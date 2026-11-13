@@ -172,27 +172,27 @@ diag_session_state_t,0x003fecbe,checksum_status,byte,1,EEPROM checksum validatio
 # System Status Flags - engine and protection status bitmaps
 # Used by condition monitoring and fault detection
 # Total size: 48 bytes (0x003fe974-0x003fe9a3)
-system_status_flags_t,0x003fe974,enable_state,word,2,System master enable state,,verified
-system_status_flags_t,0x003fe974,condition_monitor,word,2,Condition monitor flags,,verified
-system_status_flags_t,0x003fe974,reserved_04,word,2,Gap (0x3fe978-0x3fe979),,needs_review
-system_status_flags_t,0x003fe974,safety_bits_1,word,2,Safety condition bits set 1,,verified
-system_status_flags_t,0x003fe974,safety_bits_2,word,2,Safety condition bits set 2,,verified
-system_status_flags_t,0x003fe974,sensor_diag,word,2,Sensor diagnostic flags,,verified
-system_status_flags_t,0x003fe974,lamp_status,word,2,Fault lamp status (MIL/warning),,verified
-system_status_flags_t,0x003fe974,emission_faults,word,2,Emission-related fault flags,,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_0_to_15,word,2,Word 0 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0606 b5 P0341 b7 P0191 b8 P0238 boost-high b9 P0237 boost-low b10 P2123 b11 P2122 (was enable_state),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_16_to_31,word,2,Word 1 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0118 b1 P0117 coolant b3 P0113 b4 P0112 intake-temp b9 P0108 b10 P0107 baro b11 P0219 overspeed b13 P0500 VSS (was condition_monitor),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_32_to_47,word,2,Word 2 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b9 P0478 b10 P0477 - not a gap (was reserved_04) (Medium confidence),,needs_review
+system_status_flags_t,0x003fe974,fault_detected_bits_48_to_63,word,2,Word 3 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b6 P2267 b7 P2266 b8 P2269 water-in-fuel b9 P1221 b10 P1222 b12 P1223 b14 P2127 b15 P2121 pedal - b4/b5 (0x10/0x20) no code (was safety_bits_1),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_64_to_79,word,2,Word 4 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0236 b2 P0562 b3 P0563 system-voltage b4 P2128 b5 P1221 b6 P1222 b7 P1223 (was safety_bits_2),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_80_to_95,word,2,Word 5 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b2/b9/b10 P2509 b11 P0606 b12 P0335 crank b13 P0340 cam (was sensor_diag),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_96_to_111,word,2,Word 6 of fault-detected array 0x3fe974 - no OBD DTC slots (all map to 170) - internal fault bits eg b14 (0x4000) set on ETC1/cold-start timeout and cleared with its registered sibling 0x3fe9e4 - confirm b5 (0x20) role (was lamp_status) (Medium confidence),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_112_to_127,word,2,Word 7 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b5 P0016 crank-cam b9 P0480 fan b12 P0336 crank (was emission_faults),,verified
 system_status_flags_t,0x003fe974,fault_detected_bits_128_to_143,word,2,Word 8 of the fault-present bit array at 0x3fe974 (fault bit = word x 16 + bit): bit 0 any J1939 input timeout / bit 1 read by the J1939 pedal rate-limit check / bit 2 any J1939 input data error / bits 8-15 DTC slots 128-135 = P0883 P0882 P0974 P0973 P2770 P2769 P0588 P0587 (was reserved_10),,needs_review
-system_status_flags_t,0x003fe974,reserved_12,word,2,Gap (0x3fe986-0x3fe987),,needs_review
-system_status_flags_t,0x003fe974,system_faults,word,2,System fault flags,,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_144_to_159,word,2,Word 9 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0584 b1 P0583 vacuum b2 P0596 b3 P0595 servo-supply b4 P0850 park-neutral b5 P1762 governor b6 P0073 b7 P0072 ambient - not a gap (was reserved_12),,needs_review
+system_status_flags_t,0x003fe974,fault_detected_bits_160_to_175,word,2,Word 10 of fault-detected array 0x3fe974 - no OBD DTC slots (all map to 170) - internal fault bits eg b5 (0x20) set on EEPROM status-poll failure - registered sibling 0x3fe9ec (was system_faults) (Medium confidence),,verified
 system_status_flags_t,0x003fe974,reserved_16,word,2,Gap (0x3fe98a-0x3fe98f),,needs_review
-system_status_flags_t,0x003fe974,reserved_18,word,2,Gap,,needs_review
-system_status_flags_t,0x003fe974,reserved_1a,word,2,Gap,,needs_review
+system_status_flags_t,0x003fe974,fault_detected_bits_192_to_207,word,2,Word 12 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b4 P0699 b5 P0698 sensor-reference - not a gap (was reserved_18) (Medium confidence),,needs_review
+system_status_flags_t,0x003fe974,fault_detected_bits_208_to_223,word,2,Word 13 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b10/b11 P0381 wait-to-start lamp - not a gap (was reserved_1a) (Medium confidence),,needs_review
 system_status_flags_t,0x003fe974,reserved_1c,word,2,Gap,,needs_review
 system_status_flags_t,0x003fe974,severity_flags,word,2,Fault severity flags,,verified
-system_status_flags_t,0x003fe974,comm_faults,word,2,Communication fault flags,,verified
-system_status_flags_t,0x003fe974,engine_status,word,2,Engine status flags,,verified
-system_status_flags_t,0x003fe974,pending_faults,word,2,Fault pending flags,,verified
-system_status_flags_t,0x003fe974,reserved_28,word,2,Gap (0x3fe99c-0x3fe9a1),,needs_review
-system_status_flags_t,0x003fe974,protection_active,word,2,Protection active flags,,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_256_to_271,word,2,Word 16 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b12/b13/b15 P2146 injector supply voltage - not comm (was comm_faults) (Medium confidence),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_272_to_287,word,2,Word 17 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0/b2/b3 P2146 b5/b6/b8/b9/b11/b12 P2149 injector supply b14 P0201 b15 P0202 injector 1/2 (was engine_status),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_288_to_303,word,2,Word 18 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0203 b1 P0204 b3 P0205 b4 P0206 injectors b6 P0541 b7 P0542 grid-heater b8 P2607 b9 P2608 b10 P0711 b11 P0868 b12 P0869 b13 P0713 b14 P0712 b15 P0088 (was pending_faults),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_304_to_319,word,2,Word 19 of fault-detected array 0x3fe974 at offset 0x26 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0193 b1 P0192 rail pressure b14 P0604 b15 P1740 - not a gap and not offset 0x28 (was reserved_28),,needs_review
+system_status_flags_t,0x003fe974,fault_detected_bits_320_to_335,word,2,Word 20 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0720 output speed b8/b10 P0606 b9 P2146 b11 P2149 b12 P0234 overboost b13 P0251 b14 P2121 b15 P0336 (was protection_active),,verified
 # Speed Control State - vehicle/engine speed setpoints and limits
 # Used by processEngineRpmTarget and speed governor
 # Total size: 22 bytes (0x0040a3ca-0x0040a3df)
@@ -869,7 +869,7 @@ etc1_governor_state_t,0x0040adf8,etc1_spn573_tc_lockup_disengage,word,2,1=ETC1 d
 etc1_governor_state_t,0x0040adf8,etc1_handler_initialized,word,2,1=ETC1 handler init complete,,verified
 etc1_governor_state_t,0x0040adf8,speed_control_target,word,2,Bitmask: bit0=mode1 active bit1=mode2 active bit2=torque active,,verified
 etc1_governor_state_t,0x0040adf8,etc1_spn574_shift_in_process,byte,1,1=coast/brake mode from ETC1 byte0 bits 0x30==0x10,,verified
-etc1_governor_state_t,0x0040adf8,etc2_transmission_selected_gear,byte,1,J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when governor_timeout_countdown (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter),,verified
+etc1_governor_state_t,0x0040adf8,etc2_transmission_selected_gear,byte,1,J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when etc2_selected_gear_timeout (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter),,verified
 etc1_governor_state_t,0x0040adf8,proprietary_offset_value,word,2,Proprietary PGN offset value,,needs_review
 etc1_governor_state_t,0x0040adf8,etc1_speed_error_timeout_flag,word,2,1=speed error timeout has fired,,verified
 etc1_governor_state_t,0x0040adf8,etc1_activation_confirm_timer,word,2,Countdown: loaded from config+6/+10 by gov mode; fires to confirm mode transition and log fault,,verified

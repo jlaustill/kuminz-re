@@ -121,6 +121,7 @@ address,name,type,comment
 0x0005c380,j1939_dtc_spn_cal_d,word,
 0x0005c38c,etc1_torque_mode_timeout_cal,word,
 0x0005c398,fuel_demand_norm_zero_cal,word,
+0x0005c39e,etc2_timeout_reload_count,word,ROM constant 50 - reload count for the ETC2 PGN 61445 receive timeouts - cm848_j1939ProcessPgn61445Etc2 loads etc2_selected_gear_timeout = this+1 - ROM not EEPROM so no _cal (was DAT_0005c39e)
 0x0005c3b4,etc1_config_entry_t_0005c3b4,etc1_config_entry_t,
 0x0005c3b6,etc1_config_entry_t.conflict_0005c3b4.source_address_filter,,
 0x0005c47c,j1939_dm_feature_mode,word,
@@ -1075,7 +1076,7 @@ address,name,type,comment
 0x003faaf5,j1939_ccvs1_cruise_brake_clutch_byte,byte,CCVS1 transmit byte 4: bits 1-2 cruise control active (cruise_control_engaged_flag) / 3-4 cruise control enable switch (switch 31) / 5-6 brake switch (switch 11) / 7-8 clutch switch (switch 15); 3 = not available when the switch is datalink-sourced (was j1939_ccvs1_override_status)
 0x003faaf6,j1939_ccvs1_cruise_set_resume_byte,byte,CCVS1 transmit byte 5: set / coast / resume / accelerate switch fields - all derived from switch 31 and j1939_tsc1_active_flag; 0xFF when j1939_governor_feature_cal bit 6 is clear (was j1939_ccvs1_control_byte)
 0x003faaf7,j1939_ccvs1_cruise_set_speed_byte,byte,CCVS1 transmit byte 6: cruise control set speed (SPN 86 km/h) = cruise_speed_command x 412 >> 16; 0xFF when j1939_governor_feature_cal bit 6 is clear (was j1939_cruise_speed_byte)
-0x003faaf8,j1939_ccvs1_pto_and_cruise_state_byte,byte,CCVS1 transmit byte 7: bits 1-5 PTO governor state (SPN 976) = protection_event_code when j1939_governor_feature_cal bit 4 else 0x1F / bits 6-8 cruise control state (SPN 527) = j1939_status_field_3bit (was j1939_ccvs1_event_bits)
+0x003faaf8,j1939_ccvs1_pto_and_cruise_state_byte,byte,CCVS1 transmit byte 7: bits 1-5 PTO governor state (SPN 976) = protection_event_code when j1939_governor_feature_cal bit 4 else 0x1F / bits 6-8 cruise control state (SPN 527) = ccvs1_cruise_control_state (was j1939_ccvs1_event_bits)
 0x003faaf9,j1939_ccvs1_idle_switches_byte,byte,CCVS1 transmit byte 8: idle increment / idle decrement / test mode fields derived from switch 31 - shutdown override always not available (was j1939_ccvs1_pto_flags)
 0x003faafc,j1939_pgn65261_tx_header,dword,
 0x003faaff,j1939_pgn65261_tx_header+3,,
@@ -1290,7 +1291,7 @@ address,name,type,comment
 0x003fafe0,protection_eval_step_index,word,
 0x003fafe2,protection_eval_frame_counter,word,
 0x003fafe4,protection_eval_sub_counter,word,
-0x003fafe6,governor_speed_request_state,CRUISE_SWITCH_REQUEST,
+0x003fafe6,cruise_switch_request_speed_control,CRUISE_SWITCH_REQUEST,Debounced cruise switch request (ON_OFF / CANCEL / COAST / SET / RESUME / IDLE) - written and read ONLY by cm848_processProtectionControlStateMachine from its own protection_control_state_check_2 sample - selects that governor SET / RESUME / COAST / CANCEL (was governor_speed_request_state) (Medium confidence)
 0x003fafe8,protection_rpm_reference_snapshot,word,
 0x003fafea,governor_rpm_reference_snapshot_a,word,
 0x003fafec,governor_rpm_ref_target_0_snapshot,word,
@@ -1548,12 +1549,12 @@ address,name,type,comment
 0x003fb4fe,fuel_injection_state,word,
 0x003fb500,subsystem_init_code,word,
 0x003fb504,fuel_flow_rate_counter,word,
-0x003fb506,fuel_injection_delay_timer,word,
-0x003fb508,fuel_flow_calculation,dword,
-0x003fb50a,fuel_flow_calculation+2,,
-0x003fb50e,engine_load_filter_accum_init,dword,
-0x003fb512,engine_load_filter_coeff_ptr,pointer,
-0x003fb516,engine_load_filter_state_init,dword,
+0x003fb506,transmission_output_speed_pulse_timeout_counter,word,Counts down each cycle in cm848_calculateTransmissionOutputSpeed - reloaded to 26 by the TPU-B ch14 period handler - at 0 the output speed is forced to 8 (1 rpm stopped) (was fuel_injection_delay_timer)
+0x003fb508,transmission_output_speed_sensor_unfiltered,word,Raw output shaft speed in 1/8 rpm from the sensor period only - never the vehicle-speed substitute - EMA'd into transmission_output_speed_sensor_filtered - word at 0x3fb508-0x3fb509 of the mis-sized old dword; 0x3fb50a is a separate pointer (was fuel_flow_calculation)
+0x003fb50a,transmission_output_speed_in_use_filter_coefficient_pointer,pointer,Points to transmission_output_speed_filter_coefficient - param 0 of the EMA that produces transmission_output_speed_in_use - a separate 4-byte pointer at 0x3fb50a-0x3fb50d that Ghidra folded into the mis-sized transmission_output_speed_sensor_unfiltered dword (was fuel_flow_calculation+2)
+0x003fb50e,transmission_output_speed_in_use_filter_accumulator,dword,16.16 EMA accumulator for transmission_output_speed_in_use - param 1 of its exponentialMovingAverage call (0x3fb50a + 4) - zeroed at init (was engine_load_filter_accum_init)
+0x003fb512,transmission_output_speed_sensor_filter_coefficient_pointer,pointer,Points to transmission_output_speed_filter_coefficient - param 0 of the EMA that produces transmission_output_speed_sensor_filtered (was engine_load_filter_coeff_ptr)
+0x003fb516,transmission_output_speed_sensor_filter_accumulator,dword,16.16 EMA accumulator for transmission_output_speed_sensor_filtered - param 1 of its exponentialMovingAverage call (0x3fb512 + 4) - zeroed at init (was engine_load_filter_state_init)
 0x003fb51a,governor_cycle_counter,word,
 0x003fb51c,governor_fuel_demand_prev_snapshot,dword,
 0x003fb520,governor_fuel_mode_counter,word,
@@ -1814,7 +1815,7 @@ address,name,type,comment
 0x003fcd56,PTR_DAT_003fcd56,pointer,
 0x003fcd96,PTR_DAT_003fcd96,pointer,
 0x003fcd9e,cruise_control_on_toggle_state,word,Cruise ON/OFF state: cm848_updateCruiseControlOnOffToggle flips it on each new ON/OFF switch press and forces 0 on a cruise switch or vehicle speed rationality fault or until cold start reaches governor setpoint; 0 = denied reason 5 ON/OFF SW (was cruise_protection_ok)
-0x003fcda2,governor_speed_request_state_b,CRUISE_SWITCH_REQUEST,cruise-fuel-governor working copy of governor_speed_request_state (0x3fafe6); holds protection_control_state_check_2() result (states 0-5); paired with raw DAT_003fcdaa + debounce counter DAT_003fcda0
+0x003fcda2,cruise_switch_request,CRUISE_SWITCH_REQUEST,Primary debounced cruise switch request - protection_control_state_check_2 result stored each cycle by cm848_cruiseControlPeriodicUpdate - read by every governor_cruise_ button handler and the engage check - prior value in cruise_switch_request_prev (was governor_speed_request_state_b)
 0x003fce7c,obd_response_staging,byte[8],Staging copy of the OBD-II response bytes - multi-byte values are built here then copied into the response (was j1939_dm_scratch_buffer)
 0x003fce7f,j1939_dm_scratch_byte0,,
 0x003fce80,j1939_dm_scratch_byte1,,
@@ -2047,7 +2048,7 @@ address,name,type,comment
 0x003fdbd4,protection_event_output_polarity_bits_cal+2,,
 0x003fdbd6,cmf_control_base,dword,CMFCTL base value (timing bits) for flash program/erase
 0x003fdbda,cmf_control_pulse_value,word,CMFCTL value for the next pulse (block select | step bits | SES|EHV); written as a dword so it renders with _ (it overlaps protection_event_output_line_cal at 0x3fdbdc)
-0x003fdbdc,protection_event_output_line_cal,word,Application: word table indexed by protection event N = output line driven for that event (0 = none); read by cm848_protectionFlagManager / cm848_clearProtectionFault / cm848_protectionAlarmHandler / cm848_checkProtectionModeFlags / injectorTimingCalculation; read-only in the app (EEPROM image range; unconfirmed). TIME-SHARED: the boot reflash kernel's CMF parameters at 0x3fdbde-0x3fdc2b sit inside it (was qadc_result_array)
+0x003fdbdc,protection_event_output_line_cal,word,Application: word table indexed by protection event N = output line driven for that event (0 = none); read by cm848_clearLogicalOutputAndDriveLine / cm848_setLogicalOutputAndDriveLine / cm848_applyLogicalOutputRequests / cm848_checkProtectionModeFlags / injectorTimingCalculation; read-only in the app (EEPROM image range; unconfirmed). TIME-SHARED: the boot reflash kernel's CMF parameters at 0x3fdbde-0x3fdc2b sit inside it (was qadc_result_array)
 0x003fdbde,cmf_control_step_bits,dword,Per-step CMFCTL bits (indexed by cmf_pulse_step_index)
 0x003fdbe2,qadc_channel_config_mask_c,dword,
 0x003fdbe6,qadc_channel_config_mask_d,dword,
@@ -2162,29 +2163,29 @@ address,name,type,comment
 0x003fe691,fault_entry_t_003fe674.pressure_adj,,
 0x003fe6a2,fault_entry_t_003fe674.status_flags,,
 0x003fe974,system_status_flags_t_003fe974,system_status_flags_t,
-0x003fe976,system_status_flags_t_003fe974.condition_monitor,,
-0x003fe978,system_status_flags_t_003fe974.reserved_04,,
-0x003fe97a,system_status_flags_t_003fe974.safety_bits_1,,
-0x003fe97c,system_status_flags_t_003fe974.safety_bits_2,,
-0x003fe97e,system_status_flags_t_003fe974.sensor_diag,,
-0x003fe980,system_status_flags_t_003fe974.lamp_status,,
-0x003fe982,system_status_flags_t_003fe974.emission_faults,,
+0x003fe976,system_status_flags_t_003fe974.fault_detected_bits_16_to_31,,
+0x003fe978,system_status_flags_t_003fe974.fault_detected_bits_32_to_47,,
+0x003fe97a,system_status_flags_t_003fe974.fault_detected_bits_48_to_63,,
+0x003fe97c,system_status_flags_t_003fe974.fault_detected_bits_64_to_79,,
+0x003fe97e,system_status_flags_t_003fe974.fault_detected_bits_80_to_95,,
+0x003fe980,system_status_flags_t_003fe974.fault_detected_bits_96_to_111,,
+0x003fe982,system_status_flags_t_003fe974.fault_detected_bits_112_to_127,,
 0x003fe984,system_status_flags_t_003fe974.fault_detected_bits_128_to_143,,
-0x003fe986,system_status_flags_t_003fe974.reserved_12,,
-0x003fe988,system_status_flags_t_003fe974.system_faults,,
+0x003fe986,system_status_flags_t_003fe974.fault_detected_bits_144_to_159,,
+0x003fe988,system_status_flags_t_003fe974.fault_detected_bits_160_to_175,,
 0x003fe98a,system_status_flags_t_003fe974.reserved_16,,
-0x003fe98c,system_status_flags_t_003fe974.reserved_18,,
-0x003fe98e,system_status_flags_t_003fe974.reserved_1a,,
-0x003fe994,system_status_flags_t_003fe974.comm_faults,,
-0x003fe996,system_status_flags_t_003fe974.engine_status,,
-0x003fe998,system_status_flags_t_003fe974.pending_faults,,
-0x003fe99a,system_status_flags_t_003fe974.reserved_28,,
-0x003fe99c,system_status_flags_t_003fe974.protection_active,,
-0x003fe99e,j1939_receive_status_flags,word,
-0x003fe9a0,injection_fault_shadow_flags,word,
+0x003fe98c,system_status_flags_t_003fe974.fault_detected_bits_192_to_207,,
+0x003fe98e,system_status_flags_t_003fe974.fault_detected_bits_208_to_223,,
+0x003fe994,system_status_flags_t_003fe974.fault_detected_bits_256_to_271,,
+0x003fe996,system_status_flags_t_003fe974.fault_detected_bits_272_to_287,,
+0x003fe998,system_status_flags_t_003fe974.fault_detected_bits_288_to_303,,
+0x003fe99a,system_status_flags_t_003fe974.fault_detected_bits_304_to_319,,
+0x003fe99c,system_status_flags_t_003fe974.fault_detected_bits_320_to_335,,
+0x003fe99e,fault_detected_bits_336_to_351,word,Word 21 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0169 water-in-fuel b1 P0642 b2 P0643 b3 P0071 b4 P0106 b5 P0521 b8 P0630 b10 P0633 immobilizer b11 P2122 b12 P2123 b13 P2127 b14 P2128 b15 P0748 (was j1939_receive_status_flags)
+0x003fe9a0,fault_detected_bits_352_to_367,word,Word 22 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b1/b7 P0514 battery-temp b2/b6 P0111 b3 P1652 b5 P0602 b8 P0071 b9-b14 P0301-P0306 cyl 1-6 misfire b15 P0300 (was injection_fault_shadow_flags)
 0x003fe9a2,fault_detected_bits_368_to_383,word,Word 23 of the fault-detected bit array at 0x3fe974 (fault n = word n/16 bit n%16 - slot table 0x5985a then obd_dtc_code_table): bits 0-15 = P2502 P2504 P2503 P0647 P0646 P0581 P0580 P0338 P0337 P0653 P0652 P0517 P0516 P0463 P0462 P1652 (was power_state_status_flags)
 0x003fe9a4,fault_detected_bits_384_to_399,word,Word 24 of the fault-detected bit array at 0x3fe974: bits 0-15 = P0533 P0532 P0629 P0628 P0606 P0217 P0217 P1757 P1756 P0524 P0573 P0572 P0622 (bit 13 = fuel level no-change pending - no DTC) P0461 P0607 (was engine_diag_shadow_flags)
-0x003fe9a6,protection_monitor_shadow,word,
+0x003fe9a6,fault_detected_bits_400_to_415,word,Word 25 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0128 b1 P0116 coolant b3 P0243 wastegate b6 P0837 b7 P0483 fan b8/b9 P0148 b11 P2609 heater b12 P0839 b13 P0838 b14 P0191 b15 P0234 (was protection_monitor_shadow)
 0x003fe9b4,engine_sync_validation_flags,word,
 0x003fe9be,iat_sensor_deviation_flags,word,
 0x003fe9c6,governor_status_flags,word,engine-load (fuel-demand-derived) protection confirm bits (trip = load-EMA deviation): 0x4000=confirm-A (fuel-low-armed steady stage - clamps EMA/load) 0x8000=confirm-B (throttle-rate/overspeed-armed live stage - drives the speed derate); only these 2 bits used; shadow @0x3fea2a; the sibling governor_status_overspeed_flag_snapshot is a wrong write-only name
@@ -2194,22 +2195,22 @@ address,name,type,comment
 0x003fe9d0,diagnostic_status_flags,word,
 0x003fe9d6,diagnostic_status_flags_b,word,
 0x003fe9d8,fault_active_status_array,word,
-0x003fe9da,engine_timing_shadow_flags,word,
-0x003fe9de,sensor_status_flags_2,word,
-0x003fe9e0,fuel_status_shadow_flags,word,
-0x003fe9e2,sensor_diag_shadow_flags,word,
-0x003fe9e4,j1939_tsc1_status_shadow,word,
-0x003fe9e6,emission_faults_shadow_flags,word,
-0x003fe9ec,system_faults_shadow_flags,word,
-0x003fe9f2,system_faults_active_shadow_flags,word,
-0x003fe9f8,comm_faults_shadow_flags,word,
-0x003fe9fc,pending_faults_shadow_flags,word,
-0x003fe9fe,diagnostic_timer_flags,word,
-0x003fea00,crank_sync_status_flags,word,
-0x003fea02,protection_enable_shadow_flags,word,
-0x003fea04,protection_diag_shadow_flags_b,word,
-0x003fea06,fault_registered_bits_368_to_383,word,Word 23 of the second fault bit array at 0x3fe9d8: cm848_faultTableEntryProcessor ORs in each detected bit it has processed and the detectors clear it together with the detected bit; bit map as fault_detected_bits_368_to_383 (was battery_diag_shadow_flags) (Medium confidence)
-0x003fea0a,j1939_message_state_flags,word,
+0x003fe9da,fault_registered_bits_16_to_31,word,Word 1 of fault-registered array 0x3fe9d8 - cm848_processFaultScanGroup ORs in each processed detected bit cleared with its detected sibling - bit map as fault_detected_bits_16_to_31 (coolant / intake-temp / baro) (was engine_timing_shadow_flags)
+0x003fe9de,fault_registered_bits_48_to_63,word,Word 3 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_48_to_63 (water-in-fuel / pedal) (was sensor_status_flags_2)
+0x003fe9e0,fault_registered_bits_64_to_79,word,Word 4 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_64_to_79 (was fuel_status_shadow_flags)
+0x003fe9e2,fault_registered_bits_80_to_95,word,Word 5 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_80_to_95 (crank / cam) (was sensor_diag_shadow_flags)
+0x003fe9e4,fault_registered_bits_96_to_111,word,Word 6 of fault-registered array 0x3fe9d8 - registered copy of fault_detected_bits_96_to_111 - no OBD DTC slots (internal fault bits eg b14 0x4000 ETC1 timeout cleared in lockstep with detected) (was j1939_tsc1_status_shadow) (Medium confidence)
+0x003fe9e6,fault_registered_bits_112_to_127,word,Word 7 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_112_to_127 (P0016 / P0480 / P0336) (was emission_faults_shadow_flags)
+0x003fe9ec,fault_registered_bits_160_to_175,word,Word 10 of fault-registered array 0x3fe9d8 - registered copy of fault_detected_bits_160_to_175 - no OBD DTC slots (internal eg b5 EEPROM poll fault) (was system_faults_shadow_flags) (Medium confidence)
+0x003fe9f2,fault_registered_bits_208_to_223,word,Word 13 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_208_to_223 (P0381 wait-to-start) (was system_faults_active_shadow_flags) (Medium confidence)
+0x003fe9f8,fault_registered_bits_256_to_271,word,Word 16 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_256_to_271 (P2146 injector supply) (was comm_faults_shadow_flags) (Medium confidence)
+0x003fe9fc,fault_registered_bits_288_to_303,word,Word 18 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_288_to_303 (injectors / grid heater / trans temp) (was pending_faults_shadow_flags)
+0x003fe9fe,fault_registered_bits_304_to_319,word,Word 19 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_304_to_319 (rail pressure P0193 / P0192) - not a timer (was diagnostic_timer_flags)
+0x003fea00,fault_registered_bits_320_to_335,word,Word 20 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_320_to_335 (P0720 output speed / overboost / misc) (was crank_sync_status_flags)
+0x003fea02,fault_registered_bits_336_to_351,word,Word 21 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_336_to_351 (water-in-fuel / immobilizer P0633) (was protection_enable_shadow_flags)
+0x003fea04,fault_registered_bits_352_to_367,word,Word 22 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_352_to_367 (battery-temp / cylinder misfire P0300-P0306) (was protection_diag_shadow_flags_b)
+0x003fea06,fault_registered_bits_368_to_383,word,Word 23 of the second fault bit array at 0x3fe9d8: cm848_processFaultScanGroup ORs in each detected bit it has processed and the detectors clear it together with the detected bit; bit map as fault_detected_bits_368_to_383 (was battery_diag_shadow_flags) (Medium confidence)
+0x003fea0a,fault_registered_bits_400_to_415,word,Word 25 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_400_to_415 (coolant / fan P0483 / heater) (was j1939_message_state_flags)
 0x003fea18,j1939_message_state_flags_b,word,
 0x003fea22,j1939_tsc1_mode_shadow,word,
 0x003fea2a,governor_status_flags_shadow,word,
@@ -2217,7 +2218,7 @@ address,name,type,comment
 0x003fea32,sensor_fault_status_flags,word,
 0x003fea34,j1939_comm_status_flags,word,
 0x003fea3a,diagnostic_status_flags_b_shadow,word,
-0x003fea3c,j1939_dm1_spn_array,word,
+0x003fea3c,fault_previous_pass_array,word,Previous-pass snapshot of the 50-word fault-detected array - cm848_processFaultScanGroup writes each detected word here per pass (cpp 17413) to find newly-set/cleared bits - cleared with the other two arrays (i<50) - NOT J1939 DM1 SPNs (was j1939_dm1_spn_array)
 0x003fea96,diagnostic_status_snapshot,word,
 0x003feaa0,governor_mode_code_diag_snapshot,word,
 0x003feaa2,fuel_timing_arb_diag_snapshot,word,
@@ -2277,7 +2278,7 @@ address,name,type,comment
 0x003fedf6,eeprom_write_request_pending,word,staged EEPROM write request type awaiting dispatch
 0x003fedf8,mios_cnt_snapshot,word,
 0x003fedfa,diag_response_pending_flag,byte,
-0x003fedfb,diag_response_checksum,byte,
+0x003fedfb,output_speed_to_vehicle_speed_ratio_learned_flag,byte,Bit 0 set by cm848_learnOutputSpeedToVehicleSpeedRatio once a ratio is stored - cm848_calculateTransmissionOutputSpeed checks it to pick the learned vs default ratio - the boot reflash kernel reuses this byte as an SCI checksum (was diag_response_checksum) (Medium confidence)
 0x003fedfc,diag_clear_flags_t_003fedfc,diag_clear_flags_t,
 0x003fedfd,diag_clear_flags_t_003fedfc.diag_eeprom_work_byte,,
 0x003fedfe,diag_clear_flags_t_003fedfc.learned_output_speed_to_vehicle_speed_ratio,,
@@ -2983,14 +2984,14 @@ address,name,type,comment
 0x0040783a,protection_overload_fuel_demand_threshold_cal,word,
 0x0040783c,overdrive_off_set_transmission_temperature,word,overdrive_off_flag is forced on above this transmission_temperature_in_use (17280 = 270 deg F) (was transmission_hot_set_temperature)
 0x0040783e,protection_fuel_demand_l_threshold_cal,word,
-0x00407840,protection_load_input_min_threshold_cal,word,
+0x00407840,governor_pressure_cold_mode_temperature_threshold,word,Transmission temperature in 1/64 deg F (2048 = 32 deg F) below which cm848_runTransmissionControl runs the cold governor pressure handler - name was wrong (a temperature not a load) and outside the EEPROM mirror so no _cal (was protection_load_input_min_threshold_cal) (Medium confidence)
 0x00407842,protection_load_fuel_check_threshold_a_cal,word,
 0x00407844,protection_load_fuel_check_threshold_b_cal,word,
-0x00407846,protection_derate_rpm_limit_a,word,
-0x00407848,protection_derate_rpm_limit_b,word,
+0x00407846,governor_pressure_gear1_elevated_target,word,48RE governor pressure target in 1/18.56 kPa (7168 = 56 psi) - commanded in gear 1 once engine RPM crosses the load-scaled escalation point - the elevated full-load value assigned to governor_pressure_target (was protection_derate_rpm_limit_a)
+0x00407848,governor_pressure_gear2_elevated_target,word,48RE governor pressure target in 1/18.56 kPa (16256 = near full-scale) - commanded in gear 2 once engine RPM crosses the load-scaled escalation point - the elevated full-load value (was protection_derate_rpm_limit_b)
 0x0040784a,protection_recovery_timer_init_cal,word,
-0x0040784c,protection_derate_rpm_limit_c,word,
-0x0040784e,protection_derate_rpm_limit_d,word,
+0x0040784c,governor_pressure_gear1_base_limit,word,48RE governor pressure ceiling in 1/18.56 kPa (2880 = 22.5 psi) - clamps the gear 1 base-state interpolated governor_pressure_target until engine RPM forces escalation to the elevated value (was protection_derate_rpm_limit_c)
+0x0040784e,governor_pressure_gear2_base_limit,word,48RE governor pressure ceiling in 1/18.56 kPa (7168 = 56 psi) - clamps the gear 2 base-state interpolated governor_pressure_target until engine RPM forces escalation to the elevated value (was protection_derate_rpm_limit_d)
 0x00407850,protection_load_rate_b_delta_threshold_cal,word,
 0x00407852,protection_derate_fuel_exit_threshold_cal,word,
 0x00407854,protection_thermal_lockout_rpm_delta_cal,word,
@@ -3135,8 +3136,8 @@ address,name,type,comment
 0x00408302,protection_rpm_threshold,word,
 0x00408304,protection_rpm_peak_low_threshold_cal,word,
 0x00408306,protection_rpm_peak_threshold,word,
-0x00408308,protection_status_step_delta,word,
-0x0040830a,protection_derate_rpm_limit_e,word,
+0x00408308,governor_pressure_learned_gain_step,word,Step size (1) added or subtracted each adaptation of the gear 1 and gear 2 governor pressure learned gains (was protection_status_step_delta) (Medium confidence)
+0x0040830a,governor_pressure_high_gear_target,word,48RE governor pressure target in 1/18.56 kPa (16256 = about 127 psi) - commanded in gear 3 and up (status 0x10) and on the fault / shutdown path - read by cm848_runTransmissionControl and cm848_calculateProtectionThresholdLimit (was protection_derate_rpm_limit_e) (Medium confidence)
 0x0040830c,protection_sensor_fault_cal,word,
 0x0040830e,protection_thermal_lockout_cal,word,
 0x00408310,protection_load_lockout_cal,word,
@@ -3146,16 +3147,16 @@ address,name,type,comment
 0x00408318,overdrive_engaged_speed_ratio_threshold,word,With the overdrive solenoid on the gear counts as fourth once overdrive_upshift_timer has expired or transmission_speed_ratio is below this (30 = 0.94) (was protection_debounce_threshold_cal) (Medium confidence)
 0x0040831a,transmission_cold_set_battery_temperature,word,cm848_updateTransmissionConditionFlags: with overdrive_control_flags bit 1 (init option from j1939_governor_feature_byte bit 3) the transmission cold bit (overdrive_control_flags bit 7) also sets when battery temperature is below this (0xF380 = -50 F) - working RAM so no _cal (was protection_oil_temp_exit_threshold_cal)
 0x0040831c,transmission_cold_clear_battery_temperature,word,cm848_updateTransmissionConditionFlags: with overdrive_control_flags bit 1 set the transmission cold bit clears only when battery temperature is also above this (0xF4C0 = -45 F) - working RAM so no _cal (was protection_oil_temp_entry_threshold_cal)
-0x0040831e,protection_status_upper_limit_cal,word,
-0x00408320,protection_status_lower_limit_cal,word,
+0x0040831e,governor_pressure_learned_gain_gear1_maximum,word,Upper bound (33) of the gear 1 governor pressure learned gain - the adapted value is stored back to its table only while it stays below this - outside the EEPROM mirror so no _cal (was protection_status_upper_limit_cal) (Medium confidence)
+0x00408320,governor_pressure_learned_gain_gear1_minimum,word,Lower bound (0) of the gear 1 governor pressure learned gain - the adapted value is stored back to its table only while it stays above this - no _cal (was protection_status_lower_limit_cal) (Medium confidence)
 0x00408322,protection_countdown_cal,word,
 0x00408324,protection_fuel_demand_status10_set_threshold_cal,word,
 0x00408326,protection_fuel_demand_status10_clear_threshold_cal,word,
 0x00408328,protection_load_monitor_threshold_cal,word,
 0x0040832a,protection_fuel_demand_status80_set_threshold_cal,word,
 0x0040832c,protection_fuel_demand_status80_clear_threshold_cal,word,
-0x0040832e,protection_status_entry_upper_limit_cal,word,
-0x00408330,protection_status_entry_lower_limit_cal,word,
+0x0040832e,governor_pressure_learned_gain_gear2_maximum,word,Upper bound (40) of the gear 2 governor pressure learned gain - the adapted value is stored back to its table only while it stays below this - no _cal (was protection_status_entry_upper_limit_cal) (Medium confidence)
+0x00408330,governor_pressure_learned_gain_gear2_minimum,word,Lower bound (0) of the gear 2 governor pressure learned gain - the adapted value is stored back to its table only while it stays above this - no _cal (was protection_status_entry_lower_limit_cal) (Medium confidence)
 0x00408332,protection_load_condition8_upper_threshold_cal,word,
 0x00408334,protection_load_condition8_lower_threshold_cal,word,
 0x00408336,protection_load_fault_bypass_threshold_cal,word,
@@ -3169,7 +3170,7 @@ address,name,type,comment
 0x00408346,transmission_temperature_range_4_threshold,word,Range 4 or more above this (12800 = 200 deg F) (was protection_status_level4_threshold_cal)
 0x00408348,transmission_temperature_range_5_threshold,word,Range 5 above this (16000 = 250 deg F) (was protection_status_level5_threshold_cal)
 0x0040834a,protection_load_scaled_filter_state_cal,byte,
-0x0040834c,protection_derate_l2_ramp_rpm_limit_cal,word,
+0x0040834c,governor_pressure_gear2_locked_target,word,48RE governor pressure target in 1/18.56 kPa (7168 = 56 psi) - commanded in gear 2 with the converter clutch apply request active and the selector held in 1st or 2nd (0x7e/0x7f) - status 0x11 - outside the EEPROM mirror so no _cal (was protection_derate_l2_ramp_rpm_limit_cal) (Medium confidence)
 0x0040834e,protection_derate_countdown_init_cal,word,
 0x00408350,protection_entry_countdown_init_cal,word,
 0x00408352,hot_mode_transmission_set_temperature,word,hot_mode_flag sets above this transmission temperature (15040 = 235 deg F) (was protection_trigger_load_threshold_cal)
@@ -3354,7 +3355,7 @@ address,name,type,comment
 0x00408a8a,cruise_resume_timer_threshold_cal,word,
 0x00408a8c,cruise_speed_settle_count_cal,word,
 0x00408ab0,cruise_debounce_timer_a_init_cal,word,
-0x00408ab2,cruise_debounce_fuel_threshold_cal,word,
+0x00408ab2,output_speed_sensor_check_minimum_output_speed,word,480 = 60 rpm (1/8 rpm) - cm848_processEngineConditionFlags trips P0720 when transmission_output_speed_sensor_filtered stays below this while vehicle speed exceeds the vehicle-speed check minimum - not EEPROM so no _cal (was cruise_debounce_fuel_threshold_cal) (Medium confidence)
 0x00408ab4,output_speed_sensor_check_minimum_vehicle_speed,word,3840 = 15 mph: above this vehicle_speed_copy (running / out of park or neutral) a TPU-B channel 14 output shaft speed EMA below 480 (60 rpm) for 300 passes sets P0720 (protection_active bit 0) and threshold_current bit 5 (shaft speed then from vehicle speed) (was cruise_fuel_temp_trim_threshold_cal)
 0x00408ab6,cruise_debounce_timer_b_init_cal,word,
 0x00408b5a,vehicle_speed_maximum_from_output_shaft,word,Cap on the output-shaft-derived speed - 38400 = 150 mph (was fuel_temp_cap_from_shaft_speed)
@@ -3401,15 +3402,15 @@ address,name,type,comment
 0x00408d42,transmission_temperature_early_substitute,word,transmission_temperature_in_use while its sensor and the coolant sensor are both faulted and fuel_flow_rate_working is still counting down (11520 = 180 deg F) (was protection_load_input_static_cal)
 0x00408d44,transmission_temperature_coolant_model_scale,word,Estimate while the transmission temperature sensor is faulted = coolant temperature x this / 32768 + transmission_temperature_coolant_model_offset (14336 = 0.4375); working RAM - not EEPROM-backed (was protection_load_coolant_scale_cal)
 0x00408d46,transmission_temperature_coolant_model_offset,word,Offset of the coolant-based transmission temperature estimate (5568 = 87 deg F) (was protection_load_coolant_offset_cal)
-0x00408d60,fuel_flow_rate_temp_scale_cal,word,
-0x00408d62,engine_load_filter_coeff_cal,byte,
-0x00408d64,fuel_flow_rate_max_cal,word,
-0x00408d66,fuel_flow_default_cal,word,
-0x00408d68,fuel_flow_divisor_upper_threshold_cal,dword,
-0x00408d6c,fuel_flow_divisor_lower_threshold_cal,dword,
-0x00408d70,timer_frequency_base_cal,word,
-0x00408d71,timer_frequency_base_cal+1,,
-0x00408d72,fuel_injection_delay_timer_cal,word,
+0x00408d60,output_speed_to_vehicle_speed_default_ratio,word,5376/4096 = 1.3125 = 42 rpm per mph - default output shaft speed per vehicle speed used while P0720 faults the sensor and no ratio has been learned - not EEPROM so no _cal (was fuel_flow_rate_temp_scale_cal)
+0x00408d62,transmission_output_speed_filter_coefficient,word,0xe666 - 16-bit EMA smoothing coefficient (about 0.1 alpha) shared by the in-use and sensor output speed filters - read as a short by exponentialMovingAverage - not EEPROM so no _cal (was engine_load_filter_coeff_cal)
+0x00408d64,transmission_output_speed_maximum,word,40000 = 5000 rpm ceiling (1/8 rpm) on the output shaft speed - used when the sensor period falls below the minimum 1043 us - not EEPROM so no _cal (was fuel_flow_rate_max_cal)
+0x00408d66,transmission_output_speed_floor,word,320 = 40 rpm floor (1/8 rpm) used when the sensor period exceeds the maximum 130435 us - not EEPROM so no _cal (was fuel_flow_default_cal)
+0x00408d68,transmission_output_speed_period_maximum,dword,130435 us - longest accepted output speed sensor period (= the 40 rpm floor) - above it the speed drops to the floor - not EEPROM so no _cal (was fuel_flow_divisor_upper_threshold_cal)
+0x00408d6c,transmission_output_speed_period_minimum,dword,1043 us - shortest accepted output speed sensor period (= the 5000 rpm ceiling) - below it the speed is clamped to the maximum - not EEPROM so no _cal (was fuel_flow_divisor_lower_threshold_cal)
+0x00408d70,output_speed_sensor_periods_accumulated,byte,2 - number of output speed sensor periods TPU-B ch14 accumulates before latching (loaded into PARAM1 high byte) - the matching 2 in the speed numerator cancels it - not EEPROM so no _cal (was timer_frequency_base_cal)
+0x00408d71,output_speed_sensor_pulses_per_revolution,byte,23 - output speed sensor pulses per output shaft revolution - speed numerator = 2 x 60e6 / 23 = 5217391 - not EEPROM so no _cal (was timer_frequency_base_cal+1)
+0x00408d72,transmission_output_speed_pulse_timeout_reload,word,26 - reload value for transmission_output_speed_pulse_timeout_counter loaded by the TPU-B ch14 period handler - not EEPROM so no _cal (was fuel_injection_delay_timer_cal)
 0x00408d76,torque_limit_override_source_cal,word,
 0x00408daa,fuel_demand_derivative_gain_cal,word,
 0x00408dac,fuel_demand_trim_upper_limit_cal,word,
@@ -3918,8 +3919,8 @@ address,name,type,comment
 0x0040a262,governor_speed_lower_limit,word,
 0x0040a264,j1939_prop_status_byte3,byte,
 0x0040a265,j1939_prop_status_byte2,byte,
-0x0040a266,governor_load_timer_b,word,
-0x0040a268,cruise_control_engaged_flag,word,1 = cruise engaged: cm848_cruiseSpeedCommandStateMachine sets it in CRUISE_SET / CRUISE_RESUME and clears it in OFF / STANDBY or below cruise_speed_min_cal; CCVS1 cruise active; denied status 13; gates the servo PID cm848_processEngineLoadCalculation (was governor_override_active_flag)
+0x0040a266,etc2_gear_ratio_timeout,word,ETC2 PGN 61445 actual-gear-ratio timeout SPN 526 - reloaded on a valid ratio in cm848_j1939ProcessPgn61445Etc2 - decremented in cm848_processGovernorModeTransition for J1939 auto drivetrains - at 1 clears etc2_gear_ratio_valid_flag and feeds the ETC fault debounce (was governor_load_timer_b)
+0x0040a268,cruise_control_engaged_flag,word,1 = cruise engaged: cm848_cruiseSpeedCommandStateMachine sets it in CRUISE_SET / CRUISE_RESUME and clears it in OFF / STANDBY or below cruise_speed_min_cal; CCVS1 cruise active; denied status 13; gates the servo PID cm848_controlCruiseVacuumServo (was governor_override_active_flag)
 0x0040a26a,cruise_speed_command,word,
 0x0040a26c,fuel_mode_switch_state,word,
 0x0040a26e,governor_load_percent_snapshot,word,
@@ -3942,7 +3943,7 @@ address,name,type,comment
 0x0040a2b0,protection_transition_block_flag,word,
 0x0040a2b2,j1939_governor_fuel_input,word,
 0x0040a2b4,governor_speed_engage_reset_flag,dword,
-0x0040a2bc,j1939_status_field_3bit,word,
+0x0040a2bc,ccvs1_cruise_control_state,word,J1939 CCVS1 PGN 65265 cruise control state SPN 527 3-bit field - set 0-6 by cruise state (0 off 1 hold 2 accel 3 decel 4 resume 5 set 6 override - 7 not available at init) - CCVS1 builder shifts it left 5 into its byte (was j1939_status_field_3bit)
 0x0040a2c2,j1939_prop_status_tx_state,word,
 0x0040a2c4,governor_startup_threshold,word,
 0x0040a2c8,fuel_demand_enable_sync_flag,word,
@@ -4566,7 +4567,7 @@ address,name,type,comment
 0x0040ae46,j1939_tsc1_override_state.etc1_secondary_config_ptr,,
 0x0040ae4a,etc1_prev_speed_ctrl_active_flag,,
 0x0040ae4c,etc1_override_timer_countdown,,
-0x0040ae50,governor_timeout_countdown,word,
+0x0040ae50,etc2_selected_gear_timeout,word,ETC2 PGN 61445 timeout guarding the selected gear - reloaded to etc2_timeout_reload_count+1 each valid frame in cm848_j1939ProcessPgn61445Etc2 - decremented in cm848_processGovernorModeTransition - at 1 forces etc2_transmission_selected_gear to 0xff (was governor_timeout_countdown)
 0x0040ae56,emission_fault_overflow_flag,word,
 0x0040ae58,diagnostic_clear_request_state,word,
 0x0040ae5a,fuel_operation_mode_index,word,
@@ -4824,13 +4825,13 @@ address,name,type,comment
 0x0040b122,protection_lockout_t_0040b11c.sensor_fault_active,,
 0x0040b124,protection_lockout_t_0040b11c.reserved_08,,
 0x0040b126,protection_lockout_t_0040b11c.timer_expired,,
-0x0040b128,protection_status_byte,word,
+0x0040b128,governor_pressure_learned_gain_gear1,word,Gear 1 per-temperature learned lead factor (0-33) multiplying engine load to set the RPM escalation point for governor pressure - working copy of the EEPROM-mirror table base 0x3fede2 indexed by transmission_temperature_range (was protection_status_byte) (Medium confidence)
 0x0040b12a,protection_rate_integrator,dword,
 0x0040b12c,protection_countdown_timer,,
 0x0040b12e,protection_state_counter_b,word,
 0x0040b130,fuel_demand_rate_abs,word,
 0x0040b132,overdrive_upshift_timer,word,Loaded with 400 (DAT_004077fa) when the overdrive solenoid turns on; counted down in cm848_decrementProtectionTimers; while it runs and the ratio is still 30 or more the gear stays third (was protection_debounce_counter) (Medium confidence)
-0x0040b134,protection_status_entry,word,
+0x0040b134,governor_pressure_learned_gain_gear2,word,Gear 2 per-temperature learned lead factor (0-40) multiplying engine load to set the RPM escalation point for governor pressure - working copy of the EEPROM-mirror table base 0x3fedee (and eeprom_calibration_pending_flag) indexed by transmission_temperature_range (was protection_status_entry) (Medium confidence)
 0x0040b136,protection_timer_d,word,
 0x0040b138,protection_recovery_timer,word,
 0x0040b13a,transmission_temperature_range,byte,1-5 from transmission_temperature_in_use against the 98.6 / 149 / 200 / 250 deg F thresholds (was protection_status_table_index)
@@ -4840,7 +4841,7 @@ address,name,type,comment
 0x0040b140,protection_derate_countdown,word,
 0x0040b142,protection_entry_countdown,word,
 0x0040b144,hot_mode_flag,word,Set while the transmission is above 235 deg F or coolant above 235 deg F - cleared once both are below 220 / 225 deg F (cm848_updateTransmissionConditionFlags); read by about 20 protection_* functions (was protection_trigger_active_flag)
-0x0040b146,transmission_vehicle_speed_filtered,word,EMA of vehicle_speed_unfiltered (1/256 mph) through transmission_vehicle_speed_filter_state; divisor of the low range ratio (needs above 512 = 2 mph); at or below 512 cm848_runTransmissionControl calls cm848_protectionWarmupHandler (was fuel_temp_trim_ema)
+0x0040b146,transmission_vehicle_speed_filtered,word,EMA of vehicle_speed_unfiltered (1/256 mph) through transmission_vehicle_speed_filter_state; divisor of the low range ratio (needs above 512 = 2 mph); at or below 512 cm848_runTransmissionControl calls cm848_selectGovernorPressureBaseCurve (was fuel_temp_trim_ema)
 0x0040b148,transmission_speed_ratio,word,Engine speed over transmission output speed x 32 (32 = 1.00 / capped 8160): the 48RE ratios 2.45 / 1.45 / 1.00 / 0.69 read about 78 / 46 / 32 / 22 before converter slip (was protection_derate_measurement)
 0x0040b14a,protection_load_rate_delta,word,
 0x0040b14c,protection_monitor_countdown,word,
@@ -4867,9 +4868,9 @@ address,name,type,comment
 0x0040b1fc,injection_check_flags,word,
 0x0040b204,cruise_speed_error_integral,word,accumulator in governor_cruise_speedError_integrate; integrates signed (prev-current) cruise_rpm_ratio_ema change, reset to 0 when steady. Working RAM so never _cal
 0x0040b206,cruise_rpm_ratio_ema,word,EMA output of governor_cruise_rpmRatio_ema = filtered (current_rpm+offset)*128/cruise_speed_setpoint_adjusted (ratio 1.0 ~ 0x80). Working RAM so never _cal
-0x0040b208,cruise_control_on_flag,word,1 = speed control switched ON (cruise_control_on_toggle_state != 0 - written each pass by cm848_periodicProtectionControl) = the cruise indicator lamp (DRB SCI FB-E2 S/C CRUISE IND LAMP); TX[2] 0x35 byte 1 bit 2 once the switches are learned (was etc1_throttle_active_flag)
+0x0040b208,cruise_control_on_flag,word,1 = speed control switched ON (cruise_control_on_toggle_state != 0 - written each pass by cm848_cruiseControlPeriodicUpdate) = the cruise indicator lamp (DRB SCI FB-E2 S/C CRUISE IND LAMP); TX[2] 0x35 byte 1 bit 2 once the switches are learned (was etc1_throttle_active_flag)
 0x0040b20a,cruise_control_last_cutout_reason,word,Why speed control last cut out (DRB FB-DE) - stored only while engaged: 1 disabled / 2 S/C switch DTC / 3 VSS rationality / 4 brake rationality / 5 ON/OFF / 6 brake / 7 cancel / 8 low speed / 9 RPM / 10 RPM-speed / 11 clutch / 12 P/N; 1 at boot - never 0 or 13 (was governor_fuel_mode_d)
-0x0040b20c,cruise_control_denied_status,word,Cruise status each pass (DRB S/C DENIED STATUS): 0 ready / 13 engaged / 1-12 reason it is denied (codes as in cruise_control_last_cutout_reason); re-coded into the SCI status low nibble by cm848_encodeGovernorFuelModeStatus (was governor_fuel_mode)
+0x0040b20c,cruise_control_denied_status,word,Cruise status each pass (DRB S/C DENIED STATUS): 0 ready / 13 engaged / 1-12 reason it is denied (codes as in cruise_control_last_cutout_reason); re-coded into the SCI status low nibble by cm848_encodeCruiseControlStatusByte (was governor_fuel_mode)
 0x0040b210,engine_warning_alert_flag,word,1 while engine_warning_alert_countdown is above 0: a timed alert after a rising edge of coolant overheat / low oil pressure / coolant class B / water in fuel (sensor channel 15) / protection_fault_latch_flag; PCI 0x53 byte 1 bit 5 (was protection_sensor_state_a)
 0x0040b212,coolant_overheat_or_low_oil_pressure_flag,word,1 while coolant_bucket_overheat_detected_flag (time above 230/238/243/247 F past its limit) or low_oil_pressure_active_flag is set; PCI 0x53 byte 1 bit 4 (was protection_sensor_state_b)
 0x0040b214,protection_fault_latch_flag,word,
@@ -4930,8 +4931,8 @@ address,name,type,comment
 0x0040b326,safety_condition_active_flag,word,Word flag of cm848_processSafetyConditionProtection - retyped from dword because the next word 0x40b328 is the separate fuel_level_first_sample_flag
 0x0040b328,fuel_level_first_sample_flag,word,1 from boot (cm848_initFuelLevelPowerUpCheck) until the first stable fuel level sample arms the power-up check; while 1 the high-voltage debounce / fast filter / slow filter / substitution are skipped (was safety_condition_active_flag+2)
 0x0040b338,fuel_level_ready_flag,word,Set to 1 (never cleared) when the power-up fuel level check has run (cm848_checkFuelLevelChangeAtPowerUp); gates the PCI TX[13] 0xA4 fuel level broadcast; one writer and one reader - not part of the cbd_* family of hpcr_coldBurndownControl (was cbd_enable_state)
-0x0040b33b,battery_voltage_status_flags,byte,
-0x0040b33c,battery_voltage_protection_state,word,
+0x0040b33b,intake_air_heater_status_flags,byte,grid heater phase one-hot - bit0 idle / bit1 preheat on / bit2 preheat aborted / bit3 preheat done / bit4 run-up / bit5 postheat on / bit6 ended early / bit7 postheat done - bit1 or bit5 makes PCI 0xC0 report battery_voltage_default_cal (was battery_voltage_status_flags)
+0x0040b33c,intake_air_heater_control_state,word,grid heater control state 0-5 - 1 compute preheat / 2 preheat countdown / 3 run-up / 4 postheat cycling / 5 shutdown - advanced from cold_start_phase (was battery_voltage_protection_state)
 0x0040b34e,pci_link_state,pci_link_state_t,J1850 PCI link state (was can_rx_state_t)
 0x0040b34f,pci_link_state.tx_match_index,,
 0x0040b350,pci_link_state.receive_byte_count,,
@@ -5164,19 +5165,19 @@ address,name,type,comment
 0x0040b620,torque_limit_setpoint_active,word,
 0x0040b622,fuel_flow_rate_working,dword,
 0x0040b62a,governor_data_validation_state,word,state (0/1/4/5/6) of cm848_checkTransmissionTemperatureSensorPerformance: cold-start governor-setpoint sensor-snapshot qualification; fault flags -> state 4 (disqualified), fault-ring/eeprom confirm -> 5/6, stable capture -> 1; init 0 in initCruiseStateVariables
-0x0040b62c,fuel_flow_rate_divisor,dword,
+0x0040b62c,transmission_output_speed_period_microseconds,dword,Output speed sensor period in microseconds - TPU-B ch14 accumulated ticks x 1e6 / 312500 - cm848_calculateTransmissionOutputSpeed divides the numerator by it for 1/8 rpm (was fuel_flow_rate_divisor)
 0x0040b630,transmission_output_speed_in_use_unfiltered,word,Output shaft speed in 1/8 rpm from the output speed sensor period (TPU-B channel 14) - 8 (1 rpm) after the pulse timeout - or with P0720 set vehicle_speed x the learned ratio at 0x3fedfe (0x3fedfb bit 0) else x 1.3125 (42 rpm per mph); capped at 40000 (was engine_load_raw)
-0x0040b632,fuel_consumption_accumulator,dword,
-0x0040b636,fuel_flow_ema,word,
+0x0040b632,transmission_output_speed_numerator,dword,Output shaft speed numerator 5217391 = 2 x 60e6 / 23 derived at init from the periods-accumulated and pulses-per-rev bytes - speed in 1/8 rpm = numerator x 8 / period-us (was fuel_consumption_accumulator)
+0x0040b636,transmission_output_speed_sensor_filtered,word,EMA of the raw output shaft speed in 1/8 rpm - never the vehicle-speed substitute - cm848_processEngineConditionFlags trips P0720 when it stays below 60 rpm while the vehicle moves (was fuel_flow_ema)
 0x0040b640,pci_transmit_message_11_distance_pulses,word,Speed sensor pulses since the last PCI 0x5D send (payload byte 1) (was injection_timing_delta)
 0x0040b648,governor_active_flag_b648,word,
 0x0040b64e,fuel_demand_d_term,dword,
-0x0040b652,engine_load_trim_rpm,dword,
+0x0040b652,cruise_servo_control_trim,dword,Cruise servo control-loop output trim - signed - split into the vent duty (0x6400+trim when negative else 0x6400) and the vacuum duty (0..trim) that software-PWM the vent and vacuum solenoids (was engine_load_trim_rpm) (Medium confidence)
 0x0040b656,fuel_demand_rate_accumulator,word,
 0x0040b658,fuel_demand_error,word,
 0x0040b65a,fuel_demand_feed_forward,word,
-0x0040b65c,fuel_demand_trim_output,word,
-0x0040b65e,engine_load_governor_threshold,word,
+0x0040b65c,cruise_servo_vacuum_duty,word,Cruise vacuum solenoid PWM duty in 1/256 percent (0x6400 = 100) - vacuum output 20 held on while the cycle counter <= duty*period/0x6400 - clamp of the servo control trim to 0..upper (was fuel_demand_trim_output)
+0x0040b65e,cruise_servo_vent_duty,word,Cruise vent solenoid PWM duty in 1/256 percent (0x6400 = 100) - vent output 19 is held on while the cycle counter <= duty*period/0x6400 - derived from the servo control trim (was engine_load_governor_threshold)
 0x0040b660,governor_cycle_active_flag,word,
 0x0040b662,fuel_step_counter,word,
 0x0040b664,fuel_demand_p_term,dword,
@@ -5189,7 +5190,7 @@ address,name,type,comment
 0x0040b67a,governor_fuel_demand_upper,word,
 0x0040b67c,governor_pid_integral_snapshot,word,
 0x0040b682,governor_override_speed_ema_coeff_ptr,pointer,EMA coeff pointer for governor override speed
-0x0040b68e,cruise_control_state,CRUISE_CONTROL_STATE,cruise control action/state (was fuel_demand_speed_error - NOT a speed error; it is the CRUISE_CONTROL_STATE selector for cm848_cruiseSpeedCommandStateMachine). Written each cycle in cm848_periodicProtectionControl
+0x0040b68e,cruise_control_state,CRUISE_CONTROL_STATE,cruise control action/state (was fuel_demand_speed_error - NOT a speed error; it is the CRUISE_CONTROL_STATE selector for cm848_cruiseSpeedCommandStateMachine). Written each cycle in cm848_cruiseControlPeriodicUpdate
 0x0040b698,cruise_speed_reference_a,word,
 0x0040b69a,cruise_speed_setpoint_b,word,
 0x0040b6a2,cruise_speed_setpoint_active,word,
@@ -5205,7 +5206,7 @@ address,name,type,comment
 0x0040b6e0,cruise_speed_setpoint_adjusted,word,
 0x0040b6e2,fuel_flow_rpm_numerator,word,
 0x0040b6e4,cruise_speed_target_working,word,
-0x0040b6e6,governor_fuel_enable_state,word,
+0x0040b6e6,cruise_set_speed_valid_flag,word,1 when the working cruise set speed is within cruise_speed_min_cal to cruise_speed_high_limit - set in cm848_validateFuelRateTarget and cm848_cruiseSpeedCommandStateMachine - gates CRUISE_STANDBY and CRUISE_RESUME while CRUISE_OFF clears it (was governor_fuel_enable_state) (Medium confidence)
 0x0040b6e8,engine_temp_protection_ema_coeff_ptr,pointer,EMA coeff pointer for engine temp protection input
 0x0040b6ec,engine_temp_protection_input_q16,dword,Q16 fixed-point (value << 16) of engine_temp_protection_input (or default DAT_0005c936); published in protectionTimeoutControl / initGovernorJ1939Bypass; write-only in ROM (consumed by diagnostics/CLIP)
 0x0040b6f0,governor_bypass_threshold_low,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd918) / 25600, clamped to DAT_0005c932; in protectionTimeoutControl, engine_temp_protection_input < this -> governor_j1939_bypass_flag = 1 (full bypass)
@@ -5392,7 +5393,7 @@ address,name,type,comment
 0x0040b9cb,fault_enable_override_flag,byte,
 0x0040b9d0,protection_feature_status_flags,dword,
 0x0040b9d4,boost_fuel_bypass_flags,dword,
-0x0040b9ec,iat_protection_state,word,state machine (0/3/4/5/6) of diag_iat_protectionLimit_calc (intake-air-temp protection); gates fuel limiting under operating_mode_flags & 0x200
+0x0040b9ec,iat_protection_state,word,state machine (0/3/4/5/6) of cm848_computeIntakeAirHeaterPreheatDuration (intake-air-temp protection); gates fuel limiting under operating_mode_flags & 0x200
 0x0040ba16,engine_sync_debounce_flag,word,
 0x0040ba18,cbd_active_flag,word,
 0x0040ba1a,fault_mask_inverted,dword,
@@ -5519,16 +5520,16 @@ address,name,type,comment
 0x0040be74,scheduler_task_stat_t_0040be6a.overrun_count,,
 0x0040c04a,diagnostic_session_state,DIAG_SESSION_STATE,
 0x0040c04c,sensor_validation_result,word,
-0x0040c080,protection_fault_status_bits,byte,
+0x0040c080,logical_output_request_bits,byte,80-bit (10 byte) logical output request array - bit N = logical output N requested - bits 19/20/21 = speed-control vent/vacuum/servo-supply solenoid requests (P0587 / P0583 / P0595) - bytes 2-3 aliased as logical_output_request_bits_16_to_31 (was protection_fault_status_bits)
 0x0040c081,fuel_demand_config_flags,byte,
-0x0040c082,logical_output_request_bits_16_to_31,word,protection_fault_status_bits bytes 2-3 = logical outputs 16-31 (the code reads byte 2): bit 0 output 16 (probably the transmission relay - governor monitors need it) / bit 1 output 17 overdrive solenoid / bit 2 output 18 converter clutch solenoid / bit 5 output 21 (was protection_action_mode_bits) (Medium confidence)
+0x0040c082,logical_output_request_bits_16_to_31,word,logical_output_request_bits bytes 2-3 = logical outputs 16-31 (the code reads byte 2): bit 0 output 16 (probably the transmission relay - governor monitors need it) / bit 1 output 17 overdrive solenoid / bit 2 output 18 converter clutch solenoid / bit 5 output 21 (was protection_action_mode_bits) (Medium confidence)
 0x0040c084,air_conditioning_clutch_request_byte,byte,Byte 4 (requests 32-39) of the 80-bit output request bits at 0x40c080; bit 6 = request 38 = A/C clutch relay request (output line 145 / P0646 P0647) cut out for A/C switch 13 off / A/C pressure (slot 71) / RPM / coolant / load / pedal / shift / min on-off time (was protection_enable_byte_34) (Medium confidence)
 0x0040c085,protection_enable_byte_35,byte,
 0x0040c086,protection_config_flags,byte,
 0x0040c088,engine_feature_status_flags,byte,
 0x0040c089,engine_feature_status_flags_2,byte,
-0x0040c08a,protection_fault_status_snapshot,byte,
-0x0040c094,fault_severity_snapshot_array,byte,
+0x0040c08a,logical_output_request_snapshot,byte,Per-cycle snapshot copy of logical_output_request_bits (0x40c080) taken at the top of cm848_applyLogicalOutputRequests - read by diag_faultMatch_outputCheck_update as the expected output state vs the feedback switch (was protection_fault_status_snapshot)
+0x0040c094,logical_output_request_priority,byte,Per-output-index severity/priority byte array - set/clear of a request bit proceeds only when the new severity >= the value stored here so a higher-priority protection source wins - written by several protection managers (was fault_severity_snapshot_array) (Medium confidence)
 0x0040c0e5,j1939_dm1_prev_b0,byte,
 0x0040c0e6,j1939_dm1_prev_b1,byte,
 0x0040c0e7,j1939_dm1_prev_b2,byte,
@@ -5559,7 +5560,7 @@ address,name,type,comment
 0x0040c109,j1939_dm1_parameter_byte,byte,
 0x0040c10a,j1939_fault_occurrence_prev,byte,
 0x0040c10b,j1939_periodic_timer_prev,byte,
-0x0040c10c,j1939_dm2_fault_bit_array,byte,
+0x0040c10c,output_lines_0_to_7_state,byte,Base byte (lines 0-7) of the output-line command shadow - siblings output_lines_8_to_15_state..output_lines_152_to_159_state up to +19 (injector_control_t reuses +11 to +17) - written by cm848_applyLogicalOutputRequests as request XOR polarity - not DM2 (was j1939_dm2_fault_bit_array)
 0x0040c10d,output_lines_8_to_15_state,byte,Shadow of output lines 8-15 (bit = line - 8); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_0)
 0x0040c10e,output_lines_16_to_23_state,byte,Shadow of output lines 16-23 (bit = line - 16); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_1)
 0x0040c10f,output_lines_24_to_31_state,byte,Shadow of output lines 24-31 (bit = line - 24); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_2)
@@ -5698,7 +5699,7 @@ address,name,type,comment
 0x00408862,egr_governor_speed_base,word,EGR base governor speed setpoint (ROM-sourced working RAM)
 0x00408868,egr_governor_speed_ramp_target,word,EGR governor speed ramp upper target (ROM-sourced)
 0x0040af06,fault_aging_triggered_flag,byte,set after dwell at governor setpoint; triggers fault aging/removal (lbz=byte)
-0x0040af0c,fault_ring_handled_bitmap,byte,22-byte fault-handled bitmask 1 bit/fault; lbzx/stb byte array
+0x0040af0c,fault_handled_bitmap,byte,170-bit (22-byte) per-fault handled bitmap 1 bit/fault - set by cm848_processFaultScanGroup when a fault is latched and read by cm848_clearMilForHealedFaults to skip it - a flat bitmap not a ring (was fault_ring_handled_bitmap) (Medium confidence)
 0x0040b962,injection_timing_arb_component_4,word,injection timing arb component (winner code 4; rpm*rpm product)
 0x0040b968,injection_timing_arb_component_3,word,injection timing arb component (winner code 3; extended-protection mode)
 0x0040b96e,injection_timing_offset_boost_blended,word,boost-map-blended injection timing offset (winner 1)
@@ -5748,19 +5749,19 @@ address,name,type,comment
 0x0040a02a,sensor_channel_ratio_scale,word,sensor-channel normalization scale factor (read-only)
 0x0040b2cc,governor_speed_decel_target,word,governor decel-entry speed setpoint
 0x0040ba34,ambient_air_temperature_key_on_rationality_state,word,Ambient air temperature key-on rationality (P0071) state (e2m Ambient_Air_Temperature_Keyon_Rationality_State): 1 running / 2 passed / 3 failed / 4 aborted or not run (all three key-on checks go to 4 without a cranking start) - 4 in the dump (was cam_sync_oiltemp_validation_state)
-0x0040ba32,cam_sync_crossval_b_state,word,cam-sync cross-validation channel 9 state 1-4
+0x0040ba32,intake_manifold_temperature_key_on_rationality_state,word,Intake manifold air temp key-on rationality (P0111) state - 1 running / 2 passed / 3 failed / 4 aborted or not run - parallels battery (0x40ba30) and ambient (0x40ba34) - passed as the slot 9 stuck-check companion state (was cam_sync_crossval_b_state)
 0x0040b2c8,governor_speed_overspeed_ramp_step,word,governor overspeed/decel ramp working register (limit_source=12)
-0x0040ba42,cam_sync_startup_cycle_counter,word,cam-sync cranking-cycle accumulator for startup delay
+0x0040ba42,temperature_rationality_cranking_cycle_count,word,Cycles counted during cranking - the scheduler holds sampling off until 0x409f92 (49) then the cross-check runs and counts on to 0x409fb2 (50) where it decides - single monotonic key-on cranking counter (was cam_sync_startup_cycle_counter)
 0x0040b844,injection_timing_aux_load_limit,word,load*rpm aux injection-timing component clamped +/-0x400
 0x0040b852,injection_timing_auxiliary_boost_component,word,Auxiliary injection timing boost term: RPM x boost table (ROM 0x5e3e2 - y 0 to 100 inHg) times RPM x fuel_demand_computed table (ROM 0x5e534) / 4096 clamped +/-1024; min or max picked with the other terms into injection_timing_aux_output; tables all zero here (was injection_timing_aux_rpm_limit)
-0x00409f96,cam_sync_sensor_mismatch_threshold,word,max allowed cross-validated sensor pair delta (read-only)
+0x00409f96,temperature_rationality_sensor_agreement_threshold,word,Largest delta (1/64 deg F) for two temperature snapshots to count as agreeing in the cross-checks - 640 = 10 F - used by crossCheck checkBattery and checkAmbient (was cam_sync_sensor_mismatch_threshold)
 0x0040b2ce,governor_speed_ramp_upper_step,word,governor speed up-ramp working register (limit_source=15)
 0x0040b2ca,governor_speed_ramp_lower_step,word,governor speed down-ramp working register (limit_source=14)
-0x0040b33e,iat_protection_derate_level,word,IAT protection derate level 0-6 from table
-0x0040b340,iat_protection_solenoid_phase,word,IAT protection solenoid alternating phase 1/2
-0x0040b344,iat_protection_shutdown_reason,word,IAT protection shutdown reason code 0-8
+0x0040b33e,intake_air_heater_schedule_level,word,grid heater schedule level 0-6 from a temperature lookup table - selects the per-level pulse durations and rpm transitions - level 6 forces shutdown reason 5 (was iat_protection_derate_level) (Medium confidence)
+0x0040b340,intake_air_heater_relay_phase,word,grid heater relay alternation phase 1/2 - toggled each PWM period to alternate which relay drives so the two heater relays share the current (was iat_protection_solenoid_phase)
+0x0040b344,intake_air_heater_shutdown_reason,word,grid heater shutdown reason - 1 default / 2 over 19 mph / 3 battery over 30 V (never on 12 V) / 4 run-up holdoff expired / 5 schedule level 6 / 6 both warm (cal makes unreachable) / 7 EEPROM postheat-skip counter nonzero / 8 loaded-cycle overflow (was iat_protection_shutdown_reason)
 0x0040b34a,intake_air_heater_start_temperature,word,Intake air heater start temperature in 1/64 deg F (e2m IAH_Temperature_Input0) taken once after reset: intake manifold - else coolant - else 0 F - sets the preheat time (300 at 0 F or less / 150 to 15 F / 100 to 66 F / 0 above - 0.1 s) - 2357 = 36.8 F in the dump (was iat_protection_oilTemp_input)
-0x0040b9ea,iat_protection_remaining_derate_steps,word,countdown of remaining IAT fuel-derate steps
+0x0040b9ea,intake_air_heater_preheat_remaining_ticks,word,remaining grid heater preheat ticks counting down while relays 43/44 held on - initial value 300 at 0 F from the start-temperature table at 0x5b3e4 - set = total / decremented in 0x517120 / zeroed in 0x51736c (was iat_protection_remaining_derate_steps)
 0x0040b0a8,protection_sensor_fault_active_flag,word,set when sensor reading in fault range; gates protection ramp step
 0x0040b1e8,protection_coolant_classb_active_flag,word,class-B coolant protection active (enable_byte_34 & 0x40)
 0x00408736,engine_warning_alert_duration_scale,word,ROM constant 10: countdown = duration x this x 5 / 10 = 5 calls per duration unit = 1 s at the derived 200 ms call rate; duration 255 = held on (was protection_ramp_steps_max)
@@ -5816,7 +5817,7 @@ address,name,type,comment
 0x0040b330,fuel_level_sensor_high_voltage_flag,word,1 once the raw fuel level ADC has stayed in 766-1023 (beyond the empty end of the table) for 320 samples - cleared after 38 samples outside; makes the substitution force the broadcast byte to 255 (was calibBlock1_inRange_flag)
 0x0040b332,fuel_level_sensor_high_voltage_debounce_counter,word,Counts fuel level samples with the raw ADC in 766-1023 up to 320 (then sets fuel_level_sensor_high_voltage_flag); zeroed by a sample outside the band; nonzero blocks the power-up jump and both filters (was calibBlock1_inRange_debounce_counter)
 0x0040b336,fuel_level_standstill_timer,word,Reloaded to 76 while vehicle_speed is nonzero and counted down at standstill; at 0 the slow fuel level filter uses weight 12 instead of 376 and skips the jump check (was calibBlock1_learned_trim_cooldown_timer)
-0x0040b342,iat_protection_fault_action_code,word,med fault action code 1-4 (non-zero writer not found)
+0x0040b342,intake_air_heater_relay_action_code,word,grid heater relay command code - the tail of cm848_updateIntakeAirHeaterControl would set or clear relays 43 and 44 by code 1-4 but a whole-binary scan finds no non-zero writer so it stays 0 (was iat_protection_fault_action_code) (Medium confidence)
 0x0040b560,protection_coldStart_channelA_state,word,cold-start protection channel A state 0-4
 0x0040b566,protection_coldStart_channelB_state,word,cold-start protection channel B state 0-4
 0x0040b570,park_neutral_switch_monitor_state,word,P0850 park/neutral switch monitor: 0 reset / 1 start check running / 2 passed / 3 failed (sets reserved_12 bit 4 = P0850) / 4 aborted until the next power-up by a P0500 vehicle speed / P1762 governor pressure / P0868 P0869 / P0606 fault (was fuel_temp_derate_state)
@@ -5905,7 +5906,7 @@ address,name,type,comment
 0x003fedce,protection_event_count_history,word,8-element occurrence counts parallel to SPN history (array base)
 0x003fb9ca,fuel_correction_table_dims_a,word,in_window dual_axis_table_dims_t instance (row_count)
 0x003fd1b4,cold_start_protection_timer_countdown,word,countdown gating cold-start protection state transitions
-0x003fea08,fault_registered_bits_384_to_399,word,Word 24 of the second fault bit array at 0x3fe9d8: set by cm848_faultTableEntryProcessor for each processed detected bit and cleared together with fault_detected_bits_384_to_399; bit map as that word (was engine_diag_shadow_flags_b) (Medium confidence)
+0x003fea08,fault_registered_bits_384_to_399,word,Word 24 of the second fault bit array at 0x3fe9d8: set by cm848_processFaultScanGroup for each processed detected bit and cleared together with fault_detected_bits_384_to_399; bit map as that word (was engine_diag_shadow_flags_b) (Medium confidence)
 0x003fd108,timing_limit_arbitrated_target,word,arbitrated timing-limit target feeding the slew accumulator
 0x003fd104,timing_limit_slew_q16,word,slew-rate-limited Q16 timing-limit accumulator
 0x003fd1b0,cold_start_protection_sub_state,byte,inner sub-step of protection_state_machine_step
@@ -5918,7 +5919,7 @@ address,name,type,comment
 0x003fd938,protection_timer_dispatch_config,byte,NEVER-WRITTEN ROM cal; bits gate timerBitCheck sub-paths
 0x003fd1b3,cold_start_protection_branch_flag,byte,0/1 selects set-fault vs clear-fault path
 0x003fcbee,j1939_protection_receive_delay_counter,word,debounce for j1939 protection-receive; caps then sets status 0x8000
-0x003fcbf0,governor_load_cycle_delay_counter,word,debounce for governor load cycle; caps then sets protection_monitor_shadow 8
+0x003fcbf0,governor_load_cycle_delay_counter,word,debounce for governor load cycle; caps then sets fault_detected_bits_400_to_415 8
 0x003fd948,sensor_channel_type_table,word,NEVER-WRITTEN ROM table; channel->override/QADC type (array base)
 0x003fd942,cam_sync_protection_state_flags,byte,cam-sync + cold-start protection state bits
 0x003fcea1,mil_message_state_flags,byte,PCI 0xB0 builder state: bit 0 = MIL state for the request logic edge test - copied from payload bit 7 outside CSP_CRANKING / CSP_ENGINE_STANDBY / set when 0x3fdda8 passes base 0x3fce9e / cleared when the engine-off rule forces it / bit 2 = hold the DTC (clear = step) (was j1939_dm1_tx_control_flags)
@@ -5927,7 +5928,7 @@ address,name,type,comment
 0x003fd941,battery_voltage_test_state_flags,byte,bit0 battery-voltage test result
 0x003fee9b,diag_suppress_request_flag,byte,set=1 by protection FSMs to request diag suppression
 0x003fd940,battery_voltage_protection_state_flags,byte,bit5 battery voltage protection active
-0x003fea68,injection_fault_shadow_snapshot,word,snapshot of injection_fault_shadow_flags for change detect
+0x003fea68,fault_previous_bits_352_to_367,word,Word 22 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected word here each pass for edge detect - bit map as fault_detected_bits_352_to_367 (misfire) (was injection_fault_shadow_snapshot)
 0x003fee50,lifetime_distance_8_mile_record,word,EEPROM 0x19ce: 4-entry ring of lifetime_distance_pulses / 64000 (8-mile units) written by cm848_recordLifetimeDistanceEvery8Miles (was sensor_validation_accum_table)
 0x003fce9e,dtc_display_key_off_count_base,word,Baseline of the ignition key-off count (0x3fdda8) for the DTC display: it starts when that count reaches this + 2 in cold_start_phase CSP_CRANKING (key ON-OFF-ON-OFF-ON); re-armed to count + 1 while the engine runs / after the list ends / after 2.5 s key on (was j1939_dm1_crank_counter_prev) (Medium confidence)
 0x003fcea2,mil_message_tick,word,Pass counter of the PCI TX[3] 0xB0 builder (~100 ms per pass / saturates at 65535) reset to 1 each pass while cold_start_phase is CSP_ENGINE_STANDBY: forced engine-off MIL from 150 / blink mod 10 / DTC step hold-off 12 / 0x3fce9e base re-arm 25 (was j1939_dm1_cycle_tick)
@@ -5977,18 +5978,18 @@ address,name,type,comment
 0x003fd1ec,hpcr_pressure_diag_ring_index,word,HPCR pressure-diag 3-element ring index
 0x003fd1f0,hpcr_pressure_diag_sample_sum_state0,word,HPCR pressure-diag state-0 sample accumulator
 0x003fd1f2,hpcr_pressure_diag_reference_avg,word,HPCR pressure-diag averaged reference pressure
-0x003fce34,iat_solenoid_active_flag,byte,IAT solenoid control active 0/1
-0x003fce35,iat_solenoid_target_level,word,desired IAT derate level 0-4
-0x003fce37,iat_solenoid_committed_level,word,last committed IAT derate level
-0x003fce41,iat_rpmDerate_elapsed_ticks,word,cumulative RPM-derate timer
-0x003fce43,iat_rpmDerate_below_threshold_count,word,consecutive cycles RPM below threshold
-0x003fce45,iat_solenoid_derate_elapsed_cycles,word,cumulative active-derate cycle count
-0x003fce49,iat_solenoid_duty_countdown,word,remaining ticks in solenoid duty pulse
-0x003fce4b,iat_solenoid_period_ticks,word,100-tick solenoid PWM period counter
-0x003fce4d,iat_solenoid_on_ticks_remaining,word,solenoid on-ticks within PWM period
-0x003fce51,iat_protection_level6_grace_count,word,grace countdown at derate level 6 before shutdown
-0x003fce55,iat_solenoid_derate_step_table,word,4-element per-level derate step durations (array base)
-0x003fce5f,iat_protection_total_derate_steps,word,total permitted IAT derate steps from table
+0x003fce34,intake_air_heater_pulse_active_flag,byte,set while a grid heater relay on-pulse is counting down - cleared by cm848_pulseIntakeAirHeaterRelays when the pulse duration reaches 0 (was iat_solenoid_active_flag)
+0x003fce35,intake_air_heater_target_level,word,grid heater target pulse level 0-4 chosen by the level selectors - level 4 ends the postheat burst - committed level follows it once applied (was iat_solenoid_target_level)
+0x003fce37,intake_air_heater_committed_level,word,last applied grid heater pulse level - set = target level after cm848_pulseIntakeAirHeaterRelays runs - seeded to 6 on postheat entry to force the first load then tracks 0-4 - drives the next level step (was iat_solenoid_committed_level)
+0x003fce41,intake_air_heater_runup_elapsed_ticks,word,run-up elapsed timer incremented while gated by protection_enable_byte_35 bits - compared to ROM 100 and subtracted from the first pulse duration (was iat_rpmDerate_elapsed_ticks) (Medium confidence)
+0x003fce43,intake_air_heater_runup_rpm_below_count,word,consecutive run-up cycles with engine rpm below ROM 4100 (always true at idle) - over ROM 20 it releases the heater relays (was iat_rpmDerate_below_threshold_count) (Medium confidence)
+0x003fce45,intake_air_heater_postheat_elapsed_cycles,word,cumulative grid heater postheat cycle counter - used to time level transitions and pulse durations (was iat_solenoid_derate_elapsed_cycles)
+0x003fce49,intake_air_heater_pulse_countdown,word,remaining ticks of the current grid heater level pulse - loaded from pulse_duration_ticks then decremented each tick in cm848_pulseIntakeAirHeaterRelays - below 1 clears pulse_active_flag (was iat_solenoid_duty_countdown)
+0x003fce4b,intake_air_heater_pwm_period_ticks,word,grid heater software PWM period counter reloaded to 100 ticks - at rollover it reloads on-ticks from the duty percent and alternates the relay phase (was iat_solenoid_period_ticks)
+0x003fce4d,intake_air_heater_pwm_on_ticks_remaining,word,on-time left in the current grid heater PWM period derived from the duty percent - when 0 the relays are driven off for the rest of the period (was iat_solenoid_on_ticks_remaining)
+0x003fce51,intake_air_heater_level6_grace_count,word,grace countdown at schedule level 6 before the heater shuts down - 100 ticks reloaded in preheat - while non-zero the relays stay cleared (was iat_protection_level6_grace_count)
+0x003fce55,intake_air_heater_level_duration_table,word,4-element table of grid heater pulse durations per level built from a dual-axis table on the schedule level - element 0 is trimmed by run-up elapsed ticks (was iat_solenoid_derate_step_table)
+0x003fce5f,intake_air_heater_preheat_total_ticks,word,total grid heater preheat ticks from the dual-axis table 0x5b3e4 on start_temperature - 300 at 0 F / 150 near 15 F / 100 to 66 F / 0 above - seeds the remaining ticks (was iat_protection_total_derate_steps)
 0x003fbca6,diag_dm1_buffer_fill_end_ptr,dword,DM1 ring-buffer fill endpoint ptr (ROM-aliased)
 0x003fbcaa,diag_dm1_buffer_fill_phase,dword,DM1 fill state 0/1/2/3 (ROM-aliased)
 0x003fbcae,diag_dm1_buffer_slot_started_flag,word,DM1 buffer slot write started 0/1
@@ -6005,7 +6006,7 @@ address,name,type,comment
 0x003fbd2c,governor_faultDerate_task_index,word,round-robin scheduler index 0-4 for fault-derate subtasks
 0x003fbd3e,governor_faultDerate_peak_value,word,running max of per-channel derate fuel-limit values
 0x003fcd92,governor_cruiseOverride_holdoff_countdown,word,holdoff before accepting a new override transition
-0x003fcdaa,governor_speed_request_state_prev,CRUISE_SWITCH_REQUEST,previous-cycle snapshot of governor_speed_request_state_b
+0x003fcdaa,cruise_switch_request_working_previous,CRUISE_SWITCH_REQUEST,Previous-cycle copy of cruise_switch_request_working - saved from it each cycle in the periodic cruise task - used for button rising-edge detection and governor_cruise_engage_check - and as the debounce reference in protection_control_state_check_2 (was governor_speed_request_state_prev)
 0x003fcdae,cruise_steady_state_debounce_counter,word,debounce for cruise steady-state detection
 0x003fce22,calibBlock1_update_phase_counter,word,mod-4 phase counter dividing calibBlock1 EEPROM writes
 0x003fce24,fuel_level_fast_filter,word,Fast fuel level EMA x 256 (coefficient 3341 / 65536 per run); stored byte [0] = value / 256; seeded from that byte at boot (was calibBlock1_adaptiveTrim_ema_q8)
@@ -6026,7 +6027,7 @@ address,name,type,comment
 0x003fcdb0,engine_warning_alert_countdown,word,Calls left in the engine warning alert: on a rising edge loaded with duration x engine_warning_alert_duration_scale x 5 / 10 - minus 1 per call - held at scale x 127.5 (duration 255) - 0 once all five inputs clear (was protection_ramp_step_current)
 0x003fce7a,pci_message_handler_tick,byte,Pass counter 0-59 of the PCI application task 0x518538 (one pass per ~100 ms); selects the even / odd / mod 4 / 6 / 12 / 14 handler groups (was protection_diagnostics_periodic_tick)
 0x003fceac,low_oil_pressure_debounce_count,word,Counts low engine_oil_pressure samples up to low_oil_pressure_debounce_limit (was governor_temp_diag_debounce_count)
-0x003fceb2,oil_pressure_switch_stuck_count,word,Counts passes with the engine stopped while the low-oil-pressure switch still reads pressure; at oil_pressure_switch_stuck_count_limit sets j1939_receive_status_flags 0x20 (switch fault) (was governor_temp_diag_zero_rpm_count)
+0x003fceb2,oil_pressure_switch_stuck_count,word,Counts passes with the engine stopped while the low-oil-pressure switch still reads pressure; at oil_pressure_switch_stuck_count_limit sets fault_detected_bits_336_to_351 0x20 (switch fault) (was governor_temp_diag_zero_rpm_count)
 0x003fcebc,oil_pressure_switch_fault_running_count,word,Counts passes with the switch fault set while cold_start_phase is at the governor setpoint; at its limit engine_oil_pressure = the word at 0x408992 and the derate may latch (was governor_temp_diag_cold_start_j1939_count)
 0x003fcf96,message_buffer_scan_cursor,dword,scan cursor into message buffer 0x3f9808..0x3f9ff8
 0x003fd082,injection_load_snapshot,word,torque-limit snapshot for injection angle calc
@@ -6081,7 +6082,7 @@ address,name,type,comment
 0x003fd182,protection_group29_coolant_temp_snapshot,word,coolant temp snapshot for group29 protection
 0x003fd188,protection_group29_startup_timer_count,word,group29 startup countdown timer
 0x003fd18f,protection_group29_conditions_met_flag,byte,group29 conditions met 0/1
-0x003fd268,overboost_debounce_count,word,P0234 turbocharger overboost debounce at 0x5372c4: up to 25 in governor mode 16 while boost > 3647 (196.5 kPa) above 2200 rpm then sets protection_monitor_shadow bit 15 / counts down and clears it at 0 / zeroed while P0238 P0237 or P0236 is set (was hpcr_oil_pressure_protection_debounce_count)
+0x003fd268,overboost_debounce_count,word,P0234 turbocharger overboost debounce at 0x5372c4: up to 25 in governor mode 16 while boost > 3647 (196.5 kPa) above 2200 rpm then sets fault_detected_bits_400_to_415 bit 15 / counts down and clears it at 0 / zeroed while P0238 P0237 or P0236 is set (was hpcr_oil_pressure_protection_debounce_count)
 0x003fd26a,high_load_boost_band_debounce_count,word,Debounce for boost between 3017 and 3331 (162.6 to 179.5 kPa) with engine_load_at_current_speed_percent above 80 percent and engine speed above 2200 rpm: 0 outside / reaching 25 bumps the event count 0x40ba6a and every pass at 25 the time count 0x40ba6c (was hpcr_oil_pressure_fault_debounce_count)
 0x003fd26c,hpcr_fuel_demand_protection_debounce_count,word,HPCR fuel-demand protection debounce
 0x003fd26e,hpcr_fuel_demand_fault_debounce_count,word,HPCR fuel-demand fault debounce
@@ -6107,7 +6108,7 @@ address,name,type,comment
 0x003fde48,fuel_demand_histogram_sample_count,dword,total sample count for fuel-demand usage histogram
 0x003fe9b2,hpcr_battery_voltage_flags,word,HPCR battery-voltage protection status bits (system_status_flags+0x3e)
 0x003fb73c,injection_timing_trim_boost_blend_interp_state,word,dualAxis interp state base (injection timing trim boost blend)
-0x003fcda0,governor_speed_request_debounce_count,word,debounce for governor speed-request state machine
+0x003fcda0,cruise_switch_request_debounce_count,word,Debounce counter for the cruise switch request FSM in protection_control_state_check_2 - ramps up to cruise_switch_request_debounce_count_max (was governor_speed_request_debounce_count)
 0x003fcdbc,cold_start_fuel_demand_ramp_prev,word,previous-cycle cold-start fuel demand ramp output
 0x003fcdc6,cold_start_coolant_bucket_cycle_count,word,coolant-temp bucket reporting cycle counter
 0x003fcdd8,cold_start_fuel_demand_limit_min,word,min(pi_correction
@@ -6132,7 +6133,7 @@ address,name,type,comment
 0x003fd1a0,boost_corr_crank_phase_dwell_b,word,cold-start boost-correction dwell channel B
 0x003fb41c,fuel_demand_rate_table_dims,word,dualAxis table dims base (fuel demand rate)
 0x003fb9fe,boost_corr_eligible_dwell_count,word,dwell confirming boost-correction eligibility stable
-0x003fea6e,protection_monitor_shadow_snapshot,word,snapshot of protection_monitor_shadow for edge detect
+0x003fea6e,fault_previous_bits_400_to_415,word,Word 25 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected word here each pass for edge detect - bit map as fault_detected_bits_400_to_415 (was protection_monitor_shadow_snapshot)
 0x003fd1e6,cam_timing_monitor_active_flag,byte,cam-timing measurement active 0/1
 0x003fd19e,boost_corr_crank_phase_dwell_a,word,cold-start boost-correction dwell channel A
 0x003fbc90,fuel_demand_timing_demand_window_sum,dword,150-sample rolling sum of fuel_demand_min_threshold
@@ -6170,11 +6171,11 @@ address,name,type,comment
 0x003fd1d6,fuel_correction_direction_latch_flag,byte,one-shot latch in fuel correction state machine
 0x003fd1de,cam_sync_validation_crank_tick_count,word,cranking tick counter for cam-sync validation state 1
 0x003fd232,temperature_rationality_battery_temperature_sample,word,Battery temperature (slot 69 - 1/64 deg F) copied each cycle by hpcr_injectPressureDiagnostic for the cold-start temperature cross-checks (intake manifold P0111 / battery P0514 / ambient P0071) - 2083 = 32.5 F in the dump (was cam_sync_validation_oil_temp_snapshot)
-0x003fd234,cam_sync_validation_coolant_temp_snapshot,word,coolant-temp reference sample for cam-sync validation
+0x003fd234,temperature_rationality_coolant_temperature_sample,word,Coolant temperature snapshot (1/64 deg F) copied each cycle by hpcr_injectPressureDiagnostic for the cold-start temperature cross-checks - the baseline the other three sensors compare against - with battery 0x3fd232 and ambient 0x3fd230 (was cam_sync_validation_coolant_temp_snapshot)
 0x003fd24c,battery_temperature_key_on_rationality_moving_count,word,Passes at or above 256 (1 mph) in cm848_checkBatteryTemperatureKeyOnRationality - reset below 1 mph; the check decides at 0x409fa4 + 0x409fa8 (0 + 1) passes; its sensor is slot 69 (battery_temperature_sensor_filtered) whose fault bits are P0514 / P0516 / P0517 battery temperature (was cam_sync_fueltemp_qualify_dwell_count) (Medium confidence)
 0x003fd24e,battery_temperature_key_on_rationality_mismatch_count,word,Consecutive moving passes where the slot 69 (battery temperature) snapshot differs from both the coolant baseline and the slot 20 ambient snapshot by over 1728 (27 F) while those two agree within 640 (10 F); 0x409fa4 (0) or more at the decision fails P0514 (was cam_sync_fueltemp_agreement_count) (Medium confidence)
-0x003fd257,cam_sync_oil_path_fault_pending_flag,byte,oil-path fault pending in cam-sync cross-validation
-0x003fd258,cam_sync_coolant_path_fault_pending_flag,byte,coolant-path fault pending in cam-sync cross-validation
+0x003fd257,intake_manifold_temperature_rationality_fault_pending_flag,byte,Set by the cranking cross-check when intake manifold air temp is the odd-one-out - bridges to the governor-setpoint confirm which turns it into P0111 - legacy oil label is wrong (was cam_sync_oil_path_fault_pending_flag)
+0x003fd258,battery_temperature_rationality_fault_pending_flag,byte,Set by the cranking cross-check when battery temp (slot 69) is the odd-one-out - bridges to the moving re-check which turns it into P0514 - legacy coolant label is wrong (was cam_sync_coolant_path_fault_pending_flag)
 0x003fd25a,thermostat_monitor_start_delay_countdown,word,Thermostat monitor start delay (loaded from 0x409fc6 at init) - battery temperature is recorded when it reaches 0 and the start tests run once it is below 0 (0xFFFF in the dump) (was cssc_oiltemp_init_delay_countdown)
 0x003fd262,cssc_oiltemp_cooling_rate_fraction,word,sub-unit fractional accumulator for CSSC oil-temp cooldown
 0x003fd27a,water_in_fuel_distance_remainder,dword,Sum of vehicle_speed (1/256 mph) per pass while P2269 water in fuel (safety_bits_1 bit 8) is active - each 36000 moves one count into water_in_fuel_distance (1/256 mile if the task runs every 100 ms) (was hpcr_oil_pressure_crank_angle_fraction)
@@ -6199,8 +6200,8 @@ address,name,type,comment
 0x003fcdc8,coolant_overheat_debounce_count,word,coolant overheat entry debounce (engine_coolant_overheat_check)
 0x003fcdca,coolant_overheat_recovery_count,word,coolant overheat recovery debounce (engine_coolant_overheat_check)
 0x003fce0c,governor_fuel_demand_i_acc,dword,governor PID integral accumulator (/0x5000 -> i_term)
-0x003fce39,iat_protection_action_code_prev,word,prev-cycle iat_protection_fault_action_code
-0x003fce3f,iat_rpmDerate_holdoff_countdown,word,IAT RPM-derate holdoff countdown
+0x003fce39,intake_air_heater_relay_action_code_previous,word,previous-cycle copy of intake_air_heater_relay_action_code used to detect a new relay command in cm848_updateIntakeAirHeaterControl (was iat_protection_action_code_prev) (Medium confidence)
+0x003fce3f,intake_air_heater_runup_holdoff_countdown,word,run-up holdoff timer reloaded to 100 ticks - when it reaches 0 in state 3 the heater shuts down with reason 4 (was iat_rpmDerate_holdoff_countdown) (Medium confidence)
 0x003fceea,protection_coldStart_eval_cycle_count,dword,4-tick divide-down for cold-start protection eval
 0x003fcef8,park_neutral_switch_driving_check_complete_flag,word,P0850 park/neutral switch monitor: 1 once the driving check decides - vehicle_speed above 2560 (10 mph) with output shaft speed (transmission_output_speed_in_use) above 720 (90 rpm) and the governor_pressure window - switch 20 off passes / on for 30 passes fails (was fuel_temp_derate_active_latch)
 0x003fcfc8,immobilizer_authorization_window_counter,word,Counts cm848_runImmobilizerTask passes up to immobilizer_authorization_window_limit; reset by cm848_resetImmobilizerHandshake and the 0xB1 restart edge; at the limit an unauthorized key sets immobilizer_fuel_disable_flag (was governor_auth_timeout_counter)
@@ -6350,12 +6351,12 @@ address,name,type,comment
 0x0040b9ba,fuel_correction_ramp_demand,word,fuel correction ramp demand (weighted-average)
 0x0040b9be,fuel_correction_timing_base_addend,word,base addend on fuel-correction timing targets
 0x00409ee2,fuel_correction_timing_table,word,ROM; 5-zone injection timing offset target array base
-0x00409f9e,cam_sync_snapshot_mismatch_threshold,word,ROM; max delta for snapshot sensor-pair cross-check
-0x0040ba36,cam_sync_coolant_mismatch_count,word,count of coolant cross-check mismatches
-0x0040ba38,cam_sync_oil_mismatch_count,word,count of oil cross-check mismatches
-0x0040ba3c,cam_sync_crossval_coolant_baseline,word,coolant temp baseline for cam-sync cross-validation
-0x0040ba3e,cam_sync_confirm_coolant_temp_min,word,min coolant temp during confirm dwell
-0x0040ba40,cam_sync_confirm_dwell_count,word,confirm dwell cycle counter
+0x00409f9e,battery_temperature_rationality_deviation_threshold,word,Deviation (1/64 deg F) battery temp must exceed vs coolant and vs intake in the cranking battery block and the moving re-check - 1728 = 27 F - intake uses the tighter 0x409fa0 instead (was cam_sync_snapshot_mismatch_threshold)
+0x0040ba36,battery_temperature_cranking_mismatch_count,word,Consecutive cranking cycles where battery temp (slot 69) deviates from both coolant and intake manifold by over 0x409f9e while those two agree within 0x409f96 - over 0x409fa4 sets the battery pending flag (P0514) (was cam_sync_coolant_mismatch_count)
+0x0040ba38,intake_manifold_temperature_cranking_mismatch_count,word,Consecutive cranking cycles where intake manifold air temp deviates from both coolant and battery by over 0x409fa0 while those two agree within 0x409f96 - over 0x409fb0 sets the intake pending flag (P0111) (was cam_sync_oil_mismatch_count)
+0x0040ba3c,temperature_rationality_coolant_baseline,word,Coolant temperature latched on the first qualifying cranking cycle (1/64 deg F) - the governor-setpoint confirm subtracts the tracked coolant minimum from it and confirms P0111 when that fall stays under 5 F (was cam_sync_crossval_coolant_baseline)
+0x0040ba3e,temperature_rationality_confirm_coolant_minimum,word,Minimum coolant temperature (1/64 deg F) tracked over the 300-sample confirm dwell at governor setpoint - seeded to 300 F then pulled to the real minimum - baseline minus this is the coolant fall tested against 5 F (was cam_sync_confirm_coolant_temp_min)
+0x0040ba40,temperature_rationality_confirm_dwell_count,word,Sample counter for the governor-setpoint confirm stage - counts up to 0x409fb4 (300) while tracking the coolant minimum then the P0111 decision is made (was cam_sync_confirm_dwell_count)
 0x00409fbc,thermostat_monitor_cold_soak_limit,word,Largest start coolant minus start battery temperature (640 = 10 F) for a cold-soak start - a larger difference aborts the thermostat monitor - working RAM (was cssc_min_coolant_oil_delta_threshold) (Medium confidence)
 0x00409fbe,thermostat_monitor_battery_temperature_drop_limit,word,Battery temperature drop from its start value (640 = 10 F) that aborts the thermostat monitor (was cssc_min_oiltemp_recovery_delta) (Medium confidence)
 0x00409fc0,thermostat_monitor_target_coolant_temperature,word,Thermostat monitor (P0128) target coolant temperature (10880 = 170 F in 1/64 deg F) - reaching it in time passes - also the base of thermostat_monitor_coolant_rise_needed (was cssc_target_coolant_temp)
@@ -6563,8 +6564,8 @@ address,name,type,comment
 0x003fcd76,protection_event26_rpm_high_gate_flag,word,event-26 RPM high-side gate (cond 7)
 0x003fcd78,protection_event26_coolant_gate_flag,word,event-26 coolant window gate (cond 8)
 0x003fcd80,park_neutral_exit_torque_limit_startup_delay_count,dword,Calls of the park/neutral exit torque limit monitor (0x51193c) since power-up: at or below 22 (0x4086da) state bit 1 stays set and it will not arm; its inputs are switch 20 (park/neutral) / pedal / output shaft speed / a transmission temperature table (was fuel_temp_protection_warmup_cycle_count) (Medium confidence)
-0x003fcd94,governor_speed_request_raw_sample,word,current-cycle raw J1939 governor state input
-0x003fcda4,governor_speed_request_raw_prev,word,previous-cycle raw governor state sample
+0x003fcd94,cruise_switch_request_raw,word,Current-cycle raw cruise switch request copied from sensor_channel_filtered_output[47] the analog switch channel - NOT J1939 - input to the debounce in protection_control_state_check_2 (was governor_speed_request_raw_sample)
+0x003fcda4,cruise_switch_request_raw_previous,word,Previous-cycle cruise_switch_request_raw used by the protection_control_state_check_2 debounce (was governor_speed_request_raw_prev)
 0x003fcda6,cruise_rpm_ratio_ema_prev,word,previous cruise RPM ratio EMA
 0x003fcda8,cruise_control_on_toggle_state_previous,word,Previous cruise_control_on_toggle_state - the value the ON/OFF toggle holds or flips (was cruise_protection_ok_prev)
 0x003fcdac,cruise_rpm_prev_sample,word,previous-cycle RPM for cruise ratio smoothing
@@ -6573,16 +6574,16 @@ address,name,type,comment
 0x003fce1f,tpu_rpm_isb_was_active_flag,byte,ISB-active-last-cycle flag for mode switch
 0x003fce20,tpu_rpm_startup_blank_countdown,word,startup RPM blanking countdown
 0x003fce2c,fuel_quantity_demand_excess_fault_count,word,excess fuel-demand fault debounce (event 0x36)
-0x003fce3b,iat_protection_state_prev,word,previous battery_voltage_protection_state
-0x003fce3d,iat_solenoid_active_cycle_count,word,IAT solenoid active cycle counter
-0x003fce47,iat_protection_action_onset_countdown,word,IAT protection action onset countdown
-0x003fce4f,iat_protection_crank_standby_cycle_count,word,IAT protection crank/standby cycle count
-0x003fce64,iat_solenoid_active_duration_ticks,word,IAT solenoid PWM active-pulse duration
+0x003fce3b,intake_air_heater_control_state_previous,word,previous-cycle copy of intake_air_heater_control_state - the control fns compare it to detect first entry into run-up or postheat or shutdown (was iat_protection_state_prev)
+0x003fce3d,intake_air_heater_loaded_cycle_count,word,counts grid heater postheat cycles run while fuel_demand_computed is at or above ROM 5888 - shutdown reason 8 at ROM 300 cycles - zeroed on postheat entry (was iat_solenoid_active_cycle_count)
+0x003fce47,intake_air_heater_relay_onset_countdown,word,caps a relay command (codes 1-3) to ROM 1800 ticks - loaded on the command onset then counted down in cm848_updateIntakeAirHeaterControl before it clears relays 43/44 (was iat_protection_action_onset_countdown) (Medium confidence)
+0x003fce4f,intake_air_heater_crank_standby_cycle_count,word,counts cycles spent in engine standby or cranking while in state 3 or 4 - at a RAM threshold it drops the control state back to 2 (was iat_protection_crank_standby_cycle_count)
+0x003fce64,intake_air_heater_pulse_duration_ticks,word,duration in ticks of the current grid heater on-pulse selected from the per-level duration table - loaded into the duty countdown (was iat_solenoid_active_duration_ticks)
 0x003fcea0,dtc_display_index,byte,Cluster DTC display position for PCI 0xB0: first the active DTC list (0x3fe05b) then the previously active list (0x3fe07b) / equal to the total sends DTC 0 (end) / past it the display ends; reset to 0 when not displaying (was j1939_dm1_fault_list_index)
 0x003fce66,intake_air_heater_postheat_temperature,word,Intake air heater postheat temperature (set in its postheat phase): the start temperature unless over intake_air_heater_ambient_temperature + 10 F (then that) - picks the postheat schedule / over 0x5c79e (20 F) with coolant over 0x5c79c it ends postheat (was iat_protection_oilTemp_derate_input)
-0x003fce6a,iat_solenoid_derate_active_flag,word,IAT solenoid derate active gate
-0x003fce61,iat_solenoid_duty_percent,word,IAT solenoid duty percent (lookup output)
-0x003fce63,iat_solenoid_update_pending_flag,byte,IAT solenoid level-update pending flag
+0x003fce6a,intake_air_heater_postheat_active_flag,word,gate set while the grid heater postheat cycling is running - checked at the top of cm848_updateIntakeAirHeaterPostheat to keep pulsing instead of re-evaluating entry (was iat_solenoid_derate_active_flag)
+0x003fce61,intake_air_heater_duty_percent,word,grid heater PWM duty percent from a lookup table - sets the PWM on-ticks within the 100-tick period (was iat_solenoid_duty_percent) (Medium confidence)
+0x003fce63,intake_air_heater_level_update_pending_flag,byte,set when the grid heater target level changed so cm848_pulseIntakeAirHeaterRelays reloads the pulse duration and duty for the new level (was iat_solenoid_update_pending_flag)
 0x003fcede,governor_cruise_crank_period_snapshot,dword,prev crank-period total for delta
 0x003fcee2,governor_cruise_period_accum,dword,scaled engine operating time accumulator
 0x003fcee6,j1939_load_protection_fault_reported_flag,word,J1939 load-protection fault dedup latch
@@ -6594,9 +6595,9 @@ address,name,type,comment
 0x003fcefe,protection_pid_rpm_setpoint_prev,word,previous-cycle protection PID rpm setpoint
 0x003fcf04,protection_fuel_demand_tick_snapshot,word,current fuel demand snapshot (feeds prev next tick)
 0x003fcf06,protection_action_mode_b2_snapshot,word,prev protection_action_mode bit1 (change detect)
-0x003fe9ea,protection_derate_status_shadow_flags,word,shadow of reserved_12 in diag shadow block
-0x003fea4e,protection_derate_status_snapshot,word,snapshot of reserved_12 derate bits (edge detect)
-0x003fea6c,protection_coldStart_fault_enable_bits,word,cold-start protection fault permission bits
+0x003fe9ea,fault_registered_bits_144_to_159,word,Word 9 of fault-registered array 0x3fe9d8 - registered copy set by cm848_processFaultScanGroup - bit map as fault_detected_bits_144_to_159 (cruise vacuum / servo-supply / park-neutral / governor) (was protection_derate_status_shadow_flags)
+0x003fea4e,fault_previous_bits_144_to_159,word,Word 9 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected word here each pass for edge detect - bit map as fault_detected_bits_144_to_159 (was protection_derate_status_snapshot)
+0x003fea6c,fault_previous_bits_384_to_399,word,Word 24 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected word here each pass for edge detect - bit map as fault_detected_bits_384_to_399 - not cold-start enable bits (was protection_coldStart_fault_enable_bits)
 0x003fcf1b,sci_high_speed_last_table,byte,SCI high-speed read: last table number (was fuel_demand_serial_last_sa)
 0x003fcf1c,sci_high_speed_last_offset,byte,SCI high-speed read: last offset (was fuel_demand_serial_last_seq)
 0x003fcf1e,sci_high_speed_last_address,dword,SCI high-speed read: last address (was fuel_demand_serial_last_data_ptr)
@@ -6674,10 +6675,10 @@ address,name,type,comment
 0x003fd230,temperature_rationality_ambient_air_temperature_sample,word,Ambient air temperature (slot 20 - 1/64 deg F) copied each cycle by hpcr_injectPressureDiagnostic for the cold-start temperature cross-checks - 2260 = 35.3 F in the dump (was cam_sync_validation_j1939_coolant_snapshot)
 0x003fd244,ambient_air_temperature_key_on_rationality_driving_count,word,Consecutive ambient key-on rationality cycles above 0x409f9c (6400 = 25 mph) - reset at lower speed - more than 0x409f9a (300) with the ambient sample still off and battery agreeing with coolant sets P0071 (was cam_sync_oiltemp_agree_count)
 0x003fd246,ambient_air_temperature_key_on_rationality_cycle_count,word,Cycles spent in the ambient air temperature key-on rationality check - over 0x409f98 (30000 - e2m Ambient_Air_Temperature_Max_Time) ends it with no decision (state 4) (was cam_sync_oiltemp_qualify_dwell_count)
-0x003fd248,cam_sync_fault_detection_enable_flag,word,cam-sync per-cylinder fault detection enable
+0x003fd248,sensor_stuck_check_enable_flag,word,Enables the per-sensor stuck-over-distance check - set each cycle from switch input 0 (the key-on run signal) - when clear the stuck check returns immediately (was cam_sync_fault_detection_enable_flag)
 0x003fd266,cssc_injection_diag_cycle_count,word,CSSC injection diagnostic cycle count
 0x003fd278,water_in_fuel_distance_monitor_active_flag,word,Enables the water-in-fuel distance monitor at 0x5379d8: set at boot by 0x5379b4 when switch 0 is on / cleared by P2266 (safety_bits_1 bit 7) or once the distance limit sets P0169 (was hpcr_oil_pressure_monitoring_active_flag)
-0x003feeb8,water_in_fuel_distance,dword,Persistent distance with P2269 water in fuel active (EEPROM mirror offset 0x1a36 - 1/256 mile per count if the task runs every 100 ms): zeroed while P2269 is clear / at 128000 (0x40a026 - 500 miles at that rate) sets P0169 (j1939_receive_status_flags bit 0) (was hpcr_oil_pressure_revolution_count)
+0x003feeb8,water_in_fuel_distance,dword,Persistent distance with P2269 water in fuel active (EEPROM mirror offset 0x1a36 - 1/256 mile per count if the task runs every 100 ms): zeroed while P2269 is clear / at 128000 (0x40a026 - 500 miles at that rate) sets P0169 (fault_detected_bits_336_to_351 bit 0) (was hpcr_oil_pressure_revolution_count)
 0x003fd2dc,sensor_cal_write_dirty_flag,word,sensor cal RAM dirty flag (copy mismatch)
 0x003fd2de,sensor_cal_session_state_prev,word,prev diagnostic session state (protection module)
 0x003fd410,j1939_periodic_queue0_current_tick,word,current tick for J1939 diag queue 0
@@ -6763,7 +6764,7 @@ address,name,type,comment
 0x003fcdf2,protection_fault_prevEnable_event18,word,prev-cycle enable byte for protection event 18
 0x003fcdf4,protection_fault_prevEnable_event16,word,prev-cycle enable byte for protection event 16
 0x003fce14,governor_fuel_demand_p_term_prev,dword,prev P-term for governor fuel demand D-term
-0x003fce54,iat_protection_derate_steps_zero_flag,byte,set when IAT derate steps table returns 0
+0x003fce54,intake_air_heater_no_preheat_flag,byte,set when the start-temperature table returns 0 preheat time (intake warm enough) so no grid heater preheat runs this start (was iat_protection_derate_steps_zero_flag)
 0x003fce78,intake_air_heater_start_temperature_captured_flag,byte,Set to 1 by cm848_updateIntakeAirHeaterAmbientTemperature after it calls cm848_captureIntakeAirHeaterStartTemperature - cleared on reset by cm848_resetIntakeAirHeaterStartTemperatureCapture (was protection_oilTemp_source_init_done_flag)
 0x003fcea8,protection_fuel_demand_ramp_locked_flag,word,protection fuel demand ramp converged/locked
 0x003fcf5e,governor_speed_limit_floor_countdown,word,countdown clearing governor speed limit floors
@@ -6778,7 +6779,7 @@ address,name,type,comment
 0x0040ba12,cbd_phase_advance_flag,byte,CBD phase-advance gate (0=hold)
 0x0040a772,governor_faultDerate_engine_sync_trigger,word,fault-derate engine-sync trigger flag
 0x0040a774,governor_faultDerate_channel_active_latch,word,fault-derate channel-active latch
-0x0040871e,governor_speed_request_debounce_count_max,word,ROM debounce depth for speed-request FSM
+0x0040871e,cruise_switch_request_debounce_count_maximum,word,Debounce depth for the cruise switch request FSM in protection_control_state_check_2 - read-only at runtime (value 2) - working RAM so no _cal (was governor_speed_request_debounce_count_max)
 0x0040b9e4,hpcr_pressure_diag_lookup_ref,word,HPCR pressure diag reference (table lookup)
 0x0040b9e8,hpcr_pressure_diag_delta_state1,word,HPCR pressure diag state-1 delta
 0x0040a566,fuel_demand_blend_divisor_ref,word,governor blend window normalization divisor
@@ -6965,8 +6966,8 @@ address,name,type,comment
 0x00409ef8,cam_sync_validation_dwell_limit,word,ROM dwell cap for cam-sync validation
 0x00409fa2,ambient_air_temperature_key_on_rationality_tolerance,word,Largest ambient air temperature difference from the key-on coolant and from the battery sample for the P0071 key-on check to pass (1280 = 20 F - e2m Ambient_Air_Temperature_Keyon_Rat_Max_Delta) (was cam_sync_oiltemp_j1939_agree_threshold)
 0x0040ba3a,temperature_rationality_start_battery_temperature,word,Battery temperature sample latched at the first cranking cycle of the cold-start temperature cross-checks (1/64 deg F) - compared with the start coolant in the ambient P0071 check (was cam_sync_crossval_oil_baseline)
-0x0040ba44,cam_sync_crossval_startup_done_flag,word,cam-sync cross-validation startup-complete flag
-0x0040ba46,cam_sync_coolant_temp_init_snapshot,word,coolant temp snapshot for cam-sync cross-validation
+0x0040ba44,temperature_rationality_cranking_check_done_flag,word,Set once the cranking cross-check has made its decision - after that the scheduler runs the governor confirm and the moving re-checks instead of the cross-check (was cam_sync_crossval_startup_done_flag)
+0x0040ba46,temperature_rationality_coolant_soak_reference_working,word,Coolant temperature captured while switch input 0 (key-on run signal) is set - held when it clears - cm848_initCommunication copies it to the persistent 0x3feeb6 which the cranking cross-check uses to require a cold soak (was cam_sync_coolant_temp_init_snapshot) (Medium confidence)
 0x00409fe6,hpcr_fuel_demand_rpm_threshold,word,ROM RPM threshold for HPCR fuel-demand protection
 0x0040a02c,fault_match_debounce_threshold_std,word,ROM fault-match debounce threshold (standard channels)
 0x0040a02e,fault_active_recovery_threshold_std,word,ROM fault-active recovery threshold (standard channels)
@@ -6986,7 +6987,7 @@ address,name,type,comment
 0x0040be34,sensor_channel28_fault_status,word,sensor channel 28 fault status
 0x0040b300,tpu_rpm_cam_sync_update_enable,byte,enable for cam-sync RPM window update (set by init)
 0x0040b9ac,rpm_camSync_window_oldest,word,oldest sample of 3-sample cam-sync RPM window
-0x0040b348,iat_protection_derate_steps_depleted_flag,word,IAT derate steps depleted latch
+0x0040b348,intake_air_heater_preheat_depleted_flag,word,latched when remaining preheat falls below total minus ROM 150 ticks - also sets the shared EEPROM eeprom_status_flags - re-read next start to cap the preheat to 150 (was iat_protection_derate_steps_depleted_flag)
 0x0040b478,pci_transmit_message_7_payload,byte,PCI TX[7] 3F payload: the 4-byte immobilizer seed broadcast each time a seed is made - filled big-endian by both RX[6] handlers (was j1939_governor_auth_seed_bytes) (Medium confidence)
 0x0040b48b,pci_transmit_message_9_immobilizer_command,byte,PCI TX[9] 4F 10 payload byte 1: secret-key frame number - 1 = key bytes 0-2 follow / 2 = key bytes 3-4 follow (was j1939_msg_slot_u_eeprom_cmd) (Medium confidence)
 0x0040b48c,pci_transmit_message_9_immobilizer_data_1,byte,PCI TX[9] 4F 10 payload byte 2: immobilizer secret-key byte 0 (0x3fee2c) in frame 1 / byte 3 (0x3fee2f) in frame 2 (was j1939_msg_slot_u_eeprom_data0) (Medium confidence)
@@ -7027,6 +7028,9 @@ address,name,type,comment
 0x003fcfd5,pci_transmit_message_2_timer_previous,word,pci_transmit_message_2_timer from the last immobilizer task pass; below it = PCI TX[2] header 0x35 was just sent - then with the challenge sent and a key response received authorization flag bit 2 is set (was DAT_003fcfd5)
 0x003fcfd7,pci_receive_message_12_timer_previous,word,pci_receive_message_12_timer from the last immobilizer task pass; the timer below it means a new PCI 0xB1 frame arrived (reset to 0 on reception) so cm848_processImmobilizerStatusMessage runs (was DAT_003fcfd7)
 0x003fcfd9,immobilizer_handshake_status_flags_snapshot,byte,Copy of immobilizer_handshake_status_flags stored after each PCI 0xB1 immobilizer status frame; write-only - no code or SCI table reads it (was DAT_003fcfd9)
+0x003fd236,temperature_rationality_intake_manifold_temperature_sample,word,Intake manifold air temperature snapshot (1/64 deg F) copied each cycle for the cold-start cross-checks - its outlier vs coolant and battery feeds P0111 (word 22 bit 6) - 4th of the 4 snapshots at 0x3fd230-0x3fd236 (was DAT_003fd236)
+0x003fd24a,sensor_stuck_check_enable_flag_previous,word,Previous-cycle copy of the stuck-check enable flag - the stuck check uses it to initialise its state and snapshot on the first enabled pass (was DAT_003fd24a)
+0x003fd256,temperature_rationality_baseline_latched_flag,byte,One-shot guard - set the first qualifying cranking cycle after the coolant baseline and start battery temp are latched so they are captured only once (was DAT_003fd256)
 0x003fd870,datalink_broadcast_enable_default_cal,word,Cummins JCBCFG Broadcast_Flags - datalink broadcast power-up default (same bit map as datalink_broadcast_enable_flags); EEPROM 0x3ee = 0x0000 in this truck's image so both J1939 periodic queues start disabled (was DAT_003fd870)
 0x003fd8de,pci_normal_transmit_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45c; 0 in dump) - boot value of pci_normal_transmit_disabled
 0x003fd8df,pci_receive_processing_disabled_initial_cal,byte,EEPROM-shadowed (EEPROM offset 0x45d; 0 in dump) - boot value of pci_receive_processing_disabled
@@ -7035,6 +7039,7 @@ address,name,type,comment
 0x003fe07b,previously_active_dtc_slot_list,byte[31],Fault slot numbers (index into obd_dtc_code_table) of faults that were present and have cleared (count previously_active_dtc_count / max 31); J1939 DM2 reads it and the 0xB0 cluster DTC display shows it after the active list (was DAT_003fe07b)
 0x003fee2f,immobilizer_secret_key_byte_3,byte,Byte 3 of the 5-byte immobilizer secret key at EEPROM-mirror 0x3fee2c-0x3fee30 (EEPROM 0x19aa-0x19ae) - the other four bytes keep the boot ROM names of their time-shared rows (eeprom_write_buffer tail / eeprom_config_write_triggered_flag / flash2_operation_active_flag) (was DAT_003fee2f)
 0x003fee5c,lifetime_time_at_governed_speed,dword,Lifetime passes with engine_at_governed_speed_flag set (EEPROM 0x19da) - probably idle time
+0x003feeb6,temperature_rationality_coolant_soak_reference,word,Persistent coolant reference (EEPROM mirror offset 0x1a34 - 1/64 deg F) - the cranking cross-check requires this minus current coolant over 0x409fac plus coolant below 0x409fb6 plus engine-off over 480 to confirm a cold soak - no _cal (runtime value) (was DAT_003feeb6) (Medium confidence)
 0x00408960,immobilizer_authorization_window_limit,word,Immobilizer task passes allowed for key authorization before cm848_runImmobilizerTask disables fuel - 20 in the RAM dump (was DAT_00408960)
 0x00408964,mil_engine_off_start_tick,word,Boot copy of ROM 0x6e57e: builder pass from which the MIL is forced on while the engine is not running (cold_start_phase 1 or 8) and the blink window opens; 150 = ~15 s (was DAT_00408964)
 0x00408966,dtc_display_step_period_ticks,word,Boot copy of ROM 0x6e580: DTC display step period in builder passes; 0 (this build) = step instead when the 0x2D lamp bit 0x02 is clear after pass 12 (was DAT_00408966)
@@ -7044,7 +7049,17 @@ address,name,type,comment
 0x00408b62,vehicle_speed_pulse_timeout_reload,word,Pulse timeout reload value (25)
 0x00408d56,transmission_temperature_check_minimum_engine_off_time,word,200 (minutes inferred): cm848_checkTransmissionTemperatureSensorPerformance can fail only when engine_off_time_at_key_on is at least this or the PCI 0x42 time is missing or flagged stuck (fault word 19 bit 4) (was DAT_00408d56) (Medium confidence)
 0x00409ef6,rail_pressure_check_minimum_engine_off_time,word,480 (8 h if minutes): hpcr_checkRailPressureSensorBeforeStart aborts (reason 1) when the raw PCI 0x42 engine-off time is below this (was DAT_00409ef6) (Medium confidence)
+0x00409f92,temperature_rationality_cranking_start_delay,word,Cranking cycles the scheduler waits before the temperature cross-check starts sampling - 49 - if the engine leaves cranking first the checks abort (was DAT_00409f92)
 0x00409f94,temperature_cross_check_minimum_engine_off_time,word,480 (8 h if minutes): cm848_crossCheckTemperatureSensorsBeforeStart aborts when engine_off_time_at_key_on is below this (was DAT_00409f94) (Medium confidence)
+0x00409fa0,intake_manifold_temperature_cranking_outlier_threshold,word,Deviation (1/64 deg F) the intake manifold air temp snapshot must exceed vs coolant and vs battery in the cranking outlier block - 640 = 10 F - widened to 0x409fae when intake_air_heater_status_flags bit 0 is clear (was DAT_00409fa0) (Medium confidence)
+0x00409fa4,battery_temperature_rationality_mismatch_count_threshold,word,Mismatch count above which the battery temp path is flagged (P0514) - 0 so the first mismatch triggers - shared by the cranking cross-check and the moving re-check (was DAT_00409fa4)
+0x00409faa,temperature_rationality_confirm_coolant_drop_threshold,word,Coolant fall limit (1/64 deg F) for the governor-setpoint confirm - 320 = 5 F - P0111 is set when the latched baseline minus the tracked coolant minimum stays under this - a larger fall aborts (was DAT_00409faa)
+0x00409fac,temperature_rationality_coolant_soak_drop_threshold,word,Minimum coolant fall from the stored soak reference for the cranking cross-check to run - 0 so current coolant must simply be below the reference (was DAT_00409fac) (Medium confidence)
+0x00409fae,intake_manifold_temperature_cranking_outlier_threshold_wide,word,Wider intake manifold outlier tolerance (1/64 deg F) - 1600 = 25 F - used instead of 0x409fa0 when intake_air_heater_status_flags bit 0 is clear - that flag is intake-air-heater status not battery voltage (was DAT_00409fae) (Medium confidence)
+0x00409fb0,intake_manifold_temperature_cranking_mismatch_count_threshold,word,Cranking mismatch count above which the intake manifold air temp path is flagged pending (P0111) - 0 so the first mismatch triggers (was DAT_00409fb0)
+0x00409fb2,temperature_rationality_cranking_decision_count,word,Cranking cycle count at which the temperature cross-check makes its decision - 50 (was DAT_00409fb2)
+0x00409fb4,temperature_rationality_confirm_dwell_limit,word,Sample count for the governor-setpoint confirm stage - 300 - the coolant minimum is tracked for this many samples before the P0111 decision (was DAT_00409fb4)
+0x00409fb6,temperature_rationality_cranking_coolant_maximum,word,Current coolant must be below this (1/64 deg F) for the cranking cross-check to run - 12800 = 200 F (was DAT_00409fb6) (Medium confidence)
 0x0040a2aa,etc2_actual_gear_ratio,word,J1939 ETC2 (PGN 61445) bytes 2-3 actual gear ratio (SPN 526 - 0.001 per bit) clamped to at least 100; set by the ETC2 receive handler at 0x22c5c; x 2048 / 1000 = drivetrain_ratio_raw in cm848_calculateDrivetrainRatioFromGearRatio (was DAT_0040a2aa)
 0x0040aaaa,j1939_received_accelerator_interlock_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 1-2 (SPN 972 Accelerator Interlock Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
 0x0040aaab,j1939_received_engine_auxiliary_shutdown_switch,byte,J1939 input received over PGN 61441 EBC1 byte 4 bits 5-6 (SPN 970 Engine Auxiliary Shutdown Switch); 2-bit switch states use J1939 0 off / 1 on / 3 not available
@@ -7085,5 +7100,10 @@ address,name,type,comment
 0x0040b4e0,pci_transmit_message_22_payload,byte[4],PCI TX[22] header F0 06 payload: VIN characters 6-9 (vehicle_vin_string[5] to [8]) copied once at power-up by cm848_initPciMessagePayloads - nothing else writes it (was unnamed)
 0x0040b4e7,pci_transmit_message_23_payload,byte[4],PCI TX[23] header F0 0A payload: VIN characters 10-13 (vehicle_vin_string[9] to [12]) copied once at power-up by cm848_initPciMessagePayloads - nothing else writes it (was unnamed)
 0x0040b4ee,pci_transmit_message_24_payload,byte[4],PCI TX[24] header F0 0E payload: VIN characters 14-17 (vehicle_vin_string[13] to [16]) copied once at power-up by cm848_initPciMessagePayloads - nothing else writes it (was unnamed)
+0x0040ba2a,battery_temperature_stuck_check_state,word,Per-sensor stuck-over-distance state for battery temp (slot 69) - 1 monitoring / 2 moved enough / 3 stuck (P0514) - the stuck check arg 16 for the slot-69 call (was DAT_0040ba2a)
+0x0040ba2c,intake_manifold_temperature_stuck_check_state,word,Per-sensor stuck-over-distance state for intake manifold air temp (slot 9) - 1 monitoring / 2 moved enough / 3 stuck (P0111) - the stuck check arg 16 for the slot-9 call (was DAT_0040ba2c)
+0x0040ba2e,ambient_air_temperature_stuck_check_state,word,Per-sensor stuck-over-distance state for ambient air temp (slot 20) - 1 monitoring / 2 moved enough / 3 stuck (P0071) - the stuck check arg 16 for the slot-20 call (was DAT_0040ba2e)
+0x0040bb0e,water_in_fuel_sensor_filtered,word,Water-in-fuel analog sensor - sensor_channel_filtered_output slot 15 - a reading of 1000 to 1300 is the P2269 water condition (sets safety_bits_1 bit 8 -> fault slot 42) - reads 2000 dry in the dump (was DAT_0040bb0e)
+0x0040bb4e,cruise_switch_button_code,word,sensor_channel_filtered_output[47]: decoded cruise switch button code (0-5 CRUISE_SWITCH_REQUEST) from the resistor-ladder lookup cruise_switch_button_code_table_y - debounced by protection_control_state_check_2 - 5 (IDLE) in the dump (was DAT_0040bb4e) (Medium confidence)
 0x0040bb78,fuel_level_sensor_filtered,word,sensor_channel_filtered_output[68]: EMA-filtered fuel level in 1/2.55 percent; copied into all stored fuel level bytes when engine_feature_enable_flags_cal bit 5 is clear; RAM dump 252 (was DAT_0040bb78)
 0x0053a278,j1939_input_signal_descriptor_table,j1939_input_signal_descriptor_t,17 J1939 2-bit switch inputs supervised by cm848_evaluateJ1939InputSignalFault (value pointer / timeout slot / fault bit index)

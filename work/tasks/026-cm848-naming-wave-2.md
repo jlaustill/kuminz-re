@@ -17,3 +17,4 @@ independent skeptics re-check every proposal, accept only where no skeptic rejec
 
 ## Log
 - 2026-11-13: branch cut from merged main (4ed0948); wave-2 workflow launched (run wf_3b947338-e2f, 8 units × 1 investigator + 2 skeptics).
+- 2026-11-13: workflow returned 197 accepted / 0 disputed; reconciled to 196 targets (143 globals / 36 functions / 17 struct fields), 0 cross-unit conflicts; applied, built, `verify` byte-identical. Open questions + skeptic misses captured in `027-cm848-naming-wave-2-followups.md`.
