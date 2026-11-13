@@ -28,6 +28,38 @@ be re-verified on the bench before being trusted — see
 | **Engine run time (engine-running s)** | *none*                     | `0x0111BC00` is **not a physical address** — unreachable via known services | **Blocked** (see dead end below) |
 | **PGN 0xFEE5 (Engine Hours/Revs)**     | **Does not exist in firmware** | —                                 | Ruled out        |
 
+> **Correction 2026-11-12 (PR #46, firmware + the four EEPROM dumps):** the ECM's own odometer is **not**
+> EEPROM `0xBD8`. The firmware's distance counters are `lifetime_distance_pulses` at **EEPROM 0x8ea** (u32,
+> speed-sensor pulses, 8000 per mile — the only source of PGN 0xFEE0 total distance), the trip copy at
+> **0x19a6**, and an every-8-miles record at **0x19ce** (4 × u16 = lifetime pulses / 64000, written by
+> `cm848_recordLifetimeDistanceEvery8Miles`). All three move together across the dumps and HP Tuners resets them
+> (1,630.6 → 181.1 → 0 → 0 mi; the 0x19ce record 1,624 → 176 → 8 → 8 mi). The u32 at `0xBD8` is **not
+> monotonic** (5,139.6 → 7,236.7 → 5,137.7 → 5,137.7 mi in dump order — the runtime counter at 0x30 proves the
+> order), and the firmware's direct accesses touch only its first byte, as a byte (27 accesses, all `lbz`/`stb`;
+> nothing reads it as a 32-bit distance). `0x1A84` holds 0x0280 in every dump and sits past the
+> part of the EEPROM the app mirrors (0x0-0x1a3f). So `tools/update_odometer.sh` leaves the J1939 distance untouched.
+> Restoring what an ELD reads means writing miles × 8000
+> to 0x8ea (and 0x19a6, and miles / 8 into the 0x19ce record) and fixing the block checksum (EEPROM 0x8ea-0x1a3d
+> vs 0x5c). Untested on the truck. Also: RAM `0x0040B150` is now `accelerator_pedal_position_in_use` (OBD-II
+> PID 0x11 reports it), so the 1.5 Hz "session counter" bench label below was likely a wrong address.
+>
+> **Update 2026-11-13 (PR #46) — what 0xBD8 really is, and a live source for the dash odometer.**
+> - EEPROM **0xBD8 is the stored active-DTC list**: `active_dtc_count` (RAM 0x3fe05a, byte) then
+>   `active_dtc_slot_list` (0xBD9-0xBF7, 31 fault-slot bytes); the previously-active list follows at 0xBF8 / 0xBF9
+>   (`previously_active_dtc_count` / `previously_active_dtc_slot_list`). The J1939 DM1 / DM2 / DM5 replies and the
+>   PCI 0xB0 DTC display read them. Decoded through `obd_dtc_code_table`, the four dumps hold real faults: active
+>   P0633 (SKIM secret key not stored) + P0483 (original), P0633 + P0483 + P0480 (before HPT), P0633 + P0480 (both
+>   after HPT); previously active P0630 / P2509 / P0646 / P0532 (before HPT) and P0630 (after HPT). The "5,139.6 /
+>   7,236.7 / 5,137.7 mi" readings were those counts (2 / 3 / 2) and slot numbers.
+> - **So `tools/update_odometer.sh` corrupts the fault memory:** writing 293,199 mi × 8000 = 0x8BCEE4C0 sets the
+>   active-DTC count to 0x8B = 139 for a 31-entry list and overwrites the first three active fault slots.
+>   **Do not run it** until it is retargeted (task 023).
+> - **The ECM already holds the dash odometer:** the cluster broadcasts it on PCI header 0x72 and the ECM stores it in
+>   RAM **0x0040B471** (`pci_receive_message_11_odometer`, u32 big-endian, 1/8000 mile — 0x8B633FCC = 292,317.2 mi in
+>   the RAM dump). `./kuminz-cli can0 --read-addr 40B471 4` should return it live (confirm against the dash). It
+>   uses the same 8000-per-mile unit as `lifetime_distance_pulses`, so those 4 bytes are exactly the value to write to
+>   EEPROM 0x8ea (and 0x19a6) for the ELD restore.
+
 ---
 
 ## Update 2026-06-07 — static re-analysis (post working-RAM naming campaign)
@@ -65,7 +97,7 @@ the 1.5 Hz tick:
 
 | Address | Campaign name (asm-derived) | This doc's bench label |
 |---------|------------------------------|------------------------|
-| `0x0040B150` | `protection_fuel_demand_snapshot` (written by sensor-buffer copy) | `session_time_counter` (1.5 Hz) |
+| `0x0040B150` | `accelerator_pedal_position_in_use` (was `protection_fuel_demand_snapshot`; written by the sensor-value copy; OBD-II PID 0x11) | `session_time_counter` (1.5 Hz) |
 | `0x0040B2C2` | `cold_start_injection_protection_flag` (bit7 protection cfg) | "copy of session_time_counter" |
 | `0x0040BDF6` | `sensor_channel102_raw` | "scatter write pointer" |
 
@@ -195,7 +227,7 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 
 **Firmware-traced path (2026-04-09):**
 
-`mpc555_watchdogTimerTick` @ 0x7608 runs periodically. Every 40 ticks
+`mpc555_tickTransferTimeoutAndRuntimeCounter` @ 0x7608 runs periodically. Every 40 ticks
 (`watchdog_tick_prescaler` reaches 0x28), it increments both:
 - `ecm_runtime_accumulator` @ 0x00302012 (lifetime counter)
 - `keyon_duration_counter` @ 0x003028a6 (session counter)
@@ -209,7 +241,7 @@ Save path: `ecm_runtime_accumulator` → `eeprom_runtime_write_staging`
 (0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, &DAT_01000030, 4)`
 → **EEPROM 0x01000030**.
 
-On boot, `mpc555_watchdogTimerTick_midEntry` @ 0x76B4 reloads
+On boot, `mpc555_loadRuntimeCounterFromEepromShadow` @ 0x76B4 reloads
 `ecm_runtime_accumulator` from `eeprom_version_marker.config_dword`,
 which is read from EEPROM 0x01000034 (line 669).
 

@@ -21,19 +21,20 @@ tsc1_payload_t,0x00302020,reserved,byte,4,Reserved bytes 4-7 per J1939-71,,needs
 # UDS Response Buffer - diagnostic response structure at 0x0040b492
 # Used by processUdsTransmitBuffer and related diagnostic handlers
 # Total size: 11 bytes (0x0040b492-0x0040b49c)
-uds_response_t,0x0040b492,source_address,byte,1,Destination address for J1939 response message,,verified
-uds_response_t,0x0040b492,service_id,byte,1,UDS service ID (0x67=SecAccess 0x7F=NegResp 0x60/0x68=Cummins),,verified
-uds_response_t,0x0040b492,subfunction,byte,1,UDS subfunction code for service routing,,verified
-uds_response_t,0x0040b492,error_code,byte,1,Negative response error code (0x11=serviceNotSupported 0x37=requiredTimeDelayNotExpired),,verified
-uds_response_t,0x0040b492,data_length,byte,1,Length of data payload in response,,verified
-uds_response_t,0x0040b492,data,byte,5,Variable response payload (security seeds etc),DAT_0040b497-0x49b,verified
-uds_response_t,0x0040b492,transmit_timer,word,2,This buffer is pci_transmit_message_table[10] (header 0x26 diagnostic response) and this word is its timer (sth): writing 1 queues the response on the PCI bus (was response_pending byte),,verified
+pci_diagnostic_response_t,0x0040b492,source_address,byte,1,Reply byte 1: the ECM's own PCI address (pci_ecm_address 0x10) - comment fix only: it is the responder not a J1939 destination,,verified
+pci_diagnostic_response_t,0x0040b492,response_service_id,byte,1,Reply byte 2: request service + 0x40 (60 / 67 / 68 / 69 / E1 / E4) or 0x7F for a negative reply (was service_id),,verified
+pci_diagnostic_response_t,0x0040b492,data_1,byte,1,Reply byte 3: sub-function echo (0x27: 1 or 2 / 0x28: request byte 3) / the refused service in a 7F reply / 0xA4 memory byte 1 / 0xA1 the byte written (was subfunction),,verified
+pci_diagnostic_response_t,0x0040b492,data_2,byte,1,Reply byte 4: the 7F reply code (0x11 / 0x12 / 0x33 / 0x35 / 0x36 / 0x37 / 0x40 / 0x42 / 0x52 / 0x90 / 0xC0) / seed high byte / 0xA4 memory byte 2 / 0x62 in the E1 reply (was error_code),,verified
+pci_diagnostic_response_t,0x0040b492,data_3,byte,1,Reply byte 5: seed low byte / 0xA4 memory byte 3 / otherwise 0 - never a length (was data_length),,verified
+pci_diagnostic_response_t,0x0040b492,data_4_to_7,byte,4,Reply bytes 6 on: element 0 = 0xA4 memory byte 4; elements 1-3 unused; element 4 (0x40b49b) is the TX[10] descriptor status byte (0x80 at init) - split into data_4_to_7 byte[4] + status (was data),DAT_0040b497-0x49b,verified
+pci_diagnostic_response_t,0x0040b492,status,byte,1,PCI TX[10] descriptor status byte (hpcr_initJ1939BufferValues writes 0x80 / cm848_completePciFrame ORs the completion bits in),,verified
+pci_diagnostic_response_t,0x0040b492,transmit_timer,word,2,This buffer is pci_transmit_message_table[10] (header 0x26 diagnostic response) and this word is its timer (sth): writing 1 queues the response on the PCI bus (was response_pending byte),,verified
 # Fuel Demand Control State - fuel demand calculation and rate limiting
 # Used by calculateFuelDemandValue and related fuel control functions
 # Total size: 28 bytes (0x0040a57a-0x0040a594)
 fuel_demand_control_t,0x0040a57a,calculated,word,2,Final calculated fuel demand value,,verified
-fuel_demand_control_t,0x0040a57a,mode,word,2,Fuel demand mode selector (0=normal),,verified
-fuel_demand_control_t,0x0040a57a,enable_flag,word,2,Fuel demand enable flag (1=enabled),,verified
+fuel_demand_control_t,0x0040a57a,idle_validation_state,word,2,cm848_evaluateIdleValidationSwitches: 0 at-idle switch + pedal at idle / 1 off-idle switch + pedal above idle / 2 at-idle switch but pedal above the band / 3 off-idle switch but pedal below the band / 4 both switches + pedal outside the band / 5 no switch + pedal above the band / 6 no switch + pedal below the band / 7 equal switches + pedal inside the band / 8 valid pair + pedal between idle and the band edge (was mode),,verified
+fuel_demand_control_t,0x0040a57a,accelerator_off_idle,word,2,1 = accelerator demand off idle: idle validation states 1 / 3 / 5 / pedal sensor above threshold / J1939 SPN 558 / or speed-governor demand above cruise_governor_demand_enable_threshold_cal while fuel_demand_enable_flag; the EEC2 broadcast reports it as SPN 558 (was enable_flag),,verified
 fuel_demand_control_t,0x0040a57a,rate_limiter_state,word,2,Rate limiter state machine value,,verified
 fuel_demand_control_t,0x0040a57a,rate_delta,word,2,Fuel demand rate of change delta,,verified
 fuel_demand_control_t,0x0040a57a,throttle_based,word,2,Throttle-based fuel demand component,,verified
@@ -51,7 +52,7 @@ fuel_demand_control_t,0x0040a57a,delta_filtered,word,2,Filtered fuel demand delt
 protection_condition_flags_t,0x0040b0e8,condition_eval,byte,1,Protection condition evaluation result,,verified
 protection_condition_flags_t,0x0040b0e8,condition_flags_1,byte,1,Protection condition flags set 1,,verified
 protection_condition_flags_t,0x0040b0e8,load_condition_flags,byte,1,Load-based protection condition flags,,verified
-protection_condition_flags_t,0x0040b0e8,overtemp_flags,byte,1,Overtemperature protection flags,,verified
+protection_condition_flags_t,0x0040b0e8,overdrive_control_flags,byte,1,bit 0 cruise 4-3 request / 1 cold lockout also checks the slot 69 temperature (config) / 2 overdrive-off switch released / 3 overdrive solenoid off / 5 overdrive off by switch / 6 overdrive locked out above 270 deg F / 7 overdrive locked out below 19.4 deg F (was overtemp_flags) (Medium confidence),,verified
 protection_condition_flags_t,0x0040b0e8,reserved_04,byte,1,Gap/reserved byte at offset 0x04,,needs_review
 protection_condition_flags_t,0x0040b0e8,condition_flags_3,byte,1,Protection condition flags set 3,,verified
 protection_condition_flags_t,0x0040b0e8,condition_flags_2,byte,1,Protection condition flags set 2,,verified
@@ -101,10 +102,10 @@ engine_rpm_state_t,0x0040b7ac,current_rpm,word,2,Current engine RPM measurement,
 # Primary Sensor Readings - core engine sensor inputs
 # Used by sensor processing and protection monitoring
 # Total size: 8 bytes (0x0040baf2-0x0040baf9)
-sensor_readings_t,0x0040baf2,oil_pressure,word,2,Oil pressure sensor reading (PSI scaled),,verified
-sensor_readings_t,0x0040baf2,coolant_temp,word,2,Coolant temperature sensor (deg C scaled),,verified
-sensor_readings_t,0x0040baf2,intake_air_temp,word,2,Intake manifold air temperature,,verified
-sensor_readings_t,0x0040baf2,battery_voltage,word,2,Battery voltage raw ADC value,,verified
+sensor_readings_t,0x0040baf2,intake_manifold_pressure,word,2,Intake manifold (boost) absolute pressure - sensor_channel_filtered_output[1] - 1/18.56 kPa per count (0.0159 inHg); boost = this minus barometric_pressure (cm848_calculateBoostPressure); J1939 IC1 byte 2 / OBD-II intake manifold pressure; 1700 in the RAM dump with the engine stopped (was oil_pressure),,verified
+sensor_readings_t,0x0040baf2,coolant_temp,word,2,Coolant temperature - sensor_channel_filtered_output[2] - 1/64 deg F per count; J1939 ET1 byte 1 (SPN 110),,verified
+sensor_readings_t,0x0040baf2,barometric_pressure,word,2,Barometric pressure - sensor_channel_filtered_output[3] - 1/18.56 kPa per count; J1939 AMB byte 1 (SPN 108) / the reference subtracted for boost and oil pressure; 1647 (88.5 kPa) in the RAM dump (was intake_air_temp),,verified
+sensor_readings_t,0x0040baf2,battery_voltage,word,2,Battery voltage - sensor_channel_filtered_output[4] - 1/16 V per count (192 = 12.0 V in the RAM dump); PCI 0xC0 byte 1,,verified
 # EEPROM Header Block - calibration validation and configuration
 # Located in RAM copy of EEPROM data at 0x003fee08
 # Total size: 32 bytes (0x003fee08-0x003fee27)
@@ -143,13 +144,6 @@ pci_link_state_t,0x0040b34e,tx_match_index,byte,1,pci_transmit_message_table ent
 pci_link_state_t,0x0040b34e,receive_byte_count,byte,1,Bytes stored in pci_receive_frame_buffer for the current frame,,verified
 pci_link_state_t,0x0040b34e,init_complete_marker,byte,1,Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found,,verified
 pci_link_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word),,verified
-# Protection System Enable - master protection control bits
-# Used by protectionEnableCheck and protection initialization
-# Total size: 4 bytes (0x0040c050-0x0040c053)
-protection_enable_t,0x0040c050,mode_bits,byte,1,Protection mode selection bits,,verified
-protection_enable_t,0x0040c050,system_enable_bits,byte,1,Protection subsystem enable flags,,verified
-protection_enable_t,0x0040c050,reserved_02,byte,1,Gap/reserved,,needs_review
-protection_enable_t,0x0040c050,protection_active,bitfield:1@7,1,Runtime protection-engaged boolean - bit7 (0x80); 1=limiting active. Ghidra 12.1+ renders the mask away,,verified
 # Fault List Management - DTC list indices and counters
 # Used by fault logging and DM1/DM2 message generation
 # Total size: 8 bytes (0x003fe11a-0x003fe121)
@@ -186,7 +180,7 @@ system_status_flags_t,0x003fe974,safety_bits_2,word,2,Safety condition bits set 
 system_status_flags_t,0x003fe974,sensor_diag,word,2,Sensor diagnostic flags,,verified
 system_status_flags_t,0x003fe974,lamp_status,word,2,Fault lamp status (MIL/warning),,verified
 system_status_flags_t,0x003fe974,emission_faults,word,2,Emission-related fault flags,,verified
-system_status_flags_t,0x003fe974,reserved_10,word,2,Gap (0x3fe984-0x3fe985),,needs_review
+system_status_flags_t,0x003fe974,fault_detected_bits_128_to_143,word,2,Word 8 of the fault-present bit array at 0x3fe974 (fault bit = word x 16 + bit): bit 0 any J1939 input timeout / bit 1 read by the J1939 pedal rate-limit check / bit 2 any J1939 input data error / bits 8-15 DTC slots 128-135 = P0883 P0882 P0974 P0973 P2770 P2769 P0588 P0587 (was reserved_10),,needs_review
 system_status_flags_t,0x003fe974,reserved_12,word,2,Gap (0x3fe986-0x3fe987),,needs_review
 system_status_flags_t,0x003fe974,system_faults,word,2,System fault flags,,verified
 system_status_flags_t,0x003fe974,reserved_16,word,2,Gap (0x3fe98a-0x3fe98f),,needs_review
@@ -279,7 +273,7 @@ protection_lockout_t,0x0040b11c,timer_expired,word,2,Lockout timer expired flag,
 # ============================================================================
 
 # J1939 TX Message Header - first 6 bytes of all outgoing J1939 TX message descriptors
-# Used as the parameter type for transmitCanMessage / multiFrameCanTransmit
+# Used as the parameter type for cm848_transmitCanMessage / mpc555_sendJ1939TransportRequestToSend
 # Note: RX ring buffer (j1939_rx_msg_t) stores the same 6 bytes but decoded as 4 individual
 #       address bytes; TX buffers pack the CAN ID as a single dword via stw.
 # Layout: [priority+DP (byte)] [PF (byte)] [PS/dest (byte)] [SA (byte)]
@@ -754,9 +748,9 @@ scheduler_task_stat_t,0x0040be6a,overrun_count,word,2,Number of deadline overrun
 # Accessed via (&governor_derivative_term)[uVar1 * 3] with while (uVar1 < 3)
 # processGovernorControlMessage matches channels by identifier, updates derivative bits
 # processSecurityAccessRequest clears bits per channel
-governor_channel_t,0x0040addc,derivative_term,word,2,Governor derivative term bitmask (0xFFFF=inactive),,verified
-governor_channel_t,0x0040addc,channel_identifier,word,2,Channel ID for matching incoming governor commands,,verified
-governor_channel_t,0x0040addc,gain_schedule,word,2,Gain schedule countdown timer (0=expired),,verified
+j1939_dm13_requester_slot_t,0x0040addc,broadcast_enable_flags,word,2,Cummins DM13BRDn - broadcast enable flags requested by this source (0xFFFF = nothing suspended): DM13 stop (00) clears J1587 bit 0 / J1922 bit 1 / J1939 network 1 bits 2 3 7 and start (01) sets them; back to 0xFFFF when the stop broadcast timer expires (was derivative_term),,verified
+j1939_dm13_requester_slot_t,0x0040addc,stop_broadcast_source_address,word,2,Cummins STPBRDSn - J1939 source address of the device whose DM13 asked this ECM to stop broadcasting; matched against the source address of each received DM13 (was channel_identifier),,verified
+j1939_dm13_requester_slot_t,0x0040addc,stop_broadcast_timer,word,2,Cummins DM13BDTn (0.1 s): reloaded with j1939_dm13_stop_broadcast_time_limit_cal (60 = 6 s) by this source's stop or hold message (byte 4 hold signal 0 or 1) and counted down; 0 = free slot and its flags return to 0xFFFF (was gain_schedule),,verified
 
 # Protection Threshold Lookup Results - fuel demand and RPM-corrected protection thresholds
 # 2 consecutive sets at 0x0040a502, 10 bytes each (5 u16 fields per set, 20 bytes total)
@@ -774,21 +768,21 @@ protection_threshold_set_t,0x0040a502,threshold_base,word,2,Base protection thre
 # Primary array: 8 entries at 0x003fe674, 48 bytes each (0x30 stride)
 # Shadow array: 8 entries at 0x003fe7f4, same layout (always updated on fault)
 # Primary only updates when fault code changes; shadow updates every activation
-# Code evidence: setFaultActiveStatus (0x0001df64), captureFreezeFrameData (0x0001df88)
+# Code evidence: hpcr_setFaultActiveStatus (0x0001df64) - it also captures the freeze frame
 # Iteration: addFaultToActiveList (0x0001cea4) uses pbVar3 += 0x30 with limit < 8
 # findFaultByTypeAndSeverity (0x0001ce28) uses puVar3 = &DAT_003fe674, puVar3 += 0xc (as dword*)
 # Note: fault_entry_table_base (0x003fe678) is at offset +4 (the fault_code byte), not struct base
 fault_entry_t,0x003fe674,timing_snapshot,dword,4,Fuel timing advance value at capture time,,verified
 fault_entry_t,0x003fe674,fault_code,byte,1,Fault code ID (0xAA = empty/available slot),,verified
-fault_entry_t,0x003fe674,temperature_trim,word,2,Temperature compensation trim calculation,,verified
+fault_entry_t,0x003fe674,vehicle_speed,word,2,Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim),,verified
 fault_entry_t,0x003fe674,target_rpm,word,2,Target engine RPM at fault time,,verified
 fault_entry_t,0x003fe674,sensor_scale_1,word,2,Sensor scale factor 1,,verified
-fault_entry_t,0x003fe674,fault_status,word,2,Fault active status value at capture,,verified
-fault_entry_t,0x003fe674,protection_high,word,2,Protection output high word,,verified
-fault_entry_t,0x003fe674,protection_low,word,2,Protection output low word,,verified
-fault_entry_t,0x003fe674,timing_param_1,word,2,Fuel timing parameter 1,,verified
-fault_entry_t,0x003fe674,timing_param_2,word,2,Fuel timing parameter 2,,verified
-fault_entry_t,0x003fe674,timing_param_3,word,2,Fuel timing parameter 3,,verified
+fault_entry_t,0x003fe674,engine_load_at_current_speed,word,2,engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status),,verified
+fault_entry_t,0x003fe674,accelerator_pedal_position,word,2,accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high),,verified
+fault_entry_t,0x003fe674,intake_manifold_pressure,word,2,intake_manifold_pressure_in_use at capture (was protection_low),,verified
+fault_entry_t,0x003fe674,coolant_temperature,word,2,coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1),,verified
+fault_entry_t,0x003fe674,intake_manifold_temperature,word,2,intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2),,verified
+fault_entry_t,0x003fe674,oil_pressure,word,2,oil_pressure_sensor_filtered at capture (was timing_param_3),,verified
 fault_entry_t,0x003fe674,sensor_scale_2,word,2,Sensor scale factor 2,,verified
 fault_entry_t,0x003fe674,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
 fault_entry_t,0x003fe674,pressure_adj,byte,1,Pressure fuel adjustment byte,,verified
@@ -800,7 +794,7 @@ fault_entry_t,0x003fe674,diagnostic_byte_3,byte,1,Diagnostic data byte 3,,verifi
 fault_entry_t,0x003fe674,diagnostic_byte_4,byte,1,Diagnostic data byte 4,,verified
 fault_entry_t,0x003fe674,diagnostic_word_2,word,2,Diagnostic data word 2,,verified
 fault_entry_t,0x003fe674,diagnostic_word_3,word,2,Diagnostic data word 3,,verified
-fault_entry_t,0x003fe674,coolant_temp_raw,word,2,Coolant temperature raw sensor value,,verified
+fault_entry_t,0x003fe674,fuel_temperature,word,2,fuel_temperature_sensor_filtered at capture (1/64 deg F) - not coolant (was coolant_temp_raw),,verified
 fault_entry_t,0x003fe674,status_flags,word,2,Fault entry status/severity flags (bit 0 = newly active),,verified
 # Boost In Range (BIR) Configuration - ROM calibration thresholds for P0069/Fault 433
 # Loaded from EEPROM at boot, maps to BIR parameters (DGBSHTTD, DGSTBSTD, DGLWTD, etc.)
@@ -818,8 +812,6 @@ boost_in_range_config_t,0x0005c994,consecutive_high_threshold,word,2,BIR consecu
 # Total size: 10 bytes (0x003fd064-0x003fd06d)
 # Boost In Range (BIR) Counters - RAM fault accumulation counters
 # Total size: 4 bytes (0x003fee5e-0x003fee61)
-boost_in_range_counters_t,0x003fee5e,deviation_count,word,2,BIR boost deviation event count,,needs_review
-boost_in_range_counters_t,0x003fee5e,operating_time_counter,word,2,BIR time at operating condition counter,,needs_review
 # =============================================================================
 # USIU PIT Sub-structure - Periodic Interrupt Timer registers at 0x002FC240
 # Reference: RTEMS MPC555 BSP usiu_ struct; confirmed by firmware access patterns
@@ -877,7 +869,7 @@ etc1_governor_state_t,0x0040adf8,etc1_spn573_tc_lockup_disengage,word,2,1=ETC1 d
 etc1_governor_state_t,0x0040adf8,etc1_handler_initialized,word,2,1=ETC1 handler init complete,,verified
 etc1_governor_state_t,0x0040adf8,speed_control_target,word,2,Bitmask: bit0=mode1 active bit1=mode2 active bit2=torque active,,verified
 etc1_governor_state_t,0x0040adf8,etc1_spn574_shift_in_process,byte,1,1=coast/brake mode from ETC1 byte0 bits 0x30==0x10,,verified
-etc1_governor_state_t,0x0040adf8,etc1_address_filter,byte,1,Source address filter (0xFF=accept all),,verified
+etc1_governor_state_t,0x0040adf8,etc2_transmission_selected_gear,byte,1,J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when governor_timeout_countdown (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter),,verified
 etc1_governor_state_t,0x0040adf8,proprietary_offset_value,word,2,Proprietary PGN offset value,,needs_review
 etc1_governor_state_t,0x0040adf8,etc1_speed_error_timeout_flag,word,2,1=speed error timeout has fired,,verified
 etc1_governor_state_t,0x0040adf8,etc1_activation_confirm_timer,word,2,Countdown: loaded from config+6/+10 by gov mode; fires to confirm mode transition and log fault,,verified
@@ -1251,7 +1243,7 @@ qsmcm_txram_t,0x00305180,TX5,word,2,QSPI Transmit RAM entry 5,,verified
 # capability_flags: bit0=MIOS_ER_active bit1=key_on_allowed bit4=IMB3_config
 # mailbox_index: CAN mailbox slot index incremented by initDiagnosticSubsystem
 # transfer_crc: CRC-CCITT running value used in processTransferCrc
-# eeprom_write_count: incremented each key-on cycle, saved to EEPROM config_dword
+# runtime_counter (+0x10 = RAM 0x302012): ECU runtime counter - +1 every 41 PIT ticks by mpc555_tickTransferTimeoutAndRuntimeCounter, loaded from / saved to EEPROM 0x1000030 (was mislabeled eeprom_write_count "per key-on")
 # =============================================================================
 keyon_flags_t,0x00302002,capability_flags,dword,4,ECU capability bitmask (bit0=MIOS_ER bit1=key_on bit4=IMB3),,verified
 keyon_flags_t,0x00302002,state,dword,4,Key-on state machine state (0=idle 1=active),,verified
@@ -1259,7 +1251,7 @@ keyon_flags_t,0x00302002,transfer_crc,word,2,CRC-CCITT block transfer running ac
 keyon_flags_t,0x00302002,_pad10,word,2,Reserved,,verified
 keyon_flags_t,0x00302002,mailbox_index,word,2,CAN mailbox slot index for channel assignment,,verified
 keyon_flags_t,0x00302002,_pad14,word,2,Reserved,,verified
-keyon_flags_t,0x00302002,eeprom_write_count,dword,4,EEPROM config counter incremented per key-on cycle,,verified
+keyon_flags_t,0x00302002,runtime_counter,dword,4,ECU runtime counter (RAM 0x302012): loaded from EEPROM 0x1000030 at boot / +1 every 41 PIT ticks (~0.205 s per count if the PIT runs at 1 MHz) / written back at key-off; also the auth-token freshness clock (was eeprom_write_count),,verified
 # =============================================================================
 # CAN transmit/receive ring buffer pointers @ 0x3024c6
 # j1939_tx: J1939 message queue ring buffer (12-byte records, base 0x3022e6)
@@ -1277,9 +1269,8 @@ can_tx_ring_t,0x003024c6,toucan_mb_ptr,dword,4,Active TouCAN mailbox base pointe
 # sensor_param_ptr: pointer to active sensor parameter block (set in ADC init)
 # adc_scan_active: flag indicating ADC sensor scan is in progress (0/1)
 # =============================================================================
-adc_trigger_t,0x003024f4,sensor_param_ptr,dword,4,Pointer to active ADC sensor parameter block,,verified
-adc_trigger_t,0x003024f4,adc_scan_active,word,2,ADC scan active flag (0=idle 1=scanning),,verified
-adc_trigger_t,0x003024f4,_pad6,word,2,Reserved,,verified
+diag_write_request_state_t,0x003024f4,pending_request,dword,4,Boot reflash kernel: request whose positive response is deferred until the flash write completes (was adc_trigger_t.sensor_param_ptr),,verified
+diag_write_request_state_t,0x003024f4,address_mode,dword,4,0 = parameter-ID addressing (services 68/69) / 1 = absolute address (75/77); stored as a dword (was adc_scan_active word + _pad6),,verified
 # =============================================================================
 # CAN mailbox slot assignment range @ 0x302510
 # Configured in mpc555_initDiagnosticSubsystem to (mailbox_index, mailbox_index+4)
@@ -1315,8 +1306,8 @@ sys_init_flags_t,0x00302736,init_counter,word,2,System initialization counter (z
 eeprom_xfer_state_t,0x00302878,bytes_transferred,dword,4,Current byte offset progress in EEPROM transfer block,,verified
 eeprom_xfer_state_t,0x00302878,block_length,dword,4,Total bytes in current EEPROM transfer block,,verified
 eeprom_xfer_state_t,0x00302878,_pad8,word,2,Reserved,,verified
-eeprom_xfer_state_t,0x00302878,write_callback_ptr,dword,4,Function pointer for calibration block write operation,,verified
-eeprom_xfer_state_t,0x00302878,read_callback_ptr,dword,4,Function pointer for calibration block read/verify operation,,verified
+eeprom_xfer_state_t,0x00302878,eeprom_write_callback,dword,4,Writer for memory region type 5 (EEPROM) called by cm848_writeDiagMemory (was write_callback_ptr),,verified
+eeprom_xfer_state_t,0x00302878,flash2_write_callback,dword,4,Writer for memory region type 2 (Bank-2 flash) called by cm848_writeDiagMemory (was read_callback_ptr - it writes),,verified
 eeprom_xfer_state_t,0x00302878,transfer_timer,word,2,Transfer timeout countdown (0x28 or 0x4B ticks init),,verified
 # =============================================================================
 # EEPROM block range tracking @ 0x3028a6
@@ -1333,7 +1324,7 @@ eeprom_block_tracking_t,0x003028a6,block_start_addr,dword,4,Start address of cur
 eeprom_block_tracking_t,0x003028a6,block_count,word,2,Completed transfer block count (max 9),,verified
 # =============================================================================
 # J1939 Transport Protocol queue/RTS-CTS state machine @ 0x302905
-# Used by mpc555_handleJ1939DataRequest / mpc555_processJ1939QueueTransmit
+# Used by mpc555_handleJ1939TransportRequestToSend / mpc555_sendJ1939TransportDataPackets
 # session_pgn: PGN for active queue TP session (top byte 0xEF)
 # total_bytes: total data bytes for TP session (from CTS request)
 # data_buf_ptr: pointer to source data buffer for multi-packet transmission
@@ -1357,7 +1348,7 @@ j1939_tp_queue_t,0x00302905,packet_size,word,2,Bytes in current CTS packet grant
 j1939_tp_queue_t,0x00302905,tx_buf_ptr,dword,4,Pointer to CAN TX assembly buffer (0x30306D),,verified
 # =============================================================================
 # J1939 Transport Protocol pause/DataRequest state @ 0x302927
-# Used by mpc555_handleJ1939DataRequest / mpc555_handleJ1939DataTransfer
+# Used by mpc555_handleJ1939TransportRequestToSend / mpc555_handleJ1939TransportDataPacket
 # pause_pgn: PGN for pause session (0xEF00 = ECU diagnostic response)
 # pause_timer: pause session countdown (0x70 init, 0x19 per packet)
 # pause_data: copy of first dword from DataRequest CAN frame
@@ -1398,7 +1389,7 @@ diag_buf_a_ctrl_t,0x0030305a,end_ptr,dword,4,Pointer to end of buffer A data are
 # phase 0: loadCalibrationFromEeprom
 # phase 1/2: mainLoopIteration
 # phase 3: loadVersionConfigFromEeprom
-# boot_param: parameter value set during mpc555_processScheduledTasks
+# boot_param: parameter value set during mpc555_runPeriodicInterruptTimerTick
 # boot_phase: current phase counter (0-3)
 # =============================================================================
 boot_state_t,0x003034a0,boot_param,word,2,Boot state machine initialization parameter,,verified
@@ -1433,13 +1424,13 @@ mios1_isr_t,0x00306c00,_pad2,word,2,Reserved,,verified
 mios1_isr_t,0x00306c00,EN,word,2,MIOS1 interrupt enable register (channel mask),,verified
 # ==============================================================================
 # Diagnostic clear state flags - 4 bytes zeroed together by stw r0 in
-# cm848_clearDiagnosticState and cm848_clearAllDiagnosticFaults.
+# cm848_clearDiagnosticState (including its tail at 0x1d11c, once split off as a separate function).
 # Originally one bogus 4-byte pointer (sensor_channel_cmd_address).
 # These bytes serve different roles in different execution contexts (type-punned).
 # ==============================================================================
 diag_clear_flags_t,0x003fedfc,diag_response_write_count,byte,1,Diagnostic response write count pending,,best_guess
 diag_clear_flags_t,0x003fedfc,diag_eeprom_work_byte,byte,1,EEPROM channel scratch byte,,best_guess
-diag_clear_flags_t,0x003fedfc,fuel_temp_protection_ratio,word,2,Fuel temperature protection ratio,,best_guess
+diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2,EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio),,best_guess
 # ==============================================================================
 # Dual-axis lookup table dimension descriptor
 # Passed as first arg to cm848_dualAxisTableInterpolation to describe table size
@@ -1528,6 +1519,15 @@ qspi_job_t,0x0040b357,command_bytes,byte*,4,Bytes copied into QSPI command RAM (
 qspi_job_t,0x0040b357,receive_words,word*,4,Where the received QSPI words are stored,,verified
 qspi_job_t,0x0040b357,completion_callback,pointer,4,Function called when the transfer completes,,verified
 qspi_job_t,0x0040b36d,,,,pci_controller_receive_job - second instance,,verified
+qspi_job_t,0x003fb8d6,,,,eeprom_job - instance,,verified
+qspi_job_t,0x003fb26f,,,,supervisor_register_162_read_job - instance,,verified
+qspi_job_t,0x003fb287,,,,supervisor_configuration_write_job - instance,,verified
+qspi_job_t,0x003fb2a5,,,,supervisor_watchdog_job - instance,,verified
+qspi_job_t,0x003fb2d3,,,,supervisor_register_36_read_job - instance,,verified
+qspi_job_t,0x003fb2eb,,,,supervisor_output_write_job - instance,,verified
+qspi_job_t,0x003fb301,,,,supervisor_status_read_job - instance,,verified
+qspi_job_t,0x003fb325,,,,supervisor_register_46_read_job - instance,,verified
+qspi_job_t,0x003fb360,,,,serial_output_driver_job - instance,,verified
 
 # --- QSPI job driver data (reviewed 2026-11-11) ---
 qspi_device_slot_t,0x003fb434,spcr0,word,2,SPCR0 value for this device (mode + baud),,verified
@@ -1540,3 +1540,36 @@ qspi_job_queue_t,0x003fb446,write_index,byte,1,jobs[] index the next queued job 
 qspi_job_queue_t,0x003fb446,pending_count,byte,1,Jobs queued and not yet completed (max 16),,verified
 qspi_job_queue_t,0x003fb446,jobs,qspi_job_t*,64,Ring of 16 queued job pointers,,verified
 qspi_job_queue_t,0x003fb489,,,,job queue 1 - marker,,verified
+
+# --- memory_region_t: boot reflash kernel write-permission map (6 x 10 bytes @ RAM 0x3f9830 = ROM 0x3c60) ---
+memory_region_t,0x003f9830,start_address,dword,4,First address of the region,,verified
+memory_region_t,0x003f9830,end_address,dword,4,Last address of the region,,verified
+memory_region_t,0x003f9830,region_type,byte,1,0 RAM / 2 Bank-2 flash / 3 registers / 4 main flash / 5 EEPROM (9 = not found),,verified
+memory_region_t,0x003f9830,region_type_copy,byte,1,Same value as region_type in every entry,,verified
+memory_region_t,0x003f983a,,,,region 1 0x500000-0x5fffff Bank-2 flash - marker,,verified
+memory_region_t,0x003f9844,,,,region 2 0x3f9800 type 3 (end 0x302000 is below start so never matches) - marker,,verified
+memory_region_t,0x003f984e,,,,region 3 0x302000-0x3fffff RAM - marker,,verified
+memory_region_t,0x003f9858,,,,region 4 0x1000000-0x1003fff EEPROM - marker,,verified
+memory_region_t,0x003f9862,,,,region 5 0x2fc000-0x307fff internal registers - marker,,verified
+
+# --- j1939_input_signal_descriptor_t: J1939 input supervision table (10 bytes x 17 @ Bank 2 0x53a278) ---
+j1939_input_signal_descriptor_t,0x0053a278,signal_value,byte*,4,Received signal byte (j1939_received_*),,verified
+j1939_input_signal_descriptor_t,0x0053a278,timeout_slot,byte,1,Index into j1939_input_signal_timeouts (also the fault bitmap index),,verified
+j1939_input_signal_descriptor_t,0x0053a278,reserved_5,byte,1,Always 0,,verified
+j1939_input_signal_descriptor_t,0x0053a278,fault_bit_index,dword,4,Bit index into the fault-enable bitmask and the fault confirmation arrays (0x1f for most entries),,verified
+j1939_input_signal_descriptor_t,0x0053a282,,,,descriptor 1 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a28c,,,,descriptor 2 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a296,,,,descriptor 3 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2a0,,,,descriptor 4 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2aa,,,,descriptor 5 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2b4,,,,descriptor 6 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2be,,,,descriptor 7 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2c8,,,,descriptor 8 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2d2,,,,descriptor 9 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2dc,,,,descriptor 10 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2e6,,,,descriptor 11 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2f0,,,,descriptor 12 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a2fa,,,,descriptor 13 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a304,,,,descriptor 14 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a30e,,,,descriptor 15 - marker,,verified
+j1939_input_signal_descriptor_t,0x0053a318,,,,descriptor 16 - marker,,verified

@@ -34,7 +34,7 @@ One agent per bin (~12–15 symbols), Sonnet, each **required** to follow [[inve
 | Dup addr / dup name | within the batch | disambiguate |
 | Name collision | proposed name already in `global_variables.csv` | rename |
 | **Already in CSV** | address row exists (often `PTR_DAT_`/`pointer`) | **EDIT that row in place — never append** (appending = duplicate-address row Ghidra mishandles) |
-| `_cal` gate | any `_cal` on `0x40xxxx`/`0x3fxxxx` | strip it (EEPROM only shadows to `0x3feexx`); sweep with `audit_cal_suffixes.py` / [[auditing-cal-suffixes]] |
+| `_cal` gate | any `_cal` on `0x40xxxx`/`0x3fxxxx` | strip it (EEPROM mirror is `0x3fd482`-`0x3feec1`; anything else in 0x3f/0x40 is ROM/flash); sweep with `audit_cal_suffixes.py` / [[auditing-cal-suffixes]] |
 | Width | **spot-check a few** `width_evidence` citations with `disasm_func.py` | for IN-WINDOW symbols expect revert — don't apply custom width |
 | Pointer mistype | `audit_widths.py` flags declared-`pointer` rows accessed narrower | retype |
 

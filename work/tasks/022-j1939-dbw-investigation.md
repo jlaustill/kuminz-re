@@ -187,6 +187,16 @@ CAN ID for TSC1 → ECU: `0x0C000003` (priority 3, PGN 0, dest=ECU addr 0x00, sr
 
 ## Investigation Log
 
+### 2026-11-13 — PR #46 naming wave: corrections to this file's older notes
+- **Not J1939 at all:** `j1939_msgSlotE_governorAuth_check` is `cm848_processImmobilizerSeedAndKey` — the Chrysler SKIM immobilizer seed / key on PCI (J1850) 4F C0 / 3F / 4F 10 — and the "auth gate" `governor_fuel_mode_status_bit` / `j1939_governor_auth_granted` (0x40b512) is `immobilizer_valid_key_flag` (1 in the RAM dump; without it the ECM cuts fuel after the authorization window). `j1939_tsc1_override_enable` (0x40b51c) is `immobilizer_secret_key_send_enable` (armed by SCI command 0x13). None of them gate TSC1.
+- Cruise names used above: `j1939_cruise_engaged` (0x3fee00) = `cruise_control_switches_learned_flag`, `governor_cruise_fuelCorrection_inhibitCheck` = `governor_cruise_deniedStatus_update` (writes `cruise_control_denied_status`, the DRB S/C denied reason), `cold_start_qualifier_flag` = `fault_reaction_request_bits` (a per-fault derate-request mask, not cold start).
+- **Why the 2026-06-12 cruise fix works:** the cruise "fuel correction" fork flag `fuel_correction_mode_flag` (0x40af54) is `transmission_park_or_neutral_flag`. It comes from the J1939 **ETC2** selected gear (PGN 61445 SPN 524, stored by the receive callback `cm848_j1939ProcessPgn61445Etc2` at 0x22c5c — a function the build was missing) when one arrives, else switch 20 / the PCI 0x37 shift lever. Forwarding the Allison's ETC2 tells the ECM the truck is in gear, which clears the flag and lets cruise engage (denied reason 12 = park / neutral). Side effect: the same flag arms the 48RE converter-slip warning, the likely TRANS TEMP lamp source (task 024).
+
+### 2026-11-12 — PR #46 naming rounds (no DBW change)
+- EEC2 accelerator-pedal-over-J1939 is a dead end: the computed J1939 pedal value has no reader, so TSC1 stays the only J1939 fueling path.
+- Side findings that touch this task: `accelerator_pedal_position_in_use` (0x40b150, OBD-II PID 0x11), `engine_load_percent` / `engine_load_at_current_speed_percent` (`cm848_calculateEngineLoadPercentages`), and the sensor-slot table in `firmware/CLAUDE.md` (slot 13 = accelerator pedal).
+- New follow-up tasks 023 (odometer restore target) and 024 (TRANS TEMP lamp) were added to `work/todo.md`.
+
 ### 2026-05-26 — Phase 3 complete — full TSC1 dispatch path traced
 
 **Dispatch**: PGN 0 registered via `j1939_handlerInitializer(0, cm848_j1939DispatchAddressHandler)`.

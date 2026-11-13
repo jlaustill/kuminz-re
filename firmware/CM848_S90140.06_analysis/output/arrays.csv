@@ -3,16 +3,16 @@ address,array_name,element_type,element_count,comment
 # Used by security seed response, diagnostic handlers, SCI serial I/O
 # Offsets 0-5 confirmed for transmit; offsets 31-32 for receive validation
 # Next named variable (diag_subcommand_code) starts at 0x003fecf1
-# DM response payload assembly scratch buffer
-# Base address used by copy loops in j1939_dm_message_processor
+# OBD-II response assembly buffer (obd_response_staging)
+# Base address used by copy loops in cm848_processPciObdRequest
 # Offsets 0-2 are padding/unused; offsets 3-7 are the 5 writable scratch bytes
 # (j1939_dm_scratch_byte0 through j1939_dm_scratch_byte4 at offsets 3-7)
 # Vehicle VIN string — 17-character ASCII SAE VIN
 # Loaded from EEPROM offset 0x0285 (preceded by 8 zero bytes) at startup
-# Sent via DM9 sub-index 2 in 5 response packets: [0]+[1..4]+[5..8]+[9..12]+[13..16]
-# hpcr_initJ1939MessageTables copies [1..16] into J1939 VIN broadcast slots dd-gg
+# Sent by the OBD-II mode 9 InfoType 2 reply in 5 packets: [0]+[1..4]+[5..8]+[9..12]+[13..16]
+# cm848_initPciMessagePayloads copies [0] and [1..16] into the PCI F0 01 / 02 / 06 / 0A / 0E VIN payloads (pci_transmit_message_20-24_payload) at reset
 0x003fd707,vehicle_vin_string,byte,17,17-char ASCII SAE VIN loaded from EEPROM 0x0285; 3D3MU48C94G228471 at runtime
-0x003fce7c,j1939_dm_scratch_buffer,byte,8,DM response payload assembly buffer; copy loops index from [3] to [7]
+0x003fce7c,obd_response_staging,byte,8,OBD-II response assembly buffer; copy loops index from [3] to [7] (was j1939_dm_scratch_buffer)
 0x003fecd0,diag_serial_buffer,byte,33,Diagnostic serial communication buffer (SCI UART)
 # QADC channel-index table: each word is an index into qadc_channel_dispatch_table (clamped <0x81)
 # selects which QADC channel a sensor reads; ~58 sites use the clamp-then-dispatch idiom
@@ -28,5 +28,52 @@ address,array_name,element_type,element_count,comment
 # Maps the analog switch voltage to a discrete button code; press each button on the bench to map code->function
 0x0005ab94,cruise_switch_adc_band_table_x,word,21,resistor-ladder X-axis input breakpoints; [0]=40 byte-count (20 entries) then ADC counts 0 269/270 280/281 459/460 470/471 620/621 631/632 752/753 763/764 871/872 1023 (1-count hysteresis pairs); param_4 / in_r5 of lookupTableInterpolation; Bank1 ROM so no _cal
 0x0005abbe,cruise_switch_button_code_table_y,word,21,resistor-ladder Y-axis decoded button code per band; [0]=40 byte-count then 0 0 5 5 1 1 5 5 2 2 5 5 3 3 5 5 4 4 5 5 -> FIVE distinct button codes 0 1 2 3 4 (one per steering-wheel switch: on/off set accel decel cancel) plus 5 = no-button/rest (high ADC ~872+ near pull-up) which also fills the inter-band transitions. code 0 = engage trigger (governor_cruise_engage_check fires on rest 5 -> 0; the SET/ON button); codes 1-4 each drive a distinct governor request channel (1 -> state==1 fuel_mode 7; 2/3/4 -> governor_cruiseOverride_stateN_handler). code -> physical-button label is a bench task. param_5 / in_r6 of lookupTableInterpolation; Bank1 ROM so no _cal
-0x003fd8e0,pci_link_event_action_mask_cal,byte,8,EEPROM-shadowed (EEPROM 0x45e-0x465 = 3f 26 40 3f 06 02 02 3f): recovery-action mask per link_event_code read by cm848_handlePciLinkEvent - [0]=code 7 / [1..6]=codes 1..6 / [7]=default; bits 0x01 count toward pci_link_error_limit / 0x02 reset receive state / 0x04 reset transmit state / 0x08 cycle controller line 124 (implies 0x20) / 0x10 re-init message timers / 0x20 send controller command 0xaf8 / 0x40 set pci_frame_match_flags 0x10
+0x003fd8e0,pci_link_event_action_mask_cal,byte,8,EEPROM-shadowed (EEPROM 0x45e-0x465 = 3f 26 40 3f 06 02 02 3f): recovery-action mask per link_event_code read by cm848_handlePciLinkEvent - [0]=code 7 / [1..6]=codes 1..6 / [7]=default; bits 0x01 count toward pci_link_error_limit / 0x02 reset receive state / 0x04 reset transmit state / 0x08 pulse controller line 124 (implies 0x20) / 0x10 re-init message timers / 0x20 send controller command 0xaf8 / 0x40 set pci_frame_match_flags 0x10
 0x003fb4ce,qspi_job_queue_peak_count,byte,2,Highest pending_count seen per QSPI job queue
+0x003fb2bb,supervisor_watchdog_transmit_words,word,5,Transmit words of supervisor_watchdog_job: four 0xE0xx answers + 0xF200 status read (or 0x14xx/0x18xx/0x2E00 settings) (were can_tx_msg_header_word / can_tx_msg_slot_b..d_word)
+0x00057714,supervisor_watchdog_answer_0_table,byte,16,Application: answer byte 0 for each of the 16 watchdog questions (identical to the boot kernel table at RAM 0x3f989c)
+0x003f989c,supervisor_watchdog_kernel_answer_0_table,byte,16,Boot reflash kernel (RAM copy of ROM 0x3ccc): answer byte 0 for each of the 16 watchdog questions
+0x00057704,supervisor_watchdog_answer_1_table,byte,16,Application: answer byte 1 for each of the 16 watchdog questions (identical to the boot kernel table at RAM 0x3f988c)
+0x003f988c,supervisor_watchdog_kernel_answer_1_table,byte,16,Boot reflash kernel (RAM copy of ROM 0x3cbc): answer byte 1 for each of the 16 watchdog questions
+0x000576f4,supervisor_watchdog_answer_2_table,byte,16,Application: answer byte 2 for each of the 16 watchdog questions (identical to the boot kernel table at RAM 0x3f987c)
+0x003f987c,supervisor_watchdog_kernel_answer_2_table,byte,16,Boot reflash kernel (RAM copy of ROM 0x3cac): answer byte 2 for each of the 16 watchdog questions
+0x000576e4,supervisor_watchdog_answer_3_table,byte,16,Application: answer byte 3 for each of the 16 watchdog questions (identical to the boot kernel table at RAM 0x3f986c)
+0x00057bb0,pci_transmit_message_19_initial_payload,byte,5,ROM initial PCI TX[19] 0xED payload
+0x00057bb6,pci_diagnostic_power_up_announcement,byte,8,ROM PCI diagnostic power-up message bytes
+0x00057bbe,pci_security_key_table,word,16,ROM PCI diagnostic security key table
+0x003f986c,supervisor_watchdog_kernel_answer_3_table,byte,16,Boot reflash kernel (RAM copy of ROM 0x3c9c): answer byte 3 for each of the 16 watchdog questions
+0x003fb836,eeprom_transmit_words,word,32,SPI EEPROM transmit words: opcode / address / data or dummy words (were sensor_validation_period_array + aliases)
+0x003fb876,eeprom_command_bytes,byte,32,QSPI command bytes per word (0x9E/0xCE/0x8E/0x4E/0x0E - chip select PCS0 held between words) (was sensor_validation_phase_array)
+0x003fb896,eeprom_receive_words,word,32,SPI EEPROM receive words (status register / read data) (was sensor_validation_reference_array)
+0x000582da,mios_interrupt_handler_table,pointer,16,MIOS interrupt handlers indexed by MIOS1 flag bit (mpc555_miosInterruptDispatcher); default entry mpc555_infiniteLoopHalt (was tpuChannelHandler_ptr0)
+0x000583ae,tpu_b_channel_interrupt_handler_table,pointer,16,TPU-B channel interrupt handlers indexed by channel 0-15 (mpc555_tpuBInterruptDispatcher); default cm848_emptyStubFunction (was tpuBChannelHandler_ptr0)
+0x000583ee,tpu_a_channel_interrupt_handler_table,pointer,16,TPU-A channel interrupt handlers indexed by channel 0-15; default cm848_emptyStubFunction (was tpuAChannelHandler_ptr0)
+0x003feaa4,j1939_input_signal_timeouts,word,25,J1939 input message timeouts per slot - reloaded by the receive handlers (500 / 50 / 25 ticks) and counted down by cm848_tickJ1939InputSupervision; 0 = message lost (was governor_load_channel_fault_confirm_timers)
+0x003fd81e,j1939_input_source_address_filter_cal,byte,23,EEPROM-backed: source address each J1939 input signal is accepted from (0xFF = any source - every entry is 0xFF in this calibration)
+0x0040c050,switch_input_state_bits,byte,4,Debounced logical switch states: switch N = byte N/8 bit N%8 (cm848_scanAndDebounceSwitchInputs); 0 = ignition key switch (line 128 = mios_key_off_detection bit 15 - its falling edges count ignition_key_off_count); 7 / 8 = accelerator at idle / off idle; 11 = brake / 15 = clutch in the ECM's CCVS1 broadcast; 20 = park-neutral switch (line 13); 21 = the O/D OFF button (toggles overdrive_off_flag); 31 has no line - every unwired switch function compiles to it (CCVS1 cruise / idle / test fields - two-speed axle - PTO - derate override) and cm848_updateSwitch31FromAcceleratorPedal pulses it after three accelerator presses (feature bit off here) or holds it on an accelerator fault (was protection_enable_t_0040c050)
+0x0040c054,switch_input_hardware_present_bits,byte,4,Bit N set when logical switch N has a hardware input line (matches switch_input_hardware_line_cal != 0) (was protection_output_state_bits)
+0x0040c058,switch_input_source_priority,byte,32,Priority of the source that last wrote each datalink-sourced switch; the set / clear helpers write only when their priority is >= this (was fault_confirmation_snapshot_array)
+0x0040c078,switch_input_sample_bits,byte,4,Latest undebounced sample of the 32 logical switches (was engine_output_state_bits)
+0x0040c07c,switch_input_datalink_state_bits,byte,4,Switch states delivered by the J1939 input layer for datalink-sourced switches (was j1939_fault_bit_array)
+0x003fdbce,switch_input_datalink_source_bits_cal,byte,4,EEPROM-backed (EEPROM 0x74c): bit N set = logical switch N takes its state from the J1939 input layer instead of its hardware line; the ECM's CCVS1 / EEC2 broadcasts report such switches as not available; all 0 in this calibration (was qadc_control_word_h and protection_override_flags)
+0x003fdb8a,switch_input_polarity_bits_cal,byte,4,EEPROM-backed (EEPROM 0x708): bit N = 1 inverts logical switch N's hardware line (state = line XOR bit)
+0x0006456e,j1939_switch_input_default_state_bits,byte,4,ROM constant (all 0): state used for a datalink-sourced switch while its J1939 value is error or not available
+0x0005b57c,obd_dtc_code_table,word,170,OBD-II DTC code (BCD - e.g. 0x0524 = P0524 oil pressure too low) per fault slot; modes 2 / 3 / 7
+0x0005c7ca,obd_mode_9_message_counts,byte,2,OBD-II mode 9 message counts: [0] calibration ID / [1] CVN
+0x003fb3eb,pci_diagnostic_read_buffer,byte,4,PCI diagnostic memory read bytes
+0x003fe05b,active_dtc_slot_list,byte,31,Fault slots active now (count in active_dtc_count)
+0x003fe07b,previously_active_dtc_slot_list,byte,31,Fault slots active before and now cleared (count in previously_active_dtc_count)
+0x0040b404,pci_receive_message_7_payload,byte,2,PCI RX[7] header 0x63 payload
+0x0040b426,pci_transmit_message_1_payload,byte,7,PCI TX[1] RAM payload buffer
+0x0040b451,pci_transmit_message_0_payload,byte,5,PCI TX[0] header 0x10 payload
+0x0040b45f,pci_transmit_message_5_payload,byte,2,PCI TX[5] header 0x53 payload
+0x0040b466,pci_transmit_message_2_payload,byte,2,PCI TX[2] header 0x35 payload
+0x0040b478,pci_transmit_message_7_payload,byte,4,PCI TX[7] header 0x3F payload: the 4-byte immobilizer seed (big-endian)
+0x0040b49e,pci_transmit_message_11_payload,byte,5,PCI TX[11] header 0x5D payload
+0x0040b4a6,pci_receive_message_13_payload,byte,2,PCI RX[13] header 0x92 payload
+0x0040b4af,pci_transmit_message_14_payload,byte,4,PCI TX[14] header 0xC0 payload
+0x0040b4cd,pci_transmit_message_19_payload,byte,3,PCI TX[19] header 0xED payload bytes 1-3
+0x0040b4d9,pci_transmit_message_21_payload,byte,4,PCI TX[21] header F0 02 payload (VIN characters)
+0x0040b4e0,pci_transmit_message_22_payload,byte,4,PCI TX[22] header F0 06 payload (VIN characters)
+0x0040b4e7,pci_transmit_message_23_payload,byte,4,PCI TX[23] header F0 0A payload (VIN characters)
+0x0040b4ee,pci_transmit_message_24_payload,byte,4,PCI TX[24] header F0 0E payload (VIN characters)

@@ -235,4 +235,4 @@ Contains:
 2. `calculateFuelTimingBlend()` @ 0x0000fcd0
 3. `calculateFuelTimingTarget()` @ 0x0000fe5c
 4. `fuelTimingCompensation()` @ 0x0000e8f0
-5. `fuelTimingOilPressureModeController()` @ 0x0000ea00
+5. `cm848_runOperatingModeSpeedGovernor()` @ 0x0000ea00 (was `fuelTimingOilPressureModeController` — renamed 2026-11-13: it is the closed-loop engine speed governor for operating modes 7 / 2 / 30 / 37, not oil-pressure timing)

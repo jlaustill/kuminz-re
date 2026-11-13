@@ -260,7 +260,7 @@ The CBD calculations run in periodic task groups. Based on firmware analysis:
 | `processSensorMonitoringLogic` | 0x000191e8 | Monitoring state machine |
 | `updateSensorDiagnosticFlags` | 0x000191a0 | Update fault flags |
 | `calculateSensorDiagnosticValue` | 0x00018f8c | Diagnostic metric calculation |
-| `updateSensorDiagnostics` | 0x00006b24 | Update sensor state |
+| `mpc555_runPacedSerialService` | 0x00006b24 | Update sensor state |
 
 **Fuel Trim Application:**
 

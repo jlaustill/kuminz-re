@@ -10,13 +10,16 @@ decompilation — their garbage bytes decompile to noise, and callers already re
 ## Background — what these calls are
 
 At boot, `copyCalibrationToRam()` copies ROM `0x3C30–0x7F60` (~17 KB) into RAM
-`0x3F9800–0x3FDB30` and the MPC555 runs that code from RAM (faster than flash). So each of
-~50 functions exists twice: the original in ROM, and a live copy in RAM.
+`0x3F9800–0x3FDB30` and the boot ROM runs that code from RAM. **Correction 2026-11-11:** the image is the
+boot reflash kernel (it must run from RAM while flash is reprogrammed); only the low boot ROM
+(0x0–0x3C2F) ever branches into it and the running application reuses the RAM for its own data — see
+`firmware/CLAUDE.md` "ROM-to-RAM Code Execution". So each of ~50 functions exists twice: the original
+in ROM, and a copy in RAM that is live only during boot / reflash.
 
 When other code calls into the RAM copy (`bl 0x3Fxxxx`), Ghidra has no function at the RAM
 address (it only analyzed the ROM original), so the decompiler emits `func_0x003fae3c()`
-instead of the real name. The live RAM dump bytes there are CAN-overwritten garbage, so we
-must NOT disassemble them — we point at the ROM source instead.
+instead of the real name. The live RAM dump bytes there are the running application's variables (not code, and not
+"CAN garbage"), so we must NOT disassemble them — we point at the ROM source instead.
 
 ## The map (verified)
 
@@ -52,28 +55,28 @@ to the function there. Snapshot of the current set (RAM,ROM,ROM-function-name):
 0x003faafc,0x004f2c,cm848_writeCan2ControllerTxMailbox
 0x003fae3c,0x00526c,mpc555_dispatchCanMessageHandlers
 0x003fb528,0x005958,cm848_getServiceDataOffset
-0x003fb54c,0x00597c,validateServiceDataLength
-0x003fb6ac,0x005adc,mpc555_multiFrameCanTransmit
-0x003fc094,0x0064c4,cm848_processJ1939QueueStatus
-0x003fc0d8,0x006508,mpc555_initDiagnosticBuffers
+0x003fb54c,0x00597c,cm848_validateDiagnosticRequestLengthAndAuthorization
+0x003fb6ac,0x005adc,mpc555_sendJ1939TransportRequestToSend
+0x003fc094,0x0064c4,mpc555_serviceJ1939TransportSessions
+0x003fc0d8,0x006508,cm848_allocateDiagnosticResponseBuffer
 0x003fc380,0x0067b0,mpc555_serialReceiveHandler
 0x003fc484,0x0068b4,serialTransmitHandler
 0x003fc580,0x0069b0,mpc555_validateSerialChecksum
 0x003fc62c,0x006a5c,mpc555_initSerialTransmit
 0x003fc688,0x006ab8,mpc555_sensorFaultDetection
-0x003fc6f4,0x006b24,mpc555_updateSensorDiagnostics
+0x003fc6f4,0x006b24,mpc555_runPacedSerialService
 0x003fc77c,0x006bac,cm848_sensorInputProcessing
-0x003fc874,0x006ca4,cm848_processMainLoop
-0x003fc9ec,0x006e1c,cm848_sendEepromVersionResponse
-0x003fca7c,0x006eac,mpc555_handleEepromDiagnosticResponse
-0x003fcb24,0x006f54,mpc555_processEepromDataTransfer
+0x003fc874,0x006ca4,cm848_runBootKernelLoop
+0x003fc9ec,0x006e1c,cm848_sendSerialDownloadStatusResponse
+0x003fca7c,0x006eac,mpc555_sciHandleDownloadStart
+0x003fcb24,0x006f54,mpc555_sciHandleDownloadDataBlock
 0x003fd070,0x0074a0,cm848_processSensorFilterChain
 0x003fd1ac,0x0075dc,mpc555_processSensorWithOverride
-0x003fd1d8,0x007608,mpc555_watchdogTimerTick
-0x003fd284,0x0076b4,mpc555_watchdogTimerTick_midEntry
+0x003fd1d8,0x007608,mpc555_tickTransferTimeoutAndRuntimeCounter
+0x003fd284,0x0076b4,mpc555_loadRuntimeCounterFromEepromShadow
 0x003fd298,0x0076c8,cm848_sensorFaultThresholdCheck
-0x003fd544,0x007974,mpc555_systemWatchdogReset
-0x003fd994,0x007dc4,mpc555_systemHaltLoop
+0x003fd544,0x007974,cm848_serviceSupervisorWatchdog
+0x003fd994,0x007dc4,cm848_forceSupervisorWatchdogReset
 ```
 
 ## How to make it a build step (the deferred work)

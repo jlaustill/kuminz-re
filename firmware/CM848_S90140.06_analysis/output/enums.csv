@@ -211,7 +211,7 @@ PROTECTION_EVENT,0x48,EVENT_DIAG_CONDITION_ACTIVE,Diagnostic condition active - 
 
 # Fuel Timing Mode State Machine (_pressure_fuel_adjustment values)
 # Controls fuel timing and oil pressure-based adjustments in temperatureSensorProcessing @ 0x0000ea00
-# Cross-referenced from CM550 fuelTimingOilPressureModeController
+# Cross-referenced from CM550 fuelTimingOilPressureModeController (the CM848 function at 0x0000ea00 is now cm848_runOperatingModeSpeedGovernor)
 FUEL_TIMING_MODE,0x01,MODE_IDLE,Idle/inactive mode,1
 FUEL_TIMING_MODE,0x02,MODE_PROTECTION_ACTIVE,Protection system active,1
 FUEL_TIMING_MODE,0x0b,MODE_FUEL_RATE_1,Fuel rate calculation mode 1,1

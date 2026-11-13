@@ -127,15 +127,14 @@ Cummins revised connector assignments between the 2003–2007 5.9L applications.
 
 ## Analysis Notes
 
-### Oil Temperature Sensor (firmware-confirmed, hardware unverified)
+### Oil Temperature Sensor — CORRECTED 2026-11-13 (PR #46): the old evidence was misnamed; presence is open
 
-From firmware reverse engineering of CM848 S90140.06:
-- **Firmware has explicit sensor-present vs. fallback logic** in `oilTemp_sensorSource_select()`
-- MPC555 QADC64A **CCW slot 9 = AN1** is read by `cm848_sensorChannel10_oilTempInit/Process`
-- NTC thermistor curve: −40°C (ADC≈945) to +130°C (ADC≈15), valid range ADC 12–1002
-- Fallback when no sensor: uses coolant-derived proxy (`protection_oilTemp_proxy`)
-- **Best candidate: C2-3 (K615)** — passive NTC thermistor signal, uses C2-24 (K900) as sensor ground
-- Cummins ISBe heavy-duty variants likely have this pin populated with a real oil temp sensor
+The firmware evidence this section was built on came from misnamed symbols:
+- `oilTemp_sensorSource_select()` is `cm848_captureIntakeAirHeaterStartTemperature` — the intake air (grid) heater's start-temperature capture, not a sensor-present / fallback selector.
+- `cm848_sensorChannel10_oilTempInit/Process` read **intake manifold temperature** (`intake_manifold_temperature_sensor_filtered`, sensor slot 9 = IC1 SPN 105) and are now `cm848_sensorChannel10_intakeManifoldTemperatureInit/Process`. So the MPC555 QADC64A **CCW slot 9 = AN1** input and the NTC curve (−40 °C at ADC≈945 to +130 °C at ADC≈15, valid ADC 12–1002) belong to the intake manifold temperature sensor.
+- `protection_oilTemp_proxy` is sensor slot 69 = the **battery temperature** sensor (`battery_temperature_sensor_filtered`; P0514 / P0516 / P0517; it sets the charging voltage target and is PCI 0xC0 byte 4).
+- Whether an oil temperature sensor is read is **still open, leaning absent**: slot 11 reads exactly 0 in the cold RAM dump while every other temperature slot reads a plausible 32–72 °F there, so it is probably never processed. Sensor slot 11 (`oil_temperature_sensor_filtered`, broadcast as ET1 SPN 175) is enabled (`sensor_channel_enable_flags` word 0 = 0xFFFF) and the DTC table has no P0195–P0198 — but the table also lacks P0182 / P0183 for the fuel temperature sensor that does work, and slots are filled through the generic indexed sensor-channel code, so a "no direct writer" scan proves nothing. Settle it live: read RAM 0x40BB06 (slot 11) with the engine warm.
+- The old pin guess **C2-3 (K615)** (passive NTC signal with C2-24 / K900 as sensor ground) has no firmware support left; it stays a hardware question.
 
 To add oil temp monitoring: connect a standard Cummins NTC thermistor (same part as IAT/ECT)
 between C2-3 (signal) and C2-24 (sensor ground). Verify MPC555 AN1 → C2-3 mapping against

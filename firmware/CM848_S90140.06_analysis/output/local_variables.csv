@@ -7,13 +7,13 @@ function_address,function_name,old_name,new_name,type,comment
 # cm848_lookupJ1939SourceAddressIndex @ 0x00053a4c - Returns 1-3 if SA matches a calibrated address, 4 if unknown
 0x00053a4c,cm848_lookupJ1939SourceAddressIndex,wVar1,address_index,word,Return value: 1=primary(auth) 2=secondary 3=tertiary(auth) 4=unknown
 # copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
-0x00000340,copyCalibrationToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)
-0x00000340,copyCalibrationToRam,puVar2,dest_ptr,undefined4 *,Destination pointer (RAM working copy)
+0x00000340,cm848_copyBootKernelToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)
+0x00000340,cm848_copyBootKernelToRam,puVar2,dest_ptr,undefined4 *,Destination pointer (RAM working copy)
 # cm848_j1939ProcessPgn61442Etc1 @ 0x00022d60 - Handle ETC1 (Electronic Transmission Controller 1) PGN 61442 messages
-0x00022d60,cm848_j1939ProcessPgn61442Etc1,bVar3,control_mode,byte,ETC1 byte1 bits1-2 SPN560 driveline engaged state (0=undef 1=disengaged 2=engaged 3=NA)
-0x00022d60,cm848_j1939ProcessPgn61442Etc1,bVar4,priority_bits,byte,ETC1 byte5 SPN607 progressive shift disable bits
-0x00022d60,cm848_j1939ProcessPgn61442Etc1,cVar1,source_address,char,J1939 source address of ETC1 sender (SPN 1482)
-0x00022d60,cm848_j1939ProcessPgn61442Etc1,sVar2,result,short,Function call return value
+0x00022d60,torqueControlModeHandler,bVar3,control_mode,byte,ETC1 byte1 bits1-2 SPN560 driveline engaged state (0=undef 1=disengaged 2=engaged 3=NA)
+0x00022d60,torqueControlModeHandler,bVar4,priority_bits,byte,ETC1 byte5 SPN607 progressive shift disable bits
+0x00022d60,torqueControlModeHandler,cVar1,source_address,char,J1939 source address of ETC1 sender (SPN 1482)
+0x00022d60,torqueControlModeHandler,sVar2,result,short,Function call return value
 # mpc555_generateSerialChallenge @ 0x000032dc - Generate serial handshake challenge and queue response
 # cm848_validateWriteAuth @ 0x00007370 - Validate scrambled auth token for calibration writes
 0x00007370,cm848_validateWriteAuth,param_1,scrambled_token,undefined4,Pointer to 10-byte scrambled auth data from tool
@@ -25,10 +25,10 @@ function_address,function_name,old_name,new_name,type,comment
 0x00007370,cm848_validateWriteAuth,uVar6,result,undefined4,Return value: 0=authorized 1=denied
 0x00007370,cm848_validateWriteAuth,pbVar4,timestamp_src,byte *,Source pointer for timestamp byte copy
 0x00007370,cm848_validateWriteAuth,pbVar5,timestamp_dest,byte *,Destination pointer for timestamp byte copy
-# mpc555_watchdogTimerTick @ 0x00007608 - Watchdog prescaler and runtime accumulator tick
-0x00007608,mpc555_watchdogTimerTick,bVar3,prescaler_count,byte,Current prescaler value (0-39)
-0x00007608,mpc555_watchdogTimerTick,dVar1,runtime_value,dword,Runtime snapshot before increment
-0x00007608,mpc555_watchdogTimerTick,wVar2,counter_value,word,Reused for timeout countdown and keyon counter
+# mpc555_tickTransferTimeoutAndRuntimeCounter @ 0x00007608 - Watchdog prescaler and runtime accumulator tick
+0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,bVar3,prescaler_count,byte,Current prescaler value (0-39)
+0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,dVar1,runtime_value,dword,Runtime snapshot before increment
+0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,wVar2,counter_value,word,Reused for timeout countdown and keyon counter
 # mpc555_keyOnStateMachine @ 0x00000184 - Key-on/key-off state machine with runtime EEPROM save
 0x00000184,mpc555_keyOnStateMachine,iVar2,keyon_phase,int,State machine phase: 0=waiting for key-on 1=running
 0x00000184,mpc555_keyOnStateMachine,wVar3,signal_value,word,Reused for MIOS key-off signal and keyon counter
@@ -72,7 +72,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00501b4c,sensorChannelTypeB_update,uVar4,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table / sensor_channel_type_table
 0x00501b4c,sensorChannelTypeB_update,uVar2,scratch16,ushort,Reused 16-bit scratch (default value / state field / debounce target depending on path)
 0x00501b4c,sensorChannelTypeB_update,wVar3,sensor_scratch,word,Raw sensor reading / EMA result reused across paths and written to *state_ptr
-0x0002f5a4,cm848_processFaultStatusMain,uVar1,engineLoadProtection,ENGINE_LOAD_PROTECTION_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
+0x0002f5a4,cm848_processLoadProtectionStatus,uVar1,engineLoadProtection,ENGINE_LOAD_PROTECTION_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
 0x00038ac8,cm848_checkPciMessageTimeouts,bVar2,all_transmits_overdue,byte,True until any timed TX entry is still within interval + grace; when it stays true link_event_code = 7
 0x00038ac8,cm848_checkPciMessageTimeouts,uVar4,message_index,uint,Entry index into pci_transmit_message_table then pci_receive_message_table (masked to 8 bits)
 0x00038ac8,cm848_checkPciMessageTimeouts,puVar3,transmit_timer,ushort *,Cached pci_transmit_message_table[message_index].timer
