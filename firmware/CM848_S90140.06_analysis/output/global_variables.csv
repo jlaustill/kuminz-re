@@ -558,11 +558,11 @@ address,name,type,comment
 0x00306076,MIOS_MDASM14_SCRD,byte,
 0x00306078,MIOS_MDASM15_AR,mios_mdasm15_t,
 0x0030607a,MIOS_MDASM15_BR,,
-0x00306080,MIOS_MPWMSM16_PERR,mios_mpwmsm16_t,MIOS1 submodule 16 (PWM): cm848_miosTimer16* drive it with the same helpers as MPWMSM0-3 (cm848_miosInitChannelPeriod / cm848_scalePwmByPercent / cm848_miosSetChannelValue) - was MIOS_MDASM0_AR
-0x00306088,MIOS_MPWMSM17_PERR,mios_mpwmsm17_t,MIOS1 submodule 17 (PWM): cm848_miosTimer17* - was MIOS_MDASM1_AR
-0x00306090,MIOS_MPWMSM18_PERR,mios_mpwmsm18_t,MIOS1 submodule 18 (PWM): cm848_miosTimer18* - was MIOS_MDASM2_AR
-0x00306098,MIOS_MPWMSM19_PERR,mios_mpwmsm19_t,MIOS1 submodule 19 (PWM): cm848_miosTimer19* - was MIOS_MDASM3_AR
-0x003060b0,mios_mmcsm22,mios_mmcsm_b_t,MIOS1 submodule 22 (modulus counter): ML (+2) is the shared PWM period - mpc555_miosSetPwmOutput writes it (-(value x 20) - 1) and mpc555_miosReadChannelStatus scales MDASM duty edges from it - was MIOS_MDASM6_AR / _BR / _SCRD
+0x00306080,MIOS_MPWMSM16_PERR,mios_mpwmsm16_t,MIOS1 submodule 16 (PWM): cm848_miosPwm16* drive it with the same helpers as MPWMSM0-3 (mpc555_miosEnablePwmSubmodule / mpc555_miosSetPwmSubmoduleDuty / mpc555_miosSetPwmSubmodulePeriodMicroseconds) - was MIOS_MDASM0_AR
+0x00306088,MIOS_MPWMSM17_PERR,mios_mpwmsm17_t,MIOS1 submodule 17 (PWM): cm848_miosPwm17* - was MIOS_MDASM1_AR
+0x00306090,MIOS_MPWMSM18_PERR,mios_mpwmsm18_t,MIOS1 submodule 18 (PWM): cm848_miosPwm18* - was MIOS_MDASM2_AR
+0x00306098,MIOS_MPWMSM19_PERR,mios_mpwmsm19_t,MIOS1 submodule 19 (PWM): cm848_miosPwm19* - was MIOS_MDASM3_AR
+0x003060b0,mios_mmcsm22,mios_mmcsm_b_t,MIOS1 submodule 22 (modulus counter): ML (+2) is the shared PWM period - mpc555_miosSetChannelPwmPeriod writes it (-(value x 20) - 1) and mpc555_miosSetChannelPwmDuty scales MDASM duty edges from it - was MIOS_MDASM6_AR / _BR / _SCRD
 0x003060d8,mios_mdasm27,mios_mdasm27_t,
 0x003060de,mios_dasm_ctrl,,
 0x003060e0,mios_mdasm28,mios_mdasm_t,MIOS1 submodule 28: cm848_miosChannel28* pass this base; SCRD (+6) bit 15 = the MDA28 pin = discrete input line 126 - was MIOS_MIOS1TPCR / MIOS_MPWMSM4_*
@@ -6884,14 +6884,14 @@ address,name,type,comment
 0x0040b6a8,cruise_pid_rate_integral_gain_working,word,cruise PID rate-to-integrator gain (zone table offset 6)
 0x00408e74,cruise_stable_speed_countdown_initial,word,ROM reload for cruise stable-speed countdown
 0x00408e78,cruise_rate_correction_holdoff_initial,word,ROM reload for cruise rate-correction holdoff
-0x004090aa,mios_timer16_set_value_ref,word,ROM MIOS MDASM0 set-value calibration
-0x004090ac,mios_timer16_scale_percent_ref,word,ROM MIOS MDASM0 scale-percent calibration
-0x004090ae,mios_timer17_set_value_ref,word,ROM MIOS MDASM1 set-value calibration
-0x004090b0,mios_timer17_scale_percent_ref,word,ROM MIOS MDASM1 scale-percent calibration
-0x004090b4,mios_timer18_scale_percent_ref,word,ROM MIOS MDASM2 scale-percent calibration
-0x004090b6,mios_timer19_scale_percent_ref,word,ROM MIOS MDASM3 scale-percent calibration
-0x004090b8,mios_timer18_set_value_ref,word,ROM MIOS MDASM2 set-value calibration
-0x004090ba,mios_timer19_set_value_ref,word,ROM MIOS MDASM3 set-value calibration
+0x004090aa,mios_pwm16_period_microseconds_ref,word,PWM submodule 16 period in microseconds (RAM dump 50 = 20 kHz) - passed to cm848_miosPwm16SetPeriodMicroseconds by cm848_tpuMiosOutput_loadCalibration / cm848_tpu_interrupt_flag_init; no direct store found (displacement scan) - was mios_timer16_set_value_ref
+0x004090ac,mios_pwm16_duty_ref,word,PWM submodule 16 duty (1/256 % per count; RAM dump 8003 = 31 %) - passed to cm848_miosPwm16SetDuty by cm848_tpuMiosOutput_loadCalibration / cm848_tpu_interrupt_flag_init; no direct store found (displacement scan) - was mios_timer16_scale_percent_ref
+0x004090ae,mios_pwm17_period_microseconds_ref,word,PWM submodule 17 period in microseconds (RAM dump 50 = 20 kHz) - passed to cm848_miosPwm17SetPeriodMicroseconds by cm848_tpuMiosOutput_loadCalibration / cm848_tpu_interrupt_flag_init; no direct store found (displacement scan) - was mios_timer17_set_value_ref
+0x004090b0,mios_pwm17_duty_ref,word,PWM submodule 17 duty (1/256 % per count; RAM dump 19923 = 78 %) - passed to cm848_miosPwm17SetDuty by cm848_tpuMiosOutput_loadCalibration / cm848_tpu_interrupt_flag_init; no direct store found (displacement scan) - was mios_timer17_scale_percent_ref
+0x004090b4,mios_pwm18_duty_ref,word,PWM submodule 18 duty (1/256 % per count; RAM dump 6284 = 25 %) - passed to cm848_miosPwm18SetDuty by cm848_tpuMiosOutput_loadCalibration / cm848_tpu_interrupt_flag_init; no direct store found (displacement scan) - was mios_timer18_scale_percent_ref
+0x004090b6,mios_pwm19_duty_ref,word,PWM submodule 19 duty (1/256 % per count; RAM dump 8611 = 34 %) - passed to cm848_miosPwm19SetDuty by cm848_tpuMiosOutput_loadCalibration / cm848_tpu_interrupt_flag_init; no direct store found (displacement scan) - was mios_timer19_scale_percent_ref
+0x004090b8,mios_pwm18_period_microseconds_ref,word,PWM submodule 18 period in microseconds (RAM dump 50 = 20 kHz) - passed to cm848_miosPwm18SetPeriodMicroseconds by cm848_tpuMiosOutput_loadCalibration / cm848_tpu_interrupt_flag_init; no direct store found (displacement scan) - was mios_timer18_set_value_ref
+0x004090ba,mios_pwm19_period_microseconds_ref,word,PWM submodule 19 period in microseconds (RAM dump 50 = 20 kHz) - passed to cm848_miosPwm19SetPeriodMicroseconds by cm848_tpuMiosOutput_loadCalibration / cm848_tpu_interrupt_flag_init; no direct store found (displacement scan) - was mios_timer19_set_value_ref
 0x004090c4,injection_cylinder_fault_index_offset,word,ROM fallback cylinder-index offset on injection fault
 0x004090e9,injection_timing_speed_breakpoint,word,ROM speed breakpoint selecting injection timing period
 0x004090f1,injection_timing_sequence_speed_threshold,word,ROM speed threshold for injection sequence advance

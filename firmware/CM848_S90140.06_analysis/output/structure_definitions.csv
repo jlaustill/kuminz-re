@@ -970,7 +970,7 @@ tpub_module_regs_t,0x00304400,R02A,word,2,Unknown register at +0x2A (written 0x1
 # Reference: MPC555 UM/D MIOS14 chapter; confirmed by firmware access patterns
 # =============================================================================
 # MIOS PWM Submodule (MPWMSM) - 4 x u16 = 8 bytes
-# Functions: cm848_miosInitChannelPeriod, cm848_scalePwmByPercent, cm848_miosSetChannelValue
+# Functions: mpc555_miosEnablePwmSubmodule, mpc555_miosSetPwmSubmoduleDuty, mpc555_miosSetPwmSubmodulePeriodMicroseconds
 # Usage: param_1 = &MIOS_MPWSMx_PERR; param_1+6 = SCR (enable/config)
 mios_mpwmsm_t,0x00306000,PERR,word,2,Period Register (sets PWM frequency),,verified
 mios_mpwmsm_t,0x00306000,PULR,word,2,Pulse Width Register (sets duty cycle),,verified
@@ -978,7 +978,7 @@ mios_mpwmsm_t,0x00306000,CNTR,word,2,Counter Register (current count value),,ver
 mios_mpwmsm_t,0x00306000,SCR,word,2,Status/Control Register (0x9=enable 0x4ff=period-mode),,verified
 # =============================================================================
 # MIOS Double Action Submodule (MDASM) - 4 x u16 = 8 bytes
-# Functions: cm848_miosChannelEnable, mpc555_miosReadChannelStatus, mpc555_miosSetPwmOutput
+# Functions: mpc555_miosEnableChannelPwm, mpc555_miosSetChannelPwmDuty, mpc555_miosSetChannelPwmPeriod
 # Usage: param_1 = &MIOS_MDASMx_AR; *(param_1+6) = SCRD write (0x9=enable)
 mios_mdasm_t,0x00306058,AR,word,2,A Register (capture/compare value A),,verified
 mios_mdasm_t,0x00306058,BR,word,2,B Register (capture/compare value B),,verified
@@ -1098,7 +1098,7 @@ tpub_ch14_params_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verifie
 # =============================================================================
 # MIOS additional channel submodule instances - MIOS1 submodule n sits at 0x306000 + 8 x n (PR #48)
 # MPWMSM = PWM Submodule (PERR/PULR/CNTR/SCR) - MPWMSM1-3 at +0x08/+0x10/+0x18 and MPWMSM16-19 at +0x80/+0x88/+0x90/+0x98
-#          (16-19 were mislabeled MDASM0-3: cm848_miosTimer16-19* drive them with the same PWM helpers as MPWMSM0-3)
+#          (16-19 were mislabeled MDASM0-3: cm848_miosPwm16-19* drive them with the same PWM helpers as MPWMSM0-3)
 # MMCSM  = Modulus Counter Submodule (CNT/ML/_pad/SCRD) - MMCSM6 at +0x30 and MMCSM22 at +0xB0 (marker row)
 # MDASM  = Double Action Submodule (AR/BR/XR/SCRD) - MDASM12 / MDASM15 here; MDASM11 and 28-31 use mios_mdasm_t
 # Per-channel types predate the marker-row pattern; they are kept (renamed in place) so decompiler casts stay stable

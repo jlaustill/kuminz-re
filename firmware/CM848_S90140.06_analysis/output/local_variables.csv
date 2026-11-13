@@ -102,3 +102,12 @@ function_address,function_name,old_name,new_name,type,comment
 # cm848_waitForStableIgnitionKeyOn @ 0x000024a0 - waits for 5 consecutive key-on samples of the MDA30 pin
 0x000024a0,cm848_waitForStableIgnitionKeyOn,uVar2,key_on_sample_count,undefined4,Consecutive samples that read the key line as on (byte counter: clrlwi r7 r12 24) - any key-off sample resets it to 0; undefined4 keeps the inferred uint
 0x000024a0,cm848_waitForStableIgnitionKeyOn,pwVar1,key_line_status_register,word *,Register-held address of mios_mdasm30.SCRD (0x3060f6) - bit 15 is the MDA30 pin = the ignition key line
+# MIOS output drivers (todo 033, PR #48)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,wVar1,modulus_start_value,word,MMCSM22 modulus latch read for the edge offset (ML & 0x7fff)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,wVar2,modulus_period_value,word,MMCSM22 modulus latch read for the period length (0xffff - ML)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,local_8,compare_register_pair,undefined4,AR (high half) : BR (low half) written as one word
+0x00054f48,mpc555_miosSetChannelPwmPeriod,wVar1,modulus_latch_value,word,Value written to the MMCSM22 modulus latch
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,uVar1,pulse_width,ushort,Value written to PULR
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar1,period_register_value,word,Value written to PERR
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar2,period_divisor,uint,16 with prescaler byte 0xff / 2048 with 0x80
+0x00054e10,mpc555_miosCheckChannelFeedback,wVar1,feedback_result,word,0 agree / 1 reads high or toggling / 2 reads low or toggling

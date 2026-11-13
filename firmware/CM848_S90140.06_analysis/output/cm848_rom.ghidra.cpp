@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 13 14:59:24 MST 2026
+// Generated: Fri Nov 13 16:47:59 MST 2026
 
 
 //
@@ -1768,10 +1768,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
-  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -45418,702 +45418,864 @@ void cm848_initSensorRetryCounters(void)
 
 
 //
-// Function: cm848_miosChannel11Enable @ 0x0004ce9c
+// Function: cm848_miosChannel11EnablePwm @ 0x0004ce9c
 //
 
-void cm848_miosChannel11Enable(void)
+/* Output channel driver table (flash2) record 0x53ae56 slot +0 (enable) for MDASM11 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel11Enable) */
+
+void cm848_miosChannel11EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&MIOS_MDASM11_AR);
+  mpc555_miosEnableChannelPwm(&MIOS_MDASM11_AR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel11ReadStatus @ 0x0004cec4
+// Function: cm848_miosChannel11SetPwmDuty @ 0x0004cec4
 //
 
-void cm848_miosChannel11ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae56 slot +12 (set duty) for MDASM11 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel11ReadStatus) */
+
+void cm848_miosChannel11SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&MIOS_MDASM11_AR,param_1);
+  mpc555_miosSetChannelPwmDuty(&MIOS_MDASM11_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel11SetPwm @ 0x0004cef0
+// Function: cm848_miosChannel11SetPwmPeriod @ 0x0004cef0
 //
 
-void cm848_miosChannel11SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae56 slot +8 (set period) for MDASM11 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel11SetPwm) */
+
+void cm848_miosChannel11SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&MIOS_MDASM11_AR,param_1);
+  mpc555_miosSetChannelPwmPeriod(&MIOS_MDASM11_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel12Enable @ 0x0004cf1c
+// Function: cm848_miosChannel12EnablePwm @ 0x0004cf1c
 //
 
-void cm848_miosChannel12Enable(void)
+/* Output channel driver table (flash2) record 0x53ae66 slot +0 (enable) for MDASM12 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel12Enable) */
+
+void cm848_miosChannel12EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&MIOS_MDASM12_AR);
+  mpc555_miosEnableChannelPwm(&MIOS_MDASM12_AR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel12ReadStatus @ 0x0004cf44
+// Function: cm848_miosChannel12SetPwmDuty @ 0x0004cf44
 //
 
-void cm848_miosChannel12ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae66 slot +12 (set duty) for MDASM12 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel12ReadStatus) */
+
+void cm848_miosChannel12SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&MIOS_MDASM12_AR,param_1);
+  mpc555_miosSetChannelPwmDuty(&MIOS_MDASM12_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel12SetPwm @ 0x0004cf70
+// Function: cm848_miosChannel12SetPwmPeriod @ 0x0004cf70
 //
 
-void cm848_miosChannel12SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae66 slot +8 (set period) for MDASM12 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel12SetPwm) */
+
+void cm848_miosChannel12SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&MIOS_MDASM12_AR,param_1);
+  mpc555_miosSetChannelPwmPeriod(&MIOS_MDASM12_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel13Enable @ 0x0004cf9c
+// Function: cm848_miosChannel13EnablePwm @ 0x0004cf9c
 //
 
-void cm848_miosChannel13Enable(void)
+/* Output channel driver table (flash2) record 0x53ae76 slot +0 (enable) for MDASM13 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel13Enable) */
+
+void cm848_miosChannel13EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&MIOS_MDASM13_AR);
+  mpc555_miosEnableChannelPwm(&MIOS_MDASM13_AR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel13ReadStatus @ 0x0004cfc4
+// Function: cm848_miosChannel13SetPwmDuty @ 0x0004cfc4
 //
 
-void cm848_miosChannel13ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae76 slot +12 (set duty) for MDASM13 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel13ReadStatus) */
+
+void cm848_miosChannel13SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&MIOS_MDASM13_AR,param_1);
+  mpc555_miosSetChannelPwmDuty(&MIOS_MDASM13_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel13SetPwm @ 0x0004cff0
+// Function: cm848_miosChannel13SetPwmPeriod @ 0x0004cff0
 //
 
-void cm848_miosChannel13SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae76 slot +8 (set period) for MDASM13 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel13SetPwm) */
+
+void cm848_miosChannel13SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&MIOS_MDASM13_AR,param_1);
+  mpc555_miosSetChannelPwmPeriod(&MIOS_MDASM13_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel14Enable @ 0x0004d01c
+// Function: cm848_miosChannel14EnablePwm @ 0x0004d01c
 //
 
-void cm848_miosChannel14Enable(void)
+/* Output channel driver table (flash2) record 0x53ae86 slot +0 (enable) for MDASM14 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel14Enable) */
+
+void cm848_miosChannel14EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&MIOS_MDASM14_AR);
+  mpc555_miosEnableChannelPwm(&MIOS_MDASM14_AR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel14ReadStatus @ 0x0004d044
+// Function: cm848_miosChannel14SetPwmDuty @ 0x0004d044
 //
 
-void cm848_miosChannel14ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae86 slot +12 (set duty) for MDASM14 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel14ReadStatus) */
+
+void cm848_miosChannel14SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&MIOS_MDASM14_AR,param_1);
+  mpc555_miosSetChannelPwmDuty(&MIOS_MDASM14_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel14SetPwm @ 0x0004d070
+// Function: cm848_miosChannel14SetPwmPeriod @ 0x0004d070
 //
 
-void cm848_miosChannel14SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae86 slot +8 (set period) for MDASM14 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel14SetPwm) */
+
+void cm848_miosChannel14SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&MIOS_MDASM14_AR,param_1);
+  mpc555_miosSetChannelPwmPeriod(&MIOS_MDASM14_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel15Enable @ 0x0004d09c
+// Function: cm848_miosChannel15EnablePwm @ 0x0004d09c
 //
 
-void cm848_miosChannel15Enable(void)
+/* Output channel driver table (flash2) record 0x53ae96 slot +0 (enable) for MDASM15 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel15Enable) */
+
+void cm848_miosChannel15EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&MIOS_MDASM15_AR);
+  mpc555_miosEnableChannelPwm(&MIOS_MDASM15_AR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel15ReadStatus @ 0x0004d0c4
+// Function: cm848_miosChannel15SetPwmDuty @ 0x0004d0c4
 //
 
-void cm848_miosChannel15ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae96 slot +12 (set duty) for MDASM15 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel15ReadStatus) */
+
+void cm848_miosChannel15SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&MIOS_MDASM15_AR,param_1);
+  mpc555_miosSetChannelPwmDuty(&MIOS_MDASM15_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel15SetPwm @ 0x0004d0f0
+// Function: cm848_miosChannel15SetPwmPeriod @ 0x0004d0f0
 //
 
-void cm848_miosChannel15SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53ae96 slot +8 (set period) for MDASM15 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel15SetPwm) */
+
+void cm848_miosChannel15SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&MIOS_MDASM15_AR,param_1);
+  mpc555_miosSetChannelPwmPeriod(&MIOS_MDASM15_AR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel27Enable @ 0x0004d11c
+// Function: cm848_miosChannel27EnablePwm @ 0x0004d11c
 //
 
-void cm848_miosChannel27Enable(void)
+/* Output channel driver table (flash2) record 0x53aea6 slot +0 (enable) for MDASM27 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel27Enable) */
+
+void cm848_miosChannel27EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&mios_mdasm27);
+  mpc555_miosEnableChannelPwm(&mios_mdasm27);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel27ReadStatus @ 0x0004d144
+// Function: cm848_miosChannel27SetPwmDuty @ 0x0004d144
 //
 
-void cm848_miosChannel27ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aea6 slot +12 (set duty) for MDASM27 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel27ReadStatus) */
+
+void cm848_miosChannel27SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&mios_mdasm27,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm27,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel27SetPwm @ 0x0004d170
+// Function: cm848_miosChannel27SetPwmPeriod @ 0x0004d170
 //
 
-void cm848_miosChannel27SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aea6 slot +8 (set period) for MDASM27 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel27SetPwm) */
+
+void cm848_miosChannel27SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&mios_mdasm27,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm27,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel28Enable @ 0x0004d19c
+// Function: cm848_miosChannel28EnablePwm @ 0x0004d19c
 //
 
-void cm848_miosChannel28Enable(void)
+/* Output channel driver table (flash2) record 0x53aeb6 slot +0 (enable) for MDASM28 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel28Enable) */
+
+void cm848_miosChannel28EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&mios_mdasm28);
+  mpc555_miosEnableChannelPwm(&mios_mdasm28);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel28ReadStatus @ 0x0004d1c4
+// Function: cm848_miosChannel28SetPwmDuty @ 0x0004d1c4
 //
 
-void cm848_miosChannel28ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aeb6 slot +12 (set duty) for MDASM28 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel28ReadStatus) */
+
+void cm848_miosChannel28SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&mios_mdasm28,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm28,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel28SetPwm @ 0x0004d1f0
+// Function: cm848_miosChannel28SetPwmPeriod @ 0x0004d1f0
 //
 
-void cm848_miosChannel28SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aeb6 slot +8 (set period) for MDASM28 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel28SetPwm) */
+
+void cm848_miosChannel28SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&mios_mdasm28,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm28,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel29Enable @ 0x0004d21c
+// Function: cm848_miosChannel29EnablePwm @ 0x0004d21c
 //
 
-void cm848_miosChannel29Enable(void)
+/* Output channel driver table (flash2) record 0x53aec6 slot +0 (enable) for MDASM29 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel29Enable) */
+
+void cm848_miosChannel29EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&mios_mdasm29);
+  mpc555_miosEnableChannelPwm(&mios_mdasm29);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel29ReadStatus @ 0x0004d244
+// Function: cm848_miosChannel29SetPwmDuty @ 0x0004d244
 //
 
-void cm848_miosChannel29ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aec6 slot +12 (set duty) for MDASM29 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel29ReadStatus) */
+
+void cm848_miosChannel29SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&mios_mdasm29,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm29,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel29SetPwm @ 0x0004d270
+// Function: cm848_miosChannel29SetPwmPeriod @ 0x0004d270
 //
 
-void cm848_miosChannel29SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aec6 slot +8 (set period) for MDASM29 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel29SetPwm) */
+
+void cm848_miosChannel29SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&mios_mdasm29,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm29,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel30Enable @ 0x0004d29c
+// Function: cm848_miosChannel30EnablePwm @ 0x0004d29c
 //
 
-void cm848_miosChannel30Enable(void)
+/* Output channel driver table (flash2) record 0x53aed6 slot +0 (enable) for MDASM30 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel30Enable) */
+
+void cm848_miosChannel30EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&mios_mdasm30);
+  mpc555_miosEnableChannelPwm(&mios_mdasm30);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel30ReadStatus @ 0x0004d2c4
+// Function: cm848_miosChannel30SetPwmDuty @ 0x0004d2c4
 //
 
-void cm848_miosChannel30ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aed6 slot +12 (set duty) for MDASM30 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel30ReadStatus) */
+
+void cm848_miosChannel30SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&mios_mdasm30,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm30,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel30SetPwm @ 0x0004d2f0
+// Function: cm848_miosChannel30SetPwmPeriod @ 0x0004d2f0
 //
 
-void cm848_miosChannel30SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aed6 slot +8 (set period) for MDASM30 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel30SetPwm) */
+
+void cm848_miosChannel30SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&mios_mdasm30,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm30,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel31Enable @ 0x0004d31c
+// Function: cm848_miosChannel31EnablePwm @ 0x0004d31c
 //
 
-void cm848_miosChannel31Enable(void)
+/* Output channel driver table (flash2) record 0x53aee6 slot +0 (enable) for MDASM31 - forwards to
+   mpc555_miosEnableChannelPwm (was cm848_miosChannel31Enable) */
+
+void cm848_miosChannel31EnablePwm(void)
 
 {
-  cm848_miosChannelEnable(&mios_mdasm31);
+  mpc555_miosEnableChannelPwm(&mios_mdasm31);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel31ReadStatus @ 0x0004d344
+// Function: cm848_miosChannel31SetPwmDuty @ 0x0004d344
 //
 
-void cm848_miosChannel31ReadStatus(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aee6 slot +12 (set duty) for MDASM31 - forwards
+   to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel31ReadStatus) */
+
+void cm848_miosChannel31SetPwmDuty(word param_1)
 
 {
-  mpc555_miosReadChannelStatus(&mios_mdasm31,param_1);
+  mpc555_miosSetChannelPwmDuty(&mios_mdasm31,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannel31SetPwm @ 0x0004d370
+// Function: cm848_miosChannel31SetPwmPeriod @ 0x0004d370
 //
 
-void cm848_miosChannel31SetPwm(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aee6 slot +8 (set period) for MDASM31 - forwards
+   to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel31SetPwm) */
+
+void cm848_miosChannel31SetPwmPeriod(undefined4 param_1)
 
 {
-  mpc555_miosSetPwmOutput(&mios_mdasm31,param_1);
+  mpc555_miosSetChannelPwmPeriod(&mios_mdasm31,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer0InitPeriod @ 0x0004d39c
+// Function: cm848_miosPwm0Enable @ 0x0004d39c
 //
 
-void cm848_miosTimer0InitPeriod(void)
+/* Output channel driver table (flash2) record 0x53aef6 slot +0 (enable) for PWM submodule 0 -
+   forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer0InitPeriod) */
+
+void cm848_miosPwm0Enable(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MPWMSM0_PERR);
+  mpc555_miosEnablePwmSubmodule(&MIOS_MPWMSM0_PERR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer0ScaleByPercent @ 0x0004d3c4
+// Function: cm848_miosPwm0SetDuty @ 0x0004d3c4
 //
 
-void cm848_miosTimer0ScaleByPercent(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aef6 slot +12 (set duty) for PWM submodule 0 -
+   forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer0ScaleByPercent) */
+
+void cm848_miosPwm0SetDuty(word param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MPWMSM0_PERR,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&MIOS_MPWMSM0_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer0SetValue @ 0x0004d3f0
+// Function: cm848_miosPwm0SetPeriodMicroseconds @ 0x0004d3f0
 //
 
-void cm848_miosTimer0SetValue(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53aef6 slot +8 (set period) for PWM submodule 0 -
+   forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer0SetValue) */
+
+void cm848_miosPwm0SetPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MPWMSM0_PERR,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&MIOS_MPWMSM0_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer1InitPeriod @ 0x0004d41c
+// Function: cm848_miosPwm1Enable @ 0x0004d41c
 //
 
-void cm848_miosTimer1InitPeriod(void)
+/* Output channel driver table (flash2) record 0x53af06 slot +0 (enable) for PWM submodule 1 -
+   forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer1InitPeriod) */
+
+void cm848_miosPwm1Enable(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MPWMSM1_PERR);
+  mpc555_miosEnablePwmSubmodule(&MIOS_MPWMSM1_PERR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer1ScaleByPercent @ 0x0004d444
+// Function: cm848_miosPwm1SetDuty @ 0x0004d444
 //
 
-void cm848_miosTimer1ScaleByPercent(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af06 slot +12 (set duty) for PWM submodule 1 -
+   forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer1ScaleByPercent) */
+
+void cm848_miosPwm1SetDuty(word param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MPWMSM1_PERR,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&MIOS_MPWMSM1_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer1SetValue @ 0x0004d470
+// Function: cm848_miosPwm1SetPeriodMicroseconds @ 0x0004d470
 //
 
-void cm848_miosTimer1SetValue(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af06 slot +8 (set period) for PWM submodule 1 -
+   forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer1SetValue) */
+
+void cm848_miosPwm1SetPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MPWMSM1_PERR,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&MIOS_MPWMSM1_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer2InitPeriod @ 0x0004d49c
+// Function: cm848_miosPwm2Enable @ 0x0004d49c
 //
 
-void cm848_miosTimer2InitPeriod(void)
+/* Output channel driver table (flash2) record 0x53af16 slot +0 (enable) for PWM submodule 2 -
+   forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer2InitPeriod) */
+
+void cm848_miosPwm2Enable(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MPWMSM2_PERR);
+  mpc555_miosEnablePwmSubmodule(&MIOS_MPWMSM2_PERR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer2ScaleByPercent @ 0x0004d4c4
+// Function: cm848_miosPwm2SetDuty @ 0x0004d4c4
 //
 
-void cm848_miosTimer2ScaleByPercent(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af16 slot +12 (set duty) for PWM submodule 2 -
+   forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer2ScaleByPercent) */
+
+void cm848_miosPwm2SetDuty(word param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MPWMSM2_PERR,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&MIOS_MPWMSM2_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer2SetValue @ 0x0004d4f0
+// Function: cm848_miosPwm2SetPeriodMicroseconds @ 0x0004d4f0
 //
 
-void cm848_miosTimer2SetValue(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af16 slot +8 (set period) for PWM submodule 2 -
+   forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer2SetValue) */
+
+void cm848_miosPwm2SetPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MPWMSM2_PERR,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&MIOS_MPWMSM2_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer3InitPeriod @ 0x0004d51c
+// Function: cm848_miosPwm3Enable @ 0x0004d51c
 //
 
-void cm848_miosTimer3InitPeriod(void)
+/* Output channel driver table (flash2) record 0x53af26 slot +0 (enable) for PWM submodule 3 -
+   forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer3InitPeriod) */
+
+void cm848_miosPwm3Enable(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MPWMSM3_PERR);
+  mpc555_miosEnablePwmSubmodule(&MIOS_MPWMSM3_PERR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer3ScaleByPercent @ 0x0004d544
+// Function: cm848_miosPwm3SetDuty @ 0x0004d544
 //
 
-void cm848_miosTimer3ScaleByPercent(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af26 slot +12 (set duty) for PWM submodule 3 -
+   forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer3ScaleByPercent) */
+
+void cm848_miosPwm3SetDuty(word param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MPWMSM3_PERR,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&MIOS_MPWMSM3_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer3SetValue @ 0x0004d570
+// Function: cm848_miosPwm3SetPeriodMicroseconds @ 0x0004d570
 //
 
-void cm848_miosTimer3SetValue(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af26 slot +8 (set period) for PWM submodule 3 -
+   forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer3SetValue) */
+
+void cm848_miosPwm3SetPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MPWMSM3_PERR,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&MIOS_MPWMSM3_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer16InitPeriod @ 0x0004d59c
+// Function: cm848_miosPwm16Enable @ 0x0004d59c
 //
 
-void cm848_miosTimer16InitPeriod(void)
+/* Output channel driver table (flash2) record 0x53af36 slot +0 (enable) for PWM submodule 16 -
+   forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer16InitPeriod) */
+
+void cm848_miosPwm16Enable(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MPWMSM16_PERR);
+  mpc555_miosEnablePwmSubmodule(&MIOS_MPWMSM16_PERR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer16ScaleByPercent @ 0x0004d5c4
+// Function: cm848_miosPwm16SetDuty @ 0x0004d5c4
 //
 
-void cm848_miosTimer16ScaleByPercent(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af36 slot +12 (set duty) for PWM submodule 16 -
+   forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer16ScaleByPercent) */
+
+void cm848_miosPwm16SetDuty(word param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MPWMSM16_PERR,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&MIOS_MPWMSM16_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer16SetValue @ 0x0004d5f0
+// Function: cm848_miosPwm16SetPeriodMicroseconds @ 0x0004d5f0
 //
 
-void cm848_miosTimer16SetValue(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af36 slot +8 (set period) for PWM submodule 16 -
+   forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer16SetValue) */
+
+void cm848_miosPwm16SetPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MPWMSM16_PERR,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&MIOS_MPWMSM16_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer17InitPeriod @ 0x0004d61c
+// Function: cm848_miosPwm17Enable @ 0x0004d61c
 //
 
-void cm848_miosTimer17InitPeriod(void)
+/* Output channel driver table (flash2) record 0x53af46 slot +0 (enable) for PWM submodule 17 -
+   forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer17InitPeriod) */
+
+void cm848_miosPwm17Enable(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MPWMSM17_PERR);
+  mpc555_miosEnablePwmSubmodule(&MIOS_MPWMSM17_PERR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer17ScaleByPercent @ 0x0004d644
+// Function: cm848_miosPwm17SetDuty @ 0x0004d644
 //
 
-void cm848_miosTimer17ScaleByPercent(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af46 slot +12 (set duty) for PWM submodule 17 -
+   forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer17ScaleByPercent) */
+
+void cm848_miosPwm17SetDuty(word param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MPWMSM17_PERR,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&MIOS_MPWMSM17_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer17SetValue @ 0x0004d670
+// Function: cm848_miosPwm17SetPeriodMicroseconds @ 0x0004d670
 //
 
-void cm848_miosTimer17SetValue(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af46 slot +8 (set period) for PWM submodule 17 -
+   forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer17SetValue) */
+
+void cm848_miosPwm17SetPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MPWMSM17_PERR,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&MIOS_MPWMSM17_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer18InitPeriod @ 0x0004d69c
+// Function: cm848_miosPwm18Enable @ 0x0004d69c
 //
 
-void cm848_miosTimer18InitPeriod(void)
+/* Output channel driver table (flash2) record 0x53af56 slot +0 (enable) for PWM submodule 18 -
+   forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer18InitPeriod) */
+
+void cm848_miosPwm18Enable(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MPWMSM18_PERR);
+  mpc555_miosEnablePwmSubmodule(&MIOS_MPWMSM18_PERR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer18ScaleByPercent @ 0x0004d6c4
+// Function: cm848_miosPwm18SetDuty @ 0x0004d6c4
 //
 
-void cm848_miosTimer18ScaleByPercent(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af56 slot +12 (set duty) for PWM submodule 18 -
+   forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer18ScaleByPercent) */
+
+void cm848_miosPwm18SetDuty(word param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MPWMSM18_PERR,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&MIOS_MPWMSM18_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer18SetValue @ 0x0004d6f0
+// Function: cm848_miosPwm18SetPeriodMicroseconds @ 0x0004d6f0
 //
 
-void cm848_miosTimer18SetValue(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af56 slot +8 (set period) for PWM submodule 18 -
+   forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer18SetValue) */
+
+void cm848_miosPwm18SetPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MPWMSM18_PERR,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&MIOS_MPWMSM18_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer19InitPeriod @ 0x0004d71c
+// Function: cm848_miosPwm19Enable @ 0x0004d71c
 //
 
-void cm848_miosTimer19InitPeriod(void)
+/* Output channel driver table (flash2) record 0x53af66 slot +0 (enable) for PWM submodule 19 -
+   forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer19InitPeriod) */
+
+void cm848_miosPwm19Enable(void)
 
 {
-  cm848_miosInitChannelPeriod(&MIOS_MPWMSM19_PERR);
+  mpc555_miosEnablePwmSubmodule(&MIOS_MPWMSM19_PERR);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer19ScaleByPercent @ 0x0004d744
+// Function: cm848_miosPwm19SetDuty @ 0x0004d744
 //
 
-void cm848_miosTimer19ScaleByPercent(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af66 slot +12 (set duty) for PWM submodule 19 -
+   forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer19ScaleByPercent) */
+
+void cm848_miosPwm19SetDuty(word param_1)
 
 {
-  cm848_scalePwmByPercent(&MIOS_MPWMSM19_PERR,param_1);
+  mpc555_miosSetPwmSubmoduleDuty(&MIOS_MPWMSM19_PERR,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_miosTimer19SetValue @ 0x0004d770
+// Function: cm848_miosPwm19SetPeriodMicroseconds @ 0x0004d770
 //
 
-void cm848_miosTimer19SetValue(undefined4 param_1)
+/* Output channel driver table (flash2) record 0x53af66 slot +8 (set period) for PWM submodule 19 -
+   forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer19SetValue) */
+
+void cm848_miosPwm19SetPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_miosSetChannelValue(&MIOS_MPWMSM19_PERR,param_1);
+  mpc555_miosSetPwmSubmodulePeriodMicroseconds(&MIOS_MPWMSM19_PERR,param_1);
   return;
 }
 
@@ -46750,7 +46912,7 @@ void cm848_tpuChannel15Configure(undefined4 param_1)
 void cm848_disableMiosResetTpu14_10(void)
 
 {
-  cm848_miosChannelDisable(&MIOS_MDASM14_AR);
+  mpc555_miosSetChannelInputMode(&MIOS_MDASM14_AR);
   mpc555_tpuResetChannel(10);
   return;
 }
@@ -46761,13 +46923,13 @@ void cm848_disableMiosResetTpu14_10(void)
 // Function: cm848_setMiosDutyCycle14 @ 0x0004df0c
 //
 
-undefined2 cm848_setMiosDutyCycle14(void)
+word cm848_setMiosDutyCycle14(void)
 
 {
-  undefined2 uVar1;
+  word wVar1;
   
-  uVar1 = cm848_miosSetChannelDutyCycle(&MIOS_MDASM14_AR,mios_ch14_duty_cycle);
-  return uVar1;
+  wVar1 = mpc555_miosCheckChannelFeedback(&MIOS_MDASM14_AR,(uint)mios_ch14_duty_cycle);
+  return wVar1;
 }
 
 
@@ -46821,7 +46983,7 @@ void mpc555_resetMiosTpuChannel29_11(void)
 void cm848_disableMiosResetTpu11_4(void)
 
 {
-  cm848_miosChannelDisable(&MIOS_MDASM11_AR);
+  mpc555_miosSetChannelInputMode(&MIOS_MDASM11_AR);
   mpc555_tpuResetChannel(4);
   return;
 }
@@ -46832,13 +46994,13 @@ void cm848_disableMiosResetTpu11_4(void)
 // Function: cm848_setMiosDutyCycle11 @ 0x0004e0f0
 //
 
-undefined2 cm848_setMiosDutyCycle11(void)
+word cm848_setMiosDutyCycle11(void)
 
 {
-  undefined2 uVar1;
+  word wVar1;
   
-  uVar1 = cm848_miosSetChannelDutyCycle(&MIOS_MDASM11_AR,mios_ch11_duty_cycle_complement);
-  return uVar1;
+  wVar1 = mpc555_miosCheckChannelFeedback(&MIOS_MDASM11_AR,(uint)mios_ch11_duty_cycle_complement);
+  return wVar1;
 }
 
 
@@ -46877,7 +47039,7 @@ void cm848_setTpuDutyWithTrack4(undefined4 param_1)
 void cm848_disableMiosResetTpu13_6(void)
 
 {
-  cm848_miosChannelDisable(&MIOS_MDASM13_AR);
+  mpc555_miosSetChannelInputMode(&MIOS_MDASM13_AR);
   mpc555_tpuResetChannel(6);
   return;
 }
@@ -46888,13 +47050,13 @@ void cm848_disableMiosResetTpu13_6(void)
 // Function: cm848_setMiosDutyCycle13 @ 0x0004e1b0
 //
 
-undefined2 cm848_setMiosDutyCycle13(void)
+word cm848_setMiosDutyCycle13(void)
 
 {
-  undefined2 uVar1;
+  word wVar1;
   
-  uVar1 = cm848_miosSetChannelDutyCycle(&MIOS_MDASM13_AR,mios_ch13_duty_cycle_complement);
-  return uVar1;
+  wVar1 = mpc555_miosCheckChannelFeedback(&MIOS_MDASM13_AR,(uint)mios_ch13_duty_cycle_complement);
+  return wVar1;
 }
 
 
@@ -46933,7 +47095,7 @@ void cm848_setTpuDutyWithTrack6(undefined4 param_1)
 void cm848_disableMiosResetTpu12_7(void)
 
 {
-  cm848_miosChannelDisable(&MIOS_MDASM12_AR);
+  mpc555_miosSetChannelInputMode(&MIOS_MDASM12_AR);
   mpc555_tpuResetChannel(7);
   return;
 }
@@ -46944,13 +47106,13 @@ void cm848_disableMiosResetTpu12_7(void)
 // Function: cm848_setMiosDutyCycle12 @ 0x0004e270
 //
 
-undefined2 cm848_setMiosDutyCycle12(void)
+word cm848_setMiosDutyCycle12(void)
 
 {
-  undefined2 uVar1;
+  word wVar1;
   
-  uVar1 = cm848_miosSetChannelDutyCycle(&MIOS_MDASM12_AR,mios_ch12_duty_cycle_complement);
-  return uVar1;
+  wVar1 = mpc555_miosCheckChannelFeedback(&MIOS_MDASM12_AR,(uint)mios_ch12_duty_cycle_complement);
+  return wVar1;
 }
 
 
@@ -51279,178 +51441,236 @@ void cm848_engineStartCompletionB(void)
 
 
 //
-// Function: cm848_miosSetChannelDutyCycle @ 0x00054e10
+// Function: mpc555_miosCheckChannelFeedback @ 0x00054e10
 //
 
-undefined4 cm848_miosSetChannelDutyCycle(int *param_1,int param_2)
+/* Output feedback check on an MDASM channel in input mode (mpc555_miosSetChannelInputMode):
+   compares the captured edges (AR:BR non-zero) and the pin state (SCRD bit 15) with the commanded
+   duty (1/256 % per count; 25600 = 100 %) and returns 0 when they agree / 1 when the pin is high or
+   toggling where it should be low / 2 when it is low or toggling where it should be high; then
+   clears AR:BR. Its only callers are cm848_setMiosDutyCycle11-14; their partners
+   cm848_disableMiosResetTpu11_4 / 12_7 / 13_6 / 14_10 put MDASM11 / 12 / 13 / 14 in input mode and
+   reset TPU channels 4 / 7 / 6 / 10 - so MDASM11-14 look like read-back inputs for those TPU
+   outputs. Was cm848_miosSetChannelDutyCycle | review-function-readability reviewed 2026-11-13 -
+   Readability Medium Accuracy Confidence High */
+
+word mpc555_miosCheckChannelFeedback(int *channel_registers,int commanded_duty)
 
 {
-  undefined4 uVar1;
+  word feedback_result;
   
-  uVar1 = 0;
-  if (param_2 == 0) {
-    if ((*param_1 == 0) && ((*(ushort *)((int)param_1 + 6) & 0x8000) == 0)) goto LAB_00054e9c;
+  feedback_result = 0;
+  if (commanded_duty == 0) {
+    if ((*channel_registers == 0) && ((*(ushort *)((int)channel_registers + 6) & 0x8000) == 0))
+    goto LAB_00054e9c;
   }
   else {
-    if (0x63ff < param_2) {
-      if ((*param_1 != 0) || ((*(ushort *)((int)param_1 + 6) & 0x8000) == 0)) {
-        uVar1 = 2;
+    if (0x63ff < commanded_duty) {
+      if ((*channel_registers != 0) || ((*(ushort *)((int)channel_registers + 6) & 0x8000) == 0)) {
+        feedback_result = 2;
       }
       goto LAB_00054e9c;
     }
-    if (*param_1 != 0) goto LAB_00054e9c;
-    if ((*(ushort *)((int)param_1 + 6) & 0x8000) == 0) {
-      uVar1 = 2;
+    if (*channel_registers != 0) goto LAB_00054e9c;
+    if ((*(ushort *)((int)channel_registers + 6) & 0x8000) == 0) {
+      feedback_result = 2;
       goto LAB_00054e9c;
     }
   }
-  uVar1 = 1;
+  feedback_result = 1;
 LAB_00054e9c:
-  *param_1 = 0;
-  return uVar1;
+  *channel_registers = 0;
+  return feedback_result;
 }
 
 
 
 //
-// Function: cm848_miosChannelDisable @ 0x00054eac
+// Function: mpc555_miosSetChannelInputMode @ 0x00054eac
 //
 
-void cm848_miosChannelDisable(int param_1)
+/* Writes mode 1 to an MDASM channel's status/control register (SCRD) - an input mode (the MPC555
+   manual's input pulse-width measurement) so pin edges latch into AR / BR for
+   mpc555_miosCheckChannelFeedback. Called next to a TPU channel reset by
+   cm848_disableMiosResetTpu11_4 / 12_7 / 13_6 / 14_10. Was cm848_miosChannelDisable |
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+    */
+
+void mpc555_miosSetChannelInputMode(int channel_registers)
 
 {
-  *(undefined2 *)(param_1 + 6) = 1;
+  *(undefined2 *)(channel_registers + 6) = 1;
   return;
 }
 
 
 
 //
-// Function: cm848_miosChannelEnable @ 0x00054eb8
+// Function: mpc555_miosEnableChannelPwm @ 0x00054eb8
 //
 
-void cm848_miosChannelEnable(int param_1)
+/* Writes mode 9 to an MDASM channel's status/control register (SCRD) - output PWM (the MPC555
+   manual's OPWM; the same channels' duty and period slots program AR / BR and the MMCSM22 period).
+   Output channel driver table slot +0 for MDASM11-15 / 27-31 (cm848_miosChannel{N}EnablePwm). Was
+   cm848_miosChannelEnable | review-function-readability reviewed 2026-11-13 - Readability Medium
+   Accuracy Confidence Medium */
+
+void mpc555_miosEnableChannelPwm(int channel_registers)
 
 {
-  *(undefined2 *)(param_1 + 6) = 9;
+  *(undefined2 *)(channel_registers + 6) = 9;
   return;
 }
 
 
 
 //
-// Function: mpc555_miosReadChannelStatus @ 0x00054ec4
+// Function: mpc555_miosSetChannelPwmDuty @ 0x00054ec4
 //
 
-void mpc555_miosReadChannelStatus(undefined4 *param_1,ushort param_2)
+/* Sets an MDASM channel's PWM duty (1/256 % per count; 25600 = 100 %) by writing the AR:BR compare
+   pair as one word: 0 % = 0x0000:0x7fff / 100 % and above = 0x7fff:0x8000 / otherwise AR = 0x7fff
+   and BR = (0xffff - ML) x duty / 25600 + (ML & 0x7fff) where ML is the shared MMCSM22 modulus
+   latch (the counter runs from ML up to 0xffff). Output channel driver table slot +12 for
+   MDASM11-15 / 27-31. Was mpc555_miosReadChannelStatus (it reads nothing back) |
+   review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High */
+
+void mpc555_miosSetChannelPwmDuty(undefined4 *channel_registers,word duty)
 
 {
-  word wVar1;
-  word wVar2;
-  undefined4 local_8;
+  undefined4 compare_register_pair;
+  word modulus_start_value;
+  word modulus_period_value;
   
-  if (param_2 < 0x6400) {
-    if (param_2 == 0) {
-      local_8 = 0x7fff;
+  if (duty < 0x6400) {
+    if (duty == 0) {
+      compare_register_pair = 0x7fff;
     }
     else {
-      wVar1 = mios_mmcsm22.ML;
-      wVar2 = mios_mmcsm22.ML;
-      local_8 = CONCAT22(0x7fff,(short)(((0xffff - wVar2 & 0xffff) * (uint)param_2) / 0x6400) +
-                                (wVar1 & 0x7fff));
+      modulus_start_value = mios_mmcsm22.ML;
+      modulus_period_value = mios_mmcsm22.ML;
+      compare_register_pair =
+           CONCAT22(0x7fff,(short)(((0xffff - modulus_period_value & 0xffff) * (uint)duty) / 0x6400)
+                           + (modulus_start_value & 0x7fff));
     }
   }
   else {
-    local_8 = 0x7fff8000;
+    compare_register_pair = 0x7fff8000;
   }
-  *param_1 = local_8;
+  *channel_registers = compare_register_pair;
   return;
 }
 
 
 
 //
-// Function: mpc555_miosSetPwmOutput @ 0x00054f48
+// Function: mpc555_miosSetChannelPwmPeriod @ 0x00054f48
 //
 
-void mpc555_miosSetPwmOutput(undefined4 param_1,uint param_2)
+/* Sets the PWM period shared by every MDASM output: ignores its channel argument and writes the
+   MMCSM22 modulus latch = -(period_setting x 20) - 1 (the counter runs from there up to 0xffff) or
+   0x8000 when period_setting is 1639 or more. Output channel driver table slot +8 for MDASM11-15 /
+   27-31 - so any channel's period call changes all of them. The MMCSM22 tick length (so the unit of
+   period_setting) is not resolved. Was mpc555_miosSetPwmOutput | review-function-readability
+   reviewed 2026-11-13 - Readability High Accuracy Confidence High */
+
+void mpc555_miosSetChannelPwmPeriod(undefined4 unused_channel_registers,uint period_setting)
 
 {
-  word wVar1;
+  word modulus_latch_value;
   
-  if (param_2 < 0x667) {
-    wVar1 = -(short)((param_2 * 20000) / 1000) - 1;
+  if (period_setting < 0x667) {
+    modulus_latch_value = -(short)((period_setting * 20000) / 1000) - 1;
   }
   else {
-    wVar1 = 0x8000;
+    modulus_latch_value = 0x8000;
   }
-  mios_mmcsm22.ML = wVar1;
+  mios_mmcsm22.ML = modulus_latch_value;
   return;
 }
 
 
 
 //
-// Function: cm848_miosInitChannelPeriod @ 0x00054f80
+// Function: mpc555_miosEnablePwmSubmodule @ 0x00054f80
 //
 
-void cm848_miosInitChannelPeriod(int param_1)
+/* Writes 0x4ff to a PWM submodule's status/control register (SCR): bit 10 (0x400) is set by every
+   SCR write in this family and the low byte is the clock prescaler 0xff
+   (mpc555_miosSetPwmSubmodulePeriodMicroseconds switches it to 0x80 for long periods). Output
+   channel driver table slot +0 for PWM submodules 0-3 / 16-19. Was cm848_miosInitChannelPeriod |
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+    */
+
+void mpc555_miosEnablePwmSubmodule(int pwm_registers)
 
 {
-  *(undefined2 *)(param_1 + 6) = 0x4ff;
+  *(undefined2 *)(pwm_registers + 6) = 0x4ff;
   return;
 }
 
 
 
 //
-// Function: cm848_scalePwmByPercent @ 0x00054f8c
+// Function: mpc555_miosSetPwmSubmoduleDuty @ 0x00054f8c
 //
 
-void cm848_scalePwmByPercent(ushort *param_1,ushort param_2)
+/* Sets a PWM submodule's duty: PULR = PERR x duty / 25600 (duty in 1/256 % per count) or PERR at
+   100 % and above. Output channel driver table slot +12 for PWM submodules 0-3 / 16-19. Was
+   cm848_scalePwmByPercent | review-function-readability reviewed 2026-11-13 - Readability Medium
+   Accuracy Confidence High */
+
+void mpc555_miosSetPwmSubmoduleDuty(ushort *pwm_registers,word duty)
 
 {
-  ushort uVar1;
+  word pulse_width;
   
-  uVar1 = *param_1;
-  if (param_2 < 0x6400) {
-    uVar1 = (ushort)(((uint)uVar1 * (uint)param_2) / 0x6400);
+  pulse_width = *pwm_registers;
+  if (duty < 0x6400) {
+    pulse_width = (word)(((uint)pulse_width * (uint)duty) / 0x6400);
   }
-  param_1[1] = uVar1;
+  pwm_registers[1] = pulse_width;
   return;
 }
 
 
 
 //
-// Function: cm848_miosSetChannelValue @ 0x00054fb8
+// Function: mpc555_miosSetPwmSubmodulePeriodMicroseconds @ 0x00054fb8
 //
 
-void cm848_miosSetChannelValue(undefined2 *param_1,uint param_2)
+/* Sets a PWM submodule's period from microseconds: 0 = PERR 0xffff; below 13921 us = prescaler byte
+   0xff and PERR = period x 40 / 16; otherwise prescaler 0x80 and PERR = period x 40 / 2048 - both
+   branches are microseconds on a 2.5 MHz MIOS clock (40 MHz / 16) and the RAM dump's PWM 16-19
+   period words read 50 (= 20 kHz). Output channel driver table slot +8 for PWM submodules 0-3 /
+   16-19. Was cm848_miosSetChannelValue | review-function-readability reviewed 2026-11-13 -
+   Readability Medium Accuracy Confidence Medium */
+
+void mpc555_miosSetPwmSubmodulePeriodMicroseconds(word *pwm_registers,uint period_microseconds)
 
 {
-  undefined2 uVar1;
-  uint uVar2;
+  word period_register_value;
+  dword period_divisor;
   
-  if (param_2 == 0) {
-    uVar1 = 0xffff;
+  if (period_microseconds == 0) {
+    period_register_value = 0xffff;
   }
   else {
-    if (param_2 < 0x3661) {
-      if ((param_1[3] & 0xff) != 0xff) {
-        param_1[3] = 0x4ff;
+    if (period_microseconds < 0x3661) {
+      if ((pwm_registers[3] & 0xff) != 0xff) {
+        pwm_registers[3] = 0x4ff;
       }
-      uVar2 = 0x10;
+      period_divisor = 0x10;
     }
     else {
-      if ((param_1[3] & 0xff) != 0x80) {
-        param_1[3] = 0x480;
+      if ((pwm_registers[3] & 0xff) != 0x80) {
+        pwm_registers[3] = 0x480;
       }
-      uVar2 = 0x800;
+      period_divisor = 0x800;
     }
-    uVar1 = (undefined2)((param_2 * 0x28) / uVar2);
+    period_register_value = (word)((period_microseconds * 0x28) / period_divisor);
   }
-  *param_1 = uVar1;
+  *pwm_registers = period_register_value;
   return;
 }
 
@@ -78372,14 +78592,14 @@ void cm848_tpuMiosOutput_loadCalibration(void)
   DAT_0030414e = tpu_output_ch_param7_ref;
   DAT_0030412e = tpu_output_ch_param7_ref;
   DAT_0030417e = tpu_output_ch_param7_ref;
-  cm848_miosTimer16SetValue(mios_timer16_set_value_ref);
-  cm848_miosTimer16ScaleByPercent(mios_timer16_scale_percent_ref);
-  cm848_miosTimer17SetValue(mios_timer17_set_value_ref);
-  cm848_miosTimer17ScaleByPercent(mios_timer17_scale_percent_ref);
-  cm848_miosTimer18SetValue(mios_timer18_set_value_ref);
-  cm848_miosTimer18ScaleByPercent(mios_timer18_scale_percent_ref);
-  cm848_miosTimer19SetValue(mios_timer19_set_value_ref);
-  cm848_miosTimer19ScaleByPercent(mios_timer19_scale_percent_ref);
+  cm848_miosPwm16SetPeriodMicroseconds(mios_pwm16_period_microseconds_ref);
+  cm848_miosPwm16SetDuty(mios_pwm16_duty_ref);
+  cm848_miosPwm17SetPeriodMicroseconds(mios_pwm17_period_microseconds_ref);
+  cm848_miosPwm17SetDuty(mios_pwm17_duty_ref);
+  cm848_miosPwm18SetPeriodMicroseconds(mios_pwm18_period_microseconds_ref);
+  cm848_miosPwm18SetDuty(mios_pwm18_duty_ref);
+  cm848_miosPwm19SetPeriodMicroseconds(mios_pwm19_period_microseconds_ref);
+  cm848_miosPwm19SetDuty(mios_pwm19_duty_ref);
   uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fd0b4);
   TPUA_CH14_PARAM0._0_4_ =
        ((uint)tpu_ch14_period_base * (uVar1 & 0xffff)) / 0xfff << 0x10 | (uint)tpu_ch14_period_base;
@@ -78500,18 +78720,18 @@ void cm848_tpu_interrupt_flag_init(void)
   TPUA_CH14_PARAM0._0_4_ = (uint)tpu_ch14_period_base;
   wVar1 = tpu_a_mcr.CPR0;
   tpu_a_mcr.CPR0 = wVar1 & 0xcfff | 0x1000;
-  cm848_miosTimer16InitPeriod();
-  cm848_miosTimer16SetValue(mios_timer16_set_value_ref);
-  cm848_miosTimer16ScaleByPercent(mios_timer16_scale_percent_ref);
-  cm848_miosTimer17InitPeriod();
-  cm848_miosTimer17SetValue(mios_timer17_set_value_ref);
-  cm848_miosTimer17ScaleByPercent(mios_timer17_scale_percent_ref);
-  cm848_miosTimer18InitPeriod();
-  cm848_miosTimer18SetValue(mios_timer18_set_value_ref);
-  cm848_miosTimer18ScaleByPercent(mios_timer18_scale_percent_ref);
-  cm848_miosTimer19InitPeriod();
-  cm848_miosTimer19SetValue(mios_timer19_set_value_ref);
-  cm848_miosTimer19ScaleByPercent(mios_timer19_scale_percent_ref);
+  cm848_miosPwm16Enable();
+  cm848_miosPwm16SetPeriodMicroseconds(mios_pwm16_period_microseconds_ref);
+  cm848_miosPwm16SetDuty(mios_pwm16_duty_ref);
+  cm848_miosPwm17Enable();
+  cm848_miosPwm17SetPeriodMicroseconds(mios_pwm17_period_microseconds_ref);
+  cm848_miosPwm17SetDuty(mios_pwm17_duty_ref);
+  cm848_miosPwm18Enable();
+  cm848_miosPwm18SetPeriodMicroseconds(mios_pwm18_period_microseconds_ref);
+  cm848_miosPwm18SetDuty(mios_pwm18_duty_ref);
+  cm848_miosPwm19Enable();
+  cm848_miosPwm19SetPeriodMicroseconds(mios_pwm19_period_microseconds_ref);
+  cm848_miosPwm19SetDuty(mios_pwm19_duty_ref);
   DAT_003fd0b0 = 2;
   DAT_003fd0b2 = 2;
   DAT_003fd0b4 = 2;

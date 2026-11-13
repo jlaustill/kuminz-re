@@ -329,3 +329,31 @@ function_address,function_name,param_index,name,type,comment
 0x0003d904,mpc555_qspiStartJob,1,queue_index,int,0 = serviced first / 1
 0x0003da60,cm848_queueQspiJob,0,job,qspi_job_t*,Job to queue
 0x0003da60,cm848_queueQspiJob,1,queue_index,int,0 = serviced first / 1 (clamped)
+
+# -----------------------------------------------------------------------------
+# MIOS output drivers (todo 033, PR #48) - names only: the 4-byte parameters are undefined4 so the decompiler keeps
+# inferring their types (locked pointer types added casts at the call sites); the two 2-byte duty parameters are
+# ushort (undefined4 turned them into duty._2_2_ sub-pieces). The per-channel wrappers
+# get no rows - committed wrapper parameters made callers cast their word arguments.
+# -----------------------------------------------------------------------------
+0x00054e10,mpc555_miosCheckChannelFeedback,return,,ushort,0 = pin agrees with the command / 1 = high or toggling where it should be low / 2 = low or toggling where it should be high (16-bit: clrlwi r3 r5 16)
+0x00054e10,mpc555_miosCheckChannelFeedback,0,channel_registers,undefined4,MDASM register block (AR:BR read as one word / SCRD at +6)
+0x00054e10,mpc555_miosCheckChannelFeedback,1,commanded_duty,undefined4,Duty the output was commanded to (1/256 % per count; 25600 = 100 %) - 4 bytes: the compares use all of r4 (cmpwi r4 0 / cmpwi r4 25600) so a 2-byte type shows CONCAT22 artifacts
+0x00054eac,mpc555_miosSetChannelInputMode,return,,void,No return value
+0x00054eac,mpc555_miosSetChannelInputMode,0,channel_registers,undefined4,MDASM register block base
+0x00054eb8,mpc555_miosEnableChannelPwm,return,,void,No return value
+0x00054eb8,mpc555_miosEnableChannelPwm,0,channel_registers,undefined4,MDASM register block base
+0x00054ec4,mpc555_miosSetChannelPwmDuty,return,,void,No return value
+0x00054ec4,mpc555_miosSetChannelPwmDuty,0,channel_registers,undefined4,MDASM register block (AR:BR written as one word)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
+0x00054f48,mpc555_miosSetChannelPwmPeriod,return,,void,No return value
+0x00054f48,mpc555_miosSetChannelPwmPeriod,0,unused_channel_registers,undefined4,Ignored - every MDASM output shares the MMCSM22 period
+0x00054f48,mpc555_miosSetChannelPwmPeriod,1,period_setting,undefined4,MMCSM22 modulus latch = -(value x 20) - 1
+0x00054f80,mpc555_miosEnablePwmSubmodule,return,,void,No return value
+0x00054f80,mpc555_miosEnablePwmSubmodule,0,pwm_registers,undefined4,PWM submodule register block base
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,return,,void,No return value
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,0,pwm_registers,undefined4,PWM submodule register block (PERR at +0 / PULR at +2)
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,return,,void,No return value
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,0,pwm_registers,undefined4,PWM submodule register block (PERR at +0 / SCR at +6)
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,1,period_microseconds,undefined4,PWM period in microseconds

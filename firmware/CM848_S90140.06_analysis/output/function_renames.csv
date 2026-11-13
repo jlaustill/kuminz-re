@@ -1407,60 +1407,60 @@ address,name
 0x0004cb64,cm848_initEepromDriverAndLoadMirror,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): registers the QSPI slot / sets up eeprom_job / reads EEPROM 0x0-0x1a3f into the RAM mirror at 0x3fd482 (RAM = 0x3fd482 + EEPROM offset) / sums 0x8aa words of the checksummed block (EEPROM 0x8ea-0x1a3d) against eeprom_block_checksum_expected_cal and sets or clears system_faults 0x40; the entries at 0x4cb6c / 0x4cb84 / 0x4cb90 were spurious splits | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0004cd50,cm848_getProtectionSyncState
 0x0004ce78,cm848_initSensorRetryCounters
-0x0004ce9c,cm848_miosChannel11Enable
-0x0004cec4,cm848_miosChannel11ReadStatus
-0x0004cef0,cm848_miosChannel11SetPwm
-0x0004cf1c,cm848_miosChannel12Enable
-0x0004cf44,cm848_miosChannel12ReadStatus
-0x0004cf70,cm848_miosChannel12SetPwm
-0x0004cf9c,cm848_miosChannel13Enable
-0x0004cfc4,cm848_miosChannel13ReadStatus
-0x0004cff0,cm848_miosChannel13SetPwm
-0x0004d01c,cm848_miosChannel14Enable
-0x0004d044,cm848_miosChannel14ReadStatus
-0x0004d070,cm848_miosChannel14SetPwm
-0x0004d09c,cm848_miosChannel15Enable
-0x0004d0c4,cm848_miosChannel15ReadStatus
-0x0004d0f0,cm848_miosChannel15SetPwm
-0x0004d11c,cm848_miosChannel27Enable
-0x0004d144,cm848_miosChannel27ReadStatus
-0x0004d170,cm848_miosChannel27SetPwm
-0x0004d19c,cm848_miosChannel28Enable
-0x0004d1c4,cm848_miosChannel28ReadStatus
-0x0004d1f0,cm848_miosChannel28SetPwm
-0x0004d21c,cm848_miosChannel29Enable
-0x0004d244,cm848_miosChannel29ReadStatus
-0x0004d270,cm848_miosChannel29SetPwm
-0x0004d29c,cm848_miosChannel30Enable
-0x0004d2c4,cm848_miosChannel30ReadStatus
-0x0004d2f0,cm848_miosChannel30SetPwm
-0x0004d31c,cm848_miosChannel31Enable
-0x0004d344,cm848_miosChannel31ReadStatus
-0x0004d370,cm848_miosChannel31SetPwm
-0x0004d39c,cm848_miosTimer0InitPeriod
-0x0004d3c4,cm848_miosTimer0ScaleByPercent
-0x0004d3f0,cm848_miosTimer0SetValue
-0x0004d41c,cm848_miosTimer1InitPeriod
-0x0004d444,cm848_miosTimer1ScaleByPercent
-0x0004d470,cm848_miosTimer1SetValue
-0x0004d49c,cm848_miosTimer2InitPeriod
-0x0004d4c4,cm848_miosTimer2ScaleByPercent
-0x0004d4f0,cm848_miosTimer2SetValue
-0x0004d51c,cm848_miosTimer3InitPeriod
-0x0004d544,cm848_miosTimer3ScaleByPercent
-0x0004d570,cm848_miosTimer3SetValue
-0x0004d59c,cm848_miosTimer16InitPeriod
-0x0004d5c4,cm848_miosTimer16ScaleByPercent
-0x0004d5f0,cm848_miosTimer16SetValue
-0x0004d61c,cm848_miosTimer17InitPeriod
-0x0004d644,cm848_miosTimer17ScaleByPercent
-0x0004d670,cm848_miosTimer17SetValue
-0x0004d69c,cm848_miosTimer18InitPeriod
-0x0004d6c4,cm848_miosTimer18ScaleByPercent
-0x0004d6f0,cm848_miosTimer18SetValue
-0x0004d71c,cm848_miosTimer19InitPeriod
-0x0004d744,cm848_miosTimer19ScaleByPercent
-0x0004d770,cm848_miosTimer19SetValue
+0x0004ce9c,cm848_miosChannel11EnablePwm,Output channel driver table (flash2) record 0x53ae56 slot +0 (enable) for MDASM11 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel11Enable)
+0x0004cec4,cm848_miosChannel11SetPwmDuty,Output channel driver table (flash2) record 0x53ae56 slot +12 (set duty) for MDASM11 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel11ReadStatus)
+0x0004cef0,cm848_miosChannel11SetPwmPeriod,Output channel driver table (flash2) record 0x53ae56 slot +8 (set period) for MDASM11 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel11SetPwm)
+0x0004cf1c,cm848_miosChannel12EnablePwm,Output channel driver table (flash2) record 0x53ae66 slot +0 (enable) for MDASM12 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel12Enable)
+0x0004cf44,cm848_miosChannel12SetPwmDuty,Output channel driver table (flash2) record 0x53ae66 slot +12 (set duty) for MDASM12 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel12ReadStatus)
+0x0004cf70,cm848_miosChannel12SetPwmPeriod,Output channel driver table (flash2) record 0x53ae66 slot +8 (set period) for MDASM12 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel12SetPwm)
+0x0004cf9c,cm848_miosChannel13EnablePwm,Output channel driver table (flash2) record 0x53ae76 slot +0 (enable) for MDASM13 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel13Enable)
+0x0004cfc4,cm848_miosChannel13SetPwmDuty,Output channel driver table (flash2) record 0x53ae76 slot +12 (set duty) for MDASM13 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel13ReadStatus)
+0x0004cff0,cm848_miosChannel13SetPwmPeriod,Output channel driver table (flash2) record 0x53ae76 slot +8 (set period) for MDASM13 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel13SetPwm)
+0x0004d01c,cm848_miosChannel14EnablePwm,Output channel driver table (flash2) record 0x53ae86 slot +0 (enable) for MDASM14 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel14Enable)
+0x0004d044,cm848_miosChannel14SetPwmDuty,Output channel driver table (flash2) record 0x53ae86 slot +12 (set duty) for MDASM14 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel14ReadStatus)
+0x0004d070,cm848_miosChannel14SetPwmPeriod,Output channel driver table (flash2) record 0x53ae86 slot +8 (set period) for MDASM14 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel14SetPwm)
+0x0004d09c,cm848_miosChannel15EnablePwm,Output channel driver table (flash2) record 0x53ae96 slot +0 (enable) for MDASM15 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel15Enable)
+0x0004d0c4,cm848_miosChannel15SetPwmDuty,Output channel driver table (flash2) record 0x53ae96 slot +12 (set duty) for MDASM15 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel15ReadStatus)
+0x0004d0f0,cm848_miosChannel15SetPwmPeriod,Output channel driver table (flash2) record 0x53ae96 slot +8 (set period) for MDASM15 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel15SetPwm)
+0x0004d11c,cm848_miosChannel27EnablePwm,Output channel driver table (flash2) record 0x53aea6 slot +0 (enable) for MDASM27 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel27Enable)
+0x0004d144,cm848_miosChannel27SetPwmDuty,Output channel driver table (flash2) record 0x53aea6 slot +12 (set duty) for MDASM27 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel27ReadStatus)
+0x0004d170,cm848_miosChannel27SetPwmPeriod,Output channel driver table (flash2) record 0x53aea6 slot +8 (set period) for MDASM27 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel27SetPwm)
+0x0004d19c,cm848_miosChannel28EnablePwm,Output channel driver table (flash2) record 0x53aeb6 slot +0 (enable) for MDASM28 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel28Enable)
+0x0004d1c4,cm848_miosChannel28SetPwmDuty,Output channel driver table (flash2) record 0x53aeb6 slot +12 (set duty) for MDASM28 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel28ReadStatus)
+0x0004d1f0,cm848_miosChannel28SetPwmPeriod,Output channel driver table (flash2) record 0x53aeb6 slot +8 (set period) for MDASM28 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel28SetPwm)
+0x0004d21c,cm848_miosChannel29EnablePwm,Output channel driver table (flash2) record 0x53aec6 slot +0 (enable) for MDASM29 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel29Enable)
+0x0004d244,cm848_miosChannel29SetPwmDuty,Output channel driver table (flash2) record 0x53aec6 slot +12 (set duty) for MDASM29 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel29ReadStatus)
+0x0004d270,cm848_miosChannel29SetPwmPeriod,Output channel driver table (flash2) record 0x53aec6 slot +8 (set period) for MDASM29 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel29SetPwm)
+0x0004d29c,cm848_miosChannel30EnablePwm,Output channel driver table (flash2) record 0x53aed6 slot +0 (enable) for MDASM30 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel30Enable)
+0x0004d2c4,cm848_miosChannel30SetPwmDuty,Output channel driver table (flash2) record 0x53aed6 slot +12 (set duty) for MDASM30 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel30ReadStatus)
+0x0004d2f0,cm848_miosChannel30SetPwmPeriod,Output channel driver table (flash2) record 0x53aed6 slot +8 (set period) for MDASM30 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel30SetPwm)
+0x0004d31c,cm848_miosChannel31EnablePwm,Output channel driver table (flash2) record 0x53aee6 slot +0 (enable) for MDASM31 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel31Enable)
+0x0004d344,cm848_miosChannel31SetPwmDuty,Output channel driver table (flash2) record 0x53aee6 slot +12 (set duty) for MDASM31 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel31ReadStatus)
+0x0004d370,cm848_miosChannel31SetPwmPeriod,Output channel driver table (flash2) record 0x53aee6 slot +8 (set period) for MDASM31 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel31SetPwm)
+0x0004d39c,cm848_miosPwm0Enable,Output channel driver table (flash2) record 0x53aef6 slot +0 (enable) for PWM submodule 0 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer0InitPeriod)
+0x0004d3c4,cm848_miosPwm0SetDuty,Output channel driver table (flash2) record 0x53aef6 slot +12 (set duty) for PWM submodule 0 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer0ScaleByPercent)
+0x0004d3f0,cm848_miosPwm0SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53aef6 slot +8 (set period) for PWM submodule 0 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer0SetValue)
+0x0004d41c,cm848_miosPwm1Enable,Output channel driver table (flash2) record 0x53af06 slot +0 (enable) for PWM submodule 1 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer1InitPeriod)
+0x0004d444,cm848_miosPwm1SetDuty,Output channel driver table (flash2) record 0x53af06 slot +12 (set duty) for PWM submodule 1 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer1ScaleByPercent)
+0x0004d470,cm848_miosPwm1SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af06 slot +8 (set period) for PWM submodule 1 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer1SetValue)
+0x0004d49c,cm848_miosPwm2Enable,Output channel driver table (flash2) record 0x53af16 slot +0 (enable) for PWM submodule 2 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer2InitPeriod)
+0x0004d4c4,cm848_miosPwm2SetDuty,Output channel driver table (flash2) record 0x53af16 slot +12 (set duty) for PWM submodule 2 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer2ScaleByPercent)
+0x0004d4f0,cm848_miosPwm2SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af16 slot +8 (set period) for PWM submodule 2 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer2SetValue)
+0x0004d51c,cm848_miosPwm3Enable,Output channel driver table (flash2) record 0x53af26 slot +0 (enable) for PWM submodule 3 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer3InitPeriod)
+0x0004d544,cm848_miosPwm3SetDuty,Output channel driver table (flash2) record 0x53af26 slot +12 (set duty) for PWM submodule 3 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer3ScaleByPercent)
+0x0004d570,cm848_miosPwm3SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af26 slot +8 (set period) for PWM submodule 3 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer3SetValue)
+0x0004d59c,cm848_miosPwm16Enable,Output channel driver table (flash2) record 0x53af36 slot +0 (enable) for PWM submodule 16 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer16InitPeriod)
+0x0004d5c4,cm848_miosPwm16SetDuty,Output channel driver table (flash2) record 0x53af36 slot +12 (set duty) for PWM submodule 16 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer16ScaleByPercent)
+0x0004d5f0,cm848_miosPwm16SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af36 slot +8 (set period) for PWM submodule 16 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer16SetValue)
+0x0004d61c,cm848_miosPwm17Enable,Output channel driver table (flash2) record 0x53af46 slot +0 (enable) for PWM submodule 17 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer17InitPeriod)
+0x0004d644,cm848_miosPwm17SetDuty,Output channel driver table (flash2) record 0x53af46 slot +12 (set duty) for PWM submodule 17 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer17ScaleByPercent)
+0x0004d670,cm848_miosPwm17SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af46 slot +8 (set period) for PWM submodule 17 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer17SetValue)
+0x0004d69c,cm848_miosPwm18Enable,Output channel driver table (flash2) record 0x53af56 slot +0 (enable) for PWM submodule 18 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer18InitPeriod)
+0x0004d6c4,cm848_miosPwm18SetDuty,Output channel driver table (flash2) record 0x53af56 slot +12 (set duty) for PWM submodule 18 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer18ScaleByPercent)
+0x0004d6f0,cm848_miosPwm18SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af56 slot +8 (set period) for PWM submodule 18 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer18SetValue)
+0x0004d71c,cm848_miosPwm19Enable,Output channel driver table (flash2) record 0x53af66 slot +0 (enable) for PWM submodule 19 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer19InitPeriod)
+0x0004d744,cm848_miosPwm19SetDuty,Output channel driver table (flash2) record 0x53af66 slot +12 (set duty) for PWM submodule 19 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer19ScaleByPercent)
+0x0004d770,cm848_miosPwm19SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af66 slot +8 (set period) for PWM submodule 19 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer19SetValue)
 0x0004d79c,cm848_tpuChannel0Reset
 0x0004d7c0,cm848_tpuChannel0SetDuty
 0x0004d7e8,cm848_tpuChannel0Configure
@@ -1617,14 +1617,14 @@ address,name
 0x00054380,mpc555_systemStartupInitialization
 0x000544c4,hpcr_exceptionHandler
 0x00054d30,cm848_engineStartCompletionB
-0x00054e10,cm848_miosSetChannelDutyCycle
-0x00054eac,cm848_miosChannelDisable
-0x00054eb8,cm848_miosChannelEnable
-0x00054ec4,mpc555_miosReadChannelStatus
-0x00054f48,mpc555_miosSetPwmOutput
-0x00054f80,cm848_miosInitChannelPeriod
-0x00054f8c,cm848_scalePwmByPercent
-0x00054fb8,cm848_miosSetChannelValue
+0x00054e10,mpc555_miosCheckChannelFeedback,Output feedback check on an MDASM channel in input mode (mpc555_miosSetChannelInputMode): compares the captured edges (AR:BR non-zero) and the pin state (SCRD bit 15) with the commanded duty (1/256 % per count; 25600 = 100 %) and returns 0 when they agree / 1 when the pin is high or toggling where it should be low / 2 when it is low or toggling where it should be high; then clears AR:BR. Its only callers are cm848_setMiosDutyCycle11-14; their partners cm848_disableMiosResetTpu11_4 / 12_7 / 13_6 / 14_10 put MDASM11 / 12 / 13 / 14 in input mode and reset TPU channels 4 / 7 / 6 / 10 - so MDASM11-14 look like read-back inputs for those TPU outputs. Was cm848_miosSetChannelDutyCycle | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00054eac,mpc555_miosSetChannelInputMode,Writes mode 1 to an MDASM channel's status/control register (SCRD) - an input mode (the MPC555 manual's input pulse-width measurement) so pin edges latch into AR / BR for mpc555_miosCheckChannelFeedback. Called next to a TPU channel reset by cm848_disableMiosResetTpu11_4 / 12_7 / 13_6 / 14_10. Was cm848_miosChannelDisable | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00054eb8,mpc555_miosEnableChannelPwm,Writes mode 9 to an MDASM channel's status/control register (SCRD) - output PWM (the MPC555 manual's OPWM; the same channels' duty and period slots program AR / BR and the MMCSM22 period). Output channel driver table slot +0 for MDASM11-15 / 27-31 (cm848_miosChannel{N}EnablePwm). Was cm848_miosChannelEnable | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00054ec4,mpc555_miosSetChannelPwmDuty,Sets an MDASM channel's PWM duty (1/256 % per count; 25600 = 100 %) by writing the AR:BR compare pair as one word: 0 % = 0x0000:0x7fff / 100 % and above = 0x7fff:0x8000 / otherwise AR = 0x7fff and BR = (0xffff - ML) x duty / 25600 + (ML & 0x7fff) where ML is the shared MMCSM22 modulus latch (the counter runs from ML up to 0xffff). Output channel driver table slot +12 for MDASM11-15 / 27-31. Was mpc555_miosReadChannelStatus (it reads nothing back) | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
+0x00054f48,mpc555_miosSetChannelPwmPeriod,Sets the PWM period shared by every MDASM output: ignores its channel argument and writes the MMCSM22 modulus latch = -(period_setting x 20) - 1 (the counter runs from there up to 0xffff) or 0x8000 when period_setting is 1639 or more. Output channel driver table slot +8 for MDASM11-15 / 27-31 - so any channel's period call changes all of them. The MMCSM22 tick length (so the unit of period_setting) is not resolved. Was mpc555_miosSetPwmOutput | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
+0x00054f80,mpc555_miosEnablePwmSubmodule,Writes 0x4ff to a PWM submodule's status/control register (SCR): bit 10 (0x400) is set by every SCR write in this family and the low byte is the clock prescaler 0xff (mpc555_miosSetPwmSubmodulePeriodMicroseconds switches it to 0x80 for long periods). Output channel driver table slot +0 for PWM submodules 0-3 / 16-19. Was cm848_miosInitChannelPeriod | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,Sets a PWM submodule's duty: PULR = PERR x duty / 25600 (duty in 1/256 % per count) or PERR at 100 % and above. Output channel driver table slot +12 for PWM submodules 0-3 / 16-19. Was cm848_scalePwmByPercent | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,Sets a PWM submodule's period from microseconds: 0 = PERR 0xffff; below 13921 us = prescaler byte 0xff and PERR = period x 40 / 16; otherwise prescaler 0x80 and PERR = period x 40 / 2048 - both branches are microseconds on a 2.5 MHz MIOS clock (40 MHz / 16) and the RAM dump's PWM 16-19 period words read 50 (= 20 kHz). Output channel driver table slot +8 for PWM submodules 0-3 / 16-19. Was cm848_miosSetChannelValue | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00055020,mpc555_tpuResetChannel
 0x00055178,cm848_tpuSetChannelDuty
 0x000551e4,cm848_tpuConfigureChannel

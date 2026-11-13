@@ -38,7 +38,7 @@ determinable from the binary alone — see "Still blocked" below.
 
 ## MIOS MPWMSM PWM outputs (0x306000)
 
-Four PWM submodules driven by `cm848_miosTimer16/17/18/19*` (set value, scale-by-percent, init
+Four PWM submodules driven by `cm848_miosPwm16/17/18/19*` (set value, scale-by-percent, init
 period). `cm848_protection_threshold_calib_check` @0x5289d4 loads all four period/pulse values from
 calibration. These are PWM **actuator** outputs (typical diesel: VGT/turbo, EGR, fan, fuel/heater) —
 **specific device per submodule unknown** from the binary.

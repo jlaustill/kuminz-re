@@ -373,7 +373,7 @@ address,name,type,comment
 0x0030607a,MIOS_MDASM15_BR,u16,MDASM15 B Register
 0x0030607e,MIOS_MDASM15_SCRD,u16,MDASM15 Status/Control Register
 
-# MIOS MPWMSM16-19 (PWM submodules 16-19 - were mislabeled MDASM0-3; cm848_miosTimer16-19* drive them like MPWMSM0-3)
+# MIOS MPWMSM16-19 (PWM submodules 16-19 - were mislabeled MDASM0-3; cm848_miosPwm16-19* drive them like MPWMSM0-3)
 0x00306080,MIOS_MPWMSM16_PERR,u16,MPWMSM16 Period Register
 0x00306082,MIOS_MPWMSM16_PULR,u16,MPWMSM16 Pulse Width Register
 0x00306086,MIOS_MPWMSM16_SCR,u16,MPWMSM16 Status/Control Register
