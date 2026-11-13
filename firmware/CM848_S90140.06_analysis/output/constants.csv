@@ -10,3 +10,5 @@ address,constant_name,value,comment
 # Pattern: (short)(w * X >> 7) + (short)((0x80 - w) * Y >> 7)
 # TSC1 speed cap in torqueControlModeHandler (cmplwi r11, 0x5DC0)
 0x00022FE0,TSC1_SPEED_LIMIT_3000RPM,0x5DC0,24000 counts x 0.125 RPM/bit = 3000 RPM maximum speed target cap for TSC1 speed control mode
+# Busy-wait pass length in cm848_busyWaitDelay (cmpwi r5,2222 ends the inner spin loop)
+0x0000239C,SPINS_PER_DELAY_PASS,2222,Inner spins per delay pass - 4 instructions per spin so a pass is at least 8888 clocks (0.22 ms at 40 MHz); the real pass time is a bench measurement

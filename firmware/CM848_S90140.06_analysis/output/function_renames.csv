@@ -386,7 +386,7 @@ address,name
 0x000021c0,cm848_setDataTransferMode
 0x000021d0,mpc555_initDiagnosticSession
 0x00002310,mpc555_eepromValidationCycle
-0x00002384,cm848_busWaitCycles
+0x00002384,cm848_busyWaitDelay,Software delay: runs pass_count passes of SPINS_PER_DELAY_PASS (2222) spins of a 4-instruction loop (addi / clrlwi / cmpwi / blt) - no timer and no watchdog service. Both counters are 16-bit. A pass is at least 8888 clocks (0.22 ms at the nominal 40 MHz system clock if every instruction took one clock); flash-fetch and taken-branch stalls make it longer, so the real pass time is a bench measurement. Callers: mpc555_checkBusHardwareStatus (1 pass after each QADC port write before reading the pins back) and cm848_waitForBusStable (2 passes between samples of an MIOS input bit). Was cm848_busWaitCycles: it waits on no bus and the argument is not CPU cycles | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
 0x000023b8,mpc555_checkBusHardwareStatus
 0x000024a0,cm848_waitForBusStable
 0x00002504,mpc555_systemInitialization

@@ -34,6 +34,14 @@ function_address,function_name,param_index,name,type,comment
 0x000038f4,cm848_dispatchEepromWriteRequest,return,,void,Dispatches EEPROM write by request type - takes no params (reads global directly)
 
 # -----------------------------------------------------------------------------
+# Boot delay helper
+# -----------------------------------------------------------------------------
+# pass_count is typed undefined4 on purpose: the CSV keyword int maps to dword (unsigned) and would add (int) casts
+# to the signed tests (cmpwi r3 0 / cmpw r4 r3); an undefined type locks the name but lets the decompiler infer int.
+0x00002384,cm848_busyWaitDelay,return,,void,No return value - r3 is only read
+0x00002384,cm848_busyWaitDelay,0,pass_count,undefined4,Number of delay passes of SPINS_PER_DELAY_PASS spins each (signed; 0 or less returns at once)
+
+# -----------------------------------------------------------------------------
 # J1939 PGN Handlers - Common pattern for diagnostic message handlers
 # Pattern: First param is always a pointer to the received CAN message descriptor
 # -----------------------------------------------------------------------------

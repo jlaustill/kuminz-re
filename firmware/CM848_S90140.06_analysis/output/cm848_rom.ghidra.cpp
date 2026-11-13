@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 13 10:59:40 MST 2026
+// Generated: Fri Nov 13 13:34:41 MST 2026
 
 
 //
@@ -1709,24 +1709,34 @@ void mpc555_eepromValidationCycle(void)
 
 
 //
-// Function: cm848_busWaitCycles @ 0x00002384
+// Function: cm848_busyWaitDelay @ 0x00002384
 //
 
-void cm848_busWaitCycles(int param_1)
+/* Software delay: runs pass_count passes of SPINS_PER_DELAY_PASS (2222) spins of a 4-instruction
+   loop (addi / clrlwi / cmpwi / blt) - no timer and no watchdog service. Both counters are 16-bit.
+   A pass is at least 8888 clocks (0.22 ms at the nominal 40 MHz system clock if every instruction
+   took one clock); flash-fetch and taken-branch stalls make it longer, so the real pass time is a
+   bench measurement. Callers: mpc555_checkBusHardwareStatus (1 pass after each QADC port write
+   before reading the pins back) and cm848_waitForBusStable (2 passes between samples of an MIOS
+   input bit). Was cm848_busWaitCycles: it waits on no bus and the argument is not CPU cycles |
+   review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High */
+
+void cm848_busyWaitDelay(int pass_count)
 
 {
-  uint uVar1;
-  ushort uVar2;
+  uint completed_passes;
+  word spin_count;
   
-  uVar1 = 0;
-  if (0 < param_1) {
+  completed_passes = 0;
+  if (0 < pass_count) {
     do {
-      uVar2 = 0;
+      spin_count = 0;
       do {
-        uVar2 = uVar2 + 1;
-      } while (uVar2 < 0x8ae);
-      uVar1 = uVar1 + 1 & 0xffff;
-    } while ((int)uVar1 < param_1);
+        spin_count = spin_count + 1;
+                    /* Constant: SPINS_PER_DELAY_PASS = 2222 */
+      } while (spin_count < 0x8ae);
+      completed_passes = completed_passes + 1 & 0xffff;
+    } while ((int)completed_passes < pass_count);
   }
   return;
 }
@@ -1755,21 +1765,21 @@ bool mpc555_checkBusHardwareStatus(void)
   pwVar6 = &QADC64B_MCR.PORTQA_B;
   uVar5 = 0;
   QADC64B_MCR.PORTQA_B = 0;
-  cm848_busWaitCycles(1);
+  cm848_busyWaitDelay(1);
   uVar1 = *pwVar6;
   *pwVar8 = *pwVar8;
   *pwVar6 = uVar5;
-  cm848_busWaitCycles(1);
+  cm848_busyWaitDelay(1);
   uVar2 = *pwVar6;
   wVar4 = qadc_b_mcr.DDRQA_B;
   qadc_b_mcr.DDRQA_B = wVar4;
   pwVar7 = &qadc_b_mcr.PORTQA_B;
   qadc_b_mcr.PORTQA_B = uVar5;
-  cm848_busWaitCycles(1);
+  cm848_busyWaitDelay(1);
   uVar3 = *pwVar7;
   *pwVar8 = *pwVar8;
   *pwVar6 = uVar5;
-  cm848_busWaitCycles(1);
+  cm848_busyWaitDelay(1);
   return (((uVar1 & 1) != 0 && (uVar2 & 0x1000) != 0) && (uVar3 & 0x400) != 0) &&
          (*pwVar7 & 0x800) != 0;
 }
@@ -1795,7 +1805,7 @@ void cm848_waitForBusStable(void)
     else {
       uVar2 = uVar2 + 1 & 0xff;
     }
-    cm848_busWaitCycles(2);
+    cm848_busyWaitDelay(2);
   } while ((int)uVar2 < 5);
   return;
 }
