@@ -130,7 +130,7 @@ address,name,type,comment
 0x0005c788,u__0005c788,,
 0x0005c7ae,pci_message_timeout_grace,word,ROM constant 50 (lhz) - a PCI message is flagged timed out once its timer exceeds interval by more than this
 0x0005c7b0,pci_link_error_limit,word,ROM constant 255 (lhz) - pci_link_error_count value that latches the PCI link failure
-0x0005c7b2,obd_ecm_address,byte,ROM: the ECM's address - the first byte of every OBD-II response (was j1939_dm_node_id_cal)
+0x0005c7b2,pci_ecm_address,word,ROM word 0x0010: the ECM's J1850 node address - first byte of every OBD-II and diagnostic response (cm848_processPciObdRequest / cm848_processUdsSecurityService) (was j1939_dm_node_id_cal)
 0x0005c7ba,obd_mode_1_supported_pids,dword,ROM: mode 1 supported PIDs (bit 31 = PID 1) (was j1939_dm1_spn_support_bitmask)
 0x0005c7be,obd_pid_1_monitor_support,word,ROM: mode 1 PID 1 monitor bytes - high byte low nibble = byte B supported continuous monitors / low byte = byte C (was j1939_dm1_lamp_status_cal)
 0x0005c7bf,obd_pid_1_monitor_support+1,,
@@ -2971,7 +2971,7 @@ address,name,type,comment
 0x00407836,protection_fault_fuel_bypass_threshold_cal,word,
 0x00407838,protection_fuel_demand_entry_threshold_cal,word,
 0x0040783a,protection_overload_fuel_demand_threshold_cal,word,
-0x0040783c,protection_load_input_fuel_correction_threshold_cal,word,
+0x0040783c,transmission_hot_set_temperature,word,transmission_hot_flag sets above this (17280 = 270 deg F) (was protection_load_input_fuel_correction_threshold_cal)
 0x0040783e,protection_fuel_demand_l_threshold_cal,word,
 0x00407840,protection_load_input_min_threshold_cal,word,
 0x00407842,protection_load_fuel_check_threshold_a_cal,word,
@@ -3149,24 +3149,24 @@ address,name,type,comment
 0x00408332,protection_load_condition8_upper_threshold_cal,word,
 0x00408334,protection_load_condition8_lower_threshold_cal,word,
 0x00408336,protection_load_fault_bypass_threshold_cal,word,
-0x00408338,protection_overtemp80_set_threshold_cal,word,
-0x0040833a,protection_overtemp80_clear_threshold_cal,word,
-0x0040833c,protection_overtemp40_clear_threshold_cal,word,
-0x0040833e,protection_fault_inactive_threshold_cal,word,
-0x00408340,protection_fault_active_threshold_cal,word,
-0x00408342,protection_status_level2_threshold_cal,word,
-0x00408344,protection_status_level3_threshold_cal,word,
-0x00408346,protection_status_level4_threshold_cal,word,
-0x00408348,protection_status_level5_threshold_cal,word,
+0x00408338,transmission_cold_set_temperature,word,protection_condition_flags_t overtemp_flags bit 7 (cold) sets below this transmission temperature (1242 = 19.4 deg F) (was protection_overtemp80_set_threshold_cal)
+0x0040833a,transmission_cold_clear_temperature,word,The cold bit clears above this (2278 = 35.6 deg F) (was protection_overtemp80_clear_threshold_cal)
+0x0040833c,transmission_hot_clear_temperature,word,transmission_hot_flag clears below this (16000 = 250 deg F) unless overtemp_flags bit 5 is set (was protection_overtemp40_clear_threshold_cal)
+0x0040833e,transmission_overheat_clear_temperature,word,transmission_overheat_flag clears below this (16000 = 250 deg F) (was protection_fault_inactive_threshold_cal)
+0x00408340,transmission_overheat_set_temperature,word,transmission_overheat_flag sets above this (18176 = 284 deg F) (was protection_fault_active_threshold_cal)
+0x00408342,transmission_temperature_range_2_threshold,word,transmission_temperature_range is 2 or more above this (6310 = 98.6 deg F) (was protection_status_level2_threshold_cal)
+0x00408344,transmission_temperature_range_3_threshold,word,Range 3 or more above this (9536 = 149 deg F) (was protection_status_level3_threshold_cal)
+0x00408346,transmission_temperature_range_4_threshold,word,Range 4 or more above this (12800 = 200 deg F) (was protection_status_level4_threshold_cal)
+0x00408348,transmission_temperature_range_5_threshold,word,Range 5 above this (16000 = 250 deg F) (was protection_status_level5_threshold_cal)
 0x0040834a,protection_load_scaled_filter_state_cal,byte,
 0x0040834c,protection_derate_l2_ramp_rpm_limit_cal,word,
 0x0040834e,protection_derate_countdown_init_cal,word,
 0x00408350,protection_entry_countdown_init_cal,word,
-0x00408352,protection_trigger_load_threshold_cal,word,
-0x00408354,protection_trigger_load_clear_threshold_cal,word,
+0x00408352,hot_mode_transmission_set_temperature,word,hot_mode_flag sets above this transmission temperature (15040 = 235 deg F) (was protection_trigger_load_threshold_cal)
+0x00408354,hot_mode_transmission_clear_temperature,word,hot_mode_flag clears when the transmission is below this (14080 = 220 deg F) and coolant is below hot_mode_coolant_clear_temperature (was protection_trigger_load_clear_threshold_cal)
 0x00408356,protection_load_filter_state_a_cal,byte,
-0x00408358,protection_trigger_coolant_threshold_cal,word,
-0x0040835a,protection_trigger_coolant_clear_threshold_cal,word,
+0x00408358,hot_mode_coolant_set_temperature,word,hot_mode_flag also sets above this coolant temperature (15066 = 235 deg F) (was protection_trigger_coolant_threshold_cal)
+0x0040835a,hot_mode_coolant_clear_temperature,word,Coolant must be below this (14374 = 225 deg F) for hot_mode_flag to clear (was protection_trigger_coolant_clear_threshold_cal)
 0x0040835c,protection_debounce_fuel_threshold_b_cal,word,
 0x0040835e,protection_derate_ramp_exit_threshold_cal,word,
 0x00408360,protection_derate_rpm_limit_floor_cal,word,
@@ -3387,10 +3387,10 @@ address,name,type,comment
 0x00408d38,fuel_temp_flow_rate_threshold_cal,word,
 0x00408d3a,fuel_flow_rate_counter_threshold_cal,word,
 0x00408d3c,fuel_flow_rate_protection_cap_cal,dword,
-0x00408d40,protection_load_input_default_cal,word,
-0x00408d42,protection_load_input_static_cal,word,
-0x00408d44,protection_load_coolant_scale_cal,word,
-0x00408d46,protection_load_coolant_offset_cal,word,
+0x00408d40,transmission_temperature_late_substitute,word,transmission_temperature_in_use while both sensors are faulted once fuel_flow_rate_working has reached 0 (11520 = 180 deg F) (was protection_load_input_default_cal)
+0x00408d42,transmission_temperature_early_substitute,word,transmission_temperature_in_use while its sensor and the coolant sensor are both faulted and fuel_flow_rate_working is still counting down (11520 = 180 deg F) (was protection_load_input_static_cal)
+0x00408d44,transmission_temperature_coolant_model_scale,word,Estimate while the transmission temperature sensor is faulted = coolant temperature x this / 32768 + transmission_temperature_coolant_model_offset (14336 = 0.4375); working RAM - not EEPROM-backed (was protection_load_coolant_scale_cal)
+0x00408d46,transmission_temperature_coolant_model_offset,word,Offset of the coolant-based transmission temperature estimate (5568 = 87 deg F) (was protection_load_coolant_offset_cal)
 0x00408d60,fuel_flow_rate_temp_scale_cal,word,
 0x00408d62,engine_load_filter_coeff_cal,byte,
 0x00408d64,fuel_flow_rate_max_cal,word,
@@ -4823,13 +4823,13 @@ address,name,type,comment
 0x0040b134,protection_status_entry,word,
 0x0040b136,protection_timer_d,word,
 0x0040b138,protection_recovery_timer,word,
-0x0040b13a,protection_status_table_index,byte,
-0x0040b13b,fuel_correction_enable_flag,byte,
-0x0040b13c,protection_fault_active_flag,byte,
+0x0040b13a,transmission_temperature_range,byte,1-5 from transmission_temperature_in_use against the 98.6 / 149 / 200 / 250 deg F thresholds (was protection_status_table_index)
+0x0040b13b,transmission_hot_flag,byte,Transmission fluid above 270 deg F (clears below 250 deg F) - also sets protection_condition_flags_t overtemp_flags 0x40; PCI 0x98 bit 0; changes the shift-lever display value in cm848_selectProtectionOverrideMode (was fuel_correction_enable_flag)
+0x0040b13c,transmission_overheat_flag,byte,Transmission fluid above 284 deg F (clears below 250 deg F); PCI 0x98 bit 1 (was protection_fault_active_flag)
 0x0040b13e,protection_load_scaled_input,word,
 0x0040b140,protection_derate_countdown,word,
 0x0040b142,protection_entry_countdown,word,
-0x0040b144,protection_trigger_active_flag,word,
+0x0040b144,hot_mode_flag,word,Set while the transmission is above 235 deg F or coolant above 235 deg F - cleared once both are below 220 / 225 deg F (processProtectionFlagConditions); read by about 20 protection_* functions (was protection_trigger_active_flag)
 0x0040b146,fuel_temp_trim_ema,word,
 0x0040b148,protection_derate_measurement,word,
 0x0040b14a,protection_load_rate_delta,word,
@@ -4850,7 +4850,7 @@ address,name,type,comment
 0x0040b1ec,protection_iat_scaled,word,
 0x0040b1ee,fuel_demand_timing_enable_flag,word,
 0x0040b1f0,engine_load_filtered,word,
-0x0040b1f2,protection_load_input,word,
+0x0040b1f2,transmission_temperature_in_use,word,Transmission fluid temperature the ECM acts on (1/64 deg F): transmission_temperature_sensor_filtered - or while pending_faults bit 10 / 13 / 14 is set (probably its sensor faults) a coolant-based estimate or a 180 deg F substitute (cm848_processEngineLoadData); PCI 0xEA byte 1 and the hot / overheat / range / cold flags in processProtectionFlagConditions (was protection_load_input)
 0x0040b1f4,protection_derate_level,word,
 0x0040b1f6,fuel_temp_protection_active_flag,word,
 0x0040b1fa,sensor_filter_update_counter,word,
@@ -4973,7 +4973,7 @@ address,name,type,comment
 0x0040b402,pci_receive_message_6_timer,word,PCI RX[6] header 4F C0 age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception
 0x0040b406,pci_receive_message_7_status,byte,PCI RX[7] header 63 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b407,pci_receive_message_7_timer,word,PCI RX[7] header 63 age timer (receive timeout 1000); 0xff37 = never received; reset to 0 on reception
-0x0040b409,uds_transmit_status_flags,byte,
+0x0040b409,pci_transmit_message_12_status_bits,byte,PCI TX[12] header 0x98 payload byte 1 (cm848_buildPciTransmitMessage12StatusBits): bit 0 transmission hot / bit 1 transmission overheat or engine_run_mode_flag / bit 4 (was uds_transmit_status_flags)
 0x0040b40c,pci_transmit_message_12_status,byte,PCI TX[12] header 98 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b40d,pci_transmit_message_12_timer,word,PCI TX[12] header 98 age timer (send interval 2816); other modules write interval+10 to force an immediate send
 0x0040b410,j1939_msg_slot_g_status_a,byte,
@@ -4983,7 +4983,7 @@ address,name,type,comment
 0x0040b417,j1939_msg_slot_h_counter,byte,
 0x0040b418,pci_receive_message_9_status,byte,PCI RX[9] header B5 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b419,pci_receive_message_9_timer,word,PCI RX[9] header B5 age timer (receive timeout 500); 0xff37 = never received; reset to 0 on reception
-0x0040b41b,j1939_msg_slot_i_counter,byte,
+0x0040b41b,pci_transmit_message_18_payload,byte,PCI TX[18] header 0xEA payload byte 1: transmission temperature in deg C + 40 (was j1939_msg_slot_i_counter)
 0x0040b41c,pci_transmit_message_18_status,byte,PCI TX[18] header EA status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b41d,pci_transmit_message_18_timer,word,PCI TX[18] header EA age timer (send interval 3584); other modules write interval+10 to force an immediate send
 0x0040b41f,j1939_msg_slot_j_counter,byte,
@@ -5028,7 +5028,7 @@ address,name,type,comment
 0x0040b476,pci_receive_message_11_timer,word,PCI RX[11] header 72 age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception
 0x0040b47c,pci_transmit_message_7_status,byte,PCI TX[7] header 3F status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed
 0x0040b47d,pci_transmit_message_7_timer,word,PCI TX[7] header 3F age timer (event-driven (armed by writing 1)); other modules write interval+10 to force an immediate send
-0x0040b47f,obd_response_source_address,byte,PCI TX[8] (header 48 6B) payload byte 1: the ECM's address (obd_ecm_address) (was j1939_dm_slot_t_node_id)
+0x0040b47f,obd_response_source_address,byte,PCI TX[8] (header 48 6B) payload byte 1: the ECM's address (pci_ecm_address) (was j1939_dm_slot_t_node_id)
 0x0040b480,obd_response_mode,byte,OBD-II response mode = request mode + 0x40 (0x41 / 0x42 / 0x43 / 0x44 / 0x47 / 0x49) (was j1939_dm_response_type)
 0x0040b481,obd_response_pid,byte,Echo of obd_request_pid (was j1939_dm_response_spn_index)
 0x0040b482,obd_response_data_a,byte,OBD-II response data byte A (mode 9: the message number) (was j1939_dm_response_byte0)
@@ -5412,7 +5412,7 @@ address,name,type,comment
 0x0040bb8a,governor_integrator_bound_a,word,
 0x0040bbb2,cruise_speed_current_a,word,
 0x0040bbb4,cruise_speed_current_b,word,
-0x0040bbbe,protection_load_input_alt,word,
+0x0040bbbe,transmission_temperature_sensor_filtered,word,sensor_channel_filtered_output[103]: transmission fluid temperature in 1/64 deg F (2629 = 41 deg F in the cold RAM dump) - the source of transmission_temperature_in_use; per the 2004 wiring this ECM reads the 48RE fluid temperature on C2 pin 29 (was protection_load_input_alt)
 0x0040bc80,sensor_channel_diag_override,word,Per-sensor-channel diagnostic override value array; used when (diag_feature_flags & channel_bit) is set; asm is lhzx (word load); 25 refs in sensor processing
 0x0040bcc4,cam_sync_position_calculated,word,
 0x0040bcde,cruise_switch_adc_override,word,Substitute cruise-switch ADC value (chan 0x2f/47) used by governor_cruise_engage_check when diag_cam_sync_config_flags & 0x8000 (diagnostic input-override bit) is set instead of the live QADC read (asm lhz @0x512e8c); working RAM so no _cal
@@ -6864,8 +6864,8 @@ address,name,type,comment
 0x00408a9c,protection_coldStart_channelA_rpm_min_threshold,word,ROM RPM min for cold-start protection channel A
 0x00408aa4,protection_coldStart_channelB_rpm_lower_threshold,word,ROM RPM lower bound for channel B window
 0x00408aa8,protection_coldStart_channelB_rpm_upper_threshold,word,ROM RPM upper bound for channel B window
-0x00408aac,protection_load_upper_threshold,word,ROM upper bound on protection_load_input_alt
-0x00408aae,protection_load_lower_threshold,word,ROM lower bound on protection_load_input_alt
+0x00408aac,protection_load_upper_threshold,word,ROM upper bound on transmission_temperature_sensor_filtered
+0x00408aae,protection_load_lower_threshold,word,ROM lower bound on transmission_temperature_sensor_filtered
 0x00408ad2,protection_fuel_derate_increment_counter_max,byte,ROM cap for fuel derate increment counter
 0x00408ad3,protection_pid_integrator_threshold,word,ROM signed threshold on protection PID integrator
 0x00408ade,protection_pid_step_count_threshold_b,byte,ROM secondary step-count gate for protection PID

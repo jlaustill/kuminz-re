@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Nov 12 23:40:37 MST 2026
+// Generated: Thu Nov 12 23:46:12 MST 2026
 
 
 //
@@ -28469,9 +28469,9 @@ void cm848_protectionOverloadHandler(void)
   uint uVar2;
   byte bVar3;
   
-  protection_status_byte = *(word *)((uint)protection_status_table_index * 2 + 0x3fede2);
+  protection_status_byte = *(word *)((uint)transmission_temperature_range * 2 + 0x3fede2);
   protection_status_entry =
-       *(word *)(&eeprom_calibration_pending_flag + (uint)protection_status_table_index * 2);
+       *(word *)(&eeprom_calibration_pending_flag + (uint)transmission_temperature_range * 2);
   if (protection_derate_level == 1) {
     bVar3 = protection_condition_flags_t_0040b0e8.action_flags & 0xfd;
     if ((protection_condition_flags_t_0040b0e8.action_flags & 1) == 0) {
@@ -28601,7 +28601,7 @@ void cm848_protectionCleanupHandler(void)
   ushort uVar1;
   ushort uVar2;
   
-  if ((short)protection_load_input <= (short)protection_load_min_threshold_cal) {
+  if ((short)transmission_temperature_in_use <= (short)protection_load_min_threshold_cal) {
     return;
   }
   if ((protection_derate_level == 3) &&
@@ -28709,7 +28709,7 @@ void cm848_protectionOutputController(void)
   ushort uVar10;
   ushort uVar11;
   
-  if ((short)protection_load_input <= (short)protection_load_min_threshold_cal) {
+  if ((short)transmission_temperature_in_use <= (short)protection_load_min_threshold_cal) {
     return;
   }
   if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) != 0) {
@@ -28728,13 +28728,12 @@ void cm848_protectionOutputController(void)
          lookupTableInterpolation
                    ((table_interp_args_t *)&protection_fuel_demand_limit_derate2_interp_state);
     if ((((((protection_ramp_position == 0x7f) || (protection_ramp_position == 0x7e)) ||
-          (protection_trigger_active_flag != 0)) ||
-         (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &&
+          (hot_mode_flag != 0)) || (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &&
         (((protection_config_flags_b & 8) != 0 && (protection_rate_integrator._2_2_ == 0)))) &&
        ((protection_derate_countdown == 0 && (protection_entry_countdown == 0)))) {
       if ((protection_derate_fuel_exit_threshold_cal < fuel_demand_control_t_0040a57a.calculated) ||
          ((protection_condition_flags_t_0040b0e8.load_condition_flags & 2) != 0)) {
-        if (protection_trigger_active_flag != 0) {
+        if (hot_mode_flag != 0) {
           uVar4 = fuel_demand_limit_working;
           uVar3 = uVar2;
         }
@@ -28766,7 +28765,7 @@ void cm848_protectionOutputController(void)
        ((((uVar3 < engine_load_filtered && (protection_rate_integrator._2_2_ == 0)) &&
          (protection_lockout_t_0040b11c.thermal_lockout == 0)) &&
         (protection_lockout_t_0040b11c.rpm_lockout == 0)))) {
-      if (protection_trigger_active_flag == 0) {
+      if (hot_mode_flag == 0) {
         if ((protection_fuel_check_bypass_flag == 0) && ((switch_input_state_bits[1] & 0x10) != 0))
         {
           if (uVar6 <= fuel_demand_control_t_0040a57a.calculated) goto joined_r0x00030600;
@@ -28779,7 +28778,7 @@ void cm848_protectionOutputController(void)
                   (((fuel_demand_control_t_0040a57a.calculated <=
                      protection_fault_fuel_bypass_threshold_cal ||
                     (protection_overtemp_fuel_check_enable_cal == 0)) ||
-                   ((short)protection_load_input <=
+                   ((short)transmission_temperature_in_use <=
                     (short)protection_load_fault_bypass_threshold_cal)))))))) goto LAB_000306ac;
 LAB_00030694:
         cm848_setEngineProtectionFault(0x12,0);
@@ -28834,7 +28833,7 @@ LAB_000306ac:
     return;
   }
   wVar1 = fuel_demand_limit_working;
-  if (protection_trigger_active_flag == 0) {
+  if (hot_mode_flag == 0) {
     if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) == 0) {
       wVar1 = uVar7;
       uVar3 = uVar6;
@@ -28893,7 +28892,7 @@ void cm848_protectionFinalizeState(void)
       fuel_demand_limit_working =
            lookupTableInterpolation
                      ((table_interp_args_t *)&protection_fuel_demand_limit_derate2_interp_state);
-      if (protection_trigger_active_flag == 0) {
+      if (hot_mode_flag == 0) {
         if ((((protection_ramp_position == 0x7f) || (protection_ramp_position == 0x7e)) ||
             (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &&
            (fuel_demand_control_t_0040a57a.calculated <= uVar1)) goto LAB_00030fdc;
@@ -28913,7 +28912,7 @@ LAB_00030f98:
         fuel_demand_limit_working =
              lookupTableInterpolation
                        ((table_interp_args_t *)&protection_fuel_demand_limit_derate3_interp_state);
-        if (protection_trigger_active_flag == 0) {
+        if (hot_mode_flag == 0) {
           if ((protection_fuel_check_bypass_flag == 0) && ((switch_input_state_bits[1] & 0x10) != 0)
              ) {
             uVar1 = uVar2;
@@ -28944,7 +28943,7 @@ LAB_00030f98:
                      ((table_interp_args_t *)&protection_fuel_demand_limit_derate4_interp_state);
       uVar4 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fb142);
       uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fb140);
-      if (protection_trigger_active_flag != 0) goto LAB_00030f98;
+      if (hot_mode_flag != 0) goto LAB_00030f98;
       if ((protection_fuel_check_bypass_flag == 0) && ((switch_input_state_bits[1] & 0x10) != 0)) {
         if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0) {
           uVar1 = uVar4;
@@ -29021,7 +29020,7 @@ LAB_00030fdc:
              (int)((uint)engine_load_filtered - (uint)engine_rpm_state_t_0040b7ac.current_rpm))) {
       cm848_triggerProtectionEvent(0x12,0);
       protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_cal;
-      if (protection_trigger_active_flag != 0) {
+      if (hot_mode_flag != 0) {
         protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_value_cal;
       }
       protection_condition_flags_t_0040b0e8.load_condition_flags =
@@ -29165,9 +29164,9 @@ void cm848_protectionStatusFlagHandler(void)
   uint uVar5;
   
   protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0x1f;
-  protection_status_byte = *(word *)((uint)protection_status_table_index * 2 + 0x3fede2);
+  protection_status_byte = *(word *)((uint)transmission_temperature_range * 2 + 0x3fede2);
   protection_status_entry =
-       *(word *)(&eeprom_calibration_pending_flag + (uint)protection_status_table_index * 2);
+       *(word *)(&eeprom_calibration_pending_flag + (uint)transmission_temperature_range * 2);
   uVar1 = lookupTableInterpolation((table_interp_args_t *)&DAT_003fb15a);
   if (protection_derate_level == 1) {
     bVar3 = protection_status_flags_t_0040b0f2.status_flags._0_1_ & 0xdf;
@@ -29263,8 +29262,8 @@ void cm848_protectionStatusFlagHandler(void)
               }
               if ((protection_status_entry_lower_limit_cal < protection_status_entry) &&
                  (protection_status_entry < protection_status_entry_upper_limit_cal)) {
-                *(word *)(&eeprom_calibration_pending_flag + (uint)protection_status_table_index * 2
-                         ) = protection_status_entry;
+                *(word *)(&eeprom_calibration_pending_flag +
+                         (uint)transmission_temperature_range * 2) = protection_status_entry;
               }
             }
             protection_init_timer = 0;
@@ -29307,7 +29306,7 @@ void cm848_protectionStatusFlagHandler(void)
         }
         if ((protection_status_lower_limit_cal < protection_status_byte) &&
            (protection_status_byte < protection_status_upper_limit_cal)) {
-          *(word *)((uint)protection_status_table_index * 2 + 0x3fede2) = protection_status_byte;
+          *(word *)((uint)transmission_temperature_range * 2 + 0x3fede2) = protection_status_byte;
         }
       }
       protection_init_timer = 0;
@@ -29868,14 +29867,14 @@ LAB_00032ee0:
 void cm848_protectionStateMachine(void)
 
 {
-  if ((short)protection_load_input < (short)protection_load_input_min_threshold_cal) {
+  if ((short)transmission_temperature_in_use < (short)protection_load_input_min_threshold_cal) {
     cm848_protectionTimeoutHandler();
   }
   else if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0) {
     if (((protection_condition_flags_t_0040b0e8.condition_flags_2 & 4) == 0) &&
        ((protection_condition_flags_t_0040b0e8.condition_flags_3 & 2) == 0)) {
       if (((protection_action_mode_bits._0_1_ & 4) == 0) ||
-         ((protection_trigger_active_flag != 0 && (protection_derate_level == 2)))) {
+         ((hot_mode_flag != 0 && (protection_derate_level == 2)))) {
         if (protection_lockout_t_0040b11c.sensor_fault_active == 0) {
           if ((protection_status_flags_t_0040b0f2.status_flags._0_1_ & 0x80) == 0) {
             if (fuel_temp_trim_ema < 0x201) {
@@ -30259,7 +30258,7 @@ void cm848_calculateProtectionConditions(void)
            (protection_timer_state_t_0040b100.status_code._0_2_ != 0x11)))))) {
         if (protection_derate_level == 2) {
           protection_lockout_t_0040b11c.thermal_lockout = protection_thermal_lockout_cal;
-          if (protection_trigger_active_flag != 0) {
+          if (hot_mode_flag != 0) {
             protection_lockout_t_0040b11c.thermal_lockout = protection_thermal_lockout_trigger_cal;
           }
           protection_condition_flags_t_0040b0e8.load_condition_flags =
@@ -30269,8 +30268,7 @@ void cm848_calculateProtectionConditions(void)
       }
       else {
         if ((protection_derate_level == 3) &&
-           (protection_entry_countdown = protection_entry_countdown_init_cal,
-           protection_trigger_active_flag != 0)) {
+           (protection_entry_countdown = protection_entry_countdown_init_cal, hot_mode_flag != 0)) {
           protection_entry_countdown = protection_entry_countdown_trigger_cal;
         }
         protection_derate_level = 2;
@@ -30299,7 +30297,7 @@ void cm848_calculateProtectionConditions(void)
       }
       if (uVar10 < uVar3) {
         if (protection_derate_level == 1) {
-          if (protection_trigger_active_flag == 0) {
+          if (hot_mode_flag == 0) {
             protection_derate_countdown = protection_derate_countdown_init_cal;
           }
           else {
@@ -30308,7 +30306,7 @@ void cm848_calculateProtectionConditions(void)
         }
         else if ((protection_derate_level == 3) &&
                 (protection_entry_countdown = protection_entry_countdown_init_cal,
-                protection_trigger_active_flag != 0)) {
+                hot_mode_flag != 0)) {
           protection_entry_countdown = protection_entry_countdown_trigger_cal;
         }
         protection_derate_level = 2;
@@ -30322,8 +30320,8 @@ void cm848_calculateProtectionConditions(void)
   }
   else {
     if ((protection_derate_level == 3) &&
-       (protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_cal,
-       protection_trigger_active_flag != 0)) {
+       (protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_cal, hot_mode_flag != 0
+       )) {
       protection_lockout_t_0040b11c.load_lockout = protection_load_lockout_value_cal;
     }
     protection_derate_level = 4;
@@ -30460,65 +30458,69 @@ void processProtectionFlagConditions(void)
     protection_condition_flags_t_0040b0e8.condition_flags_1 =
          protection_condition_flags_t_0040b0e8.condition_flags_1 | 4;
   }
-  if ((short)protection_status_level5_threshold_cal < (short)protection_load_input) {
+  if ((short)transmission_temperature_range_5_threshold < (short)transmission_temperature_in_use) {
     iVar5 = 5;
   }
-  else if ((short)protection_status_level4_threshold_cal < (short)protection_load_input) {
+  else if ((short)transmission_temperature_range_4_threshold <
+           (short)transmission_temperature_in_use) {
     iVar5 = 4;
   }
-  else if ((short)protection_status_level3_threshold_cal < (short)protection_load_input) {
+  else if ((short)transmission_temperature_range_3_threshold <
+           (short)transmission_temperature_in_use) {
     iVar5 = 3;
   }
-  else if ((short)protection_status_level2_threshold_cal < (short)protection_load_input) {
+  else if ((short)transmission_temperature_range_2_threshold <
+           (short)transmission_temperature_in_use) {
     iVar5 = 2;
   }
   else {
     iVar5 = 1;
   }
-  protection_status_table_index = (byte)iVar5;
-  if (((short)protection_trigger_load_threshold_cal < (short)protection_load_input) ||
-     ((short)protection_trigger_coolant_threshold_cal <
-      (short)sensor_readings_t_0040baf2.coolant_temp)) {
-    protection_trigger_active_flag = 1;
+  transmission_temperature_range = (byte)iVar5;
+  if (((short)hot_mode_transmission_set_temperature < (short)transmission_temperature_in_use) ||
+     ((short)hot_mode_coolant_set_temperature < (short)sensor_readings_t_0040baf2.coolant_temp)) {
+    hot_mode_flag = 1;
   }
-  else if (((short)protection_load_input < (short)protection_trigger_load_clear_threshold_cal) &&
-          ((short)sensor_readings_t_0040baf2.coolant_temp <
-           (short)protection_trigger_coolant_clear_threshold_cal)) {
-    protection_trigger_active_flag = 0;
+  else if (((short)transmission_temperature_in_use < (short)hot_mode_transmission_clear_temperature)
+          && ((short)sensor_readings_t_0040baf2.coolant_temp <
+              (short)hot_mode_coolant_clear_temperature)) {
+    hot_mode_flag = 0;
   }
-  if ((short)protection_fault_active_threshold_cal < (short)protection_load_input) {
-    protection_fault_active_flag = 1;
+  if ((short)transmission_overheat_set_temperature < (short)transmission_temperature_in_use) {
+    transmission_overheat_flag = 1;
   }
-  if ((short)protection_load_input < (short)protection_fault_inactive_threshold_cal) {
-    protection_fault_active_flag = 0;
+  if ((short)transmission_temperature_in_use < (short)transmission_overheat_clear_temperature) {
+    transmission_overheat_flag = 0;
   }
-  if ((short)protection_load_input_fuel_correction_threshold_cal < (short)protection_load_input) {
-    fuel_correction_enable_flag = 1;
+  if ((short)transmission_hot_set_temperature < (short)transmission_temperature_in_use) {
+    transmission_hot_flag = 1;
     protection_condition_flags_t_0040b0e8.condition_eval =
          protection_condition_flags_t_0040b0e8.condition_eval & 0xfb | 2;
     protection_condition_flags_t_0040b0e8.overtemp_flags =
          protection_condition_flags_t_0040b0e8.overtemp_flags | 0x40;
   }
-  else if (((short)protection_load_input < (short)protection_overtemp40_clear_threshold_cal) &&
+  else if (((short)transmission_temperature_in_use < (short)transmission_hot_clear_temperature) &&
           (bVar3 = protection_condition_flags_t_0040b0e8.overtemp_flags & 0xbf,
           bVar1 = protection_condition_flags_t_0040b0e8.overtemp_flags & 0x20,
           protection_condition_flags_t_0040b0e8.overtemp_flags = bVar3, bVar1 == 0)) {
-    fuel_correction_enable_flag = 0;
+    transmission_hot_flag = 0;
   }
-  if (((short)protection_overtemp80_clear_threshold_cal < (short)protection_load_input) &&
+  if (((short)transmission_cold_clear_temperature < (short)transmission_temperature_in_use) &&
      (((short)protection_oil_temp_entry_threshold_cal < (short)protection_oilTemp_proxy ||
       ((protection_condition_flags_t_0040b0e8.overtemp_flags & 2) == 0)))) {
     protection_condition_flags_t_0040b0e8.overtemp_flags =
          protection_condition_flags_t_0040b0e8.overtemp_flags & 0x7f;
   }
-  else if (((short)protection_load_input < (short)protection_overtemp80_set_threshold_cal) ||
+  else if (((short)transmission_temperature_in_use < (short)transmission_cold_set_temperature) ||
           (((protection_condition_flags_t_0040b0e8.overtemp_flags & 2) != 0 &&
            ((short)protection_oilTemp_proxy < (short)protection_oil_temp_exit_threshold_cal)))) {
     protection_condition_flags_t_0040b0e8.overtemp_flags =
          protection_condition_flags_t_0040b0e8.overtemp_flags | 0x80;
   }
-  if (((short)protection_load_condition8_lower_threshold_cal < (short)protection_load_input) &&
-     ((short)protection_load_input < (short)protection_load_condition8_upper_threshold_cal)) {
+  if (((short)protection_load_condition8_lower_threshold_cal <
+       (short)transmission_temperature_in_use) &&
+     ((short)transmission_temperature_in_use < (short)protection_load_condition8_upper_threshold_cal
+     )) {
     protection_condition_flags_t_0040b0e8.condition_eval =
          protection_condition_flags_t_0040b0e8.condition_eval | 8;
   }
@@ -30707,8 +30709,8 @@ void cm848_initProtectionSystem(void)
   protection_state_counter_b = 0;
   protection_condition_flags_t_0040b0e8.condition_flags_1 =
        protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xf7;
-  fuel_correction_enable_flag = 0;
-  protection_fault_active_flag = 0;
+  transmission_hot_flag = 0;
+  transmission_overheat_flag = 0;
   cm848_triggerProtectionEvent(0x12,0);
   cm848_triggerProtectionEvent(0x10,0);
   protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0xef;
@@ -30917,7 +30919,7 @@ void cm848_calculateProtectionThresholdLimit(void)
         (protection_ramp_position != 0x7e)) && (protection_ramp_position != 0x7f)) &&
       (((2 < protection_derate_level &&
         ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) &&
-       ((protection_trigger_active_flag == 0 && ((switch_input_state_bits[1] & 0x10) == 0)))))) &&
+       ((hot_mode_flag == 0 && ((switch_input_state_bits[1] & 0x10) == 0)))))) &&
      ((fuel_demand_control_t_0040a57a.calculated < uVar1 ||
       (((protection_condition_flags_t_0040b0e8.load_condition_flags & 4) != 0 &&
        (fuel_demand_control_t_0040a57a.calculated < uVar2)))))) {
@@ -33995,8 +33997,6 @@ undefined4 cm848_handlePciLinkEvent(void)
 // Function: hpcr_initJ1939MessageTables @ 0x0003a450
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void hpcr_initJ1939MessageTables(void)
 
 {
@@ -34020,7 +34020,7 @@ void hpcr_initJ1939MessageTables(void)
   puVar3 = (undefined1 *)((int)&pci_transmit_message_9_timer + 1);
   do {
     if (iVar7 == 0) {
-      uVar2 = (undefined1)_obd_ecm_address;
+      uVar2 = (undefined1)pci_ecm_address;
     }
     else {
       uVar2 = *(undefined1 *)(iVar7 + 0x57bb5);
@@ -34259,7 +34259,7 @@ void hpcr_initJ1939MessageTables(void)
     iVar7 = iVar7 + 1;
   } while (iVar7 < 5);
   j1939_msg_slot_h_counter = 0;
-  j1939_msg_slot_i_counter = 0;
+  pci_transmit_message_18_payload = 0;
   j1939_msg_slot_j_counter = 0;
   iVar7 = 0;
   puVar3 = (undefined1 *)((int)&pci_transmit_message_3_timer + 1);
@@ -34576,8 +34576,6 @@ undefined4 cm848_calculateSecurityChecksum(uint param_1,uint param_2)
 // Function: cm848_processUdsSecurityService @ 0x0003b030
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processUdsSecurityService(void)
 
 {
@@ -34594,11 +34592,11 @@ void cm848_processUdsSecurityService(void)
     uds_request_data_pointer = pci_receive_message_1_timer;
     return;
   }
-  if ((_obd_ecm_address != uds_target_service_id) && (uds_target_service_id != 0xfe)) {
+  if ((pci_ecm_address != uds_target_service_id) && (uds_target_service_id != 0xfe)) {
     uds_request_data_pointer = pci_receive_message_1_timer;
     return;
   }
-  bVar2 = (byte)_obd_ecm_address;
+  bVar2 = (byte)pci_ecm_address;
   if (uds_service_id_byte < 0x29) {
     if (uds_service_id_byte == 0x28) {
       if (pci_normal_transmit_disabled != 0) {
@@ -34869,7 +34867,7 @@ LAB_0003b608:
       }
     }
     uds_response_type_code = 5;
-    uds_response_t_0040b492.source_address = (byte)_obd_ecm_address;
+    uds_response_t_0040b492.source_address = (byte)pci_ecm_address;
     if ((pci_receive_message_1_status & 4) == 0) {
       if (tsc1_condition_active_flag != 1) {
         uds_request_data_pointer = pci_receive_message_1_timer;
@@ -35022,7 +35020,7 @@ void cm848_selectProtectionOverrideMode(void)
       protection_ramp_position = 0x80;
     }
     else if ((fuel_correction_active_flag == 2) || (fuel_correction_active_flag == 3)) {
-      if ((uds_transmit_status_flags & 1) == 1) {
+      if ((pci_transmit_message_12_status_bits & 1) == 1) {
         protection_ramp_position = 0x80;
       }
       else {
@@ -35031,7 +35029,7 @@ void cm848_selectProtectionOverrideMode(void)
     }
     goto LAB_0003bcac;
   case 5:
-    if ((uds_transmit_status_flags & 1) == 1) {
+    if ((pci_transmit_message_12_status_bits & 1) == 1) {
       if (fuel_correction_active_flag == 1) {
 LAB_0003bca0:
         protection_ramp_position = 0x81;
@@ -35046,7 +35044,7 @@ LAB_0003bca0:
     else if ((fuel_correction_active_flag == 2) || (fuel_correction_active_flag == 3))
     goto LAB_0003bca0;
 LAB_0003bcac:
-    if ((fuel_correction_enable_flag != 0) && (fuel_correction_active_flag == 3)) {
+    if ((transmission_hot_flag != 0) && (fuel_correction_active_flag == 3)) {
       protection_ramp_position = 0x80;
     }
     break;
@@ -35198,40 +35196,47 @@ void cm848_checkSpeedDerivativeMode(void)
 
 
 //
-// Function: cm848_updateProtectionOverrideFlags @ 0x0003c044
+// Function: cm848_buildPciTransmitMessage12StatusBits @ 0x0003c044
 //
 
-void cm848_updateProtectionOverrideFlags(void)
+/* Builds the PCI (J1850) TX[12] header 0x98 status byte: bit 0 = transmission_hot_flag (270 deg F)
+   / bit 1 = transmission_overheat_flag (284 deg F) or engine_run_mode_flag / bit 4 = cleared while
+   protection_condition_flags_t condition_flags_1 bit 2 or protection_condition_cleared_flag is set;
+   any change of bits 0 or 4 sends the message at once (timer pushed past its 2816 interval) (was
+   cm848_updateProtectionOverrideFlags) | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence Medium */
+
+void cm848_buildPciTransmitMessage12StatusBits(void)
 
 {
-  if (fuel_correction_enable_flag == 0) {
-    if ((uds_transmit_status_flags & 1) == 0) goto LAB_0003c0a8;
-    uds_transmit_status_flags = uds_transmit_status_flags & 0xfe;
+  if (transmission_hot_flag == 0) {
+    if ((pci_transmit_message_12_status_bits & 1) == 0) goto LAB_0003c0a8;
+    pci_transmit_message_12_status_bits = pci_transmit_message_12_status_bits & 0xfe;
   }
   else {
-    if ((uds_transmit_status_flags & 1) != 0) goto LAB_0003c0a8;
-    uds_transmit_status_flags = uds_transmit_status_flags | 1;
+    if ((pci_transmit_message_12_status_bits & 1) != 0) goto LAB_0003c0a8;
+    pci_transmit_message_12_status_bits = pci_transmit_message_12_status_bits | 1;
   }
   pci_transmit_message_12_timer = 0xb04;
 LAB_0003c0a8:
-  if ((protection_fault_active_flag == 0) && (engine_run_mode_flag == 0)) {
-    uds_transmit_status_flags = uds_transmit_status_flags & 0xfd;
+  if ((transmission_overheat_flag == 0) && (engine_run_mode_flag == 0)) {
+    pci_transmit_message_12_status_bits = pci_transmit_message_12_status_bits & 0xfd;
   }
   else {
-    uds_transmit_status_flags = uds_transmit_status_flags | 2;
+    pci_transmit_message_12_status_bits = pci_transmit_message_12_status_bits | 2;
   }
   if (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0) &&
      (protection_condition_cleared_flag == 0)) {
-    if ((uds_transmit_status_flags & 0x10) != 0) {
+    if ((pci_transmit_message_12_status_bits & 0x10) != 0) {
       return;
     }
-    uds_transmit_status_flags = uds_transmit_status_flags | 0x10;
+    pci_transmit_message_12_status_bits = pci_transmit_message_12_status_bits | 0x10;
   }
   else {
-    if ((uds_transmit_status_flags & 0x10) == 0) {
+    if ((pci_transmit_message_12_status_bits & 0x10) == 0) {
       return;
     }
-    uds_transmit_status_flags = uds_transmit_status_flags & 0xef;
+    pci_transmit_message_12_status_bits = pci_transmit_message_12_status_bits & 0xef;
   }
   pci_transmit_message_12_timer = 0xb04;
   return;
@@ -35240,21 +35245,26 @@ LAB_0003c0a8:
 
 
 //
-// Function: cm848_convertProtectionTemperatureToScale @ 0x0003c140
+// Function: cm848_buildPciTransmitMessage18TransmissionTemperature @ 0x0003c140
 //
 
-void cm848_convertProtectionTemperatureToScale(void)
+/* Builds the PCI (J1850) TX[18] header 0xEA payload: byte 1 = transmission_temperature_in_use in
+   deg C + 40 (clamped at 255) (was cm848_convertProtectionTemperatureToScale) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
+
+void cm848_buildPciTransmitMessage18TransmissionTemperature(void)
 
 {
   int iVar1;
   
-  iVar1 = ((short)(((short)protection_load_input >> 6) +
-                  (ushort)((short)protection_load_input < 0 && (protection_load_input & 0x3f) != 0))
-           * 5 + -0xa0) / 9 + 0x28;
+  iVar1 = ((short)(((short)transmission_temperature_in_use >> 6) +
+                  (ushort)((short)transmission_temperature_in_use < 0 &&
+                          (transmission_temperature_in_use & 0x3f) != 0)) * 5 + -0xa0) / 9 + 0x28;
   if (0xff < (short)iVar1) {
     iVar1 = 0xff;
   }
-  j1939_msg_slot_i_counter = (byte)iVar1;
+  pci_transmit_message_18_payload = (byte)iVar1;
   return;
 }
 
@@ -37431,22 +37441,22 @@ void cm848_processEngineLoadData(void)
     if ((((system_status_flags_t_003fe974.condition_monitor & 1) == 0) &&
         ((system_status_flags_t_003fe974.condition_monitor & 2) == 0)) &&
        ((protection_monitor_shadow & 2) == 0)) {
-      uVar4 = (uint)protection_load_coolant_scale_cal;
+      uVar4 = (uint)transmission_temperature_coolant_model_scale;
       uVar5 = (uint)(short)sensor_readings_t_0040baf2.coolant_temp;
-      protection_load_input =
+      transmission_temperature_in_use =
            (short)(CONCAT44((int)((ulonglong)uVar4 * (ulonglong)uVar5 >> 0x20) +
                             uVar4 * ((int)uVar5 >> 0x1f),uVar4 * uVar5) / 0x8000) +
-           protection_load_coolant_offset_cal;
+           transmission_temperature_coolant_model_offset;
       goto LAB_0003f598;
     }
-    protection_load_input = protection_load_input_static_cal;
+    transmission_temperature_in_use = transmission_temperature_early_substitute;
     if (fuel_flow_rate_working != 0) goto LAB_0003f598;
-    pwVar3 = &protection_load_input_default_cal;
+    pwVar3 = &transmission_temperature_late_substitute;
   }
   else {
-    pwVar3 = &protection_load_input_alt;
+    pwVar3 = &transmission_temperature_sensor_filtered;
   }
-  protection_load_input = *pwVar3;
+  transmission_temperature_in_use = *pwVar3;
 LAB_0003f598:
   if (((protection_status_flags_t_0040b0f2.rate_limit_flags & 2) == 0) &&
      (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) {
@@ -37480,7 +37490,7 @@ LAB_0003f598:
         torque_limit_setpoint_active = *(word *)(&qadc_channel_dispatch_table)[uVar5 * 2];
       }
       fuel_flow_rate_counter = 0;
-      protection_load_input = protection_load_input_alt;
+      transmission_temperature_in_use = transmission_temperature_sensor_filtered;
     }
   }
   protection_status_flags_b = protection_status_flags_b | 1;
@@ -63040,7 +63050,7 @@ void protection_overtemp_monitor(void)
         else {
           bVar2 = protection_condition_flags_t_0040b0e8.overtemp_flags & 0xdf;
         }
-        fuel_correction_enable_flag = fuel_correction_enable_flag == 0;
+        transmission_hot_flag = transmission_hot_flag == 0;
         protection_condition_flags_t_0040b0e8.overtemp_flags = bVar2 & 0xfb;
         if (((protection_status_flags_t_0040b0f2.output_flags & 2) == 0) &&
            (((protection_derate_level != 3 ||
@@ -63107,7 +63117,7 @@ void protection_overtemp_monitor(void)
           protection_condition_state._0_1_ = protection_condition_state._0_1_ | 1;
         }
         protection_lockout_t_0040b11c.rpm_lockout = DAT_00408370;
-        if ((protection_trigger_active_flag == 0) &&
+        if ((hot_mode_flag == 0) &&
            (protection_lockout_t_0040b11c.rpm_lockout = DAT_004077f6,
            (protection_condition_flags_t_0040b0e8.overtemp_flags & 0x20) != 0)) {
           protection_lockout_t_0040b11c.rpm_lockout = DAT_00407800;
@@ -65480,7 +65490,7 @@ LAB_00514b4c:
     }
   }
   egr_load_speed_floor = wVar7;
-  iVar9 = (int)(short)protection_load_input;
+  iVar9 = (int)(short)transmission_temperature_in_use;
   iVar8 = (int)DAT_00408878;
   if ((iVar9 < iVar8) || (fuel_correction_active_flag == 0)) {
     uVar4 = (uint)DAT_00408874;
@@ -67355,14 +67365,14 @@ void protection_diagnostics_periodic(void)
       cm848_selectProtectionOverrideMode();
       cm848_emptyStub10();
       cm848_processProtectionCounters();
-      cm848_updateProtectionOverrideFlags();
+      cm848_buildPciTransmitMessage12StatusBits();
       cm848_validateCalibrationAgainstEeprom();
     }
     else {
       cm848_processProtectionStateChange();
       cm848_processProtectionFaultFlags();
       cm848_updateProtectionEnableFromInjectionState();
-      cm848_convertProtectionTemperatureToScale();
+      cm848_buildPciTransmitMessage18TransmissionTemperature();
       cm848_emptyStub11();
       cm848_buildPciTransmitMessage4EngineLoadAndStatus();
     }
@@ -67399,7 +67409,6 @@ void protection_diagnostics_periodic(void)
 /* WARNING: Removing unreachable block (ram,0x00518b50) */
 /* WARNING: Removing unreachable block (ram,0x005189e8) */
 /* WARNING: Removing unreachable block (ram,0x005190fc) */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* SAE J1979 OBD-II service on the PCI (J1850) bus - answers a request in pci_receive_message_0
    (header 68 6A - requester address 0xF0-0xFD) with pci_transmit_message_8 (header 48 6B): mode 1
    current data (PID 0 supported PIDs / 1 DTC count + MIL + monitor bytes / 4 engine load / 5
@@ -67429,7 +67438,7 @@ void cm848_processPciObdRequest(void)
        (obd_dtc_scan_more_flag == 0)) && (obd_last_request_timer <= pci_receive_message_0_timer)) ||
      (((pci_receive_message_0_status & 7) != 0 || (0xd < obd_request_source_address - 0xf0))))
   goto LAB_005196d8;
-  obd_response_source_address = (byte)_obd_ecm_address;
+  obd_response_source_address = (byte)pci_ecm_address;
   if (4 < obd_request_mode) {
     if (obd_request_mode == 7) {
 LAB_00519128:
@@ -68613,8 +68622,10 @@ void j1939FaultStateUpdate(void)
   }
   else if ((((((system_status_flags_t_003fe974.reserved_12 & 0x10) == 0) &&
              (fuel_demand_control_t_0040a57a.calculated < DAT_00408a8e)) &&
-            ((int)(short)protection_load_input_alt < (int)(uint)protection_load_upper_threshold)) &&
-           ((((int)(uint)protection_load_lower_threshold < (int)(short)protection_load_input_alt &&
+            ((int)(short)transmission_temperature_sensor_filtered <
+             (int)(uint)protection_load_upper_threshold)) &&
+           ((((int)(uint)protection_load_lower_threshold <
+              (int)(short)transmission_temperature_sensor_filtered &&
              ((system_status_flags_t_003fe974.enable_state & 0x400) == 0)) &&
             (((system_status_flags_t_003fe974.enable_state & 0x800) == 0 &&
              (((system_status_flags_t_003fe974.safety_bits_1 & 0x4000) == 0 &&
@@ -68696,8 +68707,10 @@ void protectionColdStartControl(void)
           ((system_status_flags_t_003fe974.enable_state & 0x800) == 0)))) &&
         ((system_status_flags_t_003fe974.safety_bits_1 & 0x4000) == 0)) &&
        (((((system_status_flags_t_003fe974.safety_bits_1 & 0x8000) == 0 &&
-          ((int)(short)protection_load_input_alt <= (int)(uint)protection_load_upper_threshold)) &&
-         (((int)(uint)protection_load_lower_threshold <= (int)(short)protection_load_input_alt &&
+          ((int)(short)transmission_temperature_sensor_filtered <=
+           (int)(uint)protection_load_upper_threshold)) &&
+         (((int)(uint)protection_load_lower_threshold <=
+           (int)(short)transmission_temperature_sensor_filtered &&
           ((((protection_action_mode_bits._0_1_ & 1) != 0 &&
             ((protection_feature_status_flags & 0x20000000) != 0)) &&
            (((uint)fault_management_ring_read_ptr & 0x10000000) == 0)))))) &&
@@ -69161,7 +69174,7 @@ void protectionOutputAssembly(void)
     protection_output_rate_counter = 0;
     return;
   }
-  if (protection_trigger_active_flag != 0) {
+  if (hot_mode_flag != 0) {
     protection_fuel_demand_prev = wVar7;
     protection_output_rate_counter = 0;
     return;
@@ -69438,7 +69451,7 @@ void cm848_throttleGain_loadBased_calc(void)
   uint uVar1;
   int iVar2;
   
-  if ((short)protection_load_input < DAT_00408b22) {
+  if ((short)transmission_temperature_in_use < DAT_00408b22) {
     uVar1 = protection_throttle_error;
     if ((int)protection_throttle_error < 0) {
       uVar1 = -protection_throttle_error;
@@ -72713,7 +72726,7 @@ void governorDataValidation(void)
     }
     governor_datavalid_snapshot_ready_flag = 1;
     DAT_003fcfa4 = sensor_readings_t_0040baf2.coolant_temp;
-    governor_datavalid_load_snapshot = protection_load_input_alt;
+    governor_datavalid_load_snapshot = transmission_temperature_sensor_filtered;
     DAT_003fcfa8 = protection_oilTemp_proxy;
     if ((int)DAT_00408d58 <=
         (int)(short)sensor_readings_t_0040baf2.coolant_temp - (int)(short)protection_oilTemp_proxy)
@@ -72740,8 +72753,10 @@ void governorDataValidation(void)
       governor_datavalid_snapshot_ready_flag = 1;
       return;
     }
-    if ((short)protection_load_input_alt <= (short)governor_datavalid_load_overload_limit) {
-      if ((short)governor_datavalid_load_overload_limit < (short)protection_load_input_alt) {
+    if ((short)transmission_temperature_sensor_filtered <=
+        (short)governor_datavalid_load_overload_limit) {
+      if ((short)governor_datavalid_load_overload_limit <
+          (short)transmission_temperature_sensor_filtered) {
         governor_datavalid_conditions_met_flag = 1;
         governor_datavalid_snapshot_ready_flag = 1;
         return;
@@ -72784,12 +72799,12 @@ void governorDataValidation(void)
       governor_data_validation_state = 4;
       return;
     }
-    wVar1 = protection_load_input_alt;
-    if ((short)governor_datavalid_load_min < (short)protection_load_input_alt) {
+    wVar1 = transmission_temperature_sensor_filtered;
+    if ((short)governor_datavalid_load_min < (short)transmission_temperature_sensor_filtered) {
       wVar1 = governor_datavalid_load_min;
     }
-    if ((short)governor_datavalid_load_max < (short)protection_load_input_alt) {
-      governor_datavalid_load_max = protection_load_input_alt;
+    if ((short)governor_datavalid_load_max < (short)transmission_temperature_sensor_filtered) {
+      governor_datavalid_load_max = transmission_temperature_sensor_filtered;
     }
     governor_datavalid_load_range = governor_datavalid_load_max - wVar1;
     if ((governor_datavalid_fuel_temp_trim_threshold < vehicle_speed_copy) &&
