@@ -181,8 +181,8 @@ address,name,type,comment
 0x002fc004,USIU_SYPCR,dword,
 0x002fc00e,USIU_SWSR,word,
 0x002fc010,USIU_SIPEND,dword,
-0x002fc014,scheduler_task_enable_flags,dword,
-0x002fc018,scheduler_task_pending_flags,dword,
+0x002fc014,USIU_SIMASK,dword,MPC555 USIU SIU interrupt mask register (SIPEND 0x2fc010 / SIMASK 0x2fc014 / SIEL 0x2fc018 / SIVEC 0x2fc01c) - each set bit enables one SIU interrupt vector - used broadly - mpc555_timerInterruptHandler masks it per vector then dispatches (was scheduler_task_enable_flags)
+0x002fc018,USIU_SIEL,dword,MPC555 USIU SIU interrupt edge/level (SIEL) register at 0x2fc018 - sits between USIU_SIMASK 0x2fc014 and USIU_SIVEC 0x2fc01c in the SIU block - cm848_initPciControllerInterface sets bit 0x200 here alongside SIMASK to enable PCI interrupt vector 6 (was scheduler_task_pending_flags)
 0x002fc01c,USIU_SIVEC,dword,
 0x002fc020,USIU_TESR,dword,
 0x002fc024,SIU_SGPIODT1,dword,MPC555 SIU general-purpose I/O data register 1 - output lines are driven here (was system_capability_flags)
@@ -1001,7 +1001,7 @@ address,name,type,comment
 0x003fa8ae,protection_mode_request_bit,word,
 0x003fa8b0,protection_mode_request_initialized_flag,word,
 0x003fa8b4,PTR_BYTE_0050c640_003fa8b4,pointer,
-0x003fa972,engine_state_scan_counter,byte,
+0x003fa972,j1939_diagnostic_handler_count,byte,entry count of the J1939 diagnostic dispatch table at 0x3fa8b2 - incremented by the registrar cm848_j1939RegisterDiagnosticService and used as the scan bound by cm848_j1939DiagnosticServiceHandler - max 32 - live RAM value 24 (was engine_state_scan_counter)
 0x003fa974,j1939_dm13_network_command_byte,byte,Copy of DM13 data byte 1: 2-bit stop (00) / start (01) / don't care (11) fields - mask 0x30 J1587 / 0x0C J1922 / 0x03 J1939 network 1 (0xC0 current data link is not used) (was j1939_governor_status_byte)
 0x003fa982,j1939_tsc1_received,etc1_message_t,
 0x003fa984,j1939_tsc1_received.byte1_status,,
@@ -1492,7 +1492,7 @@ address,name,type,comment
 0x003fb3c9,can_rx_message_type_code,,
 0x003fb3ca,pci_qspi_queue_result,word,Return value of the last cm848_queueQspiJob call for a PCI controller job (-1 = queue full / bad job)
 0x003fb3cc,pci_in_frame_response_length,byte,Number of in-frame response bytes being sent (length of the matched RX entry in_frame_response_bytes); 0 = not sending
-0x003fb3ce,j1939_queue_tx_return_a,word,
+0x003fb3ce,pci_controller_init_queue_result,word,Write-only capture of the cm848_queueQspiJob result for pci_controller_command_job during controller init - written only in cm848_initPciControllerInterface and cm848_continuePciControllerInit - never read - parallels pci_qspi_queue_result (was j1939_queue_tx_return_a)
 0x003fb3d0,pci_link_error_count,word,Counts link events whose action mask has bit 0x01; at pci_link_error_limit sets fault_detected_bits_368_to_383 0x8000 and calls mpc555_driveOutputLineLow(124) (output line 124)
 0x003fb3d2,pci_in_frame_response_wait_count,dword,Scheduler passes spent waiting for the in-frame response to our own TX frame (pci_frame_match_flags 0x08); past pci_in_frame_response_wait_limit -> cm848_handlePciInFrameResponseTimeout
 0x003fb3d6,pci_diagnostic_parameter_base_address,pointer,Address cm848_lookupParameterIdAddress returns for pci_diagnostic_parameter_id (services 0xA1 / 0xA4) (was uds_write_base_address_working - also used by reads)
@@ -4938,7 +4938,7 @@ address,name,type,comment
 0x0040b350,pci_link_state.receive_byte_count,,
 0x0040b351,pci_link_state.init_complete_marker,,
 0x0040b352,pci_link_state.link_event_code,,
-0x0040b356,pci_controller_qspi_slot,byte,QSPI device-slot handle returned by cm848_configurePeriodicTimer(0 2000 0x352 0x28) at PCI init and copied into both PCI controller jobs device_slot (stb only; was a word that overlapped pci_controller_command_job)
+0x0040b356,pci_controller_qspi_slot,byte,QSPI device-slot handle returned by cm848_configurePeriodicTimer(0 2000 0x352 0x28) at PCI init and copied into both PCI controller jobs device_slot (stb only; was a word that overlapped pci_controller_command_job) | QSPI timing-slot handle returned by cm848_registerQspiDeviceSlot(0 2000 0x352 0x28) at PCI init (shared mode 0 slot) and copied into both pci_controller jobs device_slot - stb only - was a word that overlapped pci_controller_command_job
 0x0040b383,pci_qspi_queue_priority,byte,QSPI queue priority used for PCI controller jobs (init 1)
 0x0040b384,pci_in_frame_response_queue_priority,byte,QSPI queue priority used when queuing an in-frame response byte (init 0)
 0x0040b385,pci_qspi_command_byte,byte,QSPI command-RAM byte for both PCI controller jobs (init 0x57)

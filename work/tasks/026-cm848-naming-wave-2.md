@@ -18,3 +18,5 @@ independent skeptics re-check every proposal, accept only where no skeptic rejec
 ## Log
 - 2026-11-13: branch cut from merged main (4ed0948); wave-2 workflow launched (run wf_3b947338-e2f, 8 units × 1 investigator + 2 skeptics).
 - 2026-11-13: workflow returned 197 accepted / 0 disputed; reconciled to 196 targets (143 globals / 36 functions / 17 struct fields), 0 cross-unit conflicts; applied, built, `verify` byte-identical. Open questions + skeptic misses captured in `027-cm848-naming-wave-2-followups.md`.
+- 2026-11-13: diagnostic-service dispatch table named (commit 18d8eee) after the user spotted `cm848_registerDiagnosticService` - the indirect-dispatch insight.
+- 2026-11-13: registration-table sweep (6 units, 18 agents, 132 accepted / 0 disputed). Applied 92 (26 renames + 66 cross-refs) + force-created 6 SCI command callbacks; held 25 catch-all re-domainings / Low guesses in `029-registration-table-sweep-held.md`. `verify` byte-identical. Key corrections: 0x2e58 was a boot-SCI dispatcher (not a scheduler); 0x2FC014/18 are USIU_SIMASK/SIEL; several J1939 DM handlers renumbered from their table bindings.

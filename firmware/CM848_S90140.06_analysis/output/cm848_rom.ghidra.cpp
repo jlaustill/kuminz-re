@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 13 09:26:48 MST 2026
+// Generated: Fri Nov 13 10:59:40 MST 2026
 
 
 //
@@ -656,7 +656,7 @@ void cm848_mainLoopIteration(void)
   connection_id = BYTE_003fae3c();
   BYTE_003fc094(connection_id);
   mpc555_sciDispatchByTransferPhase();
-  cm848_handleEepromDiagnosticCallback();
+  cm848_pumpDiagnosticCallback();
   mpc555_processDiagnosticAndEepromRequests();
   return;
 }
@@ -1641,7 +1641,7 @@ void mpc555_initDiagnosticSession(void)
   diag_keep_alive_counter = 0;
   diagnostic_cooldown_counter = 0;
   if (eeprom_shadow_header.cal_word4 == 0) {
-    cm848_initSchedulerCallback();
+    cm848_installBootSciDispatcher();
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags & 0xfc
     ;
     diag_serial_crc_match_flag = 0;
@@ -2170,10 +2170,15 @@ undefined * cm848_lookupEepromParameterAddress(byte param_1)
 
 
 //
-// Function: cm848_handleEepromDiagnosticCallback @ 0x00002de4
+// Function: cm848_pumpDiagnosticCallback @ 0x00002de4
 //
 
-void cm848_handleEepromDiagnosticCallback(void)
+/* pump of the boot SCI diagnostic callback - run each pass by cm848_mainLoopIteration - calls
+   (*diagnostic_callback_ptr)() when diag_request_pending_flag set and session_flags bit 0 clear
+   else cm848_restoreDiagnosticHandler - not EEPROM-specific (was
+   cm848_handleEepromDiagnosticCallback) | registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_pumpDiagnosticCallback(void)
 
 {
   cm848_decrementDiagnosticTimeout();
@@ -2192,10 +2197,15 @@ void cm848_handleEepromDiagnosticCallback(void)
 
 
 //
-// Function: cm848_registerSchedulerTask @ 0x00002e58
+// Function: cm848_dispatchBootSciDiagnosticCommand @ 0x00002e58
 //
 
-void cm848_registerSchedulerTask(void)
+/* boot / reflash-kernel SCI diagnostic command dispatcher - scans the 5-entry ROM 0x7f7a table for
+   the received byte and runs its handler - runs under mpc555_bootStateMachine - distinct from the
+   runtime app dispatcher cm848_dispatchSciCommand 0x51d780 (was cm848_registerSchedulerTask) |
+   registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_dispatchBootSciDiagnosticCommand(void)
 
 {
   bool bVar1;
@@ -2220,24 +2230,34 @@ void cm848_registerSchedulerTask(void)
 
 
 //
-// Function: cm848_initSchedulerCallback @ 0x00002ee8
+// Function: cm848_installBootSciDispatcher @ 0x00002ee8
 //
 
-void cm848_initSchedulerCallback(void)
+/* installs cm848_dispatchBootSciCommand as the current and default diagnostic_callback_ptr state
+   via cm848_saveDefaultDiagnosticHandler - called from mpc555_initDiagnosticSession on the normal
+   cal_word4=0 boot path - NOT a scheduler (was cm848_initSchedulerCallback) |
+   registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_installBootSciDispatcher(void)
 
 {
-  diagnostic_callback_ptr = cm848_registerSchedulerTask;
-  cm848_saveSchedulerCallbackPointer();
+  diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
+  cm848_saveDefaultDiagnosticHandler();
   return;
 }
 
 
 
 //
-// Function: mpc555_initSchedulerTaskTable @ 0x00002f18
+// Function: mpc555_sciBeginUnchecksummedResponseTransmit @ 0x00002f18
 //
 
-void mpc555_initSchedulerTaskTable(void)
+/* begins SCI transmit of diag_serial_buffer response - rewinds the cursor - writes byte 0 to SC1DR
+   - enables the plain TX interrupt (checksummed twin is mpc555_sciStartResponseTransmit) - every
+   boot command handler calls it as its tail - NOT a scheduler table init (was
+   mpc555_initSchedulerTaskTable) | registration-table-sweep reviewed 2026-11-13 */
+
+void mpc555_sciBeginUnchecksummedResponseTransmit(void)
 
 {
   word wVar1;
@@ -2409,11 +2429,15 @@ void mpc555_sciEnableTransmitInterrupt(void)
 // Function: cm848_initDiagnosticResponseCallback @ 0x0000323c
 //
 
+/* boot SCI command 0x2a handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms
+   cm848_processDiagnosticResponseCallback to read an EEPROM parameter - reached only by pointer not
+   dead */
+
 void cm848_initDiagnosticResponseCallback(void)
 
 {
   diagnostic_callback_ptr = cm848_processDiagnosticResponseCallback;
-  mpc555_initSchedulerTaskTable();
+  mpc555_sciBeginUnchecksummedResponseTransmit();
   return;
 }
 
@@ -2422,6 +2446,10 @@ void cm848_initDiagnosticResponseCallback(void)
 //
 // Function: cm848_processDiagnosticResponseCallback @ 0x0000326c
 //
+
+/* boot SCI command 0x2a continuation - installed by cm848_initDiagnosticResponseCallback via
+   diagnostic_callback_ptr - appends the EEPROM parameter value (cm848_lookupEepromParameterAddress)
+   to the response - reached only by pointer not dead */
 
 void cm848_processDiagnosticResponseCallback(void)
 
@@ -2435,9 +2463,9 @@ void cm848_processDiagnosticResponseCallback(void)
     diag_session_state_t_003fecbe.response_write_index =
          diag_session_state_t_003fecbe.response_write_index + 1;
   }
-  diagnostic_callback_ptr = cm848_registerSchedulerTask;
+  diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
   cm848_processTimerInterrupt();
-  mpc555_initSchedulerTaskTable();
+  mpc555_sciBeginUnchecksummedResponseTransmit();
   return;
 }
 
@@ -2446,6 +2474,10 @@ void cm848_processDiagnosticResponseCallback(void)
 //
 // Function: mpc555_generateSerialChallenge @ 0x000032dc
 //
+
+/* boot SCI command 0x2b handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) -
+   writes a 2-byte seed from runtime_counter plus an additive checksum byte (hi + 0x2b + lo) -
+   reached only by pointer not dead */
 
 void mpc555_generateSerialChallenge(void)
 
@@ -2472,9 +2504,9 @@ void mpc555_generateSerialChallenge(void)
   write_pos = uVar1 + 1;
   diag_serial_buffer[write_pos & 0xff] = bVar3 + 0x2b + (byte)dVar2;
   diag_session_state_t_003fecbe.response_write_index = (char)write_pos + 1;
-  diagnostic_callback_ptr = cm848_registerSchedulerTask;
+  diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
   cm848_processTimerInterrupt();
-  mpc555_initSchedulerTaskTable();
+  mpc555_sciBeginUnchecksummedResponseTransmit();
   return;
 }
 
@@ -2484,12 +2516,16 @@ void mpc555_generateSerialChallenge(void)
 // Function: cm848_initDiagnosticRequestHandler @ 0x000033a4
 //
 
+/* boot SCI command 0x2c handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms
+   cm848_processDiagnosticRequest to collect and verify a 2-byte key plus checksum - reached only by
+   pointer not dead */
+
 void cm848_initDiagnosticRequestHandler(void)
 
 {
   sensor_validation_delta._0_1_ = 0;
   diagnostic_callback_ptr = cm848_processDiagnosticRequest;
-  mpc555_initSchedulerTaskTable();
+  mpc555_sciBeginUnchecksummedResponseTransmit();
   return;
 }
 
@@ -2513,6 +2549,10 @@ void cm848_decrementDiagnosticTimeout(void)
 //
 // Function: cm848_processDiagnosticRequest @ 0x00003408
 //
+
+/* boot SCI command 0x2c continuation - installed by cm848_initDiagnosticRequestHandler via
+   diagnostic_callback_ptr - accumulates the key bytes then cm848_verifySerialResponse to unlock
+   (keep-alive / cooldown / session) - reached only by pointer not dead */
 
 void cm848_processDiagnosticRequest(void)
 
@@ -2568,10 +2608,10 @@ void cm848_processDiagnosticRequest(void)
       diag_session_state_t_003fecbe.response_write_index =
            diag_session_state_t_003fecbe.response_write_index + 1;
     }
-    diagnostic_callback_ptr = cm848_registerSchedulerTask;
+    diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
     cm848_processTimerInterrupt();
   }
-  mpc555_initSchedulerTaskTable();
+  mpc555_sciBeginUnchecksummedResponseTransmit();
   return;
 }
 
@@ -2581,11 +2621,15 @@ void cm848_processDiagnosticRequest(void)
 // Function: cm848_initDiagnosticSessionHandler @ 0x000035e4
 //
 
+/* boot SCI command 0x31 handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms
+   cm848_processDiagnosticSessionFlags to confirm the diagnostic session - reached only by pointer
+   not dead */
+
 void cm848_initDiagnosticSessionHandler(void)
 
 {
   diagnostic_callback_ptr = cm848_processDiagnosticSessionFlags;
-  mpc555_initSchedulerTaskTable();
+  mpc555_sciBeginUnchecksummedResponseTransmit();
   return;
 }
 
@@ -2595,16 +2639,20 @@ void cm848_initDiagnosticSessionHandler(void)
 // Function: cm848_processDiagnosticSessionFlags @ 0x00003614
 //
 
+/* boot SCI command 0x31 continuation - installed by cm848_initDiagnosticSessionHandler via
+   diagnostic_callback_ptr - sets session_flags bits 0-1 when the confirm byte is 1 and
+   diagnostic_session_state=1 (unlocked) - reached only by pointer not dead */
+
 void cm848_processDiagnosticSessionFlags(void)
 
 {
   if ((*(char *)diag_session_state_t_003fecbe._2_4_ == '\x01') && (diagnostic_session_state == 1)) {
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 3;
     cm848_processTimerInterrupt();
-    mpc555_initSchedulerTaskTable();
+    mpc555_sciBeginUnchecksummedResponseTransmit();
   }
   else {
-    diagnostic_callback_ptr = cm848_registerSchedulerTask;
+    diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
     cm848_processTimerInterrupt();
     mpc555_sciResetToReceiveRequest();
   }
@@ -2617,6 +2665,10 @@ void cm848_processDiagnosticSessionFlags(void)
 // Function: cm848_sendDiagnosticResponse @ 0x0000368c
 //
 
+/* boot SCI command 0x32 handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) -
+   copies the fixed 6-byte template ROM 0x7f94 (32 16 02 fe fe 46) into the response - reached only
+   by pointer not dead */
+
 void cm848_sendDiagnosticResponse(void)
 
 {
@@ -2628,9 +2680,9 @@ void cm848_sendDiagnosticResponse(void)
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 6);
   diag_session_state_t_003fecbe.response_write_index = 6;
-  diagnostic_callback_ptr = cm848_registerSchedulerTask;
+  diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
   cm848_processTimerInterrupt();
-  mpc555_initSchedulerTaskTable();
+  mpc555_sciBeginUnchecksummedResponseTransmit();
   return;
 }
 
@@ -2858,13 +2910,17 @@ void cm848_processTimerInterrupt(void)
 
 
 //
-// Function: cm848_saveSchedulerCallbackPointer @ 0x00003b58
+// Function: cm848_saveDefaultDiagnosticHandler @ 0x00003b58
 //
 
-void cm848_saveSchedulerCallbackPointer(void)
+/* saves cm848_dispatchBootSciCommand into diagnostic_callback_init_ptr as the restore/default state
+   used by cm848_restoreDiagnosticHandler (0x3ad8) - NOT a scheduler (was
+   cm848_saveSchedulerCallbackPointer) | registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_saveDefaultDiagnosticHandler(void)
 
 {
-  diagnostic_callback_init_ptr = (dword)cm848_registerSchedulerTask;
+  diagnostic_callback_init_ptr = (dword)cm848_dispatchBootSciDiagnosticCommand;
   return;
 }
 
@@ -9705,12 +9761,12 @@ undefined8 mpc555_timerInterruptHandler(undefined4 param_1,undefined4 param_2)
     iVar4 = TBUr;
   } while (iVar3 != iVar4);
   bVar8 = USIU_SIVEC._0_1_;
-  uVar6 = scheduler_task_enable_flags._0_2_;
-  uVar7 = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ =
+  uVar6 = USIU_SIMASK._0_2_;
+  uVar7 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ =
        uVar7 & *(ushort *)((int)&mpc555_interrupt_task_mask_table + (uint)(bVar8 >> 2) * 2);
   (*(code *)(&mpc555_interrupt_dispatch_table)[bVar8 >> 2])();
-  scheduler_task_enable_flags._0_2_ = uVar6;
+  USIU_SIMASK._0_2_ = uVar6;
   if ((uVar6 & 1) != 0) {
     do {
       iVar4 = TBUr;
@@ -19650,6 +19706,10 @@ void cm848_initSpeedControlTableDimensions(void)
 // Function: cm848_advanceDiagnosticActionState @ 0x00021584
 //
 
+/* handles J1939 PGN 61184 diagnostic service id 1 via the 0x3fa8b2 table
+   (cm848_j1939DiagnosticServiceHandler after the j1939_diagServiceDispatch length/security gate
+   returns -1) - registered by cm848_registerJ1939DiagnosticHandlers */
+
 DIAG_RESPONSE cm848_advanceDiagnosticActionState(void)
 
 {
@@ -19833,6 +19893,10 @@ undefined1 cm848_j1939ProcessRxQueueDefault(void)
 // Function: cm848_j1939ProcessRxQueueParam @ 0x000218dc
 //
 
+/* handles J1939 PGN 61184 diagnostic service id 11 via the 0x3fa8b2 table
+   (cm848_j1939DiagnosticServiceHandler after the j1939_diagServiceDispatch gate) - wraps
+   mpc555_processJ1939RxQueue - registered by cm848_registerJ1939DiagnosticHandlers */
+
 undefined1 cm848_j1939ProcessRxQueueParam(undefined4 param_1)
 
 {
@@ -19848,6 +19912,10 @@ undefined1 cm848_j1939ProcessRxQueueParam(undefined4 param_1)
 // Function: cm848_setColdStartMode2Flag @ 0x00021904
 //
 
+/* handles J1939 PGN 61184 diagnostic service id 24 via the 0x3fa8b2 table
+   (cm848_j1939DiagnosticServiceHandler) - sets engine_shutdown_active_flag used by the cold-start
+   main loop - registered by cm848_registerJ1939DiagnosticHandlers */
+
 DIAG_RESPONSE cm848_setColdStartMode2Flag(void)
 
 {
@@ -19858,10 +19926,15 @@ DIAG_RESPONSE cm848_setColdStartMode2Flag(void)
 
 
 //
-// Function: cm848_validateCalibrationMemory @ 0x00021918
+// Function: cm848_commitEepromMirrorToEeprom @ 0x00021918
 //
 
-DIAG_RESPONSE cm848_validateCalibrationMemory(void)
+/* handles J1939 PGN 61184 diag service id 21 via the 0x3fa8b2 table
+   (cm848_j1939DiagnosticServiceHandler) - writes only the leading eeprom_mirror block EEPROM 0x0 to
+   eeprom_checksummed_block_start via cm848_queueEepromByteWrites - does not validate (was
+   cm848_validateCalibrationMemory) | registration-table-sweep reviewed 2026-11-13 */
+
+DIAG_RESPONSE cm848_commitEepromMirrorToEeprom(void)
 
 {
   char cVar1;
@@ -19923,14 +19996,14 @@ DIAG_RESPONSE cm848_validateCalibrationMemory(void)
 void cm848_registerJ1939DiagnosticHandlers(void)
 
 {
-  cm848_processJ1939DiagnosticRequest(1,cm848_advanceDiagnosticActionState);
-  cm848_processJ1939DiagnosticRequest(7,cm848_activateDiagnosticSession);
-  cm848_processJ1939DiagnosticRequest(10,cm848_resetDiagnosticSession);
-  cm848_processJ1939DiagnosticRequest(0x16,cm848_forceActivateDiagnosticSession);
-  cm848_processJ1939DiagnosticRequest(6,cm848_setEngineStarting);
-  cm848_processJ1939DiagnosticRequest(0xb,cm848_j1939ProcessRxQueueParam);
-  cm848_processJ1939DiagnosticRequest(0x18,cm848_setColdStartMode2Flag);
-  cm848_processJ1939DiagnosticRequest(0x15,cm848_validateCalibrationMemory);
+  cm848_j1939RegisterDiagnosticService(1,cm848_advanceDiagnosticActionState);
+  cm848_j1939RegisterDiagnosticService(7,cm848_activateDiagnosticSession);
+  cm848_j1939RegisterDiagnosticService(10,cm848_resetDiagnosticSession);
+  cm848_j1939RegisterDiagnosticService(0x16,cm848_forceActivateDiagnosticSession);
+  cm848_j1939RegisterDiagnosticService(6,cm848_setEngineStarting);
+  cm848_j1939RegisterDiagnosticService(0xb,cm848_j1939ProcessRxQueueParam);
+  cm848_j1939RegisterDiagnosticService(0x18,cm848_setColdStartMode2Flag);
+  cm848_j1939RegisterDiagnosticService(0x15,cm848_commitEepromMirrorToEeprom);
   return;
 }
 
@@ -20180,17 +20253,22 @@ void cm848_initJ1939DiagnosticCallback(void)
 
 
 //
-// Function: cm848_processJ1939DiagnosticRequest @ 0x000220e4
+// Function: cm848_j1939RegisterDiagnosticService @ 0x000220e4
 //
 
-bool cm848_processJ1939DiagnosticRequest(byte service_id,void *handler_ptr)
+/* REGISTRAR for the J1939 diagnostic dispatch table 0x3fa8b2 - appends a service-id / handler entry
+   up to 32 - not a request processor - scanned by cm848_j1939DiagnosticServiceHandler - 16 Bank-2
+   j1939_diagService comments still cite the old name (was cm848_processJ1939DiagnosticRequest) |
+   registration-table-sweep reviewed 2026-11-13 */
+
+bool cm848_j1939RegisterDiagnosticService(byte service_id,void *handler_ptr)
 
 {
   uint uVar1;
   
-  uVar1 = (uint)engine_state_scan_counter;
+  uVar1 = (uint)j1939_diagnostic_handler_count;
   if (uVar1 != 0x20) {
-    engine_state_scan_counter = engine_state_scan_counter + 1;
+    j1939_diagnostic_handler_count = j1939_diagnostic_handler_count + 1;
     (&DAT_003fa8b2)[uVar1 * 6] = service_id;
     *(void **)((int)&PTR_BYTE_0050c640_003fa8b4 + uVar1 * 6) = handler_ptr;
   }
@@ -20202,6 +20280,11 @@ bool cm848_processJ1939DiagnosticRequest(byte service_id,void *handler_ptr)
 //
 // Function: cm848_j1939DiagnosticServiceHandler @ 0x00022128
 //
+
+/* receives J1939 PGN 61184 Proprietary A via the Bank-2 receive table 0x3fd414
+   (cm848_dispatchJ1939ReceivedMessages) - sub-dispatches diagnostic service ids through the
+   0x3fa8b2 table and is also fed by transport reassembly - registered by
+   cm848_initJ1939DiagnosticServiceHandler */
 
 void cm848_j1939DiagnosticServiceHandler(int param_1)
 
@@ -20219,7 +20302,7 @@ void cm848_j1939DiagnosticServiceHandler(int param_1)
   }
   else {
     bVar3 = 0;
-    if (engine_state_scan_counter != 0) {
+    if (j1939_diagnostic_handler_count != 0) {
       do {
         if (*pcVar4 == cVar1) {
           cVar2 = j1939_diagServiceDispatch(param_1);
@@ -20230,7 +20313,7 @@ void cm848_j1939DiagnosticServiceHandler(int param_1)
         }
         pcVar4 = pcVar4 + 6;
         bVar3 = bVar3 + 1;
-      } while (bVar3 < engine_state_scan_counter);
+      } while (bVar3 < j1939_diagnostic_handler_count);
     }
   }
   if (cVar2 != -1) {
@@ -20487,6 +20570,10 @@ void cm848_processJ1939Dm13StopStartBroadcast(int param_1)
 // Function: cm848_j1939HandlePgn65228Dm3ClearDiag @ 0x00022674
 //
 
+/* handles the J1939 request for PGN 65228 DM3 clear previously active via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
+
 void cm848_j1939HandlePgn65228Dm3ClearDiag(j1939_rx_msg_t *param_1)
 
 {
@@ -20542,10 +20629,15 @@ void cm848_initPgn65228Dm3Handler(void)
 
 
 //
-// Function: cm848_j1939HandleDm1RequestMessage @ 0x000227a0
+// Function: cm848_j1939HandlePgn58112Dm7 @ 0x000227a0
 //
 
-void cm848_j1939HandleDm1RequestMessage(j1939_rx_msg_t *request_msg)
+/* receives J1939 PGN 58112 DM7 command via the Bank-2 receive table 0x3fd414
+   (cm848_dispatchJ1939ReceivedMessages) - reads a mode byte and sends a PGN 65232 DM8 response via
+   cm848_j1939SendDm1ResponseMessage - registered by cm848_initJ1939Dm1RequestHandler (was
+   cm848_j1939HandleDm1RequestMessage) | registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_j1939HandlePgn58112Dm7(j1939_rx_msg_t *request_msg)
 
 {
   j1939_dm1_request_mode_byte = *request_msg->data_pointer;
@@ -20570,7 +20662,7 @@ void cm848_j1939HandleDm1RequestMessage(j1939_rx_msg_t *request_msg)
 void cm848_initJ1939Dm1RequestHandler(void)
 
 {
-  j1939_handlerInitializer(0xe300,cm848_j1939HandleDm1RequestMessage);
+  j1939_handlerInitializer(0xe300,cm848_j1939HandlePgn58112Dm7);
   return;
 }
 
@@ -20581,6 +20673,9 @@ void cm848_initJ1939Dm1RequestHandler(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* receives J1939 PGN 61442 ETC1 via the Bank-2 receive table 0x3fd414
+   (cm848_dispatchJ1939ReceivedMessages) - registered by cm848_initJ1939Pgn61442Etc1Handler - greps
+   as 1 call but reached only through the table */
 
 void cm848_j1939ProcessPgn61442Etc1(j1939_rx_msg_t *rx_msg)
 
@@ -20983,7 +21078,7 @@ void cm848_initJ1939ProtocolHandlers(void)
   cm848_j1939RegisterPgnHandler(0xfef5,cm848_buildPgn65269AmbientConditionsMessage);
   cm848_j1939RegisterPgnHandler(0xfef6,cm848_buildPgn65270InletExhaustConditions1Message);
   cm848_j1939RegisterPgnHandler(0xfef7,cm848_j1939HandlePgn65271VehicleElectrical);
-  cm848_j1939RegisterPgnHandler(0xffe0,cm848_j1939HandlePgn65504ProprietaryA);
+  cm848_j1939RegisterPgnHandler(0xffe0,cm848_j1939HandlePgn65504ProprietaryB);
   cm848_initPgn65226Dm1Handler();
   cm848_initPgn65227Dm2Handler();
   cm848_initPgn65228Dm3Handler();
@@ -20998,6 +21093,10 @@ void cm848_initJ1939ProtocolHandlers(void)
 //
 // Function: cm848_j1939HandleProprietaryCommand @ 0x000233a0
 //
+
+/* receives J1939 PGN 56832 (named Reset in the J1939 database) via the Bank-2 receive table
+   0x3fd414 (cm848_dispatchJ1939ReceivedMessages) - sets feature-enable and ascii-detect flags gated
+   by j1939_feature_enable_flags_cal - registered by cm848_initJ1939ProprietaryHandler */
 
 void cm848_j1939HandleProprietaryCommand(j1939_rx_msg_t *param_1)
 
@@ -21296,6 +21395,11 @@ void cm848_initGovernorProtectionState(void)
 //
 // Function: cm848_j1939DispatchAddressHandler @ 0x00023b38
 //
+
+/* receives J1939 PGN 0 TSC1 via the Bank-2 receive table 0x3fd414
+   (cm848_dispatchJ1939ReceivedMessages) - routes to torqueControlModeHandler and
+   cm848_j1939ProcessGovernorRequest by ECM source address - registered under key 0 by
+   cm848_initJ1939AddressDispatcher */
 
 void cm848_j1939DispatchAddressHandler(j1939_rx_msg_t *msg)
 
@@ -21789,6 +21893,10 @@ void cm848_initPgn65265CruiseSpeedHandler(void)
 // Function: j1939HandlePgn65261CruiseControlSetup @ 0x000246fc
 //
 
+/* handles the J1939 request for PGN 65261 cruise control / setup via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
+
 void j1939HandlePgn65261CruiseControlSetup(void)
 
 {
@@ -21852,6 +21960,10 @@ void initPgn65261CruiseControlSetupStruct(void)
 //
 // Function: cm848_j1939HandlePgn65259ComponentId @ 0x00024870
 //
+
+/* handles the J1939 request for PGN 65259 component ID via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
 
 void cm848_j1939HandlePgn65259ComponentId(void)
 
@@ -21983,10 +22095,15 @@ void cm848_sendJ1939ExtendedResponse(undefined4 param_1,word param_2)
 
 
 //
-// Function: cm848_j1939HandlePgn65234Dm11ClearActive @ 0x00024b28
+// Function: cm848_j1939HandlePgn65234Dm10 @ 0x00024b28
 //
 
-void cm848_j1939HandlePgn65234Dm11ClearActive(void)
+/* handles the J1939 request for PGN 65234 DM10 (non-continuously monitored test ID support) via
+   j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler) - sends j1939_dm11_tx_header and does
+   NOT clear DTCs (was cm848_j1939HandlePgn65234Dm11ClearActive) | registration-table-sweep reviewed
+   2026-11-13 */
+
+void cm848_j1939HandlePgn65234Dm10(void)
 
 {
   j1939_dm11_feature_config_word = j1939_reverseByteOrder16(&j1939_feature_config_word);
@@ -22008,7 +22125,7 @@ void cm848_initPgn65234Dm11Handler(void)
   j1939_dm11_data_ptr = (undefined *)&j1939_dm11_feature_config_word;
   j1939_dm11_end_ptr = &DAT_003fab68;
   j1939_dm11_tx_header = CONCAT31(j1939_dm11_tx_header._0_3_,(char)j1939_source_address);
-  cm848_j1939RegisterPgnHandler(0xfed2,cm848_j1939HandlePgn65234Dm11ClearActive);
+  cm848_j1939RegisterPgnHandler(0xfed2,cm848_j1939HandlePgn65234Dm10);
   return;
 }
 
@@ -22017,6 +22134,10 @@ void cm848_initPgn65234Dm11Handler(void)
 //
 // Function: j1939HandlePgn65226Dm1ActiveDtc @ 0x00024be8
 //
+
+/* handles the J1939 request for PGN 65226 DM1 active DTCs via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - registered twice at table entries 2 and
+   15 so the first wins - periodic DM1 broadcast uses cm848_processDm1FaultBroadcast */
 
 void j1939HandlePgn65226Dm1ActiveDtc(void)
 
@@ -22113,6 +22234,10 @@ void cm848_initPgn65226Dm1Handler(void)
 //
 // Function: cm848_j1939HandlePgn65227Dm2PreviousDtc @ 0x00024e78
 //
+
+/* handles the J1939 request for PGN 65227 DM2 previously active DTCs via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
 
 void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
 
@@ -22299,6 +22424,9 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* handles the J1939 request for PGN 65229 DM4 freeze frame via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
 
 void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
 
@@ -22332,6 +22460,10 @@ void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
 //
 // Function: cm848_j1939HandlePgn65230Dm5Readiness @ 0x00025458
 //
+
+/* handles the J1939 request for PGN 65230 DM5 readiness via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
 
 void cm848_j1939HandlePgn65230Dm5Readiness(void)
 
@@ -23232,6 +23364,10 @@ void cm848_initJ1939ProtocolModeStatusBuffer(void)
 // Function: cm848_j1939HandlePgn65242SoftwareId @ 0x00026884
 //
 
+/* handles the J1939 request for PGN 65242 software ID via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
+
 void cm848_j1939HandlePgn65242SoftwareId(void)
 
 {
@@ -23286,10 +23422,15 @@ void cm848_initPgn65242SoftwareIdHandler(void)
 
 
 //
-// Function: cm848_j1939HandlePgn65504ProprietaryA @ 0x000269f4
+// Function: cm848_j1939HandlePgn65504ProprietaryB @ 0x000269f4
 //
 
-void cm848_j1939HandlePgn65504ProprietaryA(void)
+/* handles the J1939 request for PGN 65504 Proprietary B (PDU2 range 65280-65535 - Proprietary A is
+   61184) via j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler) - also broadcasts every 200
+   ms via diag_record_queue_add_entry (was cm848_j1939HandlePgn65504ProprietaryA) |
+   registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_j1939HandlePgn65504ProprietaryB(void)
 
 {
   uint uVar1;
@@ -23352,6 +23493,9 @@ void cm848_initJ1939ProprietaryPgn65504Buffer(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* handles the J1939 request for PGN 65248 vehicle distance via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
 
 void cm848_j1939HandlePgn65248VehicleDistance(void)
 
@@ -23394,6 +23538,10 @@ void cm848_initPgn65248VehicleDistanceHandler(void)
 // Function: cm848_j1939HandlePgn65271VehicleElectrical @ 0x00026cf0
 //
 
+/* handles the J1939 request for PGN 65271 vehicle electrical power via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - also a periodic broadcast builder via
+   diag_record_queue_add_entry every 1000 ms */
+
 void cm848_j1939HandlePgn65271VehicleElectrical(void)
 
 {
@@ -23431,6 +23579,10 @@ void cm848_initJ1939VehicleElectricalBuffer(void)
 //
 // Function: cm848_j1939HandlePgn65260VehicleId @ 0x00026db4
 //
+
+/* handles the J1939 request for PGN 65260 vehicle ID via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - greps as 1 call but reached only through
+   the table */
 
 void cm848_j1939HandlePgn65260VehicleId(void)
 
@@ -26213,6 +26365,10 @@ void cm848_resetProtectionBypass(void)
 //
 // Function: cm848_j1939HandlePgn65264Pto @ 0x0002bd58
 //
+
+/* handles the J1939 request for PGN 65264 PTO via j1939_pgn_dispatch_table
+   (cm848_j1939DispatchPgnHandler on a PGN 59904 request) - also a periodic broadcast builder via
+   diag_record_queue_add_entry every 100 ms */
 
 void cm848_j1939HandlePgn65264Pto(void)
 
@@ -31987,8 +32143,10 @@ void cm848_queueSupervisorStatusRead(void)
    registers; command byte 0x5D): completion of the 0x4E/0x5A/0x5C read: stores the replies in
    supervisor_input_lines_136_to_143_state / supervisor_register_146_output_value bits /
    supervisor_input_lines_144_to_151_state (application meaning of those globals not reviewed) |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-    */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium |
+   supervisor_status_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback - invoked
+   by cm848_completeQspiJob via cm848_onQspiFinished - set by cm848_initSupervisorStatusReadJob -
+   not a dead function */
 
 void cm848_onSupervisorStatusRead(void)
 
@@ -32046,7 +32204,9 @@ void cm848_queueSupervisorRegister36Read(void)
    registers; command byte 0x5D): completion of the register 0x24 read: inverted bit 1 ->
    supervisor_register_36_bit_1_low_flag and the delayed supervisor_register_36_bit_1_low_held_flag
    | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-    */
+   | supervisor_register_36_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback -
+   invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
+   cm848_initSupervisorRegister36ReadJob - not a dead function */
 
 void cm848_onSupervisorRegister36Read(void)
 
@@ -32202,7 +32362,9 @@ void cm848_queueSupervisorRegister46Read(void)
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): completion of the register 0x2E read: copies the reply to 0x40b222
    | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-    */
+   | supervisor_register_46_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback -
+   invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
+   cm848_initSupervisorRegister46ReadJob - not a dead function */
 
 void cm848_onSupervisorRegister46Read(void)
 
@@ -32237,7 +32399,10 @@ void cm848_queueSupervisorRegister162Read(void)
 /* Supervisor chip (external QSPI device on PCS1 - question/answer watchdog + output/status
    registers; command byte 0x5D): completion of the register 0xA2 read: low byte ->
    supervisor_register_162_status (that global's name is unverified) | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium */
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium |
+   supervisor_register_162_read_job (supervisor chip PCS1 command byte 0x5D) completion_callback -
+   invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
+   cm848_initSupervisorRegister162ReadJob - not a dead function */
 
 void cm848_onSupervisorRegister162Read(void)
 
@@ -32660,7 +32825,9 @@ void mpc555_initFuelDemandOffsetFilter(void)
 /* Serial output driver completion: when transfers are more than 625 time-base ticks apart copies
    the reply into serial_output_driver_status_byte (read by protection_j1939_control_logic /
    hpcr_injectorPulseWidthCalc) | review-function-readability reviewed 2026-11-11 - Readability
-   Medium Accuracy Confidence Medium */
+   Medium Accuracy Confidence Medium | serial_output_driver_job (serial output driver PCS2 SPI mode
+   3) completion_callback - invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
+   cm848_initSerialOutputDriverJob - not a dead function */
 
 void cm848_onSerialOutputDriverReply(void)
 
@@ -32770,6 +32937,11 @@ void cm848_processProtectionVoltageOffset(void)
 //
 // Function: cm848_dispatchProtectionOutputMode @ 0x000376dc
 //
+
+/* 4-state charging voltage regulator machine - next =
+   (*battery_voltage_regulator_state_table[state])() gated on engine_feature_enable_flags_cal bit0 -
+   the ProtectionOutput cluster is really the battery-voltage regulator (battery_voltage_delta PID
+   -> charging duty) - name kept pending re-domain */
 
 void cm848_dispatchProtectionOutputMode(void)
 
@@ -33399,10 +33571,15 @@ void cm848_checkPciMessageTimeouts(void)
 
 
 //
-// Function: mpc555_triggerJ1939TransmitMessage @ 0x00038c90
+// Function: cm848_onPciControllerInterrupt @ 0x00038c90
 //
 
-void mpc555_triggerJ1939TransmitMessage(void)
+/* SIU vector 6 interrupt handler for the J1850 PCI controller - dispatch table[6] ROM 0x575f6 via
+   mpc555_timerInterruptHandler - acks USIU_SIPEND 0x200 then queues pci_controller_receive_job
+   (gate engine_feature_enable_flags_cal 0x40) - not dead (was mpc555_triggerJ1939TransmitMessage) |
+   registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_onPciControllerInterrupt(void)
 
 {
   ushort uVar1;
@@ -33990,7 +34167,10 @@ void cm848_sendPciInFrameResponseByte(void)
 
 /* Completion callback of pci_controller_command_job: runs cm848_handlePciLinkEvent for a pending
    link_event_code then queues the next controller command (in-frame response byte / frame byte via
-   cm848_sendPciFrameByte / 0xaf8 after a link event) */
+   cm848_sendPciFrameByte / 0xaf8 after a link event) | pci_controller_command_job (J1850 PCI
+   controller PCS3 command byte 0x57) completion_callback re-armed by itself each transfer - invoked
+   by cm848_completeQspiJob via cm848_onQspiFinished - drives the next TX or in-frame-response byte
+   - not a dead function */
 
 void cm848_servicePciTransmit(void)
 
@@ -34040,7 +34220,9 @@ void cm848_servicePciTransmit(void)
 /* Completion callback of pci_controller_receive_job: splits pci_controller_receive_word into
    pci_receive_word / pci_receive_status (bit 0x800 -> link_event_code 1) and dispatches
    end-of-frame words to cm848_completePciFrame and data bytes to cm848_matchPciReceiveHeader; then
-   services the transmit side and re-queues the receive job */
+   services the transmit side and re-queues the receive job | pci_controller_receive_job (J1850 PCI
+   controller PCS3 command byte 0x57) completion_callback - invoked by cm848_completeQspiJob via
+   cm848_onQspiFinished - set by cm848_initPciControllerInterface - not a dead function */
 
 void cm848_onPciControllerReceiveWord(void)
 
@@ -34683,10 +34865,15 @@ void cm848_clearCanMessageBuffers(void)
 
 
 //
-// Function: mpc555_initJ1939TransmitSchedule @ 0x0003abc4
+// Function: cm848_initPciControllerInterface @ 0x0003abc4
 //
 
-void mpc555_initJ1939TransmitSchedule(void)
+/* One-time init of the external J1850 PCI controller - resets it via output line 124 - registers
+   the shared mode 0 timing slot (chip select PCS3 via command byte 0x57) - sets up the command and
+   receive job callbacks - enables SIU vector 6 (was mpc555_initJ1939TransmitSchedule) |
+   registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_initPciControllerInterface(void)
 
 {
   ushort uVar1;
@@ -34708,15 +34895,15 @@ void mpc555_initJ1939TransmitSchedule(void)
   pci_controller_receive_job.completion_callback = cm848_onPciControllerReceiveWord;
   pci_qspi_queue_priority = 1;
   pci_in_frame_response_queue_priority = 0;
-  pci_controller_command_job.completion_callback = cm848_j1939TransmitScheduleCallback;
+  pci_controller_command_job.completion_callback = cm848_continuePciControllerInit;
   pci_controller_transmit_word = 0xe0;
   pci_controller_command_job.device_slot = pci_controller_qspi_slot;
   pci_controller_receive_job.device_slot = pci_controller_qspi_slot;
-  j1939_queue_tx_return_a = cm848_queueQspiJob(&pci_controller_command_job,1);
-  uVar1 = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = uVar1 | 0x200;
-  uVar1 = scheduler_task_pending_flags._0_2_;
-  scheduler_task_pending_flags._0_2_ = uVar1 | 0x200;
+  pci_controller_init_queue_result = cm848_queueQspiJob(&pci_controller_command_job,1);
+  uVar1 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = uVar1 | 0x200;
+  uVar1 = USIU_SIEL._0_2_;
+  USIU_SIEL._0_2_ = uVar1 | 0x200;
   return;
 }
 
@@ -34739,7 +34926,7 @@ void cm848_initJ1939CommunicationSystem(void)
   cm848_resetPciTransmitState();
   fault_detected_bits_368_to_383 = fault_detected_bits_368_to_383 & 0x7fff;
   fault_registered_bits_368_to_383 = fault_registered_bits_368_to_383 & 0x7fff;
-  mpc555_initJ1939TransmitSchedule();
+  cm848_initPciControllerInterface();
   pci_link_state.init_complete_marker = 1;
   return;
 }
@@ -34747,15 +34934,20 @@ void cm848_initJ1939CommunicationSystem(void)
 
 
 //
-// Function: cm848_j1939TransmitScheduleCallback @ 0x0003ad80
+// Function: cm848_continuePciControllerInit @ 0x0003ad80
 //
 
-void cm848_j1939TransmitScheduleCallback(void)
+/* pci_controller_command_job completion_callback during controller init - reached via
+   cm848_completeQspiJob when the 0xe0 command finishes - clears its own callback then sends the
+   second init word 0xa18 - not a dead function (was cm848_j1939TransmitScheduleCallback) |
+   registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_continuePciControllerInit(void)
 
 {
   pci_controller_command_job.completion_callback = (undefined *)0x0;
   pci_controller_transmit_word = 0xa18;
-  j1939_queue_tx_return_a =
+  pci_controller_init_queue_result =
        cm848_queueQspiJob(&pci_controller_command_job,(uint)pci_qspi_queue_priority);
   return;
 }
@@ -36798,7 +36990,11 @@ void cm848_completeQspiJob(void)
 // Function: cm848_onQspiFinished @ 0x0003dcf4
 //
 
-/* QSPI-finished handler: clears SPIF (qsmcm_qspi.SPSR bit 0x80) then runs cm848_completeQspiJob */
+/* QSPI-finished handler: clears SPIF (qsmcm_qspi.SPSR bit 0x80) then runs cm848_completeQspiJob |
+   SIU vector 7 handler (mpc555_interrupt_dispatch_table[7] ROM 0x575fa) run by
+   mpc555_timerInterruptHandler on the QSPI SPIF interrupt - clears SPSR SPIF then runs
+   cm848_completeQspiJob which calls each job completion_callback - the dispatcher for every QSPI
+   callback */
 
 void cm848_onQspiFinished(void)
 
@@ -36827,8 +37023,8 @@ void mpc555_initQsmcmQspiModule(void)
   QSMCM_DDRQS = 0x7e;
   qsmcm_portqs_low = 0x7f;
   qsmcm_qspi.SPCR0 = 0x800a;
-  uVar1 = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = uVar1 | 0x100;
+  uVar1 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = uVar1 | 0x100;
   wVar2 = qsmcm_qspi.SPCR2;
   qsmcm_qspi.SPCR2 = wVar2 | 0x8000;
   return;
@@ -37194,8 +37390,11 @@ void cm848_dispatchSciInterrupt(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x23 (35) handler from the 0x53a9a0 table: installs cm848_sciCommand35Callback |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
-    */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium |
+   installs cm848_sciCommand35Callback - cranking-only - sub-bytes 0x13 immobilizer key / 0x14
+   cmd20-pending / 0x15 trip-reset - SCI command 0x23 (35) via the 0x53a9a0 table
+   (cm848_dispatchSciCommand) | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Medium */
 
 void cm848_sciCommand35Handler(void)
 
@@ -37272,8 +37471,10 @@ void cm848_sciCommand35Callback(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x35 (53) handler from the 0x53a9a0 table: installs cm848_sciCommand53Callback |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
-    */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium |
+   installs cm848_sciCommand53Callback (next-byte callback for command 0x35) - SCI command 0x35 (53)
+   via the 0x53a9a0 table (cm848_dispatchSciCommand) | review-function-readability reviewed
+   2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
 void cm848_sciCommand53Handler(void)
 
@@ -38052,8 +38253,11 @@ void cm848_initTransmissionOutputSpeedFilters(void)
 /* Reads the accumulated TPU-B ch14 tick count - converts it to the output speed sensor period in
    microseconds - clears PARAM4 and reloads the pulse timeout counter - no decompiled caller so
    likely the ch14 capture handler (was mpc555_calculateTimerFrequencyConversion) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
-    */
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium |
+   TPU-B channel 14 interrupt handler - reached via tpu_b_channel_interrupt_handler_table
+   (mpc555_tpuBInterruptDispatcher 0x55d2c) - no direct caller in the decompile - reads
+   TPUB_CH14_PARAM0 offset 8 (PARAM4:PARAM5 tick count) into
+   transmission_output_speed_period_microseconds */
 
 void mpc555_updateOutputSpeedSensorPeriod(void)
 
@@ -41065,6 +41269,9 @@ void cm848_protectionOverrideEvaluator(void)
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* TPU-A channel 11 interrupt handler - reached via tpu_a_channel_interrupt_handler_table
+   (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller in the decompile - engine sync pulse
+   capture packing TPUA_CH11_PARAM0-7 into crank_capture_period_packed */
 
 void hpcr_processEngineSyncPulses(void)
 
@@ -41224,6 +41431,10 @@ LAB_00045154:
 // Function: mpc555_updateEngineRunState @ 0x00045478
 //
 
+/* TPU-A channel 0 interrupt handler - reached via tpu_a_channel_interrupt_handler_table
+   (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller in the decompile - runs the crank
+   run-state machine engine_crank_state_t.run_state 0-4 from tpu_a_ch0_param0 */
+
 void mpc555_updateEngineRunState(void)
 
 {
@@ -41329,6 +41540,10 @@ void mpc555_updateEngineRunState(void)
 //
 
 /* WARNING: Removing unreachable block (ram,0x00045c78) */
+/* TPU-A channel 1 interrupt handler - reached via tpu_a_channel_interrupt_handler_table
+   (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller in the decompile - crank tooth-period
+   capture into crank_period_capture_array + the crank_state pattern machine from tpu_a_ch1_param2
+    */
 
 void mpc555_updateEngineCrankState(void)
 
@@ -44585,7 +44800,11 @@ undefined4 cm848_queueEepromByteWritesAtOffset11134(short param_1,int param_2,ui
 /* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
    read-status): read-status (5) to check write-in-progress; retries up to 32 times 20 time-base
    ticks apart and sets system_faults 0x20 (EEPROM write fault) if the job cannot be queued |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High |
+   eeprom_job completion_callback (serial EEPROM PCS0) - runs after a write transfer then issues the
+   read-status (5) poll handled by cm848_onEepromStatusRead - set by cm848_writeNextQueuedEepromByte
+   / cm848_runEepromPageWrite - invoked by cm848_completeQspiJob via cm848_onQspiFinished - not a
+   dead function */
 
 void cm848_pollEepromStatus(void)
 
@@ -44818,7 +45037,9 @@ void cm848_startEepromMirrorSave(void)
 /* SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5
    read-status): completion of the status read: write-in-progress (receive word bit 0x1) -> poll
    again; otherwise next queued byte / page write / mirror block read | review-function-readability
-   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
+   reviewed 2026-11-11 - Readability Medium Accuracy Confidence High | eeprom_job (serial EEPROM
+   PCS0) completion_callback after a read-status - invoked by cm848_completeQspiJob via
+   cm848_onQspiFinished - set by cm848_pollEepromStatus - not a dead function */
 
 void cm848_onEepromStatusRead(void)
 
@@ -44858,7 +45079,9 @@ void cm848_onEepromStatusRead(void)
    read-status): completion of a block read: copies the words into the RAM mirror
    (eeprom_mirror_base_pointer + offset) until eeprom_mirror_load_length then sets
    eeprom_mirror_loaded_flag | review-function-readability reviewed 2026-11-11 - Readability Medium
-   Accuracy Confidence High */
+   Accuracy Confidence High | eeprom_job (serial EEPROM PCS0) completion_callback for a block read -
+   invoked by cm848_completeQspiJob via cm848_onQspiFinished (SIU vector 7) - set by
+   cm848_startEepromBlockRead - not a dead function */
 
 void cm848_onEepromBlockRead(void)
 
@@ -44904,7 +45127,9 @@ void cm848_onEepromBlockRead(void)
    read-status): compares the read-back page with the source (3 retries then
    eeprom_verify_failed_flag); advances the page write and on completion sets or clears
    system_faults 0x20 | review-function-readability reviewed 2026-11-11 - Readability Medium
-   Accuracy Confidence High */
+   Accuracy Confidence High | eeprom_job (serial EEPROM PCS0) completion_callback verifying a page
+   write-back - invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
+   cm848_runEepromPageWrite - not a dead function */
 
 void cm848_verifyEepromPageWrite(void)
 
@@ -50470,8 +50695,8 @@ void mpc555_enableSchedulerMiosOutput(void)
   
   wVar2 = mios1_sched_ctrl;
   mios1_sched_ctrl = wVar2 | 0x600;
-  uVar1 = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = uVar1 | 4;
+  uVar1 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = uVar1 | 4;
   return;
 }
 
@@ -50957,14 +51182,14 @@ void hpcr_exceptionHandler(void)
   if (hardware_timer_capture == 0) {
     hardware_timer_capture = TBLr;
   }
-  uVar2 = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = scheduler_task_flags_snapshot | uVar2 | 1;
+  uVar2 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = scheduler_task_flags_snapshot | uVar2 | 1;
   uVar1 = 0x1e848;
   do {
     uVar1 = cm848_initProtectionModule(uVar1);
   } while (hardware_operation_complete_flag == 0);
-  scheduler_task_flags_snapshot = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = 0x100;
+  scheduler_task_flags_snapshot = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = 0x100;
   sensorDiagnosticsConfiguration(0x30d4);
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
@@ -50998,14 +51223,14 @@ void cm848_engineStartCompletionB(void)
   if (hardware_timer_capture == 0) {
     hardware_timer_capture = TBLr;
   }
-  uVar1 = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = scheduler_task_flags_snapshot | uVar1 | 1;
+  uVar1 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = scheduler_task_flags_snapshot | uVar1 | 1;
   uVar2 = 0x1e848;
   do {
     uVar2 = cm848_initProtectionModule(uVar2);
   } while (hardware_operation_complete_flag == 0);
-  scheduler_task_flags_snapshot = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = 0x100;
+  scheduler_task_flags_snapshot = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = 0x100;
   sensorDiagnosticsConfiguration(0x30d4);
   cm848_removeHealedFaults();
   cm848_clearMilForHealedFaults();
@@ -51720,15 +51945,15 @@ void mpc555_initTpuConfiguration(void)
     tpu_b_mcr.R02A = 0x1e;
     tpu_b_mcr.CIER = 0;
     tpu_b_mcr.TICR = 0x200;
-    uVar5 = scheduler_task_enable_flags._0_2_;
-    scheduler_task_enable_flags._0_2_ = uVar5 | 0x400;
+    uVar5 = USIU_SIMASK._0_2_;
+    USIU_SIMASK._0_2_ = uVar5 | 0x400;
     tpu_a_mcr.TPUMCR = 0x4460;
     tpu_a_mcr.R028 = 0x20;
     tpu_a_mcr.R02A = 0;
     tpu_a_mcr.CIER = 0;
     tpu_a_mcr.TICR = 0x100;
-    uVar5 = scheduler_task_enable_flags._0_2_;
-    scheduler_task_enable_flags._0_2_ = uVar5 | 0x1000;
+    uVar5 = USIU_SIMASK._0_2_;
+    USIU_SIMASK._0_2_ = uVar5 | 0x1000;
   }
   return;
 }
@@ -59108,10 +59333,10 @@ undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1)
 void j1939_diag_request_batch_init(void)
 
 {
-  cm848_processJ1939DiagnosticRequest(0xf,j1939_diagService15And16Handler);
-  cm848_processJ1939DiagnosticRequest(0x10,j1939_diagService15And16Handler);
-  cm848_processJ1939DiagnosticRequest(4,j1939_diagService4DisableBroadcast);
-  cm848_processJ1939DiagnosticRequest(5,j1939_diagService5EnableBroadcast);
+  cm848_j1939RegisterDiagnosticService(0xf,j1939_diagService15And16Handler);
+  cm848_j1939RegisterDiagnosticService(0x10,j1939_diagService15And16Handler);
+  cm848_j1939RegisterDiagnosticService(4,j1939_diagService4DisableBroadcast);
+  cm848_j1939RegisterDiagnosticService(5,j1939_diagService5EnableBroadcast);
   return;
 }
 
@@ -60199,12 +60424,12 @@ undefined1 j1939_diagService77_memoryWriteExt(int param_1)
 void j1939_diag_request_batch_44to49(void)
 
 {
-  cm848_processJ1939DiagnosticRequest(0x44,j1939_diagService68_memoryWriteByParameterId);
-  cm848_processJ1939DiagnosticRequest(0x45,j1939_diagService69_memoryWriteByParameterIdExt);
-  cm848_processJ1939DiagnosticRequest(0x4b,j1939_diagService75_memoryWrite);
-  cm848_processJ1939DiagnosticRequest(0x4d,j1939_diagService77_memoryWriteExt);
-  cm848_processJ1939DiagnosticRequest(0x47,j1939_diagService71Handler);
-  cm848_processJ1939DiagnosticRequest(0x49,j1939_diagService73_memoryWriteByParameterId);
+  cm848_j1939RegisterDiagnosticService(0x44,j1939_diagService68_memoryWriteByParameterId);
+  cm848_j1939RegisterDiagnosticService(0x45,j1939_diagService69_memoryWriteByParameterIdExt);
+  cm848_j1939RegisterDiagnosticService(0x4b,j1939_diagService75_memoryWrite);
+  cm848_j1939RegisterDiagnosticService(0x4d,j1939_diagService77_memoryWriteExt);
+  cm848_j1939RegisterDiagnosticService(0x47,j1939_diagService71Handler);
+  cm848_j1939RegisterDiagnosticService(0x49,j1939_diagService73_memoryWriteByParameterId);
   return;
 }
 
@@ -60894,7 +61119,7 @@ undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1)
 void j1939_diag_request_41_handler(void)
 
 {
-  cm848_processJ1939DiagnosticRequest(0x41,j1939_diagService65_getAddressByParameterId);
+  cm848_j1939RegisterDiagnosticService(0x41,j1939_diagService65_getAddressByParameterId);
   return;
 }
 
@@ -61116,11 +61341,11 @@ undefined1 j1939_diagService76_memoryReadExt(int param_1)
 void j1939_diag_request_batch_43to48(void)
 
 {
-  cm848_processJ1939DiagnosticRequest(0x43,j1939_diagService67_memoryReadByParameterId);
-  cm848_processJ1939DiagnosticRequest(0x4a,j1939_diagService74_memoryRead);
-  cm848_processJ1939DiagnosticRequest(0x4c,j1939_diagService76_memoryReadExt);
-  cm848_processJ1939DiagnosticRequest(0x46,j1939_diagService70Handler);
-  cm848_processJ1939DiagnosticRequest(0x48,j1939_diagService72_memoryReadByParameterId);
+  cm848_j1939RegisterDiagnosticService(0x43,j1939_diagService67_memoryReadByParameterId);
+  cm848_j1939RegisterDiagnosticService(0x4a,j1939_diagService74_memoryRead);
+  cm848_j1939RegisterDiagnosticService(0x4c,j1939_diagService76_memoryReadExt);
+  cm848_j1939RegisterDiagnosticService(0x46,j1939_diagService70Handler);
+  cm848_j1939RegisterDiagnosticService(0x48,j1939_diagService72_memoryReadByParameterId);
   return;
 }
 
@@ -63008,7 +63233,9 @@ void phase_group_b_updateBoostBlendingControl(void)
 
 /* TPU-B channel 1 interrupt (entry 1 of tpu_b_channel_interrupt_handler_table): latches the
    channel's captured period into boost_blend_tpu_ch1_period_working and reloads
-   boost_blend_dwell_countdown; previously had no function at all */
+   boost_blend_dwell_countdown; previously had no function at all | reached via
+   tpu_b_channel_interrupt_handler_table[1] - mpc555_tpuBInterruptDispatcher 0x55d2c - no direct
+   caller - period consumed by phase_group_b_updateBoostBlendingControl */
 
 void mpc555_tpuBChannel1InterruptHandler(void)
 
@@ -66744,7 +66971,9 @@ void tpu_rpm_measurement_initialize(void)
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* TPU-B channel 9 interrupt (entry 9 of tpu_b_channel_interrupt_handler_table): converts the
    captured period at 0x304598 into tpu_rpm_reference_period (x1000000 / 0x4c4b4) and reloads
-   tpu_rpm_startup_blank_countdown; was wrongly listed in deleted_functions.csv */
+   tpu_rpm_startup_blank_countdown; was wrongly listed in deleted_functions.csv | reached via
+   tpu_b_channel_interrupt_handler_table[9] - mpc555_tpuBInterruptDispatcher 0x55d2c - no direct
+   caller - tpu_rpm_reference_period read by tpu_rpm_measurement_control */
 
 void mpc555_tpuBChannel9InterruptHandler(void)
 
@@ -71328,8 +71557,8 @@ void cm848_sciInitPort1(void)
   qsmcm_sccr1.SCC1R0 = 0xa0;
   wVar2 = qsmcm_sccr1.SC1SR;
   qsmcm_sccr1.SCC1R1 = 0x102c;
-  uVar1 = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = uVar1 | 0x10;
+  uVar1 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = uVar1 | 0x10;
   return;
 }
 
@@ -71361,7 +71590,11 @@ void configurationValidationCheck(void)
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x12 (18): sets sci_mode_flags bit 0x02 (SCI1 switches to the 8x faster SCC1R0 = 0x14)
    and installs the table-select callback (0xF5-0xFD select tables / 0xFE exits) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   sets sci_mode_flags bit 0x02 (SCI1 to 8x SCC1R0 0x14) and installs the table-select callback
+   (0xF5-0xFD select / 0xFE exit) - SCI command 0x12 (18) via the 0x53a9a0 table
+   (cm848_dispatchSciCommand) | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence High */
 
 void cm848_sciCommand18EnterHighSpeedMode(void)
 
@@ -71787,6 +72020,9 @@ void cm848_sciHighSpeedReadTable253Callback(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x13 (19): installs the timed output-test callback (cm848_sciStartTimedOutputTest) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium |
+   installs the output-test next-byte callback cm848_sciCommand19OutputTestCallback and starts the
+   response - SCI command 0x13 (19) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
     */
 
@@ -72237,12 +72473,14 @@ LAB_0051eec0:
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x14 (20) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Low */
+   Accuracy Confidence Low | installs the command next-byte callback cm848_sciCommand20Callback and
+   starts the response - SCI command 0x14 (20) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
 
 void cm848_sciCommand20Handler(void)
 
 {
-  sci_next_byte_handler = &LAB_0051f0b8;
+  sci_next_byte_handler = cm848_sciCommand20Callback;
   cm848_sciStartTransmit();
   return;
 }
@@ -72349,13 +72587,725 @@ int cm848_encodeCruiseControlStatusByte(void)
 
 
 //
+// Function: cm848_sciCommand20Callback @ 0x0051f0b8
+//
+
+/* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+
+void cm848_sciCommand20Callback(void)
+
+{
+  ushort uVar1;
+  byte bVar2;
+  byte bVar3;
+  int iVar4;
+  uint uVar5;
+  
+  bVar2 = sci_transmit_byte_count;
+  switch(*(undefined1 *)sci_buffer_cursor) {
+  case 0:
+    break;
+  case 1:
+    uVar1 = DAT_0040bd0a;
+    if ((diagnostic_service_dispatch_table._80_2_ & 0x20) == 0) {
+      if (qadc_channel_index_table[0x45] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[0x45];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 2:
+    break;
+  case 3:
+    break;
+  case 4:
+    break;
+  case 5:
+    uVar5 = (uint)(short)sensor_readings_t_0040baf2.coolant_temp;
+    if ((int)uVar5 < 0x4141) {
+      (&sci_buffer)[sci_transmit_byte_count] =
+           (char)((int)((((int)uVar5 >> 6) + (uint)((int)uVar5 < 0 && (uVar5 & 0x3f) != 0)) * 5 +
+                       -0xa0) / 9) + 0x80;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 6:
+    uVar1 = DAT_0040bc84;
+    if ((diagnostic_service_dispatch_table._72_2_ & 4) == 0) {
+      if (qadc_channel_index_table[2] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[2];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 7:
+    if (fuel_demand_enable_flag == 0) {
+      uVar1 = DAT_0040bc9a;
+      if ((diagnostic_service_dispatch_table._72_2_ & 0x2000) == 0) {
+        if (qadc_channel_index_table[0xd] < 0x81) {
+          uVar5 = (uint)qadc_channel_index_table[0xd];
+        }
+        else {
+          uVar5 = 0;
+        }
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+      }
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 8:
+    break;
+  case 9:
+    break;
+  case 10:
+    uVar1 = hpcr_pressure_diag_forced_reading;
+    if ((diagnostic_service_dispatch_table._72_2_ & 0x10) == 0) {
+      if (qadc_channel_index_table[4] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[4];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    if (uVar1 < 0x2ea) {
+      uVar1 = hpcr_pressure_diag_forced_reading;
+      if ((diagnostic_service_dispatch_table._72_2_ & 0x10) == 0) {
+        if (qadc_channel_index_table[4] < 0x81) {
+          uVar5 = (uint)qadc_channel_index_table[4];
+        }
+        else {
+          uVar5 = 0;
+        }
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+      }
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x1584) / 0x3ef0);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0xb:
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)(sensor_readings_t_0040baf2.intake_manifold_pressure >> 7);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0xc:
+    break;
+  case 0xd:
+    break;
+  case 0xe:
+    break;
+  case 0xf:
+    break;
+  case 0x10:
+    break;
+  case 0x11:
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(crank_derived_rpm >> 8);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x12:
+    break;
+  case 0x13:
+    break;
+  case 0x14:
+    break;
+  case 0x15:
+    break;
+  case 0x16:
+    break;
+  case 0x17:
+    break;
+  case 0x18:
+    break;
+  case 0x19:
+    break;
+  case 0x1a:
+    break;
+  case 0x1b:
+    uVar5 = (uint)(short)intake_manifold_temperature_sensor_filtered;
+    if ((int)uVar5 < 0x4141) {
+      (&sci_buffer)[sci_transmit_byte_count] =
+           (char)((int)((((int)uVar5 >> 6) + (uint)((int)uVar5 < 0 && (uVar5 & 0x3f) != 0)) * 5 +
+                       -0xa0) / 9) + 0x80;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x1c:
+    uVar1 = DAT_0040bc92;
+    if ((diagnostic_service_dispatch_table._72_2_ & 0x200) == 0) {
+      if (qadc_channel_index_table[9] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[9];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x1d:
+    if (cruise_speed_command < 0x7f01) {
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(cruise_speed_command >> 7);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x1e:
+    break;
+  case 0x1f:
+    break;
+  case 0x20:
+    uVar5 = (uint)sci_transmit_byte_count;
+    bVar3 = cm848_encodeCruiseControlStatusByte();
+    (&sci_buffer)[uVar5] = bVar3;
+    sci_transmit_byte_count = bVar2 + 1;
+    break;
+  case 0x21:
+    break;
+  case 0x22:
+    break;
+  case 0x23:
+    break;
+  case 0x24:
+    if (battery_voltage_prev < 0xfc) {
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)battery_voltage_prev * 0x653) / 0x640);
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+    }
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    goto LAB_0051f804;
+  case 0x25:
+LAB_0051f804:
+    uVar5 = (uint)(short)transmission_temperature_sensor_filtered;
+    if ((int)uVar5 < 0x5df4) {
+      (&sci_buffer)[sci_transmit_byte_count] =
+           (char)((int)((((int)uVar5 >> 6) + (uint)((int)uVar5 < 0 && (uVar5 & 0x3f) != 0)) * 5 +
+                       -0xa0) / 9) + 0x40;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x26:
+    uVar1 = torque_limit_setpoint_working;
+    if ((diagnostic_service_dispatch_table._84_2_ & 0x80) == 0) {
+      if ((ushort)diagnostic_service_dispatch_table._22_2_ < 0x81) {
+        uVar5 = (uint)(ushort)diagnostic_service_dispatch_table._22_2_;
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x27:
+    if (immobilizer_valid_key_flag == 0) {
+      (&sci_buffer)[sci_transmit_byte_count] = 0;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0x20;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x28:
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)(((uint)j1939_calib_handler_param * 200) / 0x6400);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x29:
+    break;
+  case 0x2a:
+    break;
+  case 0x2b:
+    break;
+  case 0x2c:
+    uVar1 = cruise_switch_adc_override;
+    if ((diagnostic_service_dispatch_table._76_2_ & 0x8000) == 0) {
+      if (qadc_channel_index_table[0x2f] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[0x2f];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x2d:
+    uVar5 = (uint)(short)battery_temperature_sensor_filtered;
+    iVar4 = ((int)uVar5 >> 6) + (uint)((int)uVar5 < 0 && (uVar5 & 0x3f) != 0);
+    if (iVar4 < 0x106) {
+      (&sci_buffer)[sci_transmit_byte_count] = (char)((iVar4 * 5 + -0xa0) / 9) + 0x80;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x2e:
+    uVar1 = DAT_0040bc9e;
+    if ((diagnostic_service_dispatch_table._72_2_ & 0x8000) == 0) {
+      if (qadc_channel_index_table[0xf] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[0xf];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x2f:
+    break;
+  case 0x30:
+    break;
+  case 0x31:
+    break;
+  case 0x32:
+    uVar1 = DAT_0040bd0e;
+    if ((diagnostic_service_dispatch_table._80_2_ & 0x80) == 0) {
+      if (qadc_channel_index_table[0x47] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[0x47];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x33:
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)(((uint)air_conditioning_pressure_sensor_filtered * 0x33) / 0x3200);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x34:
+    break;
+  case 0x35:
+    break;
+  case 0x36:
+    break;
+  case 0x37:
+    break;
+  case 0x38:
+    break;
+  case 0x39:
+    break;
+  case 0x3a:
+    break;
+  case 0x3b:
+    break;
+  case 0x3c:
+    if (oil_pressure_switch_only_cal == 0) {
+      uVar1 = DAT_0040bc94;
+      if ((diagnostic_service_dispatch_table._72_2_ & 0x400) == 0) {
+        if (qadc_channel_index_table[10] < 0x81) {
+          uVar5 = (uint)qadc_channel_index_table[10];
+        }
+        else {
+          uVar5 = 0;
+        }
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+      }
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x3d:
+    if (oil_pressure_switch_only_cal == 0) {
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(oil_pressure_sensor_filtered >> 7);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x3e:
+    break;
+  case 0x3f:
+    break;
+  case 0x40:
+    uVar1 = DAT_0040bc82;
+    if ((diagnostic_service_dispatch_table._72_2_ & 2) == 0) {
+      if (qadc_channel_index_table[1] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[1];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x41:
+    if (vehicle_speed < 0x7f01) {
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(vehicle_speed >> 7);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x42:
+    break;
+  case 0x43:
+    break;
+  case 0x44:
+    break;
+  case 0x45:
+    break;
+  case 0x46:
+    if (fuel_demand_enable_flag == 0) {
+      (&sci_buffer)[sci_transmit_byte_count] =
+           (byte)(((uint)fuel_demand_control_t_0040a57a.rate_limited * 0xff) / 400);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x47:
+    break;
+  case 0x48:
+    break;
+  case 0x49:
+    break;
+  case 0x4a:
+    break;
+  case 0x4b:
+    break;
+  case 0x4c:
+    break;
+  case 0x4d:
+    break;
+  case 0x4e:
+    uVar1 = DAT_0040bd08;
+    if ((diagnostic_service_dispatch_table._80_2_ & 0x10) == 0) {
+      if (qadc_channel_index_table[0x44] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[0x44];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x4f:
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)fuel_level_sensor_filtered * 100) / 0xff)
+    ;
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x50:
+    break;
+  case 0x51:
+    break;
+  case 0x52:
+    break;
+  case 0x53:
+    if (governor_pressure_target < 0x3f81) {
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(governor_pressure_target >> 6);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x54:
+    if (governor_pressure < 0x3f81) {
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(governor_pressure >> 6);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x55:
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)transmission_current_gear;
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x56:
+    break;
+  case 0x57:
+    break;
+  case 0x58:
+    break;
+  case 0x59:
+    break;
+  case 0x5a:
+    if (transmission_output_speed_in_use < 0x9f61) {
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(transmission_output_speed_in_use / 0xa0);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x5b:
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)(((uint)protection_throttle_hpcr_setpoint * 0xff) / 0x6400);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x5c:
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(engine_load_percent >> 8);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x5d:
+    break;
+  case 0x5e:
+    break;
+  case 0x5f:
+    break;
+  case 0x60:
+    break;
+  case 0x61:
+    break;
+  case 0x62:
+    break;
+  case 99:
+    uVar5 = (uint)sci_transmit_byte_count;
+    bVar3 = cm848_sciBuildStatusFlagsByte();
+    (&sci_buffer)[uVar5] = bVar3;
+    sci_transmit_byte_count = bVar2 + 1;
+    break;
+  case 100:
+    break;
+  case 0x65:
+    break;
+  case 0x66:
+    break;
+  case 0x67:
+    break;
+  case 0x68:
+    break;
+  case 0x69:
+    break;
+  case 0x6a:
+    break;
+  case 0x6b:
+    break;
+  case 0x6c:
+    break;
+  case 0x6d:
+    break;
+  case 0x6e:
+    break;
+  case 0x6f:
+    break;
+  case 0x70:
+    break;
+  case 0x71:
+    break;
+  case 0x72:
+    if (fuel_demand_enable_flag == 1) {
+      uVar1 = DAT_0040bd42;
+      if ((diagnostic_service_dispatch_table._84_2_ & 2) == 0) {
+        if ((ushort)diagnostic_service_dispatch_table._10_2_ < 0x81) {
+          uVar5 = (uint)(ushort)diagnostic_service_dispatch_table._10_2_;
+        }
+        else {
+          uVar5 = 0;
+        }
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+      }
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x73:
+    break;
+  case 0x74:
+    if (fuel_demand_enable_flag == 1) {
+      uVar1 = DAT_0040bd44;
+      if ((diagnostic_service_dispatch_table._84_2_ & 4) == 0) {
+        if ((ushort)diagnostic_service_dispatch_table._12_2_ < 0x81) {
+          uVar5 = (uint)(ushort)diagnostic_service_dispatch_table._12_2_;
+        }
+        else {
+          uVar5 = 0;
+        }
+        uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+      }
+      (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x75:
+    break;
+  case 0x76:
+    if (fuel_demand_enable_flag == 1) {
+      (&sci_buffer)[sci_transmit_byte_count] =
+           (byte)(((uint)governor_speed_demand_limit_prev * 0x18e7) / 10000);
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x77:
+    break;
+  case 0x78:
+    break;
+  case 0x79:
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(crank_tooth_rpm >> 8);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x7a:
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)((uint)((short)fault_diagnostic_word_1 * 0x33) / 0x333);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x7b:
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)((uint)((short)engine_sync_state_t_0040b87f.speed_raw * 0xff) / 0xfff);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x7c:
+    break;
+  case 0x7d:
+    break;
+  case 0x7e:
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)DAT_0040c13a * 0xff) / 0x6400);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x7f:
+    break;
+  case 0x80:
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(tpu_rpm_ema_filtered >> 8);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x81:
+    uVar1 = DAT_0040bc8e;
+    if ((diagnostic_service_dispatch_table._72_2_ & 0x80) == 0) {
+      if (qadc_channel_index_table[7] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[7];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x82:
+    uVar5 = (uint)(short)fuel_temperature_sensor_filtered;
+    iVar4 = ((int)uVar5 >> 6) + (uint)((int)uVar5 < 0 && (uVar5 & 0x3f) != 0);
+    if (iVar4 < 0x105) {
+      (&sci_buffer)[sci_transmit_byte_count] = (char)((iVar4 * 5 + -0xa0) / 9) + 0x80;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x83:
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)(((uint)engine_timing_diagnostic_word * 0x33) / 0x333);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x84:
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)((uint)((short)cam_sync_position * 0xfe) / 0xfff)
+    ;
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x85:
+    uVar1 = DAT_0040bca8;
+    if ((diagnostic_service_dispatch_table._74_2_ & 0x10) == 0) {
+      if (qadc_channel_index_table[0x14] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[0x14];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x86:
+    uVar5 = (uint)(short)ambient_air_temperature_sensor_filtered;
+    iVar4 = ((int)uVar5 >> 6) + (uint)((int)uVar5 < 0 && (uVar5 & 0x3f) != 0);
+    if (iVar4 < 0x105) {
+      (&sci_buffer)[sci_transmit_byte_count] = (char)((iVar4 * 5 + -0xa0) / 9) + 0x80;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    else {
+      (&sci_buffer)[sci_transmit_byte_count] = 0xff;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    }
+    break;
+  case 0x87:
+    uVar1 = DAT_0040bc86;
+    if ((diagnostic_service_dispatch_table._72_2_ & 8) == 0) {
+      if (qadc_channel_index_table[3] < 0x81) {
+        uVar5 = (uint)qadc_channel_index_table[3];
+      }
+      else {
+        uVar5 = 0;
+      }
+      uVar1 = *(ushort *)(&qadc_channel_dispatch_table)[uVar5 * 2];
+    }
+    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)uVar1 * 0x55) / 0x155);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    break;
+  case 0x88:
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)(((uint)sensor_readings_t_0040baf2.barometric_pressure * 0x6df) / 0x6400);
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+  }
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
+  cm848_sciStartTransmit();
+  return;
+}
+
+
+
+//
 // Function: cm848_sciCommand23ClearDiagnostics @ 0x005204f8
 //
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x17 (23): clears diagnostic / fault records (was cm848_fuelDemandClearDiagnostics) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
-    */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium |
+   clears the diagnostic / fault records (was cm848_fuelDemandClearDiagnostics) - SCI command 0x17
+   (23) via the 0x53a9a0 table (cm848_dispatchSciCommand) | review-function-readability reviewed
+   2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
 void cm848_sciCommand23ClearDiagnostics(void)
 
@@ -72420,12 +73370,14 @@ void cm848_countdown_timer_update(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x19 (25) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Low */
+   Accuracy Confidence Low | installs the command next-byte callback cm848_sciCommand25Callback and
+   starts the response - SCI command 0x19 (25) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
 
 void cm848_sciCommand25Handler(void)
 
 {
-  sci_next_byte_handler = &LAB_005206c4;
+  sci_next_byte_handler = cm848_sciCommand25Callback;
   cm848_sciStartTransmit();
   return;
 }
@@ -72452,17 +73404,199 @@ void governor_speedLimitFloor_decrement(void)
 
 
 //
+// Function: cm848_sciCommand25Callback @ 0x005206c4
+//
+
+void cm848_sciCommand25Callback(void)
+
+{
+  governor_speed_limit_floor_b = (ushort)*(byte *)sci_buffer_cursor << 6;
+  governor_speed_limit_floor_a = 0xe5c1;
+  governor_speed_limit_floor_countdown = 0x48;
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
+  cm848_sciStartTransmit();
+  return;
+}
+
+
+
+//
 // Function: cm848_sciCommand26Handler @ 0x0052072c
 //
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x1a (26) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Low */
+   Accuracy Confidence Low | installs the command next-byte callback cm848_sciCommand26Callback and
+   starts the response - SCI command 0x1a (26) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
 
 void cm848_sciCommand26Handler(void)
 
 {
-  sci_next_byte_handler = &LAB_0052075c;
+  sci_next_byte_handler = cm848_sciCommand26Callback;
+  cm848_sciStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_sciCommand26Callback @ 0x0052075c
+//
+
+void cm848_sciCommand26Callback(void)
+
+{
+  char cVar1;
+  byte bVar2;
+  byte bVar3;
+  byte bVar4;
+  byte bVar5;
+  byte bVar6;
+  byte bVar7;
+  byte bVar8;
+  
+  cVar1 = *(char *)sci_buffer_cursor;
+  if (cVar1 == '\x01') {
+    if ((switch_input_state_bits[1] & 2) == 0) {
+      bVar5 = 0;
+    }
+    else {
+      bVar5 = 2;
+    }
+    if ((switch_input_state_bits[1] & 4) == 0) {
+      bVar4 = 0;
+    }
+    else {
+      bVar4 = 4;
+    }
+    if ((switch_input_state_bits[0] & 0x80) == 0) {
+      bVar8 = 0;
+    }
+    else {
+      bVar8 = 8;
+    }
+    if ((switch_input_state_bits[1] & 1) == 0) {
+      bVar6 = 0;
+    }
+    else {
+      bVar6 = 0x10;
+    }
+    if ((switch_input_state_bits[3] & 0x20) == 0) {
+      bVar3 = 0;
+    }
+    else {
+      bVar3 = 0x20;
+    }
+    if ((switch_input_state_bits[0] & 2) == 0) {
+      bVar7 = 0;
+    }
+    else {
+      bVar7 = 0x40;
+    }
+    if ((switch_input_state_bits[2] & 8) == 0) {
+      bVar2 = 0;
+    }
+    else {
+      bVar2 = 0x80;
+    }
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (switch_input_state_bits[0] & 0x10) != 0 | bVar5 | bVar4 | bVar8 | bVar6 | bVar3 | bVar7 |
+         bVar2;
+  }
+  else if (cVar1 == '\x02') {
+    if ((switch_input_state_bits[2] & 0x10) == 0) {
+      bVar5 = 0;
+    }
+    else {
+      bVar5 = 2;
+    }
+    if ((switch_input_state_bits[0] & 0x40) == 0) {
+      bVar4 = 0;
+    }
+    else {
+      bVar4 = 4;
+    }
+    if ((switch_input_state_bits[1] & 0x10) == 0) {
+      bVar8 = 0;
+    }
+    else {
+      bVar8 = 8;
+    }
+    if ((switch_input_state_bits[1] & 8) == 0) {
+      bVar6 = 0;
+    }
+    else {
+      bVar6 = 0x10;
+    }
+    if ((switch_input_state_bits[0] & 4) == 0) {
+      bVar3 = 0;
+    }
+    else {
+      bVar3 = 0x20;
+    }
+    if ((switch_input_state_bits[0] & 0x20) == 0) {
+      bVar7 = 0;
+    }
+    else {
+      bVar7 = 0x40;
+    }
+    if ((switch_input_state_bits[1] & 0x40) == 0) {
+      bVar2 = 0;
+    }
+    else {
+      bVar2 = 0x80;
+    }
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (switch_input_state_bits[2] & 0x20) != 0 | bVar5 | bVar4 | bVar8 | bVar6 | bVar3 | bVar7 |
+         bVar2;
+  }
+  else {
+    if (cVar1 != '\x03') goto LAB_00520aa8;
+    if ((switch_input_state_bits[3] & 8) == 0) {
+      bVar5 = 0;
+    }
+    else {
+      bVar5 = 2;
+    }
+    if ((switch_input_state_bits[3] & 0x10) == 0) {
+      bVar4 = 0;
+    }
+    else {
+      bVar4 = 4;
+    }
+    if ((switch_input_state_bits[3] & 1) == 0) {
+      bVar8 = 0;
+    }
+    else {
+      bVar8 = 8;
+    }
+    if ((switch_input_state_bits[2] & 0x80) == 0) {
+      bVar6 = 0;
+    }
+    else {
+      bVar6 = 0x10;
+    }
+    if ((switch_input_state_bits[2] & 0x40) == 0) {
+      bVar3 = 0;
+    }
+    else {
+      bVar3 = 0x20;
+    }
+    if (overdrive_off_flag == 1) {
+      bVar7 = 0x40;
+    }
+    else {
+      bVar7 = 0;
+    }
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (switch_input_state_bits[3] & 2) != 0 | bVar5 | bVar4 | bVar8 | bVar6 | bVar3 | bVar7;
+  }
+  sci_transmit_byte_count = sci_transmit_byte_count + 1;
+LAB_00520aa8:
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
   cm848_sciStartTransmit();
   return;
 }
@@ -72475,13 +73609,247 @@ void cm848_sciCommand26Handler(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x25 (37) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Low */
+   Accuracy Confidence Low | clears DAT_003fcf60 then installs cm848_sciCommand37Callback and starts
+   the response - SCI command 0x25 (37) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
 
 void cm848_sciCommand37Handler(void)
 
 {
   DAT_003fcf60 = 0;
-  sci_next_byte_handler = &LAB_00520b14;
+  sci_next_byte_handler = cm848_sciCommand37Callback;
+  cm848_sciStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_sciCommand37Callback @ 0x00520b14
+//
+
+void cm848_sciCommand37Callback(void)
+
+{
+  byte bVar1;
+  byte bVar2;
+  uint uVar3;
+  uint uVar4;
+  
+  (&DAT_003fcf61)[DAT_003fcf60] = *(undefined1 *)sci_buffer_cursor;
+  bVar2 = DAT_003fcf62;
+  bVar1 = DAT_003fcf61;
+  uVar4 = DAT_003fcf60 + 1;
+  DAT_003fcf60 = (byte)uVar4;
+  if ((uVar4 & 0xff) < 2) goto LAB_0052145c;
+  uVar4 = (uint)DAT_003fcf61;
+  if (DAT_003fcf61 == 0x11) {
+    if (DAT_003fcf62 == 1) {
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_voltage_active_flag = 1;
+      protection_voltage_active_timeout_count = 0xf;
+    }
+    else if (DAT_003fcf62 == 2) {
+      (&sci_buffer)[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_voltage_active_flag = 0;
+      protection_voltage_active_timeout_count = 0;
+    }
+  }
+  else if (((DAT_003fcf61 == 0x14) && (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) &&
+          (transmission_output_speed_in_use < DAT_00408ba2)) {
+    if (DAT_003fcf62 == 1) {
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_status_flags_t_0040b0f2.output_flags =
+           protection_status_flags_t_0040b0f2.output_flags | 1;
+      if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+        protection_throttle_hpcr_setpoint = DAT_00408ba0;
+        (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_hpcr * 0x10))();
+      }
+    }
+    else {
+      if (DAT_003fcf62 != 2) {
+        protection_status_flags_t_0040b0f2.output_flags =
+             protection_status_flags_t_0040b0f2.output_flags & 0xfe;
+        protection_throttle_output_timeout_count = 0;
+        goto LAB_005212a0;
+      }
+      (&sci_buffer)[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_status_flags_t_0040b0f2.output_flags =
+           protection_status_flags_t_0040b0f2.output_flags | 1;
+      if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+        protection_throttle_hpcr_setpoint = DAT_00408b2e;
+        (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_hpcr * 0x10))();
+      }
+    }
+    protection_throttle_output_timeout_count = 0x19;
+  }
+  else if (((DAT_003fcf61 == 0x15) && (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) &&
+          (transmission_output_speed_in_use < DAT_00408ba2)) {
+    if (DAT_003fcf62 == 1) {
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_status_flags_t_0040b0f2.output_flags =
+           protection_status_flags_t_0040b0f2.output_flags | 3;
+      cm848_setLogicalOutputRequest(0x12,5);
+    }
+    else {
+      if (DAT_003fcf62 != 2) {
+        protection_status_flags_t_0040b0f2.output_flags =
+             protection_status_flags_t_0040b0f2.output_flags & 0xfc;
+        if (DAT_0040c0a6 == '\x05') {
+          DAT_0040c0a6 = '\0';
+        }
+        protection_load_derate_output_timeout_count = 0;
+        goto LAB_005212a0;
+      }
+      (&sci_buffer)[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_status_flags_t_0040b0f2.output_flags =
+           protection_status_flags_t_0040b0f2.output_flags | 3;
+      cm848_clearLogicalOutputRequest(0x12,5);
+    }
+    if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+      protection_throttle_hpcr_setpoint = DAT_00408b2e;
+      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_hpcr * 0x10))
+                (DAT_00408b2e);
+    }
+    protection_load_derate_output_timeout_count = 10;
+  }
+  else if (((DAT_003fcf61 == 0x16) && (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) &&
+          (transmission_output_speed_in_use < DAT_00408ba2)) {
+    if (DAT_003fcf62 == 1) {
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_status_flags_t_0040b0f2.output_flags =
+           protection_status_flags_t_0040b0f2.output_flags | 5;
+      cm848_setLogicalOutputRequest(0x11,5);
+    }
+    else {
+      if (DAT_003fcf62 != 2) {
+        protection_status_flags_t_0040b0f2.output_flags =
+             protection_status_flags_t_0040b0f2.output_flags & 0xfa;
+        if (DAT_0040c0a5 == '\x05') {
+          DAT_0040c0a5 = '\0';
+        }
+        protection_engine_protection_output_timeout_count = 0;
+        goto LAB_005212a0;
+      }
+      (&sci_buffer)[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_status_flags_t_0040b0f2.output_flags =
+           protection_status_flags_t_0040b0f2.output_flags | 5;
+      cm848_clearLogicalOutputRequest(0x11,5);
+    }
+    if ((j1939_pgn_handler_index_hpcr != 0) && (j1939_pgn_handler_index_hpcr < 0x33)) {
+      protection_throttle_hpcr_setpoint = DAT_00408b2e;
+      (**(code **)(&j1939_pgn_handler_table_func3 + (uint)j1939_pgn_handler_index_hpcr * 0x10))();
+    }
+    protection_engine_protection_output_timeout_count = 10;
+  }
+  else if (((DAT_003fcf61 == 0x17) && (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) &&
+          (transmission_output_speed_in_use < DAT_00408ba2)) {
+    if (DAT_003fcf62 == 1) {
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] | 8;
+    }
+  }
+  else if (DAT_003fcf61 == 0x24) {
+    if ((DAT_003fcf62 == 1) && (cold_start_phase == CSP_CRANKING)) {
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      cm848_setLogicalOutputRequest(0x35,5);
+    }
+    else {
+      if ((DAT_003fcf62 != 2) || (cold_start_phase != CSP_CRANKING)) goto LAB_005212a0;
+      (&sci_buffer)[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      cm848_clearLogicalOutputRequest(0x35,5);
+    }
+    protection_crank_fault_severity_timeout_count = 0x7d;
+  }
+  else if (DAT_003fcf61 == 0x25) {
+    if (DAT_003fcf62 == 1) {
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      cylinder_diag_active_flag = 1;
+      protection_cylinder_diag_timeout_count = 0x5dc;
+    }
+    else if (DAT_003fcf62 == 2) {
+      (&sci_buffer)[sci_transmit_byte_count] = 2;
+      sci_transmit_byte_count = sci_transmit_byte_count + 1;
+      cylinder_diag_active_flag = 0;
+      protection_cylinder_diag_timeout_count = 0;
+    }
+  }
+  else if (DAT_003fcf61 == 0x26) {
+    if (DAT_003fcf62 == 1) {
+      (&sci_buffer)[sci_transmit_byte_count] = 1;
+      governor_speed_limit_enable_flag = 1;
+      protection_speed_limit_enable_timeout_count = 0x96;
+    }
+    else {
+      if (DAT_003fcf62 != 2) goto LAB_005212a0;
+      (&sci_buffer)[sci_transmit_byte_count] = 2;
+      governor_speed_limit_enable_flag = 0;
+      protection_speed_limit_enable_timeout_count = 0;
+    }
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+  }
+LAB_005212a0:
+  if (((bVar1 == 0) || (bVar2 == 0)) || ((bVar1 - 5 < 6 && ((bVar2 == 1 || (bVar2 == 2)))))) {
+    (&sci_buffer)[sci_transmit_byte_count] = bVar2;
+    sci_transmit_byte_count = sci_transmit_byte_count + 1;
+    if ((bVar1 == 0) || (bVar2 == 0)) {
+      uVar4 = 0;
+      do {
+        if ((&DAT_003fcf64)[uVar4] != 0) {
+          DAT_003fcf63 = DAT_003fcf63 + -1;
+          (&DAT_003fcf64)[uVar4] = 0;
+          crank_sync_inhibit_flag = 0;
+        }
+        uVar4 = uVar4 + 1 & 0xff;
+      } while (uVar4 < 8);
+      protection_voltage_active_flag = 0;
+      if (DAT_0040c0c9 == '\x05') {
+        DAT_0040c0c9 = '\0';
+      }
+      protection_voltage_active_timeout_count = 0;
+      cylinder_diag_active_flag = 0;
+      protection_cylinder_diag_timeout_count = 0;
+      governor_speed_limit_enable_flag = 0;
+      protection_speed_limit_enable_timeout_count = 0;
+    }
+    else {
+      uVar4 = uVar4 + 0xfb;
+      if (bVar2 == 1) {
+        uVar3 = uVar4 * 2 & 0x1fe;
+        if (*(short *)((int)&DAT_003fcf64 + uVar3) != 0) {
+          DAT_003fcf63 = DAT_003fcf63 + -1;
+          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 0;
+          crank_sync_inhibit_flag = crank_sync_inhibit_flag & ~(ushort)(1 << (uVar4 & 0x3f));
+        }
+      }
+      else {
+        uVar3 = uVar4 * 2 & 0x1fe;
+        if (*(short *)((int)&DAT_003fcf64 + uVar3) == 0) {
+          DAT_003fcf63 = DAT_003fcf63 + '\x01';
+          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
+          crank_sync_inhibit_flag = crank_sync_inhibit_flag | (ushort)(1 << (uVar4 & 0x3f));
+        }
+        else {
+          *(undefined2 *)((int)&DAT_003fcf64 + uVar3) = 1000;
+        }
+      }
+    }
+  }
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
+LAB_0052145c:
   cm848_sciStartTransmit();
   return;
 }
@@ -72573,7 +73941,9 @@ void initProtectionVoltageTimer(void)
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x27 (39): installs the EEPROM setting write callback (requires the unlocked security
    state) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence
-   Medium */
+   Medium | installs the EEPROM-setting write callback (requires the unlocked security state) - SCI
+   command 0x27 (39) via the 0x53a9a0 table (cm848_dispatchSciCommand) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
 void cm848_sciCommand39WriteEepromSetting(void)
 
@@ -72662,7 +74032,10 @@ void cm848_sciCommand39WriteEepromSettingCallback(void)
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x28 (40): installs the EEPROM setting read callback
    (cm848_sciLookupEepromSettingAddressForRead) | review-function-readability reviewed 2026-11-12 -
-   Readability Medium Accuracy Confidence Medium */
+   Readability Medium Accuracy Confidence Medium | installs the EEPROM-setting read callback
+   (cm848_sciLookupEepromSettingAddressForRead) - SCI command 0x28 (40) via the 0x53a9a0 table
+   (cm848_dispatchSciCommand) | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence Medium */
 
 void cm848_sciCommand40ReadEepromSetting(void)
 
@@ -72720,7 +74093,10 @@ void cm848_sciCommand40ReadEepromSettingCallback(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x29 (41): installs the table 250/252 write callback | review-function-readability
-   reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium */
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium | installs the table 250 /
+   252 write callback - SCI command 0x29 (41) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
 
 void cm848_sciCommand41WriteTableValue(void)
 
@@ -72771,12 +74147,60 @@ void cm848_sciCommand41WriteTableValueCallback(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x2a (42) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Low */
+   Accuracy Confidence Low | installs the command next-byte callback cm848_sciCommand42Callback and
+   starts the response - SCI command 0x2a (42) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
 
 void cm848_sciCommand42Handler(void)
 
 {
-  sci_next_byte_handler = &LAB_00521b9c;
+  sci_next_byte_handler = cm848_sciCommand42Callback;
+  cm848_sciStartTransmit();
+  return;
+}
+
+
+
+//
+// Function: cm848_sciCommand42Callback @ 0x00521b9c
+//
+
+void cm848_sciCommand42Callback(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = (uint)*(byte *)sci_buffer_cursor;
+  if (0x1f < uVar1) goto LAB_00521d14;
+  if (uVar1 < 0x1b) {
+    if (uVar1 == 0x1a) {
+      (&sci_buffer)[sci_transmit_byte_count] = vehicle_vin_string[4];
+    }
+    else if (uVar1 == 0x11) {
+      (&sci_buffer)[sci_transmit_byte_count] = DAT_0000b74c;
+    }
+    else if (uVar1 == 0x12) {
+      (&sci_buffer)[sci_transmit_byte_count] = DAT_0000b74d;
+    }
+    else {
+      if (uVar1 != 0x13) goto LAB_00521ce8;
+      (&sci_buffer)[sci_transmit_byte_count] = DAT_0000b74b;
+    }
+  }
+  else if (uVar1 == 0x1b) {
+    (&sci_buffer)[sci_transmit_byte_count] = vehicle_vin_string[5];
+  }
+  else if (uVar1 == 0x1c) {
+    (&sci_buffer)[sci_transmit_byte_count] = vehicle_vin_string[7];
+  }
+  else {
+LAB_00521ce8:
+    (&sci_buffer)[sci_transmit_byte_count] = (&DAT_00408b80)[uVar1];
+  }
+  sci_transmit_byte_count = sci_transmit_byte_count + 1;
+LAB_00521d14:
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  cm848_sciCancelCallbackTimeout();
   cm848_sciStartTransmit();
   return;
 }
@@ -72790,7 +74214,10 @@ void cm848_sciCommand42Handler(void)
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x2b (43): returns the security seed (sci_security_seed) (was
    cm848_fuelDemandReportFaultTiming) | review-function-readability reviewed 2026-11-12 -
-   Readability Medium Accuracy Confidence High */
+   Readability Medium Accuracy Confidence High | returns the security seed (sci_security_seed) (was
+   cm848_fuelDemandReportFaultTiming) - SCI command 0x2b (43) via the 0x53a9a0 table
+   (cm848_dispatchSciCommand) | review-function-readability reviewed 2026-11-12 - Readability Medium
+   Accuracy Confidence High */
 
 void cm848_sciCommand43RequestSecuritySeed(void)
 
@@ -72830,7 +74257,10 @@ void cm848_sciCommand43RequestSecuritySeed(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x2c (44): installs the key callback that runs cm848_sciValidateSecurityKey |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   installs the key callback that runs cm848_sciValidateSecurityKey - SCI command 0x2c (44) via the
+   0x53a9a0 table (cm848_dispatchSciCommand) | review-function-readability reviewed 2026-11-12 -
+   Readability Medium Accuracy Confidence High */
 
 void cm848_sciCommand44SendSecurityKey(void)
 
@@ -72928,12 +74358,14 @@ void cm848_sciCommand44SendSecurityKeyCallback(void)
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
    command 0x31 (49) handler | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Low */
+   Accuracy Confidence Low | installs the command next-byte callback cm848_sciCommand49Callback and
+   starts the response - SCI command 0x31 (49) via the 0x53a9a0 table (cm848_dispatchSciCommand) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
 
 void cm848_sciCommand49Handler(void)
 
 {
-  sci_next_byte_handler = &LAB_00522158;
+  sci_next_byte_handler = cm848_sciCommand49Callback;
   cm848_sciStartTransmit();
   return;
 }
@@ -72991,14 +74423,46 @@ undefined1 cm848_memoryBlock_checksum_validate(uint param_1,undefined4 param_2,i
 
 
 //
-// Function: cm848_sciCommand50ReportProtectionEventSpns @ 0x00522224
+// Function: cm848_sciCommand49Callback @ 0x00522158
 //
 
-/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
-   command 0x32 (50): reports protection event SPNs | review-function-readability reviewed
-   2026-11-12 - Readability Medium Accuracy Confidence Medium */
+void cm848_sciCommand49Callback(void)
 
-void cm848_sciCommand50ReportProtectionEventSpns(void)
+{
+  short sVar1;
+  undefined2 uStack_8;
+  undefined2 auStack_6 [3];
+  
+  if (((*(char *)sci_buffer_cursor == '\x01') && (sci_security_state == 1)) &&
+     ((cold_start_phase == CSP_CRANKING || (engine_sync_type_code == 0x13ec)))) {
+    uStack_8 = 1;
+    auStack_6[0] = 0x1d0a;
+    sVar1 = cm848_memoryBlock_checksum_validate(&eeprom_cal_word4,&uStack_8,2);
+    if (sVar1 == 0) {
+      sVar1 = cm848_memoryBlock_checksum_validate(0x1000000,auStack_6,2);
+      if (sVar1 == 0) {
+        cm848_j1939ProcessRxQueueDefault();
+      }
+    }
+  }
+  cm848_sciCancelCallbackTimeout();
+  cm848_sciEndTransfer();
+  sci_next_byte_handler = cm848_dispatchSciCommand;
+  return;
+}
+
+
+
+//
+// Function: cm848_sciCommand50ReportProtectionEventDtcs @ 0x00522224
+//
+
+/* reports recent protection-event OBD DTC codes from protection_event_spn_history (BCD P-codes -
+   0x0633 = P0633 active - same format as obd_dtc_code_table not J1939 SPNs) - SCI command 0x32 (50)
+   via the 0x53a9a0 table (cm848_dispatchSciCommand) (was ReportProtectionEventSpns) |
+   registration-table-sweep reviewed 2026-11-13 */
+
+void cm848_sciCommand50ReportProtectionEventDtcs(void)
 
 {
   ushort uVar1;
@@ -73038,14 +74502,15 @@ void cm848_sciCommand50ReportProtectionEventSpns(void)
 
 
 //
-// Function: cm848_sciCommand51ReportActiveFaultSpns @ 0x00522314
+// Function: cm848_sciCommand51ReportActiveFaultDtcs @ 0x00522314
 //
 
-/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
-   command 0x33 (51): reports active fault SPNs | review-function-readability reviewed 2026-11-12 -
-   Readability Medium Accuracy Confidence Medium */
+/* reports OBD DTC codes from obd_dtc_code_table (BCD P-codes e.g. P0238 / P2123) for each slot
+   whose fault_status_word_array bit 0 is set - these are DTCs not SPNs - SCI command 0x33 (51) via
+   the 0x53a9a0 table (cm848_dispatchSciCommand) (was ReportActiveFaultSpns) |
+   registration-table-sweep reviewed 2026-11-13 */
 
-void cm848_sciCommand51ReportActiveFaultSpns(void)
+void cm848_sciCommand51ReportActiveFaultDtcs(void)
 
 {
   ushort uVar1;
@@ -73089,15 +74554,15 @@ void cm848_sciCommand51ReportActiveFaultSpns(void)
 
 
 //
-// Function: cm848_sciCommand52ReportFaultStatusBySpn @ 0x0052242c
+// Function: cm848_sciCommand52ReportFaultStatusByDtc @ 0x0052242c
 //
 
-/* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
-   command 0x34 (52): SPN -> fault status (cm848_isFaultGroupStatusBitSet) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
-    */
+/* reports fault status for the 2-byte OBD DTC code in the request - the key is matched in
+   obd_dtc_code_table by cm848_lookupFaultSpnIndex so it is a DTC not an SPN - SCI command 0x34 (52)
+   via the 0x53a9a0 table (cm848_dispatchSciCommand) (was ReportFaultStatusBySpn) |
+   registration-table-sweep reviewed 2026-11-13 */
 
-void cm848_sciCommand52ReportFaultStatusBySpn(void)
+void cm848_sciCommand52ReportFaultStatusByDtc(void)
 
 {
   DAT_003fcf92 = 0;
@@ -75892,7 +77357,10 @@ void cm848_state_variables_reset(void)
    vehicle_speed_sensor_pulse_total (the DRIVETRAIN_MANUAL_TPU build re-arms the channel instead);
    then averages the crank period accumulators into drivetrain_ratio_engine_period_average (was
    mpc555_tpuBChannel2AndMiosFlag13InterruptHandler - restored from deleted_functions.csv) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
+   Shared ISR - tpu_b_channel_interrupt_handler_table[2] (mpc555_tpuBInterruptDispatcher 0x55d2c)
+   AND mios_interrupt_handler_table[13] (mpc555_miosInterruptDispatcher 0x54100) - no direct caller
+   in the decompile - both dispatchers call the stored pointer by channel index */
 
 void cm848_vehicleSpeedSensorInterruptHandler(void)
 
@@ -76607,7 +78075,9 @@ LAB_00528338:
    -> mpc555_evaluateProtectionSyncFaults) and starts the next injection-angle sequence (state 4 +
    schedule_crankValid when injection_tpu_timing_mode is 0x12 / else state 1 +
    schedule_crankInvalid). Was missing from every build | review-function-readability reviewed
-   2026-11-11 - Readability Medium Accuracy Confidence Medium */
+   2026-11-11 - Readability Medium Accuracy Confidence Medium | reached via
+   tpu_a_channel_interrupt_handler_table[10] - mpc555_tpuAInterruptDispatcher 0x55de4 calls
+   table[channel] - no direct caller */
 
 void engine_injectionAngle_tpuChannel10CylinderEventHandler(void)
 
@@ -77248,7 +78718,8 @@ LAB_005295d8:
    8 / 0xc with fuel_quantity_trim / fuel_quantity_active / injection_timing_active_flag) then
    engine_injectionAngle_selectCylinderInjector. Was missing from every build (wrongly in
    deleted_functions.csv) | review-function-readability reviewed 2026-11-11 - Readability Medium
-   Accuracy Confidence Medium */
+   Accuracy Confidence Medium | reached via tpu_a_channel_interrupt_handler_table[6] -
+   mpc555_tpuAInterruptDispatcher 0x55de4 calls table[channel] - no direct caller */
 
 void engine_injectionAngle_tpuChannel6EventHandler(void)
 
@@ -85292,7 +86763,7 @@ void cm848_j1939_system_init(void)
   diag_record_queue_add_entry(0,0xfef5,1000,0xaa,cm848_buildPgn65269AmbientConditionsMessage);
   diag_record_queue_add_entry(0,0xfef6,500,0xbe,cm848_buildPgn65270InletExhaustConditions1Message);
   diag_record_queue_add_entry(0,0xfef7,1000,0xd2,cm848_j1939HandlePgn65271VehicleElectrical);
-  diag_record_queue_add_entry(0,0xffe0,200,0xfa,cm848_j1939HandlePgn65504ProprietaryA);
+  diag_record_queue_add_entry(0,0xffe0,200,0xfa,cm848_j1939HandlePgn65504ProprietaryB);
   diag_record_queue_add_entry(0,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
   diag_record_queue_add_entry(0,0xfebd,1000,0x32,cm848_j1939SendDiagnosticStatusMessage);
   diag_record_queue_add_entry(0,0xf001,100,0x14,cm848_j1939BuildEngineControlByte);
@@ -85378,8 +86849,8 @@ void cm848_j1939_system_init(void)
       uVar8 = uVar8 + 1 & 0xff;
     } while (uVar8 < DAT_0006457a);
   }
-  uVar8 = scheduler_task_enable_flags._0_2_;
-  scheduler_task_enable_flags._0_2_ = uVar8 | 0x40;
+  uVar8 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = uVar8 | 0x40;
   return;
 }
 
@@ -85823,4 +87294,4 @@ void hpcr_protectionTimerMonitor(void)
 
 
 
-// Export complete - 1953 functions processed
+// Export complete - 1959 functions processed
