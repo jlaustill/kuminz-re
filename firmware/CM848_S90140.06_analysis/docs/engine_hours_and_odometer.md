@@ -20,9 +20,9 @@ be re-verified on the bench before being trusted — see
 | Value                                  | J1939 path                 | CLIP path                             | Status            |
 | -------------------------------------- | -------------------------- | ------------------------------------- | ----------------- |
 | **Vehicle distance (trip + total)**    | PGN 0xFEE0 (VD)            | —                                     | Works today       |
-| **Odometer (ECU-internal, miles)**     | *none*                     | Svc 0x4A at EEPROM `0x01000BD8` (u32) | Works (read-back path exercised by `tools/update_odometer.sh`) |
-| **Rolls odometer buffer**              | *none*                     | Svc 0x4A at EEPROM `0x01001A84` (u16) | Works             |
-| **ECM run time (key-on seconds)**      | *none*                     | Svc 0x4A at EEPROM `0x01000030` (u32) — firmware-traced via `mpc555_keyOnStateMachine` | **Needs truck verification** (see below) |
+| **Odometer (ECU-internal, miles)**     | PGN 65248 (= EEPROM `0x08EA` pulses / 8000) | Svc 0x4A at EEPROM `0x010008EA` (u32, 8000/mile) | **CORRECTED 2026-11-13**: the odometer is `0x08EA` (+ trip `0x19A6` + ring `0x19CE`), NOT `0x0BD8`. `0x0BD8` is the stored active-DTC list. `tools/update_odometer.sh` retargeted (PR #46). HP Tuners **zeroes** these. |
+| **Dash odometer (live)**               | *none*                     | Svc 0x4A at RAM `0x0040B471` (u32, 1/8000 mi, from PCI 0x72) | Reads the cluster's own odometer (292,317 mi in the dump) |
+| **ECM run time (key-on seconds)**      | *none*                     | Svc 0x4A at EEPROM `0x01000030` (u32) — firmware-traced via `mpc555_keyOnStateMachine` | **CORRECTED 2026-11-13: HP Tuners does NOT wipe it** (rises monotonically across all four dumps, 177.3M → 179.2M). Nothing to restore; read it for the OCT seed via `tools/read_engine_hours.sh`. Scale still unconfirmed. |
 | **ECM run time (RAM, live)**           | *none*                     | Svc 0x4A at RAM `0x00302012` (`ecm_runtime_accumulator`) | **Needs truck verification** |
 | **Session time (RAM, live)**           | *none*                     | Svc 0x4A at RAM `0x0040B150` (`session_time_counter`, 1.5 Hz) | Bench-verified 2026-04-08 |
 | **Engine run time (engine-running s)** | *none*                     | `0x0111BC00` is **not a physical address** — unreachable via known services | **Blocked** (see dead end below) |
@@ -71,17 +71,13 @@ persistence lives in MPC555-module RAM (`0x003xxxxx`) plus a computed-address EE
 scatter save that fires only on key-off, so more static RE won't pin the address.
 Three concrete results:
 
-### New untested candidate: `Hour_Meter` @ EEPROM `0x01001C00`
+### `Hour_Meter` @ EEPROM `0x01001C00` — RULED OUT 2026-11-13 (static/dead)
 
 `e2m_parameters.csv:5529` — `Hour_Meter,,0x01001C00,4,MIN,0.00333329989,HOUR METER
-(ECM RUN TIME)`: u32, 1/300 min/bit (= 0.2 s/bit, same as `Engine_Run_Time`).
-**Not in the 2026-04-08 results table — never tested.** Worth a bench read because:
-- it sits INSIDE the readable Svc-0x4A EEPROM window (`0x01000000–0x01001FFF`;
-  `0x1C00 < 0x2000`), unlike the unreachable virtual `0x0111BC00` / `0x01140500`;
-- it is the only parameter literally named "HOUR METER (ECM RUN TIME)".
-Caveat: e2m `0x01xxxxxx` addrs are Calterm-virtual and have been wrong before
-(odometer e2m `0x018A1322` ≠ real `0x01000BD8`) — a candidate to test, not confirmed.
-Key-cycle test (EEPROM is write-on-shutdown): `--read-addr 01001C00 2` + `01001C02 2`.
+(ECM RUN TIME)`: u32, 1/300 min/bit. **It holds 72,418,429 in ALL FOUR EEPROM
+dumps and never changes** (checked directly), so it is a static/stale value, not
+a live counter — the same Calterm-virtual-address miss as the old `0x0400`.
+The real, live ECM run-time counter is `0x01000030` (rises across every dump).
 
 ### Firmware-traced `0x01000030` re-confirmed (static)
 
