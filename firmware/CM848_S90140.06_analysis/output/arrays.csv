@@ -3,8 +3,8 @@ address,array_name,element_type,element_count,comment
 # Used by security seed response, diagnostic handlers, SCI serial I/O
 # Offsets 0-5 confirmed for transmit; offsets 31-32 for receive validation
 # Next named variable (diag_subcommand_code) starts at 0x003fecf1
-# DM response payload assembly scratch buffer
-# Base address used by copy loops in j1939_dm_message_processor
+# OBD-II response assembly buffer (obd_response_staging)
+# Base address used by copy loops in cm848_processPciObdRequest
 # Offsets 0-2 are padding/unused; offsets 3-7 are the 5 writable scratch bytes
 # (j1939_dm_scratch_byte0 through j1939_dm_scratch_byte4 at offsets 3-7)
 # Vehicle VIN string — 17-character ASCII SAE VIN
@@ -12,7 +12,7 @@ address,array_name,element_type,element_count,comment
 # Sent via DM9 sub-index 2 in 5 response packets: [0]+[1..4]+[5..8]+[9..12]+[13..16]
 # hpcr_initJ1939MessageTables copies [1..16] into J1939 VIN broadcast slots dd-gg
 0x003fd707,vehicle_vin_string,byte,17,17-char ASCII SAE VIN loaded from EEPROM 0x0285; 3D3MU48C94G228471 at runtime
-0x003fce7c,j1939_dm_scratch_buffer,byte,8,DM response payload assembly buffer; copy loops index from [3] to [7]
+0x003fce7c,obd_response_staging,byte,8,OBD-II response assembly buffer; copy loops index from [3] to [7] (was j1939_dm_scratch_buffer)
 0x003fecd0,diag_serial_buffer,byte,33,Diagnostic serial communication buffer (SCI UART)
 # QADC channel-index table: each word is an index into qadc_channel_dispatch_table (clamped <0x81)
 # selects which QADC channel a sensor reads; ~58 sites use the clamp-then-dispatch idiom
@@ -55,3 +55,7 @@ address,array_name,element_type,element_count,comment
 0x003fdbce,switch_input_datalink_source_bits_cal,byte,4,EEPROM-backed (EEPROM 0x74c): bit N set = logical switch N takes its state from the J1939 input layer instead of its hardware line; the ECM's CCVS1 / EEC2 broadcasts report such switches as not available; all 0 in this calibration (was qadc_control_word_h and protection_override_flags)
 0x003fdb8a,switch_input_polarity_bits_cal,byte,4,EEPROM-backed (EEPROM 0x708): bit N = 1 inverts logical switch N's hardware line (state = line XOR bit)
 0x0006456e,j1939_switch_input_default_state_bits,byte,4,ROM constant (all 0): state used for a datalink-sourced switch while its J1939 value is error or not available
+0x0005b57c,obd_dtc_code_table,word,170,OBD-II DTC code (BCD - e.g. 0x0524 = P0524 oil pressure too low) per fault slot; modes 2 / 3 / 7
+0x0040b451,pci_transmit_message_0_payload,byte,5,PCI TX[0] header 0x10 payload
+0x0040b49e,pci_transmit_message_11_payload,byte,5,PCI TX[11] header 0x5D payload
+0x0040b4af,pci_transmit_message_14_payload,byte,4,PCI TX[14] header 0xC0 payload

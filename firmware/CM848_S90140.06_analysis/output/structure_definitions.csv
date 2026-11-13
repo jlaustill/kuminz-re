@@ -776,8 +776,8 @@ fault_entry_t,0x003fe674,fault_code,byte,1,Fault code ID (0xAA = empty/available
 fault_entry_t,0x003fe674,vehicle_speed,word,2,Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim),,verified
 fault_entry_t,0x003fe674,target_rpm,word,2,Target engine RPM at fault time,,verified
 fault_entry_t,0x003fe674,sensor_scale_1,word,2,Sensor scale factor 1,,verified
-fault_entry_t,0x003fe674,fault_status,word,2,Fault active status value at capture,,verified
-fault_entry_t,0x003fe674,protection_high,word,2,Protection output high word,,verified
+fault_entry_t,0x003fe674,engine_load_at_current_speed,word,2,engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status),,verified
+fault_entry_t,0x003fe674,accelerator_pedal_position,word,2,accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high),,verified
 fault_entry_t,0x003fe674,intake_manifold_pressure,word,2,intake_manifold_pressure_in_use at capture (was protection_low),,verified
 fault_entry_t,0x003fe674,coolant_temperature,word,2,coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1),,verified
 fault_entry_t,0x003fe674,intake_manifold_temperature,word,2,intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2),,verified
