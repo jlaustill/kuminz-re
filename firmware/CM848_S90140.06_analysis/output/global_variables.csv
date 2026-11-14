@@ -426,7 +426,7 @@ address,name,type,comment
 0x00304420,tpu_b_cpr0,,
 0x00304428,tpu_b_cpr1,,
 0x0030442a,tpu_b_cisr,,
-0x00304500,tpu_b_mcr,tpub_ch0_params_t,
+0x00304500,tpu_b_ch0_param0,tpub_ch0_params_t,TPU-B channel parameter RAM (16 channels x 16 bytes) - the counterpart of TPU-A's tpu_a_ch0_param0 at 0x304100; was a second tpu_b_mcr label (the TPU-B module registers are tpu_b_mcr at 0x304400)
 0x00304510,TPUB_CH1_PARAM0,word,
 0x00304520,TPUB_CH2_PARAM0,word,
 0x00304530,TPUB_CH3_PARAM0,word,

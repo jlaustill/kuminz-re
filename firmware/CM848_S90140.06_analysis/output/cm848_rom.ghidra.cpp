@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 13 23:11:52 MST 2026
+// Generated: Sat Nov 14 16:12:33 MST 2026
 
 
 //
@@ -36135,7 +36135,7 @@ void cm848_buildPciTransmitMessage11DistanceAndFuelUsed(void)
     if ((vehicle_speed_pulse_timeout == 0) && (pci_transmit_message_11_pulse_timeout_previous != 0))
     {
       pci_transmit_message_11_distance_pulses =
-           (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
+           (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
     }
     else if (vehicle_speed_sensor_pulse_total < pci_transmit_message_11_pulse_total_previous) {
       pci_transmit_message_11_distance_pulses =
@@ -48538,7 +48538,7 @@ LAB_0004f990:
     tpu_b_mcr.CISR = wVar2 & 0xfffe;
     wVar2 = tpu_b_mcr.CFSR3;
     tpu_b_mcr.CFSR3 = wVar2 & 0xfff0 | 0xf;
-    tpu_b_mcr.PARAM0 = 0x113;
+    tpu_b_ch0_param0.PARAM0 = 0x113;
     tpu_b_mcr.HSRR1 = 1;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xfffc | 1;
@@ -49253,7 +49253,7 @@ LAB_000512ec:
     tpu_b_mcr.CISR = wVar2 & 0xfffe;
     wVar2 = tpu_b_mcr.CFSR3;
     tpu_b_mcr.CFSR3 = wVar2 & 0xfff0 | 0xf;
-    tpu_b_mcr.PARAM0 = 0x113;
+    tpu_b_ch0_param0.PARAM0 = 0x113;
     tpu_b_mcr.HSRR1 = 2;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xfffc | 1;
@@ -50052,7 +50052,7 @@ void cm848_refreshOutputPortsAndReadback(void)
         puVar16 = (ushort *)((int)&tpu_b_mcr + iVar6 * -2 + 0x12);
         *puVar16 = *puVar16 & ~(ushort)(0xf << (iVar15 * 4 & 0x3cU)) |
                    (ushort)(0xf << (iVar15 * 4 & 0x3cU));
-        (&tpu_b_mcr)[uVar3].PARAM0 = 0x113;
+        (&tpu_b_ch0_param0)[uVar3].PARAM0 = 0x113;
         uVar17 = (undefined2)(2 << (iVar10 * 2 & 0x3fU));
       }
       else {
@@ -50066,7 +50066,7 @@ void cm848_refreshOutputPortsAndReadback(void)
         puVar16 = (ushort *)((int)&tpu_b_mcr + iVar6 * -2 + 0x12);
         *puVar16 = *puVar16 & ~(ushort)(0xf << (iVar10 * 4 & 0x3cU)) |
                    (ushort)(0xf << (iVar10 * 4 & 0x3cU));
-        (&tpu_b_mcr)[uVar3].PARAM0 = 0x113;
+        (&tpu_b_ch0_param0)[uVar3].PARAM0 = 0x113;
         uVar17 = (undefined2)(1 << (iVar15 * 2 & 0x3fU));
       }
       *(undefined2 *)((int)&tpu_b_mcr + iVar5 * -2 + 0x1a) = uVar17;
@@ -51717,8 +51717,8 @@ void mpc555_tpuResetChannel(uint param_1)
   iVar4 = param_1 + (((int)param_1 >> 2) + (uint)((int)param_1 < 0 && (param_1 & 3) != 0)) * -4;
   puVar7 = (ushort *)((int)&tpu_b_mcr + ((int)param_1 >> 2) * -2 + 0x12);
   *puVar7 = *puVar7 & ~(ushort)(0xf << (iVar4 * 4 & 0x3cU)) | (ushort)(7 << (iVar4 * 4 & 0x3cU));
-  (&tpu_b_mcr)[param_1].PARAM0 = 0;
-  (&tpu_b_mcr)[param_1].PARAM1 = 0x8000;
+  (&tpu_b_ch0_param0)[param_1].PARAM0 = 0;
+  (&tpu_b_ch0_param0)[param_1].PARAM1 = 0x8000;
   puVar7 = (ushort *)((int)&tpu_b_mcr + iVar3 * -2 + 0x16);
   *puVar7 = *puVar7 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
   *(short *)((int)&tpu_b_mcr + iVar3 * -2 + 0x1a) = (short)(3 << (iVar6 * 2 & 0x3fU));
@@ -51739,8 +51739,8 @@ void cm848_tpuSetChannelDuty(int param_1,ushort param_2)
   uint uVar2;
   undefined4 local_8;
   
-  uVar2._0_2_ = (&tpu_b_mcr)[param_1].PARAM0;
-  uVar2._2_2_ = (&tpu_b_mcr)[param_1].PARAM1;
+  uVar2._0_2_ = (&tpu_b_ch0_param0)[param_1].PARAM0;
+  uVar2._2_2_ = (&tpu_b_ch0_param0)[param_1].PARAM1;
   uVar1 = uVar2._2_2_;
   if (param_2 < 0x6400) {
     if (param_2 == 0) {
@@ -51750,8 +51750,8 @@ void cm848_tpuSetChannelDuty(int param_1,ushort param_2)
       uVar1 = (short)(((uVar2 & 0xffff) * (uint)param_2) / 0x6400);
     }
   }
-  (&tpu_b_mcr)[param_1].PARAM0 = uVar1;
-  (&tpu_b_mcr)[param_1].PARAM1 = uVar2._2_2_;
+  (&tpu_b_ch0_param0)[param_1].PARAM0 = uVar1;
+  (&tpu_b_ch0_param0)[param_1].PARAM1 = uVar2._2_2_;
   return;
 }
 
@@ -51769,8 +51769,8 @@ void cm848_tpuConfigureChannel(int param_1,uint param_2)
   uint uVar3;
   undefined4 local_8;
   
-  uVar3._0_2_ = (&tpu_b_mcr)[param_1].PARAM0;
-  uVar3._2_2_ = (&tpu_b_mcr)[param_1].PARAM1;
+  uVar3._0_2_ = (&tpu_b_ch0_param0)[param_1].PARAM0;
+  uVar3._2_2_ = (&tpu_b_ch0_param0)[param_1].PARAM1;
   uVar3 = ((uVar3 >> 0x10) * 0x6400) / (uVar3 & 0xffff);
   if (param_2 < 0x19997) {
     uVar1 = (param_2 * 0xa001) / 0x20004;
@@ -51787,8 +51787,8 @@ void cm848_tpuConfigureChannel(int param_1,uint param_2)
       uVar2 = (short)((uVar1 * (uVar3 & 0xffff)) / 0x6400);
     }
   }
-  (&tpu_b_mcr)[param_1].PARAM0 = uVar2;
-  (&tpu_b_mcr)[param_1].PARAM1 = (short)uVar1;
+  (&tpu_b_ch0_param0)[param_1].PARAM0 = uVar2;
+  (&tpu_b_ch0_param0)[param_1].PARAM1 = (short)uVar1;
   return;
 }
 
@@ -75575,7 +75575,7 @@ void cm848_updateTripAndLifetimeCounters(void)
       if ((vehicle_speed != 0) && (uVar2 != 0)) {
         if ((vehicle_speed_pulse_timeout == 0) && (trip_counter_pulse_timeout_previous != 0)) {
           trip_counter_pulse_delta_raw =
-               (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
+               (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM1 & 0xff;
         }
         else if (vehicle_speed_sensor_pulse_total < trip_counter_pulse_total_previous) {
           trip_counter_pulse_delta_raw =
@@ -77664,8 +77664,8 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
     DAT_003fd078 = DAT_003fd078 + 1;
     if (1 < DAT_003fd078) {
       uVar5 = (uint)vehicle_speed_sensor_tpu_channel;
-      DAT_0040b718._0_2_ = (&tpu_b_mcr)[uVar5].PARAM4;
-      DAT_0040b718._2_2_ = (&tpu_b_mcr)[uVar5].PARAM5;
+      DAT_0040b718._0_2_ = (&tpu_b_ch0_param0)[uVar5].PARAM4;
+      DAT_0040b718._2_2_ = (&tpu_b_ch0_param0)[uVar5].PARAM5;
       DAT_0040b71c = 1;
       iVar2 = uVar5 + ((int)uVar5 >> 3) * -8;
       puVar4 = (ushort *)((int)&tpu_b_mcr + ((int)uVar5 >> 3) * -2 + 0x1e);
@@ -77679,11 +77679,11 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
       puVar4 = (ushort *)((int)&tpu_b_mcr + ((int)uVar5 >> 2) * -2 + 0x12);
       *puVar4 = *puVar4 & ~(ushort)(0xf << (iVar2 * 4 & 0x3cU)) |
                 (ushort)(0xd << (iVar2 * 4 & 0x3cU));
-      (&tpu_b_mcr)[uVar5].PARAM1 = 0x100;
-      (&tpu_b_mcr)[uVar5].PARAM3 = 0;
-      (&tpu_b_mcr)[uVar5].PARAM4 = 0;
-      (&tpu_b_mcr)[uVar5].PARAM5 = 0;
-      (&tpu_b_mcr)[uVar5].PARAM0 = 0xb;
+      (&tpu_b_ch0_param0)[uVar5].PARAM1 = 0x100;
+      (&tpu_b_ch0_param0)[uVar5].PARAM3 = 0;
+      (&tpu_b_ch0_param0)[uVar5].PARAM4 = 0;
+      (&tpu_b_ch0_param0)[uVar5].PARAM5 = 0;
+      (&tpu_b_ch0_param0)[uVar5].PARAM0 = 0xb;
       iVar2 = (int)uVar5 >> 3;
       iVar3 = uVar5 + iVar2 * -8;
       puVar4 = (ushort *)((int)&tpu_b_mcr + iVar2 * -2 + 0x16);
@@ -77696,13 +77696,17 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
     }
   }
   else if (drivetrain_type == DRIVETRAIN_MANUAL_TPU) {
-    vehicle_speed_sensor_period._0_2_ = (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM4;
-    vehicle_speed_sensor_period._2_2_ = (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM5;
+    vehicle_speed_sensor_period._0_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM4
+    ;
+    vehicle_speed_sensor_period._2_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM5
+    ;
   }
   else {
-    vehicle_speed_sensor_period._0_2_ = (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM4;
-    vehicle_speed_sensor_period._2_2_ = (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM5;
-    (&tpu_b_mcr)[vehicle_speed_sensor_tpu_channel].PARAM4 = 0;
+    vehicle_speed_sensor_period._0_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM4
+    ;
+    vehicle_speed_sensor_period._2_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM5
+    ;
+    (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM4 = 0;
     vehicle_speed_sensor_pulse_total = vehicle_speed_sensor_pulse_total + DAT_003fd07a;
   }
   if ((engine_event_active_flag == 0) && (engine_rpm_state_t_0040b7ac.reserved_0a != 0)) {
