@@ -87,3 +87,27 @@ function_address,function_name,old_name,new_name,type,comment
 0x00039f54,cm848_onPciControllerReceiveWord,bVar2,is_end_of_frame,byte,1 when pci_receive_status is 0xa0 / 0xc0 / 0xe0 (end of frame)
 0x00039e30,cm848_servicePciTransmit,bVar1,queue_priority,byte,QSPI queue priority for the next controller command
 0x00039e30,cm848_servicePciTransmit,cVar2,resend_requested,char,Return of cm848_handlePciLinkEvent (1 = send the 0xaf8 controller command)
+# cm848_busyWaitDelay @ 0x00002384 - software delay: pass_count passes of 2222 spins each
+0x00002384,cm848_busyWaitDelay,uVar1,completed_passes,undefined4,Outer counter - delay passes finished so far (16-bit: clrlwi r4 r12 16); undefined4 keeps the inferred uint
+0x00002384,cm848_busyWaitDelay,uVar2,spin_count,ushort,Inner counter - spins in the current pass up to SPINS_PER_DELAY_PASS (16-bit: clrlwi r5 r12 16)
+# mpc555_areBootModeStrapPinsHigh @ 0x000023b8 - samples four QADC port pins (all four must read 1)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar1,qadc_b_pqb0_sample,ushort,QADC-B port word (PORTQA:PORTQB) read for its bit 0 = PQB0
+0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar2,qadc_b_pqa4_sample,ushort,QADC-B port word read for its bit 12 = PQA4
+0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar3,qadc_a_pqa2_sample,ushort,QADC-A port word read for its bit 10 = PQA2 (the fourth sample - bit 11 = PQA3 - is read straight from qadc_a_port in the return)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,wVar4,direction_register_value,word,DDRQA value read and written straight back (no bits change). wVar4 is one r11 temp for both the QADC-B (0x23d0) and QADC-A (0x2430) read-backs; the committed name lands on the QADC-A one and the decompiler splits the QADC-B one off as wVar1 - this CSV is applied once per build against the original names so that half cannot be named here
+0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar5,port_output_zero,ushort,Register holding the 0 written to the port data registers
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar6,qadc_b_port,word *,Register-held address of QADC64B_MCR.PORTQA_B (0x304c06)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar7,qadc_a_port,word *,Register-held address of QADC64A_MCR.PORTQA_B (0x304806)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar8,qadc_b_direction,word *,Register-held address of QADC64B_MCR.DDRQA_B (0x304c08)
+# cm848_waitForStableIgnitionKeyOn @ 0x000024a0 - waits for 5 consecutive key-on samples of the MDA30 pin
+0x000024a0,cm848_waitForStableIgnitionKeyOn,uVar2,key_on_sample_count,undefined4,Consecutive samples that read the key line as on (byte counter: clrlwi r7 r12 24) - any key-off sample resets it to 0; undefined4 keeps the inferred uint
+0x000024a0,cm848_waitForStableIgnitionKeyOn,pwVar1,key_line_status_register,word *,Register-held address of mios_mdasm30.SCRD (0x3060f6) - bit 15 is the MDA30 pin = the ignition key line
+# MIOS output drivers (todo 033, PR #48)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,wVar1,modulus_start_value,word,MMCSM22 modulus latch read for the edge offset (ML & 0x7fff)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,wVar2,modulus_period_value,word,MMCSM22 modulus latch read for the period length (0xffff - ML)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,local_8,compare_register_pair,undefined4,AR (high half) : BR (low half) written as one word
+0x00054f48,mpc555_miosSetChannelPwmPeriod,wVar1,modulus_latch_value,word,Value written to the MMCSM22 modulus latch
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,uVar1,pulse_width,ushort,Value written to PULR
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar1,period_register_value,word,Value written to PERR
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar2,period_divisor,uint,16 with prescaler byte 0xff / 2048 with 0x80
+0x00054e10,mpc555_miosCheckChannelFeedback,wVar1,feedback_result,word,0 agree / 1 reads high or toggling / 2 reads low or toggling
