@@ -357,3 +357,24 @@ function_address,function_name,param_index,name,type,comment
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,return,,void,No return value
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,0,pwm_registers,undefined4,PWM submodule register block (PERR at +0 / SCR at +6)
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,1,period_microseconds,undefined4,PWM period in microseconds
+
+# -----------------------------------------------------------------------------
+# TPU PWM output drivers (todo 035, PR #48) - names only (undefined4 keeps inferred 4-byte types; the duty
+# parameter is 2-byte ushort)
+# -----------------------------------------------------------------------------
+0x00055020,mpc555_tpuBEnablePwmChannel,return,,void,No return value
+0x00055020,mpc555_tpuBEnablePwmChannel,0,channel,undefined4,TPU-B channel number 0-15
+0x000551e4,mpc555_tpuBSetPwmPeriodMicroseconds,return,,void,No return value
+0x000551e4,mpc555_tpuBSetPwmPeriodMicroseconds,0,channel,undefined4,TPU-B channel number 0-15
+0x000551e4,mpc555_tpuBSetPwmPeriodMicroseconds,1,period_microseconds,undefined4,PWM period in microseconds
+0x00055178,mpc555_tpuBSetPwmDuty,return,,void,No return value
+0x00055178,mpc555_tpuBSetPwmDuty,0,channel,undefined4,TPU-B channel number 0-15
+0x00055178,mpc555_tpuBSetPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
+0x00055294,mpc555_tpuAEnablePwmChannel,return,,void,No return value
+0x00055294,mpc555_tpuAEnablePwmChannel,0,channel,undefined4,TPU-A channel number 0-15
+0x00055458,mpc555_tpuASetPwmPeriodMicroseconds,return,,void,No return value
+0x00055458,mpc555_tpuASetPwmPeriodMicroseconds,0,channel,undefined4,TPU-A channel number 0-15
+0x00055458,mpc555_tpuASetPwmPeriodMicroseconds,1,period_microseconds,undefined4,PWM period in microseconds
+0x000553ec,mpc555_tpuASetPwmDuty,return,,void,No return value
+0x000553ec,mpc555_tpuASetPwmDuty,0,channel,undefined4,TPU-A channel number 0-15
+0x000553ec,mpc555_tpuASetPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)

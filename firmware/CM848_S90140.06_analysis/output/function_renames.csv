@@ -1461,119 +1461,120 @@ address,name
 0x0004d71c,cm848_miosPwm19Enable,Output channel driver table (flash2) record 0x53af66 slot +0 (enable) for PWM submodule 19 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer19InitPeriod)
 0x0004d744,cm848_miosPwm19SetDuty,Output channel driver table (flash2) record 0x53af66 slot +12 (set duty) for PWM submodule 19 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer19ScaleByPercent)
 0x0004d770,cm848_miosPwm19SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af66 slot +8 (set period) for PWM submodule 19 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer19SetValue)
-0x0004d79c,cm848_tpuChannel0Reset
-0x0004d7c0,cm848_tpuChannel0SetDuty
-0x0004d7e8,cm848_tpuChannel0Configure
-0x0004d810,cm848_tpuChannel1Reset
-0x0004d834,cm848_tpuChannel1SetDuty
-0x0004d85c,cm848_tpuChannel1Configure
-0x0004d884,cm848_tpuChannel2Reset
-0x0004d8a8,cm848_tpuChannel2SetDuty
-0x0004d8d0,cm848_tpuChannel2Configure
-0x0004d8f8,cm848_tpuChannel3Reset
-0x0004d91c,cm848_tpuChannel3SetDuty
-0x0004d944,cm848_tpuChannel3Configure
-0x0004d96c,cm848_tpuChannel4Reset
-0x0004d990,cm848_tpuChannel4SetDuty
-0x0004d9b8,cm848_tpuChannel4Configure
-0x0004d9e0,cm848_tpuChannel5Reset
-0x0004da04,cm848_tpuChannel5SetDuty
-0x0004da2c,cm848_tpuChannel5Configure
-0x0004da54,cm848_tpuChannel6Reset
-0x0004da78,cm848_tpuChannel6SetDuty
-0x0004daa0,cm848_tpuChannel6Configure
-0x0004dac8,cm848_tpuChannel7Reset
-0x0004daec,cm848_tpuChannel7SetDuty
-0x0004db14,cm848_tpuChannel7Configure
-0x0004db3c,cm848_tpuChannel8Reset
-0x0004db60,cm848_tpuChannel8SetDuty
-0x0004db88,cm848_tpuChannel8Configure
-0x0004dbb0,cm848_tpuChannel9Reset
-0x0004dbd4,cm848_tpuChannel9SetDuty
-0x0004dbfc,cm848_tpuChannel9Configure
-0x0004dc24,cm848_tpuChannel10Reset
-0x0004dc48,cm848_tpuChannel10SetDuty
-0x0004dc70,cm848_tpuChannel10Configure
-0x0004dc98,cm848_tpuChannel11Reset
-0x0004dcbc,cm848_tpuChannel11SetDuty
-0x0004dce4,cm848_tpuChannel11Configure
-0x0004dd0c,cm848_tpuChannel12Reset
-0x0004dd30,cm848_tpuChannel12SetDuty
-0x0004dd58,cm848_tpuChannel12Configure
-0x0004dd80,cm848_tpuChannel13Reset
-0x0004dda4,cm848_tpuChannel13SetDuty
-0x0004ddcc,cm848_tpuChannel13Configure
-0x0004ddf4,cm848_tpuChannel14Reset
-0x0004de18,cm848_tpuChannel14SetDuty
-0x0004de40,cm848_tpuChannel14Configure
-0x0004de68,cm848_tpuChannel15Reset
-0x0004de8c,cm848_tpuChannel15SetDuty
-0x0004deb4,cm848_tpuChannel15Configure
-0x0004dedc,cm848_disableMiosResetTpu14_10
-0x0004df0c,cm848_setMiosDutyCycle14
-0x0004df40,cm848_configureTpuChannel10Alt
-0x0004df68,cm848_setTpuDutyWithTrack10
-0x0004df98,mpc555_resetMiosTpuChannel29_11
-0x0004e0c0,cm848_disableMiosResetTpu11_4
-0x0004e0f0,cm848_setMiosDutyCycle11
-0x0004e124,cm848_configureTpuChannel4Alt
-0x0004e14c,cm848_setTpuDutyWithTrack4
-0x0004e180,cm848_disableMiosResetTpu13_6
-0x0004e1b0,cm848_setMiosDutyCycle13
-0x0004e1e4,cm848_configureTpuChannel6Alt
-0x0004e20c,cm848_setTpuDutyWithTrack6
-0x0004e240,cm848_disableMiosResetTpu12_7
-0x0004e270,cm848_setMiosDutyCycle12
-0x0004e2a4,cm848_configureTpuChannel7Alt
-0x0004e2cc,cm848_setTpuDutyWithTrack7
-0x0004e300,cm848_tpuOutput0Enable
-0x0004e324,cm848_tpuOutput0Disable
-0x0004e34c,cm848_tpuOutput0SetPeriod
-0x0004e374,cm848_tpuOutput1Enable
-0x0004e398,cm848_tpuOutput1Disable
-0x0004e3c0,cm848_tpuOutput1SetPeriod
-0x0004e3e8,cm848_tpuOutput2Enable
-0x0004e40c,cm848_tpuOutput2Disable
-0x0004e434,cm848_tpuOutput2SetPeriod
-0x0004e45c,cm848_tpuOutput3Enable
-0x0004e480,cm848_tpuOutput3Disable
-0x0004e4a8,cm848_tpuOutput3SetPeriod
-0x0004e4d0,cm848_tpuOutput4Enable
-0x0004e4f4,cm848_tpuOutput4Disable
-0x0004e51c,cm848_tpuOutput4SetPeriod
-0x0004e544,cm848_tpuOutput5Enable
-0x0004e568,cm848_tpuOutput5Disable
-0x0004e590,cm848_tpuOutput5SetPeriod
-0x0004e5b8,cm848_tpuOutput6Enable
-0x0004e5dc,cm848_tpuOutput6Disable
-0x0004e604,cm848_tpuOutput6SetPeriod
-0x0004e62c,cm848_tpuOutput7Enable
-0x0004e650,cm848_tpuOutput7Disable
-0x0004e678,cm848_tpuOutput7SetPeriod
-0x0004e6a0,cm848_tpuOutput8Enable
-0x0004e6c4,cm848_tpuOutput8Disable
-0x0004e6ec,cm848_tpuOutput8SetPeriod
-0x0004e714,cm848_tpuOutput9Enable
-0x0004e738,cm848_tpuOutput9Disable
-0x0004e760,cm848_tpuOutput9SetPeriod
-0x0004e788,cm848_tpuOutput10Enable
-0x0004e7ac,cm848_tpuOutput10Disable
-0x0004e7d4,cm848_tpuOutput10SetPeriod
-0x0004e7fc,cm848_tpuOutput11Enable
-0x0004e820,cm848_tpuOutput11Disable
-0x0004e848,cm848_tpuOutput11SetPeriod
-0x0004e870,cm848_tpuOutput12Enable
-0x0004e894,cm848_tpuOutput12Disable
-0x0004e8bc,cm848_tpuOutput12SetPeriod
-0x0004e8e4,cm848_tpuOutput13Enable
-0x0004e908,cm848_tpuOutput13Disable
-0x0004e930,cm848_tpuOutput13SetPeriod
-0x0004e958,cm848_tpuOutput14Enable
-0x0004e97c,cm848_tpuOutput14Disable
-0x0004e9a4,cm848_tpuOutput14SetPeriod
-0x0004e9cc,cm848_tpuOutput15Enable
-0x0004e9f0,cm848_tpuOutput15Disable
-0x0004ea18,cm848_tpuOutput15SetPeriod
+0x0004d79c,cm848_tpuBChannel0EnablePwm,Output channel driver table record 1 (0x53ac56) slot +0 (enable) for TPU-B channel 0 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel0Reset)
+0x0004d7c0,cm848_tpuBChannel0SetPwmDuty,Output channel driver table record 1 (0x53ac56) slot +12 (set duty) for TPU-B channel 0 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel0SetDuty)
+0x0004d7e8,cm848_tpuBChannel0SetPwmPeriodMicroseconds,Output channel driver table record 1 (0x53ac56) slot +8 (set period) for TPU-B channel 0 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel0Configure)
+0x0004d810,cm848_tpuBChannel1EnablePwm,Output channel driver table record 2 (0x53ac66) slot +0 (enable) for TPU-B channel 1 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel1Reset)
+0x0004d834,cm848_tpuBChannel1SetPwmDuty,Output channel driver table record 2 (0x53ac66) slot +12 (set duty) for TPU-B channel 1 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel1SetDuty)
+0x0004d85c,cm848_tpuBChannel1SetPwmPeriodMicroseconds,Output channel driver table record 2 (0x53ac66) slot +8 (set period) for TPU-B channel 1 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel1Configure)
+0x0004d884,cm848_tpuBChannel2EnablePwm,Output channel driver table record 3 (0x53ac76) slot +0 (enable) for TPU-B channel 2 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel2Reset)
+0x0004d8a8,cm848_tpuBChannel2SetPwmDuty,Output channel driver table record 3 (0x53ac76) slot +12 (set duty) for TPU-B channel 2 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel2SetDuty)
+0x0004d8d0,cm848_tpuBChannel2SetPwmPeriodMicroseconds,Output channel driver table record 3 (0x53ac76) slot +8 (set period) for TPU-B channel 2 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel2Configure)
+0x0004d8f8,cm848_tpuBChannel3EnablePwm,Output channel driver table record 4 (0x53ac86) slot +0 (enable) for TPU-B channel 3 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel3Reset)
+0x0004d91c,cm848_tpuBChannel3SetPwmDuty,Output channel driver table record 4 (0x53ac86) slot +12 (set duty) for TPU-B channel 3 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel3SetDuty)
+0x0004d944,cm848_tpuBChannel3SetPwmPeriodMicroseconds,Output channel driver table record 4 (0x53ac86) slot +8 (set period) for TPU-B channel 3 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel3Configure)
+0x0004d96c,cm848_tpuBChannel4EnablePwm,TPU-B channel 4 enable wrapper - no referrer found: table record 5 uses the read-back variant cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4Reset)
+0x0004d990,cm848_tpuBChannel4SetPwmDuty,TPU-B channel 4 set duty wrapper - no referrer found: table record 5 uses the read-back variant cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4SetDuty)
+0x0004d9b8,cm848_tpuBChannel4SetPwmPeriodMicroseconds,TPU-B channel 4 set period wrapper - no referrer found: table record 5 uses the read-back variant cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4Configure)
+0x0004d9e0,cm848_tpuBChannel5EnablePwm,Output channel driver table record 6 (0x53aca6) slot +0 (enable) for TPU-B channel 5 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel5Reset)
+0x0004da04,cm848_tpuBChannel5SetPwmDuty,Output channel driver table record 6 (0x53aca6) slot +12 (set duty) for TPU-B channel 5 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel5SetDuty)
+0x0004da2c,cm848_tpuBChannel5SetPwmPeriodMicroseconds,Output channel driver table record 6 (0x53aca6) slot +8 (set period) for TPU-B channel 5 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel5Configure)
+0x0004da54,cm848_tpuBChannel6EnablePwm,TPU-B channel 6 enable wrapper - no referrer found: table record 7 uses the read-back variant cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6Reset)
+0x0004da78,cm848_tpuBChannel6SetPwmDuty,TPU-B channel 6 set duty wrapper - no referrer found: table record 7 uses the read-back variant cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6SetDuty)
+0x0004daa0,cm848_tpuBChannel6SetPwmPeriodMicroseconds,TPU-B channel 6 set period wrapper - no referrer found: table record 7 uses the read-back variant cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6Configure)
+0x0004dac8,cm848_tpuBChannel7EnablePwm,TPU-B channel 7 enable wrapper - no referrer found: table record 8 uses the read-back variant cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7Reset)
+0x0004daec,cm848_tpuBChannel7SetPwmDuty,TPU-B channel 7 set duty wrapper - no referrer found: table record 8 uses the read-back variant cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7SetDuty)
+0x0004db14,cm848_tpuBChannel7SetPwmPeriodMicroseconds,TPU-B channel 7 set period wrapper - no referrer found: table record 8 uses the read-back variant cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7Configure)
+0x0004db3c,cm848_tpuBChannel8EnablePwm,Output channel driver table record 9 (0x53acd6) slot +0 (enable) for TPU-B channel 8 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel8Reset)
+0x0004db60,cm848_tpuBChannel8SetPwmDuty,Output channel driver table record 9 (0x53acd6) slot +12 (set duty) for TPU-B channel 8 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel8SetDuty)
+0x0004db88,cm848_tpuBChannel8SetPwmPeriodMicroseconds,Output channel driver table record 9 (0x53acd6) slot +8 (set period) for TPU-B channel 8 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel8Configure)
+0x0004dbb0,cm848_tpuBChannel9EnablePwm,Output channel driver table record 10 (0x53ace6) slot +0 (enable) for TPU-B channel 9 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel9Reset)
+0x0004dbd4,cm848_tpuBChannel9SetPwmDuty,Output channel driver table record 10 (0x53ace6) slot +12 (set duty) for TPU-B channel 9 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel9SetDuty)
+0x0004dbfc,cm848_tpuBChannel9SetPwmPeriodMicroseconds,Output channel driver table record 10 (0x53ace6) slot +8 (set period) for TPU-B channel 9 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel9Configure)
+0x0004dc24,cm848_tpuBChannel10EnablePwm,TPU-B channel 10 enable wrapper - no referrer found: table record 11 uses the read-back variant cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10Reset)
+0x0004dc48,cm848_tpuBChannel10SetPwmDuty,TPU-B channel 10 set duty wrapper - no referrer found: table record 11 uses the read-back variant cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10SetDuty)
+0x0004dc70,cm848_tpuBChannel10SetPwmPeriodMicroseconds,TPU-B channel 10 set period wrapper - no referrer found: table record 11 uses the read-back variant cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10Configure)
+0x0004dc98,cm848_tpuBChannel11EnablePwm,TPU-B channel 11 enable wrapper - no referrer found: table record 12 uses the read-back variant cm848_tpuBReadBackChannel11* for this slot (was cm848_tpuChannel11Reset)
+0x0004dcbc,cm848_tpuBChannel11SetPwmDuty,Output channel driver table record 12 (0x53ad06) slot +12 (set duty) for TPU-B channel 11 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel11SetDuty)
+0x0004dce4,cm848_tpuBChannel11SetPwmPeriodMicroseconds,Output channel driver table record 12 (0x53ad06) slot +8 (set period) for TPU-B channel 11 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel11Configure)
+0x0004dd0c,cm848_tpuBChannel12EnablePwm,Output channel driver table record 13 (0x53ad16) slot +0 (enable) for TPU-B channel 12 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel12Reset)
+0x0004dd30,cm848_tpuBChannel12SetPwmDuty,Output channel driver table record 13 (0x53ad16) slot +12 (set duty) for TPU-B channel 12 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel12SetDuty)
+0x0004dd58,cm848_tpuBChannel12SetPwmPeriodMicroseconds,Output channel driver table record 13 (0x53ad16) slot +8 (set period) for TPU-B channel 12 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel12Configure)
+0x0004dd80,cm848_tpuBChannel13EnablePwm,Output channel driver table record 14 (0x53ad26) slot +0 (enable) for TPU-B channel 13 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel13Reset)
+0x0004dda4,cm848_tpuBChannel13SetPwmDuty,Output channel driver table record 14 (0x53ad26) slot +12 (set duty) for TPU-B channel 13 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel13SetDuty)
+0x0004ddcc,cm848_tpuBChannel13SetPwmPeriodMicroseconds,Output channel driver table record 14 (0x53ad26) slot +8 (set period) for TPU-B channel 13 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel13Configure)
+0x0004ddf4,cm848_tpuBChannel14EnablePwm,Output channel driver table record 15 (0x53ad36) slot +0 (enable) for TPU-B channel 14 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel14Reset)
+0x0004de18,cm848_tpuBChannel14SetPwmDuty,Output channel driver table record 15 (0x53ad36) slot +12 (set duty) for TPU-B channel 14 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel14SetDuty)
+0x0004de40,cm848_tpuBChannel14SetPwmPeriodMicroseconds,Output channel driver table record 15 (0x53ad36) slot +8 (set period) for TPU-B channel 14 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel14Configure)
+0x0004de68,cm848_tpuBChannel15EnablePwm,Output channel driver table record 16 (0x53ad46) slot +0 (enable) for TPU-B channel 15 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel15Reset)
+0x0004de8c,cm848_tpuBChannel15SetPwmDuty,Output channel driver table record 16 (0x53ad46) slot +12 (set duty) for TPU-B channel 15 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel15SetDuty)
+0x0004deb4,cm848_tpuBChannel15SetPwmPeriodMicroseconds,Output channel driver table record 16 (0x53ad46) slot +8 (set period) for TPU-B channel 15 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel15Configure)
+0x0004dedc,cm848_tpuBReadBackChannel10EnablePwm,Output channel driver table record 11 (0x53acf6) slot +0 (enable) for TPU-B channel 10 with MDASM14 read-back: sets MDASM14 to input mode then starts the TPU-B PWM (was cm848_disableMiosResetTpu14_10)
+0x0004df0c,cm848_tpuBReadBackChannel10ReadFeedback,Output channel driver table record 11 (0x53acf6) slot +4 (read feedback) for TPU-B channel 10 with MDASM14 read-back: mpc555_miosCheckChannelFeedback on MDASM14 against tpu_b_channel_10_read_back_expected_duty (was cm848_setMiosDutyCycle14)
+0x0004df40,cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds,Output channel driver table record 11 (0x53acf6) slot +8 (set period) for TPU-B channel 10 with MDASM14 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel10Alt)
+0x0004df68,cm848_tpuBReadBackChannel10SetPwmDuty,Output channel driver table record 11 (0x53acf6) slot +12 (set duty) for TPU-B channel 10 with MDASM14 read-back: records tpu_b_channel_10_read_back_expected_duty (stores the duty itself) then sets the duty (was cm848_setTpuDutyWithTrack10)
+0x0004df98,cm848_tpuBReadBackChannel11EnablePwm,Output channel driver table record 12 (0x53ad06) slot +0 (enable) for TPU-B channel 11 with MDASM29 read-back: clears MDASM29 AR:BR / sets its SCRD to 0x801 (mode 1 input) then starts the TPU-B PWM (was mpc555_resetMiosTpuChannel29_11)
+0x0004dfd4,cm848_tpuBReadBackChannel11ReadFeedback,Output channel driver table record 12 (0x53ad06) slot +4 (read feedback) for TPU-B channel 11 with MDASM29 read-back. The commanded duty here is the 0-4095 word at 0x40b882 (currently labelled engine_sync_state_t_0040b87f.speed_raw): while 0 < duty < DAT_00409140 it skips the check and returns the previous verdict (DAT_003fb8f8); otherwise it compares MDASM29's captured edges (AR:BR) and pin (SCRD bit 15) with the command the way mpc555_miosCheckChannelFeedback does (0 agree / 1 high or toggling where it should be low / 2 low or toggling where it should be high; 4095 and above = fully on) then clears AR:BR and stores the verdict in DAT_003fb8f8. Ghidra had not made a function here - it starts right after the blr that ends cm848_tpuBReadBackChannel11EnablePwm
+0x0004e0c0,cm848_tpuBReadBackChannel4EnablePwm,Output channel driver table record 5 (0x53ac96) slot +0 (enable) for TPU-B channel 4 with MDASM11 read-back: sets MDASM11 to input mode then starts the TPU-B PWM (was cm848_disableMiosResetTpu11_4)
+0x0004e0f0,cm848_tpuBReadBackChannel4ReadFeedback,Output channel driver table record 5 (0x53ac96) slot +4 (read feedback) for TPU-B channel 4 with MDASM11 read-back: mpc555_miosCheckChannelFeedback on MDASM11 against tpu_b_channel_4_read_back_expected_duty (was cm848_setMiosDutyCycle11)
+0x0004e124,cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds,Output channel driver table record 5 (0x53ac96) slot +8 (set period) for TPU-B channel 4 with MDASM11 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel4Alt)
+0x0004e14c,cm848_tpuBReadBackChannel4SetPwmDuty,Output channel driver table record 5 (0x53ac96) slot +12 (set duty) for TPU-B channel 4 with MDASM11 read-back: records tpu_b_channel_4_read_back_expected_duty (stores 25600 - duty) then sets the duty (was cm848_setTpuDutyWithTrack4)
+0x0004e180,cm848_tpuBReadBackChannel6EnablePwm,Output channel driver table record 7 (0x53acb6) slot +0 (enable) for TPU-B channel 6 with MDASM13 read-back: sets MDASM13 to input mode then starts the TPU-B PWM (was cm848_disableMiosResetTpu13_6)
+0x0004e1b0,cm848_tpuBReadBackChannel6ReadFeedback,Output channel driver table record 7 (0x53acb6) slot +4 (read feedback) for TPU-B channel 6 with MDASM13 read-back: mpc555_miosCheckChannelFeedback on MDASM13 against tpu_b_channel_6_read_back_expected_duty (was cm848_setMiosDutyCycle13)
+0x0004e1e4,cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds,Output channel driver table record 7 (0x53acb6) slot +8 (set period) for TPU-B channel 6 with MDASM13 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel6Alt)
+0x0004e20c,cm848_tpuBReadBackChannel6SetPwmDuty,Output channel driver table record 7 (0x53acb6) slot +12 (set duty) for TPU-B channel 6 with MDASM13 read-back: records tpu_b_channel_6_read_back_expected_duty (stores 25600 - duty) then sets the duty (was cm848_setTpuDutyWithTrack6)
+0x0004e240,cm848_tpuBReadBackChannel7EnablePwm,Output channel driver table record 8 (0x53acc6) slot +0 (enable) for TPU-B channel 7 with MDASM12 read-back: sets MDASM12 to input mode then starts the TPU-B PWM (was cm848_disableMiosResetTpu12_7)
+0x0004e270,cm848_tpuBReadBackChannel7ReadFeedback,Output channel driver table record 8 (0x53acc6) slot +4 (read feedback) for TPU-B channel 7 with MDASM12 read-back: mpc555_miosCheckChannelFeedback on MDASM12 against tpu_b_channel_7_read_back_expected_duty (was cm848_setMiosDutyCycle12)
+0x0004e2a4,cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds,Output channel driver table record 8 (0x53acc6) slot +8 (set period) for TPU-B channel 7 with MDASM12 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel7Alt)
+0x0004e2cc,cm848_tpuBReadBackChannel7SetPwmDuty,Output channel driver table record 8 (0x53acc6) slot +12 (set duty) for TPU-B channel 7 with MDASM12 read-back: records tpu_b_channel_7_read_back_expected_duty (stores 25600 - duty) then sets the duty (was cm848_setTpuDutyWithTrack7)
+0x0004e300,cm848_tpuAChannel0EnablePwm,Output channel driver table record 17 (0x53ad56) slot +0 (enable) for TPU-A channel 0 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput0Enable)
+0x0004e324,cm848_tpuAChannel0SetPwmDuty,Output channel driver table record 17 (0x53ad56) slot +12 (set duty) for TPU-A channel 0 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput0Disable)
+0x0004e34c,cm848_tpuAChannel0SetPwmPeriodMicroseconds,Output channel driver table record 17 (0x53ad56) slot +8 (set period) for TPU-A channel 0 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput0SetPeriod)
+0x0004e374,cm848_tpuAChannel1EnablePwm,Output channel driver table record 18 (0x53ad66) slot +0 (enable) for TPU-A channel 1 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput1Enable)
+0x0004e398,cm848_tpuAChannel1SetPwmDuty,Output channel driver table record 18 (0x53ad66) slot +12 (set duty) for TPU-A channel 1 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput1Disable)
+0x0004e3c0,cm848_tpuAChannel1SetPwmPeriodMicroseconds,Output channel driver table record 18 (0x53ad66) slot +8 (set period) for TPU-A channel 1 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput1SetPeriod)
+0x0004e3e8,cm848_tpuAChannel2EnablePwm,Output channel driver table record 19 (0x53ad76) slot +0 (enable) for TPU-A channel 2 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput2Enable)
+0x0004e40c,cm848_tpuAChannel2SetPwmDuty,Output channel driver table record 19 (0x53ad76) slot +12 (set duty) for TPU-A channel 2 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput2Disable)
+0x0004e434,cm848_tpuAChannel2SetPwmPeriodMicroseconds,Output channel driver table record 19 (0x53ad76) slot +8 (set period) for TPU-A channel 2 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput2SetPeriod)
+0x0004e45c,cm848_tpuAChannel3EnablePwm,Output channel driver table record 20 (0x53ad86) slot +0 (enable) for TPU-A channel 3 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput3Enable)
+0x0004e480,cm848_tpuAChannel3SetPwmDuty,Output channel driver table record 20 (0x53ad86) slot +12 (set duty) for TPU-A channel 3 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput3Disable)
+0x0004e4a8,cm848_tpuAChannel3SetPwmPeriodMicroseconds,Output channel driver table record 20 (0x53ad86) slot +8 (set period) for TPU-A channel 3 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput3SetPeriod)
+0x0004e4d0,cm848_tpuAChannel4EnablePwm,Output channel driver table record 21 (0x53ad96) slot +0 (enable) for TPU-A channel 4 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput4Enable)
+0x0004e4f4,cm848_tpuAChannel4SetPwmDuty,Output channel driver table record 21 (0x53ad96) slot +12 (set duty) for TPU-A channel 4 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput4Disable)
+0x0004e51c,cm848_tpuAChannel4SetPwmPeriodMicroseconds,Output channel driver table record 21 (0x53ad96) slot +8 (set period) for TPU-A channel 4 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput4SetPeriod)
+0x0004e544,cm848_tpuAChannel5EnablePwm,Output channel driver table record 22 (0x53ada6) slot +0 (enable) for TPU-A channel 5 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput5Enable)
+0x0004e568,cm848_tpuAChannel5SetPwmDuty,Output channel driver table record 22 (0x53ada6) slot +12 (set duty) for TPU-A channel 5 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput5Disable)
+0x0004e590,cm848_tpuAChannel5SetPwmPeriodMicroseconds,Output channel driver table record 22 (0x53ada6) slot +8 (set period) for TPU-A channel 5 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput5SetPeriod)
+0x0004e5b8,cm848_tpuAChannel6EnablePwm,Output channel driver table record 23 (0x53adb6) slot +0 (enable) for TPU-A channel 6 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput6Enable)
+0x0004e5dc,cm848_tpuAChannel6SetPwmDuty,Output channel driver table record 23 (0x53adb6) slot +12 (set duty) for TPU-A channel 6 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput6Disable)
+0x0004e604,cm848_tpuAChannel6SetPwmPeriodMicroseconds,Output channel driver table record 23 (0x53adb6) slot +8 (set period) for TPU-A channel 6 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput6SetPeriod)
+0x0004e62c,cm848_tpuAChannel7EnablePwm,Output channel driver table record 24 (0x53adc6) slot +0 (enable) for TPU-A channel 7 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput7Enable)
+0x0004e650,cm848_tpuAChannel7SetPwmDuty,Output channel driver table record 24 (0x53adc6) slot +12 (set duty) for TPU-A channel 7 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput7Disable)
+0x0004e678,cm848_tpuAChannel7SetPwmPeriodMicroseconds,Output channel driver table record 24 (0x53adc6) slot +8 (set period) for TPU-A channel 7 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput7SetPeriod)
+0x0004e6a0,cm848_tpuAChannel8EnablePwm,Output channel driver table record 25 (0x53add6) slot +0 (enable) for TPU-A channel 8 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput8Enable)
+0x0004e6c4,cm848_tpuAChannel8SetPwmDuty,Output channel driver table record 25 (0x53add6) slot +12 (set duty) for TPU-A channel 8 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput8Disable)
+0x0004e6ec,cm848_tpuAChannel8SetPwmPeriodMicroseconds,Output channel driver table record 25 (0x53add6) slot +8 (set period) for TPU-A channel 8 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput8SetPeriod)
+0x0004e714,cm848_tpuAChannel9EnablePwm,Output channel driver table record 26 (0x53ade6) slot +0 (enable) for TPU-A channel 9 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput9Enable)
+0x0004e738,cm848_tpuAChannel9SetPwmDuty,Output channel driver table record 26 (0x53ade6) slot +12 (set duty) for TPU-A channel 9 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput9Disable)
+0x0004e760,cm848_tpuAChannel9SetPwmPeriodMicroseconds,Output channel driver table record 26 (0x53ade6) slot +8 (set period) for TPU-A channel 9 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput9SetPeriod)
+0x0004e788,cm848_tpuAChannel10EnablePwm,Output channel driver table record 27 (0x53adf6) slot +0 (enable) for TPU-A channel 10 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput10Enable)
+0x0004e7ac,cm848_tpuAChannel10SetPwmDuty,Output channel driver table record 27 (0x53adf6) slot +12 (set duty) for TPU-A channel 10 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput10Disable)
+0x0004e7d4,cm848_tpuAChannel10SetPwmPeriodMicroseconds,Output channel driver table record 27 (0x53adf6) slot +8 (set period) for TPU-A channel 10 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput10SetPeriod)
+0x0004e7fc,cm848_tpuAChannel11EnablePwm,Output channel driver table record 28 (0x53ae06) slot +0 (enable) for TPU-A channel 11 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput11Enable)
+0x0004e820,cm848_tpuAChannel11SetPwmDuty,Output channel driver table record 28 (0x53ae06) slot +12 (set duty) for TPU-A channel 11 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput11Disable)
+0x0004e848,cm848_tpuAChannel11SetPwmPeriodMicroseconds,Output channel driver table record 28 (0x53ae06) slot +8 (set period) for TPU-A channel 11 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput11SetPeriod)
+0x0004e870,cm848_tpuAChannel12EnablePwm,Output channel driver table record 29 (0x53ae16) slot +0 (enable) for TPU-A channel 12 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput12Enable)
+0x0004e894,cm848_tpuAChannel12SetPwmDuty,Output channel driver table record 29 (0x53ae16) slot +12 (set duty) for TPU-A channel 12 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput12Disable)
+0x0004e8bc,cm848_tpuAChannel12SetPwmPeriodMicroseconds,Output channel driver table record 29 (0x53ae16) slot +8 (set period) for TPU-A channel 12 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput12SetPeriod)
+0x0004e8e4,cm848_tpuAChannel13EnablePwm,Output channel driver table record 30 (0x53ae26) slot +0 (enable) for TPU-A channel 13 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput13Enable)
+0x0004e908,cm848_tpuAChannel13SetPwmDuty,Output channel driver table record 30 (0x53ae26) slot +12 (set duty) for TPU-A channel 13 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput13Disable)
+0x0004e930,cm848_tpuAChannel13SetPwmPeriodMicroseconds,Output channel driver table record 30 (0x53ae26) slot +8 (set period) for TPU-A channel 13 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput13SetPeriod)
+0x0004e958,cm848_tpuAChannel14EnablePwm,Output channel driver table record 31 (0x53ae36) slot +0 (enable) for TPU-A channel 14 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput14Enable)
+0x0004e97c,cm848_tpuAChannel14SetPwmDuty,Output channel driver table record 31 (0x53ae36) slot +12 (set duty) for TPU-A channel 14 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput14Disable)
+0x0004e9a4,cm848_tpuAChannel14SetPwmPeriodMicroseconds,Output channel driver table record 31 (0x53ae36) slot +8 (set period) for TPU-A channel 14 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput14SetPeriod)
+0x0004e9cc,cm848_tpuAChannel15EnablePwm,Output channel driver table record 32 (0x53ae46) slot +0 (enable) for TPU-A channel 15 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput15Enable)
+0x0004e9f0,cm848_tpuAChannel15SetPwmDuty,Output channel driver table record 32 (0x53ae46) slot +12 (set duty) for TPU-A channel 15 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput15Disable)
+0x0004ea18,cm848_tpuAChannel15SetPwmPeriodMicroseconds,Output channel driver table record 32 (0x53ae46) slot +8 (set period) for TPU-A channel 15 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput15SetPeriod)
 0x0004ea40,cm848_setDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and sets its bit in switch_input_datalink_state_bits (was cm848_setEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004ea84,cm848_clearDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and clears its bit in switch_input_datalink_state_bits (was cm848_clearEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eac8,cm848_readSwitchHardwareInput,(switch): reads the switch's hardware input line (switch_input_hardware_line_cal[switch]) with cm848_readDiscreteInputLine and applies its switch_input_polarity_bits_cal bit (was cm848_checkProtectionWarningBitState) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
@@ -1617,20 +1618,20 @@ address,name
 0x00054380,mpc555_systemStartupInitialization
 0x000544c4,hpcr_exceptionHandler
 0x00054d30,cm848_engineStartCompletionB
-0x00054e10,mpc555_miosCheckChannelFeedback,Output feedback check on an MDASM channel in input mode (mpc555_miosSetChannelInputMode): compares the captured edges (AR:BR non-zero) and the pin state (SCRD bit 15) with the commanded duty (1/256 % per count; 25600 = 100 %) and returns 0 when they agree / 1 when the pin is high or toggling where it should be low / 2 when it is low or toggling where it should be high; then clears AR:BR. Its only callers are cm848_setMiosDutyCycle11-14; their partners cm848_disableMiosResetTpu11_4 / 12_7 / 13_6 / 14_10 put MDASM11 / 12 / 13 / 14 in input mode and reset TPU channels 4 / 7 / 6 / 10 - so MDASM11-14 look like read-back inputs for those TPU outputs. Was cm848_miosSetChannelDutyCycle | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
-0x00054eac,mpc555_miosSetChannelInputMode,Writes mode 1 to an MDASM channel's status/control register (SCRD) - an input mode (the MPC555 manual's input pulse-width measurement) so pin edges latch into AR / BR for mpc555_miosCheckChannelFeedback. Called next to a TPU channel reset by cm848_disableMiosResetTpu11_4 / 12_7 / 13_6 / 14_10. Was cm848_miosChannelDisable | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00054e10,mpc555_miosCheckChannelFeedback,Output feedback check on an MDASM channel in input mode (mpc555_miosSetChannelInputMode): compares the captured edges (AR:BR non-zero) and the pin state (SCRD bit 15) with the commanded duty (1/256 % per count; 25600 = 100 %) and returns 0 when they agree / 1 when the pin is high or toggling where it should be low / 2 when it is low or toggling where it should be high; then clears AR:BR. Its only callers are the read-feedback slots cm848_tpuBReadBackChannel4 / 6 / 7 / 10ReadFeedback; the same records' enable slots (cm848_tpuBReadBackChannel{N}EnablePwm) put MDASM11 / 13 / 12 / 14 in input mode and start TPU-B channels 4 / 6 / 7 / 10 - so MDASM11-14 look like read-back inputs for those TPU-B outputs. Was cm848_miosSetChannelDutyCycle | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00054eac,mpc555_miosSetChannelInputMode,Writes mode 1 to an MDASM channel's status/control register (SCRD) - an input mode (the MPC555 manual's input pulse-width measurement) so pin edges latch into AR / BR for mpc555_miosCheckChannelFeedback. Called by the read-back enables cm848_tpuBReadBackChannel4 / 6 / 7 / 10EnablePwm right before they start their TPU-B channel. Was cm848_miosChannelDisable | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00054eb8,mpc555_miosEnableChannelPwm,Writes mode 9 to an MDASM channel's status/control register (SCRD) - output PWM (the MPC555 manual's OPWM; the same channels' duty and period slots program AR / BR and the MMCSM22 period). Output channel driver table slot +0 for MDASM11-15 / 27-31 (cm848_miosChannel{N}EnablePwm). Was cm848_miosChannelEnable | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00054ec4,mpc555_miosSetChannelPwmDuty,Sets an MDASM channel's PWM duty (1/256 % per count; 25600 = 100 %) by writing the AR:BR compare pair as one word: 0 % = 0x0000:0x7fff / 100 % and above = 0x7fff:0x8000 / otherwise AR = 0x7fff and BR = (0xffff - ML) x duty / 25600 + (ML & 0x7fff) where ML is the shared MMCSM22 modulus latch (the counter runs from ML up to 0xffff). Output channel driver table slot +12 for MDASM11-15 / 27-31. Was mpc555_miosReadChannelStatus (it reads nothing back) | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
 0x00054f48,mpc555_miosSetChannelPwmPeriod,Sets the PWM period shared by every MDASM output: ignores its channel argument and writes the MMCSM22 modulus latch = -(period_setting x 20) - 1 (the counter runs from there up to 0xffff) or 0x8000 when period_setting is 1639 or more. Output channel driver table slot +8 for MDASM11-15 / 27-31 - so any channel's period call changes all of them. The MMCSM22 tick length (so the unit of period_setting) is not resolved. Was mpc555_miosSetPwmOutput | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
 0x00054f80,mpc555_miosEnablePwmSubmodule,Writes 0x4ff to a PWM submodule's status/control register (SCR): bit 10 (0x400) is set by every SCR write in this family and the low byte is the clock prescaler 0xff (mpc555_miosSetPwmSubmodulePeriodMicroseconds switches it to 0x80 for long periods). Output channel driver table slot +0 for PWM submodules 0-3 / 16-19. Was cm848_miosInitChannelPeriod | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,Sets a PWM submodule's duty: PULR = PERR x duty / 25600 (duty in 1/256 % per count) or PERR at 100 % and above. Output channel driver table slot +12 for PWM submodules 0-3 / 16-19. Was cm848_scalePwmByPercent | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,Sets a PWM submodule's period from microseconds: 0 = PERR 0xffff; below 13921 us = prescaler byte 0xff and PERR = period x 40 / 16; otherwise prescaler 0x80 and PERR = period x 40 / 2048 - both branches are microseconds on a 2.5 MHz MIOS clock (40 MHz / 16) and the RAM dump's PWM 16-19 period words read 50 (= 20 kHz). Output channel driver table slot +8 for PWM submodules 0-3 / 16-19. Was cm848_miosSetChannelValue | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
-0x00055020,mpc555_tpuResetChannel
-0x00055178,cm848_tpuSetChannelDuty
-0x000551e4,cm848_tpuConfigureChannel
-0x00055294,mpc555_tpuEnableChannelOutput
-0x000553ec,cm848_tpuDisableChannelOutput
-0x00055458,cm848_tpuSetChannelPeriod
+0x00055020,mpc555_tpuBEnablePwmChannel,Starts a TPU-B channel as a PWM output: priority 0 (stopped) / channel interrupt enable and status cleared / channel function 7 / PARAM0 (high time) = 0 / PARAM1 (period) = 0x8000 / host sequence 0 / host service request 3 (initialise) / priority 1 (running). Output channel driver table slot +0 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5 / 7 / 8 / 11 / 12. Was mpc555_tpuResetChannel | review-function-readability reviewed 2026-11-14 - Readability Low Accuracy Confidence Medium
+0x00055178,mpc555_tpuBSetPwmDuty,Sets a TPU-B PWM channel's duty (1/256 % per count; 25600 = 100 %): PARAM0 (high time) = PARAM1 (period) x duty / 25600 - 0 at 0 % and the full period at 100 % and above. Output channel driver table slot +12 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5 / 7 / 8 / 11 / 12. Was cm848_tpuSetChannelDuty | review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High
+0x000551e4,mpc555_tpuBSetPwmPeriodMicroseconds,Sets a TPU-B PWM channel's period from microseconds and keeps its duty: duty = PARAM0 x 25600 / PARAM1; new PARAM1 = period / 3.2 (period x 0xa001 / 0x20004): the TPU-B TCR1 tick is 3.2 us (TPUMCR 0x4430 - PSCK clear) or 0x7fff at 104855 us and above; PARAM0 is re-derived from the duty. Output channel driver table slot +8 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5 / 7 / 8 / 11 / 12. Was cm848_tpuConfigureChannel | review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High
+0x00055294,mpc555_tpuAEnablePwmChannel,Starts a TPU-A channel as a PWM output: priority 0 (stopped) / channel interrupt enable and status cleared / channel function 7 / PARAM0 (high time) = 0 / PARAM1 (period) = 0x8000 / host sequence 0 / host service request 3 (initialise) / priority 1 (running). Output channel driver table slot +0 for records 17-32 (cm848_tpuAChannel{N}*). Was mpc555_tpuEnableChannelOutput | review-function-readability reviewed 2026-11-14 - Readability Low Accuracy Confidence Medium
+0x000553ec,mpc555_tpuASetPwmDuty,Sets a TPU-A PWM channel's duty (1/256 % per count; 25600 = 100 %): PARAM0 (high time) = PARAM1 (period) x duty / 25600 - 0 at 0 % and the full period at 100 % and above. Output channel driver table slot +12 for records 17-32 (cm848_tpuAChannel{N}*). Was cm848_tpuDisableChannelOutput - it sets the duty and does not disable anything | review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High
+0x00055458,mpc555_tpuASetPwmPeriodMicroseconds,Sets a TPU-A PWM channel's period from microseconds and keeps its duty: duty = PARAM0 x 25600 / PARAM1; new PARAM1 = period x 2.5 (period x 0x5000a / 0x20004): the TPU-A TCR1 tick is 0.4 us (TPUMCR 0x4460 - PSCK set; the only prescaler difference from TPU-B) or 0x7fff at 13107 us and above; PARAM0 is re-derived from the duty. Output channel driver table slot +8 for records 17-32 (cm848_tpuAChannel{N}*). Was cm848_tpuSetChannelPeriod | review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High
 0x00055500,initQadcModule
 0x000555cc,cm848_copyDataBuffer
 0x0005573c,cm848_processSecurityCodeConversion
@@ -2274,6 +2275,10 @@ address,name
 0x00539938,engine_protection_timer_sync
 0x00539a78,engine_start_completion_sequence
 0x00539d18,cm848_initProtectionTimers
+0x0053a0fc,cm848_outputChannelNoneEnable,Output channel driver table record 0 (no output) slot +0 (enable): a bare blr - that slot is its only referrer
+0x0053a100,cm848_outputChannelNoneSetPeriod,Output channel driver table record 0 (no output) slot +8 (set period): a bare blr - that slot is its only referrer
+0x0053a104,cm848_outputChannelNoneSetDuty,Output channel driver table record 0 (no output) slot +12 (set duty): a bare blr - that slot is its only referrer
+0x0053a108,cm848_outputChannelReadFeedbackNone,Read-feedback slot (+4) of the 46 output channel driver table records without a read-back: li r3 0 / blr - returns 0 (no fault); all 46 pointers to it are inside the table
 0x0053a110,hpcr_protectionTimerMonitor
 # fuelDemand SCI command handlers — dispatch table @ 0x53a9a0 (FUN_0051d780). Name uses DECIMAL command code (convention); hex in comment.
 0x0051dbd4,cm848_sciCommand18EnterHighSpeedMode,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x12 (18): sets sci_mode_flags bit 0x02 (SCI1 switches to the 8x faster SCC1R0 = 0x14) and installs the table-select callback (0xF5-0xFD select tables / 0xFE exits) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High | sets sci_mode_flags bit 0x02 (SCI1 to 8x SCC1R0 0x14) and installs the table-select callback (0xF5-0xFD select / 0xFE exit) - SCI command 0x12 (18) via the 0x53a9a0 table (cm848_dispatchSciCommand) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High

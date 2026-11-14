@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 16:12:33 MST 2026
+// Generated: Sat Nov 14 16:19:26 MST 2026
 
 
 //
@@ -1768,10 +1768,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -46296,1487 +46296,1898 @@ void cm848_miosPwm19SetPeriodMicroseconds(undefined4 param_1)
 
 
 //
-// Function: cm848_tpuChannel0Reset @ 0x0004d79c
+// Function: cm848_tpuBChannel0EnablePwm @ 0x0004d79c
 //
 
-void cm848_tpuChannel0Reset(void)
+/* Output channel driver table record 1 (0x53ac56) slot +0 (enable) for TPU-B channel 0 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel0Reset) */
+
+void cm848_tpuBChannel0EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(0);
+  mpc555_tpuBEnablePwmChannel(0);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel0SetDuty @ 0x0004d7c0
+// Function: cm848_tpuBChannel0SetPwmDuty @ 0x0004d7c0
 //
 
-void cm848_tpuChannel0SetDuty(undefined4 param_1)
+/* Output channel driver table record 1 (0x53ac56) slot +12 (set duty) for TPU-B channel 0 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel0SetDuty) */
+
+void cm848_tpuBChannel0SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(0,param_1);
+  mpc555_tpuBSetPwmDuty(0,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel0Configure @ 0x0004d7e8
+// Function: cm848_tpuBChannel0SetPwmPeriodMicroseconds @ 0x0004d7e8
 //
 
-void cm848_tpuChannel0Configure(undefined4 param_1)
+/* Output channel driver table record 1 (0x53ac56) slot +8 (set period) for TPU-B channel 0 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel0Configure) */
+
+void cm848_tpuBChannel0SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(0,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel1Reset @ 0x0004d810
+// Function: cm848_tpuBChannel1EnablePwm @ 0x0004d810
 //
 
-void cm848_tpuChannel1Reset(void)
+/* Output channel driver table record 2 (0x53ac66) slot +0 (enable) for TPU-B channel 1 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel1Reset) */
+
+void cm848_tpuBChannel1EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(1);
+  mpc555_tpuBEnablePwmChannel(1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel1SetDuty @ 0x0004d834
+// Function: cm848_tpuBChannel1SetPwmDuty @ 0x0004d834
 //
 
-void cm848_tpuChannel1SetDuty(undefined4 param_1)
+/* Output channel driver table record 2 (0x53ac66) slot +12 (set duty) for TPU-B channel 1 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel1SetDuty) */
+
+void cm848_tpuBChannel1SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(1,param_1);
+  mpc555_tpuBSetPwmDuty(1,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel1Configure @ 0x0004d85c
+// Function: cm848_tpuBChannel1SetPwmPeriodMicroseconds @ 0x0004d85c
 //
 
-void cm848_tpuChannel1Configure(undefined4 param_1)
+/* Output channel driver table record 2 (0x53ac66) slot +8 (set period) for TPU-B channel 1 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel1Configure) */
+
+void cm848_tpuBChannel1SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(1,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(1,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel2Reset @ 0x0004d884
+// Function: cm848_tpuBChannel2EnablePwm @ 0x0004d884
 //
 
-void cm848_tpuChannel2Reset(void)
+/* Output channel driver table record 3 (0x53ac76) slot +0 (enable) for TPU-B channel 2 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel2Reset) */
+
+void cm848_tpuBChannel2EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(2);
+  mpc555_tpuBEnablePwmChannel(2);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel2SetDuty @ 0x0004d8a8
+// Function: cm848_tpuBChannel2SetPwmDuty @ 0x0004d8a8
 //
 
-void cm848_tpuChannel2SetDuty(undefined4 param_1)
+/* Output channel driver table record 3 (0x53ac76) slot +12 (set duty) for TPU-B channel 2 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel2SetDuty) */
+
+void cm848_tpuBChannel2SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(2,param_1);
+  mpc555_tpuBSetPwmDuty(2,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel2Configure @ 0x0004d8d0
+// Function: cm848_tpuBChannel2SetPwmPeriodMicroseconds @ 0x0004d8d0
 //
 
-void cm848_tpuChannel2Configure(undefined4 param_1)
+/* Output channel driver table record 3 (0x53ac76) slot +8 (set period) for TPU-B channel 2 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel2Configure) */
+
+void cm848_tpuBChannel2SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(2,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(2,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel3Reset @ 0x0004d8f8
+// Function: cm848_tpuBChannel3EnablePwm @ 0x0004d8f8
 //
 
-void cm848_tpuChannel3Reset(void)
+/* Output channel driver table record 4 (0x53ac86) slot +0 (enable) for TPU-B channel 3 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel3Reset) */
+
+void cm848_tpuBChannel3EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(3);
+  mpc555_tpuBEnablePwmChannel(3);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel3SetDuty @ 0x0004d91c
+// Function: cm848_tpuBChannel3SetPwmDuty @ 0x0004d91c
 //
 
-void cm848_tpuChannel3SetDuty(undefined4 param_1)
+/* Output channel driver table record 4 (0x53ac86) slot +12 (set duty) for TPU-B channel 3 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel3SetDuty) */
+
+void cm848_tpuBChannel3SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(3,param_1);
+  mpc555_tpuBSetPwmDuty(3,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel3Configure @ 0x0004d944
+// Function: cm848_tpuBChannel3SetPwmPeriodMicroseconds @ 0x0004d944
 //
 
-void cm848_tpuChannel3Configure(undefined4 param_1)
+/* Output channel driver table record 4 (0x53ac86) slot +8 (set period) for TPU-B channel 3 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel3Configure) */
+
+void cm848_tpuBChannel3SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(3,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(3,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel4Reset @ 0x0004d96c
+// Function: cm848_tpuBChannel4EnablePwm @ 0x0004d96c
 //
 
-void cm848_tpuChannel4Reset(void)
+/* TPU-B channel 4 enable wrapper - no referrer found: table record 5 uses the read-back variant
+   cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4Reset) */
+
+void cm848_tpuBChannel4EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(4);
+  mpc555_tpuBEnablePwmChannel(4);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel4SetDuty @ 0x0004d990
+// Function: cm848_tpuBChannel4SetPwmDuty @ 0x0004d990
 //
 
-void cm848_tpuChannel4SetDuty(undefined4 param_1)
+/* TPU-B channel 4 set duty wrapper - no referrer found: table record 5 uses the read-back variant
+   cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4SetDuty) */
+
+void cm848_tpuBChannel4SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(4,param_1);
+  mpc555_tpuBSetPwmDuty(4,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel4Configure @ 0x0004d9b8
+// Function: cm848_tpuBChannel4SetPwmPeriodMicroseconds @ 0x0004d9b8
 //
 
-void cm848_tpuChannel4Configure(undefined4 param_1)
+/* TPU-B channel 4 set period wrapper - no referrer found: table record 5 uses the read-back variant
+   cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4Configure) */
+
+void cm848_tpuBChannel4SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(4,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(4,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel5Reset @ 0x0004d9e0
+// Function: cm848_tpuBChannel5EnablePwm @ 0x0004d9e0
 //
 
-void cm848_tpuChannel5Reset(void)
+/* Output channel driver table record 6 (0x53aca6) slot +0 (enable) for TPU-B channel 5 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel5Reset) */
+
+void cm848_tpuBChannel5EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(5);
+  mpc555_tpuBEnablePwmChannel(5);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel5SetDuty @ 0x0004da04
+// Function: cm848_tpuBChannel5SetPwmDuty @ 0x0004da04
 //
 
-void cm848_tpuChannel5SetDuty(undefined4 param_1)
+/* Output channel driver table record 6 (0x53aca6) slot +12 (set duty) for TPU-B channel 5 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel5SetDuty) */
+
+void cm848_tpuBChannel5SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(5,param_1);
+  mpc555_tpuBSetPwmDuty(5,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel5Configure @ 0x0004da2c
+// Function: cm848_tpuBChannel5SetPwmPeriodMicroseconds @ 0x0004da2c
 //
 
-void cm848_tpuChannel5Configure(undefined4 param_1)
+/* Output channel driver table record 6 (0x53aca6) slot +8 (set period) for TPU-B channel 5 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel5Configure) */
+
+void cm848_tpuBChannel5SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(5,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(5,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel6Reset @ 0x0004da54
+// Function: cm848_tpuBChannel6EnablePwm @ 0x0004da54
 //
 
-void cm848_tpuChannel6Reset(void)
+/* TPU-B channel 6 enable wrapper - no referrer found: table record 7 uses the read-back variant
+   cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6Reset) */
+
+void cm848_tpuBChannel6EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(6);
+  mpc555_tpuBEnablePwmChannel(6);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel6SetDuty @ 0x0004da78
+// Function: cm848_tpuBChannel6SetPwmDuty @ 0x0004da78
 //
 
-void cm848_tpuChannel6SetDuty(undefined4 param_1)
+/* TPU-B channel 6 set duty wrapper - no referrer found: table record 7 uses the read-back variant
+   cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6SetDuty) */
+
+void cm848_tpuBChannel6SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(6,param_1);
+  mpc555_tpuBSetPwmDuty(6,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel6Configure @ 0x0004daa0
+// Function: cm848_tpuBChannel6SetPwmPeriodMicroseconds @ 0x0004daa0
 //
 
-void cm848_tpuChannel6Configure(undefined4 param_1)
+/* TPU-B channel 6 set period wrapper - no referrer found: table record 7 uses the read-back variant
+   cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6Configure) */
+
+void cm848_tpuBChannel6SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(6,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(6,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel7Reset @ 0x0004dac8
+// Function: cm848_tpuBChannel7EnablePwm @ 0x0004dac8
 //
 
-void cm848_tpuChannel7Reset(void)
+/* TPU-B channel 7 enable wrapper - no referrer found: table record 8 uses the read-back variant
+   cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7Reset) */
+
+void cm848_tpuBChannel7EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(7);
+  mpc555_tpuBEnablePwmChannel(7);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel7SetDuty @ 0x0004daec
+// Function: cm848_tpuBChannel7SetPwmDuty @ 0x0004daec
 //
 
-void cm848_tpuChannel7SetDuty(undefined4 param_1)
+/* TPU-B channel 7 set duty wrapper - no referrer found: table record 8 uses the read-back variant
+   cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7SetDuty) */
+
+void cm848_tpuBChannel7SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(7,param_1);
+  mpc555_tpuBSetPwmDuty(7,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel7Configure @ 0x0004db14
+// Function: cm848_tpuBChannel7SetPwmPeriodMicroseconds @ 0x0004db14
 //
 
-void cm848_tpuChannel7Configure(undefined4 param_1)
+/* TPU-B channel 7 set period wrapper - no referrer found: table record 8 uses the read-back variant
+   cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7Configure) */
+
+void cm848_tpuBChannel7SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(7,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(7,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel8Reset @ 0x0004db3c
+// Function: cm848_tpuBChannel8EnablePwm @ 0x0004db3c
 //
 
-void cm848_tpuChannel8Reset(void)
+/* Output channel driver table record 9 (0x53acd6) slot +0 (enable) for TPU-B channel 8 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel8Reset) */
+
+void cm848_tpuBChannel8EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(8);
+  mpc555_tpuBEnablePwmChannel(8);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel8SetDuty @ 0x0004db60
+// Function: cm848_tpuBChannel8SetPwmDuty @ 0x0004db60
 //
 
-void cm848_tpuChannel8SetDuty(undefined4 param_1)
+/* Output channel driver table record 9 (0x53acd6) slot +12 (set duty) for TPU-B channel 8 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel8SetDuty) */
+
+void cm848_tpuBChannel8SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(8,param_1);
+  mpc555_tpuBSetPwmDuty(8,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel8Configure @ 0x0004db88
+// Function: cm848_tpuBChannel8SetPwmPeriodMicroseconds @ 0x0004db88
 //
 
-void cm848_tpuChannel8Configure(undefined4 param_1)
+/* Output channel driver table record 9 (0x53acd6) slot +8 (set period) for TPU-B channel 8 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel8Configure) */
+
+void cm848_tpuBChannel8SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(8,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(8,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel9Reset @ 0x0004dbb0
+// Function: cm848_tpuBChannel9EnablePwm @ 0x0004dbb0
 //
 
-void cm848_tpuChannel9Reset(void)
+/* Output channel driver table record 10 (0x53ace6) slot +0 (enable) for TPU-B channel 9 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel9Reset) */
+
+void cm848_tpuBChannel9EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(9);
+  mpc555_tpuBEnablePwmChannel(9);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel9SetDuty @ 0x0004dbd4
+// Function: cm848_tpuBChannel9SetPwmDuty @ 0x0004dbd4
 //
 
-void cm848_tpuChannel9SetDuty(undefined4 param_1)
+/* Output channel driver table record 10 (0x53ace6) slot +12 (set duty) for TPU-B channel 9 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel9SetDuty) */
+
+void cm848_tpuBChannel9SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(9,param_1);
+  mpc555_tpuBSetPwmDuty(9,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel9Configure @ 0x0004dbfc
+// Function: cm848_tpuBChannel9SetPwmPeriodMicroseconds @ 0x0004dbfc
 //
 
-void cm848_tpuChannel9Configure(undefined4 param_1)
+/* Output channel driver table record 10 (0x53ace6) slot +8 (set period) for TPU-B channel 9 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel9Configure) */
+
+void cm848_tpuBChannel9SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(9,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(9,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel10Reset @ 0x0004dc24
+// Function: cm848_tpuBChannel10EnablePwm @ 0x0004dc24
 //
 
-void cm848_tpuChannel10Reset(void)
+/* TPU-B channel 10 enable wrapper - no referrer found: table record 11 uses the read-back variant
+   cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10Reset) */
+
+void cm848_tpuBChannel10EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(10);
+  mpc555_tpuBEnablePwmChannel(10);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel10SetDuty @ 0x0004dc48
+// Function: cm848_tpuBChannel10SetPwmDuty @ 0x0004dc48
 //
 
-void cm848_tpuChannel10SetDuty(undefined4 param_1)
+/* TPU-B channel 10 set duty wrapper - no referrer found: table record 11 uses the read-back variant
+   cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10SetDuty) */
+
+void cm848_tpuBChannel10SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(10,param_1);
+  mpc555_tpuBSetPwmDuty(10,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel10Configure @ 0x0004dc70
+// Function: cm848_tpuBChannel10SetPwmPeriodMicroseconds @ 0x0004dc70
 //
 
-void cm848_tpuChannel10Configure(undefined4 param_1)
+/* TPU-B channel 10 set period wrapper - no referrer found: table record 11 uses the read-back
+   variant cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10Configure) */
+
+void cm848_tpuBChannel10SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(10,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(10,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel11Reset @ 0x0004dc98
+// Function: cm848_tpuBChannel11EnablePwm @ 0x0004dc98
 //
 
-void cm848_tpuChannel11Reset(void)
+/* TPU-B channel 11 enable wrapper - no referrer found: table record 12 uses the read-back variant
+   cm848_tpuBReadBackChannel11* for this slot (was cm848_tpuChannel11Reset) */
+
+void cm848_tpuBChannel11EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(0xb);
+  mpc555_tpuBEnablePwmChannel(0xb);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel11SetDuty @ 0x0004dcbc
+// Function: cm848_tpuBChannel11SetPwmDuty @ 0x0004dcbc
 //
 
-void cm848_tpuChannel11SetDuty(undefined4 param_1)
+/* Output channel driver table record 12 (0x53ad06) slot +12 (set duty) for TPU-B channel 11 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel11SetDuty) */
+
+void cm848_tpuBChannel11SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(0xb,param_1);
+  mpc555_tpuBSetPwmDuty(0xb,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel11Configure @ 0x0004dce4
+// Function: cm848_tpuBChannel11SetPwmPeriodMicroseconds @ 0x0004dce4
 //
 
-void cm848_tpuChannel11Configure(undefined4 param_1)
+/* Output channel driver table record 12 (0x53ad06) slot +8 (set period) for TPU-B channel 11 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel11Configure) */
+
+void cm848_tpuBChannel11SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(0xb,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xb,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel12Reset @ 0x0004dd0c
+// Function: cm848_tpuBChannel12EnablePwm @ 0x0004dd0c
 //
 
-void cm848_tpuChannel12Reset(void)
+/* Output channel driver table record 13 (0x53ad16) slot +0 (enable) for TPU-B channel 12 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel12Reset) */
+
+void cm848_tpuBChannel12EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(0xc);
+  mpc555_tpuBEnablePwmChannel(0xc);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel12SetDuty @ 0x0004dd30
+// Function: cm848_tpuBChannel12SetPwmDuty @ 0x0004dd30
 //
 
-void cm848_tpuChannel12SetDuty(undefined4 param_1)
+/* Output channel driver table record 13 (0x53ad16) slot +12 (set duty) for TPU-B channel 12 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel12SetDuty) */
+
+void cm848_tpuBChannel12SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(0xc,param_1);
+  mpc555_tpuBSetPwmDuty(0xc,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel12Configure @ 0x0004dd58
+// Function: cm848_tpuBChannel12SetPwmPeriodMicroseconds @ 0x0004dd58
 //
 
-void cm848_tpuChannel12Configure(undefined4 param_1)
+/* Output channel driver table record 13 (0x53ad16) slot +8 (set period) for TPU-B channel 12 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel12Configure) */
+
+void cm848_tpuBChannel12SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(0xc,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xc,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel13Reset @ 0x0004dd80
+// Function: cm848_tpuBChannel13EnablePwm @ 0x0004dd80
 //
 
-void cm848_tpuChannel13Reset(void)
+/* Output channel driver table record 14 (0x53ad26) slot +0 (enable) for TPU-B channel 13 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel13Reset) */
+
+void cm848_tpuBChannel13EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(0xd);
+  mpc555_tpuBEnablePwmChannel(0xd);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel13SetDuty @ 0x0004dda4
+// Function: cm848_tpuBChannel13SetPwmDuty @ 0x0004dda4
 //
 
-void cm848_tpuChannel13SetDuty(undefined4 param_1)
+/* Output channel driver table record 14 (0x53ad26) slot +12 (set duty) for TPU-B channel 13 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel13SetDuty) */
+
+void cm848_tpuBChannel13SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(0xd,param_1);
+  mpc555_tpuBSetPwmDuty(0xd,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel13Configure @ 0x0004ddcc
+// Function: cm848_tpuBChannel13SetPwmPeriodMicroseconds @ 0x0004ddcc
 //
 
-void cm848_tpuChannel13Configure(undefined4 param_1)
+/* Output channel driver table record 14 (0x53ad26) slot +8 (set period) for TPU-B channel 13 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel13Configure) */
+
+void cm848_tpuBChannel13SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(0xd,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xd,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel14Reset @ 0x0004ddf4
+// Function: cm848_tpuBChannel14EnablePwm @ 0x0004ddf4
 //
 
-void cm848_tpuChannel14Reset(void)
+/* Output channel driver table record 15 (0x53ad36) slot +0 (enable) for TPU-B channel 14 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel14Reset) */
+
+void cm848_tpuBChannel14EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(0xe);
+  mpc555_tpuBEnablePwmChannel(0xe);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel14SetDuty @ 0x0004de18
+// Function: cm848_tpuBChannel14SetPwmDuty @ 0x0004de18
 //
 
-void cm848_tpuChannel14SetDuty(undefined4 param_1)
+/* Output channel driver table record 15 (0x53ad36) slot +12 (set duty) for TPU-B channel 14 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel14SetDuty) */
+
+void cm848_tpuBChannel14SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(0xe,param_1);
+  mpc555_tpuBSetPwmDuty(0xe,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel14Configure @ 0x0004de40
+// Function: cm848_tpuBChannel14SetPwmPeriodMicroseconds @ 0x0004de40
 //
 
-void cm848_tpuChannel14Configure(undefined4 param_1)
+/* Output channel driver table record 15 (0x53ad36) slot +8 (set period) for TPU-B channel 14 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel14Configure) */
+
+void cm848_tpuBChannel14SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(0xe,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xe,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel15Reset @ 0x0004de68
+// Function: cm848_tpuBChannel15EnablePwm @ 0x0004de68
 //
 
-void cm848_tpuChannel15Reset(void)
+/* Output channel driver table record 16 (0x53ad46) slot +0 (enable) for TPU-B channel 15 - forwards
+   to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel15Reset) */
+
+void cm848_tpuBChannel15EnablePwm(void)
 
 {
-  mpc555_tpuResetChannel(0xf);
+  mpc555_tpuBEnablePwmChannel(0xf);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel15SetDuty @ 0x0004de8c
+// Function: cm848_tpuBChannel15SetPwmDuty @ 0x0004de8c
 //
 
-void cm848_tpuChannel15SetDuty(undefined4 param_1)
+/* Output channel driver table record 16 (0x53ad46) slot +12 (set duty) for TPU-B channel 15 -
+   forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel15SetDuty) */
+
+void cm848_tpuBChannel15SetPwmDuty(word param_1)
 
 {
-  cm848_tpuSetChannelDuty(0xf,param_1);
+  mpc555_tpuBSetPwmDuty(0xf,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuChannel15Configure @ 0x0004deb4
+// Function: cm848_tpuBChannel15SetPwmPeriodMicroseconds @ 0x0004deb4
 //
 
-void cm848_tpuChannel15Configure(undefined4 param_1)
+/* Output channel driver table record 16 (0x53ad46) slot +8 (set period) for TPU-B channel 15 -
+   forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel15Configure) */
+
+void cm848_tpuBChannel15SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(0xf,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(0xf,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_disableMiosResetTpu14_10 @ 0x0004dedc
+// Function: cm848_tpuBReadBackChannel10EnablePwm @ 0x0004dedc
 //
 
-void cm848_disableMiosResetTpu14_10(void)
+/* Output channel driver table record 11 (0x53acf6) slot +0 (enable) for TPU-B channel 10 with
+   MDASM14 read-back: sets MDASM14 to input mode then starts the TPU-B PWM (was
+   cm848_disableMiosResetTpu14_10) */
+
+void cm848_tpuBReadBackChannel10EnablePwm(void)
 
 {
   mpc555_miosSetChannelInputMode(&MIOS_MDASM14_AR);
-  mpc555_tpuResetChannel(10);
+  mpc555_tpuBEnablePwmChannel(10);
   return;
 }
 
 
 
 //
-// Function: cm848_setMiosDutyCycle14 @ 0x0004df0c
+// Function: cm848_tpuBReadBackChannel10ReadFeedback @ 0x0004df0c
 //
 
-word cm848_setMiosDutyCycle14(void)
+/* Output channel driver table record 11 (0x53acf6) slot +4 (read feedback) for TPU-B channel 10
+   with MDASM14 read-back: mpc555_miosCheckChannelFeedback on MDASM14 against
+   tpu_b_channel_10_read_back_expected_duty (was cm848_setMiosDutyCycle14) */
+
+word cm848_tpuBReadBackChannel10ReadFeedback(void)
 
 {
   word wVar1;
   
-  wVar1 = mpc555_miosCheckChannelFeedback(&MIOS_MDASM14_AR,(uint)mios_ch14_duty_cycle);
+  wVar1 = mpc555_miosCheckChannelFeedback
+                    (&MIOS_MDASM14_AR,(uint)tpu_b_channel_10_read_back_expected_duty);
   return wVar1;
 }
 
 
 
 //
-// Function: cm848_configureTpuChannel10Alt @ 0x0004df40
+// Function: cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds @ 0x0004df40
 //
 
-void cm848_configureTpuChannel10Alt(undefined4 param_1)
+/* Output channel driver table record 11 (0x53acf6) slot +8 (set period) for TPU-B channel 10 with
+   MDASM14 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel10Alt) */
+
+void cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(10,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(10,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_setTpuDutyWithTrack10 @ 0x0004df68
+// Function: cm848_tpuBReadBackChannel10SetPwmDuty @ 0x0004df68
 //
 
-void cm848_setTpuDutyWithTrack10(undefined4 param_1)
+/* Output channel driver table record 11 (0x53acf6) slot +12 (set duty) for TPU-B channel 10 with
+   MDASM14 read-back: records tpu_b_channel_10_read_back_expected_duty (stores the duty itself) then
+   sets the duty (was cm848_setTpuDutyWithTrack10) */
+
+void cm848_tpuBReadBackChannel10SetPwmDuty(word param_1)
 
 {
-  mios_ch14_duty_cycle = (word)param_1;
-  cm848_tpuSetChannelDuty(10,param_1);
+  tpu_b_channel_10_read_back_expected_duty = param_1;
+  mpc555_tpuBSetPwmDuty(10,param_1);
   return;
 }
 
 
 
 //
-// Function: mpc555_resetMiosTpuChannel29_11 @ 0x0004df98
+// Function: cm848_tpuBReadBackChannel11EnablePwm @ 0x0004df98
 //
 
-void mpc555_resetMiosTpuChannel29_11(void)
+/* Output channel driver table record 12 (0x53ad06) slot +0 (enable) for TPU-B channel 11 with
+   MDASM29 read-back: clears MDASM29 AR:BR / sets its SCRD to 0x801 (mode 1 input) then starts the
+   TPU-B PWM (was mpc555_resetMiosTpuChannel29_11) */
+
+void cm848_tpuBReadBackChannel11EnablePwm(void)
 
 {
   mios_mdasm29._0_4_ = 0;
   mios_mdasm29.SCRD = 0x801;
-  mpc555_tpuResetChannel(0xb);
+  mpc555_tpuBEnablePwmChannel(0xb);
   return;
 }
 
 
 
 //
-// Function: cm848_disableMiosResetTpu11_4 @ 0x0004e0c0
+// Function: cm848_tpuBReadBackChannel11ReadFeedback @ 0x0004dfd4
 //
 
-void cm848_disableMiosResetTpu11_4(void)
+/* Output channel driver table record 12 (0x53ad06) slot +4 (read feedback) for TPU-B channel 11
+   with MDASM29 read-back. The commanded duty here is the 0-4095 word at 0x40b882 (currently
+   labelled engine_sync_state_t_0040b87f.speed_raw): while 0 < duty < DAT_00409140 it skips the
+   check and returns the previous verdict (DAT_003fb8f8); otherwise it compares MDASM29's captured
+   edges (AR:BR) and pin (SCRD bit 15) with the command the way mpc555_miosCheckChannelFeedback does
+   (0 agree / 1 high or toggling where it should be low / 2 low or toggling where it should be high;
+   4095 and above = fully on) then clears AR:BR and stores the verdict in DAT_003fb8f8. Ghidra had
+   not made a function here - it starts right after the blr that ends
+   cm848_tpuBReadBackChannel11EnablePwm */
+
+undefined2 cm848_tpuBReadBackChannel11ReadFeedback(void)
+
+{
+  word wVar1;
+  int iVar2;
+  undefined2 uVar3;
+  
+  uVar3 = 0;
+  iVar2 = (int)(short)engine_sync_state_t_0040b87f.speed_raw;
+  if ((iVar2 < (int)(uint)DAT_00409140) && (0 < iVar2)) {
+    return DAT_003fb8f8;
+  }
+  if (iVar2 == 0) {
+    iVar2 = mios_mdasm29._0_4_;
+    if ((iVar2 == 0) && (wVar1 = mios_mdasm29.SCRD, (wVar1 & 0x8000) == 0)) goto LAB_0004e0a4;
+  }
+  else {
+    if (0xffe < iVar2) {
+      iVar2 = mios_mdasm29._0_4_;
+      if ((iVar2 != 0) || (wVar1 = mios_mdasm29.SCRD, (wVar1 & 0x8000) == 0)) {
+        uVar3 = 2;
+      }
+      goto LAB_0004e0a4;
+    }
+    iVar2 = mios_mdasm29._0_4_;
+    if (iVar2 != 0) goto LAB_0004e0a4;
+    wVar1 = mios_mdasm29.SCRD;
+    if ((wVar1 & 0x8000) == 0) {
+      uVar3 = 2;
+      goto LAB_0004e0a4;
+    }
+  }
+  uVar3 = 1;
+LAB_0004e0a4:
+  mios_mdasm29._0_4_ = 0;
+  DAT_003fb8f8 = uVar3;
+  return uVar3;
+}
+
+
+
+//
+// Function: cm848_tpuBReadBackChannel4EnablePwm @ 0x0004e0c0
+//
+
+/* Output channel driver table record 5 (0x53ac96) slot +0 (enable) for TPU-B channel 4 with MDASM11
+   read-back: sets MDASM11 to input mode then starts the TPU-B PWM (was
+   cm848_disableMiosResetTpu11_4) */
+
+void cm848_tpuBReadBackChannel4EnablePwm(void)
 
 {
   mpc555_miosSetChannelInputMode(&MIOS_MDASM11_AR);
-  mpc555_tpuResetChannel(4);
+  mpc555_tpuBEnablePwmChannel(4);
   return;
 }
 
 
 
 //
-// Function: cm848_setMiosDutyCycle11 @ 0x0004e0f0
+// Function: cm848_tpuBReadBackChannel4ReadFeedback @ 0x0004e0f0
 //
 
-word cm848_setMiosDutyCycle11(void)
+/* Output channel driver table record 5 (0x53ac96) slot +4 (read feedback) for TPU-B channel 4 with
+   MDASM11 read-back: mpc555_miosCheckChannelFeedback on MDASM11 against
+   tpu_b_channel_4_read_back_expected_duty (was cm848_setMiosDutyCycle11) */
+
+word cm848_tpuBReadBackChannel4ReadFeedback(void)
 
 {
   word wVar1;
   
-  wVar1 = mpc555_miosCheckChannelFeedback(&MIOS_MDASM11_AR,(uint)mios_ch11_duty_cycle_complement);
+  wVar1 = mpc555_miosCheckChannelFeedback
+                    (&MIOS_MDASM11_AR,(uint)tpu_b_channel_4_read_back_expected_duty);
   return wVar1;
 }
 
 
 
 //
-// Function: cm848_configureTpuChannel4Alt @ 0x0004e124
+// Function: cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds @ 0x0004e124
 //
 
-void cm848_configureTpuChannel4Alt(undefined4 param_1)
+/* Output channel driver table record 5 (0x53ac96) slot +8 (set period) for TPU-B channel 4 with
+   MDASM11 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel4Alt) */
+
+void cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(4,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(4,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_setTpuDutyWithTrack4 @ 0x0004e14c
+// Function: cm848_tpuBReadBackChannel4SetPwmDuty @ 0x0004e14c
 //
 
-void cm848_setTpuDutyWithTrack4(undefined4 param_1)
+/* Output channel driver table record 5 (0x53ac96) slot +12 (set duty) for TPU-B channel 4 with
+   MDASM11 read-back: records tpu_b_channel_4_read_back_expected_duty (stores 25600 - duty) then
+   sets the duty (was cm848_setTpuDutyWithTrack4) */
+
+void cm848_tpuBReadBackChannel4SetPwmDuty(word param_1)
 
 {
-  mios_ch11_duty_cycle_complement = 0x6400 - (short)param_1;
-  cm848_tpuSetChannelDuty(4,param_1);
+  tpu_b_channel_4_read_back_expected_duty = 0x6400 - param_1;
+  mpc555_tpuBSetPwmDuty(4,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_disableMiosResetTpu13_6 @ 0x0004e180
+// Function: cm848_tpuBReadBackChannel6EnablePwm @ 0x0004e180
 //
 
-void cm848_disableMiosResetTpu13_6(void)
+/* Output channel driver table record 7 (0x53acb6) slot +0 (enable) for TPU-B channel 6 with MDASM13
+   read-back: sets MDASM13 to input mode then starts the TPU-B PWM (was
+   cm848_disableMiosResetTpu13_6) */
+
+void cm848_tpuBReadBackChannel6EnablePwm(void)
 
 {
   mpc555_miosSetChannelInputMode(&MIOS_MDASM13_AR);
-  mpc555_tpuResetChannel(6);
+  mpc555_tpuBEnablePwmChannel(6);
   return;
 }
 
 
 
 //
-// Function: cm848_setMiosDutyCycle13 @ 0x0004e1b0
+// Function: cm848_tpuBReadBackChannel6ReadFeedback @ 0x0004e1b0
 //
 
-word cm848_setMiosDutyCycle13(void)
+/* Output channel driver table record 7 (0x53acb6) slot +4 (read feedback) for TPU-B channel 6 with
+   MDASM13 read-back: mpc555_miosCheckChannelFeedback on MDASM13 against
+   tpu_b_channel_6_read_back_expected_duty (was cm848_setMiosDutyCycle13) */
+
+word cm848_tpuBReadBackChannel6ReadFeedback(void)
 
 {
   word wVar1;
   
-  wVar1 = mpc555_miosCheckChannelFeedback(&MIOS_MDASM13_AR,(uint)mios_ch13_duty_cycle_complement);
+  wVar1 = mpc555_miosCheckChannelFeedback
+                    (&MIOS_MDASM13_AR,(uint)tpu_b_channel_6_read_back_expected_duty);
   return wVar1;
 }
 
 
 
 //
-// Function: cm848_configureTpuChannel6Alt @ 0x0004e1e4
+// Function: cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds @ 0x0004e1e4
 //
 
-void cm848_configureTpuChannel6Alt(undefined4 param_1)
+/* Output channel driver table record 7 (0x53acb6) slot +8 (set period) for TPU-B channel 6 with
+   MDASM13 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel6Alt) */
+
+void cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(6,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(6,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_setTpuDutyWithTrack6 @ 0x0004e20c
+// Function: cm848_tpuBReadBackChannel6SetPwmDuty @ 0x0004e20c
 //
 
-void cm848_setTpuDutyWithTrack6(undefined4 param_1)
+/* Output channel driver table record 7 (0x53acb6) slot +12 (set duty) for TPU-B channel 6 with
+   MDASM13 read-back: records tpu_b_channel_6_read_back_expected_duty (stores 25600 - duty) then
+   sets the duty (was cm848_setTpuDutyWithTrack6) */
+
+void cm848_tpuBReadBackChannel6SetPwmDuty(word param_1)
 
 {
-  mios_ch13_duty_cycle_complement = 0x6400 - (short)param_1;
-  cm848_tpuSetChannelDuty(6,param_1);
+  tpu_b_channel_6_read_back_expected_duty = 0x6400 - param_1;
+  mpc555_tpuBSetPwmDuty(6,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_disableMiosResetTpu12_7 @ 0x0004e240
+// Function: cm848_tpuBReadBackChannel7EnablePwm @ 0x0004e240
 //
 
-void cm848_disableMiosResetTpu12_7(void)
+/* Output channel driver table record 8 (0x53acc6) slot +0 (enable) for TPU-B channel 7 with MDASM12
+   read-back: sets MDASM12 to input mode then starts the TPU-B PWM (was
+   cm848_disableMiosResetTpu12_7) */
+
+void cm848_tpuBReadBackChannel7EnablePwm(void)
 
 {
   mpc555_miosSetChannelInputMode(&MIOS_MDASM12_AR);
-  mpc555_tpuResetChannel(7);
+  mpc555_tpuBEnablePwmChannel(7);
   return;
 }
 
 
 
 //
-// Function: cm848_setMiosDutyCycle12 @ 0x0004e270
+// Function: cm848_tpuBReadBackChannel7ReadFeedback @ 0x0004e270
 //
 
-word cm848_setMiosDutyCycle12(void)
+/* Output channel driver table record 8 (0x53acc6) slot +4 (read feedback) for TPU-B channel 7 with
+   MDASM12 read-back: mpc555_miosCheckChannelFeedback on MDASM12 against
+   tpu_b_channel_7_read_back_expected_duty (was cm848_setMiosDutyCycle12) */
+
+word cm848_tpuBReadBackChannel7ReadFeedback(void)
 
 {
   word wVar1;
   
-  wVar1 = mpc555_miosCheckChannelFeedback(&MIOS_MDASM12_AR,(uint)mios_ch12_duty_cycle_complement);
+  wVar1 = mpc555_miosCheckChannelFeedback
+                    (&MIOS_MDASM12_AR,(uint)tpu_b_channel_7_read_back_expected_duty);
   return wVar1;
 }
 
 
 
 //
-// Function: cm848_configureTpuChannel7Alt @ 0x0004e2a4
+// Function: cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds @ 0x0004e2a4
 //
 
-void cm848_configureTpuChannel7Alt(undefined4 param_1)
+/* Output channel driver table record 8 (0x53acc6) slot +8 (set period) for TPU-B channel 7 with
+   MDASM12 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel7Alt) */
+
+void cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuConfigureChannel(7,param_1);
+  mpc555_tpuBSetPwmPeriodMicroseconds(7,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_setTpuDutyWithTrack7 @ 0x0004e2cc
+// Function: cm848_tpuBReadBackChannel7SetPwmDuty @ 0x0004e2cc
 //
 
-void cm848_setTpuDutyWithTrack7(undefined4 param_1)
+/* Output channel driver table record 8 (0x53acc6) slot +12 (set duty) for TPU-B channel 7 with
+   MDASM12 read-back: records tpu_b_channel_7_read_back_expected_duty (stores 25600 - duty) then
+   sets the duty (was cm848_setTpuDutyWithTrack7) */
+
+void cm848_tpuBReadBackChannel7SetPwmDuty(word param_1)
 
 {
-  mios_ch12_duty_cycle_complement = 0x6400 - (short)param_1;
-  cm848_tpuSetChannelDuty(7,param_1);
+  tpu_b_channel_7_read_back_expected_duty = 0x6400 - param_1;
+  mpc555_tpuBSetPwmDuty(7,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput0Enable @ 0x0004e300
+// Function: cm848_tpuAChannel0EnablePwm @ 0x0004e300
 //
 
-void cm848_tpuOutput0Enable(void)
+/* Output channel driver table record 17 (0x53ad56) slot +0 (enable) for TPU-A channel 0 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput0Enable) */
+
+void cm848_tpuAChannel0EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(0);
+  mpc555_tpuAEnablePwmChannel(0);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput0Disable @ 0x0004e324
+// Function: cm848_tpuAChannel0SetPwmDuty @ 0x0004e324
 //
 
-void cm848_tpuOutput0Disable(undefined4 param_1)
+/* Output channel driver table record 17 (0x53ad56) slot +12 (set duty) for TPU-A channel 0 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput0Disable) */
+
+void cm848_tpuAChannel0SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(0,param_1);
+  mpc555_tpuASetPwmDuty(0,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput0SetPeriod @ 0x0004e34c
+// Function: cm848_tpuAChannel0SetPwmPeriodMicroseconds @ 0x0004e34c
 //
 
-void cm848_tpuOutput0SetPeriod(undefined4 param_1)
+/* Output channel driver table record 17 (0x53ad56) slot +8 (set period) for TPU-A channel 0 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput0SetPeriod) */
+
+void cm848_tpuAChannel0SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(0,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput1Enable @ 0x0004e374
+// Function: cm848_tpuAChannel1EnablePwm @ 0x0004e374
 //
 
-void cm848_tpuOutput1Enable(void)
+/* Output channel driver table record 18 (0x53ad66) slot +0 (enable) for TPU-A channel 1 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput1Enable) */
+
+void cm848_tpuAChannel1EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(1);
+  mpc555_tpuAEnablePwmChannel(1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput1Disable @ 0x0004e398
+// Function: cm848_tpuAChannel1SetPwmDuty @ 0x0004e398
 //
 
-void cm848_tpuOutput1Disable(undefined4 param_1)
+/* Output channel driver table record 18 (0x53ad66) slot +12 (set duty) for TPU-A channel 1 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput1Disable) */
+
+void cm848_tpuAChannel1SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(1,param_1);
+  mpc555_tpuASetPwmDuty(1,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput1SetPeriod @ 0x0004e3c0
+// Function: cm848_tpuAChannel1SetPwmPeriodMicroseconds @ 0x0004e3c0
 //
 
-void cm848_tpuOutput1SetPeriod(undefined4 param_1)
+/* Output channel driver table record 18 (0x53ad66) slot +8 (set period) for TPU-A channel 1 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput1SetPeriod) */
+
+void cm848_tpuAChannel1SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(1,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(1,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput2Enable @ 0x0004e3e8
+// Function: cm848_tpuAChannel2EnablePwm @ 0x0004e3e8
 //
 
-void cm848_tpuOutput2Enable(void)
+/* Output channel driver table record 19 (0x53ad76) slot +0 (enable) for TPU-A channel 2 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput2Enable) */
+
+void cm848_tpuAChannel2EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(2);
+  mpc555_tpuAEnablePwmChannel(2);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput2Disable @ 0x0004e40c
+// Function: cm848_tpuAChannel2SetPwmDuty @ 0x0004e40c
 //
 
-void cm848_tpuOutput2Disable(undefined4 param_1)
+/* Output channel driver table record 19 (0x53ad76) slot +12 (set duty) for TPU-A channel 2 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput2Disable) */
+
+void cm848_tpuAChannel2SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(2,param_1);
+  mpc555_tpuASetPwmDuty(2,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput2SetPeriod @ 0x0004e434
+// Function: cm848_tpuAChannel2SetPwmPeriodMicroseconds @ 0x0004e434
 //
 
-void cm848_tpuOutput2SetPeriod(undefined4 param_1)
+/* Output channel driver table record 19 (0x53ad76) slot +8 (set period) for TPU-A channel 2 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput2SetPeriod) */
+
+void cm848_tpuAChannel2SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(2,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(2,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput3Enable @ 0x0004e45c
+// Function: cm848_tpuAChannel3EnablePwm @ 0x0004e45c
 //
 
-void cm848_tpuOutput3Enable(void)
+/* Output channel driver table record 20 (0x53ad86) slot +0 (enable) for TPU-A channel 3 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput3Enable) */
+
+void cm848_tpuAChannel3EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(3);
+  mpc555_tpuAEnablePwmChannel(3);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput3Disable @ 0x0004e480
+// Function: cm848_tpuAChannel3SetPwmDuty @ 0x0004e480
 //
 
-void cm848_tpuOutput3Disable(undefined4 param_1)
+/* Output channel driver table record 20 (0x53ad86) slot +12 (set duty) for TPU-A channel 3 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput3Disable) */
+
+void cm848_tpuAChannel3SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(3,param_1);
+  mpc555_tpuASetPwmDuty(3,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput3SetPeriod @ 0x0004e4a8
+// Function: cm848_tpuAChannel3SetPwmPeriodMicroseconds @ 0x0004e4a8
 //
 
-void cm848_tpuOutput3SetPeriod(undefined4 param_1)
+/* Output channel driver table record 20 (0x53ad86) slot +8 (set period) for TPU-A channel 3 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput3SetPeriod) */
+
+void cm848_tpuAChannel3SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(3,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(3,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput4Enable @ 0x0004e4d0
+// Function: cm848_tpuAChannel4EnablePwm @ 0x0004e4d0
 //
 
-void cm848_tpuOutput4Enable(void)
+/* Output channel driver table record 21 (0x53ad96) slot +0 (enable) for TPU-A channel 4 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput4Enable) */
+
+void cm848_tpuAChannel4EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(4);
+  mpc555_tpuAEnablePwmChannel(4);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput4Disable @ 0x0004e4f4
+// Function: cm848_tpuAChannel4SetPwmDuty @ 0x0004e4f4
 //
 
-void cm848_tpuOutput4Disable(undefined4 param_1)
+/* Output channel driver table record 21 (0x53ad96) slot +12 (set duty) for TPU-A channel 4 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput4Disable) */
+
+void cm848_tpuAChannel4SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(4,param_1);
+  mpc555_tpuASetPwmDuty(4,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput4SetPeriod @ 0x0004e51c
+// Function: cm848_tpuAChannel4SetPwmPeriodMicroseconds @ 0x0004e51c
 //
 
-void cm848_tpuOutput4SetPeriod(undefined4 param_1)
+/* Output channel driver table record 21 (0x53ad96) slot +8 (set period) for TPU-A channel 4 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput4SetPeriod) */
+
+void cm848_tpuAChannel4SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(4,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(4,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput5Enable @ 0x0004e544
+// Function: cm848_tpuAChannel5EnablePwm @ 0x0004e544
 //
 
-void cm848_tpuOutput5Enable(void)
+/* Output channel driver table record 22 (0x53ada6) slot +0 (enable) for TPU-A channel 5 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput5Enable) */
+
+void cm848_tpuAChannel5EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(5);
+  mpc555_tpuAEnablePwmChannel(5);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput5Disable @ 0x0004e568
+// Function: cm848_tpuAChannel5SetPwmDuty @ 0x0004e568
 //
 
-void cm848_tpuOutput5Disable(undefined4 param_1)
+/* Output channel driver table record 22 (0x53ada6) slot +12 (set duty) for TPU-A channel 5 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput5Disable) */
+
+void cm848_tpuAChannel5SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(5,param_1);
+  mpc555_tpuASetPwmDuty(5,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput5SetPeriod @ 0x0004e590
+// Function: cm848_tpuAChannel5SetPwmPeriodMicroseconds @ 0x0004e590
 //
 
-void cm848_tpuOutput5SetPeriod(undefined4 param_1)
+/* Output channel driver table record 22 (0x53ada6) slot +8 (set period) for TPU-A channel 5 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput5SetPeriod) */
+
+void cm848_tpuAChannel5SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(5,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(5,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput6Enable @ 0x0004e5b8
+// Function: cm848_tpuAChannel6EnablePwm @ 0x0004e5b8
 //
 
-void cm848_tpuOutput6Enable(void)
+/* Output channel driver table record 23 (0x53adb6) slot +0 (enable) for TPU-A channel 6 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput6Enable) */
+
+void cm848_tpuAChannel6EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(6);
+  mpc555_tpuAEnablePwmChannel(6);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput6Disable @ 0x0004e5dc
+// Function: cm848_tpuAChannel6SetPwmDuty @ 0x0004e5dc
 //
 
-void cm848_tpuOutput6Disable(undefined4 param_1)
+/* Output channel driver table record 23 (0x53adb6) slot +12 (set duty) for TPU-A channel 6 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput6Disable) */
+
+void cm848_tpuAChannel6SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(6,param_1);
+  mpc555_tpuASetPwmDuty(6,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput6SetPeriod @ 0x0004e604
+// Function: cm848_tpuAChannel6SetPwmPeriodMicroseconds @ 0x0004e604
 //
 
-void cm848_tpuOutput6SetPeriod(undefined4 param_1)
+/* Output channel driver table record 23 (0x53adb6) slot +8 (set period) for TPU-A channel 6 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput6SetPeriod) */
+
+void cm848_tpuAChannel6SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(6,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(6,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput7Enable @ 0x0004e62c
+// Function: cm848_tpuAChannel7EnablePwm @ 0x0004e62c
 //
 
-void cm848_tpuOutput7Enable(void)
+/* Output channel driver table record 24 (0x53adc6) slot +0 (enable) for TPU-A channel 7 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput7Enable) */
+
+void cm848_tpuAChannel7EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(7);
+  mpc555_tpuAEnablePwmChannel(7);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput7Disable @ 0x0004e650
+// Function: cm848_tpuAChannel7SetPwmDuty @ 0x0004e650
 //
 
-void cm848_tpuOutput7Disable(undefined4 param_1)
+/* Output channel driver table record 24 (0x53adc6) slot +12 (set duty) for TPU-A channel 7 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput7Disable) */
+
+void cm848_tpuAChannel7SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(7,param_1);
+  mpc555_tpuASetPwmDuty(7,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput7SetPeriod @ 0x0004e678
+// Function: cm848_tpuAChannel7SetPwmPeriodMicroseconds @ 0x0004e678
 //
 
-void cm848_tpuOutput7SetPeriod(undefined4 param_1)
+/* Output channel driver table record 24 (0x53adc6) slot +8 (set period) for TPU-A channel 7 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput7SetPeriod) */
+
+void cm848_tpuAChannel7SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(7,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(7,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput8Enable @ 0x0004e6a0
+// Function: cm848_tpuAChannel8EnablePwm @ 0x0004e6a0
 //
 
-void cm848_tpuOutput8Enable(void)
+/* Output channel driver table record 25 (0x53add6) slot +0 (enable) for TPU-A channel 8 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput8Enable) */
+
+void cm848_tpuAChannel8EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(8);
+  mpc555_tpuAEnablePwmChannel(8);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput8Disable @ 0x0004e6c4
+// Function: cm848_tpuAChannel8SetPwmDuty @ 0x0004e6c4
 //
 
-void cm848_tpuOutput8Disable(undefined4 param_1)
+/* Output channel driver table record 25 (0x53add6) slot +12 (set duty) for TPU-A channel 8 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput8Disable) */
+
+void cm848_tpuAChannel8SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(8,param_1);
+  mpc555_tpuASetPwmDuty(8,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput8SetPeriod @ 0x0004e6ec
+// Function: cm848_tpuAChannel8SetPwmPeriodMicroseconds @ 0x0004e6ec
 //
 
-void cm848_tpuOutput8SetPeriod(undefined4 param_1)
+/* Output channel driver table record 25 (0x53add6) slot +8 (set period) for TPU-A channel 8 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput8SetPeriod) */
+
+void cm848_tpuAChannel8SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(8,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(8,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput9Enable @ 0x0004e714
+// Function: cm848_tpuAChannel9EnablePwm @ 0x0004e714
 //
 
-void cm848_tpuOutput9Enable(void)
+/* Output channel driver table record 26 (0x53ade6) slot +0 (enable) for TPU-A channel 9 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput9Enable) */
+
+void cm848_tpuAChannel9EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(9);
+  mpc555_tpuAEnablePwmChannel(9);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput9Disable @ 0x0004e738
+// Function: cm848_tpuAChannel9SetPwmDuty @ 0x0004e738
 //
 
-void cm848_tpuOutput9Disable(undefined4 param_1)
+/* Output channel driver table record 26 (0x53ade6) slot +12 (set duty) for TPU-A channel 9 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput9Disable) */
+
+void cm848_tpuAChannel9SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(9,param_1);
+  mpc555_tpuASetPwmDuty(9,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput9SetPeriod @ 0x0004e760
+// Function: cm848_tpuAChannel9SetPwmPeriodMicroseconds @ 0x0004e760
 //
 
-void cm848_tpuOutput9SetPeriod(undefined4 param_1)
+/* Output channel driver table record 26 (0x53ade6) slot +8 (set period) for TPU-A channel 9 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput9SetPeriod) */
+
+void cm848_tpuAChannel9SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(9,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(9,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput10Enable @ 0x0004e788
+// Function: cm848_tpuAChannel10EnablePwm @ 0x0004e788
 //
 
-void cm848_tpuOutput10Enable(void)
+/* Output channel driver table record 27 (0x53adf6) slot +0 (enable) for TPU-A channel 10 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput10Enable) */
+
+void cm848_tpuAChannel10EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(10);
+  mpc555_tpuAEnablePwmChannel(10);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput10Disable @ 0x0004e7ac
+// Function: cm848_tpuAChannel10SetPwmDuty @ 0x0004e7ac
 //
 
-void cm848_tpuOutput10Disable(undefined4 param_1)
+/* Output channel driver table record 27 (0x53adf6) slot +12 (set duty) for TPU-A channel 10 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput10Disable) */
+
+void cm848_tpuAChannel10SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(10,param_1);
+  mpc555_tpuASetPwmDuty(10,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput10SetPeriod @ 0x0004e7d4
+// Function: cm848_tpuAChannel10SetPwmPeriodMicroseconds @ 0x0004e7d4
 //
 
-void cm848_tpuOutput10SetPeriod(undefined4 param_1)
+/* Output channel driver table record 27 (0x53adf6) slot +8 (set period) for TPU-A channel 10 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput10SetPeriod) */
+
+void cm848_tpuAChannel10SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(10,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(10,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput11Enable @ 0x0004e7fc
+// Function: cm848_tpuAChannel11EnablePwm @ 0x0004e7fc
 //
 
-void cm848_tpuOutput11Enable(void)
+/* Output channel driver table record 28 (0x53ae06) slot +0 (enable) for TPU-A channel 11 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput11Enable) */
+
+void cm848_tpuAChannel11EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(0xb);
+  mpc555_tpuAEnablePwmChannel(0xb);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput11Disable @ 0x0004e820
+// Function: cm848_tpuAChannel11SetPwmDuty @ 0x0004e820
 //
 
-void cm848_tpuOutput11Disable(undefined4 param_1)
+/* Output channel driver table record 28 (0x53ae06) slot +12 (set duty) for TPU-A channel 11 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput11Disable) */
+
+void cm848_tpuAChannel11SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(0xb,param_1);
+  mpc555_tpuASetPwmDuty(0xb,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput11SetPeriod @ 0x0004e848
+// Function: cm848_tpuAChannel11SetPwmPeriodMicroseconds @ 0x0004e848
 //
 
-void cm848_tpuOutput11SetPeriod(undefined4 param_1)
+/* Output channel driver table record 28 (0x53ae06) slot +8 (set period) for TPU-A channel 11 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput11SetPeriod) */
+
+void cm848_tpuAChannel11SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(0xb,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xb,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput12Enable @ 0x0004e870
+// Function: cm848_tpuAChannel12EnablePwm @ 0x0004e870
 //
 
-void cm848_tpuOutput12Enable(void)
+/* Output channel driver table record 29 (0x53ae16) slot +0 (enable) for TPU-A channel 12 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput12Enable) */
+
+void cm848_tpuAChannel12EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(0xc);
+  mpc555_tpuAEnablePwmChannel(0xc);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput12Disable @ 0x0004e894
+// Function: cm848_tpuAChannel12SetPwmDuty @ 0x0004e894
 //
 
-void cm848_tpuOutput12Disable(undefined4 param_1)
+/* Output channel driver table record 29 (0x53ae16) slot +12 (set duty) for TPU-A channel 12 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput12Disable) */
+
+void cm848_tpuAChannel12SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(0xc,param_1);
+  mpc555_tpuASetPwmDuty(0xc,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput12SetPeriod @ 0x0004e8bc
+// Function: cm848_tpuAChannel12SetPwmPeriodMicroseconds @ 0x0004e8bc
 //
 
-void cm848_tpuOutput12SetPeriod(undefined4 param_1)
+/* Output channel driver table record 29 (0x53ae16) slot +8 (set period) for TPU-A channel 12 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput12SetPeriod) */
+
+void cm848_tpuAChannel12SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(0xc,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xc,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput13Enable @ 0x0004e8e4
+// Function: cm848_tpuAChannel13EnablePwm @ 0x0004e8e4
 //
 
-void cm848_tpuOutput13Enable(void)
+/* Output channel driver table record 30 (0x53ae26) slot +0 (enable) for TPU-A channel 13 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput13Enable) */
+
+void cm848_tpuAChannel13EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(0xd);
+  mpc555_tpuAEnablePwmChannel(0xd);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput13Disable @ 0x0004e908
+// Function: cm848_tpuAChannel13SetPwmDuty @ 0x0004e908
 //
 
-void cm848_tpuOutput13Disable(undefined4 param_1)
+/* Output channel driver table record 30 (0x53ae26) slot +12 (set duty) for TPU-A channel 13 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput13Disable) */
+
+void cm848_tpuAChannel13SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(0xd,param_1);
+  mpc555_tpuASetPwmDuty(0xd,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput13SetPeriod @ 0x0004e930
+// Function: cm848_tpuAChannel13SetPwmPeriodMicroseconds @ 0x0004e930
 //
 
-void cm848_tpuOutput13SetPeriod(undefined4 param_1)
+/* Output channel driver table record 30 (0x53ae26) slot +8 (set period) for TPU-A channel 13 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput13SetPeriod) */
+
+void cm848_tpuAChannel13SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(0xd,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xd,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput14Enable @ 0x0004e958
+// Function: cm848_tpuAChannel14EnablePwm @ 0x0004e958
 //
 
-void cm848_tpuOutput14Enable(void)
+/* Output channel driver table record 31 (0x53ae36) slot +0 (enable) for TPU-A channel 14 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput14Enable) */
+
+void cm848_tpuAChannel14EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(0xe);
+  mpc555_tpuAEnablePwmChannel(0xe);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput14Disable @ 0x0004e97c
+// Function: cm848_tpuAChannel14SetPwmDuty @ 0x0004e97c
 //
 
-void cm848_tpuOutput14Disable(undefined4 param_1)
+/* Output channel driver table record 31 (0x53ae36) slot +12 (set duty) for TPU-A channel 14 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput14Disable) */
+
+void cm848_tpuAChannel14SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(0xe,param_1);
+  mpc555_tpuASetPwmDuty(0xe,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput14SetPeriod @ 0x0004e9a4
+// Function: cm848_tpuAChannel14SetPwmPeriodMicroseconds @ 0x0004e9a4
 //
 
-void cm848_tpuOutput14SetPeriod(undefined4 param_1)
+/* Output channel driver table record 31 (0x53ae36) slot +8 (set period) for TPU-A channel 14 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput14SetPeriod) */
+
+void cm848_tpuAChannel14SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(0xe,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xe,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput15Enable @ 0x0004e9cc
+// Function: cm848_tpuAChannel15EnablePwm @ 0x0004e9cc
 //
 
-void cm848_tpuOutput15Enable(void)
+/* Output channel driver table record 32 (0x53ae46) slot +0 (enable) for TPU-A channel 15 - forwards
+   to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput15Enable) */
+
+void cm848_tpuAChannel15EnablePwm(void)
 
 {
-  mpc555_tpuEnableChannelOutput(0xf);
+  mpc555_tpuAEnablePwmChannel(0xf);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput15Disable @ 0x0004e9f0
+// Function: cm848_tpuAChannel15SetPwmDuty @ 0x0004e9f0
 //
 
-void cm848_tpuOutput15Disable(undefined4 param_1)
+/* Output channel driver table record 32 (0x53ae46) slot +12 (set duty) for TPU-A channel 15 -
+   forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput15Disable) */
+
+void cm848_tpuAChannel15SetPwmDuty(word param_1)
 
 {
-  cm848_tpuDisableChannelOutput(0xf,param_1);
+  mpc555_tpuASetPwmDuty(0xf,param_1);
   return;
 }
 
 
 
 //
-// Function: cm848_tpuOutput15SetPeriod @ 0x0004ea18
+// Function: cm848_tpuAChannel15SetPwmPeriodMicroseconds @ 0x0004ea18
 //
 
-void cm848_tpuOutput15SetPeriod(undefined4 param_1)
+/* Output channel driver table record 32 (0x53ae46) slot +8 (set period) for TPU-A channel 15 -
+   forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput15SetPeriod) */
+
+void cm848_tpuAChannel15SetPwmPeriodMicroseconds(undefined4 param_1)
 
 {
-  cm848_tpuSetChannelPeriod(0xf,param_1);
+  mpc555_tpuASetPwmPeriodMicroseconds(0xf,param_1);
   return;
 }
 
@@ -51462,11 +51873,11 @@ void cm848_engineStartCompletionB(void)
    compares the captured edges (AR:BR non-zero) and the pin state (SCRD bit 15) with the commanded
    duty (1/256 % per count; 25600 = 100 %) and returns 0 when they agree / 1 when the pin is high or
    toggling where it should be low / 2 when it is low or toggling where it should be high; then
-   clears AR:BR. Its only callers are cm848_setMiosDutyCycle11-14; their partners
-   cm848_disableMiosResetTpu11_4 / 12_7 / 13_6 / 14_10 put MDASM11 / 12 / 13 / 14 in input mode and
-   reset TPU channels 4 / 7 / 6 / 10 - so MDASM11-14 look like read-back inputs for those TPU
-   outputs. Was cm848_miosSetChannelDutyCycle | review-function-readability reviewed 2026-11-13 -
-   Readability Medium Accuracy Confidence High */
+   clears AR:BR. Its only callers are the read-feedback slots cm848_tpuBReadBackChannel4 / 6 / 7 /
+   10ReadFeedback; the same records' enable slots (cm848_tpuBReadBackChannel{N}EnablePwm) put
+   MDASM11 / 13 / 12 / 14 in input mode and start TPU-B channels 4 / 6 / 7 / 10 - so MDASM11-14 look
+   like read-back inputs for those TPU-B outputs. Was cm848_miosSetChannelDutyCycle |
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
 word mpc555_miosCheckChannelFeedback(int *channel_registers,int commanded_duty)
 
@@ -51505,8 +51916,8 @@ LAB_00054e9c:
 
 /* Writes mode 1 to an MDASM channel's status/control register (SCRD) - an input mode (the MPC555
    manual's input pulse-width measurement) so pin edges latch into AR / BR for
-   mpc555_miosCheckChannelFeedback. Called next to a TPU channel reset by
-   cm848_disableMiosResetTpu11_4 / 12_7 / 13_6 / 14_10. Was cm848_miosChannelDisable |
+   mpc555_miosCheckChannelFeedback. Called by the read-back enables cm848_tpuBReadBackChannel4 / 6 /
+   7 / 10EnablePwm right before they start their TPU-B channel. Was cm848_miosChannelDisable |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
     */
 
@@ -51691,10 +52102,17 @@ void mpc555_miosSetPwmSubmodulePeriodMicroseconds(word *pwm_registers,uint perio
 
 
 //
-// Function: mpc555_tpuResetChannel @ 0x00055020
+// Function: mpc555_tpuBEnablePwmChannel @ 0x00055020
 //
 
-void mpc555_tpuResetChannel(uint param_1)
+/* Starts a TPU-B channel as a PWM output: priority 0 (stopped) / channel interrupt enable and
+   status cleared / channel function 7 / PARAM0 (high time) = 0 / PARAM1 (period) = 0x8000 / host
+   sequence 0 / host service request 3 (initialise) / priority 1 (running). Output channel driver
+   table slot +0 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5 / 7 / 8 / 11 /
+   12. Was mpc555_tpuResetChannel | review-function-readability reviewed 2026-11-14 - Readability
+   Low Accuracy Confidence Medium */
+
+void mpc555_tpuBEnablePwmChannel(uint channel)
 
 {
   uint uVar1;
@@ -51705,20 +52123,20 @@ void mpc555_tpuResetChannel(uint param_1)
   int iVar6;
   ushort *puVar7;
   
-  iVar3 = (int)param_1 >> 3;
-  iVar6 = param_1 + (iVar3 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8;
+  iVar3 = (int)channel >> 3;
+  iVar6 = channel + (iVar3 + (uint)((int)channel < 0 && (channel & 7) != 0)) * -8;
   uVar1 = iVar6 * 2;
   puVar5 = (ushort *)((int)&tpu_b_mcr + iVar3 * -2 + 0x1e);
   *puVar5 = *puVar5 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
   wVar2 = tpu_b_mcr.CIER;
-  tpu_b_mcr.CIER = wVar2 & ~(ushort)(1 << (param_1 & 0x3f));
+  tpu_b_mcr.CIER = wVar2 & ~(ushort)(1 << (channel & 0x3f));
   wVar2 = tpu_b_mcr.CISR;
-  tpu_b_mcr.CISR = wVar2 & ~(ushort)(1 << (param_1 & 0x3f));
-  iVar4 = param_1 + (((int)param_1 >> 2) + (uint)((int)param_1 < 0 && (param_1 & 3) != 0)) * -4;
-  puVar7 = (ushort *)((int)&tpu_b_mcr + ((int)param_1 >> 2) * -2 + 0x12);
+  tpu_b_mcr.CISR = wVar2 & ~(ushort)(1 << (channel & 0x3f));
+  iVar4 = channel + (((int)channel >> 2) + (uint)((int)channel < 0 && (channel & 3) != 0)) * -4;
+  puVar7 = (ushort *)((int)&tpu_b_mcr + ((int)channel >> 2) * -2 + 0x12);
   *puVar7 = *puVar7 & ~(ushort)(0xf << (iVar4 * 4 & 0x3cU)) | (ushort)(7 << (iVar4 * 4 & 0x3cU));
-  (&tpu_b_ch0_param0)[param_1].PARAM0 = 0;
-  (&tpu_b_ch0_param0)[param_1].PARAM1 = 0x8000;
+  (&tpu_b_ch0_param0)[channel].PARAM0 = 0;
+  (&tpu_b_ch0_param0)[channel].PARAM1 = 0x8000;
   puVar7 = (ushort *)((int)&tpu_b_mcr + iVar3 * -2 + 0x16);
   *puVar7 = *puVar7 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
   *(short *)((int)&tpu_b_mcr + iVar3 * -2 + 0x1a) = (short)(3 << (iVar6 * 2 & 0x3fU));
@@ -51729,39 +52147,52 @@ void mpc555_tpuResetChannel(uint param_1)
 
 
 //
-// Function: cm848_tpuSetChannelDuty @ 0x00055178
+// Function: mpc555_tpuBSetPwmDuty @ 0x00055178
 //
 
-void cm848_tpuSetChannelDuty(int param_1,ushort param_2)
+/* Sets a TPU-B PWM channel's duty (1/256 % per count; 25600 = 100 %): PARAM0 (high time) = PARAM1
+   (period) x duty / 25600 - 0 at 0 % and the full period at 100 % and above. Output channel driver
+   table slot +12 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5 / 7 / 8 / 11
+   / 12. Was cm848_tpuSetChannelDuty | review-function-readability reviewed 2026-11-14 - Readability
+   Medium Accuracy Confidence High */
+
+void mpc555_tpuBSetPwmDuty(int channel,word duty)
 
 {
   undefined2 uVar1;
   uint uVar2;
   undefined4 local_8;
   
-  uVar2._0_2_ = (&tpu_b_ch0_param0)[param_1].PARAM0;
-  uVar2._2_2_ = (&tpu_b_ch0_param0)[param_1].PARAM1;
+  uVar2._0_2_ = (&tpu_b_ch0_param0)[channel].PARAM0;
+  uVar2._2_2_ = (&tpu_b_ch0_param0)[channel].PARAM1;
   uVar1 = uVar2._2_2_;
-  if (param_2 < 0x6400) {
-    if (param_2 == 0) {
+  if (duty < 0x6400) {
+    if (duty == 0) {
       uVar1 = 0;
     }
     else {
-      uVar1 = (short)(((uVar2 & 0xffff) * (uint)param_2) / 0x6400);
+      uVar1 = (short)(((uVar2 & 0xffff) * (uint)duty) / 0x6400);
     }
   }
-  (&tpu_b_ch0_param0)[param_1].PARAM0 = uVar1;
-  (&tpu_b_ch0_param0)[param_1].PARAM1 = uVar2._2_2_;
+  (&tpu_b_ch0_param0)[channel].PARAM0 = uVar1;
+  (&tpu_b_ch0_param0)[channel].PARAM1 = uVar2._2_2_;
   return;
 }
 
 
 
 //
-// Function: cm848_tpuConfigureChannel @ 0x000551e4
+// Function: mpc555_tpuBSetPwmPeriodMicroseconds @ 0x000551e4
 //
 
-void cm848_tpuConfigureChannel(int param_1,uint param_2)
+/* Sets a TPU-B PWM channel's period from microseconds and keeps its duty: duty = PARAM0 x 25600 /
+   PARAM1; new PARAM1 = period / 3.2 (period x 0xa001 / 0x20004): the TPU-B TCR1 tick is 3.2 us
+   (TPUMCR 0x4430 - PSCK clear) or 0x7fff at 104855 us and above; PARAM0 is re-derived from the
+   duty. Output channel driver table slot +8 for records 1-16 (cm848_tpuBChannel{N}*) and the
+   read-back records 5 / 7 / 8 / 11 / 12. Was cm848_tpuConfigureChannel |
+   review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High */
+
+void mpc555_tpuBSetPwmPeriodMicroseconds(int channel,uint period_microseconds)
 
 {
   uint uVar1;
@@ -51769,11 +52200,11 @@ void cm848_tpuConfigureChannel(int param_1,uint param_2)
   uint uVar3;
   undefined4 local_8;
   
-  uVar3._0_2_ = (&tpu_b_ch0_param0)[param_1].PARAM0;
-  uVar3._2_2_ = (&tpu_b_ch0_param0)[param_1].PARAM1;
+  uVar3._0_2_ = (&tpu_b_ch0_param0)[channel].PARAM0;
+  uVar3._2_2_ = (&tpu_b_ch0_param0)[channel].PARAM1;
   uVar3 = ((uVar3 >> 0x10) * 0x6400) / (uVar3 & 0xffff);
-  if (param_2 < 0x19997) {
-    uVar1 = (param_2 * 0xa001) / 0x20004;
+  if (period_microseconds < 0x19997) {
+    uVar1 = (period_microseconds * 0xa001) / 0x20004;
   }
   else {
     uVar1 = 0x7fff;
@@ -51787,18 +52218,24 @@ void cm848_tpuConfigureChannel(int param_1,uint param_2)
       uVar2 = (short)((uVar1 * (uVar3 & 0xffff)) / 0x6400);
     }
   }
-  (&tpu_b_ch0_param0)[param_1].PARAM0 = uVar2;
-  (&tpu_b_ch0_param0)[param_1].PARAM1 = (short)uVar1;
+  (&tpu_b_ch0_param0)[channel].PARAM0 = uVar2;
+  (&tpu_b_ch0_param0)[channel].PARAM1 = (short)uVar1;
   return;
 }
 
 
 
 //
-// Function: mpc555_tpuEnableChannelOutput @ 0x00055294
+// Function: mpc555_tpuAEnablePwmChannel @ 0x00055294
 //
 
-void mpc555_tpuEnableChannelOutput(uint param_1)
+/* Starts a TPU-A channel as a PWM output: priority 0 (stopped) / channel interrupt enable and
+   status cleared / channel function 7 / PARAM0 (high time) = 0 / PARAM1 (period) = 0x8000 / host
+   sequence 0 / host service request 3 (initialise) / priority 1 (running). Output channel driver
+   table slot +0 for records 17-32 (cm848_tpuAChannel{N}*). Was mpc555_tpuEnableChannelOutput |
+   review-function-readability reviewed 2026-11-14 - Readability Low Accuracy Confidence Medium */
+
+void mpc555_tpuAEnablePwmChannel(uint channel)
 
 {
   uint uVar1;
@@ -51809,20 +52246,20 @@ void mpc555_tpuEnableChannelOutput(uint param_1)
   int iVar6;
   ushort *puVar7;
   
-  iVar3 = (int)param_1 >> 3;
-  iVar6 = param_1 + (iVar3 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8;
+  iVar3 = (int)channel >> 3;
+  iVar6 = channel + (iVar3 + (uint)((int)channel < 0 && (channel & 7) != 0)) * -8;
   uVar1 = iVar6 * 2;
   puVar5 = (ushort *)((int)&tpu_a_mcr + iVar3 * -2 + 0x1e);
   *puVar5 = *puVar5 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
   wVar2 = tpu_a_mcr.CIER;
-  tpu_a_mcr.CIER = wVar2 & ~(ushort)(1 << (param_1 & 0x3f));
+  tpu_a_mcr.CIER = wVar2 & ~(ushort)(1 << (channel & 0x3f));
   wVar2 = tpu_a_mcr.CISR;
-  tpu_a_mcr.CISR = wVar2 & ~(ushort)(1 << (param_1 & 0x3f));
-  iVar4 = param_1 + (((int)param_1 >> 2) + (uint)((int)param_1 < 0 && (param_1 & 3) != 0)) * -4;
-  puVar7 = (ushort *)((int)&tpu_a_mcr + ((int)param_1 >> 2) * -2 + 0x12);
+  tpu_a_mcr.CISR = wVar2 & ~(ushort)(1 << (channel & 0x3f));
+  iVar4 = channel + (((int)channel >> 2) + (uint)((int)channel < 0 && (channel & 3) != 0)) * -4;
+  puVar7 = (ushort *)((int)&tpu_a_mcr + ((int)channel >> 2) * -2 + 0x12);
   *puVar7 = *puVar7 & ~(ushort)(0xf << (iVar4 * 4 & 0x3cU)) | (ushort)(7 << (iVar4 * 4 & 0x3cU));
-  (&tpu_a_ch0_param0)[param_1].PARAM0 = 0;
-  (&tpu_a_ch0_param0)[param_1].PARAM1 = 0x8000;
+  (&tpu_a_ch0_param0)[channel].PARAM0 = 0;
+  (&tpu_a_ch0_param0)[channel].PARAM1 = 0x8000;
   puVar7 = (ushort *)((int)&tpu_a_mcr + iVar3 * -2 + 0x16);
   *puVar7 = *puVar7 & ~(ushort)(3 << (uVar1 & 0x3f)) | (ushort)(0 << (iVar6 * 2 & 0x3fU));
   *(short *)((int)&tpu_a_mcr + iVar3 * -2 + 0x1a) = (short)(3 << (iVar6 * 2 & 0x3fU));
@@ -51833,39 +52270,52 @@ void mpc555_tpuEnableChannelOutput(uint param_1)
 
 
 //
-// Function: cm848_tpuDisableChannelOutput @ 0x000553ec
+// Function: mpc555_tpuASetPwmDuty @ 0x000553ec
 //
 
-void cm848_tpuDisableChannelOutput(int param_1,ushort param_2)
+/* Sets a TPU-A PWM channel's duty (1/256 % per count; 25600 = 100 %): PARAM0 (high time) = PARAM1
+   (period) x duty / 25600 - 0 at 0 % and the full period at 100 % and above. Output channel driver
+   table slot +12 for records 17-32 (cm848_tpuAChannel{N}*). Was cm848_tpuDisableChannelOutput - it
+   sets the duty and does not disable anything | review-function-readability reviewed 2026-11-14 -
+   Readability Medium Accuracy Confidence High */
+
+void mpc555_tpuASetPwmDuty(int channel,word duty)
 
 {
   undefined2 uVar1;
   uint uVar2;
   undefined4 local_8;
   
-  uVar2._0_2_ = (&tpu_a_ch0_param0)[param_1].PARAM0;
-  uVar2._2_2_ = (&tpu_a_ch0_param0)[param_1].PARAM1;
+  uVar2._0_2_ = (&tpu_a_ch0_param0)[channel].PARAM0;
+  uVar2._2_2_ = (&tpu_a_ch0_param0)[channel].PARAM1;
   uVar1 = uVar2._2_2_;
-  if (param_2 < 0x6400) {
-    if (param_2 == 0) {
+  if (duty < 0x6400) {
+    if (duty == 0) {
       uVar1 = 0;
     }
     else {
-      uVar1 = (short)(((uVar2 & 0xffff) * (uint)param_2) / 0x6400);
+      uVar1 = (short)(((uVar2 & 0xffff) * (uint)duty) / 0x6400);
     }
   }
-  (&tpu_a_ch0_param0)[param_1].PARAM0 = uVar1;
-  (&tpu_a_ch0_param0)[param_1].PARAM1 = uVar2._2_2_;
+  (&tpu_a_ch0_param0)[channel].PARAM0 = uVar1;
+  (&tpu_a_ch0_param0)[channel].PARAM1 = uVar2._2_2_;
   return;
 }
 
 
 
 //
-// Function: cm848_tpuSetChannelPeriod @ 0x00055458
+// Function: mpc555_tpuASetPwmPeriodMicroseconds @ 0x00055458
 //
 
-void cm848_tpuSetChannelPeriod(int param_1,uint param_2)
+/* Sets a TPU-A PWM channel's period from microseconds and keeps its duty: duty = PARAM0 x 25600 /
+   PARAM1; new PARAM1 = period x 2.5 (period x 0x5000a / 0x20004): the TPU-A TCR1 tick is 0.4 us
+   (TPUMCR 0x4460 - PSCK set; the only prescaler difference from TPU-B) or 0x7fff at 13107 us and
+   above; PARAM0 is re-derived from the duty. Output channel driver table slot +8 for records 17-32
+   (cm848_tpuAChannel{N}*). Was cm848_tpuSetChannelPeriod | review-function-readability reviewed
+   2026-11-14 - Readability Medium Accuracy Confidence High */
+
+void mpc555_tpuASetPwmPeriodMicroseconds(int channel,uint period_microseconds)
 
 {
   uint uVar1;
@@ -51873,11 +52323,11 @@ void cm848_tpuSetChannelPeriod(int param_1,uint param_2)
   uint uVar3;
   undefined4 local_8;
   
-  uVar3._0_2_ = (&tpu_a_ch0_param0)[param_1].PARAM0;
-  uVar3._2_2_ = (&tpu_a_ch0_param0)[param_1].PARAM1;
+  uVar3._0_2_ = (&tpu_a_ch0_param0)[channel].PARAM0;
+  uVar3._2_2_ = (&tpu_a_ch0_param0)[channel].PARAM1;
   uVar3 = ((uVar3 >> 0x10) * 0x6400) / (uVar3 & 0xffff);
-  if (param_2 < 0x3333) {
-    uVar1 = (param_2 * 0x5000a) / 0x20004;
+  if (period_microseconds < 0x3333) {
+    uVar1 = (period_microseconds * 0x5000a) / 0x20004;
   }
   else {
     uVar1 = 0x7fff;
@@ -51891,8 +52341,8 @@ void cm848_tpuSetChannelPeriod(int param_1,uint param_2)
       uVar2 = (short)((uVar1 * (uVar3 & 0xffff)) / 0x6400);
     }
   }
-  (&tpu_a_ch0_param0)[param_1].PARAM0 = uVar2;
-  (&tpu_a_ch0_param0)[param_1].PARAM1 = (short)uVar1;
+  (&tpu_a_ch0_param0)[channel].PARAM0 = uVar2;
+  (&tpu_a_ch0_param0)[channel].PARAM1 = (short)uVar1;
   return;
 }
 
@@ -87533,6 +87983,66 @@ void cm848_initProtectionTimers(void)
 
 
 //
+// Function: cm848_outputChannelNoneEnable @ 0x0053a0fc
+//
+
+/* Output channel driver table record 0 (no output) slot +0 (enable): a bare blr - that slot is its
+   only referrer */
+
+void cm848_outputChannelNoneEnable(void)
+
+{
+  return;
+}
+
+
+
+//
+// Function: cm848_outputChannelNoneSetPeriod @ 0x0053a100
+//
+
+/* Output channel driver table record 0 (no output) slot +8 (set period): a bare blr - that slot is
+   its only referrer */
+
+void cm848_outputChannelNoneSetPeriod(void)
+
+{
+  return;
+}
+
+
+
+//
+// Function: cm848_outputChannelNoneSetDuty @ 0x0053a104
+//
+
+/* Output channel driver table record 0 (no output) slot +12 (set duty): a bare blr - that slot is
+   its only referrer */
+
+void cm848_outputChannelNoneSetDuty(void)
+
+{
+  return;
+}
+
+
+
+//
+// Function: cm848_outputChannelReadFeedbackNone @ 0x0053a108
+//
+
+/* Read-feedback slot (+4) of the 46 output channel driver table records without a read-back: li r3
+   0 / blr - returns 0 (no fault); all 46 pointers to it are inside the table */
+
+undefined4 cm848_outputChannelReadFeedbackNone(void)
+
+{
+  return 0;
+}
+
+
+
+//
 // Function: hpcr_protectionTimerMonitor @ 0x0053a110
 //
 
@@ -87586,4 +88096,4 @@ void hpcr_protectionTimerMonitor(void)
 
 
 
-// Export complete - 1959 functions processed
+// Export complete - 1964 functions processed

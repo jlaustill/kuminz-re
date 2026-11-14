@@ -165,7 +165,7 @@ address,reason
 0x0004d728,mid-function split inside cm848_miosPwm19Enable +0xc (was cm848_miosTimer19InitPeriodAlt)
 0x0004d754,mid-function split inside cm848_miosPwm19SetDuty +0x10 (was cm848_miosTimer19ScaleDefault)
 0x0004d77c,mid-function split inside cm848_miosPwm19SetPeriodMicroseconds +0xc (was cm848_miosTimer19SetValueAlt)
-0x0004d7a8,mid-function split inside cm848_tpuChannel0Reset +0xc (was cm848_miosTimer20Configure)
+0x0004d7a8,mid-function split inside cm848_tpuBChannel0EnablePwm +0xc (was cm848_miosTimer20Configure)
 0x0004ea78,mid-function split inside cm848_setDatalinkSwitchStateIfPriority +0x38 (was cm848_orBitsInArray)
 0x0004eabc,mid-function split inside cm848_clearDatalinkSwitchStateIfPriority +0x38 (was cm848_clearBitsInArray)
 0x0004eb00,mid-function split inside cm848_readSwitchHardwareInput +0x38 (was cm848_checkProtectionBitWarningState)
