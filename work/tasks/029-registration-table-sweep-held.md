@@ -7,6 +7,13 @@ trans-temp corrections. Apply individually after confirming.
 
 ## other-indirect-dispatch
 
+> **Applied 2026-11-13 (PR #48, todo 034):** the table was walked in full (0x53ac46, 51 records) and its base labels
+> renamed by slot - `output_channel_driver_table_enable` / `_read_feedback` (not "mios_duty": slot +4 is the
+> read-back query, the shared stub returns 0) / `_set_period` / `_set_duty`. `index_hpcr` ->
+> `governor_pressure_solenoid_output_channel_cal`; `index_f` -> `alternator_field_output_channel_cal` (the charging
+> evidence below); the Low-confidence words got neutral `actuator_output_channel_{a,b,c,d,e,g,h}_cal` names with
+> their consumers and calibration values in the comments. The rest of this section is still held.
+
 - **global** 0x0053ac46 j1939_pgn_handler_table -> output_channel_driver_table (High): mpc555_initTpuTimingInterrupts calls (**(code**)(&j1939_pgn_handler_table + index_a*0x10))() to configure TPU ch11 - 17 non-J1939 callers (fuel/charging/TPU) - entries are named tpuChannel*/miosChanne
 - **global** 0x0053ac4a PTR_LAB_0053ac4a -> output_channel_driver_table_mios_duty (Medium): hpcr_protectionTimerMonitor: (*(code*)(&PTR_LAB_0053ac4a)[*pwVar4*4])() - findptr 0x53ac9a/acba/acca/acfa/ad0a (rows 5/7/8/11/12) hold setMiosDutyCycle11/13/12/14 + FUN_0004dfd4 - rest = null 0x53a108
 - **global** 0x0053ac4e j1939_pgn_handler_table_func2 -> output_channel_driver_table_configure (High): callers take &j1939_pgn_handler_table_func2 (0x53ac4e = entry0 +8) + index*0x10 then (**(code**))() - every entry +8 is the channel Configure/SetPwm op
