@@ -381,6 +381,10 @@ public class ApplyFunctionDefinitions extends GhidraScript {
             case "ushort":
             case "short":
                 return WordDataType.dataType;
+            case "int32_t":
+                // Signed 32-bit. "int" below keeps mapping to unsigned dword so existing rows do not
+                // re-render (ApplyStructures / ApplyGlobalVariableTypes map "int" to signed int instead).
+                return IntegerDataType.dataType;
             case "uint32_t":
             case "dword":
             case "uint":
