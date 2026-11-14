@@ -70,8 +70,9 @@ diag handlers) — the decompiler then assumes r4 is preserved and swaps the wro
 call site. To undo a bad prototype, fix/remove the row and rebuild.
 
 **Type keywords (`function_definitions.csv` and `local_variables.csv`):**
-- `int` / `uint` / `dword` / `uint32_t` → unsigned `dword`. For a signed 32-bit value use **`int32_t`** (signed `int`, added 2026-11-14). The `int` mapping was left alone so existing rows do not re-render. `global_variables.csv` / `structure_definitions.csv` map `int` to signed `int` — the mappers differ.
-- `short` / `ushort` / `word` / `uint16_t` → unsigned `word`. There is no signed 16-bit keyword yet.
+- `int` / `uint` / `dword` / `uint32_t` → unsigned `dword`. For a signed 32-bit value use **`int32_t`** (signed `int`, added 2026-11-14). The `int` mapping was left alone so existing rows do not re-render.
+- `short` / `ushort` / `word` / `uint16_t` → unsigned `word`. There is no signed 16-bit keyword for prototypes or locals yet.
+- The other CSVs use different mappers: `structure_definitions.csv` (ApplyStructures) maps `int` / `short` to **signed** types, and `global_variables.csv` (ImportAnalysis) has its own signed keywords `i8` / `i16` / `i32` and no `int` case (an `int` there goes to a named-type lookup). ApplyGlobalVariableTypes is a further copy, but only the unused `cmd_vartypes` reaches it.
 - `undefined4` locks only the **name**; the decompiler keeps inferring the type. Use it for a 4-byte parameter whose inferred type is already right.
 - A 2-byte parameter committed as `undefined4` renders as `x._2_2_` sub-pieces — give it `ushort`.
 - Locked pointer types (`int *`, `word *`, `undefined4 *`) and committed parameters on one-line wrappers add casts at the call sites (`(uint)global`, `(dword *)&x`). Leave such wrappers uncommitted, or check every caller after the build.

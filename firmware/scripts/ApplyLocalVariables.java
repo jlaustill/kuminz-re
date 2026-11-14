@@ -354,7 +354,8 @@ public class ApplyLocalVariables extends GhidraScript {
                 return WordDataType.dataType;
             case "int32_t":
                 // Signed 32-bit. "int" below keeps mapping to unsigned dword so existing rows do not
-                // re-render (ApplyStructures / ApplyGlobalVariableTypes map "int" to signed int instead).
+                // re-render. (ApplyStructures maps "int" / "short" to signed types; ImportAnalysis types
+                // globals with its own "i8" / "i16" / "i32" signed keywords.)
                 return IntegerDataType.dataType;
             case "uint32_t":
             case "dword":
