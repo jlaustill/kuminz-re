@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 16:19:26 MST 2026
+// Generated: Sat Nov 14 16:29:26 MST 2026
 
 
 //
@@ -52187,10 +52187,10 @@ void mpc555_tpuBSetPwmDuty(int channel,word duty)
 
 /* Sets a TPU-B PWM channel's period from microseconds and keeps its duty: duty = PARAM0 x 25600 /
    PARAM1; new PARAM1 = period / 3.2 (period x 0xa001 / 0x20004): the TPU-B TCR1 tick is 3.2 us
-   (TPUMCR 0x4430 - PSCK clear) or 0x7fff at 104855 us and above; PARAM0 is re-derived from the
-   duty. Output channel driver table slot +8 for records 1-16 (cm848_tpuBChannel{N}*) and the
-   read-back records 5 / 7 / 8 / 11 / 12. Was cm848_tpuConfigureChannel |
-   review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High */
+   (TPUMCR 0x4430) or 0x7fff at 104855 us and above; PARAM0 is re-derived from the duty. Output
+   channel driver table slot +8 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5
+   / 7 / 8 / 11 / 12. Was cm848_tpuConfigureChannel | review-function-readability reviewed
+   2026-11-14 - Readability Medium Accuracy Confidence High */
 
 void mpc555_tpuBSetPwmPeriodMicroseconds(int channel,uint period_microseconds)
 
@@ -52310,10 +52310,11 @@ void mpc555_tpuASetPwmDuty(int channel,word duty)
 
 /* Sets a TPU-A PWM channel's period from microseconds and keeps its duty: duty = PARAM0 x 25600 /
    PARAM1; new PARAM1 = period x 2.5 (period x 0x5000a / 0x20004): the TPU-A TCR1 tick is 0.4 us
-   (TPUMCR 0x4460 - PSCK set; the only prescaler difference from TPU-B) or 0x7fff at 13107 us and
-   above; PARAM0 is re-derived from the duty. Output channel driver table slot +8 for records 17-32
-   (cm848_tpuAChannel{N}*). Was cm848_tpuSetChannelPeriod | review-function-readability reviewed
-   2026-11-14 - Readability Medium Accuracy Confidence High */
+   (TPUMCR 0x4460 differs from TPU-B's 0x4430 in bits 0x40 and 0x10 - reading 0x40 as PSCK (system
+   clock / 4 instead of / 32 - MPC555 manual) gives the factor of 8 between the modules) or 0x7fff
+   at 13107 us and above; PARAM0 is re-derived from the duty. Output channel driver table slot +8
+   for records 17-32 (cm848_tpuAChannel{N}*). Was cm848_tpuSetChannelPeriod |
+   review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High */
 
 void mpc555_tpuASetPwmPeriodMicroseconds(int channel,uint period_microseconds)
 

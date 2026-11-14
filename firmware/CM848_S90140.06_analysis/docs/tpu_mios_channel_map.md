@@ -36,6 +36,8 @@ determinable from the binary alone — see "Still blocked" below.
 **Function-number groups:** 7/8 = status timers (CH2,7); **9 = injection** (CH6 confirmed, CH9/10);
 0xa = cold-start-gated outputs (CH4,5,8,15); 0xb = HPCR sync (CH11,14); 0xc = timing accumulate (CH12,13).
 
+> **2026-11-14 (PR #48):** function 7 is also what `mpc555_tpuAEnablePwmChannel` / `mpc555_tpuBEnablePwmChannel` select before starting a channel as a PWM output (PARAM0 = high time, PARAM1 = period) - the output channel driver table can put any TPU-A or TPU-B channel into it. So on these modules function 7 runs PWM, and the "7/8 = status timers" grouping above (inferred from CH2's owner functions) needs rechecking.
+
 ## MIOS MPWMSM PWM outputs (0x306000)
 
 Four PWM submodules driven by `cm848_miosPwm16/17/18/19*` (set value, scale-by-percent, init
