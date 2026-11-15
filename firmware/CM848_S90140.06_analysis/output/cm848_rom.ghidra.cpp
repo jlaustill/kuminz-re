@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 20:32:12 MST 2026
+// Generated: Sat Nov 14 20:41:22 MST 2026
 
 
 //
@@ -42812,16 +42812,16 @@ LAB_00047b98:
    (engine_speed_override_enable_cal) and a cranking value return early; otherwise a mode state
    machine in engine_sync_state_t_0040b87f.sync_status picks the path - modes 2 / 4 sum P / I /
    D-style terms on fuel_pressure_setpoint - cam_timing_reference_b (and on the setpoint minus the
-   filtered fuel_pressure_sensor) plus a fuel-demand feed-forward and an rpm table / modes 8 / 0x10
-   (switch_input_state_bits[0] bit 0 clear and engine_shutdown_active_flag 0) / 0x20
-   (cam_sync_disable_cal set) / 0x40 (faults 304 / 305 / 377 / 378) use fixed
-   cam_sync_ref_count_state*_cal values / mode 1 is the low-rpm mode the others fall back to; the
-   result is clamped and scaled into engine_sync_state_t_0040b87f.fuel_metering_command (0-4095),
-   then the read-back retest (0 / 4095) runs. cm848_setFuelMeteringPwm turns the command into TPU-B
-   11's on-time. It is the fuel (rail) pressure governor: the DRB SCI table labels its output FUEL
-   PRESS REG OUTPUT and its inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR. Its engine_sync_* /
-   cam_sync_* / injection_timing_* names are older guesses still to re-domain. Was
-   cm848_calculateEngineTimingOffset */
+   filtered fuel_pressure_sensor) plus a feed-forward on the change in accelerator position
+   (fuel_demand_control_t.calculated) and an rpm table / modes 8 / 0x10 (switch_input_state_bits[0]
+   bit 0 clear and engine_shutdown_active_flag 0) / 0x20 (cam_sync_disable_cal set) / 0x40 (faults
+   304 / 305 / 377 / 378) use fixed cam_sync_ref_count_state*_cal values / mode 1 is the low-rpm
+   mode the others fall back to; the result is clamped and scaled into
+   engine_sync_state_t_0040b87f.fuel_metering_command (0-4095), then the read-back retest (0 / 4095)
+   runs. cm848_setFuelMeteringPwm turns the command into TPU-B 11's on-time. It is the fuel (rail)
+   pressure governor: the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its inputs FUEL
+   PRESS SETPOINT / FUEL PRESSURE SENSOR. Its engine_sync_* / cam_sync_* / injection_timing_* names
+   are older guesses still to re-domain. Was cm848_calculateEngineTimingOffset */
 
 void cm848_calculateFuelMeteringCommand(void)
 
@@ -67489,7 +67489,7 @@ void cm848_selectCoolingFanDutySource(void)
 
 {
   if ((((governor_fuel_demand_mode == 0xb) &&
-       (fuel_demand_control_t_0040a57a.calculated <= cooling_fan_idle_fuel_demand_maximum)) &&
+       (fuel_demand_control_t_0040a57a.calculated <= cooling_fan_idle_accelerator_maximum)) &&
       (vehicle_speed <= cooling_fan_idle_vehicle_speed_maximum)) &&
      (engine_rpm_state_t_0040b7ac.current_rpm < cooling_fan_idle_engine_rpm_limit)) {
     cooling_fan_engine_idle_flag = 1;

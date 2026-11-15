@@ -3304,7 +3304,7 @@ address,name,type,comment
 0x0040883e,cooling_fan_coolant_ramp_gain,word,State 1 ramp slope (/ 128 per degree) - 1840 in the RAM dump
 0x00408842,cooling_fan_drive_ratio,word,Fan drive ratio x 256 - 256 (1.0) in the RAM dump
 0x00408844,cooling_fan_idle_engine_rpm_limit,word,Idle condition: engine rpm (0.125) below this - 8400 (1050 rpm) in the RAM dump
-0x00408846,cooling_fan_idle_fuel_demand_maximum,word,Idle condition: fuel demand at most this - 4 in the RAM dump
+0x00408846,cooling_fan_idle_accelerator_maximum,word,Idle condition: accelerator position (fuel_demand_control_t.calculated - 400 = 100 %) at most this - 4 (1 %) in the RAM dump
 0x00408848,cooling_fan_idle_vehicle_speed_maximum,word,Idle condition: vehicle speed at most this - 1280 in the RAM dump
 0x0040884a,cooling_fan_intake_ramp_end,i16,Intake value at or above which the request is full speed - 1856 in the RAM dump
 0x0040884c,cooling_fan_intake_full_speed,word,Intake request above the ramp - 19200 (2400 rpm) in the RAM dump
@@ -5736,7 +5736,7 @@ address,name,type,comment
 0x0040b292,cooling_fan_air_conditioning_speed_request,word,Fan speed requested for the A/C (target source 2) (was egr_fuel_demand_speed_floor)
 0x0040b296,cooling_fan_intake_speed_request,word,Fan speed requested for intake air temperature (target source 3) (was egr_load_speed_floor)
 0x0040b2a2,cooling_fan_engine_driven_speed_limit,word,engine rpm x cooling_fan_drive_ratio / 256: the most an engine-driven fan can turn (target source 7 caps to it) (was egr_rpm_proportional_speed_limit)
-0x0040b29c,cooling_fan_engine_idle_flag,word,Set by cm848_selectCoolingFanDutySource while governor_fuel_demand_mode = 0xb with fuel demand at most cooling_fan_idle_fuel_demand_maximum / vehicle speed at most cooling_fan_idle_vehicle_speed_maximum / engine below cooling_fan_idle_engine_rpm_limit; it picks the idle duty sources, holds the intake request and its 1 -> 0 edge starts the cooling fan hold. Not a cold-start flag (was cold_start_mode_active_flag)
+0x0040b29c,cooling_fan_engine_idle_flag,word,Set by cm848_selectCoolingFanDutySource while governor_fuel_demand_mode = 0xb with the accelerator at most cooling_fan_idle_accelerator_maximum (1 %) / vehicle speed at most cooling_fan_idle_vehicle_speed_maximum / engine below cooling_fan_idle_engine_rpm_limit; it picks the idle duty sources, holds the intake request and its 1 -> 0 edge starts the cooling fan hold. Not a cold-start flag (was cold_start_mode_active_flag)
 0x0040b2a8,cooling_fan_duty_source_code,word,Which branch set the cooling fan duty: 1-9 from cm848_selectCoolingFanDutySource (8 = cm848_runCoolingFanSpeedPid) / 0 at cooling_fan_duty_minimum / 10 at cooling_fan_duty_maximum / 11 during the hold after cooling_fan_engine_idle_flag clears (was cold_start_fuel_demand_mode_code)
 0x0040b2bc,cooling_fan_integral_term,word,Integral term of the cooling fan speed PID, clamped to cooling_fan_integral_term_minimum / _maximum (was governor_fuel_demand_i_term)
 0x0040b2c0,cooling_fan_duty_request,word,Cooling fan duty request (duty 0-25600 = 0-100 %) chosen by cm848_selectCoolingFanDutySource (its branches set cooling_fan_duty_source_code) - cm848_applyCoolingFanDuty clamps it into cooling_fan_duty (was cold_start_fuel_demand_output)
