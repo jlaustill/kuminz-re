@@ -995,9 +995,9 @@ void cm848_calculateEngineTimingInterpolation(void);  // @ 0x00047140
 void cm848_calculateEngineFaultTiming(int param_1);  // @ 0x00047394
 void cm848_selectGovernorFilterOutput(void);  // @ 0x0004769c
 void mpc555_clearTimingDataAndFilters(void);  // @ 0x00047784
-int cm848_protectionRecoveryHandler(int *param_1,int param_2);  // @ 0x00047838
-int cm848_protectionModeSelector(int param_1,int *param_2,int param_3,uint param_4);  // @ 0x00047978
-int cm848_protectionStateHandler(ushort *param_1,uint *param_2,int param_3);  // @ 0x00047a88
+int cm848_applyPiecewiseLinearGain(int *param_1,int param_2);  // @ 0x00047838
+int cm848_integrateWithZoneGain(int param_1,int *param_2,int param_3,uint param_4);  // @ 0x00047978
+int cm848_calculateFilteredDerivative(ushort *param_1,uint *param_2,int param_3);  // @ 0x00047a88
 void cm848_calculateFuelMeteringCommand(void);  // @ 0x00047bd0
 void cm848_updateSyncOffsetCounter(void);  // @ 0x00048fa0
 void cm848_resetEngineSyncState(void);  // @ 0x00049004

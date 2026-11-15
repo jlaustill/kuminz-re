@@ -1152,8 +1152,8 @@ struct engine_crank_state_t {
 };
 
 struct engine_sync_state_t {
-    uint8_t sync_status;  /* Sync detection status (0=lost 1=synced) */
-    uint16_t reference_count;  /* Sync reference pulse count */
+    uint8_t sync_status;  /* Fuel pressure governor mode: 1 low rpm / 2 and 4 PID / 8 fixed (filtered pressure below a threshold inside an rpm window) / 0x10 fixed (switch 0 off) / 0x20 fixed (cam_sync_disable_cal) / 0x40 fixed (faults 304 / 305 / 377 / 378) */
+    uint16_t fuel_pressure_governor_demand;  /* Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count) */
     uint16_t fuel_metering_command;  /* Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw) */
     uint8_t reserved_05;  /* Padding for alignment */
 };

@@ -1613,13 +1613,10 @@ address,name,type,comment
 0x003fb664,engine_sync_init_state_o,word,
 0x003fb666,engine_sync_init_state_p,word,
 0x003fb668,engine_sync_init_state_q,word,
-0x003fb66a,engine_sync_protection_output_a,word,
-0x003fb66c,engine_sync_protection_init_a,dword,
-0x003fb66e,engine_sync_protection_output_a,,
-0x003fb670,engine_sync_protection_init_b,dword,
-0x003fb672,engine_sync_protection_init_c,,
-0x003fb674,engine_sync_protection_init_d,dword,
-0x003fb676,engine_sync_protection_init_d+2,,
+0x003fb66a,fuel_pressure_governor_integrator,q16_fixed_point_t,Integral term accumulator of the fuel pressure governor PID (error = fuel_pressure_setpoint - cam_timing_reference_b; Q16.16: cm848_integrateWithZoneGain adds gain x error x 10000 >> 16 and clamps integer_part to +/-4095 = fuel_pressure_governor_integral_term). cm848_calculateFuelMeteringCommand presets it when the mode changes to 2 / 4 (bumpless transfer) or the rpm phase is acquired, and puts back the previous value when fuel_pressure_governor_demand is outside its limits (anti-windup). Was engine_sync_protection_output_a (word) + engine_sync_protection_init_a (0x3fb66c)
+0x003fb66e,fuel_metering_feedback_trim_integrator,q16_fixed_point_t,Integral term accumulator of the fuel metering feedback trim (Q16.16, error = fuel_metering_feedback_error; integer_part +/-4095 = trim in 1/4096 of the base command). Preset from a table when the filtered target and engine speed are 0, or when engine_sync_confirmed_flag is 1 in engine_sync_state_b 5; limited so that proportional + integral stays inside engine_sync_protection_upper / lower_limit_cal, and set to 0 while engine_sync_speed_fault_flags is non-zero. Shared the name engine_sync_protection_output_a with 0x3fb66a; was also engine_sync_protection_init_b (0x3fb670)
+0x003fb672,fuel_pressure_governor_derivative_filter,q16_fixed_point_t,Low-pass state of the fuel pressure governor's derivative term (Q16.16, cm848_calculateFilteredDerivative on fuel_pressure_setpoint - filtered fuel_pressure_sensor). Was engine_sync_protection_init_c + engine_sync_protection_init_d (0x3fb674)
+0x003fb676,fuel_metering_base_command_derivative_filter,q16_fixed_point_t,Low-pass state of the derivative (lead) term on the fuel metering base command (Q16.16, cm848_calculateFilteredDerivative on the scaled feedback target). cm848_resetEngineSyncState does not clear it: its fourth store pair (0x49098 / 0x4909c) repeats 0x3fb66e. Was engine_sync_protection_init_d+2
 0x003fb67a,cam_sync_status_prev,byte,
 0x003fb67b,cam_sync_tooth_match_flag,byte,
 0x003fb67c,cylinder_event_sequence_index,byte,
@@ -1643,7 +1640,7 @@ address,name,type,comment
 0x003fb6b3,cam_sync_rate_filter_accum,word,
 0x003fb6b7,cam_sync_rpm_ema_state_pointer,pointer,
 0x003fb6bb,cam_sync_rpm_ema_accum,word,
-0x003fb6bf,cam_sync_protection_state_prev,word,
+0x003fb6bf,fuel_metering_base_command_derivative_term,word,Derivative (lead) term added to the fuel metering base command (+/-4095; from fuel_metering_base_command_derivative_filter). Was cam_sync_protection_state_prev
 0x003fb6c1,governor_zero_speed_count,word,
 0x003fb6c3,engine_sync_phase_counter,word,
 0x003fb6c6,engine_sync_confirmed_flag,byte,
@@ -5380,21 +5377,21 @@ address,name,type,comment
 0x0040b879,cam_timing_source_1,word,
 0x0040b87b,cam_timing_source_0,word,
 0x0040b87f,engine_sync_state_t_0040b87f,engine_sync_state_t,
-0x0040b880,engine_sync_state_t_0040b87f.reference_count,,
+0x0040b880,engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,,
 0x0040b882,engine_sync_state_t_0040b87f.fuel_metering_command,,
 0x0040b884,engine_sync_state_t_0040b87f.reserved_05,,
-0x0040b886,cam_sync_protection_recovery_output,word,
-0x0040b888,engine_sync_protection_output_b,word,
-0x0040b88a,cam_sync_protection_state_output,word,
-0x0040b88c,cam_sync_fuel_scale_filter,word,
-0x0040b88e,engine_sync_speed_error,word,
+0x0040b886,fuel_pressure_governor_proportional_term,word,Proportional term of the fuel pressure governor PID (+/-4095; cm848_applyPiecewiseLinearGain on fuel_pressure_setpoint - cam_timing_reference_b). Was cam_sync_protection_recovery_output
+0x0040b888,fuel_pressure_governor_integral_term,word,Integral term of the fuel pressure governor PID (+/-4095; integer_part of fuel_pressure_governor_integrator, or a clamped table preset when engine_sync_rpm_phase_acquired_flag is 1 in engine_sync_state_a 5). Was engine_sync_protection_output_b
+0x0040b88a,fuel_pressure_governor_derivative_term,word,Derivative term of the fuel pressure governor PID (+/-4095; cm848_calculateFilteredDerivative on fuel_pressure_setpoint - filtered fuel_pressure_sensor). Was cam_sync_protection_state_output
+0x0040b88c,fuel_pressure_governor_accelerator_feed_forward,word,Feed-forward term of the fuel pressure governor: cam_sync_fuel_scale_gain_cal x the change in fuel_demand_control_t.calculated (accelerator position) >> 10, clamped to cam_sync_fuel_scale_lower / upper_limit_cal and filtered. Was cam_sync_fuel_scale_filter
+0x0040b88e,fuel_metering_feedback_error,word,Error of the fuel metering feedback trim: the filtered feedback target (table of the clamped fuel_pressure_governor_demand) - the filtered fuel_metering_feedback_input. Was engine_sync_speed_error
 0x0040b890,engine_sync_cold_start_flag,byte,
 0x0040b891,cam_timing_reference_b_prev,word,
 0x0040b893,cam_speed_rate,word,
 0x0040b895,engine_sync_rpm_filtered,word,
 0x0040b897,engine_sync_speed_raw,word,
 0x0040b899,engine_sync_signal_flag,word,
-0x0040b89c,fault_diagnostic_word_1,word,
+0x0040b89c,fuel_metering_feedback_input,word,Measured feedback of the fuel metering output: QADC index slot 63 raw x 4 through an identity table (0-4092; cam_sync_position_fault_input instead when diag_cam_sync_fault_config_flags bit 15 is set), written by cm848_updateEngineDiagnosticCounters. It is high with the command low -> fault 265, low with the command high -> fault 264 (neither has an OBD-II code in the slot table). The physical signal is not identified. Also stored in fault freeze frames and sent by SCI command 20 (x 0x33 / 0x333). Was fault_diagnostic_word_1
 0x0040b89e,engine_sync_speed_fault_flags,byte,
 0x0040b89f,engine_position_diag_snapshot,byte,
 0x0040b8a0,fault_reaction_request_bits,word,Fault reaction mask from per-fault masks (cm848_protectionInputValidator): bit 0 caps governor_fuel_limit_source / bit 1 caps torque_fuel_minimum_working / bit 2 caps cam_timing_measured / nonzero ramps the speed limit down / blocks cruise / zeroes the PCI fuel level (was cold_start_qualifier_flag) (Medium confidence)
