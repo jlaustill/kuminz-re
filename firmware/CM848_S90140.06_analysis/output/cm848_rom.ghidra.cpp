@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 19:34:59 MST 2026
+// Generated: Sat Nov 14 19:47:31 MST 2026
 
 
 //
@@ -6072,9 +6072,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -51454,29 +51454,30 @@ void hpcr_exceptionHandler(void)
   cm848_initEepromDriverAndLoadMirror();
   cm848_initSupervisorChip();
   cm848_setLogicalOutputAndDriveLine(0x1b);
-  if (qadc_scan_read_index == qadc_scan_write_index) {
+  if (power_cycle_sequence_number_cal == completed_power_down_sequence_number_cal) {
     system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
          system_status_flags_t_003fe974.fault_detected_bits_80_to_95 & 0xfffb;
     fault_registered_bits_80_to_95 = fault_registered_bits_80_to_95 & 0xfffb;
     local_20[0] = 0;
-    cm848_queueEepromByteWritesAtOffset11134(&sensor_diag_timeout_counter,local_20,2);
+    cm848_queueEepromByteWritesAtOffset11134
+              (&consecutive_incomplete_power_down_count_cal,local_20,2);
     uVar2 = 0;
-    if (sensor_diag_timeout_counter != local_20[0]) {
+    if (consecutive_incomplete_power_down_count_cal != local_20[0]) {
       do {
         cm848_delayMicroseconds(0x13);
         uVar2 = uVar2 + 1;
         if (4999 < uVar2) break;
-      } while (sensor_diag_timeout_counter != local_20[0]);
+      } while (consecutive_incomplete_power_down_count_cal != local_20[0]);
     }
-    local_20[0] = protection_timer_a + 1;
-    cm848_queueEepromByteWritesAtOffset11134(&protection_timer_a,local_20,2);
+    local_20[0] = completed_power_down_count_cal + 1;
+    cm848_queueEepromByteWritesAtOffset11134(&completed_power_down_count_cal,local_20,2);
     uVar2 = 0;
-    if (protection_timer_a != local_20[0]) {
+    if (completed_power_down_count_cal != local_20[0]) {
       do {
         cm848_delayMicroseconds(0x13);
         uVar2 = uVar2 + 1;
         if (4999 < uVar2) break;
-      } while (protection_timer_a != local_20[0]);
+      } while (completed_power_down_count_cal != local_20[0]);
     }
     system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
          system_status_flags_t_003fe974.fault_detected_bits_80_to_95 & 0xfdff;
@@ -51485,28 +51486,29 @@ void hpcr_exceptionHandler(void)
   else {
     system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
          system_status_flags_t_003fe974.fault_detected_bits_80_to_95 | 4;
-    local_20[0] = sensor_diag_timeout_counter + 1;
-    cm848_queueEepromByteWritesAtOffset11134(&sensor_diag_timeout_counter,local_20,2);
+    local_20[0] = consecutive_incomplete_power_down_count_cal + 1;
+    cm848_queueEepromByteWritesAtOffset11134
+              (&consecutive_incomplete_power_down_count_cal,local_20,2);
     uVar2 = 0;
-    if (sensor_diag_timeout_counter != local_20[0]) {
+    if (consecutive_incomplete_power_down_count_cal != local_20[0]) {
       do {
         cm848_delayMicroseconds(0x13);
         uVar2 = uVar2 + 1;
         if (4999 < uVar2) break;
-      } while (sensor_diag_timeout_counter != local_20[0]);
+      } while (consecutive_incomplete_power_down_count_cal != local_20[0]);
     }
-    local_20[0] = protection_timer_b + 1;
-    cm848_queueEepromByteWritesAtOffset11134(&protection_timer_b,local_20,2);
+    local_20[0] = incomplete_power_down_count_cal + 1;
+    cm848_queueEepromByteWritesAtOffset11134(&incomplete_power_down_count_cal,local_20,2);
     uVar2 = 0;
-    if (protection_timer_b != local_20[0]) {
+    if (incomplete_power_down_count_cal != local_20[0]) {
       do {
         cm848_delayMicroseconds(0x13);
         uVar2 = uVar2 + 1;
         if (4999 < uVar2) break;
-      } while (protection_timer_b != local_20[0]);
+      } while (incomplete_power_down_count_cal != local_20[0]);
     }
     high_idle_override_flag._0_2_ = 1;
-    if (DAT_000645ba < sensor_diag_timeout_counter) {
+    if (consecutive_incomplete_power_down_limit < consecutive_incomplete_power_down_count_cal) {
       system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
            system_status_flags_t_003fe974.fault_detected_bits_80_to_95 | 0x200;
     }
@@ -51516,15 +51518,15 @@ void hpcr_exceptionHandler(void)
       fault_registered_bits_80_to_95 = fault_registered_bits_80_to_95 & 0xfdff;
     }
   }
-  local_20[0] = protection_timer_a + protection_timer_b;
-  cm848_queueEepromByteWritesAtOffset11134(&qadc_scan_read_index,local_20,2);
+  local_20[0] = completed_power_down_count_cal + incomplete_power_down_count_cal;
+  cm848_queueEepromByteWritesAtOffset11134(&power_cycle_sequence_number_cal,local_20,2);
   uVar2 = 0;
-  if (qadc_scan_read_index != local_20[0]) {
+  if (power_cycle_sequence_number_cal != local_20[0]) {
     do {
       cm848_delayMicroseconds(0x13);
       uVar2 = uVar2 + 1;
       if (4999 < uVar2) break;
-    } while (qadc_scan_read_index != local_20[0]);
+    } while (power_cycle_sequence_number_cal != local_20[0]);
   }
   if (sensor_diag_clear_flag == 0) {
     system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
@@ -51535,7 +51537,7 @@ void hpcr_exceptionHandler(void)
     system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
          system_status_flags_t_003fe974.fault_detected_bits_80_to_95 | 0x10;
   }
-  if (sensor_diag_channel_select == 0) {
+  if (power_down_left_ecm_powered_flag_cal == 0) {
     system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
          system_status_flags_t_003fe974.fault_detected_bits_80_to_95 & 0xf7ff;
     fault_registered_bits_80_to_95 = fault_registered_bits_80_to_95 & 0xf7ff;
@@ -51822,20 +51824,26 @@ void hpcr_exceptionHandler(void)
   protection_accumulator_update();
   cm848_initFuelRateFromCapability();
   cm848_initCommunication();
-  cm848_initProtectionTimers();
+  cm848_runPowerDownSequence();
   return;
 }
 
 
 
 //
-// Function: cm848_engineStartCompletionB @ 0x00054d30
+// Function: cm848_restartApplicationWithoutReset @ 0x00054d30
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Re-runs the application without a hardware reset (only caller:
+   cm848_restartOnKeyOnDuringPowerDown): four init calls / disables external interrupts (mtspr EID)
+   and resets the stack pointer to 0x3f9ff8 / re-inits and runs the main run loop
+   (cm848_initProtectionModule until hardware_operation_complete_flag) / the same post-run fault
+   housekeeping as hpcr_exceptionHandler / cm848_runPowerDownSequence - so it never returns. Was
+   cm848_engineStartCompletionB */
 
-void cm848_engineStartCompletionB(void)
+void cm848_restartApplicationWithoutReset(void)
 
 {
   ushort uVar1;
@@ -51863,7 +51871,7 @@ void cm848_engineStartCompletionB(void)
   protection_accumulator_update();
   cm848_initFuelRateFromCapability();
   cm848_initCommunication();
-  cm848_initProtectionTimers();
+  cm848_runPowerDownSequence();
   return;
 }
 
@@ -87712,10 +87720,17 @@ void cm848_initCanHardware(void)
 
 
 //
-// Function: engine_protection_timer_sync @ 0x00539938
+// Function: cm848_restartOnKeyOnDuringPowerDown @ 0x00539938
 //
 
-void engine_protection_timer_sync(void)
+/* Key came back on during the power-down (called from cm848_saveEepromForPowerDown and 3 places in
+   cm848_runPowerDownSequence): counts the start in completed_power_down_count_cal / writes the new
+   power_cycle_sequence_number_cal (= completed + incomplete counts) / waits up to 1000 x 2500
+   timebase ticks for that EEPROM write / then cm848_restartApplicationWithoutReset - the same
+   bookkeeping hpcr_exceptionHandler does at a reset after a completed power-down. Was
+   engine_protection_timer_sync */
+
+void cm848_restartOnKeyOnDuringPowerDown(void)
 
 {
   int iVar1;
@@ -87726,21 +87741,21 @@ void engine_protection_timer_sync(void)
   ushort uVar6;
   word local_10 [4];
   
-  local_10[0] = protection_timer_a + 1;
-  cm848_queueEepromByteWritesAtOffset11134(&protection_timer_a,local_10,2);
+  local_10[0] = completed_power_down_count_cal + 1;
+  cm848_queueEepromByteWritesAtOffset11134(&completed_power_down_count_cal,local_10,2);
   uVar6 = 0;
-  if (protection_timer_a != local_10[0]) {
+  if (completed_power_down_count_cal != local_10[0]) {
     do {
       cm848_delayMicroseconds(0x13);
       uVar6 = uVar6 + 1;
       if (999 < uVar6) break;
-    } while (protection_timer_a != local_10[0]);
+    } while (completed_power_down_count_cal != local_10[0]);
   }
-  local_10[0] = protection_timer_a + protection_timer_b;
-  cm848_queueEepromByteWritesAtOffset11134(&qadc_scan_read_index,local_10,2);
+  local_10[0] = completed_power_down_count_cal + incomplete_power_down_count_cal;
+  cm848_queueEepromByteWritesAtOffset11134(&power_cycle_sequence_number_cal,local_10,2);
   uVar6 = 0;
   do {
-    if (qadc_scan_read_index == local_10[0]) break;
+    if (power_cycle_sequence_number_cal == local_10[0]) break;
     do {
       uVar3 = TBUr;
       iVar1 = TBLr;
@@ -87755,17 +87770,25 @@ void engine_protection_timer_sync(void)
     } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
     uVar6 = uVar6 + 1;
   } while (uVar6 < 1000);
-  cm848_engineStartCompletionB();
+  cm848_restartApplicationWithoutReset();
   return;
 }
 
 
 
 //
-// Function: engine_start_completion_sequence @ 0x00539a78
+// Function: cm848_saveEepromForPowerDown @ 0x00539a78
 //
 
-void engine_start_completion_sequence(void)
+/* Power-down EEPROM save (from cm848_runPowerDownSequence): starts the EEPROM mirror save and waits
+   for it - a key line held on for more than 80 samples meanwhile sets
+   key_on_during_power_down_save_flag and calls cm848_restartOnKeyOnDuringPowerDown after the save;
+   adds cm848_getEepromVerifyRetryTotal to the EEPROM word at 0x3fdb88; writes the mirror checksum
+   to eeprom_block_checksum_expected_cal; then copies power_cycle_sequence_number_cal into
+   completed_power_down_sequence_number_cal - the marker the next start checks. Was
+   engine_start_completion_sequence */
+
+void cm848_saveEepromForPowerDown(void)
 
 {
   int iVar1;
@@ -87780,7 +87803,7 @@ void engine_start_completion_sequence(void)
   
   cm848_startEepromMirrorSave();
   uVar8 = 0;
-  startup_mios_engine_event_flag = 0;
+  key_on_during_power_down_save_flag = 0;
   sVar7 = cm848_isEepromMirrorSaveIdle();
   while (sVar7 == 0) {
     cm848_delayMicroseconds(0x13);
@@ -87791,13 +87814,13 @@ void engine_start_completion_sequence(void)
     else {
       uVar8 = uVar8 + 1;
       if (0x50 < uVar8) {
-        startup_mios_engine_event_flag = 1;
+        key_on_during_power_down_save_flag = 1;
       }
     }
     sVar7 = cm848_isEepromMirrorSaveIdle();
   }
-  if (startup_mios_engine_event_flag != 0) {
-    engine_protection_timer_sync();
+  if (key_on_during_power_down_save_flag != 0) {
+    cm848_restartOnKeyOnDuringPowerDown();
   }
   local_10[0] = cm848_getEepromVerifyRetryTotal();
   if (local_10[0] != 0) {
@@ -87840,11 +87863,12 @@ void engine_start_completion_sequence(void)
     } while ((uVar4 < uVar3) || (uVar2 < iVar1 + 0x9c4U));
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
-  if (qadc_scan_read_index != qadc_scan_write_index) {
-    cm848_queueEepromByteWritesAtOffset11134(&qadc_scan_write_index,&qadc_scan_read_index,2);
+  if (power_cycle_sequence_number_cal != completed_power_down_sequence_number_cal) {
+    cm848_queueEepromByteWritesAtOffset11134
+              (&completed_power_down_sequence_number_cal,&power_cycle_sequence_number_cal,2);
     uVar8 = 0;
     do {
-      if (qadc_scan_read_index == qadc_scan_write_index) {
+      if (power_cycle_sequence_number_cal == completed_power_down_sequence_number_cal) {
         return;
       }
       do {
@@ -87868,10 +87892,19 @@ void engine_start_completion_sequence(void)
 
 
 //
-// Function: cm848_initProtectionTimers @ 0x00539d18
+// Function: cm848_runPowerDownSequence @ 0x00539d18
 //
 
-void cm848_initProtectionTimers(void)
+/* Power-down sequence - runs after the main run loop ends (hpcr_exceptionHandler and
+   cm848_restartApplicationWithoutReset call it last): marks the session active and cal_write_mode
+   0xee / waits for the EEPROM write queue / cm848_saveEepromForPowerDown / stores two more EEPROM
+   dwords / writes power_down_left_ecm_powered_flag_cal = 0 / clears logical output 27 (0x1b) and
+   for 40 short waits restarts (output 27 back on + cm848_restartOnKeyOnDuringPowerDown) if the key
+   line comes back on / sets output 27 again and after a short delay checks the key once more /
+   writes the flag = 1 (the ECM is still powered) / then waits for the key and restarts. Was
+   cm848_initProtectionTimers */
+
+void cm848_runPowerDownSequence(void)
 
 {
   int iVar1;
@@ -87896,7 +87929,7 @@ void cm848_initProtectionTimers(void)
     cm848_delayMicroseconds(0x13);
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
-  engine_start_completion_sequence();
+  cm848_saveEepromForPowerDown();
   local_14[0] = fault_timing_snapshot;
   cm848_queueEepromByteWritesAtOffset11134(&sensor_param_id_working,local_14,4);
   uVar8 = 0;
@@ -87936,10 +87969,10 @@ void cm848_initProtectionTimers(void)
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   local_18[0] = 0;
-  cm848_queueEepromByteWritesAtOffset11134(&sensor_diag_channel_select,local_18,2);
+  cm848_queueEepromByteWritesAtOffset11134(&power_down_left_ecm_powered_flag_cal,local_18,2);
   uVar8 = 0;
   do {
-    if (sensor_diag_channel_select == local_18[0]) break;
+    if (power_down_left_ecm_powered_flag_cal == local_18[0]) break;
     do {
       uVar6 = TBUr;
       iVar1 = TBLr;
@@ -87965,7 +87998,7 @@ void cm848_initProtectionTimers(void)
       wVar4 = mios_mdasm30.SCRD;
       if ((wVar4 & 0x8000) != 0) {
         cm848_setLogicalOutputAndDriveLine(0x1b);
-        engine_protection_timer_sync();
+        cm848_restartOnKeyOnDuringPowerDown();
       }
       uVar6 = TBLr;
     }
@@ -87979,13 +88012,13 @@ void cm848_initProtectionTimers(void)
   } while (bVar9 < 4);
   wVar4 = mios_mdasm30.SCRD;
   if ((wVar4 & 0x8000) != 0) {
-    engine_protection_timer_sync();
+    cm848_restartOnKeyOnDuringPowerDown();
   }
   local_18[0] = 1;
-  cm848_queueEepromByteWritesAtOffset11134(&sensor_diag_channel_select,local_18,2);
+  cm848_queueEepromByteWritesAtOffset11134(&power_down_left_ecm_powered_flag_cal,local_18,2);
   uVar8 = 0;
   do {
-    if (sensor_diag_channel_select == local_18[0]) break;
+    if (power_down_left_ecm_powered_flag_cal == local_18[0]) break;
     do {
       uVar6 = TBUr;
       iVar1 = TBLr;
@@ -88003,7 +88036,7 @@ void cm848_initProtectionTimers(void)
   do {
     wVar4 = mios_mdasm30.SCRD;
   } while ((wVar4 & 0x8000) == 0);
-  engine_protection_timer_sync();
+  cm848_restartOnKeyOnDuringPowerDown();
   return;
 }
 
@@ -88083,7 +88116,7 @@ undefined4 cm848_outputChannelReadFeedbackNone(void)
    (pin high or low against the command) set it; 0xFFFF would leave the bit alone but no slot in
    this build returns it (the 46 records without a read-back return 0). Entry 1 is checked on every
    2nd pass only (cooling_fan_read_back_check_divider). The pointer starts one word before the table
-   (EEPROM 0x810 - a power-down counter outside the table) because lhzu pre-increments.
+   (EEPROM 0x810 = completed_power_down_count_cal - outside the table) because lhzu pre-increments.
    cm848_debounceOutputReadBackFaults turns five of the bits into DTCs. Was
    hpcr_protectionTimerMonitor */
 
@@ -88097,7 +88130,7 @@ void cm848_updateOutputReadBackFaultBits(void)
   uint output_index;
   
   output_index = 0;
-  output_channel_entry = &protection_timer_a;
+  output_channel_entry = &completed_power_down_count_cal;
   do {
     output_channel_entry = output_channel_entry + 1;
     if ((*output_channel_entry != 0) && (*output_channel_entry < 0x33)) {
