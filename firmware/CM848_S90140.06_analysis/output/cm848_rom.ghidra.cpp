@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 20:01:46 MST 2026
+// Generated: Sat Nov 14 20:10:07 MST 2026
 
 
 //
@@ -1768,10 +1768,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6943,7 +6943,7 @@ void cm848_periodicTaskGroup12_calibration1(void)
 
 {
   cm848_processPciObdRequest();
-  tpu_rpm_measurement_control();
+  cm848_measureRadiatorFanSpeed();
   return;
 }
 
@@ -6957,7 +6957,7 @@ void cm848_periodicTaskGroup13_calibration2(void)
 
 {
   j1939_periodic_processing();
-  cm848_calibration_group13_load();
+  cm848_checkRadiatorFanSpeedRationality();
   return;
 }
 
@@ -33572,8 +33572,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
@@ -51722,8 +51722,8 @@ void hpcr_exceptionHandler(void)
   mpc555_initSensorCalibrationTables();
   cm848_copySensorValuesInUseUnchecked();
   cm848_resetImmobilizerHandshake();
-  tpu_rpm_measurement_initialize();
-  tpu_rpm_timer_setup();
+  cm848_initRadiatorFanSpeedMeasurement();
+  cm848_configureRadiatorFanSpeedInput();
   j1939_message_handler_initialize();
   cm848_initEngineWarningFlags();
   cm848_initialization_group25_state();
@@ -66917,7 +66917,7 @@ void engine_egrFuel_stateMachine_update(void)
            (int)dVar6 <= (int)egr_governor_speed_target)) goto LAB_00514584;
       }
       else {
-        egr_governor_speed_target = (dword)governor_speed_reference;
+        egr_governor_speed_target = (dword)cooling_fan_speed_target;
         egr_governor_integral_reset_flag = 0;
       }
       egr_governor_speed_integral = (egr_governor_speed_target - egr_governor_speed_p_term) * 0x1000
@@ -67123,39 +67123,39 @@ LAB_00514b4c:
     uVar4 = (uint)DAT_0040887a + ((int)uVar4 >> 7) + (uint)((int)uVar4 < 0 && (uVar4 & 0x7f) != 0);
   }
   egr_governor_protection_load_speed_floor = (word)uVar4;
-  governor_speed_reference = egr_governor_speed_base;
+  cooling_fan_speed_target = egr_governor_speed_base;
   if (egr_governor_speed_base < egr_governor_speed_floor) {
-    governor_speed_reference = egr_governor_speed_floor;
+    cooling_fan_speed_target = egr_governor_speed_floor;
   }
   governor_speed_limit_source = (word)(egr_governor_speed_base < egr_governor_speed_floor);
-  if (governor_speed_reference < egr_fuel_demand_speed_floor) {
-    governor_speed_reference = egr_fuel_demand_speed_floor;
+  if (cooling_fan_speed_target < egr_fuel_demand_speed_floor) {
+    cooling_fan_speed_target = egr_fuel_demand_speed_floor;
     governor_speed_limit_source = 2;
   }
-  if (governor_speed_reference < egr_load_speed_floor) {
-    governor_speed_reference = egr_load_speed_floor;
+  if (cooling_fan_speed_target < egr_load_speed_floor) {
+    cooling_fan_speed_target = egr_load_speed_floor;
     governor_speed_limit_source = 3;
   }
-  if ((uint)governor_speed_reference < (uVar4 & 0xffff)) {
+  if ((uint)cooling_fan_speed_target < (uVar4 & 0xffff)) {
     governor_speed_limit_source = 4;
-    governor_speed_reference = (word)uVar4;
+    cooling_fan_speed_target = (word)uVar4;
   }
   if (governor_speed_accel_ramp_at_target_flag != 0) {
     if (governor_speed_ramp_step_count < DAT_004088b8) {
       governor_speed_ramp_step_count = governor_speed_ramp_step_count + 1;
-      governor_speed_reference = egr_governor_speed_ramp_target;
+      cooling_fan_speed_target = egr_governor_speed_ramp_target;
       governor_speed_limit_source = 0xd;
       governor_speed_accel_ramp_step_flag = 0;
     }
     else if (egr_governor_overspeed_rpm_threshold < engine_rpm_state_t_0040b7ac.current_rpm) {
-      if (governor_speed_reference < DAT_004088b2) {
+      if (cooling_fan_speed_target < DAT_004088b2) {
         governor_overspeed_ramp_transition_latch = 1;
         governor_speed_accel_ramp_at_target_flag = 0;
         governor_speed_ramp_step_count = 0;
         governor_speed_overspeed_ramp_step = egr_governor_speed_ramp_target;
       }
       else {
-        governor_speed_reference = egr_governor_speed_ramp_target;
+        cooling_fan_speed_target = egr_governor_speed_ramp_target;
         governor_speed_limit_source = 5;
       }
     }
@@ -67184,8 +67184,8 @@ LAB_00514b4c:
       }
       governor_speed_limit_source = 0xe;
     }
-    if (governor_speed_reference < governor_speed_ramp_lower_step) {
-      governor_speed_reference = governor_speed_ramp_lower_step;
+    if (cooling_fan_speed_target < governor_speed_ramp_lower_step) {
+      cooling_fan_speed_target = governor_speed_ramp_lower_step;
       governor_decel_was_overspeed_clamp_flag = 0;
       governor_decel_was_governor_floor_flag = 0;
     }
@@ -67211,8 +67211,8 @@ LAB_00514b4c:
       governor_speed_ramp_upper_step =
            governor_speed_ramp_upper_step + egr_governor_speed_accel_ramp_step;
       governor_speed_limit_source = 0xf;
-      bVar1 = governor_speed_reference < governor_speed_ramp_upper_step;
-      governor_speed_reference = governor_speed_ramp_upper_step;
+      bVar1 = cooling_fan_speed_target < governor_speed_ramp_upper_step;
+      cooling_fan_speed_target = governor_speed_ramp_upper_step;
       if (bVar1) goto LAB_00514f98;
     }
   }
@@ -67220,7 +67220,7 @@ LAB_00514b4c:
 LAB_00514f98:
     governor_speed_up_ramp_active_flag = 0;
   }
-  if ((((DAT_00408864 < governor_speed_reference) &&
+  if ((((DAT_00408864 < cooling_fan_speed_target) &&
        (DAT_0040885e < engine_rpm_state_t_0040b7ac.current_rpm)) &&
       (governor_speed_decel_ramp_init_flag == 0)) && (governor_speed_accel_ramp_at_target_flag == 0)
      ) {
@@ -67235,14 +67235,14 @@ LAB_00514f98:
   }
   if ((governor_speed_decel_ramp_init_flag != 0) || (governor_overspeed_detect_flag == 0))
   goto LAB_0051524c;
-  if (((governor_speed_reference < egr_governor_overspeed_hysteresis_floor) &&
+  if (((cooling_fan_speed_target < egr_governor_overspeed_hysteresis_floor) &&
       (governor_speed_accel_ramp_step_flag == 0)) ||
      ((governor_overspeed_ramp_transition_latch != 0 || (governor_speed_decel_above_floor_flag != 0)
       ))) {
     governor_speed_accel_ramp_step_flag = 0;
     if (governor_overspeed_ramp_transition_latch == 0) {
       if (governor_speed_decel_target_captured_flag == 0) {
-        governor_speed_decel_target = governor_speed_reference;
+        governor_speed_decel_target = cooling_fan_speed_target;
         goto LAB_005150d4;
       }
     }
@@ -67264,9 +67264,9 @@ LAB_005150d4:
     }
     governor_speed_decel_above_floor_flag =
          egr_governor_decel_speed_floor < governor_speed_decel_target;
-    governor_speed_reference = governor_speed_decel_target;
+    cooling_fan_speed_target = governor_speed_decel_target;
   }
-  if ((((egr_governor_overspeed_hysteresis_floor < governor_speed_reference) &&
+  if ((((egr_governor_overspeed_hysteresis_floor < cooling_fan_speed_target) &&
        (governor_speed_decel_above_floor_flag == 0)) &&
       (governor_speed_accel_ramp_at_target_flag == 0)) || (governor_speed_accel_ramp_step_flag != 0)
      ) {
@@ -67278,19 +67278,19 @@ LAB_005150d4:
       governor_speed_accel_ramp_step_flag = 1;
     }
     if (governor_speed_accel_ramp_step_flag == 0) {
-      governor_speed_overspeed_ramp_step = governor_speed_reference;
+      governor_speed_overspeed_ramp_step = cooling_fan_speed_target;
       governor_speed_accel_ramp_request_flag = 1;
       governor_speed_accel_ramp_step_flag = 1;
     }
     if (governor_speed_overspeed_ramp_step < egr_governor_speed_ramp_target) {
-      governor_speed_reference =
+      cooling_fan_speed_target =
            governor_speed_overspeed_ramp_step + egr_governor_speed_accel_ramp_step;
       governor_speed_limit_source = 0xc;
-      governor_speed_overspeed_ramp_step = governor_speed_reference;
+      governor_speed_overspeed_ramp_step = cooling_fan_speed_target;
     }
     else {
       governor_speed_overspeed_ramp_step = egr_governor_speed_ramp_target;
-      governor_speed_reference = egr_governor_speed_ramp_target;
+      cooling_fan_speed_target = egr_governor_speed_ramp_target;
       governor_speed_accel_ramp_at_target_flag = 1;
     }
   }
@@ -67299,25 +67299,25 @@ LAB_0051524c:
     governor_decel_was_governor_floor_flag = governor_speed_limit_source == 6;
     governor_decel_was_overspeed_clamp_flag = governor_speed_limit_source == 0xb;
   }
-  if (((DAT_0040889e != 0) && (governor_speed_reference < egr_governor_speed_ceiling)) &&
-     (egr_rpm_proportional_speed_limit < governor_speed_reference)) {
-    governor_speed_reference = egr_rpm_proportional_speed_limit;
+  if (((DAT_0040889e != 0) && (cooling_fan_speed_target < egr_governor_speed_ceiling)) &&
+     (egr_rpm_proportional_speed_limit < cooling_fan_speed_target)) {
+    cooling_fan_speed_target = egr_rpm_proportional_speed_limit;
     governor_speed_limit_source = 7;
   }
-  if (egr_governor_speed_ceiling < governor_speed_reference) {
-    governor_speed_reference = egr_governor_speed_ceiling;
+  if (egr_governor_speed_ceiling < cooling_fan_speed_target) {
+    cooling_fan_speed_target = egr_governor_speed_ceiling;
     governor_speed_limit_source = 8;
   }
   if (((operating_mode_flags & 0x10) != 0) &&
      ((thermostat_monitor_state == 0 || (thermostat_monitor_state == 1)))) {
-    governor_speed_reference = egr_governor_speed_base;
+    cooling_fan_speed_target = egr_governor_speed_base;
     governor_speed_limit_source = 10;
     if (egr_governor_pi_active_flag != 0) {
       egr_governor_integral_reset_flag = 1;
     }
   }
   if (DAT_0040887e != '\0') {
-    governor_speed_reference = DAT_0040887c;
+    cooling_fan_speed_target = DAT_0040887c;
     governor_speed_limit_source = 9;
   }
   return;
@@ -67326,12 +67326,19 @@ LAB_0051524c:
 
 
 //
-// Function: governor_fuel_demand_calc @ 0x00515370
+// Function: cm848_runCoolingFanSpeedPid @ 0x00515370
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* Cooling fan speed PID (fuel_coldStart_modeCode_select's source code 8): feedback =
+   radiator_fan_speed plus a prediction on its change since radiator_fan_speed_snapshot, filtered /
+   error = cooling_fan_speed_target - feedback / P + D (filtered, x 16) / I only while
+   governor_fuel_demand_mode != 0xb, the previous source code was 8 and egr_governor_speed_floor is
+   above the three other egr_* speed floors / plus a feed-forward duty from
+   cooling_fan_feed_forward_table / clamped 0-25600 into cooling_fan_duty_request. Was
+   governor_fuel_demand_calc */
 
-void governor_fuel_demand_calc(void)
+void cm848_runCoolingFanSpeedPid(void)
 
 {
   dword dVar1;
@@ -67339,8 +67346,8 @@ void governor_fuel_demand_calc(void)
   uint uVar3;
   int iVar4;
   
-  uVar3 = (uint)DAT_00408858;
-  uVar2 = (uint)radiator_fan_speed - (uint)cold_start_mode_entry_rpm_snapshot;
+  uVar3 = (uint)cooling_fan_speed_prediction_gain;
+  uVar2 = (uint)radiator_fan_speed - (uint)radiator_fan_speed_snapshot;
   iVar4 = (uint)radiator_fan_speed +
           (int)(CONCAT44((int)((ulonglong)uVar3 * (ulonglong)uVar2 >> 0x20) +
                          uVar3 * ((int)uVar2 >> 0x1f),uVar3 * uVar2) / 0x40);
@@ -67350,22 +67357,22 @@ void governor_fuel_demand_calc(void)
   else if (0x7fff < iVar4) {
     iVar4 = 0x7fff;
   }
-  governor_rpm_feedback_filtered = cm848_signedFirstOrderFilter((int)(short)iVar4,&PTR_DAT_0040b2d4)
-  ;
-  iVar4 = (uint)governor_speed_reference - (int)(short)governor_rpm_feedback_filtered;
+  cooling_fan_speed_feedback_filtered =
+       cm848_signedFirstOrderFilter((int)(short)iVar4,&cooling_fan_speed_feedback_filter);
+  iVar4 = (uint)cooling_fan_speed_target - (int)(short)cooling_fan_speed_feedback_filtered;
   if (iVar4 < -0x8000) {
     iVar4 = -0x8000;
   }
   else if (0x7fff < iVar4) {
     iVar4 = 0x7fff;
   }
-  governor_fuel_demand_speed_error = (word)iVar4;
-  uVar3 = (uint)DAT_0040881c;
-  uVar2 = (uint)(short)governor_fuel_demand_speed_error;
+  cooling_fan_speed_error = (word)iVar4;
+  uVar3 = (uint)cooling_fan_proportional_gain;
+  uVar2 = (uint)(short)cooling_fan_speed_error;
   dVar1 = (dword)(CONCAT44((int)((ulonglong)uVar3 * (ulonglong)uVar2 >> 0x20) +
                            uVar3 * ((int)uVar2 >> 0x1f),uVar3 * uVar2) / 0x20);
-  uVar2 = (uint)DAT_0040885c;
-  uVar3 = dVar1 - governor_fuel_demand_p_term_prev;
+  uVar2 = (uint)cooling_fan_derivative_gain;
+  uVar3 = dVar1 - cooling_fan_proportional_term_previous;
   uVar2 = dVar1 + (int)(CONCAT44((int)((ulonglong)uVar2 * (ulonglong)uVar3 >> 0x20) +
                                  uVar2 * ((int)uVar3 >> 0x1f),uVar2 * uVar3) / 0x40);
   iVar4 = ((int)uVar2 >> 4) + (uint)((int)uVar2 < 0 && (uVar2 & 0xf) != 0);
@@ -67375,32 +67382,34 @@ void governor_fuel_demand_calc(void)
   else if (0x7fff < iVar4) {
     iVar4 = 0x7fff;
   }
-  governor_fuel_demand_p_term_prev = dVar1;
-  governor_fuel_demand_pd_term = cm848_signedFirstOrderFilter((int)(short)iVar4,&PTR_DAT_0040b2dc);
+  cooling_fan_proportional_term_previous = dVar1;
+  cooling_fan_proportional_derivative_term =
+       cm848_signedFirstOrderFilter((int)(short)iVar4,&cooling_fan_proportional_derivative_filter);
   if ((((governor_fuel_demand_mode != 0xb) && (cooling_fan_duty_source_code == 8)) &&
       (egr_fuel_demand_speed_floor < egr_governor_speed_floor)) &&
      ((egr_load_speed_floor < egr_governor_speed_floor &&
       (egr_governor_protection_load_speed_floor < egr_governor_speed_floor)))) {
-    governor_fuel_demand_i_acc =
-         governor_fuel_demand_i_acc +
-         (int)DAT_00408814 * (int)(short)governor_fuel_demand_speed_error;
-    governor_fuel_demand_i_term = (word)((int)governor_fuel_demand_i_acc / 0x5000);
+    cooling_fan_integral_accumulator =
+         cooling_fan_integral_accumulator +
+         (int)cooling_fan_integral_gain * (int)(short)cooling_fan_speed_error;
+    cooling_fan_integral_term = (word)((int)cooling_fan_integral_accumulator / 0x5000);
   }
-  iVar4 = (int)(short)governor_fuel_demand_i_term_min;
-  if ((short)governor_fuel_demand_i_term < iVar4) {
-    governor_fuel_demand_i_term = governor_fuel_demand_i_term_min;
+  iVar4 = (int)(short)cooling_fan_integral_term_minimum;
+  if ((short)cooling_fan_integral_term < iVar4) {
+    cooling_fan_integral_term = cooling_fan_integral_term_minimum;
   }
   else {
-    iVar4 = (int)(short)governor_fuel_demand_i_term_max;
-    if ((short)governor_fuel_demand_i_term <= iVar4) goto LAB_005155c8;
-    governor_fuel_demand_i_term = governor_fuel_demand_i_term_max;
+    iVar4 = (int)(short)cooling_fan_integral_term_maximum;
+    if ((short)cooling_fan_integral_term <= iVar4) goto LAB_005155c8;
+    cooling_fan_integral_term = cooling_fan_integral_term_maximum;
   }
-  governor_fuel_demand_i_acc = iVar4 * 0x5000;
+  cooling_fan_integral_accumulator = iVar4 * 0x5000;
 LAB_005155c8:
-  governor_fuel_demand_speed_table_result =
-       cm848_dualAxisTableInterpolation(&DAT_003fcdfb,governor_speed_reference,0xc6f6);
-  iVar4 = (short)governor_fuel_demand_pd_term * 0x10 + (int)(short)governor_fuel_demand_i_term +
-          (uint)governor_fuel_demand_speed_table_result;
+  cooling_fan_feed_forward_duty =
+       cm848_dualAxisTableInterpolation
+                 (&cooling_fan_feed_forward_table,cooling_fan_speed_target,0xc6f6);
+  iVar4 = (short)cooling_fan_proportional_derivative_term * 0x10 +
+          (int)(short)cooling_fan_integral_term + (uint)cooling_fan_feed_forward_duty;
   if (iVar4 < 0x6401) {
     if (iVar4 < 0) {
       iVar4 = 0;
@@ -67448,36 +67457,36 @@ void fuel_coldStart_modeCode_select(void)
       cooling_fan_duty_source_code = 2;
     }
     else if (((DAT_0040888c < engine_rpm_state_t_0040b7ac.current_rpm) &&
-             (DAT_0040888e < governor_speed_reference)) && (radiator_fan_speed < DAT_00408890)) {
+             (DAT_0040888e < cooling_fan_speed_target)) && (radiator_fan_speed < DAT_00408890)) {
       cooling_fan_duty_request = DAT_004088a8;
       cooling_fan_duty_source_code = 3;
     }
     else {
-      if (egr_governor_speed_base == governor_speed_reference) {
+      if (egr_governor_speed_base == cooling_fan_speed_target) {
         cooling_fan_duty_source_code = 4;
       }
       else {
-        if ((egr_governor_speed_ceiling == governor_speed_reference) &&
+        if ((egr_governor_speed_ceiling == cooling_fan_speed_target) &&
            (cold_start_mode_active_flag == 0)) {
-          cold_start_mode_entry_rpm_snapshot = radiator_fan_speed;
+          radiator_fan_speed_snapshot = radiator_fan_speed;
           cooling_fan_duty_source_code = 5;
           cooling_fan_duty_request = cooling_fan_duty_maximum;
           return;
         }
         if (cold_start_mode_active_flag == 0) {
-          governor_fuel_demand_calc();
-          cold_start_mode_entry_rpm_snapshot = radiator_fan_speed;
+          cm848_runCoolingFanSpeedPid();
+          radiator_fan_speed_snapshot = radiator_fan_speed;
           cooling_fan_duty_source_code = 8;
           return;
         }
-        if (DAT_00408892 < governor_speed_reference) {
+        if (DAT_00408892 < cooling_fan_speed_target) {
           if (egr_rpm_headroom_below_speed_limit < DAT_00408894) {
-            cold_start_mode_entry_rpm_snapshot = radiator_fan_speed;
+            radiator_fan_speed_snapshot = radiator_fan_speed;
             cooling_fan_duty_source_code = 6;
             cooling_fan_duty_request = DAT_00408888;
             return;
           }
-          cold_start_mode_entry_rpm_snapshot = radiator_fan_speed;
+          radiator_fan_speed_snapshot = radiator_fan_speed;
           cooling_fan_duty_source_code = 7;
           cooling_fan_duty_request = cooling_fan_duty_minimum;
           return;
@@ -67491,7 +67500,7 @@ void fuel_coldStart_modeCode_select(void)
     cooling_fan_duty_request = DAT_0040886e;
     cooling_fan_duty_source_code = 1;
   }
-  cold_start_mode_entry_rpm_snapshot = radiator_fan_speed;
+  radiator_fan_speed_snapshot = radiator_fan_speed;
   return;
 }
 
@@ -67606,12 +67615,12 @@ void j1939_message_handler_initialize(void)
   egr_warmup_phase_state = 0;
   governor_speed_limit_source = 0;
   cooling_fan_duty_source_code = 0;
-  cold_start_mode_entry_rpm_snapshot = 0;
-  governor_fuel_demand_p_term_prev = 0;
-  governor_fuel_demand_pd_term = 0;
-  governor_rpm_feedback_filtered = 0;
-  governor_fuel_demand_i_term = governor_fuel_demand_i_term_init_val;
-  governor_fuel_demand_i_acc = (short)governor_fuel_demand_i_term_init_val * 0x5000;
+  radiator_fan_speed_snapshot = 0;
+  cooling_fan_proportional_term_previous = 0;
+  cooling_fan_proportional_derivative_term = 0;
+  cooling_fan_speed_feedback_filtered = 0;
+  cooling_fan_integral_term = governor_fuel_demand_i_term_init_val;
+  cooling_fan_integral_accumulator = (short)governor_fuel_demand_i_term_init_val * 0x5000;
   egr_fuel_demand_speed_floor = egr_fuel_demand_speed_floor_disabled;
   governor_speed_ramp_step_count = 0;
   governor_speed_decel_ramp_init_flag = 0;
@@ -67624,12 +67633,12 @@ void j1939_message_handler_initialize(void)
   governor_speed_decel_target_captured_flag = 0;
   cooling_fan_hold_pass_count = 0;
   egr_load_floor_hold_timer = 0;
-  DAT_003fcdfb = 2;
+  cooling_fan_feed_forward_table = 2;
   DAT_003fcdfd = 2;
   DAT_0040b2d8 = 0;
-  PTR_DAT_0040b2d4 = &DAT_00408856;
+  cooling_fan_speed_feedback_filter = &DAT_00408856;
   DAT_0040b2e0 = 0;
-  PTR_DAT_0040b2dc = &DAT_0040885a;
+  cooling_fan_proportional_derivative_filter = &DAT_0040885a;
   DAT_0040b2e8 = 0;
   PTR_DAT_0040b2e4 = &DAT_004088ac;
   DAT_0040b2f0 = 0;
@@ -67644,24 +67653,32 @@ void j1939_message_handler_initialize(void)
 
 
 //
-// Function: tpu_rpm_measurement_control @ 0x00515d78
+// Function: cm848_measureRadiatorFanSpeed @ 0x00515d78
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* Radiator fan speed from the fan speed sensor on TPU-B channel 9 (DRB SCI FD-80-81 RAD FAN SPEED
+   reads the result): re-arms TPU-B 9 when engine_sync_type_code switches to or from 5100 (pulses
+   per measurement 1 or 6) / reads 0 after radiator_fan_speed_pulse_timeout_count expires / clamps
+   short and long periods / otherwise numerator x 8 / period (0.125 rpm) / moving average into
+   radiator_fan_speed / the override / and with type 5100 a three-sample history. Was
+   tpu_rpm_measurement_control */
 
-void tpu_rpm_measurement_control(void)
+void cm848_measureRadiatorFanSpeed(void)
 
 {
   word wVar1;
   uint uVar2;
   
   if (engine_sync_type_code == 0x13ec) {
-    uVar2 = tpu_rpm_crank_teeth_isb & 0xff;
-    if (tpu_rpm_isb_setup_done_flag == 0) {
-      tpu_rpm_raw_period =
-           (dword)(CONCAT44((int)((ulonglong)((uint)tpu_rpm_crank_teeth_isb * 0x3c) * 1000000 >>
-                                 0x20),(uint)tpu_rpm_crank_teeth_isb * 60000000) /
-                  (ulonglong)tpu_rpm_timer_prescaler);
+    uVar2 = radiator_fan_pulses_per_measurement_type_5100 & 0xff;
+    if (radiator_fan_input_configured_for_type_5100_flag == 0) {
+      radiator_fan_speed_numerator =
+           (dword)(CONCAT44((int)((ulonglong)
+                                  ((uint)radiator_fan_pulses_per_measurement_type_5100 * 0x3c) *
+                                  1000000 >> 0x20),
+                            (uint)radiator_fan_pulses_per_measurement_type_5100 * 60000000) /
+                  (ulonglong)radiator_fan_speed_prescaler);
       wVar1 = tpu_b_mcr.CIER;
       tpu_b_mcr.CIER = wVar1 & 0xfdff;
       wVar1 = tpu_b_mcr.CPR0;
@@ -67672,7 +67689,7 @@ void tpu_rpm_measurement_control(void)
       tpu_b_mcr.CISR = wVar1 & 0xfdff;
       wVar1 = tpu_b_mcr.CFSR1;
       tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
-      DAT_00304592 = tpu_rpm_crank_teeth_isb << 8;
+      DAT_00304592 = radiator_fan_pulses_per_measurement_type_5100 << 8;
       DAT_00304596 = 0;
       DAT_00304598 = 0;
       TPUB_CH9_PARAM0 = 0xb;
@@ -67683,16 +67700,16 @@ void tpu_rpm_measurement_control(void)
       tpu_b_mcr.CPR0 = wVar1 & 0xfff3 | 8;
       wVar1 = tpu_b_mcr.CIER;
       tpu_b_mcr.CIER = wVar1 | 0x200;
-      tpu_rpm_isb_setup_done_flag = 1;
+      radiator_fan_input_configured_for_type_5100_flag = 1;
     }
-    tpu_rpm_isb_was_active_flag = 1;
+    radiator_fan_input_was_type_5100_flag = 1;
   }
   else {
-    uVar2 = (uint)tpu_rpm_crank_teeth_non_isb;
-    if (tpu_rpm_isb_was_active_flag != 0) {
-      tpu_rpm_raw_period =
+    uVar2 = (uint)radiator_fan_pulses_per_measurement;
+    if (radiator_fan_input_was_type_5100_flag != 0) {
+      radiator_fan_speed_numerator =
            (dword)(CONCAT44((int)((ulonglong)(uVar2 * 0x3c) * 1000000 >> 0x20),uVar2 * 60000000) /
-                  (ulonglong)tpu_rpm_timer_prescaler);
+                  (ulonglong)radiator_fan_speed_prescaler);
       wVar1 = tpu_b_mcr.CIER;
       tpu_b_mcr.CIER = wVar1 & 0xfdff;
       wVar1 = tpu_b_mcr.CPR0;
@@ -67703,7 +67720,7 @@ void tpu_rpm_measurement_control(void)
       tpu_b_mcr.CISR = wVar1 & 0xfdff;
       wVar1 = tpu_b_mcr.CFSR1;
       tpu_b_mcr.CFSR1 = wVar1 & 0xff0f | 0xd0;
-      DAT_00304592 = (ushort)tpu_rpm_crank_teeth_non_isb << 8;
+      DAT_00304592 = (ushort)radiator_fan_pulses_per_measurement << 8;
       DAT_00304596 = 0;
       DAT_00304598 = 0;
       TPUB_CH9_PARAM0 = 0xb;
@@ -67714,38 +67731,40 @@ void tpu_rpm_measurement_control(void)
       tpu_b_mcr.CPR0 = wVar1 & 0xfff3 | 8;
       wVar1 = tpu_b_mcr.CIER;
       tpu_b_mcr.CIER = wVar1 | 0x200;
-      tpu_rpm_isb_was_active_flag = 0;
+      radiator_fan_input_was_type_5100_flag = 0;
     }
-    tpu_rpm_isb_setup_done_flag = 0;
+    radiator_fan_input_configured_for_type_5100_flag = 0;
   }
-  if (tpu_rpm_startup_blank_countdown != 0) {
-    tpu_rpm_startup_blank_countdown = tpu_rpm_startup_blank_countdown - 1;
+  if (radiator_fan_speed_pulse_timeout_count != 0) {
+    radiator_fan_speed_pulse_timeout_count = radiator_fan_speed_pulse_timeout_count - 1;
   }
-  if (tpu_rpm_startup_blank_countdown == 0) {
+  if (radiator_fan_speed_pulse_timeout_count == 0) {
     uVar2 = 0;
   }
-  else if (tpu_rpm_reference_period < (DAT_004088d2 * uVar2) / (uint)tpu_rpm_timer_prescaler) {
-    uVar2 = (uint)DAT_004088c8;
+  else if (radiator_fan_speed_period_microseconds <
+           (radiator_fan_speed_short_period_limit * uVar2) / (uint)radiator_fan_speed_prescaler) {
+    uVar2 = (uint)radiator_fan_speed_short_period_value;
   }
-  else if ((DAT_004088ce * uVar2) / (uint)tpu_rpm_timer_prescaler < tpu_rpm_reference_period) {
-    uVar2 = (uint)DAT_004088ca;
+  else if ((radiator_fan_speed_long_period_limit * uVar2) / (uint)radiator_fan_speed_prescaler <
+           radiator_fan_speed_period_microseconds) {
+    uVar2 = (uint)radiator_fan_speed_long_period_value;
   }
   else {
-    uVar2 = (uint)(CONCAT44(tpu_rpm_raw_period >> 0x1d,tpu_rpm_raw_period << 3) /
-                  (ulonglong)tpu_rpm_reference_period);
+    uVar2 = (uint)(CONCAT44(radiator_fan_speed_numerator >> 0x1d,radiator_fan_speed_numerator << 3)
+                  / (ulonglong)radiator_fan_speed_period_microseconds);
   }
-  DAT_0040b2f6 = (undefined2)uVar2;
-  radiator_fan_speed = exponentialMovingAverage(uVar2 & 0xffff,&tpu_rpm_ema_coeff_ptr);
-  wVar1 = rpm_camSync_window_mid;
-  if (DAT_004088da != 0) {
-    radiator_fan_speed = DAT_004088dc;
+  radiator_fan_speed_unfiltered = (word)uVar2;
+  radiator_fan_speed = exponentialMovingAverage(uVar2 & 0xffff,&radiator_fan_speed_filter_pointer);
+  wVar1 = radiator_fan_speed_history_middle;
+  if (radiator_fan_speed_override_enable != 0) {
+    radiator_fan_speed = radiator_fan_speed_override;
   }
-  if ((tpu_rpm_cam_sync_update_enable != 0) && (engine_sync_type_code == 0x13ec)) {
-    rpm_camSync_window_oldest = rpm_camSync_window_mid;
-    rpm_camSync_window_mid = rpm_camSync_window_latest;
-    rpm_camSync_window_latest = radiator_fan_speed;
+  if ((radiator_fan_speed_history_enable != 0) && (engine_sync_type_code == 0x13ec)) {
+    radiator_fan_speed_history_oldest = radiator_fan_speed_history_middle;
+    radiator_fan_speed_history_middle = radiator_fan_speed_history_latest;
+    radiator_fan_speed_history_latest = radiator_fan_speed;
     if (wVar1 != 0) {
-      rpm_camSync_new_sample_ready_flag = 1;
+      radiator_fan_speed_history_ready_flag = 1;
     }
   }
   return;
@@ -67754,53 +67773,55 @@ void tpu_rpm_measurement_control(void)
 
 
 //
-// Function: tpu_rpm_measurement_initialize @ 0x005161c0
+// Function: cm848_initRadiatorFanSpeedMeasurement @ 0x005161c0
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* Initialises the radiator fan speed measurement: history enable / filter pointer /
+   radiator_fan_speed_numerator for the current type code. Was tpu_rpm_measurement_initialize */
 
-void tpu_rpm_measurement_initialize(void)
+void cm848_initRadiatorFanSpeedMeasurement(void)
 
 {
   uint uVar1;
   
-  tpu_rpm_cam_sync_update_enable = 1;
+  radiator_fan_speed_history_enable = 1;
   DAT_0040b306 = 0;
-  tpu_rpm_ema_coeff_ptr = &DAT_004088cc;
+  radiator_fan_speed_filter_pointer = &DAT_004088cc;
   if (engine_sync_type_code == 0x13ec) {
-    uVar1 = (uint)tpu_rpm_crank_teeth_isb;
+    uVar1 = (uint)radiator_fan_pulses_per_measurement_type_5100;
   }
   else {
-    uVar1 = (uint)tpu_rpm_crank_teeth_non_isb;
+    uVar1 = (uint)radiator_fan_pulses_per_measurement;
   }
-  tpu_rpm_raw_period =
+  radiator_fan_speed_numerator =
        (dword)(CONCAT44((int)((ulonglong)(uVar1 * 0x3c) * 1000000 >> 0x20),uVar1 * 60000000) /
-              (ulonglong)tpu_rpm_timer_prescaler);
+              (ulonglong)radiator_fan_speed_prescaler);
   return;
 }
 
 
 
 //
-// Function: mpc555_tpuBChannel9InterruptHandler @ 0x00516274
+// Function: cm848_radiatorFanSpeedInterruptHandler @ 0x00516274
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* TPU-B channel 9 interrupt (entry 9 of tpu_b_channel_interrupt_handler_table): converts the
-   captured period at 0x304598 into tpu_rpm_reference_period (x1000000 / 0x4c4b4) and reloads
-   tpu_rpm_startup_blank_countdown; was wrongly listed in deleted_functions.csv | reached via
-   tpu_b_channel_interrupt_handler_table[9] - mpc555_tpuBInterruptDispatcher 0x55d2c - no direct
-   caller - tpu_rpm_reference_period read by tpu_rpm_measurement_control */
+/* TPU-B channel 9 interrupt (entry 9 of tpu_b_channel_interrupt_handler_table, via
+   mpc555_tpuBInterruptDispatcher 0x55d2c - no direct caller): converts the accumulated fan speed
+   sensor period at 0x304598 into radiator_fan_speed_period_microseconds (x 1000000 / 312500) and
+   reloads radiator_fan_speed_pulse_timeout_count. Was mpc555_tpuBChannel9InterruptHandler (and
+   wrongly listed in deleted_functions.csv before PR #46) */
 
-void mpc555_tpuBChannel9InterruptHandler(void)
+void cm848_radiatorFanSpeedInterruptHandler(void)
 
 {
   uint uVar1;
   
-  tpu_rpm_startup_blank_countdown = DAT_004088d6;
+  radiator_fan_speed_pulse_timeout_count = radiator_fan_speed_pulse_timeout_passes;
   uVar1 = DAT_00304598;
   DAT_00304598._0_2_ = 0;
-  tpu_rpm_reference_period =
+  radiator_fan_speed_period_microseconds =
        (dword)(CONCAT44((int)((ulonglong)uVar1 * 1000000 >> 0x20),uVar1 * 1000000) / 0x4c4b4);
   return;
 }
@@ -67808,10 +67829,14 @@ void mpc555_tpuBChannel9InterruptHandler(void)
 
 
 //
-// Function: tpu_rpm_timer_setup @ 0x005162ec
+// Function: cm848_configureRadiatorFanSpeedInput @ 0x005162ec
 //
 
-void tpu_rpm_timer_setup(void)
+/* Configures TPU-B channel 9 for the fan speed sensor: function 0xd (CFSR1) with the pulse count in
+   its parameters / host sequence and host service request 3 / priority 2 / interrupt enable. Was
+   tpu_rpm_timer_setup */
+
+void cm848_configureRadiatorFanSpeedInput(void)
 
 {
   short sVar1;
@@ -67826,7 +67851,7 @@ void tpu_rpm_timer_setup(void)
     tpu_b_mcr.CISR = wVar2 & 0xfdff;
     wVar2 = tpu_b_mcr.CFSR1;
     tpu_b_mcr.CFSR1 = wVar2 & 0xff0f | 0xd0;
-    sVar1 = tpu_rpm_crank_teeth_isb << 8;
+    sVar1 = radiator_fan_pulses_per_measurement_type_5100 << 8;
   }
   else {
     wVar2 = tpu_b_mcr.CPR0;
@@ -67837,7 +67862,7 @@ void tpu_rpm_timer_setup(void)
     tpu_b_mcr.CISR = wVar2 & 0xfdff;
     wVar2 = tpu_b_mcr.CFSR1;
     tpu_b_mcr.CFSR1 = wVar2 & 0xff0f | 0xd0;
-    sVar1 = (ushort)tpu_rpm_crank_teeth_non_isb << 8;
+    sVar1 = (ushort)radiator_fan_pulses_per_measurement << 8;
   }
   DAT_00304592 = sVar1;
   DAT_00304596 = 0;
@@ -82254,10 +82279,18 @@ LAB_0052f410:
 
 
 //
-// Function: engine_camSync_sampleRatio_validate @ 0x0052f448
+// Function: cm848_checkRadiatorFanSpeedSignalNoise @ 0x0052f448
 //
 
-undefined4 engine_camSync_sampleRatio_validate(void)
+/* Fan speed signal noise test (a protection_state_machine_step step - returns 5 done / 4 in
+   progress): runs while cam_sync_protection_state_flags bit 0x40 or 0x80 is set; each new
+   three-sample history (type code 5100 only) counts as clean or as a spike (middle sample more than
+   500 rpm from its neighbours' average); after radiator_fan_speed_noise_check_passes it clears both
+   flag bits if the clean ratio is above radiator_fan_speed_clean_sample_ratio_minimum, otherwise
+   clears only 0x40 and sets diag_suppress_request_flag; the flag byte is written to EEPROM. Was
+   engine_camSync_sampleRatio_validate */
+
+undefined4 cm848_checkRadiatorFanSpeedSignalNoise(void)
 
 {
   undefined4 uVar1;
@@ -82268,23 +82301,26 @@ undefined4 engine_camSync_sampleRatio_validate(void)
     uVar1 = 5;
   }
   else {
-    cam_sync_sample_ratio_dwell_count = cam_sync_sample_ratio_dwell_count + 1;
-    if (rpm_camSync_new_sample_ready_flag != 0) {
-      iVar2 = (int)((uint)rpm_camSync_window_latest + (uint)rpm_camSync_window_oldest) >> 1;
-      if (((int)(uint)DAT_000642f4 < (int)((uint)rpm_camSync_window_mid - iVar2)) ||
-         ((int)(uint)DAT_000642f6 < (int)(iVar2 - (uint)rpm_camSync_window_mid))) {
-        rpm_camSync_invalid_sample_count = rpm_camSync_invalid_sample_count + 1;
+    radiator_fan_speed_noise_check_pass_count = radiator_fan_speed_noise_check_pass_count + 1;
+    if (radiator_fan_speed_history_ready_flag != 0) {
+      iVar2 = (int)((uint)radiator_fan_speed_history_latest +
+                   (uint)radiator_fan_speed_history_oldest) >> 1;
+      if (((int)(uint)radiator_fan_speed_spike_up_limit <
+           (int)((uint)radiator_fan_speed_history_middle - iVar2)) ||
+         ((int)(uint)radiator_fan_speed_spike_down_limit <
+          (int)(iVar2 - (uint)radiator_fan_speed_history_middle))) {
+        radiator_fan_speed_spike_sample_count = radiator_fan_speed_spike_sample_count + 1;
       }
       else {
-        rpm_camSync_valid_sample_count = rpm_camSync_valid_sample_count + 1;
+        radiator_fan_speed_clean_sample_count = radiator_fan_speed_clean_sample_count + 1;
       }
-      rpm_camSync_new_sample_ready_flag = 0;
+      radiator_fan_speed_history_ready_flag = 0;
     }
-    if (DAT_000642f8 < cam_sync_sample_ratio_dwell_count) {
-      if ((uint)DAT_000642fa <
-          (((uint)rpm_camSync_valid_sample_count * 0x6400) /
-           ((uint)rpm_camSync_valid_sample_count + (uint)rpm_camSync_invalid_sample_count) & 0xffff)
-         ) {
+    if (radiator_fan_speed_noise_check_passes < radiator_fan_speed_noise_check_pass_count) {
+      if ((uint)radiator_fan_speed_clean_sample_ratio_minimum <
+          (((uint)radiator_fan_speed_clean_sample_count * 0x6400) /
+           ((uint)radiator_fan_speed_clean_sample_count +
+           (uint)radiator_fan_speed_spike_sample_count) & 0xffff)) {
         local_8[0] = 0x3f;
       }
       else {
@@ -82741,7 +82777,7 @@ void hpcr_calibration_group25_load(void)
       protection_state_machine_step = engine_coldStart_batteryVoltage_monitor();
       break;
     case 4:
-      protection_state_machine_step = engine_camSync_sampleRatio_validate();
+      protection_state_machine_step = cm848_checkRadiatorFanSpeedSignalNoise();
       break;
     case 5:
       protection_state_machine_step = engine_protection_timerState_shiftCheck();
@@ -82767,7 +82803,7 @@ void hpcr_calibration_group25_load(void)
     cold_start_battery_timer_a = 0xffff;
     cold_start_battery_timer_b = 0xffff;
     cold_start_battery_diag_suppress_done_flag = 0;
-    cam_sync_sample_ratio_dwell_count = 0;
+    radiator_fan_speed_noise_check_pass_count = 0;
   }
   return;
 }
@@ -82781,30 +82817,38 @@ void hpcr_calibration_group25_load(void)
 void cm848_initialization_group25_state(void)
 
 {
-  governor_setpoint_rpm_deviation_count = 0;
+  radiator_fan_speed_out_of_range_count = 0;
   return;
 }
 
 
 
 //
-// Function: cm848_calibration_group13_load @ 0x00530298
+// Function: cm848_checkRadiatorFanSpeedRationality @ 0x00530298
 //
 
-void cm848_calibration_group13_load(void)
+/* P0483 cooling fan speed rationality (fault 407 = fault_detected_bits_400_to_415 bit 7): only
+   while cold_start_phase = CSP_AT_GOVERNOR_SETPOINT; a radiator_fan_speed outside
+   radiator_fan_speed_rationality_minimum / _maximum (75 / 4000 rpm in the RAM dump) counts
+   radiator_fan_speed_out_of_range_count up to radiator_fan_speed_out_of_range_limit and sets P0483;
+   in range it clears the count and the DTC. Called from cm848_periodicTaskGroup13_calibration2. Was
+   cm848_calibration_group13_load */
+
+void cm848_checkRadiatorFanSpeedRationality(void)
 
 {
   if (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) {
-    if ((radiator_fan_speed < DAT_00409ec2) || (DAT_00409ec0 < radiator_fan_speed)) {
-      governor_setpoint_rpm_deviation_count = governor_setpoint_rpm_deviation_count + 1;
+    if ((radiator_fan_speed < radiator_fan_speed_rationality_minimum) ||
+       (radiator_fan_speed_rationality_maximum < radiator_fan_speed)) {
+      radiator_fan_speed_out_of_range_count = radiator_fan_speed_out_of_range_count + 1;
     }
     else {
       fault_detected_bits_400_to_415 = fault_detected_bits_400_to_415 & 0xff7f;
       fault_registered_bits_400_to_415 = fault_registered_bits_400_to_415 & 0xff7f;
-      governor_setpoint_rpm_deviation_count = 0;
+      radiator_fan_speed_out_of_range_count = 0;
     }
-    if (governor_setpoint_rpm_deviation_limit <= governor_setpoint_rpm_deviation_count) {
-      governor_setpoint_rpm_deviation_count = governor_setpoint_rpm_deviation_limit;
+    if (radiator_fan_speed_out_of_range_limit <= radiator_fan_speed_out_of_range_count) {
+      radiator_fan_speed_out_of_range_count = radiator_fan_speed_out_of_range_limit;
       fault_detected_bits_400_to_415 = fault_detected_bits_400_to_415 | 0x80;
     }
   }
