@@ -81,6 +81,18 @@ For larger reads, the ECU responds using J1939 Transport Protocol:
 
 **Not engine speed (corrected 2026-11-14, PR #48):** 0x0040B882, listed here before as `engine_speed_raw` × 0.125 RPM, is `fuel_metering_command`. It's the 0-4095 command (= 0-100 % on-time of the fuel metering PWM on TPU-B channel 11, P0251) computed by `cm848_calculateFuelMeteringCommand`. Reading it live shows the fuel metering command, not RPM.
 
+### Fuel Pressure / Radiator Fan (from the DRB SCI table, 2026-11-14)
+
+The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n → entry n − 1). The labels come from the DRB database (`mydb` `v_transaction`). Scales other than the fan speed's aren't confirmed yet.
+
+| Address | Variable | DRB read / label | Scale |
+|---------|----------|------------------|-------|
+| 0x0040B8B0 | `fuel_pressure_sensor` | FD-23-24 FUEL PRESSURE SENSOR | ? (DRB converts to kPa / psi) |
+| 0x0040B8B6 | `fuel_pressure_setpoint` | FD-27-28 FUEL PRESS SETPOINT | ? |
+| 0x0040B8AE | `fuel_pressure_sensor_volts` | FD-29-2A FUEL PRESSURE VOLTS | ? |
+| 0x0040B882 | `fuel_metering_command` | FD-21-22 FUEL PRESS REG OUTPUT | 0-4095 = 0-100 % |
+| 0x0040B2F4 | `radiator_fan_speed` | FD-80-81 RAD FAN SPEED | × 0.125 rpm |
+
 **Verified Working (2026-01-31):**
 - Request: `4A 00 40 B7 BA 02 00 00`
 - Response: `4B 00 40 B7 BA 02 17 70` → 0x1770 = 6000 × 0.125 = **750 RPM** (idle)

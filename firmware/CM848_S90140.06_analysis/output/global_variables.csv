@@ -5325,11 +5325,11 @@ address,name,type,comment
 0x0040b8a8,engine_sync_fault_active_flag,byte,
 0x0040b8aa,fuel_metering_retest_pass_count,word,Fuel metering retest pass counter (cm848_calculateFuelMeteringCommand): command 0 below fuel_metering_retest_off_passes / 4095 for the next 2 x fuel_metering_retest_fault_confirm_passes / then 0 and the retest flag clears (was engine_sync_cycle_counter)
 0x0040b8ac,fuel_metering_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the fuel metering read-back fault (output_read_back_fault_bits.fuel_metering) outlasts its debounce and P0251 (fault 333) is set; cm848_calculateFuelMeteringCommand then runs the retest on the 0-4095 command (0 / 4095) - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was engine_sync_protection_active_flag)
-0x0040b8ae,engine_timing_diagnostic_word,word,
-0x0040b8b0,cam_sync_position,word,
+0x0040b8ae,fuel_pressure_sensor_volts,word,DRB SCI read FD-29-2A 'FUEL PRESSURE VOLTS' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-29-2A to this word's two bytes; 436 in the RAM dump; hpcr_checkRailPressureSensorBeforeStart reads it (was engine_timing_diagnostic_word)
+0x0040b8b0,fuel_pressure_sensor,word,DRB SCI read FD-23-24 'FUEL PRESSURE SENSOR' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-23-24 to this word's two bytes (kPa / psi in the DRB database); 30 in the engine-off RAM dump; cm848_calculateFuelMeteringCommand filters it into its error term and the injection-angle scheduler reads it (was cam_sync_position)
 0x0040b8b2,cam_timing_reference_b,word,
 0x0040b8b4,cold_start_sync_status,byte,
-0x0040b8b6,cam_timing_measured,word,
+0x0040b8b6,fuel_pressure_setpoint,word,DRB SCI read FD-27-28 'FUEL PRESS SETPOINT' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-27-28 to this word's two bytes; 1000 in the RAM dump; cm848_calculateFuelMeteringCommand's error is this minus cam_timing_reference_b (0x40b8b2 - which reads the same as fuel_pressure_sensor in the dump); cm848_sensor_channel_state_load writes it most (was cam_timing_measured)
 0x0040b8ca,engine_timing_arb_byte_8_15,word,
 0x0040b8cc,engine_position_diag_flags,byte,
 0x0040b8cd,protection_fault_status_a,byte,
@@ -5642,7 +5642,7 @@ address,name,type,comment
 #   [15:14] channel H — protection_enable system_enable_bits bit 7
 #   [17:16] channel I — protection_enable system_enable_bits bit 3
 #   [19:18] channel J — governor_speed_request_state == 1
-0x0040b2f4,tpu_rpm_ema_filtered,word,EMA-filtered TPU engine RPM; RPM axis into governor/fuel tables
+0x0040b2f4,radiator_fan_speed,word,DRB SCI read FD-80-81 'RAD FAN SPEED' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-80-81 to this word's two bytes (x 0.125 rpm); measured by tpu_rpm_measurement_control; the fan controller (fuel_coldStart_modeCode_select / governor_fuel_demand_calc) compares it with its speed limits - not an engine rpm (was tpu_rpm_ema_filtered)
 0x0040b1e7,protection_event26_condition_code,byte,priority condition code 1-15 for protection event 0x26
 0x0040b1e6,protection_event26_condition_code_b,byte,class-B condition code for protection event 0x26 (enable_byte_34 & 0x40 path)
 0x004088de,tpu_rpm_crank_teeth_isb,word,ISB crank teeth count in RPM formula (sync==0x13ec path)
