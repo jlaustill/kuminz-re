@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 19:53:57 MST 2026
+// Generated: Sat Nov 14 19:57:47 MST 2026
 
 
 //
@@ -1768,10 +1768,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
-  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6613,9 +6613,9 @@ void cm848_phase_group_b_processing(void)
   cm848_updateEngineDiagnosticCounters();
   cm848_updateEnginePositionErrors();
   cm848_updateEnginePosition();
-  cm848_calculateEngineTimingOffset();
+  cm848_calculateFuelMeteringCommand();
   cm848_processEnginePositionDiagnostics();
-  mpc555_calculateTpuTimingPeriod();
+  cm848_setFuelMeteringPwm();
   mpc555_updateSensorDiagnosticFlags();
   cm848_checkPciMessageTimeouts();
   cm848_schedulePciTransmit();
@@ -42794,12 +42794,25 @@ LAB_00047b98:
 
 
 //
-// Function: cm848_calculateEngineTimingOffset @ 0x00047bd0
+// Function: cm848_calculateFuelMeteringCommand @ 0x00047bd0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Fuel metering command controller (cm848_phase_group_b_processing; output channel assignment table
+   entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back): an override
+   (engine_speed_override_enable_cal) and a cranking value return early; otherwise a mode state
+   machine in engine_sync_state_t_0040b87f.sync_status picks the path - modes 2 / 4 sum P / I /
+   D-style terms on cam_timing_measured - cam_timing_reference_b plus a fuel-demand feed-forward and
+   an rpm table / modes 8 / 0x10 (switch_input_state_bits[0] bit 0 clear and
+   engine_shutdown_active_flag 0) / 0x20 (cam_sync_disable_cal set) / 0x40 (faults 304 / 305 / 377 /
+   378) use fixed cam_sync_ref_count_state*_cal values / mode 1 is the low-rpm mode the others fall
+   back to; the result is clamped and scaled into engine_sync_state_t_0040b87f.fuel_metering_command
+   (0-4095), then the read-back retest (0 / 4095) runs. cm848_setFuelMeteringPwm turns the command
+   into TPU-B 11's on-time. Its engine_sync_* / cam_sync_* / injection_timing_* names are older
+   guesses still to re-domain - the controlled quantity is most likely rail pressure (unverified).
+   Was cm848_calculateEngineTimingOffset */
 
-void cm848_calculateEngineTimingOffset(void)
+void cm848_calculateFuelMeteringCommand(void)
 
 {
   ushort uVar1;
@@ -42839,12 +42852,12 @@ void cm848_calculateEngineTimingOffset(void)
   uint local_34;
   
   if (engine_speed_override_enable_cal != 0) {
-    engine_sync_state_t_0040b87f.speed_raw = engine_speed_override_value_cal;
+    engine_sync_state_t_0040b87f.fuel_metering_command = engine_speed_override_value_cal;
     return;
   }
   if ((engine_sync_cold_start_flag != 0) &&
      ((cold_start_phase == CSP_CRANKING || (engine_sync_cold_start_enable2_cal == 1)))) {
-    engine_sync_state_t_0040b87f.speed_raw = engine_sync_cold_start_speed_cal;
+    engine_sync_state_t_0040b87f.fuel_metering_command = engine_sync_cold_start_speed_cal;
     return;
   }
   wVar15 = engine_sync_protection_output_a;
@@ -43194,9 +43207,10 @@ LAB_000489d0:
       engine_sync_protection_init_a._2_2_ = engine_sync_protection_lower_limit_cal - sVar7;
       iVar11 = (int)(short)engine_sync_protection_lower_limit_cal;
     }
-    engine_sync_state_t_0040b87f.speed_raw = (short)(iVar11 * (short)wVar15 >> 0xc) + wVar15;
+    engine_sync_state_t_0040b87f.fuel_metering_command =
+         (short)(iVar11 * (short)wVar15 >> 0xc) + wVar15;
     if ((engine_rpm_measured == 0) && (governor_zero_speed_count < governor_zero_speed_count_cal)) {
-      engine_sync_state_t_0040b87f.speed_raw = engine_sync_zero_speed_output_cal;
+      engine_sync_state_t_0040b87f.fuel_metering_command = engine_sync_zero_speed_output_cal;
     }
     uVar1 = governor_zero_speed_count + 1;
     governor_zero_speed_count = governor_zero_speed_count + 1;
@@ -43206,7 +43220,7 @@ LAB_000489d0:
   }
   else {
     engine_sync_protection_init_a._2_2_ = 0;
-    engine_sync_state_t_0040b87f.speed_raw = wVar15;
+    engine_sync_state_t_0040b87f.fuel_metering_command = wVar15;
   }
   if (engine_sync_state_t_0040b87f.sync_status == 1) {
     pbVar12 = &DAT_00059336;
@@ -43216,23 +43230,26 @@ LAB_000489d0:
   }
   cam_sync_speed_filter_pointer = pbVar12;
   uVar2 = lookupTableInterpolation((table_interp_args_t *)&engine_sync_init_state_j);
-  engine_sync_state_t_0040b87f.speed_raw =
-       (word)((int)((int)(short)engine_sync_state_t_0040b87f.speed_raw * (uVar2 & 0xffff)) >> 0xc);
+  engine_sync_state_t_0040b87f.fuel_metering_command =
+       (word)((int)((int)(short)engine_sync_state_t_0040b87f.fuel_metering_command *
+                   (uVar2 & 0xffff)) >> 0xc);
   wVar15 = engine_sync_speed_upper_limit_cal;
-  if (((short)engine_sync_speed_upper_limit_cal < (short)engine_sync_state_t_0040b87f.speed_raw) ||
+  if (((short)engine_sync_speed_upper_limit_cal <
+       (short)engine_sync_state_t_0040b87f.fuel_metering_command) ||
      (wVar15 = engine_sync_speed_lower_limit_cal,
-     (short)engine_sync_state_t_0040b87f.speed_raw < (short)engine_sync_speed_lower_limit_cal)) {
-    engine_sync_state_t_0040b87f.speed_raw = wVar15;
+     (short)engine_sync_state_t_0040b87f.fuel_metering_command <
+     (short)engine_sync_speed_lower_limit_cal)) {
+    engine_sync_state_t_0040b87f.fuel_metering_command = wVar15;
   }
   if (fuel_metering_read_back_retest_active_flag != 0) {
     fuel_metering_retest_pass_count = fuel_metering_retest_pass_count + 1;
     if ((uint)fuel_metering_retest_pass_count < (uint)fuel_metering_retest_off_passes) {
-      engine_sync_state_t_0040b87f.speed_raw = 0;
+      engine_sync_state_t_0040b87f.fuel_metering_command = 0;
     }
     else if ((uint)fuel_metering_retest_pass_count <
              (uint)fuel_metering_retest_off_passes +
              (uint)fuel_metering_retest_fault_confirm_passes * 2) {
-      engine_sync_state_t_0040b87f.speed_raw = 0xfff;
+      engine_sync_state_t_0040b87f.fuel_metering_command = 0xfff;
     }
     else {
       fuel_metering_retest_pass_count = 0;
@@ -43252,7 +43269,8 @@ LAB_000489d0:
   }
   if (engine_sync_speed_fault_flags == 0) {
     cam_speed_rate =
-         cm848_signedFirstOrderFilter((int)(short)engine_sync_state_t_0040b87f.speed_raw,0x3fb6af);
+         cm848_signedFirstOrderFilter
+                   ((int)(short)engine_sync_state_t_0040b87f.fuel_metering_command,0x3fb6af);
     if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar6) &&
        ((int)(uint)cam_speed_rate_threshold_cal < (int)(short)cam_speed_rate)) {
       engine_sync_phase_counter = engine_sync_phase_counter + 1;
@@ -43313,7 +43331,7 @@ void cm848_updateSyncOffsetCounter(void)
 void cm848_resetEngineSyncState(void)
 
 {
-  engine_sync_state_t_0040b87f.speed_raw = 0;
+  engine_sync_state_t_0040b87f.fuel_metering_command = 0;
   engine_sync_state_t_0040b87f.reference_count = 0;
   engine_sync_state_t_0040b87f.sync_status = 1;
   cam_sync_tooth_match_flag = 0;
@@ -43593,8 +43611,8 @@ void cm848_updateEngineDiagnosticCounters(void)
   if (((((short)engine_sync_fault_word_threshold_hi_cal < (short)fault_diagnostic_word_1) &&
        (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) && ((protection_config_flags & 0x40) == 0))
      && ((supervisor_register_36_bit_1_low_held_flag == 0 &&
-         ((short)engine_sync_state_t_0040b87f.speed_raw < (short)engine_sync_speed_fault_upper_cal))
-        )) {
+         ((short)engine_sync_state_t_0040b87f.fuel_metering_command <
+          (short)engine_sync_speed_fault_upper_cal)))) {
     if (engine_sync_event_counter_a < engine_sync_event_target) {
       engine_sync_event_counter_a = engine_sync_event_counter_a + 1;
     }
@@ -43619,8 +43637,8 @@ void cm848_updateEngineDiagnosticCounters(void)
   if (((((short)fault_diagnostic_word_1 < (short)engine_sync_fault_word_threshold_lo_cal) &&
        (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT)) && ((protection_config_flags & 0x40) == 0))
      && ((supervisor_register_36_bit_1_low_held_flag == 0 &&
-         ((short)engine_sync_speed_fault_lower_cal < (short)engine_sync_state_t_0040b87f.speed_raw))
-        )) {
+         ((short)engine_sync_speed_fault_lower_cal <
+          (short)engine_sync_state_t_0040b87f.fuel_metering_command)))) {
     if (engine_sync_event_counter_b < engine_sync_event_target) {
       engine_sync_event_counter_b = engine_sync_event_counter_b + 1;
     }
@@ -43804,10 +43822,17 @@ void cm848_initEngineDiagnosticData(void)
 
 
 //
-// Function: mpc555_calculateTpuTimingPeriod @ 0x0004a2f8
+// Function: cm848_setFuelMeteringPwm @ 0x0004a2f8
 //
 
-void mpc555_calculateTpuTimingPeriod(void)
+/* Fuel metering PWM (cm848_phase_group_b_processing, right after
+   cm848_calculateFuelMeteringCommand): period = 5000000 / a table lookup (args at
+   cam_timing_filter_init_state) and on-time = period x
+   engine_sync_state_t_0040b87f.fuel_metering_command / 4095, written as one dword to TPU-B channel
+   11 (TPUB_CH11_PARAM0 = on-time / PARAM1 = period) - the fuel metering output bypasses the output
+   channel driver table's set-duty slot. Was mpc555_calculateTpuTimingPeriod */
+
+void cm848_setFuelMeteringPwm(void)
 
 {
   uint uVar1;
@@ -43815,7 +43840,8 @@ void mpc555_calculateTpuTimingPeriod(void)
   uVar1 = lookupTableInterpolation((table_interp_args_t *)&cam_timing_filter_init_state);
   uVar1 = 5000000 / (uVar1 & 0xffff) & 0xffff;
   TPUB_CH11_PARAM0._0_4_ =
-       (uVar1 * (int)(short)engine_sync_state_t_0040b87f.speed_raw) / 0xfff << 0x10 | uVar1;
+       (uVar1 * (int)(short)engine_sync_state_t_0040b87f.fuel_metering_command) / 0xfff << 0x10 |
+       uVar1;
   return;
 }
 
@@ -47184,26 +47210,27 @@ void cm848_tpuBReadBackChannel11EnablePwm(void)
 //
 
 /* Output channel driver table record 12 (0x53ad06) slot +4 (read feedback) for TPU-B channel 11
-   with MDASM29 read-back. The commanded duty here is the 0-4095 word at 0x40b882 (currently
-   labelled engine_sync_state_t_0040b87f.speed_raw): while 0 < duty < DAT_00409140 it skips the
-   check and returns the previous verdict (DAT_003fb8f8); otherwise it compares MDASM29's captured
-   edges (AR:BR) and pin (SCRD bit 15) with the command the way mpc555_miosCheckChannelFeedback does
-   (0 agree / 1 high or toggling where it should be low / 2 low or toggling where it should be high;
-   4095 and above = fully on) then clears AR:BR and stores the verdict in DAT_003fb8f8. Ghidra had
-   not made a function here - it starts right after the blr that ends
+   with MDASM29 read-back. It checks the fuel metering output (table entry 20 - P0251): the command
+   is engine_sync_state_t_0040b87f.fuel_metering_command (0-4095 at 0x40b882): while 0 < command <
+   fuel_metering_read_back_minimum_command it skips the check and returns
+   fuel_metering_read_back_last_verdict; otherwise it compares MDASM29's captured edges (AR:BR) and
+   pin (SCRD bit 15) with the command the way mpc555_miosCheckChannelFeedback does (0 agree / 1 high
+   or toggling where it should be low / 2 low or toggling where it should be high; 4095 and above =
+   fully on) then clears AR:BR and stores the verdict in fuel_metering_read_back_last_verdict.
+   Ghidra had not made a function here - it starts right after the blr that ends
    cm848_tpuBReadBackChannel11EnablePwm */
 
-undefined2 cm848_tpuBReadBackChannel11ReadFeedback(void)
+word cm848_tpuBReadBackChannel11ReadFeedback(void)
 
 {
   word wVar1;
   int iVar2;
-  undefined2 uVar3;
+  word wVar3;
   
-  uVar3 = 0;
-  iVar2 = (int)(short)engine_sync_state_t_0040b87f.speed_raw;
-  if ((iVar2 < (int)(uint)DAT_00409140) && (0 < iVar2)) {
-    return DAT_003fb8f8;
+  wVar3 = 0;
+  iVar2 = (int)(short)engine_sync_state_t_0040b87f.fuel_metering_command;
+  if ((iVar2 < (int)(uint)fuel_metering_read_back_minimum_command) && (0 < iVar2)) {
+    return fuel_metering_read_back_last_verdict;
   }
   if (iVar2 == 0) {
     iVar2 = mios_mdasm29._0_4_;
@@ -47213,23 +47240,23 @@ undefined2 cm848_tpuBReadBackChannel11ReadFeedback(void)
     if (0xffe < iVar2) {
       iVar2 = mios_mdasm29._0_4_;
       if ((iVar2 != 0) || (wVar1 = mios_mdasm29.SCRD, (wVar1 & 0x8000) == 0)) {
-        uVar3 = 2;
+        wVar3 = 2;
       }
       goto LAB_0004e0a4;
     }
     iVar2 = mios_mdasm29._0_4_;
     if (iVar2 != 0) goto LAB_0004e0a4;
-    wVar1 = mios_mdasm29.SCRD;
-    if ((wVar1 & 0x8000) == 0) {
-      uVar3 = 2;
+    wVar3 = mios_mdasm29.SCRD;
+    if ((wVar3 & 0x8000) == 0) {
+      wVar3 = 2;
       goto LAB_0004e0a4;
     }
   }
-  uVar3 = 1;
+  wVar3 = 1;
 LAB_0004e0a4:
   mios_mdasm29._0_4_ = 0;
-  DAT_003fb8f8 = uVar3;
-  return uVar3;
+  fuel_metering_read_back_last_verdict = wVar3;
+  return wVar3;
 }
 
 
@@ -73987,7 +74014,7 @@ LAB_0051f804:
     break;
   case 0x7b:
     (&sci_buffer)[sci_transmit_byte_count] =
-         (byte)((uint)((short)engine_sync_state_t_0040b87f.speed_raw * 0xff) / 0xfff);
+         (byte)((uint)((short)engine_sync_state_t_0040b87f.fuel_metering_command * 0xff) / 0xfff);
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     break;
   case 0x7c:

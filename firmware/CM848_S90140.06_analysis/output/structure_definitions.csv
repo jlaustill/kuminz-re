@@ -86,7 +86,7 @@ engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state (ENGINE_OPERAT
 # Total size: 6 bytes (0x0040b87f-0x0040b884)
 engine_sync_state_t,0x0040b87f,sync_status,byte,1,Sync detection status (0=lost 1=synced),,verified
 engine_sync_state_t,0x0040b87f,reference_count,word,2,Sync reference pulse count,,verified
-engine_sync_state_t,0x0040b87f,speed_raw,word,2,Raw engine speed from position sensor,,verified
+engine_sync_state_t,0x0040b87f,fuel_metering_command,word,2,"Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw)",,verified
 engine_sync_state_t,0x0040b87f,reserved_05,byte,1,Padding for alignment,,needs_review
 # Engine RPM State - current and target engine speed values
 # Used by processEngineRpmTarget and governor control

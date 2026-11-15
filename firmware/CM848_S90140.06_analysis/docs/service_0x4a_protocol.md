@@ -76,9 +76,10 @@ For larger reads, the ECU responds using J1939 Transport Protocol:
 | Address | Variable | Scale | Units | Verified |
 |---------|----------|-------|-------|----------|
 | 0x0040B7BA | `current_engine_rpm` | × 0.125 | RPM | ✓ |
-| 0x0040B882 | `engine_speed_raw` | × 0.125 | RPM | |
 | 0x0040B78E | `engine_rpm_derivative` | varies | RPM/s | |
 | 0x0040B7AC | `target_engine_rpm` | × 0.125 | RPM | |
+
+**Not engine speed (corrected 2026-11-14, PR #48):** 0x0040B882, listed here before as `engine_speed_raw` × 0.125 RPM, is `fuel_metering_command`. It's the 0-4095 command (= 0-100 % on-time of the fuel metering PWM on TPU-B channel 11, P0251) computed by `cm848_calculateFuelMeteringCommand`. Reading it live shows the fuel metering command, not RPM.
 
 **Verified Working (2026-01-31):**
 - Request: `4A 00 40 B7 BA 02 00 00`
