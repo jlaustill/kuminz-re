@@ -146,9 +146,9 @@ typedef enum {
 typedef enum {
     TorqueSpeedControlReceiveEnable_JCCNRXFT = 1,  /* TSC1 message reception enable (0x07F00400) */
     JC39ENFG = 2,  /* J1939 message enable flags table */
-    AS01CF = 3,  /* ASG throttle mode compensation filter coef. 1 */
-    AS02CF = 4,  /* ASG throttle mode compensation filter coef. 2 */
-    AS03CF = 5  /* ASG throttle mode compensation filter coef. 3 */
+    J1939_THROTTLE_ENABLE_AS01CF = 3,  /* ASG throttle mode compensation filter coef. 1 */
+    J1939_THROTTLE_ENABLE_AS02CF = 4,  /* ASG throttle mode compensation filter coef. 2 */
+    J1939_THROTTLE_ENABLE_AS03CF = 5  /* ASG throttle mode compensation filter coef. 3 */
 } J1939_THROTTLE_ENABLE;
 
 typedef enum {
@@ -303,13 +303,12 @@ typedef enum {
     MEMORY_ACCESS = 5,  /* Memory read/write operations */
     SPECIAL_CONTROL = 6,  /* Special timing/control functions */
     SECURED_COMMANDS = 0x03,  /* Secured commands - requires systemSecurityCheck (always passes) */
-    SYSTEM_CONTROL = 0x04,  /* System control commands - no security check */
     MEMORY_OPERATIONS = 0x05,  /* Memory read/write with CRC validation */
     RETRY_CONTROL = 0x06,  /* Transmission retry control (subfunction 0x74) */
     FUEL_ARBITRATOR = 0x4A,  /* fuelArbitratorControlService - fuel system control */
     EXTENDED_4C = 0x4C,  /* extendedDiagnosticService4C */
-    EXTENDED_4F = 0x4F,  /* extendedDiagnosticService4F */
-    EXTENDED_51 = 0x51  /* extendedDiagnosticService51 */
+    SERVICE_79_EXTENDED = 0x4F,  /* extendedDiagnosticService4F */
+    SERVICE_81_EXTENDED = 0x51  /* extendedDiagnosticService51 */
 } DIAG_SERVICE_ID;
 
 typedef enum {
@@ -354,8 +353,8 @@ typedef enum {
     MEM_READ_2BYTE_4BYTE_4BYTE = 0x48,  /* Memory read: 2-byte + 4-byte + 4-byte params (diagMemoryReadService48Handler) */
     MEM_READ_4BYTE_1BYTE = 0x4A,  /* Memory read: 4-byte address + 1-byte length (diagMemoryReadService4aHandler) */
     MEM_READ_4BYTE_4BYTE = 0x4C,  /* Memory read: 4-byte address + 4-byte length (diagMemoryReadService4cHandler) */
-    EXTENDED_4F = 0x4F,  /* Extended diagnostic service 0x4F */
-    EXTENDED_51 = 0x51  /* Extended diagnostic service 0x51 */
+    EXTENDED_SERVICE_79 = 0x4F,  /* Extended diagnostic service 0x4F */
+    EXTENDED_SERVICE_81 = 0x51  /* Extended diagnostic service 0x51 */
 } DIAG_EXTENDED_SVC;
 
 typedef enum {
@@ -471,7 +470,7 @@ typedef enum {
 } SENSOR_STATUS_BITS;
 
 typedef enum {
-    BYPASS_ENABLED = 0xFF,  /* Security checks completely bypassed */
+    BYPASS_FLAG_ENABLED = 0xFF,  /* Security checks completely bypassed */
     BYPASS_MAGIC = 0xB522,  /* Alternative bypass magic value (-0x4ADE signed) */
     SECURITY_ACTIVE = 0x00  /* Normal security - checks enforced */
 } SECURITY_BYPASS_FLAG;
@@ -480,9 +479,9 @@ typedef enum {
     AUTH_SUCCESS = 0x00,  /* Security check passed - operation authorized */
     SECURITY_INVALID_LENGTH = 0x02,  /* Invalid message length for service */
     AUTH_FAILED = 0x03,  /* Security check failed - access denied */
-    CONDITION_NOT_MET = 0x07,  /* Pre-condition not satisfied */
+    SECURITY_CONDITION_NOT_MET = 0x07,  /* Pre-condition not satisfied */
     INVALID_ADDR = 0x0A,  /* Invalid memory address range */
-    BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write failed */
+    SECURITY_BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write failed */
     PROCEED_TO_HANDLER = 0xFF  /* Proceed to handler (auth passed or not required) */
 } SECURITY_RESULT;
 
@@ -494,14 +493,14 @@ typedef enum {
 typedef enum {
     INIT = 0,  /* Initialize transmission - setup buffers and addresses */
     WRITE_BUFFER = 1,  /* Write buffer data with circular buffer */
-    TRANSMIT = 2,  /* Execute circular buffer write transmission */
+    VP44_COMMUNICATION_TRANSMIT = 2,  /* Execute circular buffer write transmission */
     VP44_COMM_IDLE = 3  /* Idle/complete - transmission inactive */
 } VP44_COMM_STATE;
 
 typedef enum {
-    MODE_IDLE = 0,  /* Idle mode - transition to state 3 */
-    MODE_ACTIVE = 1,  /* Active mode - perform mid-buffer transmission */
-    MODE_RESET = 2  /* Reset mode - transmit to end address and reset pointers */
+    VP44_COMMUNICATION_IDLE = 0,  /* Idle mode - transition to state 3 */
+    VP44_COMMUNICATION_ACTIVE = 1,  /* Active mode - perform mid-buffer transmission */
+    VP44_COMMUNICATION_RESET = 2  /* Reset mode - transmit to end address and reset pointers */
 } VP44_COMM_MODE;
 
 typedef enum {
@@ -640,7 +639,7 @@ typedef enum {
 
 typedef enum {
     NONE = 0,  /* No active diagnostic source */
-    FUEL_ARBITRATOR = 1,  /* Fuel arbitrator triggered (rpm_target == 2) */
+    SOURCE_FUEL_ARBITRATOR = 1,  /* Fuel arbitrator triggered (rpm_target == 2) */
     DIAG_STATUS_2 = 2,  /* Diagnostic status 2 condition */
     ENGINE_FLAGS = 5,  /* Engine control flags triggered */
     EPS_FAULT = 6,  /* Electronic Position Sensor fault */
@@ -889,15 +888,15 @@ typedef enum {
 } SECURITY_ENABLED;
 
 typedef enum {
-    QUERY_TERMINATE = 0x01,  /* QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table */
+    SERVICE_QUERY_TERMINATE = 0x01,  /* QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table */
     SYSTEM_SERVICE_04 = 0x04,  /* System service 04 - NOT in dispatch table (handled elsewhere?) */
     SYSTEM_SERVICE_05 = 0x05,  /* System service 05 - NOT in dispatch table (handled elsewhere?) */
-    HIGH_RPM_SHUTDOWN_ACTIVATE = 0x06,  /* activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table */
+    SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE = 0x06,  /* activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table */
     SYSTEM_SERVICE_07 = 0x07,  /* System service 07 - dispatch @ 0x0001188C - SECURED - in dispatch table */
     SYSTEM_SERVICE_0A = 0x0A,  /* System service 0A - dispatch @ 0x000118B2 - SECURED - in dispatch table */
     SYSTEM_SERVICE_0B = 0x0B,  /* System service 0B - dispatch @ 0x00011908 - SECURED - in dispatch table */
     GET_PARAMETERS_BY_ID_ALT = 0x0F,  /* getParametersByIdHandler - NOT in dispatch table - RESPONDS! (alternate path?) */
-    GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?) */
+    SERVICE_GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?) */
     GET_ADDRESS_BY_PARAM_ID = 0x15,  /* GetAddressByParameterID - dispatch @ 0x00011A74 - SECURED - in dispatch table */
     SYSTEM_SERVICE_16 = 0x16,  /* System service 16 - dispatch @ 0x000118CC - SECURED - in dispatch table */
     SYSTEM_SERVICE_18 = 0x18,  /* System service 18 - dispatch @ 0x00011A68 - SECURED - in dispatch table */
@@ -924,7 +923,7 @@ typedef enum {
 
 typedef enum {
     INVALID_LENGTH = 0x02,  /* diagnosticServiceSecurityValidator - message length mismatch */
-    SECURITY_FAILED = 0x03,  /* diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero */
+    ERROR_SECURITY_FAILED = 0x03,  /* diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero */
     CONDITION_NOT_MET = 0x07,  /* memoryOperationDispatcher - system_logging_state check failed */
     ADDR_LOOKUP_FAIL = 0x08,  /* j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed */
     ADDR_RANGE_INVALID = 0x09,  /* addressRangeValidator @ 0x2b544 - address not in address_range_validation_table @ 0x2b512 */
@@ -937,23 +936,23 @@ typedef enum {
 } DIAG_ERROR_SOURCE;
 
 typedef enum {
-    SUCCESS = 0x00,  /* Memory operation completed successfully (masked from memcpy return) */
-    INVALID_LENGTH = 0x02,  /* Message length mismatch - expected calculated_msg_length or +10 for auth */
-    AUTH_FAILED = 0x03,  /* hourMeterSecurityValidator returned non-zero (auth payload invalid) */
+    MEMORY_OPERATION_SUCCESS = 0x00,  /* Memory operation completed successfully (masked from memcpy return) */
+    MEMORY_OPERATION_INVALID_LENGTH = 0x02,  /* Message length mismatch - expected calculated_msg_length or +10 for auth */
+    MEMORY_OPERATION_AUTH_FAILED = 0x03,  /* hourMeterSecurityValidator returned non-zero (auth payload invalid) */
     CALIBRATION_WRITE_BLOCKED = 0x07,  /* EEPROM write blocked - calibration_write_protect_state==1 and calibration_bank_selector!=FACTORY */
-    WRITE_DENIED = 0x0A,  /* Region type 4 (ROM/Flash) - write operations not permitted */
-    BUFFER_WRITE_FAIL = 0x0B,  /* circularBufferWrite returned error during EEPROM logging */
-    AUTH_REQUIRED_MISSING = 0x1A  /* EEPROM write (region type 5) requires auth but has_auth_payload=false */
+    MEMORY_OPERATION_WRITE_DENIED = 0x0A,  /* Region type 4 (ROM/Flash) - write operations not permitted */
+    MEMORY_OPERATION_BUFFER_WRITE_FAIL = 0x0B,  /* circularBufferWrite returned error during EEPROM logging */
+    MEMORY_OPERATION_AUTH_REQUIRED_MISSING = 0x1A  /* EEPROM write (region type 5) requires auth but has_auth_payload=false */
 } MEMORY_OP_RESULT;
 
 typedef enum {
-    SUCCESS = 0x4B  /* Service 0x4A success response code (service ID + 1) */
+    SERVICE_74_SUCCESS = 0x4B  /* Service 0x4A success response code (service ID + 1) */
 } SERVICE_4A_RESPONSE;
 
 typedef enum {
     DIRECT_ACCESS = 0x00,  /* READ: Allowed | WRITE: Direct access no security check (Extended RAM) */
     SECURITY_REQUIRED = 0x03,  /* READ: Allowed | WRITE: Requires security check or bypass (RAM) */
-    WRITE_DENIED = 0x04,  /* READ: Allowed | WRITE: Denied - returns error 0x0A (Flash/ROM) */
+    MEMORY_ACCESS_WRITE_DENIED = 0x04,  /* READ: Allowed | WRITE: Denied - returns error 0x0A (Flash/ROM) */
     LOGGING_MODE = 0x05,  /* READ: Allowed | WRITE: Requires system_logging_state check (EEPROM) */
     RANGE_INVALID = 0x09,  /* READ: Denied | WRITE: Error - address not in validation table */
     ACCESS_DENIED = 0x0A  /* READ: Denied | WRITE: Error - explicitly blocked region */
@@ -965,12 +964,12 @@ typedef enum {
 } SECURITY_BYPASS;
 
 typedef enum {
-    SWITCH_TO_FACTORY_BANK = 0x40,  /* switchToFactoryCalibrationBank - select factory calibration bank (calibration_bank_selector=0) */
-    FORCE_ACTIVE_BANK = 0x41,  /* forceActiveCalibrationBank - force active calibration bank if write protect allows */
+    SERVICE_3_SWITCH_TO_FACTORY_BANK = 0x40,  /* switchToFactoryCalibrationBank - select factory calibration bank (calibration_bank_selector=0) */
+    SERVICE_3_FORCE_ACTIVE_BANK = 0x41,  /* forceActiveCalibrationBank - force active calibration bank if write protect allows */
     HIGH_RPM_SHUTDOWN = 0x42,  /* activateHighRpmShutdownFlag - trigger high RPM shutdown */
     SYSTEM_RESET = 0x43,  /* triggerDiagnosticSystemReset - diagnostic system reset */
     NOP = 0x50,  /* No operation - returns success (0x00) */
-    MEMORY_PATCH = 0x51,  /* memoryPatchingSystem - apply queued memory patches */
+    SERVICE_3_MEMORY_PATCH = 0x51,  /* memoryPatchingSystem - apply queued memory patches */
     SECURED_SHUTDOWN = 0x52,  /* requestSecuredShutdown - request secured engine shutdown */
     RESERVED_ERROR = 0x53,  /* Reserved - always returns error 0x04 */
     CAN_BUFFER_LOG = 0x54  /* canMessageBufferLogger - log CAN message buffer */
@@ -980,7 +979,7 @@ typedef enum {
     CONTROL_64 = 0x64,  /* systemControl64 - system control function */
     FAULT_SCANNER = 0x65,  /* enableFaultFlagScanner - enable fault flag scanning */
     STATE_RESET = 0x66,  /* Reset diagnostic_command_state to 0 */
-    SWITCH_TO_ACTIVE_BANK = 0x69,  /* switchToActiveCalibrationBank - select active calibration bank (calibration_bank_selector=1) */
+    SERVICE_4_SWITCH_TO_ACTIVE_BANK = 0x69,  /* switchToActiveCalibrationBank - select active calibration bank (calibration_bank_selector=1) */
     RESERVED_70 = 0x70,  /* Reserved - returns error 0x04 */
     STATE_BIT0 = 0x71,  /* Set diagnostic_command_state bit 0 */
     RESERVED_72 = 0x72,  /* Reserved - returns error 0x04 */
@@ -1009,13 +1008,13 @@ typedef enum {
 typedef enum {
     PARAM_STANDARD = 0x00,  /* Standard parameter read (0x00-0x7F) - response length 2 */
     PARAM_EXTENDED = 0x80,  /* Extended parameter read (0x80-0xBF) - response length 3 */
-    ACTIVE_FAULT_LIST = 0xC1,  /* insiteActiveFaultListBuilder - list of active DTCs */
-    FAULT_DETAIL = 0xC2,  /* insiteFaultDetailBuilder - detailed fault information */
-    PID_DTC_REQUEST = 0xC3,  /* PID/DTC handler request - triggers insitePidDtcHandler */
+    INSITE_COMMAND_ACTIVE_FAULT_LIST = 0xC1,  /* insiteActiveFaultListBuilder - list of active DTCs */
+    INSITE_COMMAND_FAULT_DETAIL = 0xC2,  /* insiteFaultDetailBuilder - detailed fault information */
+    INSITE_COMMAND_PID_DTC_REQUEST = 0xC3,  /* PID/DTC handler request - triggers insitePidDtcHandler */
     PID_DTC_RESPONSE = 0xC4,  /* PID/DTC response - response length 4 or 7 */
     CAPACITY_INFO = 0xEA,  /* insiteCapacityResponseBuilder - response length 0x18 (24 bytes) */
     ECU_ID = 0xED,  /* insiteEcuIdResponseBuilder - ECU identification (3 parts with 0x2A separator) */
-    VERSION_INFO = 0xF3  /* insiteVersionInfoBuilder - response length 0x1F (31 bytes) */
+    INSITE_COMMAND_VERSION_INFO = 0xF3  /* insiteVersionInfoBuilder - response length 0x1F (31 bytes) */
 } INSITE_CMD;
 
 typedef enum {
@@ -1101,7 +1100,6 @@ typedef struct huffman_tree_t huffman_tree_t;
 typedef struct j1708_tx_state_t j1708_tx_state_t;
 typedef struct j1708_rx_state_t j1708_rx_state_t;
 typedef struct j1708_multipacket_msg_t j1708_multipacket_msg_t;
-typedef struct j1708_rx_buffer_t j1708_rx_buffer_t;
 typedef struct diagnostic_buffers_t diagnostic_buffers_t;
 typedef struct diagnostic_buffer_ptrs_t diagnostic_buffer_ptrs_t;
 typedef struct can_buffer_setup_t can_buffer_setup_t;
@@ -1161,18 +1159,6 @@ struct division_operand_t {
 struct mc68336_reg16_t {
     uint8_t lo;  /* Low byte at offset 0 */
     uint8_t hi;  /* High byte at offset 1 */
-    uint8_t lo;  /* qsm_sci_data_reg - QSM SCI data register */
-    uint8_t hi;  /* qsm_sci_data_reg - QSM SCI data register */
-    uint8_t lo;  /* sim_ddir - SIM port I data direction */
-    uint8_t hi;  /* sim_ddir - SIM port I data direction */
-    uint8_t lo;  /* sim_ddrd - SIM port D data direction */
-    uint8_t hi;  /* sim_ddrd - SIM port D data direction */
-    uint8_t lo;  /* sim_csor1 - SIM chip select option register 1 */
-    uint8_t hi;  /* sim_csor1 - SIM chip select option register 1 */
-    uint8_t lo;  /* tpu_cpr1 - TPU channel priority register 1 */
-    uint8_t hi;  /* tpu_cpr1 - TPU channel priority register 1 */
-    uint8_t lo;  /* TPU_PRAM_CH0_0 - TPU parameter RAM channel 0 */
-    uint8_t hi;  /* TPU_PRAM_CH0_0 - TPU parameter RAM channel 0 */
 };
 
 struct sim_timer_block_t {
@@ -1187,7 +1173,6 @@ struct sim_timer_block_t {
     uint16_t reserved_18;  /* Reserved (offset 18) */
     uint16_t timer_status;  /* Timer status register (offset 20) */
     uint32_t timer_control;  /* Timer control value (offset 22) */
-    uint16_t timer_count;  /* hardware_timer_register - SIM timer block */
 };
 
 struct tpu_dscr_block_t {
@@ -1198,7 +1183,6 @@ struct tpu_dscr_block_t {
     uint16_t dscr_status;  /* DSCR status register (offset 6) */
     uint16_t dscr_data;  /* DSCR data register (offset 8) */
     uint16_t dscr_addr;  /* DSCR address register (offset 10) */
-    uint8_t control_lo;  /* tpu_dscr - TPU DSCR block */
 };
 
 struct tpu_hsq_block_t {
@@ -1209,7 +1193,6 @@ struct tpu_hsq_block_t {
     uint16_t hsq_config;  /* HSQ configuration (offset 4) */
     uint16_t hsq_status;  /* HSQ status register (offset 6) */
     uint16_t hsq_data;  /* HSQ data register (offset 8) */
-    uint8_t hsqr0_lo;  /* tpu_hsqr0 - TPU HSQ block */
 };
 
 struct serial_port_regs_t {
@@ -1217,7 +1200,6 @@ struct serial_port_regs_t {
     uint8_t config;  /* Serial port configuration (offset 1) */
     uint8_t data;  /* Serial port data register (offset 2) */
     uint8_t reserved;  /* Reserved (offset 3) */
-    uint8_t status;  /* serial_port_1_base_register - QSM serial port */
 };
 
 struct sensor_fault_config_t {
@@ -1655,11 +1637,6 @@ struct j1708_multipacket_msg_t {
     uint16_t param_178;  /* Parameter at offset 178 */
     uint16_t param_180;  /* Parameter at offset 180 */
     uint8_t tail_data[74];  /* Remaining data bytes 182-255 */
-    uint32_t base_ptr;  /* J1708 transmit message buffer */
-};
-
-struct j1708_rx_buffer_t {
-    uint8_t rx_data[256];  /* J1708 receive data buffer */
 };
 
 struct diagnostic_buffers_t {
@@ -1679,7 +1656,6 @@ struct can_buffer_setup_t {
     uint32_t data_ptr;  /* Pointer to buffer data area */
     uint32_t unused_ptr;  /* Unused/reserved pointer */
     uint8_t data[8];  /* Inline buffer data (8 bytes) */
-    uint32_t state;  /* can_buffer_setup_t_00801a8a - CAN buffer setup instance */
 };
 
 struct can_message_buffer_t {

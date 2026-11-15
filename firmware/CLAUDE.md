@@ -375,6 +375,8 @@ my_struct_t,0x003fa87c,,,,second instance - marker only,,verified
 ```
 The marker row's empty `field_name`/`type`/`size` registers the address for application without adding duplicate fields to the type.
 
+The same applies when the fields live in a type-only template (rows with an empty address). An instance row that repeats a field appends a second copy of it; CM550 had seven such structs until PR #48 (`mc68336_reg16_t` was 14 bytes instead of 2). A struct that changes size can uncover an instance that the old size was blocking, so diff the build afterwards. Shrinking `j1708_multipacket_msg_t` let a guessed `j1708_rx_buffer_t` apply over 11 fuel-limit globals, so that row was removed.
+
 ### global_variables.csv Maintenance
 
 Periodically clean garbage entries from `global_variables.csv`:

@@ -715,7 +715,7 @@ extern undefined can_buffer_1_reserved_3;  // 0x00801a98
 extern undefined diag_can_response_data_0;  // 0x00801a99
 extern undefined diag_can_response_data_1;  // 0x00801a9a
 extern undefined diag_can_response_data_2;  // 0x00801a9b
-extern undefined ambient_conditions_msg_header;  // 0x00801a9e
+extern dword ambient_conditions_msg_header;  // 0x00801a9e
 extern undefined ambient_conditions_msg_length;  // 0x00801aa2
 extern undefined ambient_conditions_data_ptr;  // 0x00801aa4
 extern undefined ambient_conditions_unused_ptr;  // 0x00801aa8
@@ -5656,7 +5656,7 @@ extern undefined flags_of_final_timing_increment_states_0_ff;  // 0x0080de72
 extern undefined insite_matched_dtc_fault_code;  // 0x0080de76
 extern undefined fault_to_erase_none;  // 0x0080de78
 extern undefined action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6;  // 0x0080de7a
-extern undefined fuel_limit_shutdown_minimum;  // 0x0080dec8
+extern word fuel_limit_shutdown_minimum;  // 0x0080dec8
 extern undefined indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41;  // 0x0080deca
 extern undefined fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100;  // 0x0080decc
 extern undefined smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100;  // 0x0080dece

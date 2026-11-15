@@ -69,15 +69,11 @@ sim_timer_block_t,,timer_status,word,2,Timer status register (offset 20),,verifi
 sim_timer_block_t,,timer_control,dword,4,Timer control value (offset 22),,verified
 
 # MC68336 Hardware Register Instances (peripheral space 0xFFxxxx)
-mc68336_reg16_t,0x00ffd00e,lo,byte,1,qsm_sci_data_reg - QSM SCI data register,,verified
-mc68336_reg16_t,0x00ffd00e,hi,byte,1,qsm_sci_data_reg - QSM SCI data register,,verified
-sim_timer_block_t,0x00fff404,timer_count,word,2,hardware_timer_register - SIM timer block,,verified
-mc68336_reg16_t,0x00fffa10,lo,byte,1,sim_ddir - SIM port I data direction,,verified
-mc68336_reg16_t,0x00fffa10,hi,byte,1,sim_ddir - SIM port I data direction,,verified
-mc68336_reg16_t,0x00fffa14,lo,byte,1,sim_ddrd - SIM port D data direction,,verified
-mc68336_reg16_t,0x00fffa14,hi,byte,1,sim_ddrd - SIM port D data direction,,verified
-mc68336_reg16_t,0x00fffa26,lo,byte,1,sim_csor1 - SIM chip select option register 1,,verified
-mc68336_reg16_t,0x00fffa26,hi,byte,1,sim_csor1 - SIM chip select option register 1,,verified
+mc68336_reg16_t,0x00ffd00e,,,,qsm_sci_data_reg - QSM SCI data register (instance marker),,verified
+sim_timer_block_t,0x00fff404,,,,hardware_timer_register - SIM timer block (instance marker),,verified
+mc68336_reg16_t,0x00fffa10,,,,sim_ddir - SIM port I data direction (instance marker),,verified
+mc68336_reg16_t,0x00fffa14,,,,sim_ddrd - SIM port D data direction (instance marker),,verified
+mc68336_reg16_t,0x00fffa26,,,,sim_csor1 - SIM chip select option register 1 (instance marker),,verified
 # TPU DSCR Block @ 0xFFFC04 - Multi-register TPU development support
 # Note: Offsets 0-1 accessed as bytes, 4-10 as words
 tpu_dscr_block_t,,control_lo,byte,1,TPU DSCR control low byte (offset 0),,verified
@@ -87,7 +83,7 @@ tpu_dscr_block_t,,dscr_config,word,2,DSCR configuration (offset 4),,verified
 tpu_dscr_block_t,,dscr_status,word,2,DSCR status register (offset 6),,verified
 tpu_dscr_block_t,,dscr_data,word,2,DSCR data register (offset 8),,verified
 tpu_dscr_block_t,,dscr_addr,word,2,DSCR address register (offset 10),,verified
-tpu_dscr_block_t,0x00fffc04,control_lo,byte,1,tpu_dscr - TPU DSCR block,,verified
+tpu_dscr_block_t,0x00fffc04,,,,tpu_dscr - TPU DSCR block (instance marker),,verified
 # TPU HSQ Block @ 0xFFFC14 - Host Sequence register group
 # HSQR0/1 accessed as bytes, config/status/data as words
 tpu_hsq_block_t,,hsqr0_lo,byte,1,TPU host sequence register 0 low (offset 0),,verified
@@ -97,11 +93,9 @@ tpu_hsq_block_t,,hsqr1_hi,byte,1,TPU host sequence register 1 high (offset 3),,v
 tpu_hsq_block_t,,hsq_config,word,2,HSQ configuration (offset 4),,verified
 tpu_hsq_block_t,,hsq_status,word,2,HSQ status register (offset 6),,verified
 tpu_hsq_block_t,,hsq_data,word,2,HSQ data register (offset 8),,verified
-tpu_hsq_block_t,0x00fffc14,hsqr0_lo,byte,1,tpu_hsqr0 - TPU HSQ block,,verified
-mc68336_reg16_t,0x00fffc1e,lo,byte,1,tpu_cpr1 - TPU channel priority register 1,,verified
-mc68336_reg16_t,0x00fffc1e,hi,byte,1,tpu_cpr1 - TPU channel priority register 1,,verified
-mc68336_reg16_t,0x00fffd40,lo,byte,1,TPU_PRAM_CH0_0 - TPU parameter RAM channel 0,,verified
-mc68336_reg16_t,0x00fffd40,hi,byte,1,TPU_PRAM_CH0_0 - TPU parameter RAM channel 0,,verified
+tpu_hsq_block_t,0x00fffc14,,,,tpu_hsqr0 - TPU HSQ block (instance marker),,verified
+mc68336_reg16_t,0x00fffc1e,,,,tpu_cpr1 - TPU channel priority register 1 (instance marker),,verified
+mc68336_reg16_t,0x00fffd40,,,,TPU_PRAM_CH0_0 - TPU parameter RAM channel 0 (instance marker),,verified
 
 # QSM Serial Port Block @ 0xFFD800 - Serial port register group
 # Accessed at offsets 0, 1, 2 as single bytes
@@ -109,7 +103,7 @@ serial_port_regs_t,,status,byte,1,Serial port status register (offset 0),,verifi
 serial_port_regs_t,,config,byte,1,Serial port configuration (offset 1),,verified
 serial_port_regs_t,,data,byte,1,Serial port data register (offset 2),,verified
 serial_port_regs_t,,reserved,byte,1,Reserved (offset 3),,verified
-serial_port_regs_t,0x00ffd800,status,byte,1,serial_port_1_base_register - QSM serial port,,verified
+serial_port_regs_t,0x00ffd800,,,,serial_port_1_base_register - QSM serial port (instance marker),,verified
 
 # Sensor Fault Configuration Entry (24 bytes per sensor)
 sensor_fault_config_t,,reserved_00,word,2,Reserved/padding at offset 0x00,,verified
@@ -575,10 +569,9 @@ j1708_multipacket_msg_t,,tail_data,byte,74,Remaining data bytes 182-255,,verifie
 
 # J1708 Multipacket Message Buffer @ 0x0080DDC6 (single instance)
 # The struct definition with all fields is above - this just places one instance
-j1708_multipacket_msg_t,0x0080DDC6,base_ptr,dword,4,J1708 transmit message buffer,,verified
+j1708_multipacket_msg_t,0x0080DDC6,,,,J1708 transmit message buffer (instance marker),,verified
 
 # J1708 Receive Buffer @ 0x0080DEC6
-j1708_rx_buffer_t,0x0080DEC6,rx_data,byte,256,J1708 receive data buffer,,verified
 
 # -----------------------------------------------------------------------------
 # Diagnostic Buffer Structures @ RAM 0x808B00 (J90350.00 verified)
@@ -607,7 +600,7 @@ can_buffer_setup_t,,unused_ptr,dword,4,Unused/reserved pointer,,verified
 can_buffer_setup_t,,data,byte,8,Inline buffer data (8 bytes),,verified
 
 # Instance at 0x801A8A
-can_buffer_setup_t,0x00801A8A,state,dword,4,can_buffer_setup_t_00801a8a - CAN buffer setup instance,,verified
+can_buffer_setup_t,0x00801A8A,,,,can_buffer_setup_t_00801a8a - CAN buffer setup instance (instance marker),,verified
 
 # CAN Message Buffer Range @ RAM 0x8034F8 (J90350.00 verified)
 can_message_buffer_t,0x008034F8,buffer_start,byte,1,Start of CAN message buffer area,,verified

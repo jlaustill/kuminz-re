@@ -115,7 +115,6 @@ undefined4 cm550_FUN_0001125a(void);  // @ 0x0001125a
 void vp44_validateRedundantSensors(void);  // @ 0x000114d4
 void cm550_firmwareDataCopyToWorkingMemory(void);  // @ 0x000117ec
 undefined1 cm550_FUN_0001183e(void);  // @ 0x0001183e
-undefined1 default(void);  // @ 0x00011880
 uint cm550_waterInFuelDetectionStateInit(void);  // @ 0x0001188c
 undefined1 cm550_waterInFuelFaultClear(void);  // @ 0x000118b2
 uint cm550_FUN_000118cc(void);  // @ 0x000118cc
@@ -215,7 +214,7 @@ void vp44_engineProtectionSystemInit(void);  // @ 0x0001873e
 uint cm550_protectionConditionEvaluator(word *threshold_ptr,dword *state_ptr,word sensor_value);  // @ 0x00018968
 void protectionState0FaultDurationCounter(void);  // @ 0x00018a26
 uint cm550_diagnosticProtectionEvaluator(void);  // @ 0x00018ac4
-short cm550_diagnosticProtectionProcessor(word *config_ptr,dword state_offset,dword threshold_value);  // @ 0x00018c1c
+ushort cm550_diagnosticProtectionProcessor (word *config_ptr,dword state_offset,dword threshold_value);  // @ 0x00018c1c
 ushort cm550_protectionState1DiagnosticValidator(void);  // @ 0x00018cb6
 void cm550_FUN_00018e0c(void);  // @ 0x00018e0c
 void cm550_protectionThresholdPointerInit(void);  // @ 0x00018f4c
@@ -560,7 +559,7 @@ void cm550_FUN_000269f2(void);  // @ 0x000269f2
 void cm550_FUN_00026a2e(void);  // @ 0x00026a2e
 void cm550_memcpy(undefined1 *param_1,undefined1 *param_2,undefined4 param_3);  // @ 0x00026a64
 void cm550_fuelDemandTablePointersInit(void);  // @ 0x00026a7e
-undefined2 cm550_rpmLoadParameterLookup(void);  // @ 0x00026ab8
+ushort cm550_rpmLoadParameterLookup(void);  // @ 0x00026ab8
 ushort cm550_FUN_00026af0(void);  // @ 0x00026af0
 ushort vp44OperatingConditionChecker(void);  // @ 0x00026b00
 void cm550_FUN_00026b3a(void);  // @ 0x00026b3a
@@ -696,7 +695,7 @@ void j1939HandlePgn65261CruiseControlSetup(void);  // @ 0x00031f30
 void initPgn65261CruiseControlSetupStruct(void);  // @ 0x00031fee
 void cm550_FUN_00032052(void);  // @ 0x00032052
 void cm550_engineSerialNumberPGN_65259_Builder(void);  // @ 0x000320f6
-undefined4 cm550_diagnosticMultiPacketResponseBuilder(byte *param_1,undefined4 param_2);  // @ 0x0003216a
+j1939_header_t * cm550_diagnosticMultiPacketResponseBuilder(byte *param_1,undefined4 param_2);  // @ 0x0003216a
 void cm550_diagnosticDM11PGN_65234_Builder(word dtc_count);  // @ 0x00032244
 byte j1939HandlePgn65226Dm1ActiveDtc(void);  // @ 0x000322ae
 void cm550_engineCoolantPGN_65226_Builder(void);  // @ 0x000323be

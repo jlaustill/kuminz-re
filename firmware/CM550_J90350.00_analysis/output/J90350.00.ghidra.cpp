@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Sun Nov 15 07:06:32 MST 2026
+// Generated: Sun Nov 15 07:28:29 MST 2026
 
 
 //
@@ -842,8 +842,8 @@ ushort cm550_rpm_system_state_controller(void)
 void cm550_shutdownMinimumSelector21(void)
 
 {
-  if (_anc_fuel_limit_value < j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _anc_fuel_limit_value;
+  if (_anc_fuel_limit_value < fuel_limit_shutdown_minimum) {
+    fuel_limit_shutdown_minimum = _anc_fuel_limit_value;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x11;
   }
   return;
@@ -2108,8 +2108,8 @@ void cm550_fuelParameterPointerSetup(void)
 void cm550_shutdownMinimumSelector15(void)
 
 {
-  if (_altitude_derate_fuel_limit_0_100 < j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _altitude_derate_fuel_limit_0_100;
+  if (_altitude_derate_fuel_limit_0_100 < fuel_limit_shutdown_minimum) {
+    fuel_limit_shutdown_minimum = _altitude_derate_fuel_limit_0_100;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0xf;
   }
   return;
@@ -6694,18 +6694,6 @@ undefined1 cm550_FUN_0001183e(void)
     uVar1 = 7;
   }
   return uVar1;
-}
-
-
-
-//
-// Function: default @ 0x00011880
-//
-
-undefined1 default(void)
-
-{
-  return 0;
 }
 
 
@@ -11490,8 +11478,8 @@ void cm550_FUN_00017120(void)
 
 {
   if (((_smoke_limiter_output_value == 3) && (_high_rpm_fuel_limit_active != 0)) &&
-     (_high_rpm_fuel_limit_value < j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_)) {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _high_rpm_fuel_limit_value;
+     (_high_rpm_fuel_limit_value < fuel_limit_shutdown_minimum)) {
+    fuel_limit_shutdown_minimum = _high_rpm_fuel_limit_value;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x21;
   }
   return;
@@ -13691,8 +13679,8 @@ void cm550_protectionState3bRpmMonitor(void)
 void cm550_shutdownMinimumSelector29(void)
 
 {
-  if (_engine_protection_fuel_limit < j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _engine_protection_fuel_limit;
+  if (_engine_protection_fuel_limit < fuel_limit_shutdown_minimum) {
+    fuel_limit_shutdown_minimum = _engine_protection_fuel_limit;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x1d;
   }
   return;
@@ -17348,8 +17336,8 @@ void cm550_FUN_0001c0d4(void)
   if (iVar1 < 0) {
     iVar1 = 0;
   }
-  if (iVar1 < (int)(uint)j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = (ushort)iVar1;
+  if (iVar1 < (int)(uint)fuel_limit_shutdown_minimum) {
+    fuel_limit_shutdown_minimum = (word)iVar1;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 =
          _indicates_origin_of_tqdqta_value_0_10;
   }
@@ -17374,16 +17362,16 @@ void fuelTimingOilPressureModeController(void)
     cm550_FUN_0001c0d4();
   }
   else {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _DAT_00803f2a;
+    fuel_limit_shutdown_minimum = _DAT_00803f2a;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0xd;
   }
-  if (_lsg_governor_fuel_demand < j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
+  if (_lsg_governor_fuel_demand < fuel_limit_shutdown_minimum) {
     _desired_engine_fueling_after_derate_without_air_handl_derate_0_100 = _lsg_governor_fuel_demand;
     _FSLMDSST = _indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12;
   }
   else {
     _desired_engine_fueling_after_derate_without_air_handl_derate_0_100 =
-         j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_;
+         fuel_limit_shutdown_minimum;
     _FSLMDSST = _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41;
   }
   if (_smoke_limiter_output_value == 1) {
@@ -17411,7 +17399,7 @@ void fuelTimingOilPressureModeController(void)
       else {
         if ((_indicator_as_to_which_algorithm_is_in_control_of_fueling_after_it_1_12 == 0xb) &&
            ((_indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 == 0x14 &&
-            (j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ <=
+            (fuel_limit_shutdown_minimum <=
              _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100)))) {
           _fuel_limit_after_derate_selection = _lsg_governor_fuel_demand;
           _fuel_limit_selection_state = 0xb;
@@ -17442,8 +17430,8 @@ void fuelTimingOilPressureModeController(void)
   }
   if ((_indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 != 0xd) &&
      (_smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100 <
-      j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_)) {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ =
+      fuel_limit_shutdown_minimum)) {
+    fuel_limit_shutdown_minimum =
          _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = _FSLMAHST;
   }
@@ -18215,7 +18203,7 @@ void cm550_FUN_0001cdf8(void)
 void cm550_FUN_0001ce58(void)
 
 {
-  j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ = _fueling_value_at_100_throttle_0_100;
+  fuel_limit_shutdown_minimum = _fueling_value_at_100_throttle_0_100;
   _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x13;
   _smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100 =
        _fueling_value_at_100_throttle_0_100;
@@ -27471,7 +27459,7 @@ void cm550_FUN_00026a2e(void)
   can_buffer_setup1_size.data[2] = 0x83;
   can_buffer_setup1_size.data[3] = 0x46;
   can_buffer_setup1_size.unused_ptr._2_2_ = 2;
-  can_buffer_setup1_size.state = 0x808372;
+  ambient_conditions_msg_header = 0x808372;
   can_buffer_setup1_size.data[6] = 0;
   can_buffer_setup1_size.data[7] = 2;
   _ambient_conditions_data_ptr = 0x80837c;
@@ -34749,8 +34737,8 @@ void cm550_shutdownMinimumSelector28(void)
 
 {
   if (_fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100 <
-      j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_) {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ =
+      fuel_limit_shutdown_minimum) {
+    fuel_limit_shutdown_minimum =
          _fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x1c;
   }
@@ -34770,8 +34758,8 @@ void cm550_shutdownMinimumSelector20(void)
 {
   if ((_datalink_speed_control_mode == 3) &&
      (_jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100 <
-      j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_)) {
-    j1708_transmit_buffer_2_32_ddc6.base_ptr._2_2_ =
+      fuel_limit_shutdown_minimum)) {
+    fuel_limit_shutdown_minimum =
          _jcomm_torque_derate_fueling_maximum_allowed_fuel_as_per_link_u_0_100;
     _indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41 = 0x14;
   }
@@ -38552,4 +38540,4 @@ LAB_00035162:
 
 
 
-// Export complete - 777 functions processed
+// Export complete - 776 functions processed

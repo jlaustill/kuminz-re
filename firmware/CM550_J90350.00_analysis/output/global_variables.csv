@@ -785,7 +785,7 @@ address,name,type,comment
 0x00801a9a,diag_can_response_data_1,,
 0x00801a9b,diag_can_response_data_2,,
 0x00801a9c,can_buffer_setup1_size.data[6],,
-0x00801a9e,ambient_conditions_msg_header,,
+0x00801a9e,ambient_conditions_msg_header,dword,Pointer set to 0x808372. Was hidden behind a duplicate trailing state field of can_buffer_setup_t
 0x00801aa2,ambient_conditions_msg_length,undefined,
 0x00801aa4,ambient_conditions_data_ptr,undefined,
 0x00801aa8,ambient_conditions_unused_ptr,undefined,
@@ -5749,7 +5749,7 @@ address,name,type,comment
 0x0080de76,insite_matched_dtc_fault_code,,
 0x0080de78,fault_to_erase_none,,
 0x0080de7a,action_00_no_clear_action_01_clear_inactive_02_clear_active_03_clear_al_0_6,,
-0x0080dec8,fuel_limit_shutdown_minimum,,
+0x0080dec8,fuel_limit_shutdown_minimum,word,Running minimum of the fuel limits (each limiter stores its value here when it is smaller). Was hidden behind a duplicate trailing base_ptr field of j1708_multipacket_msg_t
 0x0080deca,indicator_as_to_which_algorithm_is_controlling_fuel_after_it_has_13_41,undefined,
 0x0080decc,fuel_system_specific_fuel_derate_that_is_input_to_the_core_sys_0_100,undefined,
 0x0080dece,smallest_derate_fueling_value_among_group_2_ah_derate_algori_0_100,undefined,
