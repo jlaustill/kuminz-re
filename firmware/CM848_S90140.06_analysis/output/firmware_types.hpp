@@ -1186,7 +1186,7 @@ struct eeprom_header_t {
     uint16_t eeprom_status_flags;  /* Bit0=IAT derate history | Bit3=calibration validated */
     uint16_t cal_word2;  /* Calibration parameter word 2 */
     uint16_t cal_word3;  /* Calibration parameter word 3 */
-    uint16_t cal_word4;  /* Calibration parameter word 4 */
+    uint16_t serial_reflash_unlock_request;  /* Boot copy of EEPROM 0x56 (serial_reflash_unlock_request_cal) - the application's serial reflash hand-off; non-zero makes mpc555_initDiagnosticSession start the boot SCI session unlocked (was cal_word4) */
     uint32_t serial_number;  /* ECU serial number from EEPROM */
 };
 

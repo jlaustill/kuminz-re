@@ -2216,12 +2216,12 @@ address,name,type,comment
 0x003fecbe,diag_session_state_t_003fecbe,diag_session_state_t,
 0x003fecbf,diag_session_state_t_003fecbe.response_write_index,,
 0x003fecc0,diag_session_state_t_003fecbe.eeprom_status,,
-0x003fecc4,diagnostic_session_state,byte,
+0x003fecc4,boot_sci_security_state,byte,Boot ROM SCI security state: 0 locked / 1 unlocked (cm848_bootSciCheckSecurityKey accepted the key, or mpc555_initDiagnosticSession found serial_reflash_unlock_request_cal set by the application's SCI command 49) / 2 locked out (a key request after 3 wrong keys). While it is 1 mpc555_generateSerialChallenge sends seed 0 and boot SCI command 0x31 (cm848_processDiagnosticSessionFlags) can set session_flags bits 0-1. Only the boot ROM uses it; at run time this byte is the EEPROM mirror of offset 0x1842 (0 in both dumps). Was diagnostic_session_state, the name of the application's session state at 0x40c04a
 0x003fecc5,diag_request_pending_flag,undefined1,
 0x003fecc6,serial_response_crc_expected,word,
 0x003fecc8,crc16_working_value,dword,
-0x003feccd,diag_keep_alive_counter,byte,
-0x003fecce,diagnostic_cooldown_counter,word,
+0x003feccd,boot_sci_failed_key_count,byte,Wrong boot SCI security keys so far (cm848_bootSciCheckSecurityKey; reset by a correct key and by mpc555_initDiagnosticSession); a key request when it is 3 or more locks the boot SCI security out (boot_sci_security_state 2). Was diag_keep_alive_counter
+0x003fecce,boot_sci_key_retry_delay,word,Set to 1000 after a wrong boot SCI security key and counted down by cm848_decrementDiagnosticTimeout; while it is non-zero a key request is answered 2 (try later). Was diagnostic_cooldown_counter
 0x003fecd0,diag_serial_buffer,byte[33],
 0x003fecd1,diag_serial_buffer[1],,
 0x003fecd2,diag_serial_buffer[2],,
@@ -2264,7 +2264,7 @@ address,name,type,comment
 0x003fee1e,eeprom_shadow_header.eeprom_status_flags,,
 0x003fee20,eeprom_shadow_header.cal_word2,,
 0x003fee22,eeprom_shadow_header.cal_word3,,
-0x003fee24,eeprom_shadow_header.cal_word4,,
+0x003fee24,eeprom_shadow_header.serial_reflash_unlock_request,,
 0x003fee26,eeprom_shadow_header.serial_number,,
 0x003fee28,eeprom_shadow_header.serial_number+2,,
 0x003fee2a,eeprom_write_buffer,dword,
@@ -5696,7 +5696,7 @@ address,name,type,comment
 0x01000050,eeprom_cal_word1,byte,
 0x01000052,eeprom_cal_word2,byte,
 0x01000054,eeprom_cal_word3,byte,
-0x01000056,eeprom_cal_word4,byte,
+0x01000056,serial_reflash_unlock_request_cal,word,EEPROM 0x56: one-shot serial reflash hand-off from the application. SCI command 49 (cm848_sciCommand49Callback, with sci_security_state 1 and cold_start_phase 1 or engine_sync_type_code 5100) writes 1 here and the boot-kernel magic 0x1d0a at EEPROM 0x00, then restarts through the boot ROM (cm848_restartThroughBootRomAfterSciRequest). The boot ROM loads it into eeprom_shadow_header.serial_reflash_unlock_request, and mpc555_initDiagnosticSession clears it and starts the boot SCI session unlocked. 0 in the EEPROM dump. Was eeprom_cal_word4 (byte)
 0x0100008e,eeprom_serial_number,byte,
 # protection_control_state_flags: 10-channel rolling 2-bit edge-detection register (dword)
 # Updated each call by cm848_processProtectionControlStateMachine (0x0002afd0):

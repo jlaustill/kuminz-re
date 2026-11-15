@@ -2002,12 +2002,12 @@ extern void * cmf_active_test_register;  // 0x003fecb2
 extern void * diagnostic_callback_ptr;  // 0x003fecb6
 extern dword diag_serial_transfer_phase;  // 0x003fecba
 extern diag_session_state_t diag_session_state_t_003fecbe;  // 0x003fecbe
-extern byte diagnostic_session_state;  // 0x003fecc4
+extern byte boot_sci_security_state;  // 0x003fecc4
 extern undefined1 diag_request_pending_flag;  // 0x003fecc5
 extern word serial_response_crc_expected;  // 0x003fecc6
 extern dword crc16_working_value;  // 0x003fecc8
-extern byte diag_keep_alive_counter;  // 0x003feccd
-extern word diagnostic_cooldown_counter;  // 0x003fecce
+extern byte boot_sci_failed_key_count;  // 0x003feccd
+extern word boot_sci_key_retry_delay;  // 0x003fecce
 extern byte diag_serial_buffer[33];  // 0x003fecd0
 extern undefined diag_session_protocol_byte;  // 0x003fecf0
 extern EEPROM_DIAG_STATE eeprom_diag_state;  // 0x003fecf1
@@ -5272,7 +5272,7 @@ extern byte eeprom_calibration_block;  // 0x0100004a
 extern byte eeprom_cal_word1;  // 0x01000050
 extern byte eeprom_cal_word2;  // 0x01000052
 extern byte eeprom_cal_word3;  // 0x01000054
-extern byte eeprom_cal_word4;  // 0x01000056
+extern word serial_reflash_unlock_request_cal;  // 0x01000056
 extern byte eeprom_serial_number;  // 0x0100008e
 extern word radiator_fan_speed;  // 0x0040b2f4
 extern byte protection_event26_condition_code;  // 0x0040b1e7

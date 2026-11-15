@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 06:49:28 MST 2026
+// Generated: Sun Nov 15 06:59:30 MST 2026
 
 
 //
@@ -677,7 +677,7 @@ void cm848_loadCalibrationFromEeprom(void)
   mpc555_eepromReadWords(&eeprom_cal_word2,0x3fee20,2);
   mpc555_eepromReadWords(&eeprom_cal_word3,0x3fee22,2);
   mpc555_eepromReadWords(&eeprom_status_block,0x3fee26,4);
-  mpc555_eepromReadWords(&eeprom_cal_word4,0x3fee24,2);
+  mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,0x3fee24,2);
   return;
 }
 
@@ -1632,20 +1632,26 @@ void cm848_setDataTransferMode(void)
 // Function: mpc555_initDiagnosticSession @ 0x000021d0
 //
 
+/* Starts the boot SCI session. eeprom_shadow_header.serial_reflash_unlock_request 0 (the normal
+   path): installs the boot SCI dispatcher at the normal baud rate (SCC1R0 0xa0), locked
+   (boot_sci_security_state 0). Set (the application's SCI command 49 hand-off): clears EEPROM 0x56
+   and starts unlocked (boot_sci_security_state 1, session_flags bit 0, transfer phase 2) at high
+   speed (SCC1R0 0x14) */
+
 void mpc555_initDiagnosticSession(void)
 
 {
   word local_8 [4];
   
   local_8[0] = qsmcm_sccr1.SC1SR;
-  diag_keep_alive_counter = 0;
-  diagnostic_cooldown_counter = 0;
-  if (eeprom_shadow_header.cal_word4 == 0) {
+  boot_sci_failed_key_count = 0;
+  boot_sci_key_retry_delay = 0;
+  if (eeprom_shadow_header.serial_reflash_unlock_request == 0) {
     cm848_installBootSciDispatcher();
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags & 0xfc
     ;
     diag_serial_crc_match_flag = 0;
-    diagnostic_session_state = 0;
+    boot_sci_security_state = 0;
     diag_serial_transfer_phase = 0;
     diag_session_state_t_003fecbe.response_write_index = 0;
     diag_session_state_t_003fecbe._2_4_ = diag_serial_buffer;
@@ -1654,9 +1660,9 @@ void mpc555_initDiagnosticSession(void)
   }
   else {
     local_8[0] = 0;
-    mpc555_eepromWriteWords((dword)local_8,(word *)&eeprom_cal_word4,2);
+    mpc555_eepromWriteWords((dword)local_8,&serial_reflash_unlock_request_cal,2);
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 1;
-    diagnostic_session_state = 1;
+    boot_sci_security_state = 1;
     diag_serial_transfer_phase = 2;
     cm848_initDiagnosticCallback();
     diag_session_state_t_003fecbe.response_write_index = 0;
@@ -1872,7 +1878,7 @@ void mpc555_systemInitialization(void)
   mpc555_eepromReadWords(&eeprom_serial_number,0x3fee16,2);
   mpc555_eepromWriteWords(0x3fee16,(word *)&eeprom_version_marker,2);
   eeprom_xfer_state.eeprom_write_callback = 0xbec;
-  mpc555_eepromReadWords(&eeprom_cal_word4,0x3fee24,2);
+  mpc555_eepromReadWords(&serial_reflash_unlock_request_cal,0x3fee24,2);
   mpc555_initDiagnosticSession();
   mpc555_initHardwareConfig();
   do {
@@ -2270,7 +2276,7 @@ void cm848_dispatchBootSciDiagnosticCommand(void)
 
 /* installs cm848_dispatchBootSciCommand as the current and default diagnostic_callback_ptr state
    via cm848_saveDefaultDiagnosticHandler - called from mpc555_initDiagnosticSession on the normal
-   cal_word4=0 boot path - NOT a scheduler (was cm848_initSchedulerCallback) |
+   boot path (serial_reflash_unlock_request 0) - NOT a scheduler (was cm848_initSchedulerCallback) |
    registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_installBootSciDispatcher(void)
@@ -2511,8 +2517,9 @@ void cm848_processDiagnosticResponseCallback(void)
 //
 
 /* boot SCI command 0x2b handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) -
-   writes a 2-byte seed from runtime_counter plus an additive checksum byte (hi + 0x2b + lo) -
-   reached only by pointer not dead */
+   writes a 2-byte seed from runtime_counter plus an additive checksum byte (hi + 0x2b + lo); the
+   seed is 0 while boot_sci_security_state is 1 (already unlocked) - reached only by pointer not
+   dead */
 
 void mpc555_generateSerialChallenge(void)
 
@@ -2522,7 +2529,7 @@ void mpc555_generateSerialChallenge(void)
   byte bVar3;
   dword write_pos;
   
-  if (diagnostic_session_state == 1) {
+  if (boot_sci_security_state == 1) {
     crc16_working_value = 0;
   }
   else {
@@ -2552,14 +2559,14 @@ void mpc555_generateSerialChallenge(void)
 //
 
 /* boot SCI command 0x2c handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms
-   cm848_processDiagnosticRequest to collect and verify a 2-byte key plus checksum - reached only by
+   cm848_bootSciCheckSecurityKey to collect and verify a 2-byte key plus checksum - reached only by
    pointer not dead */
 
 void cm848_initDiagnosticRequestHandler(void)
 
 {
   sensor_validation_delta._0_1_ = 0;
-  diagnostic_callback_ptr = cm848_processDiagnosticRequest;
+  diagnostic_callback_ptr = cm848_bootSciCheckSecurityKey;
   mpc555_sciBeginUnchecksummedResponseTransmit();
   return;
 }
@@ -2573,8 +2580,8 @@ void cm848_initDiagnosticRequestHandler(void)
 void cm848_decrementDiagnosticTimeout(void)
 
 {
-  if (diagnostic_cooldown_counter != 0) {
-    diagnostic_cooldown_counter = diagnostic_cooldown_counter - 1;
+  if (boot_sci_key_retry_delay != 0) {
+    boot_sci_key_retry_delay = boot_sci_key_retry_delay - 1;
   }
   return;
 }
@@ -2582,14 +2589,18 @@ void cm848_decrementDiagnosticTimeout(void)
 
 
 //
-// Function: cm848_processDiagnosticRequest @ 0x00003408
+// Function: cm848_bootSciCheckSecurityKey @ 0x00003408
 //
 
-/* boot SCI command 0x2c continuation - installed by cm848_initDiagnosticRequestHandler via
-   diagnostic_callback_ptr - accumulates the key bytes then cm848_verifySerialResponse to unlock
-   (keep-alive / cooldown / session) - reached only by pointer not dead */
+/* Boot SCI command 0x2c continuation (installed by cm848_initDiagnosticRequestHandler via
+   diagnostic_callback_ptr; reached only by pointer, not dead). It collects two key bytes and a
+   checksum byte (key bytes + 0x2c) and answers: 0 = unlocked (already, or the key matched in
+   cm848_verifySerialResponse -> boot_sci_security_state 1); 1 = wrong key
+   (boot_sci_failed_key_count + 1, boot_sci_key_retry_delay 1000); 2 = retry delay running or bad
+   checksum; 3 = locked out (3 wrong keys -> boot_sci_security_state 2). Was
+   cm848_processDiagnosticRequest */
 
-void cm848_processDiagnosticRequest(void)
+void cm848_bootSciCheckSecurityKey(void)
 
 {
   uint uVar1;
@@ -2600,26 +2611,26 @@ void cm848_processDiagnosticRequest(void)
   sensor_validation_delta._0_1_ = (byte)uVar1;
   if (2 < (uVar1 & 0xff)) {
     if ((char)((char)sensor_validation_delta + DAT_003fee3c + ',') == DAT_003fee3d) {
-      if (diagnostic_session_state == 1) {
+      if (boot_sci_security_state == 1) {
         diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 0;
         diag_session_state_t_003fecbe.response_write_index =
              diag_session_state_t_003fecbe.response_write_index + 1;
       }
-      else if ((diag_keep_alive_counter < 3) && (diagnostic_session_state != 2)) {
-        if (diagnostic_cooldown_counter == 0) {
+      else if ((boot_sci_failed_key_count < 3) && (boot_sci_security_state != 2)) {
+        if (boot_sci_key_retry_delay == 0) {
           serial_response_crc_expected = CONCAT11((char)sensor_validation_delta,DAT_003fee3c);
           cm848_verifySerialResponse();
           if (diag_serial_crc_match_flag == 0) {
-            diag_keep_alive_counter = diag_keep_alive_counter + 1;
-            diagnostic_cooldown_counter = 1000;
+            boot_sci_failed_key_count = boot_sci_failed_key_count + 1;
+            boot_sci_key_retry_delay = 1000;
             diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 1;
             diag_session_state_t_003fecbe.response_write_index =
                  diag_session_state_t_003fecbe.response_write_index + 1;
           }
           else {
-            diag_keep_alive_counter = 0;
-            diagnostic_cooldown_counter = 0;
-            diagnostic_session_state = 1;
+            boot_sci_failed_key_count = 0;
+            boot_sci_key_retry_delay = 0;
+            boot_sci_security_state = 1;
             diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 0;
             diag_session_state_t_003fecbe.response_write_index =
                  diag_session_state_t_003fecbe.response_write_index + 1;
@@ -2632,7 +2643,7 @@ void cm848_processDiagnosticRequest(void)
         }
       }
       else {
-        diagnostic_session_state = 2;
+        boot_sci_security_state = 2;
         diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 3;
         diag_session_state_t_003fecbe.response_write_index =
              diag_session_state_t_003fecbe.response_write_index + 1;
@@ -2676,12 +2687,12 @@ void cm848_initDiagnosticSessionHandler(void)
 
 /* boot SCI command 0x31 continuation - installed by cm848_initDiagnosticSessionHandler via
    diagnostic_callback_ptr - sets session_flags bits 0-1 when the confirm byte is 1 and
-   diagnostic_session_state=1 (unlocked) - reached only by pointer not dead */
+   boot_sci_security_state is 1 (unlocked) - reached only by pointer not dead */
 
 void cm848_processDiagnosticSessionFlags(void)
 
 {
-  if ((*(char *)diag_session_state_t_003fecbe._2_4_ == '\x01') && (diagnostic_session_state == 1)) {
+  if ((*(char *)diag_session_state_t_003fecbe._2_4_ == '\x01') && (boot_sci_security_state == 1)) {
     diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 3;
     cm848_processTimerInterrupt();
     mpc555_sciBeginUnchecksummedResponseTransmit();
@@ -19859,12 +19870,19 @@ DIAG_RESPONSE cm848_setEngineStarting(void)
 
 
 //
-// Function: mpc555_processJ1939RxQueue @ 0x000216fc
+// Function: cm848_restartThroughBootRom @ 0x000216fc
 //
 
 /* WARNING: This function may have set the stack pointer */
+/* Software restart into the boot ROM, without a hardware reset. Only in cold_start_phase 1;
+   otherwise it returns 7. It waits for the EEPROM write queue, saves fault_timing_snapshot and
+   protection_timer_config_a to EEPROM (waiting for each while a diagnostic session is active), and
+   acknowledges the request on its link (param 2: 0 = J1939 response frame to param 1, 2 = SCI byte
+   1 via cm848_sciTransmitSingleByteOne). After a delay it sets chip-select 0 (BR0 0x500803 / OR0
+   0xfff00030) and SIUMCR 0x402000, then jumps through the reset vector word at ROM 0x104 to
+   mpc555_hardwareInitialization (0x2694). Was mpc555_processJ1939RxQueue */
 
-undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
+undefined4 cm848_restartThroughBootRom(undefined4 param_1,int param_2)
 
 {
   char cVar1;
@@ -19915,34 +19933,39 @@ undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2)
 
 
 //
-// Function: cm848_j1939ProcessRxQueueDefault @ 0x000218b0
+// Function: cm848_restartThroughBootRomAfterSciRequest @ 0x000218b0
 //
 
-undefined1 cm848_j1939ProcessRxQueueDefault(void)
+/* cm848_restartThroughBootRom(0, 2): restart through the boot ROM and acknowledge with SCI byte 1.
+   Called by SCI command 49 (cm848_sciCommand49Callback) after it wrote the serial reflash hand-off
+   to EEPROM. Was cm848_j1939ProcessRxQueueDefault */
+
+undefined1 cm848_restartThroughBootRomAfterSciRequest(void)
 
 {
   undefined1 uVar1;
   
-  uVar1 = mpc555_processJ1939RxQueue(0,2);
+  uVar1 = cm848_restartThroughBootRom(0,2);
   return uVar1;
 }
 
 
 
 //
-// Function: cm848_j1939ProcessRxQueueParam @ 0x000218dc
+// Function: cm848_handleJ1939RestartService @ 0x000218dc
 //
 
-/* handles J1939 PGN 61184 diagnostic service id 11 via the 0x3fa8b2 table
-   (cm848_j1939DiagnosticServiceHandler after the j1939_diagServiceDispatch gate) - wraps
-   mpc555_processJ1939RxQueue - registered by cm848_registerJ1939DiagnosticHandlers */
+/* J1939 PGN 61184 diagnostic service 11 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler
+   after the j1939_diagServiceDispatch gate; registered by cm848_registerJ1939DiagnosticHandlers):
+   cm848_restartThroughBootRom(requester, 0) - restart through the boot ROM and acknowledge with a
+   J1939 response frame. Was cm848_j1939ProcessRxQueueParam */
 
-undefined1 cm848_j1939ProcessRxQueueParam(undefined4 param_1)
+undefined1 cm848_handleJ1939RestartService(undefined4 param_1)
 
 {
   undefined1 uVar1;
   
-  uVar1 = mpc555_processJ1939RxQueue(param_1,0);
+  uVar1 = cm848_restartThroughBootRom(param_1,0);
   return uVar1;
 }
 
@@ -20041,7 +20064,7 @@ void cm848_registerJ1939DiagnosticHandlers(void)
   cm848_j1939RegisterDiagnosticService(10,cm848_resetDiagnosticSession);
   cm848_j1939RegisterDiagnosticService(0x16,cm848_forceActivateDiagnosticSession);
   cm848_j1939RegisterDiagnosticService(6,cm848_setEngineStarting);
-  cm848_j1939RegisterDiagnosticService(0xb,cm848_j1939ProcessRxQueueParam);
+  cm848_j1939RegisterDiagnosticService(0xb,cm848_handleJ1939RestartService);
   cm848_j1939RegisterDiagnosticService(0x18,cm848_setColdStartMode2Flag);
   cm848_j1939RegisterDiagnosticService(0x15,cm848_commitEepromMirrorToEeprom);
   return;
@@ -72530,8 +72553,8 @@ void configurationValidationCheck(void)
       (calibration_id_byte2 != DAT_003fd4ce)) ||
      (((calibration_id_byte3 != DAT_003fd4cf || (calibration_id_byte4 != DAT_003fd4d0)) ||
       (calibration_id_byte5 != DAT_003fd4d1)))) {
-    cm848_memoryBlock_checksum_validate(&eeprom_calibration_block,&calibration_id_byte0,4);
-    cm848_memoryBlock_checksum_validate(&DAT_0100004e,&calibration_id_byte4,2);
+    cm848_writeEepromBytes(&eeprom_calibration_block,&calibration_id_byte0,4);
+    cm848_writeEepromBytes(&DAT_0100004e,&calibration_id_byte4,2);
   }
   return;
 }
@@ -74963,7 +74986,7 @@ void cm848_sciCommand39WriteEepromSettingCallback(void)
           sci_transmit_byte_count = sci_transmit_byte_count + 1;
         }
         else {
-          sVar3 = cm848_memoryBlock_checksum_validate(pbVar2,abStack_10,1);
+          sVar3 = cm848_writeEepromBytes(pbVar2,abStack_10,1);
           if (sVar3 == 0) {
             (&sci_buffer)[sci_transmit_byte_count] = 0xe2;
             sci_transmit_byte_count = sci_transmit_byte_count + 1;
@@ -75340,9 +75363,9 @@ void cm848_sciCommand49Handler(void)
 //
 
 /* SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family):
-   loads sci_buffer[0] = 1 and transmits that single byte (called from mpc555_processJ1939RxQueue;
-   purpose unconfirmed) | review-function-readability reviewed 2026-11-12 - Readability Medium
-   Accuracy Confidence Low */
+   loads sci_buffer[0] = 1 and transmits that single byte (called from cm848_restartThroughBootRom:
+   the SCI acknowledge of a restart through the boot ROM, e.g. after SCI command 49) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low */
 
 void cm848_sciTransmitSingleByteOne(void)
 
@@ -75356,10 +75379,16 @@ void cm848_sciTransmitSingleByteOne(void)
 
 
 //
-// Function: cm848_memoryBlock_checksum_validate @ 0x005220b4
+// Function: cm848_writeEepromBytes @ 0x005220b4
 //
 
-undefined1 cm848_memoryBlock_checksum_validate(uint param_1,undefined4 param_2,int param_3)
+/* Queues an EEPROM write (param 1 = EEPROM address 0x1000000-0x1001ffe, param 2 = source, param 3 =
+   byte count; a zero count or an address outside that range returns 0 without writing). It first
+   waits up to 100 x 19 us for the EEPROM write queue to empty (returns 1 if it never does), then
+   returns cm848_queueEepromByteWrites' result. Used by SCI command 49 and the calibration ID save.
+   Was cm848_memoryBlock_checksum_validate */
+
+undefined1 cm848_writeEepromBytes(uint param_1,undefined4 param_2,int param_3)
 
 {
   char cVar1;
@@ -75400,11 +75429,11 @@ void cm848_sciCommand49Callback(void)
      ((cold_start_phase == CSP_CRANKING || (engine_sync_type_code == 0x13ec)))) {
     uStack_8 = 1;
     auStack_6[0] = 0x1d0a;
-    sVar1 = cm848_memoryBlock_checksum_validate(&eeprom_cal_word4,&uStack_8,2);
+    sVar1 = cm848_writeEepromBytes(&serial_reflash_unlock_request_cal,&uStack_8,2);
     if (sVar1 == 0) {
-      sVar1 = cm848_memoryBlock_checksum_validate(0x1000000,auStack_6,2);
+      sVar1 = cm848_writeEepromBytes(0x1000000,auStack_6,2);
       if (sVar1 == 0) {
-        cm848_j1939ProcessRxQueueDefault();
+        cm848_restartThroughBootRomAfterSciRequest();
       }
     }
   }

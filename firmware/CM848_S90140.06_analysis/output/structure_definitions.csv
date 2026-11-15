@@ -118,7 +118,7 @@ eeprom_header_t,0x003fee08,calibration_block1,byte,6,Calibration data block 1,,v
 eeprom_header_t,0x003fee08,eeprom_status_flags,word,2,Bit0=IAT derate history | Bit3=calibration validated,,verified
 eeprom_header_t,0x003fee08,cal_word2,word,2,Calibration parameter word 2,,verified
 eeprom_header_t,0x003fee08,cal_word3,word,2,Calibration parameter word 3,,verified
-eeprom_header_t,0x003fee08,cal_word4,word,2,Calibration parameter word 4,,verified
+eeprom_header_t,0x003fee08,serial_reflash_unlock_request,word,2,Boot copy of EEPROM 0x56 (serial_reflash_unlock_request_cal) - the application's serial reflash hand-off; non-zero makes mpc555_initDiagnosticSession start the boot SCI session unlocked (was cal_word4),,verified
 eeprom_header_t,0x003fee08,serial_number,dword,4,ECU serial number from EEPROM,,needs_review
 # Governor Output State - speed control integrator and output
 # Used by governor PID controller

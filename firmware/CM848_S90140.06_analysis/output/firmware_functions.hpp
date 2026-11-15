@@ -78,7 +78,7 @@ void cm848_processDiagnosticResponseCallback(void);  // @ 0x0000326c
 void mpc555_generateSerialChallenge(void);  // @ 0x000032dc
 void cm848_initDiagnosticRequestHandler(void);  // @ 0x000033a4
 void cm848_decrementDiagnosticTimeout(void);  // @ 0x000033e0
-void cm848_processDiagnosticRequest(void);  // @ 0x00003408
+void cm848_bootSciCheckSecurityKey(void);  // @ 0x00003408
 void cm848_initDiagnosticSessionHandler(void);  // @ 0x000035e4
 void cm848_processDiagnosticSessionFlags(void);  // @ 0x00003614
 void cm848_sendDiagnosticResponse(void);  // @ 0x0000368c
@@ -510,9 +510,9 @@ DIAG_RESPONSE cm848_activateDiagnosticSession(void);  // @ 0x00021624
 DIAG_RESPONSE cm848_resetDiagnosticSession(void);  // @ 0x00021668
 DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void);  // @ 0x00021694
 DIAG_RESPONSE cm848_setEngineStarting(void);  // @ 0x000216e8
-undefined4 mpc555_processJ1939RxQueue(undefined4 param_1,int param_2);  // @ 0x000216fc
-undefined1 cm848_j1939ProcessRxQueueDefault(void);  // @ 0x000218b0
-undefined1 cm848_j1939ProcessRxQueueParam(undefined4 param_1);  // @ 0x000218dc
+undefined4 cm848_restartThroughBootRom(undefined4 param_1,int param_2);  // @ 0x000216fc
+undefined1 cm848_restartThroughBootRomAfterSciRequest(void);  // @ 0x000218b0
+undefined1 cm848_handleJ1939RestartService(undefined4 param_1);  // @ 0x000218dc
 DIAG_RESPONSE cm848_setColdStartMode2Flag(void);  // @ 0x00021904
 DIAG_RESPONSE cm848_commitEepromMirrorToEeprom(void);  // @ 0x00021918
 void cm848_registerJ1939DiagnosticHandlers(void);  // @ 0x00021a24
@@ -1741,7 +1741,7 @@ void cm848_sciDecrementKeyRetryDelay(void);  // @ 0x00521e40
 void cm848_sciCommand44SendSecurityKeyCallback(void);  // @ 0x00521e68
 void cm848_sciCommand49Handler(void);  // @ 0x00522044
 void cm848_sciTransmitSingleByteOne(void);  // @ 0x00522074
-undefined1 cm848_memoryBlock_checksum_validate(uint param_1,undefined4 param_2,int param_3);  // @ 0x005220b4
+undefined1 cm848_writeEepromBytes(uint param_1,undefined4 param_2,int param_3);  // @ 0x005220b4
 void cm848_sciCommand49Callback(void);  // @ 0x00522158
 void cm848_sciCommand50ReportProtectionEventDtcs(void);  // @ 0x00522224
 void cm848_sciCommand51ReportActiveFaultDtcs(void);  // @ 0x00522314
