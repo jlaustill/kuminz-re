@@ -33,6 +33,10 @@ to run against any other (`check_ghidra` in `scripts/common.sh` validates `appli
   That build had no CPU32 language, so CM550 was really decoded as the default 68000 language (68040), and
   the build was not a precise pin: two checkouts both report `12.0` yet decompile differently. The
   re-baseline on 12.2 + CPU32 (PR #48) made CM550 a pinned PUBLIC build like CM848.
+  - **The language makes no difference to the output (measured 2026-11-15):** a 12.2 build with the 68040 language
+    (`68000:BE:32:default`) is byte-identical to the CPU32 build. The re-baseline's ~4300 changed lines are all
+    Ghidra-version churn (12.0 DEV → 12.2). CPU32 is set because it is the MC68336's real core; TBL / LPSTOP /
+    BGND would only decode with it.
 
 ---
 
