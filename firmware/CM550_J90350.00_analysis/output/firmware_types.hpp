@@ -7,6 +7,8 @@ typedef uint8_t   undefined1;
 typedef uint16_t  undefined2;
 typedef uint32_t  undefined4;
 typedef uint64_t  undefined8;
+typedef uint64_t  ulonglong;
+typedef int64_t   longlong;
 typedef uint8_t   byte;
 typedef uint16_t  ushort;
 typedef uint32_t  uint;
@@ -25,602 +27,6 @@ typedef int32_t   bool32;
 #define CONCAT24(a, b) ((uint64_t)((uint64_t)((uint16_t)(a)) << 32 | (uint64_t)((uint32_t)(b))))
 #define CONCAT31(a, b) ((uint32_t)((uint32_t)(a) << 8 | (uint32_t)((uint8_t)(b))))
 #define CONCAT44(a, b) ((uint64_t)((uint64_t)((uint32_t)(a)) << 32 | (uint64_t)((uint32_t)(b))))
-
-
-/* ---- Structures ---- */
-
-typedef struct {
-    uint32_t id;  /* CAN identifier containing PGN and addressing info */
-    uint16_t length;  /* Message data length for single/multi-frame decision */
-} j1939_header_t;
-
-typedef struct {
-    uint32_t id;  /* 11-bit CAN ID stored in 32-bit (ABI) */
-    uint16_t length;  /* DLC */
-    uint8_t * data_ptr;  /* Pointer to payload bytes */
-} can_std_rx_desc_t;
-
-typedef struct {
-    uint32_t calculated_block;  /* Block x 256 x 4 calculation result */
-    uint16_t offset;  /* Parameter offset within block */
-    uint16_t result_value;  /* Retrieved parameter value (capped at 32000) */
-} param_lookup_args_t;
-
-typedef struct {
-    uint16_t current_index;  /* Current interpolation index into table */
-    uint32_t x_axis_ptr;  /* Pointer to X-axis table (input values) */
-    uint16_t input_value;  /* Input value for table lookup */
-    uint32_t y_axis_ptr;  /* Pointer to Y-axis table (output values) */
-} table_interp_args_t;
-
-typedef struct {
-    uint32_t source_address;  /* DMA transfer source memory address */
-    uint32_t dest_address;  /* DMA transfer destination memory address */
-    uint16_t transfer_count;  /* Number of bytes/words to transfer */
-    uint16_t control_flags;  /* DMA control flags (mode type enable etc) */
-    uint32_t next_descriptor;  /* Pointer to next descriptor in chain */
-} dma_descriptor_t;
-
-typedef struct {
-    uint32_t source_data_ptr;  /* Pointer to source data for memory operation */
-    uint32_t target_data_ptr;  /* Pointer to destination memory location */
-    uint16_t operation_size;  /* Number of bytes to copy (max 1764 bytes) */
-    uint16_t metadata_value;  /* Logging metadata/timestamp for circular buffer */
-} memory_operation_request_t;
-
-typedef struct {
-    uint16_t integer_part;  /* High 16 bits - integer/whole number portion */
-    uint16_t fractional_part;  /* Low 16 bits - fractional portion */
-} q16_fixed_point_t;
-
-typedef struct {
-    uint16_t value;  /* Primary 16-bit value (used for division) */
-    uint16_t limit;  /* Secondary 16-bit limit/clamp value */
-} division_operand_t;
-
-typedef struct {
-    uint8_t lo;  /* Low byte at offset 0 */
-    uint8_t hi;  /* High byte at offset 1 */
-    uint8_t lo;  /* qsm_sci_data_reg - QSM SCI data register */
-    uint8_t hi;  /* qsm_sci_data_reg - QSM SCI data register */
-    uint8_t lo;  /* sim_ddir - SIM port I data direction */
-    uint8_t hi;  /* sim_ddir - SIM port I data direction */
-    uint8_t lo;  /* sim_ddrd - SIM port D data direction */
-    uint8_t hi;  /* sim_ddrd - SIM port D data direction */
-    uint8_t lo;  /* sim_csor1 - SIM chip select option register 1 */
-    uint8_t hi;  /* sim_csor1 - SIM chip select option register 1 */
-    uint8_t lo;  /* tpu_cpr1 - TPU channel priority register 1 */
-    uint8_t hi;  /* tpu_cpr1 - TPU channel priority register 1 */
-    uint8_t lo;  /* TPU_PRAM_CH0_0 - TPU parameter RAM channel 0 */
-    uint8_t hi;  /* TPU_PRAM_CH0_0 - TPU parameter RAM channel 0 */
-} mc68336_reg16_t;
-
-typedef struct {
-    uint16_t timer_count;  /* Timer counter value (offset 0) */
-    uint16_t reserved_02;  /* Reserved (offset 2) */
-    uint16_t timer_config;  /* Timer configuration (offset 4) */
-    uint16_t reserved_06;  /* Reserved (offset 6) */
-    uint32_t reserved_08;  /* Reserved (offset 8-11) */
-    uint16_t timer_compare;  /* Timer compare value (offset 12) */
-    uint16_t reserved_14;  /* Reserved (offset 14) */
-    uint16_t timer_capture;  /* Timer capture value (offset 16) */
-    uint16_t reserved_18;  /* Reserved (offset 18) */
-    uint16_t timer_status;  /* Timer status register (offset 20) */
-    uint32_t timer_control;  /* Timer control value (offset 22) */
-    uint16_t timer_count;  /* hardware_timer_register - SIM timer block */
-} sim_timer_block_t;
-
-typedef struct {
-    uint8_t control_lo;  /* TPU DSCR control low byte (offset 0) */
-    uint8_t control_hi;  /* TPU DSCR control high byte (offset 1) */
-    uint16_t reserved_02;  /* Reserved (offset 2) */
-    uint16_t dscr_config;  /* DSCR configuration (offset 4) */
-    uint16_t dscr_status;  /* DSCR status register (offset 6) */
-    uint16_t dscr_data;  /* DSCR data register (offset 8) */
-    uint16_t dscr_addr;  /* DSCR address register (offset 10) */
-    uint8_t control_lo;  /* tpu_dscr - TPU DSCR block */
-} tpu_dscr_block_t;
-
-typedef struct {
-    uint8_t hsqr0_lo;  /* TPU host sequence register 0 low (offset 0) */
-    uint8_t hsqr0_hi;  /* TPU host sequence register 0 high (offset 1) */
-    uint8_t hsqr1_lo;  /* TPU host sequence register 1 low (offset 2) */
-    uint8_t hsqr1_hi;  /* TPU host sequence register 1 high (offset 3) */
-    uint16_t hsq_config;  /* HSQ configuration (offset 4) */
-    uint16_t hsq_status;  /* HSQ status register (offset 6) */
-    uint16_t hsq_data;  /* HSQ data register (offset 8) */
-    uint8_t hsqr0_lo;  /* tpu_hsqr0 - TPU HSQ block */
-} tpu_hsq_block_t;
-
-typedef struct {
-    uint8_t status;  /* Serial port status register (offset 0) */
-    uint8_t config;  /* Serial port configuration (offset 1) */
-    uint8_t data;  /* Serial port data register (offset 2) */
-    uint8_t reserved;  /* Reserved (offset 3) */
-    uint8_t status;  /* serial_port_1_base_register - QSM serial port */
-} serial_port_regs_t;
-
-typedef struct {
-    uint16_t reserved_00;  /* Reserved/padding at offset 0x00 */
-    uint16_t default_value;  /* Default sensor value on fault */
-    uint16_t clear_threshold;  /* Threshold for fault clear */
-    uint16_t decrement_value;  /* Debounce counter decrement */
-    uint16_t increment_value;  /* Debounce counter increment */
-    uint16_t set_threshold;  /* Threshold for fault set */
-    uint16_t high_limit;  /* High error limit */
-    uint16_t low_limit;  /* Low error limit */
-    uint16_t adc_lookup_index;  /* A/D channel lookup table index */
-    uint8_t reserved_12;  /* Reserved byte */
-    uint8_t alt_fault_enable;  /* Alternative fault enable flag */
-    uint8_t primary_fault_id;  /* Primary fault code */
-    uint8_t secondary_fault_id;  /* Secondary fault code */
-    uint8_t tertiary_fault_id;  /* Tertiary fault code */
-    uint8_t debounce_max;  /* Maximum debounce count */
-} sensor_fault_config_t;
-
-typedef struct {
-    uint8_t reserved_00[8];  /* Reserved bytes at offset 0x00-0x07 */
-    uint16_t interpolated_value;  /* Interpolated sensor value */
-    uint16_t lookup_result;  /* Table lookup result */
-    uint16_t debounce_counter;  /* Current debounce count */
-    uint8_t fault_active_flag;  /* Fault currently active flag */
-    uint8_t sample_counter;  /* Sample phase counter */
-    uint16_t adc_raw_value;  /* Raw A/D conversion value */
-    uint8_t reserved_12[4];  /* Reserved bytes at offset 0x12-0x15 */
-} sensor_debounce_state_t;
-
-typedef struct {
-    uint16_t data_plt_module_id;  /* Module identifier (EN=0x454E for CM550/VP44 ECUs) */
-} cummins_data_plate_header_t;
-
-typedef struct {
-    uint16_t cm550_data_plate_offset;  /* CM550 data plate offset (0x2C0) */
-    uint16_t vp44_data_plate_offset;  /* VP44 data plate offset (0x2C0-0x22=0x29E) */
-    uint8_t incal_variant_code;  /* InCal calibration variant (A/B/C) */
-} module_variant_offsets_t;
-
-typedef struct {
-    uint16_t data_plate_length;  /* Data plate length field */
-    uint8_t engine_make[5];  /* Engine manufacturer identifier (JCMMNS) */
-    uint8_t engine_model[17];  /* Engine model designation (ISB 195) */
-    uint32_t engine_serial_number;  /* Engine serial number */
-    uint8_t engine_build_month;  /* Engine manufacturing month */
-    uint8_t engine_build_day;  /* Engine manufacturing day */
-    uint8_t engine_build_year;  /* Engine manufacturing year */
-    uint16_t engine_cpl;  /* Engine CPL (Component Parts List) */
-    uint16_t peak_torque_low_range;  /* Peak torque low range value */
-    uint16_t peak_torque_high_range;  /* Peak torque high range value */
-    uint16_t peak_torque_rpm_low;  /* Peak torque RPM low range */
-    uint16_t peak_torque_rpm_high;  /* Peak torque RPM high range */
-    uint16_t governed_speed_low;  /* Governed speed low range */
-    uint16_t governed_speed_high;  /* Governed speed high range */
-    uint16_t horsepower_low_range;  /* Horsepower low range value */
-    uint16_t horsepower_high_range;  /* Horsepower high range value */
-    uint32_t ecm_part_number;  /* ECM part number (98502) */
-    uint32_t ecm_serial_number;  /* ECM serial number (T03942860) */
-} cummins_data_plate_t;
-
-typedef struct {
-    uint8_t response_buffer;  /* VP44 response buffer byte */
-    uint8_t sequence_number;  /* VP44 message sequence number for retry logic */
-    uint16_t message_id;  /* VP44 message identifier */
-    uint8_t retry_flag;  /* VP44 retry flag (1 when response pending) */
-    uint8_t retry_count;  /* VP44 actual retry count (max 5) */
-    uint8_t timeout_counter;  /* VP44 timeout countdown (112 ticks) */
-    uint32_t message_data;  /* VP44 stored command/data */
-} vp44_message_t;
-
-typedef struct {
-    uint8_t data[8];  /* J1939 message payload data array */
-    j1939_header_t header;  /* CAN message header (ID + length) */
-} j1939_tx_msg_buffer_t;
-
-typedef struct {
-    uint8_t j1939_status_byte;  /* J1939 transmission message status/header byte */
-    uint8_t fuel_amount_high;  /* Fuel amount high byte */
-    uint8_t fuel_amount_low;  /* Fuel amount low byte */
-    uint8_t rpm_low;  /* Engine RPM low byte */
-    uint8_t rpm_high;  /* Engine RPM high byte */
-    uint32_t vp44_header;  /* VP44 0x100 command message header */
-    uint8_t timing_byte3;  /* VP44 timing advance data byte 3 */
-    uint8_t timing_byte4;  /* VP44 timing advance data byte 4 */
-    uint8_t timing_byte5;  /* VP44 timing advance data byte 5 */
-    uint8_t timing_byte6;  /* VP44 timing advance data byte 6 */
-} j1939_vp44_msg_t;
-
-typedef struct {
-    uint8_t service_id;  /* Current diagnostic service ID */
-    uint8_t sub_function;  /* Sub-function code */
-    uint16_t session_state;  /* Diagnostic session state machine */
-    uint16_t timeout_counter;  /* Session timeout countdown */
-    uint8_t data_buffer[32];  /* Multi-purpose diagnostic data buffer */
-} diagnostic_mode_buffer_t;
-
-typedef struct {
-    uint16_t mode_state;  /* VP44 diagnostic mode state machine */
-    uint32_t command_data;  /* VP44 diagnostic command data */
-    uint16_t response_status;  /* VP44 diagnostic response status */
-} vp44_diagnostic_mode_t;
-
-typedef struct {
-    uint16_t fuel_adjustment;  /* Diagnostic mode fuel adjustment value */
-    uint16_t boost_state;  /* Diagnostic mode boost state */
-    uint16_t fuel_state;  /* Diagnostic mode fuel state */
-    uint16_t vp44_state_2;  /* VP44 diagnostic state secondary */
-} diagnostic_mode_fuel_t;
-
-typedef struct {
-    uint8_t message_length;  /* Total message length including header */
-    uint8_t service_id;  /* Service identifier (3=secured 4=control 5=memory) */
-    uint8_t sub_function;  /* Sub-function code for service routing */
-    uint8_t data_payload[16];  /* Variable-length request data payload */
-} diag_service_request_t;
-
-typedef struct {
-    uint8_t diag_state;  /* State flag: 0=idle 1=active */
-    uint8_t expected_id_low;  /* Expected low byte of std CAN ID */
-    uint16_t expected_guard;  /* Guard word; must match (payload[6]<<8) */
-    uint8_t total_packets;  /* ((total_bytes-1)/7)+1 */
-    uint8_t req_start;  /* Current sequence index (1-based) */
-    uint8_t req_count;  /* Remaining packets to send */
-    uint8_t pre_status;  /* Abort/status flag (non-zero aborts with 7) */
-    uint16_t total_bytes;  /* Total payload length */
-    uint8_t * src_data_ptr;  /* Pointer to source payload */
-    uint8_t * resp_byte_ptr;  /* Pointer to 1-byte response/status */
-    uint8_t status_code;  /* Countdown/NACK (0x37 init or 0x70 delay) */
-    uint8_t reserved_0x47;  /* Padding */
-    uint32_t tx_header_id;  /* Composed CAN ID for TP.CM/TP.DT */
-    uint16_t tx_length;  /* DLC for frame (8 or tail) */
-    uint8_t * tx_cm_buf;  /* Scratch 8-byte CM/DT buffer */
-} diag_tp_state_t;
-
-typedef struct {
-    uint16_t target_address;  /* Target memory address for transfer */
-    uint32_t data_pointer;  /* Pointer to source/dest data buffer */
-    uint16_t remaining_length;  /* Remaining bytes to transfer */
-    uint16_t byte_count;  /* Total byte count for operation */
-    uint8_t tx_active_flag;  /* Transmit operation active (0/1) */
-    uint8_t rx_active_flag;  /* Receive operation active (0/1) */
-} diag_transfer_state_t;
-
-typedef struct {
-    int16_t out_cmd;  /* Final clamped output (governor/fueling command) */
-    int16_t cmd_raw;  /* Current raw command (signed) */
-    int16_t term_ff;  /* Feed-forward/scaling term (signed) */
-    int16_t term_rate;  /* Rate/derivative term (signed saturating) */
-    ushort accum_lo;  /* Q16.16 accumulator low 16 bits (fractional part) */
-    ushort accum_hi;  /* Q16.16 accumulator high 16 bits (integer part) */
-    int16_t limit_hi;  /* Accumulator integer ceiling (upper clamp) */
-    int16_t limit_cap;  /* Accumulator/output cap */
-    int16_t rpm_window;  /* RPM window/threshold term used for gating */
-} fuel_governor_state_t;
-
-typedef struct {
-    uint16_t command;  /* Current fuel demand value */
-    uint8_t source_identifier;  /* Source of fuel command (FUEL_SOURCE_ID enum) */
-    uint8_t reserved_03;  /* Padding byte */
-    uint16_t diagnostic_buffer;  /* Diagnostic parameter buffer */
-    uint16_t timing_blend_factor;  /* Fuel timing blend factor 0-16384 */
-    uint16_t table_output;  /* Fuel demand table output */
-    uint16_t limit_minimum;  /* Fuel limit minimum value */
-    uint16_t demand_source_id;  /* Fuel demand source identifier */
-    uint16_t adjustment_active;  /* Fuel adjustment active flag */
-} fuel_demand_state_t;
-
-typedef struct {
-    uint16_t source_id;  /* ID of current fuel limit source */
-    uint16_t demand_limited;  /* Rate-limited fuel demand */
-    uint16_t arbitration_threshold;  /* Fuel limit arbitration threshold */
-    uint16_t demand_delta;  /* Fuel demand delta for rate limiting */
-    uint16_t maximum_limit;  /* Maximum fuel demand limit */
-    uint16_t offset_value;  /* Fuel limit offset value */
-    uint16_t comparison_low;  /* Fuel limit comparison low value */
-    uint16_t comparison_high;  /* Fuel limit comparison high value */
-    uint16_t rate_limit;  /* Fuel demand rate limiting value */
-} fuel_limit_arbitration_t;
-
-typedef struct {
-    uint16_t fuel_value;  /* Current minimum fuel limit value selected by arbitration */
-    uint16_t init_value;  /* Shutdown minimum init value */
-    uint16_t source_id;  /* Source ID that set minimum (17=selector17 etc) */
-    uint16_t previous_value;  /* Previous minimum value for change tracking */
-} shutdown_minimum_selector_t;
-
-typedef struct {
-    uint16_t control_mode;  /* Fuel arbitrator control mode */
-    uint16_t response_timer;  /* Response timeout timer */
-    uint16_t status_counter;  /* Status update counter */
-    uint16_t speed_timer;  /* Speed control timer */
-    uint16_t status_timer;  /* Status timer */
-    uint16_t session_timer;  /* Diagnostic session timer */
-    uint16_t session_counter;  /* Session counter */
-    uint16_t throttle_override;  /* Throttle override value */
-} fuel_arbitrator_diag_t;
-
-typedef struct {
-    uint16_t rpm_period_value;  /* Engine RPM period measurement from EPS */
-    uint16_t current_engine_rpm;  /* Current calculated engine RPM (primary) */
-    uint16_t cranking_threshold;  /* Engine RPM cranking detection threshold */
-} engine_rpm_buffer_t;
-
-typedef struct {
-    uint16_t previous_engine_rpm;  /* Previous RPM sample for delta calculations */
-    uint16_t previous_nonzero;  /* Previous non-zero RPM value */
-    uint16_t previous_sample;  /* Previous RPM sample for rate of change */
-    uint16_t rpm_delta;  /* RPM change between samples */
-} engine_rpm_history_t;
-
-typedef struct {
-    uint16_t target_engine_rpm;  /* Commanded/target engine RPM */
-} engine_rpm_target_t;
-
-typedef struct {
-    uint16_t eps_previous_engine_rpm;  /* EPS-calculated previous engine RPM */
-    uint16_t eps_diagnostic_mode_counter;  /* EPS diagnostic mode counter */
-    uint16_t snapshot_engine_rpm;  /* Snapshot of engine RPM at event */
-} eps_rpm_snapshot_t;
-
-typedef struct {
-    uint16_t state;  /* Engine operating mode state 1-8 */
-    uint16_t shutdown_complete_flag;  /* Engine shutdown complete flag */
-} engine_operating_mode_t;
-
-typedef struct {
-    uint16_t fault_flag;  /* High RPM protection fault active flag */
-    uint16_t state;  /* State machine state */
-    uint16_t timer;  /* Countdown timer */
-    uint16_t reserved_06;  /* Reserved/gap */
-    uint16_t warning_flag;  /* Warning active flag */
-} high_rpm_protection_t;
-
-typedef struct {
-    uint16_t fuel_limit_shutdown;  /* Fuel limit during shutdown */
-    uint16_t high_rpm_fuel_limit;  /* High RPM fuel control limit */
-    uint16_t low_rpm_fuel_protection_limit;  /* Low RPM fuel protection limit */
-    uint16_t rpm_rate_limiter_output;  /* RPM rate limiter output */
-    uint16_t rpm_rate_limited_value;  /* RPM rate limited value */
-    uint16_t rpm_rate_secondary_calc;  /* Secondary RPM rate calculation */
-    uint16_t rpm_state_accumulator;  /* RPM state accumulator */
-    uint16_t high_rpm_fuel_accumulator;  /* High RPM fuel accumulator */
-    uint16_t low_rpm_fuel_accumulator;  /* Low RPM fuel accumulator */
-    uint16_t fuel_demand_before_limiting;  /* Fuel demand saved before limiting */
-    uint16_t low_rpm_threshold_exceeded_flag;  /* Low RPM threshold exceeded flag */
-    uint16_t rpm_threshold_exceeded_flag;  /* RPM threshold exceeded flag */
-    uint16_t high_rpm_threshold_exceeded_flag;  /* High RPM threshold exceeded flag */
-    uint16_t fuel_protection_timer_enable;  /* Timer enable for protection state machines */
-    uint16_t fuel_system_protection_enabled;  /* Master fuel protection system enable (1=active) */
-} rpm_fuel_protection_t;
-
-typedef struct {
-    uint8_t periodic_monitor_phase;  /* 5-phase counter for periodic fault monitoring */
-    uint8_t can_pin_fault;  /* CAN pin switching fault persistence counter */
-    uint8_t io_fault_1;  /* I/O control fault 1 persistence counter */
-    uint8_t io_fault_2;  /* I/O control fault 2 persistence counter */
-    uint8_t io_fault_3;  /* I/O control fault 3 persistence counter */
-    uint8_t io_fault_4;  /* I/O control fault 4 persistence counter */
-    uint8_t io_fault_5;  /* I/O control fault 5 persistence counter */
-    uint8_t io_fault_6;  /* I/O control fault 6 persistence counter */
-} fault_persistence_counters_t;
-
-typedef struct {
-    uint16_t sensor_fault_status;  /* Sensor fault status register */
-    uint16_t fault_status_2;  /* Fault status flags register 2 */
-    uint16_t engine_fault_status;  /* Engine fault status register */
-    uint16_t reserved_06;  /* Reserved/gap */
-    uint16_t io_fault_status_1;  /* IO fault status register 1 */
-    uint16_t io_fault_status_2;  /* IO fault status register 2 */
-    uint16_t io_fault_status_3;  /* IO fault status register 3 */
-    uint16_t io_fault_status_4;  /* IO fault status register 4 */
-} fault_status_registers_t;
-
-typedef struct {
-    uint16_t fault_status;  /* VP44 fault status register */
-    uint16_t fso_fault_status;  /* VP44 FSO fault status register 2 */
-} vp44_fault_state_t;
-
-typedef struct {
-    uint16_t blend_factor;  /* Fuel timing mode blend factor Q14 */
-    uint16_t protection_blend_ramp;  /* Timing protection blend ramp 0-16384 */
-    uint16_t source_selector;  /* Timing mode source selector 0-4 */
-    uint16_t transition_result;  /* Timing mode transition result */
-    uint16_t fuel_blend_result;  /* Timing fuel blend result */
-    uint16_t oil_pressure_result;  /* Timing oil pressure condition result */
-    uint16_t mode_11_result;  /* Timing mode 11 countdown result */
-    uint16_t protection_counter_1;  /* Timing protection counter 1 */
-    uint16_t protection_counter_2;  /* Timing protection counter 2 */
-    uint16_t blend_state;  /* Timing blend state */
-    uint16_t reserved_14;  /* Gap/reserved */
-    uint16_t reserved_16;  /* Gap/reserved */
-    uint16_t blend_accumulator;  /* Timing blend accumulator */
-    uint16_t reserved_1A;  /* Gap/reserved */
-    uint16_t fuel_source_mode_11_state;  /* Fuel source mode 11 state */
-    uint16_t fuel_source_mode_11_timer;  /* Fuel source mode 11 timer */
-    uint16_t fuel_mode_transition_state;  /* Fuel mode transition state */
-    uint16_t fuel_mode_transition_timer;  /* Fuel mode transition timer */
-} timing_mode_control_t;
-
-typedef struct {
-    uint32_t last_execution_time;  /* Timer value of last task execution */
-    uint16_t runtime_ticks;  /* Task runtime duration in timer ticks */
-    uint16_t deadline_ticks;  /* Task execution deadline (0xFFFF = disabled) */
-    uint16_t execution_count;  /* Number of times task has been executed */
-    uint16_t overrun_count;  /* Number of deadline overruns detected */
-    uint32_t reserved;  /* Reserved/padding bytes for alignment */
-} scheduler_phase_slot_t;
-
-typedef struct {
-    scheduler_phase_slot_t[] slots;  /* Array of phase slots - size depends on scheduler_phase_slot_count */
-} scheduler_phase_table_t;
-
-typedef struct {
-    uint16_t overrun_counter;  /* Count of scheduler overruns detected */
-    uint16_t wait_loop_counter;  /* Wait loop iteration counter */
-    uint16_t wait_loop_limit;  /* Maximum wait loop iterations */
-    uint16_t wait_loop_index;  /* Current wait loop index */
-    uint16_t phase_slot_count;  /* Number of scheduler phase slots */
-    uint16_t phase_timeout;  /* Phase execution timeout value */
-    uint16_t overrun_threshold;  /* Overrun detection threshold */
-    uint16_t tick_interval;  /* Scheduler tick interval */
-} scheduler_control_t;
-
-typedef struct {
-    uint32_t engine_position_sensor_isr;  /* EPS position sensor ISR handler */
-    uint32_t tpu_adc_isr;  /* TPU/QADC interrupt handler */
-    uint32_t main_loop_callback;  /* Main scheduler loop callback */
-} system_callback_table_t;
-
-typedef struct {
-    uint16_t channel_addr;  /* A/D channel address for sensor input */
-    uint16_t filter_const;  /* Digital filter constant (0-1) */
-    uint16_t fault_clear_count;  /* Fault clear counter threshold */
-    uint16_t fault_decrement;  /* Fault counter decrement value */
-    uint16_t fault_increment;  /* Fault counter increment value */
-    uint16_t fault_set_threshold;  /* Fault set threshold */
-    uint16_t high_error_limit;  /* A/D high error limit (0-1023) */
-    uint16_t low_error_limit;  /* A/D low error limit (0-1023) */
-} ad_sensor_config_t;
-
-typedef struct {
-    uint32_t start_address;  /* Start of valid address range (big-endian) */
-    uint32_t end_address;  /* End of valid address range (big-endian) */
-    uint8_t special_mode_flag;  /* Access flag when water_in_fuel_detection_flag==1 */
-    uint8_t normal_mode_flag;  /* Access flag in normal operation */
-} address_range_entry_t;
-
-typedef struct {
-    uint32_t read_ptr;  /* Current read position pointer */
-    uint32_t write_ptr;  /* Current write position pointer */
-    uint32_t base_ptr;  /* Start address of buffer data */
-    uint32_t end_ptr;  /* End address of buffer data */
-    uint8_t full_flag;  /* Buffer full indicator (1=full 0=space available) */
-} circular_buffer_control_t;
-
-typedef struct {
-    uint8_t metadata[1024];  /* Buffer metadata storage area */
-    uint8_t data[512];  /* Actual circular buffer data storage */
-    uint16_t read_index;  /* Current read index into buffer */
-    uint16_t write_index;  /* Current write index into buffer */
-    uint16_t count;  /* Number of entries in buffer */
-    uint16_t current_value;  /* Most recent parameter value */
-} param_circular_buffer_t;
-
-typedef struct {
-    uint16_t offset;  /* Current offset into QADC buffer */
-    uint32_t dest_ptr;  /* Destination pointer for QADC data */
-} qadc_circular_buffer_t;
-
-typedef struct {
-    uint16_t frequency;  /* Symbol frequency or combined weight */
-    uint16_t left_child;  /* Index of left child node (0-512) */
-    uint16_t right_child;  /* Index of right child node (0-512) */
-} huffman_tree_node_t;
-
-typedef struct {
-    huffman_tree_node_t nodes;  /* Array of 513 tree nodes (256 leaves + 257 internal) */
-    uint16_t root_marker;  /* Root node marker at offset 0x600 */
-    uint16_t terminator;  /* Tree terminator at offset 0xC06 (set to 0xFFFF) */
-} huffman_tree_t;
-
-typedef struct {
-    uint32_t buffer_ptr;  /* Current transmit buffer pointer */
-    uint32_t buffer_2;  /* Secondary transmit buffer pointer */
-    uint32_t buffer_end;  /* End of transmit buffer */
-    uint8_t buffer_full_flag;  /* Transmit buffer full flag (1=full 0=empty) */
-    uint8_t buffer_reserved;  /* Reserved/unused byte */
-} j1708_tx_state_t;
-
-typedef struct {
-    uint32_t buffer_ptr_1;  /* Receive buffer pointer 1 */
-    uint32_t buffer_ptr_2;  /* Receive buffer pointer 2 */
-    uint32_t buffer_ptr_3;  /* Receive buffer pointer 3 (current position) */
-    uint8_t buffer_full_flag;  /* Receive buffer full flag (1=full 0=empty) */
-    uint8_t buffer_reserved;  /* Reserved/unused byte */
-} j1708_rx_state_t;
-
-typedef struct {
-    uint32_t base_ptr;  /* Base pointer (offset 0) */
-    uint8_t reserved_04[12];  /* Reserved bytes 4-15 */
-    uint16_t length_16;  /* Length field at offset 16 */
-    uint32_t data_ptr_18;  /* Data pointer at offset 18 */
-    uint16_t count_22;  /* Count field at offset 22 */
-    uint16_t field_24;  /* Field at offset 24 */
-    uint16_t field_26;  /* Field at offset 26 */
-    uint8_t reserved_28[8];  /* Reserved bytes 28-35 */
-    uint32_t write_ptr;  /* Write pointer at offset 36 (100 uses) */
-    uint32_t next_ptr;  /* Next pointer at offset 40 */
-    uint32_t segment_ptr;  /* Segment pointer at offset 44 */
-    uint8_t reserved_48[4];  /* Reserved bytes 48-51 */
-    uint32_t buffer_ptr;  /* Buffer pointer at offset 52 */
-    uint8_t reserved_56[32];  /* Reserved bytes 56-87 */
-    uint32_t end_ptr;  /* End pointer at offset 88 */
-    uint8_t reserved_92[10];  /* Reserved bytes 92-101 */
-    uint16_t status_102;  /* Status field at offset 102 */
-    uint16_t index_104;  /* Index field at offset 104 */
-    uint16_t count_106;  /* Count field at offset 106 */
-    uint32_t ctrl_ptr;  /* Control pointer at offset 108 */
-    uint8_t reserved_112[10];  /* Reserved bytes 112-121 */
-    uint32_t state_ptr;  /* State pointer at offset 122 */
-    uint8_t reserved_126[16];  /* Reserved bytes 126-141 */
-    uint32_t msg_ptr;  /* Message pointer at offset 142 */
-    uint8_t reserved_146[8];  /* Reserved bytes 146-153 */
-    uint16_t param_154;  /* Parameter at offset 154 */
-    uint16_t param_156;  /* Parameter at offset 156 */
-    uint16_t param_158;  /* Parameter at offset 158 */
-    uint16_t param_160;  /* Parameter at offset 160 */
-    uint16_t param_162;  /* Parameter at offset 162 */
-    uint16_t param_164;  /* Parameter at offset 164 */
-    uint8_t reserved_166[8];  /* Reserved bytes 166-173 */
-    uint16_t param_174;  /* Parameter at offset 174 */
-    uint16_t param_176;  /* Parameter at offset 176 */
-    uint16_t param_178;  /* Parameter at offset 178 */
-    uint16_t param_180;  /* Parameter at offset 180 */
-    uint8_t tail_data[74];  /* Remaining data bytes 182-255 */
-    uint32_t base_ptr;  /* J1708 transmit message buffer */
-} j1708_multipacket_msg_t;
-
-typedef struct {
-    uint8_t rx_data[256];  /* J1708 receive data buffer */
-} j1708_rx_buffer_t;
-
-typedef struct {
-    uint8_t tx_buffer_base[256];  /* Diagnostic transmit buffer (256 bytes) */
-    uint8_t rx_buffer_base[256];  /* Diagnostic receive buffer (256 bytes) */
-} diagnostic_buffers_t;
-
-typedef struct {
-    uint32_t tx_start_ptr;  /* Pointer to start of TX buffer */
-    uint32_t rx_start_ptr;  /* Pointer to start of RX buffer */
-    uint32_t end_address;  /* End address of diagnostic buffers */
-    uint8_t logger_state;  /* CAN buffer logger state */
-} diagnostic_buffer_ptrs_t;
-
-typedef struct {
-    uint32_t state;  /* Buffer state (0=idle 1=ready 2=active) */
-    uint32_t data_ptr;  /* Pointer to buffer data area */
-    uint32_t unused_ptr;  /* Unused/reserved pointer */
-    uint8_t data[8];  /* Inline buffer data (8 bytes) */
-    uint32_t state;  /* can_buffer_setup_t_00801a8a - CAN buffer setup instance */
-} can_buffer_setup_t;
-
-typedef struct {
-    uint8_t buffer_start;  /* Start of CAN message buffer area */
-    uint8_t buffer_end;  /* End of CAN message buffer area */
-} can_message_buffer_t;
-
-typedef struct {
-    uint32_t ram_start_addr;  /* Actual starting RAM address of data collector buffer */
-    uint32_t ram_end_addr;  /* Physical RAM address of end of buffer */
-    uint32_t logical_start;  /* Logical beginning address of buffer */
-    uint32_t logical_center;  /* Logical center address for trigger point */
-} data_collector_t;
-
-typedef struct {
-    uint32_t buffer_ptr;  /* Pointer to response buffer */
-    uint8_t data_offset;  /* Current data offset in buffer */
-    uint8_t buffer_index;  /* Buffer index for multi-response */
-    uint8_t buffer_length;  /* Current response length */
-    uint8_t reserved;  /* Reserved/padding byte */
-} insite_response_buffer_t;
 
 
 /* ---- Enumerations ---- */
@@ -1635,3 +1041,663 @@ typedef enum {
     WRITES_BLOCKED_IF_ACTIVE = 1,  /* EEPROM writes blocked when active bank selected */
     WRITES_ALLOWED_OVERRIDE = 2  /* EEPROM writes allowed via special override */
 } CALIBRATION_WRITE_PROTECT;
+
+/* ---- Structures ---- */
+
+typedef struct j1939_header_t j1939_header_t;
+typedef struct can_std_rx_desc_t can_std_rx_desc_t;
+typedef struct param_lookup_args_t param_lookup_args_t;
+typedef struct table_interp_args_t table_interp_args_t;
+typedef struct dma_descriptor_t dma_descriptor_t;
+typedef struct memory_operation_request_t memory_operation_request_t;
+typedef struct q16_fixed_point_t q16_fixed_point_t;
+typedef struct division_operand_t division_operand_t;
+typedef struct mc68336_reg16_t mc68336_reg16_t;
+typedef struct sim_timer_block_t sim_timer_block_t;
+typedef struct tpu_dscr_block_t tpu_dscr_block_t;
+typedef struct tpu_hsq_block_t tpu_hsq_block_t;
+typedef struct serial_port_regs_t serial_port_regs_t;
+typedef struct sensor_fault_config_t sensor_fault_config_t;
+typedef struct sensor_debounce_state_t sensor_debounce_state_t;
+typedef struct cummins_data_plate_header_t cummins_data_plate_header_t;
+typedef struct module_variant_offsets_t module_variant_offsets_t;
+typedef struct cummins_data_plate_t cummins_data_plate_t;
+typedef struct vp44_message_t vp44_message_t;
+typedef struct j1939_tx_msg_buffer_t j1939_tx_msg_buffer_t;
+typedef struct j1939_vp44_msg_t j1939_vp44_msg_t;
+typedef struct diagnostic_mode_buffer_t diagnostic_mode_buffer_t;
+typedef struct vp44_diagnostic_mode_t vp44_diagnostic_mode_t;
+typedef struct diagnostic_mode_fuel_t diagnostic_mode_fuel_t;
+typedef struct diag_service_request_t diag_service_request_t;
+typedef struct diag_tp_state_t diag_tp_state_t;
+typedef struct diag_transfer_state_t diag_transfer_state_t;
+typedef struct fuel_governor_state_t fuel_governor_state_t;
+typedef struct fuel_demand_state_t fuel_demand_state_t;
+typedef struct fuel_limit_arbitration_t fuel_limit_arbitration_t;
+typedef struct shutdown_minimum_selector_t shutdown_minimum_selector_t;
+typedef struct fuel_arbitrator_diag_t fuel_arbitrator_diag_t;
+typedef struct engine_rpm_buffer_t engine_rpm_buffer_t;
+typedef struct engine_rpm_history_t engine_rpm_history_t;
+typedef struct engine_rpm_target_t engine_rpm_target_t;
+typedef struct eps_rpm_snapshot_t eps_rpm_snapshot_t;
+typedef struct engine_operating_mode_t engine_operating_mode_t;
+typedef struct high_rpm_protection_t high_rpm_protection_t;
+typedef struct rpm_fuel_protection_t rpm_fuel_protection_t;
+typedef struct fault_persistence_counters_t fault_persistence_counters_t;
+typedef struct fault_status_registers_t fault_status_registers_t;
+typedef struct vp44_fault_state_t vp44_fault_state_t;
+typedef struct timing_mode_control_t timing_mode_control_t;
+typedef struct scheduler_phase_slot_t scheduler_phase_slot_t;
+typedef struct scheduler_phase_table_t scheduler_phase_table_t;
+typedef struct scheduler_control_t scheduler_control_t;
+typedef struct system_callback_table_t system_callback_table_t;
+typedef struct ad_sensor_config_t ad_sensor_config_t;
+typedef struct address_range_entry_t address_range_entry_t;
+typedef struct circular_buffer_control_t circular_buffer_control_t;
+typedef struct param_circular_buffer_t param_circular_buffer_t;
+typedef struct qadc_circular_buffer_t qadc_circular_buffer_t;
+typedef struct huffman_tree_node_t huffman_tree_node_t;
+typedef struct huffman_tree_t huffman_tree_t;
+typedef struct j1708_tx_state_t j1708_tx_state_t;
+typedef struct j1708_rx_state_t j1708_rx_state_t;
+typedef struct j1708_multipacket_msg_t j1708_multipacket_msg_t;
+typedef struct j1708_rx_buffer_t j1708_rx_buffer_t;
+typedef struct diagnostic_buffers_t diagnostic_buffers_t;
+typedef struct diagnostic_buffer_ptrs_t diagnostic_buffer_ptrs_t;
+typedef struct can_buffer_setup_t can_buffer_setup_t;
+typedef struct can_message_buffer_t can_message_buffer_t;
+typedef struct data_collector_t data_collector_t;
+typedef struct insite_response_buffer_t insite_response_buffer_t;
+
+struct j1939_header_t {
+    uint32_t id;  /* CAN identifier containing PGN and addressing info */
+    uint16_t length;  /* Message data length for single/multi-frame decision */
+};
+
+struct can_std_rx_desc_t {
+    uint32_t id;  /* 11-bit CAN ID stored in 32-bit (ABI) */
+    uint16_t length;  /* DLC */
+    uint8_t * data_ptr;  /* Pointer to payload bytes */
+};
+
+struct param_lookup_args_t {
+    uint32_t calculated_block;  /* Block x 256 x 4 calculation result */
+    uint16_t offset;  /* Parameter offset within block */
+    uint16_t result_value;  /* Retrieved parameter value (capped at 32000) */
+};
+
+struct table_interp_args_t {
+    uint16_t current_index;  /* Current interpolation index into table */
+    uint32_t x_axis_ptr;  /* Pointer to X-axis table (input values) */
+    uint16_t input_value;  /* Input value for table lookup */
+    uint32_t y_axis_ptr;  /* Pointer to Y-axis table (output values) */
+};
+
+struct dma_descriptor_t {
+    uint32_t source_address;  /* DMA transfer source memory address */
+    uint32_t dest_address;  /* DMA transfer destination memory address */
+    uint16_t transfer_count;  /* Number of bytes/words to transfer */
+    uint16_t control_flags;  /* DMA control flags (mode type enable etc) */
+    uint32_t next_descriptor;  /* Pointer to next descriptor in chain */
+};
+
+struct memory_operation_request_t {
+    uint32_t source_data_ptr;  /* Pointer to source data for memory operation */
+    uint32_t target_data_ptr;  /* Pointer to destination memory location */
+    uint16_t operation_size;  /* Number of bytes to copy (max 1764 bytes) */
+    uint16_t metadata_value;  /* Logging metadata/timestamp for circular buffer */
+};
+
+struct q16_fixed_point_t {
+    uint16_t integer_part;  /* High 16 bits - integer/whole number portion */
+    uint16_t fractional_part;  /* Low 16 bits - fractional portion */
+};
+
+struct division_operand_t {
+    uint16_t value;  /* Primary 16-bit value (used for division) */
+    uint16_t limit;  /* Secondary 16-bit limit/clamp value */
+};
+
+struct mc68336_reg16_t {
+    uint8_t lo;  /* Low byte at offset 0 */
+    uint8_t hi;  /* High byte at offset 1 */
+    uint8_t lo;  /* qsm_sci_data_reg - QSM SCI data register */
+    uint8_t hi;  /* qsm_sci_data_reg - QSM SCI data register */
+    uint8_t lo;  /* sim_ddir - SIM port I data direction */
+    uint8_t hi;  /* sim_ddir - SIM port I data direction */
+    uint8_t lo;  /* sim_ddrd - SIM port D data direction */
+    uint8_t hi;  /* sim_ddrd - SIM port D data direction */
+    uint8_t lo;  /* sim_csor1 - SIM chip select option register 1 */
+    uint8_t hi;  /* sim_csor1 - SIM chip select option register 1 */
+    uint8_t lo;  /* tpu_cpr1 - TPU channel priority register 1 */
+    uint8_t hi;  /* tpu_cpr1 - TPU channel priority register 1 */
+    uint8_t lo;  /* TPU_PRAM_CH0_0 - TPU parameter RAM channel 0 */
+    uint8_t hi;  /* TPU_PRAM_CH0_0 - TPU parameter RAM channel 0 */
+};
+
+struct sim_timer_block_t {
+    uint16_t timer_count;  /* Timer counter value (offset 0) */
+    uint16_t reserved_02;  /* Reserved (offset 2) */
+    uint16_t timer_config;  /* Timer configuration (offset 4) */
+    uint16_t reserved_06;  /* Reserved (offset 6) */
+    uint32_t reserved_08;  /* Reserved (offset 8-11) */
+    uint16_t timer_compare;  /* Timer compare value (offset 12) */
+    uint16_t reserved_14;  /* Reserved (offset 14) */
+    uint16_t timer_capture;  /* Timer capture value (offset 16) */
+    uint16_t reserved_18;  /* Reserved (offset 18) */
+    uint16_t timer_status;  /* Timer status register (offset 20) */
+    uint32_t timer_control;  /* Timer control value (offset 22) */
+    uint16_t timer_count;  /* hardware_timer_register - SIM timer block */
+};
+
+struct tpu_dscr_block_t {
+    uint8_t control_lo;  /* TPU DSCR control low byte (offset 0) */
+    uint8_t control_hi;  /* TPU DSCR control high byte (offset 1) */
+    uint16_t reserved_02;  /* Reserved (offset 2) */
+    uint16_t dscr_config;  /* DSCR configuration (offset 4) */
+    uint16_t dscr_status;  /* DSCR status register (offset 6) */
+    uint16_t dscr_data;  /* DSCR data register (offset 8) */
+    uint16_t dscr_addr;  /* DSCR address register (offset 10) */
+    uint8_t control_lo;  /* tpu_dscr - TPU DSCR block */
+};
+
+struct tpu_hsq_block_t {
+    uint8_t hsqr0_lo;  /* TPU host sequence register 0 low (offset 0) */
+    uint8_t hsqr0_hi;  /* TPU host sequence register 0 high (offset 1) */
+    uint8_t hsqr1_lo;  /* TPU host sequence register 1 low (offset 2) */
+    uint8_t hsqr1_hi;  /* TPU host sequence register 1 high (offset 3) */
+    uint16_t hsq_config;  /* HSQ configuration (offset 4) */
+    uint16_t hsq_status;  /* HSQ status register (offset 6) */
+    uint16_t hsq_data;  /* HSQ data register (offset 8) */
+    uint8_t hsqr0_lo;  /* tpu_hsqr0 - TPU HSQ block */
+};
+
+struct serial_port_regs_t {
+    uint8_t status;  /* Serial port status register (offset 0) */
+    uint8_t config;  /* Serial port configuration (offset 1) */
+    uint8_t data;  /* Serial port data register (offset 2) */
+    uint8_t reserved;  /* Reserved (offset 3) */
+    uint8_t status;  /* serial_port_1_base_register - QSM serial port */
+};
+
+struct sensor_fault_config_t {
+    uint16_t reserved_00;  /* Reserved/padding at offset 0x00 */
+    uint16_t default_value;  /* Default sensor value on fault */
+    uint16_t clear_threshold;  /* Threshold for fault clear */
+    uint16_t decrement_value;  /* Debounce counter decrement */
+    uint16_t increment_value;  /* Debounce counter increment */
+    uint16_t set_threshold;  /* Threshold for fault set */
+    uint16_t high_limit;  /* High error limit */
+    uint16_t low_limit;  /* Low error limit */
+    uint16_t adc_lookup_index;  /* A/D channel lookup table index */
+    uint8_t reserved_12;  /* Reserved byte */
+    uint8_t alt_fault_enable;  /* Alternative fault enable flag */
+    uint8_t primary_fault_id;  /* Primary fault code */
+    uint8_t secondary_fault_id;  /* Secondary fault code */
+    uint8_t tertiary_fault_id;  /* Tertiary fault code */
+    uint8_t debounce_max;  /* Maximum debounce count */
+};
+
+struct sensor_debounce_state_t {
+    uint8_t reserved_00[8];  /* Reserved bytes at offset 0x00-0x07 */
+    uint16_t interpolated_value;  /* Interpolated sensor value */
+    uint16_t lookup_result;  /* Table lookup result */
+    uint16_t debounce_counter;  /* Current debounce count */
+    uint8_t fault_active_flag;  /* Fault currently active flag */
+    uint8_t sample_counter;  /* Sample phase counter */
+    uint16_t adc_raw_value;  /* Raw A/D conversion value */
+    uint8_t reserved_12[4];  /* Reserved bytes at offset 0x12-0x15 */
+};
+
+struct cummins_data_plate_header_t {
+    uint16_t data_plt_module_id;  /* Module identifier (EN=0x454E for CM550/VP44 ECUs) */
+};
+
+struct module_variant_offsets_t {
+    uint16_t cm550_data_plate_offset;  /* CM550 data plate offset (0x2C0) */
+    uint16_t vp44_data_plate_offset;  /* VP44 data plate offset (0x2C0-0x22=0x29E) */
+    uint8_t incal_variant_code;  /* InCal calibration variant (A/B/C) */
+};
+
+struct cummins_data_plate_t {
+    uint16_t data_plate_length;  /* Data plate length field */
+    uint8_t engine_make[5];  /* Engine manufacturer identifier (JCMMNS) */
+    uint8_t engine_model[17];  /* Engine model designation (ISB 195) */
+    uint32_t engine_serial_number;  /* Engine serial number */
+    uint8_t engine_build_month;  /* Engine manufacturing month */
+    uint8_t engine_build_day;  /* Engine manufacturing day */
+    uint8_t engine_build_year;  /* Engine manufacturing year */
+    uint16_t engine_cpl;  /* Engine CPL (Component Parts List) */
+    uint16_t peak_torque_low_range;  /* Peak torque low range value */
+    uint16_t peak_torque_high_range;  /* Peak torque high range value */
+    uint16_t peak_torque_rpm_low;  /* Peak torque RPM low range */
+    uint16_t peak_torque_rpm_high;  /* Peak torque RPM high range */
+    uint16_t governed_speed_low;  /* Governed speed low range */
+    uint16_t governed_speed_high;  /* Governed speed high range */
+    uint16_t horsepower_low_range;  /* Horsepower low range value */
+    uint16_t horsepower_high_range;  /* Horsepower high range value */
+    uint32_t ecm_part_number;  /* ECM part number (98502) */
+    uint32_t ecm_serial_number;  /* ECM serial number (T03942860) */
+};
+
+struct vp44_message_t {
+    uint8_t response_buffer;  /* VP44 response buffer byte */
+    uint8_t sequence_number;  /* VP44 message sequence number for retry logic */
+    uint16_t message_id;  /* VP44 message identifier */
+    uint8_t retry_flag;  /* VP44 retry flag (1 when response pending) */
+    uint8_t retry_count;  /* VP44 actual retry count (max 5) */
+    uint8_t timeout_counter;  /* VP44 timeout countdown (112 ticks) */
+    uint32_t message_data;  /* VP44 stored command/data */
+};
+
+struct j1939_tx_msg_buffer_t {
+    uint8_t data[8];  /* J1939 message payload data array */
+    j1939_header_t header;  /* CAN message header (ID + length) */
+};
+
+struct j1939_vp44_msg_t {
+    uint8_t j1939_status_byte;  /* J1939 transmission message status/header byte */
+    uint8_t fuel_amount_high;  /* Fuel amount high byte */
+    uint8_t fuel_amount_low;  /* Fuel amount low byte */
+    uint8_t rpm_low;  /* Engine RPM low byte */
+    uint8_t rpm_high;  /* Engine RPM high byte */
+    uint32_t vp44_header;  /* VP44 0x100 command message header */
+    uint8_t timing_byte3;  /* VP44 timing advance data byte 3 */
+    uint8_t timing_byte4;  /* VP44 timing advance data byte 4 */
+    uint8_t timing_byte5;  /* VP44 timing advance data byte 5 */
+    uint8_t timing_byte6;  /* VP44 timing advance data byte 6 */
+};
+
+struct diagnostic_mode_buffer_t {
+    uint8_t service_id;  /* Current diagnostic service ID */
+    uint8_t sub_function;  /* Sub-function code */
+    uint16_t session_state;  /* Diagnostic session state machine */
+    uint16_t timeout_counter;  /* Session timeout countdown */
+    uint8_t data_buffer[32];  /* Multi-purpose diagnostic data buffer */
+};
+
+struct vp44_diagnostic_mode_t {
+    uint16_t mode_state;  /* VP44 diagnostic mode state machine */
+    uint32_t command_data;  /* VP44 diagnostic command data */
+    uint16_t response_status;  /* VP44 diagnostic response status */
+};
+
+struct diagnostic_mode_fuel_t {
+    uint16_t fuel_adjustment;  /* Diagnostic mode fuel adjustment value */
+    uint16_t boost_state;  /* Diagnostic mode boost state */
+    uint16_t fuel_state;  /* Diagnostic mode fuel state */
+    uint16_t vp44_state_2;  /* VP44 diagnostic state secondary */
+};
+
+struct diag_service_request_t {
+    uint8_t message_length;  /* Total message length including header */
+    uint8_t service_id;  /* Service identifier (3=secured 4=control 5=memory) */
+    uint8_t sub_function;  /* Sub-function code for service routing */
+    uint8_t data_payload[16];  /* Variable-length request data payload */
+};
+
+struct diag_tp_state_t {
+    uint8_t diag_state;  /* State flag: 0=idle 1=active */
+    uint8_t expected_id_low;  /* Expected low byte of std CAN ID */
+    uint16_t expected_guard;  /* Guard word; must match (payload[6]<<8) */
+    uint8_t total_packets;  /* ((total_bytes-1)/7)+1 */
+    uint8_t req_start;  /* Current sequence index (1-based) */
+    uint8_t req_count;  /* Remaining packets to send */
+    uint8_t pre_status;  /* Abort/status flag (non-zero aborts with 7) */
+    uint16_t total_bytes;  /* Total payload length */
+    uint8_t * src_data_ptr;  /* Pointer to source payload */
+    uint8_t * resp_byte_ptr;  /* Pointer to 1-byte response/status */
+    uint8_t status_code;  /* Countdown/NACK (0x37 init or 0x70 delay) */
+    uint8_t reserved_0x47;  /* Padding */
+    uint32_t tx_header_id;  /* Composed CAN ID for TP.CM/TP.DT */
+    uint16_t tx_length;  /* DLC for frame (8 or tail) */
+    uint8_t * tx_cm_buf;  /* Scratch 8-byte CM/DT buffer */
+};
+
+struct diag_transfer_state_t {
+    uint16_t target_address;  /* Target memory address for transfer */
+    uint32_t data_pointer;  /* Pointer to source/dest data buffer */
+    uint16_t remaining_length;  /* Remaining bytes to transfer */
+    uint16_t byte_count;  /* Total byte count for operation */
+    uint8_t tx_active_flag;  /* Transmit operation active (0/1) */
+    uint8_t rx_active_flag;  /* Receive operation active (0/1) */
+};
+
+struct fuel_governor_state_t {
+    int16_t out_cmd;  /* Final clamped output (governor/fueling command) */
+    int16_t cmd_raw;  /* Current raw command (signed) */
+    int16_t term_ff;  /* Feed-forward/scaling term (signed) */
+    int16_t term_rate;  /* Rate/derivative term (signed saturating) */
+    ushort accum_lo;  /* Q16.16 accumulator low 16 bits (fractional part) */
+    ushort accum_hi;  /* Q16.16 accumulator high 16 bits (integer part) */
+    int16_t limit_hi;  /* Accumulator integer ceiling (upper clamp) */
+    int16_t limit_cap;  /* Accumulator/output cap */
+    int16_t rpm_window;  /* RPM window/threshold term used for gating */
+};
+
+struct fuel_demand_state_t {
+    uint16_t command;  /* Current fuel demand value */
+    uint8_t source_identifier;  /* Source of fuel command (FUEL_SOURCE_ID enum) */
+    uint8_t reserved_03;  /* Padding byte */
+    uint16_t diagnostic_buffer;  /* Diagnostic parameter buffer */
+    uint16_t timing_blend_factor;  /* Fuel timing blend factor 0-16384 */
+    uint16_t table_output;  /* Fuel demand table output */
+    uint16_t limit_minimum;  /* Fuel limit minimum value */
+    uint16_t demand_source_id;  /* Fuel demand source identifier */
+    uint16_t adjustment_active;  /* Fuel adjustment active flag */
+};
+
+struct fuel_limit_arbitration_t {
+    uint16_t source_id;  /* ID of current fuel limit source */
+    uint16_t demand_limited;  /* Rate-limited fuel demand */
+    uint16_t arbitration_threshold;  /* Fuel limit arbitration threshold */
+    uint16_t demand_delta;  /* Fuel demand delta for rate limiting */
+    uint16_t maximum_limit;  /* Maximum fuel demand limit */
+    uint16_t offset_value;  /* Fuel limit offset value */
+    uint16_t comparison_low;  /* Fuel limit comparison low value */
+    uint16_t comparison_high;  /* Fuel limit comparison high value */
+    uint16_t rate_limit;  /* Fuel demand rate limiting value */
+};
+
+struct shutdown_minimum_selector_t {
+    uint16_t fuel_value;  /* Current minimum fuel limit value selected by arbitration */
+    uint16_t init_value;  /* Shutdown minimum init value */
+    uint16_t source_id;  /* Source ID that set minimum (17=selector17 etc) */
+    uint16_t previous_value;  /* Previous minimum value for change tracking */
+};
+
+struct fuel_arbitrator_diag_t {
+    uint16_t control_mode;  /* Fuel arbitrator control mode */
+    uint16_t response_timer;  /* Response timeout timer */
+    uint16_t status_counter;  /* Status update counter */
+    uint16_t speed_timer;  /* Speed control timer */
+    uint16_t status_timer;  /* Status timer */
+    uint16_t session_timer;  /* Diagnostic session timer */
+    uint16_t session_counter;  /* Session counter */
+    uint16_t throttle_override;  /* Throttle override value */
+};
+
+struct engine_rpm_buffer_t {
+    uint16_t rpm_period_value;  /* Engine RPM period measurement from EPS */
+    uint16_t current_engine_rpm;  /* Current calculated engine RPM (primary) */
+    uint16_t cranking_threshold;  /* Engine RPM cranking detection threshold */
+};
+
+struct engine_rpm_history_t {
+    uint16_t previous_engine_rpm;  /* Previous RPM sample for delta calculations */
+    uint16_t previous_nonzero;  /* Previous non-zero RPM value */
+    uint16_t previous_sample;  /* Previous RPM sample for rate of change */
+    uint16_t rpm_delta;  /* RPM change between samples */
+};
+
+struct engine_rpm_target_t {
+    uint16_t target_engine_rpm;  /* Commanded/target engine RPM */
+};
+
+struct eps_rpm_snapshot_t {
+    uint16_t eps_previous_engine_rpm;  /* EPS-calculated previous engine RPM */
+    uint16_t eps_diagnostic_mode_counter;  /* EPS diagnostic mode counter */
+    uint16_t snapshot_engine_rpm;  /* Snapshot of engine RPM at event */
+};
+
+struct engine_operating_mode_t {
+    uint16_t state;  /* Engine operating mode state 1-8 */
+    uint16_t shutdown_complete_flag;  /* Engine shutdown complete flag */
+};
+
+struct high_rpm_protection_t {
+    uint16_t fault_flag;  /* High RPM protection fault active flag */
+    uint16_t state;  /* State machine state */
+    uint16_t timer;  /* Countdown timer */
+    uint16_t reserved_06;  /* Reserved/gap */
+    uint16_t warning_flag;  /* Warning active flag */
+};
+
+struct rpm_fuel_protection_t {
+    uint16_t fuel_limit_shutdown;  /* Fuel limit during shutdown */
+    uint16_t high_rpm_fuel_limit;  /* High RPM fuel control limit */
+    uint16_t low_rpm_fuel_protection_limit;  /* Low RPM fuel protection limit */
+    uint16_t rpm_rate_limiter_output;  /* RPM rate limiter output */
+    uint16_t rpm_rate_limited_value;  /* RPM rate limited value */
+    uint16_t rpm_rate_secondary_calc;  /* Secondary RPM rate calculation */
+    uint16_t rpm_state_accumulator;  /* RPM state accumulator */
+    uint16_t high_rpm_fuel_accumulator;  /* High RPM fuel accumulator */
+    uint16_t low_rpm_fuel_accumulator;  /* Low RPM fuel accumulator */
+    uint16_t fuel_demand_before_limiting;  /* Fuel demand saved before limiting */
+    uint16_t low_rpm_threshold_exceeded_flag;  /* Low RPM threshold exceeded flag */
+    uint16_t rpm_threshold_exceeded_flag;  /* RPM threshold exceeded flag */
+    uint16_t high_rpm_threshold_exceeded_flag;  /* High RPM threshold exceeded flag */
+    uint16_t fuel_protection_timer_enable;  /* Timer enable for protection state machines */
+    uint16_t fuel_system_protection_enabled;  /* Master fuel protection system enable (1=active) */
+};
+
+struct fault_persistence_counters_t {
+    uint8_t periodic_monitor_phase;  /* 5-phase counter for periodic fault monitoring */
+    uint8_t can_pin_fault;  /* CAN pin switching fault persistence counter */
+    uint8_t io_fault_1;  /* I/O control fault 1 persistence counter */
+    uint8_t io_fault_2;  /* I/O control fault 2 persistence counter */
+    uint8_t io_fault_3;  /* I/O control fault 3 persistence counter */
+    uint8_t io_fault_4;  /* I/O control fault 4 persistence counter */
+    uint8_t io_fault_5;  /* I/O control fault 5 persistence counter */
+    uint8_t io_fault_6;  /* I/O control fault 6 persistence counter */
+};
+
+struct fault_status_registers_t {
+    uint16_t sensor_fault_status;  /* Sensor fault status register */
+    uint16_t fault_status_2;  /* Fault status flags register 2 */
+    uint16_t engine_fault_status;  /* Engine fault status register */
+    uint16_t reserved_06;  /* Reserved/gap */
+    uint16_t io_fault_status_1;  /* IO fault status register 1 */
+    uint16_t io_fault_status_2;  /* IO fault status register 2 */
+    uint16_t io_fault_status_3;  /* IO fault status register 3 */
+    uint16_t io_fault_status_4;  /* IO fault status register 4 */
+};
+
+struct vp44_fault_state_t {
+    uint16_t fault_status;  /* VP44 fault status register */
+    uint16_t fso_fault_status;  /* VP44 FSO fault status register 2 */
+};
+
+struct timing_mode_control_t {
+    uint16_t blend_factor;  /* Fuel timing mode blend factor Q14 */
+    uint16_t protection_blend_ramp;  /* Timing protection blend ramp 0-16384 */
+    uint16_t source_selector;  /* Timing mode source selector 0-4 */
+    uint16_t transition_result;  /* Timing mode transition result */
+    uint16_t fuel_blend_result;  /* Timing fuel blend result */
+    uint16_t oil_pressure_result;  /* Timing oil pressure condition result */
+    uint16_t mode_11_result;  /* Timing mode 11 countdown result */
+    uint16_t protection_counter_1;  /* Timing protection counter 1 */
+    uint16_t protection_counter_2;  /* Timing protection counter 2 */
+    uint16_t blend_state;  /* Timing blend state */
+    uint16_t reserved_14;  /* Gap/reserved */
+    uint16_t reserved_16;  /* Gap/reserved */
+    uint16_t blend_accumulator;  /* Timing blend accumulator */
+    uint16_t reserved_1A;  /* Gap/reserved */
+    uint16_t fuel_source_mode_11_state;  /* Fuel source mode 11 state */
+    uint16_t fuel_source_mode_11_timer;  /* Fuel source mode 11 timer */
+    uint16_t fuel_mode_transition_state;  /* Fuel mode transition state */
+    uint16_t fuel_mode_transition_timer;  /* Fuel mode transition timer */
+};
+
+struct scheduler_phase_slot_t {
+    uint32_t last_execution_time;  /* Timer value of last task execution */
+    uint16_t runtime_ticks;  /* Task runtime duration in timer ticks */
+    uint16_t deadline_ticks;  /* Task execution deadline (0xFFFF = disabled) */
+    uint16_t execution_count;  /* Number of times task has been executed */
+    uint16_t overrun_count;  /* Number of deadline overruns detected */
+    uint32_t reserved;  /* Reserved/padding bytes for alignment */
+};
+
+struct scheduler_phase_table_t {
+    scheduler_phase_slot_t slots[1];  /* Array of phase slots - size depends on scheduler_phase_slot_count */
+};
+
+struct scheduler_control_t {
+    uint16_t overrun_counter;  /* Count of scheduler overruns detected */
+    uint16_t wait_loop_counter;  /* Wait loop iteration counter */
+    uint16_t wait_loop_limit;  /* Maximum wait loop iterations */
+    uint16_t wait_loop_index;  /* Current wait loop index */
+    uint16_t phase_slot_count;  /* Number of scheduler phase slots */
+    uint16_t phase_timeout;  /* Phase execution timeout value */
+    uint16_t overrun_threshold;  /* Overrun detection threshold */
+    uint16_t tick_interval;  /* Scheduler tick interval */
+};
+
+struct system_callback_table_t {
+    uint32_t engine_position_sensor_isr;  /* EPS position sensor ISR handler */
+    uint32_t tpu_adc_isr;  /* TPU/QADC interrupt handler */
+    uint32_t main_loop_callback;  /* Main scheduler loop callback */
+};
+
+struct ad_sensor_config_t {
+    uint16_t channel_addr;  /* A/D channel address for sensor input */
+    uint16_t filter_const;  /* Digital filter constant (0-1) */
+    uint16_t fault_clear_count;  /* Fault clear counter threshold */
+    uint16_t fault_decrement;  /* Fault counter decrement value */
+    uint16_t fault_increment;  /* Fault counter increment value */
+    uint16_t fault_set_threshold;  /* Fault set threshold */
+    uint16_t high_error_limit;  /* A/D high error limit (0-1023) */
+    uint16_t low_error_limit;  /* A/D low error limit (0-1023) */
+};
+
+struct address_range_entry_t {
+    uint32_t start_address;  /* Start of valid address range (big-endian) */
+    uint32_t end_address;  /* End of valid address range (big-endian) */
+    uint8_t special_mode_flag;  /* Access flag when water_in_fuel_detection_flag==1 */
+    uint8_t normal_mode_flag;  /* Access flag in normal operation */
+};
+
+struct circular_buffer_control_t {
+    uint32_t read_ptr;  /* Current read position pointer */
+    uint32_t write_ptr;  /* Current write position pointer */
+    uint32_t base_ptr;  /* Start address of buffer data */
+    uint32_t end_ptr;  /* End address of buffer data */
+    uint8_t full_flag;  /* Buffer full indicator (1=full 0=space available) */
+};
+
+struct param_circular_buffer_t {
+    uint8_t metadata[1024];  /* Buffer metadata storage area */
+    uint8_t data[512];  /* Actual circular buffer data storage */
+    uint16_t read_index;  /* Current read index into buffer */
+    uint16_t write_index;  /* Current write index into buffer */
+    uint16_t count;  /* Number of entries in buffer */
+    uint16_t current_value;  /* Most recent parameter value */
+};
+
+struct qadc_circular_buffer_t {
+    uint16_t offset;  /* Current offset into QADC buffer */
+    uint32_t dest_ptr;  /* Destination pointer for QADC data */
+};
+
+struct huffman_tree_node_t {
+    uint16_t frequency;  /* Symbol frequency or combined weight */
+    uint16_t left_child;  /* Index of left child node (0-512) */
+    uint16_t right_child;  /* Index of right child node (0-512) */
+};
+
+struct huffman_tree_t {
+    huffman_tree_node_t nodes;  /* Array of 513 tree nodes (256 leaves + 257 internal) */
+    uint16_t root_marker;  /* Root node marker at offset 0x600 */
+    uint16_t terminator;  /* Tree terminator at offset 0xC06 (set to 0xFFFF) */
+};
+
+struct j1708_tx_state_t {
+    uint32_t buffer_ptr;  /* Current transmit buffer pointer */
+    uint32_t buffer_2;  /* Secondary transmit buffer pointer */
+    uint32_t buffer_end;  /* End of transmit buffer */
+    uint8_t buffer_full_flag;  /* Transmit buffer full flag (1=full 0=empty) */
+    uint8_t buffer_reserved;  /* Reserved/unused byte */
+};
+
+struct j1708_rx_state_t {
+    uint32_t buffer_ptr_1;  /* Receive buffer pointer 1 */
+    uint32_t buffer_ptr_2;  /* Receive buffer pointer 2 */
+    uint32_t buffer_ptr_3;  /* Receive buffer pointer 3 (current position) */
+    uint8_t buffer_full_flag;  /* Receive buffer full flag (1=full 0=empty) */
+    uint8_t buffer_reserved;  /* Reserved/unused byte */
+};
+
+struct j1708_multipacket_msg_t {
+    uint32_t base_ptr;  /* Base pointer (offset 0) */
+    uint8_t reserved_04[12];  /* Reserved bytes 4-15 */
+    uint16_t length_16;  /* Length field at offset 16 */
+    uint32_t data_ptr_18;  /* Data pointer at offset 18 */
+    uint16_t count_22;  /* Count field at offset 22 */
+    uint16_t field_24;  /* Field at offset 24 */
+    uint16_t field_26;  /* Field at offset 26 */
+    uint8_t reserved_28[8];  /* Reserved bytes 28-35 */
+    uint32_t write_ptr;  /* Write pointer at offset 36 (100 uses) */
+    uint32_t next_ptr;  /* Next pointer at offset 40 */
+    uint32_t segment_ptr;  /* Segment pointer at offset 44 */
+    uint8_t reserved_48[4];  /* Reserved bytes 48-51 */
+    uint32_t buffer_ptr;  /* Buffer pointer at offset 52 */
+    uint8_t reserved_56[32];  /* Reserved bytes 56-87 */
+    uint32_t end_ptr;  /* End pointer at offset 88 */
+    uint8_t reserved_92[10];  /* Reserved bytes 92-101 */
+    uint16_t status_102;  /* Status field at offset 102 */
+    uint16_t index_104;  /* Index field at offset 104 */
+    uint16_t count_106;  /* Count field at offset 106 */
+    uint32_t ctrl_ptr;  /* Control pointer at offset 108 */
+    uint8_t reserved_112[10];  /* Reserved bytes 112-121 */
+    uint32_t state_ptr;  /* State pointer at offset 122 */
+    uint8_t reserved_126[16];  /* Reserved bytes 126-141 */
+    uint32_t msg_ptr;  /* Message pointer at offset 142 */
+    uint8_t reserved_146[8];  /* Reserved bytes 146-153 */
+    uint16_t param_154;  /* Parameter at offset 154 */
+    uint16_t param_156;  /* Parameter at offset 156 */
+    uint16_t param_158;  /* Parameter at offset 158 */
+    uint16_t param_160;  /* Parameter at offset 160 */
+    uint16_t param_162;  /* Parameter at offset 162 */
+    uint16_t param_164;  /* Parameter at offset 164 */
+    uint8_t reserved_166[8];  /* Reserved bytes 166-173 */
+    uint16_t param_174;  /* Parameter at offset 174 */
+    uint16_t param_176;  /* Parameter at offset 176 */
+    uint16_t param_178;  /* Parameter at offset 178 */
+    uint16_t param_180;  /* Parameter at offset 180 */
+    uint8_t tail_data[74];  /* Remaining data bytes 182-255 */
+    uint32_t base_ptr;  /* J1708 transmit message buffer */
+};
+
+struct j1708_rx_buffer_t {
+    uint8_t rx_data[256];  /* J1708 receive data buffer */
+};
+
+struct diagnostic_buffers_t {
+    uint8_t tx_buffer_base[256];  /* Diagnostic transmit buffer (256 bytes) */
+    uint8_t rx_buffer_base[256];  /* Diagnostic receive buffer (256 bytes) */
+};
+
+struct diagnostic_buffer_ptrs_t {
+    uint32_t tx_start_ptr;  /* Pointer to start of TX buffer */
+    uint32_t rx_start_ptr;  /* Pointer to start of RX buffer */
+    uint32_t end_address;  /* End address of diagnostic buffers */
+    uint8_t logger_state;  /* CAN buffer logger state */
+};
+
+struct can_buffer_setup_t {
+    uint32_t state;  /* Buffer state (0=idle 1=ready 2=active) */
+    uint32_t data_ptr;  /* Pointer to buffer data area */
+    uint32_t unused_ptr;  /* Unused/reserved pointer */
+    uint8_t data[8];  /* Inline buffer data (8 bytes) */
+    uint32_t state;  /* can_buffer_setup_t_00801a8a - CAN buffer setup instance */
+};
+
+struct can_message_buffer_t {
+    uint8_t buffer_start;  /* Start of CAN message buffer area */
+    uint8_t buffer_end;  /* End of CAN message buffer area */
+};
+
+struct data_collector_t {
+    uint32_t ram_start_addr;  /* Actual starting RAM address of data collector buffer */
+    uint32_t ram_end_addr;  /* Physical RAM address of end of buffer */
+    uint32_t logical_start;  /* Logical beginning address of buffer */
+    uint32_t logical_center;  /* Logical center address for trigger point */
+};
+
+struct insite_response_buffer_t {
+    uint32_t buffer_ptr;  /* Pointer to response buffer */
+    uint8_t data_offset;  /* Current data offset in buffer */
+    uint8_t buffer_index;  /* Buffer index for multi-response */
+    uint8_t buffer_length;  /* Current response length */
+    uint8_t reserved;  /* Reserved/padding byte */
+};

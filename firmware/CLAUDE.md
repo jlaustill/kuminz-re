@@ -202,6 +202,13 @@ cd [firmware]_analysis/ghidra
 `function_renames.csv`; `export` re-applies funcdefs+localvars then ExportAnalysis. CM848 seeds
 functions before `analyze` so cross-bank Bank-2 `bl` calls resolve.)
 
+**Regenerate the headers after any rename** (user rule, 2026-11-15). `output/firmware_types.hpp` / `firmware_globals.hpp` / `firmware_functions.hpp` come from `scripts/generate_headers.py`; commit them in the same PR.
+- Call its `generate_types_header` / `generate_globals_header` / `generate_functions_header` functions directly. Don't run its `main()`: `main()` also prepends an `#include` block to `.ghidra.cpp`, which the build never writes, so the `.cpp` would stop matching the build output.
+- Check: `g++ -fsyntax-only -std=c++17 -I output` on a file that includes all three headers. Each remaining error is a CSV problem to fix, not something to patch in the generator (see `docs/plans/2026-03-30-compilable-firmware-design.md`):
+  - an enum member name used in two enums;
+  - one global name at two addresses with different types;
+  - a repeated struct field name.
+
 ### Available Commands
 
 ```bash
