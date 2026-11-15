@@ -400,6 +400,15 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
 - Two sensor types: Type A uses `sensorChannelConfigInit`, Type B uses `sensorChannelInit_typeB`
 - Look for similar patterns in CM550 firmware
 
+### Table lookups (CM848, PR #48)
+- `lookupTableInterpolation(cached_axis_offset, input, x_axis, y_data, flags)` (0x55ef4) takes five register arguments (r3-r7).
+- **The arguments:**
+  - `x_axis` / `y_data` each start with a byte-length word.
+  - `cached_axis_offset` is a word that keeps the last segment found (2 x index); the `*_interp_state` / `*_interp_index` / `engine_sync_init_state_*` globals are these words.
+  - `flags`: bit 0 = signed axis, bit 1 = signed data, bit 3 = step lookup.
+- **The old prototype:** its one-argument row in `function_definitions.csv` (`table_interp_args_t *`, ported from CM550) hid the input and both tables at ~310 call sites. Any table's input and data are now readable at the call.
+- **Still wrong:** the `sensorChannelTypeB_*` functions still take `table_interp_args_t *`.
+
 ### QADC Analog Sensor Read (two-table dispatch)
 - Raw analog read = two-table indirection: `idx = qadc_channel_index_table[k]` (0x3fda78, ROM-copied channel-index array, each elem clamped `< 0x81`) → `qadc_channel_dispatch_table[idx]` (0x57dd2, 129×8-byte ptr entries → MPC555 QADC result regs QADC-A 0x304A80.. / QADC-B 0x304E80..) → deref = live 10-bit value. Asm: `lhz <off>(0x3fda78); cmpwi 0x80; slwi r,3; lwzx 0x57dd2; lhz 0(ptr)` (~58 sites)
 - The index picks WHICH sensor and is runtime-populated in the ROM→RAM window (not in the static dump) → the physical sensor per slot is a live-bench-read target, not statically resolvable

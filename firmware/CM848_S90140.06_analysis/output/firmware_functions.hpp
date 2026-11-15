@@ -358,7 +358,7 @@ void cm848_interpolateFuelMapTable(void *table_ptr,word rpm_input,word load_inpu
 void cm848_processFuelMapInterpolation(void);  // @ 0x00015f34
 void cm848_calculateFuelBlendModeSelection(void);  // @ 0x000160ac
 void cm848_processFuelDemandCalculations(void);  // @ 0x000164ac
-undefined2 cm848_fuelDemandTableLookup(void);  // @ 0x000164e4
+undefined2 cm848_fuelDemandTableLookup(word param_1);  // @ 0x000164e4
 int cm848_fuelDemandRpmCorrection(undefined4 param_1,word param_2);  // @ 0x00016724
 void cm848_lookupProtectionFuelDemand(void);  // @ 0x00016774
 void mpc555_initFuelDemandTablePointers(void);  // @ 0x00016888
@@ -1277,7 +1277,7 @@ void mpc555_tpuBInterruptDispatcher(void);  // @ 0x00055d2c
 void mpc555_tpuAInterruptDispatcher(void);  // @ 0x00055de4
 void cm848_emptyStubFunction(void);  // @ 0x00055e9c
 uint cm848_calculateCrc16Simple(uint param_1,int param_2,uint param_3);  // @ 0x00055ea0
-uint lookupTableInterpolation(table_interp_args_t *args);  // @ 0x00055ef4
+word lookupTableInterpolation (word *cached_axis_offset,word input,word *x_axis,word *y_data,dword flags);  // @ 0x00055ef4
 void cm848_extendedDivisionWithRemainder (uint param_1,uint param_2,uint param_3,uint *param_4,int *param_5);  // @ 0x00056184
 int cm848_signedDivisionWithSaturation(uint param_1,int param_2);  // @ 0x00056260
 int cm848_clampedDivisionWithBounds(uint param_1,int param_2,int param_3,int param_4);  // @ 0x000562fc

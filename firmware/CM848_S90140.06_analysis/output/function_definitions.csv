@@ -2,7 +2,12 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions - Ported from CM550 (same pattern across ECU families)
 # -----------------------------------------------------------------------------
-0x00055ef4,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure
+0x00055ef4,lookupTableInterpolation,return,,word,Y value at the input: linear between the two breakpoints around it (or the step value with flags bit 3) and the end value outside the axis
+0x00055ef4,lookupTableInterpolation,0,cached_axis_offset,word *,Byte offset (2 x index) of the axis segment found last time - the search starts there and the new one is written back; the globals passed here are the *_interp_state / *_interp_index / engine_sync_init_state_* words
+0x00055ef4,lookupTableInterpolation,1,input,ushort,Value looked up on the x axis (r4)
+0x00055ef4,lookupTableInterpolation,2,x_axis,word *,X axis (r5): first word = byte length of the breakpoints that follow
+0x00055ef4,lookupTableInterpolation,3,y_data,word *,Y data (r6): first word = byte length of the values that follow (one per breakpoint)
+0x00055ef4,lookupTableInterpolation,4,flags,int,r7: bit 0 = signed x axis / bit 1 = signed y data / bit 3 = step lookup (no interpolation); calls pass 0 (218) / 1 (43) / 2 (31) / 3 (13) / 8 (1) or a wrapper's own flag
 
 0x000566cc,cm848_dualAxisTableInterpolation,0,table_descriptor,void*,Pointer to 2D table descriptor
 0x000566cc,cm848_dualAxisTableInterpolation,1,x_input,ushort,X-axis input value
