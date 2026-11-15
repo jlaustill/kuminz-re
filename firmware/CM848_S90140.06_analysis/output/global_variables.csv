@@ -3293,7 +3293,7 @@ address,name,type,comment
 0x00408814,cooling_fan_integral_gain,i16,Cooling fan speed PID integral gain (signed - lha) - 20 in the RAM dump
 0x0040881c,cooling_fan_proportional_gain,word,Cooling fan speed PID proportional gain (/ 32) - 41 in the RAM dump
 0x0040881e,cooling_fan_duty_invert_flag,byte,Non-zero: the cooling fan duty is sent as 25600 - duty (cm848_applyCoolingFanDuty) - 0 in the RAM dump
-0x0040881f,cooling_fan_fixed_duty_enable,byte,Non-zero: the duty request is always cooling_fan_fixed_duty (source code 1) - 99 in the RAM dump, so this calibration requests cooling_fan_fixed_duty = 0
+0x0040881f,cooling_fan_fixed_duty_enable,byte,Non-zero: the duty request is always cooling_fan_fixed_duty (source code 1) - 0 in the RAM dump (byte 0x40881f; 0x63 next to it is the high byte of cooling_fan_duty_maximum), so the other duty sources are live
 0x00408826,cooling_fan_air_conditioning_high_pressure_speed,word,Fan speed request while the A/C is on and its pressure is high - 9600 (1200 rpm) in the RAM dump
 0x0040882c,cooling_fan_air_conditioning_pressure_gain,word,A/C pressure ramp slope (/ 256) - 0 in the RAM dump
 0x00408830,cooling_fan_coolant_full_speed_exit_temperature,i16,State 3 drops back to the PI below this coolant temperature (with no coolant sensor fault) - 16320 in the RAM dump

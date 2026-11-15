@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 20:18:58 MST 2026
+// Generated: Sat Nov 14 20:24:14 MST 2026
 
 
 //
@@ -67465,9 +67465,9 @@ LAB_005155c8:
    boost (target set but the fan barely turning) / 4 target = cooling_fan_base_speed (minimum duty)
    / 5 target = cooling_fan_speed_ceiling and not at idle (maximum duty) / 8 not at idle:
    cm848_runCoolingFanSpeedPid / 6 idle with too little engine-driven headroom
-   (cooling_fan_idle_limited_duty) / 7 minimum duty; then snapshots radiator_fan_speed. The RAM dump
-   has cooling_fan_fixed_duty_enable set, so this calibration always takes source 1. Was
-   fuel_coldStart_modeCode_select */
+   (cooling_fan_idle_limited_duty) / 7 minimum duty; then snapshots radiator_fan_speed.
+   cooling_fan_fixed_duty_enable is 0 in the RAM dump, so the PID / engage-boost / idle sources are
+   live. Was fuel_coldStart_modeCode_select */
 
 void cm848_selectCoolingFanDutySource(void)
 
