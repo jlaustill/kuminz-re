@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 07:05:35 MST 2026
+// Generated: Sun Nov 15 09:10:56 MST 2026
 
 
 //
@@ -6083,9 +6083,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -13068,42 +13068,44 @@ void cm848_selectFuelLimitWithFiltering(void)
 
 
 //
-// Function: cm848_fuelDemandFilterUpdate @ 0x00015d2c
+// Function: cm848_interpolateTableWithoutCache @ 0x00015d2c
 //
 
-uint cm848_fuelDemandFilterUpdate(uint param_1,ushort *param_2,int param_3)
+/* Stateless table interpolation (input, x_axis, y_data): searches the unsigned axis down from its
+   end, interpolates linearly between the two breakpoints around the input (signed data) and returns
+   the end value outside the axis. Only cm848_interpolateFuelMapTable calls it. Was
+   cm848_fuelDemandFilterUpdate */
+
+word cm848_interpolateTableWithoutCache(dword input,word *x_axis,word *y_data)
 
 {
-  short sVar1;
-  ushort uVar2;
-  int iVar3;
-  uint uVar4;
+  ushort uVar1;
+  ushort *puVar2;
+  uint uVar3;
   
-  uVar4 = (uint)(*param_2 >> 1);
-  if ((int)param_1 < (int)(uint)param_2[uVar4]) {
-    if ((int)(uint)param_2[1] < (int)param_1) {
-      for (param_2 = param_2 + uVar4; (int)param_1 < (int)(uint)*param_2; param_2 = param_2 + -1) {
-        uVar4 = uVar4 + 0xffff;
+  uVar3 = (uint)(*x_axis >> 1);
+  if ((int)input < (int)(uint)x_axis[uVar3]) {
+    if ((int)(uint)x_axis[1] < (int)input) {
+      for (puVar2 = x_axis + uVar3; (int)input < (int)(uint)*puVar2; puVar2 = puVar2 + -1) {
+        uVar3 = uVar3 + 0xffff;
       }
-      if (*param_2 != param_1) {
-        iVar3 = (uVar4 & 0xffff) * 2;
-        sVar1 = *(short *)(param_3 + iVar3 + 2);
-        return ((int)(short)(*(short *)(param_3 + iVar3) - sVar1) *
-               (int)(short)((short)param_1 - param_2[1])) / (int)(short)(*param_2 - param_2[1]) +
-               (int)sVar1 & 0xffff;
+      if (*puVar2 != input) {
+        return (short)(((int)(short)(y_data[uVar3 & 0xffff] - y_data[(uVar3 & 0xffff) + 1]) *
+                       (int)(short)((short)input - puVar2[1])) / (int)(short)(*puVar2 - puVar2[1]))
+               + y_data[(uVar3 & 0xffff) + 1];
       }
     }
     else {
-      uVar4 = 1;
-      uVar2 = param_2[2];
-      while (uVar2 == param_1) {
-        uVar4 = uVar4 + 1;
-        uVar2 = param_2[3];
-        param_2 = param_2 + 1;
+      uVar3 = 1;
+      uVar1 = x_axis[2];
+      while (uVar1 == input) {
+        uVar3 = uVar3 + 1;
+        uVar1 = x_axis[3];
+        x_axis = x_axis + 1;
       }
     }
   }
-  return (uint)*(ushort *)(param_3 + (uVar4 & 0xffff) * 2);
+  return y_data[uVar3 & 0xffff];
 }
 
 
@@ -13112,46 +13114,45 @@ uint cm848_fuelDemandFilterUpdate(uint param_1,ushort *param_2,int param_3)
 // Function: cm848_interpolateFuelMapTable @ 0x00015e08
 //
 
-void cm848_interpolateFuelMapTable(void *table_ptr,word rpm_input,word load_input)
+/* Fuel map lookup for cm848_processFuelMapInterpolation (called once with engine_load_input_value
+   and once with fuel_demand_boost_input, each with its own six tables in RAM at 0x400c84-0x400e1b):
+   a cached lookupTableInterpolation of the input, then three cm848_interpolateTableWithoutCache
+   follow-on lookups and one reverse lookup (axis and data swapped) fill the result record - see the
+   result parameter */
+
+void cm848_interpolateFuelMapTable
+               (word *result,word input,word *x_axis,word *y_data,word *second_axis,
+               word *second_data,word *third_data,word *fourth_data,dword lookup_signed)
 
 {
   word wVar1;
-  ushort uVar2;
-  ushort uVar3;
-  undefined2 uVar4;
-  undefined2 in_register_00000014;
-  word *in_r6;
-  undefined4 in_r7;
-  undefined4 in_r8;
-  undefined4 in_r9;
-  undefined4 in_r10;
-  word wVar5;
-  int in_stack_00000008;
+  word wVar2;
+  word wVar3;
+  word wVar4;
   undefined4 local_28;
   undefined4 local_24;
   undefined4 local_20;
   
   wVar1 = lookupTableInterpolation
-                    ((word *)((int)&fuel_map_interpolation_state + 2),rpm_input,
-                     (word *)CONCAT22(in_register_00000014,load_input),in_r6,
-                     (uint)(in_stack_00000008 != 0));
-  uVar2 = cm848_fuelDemandFilterUpdate(wVar1,in_r7,in_r8);
-  if (uVar2 < (ushort)(fuel_demand_min_threshold * 2)) {
-    uVar2 = fuel_demand_min_threshold * 2;
+                    ((word *)((int)&fuel_map_interpolation_state + 2),input,x_axis,y_data,
+                     (uint)(lookup_signed != 0));
+  wVar2 = cm848_interpolateTableWithoutCache((uint)wVar1,second_axis,second_data);
+  if (wVar2 < (ushort)(fuel_demand_min_threshold * 2)) {
+    wVar2 = fuel_demand_min_threshold * 2;
   }
-  uVar3 = cm848_fuelDemandFilterUpdate(uVar2,in_r8,in_r7);
-  wVar5 = wVar1;
-  if (wVar1 < uVar3) {
-    wVar5 = uVar3;
+  wVar3 = cm848_interpolateTableWithoutCache((uint)wVar2,second_data,second_axis);
+  wVar4 = wVar1;
+  if ((uint)wVar1 < (uint)wVar3) {
+    wVar4 = wVar3;
   }
-  local_28 = CONCAT22(wVar1,wVar5);
-  uVar4 = cm848_fuelDemandFilterUpdate(wVar5,in_r7,in_r9);
-  local_20 = CONCAT22(uVar4,local_20._2_2_);
-  uVar4 = cm848_fuelDemandFilterUpdate(wVar5,in_r7,in_r10);
-  local_24 = CONCAT22(uVar2,uVar4);
-  *(undefined4 *)table_ptr = local_28;
-  *(undefined4 *)((int)table_ptr + 4) = local_24;
-  *(undefined4 *)((int)table_ptr + 8) = local_20;
+  local_28 = CONCAT22(wVar1,wVar4);
+  wVar1 = cm848_interpolateTableWithoutCache((uint)wVar4,second_axis,third_data);
+  local_20 = CONCAT22(wVar1,local_20._2_2_);
+  wVar1 = cm848_interpolateTableWithoutCache((uint)wVar4,second_axis,fourth_data);
+  local_24 = CONCAT22(wVar2,wVar1);
+  *(undefined4 *)result = local_28;
+  *(undefined4 *)(result + 2) = local_24;
+  *(undefined4 *)(result + 4) = local_20;
   return;
 }
 
@@ -13182,8 +13183,16 @@ void cm848_processFuelMapInterpolation(void)
   word local_6;
   word local_4;
   
-  cm848_interpolateFuelMapTable(&local_c,engine_load_input_value,0xc84);
-  cm848_interpolateFuelMapTable(&local_18,fuel_demand_boost_input,0xd50);
+  cm848_interpolateFuelMapTable
+            (&local_c,engine_load_input_value,(word *)&fuel_map_load_axis_cal,
+             (word *)&fuel_map_load_values_cal,(word *)&fuel_map_load_filter_a_cal,
+             (word *)&fuel_map_load_filter_b_cal,(word *)&fuel_map_load_filter_c_cal,
+             (word *)&fuel_map_load_filter_d_cal,0);
+  cm848_interpolateFuelMapTable
+            (&local_18,fuel_demand_boost_input,(word *)&fuel_map_boost_axis_cal,
+             (word *)&fuel_map_boost_values_cal,(word *)&fuel_map_boost_filter_a_cal,
+             (word *)&fuel_map_boost_filter_b_cal,(word *)&fuel_map_boost_filter_c_cal,
+             (word *)&fuel_map_boost_filter_d_cal,1);
   sVar1 = cm848_compareForFuelMapSelection(local_a,local_16);
   if (sVar1 == 1) {
     local_24 = local_c;

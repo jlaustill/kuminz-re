@@ -688,8 +688,8 @@ address,name
 0x00015760,cm848_lookupFuelDemandRpmTables
 0x00015a24,cm848_calculateFuelLimitSource
 0x00015bd8,cm848_selectFuelLimitWithFiltering
-0x00015d2c,cm848_fuelDemandFilterUpdate
-0x00015e08,cm848_interpolateFuelMapTable
+0x00015d2c,cm848_interpolateTableWithoutCache,Stateless table interpolation (input, x_axis, y_data): searches the unsigned axis down from its end, interpolates linearly between the two breakpoints around the input (signed data) and returns the end value outside the axis. Only cm848_interpolateFuelMapTable calls it. Was cm848_fuelDemandFilterUpdate
+0x00015e08,cm848_interpolateFuelMapTable,Fuel map lookup for cm848_processFuelMapInterpolation (called once with engine_load_input_value and once with fuel_demand_boost_input, each with its own six tables in RAM at 0x400c84-0x400e1b): a cached lookupTableInterpolation of the input, then three cm848_interpolateTableWithoutCache follow-on lookups and one reverse lookup (axis and data swapped) fill the result record - see the result parameter
 0x00015f34,cm848_processFuelMapInterpolation
 0x000160ac,cm848_calculateFuelBlendModeSelection
 0x000164ac,cm848_processFuelDemandCalculations

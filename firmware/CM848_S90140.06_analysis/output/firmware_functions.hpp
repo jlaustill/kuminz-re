@@ -353,8 +353,8 @@ void cm848_calculateFuelDemandBlendTables(void);  // @ 0x00015444
 void cm848_lookupFuelDemandRpmTables(void);  // @ 0x00015760
 void cm848_calculateFuelLimitSource(void);  // @ 0x00015a24
 void cm848_selectFuelLimitWithFiltering(void);  // @ 0x00015bd8
-uint cm848_fuelDemandFilterUpdate(uint param_1,ushort *param_2,int param_3);  // @ 0x00015d2c
-void cm848_interpolateFuelMapTable(void *table_ptr,word rpm_input,word load_input);  // @ 0x00015e08
+word cm848_interpolateTableWithoutCache(dword input,word *x_axis,word *y_data);  // @ 0x00015d2c
+void cm848_interpolateFuelMapTable (word *result,word input,word *x_axis,word *y_data,word *second_axis, word *second_data,word *third_data,word *fourth_data,dword lookup_signed);  // @ 0x00015e08
 void cm848_processFuelMapInterpolation(void);  // @ 0x00015f34
 void cm848_calculateFuelBlendModeSelection(void);  // @ 0x000160ac
 void cm848_processFuelDemandCalculations(void);  // @ 0x000164ac

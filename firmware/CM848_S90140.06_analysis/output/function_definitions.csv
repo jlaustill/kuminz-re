@@ -13,9 +13,21 @@ function_address,function_name,param_index,name,type,comment
 0x000566cc,cm848_dualAxisTableInterpolation,1,x_input,ushort,X-axis input value
 0x000566cc,cm848_dualAxisTableInterpolation,2,y_input,ushort,Y-axis input value
 
-0x00015e08,cm848_interpolateFuelMapTable,0,table_ptr,void*,Pointer to fuel map table
-0x00015e08,cm848_interpolateFuelMapTable,1,rpm_input,ushort,Engine RPM value for lookup
-0x00015e08,cm848_interpolateFuelMapTable,2,load_input,ushort,Engine load value for lookup
+0x00015d2c,cm848_interpolateTableWithoutCache,return,,word,Y value at the input: linear between the breakpoints around it and the end value outside the axis
+0x00015d2c,cm848_interpolateTableWithoutCache,0,input,int,Value looked up on the x axis (compared as a full 32-bit register - a 16-bit type leaves CONCAT22 artifacts)
+0x00015d2c,cm848_interpolateTableWithoutCache,1,x_axis,word *,X axis: first word = byte length of the unsigned breakpoints that follow
+0x00015d2c,cm848_interpolateTableWithoutCache,2,y_data,word *,Y data: one signed value per breakpoint
+
+0x00015e08,cm848_interpolateFuelMapTable,return,,void,Writes the result record through param 0
+0x00015e08,cm848_interpolateFuelMapTable,0,result,word *,Result record (3 dwords): [0] the x_axis / y_data value / [1] the larger of [0] and the reverse lookup of [2] / [2] [0] through second_axis -> second_data (raised to 2 x fuel_demand_min_threshold) / [3] [1] through fourth_data / [4] [1] through third_data / [5] not set
+0x00015e08,cm848_interpolateFuelMapTable,1,input,ushort,Value looked up on x_axis (r4)
+0x00015e08,cm848_interpolateFuelMapTable,2,x_axis,word *,X axis of the first lookup (r5)
+0x00015e08,cm848_interpolateFuelMapTable,3,y_data,word *,Y data of the first lookup (r6)
+0x00015e08,cm848_interpolateFuelMapTable,4,second_axis,word *,Axis of the follow-on lookups (r7) - also the data of the reverse lookup
+0x00015e08,cm848_interpolateFuelMapTable,5,second_data,word *,Data for [2] (r8) - also the axis of the reverse lookup
+0x00015e08,cm848_interpolateFuelMapTable,6,third_data,word *,Data for [4] (r9)
+0x00015e08,cm848_interpolateFuelMapTable,7,fourth_data,word *,Data for [3] (r10)
+0x00015e08,cm848_interpolateFuelMapTable,8,lookup_signed,int,Stack argument: non-zero passes flags 1 (signed x axis) to the first lookup
 
 # -----------------------------------------------------------------------------
 # CAN Message Transmission - Adapted from CM550 patterns
