@@ -127,6 +127,20 @@ Cummins revised connector assignments between the 2003–2007 5.9L applications.
 
 ## Analysis Notes
 
+### PWM outputs tied to TPU-B channels — 2026-11-14 (PR #48)
+
+The firmware picks a driver for each output function from the output channel assignment table (EEPROM 0x812, 48 words; see `firmware/CLAUDE.md` "Output read-back faults"). Each output that has a read-back also has its own DTC. Together they tie five functions to TPU-B channels in this truck's calibration:
+
+| Function (pin above) | Table entry | Driver record | TPU-B channel / read-back | Read-back DTC |
+|---|---|---|---|---|
+| Wastegate Solenoid Control (C1-1, K139 - 2005 wiring; absent in the 2004 manual) | 11 | 8 | 7 / MDASM12 | P0243 |
+| Generator Field Control (C1-7, K20) | 27 | 11 | 10 / MDASM14 | P0622 |
+| Fan Clutch Control (C2-43, K160 - 2005 wiring; Park Lockout Solenoid in the 2004 manual) | 1 | 7 | 6 / MDASM13 | P0480 |
+| (A/T) Governor Pressure Solenoid Control (C2-14, T118) | 10 | 5 | 4 / MDASM11 | P0748 |
+| Fuel metering (P0251; most likely the CP3 fuel control actuator, not in these C1 / C2 tables) | 20 | 12 | 11 / MDASM29 | P0251 |
+
+The wastegate and fan clutch entries hold non-zero records, so this ECM is calibrated for the 2005-style wastegate and fan clutch outputs. The fan clutch's read-back DTC (P0480) is separate from the P0483 fan rationality code in the dump's active DTC list.
+
 ### Oil Temperature Sensor — CORRECTED 2026-11-13 (PR #46): the old evidence was misnamed; presence is open
 
 The firmware evidence this section was built on came from misnamed symbols:
