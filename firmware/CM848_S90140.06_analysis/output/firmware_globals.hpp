@@ -1674,7 +1674,7 @@ extern dword protection_trim_divisor_working;  // 0x003fd062
 extern dword protection_trim_divisor_cal;  // 0x003fd066
 extern word protection_channel_load_snapshot;  // 0x003fd06a
 extern word fuel_demand_enable_snapshot;  // 0x003fd06c
-extern dword protection_ema_output;  // 0x003fd070
+extern dword engine_load_ema_filter_pointer;  // 0x003fd070
 extern byte BYTE_003fd1ac;  // 0x003fd1ac
 extern word sensor_scan_cycle_counter;  // 0x003fd1d8
 extern byte BYTE_003fd284;  // 0x003fd284

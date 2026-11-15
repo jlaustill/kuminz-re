@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 20:41:22 MST 2026
+// Generated: Sun Nov 15 06:24:31 MST 2026
 
 
 //
@@ -153,7 +153,7 @@ void cm848_eepromProgressNotify(undefined4 param_1,int param_2,undefined4 param_
 
 {
   if ((param_2 != 1) && (param_2 == 2)) {
-    protection_ema_output(param_1,param_3);
+    engine_load_ema_filter_pointer(param_1,param_3);
   }
   return;
 }
@@ -420,7 +420,7 @@ short mpc555_initEepromTransfer(int param_1)
       uVar5 = 0;
     }
     uVar1 = eeprom_diag_callback._0_4_;
-    protection_ema_output(uVar1,uVar5);
+    engine_load_ema_filter_pointer(uVar1,uVar5);
   }
   eeprom_xfer_state.bytes_transferred = 0;
   eeprom_block_tracking.block_count = 0;
@@ -1133,7 +1133,7 @@ char mpc555_diagService25_executeFunction(int param_1)
     BYTE_003fc77c(local_20,*(int *)(param_1 + 6) + 1,4);
     cVar6 = BYTE_003fd298(local_20[0],1);
     if (cVar6 != '\t') {
-      protection_ema_output(param_1,0);
+      engine_load_ema_filter_pointer(param_1,0);
       wVar4 = mios_mmcsm_cnt.CNT;
       cVar3 = j1939_can_ring_buf._pad16._0_1_;
       do {
@@ -28701,12 +28701,14 @@ void cm848_calculateLoadProtectionDerateTarget(void)
    a sibling (cm848_setLogicalOutputRequest). Renamed
    protection_fault_severity->protection_diagnostic_status_intermediate (magnitude-implying name
    colliding with protection_fault_severity_code @0x408788) and uVar1->engineLoadProtection (enum
-   ENGINE_LOAD_PROTECTION_STATE INACTIVE=0/ACTIVE=0x08). confirm-B (governor_status_flags 0x8000) =
-   engine-LOAD protection actively derating: the monitored quantity is fuel-demand-derived engine
-   load (engine_load_percent, computed in cm848_calculateEngineLoadPercentages, EMA-filtered into
-   protection_ema_output), NOT a temperature/pressure sensor. The whole cluster is a fuel-mode-B
-   (governor_fuel_b_mode_flag) protection governor: load-EMA deviation is the TRIP; confirm-A is
-   fuel-low-armed (protection_confirm_enable_a) and confirm-B is throttle-rate/overspeed-armed
+   ENGINE_LOAD_PROTECTION_STATE
+   ENGINE_LOAD_PROTECTION_INACTIVE=0/ENGINE_LOAD_PROTECTION_ACTIVE=0x08). confirm-B
+   (governor_status_flags 0x8000) = engine-LOAD protection actively derating: the monitored quantity
+   is fuel-demand-derived engine load (engine_load_percent, computed in
+   cm848_calculateEngineLoadPercentages, EMA-filtered into protection_ema_output), NOT a
+   temperature/pressure sensor. The whole cluster is a fuel-mode-B (governor_fuel_b_mode_flag)
+   protection governor: load-EMA deviation is the TRIP; confirm-A is fuel-low-armed
+   (protection_confirm_enable_a) and confirm-B is throttle-rate/overspeed-armed
    (protection_confirm_enable_b from governor_overspeed_threshold_flag); it derates governor speed
    and raises protection event SPN 0x48 via cm848_setLogicalOutputRequest. confirm-A/B are two
    arming stages of this one load-deviation protection. Cluster re-domained: this fn calls
@@ -28723,10 +28725,10 @@ void cm848_processLoadProtectionStatus(void)
   cm848_evaluateLoadProtectionSteadyStage();
   cm848_evaluateLoadProtectionLiveStage();
   if ((governor_status_flags & 0x8000) == 0) {
-    engineLoadProtection = INACTIVE;
+    engineLoadProtection = ENGINE_LOAD_PROTECTION_INACTIVE;
   }
   else {
-    engineLoadProtection = ACTIVE;
+    engineLoadProtection = ENGINE_LOAD_PROTECTION_ACTIVE;
   }
   protection_diagnostic_status_intermediate =
        protection_fault_condition_value | engineLoadProtection;
@@ -78181,7 +78183,7 @@ void diag_boostLoad_overtemp_monitor(void)
     }
     else {
       protection_channel_load_snapshot =
-           exponentialMovingAverage(engine_load_percent,protection_ema_output);
+           exponentialMovingAverage(engine_load_percent,engine_load_ema_filter_pointer);
       if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) && (fuel_demand_enable_snapshot == 0)) &&
          (fuel_demand_control_t_0040a57a.accelerator_off_idle == 1)) {
         diag_boostLoad_overtemp_demand_qualify_count =
@@ -78268,7 +78270,7 @@ void cm848_state_variables_reset(void)
 
 {
   DAT_003fd074 = 0;
-  _protection_ema_output = &DAT_0005c972;
+  _engine_load_ema_filter_pointer = &DAT_0005c972;
   diag_boostLoad_overtemp_qualifying_cycle_count = 0;
   return;
 }

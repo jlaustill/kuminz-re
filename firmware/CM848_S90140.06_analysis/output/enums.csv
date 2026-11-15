@@ -403,7 +403,7 @@ DERATE_EVENT_STATE,2,EVENT_COUNTED,Event counted - counter incremented,2
 
 # Diagnostic Error Source Codes - identifies where error originated
 DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,Security validator - message length mismatch,1
-DIAG_ERROR_SOURCE,0x03,SECURITY_FAILED,Security validator - security check returned non-zero,1
+DIAG_ERROR_SOURCE,0x03,ERROR_SECURITY_FAILED,Security validator - security check returned non-zero,1
 DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,Memory operation - system_logging_state check failed,1
 DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,Memory resolver - initial address lookup failed,1
 DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,Address validator - address not in validation table,1
@@ -418,7 +418,7 @@ DIAG_SERVICE_3_CMD,0x41,VALIDATE_SPECIAL_MODE,Validate special mode state transi
 DIAG_SERVICE_3_CMD,0x42,HIGH_RPM_SHUTDOWN,Trigger high RPM shutdown,1
 DIAG_SERVICE_3_CMD,0x43,SYSTEM_RESET,Diagnostic system reset,1
 DIAG_SERVICE_3_CMD,0x50,NOP,No operation - returns success,1
-DIAG_SERVICE_3_CMD,0x51,MEMORY_PATCH,Apply queued memory patches,1
+DIAG_SERVICE_3_CMD,0x51,SERVICE_3_MEMORY_PATCH,Apply queued memory patches,1
 DIAG_SERVICE_3_CMD,0x52,SECURED_SHUTDOWN,Request secured engine shutdown,1
 DIAG_SERVICE_3_CMD,0x53,RESERVED_ERROR,Reserved - always returns error 0x04,1
 DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,Log CAN message buffer,1
@@ -467,7 +467,7 @@ EEPROM_MEMORY_BLOCKS,9,PRIMARY_BLOCK,Main parameter memory block,1
 #   0x46: NOT REGISTERED - documented but not available
 #   0x4A: IMPLEMENTED - diagService74_memoryRead (raw address read)
 #   0x4C: IMPLEMENTED - diagService76_memoryReadExt (extended address read)
-EF00_SERVICE_ID,0x01,QUERY_TERMINATE,QueryTerminate - CLIP compatible,1
+EF00_SERVICE_ID,0x01,SERVICE_QUERY_TERMINATE,QueryTerminate - CLIP compatible,1
 EF00_SERVICE_ID,0x04,SYSTEM_SERVICE_04,System service 04,1
 EF00_SERVICE_ID,0x05,SYSTEM_SERVICE_05,System service 05,1
 EF00_SERVICE_ID,0x06,SYSTEM_SERVICE_06,High RPM shutdown activation,1
@@ -475,7 +475,7 @@ EF00_SERVICE_ID,0x07,SYSTEM_SERVICE_07,System service 07,1
 EF00_SERVICE_ID,0x0A,SYSTEM_SERVICE_0A,System service 0A,1
 EF00_SERVICE_ID,0x0B,SYSTEM_SERVICE_0B,System service 0B,1
 EF00_SERVICE_ID,0x0F,GET_PARAMETERS_BY_ID_ALT,GetParametersByID alternate,1
-EF00_SERVICE_ID,0x10,GET_PARAMETERS_BY_ID,GetParametersByID - CLIP compatible,1
+EF00_SERVICE_ID,0x10,SERVICE_GET_PARAMETERS_BY_ID,GetParametersByID - CLIP compatible,1
 EF00_SERVICE_ID,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - CLIP compatible,1
 EF00_SERVICE_ID,0x16,SYSTEM_SERVICE_16,System service 16,1
 EF00_SERVICE_ID,0x18,SYSTEM_SERVICE_18,System service 18,1
@@ -586,13 +586,13 @@ J1939_DIAGNOSTIC_PROTOCOL,5,PARAM_RESPONSE_BUILDER,Formats parameter values for 
 # Insite Command Codes
 INSITE_CMD,0x00,PARAM_STANDARD,Standard parameter read (0x00-0x7F) - response length 2,1
 INSITE_CMD,0x80,PARAM_EXTENDED,Extended parameter read (0x80-0xBF) - response length 3,1
-INSITE_CMD,0xC1,ACTIVE_FAULT_LIST,Active DTC list builder,1
-INSITE_CMD,0xC2,FAULT_DETAIL,Detailed fault information builder,1
+INSITE_CMD,0xC1,INSITE_COMMAND_ACTIVE_FAULT_LIST,Active DTC list builder,1
+INSITE_CMD,0xC2,INSITE_COMMAND_FAULT_DETAIL,Detailed fault information builder,1
 INSITE_CMD,0xC3,PID_DTC_REQUEST,PID/DTC handler request,1
 INSITE_CMD,0xC4,PID_DTC_RESPONSE,PID/DTC response - response length 4 or 7,1
 INSITE_CMD,0xEA,CAPACITY_INFO,Capacity response builder - 24 bytes,1
 INSITE_CMD,0xED,ECU_ID,ECU identification builder,1
-INSITE_CMD,0xF3,VERSION_INFO,Version info builder - 31 bytes,1
+INSITE_CMD,0xF3,INSITE_COMMAND_VERSION_INFO,Version info builder - 31 bytes,1
 
 # Insite Status Output Bits - maps internal status to Insite display
 INSITE_STATUS_OUTPUT,0x80,PROTECTION_ENABLED,Protection system enable flag is set,1
@@ -605,27 +605,27 @@ INSITE_STATUS_OUTPUT,0x02,SENSOR_BIT2_SET,Sensor status register bit 2 is set,1
 INSITE_STATUS_OUTPUT,0x01,SENSOR_BIT4_SET,Sensor status register bit 4 is set,1
 
 # Memory Operation Result Codes
-MEMORY_OP_RESULT,0x00,SUCCESS,Memory operation completed successfully,1
-MEMORY_OP_RESULT,0x02,INVALID_LENGTH,Message length mismatch,1
-MEMORY_OP_RESULT,0x03,AUTH_FAILED,Security check returned non-zero,1
+MEMORY_OP_RESULT,0x00,MEMORY_OPERATION_SUCCESS,Memory operation completed successfully,1
+MEMORY_OP_RESULT,0x02,MEMORY_OPERATION_INVALID_LENGTH,Message length mismatch,1
+MEMORY_OP_RESULT,0x03,MEMORY_OPERATION_AUTH_FAILED,Security check returned non-zero,1
 MEMORY_OP_RESULT,0x07,LOGGING_STATE_ERROR,EEPROM write blocked - logging state check failed,1
-MEMORY_OP_RESULT,0x0A,WRITE_DENIED,ROM/Flash region - write not permitted,1
-MEMORY_OP_RESULT,0x0B,BUFFER_WRITE_FAIL,Circular buffer write error during EEPROM logging,1
+MEMORY_OP_RESULT,0x0A,MEMORY_OPERATION_WRITE_DENIED,ROM/Flash region - write not permitted,1
+MEMORY_OP_RESULT,0x0B,MEMORY_OPERATION_BUFFER_WRITE_FAIL,Circular buffer write error during EEPROM logging,1
 MEMORY_OP_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write requires auth but not provided,1
 
 # Security Result Codes
 SECURITY_RESULT,0x00,AUTH_SUCCESS,Security check passed - operation authorized,1
 SECURITY_RESULT,0x02,SECURITY_INVALID_LENGTH,Invalid message length for service,1
 SECURITY_RESULT,0x03,AUTH_FAILED,Security check failed - access denied,1
-SECURITY_RESULT,0x07,CONDITION_NOT_MET,Pre-condition not satisfied,1
+SECURITY_RESULT,0x07,SECURITY_CONDITION_NOT_MET,Pre-condition not satisfied,1
 SECURITY_RESULT,0x0A,INVALID_ADDR,Invalid memory address range,1
-SECURITY_RESULT,0x0B,BUFFER_WRITE_FAIL,Circular buffer write failed,1
+SECURITY_RESULT,0x0B,SECURITY_BUFFER_WRITE_FAIL,Circular buffer write failed,1
 SECURITY_RESULT,0xFF,PROCEED_TO_HANDLER,Proceed to handler (auth passed or not required),1
 
 # Security Bypass Values
 SECURITY_BYPASS,0xB522,BYPASS_ENABLED,Magic value to bypass security checks,2
 SECURITY_BYPASS,0x00FF,LEGACY_BYPASS,Legacy security bypass value,1
-SECURITY_BYPASS_FLAG,0xFF,BYPASS_ENABLED,Security checks completely bypassed,1
+SECURITY_BYPASS_FLAG,0xFF,BYPASS_FLAG_ENABLED,Security checks completely bypassed,1
 SECURITY_BYPASS_FLAG,0x00,SECURITY_ACTIVE,Normal security - checks enforced,1
 
 # Sensor Status Bits
@@ -671,7 +671,7 @@ FUEL_DEMAND_SOURCE,5,ENGINE_MODE_TRANSITION,Engine mode transition timing,2
 # Fuel Demand Limit Sources
 FUEL_DEMAND_LIMIT,0,NO_LIMIT_ACTIVE,No fuel limit active / cleared state,2
 FUEL_DEMAND_LIMIT,1,OVERRIDE_STATE_ACTIVE,Override state active from fuel_demand_override_state,2
-FUEL_DEMAND_LIMIT,5,PROTECTION_OVERRIDE,Protection/override state - init and fault recovery,2
+FUEL_DEMAND_LIMIT,5,PROTECTION_OVERRIDE_LIMIT,Protection/override state - init and fault recovery,2
 
 # Fuel Arbitrator Flags
 FUEL_ARB_FLAGS,0x04,THROTTLE_OVERRIDE,Override throttle control when set,1
@@ -811,8 +811,8 @@ CRUISE_SWITCH_REQUEST,2,CRUISE_SWITCH_COAST,COAST button - decelerate (governor_
 CRUISE_SWITCH_REQUEST,3,CRUISE_SWITCH_SET,SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12,2
 CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12,2
 CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling value,2
-ENGINE_LOAD_PROTECTION_STATE,0,INACTIVE,engine-load protection not derating,2
-ENGINE_LOAD_PROTECTION_STATE,8,ACTIVE,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
+ENGINE_LOAD_PROTECTION_STATE,0,ENGINE_LOAD_PROTECTION_INACTIVE,engine-load protection not derating,2
+ENGINE_LOAD_PROTECTION_STATE,8,ENGINE_LOAD_PROTECTION_ACTIVE,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
 # Reflash-kernel diagnostic service IDs - registered in diagnostic_service_dispatch_table by mpc555_initDiagnosticSubsystem (Calterm/Insite programming path)
 DIAGNOSTIC_SERVICE,0x02,DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT,mpc555_diagServiceInitEepromTransfer,1
 DIAGNOSTIC_SERVICE,0x07,DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_diagServiceDownloadCalibration,1

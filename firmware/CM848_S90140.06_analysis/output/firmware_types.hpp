@@ -468,7 +468,7 @@ typedef enum {
 
 typedef enum {
     INVALID_LENGTH = 0x02,  /* Security validator - message length mismatch */
-    SECURITY_FAILED = 0x03,  /* Security validator - security check returned non-zero */
+    ERROR_SECURITY_FAILED = 0x03,  /* Security validator - security check returned non-zero */
     CONDITION_NOT_MET = 0x07,  /* Memory operation - system_logging_state check failed */
     ADDR_LOOKUP_FAIL = 0x08,  /* Memory resolver - initial address lookup failed */
     ADDR_RANGE_INVALID = 0x09,  /* Address validator - address not in validation table */
@@ -484,7 +484,7 @@ typedef enum {
     HIGH_RPM_SHUTDOWN = 0x42,  /* Trigger high RPM shutdown */
     SYSTEM_RESET = 0x43,  /* Diagnostic system reset */
     NOP = 0x50,  /* No operation - returns success */
-    MEMORY_PATCH = 0x51,  /* Apply queued memory patches */
+    SERVICE_3_MEMORY_PATCH = 0x51,  /* Apply queued memory patches */
     SECURED_SHUTDOWN = 0x52,  /* Request secured engine shutdown */
     RESERVED_ERROR = 0x53,  /* Reserved - always returns error 0x04 */
     CAN_BUFFER_LOG = 0x54  /* Log CAN message buffer */
@@ -530,7 +530,7 @@ typedef enum {
 } EEPROM_MEMORY_BLOCKS;
 
 typedef enum {
-    QUERY_TERMINATE = 0x01,  /* QueryTerminate - CLIP compatible */
+    SERVICE_QUERY_TERMINATE = 0x01,  /* QueryTerminate - CLIP compatible */
     SYSTEM_SERVICE_04 = 0x04,  /* System service 04 */
     SYSTEM_SERVICE_05 = 0x05,  /* System service 05 */
     SYSTEM_SERVICE_06 = 0x06,  /* High RPM shutdown activation */
@@ -538,7 +538,7 @@ typedef enum {
     SYSTEM_SERVICE_0A = 0x0A,  /* System service 0A */
     SYSTEM_SERVICE_0B = 0x0B,  /* System service 0B */
     GET_PARAMETERS_BY_ID_ALT = 0x0F,  /* GetParametersByID alternate */
-    GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP compatible */
+    SERVICE_GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP compatible */
     GET_ADDRESS_BY_PARAM_ID = 0x15,  /* GetAddressByParameterID - CLIP compatible */
     SYSTEM_SERVICE_16 = 0x16,  /* System service 16 */
     SYSTEM_SERVICE_18 = 0x18,  /* System service 18 */
@@ -652,13 +652,13 @@ typedef enum {
 typedef enum {
     PARAM_STANDARD = 0x00,  /* Standard parameter read (0x00-0x7F) - response length 2 */
     PARAM_EXTENDED = 0x80,  /* Extended parameter read (0x80-0xBF) - response length 3 */
-    ACTIVE_FAULT_LIST = 0xC1,  /* Active DTC list builder */
-    FAULT_DETAIL = 0xC2,  /* Detailed fault information builder */
+    INSITE_COMMAND_ACTIVE_FAULT_LIST = 0xC1,  /* Active DTC list builder */
+    INSITE_COMMAND_FAULT_DETAIL = 0xC2,  /* Detailed fault information builder */
     PID_DTC_REQUEST = 0xC3,  /* PID/DTC handler request */
     PID_DTC_RESPONSE = 0xC4,  /* PID/DTC response - response length 4 or 7 */
     CAPACITY_INFO = 0xEA,  /* Capacity response builder - 24 bytes */
     ECU_ID = 0xED,  /* ECU identification builder */
-    VERSION_INFO = 0xF3  /* Version info builder - 31 bytes */
+    INSITE_COMMAND_VERSION_INFO = 0xF3  /* Version info builder - 31 bytes */
 } INSITE_CMD;
 
 typedef enum {
@@ -673,12 +673,12 @@ typedef enum {
 } INSITE_STATUS_OUTPUT;
 
 typedef enum {
-    SUCCESS = 0x00,  /* Memory operation completed successfully */
-    INVALID_LENGTH = 0x02,  /* Message length mismatch */
-    AUTH_FAILED = 0x03,  /* Security check returned non-zero */
+    MEMORY_OPERATION_SUCCESS = 0x00,  /* Memory operation completed successfully */
+    MEMORY_OPERATION_INVALID_LENGTH = 0x02,  /* Message length mismatch */
+    MEMORY_OPERATION_AUTH_FAILED = 0x03,  /* Security check returned non-zero */
     LOGGING_STATE_ERROR = 0x07,  /* EEPROM write blocked - logging state check failed */
-    WRITE_DENIED = 0x0A,  /* ROM/Flash region - write not permitted */
-    BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write error during EEPROM logging */
+    MEMORY_OPERATION_WRITE_DENIED = 0x0A,  /* ROM/Flash region - write not permitted */
+    MEMORY_OPERATION_BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write error during EEPROM logging */
     AUTH_REQUIRED_MISSING = 0x1A  /* EEPROM write requires auth but not provided */
 } MEMORY_OP_RESULT;
 
@@ -686,9 +686,9 @@ typedef enum {
     AUTH_SUCCESS = 0x00,  /* Security check passed - operation authorized */
     SECURITY_INVALID_LENGTH = 0x02,  /* Invalid message length for service */
     AUTH_FAILED = 0x03,  /* Security check failed - access denied */
-    CONDITION_NOT_MET = 0x07,  /* Pre-condition not satisfied */
+    SECURITY_CONDITION_NOT_MET = 0x07,  /* Pre-condition not satisfied */
     INVALID_ADDR = 0x0A,  /* Invalid memory address range */
-    BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write failed */
+    SECURITY_BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write failed */
     PROCEED_TO_HANDLER = 0xFF  /* Proceed to handler (auth passed or not required) */
 } SECURITY_RESULT;
 
@@ -698,7 +698,7 @@ typedef enum {
 } SECURITY_BYPASS;
 
 typedef enum {
-    BYPASS_ENABLED = 0xFF,  /* Security checks completely bypassed */
+    BYPASS_FLAG_ENABLED = 0xFF,  /* Security checks completely bypassed */
     SECURITY_ACTIVE = 0x00  /* Normal security - checks enforced */
 } SECURITY_BYPASS_FLAG;
 
@@ -751,7 +751,7 @@ typedef enum {
 typedef enum {
     NO_LIMIT_ACTIVE = 0,  /* No fuel limit active / cleared state */
     OVERRIDE_STATE_ACTIVE = 1,  /* Override state active from fuel_demand_override_state */
-    PROTECTION_OVERRIDE = 5  /* Protection/override state - init and fault recovery */
+    PROTECTION_OVERRIDE_LIMIT = 5  /* Protection/override state - init and fault recovery */
 } FUEL_DEMAND_LIMIT;
 
 typedef enum {
@@ -911,8 +911,8 @@ typedef enum {
 } CRUISE_SWITCH_REQUEST;
 
 typedef enum {
-    INACTIVE = 0,  /* engine-load protection not derating */
-    ACTIVE = 8  /* engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000) */
+    ENGINE_LOAD_PROTECTION_INACTIVE = 0,  /* engine-load protection not derating */
+    ENGINE_LOAD_PROTECTION_ACTIVE = 8  /* engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000) */
 } ENGINE_LOAD_PROTECTION_STATE;
 
 typedef enum {
