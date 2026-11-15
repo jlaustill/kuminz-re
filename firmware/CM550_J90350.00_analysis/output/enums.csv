@@ -69,9 +69,9 @@ J1939_DIAGNOSTIC_PROTOCOL,4,J1939ParamRequestHandler,Processes EEPROM parameter 
 J1939_DIAGNOSTIC_PROTOCOL,5,ParameterResponseBuilder,Formats parameter values for J1939 response
 J1939_THROTTLE_ENABLE,1,TorqueSpeedControlReceiveEnable_JCCNRXFT,TSC1 message reception enable (0x07F00400)
 J1939_THROTTLE_ENABLE,2,JC39ENFG,J1939 message enable flags table
-J1939_THROTTLE_ENABLE,3,AS01CF,ASG throttle mode compensation filter coef. 1
-J1939_THROTTLE_ENABLE,4,AS02CF,ASG throttle mode compensation filter coef. 2
-J1939_THROTTLE_ENABLE,5,AS03CF,ASG throttle mode compensation filter coef. 3
+J1939_THROTTLE_ENABLE,3,J1939_THROTTLE_ENABLE_AS01CF,ASG throttle mode compensation filter coef. 1
+J1939_THROTTLE_ENABLE,4,J1939_THROTTLE_ENABLE_AS02CF,ASG throttle mode compensation filter coef. 2
+J1939_THROTTLE_ENABLE,5,J1939_THROTTLE_ENABLE_AS03CF,ASG throttle mode compensation filter coef. 3
 # Main Loop Phase Index - main_loop_phase_index in scheduler switch (40 phases 0x00-0x27)
 # Even phases (0,2,4...): ioControl + evenPhase + [vp44_engine or engineDiagnostic] + specific tasks
 # Odd phases (1,3,5...): ioControl + oddPhase + [engine_control or slowCycle4] + specific tasks
@@ -209,8 +209,8 @@ DIAG_EXTENDED_SVC,0x46,MEM_READ_2BYTE_ONLY,Memory read: 2-byte param only (diagM
 DIAG_EXTENDED_SVC,0x48,MEM_READ_2BYTE_4BYTE_4BYTE,Memory read: 2-byte + 4-byte + 4-byte params (diagMemoryReadService48Handler)
 DIAG_EXTENDED_SVC,0x4A,MEM_READ_4BYTE_1BYTE,Memory read: 4-byte address + 1-byte length (diagMemoryReadService4aHandler)
 DIAG_EXTENDED_SVC,0x4C,MEM_READ_4BYTE_4BYTE,Memory read: 4-byte address + 4-byte length (diagMemoryReadService4cHandler)
-DIAG_EXTENDED_SVC,0x4F,EXTENDED_4F,Extended diagnostic service 0x4F
-DIAG_EXTENDED_SVC,0x51,EXTENDED_51,Extended diagnostic service 0x51
+DIAG_EXTENDED_SVC,0x4F,EXTENDED_SERVICE_79,Extended diagnostic service 0x4F
+DIAG_EXTENDED_SVC,0x51,EXTENDED_SERVICE_81,Extended diagnostic service 0x51
 # Fuel Arbitrator Modes (diagnosticSessionValidator param 0x4A - different from memory read service)
 FUEL_ARB_MODE,0,RESET_MODE,Reset/clear arbitrator state
 FUEL_ARB_MODE,1,RPM_TARGET_MODE,Set RPM target mode
@@ -308,16 +308,16 @@ SENSOR_STATUS_BITS,0x04,SENSOR_STATUS_BIT2,Sensor status bit 2 - maps to INSITE 
 SENSOR_STATUS_BITS,0x02,SENSOR_STATUS_BIT1,Sensor status bit 1 - maps to INSITE output 0x10,1
 SENSOR_STATUS_BITS,0x01,SENSOR_STATUS_BIT0,Sensor status bit 0 - maps to INSITE output 0x08,1
 # Security System Constants
-SECURITY_BYPASS_FLAG,0xFF,BYPASS_ENABLED,Security checks completely bypassed
+SECURITY_BYPASS_FLAG,0xFF,BYPASS_FLAG_ENABLED,Security checks completely bypassed
 SECURITY_BYPASS_FLAG,0xB522,BYPASS_MAGIC,Alternative bypass magic value (-0x4ADE signed)
 SECURITY_BYPASS_FLAG,0x00,SECURITY_ACTIVE,Normal security - checks enforced
 # Security Check Return Values
 SECURITY_RESULT,0x00,AUTH_SUCCESS,Security check passed - operation authorized
 SECURITY_RESULT,0x02,SECURITY_INVALID_LENGTH,Invalid message length for service
 SECURITY_RESULT,0x03,AUTH_FAILED,Security check failed - access denied
-SECURITY_RESULT,0x07,CONDITION_NOT_MET,Pre-condition not satisfied
+SECURITY_RESULT,0x07,SECURITY_CONDITION_NOT_MET,Pre-condition not satisfied
 SECURITY_RESULT,0x0A,INVALID_ADDR,Invalid memory address range
-SECURITY_RESULT,0x0B,BUFFER_WRITE_FAIL,Circular buffer write failed
+SECURITY_RESULT,0x0B,SECURITY_BUFFER_WRITE_FAIL,Circular buffer write failed
 SECURITY_RESULT,0xFF,PROCEED_TO_HANDLER,Proceed to handler (auth passed or not required)
 # Security-Protected Service IDs
 SECURED_SERVICE_ID,3,SERVICE_SECURED_WRITE,Secured write operations (length=3)
@@ -325,12 +325,12 @@ SECURED_SERVICE_ID,4,SERVICE_SYSTEM_CONTROL,System control operations (length=3)
 # VP44 Communication State Machine - _vp44_state_machine_index in vp44_communication_state_machine
 VP44_COMM_STATE,0,INIT,Initialize transmission - setup buffers and addresses,1
 VP44_COMM_STATE,1,WRITE_BUFFER,Write buffer data with circular buffer,1
-VP44_COMM_STATE,2,TRANSMIT,Execute circular buffer write transmission,1
+VP44_COMM_STATE,2,VP44_COMMUNICATION_TRANSMIT,Execute circular buffer write transmission,1
 VP44_COMM_STATE,3,VP44_COMM_IDLE,Idle/complete - transmission inactive,1
 # VP44 Communication Mode - _vp44_comm_state sub-state within state machine
-VP44_COMM_MODE,0,MODE_IDLE,Idle mode - transition to state 3,1
-VP44_COMM_MODE,1,MODE_ACTIVE,Active mode - perform mid-buffer transmission,1
-VP44_COMM_MODE,2,MODE_RESET,Reset mode - transmit to end address and reset pointers,1
+VP44_COMM_MODE,0,VP44_COMMUNICATION_IDLE,Idle mode - transition to state 3,1
+VP44_COMM_MODE,1,VP44_COMMUNICATION_ACTIVE,Active mode - perform mid-buffer transmission,1
+VP44_COMM_MODE,2,VP44_COMMUNICATION_RESET,Reset mode - transmit to end address and reset pointers,1
 # VP44 Status Flags 1 bit definitions - vp44_status_flags_1 register
 VP44_STATUS_FLAGS_1,0x8000,STATUS_BIT15,VP44 status flag bit 15 - checked in fuel control,2
 VP44_STATUS_FLAGS_1,0x4000,STATUS_BIT14,VP44 status flag bit 14 - protection mode check,2
@@ -433,7 +433,7 @@ FUEL_SOURCE_ID,0x1A,FUEL_SRC_IDLE,Idle mode - zero fuel command,1
 FUEL_SOURCE_ID,0x1B,FUEL_SRC_FAULT,Fault/emergency mode fuel,1
 # Diagnostic Source Codes - identifies which subsystem triggered a diagnostic condition
 DIAGNOSTIC_SOURCE_CODE,0,NONE,No active diagnostic source,2
-DIAGNOSTIC_SOURCE_CODE,1,FUEL_ARBITRATOR,Fuel arbitrator triggered (rpm_target == 2),2
+DIAGNOSTIC_SOURCE_CODE,1,SOURCE_FUEL_ARBITRATOR,Fuel arbitrator triggered (rpm_target == 2),2
 DIAGNOSTIC_SOURCE_CODE,2,DIAG_STATUS_2,Diagnostic status 2 condition,2
 DIAGNOSTIC_SOURCE_CODE,5,ENGINE_FLAGS,Engine control flags triggered,2
 DIAGNOSTIC_SOURCE_CODE,6,EPS_FAULT,Electronic Position Sensor fault,2
@@ -649,15 +649,15 @@ SECURITY_ENABLED,0xFF,FALSE,Security checks are SKIPPED - all services accessibl
 # security_enabled @ 0x803b98 (use SECURITY_ENABLED enum)
 # Security key @ 0x803b0c = "ABCDEF" (factory default on bench ECU)
 # --- SECURED SERVICES (ID <= 0x19) - require authentication ---
-EF00_SERVICE_ID,0x01,QUERY_TERMINATE,QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table,1
+EF00_SERVICE_ID,0x01,SERVICE_QUERY_TERMINATE,QueryTerminate - CLIP - dispatch @ 0x0001183E - SECURED - in dispatch table,1
 EF00_SERVICE_ID,0x04,SYSTEM_SERVICE_04,System service 04 - NOT in dispatch table (handled elsewhere?),1
 EF00_SERVICE_ID,0x05,SYSTEM_SERVICE_05,System service 05 - NOT in dispatch table (handled elsewhere?),1
-EF00_SERVICE_ID,0x06,HIGH_RPM_SHUTDOWN_ACTIVATE,activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table,1
+EF00_SERVICE_ID,0x06,SERVICE_HIGH_RPM_SHUTDOWN_ACTIVATE,activateHighRpmShutdownFlag - dispatch @ 0x000118FC - SECURED - RESPONDS! in dispatch table,1
 EF00_SERVICE_ID,0x07,SYSTEM_SERVICE_07,System service 07 - dispatch @ 0x0001188C - SECURED - in dispatch table,1
 EF00_SERVICE_ID,0x0A,SYSTEM_SERVICE_0A,System service 0A - dispatch @ 0x000118B2 - SECURED - in dispatch table,1
 EF00_SERVICE_ID,0x0B,SYSTEM_SERVICE_0B,System service 0B - dispatch @ 0x00011908 - SECURED - in dispatch table,1
 EF00_SERVICE_ID,0x0F,GET_PARAMETERS_BY_ID_ALT,getParametersByIdHandler - NOT in dispatch table - RESPONDS! (alternate path?),1
-EF00_SERVICE_ID,0x10,GET_PARAMETERS_BY_ID,GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?),1
+EF00_SERVICE_ID,0x10,SERVICE_GET_PARAMETERS_BY_ID,GetParametersByID - CLIP - NOT in dispatch table - RESPONDS! (alternate path?),1
 EF00_SERVICE_ID,0x15,GET_ADDRESS_BY_PARAM_ID,GetAddressByParameterID - dispatch @ 0x00011A74 - SECURED - in dispatch table,1
 EF00_SERVICE_ID,0x16,SYSTEM_SERVICE_16,System service 16 - dispatch @ 0x000118CC - SECURED - in dispatch table,1
 EF00_SERVICE_ID,0x18,SYSTEM_SERVICE_18,System service 18 - dispatch @ 0x00011A68 - SECURED - in dispatch table,1
@@ -684,7 +684,7 @@ VALID_MEMORY_RANGE,0x008091C2,RAM_END,Valid RAM region end,4
 # Detailed Error Code Sources - traceable through firmware analysis
 # Error code flows: handler → diagnosticMultiPacketResponseBuilder → [0x0D][error_code][service_id]...
 DIAG_ERROR_SOURCE,0x02,INVALID_LENGTH,diagnosticServiceSecurityValidator - message length mismatch,1
-DIAG_ERROR_SOURCE,0x03,SECURITY_FAILED,diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero,1
+DIAG_ERROR_SOURCE,0x03,ERROR_SECURITY_FAILED,diagnosticServiceSecurityValidator - systemSecurityCheck returned non-zero,1
 DIAG_ERROR_SOURCE,0x07,CONDITION_NOT_MET,memoryOperationDispatcher - system_logging_state check failed,1
 DIAG_ERROR_SOURCE,0x08,ADDR_LOOKUP_FAIL,j1939MemoryDataCopyResolver - initial address lookup at 0xeaf0 failed,1
 DIAG_ERROR_SOURCE,0x09,ADDR_RANGE_INVALID,addressRangeValidator @ 0x2b544 - address not in address_range_validation_table @ 0x2b512,1
@@ -699,13 +699,13 @@ DIAG_ERROR_SOURCE,0x1A,AUTH_REQUIRED_MISSING,memoryOperationDispatcher - EEPROM 
 # Complete list of return values from the memory write dispatcher
 # Used by: memoryOperationFromMessageExtended (0x217de) memoryOperationFromMessage8Byte (0x21826)
 # -----------------------------------------------------------------------------
-MEMORY_OP_RESULT,0x00,SUCCESS,Memory operation completed successfully (masked from memcpy return),1
-MEMORY_OP_RESULT,0x02,INVALID_LENGTH,Message length mismatch - expected calculated_msg_length or +10 for auth,1
-MEMORY_OP_RESULT,0x03,AUTH_FAILED,hourMeterSecurityValidator returned non-zero (auth payload invalid),1
+MEMORY_OP_RESULT,0x00,MEMORY_OPERATION_SUCCESS,Memory operation completed successfully (masked from memcpy return),1
+MEMORY_OP_RESULT,0x02,MEMORY_OPERATION_INVALID_LENGTH,Message length mismatch - expected calculated_msg_length or +10 for auth,1
+MEMORY_OP_RESULT,0x03,MEMORY_OPERATION_AUTH_FAILED,hourMeterSecurityValidator returned non-zero (auth payload invalid),1
 MEMORY_OP_RESULT,0x07,CALIBRATION_WRITE_BLOCKED,EEPROM write blocked - calibration_write_protect_state==1 and calibration_bank_selector!=FACTORY,1
-MEMORY_OP_RESULT,0x0A,WRITE_DENIED,Region type 4 (ROM/Flash) - write operations not permitted,1
-MEMORY_OP_RESULT,0x0B,BUFFER_WRITE_FAIL,circularBufferWrite returned error during EEPROM logging,1
-MEMORY_OP_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write (region type 5) requires auth but has_auth_payload=false,1
+MEMORY_OP_RESULT,0x0A,MEMORY_OPERATION_WRITE_DENIED,Region type 4 (ROM/Flash) - write operations not permitted,1
+MEMORY_OP_RESULT,0x0B,MEMORY_OPERATION_BUFFER_WRITE_FAIL,circularBufferWrite returned error during EEPROM logging,1
+MEMORY_OP_RESULT,0x1A,MEMORY_OPERATION_AUTH_REQUIRED_MISSING,EEPROM write (region type 5) requires auth but has_auth_payload=false,1
 # Service 0x4A Response Format (VERIFIED WORKING 2024-12-16)
 # Request:  [4A][addr3][addr2][addr1][addr0][len][00][00]
 # Response: [4B][addr3][addr2][addr1][addr0][len][data...]
@@ -716,7 +716,7 @@ MEMORY_OP_RESULT,0x1A,AUTH_REQUIRED_MISSING,EEPROM write (region type 5) require
 #   * Extended RAM: 0x008091C2-0x0080FFFF (28KB) - flags 0x00/0x00
 #   * EEPROM: 0x01000000-0x01000FFF (4KB) - flags 0x05/0x05
 #   * High Memory: 0x00FFC800-0x00FFFFFF (14KB) - flags 0x03/0x0A (blocked in normal mode)
-SERVICE_4A_RESPONSE,0x4B,SUCCESS,Service 0x4A success response code (service ID + 1),1
+SERVICE_4A_RESPONSE,0x4B,SERVICE_74_SUCCESS,Service 0x4A success response code (service ID + 1),1
 # Memory Access Flags - from address_range_validation_table entries (byte 8=special_mode byte 9=normal_mode)
 # READ operations (diagMemoryReadResponseBuilder @ 0x1c0b8):
 #   - 0x09 or 0x0A = DENIED (returns error code)
@@ -729,7 +729,7 @@ SERVICE_4A_RESPONSE,0x4B,SUCCESS,Service 0x4A success response code (service ID 
 #   - 0x09/0x0A = Error passed through
 MEMORY_ACCESS_FLAG,0x00,DIRECT_ACCESS,READ: Allowed | WRITE: Direct access no security check (Extended RAM),1
 MEMORY_ACCESS_FLAG,0x03,SECURITY_REQUIRED,READ: Allowed | WRITE: Requires security check or bypass (RAM),1
-MEMORY_ACCESS_FLAG,0x04,WRITE_DENIED,READ: Allowed | WRITE: Denied - returns error 0x0A (Flash/ROM),1
+MEMORY_ACCESS_FLAG,0x04,MEMORY_ACCESS_WRITE_DENIED,READ: Allowed | WRITE: Denied - returns error 0x0A (Flash/ROM),1
 MEMORY_ACCESS_FLAG,0x05,LOGGING_MODE,READ: Allowed | WRITE: Requires system_logging_state check (EEPROM),1
 MEMORY_ACCESS_FLAG,0x09,RANGE_INVALID,READ: Denied | WRITE: Error - address not in validation table,1
 MEMORY_ACCESS_FLAG,0x0A,ACCESS_DENIED,READ: Denied | WRITE: Error - explicitly blocked region,1
@@ -746,22 +746,21 @@ SECURITY_BYPASS,0x00FF,LEGACY_BYPASS,Legacy security bypass value check in memor
 #   0x45-0x56: Extended services (requires _diagnostic_service_enable_flags & 4)
 #   0x80+: Insite live data (requires _diagnostic_service_enable_flags & 2)
 DIAG_SERVICE_ID,0x03,SECURED_COMMANDS,Secured commands - requires systemSecurityCheck (always passes),1
-DIAG_SERVICE_ID,0x04,SYSTEM_CONTROL,System control commands - no security check,1
 DIAG_SERVICE_ID,0x05,MEMORY_OPERATIONS,Memory read/write with CRC validation,1
 DIAG_SERVICE_ID,0x06,RETRY_CONTROL,Transmission retry control (subfunction 0x74),1
 DIAG_SERVICE_ID,0x4A,FUEL_ARBITRATOR,fuelArbitratorControlService - fuel system control,1
 DIAG_SERVICE_ID,0x4C,EXTENDED_4C,extendedDiagnosticService4C,1
-DIAG_SERVICE_ID,0x4F,EXTENDED_4F,extendedDiagnosticService4F,1
-DIAG_SERVICE_ID,0x51,EXTENDED_51,extendedDiagnosticService51,1
+DIAG_SERVICE_ID,0x4F,SERVICE_79_EXTENDED,extendedDiagnosticService4F,1
+DIAG_SERVICE_ID,0x51,SERVICE_81_EXTENDED,extendedDiagnosticService51,1
 # Service 0x03 Subfunction Codes (Secured Commands - diagnosticCommandDispatcher switch @ 0x125a6)
 # IMPORTANT: Commands 0x40-0x41 control CALIBRATION BANK SELECTION (factory vs active tuning)
 # calibration_bank_selector @ 0x0080dc6c: 0=factory bank (read-only OEM values) 1=active bank (tunable values)
-DIAG_SERVICE_3_CMD,0x40,SWITCH_TO_FACTORY_BANK,switchToFactoryCalibrationBank - select factory calibration bank (calibration_bank_selector=0),1
-DIAG_SERVICE_3_CMD,0x41,FORCE_ACTIVE_BANK,forceActiveCalibrationBank - force active calibration bank if write protect allows,1
+DIAG_SERVICE_3_CMD,0x40,SERVICE_3_SWITCH_TO_FACTORY_BANK,switchToFactoryCalibrationBank - select factory calibration bank (calibration_bank_selector=0),1
+DIAG_SERVICE_3_CMD,0x41,SERVICE_3_FORCE_ACTIVE_BANK,forceActiveCalibrationBank - force active calibration bank if write protect allows,1
 DIAG_SERVICE_3_CMD,0x42,HIGH_RPM_SHUTDOWN,activateHighRpmShutdownFlag - trigger high RPM shutdown,1
 DIAG_SERVICE_3_CMD,0x43,SYSTEM_RESET,triggerDiagnosticSystemReset - diagnostic system reset,1
 DIAG_SERVICE_3_CMD,0x50,NOP,No operation - returns success (0x00),1
-DIAG_SERVICE_3_CMD,0x51,MEMORY_PATCH,memoryPatchingSystem - apply queued memory patches,1
+DIAG_SERVICE_3_CMD,0x51,SERVICE_3_MEMORY_PATCH,memoryPatchingSystem - apply queued memory patches,1
 DIAG_SERVICE_3_CMD,0x52,SECURED_SHUTDOWN,requestSecuredShutdown - request secured engine shutdown,1
 DIAG_SERVICE_3_CMD,0x53,RESERVED_ERROR,Reserved - always returns error 0x04,1
 DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,canMessageBufferLogger - log CAN message buffer,1
@@ -769,7 +768,7 @@ DIAG_SERVICE_3_CMD,0x54,CAN_BUFFER_LOG,canMessageBufferLogger - log CAN message 
 DIAG_SERVICE_4_CMD,0x64,CONTROL_64,systemControl64 - system control function,1
 DIAG_SERVICE_4_CMD,0x65,FAULT_SCANNER,enableFaultFlagScanner - enable fault flag scanning,1
 DIAG_SERVICE_4_CMD,0x66,STATE_RESET,Reset diagnostic_command_state to 0,1
-DIAG_SERVICE_4_CMD,0x69,SWITCH_TO_ACTIVE_BANK,switchToActiveCalibrationBank - select active calibration bank (calibration_bank_selector=1),1
+DIAG_SERVICE_4_CMD,0x69,SERVICE_4_SWITCH_TO_ACTIVE_BANK,switchToActiveCalibrationBank - select active calibration bank (calibration_bank_selector=1),1
 DIAG_SERVICE_4_CMD,0x70,RESERVED_70,Reserved - returns error 0x04,1
 DIAG_SERVICE_4_CMD,0x71,STATE_BIT0,Set diagnostic_command_state bit 0,1
 DIAG_SERVICE_4_CMD,0x72,RESERVED_72,Reserved - returns error 0x04,1
@@ -806,13 +805,13 @@ FUEL_ARB_FLAGS,0x10,FUEL_LIMIT_ACTIVE,Activate fuel limiter when set,1
 # Ranges: 0x00-0x7F = standard param (len 2), 0x80-0xBF = extended param (len 3), 0xC0+ = special
 INSITE_CMD,0x00,PARAM_STANDARD,Standard parameter read (0x00-0x7F) - response length 2,1
 INSITE_CMD,0x80,PARAM_EXTENDED,Extended parameter read (0x80-0xBF) - response length 3,1
-INSITE_CMD,0xC1,ACTIVE_FAULT_LIST,insiteActiveFaultListBuilder - list of active DTCs,1
-INSITE_CMD,0xC2,FAULT_DETAIL,insiteFaultDetailBuilder - detailed fault information,1
-INSITE_CMD,0xC3,PID_DTC_REQUEST,PID/DTC handler request - triggers insitePidDtcHandler,1
+INSITE_CMD,0xC1,INSITE_COMMAND_ACTIVE_FAULT_LIST,insiteActiveFaultListBuilder - list of active DTCs,1
+INSITE_CMD,0xC2,INSITE_COMMAND_FAULT_DETAIL,insiteFaultDetailBuilder - detailed fault information,1
+INSITE_CMD,0xC3,INSITE_COMMAND_PID_DTC_REQUEST,PID/DTC handler request - triggers insitePidDtcHandler,1
 INSITE_CMD,0xC4,PID_DTC_RESPONSE,PID/DTC response - response length 4 or 7,1
 INSITE_CMD,0xEA,CAPACITY_INFO,insiteCapacityResponseBuilder - response length 0x18 (24 bytes),1
 INSITE_CMD,0xED,ECU_ID,insiteEcuIdResponseBuilder - ECU identification (3 parts with 0x2A separator),1
-INSITE_CMD,0xF3,VERSION_INFO,insiteVersionInfoBuilder - response length 0x1F (31 bytes),1
+INSITE_CMD,0xF3,INSITE_COMMAND_VERSION_INFO,insiteVersionInfoBuilder - response length 0x1F (31 bytes),1
 # Insite Response Format (insiteParameterResponseBuilder @ 0xcb1e)
 # Standard: [CMD][LEN][DATA...]
 # Multi-frame: Uses insiteMultiFrameResponseBuilder for responses > 0x14 bytes
