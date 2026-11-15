@@ -1169,7 +1169,7 @@ address,name
 0x000376dc,cm848_dispatchProtectionOutputMode,4-state charging voltage regulator machine - next = (*battery_voltage_regulator_state_table[state])() gated on engine_feature_enable_flags_cal bit0 - the ProtectionOutput cluster is really the battery-voltage regulator (battery_voltage_delta PID -> charging duty) - name kept pending re-domain
 0x00037744,cm848_filterProtectionOutput
 0x00037a40,cm848_calculateProtectionOutputDemand
-0x00037c74,cm848_applyProtectionOutputDemand
+0x00037c74,cm848_applyAlternatorFieldDuty,Alternator field output stage (output channel assignment table entry 27 - the ECM's C1-7 K20 Generator Field Control pin - this calibration: TPU-B 10 with MDASM14 read-back), only while engine_feature_enable_flags_cal bit 0x1 is set: alternator_field_duty_target with overrides (P0562 system voltage low -> alternator_field_system_voltage_low_target / battery_voltage_fault_flag -> 0 / alternator_field_target_override) / 25600 - target unless alternator_field_duty_not_inverted_flag / the protection-voltage and mode-b override duties / snaps to full on above 95 % and full off below 5 % / the read-back retest / then the duty and 1000000 / alternator_field_pwm_frequency_hz us to alternator_field_output_channel_cal's record. Was cm848_applyProtectionOutputDemand
 0x00037f28,cm848_checkProtectionOutputConditions
 0x00038120,cm848_processProtectionMode2
 0x000384d0,cm848_initProtectionFilterValues
@@ -1281,7 +1281,7 @@ address,name
 0x0003fad4,mpc555_initTpuBConfiguration
 0x0003fba4,cm848_initCruiseServoControl,Init for the cruise vacuum servo controller - zeroes the control-loop feed-forward and accumulator and the governor cycle counters and clears the vent (19) vacuum (20) and servo-supply (21) solenoid requests (was cm848_initEngineLoadProtection) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0003fc24,cm848_controlCruiseVacuumServo,Cruise/speed-control vacuum servo PID - software-PWMs vent (19) and vacuum (20) requests via governor_cycle_counter - holds servo-supply (21) on unless trim = -100 percent - feed-forward = fuel_demand_governor_output - mode_b cal runs it without cruise (was cm848_processEngineLoadCalculation) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
-0x000400b8,cm848_processFuelRateConfig
+0x000400b8,cm848_applyWastegateSolenoidDuty,Turbocharger wastegate solenoid output stage (output channel assignment table entry 11 - this calibration: TPU-B 7 with MDASM12 read-back), only while fuel_feature_control_flags bit 0x1000 is set: duty = wastegate_solenoid_fixed_duty if wastegate_solenoid_fixed_duty_enable else 2 x rpm_governor_state_t_0040a3ca.commanded_rpm / clamped to wastegate_solenoid_duty_minimum / _maximum / inverted if wastegate_solenoid_duty_invert_flag / the read-back retest while wastegate_solenoid_read_back_retest_active_flag is set / then 1000000 / wastegate_solenoid_pwm_frequency_hz us and the duty to wastegate_solenoid_output_channel_cal's record. Was cm848_processFuelRateConfig
 0x000402d4,cm848_dispatchCalibrationBlockHandlers
 0x000403e4,cm848_checkDiagnosticFuelOverride
 0x0004043c,cm848_processProtectionRampControl
@@ -1975,7 +1975,7 @@ address,name
 0x005143f4,engine_egrFuel_stateMachine_update
 0x00515370,governor_fuel_demand_calc
 0x00515660,fuel_coldStart_modeCode_select
-0x005158fc,fuel_coldStart_demandFinal_apply
+0x005158fc,cm848_applyCoolingFanDuty,Cooling fan output stage (output channel assignment table entry 1 - this calibration: TPU-B 6 with MDASM13 read-back): clamps cooling_fan_duty_request to cooling_fan_duty_minimum / _maximum (source codes 0 / 10) / inverts it if cooling_fan_duty_invert_flag / holds cooling_fan_hold_duty for cooling_fan_hold_passes after cold_start_mode_active_flag clears (code 11) / runs the read-back retest (0 % then 100 %) while cooling_fan_read_back_retest_active_flag is set / then sends the duty and 1000000 / cooling_fan_pwm_frequency_hz us to cooling_fan_output_channel_cal's record. The request comes from fuel_coldStart_modeCode_select - so the fuel_coldStart_* family upstream is the fan controller, still under its old names. Was fuel_coldStart_demandFinal_apply
 0x00515bac,j1939_periodic_processing
 0x00515bd4,j1939_message_handler_initialize
 0x00515d78,tpu_rpm_measurement_control

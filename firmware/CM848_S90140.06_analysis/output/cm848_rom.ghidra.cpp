@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 19:47:31 MST 2026
+// Generated: Sat Nov 14 19:53:57 MST 2026
 
 
 //
@@ -6072,9 +6072,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  word counter_value;
   byte prescaler_count;
   dword runtime_value;
+  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -6626,7 +6626,7 @@ void cm848_phase_group_b_processing(void)
   cm848_dispatchProtectionOutputMode();
   cm848_filterProtectionOutput();
   cm848_calculateProtectionOutputDemand();
-  cm848_applyProtectionOutputDemand();
+  cm848_applyAlternatorFieldDuty();
   cm848_processProtectionMode2();
   cm848_phase_groupB_calculation(0);
   phaseGroupB_ControlDispatchers();
@@ -6801,7 +6801,7 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
   cm848_auxiliaryControl_process();
   cm848_processBoostProtectionMode();
   cm848_storeFuelDemandPreviousValues();
-  cm848_processFuelRateConfig();
+  cm848_applyWastegateSolenoidDuty();
   return;
 }
 
@@ -15556,7 +15556,7 @@ LAB_0001a0a0:
   if ((governor_speed_range_below_threshold_flag == 0) && (governor_speed_range_valid_flag == 0)) {
     wVar3 = governor_speed_range_output;
     if ((actuator_output_channel_g_cal != 0) && (actuator_output_channel_g_cal < 0x33)) {
-      governor_cruise_output_cached = governor_speed_range_output_b;
+      actuator_g_duty_command = governor_speed_range_output_b;
       (**(code **)(&output_channel_driver_table_set_duty +
                   (uint)actuator_output_channel_g_cal * 0x10))(governor_speed_range_output_b);
       wVar3 = governor_speed_range_output;
@@ -15564,7 +15564,7 @@ LAB_0001a0a0:
   }
   else {
     if ((actuator_output_channel_g_cal != 0) && (actuator_output_channel_g_cal < 0x33)) {
-      governor_cruise_output_cached = 0;
+      actuator_g_duty_command = 0;
       (**(code **)(&output_channel_driver_table_set_duty +
                   (uint)actuator_output_channel_g_cal * 0x10))(0);
     }
@@ -15628,12 +15628,12 @@ void cm848_initFuelDemandLimitVariables(void)
               ();
   }
   if ((actuator_output_channel_g_cal != 0) && (actuator_output_channel_g_cal < 0x33)) {
-    governor_cruise_output_cached = 0;
+    actuator_g_duty_command = 0;
     (**(code **)(&output_channel_driver_table_set_duty + (uint)actuator_output_channel_g_cal * 0x10)
     )(0);
   }
   if ((actuator_output_channel_g_cal != 0) && (actuator_output_channel_g_cal < 0x33)) {
-    j1939_calib_handler_a_period = (dword)j1939_pgn_handler_state_value_cal;
+    actuator_g_period_command = (dword)j1939_pgn_handler_state_value_cal;
     (**(code **)(&output_channel_driver_table_set_period +
                 (uint)actuator_output_channel_g_cal * 0x10))();
   }
@@ -24500,7 +24500,7 @@ LAB_000284d4:
     governor_speed_filter_output =
          cm848_signedFirstOrderFilter
                    ((int)(short)((int)((uint)governor_speed_filter_input_scale_cal *
-                                      ((uint)protection_fuel_output_target -
+                                      ((uint)alternator_field_duty_target -
                                       (uint)governor_speed_filter_fuel_offset_cal)) >> 0xe),
                     &governor_speed_filter_state_ptr);
     iVar6 = (int)(short)governor_speed_weight_a + (int)(short)governor_speed_weight_b +
@@ -27462,7 +27462,7 @@ void cm848_processFuelControlProtectionFlags(void)
     governor_fuel_control_limit_active = fuel_control_limit_upper;
   }
   if ((actuator_output_channel_e_cal != 0) && (actuator_output_channel_e_cal < 0x33)) {
-    j1939_calib_handler_e_param = governor_fuel_output_scaled;
+    actuator_e_duty_command = governor_fuel_output_scaled;
     (**(code **)(&output_channel_driver_table_set_duty + (uint)actuator_output_channel_e_cal * 0x10)
     )(governor_fuel_output_scaled);
   }
@@ -27528,14 +27528,14 @@ void cm848_initFuelControlStateVariables(void)
               ();
   }
   if ((actuator_output_channel_e_cal != 0) && (actuator_output_channel_e_cal < 0x33)) {
-    j1939_calib_handler_e_param = governor_fuel_output_scaled;
+    actuator_e_duty_command = governor_fuel_output_scaled;
     (**(code **)(&output_channel_driver_table_set_duty + (uint)actuator_output_channel_e_cal * 0x10)
     )(governor_fuel_output_scaled);
   }
   if ((actuator_output_channel_e_cal != 0) && (actuator_output_channel_e_cal < 0x33)) {
-    j1939_calib_handler_e_period = (dword)j1939_governor_output_param_cal;
+    actuator_e_period_command = (dword)j1939_governor_output_param_cal;
     (**(code **)(&output_channel_driver_table_set_period +
-                (uint)actuator_output_channel_e_cal * 0x10))(j1939_calib_handler_e_period);
+                (uint)actuator_output_channel_e_cal * 0x10))(actuator_e_period_command);
   }
   return;
 }
@@ -33008,19 +33008,19 @@ void cm848_filterProtectionOutput(void)
   if ((engine_feature_enable_flags_cal & 1) != 0) {
     cold_start_fuel_ema =
          (word)((int)((uint)cold_start_fuel_ema * (0x10000 - (uint)cold_start_fuel_ema_coeff_cal) +
-                     (uint)protection_fuel_output_target * (uint)cold_start_fuel_ema_coeff_cal) /
+                     (uint)alternator_field_duty_target * (uint)cold_start_fuel_ema_coeff_cal) /
                0x10000);
     if (cruise_state_machine_index == 0) {
       battery_voltage_confirm_counter = 0;
-      protection_fuel_output_target = protection_fuel_output_idle_cal;
+      alternator_field_duty_target = protection_fuel_output_idle_cal;
       if ((fault_detected_bits_368_to_383 & 1) == 0) {
-        protection_fuel_output_target = 0;
+        alternator_field_duty_target = 0;
       }
       battery_voltage_scan_index = 0;
       cruise_voltage_fault_state = 0;
     }
     else if (cruise_state_machine_index == 1) {
-      protection_fuel_output_target =
+      alternator_field_duty_target =
            lookupTableInterpolation((table_interp_args_t *)&can_subsystem_init_state_b);
       battery_voltage_scan_index = battery_voltage_scan_index + 1;
       battery_voltage_confirm_counter = 0;
@@ -33034,33 +33034,33 @@ void cm848_filterProtectionOutput(void)
              lookupTableInterpolation((table_interp_args_t *)&can_subsystem_init_state_d);
       }
       if (cruise_voltage_debounce_timer != 0) {
-        protection_fuel_output_target =
+        alternator_field_duty_target =
              lookupTableInterpolation((table_interp_args_t *)&can_subsystem_init_state_e);
         cruise_voltage_debounce_timer = cruise_voltage_debounce_timer - 1;
       }
       if (cruise_voltage_debounce_timer == 0) {
         if (cruise_voltage_fault_state == 1) {
-          protection_fuel_output_target = cold_start_fuel_ema_snapshot;
+          alternator_field_duty_target = cold_start_fuel_ema_snapshot;
           cruise_voltage_fault_state = 2;
         }
         else {
           uVar1 = lookupTableInterpolation((table_interp_args_t *)&can_subsystem_init_state_f);
           uVar2 = lookupTableInterpolation((table_interp_args_t *)&can_subsystem_init_state_g);
-          protection_fuel_output_target =
-               protection_fuel_output_target + (short)(((uVar1 & 0xffff) * (uVar2 & 0xffff)) / 10);
+          alternator_field_duty_target =
+               alternator_field_duty_target + (short)(((uVar1 & 0xffff) * (uVar2 & 0xffff)) / 10);
         }
       }
     }
     else {
-      protection_fuel_output_target =
+      alternator_field_duty_target =
            lookupTableInterpolation((table_interp_args_t *)&can_subsystem_init_state_c);
       cruise_voltage_fault_state = 0;
       battery_voltage_confirm_counter = 0;
       battery_voltage_scan_index = 0;
     }
   }
-  if (0x6400 < protection_fuel_output_target) {
-    protection_fuel_output_target = 0x6400;
+  if (0x6400 < alternator_field_duty_target) {
+    alternator_field_duty_target = 0x6400;
   }
   return;
 }
@@ -33081,7 +33081,7 @@ void cm848_calculateProtectionOutputDemand(void)
   if ((((operating_mode_flags & 0x20) != 0) && (cruise_state_machine_index != 0)) &&
      (cruise_state_machine_index != 1)) {
     if ((cruise_prev_state_index == 1) && (cruise_state_machine_index == 2)) {
-      cruise_speed_roc_integrator = ((uint)protection_fuel_output_target * 0x640) / 0x100;
+      cruise_speed_roc_integrator = ((uint)alternator_field_duty_target * 0x640) / 0x100;
     }
     iVar1 = (int)(short)battery_voltage_delta;
     if (iVar1 < (int)(uint)battery_voltage_delta_threshold_cal) {
@@ -33123,8 +33123,8 @@ void cm848_calculateProtectionOutputDemand(void)
     else if (0x6400 < iVar1) {
       iVar1 = 0x6400;
     }
-    protection_fuel_output_target = (word)iVar1;
-    protection_fuel_output_target_prev = protection_fuel_output_target;
+    alternator_field_duty_target = (word)iVar1;
+    protection_fuel_output_target_prev = alternator_field_duty_target;
   }
   return;
 }
@@ -33132,10 +33132,20 @@ void cm848_calculateProtectionOutputDemand(void)
 
 
 //
-// Function: cm848_applyProtectionOutputDemand @ 0x00037c74
+// Function: cm848_applyAlternatorFieldDuty @ 0x00037c74
 //
 
-void cm848_applyProtectionOutputDemand(void)
+/* Alternator field output stage (output channel assignment table entry 27 - the ECM's C1-7 K20
+   Generator Field Control pin - this calibration: TPU-B 10 with MDASM14 read-back), only while
+   engine_feature_enable_flags_cal bit 0x1 is set: alternator_field_duty_target with overrides
+   (P0562 system voltage low -> alternator_field_system_voltage_low_target /
+   battery_voltage_fault_flag -> 0 / alternator_field_target_override) / 25600 - target unless
+   alternator_field_duty_not_inverted_flag / the protection-voltage and mode-b override duties /
+   snaps to full on above 95 % and full off below 5 % / the read-back retest / then the duty and
+   1000000 / alternator_field_pwm_frequency_hz us to alternator_field_output_channel_cal's record.
+   Was cm848_applyProtectionOutputDemand */
+
+void cm848_applyAlternatorFieldDuty(void)
 
 {
   word wVar2;
@@ -33143,30 +33153,31 @@ void cm848_applyProtectionOutputDemand(void)
   
   if ((engine_feature_enable_flags_cal & 1) != 0) {
     if ((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 4) != 0) {
-      protection_fuel_output_target = protection_fuel_output_safety_cal;
+      alternator_field_duty_target = alternator_field_system_voltage_low_target;
     }
     if (battery_voltage_fault_flag != 0) {
-      protection_fuel_output_target = 0;
+      alternator_field_duty_target = 0;
     }
-    if (protection_fuel_output_override_enable_cal != 0) {
-      protection_fuel_output_target = protection_fuel_output_override_cal;
+    if (alternator_field_target_override_enable != 0) {
+      alternator_field_duty_target = alternator_field_target_override;
     }
-    wVar2 = protection_fuel_output_target;
-    if (protection_fuel_output_invert_enable_cal == 0) {
-      wVar2 = 0x6400 - protection_fuel_output_target;
+    wVar2 = alternator_field_duty_target;
+    if (alternator_field_duty_not_inverted_flag == 0) {
+      wVar2 = 0x6400 - alternator_field_duty_target;
     }
     if ((protection_voltage_active_flag != 0) &&
-       ((cold_start_phase == CSP_CRANKING || (protection_voltage_cold_start_flag_cal == 1)))) {
-      wVar2 = protection_fuel_voltage_active_output_cal;
+       ((cold_start_phase == CSP_CRANKING ||
+        (alternator_field_protection_voltage_duty_always_flag == 1)))) {
+      wVar2 = alternator_field_protection_voltage_duty;
     }
     if (protection_mode_b_override_flag == 1) {
-      wVar2 = protection_fuel_output_mode_b_override_cal;
+      wVar2 = alternator_field_mode_b_override_duty;
     }
-    if (protection_fuel_output_check_upper_cal < wVar2) {
-      wVar2 = protection_fuel_output_upper_clamp_cal;
+    if (alternator_field_duty_full_on_threshold < wVar2) {
+      wVar2 = alternator_field_duty_full_on;
     }
-    if (wVar2 < protection_fuel_output_check_lower_cal) {
-      wVar2 = protection_fuel_output_lower_clamp_cal;
+    if (wVar2 < alternator_field_duty_full_off_threshold) {
+      wVar2 = alternator_field_duty_full_off;
     }
     if (alternator_field_read_back_retest_active_flag != 0) {
       alternator_field_retest_pass_count = alternator_field_retest_pass_count + 1;
@@ -33196,19 +33207,19 @@ void cm848_applyProtectionOutputDemand(void)
     }
     if ((alternator_field_output_channel_cal != 0) && (alternator_field_output_channel_cal < 0x33))
     {
-      j1939_calib_handler_f_param = wVar2;
+      alternator_field_duty_command = wVar2;
       (**(code **)(&output_channel_driver_table_set_duty +
                   (uint)alternator_field_output_channel_cal * 0x10))();
     }
-    if (battery_voltage_scan_rate_cal == 0) {
+    if (alternator_field_pwm_frequency_hz == 0) {
       dVar1 = 0xffffffff;
     }
     else {
-      dVar1 = 1000000 / battery_voltage_scan_rate_cal;
+      dVar1 = 1000000 / alternator_field_pwm_frequency_hz;
     }
     if ((alternator_field_output_channel_cal != 0) && (alternator_field_output_channel_cal < 0x33))
     {
-      j1939_calib_handler_f_period = dVar1;
+      alternator_field_period_microseconds = dVar1;
       (**(code **)(&output_channel_driver_table_set_period +
                   (uint)alternator_field_output_channel_cal * 0x10))();
     }
@@ -33344,7 +33355,7 @@ void cm848_initProtectionFilterValues(void)
   can_subsystem_init_state_f = 2;
   can_subsystem_init_state_g = 2;
   cruise_state_machine_index = 0;
-  protection_fuel_output_target = 0;
+  alternator_field_duty_target = 0;
   cold_start_fuel_ema = 0;
   cruise_voltage_debounce_timer = 0;
   cruise_voltage_fault_state = 0;
@@ -38529,28 +38540,36 @@ LAB_0003ffc8:
 
 
 //
-// Function: cm848_processFuelRateConfig @ 0x000400b8
+// Function: cm848_applyWastegateSolenoidDuty @ 0x000400b8
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* Turbocharger wastegate solenoid output stage (output channel assignment table entry 11 - this
+   calibration: TPU-B 7 with MDASM12 read-back), only while fuel_feature_control_flags bit 0x1000 is
+   set: duty = wastegate_solenoid_fixed_duty if wastegate_solenoid_fixed_duty_enable else 2 x
+   rpm_governor_state_t_0040a3ca.commanded_rpm / clamped to wastegate_solenoid_duty_minimum /
+   _maximum / inverted if wastegate_solenoid_duty_invert_flag / the read-back retest while
+   wastegate_solenoid_read_back_retest_active_flag is set / then 1000000 /
+   wastegate_solenoid_pwm_frequency_hz us and the duty to wastegate_solenoid_output_channel_cal's
+   record. Was cm848_processFuelRateConfig */
 
-void cm848_processFuelRateConfig(void)
+void cm848_applyWastegateSolenoidDuty(void)
 
 {
   ushort uVar1;
   word wVar2;
   
   if ((fuel_feature_control_flags & 0x1000) != 0) {
-    uVar1 = fuel_demand_phase_input_fixed_cal;
-    if (fuel_demand_rpm_double_enable_cal == 0) {
+    uVar1 = wastegate_solenoid_fixed_duty;
+    if (wastegate_solenoid_fixed_duty_enable == 0) {
       uVar1 = rpm_governor_state_t_0040a3ca.commanded_rpm * 2;
     }
-    wVar2 = fuel_demand_phase_upper_limit_cal;
-    if ((uVar1 <= fuel_demand_phase_upper_limit_cal) &&
-       (wVar2 = uVar1, uVar1 < fuel_demand_phase_lower_limit_cal)) {
-      wVar2 = fuel_demand_phase_lower_limit_cal;
+    wVar2 = wastegate_solenoid_duty_maximum;
+    if ((uVar1 <= wastegate_solenoid_duty_maximum) &&
+       (wVar2 = uVar1, uVar1 < wastegate_solenoid_duty_minimum)) {
+      wVar2 = wastegate_solenoid_duty_minimum;
     }
-    if (fuel_demand_output_invert_enable_cal != 0) {
+    if (wastegate_solenoid_duty_invert_flag != 0) {
       wVar2 = 0x6400 - wVar2;
     }
     if (wastegate_solenoid_read_back_retest_active_flag != 0) {
@@ -38582,13 +38601,14 @@ void cm848_processFuelRateConfig(void)
     }
     if ((wastegate_solenoid_output_channel_cal != 0) &&
        (wastegate_solenoid_output_channel_cal < 0x33)) {
-      j1939_calib_handler_period = 1000000 / fuel_demand_cycle_period_cal;
+      wastegate_solenoid_period_microseconds = 1000000 / wastegate_solenoid_pwm_frequency_hz;
       (**(code **)(&output_channel_driver_table_set_period +
-                  (uint)wastegate_solenoid_output_channel_cal * 0x10))(j1939_calib_handler_period);
+                  (uint)wastegate_solenoid_output_channel_cal * 0x10))
+                (wastegate_solenoid_period_microseconds);
     }
     if ((wastegate_solenoid_output_channel_cal != 0) &&
        (wastegate_solenoid_output_channel_cal < 0x33)) {
-      j1939_calib_handler_param = wVar2;
+      wastegate_solenoid_duty_command = wVar2;
       (**(code **)(&output_channel_driver_table_set_duty +
                   (uint)wastegate_solenoid_output_channel_cal * 0x10))(wVar2);
     }
@@ -38614,15 +38634,16 @@ void cm848_dispatchCalibrationBlockHandlers(void)
   }
   if ((wastegate_solenoid_output_channel_cal != 0) && (wastegate_solenoid_output_channel_cal < 0x33)
      ) {
-    j1939_calib_handler_param = 0;
+    wastegate_solenoid_duty_command = 0;
     (**(code **)(&output_channel_driver_table_set_duty +
                 (uint)wastegate_solenoid_output_channel_cal * 0x10))(0);
   }
   if ((wastegate_solenoid_output_channel_cal != 0) && (wastegate_solenoid_output_channel_cal < 0x33)
      ) {
-    j1939_calib_handler_period = 1000000 / fuel_demand_cycle_period_cal;
+    wastegate_solenoid_period_microseconds = 1000000 / wastegate_solenoid_pwm_frequency_hz;
     (**(code **)(&output_channel_driver_table_set_period +
-                (uint)wastegate_solenoid_output_channel_cal * 0x10))(j1939_calib_handler_period);
+                (uint)wastegate_solenoid_output_channel_cal * 0x10))
+              (wastegate_solenoid_period_microseconds);
   }
   return;
 }
@@ -52578,22 +52599,22 @@ void cm848_processEngineRpmDiagnostic(void)
     wVar2 = 0x3200;
   }
   if ((actuator_output_channel_c_cal != 0) && (actuator_output_channel_c_cal < 0x33)) {
-    j1939_calib_handler_c_period = protection_timeout_sentinel;
+    actuator_c_period_command = protection_timeout_sentinel;
     (**(code **)(&output_channel_driver_table_set_period +
                 (uint)actuator_output_channel_c_cal * 0x10))();
   }
   if ((actuator_output_channel_c_cal != 0) && (actuator_output_channel_c_cal < 0x33)) {
-    j1939_calib_handler_c_param = wVar2;
+    actuator_c_duty_command = wVar2;
     (**(code **)(&output_channel_driver_table_set_duty + (uint)actuator_output_channel_c_cal * 0x10)
     )(wVar2);
   }
   if ((actuator_output_channel_d_cal != 0) && (actuator_output_channel_d_cal < 0x33)) {
-    j1939_calib_handler_d_period = protection_timeout_sentinel;
+    actuator_d_period_command = protection_timeout_sentinel;
     (**(code **)(&output_channel_driver_table_set_period +
                 (uint)actuator_output_channel_d_cal * 0x10))();
   }
   if ((actuator_output_channel_d_cal != 0) && (actuator_output_channel_d_cal < 0x33)) {
-    j1939_calib_handler_d_param = wVar2;
+    actuator_d_duty_command = wVar2;
     (**(code **)(&output_channel_driver_table_set_duty + (uint)actuator_output_channel_d_cal * 0x10)
     )(wVar2);
   }
@@ -52621,12 +52642,12 @@ void cm848_dispatchCalibrationFunctions(void)
               ();
   }
   if ((actuator_output_channel_c_cal != 0) && (actuator_output_channel_c_cal < 0x33)) {
-    j1939_calib_handler_c_period = 0xffffffff;
+    actuator_c_period_command = 0xffffffff;
     (**(code **)(&output_channel_driver_table_set_period +
                 (uint)actuator_output_channel_c_cal * 0x10))(0xffffffff);
   }
   if ((actuator_output_channel_c_cal != 0) && (actuator_output_channel_c_cal < 0x33)) {
-    j1939_calib_handler_c_param = 0;
+    actuator_c_duty_command = 0;
     (**(code **)(&output_channel_driver_table_set_duty + (uint)actuator_output_channel_c_cal * 0x10)
     )(0);
   }
@@ -52635,12 +52656,12 @@ void cm848_dispatchCalibrationFunctions(void)
               ();
   }
   if ((actuator_output_channel_d_cal != 0) && (actuator_output_channel_d_cal < 0x33)) {
-    j1939_calib_handler_d_period = 0xffffffff;
+    actuator_d_period_command = 0xffffffff;
     (**(code **)(&output_channel_driver_table_set_period +
                 (uint)actuator_output_channel_d_cal * 0x10))(0xffffffff);
   }
   if ((actuator_output_channel_d_cal != 0) && (actuator_output_channel_d_cal < 0x33)) {
-    j1939_calib_handler_d_param = 0;
+    actuator_d_duty_command = 0;
     (**(code **)(&output_channel_driver_table_set_duty + (uint)actuator_output_channel_d_cal * 0x10)
     )(0);
   }
@@ -67326,7 +67347,7 @@ void governor_fuel_demand_calc(void)
   }
   governor_fuel_demand_p_term_prev = dVar1;
   governor_fuel_demand_pd_term = cm848_signedFirstOrderFilter((int)(short)iVar4,&PTR_DAT_0040b2dc);
-  if ((((governor_fuel_demand_mode != 0xb) && (cold_start_fuel_demand_mode_code == 8)) &&
+  if ((((governor_fuel_demand_mode != 0xb) && (cooling_fan_duty_source_code == 8)) &&
       (egr_fuel_demand_speed_floor < egr_governor_speed_floor)) &&
      ((egr_load_speed_floor < egr_governor_speed_floor &&
       (egr_governor_protection_load_speed_floor < egr_governor_speed_floor)))) {
@@ -67358,7 +67379,7 @@ LAB_005155c8:
   else {
     iVar4 = 0x6400;
   }
-  cold_start_fuel_demand_output = (word)iVar4;
+  cooling_fan_duty_request = (word)iVar4;
   return;
 }
 
@@ -67389,56 +67410,56 @@ void fuel_coldStart_modeCode_select(void)
   if (DAT_0040881f == '\0') {
     if (((cold_start_phase == CSP_CRANKING) || (DAT_0040889c == 1)) &&
        (cold_start_injection_protection_flag != 0)) {
-      cold_start_fuel_demand_output = DAT_0040889a;
-      cold_start_fuel_demand_mode_code = 9;
+      cooling_fan_duty_request = DAT_0040889a;
+      cooling_fan_duty_source_code = 9;
     }
     else if (engine_rpm_state_t_0040b7ac.current_rpm < DAT_0040888a) {
-      cold_start_fuel_demand_output = DAT_0040886c;
-      cold_start_fuel_demand_mode_code = 2;
+      cooling_fan_duty_request = DAT_0040886c;
+      cooling_fan_duty_source_code = 2;
     }
     else if (((DAT_0040888c < engine_rpm_state_t_0040b7ac.current_rpm) &&
              (DAT_0040888e < governor_speed_reference)) && (tpu_rpm_ema_filtered < DAT_00408890)) {
-      cold_start_fuel_demand_output = DAT_004088a8;
-      cold_start_fuel_demand_mode_code = 3;
+      cooling_fan_duty_request = DAT_004088a8;
+      cooling_fan_duty_source_code = 3;
     }
     else {
       if (egr_governor_speed_base == governor_speed_reference) {
-        cold_start_fuel_demand_mode_code = 4;
+        cooling_fan_duty_source_code = 4;
       }
       else {
         if ((egr_governor_speed_ceiling == governor_speed_reference) &&
            (cold_start_mode_active_flag == 0)) {
           cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
-          cold_start_fuel_demand_mode_code = 5;
-          cold_start_fuel_demand_output = cold_start_fuel_demand_max;
+          cooling_fan_duty_source_code = 5;
+          cooling_fan_duty_request = cooling_fan_duty_maximum;
           return;
         }
         if (cold_start_mode_active_flag == 0) {
           governor_fuel_demand_calc();
           cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
-          cold_start_fuel_demand_mode_code = 8;
+          cooling_fan_duty_source_code = 8;
           return;
         }
         if (DAT_00408892 < governor_speed_reference) {
           if (egr_rpm_headroom_below_speed_limit < DAT_00408894) {
             cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
-            cold_start_fuel_demand_mode_code = 6;
-            cold_start_fuel_demand_output = DAT_00408888;
+            cooling_fan_duty_source_code = 6;
+            cooling_fan_duty_request = DAT_00408888;
             return;
           }
           cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
-          cold_start_fuel_demand_mode_code = 7;
-          cold_start_fuel_demand_output = cold_start_fuel_demand_min;
+          cooling_fan_duty_source_code = 7;
+          cooling_fan_duty_request = cooling_fan_duty_minimum;
           return;
         }
-        cold_start_fuel_demand_mode_code = 7;
+        cooling_fan_duty_source_code = 7;
       }
-      cold_start_fuel_demand_output = cold_start_fuel_demand_min;
+      cooling_fan_duty_request = cooling_fan_duty_minimum;
     }
   }
   else {
-    cold_start_fuel_demand_output = DAT_0040886e;
-    cold_start_fuel_demand_mode_code = 1;
+    cooling_fan_duty_request = DAT_0040886e;
+    cooling_fan_duty_source_code = 1;
   }
   cold_start_mode_entry_rpm_snapshot = tpu_rpm_ema_filtered;
   return;
@@ -67447,46 +67468,55 @@ void fuel_coldStart_modeCode_select(void)
 
 
 //
-// Function: fuel_coldStart_demandFinal_apply @ 0x005158fc
+// Function: cm848_applyCoolingFanDuty @ 0x005158fc
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* Cooling fan output stage (output channel assignment table entry 1 - this calibration: TPU-B 6
+   with MDASM13 read-back): clamps cooling_fan_duty_request to cooling_fan_duty_minimum / _maximum
+   (source codes 0 / 10) / inverts it if cooling_fan_duty_invert_flag / holds cooling_fan_hold_duty
+   for cooling_fan_hold_passes after cold_start_mode_active_flag clears (code 11) / runs the
+   read-back retest (0 % then 100 %) while cooling_fan_read_back_retest_active_flag is set / then
+   sends the duty and 1000000 / cooling_fan_pwm_frequency_hz us to cooling_fan_output_channel_cal's
+   record. The request comes from fuel_coldStart_modeCode_select - so the fuel_coldStart_* family
+   upstream is the fan controller, still under its old names. Was fuel_coldStart_demandFinal_apply
+    */
 
-void fuel_coldStart_demandFinal_apply(void)
+void cm848_applyCoolingFanDuty(void)
 
 {
-  if (cold_start_fuel_demand_output < cold_start_fuel_demand_min) {
-    cold_start_fuel_demand_final = cold_start_fuel_demand_min;
-    cold_start_fuel_demand_mode_code = 0;
+  if (cooling_fan_duty_request < cooling_fan_duty_minimum) {
+    cooling_fan_duty = cooling_fan_duty_minimum;
+    cooling_fan_duty_source_code = 0;
   }
-  else if (cold_start_fuel_demand_max < cold_start_fuel_demand_output) {
-    cold_start_fuel_demand_final = cold_start_fuel_demand_max;
-    cold_start_fuel_demand_mode_code = 10;
+  else if (cooling_fan_duty_maximum < cooling_fan_duty_request) {
+    cooling_fan_duty = cooling_fan_duty_maximum;
+    cooling_fan_duty_source_code = 10;
   }
   else {
-    cold_start_fuel_demand_final = cold_start_fuel_demand_output;
+    cooling_fan_duty = cooling_fan_duty_request;
   }
-  if (DAT_0040881e != '\0') {
-    cold_start_fuel_demand_final = 0x6400 - cold_start_fuel_demand_final;
+  if (cooling_fan_duty_invert_flag != 0) {
+    cooling_fan_duty = 0x6400 - cooling_fan_duty;
   }
-  if ((DAT_003fce18 != 0) && (cold_start_mode_active_flag == 0)) {
-    cold_start_fuel_hold_ramp_counter = 0;
+  if ((cold_start_mode_active_previous != 0) && (cold_start_mode_active_flag == 0)) {
+    cooling_fan_hold_pass_count = 0;
   }
-  DAT_003fce18 = cold_start_mode_active_flag;
-  if (cold_start_fuel_hold_ramp_counter < DAT_004088a4) {
-    cold_start_fuel_hold_ramp_counter = cold_start_fuel_hold_ramp_counter + 1;
-    cold_start_fuel_demand_final = DAT_004088a6;
-    cold_start_fuel_demand_mode_code = 0xb;
+  cold_start_mode_active_previous = cold_start_mode_active_flag;
+  if (cooling_fan_hold_pass_count < cooling_fan_hold_passes) {
+    cooling_fan_hold_pass_count = cooling_fan_hold_pass_count + 1;
+    cooling_fan_duty = cooling_fan_hold_duty;
+    cooling_fan_duty_source_code = 0xb;
   }
   if (cooling_fan_read_back_retest_active_flag != 0) {
     cooling_fan_retest_pass_count = cooling_fan_retest_pass_count + 1;
     if ((uint)cooling_fan_retest_pass_count < (uint)cooling_fan_retest_off_passes) {
-      cold_start_fuel_demand_final = 0;
+      cooling_fan_duty = 0;
     }
     else if ((uint)cooling_fan_retest_pass_count <
              (uint)cooling_fan_retest_off_passes + (uint)cooling_fan_retest_fault_confirm_passes * 2
             ) {
-      cold_start_fuel_demand_final = 0x6400;
+      cooling_fan_duty = 0x6400;
     }
     else {
       cooling_fan_retest_pass_count = 0;
@@ -67505,14 +67535,14 @@ void fuel_coldStart_demandFinal_apply(void)
     }
   }
   if ((cooling_fan_output_channel_cal != 0) && (cooling_fan_output_channel_cal < 0x33)) {
-    DAT_0040c13a = cold_start_fuel_demand_final;
+    cooling_fan_duty_command = cooling_fan_duty;
     (**(code **)(&output_channel_driver_table_set_duty + (uint)cooling_fan_output_channel_cal * 0x10
-                ))(cold_start_fuel_demand_final);
+                ))(cooling_fan_duty);
   }
   if ((cooling_fan_output_channel_cal != 0) && (cooling_fan_output_channel_cal < 0x33)) {
-    cold_start_fuel_handler_period_us = 1000000 / DAT_00408886;
+    cooling_fan_period_microseconds = 1000000 / cooling_fan_pwm_frequency_hz;
     (**(code **)(&output_channel_driver_table_set_period +
-                (uint)cooling_fan_output_channel_cal * 0x10))(cold_start_fuel_handler_period_us);
+                (uint)cooling_fan_output_channel_cal * 0x10))(cooling_fan_period_microseconds);
   }
   return;
 }
@@ -67528,7 +67558,7 @@ void j1939_periodic_processing(void)
 {
   engine_egrFuel_stateMachine_update();
   fuel_coldStart_modeCode_select();
-  fuel_coldStart_demandFinal_apply();
+  cm848_applyCoolingFanDuty();
   return;
 }
 
@@ -67545,7 +67575,7 @@ void j1939_message_handler_initialize(void)
   egr_governor_pi_active_flag = 0;
   egr_warmup_phase_state = 0;
   governor_speed_limit_source = 0;
-  cold_start_fuel_demand_mode_code = 0;
+  cooling_fan_duty_source_code = 0;
   cold_start_mode_entry_rpm_snapshot = 0;
   governor_fuel_demand_p_term_prev = 0;
   governor_fuel_demand_pd_term = 0;
@@ -67562,7 +67592,7 @@ void j1939_message_handler_initialize(void)
   governor_speed_decel_above_floor_flag = 0;
   governor_speed_up_ramp_active_flag = 0;
   governor_speed_decel_target_captured_flag = 0;
-  cold_start_fuel_hold_ramp_counter = 0;
+  cooling_fan_hold_pass_count = 0;
   egr_load_floor_hold_timer = 0;
   DAT_003fcdfb = 2;
   DAT_003fcdfd = 2;
@@ -71081,7 +71111,7 @@ void cm848_throttlePosition_clamp_update(void)
   }
   if ((governor_pressure_solenoid_output_channel_cal != 0) &&
      (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-    protection_throttle_hpcr_setpoint = wVar1;
+    governor_pressure_solenoid_duty_command = wVar1;
     (**(code **)(&output_channel_driver_table_set_duty +
                 (uint)governor_pressure_solenoid_output_channel_cal * 0x10))(wVar1);
   }
@@ -71154,16 +71184,17 @@ void protectionPhaseGroupA_Init(void)
     else {
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-        protection_throttle_hpcr_setpoint = 0;
+        governor_pressure_solenoid_duty_command = 0;
         (**(code **)(&output_channel_driver_table_set_duty +
                     (uint)governor_pressure_solenoid_output_channel_cal * 0x10))(0);
       }
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-        protection_throttle_hpcr_period = 1000000 / protection_throttle_hpcr_frequency;
+        governor_pressure_solenoid_period_microseconds =
+             1000000 / protection_throttle_hpcr_frequency;
         (**(code **)(&output_channel_driver_table_set_period +
                     (uint)governor_pressure_solenoid_output_channel_cal * 0x10))
-                  (protection_throttle_hpcr_period);
+                  (governor_pressure_solenoid_period_microseconds);
       }
     }
   }
@@ -71403,7 +71434,7 @@ void cm848_controlGovernorPressureSolenoid(void)
       governor_pressure = (word)uVar2;
       governor_pressure_error = (uint)governor_pressure_target - (uVar2 & 0xffff);
       if ((DAT_00408af2 < (int)governor_pressure_error) && (governor_pressure_target == 0)) {
-        if (DAT_00408b1e < protection_throttle_hpcr_setpoint) {
+        if (DAT_00408b1e < governor_pressure_solenoid_duty_command) {
           _throttle_setpoint_limit_arg =
                (uint)governor_pressure_controller_output + (uint)DAT_00408b20;
           cm848_throttleSetpoint_limit(_throttle_setpoint_limit_arg);
@@ -71428,16 +71459,16 @@ void cm848_controlGovernorPressureSolenoid(void)
     }
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
        (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-      protection_throttle_hpcr_setpoint = wVar3;
+      governor_pressure_solenoid_duty_command = wVar3;
       (**(code **)(&output_channel_driver_table_set_duty +
                   (uint)governor_pressure_solenoid_output_channel_cal * 0x10))(wVar3);
     }
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
        (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-      protection_throttle_hpcr_period = 1000000 / protection_throttle_hpcr_frequency;
+      governor_pressure_solenoid_period_microseconds = 1000000 / protection_throttle_hpcr_frequency;
       (**(code **)(&output_channel_driver_table_set_period +
                   (uint)governor_pressure_solenoid_output_channel_cal * 0x10))
-                (protection_throttle_hpcr_period);
+                (governor_pressure_solenoid_period_microseconds);
     }
   }
   return;
@@ -73607,7 +73638,7 @@ LAB_0051f804:
     break;
   case 0x28:
     (&sci_buffer)[sci_transmit_byte_count] =
-         (byte)(((uint)j1939_calib_handler_param * 200) / 0x6400);
+         (byte)(((uint)wastegate_solenoid_duty_command * 200) / 0x6400);
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     break;
   case 0x29:
@@ -73845,7 +73876,7 @@ LAB_0051f804:
     break;
   case 0x5b:
     (&sci_buffer)[sci_transmit_byte_count] =
-         (byte)(((uint)protection_throttle_hpcr_setpoint * 0xff) / 0x6400);
+         (byte)(((uint)governor_pressure_solenoid_duty_command * 0xff) / 0x6400);
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     break;
   case 0x5c:
@@ -73964,7 +73995,8 @@ LAB_0051f804:
   case 0x7d:
     break;
   case 0x7e:
-    (&sci_buffer)[sci_transmit_byte_count] = (byte)(((uint)DAT_0040c13a * 0xff) / 0x6400);
+    (&sci_buffer)[sci_transmit_byte_count] =
+         (byte)(((uint)cooling_fan_duty_command * 0xff) / 0x6400);
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     break;
   case 0x7f:
@@ -74432,7 +74464,7 @@ void cm848_sciCommand37Callback(void)
            protection_status_flags_t_0040b0f2.output_flags | 1;
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-        protection_throttle_hpcr_setpoint = DAT_00408ba0;
+        governor_pressure_solenoid_duty_command = DAT_00408ba0;
         (**(code **)(&output_channel_driver_table_set_duty +
                     (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
       }
@@ -74450,7 +74482,7 @@ void cm848_sciCommand37Callback(void)
            protection_status_flags_t_0040b0f2.output_flags | 1;
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-        protection_throttle_hpcr_setpoint = DAT_00408b2e;
+        governor_pressure_solenoid_duty_command = DAT_00408b2e;
         (**(code **)(&output_channel_driver_table_set_duty +
                     (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
       }
@@ -74484,7 +74516,7 @@ void cm848_sciCommand37Callback(void)
     }
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
        (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-      protection_throttle_hpcr_setpoint = DAT_00408b2e;
+      governor_pressure_solenoid_duty_command = DAT_00408b2e;
       (**(code **)(&output_channel_driver_table_set_duty +
                   (uint)governor_pressure_solenoid_output_channel_cal * 0x10))(DAT_00408b2e);
     }
@@ -74517,7 +74549,7 @@ void cm848_sciCommand37Callback(void)
     }
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
        (governor_pressure_solenoid_output_channel_cal < 0x33)) {
-      protection_throttle_hpcr_setpoint = DAT_00408b2e;
+      governor_pressure_solenoid_duty_command = DAT_00408b2e;
       (**(code **)(&output_channel_driver_table_set_duty +
                   (uint)governor_pressure_solenoid_output_channel_cal * 0x10))();
     }
@@ -83111,7 +83143,7 @@ LAB_00530f24:
   }
   if (uVar4 < uVar6) goto LAB_00531098;
   if (((air_conditioning_clutch_request_byte & 0x40) == 0) &&
-     (protection_fuel_output_target <= fuel_correction_timing_demand_threshold)) {
+     (alternator_field_duty_target <= fuel_correction_timing_demand_threshold)) {
     if (uVar6 == 0) {
       iVar3 = 2;
 LAB_00531064:
@@ -83126,11 +83158,11 @@ LAB_00531084:
   }
   else {
     if (((air_conditioning_clutch_request_byte & 0x40) == 0) ||
-       (fuel_correction_timing_demand_threshold < protection_fuel_output_target)) {
+       (fuel_correction_timing_demand_threshold < alternator_field_duty_target)) {
       if (((air_conditioning_clutch_request_byte & 0x40) != 0) ||
-         (protection_fuel_output_target < fuel_correction_timing_demand_threshold)) {
+         (alternator_field_duty_target < fuel_correction_timing_demand_threshold)) {
         if (((air_conditioning_clutch_request_byte & 0x40) == 0) ||
-           (protection_fuel_output_target < fuel_correction_timing_demand_threshold))
+           (alternator_field_duty_target < fuel_correction_timing_demand_threshold))
         goto LAB_00531098;
         if (uVar6 == 0) {
           iVar3 = 8;
@@ -86603,7 +86635,7 @@ void hpcr_fuelDemandProc(void)
        lookupTableInterpolation((table_interp_args_t *)&DAT_003fd273);
   hpcr_fuel_demand_fault_lower_limit =
        lookupTableInterpolation((table_interp_args_t *)&DAT_003fd275);
-  if (((DAT_00409fe0 < j1939_calib_handler_param) ||
+  if (((DAT_00409fe0 < wastegate_solenoid_duty_command) ||
       (engine_rpm_state_t_0040b7ac.current_rpm < hpcr_fuel_demand_rpm_threshold)) ||
      (((protection_sensor_mode_flag != 0 ||
        (sensor_readings_t_0040baf2.intake_manifold_pressure < hpcr_fuel_demand_protection_threshold)

@@ -1776,6 +1776,7 @@ address,name,type,comment
 0x003fcd96,PTR_DAT_003fcd96,pointer,
 0x003fcd9e,cruise_control_on_toggle_state,word,Cruise ON/OFF state: cm848_updateCruiseControlOnOffToggle flips it on each new ON/OFF switch press and forces 0 on a cruise switch or vehicle speed rationality fault or until cold start reaches governor setpoint; 0 = denied reason 5 ON/OFF SW (was cruise_protection_ok)
 0x003fcda2,cruise_switch_request,CRUISE_SWITCH_REQUEST,Primary debounced cruise switch request - protection_control_state_check_2 result stored each cycle by cm848_cruiseControlPeriodicUpdate - read by every governor_cruise_ button handler and the engage check - prior value in cruise_switch_request_prev (was governor_speed_request_state_b)
+0x003fce18,cold_start_mode_active_previous,word,cold_start_mode_active_flag on the previous cm848_applyCoolingFanDuty pass - the 1 -> 0 edge restarts the cooling fan hold
 0x003fce7c,obd_response_staging,byte[8],Staging copy of the OBD-II response bytes - multi-byte values are built here then copied into the response (was j1939_dm_scratch_buffer)
 0x003fce7f,j1939_dm_scratch_byte0,,
 0x003fce80,j1939_dm_scratch_byte1,,
@@ -3233,11 +3234,11 @@ address,name,type,comment
 0x0040874c,j1939_status_nibble_b_cal,byte,
 0x0040874d,j1939_status_nibble_c_cal,byte,
 0x004087a0,battery_voltage_filter_coeff_cal,word,
-0x004087a4,protection_fuel_output_override_enable_cal,word,
-0x004087a6,protection_fuel_output_override_cal,word,
-0x004087aa,protection_fuel_output_safety_cal,word,
+0x004087a4,alternator_field_target_override_enable,word,Non-zero: cm848_applyAlternatorFieldDuty replaces the field target with alternator_field_target_override - 0 in the RAM dump (was protection_fuel_output_override_enable_cal)
+0x004087a6,alternator_field_target_override,word,Field target used while alternator_field_target_override_enable is set - 25600 in the RAM dump (was protection_fuel_output_override_cal)
+0x004087aa,alternator_field_system_voltage_low_target,word,Field target while fault 66 (P0562 system voltage low - fault_detected_bits_64_to_79 bit 2) is set - 0 in the RAM dump (was protection_fuel_output_safety_cal)
 0x004087b2,charging_voltage_target_offset,word,1/16 V offset (4 = 0.25 V) added to the battery temperature table (0 / 30 / 60 / 80 / 110 / 158 / 200 F -> 14.75 to 13.5 V) to form the charging voltage target battery_voltage_prev - working RAM so no _cal (was battery_voltage_oil_temp_addend_cal)
-0x004087b4,battery_voltage_scan_rate_cal,word,
+0x004087b4,alternator_field_pwm_frequency_hz,word,Alternator field PWM frequency: the set-period argument is 1000000 / this (0 = period 0xffffffff) - 100 in the RAM dump (was battery_voltage_scan_rate_cal)
 0x004087b6,battery_voltage_sample_count_max_cal,word,
 0x004087b8,cruise_confirm_threshold_cal,word,
 0x004087ba,battery_voltage_sample_rpm_threshold_cal,word,
@@ -3253,23 +3254,23 @@ address,name,type,comment
 0x004087ce,cruise_sensor_sample_count_max_cal,word,
 0x004087d0,cruise_enable_sample_count_max_cal,word,
 0x004087d2,cold_start_fuel_ema_coeff_cal,word,
-0x004087d4,protection_fuel_output_invert_enable_cal,word,
+0x004087d4,alternator_field_duty_not_inverted_flag,word,0: cm848_applyAlternatorFieldDuty sends 25600 - target; non-zero: the target itself - 1 in the RAM dump (was protection_fuel_output_invert_enable_cal)
 0x004087d6,battery_voltage_ema_rate_a_cal,word,
 0x004087d8,battery_voltage_ema_rate_b_cal,word,
-0x004087da,protection_fuel_output_upper_clamp_cal,word,
-0x004087dc,protection_fuel_output_lower_clamp_cal,word,
+0x004087da,alternator_field_duty_full_on,word,Field duty sent when the duty is above alternator_field_duty_full_on_threshold - 25600 in the RAM dump (was protection_fuel_output_upper_clamp_cal)
+0x004087dc,alternator_field_duty_full_off,word,Field duty sent when the duty is below alternator_field_duty_full_off_threshold - 0 in the RAM dump (was protection_fuel_output_lower_clamp_cal)
 0x004087de,battery_voltage_integral_rate_a_cal,dword,
 0x004087e2,battery_voltage_integral_rate_b_cal,dword,
 0x004087e6,battery_voltage_delta_threshold_cal,word,
 0x004087e8,battery_voltage_gain_a_cal,word,
 0x004087ea,battery_voltage_gain_b_cal,word,
-0x004087ec,protection_fuel_output_check_upper_cal,word,
-0x004087ee,protection_fuel_output_check_lower_cal,word,
-0x004087f0,protection_fuel_voltage_active_output_cal,word,
+0x004087ec,alternator_field_duty_full_on_threshold,word,Above this the field duty snaps to alternator_field_duty_full_on - 24320 = 95 % in the RAM dump (was protection_fuel_output_check_upper_cal)
+0x004087ee,alternator_field_duty_full_off_threshold,word,Below this the field duty snaps to alternator_field_duty_full_off - 1280 = 5 % in the RAM dump (was protection_fuel_output_check_lower_cal)
+0x004087f0,alternator_field_protection_voltage_duty,word,Field duty while protection_voltage_active_flag is set and the engine is cranking (or alternator_field_protection_voltage_duty_always_flag = 1) - 25600 in the RAM dump; what sets that flag is still open (was protection_fuel_voltage_active_output_cal)
 0x004087f2,battery_voltage_correction_enable_cal,word,
 0x004087f4,battery_voltage_correction_default_cal,word,
-0x004087f6,protection_fuel_output_mode_b_override_cal,word,
-0x004087f8,protection_voltage_cold_start_flag_cal,word,
+0x004087f6,alternator_field_mode_b_override_duty,word,Field duty while protection_mode_b_override_flag = 1 (set by engine_coldStart_batteryVoltage_monitor) - 0 in the RAM dump (was protection_fuel_output_mode_b_override_cal)
+0x004087f8,alternator_field_protection_voltage_duty_always_flag,word,1: alternator_field_protection_voltage_duty applies while protection_voltage_active_flag is set even when not cranking (was protection_voltage_cold_start_flag_cal)
 0x004087fa,protection_fuel_output_idle_cal,word,
 0x004087fc,alternator_field_retest_off_passes,word,Alternator field retest: passes at 0 % duty before the 100 % phase - 4000 in the RAM dump (was cruise_voltage_sample_threshold_cal)
 0x004087fe,alternator_field_retest_fault_confirm_passes,word,Alternator field retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts twice this - 50 in the RAM dump (was battery_monitor_sample_rate_cal)
@@ -3283,6 +3284,10 @@ address,name,type,comment
 0x0040880e,governor_speed_error_b_upper_limit_cal,word,
 0x00408810,engine_speed_sim_mode_cal,word,
 0x00408812,engine_speed_default_cal,word,
+0x0040881e,cooling_fan_duty_invert_flag,byte,Non-zero: the cooling fan duty is sent as 25600 - duty (cm848_applyCoolingFanDuty) - 0 in the RAM dump
+0x00408886,cooling_fan_pwm_frequency_hz,word,Cooling fan PWM frequency: the set-period argument is 1000000 / this - 20 in the RAM dump
+0x004088a4,cooling_fan_hold_passes,word,Length of the cooling fan hold after cold_start_mode_active_flag clears - 40 passes in the RAM dump
+0x004088a6,cooling_fan_hold_duty,word,Cooling fan duty during that hold (source code 11) - 0 in the RAM dump
 0x004088e0,safety_fuel_blend_decrement_cal,word,
 0x004088e2,safety_fuel_blend_increment_cal,word,
 0x004088e4,safety_system_enable_cal,byte,
@@ -3388,12 +3393,12 @@ address,name,type,comment
 0x00408dc3,fuel_demand_mode_a_enable_cal,byte,
 0x00408dc6,fuel_demand_error_step_threshold_cal,word,
 0x00408dc8,fuel_step_counter_threshold_cal,word,
-0x00408dca,fuel_demand_rpm_double_enable_cal,byte,
-0x00408dcb,fuel_demand_output_invert_enable_cal,byte,
-0x00408dcc,fuel_demand_cycle_period_cal,word,
-0x00408dce,fuel_demand_phase_input_fixed_cal,word,
-0x00408dd0,fuel_demand_phase_upper_limit_cal,word,
-0x00408dd2,fuel_demand_phase_lower_limit_cal,word,
+0x00408dca,wastegate_solenoid_fixed_duty_enable,byte,Non-zero: cm848_applyWastegateSolenoidDuty uses wastegate_solenoid_fixed_duty instead of 2 x rpm_governor_state_t_0040a3ca.commanded_rpm - 0 in the RAM dump (was fuel_demand_rpm_double_enable_cal)
+0x00408dcb,wastegate_solenoid_duty_invert_flag,byte,Non-zero: the wastegate solenoid duty is sent as 25600 - duty - 0 in the RAM dump (was fuel_demand_output_invert_enable_cal)
+0x00408dcc,wastegate_solenoid_pwm_frequency_hz,word,Wastegate solenoid PWM frequency: the set-period argument is 1000000 / this (cm848_applyWastegateSolenoidDuty and the enable path in cm848_dispatchCalibrationBlockHandlers) - 350 in the RAM dump (was fuel_demand_cycle_period_cal)
+0x00408dce,wastegate_solenoid_fixed_duty,word,Wastegate solenoid duty used when wastegate_solenoid_fixed_duty_enable is set - 0 in the RAM dump (was fuel_demand_phase_input_fixed_cal)
+0x00408dd0,wastegate_solenoid_duty_maximum,word,Upper clamp of the wastegate solenoid duty - 25600 in the RAM dump (was fuel_demand_phase_upper_limit_cal)
+0x00408dd2,wastegate_solenoid_duty_minimum,word,Lower clamp of the wastegate solenoid duty - 0 in the RAM dump (was fuel_demand_phase_lower_limit_cal)
 0x00408dd4,wastegate_solenoid_retest_off_passes,word,Wastegate solenoid retest: passes at 0 % duty before the 100 % phase - 1500 in the RAM dump (was fuel_demand_phase_threshold_cal)
 0x00408dd6,wastegate_solenoid_retest_fault_confirm_passes,word,Wastegate solenoid retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts twice this - 25 in the RAM dump (was fuel_demand_mode_count_cal)
 0x00408de2,fuel_demand_override_min_cal,word,
@@ -4855,7 +4860,7 @@ address,name,type,comment
 0x0040b260,battery_voltage_delta_filtered,word,
 0x0040b262,cruise_confirm_counter,word,
 0x0040b264,battery_voltage_fault_flag,word,
-0x0040b266,protection_fuel_output_target,word,
+0x0040b266,alternator_field_duty_target,word,Alternator field duty target (duty 0-25600 = 0-100 %) from the charging-voltage PI loop in cm848_calculateProtectionOutputDemand (filtered by cm848_filterProtectionOutput); cm848_applyAlternatorFieldDuty overrides / inverts / snaps it and sends it to the field; the idle speed governor (cm848_processSpeedGovernorControl) uses it as a load term (was protection_fuel_output_target)
 0x0040b268,cruise_monitor_timer,word,
 0x0040b26a,cruise_voltage_debounce_timer,word,
 0x0040b26c,cruise_state_machine_index,word,
@@ -5547,18 +5552,19 @@ address,name,type,comment
 0x0040c12c,exception_dar,dword,
 0x0040c130,exception_dsisr,dword,
 0x0040c134,hardware_timer_capture,dword,
-0x0040c14e,j1939_calib_handler_param,word,
-0x0040c16a,j1939_calib_handler_c_param,word,
-0x0040c16c,j1939_calib_handler_d_param,word,
-0x0040c16e,j1939_calib_handler_f_param,word,
-0x0040c186,governor_cruise_output_cached,word,
-0x0040c18e,j1939_calib_handler_e_param,word,
-0x0040c1c4,j1939_calib_handler_period,dword,
-0x0040c1fc,j1939_calib_handler_c_period,dword,
-0x0040c200,j1939_calib_handler_d_period,dword,
-0x0040c204,j1939_calib_handler_f_period,dword,
-0x0040c234,j1939_calib_handler_a_period,dword,
-0x0040c244,j1939_calib_handler_e_period,dword,
+0x0040c13a,cooling_fan_duty_command,word,Last duty 0-25600 = 0-100 % sent to the cooling fan (output channel assignment table entry 1; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_applyCoolingFanDuty next to each set-duty call; the SCI command 20 reply reads it
+0x0040c14e,wastegate_solenoid_duty_command,word,Last duty 0-25600 = 0-100 % sent to the wastegate solenoid (output channel assignment table entry 11; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_applyWastegateSolenoidDuty (0 at enable in cm848_dispatchCalibrationBlockHandlers) next to each set-duty call; also read by hpcr_fuelDemandProc and the SCI command 20 reply (was j1939_calib_handler_param)
+0x0040c16a,actuator_c_duty_command,word,Last duty 0-25600 = 0-100 % sent to the actuator c output (output channel assignment table entry 25; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_processEngineRpmDiagnostic / cm848_dispatchCalibrationFunctions next to each set-duty call (was j1939_calib_handler_c_param)
+0x0040c16c,actuator_d_duty_command,word,Last duty 0-25600 = 0-100 % sent to the actuator d output (output channel assignment table entry 26; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_processEngineRpmDiagnostic / cm848_dispatchCalibrationFunctions next to each set-duty call (was j1939_calib_handler_d_param)
+0x0040c16e,alternator_field_duty_command,word,Last duty 0-25600 = 0-100 % sent to the alternator field (output channel assignment table entry 27; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_applyAlternatorFieldDuty next to each set-duty call (was j1939_calib_handler_f_param)
+0x0040c186,actuator_g_duty_command,word,Last duty 0-25600 = 0-100 % sent to the actuator g output (output channel assignment table entry 39; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_applyFuelDemandProtection / cm848_initFuelDemandLimitVariables next to each set-duty call (was governor_cruise_output_cached)
+0x0040c18e,actuator_e_duty_command,word,Last duty 0-25600 = 0-100 % sent to the actuator e output (output channel assignment table entry 43; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_processFuelControlProtectionFlags / cm848_initFuelControlStateVariables next to each set-duty call (was j1939_calib_handler_e_param)
+0x0040c1c4,wastegate_solenoid_period_microseconds,dword,Last PWM period sent to the wastegate solenoid (table entry 11; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in microseconds - written by cm848_applyWastegateSolenoidDuty and cm848_dispatchCalibrationBlockHandlers (1000000 / wastegate_solenoid_pwm_frequency_hz) (was j1939_calib_handler_period)
+0x0040c1fc,actuator_c_period_command,dword,Last PWM period sent to the actuator c output (table entry 25; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in the driver's units - written by cm848_processEngineRpmDiagnostic (protection_timeout_sentinel) / cm848_dispatchCalibrationFunctions (0xffffffff) (was j1939_calib_handler_c_period)
+0x0040c200,actuator_d_period_command,dword,Last PWM period sent to the actuator d output (table entry 26; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in the driver's units - written by cm848_processEngineRpmDiagnostic (protection_timeout_sentinel) / cm848_dispatchCalibrationFunctions (0xffffffff) (was j1939_calib_handler_d_period)
+0x0040c204,alternator_field_period_microseconds,dword,Last PWM period sent to the alternator field (table entry 27; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in microseconds - written by cm848_applyAlternatorFieldDuty (1000000 / alternator_field_pwm_frequency_hz) (was j1939_calib_handler_f_period)
+0x0040c234,actuator_g_period_command,dword,Last PWM period sent to the actuator g output (table entry 39; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in the driver's units - written by cm848_initFuelDemandLimitVariables (a calibration word passed as is) - entry 39 is actuator g not a (was j1939_calib_handler_a_period)
+0x0040c244,actuator_e_period_command,dword,Last PWM period sent to the actuator e output (table entry 43; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in the driver's units - written by cm848_initFuelControlStateVariables (a calibration word passed as is) (was j1939_calib_handler_e_period)
 0x0040c258,output_read_back_fault_bits,output_read_back_fault_bits_t,48-bit output read-back fault bitmap (3 words): bit N = the read-feedback slot of output channel assignment table entry N last reported a fault (1 / 2) - written only by cm848_updateOutputReadBackFaultBits; read by cm848_debounceOutputReadBackFaults and the outputs' retest code (was j1939_pgn_handler_b_flags + j1939_pgn_handler_f_flags)
 0x0040c25e,engine_rpm_override_value,word,
 0x0040c260,engine_rpm_override_enable,word,
@@ -5651,9 +5657,9 @@ address,name,type,comment
 0x0040b296,egr_load_speed_floor,word,load-based rate-limited governor speed floor (limit_source=3)
 0x0040b2a2,egr_rpm_proportional_speed_limit,word,RPM-proportional governor speed ceiling (limit_source=7)
 0x0040b29c,cold_start_mode_active_flag,word,cold-start mode active 0/1; gates load-speed-floor and integral reset
-0x0040b2a8,cold_start_fuel_demand_mode_code,word,cold-start fuel demand mode selector 0-11; 8=normal governor PID
+0x0040b2a8,cooling_fan_duty_source_code,word,Which branch set the cooling fan duty: 1-9 from fuel_coldStart_modeCode_select (8 = governor_fuel_demand_calc) / 0 at cooling_fan_duty_minimum / 10 at cooling_fan_duty_maximum / 11 during the hold after cold_start_mode_active_flag clears (was cold_start_fuel_demand_mode_code)
 0x0040b2bc,governor_fuel_demand_i_term,word,governor PID integral term (integrator/0x5000) clamped
-0x0040b2c0,cold_start_fuel_demand_output,word,cold-start fuel demand output -> injected demand 003fcdf6
+0x0040b2c0,cooling_fan_duty_request,word,Cooling fan duty request (duty 0-25600 = 0-100 %) chosen by fuel_coldStart_modeCode_select (its branches set cooling_fan_duty_source_code) - cm848_applyCoolingFanDuty clamps it into cooling_fan_duty (was cold_start_fuel_demand_output)
 0x0040b2c2,cold_start_injection_protection_flag,word,cranking injection protection active; gates fuel mode 9
 0x00408862,egr_governor_speed_base,word,EGR base governor speed setpoint (ROM-sourced working RAM)
 0x00408868,egr_governor_speed_ramp_target,word,EGR governor speed ramp upper target (ROM-sourced)
@@ -6014,10 +6020,10 @@ address,name,type,comment
 0x003fccf0,protection_speedTracking_ramp_step_counter,word,ramp step counter for protection speed tracking
 0x003fccf2,protection_speedTracking_speed_error_ramp,word,accumulated speed-error ramp value
 0x003fcd7a,j1939_tsc1_active_duration_counter,word,TSC1 active/timeout duration counter
-0x003fcdf6,cold_start_fuel_demand_final,word,clamped final cold-start fuel demand output
+0x003fcdf6,cooling_fan_duty,word,Cooling fan duty after the clamps / invert / post-mode hold / read-back retest - sent to the cooling fan's output channel by cm848_applyCoolingFanDuty (was cold_start_fuel_demand_final)
 0x003fdc96,cooling_fan_output_channel_cal,word,EEPROM 0x814 = output channel assignment table entry 1: output channel driver table record number (0 = no output / 1-50) for the cooling fan drive - identified by its read-back fault (output_read_back_fault_bits.cooling_fan -> fault 121 = P0480 cooling fan 1 control circuit); enabled by j1939_message_handler_initialize; fuel_coldStart_demandFinal_apply sets its duty (cold_start_fuel_demand_final - so that function's cold_start_fuel_* names are the fan control) and period (1000000 / DAT_00408886 us) - this calibration: 7 = record 7 (TPU-B channel 6 with MDASM13 read-back) - was actuator_output_channel_h_cal / j1939_pgn_handler_index_cold_start_fuel
 0x003fce12,cold_start_mode_entry_rpm_snapshot,word,RPM snapshot at cold-start mode entry
-0x003fce10,cold_start_fuel_hold_ramp_counter,word,timed hold-off counter after cold-start exit
+0x003fce10,cooling_fan_hold_pass_count,word,cm848_applyCoolingFanDuty: restarted when cold_start_mode_active_flag goes from 1 to 0; while below cooling_fan_hold_passes the fan runs at cooling_fan_hold_duty (source code 11) (was cold_start_fuel_hold_ramp_counter)
 0x003fce1a,cooling_fan_retest_fault_count,word,Cooling fan retest: passes the read-back fault bit has stayed set during the retest (restarts it at cooling_fan_retest_fault_confirm_passes) (was cold_start_emission_fault_pgn_cycle_counter)
 0x003fce1c,egr_load_floor_hold_timer,word,hold timer gating EGR load speed-floor ramp
 0x003fcdf8,egr_governor_integral_reset_flag,byte,EGR governor PI integral-reset pending
@@ -6210,8 +6216,8 @@ address,name,type,comment
 0x00408716,protection_mode_enable_debounce_threshold,word,read-only ROM debounce for protection-mode transitions
 0x00408720,governor_cruiseOverride_holdoff_reload,word,read-only ROM reload for cruise-override holdoff countdown
 0x0040876e,injection_timing_demand_step_rate,word,read-only ROM per-cycle slew step for injection timing demand
-0x00408820,cold_start_fuel_demand_max,word,read-only ROM ceiling for cold-start fuel demand
-0x00408822,cold_start_fuel_demand_min,word,read-only ROM floor for cold-start fuel demand
+0x00408820,cooling_fan_duty_maximum,word,Upper clamp of the cooling fan duty in cm848_applyCoolingFanDuty (source code 10 when it applies); fuel_coldStart_modeCode_select also requests it directly (code 5) - 25344 = 99 % in the RAM dump (was cold_start_fuel_demand_max)
+0x00408822,cooling_fan_duty_minimum,word,Lower clamp of the cooling fan duty in cm848_applyCoolingFanDuty (source code 0 when it applies); fuel_coldStart_modeCode_select also requests it directly (code 7); no code writes it - 0 in the RAM dump. Not cold_start_fuel_demand_min_floor (was cold_start_fuel_demand_min)
 0x00408860,egr_governor_speed_ceiling,word,read-only ROM hard ceiling on governor_speed_reference (EGR)
 0x0040886a,egr_governor_decel_speed_floor,word,read-only ROM min floor for governor_speed_decel_target
 0x00408896,egr_load_floor_temp_source_select,word,read-only ROM source select 0/1/2 for EGR load-floor temp
@@ -6373,8 +6379,8 @@ address,name,type,comment
 0x0040b578,park_neutral_switch_start_check_delay_count,word,Engine-running samples (cold_start_phase CSP_AT_GOVERNOR_SETPOINT) counted to 100 before the park/neutral start check is judged and 0x3fcef4 set; cleared by cm848_initParkNeutralSwitchMonitor (was fuel_temp_derate_cycles_at_setpoint)
 0x0040b596,protection_throttle_error_delta,dword,D-term of protection throttle error
 0x0040bbbc,governor_pressure_sensor_filtered,word,sensor_channel_filtered_output[102]: governor pressure sensor in 1/18.56 kPa - its table maps 0.45-4.45 V to 1856-14656 (100 kPa plus 0-100 psi gauge); 1856 at rest in the RAM dump; the source of governor_pressure (was protection_throttle_position_received)
-0x0040c14c,protection_throttle_hpcr_setpoint,word,adjusted throttle setpoint for HPCR dispatch
-0x0040c1c0,protection_throttle_hpcr_period,dword,1000000/period_cal HPCR rate for J1939 dispatch
+0x0040c14c,governor_pressure_solenoid_duty_command,word,Last duty 0-25600 = 0-100 % sent to the governor pressure solenoid (output channel assignment table entry 10; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_controlGovernorPressureSolenoid / protectionPhaseGroupA_Init / cm848_throttlePosition_clamp_update next to each set-duty call; cm848_sciCommand37Callback also sets it and cm848_controlGovernorPressureSolenoid compares it (was protection_throttle_hpcr_setpoint)
+0x0040c1c0,governor_pressure_solenoid_period_microseconds,dword,Last PWM period sent to the governor pressure solenoid (table entry 10; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in microseconds - written by cm848_controlGovernorPressureSolenoid and protectionPhaseGroupA_Init (1000000 / protection_throttle_hpcr_frequency) (was protection_throttle_hpcr_period)
 0x0040b5d5,sci_receive_error_count,byte,SCI link: receive error count (was fuel_demand_uart_error_count)
 0x0040b5d6,sci_byte_pending,byte,SCI link: byte pending flag (was fuel_demand_uart_byte_pending)
 0x0040b644,engine_at_governed_speed_flag,word,1 while governor_fuel_demand_mode is 11 and engine speed is within +/-400 rpm of the governor target (probably idle) - selects the at-governed-speed counters (was j1939_fuel_demand_at_target_rpm_flag)
@@ -6865,7 +6871,7 @@ address,name,type,comment
 0x00408824,egr_fuel_demand_stroke_high_threshold,word,ROM upper fuel-stroke bound for EGR high-stroke flag
 0x004088ba,cooling_fan_retest_off_passes,word,Cooling fan retest: passes at 0 % duty before the 100 % phase - 800 in the RAM dump (was cold_start_emission_fault_off_dwell_count)
 0x004088bc,cooling_fan_retest_fault_confirm_passes,word,Cooling fan retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts twice this - 6 in the RAM dump (was cold_start_emission_fault_pgn_cycle_count_max)
-0x0040c19c,cold_start_fuel_handler_period_us,dword,1e6/freq period for cold-start fuel J1939 handler
+0x0040c19c,cooling_fan_period_microseconds,dword,Last PWM period sent to the cooling fan (table entry 1; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in microseconds - written by cm848_applyCoolingFanDuty (1000000 / cooling_fan_pwm_frequency_hz) (was cold_start_fuel_handler_period_us)
 0x00408986,low_oil_pressure_check_minimum_rpm,word,The low-oil-pressure check runs only above this engine speed (4000 = 500 rpm) (was governor_temp_diag_rpm_enable_threshold)
 0x00408988,oil_pressure_switch_stuck_count_limit,word,Limit for oil_pressure_switch_stuck_count (was governor_temp_diag_zero_rpm_count_max)
 0x00408990,oil_pressure_switch_fault_running_count_limit,word,Limit for oil_pressure_switch_fault_running_count (was governor_temp_diag_cold_start_j1939_count_max)
