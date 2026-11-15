@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 20:24:14 MST 2026
+// Generated: Sat Nov 14 20:28:09 MST 2026
 
 
 //
@@ -7409,7 +7409,7 @@ void main_loop(void)
     cm848_periodicTaskGroup15_calibration4();
     cm848_periodicTaskGroup28_calibration10();
     hpcr_cbdCalculateCylinderTrims();
-    hpcr_processTimingCalibration();
+    cm848_runCylinderContributionTest();
     main_loop_scheduler_phase = 4;
     break;
   case 4:
@@ -40671,10 +40671,18 @@ void hpcr_cbdInitFilterState(void)
 
 
 //
-// Function: hpcr_processTimingCalibration @ 0x00043ac0
+// Function: cm848_runCylinderContributionTest @ 0x00043ac0
 //
 
-void hpcr_processTimingCalibration(void)
+/* Cylinder contribution test (DRB SCI FD-E1 to FD-EB): while cylinder_diag_active_flag is set it
+   runs only with the vehicle stopped, the coolant inside its window and sync valid
+   (cylinder_contribution_test_status 1, else 2); it swaps in test thresholds and accumulators, then
+   turns each firing-order slot's accumulator into 100 - accumulator x
+   cylinder_diag_scale_factor_cal x 4 / 471 % (0-200) - slots 1-6 = cylinders 1 / 5 / 3 / 6 / 2 / 4
+   - plus the cylinders 1-3 and 4-6 means; when the test ends it restores the saved values. Was
+   hpcr_processTimingCalibration */
+
+void cm848_runCylinderContributionTest(void)
 
 {
   byte bVar1;
@@ -40685,7 +40693,7 @@ void hpcr_processTimingCalibration(void)
   
   bVar1 = cylinder_diag_active_flag;
   if (cylinder_diag_active_flag == 0) {
-    engine_sync_confirmation_state = 0;
+    cylinder_contribution_test_status = 0;
   }
   else if (((((cylinder_sync_state == 0) || (cylinder_sync_valid_flag != 0)) || (vehicle_speed != 0)
             ) || (((short)sensor_readings_t_0040baf2.coolant_temp <=
@@ -40693,10 +40701,10 @@ void hpcr_processTimingCalibration(void)
                   ((short)engine_sync_coolant_upper_threshold_cal <=
                    (short)sensor_readings_t_0040baf2.coolant_temp)))) ||
           ((engine_sync_debounce_flag != 0 || (crank_sync_inhibit_flag != 0)))) {
-    engine_sync_confirmation_state = 2;
+    cylinder_contribution_test_status = 2;
   }
   else {
-    engine_sync_confirmation_state = 1;
+    cylinder_contribution_test_status = 1;
     crank_pattern_sync_flag = 0;
     if ((cylinder_diag_active_flag != 0) && (DAT_003fb596 == '\0')) {
       diagnostic_session_state = INACTIVE;
@@ -40723,18 +40731,18 @@ void hpcr_processTimingCalibration(void)
       else {
         sVar4 = 200;
       }
-      (&cylinder_diag_pct_1)[uVar5] = (byte)sVar4;
+      (&cylinder_1_contribution_percent)[uVar5] = (byte)sVar4;
       uVar5 = uVar5 + 1 & 0xff;
     } while (uVar5 < 6);
-    cylinder_diag_pct_avg_odd =
-         (byte)(((uint)cylinder_diag_pct_1 + (uint)cylinder_diag_pct_3 + (uint)cylinder_diag_pct_5)
-               / 3);
-    cylinder_diag_pct_avg_even =
-         (byte)(((uint)cylinder_diag_pct_2 + (uint)cylinder_diag_pct_4 + (uint)cylinder_diag_pct_6)
-               / 3);
+    cylinders_1_to_3_contribution_percent =
+         (byte)(((uint)cylinder_1_contribution_percent + (uint)cylinder_3_contribution_percent +
+                (uint)cylinder_2_contribution_percent) / 3);
+    cylinders_4_to_6_contribution_percent =
+         (byte)(((uint)cylinder_5_contribution_percent + (uint)cylinder_6_contribution_percent +
+                (uint)cylinder_4_contribution_percent) / 3);
   }
-  bVar2 = engine_sync_confirmation_state;
-  if ((engine_sync_confirmation_state != 1) && (DAT_003fb597 == '\x01')) {
+  bVar2 = cylinder_contribution_test_status;
+  if ((cylinder_contribution_test_status != 1) && (DAT_003fb597 == '\x01')) {
     cylinder_diag_low_threshold = cylinder_diag_low_threshold_snapshot;
     cylinder_diag_high_threshold = cylinder_diag_high_threshold_snapshot;
     uVar5 = 0;
@@ -54699,8 +54707,8 @@ void sensorChannelTypeB_configInit
   int iVar7;
   dword debounce_transition_state;
   uint uVar8;
-  ushort recovery_decrement;
   word scratch16;
+  ushort recovery_decrement;
   
   iVar7 = (int)channel_index >> 4;
   iVar2 = iVar7 * 2;
@@ -57662,7 +57670,7 @@ void cm848_outputs2_periodic(void)
       } while (uVar9 < 0x52);
       uVar9 = 0;
       do {
-        (&DAT_003fdf98)[uVar9] = 0;
+        (&percent_time_at_load_cal)[uVar9] = 0;
         uVar9 = uVar9 + 1 & 0xff;
       } while (uVar9 < 0xc);
       fuel_demand_cmd20_pending_flag = 0;
@@ -57750,7 +57758,7 @@ void cm848_outputs2_periodic(void)
           uVar10 = uVar10 + 1 & 0xff;
         } while (uVar10 <= uVar5);
       }
-      (&DAT_003fdf98)[uVar9] =
+      (&percent_time_at_load_cal)[uVar9] =
            (short)(CONCAT44((int)((ulonglong)uVar7 * 0x6400 >> 0x20),uVar7 * 0x6400) /
                   (ulonglong)fuel_demand_histogram_sample_count);
       uVar9 = uVar9 + 1 & 0xff;
@@ -74791,7 +74799,7 @@ void protectionVoltageTimeoutControl(void)
   }
   if ((protection_cylinder_diag_timeout_count != 0) &&
      ((protection_cylinder_diag_timeout_count = protection_cylinder_diag_timeout_count - 1,
-      protection_cylinder_diag_timeout_count == 0 || (engine_sync_confirmation_state == 2)))) {
+      protection_cylinder_diag_timeout_count == 0 || (cylinder_contribution_test_status == 2)))) {
     cylinder_diag_active_flag = 0;
     protection_cylinder_diag_timeout_count = 0;
   }

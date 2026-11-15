@@ -2093,6 +2093,7 @@ address,name,type,comment
 0x003fdda8,ignition_key_off_count,word,Count of 1->0 edges of the ignition key line (0x3060F6 bit 15 = discrete line 128 = switch 0 / low drops cold_start_phase to CSP_ENGINE_STANDBY and starts the boot power-down save); EEPROM 0x926 = 340; drives the 0xB0 DTC display (was cold_start_crank_counter)
 0x003fddaa,fuel_demand_cal_index,word,
 0x003fddac,protection_mode_80_enable_flag,word,
+0x003fdf98,percent_time_at_load_cal,word[10],EEPROM mirror (EEPROM 0xb16): DRB SCI read FD-84 to FD-97 '% OF TIME @ 0-10% ... 91-100% LOAD' via flash2 SCI table 253 - ten coarse load bins (25600 = 100 %) that cm848_outputs2_periodic sums from the 82 fine dword counters at 0x3fde4e; cleared with them
 0x003fdfb0,boost_pressure_correction_working,word,
 0x003fdfb2,fuel_enable_fault_status_flags,word,
 0x003fdfdc,engine_rpm_trigger_ready_flag,word,
@@ -5289,16 +5290,16 @@ address,name,type,comment
 0x0040b752,cylinder4_timing_offset,word,
 0x0040b754,cylinder5_timing_offset,word,
 0x0040b756,cylinder_timing_base_offset,word,
-0x0040b75c,cylinder_diag_pct_avg_odd,byte,
-0x0040b75d,cylinder_diag_pct_avg_even,byte,
-0x0040b75e,cylinder_diag_pct_1,byte,
-0x0040b75f,cylinder_diag_pct_2,byte,
-0x0040b760,cylinder_diag_pct_3,byte,
-0x0040b761,cylinder_diag_pct_4,byte,
-0x0040b762,cylinder_diag_pct_5,byte,
-0x0040b763,cylinder_diag_pct_6,byte,
+0x0040b75c,cylinders_1_to_3_contribution_percent,byte,DRB SCI read FD-E7 'Cyl. #1-3 Contribution' via flash2 SCI table 253: mean of firing-order slots 1 / 3 / 5 = cylinders 1 / 3 / 2 (was cylinder_diag_pct_avg_odd)
+0x0040b75d,cylinders_4_to_6_contribution_percent,byte,DRB SCI read FD-E8 'Cyl. #4-6 Contribution' via flash2 SCI table 253: mean of slots 2 / 4 / 6 = cylinders 5 / 6 / 4 (was cylinder_diag_pct_avg_even)
+0x0040b75e,cylinder_1_contribution_percent,byte,DRB SCI read FD-E1 'Cyl. #1 Contribution' via flash2 SCI table 253 - slot 1 of 6 (firing order 1-5-3-6-2-4: cm848_runCylinderContributionTest writes the six bytes as an array in firing-order slots) (was cylinder_diag_pct_1)
+0x0040b75f,cylinder_5_contribution_percent,byte,DRB SCI read FD-E2 'Cyl. #5 Contribution' via flash2 SCI table 253 - slot 2 of 6 in firing order (was cylinder_diag_pct_2)
+0x0040b760,cylinder_3_contribution_percent,byte,DRB SCI read FD-E3 'Cyl. #3 Contribution' via flash2 SCI table 253 - slot 3 of 6 in firing order (was cylinder_diag_pct_3)
+0x0040b761,cylinder_6_contribution_percent,byte,DRB SCI read FD-E4 'Cyl. #6 Contribution' via flash2 SCI table 253 - slot 4 of 6 in firing order (was cylinder_diag_pct_4)
+0x0040b762,cylinder_2_contribution_percent,byte,DRB SCI read FD-E5 'Cyl. #2 Contribution' via flash2 SCI table 253 - slot 5 of 6 in firing order (was cylinder_diag_pct_5)
+0x0040b763,cylinder_4_contribution_percent,byte,DRB SCI read FD-E6 'Cyl. #4 Contribution' via flash2 SCI table 253 - slot 6 of 6 in firing order (was cylinder_diag_pct_6)
 0x0040b764,cylinder_diag_active_flag,byte,
-0x0040b765,engine_sync_confirmation_state,byte,
+0x0040b765,cylinder_contribution_test_status,byte,DRB SCI read FD-EB 'Cylinder test status / CYLINDER CUTOFF' via flash2 SCI table 253: 0 not requested / 1 running / 2 requested but its conditions fail (moving / coolant out of range / sync) - set by cm848_runCylinderContributionTest (was engine_sync_confirmation_state)
 0x0040b766,engine_timing_reference,word,
 0x0040b768,cylinder_diag_output_array,byte,
 0x0040b778,crank_sync_inhibit_flag,word,

@@ -1331,7 +1331,7 @@ address,name
 0x00042cfc,hpcr_processLoadThrottle
 0x00042d78,hpcr_cbdCalculateCylinderTrims
 0x00043a5c,hpcr_cbdInitFilterState
-0x00043ac0,hpcr_processTimingCalibration
+0x00043ac0,cm848_runCylinderContributionTest,Cylinder contribution test (DRB SCI FD-E1 to FD-EB): while cylinder_diag_active_flag is set it runs only with the vehicle stopped, the coolant inside its window and sync valid (cylinder_contribution_test_status 1, else 2); it swaps in test thresholds and accumulators, then turns each firing-order slot's accumulator into 100 - accumulator x cylinder_diag_scale_factor_cal x 4 / 471 % (0-200) - slots 1-6 = cylinders 1 / 5 / 3 / 6 / 2 / 4 - plus the cylinders 1-3 and 4-6 means; when the test ends it restores the saved values. Was hpcr_processTimingCalibration
 0x00043d68,hpcr_clearTimingCalibrationData
 0x00043ddc,mpc555_resetEngineTimingAccumulators
 0x00044374,mpc555_updateSensorDiagnosticFlags
