@@ -1522,12 +1522,12 @@ extern word engine_sync_event_counter_b;  // 0x003fb6e4
 extern word engine_sync_timeout_count_b;  // 0x003fb6e6
 extern word engine_sync_event_counter;  // 0x003fb6e8
 extern word cam_timing_filter_init_state;  // 0x003fb6ea
-extern word cam_timing_reference_filter_init_state;  // 0x003fb6ec
-extern byte engine_sync_fault_code;  // 0x003fb6ee
-extern byte engine_sync_timeout_counter_a;  // 0x003fb6ef
-extern byte engine_sync_timeout_counter_b;  // 0x003fb6f0
-extern word cam_timing_reference_filter_accum;  // 0x003fb6f1
-extern void * cam_timing_reference_filter_state_pointer;  // 0x003fb6f3
+extern word fuel_pressure_sensor_table_cached_offset;  // 0x003fb6ec
+extern byte fuel_pressure_sensor_code;  // 0x003fb6ee
+extern byte fuel_pressure_sensor_fault_debounce_count;  // 0x003fb6ef
+extern byte fuel_pressure_sensor_recovery_debounce_count;  // 0x003fb6f0
+extern word fuel_pressure_feedback_filter_accumulator;  // 0x003fb6f1
+extern void * fuel_pressure_feedback_filter_pointer;  // 0x003fb6f3
 extern word engine_sync_timeout_counter_c;  // 0x003fb6f7
 extern dword cylinder_period_working;  // 0x003fb704
 extern word torque_limit_init_state_0;  // 0x003fb708
@@ -2083,7 +2083,7 @@ extern word cam_timing_correction_high_cal;  // 0x003ff6a2
 extern word cam_timing_correction_low_cal;  // 0x003ff6a4
 extern word cam_timing_correction_high_b_cal;  // 0x003ff6a6
 extern word cam_timing_correction_low_b_cal;  // 0x003ff6a8
-extern word cam_timing_error_threshold;  // 0x003ff6aa
+extern word fuel_pressure_error_threshold;  // 0x003ff6aa
 extern word governor_reference_speed_lead_offset;  // 0x003ff6ac
 extern word governor_reference_speed_lead_manifold_pressure_gain;  // 0x003ff6ae
 extern word engine_rpm_delta_offset_cal;  // 0x003ff6b0
@@ -3537,15 +3537,15 @@ extern word fuel_metering_retest_off_passes;  // 0x00409550
 extern word fuel_metering_retest_fault_confirm_passes;  // 0x00409552
 extern byte engine_sync_speed_correction_axis_cal;  // 0x00409554
 extern byte engine_sync_speed_correction_values_cal;  // 0x00409576
-extern word engine_timing_diag_upper_threshold_cal;  // 0x00409598
-extern word engine_timing_diag_lower_threshold_cal;  // 0x0040959a
-extern word engine_sync_timeout_b_threshold_cal;  // 0x0040959c
-extern word engine_sync_timeout_a_threshold_cal;  // 0x0040959e
-extern byte cam_timing_reference_filter_state_cal;  // 0x004095a2
-extern byte cam_sync_position_override_enable_cal;  // 0x004095a4
-extern word cam_sync_position_override_cal;  // 0x004095a5
-extern byte cam_timing_source_select_cal;  // 0x004095a7
-extern word cam_sync_position_default_cal;  // 0x004095a8
+extern word fuel_pressure_sensor_volts_high_limit;  // 0x00409598
+extern word fuel_pressure_sensor_volts_low_limit;  // 0x0040959a
+extern word fuel_pressure_sensor_recovery_debounce_limit;  // 0x0040959c
+extern word fuel_pressure_sensor_fault_debounce_limit;  // 0x0040959e
+extern byte fuel_pressure_feedback_filter_constants;  // 0x004095a2
+extern byte fuel_pressure_sensor_override_enable;  // 0x004095a4
+extern word fuel_pressure_sensor_override_value;  // 0x004095a5
+extern byte fuel_pressure_feedback_source_select;  // 0x004095a7
+extern word fuel_pressure_sensor_fault_default;  // 0x004095a8
 extern word engine_pos_fault_eval_threshold_cal;  // 0x00409a8a
 extern word prot_fault_status_a_threshold_cal;  // 0x00409a8c
 extern word prot_fault_status_b_threshold_cal;  // 0x00409a8e
@@ -4981,8 +4981,8 @@ extern byte injection_timing_tooth_phase;  // 0x0040b86f
 extern byte injection_timing_tooth_b;  // 0x0040b875
 extern byte injection_timing_tooth_b_phase;  // 0x0040b876
 extern byte cam_sync_position_high_byte;  // 0x0040b878
-extern word cam_timing_source_1;  // 0x0040b879
-extern word cam_timing_source_0;  // 0x0040b87b
+extern word fuel_pressure_at_other_angle_events;  // 0x0040b879
+extern word fuel_pressure_at_injection_scheduling;  // 0x0040b87b
 extern engine_sync_state_t engine_sync_state_t_0040b87f;  // 0x0040b87f
 extern word fuel_pressure_governor_proportional_term;  // 0x0040b886
 extern word fuel_pressure_governor_integral_term;  // 0x0040b888
@@ -4990,7 +4990,7 @@ extern word fuel_pressure_governor_derivative_term;  // 0x0040b88a
 extern word fuel_pressure_governor_accelerator_feed_forward;  // 0x0040b88c
 extern word fuel_metering_feedback_error;  // 0x0040b88e
 extern byte engine_sync_cold_start_flag;  // 0x0040b890
-extern word cam_timing_reference_b_prev;  // 0x0040b891
+extern word fuel_pressure_feedback_previous;  // 0x0040b891
 extern word cam_speed_rate;  // 0x0040b893
 extern word engine_sync_rpm_filtered;  // 0x0040b895
 extern word engine_sync_speed_raw;  // 0x0040b897
@@ -5006,8 +5006,8 @@ extern word fuel_metering_retest_pass_count;  // 0x0040b8aa
 extern byte fuel_metering_read_back_retest_active_flag;  // 0x0040b8ac
 extern word fuel_pressure_sensor_volts;  // 0x0040b8ae
 extern word fuel_pressure_sensor;  // 0x0040b8b0
-extern word cam_timing_reference_b;  // 0x0040b8b2
-extern byte cold_start_sync_status;  // 0x0040b8b4
+extern word fuel_pressure_feedback_filtered;  // 0x0040b8b2
+extern byte fuel_pressure_sensor_confirmed_code;  // 0x0040b8b4
 extern word fuel_pressure_setpoint;  // 0x0040b8b6
 extern word engine_timing_arb_byte_8_15;  // 0x0040b8ca
 extern byte engine_position_diag_flags;  // 0x0040b8cc
@@ -5066,7 +5066,7 @@ extern word cruise_speed_current_a;  // 0x0040bbb2
 extern word cruise_speed_current_b;  // 0x0040bbb4
 extern word transmission_temperature_sensor_filtered;  // 0x0040bbbe
 extern word sensor_channel_diag_override;  // 0x0040bc80
-extern word cam_sync_position_calculated;  // 0x0040bcc4
+extern word fuel_pressure_sensor_raw_substitute;  // 0x0040bcc4
 extern word cruise_switch_adc_override;  // 0x0040bcde
 extern word cam_sync_position_fault_input;  // 0x0040bcfe
 extern word torque_limit_setpoint_working;  // 0x0040bd4e
@@ -5920,7 +5920,7 @@ extern word cam_timing_demand_rate_limit;  // 0x00409a84
 extern word cam_timing_demand_working;  // 0x0040b8bc
 extern byte cam_sync_reference_check_a_enable;  // 0x00409aa1
 extern byte cam_sync_reference_check_b_enable;  // 0x00409aa2
-extern word cam_timing_reference_b_min;  // 0x00409aa4
+extern word fuel_pressure_feedback_minimum;  // 0x00409aa4
 extern word cam_timing_coolant_temp_min;  // 0x00409aa6
 extern word cam_timing_coolant_temp_max;  // 0x00409aa8
 extern word cam_timing_governor_speed_window_halfwidth;  // 0x00409ad2
@@ -6548,7 +6548,7 @@ extern word cam_timing_correction_convergence_threshold;  // 0x00409ab4
 extern word cam_timing_fault_activation_threshold_count;  // 0x00409abe
 extern word cam_sync_reference_check_timing_min;  // 0x00409ac0
 extern word cam_sync_reference_check_enable_count_threshold;  // 0x00409ac2
-extern word cam_timing_reference_b_max;  // 0x00409ac4
+extern word fuel_pressure_feedback_maximum;  // 0x00409ac4
 extern word torque_limit_timing_sync_fault_target;  // 0x00409e68
 extern word torque_limit_demand_output;  // 0x0040b93a
 extern word torque_limit_timing_boost_load_factor_by_load;  // 0x0040b958
@@ -6707,3 +6707,5 @@ extern word water_in_fuel_sensor_filtered;  // 0x0040bb0e
 extern word cruise_switch_button_code;  // 0x0040bb4e
 extern word fuel_level_sensor_filtered;  // 0x0040bb78
 extern j1939_input_signal_descriptor_t j1939_input_signal_descriptor_table;  // 0x0053a278
+extern word fuel_pressure_sensor_volts_axis;  // 0x0005fbc2
+extern word fuel_pressure_sensor_pressure_values;  // 0x0005fbce

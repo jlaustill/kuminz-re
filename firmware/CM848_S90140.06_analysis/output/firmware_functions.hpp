@@ -1010,11 +1010,11 @@ void cm848_checkProtectionFaultConditions(void);  // @ 0x0004a114
 void cm848_initEngineDiagnosticData(void);  // @ 0x0004a258
 void cm848_setFuelMeteringPwm(void);  // @ 0x0004a2f8
 void mpc555_initTpuTimingInterrupts(void);  // @ 0x0004a37c
-void cm848_processEnginePositionData(void);  // @ 0x0004a490
-void cm848_updateEnginePositionErrors(void);  // @ 0x0004a748
-void cm848_filterEnginePositionDelta(void);  // @ 0x0004a7ac
-void cm848_initEnginePositionState(void);  // @ 0x0004a858
-void cm848_updateEnginePosition(void);  // @ 0x0004a8cc
+void cm848_processFuelPressureSensor(void);  // @ 0x0004a490
+void cm848_countFuelPressureSensorCodeChanges(void);  // @ 0x0004a748
+void cm848_filterFuelPressureFeedback(void);  // @ 0x0004a7ac
+void cm848_initFuelPressureSensor(void);  // @ 0x0004a858
+void cm848_sampleFuelPressureSensor(void);  // @ 0x0004a8cc
 void cm848_updateProtectionBitFlags(uint param_1,int param_2);  // @ 0x0004a968
 void cm848_protectionFaultEvaluator (uint param_1,ushort *param_2,int param_3,int param_4,int param_5);  // @ 0x0004aaac
 void mpc555_evaluateProtectionSyncFaults(void);  // @ 0x0004ac3c

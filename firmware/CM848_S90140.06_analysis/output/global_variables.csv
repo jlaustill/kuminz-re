@@ -1613,7 +1613,7 @@ address,name,type,comment
 0x003fb664,engine_sync_init_state_o,word,
 0x003fb666,engine_sync_init_state_p,word,
 0x003fb668,engine_sync_init_state_q,word,
-0x003fb66a,fuel_pressure_governor_integrator,q16_fixed_point_t,Integral term accumulator of the fuel pressure governor PID (error = fuel_pressure_setpoint - cam_timing_reference_b; Q16.16: cm848_integrateWithZoneGain adds gain x error x 10000 >> 16 and clamps integer_part to +/-4095 = fuel_pressure_governor_integral_term). cm848_calculateFuelMeteringCommand presets it when the mode changes to 2 / 4 (bumpless transfer) or the rpm phase is acquired, and puts back the previous value when fuel_pressure_governor_demand is outside its limits (anti-windup). Was engine_sync_protection_output_a (word) + engine_sync_protection_init_a (0x3fb66c)
+0x003fb66a,fuel_pressure_governor_integrator,q16_fixed_point_t,Integral term accumulator of the fuel pressure governor PID (error = fuel_pressure_setpoint - fuel_pressure_feedback_filtered; Q16.16: cm848_integrateWithZoneGain adds gain x error x 10000 >> 16 and clamps integer_part to +/-4095 = fuel_pressure_governor_integral_term). cm848_calculateFuelMeteringCommand presets it when the mode changes to 2 / 4 (bumpless transfer) or the rpm phase is acquired, and puts back the previous value when fuel_pressure_governor_demand is outside its limits (anti-windup). Was engine_sync_protection_output_a (word) + engine_sync_protection_init_a (0x3fb66c)
 0x003fb66e,fuel_metering_feedback_trim_integrator,q16_fixed_point_t,Integral term accumulator of the fuel metering feedback trim (Q16.16, error = fuel_metering_feedback_error; integer_part +/-4095 = trim in 1/4096 of the base command). Preset from a table when the filtered target and engine speed are 0, or when engine_sync_confirmed_flag is 1 in engine_sync_state_b 5; limited so that proportional + integral stays inside engine_sync_protection_upper / lower_limit_cal, and set to 0 while engine_sync_speed_fault_flags is non-zero. Shared the name engine_sync_protection_output_a with 0x3fb66a; was also engine_sync_protection_init_b (0x3fb670)
 0x003fb672,fuel_pressure_governor_derivative_filter,q16_fixed_point_t,Low-pass state of the fuel pressure governor's derivative term (Q16.16, cm848_calculateFilteredDerivative on fuel_pressure_setpoint - filtered fuel_pressure_sensor). Was engine_sync_protection_init_c + engine_sync_protection_init_d (0x3fb674)
 0x003fb676,fuel_metering_base_command_derivative_filter,q16_fixed_point_t,Low-pass state of the derivative (lead) term on the fuel metering base command (Q16.16, cm848_calculateFilteredDerivative on the scaled feedback target). cm848_resetEngineSyncState does not clear it: its fourth store pair (0x49098 / 0x4909c) repeats 0x3fb66e. Was engine_sync_protection_init_d+2
@@ -1662,12 +1662,12 @@ address,name,type,comment
 0x003fb6e6,engine_sync_timeout_count_b,word,
 0x003fb6e8,engine_sync_event_counter,word,
 0x003fb6ea,cam_timing_filter_init_state,word,
-0x003fb6ec,cam_timing_reference_filter_init_state,word,
-0x003fb6ee,engine_sync_fault_code,byte,
-0x003fb6ef,engine_sync_timeout_counter_a,byte,
-0x003fb6f0,engine_sync_timeout_counter_b,byte,
-0x003fb6f1,cam_timing_reference_filter_accum,word,
-0x003fb6f3,cam_timing_reference_filter_state_pointer,pointer,
+0x003fb6ec,fuel_pressure_sensor_table_cached_offset,word,cached_axis_offset of the volts -> pressure lookup in cm848_processFuelPressureSensor (init 2). Was cam_timing_reference_filter_init_state
+0x003fb6ee,fuel_pressure_sensor_code,byte,Code of the latest rail pressure sensor sample: 0 in range / 4 volts high (P0193) / 8 volts low (P0192). Was engine_sync_fault_code
+0x003fb6ef,fuel_pressure_sensor_fault_debounce_count,byte,Samples with a code the confirmed code does not have yet (cm848_countFuelPressureSensorCodeChanges). Was engine_sync_timeout_counter_a
+0x003fb6f0,fuel_pressure_sensor_recovery_debounce_count,byte,Good samples while a code is still confirmed (cm848_countFuelPressureSensorCodeChanges). Was engine_sync_timeout_counter_b
+0x003fb6f1,fuel_pressure_feedback_filter_accumulator,word,Accumulator of the governor's pressure feedback filter (cleared by cm848_initFuelPressureSensor). Was cam_timing_reference_filter_accum
+0x003fb6f3,fuel_pressure_feedback_filter_pointer,pointer,Filter state passed to cm848_signedFirstOrderFilter by cm848_filterFuelPressureFeedback (points at fuel_pressure_feedback_filter_constants). Was cam_timing_reference_filter_state_pointer
 0x003fb6f7,engine_sync_timeout_counter_c,word,
 0x003fb704,cylinder_period_working,dword,
 0x003fb708,torque_limit_init_state_0,word,
@@ -2329,7 +2329,7 @@ address,name,type,comment
 0x003ff6a4,cam_timing_correction_low_cal,word,
 0x003ff6a6,cam_timing_correction_high_b_cal,word,
 0x003ff6a8,cam_timing_correction_low_b_cal,word,
-0x003ff6aa,cam_timing_error_threshold,word,
+0x003ff6aa,fuel_pressure_error_threshold,word,cm848_runOperatingModeSpeedGovernor compares fuel_pressure_setpoint - fuel_pressure_feedback_filtered with it (signed: 0xfecd = -307). Was cam_timing_error_threshold
 0x003ff6ac,governor_reference_speed_lead_offset,word,Signed offset (0xd440 = -11200 = -1400 rpm) of the mode-7 governor reference ceiling: reference <= current_rpm + this + (governor_reference_speed_lead_manifold_pressure_gain x slot-1 manifold pressure) >> 7 with a 16-bit wrap - ROM-initialized (ROM 0x652c6) (was rpm_oil_pressure_offset_cal)
 0x003ff6ae,governor_reference_speed_lead_manifold_pressure_gain,word,Gain on absolute intake manifold pressure (slot 1) in the mode-7 governor reference ceiling: (this x pressure) >> 7 in 1/8 rpm - 960 = 17.4 rpm per kPa so with the offset the reference may lead by about 194 rpm at 91.6 kPa and 2080 rpm at 200 kPa - ROM-initialized (was rpm_oil_pressure_gain_cal)
 0x003ff6b0,engine_rpm_delta_offset_cal,word,
@@ -3787,15 +3787,15 @@ address,name,type,comment
 0x00409552,fuel_metering_retest_fault_confirm_passes,word,Fuel metering retest: a read-back fault lasting this many passes restarts the retest; the 4095 phase lasts twice this - 40 in the RAM dump (was engine_sync_retry_count_max_cal)
 0x00409554,engine_sync_speed_correction_axis_cal,byte,
 0x00409576,engine_sync_speed_correction_values_cal,byte,
-0x00409598,engine_timing_diag_upper_threshold_cal,word,
-0x0040959a,engine_timing_diag_lower_threshold_cal,word,
-0x0040959c,engine_sync_timeout_b_threshold_cal,word,
-0x0040959e,engine_sync_timeout_a_threshold_cal,word,
-0x004095a2,cam_timing_reference_filter_state_cal,byte,
-0x004095a4,cam_sync_position_override_enable_cal,byte,
-0x004095a5,cam_sync_position_override_cal,word,
-0x004095a7,cam_timing_source_select_cal,byte,
-0x004095a8,cam_sync_position_default_cal,word,
+0x00409598,fuel_pressure_sensor_volts_high_limit,word,fuel_pressure_sensor_volts above this (3929 = 4.80 V) is code 4 -> fault 304 = P0193 (rail pressure sensor circuit high). Was engine_timing_diag_upper_threshold_cal
+0x0040959a,fuel_pressure_sensor_volts_low_limit,word,fuel_pressure_sensor_volts below this (164 = 0.20 V) is code 8 -> fault 305 = P0192 (rail pressure sensor circuit low). Was engine_timing_diag_lower_threshold_cal
+0x0040959c,fuel_pressure_sensor_recovery_debounce_limit,word,Good samples (40) before a confirmed rail pressure sensor code clears. Was engine_sync_timeout_b_threshold_cal
+0x0040959e,fuel_pressure_sensor_fault_debounce_limit,word,Faulty samples (40) before a rail pressure sensor code is confirmed. Was engine_sync_timeout_a_threshold_cal
+0x004095a2,fuel_pressure_feedback_filter_constants,byte,Filter constants of the governor's pressure feedback filter (fuel_pressure_feedback_filter_pointer points here). Was cam_timing_reference_filter_state_cal
+0x004095a4,fuel_pressure_sensor_override_enable,byte,Non-zero: cm848_processFuelPressureSensor skips the sensor and uses fuel_pressure_sensor_override_value (0 here). Not EEPROM-backed. Was cam_sync_position_override_enable_cal
+0x004095a5,fuel_pressure_sensor_override_value,word,Rail pressure used while fuel_pressure_sensor_override_enable is set. Was cam_sync_position_override_cal
+0x004095a7,fuel_pressure_feedback_source_select,byte,Pressure the governor feedback filters while the engine run / crank state is 4: 0 = fuel_pressure_at_injection_scheduling / 1 = fuel_pressure_at_other_angle_events / 2 = fuel_pressure_sensor (2 here; other values freeze the feedback). Was cam_timing_source_select_cal
+0x004095a8,fuel_pressure_sensor_fault_default,word,Rail pressure substituted while a P0193 / P0192 code is confirmed (3890 counts - above the table's full scale). Was cam_sync_position_default_cal
 0x00409a8a,engine_pos_fault_eval_threshold_cal,word,
 0x00409a8c,prot_fault_status_a_threshold_cal,word,
 0x00409a8e,prot_fault_status_b_threshold_cal,word,
@@ -5373,19 +5373,19 @@ address,name,type,comment
 0x0040b875,injection_timing_tooth_b,byte,second TPU-A ch6 injection-timing tooth (same wrap logic as injection_timing_tooth) computed in FUN_00529284 + cm848_protection_condition_eval_set1; paired with phase byte DAT_0040b876 into TPU param 0x304162
 0x0040b876,injection_timing_tooth_b_phase,byte,sub-tooth phase/low-byte paired with injection_timing_tooth_b into the TPU-A ch6 param at 0x304162 (CONCAT11)
 0x0040b878,cam_sync_position_high_byte,byte,
-0x0040b879,cam_timing_source_1,word,
-0x0040b87b,cam_timing_source_0,word,
+0x0040b879,fuel_pressure_at_other_angle_events,word,fuel_pressure_sensor sampled in injection-angle sequence states 1 and 4 by engine_injectionAngle_tpuChannel6EventHandler. Was cam_timing_source_1
+0x0040b87b,fuel_pressure_at_injection_scheduling,word,fuel_pressure_sensor sampled in injection-angle sequence state 2 (the event that schedules the injection TPU events) by engine_injectionAngle_tpuChannel6EventHandler. Was cam_timing_source_0
 0x0040b87f,engine_sync_state_t_0040b87f,engine_sync_state_t,
 0x0040b880,engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,,
 0x0040b882,engine_sync_state_t_0040b87f.fuel_metering_command,,
 0x0040b884,engine_sync_state_t_0040b87f.reserved_05,,
-0x0040b886,fuel_pressure_governor_proportional_term,word,Proportional term of the fuel pressure governor PID (+/-4095; cm848_applyPiecewiseLinearGain on fuel_pressure_setpoint - cam_timing_reference_b). Was cam_sync_protection_recovery_output
+0x0040b886,fuel_pressure_governor_proportional_term,word,Proportional term of the fuel pressure governor PID (+/-4095; cm848_applyPiecewiseLinearGain on fuel_pressure_setpoint - fuel_pressure_feedback_filtered). Was cam_sync_protection_recovery_output
 0x0040b888,fuel_pressure_governor_integral_term,word,Integral term of the fuel pressure governor PID (+/-4095; integer_part of fuel_pressure_governor_integrator, or a clamped table preset when engine_sync_rpm_phase_acquired_flag is 1 in engine_sync_state_a 5). Was engine_sync_protection_output_b
 0x0040b88a,fuel_pressure_governor_derivative_term,word,Derivative term of the fuel pressure governor PID (+/-4095; cm848_calculateFilteredDerivative on fuel_pressure_setpoint - filtered fuel_pressure_sensor). Was cam_sync_protection_state_output
 0x0040b88c,fuel_pressure_governor_accelerator_feed_forward,word,Feed-forward term of the fuel pressure governor: cam_sync_fuel_scale_gain_cal x the change in fuel_demand_control_t.calculated (accelerator position) >> 10, clamped to cam_sync_fuel_scale_lower / upper_limit_cal and filtered. Was cam_sync_fuel_scale_filter
 0x0040b88e,fuel_metering_feedback_error,word,Error of the fuel metering feedback trim: the filtered feedback target (table of the clamped fuel_pressure_governor_demand) - the filtered fuel_metering_feedback_input. Was engine_sync_speed_error
 0x0040b890,engine_sync_cold_start_flag,byte,
-0x0040b891,cam_timing_reference_b_prev,word,
+0x0040b891,fuel_pressure_feedback_previous,word,fuel_pressure_feedback_filtered as of the previous governor pass (the pressure error monitors use fuel_pressure_setpoint - this). Was cam_timing_reference_b_prev
 0x0040b893,cam_speed_rate,word,
 0x0040b895,engine_sync_rpm_filtered,word,
 0x0040b897,engine_sync_speed_raw,word,
@@ -5401,9 +5401,9 @@ address,name,type,comment
 0x0040b8ac,fuel_metering_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the fuel metering read-back fault (output_read_back_fault_bits.fuel_metering) outlasts its debounce and P0251 (fault 333) is set; cm848_calculateFuelMeteringCommand then runs the retest on the 0-4095 command (0 / 4095) - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was engine_sync_protection_active_flag)
 0x0040b8ae,fuel_pressure_sensor_volts,word,DRB SCI read FD-29-2A 'FUEL PRESSURE VOLTS' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-29-2A to this word's two bytes; 436 in the RAM dump; hpcr_checkRailPressureSensorBeforeStart reads it (was engine_timing_diagnostic_word)
 0x0040b8b0,fuel_pressure_sensor,word,DRB SCI read FD-23-24 'FUEL PRESSURE SENSOR' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-23-24 to this word's two bytes (kPa / psi in the DRB database); 30 in the engine-off RAM dump; cm848_calculateFuelMeteringCommand filters it into its error term and the injection-angle scheduler reads it (was cam_sync_position)
-0x0040b8b2,cam_timing_reference_b,word,
-0x0040b8b4,cold_start_sync_status,byte,
-0x0040b8b6,fuel_pressure_setpoint,word,DRB SCI read FD-27-28 'FUEL PRESS SETPOINT' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-27-28 to this word's two bytes; 1000 in the RAM dump; cm848_calculateFuelMeteringCommand's error is this minus cam_timing_reference_b (0x40b8b2 - which reads the same as fuel_pressure_sensor in the dump); cm848_sensor_channel_state_load writes it most (was cam_timing_measured)
+0x0040b8b2,fuel_pressure_feedback_filtered,word,Filtered rail pressure the fuel pressure governor regulates on (pressure counts (DRB scale 7.078 per count; the DRB labels it kPa, but psi fits the sensor's 0-1800 bar: 4.5 V = 3689 counts = 26,111 psi)): cm848_filterFuelPressureFeedback filters the sample fuel_pressure_feedback_source_select picks. Was cam_timing_reference_b
+0x0040b8b4,fuel_pressure_sensor_confirmed_code,byte,Debounced rail pressure sensor code (0 ok / 4 = fault 304 P0193 / 8 = fault 305 P0192): sets the fault bits and makes fuel_pressure_sensor = fuel_pressure_sensor_fault_default. Was cold_start_sync_status
+0x0040b8b6,fuel_pressure_setpoint,word,DRB SCI read FD-27-28 'FUEL PRESS SETPOINT' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-27-28 to this word's two bytes; 1000 in the RAM dump; cm848_calculateFuelMeteringCommand's error is this minus fuel_pressure_feedback_filtered (0x40b8b2 - which reads the same as fuel_pressure_sensor in the dump); cm848_sensor_channel_state_load writes it most (was cam_timing_measured)
 0x0040b8ca,engine_timing_arb_byte_8_15,word,
 0x0040b8cc,engine_position_diag_flags,byte,
 0x0040b8cd,protection_fault_status_a,byte,
@@ -5464,7 +5464,7 @@ address,name,type,comment
 0x0040bbb4,cruise_speed_current_b,word,
 0x0040bbbe,transmission_temperature_sensor_filtered,word,sensor_channel_filtered_output[103]: transmission fluid temperature in 1/64 deg F (2629 = 41 deg F in the cold RAM dump) - the source of transmission_temperature_in_use; per the 2004 wiring this ECM reads the 48RE fluid temperature on C2 pin 29 (was protection_load_input_alt)
 0x0040bc80,sensor_channel_diag_override,word,Per-sensor-channel diagnostic override value array; used when (diag_feature_flags & channel_bit) is set; asm is lhzx (word load); 25 refs in sensor processing
-0x0040bcc4,cam_sync_position_calculated,word,
+0x0040bcc4,fuel_pressure_sensor_raw_substitute,word,Raw rail pressure input used instead of QADC index slot 34 when bit 2 of the word at 0x3fdb7c is set (no writer found). Was cam_sync_position_calculated
 0x0040bcde,cruise_switch_adc_override,word,Substitute cruise-switch ADC value (chan 0x2f/47) used by governor_cruise_engage_check when diag_cam_sync_config_flags & 0x8000 (diagnostic input-override bit) is set instead of the live QADC read (asm lhz @0x512e8c); working RAM so no _cal
 0x0040bcfe,cam_sync_position_fault_input,word,
 0x0040bd4e,torque_limit_setpoint_working,word,
@@ -6362,7 +6362,7 @@ address,name,type,comment
 0x0040b8bc,cam_timing_demand_working,word,rate-limited cam timing demand (pre-transition)
 0x00409aa1,cam_sync_reference_check_a_enable,byte,ROM; enable for cam-sync reference check path A
 0x00409aa2,cam_sync_reference_check_b_enable,byte,ROM; enable for cam-sync reference check path B
-0x00409aa4,cam_timing_reference_b_min,word,ROM; lower bound on cam_timing_reference_b
+0x00409aa4,fuel_pressure_feedback_minimum,word,Lower bound on fuel_pressure_feedback_filtered (820) used by the fuel pressure monitors (engine_camTiming_* / engine_camSync_referenceCheck_update). ROM. Was cam_timing_reference_b_min
 0x00409aa6,cam_timing_coolant_temp_min,word,ROM; coolant temp lower bound for cam timing
 0x00409aa8,cam_timing_coolant_temp_max,word,ROM; coolant temp upper bound for cam timing
 0x00409ad2,cam_timing_governor_speed_window_halfwidth,word,ROM; RPM half-window around governor speed limit
@@ -6834,7 +6834,7 @@ address,name,type,comment
 0x004065c0,engine_load_ramp_rate_upper,word,ROM positive rate limit for engine_load_input_value
 0x00409aac,cam_timing_speed_window_debounce_max,word,ROM cap for cam-timing speed-window debounce
 0x00409ad0,cam_timing_speed_window_reference_count_threshold,word,ROM reference-count threshold for speed window
-0x0040b8e0,cam_timing_refB_sync_latch,word,latched cam_timing_reference_b at sync-B event
+0x0040b8e0,cam_timing_refB_sync_latch,word,latched fuel_pressure_feedback_filtered at sync-B event
 0x0040b8e8,cam_timing_position_correction_scaled,word,gain-scaled clamped cam position correction
 0x0040b8ee,cam_sync_refA_required_count,word,table-derived required reference count (ref-A check)
 0x0040b8f0,cam_timing_correction_step,word,correction step subtracted from base
@@ -6990,7 +6990,7 @@ address,name,type,comment
 0x00409abe,cam_timing_fault_activation_threshold_count,word,ROM fault-activation counter cap (cam timing)
 0x00409ac0,cam_sync_reference_check_timing_min,word,ROM min engine timing ref to enable cam-sync check
 0x00409ac2,cam_sync_reference_check_enable_count_threshold,word,ROM enable-count threshold for cam-sync reference check
-0x00409ac4,cam_timing_reference_b_max,word,ROM upper bound on cam_timing_reference_b for check
+0x00409ac4,fuel_pressure_feedback_maximum,word,Upper bound on fuel_pressure_feedback_filtered used by the fuel pressure monitors (pairs with fuel_pressure_feedback_minimum). ROM. Was cam_timing_reference_b_max
 0x00409e68,torque_limit_timing_sync_fault_target,word,ROM timing target when engine sync fault active
 0x0040b93a,torque_limit_demand_output,word,torque-limit-bounded timing demand output
 0x0040b958,torque_limit_timing_boost_load_factor_by_load,word,load-indexed factor for boost-load timing correction
@@ -7149,3 +7149,5 @@ address,name,type,comment
 0x0040bb4e,cruise_switch_button_code,word,sensor_channel_filtered_output[47]: decoded cruise switch button code (0-5 CRUISE_SWITCH_REQUEST) from the resistor-ladder lookup cruise_switch_button_code_table_y - debounced by protection_control_state_check_2 - 5 (IDLE) in the dump (was DAT_0040bb4e) (Medium confidence)
 0x0040bb78,fuel_level_sensor_filtered,word,sensor_channel_filtered_output[68]: EMA-filtered fuel level in 1/2.55 percent; copied into all stored fuel level bytes when engine_feature_enable_flags_cal bit 5 is clear; RAM dump 252 (was DAT_0040bb78)
 0x0053a278,j1939_input_signal_descriptor_table,j1939_input_signal_descriptor_t,17 J1939 2-bit switch inputs supervised by cm848_evaluateJ1939InputSignalFault (value pointer / timeout slot / fault bit index)
+0x0005fbc2,fuel_pressure_sensor_volts_axis,word,ROM x axis of the rail pressure sensor table (byte length 10 then 409 / 1228 / 2047 / 2866 / 3685 = 0.5 / 1.5 / 2.5 / 3.5 / 4.5 V in fuel_pressure_sensor_volts counts)
+0x0005fbce,fuel_pressure_sensor_pressure_values,word,ROM pressure per axis point (byte length 10 then 0 / 922 / 1844 / 2766 / 3689 pressure counts (DRB scale 7.078 per count; the DRB labels it kPa, but psi fits the sensor's 0-1800 bar: 4.5 V = 3689 counts = 26,111 psi))
