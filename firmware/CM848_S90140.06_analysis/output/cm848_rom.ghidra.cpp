@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 20:28:09 MST 2026
+// Generated: Sat Nov 14 20:32:12 MST 2026
 
 
 //
@@ -6831,7 +6831,7 @@ void cm848_periodicTaskSet_canTx(void)
    periodicTaskSet_diagnostics2). Runs every scheduler sweep (mainLoopIteration phases
    1/9/0x11/0x19/0x21); samples sensorChannel1 (ADC 0x14) + cruise switch (ADC 0x2f/47) +
    sensorChannel69 (ADC 0x45). NOTE: the configInit-family wrappers it calls run PERIODICALLY; their
-   update-family siblings run once at boot in the hpcr_exceptionHandler reset path */
+   update-family siblings run once at boot in the cm848_applicationMain reset path */
 
 void cm848_periodicTaskSet_sensors2(void)
 
@@ -8156,7 +8156,7 @@ void cm848_sensorChannel10_intakeManifoldTemperatureInit(void)
 
 /* Boot-time update twin of cm848_sensorChannel10_intakeManifoldTemperatureInit
    (updateSensorChannelWithConfig with the same slot 9 intake manifold temperature arguments) called
-   once from hpcr_exceptionHandler (was cm848_sensorChannel10_oilTempProcess) |
+   once from cm848_applicationMain (was cm848_sensorChannel10_oilTempProcess) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
 void cm848_sensorChannel10_intakeManifoldTemperatureProcess(void)
@@ -31602,7 +31602,7 @@ void cm848_sensorChannel69_init(void)
 
 /* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High -
    boot-init update sibling of cm848_sensorChannel69_init (ADC 0x45/69) via
-   updateSensorChannelWithConfig; called once from the hpcr_exceptionHandler reset path. Was
+   updateSensorChannelWithConfig; called once from the cm848_applicationMain reset path. Was
    misnamed updateSensorLookupTable */
 
 void cm848_sensorChannel69_process(void)
@@ -34524,7 +34524,7 @@ undefined4 cm848_handlePciLinkEvent(void)
 //
 
 /* Power-up fill of every PCI RX / TX payload buffer (cm848_initJ1939CommunicationSystem from
-   hpcr_exceptionHandler): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED
+   cm848_applicationMain): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED
    from ROM / TX[20]-TX[24] F0 xx = vehicle_vin_string / RX[0] source 0xF0 (was
    hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
@@ -51467,20 +51467,28 @@ void mpc555_systemStartupInitialization(word param_1)
   TBLw = 0;
   TBUw = 0;
   exception_reset_status = param_1;
-  hpcr_exceptionHandler(in_BAR | 7);
+  cm848_applicationMain(in_BAR | 7);
   return;
 }
 
 
 
 //
-// Function: hpcr_exceptionHandler @ 0x000544c4
+// Function: cm848_applicationMain @ 0x000544c4
 //
 
 /* WARNING: This function may have set the stack pointer */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Application main - mpc555_systemStartupInitialization calls it after a reset and it never
+   returns: saves the exception SPRs / DAR / DSISR and the USIU reset status (exception_*), copies
+   the ROM code to RAM, inits the QADC / QSPI / EEPROM driver (loading the mirror) / supervisor chip
+   and sets logical output 27, does the power-down bookkeeping (completed / incomplete counts -
+   P2509 / P0606), runs about 250 init functions, enables interrupts and runs the background loop
+   (cm848_initProtectionModule) until hardware_operation_complete_flag, then the post-run fault
+   housekeeping and cm848_runPowerDownSequence. Was hpcr_exceptionHandler (it is the reset path, not
+   an exception handler) */
 
-void hpcr_exceptionHandler(void)
+void cm848_applicationMain(void)
 
 {
   undefined4 uVar1;
@@ -51496,7 +51504,7 @@ void hpcr_exceptionHandler(void)
   QSMCM_IDSPI_1 = 0;
   qsmcm_sccr1.SCC1R1 = 0;
   mpc555_initTpuConfiguration();
-  hpcr_exceptionHandler();
+  cm848_clearWorkingRam();
   exception_reset_status = USIU_SCCR.RSR;
   USIU_SCCR.RSR = 0xffff;
   exception_sprg0 = in_SPRG0;
@@ -51899,7 +51907,7 @@ void hpcr_exceptionHandler(void)
    cm848_restartOnKeyOnDuringPowerDown): four init calls / disables external interrupts (mtspr EID)
    and resets the stack pointer to 0x3f9ff8 / re-inits and runs the main run loop
    (cm848_initProtectionModule until hardware_operation_complete_flag) / the same post-run fault
-   housekeeping as hpcr_exceptionHandler / cm848_runPowerDownSequence - so it never returns. Was
+   housekeeping as cm848_applicationMain / cm848_runPowerDownSequence - so it never returns. Was
    cm848_engineStartCompletionB */
 
 void cm848_restartApplicationWithoutReset(void)
@@ -68236,7 +68244,7 @@ void cm848_calibBlock1_warmupFlag_reset(void)
 // Function: cm848_initFuelLevelFilter @ 0x00516a20
 //
 
-/* Boot-time fuel level init (called once from hpcr_exceptionHandler): resets the power-up check /
+/* Boot-time fuel level init (called once from cm848_applicationMain): resets the power-up check /
    high-voltage debounce / standstill timer / fault substitution and seeds the fast / slow /
    reference filters (x 256) from the EEPROM-mirror bytes [0] / [2] / [1] (was
    eeprom_calibration_load_initialize) | review-function-readability reviewed 2026-11-13 -
@@ -69065,7 +69073,7 @@ LAB_00518250:
 // Function: cm848_resetIntakeAirHeaterStartTemperatureCapture @ 0x00518324
 //
 
-/* Reset path (hpcr_exceptionHandler): clears intake_air_heater_start_temperature_captured_flag so
+/* Reset path (cm848_applicationMain): clears intake_air_heater_start_temperature_captured_flag so
    the next cm848_updateIntakeAirHeaterAmbientTemperature captures a new start temperature (was
    protection_oilTemp_source_resetInitFlag) | review-function-readability reviewed 2026-11-13 -
    Readability Medium Accuracy Confidence High */
@@ -86849,7 +86857,7 @@ void cm848_initAdaptiveControl(void)
 //
 
 /* Boot init: arms the water-in-fuel distance monitor (sets 0x3fd278 to 1) when switch 0
-   (switch_input_state_bits[0] bit 0) is set; runs once from the hpcr_exceptionHandler boot list
+   (switch_input_state_bits[0] bit 0) is set; runs once from the cm848_applicationMain boot list
    (was cm848_initOilPressure) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
 
@@ -87300,10 +87308,14 @@ void cm848_initSensorCalibration(void)
 
 
 //
-// Function: hpcr_exceptionHandler @ 0x00538974
+// Function: cm848_clearWorkingRam @ 0x00538974
 //
 
-void hpcr_exceptionHandler(void)
+/* Zeroes working RAM from 0x3fa000 (scheduler_task_stat_value_working) up to 0x41428e (two words
+   per step, 256 bytes per outer pass) - the first call in cm848_applicationMain after the TPU
+   set-up. Was hpcr_exceptionHandler (a second function with the same name as the reset entry) */
+
+void cm848_clearWorkingRam(void)
 
 {
   word *pwVar1;
@@ -87893,7 +87905,7 @@ void cm848_initCanHardware(void)
    cm848_runPowerDownSequence): counts the start in completed_power_down_count_cal / writes the new
    power_cycle_sequence_number_cal (= completed + incomplete counts) / waits up to 1000 x 2500
    timebase ticks for that EEPROM write / then cm848_restartApplicationWithoutReset - the same
-   bookkeeping hpcr_exceptionHandler does at a reset after a completed power-down. Was
+   bookkeeping cm848_applicationMain does at a reset after a completed power-down. Was
    engine_protection_timer_sync */
 
 void cm848_restartOnKeyOnDuringPowerDown(void)
@@ -88061,7 +88073,7 @@ void cm848_saveEepromForPowerDown(void)
 // Function: cm848_runPowerDownSequence @ 0x00539d18
 //
 
-/* Power-down sequence - runs after the main run loop ends (hpcr_exceptionHandler and
+/* Power-down sequence - runs after the main run loop ends (cm848_applicationMain and
    cm848_restartApplicationWithoutReset call it last): marks the session active and cal_write_mode
    0xee / waits for the EEPROM write queue / cm848_saveEepromForPowerDown / stores two more EEPROM
    dwords / writes power_down_left_ecm_powered_flag_cal = 0 / clears logical output 27 (0x1b) and
