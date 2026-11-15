@@ -254,9 +254,6 @@ torque_limit_arb_t,0x0040a2f6,fuel_minimum,word,2,Minimum fuel limit from arbitr
 # Total size: 10 bytes (0x0040af5a-0x0040af63)
 governor_pid_t,0x0040af5a,proportional_gain,word,2,PID proportional gain value,,verified
 governor_pid_t,0x0040af5a,integral_term,word,2,PID integral accumulator,,verified
-governor_pid_t,0x0040af5a,reserved_04,word,2,Gap,,needs_review
-governor_pid_t,0x0040af5a,reserved_06,word,2,Gap,,needs_review
-governor_pid_t,0x0040af5a,reserved_08,word,2,Gap,,needs_review
 # Protection Lockout State - thermal/load/rpm lockout flags
 # Used by protection system to prevent rapid cycling
 # Total size: 12 bytes (0x0040b11c-0x0040b127)
@@ -1566,3 +1563,9 @@ j1939_input_signal_descriptor_t,0x0053a2fa,,,,descriptor 13 - marker,,verified
 j1939_input_signal_descriptor_t,0x0053a304,,,,descriptor 14 - marker,,verified
 j1939_input_signal_descriptor_t,0x0053a30e,,,,descriptor 15 - marker,,verified
 j1939_input_signal_descriptor_t,0x0053a318,,,,descriptor 16 - marker,,verified
+output_read_back_fault_bits_t,0x0040c258,cooling_fan,bitfield:1@1,2,"Bit 1 of word 0 = output channel assignment table entry 1: cooling fan read-back fault (P0480 / fault 121)",,verified
+output_read_back_fault_bits_t,0x0040c258,governor_pressure_solenoid,bitfield:1@10,0,"Bit 10 of word 0 = entry 10: governor pressure solenoid read-back fault (P0748 / fault 351)",,verified
+output_read_back_fault_bits_t,0x0040c258,wastegate_solenoid,bitfield:1@11,0,"Bit 11 of word 0 = entry 11: wastegate solenoid read-back fault (P0243 / fault 403)",,verified
+output_read_back_fault_bits_t,0x0040c258,fuel_metering,bitfield:1@4,2,"Bit 4 of word 1 = entry 20: fuel metering read-back fault (P0251 / fault 333)",,verified
+output_read_back_fault_bits_t,0x0040c258,alternator_field,bitfield:1@11,0,"Bit 11 of word 1 = entry 27: alternator field read-back fault (P0622 / fault 396)",,verified
+output_read_back_fault_bits_t,0x0040c258,entries_32_to_47,word,2,"Word 2 = entries 32-47 (no read-back output assigned in this calibration)",,verified

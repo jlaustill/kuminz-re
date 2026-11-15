@@ -111,3 +111,9 @@ function_address,function_name,old_name,new_name,type,comment
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar1,period_register_value,word,Value written to PERR
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar2,period_divisor,uint,16 with prescaler byte 0xff / 2048 with 0x80
 0x00054e10,mpc555_miosCheckChannelFeedback,wVar1,feedback_result,word,0 agree / 1 reads high or toggling / 2 reads low or toggling
+# cm848_updateOutputReadBackFaultBits @ 0x0053a110 - read-back verdict of each output channel assignment table entry into output_read_back_fault_bits
+0x0053a110,cm848_updateOutputReadBackFaultBits,sVar1,read_back_verdict,word,The record's read-feedback result: 0 agree / 1 or 2 fault / 0xffff no verdict (clrlwi + cmplwi 65535 = an unsigned 16-bit compare)
+0x0053a110,cm848_updateOutputReadBackFaultBits,bVar2,check_this_pass,byte,0 on the passes where entry 1 (cooling fan) is skipped by cooling_fan_read_back_check_divider - 1 otherwise
+0x0053a110,cm848_updateOutputReadBackFaultBits,iVar3,fault_word_index,undefined4,output_index / 16 = the word of output_read_back_fault_bits that holds the entry's bit
+0x0053a110,cm848_updateOutputReadBackFaultBits,pwVar4,output_channel_entry,word *,Walks the output channel assignment table (starts one word before it - lhzu pre-increments)
+0x0053a110,cm848_updateOutputReadBackFaultBits,uVar5,output_index,undefined4,Table entry number 0-47 = the output function = the bit number in output_read_back_fault_bits

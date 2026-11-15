@@ -129,6 +129,11 @@ address,name,type,comment
 0x0005c556,j1939_fuel_table_xaxis_cal,word,
 0x0005c582,j1939_fuel_table_ystart_cal,word,
 0x0005c58e,j1939_fuel_table_yend_cal,word,
+0x0005c660,alternator_field_read_back_fault_debounce_limit,word,ROM constant 100: cm848_debounceOutputReadBackFaults sets P0622 (fault 396) once the alternator field read-back fault bit has stayed set past this many passes
+0x0005c662,cooling_fan_read_back_fault_debounce_limit,word,ROM constant 100: cm848_debounceOutputReadBackFaults sets P0480 (fault 121) once the cooling fan read-back fault bit has stayed set past this many passes
+0x0005c664,fuel_metering_read_back_fault_debounce_limit,word,ROM constant 10: cm848_debounceOutputReadBackFaults sets P0251 (fault 333) once the fuel metering read-back fault bit has stayed set past this many passes
+0x0005c666,governor_pressure_solenoid_read_back_fault_debounce_limit,word,ROM constant 100: cm848_debounceOutputReadBackFaults sets P0748 (fault 351) once the governor pressure solenoid read-back fault bit has stayed set past this many passes
+0x0005c668,wastegate_solenoid_read_back_fault_debounce_limit,word,ROM constant 100: cm848_debounceOutputReadBackFaults sets P0243 (fault 403) once the wastegate solenoid read-back fault bit has stayed set past this many passes
 0x0005c66a,accelerator_pedal_press_window_limit,word,ROM constant 50 = 5 s of 100 ms passes (e2m Throttle_Cycle_Time_Limit - 0.1 s units - time limit for throttle cycles to turn the test switch on): the third accelerator press must come within it after the first (was DAT_0005c66a)
 0x0005c66c,accelerator_pedal_press_threshold,word,ROM constant 280: accelerator position (fuel_demand_control_t.calculated - 400 = 100 percent) that arms a press = 70 percent (e2m Throttle_Diagnostic_Threshold_Upper_Limit) (was DAT_0005c66c)
 0x0005c66e,accelerator_pedal_release_threshold,word,ROM constant 120: accelerator position at or below which an armed press is counted = 30 percent (e2m Throttle_Diagnostic_Threshold_Lower_Limit) (was DAT_0005c66e)
@@ -1432,7 +1437,7 @@ address,name,type,comment
 0x003fb3a4,battery_voltage_integral_rate_working,dword,
 0x003fb3a8,battery_voltage_ema_rate_working,word,
 0x003fb3aa,battery_voltage_delta_snapshot,word,
-0x003fb3ac,battery_monitor_timer,word,
+0x003fb3ac,alternator_field_retest_fault_count,word,Alternator field retest: passes the read-back fault bit has stayed set during the retest (restarts it at alternator_field_retest_fault_confirm_passes) (was battery_monitor_timer)
 0x003fb3ae,governor_target_rpm_snapshot,word,
 0x003fb3b0,cruise_filter_state_a_ptr,pointer,
 0x003fb3b4,cruise_filter_accumulator_working,dword,
@@ -1512,7 +1517,7 @@ address,name,type,comment
 0x003fb516,transmission_output_speed_sensor_filter_accumulator,dword,16.16 EMA accumulator for transmission_output_speed_sensor_filtered - param 1 of its exponentialMovingAverage call (0x3fb512 + 4) - zeroed at init (was engine_load_filter_state_init)
 0x003fb51a,governor_cycle_counter,word,
 0x003fb51c,governor_fuel_demand_prev_snapshot,dword,
-0x003fb520,governor_fuel_mode_counter,word,
+0x003fb520,wastegate_solenoid_retest_fault_count,word,Wastegate solenoid retest: passes the read-back fault bit has stayed set during the retest (restarts it at wastegate_solenoid_retest_fault_confirm_passes) (was governor_fuel_mode_counter)
 0x003fb522,fuel_demand_corrected_working,word,
 0x003fb524,governor_fuel_demand_mode_prev,word,
 0x003fb526,governor_pid_integral_working,dword,
@@ -1638,8 +1643,7 @@ address,name,type,comment
 0x003fb6c3,engine_sync_phase_counter,word,
 0x003fb6c6,engine_sync_confirmed_flag,byte,
 0x003fb6c7,engine_sync_rpm_raw_working,word,
-0x003fb6c9,engine_sync_retry_counter,dword,
-0x003fb6cc,engine_sync_retry_counter+3,,
+0x003fb6c9,fuel_metering_retest_fault_count,word,Fuel metering retest: passes the read-back fault bit has stayed set during the retest (restarts it at fuel_metering_retest_fault_confirm_passes) - lhz / sth at this odd address; was a dword engine_sync_retry_counter that also covered the lookup arguments at 0x3fb6cc
 0x003fb6ce,cam_sync_filter_init_state_0,word,
 0x003fb6d0,cam_sync_filter_init_state_1,word,
 0x003fb6d2,cam_sync_filter_init_state_2,word,
@@ -2041,13 +2045,13 @@ address,name,type,comment
 0x003fdc8e,sensor_diag_clear_flag,word,
 0x003fdc90,protection_timer_b,word,
 0x003fdc92,protection_timer_a,word,
-0x003fdcaa,actuator_output_channel_b_cal,word,EEPROM 0x828: output channel driver table record number (0 = no output / 1-50) for an actuator enabled by cm848_dispatchCalibrationBlockHandlers; period 1000000 / fuel_demand_cycle_period_cal us and duty from cm848_processFuelRateConfig - identity open - this calibration: 8 = record 8 (TPU-B channel 7 with MDASM12 read-back) - was j1939_pgn_handler_index_b
-0x003fdcbc,actuator_output_channel_a_cal,word,EEPROM 0x83a: output channel driver table record number (0 = no output / 1-50) for an actuator whose enable slot is called only by mpc555_initTpuTimingInterrupts (name-only scan) - identity open - this calibration: 12 = record 12 (TPU-B channel 11 with MDASM29 read-back) - was j1939_pgn_handler_index_a
-0x003fdcc6,actuator_output_channel_c_cal,word,EEPROM 0x844: output channel driver table record number (0 = no output / 1-50) for an actuator driven together with channel d by cm848_dispatchCalibrationFunctions (enable / period / duty) and cm848_processEngineRpmDiagnostic (period / duty) - identity open - this calibration: 0 = no output - was j1939_pgn_handler_index_c
-0x003fdcc8,actuator_output_channel_d_cal,word,EEPROM 0x846: output channel driver table record number (0 = no output / 1-50) for the partner of channel c (same two consumers) - identity open - this calibration: 16 = record 16 (cm848_tpuBChannel15* - TPU-B channel 15) - was j1939_pgn_handler_index_d
-0x003fdcca,alternator_field_output_channel_cal,word,EEPROM 0x848: output channel driver table record number (0 = no output / 1-50) for the alternator field - the ECM's C1-7 K20 Generator Field Control pin (docs/ecu_pinout.md) - driven by the charging-system voltage regulator: enabled by cm848_initProtectionFilterValues; cm848_applyProtectionOutputDemand sends its duty - the target comes from the PI loop on battery_voltage_delta in cm848_calculateProtectionOutputDemand (integral clamped to 0-25600 = 0-100 % duty) and the 4-state regulator machine (work/tasks/029) (zeroed on a battery-voltage fault; a periodic 0 % / 100 % sampling window) and period 1000000 / battery_voltage_scan_rate_cal us - this calibration: 11 = record 11 (TPU-B channel 10 with MDASM14 read-back) - was j1939_pgn_handler_index_f
-0x003fdce2,actuator_output_channel_g_cal,word,EEPROM 0x860: output channel driver table record number (0 = no output / 1-50) for an actuator enabled and driven by cm848_initFuelDemandLimitVariables; duty from cm848_applyFuelDemandProtection - identity open - this calibration: 0 = no output - was j1939_pgn_handler_index
-0x003fdcea,actuator_output_channel_e_cal,word,EEPROM 0x868: output channel driver table record number (0 = no output / 1-50) for an actuator enabled and driven by cm848_initFuelControlStateVariables; duty from cm848_processFuelControlProtectionFlags - identity open - this calibration: 0 = no output - was j1939_pgn_handler_index_e
+0x003fdcaa,wastegate_solenoid_output_channel_cal,word,EEPROM 0x828 = output channel assignment table entry 11: output channel driver table record number (0 = no output / 1-50) for the turbocharger wastegate solenoid - identified by its read-back fault (output_read_back_fault_bits.wastegate_solenoid -> fault 403 = P0243 wastegate solenoid A); enabled by cm848_dispatchCalibrationBlockHandlers; period 1000000 / fuel_demand_cycle_period_cal us and duty from cm848_processFuelRateConfig (so that function's fuel_demand_* names are the wastegate control) - this calibration: 8 = record 8 (TPU-B channel 7 with MDASM12 read-back) - was actuator_output_channel_b_cal / j1939_pgn_handler_index_b
+0x003fdcbc,fuel_metering_output_channel_cal,word,EEPROM 0x83a = output channel assignment table entry 20: output channel driver table record number (0 = no output / 1-50) for the injection pump fuel metering control - identified by its read-back fault (output_read_back_fault_bits.fuel_metering -> fault 333 = P0251 injection pump fuel metering control A; on this common-rail engine most likely the CP3 fuel control actuator); its enable slot is called only by mpc555_initTpuTimingInterrupts (name-only scan); commanded 0-4095 at 0x40b882 (engine_sync_state_t_0040b87f.speed_raw) set by cm848_calculateEngineTimingOffset - this calibration: 12 = record 12 (TPU-B channel 11 with MDASM29 read-back) - was actuator_output_channel_a_cal / j1939_pgn_handler_index_a
+0x003fdcc6,actuator_output_channel_c_cal,word,EEPROM 0x844 = output channel assignment table entry 25: output channel driver table record number (0 = no output / 1-50) for an actuator driven together with channel d by cm848_dispatchCalibrationFunctions (enable / period / duty) and cm848_processEngineRpmDiagnostic (period / duty) - identity open - this calibration: 0 = no output - was j1939_pgn_handler_index_c
+0x003fdcc8,actuator_output_channel_d_cal,word,EEPROM 0x846 = output channel assignment table entry 26: output channel driver table record number (0 = no output / 1-50) for the partner of channel c (same two consumers) - identity open - this calibration: 16 = record 16 (cm848_tpuBChannel15* - TPU-B channel 15) - was j1939_pgn_handler_index_d
+0x003fdcca,alternator_field_output_channel_cal,word,EEPROM 0x848 = output channel assignment table entry 27 (read-back fault output_read_back_fault_bits.alternator_field -> fault 396 = P0622): output channel driver table record number (0 = no output / 1-50) for the alternator field - the ECM's C1-7 K20 Generator Field Control pin (docs/ecu_pinout.md) - driven by the charging-system voltage regulator: enabled by cm848_initProtectionFilterValues; cm848_applyProtectionOutputDemand sends its duty - the target comes from the PI loop on battery_voltage_delta in cm848_calculateProtectionOutputDemand (integral clamped to 0-25600 = 0-100 % duty) and the 4-state regulator machine (work/tasks/029) (zeroed on a battery-voltage fault; after a P0622 read-back fault a 0 % / 100 % retest - alternator_field_read_back_retest_active_flag) and period 1000000 / battery_voltage_scan_rate_cal us - this calibration: 11 = record 11 (TPU-B channel 10 with MDASM14 read-back) - was j1939_pgn_handler_index_f
+0x003fdce2,actuator_output_channel_g_cal,word,EEPROM 0x860 = output channel assignment table entry 39: output channel driver table record number (0 = no output / 1-50) for an actuator enabled and driven by cm848_initFuelDemandLimitVariables; duty from cm848_applyFuelDemandProtection - identity open - this calibration: 0 = no output - was j1939_pgn_handler_index
+0x003fdcea,actuator_output_channel_e_cal,word,EEPROM 0x868 = output channel assignment table entry 43: output channel driver table record number (0 = no output / 1-50) for an actuator enabled and driven by cm848_initFuelControlStateVariables; duty from cm848_processFuelControlProtectionFlags - identity open - this calibration: 0 = no output - was j1939_pgn_handler_index_e
 0x003fdcf6,governor_speed_limit_output,word,
 0x003fdcf7,governor_speed_limit_output+1,,
 0x003fdcf8,torque_limit_fuel_reference_init,word,
@@ -3266,8 +3270,8 @@ address,name,type,comment
 0x004087f6,protection_fuel_output_mode_b_override_cal,word,
 0x004087f8,protection_voltage_cold_start_flag_cal,word,
 0x004087fa,protection_fuel_output_idle_cal,word,
-0x004087fc,cruise_voltage_sample_threshold_cal,word,
-0x004087fe,battery_monitor_sample_rate_cal,word,
+0x004087fc,alternator_field_retest_off_passes,word,Alternator field retest: passes at 0 % duty before the 100 % phase - 4000 in the RAM dump (was cruise_voltage_sample_threshold_cal)
+0x004087fe,alternator_field_retest_fault_confirm_passes,word,Alternator field retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts twice this - 50 in the RAM dump (was battery_monitor_sample_rate_cal)
 0x00408800,cruise_speed_setpoint_default_cal,word,
 0x00408802,fuel_quantity_active_addend_cal,word,
 0x00408804,cruise_speed_upper_limit_cal,word,
@@ -3389,8 +3393,8 @@ address,name,type,comment
 0x00408dce,fuel_demand_phase_input_fixed_cal,word,
 0x00408dd0,fuel_demand_phase_upper_limit_cal,word,
 0x00408dd2,fuel_demand_phase_lower_limit_cal,word,
-0x00408dd4,fuel_demand_phase_threshold_cal,word,
-0x00408dd6,fuel_demand_mode_count_cal,word,
+0x00408dd4,wastegate_solenoid_retest_off_passes,word,Wastegate solenoid retest: passes at 0 % duty before the 100 % phase - 1500 in the RAM dump (was fuel_demand_phase_threshold_cal)
+0x00408dd6,wastegate_solenoid_retest_fault_confirm_passes,word,Wastegate solenoid retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts twice this - 25 in the RAM dump (was fuel_demand_mode_count_cal)
 0x00408de2,fuel_demand_override_min_cal,word,
 0x00408de6,governor_fuel_demand_mode_b_offset_cal,word,
 0x00408de8,cruise_speed_min_threshold,word,read-only lower threshold on cruise setpoint; below it cruise override resets (lhz 2x in governorOverrideSpeedControl)
@@ -3703,8 +3707,8 @@ address,name,type,comment
 0x0040954d,cold_start_crank_sync_mask_cal,byte,
 0x0040954e,cold_start_j1939_mask_cal,byte,
 0x0040954f,cold_start_ecu_flag_mask_cal,byte,
-0x00409550,engine_sync_cycle_count_threshold_cal,word,
-0x00409552,engine_sync_retry_count_max_cal,word,
+0x00409550,fuel_metering_retest_off_passes,word,Fuel metering retest: passes at command 0 before the 4095 phase - 2000 in the RAM dump (was engine_sync_cycle_count_threshold_cal)
+0x00409552,fuel_metering_retest_fault_confirm_passes,word,Fuel metering retest: a read-back fault lasting this many passes restarts the retest; the 4095 phase lasts twice this - 40 in the RAM dump (was engine_sync_retry_count_max_cal)
 0x00409554,engine_sync_speed_correction_axis_cal,byte,
 0x00409576,engine_sync_speed_correction_values_cal,byte,
 0x00409598,engine_timing_diag_upper_threshold_cal,word,
@@ -4620,9 +4624,9 @@ address,name,type,comment
 0x0040af58,governor_idle_transition_flag,word,
 0x0040af5a,governor_pid_t_0040af5a,governor_pid_t,
 0x0040af5c,governor_pid_t_0040af5a.integral_term,,
-0x0040af5e,governor_pid_t_0040af5a.reserved_04,,
-0x0040af60,governor_pid_t_0040af5a.reserved_06,,
-0x0040af62,governor_pid_t_0040af5a.reserved_08,,
+0x0040af5e,alternator_field_read_back_fault_debounce_count,word,Passes the alternator field read-back fault bit has stayed set (cm848_debounceOutputReadBackFaults - P0622 above alternator_field_read_back_fault_debounce_limit) (was governor_pid_t_0040af5a.reserved_04)
+0x0040af60,cooling_fan_read_back_fault_debounce_count,word,Passes the cooling fan read-back fault bit has stayed set (cm848_debounceOutputReadBackFaults - P0480 above cooling_fan_read_back_fault_debounce_limit) (was governor_pid_t_0040af5a.reserved_06)
+0x0040af62,fuel_metering_read_back_fault_debounce_count,word,Passes the fuel metering read-back fault bit has stayed set (cm848_debounceOutputReadBackFaults - P0251 above fuel_metering_read_back_fault_debounce_limit) (was governor_pid_t_0040af5a.reserved_08)
 0x0040af66,prior_boot_faulted,byte,
 0x0040af7c,fuel_timing_blend_factor,word,
 0x0040af7e,governor_speed_error_low,word,
@@ -4864,8 +4868,8 @@ address,name,type,comment
 0x0040b280,battery_voltage_p_term,dword,
 0x0040b284,protection_voltage_active_flag,word,
 0x0040b286,protection_mode_b_override_flag,byte,
-0x0040b287,battery_voltage_sampling_active_flag,byte,
-0x0040b288,cruise_voltage_sample_count,word,
+0x0040b287,alternator_field_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the alternator field read-back fault (output_read_back_fault_bits.alternator_field) outlasts its debounce and P0622 (fault 396) is set; cm848_applyProtectionOutputDemand then runs the retest - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was battery_voltage_sampling_active_flag)
+0x0040b288,alternator_field_retest_pass_count,word,Alternator field retest pass counter (cm848_applyProtectionOutputDemand): 0 % duty below alternator_field_retest_off_passes / 100 % for the next 2 x alternator_field_retest_fault_confirm_passes / then 0 and the retest flag clears (was cruise_voltage_sample_count)
 0x0040b28a,governor_cruise_speed_adjusted,word,
 0x0040b28c,governor_speed_error_filtered_b,word,
 0x0040b28e,governor_speed_error_b_filtered,word,
@@ -5136,8 +5140,8 @@ address,name,type,comment
 0x0040b660,governor_cycle_active_flag,word,
 0x0040b662,fuel_step_counter,word,
 0x0040b664,fuel_demand_p_term,dword,
-0x0040b668,governor_load_cycle_active_flag,word,
-0x0040b66a,fuel_demand_phase_counter,word,
+0x0040b668,wastegate_solenoid_read_back_retest_active_flag,word,Set by cm848_debounceOutputReadBackFaults when the wastegate solenoid read-back fault (output_read_back_fault_bits.wastegate_solenoid) outlasts its debounce and P0243 (fault 403) is set; cm848_processFuelRateConfig (the wastegate duty output) then runs the retest - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was governor_load_cycle_active_flag)
+0x0040b66a,wastegate_solenoid_retest_pass_count,word,Wastegate solenoid retest pass counter (cm848_processFuelRateConfig): 0 % duty below wastegate_solenoid_retest_off_passes / 100 % for the next 2 x wastegate_solenoid_retest_fault_confirm_passes / then 0 and the retest flag clears (was fuel_demand_phase_counter)
 0x0040b672,governor_fuel_demand_low_threshold,word,
 0x0040b674,cruise_fuel_demand_setpoint,word,
 0x0040b676,governor_pid_fuel_output,word,
@@ -5311,8 +5315,8 @@ address,name,type,comment
 0x0040b8a2,cam_sync_reference_prev,word,
 0x0040b8a4,cam_sync_reference,word,
 0x0040b8a8,engine_sync_fault_active_flag,byte,
-0x0040b8aa,engine_sync_cycle_counter,word,
-0x0040b8ac,engine_sync_protection_active_flag,byte,
+0x0040b8aa,fuel_metering_retest_pass_count,word,Fuel metering retest pass counter (cm848_calculateEngineTimingOffset): command 0 below fuel_metering_retest_off_passes / 4095 for the next 2 x fuel_metering_retest_fault_confirm_passes / then 0 and the retest flag clears (was engine_sync_cycle_counter)
+0x0040b8ac,fuel_metering_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the fuel metering read-back fault (output_read_back_fault_bits.fuel_metering) outlasts its debounce and P0251 (fault 333) is set; cm848_calculateEngineTimingOffset then runs the retest on the 0-4095 command (0 / 4095) - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was engine_sync_protection_active_flag)
 0x0040b8ae,engine_timing_diagnostic_word,word,
 0x0040b8b0,cam_sync_position,word,
 0x0040b8b2,cam_timing_reference_b,word,
@@ -5554,8 +5558,7 @@ address,name,type,comment
 0x0040c204,j1939_calib_handler_f_period,dword,
 0x0040c234,j1939_calib_handler_a_period,dword,
 0x0040c244,j1939_calib_handler_e_period,dword,
-0x0040c258,j1939_pgn_handler_b_flags,word,
-0x0040c25a,j1939_pgn_handler_f_flags,word,
+0x0040c258,output_read_back_fault_bits,output_read_back_fault_bits_t,48-bit output read-back fault bitmap (3 words): bit N = the read-feedback slot of output channel assignment table entry N last reported a fault (1 / 2) - written only by cm848_updateOutputReadBackFaultBits; read by cm848_debounceOutputReadBackFaults and the outputs' retest code (was j1939_pgn_handler_b_flags + j1939_pgn_handler_f_flags)
 0x0040c25e,engine_rpm_override_value,word,
 0x0040c260,engine_rpm_override_enable,word,
 0x0040c262,protection_timeout_sentinel,dword,
@@ -5584,7 +5587,7 @@ address,name,type,comment
 0x0053a9a2,PTR_FUN_0053a9a2,pointer,
 0x0053a9a8,PTR_FUN_0053a9a8,pointer,
 0x0053ac46,output_channel_driver_table_enable,byte,Output channel driver table (flash2 0x53ac46-0x53af75): 51 records of 16 bytes = enable / read feedback / set period / set duty function pointers; record 0 = no output (blr / return-0 stubs); TPU-B channels 0-15 (cm848_tpuBChannel{N}* / read-back records cm848_tpuBReadBackChannel{N}*) = records 1-16 / TPU-A channels 0-15 (cm848_tpuAChannel{N}*) = 17-32 / MDASM11-15 and 27-31 = 33-42 / PWM submodules 0-3 and 16-19 = 43-50. Consumers index it with an EEPROM output channel word (*_output_channel_cal) and check 0 < channel < 51 first. This label is slot +0 (enable) of record 0 - consumers render &output_channel_driver_table_enable + channel x 0x10 - was j1939_pgn_handler_table
-0x0053ac4a,output_channel_driver_table_read_feedback,pointer,Slot +4 (read feedback) of output channel driver table record 0 - the shared return-0 stub unless the channel has a read-back; hpcr_protectionTimerMonitor calls it per channel - was PTR_LAB_0053ac4a
+0x0053ac4a,output_channel_driver_table_read_feedback,pointer,Slot +4 (read feedback) of output channel driver table record 0 - the shared return-0 stub unless the channel has a read-back; cm848_updateOutputReadBackFaultBits calls it for each output channel assignment table entry (verdict 0 / 1 / 2 into output_read_back_fault_bits) - was PTR_LAB_0053ac4a
 0x0053ac4e,output_channel_driver_table_set_period,byte,Slot +8 (set period - most consumers pass 1000000 / frequency = microseconds; the actuator e and g paths pass a calibration word directly) of output channel driver table record 0 - was j1939_pgn_handler_table_func2
 0x0053ac52,output_channel_driver_table_set_duty,byte,Slot +12 (set duty - 1/256 % per count) of output channel driver table record 0 - was j1939_pgn_handler_table_func3
 0x0053ac96,PTR_cm848_tpuBReadBackChannel4EnablePwm_0053ac96,pointer,
@@ -5821,8 +5824,8 @@ address,name,type,comment
 0x0040af07,coolant_overheat_condition_flags,byte,bit0 temp divergence bit1 absolute overtemp; ==3 clears fault ring
 0x0040b1fe,protection_mode_a_enable_event_count,word,counts protection-enable transitions (mode A) sets engine_diag 0x400
 0x0040b200,protection_mode_b_enable_event_count,word,counts protection-enable transitions (mode B) sets engine_diag 0x800
-0x0040b2d0,cold_start_emission_fault_restart_counter,word,drives two-phase fuel schedule on emission-fault restart
-0x0040b2d2,cold_start_emission_fault_active_flag,byte,set when j1939 emission-fault debounce expires
+0x0040b2d0,cooling_fan_retest_pass_count,word,Cooling fan retest pass counter (fuel_coldStart_demandFinal_apply): 0 % duty below cooling_fan_retest_off_passes / 100 % for the next 2 x cooling_fan_retest_fault_confirm_passes / then 0 and the retest flag clears (was cold_start_emission_fault_restart_counter)
+0x0040b2d2,cooling_fan_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the cooling fan read-back fault (output_read_back_fault_bits.cooling_fan) outlasts its debounce and P0480 (fault 121) is set; fuel_coldStart_demandFinal_apply (the fan duty output) then runs the retest - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was cold_start_emission_fault_active_flag)
 0x0040b536,low_oil_pressure_debounce_limit,word,Debounce limit for the low-oil-pressure check - picked by coolant temperature from the ROM tables at 0x5b4be / 0x5b4ca (default from 0x5b4d4) (was governor_temp_diag_debounce_limit)
 0x0040b59a,protection_throttle_integral_accumulator,dword,protection throttle PID integral accumulator
 0x0040b8d4,cam_timing_speed_window_debounce_count,word,debounce for cam speed window; safety_bits_1 0x200
@@ -5873,8 +5876,8 @@ address,name,type,comment
 0x003fd1c2,cold_start_battery_timer_b,word,battery voltage delta-sample timer B
 0x003fd938,protection_timer_dispatch_config,byte,NEVER-WRITTEN ROM cal; bits gate timerBitCheck sub-paths
 0x003fd1b3,cold_start_protection_branch_flag,byte,0/1 selects set-fault vs clear-fault path
-0x003fcbee,j1939_protection_receive_delay_counter,word,debounce for j1939 protection-receive; caps then sets status 0x8000
-0x003fcbf0,governor_load_cycle_delay_counter,word,debounce for governor load cycle; caps then sets fault_detected_bits_400_to_415 8
+0x003fcbee,governor_pressure_solenoid_read_back_fault_debounce_count,word,Passes the governor pressure solenoid read-back fault bit has stayed set while logical output request 16 is on (cm848_debounceOutputReadBackFaults - P0748 above governor_pressure_solenoid_read_back_fault_debounce_limit) (was j1939_protection_receive_delay_counter)
+0x003fcbf0,wastegate_solenoid_read_back_fault_debounce_count,word,Passes the wastegate solenoid read-back fault bit has stayed set (cm848_debounceOutputReadBackFaults - P0243 above wastegate_solenoid_read_back_fault_debounce_limit) (was governor_load_cycle_delay_counter)
 0x003fd948,sensor_channel_type_table,word,NEVER-WRITTEN ROM table; channel->override/QADC type (array base)
 0x003fd942,cam_sync_protection_state_flags,byte,cam-sync + cold-start protection state bits
 0x003fcea1,mil_message_state_flags,byte,PCI 0xB0 builder state: bit 0 = MIL state for the request logic edge test - copied from payload bit 7 outside CSP_CRANKING / CSP_ENGINE_STANDBY / set when 0x3fdda8 passes base 0x3fce9e / cleared when the engine-off rule forces it / bit 2 = hold the DTC (clear = step) (was j1939_dm1_tx_control_flags)
@@ -5917,7 +5920,7 @@ address,name,type,comment
 0x003fd217,cbd_reference_event_target,word,reference cylinder event index target
 0x003fd21b,cbd_cylinder_advance_pending_flag,word,set when cylinder event index advanced past target
 0x003fd1fe,cbd_active_cylinder_count,byte,count of active cylinders; >=2 sets fault bit
-0x003fdca8,governor_pressure_solenoid_output_channel_cal,word,EEPROM 0x826: output channel driver table record number (0 = no output / 1-50) for the 48RE governor pressure solenoid: cm848_controlGovernorPressureSolenoid sets its period and duty (also protectionPhaseGroupA_Init / initHpcr_HandlerRoutines / cm848_sciCommand37Callback / cm848_throttlePosition_clamp_update) - this calibration: 5 = record 5 (TPU-B channel 4 with MDASM11 read-back) - was j1939_pgn_handler_index_hpcr
+0x003fdca8,governor_pressure_solenoid_output_channel_cal,word,EEPROM 0x826 = output channel assignment table entry 10 (read-back fault output_read_back_fault_bits.governor_pressure_solenoid -> fault 351 = P0748): output channel driver table record number (0 = no output / 1-50) for the 48RE governor pressure solenoid: cm848_controlGovernorPressureSolenoid sets its period and duty (also protectionPhaseGroupA_Init / initHpcr_HandlerRoutines / cm848_sciCommand37Callback / cm848_throttlePosition_clamp_update) - this calibration: 5 = record 5 (TPU-B channel 4 with MDASM11 read-back) - was j1939_pgn_handler_index_hpcr
 0x003fd032,cruise_pid_integrator_q16,word,Q16 cruise PID integral accumulator (ROM-aliased _prefix)
 0x003fd038,cruise_speed_upper_limit_ptr,word,ptr to cruise speed upper limit (cal or working) (ROM-aliased)
 0x003fcf0c,throttle_integral_period_counter,word,countdown period for throttle integral accumulation
@@ -6011,10 +6014,10 @@ address,name,type,comment
 0x003fccf2,protection_speedTracking_speed_error_ramp,word,accumulated speed-error ramp value
 0x003fcd7a,j1939_tsc1_active_duration_counter,word,TSC1 active/timeout duration counter
 0x003fcdf6,cold_start_fuel_demand_final,word,clamped final cold-start fuel demand output
-0x003fdc96,actuator_output_channel_h_cal,word,EEPROM 0x814: output channel driver table record number (0 = no output / 1-50) for an actuator enabled by j1939_message_handler_initialize; fuel_coldStart_demandFinal_apply sets its duty (cold_start_fuel_demand_final) and period (1000000 / DAT_00408886 us) - identity open - this calibration: 7 = record 7 (TPU-B channel 6 with MDASM13 read-back) - was j1939_pgn_handler_index_cold_start_fuel
+0x003fdc96,cooling_fan_output_channel_cal,word,EEPROM 0x814 = output channel assignment table entry 1: output channel driver table record number (0 = no output / 1-50) for the cooling fan drive - identified by its read-back fault (output_read_back_fault_bits.cooling_fan -> fault 121 = P0480 cooling fan 1 control circuit); enabled by j1939_message_handler_initialize; fuel_coldStart_demandFinal_apply sets its duty (cold_start_fuel_demand_final - so that function's cold_start_fuel_* names are the fan control) and period (1000000 / DAT_00408886 us) - this calibration: 7 = record 7 (TPU-B channel 6 with MDASM13 read-back) - was actuator_output_channel_h_cal / j1939_pgn_handler_index_cold_start_fuel
 0x003fce12,cold_start_mode_entry_rpm_snapshot,word,RPM snapshot at cold-start mode entry
 0x003fce10,cold_start_fuel_hold_ramp_counter,word,timed hold-off counter after cold-start exit
-0x003fce1a,cold_start_emission_fault_pgn_cycle_counter,word,PGN-handler cycle count during emission-fault restart
+0x003fce1a,cooling_fan_retest_fault_count,word,Cooling fan retest: passes the read-back fault bit has stayed set during the retest (restarts it at cooling_fan_retest_fault_confirm_passes) (was cold_start_emission_fault_pgn_cycle_counter)
 0x003fce1c,egr_load_floor_hold_timer,word,hold timer gating EGR load speed-floor ramp
 0x003fcdf8,egr_governor_integral_reset_flag,byte,EGR governor PI integral-reset pending
 0x003fcdf9,egr_governor_pi_active_flag,byte,EGR governor PI computation enable
@@ -6638,7 +6641,7 @@ address,name,type,comment
 0x003fd2de,sensor_cal_session_state_prev,word,prev diagnostic session state (protection module)
 0x003fd410,j1939_periodic_queue0_current_tick,word,current tick for J1939 diag queue 0
 0x003fd412,j1939_periodic_queue1_current_tick,word,current tick for J1939 diag queue 1
-0x003fd47e,protection_timer_b_tick_divider,word,divide-by-2 tick for protection timer b
+0x003fd47e,cooling_fan_read_back_check_divider,word,Divide-by-2 counter for entry 1 (cooling fan) in cm848_updateOutputReadBackFaultBits: that entry's read-feedback slot is called on every 2nd monitor pass (1 -> skip / 2 -> check and reset to 0) - working RAM just below the EEPROM mirror (was protection_timer_b_tick_divider)
 0x003fdb46,transmission_temperature_qadc_channel_cal,word,EEPROM 0x6c4 = qadc_channel_index_table[103]: QADC dispatch index of the transmission temperature sensor (91 = QADC-B result 26); cm848_selectTransmissionTemperatureInUse reads that raw result for its stability check (was torque_limit_setpoint_qadc_channel_index)
 0x003fefbc,j1939_accelerator_pedal_default_position,word,Position used while the J1939 pedal is suspended / lost / invalid; never written by code (was emission_fuel_demand_default_output)
 0x003ff067,fuel_boost_final_fault_gate_enable,byte,ROM fault-gate bitmask (fuel boost final)
@@ -6859,8 +6862,8 @@ address,name,type,comment
 0x00408818,governor_fuel_demand_i_term_max,word,ROM upper clamp for governor PID i-term
 0x0040881a,governor_fuel_demand_i_term_min,word,ROM lower clamp for governor PID i-term
 0x00408824,egr_fuel_demand_stroke_high_threshold,word,ROM upper fuel-stroke bound for EGR high-stroke flag
-0x004088ba,cold_start_emission_fault_off_dwell_count,word,ROM off-period dwell for emission-fault restart cycle
-0x004088bc,cold_start_emission_fault_pgn_cycle_count_max,word,ROM on-period/cap for emission-fault restart cycle
+0x004088ba,cooling_fan_retest_off_passes,word,Cooling fan retest: passes at 0 % duty before the 100 % phase - 800 in the RAM dump (was cold_start_emission_fault_off_dwell_count)
+0x004088bc,cooling_fan_retest_fault_confirm_passes,word,Cooling fan retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts twice this - 6 in the RAM dump (was cold_start_emission_fault_pgn_cycle_count_max)
 0x0040c19c,cold_start_fuel_handler_period_us,dword,1e6/freq period for cold-start fuel J1939 handler
 0x00408986,low_oil_pressure_check_minimum_rpm,word,The low-oil-pressure check runs only above this engine speed (4000 = 500 rpm) (was governor_temp_diag_rpm_enable_threshold)
 0x00408988,oil_pressure_switch_stuck_count_limit,word,Limit for oil_pressure_switch_stuck_count (was governor_temp_diag_zero_rpm_count_max)
@@ -6950,7 +6953,7 @@ address,name,type,comment
 0x0040b48e,pci_transmit_message_9_immobilizer_data_3,byte,PCI TX[9] 4F 10 payload byte 4: immobilizer secret-key byte 2 (0x3fee2e) in frame 1 / 0 in frame 2 (was j1939_msg_slot_u_eeprom_data2) (Medium confidence)
 0x0040b529,immobilizer_failure_seen_flag,byte,Set (cleared only at power-up) when - after the authorization window with a valid key or a latch set - PCI 0xB1 status bit 1 (SKIS failure per DRB) is on at the governor setpoint; it or EEPROM latch byte 0x3fee31 blocks the immobilizer fuel disable (was governor_cal_write_active_flag) (Medium confidence)
 0x0040b57d,protection_pid_error_term,word,protection PID error term (delta setpoint)
-0x0040b5a4,j1939_protection_receive_active_flag,word,J1939 protection receive active flag
+0x0040b5a4,governor_pressure_solenoid_read_back_fault_latched_flag,word,Set by cm848_debounceOutputReadBackFaults when the governor pressure solenoid read-back fault (output_read_back_fault_bits.governor_pressure_solenoid) outlasts its debounce and P0748 (fault 351) is set; no other code refers to it and there is no retest - so the check stops until the next power-up (was j1939_protection_receive_active_flag)
 0x0040b966,injection_timing_arb_comp4_rpm_factor,word,RPM factor for injection timing arb component 4
 0x0040b96c,injection_timing_arb_comp3_rpm_factor,word,RPM factor for injection timing arb component 3
 0x0040b974,injection_timing_coolant_trim_rpm_factor,word,RPM factor for injection timing coolant trim
