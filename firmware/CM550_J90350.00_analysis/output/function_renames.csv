@@ -119,7 +119,6 @@ address,name
 0x000114d4,vp44_validateRedundantSensors
 0x000117ec,cm550_firmwareDataCopyToWorkingMemory
 0x0001183e,cm550_FUN_0001183e
-0x00011880,default
 0x0001188c,cm550_waterInFuelDetectionStateInit
 0x000118b2,cm550_waterInFuelFaultClear
 0x000118cc,cm550_FUN_000118cc

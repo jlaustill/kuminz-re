@@ -569,10 +569,9 @@ j1708_multipacket_msg_t,,tail_data,byte,74,Remaining data bytes 182-255,,verifie
 
 # J1708 Multipacket Message Buffer @ 0x0080DDC6 (single instance)
 # The struct definition with all fields is above - this just places one instance
-j1708_multipacket_msg_t,0x0080DDC6,base_ptr,dword,4,J1708 transmit message buffer,,verified
+j1708_multipacket_msg_t,0x0080DDC6,,,,J1708 transmit message buffer (instance marker),,verified
 
 # J1708 Receive Buffer @ 0x0080DEC6
-j1708_rx_buffer_t,0x0080DEC6,rx_data,byte,256,J1708 receive data buffer,,verified
 
 # -----------------------------------------------------------------------------
 # Diagnostic Buffer Structures @ RAM 0x808B00 (J90350.00 verified)
@@ -601,7 +600,7 @@ can_buffer_setup_t,,unused_ptr,dword,4,Unused/reserved pointer,,verified
 can_buffer_setup_t,,data,byte,8,Inline buffer data (8 bytes),,verified
 
 # Instance at 0x801A8A
-can_buffer_setup_t,0x00801A8A,state,dword,4,can_buffer_setup_t_00801a8a - CAN buffer setup instance,,verified
+can_buffer_setup_t,0x00801A8A,,,,can_buffer_setup_t_00801a8a - CAN buffer setup instance (instance marker),,verified
 
 # CAN Message Buffer Range @ RAM 0x8034F8 (J90350.00 verified)
 can_message_buffer_t,0x008034F8,buffer_start,byte,1,Start of CAN message buffer area,,verified

@@ -1100,7 +1100,6 @@ typedef struct huffman_tree_t huffman_tree_t;
 typedef struct j1708_tx_state_t j1708_tx_state_t;
 typedef struct j1708_rx_state_t j1708_rx_state_t;
 typedef struct j1708_multipacket_msg_t j1708_multipacket_msg_t;
-typedef struct j1708_rx_buffer_t j1708_rx_buffer_t;
 typedef struct diagnostic_buffers_t diagnostic_buffers_t;
 typedef struct diagnostic_buffer_ptrs_t diagnostic_buffer_ptrs_t;
 typedef struct can_buffer_setup_t can_buffer_setup_t;
@@ -1638,11 +1637,6 @@ struct j1708_multipacket_msg_t {
     uint16_t param_178;  /* Parameter at offset 178 */
     uint16_t param_180;  /* Parameter at offset 180 */
     uint8_t tail_data[74];  /* Remaining data bytes 182-255 */
-    uint32_t base_ptr;  /* J1708 transmit message buffer */
-};
-
-struct j1708_rx_buffer_t {
-    uint8_t rx_data[256];  /* J1708 receive data buffer */
 };
 
 struct diagnostic_buffers_t {
@@ -1662,7 +1656,6 @@ struct can_buffer_setup_t {
     uint32_t data_ptr;  /* Pointer to buffer data area */
     uint32_t unused_ptr;  /* Unused/reserved pointer */
     uint8_t data[8];  /* Inline buffer data (8 bytes) */
-    uint32_t state;  /* can_buffer_setup_t_00801a8a - CAN buffer setup instance */
 };
 
 struct can_message_buffer_t {

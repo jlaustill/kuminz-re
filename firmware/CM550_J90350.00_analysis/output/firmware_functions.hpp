@@ -115,7 +115,6 @@ int cm550_FUN_0001125a(void);  // @ 0x0001125a
 void vp44_validateRedundantSensors(void);  // @ 0x000114d4
 void cm550_firmwareDataCopyToWorkingMemory(void);  // @ 0x000117ec
 undefined1 cm550_FUN_0001183e(void);  // @ 0x0001183e
-undefined1 default(void);  // @ 0x00011880
 uint cm550_waterInFuelDetectionStateInit(void);  // @ 0x0001188c
 undefined1 cm550_waterInFuelFaultClear(void);  // @ 0x000118b2
 uint cm550_FUN_000118cc(void);  // @ 0x000118cc
