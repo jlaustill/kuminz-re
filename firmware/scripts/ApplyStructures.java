@@ -210,11 +210,13 @@ public class ApplyStructures extends GhidraScript {
                 int totalSize = calculateStructureSizeFromFields(fields);
                 if (totalSize <= 0) totalSize = 1;
 
-                // Remove canonical entry and any .conflict leftovers from prior runs
+                // Remove canonical entry and any .conflict leftovers from prior runs.
+                // remove(DataType), not remove(DataType, TaskMonitor): 12.2 dropped the
+                // two-argument overload, which in 12.1 only delegated to this one.
                 DataType existing = dtm.getDataType(structCategory.getCategoryPath(), structName);
-                if (existing != null) dtm.remove(existing, monitor);
+                if (existing != null) dtm.remove(existing);
                 DataType conflictExisting = dtm.getDataType(structCategory.getCategoryPath(), structName + ".conflict");
-                if (conflictExisting != null) dtm.remove(conflictExisting, monitor);
+                if (conflictExisting != null) dtm.remove(conflictExisting);
 
                 DataType shell;
                 if (unionTypes.contains(structName)) {

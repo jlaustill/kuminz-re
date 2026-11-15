@@ -22,21 +22,17 @@ to run against any other (`check_ghidra` in `scripts/common.sh` validates `appli
 | Firmware | CPU | Required Ghidra | Install | Why |
 |----------|-----|-----------------|---------|-----|
 | CM848 | MPC555 / PowerPC | **12.1** PUBLIC | `$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC` | mainline supports MPC555; 12.1 also renders struct bitfields (GP-2493) |
-| CM550 | MC68336 / 68k | **12.0** DEV (from source) | `$HOME/code/ghidra` | the 68k/CM550 CPU support is on an **unmerged** Ghidra branch, not in any release |
+| CM550 | MC68336 / CPU32 | **12.2** PUBLIC, language `68000:BE:32:CPU32` | `$HOME/code/ghidra-12.2/ghidra_12.2_PUBLIC` | 12.2 is the first release with the CPU32 language (issue [#1244](https://github.com/NationalSecurityAgency/ghidra/issues/1244), `CPU32.slaspec`). The MC68336's core is a CPU32 |
 
 - Override the install path with `GHIDRA_DIR=...`, but its `application.version` must still match
   the firmware's pin or the build fails gracefully (telling you which version is needed and where).
-- **CM550 reproducibility caveat:** "12.0 DEV" is *not* a precise pin — the from-source build tracks
-  a moving branch, so two checkouts both report `12.0` yet decompile differently (newer builds
-  recover more, e.g. masked-flag expressions the older committed baseline rendered as `0`). Until
-  the 68k support merges to a release, a CM550 `.cpp` is only reproducible against the *exact* Ghidra
-  commit it was built from.
-  - **Status (checked 2026-06-12):** CPU32 / 683xx support (the MC68336 family CM550 uses) was
-    **merged to Ghidra `master` ~2026-06-10** — issue [#1244](https://github.com/NationalSecurityAgency/ghidra/issues/1244)
-    closed as completed (impl via PR #9084; the old 2021 PR #2617 was superseded/closed unmerged).
-    It is **not yet in a tagged release** (latest is 12.1.2, 2026-06-05, before the merge). When the
-    next release ships it, CM550 can move off the from-source DEV build to a **pinned PUBLIC release**
-    (like CM848) and become reproducible — at which point bump CM550's `REQUIRED_GHIDRA_VERSION`.
+- **Ghidra 12.2 needs JDK 25** (`application.java.min=25`); 12.1 runs on the system JDK 21. On this machine a user-local
+  Eclipse Temurin JDK 25 lives at `$HOME/code/jdk-25/jdk-25.0.5+8`. The 12.2 install points at it with
+  `JAVA_HOME_OVERRIDE` in its own `support/launch.properties`, so neither the repo nor the system Java changes.
+- **CM550 history:** until 2026-11-15 CM550 was built on a from-source "12.0 DEV" build (`$HOME/code/ghidra`).
+  That build had no CPU32 language, so CM550 was really decoded as the default 68000 language (68040), and
+  the build was not a precise pin: two checkouts both report `12.0` yet decompile differently. The
+  re-baseline on 12.2 + CPU32 (PR #48) made CM550 a pinned PUBLIC build like CM848.
 
 ---
 
@@ -78,7 +74,7 @@ firmware/
 
 **Source:** Live ECU extraction from bench — complete ROM, RAM, and EEPROM dumps.
 
-- **MCU:** Motorola MC68336 (68020 core)
+- **MCU:** Motorola MC68336 (CPU32 core: a 68020 subset without bit-field, CAS / CAS2, CALLM / RTM, PACK / UNPK, coprocessor instructions or memory-indirect addressing, plus TBL / LPSTOP / BGND; Ghidra language `68000:BE:32:CPU32`)
 - **ROM:** 256KB (0x00000000 - 0x0003FFFF)
 - **RAM:** 37KB at 0x00800000 (live dump available)
 - **Extended RAM:** 28KB at 0x008091C2

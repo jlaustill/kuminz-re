@@ -39,8 +39,9 @@ REQUIRED_GHIDRA_VERSION="${REQUIRED_GHIDRA_VERSION:-12.1}"
 # Default install location for a given pinned version (override with GHIDRA_DIR).
 ghidra_dir_for_version() {
     case "$1" in
+        12.2) echo "$HOME/code/ghidra-12.2/ghidra_12.2_PUBLIC" ;;
         12.1) echo "$HOME/code/ghidra-12.1/ghidra_12.1_PUBLIC" ;;
-        12.0) echo "$HOME/code/ghidra" ;;
+        12.0) echo "$HOME/code/ghidra" ;;  # old from-source DEV build (CM550 before 2026-11-15)
         *)    echo "" ;;  # unknown version — caller must handle empty result
     esac
 }
@@ -65,8 +66,8 @@ ghidra_installed_version() {
     grep -h '^application.version=' "$GHIDRA_DIR/Ghidra/application.properties" 2>/dev/null | cut -d= -f2
 }
 
-# Processor configuration (can be overridden by firmware-specific wrapper)
-# Default: MC68336 for CM550 ECUs; CM848 uses PowerPC
+# Processor configuration (each firmware wrapper sets its own: CM550 = 68000:BE:32:CPU32,
+# CM848 = PowerPC:BE:32:default). The fallback is Ghidra's default 68000 language (68040).
 PROCESSOR="${PROCESSOR:-68000:BE:32:default}"
 
 # Colors for output
@@ -106,9 +107,8 @@ check_ghidra() {
         print_error "    $GHIDRA_HEADLESS"
         print_error "$FIRMWARE_NAME must be analyzed with Ghidra $REQUIRED_GHIDRA_VERSION."
         if [ "$REQUIRED_GHIDRA_VERSION" = "12.0" ]; then
-            print_error "CM550 (MC68336 / 68k) needs the from-source 12.0 DEV build — the"
-            print_error "68k/CM550 CPU support is on an unmerged Ghidra branch, not in any"
-            print_error "release. Build it from source at \$HOME/code/ghidra, or set GHIDRA_DIR."
+            print_error "12.0 was the from-source DEV build at \$HOME/code/ghidra (no release)."
+            print_error "Build it from source there, or set GHIDRA_DIR."
         else
             print_error "Install Ghidra $REQUIRED_GHIDRA_VERSION (PUBLIC release) at"
             print_error "\$HOME/code/ghidra-$REQUIRED_GHIDRA_VERSION, or set GHIDRA_DIR."
