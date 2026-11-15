@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 06:59:30 MST 2026
+// Generated: Sun Nov 15 07:03:09 MST 2026
 
 
 //
@@ -60165,6 +60165,10 @@ undefined4 cm848_updateJ1939BroadcastEnableMask(int param_1,int param_2)
 // Function: j1939_diagService4DisableBroadcast @ 0x00509ce4
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 4 - cm848_updateJ1939BroadcastEnableMask with enable 0 | review-function-readability
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+
 undefined1 j1939_diagService4DisableBroadcast(undefined4 param_1)
 
 {
@@ -60179,6 +60183,10 @@ undefined1 j1939_diagService4DisableBroadcast(undefined4 param_1)
 //
 // Function: j1939_diagService5EnableBroadcast @ 0x00509d0c
 //
+
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 5 - cm848_updateJ1939BroadcastEnableMask with enable 1 | review-function-readability
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
 undefined1 j1939_diagService5EnableBroadcast(undefined4 param_1)
 
@@ -61169,16 +61177,20 @@ j1939_writeDiagMemoryByParameterId
 // Function: j1939_diagService68_memoryWriteByParameterId @ 0x0050b228
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x44 - write by parameter ID (j1939_writeDiagMemoryByParameterId) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+
 undefined1 j1939_diagService68_memoryWriteByParameterId(int param_1)
 
 {
   undefined1 uVar1;
-  undefined2 auStack_10 [2];
-  uint uStack_c;
+  undefined2 local_10 [2];
+  uint local_c;
   
-  cm848_memcpyBytes(auStack_10,*(int *)(param_1 + 6) + 1,2);
-  uStack_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
-  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,auStack_10[0],0,uStack_c);
+  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
+  local_c = (uint)*(byte *)(*(int *)(param_1 + 6) + 3);
+  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,local_10[0],0,local_c);
   return uVar1;
 }
 
@@ -61188,16 +61200,20 @@ undefined1 j1939_diagService68_memoryWriteByParameterId(int param_1)
 // Function: j1939_diagService69_memoryWriteByParameterIdExt @ 0x0050b298
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x45 - write by parameter ID with a long length | review-function-readability reviewed
+   2026-11-12 - Readability Low Accuracy Confidence High */
+
 undefined1 j1939_diagService69_memoryWriteByParameterIdExt(int param_1)
 
 {
   undefined1 uVar1;
-  undefined2 auStack_10 [2];
-  undefined4 auStack_c [2];
+  undefined2 local_10 [2];
+  undefined4 local_c [2];
   
-  cm848_memcpyBytes(auStack_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_memcpyBytes(auStack_c,*(int *)(param_1 + 6) + 3,4);
-  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,auStack_10[0],0,auStack_c[0]);
+  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
+  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 3,4);
+  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,local_10[0],0,local_c[0]);
   return uVar1;
 }
 
@@ -61207,19 +61223,23 @@ undefined1 j1939_diagService69_memoryWriteByParameterIdExt(int param_1)
 // Function: j1939_diagService71Handler @ 0x0050b300
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x47 (header length 6) | review-function-readability reviewed 2026-11-12 - Readability
+   Low Accuracy Confidence Low */
+
 undefined1 j1939_diagService71Handler(int param_1)
 
 {
   undefined1 uVar1;
-  undefined2 auStack_10 [2];
-  uint uStack_c;
-  uint uStack_8;
+  undefined2 local_10 [2];
+  uint local_c;
+  uint local_8;
   
-  cm848_memcpyBytes(auStack_10,*(int *)(param_1 + 6) + 1,2);
-  uStack_c = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
-                            *(undefined1 *)(*(int *)(param_1 + 6) + 4));
-  uStack_8 = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,auStack_10[0],uStack_c,uStack_8);
+  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
+  local_c = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
+                           *(undefined1 *)(*(int *)(param_1 + 6) + 4));
+  local_8 = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
+  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -61229,18 +61249,22 @@ undefined1 j1939_diagService71Handler(int param_1)
 // Function: j1939_diagService73_memoryWriteByParameterId @ 0x0050b38c
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x49 (header length 11) - write by parameter ID | review-function-readability reviewed
+   2026-11-12 - Readability Low Accuracy Confidence Medium */
+
 undefined1 j1939_diagService73_memoryWriteByParameterId(int param_1)
 
 {
   undefined1 uVar1;
-  undefined2 auStack_10 [2];
-  undefined4 uStack_c;
-  undefined4 uStack_8;
+  undefined2 local_10 [2];
+  undefined4 local_c;
+  undefined4 local_8;
   
-  cm848_memcpyBytes(auStack_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_memcpyBytes(&uStack_c,*(int *)(param_1 + 6) + 3,4);
-  cm848_memcpyBytes(&uStack_8,*(int *)(param_1 + 6) + 7,4);
-  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,auStack_10[0],uStack_c,uStack_8);
+  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
+  cm848_memcpyBytes(&local_c,*(int *)(param_1 + 6) + 3,4);
+  cm848_memcpyBytes(&local_8,*(int *)(param_1 + 6) + 7,4);
+  uVar1 = j1939_writeDiagMemoryByParameterId(param_1,local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -61250,14 +61274,18 @@ undefined1 j1939_diagService73_memoryWriteByParameterId(int param_1)
 // Function: j1939_diagService75_memoryWrite @ 0x0050b408
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x4B - write by address (j1939_writeDiagMemory) | review-function-readability reviewed
+   2026-11-12 - Readability Low Accuracy Confidence High */
+
 undefined1 j1939_diagService75_memoryWrite(int param_1)
 
 {
   undefined1 uVar1;
-  undefined4 auStack_c [2];
+  undefined4 local_c [2];
   
-  cm848_memcpyBytes(auStack_c,*(int *)(param_1 + 6) + 1,4);
-  uVar1 = j1939_writeDiagMemory(param_1,auStack_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
+  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 1,4);
+  uVar1 = j1939_writeDiagMemory(param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
   return uVar1;
 }
 
@@ -61267,16 +61295,20 @@ undefined1 j1939_diagService75_memoryWrite(int param_1)
 // Function: j1939_diagService77_memoryWriteExt @ 0x0050b474
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x4D - write by address with a long length | review-function-readability reviewed
+   2026-11-12 - Readability Low Accuracy Confidence High */
+
 undefined1 j1939_diagService77_memoryWriteExt(int param_1)
 
 {
   undefined1 uVar1;
-  undefined4 uStack_10;
-  undefined4 auStack_c [2];
+  undefined4 local_10;
+  undefined4 local_c [2];
   
-  cm848_memcpyBytes(&uStack_10,*(int *)(param_1 + 6) + 1,4);
-  cm848_memcpyBytes(auStack_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = j1939_writeDiagMemory(param_1,uStack_10,auStack_c[0]);
+  cm848_memcpyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
+  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 5,4);
+  uVar1 = j1939_writeDiagMemory(param_1,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -61930,43 +61962,47 @@ LAB_0050c2f4:
 // Function: j1939_diagService65_getAddressByParameterId @ 0x0050c318
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x41 - resolves a parameter ID (cm848_lookupParameterIdAddress) to an address |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+
 undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1)
 
 {
   char cVar2;
   undefined4 uVar1;
   undefined1 auStack_28 [4];
-  undefined2 uStack_24;
-  undefined1 uStack_20;
-  undefined1 uStack_1f;
-  undefined1 uStack_1e;
-  undefined1 uStack_1d;
-  undefined1 uStack_1c;
-  undefined1 uStack_1b;
-  undefined1 uStack_1a;
-  undefined1 uStack_19;
-  undefined1 uStack_18;
-  undefined1 uStack_17;
-  undefined1 uStack_16;
-  undefined4 uStack_14;
-  undefined2 uStack_10;
-  undefined1 *puStack_e;
+  undefined2 local_24;
+  undefined1 local_20;
+  undefined1 local_1f;
+  undefined1 local_1e;
+  undefined1 local_1d;
+  undefined1 local_1c;
+  undefined1 local_1b;
+  undefined1 local_1a;
+  undefined1 local_19;
+  undefined1 local_18;
+  undefined1 local_17;
+  undefined1 local_16;
+  undefined4 local_14;
+  undefined2 local_10;
+  undefined1 *local_e;
   
-  uStack_24 = *(undefined2 *)(*(int *)(param_1 + 6) + 1);
-  cVar2 = cm848_lookupParameterIdAddress(uStack_24,&uStack_20);
+  local_24 = *(undefined2 *)(*(int *)(param_1 + 6) + 1);
+  cVar2 = cm848_lookupParameterIdAddress(local_24,&local_20);
   if (cVar2 == '\0') {
-    uStack_14 = CONCAT13((*param_1 >> 2 & 7) << 2,0xef0000);
-    uStack_14 = CONCAT31(CONCAT21(uStack_14._0_2_,param_1[3]),param_1[2]);
-    puStack_e = &uStack_1c;
-    uStack_10 = 7;
-    uStack_1c = 0x42;
-    uStack_1b = uStack_24._0_1_;
-    uStack_1a = (undefined1)uStack_24;
-    uStack_19 = uStack_20;
-    uStack_18 = uStack_1f;
-    uStack_17 = uStack_1e;
-    uStack_16 = uStack_1d;
-    mpc555_sendJ1939SingleFrame(uStack_14,7,puStack_e,auStack_28);
+    local_14 = CONCAT13((*param_1 >> 2 & 7) << 2,0xef0000);
+    local_14 = CONCAT31(CONCAT21(local_14._0_2_,param_1[3]),param_1[2]);
+    local_e = &local_1c;
+    local_10 = 7;
+    local_1c = 0x42;
+    local_1b = local_24._0_1_;
+    local_1a = (undefined1)local_24;
+    local_19 = local_20;
+    local_18 = local_1f;
+    local_17 = local_1e;
+    local_16 = local_1d;
+    mpc555_sendJ1939SingleFrame(local_14,7,local_e,auStack_28);
     uVar1 = 0xff;
   }
   else {
@@ -62123,19 +62159,23 @@ undefined1 j1939_diagService67_memoryReadByParameterId(int param_1)
 // Function: j1939_diagService70Handler @ 0x0050c6a8
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x46 | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   Confidence Low */
+
 undefined1 j1939_diagService70Handler(int param_1)
 
 {
   undefined1 uVar1;
-  undefined2 auStack_10 [2];
-  uint uStack_c;
-  uint uStack_8;
+  undefined2 local_10 [2];
+  uint local_c;
+  uint local_8;
   
-  cm848_memcpyBytes(auStack_10,*(int *)(param_1 + 6) + 1,2);
-  uStack_c = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
-                            *(undefined1 *)(*(int *)(param_1 + 6) + 4));
-  uStack_8 = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
-  uVar1 = j1939_readDiagMemoryByParameterId(param_1,auStack_10[0],uStack_c,uStack_8);
+  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
+  local_c = (uint)CONCAT11(*(undefined1 *)(*(int *)(param_1 + 6) + 3),
+                           *(undefined1 *)(*(int *)(param_1 + 6) + 4));
+  local_8 = (uint)*(byte *)(*(int *)(param_1 + 6) + 5);
+  uVar1 = j1939_readDiagMemoryByParameterId(param_1,local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -62145,18 +62185,22 @@ undefined1 j1939_diagService70Handler(int param_1)
 // Function: j1939_diagService72_memoryReadByParameterId @ 0x0050c734
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x48 - read by parameter ID | review-function-readability reviewed 2026-11-12 -
+   Readability Low Accuracy Confidence Medium */
+
 undefined1 j1939_diagService72_memoryReadByParameterId(int param_1)
 
 {
   undefined1 uVar1;
-  undefined2 auStack_10 [2];
-  undefined4 uStack_c;
-  undefined4 uStack_8;
+  undefined2 local_10 [2];
+  undefined4 local_c;
+  undefined4 local_8;
   
-  cm848_memcpyBytes(auStack_10,*(int *)(param_1 + 6) + 1,2);
-  cm848_memcpyBytes(&uStack_c,*(int *)(param_1 + 6) + 3,4);
-  cm848_memcpyBytes(&uStack_8,*(int *)(param_1 + 6) + 7,4);
-  uVar1 = j1939_readDiagMemoryByParameterId(param_1,auStack_10[0],uStack_c,uStack_8);
+  cm848_memcpyBytes(local_10,*(int *)(param_1 + 6) + 1,2);
+  cm848_memcpyBytes(&local_c,*(int *)(param_1 + 6) + 3,4);
+  cm848_memcpyBytes(&local_8,*(int *)(param_1 + 6) + 7,4);
+  uVar1 = j1939_readDiagMemoryByParameterId(param_1,local_10[0],local_c,local_8);
   return uVar1;
 }
 
@@ -62166,15 +62210,19 @@ undefined1 j1939_diagService72_memoryReadByParameterId(int param_1)
 // Function: j1939_diagService74_memoryRead @ 0x0050c7b0
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x4A - read by address (j1939_readDiagMemoryAndRespond) | review-function-readability
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+
 undefined1 j1939_diagService74_memoryRead(int param_1)
 
 {
   undefined1 uVar1;
-  undefined4 auStack_c [2];
+  undefined4 local_c [2];
   
-  cm848_memcpyBytes(auStack_c,*(int *)(param_1 + 6) + 1,4);
+  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 1,4);
   uVar1 = j1939_readDiagMemoryAndRespond
-                    (param_1,auStack_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
+                    (param_1,local_c[0],*(undefined1 *)(*(int *)(param_1 + 6) + 5));
   return uVar1;
 }
 
@@ -62184,16 +62232,20 @@ undefined1 j1939_diagService74_memoryRead(int param_1)
 // Function: j1939_diagService76_memoryReadExt @ 0x0050c81c
 //
 
+/* Application CLIP diagnostic service handler registered with cm848_processJ1939DiagnosticRequest:
+   service 0x4C - read by address with a long length | review-function-readability reviewed
+   2026-11-12 - Readability Low Accuracy Confidence High */
+
 undefined1 j1939_diagService76_memoryReadExt(int param_1)
 
 {
   undefined1 uVar1;
-  undefined4 uStack_10;
-  undefined4 auStack_c [2];
+  undefined4 local_10;
+  undefined4 local_c [2];
   
-  cm848_memcpyBytes(&uStack_10,*(int *)(param_1 + 6) + 1,4);
-  cm848_memcpyBytes(auStack_c,*(int *)(param_1 + 6) + 5,4);
-  uVar1 = j1939_readDiagMemoryAndRespond(param_1,uStack_10,auStack_c[0]);
+  cm848_memcpyBytes(&local_10,*(int *)(param_1 + 6) + 1,4);
+  cm848_memcpyBytes(local_c,*(int *)(param_1 + 6) + 5,4);
+  uVar1 = j1939_readDiagMemoryAndRespond(param_1,local_10,local_c[0]);
   return uVar1;
 }
 
@@ -72590,6 +72642,10 @@ void cm848_sciCommand18EnterHighSpeedMode(void)
 // Function: cm848_sciHighSpeedTableSelectCallback @ 0x0051dc1c
 //
 
+/* SCI diagnostic link next-byte callback: high-speed mode (command 18): 0xF5-0xFD select a table
+   read / 0xFE exits | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   Confidence High */
+
 void cm848_sciHighSpeedTableSelectCallback(void)
 
 {
@@ -72697,6 +72753,9 @@ LAB_0051ddf4:
 //
 // Function: cm848_sciHighSpeedTable248And249Callback @ 0x0051dea8
 //
+
+/* SCI diagnostic link next-byte callback: high-speed tables 248 / 249 | review-function-readability
+   reviewed 2026-11-12 - Readability Low Accuracy Confidence Low */
 
 void cm848_sciHighSpeedTable248And249Callback(void)
 
@@ -72931,6 +72990,9 @@ LAB_0051e2bc:
 // Function: cm848_sciHighSpeedReadTable245Callback @ 0x0051e384
 //
 
+/* SCI diagnostic link next-byte callback: cm848_sciHighSpeedReadTableByte(245 / received offset) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+
 void cm848_sciHighSpeedReadTable245Callback(void)
 
 {
@@ -72943,6 +73005,9 @@ void cm848_sciHighSpeedReadTable245Callback(void)
 //
 // Function: cm848_sciHighSpeedReadTable250Callback @ 0x0051e3b0
 //
+
+/* SCI diagnostic link next-byte callback: cm848_sciHighSpeedReadTableByte(250 / received offset) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
 void cm848_sciHighSpeedReadTable250Callback(void)
 
@@ -72957,6 +73022,9 @@ void cm848_sciHighSpeedReadTable250Callback(void)
 // Function: cm848_sciHighSpeedReadTable251Callback @ 0x0051e3dc
 //
 
+/* SCI diagnostic link next-byte callback: cm848_sciHighSpeedReadTableByte(251 / received offset) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+
 void cm848_sciHighSpeedReadTable251Callback(void)
 
 {
@@ -72970,6 +73038,9 @@ void cm848_sciHighSpeedReadTable251Callback(void)
 // Function: cm848_sciHighSpeedReadTable252Callback @ 0x0051e408
 //
 
+/* SCI diagnostic link next-byte callback: cm848_sciHighSpeedReadTableByte(252 / received offset) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
+
 void cm848_sciHighSpeedReadTable252Callback(void)
 
 {
@@ -72982,6 +73053,9 @@ void cm848_sciHighSpeedReadTable252Callback(void)
 //
 // Function: cm848_sciHighSpeedReadTable253Callback @ 0x0051e434
 //
+
+/* SCI diagnostic link next-byte callback: cm848_sciHighSpeedReadTableByte(253 / received offset) |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High */
 
 void cm848_sciHighSpeedReadTable253Callback(void)
 
@@ -73184,6 +73258,10 @@ void cm848_sciStartTimedOutputTest(short *param_1,undefined4 param_2,short param
 //
 // Function: cm848_sciCommand19OutputTestCallback @ 0x0051e914
 //
+
+/* SCI diagnostic link next-byte callback: command 19 output test (only while cranking; code 0 stops
+   all tests) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
+   Confidence Medium */
 
 void cm848_sciCommand19OutputTestCallback(void)
 
@@ -73569,6 +73647,9 @@ int cm848_encodeCruiseControlStatusByte(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* next-byte callback for SCI command 0x14 (20) installed by cm848_sciCommand20Handler (0x51eef0) -
+   reached only via sci_next_byte_handler - not a dead function | registration-table-sweep reviewed
+   2026-11-13 */
 
 void cm848_sciCommand20Callback(void)
 
@@ -74386,6 +74467,10 @@ void governor_speedLimitFloor_decrement(void)
 // Function: cm848_sciCommand25Callback @ 0x005206c4
 //
 
+/* next-byte callback for SCI command 0x19 (25) installed by cm848_sciCommand25Handler (0x520654) -
+   reached only via sci_next_byte_handler - not a dead function | registration-table-sweep reviewed
+   2026-11-13 */
+
 void cm848_sciCommand25Callback(void)
 
 {
@@ -74423,6 +74508,10 @@ void cm848_sciCommand26Handler(void)
 //
 // Function: cm848_sciCommand26Callback @ 0x0052075c
 //
+
+/* next-byte callback for SCI command 0x1a (26) installed by cm848_sciCommand26Handler (0x52072c) -
+   reached only via sci_next_byte_handler - not a dead function | registration-table-sweep reviewed
+   2026-11-13 */
 
 void cm848_sciCommand26Callback(void)
 
@@ -74606,6 +74695,10 @@ void cm848_sciCommand37Handler(void)
 //
 // Function: cm848_sciCommand37Callback @ 0x00520b14
 //
+
+/* next-byte callback for SCI command 0x25 (37) installed by cm848_sciCommand37Handler (0x520ad8) -
+   works on DAT_003fcf60 - reached only via sci_next_byte_handler - not a dead function |
+   registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_sciCommand37Callback(void)
 
@@ -74946,6 +75039,10 @@ void cm848_sciCommand39WriteEepromSetting(void)
 // Function: cm848_sciCommand39WriteEepromSettingCallback @ 0x00521730
 //
 
+/* SCI diagnostic link next-byte callback: command 39 EEPROM setting write (requires
+   sci_security_state 1) | review-function-readability reviewed 2026-11-12 - Readability Low
+   Accuracy Confidence Medium */
+
 void cm848_sciCommand39WriteEepromSettingCallback(void)
 
 {
@@ -74953,7 +75050,7 @@ void cm848_sciCommand39WriteEepromSettingCallback(void)
   byte *pbVar2;
   short sVar3;
   uint uVar4;
-  byte abStack_10 [4];
+  byte local_10 [4];
   
   (&DAT_003fcf83)[DAT_003fcf82] = *(undefined1 *)sci_buffer_cursor;
   uVar4 = DAT_003fcf82 + 1;
@@ -74966,27 +75063,27 @@ void cm848_sciCommand39WriteEepromSettingCallback(void)
         sci_transmit_byte_count = sci_transmit_byte_count + 1;
       }
       else {
-        abStack_10[0] = DAT_003fcf85;
+        local_10[0] = DAT_003fcf85;
         if (DAT_003fcf83 == '\x02') {
-          abStack_10[0] =
-               (byte)(1 << ((uint)DAT_003fcf84 + ((int)(uint)DAT_003fcf84 >> 3) * -8 & 0x3f));
+          local_10[0] = (byte)(1 << ((uint)DAT_003fcf84 + ((int)(uint)DAT_003fcf84 >> 3) * -8 & 0x3f
+                                    ));
           if (DAT_003fcf85 == 0) {
-            abStack_10[0] = *pbVar1 & ~abStack_10[0];
-            *pbVar1 = abStack_10[0];
+            local_10[0] = *pbVar1 & ~local_10[0];
+            *pbVar1 = local_10[0];
           }
           else {
-            abStack_10[0] = abStack_10[0] | *pbVar1;
-            *pbVar1 = abStack_10[0];
+            local_10[0] = local_10[0] | *pbVar1;
+            *pbVar1 = local_10[0];
           }
         }
         pbVar2 = pbVar1 + 0xc02b7e;
         if ((pbVar2 < &DAT_01000000) || ((byte *)0x10008e7 < pbVar2)) {
-          *pbVar1 = abStack_10[0];
+          *pbVar1 = local_10[0];
           (&sci_buffer)[sci_transmit_byte_count] = 0xe2;
           sci_transmit_byte_count = sci_transmit_byte_count + 1;
         }
         else {
-          sVar3 = cm848_writeEepromBytes(pbVar2,abStack_10,1);
+          sVar3 = cm848_writeEepromBytes(pbVar2,local_10,1);
           if (sVar3 == 0) {
             (&sci_buffer)[sci_transmit_byte_count] = 0xe2;
             sci_transmit_byte_count = sci_transmit_byte_count + 1;
@@ -75037,6 +75134,9 @@ void cm848_sciCommand40ReadEepromSetting(void)
 //
 // Function: cm848_sciCommand40ReadEepromSettingCallback @ 0x00521944
 //
+
+/* SCI diagnostic link next-byte callback: command 40 EEPROM setting read |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
 
 void cm848_sciCommand40ReadEepromSettingCallback(void)
 
@@ -75099,6 +75199,9 @@ void cm848_sciCommand41WriteTableValue(void)
 // Function: cm848_sciCommand41WriteTableValueCallback @ 0x00521a9c
 //
 
+/* SCI diagnostic link next-byte callback: command 41 table 250 / 252 value write |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+
 void cm848_sciCommand41WriteTableValueCallback(void)
 
 {
@@ -75150,6 +75253,10 @@ void cm848_sciCommand42Handler(void)
 //
 // Function: cm848_sciCommand42Callback @ 0x00521b9c
 //
+
+/* next-byte callback for SCI command 0x2a (42) installed by cm848_sciCommand42Handler (0x521b6c) -
+   reached only via sci_next_byte_handler - not a dead function | registration-table-sweep reviewed
+   2026-11-13 */
 
 void cm848_sciCommand42Callback(void)
 
@@ -75281,6 +75388,10 @@ void cm848_sciDecrementKeyRetryDelay(void)
 //
 // Function: cm848_sciCommand44SendSecurityKeyCallback @ 0x00521e68
 //
+
+/* SCI diagnostic link next-byte callback: command 44 key: cm848_sciValidateSecurityKey / 3 failures
+   lock out / wrong key starts the retry delay | review-function-readability reviewed 2026-11-12 -
+   Readability Low Accuracy Confidence High */
 
 void cm848_sciCommand44SendSecurityKeyCallback(void)
 
@@ -75418,20 +75529,27 @@ undefined1 cm848_writeEepromBytes(uint param_1,undefined4 param_2,int param_3)
 // Function: cm848_sciCommand49Callback @ 0x00522158
 //
 
+/* next-byte callback for SCI command 0x31 (49) installed by cm848_sciCommand49Handler (0x522044) -
+   reached only via sci_next_byte_handler - not a dead function. Serial reflash request: when the
+   byte is 1, sci_security_state is 1 (unlocked) and cold_start_phase is 1 (or engine_sync_type_code
+   is 5100), it writes serial_reflash_unlock_request_cal = 1 (EEPROM 0x56) and the boot-kernel magic
+   0x1d0a at EEPROM 0x00, then cm848_restartThroughBootRomAfterSciRequest; the boot ROM then starts
+   its SCI session already unlocked | registration-table-sweep reviewed 2026-11-13 */
+
 void cm848_sciCommand49Callback(void)
 
 {
   short sVar1;
-  undefined2 uStack_8;
-  undefined2 auStack_6 [3];
+  undefined2 local_8;
+  undefined2 local_6 [3];
   
   if (((*(char *)sci_buffer_cursor == '\x01') && (sci_security_state == 1)) &&
      ((cold_start_phase == CSP_CRANKING || (engine_sync_type_code == 0x13ec)))) {
-    uStack_8 = 1;
-    auStack_6[0] = 0x1d0a;
-    sVar1 = cm848_writeEepromBytes(&serial_reflash_unlock_request_cal,&uStack_8,2);
+    local_8 = 1;
+    local_6[0] = 0x1d0a;
+    sVar1 = cm848_writeEepromBytes(&serial_reflash_unlock_request_cal,&local_8,2);
     if (sVar1 == 0) {
-      sVar1 = cm848_writeEepromBytes(0x1000000,auStack_6,2);
+      sVar1 = cm848_writeEepromBytes(0x1000000,local_6,2);
       if (sVar1 == 0) {
         cm848_restartThroughBootRomAfterSciRequest();
       }
@@ -75625,21 +75743,24 @@ bool cm848_isFaultGroupStatusBitSet(uint param_1)
 // Function: cm848_sciCommand52ReportFaultStatusBySpnCallback @ 0x0052252c
 //
 
+/* SCI diagnostic link next-byte callback: command 52 SPN -> fault status |
+   review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium */
+
 void cm848_sciCommand52ReportFaultStatusBySpnCallback(void)
 
 {
   uint uVar1;
   short sVar2;
   byte bVar3;
-  ushort auStack_8 [4];
+  ushort local_8 [4];
   
   bVar3 = 0;
   (&DAT_003fcf93)[DAT_003fcf92] = *(undefined1 *)sci_buffer_cursor;
   uVar1 = DAT_003fcf92 + 1;
   DAT_003fcf92 = (byte)uVar1;
   if ((uVar1 & 0xff) < 2) goto LAB_00522660;
-  sVar2 = cm848_lookupFaultSpnIndex(auStack_8,CONCAT11(DAT_003fcf93,DAT_003fcf94));
-  uVar1 = (uint)auStack_8[0];
+  sVar2 = cm848_lookupFaultSpnIndex(local_8,CONCAT11(DAT_003fcf93,DAT_003fcf94));
+  uVar1 = (uint)local_8[0];
   if (sVar2 != 0) {
     bVar3 = (&fault_status_array)[uVar1 * 3] >> 4 & 6;
     if (((&fault_status_array)[uVar1 * 3] & 0x10) != 0) {
