@@ -737,7 +737,7 @@ address,name,type,comment
 0x003fa5f2,diag_state_group7_a_state,word,
 0x003fa5f4,diag_state_group7_b_state,word,
 0x003fa5fe,PTR_DAT_003fa5fe,pointer,
-0x003fa606,fuel_demand_computed,dword,
+0x003fa606,boost_pressure_target_unclamped,dword,cm848_calculateBoostTorqueOffset: base quantity x rpm factor x boost_fuel_scale_divisor / 0xfa000 - fuel_demand_correction_offset_cal; clamped to 0-0x3200 and EMA-filtered into boost_pressure_target_filtered - copy-window RAM, app side (was fuel_demand_computed - the same name as 0x40a2ce)
 0x003fa60a,fuel_demand_cal_percent,word,
 0x003fa60c,fuel_mode_flags_combined,word,
 0x003fa60e,PTR_DAT_003fa60e,pointer,
@@ -1191,7 +1191,7 @@ address,name,type,comment
 0x003faf42,cold_start_state_flag_a,byte,
 0x003faf43,cold_start_state_flag_b,byte,
 0x003faf44,etc1_torque_limit_integrator,dword,
-0x003faf48,governor_fuel_demand_correction,dword,
+0x003faf48,governor_fuel_demand_correction_accumulator,dword,Q16 accumulator of the speed governor fuel demand correction: cm848_processSpeedGovernorControl / cm848_updateSpeedProtectionLimits read and write it as a dword (value << 16) and its high word (lha / sth) is the correction copied into governor_fuel_demand_correction (0x40ae9a) - time-shared copy-window RAM, app side (was governor_fuel_demand_correction - the same name as 0x40ae9a)
 0x003faf4a,governor_fuel_demand_correction+2,,
 0x003faf4c,governor_speed_correction,word,
 0x003faf4e,governor_speed_setpoint_working,word,
@@ -4617,7 +4617,7 @@ address,name,type,comment
 0x0040ae76,governor_speed_setpoint_raw,word,
 0x0040ae78,governor_d_gain_from_table,word,
 0x0040ae7a,governor_p_gain_from_table,word,
-0x0040ae7c,governor_mode_state,byte,
+0x0040ae7c,governor_operational_mode_request,word,Requested governor operating mode: cm848_processGovernorLoadCondition sets 1 / 0 and cm848_processGovernorSpeedSetpoint 0 / 2 / 3; cm848_updateGovernorSetpointParameters copies it into governor_operational_mode (0x40ae7e) (was governor_mode_state - the same name as the word at 0x40ad5a; it was declared byte though every access is a word sth, so it rendered as _governor_mode_state)
 0x0040ae7e,governor_operational_mode,word,
 0x0040ae80,governor_j1939_mode_override,word,
 0x0040ae82,governor_j1939_speed_target,word,

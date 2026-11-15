@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 06:24:31 MST 2026
+// Generated: Sun Nov 15 06:31:34 MST 2026
 
 
 //
@@ -11613,16 +11613,16 @@ void cm848_calculateBoostTorqueOffset(word boost_input,word rpm)
   fuel_demand_rpm_factor = lookupTableInterpolation((table_interp_args_t *)&DAT_003fa5fc);
   uVar2 = (uint)fuel_demand_base_quantity * (uint)fuel_demand_rpm_factor;
   uVar1 = (uint)boost_fuel_scale_divisor;
-  fuel_demand_computed =
+  boost_pressure_target_unclamped =
        (int)(CONCAT44((int)((ulonglong)uVar1 * (ulonglong)uVar2 >> 0x20) +
                       uVar1 * ((int)uVar2 >> 0x1f),uVar1 * uVar2) / 0xfa000) -
        (uint)fuel_demand_correction_offset_cal;
-  if ((int)fuel_demand_computed < 0) {
+  if ((int)boost_pressure_target_unclamped < 0) {
     uVar1 = 0;
   }
   else {
-    uVar1 = fuel_demand_computed;
-    if (0x3200 < (int)fuel_demand_computed) {
+    uVar1 = boost_pressure_target_unclamped;
+    if (0x3200 < (int)boost_pressure_target_unclamped) {
       uVar1 = 0x3200;
     }
   }
@@ -24286,7 +24286,7 @@ void cm848_updateSpeedProtectionLimits(int param_1)
   cm848_processSpeedSensorCompensation();
   pwVar1 = &governor_speed_reference_computed;
   governor_speed_reference_computed = governor_speed_reference_init_cal + governor_speed_correction;
-  governor_fuel_demand_correction =
+  governor_fuel_demand_correction_accumulator =
        ((uint)fuel_demand_computed -
        (int)(CONCAT44((int)((ulonglong)
                             ((longlong)(int)(short)governor_speed_error_delta *
@@ -24300,26 +24300,27 @@ void cm848_updateSpeedProtectionLimits(int param_1)
       (cold_start_fuel_demand_correction_enable_cal != 0)) &&
      (((short)governor_speed_low_clamp < (short)cold_start_governor_speed_clamp_threshold_cal ||
       (vehicle_speed <= governor_fuel_demand_correction_maximum_vehicle_speed)))) {
-    governor_fuel_demand_correction = (dword)(short)governor_fuel_demand_correction;
+    governor_fuel_demand_correction_accumulator = (dword)(short)governor_fuel_demand_correction;
     governor_fuel_demand_correction_active_flag = 1;
   }
   else {
     governor_fuel_demand_correction_active_flag = 0;
   }
-  if ((int)governor_fuel_demand_correction <=
+  if ((int)governor_fuel_demand_correction_accumulator <=
       (int)(short)(governor_speed_reference_init_cal + governor_speed_correction)) {
     if (((transmission_park_or_neutral_flag != 0) &&
         (wVar2 = governor_fuel_correction_lower_cal,
-        (int)governor_fuel_demand_correction < (int)(short)governor_fuel_correction_lower_cal)) ||
+        (int)governor_fuel_demand_correction_accumulator <
+        (int)(short)governor_fuel_correction_lower_cal)) ||
        ((transmission_park_or_neutral_flag == 0 &&
         (wVar2 = governor_fuel_correction_lower_b_cal,
-        (int)governor_fuel_demand_correction < (int)(short)governor_fuel_correction_lower_b_cal))))
-    goto LAB_00027fb0;
-    pwVar1 = (word *)((int)&governor_fuel_demand_correction + 2);
+        (int)governor_fuel_demand_correction_accumulator <
+        (int)(short)governor_fuel_correction_lower_b_cal)))) goto LAB_00027fb0;
+    pwVar1 = (word *)((int)&governor_fuel_demand_correction_accumulator + 2);
   }
   wVar2 = *pwVar1;
 LAB_00027fb0:
-  governor_fuel_demand_correction = (uint)wVar2 << 0x10;
+  governor_fuel_demand_correction_accumulator = (uint)wVar2 << 0x10;
   governor_speed_weight_a = 0;
   governor_speed_weight_b = 0;
   governor_speed_error_derivative = 0;
@@ -24382,7 +24383,7 @@ void cm848_processSpeedGovernorControl(void)
   if (((uVar3 & 0xffff) < (uint)engine_rpm_state_t_0040b7ac.current_rpm) &&
      (governor_fuel_demand_value < governor_fuel_demand_reset_threshold_cal)) {
     governor_fuel_demand_correction = governor_fuel_correction_init_cal;
-    governor_fuel_demand_correction = (uint)governor_fuel_correction_init_cal << 0x10;
+    governor_fuel_demand_correction_accumulator = (uint)governor_fuel_correction_init_cal << 0x10;
     governor_speed_weight_a = 0;
     governor_speed_weight_b = 0;
     governor_speed_error_derivative = 0;
@@ -24454,7 +24455,7 @@ void cm848_processSpeedGovernorControl(void)
     else {
       iVar2 = 0x22800000;
     }
-    dVar4 = (governor_fuel_demand_correction - iVar2) +
+    dVar4 = (governor_fuel_demand_correction_accumulator - iVar2) +
             (int)(CONCAT44((int)((ulonglong)
                                  ((longlong)iVar5 *
                                  (longlong)
@@ -24462,16 +24463,17 @@ void cm848_processSpeedGovernorControl(void)
                                  (int)(short)governor_pid_gain_factor_b)) >> 0x20),
                            iVar5 * (int)(short)governor_d_gain_from_table *
                                    (int)(short)governor_pid_gain_factor_b) / 0x23);
-    governor_fuel_demand_correction._0_2_ = (word)(dVar4 >> 0x10);
+    governor_fuel_demand_correction_accumulator._0_2_ = (word)(dVar4 >> 0x10);
     wVar7 = governor_speed_pid_output_working;
-    if (((short)governor_speed_pid_output_working <= (short)governor_fuel_demand_correction._0_2_)
-       || (bVar1 = (short)governor_fuel_demand_correction._0_2_ <
-                   (short)governor_fuel_correction_threshold_cal,
-          wVar7 = governor_fuel_correction_threshold_cal, governor_fuel_demand_correction = dVar4,
-          bVar1)) {
-      governor_fuel_demand_correction = (uint)wVar7 << 0x10;
+    if (((short)governor_speed_pid_output_working <=
+         (short)governor_fuel_demand_correction_accumulator._0_2_) ||
+       (bVar1 = (short)governor_fuel_demand_correction_accumulator._0_2_ <
+                (short)governor_fuel_correction_threshold_cal,
+       wVar7 = governor_fuel_correction_threshold_cal,
+       governor_fuel_demand_correction_accumulator = dVar4, bVar1)) {
+      governor_fuel_demand_correction_accumulator = (uint)wVar7 << 0x10;
     }
-    governor_fuel_demand_correction = governor_fuel_demand_correction._0_2_;
+    governor_fuel_demand_correction = governor_fuel_demand_correction_accumulator._0_2_;
     uVar3 = (int)(short)governor_speed_error_derivative *
             (int)(short)governor_speed_derivative_scale_cal;
     sVar8 = (short)(((int)(short)governor_speed_error_rate_adjusted *
@@ -24570,8 +24572,6 @@ void cm848_initSpeedProtectionParameters(void)
 // Function: cm848_processGovernorLoadCondition @ 0x00028670
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processGovernorLoadCondition(void)
 
 {
@@ -24648,11 +24648,11 @@ void cm848_processGovernorLoadCondition(void)
       }
     }
     if (governor_active_flag == 1) {
-      _governor_mode_state = 1;
+      governor_operational_mode_request = 1;
       governor_setpoint_table_ptr = &governor_setpoint_table_cal;
     }
     else {
-      _governor_mode_state = 0;
+      governor_operational_mode_request = 0;
     }
   }
   return;
@@ -24712,8 +24712,6 @@ undefined4 cm848_selectGovernorSetpointSource(int param_1)
 // Function: cm848_updateGovernorSetpointParameters @ 0x00028a14
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_updateGovernorSetpointParameters(void)
 
 {
@@ -24722,8 +24720,9 @@ void cm848_updateGovernorSetpointParameters(void)
   sVar1 = cm848_getGovernorOverrideSource();
   sVar1 = cm848_selectGovernorSetpointSource((int)sVar1);
   if ((sVar1 == 0) &&
-     (governor_operational_mode = _governor_mode_state,
-     governor_setpoint_table_ptr = governor_setpoint_table_ptr, _governor_mode_state == 0)) {
+     (governor_operational_mode = governor_operational_mode_request,
+     governor_setpoint_table_ptr = governor_setpoint_table_ptr,
+     governor_operational_mode_request == 0)) {
     governor_setpoint_table_ptr = (undefined *)&governor_setpoint_table_a;
   }
   governor_speed_setpoint_raw = *(word *)governor_setpoint_table_ptr;
@@ -24752,13 +24751,11 @@ void cm848_initGovernorTimerCountersWrapper(void)
 // Function: cm848_initGovernorLoadStateWrapper @ 0x00028adc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_initGovernorLoadStateWrapper(void)
 
 {
   cm848_resetGovernorLoadState();
-  _governor_mode_state = 0;
+  governor_operational_mode_request = 0;
   governor_j1939_speed_target = governor_setpoint_table_a;
   governor_j1939_d_gain_stored = governor_j1939_d_gain_default_cal;
   governor_j1939_p_gain_stored = governor_j1939_p_gain_default_cal;
@@ -39833,8 +39830,6 @@ void cm848_processSystemStatusLimits(void)
 // Function: cm848_processGovernorSpeedSetpoint @ 0x0004256c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void cm848_processGovernorSpeedSetpoint(void)
 
 {
@@ -39844,7 +39839,7 @@ void cm848_processGovernorSpeedSetpoint(void)
     if (governor_enabled_flag == 1) {
       if (((short)governor_speed_error_exit_upper_cal < (short)governor_speed_error_delta) ||
          ((short)governor_speed_error_delta < (short)governor_speed_error_exit_lower_cal)) {
-        _governor_mode_state = 0;
+        governor_operational_mode_request = 0;
         governor_speed_mode_count = 0;
       }
       else {
@@ -39853,9 +39848,9 @@ void cm848_processGovernorSpeedSetpoint(void)
         }
         uVar1 = (uint)drivetrain_ratio * (uint)protection_temp_scale_factor >> 0xb;
         if ((int)(short)governor_speed_mode_rpm_upper_cal < (int)uVar1) {
-          _governor_mode_state = 0;
+          governor_operational_mode_request = 0;
         }
-        else if ((((_governor_mode_state == 0) &&
+        else if ((((governor_operational_mode_request == 0) &&
                   (governor_speed_mode_count == governor_speed_mode_count_max_cal)) &&
                  ((governor_feature_flags & 0x4000) != 0)) &&
                 ((int)uVar1 <
@@ -39863,18 +39858,18 @@ void cm848_processGovernorSpeedSetpoint(void)
                  (int)(short)governor_speed_mode_hysteresis_cal)) {
           if (((governor_feature_flags & 0x2000) == 0) ||
              ((int)(short)governor_speed_mode_rpm_upper_b_cal < (int)uVar1)) {
-            _governor_mode_state = 2;
+            governor_operational_mode_request = 2;
             governor_setpoint_table_ptr = &governor_setpoint_table_mode2_cal;
           }
           else if ((int)uVar1 <
                    (int)(short)governor_speed_mode_rpm_upper_b_cal -
                    (int)(short)governor_speed_mode_hysteresis_cal) {
-            _governor_mode_state = 3;
+            governor_operational_mode_request = 3;
             governor_setpoint_table_ptr = &governor_setpoint_table_mode3_cal;
           }
         }
       }
-      if (_governor_mode_state == 0) {
+      if (governor_operational_mode_request == 0) {
         governor_mode_active_flag = 0;
       }
       else {
@@ -39883,7 +39878,7 @@ void cm848_processGovernorSpeedSetpoint(void)
     }
   }
   else {
-    _governor_mode_state = 0;
+    governor_operational_mode_request = 0;
     governor_speed_mode_count = 0;
   }
   return;

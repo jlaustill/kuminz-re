@@ -680,7 +680,7 @@ extern void * PTR_DAT_003fa5ea;  // 0x003fa5ea
 extern word diag_state_group7_a_state;  // 0x003fa5f2
 extern word diag_state_group7_b_state;  // 0x003fa5f4
 extern void * PTR_DAT_003fa5fe;  // 0x003fa5fe
-extern dword fuel_demand_computed;  // 0x003fa606
+extern dword boost_pressure_target_unclamped;  // 0x003fa606
 extern word fuel_demand_cal_percent;  // 0x003fa60a
 extern word fuel_mode_flags_combined;  // 0x003fa60c
 extern void * PTR_DAT_003fa60e;  // 0x003fa60e
@@ -1063,7 +1063,7 @@ extern word j1939_etc1_torque_limit_snapshot;  // 0x003faf40
 extern byte cold_start_state_flag_a;  // 0x003faf42
 extern byte cold_start_state_flag_b;  // 0x003faf43
 extern dword etc1_torque_limit_integrator;  // 0x003faf44
-extern dword governor_fuel_demand_correction;  // 0x003faf48
+extern dword governor_fuel_demand_correction_accumulator;  // 0x003faf48
 extern word governor_speed_correction;  // 0x003faf4c
 extern word governor_speed_setpoint_working;  // 0x003faf4e
 extern word governor_speed_debounce_active_flag;  // 0x003faf50
@@ -4270,7 +4270,7 @@ extern word governor_enabled_flag;  // 0x0040ae74
 extern word governor_speed_setpoint_raw;  // 0x0040ae76
 extern word governor_d_gain_from_table;  // 0x0040ae78
 extern word governor_p_gain_from_table;  // 0x0040ae7a
-extern byte governor_mode_state;  // 0x0040ae7c
+extern word governor_operational_mode_request;  // 0x0040ae7c
 extern word governor_operational_mode;  // 0x0040ae7e
 extern word governor_j1939_mode_override;  // 0x0040ae80
 extern word governor_j1939_speed_target;  // 0x0040ae82
