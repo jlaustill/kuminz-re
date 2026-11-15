@@ -1372,8 +1372,8 @@ void hpcr_exception_process(void);  // @ 0x00505d94
 void j1939_dm1_diagnosticMessage_send(void);  // @ 0x00505df0
 void cm848_phase_groupB_calculation(int param_1);  // @ 0x00505f98
 void cm848_outputs2_periodic(void);  // @ 0x0050638c
-void cm848_mainLoop_step_4(void);  // @ 0x00506780
-void hpcr_exception_process_2(void);  // @ 0x005067bc
+void cm848_advanceHourMeters(void);  // @ 0x00506780
+void cm848_loadHourMetersFromEeprom(void);  // @ 0x005067bc
 void governor_speedModeB_activeFlag_update(void);  // @ 0x005067e0
 void governor_speedFault_filterProcess_update(void);  // @ 0x00506840
 void boost_pressureSource_faultSelect_update(void);  // @ 0x00506964

@@ -1690,9 +1690,9 @@ extern void * PTR_cm848_j1939BuildProtocolModeStatus_003fd3ba;  // 0x003fd3ba
 extern void * PTR_FUN_003fd416;  // 0x003fd416
 extern void * PTR_FUN_003fd41c;  // 0x003fd41c
 extern byte eeprom_mirror;  // 0x003fd482
-extern dword sensor_param_id_working;  // 0x003fd4b2
+extern dword key_on_hour_meter_cal;  // 0x003fd4b2
 extern word sensor_channel_index_working;  // 0x003fd4b8
-extern dword sensor_fault_threshold_working;  // 0x003fd4c4
+extern dword engine_hour_meter_cal;  // 0x003fd4c4
 extern word eeprom_block_checksum_expected_cal;  // 0x003fd4de
 extern word checksum_validation_step_counter;  // 0x003fd510
 extern word fuel_blend_coefficient_startup_cal;  // 0x003fd514
@@ -4011,7 +4011,7 @@ extern word throttle_cal_b6_lookup;  // 0x0040a642
 extern word throttle_demand_processed;  // 0x0040a644
 extern word throttle_cal_ba_lookup;  // 0x0040a646
 extern byte fuel_demand_cmd20_pending_flag;  // 0x0040a64b
-extern dword fault_timing_snapshot;  // 0x0040a64c
+extern dword key_on_hour_meter;  // 0x0040a64c
 extern word map_sensor_fault_mode_flag;  // 0x0040a650
 extern dword boost_decel_active_flag;  // 0x0040a652
 extern word boost_pressure_correction_snapshot;  // 0x0040a656
@@ -4094,7 +4094,7 @@ extern word torque_limit_fuel_upper_cap;  // 0x0040a77c
 extern word governor_startup_ready_flag;  // 0x0040a77e
 extern word torque_limit_fuel_min_alt;  // 0x0040a780
 extern word engine_starting;  // 0x0040a784
-extern dword protection_timer_config_a;  // 0x0040a794
+extern dword engine_hour_meter;  // 0x0040a794
 extern word cold_start_advance_counter;  // 0x0040a798
 extern word cold_start_rpm_adjust_b;  // 0x0040a79a
 extern word cold_start_rpm_adjust_c;  // 0x0040a79c
@@ -5704,6 +5704,7 @@ extern word injection_timing_arb_boost_blend_interp_state;  // 0x003fd164
 extern word cam_sync_balance_hold_counter;  // 0x003fd1a4
 extern word cam_sync_advance_event_count;  // 0x003fd1a6
 extern word cam_sync_balance_accumulator;  // 0x003fd1a8
+extern dword load_histogram_start_engine_hours_cal;  // 0x003fde44
 extern dword fuel_demand_histogram_sample_count;  // 0x003fde48
 extern word hpcr_battery_voltage_flags;  // 0x003fe9b2
 extern word injection_timing_trim_boost_blend_interp_state;  // 0x003fb73c

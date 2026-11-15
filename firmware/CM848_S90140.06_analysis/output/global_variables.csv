@@ -1833,9 +1833,9 @@ address,name,type,comment
 0x003fd416,PTR_FUN_003fd416,pointer,
 0x003fd41c,PTR_FUN_003fd41c,pointer,
 0x003fd482,eeprom_mirror,byte,RAM mirror of the serial EEPROM: RAM = 0x3fd482 + EEPROM offset (0x0-0x1a3f) - loaded by cm848_initEepromDriverAndLoadMirror (was sensor_cal_table)
-0x003fd4b2,sensor_param_id_working,dword,
+0x003fd4b2,key_on_hour_meter_cal,dword,EEPROM 0x30 (mirror): lifetime ECM key-on time in 0.2 s counts - the EEPROM copy of key_on_hour_meter (HP Tuners does not wipe it: 177.3M -> 179.2M counts across the four dumps). The boot ROM loads the same word into ecu_power_state_flags.runtime_counter. Was sensor_param_id_working
 0x003fd4b8,sensor_channel_index_working,word,
-0x003fd4c4,sensor_fault_threshold_working,dword,
+0x003fd4c4,engine_hour_meter_cal,dword,EEPROM 0x42 (mirror): lifetime ENGINE-RUNNING time in 0.2 s counts - the EEPROM copy of engine_hour_meter (HP Tuners does not wipe it: 176,750,910 = 9,819.5 h in the last dump). The engine hours to seed OCT with (tools/read_engine_hours.sh). Was sensor_fault_threshold_working
 0x003fd4de,eeprom_block_checksum_expected_cal,word,EEPROM offset 0x5c: expected 16-bit sum of the checksummed block EEPROM 0x8ea-0x1a3d (was sensor_validation_sum_expected)
 0x003fd510,checksum_validation_step_counter,word,
 0x003fd514,fuel_blend_coefficient_startup_cal,word,
@@ -4315,7 +4315,7 @@ address,name,type,comment
 0x0040a644,throttle_demand_processed,word,
 0x0040a646,throttle_cal_ba_lookup,word,
 0x0040a64b,fuel_demand_cmd20_pending_flag,byte,
-0x0040a64c,fault_timing_snapshot,dword,
+0x0040a64c,key_on_hour_meter,dword,ECM key-on (powered) time in 0.2 s counts (hours = counts / 18000): +1 every 40-phase main-loop cycle (cm848_advanceHourMeters - 40 PIT ticks of 5 ms). Loaded from key_on_hour_meter_cal (EEPROM 0x30) at start and saved there at power-down and before a reflash restart. Also the fault timestamp clock (fault_timestamp_array / fault_entry_t.timing_snapshot) and the PCI / SCI security seed source. Was fault_timing_snapshot
 0x0040a650,map_sensor_fault_mode_flag,word,
 0x0040a652,boost_decel_active_flag,dword,
 0x0040a656,boost_pressure_correction_snapshot,word,
@@ -4401,8 +4401,7 @@ address,name,type,comment
 0x0040a77e,governor_startup_ready_flag,word,
 0x0040a780,torque_limit_fuel_min_alt,word,
 0x0040a784,engine_starting,word,
-0x0040a794,protection_timer_config_a,dword,
-0x0040a796,protection_timer_config_a+2,,
+0x0040a794,engine_hour_meter,dword,ENGINE-RUNNING time in 0.2 s counts (hours = counts / 18000): +1 every 40-phase main-loop cycle unless cold_start_phase is 1 (engine stopped / cranking) - cm848_advanceHourMeters. Loaded from engine_hour_meter_cal (EEPROM 0x42) at start and saved there at power-down and before a reflash restart. During the two HP Tuners flash sessions (key on - engine off) it advanced 2 s while key_on_hour_meter advanced 44.7 / 19.8 min. Was protection_timer_config_a
 0x0040a798,cold_start_advance_counter,word,
 0x0040a79a,cold_start_rpm_adjust_b,word,
 0x0040a79c,cold_start_rpm_adjust_c,word,
@@ -5148,7 +5147,7 @@ address,name,type,comment
 0x0040b512,immobilizer_valid_key_flag,word,1 = the immobilizer (SKIM) answered the seed the ECM sent in PCI TX[7] 0x3F with the expected key (RX[6] 4F C0 command 0); sent as TX[2] 0x35 byte 1 bit 0 (DRB Key Status VALID); still 0 when the wait ends = no fuel (was j1939_governor_auth_granted)
 0x0040b516,immobilizer_fuel_disable_flag,word,1 = immobilizer fuel cut: set by cm848_runImmobilizerTask when the authorization window ends unauthorized with no failure latch; once the engine leaves CSP_CRANKING cm848_selectFuelDemandSource forces fuel demand 0 (mode 0x29); cleared by init / 0xB1 restart (was governor_mode_override_active)
 0x0040b51c,immobilizer_secret_key_send_enable,byte,1 requests the PCI TX[9] 4F 10 secret-key send - set by the SCI command 0x23 (35) callback on sub-byte 0x13 when sci_security_key_matched_flag and sci_receive_flag are set while cranking - cleared after frame 2 (was j1939_tsc1_override_enable) (Medium confidence)
-0x0040b51d,pci_security_seed,word,Seed sent in the 67 01 reply (bytes 4-5): low 16 bits of the free-running fault_timing_snapshot counter (0 -> 1) - 0 once unlocked; checked against the key by cm848_validatePciSecurityKey (was uds_security_challenge)
+0x0040b51d,pci_security_seed,word,Seed sent in the 67 01 reply (bytes 4-5): low 16 bits of key_on_hour_meter (0 -> 1) - 0 once unlocked; checked against the key by cm848_validatePciSecurityKey (was uds_security_challenge)
 0x0040b51f,pci_security_key,word,Key received with service 0x27 sub-function 2 = (request byte 4 << 8) + request byte 5 (was uds_security_seed_word - it is the tester's key not the seed)
 0x0040b521,pci_security_failed_key_count,word,Invalid keys in a row: 1-2 -> 7F 27 35 (invalid key) / the 3rd -> 7F 27 36 (attempts exceeded) + pci_security_lockout_timer 250 and back to 0; cleared by a valid key (was tsc1_retry_count - nothing to do with TSC1)
 0x0040b523,pci_security_lockout_timer,word,Lockout after 3 invalid keys: 250 then -1 per handler run (every 8th main-loop phase - about 10 s if a phase is one 5 ms PIT tick - unconfirmed); while nonzero seed and key requests get 7F 27 37 (was fuel_state_countdown_timer)
@@ -6147,6 +6146,7 @@ address,name,type,comment
 0x003fd1a4,cam_sync_balance_hold_counter,word,precondition stability counter before cam-sync balance sampling
 0x003fd1a6,cam_sync_advance_event_count,word,advance/retard event count for cam-sync balance
 0x003fd1a8,cam_sync_balance_accumulator,word,net cam-sync balance accumulator vs limit
+0x003fde44,load_histogram_start_engine_hours_cal,dword,EEPROM 0x9c2 (mirror): engine_hour_meter when the load histogram started - cm848_outputs2_periodic stores it on the first engine-running sample after a reset (fuel_demand_histogram_sample_count 0; SCI command 20 clears the histogram)
 0x003fde48,fuel_demand_histogram_sample_count,dword,total sample count for fuel-demand usage histogram
 0x003fe9b2,hpcr_battery_voltage_flags,word,HPCR battery-voltage protection status bits (system_status_flags+0x3e)
 0x003fb73c,injection_timing_trim_boost_blend_interp_state,word,dualAxis interp state base (injection timing trim boost blend)

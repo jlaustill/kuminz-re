@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 09:10:56 MST 2026
+// Generated: Sun Nov 15 09:17:57 MST 2026
 
 
 //
@@ -7388,7 +7388,7 @@ void main_loop(void)
     cm848_periodicTaskSet_canTx();
     cm848_periodicTaskGroup12_calibration1();
     hpcr_periodicTaskGroup25_calibration7();
-    cm848_mainLoop_step_4();
+    cm848_advanceHourMeters();
     scheduler_task_stat_ptr_b = (undefined *)&scheduler_task_stat_t_0040be6a;
     main_loop_scheduler_phase = 1;
     break;
@@ -17057,7 +17057,7 @@ void mpc555_processColdStartMainLoop(void)
         if (fault_rpm_log_write_flag == 0) {
           fault_rpm_log_write_flag = 1;
           uVar3 = (uint)fault_rpm_log_index;
-          (&cold_start_fault_timing_log)[uVar3 * 2] = fault_timing_snapshot;
+          (&cold_start_fault_timing_log)[uVar3 * 2] = key_on_hour_meter;
           (&DAT_003fdfe4)[uVar3 * 4] = 0;
         }
         else if (engine_rpm_state_t_0040b7ac.current_rpm <=
@@ -17072,7 +17072,7 @@ void mpc555_processColdStartMainLoop(void)
          system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0xf7ff;
     fault_registered_bits_16_to_31 = fault_registered_bits_16_to_31 & 0xf7ff;
     (&DAT_003fdfe4)[(uint)fault_rpm_log_index * 4] =
-         (short)fault_timing_snapshot -
+         (short)key_on_hour_meter -
          (short)(&cold_start_fault_timing_log)[(uint)fault_rpm_log_index * 2];
     fault_rpm_log_write_flag = 0;
     fault_rpm_log_index = (ushort)(fault_rpm_log_index + 1) % 5;
@@ -17245,10 +17245,10 @@ void cm848_faultTimeoutHandler(byte param_1)
       iVar1 = ((byte)(&DAT_00059e9f)[(uint)param_1 * 6] & 3) * 8;
       if ((((&fault_entry_debounce_array)[iVar3] == 0) &&
           (*(uint *)(&DAT_0005983a + iVar1) <
-           fault_timing_snapshot - *(int *)((int)&fault_timestamp_array + iVar3))) ||
+           key_on_hour_meter - *(int *)((int)&fault_timestamp_array + iVar3))) ||
          (((&fault_entry_debounce_array)[iVar3] != 0 &&
           (*(uint *)(&DAT_0005983e + iVar1) <
-           ((fault_timing_snapshot - *(int *)((int)&fault_timestamp_array + iVar3)) -
+           ((key_on_hour_meter - *(int *)((int)&fault_timestamp_array + iVar3)) -
            *(uint *)(&DAT_0005983a + iVar1)) -
            *(uint *)(&DAT_0005983e + iVar1) * ((&fault_entry_debounce_array)[iVar3] - 1))))) {
         (&fault_entry_debounce_array)[iVar3] = (&fault_entry_debounce_array)[iVar3] + 1;
@@ -17609,7 +17609,7 @@ void cm848_processFaultScanGroup(void)
             }
             if (*(char *)(uVar10 + 0x3fe124) == '\0') {
               (&fault_entry_status_array)[uVar10 * 7] = 2;
-              *(dword *)((int)&fault_timestamp_array + uVar10 * 7) = fault_timing_snapshot;
+              *(dword *)((int)&fault_timestamp_array + uVar10 * 7) = key_on_hour_meter;
               bVar2 = false;
               uVar9 = 0;
               do {
@@ -17687,7 +17687,7 @@ void cm848_processFaultScanGroup(void)
           if (*(char *)(uVar9 + 0x3fe124) == '\0') {
             cm848_registerFaultInActiveList(uVar9);
             (&fault_entry_status_array)[iVar8] = 3;
-            *(dword *)((int)&fault_timestamp_array + iVar8) = fault_timing_snapshot;
+            *(dword *)((int)&fault_timestamp_array + iVar8) = key_on_hour_meter;
             (&fault_entry_debounce_array)[iVar8] = 0;
             bVar2 = false;
             uVar10 = 0;
@@ -17897,9 +17897,9 @@ void diagnosticMainStateProcessor(void)
   else {
     diagnostic_fault_flags_b = uVar1 | 0x1000;
   }
-  if (0x18 < fault_timing_snapshot - fault_event_timing_prev) {
+  if (0x18 < key_on_hour_meter - fault_event_timing_prev) {
     cm848_activeFaultScanProcessor();
-    fault_event_timing_prev = fault_timing_snapshot;
+    fault_event_timing_prev = key_on_hour_meter;
   }
   return;
 }
@@ -18035,7 +18035,7 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
     *(word *)(&DAT_003fe7fb + iVar2) = engine_rpm_state_t_0040b7ac.target_rpm;
     *(word *)(&DAT_003fe801 + iVar2) = accelerator_pedal_position_in_use;
     *(word *)(&DAT_003fe803 + iVar2) = intake_manifold_pressure_in_use;
-    *(dword *)(&DAT_003fe7f4 + iVar2) = fault_timing_snapshot;
+    *(dword *)(&DAT_003fe7f4 + iVar2) = key_on_hour_meter;
     *(word *)(&DAT_003fe805 + iVar2) = coolant_temperature_in_use;
     *(word *)(&DAT_003fe807 + iVar2) = intake_manifold_temperature_in_use;
     *(word *)(&DAT_003fe809 + iVar2) = oil_pressure_sensor_filtered;
@@ -18062,7 +18062,7 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
     (&fault_entry_t_003fe674)[param_1].accelerator_pedal_position =
          accelerator_pedal_position_in_use;
     (&fault_entry_t_003fe674)[param_1].intake_manifold_pressure = intake_manifold_pressure_in_use;
-    (&fault_entry_t_003fe674)[param_1].timing_snapshot = fault_timing_snapshot;
+    (&fault_entry_t_003fe674)[param_1].timing_snapshot = key_on_hour_meter;
     (&fault_entry_t_003fe674)[param_1].coolant_temperature = coolant_temperature_in_use;
     (&fault_entry_t_003fe674)[param_1].intake_manifold_temperature =
          intake_manifold_temperature_in_use;
@@ -20094,12 +20094,12 @@ DIAG_RESPONSE cm848_setEngineStarting(void)
 
 /* WARNING: This function may have set the stack pointer */
 /* Software restart into the boot ROM, without a hardware reset. Only in cold_start_phase 1;
-   otherwise it returns 7. It waits for the EEPROM write queue, saves fault_timing_snapshot and
-   protection_timer_config_a to EEPROM (waiting for each while a diagnostic session is active), and
-   acknowledges the request on its link (param 2: 0 = J1939 response frame to param 1, 2 = SCI byte
-   1 via cm848_sciTransmitSingleByteOne). After a delay it sets chip-select 0 (BR0 0x500803 / OR0
-   0xfff00030) and SIUMCR 0x402000, then jumps through the reset vector word at ROM 0x104 to
-   mpc555_hardwareInitialization (0x2694). Was mpc555_processJ1939RxQueue */
+   otherwise it returns 7. It waits for the EEPROM write queue, saves key_on_hour_meter and
+   engine_hour_meter to EEPROM (0x30 / 0x42) (waiting for each while a diagnostic session is
+   active), and acknowledges the request on its link (param 2: 0 = J1939 response frame to param 1,
+   2 = SCI byte 1 via cm848_sciTransmitSingleByteOne). After a delay it sets chip-select 0 (BR0
+   0x500803 / OR0 0xfff00030) and SIUMCR 0x402000, then jumps through the reset vector word at ROM
+   0x104 to mpc555_hardwareInitialization (0x2694). Was mpc555_processJ1939RxQueue */
 
 undefined4 cm848_restartThroughBootRom(undefined4 param_1,int param_2)
 
@@ -20113,25 +20113,25 @@ undefined4 cm848_restartThroughBootRom(undefined4 param_1,int param_2)
     while (cVar1 = cm848_isEepromWriteQueueEmpty(), cVar1 == '\0') {
       cm848_delayMicroseconds2(0x13);
     }
-    local_18[0] = fault_timing_snapshot;
-    cm848_queueEepromByteWritesAtOffset11134(&sensor_param_id_working,local_18,4);
+    local_18[0] = key_on_hour_meter;
+    cm848_queueEepromByteWritesAtOffset11134(&key_on_hour_meter_cal,local_18,4);
     if (diagnostic_session_state == INACTIVE) {
       cm848_delayMicroseconds2(9);
     }
-    else if (sensor_param_id_working != local_18[0]) {
+    else if (key_on_hour_meter_cal != local_18[0]) {
       do {
         cm848_delayMicroseconds2(0x13);
-      } while (sensor_param_id_working != local_18[0]);
+      } while (key_on_hour_meter_cal != local_18[0]);
     }
-    local_18[0] = protection_timer_config_a;
-    cm848_queueEepromByteWritesAtOffset11134(&sensor_fault_threshold_working,local_18,4);
+    local_18[0] = engine_hour_meter;
+    cm848_queueEepromByteWritesAtOffset11134(&engine_hour_meter_cal,local_18,4);
     if (diagnostic_session_state == INACTIVE) {
       cm848_delayMicroseconds2(9);
     }
-    else if (sensor_fault_threshold_working != local_18[0]) {
+    else if (engine_hour_meter_cal != local_18[0]) {
       do {
         cm848_delayMicroseconds2(0x13);
-      } while (sensor_fault_threshold_working != local_18[0]);
+      } while (engine_hour_meter_cal != local_18[0]);
     }
     if (param_2 == 0) {
       cm848_sendJ1939ResponseFrame(param_1,0);
@@ -35852,8 +35852,8 @@ void cm848_processPciDiagnosticRequest(void)
                 goto LAB_0003b37c;
               }
               if (pci_security_unlocked_flag != 1) {
-                pci_security_seed = (word)fault_timing_snapshot;
-                if ((fault_timing_snapshot & 0xffff) == 0) {
+                pci_security_seed = (word)key_on_hour_meter;
+                if ((key_on_hour_meter & 0xffff) == 0) {
                   pci_security_seed = 1;
                 }
                 pci_receive_message_1_timer_previous = pci_receive_message_1_timer;
@@ -38153,9 +38153,9 @@ void cm848_sciCommand53Callback(void)
     sci_security_seed = 0;
   }
   else {
-    sci_security_seed = fault_timing_snapshot;
-    if ((fault_timing_snapshot & 0xffff) == 0) {
-      sci_security_seed = fault_timing_snapshot + 1;
+    sci_security_seed = key_on_hour_meter;
+    if ((key_on_hour_meter & 0xffff) == 0) {
+      sci_security_seed = key_on_hour_meter + 1;
     }
   }
   dVar2 = sci_security_seed;
@@ -52404,7 +52404,7 @@ void cm848_applicationMain(void)
   cm848_sensorChannel13_process();
   cm848_sensorChannel16_process();
   cm848_sensorChannel1_process();
-  hpcr_exception_process_2();
+  cm848_loadHourMetersFromEeprom();
   cm848_dispatchModeHandlers();
   cm848_initEngineSpeedTracking();
   cm848_initCrankingLimits();
@@ -53369,7 +53369,7 @@ undefined4 cm848_processSecurityCodeConversion(undefined4 param_1)
       *pcVar4 = *pcVar3;
       bVar6 = bVar6 + 1;
     } while (bVar6 < 4);
-    if ((fault_timing_snapshot & 0xffffff00) - (local_18 & 0xffffff00) < 0x1a) {
+    if ((key_on_hour_meter & 0xffffff00) - (local_18 & 0xffffff00) < 0x1a) {
       bVar1 = true;
       cVar7 = '\0';
       do {
@@ -58367,7 +58367,7 @@ void cm848_phase_groupB_calculation(int param_1)
         diag_dm1_active_fault_entry_count = diag_dm1_active_fault_entry_count + 1;
         pdVar5 = pdVar5 + 1;
         if (*pdVar5 == 0) break;
-      } while (pdVar5 < &DAT_003fde44);
+      } while (pdVar5 < &load_histogram_start_engine_hours_cal);
     }
     uVar3 = (uint)diag_dm1_active_fault_entry_count;
     uVar2 = 0x8000 / uVar3;
@@ -58493,7 +58493,7 @@ void cm848_outputs2_periodic(void)
   }
   else {
     if (fuel_demand_histogram_sample_count == 0) {
-      DAT_003fde44 = protection_timer_config_a;
+      load_histogram_start_engine_hours_cal = engine_hour_meter;
     }
     if (engine_rpm_state_t_0040b7ac.current_rpm < DAT_0005c2bc) {
       wVar2 = fuel_demand_load_axis;
@@ -58591,30 +58591,37 @@ void cm848_outputs2_periodic(void)
 
 
 //
-// Function: cm848_mainLoop_step_4 @ 0x00506780
+// Function: cm848_advanceHourMeters @ 0x00506780
 //
 
-void cm848_mainLoop_step_4(void)
+/* Main-loop phase 0 task (once per 40-phase cycle = 40 PIT ticks of 5 ms = 0.2 s): +1 to
+   key_on_hour_meter always and to engine_hour_meter unless cold_start_phase is 1 (engine stopped /
+   cranking). Was cm848_mainLoop_step_4 */
+
+void cm848_advanceHourMeters(void)
 
 {
   if (cold_start_phase != CSP_CRANKING) {
-    protection_timer_config_a = protection_timer_config_a + 1;
+    engine_hour_meter = engine_hour_meter + 1;
   }
-  fault_timing_snapshot = fault_timing_snapshot + 1;
+  key_on_hour_meter = key_on_hour_meter + 1;
   return;
 }
 
 
 
 //
-// Function: hpcr_exception_process_2 @ 0x005067bc
+// Function: cm848_loadHourMetersFromEeprom @ 0x005067bc
 //
 
-void hpcr_exception_process_2(void)
+/* Loads key_on_hour_meter / engine_hour_meter from their EEPROM copies (0x30 / 0x42) - called from
+   cm848_applicationMain. Was hpcr_exception_process_2 */
+
+void cm848_loadHourMetersFromEeprom(void)
 
 {
-  fault_timing_snapshot = sensor_param_id_working;
-  protection_timer_config_a = sensor_fault_threshold_working;
+  key_on_hour_meter = key_on_hour_meter_cal;
+  engine_hour_meter = engine_hour_meter_cal;
   return;
 }
 
@@ -60328,7 +60335,7 @@ void fault_snapshot_capture(int param_1)
   uVar9 = (uint)uVar1;
   if (*(short *)(PTR_engine_rpm_trigger_ready_flag_003fbd4a + iVar4) == 0) {
     *(short *)(PTR_engine_rpm_trigger_ready_flag_003fbd4a + iVar4) = 1;
-    *(dword *)(iVar11 + uVar9 * 8) = fault_timing_snapshot;
+    *(dword *)(iVar11 + uVar9 * 8) = key_on_hour_meter;
     iVar4 = iVar11 + uVar9 * 8;
     *(undefined2 *)(iVar4 + 6) = 0;
     if ((*(ushort *)fault_channel_config_ptr & 8) == 0) {
@@ -60406,7 +60413,7 @@ void fault_event_timing_snapshot(int param_1)
     if (*psVar6 != 0) {
       *psVar6 = 0;
       *(short *)(iVar7 + (uint)*puVar8 * 8 + 6) =
-           (short)fault_timing_snapshot - (short)*(undefined4 *)(iVar7 + (uint)*puVar8 * 8);
+           (short)key_on_hour_meter - (short)*(undefined4 *)(iVar7 + (uint)*puVar8 * 8);
       if (param_1 == 0) {
         iVar2 = 0x2e;
       }
@@ -60530,7 +60537,7 @@ LAB_0050946c:
                            (int)*(short *)(PTR_engine_rpm_trigger_ready_flag_003fbd4a + 8),uVar1);
         if (sVar6 != 0) {
           *(short *)(puVar10 + 8) = sVar2;
-          *(dword *)(puVar10 + 10) = fault_timing_snapshot;
+          *(dword *)(puVar10 + 10) = key_on_hour_meter;
         }
       }
     }
@@ -62578,7 +62585,7 @@ void governor_sourceData_init(int param_1)
     DAT_003feb5c = 0;
     DAT_003feb5a = 0;
     DAT_003feb58 = 0;
-    etc1_governor_calib_session_start_time = fault_timing_snapshot;
+    etc1_governor_calib_session_start_time = key_on_hour_meter;
     DAT_003feb64 = 0;
   }
   else {
@@ -62593,7 +62600,7 @@ void governor_sourceData_init(int param_1)
     DAT_003feb76 = 0;
     DAT_003feb74 = 0;
     DAT_003feb72 = 0;
-    governor_mode_calib_session_start_time = fault_timing_snapshot;
+    governor_mode_calib_session_start_time = key_on_hour_meter;
     DAT_003feb7e = 0;
   }
   return;
@@ -62631,7 +62638,7 @@ void phase_group_a_setupETC1Controller(void)
     if (j1939_tsc1_override_state.governor_mode == 0) {
       if ((etc1_governor_mode_transition_snapshot != 0) &&
          (etc1_active_state_transition_snapshot == 1)) {
-        DAT_003feb64 = fault_timing_snapshot - etc1_governor_calib_session_start_time;
+        DAT_003feb64 = key_on_hour_meter - etc1_governor_calib_session_start_time;
 LAB_0050c1a0:
         etc1_governor_calib_session_active = 0;
         governor_calibSnapshot_rollingBuffer_update(0);
@@ -62657,7 +62664,7 @@ LAB_0050c1a0:
           }
           goto LAB_0050c1a8;
         }
-        DAT_003feb64 = fault_timing_snapshot - etc1_governor_calib_session_start_time;
+        DAT_003feb64 = key_on_hour_meter - etc1_governor_calib_session_start_time;
         governor_calibSnapshot_rollingBuffer_update(0);
       }
       governor_sourceData_init(0);
@@ -62680,7 +62687,7 @@ LAB_0050c1a8:
     if (governor_mode_state == 0) {
       if (governor_mode_state_transition_snapshot != 0) {
         governor_mode_calib_session_active = 0;
-        DAT_003feb7e = fault_timing_snapshot - governor_mode_calib_session_start_time;
+        DAT_003feb7e = key_on_hour_meter - governor_mode_calib_session_start_time;
         governor_calibSnapshot_rollingBuffer_update(1);
         pwVar3 = pwVar1;
         pbVar4 = pbVar6;
@@ -62703,7 +62710,7 @@ LAB_0050c1a8:
           }
           goto LAB_0050c2f4;
         }
-        DAT_003feb7e = fault_timing_snapshot - governor_mode_calib_session_start_time;
+        DAT_003feb7e = key_on_hour_meter - governor_mode_calib_session_start_time;
         governor_calibSnapshot_rollingBuffer_update(1);
       }
       governor_sourceData_init(1);
@@ -76125,9 +76132,9 @@ void cm848_sciCommand43RequestSecuritySeed(void)
     sci_security_seed = 0;
   }
   else {
-    sci_security_seed = fault_timing_snapshot;
-    if ((fault_timing_snapshot & 0xffff) == 0) {
-      sci_security_seed = fault_timing_snapshot + 1;
+    sci_security_seed = key_on_hour_meter;
+    if ((key_on_hour_meter & 0xffff) == 0) {
+      sci_security_seed = key_on_hour_meter + 1;
     }
   }
   dVar1 = sci_security_seed;
@@ -77518,7 +77525,7 @@ void cm848_calculateImmobilizerExpectedKey(void)
 //
 
 /* 24-bit immobilizer seed: increments immobilizer_seed_counter then XORs mix(timebase / counter)
-   with mix(fault_timing_snapshot / counter) - returns the fixed seed at 0x3fcfd0 if the word at
+   with mix(key_on_hour_meter / counter) - returns the fixed seed at 0x3fcfd0 if the word at
    0x3fcfcd is nonzero and no diagnostic session (neither has a writer) (was
    sensor_checksum_verify_session) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence High */
@@ -77535,7 +77542,7 @@ uint cm848_generateImmobilizerSeed(void)
     uVar1 = TBLr;
     uVar3 = (uint)immobilizer_seed_counter;
     uVar2 = cm848_immobilizerKeyMixRound(uVar1,uVar3);
-    uVar3 = cm848_immobilizerKeyMixRound(fault_timing_snapshot,uVar3);
+    uVar3 = cm848_immobilizerKeyMixRound(key_on_hour_meter,uVar3);
     uVar2 = uVar2 ^ uVar3;
   }
   return uVar2;
@@ -89138,11 +89145,11 @@ void cm848_runPowerDownSequence(void)
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
   cm848_saveEepromForPowerDown();
-  local_14[0] = fault_timing_snapshot;
-  cm848_queueEepromByteWritesAtOffset11134(&sensor_param_id_working,local_14,4);
+  local_14[0] = key_on_hour_meter;
+  cm848_queueEepromByteWritesAtOffset11134(&key_on_hour_meter_cal,local_14,4);
   uVar8 = 0;
   do {
-    if (sensor_param_id_working == local_14[0]) break;
+    if (key_on_hour_meter_cal == local_14[0]) break;
     do {
       uVar6 = TBUr;
       iVar1 = TBLr;
@@ -89157,11 +89164,11 @@ void cm848_runPowerDownSequence(void)
     } while ((uVar2 < uVar6) || (uVar5 < iVar1 + 0x9c4U));
     uVar8 = uVar8 + 1;
   } while (uVar8 < 1000);
-  local_14[0] = protection_timer_config_a;
-  cm848_queueEepromByteWritesAtOffset11134(&sensor_fault_threshold_working,local_14,4);
+  local_14[0] = engine_hour_meter;
+  cm848_queueEepromByteWritesAtOffset11134(&engine_hour_meter_cal,local_14,4);
   uVar8 = 0;
   do {
-    if (sensor_fault_threshold_working == local_14[0]) break;
+    if (engine_hour_meter_cal == local_14[0]) break;
     do {
       uVar6 = TBUr;
       iVar1 = TBLr;
