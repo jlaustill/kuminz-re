@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 14 20:10:07 MST 2026
+// Generated: Sat Nov 14 20:18:58 MST 2026
 
 
 //
@@ -33572,8 +33572,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
@@ -51724,7 +51724,7 @@ void hpcr_exceptionHandler(void)
   cm848_resetImmobilizerHandshake();
   cm848_initRadiatorFanSpeedMeasurement();
   cm848_configureRadiatorFanSpeedInput();
-  j1939_message_handler_initialize();
+  cm848_initCoolingFanControl();
   cm848_initEngineWarningFlags();
   cm848_initialization_group25_state();
   cm848_initInterpolationStateCounters();
@@ -54699,8 +54699,8 @@ void sensorChannelTypeB_configInit
   int iVar7;
   dword debounce_transition_state;
   uint uVar8;
-  word scratch16;
   ushort recovery_decrement;
+  word scratch16;
   
   iVar7 = (int)channel_index >> 4;
   iVar2 = iVar7 * 2;
@@ -66871,13 +66871,25 @@ void protection_fault_snapshot_initialize(void)
 
 
 //
-// Function: engine_egrFuel_stateMachine_update @ 0x005143f4
+// Function: cm848_selectCoolingFanSpeedTarget @ 0x005143f4
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
 /* WARNING: Removing unreachable block (ram,0x00514b14) */
+/* Cooling fan speed target - this ECM has no EGR; the old egr_* names were guesses. Five requests,
+   the largest wins (cooling_fan_speed_target_source 0-4): cooling_fan_base_speed / the coolant
+   request (state machine: below cooling_fan_coolant_ramp_start_temperature minimum / linear ramp /
+   a PI on cooling_fan_coolant_temperature_setpoint / full speed at
+   cooling_fan_coolant_full_speed_temperature or on a coolant sensor fault) / the A/C request (A/C
+   switch with pressure hysteresis, vehicle speed and a temperature check) / the intake air
+   temperature request (optionally relative to battery or ambient temperature, rate limited, held
+   while cooling_fan_engine_idle_flag) / the transmission temperature request. Then a ramp down and
+   back up while the engine is above cooling_fan_high_engine_rpm_enter (sources 5 / 6 / 0xb-0xf), a
+   cap at the engine-driven speed (engine rpm x cooling_fan_drive_ratio, source 7),
+   cooling_fan_speed_ceiling (8), cooling_fan_base_speed while the thermostat monitor runs (10) and
+   the override (9). Was engine_egrFuel_stateMachine_update */
 
-void engine_egrFuel_stateMachine_update(void)
+void cm848_selectCoolingFanSpeedTarget(void)
 
 {
   bool bVar1;
@@ -66893,165 +66905,184 @@ void engine_egrFuel_stateMachine_update(void)
   if ((((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 2) == 0) &&
       ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 1) == 0)) &&
      ((fault_detected_bits_400_to_415 & 2) == 0)) {
-    egr_coolant_temp_filtered =
+    cooling_fan_coolant_temperature_filtered =
          cm848_signedFirstOrderFilter
-                   ((int)(short)sensor_readings_t_0040baf2.coolant_temp,&PTR_DAT_0040b2e4);
-    dVar6 = egr_governor_speed_target;
-    if (egr_governor_pi_active_flag != 0) {
-      egr_governor_temp_error = egr_coolant_temp_filtered - egr_governor_pi_temp_setpoint;
-      uVar5 = (uint)DAT_0040883c;
-      uVar4 = (uint)(short)egr_governor_temp_error;
-      egr_governor_speed_p_term =
+                   ((int)(short)sensor_readings_t_0040baf2.coolant_temp,
+                    &cooling_fan_coolant_temperature_filter);
+    dVar6 = cooling_fan_coolant_pi_speed;
+    if (cooling_fan_coolant_pi_active_flag != 0) {
+      cooling_fan_coolant_temperature_error =
+           cooling_fan_coolant_temperature_filtered - cooling_fan_coolant_temperature_setpoint;
+      uVar5 = (uint)cooling_fan_coolant_proportional_gain;
+      uVar4 = (uint)(short)cooling_fan_coolant_temperature_error;
+      cooling_fan_coolant_proportional_term =
            (dword)(CONCAT44((int)((ulonglong)uVar5 * (ulonglong)uVar4 >> 0x20) +
                             uVar5 * ((int)uVar4 >> 0x1f),uVar5 * uVar4) / 0x80);
-      egr_governor_speed_integral =
-           egr_governor_speed_integral + (int)(short)egr_governor_temp_error * (uint)DAT_00408834;
-      if (egr_governor_integral_reset_flag == 0) {
-        dVar6 = egr_governor_speed_p_term +
-                ((int)egr_governor_speed_integral >> 0xc) +
-                (uint)((int)egr_governor_speed_integral < 0 &&
-                      (egr_governor_speed_integral & 0xfff) != 0);
-        egr_governor_speed_target = (dword)egr_governor_speed_target_min;
-        if (((int)egr_governor_speed_target <= (int)dVar6) &&
-           (egr_governor_speed_target = (dword)egr_governor_speed_target_max,
-           (int)dVar6 <= (int)egr_governor_speed_target)) goto LAB_00514584;
+      cooling_fan_coolant_integral =
+           cooling_fan_coolant_integral +
+           (int)(short)cooling_fan_coolant_temperature_error *
+           (uint)cooling_fan_coolant_integral_gain;
+      if (cooling_fan_coolant_integral_reset_flag == 0) {
+        dVar6 = cooling_fan_coolant_proportional_term +
+                ((int)cooling_fan_coolant_integral >> 0xc) +
+                (uint)((int)cooling_fan_coolant_integral < 0 &&
+                      (cooling_fan_coolant_integral & 0xfff) != 0);
+        cooling_fan_coolant_pi_speed = (dword)cooling_fan_coolant_speed_minimum;
+        if (((int)cooling_fan_coolant_pi_speed <= (int)dVar6) &&
+           (cooling_fan_coolant_pi_speed = (dword)cooling_fan_coolant_speed_maximum,
+           (int)dVar6 <= (int)cooling_fan_coolant_pi_speed)) goto LAB_00514584;
       }
       else {
-        egr_governor_speed_target = (dword)cooling_fan_speed_target;
-        egr_governor_integral_reset_flag = 0;
+        cooling_fan_coolant_pi_speed = (dword)cooling_fan_speed_target;
+        cooling_fan_coolant_integral_reset_flag = 0;
       }
-      egr_governor_speed_integral = (egr_governor_speed_target - egr_governor_speed_p_term) * 0x1000
-      ;
-      dVar6 = egr_governor_speed_target;
+      cooling_fan_coolant_integral =
+           (cooling_fan_coolant_pi_speed - cooling_fan_coolant_proportional_term) * 0x1000;
+      dVar6 = cooling_fan_coolant_pi_speed;
     }
 LAB_00514584:
-    egr_governor_speed_target = dVar6;
-    if ((short)egr_coolant_temp_filtered < (short)egr_warmup_start_coolant_temp) {
-      egr_warmup_phase_state = 0;
+    cooling_fan_coolant_pi_speed = dVar6;
+    if ((short)cooling_fan_coolant_temperature_filtered <
+        (short)cooling_fan_coolant_ramp_start_temperature) {
+      cooling_fan_coolant_request_state = 0;
     }
-    else if (DAT_00408832 <= (short)egr_coolant_temp_filtered) goto LAB_005145b0;
+    else if (cooling_fan_coolant_full_speed_temperature <=
+             (short)cooling_fan_coolant_temperature_filtered) goto LAB_005145b0;
   }
   else {
 LAB_005145b0:
-    egr_warmup_phase_state = 3;
+    cooling_fan_coolant_request_state = 3;
   }
-  if (egr_warmup_phase_state == 0) {
-    egr_governor_speed_floor = egr_governor_speed_target_min;
-    egr_governor_pi_active_flag = 0;
-    if ((short)egr_warmup_start_coolant_temp <= (short)egr_coolant_temp_filtered) {
-      egr_warmup_phase_state = 1;
+  if (cooling_fan_coolant_request_state == 0) {
+    cooling_fan_coolant_speed_request = cooling_fan_coolant_speed_minimum;
+    cooling_fan_coolant_pi_active_flag = 0;
+    if ((short)cooling_fan_coolant_ramp_start_temperature <=
+        (short)cooling_fan_coolant_temperature_filtered) {
+      cooling_fan_coolant_request_state = 1;
     }
   }
-  else if (egr_warmup_phase_state == 1) {
-    uVar4 = ((int)(short)egr_coolant_temp_filtered - (int)(short)egr_warmup_start_coolant_temp) *
-            (uint)DAT_0040883e;
-    egr_governor_speed_floor =
-         DAT_004088aa + (short)((int)uVar4 >> 7) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x7f) != 0);
-    if ((int)(short)egr_governor_pi_temp_setpoint <= (int)(short)egr_coolant_temp_filtered) {
+  else if (cooling_fan_coolant_request_state == 1) {
+    uVar4 = ((int)(short)cooling_fan_coolant_temperature_filtered -
+            (int)(short)cooling_fan_coolant_ramp_start_temperature) *
+            (uint)cooling_fan_coolant_ramp_gain;
+    cooling_fan_coolant_speed_request =
+         cooling_fan_coolant_ramp_base_speed +
+         (short)((int)uVar4 >> 7) + (ushort)((int)uVar4 < 0 && (uVar4 & 0x7f) != 0);
+    if ((int)(short)cooling_fan_coolant_temperature_setpoint <=
+        (int)(short)cooling_fan_coolant_temperature_filtered) {
 LAB_005146dc:
-      egr_governor_integral_reset_flag = 1;
-      egr_governor_pi_active_flag = 1;
-      egr_warmup_phase_state = 2;
+      cooling_fan_coolant_integral_reset_flag = 1;
+      cooling_fan_coolant_pi_active_flag = 1;
+      cooling_fan_coolant_request_state = 2;
     }
   }
-  else if (egr_warmup_phase_state == 2) {
-    egr_governor_speed_floor = (word)egr_governor_speed_target;
+  else if (cooling_fan_coolant_request_state == 2) {
+    cooling_fan_coolant_speed_request = (word)cooling_fan_coolant_pi_speed;
   }
-  else if (egr_warmup_phase_state == 3) {
-    egr_governor_speed_floor = egr_governor_speed_target_max;
+  else if (cooling_fan_coolant_request_state == 3) {
+    cooling_fan_coolant_speed_request = cooling_fan_coolant_speed_maximum;
     if ((((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 1) == 0) &&
         ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 2) == 0)) &&
        ((fault_detected_bits_400_to_415 & 2) == 0)) {
-      if ((short)egr_coolant_temp_filtered < DAT_00408830) goto LAB_005146dc;
+      if ((short)cooling_fan_coolant_temperature_filtered <
+          cooling_fan_coolant_full_speed_exit_temperature) goto LAB_005146dc;
     }
     else {
-      egr_warmup_phase_state = 3;
+      cooling_fan_coolant_request_state = 3;
     }
   }
   else {
-    egr_warmup_phase_state = 0;
+    cooling_fan_coolant_request_state = 0;
   }
-  if (egr_governor_speed_target_max < egr_governor_speed_floor) {
-    egr_governor_speed_floor = egr_governor_speed_target_max;
+  if (cooling_fan_coolant_speed_maximum < cooling_fan_coolant_speed_request) {
+    cooling_fan_coolant_speed_request = cooling_fan_coolant_speed_maximum;
   }
   uVar4 = (uint)air_conditioning_pressure_sensor_filtered;
-  if (DAT_00408898 == 0) {
+  if (cooling_fan_air_conditioning_temperature_source == 0) {
     iVar8 = 0x28;
   }
   else {
     iVar8 = 0x8a;
   }
-  if (uVar4 < egr_fuel_demand_stroke_high_threshold) {
-    if ((uVar4 < egr_fuel_demand_stroke_low_threshold) && (egr_fuel_demand_high_stroke_flag != 0)) {
-      egr_fuel_demand_high_stroke_flag = 0;
+  if (uVar4 < cooling_fan_air_conditioning_pressure_high_threshold) {
+    if ((uVar4 < cooling_fan_air_conditioning_pressure_low_threshold) &&
+       (cooling_fan_air_conditioning_pressure_high_flag != 0)) {
+      cooling_fan_air_conditioning_pressure_high_flag = 0;
     }
   }
   else {
-    egr_fuel_demand_high_stroke_flag = 1;
+    cooling_fan_air_conditioning_pressure_high_flag = 1;
   }
   if (((switch_input_state_bits[1] & 0x20) == 0) ||
-     (wVar7 = DAT_00408826, egr_fuel_demand_high_stroke_flag == 0)) {
+     (wVar7 = cooling_fan_air_conditioning_high_pressure_speed,
+     cooling_fan_air_conditioning_pressure_high_flag == 0)) {
     if (((switch_input_state_bits[1] & 0x20) != 0) &&
-       (((egr_fuel_demand_stroke_low_threshold < uVar4 &&
-         (uVar4 < egr_fuel_demand_stroke_high_threshold)) &&
-        (egr_fuel_demand_stroke_ramp_enable != 0)))) {
-      wVar7 = egr_fuel_demand_speed_floor_base +
-              (short)((uVar4 - egr_fuel_demand_stroke_low_threshold) * (uint)DAT_0040882c >> 8);
+       (((cooling_fan_air_conditioning_pressure_low_threshold < uVar4 &&
+         (uVar4 < cooling_fan_air_conditioning_pressure_high_threshold)) &&
+        (cooling_fan_air_conditioning_pressure_ramp_enable != 0)))) {
+      wVar7 = cooling_fan_air_conditioning_base_speed +
+              (short)((uVar4 - cooling_fan_air_conditioning_pressure_low_threshold) *
+                      (uint)cooling_fan_air_conditioning_pressure_gain >> 8);
       goto LAB_005148b8;
     }
-    if ((((((switch_input_state_bits[1] & 0x20) != 0) && (egr_fuel_demand_high_stroke_flag == 0)) &&
-         ((vehicle_speed < DAT_00408884 &&
-          (((short)egr_fuel_demand_timing_offset_threshold <=
+    if ((((((switch_input_state_bits[1] & 0x20) != 0) &&
+          (cooling_fan_air_conditioning_pressure_high_flag == 0)) &&
+         ((vehicle_speed < cooling_fan_air_conditioning_vehicle_speed_on_below &&
+          (((short)cooling_fan_air_conditioning_temperature_threshold <=
             *(short *)((int)&sensor_channel_filtered_output + iVar8) &&
-           (wVar7 = egr_fuel_demand_speed_floor_base, egr_fuel_demand_stroke_ramp_enable == 0))))))
-        || (wVar7 = egr_fuel_demand_speed_floor_disabled, (switch_input_state_bits[1] & 0x20) == 0))
-       || ((egr_fuel_demand_high_stroke_flag == 0 &&
-           ((DAT_00408882 <= vehicle_speed ||
+           (wVar7 = cooling_fan_air_conditioning_base_speed,
+           cooling_fan_air_conditioning_pressure_ramp_enable == 0)))))) ||
+        (wVar7 = cooling_fan_air_conditioning_off_speed, (switch_input_state_bits[1] & 0x20) == 0))
+       || ((cooling_fan_air_conditioning_pressure_high_flag == 0 &&
+           ((cooling_fan_air_conditioning_vehicle_speed_off_at <= vehicle_speed ||
             (*(short *)((int)&sensor_channel_filtered_output + iVar8) <
-             (short)egr_fuel_demand_timing_offset_threshold)))))) goto LAB_005148b8;
+             (short)cooling_fan_air_conditioning_temperature_threshold)))))) goto LAB_005148b8;
   }
   else {
 LAB_005148b8:
-    egr_fuel_demand_speed_floor = wVar7;
+    cooling_fan_air_conditioning_speed_request = wVar7;
   }
-  egr_rpm_proportional_speed_limit =
-       (word)((uint)engine_rpm_state_t_0040b7ac.current_rpm * (uint)DAT_00408842 >> 8);
-  wVar7 = egr_load_speed_floor_min;
+  cooling_fan_engine_driven_speed_limit =
+       (word)((uint)engine_rpm_state_t_0040b7ac.current_rpm * (uint)cooling_fan_drive_ratio >> 8);
+  wVar7 = cooling_fan_intake_minimum_speed;
   if (cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) {
-    egr_load_filtered =
+    cooling_fan_intake_temperature_filtered =
          cm848_signedFirstOrderFilter
-                   ((int)(short)intake_manifold_temperature_sensor_filtered,&PTR_DAT_0040b2ec);
-    iVar8 = (int)(short)egr_load_filtered;
-    if (egr_load_floor_temp_source_select != 0) {
-      if (egr_load_floor_temp_source_select == 1) {
+                   ((int)(short)intake_manifold_temperature_sensor_filtered,
+                    &cooling_fan_intake_temperature_filter);
+    iVar8 = (int)(short)cooling_fan_intake_temperature_filtered;
+    if (cooling_fan_intake_reference_select != 0) {
+      if (cooling_fan_intake_reference_select == 1) {
         iVar8 = 0x8a;
       }
       else {
         iVar8 = 0x28;
       }
-      iVar8 = (int)(short)(egr_load_filtered -
+      iVar8 = (int)(short)(cooling_fan_intake_temperature_filtered -
                           *(short *)((int)&sensor_channel_filtered_output + iVar8));
     }
-    if (((egr_load_floor_temp_source_select == 1) &&
-        ((short)battery_temperature_sensor_filtered < (short)egr_load_floor_cold_temp_threshold)) ||
-       ((egr_load_floor_temp_source_select == 2 &&
-        ((short)ambient_air_temperature_sensor_filtered < (short)egr_load_floor_cold_temp_threshold)
-        ))) {
-      if ((int)(short)egr_load_filtered < (int)DAT_004088a2) goto LAB_005149b0;
+    if (((cooling_fan_intake_reference_select == 1) &&
+        ((short)battery_temperature_sensor_filtered <
+         (short)cooling_fan_intake_reference_cold_threshold)) ||
+       ((cooling_fan_intake_reference_select == 2 &&
+        ((short)ambient_air_temperature_sensor_filtered <
+         (short)cooling_fan_intake_reference_cold_threshold)))) {
+      if ((int)(short)cooling_fan_intake_temperature_filtered <
+          (int)cooling_fan_intake_cold_reference_full_speed_temperature) goto LAB_005149b0;
 LAB_00514a48:
-      uVar4 = (uint)DAT_0040884c;
+      uVar4 = (uint)cooling_fan_intake_full_speed;
     }
     else {
-      iVar9 = (int)DAT_00408852;
+      iVar9 = (int)cooling_fan_intake_ramp_start;
       if (iVar8 < iVar9) {
 LAB_005149b0:
-        uVar4 = (uint)egr_load_speed_floor_min;
+        uVar4 = (uint)cooling_fan_intake_minimum_speed;
       }
       else {
-        if ((iVar8 < iVar9) || (DAT_0040884a <= iVar8)) goto LAB_00514a48;
-        uVar5 = (uint)DAT_00408850;
+        if ((iVar8 < iVar9) || (cooling_fan_intake_ramp_end <= iVar8)) goto LAB_00514a48;
+        uVar5 = (uint)cooling_fan_intake_ramp_gain;
         uVar4 = iVar8 - iVar9;
-        uVar4 = (uint)egr_load_speed_floor_base +
+        uVar4 = (uint)cooling_fan_intake_base_speed +
                 (int)(CONCAT44((int)((ulonglong)uVar5 * (ulonglong)uVar4 >> 0x20) +
                                uVar5 * ((int)uVar4 >> 0x1f),uVar5 * uVar4) / 0x80);
         if ((int)uVar4 < 0) {
@@ -67065,22 +67096,22 @@ LAB_005149b0:
         }
       }
     }
-    if (egr_load_floor_hold_timer != 0) {
-      egr_load_floor_hold_timer = egr_load_floor_hold_timer - 1;
+    if (cooling_fan_intake_request_hold_count != 0) {
+      cooling_fan_intake_request_hold_count = cooling_fan_intake_request_hold_count - 1;
     }
-    if (cold_start_mode_active_flag == 0) {
-      wVar7 = egr_load_speed_floor;
-      if (egr_load_floor_hold_timer == 0) {
-        uVar5 = (uint)egr_load_speed_floor_base;
-        if ((uVar5 <= uVar4) && (egr_load_speed_floor < uVar5)) {
-          egr_load_speed_floor = egr_load_speed_floor_base;
+    if (cooling_fan_engine_idle_flag == 0) {
+      wVar7 = cooling_fan_intake_speed_request;
+      if (cooling_fan_intake_request_hold_count == 0) {
+        uVar5 = (uint)cooling_fan_intake_base_speed;
+        if ((uVar5 <= uVar4) && (cooling_fan_intake_speed_request < uVar5)) {
+          cooling_fan_intake_speed_request = cooling_fan_intake_base_speed;
         }
-        uVar2 = DAT_004088c4;
-        if ((uVar4 < egr_rpm_proportional_speed_limit) &&
-           (DAT_004088be < engine_rpm_state_t_0040b7ac.current_rpm)) {
-          uVar2 = DAT_004088c2;
+        uVar2 = cooling_fan_intake_speed_rise_step;
+        if ((uVar4 < cooling_fan_engine_driven_speed_limit) &&
+           (cooling_fan_intake_high_engine_rpm < engine_rpm_state_t_0040b7ac.current_rpm)) {
+          uVar2 = cooling_fan_intake_speed_rise_step_high_engine_rpm;
         }
-        uVar3 = (uint)egr_load_speed_floor;
+        uVar3 = (uint)cooling_fan_intake_speed_request;
         if (uVar2 + uVar3 < uVar4) {
           iVar8 = uVar3 + uVar2;
 LAB_00514b4c:
@@ -67091,13 +67122,13 @@ LAB_00514b4c:
             wVar7 = 64000;
           }
         }
-        else if ((egr_load_speed_floor_decel_step + uVar4 < uVar3) && (uVar5 < uVar3)) {
-          iVar8 = uVar3 - egr_load_speed_floor_decel_step;
+        else if ((cooling_fan_intake_speed_fall_step + uVar4 < uVar3) && (uVar5 < uVar3)) {
+          iVar8 = uVar3 - cooling_fan_intake_speed_fall_step;
           if (-1 < iVar8) goto LAB_00514b4c;
           wVar7 = 0;
         }
         else {
-          wVar7 = egr_load_speed_floor_min;
+          wVar7 = cooling_fan_intake_minimum_speed;
           if (uVar5 <= uVar3) {
             wVar7 = (word)uVar4;
           }
@@ -67105,220 +67136,220 @@ LAB_00514b4c:
       }
     }
     else {
-      egr_load_floor_hold_timer = DAT_004088c6;
-      wVar7 = egr_load_speed_floor_min;
+      cooling_fan_intake_request_hold_count = cooling_fan_intake_request_hold_passes;
+      wVar7 = cooling_fan_intake_minimum_speed;
     }
   }
-  egr_load_speed_floor = wVar7;
+  cooling_fan_intake_speed_request = wVar7;
   iVar9 = (int)(short)transmission_temperature_in_use;
-  iVar8 = (int)DAT_00408878;
+  iVar8 = (int)cooling_fan_transmission_ramp_start_temperature;
   if ((iVar9 < iVar8) || (transmission_type_cal == 0)) {
-    uVar4 = (uint)DAT_00408874;
+    uVar4 = (uint)cooling_fan_transmission_low_speed;
   }
-  else if ((iVar9 < iVar8) || (DAT_00408870 <= iVar9)) {
-    uVar4 = (uint)DAT_00408872;
+  else if ((iVar9 < iVar8) || (cooling_fan_transmission_ramp_end_temperature <= iVar9)) {
+    uVar4 = (uint)cooling_fan_transmission_full_speed;
   }
   else {
-    uVar4 = (iVar9 - iVar8) * (uint)DAT_00408876;
-    uVar4 = (uint)DAT_0040887a + ((int)uVar4 >> 7) + (uint)((int)uVar4 < 0 && (uVar4 & 0x7f) != 0);
+    uVar4 = (iVar9 - iVar8) * (uint)cooling_fan_transmission_ramp_gain;
+    uVar4 = (uint)cooling_fan_transmission_ramp_base_speed +
+            ((int)uVar4 >> 7) + (uint)((int)uVar4 < 0 && (uVar4 & 0x7f) != 0);
   }
-  egr_governor_protection_load_speed_floor = (word)uVar4;
-  cooling_fan_speed_target = egr_governor_speed_base;
-  if (egr_governor_speed_base < egr_governor_speed_floor) {
-    cooling_fan_speed_target = egr_governor_speed_floor;
+  cooling_fan_transmission_speed_request = (word)uVar4;
+  cooling_fan_speed_target = cooling_fan_base_speed;
+  if (cooling_fan_base_speed < cooling_fan_coolant_speed_request) {
+    cooling_fan_speed_target = cooling_fan_coolant_speed_request;
   }
-  governor_speed_limit_source = (word)(egr_governor_speed_base < egr_governor_speed_floor);
-  if (cooling_fan_speed_target < egr_fuel_demand_speed_floor) {
-    cooling_fan_speed_target = egr_fuel_demand_speed_floor;
-    governor_speed_limit_source = 2;
+  cooling_fan_speed_target_source =
+       (word)(cooling_fan_base_speed < cooling_fan_coolant_speed_request);
+  if (cooling_fan_speed_target < cooling_fan_air_conditioning_speed_request) {
+    cooling_fan_speed_target = cooling_fan_air_conditioning_speed_request;
+    cooling_fan_speed_target_source = 2;
   }
-  if (cooling_fan_speed_target < egr_load_speed_floor) {
-    cooling_fan_speed_target = egr_load_speed_floor;
-    governor_speed_limit_source = 3;
+  if (cooling_fan_speed_target < cooling_fan_intake_speed_request) {
+    cooling_fan_speed_target = cooling_fan_intake_speed_request;
+    cooling_fan_speed_target_source = 3;
   }
   if ((uint)cooling_fan_speed_target < (uVar4 & 0xffff)) {
-    governor_speed_limit_source = 4;
+    cooling_fan_speed_target_source = 4;
     cooling_fan_speed_target = (word)uVar4;
   }
-  if (governor_speed_accel_ramp_at_target_flag != 0) {
-    if (governor_speed_ramp_step_count < DAT_004088b8) {
-      governor_speed_ramp_step_count = governor_speed_ramp_step_count + 1;
-      cooling_fan_speed_target = egr_governor_speed_ramp_target;
-      governor_speed_limit_source = 0xd;
-      governor_speed_accel_ramp_step_flag = 0;
+  if (cooling_fan_ramp_up_at_target_flag != 0) {
+    if (cooling_fan_ramp_at_target_count < cooling_fan_ramp_at_target_passes) {
+      cooling_fan_ramp_at_target_count = cooling_fan_ramp_at_target_count + 1;
+      cooling_fan_speed_target = cooling_fan_high_engine_rpm_ramp_up_target;
+      cooling_fan_speed_target_source = 0xd;
+      cooling_fan_ramp_up_step_flag = 0;
     }
-    else if (egr_governor_overspeed_rpm_threshold < engine_rpm_state_t_0040b7ac.current_rpm) {
-      if (cooling_fan_speed_target < DAT_004088b2) {
-        governor_overspeed_ramp_transition_latch = 1;
-        governor_speed_accel_ramp_at_target_flag = 0;
-        governor_speed_ramp_step_count = 0;
-        governor_speed_overspeed_ramp_step = egr_governor_speed_ramp_target;
+    else if (cooling_fan_high_engine_rpm_exit < engine_rpm_state_t_0040b7ac.current_rpm) {
+      if (cooling_fan_speed_target < cooling_fan_ramp_at_target_release_speed) {
+        cooling_fan_high_engine_rpm_ramp_latch = 1;
+        cooling_fan_ramp_up_at_target_flag = 0;
+        cooling_fan_ramp_at_target_count = 0;
+        cooling_fan_ramp_up_speed = cooling_fan_high_engine_rpm_ramp_up_target;
       }
       else {
-        cooling_fan_speed_target = egr_governor_speed_ramp_target;
-        governor_speed_limit_source = 5;
+        cooling_fan_speed_target = cooling_fan_high_engine_rpm_ramp_up_target;
+        cooling_fan_speed_target_source = 5;
       }
     }
     else {
-      governor_speed_overspeed_ramp_step = egr_governor_speed_ramp_target;
-      governor_overspeed_ramp_transition_latch = 1;
-      governor_overspeed_detect_flag = 0;
-      governor_speed_accel_ramp_at_target_flag = 0;
+      cooling_fan_ramp_up_speed = cooling_fan_high_engine_rpm_ramp_up_target;
+      cooling_fan_high_engine_rpm_ramp_latch = 1;
+      cooling_fan_high_engine_rpm_flag = 0;
+      cooling_fan_ramp_up_at_target_flag = 0;
     }
   }
-  if ((((governor_speed_accel_ramp_request_flag != 0) && (governor_overspeed_detect_flag == 0)) ||
-      ((governor_overspeed_ramp_transition_latch != 0 && (governor_overspeed_detect_flag == 0)))) &&
-     (governor_speed_accel_ramp_at_target_flag == 0)) {
-    if (governor_speed_decel_ramp_init_flag == 0) {
-      governor_speed_ramp_lower_step = governor_speed_decel_target;
-      if ((governor_decel_was_overspeed_clamp_flag == 0) &&
-         (governor_decel_was_governor_floor_flag == 0)) {
-        governor_speed_ramp_lower_step = governor_speed_overspeed_ramp_step;
+  if ((((cooling_fan_ramp_up_request_flag != 0) && (cooling_fan_high_engine_rpm_flag == 0)) ||
+      ((cooling_fan_high_engine_rpm_ramp_latch != 0 && (cooling_fan_high_engine_rpm_flag == 0)))) &&
+     (cooling_fan_ramp_up_at_target_flag == 0)) {
+    if (cooling_fan_ramp_down_started_flag == 0) {
+      cooling_fan_ramp_down_resume_speed = cooling_fan_ramp_down_speed;
+      if ((cooling_fan_ramp_down_was_stepping_flag == 0) &&
+         (cooling_fan_ramp_down_was_at_floor_flag == 0)) {
+        cooling_fan_ramp_down_resume_speed = cooling_fan_ramp_up_speed;
       }
-      governor_speed_decel_ramp_init_flag = 1;
+      cooling_fan_ramp_down_started_flag = 1;
     }
-    if (governor_speed_decel_ramp_init_flag != 0) {
-      if (egr_governor_speed_decel_step < governor_speed_ramp_lower_step) {
-        governor_speed_ramp_lower_step =
-             governor_speed_ramp_lower_step - egr_governor_speed_decel_step;
+    if (cooling_fan_ramp_down_started_flag != 0) {
+      if (cooling_fan_ramp_down_step < cooling_fan_ramp_down_resume_speed) {
+        cooling_fan_ramp_down_resume_speed =
+             cooling_fan_ramp_down_resume_speed - cooling_fan_ramp_down_step;
       }
-      governor_speed_limit_source = 0xe;
+      cooling_fan_speed_target_source = 0xe;
     }
-    if (cooling_fan_speed_target < governor_speed_ramp_lower_step) {
-      cooling_fan_speed_target = governor_speed_ramp_lower_step;
-      governor_decel_was_overspeed_clamp_flag = 0;
-      governor_decel_was_governor_floor_flag = 0;
+    if (cooling_fan_speed_target < cooling_fan_ramp_down_resume_speed) {
+      cooling_fan_speed_target = cooling_fan_ramp_down_resume_speed;
+      cooling_fan_ramp_down_was_stepping_flag = 0;
+      cooling_fan_ramp_down_was_at_floor_flag = 0;
     }
     else {
-      governor_speed_decel_ramp_init_flag = 0;
-      governor_speed_accel_ramp_request_flag = 0;
-      governor_overspeed_ramp_transition_latch = 0;
-      governor_speed_decel_above_floor_flag = 0;
-      governor_speed_up_ramp_active_flag = 0;
-      governor_speed_accel_ramp_at_target_flag = 0;
-      governor_speed_ramp_step_count = 0;
+      cooling_fan_ramp_down_started_flag = 0;
+      cooling_fan_ramp_up_request_flag = 0;
+      cooling_fan_high_engine_rpm_ramp_latch = 0;
+      cooling_fan_ramp_down_above_floor_flag = 0;
+      cooling_fan_ramp_up_active_flag = 0;
+      cooling_fan_ramp_up_at_target_flag = 0;
+      cooling_fan_ramp_at_target_count = 0;
     }
   }
-  if ((governor_overspeed_detect_flag == 0) && (governor_speed_accel_ramp_request_flag == 0)) {
-    if ((governor_decel_was_governor_floor_flag != 0) ||
-       (governor_decel_was_overspeed_clamp_flag != 0)) {
-      governor_speed_up_ramp_active_flag = 1;
-      governor_speed_ramp_upper_step = governor_speed_decel_target;
-      governor_decel_was_governor_floor_flag = 0;
-      governor_decel_was_overspeed_clamp_flag = 0;
+  if ((cooling_fan_high_engine_rpm_flag == 0) && (cooling_fan_ramp_up_request_flag == 0)) {
+    if ((cooling_fan_ramp_down_was_at_floor_flag != 0) ||
+       (cooling_fan_ramp_down_was_stepping_flag != 0)) {
+      cooling_fan_ramp_up_active_flag = 1;
+      cooling_fan_ramp_up_resume_speed = cooling_fan_ramp_down_speed;
+      cooling_fan_ramp_down_was_at_floor_flag = 0;
+      cooling_fan_ramp_down_was_stepping_flag = 0;
     }
-    if (governor_speed_up_ramp_active_flag != 0) {
-      governor_speed_ramp_upper_step =
-           governor_speed_ramp_upper_step + egr_governor_speed_accel_ramp_step;
-      governor_speed_limit_source = 0xf;
-      bVar1 = cooling_fan_speed_target < governor_speed_ramp_upper_step;
-      cooling_fan_speed_target = governor_speed_ramp_upper_step;
+    if (cooling_fan_ramp_up_active_flag != 0) {
+      cooling_fan_ramp_up_resume_speed = cooling_fan_ramp_up_resume_speed + cooling_fan_ramp_up_step
+      ;
+      cooling_fan_speed_target_source = 0xf;
+      bVar1 = cooling_fan_speed_target < cooling_fan_ramp_up_resume_speed;
+      cooling_fan_speed_target = cooling_fan_ramp_up_resume_speed;
       if (bVar1) goto LAB_00514f98;
     }
   }
   else {
 LAB_00514f98:
-    governor_speed_up_ramp_active_flag = 0;
+    cooling_fan_ramp_up_active_flag = 0;
   }
-  if ((((DAT_00408864 < cooling_fan_speed_target) &&
-       (DAT_0040885e < engine_rpm_state_t_0040b7ac.current_rpm)) &&
-      (governor_speed_decel_ramp_init_flag == 0)) && (governor_speed_accel_ramp_at_target_flag == 0)
-     ) {
-    governor_overspeed_detect_flag = 1;
+  if ((((cooling_fan_high_engine_rpm_target_threshold < cooling_fan_speed_target) &&
+       (cooling_fan_high_engine_rpm_enter < engine_rpm_state_t_0040b7ac.current_rpm)) &&
+      (cooling_fan_ramp_down_started_flag == 0)) && (cooling_fan_ramp_up_at_target_flag == 0)) {
+    cooling_fan_high_engine_rpm_flag = 1;
   }
-  if ((governor_overspeed_detect_flag != 0) &&
-     (engine_rpm_state_t_0040b7ac.current_rpm < egr_governor_overspeed_rpm_threshold)) {
-    governor_overspeed_detect_flag = 0;
-    governor_speed_decel_target_captured_flag = 0;
-    governor_speed_decel_above_floor_flag = 0;
-    governor_speed_accel_ramp_step_flag = 0;
+  if ((cooling_fan_high_engine_rpm_flag != 0) &&
+     (engine_rpm_state_t_0040b7ac.current_rpm < cooling_fan_high_engine_rpm_exit)) {
+    cooling_fan_high_engine_rpm_flag = 0;
+    cooling_fan_ramp_down_start_captured_flag = 0;
+    cooling_fan_ramp_down_above_floor_flag = 0;
+    cooling_fan_ramp_up_step_flag = 0;
   }
-  if ((governor_speed_decel_ramp_init_flag != 0) || (governor_overspeed_detect_flag == 0))
+  if ((cooling_fan_ramp_down_started_flag != 0) || (cooling_fan_high_engine_rpm_flag == 0))
   goto LAB_0051524c;
-  if (((cooling_fan_speed_target < egr_governor_overspeed_hysteresis_floor) &&
-      (governor_speed_accel_ramp_step_flag == 0)) ||
-     ((governor_overspeed_ramp_transition_latch != 0 || (governor_speed_decel_above_floor_flag != 0)
-      ))) {
-    governor_speed_accel_ramp_step_flag = 0;
-    if (governor_overspeed_ramp_transition_latch == 0) {
-      if (governor_speed_decel_target_captured_flag == 0) {
-        governor_speed_decel_target = cooling_fan_speed_target;
+  if (((cooling_fan_speed_target < cooling_fan_high_engine_rpm_ramp_up_threshold) &&
+      (cooling_fan_ramp_up_step_flag == 0)) ||
+     ((cooling_fan_high_engine_rpm_ramp_latch != 0 || (cooling_fan_ramp_down_above_floor_flag != 0))
+     )) {
+    cooling_fan_ramp_up_step_flag = 0;
+    if (cooling_fan_high_engine_rpm_ramp_latch == 0) {
+      if (cooling_fan_ramp_down_start_captured_flag == 0) {
+        cooling_fan_ramp_down_speed = cooling_fan_speed_target;
         goto LAB_005150d4;
       }
     }
     else {
-      governor_speed_decel_target = governor_speed_overspeed_ramp_step;
-      governor_overspeed_ramp_transition_latch = 0;
+      cooling_fan_ramp_down_speed = cooling_fan_ramp_up_speed;
+      cooling_fan_high_engine_rpm_ramp_latch = 0;
 LAB_005150d4:
-      governor_speed_decel_target_captured_flag = 1;
+      cooling_fan_ramp_down_start_captured_flag = 1;
     }
-    if (egr_governor_decel_speed_floor < governor_speed_decel_target) {
-      if (egr_governor_speed_decel_step < governor_speed_decel_target) {
-        governor_speed_decel_target = governor_speed_decel_target - egr_governor_speed_decel_step;
+    if (cooling_fan_high_engine_rpm_ramp_down_floor < cooling_fan_ramp_down_speed) {
+      if (cooling_fan_ramp_down_step < cooling_fan_ramp_down_speed) {
+        cooling_fan_ramp_down_speed = cooling_fan_ramp_down_speed - cooling_fan_ramp_down_step;
       }
-      governor_speed_limit_source = 0xb;
+      cooling_fan_speed_target_source = 0xb;
     }
     else {
-      governor_speed_decel_target = egr_governor_decel_speed_floor;
-      governor_speed_limit_source = 6;
+      cooling_fan_ramp_down_speed = cooling_fan_high_engine_rpm_ramp_down_floor;
+      cooling_fan_speed_target_source = 6;
     }
-    governor_speed_decel_above_floor_flag =
-         egr_governor_decel_speed_floor < governor_speed_decel_target;
-    cooling_fan_speed_target = governor_speed_decel_target;
+    cooling_fan_ramp_down_above_floor_flag =
+         cooling_fan_high_engine_rpm_ramp_down_floor < cooling_fan_ramp_down_speed;
+    cooling_fan_speed_target = cooling_fan_ramp_down_speed;
   }
-  if ((((egr_governor_overspeed_hysteresis_floor < cooling_fan_speed_target) &&
-       (governor_speed_decel_above_floor_flag == 0)) &&
-      (governor_speed_accel_ramp_at_target_flag == 0)) || (governor_speed_accel_ramp_step_flag != 0)
-     ) {
-    governor_speed_decel_target_captured_flag = 0;
-    if (governor_decel_was_governor_floor_flag != 0) {
-      governor_speed_overspeed_ramp_step = governor_speed_decel_target;
-      governor_speed_accel_ramp_request_flag = 1;
-      governor_decel_was_governor_floor_flag = 0;
-      governor_speed_accel_ramp_step_flag = 1;
+  if ((((cooling_fan_high_engine_rpm_ramp_up_threshold < cooling_fan_speed_target) &&
+       (cooling_fan_ramp_down_above_floor_flag == 0)) && (cooling_fan_ramp_up_at_target_flag == 0))
+     || (cooling_fan_ramp_up_step_flag != 0)) {
+    cooling_fan_ramp_down_start_captured_flag = 0;
+    if (cooling_fan_ramp_down_was_at_floor_flag != 0) {
+      cooling_fan_ramp_up_speed = cooling_fan_ramp_down_speed;
+      cooling_fan_ramp_up_request_flag = 1;
+      cooling_fan_ramp_down_was_at_floor_flag = 0;
+      cooling_fan_ramp_up_step_flag = 1;
     }
-    if (governor_speed_accel_ramp_step_flag == 0) {
-      governor_speed_overspeed_ramp_step = cooling_fan_speed_target;
-      governor_speed_accel_ramp_request_flag = 1;
-      governor_speed_accel_ramp_step_flag = 1;
+    if (cooling_fan_ramp_up_step_flag == 0) {
+      cooling_fan_ramp_up_speed = cooling_fan_speed_target;
+      cooling_fan_ramp_up_request_flag = 1;
+      cooling_fan_ramp_up_step_flag = 1;
     }
-    if (governor_speed_overspeed_ramp_step < egr_governor_speed_ramp_target) {
-      cooling_fan_speed_target =
-           governor_speed_overspeed_ramp_step + egr_governor_speed_accel_ramp_step;
-      governor_speed_limit_source = 0xc;
-      governor_speed_overspeed_ramp_step = cooling_fan_speed_target;
+    if (cooling_fan_ramp_up_speed < cooling_fan_high_engine_rpm_ramp_up_target) {
+      cooling_fan_speed_target = cooling_fan_ramp_up_speed + cooling_fan_ramp_up_step;
+      cooling_fan_speed_target_source = 0xc;
+      cooling_fan_ramp_up_speed = cooling_fan_speed_target;
     }
     else {
-      governor_speed_overspeed_ramp_step = egr_governor_speed_ramp_target;
-      cooling_fan_speed_target = egr_governor_speed_ramp_target;
-      governor_speed_accel_ramp_at_target_flag = 1;
+      cooling_fan_ramp_up_speed = cooling_fan_high_engine_rpm_ramp_up_target;
+      cooling_fan_speed_target = cooling_fan_high_engine_rpm_ramp_up_target;
+      cooling_fan_ramp_up_at_target_flag = 1;
     }
   }
 LAB_0051524c:
-  if (governor_overspeed_detect_flag != 0) {
-    governor_decel_was_governor_floor_flag = governor_speed_limit_source == 6;
-    governor_decel_was_overspeed_clamp_flag = governor_speed_limit_source == 0xb;
+  if (cooling_fan_high_engine_rpm_flag != 0) {
+    cooling_fan_ramp_down_was_at_floor_flag = cooling_fan_speed_target_source == 6;
+    cooling_fan_ramp_down_was_stepping_flag = cooling_fan_speed_target_source == 0xb;
   }
-  if (((DAT_0040889e != 0) && (cooling_fan_speed_target < egr_governor_speed_ceiling)) &&
-     (egr_rpm_proportional_speed_limit < cooling_fan_speed_target)) {
-    cooling_fan_speed_target = egr_rpm_proportional_speed_limit;
-    governor_speed_limit_source = 7;
+  if (((cooling_fan_engine_driven_limit_enable != 0) &&
+      (cooling_fan_speed_target < cooling_fan_speed_ceiling)) &&
+     (cooling_fan_engine_driven_speed_limit < cooling_fan_speed_target)) {
+    cooling_fan_speed_target = cooling_fan_engine_driven_speed_limit;
+    cooling_fan_speed_target_source = 7;
   }
-  if (egr_governor_speed_ceiling < cooling_fan_speed_target) {
-    cooling_fan_speed_target = egr_governor_speed_ceiling;
-    governor_speed_limit_source = 8;
+  if (cooling_fan_speed_ceiling < cooling_fan_speed_target) {
+    cooling_fan_speed_target = cooling_fan_speed_ceiling;
+    cooling_fan_speed_target_source = 8;
   }
   if (((operating_mode_flags & 0x10) != 0) &&
      ((thermostat_monitor_state == 0 || (thermostat_monitor_state == 1)))) {
-    cooling_fan_speed_target = egr_governor_speed_base;
-    governor_speed_limit_source = 10;
-    if (egr_governor_pi_active_flag != 0) {
-      egr_governor_integral_reset_flag = 1;
+    cooling_fan_speed_target = cooling_fan_base_speed;
+    cooling_fan_speed_target_source = 10;
+    if (cooling_fan_coolant_pi_active_flag != 0) {
+      cooling_fan_coolant_integral_reset_flag = 1;
     }
   }
-  if (DAT_0040887e != '\0') {
-    cooling_fan_speed_target = DAT_0040887c;
-    governor_speed_limit_source = 9;
+  if (cooling_fan_speed_target_override_enable != 0) {
+    cooling_fan_speed_target = cooling_fan_speed_target_override;
+    cooling_fan_speed_target_source = 9;
   }
   return;
 }
@@ -67330,7 +67361,7 @@ LAB_0051524c:
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
-/* Cooling fan speed PID (fuel_coldStart_modeCode_select's source code 8): feedback =
+/* Cooling fan speed PID (cm848_selectCoolingFanDutySource's source code 8): feedback =
    radiator_fan_speed plus a prediction on its change since radiator_fan_speed_snapshot, filtered /
    error = cooling_fan_speed_target - feedback / P + D (filtered, x 16) / I only while
    governor_fuel_demand_mode != 0xb, the previous source code was 8 and egr_governor_speed_floor is
@@ -67386,9 +67417,9 @@ void cm848_runCoolingFanSpeedPid(void)
   cooling_fan_proportional_derivative_term =
        cm848_signedFirstOrderFilter((int)(short)iVar4,&cooling_fan_proportional_derivative_filter);
   if ((((governor_fuel_demand_mode != 0xb) && (cooling_fan_duty_source_code == 8)) &&
-      (egr_fuel_demand_speed_floor < egr_governor_speed_floor)) &&
-     ((egr_load_speed_floor < egr_governor_speed_floor &&
-      (egr_governor_protection_load_speed_floor < egr_governor_speed_floor)))) {
+      (cooling_fan_air_conditioning_speed_request < cooling_fan_coolant_speed_request)) &&
+     ((cooling_fan_intake_speed_request < cooling_fan_coolant_speed_request &&
+      (cooling_fan_transmission_speed_request < cooling_fan_coolant_speed_request)))) {
     cooling_fan_integral_accumulator =
          cooling_fan_integral_accumulator +
          (int)cooling_fan_integral_gain * (int)(short)cooling_fan_speed_error;
@@ -67425,65 +67456,77 @@ LAB_005155c8:
 
 
 //
-// Function: fuel_coldStart_modeCode_select @ 0x00515660
+// Function: cm848_selectCoolingFanDutySource @ 0x00515660
 //
 
-void fuel_coldStart_modeCode_select(void)
+/* Picks where the cooling fan duty request comes from (cooling_fan_duty_source_code): sets
+   cooling_fan_engine_idle_flag first; then 1 cooling_fan_fixed_duty_enable (fixed duty) / 9
+   injection protection (while cranking) / 2 engine below cooling_fan_low_engine_rpm / 3 engage
+   boost (target set but the fan barely turning) / 4 target = cooling_fan_base_speed (minimum duty)
+   / 5 target = cooling_fan_speed_ceiling and not at idle (maximum duty) / 8 not at idle:
+   cm848_runCoolingFanSpeedPid / 6 idle with too little engine-driven headroom
+   (cooling_fan_idle_limited_duty) / 7 minimum duty; then snapshots radiator_fan_speed. The RAM dump
+   has cooling_fan_fixed_duty_enable set, so this calibration always takes source 1. Was
+   fuel_coldStart_modeCode_select */
+
+void cm848_selectCoolingFanDutySource(void)
 
 {
   if ((((governor_fuel_demand_mode == 0xb) &&
-       (fuel_demand_control_t_0040a57a.calculated <= DAT_00408846)) &&
-      (vehicle_speed <= DAT_00408848)) && (engine_rpm_state_t_0040b7ac.current_rpm < DAT_00408844))
-  {
-    cold_start_mode_active_flag = 1;
+       (fuel_demand_control_t_0040a57a.calculated <= cooling_fan_idle_fuel_demand_maximum)) &&
+      (vehicle_speed <= cooling_fan_idle_vehicle_speed_maximum)) &&
+     (engine_rpm_state_t_0040b7ac.current_rpm < cooling_fan_idle_engine_rpm_limit)) {
+    cooling_fan_engine_idle_flag = 1;
   }
   else {
-    cold_start_mode_active_flag = 0;
+    cooling_fan_engine_idle_flag = 0;
   }
-  if (radiator_fan_speed < egr_rpm_proportional_speed_limit) {
-    egr_rpm_headroom_below_speed_limit = egr_rpm_proportional_speed_limit - radiator_fan_speed;
+  if (radiator_fan_speed < cooling_fan_engine_driven_speed_limit) {
+    cooling_fan_engine_driven_headroom = cooling_fan_engine_driven_speed_limit - radiator_fan_speed;
   }
   else {
-    egr_rpm_headroom_below_speed_limit = 0;
+    cooling_fan_engine_driven_headroom = 0;
   }
-  if (DAT_0040881f == '\0') {
-    if (((cold_start_phase == CSP_CRANKING) || (DAT_0040889c == 1)) &&
+  if (cooling_fan_fixed_duty_enable == 0) {
+    if (((cold_start_phase == CSP_CRANKING) ||
+        (cooling_fan_injection_protection_duty_always_flag == 1)) &&
        (cold_start_injection_protection_flag != 0)) {
-      cooling_fan_duty_request = DAT_0040889a;
+      cooling_fan_duty_request = cooling_fan_injection_protection_duty;
       cooling_fan_duty_source_code = 9;
     }
-    else if (engine_rpm_state_t_0040b7ac.current_rpm < DAT_0040888a) {
-      cooling_fan_duty_request = DAT_0040886c;
+    else if (engine_rpm_state_t_0040b7ac.current_rpm < cooling_fan_low_engine_rpm) {
+      cooling_fan_duty_request = cooling_fan_low_engine_rpm_duty;
       cooling_fan_duty_source_code = 2;
     }
-    else if (((DAT_0040888c < engine_rpm_state_t_0040b7ac.current_rpm) &&
-             (DAT_0040888e < cooling_fan_speed_target)) && (radiator_fan_speed < DAT_00408890)) {
-      cooling_fan_duty_request = DAT_004088a8;
+    else if (((cooling_fan_engagement_engine_rpm < engine_rpm_state_t_0040b7ac.current_rpm) &&
+             (cooling_fan_engagement_target_minimum < cooling_fan_speed_target)) &&
+            (radiator_fan_speed < cooling_fan_engagement_fan_speed_maximum)) {
+      cooling_fan_duty_request = cooling_fan_engagement_duty;
       cooling_fan_duty_source_code = 3;
     }
     else {
-      if (egr_governor_speed_base == cooling_fan_speed_target) {
+      if (cooling_fan_base_speed == cooling_fan_speed_target) {
         cooling_fan_duty_source_code = 4;
       }
       else {
-        if ((egr_governor_speed_ceiling == cooling_fan_speed_target) &&
-           (cold_start_mode_active_flag == 0)) {
+        if ((cooling_fan_speed_ceiling == cooling_fan_speed_target) &&
+           (cooling_fan_engine_idle_flag == 0)) {
           radiator_fan_speed_snapshot = radiator_fan_speed;
           cooling_fan_duty_source_code = 5;
           cooling_fan_duty_request = cooling_fan_duty_maximum;
           return;
         }
-        if (cold_start_mode_active_flag == 0) {
+        if (cooling_fan_engine_idle_flag == 0) {
           cm848_runCoolingFanSpeedPid();
           radiator_fan_speed_snapshot = radiator_fan_speed;
           cooling_fan_duty_source_code = 8;
           return;
         }
-        if (DAT_00408892 < cooling_fan_speed_target) {
-          if (egr_rpm_headroom_below_speed_limit < DAT_00408894) {
+        if (cooling_fan_idle_target_threshold < cooling_fan_speed_target) {
+          if (cooling_fan_engine_driven_headroom < cooling_fan_idle_headroom_threshold) {
             radiator_fan_speed_snapshot = radiator_fan_speed;
             cooling_fan_duty_source_code = 6;
-            cooling_fan_duty_request = DAT_00408888;
+            cooling_fan_duty_request = cooling_fan_idle_limited_duty;
             return;
           }
           radiator_fan_speed_snapshot = radiator_fan_speed;
@@ -67497,7 +67540,7 @@ void fuel_coldStart_modeCode_select(void)
     }
   }
   else {
-    cooling_fan_duty_request = DAT_0040886e;
+    cooling_fan_duty_request = cooling_fan_fixed_duty;
     cooling_fan_duty_source_code = 1;
   }
   radiator_fan_speed_snapshot = radiator_fan_speed;
@@ -67514,10 +67557,10 @@ void fuel_coldStart_modeCode_select(void)
 /* Cooling fan output stage (output channel assignment table entry 1 - this calibration: TPU-B 6
    with MDASM13 read-back): clamps cooling_fan_duty_request to cooling_fan_duty_minimum / _maximum
    (source codes 0 / 10) / inverts it if cooling_fan_duty_invert_flag / holds cooling_fan_hold_duty
-   for cooling_fan_hold_passes after cold_start_mode_active_flag clears (code 11) / runs the
+   for cooling_fan_hold_passes after cooling_fan_engine_idle_flag clears (code 11) / runs the
    read-back retest (0 % then 100 %) while cooling_fan_read_back_retest_active_flag is set / then
    sends the duty and 1000000 / cooling_fan_pwm_frequency_hz us to cooling_fan_output_channel_cal's
-   record. The request comes from fuel_coldStart_modeCode_select - so the fuel_coldStart_* family
+   record. The request comes from cm848_selectCoolingFanDutySource - so the fuel_coldStart_* family
    upstream is the fan controller, still under its old names. Was fuel_coldStart_demandFinal_apply
     */
 
@@ -67538,10 +67581,10 @@ void cm848_applyCoolingFanDuty(void)
   if (cooling_fan_duty_invert_flag != 0) {
     cooling_fan_duty = 0x6400 - cooling_fan_duty;
   }
-  if ((cold_start_mode_active_previous != 0) && (cold_start_mode_active_flag == 0)) {
+  if ((cooling_fan_engine_idle_previous != 0) && (cooling_fan_engine_idle_flag == 0)) {
     cooling_fan_hold_pass_count = 0;
   }
-  cold_start_mode_active_previous = cold_start_mode_active_flag;
+  cooling_fan_engine_idle_previous = cooling_fan_engine_idle_flag;
   if (cooling_fan_hold_pass_count < cooling_fan_hold_passes) {
     cooling_fan_hold_pass_count = cooling_fan_hold_pass_count + 1;
     cooling_fan_duty = cooling_fan_hold_duty;
@@ -67595,8 +67638,8 @@ void cm848_applyCoolingFanDuty(void)
 void j1939_periodic_processing(void)
 
 {
-  engine_egrFuel_stateMachine_update();
-  fuel_coldStart_modeCode_select();
+  cm848_selectCoolingFanSpeedTarget();
+  cm848_selectCoolingFanDutySource();
   cm848_applyCoolingFanDuty();
   return;
 }
@@ -67604,45 +67647,53 @@ void j1939_periodic_processing(void)
 
 
 //
-// Function: j1939_message_handler_initialize @ 0x00515bd4
+// Function: cm848_initCoolingFanControl @ 0x00515bd4
 //
 
-void j1939_message_handler_initialize(void)
+/* Cooling fan control init: clears the speed-target / ramp / PID state, sets the PID integral to
+   cooling_fan_integral_term_initial, the A/C request to its off speed and the four filter
+   coefficient pointers, then enables the cooling fan's output channel record. Was
+   j1939_message_handler_initialize */
+
+void cm848_initCoolingFanControl(void)
 
 {
-  egr_governor_integral_reset_flag = 0;
-  egr_governor_pi_active_flag = 0;
-  egr_warmup_phase_state = 0;
-  governor_speed_limit_source = 0;
+  cooling_fan_coolant_integral_reset_flag = 0;
+  cooling_fan_coolant_pi_active_flag = 0;
+  cooling_fan_coolant_request_state = 0;
+  cooling_fan_speed_target_source = 0;
   cooling_fan_duty_source_code = 0;
   radiator_fan_speed_snapshot = 0;
   cooling_fan_proportional_term_previous = 0;
   cooling_fan_proportional_derivative_term = 0;
   cooling_fan_speed_feedback_filtered = 0;
-  cooling_fan_integral_term = governor_fuel_demand_i_term_init_val;
-  cooling_fan_integral_accumulator = (short)governor_fuel_demand_i_term_init_val * 0x5000;
-  egr_fuel_demand_speed_floor = egr_fuel_demand_speed_floor_disabled;
-  governor_speed_ramp_step_count = 0;
-  governor_speed_decel_ramp_init_flag = 0;
-  governor_speed_accel_ramp_request_flag = 0;
-  governor_overspeed_detect_flag = 0;
-  governor_overspeed_ramp_transition_latch = 0;
-  governor_speed_accel_ramp_at_target_flag = 0;
-  governor_speed_decel_above_floor_flag = 0;
-  governor_speed_up_ramp_active_flag = 0;
-  governor_speed_decel_target_captured_flag = 0;
+  cooling_fan_integral_term = cooling_fan_integral_term_initial;
+  cooling_fan_integral_accumulator = (short)cooling_fan_integral_term_initial * 0x5000;
+  cooling_fan_air_conditioning_speed_request = cooling_fan_air_conditioning_off_speed;
+  cooling_fan_ramp_at_target_count = 0;
+  cooling_fan_ramp_down_started_flag = 0;
+  cooling_fan_ramp_up_request_flag = 0;
+  cooling_fan_high_engine_rpm_flag = 0;
+  cooling_fan_high_engine_rpm_ramp_latch = 0;
+  cooling_fan_ramp_up_at_target_flag = 0;
+  cooling_fan_ramp_down_above_floor_flag = 0;
+  cooling_fan_ramp_up_active_flag = 0;
+  cooling_fan_ramp_down_start_captured_flag = 0;
   cooling_fan_hold_pass_count = 0;
-  egr_load_floor_hold_timer = 0;
+  cooling_fan_intake_request_hold_count = 0;
   cooling_fan_feed_forward_table = 2;
   DAT_003fcdfd = 2;
-  DAT_0040b2d8 = 0;
-  cooling_fan_speed_feedback_filter = &DAT_00408856;
-  DAT_0040b2e0 = 0;
-  cooling_fan_proportional_derivative_filter = &DAT_0040885a;
-  DAT_0040b2e8 = 0;
-  PTR_DAT_0040b2e4 = &DAT_004088ac;
-  DAT_0040b2f0 = 0;
-  PTR_DAT_0040b2ec = &DAT_004088b0;
+  cooling_fan_speed_feedback_filter_state = 0;
+  cooling_fan_speed_feedback_filter = (undefined *)&cooling_fan_speed_feedback_filter_coefficient;
+  cooling_fan_proportional_derivative_filter_state = 0;
+  cooling_fan_proportional_derivative_filter =
+       (undefined *)&cooling_fan_proportional_derivative_filter_coefficient;
+  cooling_fan_coolant_temperature_filter_state = 0;
+  cooling_fan_coolant_temperature_filter =
+       (undefined *)&cooling_fan_coolant_temperature_filter_coefficient;
+  cooling_fan_intake_temperature_filter_state = 0;
+  cooling_fan_intake_temperature_filter =
+       (undefined *)&cooling_fan_intake_temperature_filter_coefficient;
   if ((cooling_fan_output_channel_cal != 0) && (cooling_fan_output_channel_cal < 0x33)) {
     (**(code **)(&output_channel_driver_table_enable + (uint)cooling_fan_output_channel_cal * 0x10))
               ();

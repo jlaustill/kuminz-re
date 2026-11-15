@@ -1781,8 +1781,8 @@ address,name,type,comment
 0x003fcd96,PTR_DAT_003fcd96,pointer,
 0x003fcd9e,cruise_control_on_toggle_state,word,Cruise ON/OFF state: cm848_updateCruiseControlOnOffToggle flips it on each new ON/OFF switch press and forces 0 on a cruise switch or vehicle speed rationality fault or until cold start reaches governor setpoint; 0 = denied reason 5 ON/OFF SW (was cruise_protection_ok)
 0x003fcda2,cruise_switch_request,CRUISE_SWITCH_REQUEST,Primary debounced cruise switch request - protection_control_state_check_2 result stored each cycle by cm848_cruiseControlPeriodicUpdate - read by every governor_cruise_ button handler and the engage check - prior value in cruise_switch_request_prev (was governor_speed_request_state_b)
-0x003fcdfb,cooling_fan_feed_forward_table,word,Dual-axis table arguments (cm848_dualAxisTableInterpolation with cooling_fan_speed_target) for cooling_fan_feed_forward_duty - set up by j1939_message_handler_initialize
-0x003fce18,cold_start_mode_active_previous,word,cold_start_mode_active_flag on the previous cm848_applyCoolingFanDuty pass - the 1 -> 0 edge restarts the cooling fan hold
+0x003fcdfb,cooling_fan_feed_forward_table,word,Dual-axis table arguments (cm848_dualAxisTableInterpolation with cooling_fan_speed_target) for cooling_fan_feed_forward_duty - set up by cm848_initCoolingFanControl
+0x003fce18,cooling_fan_engine_idle_previous,word,cooling_fan_engine_idle_flag on the previous cm848_applyCoolingFanDuty pass - the 1 -> 0 edge restarts the hold (was cold_start_mode_active_previous)
 0x003fce7c,obd_response_staging,byte[8],Staging copy of the OBD-II response bytes - multi-byte values are built here then copied into the response (was j1939_dm_scratch_buffer)
 0x003fce7f,j1939_dm_scratch_byte0,,
 0x003fce80,j1939_dm_scratch_byte1,,
@@ -3293,11 +3293,65 @@ address,name,type,comment
 0x00408814,cooling_fan_integral_gain,i16,Cooling fan speed PID integral gain (signed - lha) - 20 in the RAM dump
 0x0040881c,cooling_fan_proportional_gain,word,Cooling fan speed PID proportional gain (/ 32) - 41 in the RAM dump
 0x0040881e,cooling_fan_duty_invert_flag,byte,Non-zero: the cooling fan duty is sent as 25600 - duty (cm848_applyCoolingFanDuty) - 0 in the RAM dump
+0x0040881f,cooling_fan_fixed_duty_enable,byte,Non-zero: the duty request is always cooling_fan_fixed_duty (source code 1) - 99 in the RAM dump, so this calibration requests cooling_fan_fixed_duty = 0
+0x00408826,cooling_fan_air_conditioning_high_pressure_speed,word,Fan speed request while the A/C is on and its pressure is high - 9600 (1200 rpm) in the RAM dump
+0x0040882c,cooling_fan_air_conditioning_pressure_gain,word,A/C pressure ramp slope (/ 256) - 0 in the RAM dump
+0x00408830,cooling_fan_coolant_full_speed_exit_temperature,i16,State 3 drops back to the PI below this coolant temperature (with no coolant sensor fault) - 16320 in the RAM dump
+0x00408832,cooling_fan_coolant_full_speed_temperature,i16,Coolant temperature at or above which the coolant request goes to full speed (state 3) - 16320 in the RAM dump
+0x00408834,cooling_fan_coolant_integral_gain,word,Coolant PI integral gain - 71 in the RAM dump
+0x0040883c,cooling_fan_coolant_proportional_gain,word,Coolant PI proportional gain (/ 128) - 2222 in the RAM dump
+0x0040883e,cooling_fan_coolant_ramp_gain,word,State 1 ramp slope (/ 128 per degree) - 1840 in the RAM dump
+0x00408842,cooling_fan_drive_ratio,word,Fan drive ratio x 256 - 256 (1.0) in the RAM dump
+0x00408844,cooling_fan_idle_engine_rpm_limit,word,Idle condition: engine rpm (0.125) below this - 8400 (1050 rpm) in the RAM dump
+0x00408846,cooling_fan_idle_fuel_demand_maximum,word,Idle condition: fuel demand at most this - 4 in the RAM dump
+0x00408848,cooling_fan_idle_vehicle_speed_maximum,word,Idle condition: vehicle speed at most this - 1280 in the RAM dump
+0x0040884a,cooling_fan_intake_ramp_end,i16,Intake value at or above which the request is full speed - 1856 in the RAM dump
+0x0040884c,cooling_fan_intake_full_speed,word,Intake request above the ramp - 19200 (2400 rpm) in the RAM dump
+0x00408850,cooling_fan_intake_ramp_gain,word,Intake request ramp slope (/ 128) - 3840 in the RAM dump
+0x00408852,cooling_fan_intake_ramp_start,i16,Intake value where the request ramp starts - 1536 in the RAM dump
+0x00408856,cooling_fan_speed_feedback_filter_coefficient,word,Coefficient of cooling_fan_speed_feedback_filter - 6554 (0.1) in the RAM dump
 0x00408858,cooling_fan_speed_prediction_gain,word,Gain on the fan speed change since radiator_fan_speed_snapshot (/ 64) in the PID feedback - 128 in the RAM dump
+0x0040885a,cooling_fan_proportional_derivative_filter_coefficient,word,Coefficient of cooling_fan_proportional_derivative_filter - 13107 (0.2)
 0x0040885c,cooling_fan_derivative_gain,word,Cooling fan speed PID derivative gain (/ 64) - 1088 in the RAM dump
+0x0040885e,cooling_fan_high_engine_rpm_enter,word,Engine rpm (0.125) above which, with the target above cooling_fan_high_engine_rpm_target_threshold, the fan ramp starts - 24800 (3100 rpm) in the RAM dump
+0x00408864,cooling_fan_high_engine_rpm_target_threshold,word,Fan target above which high engine rpm starts the ramp - 13600 (1700 rpm) in the RAM dump
+0x0040886c,cooling_fan_low_engine_rpm_duty,word,Duty request below cooling_fan_low_engine_rpm - 0 in the RAM dump
+0x0040886e,cooling_fan_fixed_duty,word,Duty request while cooling_fan_fixed_duty_enable is set - 0 in the RAM dump
+0x00408870,cooling_fan_transmission_ramp_end_temperature,i16,At or above this the transmission request is full speed - 15872 in the RAM dump
+0x00408872,cooling_fan_transmission_full_speed,word,Transmission request above the ramp - 25600 (3200 rpm) in the RAM dump
+0x00408874,cooling_fan_transmission_low_speed,word,Transmission request below the ramp start or with transmission_type_cal 0 - 2800 (350 rpm) in the RAM dump
+0x00408876,cooling_fan_transmission_ramp_gain,word,Transmission request ramp slope (/ 128) - 0 in the RAM dump
+0x00408878,cooling_fan_transmission_ramp_start_temperature,i16,Transmission temperature where the fan's transmission ramp starts - 15360 in the RAM dump
+0x0040887a,cooling_fan_transmission_ramp_base_speed,word,Transmission request at the ramp start - 9600 in the RAM dump
+0x0040887c,cooling_fan_speed_target_override,word,Fan speed target used while the override is enabled
+0x0040887e,cooling_fan_speed_target_override_enable,byte,Non-zero: cooling_fan_speed_target = cooling_fan_speed_target_override - 0 in the RAM dump
+0x00408882,cooling_fan_air_conditioning_vehicle_speed_off_at,word,At or above this vehicle speed the A/C request drops to cooling_fan_air_conditioning_off_speed - 11520 in the RAM dump
+0x00408884,cooling_fan_air_conditioning_vehicle_speed_on_below,word,Below this vehicle speed the A/C base fan speed applies - 8960 in the RAM dump
 0x00408886,cooling_fan_pwm_frequency_hz,word,Cooling fan PWM frequency: the set-period argument is 1000000 / this - 20 in the RAM dump
-0x004088a4,cooling_fan_hold_passes,word,Length of the cooling fan hold after cold_start_mode_active_flag clears - 40 passes in the RAM dump
+0x00408888,cooling_fan_idle_limited_duty,word,Code 6 duty request - 3840 (15 %) in the RAM dump
+0x0040888a,cooling_fan_low_engine_rpm,word,Below this engine rpm (0.125) the request is cooling_fan_low_engine_rpm_duty (code 2) - 3200 (400 rpm)
+0x0040888c,cooling_fan_engagement_engine_rpm,word,Code 3 (engage boost): engine rpm above this - 2400 (300 rpm) in the RAM dump
+0x0040888e,cooling_fan_engagement_target_minimum,word,Code 3: cooling_fan_speed_target above this - 2800 (350 rpm fan) in the RAM dump
+0x00408890,cooling_fan_engagement_fan_speed_maximum,word,Code 3: radiator_fan_speed below this - 6400 (800 rpm) in the RAM dump
+0x00408892,cooling_fan_idle_target_threshold,word,Code 6: at idle with cooling_fan_speed_target above this - 2800 in the RAM dump
+0x00408894,cooling_fan_idle_headroom_threshold,word,Code 6: and cooling_fan_engine_driven_headroom below this - 800 in the RAM dump
+0x00408898,cooling_fan_air_conditioning_temperature_source,word,0: sensor slot 20 (ambient) / non-zero: slot 69 (battery temperature) for the A/C fan check - 1 in the RAM dump
+0x0040889a,cooling_fan_injection_protection_duty,word,Duty request (source code 9) while cold_start_injection_protection_flag is set and the engine is cranking (or cooling_fan_injection_protection_duty_always_flag = 1) - 25344 (99 %) in the RAM dump
+0x0040889c,cooling_fan_injection_protection_duty_always_flag,word,1: the injection-protection duty applies outside cranking too - 1 in the RAM dump
+0x0040889e,cooling_fan_engine_driven_limit_enable,word,Non-zero: cap the target at cooling_fan_engine_driven_speed_limit - 1 in the RAM dump
+0x004088a2,cooling_fan_intake_cold_reference_full_speed_temperature,i16,With a cold reference: intake temperature at or above which the intake request is full speed - 7040 in the RAM dump
+0x004088a4,cooling_fan_hold_passes,word,Length of the cooling fan hold after cooling_fan_engine_idle_flag clears - 40 passes in the RAM dump
 0x004088a6,cooling_fan_hold_duty,word,Cooling fan duty during that hold (source code 11) - 0 in the RAM dump
+0x004088a8,cooling_fan_engagement_duty,word,Code 3 duty request - 25344 (99 %) in the RAM dump
+0x004088aa,cooling_fan_coolant_ramp_base_speed,word,State 1 ramp start speed - 6800 (850 rpm) in the RAM dump
+0x004088ac,cooling_fan_coolant_temperature_filter_coefficient,word,Coefficient of cooling_fan_coolant_temperature_filter - 58982 (0.9)
+0x004088b0,cooling_fan_intake_temperature_filter_coefficient,word,Coefficient of cooling_fan_intake_temperature_filter - 58982 (0.9)
+0x004088b2,cooling_fan_ramp_at_target_release_speed,word,With the ramp-up at its target and the engine above the exit rpm: a target below this releases the ramp - 8000 in the RAM dump
+0x004088b8,cooling_fan_ramp_at_target_passes,word,Passes the target is held at the ramp-up target (source 0xd) - 1200 in the RAM dump
+0x004088be,cooling_fan_intake_high_engine_rpm,word,Engine rpm (0.125) for the faster rise - 9600 (1200 rpm) in the RAM dump
+0x004088c2,cooling_fan_intake_speed_rise_step_high_engine_rpm,word,Rise per pass when the new request is below the engine-driven limit and the engine is above cooling_fan_intake_high_engine_rpm - 10 in the RAM dump
+0x004088c4,cooling_fan_intake_speed_rise_step,word,Intake request rise per pass - 0 in the RAM dump
+0x004088c6,cooling_fan_intake_request_hold_passes,word,Reload of the intake hold count - 200 in the RAM dump
 0x004088c8,radiator_fan_speed_short_period_value,word,Fan speed reported when the period is shorter than radiator_fan_speed_short_period_limit - 48000 (6000 rpm) in the RAM dump
 0x004088ca,radiator_fan_speed_long_period_value,word,Fan speed reported when the period is longer than radiator_fan_speed_long_period_limit - 0 in the RAM dump
 0x004088ce,radiator_fan_speed_long_period_limit,dword,x pulses / prescaler: a longer accumulated period reads as radiator_fan_speed_long_period_value - 1200000 in the RAM dump
@@ -4900,12 +4954,16 @@ address,name,type,comment
 0x0040b28c,governor_speed_error_filtered_b,word,
 0x0040b28e,governor_speed_error_b_filtered,word,
 0x0040b290,governor_speed_error_filtered,word,
-0x0040b294,cooling_fan_speed_target,word,Target radiator fan speed (0.125 rpm) - set by engine_egrFuel_stateMachine_update; the PID's error is this minus cooling_fan_speed_feedback_filtered, and fuel_coldStart_modeCode_select compares it with its limits (was governor_speed_reference)
-0x0040b2a0,governor_speed_limit_source,word,limit-source code (0=none,2/3/4/5/6/0xb-0xf) recording which clamp/limit determined governor_speed_reference each cycle in engine_egrFuel_stateMachine_update; read as DAT_003fce0a = (==6)
+0x0040b294,cooling_fan_speed_target,word,Target radiator fan speed (0.125 rpm) - set by cm848_selectCoolingFanSpeedTarget; the PID's error is this minus cooling_fan_speed_feedback_filtered, and cm848_selectCoolingFanDutySource compares it with its limits (was governor_speed_reference)
+0x0040b2a0,cooling_fan_speed_target_source,word,What set cooling_fan_speed_target: 0 base / 1 coolant / 2 A/C / 3 intake / 4 transmission / 5 6 0xb-0xf high-engine-rpm ramp / 7 engine-driven limit / 8 ceiling / 9 override / 10 thermostat monitor (was governor_speed_limit_source)
 0x0040b2d4,cooling_fan_speed_feedback_filter,pointer,Filter state passed to cm848_signedFirstOrderFilter for cooling_fan_speed_feedback_filtered (was PTR_DAT_0040b2d4)
+0x0040b2d8,cooling_fan_speed_feedback_filter_state,dword,State of cooling_fan_speed_feedback_filter (zeroed at init)
 0x0040b2dc,cooling_fan_proportional_derivative_filter,pointer,Filter state passed to cm848_signedFirstOrderFilter for cooling_fan_proportional_derivative_term (was PTR_DAT_0040b2dc)
-0x0040b2e4,PTR_DAT_0040b2e4,pointer,
-0x0040b2ec,PTR_DAT_0040b2ec,pointer,
+0x0040b2e0,cooling_fan_proportional_derivative_filter_state,dword,State of cooling_fan_proportional_derivative_filter (zeroed at init)
+0x0040b2e4,cooling_fan_coolant_temperature_filter,pointer,Filter state for cooling_fan_coolant_temperature_filtered (was PTR_DAT_0040b2e4)
+0x0040b2e8,cooling_fan_coolant_temperature_filter_state,dword,State of cooling_fan_coolant_temperature_filter (zeroed at init)
+0x0040b2ec,cooling_fan_intake_temperature_filter,pointer,Filter state for cooling_fan_intake_temperature_filtered (was PTR_DAT_0040b2ec)
+0x0040b2f0,cooling_fan_intake_temperature_filter_state,dword,State of cooling_fan_intake_temperature_filter (zeroed at init)
 0x0040b2f6,radiator_fan_speed_unfiltered,word,Fan speed before the moving average (0.125 rpm) - cm848_measureRadiatorFanSpeed
 0x0040b302,radiator_fan_speed_filter_pointer,pointer,Filter state for the radiator_fan_speed moving average (set to 0x4088cc by cm848_initRadiatorFanSpeedMeasurement) (was tpu_rpm_ema_coeff_ptr)
 0x0040b30a,engine_load_input_b,word,
@@ -5383,7 +5441,7 @@ address,name,type,comment
 0x0040ba16,engine_sync_debounce_flag,word,
 0x0040ba18,cbd_active_flag,word,
 0x0040ba1a,fault_mask_inverted,dword,
-0x0040ba5c,thermostat_monitor_state,word,Thermostat monitor (P0128) state: 0 waiting / 1 running / 2 passed / 3 pass reported / 4 failed / 5 fail reported / 6 not run or aborted / 7 running with a fail blocked / 8 running from a start above 60 F - engine_egrFuel_stateMachine_update holds base speed in 0 / 1 (was engine_cssc_oiltemp_state)
+0x0040ba5c,thermostat_monitor_state,word,Thermostat monitor (P0128) state: 0 waiting / 1 running / 2 passed / 3 pass reported / 4 failed / 5 fail reported / 6 not run or aborted / 7 running with a fail blocked / 8 running from a start above 60 F - cm848_selectCoolingFanSpeedTarget holds base speed in 0 / 1 (was engine_cssc_oiltemp_state)
 0x0040bab4,fuel_flow_rate_snapshot,word,
 0x0040bab8,fuel_quantity_ema_filtered,word,
 0x0040baba,fuel_quantity_ema,word,
@@ -5661,7 +5719,7 @@ address,name,type,comment
 #   [15:14] channel H — protection_enable system_enable_bits bit 7
 #   [17:16] channel I — protection_enable system_enable_bits bit 3
 #   [19:18] channel J — governor_speed_request_state == 1
-0x0040b2f4,radiator_fan_speed,word,DRB SCI read FD-80-81 'RAD FAN SPEED' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-80-81 to this word's two bytes (x 0.125 rpm); measured by tpu_rpm_measurement_control; the fan controller (fuel_coldStart_modeCode_select / governor_fuel_demand_calc) compares it with its speed limits - not an engine rpm (was tpu_rpm_ema_filtered)
+0x0040b2f4,radiator_fan_speed,word,DRB SCI read FD-80-81 'RAD FAN SPEED' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-80-81 to this word's two bytes (x 0.125 rpm); measured by cm848_measureRadiatorFanSpeed; the fan controller (cm848_selectCoolingFanDutySource / cm848_runCoolingFanSpeedPid) compares it with its speed limits - not an engine rpm (was tpu_rpm_ema_filtered)
 0x0040b1e7,protection_event26_condition_code,byte,priority condition code 1-15 for protection event 0x26
 0x0040b1e6,protection_event26_condition_code_b,byte,class-B condition code for protection event 0x26 (enable_byte_34 & 0x40 path)
 0x004088de,radiator_fan_pulses_per_measurement_type_5100,word,Fan speed sensor pulses accumulated per TPU-B channel 9 measurement - used when engine_sync_type_code = 5100 (0x13ec; the RAM dump holds 0xffff); 1 in the RAM dump (was tpu_rpm_crank_teeth_isb)
@@ -5669,21 +5727,21 @@ address,name,type,comment
 0x004088d9,radiator_fan_speed_prescaler,byte,Divisor in the fan speed numerator (pulses x 60000000 / this) and in the period limits - 6 in the RAM dump (was tpu_rpm_timer_prescaler)
 0x0040b2f8,radiator_fan_speed_numerator,dword,pulses x 60000000 / radiator_fan_speed_prescaler: radiator fan speed (0.125 rpm) = this x 8 / radiator_fan_speed_period_microseconds (was tpu_rpm_raw_period)
 0x0040b9aa,radiator_fan_speed_history_middle,word,Middle of three radiator_fan_speed samples (was rpm_camSync_window_mid)
-0x0040b2c4,egr_coolant_temp_filtered,word,filtered coolant temp; input to EGR warmup phase thresholds
-0x0040b29a,egr_warmup_phase_state,word,EGR warmup state machine 0-3 (off/ramp/setpoint/override)
-0x0040b2a4,egr_governor_speed_floor,word,EGR-phase speed floor applied to governor_speed_reference
-0x0040b2ae,egr_governor_speed_target,dword,persistent EGR speed PID output clamped to min/max cal (stw=dword)
-0x0040b2aa,egr_governor_speed_integral,dword,EGR speed PID 32-bit integral accumulator (lwz=dword)
-0x0040b292,egr_fuel_demand_speed_floor,word,fuel-quantity-based governor speed floor (limit_source=2)
-0x0040b296,egr_load_speed_floor,word,load-based rate-limited governor speed floor (limit_source=3)
-0x0040b2a2,egr_rpm_proportional_speed_limit,word,RPM-proportional governor speed ceiling (limit_source=7)
-0x0040b29c,cold_start_mode_active_flag,word,cold-start mode active 0/1; gates load-speed-floor and integral reset
-0x0040b2a8,cooling_fan_duty_source_code,word,Which branch set the cooling fan duty: 1-9 from fuel_coldStart_modeCode_select (8 = governor_fuel_demand_calc) / 0 at cooling_fan_duty_minimum / 10 at cooling_fan_duty_maximum / 11 during the hold after cold_start_mode_active_flag clears (was cold_start_fuel_demand_mode_code)
+0x0040b2c4,cooling_fan_coolant_temperature_filtered,word,Filtered coolant temperature used for the fan's coolant request (was egr_coolant_temp_filtered)
+0x0040b29a,cooling_fan_coolant_request_state,word,Coolant request state: 0 below the ramp start / 1 linear ramp / 2 PI / 3 full speed (also on a coolant sensor fault: faults 16 / 17 / 401) (was egr_warmup_phase_state)
+0x0040b2a4,cooling_fan_coolant_speed_request,word,Fan speed requested for coolant temperature (target source 1); cm848_runCoolingFanSpeedPid integrates only while it is the largest request (was egr_governor_speed_floor)
+0x0040b2ae,cooling_fan_coolant_pi_speed,dword,Coolant-temperature PI output (fan speed, clamped to cooling_fan_coolant_speed_minimum / _maximum) (was egr_governor_speed_target)
+0x0040b2aa,cooling_fan_coolant_integral,dword,Coolant PI integral (/ 4096 into the speed) (was egr_governor_speed_integral)
+0x0040b292,cooling_fan_air_conditioning_speed_request,word,Fan speed requested for the A/C (target source 2) (was egr_fuel_demand_speed_floor)
+0x0040b296,cooling_fan_intake_speed_request,word,Fan speed requested for intake air temperature (target source 3) (was egr_load_speed_floor)
+0x0040b2a2,cooling_fan_engine_driven_speed_limit,word,engine rpm x cooling_fan_drive_ratio / 256: the most an engine-driven fan can turn (target source 7 caps to it) (was egr_rpm_proportional_speed_limit)
+0x0040b29c,cooling_fan_engine_idle_flag,word,Set by cm848_selectCoolingFanDutySource while governor_fuel_demand_mode = 0xb with fuel demand at most cooling_fan_idle_fuel_demand_maximum / vehicle speed at most cooling_fan_idle_vehicle_speed_maximum / engine below cooling_fan_idle_engine_rpm_limit; it picks the idle duty sources, holds the intake request and its 1 -> 0 edge starts the cooling fan hold. Not a cold-start flag (was cold_start_mode_active_flag)
+0x0040b2a8,cooling_fan_duty_source_code,word,Which branch set the cooling fan duty: 1-9 from cm848_selectCoolingFanDutySource (8 = cm848_runCoolingFanSpeedPid) / 0 at cooling_fan_duty_minimum / 10 at cooling_fan_duty_maximum / 11 during the hold after cooling_fan_engine_idle_flag clears (was cold_start_fuel_demand_mode_code)
 0x0040b2bc,cooling_fan_integral_term,word,Integral term of the cooling fan speed PID, clamped to cooling_fan_integral_term_minimum / _maximum (was governor_fuel_demand_i_term)
-0x0040b2c0,cooling_fan_duty_request,word,Cooling fan duty request (duty 0-25600 = 0-100 %) chosen by fuel_coldStart_modeCode_select (its branches set cooling_fan_duty_source_code) - cm848_applyCoolingFanDuty clamps it into cooling_fan_duty (was cold_start_fuel_demand_output)
+0x0040b2c0,cooling_fan_duty_request,word,Cooling fan duty request (duty 0-25600 = 0-100 %) chosen by cm848_selectCoolingFanDutySource (its branches set cooling_fan_duty_source_code) - cm848_applyCoolingFanDuty clamps it into cooling_fan_duty (was cold_start_fuel_demand_output)
 0x0040b2c2,cold_start_injection_protection_flag,word,cranking injection protection active; gates fuel mode 9
-0x00408862,egr_governor_speed_base,word,EGR base governor speed setpoint (ROM-sourced working RAM)
-0x00408868,egr_governor_speed_ramp_target,word,EGR governor speed ramp upper target (ROM-sourced)
+0x00408862,cooling_fan_base_speed,word,Lowest fan speed target (source 0) and the target while the thermostat monitor holds the fan (source 10) (was egr_governor_speed_base)
+0x00408868,cooling_fan_high_engine_rpm_ramp_up_target,word,Speed the high-engine-rpm ramp-up climbs to (was egr_governor_speed_ramp_target)
 0x0040af06,fault_aging_triggered_flag,byte,set after dwell at governor setpoint; triggers fault aging/removal (lbz=byte)
 0x0040af0c,fault_handled_bitmap,byte,170-bit (22-byte) per-fault handled bitmap 1 bit/fault - set by cm848_processFaultScanGroup when a fault is latched and read by cm848_clearMilForHealedFaults to skip it - a flat bitmap not a ring (was fault_ring_handled_bitmap) (Medium confidence)
 0x0040b962,injection_timing_arb_component_4,word,injection timing arb component (winner code 4; rpm*rpm product)
@@ -5733,16 +5791,16 @@ address,name,type,comment
 0x0040b840,injection_timing_aux_output,word,final arbitrated aux injection-timing limit
 0x0040ba30,battery_temperature_key_on_rationality_state,word,Battery temperature key-on rationality (P0514) state (e2m Battery_Temperature_Keyon_Rationality_State): 1 running (cranking then the moving re-check) / 2 passed / 3 failed / 4 aborted or not run - also read by the slot 69 mileage check - 4 in the dump (was cam_sync_fueltemp_validation_state)
 0x0040a02a,sensor_channel_ratio_scale,word,sensor-channel normalization scale factor (read-only)
-0x0040b2cc,governor_speed_decel_target,word,governor decel-entry speed setpoint
+0x0040b2cc,cooling_fan_ramp_down_speed,word,Current ramp-down speed (was governor_speed_decel_target)
 0x0040ba34,ambient_air_temperature_key_on_rationality_state,word,Ambient air temperature key-on rationality (P0071) state (e2m Ambient_Air_Temperature_Keyon_Rationality_State): 1 running / 2 passed / 3 failed / 4 aborted or not run (all three key-on checks go to 4 without a cranking start) - 4 in the dump (was cam_sync_oiltemp_validation_state)
 0x0040ba32,intake_manifold_temperature_key_on_rationality_state,word,Intake manifold air temp key-on rationality (P0111) state - 1 running / 2 passed / 3 failed / 4 aborted or not run - parallels battery (0x40ba30) and ambient (0x40ba34) - passed as the slot 9 stuck-check companion state (was cam_sync_crossval_b_state)
-0x0040b2c8,governor_speed_overspeed_ramp_step,word,governor overspeed/decel ramp working register (limit_source=12)
+0x0040b2c8,cooling_fan_ramp_up_speed,word,Current ramp-up speed (was governor_speed_overspeed_ramp_step)
 0x0040ba42,temperature_rationality_cranking_cycle_count,word,Cycles counted during cranking - the scheduler holds sampling off until 0x409f92 (49) then the cross-check runs and counts on to 0x409fb2 (50) where it decides - single monotonic key-on cranking counter (was cam_sync_startup_cycle_counter)
 0x0040b844,injection_timing_aux_load_limit,word,load*rpm aux injection-timing component clamped +/-0x400
 0x0040b852,injection_timing_auxiliary_boost_component,word,Auxiliary injection timing boost term: RPM x boost table (ROM 0x5e3e2 - y 0 to 100 inHg) times RPM x fuel_demand_computed table (ROM 0x5e534) / 4096 clamped +/-1024; min or max picked with the other terms into injection_timing_aux_output; tables all zero here (was injection_timing_aux_rpm_limit)
 0x00409f96,temperature_rationality_sensor_agreement_threshold,word,Largest delta (1/64 deg F) for two temperature snapshots to count as agreeing in the cross-checks - 640 = 10 F - used by crossCheck checkBattery and checkAmbient (was cam_sync_sensor_mismatch_threshold)
-0x0040b2ce,governor_speed_ramp_upper_step,word,governor speed up-ramp working register (limit_source=15)
-0x0040b2ca,governor_speed_ramp_lower_step,word,governor speed down-ramp working register (limit_source=14)
+0x0040b2ce,cooling_fan_ramp_up_resume_speed,word,Speed of the post-ramp-down climb (source 0xf) (was governor_speed_ramp_upper_step)
+0x0040b2ca,cooling_fan_ramp_down_resume_speed,word,Speed the ramp down continues from after a ramp-up (source 0xe) (was governor_speed_ramp_lower_step)
 0x0040b33e,intake_air_heater_schedule_level,word,grid heater schedule level 0-6 from a temperature lookup table - selects the per-level pulse durations and rpm transitions - level 6 forces shutdown reason 5 (was iat_protection_derate_level) (Medium confidence)
 0x0040b340,intake_air_heater_relay_phase,word,grid heater relay alternation phase 1/2 - toggled each PWM period to alternate which relay drives so the two heater relays share the current (was iat_protection_solenoid_phase)
 0x0040b344,intake_air_heater_shutdown_reason,word,grid heater shutdown reason - 1 default / 2 over 19 mph / 3 battery over 30 V (never on 12 V) / 4 run-up holdoff expired / 5 schedule level 6 / 6 both warm (cal makes unreachable) / 7 EEPROM postheat-skip counter nonzero / 8 loaded-cycle overflow (was iat_protection_shutdown_reason)
@@ -5852,8 +5910,8 @@ address,name,type,comment
 0x0040af07,coolant_overheat_condition_flags,byte,bit0 temp divergence bit1 absolute overtemp; ==3 clears fault ring
 0x0040b1fe,protection_mode_a_enable_event_count,word,counts protection-enable transitions (mode A) sets engine_diag 0x400
 0x0040b200,protection_mode_b_enable_event_count,word,counts protection-enable transitions (mode B) sets engine_diag 0x800
-0x0040b2d0,cooling_fan_retest_pass_count,word,Cooling fan retest pass counter (fuel_coldStart_demandFinal_apply): 0 % duty below cooling_fan_retest_off_passes / 100 % for the next 2 x cooling_fan_retest_fault_confirm_passes / then 0 and the retest flag clears (was cold_start_emission_fault_restart_counter)
-0x0040b2d2,cooling_fan_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the cooling fan read-back fault (output_read_back_fault_bits.cooling_fan) outlasts its debounce and P0480 (fault 121) is set; fuel_coldStart_demandFinal_apply (the fan duty output) then runs the retest - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was cold_start_emission_fault_active_flag)
+0x0040b2d0,cooling_fan_retest_pass_count,word,Cooling fan retest pass counter (cm848_applyCoolingFanDuty): 0 % duty below cooling_fan_retest_off_passes / 100 % for the next 2 x cooling_fan_retest_fault_confirm_passes / then 0 and the retest flag clears (was cold_start_emission_fault_restart_counter)
+0x0040b2d2,cooling_fan_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the cooling fan read-back fault (output_read_back_fault_bits.cooling_fan) outlasts its debounce and P0480 (fault 121) is set; cm848_applyCoolingFanDuty (the fan duty output) then runs the retest - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was cold_start_emission_fault_active_flag)
 0x0040b536,low_oil_pressure_debounce_limit,word,Debounce limit for the low-oil-pressure check - picked by coolant temperature from the ROM tables at 0x5b4be / 0x5b4ca (default from 0x5b4d4) (was governor_temp_diag_debounce_limit)
 0x0040b59a,protection_throttle_integral_accumulator,dword,protection throttle PID integral accumulator
 0x0040b8d4,cam_timing_speed_window_debounce_count,word,debounce for cam speed window; safety_bits_1 0x200
@@ -6042,26 +6100,26 @@ address,name,type,comment
 0x003fccf2,protection_speedTracking_speed_error_ramp,word,accumulated speed-error ramp value
 0x003fcd7a,j1939_tsc1_active_duration_counter,word,TSC1 active/timeout duration counter
 0x003fcdf6,cooling_fan_duty,word,Cooling fan duty after the clamps / invert / post-mode hold / read-back retest - sent to the cooling fan's output channel by cm848_applyCoolingFanDuty (was cold_start_fuel_demand_final)
-0x003fdc96,cooling_fan_output_channel_cal,word,EEPROM 0x814 = output channel assignment table entry 1: output channel driver table record number (0 = no output / 1-50) for the cooling fan drive - identified by its read-back fault (output_read_back_fault_bits.cooling_fan -> fault 121 = P0480 cooling fan 1 control circuit); enabled by j1939_message_handler_initialize; fuel_coldStart_demandFinal_apply sets its duty (cold_start_fuel_demand_final - so that function's cold_start_fuel_* names are the fan control) and period (1000000 / DAT_00408886 us) - this calibration: 7 = record 7 (TPU-B channel 6 with MDASM13 read-back) - was actuator_output_channel_h_cal / j1939_pgn_handler_index_cold_start_fuel
-0x003fce12,radiator_fan_speed_snapshot,word,radiator_fan_speed captured by fuel_coldStart_modeCode_select at the end of every pass (after the PID in source code 8) - so the PID's prediction term uses the change since the last pass (was cold_start_mode_entry_rpm_snapshot)
-0x003fce10,cooling_fan_hold_pass_count,word,cm848_applyCoolingFanDuty: restarted when cold_start_mode_active_flag goes from 1 to 0; while below cooling_fan_hold_passes the fan runs at cooling_fan_hold_duty (source code 11) (was cold_start_fuel_hold_ramp_counter)
+0x003fdc96,cooling_fan_output_channel_cal,word,EEPROM 0x814 = output channel assignment table entry 1: output channel driver table record number (0 = no output / 1-50) for the cooling fan drive - identified by its read-back fault (output_read_back_fault_bits.cooling_fan -> fault 121 = P0480 cooling fan 1 control circuit); enabled by cm848_initCoolingFanControl; cm848_applyCoolingFanDuty sets its duty (cold_start_fuel_demand_final - so that function's cold_start_fuel_* names are the fan control) and period (1000000 / DAT_00408886 us) - this calibration: 7 = record 7 (TPU-B channel 6 with MDASM13 read-back) - was actuator_output_channel_h_cal / j1939_pgn_handler_index_cold_start_fuel
+0x003fce12,radiator_fan_speed_snapshot,word,radiator_fan_speed captured by cm848_selectCoolingFanDutySource at the end of every pass (after the PID in source code 8) - so the PID's prediction term uses the change since the last pass (was cold_start_mode_entry_rpm_snapshot)
+0x003fce10,cooling_fan_hold_pass_count,word,cm848_applyCoolingFanDuty: restarted when cooling_fan_engine_idle_flag goes from 1 to 0; while below cooling_fan_hold_passes the fan runs at cooling_fan_hold_duty (source code 11) (was cold_start_fuel_hold_ramp_counter)
 0x003fce1a,cooling_fan_retest_fault_count,word,Cooling fan retest: passes the read-back fault bit has stayed set during the retest (restarts it at cooling_fan_retest_fault_confirm_passes) (was cold_start_emission_fault_pgn_cycle_counter)
-0x003fce1c,egr_load_floor_hold_timer,word,hold timer gating EGR load speed-floor ramp
-0x003fcdf8,egr_governor_integral_reset_flag,byte,EGR governor PI integral-reset pending
-0x003fcdf9,egr_governor_pi_active_flag,byte,EGR governor PI computation enable
-0x003fcdfa,egr_fuel_demand_high_stroke_flag,byte,set when fuel stroke above high threshold
-0x003fcdff,governor_speed_ramp_step_count,word,overspeed-approach ramp step counter
-0x003fce01,governor_speed_decel_ramp_init_flag,byte,decel-ramp initialized flag
-0x003fce02,governor_speed_accel_ramp_request_flag,byte,accel-ramp begin flag
-0x003fce03,governor_overspeed_detect_flag,byte,overspeed detected flag
-0x003fce04,governor_overspeed_ramp_transition_latch,byte,overspeed ramp transition latch
-0x003fce05,governor_speed_accel_ramp_at_target_flag,byte,accel ramp reached target flag
-0x003fce06,governor_speed_decel_above_floor_flag,byte,decel target above idle floor flag
-0x003fce07,governor_speed_up_ramp_active_flag,byte,up-ramp active (drives upper step accum)
-0x003fce08,governor_speed_decel_target_captured_flag,byte,decel target captured flag
-0x003fce09,governor_decel_was_overspeed_clamp_flag,byte,prev decel was at overspeed clamp (limit_source 0xb)
-0x003fce0a,governor_decel_was_governor_floor_flag,byte,prev decel was at governor floor (limit_source 6)
-0x003fce0b,governor_speed_accel_ramp_step_flag,byte,accel-ramp step active flag
+0x003fce1c,cooling_fan_intake_request_hold_count,word,Reloaded while cooling_fan_engine_idle_flag is set; until it runs out the intake request keeps its last value (was egr_load_floor_hold_timer)
+0x003fcdf8,cooling_fan_coolant_integral_reset_flag,byte,Set when the PI starts (or the thermostat monitor holds the fan): the PI restarts from cooling_fan_speed_target (was egr_governor_integral_reset_flag)
+0x003fcdf9,cooling_fan_coolant_pi_active_flag,byte,Set once the coolant reaches cooling_fan_coolant_temperature_setpoint (request state 2): the PI runs (was egr_governor_pi_active_flag)
+0x003fcdfa,cooling_fan_air_conditioning_pressure_high_flag,byte,Set at the A/C high-pressure threshold, cleared below the low threshold (was egr_fuel_demand_high_stroke_flag)
+0x003fcdff,cooling_fan_ramp_at_target_count,word,Passes held at the ramp-up target, up to cooling_fan_ramp_at_target_passes (was governor_speed_ramp_step_count)
+0x003fce01,cooling_fan_ramp_down_started_flag,byte,Ramp-down start speed captured (was governor_speed_decel_ramp_init_flag)
+0x003fce02,cooling_fan_ramp_up_request_flag,byte,A ramp-up is pending or running (was governor_speed_accel_ramp_request_flag)
+0x003fce03,cooling_fan_high_engine_rpm_flag,byte,Set while the high-engine-rpm fan ramp is active (was governor_overspeed_detect_flag)
+0x003fce04,cooling_fan_high_engine_rpm_ramp_latch,byte,Hands the ramp-up speed over to the ramp-down when the ramp ends or the target drops (was governor_overspeed_ramp_transition_latch)
+0x003fce05,cooling_fan_ramp_up_at_target_flag,byte,The ramp-up reached its target (was governor_speed_accel_ramp_at_target_flag)
+0x003fce06,cooling_fan_ramp_down_above_floor_flag,byte,The ramp-down is still above its floor (was governor_speed_decel_above_floor_flag)
+0x003fce07,cooling_fan_ramp_up_active_flag,byte,The post-ramp-down climb (source 0xf) is running (was governor_speed_up_ramp_active_flag)
+0x003fce08,cooling_fan_ramp_down_start_captured_flag,byte,The ramp-down start speed has been taken (was governor_speed_decel_target_captured_flag)
+0x003fce09,cooling_fan_ramp_down_was_stepping_flag,byte,The last ramp-down pass was a step (source 0xb) (was governor_decel_was_overspeed_clamp_flag)
+0x003fce0a,cooling_fan_ramp_down_was_at_floor_flag,byte,The last ramp-down pass was at the floor (source 6) (was governor_decel_was_governor_floor_flag)
+0x003fce0b,cooling_fan_ramp_up_step_flag,byte,A ramp-up step is in progress (source 0xc) (was governor_speed_accel_ramp_step_flag)
 0x003fcfa6,governor_datavalid_load_snapshot,word,load snapshot during governor data validation
 0x003fcfae,governor_datavalid_conditions_met_flag,byte,governor data-validation conditions met 0/1
 0x003fcfb1,governor_datavalid_snapshot_ready_flag,byte,governor data-validation snapshot-ready gate
@@ -6237,21 +6295,21 @@ address,name,type,comment
 0x00408716,protection_mode_enable_debounce_threshold,word,read-only ROM debounce for protection-mode transitions
 0x00408720,governor_cruiseOverride_holdoff_reload,word,read-only ROM reload for cruise-override holdoff countdown
 0x0040876e,injection_timing_demand_step_rate,word,read-only ROM per-cycle slew step for injection timing demand
-0x00408820,cooling_fan_duty_maximum,word,Upper clamp of the cooling fan duty in cm848_applyCoolingFanDuty (source code 10 when it applies); fuel_coldStart_modeCode_select also requests it directly (code 5) - 25344 = 99 % in the RAM dump (was cold_start_fuel_demand_max)
-0x00408822,cooling_fan_duty_minimum,word,Lower clamp of the cooling fan duty in cm848_applyCoolingFanDuty (source code 0 when it applies); fuel_coldStart_modeCode_select also requests it directly (code 7); no code writes it - 0 in the RAM dump. Not cold_start_fuel_demand_min_floor (was cold_start_fuel_demand_min)
-0x00408860,egr_governor_speed_ceiling,word,read-only ROM hard ceiling on governor_speed_reference (EGR)
-0x0040886a,egr_governor_decel_speed_floor,word,read-only ROM min floor for governor_speed_decel_target
-0x00408896,egr_load_floor_temp_source_select,word,read-only ROM source select 0/1/2 for EGR load-floor temp
-0x004088b4,egr_governor_speed_decel_step,word,read-only ROM per-cycle decel speed step
-0x0040b29e,egr_rpm_headroom_below_speed_limit,word,egr_rpm_proportional_speed_limit - current rpm
-0x0040b2a6,egr_governor_temp_error,word,EGR PI error: filtered coolant temp - setpoint
-0x0040b2b2,egr_governor_speed_p_term,dword,EGR governor speed PI proportional term
-0x0040b2c6,egr_load_filtered,word,first-order filtered engine load for EGR load floor
-0x0040882a,egr_fuel_demand_stroke_low_threshold,word,read-only ROM lower fuel-stroke boundary for EGR fuel demand
-0x00408836,egr_governor_speed_target_max,word,read-only ROM upper clamp for egr_governor_speed_target (PI)
-0x00408840,egr_warmup_start_coolant_temp,word,read-only ROM coolant temp at which EGR warmup ramp begins
-0x0040884e,egr_load_speed_floor_min,word,read-only ROM min/fallback for egr_load_speed_floor
-0x00408854,egr_load_speed_floor_base,word,read-only ROM base of EGR load-speed-floor interpolation
+0x00408820,cooling_fan_duty_maximum,word,Upper clamp of the cooling fan duty in cm848_applyCoolingFanDuty (source code 10 when it applies); cm848_selectCoolingFanDutySource also requests it directly (code 5) - 25344 = 99 % in the RAM dump (was cold_start_fuel_demand_max)
+0x00408822,cooling_fan_duty_minimum,word,Lower clamp of the cooling fan duty in cm848_applyCoolingFanDuty (source code 0 when it applies); cm848_selectCoolingFanDutySource also requests it directly (code 7); no code writes it - 0 in the RAM dump. Not cold_start_fuel_demand_min_floor (was cold_start_fuel_demand_min)
+0x00408860,cooling_fan_speed_ceiling,word,Fan speed target cap (source 8) (was egr_governor_speed_ceiling)
+0x0040886a,cooling_fan_high_engine_rpm_ramp_down_floor,word,Speed the high-engine-rpm ramp-down stops at (source 6) (was egr_governor_decel_speed_floor)
+0x00408896,cooling_fan_intake_reference_select,word,0: use the intake temperature as is / 1: minus sensor slot 69 (battery temperature) / 2: minus slot 20 (ambient) (was egr_load_floor_temp_source_select)
+0x004088b4,cooling_fan_ramp_down_step,word,Ramp-down step per pass (was egr_governor_speed_decel_step)
+0x0040b29e,cooling_fan_engine_driven_headroom,word,cooling_fan_engine_driven_speed_limit - radiator_fan_speed (0 when negative) (was egr_rpm_headroom_below_speed_limit)
+0x0040b2a6,cooling_fan_coolant_temperature_error,word,cooling_fan_coolant_temperature_filtered - cooling_fan_coolant_temperature_setpoint (was egr_governor_temp_error)
+0x0040b2b2,cooling_fan_coolant_proportional_term,dword,Coolant PI proportional term (was egr_governor_speed_p_term)
+0x0040b2c6,cooling_fan_intake_temperature_filtered,word,Filtered intake_manifold_temperature_sensor_filtered for the fan's intake request (only at the governor setpoint) (was egr_load_filtered)
+0x0040882a,cooling_fan_air_conditioning_pressure_low_threshold,word,A/C pressure below which the high-pressure flag clears; between the thresholds the optional pressure ramp applies (was egr_fuel_demand_stroke_low_threshold)
+0x00408836,cooling_fan_coolant_speed_maximum,word,Coolant request at full speed (state 3), the PI's upper clamp and the request cap (was egr_governor_speed_target_max)
+0x00408840,cooling_fan_coolant_ramp_start_temperature,word,Coolant temperature where the fan's coolant request starts ramping (state 0 -> 1) (was egr_warmup_start_coolant_temp)
+0x0040884e,cooling_fan_intake_minimum_speed,word,Intake request below the ramp, while cooling_fan_engine_idle_flag is set and away from the governor setpoint (was egr_load_speed_floor_min)
+0x00408854,cooling_fan_intake_base_speed,word,Intake request at the ramp start (was egr_load_speed_floor_base)
 0x004088d8,radiator_fan_pulses_per_measurement,byte,Fan speed sensor pulses accumulated per TPU-B channel 9 measurement for every other type code - 6 in the RAM dump (was tpu_rpm_crank_teeth_non_isb)
 0x0040b2fc,radiator_fan_speed_period_microseconds,dword,Accumulated fan speed sensor period from TPU-B channel 9 (cm848_radiatorFanSpeedInterruptHandler: capture x 1000000 / 312500 - TPU-B ticks 3.2 us) (was tpu_rpm_reference_period)
 0x0040b9a8,radiator_fan_speed_history_latest,word,Newest of three radiator_fan_speed samples (type code 5100 only) - read by engine_camSync_sampleRatio_validate (was rpm_camSync_window_latest)
@@ -6873,23 +6931,23 @@ address,name,type,comment
 0x00408b2a,protection_throttle_hpcr_frequency,word,ROM HPCR output frequency (Hz, 1e6/this = period)
 0x00408af0,protection_throttle_velocity_gain,word,ROM derivative gain for throttle PID
 0x0040b58c,protection_throttle_velocity_term,word,velocity (D) contribution to throttle output
-0x00408816,governor_fuel_demand_i_term_init_val,word,ROM init value for governor PID i-term + accumulator
-0x00408828,egr_fuel_demand_speed_floor_disabled,word,ROM EGR fuel demand speed floor when EGR disabled
-0x0040882e,egr_fuel_demand_speed_floor_base,word,ROM base of EGR fuel demand speed floor calc
-0x00408838,egr_governor_speed_target_min,word,ROM minimum clamp for EGR governor speed target
-0x0040883a,egr_governor_pi_temp_setpoint,word,ROM temperature setpoint for EGR governor PI
-0x00408866,egr_governor_overspeed_hysteresis_floor,word,ROM decel/accel crossover speed during overspeed
-0x0040887f,egr_fuel_demand_timing_offset_threshold,word,ROM cylinder timing offset threshold for EGR floor
-0x00408881,egr_fuel_demand_stroke_ramp_enable,byte,ROM flag: interpolated vs flat EGR fuel demand floor
-0x004088a0,egr_load_floor_cold_temp_threshold,word,ROM cold-temp threshold for EGR load floor mode
-0x004088ae,egr_governor_overspeed_rpm_threshold,word,ROM RPM boundary for EGR overspeed detection
-0x004088b6,egr_governor_speed_accel_ramp_step,word,ROM per-cycle up-ramp step for governor speed
-0x004088c0,egr_load_speed_floor_decel_step,word,ROM rate-limit step for decreasing egr_load_speed_floor
-0x0040b298,egr_governor_protection_load_speed_floor,word,protection-load-derived governor speed floor
+0x00408816,cooling_fan_integral_term_initial,word,Initial cooling_fan_integral_term (and accumulator x 20480) set by cm848_initCoolingFanControl (was governor_fuel_demand_i_term_init_val)
+0x00408828,cooling_fan_air_conditioning_off_speed,word,A/C request with the A/C off (switch_input_state_bits[1] bit 0x20 clear) (was egr_fuel_demand_speed_floor_disabled)
+0x0040882e,cooling_fan_air_conditioning_base_speed,word,A/C-on fan speed request (low vehicle speed and warm enough) and the pressure ramp's start (was egr_fuel_demand_speed_floor_base)
+0x00408838,cooling_fan_coolant_speed_minimum,word,Coolant request below the ramp start temperature, and the PI's lower clamp (was egr_governor_speed_target_min)
+0x0040883a,cooling_fan_coolant_temperature_setpoint,word,Coolant temperature the fan PI regulates to; reaching it moves the request to state 2 (was egr_governor_pi_temp_setpoint)
+0x00408866,cooling_fan_high_engine_rpm_ramp_up_threshold,word,During high engine rpm: a target above this ramps up, below it ramps down (was egr_governor_overspeed_hysteresis_floor)
+0x0040887f,cooling_fan_air_conditioning_temperature_threshold,word,The A/C base fan speed needs the selected temperature (sensor slot 69 battery or 20 ambient) at or above this (was egr_fuel_demand_timing_offset_threshold)
+0x00408881,cooling_fan_air_conditioning_pressure_ramp_enable,byte,Non-zero: between the A/C pressure thresholds the request ramps with the pressure (was egr_fuel_demand_stroke_ramp_enable)
+0x004088a0,cooling_fan_intake_reference_cold_threshold,word,If the selected reference (battery / ambient) is below this, the intake request is minimum or full speed only (was egr_load_floor_cold_temp_threshold)
+0x004088ae,cooling_fan_high_engine_rpm_exit,word,Engine rpm below which the high-engine-rpm ramp ends (was egr_governor_overspeed_rpm_threshold)
+0x004088b6,cooling_fan_ramp_up_step,word,Ramp-up step per pass (was egr_governor_speed_accel_ramp_step)
+0x004088c0,cooling_fan_intake_speed_fall_step,word,Intake request fall per pass (was egr_load_speed_floor_decel_step)
+0x0040b298,cooling_fan_transmission_speed_request,word,Fan speed requested for transmission temperature (target source 4) (was egr_governor_protection_load_speed_floor)
 0x0040b2be,cooling_fan_feed_forward_duty,word,Feed-forward duty looked up from cooling_fan_speed_target (cooling_fan_feed_forward_table) - added to the PID terms (was governor_fuel_demand_speed_table_result)
 0x00408818,cooling_fan_integral_term_maximum,word,Upper clamp of cooling_fan_integral_term (was governor_fuel_demand_i_term_max)
 0x0040881a,cooling_fan_integral_term_minimum,word,Lower clamp of cooling_fan_integral_term (was governor_fuel_demand_i_term_min)
-0x00408824,egr_fuel_demand_stroke_high_threshold,word,ROM upper fuel-stroke bound for EGR high-stroke flag
+0x00408824,cooling_fan_air_conditioning_pressure_high_threshold,word,A/C pressure at or above which the A/C high-pressure fan speed applies (hysteresis with the low threshold) (was egr_fuel_demand_stroke_high_threshold)
 0x004088ba,cooling_fan_retest_off_passes,word,Cooling fan retest: passes at 0 % duty before the 100 % phase - 800 in the RAM dump (was cold_start_emission_fault_off_dwell_count)
 0x004088bc,cooling_fan_retest_fault_confirm_passes,word,Cooling fan retest: a read-back fault lasting this many passes restarts the retest; the 100 % phase lasts twice this - 6 in the RAM dump (was cold_start_emission_fault_pgn_cycle_count_max)
 0x0040c19c,cooling_fan_period_microseconds,dword,Last PWM period sent to the cooling fan (table entry 1; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in microseconds - written by cm848_applyCoolingFanDuty (1000000 / cooling_fan_pwm_frequency_hz) (was cold_start_fuel_handler_period_us)
