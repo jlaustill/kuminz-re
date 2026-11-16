@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 16 07:15:40 MST 2026
+// Generated: Mon Nov 16 07:25:19 MST 2026
 
 
 //
@@ -407,7 +407,7 @@ short mpc555_initEepromTransfer(int param_1)
     bVar2 = eeprom_service_mode_flags;
     eeprom_service_mode_flags = bVar2 | 0x80;
   }
-  sVar3 = BYTE_003fa5a0(0x7ffc);
+  sVar3 = mpc555_cmfEraseBlocks(0x7ffc);
   sVar4 = 0;
   if (sVar3 != 0) {
     sVar4 = cm848_flashEraseChip();
@@ -654,8 +654,8 @@ void cm848_mainLoopIteration(void)
 {
   byte connection_id;
   
-  connection_id = BYTE_003fae3c();
-  BYTE_003fc094(connection_id);
+  connection_id = mpc555_dispatchCanMessageHandlers();
+  mpc555_serviceJ1939TransportSessions(connection_id);
   mpc555_sciDispatchByTransferPhase();
   cm848_pumpDiagnosticCallback();
   mpc555_processDiagnosticAndEepromRequests();
@@ -1131,7 +1131,7 @@ char mpc555_diagService25_executeFunction(int param_1)
   
   cVar6 = governor_j1939_fuel_input_counter(param_1);
   if (cVar6 == -1) {
-    BYTE_003fc77c(local_20,*(int *)(param_1 + 6) + 1,4);
+    cm848_copyBytes(local_20,*(int *)(param_1 + 6) + 1,4);
     cVar6 = BYTE_003fd298(local_20[0],1);
     if (cVar6 != '\t') {
       engine_load_ema_filter_pointer(param_1,0);
@@ -1331,7 +1331,9 @@ char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
         }
         cVar5 = fuel_demand_enable_sync_flag_shadow(bVar8);
         bVar9 = cVar5 - 1;
-        msg_header = (j1939_msg_hdr_t *)BYTE_003fc0d8((uint)(response_ptr + bVar9 + 1) & 0xffff);
+        msg_header = (j1939_msg_hdr_t *)
+                     cm848_allocateDiagnosticResponseBuffer
+                               ((uint)(response_ptr + bVar9 + 1) & 0xffff);
         if (msg_header == (j1939_msg_hdr_t *)0x0) {
           cVar4 = '\x04';
         }
@@ -1345,9 +1347,9 @@ char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
           iVar7 = *(int *)(address + 6);
           *pbVar10 = bVar8;
           pbVar10 = pbVar10 + 1;
-          BYTE_003fc77c(pbVar10,iVar7 + 1,bVar9);
+          cm848_copyBytes(pbVar10,iVar7 + 1,bVar9);
           if (uVar6 < 0x1000000) {
-            BYTE_003fc77c(pbVar10 + bVar9,uVar6,uVar2);
+            cm848_copyBytes(pbVar10 + bVar9,uVar6,uVar2);
             pbVar10 = extraout_r4_00;
           }
           else {
@@ -1408,8 +1410,8 @@ undefined1 cm848_diagService67_memoryReadOffset(dword request_msg)
   word local_10 [2];
   dword local_c [2];
   
-  BYTE_003fc77c(local_10,*(int *)(request_msg + 6) + 1,2);
-  BYTE_003fc77c(local_c,*(int *)(request_msg + 6) + 3,4);
+  cm848_copyBytes(local_10,*(int *)(request_msg + 6) + 1,2);
+  cm848_copyBytes(local_c,*(int *)(request_msg + 6) + 3,4);
   uVar1 = cm848_diagMemoryReadWithBaseOffset(request_msg,local_10[0],0,local_c[0]);
   return uVar1;
 }
@@ -1431,7 +1433,7 @@ undefined1 cm848_diagService74_memoryRead(dword request_msg)
   word wStack_e;
   byte *local_c;
   
-  BYTE_003fc77c(local_10,*(int *)(request_msg + 6) + 1,4);
+  cm848_copyBytes(local_10,*(int *)(request_msg + 6) + 1,4);
   local_c = (byte *)(uint)*(byte *)(*(int *)(request_msg + 6) + 5);
   uVar1 = cm848_diagMemoryReadHandler(request_msg,wStack_e,local_c);
   return uVar1;
@@ -1454,8 +1456,8 @@ undefined1 cm848_diagService76_memoryReadExt(dword request_msg)
   word wStack_e;
   byte *local_c [2];
   
-  BYTE_003fc77c(local_10,*(int *)(request_msg + 6) + 1,4);
-  BYTE_003fc77c(local_c,*(int *)(request_msg + 6) + 5,4);
+  cm848_copyBytes(local_10,*(int *)(request_msg + 6) + 1,4);
+  cm848_copyBytes(local_c,*(int *)(request_msg + 6) + 5,4);
   uVar1 = cm848_diagMemoryReadHandler(request_msg,wStack_e,local_c[0]);
   return uVar1;
 }
@@ -15259,7 +15261,7 @@ void cm848_processSensorMonitoringLogic(void)
   
   boost_fuel_input_limit_exceeded_flag =
        (word)((short)boost_fuel_input_limit_cal <= (short)fuel_demand_boost_input);
-  sVar1 = cm848_signedFirstOrderFilter((int)(short)boost_fuel_correction,&PTR_DAT_003fa750);
+  sVar1 = cm848_signedFirstOrderFilter((int)(short)boost_fuel_correction,&PTR_WORD_003fa750);
   boost_correction_threshold_exceeded_flag =
        (ushort)((short)boost_correction_threshold_cal <= sVar1);
   if ((boost_correction_inhibit_flag == 0) && (boost_fuel_correction_state == 0)) {
@@ -15363,7 +15365,7 @@ void mpc555_processSensorValidation(void)
   ema_filter_state_t_003fa758.accumulator = 0;
   ema_filter_state_t_003fa758.coefficient = &WORD_004067b2;
   DAT_003fa754 = (int)(short)boost_fuel_correction << 0x10;
-  PTR_DAT_003fa750 = (undefined *)&WORD_004067cc;
+  PTR_WORD_003fa750 = (undefined *)&WORD_004067cc;
   if ((short)fuel_demand_boost_input < 1) {
     engine_boost_load_ema = 0;
     governor_ema_filtered_value = 0;
@@ -20697,7 +20699,8 @@ bool cm848_j1939RegisterDiagnosticService(byte service_id,void *handler_ptr)
   if (uVar1 != 0x20) {
     j1939_diagnostic_handler_count = j1939_diagnostic_handler_count + 1;
     (&DAT_003fa8b2)[uVar1 * 6] = service_id;
-    *(void **)((int)&PTR_BYTE_0050c640_003fa8b4 + uVar1 * 6) = handler_ptr;
+    *(void **)((int)&PTR_j1939_diagService67_memoryReadByParameterId_003fa8b4 + uVar1 * 6) =
+         handler_ptr;
   }
   return uVar1 == 0x20;
 }
@@ -23326,7 +23329,7 @@ void cm848_initPgn61443Eec2Handler(void)
   j1939_pgn61443_tx_header = CONCAT13(((byte)j1939_pgn61443_priority & 7) << 2,0xf00300);
   j1939_pgn61443_tx_header = CONCAT31(j1939_pgn61443_tx_header._0_3_,(char)j1939_source_address);
   DAT_003fadb4 = 5;
-  PTR_j1939_status_byte_b_003fadb6 = &j1939_eec2_low_idle_and_kickdown_byte;
+  PTR_j1939_eec2_low_idle_and_kickdown_byte_003fadb6 = &j1939_eec2_low_idle_and_kickdown_byte;
   PTR_DAT_003fadba = &DAT_003fadbe;
   emptyStubFunction3();
   cm848_j1939RegisterPgnHandler(0xf003,cm848_buildPgn61443ElectronicEngineController2Message);
@@ -23436,7 +23439,7 @@ void cm848_initJ1939FluidLevelPressureBuffer(void)
 {
   j1939_pgn65263_tx_header = CONCAT13(((byte)j1939_pgn65263_priority & 7) << 2,0xfeef00);
   DAT_003fade5 = 8;
-  PTR_j1939_engine_load_byte_003fade7 = &j1939_eflp1_fuel_delivery_pressure;
+  PTR_j1939_eflp1_fuel_delivery_pressure_003fade7 = &j1939_eflp1_fuel_delivery_pressure;
   PTR_DAT_003fadeb = &DAT_003fadd8;
   j1939_pgn65263_tx_header = CONCAT31(j1939_pgn65263_tx_header._0_3_,(char)j1939_source_address);
   DAT_003fadda = 0xff;
@@ -23693,7 +23696,7 @@ void cm848_initJ1939InletExhaustConditionsBuffer(void)
 
 {
   j1939_pgn65270_tx_header = CONCAT13(((byte)j1939_pgn65270_source_address_bits & 7) << 2,0xfef600);
-  _BYTE_003fae3c = 8;
+  _mpc555_dispatchCanMessageHandlers = 8;
   puRam003fae3e = &DAT_003fae46;
   PTR_DAT_003fae42 = &DAT_003fae4e;
   j1939_pgn65270_tx_header = CONCAT31(j1939_pgn65270_tx_header._0_3_,(char)j1939_source_address);
@@ -32693,8 +32696,8 @@ void cm848_processFaultScanLookup(void)
   if (((uint)(&fuel_demand_feature_flags)[iVar5] & 1 << ((uint)*puVar9 + iVar5 * -0x10 & 0x3f)) == 0
      ) {
     wVar2 = lookupTableInterpolation
-                      (&DAT_003fb228,wVar2,(word *)(&PTR_DAT_0005764a)[uVar6 * 0xd],
-                       (word *)(&PTR_DAT_0005764e)[uVar6 * 0xd],0);
+                      (&DAT_003fb228,wVar2,(word *)(&PTR_WORD_ARRAY_0005764a)[uVar6 * 0xd],
+                       (word *)(&PTR_WORD_ARRAY_0005764e)[uVar6 * 0xd],0);
   }
   else {
     wVar2 = **(word **)(&BYTE_00057646 + iVar7);
@@ -32716,9 +32719,10 @@ void cm848_processFaultScanLookup(void)
         1 << (*(ushort *)(&DAT_0005769c + iVar4) & 0xf)) == 0)))) &&
      (((protection_config_flags & 0x40) == 0 &&
       ((0x3a < fuel_demand_computed && (supervisor_register_36_bit_1_low_held_flag == 0)))))) {
-    if (*(ushort *)(&PTR_DAT_0005762e)[uVar6 * 0xd] < **(ushort **)(&BYTE_0005763e + iVar7)) {
+    if (*(ushort *)(&PTR_sensor_channel_config_t_0005b55c_high_threshold_0005762e)[uVar6 * 0xd] <
+        **(ushort **)(&BYTE_0005763e + iVar7)) {
       if (*(ushort *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) <
-          *(ushort *)(&PTR_DAT_0005763a)[uVar6 * 0xd]) {
+          *(ushort *)(&PTR_sensor_channel_config_t_0005b55c_debounce_limit_0005763a)[uVar6 * 0xd]) {
         **(short **)
           (&BYTE_00057652 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
              = **(short **)
@@ -32759,9 +32763,10 @@ void cm848_processFaultScanLookup(void)
       *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) =
            *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) + -1;
     }
-    if (**(ushort **)(&BYTE_0005763e + iVar7) < *(ushort *)(&PTR_DAT_00057632)[uVar6 * 0xd]) {
+    if (**(ushort **)(&BYTE_0005763e + iVar7) <
+        *(ushort *)(&PTR_sensor_channel_config_t_0005b55c_low_threshold_00057632)[uVar6 * 0xd]) {
       if ((&per_cylinder_sync_counter)[cylinder_event_index] <
-          *(ushort *)(&PTR_DAT_0005763a)[uVar6 * 0xd]) {
+          *(ushort *)(&PTR_sensor_channel_config_t_0005b55c_debounce_limit_0005763a)[uVar6 * 0xd]) {
         **(short **)
           (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
              = **(short **)
@@ -71004,7 +71009,7 @@ LAB_00519120:
       obd_response_data_b = obd_response_data_b | 0x10;
     }
     obd_response_data_c = (byte)obd_pid_1_monitor_support;
-    obd_response_data_d = PTR_PTR_0005c7c0;
+    obd_response_data_d = BYTE_0005c7c0;
     obd_response_length = 7;
     goto LAB_005196c4;
   case 2:
@@ -73569,7 +73574,7 @@ void cm848_dispatchSciCommand(void)
   uVar2 = 0;
   do {
     if (*(char *)sci_buffer_cursor == (&DAT_0053a9a0)[uVar2 * 6]) {
-      (**(code **)((int)&PTR_FUN_0053a9a2 + uVar2 * 6))();
+      (**(code **)((int)&PTR_cm848_sciCommand18EnterHighSpeedMode_0053a9a2 + uVar2 * 6))();
       bVar1 = true;
     }
     uVar2 = uVar2 + 1 & 0xff;
@@ -88914,14 +88919,14 @@ void uds_session_state_init(void)
 {
   undefined **ppuVar1;
   
-  ppuVar1 = &PTR_DAT_003fd2c4;
-  PTR_DAT_003fd2c4 = (undefined *)&sensor_channel_cal_block_start;
+  ppuVar1 = &PTR_sensor_channel_cal_block_start_003fd2c4;
+  PTR_sensor_channel_cal_block_start_003fd2c4 = (undefined *)&sensor_channel_cal_block_start;
   PTR_sensor_channel_ram_start_003fd2c8 = &sensor_channel_ram_start;
   PTR_DAT_003fd2cc = (undefined *)&DAT_00064aea;
   do {
     ppuVar1 = ppuVar1 + 3;
   } while (ppuVar1 < &PTR_PTR_003fd2d0);
-  PTR_PTR_003fd2d0 = (undefined *)&PTR_DAT_003fd2c4;
+  PTR_PTR_003fd2d0 = (undefined *)&PTR_sensor_channel_cal_block_start_003fd2c4;
   sensor_cal_ram_write_ptr = (undefined *)&sensor_channel_cal_block_start;
   sensor_cal_rom_read_ptr = (undefined *)&DAT_00064aea;
   sensor_cal_write_dirty_flag = 0;
@@ -88949,7 +88954,7 @@ void cm848_initProtectionModule(void)
     if (*(undefined **)(PTR_PTR_003fd2d0 + 4) <= sensor_cal_ram_write_ptr) {
       PTR_PTR_003fd2d0 = PTR_PTR_003fd2d0 + 0xc;
       if ((undefined *)((int)&PTR_DAT_003fd2cc + 3U) < PTR_PTR_003fd2d0) {
-        PTR_PTR_003fd2d0 = (undefined *)&PTR_DAT_003fd2c4;
+        PTR_PTR_003fd2d0 = (undefined *)&PTR_sensor_channel_cal_block_start_003fd2c4;
         if (sensor_cal_write_dirty_flag == 0) {
           if ((fault_active_status_array & 1) != 0) {
             system_status_flags_t_003fe974.fault_detected_bits_0_to_15 =
@@ -89110,7 +89115,8 @@ bool j1939_handlerInitializer(undefined2 param_1,undefined4 param_2)
   if (uVar1 != 0x11) {
     j1939_data_log_handler_count = j1939_data_log_handler_count + 1;
     (&DAT_003fd414)[uVar1 * 3] = param_1;
-    *(undefined4 *)((int)&PTR_FUN_003fd416 + uVar1 * 6) = param_2;
+    *(undefined4 *)((int)&PTR_j1939_transport_dispatchConnectionManagement_003fd416 + uVar1 * 6) =
+         param_2;
   }
   return uVar1 == 0x11;
 }

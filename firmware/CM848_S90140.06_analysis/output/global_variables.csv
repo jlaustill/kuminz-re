@@ -3,25 +3,25 @@ address,name,type,comment
 0x000059b4,switchD,,
 0x00007f60,boot_kernel_rom_end,byte,End of the boot reflash kernel image
 0x00007f7b,eepromStatusHandler_ptr0,pointer,
-0x00007f80,PTR_FUN_00007f80,byte,
-0x00008104,PTR_DAT_00008104,pointer,
+0x00007f80,,byte,
+0x00008104,,pointer,
 0x0000810e,systemStartupInit_ptr,pointer,
-0x0000811a,PTR_DAT_0000811a,pointer,
-0x00008600,BYTE_00008600,byte,
-0x00008980,BYTE_00008980,byte,
-0x00008b0a,BYTE_00008b0a,byte,
-0x00008c00,BYTE_00008c00,byte,
-0x00009c8a,BYTE_00009c8a,byte,
-0x0000a002,BYTE_0000a002,byte,
-0x0000a0fa,PTR_DAT_0000a0fa,pointer,
-0x0000ac3a,BYTE_0000ac3a,byte,
-0x0000b756,PTR_DAT_0000b756,pointer,
-0x0000b75a,PTR_DAT_0000b75a,pointer,
-0x0000b760,DWORD_0000b760,dword,
+0x0000811a,,pointer,
+0x00008600,,byte,
+0x00008980,,byte,
+0x00008b0a,,byte,
+0x00008c00,,byte,
+0x00009c8a,,byte,
+0x0000a002,,byte,
+0x0000a0fa,,pointer,
+0x0000ac3a,,byte,
+0x0000b756,,pointer,
+0x0000b75a,,pointer,
+0x0000b760,,dword,
 0x0000c194,switchD,,
 0x0001c4ac,switchD,,
 0x00020e3c,switchD,,
-0x00022c86,PTR_DAT_00022c86,pointer,
+0x00022c86,,pointer,
 0x00022f1c,accept_etc1_command,,
 0x00025050,cm848_initPgn65227Dm2ResponseHandler,,
 0x00025950,switchD,,
@@ -38,21 +38,21 @@ address,name,type,comment
 0x00051448,switchD,,
 0x000575bc,mpc555_interrupt_task_mask_table,pointer,
 0x000575de,mpc555_interrupt_dispatch_table,pointer,
-0x0005762e,PTR_DAT_0005762e,pointer,
-0x00057632,PTR_DAT_00057632,pointer,
+0x0005762e,,pointer,
+0x00057632,,pointer,
 0x00057636,j1939_pgn_lookup_ptr,byte,
 0x00057638,j1939_message_def_ptr,byte,
-0x0005763a,PTR_DAT_0005763a,pointer,
-0x0005763e,BYTE_0005763e,byte,
-0x00057642,BYTE_00057642,byte,
-0x00057646,BYTE_00057646,byte,
-0x0005764a,PTR_DAT_0005764a,pointer,
-0x0005764e,PTR_DAT_0005764e,pointer,
-0x00057652,BYTE_00057652,byte,
-0x00057656,BYTE_00057656,byte,
+0x0005763a,,pointer,
+0x0005763e,,byte,
+0x00057642,,byte,
+0x00057646,,byte,
+0x0005764a,,pointer,
+0x0005764e,,pointer,
+0x00057652,,byte,
+0x00057656,,byte,
 0x00057694,calibration_constant_1,word,
 0x00057724,supervisor_qspi_command_bytes,byte,ROM: QSPI command-RAM bytes for supervisor-chip jobs (0x5D = PCS1 chip select) (was j1939_msg_descriptor_table)
-0x00057730,PTR_LAB_00057730,byte *,
+0x00057730,,byte *,
 0x0005774b,pci_receive_message_table,pci_message_descriptor_t,15 J1850 PCI messages the ECM receives (OBD-II 68 6A request / 0x24 / 0x37 shift lever / ...); count at 0x57bab
 0x000578ef,pci_transmit_message_table,pci_message_descriptor_t,25 J1850 PCI messages the ECM transmits (0x10 engine data / 48 6B OBD-II response / D1 03 / F0 xx VIN / ...); count at 0x57bad
 0x00057bab,pci_receive_message_count,word,ROM constant 15 (lhz) - entries in pci_receive_message_table
@@ -62,13 +62,13 @@ address,name,type,comment
 0x00057bbe,pci_security_key_table,word[16],16 ROM words XORed into the seed by each of its 4 nibbles (plus 0x1911) to form the PCI security key: a81f 57c9 4140 ... d507 - identical to the SCI table at flash2 0x53abfe (was DAT_00057bbe)
 0x00057d76,calibration_table_ptr_3,byte,
 0x00057dd2,qadc_channel_dispatch_table,dword,129-entry x 8-byte table: channel index -> (QADC result-reg pointer + shared 0x57dd0); read via base[i*2] by governor_cruise_engage_check + ~38 sensor sites; verified ptrs 0x304a80.. = MPC555 QADC right-justified result regs; double-indirection asm slwi r,3/lwzx/lhz @0x512ebc
-0x00057dd6,PTR_DAT_00057dd6,pointer,
-0x00057dea,PTR_DAT_00057dea,pointer,
-0x00057dee,PTR_DAT_00057dee,pointer,
-0x00057e0a,PTR_DAT_00057e0a,pointer,
-0x00057e12,PTR_DAT_00057e12,pointer,
-0x00057e82,PTR_DAT_00057e82,pointer,
-0x00057eca,PTR_DAT_00057eca,pointer,
+0x00057dd6,,pointer,
+0x00057dea,,pointer,
+0x00057dee,,pointer,
+0x00057e0a,,pointer,
+0x00057e12,,pointer,
+0x00057e82,,pointer,
+0x00057eca,,pointer,
 0x000592a2,barometric_pressure_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 3 (barometric pressure - AMB SPN 108); its default_value is the fixed reference cm848_calculateBoostPressure subtracts when it uses no barometer (was the interior label boost_pressure_fixed_reference)
 0x000592b2,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
 0x000592c4,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
@@ -128,12 +128,11 @@ address,name,type,comment
 0x0005977e,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
 0x000597d6,,word[25],Lookup table - x axis of 24 breakpoints after its byte-length word - read by engine_protection_derateParam_priorityApply / engine_torqueLimit_upperCap_calc
 0x00059808,,word[25],Lookup table - data: 24 values (one per axis breakpoint) after a byte-length word - read by engine_protection_derateParam_priorityApply / engine_torqueLimit_upperCap_calc
-0x00059b32,BYTE_00059b32,byte,
-0x00059b5a,u_XY^__00059b5a,,
+0x00059b32,,byte,
 0x00059e9c,fault_definition_table,byte,
 0x00059e9e,fault_entry_flags,byte,
 0x00059ece,fault_entry_config,byte,
-0x0005a150,BYTE_0005a150,byte,
+0x0005a150,,byte,
 0x0005a426,governor_load_xaxis_cal,word[5],
 0x0005a430,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
 0x0005a43a,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
@@ -333,7 +332,7 @@ address,name,type,comment
 0x0005c7ba,obd_mode_1_supported_pids,dword,ROM: mode 1 supported PIDs (bit 31 = PID 1) (was j1939_dm1_spn_support_bitmask)
 0x0005c7be,obd_pid_1_monitor_support,word,ROM: mode 1 PID 1 monitor bytes - high byte low nibble = byte B supported continuous monitors / low byte = byte C (was j1939_dm1_lamp_status_cal)
 0x0005c7bf,obd_pid_1_monitor_support+1,,
-0x0005c7c0,PTR_PTR_0005c7c0,byte,
+0x0005c7c0,,byte,
 0x0005c7c1,obd_requirements_standard,byte,ROM: mode 1 PID 0x1C value - the OBD requirements this vehicle meets (was j1939_dm1_spn28_value_cal)
 0x0005c7c2,obd_mode_2_supported_pids,dword,ROM: mode 2 supported PIDs (bit 31 = PID 1) (was j1939_dm2_spn_support_bitmask)
 0x0005c7c6,obd_mode_9_supported_info_types,dword,ROM: mode 9 supported InfoTypes (bit 31 = InfoType 1) (was j1939_dm9_spn_support_bitmask)
@@ -528,7 +527,7 @@ address,name,type,comment
 0x0006432e,protection_threshold_high,,
 0x0006443c,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by hpcr_injectPressureTuning
 0x0006444c,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by hpcr_injectPressureTuning
-0x000645b6,BYTE_000645b6,byte,
+0x000645b6,,byte,
 0x000645ba,consecutive_incomplete_power_down_limit,word,ROM constant 3: cm848_applicationMain sets fault 89 (P2509) when consecutive_incomplete_power_down_count_cal is above it
 0x000645c4,fault_table_entry_5,word[22],
 0x000645f0,fault_table_entry_6,word[7],
@@ -978,8 +977,8 @@ address,name,type,comment
 0x003f9800,calibration_ram_start,undefined4,
 0x003f9830,memory_region_table,memory_region_t,Boot reflash kernel write-permission map (6 regions) - region 0 = main flash 0x0-0x6ffff type 4
 0x003f98ac,param_id_lookup_table,undefined2,
-0x003f98ae,PTR_DAT_003f98ae,pointer,
-0x003f98ba,PTR_s_060410_003f98ba,pointer,
+0x003f98ae,,pointer,
+0x003f98ba,,pointer,
 0x003fa000,scheduler_task_stat_value_working,word,
 0x003fa002,timer_base_snapshot,dword,
 0x003fa004,timer_base_snapshot+2,,
@@ -1059,9 +1058,9 @@ address,name,type,comment
 0x003fa124,interrupt_tick_accum_high,dword,
 0x003fa128,interrupt_tick_accum_low,dword,
 0x003fa12e,fuel_demand_high_limit_exceeded_flag,word,
-0x003fa138,PTR_DAT_003fa138,pointer,
-0x003fa140,PTR_DAT_003fa140,pointer,
-0x003fa148,PTR_DAT_003fa148,pointer,
+0x003fa138,,pointer,
+0x003fa140,,pointer,
+0x003fa148,,pointer,
 0x003fa158,speed_threshold_exceeded_flag,word,
 0x003fa15a,throttle_load_gain_positive,word,
 0x003fa15c,throttle_load_gain_negative,word,
@@ -1086,7 +1085,7 @@ address,name,type,comment
 0x003fa1b0,diag_state_group5_b_state,word,
 0x003fa1b2,diag_state_group5_c_state,word,
 0x003fa1b4,diag_state_group5_d_state,word,
-0x003fa5a0,BYTE_003fa5a0,byte,
+0x003fa5a0,,byte,
 0x003fa5ba,throttle_filter_state,ema_filter_state_t,(was throttle_filter_coeff_table_pointer)
 0x003fa5c2,throttle_filter_coeff_table_b_pointer,pointer,
 0x003fa5c6,throttle_filter_coeff_table_b_index,dword,
@@ -1098,21 +1097,21 @@ address,name,type,comment
 0x003fa5de,,word,Lookup cache: the last axis segment offset (2 x index) kept by lookupTableInterpolation
 0x003fa5e0,,word,Lookup cache: the last axis segment offset (2 x index) kept by lookupTableInterpolation
 0x003fa5e2,fuel_blend_rpm_base_filter_state,ema_filter_state_t,(was fuel_blend_rpm_base_table_pointer)
-0x003fa5ea,PTR_DAT_003fa5ea,pointer,
+0x003fa5ea,,pointer,
 0x003fa5f2,diag_state_group7_a_state,word,
 0x003fa5f4,diag_state_group7_b_state,word,
 0x003fa5fe,,ema_filter_state_t,EMA filter state - used by cm848_calculateBoostTorqueOffset (was PTR_DAT_003fa5fe)
 0x003fa606,boost_pressure_target_unclamped,dword,cm848_calculateBoostTorqueOffset: base quantity x rpm factor x boost_fuel_scale_divisor / 0xfa000 - fuel_demand_correction_offset_cal; clamped to 0-0x3200 and EMA-filtered into boost_pressure_target_filtered - copy-window RAM, app side (was fuel_demand_computed - the same name as 0x40a2ce)
 0x003fa60a,fuel_demand_cal_percent,word,
 0x003fa60c,fuel_mode_flags_combined,word,
-0x003fa60e,PTR_DAT_003fa60e,pointer,
+0x003fa60e,,pointer,
 0x003fa616,cold_start_pressure_scale_working,word,
 0x003fa61a,sensor_channel9_pressure_snapshot,word,
 0x003fa61c,fuel_demand_limit_b_working,word,
 0x003fa620,pressure_correction_filter1_working,word,
 0x003fa622,condition_monitor_status_working,word,
-0x003fa624,PTR_DAT_003fa624,pointer,
-0x003fa62c,PTR_DAT_003fa62c,pointer,
+0x003fa624,,pointer,
+0x003fa62c,,pointer,
 0x003fa63c,fuel_correction_output_working,word,
 0x003fa642,fuel_demand_lookup_working,word,
 0x003fa644,fuel_demand_mode_code_prev_snapshot,word,
@@ -1158,7 +1157,7 @@ address,name,type,comment
 0x003fa70a,,ema_filter_state_t,EMA filter state - used by cm848_calculateFuelFlowRate (was PTR_DAT_003fa70a)
 0x003fa712,throttle_demand_offset_cal_working,word,
 0x003fa714,fuel_enable_fault_count_working,word,
-0x003fa716,PTR_DAT_003fa716,pointer,
+0x003fa716,,pointer,
 0x003fa71e,governor_speed_output_limit,word,
 0x003fa720,boost_pressure_fault_filter_state,word,
 0x003fa722,boost_sensor_raw_input,word,
@@ -1180,7 +1179,7 @@ address,name,type,comment
 0x003fa74a,governor_speed_input_snapshot,word,
 0x003fa74c,engine_polarity_bit4_flag,word,
 0x003fa74e,fuel_timing_error_working,word,
-0x003fa750,PTR_DAT_003fa750,pointer,
+0x003fa750,,pointer,
 0x003fa758,,ema_filter_state_t,EMA filter state - used by mpc555_updateSensorDiagnosticFlags (was PTR_DAT_003fa758)
 0x003fa760,,ema_filter_state_t,EMA filter state - used by cm848_updateEngineModeFromSensor (was PTR_DAT_003fa760)
 0x003fa768,,ema_filter_state_t,EMA filter state - used by cm848_updateEngineModeFromSensor (was PTR_DAT_003fa768)
@@ -1327,7 +1326,7 @@ address,name,type,comment
 0x003fa8ac,injection_timing_advance_enable_count,word,
 0x003fa8ae,protection_mode_request_bit,word,
 0x003fa8b0,protection_mode_request_initialized_flag,word,
-0x003fa8b4,PTR_BYTE_0050c640_003fa8b4,pointer,
+0x003fa8b4,,pointer,
 0x003fa972,j1939_diagnostic_handler_count,byte,entry count of the J1939 diagnostic dispatch table at 0x3fa8b2 - incremented by the registrar cm848_j1939RegisterDiagnosticService and used as the scan bound by cm848_j1939DiagnosticServiceHandler - max 32 - live RAM value 24 (was engine_state_scan_counter)
 0x003fa974,j1939_dm13_network_command_byte,byte,Copy of DM13 data byte 1: 2-bit stop (00) / start (01) / don't care (11) fields - mask 0x30 J1587 / 0x0C J1922 / 0x03 J1939 network 1 (0xC0 current data link is not used) (was j1939_governor_status_byte)
 0x003fa982,j1939_tsc1_received,etc1_message_t,
@@ -1346,7 +1345,7 @@ address,name,type,comment
 0x003fa9a2,j1939_pgn_dispatch_table,j1939_pgn_handler_entry_t,
 0x003fa9a3,j1939_pgn_dispatch_table.pgn_byte_0,,
 0x003fa9a4,j1939_pgn_dispatch_table.handler_func,,
-0x003fa9aa,PTR_j1939HandlePgn61443Eec2_003fa9aa,pointer,
+0x003fa9aa,,pointer,
 0x003faa62,j1939_pgn_handler_count,byte,
 0x003faa68,tsc1_rx_byte_0,byte,
 0x003faa6b,tsc1_rx_byte_3,byte,
@@ -1474,8 +1473,8 @@ address,name,type,comment
 0x003fada8,j1939_eec2_low_idle_and_kickdown_byte,byte,EEC2 transmit byte 1: bits 1-2 accelerator low idle switch (SPN 558) / bits 3-4 kickdown (pedal above DAT_0005c392 - 2 on safety faults) / bits 5-8 not available (was j1939_status_byte_b)
 0x003fadb0,j1939_pgn61443_tx_header,dword,
 0x003fadb3,j1939_pgn61443_tx_header+3,,
-0x003fadb6,PTR_j1939_status_byte_b_003fadb6,pointer,
-0x003fadba,PTR_DAT_003fadba,pointer,
+0x003fadb6,,pointer,
+0x003fadba,,pointer,
 0x003fadc8,j1939_pgn65247_tx_header,dword,
 0x003fadcb,j1939_pgn65247_tx_header+3,,
 0x003fadcc,j1939_pgn65247_tx_byte_count,word,
@@ -1485,8 +1484,8 @@ address,name,type,comment
 0x003faddd,j1939_diag_response_word_b,word,
 0x003fade1,j1939_pgn65263_tx_header,dword,
 0x003fade4,j1939_pgn65263_tx_header+3,,
-0x003fade7,PTR_j1939_engine_load_byte_003fade7,pointer,
-0x003fadeb,PTR_DAT_003fadeb,pointer,
+0x003fade7,,pointer,
+0x003fadeb,,pointer,
 0x003fadf0,j1939_pgn65262_tx_header,dword,
 0x003fadf3,j1939_pgn65262_tx_header+3,,
 0x003fadf4,j1939_pgn65262_tx_byte_count,word,
@@ -1503,9 +1502,9 @@ address,name,type,comment
 0x003fae28,j1939_pgn65213_tx_header,dword,
 0x003fae38,j1939_pgn65270_tx_header,dword,
 0x003fae3b,j1939_pgn65270_tx_header+3,,
-0x003fae3c,BYTE_003fae3c,byte,
+0x003fae3c,,byte,
 0x003fae3e,j1939_tx_buf_data_ptr,pointer,
-0x003fae42,PTR_DAT_003fae42,pointer,
+0x003fae42,,pointer,
 0x003fae50,j1939_pgn_dest_address,byte,
 0x003fae51,j1939_pgn65249_byte0,byte,
 0x003fae63,j1939_pgn65249_tx_header,dword,
@@ -1638,7 +1637,7 @@ address,name,type,comment
 0x003fb012,accelerator_pedal_pressed_flag,dword,1 = the accelerator reached accelerator_pedal_press_threshold (280 = 70 percent) and has not yet come back to accelerator_pedal_release_threshold (120 = 30 percent); that return counts one press (was fuel_demand_hysteresis_flag)
 0x003fb016,switch_31_on_time_counter,word,20 ms passes switch 31 has been on - counted only while switch_31_on_time_fault_enable (ROM 0x5c28c) is nonzero (0 here); 50 (1 s) sets fault bit 73 (safety_bits_2 bit 9) (was governor_overspeed_protection_enable_flag)
 0x003fb018,map_fuel_correction_prev_snapshot,word,
-0x003fb01e,PTR_DAT_003fb01e,pointer,
+0x003fb01e,,pointer,
 0x003fb026,,ema_filter_state_t,EMA filter state - used by cm848_processProtectionEntry (was PTR_DAT_003fb026)
 0x003fb02e,throttle_zero_confirm_counter,word,
 0x003fb030,throttle_speed_rate_lower,word,
@@ -2108,11 +2107,11 @@ address,name,type,comment
 0x003fb9b8,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
 0x003fb9c0,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fb9c2,,ema_filter_state_t,EMA filter state - used by cm848_protection_init_configBundle / cm848_protection_update_configBundle (was PTR_DAT_003fb9c2)
-0x003fb9e2,PTR_DAT_003fb9e2,pointer,
+0x003fb9e2,,pointer,
 0x003fb9ea,boost_pressure_timing_filter_state,ema_filter_state_t,EMA coeff ptr for boost pressure timing filter (was boost_pressure_timing_ema_coeff_ptr)
 0x003fb9f6,,ema_filter_state_t,EMA filter state - used by hpcr_fuelFinal_exponentialAverage (was PTR_DAT_003fb9f6)
-0x003fbcbe,PTR_DAT_003fbcbe,pointer,
-0x003fbcde,PTR_PTR_003fbcde,pointer,
+0x003fbcbe,,pointer,
+0x003fbcde,,pointer,
 0x003fbce2,,ema_filter_state_t,EMA filter state - used by cm848_phase_groupA_exponentialAverage (was PTR_DAT_003fbce2)
 0x003fbcea,,ema_filter_state_t,EMA filter state - used by cm848_auxiliaryControl_exponentialAverage (was PTR_DAT_003fbcea)
 0x003fbd00,,ema_filter_state_t,EMA filter state - used by sensor_throttleTrim_ema_faultProcess (was PTR_DAT_003fbd00)
@@ -2121,23 +2120,23 @@ address,name,type,comment
 0x003fbd2e,,ema_filter_state_t,EMA filter state - used by engine_torqueLimit_min_emaCalc (was PTR_DAT_003fbd2e)
 0x003fbd42,fault_channel_config_ptr,dword,iterating ptr over fault-channel config array (was PTR_DAT)
 0x003fbd46,fault_channel_state_ptr,dword,iterating ptr over per-channel fault RAM state (was PTR_DAT)
-0x003fbd4a,PTR_engine_rpm_trigger_ready_flag_003fbd4a,pointer,
-0x003fbd7c,PTR_DAT_003fbd7c,pointer,
+0x003fbd4a,,pointer,
+0x003fbd7c,,pointer,
 0x003fbd80,j1939_tp_rx_session_status_ptr,pointer,J1939 TP RX session status byte pointer
 0x003fbd8c,j1939_tp_rx_session_tx_buf_ptr,pointer,J1939 TP RX session response TX buffer pointer
-0x003fbdac,PTR_DAT_003fbdac,pointer,
-0x003fbdcf,PTR_DAT_003fbdcf,pointer,
+0x003fbdac,,pointer,
+0x003fbdcf,,pointer,
 0x003fbdd3,j1939_multiframe_tx_status_ptr,dword,ptr to TX session state byte (was PTR_DAT)
 0x003fbddf,j1939_multiframe_tx_buf_ptr,dword,ptr to CAN TX assembly buffer (was PTR_DAT)
 0x003fbdfd,j1939_multiframe_rx_data_buf_ptr,pointer,RX data assembly buffer pointer
-0x003fc094,BYTE_003fc094,byte,
-0x003fc0d8,BYTE_003fc0d8,byte,
-0x003fc4b3,PTR_DAT_003fc4b3,pointer,
-0x003fc4b7,PTR_DAT_003fc4b7,pointer,
+0x003fc094,,byte,
+0x003fc0d8,,byte,
+0x003fc4b3,,pointer,
+0x003fc4b7,,pointer,
 # 0x003fc688 removed - is function mpc555_pollSerialDuringEeprom (ROM 0x6ab8) not a variable
-0x003fc77c,BYTE_003fc77c,byte,
-0x003fcbca,PTR_DAT_003fcbca,pointer,
-0x003fcbce,PTR_DAT_003fcbce,pointer,
+0x003fc77c,,byte,
+0x003fcbca,,pointer,
+0x003fcbce,,pointer,
 0x003fcbdc,,ema_filter_state_t,EMA filter state - used by cm848_calculateAuxiliaryTorqueLimitFromEngineRPM (was PTR_DAT_003fcbdc)
 0x003fcc08,,ema_filter_state_t,EMA filter state - used by governor_speedReference_ramp_calc (was PTR_DAT_003fcc08)
 0x003fcce8,,ema_filter_state_t,EMA filter state - used by engine_protection_speedTracking_calc (was PTR_DAT_003fcce8)
@@ -2182,10 +2181,10 @@ address,name,type,comment
 0x003fcf12,throttle_setpoint_limit_arg,word,computed ptr arg to cm848_throttleSetpoint_limit (was PTR_DAT)
 0x003fcfe0,rom_crc_descriptor_table_ptr,dword,ptr to current CRC descriptor entry (was PTR_DAT)
 0x003fd00a,,ema_filter_state_t,EMA filter state - used by protectionOutputActuatorControl (was PTR_DAT_003fd00a)
-0x003fd012,PTR_DAT_003fd012,pointer,
-0x003fd016,PTR_DAT_003fd016,pointer,
-0x003fd022,PTR_DAT_003fd022,pointer,
-0x003fd026,PTR_DAT_003fd026,pointer,
+0x003fd012,,pointer,
+0x003fd016,,pointer,
+0x003fd022,,pointer,
+0x003fd026,,pointer,
 0x003fd03c,,ema_filter_state_t,EMA filter state - used by protectionOutputActuatorControl (was PTR_DAT_003fd03c)
 0x003fd05e,output_shaft_speed_avg,word,2-sample moving average of output shaft speed: (output_shaft_speed_saved + output_shaft_speed_current) >> 1; computed in cm848_transmission_phase_group_a_calc, used as divisor for target_rpm ratio -> engine_temp_protection_input_raw (0x0040b6f4)
 0x003fd060,output_shaft_speed_saved,word,prior-cycle snapshot of output_shaft_speed_current (0x40a2ae); averaged with current sample for smoothing; seeded at init by cm848_output_shaft_speed_save, refreshed inline by cm848_transmission_phase_group_a_calc
@@ -2194,22 +2193,22 @@ address,name,type,comment
 0x003fd06a,protection_channel_load_snapshot,word,snapshot of engine_load_percent (was bogus boost_in_range_state_t field)
 0x003fd06c,fuel_demand_enable_snapshot,word,snapshot of fuel_demand_control_t.enable_flag (was bogus boost_in_range_state_t field)
 0x003fd070,engine_load_ema_filter_pointer,dword,Time-shared RAM (copy window): at run time the app keeps the engine_load_percent EMA filter pointer here - cm848_state_variables_reset sets it to &DAT_0005c972 and diag_boostLoad_overtemp_monitor passes it to exponentialMovingAverage (the output is protection_ema_output at 0x40b0a2); during boot / reflash the same address holds the kernel copy of cm848_sendDiagServiceResponse (ROM 0x74a0), so the three boot-ROM calls to it render with this name. One name per address - the app-side role names it (was protection_ema_output, a duplicate of the 0x40b0a2 name)
-0x003fd1ac,BYTE_003fd1ac,byte,
+0x003fd1ac,BYTE_003fd1ac,byte,TIME-SHARED: the boot ROM calls cm848_sendDiagResponsePending here (the kernel RAM image) while the application uses the byte as data - keep a data label until the application meaning is named
 0x003fd1d8,sensor_scan_cycle_counter,word,
-0x003fd284,BYTE_003fd284,byte,
-0x003fd298,BYTE_003fd298,byte,
-0x003fd2c4,PTR_DAT_003fd2c4,pointer,
-0x003fd2c8,PTR_sensor_channel_ram_start_003fd2c8,pointer,
-0x003fd2cc,PTR_DAT_003fd2cc,pointer,
-0x003fd2d0,PTR_PTR_003fd2d0,pointer,
+0x003fd284,BYTE_003fd284,byte,TIME-SHARED: the boot ROM calls mpc555_loadRuntimeCounterFromEepromShadow here (the kernel RAM image) while the application uses the byte as data - keep a data label until the application meaning is named
+0x003fd298,BYTE_003fd298,byte,TIME-SHARED: the boot ROM calls cm848_lookupMemoryRegionType here (the kernel RAM image) while the application uses the byte as data - keep a data label until the application meaning is named
+0x003fd2c4,,pointer,
+0x003fd2c8,,pointer,
+0x003fd2cc,,pointer,
+0x003fd2d0,,pointer,
 0x003fd2d4,sensor_cal_rom_read_ptr,pointer,ROM source cursor for sensor cal ROM->RAM copy (was PTR_DAT)
 0x003fd2d8,sensor_cal_ram_write_ptr,pointer,RAM dest cursor for sensor cal ROM->RAM copy (was PTR_DAT)
-0x003fd2e8,PTR_j1939HandlePgn65265CruiseVehicleSpeed_003fd2e8,pointer,
-0x003fd2f2,PTR_j1939GetEngineStateCode_003fd2f2,pointer,
-0x003fd3b0,PTR_cm848_j1939BuildVehicleOperatingStatus_003fd3b0,pointer,
-0x003fd3ba,PTR_cm848_j1939BuildProtocolModeStatus_003fd3ba,pointer,
-0x003fd416,PTR_FUN_003fd416,pointer,
-0x003fd41c,PTR_FUN_003fd41c,pointer,
+0x003fd2e8,,pointer,
+0x003fd2f2,,pointer,
+0x003fd3b0,,pointer,
+0x003fd3ba,,pointer,
+0x003fd416,,pointer,
+0x003fd41c,,pointer,
 0x003fd482,eeprom_mirror,byte,RAM mirror of the serial EEPROM: RAM = 0x3fd482 + EEPROM offset (0x0-0x1a3f) - loaded by cm848_initEepromDriverAndLoadMirror (was sensor_cal_table)
 0x003fd4b2,key_on_hour_meter_cal,dword,EEPROM 0x30 (mirror): lifetime ECM key-on time in 0.2 s counts - the EEPROM copy of key_on_hour_meter (HP Tuners does not wipe it: 177.3M -> 179.2M counts across the four dumps). The boot ROM loads the same word into ecu_power_state_flags.runtime_counter. Was sensor_param_id_working
 0x003fd4b8,sensor_channel_index_working,word,
@@ -2483,13 +2482,13 @@ address,name,type,comment
 0x003fe11e,fault_list_state_t_003fe11a.emission_count,,
 0x003fe120,fault_list_state_t_003fe11a.total_emission_faults,,
 0x003fe122,fault_list_iteration_counter,word,
-0x003fe197,PTR_DAT_003fe197,pointer,
+0x003fe197,,pointer,
 0x003fe1ce,fault_timestamp_array,dword,
 0x003fe1d2,fault_entry_debounce_array,byte,
 0x003fe1d3,fault_entry_status_array,byte,
 0x003fe1d4,fault_timer_array,byte,
-0x003fe490,PTR_DAT_003fe490,pointer,
-0x003fe4f9,PTR_DAT_003fe4f9,pointer,
+0x003fe490,,pointer,
+0x003fe4f9,,pointer,
 0x003fe674,fault_entry_t_003fe674,fault_entry_t,
 0x003fe678,fault_entry_t_003fe674.fault_code,,
 0x003fe679,fault_entry_t_003fe674.vehicle_speed,,Label for fault_entry_t.vehicle_speed - the vehicle_speed copy taken at fault capture (1/256 mph); the struct field is already vehicle_speed so this label row follows it (was fault_entry_t_003fe674.temperature_trim)
@@ -2611,7 +2610,7 @@ address,name,type,comment
 0x003fecf6,eeprom_block_length_cal,word,
 0x003fed94,fault_pending_flags,dword,32-bit fault/diagnostic flags register; bits default SET (init = 0xffffffff) and clear as faults resolve across diag/protection/hpcr routines (confirmed dword via lwz/stw r12,0(r5) @ 0x52d634); >=18 independent bits - strong bitmap32-struct decomposition candidate. Distinct from diagnostic_fault_flags_a/b (0x40a813, unrelated word pair)
 0x003fed9c,fault_entry_ptr_queue,pointer,8-element ptr queue base into fault_entry_t_003fe674
-0x003feda0,PTR_s_x9Md_003feda0,pointer,
+0x003feda0,,pointer,
 0x003fedde,protection_load_filtered,word,
 0x003fede0,protection_ema_output_snapshot,word,
 0x003fedee,eeprom_calibration_pending_flag,byte,
@@ -3787,7 +3786,7 @@ address,name,type,comment
 0x004088e0,safety_fuel_blend_decrement_cal,word,
 0x004088e2,safety_fuel_blend_increment_cal,word,
 0x004088e4,safety_system_enable_cal,byte,
-0x004088e6,BYTE_004088e6,byte,
+0x004088e6,,byte,
 0x004088e8,safety_fuel_limit_rpm_axis_cal,word[25],
 0x0040891a,safety_fuel_limit_rpm_output_cal,word[25],
 0x00408962,battery_voltage_default_cal,word,
@@ -4823,11 +4822,11 @@ address,name,type,comment
 0x0040a716,engine_feature_active_flag_b,dword,
 0x0040a732,protection_mode_request_flags,word,
 0x0040a734,fuel_temperature_derate_input_pointer,pointer,Input pointer (offset 0) of the single fuel temperature torque derate channel = &fuel_temperature_sensor_filtered (slot 7 - 1/64 deg F) - derate ramps from 200 to 210 deg F (ROM 0x597bc / 0x597be) - a real fuel temperature (was PTR_fuel_temp_raw_0040a734)
-0x0040a73e,PTR_DAT_0040a73e,pointer,
-0x0040a742,PTR_DAT_0040a742,pointer,
-0x0040a746,PTR_DAT_0040a746,pointer,
-0x0040a75a,PTR_DAT_0040a75a,pointer,
-0x0040a75e,PTR_DAT_0040a75e,pointer,
+0x0040a73e,,pointer,
+0x0040a742,,pointer,
+0x0040a746,,pointer,
+0x0040a75a,,pointer,
+0x0040a75e,,pointer,
 0x0040a77c,torque_limit_fuel_upper_cap,word,
 0x0040a77e,governor_startup_ready_flag,word,
 0x0040a780,torque_limit_fuel_min_alt,word,
@@ -4918,7 +4917,7 @@ address,name,type,comment
 0x0040aac2,j1939_engine_retarder_selection_percent,word,Engine retarder selection from EBC1 SPN 973 (1 %/bit) - read by cm848_processProtectionSystemBit4 (was governor_load_percent_computed)
 0x0040aaca,j1939_input_monitor_inhibit_flag,word,1 = J1939 input faults are held off (start-up delay not elapsed or engine not enabled) (was governor_load_startup_inhibit_flag)
 0x0040aacc,engine_data_log_buffer,byte,
-0x0040ac16,PTR_DAT_0040ac16,pointer,
+0x0040ac16,,pointer,
 0x0040ac22,engine_data_log_buffer_limit,byte,
 0x0040ac34,engine_data_log_buffer,byte,
 0x0040ad24,engine_data_log_read_ptr,pointer,
@@ -6047,8 +6046,8 @@ address,name,type,comment
 0x0040c280,diag_dm1_buffer_write_ptr,pointer,write/head pointer of the DM1 diagnostic ring buffer; *ptr=val then ++ with wrap to DAT_0040c270 past DAT_0040c274 in diag_dm1Buffer_circularFill
 0x00500000,flash2_command_register,dword,
 0x00500002,flash2_command_register+2,,
-0x0050c640,BYTE_0050c640,byte,
-0x0050f680,BYTE_0050f680,byte,
+0x0050c640,,byte,
+0x0050f680,,byte,
 0x00513104,switchD,,
 0x005187c4,switchD,,
 0x00518c0c,switchD,,
@@ -6063,28 +6062,28 @@ address,name,type,comment
 0x0052fb28,switchD,,
 0x00530214,switchD,,
 0x0053307c,switchD,,
-0x0053a33e,PTR_DAT_0053a33e,pointer,
-0x0053a344,PTR_flash2_command_register_0053a344,pointer,
-0x0053a9a2,PTR_FUN_0053a9a2,pointer,
-0x0053a9a8,PTR_FUN_0053a9a8,pointer,
+0x0053a33e,,pointer,
+0x0053a344,,pointer,
+0x0053a9a2,,pointer,
+0x0053a9a8,,pointer,
 0x0053ac46,output_channel_driver_table_enable,byte,Output channel driver table (flash2 0x53ac46-0x53af75): 51 records of 16 bytes = enable / read feedback / set period / set duty function pointers; record 0 = no output (blr / return-0 stubs); TPU-B channels 0-15 (cm848_tpuBChannel{N}* / read-back records cm848_tpuBReadBackChannel{N}*) = records 1-16 / TPU-A channels 0-15 (cm848_tpuAChannel{N}*) = 17-32 / MDASM11-15 and 27-31 = 33-42 / PWM submodules 0-3 and 16-19 = 43-50. Consumers index it with an EEPROM output channel word (*_output_channel_cal) and check 0 < channel < 51 first. This label is slot +0 (enable) of record 0 - consumers render &output_channel_driver_table_enable + channel x 0x10 - was j1939_pgn_handler_table
 0x0053ac4a,output_channel_driver_table_read_feedback,pointer,Slot +4 (read feedback) of output channel driver table record 0 - the shared return-0 stub unless the channel has a read-back; cm848_updateOutputReadBackFaultBits calls it for each output channel assignment table entry (verdict 0 / 1 / 2 into output_read_back_fault_bits) - was PTR_LAB_0053ac4a
 0x0053ac4e,output_channel_driver_table_set_period,byte,Slot +8 (set period - most consumers pass 1000000 / frequency = microseconds; the actuator e and g paths pass a calibration word directly) of output channel driver table record 0 - was j1939_pgn_handler_table_func2
 0x0053ac52,output_channel_driver_table_set_duty,byte,Slot +12 (set duty - 1/256 % per count) of output channel driver table record 0 - was j1939_pgn_handler_table_func3
-0x0053ac96,PTR_cm848_tpuBReadBackChannel4EnablePwm_0053ac96,pointer,
-0x0053ac9e,PTR_cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds_0053ac9e,pointer,
-0x0053acb6,PTR_cm848_tpuBReadBackChannel6EnablePwm_0053acb6,pointer,
-0x0053acba,PTR_cm848_tpuBReadBackChannel6ReadFeedback_0053acba,pointer,
-0x0053acbe,PTR_cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds_0053acbe,pointer,
-0x0053acc2,PTR_cm848_tpuBReadBackChannel6SetPwmDuty_0053acc2,pointer,
-0x0053acc6,PTR_cm848_tpuBReadBackChannel7EnablePwm_0053acc6,pointer,
-0x0053acce,PTR_cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds_0053acce,pointer,
-0x0053acf6,PTR_cm848_tpuBReadBackChannel10EnablePwm_0053acf6,pointer,
-0x0053acfe,PTR_cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds_0053acfe,pointer,
-0x0053ad02,PTR_cm848_tpuBReadBackChannel10SetPwmDuty_0053ad02,pointer,
-0x0053ad46,PTR_cm848_tpuBChannel15EnablePwm_0053ad46,pointer,
-0x0053ad4e,PTR_cm848_tpuBChannel15SetPwmPeriodMicroseconds_0053ad4e,pointer,
-0x0053be3a,PTR_DAT_0053be3a,pointer,
+0x0053ac96,,pointer,
+0x0053ac9e,,pointer,
+0x0053acb6,,pointer,
+0x0053acba,,pointer,
+0x0053acbe,,pointer,
+0x0053acc2,,pointer,
+0x0053acc6,,pointer,
+0x0053acce,,pointer,
+0x0053acf6,,pointer,
+0x0053acfe,,pointer,
+0x0053ad02,,pointer,
+0x0053ad46,,pointer,
+0x0053ad4e,,pointer,
+0x0053be3a,,pointer,
 0x01000002,eeprom_security_key,byte,
 0x0100000c,eeprom_status_block,byte,
 0x01000030,eeprom_config_block,byte,

@@ -7,22 +7,7 @@
 extern dword boot_kernel_rom_start;  // 0x00003c30
 extern byte boot_kernel_rom_end;  // 0x00007f60
 extern void * eepromStatusHandler_ptr0;  // 0x00007f7b
-extern byte PTR_FUN_00007f80;  // 0x00007f80
-extern void * PTR_DAT_00008104;  // 0x00008104
 extern void * systemStartupInit_ptr;  // 0x0000810e
-extern void * PTR_DAT_0000811a;  // 0x0000811a
-extern byte BYTE_00008600;  // 0x00008600
-extern byte BYTE_00008980;  // 0x00008980
-extern byte BYTE_00008b0a;  // 0x00008b0a
-extern byte BYTE_00008c00;  // 0x00008c00
-extern byte BYTE_00009c8a;  // 0x00009c8a
-extern byte BYTE_0000a002;  // 0x0000a002
-extern void * PTR_DAT_0000a0fa;  // 0x0000a0fa
-extern byte BYTE_0000ac3a;  // 0x0000ac3a
-extern void * PTR_DAT_0000b756;  // 0x0000b756
-extern void * PTR_DAT_0000b75a;  // 0x0000b75a
-extern dword DWORD_0000b760;  // 0x0000b760
-extern void * PTR_DAT_00022c86;  // 0x00022c86
 extern undefined accept_etc1_command;  // 0x00022f1c
 extern undefined cm848_initPgn65227Dm2ResponseHandler;  // 0x00025050
 extern undefined cm848_j1939SendPgn61443_F003_AcceleratorPedalEec2;  // 0x00025d88
@@ -30,21 +15,10 @@ extern undefined cm848_initPgn65263FluidLevelPressureHandler;  // 0x00025fd8
 extern undefined cm848_initPgn65270InletExhaustHandler;  // 0x0002661c
 extern void * mpc555_interrupt_task_mask_table;  // 0x000575bc
 extern void * mpc555_interrupt_dispatch_table;  // 0x000575de
-extern void * PTR_DAT_0005762e;  // 0x0005762e
-extern void * PTR_DAT_00057632;  // 0x00057632
 extern byte j1939_pgn_lookup_ptr;  // 0x00057636
 extern byte j1939_message_def_ptr;  // 0x00057638
-extern void * PTR_DAT_0005763a;  // 0x0005763a
-extern byte BYTE_0005763e;  // 0x0005763e
-extern byte BYTE_00057642;  // 0x00057642
-extern byte BYTE_00057646;  // 0x00057646
-extern void * PTR_DAT_0005764a;  // 0x0005764a
-extern void * PTR_DAT_0005764e;  // 0x0005764e
-extern byte BYTE_00057652;  // 0x00057652
-extern byte BYTE_00057656;  // 0x00057656
 extern word calibration_constant_1;  // 0x00057694
 extern byte supervisor_qspi_command_bytes;  // 0x00057724
-extern byte * PTR_LAB_00057730;  // 0x00057730
 extern pci_message_descriptor_t pci_receive_message_table;  // 0x0005774b
 extern pci_message_descriptor_t pci_transmit_message_table;  // 0x000578ef
 extern word pci_receive_message_count;  // 0x00057bab
@@ -54,22 +28,13 @@ extern byte pci_diagnostic_power_up_announcement[8];  // 0x00057bb6
 extern word pci_security_key_table[16];  // 0x00057bbe
 extern byte calibration_table_ptr_3;  // 0x00057d76
 extern dword qadc_channel_dispatch_table;  // 0x00057dd2
-extern void * PTR_DAT_00057dd6;  // 0x00057dd6
-extern void * PTR_DAT_00057dea;  // 0x00057dea
-extern void * PTR_DAT_00057dee;  // 0x00057dee
-extern void * PTR_DAT_00057e0a;  // 0x00057e0a
-extern void * PTR_DAT_00057e12;  // 0x00057e12
-extern void * PTR_DAT_00057e82;  // 0x00057e82
-extern void * PTR_DAT_00057eca;  // 0x00057eca
 extern sensor_channel_config_t barometric_pressure_sensor_config;  // 0x000592a2
 extern sensor_channel_config_t boost_pressure_sensor_config;  // 0x0005936a
 extern word boost_pressure_linearization_x_axis[9];  // 0x0005937a
 extern word boost_pressure_linearization_y_axis[9];  // 0x0005938c
-extern byte BYTE_00059b32;  // 0x00059b32
 extern byte fault_definition_table;  // 0x00059e9c
 extern byte fault_entry_flags;  // 0x00059e9e
 extern byte fault_entry_config;  // 0x00059ece
-extern byte BYTE_0005a150;  // 0x0005a150
 extern word governor_load_xaxis_cal[5];  // 0x0005a426
 extern word j1939_tsc1_auth_primary_sa;  // 0x0005a470
 extern word j1939_tsc1_secondary_sa;  // 0x0005a472
@@ -133,7 +98,6 @@ extern byte pci_vehicle_information_byte_4;  // 0x0005c7b8
 extern byte vehicle_body_style_code;  // 0x0005c7b9
 extern dword obd_mode_1_supported_pids;  // 0x0005c7ba
 extern word obd_pid_1_monitor_support;  // 0x0005c7be
-extern byte PTR_PTR_0005c7c0;  // 0x0005c7c0
 extern byte obd_requirements_standard;  // 0x0005c7c1
 extern dword obd_mode_2_supported_pids;  // 0x0005c7c2
 extern dword obd_mode_9_supported_info_types;  // 0x0005c7c6
@@ -152,7 +116,6 @@ extern word radiator_fan_speed_spike_down_limit;  // 0x000642f6
 extern word radiator_fan_speed_noise_check_passes;  // 0x000642f8
 extern word radiator_fan_speed_clean_sample_ratio_minimum;  // 0x000642fa
 extern undefined protection_threshold_high;  // 0x0006432e
-extern byte BYTE_000645b6;  // 0x000645b6
 extern word consecutive_incomplete_power_down_limit;  // 0x000645ba
 extern word fault_table_entry_5[22];  // 0x000645c4
 extern word fault_table_entry_6[7];  // 0x000645f0
@@ -565,8 +528,6 @@ extern word toucan_can_ext_ctrl;  // 0x00307f80
 extern undefined4 calibration_ram_start;  // 0x003f9800
 extern memory_region_t memory_region_table;  // 0x003f9830
 extern undefined2 param_id_lookup_table;  // 0x003f98ac
-extern void * PTR_DAT_003f98ae;  // 0x003f98ae
-extern void * PTR_s_060410_003f98ba;  // 0x003f98ba
 extern word scheduler_task_stat_value_working;  // 0x003fa000
 extern dword timer_base_snapshot;  // 0x003fa002
 extern word scheduler_feature_enabled_flag;  // 0x003fa006
@@ -613,9 +574,6 @@ extern word diag_state_group4_d_state;  // 0x003fa116
 extern dword interrupt_tick_accum_high;  // 0x003fa124
 extern dword interrupt_tick_accum_low;  // 0x003fa128
 extern word fuel_demand_high_limit_exceeded_flag;  // 0x003fa12e
-extern void * PTR_DAT_003fa138;  // 0x003fa138
-extern void * PTR_DAT_003fa140;  // 0x003fa140
-extern void * PTR_DAT_003fa148;  // 0x003fa148
 extern word speed_threshold_exceeded_flag;  // 0x003fa158
 extern word throttle_load_gain_positive;  // 0x003fa15a
 extern word throttle_load_gain_negative;  // 0x003fa15c
@@ -638,7 +596,6 @@ extern word diag_state_group5_a_state;  // 0x003fa1ae
 extern word diag_state_group5_b_state;  // 0x003fa1b0
 extern word diag_state_group5_c_state;  // 0x003fa1b2
 extern word diag_state_group5_d_state;  // 0x003fa1b4
-extern byte BYTE_003fa5a0;  // 0x003fa5a0
 extern ema_filter_state_t throttle_filter_state;  // 0x003fa5ba
 extern void * throttle_filter_coeff_table_b_pointer;  // 0x003fa5c2
 extern dword throttle_filter_coeff_table_b_index;  // 0x003fa5c6
@@ -648,20 +605,16 @@ extern word diag_state_group6_a_state;  // 0x003fa5d2
 extern word diag_state_group6_b_state;  // 0x003fa5d4
 extern ema_filter_state_t boost_modifier_filter_state;  // 0x003fa5d6
 extern ema_filter_state_t fuel_blend_rpm_base_filter_state;  // 0x003fa5e2
-extern void * PTR_DAT_003fa5ea;  // 0x003fa5ea
 extern word diag_state_group7_a_state;  // 0x003fa5f2
 extern word diag_state_group7_b_state;  // 0x003fa5f4
 extern dword boost_pressure_target_unclamped;  // 0x003fa606
 extern word fuel_demand_cal_percent;  // 0x003fa60a
 extern word fuel_mode_flags_combined;  // 0x003fa60c
-extern void * PTR_DAT_003fa60e;  // 0x003fa60e
 extern word cold_start_pressure_scale_working;  // 0x003fa616
 extern word sensor_channel9_pressure_snapshot;  // 0x003fa61a
 extern word fuel_demand_limit_b_working;  // 0x003fa61c
 extern word pressure_correction_filter1_working;  // 0x003fa620
 extern word condition_monitor_status_working;  // 0x003fa622
-extern void * PTR_DAT_003fa624;  // 0x003fa624
-extern void * PTR_DAT_003fa62c;  // 0x003fa62c
 extern word fuel_correction_output_working;  // 0x003fa63c
 extern word fuel_demand_lookup_working;  // 0x003fa642
 extern word fuel_demand_mode_code_prev_snapshot;  // 0x003fa644
@@ -705,7 +658,6 @@ extern word fuel_correction_output_b_working;  // 0x003fa700
 extern word fuel_correction_timer_counter;  // 0x003fa702
 extern word throttle_demand_offset_cal_working;  // 0x003fa712
 extern word fuel_enable_fault_count_working;  // 0x003fa714
-extern void * PTR_DAT_003fa716;  // 0x003fa716
 extern word governor_speed_output_limit;  // 0x003fa71e
 extern word boost_pressure_fault_filter_state;  // 0x003fa720
 extern word boost_sensor_raw_input;  // 0x003fa722
@@ -727,7 +679,6 @@ extern word governor_speed_rate_a_prev_snapshot;  // 0x003fa748
 extern word governor_speed_input_snapshot;  // 0x003fa74a
 extern word engine_polarity_bit4_flag;  // 0x003fa74c
 extern word fuel_timing_error_working;  // 0x003fa74e
-extern void * PTR_DAT_003fa750;  // 0x003fa750
 extern dword governor_speed_ramp_state_working;  // 0x003fa770
 extern word boost_fuel_input_limit_exceeded_flag;  // 0x003fa774
 extern word boost_correction_threshold_exceeded_flag;  // 0x003fa776
@@ -856,12 +807,10 @@ extern word throttle_demand_integrator;  // 0x003fa8aa
 extern word injection_timing_advance_enable_count;  // 0x003fa8ac
 extern word protection_mode_request_bit;  // 0x003fa8ae
 extern word protection_mode_request_initialized_flag;  // 0x003fa8b0
-extern void * PTR_BYTE_0050c640_003fa8b4;  // 0x003fa8b4
 extern byte j1939_diagnostic_handler_count;  // 0x003fa972
 extern byte j1939_dm13_network_command_byte;  // 0x003fa974
 extern etc1_message_t j1939_tsc1_received;  // 0x003fa982
 extern j1939_pgn_handler_entry_t j1939_pgn_dispatch_table;  // 0x003fa9a2
-extern void * PTR_j1939HandlePgn61443Eec2_003fa9aa;  // 0x003fa9aa
 extern byte j1939_pgn_handler_count;  // 0x003faa62
 extern byte tsc1_rx_byte_0;  // 0x003faa68
 extern byte tsc1_rx_byte_3;  // 0x003faa6b
@@ -961,8 +910,6 @@ extern word j1939_pgn61444_tx_byte_count;  // 0x003fad9c
 extern void * j1939_pgn61444_data_ptr;  // 0x003fad9e
 extern byte j1939_eec2_low_idle_and_kickdown_byte;  // 0x003fada8
 extern dword j1939_pgn61443_tx_header;  // 0x003fadb0
-extern void * PTR_j1939_status_byte_b_003fadb6;  // 0x003fadb6
-extern void * PTR_DAT_003fadba;  // 0x003fadba
 extern dword j1939_pgn65247_tx_header;  // 0x003fadc8
 extern word j1939_pgn65247_tx_byte_count;  // 0x003fadcc
 extern void * j1939_pgn65247_data_ptr;  // 0x003fadce
@@ -970,8 +917,6 @@ extern void * j1939_pgn65247_data2_ptr;  // 0x003fadd2
 extern byte j1939_eflp1_fuel_delivery_pressure;  // 0x003fadd9
 extern word j1939_diag_response_word_b;  // 0x003faddd
 extern dword j1939_pgn65263_tx_header;  // 0x003fade1
-extern void * PTR_j1939_engine_load_byte_003fade7;  // 0x003fade7
-extern void * PTR_DAT_003fadeb;  // 0x003fadeb
 extern dword j1939_pgn65262_tx_header;  // 0x003fadf0
 extern word j1939_pgn65262_tx_byte_count;  // 0x003fadf4
 extern void * j1939_pgn65262_data_ptr;  // 0x003fadf6
@@ -985,9 +930,7 @@ extern void * j1939_pgn65269_tx2_data_ptr;  // 0x003fae16
 extern void * j1939_pgn65269_data2_ptr;  // 0x003fae1a
 extern dword j1939_pgn65213_tx_header;  // 0x003fae28
 extern dword j1939_pgn65270_tx_header;  // 0x003fae38
-extern byte BYTE_003fae3c;  // 0x003fae3c
 extern void * j1939_tx_buf_data_ptr;  // 0x003fae3e
-extern void * PTR_DAT_003fae42;  // 0x003fae42
 extern byte j1939_pgn_dest_address;  // 0x003fae50
 extern byte j1939_pgn65249_byte0;  // 0x003fae51
 extern dword j1939_pgn65249_tx_header;  // 0x003fae63
@@ -1110,7 +1053,6 @@ extern byte accelerator_pedal_sensor_fault_hold_flag;  // 0x003fb010
 extern dword accelerator_pedal_pressed_flag;  // 0x003fb012
 extern word switch_31_on_time_counter;  // 0x003fb016
 extern word map_fuel_correction_prev_snapshot;  // 0x003fb018
-extern void * PTR_DAT_003fb01e;  // 0x003fb01e
 extern word throttle_zero_confirm_counter;  // 0x003fb02e
 extern word throttle_speed_rate_lower;  // 0x003fb030
 extern word throttle_speed_rate_upper;  // 0x003fb032
@@ -1543,28 +1485,14 @@ extern byte coolant_cal_entry_count_b;  // 0x003fb9a3
 extern word scheduler_task_flags_snapshot;  // 0x003fb9a6
 extern byte security_sequence_step;  // 0x003fb9a8
 extern word security_speed_working;  // 0x003fb9aa
-extern void * PTR_DAT_003fb9e2;  // 0x003fb9e2
 extern ema_filter_state_t boost_pressure_timing_filter_state;  // 0x003fb9ea
-extern void * PTR_DAT_003fbcbe;  // 0x003fbcbe
-extern void * PTR_PTR_003fbcde;  // 0x003fbcde
 extern dword fault_channel_config_ptr;  // 0x003fbd42
 extern dword fault_channel_state_ptr;  // 0x003fbd46
-extern void * PTR_engine_rpm_trigger_ready_flag_003fbd4a;  // 0x003fbd4a
-extern void * PTR_DAT_003fbd7c;  // 0x003fbd7c
 extern void * j1939_tp_rx_session_status_ptr;  // 0x003fbd80
 extern void * j1939_tp_rx_session_tx_buf_ptr;  // 0x003fbd8c
-extern void * PTR_DAT_003fbdac;  // 0x003fbdac
-extern void * PTR_DAT_003fbdcf;  // 0x003fbdcf
 extern dword j1939_multiframe_tx_status_ptr;  // 0x003fbdd3
 extern dword j1939_multiframe_tx_buf_ptr;  // 0x003fbddf
 extern void * j1939_multiframe_rx_data_buf_ptr;  // 0x003fbdfd
-extern byte BYTE_003fc094;  // 0x003fc094
-extern byte BYTE_003fc0d8;  // 0x003fc0d8
-extern void * PTR_DAT_003fc4b3;  // 0x003fc4b3
-extern void * PTR_DAT_003fc4b7;  // 0x003fc4b7
-extern byte BYTE_003fc77c;  // 0x003fc77c
-extern void * PTR_DAT_003fcbca;  // 0x003fcbca
-extern void * PTR_DAT_003fcbce;  // 0x003fcbce
 extern word cruise_control_on_toggle_state;  // 0x003fcd9e
 extern CRUISE_SWITCH_REQUEST cruise_switch_request;  // 0x003fcda2
 extern word cooling_fan_feed_forward_table;  // 0x003fcdfb
@@ -1586,10 +1514,6 @@ extern byte obd_dtc_scan_more_flag;  // 0x003fce9c
 extern byte obd_dtc_copy_index;  // 0x003fce9d
 extern word throttle_setpoint_limit_arg;  // 0x003fcf12
 extern dword rom_crc_descriptor_table_ptr;  // 0x003fcfe0
-extern void * PTR_DAT_003fd012;  // 0x003fd012
-extern void * PTR_DAT_003fd016;  // 0x003fd016
-extern void * PTR_DAT_003fd022;  // 0x003fd022
-extern void * PTR_DAT_003fd026;  // 0x003fd026
 extern word output_shaft_speed_avg;  // 0x003fd05e
 extern word output_shaft_speed_saved;  // 0x003fd060
 extern dword protection_trim_divisor_working;  // 0x003fd062
@@ -1601,18 +1525,8 @@ extern byte BYTE_003fd1ac;  // 0x003fd1ac
 extern word sensor_scan_cycle_counter;  // 0x003fd1d8
 extern byte BYTE_003fd284;  // 0x003fd284
 extern byte BYTE_003fd298;  // 0x003fd298
-extern void * PTR_DAT_003fd2c4;  // 0x003fd2c4
-extern void * PTR_sensor_channel_ram_start_003fd2c8;  // 0x003fd2c8
-extern void * PTR_DAT_003fd2cc;  // 0x003fd2cc
-extern void * PTR_PTR_003fd2d0;  // 0x003fd2d0
 extern void * sensor_cal_rom_read_ptr;  // 0x003fd2d4
 extern void * sensor_cal_ram_write_ptr;  // 0x003fd2d8
-extern void * PTR_j1939HandlePgn65265CruiseVehicleSpeed_003fd2e8;  // 0x003fd2e8
-extern void * PTR_j1939GetEngineStateCode_003fd2f2;  // 0x003fd2f2
-extern void * PTR_cm848_j1939BuildVehicleOperatingStatus_003fd3b0;  // 0x003fd3b0
-extern void * PTR_cm848_j1939BuildProtocolModeStatus_003fd3ba;  // 0x003fd3ba
-extern void * PTR_FUN_003fd416;  // 0x003fd416
-extern void * PTR_FUN_003fd41c;  // 0x003fd41c
 extern byte eeprom_mirror;  // 0x003fd482
 extern dword key_on_hour_meter_cal;  // 0x003fd4b2
 extern word sensor_channel_index_working;  // 0x003fd4b8
@@ -1856,13 +1770,10 @@ extern word fault_pending_counter_array;  // 0x003fe09a
 extern word emission_fault_count;  // 0x003fe0da
 extern fault_list_state_t fault_list_state_t_003fe11a;  // 0x003fe11a
 extern word fault_list_iteration_counter;  // 0x003fe122
-extern void * PTR_DAT_003fe197;  // 0x003fe197
 extern dword fault_timestamp_array;  // 0x003fe1ce
 extern byte fault_entry_debounce_array;  // 0x003fe1d2
 extern byte fault_entry_status_array;  // 0x003fe1d3
 extern byte fault_timer_array;  // 0x003fe1d4
-extern void * PTR_DAT_003fe490;  // 0x003fe490
-extern void * PTR_DAT_003fe4f9;  // 0x003fe4f9
 extern fault_entry_t fault_entry_t_003fe674;  // 0x003fe674
 extern system_status_flags_t system_status_flags_t_003fe974;  // 0x003fe974
 extern word fault_detected_bits_336_to_351;  // 0x003fe99e
@@ -1939,7 +1850,6 @@ extern byte eeprom_write_request_type;  // 0x003fecf2
 extern word eeprom_block_length_cal;  // 0x003fecf6
 extern dword fault_pending_flags;  // 0x003fed94
 extern void * fault_entry_ptr_queue;  // 0x003fed9c
-extern void * PTR_s_x9Md_003feda0;  // 0x003feda0
 extern word protection_load_filtered;  // 0x003fedde
 extern word protection_ema_output_snapshot;  // 0x003fede0
 extern byte eeprom_calibration_pending_flag;  // 0x003fedee
@@ -3036,7 +2946,6 @@ extern word radiator_fan_speed_override;  // 0x004088dc
 extern word safety_fuel_blend_decrement_cal;  // 0x004088e0
 extern word safety_fuel_blend_increment_cal;  // 0x004088e2
 extern byte safety_system_enable_cal;  // 0x004088e4
-extern byte BYTE_004088e6;  // 0x004088e6
 extern word safety_fuel_limit_rpm_axis_cal[25];  // 0x004088e8
 extern word safety_fuel_limit_rpm_output_cal[25];  // 0x0040891a
 extern word battery_voltage_default_cal;  // 0x00408962
@@ -4006,11 +3915,6 @@ extern word governor_mode3_speed_param;  // 0x0040a714
 extern dword engine_feature_active_flag_b;  // 0x0040a716
 extern word protection_mode_request_flags;  // 0x0040a732
 extern void * fuel_temperature_derate_input_pointer;  // 0x0040a734
-extern void * PTR_DAT_0040a73e;  // 0x0040a73e
-extern void * PTR_DAT_0040a742;  // 0x0040a742
-extern void * PTR_DAT_0040a746;  // 0x0040a746
-extern void * PTR_DAT_0040a75a;  // 0x0040a75a
-extern void * PTR_DAT_0040a75e;  // 0x0040a75e
 extern word torque_limit_fuel_upper_cap;  // 0x0040a77c
 extern word governor_startup_ready_flag;  // 0x0040a77e
 extern word torque_limit_fuel_min_alt;  // 0x0040a780
@@ -4100,7 +4004,6 @@ extern word j1939_engine_torque_encoded;  // 0x0040aaa2
 extern word j1939_engine_retarder_selection_percent;  // 0x0040aac2
 extern word j1939_input_monitor_inhibit_flag;  // 0x0040aaca
 extern byte engine_data_log_buffer;  // 0x0040aacc
-extern void * PTR_DAT_0040ac16;  // 0x0040ac16
 extern byte engine_data_log_buffer_limit;  // 0x0040ac22
 extern byte engine_data_log_buffer;  // 0x0040ac34
 extern void * engine_data_log_read_ptr;  // 0x0040ad24
@@ -5117,30 +5020,10 @@ extern dword protection_timeout_sentinel;  // 0x0040c262
 extern void * diag_dm1_buffer_read_ptr;  // 0x0040c278
 extern void * diag_dm1_buffer_write_ptr;  // 0x0040c280
 extern dword flash2_command_register;  // 0x00500000
-extern byte BYTE_0050c640;  // 0x0050c640
-extern byte BYTE_0050f680;  // 0x0050f680
-extern void * PTR_DAT_0053a33e;  // 0x0053a33e
-extern void * PTR_flash2_command_register_0053a344;  // 0x0053a344
-extern void * PTR_FUN_0053a9a2;  // 0x0053a9a2
-extern void * PTR_FUN_0053a9a8;  // 0x0053a9a8
 extern byte output_channel_driver_table_enable;  // 0x0053ac46
 extern void * output_channel_driver_table_read_feedback;  // 0x0053ac4a
 extern byte output_channel_driver_table_set_period;  // 0x0053ac4e
 extern byte output_channel_driver_table_set_duty;  // 0x0053ac52
-extern void * PTR_cm848_tpuBReadBackChannel4EnablePwm_0053ac96;  // 0x0053ac96
-extern void * PTR_cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds_0053ac9e;  // 0x0053ac9e
-extern void * PTR_cm848_tpuBReadBackChannel6EnablePwm_0053acb6;  // 0x0053acb6
-extern void * PTR_cm848_tpuBReadBackChannel6ReadFeedback_0053acba;  // 0x0053acba
-extern void * PTR_cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds_0053acbe;  // 0x0053acbe
-extern void * PTR_cm848_tpuBReadBackChannel6SetPwmDuty_0053acc2;  // 0x0053acc2
-extern void * PTR_cm848_tpuBReadBackChannel7EnablePwm_0053acc6;  // 0x0053acc6
-extern void * PTR_cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds_0053acce;  // 0x0053acce
-extern void * PTR_cm848_tpuBReadBackChannel10EnablePwm_0053acf6;  // 0x0053acf6
-extern void * PTR_cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds_0053acfe;  // 0x0053acfe
-extern void * PTR_cm848_tpuBReadBackChannel10SetPwmDuty_0053ad02;  // 0x0053ad02
-extern void * PTR_cm848_tpuBChannel15EnablePwm_0053ad46;  // 0x0053ad46
-extern void * PTR_cm848_tpuBChannel15SetPwmPeriodMicroseconds_0053ad4e;  // 0x0053ad4e
-extern void * PTR_DAT_0053be3a;  // 0x0053be3a
 extern byte eeprom_security_key;  // 0x01000002
 extern byte eeprom_status_block;  // 0x0100000c
 extern byte eeprom_config_block;  // 0x01000030
