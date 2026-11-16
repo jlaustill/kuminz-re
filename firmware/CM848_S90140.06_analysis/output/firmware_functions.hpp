@@ -379,7 +379,7 @@ void cm848_fuelDemandFinalCalculation(void);  // @ 0x0001782c
 void cm848_fuelDemandCoordinator(void);  // @ 0x00017980
 void cm848_initFuelDemandRateVariables(void);  // @ 0x00017af4
 void cm848_storeFuelDemandPreviousValues(void);  // @ 0x00017b54
-undefined2 cm848_calculateFuelFlowRate(void);  // @ 0x00017b84
+uint cm848_calculateFuelFlowRate(void);  // @ 0x00017b84
 void cm848_selectFuelFlowMode(void);  // @ 0x00017d54
 void mpc555_initFuelFlowRateVariables(void);  // @ 0x00017e54
 void cm848_calculateEngineOutputTorque(void);  // @ 0x00017eb8
@@ -1284,7 +1284,7 @@ int cm848_clampedDivisionWithBounds(uint param_1,int param_2,int param_3,int par
 uint cm848_saturatingDivision16(uint param_1,uint param_2);  // @ 0x000563e8
 int cm848_signedFirstOrderFilter(int param_1,undefined4 *param_2);  // @ 0x0005644c
 int cm848_secondOrderFilter(short param_1,undefined4 *param_2);  // @ 0x000564c0
-uint exponentialMovingAverage(uint param_1,undefined4 *param_2);  // @ 0x00056594
+dword exponentialMovingAverage(dword value,ema_filter_state_t *filter_state);  // @ 0x00056594
 undefined4 cm848_interpolateTableLinearStep(int param_1,undefined4 *param_2);  // @ 0x00056608
 word cm848_dualAxisTableInterpolation (word *cached_axis_offsets,word x_input,word *x_axis,word y_input,word *y_axis, word *z_data,dword flags);  // @ 0x000566cc
 undefined4 cm848_ringBufferWriteByte(int *param_1,undefined1 param_2);  // @ 0x00056c80
@@ -1305,12 +1305,12 @@ void cm848_sensorChannelGeneric_init_configBundle(void);  // @ 0x00500004
 void cm848_sensorChannelGeneric_update_configBundle(void);  // @ 0x00500090
 void cm848_sensorChannel7_init_configBundle(void);  // @ 0x0050011c
 void cm848_sensorChannel7_update_configBundle(void);  // @ 0x005001a8
-void sensorChannelConfigInit (void *cal_ptr_1,void *cal_ptr_2,word *cached_axis_offset,word *x_axis,word *y_data, dword flags,word adc_index_primary,word adc_index_secondary,word *output_raw, word *output_filtered,word param_11,word param_12,word param_13);  // @ 0x00500234
-void updateSensorChannelWithConfig (void *cal_ptr_1,void *cal_ptr_2,word *cached_axis_offset,word *x_axis,word *y_data, dword flags,word adc_index_primary,word adc_index_secondary,word *output_raw, word *output_filtered,word param_11,word param_12,word param_13);  // @ 0x00500a4c
+void sensorChannelConfigInit (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr, word *cached_axis_offset,word *x_axis,word *y_data,dword flags, ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit, dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr, word *fault_status_output_ptr);  // @ 0x00500234
+void updateSensorChannelWithConfig (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr, word *cached_axis_offset,word *x_axis,word *y_data,dword flags, ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit, dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr, word *fault_status_output_ptr);  // @ 0x00500a4c
 void cm848_protection_init_configBundle(void);  // @ 0x005011c4
 void cm848_protection_update_configBundle(void);  // @ 0x00501250
-void sensorChannelTypeB_configInit (sensor_channel_config_t *config_ptr,word *state_ptr,word *cached_axis_offset, word *x_axis,word *y_data,dword flags,dword *ema_state_ptr,dword channel_index, dword high_fault_bit,dword low_fault_bit,word *raw_output_ptr, word *filtered_output_ptr,word *fault_output_ptr);  // @ 0x005012dc
-void sensorChannelTypeB_update (sensor_channel_config_t *config_ptr,word *state_ptr,word *cached_axis_offset, word *x_axis,word *y_data,dword flags,dword *ema_state_ptr,dword channel_index, dword high_fault_bit,dword low_fault_bit,word *raw_output_ptr, word *filtered_output_ptr,word *fault_output_ptr);  // @ 0x00501b4c
+void sensorChannelTypeB_configInit (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr, word *cached_axis_offset,word *x_axis,word *y_data,dword flags, ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit, dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr, word *fault_status_output_ptr);  // @ 0x005012dc
+void sensorChannelTypeB_update (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr, word *cached_axis_offset,word *x_axis,word *y_data,dword flags, ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit, dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr, word *fault_status_output_ptr);  // @ 0x00501b4c
 void hpcr_fuelFinal_periodic(void);  // @ 0x005022cc
 void cm848_initialization_step(void);  // @ 0x0050241c
 void cm848_calibrationGroup5_periodic(void);  // @ 0x00502464

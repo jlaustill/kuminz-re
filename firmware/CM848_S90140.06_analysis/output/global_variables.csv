@@ -72,35 +72,48 @@ address,name,type,comment
 0x000592a4,boost_pressure_fixed_reference,word,ROM constant 1132 (61 kPa): subtracted from intake manifold pressure instead of barometric pressure when boost_uses_barometric_pressure_flag is 0 (cm848_calculateBoostPressure / cm848_evaluateProtectionModeFlags) (was oil_pressure_baseline_ref)
 0x000592b2,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
 0x000592c4,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
+0x000592d6,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel1_init / cm848_sensorChannel1_process
 0x000592e6,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel1_init / cm848_sensorChannel1_process
 0x0005930e,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel1_init / cm848_sensorChannel1_process
+0x00059336,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel2_init / cm848_sensorChannel2_process
 0x00059346,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel2_init / cm848_sensorChannel2_process
 0x00059358,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel2_init / cm848_sensorChannel2_process
-0x0005936a,boost_pressure_sensor_config,byte,
+0x0005936a,boost_pressure_sensor_config,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel3_boostPressureInit / cm848_sensorChannel3_boostPressureProcess
 0x0005937a,boost_pressure_linearization_x_axis,word[9],
 0x0005938c,boost_pressure_linearization_y_axis,word[9],
+0x0005939e,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel4_init / cm848_sensorChannel4_process
 0x000593ae,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel4_init / cm848_sensorChannel4_process
 0x000593c6,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel4_init / cm848_sensorChannel4_process
+0x000593de,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
 0x000593ee,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
 0x0005941a,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
+0x00059446,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel7_init / cm848_sensorChannel7_process
 0x00059456,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel7_init / cm848_sensorChannel7_process
 0x0005946c,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel7_init / cm848_sensorChannel7_process
+0x00059482,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
 0x00059492,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
 0x000594a8,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
+0x000594be,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel9_init / cm848_sensorChannel9_process
 0x000594ce,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannel9_init / cm848_sensorChannel9_process
 0x000594fa,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel9_init / cm848_sensorChannel9_process
+0x00059526,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
 0x00059536,,word[24],Lookup table - x axis of 23 breakpoints after its byte-length word - read by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
 0x00059566,,word[24],Lookup table - data: 23 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x00059596,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel11_init / cm848_sensorChannel11_process
 0x000595a6,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel11_init / cm848_sensorChannel11_process
 0x000595b8,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel11_init / cm848_sensorChannel11_process
+0x000595ca,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel12_init / cm848_sensorChannel12_process
 0x000595da,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel12_init / cm848_sensorChannel12_process
 0x000595ec,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel12_init / cm848_sensorChannel12_process
 0x000595fe,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel13_init / cm848_sensorChannel13_process
 0x00059610,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel13_init / cm848_sensorChannel13_process
+0x00059622,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel14_init / cm848_sensorChannel14_process
 0x00059632,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel14_init / cm848_sensorChannel14_process
 0x00059644,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel14_init / cm848_sensorChannel14_process
+0x00059656,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_protection_init_configBundle / cm848_protection_update_configBundle
 0x00059666,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_protection_init_configBundle / cm848_protection_update_configBundle
 0x0005967c,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_protection_init_configBundle / cm848_protection_update_configBundle
+0x00059692,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel15_init / cm848_sensorChannel15_process
 0x000596a2,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel15_init / cm848_sensorChannel15_process
 0x000596ba,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel15_init / cm848_sensorChannel15_process
 0x000596d2,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
@@ -141,29 +154,40 @@ address,name,type,comment
 0x0005a7f8,,word[15],Lookup table - x axis of 14 breakpoints after its byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
 0x0005a816,,word[15],Lookup table - y axis of 14 breakpoints after its byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
 0x0005a834,,word[196],Lookup table - 2-D grid: 14 rows of 14 values (z[(y - 1) x 14 + x - 1] / no header) - read by governor_computeSpeedTargetWithThermalCorrection
+0x0005aaf0,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
 0x0005ab00,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
 0x0005ab12,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
+0x0005ab24,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel69_init / cm848_sensorChannel69_process
 0x0005ab34,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
 0x0005ab5c,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
 0x0005ab84,cruise_switch_sensor_config,word,Base of the cruise-control switch QADC channel (0x2f/47) config struct; param_1 of cm848_processCruiseSwitchChannel/init; field +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; ROM-sourced so NO _cal
 0x0005ab88,cruise_engage_adc_valid_upper,word,ROM const =976 (0x3d0); upper open/short validity bound for the analog QADC channel checked by governor_cruise_engage_check (asm lhz 4(r4) @0x512edc); ~95% of 10-bit FS; field +4 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
 0x0005ab8a,cruise_engage_adc_valid_lower,word,ROM const =92 (0x5c); lower open/short validity bound (asm lhz 6(r4) @0x512ed0); ~9% of 10-bit FS; field +6 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
+0x0005abe8,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0005abf8,,word[21],Lookup table - x axis of 20 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0005ac22,,word[21],Lookup table - data: 20 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
+0x0005ac4c,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
 0x0005ac5c,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
 0x0005ac6a,,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
+0x0005ac78,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
 0x0005ac88,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
 0x0005ac96,,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
+0x0005aca4,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
 0x0005acb4,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
 0x0005acc6,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
+0x0005acd8,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
 0x0005ace8,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
 0x0005acfa,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
+0x0005ad0c,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
 0x0005ad1c,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
 0x0005ad2e,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
+0x0005ad40,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
 0x0005ad50,,word[27],Lookup table - x axis of 26 breakpoints after its byte-length word - read by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
 0x0005ad86,,word[27],Lookup table - data: 26 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
+0x0005adbc,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
 0x0005adcc,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
 0x0005ade2,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
+0x0005adf8,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
 0x0005ae08,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
 0x0005ae30,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
 0x0005ae58,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by fuel_coldStart_rpmLimit_select
@@ -211,6 +235,8 @@ address,name,type,comment
 0x0005b4d6,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_calculateThermalLimitValue
 0x0005b502,,word[3],Lookup table - y axis of 2 breakpoints after its byte-length word - read by cm848_calculateThermalLimitValue
 0x0005b508,,word[42],Lookup table - 2-D grid: 2 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateThermalLimitValue
+0x0005b55c,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
+0x0005b56c,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
 0x0005b57c,obd_dtc_code_table,word,ROM table: OBD-II DTC code per fault slot (word per slot) - modes 2 / 3 / 7
 0x0005b8e6,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_runThermostatMonitor
 0x0005b8f2,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_runThermostatMonitor
@@ -961,37 +987,41 @@ address,name,type,comment
 0x003fa00c,scheduler_task_stat_ptr_b,pointer,
 0x003fa010,scheduler_task_stat_ptr,pointer,
 0x003fa014,sensor_channel0_interp_state,word,interp current_index for sensor channel 0 config lookup
-0x003fa016,sensor_channel0_filter_config_ptr,pointer,config pointer for sensor channel 0 (was DAT)
+0x003fa016,sensor_channel0_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 0 (was DAT)
 0x003fa01e,sensor_channel1_interp_state,word,interp current_index for sensor channel 1 config lookup
-0x003fa020,sensor_channel1_filter_config_ptr,pointer,config pointer for sensor channel 1 (was PTR_DAT)
+0x003fa020,sensor_channel1_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 1 (was PTR_DAT)
 0x003fa028,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa02a,PTR_DAT_003fa02a,pointer,
+0x003fa02a,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel2_init / cm848_sensorChannel2_process (was PTR_DAT_003fa02a)
 0x003fa032,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa034,PTR_boost_pressure_sensor_config_003fa034,pointer,
+0x003fa034,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel3_boostPressureInit / cm848_sensorChannel3_boostPressureProcess (was PTR_boost_pressure_sensor_config_003fa034)
 0x003fa03c,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa03e,PTR_DAT_003fa03e,pointer,
+0x003fa03e,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel4_init / cm848_sensorChannel4_process (was PTR_DAT_003fa03e)
+0x003fa046,,word,Sensor channel output word - used by cm848_sensorChannel4_init / cm848_sensorChannel4_process
+0x003fa048,,word,Sensor channel output word - used by cm848_sensorChannel4_init / cm848_sensorChannel4_process
+0x003fa04a,,word,Sensor channel output word - used by cm848_sensorChannel4_init / cm848_sensorChannel4_process
 0x003fa04c,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fa04e,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel5_init / cm848_sensorChannel5_process
 0x003fa056,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa058,PTR_DAT_003fa058,pointer,
+0x003fa058,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel6_init / cm848_sensorChannel6_process (was PTR_DAT_003fa058)
 0x003fa060,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
-0x003fa062,PTR_DAT_003fa062,pointer,
+0x003fa062,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel7_init / cm848_sensorChannel7_process (was PTR_DAT_003fa062)
 0x003fa06a,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa06c,PTR_DAT_003fa06c,pointer,
+0x003fa06c,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel8_init / cm848_sensorChannel8_process (was PTR_DAT_003fa06c)
 0x003fa074,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
-0x003fa076,PTR_DAT_003fa076,pointer,
+0x003fa076,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel9_init / cm848_sensorChannel9_process (was PTR_DAT_003fa076)
 0x003fa07e,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
-0x003fa080,PTR_DAT_003fa080,pointer,
+0x003fa080,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess (was PTR_DAT_003fa080)
 0x003fa088,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa08a,PTR_DAT_003fa08a,pointer,
+0x003fa08a,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel11_init / cm848_sensorChannel11_process (was PTR_DAT_003fa08a)
 0x003fa092,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa094,PTR_DAT_003fa094,pointer,
+0x003fa094,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel12_init / cm848_sensorChannel12_process (was PTR_DAT_003fa094)
 0x003fa09c,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa09e,PTR_DAT_003fa09e,pointer,
+0x003fa09e,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel13_init / cm848_sensorChannel13_process (was PTR_DAT_003fa09e)
 0x003fa0a6,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa0a8,PTR_DAT_003fa0a8,pointer,
+0x003fa0a8,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel14_init / cm848_sensorChannel14_process (was PTR_DAT_003fa0a8)
 0x003fa0b0,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fa0b2,PTR_DAT_003fa0b2,pointer,
-0x003fa0bc,sensor_channel16_filter_config_ptr,pointer,config pointer for sensor channel 16 (was PTR_DAT)
+0x003fa0b2,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel15_init / cm848_sensorChannel15_process (was PTR_DAT_003fa0b2)
+0x003fa0bc,sensor_channel16_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 16 (was PTR_DAT)
 0x003fa0c4,diag_state_group1_a_state,word,
 0x003fa0c6,diag_state_group1_b_state,word,
 0x003fa0c8,diag_state_group1_c_state,word,
@@ -1047,7 +1077,7 @@ address,name,type,comment
 0x003fa182,fuel_flow_rate_prev_snapshot,word,
 0x003fa184,fuel_demand_quantity_snapshot,word,
 0x003fa190,governor_rpm_band_rate_working,word,
-0x003fa19c,PTR_DAT_003fa19c,pointer,
+0x003fa19c,,ema_filter_state_t,EMA filter state - used by cm848_boostCompensatedRpmGovernor (was PTR_DAT_003fa19c)
 0x003fa1a4,governor_speed_error_working,word,
 0x003fa1a6,governor_rpm_band_rate_target,dword,
 0x003fa1aa,throttle_acceleration_active_flag,word,
@@ -1074,7 +1104,7 @@ address,name,type,comment
 0x003fa5ea,PTR_DAT_003fa5ea,pointer,
 0x003fa5f2,diag_state_group7_a_state,word,
 0x003fa5f4,diag_state_group7_b_state,word,
-0x003fa5fe,PTR_DAT_003fa5fe,pointer,
+0x003fa5fe,,ema_filter_state_t,EMA filter state - used by cm848_calculateBoostTorqueOffset (was PTR_DAT_003fa5fe)
 0x003fa606,boost_pressure_target_unclamped,dword,cm848_calculateBoostTorqueOffset: base quantity x rpm factor x boost_fuel_scale_divisor / 0xfa000 - fuel_demand_correction_offset_cal; clamped to 0-0x3200 and EMA-filtered into boost_pressure_target_filtered - copy-window RAM, app side (was fuel_demand_computed - the same name as 0x40a2ce)
 0x003fa60a,fuel_demand_cal_percent,word,
 0x003fa60c,fuel_mode_flags_combined,word,
@@ -1128,7 +1158,7 @@ address,name,type,comment
 0x003fa6fe,governor_speed_output_snapshot,word,
 0x003fa700,fuel_correction_output_b_working,word,
 0x003fa702,fuel_correction_timer_counter,word,
-0x003fa70a,PTR_DAT_003fa70a,pointer,
+0x003fa70a,,ema_filter_state_t,EMA filter state - used by cm848_calculateFuelFlowRate (was PTR_DAT_003fa70a)
 0x003fa712,throttle_demand_offset_cal_working,word,
 0x003fa714,fuel_enable_fault_count_working,word,
 0x003fa716,PTR_DAT_003fa716,pointer,
@@ -1154,9 +1184,9 @@ address,name,type,comment
 0x003fa74c,engine_polarity_bit4_flag,word,
 0x003fa74e,fuel_timing_error_working,word,
 0x003fa750,PTR_DAT_003fa750,pointer,
-0x003fa758,PTR_DAT_003fa758,pointer,
-0x003fa760,PTR_DAT_003fa760,pointer,
-0x003fa768,PTR_DAT_003fa768,pointer,
+0x003fa758,,ema_filter_state_t,EMA filter state - used by mpc555_updateSensorDiagnosticFlags (was PTR_DAT_003fa758)
+0x003fa760,,ema_filter_state_t,EMA filter state - used by cm848_updateEngineModeFromSensor (was PTR_DAT_003fa760)
+0x003fa768,,ema_filter_state_t,EMA filter state - used by cm848_updateEngineModeFromSensor (was PTR_DAT_003fa768)
 0x003fa770,governor_speed_ramp_state_working,dword,
 0x003fa774,boost_fuel_input_limit_exceeded_flag,word,
 0x003fa776,boost_correction_threshold_exceeded_flag,word,
@@ -1615,7 +1645,7 @@ address,name,type,comment
 0x003fb016,switch_31_on_time_counter,word,20 ms passes switch 31 has been on - counted only while switch_31_on_time_fault_enable (ROM 0x5c28c) is nonzero (0 here); 50 (1 s) sets fault bit 73 (safety_bits_2 bit 9) (was governor_overspeed_protection_enable_flag)
 0x003fb018,map_fuel_correction_prev_snapshot,word,
 0x003fb01e,PTR_DAT_003fb01e,pointer,
-0x003fb026,PTR_DAT_003fb026,pointer,
+0x003fb026,,ema_filter_state_t,EMA filter state - used by cm848_processProtectionEntry (was PTR_DAT_003fb026)
 0x003fb02e,throttle_zero_confirm_counter,word,
 0x003fb030,throttle_speed_rate_lower,word,
 0x003fb032,throttle_speed_rate_upper,word,
@@ -1717,20 +1747,20 @@ address,name,type,comment
 0x003fb1d6,protection_load_scaled_filter_state_ptr,pointer,
 0x003fb1da,protection_load_scaled_filter_accum,dword,
 0x003fb1de,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fb1e0,PTR_DAT_003fb1e0,pointer,
+0x003fb1e0,,ema_filter_state_t,EMA filter state - used by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5 (was PTR_DAT_003fb1e0)
 0x003fb1e8,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
-0x003fb1ea,PTR_DAT_003fb1ea,pointer,
+0x003fb1ea,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel69_init / cm848_sensorChannel69_process (was PTR_DAT_003fb1ea)
 0x003fb1f2,cruise_switch_interp_index,word,Interpolation cursor for the cruise-switch resistor-ladder lookup (table_interp_args_t.current_index field); param_3 of cm848_process/initCruiseSwitchChannel; written sth r,0(r5) @0x501be0 (update resets =2) and read/written as args->current_index inside lookupTableInterpolation (0x55ef4). NOT a full table_interp_args_t - lookupTableInterpolation takes the X/Y tables + input value as separate regs r4-r7, only current_index comes from this struct. Working RAM (ROM->RAM window) so no _cal
 0x003fb1f4,cruise_switch_filter_coeff_ptr,pointer,EMA smoothing-coefficient pointer for the cruise-switch ADC filter; param_7 of cm848_process/initCruiseSwitchChannel and param_2[0] of exponentialMovingAverage (0x56594) where *(short*)*ptr is the alpha coefficient; +0 of the channel's 8-byte EMA state. Renamed from PTR_DAT_003fb1f4 (type pointer was already correct)
 0x003fb1f8,cruise_switch_filter_accum,dword,EMA accumulator (running filtered value in <<16 fixed-point) for the cruise-switch ADC filter; param_2[1] of exponentialMovingAverage, written *(uint*)(state+4) @ sensorChannelTypeB_configInit; +4 of the channel's EMA state. Working RAM (ROM->RAM window) so no _cal
 0x003fb1fc,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fb1fe,PTR_DAT_003fb1fe,pointer,
+0x003fb1fe,,ema_filter_state_t,EMA filter state - used by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3 (was PTR_DAT_003fb1fe)
 0x003fb206,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fb208,PTR_DAT_003fb208,pointer,
+0x003fb208,,ema_filter_state_t,EMA filter state - used by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2 (was PTR_DAT_003fb208)
 0x003fb210,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fb212,PTR_DAT_003fb212,pointer,
+0x003fb212,,ema_filter_state_t,EMA filter state - used by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0 (was PTR_DAT_003fb212)
 0x003fb21a,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fb21c,PTR_DAT_003fb21c,pointer,
+0x003fb21c,,ema_filter_state_t,EMA filter state - used by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1 (was PTR_DAT_003fb21c)
 0x003fb224,protection_iat_scale_pending_flag,word,
 0x003fb226,intake_manifold_pressure_snapshot,word,Copy of sensor_readings_t.intake_manifold_pressure (slot 1 absolute manifold pressure - 1/18.56 kPa per count) taken each pass by cm848_processSensorTemperatureData; no reader found (was oil_pressure_reading_snapshot)
 0x003fb236,per_cylinder_timing_array,byte,
@@ -1895,7 +1925,9 @@ address,name,type,comment
 0x003fb560,cruise_speed_offset,word,
 0x003fb562,governor_speed_mode_count,word,
 0x003fb564,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb566,,ema_filter_state_t,EMA filter state - used by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
 0x003fb56e,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb570,,ema_filter_state_t,EMA filter state - used by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
 0x003fb578,cylinder_timing_tpu_capture_snapshot,dword,
 0x003fb57d,cylinder_event_seq_counter,byte,
 0x003fb57e,crank_state_debounce_timer,word,
@@ -2084,20 +2116,22 @@ address,name,type,comment
 0x003fb9a8,security_sequence_step,byte,
 0x003fb9aa,security_speed_working,word,
 0x003fb9ac,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
-0x003fb9ae,PTR_DAT_003fb9ae,pointer,
+0x003fb9ae,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle (was PTR_DAT_003fb9ae)
 0x003fb9b6,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fb9b8,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
 0x003fb9c0,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
-0x003fb9c2,PTR_DAT_003fb9c2,pointer,
+0x003fb9c2,,ema_filter_state_t,EMA filter state - used by cm848_protection_init_configBundle / cm848_protection_update_configBundle (was PTR_DAT_003fb9c2)
 0x003fb9e2,PTR_DAT_003fb9e2,pointer,
-0x003fb9ea,boost_pressure_timing_ema_coeff_ptr,pointer,EMA coeff ptr for boost pressure timing filter
-0x003fb9f6,PTR_DAT_003fb9f6,pointer,
+0x003fb9ea,boost_pressure_timing_ema_coeff_ptr,ema_filter_state_t,EMA coeff ptr for boost pressure timing filter
+0x003fb9f6,,ema_filter_state_t,EMA filter state - used by hpcr_fuelFinal_exponentialAverage (was PTR_DAT_003fb9f6)
 0x003fbcbe,PTR_DAT_003fbcbe,pointer,
 0x003fbcde,PTR_PTR_003fbcde,pointer,
-0x003fbce2,PTR_DAT_003fbce2,pointer,
-0x003fbcea,PTR_DAT_003fbcea,pointer,
-0x003fbd00,PTR_DAT_003fbd00,pointer,
-0x003fbd10,PTR_DAT_003fbd10,pointer,
-0x003fbd2e,PTR_DAT_003fbd2e,pointer,
+0x003fbce2,,ema_filter_state_t,EMA filter state - used by cm848_phase_groupA_exponentialAverage (was PTR_DAT_003fbce2)
+0x003fbcea,,ema_filter_state_t,EMA filter state - used by cm848_auxiliaryControl_exponentialAverage (was PTR_DAT_003fbcea)
+0x003fbd00,,ema_filter_state_t,EMA filter state - used by sensor_throttleTrim_ema_faultProcess (was PTR_DAT_003fbd00)
+0x003fbd08,,ema_filter_state_t,EMA filter state - used by sensor_throttleTrim_ema_faultProcess
+0x003fbd10,,ema_filter_state_t,EMA filter state - used by governor_speedRamp_stabilityFlag_calc (was PTR_DAT_003fbd10)
+0x003fbd2e,,ema_filter_state_t,EMA filter state - used by engine_torqueLimit_min_emaCalc (was PTR_DAT_003fbd2e)
 0x003fbd42,fault_channel_config_ptr,dword,iterating ptr over fault-channel config array (was PTR_DAT)
 0x003fbd46,fault_channel_state_ptr,dword,iterating ptr over per-channel fault RAM state (was PTR_DAT)
 0x003fbd4a,PTR_engine_rpm_trigger_ready_flag_003fbd4a,pointer,
@@ -2117,22 +2151,22 @@ address,name,type,comment
 0x003fc77c,BYTE_003fc77c,byte,
 0x003fcbca,PTR_DAT_003fcbca,pointer,
 0x003fcbce,PTR_DAT_003fcbce,pointer,
-0x003fcbdc,PTR_DAT_003fcbdc,pointer,
-0x003fcc08,PTR_DAT_003fcc08,pointer,
-0x003fcce8,PTR_DAT_003fcce8,pointer,
-0x003fccf6,PTR_DAT_003fccf6,pointer,
-0x003fcd18,PTR_DAT_003fcd18,pointer,
-0x003fcd20,PTR_DAT_003fcd20,pointer,
-0x003fcd2e,PTR_DAT_003fcd2e,pointer,
+0x003fcbdc,,ema_filter_state_t,EMA filter state - used by cm848_calculateAuxiliaryTorqueLimitFromEngineRPM (was PTR_DAT_003fcbdc)
+0x003fcc08,,ema_filter_state_t,EMA filter state - used by governor_speedReference_ramp_calc (was PTR_DAT_003fcc08)
+0x003fcce8,,ema_filter_state_t,EMA filter state - used by engine_protection_speedTracking_calc (was PTR_DAT_003fcce8)
+0x003fccf6,,ema_filter_state_t,EMA filter state - used by phase_group_b_filterGovernorRpmSquaredMovingAverage (was PTR_DAT_003fccf6)
+0x003fcd18,,ema_filter_state_t,EMA filter state - used by phase_group_b_computeGovernorFuelDemandOutput (was PTR_DAT_003fcd18)
+0x003fcd20,,ema_filter_state_t,EMA filter state - used by phase_group_b_computeGovernorFuelDemandOutput (was PTR_DAT_003fcd20)
+0x003fcd2e,,ema_filter_state_t,EMA filter state - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1 (was PTR_DAT_003fcd2e)
 0x003fcd36,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fcd38,PTR_DAT_003fcd38,pointer,
+0x003fcd38,,ema_filter_state_t,EMA filter state - used by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2 (was PTR_DAT_003fcd38)
 0x003fcd40,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fcd42,PTR_DAT_003fcd42,pointer,
+0x003fcd42,,ema_filter_state_t,EMA filter state - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3 (was PTR_DAT_003fcd42)
 0x003fcd4a,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
-0x003fcd4c,PTR_DAT_003fcd4c,pointer,
+0x003fcd4c,,ema_filter_state_t,EMA filter state - used by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4 (was PTR_DAT_003fcd4c)
 0x003fcd54,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
-0x003fcd56,PTR_DAT_003fcd56,pointer,
-0x003fcd96,PTR_DAT_003fcd96,pointer,
+0x003fcd56,,ema_filter_state_t,EMA filter state - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5 (was PTR_DAT_003fcd56)
+0x003fcd96,,ema_filter_state_t,EMA filter state - used by governor_cruise_rpmRatio_ema (was PTR_DAT_003fcd96)
 0x003fcd9e,cruise_control_on_toggle_state,word,Cruise ON/OFF state: cm848_updateCruiseControlOnOffToggle flips it on each new ON/OFF switch press and forces 0 on a cruise switch or vehicle speed rationality fault or until cold start reaches governor setpoint; 0 = denied reason 5 ON/OFF SW (was cruise_protection_ok)
 0x003fcda2,cruise_switch_request,CRUISE_SWITCH_REQUEST,Primary debounced cruise switch request - protection_control_state_check_2 result stored each cycle by cm848_cruiseControlPeriodicUpdate - read by every governor_cruise_ button handler and the engage check - prior value in cruise_switch_request_prev (was governor_speed_request_state_b)
 0x003fcdfb,cooling_fan_feed_forward_table,word,Dual-axis table arguments (cm848_dualAxisTableInterpolation with cooling_fan_speed_target) for cooling_fan_feed_forward_duty - set up by cm848_initCoolingFanControl
@@ -2154,18 +2188,18 @@ address,name,type,comment
 0x003fce9b,obd_calibration_id_frame_index,byte,Mode 9 InfoType 4 (calibration ID): next of the 4 frames (0-3) (was j1939_dm1_component_id_state)
 0x003fce9c,obd_dtc_scan_more_flag,byte,Nonzero while the mode 3 / 7 DTC scan has more fault slots to report (was j1939_dm7_has_more_flag)
 0x003fce9d,obd_dtc_copy_index,byte,Byte index into obd_dtc_staging while it is copied into the response (was j1939_dm7_byte_copy_index)
-0x003fceb4,PTR_DAT_003fceb4,pointer,
-0x003fcebe,PTR_DAT_003fcebe,pointer,
-0x003fcec6,PTR_DAT_003fcec6,pointer,
-0x003fcece,PTR_DAT_003fcece,pointer,
+0x003fceb4,,ema_filter_state_t,EMA filter state - used by cm848_processEngineOilPressure (was PTR_DAT_003fceb4)
+0x003fcebe,,ema_filter_state_t,EMA filter state - used by cm848_monitorEngineToVehicleSpeedRatio (was PTR_DAT_003fcebe)
+0x003fcec6,,ema_filter_state_t,EMA filter state - used by cm848_monitorEngineToVehicleSpeedRatio (was PTR_DAT_003fcec6)
+0x003fcece,,ema_filter_state_t,EMA filter state - used by cm848_monitorEngineToVehicleSpeedRatio (was PTR_DAT_003fcece)
 0x003fcf12,throttle_setpoint_limit_arg,word,computed ptr arg to cm848_throttleSetpoint_limit (was PTR_DAT)
 0x003fcfe0,rom_crc_descriptor_table_ptr,dword,ptr to current CRC descriptor entry (was PTR_DAT)
-0x003fd00a,PTR_DAT_003fd00a,pointer,
+0x003fd00a,,ema_filter_state_t,EMA filter state - used by protectionOutputActuatorControl (was PTR_DAT_003fd00a)
 0x003fd012,PTR_DAT_003fd012,pointer,
 0x003fd016,PTR_DAT_003fd016,pointer,
 0x003fd022,PTR_DAT_003fd022,pointer,
 0x003fd026,PTR_DAT_003fd026,pointer,
-0x003fd03c,PTR_DAT_003fd03c,pointer,
+0x003fd03c,,ema_filter_state_t,EMA filter state - used by protectionOutputActuatorControl (was PTR_DAT_003fd03c)
 0x003fd05e,output_shaft_speed_avg,word,2-sample moving average of output shaft speed: (output_shaft_speed_saved + output_shaft_speed_current) >> 1; computed in cm848_transmission_phase_group_a_calc, used as divisor for target_rpm ratio -> engine_temp_protection_input_raw (0x0040b6f4)
 0x003fd060,output_shaft_speed_saved,word,prior-cycle snapshot of output_shaft_speed_current (0x40a2ae); averaged with current sample for smoothing; seeded at init by cm848_output_shaft_speed_save, refreshed inline by cm848_transmission_phase_group_a_calc
 0x003fd062,protection_trim_divisor_working,dword,= protection_temp_scale_factor_working * protection_timing_period_cal; shaft-speed fuel-trim divisor used when NOT actively limiting (normal path)
@@ -4221,26 +4255,27 @@ address,name,type,comment
 0x0040a044,j1939_timer_mode_flag,byte,
 0x0040a046,sensor_channel_ram_start,byte,
 0x0040a05e,fuel_correction_output_snapshot,word,
-0x0040a062,sensor_channel0_ram,byte,
-0x0040a06e,sensor_channel1_ram,byte,
+0x0040a062,sensor_channel0_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel0_init / cm848_sensorChannel0_process
+0x0040a06e,sensor_channel1_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel1_init / cm848_sensorChannel1_process
 0x0040a07a,sensor_channel2_ram,byte,
 0x0040a07c,sensor_channel2_raw_value,word,
-0x0040a086,sensor_channel3_ram,byte,
-0x0040a092,sensor_channel4_ram,byte,
-0x0040a0aa,sensor_channel5_ram,byte,
-0x0040a0b6,sensor_channel6_ram,byte,
-0x0040a0c2,sensor_channel7_ram,byte,
-0x0040a0ce,sensor_channel8_ram,byte,
-0x0040a0e6,sensor_channel9_ram,byte,
-0x0040a0f2,sensor_channel10_ram,dword,
-0x0040a0f4,sensor_channel10_ram+2,,
-0x0040a0fe,sensor_channel11_ram,byte,
-0x0040a10a,sensor_channel12_ram,byte,
+0x0040a086,sensor_channel3_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel3_boostPressureInit / cm848_sensorChannel3_boostPressureProcess
+0x0040a092,sensor_channel4_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel4_init / cm848_sensorChannel4_process
+0x0040a0aa,sensor_channel5_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel5_init / cm848_sensorChannel5_process
+0x0040a0b6,sensor_channel6_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel6_init / cm848_sensorChannel6_process
+0x0040a0c2,sensor_channel7_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel7_init / cm848_sensorChannel7_process
+0x0040a0ce,sensor_channel8_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel8_init / cm848_sensorChannel8_process
+0x0040a0da,,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
+0x0040a0e6,sensor_channel9_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel9_init / cm848_sensorChannel9_process
+0x0040a0f2,sensor_channel10_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x0040a0fe,sensor_channel11_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel11_init / cm848_sensorChannel11_process
+0x0040a10a,sensor_channel12_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel12_init / cm848_sensorChannel12_process
 0x0040a116,sensor_channel13_ram,byte,
 0x0040a11e,j1939_accelerator_pedal_source_priority,byte,Set to j1939_input_source_priority when the J1939 pedal writes; cm848_fuelDemandFinalCalculation skips the rate-limit / override stage while it is above that level (was fuel_demand_feature_threshold)
-0x0040a122,sensor_channel14_ram,byte,
-0x0040a13a,sensor_channel15_ram,byte,
-0x0040a146,fuel_demand_table_xaxis_base,word,
+0x0040a122,sensor_channel14_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel14_init / cm848_sensorChannel14_process
+0x0040a12e,,sensor_channel_state_t,Sensor channel RAM state - used by cm848_protection_init_configBundle / cm848_protection_update_configBundle
+0x0040a13a,sensor_channel15_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel15_init / cm848_sensorChannel15_process
+0x0040a146,fuel_demand_table_xaxis_base,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel16_init / cm848_sensorChannel16_process
 0x0040a152,governor_fuel_demand_value,word,
 0x0040a154,governor_fuel_demand_mode,word,
 0x0040a156,governor_request_active_flag,word,
@@ -5285,14 +5320,17 @@ address,name,type,comment
 0x0040b150,accelerator_pedal_position_in_use,word,fuel_demand_control_t.calculated as protection and the freeze frame use it (a substitute on its fault bits - cm848_selectSensorValuesInUse); OBD-II PID 0x11 throttle position = this x 51 / 80 so about 0.25 percent per count (was protection_fuel_demand_snapshot)
 0x0040b152,coolant_temperature_in_use,word,Coolant temperature (1/64 deg F) the engine protection uses (cm848_selectSensorValuesInUse - a substitute on its fault bits); filtered for PCI 0xC0 byte 3 / freeze frame (was protection_coolant_temp_active)
 0x0040b154,intake_manifold_temperature_in_use,word,Intake manifold temperature (1/64 deg F) the engine protection uses (cm848_selectSensorValuesInUse - a substitute on its fault bits); freeze frame (was fault_timing_snapshot - the same name as the dword at 0x40a64c)
-0x0040b156,sensor_channel_5_state,byte,
-0x0040b162,sensor_channel_6_state,byte,
-0x0040b16e,cruise_switch_channel_state,byte,Per-channel state byte for the cruise-control switch QADC channel (0x2f/47); param_2 of cm848_processCruiseSwitchChannel / cm848_initCruiseSwitchChannel; working RAM so no _cal
-0x0040b17a,PTR_SUB_03ffe880_0040b17a,pointer,
-0x0040b1aa,sensor_channel_8_state,byte,
-0x0040b1b6,sensor_channel_9_state,byte,
-0x0040b1c2,sensor_channel_10_state,byte,
-0x0040b1ce,sensor_channel_11_state,byte,
+0x0040b156,sensor_channel_5_state,sensor_channel_state_t,Sensor channel RAM state - used by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
+0x0040b162,sensor_channel_6_state,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel69_init / cm848_sensorChannel69_process
+0x0040b16e,cruise_switch_channel_state,sensor_channel_state_t,Per-channel state byte for the cruise-control switch QADC channel (0x2f/47); param_2 of cm848_processCruiseSwitchChannel / cm848_initCruiseSwitchChannel; working RAM so no _cal
+0x0040b17a,,sensor_channel_state_t,Sensor channel RAM state - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1 (was PTR_SUB_03ffe880_0040b17a)
+0x0040b186,,sensor_channel_state_t,Sensor channel RAM state - used by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
+0x0040b192,,sensor_channel_state_t,Sensor channel RAM state - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
+0x0040b1aa,sensor_channel_8_state,sensor_channel_state_t,Sensor channel RAM state - used by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
+0x0040b1b6,sensor_channel_9_state,sensor_channel_state_t,Sensor channel RAM state - used by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
+0x0040b1c2,sensor_channel_10_state,sensor_channel_state_t,Sensor channel RAM state - used by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
+0x0040b1ce,sensor_channel_11_state,sensor_channel_state_t,Sensor channel RAM state - used by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
+0x0040b1da,,sensor_channel_state_t,Sensor channel RAM state - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
 0x0040b1ea,boost_pressure_above_barometric,word,Intake manifold pressure minus barometric pressure clamped at 0 (1/18.56 kPa) from cm848_processSensorTemperatureData; read by the overboost and boost-band monitor / hpcr_fuelDemandProc / diag_boostLoad_overtemp_monitor / cm848_calibration_group21_load; 47 in the dump (was temperature_differential)
 0x0040b1ec,protection_iat_scaled,word,
 0x0040b1ee,fuel_demand_timing_enable_flag,word,
@@ -5362,7 +5400,7 @@ address,name,type,comment
 0x0040b2ec,cooling_fan_intake_temperature_filter,pointer,Filter state for cooling_fan_intake_temperature_filtered (was PTR_DAT_0040b2ec)
 0x0040b2f0,cooling_fan_intake_temperature_filter_state,dword,State of cooling_fan_intake_temperature_filter (zeroed at init)
 0x0040b2f6,radiator_fan_speed_unfiltered,word,Fan speed before the moving average (0.125 rpm) - cm848_measureRadiatorFanSpeed
-0x0040b302,radiator_fan_speed_filter_pointer,pointer,Filter state for the radiator_fan_speed moving average (set to 0x4088cc by cm848_initRadiatorFanSpeedMeasurement) (was tpu_rpm_ema_coeff_ptr)
+0x0040b302,radiator_fan_speed_filter_pointer,ema_filter_state_t,Filter state for the radiator_fan_speed moving average (set to 0x4088cc by cm848_initRadiatorFanSpeedMeasurement) (was tpu_rpm_ema_coeff_ptr)
 0x0040b30a,engine_load_input_b,word,
 0x0040b31c,engine_load_normalized_prev,word,
 0x0040b31e,safety_fuel_blend_output,word,
@@ -5630,7 +5668,7 @@ address,name,type,comment
 0x0040b678,governor_fuel_demand_working,word,
 0x0040b67a,governor_fuel_demand_upper,word,
 0x0040b67c,governor_pid_integral_snapshot,word,
-0x0040b682,governor_override_speed_ema_coeff_ptr,pointer,EMA coeff pointer for governor override speed
+0x0040b682,governor_override_speed_ema_coeff_ptr,ema_filter_state_t,EMA coeff pointer for governor override speed
 0x0040b68e,cruise_control_state,CRUISE_CONTROL_STATE,cruise control action/state (was fuel_demand_speed_error - NOT a speed error; it is the CRUISE_CONTROL_STATE selector for cm848_cruiseSpeedCommandStateMachine). Written each cycle in cm848_cruiseControlPeriodicUpdate
 0x0040b698,cruise_speed_reference_a,word,
 0x0040b69a,cruise_speed_setpoint_b,word,
@@ -5670,8 +5708,8 @@ address,name,type,comment
 0x0040b716,vehicle_speed_pulse_timeout,word,Reloaded on every speed-sensor interrupt and counted down by cm848_calculateVehicleSpeed; 0 = no pulses -> vehicle speed 0 (was injection_timing_done_flag)
 0x0040b71e,vehicle_speed_sensor_pulse_total,word,Running speed-sensor pulse count (the interrupt adds the pulses per measurement); PCI transmit message 11 carries its delta (was injection_timing_prev_value)
 0x0040b720,vehicle_speed_sensor_tpu_channel,word,TPU-B channel of the vehicle speed sensor (2) (was injection_timing_cylinder_index)
-0x0040b722,protection_param_1_channel_state,byte,
-0x0040b72e,protection_param_2_channel_state,byte,
+0x0040b722,protection_param_1_channel_state,sensor_channel_state_t,Sensor channel RAM state - used by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
+0x0040b72e,protection_param_2_channel_state,sensor_channel_state_t,Sensor channel RAM state - used by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
 0x0040b73a,governor_fuel_demand_setpoint,word,
 0x0040b73c,cylinder_diag_accumulator_e,word,
 0x0040b73e,cylinder_diag_accumulator_f,word,
@@ -5871,6 +5909,7 @@ address,name,type,comment
 0x0040bd82,sensor_channel3_raw,word,
 0x0040bd84,sensor_channel105_raw,word,
 0x0040bd86,sensor_channel9_pressure_raw,word,
+0x0040bd88,,word,Sensor channel output word - used by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
 0x0040bd8a,sensor_channel109_raw,word,
 0x0040bd8c,sensor_channel10_raw,word,
 0x0040bd8e,boost_pressure_sensor_raw,word,
@@ -5888,15 +5927,22 @@ address,name,type,comment
 0x0040bda8,sensor_channel105_filtered,word,
 0x0040bdaa,sensor_channel10_filtered,word,
 0x0040bdac,sensor_channel108_filtered,word,
+0x0040bdae,,word,Sensor channel output word - used by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
 0x0040bdb0,sensor_channel109_filtered,word,
 0x0040bdb2,sensor_channel69_filtered,word,
 0x0040bdb4,protection_derate_fallback_speed,word,fixed fallback governor speed target the load-protection derate forces governor_speed_tracking to when active (RAM copy of ROM cal DAT_00059656+2 = 0x2400 ~1152 RPM); read only in cm848_calculateDiagnosticStatusBits - was misnamed governor_speed_fault_target
 0x0040bdb6,protection_channel_filtered_output,word,live filtered output of protection sensor channel 0x65 (mirror of sensor_channel_filtered_output[0x65] at 0x40baf0 written each cycle by cm848_protection_update_configBundle); the load-deviation reference for the load-protection cluster - NOT a cal/offset
+0x0040bdb8,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
+0x0040bdba,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
+0x0040bdbc,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
+0x0040bdbe,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0040bdc4,governor_speed_reference_raw,word,
 0x0040bdd0,sensor_channel7_raw,word,
 0x0040bdd2,sensor_channel7_filtered,word,
 0x0040bdd4,sensor_channel71_raw,word,
 0x0040bdd6,sensor_channel71_filtered,word,
+0x0040bdd8,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
+0x0040bdda,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
 0x0040bddc,sensor_channel8_raw,word,
 0x0040bdde,sensor_channel8_filtered,word,
 0x0040bde0,sensor_channel13_raw,word,
@@ -5909,6 +5955,8 @@ address,name,type,comment
 0x0040bdf2,sensor_channel15_filtered,word,
 0x0040bdf4,sensor_channel102_filtered,word,
 0x0040bdf6,sensor_channel102_raw,word,
+0x0040bdf8,,word,Sensor channel output word - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
+0x0040bdfa,,word,Sensor channel output word - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
 0x0040bdfc,sensor_channel54_raw,word,
 0x0040bdfe,sensor_channel54_filtered,word,
 0x0040be00,sensor_channel55_raw,word,
@@ -5925,7 +5973,7 @@ address,name,type,comment
 0x0040be16,sensor_channel20_fault_status,word,
 0x0040be18,sensor_channel7_fault_status,word,
 0x0040be1a,sensor_channel9_fault_status,word,
-0x0040be1c,sensor_channel4_fault_status,dword,
+0x0040be1c,sensor_channel4_fault_status,word,Sensor channel output word - used by cm848_sensorChannel2_init / cm848_sensorChannel2_process
 0x0040be20,map_sensor_fault_status,word,
 0x0040be22,sensor_channel105_fault_status,word,
 0x0040be24,sensor_channel10_fault_status,word,
@@ -5933,15 +5981,19 @@ address,name,type,comment
 0x0040be2a,sensor_channel69_fault_status,word,
 0x0040be2c,sensor_channel109_fault_status,word,
 0x0040be2e,protection_fault_condition_value,word,signed 0/1/2 fault-condition code for one engine-protection channel; written via updateSensorChannelWithConfig (indexed sthx - not instruction-proven); base of protection_diagnostic_status_intermediate
+0x0040be30,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
+0x0040be32,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0040be36,fuel_smoke_limit_mode,word,smoke limit mode 0/1/2 off/EGR/boost (lha=word; was PTR_DAT)
 0x0040be3a,sensor_channel7_fault_status,word,
 0x0040be3e,sensor_channel71_fault_status,word,
+0x0040be40,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
 0x0040be42,sensor_channel8_fault_status,word,
 0x0040be44,sensor_channel13_fault_status,word,
 0x0040be46,sensor_channel42_fault_status,word,
 0x0040be4a,sensor_channel21_fault_status,word,
-0x0040be4c,sensor_channel15_fault_status,byte,
+0x0040be4c,sensor_channel15_fault_status,word,Sensor channel output word - used by cm848_sensorChannel16_init / cm848_sensorChannel16_process
 0x0040be4e,sensor_channel102_fault_status,word,
+0x0040be50,,word,Sensor channel output word - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
 0x0040be52,sensor_channel54_fault_status,word,
 0x0040be54,sensor_channel55_fault_status,word,
 0x0040be56,sensor_channel76_fault_status,word,
@@ -6432,11 +6484,14 @@ address,name,type,comment
 0x003fd40e,j1939_periodic_queue0_count,byte,entry count for J1939 periodic diag queue 0 (max 20)
 0x003fd40f,j1939_periodic_queue1_count,byte,entry count for J1939 periodic diag queue 1 (max 10)
 0x003fee98,tpu_init_retry_count,word,TPU init retry count; gates diag fault flag
-0x003feed0,sensor_channel_cal_block_start,dword,base of sensor channel cal block (ROM->RAM copy dest)
+0x003feed0,sensor_channel_cal_block_start,word,Start of the sensor channel calibration block (configs and their tables) that cm848_copyRomToRamBuffer fills dword by dword from ROM 0x64aea up to sensor_channel_ram_start at boot - only reached through a pointer (was dword - it covered the first channel config at +2)
+0x003feed2,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel5_init / cm848_sensorChannel5_process
 0x003feee2,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel5_init / cm848_sensorChannel5_process
 0x003feefa,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel5_init / cm848_sensorChannel5_process
+0x003fef12,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel6_init / cm848_sensorChannel6_process
 0x003fef22,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannel6_init / cm848_sensorChannel6_process
 0x003fef4e,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel6_init / cm848_sensorChannel6_process
+0x003fef7a,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel8_init / cm848_sensorChannel8_process
 0x003fef8a,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
 0x003fefa2,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
 0x003fbdc4,j1939_tp_bam_session_active,byte,J1939 BAM broadcast condition flag (DA=SA=0xFF)
@@ -7115,6 +7170,8 @@ address,name,type,comment
 0x003fd47e,cooling_fan_read_back_check_divider,word,Divide-by-2 counter for entry 1 (cooling fan) in cm848_updateOutputReadBackFaultBits: that entry's read-feedback slot is called on every 2nd monitor pass (1 -> skip / 2 -> check and reset to 0) - working RAM just below the EEPROM mirror (was protection_timer_b_tick_divider)
 0x003fdb46,transmission_temperature_qadc_channel_cal,word,EEPROM 0x6c4 = qadc_channel_index_table[103]: QADC dispatch index of the transmission temperature sensor (91 = QADC-B result 26); cm848_selectTransmissionTemperatureInUse reads that raw result for its stability check (was torque_limit_setpoint_qadc_channel_index)
 0x003fefbc,j1939_accelerator_pedal_default_position,word,Position used while the J1939 pedal is suspended / lost / invalid; never written by code (was emission_fuel_demand_default_output)
+0x003fefca,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel16_init / cm848_sensorChannel16_process
+0x003fefda,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel16_init / cm848_sensorChannel16_process
 0x003ff067,fuel_boost_final_fault_gate_enable,byte,ROM fault-gate bitmask (fuel boost final)
 0x003ff06b,fuel_timing_demand_fault_gate_enable,byte,ROM fault-gate bitmask (fuel timing demand)
 0x003ff06f,fuel_boost_protect_fault_gate_enable,byte,ROM fault-gate bitmask (boost protection)

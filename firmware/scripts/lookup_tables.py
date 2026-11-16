@@ -55,7 +55,7 @@ LOOKUPS = [
 AXIS_ROLES = ("x", "x2", "y_axis")
 DATA_AXIS = {"y": "x", "y2": "x2", "y3": "x2", "y4": "x2"}     # 1-D data role -> its axis role
 CACHE_CASTS = ("(word *)", "(table_interp_args_t *)")
-JUNK_NAME = re.compile(r"^(u_|s_|BYTE_|WORD_|DWORD_|DAT_|UNK_)")
+JUNK_NAME = re.compile(r"^(u_|s_|BYTE_|WORD_|DWORD_|DAT_|UNK_|PTR_|SUB_)")
 MAX_AXIS_BYTES = 0x400
 
 Call = namedtuple("Call", "source callee roles function")       # roles: {role: address}

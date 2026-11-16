@@ -429,10 +429,16 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
 - `protection_control_state_flags` (0x003fafd4) uses this for 10 channels; look for `& 0x55555` in other status registers
 
 ### Sensor Channel Architecture
-- Sensor channels use paired functions: `sensorChannelN_init()` calls a config init function, `sensorChannelN_process()` calls the update function
-- Both functions take identical 13 parameters (calibration pointers, RAM buffers, ADC indices, output variables)
-- CM848: `sensorChannelConfigInit` (0x00500234) + `updateSensorChannelWithConfig` (0x00500a4c)
-- Two sensor types: Type A uses `sensorChannelConfigInit`, Type B uses `sensorChannelInit_typeB`
+- Sensor channels use paired wrappers: `sensorChannelN_init()` calls the periodic pass, `sensorChannelN_process()` the boot pass (the suffixes are inverted - see the memory note in PR #39).
+- **Four channel functions, one prototype (2026-11-16):** Type A `sensorChannelConfigInit` (0x500234, periodic) / `updateSensorChannelWithConfig` (0x500a4c, boot) and Type B `sensorChannelTypeB_configInit` (0x5012dc) / `sensorChannelTypeB_update` (0x501b4c) run the same algorithm and take the same 13 parameters:
+  `(sensor_channel_config_t *config_ptr, sensor_channel_state_t *state_ptr, word *cached_axis_offset, word *x_axis, word *y_data, int flags, ema_filter_state_t *filter_state_ptr, uint channel_index, uint high_fault_bit, uint low_fault_bit, word *value_output_ptr, word *default_value_output_ptr, word *fault_status_output_ptr)`.
+  The old Type A prototype was misaligned. Its `adc_index_*` / `output_raw` / `output_filtered` / `param_11-13` were really the filter state, channel, fault bits and outputs, so the 22 Type A call sites passed 16-bit-truncated pointers (`0xbd90`) and the body read the outputs as `in_stack_` slots.
+- **The blocks:** each channel has a ROM / RAM block laid out as config (16 bytes) + x axis + y data, a 12-byte RAM state and an 8-byte EMA filter state (with the lookup cache word after it).
+  - `sensor_channel_config_t`: `filter_coefficient` (was `config_word0`) / `default_value` / `high_threshold` / `low_threshold` / `debounce_step` / `recovery_decrement` / `debounce_limit` / `debounce_clear_threshold`.
+  - `sensor_channel_state_t`: `raw_adc_counts` / `value` (the lookup result) / `debounce_count` / `held_value` (output while the channel's `fuel_demand_feature_flags` bit is set; for the accelerator pedal channel 13 the J1939 input layer writes `j1939_accelerator_pedal_position` there and its source priority in `spare`) / `spare` / `lookup_input` (ratiometric reading, capped at 0x3ff).
+  - `ema_filter_state_t` (`exponentialMovingAverage`'s state, 45 callers): `coefficient` points at a `filter_coefficient`, and `accumulator` is Q16.16. Each pass moves the value (65536 - coefficient) / 65536 of the way, and 0 means no filtering.
+- **Outputs:** `value_output_ptr` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value. So the `sensor_channelN_raw` / `boost_pressure_sensor_raw` / `fuel_timing_sensor_raw` globals passed there hold the filtered value, not a raw reading. `default_value_output_ptr` receives the config default (the `*_filtered` globals are misnamed too). The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
+- **Still untyped:** 26 config / state / filter blocks carry a named row inside them (e.g. `boost_pressure_fixed_reference` = the boost config's default, `fuel_level_unfiltered` = the fuel level state's value, the J1939 pedal pair, accumulator names). Typing them turns every direct use into a struct field, which is a naming decision (todo 041), so their call sites keep a cast.
 - Look for similar patterns in CM550 firmware
 
 ### Table lookups (CM848, PR #48)

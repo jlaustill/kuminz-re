@@ -974,6 +974,8 @@ typedef struct parameter_response_t parameter_response_t;
 typedef struct calterm_protocol_t calterm_protocol_t;
 typedef struct insite_protocol_t insite_protocol_t;
 typedef struct sensor_channel_config_t sensor_channel_config_t;
+typedef struct sensor_channel_state_t sensor_channel_state_t;
+typedef struct ema_filter_state_t ema_filter_state_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct dma_descriptor_t dma_descriptor_t;
 typedef struct memory_patch_entry_t memory_patch_entry_t;
@@ -1350,7 +1352,7 @@ struct insite_protocol_t {
 };
 
 struct sensor_channel_config_t {
-    uint16_t config_word0;  /* Offset 0 - not accessed by sensorChannelTypeB; purpose unconfirmed */
+    uint16_t filter_coefficient;  /* EMA coefficient: the weight of the previous filtered value in 1/65536 (0 = no filtering) - the channel's ema_filter_state_t.coefficient points here (was config_word0) */
     uint16_t default_value;  /* Nominal/fault fallback value (written to filtered output and state_ptr[1]) */
     uint16_t high_threshold;  /* Upper limit - sensor value above this trips the high fault path */
     uint16_t low_threshold;  /* Lower limit - sensor value below this trips the low fault path */
@@ -1358,6 +1360,20 @@ struct sensor_channel_config_t {
     uint16_t recovery_decrement;  /* Per-cycle decrement applied to the debounce counter when back in range */
     uint16_t debounce_limit;  /* Debounce counter target - reached = fault confirmed */
     uint16_t debounce_clear_threshold;  /* Counter at or below this clears the confirmed-fault flags */
+};
+
+struct sensor_channel_state_t {
+    uint16_t raw_adc_counts;  /* QADC result read this pass (sensor_channel_diag_override while diagnostics override the channel) */
+    uint16_t value;  /* Engineering value: the table lookup of lookup_input (config default_value while the channel is disabled or faulted) - filtered into sensor_channel_filtered_output[channel] */
+    uint16_t debounce_count;  /* Fault debounce: + debounce_step toward debounce_limit while out of range / - recovery_decrement back in range */
+    uint16_t held_value;  /* Output while the channel is held (its fuel_demand_feature_flags bit set) - config default_value from the boot pass */
+    uint16_t spare;  /* Not accessed by the four sensor-channel functions */
+    uint16_t lookup_input;  /* Table input: raw x sensor_channel_ratio_scale / the supply channel's filtered output (capped at 0x3ff) or the raw reading for type-0 channels */
+};
+
+struct ema_filter_state_t {
+    word* coefficient;  /* Points at the filter coefficient (a sensor channel's config filter_coefficient): the weight of the previous value in 1/65536 - 0 = no filtering */
+    uint32_t accumulator;  /* Q16.16 filtered value - its integer part is the output */
 };
 
 struct q16_fixed_point_t {

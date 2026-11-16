@@ -158,33 +158,35 @@ function_address,function_name,param_index,name,type,comment
 # Mode 2: sensorChannelConfigInit + updateSensorChannelWithConfig (13 params)
 # Mode 0: sensorChannelSimpleProcess (simpler processing)
 # -----------------------------------------------------------------------------
-0x00500234,sensorChannelConfigInit,0,cal_ptr_1,void*,Calibration pointer 1
-0x00500234,sensorChannelConfigInit,1,cal_ptr_2,void*,Calibration pointer 2
-0x00500234,sensorChannelConfigInit,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset (was cal_ptr_3)
-0x00500234,sensorChannelConfigInit,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with the state word at +10 (was cal_ptr_4)
-0x00500234,sensorChannelConfigInit,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word (was ram_buffer_1)
-0x00500234,sensorChannelConfigInit,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup (was ram_buffer_2)
-0x00500234,sensorChannelConfigInit,6,adc_index_primary,ushort,Primary ADC channel index
-0x00500234,sensorChannelConfigInit,7,adc_index_secondary,ushort,Secondary ADC channel index
-0x00500234,sensorChannelConfigInit,8,output_raw,ushort*,Pointer to raw output variable
-0x00500234,sensorChannelConfigInit,9,output_filtered,ushort*,Pointer to filtered output variable
-0x00500234,sensorChannelConfigInit,10,param_10,ushort,Configuration parameter
-0x00500234,sensorChannelConfigInit,11,param_11,ushort,Configuration parameter
-0x00500234,sensorChannelConfigInit,12,param_12,ushort,Configuration parameter
+0x00500234,sensorChannelConfigInit,return,,void,No return value (Type A periodic pass)
+0x00500234,sensorChannelConfigInit,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+0x00500234,sensorChannelConfigInit,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
+0x00500234,sensorChannelConfigInit,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
+0x00500234,sensorChannelConfigInit,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
+0x00500234,sensorChannelConfigInit,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
+0x00500234,sensorChannelConfigInit,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
+0x00500234,sensorChannelConfigInit,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
+0x00500234,sensorChannelConfigInit,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
+0x00500234,sensorChannelConfigInit,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
+0x00500234,sensorChannelConfigInit,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
+0x00500234,sensorChannelConfigInit,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+0x00500234,sensorChannelConfigInit,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
+0x00500234,sensorChannelConfigInit,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
 
-0x00500a4c,updateSensorChannelWithConfig,0,cal_ptr_1,void*,Calibration pointer 1
-0x00500a4c,updateSensorChannelWithConfig,1,cal_ptr_2,void*,Calibration pointer 2
-0x00500a4c,updateSensorChannelWithConfig,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset (was cal_ptr_3)
-0x00500a4c,updateSensorChannelWithConfig,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with the state word at +10 (was cal_ptr_4)
-0x00500a4c,updateSensorChannelWithConfig,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word (was ram_buffer_1)
-0x00500a4c,updateSensorChannelWithConfig,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup (was ram_buffer_2)
-0x00500a4c,updateSensorChannelWithConfig,6,adc_index_primary,ushort,Primary ADC channel index
-0x00500a4c,updateSensorChannelWithConfig,7,adc_index_secondary,ushort,Secondary ADC channel index
-0x00500a4c,updateSensorChannelWithConfig,8,output_raw,ushort*,Pointer to raw/linearized output
-0x00500a4c,updateSensorChannelWithConfig,9,output_filtered,ushort*,Pointer to filtered output
-0x00500a4c,updateSensorChannelWithConfig,10,param_10,ushort,Configuration parameter
-0x00500a4c,updateSensorChannelWithConfig,11,param_11,ushort,Configuration parameter
-0x00500a4c,updateSensorChannelWithConfig,12,param_12,ushort,Configuration parameter
+0x00500a4c,updateSensorChannelWithConfig,return,,void,No return value (Type A boot pass)
+0x00500a4c,updateSensorChannelWithConfig,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+0x00500a4c,updateSensorChannelWithConfig,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
+0x00500a4c,updateSensorChannelWithConfig,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
+0x00500a4c,updateSensorChannelWithConfig,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
+0x00500a4c,updateSensorChannelWithConfig,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
+0x00500a4c,updateSensorChannelWithConfig,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
+0x00500a4c,updateSensorChannelWithConfig,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
+0x00500a4c,updateSensorChannelWithConfig,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
+0x00500a4c,updateSensorChannelWithConfig,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
+0x00500a4c,updateSensorChannelWithConfig,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
+0x00500a4c,updateSensorChannelWithConfig,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+0x00500a4c,updateSensorChannelWithConfig,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
+0x00500a4c,updateSensorChannelWithConfig,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
 
 # Sensor Channel 3 (Boost/MAP Pressure) - calls the above with specific calibration
 # (sensorChannel3_boostPressureInit + sensorChannel3_boostPressureProcess take no parameters)
@@ -312,32 +314,34 @@ function_address,function_name,param_index,name,type,comment
 # Sensor Channel Type B - Config Init (13 params via PowerPC ABI: r3-r10 + 5 stack)
 # Params 4-6 (r6-r8) are passed by callers but NOT USED by function body
 # -----------------------------------------------------------------------------
-0x005012dc,sensorChannelTypeB_configInit,0,config_ptr,sensor_channel_config_t*,Per-channel ROM calibration config (default/thresholds/debounce fields)
-0x005012dc,sensorChannelTypeB_configInit,1,state_ptr,word*,RAM state buffer (stores ADC raw + debounce counter + filtered value)
-0x005012dc,sensorChannelTypeB_configInit,2,cached_axis_offset,word *,Cache word of the lookup (r5): the byte offset (2 x index) of the axis segment found last time - the update resets it to 2 - passed to lookupTableInterpolation as its cached_axis_offset (was table_interp_args_t *)
-0x005012dc,sensorChannelTypeB_configInit,3,x_axis,word *,X axis (r6): first word = byte length of the breakpoints - looked up with state_ptr[5] (was table_ptr - not unused)
-0x005012dc,sensorChannelTypeB_configInit,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word (was axes_ptr - not unused)
-0x005012dc,sensorChannelTypeB_configInit,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup - 0 in the calls (was mode_flag)
-0x005012dc,sensorChannelTypeB_configInit,6,ema_state_ptr,int*,EMA filter state pointer (written at offset +4 with shifted value)
-0x005012dc,sensorChannelTypeB_configInit,7,channel_index,uint,Sensor channel number (0x1c=28 0x1d=29 etc) indexes sensor_channel_filtered_output
-0x005012dc,sensorChannelTypeB_configInit,8,high_fault_bit,uint,High fault status bit index (0x179=377 etc) for fault_active_status_array
-0x005012dc,sensorChannelTypeB_configInit,9,low_fault_bit,uint,Low fault status bit index (0x17a=378 etc) for fault_active_status_array
-0x005012dc,sensorChannelTypeB_configInit,10,raw_output_ptr,word*,Output: raw sensor ADC value (e.g. sensor_channel28_raw)
-0x005012dc,sensorChannelTypeB_configInit,11,filtered_output_ptr,word*,Output: EMA-filtered sensor value (e.g. sensor_channel28_filtered)
-0x005012dc,sensorChannelTypeB_configInit,12,fault_output_ptr,word*,Output: fault status word (e.g. sensor_channel28_fault_status)
-0x00501b4c,sensorChannelTypeB_update,0,config_ptr,sensor_channel_config_t*,Per-channel ROM calibration config (default/thresholds/debounce fields)
-0x00501b4c,sensorChannelTypeB_update,1,state_ptr,word*,RAM state buffer (stores ADC raw + debounce counter + filtered value)
-0x00501b4c,sensorChannelTypeB_update,2,cached_axis_offset,word *,Cache word of the lookup (r5): the byte offset (2 x index) of the axis segment found last time - the update resets it to 2 - passed to lookupTableInterpolation as its cached_axis_offset (was table_interp_args_t *)
-0x00501b4c,sensorChannelTypeB_update,3,x_axis,word *,X axis (r6): first word = byte length of the breakpoints - looked up with state_ptr[5] (was table_ptr - not unused)
-0x00501b4c,sensorChannelTypeB_update,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word (was axes_ptr - not unused)
-0x00501b4c,sensorChannelTypeB_update,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup - 0 in the calls (was mode_flag)
-0x00501b4c,sensorChannelTypeB_update,6,ema_state_ptr,int*,EMA filter state pointer (written at offset +4 with shifted value)
-0x00501b4c,sensorChannelTypeB_update,7,channel_index,uint,Sensor channel number (0x1c=28 0x1d=29 etc) indexes sensor_channel_filtered_output
-0x00501b4c,sensorChannelTypeB_update,8,high_fault_bit,uint,High fault status bit index (0x179=377 etc) for fault_active_status_array
-0x00501b4c,sensorChannelTypeB_update,9,low_fault_bit,uint,Low fault status bit index (0x17a=378 etc) for fault_active_status_array
-0x00501b4c,sensorChannelTypeB_update,10,raw_output_ptr,word*,Output: raw sensor ADC value (e.g. sensor_channel28_raw)
-0x00501b4c,sensorChannelTypeB_update,11,filtered_output_ptr,word*,Output: EMA-filtered sensor value (e.g. sensor_channel28_filtered)
-0x00501b4c,sensorChannelTypeB_update,12,fault_output_ptr,word*,Output: fault status word (e.g. sensor_channel28_fault_status)
+0x005012dc,sensorChannelTypeB_configInit,return,,void,No return value (Type B periodic pass)
+0x005012dc,sensorChannelTypeB_configInit,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+0x005012dc,sensorChannelTypeB_configInit,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
+0x005012dc,sensorChannelTypeB_configInit,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
+0x005012dc,sensorChannelTypeB_configInit,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
+0x005012dc,sensorChannelTypeB_configInit,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
+0x005012dc,sensorChannelTypeB_configInit,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
+0x005012dc,sensorChannelTypeB_configInit,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
+0x005012dc,sensorChannelTypeB_configInit,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
+0x005012dc,sensorChannelTypeB_configInit,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
+0x005012dc,sensorChannelTypeB_configInit,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
+0x005012dc,sensorChannelTypeB_configInit,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+0x005012dc,sensorChannelTypeB_configInit,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
+0x005012dc,sensorChannelTypeB_configInit,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
+0x00501b4c,sensorChannelTypeB_update,return,,void,No return value (Type B boot pass)
+0x00501b4c,sensorChannelTypeB_update,0,config_ptr,sensor_channel_config_t *,ROM / EEPROM calibration block: filter coefficient / default / thresholds / debounce
+0x00501b4c,sensorChannelTypeB_update,1,state_ptr,sensor_channel_state_t *,The channel's RAM state
+0x00501b4c,sensorChannelTypeB_update,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset
+0x00501b4c,sensorChannelTypeB_update,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with state_ptr->lookup_input
+0x00501b4c,sensorChannelTypeB_update,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word
+0x00501b4c,sensorChannelTypeB_update,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup
+0x00501b4c,sensorChannelTypeB_update,6,filter_state_ptr,ema_filter_state_t *,EMA filter state (r9) - the boot pass points its coefficient at config_ptr->filter_coefficient and seeds the accumulator
+0x00501b4c,sensorChannelTypeB_update,7,channel_index,uint,Sensor channel (r10): indexes sensor_channel_filtered_output / qadc_channel_index_table and the enable bitmaps
+0x00501b4c,sensorChannelTypeB_update,8,high_fault_bit,uint,Fault bit set when the input stays above high_threshold (fault n = word n/16 bit n%16)
+0x00501b4c,sensorChannelTypeB_update,9,low_fault_bit,uint,Fault bit set when the input stays below low_threshold
+0x00501b4c,sensorChannelTypeB_update,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
+0x00501b4c,sensorChannelTypeB_update,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
+0x00501b4c,sensorChannelTypeB_update,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
 0x0002e488,cm848_calculateLoadProtectionDeviationFlag,return,,void,explicit void(void) - writes only protection_rpm_below_confirm_flag - clears phantom args at the 0x2e4cc call site
 # -----------------------------------------------------------------------------
 # QSPI job driver (reviewed 2026-11-11)
@@ -400,3 +404,7 @@ function_address,function_name,param_index,name,type,comment
 0x000553ec,mpc555_tpuASetPwmDuty,return,,void,No return value
 0x000553ec,mpc555_tpuASetPwmDuty,0,channel,undefined4,TPU-A channel number 0-15
 0x000553ec,mpc555_tpuASetPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
+
+0x00056594,exponentialMovingAverage,return,,uint,Filtered value: the integer part of the updated accumulator
+0x00056594,exponentialMovingAverage,0,value,uint,New sample (r3)
+0x00056594,exponentialMovingAverage,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place
