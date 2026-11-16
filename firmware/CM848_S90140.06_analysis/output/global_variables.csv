@@ -70,183 +70,183 @@ address,name,type,comment
 0x00057e82,,pointer,
 0x00057eca,,pointer,
 0x000592a2,barometric_pressure_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 3 (barometric pressure - AMB SPN 108); its default_value is the fixed reference cm848_calculateBoostPressure subtracts when it uses no barometer (was the interior label boost_pressure_fixed_reference)
-0x000592b2,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
-0x000592c4,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
+0x000592b2,barometric_pressure_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
+0x000592c4,barometric_pressure_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
 0x000592d6,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel1_init / cm848_sensorChannel1_process
-0x000592e6,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel1_init / cm848_sensorChannel1_process
-0x0005930e,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel1_init / cm848_sensorChannel1_process
+0x000592e6,ambient_air_temperature_linearization_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel1_init / cm848_sensorChannel1_process
+0x0005930e,ambient_air_temperature_linearization_values,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel1_init / cm848_sensorChannel1_process
 0x00059336,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel2_init / cm848_sensorChannel2_process
-0x00059346,sensor_channel2_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel2_init / cm848_sensorChannel2_process
-0x00059358,sensor_channel2_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel2_init / cm848_sensorChannel2_process
+0x00059346,battery_voltage_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel2_init / cm848_sensorChannel2_process
+0x00059358,battery_voltage_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel2_init / cm848_sensorChannel2_process
 0x0005936a,boost_pressure_sensor_config,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel3_boostPressureInit / cm848_sensorChannel3_boostPressureProcess
 0x0005937a,boost_pressure_linearization_x_axis,word[9],
 0x0005938c,boost_pressure_linearization_y_axis,word[9],
 0x0005939e,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel4_init / cm848_sensorChannel4_process
-0x000593ae,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel4_init / cm848_sensorChannel4_process
-0x000593c6,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel4_init / cm848_sensorChannel4_process
+0x000593ae,sensor_channel77_linearization_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel4_init / cm848_sensorChannel4_process
+0x000593c6,sensor_channel77_linearization_values,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel4_init / cm848_sensorChannel4_process
 0x000593de,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
-0x000593ee,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
-0x0005941a,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
+0x000593ee,coolant_temperature_linearization_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
+0x0005941a,coolant_temperature_linearization_values,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
 0x00059446,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel7_init / cm848_sensorChannel7_process
-0x00059456,sensor_channel7_linearization_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel7_init / cm848_sensorChannel7_process
-0x0005946c,sensor_channel7_linearization_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel7_init / cm848_sensorChannel7_process
+0x00059456,sensor_channel75_linearization_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel7_init / cm848_sensorChannel7_process
+0x0005946c,sensor_channel75_linearization_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel7_init / cm848_sensorChannel7_process
 0x00059482,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
-0x00059492,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
-0x000594a8,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
+0x00059492,sensor_channel88_linearization_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
+0x000594a8,sensor_channel88_linearization_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
 0x000594be,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel9_init / cm848_sensorChannel9_process
-0x000594ce,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannel9_init / cm848_sensorChannel9_process
-0x000594fa,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel9_init / cm848_sensorChannel9_process
+0x000594ce,fuel_temperature_linearization_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannel9_init / cm848_sensorChannel9_process
+0x000594fa,fuel_temperature_linearization_values,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel9_init / cm848_sensorChannel9_process
 0x00059526,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
-0x00059536,,word[24],Lookup table - x axis of 23 breakpoints after its byte-length word - read by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
-0x00059566,,word[24],Lookup table - data: 23 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x00059536,intake_manifold_temperature_linearization_axis,word[24],Lookup table - x axis of 23 breakpoints after its byte-length word - read by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x00059566,intake_manifold_temperature_linearization_values,word[24],Lookup table - data: 23 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
 0x00059596,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel11_init / cm848_sensorChannel11_process
-0x000595a6,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel11_init / cm848_sensorChannel11_process
-0x000595b8,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel11_init / cm848_sensorChannel11_process
+0x000595a6,oil_pressure_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel11_init / cm848_sensorChannel11_process
+0x000595b8,oil_pressure_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel11_init / cm848_sensorChannel11_process
 0x000595ca,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel12_init / cm848_sensorChannel12_process
-0x000595da,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel12_init / cm848_sensorChannel12_process
-0x000595ec,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel12_init / cm848_sensorChannel12_process
-0x000595fe,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel13_init / cm848_sensorChannel13_process
-0x00059610,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel13_init / cm848_sensorChannel13_process
+0x000595da,remote_accelerator_pedal_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel12_init / cm848_sensorChannel12_process
+0x000595ec,remote_accelerator_pedal_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel12_init / cm848_sensorChannel12_process
+0x000595fe,accelerator_pedal_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel13_init / cm848_sensorChannel13_process
+0x00059610,accelerator_pedal_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel13_init / cm848_sensorChannel13_process
 0x00059622,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel14_init / cm848_sensorChannel14_process
-0x00059632,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel14_init / cm848_sensorChannel14_process
-0x00059644,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel14_init / cm848_sensorChannel14_process
+0x00059632,sensor_reference_voltage_a_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel14_init / cm848_sensorChannel14_process
+0x00059644,sensor_reference_voltage_a_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel14_init / cm848_sensorChannel14_process
 0x00059656,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_protection_init_configBundle / cm848_protection_update_configBundle
-0x00059666,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_protection_init_configBundle / cm848_protection_update_configBundle
-0x0005967c,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_protection_init_configBundle / cm848_protection_update_configBundle
+0x00059666,sensor_channel101_linearization_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_protection_init_configBundle / cm848_protection_update_configBundle
+0x0005967c,sensor_channel101_linearization_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_protection_init_configBundle / cm848_protection_update_configBundle
 0x00059692,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel15_init / cm848_sensorChannel15_process
-0x000596a2,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel15_init / cm848_sensorChannel15_process
-0x000596ba,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel15_init / cm848_sensorChannel15_process
-0x000596d2,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
-0x000596e8,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
-0x000596fe,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
-0x00059714,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
-0x0005972a,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
-0x0005973c,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
-0x0005974e,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
-0x0005975e,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
-0x0005976e,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
-0x0005977e,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
-0x000597d6,,word[25],Lookup table - x axis of 24 breakpoints after its byte-length word - read by engine_protection_derateParam_priorityApply / engine_torqueLimit_upperCap_calc
-0x00059808,,word[25],Lookup table - data: 24 values (one per axis breakpoint) after a byte-length word - read by engine_protection_derateParam_priorityApply / engine_torqueLimit_upperCap_calc
+0x000596a2,sensor_reference_voltage_c_linearization_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel15_init / cm848_sensorChannel15_process
+0x000596ba,sensor_reference_voltage_c_linearization_values,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel15_init / cm848_sensorChannel15_process
+0x000596d2,sensor_channel15_linearization_feature_bit_4_off_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
+0x000596e8,sensor_channel15_linearization_feature_bit_4_on_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
+0x000596fe,sensor_channel15_linearization_feature_bit_4_off_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
+0x00059714,sensor_channel15_linearization_feature_bit_4_on_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
+0x0005972a,all_speed_governor_friction_fuel_blend_0_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
+0x0005973c,all_speed_governor_friction_fuel_blend_0_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
+0x0005974e,governor_speed_scale_factor_blend_0_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
+0x0005975e,governor_speed_scale_factor_blend_0_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
+0x0005976e,governor_speed_scale_factor_blend_128_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
+0x0005977e,governor_speed_scale_factor_blend_128_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTrimValues
+0x000597d6,fault_derate_fuel_limit_by_engine_speed_axis,word[25],Lookup table - x axis of 24 breakpoints after its byte-length word - read by engine_protection_derateParam_priorityApply / engine_torqueLimit_upperCap_calc
+0x00059808,fault_derate_fuel_limit_by_engine_speed_values,word[25],Lookup table - data: 24 values (one per axis breakpoint) after a byte-length word - read by engine_protection_derateParam_priorityApply / engine_torqueLimit_upperCap_calc
 0x00059b32,,byte,
 0x00059e9c,fault_definition_table,byte,
 0x00059e9e,fault_entry_flags,byte,
 0x00059ece,fault_entry_config,byte,
 0x0005a150,,byte,
 0x0005a426,governor_load_xaxis_cal,word[5],
-0x0005a430,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
-0x0005a43a,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
-0x0005a444,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
-0x0005a44e,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
-0x0005a458,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
-0x0005a462,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateSpeedControlError
+0x0005a430,engine_retarder_torque_stage_1_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
+0x0005a43a,engine_retarder_torque_stage_2_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
+0x0005a444,engine_retarder_torque_stage_3_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
+0x0005a44e,engine_retarder_torque_stage_4_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
+0x0005a458,engine_retarder_torque_stage_5_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by j1939FormatMultiFrameResponse
+0x0005a462,engine_retarder_torque_stage_6_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateSpeedControlError
 0x0005a470,j1939_tsc1_auth_primary_sa,word,
 0x0005a472,j1939_tsc1_secondary_sa,word,
 0x0005a474,j1939_tsc1_auth_tertiary_sa,word,
 0x0005a494,j1939_feature_config_word,word,
 0x0005a77c,calibration_table_base,word[10],
 0x0005a790,calibration_table_offset,word[10],
-0x0005a7a4,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_processThrottlePositionLookups / cm848_selectTorqueLimit / governor_computeSpeedTargetWithThermalCorrection
-0x0005a7bc,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_processThrottlePositionLookups / cm848_selectTorqueLimit / governor_computeSpeedTargetWithThermalCorrection
-0x0005a7d4,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
-0x0005a7e6,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
-0x0005a7f8,,word[15],Lookup table - x axis of 14 breakpoints after its byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
-0x0005a816,,word[15],Lookup table - y axis of 14 breakpoints after its byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
-0x0005a834,,word[196],Lookup table - 2-D grid: 14 rows of 14 values (z[(y - 1) x 14 + x - 1] / no header) - read by governor_computeSpeedTargetWithThermalCorrection
+0x0005a7a4,friction_fuel_correction_by_coolant_temperature_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_processThrottlePositionLookups / cm848_selectTorqueLimit / governor_computeSpeedTargetWithThermalCorrection
+0x0005a7bc,friction_fuel_correction_by_coolant_temperature_values,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_processThrottlePositionLookups / cm848_selectTorqueLimit / governor_computeSpeedTargetWithThermalCorrection
+0x0005a7d4,air_conditioning_load_fuel_demand_offset_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
+0x0005a7e6,air_conditioning_load_fuel_demand_offset_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
+0x0005a7f8,radiator_fan_load_fuel_demand_offset_x_axis,word[15],Lookup table - x axis of 14 breakpoints after its byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
+0x0005a816,radiator_fan_load_fuel_demand_offset_y_axis,word[15],Lookup table - y axis of 14 breakpoints after its byte-length word - read by governor_computeSpeedTargetWithThermalCorrection
+0x0005a834,radiator_fan_load_fuel_demand_offset_grid,word[196],Lookup table - 2-D grid: 14 rows of 14 values (z[(y - 1) x 14 + x - 1] / no header) - read by governor_computeSpeedTargetWithThermalCorrection
 0x0005aaf0,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
-0x0005ab00,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
-0x0005ab12,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
+0x0005ab00,air_conditioning_pressure_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
+0x0005ab12,air_conditioning_pressure_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
 0x0005ab24,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel69_init / cm848_sensorChannel69_process
-0x0005ab34,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
-0x0005ab5c,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
+0x0005ab34,battery_temperature_linearization_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
+0x0005ab5c,battery_temperature_linearization_values,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
 0x0005ab84,cruise_switch_sensor_config,sensor_channel_config_t,Base of the cruise-control switch QADC channel (0x2f/47) config struct; param_1 of cm848_processCruiseSwitchChannel/init; field +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; ROM-sourced so NO _cal
 0x0005abe8,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
-0x0005abf8,,word[21],Lookup table - x axis of 20 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
-0x0005ac22,,word[21],Lookup table - data: 20 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
+0x0005abf8,sensor_channel26_linearization_axis,word[21],Lookup table - x axis of 20 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
+0x0005ac22,sensor_channel26_linearization_values,word[21],Lookup table - data: 20 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0005ac4c,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
-0x0005ac5c,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
-0x0005ac6a,,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
+0x0005ac5c,sensor_reference_voltage_2_linearization_axis,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
+0x0005ac6a,sensor_reference_voltage_2_linearization_values,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
 0x0005ac78,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
-0x0005ac88,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
-0x0005ac96,,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
+0x0005ac88,sensor_channel29_linearization_axis,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
+0x0005ac96,sensor_channel29_linearization_values,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
 0x0005aca4,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
-0x0005acb4,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
-0x0005acc6,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
+0x0005acb4,fuel_level_sensor_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
+0x0005acc6,fuel_level_sensor_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
 0x0005acd8,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
-0x0005ace8,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
-0x0005acfa,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
+0x0005ace8,accelerator_pedal_sensor_channel97_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
+0x0005acfa,accelerator_pedal_sensor_channel97_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3
 0x0005ad0c,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
-0x0005ad1c,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
-0x0005ad2e,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
+0x0005ad1c,accelerator_pedal_sensor_channel98_linearization_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
+0x0005ad2e,accelerator_pedal_sensor_channel98_linearization_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable2 / cm848_processSensorLookupTable2
 0x0005ad40,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
-0x0005ad50,,word[27],Lookup table - x axis of 26 breakpoints after its byte-length word - read by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
-0x0005ad86,,word[27],Lookup table - data: 26 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
+0x0005ad50,four_wheel_drive_switch_position_code_axis,word[27],Lookup table - x axis of 26 breakpoints after its byte-length word - read by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
+0x0005ad86,four_wheel_drive_switch_position_code_values,word[27],Lookup table - data: 26 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
 0x0005adbc,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
-0x0005adcc,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
-0x0005ade2,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
+0x0005adcc,governor_pressure_linearization_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
+0x0005ade2,governor_pressure_linearization_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
 0x0005adf8,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
-0x0005ae08,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
-0x0005ae30,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
-0x0005ae58,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by fuel_coldStart_rpmLimit_select
-0x0005ae84,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by fuel_coldStart_rpmLimit_select
-0x0005aeb0,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by fuel_coldStart_demandMin_2dLookup
-0x0005aedc,,word[11],Lookup table - y axis of 10 breakpoints after its byte-length word - read by fuel_coldStart_demandMin_2dLookup
-0x0005aef2,,word[210],Lookup table - 2-D grid: 10 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by fuel_coldStart_demandMin_2dLookup
-0x0005b096,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by governor_injectionTiming_modeAdj
-0x0005b0b2,,word[14],Lookup table - data: 13 values (one per axis breakpoint) after a byte-length word - read by governor_injectionTiming_modeAdj
-0x0005b0ce,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
-0x0005b0e8,,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
-0x0005b102,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_processProtectionCoolantLookup
-0x0005b112,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_processProtectionCoolantLookup
-0x0005b122,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
-0x0005b12e,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
-0x0005b13a,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
-0x0005b154,,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
-0x0005b16e,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
-0x0005b17a,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
-0x0005b186,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
-0x0005b192,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
-0x0005b19e,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
-0x0005b1aa,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
-0x0005b1be,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
-0x0005b1d8,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
-0x0005b1e4,,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_calculateColdStartTempTable
-0x0005b25c,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateColdStartFuelAdjust
-0x0005b276,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateColdStartFuelAdjust
-0x0005b282,,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_calculateColdStartFuelAdjust
-0x0005b2fa,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
-0x0005b30c,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateColdStartTempTable
-0x0005b338,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_updateIntakeAirHeaterPostheat
-0x0005b352,,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_updateIntakeAirHeaterPostheat
-0x0005b36c,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_updateIntakeAirHeaterPostheat
-0x0005b37c,,word[5],Lookup table - y axis of 4 breakpoints after its byte-length word - read by cm848_updateIntakeAirHeaterPostheat
-0x0005b386,,word[28],Lookup table - 2-D grid: 4 rows of 7 values (z[(y - 1) x 7 + x - 1] / no header) - read by cm848_updateIntakeAirHeaterPostheat
-0x0005b3be,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_computeIntakeAirHeaterPreheatDuration
-0x0005b3d8,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_computeIntakeAirHeaterPreheatDuration
-0x0005b3e4,,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_computeIntakeAirHeaterPreheatDuration
-0x0005b45c,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_pulseIntakeAirHeaterRelays
-0x0005b468,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_pulseIntakeAirHeaterRelays
-0x0005b474,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_processEngineOilPressure
-0x0005b480,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_processEngineOilPressure
-0x0005b48c,,word[25],Lookup table - 2-D grid: 5 rows of 5 values (z[(y - 1) x 5 + x - 1] / no header) - read by cm848_processEngineOilPressure
+0x0005ae08,transmission_temperature_sensor_linearization_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
+0x0005ae30,transmission_temperature_sensor_linearization_values,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
+0x0005ae58,cold_start_rpm_fuel_limit_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by fuel_coldStart_rpmLimit_select
+0x0005ae84,cold_start_rpm_fuel_limit_values,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by fuel_coldStart_rpmLimit_select
+0x0005aeb0,coolant_overheat_fuel_demand_floor_x_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by fuel_coldStart_demandMin_2dLookup
+0x0005aedc,coolant_overheat_fuel_demand_floor_y_axis,word[11],Lookup table - y axis of 10 breakpoints after its byte-length word - read by fuel_coldStart_demandMin_2dLookup
+0x0005aef2,coolant_overheat_fuel_demand_floor_grid,word[210],Lookup table - 2-D grid: 10 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by fuel_coldStart_demandMin_2dLookup
+0x0005b096,injection_timing_demand_min_by_engine_speed_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by governor_injectionTiming_modeAdj
+0x0005b0b2,injection_timing_demand_min_by_engine_speed_values,word[14],Lookup table - data: 13 values (one per axis breakpoint) after a byte-length word - read by governor_injectionTiming_modeAdj
+0x0005b0ce,alternator_field_duty_regulation_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
+0x0005b0e8,alternator_field_duty_regulation_values,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
+0x0005b102,charging_voltage_target_by_battery_temperature_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_processProtectionCoolantLookup
+0x0005b112,charging_voltage_target_by_battery_temperature_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_processProtectionCoolantLookup
+0x0005b122,alternator_field_duty_start_ramp_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
+0x0005b12e,alternator_field_duty_start_ramp_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
+0x0005b13a,alternator_field_duty_load_response_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
+0x0005b154,alternator_field_duty_load_response_values,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
+0x0005b16e,alternator_field_load_response_hold_time_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
+0x0005b17a,alternator_field_load_response_hold_time_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
+0x0005b186,alternator_field_load_response_ramp_by_duty_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
+0x0005b192,alternator_field_load_response_ramp_by_duty_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
+0x0005b19e,alternator_field_load_response_ramp_by_rpm_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_filterProtectionOutput
+0x0005b1aa,alternator_field_load_response_ramp_by_rpm_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_filterProtectionOutput
+0x0005b1be,cold_start_fuel_demand_base_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
+0x0005b1d8,cold_start_fuel_demand_base_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
+0x0005b1e4,cold_start_fuel_demand_base_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_calculateColdStartTempTable
+0x0005b25c,cold_start_fuel_demand_at_governor_setpoint_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateColdStartFuelAdjust
+0x0005b276,cold_start_fuel_demand_at_governor_setpoint_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateColdStartFuelAdjust
+0x0005b282,cold_start_fuel_demand_at_governor_setpoint_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_calculateColdStartFuelAdjust
+0x0005b2fa,cold_start_fuel_ramp_start_rpm_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
+0x0005b30c,cold_start_fuel_ramp_start_rpm_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateColdStartTempTable
+0x0005b338,intake_air_heater_postheat_schedule_level_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_updateIntakeAirHeaterPostheat
+0x0005b352,intake_air_heater_postheat_schedule_level_values,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_updateIntakeAirHeaterPostheat
+0x0005b36c,intake_air_heater_postheat_pulse_duration_x_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_updateIntakeAirHeaterPostheat
+0x0005b37c,intake_air_heater_postheat_pulse_duration_y_axis,word[5],Lookup table - y axis of 4 breakpoints after its byte-length word - read by cm848_updateIntakeAirHeaterPostheat
+0x0005b386,intake_air_heater_postheat_pulse_duration_grid,word[28],Lookup table - 2-D grid: 4 rows of 7 values (z[(y - 1) x 7 + x - 1] / no header) - read by cm848_updateIntakeAirHeaterPostheat
+0x0005b3be,intake_air_heater_preheat_total_ticks_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_computeIntakeAirHeaterPreheatDuration
+0x0005b3d8,intake_air_heater_preheat_total_ticks_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_computeIntakeAirHeaterPreheatDuration
+0x0005b3e4,intake_air_heater_preheat_total_ticks_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_computeIntakeAirHeaterPreheatDuration
+0x0005b45c,intake_air_heater_duty_percent_by_target_level_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_pulseIntakeAirHeaterRelays
+0x0005b468,intake_air_heater_duty_percent_by_target_level_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_pulseIntakeAirHeaterRelays
+0x0005b474,oil_pressure_model_x_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_processEngineOilPressure
+0x0005b480,oil_pressure_model_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_processEngineOilPressure
+0x0005b48c,oil_pressure_model_grid,word[25],Lookup table - 2-D grid: 5 rows of 5 values (z[(y - 1) x 5 + x - 1] / no header) - read by cm848_processEngineOilPressure
 0x0005b4d6,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_calculateThermalLimitValue
 0x0005b502,,word[3],Lookup table - y axis of 2 breakpoints after its byte-length word - read by cm848_calculateThermalLimitValue
 0x0005b508,,word[42],Lookup table - 2-D grid: 2 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateThermalLimitValue
 0x0005b55c,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
 0x0005b56c,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
 0x0005b57c,obd_dtc_code_table,word,ROM table: OBD-II DTC code per fault slot (word per slot) - modes 2 / 3 / 7
-0x0005b8e6,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_runThermostatMonitor
-0x0005b8f2,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_runThermostatMonitor
-0x0005b8fe,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_runThermostatMonitor
-0x0005b90a,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_runThermostatMonitor
-0x0005b916,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_runThermostatMonitor
-0x0005b922,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_runThermostatMonitor
-0x0005b92e,,word[15],Lookup table - y axis of 14 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
-0x0005b94c,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
-0x0005b978,,word[294],Lookup table - 2-D grid: 14 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_fuelDemandBlendCalculator
-0x0005bbc4,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
-0x0005bbf0,,word[15],Lookup table - y axis of 14 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
-0x0005bc0e,,word[294],Lookup table - 2-D grid: 14 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_fuelDemandBlendCalculator
+0x0005b8e6,thermostat_monitor_minimum_fuel_to_fail_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_runThermostatMonitor
+0x0005b8f2,thermostat_monitor_minimum_fuel_to_fail_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_runThermostatMonitor
+0x0005b8fe,thermostat_monitor_test_timer_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_runThermostatMonitor
+0x0005b90a,thermostat_monitor_test_timer_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_runThermostatMonitor
+0x0005b916,thermostat_monitor_test_timer_rate_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_runThermostatMonitor
+0x0005b922,thermostat_monitor_test_timer_rate_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_runThermostatMonitor
+0x0005b92e,air_fuel_control_fuel_limit_y_axis,word[15],Lookup table - y axis of 14 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
+0x0005b94c,air_fuel_control_fuel_limit_x_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
+0x0005b978,air_fuel_control_fuel_limit_grid,word[294],Lookup table - 2-D grid: 14 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_fuelDemandBlendCalculator
+0x0005bbc4,air_fuel_control_low_boost_fuel_limit_x_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
+0x0005bbf0,air_fuel_control_low_boost_fuel_limit_y_axis,word[15],Lookup table - y axis of 14 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
+0x0005bc0e,air_fuel_control_low_boost_fuel_limit_grid,word[294],Lookup table - 2-D grid: 14 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_fuelDemandBlendCalculator
 0x0005be66,cold_start_intake_temperature_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - cold_start_intake_temperature_filter_state.coefficient points here
 0x0005be76,fuel_limit_barometric_engine_speed_x_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_calibrationGroup5_periodic
 0x0005bea2,fuel_limit_barometric_pressure_y_axis,word[7],Lookup table - y axis of 6 breakpoints after its byte-length word - read by cm848_calibrationGroup5_periodic
@@ -256,12 +256,12 @@ address,name,type,comment
 0x0005c1a4,fuel_limit_barometric_temperature_band_x_axis,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by cm848_calibrationGroup5_periodic
 0x0005c1b2,fuel_limit_barometric_temperature_band_y_axis,word[3],Lookup table - y axis of 2 breakpoints after its byte-length word - read by cm848_calibrationGroup5_periodic
 0x0005c1b8,fuel_limit_barometric_temperature_band_grid,word[12],Lookup table - 2-D grid: 2 rows of 6 values (z[(y - 1) x 6 + x - 1] / no header) - read by cm848_calibrationGroup5_periodic
-0x0005c21e,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
-0x0005c230,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
-0x0005c242,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
-0x0005c25a,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
-0x0005c272,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_fuelTimingRateLimitedBlend
-0x0005c27e,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_fuelTimingRateLimitedBlend
+0x0005c21e,all_speed_governor_friction_fuel_blend_128_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
+0x0005c230,all_speed_governor_friction_fuel_blend_128_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
+0x0005c242,all_speed_governor_coolant_fuel_adjustment_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
+0x0005c25a,all_speed_governor_coolant_fuel_adjustment_values,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateFuelDemandWithConditions / cm848_calculateFuelTimingBlend
+0x0005c272,speed_request_blend_weight_by_speed_difference_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_fuelTimingRateLimitedBlend
+0x0005c27e,speed_request_blend_weight_by_speed_difference_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_fuelTimingRateLimitedBlend
 0x0005c28a,cruise_speed_low_limit,word,cruise control low set-limit speed; broadcast as cruise_low_set_limit_speed in PGN 65261 (SPN 88) scaled *161/100/256; gates cruise_control_denied_status=8 when cruise_speed_setpoint_adjusted falls below it. Bank1 ROM/flash constant - NOT EEPROM so no _cal
 0x0005c28c,switch_31_on_time_fault_enable,word,ROM constant 0: nonzero enables the switch 31 on-time fault in cm848_checkSwitch31OnTimeFault (fault bit 73 after 1 s on) and one of its switch copies; 0 in S90140.06 so the fault never sets (was DAT_0005c28c) (Medium confidence)
 0x0005c294,throttle_fuel_demand_threshold_cal,word,
@@ -297,13 +297,13 @@ address,name,type,comment
 0x0005c47c,j1939_dm_feature_mode,word,
 0x0005c47e,cal_fuel_operation_mode_1_en,word,
 0x0005c48e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcbdc.coefficient points here
-0x0005c4b6,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_updateSpeedLimitFromCoolant
-0x0005c4c8,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_updateSpeedLimitFromCoolant
-0x0005c4da,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_calculateProtectionSpeedLimits
-0x0005c4e6,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateProtectionSpeedLimits
-0x0005c4f2,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by cm848_processEngineConfigSpeedControl
-0x0005c500,,word[7],Lookup table - y axis of 6 breakpoints after its byte-length word - read by cm848_processEngineConfigSpeedControl
-0x0005c50e,,word[36],Lookup table - 2-D grid: 6 rows of 6 values (z[(y - 1) x 6 + x - 1] / no header) - read by cm848_processEngineConfigSpeedControl
+0x0005c4b6,governor_speed_limit_by_coolant_temperature_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_updateSpeedLimitFromCoolant
+0x0005c4c8,governor_speed_limit_by_coolant_temperature_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_updateSpeedLimitFromCoolant
+0x0005c4da,governor_idle_speed_by_barometric_pressure_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_calculateProtectionSpeedLimits
+0x0005c4e6,governor_idle_speed_by_barometric_pressure_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateProtectionSpeedLimits
+0x0005c4f2,injection_timing_demand_floor_x_axis,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by cm848_processEngineConfigSpeedControl
+0x0005c500,injection_timing_demand_floor_y_axis,word[7],Lookup table - y axis of 6 breakpoints after its byte-length word - read by cm848_processEngineConfigSpeedControl
+0x0005c50e,injection_timing_demand_floor_grid,word[36],Lookup table - 2-D grid: 6 rows of 6 values (z[(y - 1) x 6 + x - 1] / no header) - read by cm848_processEngineConfigSpeedControl
 0x0005c556,j1939_fuel_table_xaxis_cal,word[22],
 0x0005c582,j1939_fuel_table_ystart_cal,word[6],
 0x0005c58e,j1939_fuel_table_yend_cal,word[105],
@@ -315,12 +315,12 @@ address,name,type,comment
 0x0005c66a,accelerator_pedal_press_window_limit,word,ROM constant 50 = 5 s of 100 ms passes (e2m Throttle_Cycle_Time_Limit - 0.1 s units - time limit for throttle cycles to turn the test switch on): the third accelerator press must come within it after the first (was DAT_0005c66a)
 0x0005c66c,accelerator_pedal_press_threshold,word,ROM constant 280: accelerator position (fuel_demand_control_t.calculated - 400 = 100 percent) that arms a press = 70 percent (e2m Throttle_Diagnostic_Threshold_Upper_Limit) (was DAT_0005c66c)
 0x0005c66e,accelerator_pedal_release_threshold,word,ROM constant 120: accelerator position at or below which an armed press is counted = 30 percent (e2m Throttle_Diagnostic_Threshold_Lower_Limit) (was DAT_0005c66e)
-0x0005c67c,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_calculateFuelDemandOffsetTrim
-0x0005c690,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateFuelDemandOffsetTrim
-0x0005c69c,,word[45],Lookup table - 2-D grid: 5 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_calculateFuelDemandOffsetTrim
-0x0005c6f6,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_runCoolingFanSpeedPid
-0x0005c708,,word[8],Lookup table - y axis of 7 breakpoints after its byte-length word - read by cm848_runCoolingFanSpeedPid
-0x0005c718,,word[56],Lookup table - 2-D grid: 7 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_runCoolingFanSpeedPid
+0x0005c67c,fuel_demand_offset_correction_by_coolant_and_rpm_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_calculateFuelDemandOffsetTrim
+0x0005c690,fuel_demand_offset_correction_by_coolant_and_rpm_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateFuelDemandOffsetTrim
+0x0005c69c,fuel_demand_offset_correction_by_coolant_and_rpm_grid,word[45],Lookup table - 2-D grid: 5 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_calculateFuelDemandOffsetTrim
+0x0005c6f6,cooling_fan_feed_forward_duty_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_runCoolingFanSpeedPid
+0x0005c708,cooling_fan_feed_forward_duty_y_axis,word[8],Lookup table - y axis of 7 breakpoints after its byte-length word - read by cm848_runCoolingFanSpeedPid
+0x0005c718,cooling_fan_feed_forward_duty_grid,word[56],Lookup table - 2-D grid: 7 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_runCoolingFanSpeedPid
 0x0005c788,intake_air_heater_runup_holdoff_preset,word,ROM constant (lhz) cm848_countDownIntakeAirHeaterPreheat reloads intake_air_heater_runup_holdoff_countdown with on every preheat pass - the countdown starts from it once the preheat ends (was the auto-string label u__0005c788)
 0x0005c7ae,pci_message_timeout_grace,word,ROM constant 50 (lhz) - a PCI message is flagged timed out once its timer exceeds interval by more than this
 0x0005c7b0,pci_link_error_limit,word,ROM constant 255 (lhz) - pci_link_error_count value that latches the PCI link failure
@@ -342,47 +342,47 @@ address,name,type,comment
 0x0005c7ce,pci_in_frame_response_wait_limit,word,ROM constant 3 (lhz) - scheduler passes to wait for the in-frame response to our own TX frame
 0x0005c7d0,engine_off_time_unchanged_count_limit,byte,ROM 16: consecutive key cycles with an engine-off time within engine_off_time_unchanged_delta of the previous one that set fault word 19 bit 4 (engine-off time stuck - no DTC) (was DAT_0005c7d0) (Medium confidence)
 0x0005c7d1,engine_off_time_unchanged_delta,byte,ROM 2: a key-on engine-off time that differs from the previous key cycle's value by less than this counts as unchanged in cm848_latchAndCheckEngineOffTime (was DAT_0005c7d1) (Medium confidence)
-0x0005c7d2,,word[15],Lookup table - x axis of 14 breakpoints after its byte-length word - read by protection_fuel_demand_limiting
-0x0005c7f0,,word[15],Lookup table - data: 14 values (one per axis breakpoint) after a byte-length word - read by protection_fuel_demand_limiting
-0x0005c80e,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by governorCruiseTimerManagement
-0x0005c824,,word[11],Lookup table - y axis of 10 breakpoints after its byte-length word - read by governorCruiseTimerManagement
-0x0005c83a,,word[100],Lookup table - 2-D grid: 10 rows of 10 values (z[(y - 1) x 10 + x - 1] / no header) - read by governorCruiseTimerManagement
-0x0005c902,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by governorCruiseTimerManagement
-0x0005c918,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by governorCruiseTimerManagement
+0x0005c7d2,fuel_quantity_limit_rail_pressure_shortfall_axis,word[15],Lookup table - x axis of 14 breakpoints after its byte-length word - read by protection_fuel_demand_limiting
+0x0005c7f0,fuel_quantity_limit_rail_pressure_shortfall_values,word[15],Lookup table - data: 14 values (one per axis breakpoint) after a byte-length word - read by protection_fuel_demand_limiting
+0x0005c80e,fuel_accumulation_weight_by_coolant_and_rpm_x_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by governorCruiseTimerManagement
+0x0005c824,fuel_accumulation_weight_by_coolant_and_rpm_y_axis,word[11],Lookup table - y axis of 10 breakpoints after its byte-length word - read by governorCruiseTimerManagement
+0x0005c83a,fuel_accumulation_weight_by_coolant_and_rpm_grid,word[100],Lookup table - 2-D grid: 10 rows of 10 values (z[(y - 1) x 10 + x - 1] / no header) - read by governorCruiseTimerManagement
+0x0005c902,engine_power_accumulator_increment_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by governorCruiseTimerManagement
+0x0005c918,engine_power_accumulator_increment_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by governorCruiseTimerManagement
 0x0005c94c,cruise_speed_default_cal,word,
-0x0005c976,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005c99e,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word (fuel demand) - read by cm848_dualAxisTableInterpolation callers with the WORD_ARRAY_0005c976 rpm axis (was the boost_in_range_config.high_boost_threshold field label of a struct that overlapped both axes)
-0x0005c9c0,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005cc20,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005cc3c,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005cc54,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005cd72,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005cd84,,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005cd96,,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005ce16,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005ce30,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005ce3c,,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005ceb4,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005ced0,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005cee8,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005d006,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d022,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d03a,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005d158,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d174,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d18c,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005d2aa,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d2d2,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d2f4,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005d554,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d57c,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d59e,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005d7fe,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d826,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005d848,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
-0x0005daa8,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005dad0,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
-0x0005daf2,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005c976,injection_quantity_auxiliary_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005c99e,injection_quantity_auxiliary_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word (fuel demand) - read by cm848_dualAxisTableInterpolation callers with the WORD_ARRAY_0005c976 rpm axis (was the boost_in_range_config.high_boost_threshold field label of a struct that overlapped both axes)
+0x0005c9c0,injection_quantity_auxiliary_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005cc20,injection_quantity_auxiliary_coolant_limit_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005cc3c,injection_quantity_auxiliary_coolant_limit_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005cc54,injection_quantity_auxiliary_coolant_limit_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005cd72,injection_quantity_auxiliary_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005cd84,injection_quantity_auxiliary_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005cd96,injection_quantity_auxiliary_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005ce16,injection_quantity_auxiliary_ambient_factor_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005ce30,injection_quantity_auxiliary_ambient_factor_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005ce3c,injection_quantity_auxiliary_ambient_factor_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005ceb4,injection_quantity_auxiliary_ambient_limit_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005ced0,injection_quantity_auxiliary_ambient_limit_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005cee8,injection_quantity_auxiliary_ambient_limit_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005d006,injection_quantity_auxiliary_boost_factor_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d022,injection_quantity_auxiliary_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d03a,injection_quantity_auxiliary_boost_factor_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005d158,injection_quantity_auxiliary_boost_limit_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d174,injection_quantity_auxiliary_boost_limit_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d18c,injection_quantity_auxiliary_boost_limit_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005d2aa,injection_quantity_auxiliary_map_1_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d2d2,injection_quantity_auxiliary_map_1_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d2f4,injection_quantity_auxiliary_map_1_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005d554,injection_quantity_auxiliary_map_2_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d57c,injection_quantity_auxiliary_map_2_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d59e,injection_quantity_auxiliary_map_2_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005d7fe,injection_quantity_auxiliary_map_3_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d826,injection_quantity_auxiliary_map_3_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005d848,injection_quantity_auxiliary_map_3_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
+0x0005daa8,injection_quantity_auxiliary_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005dad0,injection_quantity_auxiliary_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateGovernorOutput
+0x0005daf2,injection_quantity_auxiliary_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateGovernorOutput
 0x0005dd52,injection_timing_auxiliary_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_auxiliary_boundary_condition_eval
 0x0005dd7a,injection_timing_auxiliary_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_auxiliary_boundary_condition_eval
 0x0005dd9c,injection_timing_auxiliary_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_auxiliary_boundary_condition_eval
@@ -416,23 +416,23 @@ address,name,type,comment
 0x0005ee84,injection_timing_auxiliary_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_auxiliary_boundary_condition_eval
 0x0005eeac,injection_timing_auxiliary_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_auxiliary_boundary_condition_eval
 0x0005eece,injection_timing_auxiliary_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_auxiliary_boundary_condition_eval
-0x0005f12e,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by engine_injectionAngle_tpuUpdate
-0x0005f13e,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by engine_injectionAngle_tpuUpdate
-0x0005f166,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by engine_injectionAngle_lookupTimingTableOffset
-0x0005f172,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionAngle_lookupTimingTableOffset
-0x0005f18a,,word[55],Lookup table - 2-D grid: 11 rows of 5 values (z[(y - 1) x 5 + x - 1] / no header) - read by engine_injectionAngle_lookupTimingTableOffset
-0x0005f1f8,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_tpuMiosOutput_loadCalibration
-0x0005f208,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_tpuMiosOutput_loadCalibration
-0x0005f218,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_tpuMiosOutput_loadCalibration
-0x0005f224,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_tpuMiosOutput_loadCalibration
+0x0005f12e,injection_timing_cam_angle_correction_base_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by engine_injectionAngle_tpuUpdate
+0x0005f13e,injection_timing_cam_angle_correction_base_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by engine_injectionAngle_tpuUpdate
+0x0005f166,injection_angle_offset_x_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by engine_injectionAngle_lookupTimingTableOffset
+0x0005f172,injection_angle_offset_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionAngle_lookupTimingTableOffset
+0x0005f18a,injection_angle_offset_grid,word[55],Lookup table - 2-D grid: 11 rows of 5 values (z[(y - 1) x 5 + x - 1] / no header) - read by engine_injectionAngle_lookupTimingTableOffset
+0x0005f1f8,tpu_a_channel_14_scale_by_battery_voltage_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_tpuMiosOutput_loadCalibration
+0x0005f208,tpu_a_channel_14_scale_by_battery_voltage_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_tpuMiosOutput_loadCalibration
+0x0005f218,tpu_a_channel_4_scale_by_battery_voltage_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_tpuMiosOutput_loadCalibration
+0x0005f224,tpu_a_channel_4_scale_by_battery_voltage_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_tpuMiosOutput_loadCalibration
 0x0005f230,cam_sync_timing_xaxis_cal,word[9],
 0x0005f242,cam_sync_timing_yaxis_cal,word[9],
 0x0005f254,main_injection_pulse_width_x_axis,word[25],Lookup table - x axis of 24 breakpoints after its byte-length word - read by cm848_calculateTimingWithTables
 0x0005f286,main_injection_pulse_width_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateTimingWithTables
 0x0005f2a8,main_injection_pulse_width_grid,word[384],Lookup table - 2-D grid: 16 rows of 24 values (z[(y - 1) x 24 + x - 1] / no header) - read by cm848_calculateTimingWithTables
-0x0005f5a8,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingInterpolation
-0x0005f5c0,,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineTimingInterpolation
-0x0005f5d4,,word[99],Lookup table - 2-D grid: 9 rows of 11 values (z[(y - 1) x 11 + x - 1] / no header) - read by cm848_calculateEngineTimingInterpolation
+0x0005f5a8,pilot_injection_pulse_width_x_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingInterpolation
+0x0005f5c0,pilot_injection_pulse_width_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineTimingInterpolation
+0x0005f5d4,pilot_injection_pulse_width_grid,word[99],Lookup table - 2-D grid: 9 rows of 11 values (z[(y - 1) x 11 + x - 1] / no header) - read by cm848_calculateEngineTimingInterpolation
 0x0005f69a,main_quantity_pilot_correction_x_axis,word[26],Lookup table - x axis of 25 breakpoints after its byte-length word - read by cm848_calculateTimingWithTables
 0x0005f6ce,main_quantity_pilot_correction_y_axis,word[7],Lookup table - y axis of 6 breakpoints after its byte-length word - read by cm848_calculateTimingWithTables
 0x0005f6dc,main_quantity_pilot_correction_grid,word[150],Lookup table - 2-D grid: 6 rows of 25 values (z[(y - 1) x 25 + x - 1] / no header) - read by cm848_calculateTimingWithTables
@@ -445,97 +445,97 @@ address,name,type,comment
 0x0005fa1a,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateEngineFaultTiming
 0x0005fa2c,,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_calculateEngineFaultTiming
 0x0005fa3e,,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_calculateEngineFaultTiming
-0x0005fabe,post_injection_pulse_width_x_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineFaultTiming
-0x0005fad6,post_injection_pulse_width_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineFaultTiming
-0x0005faea,post_injection_pulse_width_grid,word[99],Lookup table - 2-D grid: 9 rows of 11 values (z[(y - 1) x 11 + x - 1] / no header) - read by cm848_calculateEngineFaultTiming
-0x00061cea,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061d12,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061d34,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061f94,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061fb0,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061fc8,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x000620e6,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062102,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006211a,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062238,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062260,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062282,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x000624e2,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006250a,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006252c,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x0006278c,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000627b4,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000627d6,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062a36,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062a48,,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062a5a,,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062ada,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062af6,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062b0e,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062c2c,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062c40,,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062c54,,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062cf6,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062d08,,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062d1a,,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00062d9a,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062db4,,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062dce,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062dda,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062de6,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062dfa,,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062e0e,,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00062eb0,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062ed8,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062efa,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x0006315a,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063176,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006318e,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x000632ac,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x000632c8,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x000632e0,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x000633fe,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006341a,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063432,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00063550,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006356c,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063584,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x000636a2,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x000636be,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x000636d6,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x000637f4,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006381c,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006383e,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00063a9e,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063ac6,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063ae8,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00063d48,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063d70,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063d92,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00063ff2,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006401a,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006403c,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x0006429c,,word[3],Lookup table - x axis of 2 breakpoints after its byte-length word - read by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
-0x000642a2,,word[3],Lookup table - data: 2 values (one per axis breakpoint) after a byte-length word - read by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
-0x000642a8,,word[3],Lookup table - x axis of 2 breakpoints after its byte-length word - read by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
-0x000642ae,,word[3],Lookup table - data: 2 values (one per axis breakpoint) after a byte-length word - read by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
+0x0005fabe,auxiliary_injection_pulse_width_x_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineFaultTiming
+0x0005fad6,auxiliary_injection_pulse_width_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineFaultTiming
+0x0005faea,auxiliary_injection_pulse_width_grid,word[99],Lookup table - 2-D grid: 9 rows of 11 values (z[(y - 1) x 11 + x - 1] / no header) - read by cm848_calculateEngineFaultTiming
+0x00061cea,pilot_quantity_map_1_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061d12,pilot_quantity_map_1_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061d34,pilot_quantity_map_1_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061f94,pilot_quantity_boost_factor_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061fb0,pilot_quantity_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061fc8,pilot_quantity_boost_factor_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x000620e6,pilot_quantity_boost_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062102,pilot_quantity_boost_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006211a,pilot_quantity_boost_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062238,pilot_quantity_map_2_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062260,pilot_quantity_map_2_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062282,pilot_quantity_map_2_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x000624e2,pilot_quantity_map_3_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006250a,pilot_quantity_map_3_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006252c,pilot_quantity_map_3_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x0006278c,pilot_quantity_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000627b4,pilot_quantity_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000627d6,pilot_quantity_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062a36,pilot_quantity_cold_correction_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062a48,pilot_quantity_cold_correction_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062a5a,pilot_quantity_cold_correction_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062ada,pilot_quantity_cold_correction_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062af6,pilot_quantity_cold_correction_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062b0e,pilot_quantity_cold_correction_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062c2c,pilot_quantity_cold_start_override_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062c40,pilot_quantity_cold_start_override_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062c54,pilot_quantity_cold_start_override_grid,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062cf6,injection_timing_offset_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062d08,injection_timing_offset_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062d1a,injection_timing_offset_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00062d9a,injection_timing_offset_intake_temperature_factor_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062db4,injection_timing_offset_intake_temperature_factor_values,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062dce,injection_timing_offset_barometric_pressure_factor_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062dda,injection_timing_offset_barometric_pressure_factor_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062de6,injection_timing_offset_start_run_up_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062dfa,injection_timing_offset_start_run_up_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062e0e,injection_timing_offset_start_run_up_grid,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00062eb0,injection_timing_offset_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062ed8,injection_timing_offset_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062efa,injection_timing_offset_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x0006315a,injection_timing_offset_coolant_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063176,injection_timing_offset_coolant_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006318e,injection_timing_offset_coolant_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x000632ac,injection_timing_offset_intake_temperature_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x000632c8,injection_timing_offset_intake_temperature_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x000632e0,injection_timing_offset_intake_temperature_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x000633fe,injection_timing_offset_barometric_pressure_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006341a,injection_timing_offset_barometric_pressure_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063432,injection_timing_offset_barometric_pressure_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00063550,injection_timing_offset_boost_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006356c,injection_timing_offset_boost_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063584,injection_timing_offset_boost_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x000636a2,injection_timing_offset_boost_factor_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x000636be,injection_timing_offset_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x000636d6,injection_timing_offset_boost_factor_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x000637f4,injection_timing_offset_map_1_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006381c,injection_timing_offset_map_1_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006383e,injection_timing_offset_map_1_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00063a9e,injection_timing_offset_map_2_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063ac6,injection_timing_offset_map_2_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063ae8,injection_timing_offset_map_2_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00063d48,injection_timing_offset_map_3_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063d70,injection_timing_offset_map_3_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063d92,injection_timing_offset_map_3_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00063ff2,injection_timing_offset_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006401a,injection_timing_offset_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006403c,injection_timing_offset_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x0006429c,injector_group_a_supply_voltage_linearization_axis,word[3],Lookup table - x axis of 2 breakpoints after its byte-length word - read by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
+0x000642a2,injector_group_a_supply_voltage_linearization_values,word[3],Lookup table - data: 2 values (one per axis breakpoint) after a byte-length word - read by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
+0x000642a8,injector_group_b_supply_voltage_linearization_axis,word[3],Lookup table - x axis of 2 breakpoints after its byte-length word - read by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
+0x000642ae,injector_group_b_supply_voltage_linearization_values,word[3],Lookup table - data: 2 values (one per axis breakpoint) after a byte-length word - read by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
 0x000642dc,coolant_temperature_check_minimum_engine_off_time,word,ROM 480 (8 h if minutes): cm848_checkCoolantTemperatureSensorPerformance can fail only when engine_off_time_at_key_on is at least this or the PCI 0x42 time is missing or flagged stuck (fault word 19 bit 4) (was DAT_000642dc) (Medium confidence)
 0x000642f4,radiator_fan_speed_spike_up_limit,word,ROM 4000 (500 rpm): a middle history sample this far above its neighbours' average is a spike
 0x000642f6,radiator_fan_speed_spike_down_limit,word,ROM 4000 (500 rpm): a middle history sample this far below its neighbours' average is a spike
 0x000642f8,radiator_fan_speed_noise_check_passes,word,ROM 50: cm848_checkRadiatorFanSpeedSignalNoise decides after this many passes
 0x000642fa,radiator_fan_speed_clean_sample_ratio_minimum,word,ROM 0: clean / all samples (x 25600) must be above this for the signal to pass
 0x0006432e,protection_threshold_high,,
-0x0006443c,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by hpcr_injectPressureTuning
-0x0006444c,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by hpcr_injectPressureTuning
+0x0006443c,intake_air_heater_performance_threshold_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by hpcr_injectPressureTuning
+0x0006444c,intake_air_heater_performance_threshold_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by hpcr_injectPressureTuning
 0x000645b6,,byte,
 0x000645ba,consecutive_incomplete_power_down_limit,word,ROM constant 3: cm848_applicationMain sets fault 89 (P2509) when consecutive_incomplete_power_down_count_cal is above it
 0x000645c4,fault_table_entry_5,word[22],
 0x000645f0,fault_table_entry_6,word[7],
-0x000645fe,,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
-0x000646fa,,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
-0x000647f6,,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
-0x000648f2,,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
-0x000649ee,,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
+0x000645fe,fuel_limit_by_rpm_and_demand_reference_map_grid,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
+0x000646fa,fuel_limit_by_rpm_and_demand_blend_map_1_grid,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
+0x000647f6,fuel_limit_by_rpm_and_demand_blend_map_2_grid,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
+0x000648f2,fuel_limit_by_rpm_and_demand_blend_map_3_grid,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
+0x000649ee,fuel_limit_by_rpm_and_demand_blend_map_4_grid,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calculateFuel2DTableLookup
 0x002fc000,USIU_SIUMCR,dword,
 0x002fc004,USIU_SYPCR,dword,
 0x002fc00e,USIU_SWSR,word,
@@ -2689,10 +2689,10 @@ address,name,type,comment
 0x003ff010,fuel_ramp_increase_limit_cal,word,
 0x003ff012,boost_fuel_limit_maximum_decrease_step,word,Largest drop per pass of the boost-based (AFC) fuel limit fuel_demand_load_based while its table-C blend runs - 5888 here = full fuel so no limit; ROM-initialized RAM (ROM 0x64c2c) not EEPROM (was oil_pressure_fuel_limit_step_cal)
 0x003ff014,iat_fuel_trim_enable_flag,word,
-0x003ff016,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_temperatureBasedFuelTrim
-0x003ff028,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_temperatureBasedFuelTrim
-0x003ff03a,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_temperatureBasedFuelTrim
-0x003ff04c,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_temperatureBasedFuelTrim
+0x003ff016,fuel_blend_coefficient_by_barometric_pressure_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_temperatureBasedFuelTrim
+0x003ff028,fuel_blend_coefficient_by_barometric_pressure_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_temperatureBasedFuelTrim
+0x003ff03a,fuel_blend_coefficient_by_coolant_temperature_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_temperatureBasedFuelTrim
+0x003ff04c,fuel_blend_coefficient_by_coolant_temperature_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_temperatureBasedFuelTrim
 0x003ff686,governor_demand_rate_limit_window,word,
 0x003ff688,governor_pid_derivative_gain,word,
 0x003ff68a,governor_demand_rate_limit_max,word,
@@ -2773,22 +2773,22 @@ address,name,type,comment
 0x003ff85c,speed_threshold_scale_cal,word,
 0x003ff85e,fuel_blend_load_lower_threshold,word,
 0x003ff860,fuel_blend_load_upper_threshold,word,
-0x003ff862,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_lookupRpmLoadTable
-0x003ff884,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_lookupRpmLoadTable
-0x003ff8a6,,word[256],Lookup table - 2-D grid: 16 rows of 16 values (z[(y - 1) x 16 + x - 1] / no header) - read by cm848_lookupRpmLoadTable
-0x003ffaa6,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateLoadAdjustmentFactors
-0x003fface,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateLoadAdjustmentFactors
+0x003ff862,throttle_load_gain_angle_x_axis,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_lookupRpmLoadTable
+0x003ff884,throttle_load_gain_angle_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_lookupRpmLoadTable
+0x003ff8a6,throttle_load_gain_angle_grid,word[256],Lookup table - 2-D grid: 16 rows of 16 values (z[(y - 1) x 16 + x - 1] / no header) - read by cm848_lookupRpmLoadTable
+0x003ffaa6,throttle_load_gain_half_angle_cosine_values,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateLoadAdjustmentFactors
+0x003fface,throttle_load_gain_half_angle_cosine_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateLoadAdjustmentFactors
 0x003ffaf6,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_calculateLoadGainValues
 0x003ffb1e,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateLoadGainValues
 0x003ffb46,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by cm848_calculateLoadCompensation
 0x003ffb54,,word[7],Lookup table - y axis of 6 breakpoints after its byte-length word - read by cm848_calculateLoadCompensation
 0x003ffb62,,word[36],Lookup table - 2-D grid: 6 rows of 6 values (z[(y - 1) x 6 + x - 1] / no header) - read by cm848_calculateLoadCompensation
-0x003ffbaa,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
-0x003ffbd2,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_boostCompensatedRpmGovernor
+0x003ffbaa,wastegate_integrator_gain_by_error_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
+0x003ffbd2,wastegate_integrator_gain_by_error_values,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_boostCompensatedRpmGovernor
 0x003ffbfa,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_calculateLoadGainValues
 0x003ffc1c,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateLoadGainValues
-0x003ffc3e,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_calculateLoadBasedAdjustment
-0x003ffc60,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateLoadBasedAdjustment
+0x003ffc3e,throttle_fuel_demand_deviation_gain_axis,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_calculateLoadBasedAdjustment
+0x003ffc60,throttle_fuel_demand_deviation_gain_values,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateLoadBasedAdjustment
 0x003ffc82,throttle_fuel_demand_high_b_cal,word,
 0x003ffc84,throttle_fuel_rate_error_gain_cal,word,
 0x003ffc86,throttle_fuel_demand_high_cal,word,
@@ -2816,14 +2816,14 @@ address,name,type,comment
 0x003ffcb4,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa19c.coefficient points here
 0x003ffcb6,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
 0x003ffcca,,word[10],Lookup table - data: 9 values (one per axis breakpoint) after a byte-length word - read by cm848_boostCompensatedRpmGovernor
-0x003ffcde,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
-0x003ffd06,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
-0x003ffd28,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_boostCompensatedRpmGovernor
-0x003fff88,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
-0x003fff9a,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_boostCompensatedRpmGovernor
-0x003fffac,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
-0x003fffd4,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
-0x003ffff6,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_boostCompensatedRpmGovernor
+0x003ffcde,wastegate_duty_ceiling_engine_speed_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
+0x003ffd06,wastegate_duty_ceiling_by_rpm_and_fuel_quantity_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
+0x003ffd28,wastegate_duty_ceiling_by_rpm_and_fuel_quantity_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_boostCompensatedRpmGovernor
+0x003fff88,wastegate_duty_ceiling_adjustment_by_altitude_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
+0x003fff9a,wastegate_duty_ceiling_adjustment_by_altitude_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_boostCompensatedRpmGovernor
+0x003fffac,wastegate_duty_floor_by_rpm_and_fuel_quantity_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
+0x003fffd4,wastegate_duty_floor_by_rpm_and_fuel_quantity_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
+0x003ffff6,wastegate_duty_floor_by_rpm_and_fuel_quantity_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_boostCompensatedRpmGovernor
 0x00400256,governor_adjustment_rpm_axis_cal,word[9],
 0x00400268,governor_adjustment_limit_cal,word[9],
 0x0040027a,governor_base_rpm_output_cal,word[20],
@@ -2990,8 +2990,8 @@ address,name,type,comment
 0x00405d9c,protection_rpm_correction_yend_cal,word[304],
 0x00406004,injection_timing_period_cal,word,
 0x00406462,fuel_blend_weight_threshold_cal,word,
-0x00406504,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by governor_adjustment_compare
-0x00406526,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by governor_adjustment_compare
+0x00406504,governor_adjustment_boost_threshold_values,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by governor_adjustment_compare
+0x00406526,governor_adjustment_fuel_quantity_threshold_values,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by governor_adjustment_compare
 0x004065c4,fuel_flow_rate_default_cal,word,
 0x004065c6,fuel_timing_boost_scale_yend_cal,word[121],
 0x004066b8,fuel_timing_boost_scale_axis1_cal,word[12],
@@ -3872,8 +3872,8 @@ address,name,type,comment
 0x00408d71,output_speed_sensor_pulses_per_revolution,byte,23 - output speed sensor pulses per output shaft revolution - speed numerator = 2 x 60e6 / 23 = 5217391 - not EEPROM so no _cal (was timer_frequency_base_cal+1)
 0x00408d72,transmission_output_speed_pulse_timeout_reload,word,26 - reload value for transmission_output_speed_pulse_timeout_counter loaded by the TPU-B ch14 period handler - not EEPROM so no _cal (was fuel_injection_delay_timer_cal)
 0x00408d76,torque_limit_override_source_cal,word,
-0x00408d7e,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by initGovernorSpeedControl
-0x00408d94,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by initGovernorSpeedControl
+0x00408d7e,governor_speed_compensation_steps_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by initGovernorSpeedControl
+0x00408d94,governor_speed_compensation_steps_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by initGovernorSpeedControl
 0x00408daa,fuel_demand_derivative_gain_cal,word,
 0x00408dac,fuel_demand_trim_upper_limit_cal,word,
 0x00408dae,fuel_demand_trim_lower_limit_cal,word,
@@ -4226,8 +4226,8 @@ address,name,type,comment
 0x004095a5,fuel_pressure_sensor_override_value,word,Rail pressure used while fuel_pressure_sensor_override_enable is set. Was cam_sync_position_override_cal
 0x004095a7,fuel_pressure_feedback_source_select,byte,Pressure the governor feedback filters while the engine run / crank state is 4: 0 = fuel_pressure_at_injection_scheduling / 1 = fuel_pressure_at_other_angle_events / 2 = fuel_pressure_sensor (2 here; other values freeze the feedback). Was cam_timing_source_select_cal
 0x004095a8,fuel_pressure_sensor_fault_default,word,Rail pressure substituted while a P0193 / P0192 code is confirmed (3890 counts - above the table's full scale). Was cam_sync_position_default_cal
-0x004095aa,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x0040980a,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x004095aa,fuel_pressure_setpoint_map_1_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x0040980a,fuel_pressure_setpoint_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
 0x00409a8a,engine_pos_fault_eval_threshold_cal,word,
 0x00409a8c,prot_fault_status_a_threshold_cal,word,
 0x00409a8e,prot_fault_status_b_threshold_cal,word,
@@ -6477,14 +6477,14 @@ address,name,type,comment
 0x003fee98,tpu_init_retry_count,word,TPU init retry count; gates diag fault flag
 0x003feed0,sensor_channel_cal_block_start,word,Start of the sensor channel calibration block (configs and their tables) that cm848_copyRomToRamBuffer fills dword by dword from ROM 0x64aea up to sensor_channel_ram_start at boot - only reached through a pointer (was dword - it covered the first channel config at +2)
 0x003feed2,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel5_init / cm848_sensorChannel5_process
-0x003feee2,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel5_init / cm848_sensorChannel5_process
-0x003feefa,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel5_init / cm848_sensorChannel5_process
+0x003feee2,sensor_channel105_linearization_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel5_init / cm848_sensorChannel5_process
+0x003feefa,sensor_channel105_linearization_values,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel5_init / cm848_sensorChannel5_process
 0x003fef12,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel6_init / cm848_sensorChannel6_process
-0x003fef22,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannel6_init / cm848_sensorChannel6_process
-0x003fef4e,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel6_init / cm848_sensorChannel6_process
+0x003fef22,sensor_channel108_linearization_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannel6_init / cm848_sensorChannel6_process
+0x003fef4e,sensor_channel108_linearization_values,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel6_init / cm848_sensorChannel6_process
 0x003fef7a,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel8_init / cm848_sensorChannel8_process
-0x003fef8a,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
-0x003fefa2,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
+0x003fef8a,sensor_channel109_linearization_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
+0x003fefa2,sensor_channel109_linearization_values,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
 0x003fefba,accelerator_pedal_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 13 (accelerator pedal); its default_value is the J1939 pedal fallback position cm848_processJ1939AcceleratorPedalPosition loads on a timeout (was the interior label j1939_accelerator_pedal_default_position)
 0x003fbdc4,j1939_tp_bam_session_active,byte,J1939 BAM broadcast condition flag (DA=SA=0xFF)
 0x003fbdc5,j1939_multiframe_tx_active,byte,bulk multi-frame TX session active
@@ -6689,8 +6689,8 @@ address,name,type,comment
 0x0040a602,fuel_timing_cylinder_check_demand_floor,word,per-cylinder injection-timing shortfall demand floor
 0x0040a8ab,fuel_demand_sensor_validation_floor,word,fuel demand floor when sensor-validation flags active
 0x00406570,cold_start_phase3_fuel_mode_count_max,word,read-only ROM ceiling for phase-3 fuel mode count
-0x00406576,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by fuel_demandBoost_overrideFlag_lookup
-0x00406598,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by fuel_demandBoost_overrideFlag_lookup
+0x00406576,cold_start_override_fuel_demand_floor_axis,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by fuel_demandBoost_overrideFlag_lookup
+0x00406598,cold_start_override_fuel_demand_floor_values,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by fuel_demandBoost_overrideFlag_lookup
 0x0040a6b8,governor_speed_stability_conditions_flag,word,all-conditions-met flag for governor speed-stability diag
 0x0040a6bc,governor_speed_deviation_exceeds_threshold_flag,word,governor speed deviation > threshold 0/1
 0x0040a6c0,governor_speed_ramp_pid_stable_gate,word,PID-vs-deviation gate within stability check
@@ -6774,10 +6774,10 @@ address,name,type,comment
 0x00409aa6,cam_timing_coolant_temp_min,word,ROM; coolant temp lower bound for cam timing
 0x00409aa8,cam_timing_coolant_temp_max,word,ROM; coolant temp upper bound for cam timing
 0x00409ad2,cam_timing_governor_speed_window_halfwidth,word,ROM; RPM half-window around governor speed limit
-0x00409ad4,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by engine_camSync_referenceCheck_update
-0x00409aea,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by engine_camSync_referenceCheck_update
-0x00409b00,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by engine_camSync_referenceCheck_update
-0x00409b16,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by engine_camSync_referenceCheck_update
+0x00409ad4,fuel_pressure_governor_demand_plausibility_limit_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by engine_camSync_referenceCheck_update
+0x00409aea,fuel_pressure_governor_demand_plausibility_limit_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by engine_camSync_referenceCheck_update
+0x00409b00,fuel_pressure_allowed_decay_step_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by engine_camSync_referenceCheck_update
+0x00409b16,fuel_pressure_allowed_decay_step_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by engine_camSync_referenceCheck_update
 0x00409b2c,fuel_pressure_governor_demand_residual_divisor_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by engine_camTiming_positionCorrection_calc
 0x00409b42,fuel_pressure_governor_demand_residual_divisor_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by engine_camTiming_positionCorrection_calc
 0x00409b58,fuel_pressure_governor_demand_threshold_gain_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by engine_camTiming_positionCorrection_calc
@@ -6914,8 +6914,8 @@ address,name,type,comment
 0x004086c8,j1939_tsc1_active_duration_reload,word,ROM reload/max for TSC1 active duration counter
 0x00408788,protection_fault_severity_code,word,ROM severity/event code for protection faults
 0x00408952,fuel_demand_active_correction_increment,word,ROM per-mode increment for active correction sum
-0x00408954,,word[3],Lookup table - x axis of 2 breakpoints after its byte-length word - read by fuel_quantity_demand_monitor
-0x0040895a,,word[3],Lookup table - data: 2 values (one per axis breakpoint) after a byte-length word - read by fuel_quantity_demand_monitor
+0x00408954,fuel_quantity_demand_excess_cold_allowance_axis,word[3],Lookup table - x axis of 2 breakpoints after its byte-length word - read by fuel_quantity_demand_monitor
+0x0040895a,fuel_quantity_demand_excess_cold_allowance_values,word[3],Lookup table - data: 2 values (one per axis breakpoint) after a byte-length word - read by fuel_quantity_demand_monitor
 0x0040898c,low_oil_pressure_threshold,word,engine_oil_pressure below this counts as low (sensor mode) (was governor_temp_protection_fuel_qty_min)
 0x00409e9a,boost_corr_crank_dwell_b_limit,word,ROM limit for boost_corr_crank_phase_dwell_b
 0x00409e9c,boost_corr_diag_neg_accum_limit,word,ROM limit for boost_corr_diag_neg_accumulator
@@ -7169,16 +7169,16 @@ address,name,type,comment
 0x003ff073,fuel_pressure_phase_fault_gate_enable,byte,ROM fault-gate bitmask (fuel pressure phase)
 0x003ff07a,boost_pressure_timing_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - boost_pressure_timing_filter_state.coefficient points here
 0x003ff07e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fb9f6.coefficient points here
-0x003ff080,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
-0x003ff0a2,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
+0x003ff080,altitude_from_barometric_pressure_axis,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
+0x003ff0a2,altitude_from_barometric_pressure_values,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
 0x003ff0c4,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by hpcr_fuelFinal_exponentialAverage
 0x003ff0e6,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by hpcr_fuelFinal_exponentialAverage
 0x003ff108,,word[19],Lookup table - x axis of 18 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
 0x003ff12e,,word[324],Lookup table - 2-D grid: 18 rows of 18 values (z[(y - 1) x 18 + x - 1] / no header) - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
 0x003ff3b6,,word[19],Lookup table - y axis of 18 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
-0x003ff3dc,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
-0x003ff404,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
-0x003ff426,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
+0x003ff3dc,boost_fuel_rpm_blend_scale_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
+0x003ff404,boost_fuel_rpm_blend_scale_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
+0x003ff426,boost_fuel_rpm_blend_scale_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
 0x003ff6f8,egr_pressure_integrator_upper_limit,word,ROM upper clamp for EGR pressure integrator
 0x003ff6fa,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcc08.coefficient points here
 0x003fa150,throttle_load_gain_interp_state,word,interp state base (throttle load gain)
@@ -7303,17 +7303,17 @@ address,name,type,comment
 0x004051e8,boost_correction_fuel_ema_scale,word,ROM scale for fuel-EMA boost correction ratio
 0x004059f4,fuel_demand_rpm_correction_scale,word,ROM scale for RPM correction in aux blend deviation
 0x00405a9e,fuel_demand_offset_correction_upper_limit,word,ROM ceiling for fuel_demand_offset_correction
-0x00405aa0,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_auxiliaryControl_tableInterpolation
-0x00405ac8,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_auxiliaryControl_tableInterpolation
-0x00405aea,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_auxiliaryControl_tableInterpolation
+0x00405aa0,fuel_demand_offset_load_delta_gain_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_auxiliaryControl_tableInterpolation
+0x00405ac8,fuel_demand_offset_load_delta_gain_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_auxiliaryControl_tableInterpolation
+0x00405aea,fuel_demand_offset_load_delta_gain_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_auxiliaryControl_tableInterpolation
 0x0040a54e,fuel_demand_blend_deviation_working,word,cross-task staging for aux blend deviation
 0x00406008,fuel_demand_limit_input_upper_limit,word,ROM upper clamp for fuel_demand_limit_input
 0x0040600a,fuel_demand_limit_input_lower_limit,word,ROM lower clamp for fuel_demand_limit_input
-0x0040600c,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by fuel_demandLimit_rpmLoad_calc
-0x00406034,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by fuel_demandLimit_rpmLoad_calc
-0x00406056,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by fuel_demandLimit_rpmLoad_calc
-0x004062b6,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by fuel_demandLimit_rpmLoad_calc
-0x004062c4,,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by fuel_demandLimit_rpmLoad_calc
+0x0040600c,fuel_demand_limit_scale_by_rpm_and_load_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by fuel_demandLimit_rpmLoad_calc
+0x00406034,fuel_demand_limit_scale_by_rpm_and_load_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by fuel_demandLimit_rpmLoad_calc
+0x00406056,fuel_demand_limit_scale_by_rpm_and_load_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by fuel_demandLimit_rpmLoad_calc
+0x004062b6,fuel_demand_limit_scale_by_pressure_axis,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by fuel_demandLimit_rpmLoad_calc
+0x004062c4,fuel_demand_limit_scale_by_pressure_values,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by fuel_demandLimit_rpmLoad_calc
 0x004062d2,boost_pressure_ratio_upper_limit,word,ROM ceiling for boost_pressure_ratio_clamped
 0x004062d4,boost_pressure_ratio_lower_limit,word,ROM floor for boost_pressure_ratio_clamped
 0x004062d8,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by fuel_demandBlend_weight_calc
@@ -7322,16 +7322,16 @@ address,name,type,comment
 0x0040637c,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by fuel_demandBlend_weight_calc
 0x0040638e,,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by fuel_demandBlend_weight_calc
 0x004063a0,,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by fuel_demandBlend_weight_calc
-0x00406420,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by fuel_demandBlend_rpmRange_check
-0x00406430,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by fuel_demandBlend_rpmRange_check
-0x00406440,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by fuel_demandBlend_rpmRange_check
-0x00406450,,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by fuel_demandBlend_rpmRange_check
+0x00406420,fuel_demand_auxiliary_blend_deviation_maximum_by_rpm_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by fuel_demandBlend_rpmRange_check
+0x00406430,fuel_demand_auxiliary_blend_deviation_maximum_by_rpm_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by fuel_demandBlend_rpmRange_check
+0x00406440,fuel_demand_auxiliary_blend_deviation_minimum_by_rpm_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by fuel_demandBlend_rpmRange_check
+0x00406450,fuel_demand_auxiliary_blend_deviation_minimum_by_rpm_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by fuel_demandBlend_rpmRange_check
 0x00406464,fuel_blendMode_condition_a_slope,word,ROM slope for blend condition A threshold
 0x00406466,fuel_blendMode_condition_b_slope,word,ROM slope for blend condition B threshold
 0x00406470,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by etc1_threshold_lookup
 0x00406498,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by etc1_threshold_lookup
-0x004064c0,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by governor_adjustment_compare
-0x004064e2,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by governor_adjustment_compare
+0x004064c0,governor_adjustment_threshold_input_axis,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by governor_adjustment_compare
+0x004064e2,governor_adjustment_flow_rate_threshold_values,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by governor_adjustment_compare
 0x00406548,fuel_demand_min_rate_limit_decrease,word,ROM negative slew step for fuel_demand_min
 0x0040654a,fuel_demand_min_rate_limit_increase,word,ROM positive slew step for fuel_demand_min
 0x0040a72e,fuel_demand_blend_weight,word,blend weight (dualAxis product) floor input
@@ -7353,10 +7353,10 @@ address,name,type,comment
 0x004067e0,governor_speed_stability_diag_count_decrement,word,ROM decay step for stability diag counter
 0x004067e2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbd10.coefficient points here
 0x004071de,fuel_demand_override_active_min,word,ROM minimum override trigger count
-0x004071e0,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_blendBoostAndThrottleFuelDemand / fuel_demand_blend_compensate / fuel_demand_boost_compensate (+2 more)
-0x0040720c,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_blendBoostAndThrottleFuelDemand / fuel_demand_blend_compensate / fuel_demand_boost_compensate (+2 more)
-0x00407238,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_blendBoostAndThrottleFuelDemand
-0x0040724e,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_blendBoostAndThrottleFuelDemand
+0x004071e0,water_saturation_vapor_pressure_by_temperature_axis,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_blendBoostAndThrottleFuelDemand / fuel_demand_blend_compensate / fuel_demand_boost_compensate (+2 more)
+0x0040720c,water_saturation_vapor_pressure_by_temperature_values,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_blendBoostAndThrottleFuelDemand / fuel_demand_blend_compensate / fuel_demand_boost_compensate (+2 more)
+0x00407238,fuel_demand_compensation_target_by_pressure_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_blendBoostAndThrottleFuelDemand
+0x0040724e,fuel_demand_compensation_target_by_pressure_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_blendBoostAndThrottleFuelDemand
 0x00407772,protection_speedTracking_speed_error_threshold,word,ROM threshold for speed-error-over flag
 0x00407778,protection_speedTracking_speed_error_ramp_decay,word,ROM decay step for speed-error ramp
 0x0040777a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcce8.coefficient points here
@@ -7375,8 +7375,8 @@ address,name,type,comment
 0x004086b8,protection_event26_rpm_high_debounce_limit,word,ROM cap for event-26 rpm-high debounce
 0x004086cc,j1939_tsc1_timing_fault_counter_threshold,word,ROM threshold for TSC1 timing-fault path
 0x004086da,park_neutral_exit_torque_limit_startup_delay,dword,22 passes: after start the counter 0x3fcd80 must exceed this before the park/neutral exit torque limit monitor (0x51193c) can arm - until then its state bit 1 (inhibit) stays set - read with lwz - no fuel temperature input (was fuel_temp_protection_warmup_cycle_limit) (Medium confidence)
-0x004086de,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_updateParkNeutralExitTorqueLimitWindow
-0x004086f2,,word[10],Lookup table - data: 9 values (one per axis breakpoint) after a byte-length word - read by cm848_updateParkNeutralExitTorqueLimitWindow
+0x004086de,park_neutral_exit_torque_limit_countdown_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_updateParkNeutralExitTorqueLimitWindow
+0x004086f2,park_neutral_exit_torque_limit_countdown_values,word[10],Lookup table - data: 9 values (one per axis breakpoint) after a byte-length word - read by cm848_updateParkNeutralExitTorqueLimitWindow
 0x0040871c,protection_j1939_trigger_accumulator_limit,byte,ROM ceiling for J1939 protection trigger accumulator
 0x0040871d,protection_j1939_trigger_accumulator_step,byte,ROM per-cycle step for trigger accumulator
 0x00408732,engine_warning_alert_duration_coolant_overheat,word,ROM constant 6 (6 s derived): engine warning alert length on a rising edge of coolant_bucket_overheat_active_flag - 0 = no alert / 255 = held until all inputs clear (was protection_ramp_fraction_coolant_overheat)
@@ -7417,8 +7417,8 @@ address,name,type,comment
 0x00408b27,protection_throttle_invert_flag,byte,ROM throttle direction invert flag
 0x00408b28,protection_throttle_position_clamp_high,word,ROM upper clamp for throttle position
 0x00408b2a,protection_throttle_hpcr_frequency,word,ROM HPCR output frequency (Hz, 1e6/this = period)
-0x00408b36,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_controlGovernorPressureSolenoid
-0x00408b48,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_controlGovernorPressureSolenoid
+0x00408b36,governor_pressure_temperature_gain_percent_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_controlGovernorPressureSolenoid
+0x00408b48,governor_pressure_temperature_gain_percent_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_controlGovernorPressureSolenoid
 0x00408af0,protection_throttle_velocity_gain,word,ROM derivative gain for throttle PID
 0x0040b58c,protection_throttle_velocity_term,word,velocity (D) contribution to throttle output
 0x00408816,cooling_fan_integral_term_initial,word,Initial cooling_fan_integral_term (and accumulator x 20480) set by cm848_initCoolingFanControl (was governor_fuel_demand_i_term_init_val)
@@ -7508,12 +7508,12 @@ address,name,type,comment
 0x0040ba44,temperature_rationality_cranking_check_done_flag,word,Set once the cranking cross-check has made its decision - after that the scheduler runs the governor confirm and the moving re-checks instead of the cross-check (was cam_sync_crossval_startup_done_flag)
 0x0040ba46,temperature_rationality_coolant_soak_reference_working,word,Coolant temperature captured while switch input 0 (key-on run signal) is set - held when it clears - cm848_initCommunication copies it to the persistent 0x3feeb6 which the cranking cross-check uses to require a cold soak (was cam_sync_coolant_temp_init_snapshot) (Medium confidence)
 0x00409fe6,hpcr_fuel_demand_rpm_threshold,word,ROM RPM threshold for HPCR fuel-demand protection
-0x00409fea,,word[5],Lookup table - x axis of 4 breakpoints after its byte-length word - read by hpcr_fuelDemandProc
-0x00409ff4,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by hpcr_fuelDemandProc
-0x00409ffe,,word[5],Lookup table - x axis of 4 breakpoints after its byte-length word - read by hpcr_fuelDemandProc
-0x0040a008,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by hpcr_fuelDemandProc
-0x0040a012,,word[5],Lookup table - x axis of 4 breakpoints after its byte-length word - read by hpcr_fuelDemandProc
-0x0040a01c,,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by hpcr_fuelDemandProc
+0x00409fea,wastegate_monitor_fail_high_boost_pressure_axis,word[5],Lookup table - x axis of 4 breakpoints after its byte-length word - read by hpcr_fuelDemandProc
+0x00409ff4,wastegate_monitor_fail_high_boost_pressure_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by hpcr_fuelDemandProc
+0x00409ffe,wastegate_monitor_pass_high_boost_pressure_axis,word[5],Lookup table - x axis of 4 breakpoints after its byte-length word - read by hpcr_fuelDemandProc
+0x0040a008,wastegate_monitor_pass_high_boost_pressure_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by hpcr_fuelDemandProc
+0x0040a012,wastegate_monitor_pass_low_boost_pressure_axis,word[5],Lookup table - x axis of 4 breakpoints after its byte-length word - read by hpcr_fuelDemandProc
+0x0040a01c,wastegate_monitor_pass_low_boost_pressure_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by hpcr_fuelDemandProc
 0x0040a02c,fault_match_debounce_threshold_std,word,ROM fault-match debounce threshold (standard channels)
 0x0040a02e,fault_active_recovery_threshold_std,word,ROM fault-active recovery threshold (standard channels)
 0x0040a036,fault_active_recovery_threshold_ch19_20,word,ROM fault-active recovery threshold (channels 19/20)
@@ -7654,97 +7654,97 @@ address,name,type,comment
 0x0053a278,j1939_input_signal_descriptor_table,j1939_input_signal_descriptor_t,17 J1939 2-bit switch inputs supervised by cm848_evaluateJ1939InputSignalFault (value pointer / timeout slot / fault bit index)
 0x0005fbc2,fuel_pressure_sensor_volts_axis,word[6],ROM x axis of the rail pressure sensor table (byte length 10 then 409 / 1228 / 2047 / 2866 / 3685 = 0.5 / 1.5 / 2.5 / 3.5 / 4.5 V in fuel_pressure_sensor_volts counts)
 0x0005fbce,fuel_pressure_sensor_pressure_values,word[6],ROM pressure per axis point (byte length 10 then 0 / 922 / 1844 / 2766 / 3689 pressure counts (DRB scale 7.078 per count; the DRB labels it kPa, but psi fits the sensor's 0-1800 bar: 4.5 V = 3689 counts = 26,111 psi))
-0x0005fbda,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fbec,,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fbfe,,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x0005fc7e,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fca6,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fcc8,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fce2,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fcfa,,word[132],Lookup table - 2-D grid: 11 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x0005fe02,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fe18,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fe24,,word[50],Lookup table - 2-D grid: 5 rows of 10 values (z[(y - 1) x 10 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x0005fe88,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fea2,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0005fec4,,word[192],Lookup table - 2-D grid: 16 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x00060044,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x00060058,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x00060064,,word[45],Lookup table - 2-D grid: 5 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x000600be,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x000600e6,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x00060108,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x00060130,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x00060152,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x000603b2,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x000603da,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x000603fc,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x0006065c,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x00060684,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x000606a6,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x00060906,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x0006092e,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
-0x00060950,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
-0x00060bb0,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by cm848_updateEngineDiagnosticCounters
-0x00060bbe,,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by cm848_updateEngineDiagnosticCounters
-0x00060bcc,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060be2,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060bf8,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060c0e,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060c24,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060c3a,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060c50,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060c66,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060c7c,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060c92,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060ca8,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060cbe,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060cd4,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060cea,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
-0x00060d00,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00060d12,,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00060d24,,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_calculateEngineTimingData
-0x00060da4,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00060dbe,,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateEngineTimingData
-0x00060dd8,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00060de4,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateEngineTimingData
-0x00060df0,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00060e04,,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00060e18,,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_calculateEngineTimingData
-0x00060eba,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00060ed6,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00060eee,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateEngineTimingData
-0x0006100c,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00061028,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00061040,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateEngineTimingData
-0x0006115e,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x0006117a,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00061192,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateEngineTimingData
-0x000612b0,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x000612cc,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x000612e4,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateEngineTimingData
-0x00061402,,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x00061412,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
-0x0006142a,,word[77],Lookup table - 2-D grid: 11 rows of 7 values (z[(y - 1) x 7 + x - 1] / no header) - read by cm848_calculateEngineTimingData
-0x000614c4,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000614ec,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006150e,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x0006176e,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061780,,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061792,,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061812,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006182e,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061846,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061964,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061970,,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_torque_limit_state_update
-0x0006197c,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061992,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_torque_limit_state_update
-0x000619a8,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000619c4,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000619dc,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061afa,,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061b16,,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061b2e,,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061c4c,,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061c66,,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061c72,,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x0005fbda,fuel_pressure_setpoint_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fbec,fuel_pressure_setpoint_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fbfe,fuel_pressure_setpoint_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x0005fc7e,fuel_pressure_setpoint_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fca6,fuel_pressure_setpoint_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fcc8,fuel_pressure_setpoint_coolant_limit_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fce2,fuel_pressure_setpoint_coolant_limit_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fcfa,fuel_pressure_setpoint_coolant_limit_grid,word[132],Lookup table - 2-D grid: 11 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x0005fe02,fuel_pressure_setpoint_ambient_factor_x_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fe18,fuel_pressure_setpoint_ambient_factor_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fe24,fuel_pressure_setpoint_ambient_factor_grid,word[50],Lookup table - 2-D grid: 5 rows of 10 values (z[(y - 1) x 10 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x0005fe88,fuel_pressure_setpoint_ambient_limit_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fea2,fuel_pressure_setpoint_ambient_limit_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0005fec4,fuel_pressure_setpoint_ambient_limit_grid,word[192],Lookup table - 2-D grid: 16 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x00060044,fuel_pressure_setpoint_start_run_up_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x00060058,fuel_pressure_setpoint_start_run_up_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x00060064,fuel_pressure_setpoint_start_run_up_grid,word[45],Lookup table - 2-D grid: 5 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x000600be,fuel_pressure_setpoint_map_1_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x000600e6,fuel_pressure_setpoint_map_1_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x00060108,fuel_pressure_setpoint_map_2_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x00060130,fuel_pressure_setpoint_map_2_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x00060152,fuel_pressure_setpoint_map_2_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x000603b2,fuel_pressure_setpoint_map_3_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x000603da,fuel_pressure_setpoint_map_3_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x000603fc,fuel_pressure_setpoint_map_3_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x0006065c,fuel_pressure_setpoint_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x00060684,fuel_pressure_setpoint_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x000606a6,fuel_pressure_setpoint_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x00060906,fuel_pressure_setpoint_offset_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x0006092e,fuel_pressure_setpoint_offset_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_sensor_channel_state_load
+0x00060950,fuel_pressure_setpoint_offset_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_sensor_channel_state_load
+0x00060bb0,fuel_metering_feedback_linearization_axis,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by cm848_updateEngineDiagnosticCounters
+0x00060bbe,fuel_metering_feedback_linearization_values,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by cm848_updateEngineDiagnosticCounters
+0x00060bcc,fuel_pressure_minimum_expected_by_rpm_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060be2,fuel_pressure_minimum_expected_by_rpm_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060bf8,fuel_pressure_above_setpoint_error_limit_by_rpm_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060c0e,fuel_pressure_above_setpoint_error_limit_by_rpm_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060c24,fuel_pressure_below_setpoint_error_limit_by_rpm_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060c3a,fuel_pressure_below_setpoint_error_limit_by_rpm_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060c50,fuel_pressure_below_setpoint_demand_limit_by_rpm_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060c66,fuel_pressure_below_setpoint_demand_limit_by_rpm_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060c7c,fuel_pressure_expected_decay_by_pressure_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060c92,fuel_pressure_expected_decay_by_pressure_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060ca8,fuel_pressure_governor_demand_limit_without_fuel_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060cbe,fuel_pressure_governor_demand_limit_without_fuel_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060cd4,fuel_pressure_above_setpoint_demand_limit_by_rpm_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060cea,fuel_pressure_above_setpoint_demand_limit_by_rpm_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_processEnginePositionDiagnostics
+0x00060d00,injection_timing_main_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00060d12,injection_timing_main_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00060d24,injection_timing_main_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_calculateEngineTimingData
+0x00060da4,injection_timing_main_intake_temperature_factor_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00060dbe,injection_timing_main_intake_temperature_factor_values,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateEngineTimingData
+0x00060dd8,injection_timing_main_barometric_pressure_factor_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00060de4,injection_timing_main_barometric_pressure_factor_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateEngineTimingData
+0x00060df0,injection_timing_main_start_run_up_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00060e04,injection_timing_main_start_run_up_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00060e18,injection_timing_main_start_run_up_grid,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_calculateEngineTimingData
+0x00060eba,injection_timing_main_coolant_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00060ed6,injection_timing_main_coolant_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00060eee,injection_timing_main_coolant_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateEngineTimingData
+0x0006100c,injection_timing_main_intake_temperature_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00061028,injection_timing_main_intake_temperature_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00061040,injection_timing_main_intake_temperature_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateEngineTimingData
+0x0006115e,injection_timing_main_barometric_pressure_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x0006117a,injection_timing_main_barometric_pressure_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00061192,injection_timing_main_barometric_pressure_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateEngineTimingData
+0x000612b0,injection_timing_main_boost_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x000612cc,injection_timing_main_boost_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x000612e4,injection_timing_main_boost_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_calculateEngineTimingData
+0x00061402,injection_timing_main_boost_factor_x_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x00061412,injection_timing_main_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
+0x0006142a,injection_timing_main_boost_factor_grid,word[77],Lookup table - 2-D grid: 11 rows of 7 values (z[(y - 1) x 7 + x - 1] / no header) - read by cm848_calculateEngineTimingData
+0x000614c4,pilot_quantity_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000614ec,pilot_quantity_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006150e,pilot_quantity_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x0006176e,pilot_quantity_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061780,pilot_quantity_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061792,pilot_quantity_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061812,pilot_quantity_coolant_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006182e,pilot_quantity_coolant_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061846,pilot_quantity_coolant_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061964,pilot_quantity_coolant_factor_cold_start_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061970,pilot_quantity_coolant_factor_cold_start_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_torque_limit_state_update
+0x0006197c,pilot_quantity_intake_temperature_factor_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061992,pilot_quantity_intake_temperature_factor_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_torque_limit_state_update
+0x000619a8,pilot_quantity_intake_temperature_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000619c4,pilot_quantity_intake_temperature_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000619dc,pilot_quantity_intake_temperature_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061afa,pilot_quantity_ambient_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061b16,pilot_quantity_ambient_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061b2e,pilot_quantity_ambient_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061c4c,pilot_quantity_ambient_factor_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061c66,pilot_quantity_ambient_factor_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061c72,pilot_quantity_ambient_factor_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_torque_limit_state_update

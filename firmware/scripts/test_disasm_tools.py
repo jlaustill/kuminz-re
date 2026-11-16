@@ -55,10 +55,21 @@ def main():
     print(f"[{'PASS' if ro_ok else 'FAIL'}] xref 0x00408dfc read-only: {writes} writes / {len(refs)} fns")
     fails += not ro_ok
 
-    # an unnamed lookup table typed by a type-only row renders WORD_ARRAY_<addr>, not DAT_<addr>
-    name, refs = referencing_functions(0x0005fe88)
-    table_ok = not name and any(f == "cm848_sensor_channel_state_load" for _, f in refs)
-    print(f"[{'PASS' if table_ok else 'FAIL'}] xref 0x0005fe88 unnamed word array: {len(refs)} fns")
+    # an unnamed lookup table typed by a type-only row renders WORD_ARRAY_<addr>, not DAT_<addr>. The table is
+    # picked from the CSV (the first type-only word[N] row whose label is in the .cpp), because the naming
+    # campaigns keep naming the fixed example (0x5fe88 was named on 2026-11-16).
+    output = os.path.join(D.FW, "output")
+    cpp = open(os.path.join(output, "cm848_rom.ghidra.cpp")).read()
+    unnamed = None
+    for line in open(os.path.join(output, "global_variables.csv")):
+        p = line.rstrip("\n").split(",")
+        if p[0].startswith("0x") and len(p) > 2 and not p[1] and p[2].startswith("word["):
+            if f"WORD_ARRAY_{int(p[0], 16):08x}" in cpp:
+                unnamed = int(p[0], 16)
+                break
+    name, refs = referencing_functions(unnamed) if unnamed is not None else ("", [])
+    table_ok = unnamed is not None and not name and len(refs) > 0
+    print(f"[{'PASS' if table_ok else 'FAIL'}] xref {hex(unnamed or 0)} unnamed word array: {len(refs)} fns")
     fails += not table_ok
 
     print(f"\n{'ALL PASS' if fails == 0 else str(fails) + ' FAILED'}")
