@@ -314,10 +314,10 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x005012dc,sensorChannelTypeB_configInit,0,config_ptr,sensor_channel_config_t*,Per-channel ROM calibration config (default/thresholds/debounce fields)
 0x005012dc,sensorChannelTypeB_configInit,1,state_ptr,word*,RAM state buffer (stores ADC raw + debounce counter + filtered value)
-0x005012dc,sensorChannelTypeB_configInit,2,interp_args_ptr,table_interp_args_t*,Table interpolation arguments structure
-0x005012dc,sensorChannelTypeB_configInit,3,table_ptr,void*,ROM calibration table data (UNUSED by function body)
-0x005012dc,sensorChannelTypeB_configInit,4,axes_ptr,void*,ROM calibration axes (UNUSED by function body)
-0x005012dc,sensorChannelTypeB_configInit,5,mode_flag,int,Mode flag - always 0 in calls (UNUSED by function body)
+0x005012dc,sensorChannelTypeB_configInit,2,cached_axis_offset,word *,Cache word of the lookup (r5): the byte offset (2 x index) of the axis segment found last time - the update resets it to 2 - passed to lookupTableInterpolation as its cached_axis_offset (was table_interp_args_t *)
+0x005012dc,sensorChannelTypeB_configInit,3,x_axis,word *,X axis (r6): first word = byte length of the breakpoints - looked up with state_ptr[5] (was table_ptr - not unused)
+0x005012dc,sensorChannelTypeB_configInit,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word (was axes_ptr - not unused)
+0x005012dc,sensorChannelTypeB_configInit,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup - 0 in the calls (was mode_flag)
 0x005012dc,sensorChannelTypeB_configInit,6,ema_state_ptr,int*,EMA filter state pointer (written at offset +4 with shifted value)
 0x005012dc,sensorChannelTypeB_configInit,7,channel_index,uint,Sensor channel number (0x1c=28 0x1d=29 etc) indexes sensor_channel_filtered_output
 0x005012dc,sensorChannelTypeB_configInit,8,high_fault_bit,uint,High fault status bit index (0x179=377 etc) for fault_active_status_array
@@ -327,10 +327,10 @@ function_address,function_name,param_index,name,type,comment
 0x005012dc,sensorChannelTypeB_configInit,12,fault_output_ptr,word*,Output: fault status word (e.g. sensor_channel28_fault_status)
 0x00501b4c,sensorChannelTypeB_update,0,config_ptr,sensor_channel_config_t*,Per-channel ROM calibration config (default/thresholds/debounce fields)
 0x00501b4c,sensorChannelTypeB_update,1,state_ptr,word*,RAM state buffer (stores ADC raw + debounce counter + filtered value)
-0x00501b4c,sensorChannelTypeB_update,2,interp_args_ptr,table_interp_args_t*,Table interpolation arguments structure
-0x00501b4c,sensorChannelTypeB_update,3,table_ptr,void*,ROM calibration table data (UNUSED by function body)
-0x00501b4c,sensorChannelTypeB_update,4,axes_ptr,void*,ROM calibration axes (UNUSED by function body)
-0x00501b4c,sensorChannelTypeB_update,5,mode_flag,int,Mode flag - always 0 in calls (UNUSED by function body)
+0x00501b4c,sensorChannelTypeB_update,2,cached_axis_offset,word *,Cache word of the lookup (r5): the byte offset (2 x index) of the axis segment found last time - the update resets it to 2 - passed to lookupTableInterpolation as its cached_axis_offset (was table_interp_args_t *)
+0x00501b4c,sensorChannelTypeB_update,3,x_axis,word *,X axis (r6): first word = byte length of the breakpoints - looked up with state_ptr[5] (was table_ptr - not unused)
+0x00501b4c,sensorChannelTypeB_update,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word (was axes_ptr - not unused)
+0x00501b4c,sensorChannelTypeB_update,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup - 0 in the calls (was mode_flag)
 0x00501b4c,sensorChannelTypeB_update,6,ema_state_ptr,int*,EMA filter state pointer (written at offset +4 with shifted value)
 0x00501b4c,sensorChannelTypeB_update,7,channel_index,uint,Sensor channel number (0x1c=28 0x1d=29 etc) indexes sensor_channel_filtered_output
 0x00501b4c,sensorChannelTypeB_update,8,high_fault_bit,uint,High fault status bit index (0x179=377 etc) for fault_active_status_array
