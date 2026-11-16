@@ -25,9 +25,11 @@
 #                  each = lifetime pulses / 64000 (= miles / 8)
 #
 # Block checksum (EEPROM 0x005C) is SELF-HEALING: the ECU recomputes the
-# 16-bit sum of EEPROM 0x08EA-0x1A3D at each engine-start-completion and
-# stores it back. After this write the checksum fault (system_faults 0x40)
-# may be set until the next key cycle, then the ECU re-stores it. This tool
+# 16-bit sum of EEPROM 0x08EA-0x1A3D in its power-down EEPROM save
+# (cm848_saveEepromForPowerDown, run at key-off - the function was misnamed
+# engine_start_completion_sequence before PR #48) and stores it back. After
+# this write the checksum fault (system_faults 0x40) may be set until that
+# key-off save re-stores it. This tool
 # therefore does not forge a checksum the ECU would immediately overwrite.
 #
 # Source for the real mileage:
@@ -164,7 +166,7 @@ echo "    lifetime 0x${LIFETIME_ADDR}  <- ${HI_HEX} ${LO_HEX}"
 echo "    trip     0x${TRIP_ADDR}  <- ${HI_HEX} ${LO_HEX}"
 echo "    ring     0x${RING_ADDR}  <- ${RING_HEX} x ${RING_ENTRIES}"
 echo "  Not touched: 0x${DTC_LIST_ADDR} (active DTC list), the dash cluster."
-echo "  Checksum 0x${CHECKSUM_ADDR} self-heals at the next engine start."
+echo "  Checksum 0x${CHECKSUM_ADDR} self-heals at the next key-off (power-down EEPROM save)."
 echo
 
 # Show current values.

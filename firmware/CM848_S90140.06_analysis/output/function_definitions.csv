@@ -2,15 +2,37 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions - Ported from CM550 (same pattern across ECU families)
 # -----------------------------------------------------------------------------
-0x00055ef4,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure
+0x00055ef4,lookupTableInterpolation,return,,word,Y value at the input: linear between the two breakpoints around it (or the step value with flags bit 3) and the end value outside the axis
+0x00055ef4,lookupTableInterpolation,0,cached_axis_offset,word *,Byte offset (2 x index) of the axis segment found last time - the search starts there and the new one is written back; the globals passed here are the *_interp_state / *_interp_index / engine_sync_init_state_* words
+0x00055ef4,lookupTableInterpolation,1,input,ushort,Value looked up on the x axis (r4)
+0x00055ef4,lookupTableInterpolation,2,x_axis,word *,X axis (r5): first word = byte length of the breakpoints that follow
+0x00055ef4,lookupTableInterpolation,3,y_data,word *,Y data (r6): first word = byte length of the values that follow (one per breakpoint)
+0x00055ef4,lookupTableInterpolation,4,flags,int,r7: bit 0 = signed x axis / bit 1 = signed y data / bit 3 = step lookup (no interpolation); calls pass 0 (218) / 1 (43) / 2 (31) / 3 (13) / 8 (1) or a wrapper's own flag
 
-0x000566cc,cm848_dualAxisTableInterpolation,0,table_descriptor,void*,Pointer to 2D table descriptor
-0x000566cc,cm848_dualAxisTableInterpolation,1,x_input,ushort,X-axis input value
-0x000566cc,cm848_dualAxisTableInterpolation,2,y_input,ushort,Y-axis input value
+0x000566cc,cm848_dualAxisTableInterpolation,return,,word,Z value at (x_input / y_input): interpolated between the grid points around it (step value with flags bit 3)
+0x000566cc,cm848_dualAxisTableInterpolation,0,cached_axis_offsets,word *,Two words (r3): the byte offsets (2 x index) of the x and y axis segments found last time - each search starts there and the new offsets are written back
+0x000566cc,cm848_dualAxisTableInterpolation,1,x_input,ushort,Value looked up on x_axis (r4)
+0x000566cc,cm848_dualAxisTableInterpolation,2,x_axis,word *,X axis (r5): first word = byte length of the breakpoints
+0x000566cc,cm848_dualAxisTableInterpolation,3,y_input,ushort,Value looked up on y_axis (r6)
+0x000566cc,cm848_dualAxisTableInterpolation,4,y_axis,word *,Y axis (r7): first word = byte length of the breakpoints
+0x000566cc,cm848_dualAxisTableInterpolation,5,z_data,word *,Grid values (r8) - one per x / y breakpoint pair
+0x000566cc,cm848_dualAxisTableInterpolation,6,flags,int,r9: bit 0 = signed x axis / bit 1 = signed y axis / bit 2 = signed z data / bit 3 = step lookup
 
-0x00015e08,cm848_interpolateFuelMapTable,0,table_ptr,void*,Pointer to fuel map table
-0x00015e08,cm848_interpolateFuelMapTable,1,rpm_input,ushort,Engine RPM value for lookup
-0x00015e08,cm848_interpolateFuelMapTable,2,load_input,ushort,Engine load value for lookup
+0x00015d2c,cm848_interpolateTableWithoutCache,return,,word,Y value at the input: linear between the breakpoints around it and the end value outside the axis
+0x00015d2c,cm848_interpolateTableWithoutCache,0,input,int,Value looked up on the x axis (compared as a full 32-bit register - a 16-bit type leaves CONCAT22 artifacts)
+0x00015d2c,cm848_interpolateTableWithoutCache,1,x_axis,word *,X axis: first word = byte length of the unsigned breakpoints that follow
+0x00015d2c,cm848_interpolateTableWithoutCache,2,y_data,word *,Y data: one signed value per breakpoint
+
+0x00015e08,cm848_interpolateFuelMapTable,return,,void,Writes the result record through param 0
+0x00015e08,cm848_interpolateFuelMapTable,0,result,word *,Result record (3 dwords): [0] the x_axis / y_data value / [1] the larger of [0] and the reverse lookup of [2] / [2] [0] through second_axis -> second_data (raised to 2 x fuel_demand_min_threshold) / [3] [1] through fourth_data / [4] [1] through third_data / [5] not set
+0x00015e08,cm848_interpolateFuelMapTable,1,input,ushort,Value looked up on x_axis (r4)
+0x00015e08,cm848_interpolateFuelMapTable,2,x_axis,word *,X axis of the first lookup (r5)
+0x00015e08,cm848_interpolateFuelMapTable,3,y_data,word *,Y data of the first lookup (r6)
+0x00015e08,cm848_interpolateFuelMapTable,4,second_axis,word *,Axis of the follow-on lookups (r7) - also the data of the reverse lookup
+0x00015e08,cm848_interpolateFuelMapTable,5,second_data,word *,Data for [2] (r8) - also the axis of the reverse lookup
+0x00015e08,cm848_interpolateFuelMapTable,6,third_data,word *,Data for [4] (r9)
+0x00015e08,cm848_interpolateFuelMapTable,7,fourth_data,word *,Data for [3] (r10)
+0x00015e08,cm848_interpolateFuelMapTable,8,lookup_signed,int,Stack argument: non-zero passes flags 1 (signed x axis) to the first lookup
 
 # -----------------------------------------------------------------------------
 # CAN Message Transmission - Adapted from CM550 patterns
@@ -32,6 +54,15 @@ function_address,function_name,param_index,name,type,comment
 0x000036f8,cm848_resetEepromCalibrationState,return,,void,Clears eeprom_calibration_pending_flag and diag_session_state_byte
 
 0x000038f4,cm848_dispatchEepromWriteRequest,return,,void,Dispatches EEPROM write by request type - takes no params (reads global directly)
+
+# -----------------------------------------------------------------------------
+# Boot delay helper
+# -----------------------------------------------------------------------------
+# pass_count is int32_t (signed 32-bit): the tests are signed (cmpwi r3 0 / cmpw r4 r3). The CSV keyword int maps to
+# unsigned dword in this file and would add (int) casts.
+0x00002384,cm848_busyWaitDelay,return,,void,No return value - r3 is only read
+0x00002384,cm848_busyWaitDelay,0,pass_count,int32_t,Number of delay passes of SPINS_PER_DELAY_PASS spins each (signed; 0 or less returns at once)
+0x000024a0,cm848_waitForStableIgnitionKeyOn,return,,void,explicit void(void) - r3 is written before it is read - clears the phantom 0x1000 argument at its 3 call sites
 
 # -----------------------------------------------------------------------------
 # J1939 PGN Handlers - Common pattern for diagnostic message handlers
@@ -320,3 +351,52 @@ function_address,function_name,param_index,name,type,comment
 0x0003d904,mpc555_qspiStartJob,1,queue_index,int,0 = serviced first / 1
 0x0003da60,cm848_queueQspiJob,0,job,qspi_job_t*,Job to queue
 0x0003da60,cm848_queueQspiJob,1,queue_index,int,0 = serviced first / 1 (clamped)
+
+# -----------------------------------------------------------------------------
+# MIOS output drivers (todo 033, PR #48) - names only: the 4-byte parameters are undefined4 so the decompiler keeps
+# inferring their types (locked pointer types added casts at the call sites); the two 2-byte duty parameters are
+# ushort (undefined4 turned them into duty._2_2_ sub-pieces). The per-channel wrappers
+# get no rows - committed wrapper parameters made callers cast their word arguments.
+# -----------------------------------------------------------------------------
+0x00054e10,mpc555_miosCheckChannelFeedback,return,,ushort,0 = pin agrees with the command / 1 = high or toggling where it should be low / 2 = low or toggling where it should be high (16-bit: clrlwi r3 r5 16)
+0x00054e10,mpc555_miosCheckChannelFeedback,0,channel_registers,undefined4,MDASM register block (AR:BR read as one word / SCRD at +6)
+0x00054e10,mpc555_miosCheckChannelFeedback,1,commanded_duty,undefined4,Duty the output was commanded to (1/256 % per count; 25600 = 100 %) - 4 bytes: the compares use all of r4 (cmpwi r4 0 / cmpwi r4 25600) so a 2-byte type shows CONCAT22 artifacts
+0x00054eac,mpc555_miosSetChannelInputMode,return,,void,No return value
+0x00054eac,mpc555_miosSetChannelInputMode,0,channel_registers,undefined4,MDASM register block base
+0x00054eb8,mpc555_miosEnableChannelPwm,return,,void,No return value
+0x00054eb8,mpc555_miosEnableChannelPwm,0,channel_registers,undefined4,MDASM register block base
+0x00054ec4,mpc555_miosSetChannelPwmDuty,return,,void,No return value
+0x00054ec4,mpc555_miosSetChannelPwmDuty,0,channel_registers,undefined4,MDASM register block (AR:BR written as one word)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
+0x00054f48,mpc555_miosSetChannelPwmPeriod,return,,void,No return value
+0x00054f48,mpc555_miosSetChannelPwmPeriod,0,unused_channel_registers,undefined4,Ignored - every MDASM output shares the MMCSM22 period
+0x00054f48,mpc555_miosSetChannelPwmPeriod,1,period_setting,undefined4,MMCSM22 modulus latch = -(value x 20) - 1
+0x00054f80,mpc555_miosEnablePwmSubmodule,return,,void,No return value
+0x00054f80,mpc555_miosEnablePwmSubmodule,0,pwm_registers,undefined4,PWM submodule register block base
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,return,,void,No return value
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,0,pwm_registers,undefined4,PWM submodule register block (PERR at +0 / PULR at +2)
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,return,,void,No return value
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,0,pwm_registers,undefined4,PWM submodule register block (PERR at +0 / SCR at +6)
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,1,period_microseconds,undefined4,PWM period in microseconds
+
+# -----------------------------------------------------------------------------
+# TPU PWM output drivers (todo 035, PR #48) - names only (undefined4 keeps inferred 4-byte types; the duty
+# parameter is 2-byte ushort)
+# -----------------------------------------------------------------------------
+0x00055020,mpc555_tpuBEnablePwmChannel,return,,void,No return value
+0x00055020,mpc555_tpuBEnablePwmChannel,0,channel,undefined4,TPU-B channel number 0-15
+0x000551e4,mpc555_tpuBSetPwmPeriodMicroseconds,return,,void,No return value
+0x000551e4,mpc555_tpuBSetPwmPeriodMicroseconds,0,channel,undefined4,TPU-B channel number 0-15
+0x000551e4,mpc555_tpuBSetPwmPeriodMicroseconds,1,period_microseconds,undefined4,PWM period in microseconds
+0x00055178,mpc555_tpuBSetPwmDuty,return,,void,No return value
+0x00055178,mpc555_tpuBSetPwmDuty,0,channel,undefined4,TPU-B channel number 0-15
+0x00055178,mpc555_tpuBSetPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)
+0x00055294,mpc555_tpuAEnablePwmChannel,return,,void,No return value
+0x00055294,mpc555_tpuAEnablePwmChannel,0,channel,undefined4,TPU-A channel number 0-15
+0x00055458,mpc555_tpuASetPwmPeriodMicroseconds,return,,void,No return value
+0x00055458,mpc555_tpuASetPwmPeriodMicroseconds,0,channel,undefined4,TPU-A channel number 0-15
+0x00055458,mpc555_tpuASetPwmPeriodMicroseconds,1,period_microseconds,undefined4,PWM period in microseconds
+0x000553ec,mpc555_tpuASetPwmDuty,return,,void,No return value
+0x000553ec,mpc555_tpuASetPwmDuty,0,channel,undefined4,TPU-A channel number 0-15
+0x000553ec,mpc555_tpuASetPwmDuty,1,duty,ushort,1/256 % per count (25600 = 100 %)

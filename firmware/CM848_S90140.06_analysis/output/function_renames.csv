@@ -347,7 +347,7 @@ address,name
 0x000008fc,mpc555_initEepromTransfer
 0x000009e4,mpc555_diagServiceInitEepromTransfer,dispatched as diagnostic service 2 via diagnostic_service_dispatch_table (cm848_dispatchDiagnosticService) - not a dead function
 0x00000a40,cm848_computeCrcCcitt
-0x00000b44,mpc555_updatePowerStateOutputs,Boot ROM (from mpc555_bootStateMachine): copies the MIOS1ER bit 15 input into ecu_power_state_flags.capability_flags bit 0 then drives SIU_SGPIODT1 bit 0x400 from flag bit 1 and the MIOS port bit 0x2000 from flag bit 4 (likely power-hold style outputs; exact pins unconfirmed) - was mpc555_updateCapabilityFlags | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+0x00000b44,mpc555_updatePowerStateOutputs,Boot ROM (from mpc555_bootStateMachine): copies the ignition key line (mios_mdasm30.SCRD bit 15) into ecu_power_state_flags.capability_flags bit 0 then drives SIU_SGPIODT1 bit 0x400 from flag bit 1 and the MIOS port bit 0x2000 from flag bit 4 (likely power-hold style outputs; exact pins unconfirmed) - was mpc555_updateCapabilityFlags | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
 0x00000be8,cm848_stubFunction1
 0x00000bec,mpc555_eepromWriteWords
 0x00000d88,mpc555_eepromReadWords
@@ -384,11 +384,11 @@ address,name
 0x00002148,cm848_initDiagnosticCallback
 0x00002170,cm848_processDiagnosticTimeout
 0x000021c0,cm848_setDataTransferMode
-0x000021d0,mpc555_initDiagnosticSession
+0x000021d0,mpc555_initDiagnosticSession,Starts the boot SCI session. eeprom_shadow_header.serial_reflash_unlock_request 0 (the normal path): installs the boot SCI dispatcher at the normal baud rate (SCC1R0 0xa0), locked (boot_sci_security_state 0). Set (the application's SCI command 49 hand-off): clears EEPROM 0x56 and starts unlocked (boot_sci_security_state 1, session_flags bit 0, transfer phase 2) at high speed (SCC1R0 0x14)
 0x00002310,mpc555_eepromValidationCycle
-0x00002384,cm848_busWaitCycles
-0x000023b8,mpc555_checkBusHardwareStatus
-0x000024a0,cm848_waitForBusStable
+0x00002384,cm848_busyWaitDelay,Software delay: runs pass_count passes of SPINS_PER_DELAY_PASS (2222) spins of a 4-instruction loop (addi / clrlwi / cmpwi / blt) - no timer and no watchdog service. Both counters are 16-bit. A pass is at least 8888 clocks (0.22 ms at the nominal 40 MHz system clock if every instruction took one clock); flash-fetch and taken-branch stalls make it longer, so the real pass time is a bench measurement. Callers: mpc555_areBootModeStrapPinsHigh (1 pass after each QADC port write before reading the pins back) and cm848_waitForStableIgnitionKeyOn (2 passes between samples of the ignition key line). Was cm848_busWaitCycles: it waits on no bus and the argument is not CPU cycles | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
+0x000023b8,mpc555_areBootModeStrapPinsHigh,Samples four QADC port pins at reset and returns true only if all four read 1: QADC-B port word bit 0 (PQB0) and bit 12 (PQA4) then QADC-A port word bit 10 (PQA2) and bit 11 (PQA3). Before each sample it writes a direction register back unchanged and writes 0 to a port data register (QADC-B for samples 1 2 and 4 / QADC-A for sample 3) then waits one cm848_busyWaitDelay pass - so the fourth sample sets up the QADC-B pair but reads the QADC-A port. mpc555_hardwareInitialization stores the result in boot_mode_strap_pins_high: when it is 1 (or the EEPROM magic is not 0x600d) the ECM enters the boot service loop (mpc555_systemInitialization never returns) instead of starting the application - and cm848_initSupervisorWatchdog then sends the unarmed 0x1400 command. Which connector pins these are is a wiring / bench question. Was mpc555_checkBusHardwareStatus: no bus is involved | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x000024a0,cm848_waitForStableIgnitionKeyOn,Reset-time wait for the ignition key: samples mios_mdasm30.SCRD bit 15 (the MDA30 pin = the ignition key line - 1 = key on; the same bit cm848_readDiscreteInputLine reads as line 128 and mpc555_keyOnStateMachine tests) every 2 cm848_busyWaitDelay passes and returns once 5 consecutive samples read 1; any 0 restarts the count - so it never returns while the key is off. Called by mpc555_reset_vector / mpc555_initSystemRegisters / cm848_initClockAndTimers right after they write 3 (MDASM mode 3 = input capture) to that register. Was cm848_waitForBusStable: no bus is involved | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
 0x00002504,mpc555_systemInitialization
 0x00002694,mpc555_hardwareInitialization
 0x00002970,mpc555_initCanController
@@ -400,7 +400,7 @@ address,name
 0x00002d08,cm848_lookupEepromParameterAddress
 0x00002de4,cm848_pumpDiagnosticCallback,pump of the boot SCI diagnostic callback - run each pass by cm848_mainLoopIteration - calls (*diagnostic_callback_ptr)() when diag_request_pending_flag set and session_flags bit 0 clear else cm848_restoreDiagnosticHandler - not EEPROM-specific (was cm848_handleEepromDiagnosticCallback) | registration-table-sweep reviewed 2026-11-13
 0x00002e58,cm848_dispatchBootSciDiagnosticCommand,boot / reflash-kernel SCI diagnostic command dispatcher - scans the 5-entry ROM 0x7f7a table for the received byte and runs its handler - runs under mpc555_bootStateMachine - distinct from the runtime app dispatcher cm848_dispatchSciCommand 0x51d780 (was cm848_registerSchedulerTask) | registration-table-sweep reviewed 2026-11-13
-0x00002ee8,cm848_installBootSciDispatcher,installs cm848_dispatchBootSciCommand as the current and default diagnostic_callback_ptr state via cm848_saveDefaultDiagnosticHandler - called from mpc555_initDiagnosticSession on the normal cal_word4=0 boot path - NOT a scheduler (was cm848_initSchedulerCallback) | registration-table-sweep reviewed 2026-11-13
+0x00002ee8,cm848_installBootSciDispatcher,installs cm848_dispatchBootSciCommand as the current and default diagnostic_callback_ptr state via cm848_saveDefaultDiagnosticHandler - called from mpc555_initDiagnosticSession on the normal boot path (serial_reflash_unlock_request 0) - NOT a scheduler (was cm848_initSchedulerCallback) | registration-table-sweep reviewed 2026-11-13
 0x00002f18,mpc555_sciBeginUnchecksummedResponseTransmit,begins SCI transmit of diag_serial_buffer response - rewinds the cursor - writes byte 0 to SC1DR - enables the plain TX interrupt (checksummed twin is mpc555_sciStartResponseTransmit) - every boot command handler calls it as its tail - NOT a scheduler table init (was mpc555_initSchedulerTaskTable) | registration-table-sweep reviewed 2026-11-13
 0x00002f74,mpc555_sciReceiveRequestByte
 0x00003008,mpc555_sciTransmitResponseByte
@@ -410,12 +410,12 @@ address,name
 0x00003218,mpc555_sciEnableTransmitInterrupt
 0x0000323c,cm848_initDiagnosticResponseCallback,boot SCI command 0x2a handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms cm848_processDiagnosticResponseCallback to read an EEPROM parameter - reached only by pointer not dead
 0x0000326c,cm848_processDiagnosticResponseCallback,boot SCI command 0x2a continuation - installed by cm848_initDiagnosticResponseCallback via diagnostic_callback_ptr - appends the EEPROM parameter value (cm848_lookupEepromParameterAddress) to the response - reached only by pointer not dead
-0x000032dc,mpc555_generateSerialChallenge,boot SCI command 0x2b handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - writes a 2-byte seed from runtime_counter plus an additive checksum byte (hi + 0x2b + lo) - reached only by pointer not dead
-0x000033a4,cm848_initDiagnosticRequestHandler,boot SCI command 0x2c handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms cm848_processDiagnosticRequest to collect and verify a 2-byte key plus checksum - reached only by pointer not dead
+0x000032dc,mpc555_generateSerialChallenge,boot SCI command 0x2b handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - writes a 2-byte seed from runtime_counter plus an additive checksum byte (hi + 0x2b + lo); the seed is 0 while boot_sci_security_state is 1 (already unlocked) - reached only by pointer not dead
+0x000033a4,cm848_initDiagnosticRequestHandler,boot SCI command 0x2c handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms cm848_bootSciCheckSecurityKey to collect and verify a 2-byte key plus checksum - reached only by pointer not dead
 0x000033e0,cm848_decrementDiagnosticTimeout
-0x00003408,cm848_processDiagnosticRequest,boot SCI command 0x2c continuation - installed by cm848_initDiagnosticRequestHandler via diagnostic_callback_ptr - accumulates the key bytes then cm848_verifySerialResponse to unlock (keep-alive / cooldown / session) - reached only by pointer not dead
+0x00003408,cm848_bootSciCheckSecurityKey,Boot SCI command 0x2c continuation (installed by cm848_initDiagnosticRequestHandler via diagnostic_callback_ptr; reached only by pointer, not dead). It collects two key bytes and a checksum byte (key bytes + 0x2c) and answers: 0 = unlocked (already, or the key matched in cm848_verifySerialResponse -> boot_sci_security_state 1); 1 = wrong key (boot_sci_failed_key_count + 1, boot_sci_key_retry_delay 1000); 2 = retry delay running or bad checksum; 3 = locked out (3 wrong keys -> boot_sci_security_state 2). Was cm848_processDiagnosticRequest
 0x000035e4,cm848_initDiagnosticSessionHandler,boot SCI command 0x31 handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - arms cm848_processDiagnosticSessionFlags to confirm the diagnostic session - reached only by pointer not dead
-0x00003614,cm848_processDiagnosticSessionFlags,boot SCI command 0x31 continuation - installed by cm848_initDiagnosticSessionHandler via diagnostic_callback_ptr - sets session_flags bits 0-1 when the confirm byte is 1 and diagnostic_session_state=1 (unlocked) - reached only by pointer not dead
+0x00003614,cm848_processDiagnosticSessionFlags,boot SCI command 0x31 continuation - installed by cm848_initDiagnosticSessionHandler via diagnostic_callback_ptr - sets session_flags bits 0-1 when the confirm byte is 1 and boot_sci_security_state is 1 (unlocked) - reached only by pointer not dead
 0x0000368c,cm848_sendDiagnosticResponse,boot SCI command 0x32 handler via dispatch table ROM 0x7f7a (cm848_dispatchBootSciCommand) - copies the fixed 6-byte template ROM 0x7f94 (32 16 02 fe fe 46) into the response - reached only by pointer not dead
 0x000036f8,cm848_resetEepromCalibrationState
 0x00003710,cm848_beginEepromCalibrationWrite
@@ -512,7 +512,7 @@ address,name
 0x0000ba08,cm848_periodicTaskSet_controlLoop
 0x0000ba90,cm848_periodicTaskSet_auxiliaryControl
 0x0000bb18,cm848_periodicTaskSet_canTx
-0x0000bb40,cm848_periodicTaskSet_sensors2,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - periodic sensor-channel acquisition slot (NOT diagnostics; the real diagnostics bundle is periodicTaskSet_diagnostics2). Runs every scheduler sweep (mainLoopIteration phases 1/9/0x11/0x19/0x21); samples sensorChannel1 (ADC 0x14) + cruise switch (ADC 0x2f/47) + sensorChannel69 (ADC 0x45). NOTE: the configInit-family wrappers it calls run PERIODICALLY; their update-family siblings run once at boot in the hpcr_exceptionHandler reset path
+0x0000bb40,cm848_periodicTaskSet_sensors2,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - periodic sensor-channel acquisition slot (NOT diagnostics; the real diagnostics bundle is periodicTaskSet_diagnostics2). Runs every scheduler sweep (mainLoopIteration phases 1/9/0x11/0x19/0x21); samples sensorChannel1 (ADC 0x14) + cruise switch (ADC 0x2f/47) + sensorChannel69 (ADC 0x45). NOTE: the configInit-family wrappers it calls run PERIODICALLY; their update-family siblings run once at boot in the cm848_applicationMain reset path
 0x0000bb68,cm848_periodicTaskSet_protection
 0x0000bb90,cm848_periodicTaskSet_timing
 0x0000bbb8,cm848_periodicTaskSet_outputs
@@ -569,7 +569,7 @@ address,name
 0x0000d294,cm848_sensorChannel9_init
 0x0000d320,cm848_sensorChannel9_process
 0x0000d3ac,cm848_sensorChannel10_intakeManifoldTemperatureInit,Periodic Type A sampler for sensor slot 9 = intake manifold temperature (intake_manifold_temperature_sensor_filtered - circuit faults 0x13 / 0x14 = P0113 / P0112) - not oil temperature - _init is the family name of the periodic sampler (was cm848_sensorChannel10_oilTempInit) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
-0x0000d438,cm848_sensorChannel10_intakeManifoldTemperatureProcess,Boot-time update twin of cm848_sensorChannel10_intakeManifoldTemperatureInit (updateSensorChannelWithConfig with the same slot 9 intake manifold temperature arguments) called once from hpcr_exceptionHandler (was cm848_sensorChannel10_oilTempProcess) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0000d438,cm848_sensorChannel10_intakeManifoldTemperatureProcess,Boot-time update twin of cm848_sensorChannel10_intakeManifoldTemperatureInit (updateSensorChannelWithConfig with the same slot 9 intake manifold temperature arguments) called once from cm848_applicationMain (was cm848_sensorChannel10_oilTempProcess) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0000d4c4,cm848_sensorChannel11_init
 0x0000d550,cm848_sensorChannel11_process
 0x0000d5dc,cm848_sensorChannel12_init
@@ -688,8 +688,8 @@ address,name
 0x00015760,cm848_lookupFuelDemandRpmTables
 0x00015a24,cm848_calculateFuelLimitSource
 0x00015bd8,cm848_selectFuelLimitWithFiltering
-0x00015d2c,cm848_fuelDemandFilterUpdate
-0x00015e08,cm848_interpolateFuelMapTable
+0x00015d2c,cm848_interpolateTableWithoutCache,Stateless table interpolation (input, x_axis, y_data): searches the unsigned axis down from its end, interpolates linearly between the two breakpoints around the input (signed data) and returns the end value outside the axis. Only cm848_interpolateFuelMapTable calls it. Was cm848_fuelDemandFilterUpdate
+0x00015e08,cm848_interpolateFuelMapTable,Fuel map lookup for cm848_processFuelMapInterpolation (called once with engine_load_input_value and once with fuel_demand_boost_input, each with its own six tables in RAM at 0x400c84-0x400e1b): a cached lookupTableInterpolation of the input, then three cm848_interpolateTableWithoutCache follow-on lookups and one reverse lookup (axis and data swapped) fill the result record - see the result parameter
 0x00015f34,cm848_processFuelMapInterpolation
 0x000160ac,cm848_calculateFuelBlendModeSelection
 0x000164ac,cm848_processFuelDemandCalculations
@@ -865,9 +865,9 @@ address,name
 # EF00 service handlers (0x16, 0x06): formerly LAB_ labels
 0x00021694,cm848_forceActivateDiagnosticSession,jlaustill reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums
 0x000216e8,cm848_setEngineStarting,jlaustill reviewed 2026-5-25 - annoyed that = 1 rejects bool = TRUE, but otherwise hoping accurate
-0x000216fc,mpc555_processJ1939RxQueue
-0x000218b0,cm848_j1939ProcessRxQueueDefault
-0x000218dc,cm848_j1939ProcessRxQueueParam,handles J1939 PGN 61184 diagnostic service id 11 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler after the j1939_diagServiceDispatch gate) - wraps mpc555_processJ1939RxQueue - registered by cm848_registerJ1939DiagnosticHandlers
+0x000216fc,cm848_restartThroughBootRom,Software restart into the boot ROM, without a hardware reset. Only in cold_start_phase 1; otherwise it returns 7. It waits for the EEPROM write queue, saves key_on_hour_meter and engine_hour_meter to EEPROM (0x30 / 0x42) (waiting for each while a diagnostic session is active), and acknowledges the request on its link (param 2: 0 = J1939 response frame to param 1, 2 = SCI byte 1 via cm848_sciTransmitSingleByteOne). After a delay it sets chip-select 0 (BR0 0x500803 / OR0 0xfff00030) and SIUMCR 0x402000, then jumps through the reset vector word at ROM 0x104 to mpc555_hardwareInitialization (0x2694). Was mpc555_processJ1939RxQueue
+0x000218b0,cm848_restartThroughBootRomAfterSciRequest,cm848_restartThroughBootRom(0, 2): restart through the boot ROM and acknowledge with SCI byte 1. Called by SCI command 49 (cm848_sciCommand49Callback) after it wrote the serial reflash hand-off to EEPROM. Was cm848_j1939ProcessRxQueueDefault
+0x000218dc,cm848_handleJ1939RestartService,J1939 PGN 61184 diagnostic service 11 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler after the j1939_diagServiceDispatch gate; registered by cm848_registerJ1939DiagnosticHandlers): cm848_restartThroughBootRom(requester, 0) - restart through the boot ROM and acknowledge with a J1939 response frame. Was cm848_j1939ProcessRxQueueParam
 # EF00 service handler (0x18): formerly LAB_ label
 0x00021904,cm848_setColdStartMode2Flag,handles J1939 PGN 61184 diagnostic service id 24 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler) - sets engine_shutdown_active_flag used by the cold-start main loop - registered by cm848_registerJ1939DiagnosticHandlers
 0x00021918,cm848_commitEepromMirrorToEeprom,handles J1939 PGN 61184 diag service id 21 via the 0x3fa8b2 table (cm848_j1939DiagnosticServiceHandler) - writes only the leading eeprom_mirror block EEPROM 0x0 to eeprom_checksummed_block_start via cm848_queueEepromByteWrites - does not validate (was cm848_validateCalibrationMemory) | registration-table-sweep reviewed 2026-11-13
@@ -1081,7 +1081,7 @@ address,name
 0x0002f2c8,cm848_updateLoadProtectionLoadFilter
 0x0002f3a0,cm848_evaluateLoadProtectionLiveStage
 0x0002f524,cm848_calculateLoadProtectionDerateTarget
-0x0002f5a4,cm848_processLoadProtectionStatus,review-function-readability reviewed 2026-06-23 (cluster re-domained 2026-06-27) - Readability High Accuracy Confidence High - orchestrates the engine-load-PROTECTION derate-speed path (NOT DTC handling): runs the two protection-condition state machines then builds the protection status word (protection_diagnostic_status_intermediate = protection_fault_condition_value | confirm-B bit3) and computes the derate speed target via cm848_calculateLoadProtectionDerateTarget. Outputs converge on governor_speed_tracking (live PID error term cpp:29251); real J1939 DM2 fault path is a sibling (cm848_setLogicalOutputRequest). Renamed protection_fault_severity->protection_diagnostic_status_intermediate (magnitude-implying name colliding with protection_fault_severity_code @0x408788) and uVar1->engineLoadProtection (enum ENGINE_LOAD_PROTECTION_STATE INACTIVE=0/ACTIVE=0x08). confirm-B (governor_status_flags 0x8000) = engine-LOAD protection actively derating: the monitored quantity is fuel-demand-derived engine load (engine_load_percent, computed in cm848_calculateEngineLoadPercentages, EMA-filtered into protection_ema_output), NOT a temperature/pressure sensor. The whole cluster is a fuel-mode-B (governor_fuel_b_mode_flag) protection governor: load-EMA deviation is the TRIP; confirm-A is fuel-low-armed (protection_confirm_enable_a) and confirm-B is throttle-rate/overspeed-armed (protection_confirm_enable_b from governor_overspeed_threshold_flag); it derates governor speed and raises protection event SPN 0x48 via cm848_setLogicalOutputRequest. confirm-A/B are two arming stages of this one load-deviation protection. Cluster re-domained: this fn calls evaluateLoadProtectionSteadyStage (confirm-A) + evaluateLoadProtectionLiveStage (confirm-B) + calculateLoadProtectionDerateTarget; caller is updateLoadProtectionStatusAndDerate - body now reads like a book. (protection_fault_condition_value's writer is an indexed sthx - pointer-arg inference not instruction-proven - but its 0/1/2 fault-code name is accurate.)
+0x0002f5a4,cm848_processLoadProtectionStatus,review-function-readability reviewed 2026-06-23 (cluster re-domained 2026-06-27) - Readability High Accuracy Confidence High - orchestrates the engine-load-PROTECTION derate-speed path (NOT DTC handling): runs the two protection-condition state machines then builds the protection status word (protection_diagnostic_status_intermediate = protection_fault_condition_value | confirm-B bit3) and computes the derate speed target via cm848_calculateLoadProtectionDerateTarget. Outputs converge on governor_speed_tracking (live PID error term cpp:29251); real J1939 DM2 fault path is a sibling (cm848_setLogicalOutputRequest). Renamed protection_fault_severity->protection_diagnostic_status_intermediate (magnitude-implying name colliding with protection_fault_severity_code @0x408788) and uVar1->engineLoadProtection (enum ENGINE_LOAD_PROTECTION_STATE ENGINE_LOAD_PROTECTION_INACTIVE=0/ENGINE_LOAD_PROTECTION_ACTIVE=0x08). confirm-B (governor_status_flags 0x8000) = engine-LOAD protection actively derating: the monitored quantity is fuel-demand-derived engine load (engine_load_percent, computed in cm848_calculateEngineLoadPercentages, EMA-filtered into protection_ema_output), NOT a temperature/pressure sensor. The whole cluster is a fuel-mode-B (governor_fuel_b_mode_flag) protection governor: load-EMA deviation is the TRIP; confirm-A is fuel-low-armed (protection_confirm_enable_a) and confirm-B is throttle-rate/overspeed-armed (protection_confirm_enable_b from governor_overspeed_threshold_flag); it derates governor speed and raises protection event SPN 0x48 via cm848_setLogicalOutputRequest. confirm-A/B are two arming stages of this one load-deviation protection. Cluster re-domained: this fn calls evaluateLoadProtectionSteadyStage (confirm-A) + evaluateLoadProtectionLiveStage (confirm-B) + calculateLoadProtectionDerateTarget; caller is updateLoadProtectionStatusAndDerate - body now reads like a book. (protection_fault_condition_value's writer is an indexed sthx - pointer-arg inference not instruction-proven - but its 0/1/2 fault-code name is accurate.)
 0x0002f604,cm848_calculateDiagnosticStatusBits
 0x0002f6a0,cm848_updateLoadProtectionStatusAndDerate
 0x0002f784,cm848_initFaultStatusFilterState
@@ -1120,7 +1120,7 @@ address,name
 0x00035558,cm848_processSensorLookupTable5
 0x000355e4,cm848_initSensorLookupTable5
 0x00035670,cm848_sensorChannel69_init,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - Type A sensor channel on ADC index 0x45(69) via sensorChannelConfigInit. Was misnamed calculateSensorLookupValue (no calc/lookup - it is sensor acquisition). Despite the _init suffix this is the PERIODIC sampler (called from periodicTaskSet_sensors2); _init follows the sensorChannelN family convention where the configInit wrapper is _init and the boot-time update sibling is _process
-0x000356fc,cm848_sensorChannel69_process,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - boot-init update sibling of cm848_sensorChannel69_init (ADC 0x45/69) via updateSensorChannelWithConfig; called once from the hpcr_exceptionHandler reset path. Was misnamed updateSensorLookupTable
+0x000356fc,cm848_sensorChannel69_process,review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High - boot-init update sibling of cm848_sensorChannel69_init (ADC 0x45/69) via updateSensorChannelWithConfig; called once from the cm848_applicationMain reset path. Was misnamed updateSensorLookupTable
 0x00035788,cm848_processCruiseSwitchChannel,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - QADC channel 0x2f(47); sole reader governor_cruise_engage_check; config struct 0x5ab84 holds cruise_engage_adc_valid_lower/upper
 0x00035814,cm848_initCruiseSwitchChannel,review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High - boot-time init sibling of cm848_processCruiseSwitchChannel (same channel 47 / config 0x5ab84)
 0x000358a0,cm848_processSensorLookupTable3
@@ -1169,7 +1169,7 @@ address,name
 0x000376dc,cm848_dispatchProtectionOutputMode,4-state charging voltage regulator machine - next = (*battery_voltage_regulator_state_table[state])() gated on engine_feature_enable_flags_cal bit0 - the ProtectionOutput cluster is really the battery-voltage regulator (battery_voltage_delta PID -> charging duty) - name kept pending re-domain
 0x00037744,cm848_filterProtectionOutput
 0x00037a40,cm848_calculateProtectionOutputDemand
-0x00037c74,cm848_applyProtectionOutputDemand
+0x00037c74,cm848_applyAlternatorFieldDuty,Alternator field output stage (output channel assignment table entry 27 - the ECM's C1-7 K20 Generator Field Control pin - this calibration: TPU-B 10 with MDASM14 read-back), only while engine_feature_enable_flags_cal bit 0x1 is set: alternator_field_duty_target with overrides (P0562 system voltage low -> alternator_field_system_voltage_low_target / battery_voltage_fault_flag -> 0 / alternator_field_target_override) / 25600 - target unless alternator_field_duty_not_inverted_flag / the protection-voltage and mode-b override duties / snaps to full on above 95 % and full off below 5 % / the read-back retest / then the duty and 1000000 / alternator_field_pwm_frequency_hz us to alternator_field_output_channel_cal's record. Was cm848_applyProtectionOutputDemand
 0x00037f28,cm848_checkProtectionOutputConditions
 0x00038120,cm848_processProtectionMode2
 0x000384d0,cm848_initProtectionFilterValues
@@ -1193,7 +1193,7 @@ address,name
 0x0003a0cc,cm848_pulsePciControllerLine124,Drives output line 124 low (twice) then high via mpc555_driveOutputLineLow / mpc555_driveOutputLineHigh - the same pulse the PCI init starts with; line 124 is most likely the external J1850 controller's reset (link-event action bit 0x08). Purpose of the line not yet confirmed
 0x0003a100,hpcr_initPciMessageTimers,Initializes every PCI message timer: RX timers to 0xff37 (never received) and TX timers to staggered start values so the broadcasts do not all fire together; also arms the 0x26 diagnostic response (timer 1) (link-event action bit 0x10)
 0x0003a290,cm848_handlePciLinkEvent,Maps link_event_code 1..7 to pci_link_event_action_mask_cal and performs the recovery actions (count toward pci_link_error_limit -> fault_detected_bits_368_to_383 0x8000 + mpc555_driveOutputLineLow(124) / reset receive state / reset transmit state / pulse controller line 124 / re-init message timers); returns 1 when the mask asks for a controller resend (bit 0x20) | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-0x0003a450,cm848_initPciMessagePayloads,Power-up fill of every PCI RX / TX payload buffer (cm848_initJ1939CommunicationSystem from hpcr_exceptionHandler): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED from ROM / TX[20]-TX[24] F0 xx = vehicle_vin_string / RX[0] source 0xF0 (was hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x0003a450,cm848_initPciMessagePayloads,Power-up fill of every PCI RX / TX payload buffer (cm848_initJ1939CommunicationSystem from cm848_applicationMain): zeroes most / TX[10] 0x26 = pci_ecm_address + ROM 0x57bb6 / TX[19] 0xED from ROM / TX[20]-TX[24] F0 xx = vehicle_vin_string / RX[0] source 0xF0 (was hpcr_initJ1939MessageTables) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003a9a4,hpcr_initJ1939BufferValues
 0x0003aaf0,cm848_initPciInFrameResponseBytes,Writes the two zero-terminated J1850 in-frame response strings: 0x40b4fd = 0x60 0 (the cluster node address that TX[3] 0xB0 expects back) / 0x40b4fb = 0x18 0 (no descriptor points at it) (was cm848_initJ1939BufferParams) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0003ab20,cm848_clearCanMessageBuffers
@@ -1281,7 +1281,7 @@ address,name
 0x0003fad4,mpc555_initTpuBConfiguration
 0x0003fba4,cm848_initCruiseServoControl,Init for the cruise vacuum servo controller - zeroes the control-loop feed-forward and accumulator and the governor cycle counters and clears the vent (19) vacuum (20) and servo-supply (21) solenoid requests (was cm848_initEngineLoadProtection) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0003fc24,cm848_controlCruiseVacuumServo,Cruise/speed-control vacuum servo PID - software-PWMs vent (19) and vacuum (20) requests via governor_cycle_counter - holds servo-supply (21) on unless trim = -100 percent - feed-forward = fuel_demand_governor_output - mode_b cal runs it without cruise (was cm848_processEngineLoadCalculation) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
-0x000400b8,cm848_processFuelRateConfig
+0x000400b8,cm848_applyWastegateSolenoidDuty,Turbocharger wastegate solenoid output stage (output channel assignment table entry 11 - this calibration: TPU-B 7 with MDASM12 read-back), only while fuel_feature_control_flags bit 0x1000 is set: duty = wastegate_solenoid_fixed_duty if wastegate_solenoid_fixed_duty_enable else 2 x rpm_governor_state_t_0040a3ca.commanded_rpm / clamped to wastegate_solenoid_duty_minimum / _maximum / inverted if wastegate_solenoid_duty_invert_flag / the read-back retest while wastegate_solenoid_read_back_retest_active_flag is set / then 1000000 / wastegate_solenoid_pwm_frequency_hz us and the duty to wastegate_solenoid_output_channel_cal's record. Was cm848_processFuelRateConfig
 0x000402d4,cm848_dispatchCalibrationBlockHandlers
 0x000403e4,cm848_checkDiagnosticFuelOverride
 0x0004043c,cm848_processProtectionRampControl
@@ -1331,7 +1331,7 @@ address,name
 0x00042cfc,hpcr_processLoadThrottle
 0x00042d78,hpcr_cbdCalculateCylinderTrims
 0x00043a5c,hpcr_cbdInitFilterState
-0x00043ac0,hpcr_processTimingCalibration
+0x00043ac0,cm848_runCylinderContributionTest,Cylinder contribution test (DRB SCI FD-E1 to FD-EB): while cylinder_diag_active_flag is set it runs only with the vehicle stopped, the coolant inside its window and sync valid (cylinder_contribution_test_status 1, else 2); it swaps in test thresholds and accumulators, then turns each firing-order slot's accumulator into 100 - accumulator x cylinder_diag_scale_factor_cal x 4 / 471 % (0-200) - slots 1-6 = cylinders 1 / 5 / 3 / 6 / 2 / 4 - plus the cylinders 1-3 and 4-6 means; when the test ends it restores the saved values. Was hpcr_processTimingCalibration
 0x00043d68,hpcr_clearTimingCalibrationData
 0x00043ddc,mpc555_resetEngineTimingAccumulators
 0x00044374,mpc555_updateSensorDiagnosticFlags
@@ -1360,12 +1360,12 @@ address,name
 0x00047394,cm848_calculateEngineFaultTiming
 0x0004769c,cm848_selectGovernorFilterOutput
 0x00047784,mpc555_clearTimingDataAndFilters
-0x00047838,cm848_protectionRecoveryHandler
-0x00047978,cm848_protectionModeSelector
-0x00047a88,cm848_protectionStateHandler
-0x00047bd0,cm848_calculateEngineTimingOffset
-0x00048fa0,cm848_updateSyncOffsetCounter
-0x00049004,cm848_resetEngineSyncState
+0x00047838,cm848_applyPiecewiseLinearGain,Piecewise-linear gain used by the fuel pressure governor: x times gain 0 between two breakpoints (shorts at +12 upper / +14 lower), with gain 1 (+4) above the upper and gain 2 (+8) below the lower breakpoint for the part past it; result >> 16, clamped to +/-4095. Was cm848_protectionRecoveryHandler
+0x00047978,cm848_integrateWithZoneGain,Integral term step: adds gain x error x step >> 16 to a Q16.16 accumulator (param 2), with the gain picked by the error's zone (+4 above the short at +12, +0 between, +8 below the short at +14); clamps the integer part to +/-4095 and returns it. Was cm848_protectionModeSelector
+0x00047a88,cm848_calculateFilteredDerivative,Filtered derivative term: returns the integer part of gain x input - state (clamped to +/-4095), then moves the Q16.16 state (param 2) toward gain x input by 1 - coefficient / 65536 (coefficient = first word). The gain is picked by the input's zone (+6 above the short at +14, +10 below the short at +16, +2 between). Was cm848_protectionStateHandler
+0x00047bd0,cm848_calculateFuelMeteringCommand,Fuel metering command controller (cm848_phase_group_b_processing; output channel assignment table entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is the fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override (engine_speed_override_enable_cal) and a cranking value return early; otherwise the governor mode in engine_sync_state_t_0040b87f.fuel_pressure_governor_mode picks fuel_pressure_governor_demand - modes 2 / 4 sum the PID terms on fuel_pressure_setpoint - fuel_pressure_feedback_filtered (fuel_pressure_governor_proportional_term / _integral_term / _derivative_term) plus fuel_pressure_governor_accelerator_feed_forward and an rpm table; modes 8 / 0x10 (switch_input_state_bits[0] bit 0 clear and engine_shutdown_active_flag 0) / 0x20 (fuel_pressure_governor_disable set) / 0x40 (faults 304 / 305 / 377 / 378) use the fixed fuel_pressure_governor_*_command values; mode 1 is the low-rpm mode the others fall back to. The demand is clamped to a lower limit and an rpm table (the integrator is put back when it is outside them). (2) a table turns the clamped demand into a feedback target; the base command is that target through a piecewise-linear gain plus fuel_metering_base_command_derivative_term; a PI trim on fuel_metering_feedback_error (target - fuel_metering_feedback_input) scales it: fuel_metering_command = base + trim x base / 4096 (no trim while fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Was cm848_calculateEngineTimingOffset
+0x00048fa0,cm848_countFuelPressureGovernorStartRevolutions,Injection-angle state 1 task: while fuel_pressure_governor_counting_start_revolutions is set it counts cylinder events and adds 2 to fuel_pressure_governor_start_revolutions per full cycle (cylinder_event_count_max events); otherwise it clears the count. Was cm848_updateSyncOffsetCounter
+0x00049004,cm848_resetEngineSyncState,Resets the fuel pressure governor / fuel metering state (cm848_calculateFuelMeteringCommand): command, demand, governor mode 1, counters, the table interpolation states and filters. Of the four Q16.16 PID states it clears fuel_pressure_governor_integrator, fuel_metering_feedback_trim_integrator (twice) and fuel_pressure_governor_derivative_filter; fuel_metering_base_command_derivative_filter (0x3fb676) is never cleared because the fourth store pair repeats 0x3fb66e
 0x0004922c,cm848_filterEngineSensorValue
 0x00049264,cm848_processEnginePositionDiagnostics
 0x00049a54,cm848_updateEngineDiagnosticCounters
@@ -1373,13 +1373,13 @@ address,name
 0x00049edc,cm848_protectionSensorFaultHandler
 0x0004a114,cm848_checkProtectionFaultConditions
 0x0004a258,cm848_initEngineDiagnosticData
-0x0004a2f8,mpc555_calculateTpuTimingPeriod
+0x0004a2f8,cm848_setFuelMeteringPwm,Fuel metering PWM (cm848_phase_group_b_processing, right after cm848_calculateFuelMeteringCommand): period = 5000000 / a table lookup (args at cam_timing_filter_init_state) and on-time = period x engine_sync_state_t_0040b87f.fuel_metering_command / 4095, written as one dword to TPU-B channel 11 (TPUB_CH11_PARAM0 = on-time / PARAM1 = period) - the fuel metering output bypasses the output channel driver table's set-duty slot. Was mpc555_calculateTpuTimingPeriod
 0x0004a37c,mpc555_initTpuTimingInterrupts
-0x0004a490,cm848_processEnginePositionData
-0x0004a748,cm848_updateEnginePositionErrors
-0x0004a7ac,cm848_filterEnginePositionDelta
-0x0004a858,cm848_initEnginePositionState
-0x0004a8cc,cm848_updateEnginePosition
+0x0004a490,cm848_processFuelPressureSensor,Rail (fuel) pressure sensor: QADC index slot 34 x 4 -> fuel_pressure_sensor_volts (clamped to 4092; fuel_pressure_sensor_raw_substitute instead when bit 2 of the word at 0x3fdb7c is set). Above fuel_pressure_sensor_volts_high_limit is code 4 (fault 304 = P0193), below the low limit code 8 (fault 305 = P0192); in range it converts volts to pressure through fuel_pressure_sensor_volts_axis / fuel_pressure_sensor_pressure_values. 40-sample debounce each way; while a code is confirmed fuel_pressure_sensor = fuel_pressure_sensor_fault_default. fuel_pressure_sensor_override_enable bypasses it all. Called by cm848_sampleFuelPressureSensor and in injection-angle states 1 / 2 / 4. Was cm848_processEnginePositionData
+0x0004a748,cm848_countFuelPressureSensorCodeChanges,Debounce counting for the rail pressure sensor: both counts reset while the latest code equals the confirmed one; otherwise fuel_pressure_sensor_recovery_debounce_count +1 when the sample is good and fuel_pressure_sensor_fault_debounce_count +1 when it is not. Was cm848_updateEnginePositionErrors
+0x0004a7ac,cm848_filterFuelPressureFeedback,Filters the governor's pressure feedback (fuel_pressure_feedback_filtered) with cm848_signedFirstOrderFilter: in engine run / crank state 4 the sample fuel_pressure_feedback_source_select picks, otherwise fuel_pressure_sensor. Was cm848_filterEnginePositionDelta
+0x0004a858,cm848_initFuelPressureSensor,Clears the rail pressure sensor state (volts / pressure / feedback / codes / debounce counts) and sets up the feedback filter and the table cache. Called from cm848_applicationMain. Was cm848_initEnginePositionState
+0x0004a8cc,cm848_sampleFuelPressureSensor,Periodic rail pressure sample (phase group b) unless the engine is cranking (crank state 4 - then the injection-angle events sample it) or cold_start_phase is the fuel mode switch phase: reads QADC index slot 34 and runs cm848_processFuelPressureSensor. Was cm848_updateEnginePosition
 0x0004a968,cm848_updateProtectionBitFlags
 0x0004aaac,cm848_protectionFaultEvaluator
 0x0004ac3c,mpc555_evaluateProtectionSyncFaults
@@ -1407,177 +1407,178 @@ address,name
 0x0004cb64,cm848_initEepromDriverAndLoadMirror,SPI serial EEPROM driver (QSPI PCS0; 25xx opcodes 3 READ / 2 WRITE / 6 write-enable / 5 read-status): registers the QSPI slot / sets up eeprom_job / reads EEPROM 0x0-0x1a3f into the RAM mirror at 0x3fd482 (RAM = 0x3fd482 + EEPROM offset) / sums 0x8aa words of the checksummed block (EEPROM 0x8ea-0x1a3d) against eeprom_block_checksum_expected_cal and sets or clears system_faults 0x40; the entries at 0x4cb6c / 0x4cb84 / 0x4cb90 were spurious splits | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High
 0x0004cd50,cm848_getProtectionSyncState
 0x0004ce78,cm848_initSensorRetryCounters
-0x0004ce9c,cm848_miosChannel11Enable
-0x0004cec4,cm848_miosChannel11ReadStatus
-0x0004cef0,cm848_miosChannel11SetPwm
-0x0004cf1c,cm848_miosChannel12Enable
-0x0004cf44,cm848_miosChannel12ReadStatus
-0x0004cf70,cm848_miosChannel12SetPwm
-0x0004cf9c,cm848_miosChannel13Enable
-0x0004cfc4,cm848_miosChannel13ReadStatus
-0x0004cff0,cm848_miosChannel13SetPwm
-0x0004d01c,cm848_miosChannel14Enable
-0x0004d044,cm848_miosChannel14ReadStatus
-0x0004d070,cm848_miosChannel14SetPwm
-0x0004d09c,cm848_miosChannel15Enable
-0x0004d0c4,cm848_miosChannel15ReadStatus
-0x0004d0f0,cm848_miosChannel15SetPwm
-0x0004d11c,cm848_miosChannel27Enable
-0x0004d144,cm848_miosChannel27ReadStatus
-0x0004d170,cm848_miosChannel27SetPwm
-0x0004d19c,cm848_miosChannel28Enable
-0x0004d1c4,cm848_miosChannel28ReadStatus
-0x0004d1f0,cm848_miosChannel28SetPwm
-0x0004d21c,cm848_miosChannel29Enable
-0x0004d244,cm848_miosChannel29ReadStatus
-0x0004d270,cm848_miosChannel29SetPwm
-0x0004d29c,cm848_miosChannel30Enable
-0x0004d2c4,cm848_miosChannel30ReadStatus
-0x0004d2f0,cm848_miosChannel30SetPwm
-0x0004d31c,cm848_miosChannel31Enable
-0x0004d344,cm848_miosChannel31ReadStatus
-0x0004d370,cm848_miosChannel31SetPwm
-0x0004d39c,cm848_miosTimer0InitPeriod
-0x0004d3c4,cm848_miosTimer0ScaleByPercent
-0x0004d3f0,cm848_miosTimer0SetValue
-0x0004d41c,cm848_miosTimer1InitPeriod
-0x0004d444,cm848_miosTimer1ScaleByPercent
-0x0004d470,cm848_miosTimer1SetValue
-0x0004d49c,cm848_miosTimer2InitPeriod
-0x0004d4c4,cm848_miosTimer2ScaleByPercent
-0x0004d4f0,cm848_miosTimer2SetValue
-0x0004d51c,cm848_miosTimer3InitPeriod
-0x0004d544,cm848_miosTimer3ScaleByPercent
-0x0004d570,cm848_miosTimer3SetValue
-0x0004d59c,cm848_miosTimer16InitPeriod
-0x0004d5c4,cm848_miosTimer16ScaleByPercent
-0x0004d5f0,cm848_miosTimer16SetValue
-0x0004d61c,cm848_miosTimer17InitPeriod
-0x0004d644,cm848_miosTimer17ScaleByPercent
-0x0004d670,cm848_miosTimer17SetValue
-0x0004d69c,cm848_miosTimer18InitPeriod
-0x0004d6c4,cm848_miosTimer18ScaleByPercent
-0x0004d6f0,cm848_miosTimer18SetValue
-0x0004d71c,cm848_miosTimer19InitPeriod
-0x0004d744,cm848_miosTimer19ScaleByPercent
-0x0004d770,cm848_miosTimer19SetValue
-0x0004d79c,cm848_tpuChannel0Reset
-0x0004d7c0,cm848_tpuChannel0SetDuty
-0x0004d7e8,cm848_tpuChannel0Configure
-0x0004d810,cm848_tpuChannel1Reset
-0x0004d834,cm848_tpuChannel1SetDuty
-0x0004d85c,cm848_tpuChannel1Configure
-0x0004d884,cm848_tpuChannel2Reset
-0x0004d8a8,cm848_tpuChannel2SetDuty
-0x0004d8d0,cm848_tpuChannel2Configure
-0x0004d8f8,cm848_tpuChannel3Reset
-0x0004d91c,cm848_tpuChannel3SetDuty
-0x0004d944,cm848_tpuChannel3Configure
-0x0004d96c,cm848_tpuChannel4Reset
-0x0004d990,cm848_tpuChannel4SetDuty
-0x0004d9b8,cm848_tpuChannel4Configure
-0x0004d9e0,cm848_tpuChannel5Reset
-0x0004da04,cm848_tpuChannel5SetDuty
-0x0004da2c,cm848_tpuChannel5Configure
-0x0004da54,cm848_tpuChannel6Reset
-0x0004da78,cm848_tpuChannel6SetDuty
-0x0004daa0,cm848_tpuChannel6Configure
-0x0004dac8,cm848_tpuChannel7Reset
-0x0004daec,cm848_tpuChannel7SetDuty
-0x0004db14,cm848_tpuChannel7Configure
-0x0004db3c,cm848_tpuChannel8Reset
-0x0004db60,cm848_tpuChannel8SetDuty
-0x0004db88,cm848_tpuChannel8Configure
-0x0004dbb0,cm848_tpuChannel9Reset
-0x0004dbd4,cm848_tpuChannel9SetDuty
-0x0004dbfc,cm848_tpuChannel9Configure
-0x0004dc24,cm848_tpuChannel10Reset
-0x0004dc48,cm848_tpuChannel10SetDuty
-0x0004dc70,cm848_tpuChannel10Configure
-0x0004dc98,cm848_tpuChannel11Reset
-0x0004dcbc,cm848_tpuChannel11SetDuty
-0x0004dce4,cm848_tpuChannel11Configure
-0x0004dd0c,cm848_tpuChannel12Reset
-0x0004dd30,cm848_tpuChannel12SetDuty
-0x0004dd58,cm848_tpuChannel12Configure
-0x0004dd80,cm848_tpuChannel13Reset
-0x0004dda4,cm848_tpuChannel13SetDuty
-0x0004ddcc,cm848_tpuChannel13Configure
-0x0004ddf4,cm848_tpuChannel14Reset
-0x0004de18,cm848_tpuChannel14SetDuty
-0x0004de40,cm848_tpuChannel14Configure
-0x0004de68,cm848_tpuChannel15Reset
-0x0004de8c,cm848_tpuChannel15SetDuty
-0x0004deb4,cm848_tpuChannel15Configure
-0x0004dedc,cm848_disableMiosResetTpu14_10
-0x0004df0c,cm848_setMiosDutyCycle14
-0x0004df40,cm848_configureTpuChannel10Alt
-0x0004df68,cm848_setTpuDutyWithTrack10
-0x0004df98,mpc555_resetMiosTpuChannel29_11
-0x0004e0c0,cm848_disableMiosResetTpu11_4
-0x0004e0f0,cm848_setMiosDutyCycle11
-0x0004e124,cm848_configureTpuChannel4Alt
-0x0004e14c,cm848_setTpuDutyWithTrack4
-0x0004e180,cm848_disableMiosResetTpu13_6
-0x0004e1b0,cm848_setMiosDutyCycle13
-0x0004e1e4,cm848_configureTpuChannel6Alt
-0x0004e20c,cm848_setTpuDutyWithTrack6
-0x0004e240,cm848_disableMiosResetTpu12_7
-0x0004e270,cm848_setMiosDutyCycle12
-0x0004e2a4,cm848_configureTpuChannel7Alt
-0x0004e2cc,cm848_setTpuDutyWithTrack7
-0x0004e300,cm848_tpuOutput0Enable
-0x0004e324,cm848_tpuOutput0Disable
-0x0004e34c,cm848_tpuOutput0SetPeriod
-0x0004e374,cm848_tpuOutput1Enable
-0x0004e398,cm848_tpuOutput1Disable
-0x0004e3c0,cm848_tpuOutput1SetPeriod
-0x0004e3e8,cm848_tpuOutput2Enable
-0x0004e40c,cm848_tpuOutput2Disable
-0x0004e434,cm848_tpuOutput2SetPeriod
-0x0004e45c,cm848_tpuOutput3Enable
-0x0004e480,cm848_tpuOutput3Disable
-0x0004e4a8,cm848_tpuOutput3SetPeriod
-0x0004e4d0,cm848_tpuOutput4Enable
-0x0004e4f4,cm848_tpuOutput4Disable
-0x0004e51c,cm848_tpuOutput4SetPeriod
-0x0004e544,cm848_tpuOutput5Enable
-0x0004e568,cm848_tpuOutput5Disable
-0x0004e590,cm848_tpuOutput5SetPeriod
-0x0004e5b8,cm848_tpuOutput6Enable
-0x0004e5dc,cm848_tpuOutput6Disable
-0x0004e604,cm848_tpuOutput6SetPeriod
-0x0004e62c,cm848_tpuOutput7Enable
-0x0004e650,cm848_tpuOutput7Disable
-0x0004e678,cm848_tpuOutput7SetPeriod
-0x0004e6a0,cm848_tpuOutput8Enable
-0x0004e6c4,cm848_tpuOutput8Disable
-0x0004e6ec,cm848_tpuOutput8SetPeriod
-0x0004e714,cm848_tpuOutput9Enable
-0x0004e738,cm848_tpuOutput9Disable
-0x0004e760,cm848_tpuOutput9SetPeriod
-0x0004e788,cm848_tpuOutput10Enable
-0x0004e7ac,cm848_tpuOutput10Disable
-0x0004e7d4,cm848_tpuOutput10SetPeriod
-0x0004e7fc,cm848_tpuOutput11Enable
-0x0004e820,cm848_tpuOutput11Disable
-0x0004e848,cm848_tpuOutput11SetPeriod
-0x0004e870,cm848_tpuOutput12Enable
-0x0004e894,cm848_tpuOutput12Disable
-0x0004e8bc,cm848_tpuOutput12SetPeriod
-0x0004e8e4,cm848_tpuOutput13Enable
-0x0004e908,cm848_tpuOutput13Disable
-0x0004e930,cm848_tpuOutput13SetPeriod
-0x0004e958,cm848_tpuOutput14Enable
-0x0004e97c,cm848_tpuOutput14Disable
-0x0004e9a4,cm848_tpuOutput14SetPeriod
-0x0004e9cc,cm848_tpuOutput15Enable
-0x0004e9f0,cm848_tpuOutput15Disable
-0x0004ea18,cm848_tpuOutput15SetPeriod
+0x0004ce9c,cm848_miosChannel11EnablePwm,Output channel driver table (flash2) record 0x53ae56 slot +0 (enable) for MDASM11 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel11Enable)
+0x0004cec4,cm848_miosChannel11SetPwmDuty,Output channel driver table (flash2) record 0x53ae56 slot +12 (set duty) for MDASM11 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel11ReadStatus)
+0x0004cef0,cm848_miosChannel11SetPwmPeriod,Output channel driver table (flash2) record 0x53ae56 slot +8 (set period) for MDASM11 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel11SetPwm)
+0x0004cf1c,cm848_miosChannel12EnablePwm,Output channel driver table (flash2) record 0x53ae66 slot +0 (enable) for MDASM12 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel12Enable)
+0x0004cf44,cm848_miosChannel12SetPwmDuty,Output channel driver table (flash2) record 0x53ae66 slot +12 (set duty) for MDASM12 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel12ReadStatus)
+0x0004cf70,cm848_miosChannel12SetPwmPeriod,Output channel driver table (flash2) record 0x53ae66 slot +8 (set period) for MDASM12 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel12SetPwm)
+0x0004cf9c,cm848_miosChannel13EnablePwm,Output channel driver table (flash2) record 0x53ae76 slot +0 (enable) for MDASM13 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel13Enable)
+0x0004cfc4,cm848_miosChannel13SetPwmDuty,Output channel driver table (flash2) record 0x53ae76 slot +12 (set duty) for MDASM13 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel13ReadStatus)
+0x0004cff0,cm848_miosChannel13SetPwmPeriod,Output channel driver table (flash2) record 0x53ae76 slot +8 (set period) for MDASM13 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel13SetPwm)
+0x0004d01c,cm848_miosChannel14EnablePwm,Output channel driver table (flash2) record 0x53ae86 slot +0 (enable) for MDASM14 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel14Enable)
+0x0004d044,cm848_miosChannel14SetPwmDuty,Output channel driver table (flash2) record 0x53ae86 slot +12 (set duty) for MDASM14 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel14ReadStatus)
+0x0004d070,cm848_miosChannel14SetPwmPeriod,Output channel driver table (flash2) record 0x53ae86 slot +8 (set period) for MDASM14 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel14SetPwm)
+0x0004d09c,cm848_miosChannel15EnablePwm,Output channel driver table (flash2) record 0x53ae96 slot +0 (enable) for MDASM15 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel15Enable)
+0x0004d0c4,cm848_miosChannel15SetPwmDuty,Output channel driver table (flash2) record 0x53ae96 slot +12 (set duty) for MDASM15 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel15ReadStatus)
+0x0004d0f0,cm848_miosChannel15SetPwmPeriod,Output channel driver table (flash2) record 0x53ae96 slot +8 (set period) for MDASM15 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel15SetPwm)
+0x0004d11c,cm848_miosChannel27EnablePwm,Output channel driver table (flash2) record 0x53aea6 slot +0 (enable) for MDASM27 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel27Enable)
+0x0004d144,cm848_miosChannel27SetPwmDuty,Output channel driver table (flash2) record 0x53aea6 slot +12 (set duty) for MDASM27 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel27ReadStatus)
+0x0004d170,cm848_miosChannel27SetPwmPeriod,Output channel driver table (flash2) record 0x53aea6 slot +8 (set period) for MDASM27 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel27SetPwm)
+0x0004d19c,cm848_miosChannel28EnablePwm,Output channel driver table (flash2) record 0x53aeb6 slot +0 (enable) for MDASM28 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel28Enable)
+0x0004d1c4,cm848_miosChannel28SetPwmDuty,Output channel driver table (flash2) record 0x53aeb6 slot +12 (set duty) for MDASM28 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel28ReadStatus)
+0x0004d1f0,cm848_miosChannel28SetPwmPeriod,Output channel driver table (flash2) record 0x53aeb6 slot +8 (set period) for MDASM28 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel28SetPwm)
+0x0004d21c,cm848_miosChannel29EnablePwm,Output channel driver table (flash2) record 0x53aec6 slot +0 (enable) for MDASM29 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel29Enable)
+0x0004d244,cm848_miosChannel29SetPwmDuty,Output channel driver table (flash2) record 0x53aec6 slot +12 (set duty) for MDASM29 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel29ReadStatus)
+0x0004d270,cm848_miosChannel29SetPwmPeriod,Output channel driver table (flash2) record 0x53aec6 slot +8 (set period) for MDASM29 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel29SetPwm)
+0x0004d29c,cm848_miosChannel30EnablePwm,Output channel driver table (flash2) record 0x53aed6 slot +0 (enable) for MDASM30 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel30Enable)
+0x0004d2c4,cm848_miosChannel30SetPwmDuty,Output channel driver table (flash2) record 0x53aed6 slot +12 (set duty) for MDASM30 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel30ReadStatus)
+0x0004d2f0,cm848_miosChannel30SetPwmPeriod,Output channel driver table (flash2) record 0x53aed6 slot +8 (set period) for MDASM30 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel30SetPwm)
+0x0004d31c,cm848_miosChannel31EnablePwm,Output channel driver table (flash2) record 0x53aee6 slot +0 (enable) for MDASM31 - forwards to mpc555_miosEnableChannelPwm (was cm848_miosChannel31Enable)
+0x0004d344,cm848_miosChannel31SetPwmDuty,Output channel driver table (flash2) record 0x53aee6 slot +12 (set duty) for MDASM31 - forwards to mpc555_miosSetChannelPwmDuty (was cm848_miosChannel31ReadStatus)
+0x0004d370,cm848_miosChannel31SetPwmPeriod,Output channel driver table (flash2) record 0x53aee6 slot +8 (set period) for MDASM31 - forwards to mpc555_miosSetChannelPwmPeriod (was cm848_miosChannel31SetPwm)
+0x0004d39c,cm848_miosPwm0Enable,Output channel driver table (flash2) record 0x53aef6 slot +0 (enable) for PWM submodule 0 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer0InitPeriod)
+0x0004d3c4,cm848_miosPwm0SetDuty,Output channel driver table (flash2) record 0x53aef6 slot +12 (set duty) for PWM submodule 0 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer0ScaleByPercent)
+0x0004d3f0,cm848_miosPwm0SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53aef6 slot +8 (set period) for PWM submodule 0 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer0SetValue)
+0x0004d41c,cm848_miosPwm1Enable,Output channel driver table (flash2) record 0x53af06 slot +0 (enable) for PWM submodule 1 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer1InitPeriod)
+0x0004d444,cm848_miosPwm1SetDuty,Output channel driver table (flash2) record 0x53af06 slot +12 (set duty) for PWM submodule 1 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer1ScaleByPercent)
+0x0004d470,cm848_miosPwm1SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af06 slot +8 (set period) for PWM submodule 1 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer1SetValue)
+0x0004d49c,cm848_miosPwm2Enable,Output channel driver table (flash2) record 0x53af16 slot +0 (enable) for PWM submodule 2 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer2InitPeriod)
+0x0004d4c4,cm848_miosPwm2SetDuty,Output channel driver table (flash2) record 0x53af16 slot +12 (set duty) for PWM submodule 2 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer2ScaleByPercent)
+0x0004d4f0,cm848_miosPwm2SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af16 slot +8 (set period) for PWM submodule 2 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer2SetValue)
+0x0004d51c,cm848_miosPwm3Enable,Output channel driver table (flash2) record 0x53af26 slot +0 (enable) for PWM submodule 3 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer3InitPeriod)
+0x0004d544,cm848_miosPwm3SetDuty,Output channel driver table (flash2) record 0x53af26 slot +12 (set duty) for PWM submodule 3 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer3ScaleByPercent)
+0x0004d570,cm848_miosPwm3SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af26 slot +8 (set period) for PWM submodule 3 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer3SetValue)
+0x0004d59c,cm848_miosPwm16Enable,Output channel driver table (flash2) record 0x53af36 slot +0 (enable) for PWM submodule 16 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer16InitPeriod)
+0x0004d5c4,cm848_miosPwm16SetDuty,Output channel driver table (flash2) record 0x53af36 slot +12 (set duty) for PWM submodule 16 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer16ScaleByPercent)
+0x0004d5f0,cm848_miosPwm16SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af36 slot +8 (set period) for PWM submodule 16 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer16SetValue)
+0x0004d61c,cm848_miosPwm17Enable,Output channel driver table (flash2) record 0x53af46 slot +0 (enable) for PWM submodule 17 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer17InitPeriod)
+0x0004d644,cm848_miosPwm17SetDuty,Output channel driver table (flash2) record 0x53af46 slot +12 (set duty) for PWM submodule 17 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer17ScaleByPercent)
+0x0004d670,cm848_miosPwm17SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af46 slot +8 (set period) for PWM submodule 17 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer17SetValue)
+0x0004d69c,cm848_miosPwm18Enable,Output channel driver table (flash2) record 0x53af56 slot +0 (enable) for PWM submodule 18 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer18InitPeriod)
+0x0004d6c4,cm848_miosPwm18SetDuty,Output channel driver table (flash2) record 0x53af56 slot +12 (set duty) for PWM submodule 18 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer18ScaleByPercent)
+0x0004d6f0,cm848_miosPwm18SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af56 slot +8 (set period) for PWM submodule 18 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer18SetValue)
+0x0004d71c,cm848_miosPwm19Enable,Output channel driver table (flash2) record 0x53af66 slot +0 (enable) for PWM submodule 19 - forwards to mpc555_miosEnablePwmSubmodule (was cm848_miosTimer19InitPeriod)
+0x0004d744,cm848_miosPwm19SetDuty,Output channel driver table (flash2) record 0x53af66 slot +12 (set duty) for PWM submodule 19 - forwards to mpc555_miosSetPwmSubmoduleDuty (was cm848_miosTimer19ScaleByPercent)
+0x0004d770,cm848_miosPwm19SetPeriodMicroseconds,Output channel driver table (flash2) record 0x53af66 slot +8 (set period) for PWM submodule 19 - forwards to mpc555_miosSetPwmSubmodulePeriodMicroseconds (was cm848_miosTimer19SetValue)
+0x0004d79c,cm848_tpuBChannel0EnablePwm,Output channel driver table record 1 (0x53ac56) slot +0 (enable) for TPU-B channel 0 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel0Reset)
+0x0004d7c0,cm848_tpuBChannel0SetPwmDuty,Output channel driver table record 1 (0x53ac56) slot +12 (set duty) for TPU-B channel 0 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel0SetDuty)
+0x0004d7e8,cm848_tpuBChannel0SetPwmPeriodMicroseconds,Output channel driver table record 1 (0x53ac56) slot +8 (set period) for TPU-B channel 0 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel0Configure)
+0x0004d810,cm848_tpuBChannel1EnablePwm,Output channel driver table record 2 (0x53ac66) slot +0 (enable) for TPU-B channel 1 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel1Reset)
+0x0004d834,cm848_tpuBChannel1SetPwmDuty,Output channel driver table record 2 (0x53ac66) slot +12 (set duty) for TPU-B channel 1 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel1SetDuty)
+0x0004d85c,cm848_tpuBChannel1SetPwmPeriodMicroseconds,Output channel driver table record 2 (0x53ac66) slot +8 (set period) for TPU-B channel 1 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel1Configure)
+0x0004d884,cm848_tpuBChannel2EnablePwm,Output channel driver table record 3 (0x53ac76) slot +0 (enable) for TPU-B channel 2 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel2Reset)
+0x0004d8a8,cm848_tpuBChannel2SetPwmDuty,Output channel driver table record 3 (0x53ac76) slot +12 (set duty) for TPU-B channel 2 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel2SetDuty)
+0x0004d8d0,cm848_tpuBChannel2SetPwmPeriodMicroseconds,Output channel driver table record 3 (0x53ac76) slot +8 (set period) for TPU-B channel 2 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel2Configure)
+0x0004d8f8,cm848_tpuBChannel3EnablePwm,Output channel driver table record 4 (0x53ac86) slot +0 (enable) for TPU-B channel 3 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel3Reset)
+0x0004d91c,cm848_tpuBChannel3SetPwmDuty,Output channel driver table record 4 (0x53ac86) slot +12 (set duty) for TPU-B channel 3 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel3SetDuty)
+0x0004d944,cm848_tpuBChannel3SetPwmPeriodMicroseconds,Output channel driver table record 4 (0x53ac86) slot +8 (set period) for TPU-B channel 3 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel3Configure)
+0x0004d96c,cm848_tpuBChannel4EnablePwm,TPU-B channel 4 enable wrapper - no referrer found: table record 5 uses the read-back variant cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4Reset)
+0x0004d990,cm848_tpuBChannel4SetPwmDuty,TPU-B channel 4 set duty wrapper - no referrer found: table record 5 uses the read-back variant cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4SetDuty)
+0x0004d9b8,cm848_tpuBChannel4SetPwmPeriodMicroseconds,TPU-B channel 4 set period wrapper - no referrer found: table record 5 uses the read-back variant cm848_tpuBReadBackChannel4* for this slot (was cm848_tpuChannel4Configure)
+0x0004d9e0,cm848_tpuBChannel5EnablePwm,Output channel driver table record 6 (0x53aca6) slot +0 (enable) for TPU-B channel 5 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel5Reset)
+0x0004da04,cm848_tpuBChannel5SetPwmDuty,Output channel driver table record 6 (0x53aca6) slot +12 (set duty) for TPU-B channel 5 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel5SetDuty)
+0x0004da2c,cm848_tpuBChannel5SetPwmPeriodMicroseconds,Output channel driver table record 6 (0x53aca6) slot +8 (set period) for TPU-B channel 5 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel5Configure)
+0x0004da54,cm848_tpuBChannel6EnablePwm,TPU-B channel 6 enable wrapper - no referrer found: table record 7 uses the read-back variant cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6Reset)
+0x0004da78,cm848_tpuBChannel6SetPwmDuty,TPU-B channel 6 set duty wrapper - no referrer found: table record 7 uses the read-back variant cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6SetDuty)
+0x0004daa0,cm848_tpuBChannel6SetPwmPeriodMicroseconds,TPU-B channel 6 set period wrapper - no referrer found: table record 7 uses the read-back variant cm848_tpuBReadBackChannel6* for this slot (was cm848_tpuChannel6Configure)
+0x0004dac8,cm848_tpuBChannel7EnablePwm,TPU-B channel 7 enable wrapper - no referrer found: table record 8 uses the read-back variant cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7Reset)
+0x0004daec,cm848_tpuBChannel7SetPwmDuty,TPU-B channel 7 set duty wrapper - no referrer found: table record 8 uses the read-back variant cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7SetDuty)
+0x0004db14,cm848_tpuBChannel7SetPwmPeriodMicroseconds,TPU-B channel 7 set period wrapper - no referrer found: table record 8 uses the read-back variant cm848_tpuBReadBackChannel7* for this slot (was cm848_tpuChannel7Configure)
+0x0004db3c,cm848_tpuBChannel8EnablePwm,Output channel driver table record 9 (0x53acd6) slot +0 (enable) for TPU-B channel 8 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel8Reset)
+0x0004db60,cm848_tpuBChannel8SetPwmDuty,Output channel driver table record 9 (0x53acd6) slot +12 (set duty) for TPU-B channel 8 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel8SetDuty)
+0x0004db88,cm848_tpuBChannel8SetPwmPeriodMicroseconds,Output channel driver table record 9 (0x53acd6) slot +8 (set period) for TPU-B channel 8 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel8Configure)
+0x0004dbb0,cm848_tpuBChannel9EnablePwm,Output channel driver table record 10 (0x53ace6) slot +0 (enable) for TPU-B channel 9 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel9Reset)
+0x0004dbd4,cm848_tpuBChannel9SetPwmDuty,Output channel driver table record 10 (0x53ace6) slot +12 (set duty) for TPU-B channel 9 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel9SetDuty)
+0x0004dbfc,cm848_tpuBChannel9SetPwmPeriodMicroseconds,Output channel driver table record 10 (0x53ace6) slot +8 (set period) for TPU-B channel 9 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel9Configure)
+0x0004dc24,cm848_tpuBChannel10EnablePwm,TPU-B channel 10 enable wrapper - no referrer found: table record 11 uses the read-back variant cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10Reset)
+0x0004dc48,cm848_tpuBChannel10SetPwmDuty,TPU-B channel 10 set duty wrapper - no referrer found: table record 11 uses the read-back variant cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10SetDuty)
+0x0004dc70,cm848_tpuBChannel10SetPwmPeriodMicroseconds,TPU-B channel 10 set period wrapper - no referrer found: table record 11 uses the read-back variant cm848_tpuBReadBackChannel10* for this slot (was cm848_tpuChannel10Configure)
+0x0004dc98,cm848_tpuBChannel11EnablePwm,TPU-B channel 11 enable wrapper - no referrer found: table record 12 uses the read-back variant cm848_tpuBReadBackChannel11* for this slot (was cm848_tpuChannel11Reset)
+0x0004dcbc,cm848_tpuBChannel11SetPwmDuty,Output channel driver table record 12 (0x53ad06) slot +12 (set duty) for TPU-B channel 11 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel11SetDuty)
+0x0004dce4,cm848_tpuBChannel11SetPwmPeriodMicroseconds,Output channel driver table record 12 (0x53ad06) slot +8 (set period) for TPU-B channel 11 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel11Configure)
+0x0004dd0c,cm848_tpuBChannel12EnablePwm,Output channel driver table record 13 (0x53ad16) slot +0 (enable) for TPU-B channel 12 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel12Reset)
+0x0004dd30,cm848_tpuBChannel12SetPwmDuty,Output channel driver table record 13 (0x53ad16) slot +12 (set duty) for TPU-B channel 12 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel12SetDuty)
+0x0004dd58,cm848_tpuBChannel12SetPwmPeriodMicroseconds,Output channel driver table record 13 (0x53ad16) slot +8 (set period) for TPU-B channel 12 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel12Configure)
+0x0004dd80,cm848_tpuBChannel13EnablePwm,Output channel driver table record 14 (0x53ad26) slot +0 (enable) for TPU-B channel 13 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel13Reset)
+0x0004dda4,cm848_tpuBChannel13SetPwmDuty,Output channel driver table record 14 (0x53ad26) slot +12 (set duty) for TPU-B channel 13 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel13SetDuty)
+0x0004ddcc,cm848_tpuBChannel13SetPwmPeriodMicroseconds,Output channel driver table record 14 (0x53ad26) slot +8 (set period) for TPU-B channel 13 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel13Configure)
+0x0004ddf4,cm848_tpuBChannel14EnablePwm,Output channel driver table record 15 (0x53ad36) slot +0 (enable) for TPU-B channel 14 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel14Reset)
+0x0004de18,cm848_tpuBChannel14SetPwmDuty,Output channel driver table record 15 (0x53ad36) slot +12 (set duty) for TPU-B channel 14 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel14SetDuty)
+0x0004de40,cm848_tpuBChannel14SetPwmPeriodMicroseconds,Output channel driver table record 15 (0x53ad36) slot +8 (set period) for TPU-B channel 14 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel14Configure)
+0x0004de68,cm848_tpuBChannel15EnablePwm,Output channel driver table record 16 (0x53ad46) slot +0 (enable) for TPU-B channel 15 - forwards to mpc555_tpuBEnablePwmChannel (was cm848_tpuChannel15Reset)
+0x0004de8c,cm848_tpuBChannel15SetPwmDuty,Output channel driver table record 16 (0x53ad46) slot +12 (set duty) for TPU-B channel 15 - forwards to mpc555_tpuBSetPwmDuty (was cm848_tpuChannel15SetDuty)
+0x0004deb4,cm848_tpuBChannel15SetPwmPeriodMicroseconds,Output channel driver table record 16 (0x53ad46) slot +8 (set period) for TPU-B channel 15 - forwards to mpc555_tpuBSetPwmPeriodMicroseconds (was cm848_tpuChannel15Configure)
+0x0004dedc,cm848_tpuBReadBackChannel10EnablePwm,Output channel driver table record 11 (0x53acf6) slot +0 (enable) for TPU-B channel 10 with MDASM14 read-back: sets MDASM14 to input mode then starts the TPU-B PWM (was cm848_disableMiosResetTpu14_10)
+0x0004df0c,cm848_tpuBReadBackChannel10ReadFeedback,Output channel driver table record 11 (0x53acf6) slot +4 (read feedback) for TPU-B channel 10 with MDASM14 read-back: mpc555_miosCheckChannelFeedback on MDASM14 against tpu_b_channel_10_read_back_expected_duty (was cm848_setMiosDutyCycle14)
+0x0004df40,cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds,Output channel driver table record 11 (0x53acf6) slot +8 (set period) for TPU-B channel 10 with MDASM14 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel10Alt)
+0x0004df68,cm848_tpuBReadBackChannel10SetPwmDuty,Output channel driver table record 11 (0x53acf6) slot +12 (set duty) for TPU-B channel 10 with MDASM14 read-back: records tpu_b_channel_10_read_back_expected_duty (stores the duty itself) then sets the duty (was cm848_setTpuDutyWithTrack10)
+0x0004df98,cm848_tpuBReadBackChannel11EnablePwm,Output channel driver table record 12 (0x53ad06) slot +0 (enable) for TPU-B channel 11 with MDASM29 read-back: clears MDASM29 AR:BR / sets its SCRD to 0x801 (mode 1 input) then starts the TPU-B PWM (was mpc555_resetMiosTpuChannel29_11)
+0x0004dfd4,cm848_tpuBReadBackChannel11ReadFeedback,Output channel driver table record 12 (0x53ad06) slot +4 (read feedback) for TPU-B channel 11 with MDASM29 read-back. It checks the fuel metering output (table entry 20 - P0251): the command is engine_sync_state_t_0040b87f.fuel_metering_command (0-4095 at 0x40b882): while 0 < command < fuel_metering_read_back_minimum_command it skips the check and returns fuel_metering_read_back_last_verdict; otherwise it compares MDASM29's captured edges (AR:BR) and pin (SCRD bit 15) with the command the way mpc555_miosCheckChannelFeedback does (0 agree / 1 high or toggling where it should be low / 2 low or toggling where it should be high; 4095 and above = fully on) then clears AR:BR and stores the verdict in fuel_metering_read_back_last_verdict. Ghidra had not made a function here - it starts right after the blr that ends cm848_tpuBReadBackChannel11EnablePwm
+0x0004e0c0,cm848_tpuBReadBackChannel4EnablePwm,Output channel driver table record 5 (0x53ac96) slot +0 (enable) for TPU-B channel 4 with MDASM11 read-back: sets MDASM11 to input mode then starts the TPU-B PWM (was cm848_disableMiosResetTpu11_4)
+0x0004e0f0,cm848_tpuBReadBackChannel4ReadFeedback,Output channel driver table record 5 (0x53ac96) slot +4 (read feedback) for TPU-B channel 4 with MDASM11 read-back: mpc555_miosCheckChannelFeedback on MDASM11 against tpu_b_channel_4_read_back_expected_duty (was cm848_setMiosDutyCycle11)
+0x0004e124,cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds,Output channel driver table record 5 (0x53ac96) slot +8 (set period) for TPU-B channel 4 with MDASM11 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel4Alt)
+0x0004e14c,cm848_tpuBReadBackChannel4SetPwmDuty,Output channel driver table record 5 (0x53ac96) slot +12 (set duty) for TPU-B channel 4 with MDASM11 read-back: records tpu_b_channel_4_read_back_expected_duty (stores 25600 - duty) then sets the duty (was cm848_setTpuDutyWithTrack4)
+0x0004e180,cm848_tpuBReadBackChannel6EnablePwm,Output channel driver table record 7 (0x53acb6) slot +0 (enable) for TPU-B channel 6 with MDASM13 read-back: sets MDASM13 to input mode then starts the TPU-B PWM (was cm848_disableMiosResetTpu13_6)
+0x0004e1b0,cm848_tpuBReadBackChannel6ReadFeedback,Output channel driver table record 7 (0x53acb6) slot +4 (read feedback) for TPU-B channel 6 with MDASM13 read-back: mpc555_miosCheckChannelFeedback on MDASM13 against tpu_b_channel_6_read_back_expected_duty (was cm848_setMiosDutyCycle13)
+0x0004e1e4,cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds,Output channel driver table record 7 (0x53acb6) slot +8 (set period) for TPU-B channel 6 with MDASM13 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel6Alt)
+0x0004e20c,cm848_tpuBReadBackChannel6SetPwmDuty,Output channel driver table record 7 (0x53acb6) slot +12 (set duty) for TPU-B channel 6 with MDASM13 read-back: records tpu_b_channel_6_read_back_expected_duty (stores 25600 - duty) then sets the duty (was cm848_setTpuDutyWithTrack6)
+0x0004e240,cm848_tpuBReadBackChannel7EnablePwm,Output channel driver table record 8 (0x53acc6) slot +0 (enable) for TPU-B channel 7 with MDASM12 read-back: sets MDASM12 to input mode then starts the TPU-B PWM (was cm848_disableMiosResetTpu12_7)
+0x0004e270,cm848_tpuBReadBackChannel7ReadFeedback,Output channel driver table record 8 (0x53acc6) slot +4 (read feedback) for TPU-B channel 7 with MDASM12 read-back: mpc555_miosCheckChannelFeedback on MDASM12 against tpu_b_channel_7_read_back_expected_duty (was cm848_setMiosDutyCycle12)
+0x0004e2a4,cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds,Output channel driver table record 8 (0x53acc6) slot +8 (set period) for TPU-B channel 7 with MDASM12 read-back: same body as the plain period wrapper (was cm848_configureTpuChannel7Alt)
+0x0004e2cc,cm848_tpuBReadBackChannel7SetPwmDuty,Output channel driver table record 8 (0x53acc6) slot +12 (set duty) for TPU-B channel 7 with MDASM12 read-back: records tpu_b_channel_7_read_back_expected_duty (stores 25600 - duty) then sets the duty (was cm848_setTpuDutyWithTrack7)
+0x0004e300,cm848_tpuAChannel0EnablePwm,Output channel driver table record 17 (0x53ad56) slot +0 (enable) for TPU-A channel 0 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput0Enable)
+0x0004e324,cm848_tpuAChannel0SetPwmDuty,Output channel driver table record 17 (0x53ad56) slot +12 (set duty) for TPU-A channel 0 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput0Disable)
+0x0004e34c,cm848_tpuAChannel0SetPwmPeriodMicroseconds,Output channel driver table record 17 (0x53ad56) slot +8 (set period) for TPU-A channel 0 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput0SetPeriod)
+0x0004e374,cm848_tpuAChannel1EnablePwm,Output channel driver table record 18 (0x53ad66) slot +0 (enable) for TPU-A channel 1 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput1Enable)
+0x0004e398,cm848_tpuAChannel1SetPwmDuty,Output channel driver table record 18 (0x53ad66) slot +12 (set duty) for TPU-A channel 1 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput1Disable)
+0x0004e3c0,cm848_tpuAChannel1SetPwmPeriodMicroseconds,Output channel driver table record 18 (0x53ad66) slot +8 (set period) for TPU-A channel 1 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput1SetPeriod)
+0x0004e3e8,cm848_tpuAChannel2EnablePwm,Output channel driver table record 19 (0x53ad76) slot +0 (enable) for TPU-A channel 2 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput2Enable)
+0x0004e40c,cm848_tpuAChannel2SetPwmDuty,Output channel driver table record 19 (0x53ad76) slot +12 (set duty) for TPU-A channel 2 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput2Disable)
+0x0004e434,cm848_tpuAChannel2SetPwmPeriodMicroseconds,Output channel driver table record 19 (0x53ad76) slot +8 (set period) for TPU-A channel 2 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput2SetPeriod)
+0x0004e45c,cm848_tpuAChannel3EnablePwm,Output channel driver table record 20 (0x53ad86) slot +0 (enable) for TPU-A channel 3 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput3Enable)
+0x0004e480,cm848_tpuAChannel3SetPwmDuty,Output channel driver table record 20 (0x53ad86) slot +12 (set duty) for TPU-A channel 3 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput3Disable)
+0x0004e4a8,cm848_tpuAChannel3SetPwmPeriodMicroseconds,Output channel driver table record 20 (0x53ad86) slot +8 (set period) for TPU-A channel 3 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput3SetPeriod)
+0x0004e4d0,cm848_tpuAChannel4EnablePwm,Output channel driver table record 21 (0x53ad96) slot +0 (enable) for TPU-A channel 4 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput4Enable)
+0x0004e4f4,cm848_tpuAChannel4SetPwmDuty,Output channel driver table record 21 (0x53ad96) slot +12 (set duty) for TPU-A channel 4 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput4Disable)
+0x0004e51c,cm848_tpuAChannel4SetPwmPeriodMicroseconds,Output channel driver table record 21 (0x53ad96) slot +8 (set period) for TPU-A channel 4 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput4SetPeriod)
+0x0004e544,cm848_tpuAChannel5EnablePwm,Output channel driver table record 22 (0x53ada6) slot +0 (enable) for TPU-A channel 5 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput5Enable)
+0x0004e568,cm848_tpuAChannel5SetPwmDuty,Output channel driver table record 22 (0x53ada6) slot +12 (set duty) for TPU-A channel 5 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput5Disable)
+0x0004e590,cm848_tpuAChannel5SetPwmPeriodMicroseconds,Output channel driver table record 22 (0x53ada6) slot +8 (set period) for TPU-A channel 5 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput5SetPeriod)
+0x0004e5b8,cm848_tpuAChannel6EnablePwm,Output channel driver table record 23 (0x53adb6) slot +0 (enable) for TPU-A channel 6 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput6Enable)
+0x0004e5dc,cm848_tpuAChannel6SetPwmDuty,Output channel driver table record 23 (0x53adb6) slot +12 (set duty) for TPU-A channel 6 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput6Disable)
+0x0004e604,cm848_tpuAChannel6SetPwmPeriodMicroseconds,Output channel driver table record 23 (0x53adb6) slot +8 (set period) for TPU-A channel 6 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput6SetPeriod)
+0x0004e62c,cm848_tpuAChannel7EnablePwm,Output channel driver table record 24 (0x53adc6) slot +0 (enable) for TPU-A channel 7 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput7Enable)
+0x0004e650,cm848_tpuAChannel7SetPwmDuty,Output channel driver table record 24 (0x53adc6) slot +12 (set duty) for TPU-A channel 7 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput7Disable)
+0x0004e678,cm848_tpuAChannel7SetPwmPeriodMicroseconds,Output channel driver table record 24 (0x53adc6) slot +8 (set period) for TPU-A channel 7 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput7SetPeriod)
+0x0004e6a0,cm848_tpuAChannel8EnablePwm,Output channel driver table record 25 (0x53add6) slot +0 (enable) for TPU-A channel 8 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput8Enable)
+0x0004e6c4,cm848_tpuAChannel8SetPwmDuty,Output channel driver table record 25 (0x53add6) slot +12 (set duty) for TPU-A channel 8 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput8Disable)
+0x0004e6ec,cm848_tpuAChannel8SetPwmPeriodMicroseconds,Output channel driver table record 25 (0x53add6) slot +8 (set period) for TPU-A channel 8 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput8SetPeriod)
+0x0004e714,cm848_tpuAChannel9EnablePwm,Output channel driver table record 26 (0x53ade6) slot +0 (enable) for TPU-A channel 9 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput9Enable)
+0x0004e738,cm848_tpuAChannel9SetPwmDuty,Output channel driver table record 26 (0x53ade6) slot +12 (set duty) for TPU-A channel 9 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput9Disable)
+0x0004e760,cm848_tpuAChannel9SetPwmPeriodMicroseconds,Output channel driver table record 26 (0x53ade6) slot +8 (set period) for TPU-A channel 9 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput9SetPeriod)
+0x0004e788,cm848_tpuAChannel10EnablePwm,Output channel driver table record 27 (0x53adf6) slot +0 (enable) for TPU-A channel 10 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput10Enable)
+0x0004e7ac,cm848_tpuAChannel10SetPwmDuty,Output channel driver table record 27 (0x53adf6) slot +12 (set duty) for TPU-A channel 10 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput10Disable)
+0x0004e7d4,cm848_tpuAChannel10SetPwmPeriodMicroseconds,Output channel driver table record 27 (0x53adf6) slot +8 (set period) for TPU-A channel 10 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput10SetPeriod)
+0x0004e7fc,cm848_tpuAChannel11EnablePwm,Output channel driver table record 28 (0x53ae06) slot +0 (enable) for TPU-A channel 11 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput11Enable)
+0x0004e820,cm848_tpuAChannel11SetPwmDuty,Output channel driver table record 28 (0x53ae06) slot +12 (set duty) for TPU-A channel 11 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput11Disable)
+0x0004e848,cm848_tpuAChannel11SetPwmPeriodMicroseconds,Output channel driver table record 28 (0x53ae06) slot +8 (set period) for TPU-A channel 11 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput11SetPeriod)
+0x0004e870,cm848_tpuAChannel12EnablePwm,Output channel driver table record 29 (0x53ae16) slot +0 (enable) for TPU-A channel 12 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput12Enable)
+0x0004e894,cm848_tpuAChannel12SetPwmDuty,Output channel driver table record 29 (0x53ae16) slot +12 (set duty) for TPU-A channel 12 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput12Disable)
+0x0004e8bc,cm848_tpuAChannel12SetPwmPeriodMicroseconds,Output channel driver table record 29 (0x53ae16) slot +8 (set period) for TPU-A channel 12 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput12SetPeriod)
+0x0004e8e4,cm848_tpuAChannel13EnablePwm,Output channel driver table record 30 (0x53ae26) slot +0 (enable) for TPU-A channel 13 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput13Enable)
+0x0004e908,cm848_tpuAChannel13SetPwmDuty,Output channel driver table record 30 (0x53ae26) slot +12 (set duty) for TPU-A channel 13 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput13Disable)
+0x0004e930,cm848_tpuAChannel13SetPwmPeriodMicroseconds,Output channel driver table record 30 (0x53ae26) slot +8 (set period) for TPU-A channel 13 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput13SetPeriod)
+0x0004e958,cm848_tpuAChannel14EnablePwm,Output channel driver table record 31 (0x53ae36) slot +0 (enable) for TPU-A channel 14 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput14Enable)
+0x0004e97c,cm848_tpuAChannel14SetPwmDuty,Output channel driver table record 31 (0x53ae36) slot +12 (set duty) for TPU-A channel 14 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput14Disable)
+0x0004e9a4,cm848_tpuAChannel14SetPwmPeriodMicroseconds,Output channel driver table record 31 (0x53ae36) slot +8 (set period) for TPU-A channel 14 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput14SetPeriod)
+0x0004e9cc,cm848_tpuAChannel15EnablePwm,Output channel driver table record 32 (0x53ae46) slot +0 (enable) for TPU-A channel 15 - forwards to mpc555_tpuAEnablePwmChannel (was cm848_tpuOutput15Enable)
+0x0004e9f0,cm848_tpuAChannel15SetPwmDuty,Output channel driver table record 32 (0x53ae46) slot +12 (set duty) for TPU-A channel 15 - forwards to mpc555_tpuASetPwmDuty (was cm848_tpuOutput15Disable)
+0x0004ea18,cm848_tpuAChannel15SetPwmPeriodMicroseconds,Output channel driver table record 32 (0x53ae46) slot +8 (set period) for TPU-A channel 15 - forwards to mpc555_tpuASetPwmPeriodMicroseconds (was cm848_tpuOutput15SetPeriod)
 0x0004ea40,cm848_setDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and sets its bit in switch_input_datalink_state_bits (was cm848_setEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004ea84,cm848_clearDatalinkSwitchStateIfPriority,(switch / priority): when switch_input_source_priority[switch] <= priority claims the switch at that priority and clears its bit in switch_input_datalink_state_bits (was cm848_clearEngineCycleBitmapBitIfGreater) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eac8,cm848_readSwitchHardwareInput,(switch): reads the switch's hardware input line (switch_input_hardware_line_cal[switch]) with cm848_readDiscreteInputLine and applies its switch_input_polarity_bits_cal bit (was cm848_checkProtectionWarningBitState) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x0004eb48,cm848_scanAndDebounceSwitchInputs,32 logical switch inputs: datalink-sourced switches (switch_input_datalink_source_bits_cal) take switch_input_datalink_state_bits / hardware switches read their line from the input-line image at 0x40c0f8 XOR switch_input_polarity_bits_cal / switches with no line keep their software-set state; 4-sample debounce (all 4 set -> set / all 4 clear -> clear / else hold) into switch_input_state_bits; also counts MIOS1ER bit 15 falling edges into ignition_key_off_count (was mpc555_updateEngineCycleOutputs) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
+0x0004eb48,cm848_scanAndDebounceSwitchInputs,32 logical switch inputs: datalink-sourced switches (switch_input_datalink_source_bits_cal) take switch_input_datalink_state_bits / hardware switches read their line from the input-line image at 0x40c0f8 XOR switch_input_polarity_bits_cal / switches with no line keep their software-set state; 4-sample debounce (all 4 set -> set / all 4 clear -> clear / else hold) into switch_input_state_bits; also counts falling edges of the ignition key line (mios_mdasm30.SCRD bit 15) into ignition_key_off_count (was mpc555_updateEngineCycleOutputs) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0004eeb8,hpcr_initProtectionAndOutputCycle
 0x0004ef24,cm848_setLogicalOutputRequest,Priority-gated SET of bit N in the 80-bit logical output request array (0x40c080) - writes only if new severity >= stored logical_output_request_priority[N] - bit set = output N requested on (was cm848_setEngineProtectionFault) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x0004ef74,cm848_setLogicalOutputAndDriveLine,Sets request bit N then immediately drives physical line protection_event_output_line_cal[N] to match - high if polarity bit 0 / low if 1 - immediate variant of cm848_setLogicalOutputRequest (was cm848_clearProtectionFault) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
@@ -1615,22 +1616,22 @@ address,name
 0x00054220,cm848_emptyStubFunction
 0x00054224,cm848_checkRpmOverspeedProtection
 0x00054380,mpc555_systemStartupInitialization
-0x000544c4,hpcr_exceptionHandler
-0x00054d30,cm848_engineStartCompletionB
-0x00054e10,cm848_miosSetChannelDutyCycle
-0x00054eac,cm848_miosChannelDisable
-0x00054eb8,cm848_miosChannelEnable
-0x00054ec4,mpc555_miosReadChannelStatus
-0x00054f48,mpc555_miosSetPwmOutput
-0x00054f80,cm848_miosInitChannelPeriod
-0x00054f8c,cm848_scalePwmByPercent
-0x00054fb8,cm848_miosSetChannelValue
-0x00055020,mpc555_tpuResetChannel
-0x00055178,cm848_tpuSetChannelDuty
-0x000551e4,cm848_tpuConfigureChannel
-0x00055294,mpc555_tpuEnableChannelOutput
-0x000553ec,cm848_tpuDisableChannelOutput
-0x00055458,cm848_tpuSetChannelPeriod
+0x000544c4,cm848_applicationMain,Application main - mpc555_systemStartupInitialization calls it after a reset and it never returns: saves the exception SPRs / DAR / DSISR and the USIU reset status (exception_*), copies the ROM code to RAM, inits the QADC / QSPI / EEPROM driver (loading the mirror) / supervisor chip and sets logical output 27, does the power-down bookkeeping (completed / incomplete counts - P2509 / P0606), runs about 250 init functions, enables interrupts and runs the background loop (cm848_initProtectionModule) until hardware_operation_complete_flag, then the post-run fault housekeeping and cm848_runPowerDownSequence. Was hpcr_exceptionHandler (it is the reset path, not an exception handler)
+0x00054d30,cm848_restartApplicationWithoutReset,Re-runs the application without a hardware reset (only caller: cm848_restartOnKeyOnDuringPowerDown): four init calls / disables external interrupts (mtspr EID) and resets the stack pointer to 0x3f9ff8 / re-inits and runs the main run loop (cm848_initProtectionModule until hardware_operation_complete_flag) / the same post-run fault housekeeping as cm848_applicationMain / cm848_runPowerDownSequence - so it never returns. Was cm848_engineStartCompletionB
+0x00054e10,mpc555_miosCheckChannelFeedback,Output feedback check on an MDASM channel in input mode (mpc555_miosSetChannelInputMode): compares the captured edges (AR:BR non-zero) and the pin state (SCRD bit 15) with the commanded duty (1/256 % per count; 25600 = 100 %) and returns 0 when they agree / 1 when the pin is high or toggling where it should be low / 2 when it is low or toggling where it should be high; then clears AR:BR. Its only callers are the read-feedback slots cm848_tpuBReadBackChannel4 / 6 / 7 / 10ReadFeedback; the same records' enable slots (cm848_tpuBReadBackChannel{N}EnablePwm) put MDASM11 / 13 / 12 / 14 in input mode and start TPU-B channels 4 / 6 / 7 / 10 - so MDASM11-14 look like read-back inputs for those TPU-B outputs. Was cm848_miosSetChannelDutyCycle | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00054eac,mpc555_miosSetChannelInputMode,Writes mode 1 to an MDASM channel's status/control register (SCRD) - an input mode (the MPC555 manual's input pulse-width measurement) so pin edges latch into AR / BR for mpc555_miosCheckChannelFeedback. Called by the read-back enables cm848_tpuBReadBackChannel4 / 6 / 7 / 10EnablePwm right before they start their TPU-B channel. Was cm848_miosChannelDisable | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00054eb8,mpc555_miosEnableChannelPwm,Writes mode 9 to an MDASM channel's status/control register (SCRD) - output PWM (the MPC555 manual's OPWM; the same channels' duty and period slots program AR / BR and the MMCSM22 period). Output channel driver table slot +0 for MDASM11-15 / 27-31 (cm848_miosChannel{N}EnablePwm). Was cm848_miosChannelEnable | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00054ec4,mpc555_miosSetChannelPwmDuty,Sets an MDASM channel's PWM duty (1/256 % per count; 25600 = 100 %) by writing the AR:BR compare pair as one word: 0 % = 0x0000:0x7fff / 100 % and above = 0x7fff:0x8000 / otherwise AR = 0x7fff and BR = (0xffff - ML) x duty / 25600 + (ML & 0x7fff) where ML is the shared MMCSM22 modulus latch (the counter runs from ML up to 0xffff). Output channel driver table slot +12 for MDASM11-15 / 27-31. Was mpc555_miosReadChannelStatus (it reads nothing back) | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
+0x00054f48,mpc555_miosSetChannelPwmPeriod,Sets the PWM period shared by every MDASM output: ignores its channel argument and writes the MMCSM22 modulus latch = -(period_setting x 20) - 1 (the counter runs from there up to 0xffff) or 0x8000 when period_setting is 1639 or more. Output channel driver table slot +8 for MDASM11-15 / 27-31 - so any channel's period call changes all of them. The MMCSM22 tick length (so the unit of period_setting) is not resolved. Was mpc555_miosSetPwmOutput | review-function-readability reviewed 2026-11-13 - Readability High Accuracy Confidence High
+0x00054f80,mpc555_miosEnablePwmSubmodule,Writes 0x4ff to a PWM submodule's status/control register (SCR): bit 10 (0x400) is set by every SCR write in this family and the low byte is the clock prescaler 0xff (mpc555_miosSetPwmSubmodulePeriodMicroseconds switches it to 0x80 for long periods). Output channel driver table slot +0 for PWM submodules 0-3 / 16-19. Was cm848_miosInitChannelPeriod | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,Sets a PWM submodule's duty: PULR = PERR x duty / 25600 (duty in 1/256 % per count) or PERR at 100 % and above. Output channel driver table slot +12 for PWM submodules 0-3 / 16-19. Was cm848_scalePwmByPercent | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,Sets a PWM submodule's period from microseconds: 0 = PERR 0xffff; below 13921 us = prescaler byte 0xff and PERR = period x 40 / 16; otherwise prescaler 0x80 and PERR = period x 40 / 2048 - both branches are microseconds on a 2.5 MHz MIOS clock (40 MHz / 16) and the RAM dump's PWM 16-19 period words read 50 (= 20 kHz). Output channel driver table slot +8 for PWM submodules 0-3 / 16-19. Was cm848_miosSetChannelValue | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x00055020,mpc555_tpuBEnablePwmChannel,Starts a TPU-B channel as a PWM output: priority 0 (stopped) / channel interrupt enable and status cleared / channel function 7 / PARAM0 (high time) = 0 / PARAM1 (period) = 0x8000 / host sequence 0 / host service request 3 (initialise) / priority 1 (running). Output channel driver table slot +0 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5 / 7 / 8 / 11 / 12. Was mpc555_tpuResetChannel | review-function-readability reviewed 2026-11-14 - Readability Low Accuracy Confidence Medium
+0x00055178,mpc555_tpuBSetPwmDuty,Sets a TPU-B PWM channel's duty (1/256 % per count; 25600 = 100 %): PARAM0 (high time) = PARAM1 (period) x duty / 25600 - 0 at 0 % and the full period at 100 % and above. Output channel driver table slot +12 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5 / 7 / 8 / 11 / 12. Was cm848_tpuSetChannelDuty | review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High
+0x000551e4,mpc555_tpuBSetPwmPeriodMicroseconds,Sets a TPU-B PWM channel's period from microseconds and keeps its duty: duty = PARAM0 x 25600 / PARAM1; new PARAM1 = period / 3.2 (period x 0xa001 / 0x20004): the TPU-B TCR1 tick is 3.2 us (TPUMCR 0x4430) or 0x7fff at 104855 us and above; PARAM0 is re-derived from the duty. Output channel driver table slot +8 for records 1-16 (cm848_tpuBChannel{N}*) and the read-back records 5 / 7 / 8 / 11 / 12. Was cm848_tpuConfigureChannel | review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High
+0x00055294,mpc555_tpuAEnablePwmChannel,Starts a TPU-A channel as a PWM output: priority 0 (stopped) / channel interrupt enable and status cleared / channel function 7 / PARAM0 (high time) = 0 / PARAM1 (period) = 0x8000 / host sequence 0 / host service request 3 (initialise) / priority 1 (running). Output channel driver table slot +0 for records 17-32 (cm848_tpuAChannel{N}*). Was mpc555_tpuEnableChannelOutput | review-function-readability reviewed 2026-11-14 - Readability Low Accuracy Confidence Medium
+0x000553ec,mpc555_tpuASetPwmDuty,Sets a TPU-A PWM channel's duty (1/256 % per count; 25600 = 100 %): PARAM0 (high time) = PARAM1 (period) x duty / 25600 - 0 at 0 % and the full period at 100 % and above. Output channel driver table slot +12 for records 17-32 (cm848_tpuAChannel{N}*). Was cm848_tpuDisableChannelOutput - it sets the duty and does not disable anything | review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High
+0x00055458,mpc555_tpuASetPwmPeriodMicroseconds,Sets a TPU-A PWM channel's period from microseconds and keeps its duty: duty = PARAM0 x 25600 / PARAM1; new PARAM1 = period x 2.5 (period x 0x5000a / 0x20004): the TPU-A TCR1 tick is 0.4 us (TPUMCR 0x4460 differs from TPU-B's 0x4430 in bits 0x40 and 0x10 - reading 0x40 as PSCK (system clock / 4 instead of / 32 - MPC555 manual) gives the factor of 8 between the modules) or 0x7fff at 13107 us and above; PARAM0 is re-derived from the duty. Output channel driver table slot +8 for records 17-32 (cm848_tpuAChannel{N}*). Was cm848_tpuSetChannelPeriod | review-function-readability reviewed 2026-11-14 - Readability Medium Accuracy Confidence High
 0x00055500,initQadcModule
 0x000555cc,cm848_copyDataBuffer
 0x0005573c,cm848_processSecurityCodeConversion
@@ -1738,8 +1739,8 @@ address,name
 0x00505df0,j1939_dm1_diagnosticMessage_send
 0x00505f98,cm848_phase_groupB_calculation
 0x0050638c,cm848_outputs2_periodic
-0x00506780,cm848_mainLoop_step_4
-0x005067bc,hpcr_exception_process_2
+0x00506780,cm848_advanceHourMeters,Main-loop phase 0 task (once per 40-phase cycle = 40 PIT ticks of 5 ms = 0.2 s): +1 to key_on_hour_meter always and to engine_hour_meter unless cold_start_phase is 1 (engine stopped / cranking). Was cm848_mainLoop_step_4
+0x005067bc,cm848_loadHourMetersFromEeprom,Loads key_on_hour_meter / engine_hour_meter from their EEPROM copies (0x30 / 0x42) - called from cm848_applicationMain. Was hpcr_exception_process_2
 0x005067e0,governor_speedModeB_activeFlag_update
 0x00506840,governor_speedFault_filterProcess_update
 0x00506964,boost_pressureSource_faultSelect_update
@@ -1887,7 +1888,7 @@ address,name
 0x0050ddb4,diag_suppress_stateMachine
 0x0050de54,cm848_calculateEngineLoadPercentages,engine_load_percent = fuel_demand_computed above fuel_demand_base_offset over the full load axis (fuel_demand_load_axis) / engine_load_at_current_speed_percent = the same fuel over what is available at the current engine speed (it falls above the governor breakpoint) - both 1/256 percent (0x6400 = 100 - clamped at 0x7f80); the second is 100 percent in governor mode 12 (was cm848_adjustFuelDemandWithOffset) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
 0x0050e000,cm848_validateFuelDemandRelativeToTiming
-0x0050e0a0,main_loop_resetGovernorDiagnosticFlags
+0x0050e0a0,cm848_debounceOutputReadBackFaults,Output read-back fault debounce (once per 40-phase main-loop cycle - phase 10; skipped while protection_config_flags bit 0x40 or supervisor_register_36_bit_1_low_held_flag is set). For five outputs whose read-back bit cm848_updateOutputReadBackFaultBits keeps in output_read_back_fault_bits: a bit that stays set past the output's ROM limit (*_read_back_fault_debounce_limit - 100 passes / 10 for fuel metering) sets its DTC and its retest flag; a clear bit zeroes the count and clears a registered DTC. Entry -> fault -> DTC: alternator field 27 -> 396 P0622 / cooling fan 1 -> 121 P0480 / fuel metering 20 -> 333 P0251 / governor pressure solenoid 10 -> 351 P0748 (checked only while logical output request 16 - probably the transmission relay - is on) / wastegate solenoid 11 -> 403 P0243. An output whose retest flag is set is not debounced: its control function drives 0 % for *_retest_off_passes then 100 % for 2 x *_retest_fault_confirm_passes (a read-back fault lasting the confirm count restarts it) and then clears the flag. The governor pressure solenoid has no retest: nothing clears governor_pressure_solenoid_read_back_fault_latched_flag so its check stops until the next power-up. Was main_loop_resetGovernorDiagnosticFlags
 0x0050e4c4,cm848_synchronizeProtectionEnableShadowFlags
 0x0050e534,fuel_demandRateLimit_outputCheck
 0x0050e610,cm848_periodicControlLoopFaultHandling
@@ -1971,16 +1972,16 @@ address,name
 0x0051408c,engine_protection_faultSeverity_manage
 0x00514108,protection_fault_snapshot_update
 0x00514394,protection_fault_snapshot_initialize
-0x005143f4,engine_egrFuel_stateMachine_update
-0x00515370,governor_fuel_demand_calc
-0x00515660,fuel_coldStart_modeCode_select
-0x005158fc,fuel_coldStart_demandFinal_apply
+0x005143f4,cm848_selectCoolingFanSpeedTarget,Cooling fan speed target - this ECM has no EGR; the old egr_* names were guesses. Five requests, the largest wins (cooling_fan_speed_target_source 0-4): cooling_fan_base_speed / the coolant request (state machine: below cooling_fan_coolant_ramp_start_temperature minimum / linear ramp / a PI on cooling_fan_coolant_temperature_setpoint / full speed at cooling_fan_coolant_full_speed_temperature or on a coolant sensor fault) / the A/C request (A/C switch with pressure hysteresis, vehicle speed and a temperature check) / the intake air temperature request (optionally relative to battery or ambient temperature, rate limited, held while cooling_fan_engine_idle_flag) / the transmission temperature request. Then a ramp down and back up while the engine is above cooling_fan_high_engine_rpm_enter (sources 5 / 6 / 0xb-0xf), a cap at the engine-driven speed (engine rpm x cooling_fan_drive_ratio, source 7), cooling_fan_speed_ceiling (8), cooling_fan_base_speed while the thermostat monitor runs (10) and the override (9). Was engine_egrFuel_stateMachine_update
+0x00515370,cm848_runCoolingFanSpeedPid,Cooling fan speed PID (cm848_selectCoolingFanDutySource's source code 8): feedback = radiator_fan_speed plus a prediction on its change since radiator_fan_speed_snapshot, filtered / error = cooling_fan_speed_target - feedback / P + D (filtered, x 16) / I only while governor_fuel_demand_mode != 0xb, the previous source code was 8 and egr_governor_speed_floor is above the three other egr_* speed floors / plus a feed-forward duty from cooling_fan_feed_forward_table / clamped 0-25600 into cooling_fan_duty_request. Was governor_fuel_demand_calc
+0x00515660,cm848_selectCoolingFanDutySource,Picks where the cooling fan duty request comes from (cooling_fan_duty_source_code): sets cooling_fan_engine_idle_flag first; then 1 cooling_fan_fixed_duty_enable (fixed duty) / 9 injection protection (while cranking) / 2 engine below cooling_fan_low_engine_rpm / 3 engage boost (target set but the fan barely turning) / 4 target = cooling_fan_base_speed (minimum duty) / 5 target = cooling_fan_speed_ceiling and not at idle (maximum duty) / 8 not at idle: cm848_runCoolingFanSpeedPid / 6 idle with too little engine-driven headroom (cooling_fan_idle_limited_duty) / 7 minimum duty; then snapshots radiator_fan_speed. cooling_fan_fixed_duty_enable is 0 in the RAM dump, so the PID / engage-boost / idle sources are live. Was fuel_coldStart_modeCode_select
+0x005158fc,cm848_applyCoolingFanDuty,Cooling fan output stage (output channel assignment table entry 1 - this calibration: TPU-B 6 with MDASM13 read-back): clamps cooling_fan_duty_request to cooling_fan_duty_minimum / _maximum (source codes 0 / 10) / inverts it if cooling_fan_duty_invert_flag / holds cooling_fan_hold_duty for cooling_fan_hold_passes after cooling_fan_engine_idle_flag clears (code 11) / runs the read-back retest (0 % then 100 %) while cooling_fan_read_back_retest_active_flag is set / then sends the duty and 1000000 / cooling_fan_pwm_frequency_hz us to cooling_fan_output_channel_cal's record. The request comes from cm848_selectCoolingFanDutySource - so the fuel_coldStart_* family upstream is the fan controller, still under its old names. Was fuel_coldStart_demandFinal_apply
 0x00515bac,j1939_periodic_processing
-0x00515bd4,j1939_message_handler_initialize
-0x00515d78,tpu_rpm_measurement_control
-0x005161c0,tpu_rpm_measurement_initialize
-0x00516274,mpc555_tpuBChannel9InterruptHandler,TPU-B channel 9 interrupt (entry 9 of tpu_b_channel_interrupt_handler_table): converts the captured period at 0x304598 into tpu_rpm_reference_period (x1000000 / 0x4c4b4) and reloads tpu_rpm_startup_blank_countdown; was wrongly listed in deleted_functions.csv | reached via tpu_b_channel_interrupt_handler_table[9] - mpc555_tpuBInterruptDispatcher 0x55d2c - no direct caller - tpu_rpm_reference_period read by tpu_rpm_measurement_control
-0x005162ec,tpu_rpm_timer_setup
+0x00515bd4,cm848_initCoolingFanControl,Cooling fan control init: clears the speed-target / ramp / PID state, sets the PID integral to cooling_fan_integral_term_initial, the A/C request to its off speed and the four filter coefficient pointers, then enables the cooling fan's output channel record. Was j1939_message_handler_initialize
+0x00515d78,cm848_measureRadiatorFanSpeed,Radiator fan speed from the fan speed sensor on TPU-B channel 9 (DRB SCI FD-80-81 RAD FAN SPEED reads the result): re-arms TPU-B 9 when engine_sync_type_code switches to or from 5100 (pulses per measurement 1 or 6) / reads 0 after radiator_fan_speed_pulse_timeout_count expires / clamps short and long periods / otherwise numerator x 8 / period (0.125 rpm) / moving average into radiator_fan_speed / the override / and with type 5100 a three-sample history. Was tpu_rpm_measurement_control
+0x005161c0,cm848_initRadiatorFanSpeedMeasurement,Initialises the radiator fan speed measurement: history enable / filter pointer / radiator_fan_speed_numerator for the current type code. Was tpu_rpm_measurement_initialize
+0x00516274,cm848_radiatorFanSpeedInterruptHandler,TPU-B channel 9 interrupt (entry 9 of tpu_b_channel_interrupt_handler_table, via mpc555_tpuBInterruptDispatcher 0x55d2c - no direct caller): converts the accumulated fan speed sensor period at 0x304598 into radiator_fan_speed_period_microseconds (x 1000000 / 312500) and reloads radiator_fan_speed_pulse_timeout_count. Was mpc555_tpuBChannel9InterruptHandler (and wrongly listed in deleted_functions.csv before PR #46)
+0x005162ec,cm848_configureRadiatorFanSpeedInput,Configures TPU-B channel 9 for the fan speed sensor: function 0xd (CFSR1) with the pulse count in its parameters / host sequence and host service request 3 / priority 2 / interrupt enable. Was tpu_rpm_timer_setup
 0x00516428,cm848_initFuelLevelPowerUpCheck,Arms the once-per-power-up fuel level check: dwell counter = ROM 0x5b32e (0 here) / fuel_level_first_sample_flag = 1 / fuel_level_power_up_check_pending_flag = 0 (was cm848_calibBlock1_adaptiveTrim_init) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516454,cm848_qualifyFuelLevelSample,Returns 1 when the fuel level sample may be filtered (switch 0 on - apparently ignition - and fuel_level_unfiltered within 20 of the last sample); arms the power-up check on the first; engine_feature_enable_flags_cal bit 5 clear = copy the sensor instead (was cm848_calibBlock1_trim_eepromWrite) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00516578,cm848_calibBlock1_counters_reset
@@ -1990,7 +1991,7 @@ address,name
 0x00516834,cm848_calibBlock1_trimTimer_reset
 0x00516844,cm848_filterFuelLevelSlow,Slow fuel level filter behind the 0xA4 broadcast: averages the fast filter into fuel_level_slow_filter with weight 12 after 76 runs at standstill or 376 while moving (moving samples 51 or more off the reference skipped); stored bytes [1] and [2] = result (was cm848_calibBlock1_learnedTrim_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516a10,cm848_calibBlock1_warmupFlag_reset
-0x00516a20,cm848_initFuelLevelFilter,Boot-time fuel level init (called once from hpcr_exceptionHandler): resets the power-up check / high-voltage debounce / standstill timer / fault substitution and seeds the fast / slow / reference filters (x 256) from the EEPROM-mirror bytes [0] / [2] / [1] (was eeprom_calibration_load_initialize) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00516a20,cm848_initFuelLevelFilter,Boot-time fuel level init (called once from cm848_applicationMain): resets the power-up check / high-voltage debounce / standstill timer / fault substitution and seeds the fast / slow / reference filters (x 256) from the EEPROM-mirror bytes [0] / [2] / [1] (was eeprom_calibration_load_initialize) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516a94,cm848_substituteFuelLevelOnSensorFault,Fuel level fault substitution: P0463 (fault bit 381) or the high-voltage flag sets broadcast byte [2] = 255 / P0462 (bit 382) alone = 0 and sets the substitution flag; when all clear bytes [1] and [2] restart from the fast level [0] (was cm848_calibBlock1_warmupFlag_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516bb0,cm848_updateFuelLevel,Main-loop fuel level task: every 4th pass runs cm848_qualifyFuelLevelSample and when it returns nonzero the high-voltage debounce / power-up check / fast filter / slow filter / fault substitution (was eeprom_calibration_load_periodic) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00516c18,fuel_quantity_demand_monitor
@@ -2005,7 +2006,7 @@ address,name
 0x00517a5c,cm848_shutdownIntakeAirHeater,state 5 - clears grid heater relays 43/44 - sets status bit6 ended-early and a default shutdown reason 1 when none is set (was diag_iat_protection_shutdownEvent) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00517b70,cm848_updateIntakeAirHeaterPostheat,state 4 postheat - picks the schedule level from temperature - builds the 4 per-level pulse durations - pulses the relays via cm848_pulseIntakeAirHeaterRelays - shuts down at schedule level 6 (the coolant-warm exit is cal-disabled) (was diag_iat_protection_stateMachine_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00517f48,cm848_updateIntakeAirHeaterControl,grid heater control top level gated by governor_fuel_feature_flags bit 0 - advances control state from cold_start_phase then dispatches the preheat / run-up / postheat / shutdown handlers (they drive relays 43/44) - its own relay tail is dead code (was battery_voltage_protection_control) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
-0x00518324,cm848_resetIntakeAirHeaterStartTemperatureCapture,Reset path (hpcr_exceptionHandler): clears intake_air_heater_start_temperature_captured_flag so the next cm848_updateIntakeAirHeaterAmbientTemperature captures a new start temperature (was protection_oilTemp_source_resetInitFlag) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00518324,cm848_resetIntakeAirHeaterStartTemperatureCapture,Reset path (cm848_applicationMain): clears intake_air_heater_start_temperature_captured_flag so the next cm848_updateIntakeAirHeaterAmbientTemperature captures a new start temperature (was protection_oilTemp_source_resetInitFlag) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00518334,cm848_captureIntakeAirHeaterStartTemperature,One-shot (first cm848_updateIntakeAirHeaterAmbientTemperature run after reset): intake_air_heater_start_temperature = the converted intake manifold temperature reading when its raw ADC is inside the channel limits / else the coolant reading / else 0 F (ROM 0x5c7ac) (was oilTemp_sensorSource_select) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x005183b4,cm848_updateIntakeAirHeaterAmbientTemperature,Periodic if governor_fuel_feature_flags bit 0: captures the start temperature once / sets intake_air_heater_ambient_temperature = min(fuel temperature if configured else ambient air / battery temperature) - the healthy one on a fault - else start temperature (was protection_oilTemp_source_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00518538,cm848_runPciMessageHandlers,PCI (J1850) application task every ~100 ms gated by engine_feature_enable_flags_cal bit 0x40 (the PCI link layer gate): runs the TX2-5 / TX11-18 builders and the RX2-5 / 8 / 10 / 13 / 14 consumers on every / even / odd / mod 4 / 6 / 12 / 14 passes of a 0-59 tick (was protection_diagnostics_periodic) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
@@ -2068,8 +2069,8 @@ address,name
 0x00521474,protectionVoltageTimeoutControl
 0x005216cc,initProtectionVoltageTimer
 0x00521e40,cm848_sciDecrementKeyRetryDelay,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): counts the failed-key delay down | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
-0x00522074,cm848_sciTransmitSingleByteOne,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): loads sci_buffer[0] = 1 and transmits that single byte (called from mpc555_processJ1939RxQueue; purpose unconfirmed) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
-0x005220b4,cm848_memoryBlock_checksum_validate
+0x00522074,cm848_sciTransmitSingleByteOne,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): loads sci_buffer[0] = 1 and transmits that single byte (called from cm848_restartThroughBootRom: the SCI acknowledge of a restart through the boot ROM, e.g. after SCI command 49) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Low
+0x005220b4,cm848_writeEepromBytes,Queues an EEPROM write (param 1 = EEPROM address 0x1000000-0x1001ffe, param 2 = source, param 3 = byte count; a zero count or an address outside that range returns 0 without writing). It first waits up to 100 x 19 us for the EEPROM write queue to empty (returns 1 if it never does), then returns cm848_queueEepromByteWrites' result. Used by SCI command 49 and the calibration ID save. Was cm848_memoryBlock_checksum_validate
 0x00522700,bufferManagementWithBounds
 0x00522788,initMessageBufferPointers
 0x005227ac,sensorValidationTimeout
@@ -2091,7 +2092,7 @@ address,name
 0x00523ba4,cm848_getVinCharacter,Returns VIN character n (1-based) = vehicle_vin_string[n - 1] - only caller cm848_calculateImmobilizerExpectedKey mixes characters 9 / 14 / 16 / 17 with the seed into the PCI 4F C0 expected key - nothing to do with J1939 source addresses (was j1939_sourceAddress_lookup) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00523bc4,cm848_immobilizerKeyMixRound,one add / XOR mixing round over a 24-bit value and an 8-bit key byte - the core of the immobilizer seed and key derivation (was j1939_checksum_xor_calc) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00523c00,cm848_calculateImmobilizerExpectedKey,Computes the expected immobilizer key: the 24-bit seed folded through cm848_immobilizerKeyMixRound with VIN characters 17 then 16 then 14 then 9 (1-based) - stores immobilizer_expected_key (was sensor_checksum_calculate_composite) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
-0x00523c98,cm848_generateImmobilizerSeed,24-bit immobilizer seed: increments immobilizer_seed_counter then XORs mix(timebase / counter) with mix(fault_timing_snapshot / counter) - returns the fixed seed at 0x3fcfd0 if the word at 0x3fcfcd is nonzero and no diagnostic session (neither has a writer) (was sensor_checksum_verify_session) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00523c98,cm848_generateImmobilizerSeed,24-bit immobilizer seed: increments immobilizer_seed_counter then XORs mix(timebase / counter) with mix(key_on_hour_meter / counter) - returns the fixed seed at 0x3fcfd0 if the word at 0x3fcfcd is nonzero and no diagnostic session (neither has a writer) (was sensor_checksum_verify_session) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00523d38,cm848_processImmobilizerSeedAndKey,SKIM immobilizer handshake - command 0x80 makes a seed and the expected key from VIN chars 9/14/16/17 - command 0 checks the returned key and grants start (was j1939_msgSlotE_governorAuth_check) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00523e88,cm848_storeImmobilizerSecretKey,Immobilizer commands 1 / 2 on PCI 4F C0: store the 5-byte secret key in the EEPROM mirror (command 1 = bytes 0-2 at 0x3fee2c / command 2 = bytes 3-4 at 0x3fee2f) then send a fresh seed on PCI 3F without recomputing the expected key (was j1939_msgSlotE_eepromWrite_stage) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00523f60,cm848_runImmobilizerTask,Every 2nd pass flags VIN blank (word 21 bit 8 = P0630) / PCI 0x72 odometer 0 (bit 9); decodes new 0xB1 frames; with immobilizer_present_flag set: flags a blank secret key (bit 10 = P0633) / runs the 4F C0 handshake / cuts fuel when the window ends unauthorized (was governorModeTransitionControl) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
@@ -2169,7 +2170,7 @@ address,name
 0x0052f030,engine_protection_timerStateMachine_init
 0x0052f250,diag_camSync_deviation_check
 0x0052f32c,engine_protection_timerState_shiftCheck
-0x0052f448,engine_camSync_sampleRatio_validate
+0x0052f448,cm848_checkRadiatorFanSpeedSignalNoise,Fan speed signal noise test (a protection_state_machine_step step - returns 5 done / 4 in progress): runs while cam_sync_protection_state_flags bit 0x40 or 0x80 is set; each new three-sample history (type code 5100 only) counts as clean or as a spike (middle sample more than 500 rpm from its neighbours' average); after radiator_fan_speed_noise_check_passes it clears both flag bits if the clean ratio is above radiator_fan_speed_clean_sample_ratio_minimum, otherwise clears only 0x40 and sets diag_suppress_request_flag; the flag byte is written to EEPROM. Was engine_camSync_sampleRatio_validate
 0x0052f5d4,engine_coldStart_batteryVoltage_monitor
 0x0052f770,engine_protection_timerBitCheck_dispatch
 0x0052f89c,sensor_battery_voltage_decrement
@@ -2179,7 +2180,7 @@ address,name
 0x0052fa34,engine_coldStart_protection_stateMachine
 0x0053005c,hpcr_calibration_group25_load
 0x00530288,cm848_initialization_group25_state
-0x00530298,cm848_calibration_group13_load
+0x00530298,cm848_checkRadiatorFanSpeedRationality,P0483 cooling fan speed rationality (fault 407 = fault_detected_bits_400_to_415 bit 7): only while cold_start_phase = CSP_AT_GOVERNOR_SETPOINT; a radiator_fan_speed outside radiator_fan_speed_rationality_minimum / _maximum (75 / 4000 rpm in the RAM dump) counts radiator_fan_speed_out_of_range_count up to radiator_fan_speed_out_of_range_limit and sets P0483; in range it clears the count and the DTC. Called from cm848_periodicTaskGroup13_calibration2. Was cm848_calibration_group13_load
 0x00530364,cm848_initialization_group13_state
 0x00530374,cm848_completeMonitorGroup11Report,Monitor group 11 completion - sets diagnostic_monitor_complete_bits bit 11 / clears fault_pending_flags bit 11 on fault_detected_bits_400_to_415 bit2 match - caller group37_load is a cold-start coolant-vs-ambient temp check - group 11 has no P-code (was diag_faultRing_protectionMonitor_update) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x00530428,cm848_calibration_group37_load
@@ -2253,14 +2254,14 @@ address,name
 0x005372c4,cm848_monitorOverboostAndHighLoadBoostBand,In governor mode 16 above 2200 rpm boost above 58 inHg (ROM 0x64566) for 25 passes sets fault_detected_bits_400_to_415 bit 15 (P0234 overboost) - counting back down clears it; also counts high-load boost band events and time (0x40ba6a / 0x40ba6c) (was hpcr_fuelPressureControl) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00537584,hpcr_fuelDemandProc
 0x00537944,cm848_initAdaptiveControl
-0x005379b4,cm848_initWaterInFuelDistanceMonitor,Boot init: arms the water-in-fuel distance monitor (sets 0x3fd278 to 1) when switch 0 (switch_input_state_bits[0] bit 0) is set; runs once from the hpcr_exceptionHandler boot list (was cm848_initOilPressure) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x005379b4,cm848_initWaterInFuelDistanceMonitor,Boot init: arms the water-in-fuel distance monitor (sets 0x3fd278 to 1) when switch 0 (switch_input_state_bits[0] bit 0) is set; runs once from the cm848_applicationMain boot list (was cm848_initOilPressure) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x005379d8,cm848_monitorWaterInFuelDistance,While P2269 water in fuel (safety_bits_1 bit 8) is set integrates vehicle_speed into the EEPROM-mirror count 0x3feeb8 (36000 per count = 1/256 mile at 100 ms) - else zeroes it; at 128000 (500 miles) sets the P0169 bit 0x3fe99e bit 0 and stops; P2266 (bit 7) stops it (was hpcr_oilPressureLimited) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00537acc,cm848_mainLoopDispatcher
 0x00537b50,sensorChannelConditionValidator
 0x00537c64,diag_faultMatch_outputCheck_update
 0x00538278,cm848_mainLoopMonitor
 0x00538748,cm848_initSensorCalibration
-0x00538974,hpcr_exceptionHandler
+0x00538974,cm848_clearWorkingRam,Zeroes working RAM from 0x3fa000 (scheduler_task_stat_value_working) up to 0x41428e (two words per step, 256 bytes per outer pass) - the first call in cm848_applicationMain after the TPU set-up. Was hpcr_exceptionHandler (a second function with the same name as the reset entry)
 0x005389c4,uds_session_state_init
 0x00538a84,cm848_initProtectionModule
 0x00538c8c,diag_record_queue_add_entry
@@ -2271,10 +2272,14 @@ address,name
 0x00539190,cm848_j1939_system_init
 0x00539768,cm848_lookupParameterIdAddress,Finds a 16-bit parameter ID in the {ID / address} table 0x53be38 (6-byte entries / hash index 0x53af76 = ID mod 1889) and stores its address in *param 2 (EEPROM 0x1000000-0x10008e7 -> RAM mirror unless cal_write_mode 0xEE and no boot fault). Returns 0 found / 1 unknown (was uds_conditionEvaluator) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00539868,cm848_initCanHardware
-0x00539938,engine_protection_timer_sync
-0x00539a78,engine_start_completion_sequence
-0x00539d18,cm848_initProtectionTimers
-0x0053a110,hpcr_protectionTimerMonitor
+0x00539938,cm848_restartOnKeyOnDuringPowerDown,Key came back on during the power-down (called from cm848_saveEepromForPowerDown and 3 places in cm848_runPowerDownSequence): counts the start in completed_power_down_count_cal / writes the new power_cycle_sequence_number_cal (= completed + incomplete counts) / waits up to 1000 x 2500 timebase ticks for that EEPROM write / then cm848_restartApplicationWithoutReset - the same bookkeeping cm848_applicationMain does at a reset after a completed power-down. Was engine_protection_timer_sync
+0x00539a78,cm848_saveEepromForPowerDown,Power-down EEPROM save (from cm848_runPowerDownSequence): starts the EEPROM mirror save and waits for it - a key line held on for more than 80 samples meanwhile sets key_on_during_power_down_save_flag and calls cm848_restartOnKeyOnDuringPowerDown after the save; adds cm848_getEepromVerifyRetryTotal to the EEPROM word at 0x3fdb88; writes the mirror checksum to eeprom_block_checksum_expected_cal; then copies power_cycle_sequence_number_cal into completed_power_down_sequence_number_cal - the marker the next start checks. Was engine_start_completion_sequence
+0x00539d18,cm848_runPowerDownSequence,Power-down sequence - runs after the main run loop ends (cm848_applicationMain and cm848_restartApplicationWithoutReset call it last): marks the session active and cal_write_mode 0xee / waits for the EEPROM write queue / cm848_saveEepromForPowerDown / stores two more EEPROM dwords / writes power_down_left_ecm_powered_flag_cal = 0 / clears logical output 27 (0x1b) and for 40 short waits restarts (output 27 back on + cm848_restartOnKeyOnDuringPowerDown) if the key line comes back on / sets output 27 again and after a short delay checks the key once more / writes the flag = 1 (the ECM is still powered) / then waits for the key and restarts. Was cm848_initProtectionTimers
+0x0053a0fc,cm848_outputChannelNoneEnable,Output channel driver table record 0 (no output) slot +0 (enable): a bare blr - that slot is its only referrer
+0x0053a100,cm848_outputChannelNoneSetPeriod,Output channel driver table record 0 (no output) slot +8 (set period): a bare blr - that slot is its only referrer
+0x0053a104,cm848_outputChannelNoneSetDuty,Output channel driver table record 0 (no output) slot +12 (set duty): a bare blr - that slot is its only referrer
+0x0053a108,cm848_outputChannelReadFeedbackNone,Read-feedback slot (+4) of the 46 output channel driver table records without a read-back: li r3 0 / blr - returns 0 (no fault); all 46 pointers to it are inside the table
+0x0053a110,cm848_updateOutputReadBackFaultBits,Output read-back fault monitor (4 times per 40-phase main-loop cycle - cm848_periodicTaskGroup14_calibration3 in phases 2 / 12 / 22 / 32): walks the 48-word output channel assignment table in the EEPROM mirror (0x3fdc94-0x3fdcf3 = EEPROM 0x812-0x871 - entry N holds the output channel driver table record for output function N: 1 cooling fan / 10 governor pressure solenoid / 11 wastegate solenoid / 20 fuel metering / 25 and 26 actuators c and d / 27 alternator field / 39 actuator g / 43 actuator e). For each entry holding a record 1-50 it calls that record's read-feedback slot (+4): 0 clears bit N of output_read_back_fault_bits and 1 / 2 (pin high or low against the command) set it; 0xFFFF would leave the bit alone but no slot in this build returns it (the 46 records without a read-back return 0). Entry 1 is checked on every 2nd pass only (cooling_fan_read_back_check_divider). The pointer starts one word before the table (EEPROM 0x810 = completed_power_down_count_cal - outside the table) because lhzu pre-increments. cm848_debounceOutputReadBackFaults turns five of the bits into DTCs. Was hpcr_protectionTimerMonitor
 # fuelDemand SCI command handlers — dispatch table @ 0x53a9a0 (FUN_0051d780). Name uses DECIMAL command code (convention); hex in comment.
 0x0051dbd4,cm848_sciCommand18EnterHighSpeedMode,SCI diagnostic link (QSMCM SCI1; Chrysler-style SCI command set - was the fuelDemand* family): command 0x12 (18): sets sci_mode_flags bit 0x02 (SCI1 switches to the 8x faster SCC1R0 = 0x14) and installs the table-select callback (0xF5-0xFD select tables / 0xFE exits) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High | sets sci_mode_flags bit 0x02 (SCI1 to 8x SCC1R0 0x14) and installs the table-select callback (0xF5-0xFD select / 0xFE exit) - SCI command 0x12 (18) via the 0x53a9a0 table (cm848_dispatchSciCommand) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High
 0x0051dc1c,cm848_sciHighSpeedTableSelectCallback,SCI diagnostic link next-byte callback: high-speed mode (command 18): 0xF5-0xFD select a table read / 0xFE exits | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High
@@ -2316,7 +2321,7 @@ address,name
 0x00521a9c,cm848_sciCommand41WriteTableValueCallback,SCI diagnostic link next-byte callback: command 41 table 250 / 252 value write | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium
 0x00521b9c,cm848_sciCommand42Callback,next-byte callback for SCI command 0x2a (42) installed by cm848_sciCommand42Handler (0x521b6c) - reached only via sci_next_byte_handler - not a dead function | registration-table-sweep reviewed 2026-11-13
 0x00521e68,cm848_sciCommand44SendSecurityKeyCallback,SCI diagnostic link next-byte callback: command 44 key: cm848_sciValidateSecurityKey / 3 failures lock out / wrong key starts the retry delay | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence High
-0x00522158,cm848_sciCommand49Callback,next-byte callback for SCI command 0x31 (49) installed by cm848_sciCommand49Handler (0x522044) - reached only via sci_next_byte_handler - not a dead function | registration-table-sweep reviewed 2026-11-13
+0x00522158,cm848_sciCommand49Callback,next-byte callback for SCI command 0x31 (49) installed by cm848_sciCommand49Handler (0x522044) - reached only via sci_next_byte_handler - not a dead function. Serial reflash request: when the byte is 1, sci_security_state is 1 (unlocked) and cold_start_phase is 1 (or engine_sync_type_code is 5100), it writes serial_reflash_unlock_request_cal = 1 (EEPROM 0x56) and the boot-kernel magic 0x1d0a at EEPROM 0x00, then cm848_restartThroughBootRomAfterSciRequest; the boot ROM then starts its SCI session already unlocked | registration-table-sweep reviewed 2026-11-13
 0x00522468,cm848_lookupFaultSpnIndex,searches the SPN table DAT_0005b57c for a matching SPN and returns its table index
 0x005224b0,cm848_isFaultGroupStatusBitSet,SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): for SCI 0x34: finds the fault index row in ROM table 0x5b6e6 and returns that bit of the 32-bit word at 0x40aefe | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Low
 0x0052252c,cm848_sciCommand52ReportFaultStatusBySpnCallback,SCI diagnostic link next-byte callback: command 52 SPN -> fault status | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy Confidence Medium

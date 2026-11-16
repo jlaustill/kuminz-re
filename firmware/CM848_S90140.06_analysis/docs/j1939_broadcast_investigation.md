@@ -33,7 +33,7 @@ Broadcasts are registered at boot via `initDiagnosticBufferPointers @ Flash2[0x5
 called once from the boot-init chain:
 
 ```
-hpcr_exceptionHandler @ ROM[0x544C4]
+cm848_applicationMain (was hpcr_exceptionHandler) @ ROM[0x544C4]
   └─ cm848_dataTable_00539868 @ Flash2[0x539868]  (bad instructions - Ghidra can't decode)
        └─ [indirect] → mpc555_calculatePressureDropOffset @ Flash2[0x5383D0]
             └─ initDiagnosticBufferPointers @ Flash2[0x537CF8]
@@ -160,7 +160,7 @@ command or targeted write support re-added.
 Function has floating-point save/restore opcodes (`stfd`/`lfd`) that Ghidra can't decode.
 First 48 bytes suggest MPC555 TouCAN peripheral init (0x003070xx registers).
 Full decode may reveal additional broadcast control initialization.
-Called once at boot: `hpcr_exceptionHandler @ ROM[0x544C4]` → this function → `initDiagnosticBufferPointers`.
+Called once at boot: `cm848_applicationMain @ ROM[0x544C4]` → this function → `initDiagnosticBufferPointers`.
 
 ---
 

@@ -36,9 +36,20 @@ determinable from the binary alone — see "Still blocked" below.
 **Function-number groups:** 7/8 = status timers (CH2,7); **9 = injection** (CH6 confirmed, CH9/10);
 0xa = cold-start-gated outputs (CH4,5,8,15); 0xb = HPCR sync (CH11,14); 0xc = timing accumulate (CH12,13).
 
+> **2026-11-14 (PR #48):** function 7 is also what `mpc555_tpuAEnablePwmChannel` / `mpc555_tpuBEnablePwmChannel` select before starting a channel as a PWM output (PARAM0 = high time, PARAM1 = period) - the output channel driver table can put any TPU-A or TPU-B channel into it. So on these modules function 7 runs PWM, and the "7/8 = status timers" grouping above (inferred from CH2's owner functions) needs rechecking.
+
+> **2026-11-14 (PR #48), TPU-B:** the outputs that have a read-back are identified from the binary after all. The route is the output channel assignment table (EEPROM 0x812: entry = output function, value = driver record) plus each output's read-back DTC. In this calibration:
+> - TPU-B 4 = governor pressure solenoid (P0748)
+> - TPU-B 6 = fan clutch (P0480)
+> - TPU-B 7 = wastegate solenoid (P0243)
+> - TPU-B 10 = generator field (P0622)
+> - TPU-B 11 = fuel metering (P0251)
+>
+> The "Still blocked" section below now applies to TPU-A, the MIOS PWM outputs and the TPU-B channels without a read-back (TPU-B 15 = actuator d). TPU-A CH6 = injection timing is unaffected. See `ecu_pinout.md` and `firmware/CLAUDE.md` "Output read-back faults".
+
 ## MIOS MPWMSM PWM outputs (0x306000)
 
-Four PWM submodules driven by `cm848_miosTimer16/17/18/19*` (set value, scale-by-percent, init
+Four PWM submodules driven by `cm848_miosPwm16/17/18/19*` (set value, scale-by-percent, init
 period). `cm848_protection_threshold_calib_check` @0x5289d4 loads all four period/pulse values from
 calibration. These are PWM **actuator** outputs (typical diesel: VGT/turbo, EGR, fan, fuel/heater) —
 **specific device per submodule unknown** from the binary.

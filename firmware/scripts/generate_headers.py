@@ -69,7 +69,26 @@ TYPE_MAP = {
     'int8_t':   'int8_t',
     'int16_t':  'int16_t',
     'int32_t':  'int32_t',
+    'pointer':  'void *',
+    # ImportAnalysis (global_variables.csv) keywords
+    'u8':  'uint8_t',
+    'u16': 'uint16_t',
+    'u32': 'uint32_t',
+    'i8':  'int8_t',
+    'i16': 'int16_t',
+    'i32': 'int32_t',
 }
+
+BITFIELD_STORAGE = {1: 'uint8_t', 2: 'uint16_t', 4: 'uint32_t'}
+
+IDENTIFIER = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
+ARRAY_TYPE = re.compile(r'^(.+?)\s*\[(\d+)\]$')
+
+
+def is_identifier(name):
+    """True if name is a valid C identifier (struct-member labels such as 'a.b' and
+    Ghidra string labels such as 'u_dd#2_0005b468' are not)."""
+    return bool(IDENTIFIER.fullmatch(name))
 
 TYPE_WIDTHS = {
     'uint8_t':  1,
@@ -106,7 +125,13 @@ def field_declaration(field_name, c_type, size):
     Produce a C field declaration, using arrays when size > base type width.
 
     e.g.  uint8_t data[5]  when type=uint8_t and size=5
+          T items[]        when type=T[] (a variable-length tail)
     """
+    array = re.match(r'^(.+?)\s*\[(\d*)\]$', c_type)
+    if array:
+        # C++ has no flexible array members: a variable-length tail is declared with one element.
+        count = array.group(2) or '1'
+        return f'    {map_type(array.group(1))} {field_name}[{count}];'
     base_width = TYPE_WIDTHS.get(c_type, None)
     if base_width is not None and size > base_width:
         count = size // base_width
@@ -128,6 +153,8 @@ typedef uint8_t   undefined1;
 typedef uint16_t  undefined2;
 typedef uint32_t  undefined4;
 typedef uint64_t  undefined8;
+typedef uint64_t  ulonglong;
+typedef int64_t   longlong;
 typedef uint8_t   byte;
 typedef uint16_t  ushort;
 typedef uint32_t  uint;
@@ -171,9 +198,32 @@ def generate_types_header(output_dir):
             structs[name] = []
         structs[name].append(row)
 
-    struct_blocks = []
+    struct_blocks = OrderedDict()   # name -> definition text
+    struct_needs = OrderedDict()    # name -> structs it holds by value (they must come first)
     for struct_name, fields in structs.items():
-        lines = [f'typedef struct {{']
+        lines = [f'struct {struct_name} {{']
+        needs = []
+        bitfield_unit = None  # (width_bytes, [(offset, bits, name, comment), ...])
+
+        def flush_bitfield_unit():
+            # Emit one storage unit as C bit-fields, padding the gaps. Offsets count from the
+            # LSB of the unit (Ghidra's convention); C's allocation order is up to the compiler.
+            nonlocal bitfield_unit
+            if bitfield_unit is None:
+                return
+            width, members = bitfield_unit
+            storage = BITFIELD_STORAGE.get(width, 'uint32_t')
+            position = 0
+            for offset, bits, name, comment in sorted(members):
+                if offset > position:
+                    lines.append(f'    {storage} : {offset - position};')
+                note = f'  /* bit {offset}: {comment} */' if comment else f'  /* bit {offset} */'
+                lines.append(f'    {storage} {name} : {bits};{note}')
+                position = offset + bits
+            if position < width * 8:
+                lines.append(f'    {storage} : {width * 8 - position};')
+            bitfield_unit = None
+
         for field in fields:
             field_name = field.get('field_name', '').strip()
             raw_type   = field.get('type', '').strip()
@@ -183,14 +233,52 @@ def generate_types_header(output_dir):
                 size = 0
             comment = field.get('comment', '').strip()
 
+            if not field_name:
+                # Marker row (an extra instance address of the same struct) - no field.
+                continue
+
+            if raw_type.lower().startswith('bitfield:'):
+                spec = raw_type.split(':', 1)[1]
+                try:
+                    bits_text, offset_text = spec.split('@')
+                    bits, offset = int(bits_text), int(offset_text)
+                except ValueError:
+                    continue
+                if size > 0 or bitfield_unit is None:
+                    flush_bitfield_unit()
+                    bitfield_unit = (size if size > 0 else 1, [])
+                bitfield_unit[1].append((offset, bits, field_name, comment))
+                continue
+
+            flush_bitfield_unit()
             c_type = map_type(raw_type)
+            base = re.sub(r'\s*\[\d*\]$', '', c_type).strip()
+            if not base.endswith('*') and base in structs and base != struct_name:
+                needs.append(base)
             decl   = field_declaration(field_name, c_type, size)
             if comment:
                 lines.append(f'{decl}  /* {comment} */')
             else:
                 lines.append(decl)
-        lines.append(f'}} {struct_name};')
-        struct_blocks.append('\n'.join(lines))
+        flush_bitfield_unit()
+        lines.append('};')
+        struct_blocks[struct_name] = '\n'.join(lines)
+        struct_needs[struct_name] = needs
+
+    # Definitions in dependency order (a struct held by value comes first), CSV order otherwise.
+    ordered, visiting = [], set()
+
+    def visit(name):
+        if name in ordered or name in visiting:
+            return
+        visiting.add(name)
+        for dependency in struct_needs.get(name, []):
+            visit(dependency)
+        visiting.discard(name)
+        ordered.append(name)
+
+    for name in struct_blocks:
+        visit(name)
 
     # --- Parse enums ----------------------------------------------------------
     enum_rows = read_csv_skip_comments(enum_csv)
@@ -204,6 +292,8 @@ def generate_types_header(output_dir):
             enums[name] = []
         enums[name].append(row)
 
+    # Unscoped, as the decompiled .cpp uses the members unqualified. A member name that repeats
+    # across enums is a CSV naming problem and is left to show up as a compile error.
     enum_blocks = []
     for enum_name, members in enums.items():
         lines = [f'typedef enum {{']
@@ -224,13 +314,14 @@ def generate_types_header(output_dir):
     # --- Assemble -------------------------------------------------------------
     parts = [TYPE_ALIAS_PREAMBLE]
 
+    if enum_blocks:
+        parts.append('/* ---- Enumerations ---- */')
+        parts.append('\n\n'.join(enum_blocks))
+
     if struct_blocks:
         parts.append('/* ---- Structures ---- */')
-        parts.append('\n\n'.join(struct_blocks))
-
-    if enum_blocks:
-        parts.append('\n/* ---- Enumerations ---- */')
-        parts.append('\n\n'.join(enum_blocks))
+        parts.append('\n'.join(f'typedef struct {name} {name};' for name in struct_blocks))
+        parts.append('\n\n'.join(struct_blocks[name] for name in ordered))
 
     content = '\n\n'.join(parts) + '\n'
 
@@ -261,6 +352,13 @@ GLOBALS_TYPE_MAP = {
     'dword':       'dword',
     'pointer':     'void *',
     'undefined *': 'undefined *',
+    # ImportAnalysis signed / unsigned keywords
+    'u8':  'uint8_t',
+    'u16': 'uint16_t',
+    'u32': 'uint32_t',
+    'i8':  'int8_t',
+    'i16': 'int16_t',
+    'i32': 'int32_t',
 }
 
 GLOBALS_HEADER_PREAMBLE = """\
@@ -311,12 +409,19 @@ def generate_globals_header(output_dir):
         address = row.get('address', '').strip()
         raw_type = row.get('type', '').strip()
 
-        if _is_globals_artifact(name):
+        if _is_globals_artifact(name) or not is_identifier(name):
+            # Ghidra artifacts, struct-member label rows ('a.b' - the member is declared by its
+            # struct) and string labels ('u_x#y') - none of them is a variable of its own.
             excluded += 1
             continue
 
-        c_type = _map_globals_type(raw_type)
-        lines.append(f'extern {c_type} {name};  // {address}')
+        array = ARRAY_TYPE.match(raw_type)
+        if array:
+            c_type = _map_globals_type(array.group(1))
+            lines.append(f'extern {c_type} {name}[{array.group(2)}];  // {address}')
+        else:
+            c_type = _map_globals_type(raw_type)
+            lines.append(f'extern {c_type} {name};  // {address}')
         declared += 1
 
     content = '\n'.join(lines) + '\n'
@@ -372,6 +477,10 @@ def extract_function_signatures(cpp_path):
             # No opening brace found — skip (shouldn't happen in well-formed output).
             continue
         pre_brace = body[:brace_idx]
+
+        # Drop whole /* ... */ blocks first - plate comments span several lines whose middle
+        # lines start with plain text, which the line filter below would let through.
+        pre_brace = re.sub(r'/\*.*?\*/', '', pre_brace, flags=re.S)
 
         # Strip WARNING comment lines and blank lines.
         # WARNING blocks look like:

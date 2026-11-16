@@ -7,6 +7,8 @@ typedef uint8_t   undefined1;
 typedef uint16_t  undefined2;
 typedef uint32_t  undefined4;
 typedef uint64_t  undefined8;
+typedef uint64_t  ulonglong;
+typedef int64_t   longlong;
 typedef uint8_t   byte;
 typedef uint16_t  ushort;
 typedef uint32_t  uint;
@@ -25,752 +27,6 @@ typedef int32_t   bool32;
 #define CONCAT24(a, b) ((uint64_t)((uint64_t)((uint16_t)(a)) << 32 | (uint64_t)((uint32_t)(b))))
 #define CONCAT31(a, b) ((uint32_t)((uint32_t)(a) << 8 | (uint32_t)((uint8_t)(b))))
 #define CONCAT44(a, b) ((uint64_t)((uint64_t)((uint32_t)(a)) << 32 | (uint64_t)((uint32_t)(b))))
-
-
-/* ---- Structures ---- */
-
-typedef struct {
-    uint8_t source_address;  /* Destination address for J1939 response message */
-    uint8_t service_id;  /* UDS service ID (0x67=SecAccess 0x7F=NegResp 0x60/0x68=Cummins) */
-    uint8_t subfunction;  /* UDS subfunction code for service routing */
-    uint8_t error_code;  /* Negative response error code (0x11=serviceNotSupported 0x37=requiredTimeDelayNotExpired) */
-    uint8_t data_length;  /* Length of data payload in response */
-    uint8_t data[5];  /* Variable response payload (security seeds etc) */
-    uint8_t response_pending;  /* Flag to trigger transmission (1=send response) */
-} uds_response_t;
-
-typedef struct {
-    uint16_t calculated;  /* Final calculated fuel demand value */
-    uint16_t mode;  /* Fuel demand mode selector (0=normal) */
-    uint16_t enable_flag;  /* Fuel demand enable flag (1=enabled) */
-    uint16_t rate_limiter_state;  /* Rate limiter state machine value */
-    uint16_t rate_delta;  /* Fuel demand rate of change delta */
-    uint16_t throttle_based;  /* Throttle-based fuel demand component */
-    uint16_t override_value;  /* Diagnostic override fuel demand value */
-    uint16_t override_active;  /* Override mode active flag (1=override) */
-    uint16_t rate_limited;  /* Rate-limited fuel demand output */
-    uint16_t override_countdown;  /* Override timeout countdown (offset 0x12) */
-    uint16_t reserved_14;  /* Gap/reserved (0x58e-0x590) */
-    uint16_t reserved_16;  /* Gap/reserved (0x590-0x592) */
-    uint16_t delta;  /* Fuel demand delta for rate calculations */
-    uint16_t delta_filtered;  /* Filtered fuel demand delta */
-} fuel_demand_control_t;
-
-typedef struct {
-    uint8_t condition_eval;  /* Protection condition evaluation result */
-    uint8_t condition_flags_1;  /* Protection condition flags set 1 */
-    uint8_t load_condition_flags;  /* Load-based protection condition flags */
-    uint8_t overtemp_flags;  /* Overtemperature protection flags */
-    uint8_t reserved_04;  /* Gap/reserved byte at offset 0x04 */
-    uint8_t condition_flags_3;  /* Protection condition flags set 3 */
-    uint8_t condition_flags_2;  /* Protection condition flags set 2 */
-    uint8_t reserved_07;  /* Gap/reserved byte at offset 0x07 */
-    uint8_t threshold_current;  /* Current threshold index for protection lookup */
-    uint8_t action_flags;  /* Protection action trigger flags */
-} protection_condition_flags_t;
-
-typedef struct {
-    uint16_t status_flags;  /* Protection status word (bit flags) */
-    uint8_t flags[3];  /* Protection flags (3 bytes of packed bits) */
-    uint8_t output_flags;  /* Protection output control flags */
-    uint8_t reserved_06;  /* Gap/reserved */
-    uint8_t rate_limit_flags;  /* Rate limit protection flags (offset 0x0c from 0xb0f2 is 0xb0fe) */
-} protection_status_flags_t;
-
-typedef struct {
-    uint32_t status_code;  /* Protection status code (PROTECTION_STATUS_CODE enum) */
-    uint16_t timeout_counter;  /* Protection timeout countdown counter */
-    uint16_t state1_timer;  /* Level 1 protection state timer value */
-    uint16_t state2_timer;  /* Level 2 protection state timer value */
-} protection_timer_state_t;
-
-typedef struct {
-    uint16_t start_counter;  /* Engine start attempt counter */
-    uint16_t crank_state;  /* Cranking state machine value */
-    uint16_t cranking_flag;  /* Engine currently cranking flag (1=cranking) */
-    uint16_t run_state;  /* Engine run state (ENGINE_OPERATING_MODE enum) */
-} engine_crank_state_t;
-
-typedef struct {
-    uint8_t sync_status;  /* Sync detection status (0=lost 1=synced) */
-    uint16_t reference_count;  /* Sync reference pulse count */
-    uint16_t speed_raw;  /* Raw engine speed from position sensor */
-    uint8_t reserved_05;  /* Padding for alignment */
-} engine_sync_state_t;
-
-typedef struct {
-    uint16_t target_rpm;  /* Target engine RPM setpoint */
-    uint16_t reserved_02;  /* Gap/reserved (0xb7ae) */
-    uint16_t reserved_04;  /* Gap/reserved (0xb7b0) */
-    uint16_t reserved_06;  /* Gap/reserved (0xb7b2) */
-    uint16_t reserved_08;  /* Gap/reserved (0xb7b4) */
-    uint16_t reserved_0a;  /* Gap/reserved (0xb7b6) */
-    uint16_t reserved_0c;  /* Gap/reserved (0xb7b8) */
-    uint16_t current_rpm;  /* Current engine RPM measurement */
-} engine_rpm_state_t;
-
-typedef struct {
-    uint16_t oil_pressure;  /* Oil pressure sensor reading (PSI scaled) */
-    uint16_t coolant_temp;  /* Coolant temperature sensor (deg C scaled) */
-    uint16_t intake_air_temp;  /* Intake manifold air temperature */
-    uint16_t battery_voltage;  /* Battery voltage raw ADC value */
-} sensor_readings_t;
-
-typedef struct {
-    uint16_t version_marker;  /* EEPROM data version marker */
-    uint16_t magic;  /* Validation magic (EEPROM_MAGIC enum: 0x600D=valid) */
-    uint8_t header_block[6];  /* EEPROM header data block */
-    uint32_t config_dword;  /* EEPROM configuration dword */
-    uint16_t config_word;  /* EEPROM configuration word */
-    uint8_t calibration_block1[6];  /* Calibration data block 1 */
-    uint16_t cal_word1;  /* Calibration parameter word 1 */
-    uint16_t cal_word2;  /* Calibration parameter word 2 */
-    uint16_t cal_word3;  /* Calibration parameter word 3 */
-    uint16_t cal_word4;  /* Calibration parameter word 4 */
-    uint32_t serial_number;  /* ECU serial number from EEPROM */
-} eeprom_header_t;
-
-typedef struct {
-    uint32_t integrator;  /* Speed control PID integrator (Q16.16 fixed point) */
-    uint32_t output;  /* Governor output command value */
-} governor_output_t;
-
-typedef struct {
-    uint8_t enable_ch0_7;  /* Injector enable bitmap channels 0-7 */
-    uint8_t enable_ch8_15;  /* Injector enable bitmap channels 8-15 */
-    uint8_t channel_status;  /* Output channel status flags */
-    uint8_t timing_mode;  /* Injector timing mode selector */
-    uint8_t output_ch0;  /* Channel 0 output state */
-    uint8_t fault_flags;  /* Injector fault detection flags */
-    uint8_t output_ch1;  /* Channel 1 output state */
-} injector_control_t;
-
-typedef struct {
-    uint8_t message_index;  /* Current message buffer index */
-    uint8_t message_buffer;  /* Message buffer selector */
-    uint16_t message_counter;  /* Received message counter */
-    uint16_t dm1_pending;  /* DM1 diagnostic message pending flag */
-} can_rx_state_t;
-
-typedef struct {
-    uint8_t mode_bits;  /* Protection mode selection bits */
-    uint8_t system_enable_bits;  /* Protection subsystem enable flags */
-    uint8_t reserved_02;  /* Gap/reserved */
-    uint8_t control_word;  /* Protection control word */
-} protection_enable_t;
-
-typedef struct {
-    uint16_t write_index;  /* Next write position in fault list */
-    uint16_t read_index;  /* Current read position in fault list */
-    uint16_t emission_count;  /* Count of emission-related faults */
-    uint16_t total_emission_faults;  /* Total emission fault counter */
-} fault_list_state_t;
-
-typedef struct {
-    uint16_t byte_count;  /* Bytes remaining to transfer */
-    uint16_t reserved_02;  /* Gap (0x3fec84-0x3fec85) */
-    uint16_t reserved_04;  /* Gap (0x3fec86-0x3fec87) */
-    uint16_t reserved_06;  /* Gap (0x3fec88-0x3fec89) */
-    uint16_t state;  /* Transfer state machine value */
-    uint16_t status;  /* Transfer status/result code */
-} data_transfer_state_t;
-
-typedef struct {
-    uint8_t session_flags;  /* Diagnostic session active flags */
-    uint8_t enable_flags_2;  /* Secondary diagnostic enable flags */
-    uint8_t eeprom_status;  /* EEPROM operation status byte */
-    uint8_t reserved_03;  /* Gap/reserved */
-    uint8_t reserved_04;  /* Gap/reserved */
-    uint8_t checksum_status;  /* EEPROM checksum validation status */
-} diag_session_state_t;
-
-typedef struct {
-    uint16_t enable_state;  /* System master enable state */
-    uint16_t condition_monitor;  /* Condition monitor flags */
-    uint16_t reserved_04;  /* Gap (0x3fe978-0x3fe979) */
-    uint16_t safety_bits_1;  /* Safety condition bits set 1 */
-    uint16_t safety_bits_2;  /* Safety condition bits set 2 */
-    uint16_t sensor_diag;  /* Sensor diagnostic flags */
-    uint16_t lamp_status;  /* Fault lamp status (MIL/warning) */
-    uint16_t emission_faults;  /* Emission-related fault flags */
-    uint16_t reserved_10;  /* Gap (0x3fe984-0x3fe985) */
-    uint16_t reserved_12;  /* Gap (0x3fe986-0x3fe987) */
-    uint16_t system_faults;  /* System fault flags */
-    uint16_t reserved_16;  /* Gap (0x3fe98a-0x3fe98f) */
-    uint16_t reserved_18;  /* Gap */
-    uint16_t reserved_1a;  /* Gap */
-    uint16_t reserved_1c;  /* Gap */
-    uint16_t severity_flags;  /* Fault severity flags */
-    uint16_t comm_faults;  /* Communication fault flags */
-    uint16_t engine_status;  /* Engine status flags */
-    uint16_t pending_faults;  /* Fault pending flags */
-    uint16_t reserved_28;  /* Gap (0x3fe99c-0x3fe9a1) */
-    uint16_t protection_active;  /* Protection active flags */
-} system_status_flags_t;
-
-typedef struct {
-    uint16_t current_value;  /* Current speed value */
-    uint16_t reserved_02;  /* Gap (0xa3cc) */
-    uint16_t reserved_04;  /* Gap (0xa3ce) */
-    uint16_t reserved_06;  /* Gap (0xa3d0) */
-    uint16_t lower_limit;  /* Speed lower limit */
-    uint16_t limit_adjustment;  /* Speed limit adjustment factor */
-    uint16_t reserved_0c;  /* Gap (0xa3d6) */
-    uint16_t reserved_0e;  /* Gap (0xa3d8) */
-    uint16_t target_setpoint;  /* Target speed setpoint */
-    uint16_t adjustment_delta;  /* Speed adjustment delta */
-    uint16_t lookup_result;  /* Speed table lookup result */
-} speed_control_state_t;
-
-typedef struct {
-    uint16_t efficiency_filtered;  /* Throttle efficiency filtered value */
-    uint16_t fuel_demand_final;  /* Final throttle-based fuel demand */
-    uint16_t final_trim;  /* Final fuel trim value */
-    uint16_t load_adjusted;  /* Load-adjusted fuel value */
-    uint16_t load_based_trim;  /* Load-based fuel trim */
-    uint16_t rpm_based_trim;  /* RPM-based fuel trim */
-    uint16_t reserved_0c;  /* Gap (0xa3f6) */
-    uint16_t rpm_conversion;  /* RPM to fuel conversion factor */
-    uint16_t reserved_10;  /* Gap (0xa3fa) */
-    uint16_t reserved_12;  /* Gap (0xa3fc) */
-    uint16_t throttle_conversion;  /* Throttle to fuel conversion factor */
-    uint16_t reserved_16;  /* Gap */
-} throttle_fuel_trim_t;
-
-typedef struct {
-    uint16_t blend_mode;  /* Fuel blend mode selector */
-    uint16_t reserved_02;  /* Gap (0xa496) */
-    uint16_t reserved_04;  /* Gap (0xa498) */
-    uint16_t reserved_06;  /* Gap (0xa49a) */
-    uint16_t reserved_08;  /* Gap (0xa49c) */
-    uint16_t blend_weight;  /* Fuel blend weight factor (0-100%) */
-} fuel_blend_state_t;
-
-typedef struct {
-    uint16_t load_input;  /* Boost-based load input */
-    uint16_t rpm_modifier;  /* RPM-based boost modifier */
-    uint16_t lookup_result;  /* Boost table lookup result */
-    uint16_t computed_value;  /* Computed boost pressure value */
-    uint16_t pressure_ratio;  /* Boost pressure ratio */
-    uint16_t reserved_0a;  /* Gap */
-    uint16_t reserved_0c;  /* Gap */
-    uint16_t reserved_0e;  /* Gap */
-} boost_pressure_state_t;
-
-typedef struct {
-    uint16_t source_priority;  /* Limit source priority ranking */
-    uint16_t source_active;  /* Currently active limit source ID */
-    uint16_t limit_source;  /* Torque limit source selector */
-    uint16_t fuel_minimum;  /* Minimum fuel limit from arbitration */
-} torque_limit_arb_t;
-
-typedef struct {
-    uint16_t proportional_gain;  /* PID proportional gain value */
-    uint16_t integral_term;  /* PID integral accumulator */
-    uint16_t reserved_04;  /* Gap */
-    uint16_t reserved_06;  /* Gap */
-    uint16_t reserved_08;  /* Gap */
-} governor_pid_t;
-
-typedef struct {
-    uint16_t thermal_lockout;  /* Thermal protection lockout flag */
-    uint16_t load_lockout;  /* Load protection lockout flag */
-    uint16_t rpm_lockout;  /* RPM protection lockout flag */
-    uint16_t sensor_fault_active;  /* Sensor fault lockout flag */
-    uint16_t reserved_08;  /* Gap (0xb124-0xb125) */
-    uint16_t timer_expired;  /* Lockout timer expired flag */
-} protection_lockout_t;
-
-typedef struct {
-    uint32_t id;  /* CAN identifier containing PGN priority and addressing info */
-    uint16_t length;  /* Message data length for single/multi-frame decision */
-} j1939_header_t;
-
-typedef struct {
-    uint32_t id;  /* 11-bit or 29-bit CAN ID stored in 32-bit */
-    uint16_t length;  /* DLC (Data Length Code) */
-    uint32_t data_ptr;  /* Pointer to payload bytes */
-} can_std_rx_desc_t;
-
-typedef struct {
-    uint8_t error_code;  /* Error code (0=success non-zero=error) */
-    uint16_t param_value;  /* Retrieved parameter value */
-    uint8_t scaling_applied;  /* Flag indicating if scaling was applied */
-    uint32_t timestamp;  /* Response generation timestamp */
-} parameter_response_t;
-
-typedef struct {
-    uint8_t command_id;  /* CalTerm command identifier */
-    uint8_t parameter_count;  /* Number of parameters in request/response */
-    uint8_t data_payload[8];  /* Parameter data payload (up to 8 bytes) */
-    uint8_t checksum;  /* Message integrity checksum */
-} calterm_protocol_t;
-
-typedef struct {
-    uint8_t function_code;  /* Insite function code */
-    uint8_t live_data_request;  /* Live data monitoring request flag */
-    uint8_t status_flags;  /* Monitoring status flags */
-    uint8_t response_data[6];  /* Live parameter response data */
-} insite_protocol_t;
-
-typedef struct {
-    uint16_t current_index;  /* Current interpolation index into table */
-    uint32_t x_axis_ptr;  /* Pointer to X-axis table (input values) */
-    uint16_t input_value;  /* Input value for table lookup */
-    uint32_t y_axis_ptr;  /* Pointer to Y-axis table (output values) */
-} table_interp_args_t;
-
-typedef struct {
-    uint16_t integer_part;  /* High 16 bits - integer/whole number portion */
-    uint16_t fractional_part;  /* Low 16 bits - fractional portion */
-} q16_fixed_point_t;
-
-typedef struct {
-    uint32_t source_address;  /* DMA transfer source memory address */
-    uint32_t dest_address;  /* DMA transfer destination memory address */
-    uint16_t transfer_count;  /* Number of bytes/words to transfer */
-    uint16_t control_flags;  /* DMA control flags (mode type enable etc) */
-    uint32_t next_descriptor;  /* Pointer to next descriptor in chain */
-} dma_descriptor_t;
-
-typedef struct {
-    uint32_t target_address;  /* Memory address to patch */
-    uint8_t patch_size;  /* Number of bytes to copy to target address */
-    uint8_t reserved;  /* Unused padding byte for 6-byte alignment */
-} memory_patch_entry_t;
-
-typedef struct {
-    uint8_t pgn_byte_1;  /* First PGN byte for matching (compared against msg+6+1) */
-    uint8_t pgn_byte_0;  /* Second PGN byte for matching (compared against msg+6+0) */
-    uint32_t handler_func;  /* Function pointer to PGN handler callback */
-} j1939_pgn_handler_entry_t;
-
-typedef struct {
-    uint8_t priority;  /* J1939 message priority (0-7) */
-    uint8_t reserved_01;  /* Reserved/padding byte */
-    uint8_t dest_address;  /* Destination address (0xFF=broadcast) */
-    uint8_t source_address;  /* Source address of requester */
-    uint16_t reserved_04;  /* Reserved/message flags */
-    uint32_t pgn_data_ptr;  /* Pointer to PGN data bytes */
-} j1939_request_msg_t;
-
-typedef struct {
-    uint8_t control_byte;  /* ACK control byte (0=ACK 1=NACK 2=AccessDenied 3=CannotRespond) */
-    uint8_t group_function;  /* Group function value from original request */
-    uint16_t reserved_02;  /* Reserved bytes 2-3 */
-    uint8_t address_acknowledged;  /* Address being acknowledged */
-    uint8_t pgn_low;  /* Acknowledged PGN low byte */
-    uint8_t pgn_mid;  /* Acknowledged PGN mid byte */
-    uint8_t pgn_high;  /* Acknowledged PGN high byte */
-} j1939_ack_msg_t;
-
-typedef struct {
-    uint16_t value;  /* Parameter value (resolution varies per parameter) */
-    uint16_t min_limit;  /* Minimum allowed value for parameter */
-    uint16_t max_limit;  /* Maximum allowed value for parameter */
-    uint16_t default_value;  /* Factory default value */
-} eeprom_param_t;
-
-typedef struct {
-    uint32_t calculated_block;  /* Block × 256 × 4 calculation result */
-    uint16_t offset;  /* Parameter offset within block */
-    uint16_t result_value;  /* Retrieved parameter value (capped at 32000) */
-} param_lookup_args_t;
-
-typedef struct {
-    uint8_t msg_id;  /* Message identifier */
-    uint8_t param_1;  /* First parameter byte */
-    uint8_t param_2;  /* Second parameter byte */
-    uint8_t param_3;  /* Third parameter byte */
-    uint8_t param_4;  /* Fourth parameter byte */
-    uint16_t timestamp;  /* Message timestamp */
-    uint8_t checksum;  /* Message checksum */
-} can_param_msg_t;
-
-typedef struct {
-    uint32_t last_execution_time;  /* Timer value of last task execution */
-    uint16_t runtime_ticks;  /* Task runtime duration in timer ticks */
-    uint16_t deadline_ticks;  /* Task execution deadline (0xFFFF = disabled) */
-    uint16_t execution_count;  /* Number of times task has been executed */
-    uint16_t overrun_count;  /* Number of deadline overruns detected */
-    uint32_t reserved;  /* Reserved/padding bytes for alignment */
-} scheduler_phase_slot_t;
-
-typedef struct {
-    uint16_t channel_addr;  /* A/D channel address for sensor input */
-    uint16_t filter_const;  /* Digital filter constant (0-1) */
-    uint16_t fault_clear_count;  /* Fault clear counter threshold */
-    uint16_t fault_decrement;  /* Fault counter decrement value */
-    uint16_t fault_increment;  /* Fault counter increment value */
-    uint16_t fault_set_threshold;  /* Fault set threshold */
-    uint16_t high_error_limit;  /* A/D high error limit (0-1023) */
-    uint16_t low_error_limit;  /* A/D low error limit (0-1023) */
-} ad_sensor_config_t;
-
-typedef struct {
-    uint16_t reserved_00;  /* Reserved/padding at offset 0x00 */
-    uint16_t default_value;  /* Default sensor value on fault (offset 0x02) */
-    uint16_t clear_threshold;  /* Threshold for fault clear (offset 0x04) */
-    uint16_t decrement_value;  /* Debounce counter decrement (offset 0x06) */
-    uint16_t increment_value;  /* Debounce counter increment (offset 0x08) */
-    uint16_t set_threshold;  /* Threshold for fault set (offset 0x0a) */
-    uint16_t high_limit;  /* High error limit (offset 0x0c) */
-    uint16_t low_limit;  /* Low error limit (offset 0x0e) */
-    uint16_t adc_lookup_index;  /* A/D channel lookup table index (offset 0x10) */
-    uint8_t reserved_12;  /* Reserved byte at offset 0x12 */
-    uint8_t alt_fault_enable;  /* Alternative fault enable flag (offset 0x13) */
-    uint8_t primary_fault_id;  /* Primary fault code packed bit/word (offset 0x14) */
-    uint8_t secondary_fault_id;  /* Secondary fault code (offset 0x15) */
-    uint8_t tertiary_fault_id;  /* Tertiary fault code (offset 0x16) */
-    uint8_t debounce_max;  /* Maximum debounce count (offset 0x17) */
-} sensor_fault_config_t;
-
-typedef struct {
-    uint8_t reserved_00[8];  /* Reserved bytes at offset 0x00-0x07 */
-    uint16_t interpolated_value;  /* Interpolated sensor value (offset 0x08) */
-    uint16_t lookup_result;  /* Table lookup result (offset 0x0a) */
-    uint16_t debounce_counter;  /* Current debounce count (offset 0x0c) */
-    uint8_t fault_active_flag;  /* Fault currently active flag (offset 0x0e) */
-    uint8_t sample_counter;  /* Sample phase counter (offset 0x0f) */
-    uint16_t adc_raw_value;  /* Raw A/D conversion value (offset 0x10) */
-    uint8_t reserved_12[4];  /* Reserved bytes at offset 0x12-0x15 */
-} sensor_debounce_state_t;
-
-typedef struct {
-    uint16_t data_plate_length;  /* Data plate length field */
-    uint8_t engine_make[5];  /* Engine manufacturer identifier */
-    uint8_t engine_model[17];  /* Engine model designation */
-    uint32_t engine_serial_number;  /* Engine serial number */
-    uint8_t engine_build_month;  /* Engine manufacturing month */
-    uint8_t engine_build_day;  /* Engine manufacturing day */
-    uint8_t engine_build_year;  /* Engine manufacturing year */
-    uint16_t engine_cpl;  /* Engine CPL (Component Parts List) */
-    uint16_t peak_torque_low_range;  /* Peak torque low range value */
-    uint16_t peak_torque_high_range;  /* Peak torque high range value */
-    uint16_t peak_torque_rpm_low;  /* Peak torque RPM low range */
-    uint16_t peak_torque_rpm_high;  /* Peak torque RPM high range */
-    uint16_t governed_speed_low;  /* Governed speed low range */
-    uint16_t governed_speed_high;  /* Governed speed high range */
-    uint16_t horsepower_low_range;  /* Horsepower low range value */
-    uint16_t horsepower_high_range;  /* Horsepower high range value */
-    uint16_t horsepower_rpm_low;  /* Horsepower RPM low range */
-    uint16_t horsepower_rpm_high;  /* Horsepower RPM high range */
-    uint8_t fuel_code_part_number[7];  /* Fuel code part number */
-    uint8_t percent_torque_rise;  /* Percent torque rise specification */
-    uint16_t peak_torque;  /* Peak torque specification */
-    uint16_t peak_torque_rpm;  /* Peak torque RPM specification */
-    uint16_t governed_speed;  /* Governed speed specification */
-    uint16_t ecm_id;  /* ECM identification number */
-    uint32_t ecm_part_number;  /* ECM part number */
-    uint32_t ecm_serial_number;  /* ECM serial number */
-    uint8_t ecm_voltage_low_range;  /* ECM voltage low range */
-    uint8_t ecm_voltage_high_range;  /* ECM voltage high range */
-    uint8_t ecm_code[10];  /* ECM identification code */
-    uint8_t engine_calibration_time[12];  /* Engine calibration timestamp */
-    uint16_t sc_option_number;  /* SC option number */
-    uint16_t do_option_number;  /* DO option number */
-    uint8_t other_options[40];  /* Other options field */
-    uint8_t oem_name[15];  /* Original equipment manufacturer name */
-    uint8_t oem_vehicle[15];  /* OEM vehicle designation */
-    uint8_t vin[20];  /* Vehicle identification number */
-    uint8_t vehicle_year[10];  /* Vehicle manufacturing year */
-    uint8_t customer_name[15];  /* Customer name */
-    uint8_t location[15];  /* Installation location */
-    uint8_t unit_number[10];  /* Unit identification number */
-} cummins_data_plate_t;
-
-typedef struct {
-    uint32_t source_data_ptr;  /* Pointer to source data for memory operation */
-    uint32_t target_data_ptr;  /* Pointer to destination memory location */
-    uint16_t operation_size;  /* Number of bytes to copy (max varies) */
-    uint16_t metadata_value;  /* Logging metadata/timestamp for circular buffer */
-} memory_operation_request_t;
-
-typedef struct {
-    uint16_t source_addr_1;  /* J1939 source address 1 */
-    uint16_t source_addr_2;  /* J1939 source address 2 */
-    uint16_t source_addr_3;  /* J1939 source address 3 */
-    uint16_t source_addr_4;  /* J1939 source address 4 */
-    uint16_t source_addr_5;  /* J1939 source address 5 */
-} j1939_source_addresses_t;
-
-typedef struct {
-    uint8_t type_switch_1;  /* Network type switch 1 (0=J1922 1=J1939) */
-    uint8_t type_switch_2;  /* Network type switch 2 (0=J1922 1=J1939) */
-    uint8_t type_switch_3;  /* Network type switch 3 (0=J1922 1=J1939) */
-    uint8_t type_switch_4;  /* Network type switch 4 (0=J1922 1=J1939) */
-    uint8_t type_switch_5;  /* Network type switch 5 (0=J1922 1=J1939) */
-} network_type_switches_t;
-
-typedef struct {
-    uint16_t target_address;  /* Target memory address for transfer */
-    uint32_t data_pointer;  /* Pointer to source/dest data buffer */
-    uint16_t remaining_length;  /* Remaining bytes to transfer */
-    uint16_t byte_count;  /* Total byte count for operation */
-    uint8_t tx_active_flag;  /* Transmit operation active (0/1) */
-    uint8_t rx_active_flag;  /* Receive operation active (0/1) */
-} diag_transfer_state_t;
-
-typedef struct {
-    uint8_t message_length;  /* Total message length including header */
-    uint8_t service_id;  /* Service identifier (3=secured 4=control 5=memory) */
-    uint8_t sub_function;  /* Sub-function code for service routing */
-    uint8_t data_payload[16];  /* Variable-length request data payload */
-} diag_service_request_t;
-
-typedef struct {
-    uint16_t write_index;  /* Current write position (0-N) */
-    uint16_t entry_count;  /* Number of entries in buffer */
-    uint16_t read_index;  /* Current read position (0-N) */
-    uint16_t buffer_size;  /* Maximum buffer capacity */
-} circular_buffer_t;
-
-typedef struct {
-    uint32_t start_address;  /* Start of valid address range (big-endian) */
-    uint32_t end_address;  /* End of valid address range (big-endian) */
-    uint8_t special_mode_flag;  /* Access flag when in special mode (non-0x09/0x0A = allow) */
-    uint8_t normal_mode_flag;  /* Access flag in normal operation (0x09=invalid 0x0A=denied other=allow) */
-} address_range_entry_t;
-
-typedef struct {
-    uint16_t source_id;  /* ID of current fuel limit source (arbitrator output) */
-    uint16_t demand_limited;  /* Rate-limited fuel demand */
-    uint16_t arbitration_threshold;  /* Fuel limit arbitration threshold */
-    uint16_t demand_delta;  /* Fuel demand delta for rate limiting */
-    uint16_t maximum_limit;  /* Maximum fuel demand limit */
-    uint16_t offset_value;  /* Fuel limit offset value */
-    uint16_t comparison_low;  /* Fuel limit comparison low value */
-    uint16_t comparison_high;  /* Fuel limit comparison high value */
-    uint16_t rate_limit;  /* Fuel demand rate limiting value */
-} fuel_limit_arbitration_t;
-
-typedef struct {
-    uint16_t fuel_demand_control;  /* Fuel demand mode control flags */
-    uint16_t protection_system;  /* Protection system status flags */
-    uint16_t engine_operating_state;  /* Engine operating state flags */
-    uint16_t reserved_06;  /* Gap/reserved */
-    uint16_t reserved_08;  /* Gap/reserved */
-    uint16_t fuel_temp_control;  /* Fuel temp control bit flags */
-} engine_control_flags_t;
-
-typedef struct {
-    uint16_t fault_flag;  /* High RPM protection fault active flag */
-    uint16_t state;  /* State machine state */
-    uint16_t timer;  /* Countdown timer */
-    uint16_t reserved_06;  /* Reserved/gap */
-    uint16_t warning_flag;  /* Warning active flag */
-} high_rpm_protection_t;
-
-typedef struct {
-    uint32_t sensor_status_history_bits;  /* Sensor status history bits - shifting record */
-    uint16_t rpm_ramp_complete;  /* Flag indicating RPM ramp complete */
-    uint16_t rpm_limit_current;  /* Current RPM limit from oil pressure */
-    uint16_t rpm_limit_target;  /* Target RPM limit for oil pressure */
-    uint16_t rpm_limit_previous;  /* Previous RPM limit for tracking */
-    uint16_t state_index;  /* State index for oil pressure protection */
-    uint16_t validation_timer;  /* Timer for oil pressure validation */
-    uint16_t sensor_validation_counter;  /* Sensor status validation counter */
-} oil_pressure_protection_t;
-
-typedef struct {
-    uint8_t periodic_monitor_phase;  /* 5-phase counter for periodic fault monitoring */
-    uint8_t can_pin_fault;  /* CAN pin switching fault persistence counter */
-    uint8_t io_fault_1;  /* I/O control fault 1 persistence counter */
-    uint8_t io_fault_2;  /* I/O control fault 2 persistence counter */
-    uint8_t io_fault_3;  /* I/O control fault 3 persistence counter */
-    uint8_t io_fault_4;  /* I/O control fault 4 persistence counter */
-    uint8_t io_fault_5;  /* I/O control fault 5 persistence counter */
-    uint8_t io_fault_6;  /* I/O control fault 6 persistence counter */
-} fault_persistence_counters_t;
-
-typedef struct {
-    uint16_t sensor_fault_status;  /* Sensor fault status register */
-    uint16_t fault_status_2;  /* Fault status flags register 2 */
-    uint16_t engine_fault_status;  /* Engine fault status register */
-    uint16_t reserved_06;  /* Reserved/gap */
-    uint16_t io_fault_status_1;  /* IO fault status register 1 */
-    uint16_t io_fault_status_2;  /* IO fault status register 2 */
-    uint16_t io_fault_status_3;  /* IO fault status register 3 */
-    uint16_t io_fault_status_4;  /* IO fault status register 4 */
-} fault_status_registers_t;
-
-typedef struct {
-    uint16_t sensor_fault_latch;  /* Sensor fault latch register */
-    uint16_t fault_status_8_previous;  /* Previous state for edge detection */
-    uint16_t engine_fault_latch;  /* Engine fault latch register */
-    uint16_t reserved_06;  /* Reserved/gap */
-    uint16_t io_fault_latch_1;  /* IO fault latch register 1 */
-    uint16_t io_fault_latch_2;  /* IO fault latch register 2 */
-    uint16_t io_fault_latch_3;  /* IO fault latch register 3 */
-    uint16_t io_fault_latch_4;  /* IO fault latch register 4 */
-} fault_latch_registers_t;
-
-typedef struct {
-    uint16_t state;  /* Engine operating mode state 1-8 */
-    uint16_t shutdown_complete_flag;  /* Engine shutdown complete flag */
-} engine_operating_mode_t;
-
-typedef struct {
-    uint16_t fuel_limit_shutdown;  /* Fuel limit during shutdown */
-    uint16_t high_rpm_fuel_limit;  /* High RPM fuel control limit */
-    uint16_t low_rpm_fuel_protection_limit;  /* Low RPM fuel protection limit */
-    uint16_t rpm_rate_limiter_output;  /* RPM rate limiter output */
-    uint16_t rpm_rate_limited_value;  /* RPM rate limited value */
-    uint16_t rpm_rate_secondary_calc;  /* Secondary RPM rate calculation */
-    uint16_t rpm_state_accumulator;  /* RPM state accumulator */
-    uint16_t high_rpm_fuel_accumulator;  /* High RPM fuel accumulator */
-    uint16_t low_rpm_fuel_accumulator;  /* Low RPM fuel accumulator */
-    uint16_t fuel_demand_before_limiting;  /* Fuel demand saved before limiting */
-    uint16_t low_rpm_threshold_exceeded_flag;  /* Low RPM threshold exceeded flag */
-    uint16_t rpm_threshold_exceeded_flag;  /* RPM threshold exceeded flag */
-    uint16_t high_rpm_threshold_exceeded_flag;  /* High RPM threshold exceeded flag */
-    uint16_t fuel_protection_timer_enable;  /* Timer enable for protection state machines */
-    uint16_t fuel_system_protection_enabled;  /* Master fuel protection system enable (1=active) */
-} rpm_fuel_protection_t;
-
-typedef struct {
-    uint16_t blend_factor;  /* Fuel timing mode blend factor Q14 */
-    uint16_t protection_blend_ramp;  /* Timing protection blend ramp 0-16384 */
-    uint16_t source_selector;  /* Timing mode source selector 0-4 */
-    uint16_t transition_result;  /* Timing mode transition result */
-    uint16_t fuel_blend_result;  /* Timing fuel blend result */
-    uint16_t oil_pressure_result;  /* Timing oil pressure condition result */
-    uint16_t mode_11_result;  /* Timing mode 11 countdown result */
-    uint16_t protection_counter_1;  /* Timing protection counter 1 */
-    uint16_t protection_counter_2;  /* Timing protection counter 2 */
-    uint16_t blend_state;  /* Timing blend state */
-    uint16_t blend_accumulator;  /* Timing blend accumulator */
-    uint16_t fuel_source_mode_11_state;  /* Fuel source mode 11 state */
-    uint16_t fuel_source_mode_11_timer;  /* Fuel source mode 11 timer */
-    uint16_t fuel_mode_transition_state;  /* Fuel mode transition state */
-    uint16_t fuel_mode_transition_timer;  /* Fuel mode transition timer */
-} timing_mode_control_t;
-
-typedef struct {
-    uint16_t speed_previous;  /* Previous speed request value stored */
-    uint8_t byte0_control_mode;  /* TSC1 byte 0: Engine Override Control Mode (bits 0-1=mode 2-3=speed_cond 4-5=coast) */
-    uint16_t bytes12_requested_speed;  /* TSC1 bytes 1-2: Requested speed (0.125 RPM/bit little-endian) */
-    uint8_t reserved_05;  /* Gap/reserved byte */
-    uint8_t byte4_priority;  /* TSC1 byte 4: Override Control Mode Priority/Status */
-    uint8_t reserved_07[3];  /* Gap/reserved bytes */
-    uint8_t auxiliary_state;  /* TSC1 auxiliary state byte */
-    uint8_t reserved_0b[9];  /* Gap/reserved bytes to offset 0x14 */
-    uint8_t control_word;  /* TSC1 control word from message */
-    uint16_t requested_speed;  /* TSC1 requested speed value (0.125 RPM/bit) */
-    uint8_t requested_torque;  /* TSC1 requested torque percentage */
-    uint8_t reserved_18[4];  /* Gap/reserved bytes */
-    uint8_t priority_byte;  /* TSC1 message priority level */
-    uint16_t speed_stored;  /* TSC1 requested speed stored for governor */
-    uint8_t torque_stored;  /* TSC1 requested torque stored for governor */
-} tsc1_message_t;
-
-typedef struct {
-    uint16_t mode3_speed_target;  /* TSC1 mode 3 requested speed target */
-    uint16_t speed_setpoint;  /* TSC1 speed setpoint for torque calculation */
-    uint16_t capped_speed_target;  /* TSC1 mode 1 speed target capped at 24000 (3000 RPM) */
-    uint16_t control_flags;  /* TSC1 control flags */
-    uint16_t mode3_torque_limit;  /* TSC1 mode 3 calculated torque limit */
-    uint16_t torque_limit_calc;  /* Calculated torque limit from TSC1 request (signed) */
-    uint16_t speed_control_mode;  /* Speed control mode bits extracted from TSC1 byte 0 */
-    uint16_t active_state;  /* TSC1 active state (1=control active) */
-    uint16_t reserved_10;  /* Reserved/gap at offset 0x10 */
-    uint16_t mode_active;  /* TSC1 mode active flag (1=TSC1 control active) */
-    uint16_t disable_override;  /* TSC1 disable override flag (1=disable 0=enable) */
-    uint16_t handler_initialized;  /* TSC1 handler initialized flag */
-    uint16_t speed_control_target;  /* Speed control target setpoint (0.125 RPM/bit) */
-    uint8_t coast_brake_mode;  /* TSC1 coast/brake mode flag (from byte 0 bits 4-5) */
-    uint8_t address_filter;  /* TSC1 source address filter value (0xFF=any) */
-    uint8_t reserved_1c[10];  /* Gap to timer region */
-    uint16_t torque_mode_timer;  /* TSC1 torque mode timeout counter */
-    uint16_t torque_active_timer;  /* TSC1 torque active timeout counter */
-    uint16_t speed_override_timer;  /* TSC1 speed override timeout counter */
-    uint16_t torque_limit_timer;  /* TSC1 torque limit timeout counter */
-    uint16_t speed_mode_flag;  /* TSC1 speed mode flag */
-    uint16_t mode_timeout;  /* TSC1 mode timeout counter */
-    uint16_t speed_cmd_timeout;  /* TSC1 speed command timeout counter */
-    uint16_t override_timeout;  /* TSC1 override timeout counter */
-    uint8_t reserved_36[3];  /* Gap to source address */
-    uint8_t source_address;  /* TSC1 source address of current command */
-    uint32_t config_entry_ptr;  /* Pointer to TSC1 configuration table entry */
-    uint32_t active_config_ptr;  /* Pointer to active TSC1 configuration */
-    uint32_t secondary_config_ptr;  /* Pointer to secondary TSC1 configuration */
-    uint16_t torque_limit_active;  /* TSC1 torque limit mode active flag */
-    uint16_t message_timeout;  /* TSC1 message timeout counter (lost message detection) */
-} tsc1_state_t;
-
-typedef struct {
-    uint16_t tsc1_control_word;  /* TSC1 control word stored from message */
-    uint16_t mode_request;  /* Governor mode request (GOVERNOR_MODE enum) */
-    uint16_t mode;  /* Current governor mode (GOVERNOR_MODE enum) */
-    uint16_t torque_limit_select;  /* Torque limit mode selection (0=off 1=active) */
-    uint16_t disable_control;  /* TSC1 disable control flag */
-    uint32_t limit_state;  /* TSC1 limit state (low=torque_limit high=speed_limit) */
-} governor_control_t;
-
-typedef struct {
-    uint16_t param_id;  /* Parameter ID (0x0000-0x12A9 for CM848) */
-    uint32_t address;  /* Resolved memory address (EEPROM/ROM/MPC555 regs) */
-} param_id_entry_t;
-
-typedef struct {
-    uint8_t service_id;  /* EF00 service ID (see EF00_SERVICE_ID enum) */
-    uint8_t reserved;  /* Padding byte */
-    uint32_t handler_ptr;  /* Function pointer to service handler */
-} ef00_dispatch_entry_t;
-
-typedef struct {
-    uint8_t service_id;  /* Diagnostic service ID (0x43=paramRead 0x4A=memRead 0x4C=memReadExt) */
-    uint32_t handler_ptr;  /* Function pointer to service handler */
-} diag_dispatch_entry_t;
-
-typedef struct {
-    uint32_t total_ticks;  /* Cumulative execution time in timer ticks */
-    uint16_t call_count;  /* Number of times task has been executed */
-    uint16_t min_time;  /* Minimum execution time (initialized to 0xFFFF) */
-    uint16_t max_time;  /* Maximum execution time observed */
-    uint16_t overrun_count;  /* Number of deadline overruns detected */
-} scheduler_task_stat_t;
-
-typedef struct {
-    uint16_t derivative_term;  /* Governor derivative term bitmask (0xFFFF=inactive) */
-    uint16_t channel_identifier;  /* Channel ID for matching incoming governor commands */
-    uint16_t gain_schedule;  /* Gain schedule countdown timer (0=expired) */
-} governor_channel_t;
-
-typedef struct {
-    uint16_t threshold_scaled;  /* Scaled protection threshold from table lookup */
-    uint16_t recovery_threshold;  /* Recovery/hysteresis exit threshold */
-    uint16_t hysteresis;  /* Protection hysteresis band value */
-    uint16_t threshold_scaled_alt;  /* Alternate scaled threshold (same input different context) */
-    uint16_t threshold_base;  /* Base protection threshold before correction */
-} protection_threshold_set_t;
-
-typedef struct {
-    uint32_t timing_snapshot;  /* Fuel timing advance value at capture time */
-    uint8_t fault_code;  /* Fault code ID (0xAA = empty/available slot) */
-    uint16_t temperature_trim;  /* Temperature compensation trim calculation */
-    uint16_t target_rpm;  /* Target engine RPM at fault time */
-    uint16_t sensor_scale_1;  /* Sensor scale factor 1 */
-    uint16_t fault_status;  /* Fault active status value at capture */
-    uint16_t protection_high;  /* Protection output high word */
-    uint16_t protection_low;  /* Protection output low word */
-    uint16_t timing_param_1;  /* Fuel timing parameter 1 */
-    uint16_t timing_param_2;  /* Fuel timing parameter 2 */
-    uint16_t timing_param_3;  /* Fuel timing parameter 3 */
-    uint16_t sensor_scale_2;  /* Sensor scale factor 2 */
-    uint32_t reserved;  /* Reserved gap (not written by set/capture functions) */
-    uint8_t pressure_adj;  /* Pressure fuel adjustment byte */
-    uint16_t battery_voltage;  /* Battery voltage reading at fault time */
-    uint16_t load_throttle;  /* Processed load/throttle value */
-    uint16_t torque_limit;  /* Torque limit factor at fault time */
-    uint16_t diagnostic_word_1;  /* Diagnostic data word 1 */
-    uint8_t diagnostic_byte_3;  /* Diagnostic data byte 3 */
-    uint8_t diagnostic_byte_4;  /* Diagnostic data byte 4 */
-    uint16_t diagnostic_word_2;  /* Diagnostic data word 2 */
-    uint16_t diagnostic_word_3;  /* Diagnostic data word 3 */
-    uint16_t coolant_temp_raw;  /* Coolant temperature raw sensor value */
-    uint16_t status_flags;  /* Fault entry status/severity flags (bit 0 = newly active) */
-} fault_entry_t;
 
 
 /* ---- Enumerations ---- */
@@ -986,10 +242,10 @@ typedef enum {
 
 typedef enum {
     HANDLER_DIAGNOSTIC_CALLBACK = 0xdd00,  /* Diagnostic callback handler */
-    HANDLER_GOVERNOR_CONTROL = 0xdf00,  /* Governor control message (TSC1) */
+    HANDLER_GOVERNOR_CONTROL = 0xdf00,  /* Governor control message (proprietary) */
     HANDLER_DM1_REQUEST = 0xe300,  /* DM1 active fault request handler */
     HANDLER_DIAGNOSTIC_SERVICE = 0xef00,  /* Diagnostic service handler (DM14) */
-    HANDLER_TORQUE_SPEED_CONTROL = 0xf002,  /* Torque/Speed Control (TSC1 PGN 0) */
+    HANDLER_ETC1 = 0xf002,  /* Electronic Transmission Controller 1 (ETC1 PGN 61442) */
     HANDLER_ENGINE_CONTROLLER = 0xf005  /* Engine Controller message */
 } J1939_HANDLER_TYPE;
 
@@ -1191,12 +447,12 @@ typedef enum {
 } DIAGNOSTIC_FUEL_CONTROL_MODE;
 
 typedef enum {
-    FUELMODE_DISABLED = 0,  /* Fuel control disabled/idle */
-    FUELMODE_BASE = 1,  /* Base fuel control mode */
-    FUELMODE_LIMIT_A = 2,  /* Fuel limit source A (calibration) */
-    FUELMODE_LIMIT_B = 3,  /* Fuel limit source B (governor) */
-    FUELMODE_LIMIT_C = 4,  /* Fuel limit source C (protection) */
-    FUELMODE_OVERRIDE = 5  /* Fuel override/diagnostic mode */
+    FUELMODE_NORMAL = 0,  /* PID governor controls fuel (engine running) */
+    FUELMODE_IDLE = 1,  /* Engine at zero RPM (base idle fueling) */
+    FUELMODE_CALIBRATION_LIMIT = 2,  /* Calibration table fuel limit override */
+    FUELMODE_FAULT_LIMIT = 3,  /* Fault threshold fuel derate */
+    FUELMODE_PROTECTION_LIMIT = 4,  /* Protection override fuel limit */
+    FUELMODE_DISABLED = 5  /* Fuel control bypassed (mode flags off) */
 } FUEL_CONTROL_MODE_SELECT;
 
 typedef enum {
@@ -1212,7 +468,7 @@ typedef enum {
 
 typedef enum {
     INVALID_LENGTH = 0x02,  /* Security validator - message length mismatch */
-    SECURITY_FAILED = 0x03,  /* Security validator - security check returned non-zero */
+    ERROR_SECURITY_FAILED = 0x03,  /* Security validator - security check returned non-zero */
     CONDITION_NOT_MET = 0x07,  /* Memory operation - system_logging_state check failed */
     ADDR_LOOKUP_FAIL = 0x08,  /* Memory resolver - initial address lookup failed */
     ADDR_RANGE_INVALID = 0x09,  /* Address validator - address not in validation table */
@@ -1228,7 +484,7 @@ typedef enum {
     HIGH_RPM_SHUTDOWN = 0x42,  /* Trigger high RPM shutdown */
     SYSTEM_RESET = 0x43,  /* Diagnostic system reset */
     NOP = 0x50,  /* No operation - returns success */
-    MEMORY_PATCH = 0x51,  /* Apply queued memory patches */
+    SERVICE_3_MEMORY_PATCH = 0x51,  /* Apply queued memory patches */
     SECURED_SHUTDOWN = 0x52,  /* Request secured engine shutdown */
     RESERVED_ERROR = 0x53,  /* Reserved - always returns error 0x04 */
     CAN_BUFFER_LOG = 0x54  /* Log CAN message buffer */
@@ -1274,7 +530,7 @@ typedef enum {
 } EEPROM_MEMORY_BLOCKS;
 
 typedef enum {
-    QUERY_TERMINATE = 0x01,  /* QueryTerminate - CLIP compatible */
+    SERVICE_QUERY_TERMINATE = 0x01,  /* QueryTerminate - CLIP compatible */
     SYSTEM_SERVICE_04 = 0x04,  /* System service 04 */
     SYSTEM_SERVICE_05 = 0x05,  /* System service 05 */
     SYSTEM_SERVICE_06 = 0x06,  /* High RPM shutdown activation */
@@ -1282,7 +538,7 @@ typedef enum {
     SYSTEM_SERVICE_0A = 0x0A,  /* System service 0A */
     SYSTEM_SERVICE_0B = 0x0B,  /* System service 0B */
     GET_PARAMETERS_BY_ID_ALT = 0x0F,  /* GetParametersByID alternate */
-    GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP compatible */
+    SERVICE_GET_PARAMETERS_BY_ID = 0x10,  /* GetParametersByID - CLIP compatible */
     GET_ADDRESS_BY_PARAM_ID = 0x15,  /* GetAddressByParameterID - CLIP compatible */
     SYSTEM_SERVICE_16 = 0x16,  /* System service 16 */
     SYSTEM_SERVICE_18 = 0x18,  /* System service 18 */
@@ -1328,7 +584,7 @@ typedef enum {
 } J1939_CRUISE_CONTROL_ENABLE;
 
 typedef enum {
-    TSC1_RECEIVE_ENABLE = 1,  /* TSC1 message reception enable */
+    ETC1_RECEIVE_ENABLE = 1,  /* ETC1(PGN 61442) message reception enable */
     J1939_MESSAGE_FLAGS = 2,  /* J1939 message enable flags table */
     ASG_THROTTLE_COEFF_1 = 3,  /* ASG throttle mode compensation filter coef 1 */
     ASG_THROTTLE_COEFF_2 = 4,  /* ASG throttle mode compensation filter coef 2 */
@@ -1336,30 +592,52 @@ typedef enum {
 } J1939_THROTTLE_ENABLE;
 
 typedef enum {
-    DISABLE_OVERRIDE = 0,  /* Disable speed/torque override - return to pedal control */
-    SPEED_CONTROL = 1,  /* Speed control mode - target engine speed */
-    TORQUE_CONTROL = 2,  /* Torque control mode - limit engine torque */
-    SPEED_TORQUE_LIMIT = 3  /* Speed/torque limit mode - apply both limits */
-} TSC1_ENGINE_CONTROL_MODE;
+    DRIVELINE_NOT_DEFINED = 0,  /* Driveline state not defined/not supported */
+    DRIVELINE_DISENGAGED = 1,  /* Transmission driveline disengaged */
+    DRIVELINE_ENGAGED = 2,  /* Transmission driveline engaged */
+    DRIVELINE_NA = 3  /* Driveline state not available */
+} ETC1_SPN560_DRIVELINE_STATE;
 
 typedef enum {
-    NO_SPEED_CONDITION = 0,  /* No speed condition - use requested speed directly */
-    APPLY_AS_LIMIT = 1,  /* Apply requested speed as upper limit only */
-    NOT_AVAILABLE = 2,  /* Speed condition not available */
-    DONT_CARE = 3  /* Speed condition don't care */
-} TSC1_SPEED_CONDITION;
+    TC_LOCKUP_DISENGAGED = 0,  /* Torque converter lockup disengaged */
+    TC_LOCKUP_ENGAGING = 1,  /* Torque converter lockup engaging (in progress) */
+    TC_LOCKUP_ENGAGED = 2,  /* Torque converter lockup fully engaged */
+    TC_LOCKUP_NA = 3  /* Torque converter lockup state not available */
+} ETC1_SPN573_TC_LOCKUP_STATE;
 
 typedef enum {
-    NO_COAST_BRAKE = 0,  /* No coast/brake override active */
-    COAST_DECEL = 1,  /* Coast deceleration mode active */
-    ENGINE_BRAKE = 2,  /* Engine brake / exhaust brake active */
-    RESERVED = 3  /* Reserved coast/brake mode */
-} TSC1_COAST_BRAKE_MODE;
+    NO_SHIFT_IN_PROCESS = 0,  /* No transmission shift in progress */
+    SHIFT_IN_PROCESS = 1,  /* Transmission shift currently in process */
+    SHIFT_RESERVED = 2,  /* Reserved (not used) */
+    SHIFT_NA = 3  /* Shift state not available */
+} ETC1_SPN574_SHIFT_STATE;
+
+typedef enum {
+    OVERSPEED_DISABLED = 0,  /* Engine momentary overspeed not requested */
+    OVERSPEED_ENABLED = 1,  /* Engine momentary overspeed requested by transmission */
+    OVERSPEED_RESERVED = 2,  /* Reserved */
+    OVERSPEED_NA = 3  /* Overspeed enable state not available */
+} ETC1_SPN606_OVERSPEED_ENABLE;
+
+typedef enum {
+    PROGRESSIVE_SHIFT_ALLOW = 0,  /* Progressive shift allowed by transmission */
+    PROGRESSIVE_SHIFT_DISABLE = 1,  /* Progressive shift disabled - transmission controlling torque */
+    PROGRESSIVE_SHIFT_RESERVED = 2,  /* Reserved */
+    PROGRESSIVE_SHIFT_NA = 3  /* Progressive shift state not available */
+} ETC1_SPN607_PROGRESSIVE_SHIFT;
+
+typedef enum {
+    DRIVETRAIN_STANDALONE = 0,  /* No transmission interface - standalone engine */
+    DRIVETRAIN_MANUAL_VSS = 1,  /* Manual transmission with vehicle speed sensor (VSS) */
+    DRIVETRAIN_MANUAL_TPU = 3,  /* Manual transmission with direct TPU hardware throttle/PTO */
+    DRIVETRAIN_AUTO_J1939_FULL = 4,  /* Automatic trans - J1939 ETC1(PGN 61442) + cruise/vehicle speed */
+    DRIVETRAIN_AUTO_J1939_ETC1 = 5  /* Automatic trans - J1939 ETC1(PGN 61442) shift defuel only */
+} DRIVETRAIN_TYPE;
 
 typedef enum {
     GOV_DISABLED = 0,  /* Governor control disabled - pedal/throttle control */
-    GOV_SPEED_CONTROL = 1,  /* Speed control mode - maintain target RPM */
-    GOV_TORQUE_CONTROL = 2,  /* Torque control mode - limit engine torque */
+    GOV_DRIVELINE_DISENGAGED = 1,  /* Speed control mode - maintain target RPM */
+    GOV_DRIVELINE_ENGAGED = 2,  /* Torque control mode - limit engine torque */
     GOV_SPEED_TORQUE = 3  /* Combined speed and torque control mode */
 } GOVERNOR_MODE;
 
@@ -1374,13 +652,13 @@ typedef enum {
 typedef enum {
     PARAM_STANDARD = 0x00,  /* Standard parameter read (0x00-0x7F) - response length 2 */
     PARAM_EXTENDED = 0x80,  /* Extended parameter read (0x80-0xBF) - response length 3 */
-    ACTIVE_FAULT_LIST = 0xC1,  /* Active DTC list builder */
-    FAULT_DETAIL = 0xC2,  /* Detailed fault information builder */
+    INSITE_COMMAND_ACTIVE_FAULT_LIST = 0xC1,  /* Active DTC list builder */
+    INSITE_COMMAND_FAULT_DETAIL = 0xC2,  /* Detailed fault information builder */
     PID_DTC_REQUEST = 0xC3,  /* PID/DTC handler request */
     PID_DTC_RESPONSE = 0xC4,  /* PID/DTC response - response length 4 or 7 */
     CAPACITY_INFO = 0xEA,  /* Capacity response builder - 24 bytes */
     ECU_ID = 0xED,  /* ECU identification builder */
-    VERSION_INFO = 0xF3  /* Version info builder - 31 bytes */
+    INSITE_COMMAND_VERSION_INFO = 0xF3  /* Version info builder - 31 bytes */
 } INSITE_CMD;
 
 typedef enum {
@@ -1395,12 +673,12 @@ typedef enum {
 } INSITE_STATUS_OUTPUT;
 
 typedef enum {
-    SUCCESS = 0x00,  /* Memory operation completed successfully */
-    INVALID_LENGTH = 0x02,  /* Message length mismatch */
-    AUTH_FAILED = 0x03,  /* Security check returned non-zero */
+    MEMORY_OPERATION_SUCCESS = 0x00,  /* Memory operation completed successfully */
+    MEMORY_OPERATION_INVALID_LENGTH = 0x02,  /* Message length mismatch */
+    MEMORY_OPERATION_AUTH_FAILED = 0x03,  /* Security check returned non-zero */
     LOGGING_STATE_ERROR = 0x07,  /* EEPROM write blocked - logging state check failed */
-    WRITE_DENIED = 0x0A,  /* ROM/Flash region - write not permitted */
-    BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write error during EEPROM logging */
+    MEMORY_OPERATION_WRITE_DENIED = 0x0A,  /* ROM/Flash region - write not permitted */
+    MEMORY_OPERATION_BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write error during EEPROM logging */
     AUTH_REQUIRED_MISSING = 0x1A  /* EEPROM write requires auth but not provided */
 } MEMORY_OP_RESULT;
 
@@ -1408,9 +686,9 @@ typedef enum {
     AUTH_SUCCESS = 0x00,  /* Security check passed - operation authorized */
     SECURITY_INVALID_LENGTH = 0x02,  /* Invalid message length for service */
     AUTH_FAILED = 0x03,  /* Security check failed - access denied */
-    CONDITION_NOT_MET = 0x07,  /* Pre-condition not satisfied */
+    SECURITY_CONDITION_NOT_MET = 0x07,  /* Pre-condition not satisfied */
     INVALID_ADDR = 0x0A,  /* Invalid memory address range */
-    BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write failed */
+    SECURITY_BUFFER_WRITE_FAIL = 0x0B,  /* Circular buffer write failed */
     PROCEED_TO_HANDLER = 0xFF  /* Proceed to handler (auth passed or not required) */
 } SECURITY_RESULT;
 
@@ -1420,7 +698,7 @@ typedef enum {
 } SECURITY_BYPASS;
 
 typedef enum {
-    BYPASS_ENABLED = 0xFF,  /* Security checks completely bypassed */
+    BYPASS_FLAG_ENABLED = 0xFF,  /* Security checks completely bypassed */
     SECURITY_ACTIVE = 0x00  /* Normal security - checks enforced */
 } SECURITY_BYPASS_FLAG;
 
@@ -1473,7 +751,7 @@ typedef enum {
 typedef enum {
     NO_LIMIT_ACTIVE = 0,  /* No fuel limit active / cleared state */
     OVERRIDE_STATE_ACTIVE = 1,  /* Override state active from fuel_demand_override_state */
-    PROTECTION_OVERRIDE = 5  /* Protection/override state - init and fault recovery */
+    PROTECTION_OVERRIDE_LIMIT = 5  /* Protection/override state - init and fault recovery */
 } FUEL_DEMAND_LIMIT;
 
 typedef enum {
@@ -1549,3 +827,1634 @@ typedef enum {
     TIMER_CHANNEL_44 = 0x2c,  /* Timer channel 44 (DAT_003fcf3e) */
     TIMER_CHANNEL_53 = 0x35  /* Timer channel 53 (DAT_003fcf40) */
 } EVENT_TIMER_CHANNEL;
+
+typedef enum {
+    PRIOR_BOOT_NORMAL = 0,  /* Previous boot completed a normal run cycle; diagnostics permitted */
+    PRIOR_BOOT_FAULTED = 1  /* Previous boot faulted or shut down mid cold-start; diagnostics locked out */
+} PRIOR_BOOT_STATE;
+
+typedef enum {
+    INACTIVE = 0,  /* No session; J1939 broadcasts running normally */
+    ACTIVE = 1,  /* Session healthy; broadcasts suppressed; writes permitted */
+    LOCKED_OUT = 2  /* Keep-alive auth failed 3 times; session frozen */
+} DIAG_SESSION_STATE;
+
+typedef enum {
+    SESSION_ACTIVE = 0,  /* Diagnostic session running; J1939 broadcasts suppressed */
+    STANDING_BY = 1  /* ECU armed and waiting for tool to activate session */
+} J1939_STANDBY_STATE;
+
+typedef enum {
+    DIAG_ACK = 0,  /* Request fulfilled successfully */
+    DIAG_NACK_NOT_READY = 4,  /* Rejected: ECU not in standby (j1939_standby_flag was 0) */
+    DIAG_NACK_PROTECTED = 7  /* Rejected: protection mode active */
+} DIAG_RESPONSE;
+
+typedef enum {
+    EEPROM_DIAG_HANDLE_RESPONSE = 0x03,  /* Handle EEPROM diagnostic response */
+    EEPROM_DIAG_DATA_TRANSFER = 0x10,  /* Process EEPROM data transfer */
+    EEPROM_DIAG_SEND_VERSION = 0x11,  /* Send EEPROM version response */
+    EEPROM_DIAG_TRANSFER_BLOCK = 0x12,  /* Transfer data block service */
+    EEPROM_DIAG_WRITE_DISPATCH = 0x20  /* Dispatch EEPROM write request */
+} EEPROM_DIAG_STATE;
+
+typedef enum {
+    CAL_VOLATILE = 0xea,  /* Writes land in RAM only; lost on power cycle */
+    CAL_PERSISTENT = 0xee  /* Writes go through to EEPROM; survive power cycle */
+} CAL_WRITE_MODE;
+
+typedef enum {
+    TSC1_OVERRIDE_OFF = 0,  /* Override disabled; normal engine governor operation */
+    TSC1_SPEED_CONTROL = 1,  /* Speed control; ECU governs to TSC1 requested_speed */
+    TSC1_TORQUE_CONTROL = 2,  /* Torque control; active during transmission shift-in-progress */
+    TSC1_SPEED_TORQUE_LIMIT = 3  /* Speed and torque limit; ECU caps both simultaneously */
+} TSC1_OVERRIDE_MODE;
+
+typedef enum {
+    CSP_INIT = 0,  /* Reset/power-on default; immediately transitions to CRANKING */
+    CSP_CRANKING = 1,  /* Engine at idle/crank speed; RPM below trigger threshold */
+    CSP_ABOVE_RPM_TRIGGER = 2,  /* RPM exceeded trigger but below governor setpoint; warming up */
+    CSP_AT_GOVERNOR_SETPOINT = 3,  /* RPM at or above governor setpoint; cold start governor active */
+    CSP_FUEL_MODE_SWITCH = 4,  /* Fuel mode switch active; waiting for switch to release */
+    CSP_SUSPENDED = 5,  /* Cold start suspended due to shutdown inhibit with cold mode enabled */
+    CSP_ABOVE_RPM_VIA_EVENTS = 6,  /* Same as ABOVE_RPM_TRIGGER but entered via crank event counter overflow */
+    CSP_SETPOINT_UNDERRUN = 7,  /* Dropped below governor setpoint after reaching it (phase 3 backtrack) */
+    CSP_ENGINE_STANDBY = 8  /* Engine cranking (RPM=0) or MIOS crank signal stopped; pre/post-run standby */
+} COLD_START_PHASE;
+
+typedef enum {
+    J1939_ACK = 0,  /* Positive acknowledgment - request fulfilled */
+    J1939_NACK = 1,  /* Negative acknowledgment - cannot comply with request */
+    J1939_ACCESS_DENIED = 2,  /* Access denied - not authorized for requested action */
+    J1939_CANNOT_RESPOND = 3  /* Cannot respond - busy or resource unavailable */
+} J1939_ACK_TYPE;
+
+typedef enum {
+    CRUISE_OFF = 0,  /* Cruise off/disabled - clears override and fuel-enable */
+    CRUISE_SET = 1,  /* SET pressed - latch current speed as cruise_speed_command (J1939 SET) */
+    CRUISE_RESUME = 2,  /* RESUME - restore cruise_speed_target_working (J1939 RESUME) */
+    CRUISE_DECELERATE = 3,  /* Decelerate/coast via fuel-rate step (J1939 DECELERATE) */
+    CRUISE_ACCELERATE = 4,  /* Accelerate via fuel-rate ramp (J1939 ACCELERATE) */
+    CRUISE_DECELERATE_2 = 5,  /* Decelerate alternate fuel-rate step (J1939 DECELERATE) */
+    CRUISE_ACCELERATE_2 = 6,  /* Accelerate alternate fuel-rate ramp (J1939 ACCELERATE) */
+    CRUISE_ACTIVE_HOLD = 7,  /* Override active - holding setpoint (J1939 HOLD) */
+    CRUISE_STANDBY = 8  /* Armed/enabled - driver in control not overriding */
+} CRUISE_CONTROL_STATE;
+
+typedef enum {
+    CRUISE_SWITCH_ON_OFF = 0,  /* ON/OFF master button - arms cruise (engage check wants state_b 0 with prev 5). Confirmed live 2026-06-12 */
+    CRUISE_SWITCH_CANCEL = 1,  /* CANCEL button. Confirmed live 2026-06-12 */
+    CRUISE_SWITCH_COAST = 2,  /* COAST button - decelerate (governor_cruise_coastButton_handler returns CRUISE_DECELERATE). Confirmed live 2026-06-12 */
+    CRUISE_SWITCH_SET = 3,  /* SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12 */
+    CRUISE_SWITCH_RESUME = 4,  /* RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12 */
+    CRUISE_SWITCH_IDLE = 5  /* No button pressed / debounce-settling value */
+} CRUISE_SWITCH_REQUEST;
+
+typedef enum {
+    ENGINE_LOAD_PROTECTION_INACTIVE = 0,  /* engine-load protection not derating */
+    ENGINE_LOAD_PROTECTION_ACTIVE = 8  /* engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000) */
+} ENGINE_LOAD_PROTECTION_STATE;
+
+typedef enum {
+    DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT = 0x02,  /* mpc555_diagServiceInitEepromTransfer */
+    DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION = 0x07,  /* cm848_diagServiceDownloadCalibration */
+    DIAGNOSTIC_SERVICE_ACKNOWLEDGE_11 = 0x0b,  /* stub */
+    DIAGNOSTIC_SERVICE_ACKNOWLEDGE_16 = 0x10,  /* stub */
+    DIAGNOSTIC_SERVICE_ACKNOWLEDGE_24 = 0x18,  /* stub */
+    DIAGNOSTIC_SERVICE_EXECUTE_ROUTINE = 0x19,  /* mpc555_diagService25_executeFunction */
+    DIAGNOSTIC_SERVICE_GET_ADDRESS_BY_PARAMETER_ID = 0x41,  /* cm848_diagService65_handler */
+    DIAGNOSTIC_SERVICE_READ_BY_PARAMETER_ID_OFFSET = 0x43,  /* cm848_diagService67_memoryReadOffset */
+    DIAGNOSTIC_SERVICE_MEMORY_WRITE = 0x44,  /* kernel memory-write (ROM->RAM window) */
+    DIAGNOSTIC_SERVICE_MEMORY_WRITE_69 = 0x45,  /* kernel memory-write */
+    DIAGNOSTIC_SERVICE_MEMORY_READ = 0x4a,  /* cm848_diagService74_memoryRead */
+    DIAGNOSTIC_SERVICE_MEMORY_WRITE_75 = 0x4b,  /* kernel memory-write */
+    DIAGNOSTIC_SERVICE_MEMORY_READ_EXT = 0x4c,  /* cm848_diagService76_memoryReadExt */
+    DIAGNOSTIC_SERVICE_MEMORY_WRITE_EXT = 0x4d  /* kernel memory-write ext */
+} DIAGNOSTIC_SERVICE;
+
+typedef enum {
+    FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START = 1,  /* Open-loop start command (two tables blended by the input engine_sync_state_a picks); the mode the others fall back to */
+    FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START = 2,  /* PID on fuel_pressure_setpoint - fuel_pressure_feedback_filtered for the first 1000 revolutions (fuel_pressure_governor_start_revolutions) */
+    FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP = 4,  /* PID after the start revolutions */
+    FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED = 8,  /* Timed fixed command when the pressure is low inside an rpm window (impossible in this calibration: threshold 0 and an empty rpm window) */
+    FUEL_PRESSURE_GOVERNOR_KEY_OFF = 0x10,  /* Fixed command while the ignition key switch is off and no shutdown is running */
+    FUEL_PRESSURE_GOVERNOR_DISABLED = 0x20,  /* Fixed command while fuel_pressure_governor_disable is set */
+    FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT = 0x40  /* Fixed command (2865 here) while P0193 / P0192 / P0653 / P0652 are set (faults 304 / 305 / 377 / 378) - the open-loop fallback */
+} FUEL_PRESSURE_GOVERNOR_MODE;
+
+/* ---- Structures ---- */
+
+typedef struct j1939_rx_msg_t j1939_rx_msg_t;
+typedef struct tsc1_payload_t tsc1_payload_t;
+typedef struct pci_diagnostic_response_t pci_diagnostic_response_t;
+typedef struct fuel_demand_control_t fuel_demand_control_t;
+typedef struct protection_condition_flags_t protection_condition_flags_t;
+typedef struct protection_status_flags_t protection_status_flags_t;
+typedef struct protection_timer_state_t protection_timer_state_t;
+typedef struct engine_crank_state_t engine_crank_state_t;
+typedef struct engine_sync_state_t engine_sync_state_t;
+typedef struct engine_rpm_state_t engine_rpm_state_t;
+typedef struct sensor_readings_t sensor_readings_t;
+typedef struct eeprom_header_t eeprom_header_t;
+typedef struct governor_output_t governor_output_t;
+typedef struct injector_control_t injector_control_t;
+typedef struct pci_link_state_t pci_link_state_t;
+typedef struct fault_list_state_t fault_list_state_t;
+typedef struct data_transfer_state_t data_transfer_state_t;
+typedef struct diag_session_state_t diag_session_state_t;
+typedef struct system_status_flags_t system_status_flags_t;
+typedef struct rpm_governor_state_t rpm_governor_state_t;
+typedef struct throttle_fuel_trim_t throttle_fuel_trim_t;
+typedef struct fuel_blend_state_t fuel_blend_state_t;
+typedef struct boost_pressure_state_t boost_pressure_state_t;
+typedef struct torque_limit_arb_t torque_limit_arb_t;
+typedef struct governor_pid_t governor_pid_t;
+typedef struct protection_lockout_t protection_lockout_t;
+typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
+typedef struct parameter_response_t parameter_response_t;
+typedef struct calterm_protocol_t calterm_protocol_t;
+typedef struct insite_protocol_t insite_protocol_t;
+typedef struct table_interp_args_t table_interp_args_t;
+typedef struct sensor_channel_config_t sensor_channel_config_t;
+typedef struct q16_fixed_point_t q16_fixed_point_t;
+typedef struct dma_descriptor_t dma_descriptor_t;
+typedef struct memory_patch_entry_t memory_patch_entry_t;
+typedef struct j1939_pgn_handler_entry_t j1939_pgn_handler_entry_t;
+typedef struct j1939_tx_msg_t j1939_tx_msg_t;
+typedef struct j1939_ack_msg_t j1939_ack_msg_t;
+typedef struct eeprom_param_t eeprom_param_t;
+typedef struct param_lookup_args_t param_lookup_args_t;
+typedef struct can_param_msg_t can_param_msg_t;
+typedef struct scheduler_phase_slot_t scheduler_phase_slot_t;
+typedef struct ad_sensor_config_t ad_sensor_config_t;
+typedef struct sensor_fault_config_t sensor_fault_config_t;
+typedef struct sensor_debounce_state_t sensor_debounce_state_t;
+typedef struct cummins_data_plate_t cummins_data_plate_t;
+typedef struct memory_operation_request_t memory_operation_request_t;
+typedef struct j1939_source_addresses_t j1939_source_addresses_t;
+typedef struct network_type_switches_t network_type_switches_t;
+typedef struct diag_transfer_state_t diag_transfer_state_t;
+typedef struct diag_service_request_t diag_service_request_t;
+typedef struct circular_buffer_t circular_buffer_t;
+typedef struct address_range_entry_t address_range_entry_t;
+typedef struct fuel_limit_arbitration_t fuel_limit_arbitration_t;
+typedef struct engine_control_flags_t engine_control_flags_t;
+typedef struct high_rpm_protection_t high_rpm_protection_t;
+typedef struct oil_pressure_protection_t oil_pressure_protection_t;
+typedef struct fault_persistence_counters_t fault_persistence_counters_t;
+typedef struct fault_status_registers_t fault_status_registers_t;
+typedef struct fault_latch_registers_t fault_latch_registers_t;
+typedef struct engine_operating_mode_t engine_operating_mode_t;
+typedef struct rpm_fuel_protection_t rpm_fuel_protection_t;
+typedef struct timing_mode_control_t timing_mode_control_t;
+typedef struct etc1_message_t etc1_message_t;
+typedef struct etc1_state_t etc1_state_t;
+typedef struct governor_control_t governor_control_t;
+typedef struct param_id_entry_t param_id_entry_t;
+typedef struct ef00_dispatch_entry_t ef00_dispatch_entry_t;
+typedef struct diag_dispatch_entry_t diag_dispatch_entry_t;
+typedef struct scheduler_task_stat_t scheduler_task_stat_t;
+typedef struct j1939_dm13_requester_slot_t j1939_dm13_requester_slot_t;
+typedef struct protection_threshold_set_t protection_threshold_set_t;
+typedef struct fault_entry_t fault_entry_t;
+typedef struct boost_in_range_config_t boost_in_range_config_t;
+typedef struct usiu_pit_t usiu_pit_t;
+typedef struct usiu_clock_t usiu_clock_t;
+typedef struct usiu_memc_t usiu_memc_t;
+typedef struct etc1_governor_state_t etc1_governor_state_t;
+typedef struct etc1_config_entry_t etc1_config_entry_t;
+typedef struct tpua_module_regs_t tpua_module_regs_t;
+typedef struct tpub_module_regs_t tpub_module_regs_t;
+typedef struct mios_mpwmsm_t mios_mpwmsm_t;
+typedef struct mios_mdasm_t mios_mdasm_t;
+typedef struct qadc64_regs_t qadc64_regs_t;
+typedef struct tpu3_ch_params_t tpu3_ch_params_t;
+typedef struct qadc64b_regs_t qadc64b_regs_t;
+typedef struct tpua_ch1_params_t tpua_ch1_params_t;
+typedef struct tpua_ch9_params_t tpua_ch9_params_t;
+typedef struct tpua_ch12_params_t tpua_ch12_params_t;
+typedef struct tpua_ch14_params_t tpua_ch14_params_t;
+typedef struct tpub_ch0_params_t tpub_ch0_params_t;
+typedef struct tpub_ch11_params_t tpub_ch11_params_t;
+typedef struct tpub_ch14_params_t tpub_ch14_params_t;
+typedef struct mios_mpwmsm1_t mios_mpwmsm1_t;
+typedef struct mios_mpwmsm2_t mios_mpwmsm2_t;
+typedef struct mios_mpwmsm3_t mios_mpwmsm3_t;
+typedef struct mios_mmcsm_b_t mios_mmcsm_b_t;
+typedef struct mios_mdasm12_t mios_mdasm12_t;
+typedef struct mios_mdasm15_t mios_mdasm15_t;
+typedef struct mios_mpwmsm16_t mios_mpwmsm16_t;
+typedef struct mios_mpwmsm17_t mios_mpwmsm17_t;
+typedef struct mios_mpwmsm18_t mios_mpwmsm18_t;
+typedef struct mios_mpwmsm19_t mios_mpwmsm19_t;
+typedef struct toucan_a_mb0_t toucan_a_mb0_t;
+typedef struct toucan_a_mb1_t toucan_a_mb1_t;
+typedef struct toucan_a_mb2_t toucan_a_mb2_t;
+typedef struct qsmcm_sci1_regs_t qsmcm_sci1_regs_t;
+typedef struct qsmcm_qspi_ctrl_t qsmcm_qspi_ctrl_t;
+typedef struct qsmcm_recram_t qsmcm_recram_t;
+typedef struct qsmcm_txram_t qsmcm_txram_t;
+typedef struct keyon_flags_t keyon_flags_t;
+typedef struct can_tx_ring_t can_tx_ring_t;
+typedef struct diag_write_request_state_t diag_write_request_state_t;
+typedef struct can_slot_range_t can_slot_range_t;
+typedef struct can_rx_channel_t can_rx_channel_t;
+typedef struct sys_init_flags_t sys_init_flags_t;
+typedef struct eeprom_xfer_state_t eeprom_xfer_state_t;
+typedef struct eeprom_block_tracking_t eeprom_block_tracking_t;
+typedef struct j1939_tp_queue_t j1939_tp_queue_t;
+typedef struct j1939_tp_pause_t j1939_tp_pause_t;
+typedef struct diag_buf_b_ctrl_t diag_buf_b_ctrl_t;
+typedef struct diag_buf_a_ctrl_t diag_buf_a_ctrl_t;
+typedef struct boot_state_t boot_state_t;
+typedef struct mios_mdasm27_t mios_mdasm27_t;
+typedef struct mios1_ext_ctrl_t mios1_ext_ctrl_t;
+typedef struct mios1_isr_t mios1_isr_t;
+typedef struct diag_clear_flags_t diag_clear_flags_t;
+typedef struct dual_axis_table_dims_t dual_axis_table_dims_t;
+typedef struct j1939_ccss_tx_payload_t j1939_ccss_tx_payload_t;
+typedef struct pci_message_descriptor_t pci_message_descriptor_t;
+typedef struct qspi_job_t qspi_job_t;
+typedef struct qspi_device_slot_t qspi_device_slot_t;
+typedef struct qspi_job_queue_t qspi_job_queue_t;
+typedef struct memory_region_t memory_region_t;
+typedef struct j1939_input_signal_descriptor_t j1939_input_signal_descriptor_t;
+typedef struct output_read_back_fault_bits_t output_read_back_fault_bits_t;
+
+struct j1939_rx_msg_t {
+    uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
+    uint8_t pgn_pf;  /* PDU Format - high byte of PGN (0xEF=EF00 0xDF=DF00 0x00=TSC1 etc) */
+    uint8_t dest_address;  /* Destination address (PDU1) or PGN low byte (PDU2); compared against j1939_source_address to filter incoming messages */
+    uint8_t source_address;  /* J1939 source address of sending node */
+    uint16_t data_length;  /* CAN DLC - payload byte count (handlers expect 8 for TSC1/ETC1) */
+    byte* data_pointer;  /* Pointer to inline_data below (always this+10 per processCanReceiveBuffer) */
+    uint8_t inline_data[8];  /* CAN payload bytes copied directly from TouCAN mailbox data registers */
+};
+
+struct tsc1_payload_t {
+    uint8_t control_byte;  /* Override control mode (bits 0-1) priority (bits 4-5) tx_rate (bits 6-7) */
+    uint16_t requested_speed;  /* Requested speed/speed limit - little-endian 0.125 rpm/bit */
+    uint8_t requested_torque;  /* Requested torque/torque limit - 1pct/bit offset -125pct */
+    uint8_t reserved[4];  /* Reserved bytes 4-7 per J1939-71 */
+};
+
+struct pci_diagnostic_response_t {
+    uint8_t source_address;  /* Reply byte 1: the ECM's own PCI address (pci_ecm_address 0x10) - comment fix only: it is the responder not a J1939 destination */
+    uint8_t response_service_id;  /* Reply byte 2: request service + 0x40 (60 / 67 / 68 / 69 / E1 / E4) or 0x7F for a negative reply (was service_id) */
+    uint8_t data_1;  /* Reply byte 3: sub-function echo (0x27: 1 or 2 / 0x28: request byte 3) / the refused service in a 7F reply / 0xA4 memory byte 1 / 0xA1 the byte written (was subfunction) */
+    uint8_t data_2;  /* Reply byte 4: the 7F reply code (0x11 / 0x12 / 0x33 / 0x35 / 0x36 / 0x37 / 0x40 / 0x42 / 0x52 / 0x90 / 0xC0) / seed high byte / 0xA4 memory byte 2 / 0x62 in the E1 reply (was error_code) */
+    uint8_t data_3;  /* Reply byte 5: seed low byte / 0xA4 memory byte 3 / otherwise 0 - never a length (was data_length) */
+    uint8_t data_4_to_7[4];  /* Reply bytes 6 on: element 0 = 0xA4 memory byte 4; elements 1-3 unused; element 4 (0x40b49b) is the TX[10] descriptor status byte (0x80 at init) - split into data_4_to_7 byte[4] + status (was data) */
+    uint8_t status;  /* PCI TX[10] descriptor status byte (hpcr_initJ1939BufferValues writes 0x80 / cm848_completePciFrame ORs the completion bits in) */
+    uint16_t transmit_timer;  /* This buffer is pci_transmit_message_table[10] (header 0x26 diagnostic response) and this word is its timer (sth): writing 1 queues the response on the PCI bus (was response_pending byte) */
+};
+
+struct fuel_demand_control_t {
+    uint16_t calculated;  /* Final calculated fuel demand value */
+    uint16_t idle_validation_state;  /* cm848_evaluateIdleValidationSwitches: 0 at-idle switch + pedal at idle / 1 off-idle switch + pedal above idle / 2 at-idle switch but pedal above the band / 3 off-idle switch but pedal below the band / 4 both switches + pedal outside the band / 5 no switch + pedal above the band / 6 no switch + pedal below the band / 7 equal switches + pedal inside the band / 8 valid pair + pedal between idle and the band edge (was mode) */
+    uint16_t accelerator_off_idle;  /* 1 = accelerator demand off idle: idle validation states 1 / 3 / 5 / pedal sensor above threshold / J1939 SPN 558 / or speed-governor demand above cruise_governor_demand_enable_threshold_cal while fuel_demand_enable_flag; the EEC2 broadcast reports it as SPN 558 (was enable_flag) */
+    uint16_t rate_limiter_state;  /* Rate limiter state machine value */
+    uint16_t rate_delta;  /* Fuel demand rate of change delta */
+    uint16_t throttle_based;  /* Throttle-based fuel demand component */
+    uint16_t override_value;  /* Diagnostic override fuel demand value */
+    uint16_t override_active;  /* Override mode active flag (1=override) */
+    uint16_t rate_limited;  /* Rate-limited fuel demand output */
+    uint16_t override_countdown;  /* Override timeout countdown (offset 0x12) */
+    uint16_t reserved_14;  /* Gap/reserved (0x58e-0x590) */
+    uint16_t reserved_16;  /* Gap/reserved (0x590-0x592) */
+    uint16_t delta;  /* Fuel demand delta for rate calculations */
+    uint16_t delta_filtered;  /* Filtered fuel demand delta */
+};
+
+struct protection_condition_flags_t {
+    uint8_t condition_eval;  /* Protection condition evaluation result */
+    uint8_t condition_flags_1;  /* Protection condition flags set 1 */
+    uint8_t load_condition_flags;  /* Load-based protection condition flags */
+    uint8_t overdrive_control_flags;  /* bit 0 cruise 4-3 request / 1 cold lockout also checks the slot 69 temperature (config) / 2 overdrive-off switch released / 3 overdrive solenoid off / 5 overdrive off by switch / 6 overdrive locked out above 270 deg F / 7 overdrive locked out below 19.4 deg F (was overtemp_flags) (Medium confidence) */
+    uint8_t reserved_04;  /* Gap/reserved byte at offset 0x04 */
+    uint8_t condition_flags_3;  /* Protection condition flags set 3 */
+    uint8_t condition_flags_2;  /* Protection condition flags set 2 */
+    uint8_t reserved_07;  /* Gap/reserved byte at offset 0x07 */
+    uint8_t threshold_current;  /* Current threshold index for protection lookup */
+    uint8_t action_flags;  /* Protection action trigger flags */
+};
+
+struct protection_status_flags_t {
+    uint16_t status_flags;  /* Protection status word (bit flags) */
+    uint8_t flags[3];  /* Protection flags (3 bytes of packed bits) */
+    uint8_t output_flags;  /* Protection output control flags */
+    uint8_t reserved_06;  /* Gap/reserved */
+    uint8_t rate_limit_flags;  /* Rate limit protection flags (offset 0x0c from 0xb0f2 is 0xb0fe) */
+};
+
+struct protection_timer_state_t {
+    uint32_t status_code;  /* Protection status code (PROTECTION_STATUS_CODE enum) */
+    uint16_t timeout_counter;  /* Protection timeout countdown counter */
+    uint16_t state1_timer;  /* Level 1 protection state timer value */
+    uint16_t state2_timer;  /* Level 2 protection state timer value */
+};
+
+struct engine_crank_state_t {
+    uint16_t start_counter;  /* Engine start attempt counter */
+    uint16_t crank_state;  /* Cranking state machine value */
+    uint16_t cranking_flag;  /* Engine currently cranking flag (1=cranking) */
+    uint16_t run_state;  /* Engine run state (ENGINE_OPERATING_MODE enum) */
+};
+
+struct engine_sync_state_t {
+    FUEL_PRESSURE_GOVERNOR_MODE fuel_pressure_governor_mode;  /* Fuel pressure governor mode (FUEL_PRESSURE_GOVERNOR_MODE; was sync_status) */
+    uint16_t fuel_pressure_governor_demand;  /* Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count) */
+    uint16_t fuel_metering_command;  /* Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw) */
+    uint8_t reserved_05;  /* Padding for alignment */
+};
+
+struct engine_rpm_state_t {
+    uint16_t target_rpm;  /* Target engine RPM setpoint */
+    uint16_t reserved_02;  /* Gap/reserved (0xb7ae) */
+    uint16_t reserved_04;  /* Gap/reserved (0xb7b0) */
+    uint16_t reserved_06;  /* Gap/reserved (0xb7b2) */
+    uint16_t reserved_08;  /* Gap/reserved (0xb7b4) */
+    uint16_t reserved_0a;  /* Gap/reserved (0xb7b6) */
+    uint16_t reserved_0c;  /* Gap/reserved (0xb7b8) */
+    uint16_t current_rpm;  /* Current engine RPM measurement */
+};
+
+struct sensor_readings_t {
+    uint16_t intake_manifold_pressure;  /* Intake manifold (boost) absolute pressure - sensor_channel_filtered_output[1] - 1/18.56 kPa per count (0.0159 inHg); boost = this minus barometric_pressure (cm848_calculateBoostPressure); J1939 IC1 byte 2 / OBD-II intake manifold pressure; 1700 in the RAM dump with the engine stopped (was oil_pressure) */
+    uint16_t coolant_temp;  /* Coolant temperature - sensor_channel_filtered_output[2] - 1/64 deg F per count; J1939 ET1 byte 1 (SPN 110) */
+    uint16_t barometric_pressure;  /* Barometric pressure - sensor_channel_filtered_output[3] - 1/18.56 kPa per count; J1939 AMB byte 1 (SPN 108) / the reference subtracted for boost and oil pressure; 1647 (88.5 kPa) in the RAM dump (was intake_air_temp) */
+    uint16_t battery_voltage;  /* Battery voltage - sensor_channel_filtered_output[4] - 1/16 V per count (192 = 12.0 V in the RAM dump); PCI 0xC0 byte 1 */
+};
+
+struct eeprom_header_t {
+    uint16_t version_marker;  /* EEPROM data version marker */
+    uint16_t magic;  /* Validation magic (EEPROM_MAGIC enum: 0x600D=valid) */
+    uint8_t header_block[6];  /* EEPROM header data block */
+    uint32_t config_dword;  /* EEPROM configuration dword */
+    uint16_t config_word;  /* EEPROM configuration word */
+    uint8_t calibration_block1[6];  /* Calibration data block 1 */
+    uint16_t eeprom_status_flags;  /* Bit0=IAT derate history | Bit3=calibration validated */
+    uint16_t cal_word2;  /* Calibration parameter word 2 */
+    uint16_t cal_word3;  /* Calibration parameter word 3 */
+    uint16_t serial_reflash_unlock_request;  /* Boot copy of EEPROM 0x56 (serial_reflash_unlock_request_cal) - the application's serial reflash hand-off; non-zero makes mpc555_initDiagnosticSession start the boot SCI session unlocked (was cal_word4) */
+    uint32_t serial_number;  /* ECU serial number from EEPROM */
+};
+
+struct governor_output_t {
+    uint32_t integrator;  /* Speed control PID integrator (Q16.16 fixed point) */
+    uint16_t governor_output;  /* Governor output command (lower word) */
+    uint16_t governor_output_high;  /* Governor output command (upper word) */
+};
+
+struct injector_control_t {
+    uint8_t enable_ch0_7;  /* Injector enable bitmap channels 0-7 */
+    uint8_t enable_ch8_15;  /* Injector enable bitmap channels 8-15 */
+    uint8_t channel_status;  /* Output channel status flags */
+    uint8_t timing_mode;  /* Injector timing mode selector */
+    uint8_t output_ch0;  /* Channel 0 output state */
+    uint8_t fault_flags;  /* Injector fault detection flags */
+    uint8_t output_ch1;  /* Channel 1 output state */
+};
+
+struct pci_link_state_t {
+    uint8_t rx_match_index;  /* pci_receive_message_table entry whose header matches the frame being received (search resumes here per byte) */
+    uint8_t tx_match_index;  /* pci_transmit_message_table entry whose header matches (own transmission echoed back) */
+    uint8_t receive_byte_count;  /* Bytes stored in pci_receive_frame_buffer for the current frame */
+    uint8_t init_complete_marker;  /* Set to 1 at the end of cm848_initJ1939CommunicationSystem; no reader found */
+    uint32_t link_event_code;  /* PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word) */
+};
+
+struct fault_list_state_t {
+    uint16_t write_index;  /* Next write position in fault list */
+    uint16_t read_index;  /* Current read position in fault list */
+    uint16_t emission_count;  /* Count of emission-related faults */
+    uint16_t total_emission_faults;  /* Total emission fault counter */
+};
+
+struct data_transfer_state_t {
+    uint16_t byte_count;  /* Bytes remaining to transfer */
+    uint16_t reserved_02;  /* Gap (0x3fec84-0x3fec85) */
+    uint16_t reserved_04;  /* Gap (0x3fec86-0x3fec87) */
+    uint16_t reserved_06;  /* Gap (0x3fec88-0x3fec89) */
+    uint16_t state;  /* Transfer state machine value */
+    uint16_t status;  /* Transfer status/result code */
+};
+
+struct diag_session_state_t {
+    uint8_t session_flags;  /* Diagnostic session active flags */
+    uint8_t response_write_index;  /* Write cursor into diag_serial_buffer */
+    uint8_t eeprom_status;  /* EEPROM operation status byte */
+    uint8_t reserved_03;  /* Gap/reserved */
+    uint8_t reserved_04;  /* Gap/reserved */
+    uint8_t checksum_status;  /* EEPROM checksum validation status */
+};
+
+struct system_status_flags_t {
+    uint16_t fault_detected_bits_0_to_15;  /* Word 0 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0606 b5 P0341 b7 P0191 b8 P0238 boost-high b9 P0237 boost-low b10 P2123 b11 P2122 (was enable_state) */
+    uint16_t fault_detected_bits_16_to_31;  /* Word 1 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0118 b1 P0117 coolant b3 P0113 b4 P0112 intake-temp b9 P0108 b10 P0107 baro b11 P0219 overspeed b13 P0500 VSS (was condition_monitor) */
+    uint16_t fault_detected_bits_32_to_47;  /* Word 2 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b9 P0478 b10 P0477 - not a gap (was reserved_04) (Medium confidence) */
+    uint16_t fault_detected_bits_48_to_63;  /* Word 3 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b6 P2267 b7 P2266 b8 P2269 water-in-fuel b9 P1221 b10 P1222 b12 P1223 b14 P2127 b15 P2121 pedal - b4/b5 (0x10/0x20) no code (was safety_bits_1) */
+    uint16_t fault_detected_bits_64_to_79;  /* Word 4 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0236 b2 P0562 b3 P0563 system-voltage b4 P2128 b5 P1221 b6 P1222 b7 P1223 (was safety_bits_2) */
+    uint16_t fault_detected_bits_80_to_95;  /* Word 5 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b2/b9/b10 P2509 (b2 = the previous run's power-down did not complete / b9 = more than consecutive_incomplete_power_down_limit of those in a row) b4 no DTC (0x3fdc8e non-zero at start) b11 P0606 (power_down_left_ecm_powered_flag_cal set) b12 P0335 crank b13 P0340 cam (was sensor_diag) */
+    uint16_t fault_detected_bits_96_to_111;  /* Word 6 of fault-detected array 0x3fe974 - no OBD DTC slots (all map to 170) - internal fault bits eg b14 (0x4000) set on ETC1/cold-start timeout and cleared with its registered sibling 0x3fe9e4 - confirm b5 (0x20) role (was lamp_status) (Medium confidence) */
+    uint16_t fault_detected_bits_112_to_127;  /* Word 7 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b5 P0016 crank-cam b9 P0480 fan b12 P0336 crank (was emission_faults) */
+    uint16_t fault_detected_bits_128_to_143;  /* Word 8 of the fault-present bit array at 0x3fe974 (fault bit = word x 16 + bit): bit 0 any J1939 input timeout / bit 1 read by the J1939 pedal rate-limit check / bit 2 any J1939 input data error / bits 8-15 DTC slots 128-135 = P0883 P0882 P0974 P0973 P2770 P2769 P0588 P0587 (was reserved_10) */
+    uint16_t fault_detected_bits_144_to_159;  /* Word 9 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0584 b1 P0583 vacuum b2 P0596 b3 P0595 servo-supply b4 P0850 park-neutral b5 P1762 governor b6 P0073 b7 P0072 ambient - not a gap (was reserved_12) */
+    uint16_t fault_detected_bits_160_to_175;  /* Word 10 of fault-detected array 0x3fe974 - no OBD DTC slots (all map to 170) - internal fault bits eg b5 (0x20) set on EEPROM status-poll failure - registered sibling 0x3fe9ec (was system_faults) (Medium confidence) */
+    uint16_t reserved_16;  /* Gap (0x3fe98a-0x3fe98f) */
+    uint16_t fault_detected_bits_192_to_207;  /* Word 12 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b4 P0699 b5 P0698 sensor-reference - not a gap (was reserved_18) (Medium confidence) */
+    uint16_t fault_detected_bits_208_to_223;  /* Word 13 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b10/b11 P0381 wait-to-start lamp - not a gap (was reserved_1a) (Medium confidence) */
+    uint16_t reserved_1c;  /* Gap */
+    uint16_t severity_flags;  /* Fault severity flags */
+    uint16_t fault_detected_bits_256_to_271;  /* Word 16 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b12/b13/b15 P2146 injector supply voltage - not comm (was comm_faults) (Medium confidence) */
+    uint16_t fault_detected_bits_272_to_287;  /* Word 17 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0/b2/b3 P2146 b5/b6/b8/b9/b11/b12 P2149 injector supply b14 P0201 b15 P0202 injector 1/2 (was engine_status) */
+    uint16_t fault_detected_bits_288_to_303;  /* Word 18 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0203 b1 P0204 b3 P0205 b4 P0206 injectors b6 P0541 b7 P0542 grid-heater b8 P2607 b9 P2608 b10 P0711 b11 P0868 b12 P0869 b13 P0713 b14 P0712 b15 P0088 (was pending_faults) */
+    uint16_t fault_detected_bits_304_to_319;  /* Word 19 of fault-detected array 0x3fe974 at offset 0x26 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0193 b1 P0192 rail pressure b14 P0604 b15 P1740 - not a gap and not offset 0x28 (was reserved_28) */
+    uint16_t fault_detected_bits_320_to_335;  /* Word 20 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0720 output speed b8/b10 P0606 b9 P2146 b11 P2149 b12 P0234 overboost b13 P0251 b14 P2121 b15 P0336 (was protection_active) */
+};
+
+struct rpm_governor_state_t {
+    uint16_t commanded_rpm;  /* Governor output RPM */
+    uint16_t reserved_02;  /* Gap (0xa3cc) */
+    uint16_t reserved_04;  /* Gap (0xa3ce) */
+    uint16_t reserved_06;  /* Gap (0xa3d0) */
+    uint16_t lower_rpm_limit;  /* Bottom of governor droop band */
+    uint16_t limit_adjustment;  /* Pressure-based limit trim */
+    uint16_t reserved_0c;  /* Gap (0xa3d6) */
+    uint16_t reserved_0e;  /* Gap (0xa3d8) */
+    uint16_t desired_rpm;  /* Target RPM setpoint */
+    uint16_t adjustment_delta;  /* Pressure-based setpoint trim */
+    uint16_t base_rpm_lookup;  /* Base RPM from calibration table before adjustments */
+};
+
+struct throttle_fuel_trim_t {
+    uint16_t efficiency_filtered;  /* Throttle efficiency filtered value */
+    uint16_t fuel_demand_final;  /* Final throttle-based fuel demand */
+    uint16_t final_trim;  /* Final fuel trim value */
+    uint16_t load_adjusted;  /* Load-adjusted fuel value */
+    uint16_t load_based_trim;  /* Load-based fuel trim */
+    uint16_t rpm_based_trim;  /* RPM-based fuel trim */
+    uint16_t reserved_0c;  /* Gap (0xa3f6) */
+    uint16_t rpm_conversion;  /* RPM to fuel conversion factor */
+    uint16_t reserved_10;  /* Gap (0xa3fa) */
+    uint16_t reserved_12;  /* Gap (0xa3fc) */
+    uint16_t throttle_conversion;  /* Throttle to fuel conversion factor */
+    uint16_t reserved_16;  /* Gap */
+};
+
+struct fuel_blend_state_t {
+    uint16_t blend_mode;  /* Fuel blend mode selector */
+    uint16_t blend_enable;  /* enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100 */
+    uint16_t demand_above_threshold;  /* 1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal */
+    uint16_t bypass_load_correction;  /* dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active */
+    uint16_t fuel_demand_snapshot;  /* snapshot of fuel_demand_arbitrated_snapshot */
+    uint16_t blend_weight;  /* Fuel blend weight factor (0-100%) */
+};
+
+struct boost_pressure_state_t {
+    uint16_t load_input;  /* Boost-based load input */
+    uint16_t rpm_modifier;  /* RPM-based boost modifier */
+    uint16_t lookup_result;  /* Boost table lookup result */
+    uint16_t computed_value;  /* Computed boost pressure value */
+    uint16_t pressure_ratio;  /* Boost pressure ratio */
+    uint16_t reserved_0a;  /* Gap */
+    uint16_t reserved_0c;  /* Gap */
+    uint16_t reserved_0e;  /* Gap */
+};
+
+struct torque_limit_arb_t {
+    uint16_t source_priority;  /* Limit source priority ranking */
+    uint16_t source_active;  /* Currently active limit source ID */
+    uint16_t limit_source;  /* Torque limit source selector */
+    uint16_t fuel_minimum;  /* Minimum fuel limit from arbitration */
+};
+
+struct governor_pid_t {
+    uint16_t proportional_gain;  /* PID proportional gain value */
+    uint16_t integral_term;  /* PID integral accumulator */
+};
+
+struct protection_lockout_t {
+    uint16_t thermal_lockout;  /* Thermal protection lockout flag */
+    uint16_t load_lockout;  /* Load protection lockout flag */
+    uint16_t rpm_lockout;  /* RPM protection lockout flag */
+    uint16_t sensor_fault_active;  /* Sensor fault lockout flag */
+    uint16_t reserved_08;  /* Gap (0xb124-0xb125) */
+    uint16_t timer_expired;  /* Lockout timer expired flag */
+};
+
+struct j1939_msg_hdr_t {
+    uint32_t can_id;  /* Packed J1939 29-bit CAN identifier (priority[31:29] DP[28] PGN[27:8] SA[7:0]) */
+    uint16_t data_length;  /* CAN DLC - payload byte count for TX message */
+};
+
+struct parameter_response_t {
+    uint8_t error_code;  /* Error code (0=success non-zero=error) */
+    uint16_t param_value;  /* Retrieved parameter value */
+    uint8_t scaling_applied;  /* Flag indicating if scaling was applied */
+    uint32_t timestamp;  /* Response generation timestamp */
+};
+
+struct calterm_protocol_t {
+    uint8_t command_id;  /* CalTerm command identifier */
+    uint8_t parameter_count;  /* Number of parameters in request/response */
+    uint8_t data_payload[8];  /* Parameter data payload (up to 8 bytes) */
+    uint8_t checksum;  /* Message integrity checksum */
+};
+
+struct insite_protocol_t {
+    uint8_t function_code;  /* Insite function code */
+    uint8_t live_data_request;  /* Live data monitoring request flag */
+    uint8_t status_flags;  /* Monitoring status flags */
+    uint8_t response_data[6];  /* Live parameter response data */
+};
+
+struct table_interp_args_t {
+    uint16_t current_index;  /* Current interpolation index into table */
+    uint32_t x_axis_ptr;  /* Pointer to X-axis table (input values) */
+    uint16_t input_value;  /* Input value for table lookup */
+    uint32_t y_axis_ptr;  /* Pointer to Y-axis table (output values) */
+};
+
+struct sensor_channel_config_t {
+    uint16_t config_word0;  /* Offset 0 - not accessed by sensorChannelTypeB; purpose unconfirmed */
+    uint16_t default_value;  /* Nominal/fault fallback value (written to filtered output and state_ptr[1]) */
+    uint16_t high_threshold;  /* Upper limit - sensor value above this trips the high fault path */
+    uint16_t low_threshold;  /* Lower limit - sensor value below this trips the low fault path */
+    uint16_t debounce_step;  /* Per-cycle increment added to the debounce counter while ramping toward the limit */
+    uint16_t recovery_decrement;  /* Per-cycle decrement applied to the debounce counter when back in range */
+    uint16_t debounce_limit;  /* Debounce counter target - reached = fault confirmed */
+    uint16_t debounce_clear_threshold;  /* Counter at or below this clears the confirmed-fault flags */
+};
+
+struct q16_fixed_point_t {
+    uint16_t integer_part;  /* High 16 bits - integer/whole number portion */
+    uint16_t fractional_part;  /* Low 16 bits - fractional portion */
+};
+
+struct dma_descriptor_t {
+    uint32_t source_address;  /* DMA transfer source memory address */
+    uint32_t dest_address;  /* DMA transfer destination memory address */
+    uint16_t transfer_count;  /* Number of bytes/words to transfer */
+    uint16_t control_flags;  /* DMA control flags (mode type enable etc) */
+    uint32_t next_descriptor;  /* Pointer to next descriptor in chain */
+};
+
+struct memory_patch_entry_t {
+    uint32_t target_address;  /* Memory address to patch */
+    uint8_t patch_size;  /* Number of bytes to copy to target address */
+    uint8_t reserved;  /* Unused padding byte for 6-byte alignment */
+};
+
+struct j1939_pgn_handler_entry_t {
+    uint8_t pgn_byte_1;  /* First PGN byte for matching (compared against msg+6+1) */
+    uint8_t pgn_byte_0;  /* Second PGN byte for matching (compared against msg+6+0) */
+    uint32_t handler_func;  /* Function pointer to PGN handler callback */
+};
+
+struct j1939_tx_msg_t {
+    j1939_msg_hdr_t header;  /* J1939 TX message header (can_id + data_length); TX functions receive j1939_msg_hdr_t* pointing here */
+    void * data_pointer;  /* Pointer to payload start (self-ref: = &this.control_byte) */
+    void * data_end_pointer;  /* Pointer to payload end (self-ref: = &this.control_byte + 8) */
+    J1939_ACK_TYPE control_byte;  /* J1939-21 ACKM control byte (ACK/NACK/ACCESS_DENIED/CANNOT_RESPOND) */
+    uint8_t group_function;  /* Group function value (0xFF = not defined per J1939-21) */
+    uint8_t reserved_byte2;  /* Reserved byte 2 (always 0xFF per J1939-21) */
+    uint8_t reserved_byte3;  /* Reserved byte 3 (always 0xFF per J1939-21) */
+    uint8_t address_acknowledged;  /* Source address of message being acknowledged (0xFF = global) */
+    uint8_t pgn_low;  /* Acknowledged PGN low byte (hardcoded 0 for PDU1 requests) */
+    uint8_t pgn_mid;  /* Acknowledged PGN mid byte (= pgn_pf of request) */
+    uint8_t pgn_high;  /* Acknowledged PGN high byte (= dest_address of request) */
+};
+
+struct j1939_ack_msg_t {
+    J1939_ACK_TYPE control_byte;  /* J1939-21 ACKM control byte */
+    uint8_t group_function;  /* Group function value (0xFF = not defined per J1939-21) */
+    uint8_t reserved_byte2;  /* Reserved byte 2 (always 0xFF per J1939-21) */
+    uint8_t reserved_byte3;  /* Reserved byte 3 (always 0xFF per J1939-21) */
+    uint8_t address_acknowledged;  /* Source address of message being acknowledged (0xFF = global) */
+    uint8_t pgn_low;  /* Acknowledged PGN low byte (hardcoded 0 for PDU1 requests) */
+    uint8_t pgn_mid;  /* Acknowledged PGN mid byte (= PF byte of request) */
+    uint8_t pgn_high;  /* Acknowledged PGN high byte (= PS/DP byte of request) */
+};
+
+struct eeprom_param_t {
+    uint16_t value;  /* Parameter value (resolution varies per parameter) */
+    uint16_t min_limit;  /* Minimum allowed value for parameter */
+    uint16_t max_limit;  /* Maximum allowed value for parameter */
+    uint16_t default_value;  /* Factory default value */
+    uint32_t callback_param;  /* Diagnostic callback parameter for EEPROM transfer */
+};
+
+struct param_lookup_args_t {
+    uint32_t calculated_block;  /* Block × 256 × 4 calculation result */
+    uint16_t offset;  /* Parameter offset within block */
+    uint16_t result_value;  /* Retrieved parameter value (capped at 32000) */
+};
+
+struct can_param_msg_t {
+    uint8_t msg_id;  /* Message identifier */
+    uint8_t param_1;  /* First parameter byte */
+    uint8_t param_2;  /* Second parameter byte */
+    uint8_t param_3;  /* Third parameter byte */
+    uint8_t param_4;  /* Fourth parameter byte */
+    uint16_t timestamp;  /* Message timestamp */
+    uint8_t checksum;  /* Message checksum */
+};
+
+struct scheduler_phase_slot_t {
+    uint32_t last_execution_time;  /* Timer value of last task execution */
+    uint16_t runtime_ticks;  /* Task runtime duration in timer ticks */
+    uint16_t deadline_ticks;  /* Task execution deadline (0xFFFF = disabled) */
+    uint16_t execution_count;  /* Number of times task has been executed */
+    uint16_t overrun_count;  /* Number of deadline overruns detected */
+    uint32_t reserved;  /* Reserved/padding bytes for alignment */
+};
+
+struct ad_sensor_config_t {
+    uint16_t channel_addr;  /* A/D channel address for sensor input */
+    uint16_t filter_const;  /* Digital filter constant (0-1) */
+    uint16_t fault_clear_count;  /* Fault clear counter threshold */
+    uint16_t fault_decrement;  /* Fault counter decrement value */
+    uint16_t fault_increment;  /* Fault counter increment value */
+    uint16_t fault_set_threshold;  /* Fault set threshold */
+    uint16_t high_error_limit;  /* A/D high error limit (0-1023) */
+    uint16_t low_error_limit;  /* A/D low error limit (0-1023) */
+};
+
+struct sensor_fault_config_t {
+    uint16_t reserved_00;  /* Reserved/padding at offset 0x00 */
+    uint16_t default_value;  /* Default sensor value on fault (offset 0x02) */
+    uint16_t clear_threshold;  /* Threshold for fault clear (offset 0x04) */
+    uint16_t decrement_value;  /* Debounce counter decrement (offset 0x06) */
+    uint16_t increment_value;  /* Debounce counter increment (offset 0x08) */
+    uint16_t set_threshold;  /* Threshold for fault set (offset 0x0a) */
+    uint16_t high_limit;  /* High error limit (offset 0x0c) */
+    uint16_t low_limit;  /* Low error limit (offset 0x0e) */
+    uint16_t adc_lookup_index;  /* A/D channel lookup table index (offset 0x10) */
+    uint8_t reserved_12;  /* Reserved byte at offset 0x12 */
+    uint8_t alt_fault_enable;  /* Alternative fault enable flag (offset 0x13) */
+    uint8_t primary_fault_id;  /* Primary fault code packed bit/word (offset 0x14) */
+    uint8_t secondary_fault_id;  /* Secondary fault code (offset 0x15) */
+    uint8_t tertiary_fault_id;  /* Tertiary fault code (offset 0x16) */
+    uint8_t debounce_max;  /* Maximum debounce count (offset 0x17) */
+};
+
+struct sensor_debounce_state_t {
+    uint8_t reserved_00[8];  /* Reserved bytes at offset 0x00-0x07 */
+    uint16_t interpolated_value;  /* Interpolated sensor value (offset 0x08) */
+    uint16_t lookup_result;  /* Table lookup result (offset 0x0a) */
+    uint16_t debounce_counter;  /* Current debounce count (offset 0x0c) */
+    uint8_t fault_active_flag;  /* Fault currently active flag (offset 0x0e) */
+    uint8_t sample_counter;  /* Sample phase counter (offset 0x0f) */
+    uint16_t adc_raw_value;  /* Raw A/D conversion value (offset 0x10) */
+    uint8_t reserved_12[4];  /* Reserved bytes at offset 0x12-0x15 */
+};
+
+struct cummins_data_plate_t {
+    uint16_t data_plate_length;  /* Data plate length field */
+    uint8_t engine_make[5];  /* Engine manufacturer identifier */
+    uint8_t engine_model[17];  /* Engine model designation */
+    uint32_t engine_serial_number;  /* Engine serial number */
+    uint8_t engine_build_month;  /* Engine manufacturing month */
+    uint8_t engine_build_day;  /* Engine manufacturing day */
+    uint8_t engine_build_year;  /* Engine manufacturing year */
+    uint16_t engine_cpl;  /* Engine CPL (Component Parts List) */
+    uint16_t peak_torque_low_range;  /* Peak torque low range value */
+    uint16_t peak_torque_high_range;  /* Peak torque high range value */
+    uint16_t peak_torque_rpm_low;  /* Peak torque RPM low range */
+    uint16_t peak_torque_rpm_high;  /* Peak torque RPM high range */
+    uint16_t governed_speed_low;  /* Governed speed low range */
+    uint16_t governed_speed_high;  /* Governed speed high range */
+    uint16_t horsepower_low_range;  /* Horsepower low range value */
+    uint16_t horsepower_high_range;  /* Horsepower high range value */
+    uint16_t horsepower_rpm_low;  /* Horsepower RPM low range */
+    uint16_t horsepower_rpm_high;  /* Horsepower RPM high range */
+    uint8_t fuel_code_part_number[7];  /* Fuel code part number */
+    uint8_t percent_torque_rise;  /* Percent torque rise specification */
+    uint16_t peak_torque;  /* Peak torque specification */
+    uint16_t peak_torque_rpm;  /* Peak torque RPM specification */
+    uint16_t governed_speed;  /* Governed speed specification */
+    uint16_t ecm_id;  /* ECM identification number */
+    uint32_t ecm_part_number;  /* ECM part number */
+    uint32_t ecm_serial_number;  /* ECM serial number */
+    uint8_t ecm_voltage_low_range;  /* ECM voltage low range */
+    uint8_t ecm_voltage_high_range;  /* ECM voltage high range */
+    uint8_t ecm_code[10];  /* ECM identification code */
+    uint8_t engine_calibration_time[12];  /* Engine calibration timestamp */
+    uint16_t sc_option_number;  /* SC option number */
+    uint16_t do_option_number;  /* DO option number */
+    uint8_t other_options[40];  /* Other options field */
+    uint8_t oem_name[15];  /* Original equipment manufacturer name */
+    uint8_t oem_vehicle[15];  /* OEM vehicle designation */
+    uint8_t vin[20];  /* Vehicle identification number */
+    uint8_t vehicle_year[10];  /* Vehicle manufacturing year */
+    uint8_t customer_name[15];  /* Customer name */
+    uint8_t location[15];  /* Installation location */
+    uint8_t unit_number[10];  /* Unit identification number */
+};
+
+struct memory_operation_request_t {
+    uint32_t source_data_ptr;  /* Pointer to source data for memory operation */
+    uint32_t target_data_ptr;  /* Pointer to destination memory location */
+    uint16_t operation_size;  /* Number of bytes to copy (max varies) */
+    uint16_t metadata_value;  /* Logging metadata/timestamp for circular buffer */
+};
+
+struct j1939_source_addresses_t {
+    uint16_t source_addr_1;  /* J1939 source address 1 */
+    uint16_t source_addr_2;  /* J1939 source address 2 */
+    uint16_t source_addr_3;  /* J1939 source address 3 */
+    uint16_t source_addr_4;  /* J1939 source address 4 */
+    uint16_t source_addr_5;  /* J1939 source address 5 */
+};
+
+struct network_type_switches_t {
+    uint8_t type_switch_1;  /* Network type switch 1 (0=J1922 1=J1939) */
+    uint8_t type_switch_2;  /* Network type switch 2 (0=J1922 1=J1939) */
+    uint8_t type_switch_3;  /* Network type switch 3 (0=J1922 1=J1939) */
+    uint8_t type_switch_4;  /* Network type switch 4 (0=J1922 1=J1939) */
+    uint8_t type_switch_5;  /* Network type switch 5 (0=J1922 1=J1939) */
+};
+
+struct diag_transfer_state_t {
+    uint16_t target_address;  /* Target memory address for transfer */
+    uint32_t data_pointer;  /* Pointer to source/dest data buffer */
+    uint16_t remaining_length;  /* Remaining bytes to transfer */
+    uint16_t byte_count;  /* Total byte count for operation */
+    uint8_t tx_active_flag;  /* Transmit operation active (0/1) */
+    uint8_t rx_active_flag;  /* Receive operation active (0/1) */
+};
+
+struct diag_service_request_t {
+    uint8_t message_length;  /* Total message length including header */
+    uint8_t service_id;  /* Service identifier (3=secured 4=control 5=memory) */
+    uint8_t sub_function;  /* Sub-function code for service routing */
+    uint8_t data_payload[16];  /* Variable-length request data payload */
+};
+
+struct circular_buffer_t {
+    uint16_t write_index;  /* Current write position (0-N) */
+    uint16_t entry_count;  /* Number of entries in buffer */
+    uint16_t read_index;  /* Current read position (0-N) */
+    uint16_t buffer_size;  /* Maximum buffer capacity */
+};
+
+struct address_range_entry_t {
+    uint32_t start_address;  /* Start of valid address range (big-endian) */
+    uint32_t end_address;  /* End of valid address range (big-endian) */
+    uint8_t special_mode_flag;  /* Access flag when in special mode (non-0x09/0x0A = allow) */
+    uint8_t normal_mode_flag;  /* Access flag in normal operation (0x09=invalid 0x0A=denied other=allow) */
+};
+
+struct fuel_limit_arbitration_t {
+    uint16_t source_id;  /* ID of current fuel limit source (arbitrator output) */
+    uint16_t demand_limited;  /* Rate-limited fuel demand */
+    uint16_t arbitration_threshold;  /* Fuel limit arbitration threshold */
+    uint16_t demand_delta;  /* Fuel demand delta for rate limiting */
+    uint16_t maximum_limit;  /* Maximum fuel demand limit */
+    uint16_t offset_value;  /* Fuel limit offset value */
+    uint16_t comparison_low;  /* Fuel limit comparison low value */
+    uint16_t comparison_high;  /* Fuel limit comparison high value */
+    uint16_t rate_limit;  /* Fuel demand rate limiting value */
+};
+
+struct engine_control_flags_t {
+    uint16_t fuel_demand_control;  /* Fuel demand mode control flags */
+    uint16_t protection_system;  /* Protection system status flags */
+    uint16_t engine_operating_state;  /* Engine operating state flags */
+    uint16_t reserved_06;  /* Gap/reserved */
+    uint16_t reserved_08;  /* Gap/reserved */
+    uint16_t fuel_temp_control;  /* Fuel temp control bit flags */
+};
+
+struct high_rpm_protection_t {
+    uint16_t fault_flag;  /* High RPM protection fault active flag */
+    uint16_t state;  /* State machine state */
+    uint16_t timer;  /* Countdown timer */
+    uint16_t reserved_06;  /* Reserved/gap */
+    uint16_t warning_flag;  /* Warning active flag */
+};
+
+struct oil_pressure_protection_t {
+    uint32_t sensor_status_history_bits;  /* Sensor status history bits - shifting record */
+    uint16_t rpm_ramp_complete;  /* Flag indicating RPM ramp complete */
+    uint16_t rpm_limit_current;  /* Current RPM limit from oil pressure */
+    uint16_t rpm_limit_target;  /* Target RPM limit for oil pressure */
+    uint16_t rpm_limit_previous;  /* Previous RPM limit for tracking */
+    uint16_t state_index;  /* State index for oil pressure protection */
+    uint16_t validation_timer;  /* Timer for oil pressure validation */
+    uint16_t sensor_validation_counter;  /* Sensor status validation counter */
+};
+
+struct fault_persistence_counters_t {
+    uint8_t periodic_monitor_phase;  /* 5-phase counter for periodic fault monitoring */
+    uint8_t can_pin_fault;  /* CAN pin switching fault persistence counter */
+    uint8_t io_fault_1;  /* I/O control fault 1 persistence counter */
+    uint8_t io_fault_2;  /* I/O control fault 2 persistence counter */
+    uint8_t io_fault_3;  /* I/O control fault 3 persistence counter */
+    uint8_t io_fault_4;  /* I/O control fault 4 persistence counter */
+    uint8_t io_fault_5;  /* I/O control fault 5 persistence counter */
+    uint8_t io_fault_6;  /* I/O control fault 6 persistence counter */
+};
+
+struct fault_status_registers_t {
+    uint16_t sensor_fault_status;  /* Sensor fault status register */
+    uint16_t fault_status_2;  /* Fault status flags register 2 */
+    uint16_t engine_fault_status;  /* Engine fault status register */
+    uint16_t reserved_06;  /* Reserved/gap */
+    uint16_t io_fault_status_1;  /* IO fault status register 1 */
+    uint16_t io_fault_status_2;  /* IO fault status register 2 */
+    uint16_t io_fault_status_3;  /* IO fault status register 3 */
+    uint16_t io_fault_status_4;  /* IO fault status register 4 */
+};
+
+struct fault_latch_registers_t {
+    uint16_t sensor_fault_latch;  /* Sensor fault latch register */
+    uint16_t fault_status_8_previous;  /* Previous state for edge detection */
+    uint16_t engine_fault_latch;  /* Engine fault latch register */
+    uint16_t reserved_06;  /* Reserved/gap */
+    uint16_t io_fault_latch_1;  /* IO fault latch register 1 */
+    uint16_t io_fault_latch_2;  /* IO fault latch register 2 */
+    uint16_t io_fault_latch_3;  /* IO fault latch register 3 */
+    uint16_t io_fault_latch_4;  /* IO fault latch register 4 */
+};
+
+struct engine_operating_mode_t {
+    uint16_t state;  /* Engine operating mode state 1-8 */
+    uint16_t shutdown_complete_flag;  /* Engine shutdown complete flag */
+};
+
+struct rpm_fuel_protection_t {
+    uint16_t fuel_limit_shutdown;  /* Fuel limit during shutdown */
+    uint16_t high_rpm_fuel_limit;  /* High RPM fuel control limit */
+    uint16_t low_rpm_fuel_protection_limit;  /* Low RPM fuel protection limit */
+    uint16_t rpm_rate_limiter_output;  /* RPM rate limiter output */
+    uint16_t rpm_rate_limited_value;  /* RPM rate limited value */
+    uint16_t rpm_rate_secondary_calc;  /* Secondary RPM rate calculation */
+    uint16_t rpm_state_accumulator;  /* RPM state accumulator */
+    uint16_t high_rpm_fuel_accumulator;  /* High RPM fuel accumulator */
+    uint16_t low_rpm_fuel_accumulator;  /* Low RPM fuel accumulator */
+    uint16_t fuel_demand_before_limiting;  /* Fuel demand saved before limiting */
+    uint16_t low_rpm_threshold_exceeded_flag;  /* Low RPM threshold exceeded flag */
+    uint16_t rpm_threshold_exceeded_flag;  /* RPM threshold exceeded flag */
+    uint16_t high_rpm_threshold_exceeded_flag;  /* High RPM threshold exceeded flag */
+    uint16_t fuel_protection_timer_enable;  /* Timer enable for protection state machines */
+    uint16_t fuel_system_protection_enabled;  /* Master fuel protection system enable (1=active) */
+};
+
+struct timing_mode_control_t {
+    uint16_t blend_factor;  /* Fuel timing mode blend factor Q14 */
+    uint16_t protection_blend_ramp;  /* Timing protection blend ramp 0-16384 */
+    uint16_t source_selector;  /* Timing mode source selector 0-4 */
+    uint16_t transition_result;  /* Timing mode transition result */
+    uint16_t fuel_blend_result;  /* Timing fuel blend result */
+    uint16_t oil_pressure_result;  /* Timing oil pressure condition result */
+    uint16_t mode_11_result;  /* Timing mode 11 countdown result */
+    uint16_t protection_counter_1;  /* Timing protection counter 1 */
+    uint16_t protection_counter_2;  /* Timing protection counter 2 */
+    uint16_t blend_state;  /* Timing blend state */
+    uint16_t blend_accumulator;  /* Timing blend accumulator */
+    uint16_t fuel_source_mode_11_state;  /* Fuel source mode 11 state */
+    uint16_t fuel_source_mode_11_timer;  /* Fuel source mode 11 timer */
+    uint16_t fuel_mode_transition_state;  /* Fuel mode transition state */
+    uint16_t fuel_mode_transition_timer;  /* Fuel mode transition timer */
+};
+
+struct etc1_message_t {
+    uint16_t speed_previous;  /* Previous speed request value stored */
+    uint8_t byte1_status;  /* ETC1 byte 1: SPN560(bits1-2=driveline) SPN573(bits3-4=TC_lockup) SPN574(bits5-6=shift) */
+    uint16_t spn191_output_shaft_speed;  /* ETC1 bytes 2-3: SPN191 Transmission Output Shaft Speed */
+    uint8_t spn522_clutch_slip;  /* ETC1 byte 4: SPN522 Percent Clutch Slip */
+    uint8_t byte5_control;  /* ETC1 byte 5: SPN606(bits1-2=overspeed_enable) SPN607(bits3-4=progressive_shift_disable) */
+    uint8_t reserved_07[3];  /* Gap/reserved bytes */
+    uint8_t auxiliary_state;  /* ETC1 auxiliary state byte */
+    uint8_t reserved_0b[9];  /* Gap/reserved bytes to offset 0x14 */
+    uint8_t control_word;  /* ETC1 byte 1 status word (packed SPN560+SPN573+SPN574) */
+    uint16_t requested_speed;  /* SPN191 Transmission Output Shaft Speed stored */
+    uint8_t requested_torque;  /* SPN522 Percent Clutch Slip */
+    uint8_t reserved_18[4];  /* Gap/reserved bytes */
+    uint8_t priority_byte;  /* ETC1 byte 5 control stored (SPN606+SPN607) */
+    uint16_t speed_stored;  /* SPN191 Output Shaft Speed stored for comparison */
+    uint8_t torque_stored;  /* SPN522 Percent Clutch Slip stored for comparison */
+};
+
+struct etc1_state_t {
+    uint16_t mode3_speed_target;  /* ETC1 mode 3 requested speed target */
+    uint16_t speed_setpoint;  /* ETC1 speed setpoint for torque calculation */
+    uint16_t capped_speed_target;  /* ETC1 mode 1 speed target capped at 24000 (3000 RPM) */
+    uint16_t control_flags;  /* ETC1 control flags */
+    uint16_t mode3_torque_limit;  /* ETC1 mode 3 calculated torque limit */
+    uint16_t torque_limit_calc;  /* Calculated torque limit from ETC1 request (signed) */
+    uint16_t speed_control_mode;  /* Speed control mode bits extracted from ETC1 byte 1 (SPN560 driveline state) */
+    uint16_t active_state;  /* ETC1 active state (1=control active) */
+    uint16_t reserved_10;  /* Reserved/gap at offset 0x10 */
+    uint16_t control_active;  /* ETC1 control active flag (1=ETC1 handler processing shifts) */
+    uint16_t spn573_tc_lockup_disengage;  /* SPN573 TC lockup disengaged: 1=disable override when TC not locked */
+    uint16_t handler_initialized;  /* ETC1 handler initialized flag */
+    uint16_t speed_control_target;  /* Speed control target setpoint (0.125 RPM/bit) */
+    uint8_t spn574_shift_in_process;  /* SPN574 Shift In Process: 1=transmission shift active (ETC1 byte 1 bits 5-6 = 01) */
+    uint8_t address_filter;  /* ETC1 source address filter value (0xFF=any) */
+    uint8_t reserved_1c[10];  /* Gap to timer region */
+    uint16_t torque_mode_timer;  /* ETC1 torque mode timeout counter */
+    uint16_t torque_active_timer;  /* ETC1 torque active timeout counter */
+    uint16_t speed_override_timer;  /* ETC1 speed override timeout counter */
+    uint16_t torque_limit_timer;  /* ETC1 torque limit timeout counter */
+    uint16_t speed_mode_flag;  /* ETC1 speed mode flag */
+    uint16_t mode_timeout;  /* ETC1 mode timeout counter */
+    uint16_t speed_cmd_timeout;  /* ETC1 speed command timeout counter */
+    uint16_t override_timeout;  /* ETC1 override timeout counter */
+    uint8_t reserved_36[3];  /* Gap to source address */
+    uint8_t source_address;  /* ETC1 source address of current command */
+    uint32_t config_entry_ptr;  /* Pointer to ETC1 configuration table entry */
+    uint32_t active_config_ptr;  /* Pointer to active ETC1 configuration */
+    uint32_t secondary_config_ptr;  /* Pointer to secondary ETC1 configuration */
+    uint16_t torque_limit_active;  /* ETC1 torque limit mode active flag */
+    uint16_t message_timeout;  /* ETC1 message timeout counter (lost message detection) */
+};
+
+struct governor_control_t {
+    uint16_t etc1_control_word;  /* ETC1 control word stored from message */
+    uint16_t mode_request;  /* Governor mode request (GOVERNOR_MODE enum) */
+    uint16_t mode;  /* Current governor mode (GOVERNOR_MODE enum) */
+    uint16_t torque_limit_select;  /* Torque limit mode selection (0=off 1=active) */
+    uint16_t disable_control;  /* ETC1 disable control flag */
+    uint32_t limit_state;  /* ETC1 limit state (low=torque_limit high=speed_limit) */
+};
+
+struct param_id_entry_t {
+    uint16_t param_id;  /* Parameter ID (0x0000-0x12A9 for CM848) */
+    uint32_t address;  /* Resolved memory address (EEPROM/ROM/MPC555 regs) */
+};
+
+struct ef00_dispatch_entry_t {
+    uint8_t service_id;  /* EF00 service ID (see EF00_SERVICE_ID enum) */
+    uint8_t reserved;  /* Padding byte */
+    uint32_t handler_ptr;  /* Function pointer to service handler */
+};
+
+struct diag_dispatch_entry_t {
+    uint8_t service_id;  /* Diagnostic service ID (0x43=paramRead 0x4A=memRead 0x4C=memReadExt) */
+    uint32_t handler_ptr;  /* Function pointer to service handler */
+};
+
+struct scheduler_task_stat_t {
+    uint32_t total_ticks;  /* Cumulative execution time in timer ticks */
+    uint16_t call_count;  /* Number of times task has been executed */
+    uint16_t min_time;  /* Minimum execution time (initialized to 0xFFFF) */
+    uint16_t max_time;  /* Maximum execution time observed */
+    uint16_t overrun_count;  /* Number of deadline overruns detected */
+};
+
+struct j1939_dm13_requester_slot_t {
+    uint16_t broadcast_enable_flags;  /* Cummins DM13BRDn - broadcast enable flags requested by this source (0xFFFF = nothing suspended): DM13 stop (00) clears J1587 bit 0 / J1922 bit 1 / J1939 network 1 bits 2 3 7 and start (01) sets them; back to 0xFFFF when the stop broadcast timer expires (was derivative_term) */
+    uint16_t stop_broadcast_source_address;  /* Cummins STPBRDSn - J1939 source address of the device whose DM13 asked this ECM to stop broadcasting; matched against the source address of each received DM13 (was channel_identifier) */
+    uint16_t stop_broadcast_timer;  /* Cummins DM13BDTn (0.1 s): reloaded with j1939_dm13_stop_broadcast_time_limit_cal (60 = 6 s) by this source's stop or hold message (byte 4 hold signal 0 or 1) and counted down; 0 = free slot and its flags return to 0xFFFF (was gain_schedule) */
+};
+
+struct protection_threshold_set_t {
+    uint16_t threshold_scaled;  /* Scaled protection threshold from table lookup */
+    uint16_t recovery_threshold;  /* Recovery/hysteresis exit threshold */
+    uint16_t hysteresis;  /* Protection hysteresis band value */
+    uint16_t threshold_scaled_alt;  /* Alternate scaled threshold (same input different context) */
+    uint16_t threshold_base;  /* Base protection threshold before correction */
+};
+
+struct fault_entry_t {
+    uint32_t timing_snapshot;  /* Fuel timing advance value at capture time */
+    uint8_t fault_code;  /* Fault code ID (0xAA = empty/available slot) */
+    uint16_t vehicle_speed;  /* Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim) */
+    uint16_t target_rpm;  /* Target engine RPM at fault time */
+    uint16_t sensor_scale_1;  /* Sensor scale factor 1 */
+    uint16_t engine_load_at_current_speed;  /* engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status) */
+    uint16_t accelerator_pedal_position;  /* accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high) */
+    uint16_t intake_manifold_pressure;  /* intake_manifold_pressure_in_use at capture (was protection_low) */
+    uint16_t coolant_temperature;  /* coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1) */
+    uint16_t intake_manifold_temperature;  /* intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2) */
+    uint16_t oil_pressure;  /* oil_pressure_sensor_filtered at capture (was timing_param_3) */
+    uint16_t sensor_scale_2;  /* Sensor scale factor 2 */
+    uint32_t reserved;  /* Reserved gap (not written by set/capture functions) */
+    uint8_t pressure_adj;  /* Pressure fuel adjustment byte */
+    uint16_t battery_voltage;  /* Battery voltage reading at fault time */
+    uint16_t load_throttle;  /* Processed load/throttle value */
+    uint16_t torque_limit;  /* Torque limit factor at fault time */
+    uint16_t diagnostic_word_1;  /* Diagnostic data word 1 */
+    uint8_t diagnostic_byte_3;  /* Diagnostic data byte 3 */
+    uint8_t diagnostic_byte_4;  /* Diagnostic data byte 4 */
+    uint16_t diagnostic_word_2;  /* Diagnostic data word 2 */
+    uint16_t diagnostic_word_3;  /* Diagnostic data word 3 */
+    uint16_t fuel_temperature;  /* fuel_temperature_sensor_filtered at capture (1/64 deg F) - not coolant (was coolant_temp_raw) */
+    uint16_t status_flags;  /* Fault entry status/severity flags (bit 0 = newly active) */
+};
+
+struct boost_in_range_config_t {
+    uint16_t deviation_count_threshold;  /* BIR deviation count threshold for setting fault */
+    uint16_t load_threshold;  /* BIR load threshold for high boost check (maps to DGLWTD) */
+    uint16_t unknown1;  /* BIR calibration value (unknown purpose) */
+    uint16_t operating_time_threshold;  /* BIR operating time threshold for fault (maps to DGBSHTTD) */
+    uint16_t timing_threshold;  /* BIR injection timing threshold */
+    uint16_t high_boost_threshold;  /* BIR high boost pressure threshold (maps to DGSTBSTD) */
+    uint16_t speed_threshold;  /* BIR RPM threshold (maps to DGLSRSOF) */
+    uint16_t unknown2;  /* BIR calibration value (gap at 0x0005c9a2) */
+    uint16_t consecutive_high_threshold;  /* BIR consecutive high count before deviation increment */
+};
+
+struct usiu_pit_t {
+    uint16_t PISCR;  /* PIT Status and Control Register (firmware writes 0x101 to enable PIE+PS) */
+    uint16_t _pad_piscr;  /* Padding after PISCR (16-bit register in 32-bit slot) */
+    uint16_t PITC;  /* PIT Count Register (firmware writes 4999 for 5000-count period) */
+    uint16_t _pad_pitc;  /* Padding after PITC */
+    uint16_t PITR;  /* PIT Register (read-only current count value) */
+};
+
+struct usiu_clock_t {
+    uint32_t SCCR;  /* System Clock Control Register (firmware writes 0x2010000/0xe010000) */
+    uint32_t PLPRCR;  /* PLL Low Power and Reset Control Register (firmware writes 0x1304001) */
+    uint16_t RSR;  /* Reset Status Register (read at startup then cleared with 0xFFFF) */
+    uint16_t _pad_rsr;  /* Padding after RSR (16-bit register in 32-bit slot) */
+    uint16_t COLIR;  /* Change of Lock Interrupt Register */
+    uint16_t _pad_colir;  /* Padding after COLIR */
+    uint16_t VSRMCR;  /* VDD Sense Mode Control Register (firmware writes 0x400) */
+};
+
+struct usiu_memc_t {
+    uint32_t BR0;  /* Base Register 0 (Flash2 chip select) */
+    uint32_t OR0;  /* Option Register 0 */
+    uint32_t BR1;  /* Base Register 1 (RAM chip select) */
+    uint32_t OR1;  /* Option Register 1 */
+    uint32_t BR2;  /* Base Register 2 */
+    uint32_t OR2;  /* Option Register 2 */
+    uint32_t BR3;  /* Base Register 3 */
+    uint32_t OR3;  /* Option Register 3 */
+};
+
+struct etc1_governor_state_t {
+    uint16_t governor_mode;  /* GOV_DISABLED=0 GOV_SPEED_CONTROL=1 GOV_TORQUE_CONTROL=2 GOV_SPEED_TORQUE=3 */
+    uint16_t torque_limit_mode_select;  /* Selects which torque limit algorithm is active */
+    uint16_t etc1_disable_control;  /* Set when ETC1 mode bits 0x30+0x03 both clear (speed disable) */
+    uint16_t etc1_spn607_progressive_shift_disable;  /* 1=ETC1 torque limit active (was etc1_limit_state._0_2_) */
+    uint16_t etc1_torque_limit_value;  /* Torque limit value applied to fuel_limit_minimum when gov_mode=3 (was etc1_limit_state._2_2_) */
+    uint16_t etc1_speed_setpoint;  /* Requested speed setpoint from ETC1 message */
+    uint16_t etc1_capped_speed_target;  /* Speed target capped to valid operating range */
+    uint16_t etc1_control_flags;  /* Packed control flags from ETC1 byte 1 (SPN560+SPN573+SPN574) */
+    uint16_t etc1_mode3_torque_limit;  /* Torque limit applied in GOV_SPEED_TORQUE mode */
+    uint16_t etc1_torque_limit_calc;  /* Calculated torque limit intermediate value */
+    uint16_t etc1_speed_control_mode;  /* Speed control sub-mode selector */
+    uint16_t etc1_active_state;  /* 1=ETC1 session active (source address accepted) */
+    uint16_t etc1_speed_disable_latch;  /* Set when ETC1 speed override is disabled (byte0 bits 0x30+0x03 == 0) */
+    uint16_t etc1_control_active;  /* 1=ETC1 mode activated (trans type 4 or 5 required) */
+    uint16_t etc1_spn573_tc_lockup_disengage;  /* 1=ETC1 disable override asserted */
+    uint16_t etc1_handler_initialized;  /* 1=ETC1 handler init complete */
+    uint16_t speed_control_target;  /* Bitmask: bit0=mode1 active bit1=mode2 active bit2=torque active */
+    uint8_t etc1_spn574_shift_in_process;  /* 1=coast/brake mode from ETC1 byte0 bits 0x30==0x10 */
+    uint8_t etc2_transmission_selected_gear;  /* J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when etc2_selected_gear_timeout (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter) */
+    uint16_t proprietary_offset_value;  /* Proprietary PGN offset value */
+    uint16_t etc1_speed_error_timeout_flag;  /* 1=speed error timeout has fired */
+    uint16_t etc1_activation_confirm_timer;  /* Countdown: loaded from config+6/+10 by gov mode; fires to confirm mode transition and log fault */
+    uint16_t etc1_speed_error_timeout;  /* Countdown: fires to trigger DM1 on speed error */
+    uint16_t etc1_error_fault_timer;  /* Countdown: loaded from secondary_config+0x10; fires to log fault and call resetGovernorState */
+    uint16_t etc1_multiframe_timeout;  /* Countdown: loaded from secondary_config+0xe/+0x12 after multi-frame transfer; fires to call resetGovernorState */
+    uint16_t etc1_torque_mode_timer;  /* Countdown for torque mode hold duration */
+    uint16_t etc1_torque_active_timer;  /* Countdown for torque active confirmation */
+    uint16_t etc1_speed_override_timer;  /* Countdown for speed override hold duration */
+    uint16_t etc1_torque_limit_timer;  /* Countdown for torque limit assertion hold */
+    uint16_t etc1_mode_transition_timer;  /* Countdown: parallel to etc1_multiframe_timeout but fires to clear local state rather than call resetGovernorState */
+    uint16_t etc1_speed_mode_flag;  /* Speed mode active flag */
+    uint16_t etc1_mode_timeout;  /* Countdown: ETC1 mode hold duration (loaded from config) */
+    uint16_t etc1_speed_cmd_timeout;  /* Countdown: speed command timeout (loaded from config) */
+    uint16_t etc1_override_timeout;  /* Countdown: disable override hold duration (loaded from config) */
+    uint16_t governor_mode_transition_counter;  /* Counter tracking governor mode transitions */
+    uint8_t _pad;  /* Alignment padding */
+    uint8_t etc1_spn1482_source_address;  /* J1939 source address of active ETC1 sender */
+    void * etc1_config_entry_ptr;  /* short* into etc1 config table at DAT_0005c3b4 (10 entries x 20 bytes) */
+    etc1_config_entry_t* etc1_active_config_ptr;  /* Pointer to active calibration entry in etc1_config_entry_t table */
+    void * etc1_secondary_config_ptr;  /* short* to secondary config entry (used for multi-frame response timers) */
+    uint16_t etc1_torque_limit_active;  /* 1=ETC1 torque limit currently limiting fuel */
+    uint16_t etc1_message_timeout;  /* Countdown: fires if no ETC1 message received within window */
+};
+
+struct etc1_config_entry_t {
+    uint16_t match_key;  /* J1939 control byte type for entry matching (1=wildcard; must match ETC1 byte0 type) */
+    uint16_t source_address_filter;  /* Low byte = J1939 SA to match (0xFF=wildcard); high byte = priority filter */
+    uint16_t speed_error_timeout_mode1;  /* etc1_speed_error_timeout reload value for GOV_SPEED_CONTROL (mode 1) */
+    uint16_t activation_confirm_timeout_mode1;  /* etc1_activation_confirm_timer reload value for GOV_SPEED_CONTROL (mode 1) */
+    uint16_t speed_error_timeout_mode2;  /* etc1_speed_error_timeout reload value for GOV_TORQUE_CONTROL (mode 2) */
+    uint16_t activation_confirm_timeout_mode2;  /* etc1_activation_confirm_timer reload value for GOV_TORQUE_CONTROL (mode 2) */
+    uint16_t speed_error_timeout_mode3;  /* etc1_speed_error_timeout reload value for GOV_SPEED_TORQUE (mode 3) */
+    uint16_t multiframe_timeout_mode2;  /* etc1_multiframe_timeout and etc1_mode_transition_timer reload for mode 2 multi-frame */
+    uint16_t error_fault_timeout;  /* etc1_error_fault_timer reload value (fired on governor_error_term==2) */
+    uint16_t multiframe_timeout_mode3;  /* etc1_multiframe_timeout reload value for mode 3 multi-frame (governor_error_term==3) */
+};
+
+struct tpua_module_regs_t {
+    uint16_t TPUMCR;  /* Module Configuration Register (0x8000=STOP 0x4460=run w/prescaler) */
+    uint16_t _pad1;  /* Reserved (TPU3 offset +0x02) */
+    uint16_t _pad2;  /* Reserved (TPU3 offset +0x04) */
+    uint16_t _pad3;  /* Reserved (TPU3 offset +0x06) */
+    uint16_t TICR;  /* Timer Interrupt Configuration Register (written 0x100 at init) */
+    uint16_t CIER;  /* Channel Interrupt Enable Register */
+    uint16_t CFSR0;  /* Channel Function Select Register 0 (ch 0-3) */
+    uint16_t CFSR1;  /* Channel Function Select Register 1 (ch 4-7) */
+    uint16_t CFSR2;  /* Channel Function Select Register 2 (ch 8-11) */
+    uint16_t CFSR3;  /* Channel Function Select Register 3 (ch 12-15) */
+    uint16_t HSQR0;  /* Host Sequence Register 0 (ch 0-7) */
+    uint16_t HSQR1;  /* Host Sequence Register 1 (ch 8-15) */
+    uint16_t HSRR0;  /* Host Service Request Register 0 (ch 0-7) */
+    uint16_t HSRR1;  /* Host Service Request Register 1 (ch 8-15) */
+    uint16_t CPR0;  /* Channel Priority Register 0 (ch 0-7) */
+    uint16_t CPR1;  /* Channel Priority Register 1 (ch 8-15) */
+    uint16_t CISR;  /* Channel Interrupt Status Register */
+    uint16_t _pad4;  /* Reserved (TPU3 offset +0x22) */
+    uint16_t _pad5;  /* Reserved (TPU3 offset +0x24) */
+    uint16_t _pad6;  /* Reserved (TPU3 offset +0x26) */
+    uint16_t R028;  /* Unknown register at +0x28 (written 0x80/0x20 at init) */
+    uint16_t R02A;  /* Unknown register at +0x2A (written 0x00 at init) */
+};
+
+struct tpub_module_regs_t {
+    uint16_t TPUMCR;  /* Module Configuration Register (0x8000=STOP 0x4430=run w/prescaler) */
+    uint16_t _pad1;  /* Reserved (TPU3 offset +0x02) */
+    uint16_t _pad2;  /* Reserved (TPU3 offset +0x04) */
+    uint16_t _pad3;  /* Reserved (TPU3 offset +0x06) */
+    uint16_t TICR;  /* Timer Interrupt Configuration Register (written 0x200 at init) */
+    uint16_t CIER;  /* Channel Interrupt Enable Register */
+    uint16_t CFSR0;  /* Channel Function Select Register 0 (ch 0-3) */
+    uint16_t CFSR1;  /* Channel Function Select Register 1 (ch 4-7) */
+    uint16_t CFSR2;  /* Channel Function Select Register 2 (ch 8-11) */
+    uint16_t CFSR3;  /* Channel Function Select Register 3 (ch 12-15) */
+    uint16_t HSQR0;  /* Host Sequence Register 0 (ch 0-7) */
+    uint16_t HSQR1;  /* Host Sequence Register 1 (ch 8-15) */
+    uint16_t HSRR0;  /* Host Service Request Register 0 (ch 0-7) */
+    uint16_t HSRR1;  /* Host Service Request Register 1 (ch 8-15) */
+    uint16_t CPR0;  /* Channel Priority Register 0 (ch 0-7) */
+    uint16_t CPR1;  /* Channel Priority Register 1 (ch 8-15) */
+    uint16_t CISR;  /* Channel Interrupt Status Register */
+    uint16_t _pad4;  /* Reserved (TPU3 offset +0x22) */
+    uint16_t _pad5;  /* Reserved (TPU3 offset +0x24) */
+    uint16_t _pad6;  /* Reserved (TPU3 offset +0x26) */
+    uint16_t R028;  /* Unknown register at +0x28 (written 0x80/0x20 at init) */
+    uint16_t R02A;  /* Unknown register at +0x2A (written 0x1E at init) */
+};
+
+struct mios_mpwmsm_t {
+    uint16_t PERR;  /* Period Register (sets PWM frequency) */
+    uint16_t PULR;  /* Pulse Width Register (sets duty cycle) */
+    uint16_t CNTR;  /* Counter Register (current count value) */
+    uint16_t SCR;  /* Status/Control Register (0x9=enable 0x4ff=period-mode) */
+};
+
+struct mios_mdasm_t {
+    uint16_t AR;  /* A Register (capture/compare value A) */
+    uint16_t BR;  /* B Register (capture/compare value B) */
+    uint16_t XR;  /* X Register (extended capture/status value) */
+    uint16_t SCRD;  /* Status/Control Register D (0x9=enable output) */
+};
+
+struct qadc64_regs_t {
+    uint16_t MCR;  /* Module Configuration Register (bit15=QSTOP) */
+    uint16_t TEST;  /* Test Register (reserved/debug) */
+    uint16_t INTC;  /* Interrupt Configure Register */
+    uint16_t PORTQA_B;  /* Port QA (high byte) and QB (low byte) Data Registers */
+    uint16_t DDRQA_B;  /* Port QA (high byte) and QB (low byte) Data Direction Registers */
+    uint16_t CCW;  /* Current Command Word pointer (queue head) */
+    uint16_t RJURR;  /* Right-Justified Unsigned Result Register */
+    uint16_t LJSRR;  /* Left-Justified Signed Result Register */
+    uint16_t LJURR;  /* Left-Justified Unsigned Result Register */
+};
+
+struct tpu3_ch_params_t {
+    uint16_t PARAM0;  /* Channel parameter 0 (SCR/function config) */
+    uint16_t PARAM1;  /* Channel parameter 1 */
+    uint16_t PARAM2;  /* Channel parameter 2 */
+    uint16_t PARAM3;  /* Channel parameter 3 */
+    uint16_t PARAM4;  /* Channel parameter 4 */
+    uint16_t PARAM5;  /* Channel parameter 5 */
+    uint16_t PARAM6;  /* Channel parameter 6 */
+    uint16_t PARAM7;  /* Channel parameter 7 */
+};
+
+struct qadc64b_regs_t {
+    uint16_t MCR;  /* Module Configuration Register (bit15=QSTOP) */
+    uint16_t TEST;  /* Test Register (reserved/debug) */
+    uint16_t INTC;  /* Interrupt Configure Register */
+    uint16_t PORTQA_B;  /* Port QA (high byte) and QB (low byte) Data Registers */
+    uint16_t DDRQA_B;  /* Port QA (high byte) and QB (low byte) Data Direction Registers */
+    uint16_t CCW;  /* Current Command Word pointer (queue head) */
+    uint16_t RJURR;  /* Right-Justified Unsigned Result Register */
+    uint16_t LJSRR;  /* Left-Justified Signed Result Register */
+    uint16_t LJURR;  /* Left-Justified Unsigned Result Register */
+};
+
+struct tpua_ch1_params_t {
+    uint16_t PARAM0;  /* Channel 1 parameter 0 */
+    uint16_t PARAM1;  /* Channel 1 parameter 1 */
+    uint16_t PARAM2;  /* Channel 1 parameter 2 */
+    uint16_t PARAM3;  /* Channel 1 parameter 3 */
+    uint16_t PARAM4;  /* Channel 1 parameter 4 */
+    uint16_t PARAM5;  /* Channel 1 parameter 5 */
+    uint16_t PARAM6;  /* Channel 1 parameter 6 */
+    uint16_t PARAM7;  /* Channel 1 parameter 7 */
+};
+
+struct tpua_ch9_params_t {
+    uint16_t PARAM0;  /* Channel 9 parameter 0 */
+    uint16_t PARAM1;  /* Channel 9 parameter 1 */
+    uint16_t PARAM2;  /* Channel 9 parameter 2 */
+    uint16_t PARAM3;  /* Channel 9 parameter 3 */
+    uint16_t PARAM4;  /* Channel 9 parameter 4 */
+    uint16_t PARAM5;  /* Channel 9 parameter 5 */
+    uint16_t PARAM6;  /* Channel 9 parameter 6 */
+    uint16_t PARAM7;  /* Channel 9 parameter 7 */
+};
+
+struct tpua_ch12_params_t {
+    uint16_t PARAM0;  /* Channel 12 parameter 0 */
+    uint16_t PARAM1;  /* Channel 12 parameter 1 */
+    uint16_t PARAM2;  /* Channel 12 parameter 2 */
+    uint16_t PARAM3;  /* Channel 12 parameter 3 */
+    uint16_t PARAM4;  /* Channel 12 parameter 4 */
+    uint16_t PARAM5;  /* Channel 12 parameter 5 */
+    uint16_t PARAM6;  /* Channel 12 parameter 6 */
+    uint16_t PARAM7;  /* Channel 12 parameter 7 */
+};
+
+struct tpua_ch14_params_t {
+    uint16_t PARAM0;  /* Channel 14 parameter 0 */
+    uint16_t PARAM1;  /* Channel 14 parameter 1 */
+    uint16_t PARAM2;  /* Channel 14 parameter 2 */
+    uint16_t PARAM3;  /* Channel 14 parameter 3 */
+    uint16_t PARAM4;  /* Channel 14 parameter 4 */
+    uint16_t PARAM5;  /* Channel 14 parameter 5 */
+    uint16_t PARAM6;  /* Channel 14 parameter 6 */
+    uint16_t PARAM7;  /* Channel 14 parameter 7 */
+};
+
+struct tpub_ch0_params_t {
+    uint16_t PARAM0;  /* TPUB Channel 0 parameter 0 */
+    uint16_t PARAM1;  /* TPUB Channel 0 parameter 1 */
+    uint16_t PARAM2;  /* TPUB Channel 0 parameter 2 */
+    uint16_t PARAM3;  /* TPUB Channel 0 parameter 3 */
+    uint16_t PARAM4;  /* TPUB Channel 0 parameter 4 */
+    uint16_t PARAM5;  /* TPUB Channel 0 parameter 5 */
+    uint16_t PARAM6;  /* TPUB Channel 0 parameter 6 */
+    uint16_t PARAM7;  /* TPUB Channel 0 parameter 7 */
+};
+
+struct tpub_ch11_params_t {
+    uint16_t PARAM0;  /* TPUB Channel 11 parameter 0 */
+    uint16_t PARAM1;  /* TPUB Channel 11 parameter 1 */
+    uint16_t PARAM2;  /* TPUB Channel 11 parameter 2 */
+    uint16_t PARAM3;  /* TPUB Channel 11 parameter 3 */
+    uint16_t PARAM4;  /* TPUB Channel 11 parameter 4 */
+    uint16_t PARAM5;  /* TPUB Channel 11 parameter 5 */
+    uint16_t PARAM6;  /* TPUB Channel 11 parameter 6 */
+    uint16_t PARAM7;  /* TPUB Channel 11 parameter 7 */
+};
+
+struct tpub_ch14_params_t {
+    uint16_t PARAM0;  /* TPUB Channel 14 parameter 0 */
+    uint16_t PARAM1;  /* TPUB Channel 14 parameter 1 */
+    uint16_t PARAM2;  /* TPUB Channel 14 parameter 2 */
+    uint16_t PARAM3;  /* TPUB Channel 14 parameter 3 */
+    uint16_t PARAM4;  /* TPUB Channel 14 parameter 4 */
+    uint16_t PARAM5;  /* TPUB Channel 14 parameter 5 */
+    uint16_t PARAM6;  /* TPUB Channel 14 parameter 6 */
+    uint16_t PARAM7;  /* TPUB Channel 14 parameter 7 */
+};
+
+struct mios_mpwmsm1_t {
+    uint16_t PERR;  /* MPWMSM1 Period Register */
+    uint16_t PULR;  /* MPWMSM1 Pulse Width Register */
+    uint16_t CNTR;  /* MPWMSM1 Counter Register */
+    uint16_t SCR;  /* MPWMSM1 Status/Control Register */
+};
+
+struct mios_mpwmsm2_t {
+    uint16_t PERR;  /* MPWMSM2 Period Register */
+    uint16_t PULR;  /* MPWMSM2 Pulse Width Register */
+    uint16_t CNTR;  /* MPWMSM2 Counter Register */
+    uint16_t SCR;  /* MPWMSM2 Status/Control Register */
+};
+
+struct mios_mpwmsm3_t {
+    uint16_t PERR;  /* MPWMSM3 Period Register */
+    uint16_t PULR;  /* MPWMSM3 Pulse Width Register */
+    uint16_t CNTR;  /* MPWMSM3 Counter Register */
+    uint16_t SCR;  /* MPWMSM3 Status/Control Register */
+};
+
+struct mios_mmcsm_b_t {
+    uint16_t CNT;  /* Up-Counter Register */
+    uint16_t ML;  /* Modulus Latch Register (period/reload value) */
+    uint16_t _pad;  /* Reserved/unused padding */
+    uint16_t SCRD;  /* Status/Control Register D */
+};
+
+struct mios_mdasm12_t {
+    uint16_t AR;  /* MDASM12 A Register */
+    uint16_t BR;  /* MDASM12 B Register */
+    uint16_t XR;  /* MDASM12 X Register (extended status) */
+    uint16_t SCRD;  /* MDASM12 Status/Control Register D */
+};
+
+struct mios_mdasm15_t {
+    uint16_t AR;  /* MDASM15 A Register */
+    uint16_t BR;  /* MDASM15 B Register */
+    uint16_t XR;  /* MDASM15 X Register */
+    uint16_t SCRD;  /* MDASM15 Status/Control Register D */
+};
+
+struct mios_mpwmsm16_t {
+    uint16_t PERR;  /* MPWMSM16 Period Register */
+    uint16_t PULR;  /* MPWMSM16 Pulse Width Register */
+    uint16_t CNTR;  /* MPWMSM16 Counter Register */
+    uint16_t SCR;  /* MPWMSM16 Status/Control Register */
+};
+
+struct mios_mpwmsm17_t {
+    uint16_t PERR;  /* MPWMSM17 Period Register */
+    uint16_t PULR;  /* MPWMSM17 Pulse Width Register */
+    uint16_t CNTR;  /* MPWMSM17 Counter Register */
+    uint16_t SCR;  /* MPWMSM17 Status/Control Register */
+};
+
+struct mios_mpwmsm18_t {
+    uint16_t PERR;  /* MPWMSM18 Period Register */
+    uint16_t PULR;  /* MPWMSM18 Pulse Width Register */
+    uint16_t CNTR;  /* MPWMSM18 Counter Register */
+    uint16_t SCR;  /* MPWMSM18 Status/Control Register */
+};
+
+struct mios_mpwmsm19_t {
+    uint16_t PERR;  /* MPWMSM19 Period Register */
+    uint16_t PULR;  /* MPWMSM19 Pulse Width Register */
+    uint16_t CNTR;  /* MPWMSM19 Counter Register */
+    uint16_t SCR;  /* MPWMSM19 Status/Control Register */
+};
+
+struct toucan_a_mb0_t {
+    uint16_t CTRL;  /* Message Buffer 0 Control/Status (code+DLC+flags) */
+    uint16_t ID_HI;  /* Message Buffer 0 ID High (bits 28-16) */
+    uint16_t ID_LO;  /* Message Buffer 0 ID Low (bits 15-0) */
+    uint16_t DATA0;  /* Message Buffer 0 Data bytes 0-1 */
+    uint16_t DATA2;  /* Message Buffer 0 Data bytes 2-3 */
+    uint16_t DATA4;  /* Message Buffer 0 Data bytes 4-5 */
+    uint16_t DATA6;  /* Message Buffer 0 Data bytes 6-7 */
+    uint16_t _pad;  /* Reserved (timestamp) */
+};
+
+struct toucan_a_mb1_t {
+    uint16_t CTRL;  /* Message Buffer 1 Control/Status */
+    uint16_t ID_HI;  /* Message Buffer 1 ID High */
+    uint16_t ID_LO;  /* Message Buffer 1 ID Low */
+    uint16_t DATA0;  /* Message Buffer 1 Data bytes 0-1 */
+    uint16_t DATA2;  /* Message Buffer 1 Data bytes 2-3 */
+    uint16_t DATA4;  /* Message Buffer 1 Data bytes 4-5 */
+    uint16_t DATA6;  /* Message Buffer 1 Data bytes 6-7 */
+    uint16_t _pad;  /* Reserved (timestamp) */
+};
+
+struct toucan_a_mb2_t {
+    uint16_t CTRL;  /* Message Buffer 2 Control/Status */
+    uint16_t ID_HI;  /* Message Buffer 2 ID High */
+    uint16_t ID_LO;  /* Message Buffer 2 ID Low */
+    uint16_t DATA0;  /* Message Buffer 2 Data bytes 0-1 */
+    uint16_t DATA2;  /* Message Buffer 2 Data bytes 2-3 */
+    uint16_t DATA4;  /* Message Buffer 2 Data bytes 4-5 */
+    uint16_t DATA6;  /* Message Buffer 2 Data bytes 6-7 */
+    uint16_t _pad;  /* Reserved (timestamp) */
+};
+
+struct qsmcm_sci1_regs_t {
+    uint16_t SCC1R0;  /* SCI1 Control Register 0 (baud/config) */
+    uint16_t SCC1R1;  /* SCI1 Control Register 1 (interrupt enables) */
+    uint16_t SC1SR;  /* SCI1 Status Register (TDRE/RDRF/OR/FE/NF/PF) */
+    uint16_t SC1DR;  /* SCI1 Data Register (read=RX data write=TX data) */
+};
+
+struct qsmcm_qspi_ctrl_t {
+    uint16_t SPCR0;  /* QSPI control 0: MSTR / bit size / CPOL / CPHA / baud (sth) */
+    uint16_t SPCR1;  /* QSPI control 1: bit 15 = SPE (start) / DSCKL / DTL delays (sth) */
+    uint16_t SPCR2;  /* QSPI queue pointers (ENDQP bits 12-8 / NEWQP bits 4-0) */
+    uint8_t SPCR3;  /* QSPI control 3 */
+    uint8_t SPSR;  /* QSPI status: bit 0x80 = SPIF (queue finished; cleared by cm848_onQspiFinished) */
+};
+
+struct qsmcm_recram_t {
+    uint16_t RX0;  /* QSPI Receive RAM entry 0 */
+    uint16_t RX1;  /* QSPI Receive RAM entry 1 */
+    uint16_t RX2;  /* QSPI Receive RAM entry 2 */
+    uint16_t RX3;  /* QSPI Receive RAM entry 3 */
+    uint16_t RX4;  /* QSPI Receive RAM entry 4 (injector sequence index at bits 3-0) */
+    uint16_t RX5;  /* QSPI Receive RAM entry 5 */
+};
+
+struct qsmcm_txram_t {
+    uint16_t TX0;  /* QSPI Transmit RAM entry 0 (SPI opcode byte) */
+    uint16_t TX1;  /* QSPI Transmit RAM entry 1 (SPI write command byte) */
+    uint16_t TX2;  /* QSPI Transmit RAM entry 2 (EEPROM address / SPI data) */
+    uint16_t TX3;  /* QSPI Transmit RAM entry 3 (write data word) */
+    uint16_t TX4;  /* QSPI Transmit RAM entry 4 */
+    uint16_t TX5;  /* QSPI Transmit RAM entry 5 */
+};
+
+struct keyon_flags_t {
+    uint32_t capability_flags;  /* ECU capability bitmask (bit0=MIOS_ER bit1=key_on bit4=IMB3) */
+    uint32_t state;  /* Key-on state machine state (0=idle 1=active) */
+    uint16_t transfer_crc;  /* CRC-CCITT block transfer running accumulator */
+    uint16_t _pad10;  /* Reserved */
+    uint16_t mailbox_index;  /* CAN mailbox slot index for channel assignment */
+    uint16_t _pad14;  /* Reserved */
+    uint32_t runtime_counter;  /* ECU runtime counter (RAM 0x302012): loaded from EEPROM 0x1000030 at boot / +1 every 41 PIT ticks (~0.205 s per count if the PIT runs at 1 MHz) / written back at key-off; also the auth-token freshness clock (was eeprom_write_count) */
+};
+
+struct can_tx_ring_t {
+    uint32_t j1939_tx_write_ptr;  /* J1939 TX queue write pointer (12-byte records base 0x3022E6) */
+    uint32_t j1939_tx_read_ptr;  /* J1939 TX queue read pointer */
+    uint32_t can_rx_write_ptr;  /* CAN RX queue write pointer (18-byte records base 0x302016) */
+    uint32_t can_rx_read_ptr;  /* CAN RX queue read pointer */
+    uint32_t _pad16;  /* Reserved */
+    uint32_t toucan_mb_ptr;  /* Active TouCAN mailbox base pointer for diagnostic session */
+};
+
+struct diag_write_request_state_t {
+    uint32_t pending_request;  /* Boot reflash kernel: request whose positive response is deferred until the flash write completes (was adc_trigger_t.sensor_param_ptr) */
+    uint32_t address_mode;  /* 0 = parameter-ID addressing (services 68/69) / 1 = absolute address (75/77); stored as a dword (was adc_scan_active word + _pad6) */
+};
+
+struct can_slot_range_t {
+    uint16_t slot_start;  /* First CAN mailbox slot for diagnostic service */
+    uint16_t slot_end;  /* Last CAN mailbox slot for diagnostic service */
+};
+
+struct can_rx_channel_t {
+    uint16_t channel_id;  /* J1939 source address filter for CAN receive matching */
+};
+
+struct sys_init_flags_t {
+    uint16_t init_sentinel;  /* System initialization sentinel (0xBBBB = fully initialized) */
+    uint16_t init_counter;  /* System initialization counter (zeroed at startup) */
+};
+
+struct eeprom_xfer_state_t {
+    uint32_t bytes_transferred;  /* Current byte offset progress in EEPROM transfer block */
+    uint32_t block_length;  /* Total bytes in current EEPROM transfer block */
+    uint16_t _pad8;  /* Reserved */
+    uint32_t eeprom_write_callback;  /* Writer for memory region type 5 (EEPROM) called by cm848_writeDiagMemory (was write_callback_ptr) */
+    uint32_t flash2_write_callback;  /* Writer for memory region type 2 (Bank-2 flash) called by cm848_writeDiagMemory (was read_callback_ptr - it writes) */
+    uint16_t transfer_timer;  /* Transfer timeout countdown (0x28 or 0x4B ticks init) */
+};
+
+struct eeprom_block_tracking_t {
+    uint16_t watchdog_counter;  /* Transfer watchdog counter (reset each block) */
+    uint8_t _pad2;  /* Reserved */
+    uint32_t last_write_addr;  /* Previous block write address for continuity validation */
+    uint32_t block_start_addr;  /* Start address of current EEPROM transfer range */
+    uint16_t block_count;  /* Completed transfer block count (max 9) */
+};
+
+struct j1939_tp_queue_t {
+    uint16_t session_pgn;  /* Active J1939 TP queue session PGN (0xEF__ format) */
+    uint8_t queue_status2;  /* J1939 TP queue entry count (number of packets in queue) */
+    uint8_t range_start;  /* J1939 TP batch range start index (incremented by batch size) */
+    uint8_t queue_ptr;  /* J1939 TP remaining packet pointer (decremented by batch size) */
+    uint8_t _pad5;  /* Reserved */
+    uint16_t total_bytes;  /* Total data bytes for TP queue session */
+    uint32_t data_buf_ptr;  /* Pointer to source data buffer for queue TP session */
+    uint32_t state_ptr;  /* Pointer to session status byte (J1939 TP state codes) */
+    uint16_t retry_timer;  /* CTS retry countdown timer (nominal 0x37 ticks) */
+    uint32_t can_header;  /* CAN frame header word (PGN 0xEC00 RTS or 0xEB00 DT) */
+    uint16_t packet_size;  /* Bytes in current CTS packet grant (max 8) */
+    uint32_t tx_buf_ptr;  /* Pointer to CAN TX assembly buffer (0x30306D) */
+};
+
+struct j1939_tp_pause_t {
+    uint16_t pause_pgn;  /* J1939 DataRequest session PGN (0xEF00) */
+    uint16_t _pad2;  /* Reserved */
+    uint16_t pause_timer;  /* Pause session countdown (0x70 init / 0x19 per packet) */
+    uint32_t pause_data;  /* First dword of DataRequest CAN frame copy */
+    uint16_t data_count;  /* Number of QADC data items in DataRequest */
+    uint32_t rx_buf_ptr;  /* Pointer to CAN RX data assembly buffer (0x303075) */
+};
+
+struct diag_buf_b_ctrl_t {
+    uint16_t service_count;  /* Service count/size parameter for buffer B */
+    uint32_t data_ptr;  /* Pointer to start of buffer B data area (0x30293F) */
+    uint32_t end_ptr;  /* Pointer to end of buffer B data area (0x303055) */
+};
+
+struct diag_buf_a_ctrl_t {
+    uint16_t service_count;  /* Service count/size parameter for buffer A */
+    uint32_t data_ptr;  /* Pointer to start of buffer A data area (0x303065) */
+    uint32_t end_ptr;  /* Pointer to end of buffer A data area (0x303064) */
+};
+
+struct boot_state_t {
+    uint16_t boot_param;  /* Boot state machine initialization parameter */
+    uint16_t boot_phase;  /* Boot phase counter (cycles 0-3 per PISCR interrupt) */
+};
+
+struct mios_mdasm27_t {
+    uint16_t AR;  /* A Register (capture/compare value A) */
+    uint16_t BR;  /* B Register (capture/compare value B) */
+    uint16_t XR;  /* X Register (extended capture/status value) */
+    uint16_t SCRD;  /* Status/Control Register D (0x405=enable / 0x205=mode) */
+};
+
+struct mios1_ext_ctrl_t {
+    uint16_t ctrl_a;  /* Control/status word A (bit 0x2000=capability flag) */
+    uint16_t ctrl_b;  /* Control/status word B (startup: 0x2000) */
+};
+
+struct mios1_isr_t {
+    uint16_t FLG;  /* MIOS1 interrupt flag register (bits cleared on service) */
+    uint16_t _pad2;  /* Reserved */
+    uint16_t EN;  /* MIOS1 interrupt enable register (channel mask) */
+};
+
+struct diag_clear_flags_t {
+    uint8_t diag_response_write_count;  /* Diagnostic response write count pending */
+    uint8_t diag_eeprom_work_byte;  /* EEPROM channel scratch byte */
+    uint16_t learned_output_speed_to_vehicle_speed_ratio;  /* EEPROM-backed learned ratio = output shaft speed x 4096 / vehicle_speed (5141 = 40.2 rpm per mph) clamped 4480-6656; synthesizes the output shaft speed on sensor fault; 0x3fedfb bit 0 marks it learned (was fuel_temp_protection_ratio) */
+};
+
+struct dual_axis_table_dims_t {
+    uint16_t row_count;  /* Number of first-axis (RPM) breakpoints */
+    uint16_t col_count;  /* Number of second-axis (fuel) breakpoints */
+};
+
+struct j1939_ccss_tx_payload_t {
+    uint8_t max_vehicle_speed_limit;  /* SPN 74 Maximum Vehicle Speed Limit (km/h); from j1939_cruise_speed_setpoint; gate j1939_governor_feature_cal&0x80 */
+    uint8_t cruise_high_set_limit_speed;  /* SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by cruise_speed_high_limit */
+    uint8_t cruise_low_set_limit_speed;  /* SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from DAT_0005c28a */
+    uint8_t reserved3;  /* reserved - init 0xff (not available) */
+    uint8_t reserved4;  /* reserved - init 0xff (not available) */
+    uint8_t reserved5;  /* reserved - init 0xff (not available) */
+    uint8_t reserved6;  /* reserved - init 0xff (not available) */
+    uint8_t reserved7;  /* reserved - init 0xff (not available) */
+};
+
+struct pci_message_descriptor_t {
+    uint8_t header_byte_0;  /* J1850 message header byte 1 (message ID - e.g. 0x10 engine data / 0x37 shift lever / 0x68 OBD-II request) */
+    uint8_t header_byte_1;  /* Header byte 2 - 0 terminates a 1-byte header (e.g. 0x6A in 68 6A / 0x03 in D1 03) */
+    uint8_t header_byte_2;  /* Header byte 3 - 0 terminates */
+    uint8_t header_byte_3;  /* Header terminator (always 0 in ROM) */
+    byte* data_buffer;  /* RAM payload buffer: TX copies it after the header / RX stores received bytes into it */
+    byte* data_length;  /* Pointer to the payload length byte (ROM 0x57741..0x57748 or RAM) */
+    uint16_t interval;  /* TX: send when *timer exceeds this / RX: receive timeout; 0 = event-driven (armed by writing 1 to *timer) and not timeout-checked; same units as *timer (+10 per monitor pass) */
+    word* timer;  /* RAM age timer: +10 per pass saturating at 0xff00; TX reset on own-message echo and RX reset on reception; RX starts at 0xff37 = never received */
+    uint8_t in_frame_response_enabled;  /* Nonzero = J1850 in-frame response: RX entry -> ECM sends in_frame_response_bytes inside the frame (pci_frame_match_flags 0x04); TX entry -> ECM expects them back (0x08). Only TX 0xB0 sets it in this ROM (RX path inactive under this cal) */
+    uint8_t reserved_19;  /* Unused padding */
+    byte* in_frame_response_bytes;  /* Zero-terminated in-frame response bytes (up to 12): RX entry = bytes the ECM sends (cm848_sendPciInFrameResponseByte) / TX entry = bytes expected back and compared against the frame tail (mismatch sets status bit 0x08); ROM 0x57740 (empty) except TX 0xB0 (RAM 0x40b4fd) */
+    byte* status;  /* RAM status byte: bit 0x10 = message timed out (latched; RX handler keeps it via &= 0x90) / bit 0x80 meaning unconfirmed */
+};
+
+struct qspi_job_t {
+    uint32_t busy_state;  /* 0 = idle / 1 = queued / 2 = transfer started */
+    uint8_t device_slot;  /* QSPI device slot (bus reconfigured via mpc555_j1939InitTransmitBuffer when it changes) */
+    uint8_t word_count;  /* Number of QSPI words to transfer (must be under 0x21) */
+    word* transmit_words;  /* Words copied into QSPI transmit RAM (must be non-null) */
+    byte* command_bytes;  /* Bytes copied into QSPI command RAM (must be non-null) */
+    word* receive_words;  /* Where the received QSPI words are stored */
+    void * completion_callback;  /* Function called when the transfer completes */
+};
+
+struct qspi_device_slot_t {
+    uint16_t spcr0;  /* SPCR0 value for this device (mode + baud) */
+    uint16_t spcr1;  /* SPCR1 value for this device (delays) */
+};
+
+struct qspi_job_queue_t {
+    uint8_t active_index;  /* jobs[] index of the job being transferred */
+    uint8_t write_index;  /* jobs[] index the next queued job is stored at (wraps at 16) */
+    uint8_t pending_count;  /* Jobs queued and not yet completed (max 16) */
+    qspi_job_t* jobs;  /* Ring of 16 queued job pointers */
+};
+
+struct memory_region_t {
+    uint32_t start_address;  /* First address of the region */
+    uint32_t end_address;  /* Last address of the region */
+    uint8_t region_type;  /* 0 RAM / 2 Bank-2 flash / 3 registers / 4 main flash / 5 EEPROM (9 = not found) */
+    uint8_t region_type_copy;  /* Same value as region_type in every entry */
+};
+
+struct j1939_input_signal_descriptor_t {
+    byte* signal_value;  /* Received signal byte (j1939_received_*) */
+    uint8_t timeout_slot;  /* Index into j1939_input_signal_timeouts (also the fault bitmap index) */
+    uint8_t reserved_5;  /* Always 0 */
+    uint32_t fault_bit_index;  /* Bit index into the fault-enable bitmask and the fault confirmation arrays (0x1f for most entries) */
+};
+
+struct output_read_back_fault_bits_t {
+    uint16_t : 1;
+    uint16_t cooling_fan : 1;  /* bit 1: Bit 1 of word 0 = output channel assignment table entry 1: cooling fan read-back fault (P0480 / fault 121) */
+    uint16_t : 8;
+    uint16_t governor_pressure_solenoid : 1;  /* bit 10: Bit 10 of word 0 = entry 10: governor pressure solenoid read-back fault (P0748 / fault 351) */
+    uint16_t wastegate_solenoid : 1;  /* bit 11: Bit 11 of word 0 = entry 11: wastegate solenoid read-back fault (P0243 / fault 403) */
+    uint16_t : 4;
+    uint16_t : 4;
+    uint16_t fuel_metering : 1;  /* bit 4: Bit 4 of word 1 = entry 20: fuel metering read-back fault (P0251 / fault 333) */
+    uint16_t : 6;
+    uint16_t alternator_field : 1;  /* bit 11: Bit 11 of word 1 = entry 27: alternator field read-back fault (P0622 / fault 396) */
+    uint16_t : 4;
+    uint16_t entries_32_to_47;  /* Word 2 = entries 32-47 (no read-back output assigned in this calibration) */
+};

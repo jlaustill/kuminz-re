@@ -24,10 +24,13 @@ PROJECT_LOCATION="$SCRIPT_DIR/project"
 OUTPUT_DIR="$PROJECT_DIR/output"
 FIRMWARE_DIR="$PROJECT_DIR/firmware"
 
-# Pin the Ghidra version: the MC68336 / 68k CPU support CM550 needs lives in the
-# from-source 12.0 DEV build (unmerged Ghidra branch, not in any release).
-# See common.sh.
-REQUIRED_GHIDRA_VERSION="12.0"
+# Pin the Ghidra version: 12.2 is the first PUBLIC release with the CPU32 language
+# (Ghidra issue #1244, CPU32.slaspec). The MC68336's core is a CPU32, so CM550 is
+# analyzed as 68000:BE:32:CPU32. Until 2026-11-15 it was built on a from-source
+# 12.0 DEV build with the default 68000 language (68040), because no release had
+# CPU32. See common.sh.
+REQUIRED_GHIDRA_VERSION="12.2"
+PROCESSOR="68000:BE:32:CPU32"
 
 # ============================================================================
 # SOURCE SHARED INFRASTRUCTURE

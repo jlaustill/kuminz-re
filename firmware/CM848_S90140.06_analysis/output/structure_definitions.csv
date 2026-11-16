@@ -84,9 +84,9 @@ engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state (ENGINE_OPERAT
 # Engine Sync State - crankshaft synchronization status
 # Used by engine position sensor ISR and sync detection
 # Total size: 6 bytes (0x0040b87f-0x0040b884)
-engine_sync_state_t,0x0040b87f,sync_status,byte,1,Sync detection status (0=lost 1=synced),,verified
-engine_sync_state_t,0x0040b87f,reference_count,word,2,Sync reference pulse count,,verified
-engine_sync_state_t,0x0040b87f,speed_raw,word,2,Raw engine speed from position sensor,,verified
+engine_sync_state_t,0x0040b87f,fuel_pressure_governor_mode,FUEL_PRESSURE_GOVERNOR_MODE,1,Fuel pressure governor mode (FUEL_PRESSURE_GOVERNOR_MODE; was sync_status),,verified
+engine_sync_state_t,0x0040b87f,fuel_pressure_governor_demand,word,2,Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count),,verified
+engine_sync_state_t,0x0040b87f,fuel_metering_command,word,2,"Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw)",,verified
 engine_sync_state_t,0x0040b87f,reserved_05,byte,1,Padding for alignment,,needs_review
 # Engine RPM State - current and target engine speed values
 # Used by processEngineRpmTarget and governor control
@@ -118,7 +118,7 @@ eeprom_header_t,0x003fee08,calibration_block1,byte,6,Calibration data block 1,,v
 eeprom_header_t,0x003fee08,eeprom_status_flags,word,2,Bit0=IAT derate history | Bit3=calibration validated,,verified
 eeprom_header_t,0x003fee08,cal_word2,word,2,Calibration parameter word 2,,verified
 eeprom_header_t,0x003fee08,cal_word3,word,2,Calibration parameter word 3,,verified
-eeprom_header_t,0x003fee08,cal_word4,word,2,Calibration parameter word 4,,verified
+eeprom_header_t,0x003fee08,serial_reflash_unlock_request,word,2,Boot copy of EEPROM 0x56 (serial_reflash_unlock_request_cal) - the application's serial reflash hand-off; non-zero makes mpc555_initDiagnosticSession start the boot SCI session unlocked (was cal_word4),,verified
 eeprom_header_t,0x003fee08,serial_number,dword,4,ECU serial number from EEPROM,,needs_review
 # Governor Output State - speed control integrator and output
 # Used by governor PID controller
@@ -177,7 +177,7 @@ system_status_flags_t,0x003fe974,fault_detected_bits_16_to_31,word,2,Word 1 of f
 system_status_flags_t,0x003fe974,fault_detected_bits_32_to_47,word,2,Word 2 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b9 P0478 b10 P0477 - not a gap (was reserved_04) (Medium confidence),,needs_review
 system_status_flags_t,0x003fe974,fault_detected_bits_48_to_63,word,2,Word 3 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b6 P2267 b7 P2266 b8 P2269 water-in-fuel b9 P1221 b10 P1222 b12 P1223 b14 P2127 b15 P2121 pedal - b4/b5 (0x10/0x20) no code (was safety_bits_1),,verified
 system_status_flags_t,0x003fe974,fault_detected_bits_64_to_79,word,2,Word 4 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0236 b2 P0562 b3 P0563 system-voltage b4 P2128 b5 P1221 b6 P1222 b7 P1223 (was safety_bits_2),,verified
-system_status_flags_t,0x003fe974,fault_detected_bits_80_to_95,word,2,Word 5 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b2/b9/b10 P2509 b11 P0606 b12 P0335 crank b13 P0340 cam (was sensor_diag),,verified
+system_status_flags_t,0x003fe974,fault_detected_bits_80_to_95,word,2,Word 5 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b2/b9/b10 P2509 (b2 = the previous run's power-down did not complete / b9 = more than consecutive_incomplete_power_down_limit of those in a row) b4 no DTC (0x3fdc8e non-zero at start) b11 P0606 (power_down_left_ecm_powered_flag_cal set) b12 P0335 crank b13 P0340 cam (was sensor_diag),,verified
 system_status_flags_t,0x003fe974,fault_detected_bits_96_to_111,word,2,Word 6 of fault-detected array 0x3fe974 - no OBD DTC slots (all map to 170) - internal fault bits eg b14 (0x4000) set on ETC1/cold-start timeout and cleared with its registered sibling 0x3fe9e4 - confirm b5 (0x20) role (was lamp_status) (Medium confidence),,verified
 system_status_flags_t,0x003fe974,fault_detected_bits_112_to_127,word,2,Word 7 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b5 P0016 crank-cam b9 P0480 fan b12 P0336 crank (was emission_faults),,verified
 system_status_flags_t,0x003fe974,fault_detected_bits_128_to_143,word,2,Word 8 of the fault-present bit array at 0x3fe974 (fault bit = word x 16 + bit): bit 0 any J1939 input timeout / bit 1 read by the J1939 pedal rate-limit check / bit 2 any J1939 input data error / bits 8-15 DTC slots 128-135 = P0883 P0882 P0974 P0973 P2770 P2769 P0588 P0587 (was reserved_10),,needs_review
@@ -254,9 +254,6 @@ torque_limit_arb_t,0x0040a2f6,fuel_minimum,word,2,Minimum fuel limit from arbitr
 # Total size: 10 bytes (0x0040af5a-0x0040af63)
 governor_pid_t,0x0040af5a,proportional_gain,word,2,PID proportional gain value,,verified
 governor_pid_t,0x0040af5a,integral_term,word,2,PID integral accumulator,,verified
-governor_pid_t,0x0040af5a,reserved_04,word,2,Gap,,needs_review
-governor_pid_t,0x0040af5a,reserved_06,word,2,Gap,,needs_review
-governor_pid_t,0x0040af5a,reserved_08,word,2,Gap,,needs_review
 # Protection Lockout State - thermal/load/rpm lockout flags
 # Used by protection system to prevent rapid cycling
 # Total size: 12 bytes (0x0040b11c-0x0040b127)
@@ -970,7 +967,7 @@ tpub_module_regs_t,0x00304400,R02A,word,2,Unknown register at +0x2A (written 0x1
 # Reference: MPC555 UM/D MIOS14 chapter; confirmed by firmware access patterns
 # =============================================================================
 # MIOS PWM Submodule (MPWMSM) - 4 x u16 = 8 bytes
-# Functions: cm848_miosInitChannelPeriod, cm848_scalePwmByPercent, cm848_miosSetChannelValue
+# Functions: mpc555_miosEnablePwmSubmodule, mpc555_miosSetPwmSubmoduleDuty, mpc555_miosSetPwmSubmodulePeriodMicroseconds
 # Usage: param_1 = &MIOS_MPWSMx_PERR; param_1+6 = SCR (enable/config)
 mios_mpwmsm_t,0x00306000,PERR,word,2,Period Register (sets PWM frequency),,verified
 mios_mpwmsm_t,0x00306000,PULR,word,2,Pulse Width Register (sets duty cycle),,verified
@@ -978,19 +975,16 @@ mios_mpwmsm_t,0x00306000,CNTR,word,2,Counter Register (current count value),,ver
 mios_mpwmsm_t,0x00306000,SCR,word,2,Status/Control Register (0x9=enable 0x4ff=period-mode),,verified
 # =============================================================================
 # MIOS Double Action Submodule (MDASM) - 4 x u16 = 8 bytes
-# Functions: cm848_miosChannelEnable, mpc555_miosReadChannelStatus, mpc555_miosSetPwmOutput
+# Functions: mpc555_miosEnableChannelPwm, mpc555_miosSetChannelPwmDuty, mpc555_miosSetChannelPwmPeriod
 # Usage: param_1 = &MIOS_MDASMx_AR; *(param_1+6) = SCRD write (0x9=enable)
 mios_mdasm_t,0x00306058,AR,word,2,A Register (capture/compare value A),,verified
 mios_mdasm_t,0x00306058,BR,word,2,B Register (capture/compare value B),,verified
 mios_mdasm_t,0x00306058,XR,word,2,X Register (extended capture/status value),,verified
 mios_mdasm_t,0x00306058,SCRD,word,2,Status/Control Register D (0x9=enable output),,verified
 # =============================================================================
-# MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes
-# MMCSM6 used as reference timebase for mpc555_miosReadChannelStatus
-mios_mmcsm_t,0x00306020,CNT,word,2,Up-Counter Register (current count),,verified
-mios_mmcsm_t,0x00306020,ML,word,2,Modulus Latch Register (period/reload value),,verified
-mios_mmcsm_t,0x00306020,_pad,word,2,Reserved/unused padding byte,,verified
-mios_mmcsm_t,0x00306020,SCRD,word,2,Status/Control Register D,,verified
+# MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes: type mios_mmcsm_b_t (defined further down)
+# MMCSM6 = mios_mmcsm_cnt at 0x306030 and MMCSM22 = mios_mmcsm22 at 0x3060b0 (submodule n at 0x306000 + 8 x n).
+# The old mios_mmcsm_t at 0x306020 was a fake: this firmware never accesses 0x306020-0x30602f. (PR #48)
 # =============================================================================
 # QADC64 Peripheral Struct - Queued ADC module register layout
 # Applied at QADC64A (0x304800) and QADC64B (0x304C00) bus-interface blocks
@@ -1099,12 +1093,12 @@ tpub_ch14_params_t,0x003045e0,PARAM5,word,2,TPUB Channel 14 parameter 5,,verifie
 tpub_ch14_params_t,0x003045e0,PARAM6,word,2,TPUB Channel 14 parameter 6,,verified
 tpub_ch14_params_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verified
 # =============================================================================
-# MIOS additional channel submodule instances
-# MPWMSM = PWM Submodule (PERR/PULR/CNTR/SCR) - channels 1-3 at +8/+10/+18
-# MMCSM  = Modulus Counter Submodule (CNT/ML/_pad/SCRD) - second instance at +30
-# MDASM  = Double Action Submodule (AR/BR/XR/SCRD) - channels 12/15/0-3
-# MPWMSM5 = fifth PWM submodule at MIOS_base+0xE8
-# Separate type per instance required — ApplyStructures constraint
+# MIOS additional channel submodule instances - MIOS1 submodule n sits at 0x306000 + 8 x n (PR #48)
+# MPWMSM = PWM Submodule (PERR/PULR/CNTR/SCR) - MPWMSM1-3 at +0x08/+0x10/+0x18 and MPWMSM16-19 at +0x80/+0x88/+0x90/+0x98
+#          (16-19 were mislabeled MDASM0-3: cm848_miosPwm16-19* drive them with the same PWM helpers as MPWMSM0-3)
+# MMCSM  = Modulus Counter Submodule (CNT/ML/_pad/SCRD) - MMCSM6 at +0x30 and MMCSM22 at +0xB0 (marker row)
+# MDASM  = Double Action Submodule (AR/BR/XR/SCRD) - MDASM12 / MDASM15 here; MDASM11 and 28-31 use mios_mdasm_t
+# Per-channel types predate the marker-row pattern; they are kept (renamed in place) so decompiler casts stay stable
 # =============================================================================
 mios_mpwmsm1_t,0x00306008,PERR,word,2,MPWMSM1 Period Register,,verified
 mios_mpwmsm1_t,0x00306008,PULR,word,2,MPWMSM1 Pulse Width Register,,verified
@@ -1123,6 +1117,7 @@ mios_mmcsm_b_t,0x00306030,CNT,word,2,Up-Counter Register,,verified
 mios_mmcsm_b_t,0x00306030,ML,word,2,Modulus Latch Register (period/reload value),,verified
 mios_mmcsm_b_t,0x00306030,_pad,word,2,Reserved/unused padding,,verified
 mios_mmcsm_b_t,0x00306030,SCRD,word,2,Status/Control Register D,,verified
+mios_mmcsm_b_t,0x003060b0,,,,MMCSM22 instance - marker only,,verified
 mios_mdasm12_t,0x00306060,AR,word,2,MDASM12 A Register,,verified
 mios_mdasm12_t,0x00306060,BR,word,2,MDASM12 B Register,,verified
 mios_mdasm12_t,0x00306060,XR,word,2,MDASM12 X Register (extended status),,verified
@@ -1131,26 +1126,22 @@ mios_mdasm15_t,0x00306078,AR,word,2,MDASM15 A Register,,verified
 mios_mdasm15_t,0x00306078,BR,word,2,MDASM15 B Register,,verified
 mios_mdasm15_t,0x00306078,XR,word,2,MDASM15 X Register,,verified
 mios_mdasm15_t,0x00306078,SCRD,word,2,MDASM15 Status/Control Register D,,verified
-mios_mdasm0_t,0x00306080,AR,word,2,MDASM0 A Register,,verified
-mios_mdasm0_t,0x00306080,BR,word,2,MDASM0 B Register,,verified
-mios_mdasm0_t,0x00306080,XR,word,2,MDASM0 X Register,,verified
-mios_mdasm0_t,0x00306080,SCRD,word,2,MDASM0 Status/Control Register D,,verified
-mios_mdasm1_t,0x00306088,AR,word,2,MDASM1 A Register,,verified
-mios_mdasm1_t,0x00306088,BR,word,2,MDASM1 B Register,,verified
-mios_mdasm1_t,0x00306088,XR,word,2,MDASM1 X Register,,verified
-mios_mdasm1_t,0x00306088,SCRD,word,2,MDASM1 Status/Control Register D,,verified
-mios_mdasm2_t,0x00306090,AR,word,2,MDASM2 A Register,,verified
-mios_mdasm2_t,0x00306090,BR,word,2,MDASM2 B Register,,verified
-mios_mdasm2_t,0x00306090,XR,word,2,MDASM2 X Register,,verified
-mios_mdasm2_t,0x00306090,SCRD,word,2,MDASM2 Status/Control Register D,,verified
-mios_mdasm3_t,0x00306098,AR,word,2,MDASM3 A Register,,verified
-mios_mdasm3_t,0x00306098,BR,word,2,MDASM3 B Register,,verified
-mios_mdasm3_t,0x00306098,XR,word,2,MDASM3 X Register,,verified
-mios_mdasm3_t,0x00306098,SCRD,word,2,MDASM3 Status/Control Register D,,verified
-mios_mpwmsm5_t,0x003060e8,PERR,word,2,MPWMSM5 Period Register,,verified
-mios_mpwmsm5_t,0x003060e8,PULR,word,2,MPWMSM5 Pulse Width Register,,verified
-mios_mpwmsm5_t,0x003060e8,CNTR,word,2,MPWMSM5 Counter Register,,verified
-mios_mpwmsm5_t,0x003060e8,SCR,word,2,MPWMSM5 Status/Control Register,,verified
+mios_mpwmsm16_t,0x00306080,PERR,word,2,MPWMSM16 Period Register,,verified
+mios_mpwmsm16_t,0x00306080,PULR,word,2,MPWMSM16 Pulse Width Register,,verified
+mios_mpwmsm16_t,0x00306080,CNTR,word,2,MPWMSM16 Counter Register,,verified
+mios_mpwmsm16_t,0x00306080,SCR,word,2,MPWMSM16 Status/Control Register,,verified
+mios_mpwmsm17_t,0x00306088,PERR,word,2,MPWMSM17 Period Register,,verified
+mios_mpwmsm17_t,0x00306088,PULR,word,2,MPWMSM17 Pulse Width Register,,verified
+mios_mpwmsm17_t,0x00306088,CNTR,word,2,MPWMSM17 Counter Register,,verified
+mios_mpwmsm17_t,0x00306088,SCR,word,2,MPWMSM17 Status/Control Register,,verified
+mios_mpwmsm18_t,0x00306090,PERR,word,2,MPWMSM18 Period Register,,verified
+mios_mpwmsm18_t,0x00306090,PULR,word,2,MPWMSM18 Pulse Width Register,,verified
+mios_mpwmsm18_t,0x00306090,CNTR,word,2,MPWMSM18 Counter Register,,verified
+mios_mpwmsm18_t,0x00306090,SCR,word,2,MPWMSM18 Status/Control Register,,verified
+mios_mpwmsm19_t,0x00306098,PERR,word,2,MPWMSM19 Period Register,,verified
+mios_mpwmsm19_t,0x00306098,PULR,word,2,MPWMSM19 Pulse Width Register,,verified
+mios_mpwmsm19_t,0x00306098,CNTR,word,2,MPWMSM19 Counter Register,,verified
+mios_mpwmsm19_t,0x00306098,SCR,word,2,MPWMSM19 Status/Control Register,,verified
 # =============================================================================
 # TouCAN A Message Buffer structs - 16 bytes each (8 x u16)
 # MB area starts at TouCAN_A_base + 0x80; each MB = 16 bytes (spacing confirmed)
@@ -1190,18 +1181,17 @@ qsmcm_sci1_regs_t,0x00305008,SCC1R1,word,2,SCI1 Control Register 1 (interrupt en
 qsmcm_sci1_regs_t,0x00305008,SC1SR,word,2,SCI1 Status Register (TDRE/RDRF/OR/FE/NF/PF),,verified
 qsmcm_sci1_regs_t,0x00305008,SC1DR,word,2,SCI1 Data Register (read=RX data write=TX data),,verified
 # =============================================================================
-# MIOS1 Global Registers - 14 bytes at MIOS_base+0xF0
-# MCPSMSCR: prescaler control; MIOS1SR0/1: interrupt status; MIOS1ER: enable
-# MIOS1RPR: request pending; MIOS1LVL: interrupt level
-# Used by mpc555_updateCapabilityFlags to read MIOS1ER (bit 15 = channel live)
+# MDASM28-31 - MIOS1 submodules 28-31 (base 0x306000 + 8 x n) - instances of mios_mdasm_t
+# cm848_miosChannel28* - cm848_miosChannel31* pass these bases to the generic MDASM driver.
+# SCRD (+6) bit 15 = the pin state: discrete input lines 126 / 127 / 128 read MDA28 / MDA29 / MDA30.
+# MDASM30 SCRD (+6) bit 15 = the MDA30 pin = the ignition key line (1 = key on).
+# This range was mislabeled mios1_global_regs_t (MCPSMSCR / MIOS1SR0 / MIOS1ER / ...): the real
+# MCPSMSCR is 0x306816 (mios1_ext_816) and the MIOS1 interrupt registers are at 0x306c00 (mios1_isr). (PR #48)
 # =============================================================================
-mios1_global_regs_t,0x003060f0,MCPSMSCR,word,2,MIOS Counter Prescaler Status/Control Register,,verified
-mios1_global_regs_t,0x003060f0,MIOS1SR0,word,2,MIOS1 Interrupt Status Register 0,,verified
-mios1_global_regs_t,0x003060f0,MIOS1SR1,word,2,MIOS1 Interrupt Status Register 1,,verified
-mios1_global_regs_t,0x003060f0,MIOS1ER,word,2,MIOS1 Interrupt Enable Register (bit15=ch0 live),,verified
-mios1_global_regs_t,0x003060f0,MIOS1RPR,word,2,MIOS1 Request Pending Register,,verified
-mios1_global_regs_t,0x003060f0,_pad,word,2,Reserved,,verified
-mios1_global_regs_t,0x003060f0,MIOS1LVL,word,2,MIOS1 Interrupt Level Register,,verified
+mios_mdasm_t,0x003060e0,,,,MDASM28 instance - marker only (was MIOS_MIOS1TPCR / MIOS_MPWMSM4_*),,verified
+mios_mdasm_t,0x003060e8,,,,MDASM29 instance - marker only (was mios_mpwmsm5_t),,verified
+mios_mdasm_t,0x003060f0,,,,MDASM30 instance - marker only,,verified
+mios_mdasm_t,0x003060f8,,,,MDASM31 instance - marker only,,verified
 # =============================================================================
 # QSMCM QSPI runtime control registers
 # 0x30501a: QSPI control (bit 15 = SPE/start transfer); 0x30501c = SPCR2 (ENDQP/NEWQP)
@@ -1573,3 +1563,9 @@ j1939_input_signal_descriptor_t,0x0053a2fa,,,,descriptor 13 - marker,,verified
 j1939_input_signal_descriptor_t,0x0053a304,,,,descriptor 14 - marker,,verified
 j1939_input_signal_descriptor_t,0x0053a30e,,,,descriptor 15 - marker,,verified
 j1939_input_signal_descriptor_t,0x0053a318,,,,descriptor 16 - marker,,verified
+output_read_back_fault_bits_t,0x0040c258,cooling_fan,bitfield:1@1,2,"Bit 1 of word 0 = output channel assignment table entry 1: cooling fan read-back fault (P0480 / fault 121)",,verified
+output_read_back_fault_bits_t,0x0040c258,governor_pressure_solenoid,bitfield:1@10,0,"Bit 10 of word 0 = entry 10: governor pressure solenoid read-back fault (P0748 / fault 351)",,verified
+output_read_back_fault_bits_t,0x0040c258,wastegate_solenoid,bitfield:1@11,0,"Bit 11 of word 0 = entry 11: wastegate solenoid read-back fault (P0243 / fault 403)",,verified
+output_read_back_fault_bits_t,0x0040c258,fuel_metering,bitfield:1@4,2,"Bit 4 of word 1 = entry 20: fuel metering read-back fault (P0251 / fault 333)",,verified
+output_read_back_fault_bits_t,0x0040c258,alternator_field,bitfield:1@11,0,"Bit 11 of word 1 = entry 27: alternator field read-back fault (P0622 / fault 396)",,verified
+output_read_back_fault_bits_t,0x0040c258,entries_32_to_47,word,2,"Word 2 = entries 32-47 (no read-back output assigned in this calibration)",,verified

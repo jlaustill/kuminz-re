@@ -22,12 +22,43 @@ be re-verified on the bench before being trusted — see
 | **Vehicle distance (trip + total)**    | PGN 0xFEE0 (VD)            | —                                     | Works today       |
 | **Odometer (ECU-internal, miles)**     | PGN 65248 (= EEPROM `0x08EA` pulses / 8000) | Svc 0x4A at EEPROM `0x010008EA` (u32, 8000/mile) | **CORRECTED 2026-11-13**: the odometer is `0x08EA` (+ trip `0x19A6` + ring `0x19CE`), NOT `0x0BD8`. `0x0BD8` is the stored active-DTC list. `tools/update_odometer.sh` retargeted (PR #46). HP Tuners **zeroes** these. |
 | **Dash odometer (live)**               | *none*                     | Svc 0x4A at RAM `0x0040B471` (u32, 1/8000 mi, from PCI 0x72) | Reads the cluster's own odometer (292,317 mi in the dump) |
-| **ECM run time (key-on seconds)**      | *none*                     | Svc 0x4A at EEPROM `0x01000030` (u32) — firmware-traced via `mpc555_keyOnStateMachine` | **CORRECTED 2026-11-13: HP Tuners does NOT wipe it** (rises monotonically across all four dumps, 177.3M → 179.2M). Nothing to restore; read it for the OCT seed via `tools/read_engine_hours.sh`. Scale still unconfirmed. |
-| **ECM run time (RAM, live)**           | *none*                     | Svc 0x4A at RAM `0x00302012` (`ecm_runtime_accumulator`) | **Needs truck verification** |
-| **Session time (RAM, live)**           | *none*                     | Svc 0x4A at RAM `0x0040B150` (`session_time_counter`, 1.5 Hz) | Bench-verified 2026-04-08 |
-| **Engine run time (engine-running s)** | *none*                     | `0x0111BC00` is **not a physical address** — unreachable via known services | **Blocked** (see dead end below) |
+| **ENGINE HOURS (engine-running)**      | *none*                     | Svc 0x4A at EEPROM `0x01000042` (u32, 0.2 s/count) / live RAM `0x0040A794` | **FOUND 2026-11-15 (PR #48)**: `engine_hour_meter`. HP Tuners does NOT wipe it (9,819.5 h in the last dump). Seed OCT with it via `tools/read_engine_hours.sh`. See the update below. |
+| **ECM run time (key-on seconds)**      | *none*                     | Svc 0x4A at EEPROM `0x01000030` (u32, 0.2 s/count) / live RAM `0x0040A64C` | `key_on_hour_meter`. HP Tuners does NOT wipe it (177.3M → 179.2M counts across the four dumps). Key-on time, so it over-estimates engine hours (9,957.3 h vs 9,819.5 h). Scale now firmware-derived (below). |
+| **ECM run time (RAM, boot ROM copy)**  | *none*                     | RAM `0x00302012` (`ecu_power_state_flags.runtime_counter`) | The boot ROM's copy of EEPROM 0x30 (+1 every 41 PIT ticks while in the boot ROM) |
+| **Session time (RAM, live)**           | *none*                     | Svc 0x4A at RAM `0x0040B150` (`session_time_counter`, 1.5 Hz) | Bench-verified 2026-04-08 (address later disputed - see the correction below) |
+| **Engine run time via CMEGTR**         | *none*                     | `0x0111BC00` is **not a physical address** — unreachable via known services | Not needed any more: EEPROM `0x01000042` is the ECM's engine-run meter |
 | **PGN 0xFEE5 (Engine Hours/Revs)**     | **Does not exist in firmware** | —                                 | Ruled out        |
 
+> **Update 2026-11-15 (PR #48): the two hour meters, their scale, and real engine hours.**
+> - **The task:** `cm848_advanceHourMeters` (flash2 0x506780, was `cm848_mainLoop_step_4`) runs in phase 0 of the
+>   40-phase `main_loop`. `main_loop` runs one phase per PIT tick: it clears the PIT status flag on every pass, and
+>   `PITC` = 4999 gives a 5000-count period, which is 5 ms at the usual 1 MHz PIT clock (4 MHz crystal / 4). So each meter
+>   gains **1 count per 40 × 5 ms = 0.200 s**, and hours = counts / 18000.
+> - **The two meters:**
+>   - `key_on_hour_meter` (RAM 0x40A64C, was `fault_timing_snapshot`): +1 on every call. It is ECM key-on time;
+>     EEPROM copy at **0x30** (`key_on_hour_meter_cal`).
+>   - `engine_hour_meter` (RAM 0x40A794, was `protection_timer_config_a`): +1 only when `cold_start_phase` is not 1
+>     (engine stopped / cranking). It is **engine-running time**; EEPROM copy at **0x42** (`engine_hour_meter_cal`).
+>   - Both are loaded at start (`cm848_loadHourMetersFromEeprom`) and saved at power-down (`cm848_runPowerDownSequence`)
+>     and before a reflash restart (`cm848_restartThroughBootRom`).
+> - **Proof that 0x42 is engine-running time** (the four EEPROM dumps):
+>
+>   | Dump | Key-on 0x30 | Engine-run 0x42 | Key-on delta | Engine-run delta |
+>   |---|---|---|---|---|
+>   | original | 177,300,018 (9,850.0 h) | 175,576,202 (9,754.2 h) | | |
+>   | before HPT | 179,212,321 (9,956.2 h) | 176,750,890 (9,819.5 h) | +106.2 h | +65.3 h |
+>   | after HPT 1 | 179,225,737 (9,957.0 h) | 176,750,900 (9,819.5 h) | +44.7 min | +2 s |
+>   | after HPT 2 | 179,231,674 (9,957.3 h) | 176,750,910 (9,819.5 h) | +19.8 min | +2 s |
+>
+>   The two flash sessions ran with the key on and the engine off, and only the key-on meter moved. The RAM dump (a
+>   key-on session of about 50 min) shows the same thing: the live key-on meter is 14,936 counts past its EEPROM copy,
+>   the engine-run meter 4 counts. 9,819.5 engine hours over about 293,000 mi is about 30 mph on average.
+> - **Consequence:** engine-running hours ARE readable: EEPROM `0x01000042`, or RAM `0x0040A794` live. That is the
+>   value to seed OCT with (`engineHoursTruckLifetime`). `tools/read_engine_hours.sh` now reads it, with 0.200 s/count
+>   as the default. `--calibrate` remains as a check: run the engine for a timed interval and expect 5 counts per second.
+> - **EEPROM 0x9c2** (`load_histogram_start_engine_hours_cal`) holds the engine-run count when the load histogram was
+>   last reset. It also survives HP Tuners.
+>
 > **Correction 2026-11-12 (PR #46, firmware + the four EEPROM dumps):** the ECM's own odometer is **not**
 > EEPROM `0xBD8`. The firmware's distance counters are `lifetime_distance_pulses` at **EEPROM 0x8ea** (u32,
 > speed-sensor pulses, 8000 per mile — the only source of PGN 0xFEE0 total distance), the trip copy at
@@ -230,8 +261,9 @@ S90140.06. Add a `tools/read_odometer.sh` that only does the read.
 
 `mpc555_keyOnStateMachine` @ 0x184 saves to EEPROM in two scenarios:
 1. **Periodic save:** `keyon_duration_counter > 0x2903` (10,499 ticks)
-2. **Key-off save:** `mios_key_off_detection` bit 15 set AND
+2. **Key-off save:** `mios_mdasm30.SCRD` bit 15 set AND
    `eeprom_version_marker.magic == 0x600d`
+   *(2026-11-13, PR #48: bit 15 = 1 means key ON — the reset code waits for it — so this branch is really the key-back-on save before the watchdog reset / restart, and scenario 1 runs while bit 15 reads 0 = key off.)*
 
 Save path: `ecm_runtime_accumulator` → `eeprom_runtime_write_staging`
 (0x003fee2a) → `mpc555_eepromWriteWords(0x3fee2a, &DAT_01000030, 4)`
