@@ -107,7 +107,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 
 | Address | Variable | Scale | Units | Verified |
 |---------|----------|-------|-------|----------|
-| 0x0040BD8E | `boost_pressure_sensor_raw` | × 0.0159 | IN_HG | ✓ |
+| 0x0040BD8E | `boost_pressure_sensor_value` | × 0.0159 | IN_HG | ✓ |
 
 **Verified Working (2026-01-31):**
 - Request: `4A 00 40 BD 8E 02 00 00`

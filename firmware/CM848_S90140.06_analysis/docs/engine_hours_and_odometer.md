@@ -126,7 +126,7 @@ the 1.5 Hz tick:
 |---------|------------------------------|------------------------|
 | `0x0040B150` | `accelerator_pedal_position_in_use` (was `protection_fuel_demand_snapshot`; written by the sensor-value copy; OBD-II PID 0x11) | `session_time_counter` (1.5 Hz) |
 | `0x0040B2C2` | `cold_start_injection_protection_flag` (bit7 protection cfg) | "copy of session_time_counter" |
-| `0x0040BDF6` | `sensor_channel102_raw` | "scatter write pointer" |
+| `0x0040BDF6` | `sensor_channel102_value` | "scatter write pointer" |
 
 If the bench re-confirms a 1.5 Hz tick at `0x0040B150`, the campaign name is wrong
 and the CSV should be corrected; if not, the bench address was approximate.

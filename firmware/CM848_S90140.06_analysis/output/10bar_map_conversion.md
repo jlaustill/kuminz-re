@@ -255,7 +255,7 @@ The first u16 word of each sensor linearization table is the **byte count** of t
           └───────────┬────────────────────────────┬─────┘
                       │                            │
                       ▼                            ▼
-            boost_pressure_sensor_raw      boost_pressure_sensor_filtered
+            boost_pressure_sensor_value      boost_pressure_sensor_default_value
             (0x0040bd8e)                   (0x0040bda6)
                       │
                       ▼

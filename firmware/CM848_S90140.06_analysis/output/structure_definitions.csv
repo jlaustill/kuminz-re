@@ -307,7 +307,8 @@ sensor_channel_state_t,,raw_adc_counts,word,2,QADC result read this pass (sensor
 sensor_channel_state_t,,value,word,2,Engineering value: the table lookup of lookup_input (config default_value while the channel is disabled or faulted) - filtered into sensor_channel_filtered_output[channel],,verified
 sensor_channel_state_t,,debounce_count,word,2,Fault debounce: + debounce_step toward debounce_limit while out of range / - recovery_decrement back in range,,verified
 sensor_channel_state_t,,held_value,word,2,Output while the channel is held (its fuel_demand_feature_flags bit set) - config default_value from the boot pass,,verified
-sensor_channel_state_t,,spare,word,2,Not accessed by the four sensor-channel functions,,verified
+sensor_channel_state_t,,held_value_source_priority,byte,1,Priority of the source that last wrote held_value - the J1939 input layer arbitrates with it (the accelerator pedal channel 13 - cm848_processJ1939AcceleratorPedalPosition); not used by the sensor-channel functions,,verified
+sensor_channel_state_t,,spare,byte,1,Not accessed,,verified
 sensor_channel_state_t,,lookup_input,word,2,Table input: raw x sensor_channel_ratio_scale / the supply channel's filtered output (capped at 0x3ff) or the raw reading for type-0 channels,,verified
 # ema_filter_state_t: exponentialMovingAverage's state - each pass the accumulator moves (65536 - coefficient) / 65536 of the way to the new value
 ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient (a sensor channel's config filter_coefficient): the weight of the previous value in 1/65536 - 0 = no filtering,,verified

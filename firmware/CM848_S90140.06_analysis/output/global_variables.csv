@@ -69,7 +69,7 @@ address,name,type,comment
 0x00057e12,PTR_DAT_00057e12,pointer,
 0x00057e82,PTR_DAT_00057e82,pointer,
 0x00057eca,PTR_DAT_00057eca,pointer,
-0x000592a4,boost_pressure_fixed_reference,word,ROM constant 1132 (61 kPa): subtracted from intake manifold pressure instead of barometric pressure when boost_uses_barometric_pressure_flag is 0 (cm848_calculateBoostPressure / cm848_evaluateProtectionModeFlags) (was oil_pressure_baseline_ref)
+0x000592a2,barometric_pressure_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 3 (barometric pressure - AMB SPN 108); its default_value is the fixed reference cm848_calculateBoostPressure subtracts when it uses no barometer (was the interior label boost_pressure_fixed_reference)
 0x000592b2,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
 0x000592c4,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
 0x000592d6,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel1_init / cm848_sensorChannel1_process
@@ -160,9 +160,7 @@ address,name,type,comment
 0x0005ab24,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel69_init / cm848_sensorChannel69_process
 0x0005ab34,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
 0x0005ab5c,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
-0x0005ab84,cruise_switch_sensor_config,word,Base of the cruise-control switch QADC channel (0x2f/47) config struct; param_1 of cm848_processCruiseSwitchChannel/init; field +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; ROM-sourced so NO _cal
-0x0005ab88,cruise_engage_adc_valid_upper,word,ROM const =976 (0x3d0); upper open/short validity bound for the analog QADC channel checked by governor_cruise_engage_check (asm lhz 4(r4) @0x512edc); ~95% of 10-bit FS; field +4 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
-0x0005ab8a,cruise_engage_adc_valid_lower,word,ROM const =92 (0x5c); lower open/short validity bound (asm lhz 6(r4) @0x512ed0); ~9% of 10-bit FS; field +6 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
+0x0005ab84,cruise_switch_sensor_config,sensor_channel_config_t,Base of the cruise-control switch QADC channel (0x2f/47) config struct; param_1 of cm848_processCruiseSwitchChannel/init; field +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; ROM-sourced so NO _cal
 0x0005abe8,,sensor_channel_config_t,Sensor channel calibration block - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0005abf8,,word[21],Lookup table - x axis of 20 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0005ac22,,word[21],Lookup table - data: 20 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
@@ -250,6 +248,7 @@ address,name,type,comment
 0x0005bbc4,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
 0x0005bbf0,,word[15],Lookup table - y axis of 14 breakpoints after its byte-length word - read by cm848_fuelDemandBlendCalculator
 0x0005bc0e,,word[294],Lookup table - 2-D grid: 14 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_fuelDemandBlendCalculator
+0x0005be66,cold_start_intake_temperature_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - cold_start_intake_temperature_filter_state.coefficient points here
 0x0005be76,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_calibrationGroup5_periodic
 0x0005bea2,,word[7],Lookup table - y axis of 6 breakpoints after its byte-length word - read by cm848_calibrationGroup5_periodic
 0x0005beb0,,word[126],Lookup table - 2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header) - read by cm848_calibrationGroup5_periodic
@@ -271,6 +270,7 @@ address,name,type,comment
 0x0005c29e,fuel_demand_cal_offset,word,
 0x0005c2a0,idle_validation_fault_minimum_vehicle_speed,word,vehicle_speed must exceed this (2560 = 10 mph) for the idle validation fault debounce (P2121 / P2127 / P2128) to advance while the idle position fuel_demand_cal_index is above fuel_demand_cal_offset + 116 - ROM constant so no _cal (was fuel_demand_smoothing_temp_threshold_cal)
 0x0005c2a4,fuel_demand_rate_limit_debounce_cal,word,Default debounce count for the fuel-demand rate limiter; per-mode increment reaching it latches a protection safety bit (safety_bits_1 0x4000/0x8000 or safety_bits_2 0x10)
+0x0005c2f2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbd2e.coefficient points here
 0x0005c306,timing_limit_lower,word,
 0x0005c30c,timing_limit_upper,word,
 0x0005c340,j1939_input_source_priority,word,ROM constant (0): priority level the J1939 input layer writes switches and inputs at
@@ -297,6 +297,7 @@ address,name,type,comment
 0x0005c3b6,etc1_config_entry_t.conflict_0005c3b4.source_address_filter,,
 0x0005c47c,j1939_dm_feature_mode,word,
 0x0005c47e,cal_fuel_operation_mode_1_en,word,
+0x0005c48e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcbdc.coefficient points here
 0x0005c4b6,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_updateSpeedLimitFromCoolant
 0x0005c4c8,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_updateSpeedLimitFromCoolant
 0x0005c4da,,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_calculateProtectionSpeedLimits
@@ -987,9 +988,9 @@ address,name,type,comment
 0x003fa00c,scheduler_task_stat_ptr_b,pointer,
 0x003fa010,scheduler_task_stat_ptr,pointer,
 0x003fa014,sensor_channel0_interp_state,word,interp current_index for sensor channel 0 config lookup
-0x003fa016,sensor_channel0_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 0 (was DAT)
+0x003fa016,sensor_channel0_filter_state,ema_filter_state_t,config pointer for sensor channel 0 (was DAT) (was sensor_channel0_filter_config_ptr)
 0x003fa01e,sensor_channel1_interp_state,word,interp current_index for sensor channel 1 config lookup
-0x003fa020,sensor_channel1_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 1 (was PTR_DAT)
+0x003fa020,sensor_channel1_filter_state,ema_filter_state_t,config pointer for sensor channel 1 (was PTR_DAT) (was sensor_channel1_filter_config_ptr)
 0x003fa028,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fa02a,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel2_init / cm848_sensorChannel2_process (was PTR_DAT_003fa02a)
 0x003fa032,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
@@ -1021,15 +1022,14 @@ address,name,type,comment
 0x003fa0a8,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel14_init / cm848_sensorChannel14_process (was PTR_DAT_003fa0a8)
 0x003fa0b0,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fa0b2,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel15_init / cm848_sensorChannel15_process (was PTR_DAT_003fa0b2)
-0x003fa0bc,sensor_channel16_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 16 (was PTR_DAT)
+0x003fa0bc,sensor_channel16_filter_state,ema_filter_state_t,config pointer for sensor channel 16 (was PTR_DAT) (was sensor_channel16_filter_config_ptr)
 0x003fa0c4,diag_state_group1_a_state,word,
 0x003fa0c6,diag_state_group1_b_state,word,
 0x003fa0c8,diag_state_group1_c_state,word,
 0x003fa0ca,diag_state_group1_d_state,word,
 0x003fa0cc,governor_demand_accumulator,dword,
 0x003fa0d0,governor_mode_code_snapshot,word,
-0x003fa0d2,PTR_DAT_003fa0d2,pointer,
-0x003fa0d6,cold_start_intake_temp_shifted,dword,
+0x003fa0d2,cold_start_intake_temperature_filter_state,ema_filter_state_t,
 0x003fa0da,cold_start_timer_a_active_flag,word,
 0x003fa0dc,cold_start_timer_b_active_flag,word,
 0x003fa0e2,fuel_trim_pid_ema_snapshot,word,
@@ -1087,20 +1087,17 @@ address,name,type,comment
 0x003fa1b2,diag_state_group5_c_state,word,
 0x003fa1b4,diag_state_group5_d_state,word,
 0x003fa5a0,BYTE_003fa5a0,byte,
-0x003fa5ba,throttle_filter_coeff_table_pointer,pointer,
-0x003fa5be,throttle_filter_coeff_table_index,dword,
+0x003fa5ba,throttle_filter_state,ema_filter_state_t,(was throttle_filter_coeff_table_pointer)
 0x003fa5c2,throttle_filter_coeff_table_b_pointer,pointer,
 0x003fa5c6,throttle_filter_coeff_table_b_index,dword,
 0x003fa5ca,throttle_filter_coeff_data_pointer,pointer,
 0x003fa5ce,throttle_filter_coeff_data_index,dword,
 0x003fa5d2,diag_state_group6_a_state,word,
 0x003fa5d4,diag_state_group6_b_state,word,
-0x003fa5d6,boost_modifier_table_pointer,pointer,
-0x003fa5da,boost_modifier_table_index,word,
+0x003fa5d6,boost_modifier_filter_state,ema_filter_state_t,(was boost_modifier_table_pointer)
 0x003fa5de,,word,Lookup cache: the last axis segment offset (2 x index) kept by lookupTableInterpolation
 0x003fa5e0,,word,Lookup cache: the last axis segment offset (2 x index) kept by lookupTableInterpolation
-0x003fa5e2,fuel_blend_rpm_base_table_pointer,pointer,
-0x003fa5e6,fuel_blend_rpm_base_table_index,word,
+0x003fa5e2,fuel_blend_rpm_base_filter_state,ema_filter_state_t,(was fuel_blend_rpm_base_table_pointer)
 0x003fa5ea,PTR_DAT_003fa5ea,pointer,
 0x003fa5f2,diag_state_group7_a_state,word,
 0x003fa5f4,diag_state_group7_b_state,word,
@@ -1196,8 +1193,7 @@ address,name,type,comment
 0x003fa77e,governor_speed_ramp_state,word,
 0x003fa780,governor_speed_integral_b,dword,
 0x003fa784,boost_pressure_error_prev_snapshot,word,
-0x003fa786,boost_pressure_ema_state_pointer,pointer,
-0x003fa78a,governor_speed_range_init_working,word,
+0x003fa786,boost_pressure_filter_state,ema_filter_state_t,(was boost_pressure_ema_state_pointer)
 0x003fa78e,governor_operating_mode_prev_snapshot,word,
 0x003fa790,j1939_handler_param_table_pointer,pointer,
 0x003fa794,j1939_handler_param_table_index,word,
@@ -1311,8 +1307,7 @@ address,name,type,comment
 0x003fa87e,rpm_governor_offset_table_b_dims.col_count,,
 0x003fa880,fuel_mode_ema_output,word,
 0x003fa882,fuel_mode_ema_state,word,
-0x003fa884,fuel_mode_ema_min_ptr,pointer,
-0x003fa888,fuel_demand_ema_index,word,
+0x003fa884,fuel_mode_filter_state,ema_filter_state_t,(was fuel_mode_ema_min_ptr)
 0x003fa88c,fuel_ema_slot_state_1,word,
 0x003fa88e,fuel_ema_slot_state_2,word,
 0x003fa890,timing_compensation_accumulator,dword,
@@ -1613,8 +1608,7 @@ address,name,type,comment
 0x003fafc6,governor_pid_interp_state_a,word,
 0x003fafc8,governor_pid_interp_state_b,word,
 0x003fafca,governor_pid_interp_state_c,word,
-0x003fafcc,protection_smoothing_state_ptr,pointer,
-0x003fafd0,protection_rpm_filter_working,dword,
+0x003fafcc,protection_smoothing_filter_state,ema_filter_state_t,(was protection_smoothing_state_ptr)
 0x003fafd4,protection_control_state_flags,dword,
 0x003fafd8,governor_rpm_transition_flag,word,
 0x003fafda,governor_rpm_reference_integrator,dword,
@@ -1650,8 +1644,7 @@ address,name,type,comment
 0x003fb030,throttle_speed_rate_lower,word,
 0x003fb032,throttle_speed_rate_upper,word,
 0x003fb034,governor_output_prev_working,word,
-0x003fb036,governor_derivative_gain_working_ptr,pointer,
-0x003fb03a,governor_fuel_integral_c,word,
+0x003fb036,governor_derivative_gain_filter_state,ema_filter_state_t,(was governor_derivative_gain_working_ptr)
 0x003fb03e,governor_ema_filter_state_ptr,pointer,
 0x003fb042,governor_speed_error_filter_accum,dword,
 0x003fb046,governor_speed_error_filtered_snapshot,word,
@@ -1709,8 +1702,7 @@ address,name,type,comment
 0x003fb0b0,protection_confirm_counter_a_snapshot,word,
 0x003fb0b2,protection_ema_delta_working,word,
 0x003fb0b4,protection_ema_exceeded_flag,word,
-0x003fb0b6,fault_status_filter_coeff_ptr,pointer,
-0x003fb0ba,protection_load_filtered_shifted,dword,
+0x003fb0b6,load_protection_filter_state,ema_filter_state_t,(was fault_status_filter_coeff_ptr)
 0x003fb0be,protection_load_filter_active_flag,word,
 0x003fb0c0,protection_condition_b_active_flag,word,
 0x003fb0c2,protection_confirm_active_flag,word,
@@ -1724,8 +1716,7 @@ address,name,type,comment
 0x003fb0d2,fault_status_filter_coeff_b_ptr,pointer,
 0x003fb0d6,protection_ema_output_shifted,dword,
 0x003fb138,fuel_demand_limit_working,word,
-0x003fb170,transmission_vehicle_speed_filter_state,pointer,EMA state for transmission_vehicle_speed_filtered: pointer to transmission_vehicle_speed_filter_coefficient (set by cm848_initProtectionSystem) followed by the accumulator (was protection_load_filter_state_a_ptr)
-0x003fb174,transmission_vehicle_speed_filter_accumulator,dword,16.16 accumulator of the transmission_vehicle_speed_filtered EMA (second word of transmission_vehicle_speed_filter_state) (was protection_load_filter_accum_a)
+0x003fb170,transmission_vehicle_speed_filter_state,ema_filter_state_t,EMA state for transmission_vehicle_speed_filtered: pointer to transmission_vehicle_speed_filter_coefficient (set by cm848_initProtectionSystem) followed by the accumulator (was protection_load_filter_state_a_ptr)
 0x003fb178,protection_mode_changed_flag,word,
 0x003fb17a,protection_filter_stage_0_state,word,
 0x003fb17c,protection_filter_stage_1_state,word,
@@ -1751,8 +1742,7 @@ address,name,type,comment
 0x003fb1e8,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fb1ea,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel69_init / cm848_sensorChannel69_process (was PTR_DAT_003fb1ea)
 0x003fb1f2,cruise_switch_interp_index,word,Interpolation cursor for the cruise-switch resistor-ladder lookup (table_interp_args_t.current_index field); param_3 of cm848_process/initCruiseSwitchChannel; written sth r,0(r5) @0x501be0 (update resets =2) and read/written as args->current_index inside lookupTableInterpolation (0x55ef4). NOT a full table_interp_args_t - lookupTableInterpolation takes the X/Y tables + input value as separate regs r4-r7, only current_index comes from this struct. Working RAM (ROM->RAM window) so no _cal
-0x003fb1f4,cruise_switch_filter_coeff_ptr,pointer,EMA smoothing-coefficient pointer for the cruise-switch ADC filter; param_7 of cm848_process/initCruiseSwitchChannel and param_2[0] of exponentialMovingAverage (0x56594) where *(short*)*ptr is the alpha coefficient; +0 of the channel's 8-byte EMA state. Renamed from PTR_DAT_003fb1f4 (type pointer was already correct)
-0x003fb1f8,cruise_switch_filter_accum,dword,EMA accumulator (running filtered value in <<16 fixed-point) for the cruise-switch ADC filter; param_2[1] of exponentialMovingAverage, written *(uint*)(state+4) @ sensorChannelTypeB_configInit; +4 of the channel's EMA state. Working RAM (ROM->RAM window) so no _cal
+0x003fb1f4,cruise_switch_filter_state,ema_filter_state_t,EMA smoothing-coefficient pointer for the cruise-switch ADC filter; param_7 of cm848_process/initCruiseSwitchChannel and param_2[0] of exponentialMovingAverage (0x56594) where *(short*)*ptr is the alpha coefficient; +0 of the channel's 8-byte EMA state. Renamed from PTR_DAT_003fb1f4 (type pointer was already correct) (was cruise_switch_filter_coeff_ptr)
 0x003fb1fc,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fb1fe,,ema_filter_state_t,EMA filter state - used by cm848_initSensorLookupTable3 / cm848_processSensorLookupTable3 (was PTR_DAT_003fb1fe)
 0x003fb206,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
@@ -1950,8 +1940,7 @@ address,name,type,comment
 0x003fb5c1,crank_timing_init_state_b,word,
 0x003fb5c3,crank_timing_init_state_c,word,
 0x003fb5c5,crank_pattern_valid_flag,byte,
-0x003fb5c6,crank_filter_state_ptr,pointer,
-0x003fb5ca,speed_setpoint_active_flag,dword,
+0x003fb5c6,crank_filter_state,ema_filter_state_t,(was crank_filter_state_ptr)
 0x003fb5ce,crank_position_valid_counter,word,
 0x003fb5d0,governor_speed_error_input,word,
 0x003fb5d2,governor_fuel_integral_high_word,word,
@@ -2010,8 +1999,7 @@ address,name,type,comment
 0x003fb68b,cam_sync_filter_accum_init,dword,
 0x003fb68f,cam_sync_fault_filter_ptr,pointer,
 0x003fb693,cam_sync_speed_filter_accum,word,
-0x003fb697,cam_sync_speed_filter_pointer,pointer,
-0x003fb69b,cam_sync_fault_filter_accum,word,
+0x003fb697,cam_sync_speed_filter_state,ema_filter_state_t,(was cam_sync_speed_filter_pointer)
 0x003fb69f,cam_sync_filter_state_pointer,pointer,
 0x003fb6a3,cam_sync_speed_filter_state_accum,word,
 0x003fb6a7,cam_sync_fuel_filter_state_pointer,pointer,
@@ -2019,8 +2007,7 @@ address,name,type,comment
 0x003fb6ac,cam_sync_fuel_filter_accum+1,,
 0x003fb6af,cam_sync_rate_filter_state_pointer,pointer,
 0x003fb6b3,cam_sync_rate_filter_accum,word,
-0x003fb6b7,cam_sync_rpm_ema_state_pointer,pointer,
-0x003fb6bb,cam_sync_rpm_ema_accum,word,
+0x003fb6b7,cam_sync_rpm_filter_state,ema_filter_state_t,(was cam_sync_rpm_ema_state_pointer)
 0x003fb6bf,fuel_metering_base_command_derivative_term,word,Derivative (lead) term added to the fuel metering base command (+/-4095; from fuel_metering_base_command_derivative_filter). Was cam_sync_protection_state_prev
 0x003fb6c1,governor_zero_speed_count,word,
 0x003fb6c3,engine_sync_phase_counter,word,
@@ -2122,7 +2109,7 @@ address,name,type,comment
 0x003fb9c0,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fb9c2,,ema_filter_state_t,EMA filter state - used by cm848_protection_init_configBundle / cm848_protection_update_configBundle (was PTR_DAT_003fb9c2)
 0x003fb9e2,PTR_DAT_003fb9e2,pointer,
-0x003fb9ea,boost_pressure_timing_ema_coeff_ptr,ema_filter_state_t,EMA coeff ptr for boost pressure timing filter
+0x003fb9ea,boost_pressure_timing_filter_state,ema_filter_state_t,EMA coeff ptr for boost pressure timing filter (was boost_pressure_timing_ema_coeff_ptr)
 0x003fb9f6,,ema_filter_state_t,EMA filter state - used by hpcr_fuelFinal_exponentialAverage (was PTR_DAT_003fb9f6)
 0x003fbcbe,PTR_DAT_003fbcbe,pointer,
 0x003fbcde,PTR_PTR_003fbcde,pointer,
@@ -2827,6 +2814,7 @@ address,name,type,comment
 0x003ffcae,fuel_demand_delta_scale_cal,word,
 0x003ffcb0,fuel_flow_rate_divisor_cal,word,
 0x003ffcb2,fuel_flow_rate_gain_cal,word,
+0x003ffcb4,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa19c.coefficient points here
 0x003ffcb6,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
 0x003ffcca,,word[10],Lookup table - data: 9 values (one per axis breakpoint) after a byte-length word - read by cm848_boostCompensatedRpmGovernor
 0x003ffcde,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
@@ -2844,7 +2832,7 @@ address,name,type,comment
 0x004002b6,governor_trim_output_cal,word[10],
 0x004002ca,battery_voltage_axis_cal,word[6],
 0x004002d6,battery_voltage_gain_output_cal,word[6],
-0x004002e2,throttle_filter_coeff_table,byte,
+0x004002e2,throttle_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - throttle_filter_state.coefficient points here (was throttle_filter_coeff_table)
 0x004002e4,throttle_fuel_trim_lower_cal,word,
 0x004002e6,throttle_fuel_trim_upper_cal,word,
 0x004002e8,throttle_conversion_scale_cal,word,
@@ -2862,7 +2850,7 @@ address,name,type,comment
 0x0040065e,throttle_rpm_yend_cal,word[324],
 0x004008e6,throttle_trim_axis_cal,word[19],
 0x0040090c,throttle_trim_output_cal,word[19],
-0x00400932,boost_modifier_table_cal,byte,
+0x00400932,boost_modifier_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - boost_modifier_filter_state.coefficient points here (was boost_modifier_table_cal)
 0x00400934,fuel_quantity_ema_upper_limit_cal,word,
 0x00400936,boost_load_lower_limit_cal,word,
 0x00400938,boost_rpm_scale_factor_cal,word,
@@ -2878,7 +2866,7 @@ address,name,type,comment
 0x0040096c,boost_rpm_scale_output_cal,word[17],
 0x0040098e,boost_load_axis_cal,word[17],
 0x004009b0,boost_load_output_cal,word[17],
-0x004009d2,fuel_blend_rpm_base_table_cal,byte,
+0x004009d2,fuel_blend_rpm_base_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - fuel_blend_rpm_base_filter_state.coefficient points here (was fuel_blend_rpm_base_table_cal)
 0x004009d4,boost_fuel_blend_weight_a_cal,word,
 0x004009d8,boost_fuel_blend_weight_b_cal,word,
 0x004009da,fuel_blend_rpm_axis_cal,word[20],
@@ -2930,6 +2918,7 @@ address,name,type,comment
 0x0040510c,boost_control_fuel_upper_threshold_cal,word,
 0x0040510e,boost_control_fuel_lower_threshold_cal,word,
 0x00405110,fuel_demand_correction_offset_cal,word,
+0x00405112,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa5fe.coefficient points here
 0x00405114,fuel_timing_load_axis_cal,word[17],
 0x00405136,boost_fuel_threshold_offset_values_cal,word[17],
 0x00405158,fuel_demand_rpm_axis_b_cal,word[17],
@@ -3028,6 +3017,7 @@ address,name,type,comment
 0x004067aa,boost_fuel_correction_input_threshold_cal,word,
 0x004067ac,governor_speed_rate_b_decay_cal,word,
 0x004067ae,governor_speed_rate_b_step_cal,word,
+0x004067b2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa758.coefficient points here
 0x004067b6,boost_fuel_input_offset_cal,word,
 0x004067b8,boost_correction_lower_clamp_cal,word,
 0x004067ba,fuel_timing_error_offset_cal,word,
@@ -3038,6 +3028,8 @@ address,name,type,comment
 0x004067c6,boost_correction_ema_scale_cal,word,
 0x004067c8,boost_load_calc_offset_cal,word,
 0x004067ca,boost_load_ema_scale_cal,word,
+0x004067cc,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa760.coefficient points here
+0x004067ce,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa768.coefficient points here
 0x004067d0,boost_fuel_demand_gain_cal,word,
 0x004067d2,boost_fuel_input_limit_cal,word,
 0x004067d4,boost_correction_threshold_cal,word,
@@ -3261,7 +3253,7 @@ address,name,type,comment
 0x0040719a,governor_blend_factor_cal,word,
 0x0040719c,governor_speed_gain_scale_cal,word,
 0x0040719e,protection_rpm_hysteresis_cal,word,
-0x004071a0,protection_smoothing_state_cal,byte,
+0x004071a0,protection_smoothing_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - protection_smoothing_filter_state.coefficient points here (was protection_smoothing_state_cal)
 0x004071a2,protection_rpm_monitor_mode_cal,word,
 0x004071ac,protection_rpm_axis_cal,word[11],
 0x004071c2,protection_rpm_values_cal,word[11],
@@ -3271,6 +3263,7 @@ address,name,type,comment
 0x00407264,high_idle_override_reset_enable_cal,word,
 0x00407266,torque_limit_multi_source_enable_cal,word,
 0x0040729c,boost_fuel_correction_gain_cal,word,
+0x004072a0,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fb026.coefficient points here
 0x004072a2,injection_timing_temp_corr_axis1_cal,word[35],
 0x004072e8,injection_timing_temp_corr_ystart_cal,word[16],
 0x00407308,injection_timing_temp_corr_yend_cal,word[510],
@@ -3346,6 +3339,7 @@ address,name,type,comment
 0x004077b2,governor_rpm_monitor_threshold,word,
 0x004077b4,governor_demand_rate_a_decay_step_cal,word,
 0x004077b6,governor_demand_rate_a_step_cal,word,
+0x004077ba,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fccf6.coefficient points here
 0x004077de,protection_ema_base_offset_cal,word,
 0x004077e2,protection_load_filter_offset_cal,word,
 0x004077e4,protection_load_filtered_override_cal,word,
@@ -3353,7 +3347,7 @@ address,name,type,comment
 0x004077e8,protection_ema_output_override_cal,word,
 0x004077ea,protection_confirm_limit_a_cal,word,
 0x004077ec,protection_confirm_limit_b_cal,word,
-0x004077ee,fault_status_filter_coeff_cal,byte,
+0x004077ee,load_protection_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - load_protection_filter_state.coefficient points here (was fault_status_filter_coeff_cal)
 0x004077f8,overdrive_downshift_maximum_output_speed,word,A 4-3 downshift (overdrive solenoid off) and the cruise downshift request happen only below this output speed (24800 = 3100 rpm - about 74 mph) (was protection_load_check_lower_threshold_cal) (Medium confidence)
 0x0040780c,protection_overtemp_fuel_check_enable_cal,word,
 0x0040780e,protection_timer_status_code_b_cal,word,
@@ -3656,6 +3650,7 @@ address,name,type,comment
 0x00408724,cruise_steady_debounce_count,word,debounce-count limit in governor_cruise_speedError_integrate; when the steady-cycle counter DAT_003fcdae reaches it the speed-error integral resets. ROM-initialized cal so no _cal
 0x00408726,cruise_ratio_steady_threshold,word,steady threshold in governor_cruise_speedError_integrate; |cruise_rpm_ratio_ema change| below this counts as steady. ROM-initialized cal so no _cal
 0x00408728,cruise_speed_error_integral_limit,word,magnitude limit for cruise_speed_error_integral; |integral| >= this -> cruise_control_denied_status=0xb inhibit. ROM-initialized cal so no _cal
+0x0040872a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd96.coefficient points here
 0x0040872c,cruise_rpm_ratio_max,word,upper bound of the cruise_rpm_ratio_ema deadband; ratio above this -> cruise_control_denied_status=0xa inhibit (max stored at lower addr than min). ROM-initialized cal so no _cal
 0x0040872e,cruise_rpm_ratio_min,word,lower bound of the cruise_rpm_ratio_ema deadband; ratio below this -> cruise_control_denied_status=0xa inhibit. ROM-initialized cal so no _cal
 0x00408730,cruise_target_rpm_min,word,lower bound of the target-rpm window for cruise fuel-correction; target_rpm below this -> cruise_control_denied_status=9 inhibit. ROM-initialized cal so no _cal
@@ -3783,6 +3778,7 @@ address,name,type,comment
 0x004088c6,cooling_fan_intake_request_hold_passes,word,Reload of the intake hold count - 200 in the RAM dump
 0x004088c8,radiator_fan_speed_short_period_value,word,Fan speed reported when the period is shorter than radiator_fan_speed_short_period_limit - 48000 (6000 rpm) in the RAM dump
 0x004088ca,radiator_fan_speed_long_period_value,word,Fan speed reported when the period is longer than radiator_fan_speed_long_period_limit - 0 in the RAM dump
+0x004088cc,radiator_fan_speed_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - radiator_fan_speed_filter_state.coefficient points here
 0x004088ce,radiator_fan_speed_long_period_limit,dword,x pulses / prescaler: a longer accumulated period reads as radiator_fan_speed_long_period_value - 1200000 in the RAM dump
 0x004088d2,radiator_fan_speed_short_period_limit,dword,x pulses / prescaler: a shorter accumulated period reads as radiator_fan_speed_short_period_value - 10000 in the RAM dump
 0x004088d6,radiator_fan_speed_pulse_timeout_passes,word,Reload value of radiator_fan_speed_pulse_timeout_count - 48 in the RAM dump
@@ -3906,7 +3902,9 @@ address,name,type,comment
 0x00408de2,fuel_demand_override_min_cal,word,
 0x00408de6,governor_fuel_demand_mode_b_offset_cal,word,
 0x00408de8,cruise_speed_min_threshold,word,read-only lower threshold on cruise setpoint; below it cruise override resets (lhz 2x in governorOverrideSpeedControl)
+0x00408dfa,governor_override_speed_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - governor_override_speed_filter_state.coefficient points here
 0x00408e6e,fuel_demand_corrected_step_cal,word,
+0x00408e70,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fd03c.coefficient points here
 0x00408e86,cruise_speed_setpoint_adj_offset_cal,word,
 0x00408e88,protection_fuel_rate_ramp_param_cal,word,
 0x00408e8a,protection_fuel_rate_step_b_param_cal,word,
@@ -4002,7 +4000,7 @@ address,name,type,comment
 0x00408f68,crank_period_scale_cal,dword,
 0x00408f6c,crank_tooth_rpm_divisor_cal,dword,
 0x00408f70,speed_setpoint_minimum,word,
-0x00408f72,crank_filter_state_cal,byte,
+0x00408f72,crank_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - crank_filter_state.coefficient points here (was crank_filter_state_cal)
 0x00408f74,crank_period_tooth_count_threshold_cal,dword,
 0x00408f78,crank_teeth_per_rev,word,
 0x00408f7e,crank_speed_setpoint_threshold_cal,word,
@@ -4115,7 +4113,7 @@ address,name,type,comment
 0x00409142,engine_sync_cold_start_speed_cal,word,
 0x00409144,fuel_pressure_governor_sensor_fault_command,word,Demand in FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT (2865 = 70 % of the 4095 command). Was cam_sync_ref_count_state40_cal
 0x00409146,engine_sync_cold_start_enable2_cal,word,
-0x00409148,cam_sync_rpm_ema_state_cal,byte,
+0x00409148,cam_sync_rpm_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - cam_sync_rpm_filter_state.coefficient points here (was cam_sync_rpm_ema_state_cal)
 0x0040914a,engine_sync_phase_counter_max_cal,word,
 0x0040914c,engine_sync_state_b,word,
 0x0040914e,cam_sync_rate_filter_state_cal,byte,
@@ -4257,8 +4255,7 @@ address,name,type,comment
 0x0040a05e,fuel_correction_output_snapshot,word,
 0x0040a062,sensor_channel0_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel0_init / cm848_sensorChannel0_process
 0x0040a06e,sensor_channel1_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel1_init / cm848_sensorChannel1_process
-0x0040a07a,sensor_channel2_ram,byte,
-0x0040a07c,sensor_channel2_raw_value,word,
+0x0040a07a,sensor_channel2_ram,sensor_channel_state_t,
 0x0040a086,sensor_channel3_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel3_boostPressureInit / cm848_sensorChannel3_boostPressureProcess
 0x0040a092,sensor_channel4_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel4_init / cm848_sensorChannel4_process
 0x0040a0aa,sensor_channel5_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel5_init / cm848_sensorChannel5_process
@@ -4270,8 +4267,7 @@ address,name,type,comment
 0x0040a0f2,sensor_channel10_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
 0x0040a0fe,sensor_channel11_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel11_init / cm848_sensorChannel11_process
 0x0040a10a,sensor_channel12_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel12_init / cm848_sensorChannel12_process
-0x0040a116,sensor_channel13_ram,byte,
-0x0040a11e,j1939_accelerator_pedal_source_priority,byte,Set to j1939_input_source_priority when the J1939 pedal writes; cm848_fuelDemandFinalCalculation skips the rate-limit / override stage while it is above that level (was fuel_demand_feature_threshold)
+0x0040a116,sensor_channel13_ram,sensor_channel_state_t,
 0x0040a122,sensor_channel14_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel14_init / cm848_sensorChannel14_process
 0x0040a12e,,sensor_channel_state_t,Sensor channel RAM state - used by cm848_protection_init_configBundle / cm848_protection_update_configBundle
 0x0040a13a,sensor_channel15_ram,sensor_channel_state_t,Sensor channel RAM state - used by cm848_sensorChannel15_init / cm848_sensorChannel15_process
@@ -4337,8 +4333,7 @@ address,name,type,comment
 0x0040a1ee,fuel_pid_shadow_coeff1,word,
 0x0040a1f0,fuel_trim_speed_floor,word,
 0x0040a1f2,fuel_trim_speed_active_flag,word,
-0x0040a1f4,fuel_trim_speed_ema_state_ptr,pointer,
-0x0040a1f8,fuel_trim_speed_high_word,dword,
+0x0040a1f4,fuel_trim_speed_filter_state,ema_filter_state_t,(was fuel_trim_speed_ema_state_ptr)
 0x0040a1fc,fuel_demand_pid_coeffs,dword,
 0x0040a200,fuel_demand_integrator,word,
 0x0040a202,engine_rpm_delta,word,
@@ -5400,7 +5395,7 @@ address,name,type,comment
 0x0040b2ec,cooling_fan_intake_temperature_filter,pointer,Filter state for cooling_fan_intake_temperature_filtered (was PTR_DAT_0040b2ec)
 0x0040b2f0,cooling_fan_intake_temperature_filter_state,dword,State of cooling_fan_intake_temperature_filter (zeroed at init)
 0x0040b2f6,radiator_fan_speed_unfiltered,word,Fan speed before the moving average (0.125 rpm) - cm848_measureRadiatorFanSpeed
-0x0040b302,radiator_fan_speed_filter_pointer,ema_filter_state_t,Filter state for the radiator_fan_speed moving average (set to 0x4088cc by cm848_initRadiatorFanSpeedMeasurement) (was tpu_rpm_ema_coeff_ptr)
+0x0040b302,radiator_fan_speed_filter_state,ema_filter_state_t,Filter state for the radiator_fan_speed moving average (set to 0x4088cc by cm848_initRadiatorFanSpeedMeasurement) (was tpu_rpm_ema_coeff_ptr) (was radiator_fan_speed_filter_pointer)
 0x0040b30a,engine_load_input_b,word,
 0x0040b31c,engine_load_normalized_prev,word,
 0x0040b31e,safety_fuel_blend_output,word,
@@ -5616,8 +5611,7 @@ address,name,type,comment
 0x0040b5a8,vehicle_speed_unfiltered,word,Vehicle speed before the EMA (1/256 mph) - from the speed-sensor period or (J1939 automatic) the output shaft speed (was fuel_temp_trim_raw)
 0x0040b5aa,vehicle_speed_conversion_numerator,dword,Period-to-speed numerator set by cm848_initVehicleSpeedCalculation (was fuel_temp_trim_numerator)
 0x0040b5ae,vehicle_speed_sensor_scaled_period,dword,vehicle_speed_sensor_period x vehicle_speed_sensor_period_scale_cal (was fuel_temp_trim_product_prev)
-0x0040b5b2,vehicle_speed_filter_state,dword,EMA state word 0: pointer to vehicle_speed_filter_coefficient (was fuel_temp_trim_filter_state)
-0x0040b5b6,vehicle_speed_filter_accumulator,dword,EMA state word 1: 16.16 accumulator (was fuel_temp_trim_init_flag)
+0x0040b5b2,vehicle_speed_filter_state,ema_filter_state_t,EMA state word 0: pointer to vehicle_speed_filter_coefficient (was fuel_temp_trim_filter_state)
 0x0040b5ba,park_neutral_exit_torque_limit_phase,word,Handshake of the park/neutral exit torque limit: 2 idle (init) / 0 limit applied by cm848_processTorqueLimitConfig / 1 limit just released - cm848_updateParkNeutralExitTorqueLimitWindow then pulses 0x40b0fd bit 4 and sets 2 (was fuel_temp_trim_active_flag)
 0x0040b5bc,cruise_speed_limit_working,word,working cruise/governor speed limit = min(cruise_speed_setpoint_default, temp-trim-reduced value); compared with cruise_speed_high_limit/_setpoint_adjusted/_command; feeds governor_override_threshold (77316). Renamed from fuel_pressure_threshold_working (mislabeled - a speed)
 0x0040b5be,cruise_speed_limit_prev,word,prior snapshot of cruise_speed_limit_working (cm848_calculateTorqueCurveValue:39602). Renamed from fuel_pressure_threshold_prev (mislabeled - a speed)
@@ -5668,7 +5662,7 @@ address,name,type,comment
 0x0040b678,governor_fuel_demand_working,word,
 0x0040b67a,governor_fuel_demand_upper,word,
 0x0040b67c,governor_pid_integral_snapshot,word,
-0x0040b682,governor_override_speed_ema_coeff_ptr,ema_filter_state_t,EMA coeff pointer for governor override speed
+0x0040b682,governor_override_speed_filter_state,ema_filter_state_t,EMA coeff pointer for governor override speed (was governor_override_speed_ema_coeff_ptr)
 0x0040b68e,cruise_control_state,CRUISE_CONTROL_STATE,cruise control action/state (was fuel_demand_speed_error - NOT a speed error; it is the CRUISE_CONTROL_STATE selector for cm848_cruiseSpeedCommandStateMachine). Written each cycle in cm848_cruiseControlPeriodicUpdate
 0x0040b698,cruise_speed_reference_a,word,
 0x0040b69a,cruise_speed_setpoint_b,word,
@@ -5686,8 +5680,7 @@ address,name,type,comment
 0x0040b6e2,fuel_flow_rpm_numerator,word,
 0x0040b6e4,cruise_speed_target_working,word,
 0x0040b6e6,cruise_set_speed_valid_flag,word,1 when the working cruise set speed is within cruise_speed_min_cal to cruise_speed_high_limit - set in cm848_validateFuelRateTarget and cm848_cruiseSpeedCommandStateMachine - gates CRUISE_STANDBY and CRUISE_RESUME while CRUISE_OFF clears it (was governor_fuel_enable_state) (Medium confidence)
-0x0040b6e8,engine_temp_protection_ema_coeff_ptr,pointer,EMA coeff pointer for engine temp protection input
-0x0040b6ec,engine_temp_protection_input_q16,dword,Q16 fixed-point (value << 16) of engine_temp_protection_input (or default DAT_0005c936); published in protectionTimeoutControl / initGovernorJ1939Bypass; write-only in ROM (consumed by diagnostics/CLIP)
+0x0040b6e8,engine_temperature_protection_filter_state,ema_filter_state_t,EMA coeff pointer for engine temp protection input (was engine_temp_protection_ema_coeff_ptr)
 0x0040b6f0,governor_bypass_threshold_low,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd918) / 25600, clamped to DAT_0005c932; in protectionTimeoutControl, engine_temp_protection_input < this -> governor_j1939_bypass_flag = 1 (full bypass)
 0x0040b6f2,governor_bypass_threshold_high,word,per-cycle published threshold = ((DAT_00408b78 + 25600) * DAT_003fd900) / 25600, clamped to DAT_0005c932; engine_temp_protection_input between low and this -> bypass_flag = 2 (partial), above -> 3 (none)
 0x0040b6f4,drivetrain_ratio_raw,word,Engine speed over vehicle / output-shaft speed x 2048 before the EMA; 0x7ffd = not computable; computed per drivetrain type (was engine_temp_protection_input_raw)
@@ -5906,30 +5899,30 @@ address,name,type,comment
 0x0040bcde,cruise_switch_adc_override,word,Substitute cruise-switch ADC value (chan 0x2f/47) used by governor_cruise_engage_check when diag_cam_sync_config_flags & 0x8000 (diagnostic input-override bit) is set instead of the live QADC read (asm lhz @0x512e8c); working RAM so no _cal
 0x0040bcfe,cam_sync_position_fault_input,word,
 0x0040bd4e,torque_limit_setpoint_working,word,
-0x0040bd82,sensor_channel3_raw,word,
-0x0040bd84,sensor_channel105_raw,word,
-0x0040bd86,sensor_channel9_pressure_raw,word,
+0x0040bd82,sensor_channel3_value,word,(was sensor_channel3_raw)
+0x0040bd84,sensor_channel105_value,word,(was sensor_channel105_raw)
+0x0040bd86,sensor_channel9_pressure_value,word,(was sensor_channel9_pressure_raw)
 0x0040bd88,,word,Sensor channel output word - used by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
-0x0040bd8a,sensor_channel109_raw,word,
-0x0040bd8c,sensor_channel10_raw,word,
-0x0040bd8e,boost_pressure_sensor_raw,word,
-0x0040bd90,sensor_channel20_raw,word,
-0x0040bd92,sensor_channel69_raw,word,
-0x0040bd94,sensor_channel108_raw,word,
-0x0040bd96,governor_speed_input_raw,word,
-0x0040bd9a,sensor_channel3_filtered,word,
-0x0040bd9c,sensor_channel20_filtered,word,
-0x0040bd9e,sensor_channel9_pressure_filtered,word,
-0x0040bda0,governor_speed_input_filtered,word,
-0x0040bda2,fuel_timing_sensor_raw,word,
-0x0040bda4,fuel_timing_sensor_filtered,word,
-0x0040bda6,boost_pressure_sensor_filtered,word,
-0x0040bda8,sensor_channel105_filtered,word,
-0x0040bdaa,sensor_channel10_filtered,word,
-0x0040bdac,sensor_channel108_filtered,word,
+0x0040bd8a,sensor_channel109_value,word,(was sensor_channel109_raw)
+0x0040bd8c,sensor_channel10_value,word,(was sensor_channel10_raw)
+0x0040bd8e,boost_pressure_sensor_value,word,(was boost_pressure_sensor_raw)
+0x0040bd90,sensor_channel20_value,word,(was sensor_channel20_raw)
+0x0040bd92,sensor_channel69_value,word,(was sensor_channel69_raw)
+0x0040bd94,sensor_channel108_value,word,(was sensor_channel108_raw)
+0x0040bd96,governor_speed_input_value,word,(was governor_speed_input_raw)
+0x0040bd9a,sensor_channel3_default_value,word,(was sensor_channel3_filtered)
+0x0040bd9c,sensor_channel20_default_value,word,(was sensor_channel20_filtered)
+0x0040bd9e,sensor_channel9_pressure_default_value,word,(was sensor_channel9_pressure_filtered)
+0x0040bda0,governor_speed_input_default_value,word,(was governor_speed_input_filtered)
+0x0040bda2,fuel_timing_sensor_value,word,(was fuel_timing_sensor_raw)
+0x0040bda4,fuel_timing_sensor_default_value,word,(was fuel_timing_sensor_filtered)
+0x0040bda6,boost_pressure_sensor_default_value,word,(was boost_pressure_sensor_filtered)
+0x0040bda8,sensor_channel105_default_value,word,(was sensor_channel105_filtered)
+0x0040bdaa,sensor_channel10_default_value,word,(was sensor_channel10_filtered)
+0x0040bdac,sensor_channel108_default_value,word,(was sensor_channel108_filtered)
 0x0040bdae,,word,Sensor channel output word - used by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
-0x0040bdb0,sensor_channel109_filtered,word,
-0x0040bdb2,sensor_channel69_filtered,word,
+0x0040bdb0,sensor_channel109_default_value,word,(was sensor_channel109_filtered)
+0x0040bdb2,sensor_channel69_default_value,word,(was sensor_channel69_filtered)
 0x0040bdb4,protection_derate_fallback_speed,word,fixed fallback governor speed target the load-protection derate forces governor_speed_tracking to when active (RAM copy of ROM cal DAT_00059656+2 = 0x2400 ~1152 RPM); read only in cm848_calculateDiagnosticStatusBits - was misnamed governor_speed_fault_target
 0x0040bdb6,protection_channel_filtered_output,word,live filtered output of protection sensor channel 0x65 (mirror of sensor_channel_filtered_output[0x65] at 0x40baf0 written each cycle by cm848_protection_update_configBundle); the load-deviation reference for the load-protection cluster - NOT a cal/offset
 0x0040bdb8,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis4 / sensorChannelTypeB_update_axis4
@@ -5937,38 +5930,38 @@ address,name,type,comment
 0x0040bdbc,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0040bdbe,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0040bdc4,governor_speed_reference_raw,word,
-0x0040bdd0,sensor_channel7_raw,word,
-0x0040bdd2,sensor_channel7_filtered,word,
-0x0040bdd4,sensor_channel71_raw,word,
-0x0040bdd6,sensor_channel71_filtered,word,
+0x0040bdd0,sensor_channel7_value,word,(was sensor_channel7_raw)
+0x0040bdd2,sensor_channel7_default_value,word,(was sensor_channel7_filtered)
+0x0040bdd4,sensor_channel71_value,word,(was sensor_channel71_raw)
+0x0040bdd6,sensor_channel71_default_value,word,(was sensor_channel71_filtered)
 0x0040bdd8,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
 0x0040bdda,,word,Sensor channel output word - used by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
-0x0040bddc,sensor_channel8_raw,word,
-0x0040bdde,sensor_channel8_filtered,word,
-0x0040bde0,sensor_channel13_raw,word,
-0x0040bde2,sensor_channel13_filtered,word,
-0x0040bde4,sensor_channel42_raw,word,
-0x0040bde6,sensor_channel42_filtered,word,
-0x0040bdec,sensor_channel21_raw,word,
-0x0040bdee,sensor_channel21_filtered,word,
-0x0040bdf0,sensor_channel15_raw,word,
-0x0040bdf2,sensor_channel15_filtered,word,
-0x0040bdf4,sensor_channel102_filtered,word,
-0x0040bdf6,sensor_channel102_raw,word,
+0x0040bddc,sensor_channel8_value,word,(was sensor_channel8_raw)
+0x0040bdde,sensor_channel8_default_value,word,(was sensor_channel8_filtered)
+0x0040bde0,sensor_channel13_value,word,(was sensor_channel13_raw)
+0x0040bde2,sensor_channel13_default_value,word,(was sensor_channel13_filtered)
+0x0040bde4,sensor_channel42_value,word,(was sensor_channel42_raw)
+0x0040bde6,sensor_channel42_default_value,word,(was sensor_channel42_filtered)
+0x0040bdec,sensor_channel21_value,word,(was sensor_channel21_raw)
+0x0040bdee,sensor_channel21_default_value,word,(was sensor_channel21_filtered)
+0x0040bdf0,sensor_channel15_value,word,(was sensor_channel15_raw)
+0x0040bdf2,sensor_channel15_default_value,word,(was sensor_channel15_filtered)
+0x0040bdf4,sensor_channel102_default_value,word,(was sensor_channel102_filtered)
+0x0040bdf6,sensor_channel102_value,word,(was sensor_channel102_raw)
 0x0040bdf8,,word,Sensor channel output word - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
 0x0040bdfa,,word,Sensor channel output word - used by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
-0x0040bdfc,sensor_channel54_raw,word,
-0x0040bdfe,sensor_channel54_filtered,word,
-0x0040be00,sensor_channel55_raw,word,
-0x0040be02,sensor_channel55_filtered,word,
-0x0040be04,sensor_channel76_raw,word,
-0x0040be06,sensor_channel76_filtered,word,
-0x0040be08,cruise_switch_adc_raw,word,Raw QADC reading of the cruise-control switch input (channel 0x2f/47; resistor-ladder steering-wheel switches); written by cm848_processCruiseSwitchChannel; working RAM so no _cal
-0x0040be0a,cruise_switch_adc_filtered,word,EMA-filtered cruise-control switch ADC value (channel 0x2f/47); written by cm848_processCruiseSwitchChannel; working RAM so no _cal
-0x0040be0c,sensor_channel97_raw,word,
-0x0040be0e,sensor_channel97_filtered,word,
-0x0040be10,sensor_channel98_raw,word,
-0x0040be12,sensor_channel98_filtered,word,
+0x0040bdfc,sensor_channel54_value,word,(was sensor_channel54_raw)
+0x0040bdfe,sensor_channel54_default_value,word,(was sensor_channel54_filtered)
+0x0040be00,sensor_channel55_value,word,(was sensor_channel55_raw)
+0x0040be02,sensor_channel55_default_value,word,(was sensor_channel55_filtered)
+0x0040be04,sensor_channel76_value,word,(was sensor_channel76_raw)
+0x0040be06,sensor_channel76_default_value,word,(was sensor_channel76_filtered)
+0x0040be08,cruise_switch_value,word,Raw QADC reading of the cruise-control switch input (channel 0x2f/47; resistor-ladder steering-wheel switches); written by cm848_processCruiseSwitchChannel; working RAM so no _cal (was cruise_switch_adc_raw)
+0x0040be0a,cruise_switch_default_value,word,EMA-filtered cruise-control switch ADC value (channel 0x2f/47); written by cm848_processCruiseSwitchChannel; working RAM so no _cal (was cruise_switch_adc_filtered)
+0x0040be0c,sensor_channel97_value,word,(was sensor_channel97_raw)
+0x0040be0e,sensor_channel97_default_value,word,(was sensor_channel97_filtered)
+0x0040be10,sensor_channel98_value,word,(was sensor_channel98_raw)
+0x0040be12,sensor_channel98_default_value,word,(was sensor_channel98_filtered)
 0x0040be14,sensor_channel3_fault_status,word,
 0x0040be16,sensor_channel20_fault_status,word,
 0x0040be18,sensor_channel7_fault_status,word,
@@ -6163,6 +6156,7 @@ address,name,type,comment
 0x0040b6ca,governor_cruise_speed_error_net,word,net cruise speed error clamped +/-0xa00; feeds torque adj
 0x0040b6de,governor_cruise_fuel_demand_delta,word,cruise fuel demand feedforward delta clamped +/-0xb80
 0x00408dfc,governor_cruise_fuel_demand_setpoint,word,cruise fuel-demand deadband center (read-only working RAM)
+0x00408e0a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fd00a.coefficient points here
 0x00408e0c,cruise_speed_offset_default,word,default cruise speed offset (read-only)
 0x00408e68,governor_cruise_fuel_demand_min,word,cruise fuel-demand floor (read-only)
 0x0040afe8,egr_fuel_pressure_ratio,word,EGR/boost pressure ratio; drives integrator direction
@@ -6178,7 +6172,6 @@ address,name,type,comment
 0x004090f5,injection_timing_tooth_base_index,byte,base tooth index at injection window start (read-only)
 0x0040b856,injection_timing_table_offset,word,injection timing table offset added to per-cyl base angle
 0x0040b877,injection_tpu_timing_mode,byte,TPU timing mode code ORed into injector channel params (2/0x12)
-0x0040b1a0,fuel_level_unfiltered,word,Fuel level from the channel 68 table in 1/2.55 percent (1 empty / 254 full) before filtering = state[1] of the channel state block (184 default on a sensor fault); feeds the 20-count stability test / the power-up check / the fast filter; RAM dump 252 (was calibBlock1_adaptive_trim_working)
 0x0040b32c,fuel_level_power_up_check_pending_flag,word,1 from the first stable fuel level sample until cm848_checkFuelLevelChangeAtPowerUp has compared it with the stored level; blocks the fast filter meanwhile (was calibBlock1_eeprom_write_pending_flag)
 0x0040b52e,protection_fuel_demand_limit_ramp,word,protection fuel-demand ramp-down ceiling
 0x0040b530,protection_fuel_demand_debounce_count,word,protection fuel-demand limiting debounce counter
@@ -6245,7 +6238,6 @@ address,name,type,comment
 0x0040aaa6,j1939_accelerator_position_error_fallback_flag,byte,1 = the J1939 pedal position reports error (0xFE) while the low idle switch is valid - the off-idle flag then follows the switch; read by cm848_transitionEngineOperatingMode (was emission_feature_engage_flag)
 0x0040b9bc,fuel_correction_timing_target,word,target injection timing offset for protection fuel correction
 0x0040b5a0,governor_pressure_sensor_zero_offset,word,Governor pressure sensor zero: governor_pressure_sensor_filtered captured while it is inside the clamp window (else the clamp value) by cm848_throttlePosition_clamp_update; 1852 in the RAM dump (was protection_throttle_position_measured) (Medium confidence)
-0x0040a11c,j1939_accelerator_pedal_position,word,Accelerator pedal position 1 from EEC2 SPN 91 (raw x 16 / 10 = 0.25 %/bit - the local pedal scale); written only by cm848_processJ1939AcceleratorPedalPosition - NO reader in S90140.06 (was emission_fuel_demand_output)
 0x0040a5f4,cold_start_phase26_fuel_mode_flag,word,cold-start phase 2.6 fuel mode flag
 0x0040a600,injection_timing_cylinder_check_flags,word,per-cylinder injection timing shortfall bitmask
 0x0040a6b6,governor_speed_sync_stable_flag,word,governor speed sync stable gate for diag counter
@@ -6258,7 +6250,7 @@ address,name,type,comment
 0x0040a786,governor_fuel_derate_active,word,main fault-derate-active flag
 0x0040a78a,governor_fuel_derate_j1939_latch,byte,J1939 derate trigger latch
 0x0040a790,governor_fuel_derate_state,word,med derate state 0/1/3 status word
-0x0040b19e,fuel_level_sensor_adc_counts,word,Fuel level sensor (sensor channel 68) raw ADC counts 0-1023 = state[0] of the channel state block (state[1] = fuel_level_unfiltered); low voltage = full (ADC 65 -> 254 / 720 -> 1); RAM dump 70 (was calibBlock1_sensor_value)
+0x0040b19e,fuel_level_sensor_channel_state,sensor_channel_state_t,Fuel level sensor (sensor channel 68) raw ADC counts 0-1023 = state[0] of the channel state block (state[1] = fuel_level_unfiltered); low voltage = full (ADC 65 -> 254 / 720 -> 1); RAM dump 70 (was calibBlock1_sensor_value) (was fuel_level_sensor_adc_counts)
 0x0040b32e,fuel_level_sensor_high_voltage_recovery_counter,word,Counts fuel level samples with the raw ADC outside 766-1023 up to 38 then clears fuel_level_sensor_high_voltage_flag; zeroed by a sample in the band (was calibBlock1_outOfRange_debounce_counter)
 0x0040b330,fuel_level_sensor_high_voltage_flag,word,1 once the raw fuel level ADC has stayed in 766-1023 (beyond the empty end of the table) for 320 samples - cleared after 38 samples outside; makes the substitution force the broadcast byte to 255 (was calibBlock1_inRange_flag)
 0x0040b332,fuel_level_sensor_high_voltage_debounce_counter,word,Counts fuel level samples with the raw ADC in 766-1023 up to 320 (then sets fuel_level_sensor_high_voltage_flag); zeroed by a sample outside the band; nonzero blocks the power-up jump and both filters (was calibBlock1_inRange_debounce_counter)
@@ -6494,6 +6486,7 @@ address,name,type,comment
 0x003fef7a,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel8_init / cm848_sensorChannel8_process
 0x003fef8a,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
 0x003fefa2,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
+0x003fefba,accelerator_pedal_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 13 (accelerator pedal); its default_value is the J1939 pedal fallback position cm848_processJ1939AcceleratorPedalPosition loads on a timeout (was the interior label j1939_accelerator_pedal_default_position)
 0x003fbdc4,j1939_tp_bam_session_active,byte,J1939 BAM broadcast condition flag (DA=SA=0xFF)
 0x003fbdc5,j1939_multiframe_tx_active,byte,bulk multi-frame TX session active
 0x003fbdc9,j1939_multiframe_tx_total_packets,byte,total packet count for bulk TX
@@ -6843,7 +6836,7 @@ address,name,type,comment
 0x0040ba54,thermostat_monitor_coolant_rise_needed,word,170 F target minus the start coolant temperature (1/64 deg F - clamped at 0) - scales thermostat_monitor_maximum_fuel_to_pass (was cssc_coolant_temp_deficit)
 0x0040ba4a,thermostat_monitor_start_fuel_total,word,injected_fuel_running_total x 6400 / 557211712 captured when the thermostat monitor starts - the base of thermostat_monitor_fuel_since_start (was cssc_start_time_snapshot)
 0x0040ba5e,cssc_initial_warmup_budget,word,initial CSSC warmup budget (denominator)
-0x0040a09e,sensor_channelGeneric_raw,word,generic sensor channel raw ADC value
+0x0040a09e,sensor_channelGeneric_ram,sensor_channel_state_t,generic sensor channel raw ADC value (was sensor_channelGeneric_raw)
 0x0040a1a2,boost_fuel_pressure_offset_lookup,word,pressure offset for boost fuel scale divisor
 0x0040a1a4,boost_fuel_timing_target,word,boost fuel timing target (dualAxis lookup)
 0x0040a1a8,boost_fuel_rpm_blend_scale,word,RPM-indexed scale in boost-throttle fuel blend
@@ -7169,13 +7162,14 @@ address,name,type,comment
 0x003fd412,j1939_periodic_queue1_current_tick,word,current tick for J1939 diag queue 1
 0x003fd47e,cooling_fan_read_back_check_divider,word,Divide-by-2 counter for entry 1 (cooling fan) in cm848_updateOutputReadBackFaultBits: that entry's read-feedback slot is called on every 2nd monitor pass (1 -> skip / 2 -> check and reset to 0) - working RAM just below the EEPROM mirror (was protection_timer_b_tick_divider)
 0x003fdb46,transmission_temperature_qadc_channel_cal,word,EEPROM 0x6c4 = qadc_channel_index_table[103]: QADC dispatch index of the transmission temperature sensor (91 = QADC-B result 26); cm848_selectTransmissionTemperatureInUse reads that raw result for its stability check (was torque_limit_setpoint_qadc_channel_index)
-0x003fefbc,j1939_accelerator_pedal_default_position,word,Position used while the J1939 pedal is suspended / lost / invalid; never written by code (was emission_fuel_demand_default_output)
 0x003fefca,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel16_init / cm848_sensorChannel16_process
 0x003fefda,,sensor_channel_config_t,Sensor channel calibration block - used by cm848_sensorChannel16_init / cm848_sensorChannel16_process
 0x003ff067,fuel_boost_final_fault_gate_enable,byte,ROM fault-gate bitmask (fuel boost final)
 0x003ff06b,fuel_timing_demand_fault_gate_enable,byte,ROM fault-gate bitmask (fuel timing demand)
 0x003ff06f,fuel_boost_protect_fault_gate_enable,byte,ROM fault-gate bitmask (boost protection)
 0x003ff073,fuel_pressure_phase_fault_gate_enable,byte,ROM fault-gate bitmask (fuel pressure phase)
+0x003ff07a,boost_pressure_timing_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - boost_pressure_timing_filter_state.coefficient points here
+0x003ff07e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fb9f6.coefficient points here
 0x003ff080,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
 0x003ff0a2,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
 0x003ff0c4,,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by hpcr_fuelFinal_exponentialAverage
@@ -7187,6 +7181,7 @@ address,name,type,comment
 0x003ff404,,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
 0x003ff426,,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
 0x003ff6f8,egr_pressure_integrator_upper_limit,word,ROM upper clamp for EGR pressure integrator
+0x003ff6fa,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcc08.coefficient points here
 0x003fa150,throttle_load_gain_interp_state,word,interp state base (throttle load gain)
 0x003fa6ca,fuel_demand_load_axis_base_interp_state,word,interp state base (fuel demand load axis)
 0x003fa6d6,fuel_load_correction_timing_interp_state,word,interp state base (fuel load correction timing)
@@ -7291,6 +7286,7 @@ address,name,type,comment
 0x0040af70,fuel_boost_map_correction_weighted,word,MAP correction x blend EMA weight
 0x004065be,engine_load_ramp_rate_lower,word,ROM negative rate limit for engine_load_input_value
 0x004065c0,engine_load_ramp_rate_upper,word,ROM positive rate limit for engine_load_input_value
+0x004065c2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa70a.coefficient points here
 0x00409aac,cam_timing_speed_window_debounce_max,word,ROM cap for cam-timing speed-window debounce
 0x00409ad0,cam_timing_speed_window_reference_count_threshold,word,ROM reference-count threshold for speed window
 0x0040b8e0,cam_timing_refB_sync_latch,word,latched fuel_pressure_feedback_filtered at sync-B event
@@ -7348,12 +7344,15 @@ address,name,type,comment
 0x0040675e,boost_synthetic_ema_boost_pressure_coef,word,ROM boost-pressure coef in synthetic boost EMA
 0x00406760,boost_synthetic_ema_rpm_coef,word,ROM RPM coef in synthetic boost EMA
 0x00406762,boost_synthetic_ema_map_coef,word,ROM MAP coef in synthetic boost EMA
+0x00406766,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbce2.coefficient points here
 0x0040676c,boost_target_load_gain,word,ROM load gain in boost target pressure polynomial
+0x00406770,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbcea.coefficient points here
 0x0040a67e,boost_target_fuel_normalized_ratio,word,boost target normalized by fuel qty
 0x00406776,throttle_trim_predictor_output_min,word,ROM lower clamp for throttle trim predictor output
 0x00406778,,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by sensor_throttleTrim_ema_faultProcess
 0x0040678c,,word[10],Lookup table - data: 9 values (one per axis breakpoint) after a byte-length word - read by sensor_throttleTrim_ema_faultProcess
 0x004067e0,governor_speed_stability_diag_count_decrement,word,ROM decay step for stability diag counter
+0x004067e2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbd10.coefficient points here
 0x004071de,fuel_demand_override_active_min,word,ROM minimum override trigger count
 0x004071e0,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_blendBoostAndThrottleFuelDemand / fuel_demand_blend_compensate / fuel_demand_boost_compensate (+2 more)
 0x0040720c,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_blendBoostAndThrottleFuelDemand / fuel_demand_blend_compensate / fuel_demand_boost_compensate (+2 more)
@@ -7361,8 +7360,11 @@ address,name,type,comment
 0x0040724e,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_blendBoostAndThrottleFuelDemand
 0x00407772,protection_speedTracking_speed_error_threshold,word,ROM threshold for speed-error-over flag
 0x00407778,protection_speedTracking_speed_error_ramp_decay,word,ROM decay step for speed-error ramp
+0x0040777a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcce8.coefficient points here
 0x0040b044,protection_speedTracking_ramp_step_max_reached_flag,word,speed-tracking ramp step max-reached flag
 0x004077c0,governor_b_timing_deviation_max,word,ROM ceiling for governor_b_timing_deviation_normalized
+0x004077d4,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd18.coefficient points here
+0x004077d6,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd20.coefficient points here
 0x004077da,governor_b_boost_demand_minimum,word,ROM floor/fallback for governor-B boost demand
 0x0040b082,governor_b_rpm_squared_ema,word,EMA of governor RPM-squared weighting
 0x004077fe,protection_overtemp_entry_debounce_count_max,word,ROM cap for overtemp entry debounce
@@ -7442,11 +7444,14 @@ address,name,type,comment
 0x0040c19c,cooling_fan_period_microseconds,dword,Last PWM period sent to the cooling fan (table entry 1; the per-entry period cache at 0x40c198 + 4 x entry - it ends where output_read_back_fault_bits starts) in microseconds - written by cm848_applyCoolingFanDuty (1000000 / cooling_fan_pwm_frequency_hz) (was cold_start_fuel_handler_period_us)
 0x00408986,low_oil_pressure_check_minimum_rpm,word,The low-oil-pressure check runs only above this engine speed (4000 = 500 rpm) (was governor_temp_diag_rpm_enable_threshold)
 0x00408988,oil_pressure_switch_stuck_count_limit,word,Limit for oil_pressure_switch_stuck_count (was governor_temp_diag_zero_rpm_count_max)
+0x0040898a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fceb4.coefficient points here
 0x00408990,oil_pressure_switch_fault_running_count_limit,word,Limit for oil_pressure_switch_fault_running_count (was governor_temp_diag_cold_start_j1939_count_max)
 0x0040b53a,oil_pressure_model_unfiltered,word,RPM-indexed oil pressure model (table 0x3fceae) before the EMA - used when oil_pressure_switch_only_cal is set (was governor_temp_fuel_qty_table_raw)
 0x00408a52,engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed,word,1280 = 5 mph: below this vehicle speed EMA a ratio deviation EMA above 8960 (35 percent) sets the engine to vehicle speed ratio invalid flag (0x40b547) - an EMA above this clears it (was fuel_temp_trim_comp_ema_fault_threshold)
 0x00408a56,engine_to_vehicle_speed_ratio_high_maximum_vehicle_speed,word,11264 = 44 mph: the high engine to vehicle speed ratio flag (0x40b546 - probably low range on trucks without the output shaft sensor) is set only below this vehicle speed EMA and cleared above it (was fuel_temp_trim_comp_ema_clear_threshold)
+0x00408a58,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcebe.coefficient points here
 0x00408a5a,engine_to_vehicle_speed_ratio_stable_maximum_deviation,word,5120 = 20 percent (1/256 percent): a ratio deviation EMA below this counts as a stable engine to vehicle speed ratio - it clears the invalid flag (0x40b547) and allows the high ratio flag (0x40b546) (was fuel_temp_trim_deviation_ema_clear_threshold)
+0x00408a5e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcec6.coefficient points here
 0x00408b1c,protection_throttle_integral_period,word,ROM reload for throttle integral period counter
 0x00408b98,calibration_id_byte5,byte,EEPROM-loaded calibration ID byte 5 (J1939 component ID)
 0x00408d4a,governor_datavalid_load_overload_limit,word,ROM load limit for datavalid overload flag
@@ -7513,7 +7518,6 @@ address,name,type,comment
 0x0040a02c,fault_match_debounce_threshold_std,word,ROM fault-match debounce threshold (standard channels)
 0x0040a02e,fault_active_recovery_threshold_std,word,ROM fault-active recovery threshold (standard channels)
 0x0040a036,fault_active_recovery_threshold_ch19_20,word,ROM fault-active recovery threshold (channels 19/20)
-0x0040a0a0,sensor_channelGeneric_filtered,word,generic sensor channel filtered output
 0x0040b64a,governor_speed_compensation_initial_ref,word,governor speed compensation initial reference
 0x0040a18e,fuel_correction_temp_band_lower,word,lower temp band for fuel correction blend
 0x0040a190,fuel_correction_temp_band_upper,word,upper temp band for fuel correction blend
@@ -7523,8 +7527,8 @@ address,name,type,comment
 0x0040ad56,j1939_data_log_sa_whitelist,byte,J1939 data-log SA whitelist array base (4 bytes)
 0x0040afe2,smoke_limit_mode_egr_status_combined,word,smoke limit mode combined with EGR smoke active bit
 0x0040bdc6,egr_smoke_speed_demand_working,word,EGR smoke-limit fallback speed demand
-0x0040bdc0,sensor_channel28_raw,word,sensor channel 28 raw value
-0x0040bdc2,sensor_channel28_filtered,word,sensor channel 28 filtered value
+0x0040bdc0,sensor_channel28_value,word,sensor channel 28 raw value (was sensor_channel28_raw)
+0x0040bdc2,sensor_channel28_default_value,word,sensor channel 28 filtered value (was sensor_channel28_filtered)
 0x0040be34,sensor_channel28_fault_status,word,sensor channel 28 fault status
 0x0040b300,radiator_fan_speed_history_enable,byte,Set by cm848_initRadiatorFanSpeedMeasurement: with type code 5100 each measurement shifts radiator_fan_speed into radiator_fan_speed_history_* (was tpu_rpm_cam_sync_update_enable)
 0x0040b9ac,radiator_fan_speed_history_oldest,word,Oldest of three radiator_fan_speed samples (was rpm_camSync_window_oldest)
@@ -7587,6 +7591,7 @@ address,name,type,comment
 0x00408968,mil_blink_end_tick,word,Boot copy of ROM 0x6e582: end of the engine-off MIL blink window (on 5 / off 5 passes); 50 is below mil_engine_off_start_tick (150) so the blink never runs in this build (was DAT_00408968)
 0x0040896a,mil_blink_inhibit_fault_pending_value,dword,Boot copy of ROM 0x6e584 (0xFFFFB41E): fault_pending_flags value that stops the engine-off MIL blink; fault_pending_flags holds monitor-incomplete bits (bit 8 = OBD PID 1 misfire incomplete) so this is probably the readiness flash (was DAT_0040896a) (Medium confidence)
 0x00408a60,engine_to_vehicle_speed_ratio_high_threshold,word,ROM constant 2400 = 300 rpm per mph (8 counts per rpm per mph): engine_to_vehicle_speed_ratio_filtered above it below 44 mph with a stable ratio and fuel demand above 8 sets engine_to_vehicle_speed_ratio_high_flag (was DAT_00408a60) (Medium confidence)
+0x00408a64,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcece.coefficient points here
 0x00408b62,vehicle_speed_pulse_timeout_reload,word,Pulse timeout reload value (25)
 0x00408d56,transmission_temperature_check_minimum_engine_off_time,word,200 (minutes inferred): cm848_checkTransmissionTemperatureSensorPerformance can fail only when engine_off_time_at_key_on is at least this or the PCI 0x42 time is missing or flagged stuck (fault word 19 bit 4) (was DAT_00408d56) (Medium confidence)
 0x00409ef6,rail_pressure_check_minimum_engine_off_time,word,480 (8 h if minutes): hpcr_checkRailPressureSensorBeforeStart aborts (reason 1) when the raw PCI 0x42 engine-off time is below this (was DAT_00409ef6) (Medium confidence)

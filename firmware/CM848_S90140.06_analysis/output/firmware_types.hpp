@@ -1367,7 +1367,8 @@ struct sensor_channel_state_t {
     uint16_t value;  /* Engineering value: the table lookup of lookup_input (config default_value while the channel is disabled or faulted) - filtered into sensor_channel_filtered_output[channel] */
     uint16_t debounce_count;  /* Fault debounce: + debounce_step toward debounce_limit while out of range / - recovery_decrement back in range */
     uint16_t held_value;  /* Output while the channel is held (its fuel_demand_feature_flags bit set) - config default_value from the boot pass */
-    uint16_t spare;  /* Not accessed by the four sensor-channel functions */
+    uint8_t held_value_source_priority;  /* Priority of the source that last wrote held_value - the J1939 input layer arbitrates with it (the accelerator pedal channel 13 - cm848_processJ1939AcceleratorPedalPosition); not used by the sensor-channel functions */
+    uint8_t spare;  /* Not accessed */
     uint16_t lookup_input;  /* Table input: raw x sensor_channel_ratio_scale / the supply channel's filtered output (capped at 0x3ff) or the raw reading for type-0 channels */
 };
 
