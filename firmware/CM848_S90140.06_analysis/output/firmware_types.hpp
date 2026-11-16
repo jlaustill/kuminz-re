@@ -1810,23 +1810,23 @@ struct protection_threshold_set_t {
 };
 
 struct fault_entry_t {
-    uint32_t timing_snapshot;  /* Fuel timing advance value at capture time */
+    uint32_t key_on_hour_meter;  /* Fuel timing advance value at capture time */
     uint8_t fault_code;  /* Fault code ID (0xAA = empty/available slot) */
     uint16_t vehicle_speed;  /* Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim) */
     uint16_t target_rpm;  /* Target engine RPM at fault time */
-    uint16_t sensor_scale_1;  /* Sensor scale factor 1 */
+    uint16_t diagnostic_fault_flags_a;  /* Sensor scale factor 1 */
     uint16_t engine_load_at_current_speed;  /* engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status) */
     uint16_t accelerator_pedal_position;  /* accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high) */
     uint16_t intake_manifold_pressure;  /* intake_manifold_pressure_in_use at capture (was protection_low) */
     uint16_t coolant_temperature;  /* coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1) */
     uint16_t intake_manifold_temperature;  /* intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2) */
     uint16_t oil_pressure;  /* oil_pressure_sensor_filtered at capture (was timing_param_3) */
-    uint16_t sensor_scale_2;  /* Sensor scale factor 2 */
+    uint16_t diagnostic_fault_flags_b;  /* Sensor scale factor 2 */
     uint32_t reserved;  /* Reserved gap (not written by set/capture functions) */
-    uint8_t pressure_adj;  /* Pressure fuel adjustment byte */
+    uint8_t governor_mode_code;  /* Pressure fuel adjustment byte */
     uint16_t battery_voltage;  /* Battery voltage reading at fault time */
-    uint16_t load_throttle;  /* Processed load/throttle value */
-    uint16_t torque_limit;  /* Torque limit factor at fault time */
+    uint16_t fuel_demand_computed;  /* Processed load/throttle value */
+    uint16_t main_injection_timing;  /* Torque limit factor at fault time */
     uint16_t fuel_metering_feedback;  /* Diagnostic data word 1 */
     uint8_t fuel_metering_feedback_fault;  /* Diagnostic data byte 3 */
     uint8_t fuel_pressure_diagnostic;  /* Diagnostic data byte 4 */
