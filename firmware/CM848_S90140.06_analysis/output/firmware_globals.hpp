@@ -173,8 +173,8 @@ extern dword USIU_SIMASK;  // 0x002fc014
 extern dword USIU_SIEL;  // 0x002fc018
 extern dword USIU_SIVEC;  // 0x002fc01c
 extern dword USIU_TESR;  // 0x002fc020
-extern dword SIU_SGPIODT1;  // 0x002fc024
-extern dword SIU_SGPIODT2;  // 0x002fc028
+extern siu_gpio_data_register_t SIU_SGPIODT1;  // 0x002fc024
+extern siu_gpio_data_register_t SIU_SGPIODT2;  // 0x002fc028
 extern dword USIU_INITCFG;  // 0x002fc02c
 extern byte USIU_SGPIODT1;  // 0x002fc030
 extern byte USIU_SGPIODT2;  // 0x002fc034

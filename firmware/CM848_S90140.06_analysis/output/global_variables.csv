@@ -195,8 +195,8 @@ address,name,type,comment
 0x002fc018,USIU_SIEL,dword,MPC555 USIU SIU interrupt edge/level (SIEL) register at 0x2fc018 - sits between USIU_SIMASK 0x2fc014 and USIU_SIVEC 0x2fc01c in the SIU block - cm848_initPciControllerInterface sets bit 0x200 here alongside SIMASK to enable PCI interrupt vector 6 (was scheduler_task_pending_flags)
 0x002fc01c,USIU_SIVEC,dword,
 0x002fc020,USIU_TESR,dword,
-0x002fc024,SIU_SGPIODT1,dword,MPC555 SIU general-purpose I/O data register 1 - output lines are driven here (was system_capability_flags)
-0x002fc028,SIU_SGPIODT2,dword,MPC555 SIU general-purpose I/O data register 2 (was calibration_config_word)
+0x002fc024,SIU_SGPIODT1,siu_gpio_data_register_t,MPC555 SIU general-purpose I/O data register 1 - output lines are driven here (was system_capability_flags)
+0x002fc028,SIU_SGPIODT2,siu_gpio_data_register_t,MPC555 SIU general-purpose I/O data register 2 (was calibration_config_word)
 0x002fc02c,USIU_INITCFG,dword,
 0x002fc030,USIU_SGPIODT1,byte,
 0x002fc034,USIU_SGPIODT2,byte,

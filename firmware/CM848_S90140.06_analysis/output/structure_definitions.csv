@@ -844,6 +844,22 @@ usiu_memc_t,0x002fc100,BR2,dword,4,Base Register 2,,verified
 usiu_memc_t,0x002fc100,OR2,dword,4,Option Register 2,,verified
 usiu_memc_t,0x002fc100,BR3,dword,4,Base Register 3,,verified
 usiu_memc_t,0x002fc100,OR3,dword,4,Option Register 3,,verified
+# =============================================================================
+# SIU GPIO data register - one 32-bit register seen as its 4 bytes (big-endian: byte_0 = bits 31-24)
+# Type-only template, used by SIU_SGPIODT1 (0x2fc024) / SIU_SGPIODT2 (0x2fc028) in global_variables.csv and by
+# the gpio_register_copy stack locals in local_variables.csv. The code reads the register whole (lwz),
+# edits ONE byte of a stack copy (lbz/stb 12-15(r1)) and writes the copy back whole (stw).
+# Each byte holds 8 discrete lines (line n = bit n%8 of its byte):
+#   SIU_SGPIODT1 byte_0..byte_3 = lines 24-31 / 32-39 / 40-47 / 48-55
+#   SIU_SGPIODT2 byte_0..byte_3 = lines 56-63 / 64-71 / 72-79 / 80-87
+# Proof: mpc555_driveOutputLineLow 0x51150-0x5117c (lines 24-31 -> 12(r1)) and 0x511ac-0x511d8 (32-39 -> 13(r1))
+# Trade-off: whole-word mask arithmetic on the register (mpc555_updatePowerStateOutputs bit 0x400) renders with
+# struct-to-uint casts. A union of dword + these bytes was tried 2026-11-15 and read worse (mixed .bytes/.value pieces).
+# =============================================================================
+siu_gpio_data_register_t,,byte_0,byte,1,Bits 31-24: lines 24-31 in SIU_SGPIODT1 / lines 56-63 in SIU_SGPIODT2,,verified
+siu_gpio_data_register_t,,byte_1,byte,1,Bits 23-16: lines 32-39 in SIU_SGPIODT1 / lines 64-71 in SIU_SGPIODT2,,verified
+siu_gpio_data_register_t,,byte_2,byte,1,Bits 15-8: lines 40-47 in SIU_SGPIODT1 / lines 72-79 in SIU_SGPIODT2,,verified
+siu_gpio_data_register_t,,byte_3,byte,1,Bits 7-0: lines 48-55 in SIU_SGPIODT1 / lines 80-87 in SIU_SGPIODT2,,verified
 # ETC1 / Governor State Block - combined ETC1 handler and governor control state
 # Used by cm848_j1939ProcessTorqueSpeedControl, torqueControlModeHandler,
 #   cm848_j1939ProcessGovernorRequest, cm848_processGovernorModeTransition

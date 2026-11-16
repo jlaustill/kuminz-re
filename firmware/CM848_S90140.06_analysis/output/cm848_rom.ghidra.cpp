@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 20:22:47 MST 2026
+// Generated: Sun Nov 15 21:25:31 MST 2026
 
 
 //
@@ -495,6 +495,7 @@ void mpc555_updatePowerStateOutputs(void)
   word wVar2;
   ushort uVar3;
   uint uVar4;
+  siu_gpio_data_register_t sVar5;
   
   wVar2 = mios_mdasm30.SCRD;
   if ((wVar2 & 0x8000) == 0) {
@@ -507,14 +508,14 @@ void mpc555_updatePowerStateOutputs(void)
   }
   ecu_power_state_flags.capability_flags = uVar4;
   if ((uVar4 & 2) == 0) {
-    dVar1 = SIU_SGPIODT1;
-    uVar4 = dVar1 & 0xfffffbff;
+    sVar5 = SIU_SGPIODT1;
+    sVar5 = (siu_gpio_data_register_t)((uint)sVar5 & 0xfffffbff);
   }
   else {
-    dVar1 = SIU_SGPIODT1;
-    uVar4 = dVar1 | 0x400;
+    sVar5 = SIU_SGPIODT1;
+    sVar5 = (siu_gpio_data_register_t)((uint)sVar5 | 0x400);
   }
-  SIU_SGPIODT1 = uVar4;
+  SIU_SGPIODT1 = sVar5;
   dVar1 = ecu_power_state_flags.capability_flags;
   if ((dVar1 & 0x10) == 0) {
     wVar2 = mios1_ext_ctrl.ctrl_a;
@@ -49799,13 +49800,13 @@ undefined4
 cm848_readDiscreteInputLine(uint param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
-  dword dVar1;
+  siu_gpio_data_register_t sVar1;
   word wVar2;
   undefined4 uVar3;
   int iVar4;
   byte local_8;
   byte bStack_7;
-  undefined4 local_4;
+  siu_gpio_data_register_t gpio_register_copy;
   
   if ((int)param_1 < 8) goto LAB_0004f6ac;
   if ((int)param_1 < 0x10) {
@@ -49822,60 +49823,60 @@ cm848_readDiscreteInputLine(uint param_1,undefined4 param_2,undefined4 param_3,u
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x20) {
-    dVar1 = SIU_SGPIODT1;
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
     iVar4 = 3;
 LAB_0004f3cc:
-    param_4 = (uint)local_4._0_1_;
-    *(byte *)(iVar4 + 0x40c0f8) = local_4._0_1_;
+    param_4 = (uint)gpio_register_copy.byte_0;
+    *(byte *)(iVar4 + 0x40c0f8) = gpio_register_copy.byte_0;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x28) {
-    dVar1 = SIU_SGPIODT1;
-    local_4._1_1_ = (byte)(dVar1 >> 0x10);
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_1 = sVar1.byte_1;
     iVar4 = 4;
 LAB_0004f3f8:
-    param_4 = (uint)local_4._1_1_;
-    *(byte *)(iVar4 + 0x40c0f8) = local_4._1_1_;
+    param_4 = (uint)gpio_register_copy.byte_1;
+    *(byte *)(iVar4 + 0x40c0f8) = gpio_register_copy.byte_1;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x30) {
-    dVar1 = SIU_SGPIODT1;
-    local_4._2_1_ = (byte)(dVar1 >> 8);
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_2 = sVar1.byte_2;
     iVar4 = 5;
 LAB_0004f424:
-    param_4 = (uint)local_4._2_1_;
-    *(byte *)(iVar4 + 0x40c0f8) = local_4._2_1_;
+    param_4 = (uint)gpio_register_copy.byte_2;
+    *(byte *)(iVar4 + 0x40c0f8) = gpio_register_copy.byte_2;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x38) {
-    local_4 = SIU_SGPIODT1;
+    gpio_register_copy = SIU_SGPIODT1;
     iVar4 = 6;
 LAB_0004f450:
-    param_4 = local_4 & 0xff;
-    *(undefined1 *)(iVar4 + 0x40c0f8) = (undefined1)local_4;
+    param_4 = (uint)gpio_register_copy & 0xff;
+    *(byte *)(iVar4 + 0x40c0f8) = gpio_register_copy.byte_3;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x40) {
-    dVar1 = SIU_SGPIODT2;
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
     iVar4 = 7;
     goto LAB_0004f3cc;
   }
   if ((int)param_1 < 0x48) {
-    dVar1 = SIU_SGPIODT2;
-    local_4._1_1_ = (byte)(dVar1 >> 0x10);
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_1 = sVar1.byte_1;
     iVar4 = 8;
     goto LAB_0004f3f8;
   }
   if ((int)param_1 < 0x50) {
-    dVar1 = SIU_SGPIODT2;
-    local_4._2_1_ = (byte)(dVar1 >> 8);
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_2 = sVar1.byte_2;
     iVar4 = 9;
     goto LAB_0004f424;
   }
   if ((int)param_1 < 0x58) {
-    local_4 = SIU_SGPIODT2;
+    gpio_register_copy = SIU_SGPIODT2;
     iVar4 = 10;
     goto LAB_0004f450;
   }
@@ -49997,17 +49998,17 @@ LAB_0004f6dc:
 void mpc555_driveOutputLineHigh(uint param_1)
 
 {
-  dword dVar1;
+  siu_gpio_data_register_t sVar1;
   word wVar2;
   mios_mpwmsm3_t *pmVar3;
   mios_mpwmsm16_t *pmVar4;
   mios_mpwmsm17_t *pmVar5;
   int iVar6;
-  dword *pdVar7;
+  siu_gpio_data_register_t *psVar7;
   mios1_ext_ctrl_t *pmVar8;
   byte bVar9;
   word local_8;
-  undefined4 local_4;
+  siu_gpio_data_register_t gpio_register_copy;
   
   if ((int)param_1 < 8) {
     return;
@@ -50045,100 +50046,100 @@ LAB_00050f24:
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
     output_lines_24_to_31_state = output_lines_24_to_31_state | bVar9;
-    pdVar7 = &SIU_SGPIODT1;
-    dVar1 = SIU_SGPIODT1;
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
-    local_4._1_3_ = (undefined3)dVar1;
-    local_4 = CONCAT13(local_4._0_1_ | bVar9,local_4._1_3_);
+    psVar7 = &SIU_SGPIODT1;
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
+    gpio_register_copy._1_3_ = sVar1._1_3_;
+    gpio_register_copy.byte_0 = gpio_register_copy.byte_0 | bVar9;
 LAB_0004fab0:
-    *pdVar7 = local_4;
+    *psVar7 = gpio_register_copy;
     return;
   }
   if ((int)param_1 < 0x28) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
     output_lines_32_to_39_state = output_lines_32_to_39_state | bVar9;
-    pdVar7 = &SIU_SGPIODT1;
-    dVar1 = SIU_SGPIODT1;
-    local_4._1_1_ = (byte)(dVar1 >> 0x10);
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
-    local_4._2_2_ = (undefined2)dVar1;
-    local_4._1_3_ = CONCAT12(local_4._1_1_ | bVar9,local_4._2_2_);
+    psVar7 = &SIU_SGPIODT1;
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_1 = sVar1.byte_1;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
+    gpio_register_copy._2_2_ = sVar1._2_2_;
+    gpio_register_copy.byte_1 = gpio_register_copy.byte_1 | bVar9;
 LAB_0004fa50:
-    *pdVar7 = local_4;
+    *psVar7 = gpio_register_copy;
     return;
   }
   if ((int)param_1 < 0x30) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
     output_lines_40_to_47_state = output_lines_40_to_47_state | bVar9;
-    pdVar7 = &SIU_SGPIODT1;
-    dVar1 = SIU_SGPIODT1;
-    local_4._2_1_ = (byte)(dVar1 >> 8);
-    local_4._0_2_ = (undefined2)(dVar1 >> 0x10);
-    local_4._3_1_ = (byte)dVar1;
-    local_4._2_2_ = CONCAT11(local_4._2_1_ | bVar9,(byte)local_4);
+    psVar7 = &SIU_SGPIODT1;
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_2 = sVar1.byte_2;
+    gpio_register_copy._0_2_ = sVar1._0_2_;
+    gpio_register_copy.byte_3 = sVar1.byte_3;
+    gpio_register_copy.byte_2 = gpio_register_copy.byte_2 | bVar9;
 LAB_0004f9f0:
-    *pdVar7 = local_4;
+    *psVar7 = gpio_register_copy;
     return;
   }
   if ((int)param_1 < 0x38) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
     output_lines_48_to_55_state = output_lines_48_to_55_state | bVar9;
-    pdVar7 = &SIU_SGPIODT1;
-    dVar1 = SIU_SGPIODT1;
-    local_4._3_1_ = (byte)dVar1;
-    local_4._0_3_ = (undefined3)(dVar1 >> 8);
-    local_4 = CONCAT31(local_4._0_3_,(byte)local_4 | bVar9);
+    psVar7 = &SIU_SGPIODT1;
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_3 = sVar1.byte_3;
+    gpio_register_copy._0_3_ = sVar1._0_3_;
+    gpio_register_copy.byte_3 = gpio_register_copy.byte_3 | bVar9;
 LAB_0004f990:
-    *pdVar7 = local_4;
+    *psVar7 = gpio_register_copy;
     return;
   }
   if ((int)param_1 < 0x40) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
     output_lines_56_to_63_state = output_lines_56_to_63_state | bVar9;
-    dVar1 = SIU_SGPIODT2;
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
-    local_4._1_3_ = (undefined3)dVar1;
-    local_4 = CONCAT13(local_4._0_1_ | bVar9,local_4._1_3_);
-    pdVar7 = &SIU_SGPIODT2;
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
+    gpio_register_copy._1_3_ = sVar1._1_3_;
+    gpio_register_copy.byte_0 = gpio_register_copy.byte_0 | bVar9;
+    psVar7 = &SIU_SGPIODT2;
     goto LAB_0004f990;
   }
   if ((int)param_1 < 0x48) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
     output_lines_64_to_71_state = output_lines_64_to_71_state | bVar9;
-    dVar1 = SIU_SGPIODT2;
-    local_4._1_1_ = (byte)(dVar1 >> 0x10);
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
-    local_4._2_2_ = (undefined2)dVar1;
-    local_4._1_3_ = CONCAT12(local_4._1_1_ | bVar9,local_4._2_2_);
-    pdVar7 = &SIU_SGPIODT2;
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_1 = sVar1.byte_1;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
+    gpio_register_copy._2_2_ = sVar1._2_2_;
+    gpio_register_copy.byte_1 = gpio_register_copy.byte_1 | bVar9;
+    psVar7 = &SIU_SGPIODT2;
     goto LAB_0004f9f0;
   }
   if ((int)param_1 < 0x50) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
     output_lines_72_to_79_state = output_lines_72_to_79_state | bVar9;
-    dVar1 = SIU_SGPIODT2;
-    local_4._2_1_ = (byte)(dVar1 >> 8);
-    local_4._0_2_ = (undefined2)(dVar1 >> 0x10);
-    local_4._3_1_ = (byte)dVar1;
-    local_4._2_2_ = CONCAT11(local_4._2_1_ | bVar9,(byte)local_4);
-    pdVar7 = &SIU_SGPIODT2;
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_2 = sVar1.byte_2;
+    gpio_register_copy._0_2_ = sVar1._0_2_;
+    gpio_register_copy.byte_3 = sVar1.byte_3;
+    gpio_register_copy.byte_2 = gpio_register_copy.byte_2 | bVar9;
+    psVar7 = &SIU_SGPIODT2;
     goto LAB_0004fa50;
   }
   if ((int)param_1 < 0x58) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
     output_lines_80_to_87_state = output_lines_80_to_87_state | bVar9;
-    dVar1 = SIU_SGPIODT2;
-    local_4._3_1_ = (byte)dVar1;
-    local_4._0_3_ = (undefined3)(dVar1 >> 8);
-    local_4 = CONCAT31(local_4._0_3_,(byte)local_4 | bVar9);
-    pdVar7 = &SIU_SGPIODT2;
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_3 = sVar1.byte_3;
+    gpio_register_copy._0_3_ = sVar1._0_3_;
+    gpio_register_copy.byte_3 = gpio_register_copy.byte_3 | bVar9;
+    psVar7 = &SIU_SGPIODT2;
     goto LAB_0004fab0;
   }
   switch(param_1) {
@@ -50712,17 +50713,17 @@ LAB_00050ed8:
 void mpc555_driveOutputLineLow(uint param_1)
 
 {
-  dword dVar1;
+  siu_gpio_data_register_t sVar1;
   word wVar2;
   mios_mpwmsm3_t *pmVar3;
   mios_mpwmsm16_t *pmVar4;
   mios_mpwmsm17_t *pmVar5;
   int iVar6;
-  dword *pdVar7;
+  siu_gpio_data_register_t *psVar7;
   mios1_ext_ctrl_t *pmVar8;
   byte bVar9;
   ushort local_8;
-  undefined4 local_4;
+  siu_gpio_data_register_t gpio_register_copy;
   
   if ((int)param_1 < 8) {
     return;
@@ -50760,100 +50761,100 @@ LAB_0005289c:
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
     output_lines_24_to_31_state = output_lines_24_to_31_state & bVar9;
-    pdVar7 = &SIU_SGPIODT1;
-    dVar1 = SIU_SGPIODT1;
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
-    local_4._1_3_ = (undefined3)dVar1;
-    local_4 = CONCAT13(local_4._0_1_ & bVar9,local_4._1_3_);
+    psVar7 = &SIU_SGPIODT1;
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
+    gpio_register_copy._1_3_ = sVar1._1_3_;
+    gpio_register_copy.byte_0 = gpio_register_copy.byte_0 & bVar9;
 LAB_00051418:
-    *pdVar7 = local_4;
+    *psVar7 = gpio_register_copy;
     return;
   }
   if ((int)param_1 < 0x28) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
     output_lines_32_to_39_state = output_lines_32_to_39_state & bVar9;
-    pdVar7 = &SIU_SGPIODT1;
-    dVar1 = SIU_SGPIODT1;
-    local_4._1_1_ = (byte)(dVar1 >> 0x10);
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
-    local_4._2_2_ = (undefined2)dVar1;
-    local_4._1_3_ = CONCAT12(local_4._1_1_ & bVar9,local_4._2_2_);
+    psVar7 = &SIU_SGPIODT1;
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_1 = sVar1.byte_1;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
+    gpio_register_copy._2_2_ = sVar1._2_2_;
+    gpio_register_copy.byte_1 = gpio_register_copy.byte_1 & bVar9;
 LAB_000513b4:
-    *pdVar7 = local_4;
+    *psVar7 = gpio_register_copy;
     return;
   }
   if ((int)param_1 < 0x30) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
     output_lines_40_to_47_state = output_lines_40_to_47_state & bVar9;
-    pdVar7 = &SIU_SGPIODT1;
-    dVar1 = SIU_SGPIODT1;
-    local_4._2_1_ = (byte)(dVar1 >> 8);
-    local_4._0_2_ = (undefined2)(dVar1 >> 0x10);
-    local_4._3_1_ = (byte)dVar1;
-    local_4._2_2_ = CONCAT11(local_4._2_1_ & bVar9,(byte)local_4);
+    psVar7 = &SIU_SGPIODT1;
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_2 = sVar1.byte_2;
+    gpio_register_copy._0_2_ = sVar1._0_2_;
+    gpio_register_copy.byte_3 = sVar1.byte_3;
+    gpio_register_copy.byte_2 = gpio_register_copy.byte_2 & bVar9;
 LAB_00051350:
-    *pdVar7 = local_4;
+    *psVar7 = gpio_register_copy;
     return;
   }
   if ((int)param_1 < 0x38) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
     output_lines_48_to_55_state = output_lines_48_to_55_state & bVar9;
-    pdVar7 = &SIU_SGPIODT1;
-    dVar1 = SIU_SGPIODT1;
-    local_4._3_1_ = (byte)dVar1;
-    local_4._0_3_ = (undefined3)(dVar1 >> 8);
-    local_4 = CONCAT31(local_4._0_3_,(byte)local_4 & bVar9);
+    psVar7 = &SIU_SGPIODT1;
+    sVar1 = SIU_SGPIODT1;
+    gpio_register_copy.byte_3 = sVar1.byte_3;
+    gpio_register_copy._0_3_ = sVar1._0_3_;
+    gpio_register_copy.byte_3 = gpio_register_copy.byte_3 & bVar9;
 LAB_000512ec:
-    *pdVar7 = local_4;
+    *psVar7 = gpio_register_copy;
     return;
   }
   if ((int)param_1 < 0x40) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
     output_lines_56_to_63_state = output_lines_56_to_63_state & bVar9;
-    dVar1 = SIU_SGPIODT2;
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
-    local_4._1_3_ = (undefined3)dVar1;
-    local_4 = CONCAT13(local_4._0_1_ & bVar9,local_4._1_3_);
-    pdVar7 = &SIU_SGPIODT2;
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
+    gpio_register_copy._1_3_ = sVar1._1_3_;
+    gpio_register_copy.byte_0 = gpio_register_copy.byte_0 & bVar9;
+    psVar7 = &SIU_SGPIODT2;
     goto LAB_000512ec;
   }
   if ((int)param_1 < 0x48) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
     output_lines_64_to_71_state = output_lines_64_to_71_state & bVar9;
-    dVar1 = SIU_SGPIODT2;
-    local_4._1_1_ = (byte)(dVar1 >> 0x10);
-    local_4._0_1_ = (byte)(dVar1 >> 0x18);
-    local_4._2_2_ = (undefined2)dVar1;
-    local_4._1_3_ = CONCAT12(local_4._1_1_ & bVar9,local_4._2_2_);
-    pdVar7 = &SIU_SGPIODT2;
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_1 = sVar1.byte_1;
+    gpio_register_copy.byte_0 = sVar1.byte_0;
+    gpio_register_copy._2_2_ = sVar1._2_2_;
+    gpio_register_copy.byte_1 = gpio_register_copy.byte_1 & bVar9;
+    psVar7 = &SIU_SGPIODT2;
     goto LAB_00051350;
   }
   if ((int)param_1 < 0x50) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
     output_lines_72_to_79_state = output_lines_72_to_79_state & bVar9;
-    dVar1 = SIU_SGPIODT2;
-    local_4._2_1_ = (byte)(dVar1 >> 8);
-    local_4._0_2_ = (undefined2)(dVar1 >> 0x10);
-    local_4._3_1_ = (byte)dVar1;
-    local_4._2_2_ = CONCAT11(local_4._2_1_ & bVar9,(byte)local_4);
-    pdVar7 = &SIU_SGPIODT2;
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_2 = sVar1.byte_2;
+    gpio_register_copy._0_2_ = sVar1._0_2_;
+    gpio_register_copy.byte_3 = sVar1.byte_3;
+    gpio_register_copy.byte_2 = gpio_register_copy.byte_2 & bVar9;
+    psVar7 = &SIU_SGPIODT2;
     goto LAB_000513b4;
   }
   if ((int)param_1 < 0x58) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
     output_lines_80_to_87_state = output_lines_80_to_87_state & bVar9;
-    dVar1 = SIU_SGPIODT2;
-    local_4._3_1_ = (byte)dVar1;
-    local_4._0_3_ = (undefined3)(dVar1 >> 8);
-    local_4 = CONCAT31(local_4._0_3_,(byte)local_4 & bVar9);
-    pdVar7 = &SIU_SGPIODT2;
+    sVar1 = SIU_SGPIODT2;
+    gpio_register_copy.byte_3 = sVar1.byte_3;
+    gpio_register_copy._0_3_ = sVar1._0_3_;
+    gpio_register_copy.byte_3 = gpio_register_copy.byte_3 & bVar9;
+    psVar7 = &SIU_SGPIODT2;
     goto LAB_00051418;
   }
   switch(param_1) {
@@ -51433,7 +51434,7 @@ void cm848_refreshOutputPortsAndReadback(void)
   uint uVar1;
   bool bVar2;
   uint uVar3;
-  dword dVar4;
+  siu_gpio_data_register_t sVar4;
   int iVar5;
   int iVar6;
   byte bVar7;
@@ -51448,33 +51449,37 @@ void cm848_refreshOutputPortsAndReadback(void)
   ushort *puVar16;
   undefined2 uVar17;
   undefined2 local_30;
-  undefined4 local_2c;
+  siu_gpio_data_register_t gpio_register_copy;
   
   bVar2 = false;
-  dVar4 = SIU_SGPIODT1;
-  local_2c._0_1_ = (byte)(dVar4 >> 0x18);
-  j1939_dm1_prev_b2 = local_2c._0_1_;
-  local_2c._1_1_ = (byte)(dVar4 >> 0x10);
-  j1939_dm1_prev_b3 = local_2c._1_1_;
-  local_2c._2_1_ = (byte)(dVar4 >> 8);
-  j1939_dm1_prev_b4 = local_2c._2_1_;
-  local_2c._3_1_ = (byte)dVar4;
-  j1939_dm1_prev_b5 = (byte)local_2c;
-  dVar4 = SIU_SGPIODT2;
-  local_2c._0_1_ = (byte)(dVar4 >> 0x18);
-  j1939_dm1_prev_b6 = local_2c._0_1_;
-  local_2c._1_1_ = (byte)(dVar4 >> 0x10);
-  j1939_dm1_prev_b7 = local_2c._1_1_;
-  local_2c._2_1_ = (byte)(dVar4 >> 8);
-  j1939_dm1_prev_b8 = local_2c._2_1_;
-  local_2c._3_1_ = (byte)dVar4;
-  j1939_dm1_prev_b9 = (byte)local_2c;
-  local_2c = CONCAT31(CONCAT21(CONCAT11(output_lines_24_to_31_state,output_lines_32_to_39_state),
-                               output_lines_40_to_47_state),output_lines_48_to_55_state);
-  SIU_SGPIODT1 = local_2c;
-  local_2c = CONCAT31(CONCAT21(CONCAT11(output_lines_56_to_63_state,output_lines_64_to_71_state),
-                               output_lines_72_to_79_state),output_lines_80_to_87_state);
-  SIU_SGPIODT2 = local_2c;
+  sVar4 = SIU_SGPIODT1;
+  gpio_register_copy.byte_0 = sVar4.byte_0;
+  j1939_dm1_prev_b2 = gpio_register_copy.byte_0;
+  gpio_register_copy.byte_1 = sVar4.byte_1;
+  j1939_dm1_prev_b3 = gpio_register_copy.byte_1;
+  gpio_register_copy.byte_2 = sVar4.byte_2;
+  j1939_dm1_prev_b4 = gpio_register_copy.byte_2;
+  gpio_register_copy.byte_3 = sVar4.byte_3;
+  j1939_dm1_prev_b5 = gpio_register_copy.byte_3;
+  sVar4 = SIU_SGPIODT2;
+  gpio_register_copy.byte_0 = sVar4.byte_0;
+  j1939_dm1_prev_b6 = gpio_register_copy.byte_0;
+  gpio_register_copy.byte_1 = sVar4.byte_1;
+  j1939_dm1_prev_b7 = gpio_register_copy.byte_1;
+  gpio_register_copy.byte_2 = sVar4.byte_2;
+  j1939_dm1_prev_b8 = gpio_register_copy.byte_2;
+  gpio_register_copy.byte_3 = sVar4.byte_3;
+  j1939_dm1_prev_b9 = gpio_register_copy.byte_3;
+  gpio_register_copy.byte_0 = output_lines_24_to_31_state;
+  gpio_register_copy.byte_1 = output_lines_32_to_39_state;
+  gpio_register_copy.byte_2 = output_lines_40_to_47_state;
+  gpio_register_copy.byte_3 = output_lines_48_to_55_state;
+  SIU_SGPIODT1 = gpio_register_copy;
+  gpio_register_copy.byte_0 = output_lines_56_to_63_state;
+  gpio_register_copy.byte_1 = output_lines_64_to_71_state;
+  gpio_register_copy.byte_2 = output_lines_72_to_79_state;
+  gpio_register_copy.byte_3 = output_lines_80_to_87_state;
+  SIU_SGPIODT2 = gpio_register_copy;
   wVar9 = mios1_ext_ctrl.ctrl_a;
   local_30._1_1_ = (byte)wVar9;
   j1939_dm1_prev_b0 = (byte)local_30;
@@ -51752,15 +51757,12 @@ void cm848_refreshOutputPortsAndReadback(void)
 void hpcr_injectorPulseWidthCalc(void)
 
 {
-  dword dVar1;
+  siu_gpio_data_register_t sVar1;
   word wVar2;
   byte bVar3;
   undefined1 local_8;
   undefined1 uStack_7;
-  undefined1 local_4;
-  undefined1 uStack_3;
-  undefined1 uStack_2;
-  undefined1 uStack_1;
+  siu_gpio_data_register_t gpio_register_copy;
   
   wVar2 = mios1_ext_ctrl.ctrl_a;
   uStack_7 = (byte)wVar2;
@@ -51816,24 +51818,24 @@ void hpcr_injectorPulseWidthCalc(void)
   else {
     bVar3 = j1939_protection_config_byte | 1;
   }
-  dVar1 = SIU_SGPIODT1;
-  local_4 = (byte)(dVar1 >> 0x18);
-  j1939_dm1_tx_b2 = local_4;
-  uStack_3 = (byte)(dVar1 >> 0x10);
-  j1939_dm1_tx_b3 = uStack_3;
-  uStack_2 = (byte)(dVar1 >> 8);
-  j1939_dm1_tx_b4 = uStack_2;
-  uStack_1 = (byte)dVar1;
-  j1939_dm1_tx_b5 = uStack_1;
-  dVar1 = SIU_SGPIODT2;
-  local_4 = (byte)(dVar1 >> 0x18);
-  j1939_dm1_tx_b6 = local_4;
-  uStack_3 = (byte)(dVar1 >> 0x10);
-  j1939_dm1_tx_b7 = uStack_3;
-  uStack_2 = (byte)(dVar1 >> 8);
-  j1939_dm1_tx_b8 = uStack_2;
-  uStack_1 = (byte)dVar1;
-  j1939_dm1_tx_b9 = uStack_1;
+  sVar1 = SIU_SGPIODT1;
+  gpio_register_copy.byte_0 = sVar1.byte_0;
+  j1939_dm1_tx_b2 = gpio_register_copy.byte_0;
+  gpio_register_copy.byte_1 = sVar1.byte_1;
+  j1939_dm1_tx_b3 = gpio_register_copy.byte_1;
+  gpio_register_copy.byte_2 = sVar1.byte_2;
+  j1939_dm1_tx_b4 = gpio_register_copy.byte_2;
+  gpio_register_copy.byte_3 = sVar1.byte_3;
+  j1939_dm1_tx_b5 = gpio_register_copy.byte_3;
+  sVar1 = SIU_SGPIODT2;
+  gpio_register_copy.byte_0 = sVar1.byte_0;
+  j1939_dm1_tx_b6 = gpio_register_copy.byte_0;
+  gpio_register_copy.byte_1 = sVar1.byte_1;
+  j1939_dm1_tx_b7 = gpio_register_copy.byte_1;
+  gpio_register_copy.byte_2 = sVar1.byte_2;
+  j1939_dm1_tx_b8 = gpio_register_copy.byte_2;
+  gpio_register_copy.byte_3 = sVar1.byte_3;
+  j1939_dm1_tx_b9 = gpio_register_copy.byte_3;
   j1939_protection_config_byte = bVar3 & 3 | supervisor_input_lines_130_to_135_state << 2;
   j1939_dm1_parameter_byte = supervisor_input_lines_136_to_143_state;
   j1939_fault_occurrence_prev = supervisor_input_lines_144_to_151_state;

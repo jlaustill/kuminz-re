@@ -117,3 +117,8 @@ function_address,function_name,old_name,new_name,type,comment
 0x0053a110,cm848_updateOutputReadBackFaultBits,iVar3,fault_word_index,undefined4,output_index / 16 = the word of output_read_back_fault_bits that holds the entry's bit
 0x0053a110,cm848_updateOutputReadBackFaultBits,pwVar4,output_channel_entry,word *,Walks the output channel assignment table (starts one word before it - lhzu pre-increments)
 0x0053a110,cm848_updateOutputReadBackFaultBits,uVar5,output_index,undefined4,Table entry number 0-47 = the output function = the bit number in output_read_back_fault_bits
+0x0004f2ec,cm848_readDiscreteInputLine,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 or SIU_SGPIODT2 read whole (lwz) - the byte holding the requested line group goes to the input-line image
+0x0004f6f0,mpc555_driveOutputLineHigh,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 or SIU_SGPIODT2: read whole (lwz) / one byte ORed with the line bit (lbz-stb) / written back whole (stw)
+0x00051038,mpc555_driveOutputLineLow,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 or SIU_SGPIODT2: read whole (lwz) / one byte ANDed with the inverted line bit (lbz-stb) / written back whole (stw)
+0x000529b8,cm848_refreshOutputPortsAndReadback,local_2c,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 then SIU_SGPIODT2: snapshotted byte by byte then rebuilt from the output_lines_*_state shadows and written back whole
+0x000533e0,hpcr_injectorPulseWidthCalc,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 then SIU_SGPIODT2 - its four bytes are copied out to the j1939_dm1_tx_b2..b9 snapshot bytes
