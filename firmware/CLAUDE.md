@@ -453,6 +453,11 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
   - **Unnamed tables are type-only rows** (empty name): they render with Ghidra's default label `WORD_ARRAY_<address>` (cache words `WORD_<address>`), not `DAT_`, so a naming pass must look for those prefixes too. Each row's comment gives the role, size and readers.
   - **Lookup cache words** are `word` (1-D) / `word[2]` (2-D, or two 1-D caches side by side).
   - **Watch for:** `protection_fuel_limit_l2/l3/l4_axis_cal` used to name two tables each (the copies at 0x40853e / 0x408566 / 0x40858e are the converter lockup axes, now `..._values_axis_cal`); a scalar inside a table becomes an element (`fuel_demand_rpm_limit_low_cal[3]` was `fuel_demand_ema_lower_threshold_cal`).
+  - **The audit tool:** `python3 firmware/scripts/lookup_tables.py` re-derives every table from the last build (the `.cpp` call arguments plus the call-site disassembly, sized from the dumps) and checks the CSVs. It exits 1 when a table is untyped or typed with another size, when a row sits inside a table, or when a table overlaps a struct, an `arrays.csv` row, a function or another table. It also flags a cache argument that still renders with a cast. Run it after a build that touches tables or lookup prototypes.
+    - `--apply` writes the rows only for the untyped, conflict-free tables and cast cache words (a named scalar row keeps its name; a missing or junk-labelled row becomes type-only). It never deletes a row, so conflicts stay for review. Build and re-audit afterwards.
+    - `--plan FILE` dumps every table with its size, roles and readers.
+    - Tests: `python3 firmware/scripts/test_lookup_tables.py` (synthetic cases plus ground truth; the committed state must audit clean).
+    - A new interpolator or a new sensor-channel kind needs its own `LOOKUPS` entry (C argument index and register per role).
 
 ### QADC Analog Sensor Read (two-table dispatch)
 - Raw analog read = two-table indirection: `idx = qadc_channel_index_table[k]` (0x3fda78, ROM-copied channel-index array, each elem clamped `< 0x81`) → `qadc_channel_dispatch_table[idx]` (0x57dd2, 129×8-byte ptr entries → MPC555 QADC result regs QADC-A 0x304A80.. / QADC-B 0x304E80..) → deref = live 10-bit value. Asm: `lhz <off>(0x3fda78); cmpwi 0x80; slwi r,3; lwzx 0x57dd2; lhz 0(ptr)` (~58 sites)
