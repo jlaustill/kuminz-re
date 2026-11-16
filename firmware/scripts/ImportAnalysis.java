@@ -13,6 +13,7 @@ import java.io.File;
 
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.data.ArrayDataType;
 import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.DataTypeManager;
 import ghidra.program.model.data.PointerDataType;
@@ -188,6 +189,7 @@ public class ImportAnalysis extends GhidraScript {
         int typeFailed = 0;
         int skipped = 0;
         int failed = 0;
+        java.util.List<String> unmappedTypeRows = new java.util.ArrayList<>();
 
         long maxAddress = currentProgram.getMaxAddress().getOffset();
 
@@ -230,17 +232,21 @@ public class ImportAnalysis extends GhidraScript {
                         continue;
                     }
 
-                    // Apply name if different
-                    Symbol existingSymbol = symbolTable.getPrimarySymbol(address);
-                    boolean nameMatches = (existingSymbol != null && existingSymbol.getName().equals(newName));
+                    // Apply name if different. An empty name types the address without naming
+                    // it: the default label (DAT_...) stays, e.g. for a lookup table whose
+                    // meaning is still unknown.
+                    if (!newName.isEmpty()) {
+                        Symbol existingSymbol = symbolTable.getPrimarySymbol(address);
+                        boolean nameMatches = (existingSymbol != null && existingSymbol.getName().equals(newName));
 
-                    if (!nameMatches) {
-                        if (existingSymbol != null) {
-                            existingSymbol.setName(newName, SourceType.USER_DEFINED);
-                        } else {
-                            symbolTable.createLabel(address, newName, SourceType.USER_DEFINED);
+                        if (!nameMatches) {
+                            if (existingSymbol != null) {
+                                existingSymbol.setName(newName, SourceType.USER_DEFINED);
+                            } else {
+                                symbolTable.createLabel(address, newName, SourceType.USER_DEFINED);
+                            }
+                            nameChanges++;
                         }
-                        nameChanges++;
                     }
 
                     // Apply data type if specified
@@ -254,6 +260,9 @@ public class ImportAnalysis extends GhidraScript {
                         DataType dataType = mapCsvTypeToDataType(typeStr, currentProgram.getDataTypeManager());
                         if (dataType == null) {
                             typeSkippedNoType++;
+                            if (!ScriptUtils.isIgnoredGlobalType(typeStr)) {
+                                unmappedTypeRows.add(addressStr + " " + newName + " '" + typeStr + "'");
+                            }
                             continue;
                         }
 
@@ -296,6 +305,18 @@ public class ImportAnalysis extends GhidraScript {
             println("  WARNING: " + failed + " variable imports failed");
         }
 
+        // A type the importer does not know is dropped (the row keeps only its name), so say
+        // which rows - a silently ignored type looks applied in the CSV but never renders.
+        if (!unmappedTypeRows.isEmpty()) {
+            println("  WARNING: " + unmappedTypeRows.size() + " global rows have a type the importer does not know (type ignored):");
+            for (String row : unmappedTypeRows.subList(0, Math.min(20, unmappedTypeRows.size()))) {
+                println("    " + row);
+            }
+            if (unmappedTypeRows.size() > 20) {
+                println("    ... and " + (unmappedTypeRows.size() - 20) + " more");
+            }
+        }
+
         // Debug output for type application
         if (typeSkippedOutOfRange > 0 || typeFailed > 0) {
             println("  Type stats: " + typeSkippedOutOfRange + " out-of-range, " +
@@ -312,6 +333,16 @@ public class ImportAnalysis extends GhidraScript {
      * Supports both our CSV format (u8, u16, etc.) and Ghidra's export format (byte, word, etc.)
      */
     private DataType mapCsvTypeToDataType(String typeStr, DataTypeManager dtm) {
+        // Array: "<element>[<count>]", e.g. word[10] for a lookup table
+        ScriptUtils.ArrayTypeSpec array = ScriptUtils.parseArrayType(typeStr);
+        if (array != null) {
+            DataType element = mapCsvTypeToDataType(array.elementType, dtm);
+            if (element == null || element.getLength() <= 0) {
+                return null;
+            }
+            return new ArrayDataType(element, array.count, element.getLength());
+        }
+
         switch (typeStr.toLowerCase()) {
             // Unsigned integers (CSV format)
             case "u8":

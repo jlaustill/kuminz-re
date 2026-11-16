@@ -305,6 +305,54 @@ class ScriptUtilsTest {
         assertEquals(5, ScriptUtils.calculateArrayCount(5, 1));
     }
 
+    // ── parseArrayType ────────────────────────────────────────────────────────
+    // Bug: ImportAnalysis had no array case, so a word[10] global type was silently dropped.
+
+    @Test void parseArrayType_primitiveElement() {
+        ScriptUtils.ArrayTypeSpec spec = ScriptUtils.parseArrayType("word[10]");
+        assertNotNull(spec);
+        assertEquals("word", spec.elementType);
+        assertEquals(10, spec.count);
+    }
+
+    @Test void parseArrayType_structElementAndSpaces() {
+        ScriptUtils.ArrayTypeSpec spec = ScriptUtils.parseArrayType(" q16_fixed_point_t [ 4 ] ");
+        assertNotNull(spec);
+        assertEquals("q16_fixed_point_t", spec.elementType);
+        assertEquals(4, spec.count);
+    }
+
+    @Test void parseArrayType_scalarIsNotAnArray() {
+        assertNull(ScriptUtils.parseArrayType("word"));
+        assertNull(ScriptUtils.parseArrayType("word *"));
+        assertNull(ScriptUtils.parseArrayType(""));
+        assertNull(ScriptUtils.parseArrayType(null));
+    }
+
+    @Test void parseArrayType_rejectsBadCounts() {
+        assertNull(ScriptUtils.parseArrayType("word[0]"));
+        assertNull(ScriptUtils.parseArrayType("word[]"));
+        assertNull(ScriptUtils.parseArrayType("word[-2]"));
+        assertNull(ScriptUtils.parseArrayType("word[0x10]"));
+        assertNull(ScriptUtils.parseArrayType("word[99999999999]"));
+    }
+
+    // ── isIgnoredGlobalType ───────────────────────────────────────────────────
+
+    @Test void isIgnoredGlobalType_blankAndUndefinedAreIgnored() {
+        assertTrue(ScriptUtils.isIgnoredGlobalType(""));
+        assertTrue(ScriptUtils.isIgnoredGlobalType("  "));
+        assertTrue(ScriptUtils.isIgnoredGlobalType(null));
+        assertTrue(ScriptUtils.isIgnoredGlobalType("undefined"));
+        assertTrue(ScriptUtils.isIgnoredGlobalType("undefined *"));
+    }
+
+    @Test void isIgnoredGlobalType_realTypesAreReported() {
+        assertFalse(ScriptUtils.isIgnoredGlobalType("unicode"));
+        assertFalse(ScriptUtils.isIgnoredGlobalType("wrod"));
+        assertFalse(ScriptUtils.isIgnoredGlobalType("word[10]"));
+    }
+
     @Test void calculateArrayCount_zeroBaseSize_returnsNegOne() {
         assertEquals(-1, ScriptUtils.calculateArrayCount(5, 0));
     }

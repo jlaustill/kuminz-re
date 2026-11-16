@@ -204,6 +204,52 @@ public class ScriptUtils {
         return fieldSize / baseTypeSize;
     }
 
+    // ── Array type syntax ────────────────────────────────────────────────────
+
+    /** The element type name and element count of a CSV array type such as {@code word[10]}. */
+    public static final class ArrayTypeSpec {
+        public final String elementType;
+        public final int count;
+
+        ArrayTypeSpec(String elementType, int count) {
+            this.elementType = elementType;
+            this.count = count;
+        }
+    }
+
+    private static final java.util.regex.Pattern ARRAY_TYPE =
+            java.util.regex.Pattern.compile("^\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*\\[\\s*(\\d+)\\s*\\]\\s*$");
+
+    /**
+     * Parses a CSV array type {@code <element>[<count>]} — {@code word[10]}, {@code byte[17]},
+     * {@code my_struct_t[4]}. Returns null when the string is not an array type or the count is
+     * not positive, so callers can fall through to their scalar type mapping.
+     */
+    /**
+     * True for the global_variables.csv types the importer leaves to Ghidra on purpose
+     * (blank, {@code undefined}, {@code undefined *}): they are neither applied nor reported.
+     * Any other type the importer cannot map is reported, so a typo never vanishes silently.
+     */
+    public static boolean isIgnoredGlobalType(String typeStr) {
+        if (typeStr == null) return true;
+        String t = typeStr.trim().toLowerCase();
+        return t.isEmpty() || t.equals("undefined") || t.equals("undefined *");
+    }
+
+    public static ArrayTypeSpec parseArrayType(String typeStr) {
+        if (typeStr == null) return null;
+        java.util.regex.Matcher m = ARRAY_TYPE.matcher(typeStr);
+        if (!m.matches()) return null;
+        int count;
+        try {
+            count = Integer.parseInt(m.group(2));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        if (count <= 0) return null;
+        return new ArrayTypeSpec(m.group(1), count);
+    }
+
     // ── Firmware name ────────────────────────────────────────────────────────
 
     /**

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 21:25:31 MST 2026
+// Generated: Sun Nov 15 22:05:41 MST 2026
 
 
 //
@@ -25500,8 +25500,8 @@ void cm848_calculateProtectionSpeedLimits(void)
     governor_speed_limit_dynamic =
          lookupTableInterpolation
                    (&governor_interp_table_state_d,vehicle_speed,
-                    (word *)&governor_minimum_speed_by_vehicle_speed_axis,
-                    (word *)&governor_minimum_speed_by_vehicle_speed_table,0);
+                    governor_minimum_speed_by_vehicle_speed_axis,
+                    governor_minimum_speed_by_vehicle_speed_table,0);
   }
   else {
     governor_speed_limit_dynamic = 0;
@@ -58876,7 +58876,7 @@ void cm848_outputs2_periodic(void)
       } while (uVar9 < 0x52);
       uVar9 = 0;
       do {
-        (&percent_time_at_load_cal)[uVar9] = 0;
+        percent_time_at_load_cal[uVar9] = 0;
         uVar9 = uVar9 + 1 & 0xff;
       } while (uVar9 < 0xc);
       fuel_demand_cmd20_pending_flag = 0;
@@ -58964,9 +58964,9 @@ void cm848_outputs2_periodic(void)
           uVar10 = uVar10 + 1 & 0xff;
         } while (uVar10 <= uVar5);
       }
-      (&percent_time_at_load_cal)[uVar9] =
-           (short)(CONCAT44((int)((ulonglong)uVar7 * 0x6400 >> 0x20),uVar7 * 0x6400) /
-                  (ulonglong)fuel_demand_histogram_sample_count);
+      percent_time_at_load_cal[uVar9] =
+           (word)(CONCAT44((int)((ulonglong)uVar7 * 0x6400 >> 0x20),uVar7 * 0x6400) /
+                 (ulonglong)fuel_demand_histogram_sample_count);
       uVar9 = uVar9 + 1 & 0xff;
     } while (uVar9 < 10);
     DAT_003fdfac = (undefined2)
