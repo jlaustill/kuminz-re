@@ -84,7 +84,7 @@ engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state (ENGINE_OPERAT
 # Engine Sync State - crankshaft synchronization status
 # Used by engine position sensor ISR and sync detection
 # Total size: 6 bytes (0x0040b87f-0x0040b884)
-engine_sync_state_t,0x0040b87f,sync_status,byte,1,Fuel pressure governor mode: 1 low rpm / 2 and 4 PID / 8 fixed (filtered pressure below a threshold inside an rpm window) / 0x10 fixed (switch 0 off) / 0x20 fixed (cam_sync_disable_cal) / 0x40 fixed (faults 304 / 305 / 377 / 378),,verified
+engine_sync_state_t,0x0040b87f,fuel_pressure_governor_mode,FUEL_PRESSURE_GOVERNOR_MODE,1,Fuel pressure governor mode (FUEL_PRESSURE_GOVERNOR_MODE; was sync_status),,verified
 engine_sync_state_t,0x0040b87f,fuel_pressure_governor_demand,word,2,Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count),,verified
 engine_sync_state_t,0x0040b87f,fuel_metering_command,word,2,"Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw)",,verified
 engine_sync_state_t,0x0040b87f,reserved_05,byte,1,Padding for alignment,,needs_review

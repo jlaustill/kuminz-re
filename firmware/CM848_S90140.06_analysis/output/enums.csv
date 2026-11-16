@@ -828,3 +828,12 @@ DIAGNOSTIC_SERVICE,0x4a,DIAGNOSTIC_SERVICE_MEMORY_READ,cm848_diagService74_memor
 DIAGNOSTIC_SERVICE,0x4b,DIAGNOSTIC_SERVICE_MEMORY_WRITE_75,kernel memory-write,1
 DIAGNOSTIC_SERVICE,0x4c,DIAGNOSTIC_SERVICE_MEMORY_READ_EXT,cm848_diagService76_memoryReadExt,1
 DIAGNOSTIC_SERVICE,0x4d,DIAGNOSTIC_SERVICE_MEMORY_WRITE_EXT,kernel memory-write ext,1
+
+# FUEL_PRESSURE_GOVERNOR_MODE - engine_sync_state_t.fuel_pressure_governor_mode (cm848_calculateFuelMeteringCommand)
+FUEL_PRESSURE_GOVERNOR_MODE,1,FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START,Open-loop start command (two tables blended by the input engine_sync_state_a picks); the mode the others fall back to,1
+FUEL_PRESSURE_GOVERNOR_MODE,2,FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START,PID on fuel_pressure_setpoint - fuel_pressure_feedback_filtered for the first 1000 revolutions (fuel_pressure_governor_start_revolutions),1
+FUEL_PRESSURE_GOVERNOR_MODE,4,FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP,PID after the start revolutions,1
+FUEL_PRESSURE_GOVERNOR_MODE,8,FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED,Timed fixed command when the pressure is low inside an rpm window (impossible in this calibration: threshold 0 and an empty rpm window),1
+FUEL_PRESSURE_GOVERNOR_MODE,0x10,FUEL_PRESSURE_GOVERNOR_KEY_OFF,Fixed command while the ignition key switch is off and no shutdown is running,1
+FUEL_PRESSURE_GOVERNOR_MODE,0x20,FUEL_PRESSURE_GOVERNOR_DISABLED,Fixed command while fuel_pressure_governor_disable is set,1
+FUEL_PRESSURE_GOVERNOR_MODE,0x40,FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT,Fixed command (2865 here) while P0193 / P0192 / P0653 / P0652 are set (faults 304 / 305 / 377 / 378) - the open-loop fallback,1

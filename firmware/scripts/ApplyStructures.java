@@ -382,8 +382,12 @@ public class ApplyStructures extends GhidraScript {
                 if (createdStructures.containsKey(typeName)) {
                     dt = createdStructures.get(typeName);
                 } else {
-                    // Default to byte array
-                    dt = ByteDataType.dataType;
+                    // An enum from enums.csv (the enums stage runs before import). Other unknown names keep
+                    // the byte default, so only enum-typed fields change.
+                    dt = findEnum(typeName);
+                    if (dt == null) {
+                        dt = ByteDataType.dataType;
+                    }
                 }
         }
 
@@ -399,6 +403,19 @@ public class ApplyStructures extends GhidraScript {
         }
 
         return dt;
+    }
+
+    // The enum data type with this name, or null. Struct fields used to fall back to byte for every
+    // non-built-in name, so an enum-typed field (e.g. J1939_ACK_TYPE) never rendered its member names.
+    private DataType findEnum(String typeName) {
+        java.util.List<DataType> found = new java.util.ArrayList<>();
+        dtm.findDataTypes(typeName, found);
+        for (DataType candidate : found) {
+            if (candidate instanceof ghidra.program.model.data.Enum) {
+                return candidate;
+            }
+        }
+        return null;
     }
 
     private int applyStructuresToMemory(Map<String, List<FieldDef>> structDefs) throws Exception {

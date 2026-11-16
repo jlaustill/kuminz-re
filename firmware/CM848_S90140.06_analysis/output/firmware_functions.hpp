@@ -999,7 +999,7 @@ int cm848_applyPiecewiseLinearGain(int *param_1,int param_2);  // @ 0x00047838
 int cm848_integrateWithZoneGain(int param_1,int *param_2,int param_3,uint param_4);  // @ 0x00047978
 int cm848_calculateFilteredDerivative(ushort *param_1,uint *param_2,int param_3);  // @ 0x00047a88
 void cm848_calculateFuelMeteringCommand(void);  // @ 0x00047bd0
-void cm848_updateSyncOffsetCounter(void);  // @ 0x00048fa0
+void cm848_countFuelPressureGovernorStartRevolutions(void);  // @ 0x00048fa0
 void cm848_resetEngineSyncState(void);  // @ 0x00049004
 void cm848_filterEngineSensorValue(void);  // @ 0x0004922c
 void cm848_processEnginePositionDiagnostics(void);  // @ 0x00049264

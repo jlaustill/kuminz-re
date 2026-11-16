@@ -932,6 +932,16 @@ typedef enum {
     DIAGNOSTIC_SERVICE_MEMORY_WRITE_EXT = 0x4d  /* kernel memory-write ext */
 } DIAGNOSTIC_SERVICE;
 
+typedef enum {
+    FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START = 1,  /* Open-loop start command (two tables blended by the input engine_sync_state_a picks); the mode the others fall back to */
+    FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START = 2,  /* PID on fuel_pressure_setpoint - fuel_pressure_feedback_filtered for the first 1000 revolutions (fuel_pressure_governor_start_revolutions) */
+    FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP = 4,  /* PID after the start revolutions */
+    FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED = 8,  /* Timed fixed command when the pressure is low inside an rpm window (impossible in this calibration: threshold 0 and an empty rpm window) */
+    FUEL_PRESSURE_GOVERNOR_KEY_OFF = 0x10,  /* Fixed command while the ignition key switch is off and no shutdown is running */
+    FUEL_PRESSURE_GOVERNOR_DISABLED = 0x20,  /* Fixed command while fuel_pressure_governor_disable is set */
+    FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT = 0x40  /* Fixed command (2865 here) while P0193 / P0192 / P0653 / P0652 are set (faults 304 / 305 / 377 / 378) - the open-loop fallback */
+} FUEL_PRESSURE_GOVERNOR_MODE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -1152,7 +1162,7 @@ struct engine_crank_state_t {
 };
 
 struct engine_sync_state_t {
-    uint8_t sync_status;  /* Fuel pressure governor mode: 1 low rpm / 2 and 4 PID / 8 fixed (filtered pressure below a threshold inside an rpm window) / 0x10 fixed (switch 0 off) / 0x20 fixed (cam_sync_disable_cal) / 0x40 fixed (faults 304 / 305 / 377 / 378) */
+    FUEL_PRESSURE_GOVERNOR_MODE fuel_pressure_governor_mode;  /* Fuel pressure governor mode (FUEL_PRESSURE_GOVERNOR_MODE; was sync_status) */
     uint16_t fuel_pressure_governor_demand;  /* Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count) */
     uint16_t fuel_metering_command;  /* Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw) */
     uint8_t reserved_05;  /* Padding for alignment */
