@@ -1021,6 +1021,7 @@ typedef struct boost_in_range_config_t boost_in_range_config_t;
 typedef struct usiu_pit_t usiu_pit_t;
 typedef struct usiu_clock_t usiu_clock_t;
 typedef struct usiu_memc_t usiu_memc_t;
+typedef struct siu_gpio_data_register_t siu_gpio_data_register_t;
 typedef struct etc1_governor_state_t etc1_governor_state_t;
 typedef struct etc1_config_entry_t etc1_config_entry_t;
 typedef struct tpua_module_regs_t tpua_module_regs_t;
@@ -1885,6 +1886,13 @@ struct usiu_memc_t {
     uint32_t OR2;  /* Option Register 2 */
     uint32_t BR3;  /* Base Register 3 */
     uint32_t OR3;  /* Option Register 3 */
+};
+
+struct siu_gpio_data_register_t {
+    uint8_t byte_0;  /* Bits 31-24: lines 24-31 in SIU_SGPIODT1 / lines 56-63 in SIU_SGPIODT2 */
+    uint8_t byte_1;  /* Bits 23-16: lines 32-39 in SIU_SGPIODT1 / lines 64-71 in SIU_SGPIODT2 */
+    uint8_t byte_2;  /* Bits 15-8: lines 40-47 in SIU_SGPIODT1 / lines 72-79 in SIU_SGPIODT2 */
+    uint8_t byte_3;  /* Bits 7-0: lines 48-55 in SIU_SGPIODT1 / lines 80-87 in SIU_SGPIODT2 */
 };
 
 struct etc1_governor_state_t {
