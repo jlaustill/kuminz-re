@@ -9,9 +9,14 @@ function_address,function_name,param_index,name,type,comment
 0x00055ef4,lookupTableInterpolation,3,y_data,word *,Y data (r6): first word = byte length of the values that follow (one per breakpoint)
 0x00055ef4,lookupTableInterpolation,4,flags,int,r7: bit 0 = signed x axis / bit 1 = signed y data / bit 3 = step lookup (no interpolation); calls pass 0 (218) / 1 (43) / 2 (31) / 3 (13) / 8 (1) or a wrapper's own flag
 
-0x000566cc,cm848_dualAxisTableInterpolation,0,table_descriptor,void*,Pointer to 2D table descriptor
-0x000566cc,cm848_dualAxisTableInterpolation,1,x_input,ushort,X-axis input value
-0x000566cc,cm848_dualAxisTableInterpolation,2,y_input,ushort,Y-axis input value
+0x000566cc,cm848_dualAxisTableInterpolation,return,,word,Z value at (x_input / y_input): interpolated between the grid points around it (step value with flags bit 3)
+0x000566cc,cm848_dualAxisTableInterpolation,0,cached_axis_offsets,word *,Two words (r3): the byte offsets (2 x index) of the x and y axis segments found last time - each search starts there and the new offsets are written back
+0x000566cc,cm848_dualAxisTableInterpolation,1,x_input,ushort,Value looked up on x_axis (r4)
+0x000566cc,cm848_dualAxisTableInterpolation,2,x_axis,word *,X axis (r5): first word = byte length of the breakpoints
+0x000566cc,cm848_dualAxisTableInterpolation,3,y_input,ushort,Value looked up on y_axis (r6)
+0x000566cc,cm848_dualAxisTableInterpolation,4,y_axis,word *,Y axis (r7): first word = byte length of the breakpoints
+0x000566cc,cm848_dualAxisTableInterpolation,5,z_data,word *,Grid values (r8) - one per x / y breakpoint pair
+0x000566cc,cm848_dualAxisTableInterpolation,6,flags,int,r9: bit 0 = signed x axis / bit 1 = signed y axis / bit 2 = signed z data / bit 3 = step lookup
 
 0x00015d2c,cm848_interpolateTableWithoutCache,return,,word,Y value at the input: linear between the breakpoints around it and the end value outside the axis
 0x00015d2c,cm848_interpolateTableWithoutCache,0,input,int,Value looked up on the x axis (compared as a full 32-bit register - a 16-bit type leaves CONCAT22 artifacts)

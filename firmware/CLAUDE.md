@@ -430,6 +430,11 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
   - `cached_axis_offset` is a word that keeps the last segment found (2 x index); the `*_interp_state` / `*_interp_index` / `engine_sync_init_state_*` globals are these words.
   - `flags`: bit 0 = signed axis, bit 1 = signed data, bit 3 = step lookup.
 - **The old prototype:** its one-argument row in `function_definitions.csv` (`table_interp_args_t *`, ported from CM550) hid the input and both tables at ~310 call sites. Any table's input and data are now readable at the call.
+- **2-D tables:** `cm848_dualAxisTableInterpolation(cached_axis_offsets, x_input, x_axis, y_input, y_axis, z_data, flags)` (0x566cc) takes seven register arguments (r3-r9).
+  - `cached_axis_offsets` is two words (x / y segment offsets).
+  - `flags`: bit 0 signed x / bit 1 signed y / bit 2 signed z / bit 3 step.
+  - Its old three-argument row hid both axes and the y input; ~230 references now render.
+- **Stateless lookup:** `cm848_interpolateTableWithoutCache(input, x_axis, y_data)` (0x15d2c).
 - **Still wrong:** the `sensorChannelTypeB_*` functions still take `table_interp_args_t *`.
 
 ### QADC Analog Sensor Read (two-table dispatch)

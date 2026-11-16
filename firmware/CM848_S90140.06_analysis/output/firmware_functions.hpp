@@ -359,7 +359,7 @@ void cm848_processFuelMapInterpolation(void);  // @ 0x00015f34
 void cm848_calculateFuelBlendModeSelection(void);  // @ 0x000160ac
 void cm848_processFuelDemandCalculations(void);  // @ 0x000164ac
 undefined2 cm848_fuelDemandTableLookup(word param_1);  // @ 0x000164e4
-int cm848_fuelDemandRpmCorrection(undefined4 param_1,word param_2);  // @ 0x00016724
+int cm848_fuelDemandRpmCorrection(word param_1,word param_2);  // @ 0x00016724
 void cm848_lookupProtectionFuelDemand(void);  // @ 0x00016774
 void mpc555_initFuelDemandTablePointers(void);  // @ 0x00016888
 void cm848_calculateFuelInjectionTiming(void);  // @ 0x00016a90
@@ -480,7 +480,7 @@ void cm848_processFaultIncrement(short *param_1);  // @ 0x0001ec48
 uint cm848_calculateDualAxisFuelLimit(void);  // @ 0x0001ec70
 void cm848_initFuelDemandTracking(void);  // @ 0x0001ef30
 void fuelDemandProportionalCalculationSlowCycle40Coordinator(void);  // @ 0x0001ef88
-uint cm848_processActiveFaultList(word param_1);  // @ 0x0001f03c
+uint cm848_processActiveFaultList(word param_1,word param_2);  // @ 0x0001f03c
 void cm848_calculateFuelDemandWithTrim(void);  // @ 0x0001f17c
 void cm848_initFuelDemandTableDimensions(void);  // @ 0x0001f300
 void cm848_initProtectionStateWithFuelDemand(void);  // @ 0x0001f318
@@ -1286,7 +1286,7 @@ int cm848_signedFirstOrderFilter(int param_1,undefined4 *param_2);  // @ 0x00056
 int cm848_secondOrderFilter(short param_1,undefined4 *param_2);  // @ 0x000564c0
 uint exponentialMovingAverage(uint param_1,undefined4 *param_2);  // @ 0x00056594
 undefined4 cm848_interpolateTableLinearStep(int param_1,undefined4 *param_2);  // @ 0x00056608
-uint cm848_dualAxisTableInterpolation(void *table_descriptor,word x_input,word y_input);  // @ 0x000566cc
+word cm848_dualAxisTableInterpolation (word *cached_axis_offsets,word x_input,word *x_axis,word y_input,word *y_axis, word *z_data,dword flags);  // @ 0x000566cc
 undefined4 cm848_ringBufferWriteByte(int *param_1,undefined1 param_2);  // @ 0x00056c80
 void cm848_ringBufferInit(int *param_1,int param_2,int param_3);  // @ 0x00056d38
 void cm848_memcpyBytes(int param_1,int param_2,int param_3);  // @ 0x00056d58
@@ -1782,7 +1782,7 @@ void initHpcr_ExceptionHandler(void);  // @ 0x005246e0
 void governor_cruise_setpoint_calc(int param_1);  // @ 0x0052470c
 void governor_cruise_speedReference_update(void);  // @ 0x00524aec
 undefined2 governor_cruise_rampRate_calc(int param_1,int param_2);  // @ 0x00524c6c
-uint governor_cruise_tableLimit_calc(int param_1,void *param_2,word param_3,word param_4);  // @ 0x00524d34
+uint governor_cruise_tableLimit_calc (int param_1,word *param_2,word param_3,word *param_4,word param_5,word *param_6, word *param_7,dword param_8);  // @ 0x00524d34
 uint governor_cruise_rampScale_calc(int param_1,uint param_2,uint param_3);  // @ 0x00524dd0
 void governorCruiseStateMachine(void);  // @ 0x00524df4
 void governor_cruise_torqueLimit_calc(void);  // @ 0x005250c0
