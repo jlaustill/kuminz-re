@@ -295,7 +295,7 @@ address,name,type,comment
 0x0005c3b4,etc1_config_entry_t_0005c3b4,etc1_config_entry_t,
 0x0005c3b6,etc1_config_entry_t.conflict_0005c3b4.source_address_filter,,
 0x0005c47c,j1939_dm_feature_mode,word,
-0x0005c47e,cal_fuel_operation_mode_1_en,word,
+0x0005c47e,engine_retarder_stage_1_weight,word,Extra: ROM constant (1), the first of six consecutive stage weights at 0x5c47e / 0x5c480 / 0x5c482 / 0x5c484 / 0x5c486 / 0x5c488 (values 1,0,0,0,0,0; the last five are unnamed DAT_ words). cm848_calculateSpeedControlError adds weight n to the engaged stage count when flag bit (3 + n - 1) of fuel_demand_config_flags is set; cm848_initGovernorProtectionState sums all six into fuel_operation_mode_cou (was cal_fuel_operation_mode_1_en)
 0x0005c48e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcbdc.coefficient points here
 0x0005c4b6,governor_speed_limit_by_coolant_temperature_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_updateSpeedLimitFromCoolant
 0x0005c4c8,governor_speed_limit_by_coolant_temperature_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_updateSpeedLimitFromCoolant
@@ -425,8 +425,8 @@ address,name,type,comment
 0x0005f208,tpu_a_channel_14_scale_by_battery_voltage_values,word[8],Lookup table - data: 7 values (one per axis breakpoint) after a byte-length word - read by cm848_tpuMiosOutput_loadCalibration
 0x0005f218,tpu_a_channel_4_scale_by_battery_voltage_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_tpuMiosOutput_loadCalibration
 0x0005f224,tpu_a_channel_4_scale_by_battery_voltage_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_tpuMiosOutput_loadCalibration
-0x0005f230,cam_sync_timing_xaxis_cal,word[9],
-0x0005f242,cam_sync_timing_yaxis_cal,word[9],
+0x0005f230,injection_pulse_width_minimum_axis,word[9],ROM 1-D table (word[9], byte length 16 + 8 breakpoints 0..2866 counts = 0..140 MPa) used as the x axis of the minimum-on-time lookup with fuel_pressure_sensor in all three pulse width functions (their only users). Matches e2m HPCR_Min_Injduration_Curve_Fuelpr_Axis (MPa 0.0488). ROM, so no _cal; nothing to do with cam sync. (was cam_sync_timing_xaxis_cal)
+0x0005f242,injection_pulse_width_minimum_values,word[9],ROM 1-D values of the minimum on-time: 375 ticks (150 us) at every rail pressure; each pulse width function zeroes its on-time when the table result is below it. Matches e2m HPCR_Min_Injduration_Curve_Duration_Axis (uSEC 0.4). ROM, so no _cal. (was cam_sync_timing_yaxis_cal)
 0x0005f254,main_injection_pulse_width_x_axis,word[25],Lookup table - x axis of 24 breakpoints after its byte-length word - read by cm848_calculateTimingWithTables
 0x0005f286,main_injection_pulse_width_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_calculateTimingWithTables
 0x0005f2a8,main_injection_pulse_width_grid,word[384],Lookup table - 2-D grid: 16 rows of 24 values (z[(y - 1) x 24 + x - 1] / no header) - read by cm848_calculateTimingWithTables
@@ -448,73 +448,73 @@ address,name,type,comment
 0x0005fabe,auxiliary_injection_pulse_width_x_axis,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineFaultTiming
 0x0005fad6,auxiliary_injection_pulse_width_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_calculateEngineFaultTiming
 0x0005faea,auxiliary_injection_pulse_width_grid,word[99],Lookup table - 2-D grid: 9 rows of 11 values (z[(y - 1) x 11 + x - 1] / no header) - read by cm848_calculateEngineFaultTiming
-0x00061cea,pilot_quantity_map_1_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061d12,pilot_quantity_map_1_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061d34,pilot_quantity_map_1_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061f94,pilot_quantity_boost_factor_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061fb0,pilot_quantity_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061fc8,pilot_quantity_boost_factor_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x000620e6,pilot_quantity_boost_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062102,pilot_quantity_boost_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006211a,pilot_quantity_boost_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062238,pilot_quantity_map_2_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062260,pilot_quantity_map_2_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062282,pilot_quantity_map_2_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x000624e2,pilot_quantity_map_3_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006250a,pilot_quantity_map_3_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006252c,pilot_quantity_map_3_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x0006278c,pilot_quantity_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000627b4,pilot_quantity_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000627d6,pilot_quantity_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062a36,pilot_quantity_cold_correction_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062a48,pilot_quantity_cold_correction_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062a5a,pilot_quantity_cold_correction_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062ada,pilot_quantity_cold_correction_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062af6,pilot_quantity_cold_correction_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062b0e,pilot_quantity_cold_correction_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062c2c,pilot_quantity_cold_start_override_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062c40,pilot_quantity_cold_start_override_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00062c54,pilot_quantity_cold_start_override_grid,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00062cf6,injection_timing_offset_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062d08,injection_timing_offset_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062d1a,injection_timing_offset_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00062d9a,injection_timing_offset_intake_temperature_factor_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062db4,injection_timing_offset_intake_temperature_factor_values,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062dce,injection_timing_offset_barometric_pressure_factor_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062dda,injection_timing_offset_barometric_pressure_factor_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062de6,injection_timing_offset_cold_start_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062dfa,injection_timing_offset_cold_start_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062e0e,injection_timing_offset_cold_start_grid,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00062eb0,injection_timing_offset_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062ed8,injection_timing_offset_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00062efa,injection_timing_offset_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x0006315a,injection_timing_offset_coolant_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063176,injection_timing_offset_coolant_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006318e,injection_timing_offset_coolant_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x000632ac,injection_timing_offset_intake_temperature_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x000632c8,injection_timing_offset_intake_temperature_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x000632e0,injection_timing_offset_intake_temperature_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x000633fe,injection_timing_offset_barometric_pressure_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006341a,injection_timing_offset_barometric_pressure_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063432,injection_timing_offset_barometric_pressure_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00063550,injection_timing_offset_boost_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006356c,injection_timing_offset_boost_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063584,injection_timing_offset_boost_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x000636a2,injection_timing_offset_boost_factor_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x000636be,injection_timing_offset_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x000636d6,injection_timing_offset_boost_factor_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x000637f4,injection_timing_offset_map_1_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006381c,injection_timing_offset_map_1_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006383e,injection_timing_offset_map_1_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00063a9e,injection_timing_offset_map_2_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063ac6,injection_timing_offset_map_2_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063ae8,injection_timing_offset_map_2_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00063d48,injection_timing_offset_map_3_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063d70,injection_timing_offset_map_3_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x00063d92,injection_timing_offset_map_3_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
-0x00063ff2,injection_timing_offset_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006401a,injection_timing_offset_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
-0x0006403c,injection_timing_offset_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00061cea,injection_quantity_pilot_map_1_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061d12,injection_quantity_pilot_map_1_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061d34,injection_quantity_pilot_map_1_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061f94,injection_quantity_pilot_boost_factor_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061fb0,injection_quantity_pilot_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061fc8,injection_quantity_pilot_boost_factor_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x000620e6,injection_quantity_pilot_boost_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062102,injection_quantity_pilot_boost_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006211a,injection_quantity_pilot_boost_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062238,injection_quantity_pilot_map_2_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062260,injection_quantity_pilot_map_2_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062282,injection_quantity_pilot_map_2_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x000624e2,injection_quantity_pilot_map_3_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006250a,injection_quantity_pilot_map_3_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006252c,injection_quantity_pilot_map_3_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x0006278c,injection_quantity_pilot_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000627b4,injection_quantity_pilot_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000627d6,injection_quantity_pilot_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062a36,injection_quantity_pilot_cold_correction_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062a48,injection_quantity_pilot_cold_correction_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062a5a,injection_quantity_pilot_cold_correction_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062ada,injection_quantity_pilot_cold_correction_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062af6,injection_quantity_pilot_cold_correction_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062b0e,injection_quantity_pilot_cold_correction_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062c2c,injection_quantity_pilot_cold_start_override_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062c40,injection_quantity_pilot_cold_start_override_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00062c54,injection_quantity_pilot_cold_start_override_grid,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00062cf6,injection_timing_pilot_offset_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062d08,injection_timing_pilot_offset_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062d1a,injection_timing_pilot_offset_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00062d9a,injection_timing_pilot_offset_intake_temperature_factor_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062db4,injection_timing_pilot_offset_intake_temperature_factor_values,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062dce,injection_timing_pilot_offset_barometric_pressure_factor_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062dda,injection_timing_pilot_offset_barometric_pressure_factor_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062de6,injection_timing_pilot_offset_cold_start_x_axis,word[10],Lookup table - x axis of 9 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062dfa,injection_timing_pilot_offset_cold_start_y_axis,word[10],Lookup table - y axis of 9 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062e0e,injection_timing_pilot_offset_cold_start_grid,word[81],Lookup table - 2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00062eb0,injection_timing_pilot_offset_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062ed8,injection_timing_pilot_offset_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00062efa,injection_timing_pilot_offset_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x0006315a,injection_timing_pilot_offset_coolant_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063176,injection_timing_pilot_offset_coolant_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006318e,injection_timing_pilot_offset_coolant_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x000632ac,injection_timing_pilot_offset_intake_temperature_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x000632c8,injection_timing_pilot_offset_intake_temperature_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x000632e0,injection_timing_pilot_offset_intake_temperature_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x000633fe,injection_timing_pilot_offset_barometric_pressure_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006341a,injection_timing_pilot_offset_barometric_pressure_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063432,injection_timing_pilot_offset_barometric_pressure_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00063550,injection_timing_pilot_offset_boost_angle_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006356c,injection_timing_pilot_offset_boost_angle_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063584,injection_timing_pilot_offset_boost_angle_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x000636a2,injection_timing_pilot_offset_boost_factor_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x000636be,injection_timing_pilot_offset_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x000636d6,injection_timing_pilot_offset_boost_factor_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x000637f4,injection_timing_pilot_offset_map_1_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006381c,injection_timing_pilot_offset_map_1_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006383e,injection_timing_pilot_offset_map_1_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00063a9e,injection_timing_pilot_offset_map_2_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063ac6,injection_timing_pilot_offset_map_2_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063ae8,injection_timing_pilot_offset_map_2_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00063d48,injection_timing_pilot_offset_map_3_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063d70,injection_timing_pilot_offset_map_3_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x00063d92,injection_timing_pilot_offset_map_3_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
+0x00063ff2,injection_timing_pilot_offset_map_4_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006401a,injection_timing_pilot_offset_map_4_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by engine_injectionTiming_arbitration_calc
+0x0006403c,injection_timing_pilot_offset_map_4_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by engine_injectionTiming_arbitration_calc
 0x0006429c,injector_group_a_supply_voltage_linearization_axis,word[3],Lookup table - x axis of 2 breakpoints after its byte-length word - read by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
 0x000642a2,injector_group_a_supply_voltage_linearization_values,word[3],Lookup table - data: 2 values (one per axis breakpoint) after a byte-length word - read by cm848_initProtectionParameter1 / cm848_processProtectionParameter1
 0x000642a8,injector_group_b_supply_voltage_linearization_axis,word[3],Lookup table - x axis of 2 breakpoints after its byte-length word - read by cm848_initProtectionParameter2 / cm848_processProtectionParameter2
@@ -1041,7 +1041,7 @@ address,name,type,comment
 0x003fa0f2,protection_diag_state_a,word,
 0x003fa0f4,protection_diag_state_b,word,
 0x003fa0f6,protection_diag_state_c,word,
-0x003fa0f8,speed_timing_blend_weight,word,
+0x003fa0f8,governor_reference_filter_weight,word,Q14 weight (16384 = 1.0) of the previous value for the governor reference smoothing: set from the speed-difference table in cm848_fuelTimingRateLimitedBlend (mode 7) or from the reference EMA coefficient >> 2 otherwise; used for fuel_trim_speed_floor and for governor_fuel_demand_prev_ref. No timing involved. Working RAM, no _cal. (was speed_timing_blend_weight)
 0x003fa0fa,governor_fuel_demand_prev_ref,word,
 0x003fa0fc,fuel_demand_integrator_max,word,
 0x003fa0fe,engine_rpm_prev_snapshot,word,
@@ -1322,8 +1322,8 @@ address,name,type,comment
 0x003fa8a4,torque_limit_working_reference,word,
 0x003fa8a6,fuel_ema_mode_slot_state_1,word,
 0x003fa8a8,fuel_ema_mode_slot_state_2,word,
-0x003fa8aa,throttle_demand_integrator,word,
-0x003fa8ac,injection_timing_advance_enable_count,word,
+0x003fa8aa,engine_retarder_torque_ramp_percent_times_256,word,Extra: used only in cm848_calculateSpeedControlError. Reset to 0 with no stage engaged, else grows by ROM 0x5c48a (12800) per call up to 0x6400 (25600 = 100 percent x 256) and multiplies the table torque; not a throttle demand. (was throttle_demand_integrator)
+0x003fa8ac,engine_retarder_torque_ramp_delay_count,word,Extra: used only in cm848_calculateSpeedControlError. Counts calls up to ROM 0x5c48c (2) before the torque ramp starts, reset with no stage engaged; unrelated to injection timing. (was injection_timing_advance_enable_count)
 0x003fa8ae,protection_mode_request_bit,word,
 0x003fa8b0,protection_mode_request_initialized_flag,word,
 0x003fa8b4,,pointer,
@@ -1349,11 +1349,11 @@ address,name,type,comment
 0x003faa62,j1939_pgn_handler_count,byte,
 0x003faa68,tsc1_rx_byte_0,byte,
 0x003faa6b,tsc1_rx_byte_3,byte,
-0x003faa70,j1939_governor_speed_demand,word,
-0x003faa72,fuel_operation_mode_count,word,
-0x003faa74,governor_output_percentage,word,
-0x003faa76,governor_speed_percentage_cal,word,
-0x003faa78,governor_speed_request_maximum,word,
+0x003faa70,engine_retarder_requested_torque,word,Extra (not in the lead list): request percent x full-scale torque / 100, written and read only in j1939FormatMultiFrameResponse and compared with the stage maxima; it is a retarder torque in table units, not a speed demand. (was j1939_governor_speed_demand)
+0x003faa72,engine_retarder_stage_count,word,Set once by cm848_initGovernorProtectionState to the sum of the six stage weights (1 in this ROM); j1939FormatMultiFrameResponse tests == 4 to use stage 4 value [4] instead of stage 6 value [4] as the full-scale torque. (was fuel_operation_mode_count)
+0x003faa74,engine_retarder_stage_percent,word,Output of j1939FormatMultiFrameResponse (0 / 17 / 33 / 50 / 67 / 83 / 100 = engaged stages out of 6); copied to j1939_governor_output_percent_cached / _tx by cm848_j1939ProcessGovernorRequest, where the lowest request wins in cm848_processGovernorErrorState. (was governor_output_percentage)
+0x003faa76,engine_retarder_full_scale_torque,word,0x3faa76 is working RAM, so _cal is wrong. Reloaded on every call of j1939FormatMultiFrameResponse from engine_retarder_torque_stage_6_values[4] (stage_4_values[4] when fuel_operation_mode_count = 4) and used as request x value / 100; read nowhere else. (was governor_speed_percentage_cal)
+0x003faa78,engine_retarder_stage_maximum_torque,word,Used only in j1939FormatMultiFrameResponse: the interpolated engine_retarder_torque_stage_<n>_values maximum at current_rpm for the stage being tested, compared against the scaled request (the campaign already called it a misnomer). (was governor_speed_request_maximum)
 0x003faa7a,diag_service_slot_state_1,word,
 0x003faa7c,diag_service_slot_state_2,word,
 0x003faa7e,diag_service_slot_state_3,word,
@@ -1789,16 +1789,16 @@ address,name,type,comment
 0x003fb384,cruise_check_sample_count,word,
 0x003fb386,cruise_enable_sample_count_b,word,
 0x003fb388,cruise_sensor_sample_count,word,
-0x003fb38a,battery_voltage_scan_index,word,
-0x003fb38c,battery_voltage_confirm_counter,word,
-0x003fb38e,can_subsystem_init_state_a,word,
-0x003fb390,can_subsystem_init_state_b,word,
-0x003fb392,can_subsystem_init_state_c,word,
-0x003fb394,can_subsystem_init_state_d,word,
-0x003fb396,can_subsystem_init_state_e,word,
-0x003fb398,can_subsystem_init_state_f,word,
-0x003fb39a,can_subsystem_init_state_g,word,
-0x003fb39c,cruise_prev_state_index,word,
+0x003fb38a,alternator_field_start_ramp_elapsed_passes,word,Only user is cm848_filterProtectionOutput: it is the x input of the alternator_field_duty_start_ramp_* lookup in state 1, incremented once per pass there and zeroed in states 0 and 2, so it is the age of the soft-start ramp (not a voltage scan). (was battery_voltage_scan_index)
+0x003fb38c,alternator_field_load_response_elapsed_passes,word,Incremented once per pass in regulator state 3 and zeroed in states 0, 1 and 2; read by the state 3 handler (ROM 0x3844c): with the duty at 25600 and this count above the limit at 0x4087b0 the machine leaves state 3 for state 2. It counts time in the load response, not a confirmation of anything. (was battery_voltage_confirm_counter)
+0x003fb38e,charging_voltage_target_cached_axis_offset,word,First argument of lookupTableInterpolation (ROM 0x55ef4 reads it as the starting segment, writes back 2 x index: lhz r12,0(r8) ... sth r12,0(r8)); initialised to 2 in cm848_initProtectionFilterValues; its only other reference is the charging_voltage_target_by_battery_temperature_* lookup in cm848_processProtectionCoolantLookup. Nothing to do with CAN. (Existing 'Lookup cache' comment wording in gl (was can_subsystem_init_state_a)
+0x003fb390,alternator_field_duty_start_ramp_cached_axis_offset,word,First argument of lookupTableInterpolation (ROM 0x55ef4 reads it as the starting segment, writes back 2 x index: lhz r12,0(r8) ... sth r12,0(r8)); initialised to 2 in cm848_initProtectionFilterValues; its only other reference is the alternator_field_duty_start_ramp_* lookup (state 1). Nothing to do with CAN. (Existing 'Lookup cache' comment wording in global_variables.csv says 'the last axis segme (was can_subsystem_init_state_b)
+0x003fb392,alternator_field_duty_regulation_cached_axis_offset,word,First argument of lookupTableInterpolation (ROM 0x55ef4 reads it as the starting segment, writes back 2 x index: lhz r12,0(r8) ... sth r12,0(r8)); initialised to 2 in cm848_initProtectionFilterValues; its only other reference is the alternator_field_duty_regulation_* lookup (state 2). Nothing to do with CAN. (Existing 'Lookup cache' comment wording in global_variables.csv says 'the last axis segme (was can_subsystem_init_state_c)
+0x003fb394,alternator_field_load_response_hold_time_cached_axis_offset,word,First argument of lookupTableInterpolation (ROM 0x55ef4 reads it as the starting segment, writes back 2 x index: lhz r12,0(r8) ... sth r12,0(r8)); initialised to 2 in cm848_initProtectionFilterValues; its only other reference is the alternator_field_load_response_hold_time_* lookup (state 3 entry). Nothing to do with CAN. (Existing 'Lookup cache' comment wording in global_variables.csv says 'the l (was can_subsystem_init_state_d)
+0x003fb396,alternator_field_duty_load_response_cached_axis_offset,word,First argument of lookupTableInterpolation (ROM 0x55ef4 reads it as the starting segment, writes back 2 x index: lhz r12,0(r8) ... sth r12,0(r8)); initialised to 2 in cm848_initProtectionFilterValues; its only other reference is the alternator_field_duty_load_response_* lookup (state 3 hold). Nothing to do with CAN. (Existing 'Lookup cache' comment wording in global_variables.csv says 'the last ax (was can_subsystem_init_state_e)
+0x003fb398,alternator_field_load_response_ramp_by_rpm_cached_axis_offset,word,First argument of lookupTableInterpolation (ROM 0x55ef4 reads it as the starting segment, writes back 2 x index: lhz r12,0(r8) ... sth r12,0(r8)); initialised to 2 in cm848_initProtectionFilterValues; its only other reference is the alternator_field_load_response_ramp_by_rpm_* lookup (state 3 ramp). Nothing to do with CAN. (Existing 'Lookup cache' comment wording in global_variables.csv says 'the  (was can_subsystem_init_state_f)
+0x003fb39a,alternator_field_load_response_ramp_by_duty_cached_axis_offset,word,First argument of lookupTableInterpolation (ROM 0x55ef4 reads it as the starting segment, writes back 2 x index: lhz r12,0(r8) ... sth r12,0(r8)); initialised to 2 in cm848_initProtectionFilterValues; its only other reference is the alternator_field_load_response_ramp_by_duty_* lookup (state 3 ramp). Nothing to do with CAN. (Existing 'Lookup cache' comment wording in global_variables.csv says 'the (was can_subsystem_init_state_g)
+0x003fb39c,alternator_field_regulator_previous_state,word,Written only by cm848_dispatchProtectionOutputMode (copy of the state before the handler runs); read by the filter (state 3 entry test) and the PID (state 1 -> 2 integrator preset). (was cruise_prev_state_index)
 0x003fb39e,cruise_speed_roc_integrator,dword,
 0x003fb3a2,battery_voltage_gain_working,word,
 0x003fb3a4,battery_voltage_integral_rate_working,dword,
@@ -1953,14 +1953,14 @@ address,name,type,comment
 0x003fb5e4,governor_pid_init_state_e,word,
 0x003fb5e6,governor_fuel_integral_accumulator,dword,
 0x003fb5ea,governor_rpm_integral,dword,
-0x003fb630,engine_timing_reference_low,word,
-0x003fb632,engine_timing_reference_high,word,
-0x003fb634,fuel_quantity_upper_limit,word,
-0x003fb636,cruise_speed_demand_limit,word,
-0x003fb638,cruise_speed_rate_of_change,word,
-0x003fb63a,fuel_quantity_axis1_index,word,
-0x003fb63c,fuel_quantity_axis2_index,word,
-0x003fb63e,fuel_quantity_table_result,word,
+0x003fb630,main_injection_quantity_odd_event,word,Same as the even-event word for odd cylinder_event_index (selected with cylinder_event_index & 1 in cm848_calculateTimingWithTables and cm848_selectGovernorFilterOutput). (was engine_timing_reference_low)
+0x003fb632,main_injection_quantity_even_event,word,Starts as total_injection_quantity (cm848_selectGovernorFilterOutput, even cylinder_event_index), then cm848_calculateEngineTimingInterpolation subtracts the pilot quantity (when the pilot is on) and the auxiliary quantity, leaving the main quantity that cm848_calculateTimingWithTables turns into the main on-time. (was engine_timing_reference_high)
+0x003fb634,main_injection_pulse_width_maximum,word,Set in cm848_selectGovernorFilterOutput to 2 / 3 / 4 x (crank period >> 3) by fuel_injection_state_code and used only as the cap of the main table result in cm848_calculateTimingWithTables; a pulse width ceiling of 1/4 to 1/2 of the crank period (the e2m shift factor HPCR_Max_Maininj_Duration_Shiftfactor). (was fuel_quantity_upper_limit)
+0x003fb636,pilot_injection_pulse_width_maximum,word,Set in cm848_selectGovernorFilterOutput to crank period >> 4 (doubled when injection_timing_mode_a_cal = 2); only reader is cm848_calculateEngineTimingInterpolation, which caps the pilot table width with it. Nothing to do with cruise control. (was cruise_speed_demand_limit)
+0x003fb638,auxiliary_injection_pulse_width_maximum,word,Set in cm848_selectGovernorFilterOutput to crank period >> 4 (doubled when injection_timing_mode_b_cal = 2); only reader is cm848_calculateEngineFaultTiming, which caps the third on-time with it. Nothing to do with cruise control. (was cruise_speed_rate_of_change)
+0x003fb63a,pilot_to_main_injection_interval,word,Written by cm848_calculateEngineTimingInterpolation: (main start angle - pilot start angle) x crank period / (cam_sync_position_high_byte x 256) >> 3, i.e. time from pilot start to main start in 3.2 us counts; x input of main_quantity_pilot_correction_grid (e2m HPCR_Fuelq_Corr_Map_Interval_Axis, 3.2 us). (was fuel_quantity_axis1_index)
+0x003fb63c,main_to_auxiliary_injection_interval,word,Written by cm848_calculateEngineFaultTiming: (third start angle - main start angle) converted with the crank period and shifted >> 3 (3.2 us counts); x input of the main-pulse interaction table (WORD_ARRAY_0005f8ac). Same construction as the pilot interval. (was fuel_quantity_axis2_index)
+0x003fb63e,main_injection_pulse_width_before_minimum_check,word,Main on-time from main_injection_pulse_width_grid capped at fuel_quantity_upper_limit, before the minimum-on-time cutoff that zeroes fuel_quantity_active. Read by cm848_calculateEngineFaultTiming as the y input of the main-pulse interaction table and as the main-pulse-on test. (was fuel_quantity_table_result)
 0x003fb640,engine_sync_init_state_a,word,
 0x003fb642,engine_sync_init_state_b,word,
 0x003fb644,engine_sync_init_state_c,word,
@@ -2020,14 +2020,14 @@ address,name,type,comment
 0x003fb6d6,cam_sync_filter_init_state_4,word,
 0x003fb6d8,cam_sync_filter_init_state_5,word,
 0x003fb6da,cam_sync_filter_init_state_6,word,
-0x003fb6dc,engine_sync_counter_b,word,
-0x003fb6de,engine_sync_counter_a,word,
-0x003fb6e0,engine_position_diagnostic_flags,byte,
-0x003fb6e1,engine_position_diag_pending,byte,
+0x003fb6dc,fuel_pressure_diagnostic_set_debounce_count,word,Counted on passes where the flags are nonzero and differ from the snapshot; above 150 (0x40951a) the snapshot takes the flags. (was engine_sync_counter_b)
+0x003fb6de,fuel_pressure_diagnostic_clear_debounce_count,word,Counted in cm848_updateEngineDiagnosticCounters on passes where the flags are 0 but the snapshot is not; above 150 (0x40951c) the snapshot takes the flags. Not an engine sync counter. (was engine_sync_counter_a)
+0x003fb6e0,fuel_pressure_diagnostic_flags,byte,Bits: 1 too high (via the pending flag), 2 above the second range limit, 4 below the rpm minimum, 8 above setpoint with low demand, 0x10 below setpoint with high demand, 0x20 below the leak-down model or demand above its limit with no fuel, 0x40 demand above the idle limit. Users: the diagnostics, cm848_updateEngineDiagnosticCounters, cm848_initEngineDiagnosticData. Not the same variable as 0x40b8 (was engine_position_diagnostic_flags)
+0x003fb6e1,fuel_pressure_too_high_pending_flag,byte,Bit 0 only: set after the pressure was above the too-high threshold for the limit count; cleared when the engine stops, feature bit 0x2000 is off, or after the recovery count; OR-ed into the snapshot without the debounce. Users: the diagnostics and the init function. (was engine_position_diag_pending)
 0x003fb6e2,engine_sync_event_counter_a,word,
 0x003fb6e4,engine_sync_event_counter_b,word,
-0x003fb6e6,engine_sync_timeout_count_b,word,
-0x003fb6e8,engine_sync_event_counter,word,
+0x003fb6e6,fuel_pressure_too_high_count,word,Counts passes with fuel_pressure_sensor above the too-high threshold up to the limit byte (150), then sets the pending flag; reset with the pending flag. Users: the diagnostics and the init function. (was engine_sync_timeout_count_b)
+0x003fb6e8,fuel_pressure_too_high_recovery_count,word,Counts passes with the pressure back below the threshold; at the recovery limit (500) the pending flag and the too-high count reset. Users: the diagnostics and the init function. (was engine_sync_event_counter)
 0x003fb6ea,cam_timing_filter_init_state,word,
 0x003fb6ec,fuel_pressure_sensor_table_cached_offset,word,cached_axis_offset of the volts -> pressure lookup in cm848_processFuelPressureSensor (init 2). Was cam_timing_reference_filter_init_state
 0x003fb6ee,fuel_pressure_sensor_code,byte,Code of the latest rail pressure sensor sample: 0 in range / 4 volts high (P0193) / 8 volts low (P0192). Was engine_sync_fault_code
@@ -2218,7 +2218,7 @@ address,name,type,comment
 0x003fd514,fuel_blend_coefficient_startup_cal,word,
 0x003fd516,fuel_blend_coefficient_run_cal,word,
 0x003fd51c,j1939_pgn_priority_cal,word,
-0x003fd526,fuel_timing_blend_counter,word,
+0x003fd526,governor_tuning_set_default_blend_weight_cal,word,EEPROM-backed (mirror offset 0xa4, reads 0 in originals/cm848_eeprom.bin) and never written. cm848_initProtectionLimitVariables copies it into fuel_timing_blend_factor, cm848_calculateRpmLimitsFromProtection uses it as the blend weight when governor_system_config_flags mask 0x08 is set (drivetrain ratio selection off), and one entry condition of that function is value < 256. So it is the default t (was fuel_timing_blend_counter)
 0x003fd52a,cruise_speed_high_limit_default,word,ROM default assigned to cruise_speed_high_limit when the temp-trim clamp is inactive (cm848_calculateTorqueCurveValue:39625); ROM-to-RAM region so NOT a _cal. Renamed from fuel_pressure_threshold_b_cal (mislabeled - a speed)
 0x003fd52c,cruise_speed_setpoint_default,word,ROM default cruise speed setpoint/limit; assigned to j1939_cruise_speed_setpoint (39624) and base for cruise_speed_limit_working (clamped by fuel-temp-trim); ROM-to-RAM region so NOT a _cal. Renamed from fuel_pressure_threshold_cal (mislabeled - a speed)
 0x003fd52e,protection_temp_scale_factor_working,word,
@@ -2275,9 +2275,9 @@ address,name,type,comment
 0x003fd7da,throttle_fuel_rate_limit_enable_flag,word,
 0x003fd7dc,throttle_rate_integrator_reset_flag,word,
 0x003fd7de,throttle_rate_filter_active_flag,word,
-0x003fd7e0,battery_voltage_gain_init_flag,word,
-0x003fd7e2,fuel_quantity_override_flag,word,
-0x003fd7e4,rpm_governor_fuel_mode_init_flag,word,
+0x003fd7e0,wastegate_duty_ceiling_grid_enable_cal,word,Read only in cm848_boostCompensatedRpmGovernor: 0 selects the battery-voltage-scaled fixed ceiling (battery_voltage_correction_cal x gain / 4096), non-zero selects the engine speed x load grid (rpm_governor_state.reserved_0c). 0 in the dump. Address is in the EEPROM mirror, so _cal is right. (was battery_voltage_gain_init_flag)
+0x003fd7e2,wastegate_duty_floor_grid_enable_cal,word,Read only in cm848_boostCompensatedRpmGovernor: non-zero takes the floor from the wastegate_duty_floor_* grid (rpm_governor_state.reserved_0e), 0 uses the fixed throttle_fuel_demand_alt_cal. 0 in the dump. EEPROM mirror. (was fuel_quantity_override_flag)
+0x003fd7e4,wastegate_duty_altitude_adjustment_enable_cal,word,Read only in cm848_boostCompensatedRpmGovernor (with fuel_mode_switch_state = 0): 0 leaves the ceiling and floor as computed, non-zero adds adjustment_delta to the ceiling and limit_adjustment to the floor (both lookups of governor_adjustment_input = altitude) and clamps to 0..12800. 0 in the dump. EEPROM mirror. (was rpm_governor_fuel_mode_init_flag)
 0x003fd7e6,governor_rpm_output_enable_flag,word,
 0x003fd7f0,cold_start_inhibit_cal,word,
 0x003fd7f8,governor_speed_target_mode_flags,word,
@@ -2654,7 +2654,7 @@ address,name,type,comment
 0x003fee36,sensor_initialization_sequence_count+2,,
 0x003fee3a,sensor_validation_delta,word,
 0x003fee3b,sensor_validation_delta+1,,
-0x003fee3e,sensor_init_retry_timer,dword,
+0x003fee3e,oil_change_monitor_soot_accumulator_cal,dword,Third accumulator of the oil change monitor, soot by elimination: it is compared with DAT_00408a6e, the third of three consecutive threshold dwords whose first two are verified in the RAM dump as gallons (250000 = 2500 gal) and miles (120000000 = 15000 mi), and the e2m order is OCM_Gallons / OCM_Miles / OCM_Soot_Percentage (u32 at 0x018B4E00 / 04 / 08). Per call while fuel is injected it adds engi (was sensor_init_retry_timer)
 0x003fee46,cruise_speed_target_working,word,
 0x003fee48,cruise_speed_target_b,word,
 0x003fee49,sensor_val_state_t_003fee48.sensor_val_pad_01,,
@@ -2803,10 +2803,10 @@ address,name,type,comment
 0x003ffc98,throttle_rate_scale_factor_cal,word,
 0x003ffc9a,throttle_rate_integrator_lower_cal,word,
 0x003ffc9c,throttle_rate_integrator_upper_cal,word,
-0x003ffc9e,throttle_fuel_demand_alt_cal,word,
+0x003ffc9e,wastegate_duty_floor_fixed,word,Read only in cm848_boostCompensatedRpmGovernor: the fixed floor of the wastegate duty request used when the floor grid is off; 128 half-duty counts = 1 % duty in the dump. Address is above the EEPROM mirror, so no _cal. (was throttle_fuel_demand_alt_cal)
 0x003ffca0,governor_rpm_band_rate_current_cal,word,
 0x003ffca2,governor_rpm_error_gain_cal,word,
-0x003ffca4,battery_voltage_correction_cal,word,
+0x003ffca4,wastegate_duty_ceiling_fixed,word,Read only in cm848_boostCompensatedRpmGovernor: the fixed ceiling (9600 = 75 % duty) multiplied by the battery voltage gain / 4096 when the ceiling grid is off. Above the EEPROM mirror, so no _cal. (was battery_voltage_correction_cal)
 0x003ffca6,throttle_rate_integrator_cal,word,
 0x003ffcaa,throttle_rate_pid_gain_cal,dword,
 0x003ffcac,throttle_rate_pid_gain_cal+2,,
@@ -2824,13 +2824,13 @@ address,name,type,comment
 0x003fffac,wastegate_duty_floor_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
 0x003fffd4,wastegate_duty_floor_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_boostCompensatedRpmGovernor
 0x003ffff6,wastegate_duty_floor_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_boostCompensatedRpmGovernor
-0x00400256,governor_adjustment_rpm_axis_cal,word[9],
-0x00400268,governor_adjustment_limit_cal,word[9],
+0x00400256,wastegate_duty_floor_adjustment_by_altitude_axis,word[9],x axis of the lookup whose x input is governor_adjustment_input (altitude in feet), not engine speed; result rpm_governor_state.limit_adjustment is added to the duty floor. Only reader is cm848_boostCompensatedRpmGovernor. Mirrors wastegate_duty_ceiling_adjustment_by_altitude_axis. Not EEPROM, so no _cal. (was governor_adjustment_rpm_axis_cal)
+0x00400268,wastegate_duty_floor_adjustment_by_altitude_values,word[9],Values of the same lookup (see governor_adjustment_rpm_axis_cal); only reader is cm848_boostCompensatedRpmGovernor. Not EEPROM, so no _cal. (was governor_adjustment_limit_cal)
 0x0040027a,governor_base_rpm_output_cal,word[20],
 0x004002a2,governor_trim_rpm_axis_cal,word[10],
 0x004002b6,governor_trim_output_cal,word[10],
-0x004002ca,battery_voltage_axis_cal,word[6],
-0x004002d6,battery_voltage_gain_output_cal,word[6],
+0x004002ca,wastegate_duty_ceiling_battery_voltage_gain_axis,word[6],x axis (battery voltage EMA, 1/16 V: 0 / 160 / 224 / 240 / 256) of the gain lookup in cm848_boostCompensatedRpmGovernor; its only reader. Address 0x4002ca is outside the EEPROM mirror, so the _cal suffix is wrong. (was battery_voltage_axis_cal)
+0x004002d6,wastegate_duty_ceiling_battery_voltage_gain_values,word[6],Q12 gain values (5202 / 5202 / 4096 / 4096 / 4096 = 1.27 at or below 10 V, 1.0 at or above 14 V) multiplied into the fixed duty ceiling; only reader is cm848_boostCompensatedRpmGovernor. Not EEPROM, so no _cal. (was battery_voltage_gain_output_cal)
 0x004002e2,throttle_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - throttle_filter_state.coefficient points here (was throttle_filter_coeff_table)
 0x004002e4,throttle_fuel_trim_lower_cal,word,
 0x004002e6,throttle_fuel_trim_upper_cal,word,
@@ -3682,7 +3682,7 @@ address,name,type,comment
 0x004087cc,battery_voltage_low_threshold_cal,word,
 0x004087ce,cruise_sensor_sample_count_max_cal,word,
 0x004087d0,cruise_enable_sample_count_max_cal,word,
-0x004087d2,cold_start_fuel_ema_coeff_cal,word,
+0x004087d2,alternator_field_duty_slow_average_coefficient,word,Weight of the new duty sample in the slow average (6554 / 65536 = 0.1 in the dump). Address 0x4087d2 is outside the EEPROM mirror 0x3fd482-0x3feec1, so the _cal suffix is dropped. (was cold_start_fuel_ema_coeff_cal)
 0x004087d4,alternator_field_duty_not_inverted_flag,word,0: cm848_applyAlternatorFieldDuty sends 25600 - target; non-zero: the target itself - 1 in the RAM dump (was protection_fuel_output_invert_enable_cal)
 0x004087d6,battery_voltage_ema_rate_a_cal,word,
 0x004087d8,battery_voltage_ema_rate_b_cal,word,
@@ -4057,21 +4057,21 @@ address,name,type,comment
 0x00409084,fuel_correction_hysteresis_cal,word,
 0x00409086,crank_sync_threshold_override_enable_cal,word,
 0x00409088,crank_sync_threshold_override_cal,word,
-0x0040908a,injection_timing_mode_select_cal,word,
+0x0040908a,injection_quantity_auxiliary_logic_select,word,== 2 takes the minimum of the four terms, otherwise the maximum (1 = max wins in the dump). e2m Aux_Quantity_Logic_Select (1 = max wins, 2 = min wins). Only user is the auxiliary quantity function; not EEPROM-backed. (was injection_timing_mode_select_cal)
 0x0040908e,engine_sync_force_reset_cal,word,
 0x004090cc,injection_timing_count_a_max_cal,word,
 0x004090ce,injection_timing_count_b_max_cal,word,
-0x004090d0,injection_timing_phase_upper_cal,word,
-0x004090d2,injection_timing_mode_a_cal,byte,
-0x004090d3,fuel_injection_state_code,byte,
-0x004090d4,injection_timing_override_flag_cal,byte,
-0x004090d5,injection_timing_override_value_cal,word,
-0x004090d7,injection_timing_override_b_flag_cal,byte,
-0x004090d8,injection_timing_override_b_value_cal,word,
-0x004090da,injection_timing_override_c_flag_cal,byte,
-0x004090db,injection_timing_override_c_value_cal,word,
-0x004090dd,fuel_injection_quantity_threshold,word,
-0x004090df,injection_timing_mode_b_cal,byte,
+0x004090d0,pilot_to_main_injection_minimum_interval,word,Only user cm848_calculateEngineTimingInterpolation: pilot enabled only if (pilot-start to main-start interval - pilot width) >= this, in ticks (625 = 250 us in the dump). Matches e2m HPCR_Min_Interval_Main_Pilot (0.4 us). Not EEPROM-backed, so no _cal. (was injection_timing_phase_upper_cal)
+0x004090d2,pilot_injection_pulse_width_maximum_shift_factor,byte,Only user cm848_selectGovernorFilterOutput: value 2 doubles the pilot maximum on-time (period / 16 -> period / 8). Matches e2m HPCR_Max_Pilotinj_Duration_Shiftfactor. Not EEPROM-backed. (was injection_timing_mode_a_cal)
+0x004090d3,main_injection_pulse_width_maximum_shift_factor,byte,Byte cal read only by cm848_selectGovernorFilterOutput: 2 / 3 / 4 selects the main maximum on-time 2 / 3 / 4 x (period / 8) (3 in the dump). Matches e2m HPCR_Max_Maininj_Duration_Shiftfactor; never written, so not a state. (was fuel_injection_state_code)
+0x004090d4,main_injection_pulse_width_override_switch,byte,Byte read in cm848_calculateTimingWithTables: nonzero replaces the table width with the next word. Matches e2m HPCR_Maininj_Duration_Override_Switch at the same offset. Not EEPROM-backed. (was injection_timing_override_flag_cal)
+0x004090d5,main_injection_pulse_width_override_value,word,Word at an odd address right after the switch byte; main on-time used when the override switch is set (cm848_calculateTimingWithTables). Matches e2m HPCR_Maininj_Duration_Override_Value. (was injection_timing_override_value_cal)
+0x004090d7,pilot_injection_pulse_width_override_switch,byte,Byte read in cm848_calculateEngineTimingInterpolation; matches e2m HPCR_Pilotinj_Duration_Override_Switch. (was injection_timing_override_b_flag_cal)
+0x004090d8,pilot_injection_pulse_width_override_value,word,Pilot on-time used when the pilot override switch is set (cm848_calculateEngineTimingInterpolation); matches e2m HPCR_Pilotinj_Duration_Override_Value. (was injection_timing_override_b_value_cal)
+0x004090da,auxiliary_injection_pulse_width_override_switch,byte,Byte read in cm848_calculateEngineFaultTiming; matches e2m HPCR_Auxinj_Duration_Override_Switch. (was injection_timing_override_c_flag_cal)
+0x004090db,auxiliary_injection_pulse_width_override_value,word,Auxiliary on-time used when the override switch is set (cm848_calculateEngineFaultTiming); matches e2m HPCR_Auxinj_Duration_Override_Value. (was injection_timing_override_c_value_cal)
+0x004090dd,main_to_auxiliary_injection_minimum_interval,word,Only user cm848_calculateEngineFaultTiming: third pulse allowed only if the gap after the main pulse is at least this many ticks (1500 = 600 us in the dump). Matches e2m HPCR_Min_Interval_Main_Aux. It is a time, not a quantity threshold. (was fuel_injection_quantity_threshold)
+0x004090df,auxiliary_injection_pulse_width_maximum_shift_factor,byte,Only user cm848_selectGovernorFilterOutput: value 2 doubles the auxiliary maximum on-time (2 in the dump). Matches e2m HPCR_Max_Auxinj_Duration_Shiftfactor. Not EEPROM-backed. (was injection_timing_mode_b_cal)
 0x004090f6,injection_timing_timing_mode_cal,word,
 0x004090fa,cam_timing_alt_mode_enable_cal,byte,
 0x004090fb,fuel_pressure_governor_feed_forward_enable,byte,Non-zero: the rpm-table feed-forward (fuel_pressure_governor_feed_forward) is added to the demand and used for the bumpless integrator presets (1 here). Was engine_sync_reference_valid_flag
@@ -4183,20 +4183,20 @@ address,name,type,comment
 0x004094e4,cam_sync_speed_error_prot_mode_cal,byte,
 0x004094f4,cam_sync_ref_prot_state_cal,byte,
 0x00409504,cam_sync_ref_prot_handler_state_cal,byte,
-0x00409516,cam_sync_position_upper_threshold_cal,word,
+0x00409516,fuel_pressure_sensor_too_high_threshold,word,3688 counts (180 MPa; the sensor full scale is 3689). RAM copy of ROM at 0x4095xx, outside the EEPROM mirror 0x3fd482-0x3feec1, so no _cal. Only the diagnostics read it. (was cam_sync_position_upper_threshold_cal)
 0x00409518,engine_sync_fault_word_threshold_hi_cal,word,
-0x0040951a,engine_sync_counter_b_max_cal,word,
-0x0040951c,engine_sync_counter_a_max_cal,word,
+0x0040951a,fuel_pressure_diagnostic_set_debounce_limit,word,150 in the dump; trip value of the set debounce count. RAM copy of ROM: no _cal. (was engine_sync_counter_b_max_cal)
+0x0040951c,fuel_pressure_diagnostic_clear_debounce_limit,word,150 in the dump; trip value of the clear debounce count. RAM copy of ROM: no _cal. (was engine_sync_counter_a_max_cal)
 0x0040951e,cam_sync_position_lower_threshold_cal,word,
-0x00409520,cam_sync_position_mid_threshold_cal,word,
-0x00409522,cam_sync_ref_count_diag_threshold_cal,word,
+0x00409520,fuel_pressure_minimum_expected_check_floor,word,204 counts (10 MPa): the below-minimum-for-rpm test (flag 4) only applies above it. RAM copy of ROM: no _cal. (was cam_sync_position_mid_threshold_cal)
+0x00409522,fuel_pressure_governor_demand_idle_limit,word,283 (6.9 % of 4095): flag 0x40 needs fuel_pressure_governor_demand above it with governor mode 11 near its target speed, the vehicle stopped and the coolant above 0x409526 (the 'idle' in the name assumes governor mode 11 is idle, which the repo only calls probable). Same value as cam_timing_speed_window_reference_count_threshold (0x409ad0). RAM copy of ROM: no _cal. (was cam_sync_ref_count_diag_threshold_cal)
 0x00409524,governor_integrator_hysteresis_cal,word,
-0x00409526,cam_sync_coolant_temp_threshold_cal,word,
-0x00409528,engine_sync_event_counter_threshold_cal,word,
+0x00409526,fuel_pressure_governor_demand_idle_minimum_coolant_temperature,word,11200 = 175 F (1/64 F per count): the governor mode 11 demand test (flag 0x40) needs the coolant above it ('idle' in the name assumes mode 11 is idle, which the repo only calls probable). RAM copy of ROM: no _cal. (was cam_sync_coolant_temp_threshold_cal)
+0x00409528,fuel_pressure_too_high_recovery_limit,word,500 passes below the threshold reset the pending flag. RAM copy of ROM: no _cal. (was engine_sync_event_counter_threshold_cal)
 0x0040952a,engine_sync_fault_word_threshold_lo_cal,word,
 0x0040952c,engine_sync_event_target,word,
 0x0040952e,governor_fuel_limit_max_cal,word,
-0x00409530,engine_sync_timeout_count_b_max_cal,word,
+0x00409530,fuel_pressure_too_high_count_limit,word,Read as a byte in the diagnostics (._0_1_): the value is 150 (the word 0x9600 includes the next byte); typed word, see the type note. RAM copy of ROM: no _cal. (was engine_sync_timeout_count_b_max_cal)
 0x00409532,sensor_fault_fuel_limit_cal,word,
 0x00409534,sensor_fault_torque_fuel_min_cal,word,
 0x00409536,torque_fuel_min_max_cal,word,
@@ -4233,8 +4233,8 @@ address,name,type,comment
 0x00409a8e,prot_fault_status_b_threshold_cal,word,
 0x00409a90,prot_fault_status_c_threshold_cal,word,
 0x00409e40,injection_delivery_mode,word,
-0x00409e42,injection_timing_select_mode_cal,word,
-0x00409e44,injection_timing_demand_lower_limit_cal,word,
+0x00409e42,injection_timing_main_combination_mode,word,cm848_calculateEngineTimingData: 0 = sum (clamped +/-1024), 1 = highest, other = lowest of the components (1 in the dump, so highest); the address is outside the EEPROM range 0x3fd482-0x3feec1, so no _cal. (was injection_timing_select_mode_cal)
+0x00409e44,injection_timing_main_governor_limit_minimum,word,The main timing is raised to this (68 counts = 8 deg, source 23) while governor_speed_limit_active_flag is set, and cm848_pressure_control_state_load tests main timing = this to switch the pilot offset to its governor-limit floor; the address is outside the EEPROM range, so no _cal. (was injection_timing_demand_lower_limit_cal)
 0x00409e46,injection_timing_cyl5_fault,word,
 0x00409e48,injection_timing_cyl5_normal,word,
 0x00409ec0,radiator_fan_speed_rationality_maximum,word,P0483 check: fan speed above this (0.125 rpm) counts as out of range - 32000 = 4000 rpm in the RAM dump
@@ -4300,15 +4300,15 @@ address,name,type,comment
 0x0040a18a,fuel_blend_coefficient_offset,word,
 0x0040a18c,fuel_correction_upper_limit,word,
 0x0040a192,fuel_correction_upper_limit_lookup,word,dualAxisTableInterpolation result in cm848_calibrationGroup5_periodic that is copied into fuel_correction_upper_limit across the mode branches
-0x0040a194,governor_adjustment_input,word,
-0x0040a196,fuel_pressure_sensor_reference,word,
+0x0040a194,barometric_altitude_feet,word,Written by hpcr_fuelFinal_exponentialAverage from fuel_pressure_sensor_reference through the 0x3ff080 -> 0x3ff0a2 table, which I checked: 1105 / 1149 / 1196 / 1244 / 1293 / 1344 / 1396 / 1452 / 1507 counts (1/18.56 kPa) give 14000 / 13000 / 12000 / 11000 / 10000 / 9000 / 8000 / 7000 / 6000, and the standard atmosphere gives 13995 / 13014 / 12000 / 10998 / 10006 / 9005 / 8016 / 6984 / 6001 ft for t (was governor_adjustment_input)
+0x0040a196,barometric_pressure_reference,word,Not a fuel pressure. Dump numbers: 0x40a196 = 1647 and its source boost_pressure_fuel_working (0x40a162) = 1648, against sensor_readings_t.barometric_pressure (0x40baf6) = 1647 and intake_manifold_pressure (0x40baf2) = 1700, with the offset boost_fuel_pressure_offset_lookup = 0. Code: it is clamped to 0x75e = 1886 counts = 101.6 kPa (standard sea-level atmosphere at 1/18.56 kPa per count), and the (was fuel_pressure_sensor_reference)
 0x0040a19a,boost_fuel_demand_blend_a,word,
 0x0040a19e,boost_fuel_scale_divisor,word,
 0x0040a1a0,fuel_demand_mode_state,word,
 0x0040a1aa,governor_demand_rate_limited,word,
 0x0040a1ac,fuel_demand_pid_input,word,
 0x0040a1ae,fuel_demand_pid_prev_output,word,
-0x0040a1b0,fuel_trim_speed_filtered,word,
+0x0040a1b0,governor_reference_speed_filtered,word,EMA of speed_request_filtered (the reference speed) in cm848_runOperatingModeSpeedGovernor; the PID error is this minus governor_rpm_actual and cm848_calculateEffectiveFuelLimit uses (this - speed) in the droop equation. It is the filtered ASG reference speed (e2m ASG_Filtered_Reference), not a fuel trim. (was fuel_trim_speed_filtered)
 0x0040a1b2,fuel_correction_output_active_flag,word,
 0x0040a1b4,fuel_demand_previous,word,
 0x0040a1b6,fuel_demand_pid_reference_working,word,
@@ -4330,7 +4330,7 @@ address,name,type,comment
 0x0040a1ea,fuel_pid_shadow_coeff3,word,
 0x0040a1ec,fuel_pid_shadow_coeff0,word,
 0x0040a1ee,fuel_pid_shadow_coeff1,word,
-0x0040a1f0,fuel_trim_speed_floor,word,
+0x0040a1f0,governor_reference_speed_floor,word,Written only in cm848_fuelTimingRateLimitedBlend = request x (1 - w) + filtered x w; in the mode 7 branch of cm848_runOperatingModeSpeedGovernor the filtered reference is not allowed below it. (was fuel_trim_speed_floor)
 0x0040a1f2,fuel_trim_speed_active_flag,word,
 0x0040a1f4,fuel_trim_speed_filter_state,ema_filter_state_t,(was fuel_trim_speed_ema_state_ptr)
 0x0040a1fc,fuel_demand_pid_coeffs,dword,
@@ -4426,7 +4426,7 @@ address,name,type,comment
 0x0040a2de,governor_mode_code_prev,word,
 0x0040a2e0,fuel_demand_arbitrated_snapshot,word,
 0x0040a2e2,governor_fuel_mode_snapshot,word,
-0x0040a2e6,torque_limit_fault_snapshot,word,
+0x0040a2e6,main_injection_timing,word,Written only by cm848_calculateEngineTimingData (and = injection_timing_offset_cal in fixed delivery mode 2 by cm848_updateEngineStatusFlags); dump 213 x 3128 / 4096 = 162. Read by the PGN 65504 builder as (x + DAT_0005a48a) x 120 / 1024 and, via injection_load_snapshot -> injection_period_capture_a x -5, it is the TPU-A channel 5 slot 8 (main event) angle; the pilot and auxiliary timings are deri (was torque_limit_fault_snapshot)
 0x0040a2ee,governor_rpm_offset,word,
 0x0040a2f0,governor_rpm_offset_cached,word,
 0x0040a2f2,fuel_demand_mode_code,word,
@@ -4620,8 +4620,8 @@ address,name,type,comment
 0x0040a4a0,fuel_blend_step_b_stored,word,
 0x0040a4a2,fuel_blend_weight_stored,word,
 0x0040a4a4,fuel_blend_table_size,word,
-0x0040a4a6,boost_map_index_current,word,
-0x0040a4a8,boost_map_index_target,word,
+0x0040a4a6,fuel_blend_lower_map_number,word,Only writer cm848_calculateFuelBlendModeSelection clamps it to 1..4; 17 other functions read it to pick the *_map_1..4 table and pass it to cm848_filterInputValue, which interpolates from the value of this map to the value of the other map as fuel_blend_state_t.blend_weight (100..400) runs from this number x 100 to the other number x 100; no boost pressure is involved. The fuel_blend prefix follow (was boost_map_index_current)
+0x0040a4a8,fuel_blend_upper_map_number,word,Same writer and clamp (1..4); second map number argument of cm848_filterInputValue (end of the interpolation, written as lower <= upper); both are 4 in the dump, i.e. pure map 4. (was boost_map_index_target)
 0x0040a4aa,fuel_demand_mode2_map5_lookup,word,
 0x0040a4ac,fuel_demand_mode2_boost_map1,word,
 0x0040a4ae,fuel_demand_mode2_boost_map2,word,
@@ -4696,7 +4696,7 @@ address,name,type,comment
 0x0040a542,fuel_injection_timing_complement,word,
 0x0040a544,fuel_load_correction_alt,word,
 0x0040a54c,fuel_load_correction_input,word,
-0x0040a550,fuel_demand_offset_correction,word,
+0x0040a550,fuel_demand_offset_load_delta_correction,word,DUPLICATE NAME. This one is written only by cm848_auxiliaryControl_tableInterpolation @ 0x5039b4: gain(rpm, engine_load_input_b) x (engine_load_normalized_prev - fuel_demand_calc_c) x 10 / 371 clamped to [DAT_00405a9c, fuel_demand_offset_correction_upper_limit] (tables fuel_demand_offset_load_delta_gain_*), and it feeds DAT_0040a556. It is read as a signed value and subtracted from fuel_demand_arb (was fuel_demand_offset_correction)
 0x0040a55a,fuel_demand_load_axis_cap,word,
 0x0040a572,governor_circular_buffer_input,word,
 0x0040a57a,fuel_demand_control_t_0040a57a,fuel_demand_control_t,
@@ -4913,7 +4913,7 @@ address,name,type,comment
 0x0040aa84,active_fault_added_flag,dword,
 0x0040aa98,engine_shutdown_active_flag,word,
 0x0040aa9a,j1939_standby_flag,J1939_STANDBY_STATE,
-0x0040aaa2,j1939_engine_torque_encoded,word,
+0x0040aaa2,engine_retarder_torque_percent_times_256,word,Written only by cm848_calculateSpeedControlError, read only by the ERC1 builder (byte 2 = 0x7d - (value >> 8), SPN 520). The value is percent x 256 (table / full-scale ratio times the ramp; 25600 = 100 percent, clamp 32000 = 125 percent, 0x8300 = invalid), 0 with no stage engaged; the scale is in the name because plain 'percent' would be 256 times off. (was j1939_engine_torque_encoded)
 0x0040aac2,j1939_engine_retarder_selection_percent,word,Engine retarder selection from EBC1 SPN 973 (1 %/bit) - read by cm848_processProtectionSystemBit4 (was governor_load_percent_computed)
 0x0040aaca,j1939_input_monitor_inhibit_flag,word,1 = J1939 input faults are held off (start-up delay not elapsed or engine not enabled) (was governor_load_startup_inhibit_flag)
 0x0040aacc,engine_data_log_buffer,byte,
@@ -4934,7 +4934,7 @@ address,name,type,comment
 0x0040ad60,tsc1_rx_byte0_cached,word,
 0x0040ad62,j1939_governor_output_percent_tx,word,
 0x0040ad64,j1939_governor_output_percent_cached,word,
-0x0040ad66,j1939_transfer_frame_count,word,
+0x0040ad66,engine_retarder_requested_torque_percent,word,Written only by cm848_j1939ProcessGovernorRequest from cm848_j1939SetupMultiFrameTransfer(TSC1 byte 4): 100 below raw 25, 125 - raw up to 124, else 0 (SPN 518 requested torque, -125 percent offset, as a retarding magnitude); read by j1939FormatMultiFrameResponse and as a non-zero check in the torque control branch. (was j1939_transfer_frame_count)
 0x0040ad68,can_tx_mailbox_start_index,word,
 0x0040ad6a,can_tx_mailbox_end_index,word,
 0x0040ad74,j1939_source_address,word,
@@ -5036,7 +5036,7 @@ address,name,type,comment
 0x0040ae50,etc2_selected_gear_timeout,word,ETC2 PGN 61445 timeout guarding the selected gear - reloaded to etc2_timeout_reload_count+1 each valid frame in cm848_j1939ProcessPgn61445Etc2 - decremented in cm848_processGovernorModeTransition - at 1 forces etc2_transmission_selected_gear to 0xff (was governor_timeout_countdown)
 0x0040ae56,emission_fault_overflow_flag,word,
 0x0040ae58,diagnostic_clear_request_state,word,
-0x0040ae5a,fuel_operation_mode_index,word,
+0x0040ae5a,engine_retarder_engaged_stage_count,word,Only cm848_calculateSpeedControlError touches it: sum of the per-stage weights (ROM 0x5c47e / 0x5c480 / 0x5c482 / 0x5c484 / 0x5c486 = 1,0,0,0,0) over set bits 3-7 of fuel_demand_config_flags (logical output requests 11-15, byte 1 of logical_output_request_bits); it selects engine_retarder_torque_stage_<n>_values. Reading those bits as retarder stage requests is inferred from the table family. (was fuel_operation_mode_index)
 0x0040ae60,j1939_feature_enable_cmd_flag,word,
 0x0040ae72,torque_limit_fuel_min_working,word,
 0x0040ae74,governor_enabled_flag,word,
@@ -5134,7 +5134,7 @@ address,name,type,comment
 0x0040af60,cooling_fan_read_back_fault_debounce_count,word,Passes the cooling fan read-back fault bit has stayed set (cm848_debounceOutputReadBackFaults - P0480 above cooling_fan_read_back_fault_debounce_limit) (was governor_pid_t_0040af5a.reserved_06)
 0x0040af62,fuel_metering_read_back_fault_debounce_count,word,Passes the fuel metering read-back fault bit has stayed set (cm848_debounceOutputReadBackFaults - P0251 above fuel_metering_read_back_fault_debounce_limit) (was governor_pid_t_0040af5a.reserved_08)
 0x0040af66,prior_boot_faulted,byte,
-0x0040af7c,fuel_timing_blend_factor,word,
+0x0040af7c,governor_tuning_set_blend_weight,word,Written only in cm848_calculateRpmLimitsFromProtection (first drivetrain_ratio threshold at ROM 0x5a9c6.. = 1843 / 2458 / 3482 / 6144 / 10240 / 40960, ratio x 2048, picks the weight at 0x5a9d4.., all 128 in this ROM) and at init. Weight 0..128 of the second tuning set: 0 = governor_speed_error_*_working and the *_blend_0 tables, 128 = governor_speed_error_*_b and the *_blend_128 tables. (was fuel_timing_blend_factor)
 0x0040af7e,governor_speed_error_low,word,
 0x0040af80,governor_speed_error_high,word,
 0x0040af82,high_idle_override_flag,dword,
@@ -5358,19 +5358,19 @@ address,name,type,comment
 0x0040b258,serial_output_driver_transmit_word,byte,High byte of the serial output driver transmit word (the job sends this word; low byte follows) (was j1939_periodic_filter_state)
 0x0040b259,serial_output_driver_transmit_byte,byte,Output lines 152-159 byte sent to the serial output driver (copied from output_lines_152_to_159_state by cm848_refreshOutputPortsAndReadback) (was j1939_dm1_fault_byte_10_prev)
 0x0040b25b,serial_output_driver_status_byte,byte,Accepted serial output driver reply (status / fault byte) - read by protection_j1939_control_logic / hpcr_injectorPulseWidthCalc (was j1939_periodic_timer_output_byte)
-0x0040b25c,cold_start_fuel_ema,word,
-0x0040b25e,battery_voltage_filtered,word,
-0x0040b260,battery_voltage_delta_filtered,word,
+0x0040b25c,alternator_field_duty_slow_average,word,ema = (ema x (65536 - coefficient) + alternator_field_duty_target x coefficient) / 65536 at the top of cm848_filterProtectionOutput, coefficient = cold_start_fuel_ema_coeff_cal = 6554 (0.1); nothing to do with cold start or fuel. Read only to take the snapshot below. (was cold_start_fuel_ema)
+0x0040b25e,charging_voltage_error_slow_average,word,cm848_processProtectionVoltageOffset: EMA of battery_voltage_delta with battery_voltage_filter_coeff_cal; it is a filtered charging voltage ERROR, not a filtered battery voltage (the checks compare it with thresholds the way an error is compared). (was battery_voltage_filtered)
+0x0040b260,charging_voltage_error_fast_component,word,cm848_processProtectionVoltageOffset: battery_voltage_delta - battery_voltage_filtered (the error minus its slow average); the state 2 handler (ROM 0x383f0) enters state 3 when it exceeds the threshold at 0x4087ac, i.e. a fast voltage dip from an electrical load. (was battery_voltage_delta_filtered)
 0x0040b262,cruise_confirm_counter,word,
 0x0040b264,battery_voltage_fault_flag,word,
 0x0040b266,alternator_field_duty_target,word,Alternator field duty target (duty 0-25600 = 0-100 %) from the charging-voltage PI loop in cm848_calculateProtectionOutputDemand (filtered by cm848_filterProtectionOutput); cm848_applyAlternatorFieldDuty overrides / inverts / snaps it and sends it to the field; the idle speed governor (cm848_processSpeedGovernorControl) uses it as a load term (was protection_fuel_output_target)
 0x0040b268,cruise_monitor_timer,word,
-0x0040b26a,cruise_voltage_debounce_timer,word,
-0x0040b26c,cruise_state_machine_index,word,
-0x0040b26e,battery_voltage_prev,word,
-0x0040b270,cold_start_fuel_ema_snapshot,word,
-0x0040b272,cruise_voltage_fault_state,word,
-0x0040b274,battery_voltage_delta,word,
+0x0040b26a,alternator_field_load_response_hold_remaining_passes,word,Loaded on the first pass of state 3 from alternator_field_load_response_hold_time_* indexed by engine speed, decremented once per pass while non-zero; while non-zero the duty follows alternator_field_duty_load_response_*, at 0 the load response moves to its ramp stage. Used only in cm848_filterProtectionOutput and the init function. (was cruise_voltage_debounce_timer)
+0x0040b26c,alternator_field_regulator_state,word,Written only by cm848_dispatchProtectionOutputMode (next state from the 4-entry handler table at ROM 0x57730) and cm848_initProtectionFilterValues; all six readers are the charging regulator cluster (dispatch, filter, PID, output checks, processProtectionMode2). Values 0..3: 0 idle / fault, 1 start ramp, 2 regulation, 3 load response. Dump: 0 (engine off). (was cruise_state_machine_index)
+0x0040b26e,charging_voltage_target,word,Written only in cm848_processProtectionCoolantLookup: charging_voltage_target_by_battery_temperature_* lookup on battery_temperature_sensor_filtered plus charging_voltage_target_offset (or battery_voltage_correction_default_cal when battery_voltage_correction_enable_cal is non-zero). Read in cm848_processProtectionVoltageOffset as delta = battery_voltage_prev - battery voltage and in the SCI comma (was battery_voltage_prev)
+0x0040b270,alternator_field_duty_slow_average_snapshot,word,Copy of the slow average duty taken on entry to regulator state 3; written back into alternator_field_duty_target when the load-response hold timer expires (stage 1 -> 2). Only user is cm848_filterProtectionOutput. (was cold_start_fuel_ema_snapshot)
+0x0040b272,alternator_field_load_response_stage,word,0 outside state 3, set to 1 on state 3 entry (hold stage, duty from the load-response table), set to 2 when the hold timer expires (duty restored to the slow-average snapshot, then ramped); zeroed in states 0 and 2. Not a fault state; only cm848_filterProtectionOutput and the init function touch it. (was cruise_voltage_fault_state)
+0x0040b274,charging_voltage_error,word,cm848_processProtectionVoltageOffset: battery_voltage_delta = battery_voltage_prev (target) - sensor_readings_t.battery_voltage, signed, 1/16 V per count; the input of the state 2 and state 3 duty tables and of the PID. Dump: 240 - 192 = 48. (was battery_voltage_delta)
 0x0040b276,battery_voltage_d_term,dword,
 0x0040b27a,cruise_integral_clamp_value,dword,
 0x0040b27e,protection_fuel_output_target_prev,word,
@@ -5379,7 +5379,7 @@ address,name,type,comment
 0x0040b286,protection_mode_b_override_flag,byte,
 0x0040b287,alternator_field_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the alternator field read-back fault (output_read_back_fault_bits.alternator_field) outlasts its debounce and P0622 (fault 396) is set; cm848_applyProtectionOutputDemand then runs the retest - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was battery_voltage_sampling_active_flag)
 0x0040b288,alternator_field_retest_pass_count,word,Alternator field retest pass counter (cm848_applyProtectionOutputDemand): 0 % duty below alternator_field_retest_off_passes / 100 % for the next 2 x alternator_field_retest_fault_confirm_passes / then 0 and the retest flag clears (was cruise_voltage_sample_count)
-0x0040b28a,governor_cruise_speed_adjusted,word,
+0x0040b28a,fuel_rpm_compensated_offset,word,Written only by cm848_computeFuelRpmCompensatedOffset (base - (fuel_quantity_active + addend) x rpm x 6 term, clamped to cal limits, default when fuel or rpm is 0; the base falls back to injection_timing_offset_cal per that function's comment) and read only by the oil change monitor as the x input of engine_power_accumulator_increment_*. Not a speed and not cruise. (was governor_cruise_speed_adjusted)
 0x0040b28c,governor_speed_error_filtered_b,word,
 0x0040b28e,governor_speed_error_b_filtered,word,
 0x0040b290,governor_speed_error_filtered,word,
@@ -5726,14 +5726,14 @@ address,name,type,comment
 0x0040b763,cylinder_4_contribution_percent,byte,DRB SCI read FD-E6 'Cyl. #4 Contribution' via flash2 SCI table 253 - slot 6 of 6 in firing order (was cylinder_diag_pct_6)
 0x0040b764,cylinder_diag_active_flag,byte,
 0x0040b765,cylinder_contribution_test_status,byte,DRB SCI read FD-EB 'Cylinder test status / CYLINDER CUTOFF' via flash2 SCI table 253: 0 not requested / 1 running / 2 requested but its conditions fail (moving / coolant out of range / sync) - set by cm848_runCylinderContributionTest (was engine_sync_confirmation_state)
-0x0040b766,engine_timing_reference,word,
+0x0040b766,total_injection_quantity,word,Computed in engine_injectionAngle_updateCutoutAndTimingDemand (also zeroed in one other place): fuel_demand_computed_snapshot x scale / 51200 + the per-cylinder trim, clamped 0..5888 (0x1700). It is the cylinder's whole quantity (pilot + main + auxiliary): copied to engine_timing_reference_high / _low, to injection_fuel_quantity_snapshot (added to injected_fuel_running_total per injection) and use (was engine_timing_reference)
 0x0040b768,cylinder_diag_output_array,byte,
 0x0040b778,crank_sync_inhibit_flag,word,
-0x0040b77a,cam_timing_reference_offset,word,
+0x0040b77a,pilot_injection_quantity,word,engine_injectionAngle_updateCutoutAndTimingDemand: scale x 0x3fd07e (pilot quantity snapshot) / 51200, capped at total_injection_quantity. Read by cm848_calculateEngineTimingInterpolation (x input of pilot_injection_pulse_width_grid, subtracted from the main quantity) and by engine_injectionAngle_computeLoadCh6 (nonzero = the first scheduled event is the pilot). (was cam_timing_reference_offset)
 0x0040b77c,injection_period_capture_a,word,
 0x0040b77e,cam_sync_period_reference_a,word,
 0x0040b780,protection_fault_eval_input,word,
-0x0040b784,engine_timing_delta,word,
+0x0040b784,auxiliary_injection_quantity,word,engine_injectionAngle_updateCutoutAndTimingDemand: 0x40908c x (total - pilot) >> 12, capped at scale x 0x3fd080 / 51200 (0 if that is negative); subtracted from the main quantity, x input of auxiliary_injection_pulse_width_grid in cm848_calculateEngineFaultTiming, added back to the main quantity when the third pulse stays off. (was engine_timing_delta)
 0x0040b786,cam_sync_period_reference_b,word,
 0x0040b78e,engine_rpm_measured,word,Live measured engine RPM (0.125 RPM/count) - NOT a setpoint; written by mpc555_updateSensorDiagnosticFlags from crank_tooth_rpm or crank_derived_rpm; EMA-filtered into engine_rpm_state_t.current_rpm (0x40b7ba; x0.125 verified live 2026-01-31)
 0x0040b790,crank_period_accumulator,dword,
@@ -5779,23 +5779,23 @@ address,name,type,comment
 0x0040b80e,engine_crank_state_t_0040b80a.cranking_flag,,
 0x0040b810,engine_crank_state_t_0040b80a.run_state,,
 0x0040b812,fuel_demand_governor_output,word,
-0x0040b814,injection_timing_boost_blend,word,
-0x0040b816,crank_sync_threshold,word,
-0x0040b818,injection_timing_factor_cyl6_a,word,
-0x0040b81a,injection_timing_demand_cyl6,word,
-0x0040b81c,injection_timing_factor_cyl6_b,word,
-0x0040b820,crank_sync_state_counter,word,
-0x0040b822,governor_fuel_demand_limit_lo,word,
-0x0040b824,governor_fuel_demand_limit_hi,dword,
-0x0040b828,crank_rpm_calc_factor_a,word,
-0x0040b82a,crank_rpm_calc_factor_b,word,
+0x0040b814,injection_quantity_auxiliary_map_blend,word,cm848_filterInputValue result of the four injection_quantity_auxiliary_map_N tables against the base map; first term of the max / min selection. e2m Aux_Base_Fuel_Quantity (offset +0 of the aux block). (was injection_timing_boost_blend)
+0x0040b816,injection_quantity_auxiliary_unscaled,word,Output of cm848_calculateGovernorOutput, one reader (cm848_fuel_demand_state_capture -> 0x3fd080 -> cap of engine_timing_delta). The auxiliary quantity before scaling and before the ratio cap. e2m Aux_Fuel_Quantity (0x0180C402) at the same offset in the block; the lead called it a limit and it does act as the upper bound of the auxiliary share, but Cummins names it the quantity. (was crank_sync_threshold)
+0x0040b818,injection_quantity_auxiliary_coolant_factor,word,injection_quantity_auxiliary_coolant_factor_grid (x coolant, y intake temperature) Q12 factor; only used in cm848_calculateGovernorOutput. e2m Aux_Quantity_Cool_Corr_Factor; not a cylinder 6 value. (was injection_timing_factor_cyl6_a)
+0x0040b81a,injection_quantity_auxiliary_coolant_correction,word,(coolant factor x coolant map value) >> 12, the coolant term of the selection (arbitration code 2). e2m Aux_Quantity_Cool_Corr_Value. (was injection_timing_demand_cyl6)
+0x0040b81c,injection_quantity_auxiliary_coolant_map_value,word,injection_quantity_auxiliary_coolant_limit_grid output (x engine speed, y fuel demand), the quantity multiplied by the coolant factor. e2m Aux_Quantity_Cool_Setpoint (output of the cool setpoint map). (was injection_timing_factor_cyl6_b)
+0x0040b820,injection_quantity_auxiliary_source_code,word,Written 3 times in cm848_calculateGovernorOutput, never read in code: 14 forced zero (crank_position_valid_flag set with the switch on), 7 override, 1 map blend, 2 coolant, 4 ambient, 5 boost. Diagnostic of which term controls the auxiliary quantity; e2m Aux_Quantity_State at offset 0xC. (was crank_sync_state_counter)
+0x0040b822,injection_quantity_auxiliary_ambient_correction,word,ambient factor x ambient limit map value / 4096 clamped 0..5888, the ambient term (arbitration code 4). e2m Aux_Quantity_Ambient_Correction (offset 0xE). Not a governor limit. (was governor_fuel_demand_limit_lo)
+0x0040b824,injection_quantity_auxiliary_boost_correction,dword,dword: boost factor x 10 x boost map value / 32768, the boost term (arbitration code 5). e2m Aux_Quantity_Boost_Correction (4 bytes at offset 0x10). Not a governor limit. (was governor_fuel_demand_limit_hi)
+0x0040b828,injection_quantity_auxiliary_boost_factor,word,injection_quantity_auxiliary_boost_factor_grid output (x engine speed, y boost pressure), scaled x 10 / 32768 in the product. e2m Aux_Quantity_Boost_Factor (1/3276.8); not a crank rpm value. (was crank_rpm_calc_factor_a)
+0x0040b82a,injection_quantity_auxiliary_boost_map_value,word,injection_quantity_auxiliary_boost_limit_grid output (x engine speed, y fuel demand), the quantity multiplied by the boost factor. e2m Aux_Quantity_Boost_Precorr. (was crank_rpm_calc_factor_b)
 0x0040b82c,injection_timing_arb_source_packed,dword,
 0x0040b846,injection_timing_source_byte_2,word,
 0x0040b858,injection_timing_count_a,word,
 0x0040b85a,injection_timing_count_b,word,
-0x0040b85c,fuel_quantity_active,word,
-0x0040b85e,fuel_quantity_trim,word,
-0x0040b860,injection_timing_active_flag,word,
+0x0040b85c,main_injection_pulse_width,word,Written by cm848_calculateTimingWithTables from main_injection_pulse_width_grid, passed as the slot 8 on-time to engine_injectionAngle_writeTpuEvent (TPU-A channel 5 pulse width parameter), summed by fuel_quantity_demand_monitor, compared with the interval to the third pulse. Equals e2m HPCR_Duration_Main_Injection (0.4 us per count) at the same offset; it is a time, not a quantity. (was fuel_quantity_active)
+0x0040b85e,pilot_injection_pulse_width,word,Written by cm848_calculateEngineTimingInterpolation (0 = pilot off), slot 4 on-time in the TPU event handler, y input of main_quantity_pilot_correction_grid, summed by fuel_quantity_demand_monitor. Equals e2m HPCR_Duration_Pilot1. (was fuel_quantity_trim)
+0x0040b860,auxiliary_injection_pulse_width,word,Word on-time written by cm848_calculateEngineFaultTiming (0 = third pulse off), slot 12 on-time in the TPU event handler, summed by fuel_quantity_demand_monitor; not a flag. Equals e2m HPCR_Duration_Aux. (was injection_timing_active_flag)
 0x0040b86c,injection_angle_sequence_state,byte,injection-angle TPU-ch6 scheduler sequence state (values 1/2/4/8) driving engine_injectionAngle_schedule_crankValid; each transition saves prev into injection_angle_sequence_state_prev
 0x0040b86d,injection_angle_sequence_state_prev,byte,previous-value snapshot of injection_angle_sequence_state (DAT_0040b86d = DAT_0040b86c before each transition)
 0x0040b86e,injection_timing_tooth,byte,integer tooth/angle (0-119 over 720 deg, wraps at 60/119) for the TPU-A ch6 injection-timing event; written with phase byte DAT_0040b86f to TPU param 0x304162 via CONCAT11; computed per cylinder_event_index from cam-sync position
@@ -5822,11 +5822,11 @@ address,name,type,comment
 0x0040b899,engine_sync_signal_flag,word,
 0x0040b89c,fuel_metering_feedback_input,word,Measured feedback of the fuel metering output: QADC index slot 63 raw x 4 through an identity table (0-4092; cam_sync_position_fault_input instead when diag_cam_sync_fault_config_flags bit 15 is set), written by cm848_updateEngineDiagnosticCounters. It is high with the command low -> fault 265, low with the command high -> fault 264 (neither has an OBD-II code in the slot table). The physical signal is not identified. Also stored in fault freeze frames and sent by SCI command 20 (x 0x33 / 0x333). Was fault_diagnostic_word_1
 0x0040b89e,fuel_metering_feedback_fault_code,byte,Fuel metering feedback circuit check (cm848_updateEngineDiagnosticCounters): 1 = feedback high with the command low (fault 265) / 2 = feedback low with the command high (fault 264); while non-zero the feedback trim is off. Was engine_sync_speed_fault_flags
-0x0040b89f,engine_position_diag_snapshot,byte,
+0x0040b89f,fuel_pressure_diagnostic_snapshot,byte,Debounced copy of the flags OR-ed with the pending flag; read by the three monitors as 'no rail pressure diagnostic active', by cm848_protectionSensorFaultHandler (bits 1 / 2 request logical output 54 when engine_position_fault_enable_cal is set) and stored in the fault freeze frame (fault_entry_t.diagnostic_byte_4 and DAT_003fe81b). (was engine_position_diag_snapshot)
 0x0040b8a0,fault_reaction_request_bits,word,Fault reaction mask from per-fault masks (cm848_protectionInputValidator): bit 0 caps governor_fuel_limit_source / bit 1 caps torque_fuel_minimum_working / bit 2 caps cam_timing_measured / nonzero ramps the speed limit down / blocks cruise / zeroes the PCI fuel level (was cold_start_qualifier_flag) (Medium confidence)
-0x0040b8a2,cam_sync_reference_prev,word,
-0x0040b8a4,cam_sync_reference,word,
-0x0040b8a8,engine_sync_fault_active_flag,byte,
+0x0040b8a2,fuel_pressure_expected_decay_model_previous,word,Last pass's value of the model; the input of the decay lookup. Only user is the rail pressure diagnostics. (was cam_sync_reference_prev)
+0x0040b8a4,fuel_pressure_expected_decay_model,word,Only user is the rail pressure diagnostics: copies fuel_pressure_sensor while the governor demand or the fuel demand is nonzero, otherwise falls each pass by the fuel_pressure_expected_decay_by_pressure_* lookup; flag 0x20 when the sensor is below it. A modelled rail pressure, not a cam sync reference. (was cam_sync_reference)
+0x0040b8a8,fuel_pressure_limp_home_active_flag,byte,Writer cm848_checkProtectionFaultConditions sets it when any of 8 registered faults is enabled in engine_sync_enable_mask; one of them is fault 333 (fault_registered_bits_320_to_335 & 0x2000), which firmware/CLAUDE.md gives as P0251 fuel metering, the rail pressure actuator. The three readers are all fuel pressure limp-home substitutions: the pilot quantity default (DAT_00409e68), the main timing  (was engine_sync_fault_active_flag)
 0x0040b8aa,fuel_metering_retest_pass_count,word,Fuel metering retest pass counter (cm848_calculateFuelMeteringCommand): command 0 below fuel_metering_retest_off_passes / 4095 for the next 2 x fuel_metering_retest_fault_confirm_passes / then 0 and the retest flag clears (was engine_sync_cycle_counter)
 0x0040b8ac,fuel_metering_read_back_retest_active_flag,byte,Set by cm848_debounceOutputReadBackFaults when the fuel metering read-back fault (output_read_back_fault_bits.fuel_metering) outlasts its debounce and P0251 (fault 333) is set; cm848_calculateFuelMeteringCommand then runs the retest on the 0-4095 command (0 / 4095) - while its read-back retest flag is set the control function drives 0 % for the off passes then 100 % for 2 x the fault confirm passes and then clears the flag; a read-back fault lasting the confirm count restarts it (was engine_sync_protection_active_flag)
 0x0040b8ae,fuel_pressure_sensor_volts,word,DRB SCI read FD-29-2A 'FUEL PRESSURE VOLTS' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-29-2A to this word's two bytes; 436 in the RAM dump; hpcr_checkRailPressureSensorBeforeStart reads it (was engine_timing_diagnostic_word)
@@ -5834,37 +5834,37 @@ address,name,type,comment
 0x0040b8b2,fuel_pressure_feedback_filtered,word,Filtered rail pressure the fuel pressure governor regulates on (pressure counts (DRB scale 7.078 per count; the DRB labels it kPa, but psi fits the sensor's 0-1800 bar: 4.5 V = 3689 counts = 26,111 psi)): cm848_filterFuelPressureFeedback filters the sample fuel_pressure_feedback_source_select picks. Was cam_timing_reference_b
 0x0040b8b4,fuel_pressure_sensor_confirmed_code,byte,Debounced rail pressure sensor code (0 ok / 4 = fault 304 P0193 / 8 = fault 305 P0192): sets the fault bits and makes fuel_pressure_sensor = fuel_pressure_sensor_fault_default. Was cold_start_sync_status
 0x0040b8b6,fuel_pressure_setpoint,word,DRB SCI read FD-27-28 'FUEL PRESS SETPOINT' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-27-28 to this word's two bytes; 1000 in the RAM dump; cm848_calculateFuelMeteringCommand's error is this minus fuel_pressure_feedback_filtered (0x40b8b2 - which reads the same as fuel_pressure_sensor in the dump); cm848_sensor_channel_state_load writes it most (was cam_timing_measured)
-0x0040b8ca,engine_timing_arb_byte_8_15,word,
+0x0040b8ca,fuel_pressure_setpoint_winning_term_code,word,Written only by the setpoint calculator (10 stores) and its init (1 store): 1 engine starting (setpoint 0), 2 map, 3 coolant limit, 4 ambient limit, 5 forced override, 6 cold-start table, 7 sum mode, 8-11 = 2 / 3 / 4 / 7 with the offset active, 12 / 13 = ramp up / down out of the cold-start value, 14 maximum clamp, 15 fault-reaction cap, 16 / 17 minimum clamp (cranking / running); 6 in the RAM dum (was engine_timing_arb_byte_8_15)
 0x0040b8cc,engine_position_diag_flags,byte,
 0x0040b8cd,protection_fault_status_a,byte,
 0x0040b8ce,protection_fault_status_b,byte,
 0x0040b8cf,protection_fault_status_c,byte,
-0x0040b90e,injection_timing_demand_calc,word,
-0x0040b910,injection_timing_factor_base_b,word,
-0x0040b912,injection_timing_factor_base_a,word,
-0x0040b914,injection_timing_demand_cyl2,word,
-0x0040b916,injection_timing_factor_cyl2_b,word,
-0x0040b918,injection_timing_factor_cyl2_a,word,
-0x0040b91a,injection_timing_demand_cyl3,word,
-0x0040b91c,injection_timing_factor_cyl3_b,word,
-0x0040b91e,injection_timing_factor_cyl3_a,word,
-0x0040b928,injection_timing_demand_cyl4,word,
-0x0040b92a,injection_timing_factor_cyl4_b,word,
-0x0040b92c,injection_timing_factor_cyl4_a,word,
+0x0040b90e,injection_timing_main_barometric_pressure_component,word,(barometric angle x factor) / 4096; 0 in the dump. The old name says nothing; the code multiplies the base_a / base_b pair, which are the barometric tables. (was injection_timing_demand_calc)
+0x0040b910,injection_timing_main_barometric_pressure_factor,word,Q12 output of the 1-D table injection_timing_main_barometric_pressure_factor_values keyed by timing_barometric_pressure_snapshot (0 at this altitude in the dump). (was injection_timing_factor_base_b)
+0x0040b912,injection_timing_main_barometric_pressure_angle,word,Output of rpm x fuel_demand_computed table injection_timing_main_barometric_pressure_angle_grid (flat 43 counts = 5 deg in the dump), multiplied by the barometric factor into injection_timing_demand_calc. (was injection_timing_factor_base_a)
+0x0040b914,injection_timing_main_intake_temperature_component,word,(intake temperature angle x factor) / 4096; 0 in the dump because its factor table is all zero. (was injection_timing_demand_cyl2)
+0x0040b916,injection_timing_main_intake_temperature_factor,word,Q12 output of the 1-D table injection_timing_main_intake_temperature_factor_values keyed by timing_intake_manifold_temperature_snapshot (0 in the dump). (was injection_timing_factor_cyl2_b)
+0x0040b918,injection_timing_main_intake_temperature_angle,word,Output of rpm x fuel_demand_computed table injection_timing_main_intake_temperature_angle_grid (dump 222), multiplied by the intake manifold temperature factor into injection_timing_demand_cyl2. (was injection_timing_factor_cyl2_a)
+0x0040b91a,injection_timing_main_coolant_component,word,(coolant angle x coolant factor) / 4096 rounded toward zero = 162 in the dump = the main timing; one candidate of the sum / highest / lowest combination. (was injection_timing_demand_cyl3)
+0x0040b91c,injection_timing_main_coolant_factor,word,Q12 output of the coolant x intake manifold temperature grid injection_timing_main_coolant_factor_grid (dump 3128 = 0.764). (was injection_timing_factor_cyl3_b)
+0x0040b91e,injection_timing_main_coolant_angle,word,Output of the rpm x fuel_demand_computed table injection_timing_main_coolant_angle_grid (dump 213 counts), multiplied by the coolant factor into injection_timing_demand_cyl3 (162); an angle, not a factor, and not cylinder 3. (was injection_timing_factor_cyl3_a)
+0x0040b928,injection_timing_main_boost_component,word,(boost angle x boost factor) / 4096; 0 in the dump. (was injection_timing_demand_cyl4)
+0x0040b92a,injection_timing_main_boost_factor,word,Q12 output of the rpm x cm848_calculateBoostPressure() grid injection_timing_main_boost_factor_grid (0 at rpm 0 in the dump). (was injection_timing_factor_cyl4_b)
+0x0040b92c,injection_timing_main_boost_angle,word,Output of rpm x fuel_demand_computed table injection_timing_main_boost_angle_grid (dump 85 counts), multiplied by the boost factor into injection_timing_demand_cyl4. (was injection_timing_factor_cyl4_a)
 0x0040b92e,injection_timing_demand,word,
 0x0040b930,timing_arbitration_status_bits,word,
 0x0040b932,engine_timing_arb_status_packed,dword,
-0x0040b936,injection_timing_demand_cyl5,word,
-0x0040b944,torque_limit_rpm_slewed,word,slew-limited engine speed: tracks current_rpm but capped to +/-DAT_00409e56 step per update in cm848_torque_limit_state_update; used as the rpm axis of the torque-limit dualAxisTableInterpolation lookups
-0x0040b94a,injection_timing_table_output_b,word,
-0x0040b956,engine_timing_arb_byte_16_23,word,
+0x0040b936,injection_timing_main_constant_component,word,Calibration constant injection_timing_cyl5_normal (0), or injection_timing_cyl5_fault (213) while engine_sync_fault_active_flag is set; a fifth candidate of the same sum / highest / lowest combination, not a cylinder 5 value. (was injection_timing_demand_cyl5)
+0x0040b944,injection_quantity_pilot_engine_speed_with_hysteresis,word,Follows current_rpm but only moves once the difference exceeds the step (current -/+ step): a dead band, not a slew. x input of every pilot_quantity map. e2m RPM_With_Hyst. (was torque_limit_rpm_slewed) | earlier note: slew-limited engine speed: tracks current_rpm but capped to +/-DAT_00409e56 step per update in cm848_torque_limit_state_update; used as the rpm axis of the torque-limit dualAxisTableInterpolation lookups
+0x0040b94a,injection_quantity_pilot_ambient_correction,word,(injection_quantity_pilot_ambient_map value x ambient factor) >> 12 inside cm848_torque_limit_state_update, the third term of the arbitration; only user is that function. e2m Pilot_Quantity_Ambient_Correction (offset 0x12 of the pilot block). (was injection_timing_table_output_b)
+0x0040b956,injection_quantity_pilot_source_code,word,Written in cm848_torque_limit_state_update with the winning term: 1 map blend, 2 coolant, 3 intake temperature, 4 ambient, 5 boost, 6 cold-start coolant curve, 7 override, 11 sum, 13 ratio cap reached, 14 forced zero or negative, 15 fuel pressure limp home, 16 / 17 cold correction, 19 cold-start override; packed with the other event source codes by cm848_updateEngineStatusFlags. e2m Pilot_Fuel_Sta (was engine_timing_arb_byte_16_23)
 0x0040b98a,injection_timing_rpm_axis,word,engine speed arbitrated for injection-timing tables (governor integrator / protection_monitored_rpm / current_rpm by mode) in engine_injectionTiming_arbitration_calc; used as the rpm axis of the injection-timing dualAxisTableInterpolation lookups
-0x0040b998,engine_timing_arb_byte_24_31,word,
+0x0040b998,injection_timing_pilot_source_code,word,which term set the pilot timing: 0 computed offset, 7 the override DAT_00409e6e, 8 the governor-limit floor (cm848_calculatePilotInjectionTiming) (was engine_timing_arb_byte_24_31)
 0x0040b99c,protection_fuel_limit_working,word,
 0x0040b9cb,fault_enable_override_flag,byte,
 0x0040b9d0,protection_feature_status_flags,dword,
 0x0040b9d4,boost_fuel_bypass_flags,dword,
-0x0040b9ec,iat_protection_state,word,state machine (0/3/4/5/6) of cm848_computeIntakeAirHeaterPreheatDuration (intake-air-temp protection); gates fuel limiting under operating_mode_flags & 0x200
+0x0040b9ec,intake_air_heater_performance_test_state,word,Written only by hpcr_injectPressureTuning (states 1..5), engine_protection_batteryLoad_check (abort = 6) and hpcr_throttlePositionDiagnostic (arms it: 0, or 6 when the battery and intake manifold temperatures disagree); cm848_computeIntakeAirHeaterPreheatDuration and cm848_countDownIntakeAirHeaterPreheat only read it (state 0 with operating_mode_flags & 0x200 holds relays 43/44 off for the baselin (was iat_protection_state) | earlier note: state machine (0/3/4/5/6) of cm848_computeIntakeAirHeaterPreheatDuration (intake-air-temp protection); gates fuel limiting under operating_mode_flags & 0x200
 0x0040ba16,engine_sync_debounce_flag,word,
 0x0040ba18,cbd_active_flag,word,
 0x0040ba1a,fault_mask_inverted,dword,
@@ -5963,7 +5963,7 @@ address,name,type,comment
 0x0040be12,sensor_channel98_default_value,word,(was sensor_channel98_filtered)
 0x0040be14,sensor_channel3_fault_status,word,
 0x0040be16,sensor_channel20_fault_status,word,
-0x0040be18,sensor_channel7_fault_status,word,
+0x0040be18,sensor_channel75_fault_status,word,DUPLICATE NAME. Disassembly: cm848_sensorChannel7_init / _process (0xd064 / 0xd0f0) load 0x40be18 (addi r10,r10,-16872) as the fault-status output with channel_index 0x4b = 75 and the sensor_channel75_linearization_* tables. The .cpp prints both addresses with the same name, so the readers (boost_pressureSource_faultSelect_update, governor_speedRamp_stabilityFlag_calc, cm848_updateFaultConditionSt (was sensor_channel7_fault_status)
 0x0040be1a,sensor_channel9_fault_status,word,
 0x0040be1c,sensor_channel4_fault_status,word,Sensor channel output word - used by cm848_sensorChannel2_init / cm848_sensorChannel2_process
 0x0040be20,map_sensor_fault_status,word,
@@ -6138,12 +6138,12 @@ address,name,type,comment
 0x00408868,cooling_fan_high_engine_rpm_ramp_up_target,word,Speed the high-engine-rpm ramp-up climbs to (was egr_governor_speed_ramp_target)
 0x0040af06,fault_aging_triggered_flag,byte,set after dwell at governor setpoint; triggers fault aging/removal (lbz=byte)
 0x0040af0c,fault_handled_bitmap,byte,170-bit (22-byte) per-fault handled bitmap 1 bit/fault - set by cm848_processFaultScanGroup when a fault is latched and read by cm848_clearMilForHealedFaults to skip it - a flat bitmap not a ring (was fault_ring_handled_bitmap) (Medium confidence)
-0x0040b962,injection_timing_arb_component_4,word,injection timing arb component (winner code 4; rpm*rpm product)
-0x0040b968,injection_timing_arb_component_3,word,injection timing arb component (winner code 3; extended-protection mode)
-0x0040b96e,injection_timing_offset_boost_blended,word,boost-map-blended injection timing offset (winner 1)
-0x0040b970,injection_timing_offset_coolant_trim,word,coolant-temp injection timing correction (winner 2)
-0x0040b97e,injection_timing_arb_component_5,word,injection timing arb component (winner code 5; crank-start mode)
-0x0040b984,injection_timing_offset_arbitrated,word,final arbitrated injection timing offset
+0x0040b962,injection_timing_pilot_offset_barometric_pressure_component,word,Barometric angle x barometric factor / 4096 (759 in the dump); winner code 4. (was injection_timing_arb_component_4) | earlier note: injection timing arb component (winner code 4; rpm*rpm product)
+0x0040b968,injection_timing_pilot_offset_intake_temperature_component,word,Intake temperature angle x intake manifold temperature factor / 4096 (512 in the dump); winner code 3. (was injection_timing_arb_component_3) | earlier note: injection timing arb component (winner code 3; extended-protection mode)
+0x0040b96e,injection_timing_pilot_offset_map_blend,word,cm848_filterInputValue over injection_timing_offset_map_1..4_grid with injection_timing_offset_base_map_grid as the mode-0 value (111 = grid corner in the dump); the maps are rpm x engine_timing_reference, no boost input (winner code 1). (was injection_timing_offset_boost_blended) | earlier note: boost-map-blended injection timing offset (winner 1)
+0x0040b970,injection_timing_pilot_offset_coolant_component,word,(angle x coolant factor) / 4096; 87 in the dump, the lowest candidate under mode word 2, winner code 2; a candidate in the combination, not a trim. (was injection_timing_offset_coolant_trim) | earlier note: coolant-temp injection timing correction (winner 2)
+0x0040b97e,injection_timing_pilot_offset_boost_component,word,Boost angle x rpm-by-boost factor / 4096 (266 in the dump); winner code 5. (was injection_timing_arb_component_5) | earlier note: injection timing arb component (winner code 5; crank-start mode)
+0x0040b984,injection_timing_pilot_offset_arbitrated,word,Combined offset before the speed correction (87 in the dump); prefix change only, because injection_timing_offset_* is also the name of the EEPROM value injection_timing_offset_cal, a different quantity (main timing offset). (was injection_timing_offset_arbitrated) | earlier note: final arbitrated injection timing offset
 0x0040b696,cruise_deadband_active_flag,word,cruise fuel-demand within deadband 0/1
 0x0040b69e,cruise_zone_transition_flag,word,cruise zone-index changed this frame 0/1
 0x0040b6b0,cruise_ramp_rate_b_working,word,cruise ramp rate B (normal/protection select)
@@ -6172,8 +6172,8 @@ address,name,type,comment
 0x0040b856,injection_timing_table_offset,word,injection timing table offset added to per-cyl base angle
 0x0040b877,injection_tpu_timing_mode,byte,TPU timing mode code ORed into injector channel params (2/0x12)
 0x0040b32c,fuel_level_power_up_check_pending_flag,word,1 from the first stable fuel level sample until cm848_checkFuelLevelChangeAtPowerUp has compared it with the stored level; blocks the fast filter meanwhile (was calibBlock1_eeprom_write_pending_flag)
-0x0040b52e,protection_fuel_demand_limit_ramp,word,protection fuel-demand ramp-down ceiling
-0x0040b530,protection_fuel_demand_debounce_count,word,protection fuel-demand limiting debounce counter
+0x0040b52e,fuel_quantity_limit_rail_pressure_shortfall_ramp,word,The limiter's falling quantity ramp (starts at fuel_demand_load_axis, holds at the table value); 0x1700 = 5888 when not armed. Users: only the limiter and protection_speed_limit_initialize. (was protection_fuel_demand_limit_ramp) | earlier note: protection fuel-demand ramp-down ceiling
+0x0040b530,fuel_quantity_limit_rail_pressure_shortfall_debounce_count,word,Consecutive passes with fuel_demand_computed above the table limit and a pressure shortfall of at least 512 counts; reset on any failing pass; arms at 2500. Used only by the limiter. (was protection_fuel_demand_debounce_count) | earlier note: protection fuel-demand limiting debounce counter
 0x0040b638,fuel_used_increment,dword,Fuel counts added to the trip and lifetime fuel totals at this send (was fuel_consumption_tick_increment)
 0x0040b63c,trip_counter_pulse_delta,dword,trip_counter_pulse_delta_raw widened - added to the trip and lifetime distance (was injection_timing_period_delta)
 0x0040b788,injected_fuel_running_total,dword,Running sum of every injection's fuel quantity (injection_fuel_quantity_snapshot added once per injection by engine_injectionAngle_accumulateInjectedFuel); wraps; its deltas >> 12 are the trip / lifetime fuel counts and the warm-up model reads it too (was crank_period_running_total)
@@ -6182,7 +6182,7 @@ address,name,type,comment
 0x0040ba56,thermostat_monitor_start_battery_temperature,word,Battery temperature (1/64 deg F) recorded when the thermostat monitor start delay expires - the cold-soak reference (start coolant may exceed it by 10 F at most) and the 10 F drop abort reference - 2048 = 32 F in the dump (was cssc_oiltemp_baseline)
 0x0040ba58,thermostat_monitor_test_timer,word,Thermostat monitor test timer (e2m Tstat_Test_Timer): starts from a start-coolant table (1260 at 20 F to 240 at 130 F) and drops 1 per 100 of a rate from engine_load_at_current_speed_percent (4 at 0 % to 20 at 60 %) - a decision is made at 0 (was cssc_warmup_budget_remaining)
 0x0040ba60,cssc_conditioning_cycle_count,word,CSSC warmup cycle count (gov mode 0xb)
-0x0040b840,injection_timing_aux_output,word,final arbitrated aux injection-timing limit
+0x0040b840,auxiliary_injection_timing_retard,word,Highest (ROM mode word 0x409094 other than 2; 1 in the dump) or lowest (= 2) of the map blend, boost, ambient and coolant candidates (blend values 0..143 counts = up to 16.8 deg); injection_timing_aux_offset = main timing - this, so it is how far the third event follows the main injection (from its end in the calibration mode that adds the main on-time angle in the TPU writer). (was injection_timing_aux_output) | earlier note: final arbitrated aux injection-timing limit
 0x0040ba30,battery_temperature_key_on_rationality_state,word,Battery temperature key-on rationality (P0514) state (e2m Battery_Temperature_Keyon_Rationality_State): 1 running (cranking then the moving re-check) / 2 passed / 3 failed / 4 aborted or not run - also read by the slot 69 mileage check - 4 in the dump (was cam_sync_fueltemp_validation_state)
 0x0040a02a,sensor_channel_ratio_scale,word,sensor-channel normalization scale factor (read-only)
 0x0040b2cc,cooling_fan_ramp_down_speed,word,Current ramp-down speed (was governor_speed_decel_target)
@@ -6190,7 +6190,7 @@ address,name,type,comment
 0x0040ba32,intake_manifold_temperature_key_on_rationality_state,word,Intake manifold air temp key-on rationality (P0111) state - 1 running / 2 passed / 3 failed / 4 aborted or not run - parallels battery (0x40ba30) and ambient (0x40ba34) - passed as the slot 9 stuck-check companion state (was cam_sync_crossval_b_state)
 0x0040b2c8,cooling_fan_ramp_up_speed,word,Current ramp-up speed (was governor_speed_overspeed_ramp_step)
 0x0040ba42,temperature_rationality_cranking_cycle_count,word,Cycles counted during cranking - the scheduler holds sampling off until 0x409f92 (49) then the cross-check runs and counts on to 0x409fb2 (50) where it decides - single monotonic key-on cranking counter (was cam_sync_startup_cycle_counter)
-0x0040b844,injection_timing_aux_load_limit,word,load*rpm aux injection-timing component clamped +/-0x400
+0x0040b844,injection_timing_auxiliary_ambient_component,word,(ambient angle from rpm x fuel_demand_computed table injection_timing_auxiliary_ambient_angle_grid) x (factor from intake manifold temperature x barometric pressure grid) / 4096 clamped +/-1024; no engine load or limit input. (was injection_timing_aux_load_limit) | earlier note: load*rpm aux injection-timing component clamped +/-0x400
 0x0040b852,injection_timing_auxiliary_boost_component,word,Auxiliary injection timing boost term: RPM x boost table (ROM 0x5e3e2 - y 0 to 100 inHg) times RPM x fuel_demand_computed table (ROM 0x5e534) / 4096 clamped +/-1024; min or max picked with the other terms into injection_timing_aux_output; tables all zero here (was injection_timing_aux_rpm_limit)
 0x00409f96,temperature_rationality_sensor_agreement_threshold,word,Largest delta (1/64 deg F) for two temperature snapshots to count as agreeing in the cross-checks - 640 = 10 F - used by crossCheck checkBattery and checkAmbient (was cam_sync_sensor_mismatch_threshold)
 0x0040b2ce,cooling_fan_ramp_up_resume_speed,word,Speed of the post-ramp-down climb (source 0xf) (was governor_speed_ramp_upper_step)
@@ -6259,8 +6259,8 @@ address,name,type,comment
 0x0040b566,protection_coldStart_channelB_state,word,cold-start protection channel B state 0-4
 0x0040b570,park_neutral_switch_monitor_state,word,P0850 park/neutral switch monitor: 0 reset / 1 start check running / 2 passed / 3 failed (sets reserved_12 bit 4 = P0850) / 4 aborted until the next power-up by a P0500 vehicle speed / P1762 governor pressure / P0868 P0869 / P0606 fault (was fuel_temp_derate_state)
 0x0040b66c,rom_crc_calc_phase,word,ROM CRC computation phase 0-4
-0x0040b8ba,cam_timing_transition_state,word,cam timing advance/retard transition state
-0x0040b8c0,cam_timing_advance_target,dword,cam advance target (table*100) slew setpoint
+0x0040b8ba,fuel_pressure_setpoint_transition_state,word,Cold-start hand-over state of the setpoint (only the calculator and its init hpcr_register_state_save use it): 1 = cranking phases / waiting, 2 = follow the running value, 4 = ramping up by the step, 8 = ramping down; needs protection_feature_flags bit 4; 1 in the dump. (was cam_timing_transition_state) | earlier note: cam timing advance/retard transition state
+0x0040b8c0,fuel_pressure_setpoint_offset_target,dword,Dword store, only here: fuel_pressure_setpoint_offset_grid(engine_rpm_measured, fuel_demand_computed) x 100 (grid values 0 / 102 / 205 counts = 0 / 5 / 10 MPa). It is slewed into 0x3fd0c6 and the setpoint adds slewed / 100, only in governor modes 0x10 / 0x32 / 0x3a with coolant above 180 F and intake manifold temperature above 70 F. The x 100 should go in the CSV comment. (was cam_timing_advance_target) | earlier note: cam advance target (table*100) slew setpoint
 0x0040b9c4,cam_sync_validation_abort_reason,word,med abort reason code 1-5 (write-only diag)
 0x0040b9c6,cam_sync_validation_state,word,cam-sync validation phase 1/2/3/4
 0x0040a5c8,fuel_blend_compensation_integrator,dword,blend-correction ramp accumulator clamped to limit
@@ -6282,13 +6282,13 @@ address,name,type,comment
 0x0040a67a,boost_correction_mode_flags,word,status 0/0x40/0x80 OR-input to boost_pressure_source_flags
 0x0040a7d4,boost_pressure_source_flags,word,combined boost-source selection and fault flags
 0x0040b32a,fuel_level_fault_substitution_flag,word,1 while the fuel level broadcast byte holds a fault substitute (255 or 0) for P0463 / P0462 / the high-voltage band; cleared once they clear and the stored levels restart from the fast level; read by cm848_main_loop_protection_eval (was calibBlock1_warmup_pending_flag)
-0x0040b8e4,cam_timing_position_correction_term,word,signed P-controller cam timing correction output
-0x0040b8ec,cam_timing_fault_activation_counter,word,ramp counter setting safety_bits_1 0x1000 at limit
-0x0040b938,torque_limit_timing_boost_blend,word,boost-map-blended timing correction (winner 1)
-0x0040b942,torque_limit_fuel_demand_slewed,word,rate-limited fuel demand tracker for torque limit
-0x0040b948,torque_limit_timing_thermal_max,word,max of warmup and fuel-slew timing corrections
-0x0040b952,torque_limit_timing_load_correction,dword,load*RPM scaled timing correction (winner 5)
-0x0040b95a,torque_limit_timing_boost_load_correction,word,boost-map*load scaled timing correction (winner 0x11)
+0x0040b8e4,fuel_pressure_governor_demand_residual,word,(governor demand - coolant offset - rpm offset) x 41 / divisor, clamped to +/-32767 and held between updates (updated only while at the governed speed with the vehicle stopped); that branch is not active in this calibration (0x409aba nonzero). It is an instantaneous scaled residual, not a P controller and not a cam timing correction; 0 in the dump. (was cam_timing_position_correction_term) | earlier note: signed P-controller cam timing correction output
+0x0040b8ec,fuel_metering_feedback_low_debounce_count,word,Up / down counter (+1 while the feedback is below the minimum, -1 otherwise, capped at the limit); fault 60 is set when it reaches the limit and cleared at 0. Used only by the monitor. (was cam_timing_fault_activation_counter) | earlier note: ramp counter setting safety_bits_1 0x1000 at limit
+0x0040b938,injection_quantity_pilot_map_blend,word,cm848_filterInputValue result of the four selectable injection_quantity_pilot_map_N tables (current / target map index) against injection_quantity_pilot_base_map; first term of the arbitration. e2m Pilot_Base_Fuel_Quantity (offset +0 of the pilot block). (was torque_limit_timing_boost_blend) | earlier note: boost-map-blended timing correction (winner 1)
+0x0040b942,injection_quantity_pilot_fuel_demand_with_hysteresis,word,Same dead-band follower on fuel_demand_computed (tracks exactly below 4 x step); y input of every pilot_quantity map. e2m Fuel_With_Hyst. (was torque_limit_fuel_demand_slewed) | earlier note: rate-limited fuel demand tracker for torque limit
+0x0040b948,injection_quantity_pilot_temperature_correction,word,Larger of the coolant and the intake temperature corrections (code takes the max), one input of the sum / max / min arbitration. e2m Pilot_Quantity_Temp_Correction: 'Max wins of coolant and air temp pilot qty corrections'. (was torque_limit_timing_thermal_max) | earlier note: max of warmup and fuel-slew timing corrections
+0x0040b952,injection_quantity_pilot_boost_correction,dword,dword: boost factor x boost map value / 3276 = the boost quantity term of the arbitration (4-14 mm3 at no boost). e2m Pilot_Quantity_Boost_Correction (4 bytes, MM3S). (was torque_limit_timing_load_correction) | earlier note: load*RPM scaled timing correction (winner 5)
+0x0040b95a,injection_quantity_pilot_cold_correction,word,(DAT_0040b95c cold correction map value x factor) >> 12, combined with the main arbitration result by torque_limit_boost_load_corr_mode (0 add, 1 max wins, 2 min wins). e2m Pilot_Quantity_AECD_Corr_Value. (was torque_limit_timing_boost_load_correction) | earlier note: boost-map*load scaled timing correction (winner 0x11)
 0x0040b9d8,cam_timing_advance_accumulator,dword,accumulates positive cam-timing delta vs threshold
 0x0040b9dc,cam_timing_retard_accumulator,dword,accumulates negative cam-timing delta vs threshold
 0x0040b9e2,cam_timing_monitor_state,word,cam timing monitor state 0/1/2/3
@@ -6308,19 +6308,19 @@ address,name,type,comment
 0x0040b536,low_oil_pressure_debounce_limit,word,Debounce limit for the low-oil-pressure check - picked by coolant temperature from the ROM tables at 0x5b4be / 0x5b4ca (default from 0x5b4d4) (was governor_temp_diag_debounce_limit)
 0x0040b59a,protection_throttle_integral_accumulator,dword,protection throttle PID integral accumulator
 0x0040b8d4,cam_timing_speed_window_debounce_count,word,debounce for cam speed window; safety_bits_1 0x200
-0x0040b8d6,cam_sync_reference_a_debounce_count,word,debounce for cam sync ref A; safety_bits_1 0x400
+0x0040b8d6,fuel_pressure_governor_demand_above_limit_debounce_count,word,Up / down counter (+1 above the limit, -1 otherwise, cap = limit); fault 58 is set at the cap and cleared at 0. (was cam_sync_reference_a_debounce_count) | earlier note: debounce for cam sync ref A; safety_bits_1 0x400
 0x0040b8d8,cam_sync_reference_b_debounce_count,word,counts cam ref B enable cycles vs threshold
-0x0040b8de,cam_timing_correction_target,word,signed cam timing correction setpoint
+0x0040b8de,fuel_pressure_allowed_decay_model,word,Check B only (not the feedback monitor): base (the latched pressure, then the previous model) minus the allowed decay step; fault 59 counts passes with fuel_pressure_feedback_filtered below it; DAT_0040b8dc is a copy of it. Check B is off here and the step table is all zero, so confirmed from code only. (was cam_timing_correction_target) | earlier note: signed cam timing correction setpoint
 0x0040b8e2,cam_timing_correction_convergence_count,word,debounce for cam timing convergence; safety_bits_1 0x800
 0x0040b900,cam_sync_reference_check_enable_count,word,counts cam ref check A enable cycles
 0x0040b904,cam_sync_reference_b_threshold_reached_flag,byte,set when cam ref B debounce reached threshold
-0x0040b992,injection_timing_offset_arb_lower_limit,word,lower-limit floor clamping injection timing demand (pressure path)
-0x0040b99a,injection_timing_offset_sync_fault_addend,word,timing offset addend under sync fault (winner 0xf)
+0x0040b992,pilot_injection_timing_uncapped,word,= rpm-corrected offset + torque_limit_fault_snapshot (87 + 162 = 249 in the dump; the offset alone if ROM flag 0x409e72 is set; the governor-limit floor variant while the main timing sits at its governor limit minimum); cm848_pressure_control_state_load takes the smaller of this and the earliest schedulable angle, so it is the pilot timing before that cap, not a lower limit. (was injection_timing_offset_arb_lower_limit) | earlier note: lower-limit floor clamping injection timing demand (pressure path)
+0x0040b99a,injection_timing_pilot_offset_constant_component,word,DAT_00409e7e (512 = 60 deg) normally and DAT_00409e7c (85 = 10 deg) while engine_sync_fault_active_flag is set; it takes part in every combination, so the sync fault wording describes only one of its two values. (was injection_timing_offset_sync_fault_addend) | earlier note: timing offset addend under sync fault (winner 0xf)
 0x0040b99e,group21_fault_detected_flag,word,oil/temp differential fault-detected flag gating fault ring
 0x0040b9a0,group21_monitor_state_code,word,med group21 monitor state 0/2/3 (write-only)
-0x0040b960,injection_timing_demand_pressure_calc,word,HPCR pressure-path injection timing demand clamped at arb floor
-0x0040b986,injection_timing_offset_rpm_corrected,word,arbitrated timing offset after optional RPM-ratio correction
-0x00409fe2,hpcr_protection_debounce_count_threshold,word,read-only ROM; debounce count for hpcr fuel demand protection
+0x0040b960,pilot_injection_timing,word,min(earliest schedulable angle, main timing + pilot offset) = 249 counts = 29.2 deg in the dump versus 162 for main; only reader cm848_fuel_demand_state_capture -> injection_timing_pressure_snapshot -> cam_sync_period_reference_a -> x -5 -> slot 4 angle; no pressure is involved. (was injection_timing_demand_pressure_calc) | earlier note: HPCR pressure-path injection timing demand clamped at arb floor
+0x0040b986,injection_timing_pilot_offset_rpm_corrected,word,Offset after the measured / target rpm scaling (equal to the arbitrated value unless injection_timing_rpm_snap_active_flag is set); its only reader cm848_pressure_control_state_load adds the main timing to it. (was injection_timing_offset_rpm_corrected) | earlier note: arbitrated timing offset after optional RPM-ratio correction
+0x00409fe2,wastegate_monitor_debounce_count_limit,word,30 passes in the dump; the limit for both the high-boost debounce and the pass debounce. Read only by this function. (was hpcr_protection_debounce_count_threshold) | earlier note: read-only ROM; debounce count for hpcr fuel demand protection
 0x0040a034,protection_fault_match_debounce_threshold,word,read-only ROM; fault-match count threshold channels 19/20
 0x0040a5a2,fuel_blend_weight_threshold_active,word,working/selected blend weight threshold by blend mode
 0x0040a666,governor_speed_deviation_from_filter,word,governor speed raw minus fault-filtered reference
@@ -6345,7 +6345,7 @@ address,name,type,comment
 0x003fd1b4,cold_start_protection_timer_countdown,word,countdown gating cold-start protection state transitions
 0x003fea08,fault_registered_bits_384_to_399,word,Word 24 of the second fault bit array at 0x3fe9d8: set by cm848_processFaultScanGroup for each processed detected bit and cleared together with fault_detected_bits_384_to_399; bit map as that word (was engine_diag_shadow_flags_b) (Medium confidence)
 0x003fd108,timing_limit_arbitrated_target,word,arbitrated timing-limit target feeding the slew accumulator
-0x003fd104,timing_limit_slew_q16,word,slew-rate-limited Q16 timing-limit accumulator
+0x003fd104,injection_quantity_pilot_slewed_q16,word,dword Q16 accumulator that the pilot function moves toward the arbitrated target by the increase / decrease steps and then clamps to 0..fuel_demand_computed << 16; its high half is the pilot result. See the type note. (was timing_limit_slew_q16) | earlier note: slew-rate-limited Q16 timing-limit accumulator
 0x003fd1b0,cold_start_protection_sub_state,byte,inner sub-step of protection_state_machine_step
 0x003fd1b1,cold_start_protection_cycle_counter,byte,2-call debounce before advancing cold-start inner state
 0x003fd1b2,cold_start_protection_state,byte,cold-start battery voltage fault state machine (cases 0-8)
@@ -6383,8 +6383,8 @@ address,name,type,comment
 0x003fee6c,trip_fuel_used_at_governed_speed,dword,Trip injected fuel while engine_at_governed_speed_flag is set (EEPROM 0x19ea) (was j1939_fuel_demand_tick_at_target_rpm)
 0x003fee70,trip_time_at_governed_speed,dword,Trip passes with engine_at_governed_speed_flag set (EEPROM 0x19ee) (was j1939_fuel_demand_time_at_target_rpm)
 0x003fee74,trip_engine_run_time,dword,Trip passes with the engine running (EEPROM 0x19f2) (was j1939_fuel_demand_engine_on_time)
-0x003fd0c6,cam_timing_advance_slew_working,word,slew filter tracking cam_timing_advance_target (x100)
-0x003fd0c4,cam_timing_demand_rate_limited,word,rate-limited cam timing demand output
+0x003fd0c6,fuel_pressure_setpoint_offset_slewed,word,disasm_func: 8 accesses, all lwz / stw, so a dword (x 100) although typed word (the .cpp renders _cam_timing_advance_slew_working, which is why xref_addr finds no function); only the setpoint calculator uses it: it steps toward fuel_pressure_setpoint_offset_target by the slew step each pass and back to 0 when the offset conditions end. (was cam_timing_advance_slew_working) | earlier note: slew filter tracking cam_timing_advance_target (x100)
+0x003fd0c4,fuel_pressure_setpoint_deadband_filtered,word,Not a rate limiter: when the candidate is more than the band above the stored value it becomes candidate - band, when more than the band below it becomes candidate + band, otherwise it holds - a dead-band follower. It is used (and DAT_0040b8c4 = 1) only below 1500 rpm and 50 mm3 per stroke; the dump is consistent with it: running value 677 = 717 - 40 (717 is the map value; I did not print the cool (was cam_timing_demand_rate_limited) | earlier note: rate-limited cam timing demand output
 0x003fd0ca,cam_timing_advance_table_interp_states,word,16-element dualAxis interp state block (array base)
 0x003fd21e,cbd_phase_code,word,CBD outer phase (0 off
 0x003fd222,cbd_step_code,word,CBD inner step dispatcher (cases 0-6)
@@ -6410,11 +6410,11 @@ address,name,type,comment
 0x003fd04f,cruise_rate_correction_countdown,word,countdown enabling rate correction (ROM-aliased)
 0x003fd002,cruise_fuel_demand_prev,word,prev fuel_demand_computed for cruise D-term (ROM-aliased)
 0x003fd04a,cruise_rate_correction_holdoff,word,holdoff blocking rate-correction re-entry (ROM-aliased)
-0x003fd1e8,hpcr_pressure_diag_delay_ticks,word,HPCR pressure-diag dwell countdown
-0x003fd1ea,hpcr_pressure_diag_sample_count,word,HPCR pressure-diag sample counter (to 3)
-0x003fd1ec,hpcr_pressure_diag_ring_index,word,HPCR pressure-diag 3-element ring index
-0x003fd1f0,hpcr_pressure_diag_sample_sum_state0,word,HPCR pressure-diag state-0 sample accumulator
-0x003fd1f2,hpcr_pressure_diag_reference_avg,word,HPCR pressure-diag averaged reference pressure
+0x003fd1e8,intake_air_heater_performance_test_delay_ticks,word,Dwell countdown between test phases, reloaded from ROM DAT_0006442a / 00064424 / 00064428 (25 / 30 / 2); used by hpcr_injectPressureTuning and initialised from DAT_0006442c in hpcr_throttlePositionDiagnostic. (was hpcr_pressure_diag_delay_ticks) | earlier note: HPCR pressure-diag dwell countdown
+0x003fd1ea,intake_air_heater_performance_test_sample_count,word,Counts the three battery-voltage ADC samples that are averaged in each phase. (was hpcr_pressure_diag_sample_count) | earlier note: HPCR pressure-diag sample counter (to 3)
+0x003fd1ec,intake_air_heater_performance_test_sample_ring_index,word,Index (wraps after 3) of the three-element sample ring at 0x3fd1f6 filled in state 2. (was hpcr_pressure_diag_ring_index) | earlier note: HPCR pressure-diag 3-element ring index
+0x003fd1f0,intake_air_heater_performance_test_baseline_battery_voltage_adc,word,State 0 accumulates three raw battery-voltage ADC samples (qadc channel index 4) taken before the heater relays are on, then divides by 3 in place; state 1 subtracts the loaded average from it. (was hpcr_pressure_diag_sample_sum_state0) | earlier note: HPCR pressure-diag state-0 sample accumulator
+0x003fd1f2,intake_air_heater_performance_test_loaded_battery_voltage_adc,word,Average battery-voltage ADC reading with the heater on (state 1, refreshed from the ring average at the end of state 2); state 2 checks the ring average against it (-DAT_0006442e / +DAT_00064438) and state 3 subtracts it from the after-turn-off average. It is a voltage, not a pressure. (was hpcr_pressure_diag_reference_avg) | earlier note: HPCR pressure-diag averaged reference pressure
 0x003fce34,intake_air_heater_pulse_active_flag,byte,set while a grid heater relay on-pulse is counting down - cleared by cm848_pulseIntakeAirHeaterRelays when the pulse duration reaches 0 (was iat_solenoid_active_flag)
 0x003fce35,intake_air_heater_target_level,word,grid heater target pulse level 0-4 chosen by the level selectors - level 4 ends the postheat burst - committed level follows it once applied (was iat_solenoid_target_level)
 0x003fce37,intake_air_heater_committed_level,word,last applied grid heater pulse level - set = target level after cm848_pulseIntakeAirHeaterRelays runs - seeded to 6 on postheat entry to force the first load then tracks 0-4 - drives the next level step (was iat_solenoid_committed_level)
@@ -6531,8 +6531,8 @@ address,name,type,comment
 0x003fd18f,protection_group29_conditions_met_flag,byte,group29 conditions met 0/1
 0x003fd268,overboost_debounce_count,word,P0234 turbocharger overboost debounce at 0x5372c4: up to 25 in governor mode 16 while boost > 3647 (196.5 kPa) above 2200 rpm then sets fault_detected_bits_400_to_415 bit 15 / counts down and clears it at 0 / zeroed while P0238 P0237 or P0236 is set (was hpcr_oil_pressure_protection_debounce_count)
 0x003fd26a,high_load_boost_band_debounce_count,word,Debounce for boost between 3017 and 3331 (162.6 to 179.5 kPa) with engine_load_at_current_speed_percent above 80 percent and engine speed above 2200 rpm: 0 outside / reaching 25 bumps the event count 0x40ba6a and every pass at 25 the time count 0x40ba6c (was hpcr_oil_pressure_fault_debounce_count)
-0x003fd26c,hpcr_fuel_demand_protection_debounce_count,word,HPCR fuel-demand protection debounce
-0x003fd26e,hpcr_fuel_demand_fault_debounce_count,word,HPCR fuel-demand fault debounce
+0x003fd26c,wastegate_monitor_high_boost_debounce_count,word,Up/down counter of the high-boost check (+1 per qualifying pass up to the limit, -1 otherwise); at the limit it sets fault 332, at 0 it clears it. Address 0x3fd26c is RAM below the EEPROM mirror, so no _cal. (was hpcr_fuel_demand_protection_debounce_count) | earlier note: HPCR fuel-demand protection debounce
+0x003fd26e,wastegate_monitor_pass_debounce_count,word,Up/down counter of the pass-window check (boost inside the window at load >= DAT_00409fe4 and rpm >= minimum); reaching the limit counts one pass event. It is the pass debounce, not a fault debounce. (was hpcr_fuel_demand_fault_debounce_count) | earlier note: HPCR fuel-demand fault debounce
 0x003fa696,fuel_demand_blend_tables_interp_state,word,dualAxis interp state base (fuel demand blend tables)
 0x003fa69e,fuel_demand_mode3_interp_state,word,dualAxis interp state base (fuel demand mode 3)
 0x003fa6a6,fuel_demand_timing_offset_interp_state,word,dualAxis interp state base (timing offset)
@@ -6547,8 +6547,8 @@ address,name,type,comment
 0x003fcd8e,protection_j1939_trigger_active,byte,J1939 protection trigger detected
 0x003fcd8f,protection_j1939_trigger_accumulator,byte,accumulator toward J1939 protection threshold
 0x003fcff8,cruise_speed_zone_code,word,cruise speed zone 1/2/3 selecting ramp-rate cal
-0x003fd0aa,aux_boundary_boost_blend_interp_state,word,dualAxis interp state base (aux boundary boost blend)
-0x003fd164,injection_timing_arb_boost_blend_interp_state,word,dualAxis interp state base (injection timing arbitration boost blend)
+0x003fd0aa,injection_timing_auxiliary_map_blend_cached_axis_offset,word,Lookup cache word of the injection_timing_auxiliary_map_1..4_grid lookups inside the auxiliary timing function; the grids are blended maps, not boost (set to 2 by cm848_initialization_auxiliary_state). (was aux_boundary_boost_blend_interp_state) | earlier note: dualAxis interp state base (aux boundary boost blend)
+0x003fd164,injection_timing_pilot_offset_map_blend_cached_axis_offset,word,Lookup cache word of the injection_timing_offset_map_1..4_grid lookups (set to 2 by cm848_initialization_pressure_state); the grids are blended maps, not boost. (was injection_timing_arb_boost_blend_interp_state) | earlier note: dualAxis interp state base (injection timing arbitration boost blend)
 0x003fd1a4,cam_sync_balance_hold_counter,word,precondition stability counter before cam-sync balance sampling
 0x003fd1a6,cam_sync_advance_event_count,word,advance/retard event count for cam-sync balance
 0x003fd1a8,cam_sync_balance_accumulator,word,net cam-sync balance accumulator vs limit
@@ -6747,14 +6747,14 @@ address,name,type,comment
 0x00408f46,protection_cylinder_event_factor,word,ROM x cylinder_event_count_max -> protection countdown
 0x00408f48,protection_shutdown_cycle_limit,byte,ROM cap on protection shutdown cycle count
 0x00408f49,protection_debounce_event_factor,word,ROM x cylinder_event_count_max -> protection debounce
-0x0040b78c,injection_timing_demand_working,word,rate-limited injection timing demand (reset 0xc800)
-0x0040b830,injection_timing_aux_offset,word,aux timing offset (torque snapshot - aux output)
-0x0040b838,injection_timing_aux_boost_blend,word,boost-map-blended aux injection timing
-0x0040b848,injection_timing_aux_coolant_factor,word,coolant-temp table factor for aux timing clamp
-0x0040b84a,injection_timing_aux_rpm_factor,word,RPM table factor for aux timing clamp
-0x0040b84c,injection_timing_aux_combined_clamp,word,(rpm x coolant)/0x1000 clamp on aux timing output
+0x0040b78c,injection_quantity_scale_factor,word,Outside the five functions. Only users are engine_injectionAngle_updateCutoutAndTimingDemand (slews it toward a fuel-demand dependent target, step limit DAT_00408f4e, then multiplies fuel_demand_computed_snapshot, the pilot snapshot and the auxiliary snapshot by it / 51200) and cm848_fuel_demand_state_capture (resets it to 51200 = 1.0 outside the governor-setpoint cold start phases). It scales qua (was injection_timing_demand_working) | earlier note: rate-limited injection timing demand (reset 0xc800)
+0x0040b830,auxiliary_injection_timing,word,= torque_limit_fault_snapshot - retard (dump 162 - 0), or -(DAT_0005a48a + retard) when ROM flag 0x409096 is set; only reader cm848_fuel_demand_state_capture -> cam_sync_period_reference_b -> x -5 -> slot 12 of TPU-A channel 5, the third event, in the same advance-count convention as the main timing. (was injection_timing_aux_offset) | earlier note: aux timing offset (torque snapshot - aux output)
+0x0040b838,injection_timing_auxiliary_map_blend,word,cm848_filterInputValue over injection_timing_auxiliary_map_1..4_grid (lower / upper map number and blend weight, base map as the mode-0 value), inputs rpm x fuel_demand_computed; it has no boost input (the boost term is injection_timing_auxiliary_boost_component). (was injection_timing_aux_boost_blend) | earlier note: boost-map-blended aux injection timing
+0x0040b848,injection_timing_auxiliary_coolant_factor,word,Role is right (Q12 factor from the coolant x intake manifold temperature grid, 4096 in the dump); only the abbreviation aux is spelled out to match injection_timing_auxiliary_coolant_factor_grid. (was injection_timing_aux_coolant_factor) | earlier note: coolant-temp table factor for aux timing clamp
+0x0040b84a,injection_timing_auxiliary_coolant_angle,word,Output of rpm x fuel_demand_computed table injection_timing_auxiliary_coolant_angle_grid (85..145 counts = 10..17 deg at 600..1800 rpm and up to 40 mm3, else 0), multiplied by injection_timing_aux_coolant_factor / 4096 into injection_timing_aux_combined_clamp; an angle, not a factor. (was injection_timing_aux_rpm_factor) | earlier note: RPM table factor for aux timing clamp
+0x0040b84c,injection_timing_auxiliary_coolant_component,word,(coolant angle x coolant factor) / 4096 clamped to +/-1024, the coolant candidate; it is combined with the other candidates by highest / lowest, so neither an additive correction nor a clamp on the output. (was injection_timing_aux_combined_clamp) | earlier note: (rpm x coolant)/0x1000 clamp on aux timing output
 0x0040b84e,injection_timing_auxiliary_boost_factor,word,RPM x boost table factor (ROM 0x5e3e2 x axis 600 to 3000 rpm / 0x5e3fe y axis 0 to 100 inHg / 0x5e416 values - all zero here) for injection_timing_auxiliary_boost_component; signed values (was injection_timing_aux_oil_factor_a)
-0x0040b850,injection_timing_auxiliary_fuel_demand_factor,word,RPM x fuel_demand_computed table factor (ROM 0x5e534 / 0x5e550 / 0x5e568 - all zero here) multiplied with injection_timing_auxiliary_boost_factor / 4096 into injection_timing_auxiliary_boost_component (was injection_timing_aux_oil_factor_b)
+0x0040b850,injection_timing_auxiliary_boost_angle,word,Output of rpm x fuel_demand_computed table injection_timing_auxiliary_boost_angle_grid (all 0 in this calibration), multiplied by injection_timing_auxiliary_boost_factor / 4096 into injection_timing_auxiliary_boost_component; an angle, with fuel demand as its input. (was injection_timing_auxiliary_fuel_demand_factor) | earlier note: RPM x fuel_demand_computed table factor (ROM 0x5e534 / 0x5e550 / 0x5e568 - all zero here) multiplied with injection_timing_auxiliary_boost_factor / 4096 into injection_timing_auxiliary_boost_component (was injection_timing_aux_oil_factor_b)
 0x004090a0,tpu_ch3_param_period_ref,word,ROM; TPUA CH3 PARAM4-7 period reference
 0x004090a4,tpu_output_ch_param7_ref,word,ROM; shared PARAM7 ref for TPUA CH2/4/7
 0x004090b2,tpu_ch14_period_base,word,ROM; TPUA CH14 PARAM0 base period (HPCR sync)
@@ -6763,13 +6763,13 @@ address,name,type,comment
 0x0040b854,injection_timing_cam_angle_correction,word,cam-position-corrected injection angle term
 0x0040b98c,injection_timing_speed_component,word,speed-proportional injection timing component (pressure path)
 0x0040b994,injection_timing_floor_underrun_count,word,count of frames timing demand below arb floor
-0x00409a6c,cam_timing_override_mode,byte,ROM; cam timing override 0=normal 1=force 2=additive
-0x00409a74,cam_timing_advance_slew_step,word,ROM; per-frame step for cam advance slew
-0x00409a76,cam_timing_transition_step,word,ROM; step for cold-start cam timing transition
-0x00409a84,cam_timing_demand_rate_limit,word,ROM; max cam timing demand change per frame
-0x0040b8bc,cam_timing_demand_working,word,rate-limited cam timing demand (pre-transition)
-0x00409aa1,cam_sync_reference_check_a_enable,byte,ROM; enable for cam-sync reference check path A
-0x00409aa2,cam_sync_reference_check_b_enable,byte,ROM; enable for cam-sync reference check path B
+0x00409a6c,fuel_pressure_setpoint_override_mode,byte,Byte, 0 in the dump: 1 returns at once with fuel_pressure_setpoint = the override value (winning term 5), 2 adds the value to the final setpoint (flag DAT_0040b8c8). Only the setpoint calculator reads it; a RAM copy of ROM, so no _cal. (was cam_timing_override_mode) | earlier note: ROM; cam timing override 0=normal 1=force 2=additive
+0x00409a74,fuel_pressure_setpoint_offset_slew_step,word,RAM copy of a ROM constant (4098 in the dump = 40.98 counts per pass in the x 100 unit of the offset); only the setpoint calculator reads it. (was cam_timing_advance_slew_step) | earlier note: ROM; per-frame step for cam advance slew
+0x00409a76,fuel_pressure_setpoint_transition_step,word,RAM copy of a ROM constant (1 count per pass in the dump); added to or subtracted from fuel_pressure_setpoint in transition states 4 / 8; read only by the setpoint calculator. (was cam_timing_transition_step) | earlier note: ROM; step for cold-start cam timing transition
+0x00409a84,fuel_pressure_setpoint_deadband,word,RAM copy of a ROM constant (40 counts = 1.95 MPa) used as the +/- band of the dead-band follower above (not a per-pass rate); read only by the setpoint calculator. (was cam_timing_demand_rate_limit) | earlier note: ROM; max cam timing demand change per frame
+0x0040b8bc,fuel_pressure_setpoint_running_value,word,The candidate after the low-speed dead band and the rise limit (rise limit = previous setpoint + 0x409a78), before the cold-start table / transition and the final clamp; the old comment 'rate-limited' is wrong. Used only by the setpoint calculator; 677 in the dump. (was cam_timing_demand_working) | earlier note: rate-limited cam timing demand (pre-transition)
+0x00409aa1,fuel_pressure_governor_demand_plausibility_check_enable,byte,Calibration byte, 1 in the dump: check A (demand against the plausibility limit) is enabled; the function returns at once when both check enable bytes are 0. (was cam_sync_reference_check_a_enable) | earlier note: ROM; enable for cam-sync reference check path A
+0x00409aa2,fuel_pressure_allowed_decay_check_enable,byte,Calibration byte, 0 in the dump: check B (pressure against a decaying model) is switched off in this calibration; its names rest on code only. (was cam_sync_reference_check_b_enable) | earlier note: ROM; enable for cam-sync reference check path B
 0x00409aa4,fuel_pressure_feedback_minimum,word,Lower bound on fuel_pressure_feedback_filtered (820) used by the fuel pressure monitors (engine_camTiming_* / engine_camSync_referenceCheck_update). ROM. Was cam_timing_reference_b_min
 0x00409aa6,cam_timing_coolant_temp_min,word,ROM; coolant temp lower bound for cam timing
 0x00409aa8,cam_timing_coolant_temp_max,word,ROM; coolant temp upper bound for cam timing
@@ -6798,24 +6798,24 @@ address,name,type,comment
 0x00409e2a,fuel_metering_feedback_min_by_demand_threshold_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by engine_camTiming_positionCorrection_calc
 0x0040b8da,cam_timing_correction_base,word,seed/base setpoint for cam correction PI
 0x0040b8e6,cam_timing_position_correction_effective,word,applied cam position correction term
-0x0040b8f4,cam_timing_position_correction_gain,word,table-interpolated cam correction gain
-0x0040b8fe,cam_timing_fault_activation_threshold,word,threshold to ramp cam timing fault counter
+0x0040b8f4,fuel_pressure_governor_demand_threshold_gain,word,Lookup of fuel_pressure_governor_demand_threshold_gain_* at fuel_pressure_feedback_filtered (316-516 over 1025-2869 counts); with the residual fixed at 41 the scaled term equals this gain. (was cam_timing_position_correction_gain) | earlier note: table-interpolated cam correction gain
+0x0040b8fe,fuel_metering_feedback_minimum_expected,word,Output of the fuel_metering_feedback_min_by_demand_threshold lookup at the demand threshold (1391 at 0 falling to 0 at 2869); the monitor counts passes with fuel_metering_feedback_input below it. Used only by the monitor. (was cam_timing_fault_activation_threshold) | earlier note: threshold to ramp cam timing fault counter
 0x0040b905,cam_sync_reference_b_threshold_prev_flag,byte,previous-cycle latch of cam ref B threshold flag
 0x0040b906,cam_timing_speed_window_in_range_flag,byte,speed within cam-timing window 0/1
 0x0040b907,cam_timing_speed_window_enable_flag,byte,cam-timing speed-window enable gate
 0x0040b909,cam_sync_reference_check_enable_flag,byte,cam-sync reference check A enable gate
 0x00409e4e,timing_limit_slew_decrease_step_q16,dword,ROM; Q16 decrement step for timing-limit slew
 0x00409e52,timing_limit_slew_increase_step_q16,dword,ROM; Q16 increment step for timing-limit slew
-0x00409e56,torque_limit_rpm_slew_step,word,ROM; per-update step for torque_limit_rpm_slewed
-0x00409e58,torque_limit_fuel_demand_slew_step,word,ROM; per-update step for torque_limit_fuel_demand_slewed
-0x00409e64,torque_limit_timing_arb_mode,word,ROM; timing arb mode 0=sum 1=max 2=min
-0x00409e6a,torque_limit_boost_load_corr_mode,word,ROM; boost-load correction apply mode 0/1/2
-0x00409e6c,torque_limit_cold_start_table_select,word,ROM; cold-start timing table select 0/1
-0x0040b93c,torque_limit_timing_warmup_correction,word,warmup/cold-start timing correction (pre-RPM-scale)
-0x0040b93e,torque_limit_timing_warmup_rpm_scaled,word,RPM-scaled warmup timing correction
-0x0040b946,torque_limit_timing_fuel_slew_correction,word,fuel-slew timing correction term
-0x0040b94e,torque_limit_timing_load_scale_factor,word,RPM-indexed scale for load timing correction
-0x0040b950,torque_limit_timing_load_base_factor,word,RPM-indexed base for load timing correction
+0x00409e56,injection_quantity_pilot_engine_speed_hysteresis,word,Dead-band width of the engine speed follower. e2m Pilot_RPM_Hyst (RPM 0.125) at the matching offset. (was torque_limit_rpm_slew_step) | earlier note: ROM; per-update step for torque_limit_rpm_slewed
+0x00409e58,injection_quantity_pilot_fuel_demand_hysteresis,word,Dead-band width of the fuel demand follower. e2m Pilot_Fuel_Hyst (MM3S) at the matching offset. (was torque_limit_fuel_demand_slew_step) | earlier note: ROM; per-update step for torque_limit_fuel_demand_slewed
+0x00409e64,injection_quantity_pilot_logic_select,word,Selects how the pilot terms combine: 0 sum, 1 max wins, 2 min wins (2 in the dump); only user is the pilot function. e2m Pilot_Quantity_Logic_Select. 0x409e64 is not EEPROM-backed, no _cal. (was torque_limit_timing_arb_mode) | earlier note: ROM; timing arb mode 0=sum 1=max 2=min
+0x00409e6a,injection_quantity_pilot_cold_correction_logic_select,word,0 adds the cold correction term, 1 max wins, 2 min wins, 3 none (1 in the dump); only user is the pilot function. e2m Pilot_Quantity_AECD_Logic_Select (default none = 3). (was torque_limit_boost_load_corr_mode) | earlier note: ROM; boost-load correction apply mode 0/1/2
+0x00409e6c,injection_quantity_pilot_cold_start_logic_select,word,While cold_start_phase is above-rpm-trigger / via-events / setpoint-underrun: 0 uses the cold-start coolant factor curve, 1 replaces the result with the cold-start override map (0 in the dump). e2m Pilot_Quantity_Crank_Logic_Select. (was torque_limit_cold_start_table_select) | earlier note: ROM; cold-start timing table select 0/1
+0x0040b93c,injection_quantity_pilot_coolant_factor,word,Q12 factor (4096 = 1.0) from injection_quantity_pilot_coolant_factor_grid (x coolant, y intake temperature), or from the cold-start curve while cranking with torque_limit_cold_start_table_select = 0; multiplied with the coolant map value >> 12. e2m Pilot_Quantity_Cool_Corr_Factor (UNITLESS 1/4096). (was torque_limit_timing_warmup_correction) | earlier note: warmup/cold-start timing correction (pre-RPM-scale)
+0x0040b93e,injection_quantity_pilot_coolant_correction,word,(DAT_0040b940 coolant map value x torque_limit_timing_warmup_correction) >> 12: a quantity in 0.0679 mm3 counts, one of the arbitration terms. e2m Pilot_Quantity_Cool_Corr_Value (MM3S). (was torque_limit_timing_warmup_rpm_scaled) | earlier note: RPM-scaled warmup timing correction
+0x0040b946,injection_quantity_pilot_intake_temperature_correction,word,(injection_quantity_pilot_intake_temperature_map value x intake temperature factor) >> 12 with the factor from the 1-D injection_quantity_pilot_intake_temperature_factor table: a quantity, not a slew. e2m Pilot_Quantity_Air_Temp_Correction. (was torque_limit_timing_fuel_slew_correction) | earlier note: fuel-slew timing correction term
+0x0040b94e,injection_quantity_pilot_boost_map_value,word,Output of injection_quantity_pilot_boost_map (x engine speed with hysteresis, y fuel demand with hysteresis): 59 / 88 / 103 / 206 counts = 4-14 mm3, a quantity, not a factor. e2m Pilot_Quantity_Boost_Precorr (MM3S). (was torque_limit_timing_load_scale_factor) | earlier note: RPM-indexed scale for load timing correction
+0x0040b950,injection_quantity_pilot_boost_factor,word,Output of injection_quantity_pilot_boost_factor_grid (x engine speed, y cm848_calculateBoostPressure); values 3277 = 1.0 up to 6554 = 2.0 with the divisor 3276 in the product. e2m Pilot_Quantity_Boost_Factor (1/3276.8). (was torque_limit_timing_load_base_factor) | earlier note: RPM-indexed base for load timing correction
 0x00409e74,injection_timing_arbitration_mode,word,ROM; injection timing arb mode 0-3
 0x00409e78,injection_timing_rpm_snap_tolerance,word,ROM; RPM band to snap injection timing rpm axis
 0x0040b988,injection_timing_rpm_snap_active_flag,word,injection timing rpm axis snapped to target 0/1
@@ -6873,7 +6873,7 @@ address,name,type,comment
 0x0040b50a,immobilizer_received_key,dword,24-bit immobilizer key received on PCI 4F C0 command 0 - assembled from payload bytes 2-4 then compared to immobilizer_expected_key (was j1939_governor_auth_response_received)
 0x0040b50e,immobilizer_seed,dword,24-bit immobilizer session seed sent on PCI 3F and folded with the VIN to make the expected key - top byte 0 (0x00c94944 on the dump) (was j1939_governor_auth_session_seed)
 0x0040b51b,immobilizer_status_bits,byte,Copy of PCI 0xB1 immobilizer status bits 0/1/4/5/6 (bits 2/3/7 kept); bit 1 (SKIS failure per DRB) while running latches the fuel-disable bypass in cm848_runImmobilizerTask; SCI table 253 offset 159 (was j1939_msg_slot_m_switch_input_bits)
-0x0040b52c,protection_fuel_demand_active_flag,word,fuel-demand protection active; drives ramp-down
+0x0040b52c,fuel_quantity_limit_rail_pressure_shortfall_active_flag,word,Set when the shortfall debounce completes; the only write that clears it (no clearing write found otherwise) is the feature-disabled branch. All 4 accesses are in the limiter. (was protection_fuel_demand_active_flag) | earlier note: fuel-demand protection active; drives ramp-down
 0x0040b55a,j1939_fault_load_protection_trip_count,byte,outer escalation count
 0x0040b55b,j1939_fault_load_protection_debounce_count,byte,inner debounce count
 0x0040b55e,protection_coldStart_channelA_trip_count,word,cold-start protection channel A trip count
@@ -6893,18 +6893,18 @@ address,name,type,comment
 0x0040b644,engine_at_governed_speed_flag,word,1 while governor_fuel_demand_mode is 11 and engine speed is within +/-400 rpm of the governor target (probably idle) - selects the at-governed-speed counters (was j1939_fuel_demand_at_target_rpm_flag)
 0x0040b646,trip_counter_pulse_delta_raw,word,Speed sensor pulses since the last send (or the TPU-B PARAM1 low byte after the pulses resume) (was injection_timing_period_delta_raw)
 0x0040b64c,governor_speed_compensation_steps,word,countdown steps for governor speed compensation
-0x0040b90a,cam_timing_correction_enable_flag,byte,cam timing position correction enable gate
+0x0040b90a,fuel_metering_feedback_monitor_enable_flag,byte,Recomputed every pass: pressure within +/-61 counts of the setpoint (0x409ab6 / 0x409ab8) at the governor setpoint, pressure and coolant in range, no related faults; the monitor returns when it is 0. Used only by the monitor. (was cam_timing_correction_enable_flag) | earlier note: cam timing position correction enable gate
 0x0040b9a2,cssc_coolant_monitoring_cycle_count,word,CSSC coolant thermostat monitoring cycle count
 0x0040b9a4,cssc_coolant_temp_span,word,coolant temp max-min span for CSSC thermostat diag
 0x0040b9c8,hpcr_battery_dwell_timeout_flag,word,HPCR battery dwell-timeout flag (status bit 6)
 0x0040b9ca,hpcr_battery_voltage_normal_flag,byte,HPCR battery voltage in-range flag (status bit 7)
 0x0040b9cc,hpcr_governor_phase_active_flag,word,HPCR governor-phase active flag (status bit 1)
 0x0040b9ce,hpcr_battery_monitor_lockout_count,word,battery monitor lockout countdown (crank phases)
-0x0040ba6e,hpcr_fuel_demand_protection_threshold,word,HPCR fuel-demand protection lower limit
-0x0040ba70,hpcr_fuel_demand_fault_upper_limit,word,HPCR fuel-demand fault upper bound
-0x0040ba72,hpcr_fuel_demand_fault_lower_limit,word,HPCR fuel-demand fault lower bound
-0x0040ba74,hpcr_fuel_demand_fault_qualified_event_count,word,count of qualified HPCR fuel-demand fault events
-0x0040ba76,hpcr_fuel_demand_fault_count,word,accumulated HPCR fuel-demand fault-active cycles
+0x0040ba6e,wastegate_monitor_fail_high_boost_pressure_threshold,word,Output of the wastegate_monitor_fail_high_boost_pressure_* lookup by barometric reference; boost at or above it (with the other conditions) counts toward fault 332 (CWG_High_Boost_Error). (was hpcr_fuel_demand_protection_threshold) | earlier note: HPCR fuel-demand protection lower limit
+0x0040ba70,wastegate_monitor_pass_high_boost_pressure_threshold,word,Output of the wastegate_monitor_pass_high_boost_pressure_* lookup; upper edge of the PASS window (boost above it decrements the pass debounce), not a fault limit. e2m CWG_Pass_High_Boost_Pressure_Threshold. (was hpcr_fuel_demand_fault_upper_limit) | earlier note: HPCR fuel-demand fault upper bound
+0x0040ba72,wastegate_monitor_pass_low_boost_pressure_threshold,word,Output of the wastegate_monitor_pass_low_boost_pressure_* lookup; lower edge of the PASS window. e2m CWG_Pass_Low_Boost_Pressure_Threshold. (was hpcr_fuel_demand_fault_lower_limit) | earlier note: HPCR fuel-demand fault lower bound
+0x0040ba74,wastegate_monitor_pass_event_count,word,Incremented each time wastegate_monitor_pass_debounce_count newly reaches the limit; written only by this function and its init. Matches e2m CWG_Total_Pass_Counter. (was hpcr_fuel_demand_fault_qualified_event_count) | earlier note: count of qualified HPCR fuel-demand fault events
+0x0040ba76,wastegate_monitor_pass_duration_count,word,Incremented every pass while the pass debounce is at or above the limit (saturates at 0xffff), so it is the time spent inside the pass window; its role matches e2m CWG_Total_Pass_Time. (was hpcr_fuel_demand_fault_count) | earlier note: accumulated HPCR fuel-demand fault-active cycles
 0x004051ee,boost_correction_step_count_max,word,ROM cap for boost_correction_step_counter
 0x0040a448,boost_correction_throttle_trim_ratio,word,0-10000 throttle trim ratio (boost correction)
 0x0040a44a,boost_correction_fuel_ema_ratio,word,0-10000 fuel EMA ratio (boost correction)
@@ -7060,8 +7060,8 @@ address,name,type,comment
 0x003fce6a,intake_air_heater_postheat_active_flag,word,gate set while the grid heater postheat cycling is running - checked at the top of cm848_updateIntakeAirHeaterPostheat to keep pulsing instead of re-evaluating entry (was iat_solenoid_derate_active_flag)
 0x003fce61,intake_air_heater_duty_percent,word,grid heater PWM duty percent from a lookup table - sets the PWM on-ticks within the 100-tick period (was iat_solenoid_duty_percent) (Medium confidence)
 0x003fce63,intake_air_heater_level_update_pending_flag,byte,set when the grid heater target level changed so cm848_pulseIntakeAirHeaterRelays reloads the pulse duration and duty for the new level (was iat_solenoid_update_pending_flag)
-0x003fcede,governor_cruise_crank_period_snapshot,dword,prev crank-period total for delta
-0x003fcee2,governor_cruise_period_accum,dword,scaled engine operating time accumulator
+0x003fcede,oil_change_monitor_injected_fuel_snapshot,dword,Copy of injected_fuel_running_total taken at the end of every call of the monitor to form the delta. (was governor_cruise_crank_period_snapshot) | earlier note: prev crank-period total for delta
+0x003fcee2,oil_change_monitor_weighted_fuel_accumulator,dword,Adds (injected_fuel_running_total delta x weight) / 100 each call and wraps into the fuel counter at 0x3fee36 above 0x8809a (557210 = 0.01 US gallon at 100 percent weight); the old comment 'scaled engine operating time' is wrong, it is weighted fuel. (was governor_cruise_period_accum) | earlier note: scaled engine operating time accumulator
 0x003fcee6,j1939_load_protection_fault_reported_flag,word,J1939 load-protection fault dedup latch
 0x003fceee,protection_coldStart_channelB_fault_reported_flag,word,cold-start channelB fault reported latch
 0x003fcef2,protection_coldStart_channelA_window_active_flag,byte,cold-start channelA trip window open
@@ -7142,7 +7142,7 @@ address,name,type,comment
 0x003fd1e2,hpcr_battery_dwell_counter,word,battery dwell counter (timeout->flag)
 0x003fd1e4,cam_timing_monitor_eval_cycle_count,word,cam-timing monitor eval cycle counter
 0x003fd1e7,cam_timing_monitor_inhibit_flag,byte,cam-timing monitor was-inhibited latch
-0x003fd1f4,hpcr_pressure_diag_sample_sum_state3,word,HPCR pressure diag state-3 sample sum
+0x003fd1f4,intake_air_heater_performance_test_recovered_battery_voltage_adc,word,State 3 accumulates three battery-voltage ADC samples after the heater relays are off, divides by 3 in place, and the recovery (this minus the loaded average) goes to DAT_0040b9e6. (was hpcr_pressure_diag_sample_sum_state3) | earlier note: HPCR pressure diag state-3 sample sum
 0x003fd1ff,cbd_cylinder_injection_enable_array,byte,per-cylinder CBD injection enable array base
 0x003fee9c,low_fuel_distance_check_armed_flag,word,P0461 fuel level check (cm848_main_loop_protection_eval): 1 = distance may integrate while the stored fuel level byte (calibration_block1[1]) reads below 38; cleared when P0461 sets; set again when P0461 heals above 38 - EEPROM-backed state no _cal (was protection_fuel_temp_integration_active_flag)
 0x003fee9e,low_fuel_distance_accumulator,dword,P0461 fuel level check: adds vehicle_speed x 222 >> 4 each pass (every 4th call) while the stored fuel level byte reads below 38 / reset to 0 at 38 or more; above 1920000000 (0x409ec8) sets P0461 (fault_detected_bits_384_to_399 bit 14) - EEPROM mirror (was protection_fuel_temp_integration_accumulator)
@@ -7261,7 +7261,7 @@ address,name,type,comment
 0x003fce14,cooling_fan_proportional_term_previous,dword,Last pass's proportional term - the derivative part uses its change (was governor_fuel_demand_p_term_prev)
 0x003fce54,intake_air_heater_no_preheat_flag,byte,set when the start-temperature table returns 0 preheat time (intake warm enough) so no grid heater preheat runs this start (was iat_protection_derate_steps_zero_flag)
 0x003fce78,intake_air_heater_start_temperature_captured_flag,byte,Set to 1 by cm848_updateIntakeAirHeaterAmbientTemperature after it calls cm848_captureIntakeAirHeaterStartTemperature - cleared on reset by cm848_resetIntakeAirHeaterStartTemperatureCapture (was protection_oilTemp_source_init_done_flag)
-0x003fcea8,protection_fuel_demand_ramp_locked_flag,word,protection fuel demand ramp converged/locked
+0x003fcea8,fuel_quantity_limit_rail_pressure_shortfall_locked_flag,word,Set when the ramp reaches the table value, after which the ramp is held at the table value. Used only by the limiter. (was protection_fuel_demand_ramp_locked_flag) | earlier note: protection fuel demand ramp converged/locked
 0x003fcf5e,governor_speed_limit_floor_countdown,word,countdown clearing governor speed limit floors
 0x003fcfb2,lifetime_distance_8_mile_record_index,byte,Newest entry (0-3) of lifetime_distance_8_mile_record (was sensor_validation_accum_table_index)
 0x003fcfdb,immobilizer_seed_counter,byte,Nonce counter incremented once per immobilizer seed generation then used as the mix key byte - value 2 on the dump (was sensor_checksum_session_counter) (Medium confidence)
@@ -7270,13 +7270,13 @@ address,name,type,comment
 0x003fdb88,sensor_validation_startup_accumulator,word,sensor validation accumulator during engine start
 0x003fdb92,protection_j1939_mode_enable_flag,word,ROM flag gating J1939-triggered protection mode bit 2
 0x003feccc,diag_serial_crc_match_flag,byte,serial response CRC16 match result
-0x0040bc88,hpcr_pressure_diag_forced_reading,word,forced pressure value when diag bypass flag set
+0x0040bc88,battery_voltage_adc_forced_reading,word,Element 4 of a per-slot forced-reading array that starts at 0x40bc80 (2 bytes per slot): it replaces the QADC index 4 (battery voltage) reading when diagnostic_service_dispatch_table word +72 mask 0x10 is set, in the heater test and in cm848_sciCommand20Callback case 10. The same pattern for slot 69 in SCI case 1 reads DAT_0040bd0a with word +80 mask 0x20, and 0x40bd0a - 0x40bc88 = 130 = 2 x (69 - (was hpcr_pressure_diag_forced_reading) | earlier note: forced pressure value when diag bypass flag set
 0x0040ba12,cbd_phase_advance_flag,byte,CBD phase-advance gate (0=hold)
 0x0040a772,governor_faultDerate_engine_sync_trigger,word,fault-derate engine-sync trigger flag
 0x0040a774,governor_faultDerate_channel_active_latch,word,fault-derate channel-active latch
 0x0040871e,cruise_switch_request_debounce_count_maximum,word,Debounce depth for the cruise switch request FSM in protection_control_state_check_2 - read-only at runtime (value 2) - working RAM so no _cal (was governor_speed_request_debounce_count_max)
-0x0040b9e4,hpcr_pressure_diag_lookup_ref,word,HPCR pressure diag reference (table lookup)
-0x0040b9e8,hpcr_pressure_diag_delta_state1,word,HPCR pressure diag state-1 delta
+0x0040b9e4,intake_air_heater_performance_test_minimum_voltage_change_adc,word,Output of the intake_air_heater_performance_threshold_* lookup by intake_manifold_temperature_sensor_filtered (45 counts at 0 F ... 24 at 66 F), taken once on the state 0 -> 1 move; the test fails when both the turn-on drop and the turn-off recovery are below it. (was hpcr_pressure_diag_lookup_ref) | earlier note: HPCR pressure diag reference (table lookup)
+0x0040b9e8,intake_air_heater_performance_test_turn_on_voltage_drop_adc,word,hpcr_pressure_diag_sample_sum_state0 minus the loaded average (baseline minus loaded), taken in state 1; compared with the turn-off recovery and with the temperature threshold in state 3. (was hpcr_pressure_diag_delta_state1) | earlier note: HPCR pressure diag state-1 delta
 0x0040a566,fuel_demand_blend_divisor_ref,word,governor blend window normalization divisor
 0x0040a682,boost_target_load_rpm_output,word,boost target from load/rpm/map calc
 0x0040a71a,fuel_blend_compensation_target,word,blend compensation error zero-crossing target
@@ -7288,21 +7288,21 @@ address,name,type,comment
 0x004065c2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa70a.coefficient points here
 0x00409aac,cam_timing_speed_window_debounce_max,word,ROM cap for cam-timing speed-window debounce
 0x00409ad0,cam_timing_speed_window_reference_count_threshold,word,ROM reference-count threshold for speed window
-0x0040b8e0,cam_timing_refB_sync_latch,word,latched fuel_pressure_feedback_filtered at sync-B event
+0x0040b8e0,fuel_pressure_allowed_decay_start_pressure,word,Check B only: fuel_pressure_feedback_filtered latched every pass until the check conditions have held for the debounce, then seeds the model (cam_timing_correction_base). (was cam_timing_refB_sync_latch) | earlier note: latched fuel_pressure_feedback_filtered at sync-B event
 0x0040b8e8,cam_timing_position_correction_scaled,word,gain-scaled clamped cam position correction
-0x0040b8ee,cam_sync_refA_required_count,word,table-derived required reference count (ref-A check)
-0x0040b8f0,cam_timing_correction_step,word,correction step subtracted from base
-0x0040b8f2,cam_timing_correction_time_constant,word,correction P-controller time constant
-0x0040b8f6,cam_timing_correction_coolant_offset,word,coolant-temp reference-count offset
-0x0040b8f8,cam_timing_correction_coolant_component,word,coolant-temp additive correction component
-0x0040b8fa,cam_timing_correction_rpm_offset,word,RPM reference-count offset
-0x0040b8fc,cam_timing_correction_rpm_component,word,RPM additive correction component
-0x0040b903,cam_sync_refA_count_above_target_flag,byte,ref-A count above target boolean
-0x0040b90b,cam_timing_correction_speed_gate_flag,byte,cam correction speed-window precondition gate
-0x0040b54a,governor_cruise_period_scale_factor,word,coolant-indexed scale for cruise period accumulator
+0x0040b8ee,fuel_pressure_governor_demand_plausibility_limit,word,Output of the fuel_pressure_governor_demand_plausibility_limit_* lookup at fuel_pressure_feedback_filtered (255 at 1025 counts to 434 at 2869), compared with fuel_pressure_governor_demand; it is a limit, not a count. Used only by check A. (was cam_sync_refA_required_count) | earlier note: table-derived required reference count (ref-A check)
+0x0040b8f0,fuel_pressure_allowed_decay_step,word,Check B only: lookup of fuel_pressure_allowed_decay_step_* at the model base (all zero here), subtracted from the base each pass. (was cam_timing_correction_step) | earlier note: correction step subtracted from base
+0x0040b8f2,fuel_pressure_governor_demand_residual_divisor,word,Lookup of fuel_pressure_governor_demand_residual_divisor_* at the filtered pressure (all zero here), x 100 and at least 1, used as the divisor of the residual; it is a divisor, not a time constant. (was cam_timing_correction_time_constant) | earlier note: correction P-controller time constant
+0x0040b8f6,fuel_pressure_governor_demand_offset_coolant,word,2-D lookup (coolant temperature x filtered rail pressure) in fuel_pressure_governor_demand_offset_coolant_*; subtracted from the demand in the residual. Used only by the monitor. (was cam_timing_correction_coolant_offset) | earlier note: coolant-temp reference-count offset
+0x0040b8f8,fuel_pressure_governor_demand_threshold_coolant,word,2-D lookup (coolant x filtered rail pressure) in fuel_pressure_governor_demand_threshold_coolant_*; added into the demand threshold. Used only by the monitor. (was cam_timing_correction_coolant_component) | earlier note: coolant-temp additive correction component
+0x0040b8fa,fuel_pressure_governor_demand_offset_rpm,word,2-D lookup (rpm x engine_timing_reference, the injection quantity) in fuel_pressure_governor_demand_offset_rpm_*; subtracted from the demand in the residual. Used only by the monitor. (was cam_timing_correction_rpm_offset) | earlier note: RPM reference-count offset
+0x0040b8fc,fuel_pressure_governor_demand_threshold_rpm,word,2-D lookup (rpm x injection quantity) in fuel_pressure_governor_demand_threshold_rpm_*; added into the demand threshold. Used only by the monitor. (was cam_timing_correction_rpm_component) | earlier note: RPM additive correction component
+0x0040b903,fuel_pressure_governor_demand_above_limit_flag,byte,Set when fuel_pressure_governor_demand is above the plausibility limit (check A); used only there. (was cam_sync_refA_count_above_target_flag) | earlier note: ref-A count above target boolean
+0x0040b90b,fuel_pressure_governor_demand_residual_update_gate_flag,byte,Engine speed within governor_speed_limit_output +/- 160 counts (20 rpm), vehicle_speed_copy 0 and the vehicle speed sensor ok; it only gates the residual update, which is not active in this calibration. (was cam_timing_correction_speed_gate_flag) | earlier note: cam correction speed-window precondition gate
+0x0040b54a,oil_change_monitor_fuel_weight_percent,word,Output of the coolant x target rpm grid fuel_accumulation_weight_by_coolant_and_rpm_grid; divided by 100 when scaling the injected-fuel delta, so it is a percent weight. (was governor_cruise_period_scale_factor) | earlier note: coolant-indexed scale for cruise period accumulator
 0x004051e8,boost_correction_fuel_ema_scale,word,ROM scale for fuel-EMA boost correction ratio
 0x004059f4,fuel_demand_rpm_correction_scale,word,ROM scale for RPM correction in aux blend deviation
-0x00405a9e,fuel_demand_offset_correction_upper_limit,word,ROM ceiling for fuel_demand_offset_correction
+0x00405a9e,fuel_demand_offset_load_delta_correction_upper_limit,word,Follows the 0x40a550 rename: its only use is the upper clamp of the value written to 0x40a550 in cm848_auxiliaryControl_tableInterpolation, not of the coolant x rpm offset at 0x40b22a (update its comment too). (was fuel_demand_offset_correction_upper_limit) | earlier note: ROM ceiling for fuel_demand_offset_correction
 0x00405aa0,fuel_demand_offset_load_delta_gain_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_auxiliaryControl_tableInterpolation
 0x00405ac8,fuel_demand_offset_load_delta_gain_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_auxiliaryControl_tableInterpolation
 0x00405aea,fuel_demand_offset_load_delta_gain_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_auxiliaryControl_tableInterpolation
@@ -7479,18 +7479,18 @@ address,name,type,comment
 0x004090c4,injection_cylinder_fault_index_offset,word,ROM fallback cylinder-index offset on injection fault
 0x004090e9,injection_timing_speed_breakpoint,word,ROM speed breakpoint selecting injection timing period
 0x004090f1,injection_timing_sequence_speed_threshold,word,ROM speed threshold for injection sequence advance
-0x00409e76,injection_timing_offset_governor_limit_floor,word,ROM timing offset floor when governor speed limit active
-0x00409a6d,cam_timing_override_value,word,ROM cam timing force/additive override value
+0x00409e76,injection_timing_pilot_offset_governor_limit_floor,word,the pilot timing offset used in place of the computed one while governor_speed_limit_active_flag is set and the main timing sits at its governor limit (cm848_calculatePilotInjectionTiming) (was injection_timing_offset_governor_limit_floor) | earlier note: ROM timing offset floor when governor speed limit active
+0x00409a6d,fuel_pressure_setpoint_override_value,word,Word at an odd address (0 in the dump), the value forced or added by fuel_pressure_setpoint_override_mode; only the setpoint calculator reads it. (was cam_timing_override_value) | earlier note: ROM cam timing force/additive override value
 0x00409ab0,cam_sync_reference_b_debounce_threshold,word,ROM debounce threshold for cam-sync reference check B
-0x00409ab2,cam_sync_reference_a_debounce_threshold,word,ROM debounce threshold for cam-sync reference check A
+0x00409ab2,fuel_pressure_governor_demand_above_limit_debounce_limit,word,RAM copy of a ROM constant, 80 in the dump; used only by check A. (was cam_sync_reference_a_debounce_threshold) | earlier note: ROM debounce threshold for cam-sync reference check A
 0x00409ab4,cam_timing_correction_convergence_threshold,word,ROM convergence count cap for cam timing correction
-0x00409abe,cam_timing_fault_activation_threshold_count,word,ROM fault-activation counter cap (cam timing)
-0x00409ac0,cam_sync_reference_check_timing_min,word,ROM min engine timing ref to enable cam-sync check
+0x00409abe,fuel_metering_feedback_low_debounce_limit,word,RAM copy of a ROM constant, 150 in the dump; the cap and trip value of the counter above. (was cam_timing_fault_activation_threshold_count) | earlier note: ROM fault-activation counter cap (cam timing)
+0x00409ac0,fuel_pressure_check_injection_quantity_maximum,word,Both checks are disabled when engine_timing_reference (the per-injection fuel quantity, not a timing) is above this value; 0 in the dump, so they run only with no fuel injected. The old name said timing and minimum. (was cam_sync_reference_check_timing_min) | earlier note: ROM min engine timing ref to enable cam-sync check
 0x00409ac2,cam_sync_reference_check_enable_count_threshold,word,ROM enable-count threshold for cam-sync reference check
 0x00409ac4,fuel_pressure_feedback_maximum,word,Upper bound on fuel_pressure_feedback_filtered used by the fuel pressure monitors (pairs with fuel_pressure_feedback_minimum). ROM. Was cam_timing_reference_b_max
-0x00409e68,torque_limit_timing_sync_fault_target,word,ROM timing target when engine sync fault active
-0x0040b93a,torque_limit_demand_output,word,torque-limit-bounded timing demand output
-0x0040b958,torque_limit_timing_boost_load_factor_by_load,word,load-indexed factor for boost-load timing correction
+0x00409e68,injection_quantity_pilot_fuel_pressure_limp_home_default,word,Value (88 counts = 6 mm3 in the dump) the pilot quantity takes while engine_sync_fault_active_flag is set; that flag is the fuel pressure limp home flag, not a sync fault. e2m Pilot_Quantity_Fuelpr_Limp_Home_Default: 'Pilot fuel qty. = this if in fuel press limp home'. (was torque_limit_timing_sync_fault_target) | earlier note: ROM timing target when engine sync fault active
+0x0040b93a,injection_quantity_pilot_unscaled,word,The pilot injection quantity before the injection_quantity_scale_factor and the cap at the total (the later stage is pilot_injection_quantity = cam_timing_reference_offset). One reader (cm848_fuel_demand_state_capture). Equals e2m Pilot_Fuel_Quantity (0x01806A02, 0.0679 mm3) at the matching offset in the block. (was torque_limit_demand_output) | earlier note: torque-limit-bounded timing demand output
+0x0040b958,injection_quantity_pilot_cold_correction_factor,word,Q12 factor from injection_quantity_pilot_cold_correction_factor_grid (x coolant, y intake temperature) multiplied with the cold correction map value. e2m calls this block Pilot_Quantity_AECD_Corr_Factor; keep the campaign's cold_correction wording to match the table names. (was torque_limit_timing_boost_load_factor_by_load) | earlier note: load-indexed factor for boost-load timing correction
 0x00409e82,iat_protection_derate_integrator_max,word,ROM saturation max for IAT derate integrator
 0x00409e96,boost_corr_diag_pos_accum_limit,word,ROM cap for boost_corr_diag_pos_accumulator
 0x00409e98,boost_corr_diag_pos_accum_b_limit,word,ROM cap for boost_corr_diag_pos_accumulator_b
@@ -7507,7 +7507,7 @@ address,name,type,comment
 0x0040ba3a,temperature_rationality_start_battery_temperature,word,Battery temperature sample latched at the first cranking cycle of the cold-start temperature cross-checks (1/64 deg F) - compared with the start coolant in the ambient P0071 check (was cam_sync_crossval_oil_baseline)
 0x0040ba44,temperature_rationality_cranking_check_done_flag,word,Set once the cranking cross-check has made its decision - after that the scheduler runs the governor confirm and the moving re-checks instead of the cross-check (was cam_sync_crossval_startup_done_flag)
 0x0040ba46,temperature_rationality_coolant_soak_reference_working,word,Coolant temperature captured while switch input 0 (key-on run signal) is set - held when it clears - cm848_initCommunication copies it to the persistent 0x3feeb6 which the cranking cross-check uses to require a cold soak (was cam_sync_coolant_temp_init_snapshot) (Medium confidence)
-0x00409fe6,hpcr_fuel_demand_rpm_threshold,word,ROM RPM threshold for HPCR fuel-demand protection
+0x00409fe6,wastegate_monitor_minimum_engine_speed_threshold,word,Engine speed (0.125 rpm per count; 14400 = 1800 rpm) below which both checks stop counting up; e2m CWG_Minimum_Engine_Speed_Threshold. Read only by this function. (was hpcr_fuel_demand_rpm_threshold) | earlier note: ROM RPM threshold for HPCR fuel-demand protection
 0x00409fea,wastegate_monitor_fail_high_boost_pressure_axis,word[5],Lookup table - x axis of 4 breakpoints after its byte-length word - read by hpcr_fuelDemandProc
 0x00409ff4,wastegate_monitor_fail_high_boost_pressure_values,word[5],Lookup table - data: 4 values (one per axis breakpoint) after a byte-length word - read by hpcr_fuelDemandProc
 0x00409ffe,wastegate_monitor_pass_high_boost_pressure_axis,word[5],Lookup table - x axis of 4 breakpoints after its byte-length word - read by hpcr_fuelDemandProc
@@ -7540,10 +7540,10 @@ address,name,type,comment
 0x0040b529,immobilizer_failure_seen_flag,byte,Set (cleared only at power-up) when - after the authorization window with a valid key or a latch set - PCI 0xB1 status bit 1 (SKIS failure per DRB) is on at the governor setpoint; it or EEPROM latch byte 0x3fee31 blocks the immobilizer fuel disable (was governor_cal_write_active_flag) (Medium confidence)
 0x0040b57d,protection_pid_error_term,word,protection PID error term (delta setpoint)
 0x0040b5a4,governor_pressure_solenoid_read_back_fault_latched_flag,word,Set by cm848_debounceOutputReadBackFaults when the governor pressure solenoid read-back fault (output_read_back_fault_bits.governor_pressure_solenoid) outlasts its debounce and P0748 (fault 351) is set; no other code refers to it and there is no retest - so the check stops until the next power-up (was j1939_protection_receive_active_flag)
-0x0040b966,injection_timing_arb_comp4_rpm_factor,word,RPM factor for injection timing arb component 4
-0x0040b96c,injection_timing_arb_comp3_rpm_factor,word,RPM factor for injection timing arb component 3
-0x0040b974,injection_timing_coolant_trim_rpm_factor,word,RPM factor for injection timing coolant trim
-0x0040b982,injection_timing_arb_comp5_rpm_factor_a,word,RPM factor A for injection timing arb component 5
+0x0040b966,injection_timing_pilot_offset_barometric_pressure_angle,word,Output of rpm x engine_timing_reference table injection_timing_offset_barometric_pressure_angle_grid, multiplied by the unnamed Q12 factor at 0x40b964 (1-D table of the barometric pressure copy 0x3fd168) / 4096 into component 4. (was injection_timing_arb_comp4_rpm_factor) | earlier note: RPM factor for injection timing arb component 4
+0x0040b96c,injection_timing_pilot_offset_intake_temperature_angle,word,Output of rpm x engine_timing_reference table injection_timing_offset_intake_temperature_angle_grid, multiplied by the unnamed Q12 factor at 0x40b96a (1-D table of the intake manifold temperature copy 0x3fd16c) / 4096 into component 3. (was injection_timing_arb_comp3_rpm_factor) | earlier note: RPM factor for injection timing arb component 3
+0x0040b974,injection_timing_pilot_offset_coolant_angle,word,Output of rpm x engine_timing_reference table injection_timing_offset_coolant_angle_grid, multiplied by the unnamed Q12 coolant factor at 0x40b972 / 4096 into injection_timing_offset_coolant_trim; an angle, not an rpm factor. (was injection_timing_coolant_trim_rpm_factor) | earlier note: RPM factor for injection timing coolant trim
+0x0040b982,injection_timing_pilot_offset_boost_angle,word,Output of rpm x engine_timing_reference table injection_timing_offset_boost_angle_grid, multiplied by the unnamed Q12 factor at 0x40b980 (rpm x cm848_calculateBoostPressure() grid) / 4096 into component 5. (was injection_timing_arb_comp5_rpm_factor_a) | earlier note: RPM factor A for injection timing arb component 5
 0x0040ba4e,thermostat_monitor_minimum_fuel_to_fail,word,Fuel since start (from table args 0x3fd25e at the monitor start) that must be used before a below-target budget expiry counts as a P0128 failure - less gives no decision (state 6) (was cssc_oiltemp_verify_time_threshold) (Medium confidence)
 0x0040ba50,thermostat_monitor_maximum_fuel_to_pass,word,Fuel since start allowed for coolant to reach 170 F and pass the thermostat monitor = thermostat_monitor_coolant_rise_needed x 320 / (0x409fc2 + 0x409fc4 = 3840) - more is a P0128 failure (was cssc_oiltemp_state_update_time_threshold) (Medium confidence)
 0x0040bbf0,sensor_channel_handler_active_bitmask,word,8-word bitmask of active dispatch-table handlers (base)
@@ -7726,25 +7726,28 @@ address,name,type,comment
 0x00061402,injection_timing_main_boost_factor_x_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
 0x00061412,injection_timing_main_boost_factor_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_calculateEngineTimingData
 0x0006142a,injection_timing_main_boost_factor_grid,word[77],Lookup table - 2-D grid: 11 rows of 7 values (z[(y - 1) x 7 + x - 1] / no header) - read by cm848_calculateEngineTimingData
-0x000614c4,pilot_quantity_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000614ec,pilot_quantity_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006150e,pilot_quantity_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x0006176e,pilot_quantity_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061780,pilot_quantity_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061792,pilot_quantity_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061812,pilot_quantity_coolant_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x0006182e,pilot_quantity_coolant_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061846,pilot_quantity_coolant_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061964,pilot_quantity_coolant_factor_cold_start_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061970,pilot_quantity_coolant_factor_cold_start_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_torque_limit_state_update
-0x0006197c,pilot_quantity_intake_temperature_factor_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061992,pilot_quantity_intake_temperature_factor_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_torque_limit_state_update
-0x000619a8,pilot_quantity_intake_temperature_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000619c4,pilot_quantity_intake_temperature_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x000619dc,pilot_quantity_intake_temperature_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061afa,pilot_quantity_ambient_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061b16,pilot_quantity_ambient_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061b2e,pilot_quantity_ambient_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
-0x00061c4c,pilot_quantity_ambient_factor_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061c66,pilot_quantity_ambient_factor_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
-0x00061c72,pilot_quantity_ambient_factor_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x000614c4,injection_quantity_pilot_base_map_x_axis,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000614ec,injection_quantity_pilot_base_map_y_axis,word[17],Lookup table - y axis of 16 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006150e,injection_quantity_pilot_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x0006176e,injection_quantity_pilot_coolant_factor_x_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061780,injection_quantity_pilot_coolant_factor_y_axis,word[9],Lookup table - y axis of 8 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061792,injection_quantity_pilot_coolant_factor_grid,word[64],Lookup table - 2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061812,injection_quantity_pilot_coolant_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x0006182e,injection_quantity_pilot_coolant_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061846,injection_quantity_pilot_coolant_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061964,injection_quantity_pilot_coolant_factor_cold_start_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061970,injection_quantity_pilot_coolant_factor_cold_start_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_torque_limit_state_update
+0x0006197c,injection_quantity_pilot_intake_temperature_factor_axis,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061992,injection_quantity_pilot_intake_temperature_factor_values,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_torque_limit_state_update
+0x000619a8,injection_quantity_pilot_intake_temperature_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000619c4,injection_quantity_pilot_intake_temperature_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x000619dc,injection_quantity_pilot_intake_temperature_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061afa,injection_quantity_pilot_ambient_map_x_axis,word[14],Lookup table - x axis of 13 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061b16,injection_quantity_pilot_ambient_map_y_axis,word[12],Lookup table - y axis of 11 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061b2e,injection_quantity_pilot_ambient_map_grid,word[143],Lookup table - 2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x00061c4c,injection_quantity_pilot_ambient_factor_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061c66,injection_quantity_pilot_ambient_factor_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_torque_limit_state_update
+0x00061c72,injection_quantity_pilot_ambient_factor_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_torque_limit_state_update
+0x0040b8b8,fuel_pressure_setpoint_cold_start_value,word,the cold-start (start-phase) table value of the rail pressure setpoint, written by cm848_calculateFuelPressureSetpoint and passed on in a register (one word store, no memory reader)
+0x0040b8be,fuel_pressure_setpoint_map_blended,i16,the blended map value of the rail pressure setpoint (base map / map_1..map_4 through cm848_filterInputValue), written by cm848_calculateFuelPressureSetpoint (one word store, passed on in a register)
+0x0040b8ea,fuel_pressure_governor_demand_threshold,word,the demand threshold sum (gain + coolant + rpm terms + a constant) that the fuel-metering feedback monitor turns into fuel_metering_feedback_minimum_expected (one word store, passed on in a register)
