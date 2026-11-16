@@ -58,8 +58,18 @@ renames**: check each against the code (and `xref_addr.py` / the disassembly) be
 - `fuel_demand_offset_correction` at 0x0040a550 and 0x0040b22a (bin 13).
 - `sensor_channel7_fault_status` at 0x0040be18 and 0x0040be3a (bin 16).
 
+## Vocabulary the table names follow (change them together)
+
+- `cold_start_*`: the table names follow `cold_start_phase`. Bin 05 found that the phase machine steps on rpm only
+  (no coolant condition), so "cold start" may be a misnomer for an engine start / run-up machine. If
+  `cold_start_phase` is renamed, rename `injection_timing_main_cold_start_*`, `injection_timing_offset_cold_start_*`,
+  `fuel_pressure_setpoint_cold_start_*` and the other `cold_start_*` tables with it.
+- `auxiliary` (the third injection event) is used for the tables next to the legacy `injection_timing_aux_*`
+  variables. If the event is confirmed to be a post injection, rename both together.
+
 ## Tables left unnamed (45)
 
 Their lookups were skipped: an input of unknown units, an untraced output, or a flat / all-zero table with no
-shape. The skip reasons are in the campaign result files; re-run the naming for a lookup once its input or
-output is named.
+shape. Each skip reason (and every named table's evidence) is in
+`firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv`; re-run the naming for a lookup
+once its input or output is named.

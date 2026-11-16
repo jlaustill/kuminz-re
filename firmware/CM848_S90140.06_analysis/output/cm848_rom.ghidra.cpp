@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 16 09:01:14 MST 2026
+// Generated: Mon Nov 16 09:16:23 MST 2026
 
 
 //
@@ -2113,7 +2113,7 @@ void cm848_clearRamRegions(void)
     pwVar1[0] = 0;
     pwVar1[1] = 0;
     pwVar1 = pwVar1 + 2;
-  } while (pwVar1 < wastegate_duty_floor_by_rpm_and_fuel_quantity_x_axis + 0x12);
+  } while (pwVar1 < wastegate_duty_floor_x_axis + 0x12);
   pbVar2 = &TPU3_TPUMCR;
   do {
     pbVar2[0] = 0;
@@ -10872,14 +10872,11 @@ void cm848_boostCompensatedRpmGovernor(void)
        cm848_dualAxisTableInterpolation
                  (&DAT_003fa198,engine_rpm_state_t_0040b7ac.current_rpm,
                   wastegate_duty_ceiling_engine_speed_axis,engine_load_input_b,
-                  wastegate_duty_ceiling_by_rpm_and_fuel_quantity_y_axis,
-                  wastegate_duty_ceiling_by_rpm_and_fuel_quantity_grid,4);
+                  wastegate_duty_ceiling_y_axis,wastegate_duty_ceiling_grid,4);
   rpm_governor_state_t_0040a3ca.reserved_0e =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fa194,engine_rpm_state_t_0040b7ac.current_rpm,
-                  wastegate_duty_floor_by_rpm_and_fuel_quantity_x_axis,engine_load_input_b,
-                  wastegate_duty_floor_by_rpm_and_fuel_quantity_y_axis,
-                  wastegate_duty_floor_by_rpm_and_fuel_quantity_grid,4);
+                 (&DAT_003fa194,engine_rpm_state_t_0040b7ac.current_rpm,wastegate_duty_floor_x_axis,
+                  engine_load_input_b,wastegate_duty_floor_y_axis,wastegate_duty_floor_grid,4);
   rpm_governor_state_t_0040a3ca.adjustment_delta =
        lookupTableInterpolation
                  (&DAT_003fa18c,governor_adjustment_input,
@@ -32442,9 +32439,9 @@ void cm848_processSensorLookupTable3(void)
 {
   sensorChannelTypeB_configInit
             (&sensor_channel_config_t_0005acd8,&sensor_channel_8_state,&WORD_003fb1fc,
-             accelerator_pedal_sensor_channel97_linearization_axis,
-             accelerator_pedal_sensor_channel97_linearization_values,0,&ema_filter_state_t_003fb1fe,
-             0x61,0x15c,0x15b,&sensor_channel97_value,&sensor_channel97_default_value,
+             accelerator_pedal_channel97_linearization_axis,
+             accelerator_pedal_channel97_linearization_values,0,&ema_filter_state_t_003fb1fe,0x61,
+             0x15c,0x15b,&sensor_channel97_value,&sensor_channel97_default_value,
              &sensor_channel97_fault_status);
   return;
 }
@@ -32460,9 +32457,9 @@ void cm848_initSensorLookupTable3(void)
 {
   sensorChannelTypeB_update
             (&sensor_channel_config_t_0005acd8,&sensor_channel_8_state,&WORD_003fb1fc,
-             accelerator_pedal_sensor_channel97_linearization_axis,
-             accelerator_pedal_sensor_channel97_linearization_values,0,&ema_filter_state_t_003fb1fe,
-             0x61,0x15c,0x15b,&sensor_channel97_value,&sensor_channel97_default_value,
+             accelerator_pedal_channel97_linearization_axis,
+             accelerator_pedal_channel97_linearization_values,0,&ema_filter_state_t_003fb1fe,0x61,
+             0x15c,0x15b,&sensor_channel97_value,&sensor_channel97_default_value,
              &sensor_channel97_fault_status);
   return;
 }
@@ -32478,9 +32475,9 @@ void cm848_processSensorLookupTable2(void)
 {
   sensorChannelTypeB_configInit
             (&sensor_channel_config_t_0005ad0c,&sensor_channel_9_state,&WORD_003fb206,
-             accelerator_pedal_sensor_channel98_linearization_axis,
-             accelerator_pedal_sensor_channel98_linearization_values,0,&ema_filter_state_t_003fb208,
-             0x62,0x15e,0x15d,&sensor_channel98_value,&sensor_channel98_default_value,
+             accelerator_pedal_channel98_linearization_axis,
+             accelerator_pedal_channel98_linearization_values,0,&ema_filter_state_t_003fb208,0x62,
+             0x15e,0x15d,&sensor_channel98_value,&sensor_channel98_default_value,
              &sensor_channel98_fault_status);
   return;
 }
@@ -32496,9 +32493,9 @@ void cm848_initSensorLookupTable2(void)
 {
   sensorChannelTypeB_update
             (&sensor_channel_config_t_0005ad0c,&sensor_channel_9_state,&WORD_003fb206,
-             accelerator_pedal_sensor_channel98_linearization_axis,
-             accelerator_pedal_sensor_channel98_linearization_values,0,&ema_filter_state_t_003fb208,
-             0x62,0x15e,0x15d,&sensor_channel98_value,&sensor_channel98_default_value,
+             accelerator_pedal_channel98_linearization_axis,
+             accelerator_pedal_channel98_linearization_values,0,&ema_filter_state_t_003fb208,0x62,
+             0x15e,0x15d,&sensor_channel98_value,&sensor_channel98_default_value,
              &sensor_channel98_fault_status);
   return;
 }
@@ -45454,10 +45451,9 @@ void cm848_calculateEngineTimingData(void)
     injection_timing_demand =
          cm848_dualAxisTableInterpolation
                    (&torque_limit_init_state_0,engine_rpm_state_t_0040b7ac.current_rpm,
-                    injection_timing_main_start_run_up_x_axis,
-                    sensor_readings_t_0040baf2.coolant_temp,
-                    injection_timing_main_start_run_up_y_axis,
-                    injection_timing_main_start_run_up_grid,6);
+                    injection_timing_main_cold_start_x_axis,sensor_readings_t_0040baf2.coolant_temp,
+                    injection_timing_main_cold_start_y_axis,injection_timing_main_cold_start_grid,6)
+    ;
     if (injection_delivery_mode == 3) {
       timing_arbitration_status_bits = timing_arbitration_status_bits | 8;
     }
@@ -66234,8 +66230,8 @@ void sensorChannelTypeB_configInit_axis2(void)
 {
   sensorChannelTypeB_configInit
             (&sensor_channel_config_t_0005ac4c,&sensor_channel_state_t_0040b186,&WORD_003fcd36,
-             sensor_reference_voltage_2_linearization_axis,
-             sensor_reference_voltage_2_linearization_values,0,&ema_filter_state_t_003fcd38,0x1c,
+             sensor_reference_voltage_b_linearization_axis,
+             sensor_reference_voltage_b_linearization_values,0,&ema_filter_state_t_003fcd38,0x1c,
              0x179,0x17a,&sensor_channel28_value,&sensor_channel28_default_value,
              &sensor_channel28_fault_status);
   return;
@@ -66252,8 +66248,8 @@ void sensorChannelTypeB_update_axis2(void)
 {
   sensorChannelTypeB_update
             (&sensor_channel_config_t_0005ac4c,&sensor_channel_state_t_0040b186,&WORD_003fcd36,
-             sensor_reference_voltage_2_linearization_axis,
-             sensor_reference_voltage_2_linearization_values,0,&ema_filter_state_t_003fcd38,0x1c,
+             sensor_reference_voltage_b_linearization_axis,
+             sensor_reference_voltage_b_linearization_values,0,&ema_filter_state_t_003fcd38,0x1c,
              0x179,0x17a,&sensor_channel28_value,&sensor_channel28_default_value,
              &sensor_channel28_fault_status);
   return;
@@ -66304,7 +66300,7 @@ void sensorChannelTypeB_configInit_axis4(void)
 {
   sensorChannelTypeB_configInit
             (&sensor_channel_config_t_0005aca4,&fuel_level_sensor_channel_state,&WORD_003fcd4a,
-             fuel_level_sensor_linearization_axis,fuel_level_sensor_linearization_values,0,
+             fuel_level_linearization_axis,fuel_level_linearization_values,0,
              &ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e,&WORD_0040bdb8,&WORD_0040bdba,
              &WORD_0040be30);
   return;
@@ -66321,7 +66317,7 @@ void sensorChannelTypeB_update_axis4(void)
 {
   sensorChannelTypeB_update
             (&sensor_channel_config_t_0005aca4,&fuel_level_sensor_channel_state,&WORD_003fcd4a,
-             fuel_level_sensor_linearization_axis,fuel_level_sensor_linearization_values,0,
+             fuel_level_linearization_axis,fuel_level_linearization_values,0,
              &ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e,&WORD_0040bdb8,&WORD_0040bdba,
              &WORD_0040be30);
   return;
@@ -66338,9 +66334,9 @@ void sensorChannelTypeA_configInit_axis5(void)
 {
   sensorChannelConfigInit
             (&sensor_channel_config_t_0005adf8,&sensor_channel_state_t_0040b1da,&WORD_003fcd54,
-             transmission_temperature_sensor_linearization_axis,
-             transmission_temperature_sensor_linearization_values,2,&ema_filter_state_t_003fcd56,
-             0x67,0x12d,0x12e,&WORD_0040bdf8,&WORD_0040bdfa,&WORD_0040be50);
+             transmission_temperature_linearization_axis,
+             transmission_temperature_linearization_values,2,&ema_filter_state_t_003fcd56,0x67,0x12d
+             ,0x12e,&WORD_0040bdf8,&WORD_0040bdfa,&WORD_0040be50);
   return;
 }
 
@@ -66355,9 +66351,9 @@ void sensorChannelTypeA_update_axis5(void)
 {
   updateSensorChannelWithConfig
             (&sensor_channel_config_t_0005adf8,&sensor_channel_state_t_0040b1da,&WORD_003fcd54,
-             transmission_temperature_sensor_linearization_axis,
-             transmission_temperature_sensor_linearization_values,2,&ema_filter_state_t_003fcd56,
-             0x67,0x12d,0x12e,&WORD_0040bdf8,&WORD_0040bdfa,&WORD_0040be50);
+             transmission_temperature_linearization_axis,
+             transmission_temperature_linearization_values,2,&ema_filter_state_t_003fcd56,0x67,0x12d
+             ,0x12e,&WORD_0040bdf8,&WORD_0040bdfa,&WORD_0040be50);
   return;
 }
 
@@ -81877,9 +81873,9 @@ LAB_0052a5b0:
   cam_timing_demand_working = (word)unaff_r28;
   DAT_0040b8b8 = cm848_dualAxisTableInterpolation
                            (&DAT_003fd0ce,engine_rpm_measured,
-                            fuel_pressure_setpoint_start_run_up_x_axis,wVar13,
-                            fuel_pressure_setpoint_start_run_up_y_axis,
-                            fuel_pressure_setpoint_start_run_up_grid,6);
+                            fuel_pressure_setpoint_cold_start_x_axis,wVar13,
+                            fuel_pressure_setpoint_cold_start_y_axis,
+                            fuel_pressure_setpoint_cold_start_grid,6);
   iVar10 = (int)(short)DAT_0040b8b8;
   if ((protection_feature_flags & 4) == 0) goto LAB_0052a7e4;
   if ((((cold_start_phase == CSP_CRANKING) || (cold_start_phase == CSP_ABOVE_RPM_TRIGGER)) ||
@@ -82847,10 +82843,10 @@ void engine_injectionTiming_arbitration_calc(void)
     injection_timing_offset_arbitrated =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fd160,engine_rpm_state_t_0040b7ac.current_rpm,
-                    injection_timing_offset_start_run_up_x_axis,
+                    injection_timing_offset_cold_start_x_axis,
                     sensor_readings_t_0040baf2.coolant_temp,
-                    injection_timing_offset_start_run_up_y_axis,
-                    injection_timing_offset_start_run_up_grid,6);
+                    injection_timing_offset_cold_start_y_axis,
+                    injection_timing_offset_cold_start_grid,6);
     engine_timing_arb_byte_24_31 = 10;
     goto LAB_0052d010;
   }
