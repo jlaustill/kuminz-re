@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 16 07:32:25 MST 2026
+// Generated: Mon Nov 16 08:34:51 MST 2026
 
 
 //
@@ -7892,9 +7892,9 @@ void cm848_sensorChannel2_init(void)
 {
   sensorChannelTypeB_configInit
             (&sensor_channel_config_t_00059336,&sensor_channel2_ram,&WORD_003fa028,
-             WORD_ARRAY_00059346,WORD_ARRAY_00059358,0,&ema_filter_state_t_003fa02a,4,0x43,0x42,
-             &fuel_timing_sensor_value,&fuel_timing_sensor_default_value,
-             &sensor_channel4_fault_status);
+             sensor_channel2_linearization_axis,sensor_channel2_linearization_values,0,
+             &ema_filter_state_t_003fa02a,4,0x43,0x42,&fuel_timing_sensor_value,
+             &fuel_timing_sensor_default_value,&sensor_channel4_fault_status);
   return;
 }
 
@@ -7909,9 +7909,9 @@ void cm848_sensorChannel2_process(void)
 {
   sensorChannelTypeB_update
             (&sensor_channel_config_t_00059336,&sensor_channel2_ram,&WORD_003fa028,
-             WORD_ARRAY_00059346,WORD_ARRAY_00059358,0,&ema_filter_state_t_003fa02a,4,0x43,0x42,
-             &fuel_timing_sensor_value,&fuel_timing_sensor_default_value,
-             &sensor_channel4_fault_status);
+             sensor_channel2_linearization_axis,sensor_channel2_linearization_values,0,
+             &ema_filter_state_t_003fa02a,4,0x43,0x42,&fuel_timing_sensor_value,
+             &fuel_timing_sensor_default_value,&sensor_channel4_fault_status);
   return;
 }
 
@@ -8060,9 +8060,9 @@ void cm848_sensorChannel7_init(void)
 {
   sensorChannelConfigInit
             (&sensor_channel_config_t_00059446,&sensor_channel7_ram,&WORD_003fa060,
-             WORD_ARRAY_00059456,WORD_ARRAY_0005946c,2,&ema_filter_state_t_003fa062,0x4b,0x282,0x283
-             ,&governor_speed_input_value,&governor_speed_input_default_value,
-             &sensor_channel7_fault_status);
+             sensor_channel7_linearization_axis,sensor_channel7_linearization_values,2,
+             &ema_filter_state_t_003fa062,0x4b,0x282,0x283,&governor_speed_input_value,
+             &governor_speed_input_default_value,&sensor_channel7_fault_status);
   return;
 }
 
@@ -8077,9 +8077,9 @@ void cm848_sensorChannel7_process(void)
 {
   updateSensorChannelWithConfig
             (&sensor_channel_config_t_00059446,&sensor_channel7_ram,&WORD_003fa060,
-             WORD_ARRAY_00059456,WORD_ARRAY_0005946c,2,&ema_filter_state_t_003fa062,0x4b,0x282,0x283
-             ,&governor_speed_input_value,&governor_speed_input_default_value,
-             &sensor_channel7_fault_status);
+             sensor_channel7_linearization_axis,sensor_channel7_linearization_values,2,
+             &ema_filter_state_t_003fa062,0x4b,0x282,0x283,&governor_speed_input_value,
+             &governor_speed_input_default_value,&sensor_channel7_fault_status);
   return;
 }
 
@@ -43194,11 +43194,14 @@ void cm848_calculateTimingWithTables(void)
     if (fuel_quantity_trim != 0) {
       wVar2 = cm848_dualAxisTableInterpolation
                         (&injection_timing_trim_axis1_interp_state,fuel_quantity_axis1_index,
-                         WORD_ARRAY_0005f69a,fuel_quantity_trim,WORD_ARRAY_0005f6ce,
-                         WORD_ARRAY_0005f6dc,4);
+                         main_quantity_pilot_correction_x_axis,fuel_quantity_trim,
+                         main_quantity_pilot_correction_y_axis,main_quantity_pilot_correction_grid,4
+                        );
       wVar3 = cm848_dualAxisTableInterpolation
-                        (&injection_timing_trim_axis2_interp_state,uVar4,WORD_ARRAY_0005f808,
-                         fuel_pressure_sensor,WORD_ARRAY_0005f81a,WORD_ARRAY_0005f82c,6);
+                        (&injection_timing_trim_axis2_interp_state,uVar4,
+                         main_quantity_pilot_correction_scale_x_axis,fuel_pressure_sensor,
+                         main_quantity_pilot_correction_scale_y_axis,
+                         main_quantity_pilot_correction_scale_grid,6);
       uVar5 = ((int)(short)wVar3 * (int)(short)wVar2 >> 4) + uVar5;
     }
     if ((int)uVar5 < 0) {
@@ -43208,8 +43211,9 @@ void cm848_calculateTimingWithTables(void)
       uVar5 = 0x1700;
     }
     uVar4 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_fuel_table_interp_state,(word)uVar5,WORD_ARRAY_0005f254,
-                       fuel_pressure_sensor,WORD_ARRAY_0005f286,WORD_ARRAY_0005f2a8,2);
+                      (&injection_timing_fuel_table_interp_state,(word)uVar5,
+                       main_injection_pulse_width_x_axis,fuel_pressure_sensor,
+                       main_injection_pulse_width_y_axis,main_injection_pulse_width_grid,2);
   }
   fuel_quantity_table_result = uVar4;
   if (fuel_quantity_upper_limit < uVar4) {
@@ -43371,8 +43375,9 @@ void cm848_calculateEngineFaultTiming(int param_1)
         uVar7 = 0x1700;
       }
       wVar3 = cm848_dualAxisTableInterpolation
-                        (&injection_fault_timing_output_interp_state,(word)uVar7,WORD_ARRAY_0005fabe
-                         ,fuel_pressure_sensor,WORD_ARRAY_0005fad6,WORD_ARRAY_0005faea,2);
+                        (&injection_fault_timing_output_interp_state,(word)uVar7,
+                         post_injection_pulse_width_x_axis,fuel_pressure_sensor,
+                         post_injection_pulse_width_y_axis,post_injection_pulse_width_grid,2);
     }
     if (wVar3 < wVar2) {
       wVar3 = 0;
@@ -56402,8 +56407,10 @@ void cm848_calibrationGroup5_periodic(void)
       }
       fuel_correction_upper_limit_lookup =
            cm848_dualAxisTableInterpolation
-                     (&DAT_003fb9d2,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005be76,
-                      wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005c0a8,0);
+                     (&DAT_003fb9d2,engine_rpm_state_t_0040b7ac.current_rpm,
+                      fuel_limit_barometric_engine_speed_x_axis,wVar1,
+                      fuel_limit_barometric_pressure_y_axis,
+                      fuel_limit_barometric_air_handling_fault_grid,0);
       if (engine_rpm_state_t_0040b7ac.current_rpm <= DAT_003ff05e) {
         fuel_correction_upper_limit = timing_limit_lower;
         return;
@@ -56505,12 +56512,16 @@ void cm848_calibrationGroup5_periodic(void)
     }
     fuel_correction_temp_band_lower =
          cm848_dualAxisTableInterpolation
-                   (&fuel_correction_temp_band_dims_b,wVar1,WORD_ARRAY_0005c1a4,0,
-                    WORD_ARRAY_0005c1b2,WORD_ARRAY_0005c1b8,4);
+                   (&fuel_correction_temp_band_dims_b,wVar1,
+                    fuel_limit_barometric_temperature_band_x_axis,0,
+                    fuel_limit_barometric_temperature_band_y_axis,
+                    fuel_limit_barometric_temperature_band_grid,4);
     fuel_correction_temp_band_upper =
          cm848_dualAxisTableInterpolation
-                   (&fuel_correction_temp_band_dims_b,wVar1,WORD_ARRAY_0005c1a4,1,
-                    WORD_ARRAY_0005c1b2,WORD_ARRAY_0005c1b8,4);
+                   (&fuel_correction_temp_band_dims_b,wVar1,
+                    fuel_limit_barometric_temperature_band_x_axis,1,
+                    fuel_limit_barometric_temperature_band_y_axis,
+                    fuel_limit_barometric_temperature_band_grid,4);
     iVar4 = (int)(short)fuel_correction_temp_band_lower;
     if ((iVar4 < unaff_r27) && (iVar5 = (int)(short)fuel_correction_temp_band_upper, iVar4 < iVar5))
     {
@@ -56519,23 +56530,31 @@ void cm848_calibrationGroup5_periodic(void)
                 ((uint)fuel_correction_temp_band_upper - iVar4 & 0xffff);
         wVar2 = cm848_dualAxisTableInterpolation
                           (&fuel_correction_table_dims_a,engine_rpm_state_t_0040b7ac.current_rpm,
-                           WORD_ARRAY_0005be76,wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005beb0,0);
+                           fuel_limit_barometric_engine_speed_x_axis,wVar1,
+                           fuel_limit_barometric_pressure_y_axis,
+                           fuel_limit_barometric_cool_ambient_air_grid,0);
         wVar1 = cm848_dualAxisTableInterpolation
                           (&fuel_correction_table_dims_a,engine_rpm_state_t_0040b7ac.current_rpm,
-                           WORD_ARRAY_0005be76,wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005bfac,0);
+                           fuel_limit_barometric_engine_speed_x_axis,wVar1,
+                           fuel_limit_barometric_pressure_y_axis,
+                           fuel_limit_barometric_hot_ambient_air_grid,0);
         wVar1 = (word)(((uVar3 & 0xffff) * (uint)wVar2 + (100 - uVar3 & 0xffff) * (uint)wVar1) / 100
                       );
       }
       else {
         wVar1 = cm848_dualAxisTableInterpolation
                           (&fuel_correction_table_dims_a,engine_rpm_state_t_0040b7ac.current_rpm,
-                           WORD_ARRAY_0005be76,wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005bfac,0);
+                           fuel_limit_barometric_engine_speed_x_axis,wVar1,
+                           fuel_limit_barometric_pressure_y_axis,
+                           fuel_limit_barometric_hot_ambient_air_grid,0);
       }
     }
     else {
       wVar1 = cm848_dualAxisTableInterpolation
                         (&fuel_correction_table_dims_a,engine_rpm_state_t_0040b7ac.current_rpm,
-                         WORD_ARRAY_0005be76,wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005beb0,0);
+                         fuel_limit_barometric_engine_speed_x_axis,wVar1,
+                         fuel_limit_barometric_pressure_y_axis,
+                         fuel_limit_barometric_cool_ambient_air_grid,0);
     }
     if ((protection_feature_flags & 0x80) != 0) {
       wVar1 = wVar1 + fuel_demand_offset_correction;
@@ -80138,13 +80157,17 @@ void cm848_auxiliary_boundary_condition_eval(void)
   }
   injection_timing_aux_coolant_factor =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fd08e,sensor_readings_t_0040baf2.coolant_temp,WORD_ARRAY_0005dffc,
-                  intake_manifold_temperature_sensor_filtered,WORD_ARRAY_0005e00e,
-                  WORD_ARRAY_0005e020,7);
+                 (&DAT_003fd08e,sensor_readings_t_0040baf2.coolant_temp,
+                  injection_timing_auxiliary_coolant_factor_x_axis,
+                  intake_manifold_temperature_sensor_filtered,
+                  injection_timing_auxiliary_coolant_factor_y_axis,
+                  injection_timing_auxiliary_coolant_factor_grid,7);
   injection_timing_aux_rpm_factor =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fd092,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e0a0,
-                  fuel_demand_computed,WORD_ARRAY_0005e0bc,WORD_ARRAY_0005e0d4,4);
+                 (&DAT_003fd092,engine_rpm_state_t_0040b7ac.current_rpm,
+                  injection_timing_auxiliary_coolant_angle_x_axis,fuel_demand_computed,
+                  injection_timing_auxiliary_coolant_angle_y_axis,
+                  injection_timing_auxiliary_coolant_angle_grid,4);
   lVar1 = CONCAT44((int)((ulonglong)
                          ((longlong)(int)(short)injection_timing_aux_rpm_factor *
                          (longlong)(int)(short)injection_timing_aux_coolant_factor) >> 0x20),
@@ -80164,11 +80187,14 @@ void cm848_auxiliary_boundary_condition_eval(void)
   }
   injection_timing_aux_combined_clamp = wStack_2e;
   wVar3 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd096,wVar4,WORD_ARRAY_0005e1f2,wVar3,WORD_ARRAY_0005e20c,
-                     WORD_ARRAY_0005e218,5);
+                    (&DAT_003fd096,wVar4,injection_timing_auxiliary_ambient_factor_x_axis,wVar3,
+                     injection_timing_auxiliary_ambient_factor_y_axis,
+                     injection_timing_auxiliary_ambient_factor_grid,5);
   wVar4 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd09a,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e290,
-                     fuel_demand_computed,WORD_ARRAY_0005e2ac,WORD_ARRAY_0005e2c4,4);
+                    (&DAT_003fd09a,engine_rpm_state_t_0040b7ac.current_rpm,
+                     injection_timing_auxiliary_ambient_angle_x_axis,fuel_demand_computed,
+                     injection_timing_auxiliary_ambient_angle_y_axis,
+                     injection_timing_auxiliary_ambient_angle_grid,4);
   lVar1 = CONCAT44((int)((ulonglong)((longlong)(int)(short)wVar3 * (longlong)(int)(short)wVar4) >>
                         0x20),(int)(short)wVar3 * (int)(short)wVar4) / 0x1000;
   iVar2 = (int)lVar1;
@@ -80187,12 +80213,16 @@ void cm848_auxiliary_boundary_condition_eval(void)
   wVar3 = cm848_calculateBoostPressure();
   injection_timing_auxiliary_boost_factor =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fd09e,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e3e2,wVar3,
-                  WORD_ARRAY_0005e3fe,WORD_ARRAY_0005e416,4);
+                 (&DAT_003fd09e,engine_rpm_state_t_0040b7ac.current_rpm,
+                  injection_timing_auxiliary_boost_factor_x_axis,wVar3,
+                  injection_timing_auxiliary_boost_factor_y_axis,
+                  injection_timing_auxiliary_boost_factor_grid,4);
   injection_timing_auxiliary_fuel_demand_factor =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fd0a2,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e534,
-                  fuel_demand_computed,WORD_ARRAY_0005e550,WORD_ARRAY_0005e568,4);
+                 (&DAT_003fd0a2,engine_rpm_state_t_0040b7ac.current_rpm,
+                  injection_timing_auxiliary_boost_angle_x_axis,fuel_demand_computed,
+                  injection_timing_auxiliary_boost_angle_y_axis,
+                  injection_timing_auxiliary_boost_angle_grid,4);
   lVar1 = CONCAT44((int)((ulonglong)
                          ((longlong)(int)(short)injection_timing_auxiliary_fuel_demand_factor *
                          (longlong)(int)(short)injection_timing_auxiliary_boost_factor) >> 0x20),
@@ -80212,55 +80242,73 @@ void cm848_auxiliary_boundary_condition_eval(void)
   }
   injection_timing_auxiliary_boost_component = wStack_2e;
   wVar3 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd0a6,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005dd52,
-                     fuel_demand_computed,WORD_ARRAY_0005dd7a,WORD_ARRAY_0005dd9c,4);
+                    (&DAT_003fd0a6,engine_rpm_state_t_0040b7ac.current_rpm,
+                     injection_timing_auxiliary_base_map_x_axis,fuel_demand_computed,
+                     injection_timing_auxiliary_base_map_y_axis,
+                     injection_timing_auxiliary_base_map_grid,4);
   if (boost_map_index_current == 1) {
     wVar5 = cm848_dualAxisTableInterpolation
                       (&aux_boundary_boost_blend_interp_state,
-                       engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e686,
-                       fuel_demand_computed,WORD_ARRAY_0005e6ae,WORD_ARRAY_0005e6d0,4);
+                       engine_rpm_state_t_0040b7ac.current_rpm,
+                       injection_timing_auxiliary_map_1_x_axis,fuel_demand_computed,
+                       injection_timing_auxiliary_map_1_y_axis,injection_timing_auxiliary_map_1_grid
+                       ,4);
   }
   else if (boost_map_index_current == 2) {
     wVar5 = cm848_dualAxisTableInterpolation
                       (&aux_boundary_boost_blend_interp_state,
-                       engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e930,
-                       fuel_demand_computed,WORD_ARRAY_0005e958,WORD_ARRAY_0005e97a,4);
+                       engine_rpm_state_t_0040b7ac.current_rpm,
+                       injection_timing_auxiliary_map_2_x_axis,fuel_demand_computed,
+                       injection_timing_auxiliary_map_2_y_axis,injection_timing_auxiliary_map_2_grid
+                       ,4);
   }
   else if (boost_map_index_current == 3) {
     wVar5 = cm848_dualAxisTableInterpolation
                       (&aux_boundary_boost_blend_interp_state,
-                       engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005ebda,
-                       fuel_demand_computed,WORD_ARRAY_0005ec02,WORD_ARRAY_0005ec24,4);
+                       engine_rpm_state_t_0040b7ac.current_rpm,
+                       injection_timing_auxiliary_map_3_x_axis,fuel_demand_computed,
+                       injection_timing_auxiliary_map_3_y_axis,injection_timing_auxiliary_map_3_grid
+                       ,4);
   }
   else if (boost_map_index_current == 4) {
     wVar5 = cm848_dualAxisTableInterpolation
                       (&aux_boundary_boost_blend_interp_state,
-                       engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005ee84,
-                       fuel_demand_computed,WORD_ARRAY_0005eeac,WORD_ARRAY_0005eece,4);
+                       engine_rpm_state_t_0040b7ac.current_rpm,
+                       injection_timing_auxiliary_map_4_x_axis,fuel_demand_computed,
+                       injection_timing_auxiliary_map_4_y_axis,injection_timing_auxiliary_map_4_grid
+                       ,4);
   }
   if (boost_map_index_target == 1) {
     wVar6 = cm848_dualAxisTableInterpolation
                       (&aux_boundary_boost_blend_interp_state,
-                       engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e686,
-                       fuel_demand_computed,WORD_ARRAY_0005e6ae,WORD_ARRAY_0005e6d0,4);
+                       engine_rpm_state_t_0040b7ac.current_rpm,
+                       injection_timing_auxiliary_map_1_x_axis,fuel_demand_computed,
+                       injection_timing_auxiliary_map_1_y_axis,injection_timing_auxiliary_map_1_grid
+                       ,4);
   }
   else if (boost_map_index_target == 2) {
     wVar6 = cm848_dualAxisTableInterpolation
                       (&aux_boundary_boost_blend_interp_state,
-                       engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e930,
-                       fuel_demand_computed,WORD_ARRAY_0005e958,WORD_ARRAY_0005e97a,4);
+                       engine_rpm_state_t_0040b7ac.current_rpm,
+                       injection_timing_auxiliary_map_2_x_axis,fuel_demand_computed,
+                       injection_timing_auxiliary_map_2_y_axis,injection_timing_auxiliary_map_2_grid
+                       ,4);
   }
   else if (boost_map_index_target == 3) {
     wVar6 = cm848_dualAxisTableInterpolation
                       (&aux_boundary_boost_blend_interp_state,
-                       engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005ebda,
-                       fuel_demand_computed,WORD_ARRAY_0005ec02,WORD_ARRAY_0005ec24,4);
+                       engine_rpm_state_t_0040b7ac.current_rpm,
+                       injection_timing_auxiliary_map_3_x_axis,fuel_demand_computed,
+                       injection_timing_auxiliary_map_3_y_axis,injection_timing_auxiliary_map_3_grid
+                       ,4);
   }
   else if (boost_map_index_target == 4) {
     wVar6 = cm848_dualAxisTableInterpolation
                       (&aux_boundary_boost_blend_interp_state,
-                       engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005ee84,
-                       fuel_demand_computed,WORD_ARRAY_0005eeac,WORD_ARRAY_0005eece,4);
+                       engine_rpm_state_t_0040b7ac.current_rpm,
+                       injection_timing_auxiliary_map_4_x_axis,fuel_demand_computed,
+                       injection_timing_auxiliary_map_4_y_axis,injection_timing_auxiliary_map_4_grid
+                       ,4);
   }
   injection_timing_aux_boost_blend =
        cm848_filterInputValue
@@ -82035,20 +82083,25 @@ void engine_camTiming_positionCorrection_calc(void)
     if ((bool)cam_timing_correction_speed_gate_flag) {
       cam_timing_correction_time_constant =
            lookupTableInterpolation
-                     (&DAT_003fd0ee,fuel_pressure_feedback_filtered,WORD_ARRAY_00409b2c,
-                      WORD_ARRAY_00409b42,0);
+                     (&DAT_003fd0ee,fuel_pressure_feedback_filtered,
+                      fuel_pressure_governor_demand_residual_divisor_axis,
+                      fuel_pressure_governor_demand_residual_divisor_values,0);
       iVar5 = (short)cam_timing_correction_time_constant * 100;
       if (iVar5 < 1) {
         iVar5 = 1;
       }
       cam_timing_correction_coolant_offset =
            cm848_dualAxisTableInterpolation
-                     (&DAT_003fd0f2,x_input,WORD_ARRAY_00409b84,fuel_pressure_feedback_filtered,
-                      WORD_ARRAY_00409b96,WORD_ARRAY_00409ba8,1);
+                     (&DAT_003fd0f2,x_input,fuel_pressure_governor_demand_offset_coolant_x_axis,
+                      fuel_pressure_feedback_filtered,
+                      fuel_pressure_governor_demand_offset_coolant_y_axis,
+                      fuel_pressure_governor_demand_offset_coolant_grid,1);
       cam_timing_correction_rpm_offset =
            cm848_dualAxisTableInterpolation
-                     (&DAT_003fd0fa,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_00409ccc,
-                      engine_timing_reference,WORD_ARRAY_00409cde,WORD_ARRAY_00409cf0,0);
+                     (&DAT_003fd0fa,engine_rpm_state_t_0040b7ac.current_rpm,
+                      fuel_pressure_governor_demand_offset_rpm_x_axis,engine_timing_reference,
+                      fuel_pressure_governor_demand_offset_rpm_y_axis,
+                      fuel_pressure_governor_demand_offset_rpm_grid,0);
       iVar3 = ((int)(short)engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
               (int)(short)cam_timing_correction_coolant_offset) -
               (int)(short)cam_timing_correction_rpm_offset;
@@ -82073,16 +82126,21 @@ void engine_camTiming_positionCorrection_calc(void)
   cam_timing_position_correction_effective = wVar2;
   cam_timing_position_correction_gain =
        lookupTableInterpolation
-                 (&DAT_003fd0f0,fuel_pressure_feedback_filtered,WORD_ARRAY_00409b58,
-                  WORD_ARRAY_00409b6e,0);
+                 (&DAT_003fd0f0,fuel_pressure_feedback_filtered,
+                  fuel_pressure_governor_demand_threshold_gain_axis,
+                  fuel_pressure_governor_demand_threshold_gain_values,0);
   cam_timing_correction_coolant_component =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fd0f6,x_input,WORD_ARRAY_00409c28,fuel_pressure_feedback_filtered,
-                  WORD_ARRAY_00409c3a,WORD_ARRAY_00409c4c,1);
+                 (&DAT_003fd0f6,x_input,fuel_pressure_governor_demand_threshold_coolant_x_axis,
+                  fuel_pressure_feedback_filtered,
+                  fuel_pressure_governor_demand_threshold_coolant_y_axis,
+                  fuel_pressure_governor_demand_threshold_coolant_grid,1);
   cam_timing_correction_rpm_component =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fd0fe,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_00409d70,
-                  engine_timing_reference,WORD_ARRAY_00409d82,WORD_ARRAY_00409d94,0);
+                 (&DAT_003fd0fe,engine_rpm_state_t_0040b7ac.current_rpm,
+                  fuel_pressure_governor_demand_threshold_rpm_x_axis,engine_timing_reference,
+                  fuel_pressure_governor_demand_threshold_rpm_y_axis,
+                  fuel_pressure_governor_demand_threshold_rpm_grid,0);
   iVar5 = (int)(CONCAT44((int)((ulonglong)
                                ((longlong)(int)(short)cam_timing_position_correction_effective *
                                (longlong)(int)(short)cam_timing_position_correction_gain) >> 0x20),
@@ -82099,7 +82157,8 @@ void engine_camTiming_positionCorrection_calc(void)
                  cam_timing_correction_rpm_component + DAT_00409abc;
   cam_timing_fault_activation_threshold =
        lookupTableInterpolation
-                 (&DAT_003fd102,DAT_0040b8ea,WORD_ARRAY_00409e14,WORD_ARRAY_00409e2a,0);
+                 (&DAT_003fd102,DAT_0040b8ea,fuel_metering_feedback_min_by_demand_threshold_axis,
+                  fuel_metering_feedback_min_by_demand_threshold_values,0);
   if ((short)fuel_metering_feedback_input < (short)cam_timing_fault_activation_threshold) {
     if (cam_timing_fault_activation_threshold_count <= cam_timing_fault_activation_counter)
     goto LAB_0052b918;
