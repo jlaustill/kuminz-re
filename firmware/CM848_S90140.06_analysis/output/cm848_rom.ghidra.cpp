@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 16 10:10:34 MST 2026
+// Generated: Mon Nov 16 10:26:39 MST 2026
 
 
 //
@@ -2922,10 +2922,10 @@ void cm848_restoreDiagnosticHandler(void)
   bool bVar1;
   char cVar2;
   
-  if ((oil_change_monitor_soot_accumulator_cal._0_1_ != '\0') &&
-     (cVar2 = oil_change_monitor_soot_accumulator_cal._0_1_ + -1,
-     bVar1 = oil_change_monitor_soot_accumulator_cal._0_1_ == '\x01',
-     oil_change_monitor_soot_accumulator_cal._0_1_ = cVar2, bVar1)) {
+  if ((oil_change_monitor_engine_power_accumulator_cal._0_1_ != '\0') &&
+     (cVar2 = oil_change_monitor_engine_power_accumulator_cal._0_1_ + -1,
+     bVar1 = oil_change_monitor_engine_power_accumulator_cal._0_1_ == '\x01',
+     oil_change_monitor_engine_power_accumulator_cal._0_1_ = cVar2, bVar1)) {
     diagnostic_callback_ptr = (undefined *)diagnostic_callback_init_ptr;
     mpc555_sciResetToReceiveRequest();
   }
@@ -2941,7 +2941,7 @@ void cm848_restoreDiagnosticHandler(void)
 void cm848_enableDiagnosticTimer(void)
 
 {
-  oil_change_monitor_soot_accumulator_cal._0_1_ = 0x11;
+  oil_change_monitor_engine_power_accumulator_cal._0_1_ = 0x11;
   return;
 }
 
@@ -2954,7 +2954,7 @@ void cm848_enableDiagnosticTimer(void)
 void cm848_processTimerInterrupt(void)
 
 {
-  oil_change_monitor_soot_accumulator_cal._0_1_ = 0;
+  oil_change_monitor_engine_power_accumulator_cal._0_1_ = 0;
   return;
 }
 
@@ -6804,7 +6804,7 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
   cm848_updateEngineStatusFlags();
   cm848_calculateAuxiliaryInjectionTiming();
   cm848_copyProtectionAccumulator();
-  cm848_calculateAuxiliaryInjectionQuantity();
+  cm848_calculateAuxiliaryInjectionQuantityLimit();
   cm848_computeFuelRpmCompensatedOffset();
   cm848_calculatePilotInjectionQuantity();
   cm848_calculatePilotInjectionTiming();
@@ -9760,20 +9760,22 @@ void cm848_calculateFuelTimingTarget(void)
 
 
 //
-// Function: cm848_calculateGovernorPidGains @ 0x0000ff04
+// Function: cm848_calculateGovernorCompensatorCoefficients @ 0x0000ff04
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* Calculates the all-speed governor's integral and proportional gains (Q10, 1024 = 1.0) from the
-   coefficient calibrations fuel_pid_coeff2/3/6/7/8_cal and a speed scale factor, which is the blend
-   (weighted by the gear-ratio blend weight 0..128) of the governor_speed_scale_factor_blend_0 and
-   _128 tables at the requested speed. Integral gain = 1024 x (K - u) / (K + u) with K = 40196217
-   and u = scale x (coeff2 + coeff3) x (coeff6 - coeff7) / (256 - coeff8), proportional gain =
-   (integral gain + 1024) / 2, and 1024 when the coefficients disable the adjustment. Called by
+/* Calculates the all-speed governor's two compensator coefficients (Q10, 1024 = 1.0; the speed
+   governor uses them as its integral / proportional pair - their form, a bilinear-transform pole a
+   and (a + 1024) / 2, could also be a filter's) from the coefficient calibrations
+   fuel_pid_coeff2/3/6/7/8_cal and a speed scale factor, which is the blend (weighted by the
+   gear-ratio blend weight 0..128) of the governor_speed_scale_factor_blend_0 and _128 tables at the
+   requested speed. Integral gain = 1024 x (K - u) / (K + u) with K = 40196217 and u = scale x
+   (coeff2 + coeff3) x (coeff6 - coeff7) / (256 - coeff8), proportional gain = (integral gain +
+   1024) / 2, and 1024 when the coefficients disable the adjustment. Called by
    cm848_initEngineOperatingMode when the speed governor starts; the results feed
    cm848_runOperatingModeSpeedGovernor (was cm848_calculateFuelTrimValues). */
 
-void cm848_calculateGovernorPidGains(void)
+void cm848_calculateGovernorCompensatorCoefficients(void)
 
 {
   word wVar1;
@@ -9847,7 +9849,7 @@ void cm848_initEngineOperatingMode(int param_1)
     engine_operating_mode = 7;
     cm848_calculateFuelTimingTarget();
     cm848_emptyStubFunction6();
-    cm848_calculateGovernorPidGains();
+    cm848_calculateGovernorCompensatorCoefficients();
     if (param_1 != 7) {
       fuel_demand_pid_coeffs = (dword)&fuel_pid_shadow_coeff0_cal;
       fuel_pid_shadow_coeff2 = fuel_pid_coeff2_cal;
@@ -33834,7 +33836,7 @@ void cm848_processProtectionVoltageOffset(void)
 
 /* 4-state charging voltage regulator machine - next =
    (*battery_voltage_regulator_state_table[state])() gated on engine_feature_enable_flags_cal bit0 -
-   the ProtectionOutput cluster is really the battery-voltage regulator (battery_voltage_delta PID
+   the ProtectionOutput cluster is really the battery-voltage regulator (charging_voltage_error PID
    -> charging duty) - name kept pending re-domain */
 
 void cm848_dispatchProtectionOutputMode(void)
@@ -34281,12 +34283,12 @@ void cm848_initProtectionFilterValues(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* out = governor_rpm_offset_cached - ((fuel_quantity_active + addend) * (engine_rpm_measured * 6) /
-   1e6 * 256 / 600) clamped to lower..upper; default when fuel or RPM is 0 | renamed 2026-11-11 from
-   cm848_computeCruiseSpeedSetpoint: limits are -171..512 in RAM dump (not a speed) and the base
-   falls back to injection_timing_offset_cal - does NOT cut fuel and is not protection | output
-   0x40b28a has no direct reader anywhere in ROM (only the sth at 0x38748) | asm clrlwi truncates
-   rpm*6 to 16 bits so it wraps above raw 10922 (~1365 RPM) */
+/* out = governor_rpm_offset_cached - ((main_injection_pulse_width + addend) * (engine_rpm_measured
+   * 6) / 1e6 * 256 / 600) clamped to lower..upper; default when fuel or RPM is 0 | renamed
+   2026-11-11 from cm848_computeCruiseSpeedSetpoint: limits are -171..512 in RAM dump (not a speed)
+   and the base falls back to injection_timing_offset_cal - does NOT cut fuel and is not protection
+   | output 0x40b28a has no direct reader anywhere in ROM (only the sth at 0x38748) | asm clrlwi
+   truncates rpm*6 to 16 bits so it wraps above raw 10922 (~1365 RPM) */
 
 void cm848_computeFuelRpmCompensatedOffset(void)
 
@@ -37022,11 +37024,12 @@ void cm848_buildPciTransmitMessage5EngineWarningBits(void)
 /* Builds the PCI (J1850) TX[11] header 0x5D payload once per send (when
    pci_transmit_message_11_timer drops): byte 1 vehicle speed sensor pulses since the last send (the
    TPU-B channel PARAM1 low byte on the first send after the pulses resume) / bytes 2-3 fuel used
-   since the last send = (fuel_quantity_active + fuel_quantity_trim) x passes x rpm x 3 / 768000 (3
-   injections per revolution) / bytes 4-5 a second fuel total from fuel_demand_computed x
-   fuel_demand_scale_factor x passes x rpm x 12 / 282624000; probably the overhead console's trip
-   computer source (was cm848_processProtectionTimingCounter) | review-function-readability reviewed
-   2026-11-12 - Readability Medium Accuracy Confidence Medium */
+   since the last send = (main_injection_pulse_width + pilot_injection_pulse_width) x passes x rpm x
+   3 / 768000 (3 injections per revolution) / bytes 4-5 a second fuel total from
+   fuel_demand_computed x fuel_demand_scale_factor x passes x rpm x 12 / 282624000; probably the
+   overhead console's trip computer source (was cm848_processProtectionTimingCounter) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
 
 void cm848_buildPciTransmitMessage11DistanceAndFuelUsed(void)
 
@@ -43046,21 +43049,21 @@ void cm848_initRpmSetpointFilters(void)
 
 
 //
-// Function: cm848_calculateAuxiliaryInjectionQuantity @ 0x000466a8
+// Function: cm848_calculateAuxiliaryInjectionQuantityLimit @ 0x000466a8
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
-/* Computes the auxiliary (third, after-main) injection quantity
-   injection_quantity_auxiliary_unscaled: the blended injection_quantity_auxiliary map and the
-   coolant, ambient and boost terms are selected by max or min wins
-   (injection_quantity_auxiliary_logic_select: 1 = max, 2 = min), replaced by an override value when
-   enabled, and set to 0 when crank_position_valid_flag is set with engine_sync_force_reset_cal = 1.
-   cm848_fuel_demand_state_capture copies it to 0x3fd080 and
+/* Computes the auxiliary (third, after-main) injection quantity LIMIT (the cap of
+   auxiliary_injection_quantity) injection_quantity_auxiliary_limit_unscaled: the blended
+   injection_quantity_auxiliary map and the coolant, ambient and boost terms are selected by max or
+   min wins (injection_quantity_auxiliary_logic_select: 1 = max, 2 = min), replaced by an override
+   value when enabled, and set to 0 when crank_position_valid_flag is set with
+   engine_sync_force_reset_cal = 1. cm848_fuel_demand_state_capture copies it to 0x3fd080 and
    engine_injectionAngle_updateCutoutAndTimingDemand uses it, scaled, as the cap of
    auxiliary_injection_quantity; the winning term goes to injection_quantity_auxiliary_source_code
    (was cm848_calculateGovernorOutput). */
 
-void cm848_calculateAuxiliaryInjectionQuantity(void)
+void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
 
 {
   longlong lVar1;
@@ -43080,12 +43083,12 @@ void cm848_calculateAuxiliaryInjectionQuantity(void)
   wVar4 = 0;
   wVar5 = 0;
   if ((crank_position_valid_flag != 0) && (engine_sync_force_reset_cal == 1)) {
-    injection_quantity_auxiliary_unscaled = 0;
+    injection_quantity_auxiliary_limit_unscaled = 0;
     injection_quantity_auxiliary_source_code = 0xe;
     return;
   }
   if (crank_sync_threshold_override_enable_cal != 0) {
-    injection_quantity_auxiliary_unscaled = crank_sync_threshold_override_cal;
+    injection_quantity_auxiliary_limit_unscaled = crank_sync_threshold_override_cal;
     injection_quantity_auxiliary_source_code = 7;
     return;
   }
@@ -43095,13 +43098,13 @@ void cm848_calculateAuxiliaryInjectionQuantity(void)
                  (&DAT_003fb606,wVar2,injection_quantity_auxiliary_coolant_factor_x_axis,y_input,
                   injection_quantity_auxiliary_coolant_factor_y_axis,
                   injection_quantity_auxiliary_coolant_factor_grid,7);
-  injection_quantity_auxiliary_coolant_map_value =
+  injection_quantity_auxiliary_coolant_limit =
        cm848_dualAxisTableInterpolation
                  (&DAT_003fb60e,engine_rpm_state_t_0040b7ac.current_rpm,
                   injection_quantity_auxiliary_coolant_limit_x_axis,fuel_demand_computed,
                   injection_quantity_auxiliary_coolant_limit_y_axis,
                   injection_quantity_auxiliary_coolant_limit_grid,4);
-  uVar6 = (int)(short)injection_quantity_auxiliary_coolant_map_value *
+  uVar6 = (int)(short)injection_quantity_auxiliary_coolant_limit *
           (int)(short)injection_quantity_auxiliary_coolant_factor;
   injection_quantity_auxiliary_coolant_correction =
        (short)((int)uVar6 >> 0xc) + (ushort)((int)uVar6 < 0 && (uVar6 & 0xfff) != 0);
@@ -43135,7 +43138,7 @@ void cm848_calculateAuxiliaryInjectionQuantity(void)
                   injection_quantity_auxiliary_boost_factor_x_axis,y_input_00,
                   injection_quantity_auxiliary_boost_factor_y_axis,
                   injection_quantity_auxiliary_boost_factor_grid,4);
-  injection_quantity_auxiliary_boost_map_value =
+  injection_quantity_auxiliary_boost_limit =
        cm848_dualAxisTableInterpolation
                  (&DAT_003fb5fe,engine_rpm_state_t_0040b7ac.current_rpm,
                   injection_quantity_auxiliary_boost_limit_x_axis,fuel_demand_computed,
@@ -43144,10 +43147,9 @@ void cm848_calculateAuxiliaryInjectionQuantity(void)
   injection_quantity_auxiliary_boost_correction =
        (dword)(CONCAT44((int)((ulonglong)
                               ((longlong)((short)injection_quantity_auxiliary_boost_factor * 10) *
-                              (longlong)(int)(uint)injection_quantity_auxiliary_boost_map_value) >>
-                             0x20),
-                        (short)injection_quantity_auxiliary_boost_factor * 10 *
-                        (uint)injection_quantity_auxiliary_boost_map_value) / 0x8000);
+                              (longlong)(int)(uint)injection_quantity_auxiliary_boost_limit) >> 0x20
+                             ),(short)injection_quantity_auxiliary_boost_factor * 10 *
+                               (uint)injection_quantity_auxiliary_boost_limit) / 0x8000);
   wVar2 = cm848_dualAxisTableInterpolation
                     (&DAT_003fb5ee,engine_rpm_state_t_0040b7ac.current_rpm,
                      injection_quantity_auxiliary_base_map_x_axis,fuel_demand_computed,
@@ -43263,7 +43265,7 @@ LAB_00046c70:
        ((int)(short)injection_timing_source_byte_2 & 0xffU) << 0x10 | iVar7 << 8 |
        (int)(short)governor_mode_code & 0xffU;
   injection_quantity_auxiliary_source_code = (word)iVar7;
-  injection_quantity_auxiliary_unscaled = (word)uVar6;
+  injection_quantity_auxiliary_limit_unscaled = (word)uVar6;
   return;
 }
 
@@ -44776,9 +44778,9 @@ LAB_00049380:
          ((vehicle_speed_copy == 0 &&
           ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 1) == 0)))) &&
         (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 2) == 0 &&
-         (((short)fuel_pressure_governor_demand_idle_minimum_coolant_temperature <
+         (((short)fuel_pressure_governor_demand_check_minimum_coolant_temperature <
            (short)sensor_readings_t_0040baf2.coolant_temp &&
-          ((short)fuel_pressure_governor_demand_idle_limit <
+          ((short)fuel_pressure_governor_demand_limit_at_governed_speed <
            (short)engine_sync_state_t_0040b87f.fuel_pressure_governor_demand)))))) &&
        (governor_mode_code == 0xb)) {
       fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 0x40;
@@ -45595,9 +45597,9 @@ void cm848_initTimingFilterStates(void)
 //
 
 /* Computes the main injection timing (counts of 0.1171875 degree, larger = earlier) into
-   torque_limit_fault_snapshot: the cold-start rpm x coolant map while cold_start_phase is
+   main_injection_timing: the cold-start rpm x coolant map while cold_start_phase is
    CSP_ABOVE_RPM_TRIGGER / CSP_ABOVE_RPM_VIA_EVENTS / CSP_SETPOINT_UNDERRUN, otherwise the sum,
-   highest or lowest (injection_timing_select_mode_cal 0 / 1 / other) of the coolant, intake
+   highest or lowest (injection_timing_main_combination_mode 0 / 1 / other) of the coolant, intake
    temperature, barometric pressure and boost components (each an rpm x fuel_demand_computed angle
    map x a Q12 factor / 4096), injection_timing_advance and a constant, then the floor,
    governor-limit minimum and working minimum; in delivery mode 3 it adds
@@ -72141,8 +72143,8 @@ void cm848_updateOilChangeMonitor(void)
                           (&DAT_003fcedc,fuel_rpm_compensated_offset,
                            engine_power_accumulator_increment_axis,
                            engine_power_accumulator_increment_values,1);
-        oil_change_monitor_soot_accumulator_cal =
-             oil_change_monitor_soot_accumulator_cal +
+        oil_change_monitor_engine_power_accumulator_cal =
+             oil_change_monitor_engine_power_accumulator_cal +
              (int)(CONCAT44(wVar1 / 0xc545,(uint)wVar1 * 0x14c38) / 900000);
       }
     }
@@ -72154,7 +72156,7 @@ void cm848_updateOilChangeMonitor(void)
            sensor_initialization_sequence_count._0_2_ | 0x100;
     }
     if ((((DAT_00408a6a < _sensor_validation_delta) || (DAT_00408a66 < ram0x003fee36)) ||
-        (DAT_00408a6e < oil_change_monitor_soot_accumulator_cal)) &&
+        (DAT_00408a6e < oil_change_monitor_engine_power_accumulator_cal)) &&
        (DAT_003fd8ec <= _sensor_validation_delta)) {
       DAT_0040ae5e = 1;
     }
@@ -72164,7 +72166,7 @@ void cm848_updateOilChangeMonitor(void)
     if (j1939_feature_enable_cmd_flag != 0) {
       _sensor_validation_delta = 0;
       ram0x003fee36 = 0;
-      oil_change_monitor_soot_accumulator_cal = 0;
+      oil_change_monitor_engine_power_accumulator_cal = 0;
       sensor_initialization_sequence_count._0_2_ = 0;
       DAT_003fee42 = lifetime_distance_pulses;
       DAT_0040ae5e = 0;
@@ -80274,8 +80276,8 @@ void cm848_initVehicleSpeedSensorChannel(void)
 /* WARNING: Removing unreachable block (ram,0x005277a4) */
 /* Debounced cylinder-cutout evaluation (fault masks 0x55 / 0xaa per bank ->
    protection_fault_eval_input; can clear TPU-A channel 4 enable bit) then the per-cylinder timing
-   demand: rate-limits injection_timing_demand_working and computes engine_timing_reference /
-   cam_timing_reference_offset / engine_timing_delta with the cylinder trim |
+   demand: rate-limits injection_quantity_scale_factor and computes total_injection_quantity /
+   pilot_injection_quantity / auxiliary_injection_quantity with the cylinder trim |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
     */
 
@@ -80455,7 +80457,7 @@ void cm848_fuel_demand_state_capture(void)
 {
   fuel_demand_computed_snapshot = fuel_demand_computed;
   DAT_003fd07e = injection_quantity_pilot_unscaled;
-  DAT_003fd080 = injection_quantity_auxiliary_unscaled;
+  DAT_003fd080 = injection_quantity_auxiliary_limit_unscaled;
   injection_load_snapshot = main_injection_timing;
   injection_timing_pressure_snapshot = pilot_injection_timing;
   injection_timing_aux_offset_snapshot = auxiliary_injection_timing;
@@ -80527,7 +80529,7 @@ void cm848_main_loop_initialization(void)
 /* Computes the timing of the auxiliary (third) injection event as a retard after the main injection
    (the highest or lowest, by a ROM mode word, of a 4-map blend and boost, ambient and coolant
    terms, in counts of 0.1171875 degree) and stores main injection timing - retard in
-   injection_timing_aux_offset. cm848_fuel_demand_state_capture snapshots that value and
+   auxiliary_injection_timing. cm848_fuel_demand_state_capture snapshots that value and
    engine_injectionAngle_tpuChannel6EventHandler turns it (x -5) into the TPU-A channel 5 slot 12
    angle; when the ROM override flag at 0x409090 is set it only copies the override value to
    0x40b842 and sets the source byte to 7 (was cm848_auxiliary_boundary_condition_eval). */
@@ -81540,11 +81542,12 @@ LAB_005295d8:
 /* TPU-A channel 6 interrupt (injection per the channel map): injection-angle state machine on
    injection_angle_sequence_state 1/2/4/8 - per step runs engine position + timing tables and
    schedules three injection events per cylinder via engine_injectionAngle_writeTpuEvent (slots 4 /
-   8 / 0xc with fuel_quantity_trim / fuel_quantity_active / injection_timing_active_flag) then
-   engine_injectionAngle_selectCylinderInjector. Was missing from every build (wrongly in
-   deleted_functions.csv) | review-function-readability reviewed 2026-11-11 - Readability Medium
-   Accuracy Confidence Medium | reached via tpu_a_channel_interrupt_handler_table[6] -
-   mpc555_tpuAInterruptDispatcher 0x55de4 calls table[channel] - no direct caller */
+   8 / 0xc with pilot_injection_pulse_width / main_injection_pulse_width /
+   auxiliary_injection_pulse_width) then engine_injectionAngle_selectCylinderInjector. Was missing
+   from every build (wrongly in deleted_functions.csv) | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium | reached via
+   tpu_a_channel_interrupt_handler_table[6] - mpc555_tpuAInterruptDispatcher 0x55de4 calls
+   table[channel] - no direct caller */
 
 void engine_injectionAngle_tpuChannel6EventHandler(void)
 
@@ -82301,7 +82304,7 @@ LAB_0052ac8c:
 // Function: cm848_checkFuelPressureWithoutInjection @ 0x0052acfc
 //
 
-/* Rail pressure checks that run only while the injection quantity engine_timing_reference is not
+/* Rail pressure checks that run only while the injection quantity total_injection_quantity is not
    above the limit at 0x409ac0 (0, so no fuel is injected), above 800 rpm, with
    fuel_pressure_feedback_filtered between its minimum and maximum, the coolant at 180-205 F and no
    related fault. Check A (enabled here) compares fuel_pressure_governor_demand with a limit looked
@@ -83152,11 +83155,11 @@ void cm848_initializePilotInjectionQuantityState(void)
    CSP_ABOVE_RPM_TRIGGER / CSP_ABOVE_RPM_VIA_EVENTS / CSP_SETPOINT_UNDERRUN, otherwise the sum,
    highest, lowest or main-timing-winner choice (ROM mode word 0x409e74) of a 4-map blend, coolant,
    intake temperature, barometric pressure and boost components (each an rpm x
-   engine_timing_reference angle map x a Q12 factor / 4096) and a constant (512 normally, 85 under
+   total_injection_quantity angle map x a Q12 factor / 4096) and a constant (512 normally, 85 under
    an engine sync fault). While the governor holds a target speed (governor_mode_code 11 or 4) the
    maps are read at that speed and the result is scaled by measured / target rpm;
-   cm848_pressure_control_state_load adds it to torque_limit_fault_snapshot to get the pilot timing
-   for TPU-A channel 5 slot 4 (was engine_injectionTiming_arbitration_calc). */
+   cm848_calculatePilotInjectionTiming adds it to main_injection_timing to get the pilot timing for
+   TPU-A channel 5 slot 4 (was engine_injectionTiming_arbitration_calc). */
 
 void cm848_calculatePilotInjectionTimingOffset(void)
 

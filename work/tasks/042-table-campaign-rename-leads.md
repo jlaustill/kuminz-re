@@ -19,7 +19,7 @@ renames**: check each against the code (and `xref_addr.py` / the disassembly) be
 | `cm848_calculateTimingWithTables` / `cm848_calculateEngineFaultTiming` | main / auxiliary injector on-time | bin 09 |
 | `cm848_calculateEngineTimingInterpolation` | pilot injector on-time | bins 00 / 13 |
 | `engine_camTiming_positionCorrection_calc` | fuel-metering feedback monitor (fault bit 60 = P1223) | bin 06 |
-| `cm848_processEnginePositionDiagnostics` / `engine_camSync_referenceCheck_update` | rail pressure diagnostics (fault bit 303 = P0088) | bins 07 / 13 |
+| `cm848_processEnginePositionDiagnostics` / `engine_camSync_referenceCheck_update` | rail pressure diagnostics (fault bit 303 = P0088) / a no-injection pressure check (fault 58 = P1222 - verification corrected the P0088 pairing for engine_camSync_referenceCheck_update) | bins 07 / 13 |
 | `cm848_boostCompensatedRpmGovernor` | wastegate duty: `rpm_governor_state_t.desired_rpm` / `lower_rpm_limit` / `commanded_rpm` are duty / 2 (12800 = 100 %) | bin 07 |
 | `hpcr_fuelDemandProc` | electronic wastegate monitor (pass window) | bin 10 |
 | `cm848_filterProtectionOutput` | 4-state charging-voltage (alternator field) regulator | bin 08 |
@@ -83,12 +83,12 @@ Five read-only agents verified the leads above against the code (RAM-dump reprod
 - `cm848_calculateAllSpeedGovernorNoLoadFuel` (was `cm848_calculateFuelTimingBlend`, 0x0000fcd0)
 - `cm848_calculateAlternatorFieldDutyByRegulatorState` (was `cm848_filterProtectionOutput`, 0x00037744)
 - `cm848_calculateAuxiliaryInjectionPulseWidth` (was `cm848_calculateEngineFaultTiming`, 0x00047394)
-- `cm848_calculateAuxiliaryInjectionQuantity` (was `cm848_calculateGovernorOutput`, 0x000466a8)
+- `cm848_calculateAuxiliaryInjectionQuantityLimit` (was `cm848_calculateGovernorOutput`, 0x000466a8)
 - `cm848_calculateAuxiliaryInjectionTiming` (was `cm848_auxiliary_boundary_condition_eval`, 0x005279d8)
 - `cm848_calculateChargingVoltageTarget` (was `cm848_processProtectionCoolantLookup`, 0x000375c8)
 - `cm848_calculateEngineRetarderTorque` (was `cm848_calculateSpeedControlError`, 0x00021314)
 - `cm848_calculateFuelPressureSetpoint` (was `cm848_sensor_channel_state_load`, 0x00529f58)
-- `cm848_calculateGovernorPidGains` (was `cm848_calculateFuelTrimValues`, 0x0000ff04)
+- `cm848_calculateGovernorCompensatorCoefficients` (was `cm848_calculateFuelTrimValues`, 0x0000ff04)
 - `cm848_calculateGovernorReferenceSpeedBlend` (was `cm848_fuelTimingRateLimitedBlend`, 0x0000e8dc)
 - `cm848_calculateMainInjectionPulseWidth` (was `cm848_calculateTimingWithTables`, 0x00046f7c)
 - `cm848_calculateMainInjectionTiming` (was `cm848_calculateEngineTimingData`, 0x0004ae20)
@@ -172,3 +172,34 @@ Five read-only agents verified the leads above against the code (RAM-dump reprod
 - [G4] Not renamed (insufficient evidence): fuel_timing_blend_accumulator (read in the PID loop of cm848_runOperatingModeSpeedGovernor, not a blend) and the fuel_trim_* family (fuel_trim_speed_active_flag / _upper_threshold / _lower_threshold / _decay_cal ...) around the same loop: they belong to the governor reference speed handling in mode 7, not to a fuel trim; needs its own pass.
 
 Also still open from the list above: the struct fields (`rpm_governor_state_t.desired_rpm` / `lower_rpm_limit` / `commanded_rpm` are wastegate duty / 2), and `cold_start_phase` (see the vocabulary note).
+
+### Review of the rename wave (2026-11-16)
+
+- **Second pass:** `cm848_calculateAuxiliaryInjectionQuantityLimit` (the function's result caps
+  `auxiliary_injection_quantity`; its terms are `injection_quantity_auxiliary_coolant_limit` / `_boost_limit`, like
+  the tables), `cm848_calculateGovernorCompensatorCoefficients` (a bilinear-transform pole a and (a + 1024) / 2 -
+  "PID gains" claimed more than the code shows), `fuel_pressure_governor_demand_limit_at_governed_speed` /
+  `..._check_minimum_coolant_temperature` (governor mode 11 = governed speed, only probably idle),
+  `oil_change_monitor_engine_power_accumulator_cal` (0x3fee3e: "soot" was only by elimination; the address is
+  time-shared - the boot ROM uses byte 0 as its SCI diagnostic timeout counter).
+- **Independence check:** 155 of the 234 renamed globals are used only inside the verified functions; the outside
+  users of the rest fit their names (PGN 65504 sends `main_injection_timing`, the PCI fuel-used message reads
+  `main_injection_pulse_width`, the charging chain uses `alternator_field_regulator_state`, ...).
+- **Decoded:** fault 411 = P2609; `fuel_pressure_limp_home_active_flag` triggers = P0193 / P0192 / P0088 / P0251 +
+  faults 264 / 265 (no DTC slot) + two fault reaction requests.
+- **e2m block layout matches CM848 RAM by relative offset (verified for two blocks):** e2m Pilot_Fuel_Quantity /
+  RPM_With_Hyst / Pilot_Fuel_State at 0x01806A00 + 0x02 / 0x0C / 0x1E = CM848 0x40b938 + 0x02 / 0x0C / 0x1E (same
+  scales), and HPCR_Duration_Main_Injection / _Pilot1 / _Aux at 0x01805B00 + 0 / 2 / 4 = CM848 0x40b85c / 5e / 60
+  (0.4 us). Names that lean on e2m words: the oil change monitor, the all-speed governor no-load fuel, the wastegate
+  (CWG) monitor and G1b's quantity / on-time blocks.
+- **CM550 shares three renamed names (cross-firmware links now broken; CM550 semantics not checked):**
+  `crank_sync_threshold` (CM550 0x80707a), `fuel_timing_blend_factor` (0x80c9aa), `j1939FormatMultiFrameResponse`
+  (0x2f632). Check the CM550 counterparts before renaming them to the CM848 names.
+- **Duplicate names that predate this wave (not fixed):** globals `cruise_speed_setpoint_b`,
+  `cruise_speed_target_working`, `engine_data_log_buffer`, `engine_data_log_read_ptr`, `fuel_demand_mode_code`,
+  `fuel_demand_rate_output`, `fuel_demand_rpm_factor`, `governor_setpoint_table_ptr`, `governor_speed_error_delta`,
+  `injection_timing_compensation_lower_cal`, `j1939_tsc1_active_flag`, `protection_confirm_counter_a` / `_b`,
+  `switchD`, `USIU_PITR`, `USIU_RTCAL`; functions `cm848_addCoolantCalEntry`, `cm848_emptyStubFunction`,
+  `cm848_processFaultIncrement`, `emptyStubFunction3`, `mpc555_updateSensorDiagnosticFlags`.
+- Pre-existing underscore variants (dwords typed word in the ROM-to-RAM window): `_fuel_pressure_setpoint_offset_slewed`
+  (0x3fd0c6), `_injection_quantity_pilot_slewed_q16` (0x3fd104).

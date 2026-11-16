@@ -28,7 +28,7 @@ CASES = [
     # name, so renames don't break the test (two cases had gone stale: tpu_rpm_measurement_initialize is now
     # cm848_initRadiatorFanSpeedMeasurement and cm848_initJ1939Stack is now cm848_clearMilForHealedFaults).
     ("0x0050ecc4", 0x0040afd8, ["word"], "store", "fuel_demandSource_modeSelect: displacement sth"),
-    ("0x0051a878", 0x0040b788, ["dword"], "load", "governorCruiseTimerManagement: displacement lwz"),
+    ("0x0051a878", 0x0040b788, ["dword"], "load", "cm848_updateOilChangeMonitor: displacement lwz"),
     ("0x005161c0", 0x0040b2f8, ["dword"], "store", "cm848_initRadiatorFanSpeedMeasurement: displacement stw"),
     ("0x0053473c", 0x0040af0c, ["byte"], "load", "cm848_clearMilForHealedFaults: INDEXED lbzx (the fix)"),
 ]

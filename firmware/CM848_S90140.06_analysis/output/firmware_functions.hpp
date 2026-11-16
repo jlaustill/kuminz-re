@@ -270,7 +270,7 @@ void cm848_restoreEngineOperatingMode(void);  // @ 0x0000fb28
 void cm848_calculateAllSpeedGovernorNoLoadFuel(void);  // @ 0x0000fcd0
 void cm848_initFuelTimingTableSizes(void);  // @ 0x0000fe3c
 void cm848_calculateFuelTimingTarget(void);  // @ 0x0000fe5c
-void cm848_calculateGovernorPidGains(void);  // @ 0x0000ff04
+void cm848_calculateGovernorCompensatorCoefficients(void);  // @ 0x0000ff04
 void cm848_initEngineOperatingMode(int param_1);  // @ 0x00010110
 void cm848_initLookupTableParams(void);  // @ 0x00010248
 void cm848_stubFunction3(void);  // @ 0x00010270
@@ -986,7 +986,7 @@ void mpc555_updateEngineRunState(void);  // @ 0x00045478
 void mpc555_updateEngineCrankState(void);  // @ 0x000457d0
 void cm848_calculateFuelDemandWithConditions(void);  // @ 0x00045ecc
 void cm848_initRpmSetpointFilters(void);  // @ 0x0004665c
-void cm848_calculateAuxiliaryInjectionQuantity(void);  // @ 0x000466a8
+void cm848_calculateAuxiliaryInjectionQuantityLimit(void);  // @ 0x000466a8
 void mpc555_initFuelFilterStates(void);  // @ 0x00046cf8
 void cm848_updateEngineStatusTimers(void);  // @ 0x00046d90
 void cm848_clearTimingAccumulators(void);  // @ 0x00046f64
