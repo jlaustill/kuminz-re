@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 16 10:26:39 MST 2026
+// Generated: Mon Nov 16 10:52:35 MST 2026
 
 
 //
@@ -81866,7 +81866,6 @@ void cm848_sensor_diagnostic_flag_update(void)
 // Function: cm848_calculateFuelPressureSetpoint @ 0x00529f58
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Calculates the rail pressure setpoint fuel_pressure_setpoint (0.0488 MPa per count; this is its
    only writer) in the auxiliary-control task: the lower of the blended rpm x fuel quantity map
    (fuel_pressure_setpoint_base_map / _map_1 to _map_4), the coolant limit and the ambient limit
@@ -82003,7 +82002,7 @@ void cm848_calculateFuelPressureSetpoint(void)
                      fuel_demand_computed,fuel_pressure_setpoint_offset_y_axis,
                      fuel_pressure_setpoint_offset_grid,4);
   fuel_pressure_setpoint_offset_target = (short)wVar6 * 100;
-  sVar12 = (short)((int)_fuel_pressure_setpoint_offset_slewed / 100);
+  sVar12 = (short)((int)fuel_pressure_setpoint_offset_slewed / 100);
   if (DAT_00409a71 == '\0') {
     unaff_r28 = (int)(short)(sVar4 + sVar8 + sVar9 + sVar12);
     fuel_pressure_setpoint_winning_term_code = 7;
@@ -82032,22 +82031,21 @@ void cm848_calculateFuelPressureSetpoint(void)
       (governor_mode_code == 0x32)) &&
      ((DAT_00409a7c < (short)wVar13 && (DAT_00409a7e < (short)y_input)))) {
     if ((int)fuel_pressure_setpoint_offset_target < 1) {
-      if (((int)fuel_pressure_setpoint_offset_target < (int)_fuel_pressure_setpoint_offset_slewed)
-         && (_fuel_pressure_setpoint_offset_slewed =
-                  _fuel_pressure_setpoint_offset_slewed - fuel_pressure_setpoint_offset_slew_step,
-            (int)_fuel_pressure_setpoint_offset_slewed < (int)fuel_pressure_setpoint_offset_target))
+      if (((int)fuel_pressure_setpoint_offset_target < (int)fuel_pressure_setpoint_offset_slewed) &&
+         (fuel_pressure_setpoint_offset_slewed =
+               fuel_pressure_setpoint_offset_slewed - fuel_pressure_setpoint_offset_slew_step,
+         (int)fuel_pressure_setpoint_offset_slewed < (int)fuel_pressure_setpoint_offset_target))
       goto LAB_0052a500;
     }
-    else if (((int)_fuel_pressure_setpoint_offset_slewed < (int)fuel_pressure_setpoint_offset_target
-             ) && (_fuel_pressure_setpoint_offset_slewed =
-                        _fuel_pressure_setpoint_offset_slewed +
-                        fuel_pressure_setpoint_offset_slew_step,
-                  (int)fuel_pressure_setpoint_offset_target <
-                  (int)_fuel_pressure_setpoint_offset_slewed)) {
+    else if (((int)fuel_pressure_setpoint_offset_slewed < (int)fuel_pressure_setpoint_offset_target)
+            && (fuel_pressure_setpoint_offset_slewed =
+                     fuel_pressure_setpoint_offset_slewed + fuel_pressure_setpoint_offset_slew_step,
+               (int)fuel_pressure_setpoint_offset_target < (int)fuel_pressure_setpoint_offset_slewed
+               )) {
 LAB_0052a500:
-      _fuel_pressure_setpoint_offset_slewed = fuel_pressure_setpoint_offset_target;
+      fuel_pressure_setpoint_offset_slewed = fuel_pressure_setpoint_offset_target;
     }
-    if (_fuel_pressure_setpoint_offset_slewed != 0) {
+    if (fuel_pressure_setpoint_offset_slewed != 0) {
       if (fuel_pressure_setpoint_winning_term_code == 2) {
         fuel_pressure_setpoint_winning_term_code = 8;
       }
@@ -82062,18 +82060,18 @@ LAB_0052a500:
       }
     }
   }
-  else if (_fuel_pressure_setpoint_offset_slewed != 0) {
+  else if (fuel_pressure_setpoint_offset_slewed != 0) {
     if ((int)fuel_pressure_setpoint_offset_target < 1) {
-      _fuel_pressure_setpoint_offset_slewed =
-           _fuel_pressure_setpoint_offset_slewed + fuel_pressure_setpoint_offset_slew_step;
-      if (0 < (int)_fuel_pressure_setpoint_offset_slewed) goto LAB_0052a5b0;
+      fuel_pressure_setpoint_offset_slewed =
+           fuel_pressure_setpoint_offset_slewed + fuel_pressure_setpoint_offset_slew_step;
+      if (0 < (int)fuel_pressure_setpoint_offset_slewed) goto LAB_0052a5b0;
     }
     else {
-      _fuel_pressure_setpoint_offset_slewed =
-           _fuel_pressure_setpoint_offset_slewed - fuel_pressure_setpoint_offset_slew_step;
-      if ((int)_fuel_pressure_setpoint_offset_slewed < 0) {
+      fuel_pressure_setpoint_offset_slewed =
+           fuel_pressure_setpoint_offset_slewed - fuel_pressure_setpoint_offset_slew_step;
+      if ((int)fuel_pressure_setpoint_offset_slewed < 0) {
 LAB_0052a5b0:
-        _fuel_pressure_setpoint_offset_slewed = 0;
+        fuel_pressure_setpoint_offset_slewed = 0;
       }
     }
   }
@@ -82710,10 +82708,9 @@ void cm848_calculatePilotInjectionQuantity(void)
   word wVar4;
   short sVar5;
   word unaff_r23;
-  word unaff_r25;
   uint uVar6;
+  word unaff_r25;
   dword dVar7;
-  uint uVar8;
   
   wVar4 = intake_manifold_temperature_sensor_filtered;
   wVar3 = sensor_readings_t_0040baf2.barometric_pressure;
@@ -82724,15 +82721,15 @@ void cm848_calculatePilotInjectionQuantity(void)
       (((vehicle_speed < DAT_00409e5c &&
         (DAT_00409e5e < (short)sensor_readings_t_0040baf2.coolant_temp)) &&
        (DAT_00409e60 < (short)intake_manifold_temperature_sensor_filtered)))))) {
-    uVar8 = 0;
+    dVar7 = 0;
     injection_quantity_pilot_source_code = 0xe;
-    _injection_quantity_pilot_slewed_q16 = uVar8;
+    injection_quantity_pilot_slewed_q16 = dVar7;
     goto LAB_0052c614;
   }
   if (DAT_00409e4a != 0) {
-    uVar8 = (uint)DAT_00409e4c;
+    dVar7 = (dword)DAT_00409e4c;
     injection_quantity_pilot_source_code = 7;
-    _injection_quantity_pilot_slewed_q16 = uVar8;
+    injection_quantity_pilot_slewed_q16 = dVar7;
     goto LAB_0052c614;
   }
   sVar5 = engine_rpm_state_t_0040b7ac.current_rpm -
@@ -82747,16 +82744,16 @@ void cm848_calculatePilotInjectionQuantity(void)
          engine_rpm_state_t_0040b7ac.current_rpm + injection_quantity_pilot_engine_speed_hysteresis;
   }
   sVar5 = fuel_demand_computed - injection_quantity_pilot_fuel_demand_with_hysteresis;
-  uVar8 = (uint)(short)injection_quantity_pilot_fuel_demand_hysteresis;
-  if ((int)uVar8 < (int)sVar5) {
+  uVar6 = (uint)(short)injection_quantity_pilot_fuel_demand_hysteresis;
+  if ((int)uVar6 < (int)sVar5) {
     injection_quantity_pilot_fuel_demand_with_hysteresis =
          fuel_demand_computed - injection_quantity_pilot_fuel_demand_hysteresis;
   }
-  if ((int)sVar5 < (int)-uVar8) {
+  if ((int)sVar5 < (int)-uVar6) {
     injection_quantity_pilot_fuel_demand_with_hysteresis =
          fuel_demand_computed + injection_quantity_pilot_fuel_demand_hysteresis;
   }
-  if ((uint)fuel_demand_computed < (uVar8 & 0x3fff) << 2) {
+  if ((uint)fuel_demand_computed < (uVar6 & 0x3fff) << 2) {
     injection_quantity_pilot_fuel_demand_with_hysteresis = fuel_demand_computed;
   }
   if ((((cold_start_phase == CSP_ABOVE_RPM_TRIGGER) ||
@@ -82886,27 +82883,27 @@ void cm848_calculatePilotInjectionQuantity(void)
                             injection_quantity_pilot_fuel_demand_with_hysteresis,
                             injection_quantity_pilot_coolant_map_y_axis,
                             injection_quantity_pilot_coolant_map_grid,4);
-  uVar8 = (int)(short)DAT_0040b940 * (int)(short)injection_quantity_pilot_coolant_factor;
+  uVar6 = (int)(short)DAT_0040b940 * (int)(short)injection_quantity_pilot_coolant_factor;
   injection_quantity_pilot_coolant_correction =
-       (short)((int)uVar8 >> 0xc) + (ushort)((int)uVar8 < 0 && (uVar8 & 0xfff) != 0);
+       (short)((int)uVar6 >> 0xc) + (ushort)((int)uVar6 < 0 && (uVar6 & 0xfff) != 0);
   wVar4 = cm848_dualAxisTableInterpolation
                     (&DAT_003fd118,injection_quantity_pilot_engine_speed_with_hysteresis,
                      injection_quantity_pilot_intake_temperature_map_x_axis,
                      injection_quantity_pilot_fuel_demand_with_hysteresis,
                      injection_quantity_pilot_intake_temperature_map_y_axis,
                      injection_quantity_pilot_intake_temperature_map_grid,4);
-  uVar8 = (int)(short)wVar4 * (int)(short)wVar2;
+  uVar6 = (int)(short)wVar4 * (int)(short)wVar2;
   injection_quantity_pilot_intake_temperature_correction =
-       (short)((int)uVar8 >> 0xc) + (ushort)((int)uVar8 < 0 && (uVar8 & 0xfff) != 0);
+       (short)((int)uVar6 >> 0xc) + (ushort)((int)uVar6 < 0 && (uVar6 & 0xfff) != 0);
   wVar4 = cm848_dualAxisTableInterpolation
                     (&DAT_003fd120,injection_quantity_pilot_engine_speed_with_hysteresis,
                      injection_quantity_pilot_ambient_map_x_axis,
                      injection_quantity_pilot_fuel_demand_with_hysteresis,
                      injection_quantity_pilot_ambient_map_y_axis,
                      injection_quantity_pilot_ambient_map_grid,4);
-  uVar8 = (int)(short)wVar4 * (int)(short)wVar3;
+  uVar6 = (int)(short)wVar4 * (int)(short)wVar3;
   injection_quantity_pilot_ambient_correction =
-       (short)((int)uVar8 >> 0xc) + (ushort)((int)uVar8 < 0 && (uVar8 & 0xfff) != 0);
+       (short)((int)uVar6 >> 0xc) + (ushort)((int)uVar6 < 0 && (uVar6 & 0xfff) != 0);
   injection_quantity_pilot_temperature_correction =
        injection_quantity_pilot_intake_temperature_correction;
   if ((short)injection_quantity_pilot_intake_temperature_correction <
@@ -82932,14 +82929,14 @@ void cm848_calculatePilotInjectionQuantity(void)
                             injection_quantity_pilot_fuel_demand_with_hysteresis,
                             injection_quantity_pilot_cold_correction_map_y_axis,
                             injection_quantity_pilot_cold_correction_map_grid,4);
-  uVar8 = (int)(short)DAT_0040b95c * (int)(short)injection_quantity_pilot_cold_correction_factor;
+  uVar6 = (int)(short)DAT_0040b95c * (int)(short)injection_quantity_pilot_cold_correction_factor;
   injection_quantity_pilot_cold_correction =
-       (short)((int)uVar8 >> 0xc) + (ushort)((int)uVar8 < 0 && (uVar8 & 0xfff) != 0);
+       (short)((int)uVar6 >> 0xc) + (ushort)((int)uVar6 < 0 && (uVar6 & 0xfff) != 0);
   wVar3 = injection_quantity_pilot_fuel_pressure_limp_home_default;
   if (fuel_pressure_limp_home_active_flag == 0) {
     if (injection_quantity_pilot_logic_select == 1) {
-      _timing_limit_arbitrated_target = (uint)(short)injection_quantity_pilot_temperature_correction
-      ;
+      _timing_limit_arbitrated_target =
+           (dword)(short)injection_quantity_pilot_temperature_correction;
       dVar7 = (dword)(short)injection_quantity_pilot_map_blend;
       if ((int)dVar7 < (int)_timing_limit_arbitrated_target) {
         if ((int)_timing_limit_arbitrated_target <=
@@ -82959,8 +82956,8 @@ LAB_0052c290:
       }
     }
     else if (injection_quantity_pilot_logic_select == 2) {
-      _timing_limit_arbitrated_target = (uint)(short)injection_quantity_pilot_temperature_correction
-      ;
+      _timing_limit_arbitrated_target =
+           (dword)(short)injection_quantity_pilot_temperature_correction;
       dVar7 = (dword)(short)injection_quantity_pilot_map_blend;
       if ((int)_timing_limit_arbitrated_target < (int)dVar7) {
         if ((int)(short)injection_quantity_pilot_ambient_correction <=
@@ -83001,7 +82998,7 @@ LAB_0052c278:
             ((int)(short)injection_quantity_pilot_cold_correction <=
              (int)_timing_limit_arbitrated_target)) {
 LAB_0052c398:
-      _timing_limit_arbitrated_target = (uint)(short)injection_quantity_pilot_cold_correction;
+      _timing_limit_arbitrated_target = (dword)(short)injection_quantity_pilot_cold_correction;
     }
     DAT_0040b95e = cm848_dualAxisTableInterpolation
                              (&DAT_003fd13c,injection_quantity_pilot_engine_speed_with_hysteresis,
@@ -83016,7 +83013,7 @@ LAB_0052c398:
   }
   else {
 LAB_0052c41c:
-    _timing_limit_arbitrated_target = (uint)(short)wVar3;
+    _timing_limit_arbitrated_target = (dword)(short)wVar3;
   }
   if ((int)(short)injection_quantity_pilot_coolant_correction == _timing_limit_arbitrated_target) {
     if ((((cold_start_phase == CSP_ABOVE_RPM_TRIGGER) ||
@@ -83058,37 +83055,37 @@ LAB_0052c41c:
     injection_quantity_pilot_source_code = 0x13;
   }
   _timing_limit_arbitrated_target = _timing_limit_arbitrated_target << 0x10;
-  if ((int)_injection_quantity_pilot_slewed_q16 < (int)_timing_limit_arbitrated_target) {
+  if ((int)injection_quantity_pilot_slewed_q16 < (int)_timing_limit_arbitrated_target) {
     if ((timing_limit_slew_increase_step_q16 == 0) ||
        ((0 < (int)timing_limit_slew_increase_step_q16 &&
-        (_injection_quantity_pilot_slewed_q16 =
-              _injection_quantity_pilot_slewed_q16 + timing_limit_slew_increase_step_q16,
-        (int)_timing_limit_arbitrated_target < (int)_injection_quantity_pilot_slewed_q16)))) {
+        (injection_quantity_pilot_slewed_q16 =
+              injection_quantity_pilot_slewed_q16 + timing_limit_slew_increase_step_q16,
+        (int)_timing_limit_arbitrated_target < (int)injection_quantity_pilot_slewed_q16)))) {
 LAB_0052c5cc:
-      _injection_quantity_pilot_slewed_q16 = _timing_limit_arbitrated_target;
+      injection_quantity_pilot_slewed_q16 = _timing_limit_arbitrated_target;
     }
   }
-  else if (((int)_timing_limit_arbitrated_target < (int)_injection_quantity_pilot_slewed_q16) &&
+  else if (((int)_timing_limit_arbitrated_target < (int)injection_quantity_pilot_slewed_q16) &&
           ((timing_limit_slew_decrease_step_q16 == 0 ||
            ((0 < (int)timing_limit_slew_decrease_step_q16 &&
-            (_injection_quantity_pilot_slewed_q16 =
-                  _injection_quantity_pilot_slewed_q16 - timing_limit_slew_decrease_step_q16,
-            (int)_injection_quantity_pilot_slewed_q16 < (int)_timing_limit_arbitrated_target))))))
+            (injection_quantity_pilot_slewed_q16 =
+                  injection_quantity_pilot_slewed_q16 - timing_limit_slew_decrease_step_q16,
+            (int)injection_quantity_pilot_slewed_q16 < (int)_timing_limit_arbitrated_target))))))
   goto LAB_0052c5cc;
-  if ((int)_injection_quantity_pilot_slewed_q16 < 0) {
-    _injection_quantity_pilot_slewed_q16 = 0;
+  if ((int)injection_quantity_pilot_slewed_q16 < 0) {
+    injection_quantity_pilot_slewed_q16 = 0;
     injection_quantity_pilot_source_code = 0xe;
   }
-  else if ((int)((uint)fuel_demand_computed << 0x10) < (int)_injection_quantity_pilot_slewed_q16) {
-    _injection_quantity_pilot_slewed_q16 = (uint)fuel_demand_computed << 0x10;
+  else if ((int)((uint)fuel_demand_computed << 0x10) < (int)injection_quantity_pilot_slewed_q16) {
+    injection_quantity_pilot_slewed_q16 = (uint)fuel_demand_computed << 0x10;
   }
-  uVar8 = (int)_injection_quantity_pilot_slewed_q16 >> 0x10;
+  dVar7 = (int)injection_quantity_pilot_slewed_q16 >> 0x10;
 LAB_0052c614:
   uVar6 = (uint)DAT_00409e66 * (uint)fuel_demand_computed >> 0xc;
   DAT_0040b94c = (short)uVar6;
   uVar1 = uVar6 & 0xffff;
-  if ((int)uVar8 < (int)uVar1) {
-    uVar6 = uVar8;
+  if ((int)dVar7 < (int)uVar1) {
+    uVar6 = dVar7;
   }
   injection_quantity_pilot_unscaled = (word)uVar6;
   if ((uVar1 <= (uVar6 & 0xffff)) && (0x3a < fuel_demand_computed)) {

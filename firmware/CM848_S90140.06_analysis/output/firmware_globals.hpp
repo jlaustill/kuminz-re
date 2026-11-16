@@ -5625,7 +5625,7 @@ extern word fuel_correction_table_dims_a;  // 0x003fb9ca
 extern word cold_start_protection_timer_countdown;  // 0x003fd1b4
 extern word fault_registered_bits_384_to_399;  // 0x003fea08
 extern word timing_limit_arbitrated_target;  // 0x003fd108
-extern word injection_quantity_pilot_slewed_q16;  // 0x003fd104
+extern dword injection_quantity_pilot_slewed_q16;  // 0x003fd104
 extern byte cold_start_protection_sub_state;  // 0x003fd1b0
 extern byte cold_start_protection_cycle_counter;  // 0x003fd1b1
 extern byte cold_start_protection_state;  // 0x003fd1b2
@@ -5663,7 +5663,7 @@ extern dword trip_fuel_used;  // 0x003fee68
 extern dword trip_fuel_used_at_governed_speed;  // 0x003fee6c
 extern dword trip_time_at_governed_speed;  // 0x003fee70
 extern dword trip_engine_run_time;  // 0x003fee74
-extern word fuel_pressure_setpoint_offset_slewed;  // 0x003fd0c6
+extern dword fuel_pressure_setpoint_offset_slewed;  // 0x003fd0c6
 extern word fuel_pressure_setpoint_deadband_filtered;  // 0x003fd0c4
 extern word cam_timing_advance_table_interp_states;  // 0x003fd0ca
 extern word cbd_phase_code;  // 0x003fd21e
