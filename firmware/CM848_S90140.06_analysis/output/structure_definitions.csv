@@ -878,7 +878,7 @@ mios_port_data_register_t,,byte_0,byte,1,Bits 15-8 (the byte at the lower addres
 mios_port_data_register_t,,byte_1,byte,1,Bits 7-0: input lines 8-15,,verified
 # ETC1 / Governor State Block - combined ETC1 handler and governor control state
 # Used by cm848_j1939ProcessTorqueSpeedControl, torqueControlModeHandler,
-#   cm848_j1939ProcessGovernorRequest, cm848_processGovernorModeTransition
+#   cm848_processEngineRetarderTsc1Request (was cm848_j1939ProcessGovernorRequest), cm848_processGovernorModeTransition
 # Total size: 86 bytes (0x0040adf8-0x0040ae4d)
 etc1_governor_state_t,0x0040adf8,governor_mode,word,2,GOV_DISABLED=0 GOV_SPEED_CONTROL=1 GOV_TORQUE_CONTROL=2 GOV_SPEED_TORQUE=3,,verified
 etc1_governor_state_t,0x0040adf8,torque_limit_mode_select,word,2,Selects which torque limit algorithm is active,,verified

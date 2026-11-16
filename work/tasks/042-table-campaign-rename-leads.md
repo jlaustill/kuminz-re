@@ -283,3 +283,16 @@ per-injector diagnostic bitmaps (P0201-P0206 / P2146 / P2149), `all_speed_govern
 - [W3 duplicates] The coolant_cal_entry family (cm848_addCoolantCalEntry, cm848_addCoolantCalEntryAlt, cm848_processCoolantCalEntries, cm848_removeCoolantCalEntry*, coolant_cal_entry_count_a / _b, fault_entry_data_array, fault_severity_data_array, DAT_003fb918..DAT_003fb96a) is the TSC1 override request tracker (source address, control mode, countdown timeout from etc1_torque
 - [W3 duplicates] injection_timing_compensation_lower_cal at 0x00406fcc (kept) is outside 0x3fd482-0x3feec1 and is ROM-initialised and never written, so its _cal suffix is legacy audit backlog, not changed here. injection_timing_compensation_limit_cal (0x00406fc2) is the upper bound paired with the renamed 0x00406fc4 in cm848_processTorqueLimitTiming; consider injection_timin
 - [W3 duplicates] 0x0040a8b1 (renamed above) is in the packed halfword block 0x0040a8ad..0x0040a8b7 (fuel_ema_coeff_3/4/2/1_working, fuel_demand_state_code): the odd-address sth / lha accesses at 0x424dc, 0x42524 and 0x1fbe8 are real, not a width error. The fuel_ema_coeff_* / fuel_demand_ema_* names use coeff and ema; spell them out if that family is renamed.
+
+### Wave 3 review checks
+- `engine_speed_limp_home_active_flag` (was `crank_position_valid_flag`) confirmed apart from e2m: `cm848_enterSpeedLimpHome`
+  switches the TPU-A speed input from channel 0 to channel 1 and, after its debounce above a speed, sets fault 335 =
+  P0336 (crankshaft position sensor signal); the RAM dump (engine off) holds 0.
+- Five new rows do not render: the alternator regulator thresholds 0x4087a2-0x4087b0 - their only readers are the
+  four regulator state handlers at ROM 0x38338-0x3844c, which Ghidra has not made functions.
+- No new row overlaps another row or array; no renamed ROM-to-RAM-window global is used by boot-ROM code; no
+  duplicate names remain; the importer's type stats are unchanged.
+- CM550 also uses the old `governor_mode_state` (now `engine_retarder_override_control_mode` in CM848) - one more
+  cross-firmware link to check on the CM550 side.
+- Naming convention left for the user: about nine wave-3 functions say `initialize` (spelled out by the renaming
+  gate), while the repo's older functions say `init`.

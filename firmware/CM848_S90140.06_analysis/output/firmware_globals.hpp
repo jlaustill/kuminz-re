@@ -7101,6 +7101,6 @@ extern word intake_air_heater_performance_test_maximum_battery_voltage;  // 0x00
 extern word intake_air_heater_performance_test_minimum_battery_voltage;  // 0x00064436
 extern word intake_air_heater_performance_test_loaded_voltage_upper_window_adc;  // 0x00064438
 extern word intake_air_heater_performance_test_arming_temperature_difference_limit;  // 0x0006443a
-extern word intake_air_heater_performance_test_recovery_voltage_rise_adc;  // 0x0040b9e6
+extern int16_t intake_air_heater_performance_test_recovery_voltage_rise_adc;  // 0x0040b9e6
 extern word intake_air_heater_performance_test_ring_average_battery_voltage_adc;  // 0x003fd1ee
 extern word battery_temperature_adc_forced_reading;  // 0x0040bd0a

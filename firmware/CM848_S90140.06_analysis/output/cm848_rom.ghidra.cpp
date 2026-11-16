@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 16 11:39:28 MST 2026
+// Generated: Mon Nov 16 11:50:37 MST 2026
 
 
 //
@@ -86686,9 +86686,9 @@ void cm848_monitorIntakeAirHeaterPerformance(void)
             intake_air_heater_performance_test_recovered_battery_voltage_adc = (word)(uVar8 / 3);
             iVar7 = uVar8 / 3 -
                     (int)(short)intake_air_heater_performance_test_loaded_battery_voltage_adc;
-            intake_air_heater_performance_test_recovery_voltage_rise_adc = (word)iVar7;
+            intake_air_heater_performance_test_recovery_voltage_rise_adc = (sword)iVar7;
             iVar11 = (int)(short)intake_air_heater_performance_test_turn_on_voltage_drop_adc;
-            iVar9 = (int)(short)intake_air_heater_performance_test_recovery_voltage_rise_adc;
+            iVar9 = (int)intake_air_heater_performance_test_recovery_voltage_rise_adc;
             if (iVar11 - iVar9 < 0) {
               uVar8 = iVar7 - iVar11;
             }
