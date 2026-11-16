@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Mon Nov 16 07:25:19 MST 2026
+// Generated: Mon Nov 16 07:32:25 MST 2026
 
 
 //
@@ -43657,7 +43657,11 @@ LAB_00047b98:
    fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back
    retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining
    engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Was
-   cm848_calculateEngineTimingOffset */
+   cm848_calculateEngineTimingOffset Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START)
+   sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command
+   modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while
+   engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it
+   only runs with the engine stopped and mode 1 recomputes the preset before a start. */
 
 void cm848_calculateFuelMeteringCommand(void)
 
