@@ -72,6 +72,8 @@ address,name,type,comment
 0x000592a4,boost_pressure_fixed_reference,word,ROM constant 1132 (61 kPa): subtracted from intake manifold pressure instead of barometric pressure when boost_uses_barometric_pressure_flag is 0 (cm848_calculateBoostPressure / cm848_evaluateProtectionModeFlags) (was oil_pressure_baseline_ref)
 0x000592b2,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
 0x000592c4,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel0_init / cm848_sensorChannel0_process
+0x000592e6,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel1_init / cm848_sensorChannel1_process
+0x0005930e,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel1_init / cm848_sensorChannel1_process
 0x00059346,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel2_init / cm848_sensorChannel2_process
 0x00059358,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel2_init / cm848_sensorChannel2_process
 0x0005936a,boost_pressure_sensor_config,byte,
@@ -79,6 +81,16 @@ address,name,type,comment
 0x0005938c,boost_pressure_linearization_y_axis,word[9],
 0x000593ae,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel4_init / cm848_sensorChannel4_process
 0x000593c6,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel4_init / cm848_sensorChannel4_process
+0x000593ee,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
+0x0005941a,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannelGeneric_init_configBundle / cm848_sensorChannelGeneric_update_configBundle
+0x00059456,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel7_init / cm848_sensorChannel7_process
+0x0005946c,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel7_init / cm848_sensorChannel7_process
+0x00059492,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
+0x000594a8,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
+0x000594ce,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannel9_init / cm848_sensorChannel9_process
+0x000594fa,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel9_init / cm848_sensorChannel9_process
+0x00059536,,word[24],Lookup table - x axis of 23 breakpoints after its byte-length word - read by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x00059566,,word[24],Lookup table - data: 23 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel10_intakeManifoldTemperatureInit / cm848_sensorChannel10_intakeManifoldTemperatureProcess
 0x000595a6,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel11_init / cm848_sensorChannel11_process
 0x000595b8,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel11_init / cm848_sensorChannel11_process
 0x000595da,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel12_init / cm848_sensorChannel12_process
@@ -87,6 +99,8 @@ address,name,type,comment
 0x00059610,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel13_init / cm848_sensorChannel13_process
 0x00059632,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_sensorChannel14_init / cm848_sensorChannel14_process
 0x00059644,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel14_init / cm848_sensorChannel14_process
+0x00059666,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_protection_init_configBundle / cm848_protection_update_configBundle
+0x0005967c,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_protection_init_configBundle / cm848_protection_update_configBundle
 0x000596a2,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel15_init / cm848_sensorChannel15_process
 0x000596ba,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel15_init / cm848_sensorChannel15_process
 0x000596d2,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_sensorChannel16_init / cm848_sensorChannel16_process
@@ -129,9 +143,13 @@ address,name,type,comment
 0x0005a834,,word[196],Lookup table - 2-D grid: 14 rows of 14 values (z[(y - 1) x 14 + x - 1] / no header) - read by governor_computeSpeedTargetWithThermalCorrection
 0x0005ab00,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
 0x0005ab12,,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5
+0x0005ab34,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
+0x0005ab5c,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel69_init / cm848_sensorChannel69_process
 0x0005ab84,cruise_switch_sensor_config,word,Base of the cruise-control switch QADC channel (0x2f/47) config struct; param_1 of cm848_processCruiseSwitchChannel/init; field +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; ROM-sourced so NO _cal
 0x0005ab88,cruise_engage_adc_valid_upper,word,ROM const =976 (0x3d0); upper open/short validity bound for the analog QADC channel checked by governor_cruise_engage_check (asm lhz 4(r4) @0x512edc); ~95% of 10-bit FS; field +4 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
 0x0005ab8a,cruise_engage_adc_valid_lower,word,ROM const =92 (0x5c); lower open/short validity bound (asm lhz 6(r4) @0x512ed0); ~9% of 10-bit FS; field +6 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
+0x0005abf8,,word[21],Lookup table - x axis of 20 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
+0x0005ac22,,word[21],Lookup table - data: 20 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis1 / sensorChannelTypeB_update_axis1
 0x0005ac5c,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
 0x0005ac6a,,word[7],Lookup table - data: 6 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeB_configInit_axis2 / sensorChannelTypeB_update_axis2
 0x0005ac88,,word[7],Lookup table - x axis of 6 breakpoints after its byte-length word - read by sensorChannelTypeB_configInit_axis3 / sensorChannelTypeB_update_axis3
@@ -146,6 +164,8 @@ address,name,type,comment
 0x0005ad86,,word[27],Lookup table - data: 26 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTable1 / cm848_processSensorLookupTable0
 0x0005adcc,,word[11],Lookup table - x axis of 10 breakpoints after its byte-length word - read by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
 0x0005ade2,,word[11],Lookup table - data: 10 values (one per axis breakpoint) after a byte-length word - read by cm848_initSensorLookupTableInit1 / cm848_processSensorLookupTable1
+0x0005ae08,,word[20],Lookup table - x axis of 19 breakpoints after its byte-length word - read by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
+0x0005ae30,,word[20],Lookup table - data: 19 values (one per axis breakpoint) after a byte-length word - read by sensorChannelTypeA_configInit_axis5 / sensorChannelTypeA_update_axis5
 0x0005ae58,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by fuel_coldStart_rpmLimit_select
 0x0005ae84,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by fuel_coldStart_rpmLimit_select
 0x0005aeb0,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by fuel_coldStart_demandMin_2dLookup
@@ -950,12 +970,16 @@ address,name,type,comment
 0x003fa034,PTR_boost_pressure_sensor_config_003fa034,pointer,
 0x003fa03c,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fa03e,PTR_DAT_003fa03e,pointer,
+0x003fa04c,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fa056,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fa058,PTR_DAT_003fa058,pointer,
+0x003fa060,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fa062,PTR_DAT_003fa062,pointer,
 0x003fa06a,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fa06c,PTR_DAT_003fa06c,pointer,
+0x003fa074,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fa076,PTR_DAT_003fa076,pointer,
+0x003fa07e,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fa080,PTR_DAT_003fa080,pointer,
 0x003fa088,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fa08a,PTR_DAT_003fa08a,pointer,
@@ -1694,6 +1718,7 @@ address,name,type,comment
 0x003fb1da,protection_load_scaled_filter_accum,dword,
 0x003fb1de,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fb1e0,PTR_DAT_003fb1e0,pointer,
+0x003fb1e8,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fb1ea,PTR_DAT_003fb1ea,pointer,
 0x003fb1f2,cruise_switch_interp_index,word,Interpolation cursor for the cruise-switch resistor-ladder lookup (table_interp_args_t.current_index field); param_3 of cm848_process/initCruiseSwitchChannel; written sth r,0(r5) @0x501be0 (update resets =2) and read/written as args->current_index inside lookupTableInterpolation (0x55ef4). NOT a full table_interp_args_t - lookupTableInterpolation takes the X/Y tables + input value as separate regs r4-r7, only current_index comes from this struct. Working RAM (ROM->RAM window) so no _cal
 0x003fb1f4,cruise_switch_filter_coeff_ptr,pointer,EMA smoothing-coefficient pointer for the cruise-switch ADC filter; param_7 of cm848_process/initCruiseSwitchChannel and param_2[0] of exponentialMovingAverage (0x56594) where *(short*)*ptr is the alpha coefficient; +0 of the channel's 8-byte EMA state. Renamed from PTR_DAT_003fb1f4 (type pointer was already correct)
@@ -2058,7 +2083,10 @@ address,name,type,comment
 0x003fb9a6,scheduler_task_flags_snapshot,word,
 0x003fb9a8,security_sequence_step,byte,
 0x003fb9aa,security_speed_working,word,
+0x003fb9ac,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fb9ae,PTR_DAT_003fb9ae,pointer,
+0x003fb9b6,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fb9c0,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fb9c2,PTR_DAT_003fb9c2,pointer,
 0x003fb9e2,PTR_DAT_003fb9e2,pointer,
 0x003fb9ea,boost_pressure_timing_ema_coeff_ptr,pointer,EMA coeff ptr for boost pressure timing filter
@@ -2102,6 +2130,7 @@ address,name,type,comment
 0x003fcd42,PTR_DAT_003fcd42,pointer,
 0x003fcd4a,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fcd4c,PTR_DAT_003fcd4c,pointer,
+0x003fcd54,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fcd56,PTR_DAT_003fcd56,pointer,
 0x003fcd96,PTR_DAT_003fcd96,pointer,
 0x003fcd9e,cruise_control_on_toggle_state,word,Cruise ON/OFF state: cm848_updateCruiseControlOnOffToggle flips it on each new ON/OFF switch press and forces 0 on a cruise switch or vehicle speed rationality fault or until cold start reaches governor setpoint; 0 = denied reason 5 ON/OFF SW (was cruise_protection_ok)
@@ -2939,7 +2968,7 @@ address,name,type,comment
 0x00405d9c,protection_rpm_correction_yend_cal,word[304],
 0x00406004,injection_timing_period_cal,word,
 0x00406462,fuel_blend_weight_threshold_cal,word,
-0x00406504,u__00406504,,
+0x00406504,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by governor_adjustment_compare
 0x00406526,,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by governor_adjustment_compare
 0x004065c4,fuel_flow_rate_default_cal,word,
 0x004065c6,fuel_timing_boost_scale_yend_cal,word[121],
@@ -6404,6 +6433,8 @@ address,name,type,comment
 0x003fd40f,j1939_periodic_queue1_count,byte,entry count for J1939 periodic diag queue 1 (max 10)
 0x003fee98,tpu_init_retry_count,word,TPU init retry count; gates diag fault flag
 0x003feed0,sensor_channel_cal_block_start,dword,base of sensor channel cal block (ROM->RAM copy dest)
+0x003feee2,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel5_init / cm848_sensorChannel5_process
+0x003feefa,,word[12],Lookup table - data: 11 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel5_init / cm848_sensorChannel5_process
 0x003fef22,,word[22],Lookup table - x axis of 21 breakpoints after its byte-length word - read by cm848_sensorChannel6_init / cm848_sensorChannel6_process
 0x003fef4e,,word[22],Lookup table - data: 21 values (one per axis breakpoint) after a byte-length word - read by cm848_sensorChannel6_init / cm848_sensorChannel6_process
 0x003fef8a,,word[12],Lookup table - x axis of 11 breakpoints after its byte-length word - read by cm848_sensorChannel8_init / cm848_sensorChannel8_process
@@ -6953,6 +6984,7 @@ address,name,type,comment
 0x003fcd14,governor_b_ema_offset_prev,word,previous-cycle protection_ema_cal_offset
 0x003fcd16,governor_b_engine_flag_80_prev,word,previous engine_feature_status_flags&0x80
 0x003fcd2a,protection_overtemp_entry_debounce_count,word,overtemp entry debounce accumulator
+0x003fcd2c,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
 0x003fcd66,protection_event26_classb_enable_prev,word,prev class-B enable bit (event 26)
 0x003fcd6a,air_conditioning_high_fuel_demand_cutout_count,word,Passes of the high fuel demand A/C clutch cutout: counts while air_conditioning_high_fuel_demand_cutout_done_flag is 0 and ends it (flag 1) at 50 (0x4086ba); zeroed when a cutout starts on fuel_demand_control_t.calculated above 396 (99 percent) (was protection_event26_fuel_temp_debounce_count)
 0x003fcd70,protection_event26_fuel_qty_gate_flag,word,event-26 fuel-qty window hysteresis gate (cond 4)

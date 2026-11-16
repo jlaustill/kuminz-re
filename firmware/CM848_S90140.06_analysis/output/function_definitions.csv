@@ -160,10 +160,10 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x00500234,sensorChannelConfigInit,0,cal_ptr_1,void*,Calibration pointer 1
 0x00500234,sensorChannelConfigInit,1,cal_ptr_2,void*,Calibration pointer 2
-0x00500234,sensorChannelConfigInit,2,cal_ptr_3,void*,Calibration pointer 3
-0x00500234,sensorChannelConfigInit,3,cal_ptr_4,void*,Calibration pointer 4
-0x00500234,sensorChannelConfigInit,4,ram_buffer_1,void*,RAM buffer pointer 1
-0x00500234,sensorChannelConfigInit,5,ram_buffer_2,void*,RAM buffer pointer 2
+0x00500234,sensorChannelConfigInit,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset (was cal_ptr_3)
+0x00500234,sensorChannelConfigInit,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with the state word at +10 (was cal_ptr_4)
+0x00500234,sensorChannelConfigInit,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word (was ram_buffer_1)
+0x00500234,sensorChannelConfigInit,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup (was ram_buffer_2)
 0x00500234,sensorChannelConfigInit,6,adc_index_primary,ushort,Primary ADC channel index
 0x00500234,sensorChannelConfigInit,7,adc_index_secondary,ushort,Secondary ADC channel index
 0x00500234,sensorChannelConfigInit,8,output_raw,ushort*,Pointer to raw output variable
@@ -174,10 +174,10 @@ function_address,function_name,param_index,name,type,comment
 
 0x00500a4c,updateSensorChannelWithConfig,0,cal_ptr_1,void*,Calibration pointer 1
 0x00500a4c,updateSensorChannelWithConfig,1,cal_ptr_2,void*,Calibration pointer 2
-0x00500a4c,updateSensorChannelWithConfig,2,cal_ptr_3,void*,Calibration pointer 3
-0x00500a4c,updateSensorChannelWithConfig,3,cal_ptr_4,void*,Calibration pointer 4
-0x00500a4c,updateSensorChannelWithConfig,4,ram_buffer_1,void*,RAM buffer pointer 1
-0x00500a4c,updateSensorChannelWithConfig,5,ram_buffer_2,void*,RAM buffer pointer 2
+0x00500a4c,updateSensorChannelWithConfig,2,cached_axis_offset,word *,Cache word of the lookup (r5) - passed to lookupTableInterpolation as its cached_axis_offset (was cal_ptr_3)
+0x00500a4c,updateSensorChannelWithConfig,3,x_axis,word *,X axis (r6): byte-length word then the breakpoints - looked up with the state word at +10 (was cal_ptr_4)
+0x00500a4c,updateSensorChannelWithConfig,4,y_data,word *,Y data (r7): one value per breakpoint after a byte-length word (was ram_buffer_1)
+0x00500a4c,updateSensorChannelWithConfig,5,flags,int,lookupTableInterpolation flags (r8): bit 0 = signed axis / bit 1 = signed data / bit 3 = step lookup (was ram_buffer_2)
 0x00500a4c,updateSensorChannelWithConfig,6,adc_index_primary,ushort,Primary ADC channel index
 0x00500a4c,updateSensorChannelWithConfig,7,adc_index_secondary,ushort,Secondary ADC channel index
 0x00500a4c,updateSensorChannelWithConfig,8,output_raw,ushort*,Pointer to raw/linearized output
