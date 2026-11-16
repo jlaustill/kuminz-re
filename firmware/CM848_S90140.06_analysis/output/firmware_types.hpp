@@ -962,7 +962,7 @@ typedef struct fault_list_state_t fault_list_state_t;
 typedef struct data_transfer_state_t data_transfer_state_t;
 typedef struct diag_session_state_t diag_session_state_t;
 typedef struct system_status_flags_t system_status_flags_t;
-typedef struct rpm_governor_state_t rpm_governor_state_t;
+typedef struct wastegate_duty_controller_state_t wastegate_duty_controller_state_t;
 typedef struct throttle_fuel_trim_t throttle_fuel_trim_t;
 typedef struct fuel_blend_state_t fuel_blend_state_t;
 typedef struct boost_pressure_state_t boost_pressure_state_t;
@@ -1255,18 +1255,18 @@ struct system_status_flags_t {
     uint16_t fault_detected_bits_320_to_335;  /* Word 20 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0720 output speed b8/b10 P0606 b9 P2146 b11 P2149 b12 P0234 overboost b13 P0251 b14 P2121 b15 P0336 (was protection_active) */
 };
 
-struct rpm_governor_state_t {
-    uint16_t commanded_rpm;  /* Governor output RPM */
-    uint16_t reserved_02;  /* Gap (0xa3cc) */
-    uint16_t reserved_04;  /* Gap (0xa3ce) */
-    uint16_t reserved_06;  /* Gap (0xa3d0) */
-    uint16_t lower_rpm_limit;  /* Bottom of governor droop band */
-    uint16_t limit_adjustment;  /* Pressure-based limit trim */
-    uint16_t reserved_0c;  /* Gap (0xa3d6) */
-    uint16_t reserved_0e;  /* Gap (0xa3d8) */
-    uint16_t desired_rpm;  /* Target RPM setpoint */
-    uint16_t adjustment_delta;  /* Pressure-based setpoint trim */
-    uint16_t base_rpm_lookup;  /* Base RPM from calibration table before adjustments */
+struct wastegate_duty_controller_state_t {
+    uint16_t request_half_duty_counts;  /* Governor output RPM */
+    uint16_t selected_control_term;  /* Gap (0xa3cc) */
+    uint16_t first_error_proportional_derivative_term;  /* Gap (0xa3ce) */
+    uint16_t first_error_gain;  /* Gap (0xa3d0) */
+    uint16_t floor_half_duty_counts;  /* Bottom of governor droop band */
+    uint16_t floor_altitude_adjustment_half_duty_counts;  /* Pressure-based limit trim */
+    uint16_t ceiling_grid_lookup_half_duty_counts;  /* Gap (0xa3d6) */
+    uint16_t floor_grid_lookup_half_duty_counts;  /* Gap (0xa3d8) */
+    uint16_t ceiling_half_duty_counts;  /* Target RPM setpoint */
+    uint16_t ceiling_altitude_adjustment_half_duty_counts;  /* Pressure-based setpoint trim */
+    uint16_t engine_speed_ceiling_half_duty_counts;  /* Base RPM from calibration table before adjustments */
 };
 
 struct throttle_fuel_trim_t {
@@ -1827,11 +1827,11 @@ struct fault_entry_t {
     uint16_t battery_voltage;  /* Battery voltage reading at fault time */
     uint16_t load_throttle;  /* Processed load/throttle value */
     uint16_t torque_limit;  /* Torque limit factor at fault time */
-    uint16_t diagnostic_word_1;  /* Diagnostic data word 1 */
-    uint8_t diagnostic_byte_3;  /* Diagnostic data byte 3 */
-    uint8_t diagnostic_byte_4;  /* Diagnostic data byte 4 */
-    uint16_t diagnostic_word_2;  /* Diagnostic data word 2 */
-    uint16_t diagnostic_word_3;  /* Diagnostic data word 3 */
+    uint16_t fuel_metering_feedback;  /* Diagnostic data word 1 */
+    uint8_t fuel_metering_feedback_fault;  /* Diagnostic data byte 3 */
+    uint8_t fuel_pressure_diagnostic;  /* Diagnostic data byte 4 */
+    uint16_t fuel_pressure_sensor_voltage;  /* Diagnostic data word 2 */
+    uint16_t fuel_pressure_setpoint;  /* Diagnostic data word 3 */
     uint16_t fuel_temperature;  /* fuel_temperature_sensor_filtered at capture (1/64 deg F) - not coolant (was coolant_temp_raw) */
     uint16_t status_flags;  /* Fault entry status/severity flags (bit 0 = newly active) */
 };

@@ -140,8 +140,8 @@ function_address,function_name,param_index,name,type,comment
 0x000255c0,cm848_j1939SendDm1ResponseMessage,0,dest_address,byte,Destination address for DM1 response
 0x000255c0,cm848_j1939SendDm1ResponseMessage,1,fault_count,byte,Number of active DTCs to report
 
-0x0002641c,cm848_j1939SendDiagnosticStatusMessage,0,dest_address,byte,Destination address for status response
-0x0002641c,cm848_j1939SendDiagnosticStatusMessage,1,status_type,byte,Type of diagnostic status to send
+0x0002641c,cm848_buildPgn65213FanDrive1Message,0,dest_address,byte,Destination address for status response
+0x0002641c,cm848_buildPgn65213FanDrive1Message,1,status_type,byte,Type of diagnostic status to send
 
 # -----------------------------------------------------------------------------
 # J1939 Queue/Transport Protocol
@@ -257,7 +257,7 @@ function_address,function_name,param_index,name,type,comment
 # J1939 RX Message Handlers - all receive j1939_rx_msg_t* as first param
 # -----------------------------------------------------------------------------
 0x00022d60,torqueControlModeHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
-0x000236f0,cm848_j1939ProcessGovernorRequest,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x000236f0,cm848_processEngineRetarderTsc1Request,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x000231cc,cm848_j1939DispatchPgnHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x00023b38,cm848_j1939DispatchAddressHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 

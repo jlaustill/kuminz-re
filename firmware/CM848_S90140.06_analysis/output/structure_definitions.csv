@@ -189,17 +189,17 @@ system_status_flags_t,0x003fe974,fault_detected_bits_320_to_335,word,2,Word 20 o
 # Speed Control State - vehicle/engine speed setpoints and limits
 # Used by processEngineRpmTarget and speed governor
 # Total size: 22 bytes (0x0040a3ca-0x0040a3df)
-rpm_governor_state_t,0x0040a3ca,commanded_rpm,word,2,Governor output RPM,,verified
-rpm_governor_state_t,0x0040a3ca,reserved_02,word,2,Gap (0xa3cc),,needs_review
-rpm_governor_state_t,0x0040a3ca,reserved_04,word,2,Gap (0xa3ce),,needs_review
-rpm_governor_state_t,0x0040a3ca,reserved_06,word,2,Gap (0xa3d0),,needs_review
-rpm_governor_state_t,0x0040a3ca,lower_rpm_limit,word,2,Bottom of governor droop band,,verified
-rpm_governor_state_t,0x0040a3ca,limit_adjustment,word,2,Pressure-based limit trim,,verified
-rpm_governor_state_t,0x0040a3ca,reserved_0c,word,2,Gap (0xa3d6),,needs_review
-rpm_governor_state_t,0x0040a3ca,reserved_0e,word,2,Gap (0xa3d8),,needs_review
-rpm_governor_state_t,0x0040a3ca,desired_rpm,word,2,Target RPM setpoint,,verified
-rpm_governor_state_t,0x0040a3ca,adjustment_delta,word,2,Pressure-based setpoint trim,,verified
-rpm_governor_state_t,0x0040a3ca,base_rpm_lookup,word,2,Base RPM from calibration table before adjustments,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,request_half_duty_counts,word,2,Governor output RPM,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,selected_control_term,word,2,Gap (0xa3cc),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,first_error_proportional_derivative_term,word,2,Gap (0xa3ce),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,first_error_gain,word,2,Gap (0xa3d0),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,floor_half_duty_counts,word,2,Bottom of governor droop band,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,floor_altitude_adjustment_half_duty_counts,word,2,Pressure-based limit trim,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,ceiling_grid_lookup_half_duty_counts,word,2,Gap (0xa3d6),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,floor_grid_lookup_half_duty_counts,word,2,Gap (0xa3d8),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,ceiling_half_duty_counts,word,2,Target RPM setpoint,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,ceiling_altitude_adjustment_half_duty_counts,word,2,Pressure-based setpoint trim,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,engine_speed_ceiling_half_duty_counts,word,2,Base RPM from calibration table before adjustments,,verified
 # Throttle Fuel Trim State - throttle-based fuel calculations
 # Used by calculateFuelDemandValue and throttle processing
 # Total size: 24 bytes (0x0040a3ea-0x0040a401)
@@ -786,11 +786,11 @@ fault_entry_t,0x003fe674,pressure_adj,byte,1,Pressure fuel adjustment byte,,veri
 fault_entry_t,0x003fe674,battery_voltage,word,2,Battery voltage reading at fault time,,verified
 fault_entry_t,0x003fe674,load_throttle,word,2,Processed load/throttle value,,verified
 fault_entry_t,0x003fe674,torque_limit,word,2,Torque limit factor at fault time,,verified
-fault_entry_t,0x003fe674,diagnostic_word_1,word,2,Diagnostic data word 1,,verified
-fault_entry_t,0x003fe674,diagnostic_byte_3,byte,1,Diagnostic data byte 3,,verified
-fault_entry_t,0x003fe674,diagnostic_byte_4,byte,1,Diagnostic data byte 4,,verified
-fault_entry_t,0x003fe674,diagnostic_word_2,word,2,Diagnostic data word 2,,verified
-fault_entry_t,0x003fe674,diagnostic_word_3,word,2,Diagnostic data word 3,,verified
+fault_entry_t,0x003fe674,fuel_metering_feedback,word,2,Diagnostic data word 1,,verified
+fault_entry_t,0x003fe674,fuel_metering_feedback_fault,byte,1,Diagnostic data byte 3,,verified
+fault_entry_t,0x003fe674,fuel_pressure_diagnostic,byte,1,Diagnostic data byte 4,,verified
+fault_entry_t,0x003fe674,fuel_pressure_sensor_voltage,word,2,Diagnostic data word 2,,verified
+fault_entry_t,0x003fe674,fuel_pressure_setpoint,word,2,Diagnostic data word 3,,verified
 fault_entry_t,0x003fe674,fuel_temperature,word,2,fuel_temperature_sensor_filtered at capture (1/64 deg F) - not coolant (was coolant_temp_raw),,verified
 fault_entry_t,0x003fe674,status_flags,word,2,Fault entry status/severity flags (bit 0 = newly active),,verified
 # Boost In Range (BIR) Configuration - ROM calibration thresholds for P0069/Fault 433
