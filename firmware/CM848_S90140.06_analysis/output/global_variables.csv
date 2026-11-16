@@ -579,8 +579,7 @@ address,name,type,comment
 0x003060e8,mios_mdasm29,mios_mdasm_t,MIOS1 submodule 29: cm848_miosChannel29* pass this base; SCRD (+6) bit 15 = the MDA29 pin = discrete input line 127 - was MIOS_MPWMSM5_* (mios_mpwmsm5_t)
 0x003060f0,mios_mdasm30,mios_mdasm_t,MIOS1 submodule 30 (0x306000 + 8 x 30): cm848_miosChannel30* pass this base; SCRD (+6) bit 15 = the MDA30 pin = the ignition key line (1 = key on; discrete input line 128 = switch 0). Was MIOS_MCPSMSCR (mios1_global_regs_t) + mios_key_off_detection: the real MCPSMSCR is 0x306816 (mios1_ext_816) and the MIOS1 interrupt registers are at 0x306c00 (mios1_isr)
 0x003060f8,mios_mdasm31,mios_mdasm_t,MIOS1 submodule 31: cm848_miosChannel31* pass this base (was MIOS_MIOS1RPR / MIOS_MIOS1LVL)
-0x00306100,mios1_ext_ctrl,mios1_ext_ctrl_t,
-0x00306102,mios1_ext_ctrl_b,,
+0x00306100,mios_mpiosm32,mios_mpiosm_t,MIOS1 16-bit parallel port I/O submodule (submodule 32 at 0x306000 + 8 x 32): data / data_direction (was mios1_ext_ctrl)
 0x00306816,mios1_ext_816,word,
 0x00306c00,mios1_isr,mios1_isr_t,
 0x00306c04,mios1_isr.EN,,
@@ -5571,56 +5570,9 @@ address,name,type,comment
 0x0040c089,engine_feature_status_flags_2,byte,
 0x0040c08a,logical_output_request_snapshot,byte,Per-cycle snapshot copy of logical_output_request_bits (0x40c080) taken at the top of cm848_applyLogicalOutputRequests - read by diag_faultMatch_outputCheck_update as the expected output state vs the feedback switch (was protection_fault_status_snapshot)
 0x0040c094,logical_output_request_priority,byte,Per-output-index severity/priority byte array - set/clear of a request bit proceeds only when the new severity >= the value stored here so a higher-priority protection source wins - written by several protection managers (was fault_severity_snapshot_array) (Medium confidence)
-0x0040c0e5,j1939_dm1_prev_b0,byte,
-0x0040c0e6,j1939_dm1_prev_b1,byte,
-0x0040c0e7,j1939_dm1_prev_b2,byte,
-0x0040c0e8,j1939_dm1_prev_b3,byte,
-0x0040c0e9,j1939_dm1_prev_b4,byte,
-0x0040c0ea,j1939_dm1_prev_b5,byte,
-0x0040c0eb,j1939_dm1_prev_b6,byte,
-0x0040c0ec,j1939_dm1_prev_b7,byte,
-0x0040c0ed,j1939_dm1_prev_b8,byte,
-0x0040c0ee,j1939_dm1_prev_b9,byte,
-0x0040c0f3,j1939_lamp_status_byte_a,byte,
-0x0040c0f4,j1939_lamp_status_byte_b,byte,
-0x0040c0f5,j1939_lamp_status_byte_c,byte,
-0x0040c0f6,j1939_lamp_status_prev,byte,
-0x0040c0f7,j1939_dm1_prev_b10,byte,
-0x0040c0f9,j1939_dm1_prev_b11,byte,
-0x0040c0fa,j1939_dm1_fault_spn_ext,byte,
-0x0040c0fb,j1939_dm1_tx_b2,byte,
-0x0040c0fc,j1939_dm1_tx_b3,byte,
-0x0040c0fd,j1939_dm1_tx_b4,byte,
-0x0040c0fe,j1939_dm1_tx_b5,byte,
-0x0040c0ff,j1939_dm1_tx_b6,byte,
-0x0040c100,j1939_dm1_tx_b7,byte,
-0x0040c101,j1939_dm1_tx_b8,byte,
-0x0040c102,j1939_dm1_tx_b9,byte,
-0x0040c107,io_pin_status_byte,byte,
-0x0040c108,j1939_protection_config_byte,byte,
-0x0040c109,j1939_dm1_parameter_byte,byte,
-0x0040c10a,j1939_fault_occurrence_prev,byte,
-0x0040c10b,j1939_periodic_timer_prev,byte,
-0x0040c10c,output_lines_0_to_7_state,byte,Base byte (lines 0-7) of the output-line command shadow - siblings output_lines_8_to_15_state..output_lines_152_to_159_state up to +19 (injector_control_t reuses +11 to +17) - written by cm848_applyLogicalOutputRequests as request XOR polarity - not DM2 (was j1939_dm2_fault_bit_array)
-0x0040c10d,output_lines_8_to_15_state,byte,Shadow of output lines 8-15 (bit = line - 8); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_0)
-0x0040c10e,output_lines_16_to_23_state,byte,Shadow of output lines 16-23 (bit = line - 16); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_1)
-0x0040c10f,output_lines_24_to_31_state,byte,Shadow of output lines 24-31 (bit = line - 24); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_2)
-0x0040c110,output_lines_32_to_39_state,byte,Shadow of output lines 32-39 (bit = line - 32); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_3)
-0x0040c111,output_lines_40_to_47_state,byte,Shadow of output lines 40-47 (bit = line - 40); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_4)
-0x0040c112,output_lines_48_to_55_state,byte,Shadow of output lines 48-55 (bit = line - 48); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_5)
-0x0040c113,output_lines_56_to_63_state,byte,Shadow of output lines 56-63 (bit = line - 56); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_6)
-0x0040c114,output_lines_64_to_71_state,byte,Shadow of output lines 64-71 (bit = line - 64); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_7)
-0x0040c115,output_lines_72_to_79_state,byte,Shadow of output lines 72-79 (bit = line - 72); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_8)
-0x0040c116,output_lines_80_to_87_state,byte,Shadow of output lines 80-87 (bit = line - 80); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_9)
-0x0040c117,injector_control_t_0040c117,injector_control_t,
-0x0040c118,injector_control_t_0040c117.enable_ch8_15,,
-0x0040c119,injector_control_t_0040c117.channel_status,,
-0x0040c11a,injector_control_t_0040c117.timing_mode,,
-0x0040c11b,injector_control_t_0040c117.output_ch0,,
-0x0040c11c,injector_control_t_0040c117.fault_flags,,
-0x0040c11d,injector_control_t_0040c117.output_ch1,,
-0x0040c11e,output_lines_144_to_151_state,byte,Shadow of output lines 144-151 (bit = line - 144) kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow; cm848_refreshOutputPortsAndReadback copies it to supervisor_register_146_output_value for the supervisor chip write (was j1939_dm1_fault_inhibit_byte)
-0x0040c11f,output_lines_152_to_159_state,byte,Shadow of output lines 152-159 (bit = line - 152); kept by mpc555_driveOutputLineHigh / mpc555_driveOutputLineLow and read by other code to see the current output state (was j1939_dm1_fault_byte_10)
+0x0040c0e4,output_line_read_back,discrete_line_image_t,Output line read-back image (20 bytes = lines 0-159 / byte N/8 bit N%8): cm848_refreshOutputPortsAndReadback reads each output port back into it before it rewrites the ports from output_line_state (MIOS port = lines 8-23 / SIU_SGPIODT1-2 = 24-87 / MDASM pins = 120-143 / the previous supervisor output byte = 144-151 / the serial output driver = 152-159); bytes 0 and 11-14 have no port (were j1939_dm1_prev_b0..b10 / j1939_lamp_status_byte_a..c / j1939_lamp_status_prev)
+0x0040c0f8,input_line_image,discrete_line_image_t,Discrete input line image (20 bytes = lines 0-159 / byte N/8 bit N%8): cm848_refreshInputLineImage fills every port in one pass and cm848_readDiscreteInputLine one line (MIOS port = lines 8-23 / SIU_SGPIODT1-2 = 24-87 / MDASM pins = 120-128 / supervisor chip = 130-151 / serial output driver status = 152-159); bytes 0 and 11-14 have no source; cm848_scanAndDebounceSwitchInputs reads the switch lines from it (were j1939_dm1_prev_b11 / j1939_dm1_fault_spn_ext / j1939_dm1_tx_b2..b9 / io_pin_status_byte / j1939_protection_config_byte / j1939_dm1_parameter_byte / j1939_fault_occurrence_prev / j1939_periodic_timer_prev)
+0x0040c10c,output_line_state,discrete_line_image_t,Output line command shadow (20 bytes = lines 0-159 / byte N/8 bit N%8): cm848_applyLogicalOutputRequests writes request XOR polarity per line; mpc555_driveOutputLineHigh / Low keep it; cm848_refreshOutputPortsAndReadback copies it to the ports (lines 88-119 = TPU channels used as discrete outputs) (were output_lines_0_to_7_state..output_lines_152_to_159_state and the injector_control_t instance on lines 88-143)
 0x0040c120,exception_reset_status,word,
 0x0040c122,exception_sprg0,dword,
 0x0040c126,exception_sprg1,word,

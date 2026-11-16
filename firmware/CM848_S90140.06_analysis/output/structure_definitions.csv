@@ -129,13 +129,6 @@ governor_output_t,0x0040aec2,governor_output_high,word,2,Governor output command
 # Injector Control State - fuel injector enable and timing control
 # Used by fuel injection output drivers
 # Total size: 7 bytes (0x0040c117-0x0040c11d)
-injector_control_t,0x0040c117,enable_ch0_7,byte,1,Injector enable bitmap channels 0-7,,verified
-injector_control_t,0x0040c117,enable_ch8_15,byte,1,Injector enable bitmap channels 8-15,,verified
-injector_control_t,0x0040c117,channel_status,byte,1,Output channel status flags,,verified
-injector_control_t,0x0040c117,timing_mode,byte,1,Injector timing mode selector,,verified
-injector_control_t,0x0040c117,output_ch0,byte,1,Channel 0 output state,,verified
-injector_control_t,0x0040c117,fault_flags,byte,1,Injector fault detection flags,,verified
-injector_control_t,0x0040c117,output_ch1,byte,1,Channel 1 output state,,verified
 # J1850 PCI link state (was can_rx_state_t - not J1939/CAN) - reviewed 2026-11-11
 # Indexes into pci_receive_message_table / pci_transmit_message_table for the frame being received
 # Total size: 8 bytes (0x0040b34e-0x0040b355); all four leading fields are byte-accessed (lbz/stb)
@@ -860,6 +853,31 @@ siu_gpio_data_register_t,,byte_0,byte,1,Bits 31-24: lines 24-31 in SIU_SGPIODT1 
 siu_gpio_data_register_t,,byte_1,byte,1,Bits 23-16: lines 32-39 in SIU_SGPIODT1 / lines 64-71 in SIU_SGPIODT2,,verified
 siu_gpio_data_register_t,,byte_2,byte,1,Bits 15-8: lines 40-47 in SIU_SGPIODT1 / lines 72-79 in SIU_SGPIODT2,,verified
 siu_gpio_data_register_t,,byte_3,byte,1,Bits 7-0: lines 48-55 in SIU_SGPIODT1 / lines 80-87 in SIU_SGPIODT2,,verified
+# discrete_line_image_t: one byte per 8 discrete lines (line N = byte N/8 bit N%8); three instances:
+#   output_line_read_back 0x40c0e4 / input_line_image 0x40c0f8 / output_line_state 0x40c10c
+discrete_line_image_t,,lines_0_to_7,byte,1,Lines 0-7 (bit = line - 0),,verified
+discrete_line_image_t,,lines_8_to_15,byte,1,Lines 8-15 (bit = line - 8),,verified
+discrete_line_image_t,,lines_16_to_23,byte,1,Lines 16-23 (bit = line - 16),,verified
+discrete_line_image_t,,lines_24_to_31,byte,1,Lines 24-31 (bit = line - 24),,verified
+discrete_line_image_t,,lines_32_to_39,byte,1,Lines 32-39 (bit = line - 32),,verified
+discrete_line_image_t,,lines_40_to_47,byte,1,Lines 40-47 (bit = line - 40),,verified
+discrete_line_image_t,,lines_48_to_55,byte,1,Lines 48-55 (bit = line - 48),,verified
+discrete_line_image_t,,lines_56_to_63,byte,1,Lines 56-63 (bit = line - 56),,verified
+discrete_line_image_t,,lines_64_to_71,byte,1,Lines 64-71 (bit = line - 64),,verified
+discrete_line_image_t,,lines_72_to_79,byte,1,Lines 72-79 (bit = line - 72),,verified
+discrete_line_image_t,,lines_80_to_87,byte,1,Lines 80-87 (bit = line - 80),,verified
+discrete_line_image_t,,lines_88_to_95,byte,1,Lines 88-95 (bit = line - 88),,verified
+discrete_line_image_t,,lines_96_to_103,byte,1,Lines 96-103 (bit = line - 96),,verified
+discrete_line_image_t,,lines_104_to_111,byte,1,Lines 104-111 (bit = line - 104),,verified
+discrete_line_image_t,,lines_112_to_119,byte,1,Lines 112-119 (bit = line - 112),,verified
+discrete_line_image_t,,lines_120_to_127,byte,1,Lines 120-127 (bit = line - 120),,verified
+discrete_line_image_t,,lines_128_to_135,byte,1,Lines 128-135 (bit = line - 128),,verified
+discrete_line_image_t,,lines_136_to_143,byte,1,Lines 136-143 (bit = line - 136),,verified
+discrete_line_image_t,,lines_144_to_151,byte,1,Lines 144-151 (bit = line - 144),,verified
+discrete_line_image_t,,lines_152_to_159,byte,1,Lines 152-159 (bit = line - 152),,verified
+# mios_port_data_register_t: byte view of a copy of the MIOS parallel port data register (big-endian)
+mios_port_data_register_t,,byte_0,byte,1,Bits 15-8 (the byte at the lower address): input lines 16-23,,verified
+mios_port_data_register_t,,byte_1,byte,1,Bits 7-0: input lines 8-15,,verified
 # ETC1 / Governor State Block - combined ETC1 handler and governor control state
 # Used by cm848_j1939ProcessTorqueSpeedControl, torqueControlModeHandler,
 #   cm848_j1939ProcessGovernorRequest, cm848_processGovernorModeTransition
@@ -1417,8 +1435,8 @@ mios_mdasm27_t,0x003060d8,SCRD,word,2,Status/Control Register D (0x405=enable / 
 # ctrl_b: initialized 0x2000 at startup; bits 0x8200 by flash init
 # Also buffers DM1 lamp status bytes during J1939 DM1 transmission
 # =============================================================================
-mios1_ext_ctrl_t,0x00306100,ctrl_a,word,2,Control/status word A (bit 0x2000=capability flag),,verified
-mios1_ext_ctrl_t,0x00306100,ctrl_b,word,2,Control/status word B (startup: 0x2000),,verified
+mios_mpiosm_t,0x00306100,data,word,2,Port data register: pin n = bit n (whole-word read-modify-write by the output line drivers),,verified
+mios_mpiosm_t,0x00306100,data_direction,word,2,Port data direction register: bit n set = pin n is an output (0x2000 at startup / 0x200 / 0x8200 before driving pins 9 and 15),,verified
 # =============================================================================
 # MIOS1 ISR flag and enable registers @ 0x306c00
 # MBAR + 0xEC00 = 0x306C00 - MIOS1 interrupt service registers

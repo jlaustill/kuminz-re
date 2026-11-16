@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 22:05:41 MST 2026
+// Generated: Sun Nov 15 22:12:58 MST 2026
 
 
 //
@@ -518,14 +518,14 @@ void mpc555_updatePowerStateOutputs(void)
   SIU_SGPIODT1 = sVar5;
   dVar1 = ecu_power_state_flags.capability_flags;
   if ((dVar1 & 0x10) == 0) {
-    wVar2 = mios1_ext_ctrl.ctrl_a;
+    wVar2 = mios_mpiosm32.data;
     uVar3 = wVar2 & 0xdfff;
   }
   else {
-    wVar2 = mios1_ext_ctrl.ctrl_a;
+    wVar2 = mios_mpiosm32.data;
     uVar3 = wVar2 | 0x2000;
   }
-  mios1_ext_ctrl.ctrl_a = uVar3;
+  mios_mpiosm32.data = uVar3;
   return;
 }
 
@@ -1002,10 +1002,10 @@ void mpc555_initHardwareConfig(void)
   data_transfer_state_t_003fec82.state._0_1_ = 0;
   data_transfer_state_t_003fec82.state._1_1_ = 0;
   eeprom_xfer_state.flash2_write_callback = 0x1338;
-  wVar1 = mios1_ext_ctrl.ctrl_a;
-  mios1_ext_ctrl.ctrl_a = wVar1 & 0xfdff;
-  wVar1 = mios1_ext_ctrl.ctrl_b;
-  mios1_ext_ctrl.ctrl_b = wVar1 | 0x200;
+  wVar1 = mios_mpiosm32.data;
+  mios_mpiosm32.data = wVar1 & 0xfdff;
+  wVar1 = mios_mpiosm32.data_direction;
+  mios_mpiosm32.data_direction = wVar1 | 0x200;
   return;
 }
 
@@ -1775,10 +1775,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
-  word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
+  word qadc_b_pqa4_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -1863,8 +1863,8 @@ void mpc555_systemInitialization(void)
   cm848_stubFunction1();
   dVar1 = ecu_power_state_flags.capability_flags;
   ecu_power_state_flags.capability_flags = dVar1 | 2;
-  wVar3 = mios1_ext_ctrl.ctrl_b;
-  mios1_ext_ctrl.ctrl_b = wVar3 | 0x2000;
+  wVar3 = mios_mpiosm32.data_direction;
+  mios_mpiosm32.data_direction = wVar3 | 0x2000;
   ecu_power_state_flags.capability_flags = dVar1 | 0x12;
   MIOS_MPWMSM0_PERR.SCR = 0x4000;
   MIOS_MPWMSM1_PERR.SCR = 0x4000;
@@ -3644,10 +3644,10 @@ bool mpc555_cmfEraseBlocks(uint param_1)
   ushort uVar10;
   
   data_transfer_state_t_003fec82.reserved_02 = 1;
-  wVar4 = mios1_ext_ctrl.ctrl_a;
-  mios1_ext_ctrl.ctrl_a = wVar4 & 0xfdff | 0x8000;
-  wVar4 = mios1_ext_ctrl.ctrl_b;
-  mios1_ext_ctrl.ctrl_b = wVar4 | 0x8200;
+  wVar4 = mios_mpiosm32.data;
+  mios_mpiosm32.data = wVar4 & 0xfdff | 0x8000;
+  wVar4 = mios_mpiosm32.data_direction;
+  mios_mpiosm32.data_direction = wVar4 | 0x8200;
   cmf_erase_pulse_total = 0;
   CMFCTL_A = cmf_erase_control_base | cmf_erase_control_bits;
   CMFCTL_B = cmf_erase_control_base | cmf_erase_control_bits;
@@ -6671,7 +6671,7 @@ void hpcr_periodicTaskSet_fuelFinal(void)
   cm848_sensorChannel15_init();
   sensorChannelTypeB_configInit_axis2();
   cm848_sensorChannel13_init();
-  hpcr_injectorPulseWidthCalc();
+  cm848_refreshInputLineImage();
   cm848_selectFuelFlowMode();
   mpc555_updateSensorDiagnosticFlags();
   cm848_setEngineRpmFromCalibration();
@@ -33633,7 +33633,7 @@ void mpc555_initFuelDemandOffsetFilter(void)
 
 /* Serial output driver completion: when transfers are more than 625 time-base ticks apart copies
    the reply into serial_output_driver_status_byte (read by protection_j1939_control_logic /
-   hpcr_injectorPulseWidthCalc) | review-function-readability reviewed 2026-11-11 - Readability
+   cm848_refreshInputLineImage) | review-function-readability reviewed 2026-11-11 - Readability
    Medium Accuracy Confidence Medium | serial_output_driver_job (serial output driver PCS2 SPI mode
    3) completion_callback - invoked by cm848_completeQspiJob via cm848_onQspiFinished - set by
    cm848_initSerialOutputDriverJob - not a dead function */
@@ -33660,8 +33660,8 @@ void cm848_onSerialOutputDriverReply(void)
 
 /* Serial output driver (QSPI PCS2 / SPI mode 3 / 8-bit / 2000 kHz): registers its QSPI slot and
    sets up serial_output_driver_job (transmit = output lines 152-159 byte / receive = status reply);
-   presets output_lines_152_to_159_state to 0xff | review-function-readability reviewed 2026-11-11 -
-   Readability Medium Accuracy Confidence Medium */
+   presets output_line_state.lines_152_to_159 to 0xff | review-function-readability reviewed
+   2026-11-11 - Readability Medium Accuracy Confidence Medium */
 
 void cm848_initSerialOutputDriverJob(void)
 
@@ -33672,7 +33672,7 @@ void cm848_initSerialOutputDriverJob(void)
   serial_output_driver_job.command_bytes = &DAT_0005772e;
   serial_output_driver_job.receive_words = &serial_output_driver_reply;
   serial_output_driver_job.completion_callback = cm848_onSerialOutputDriverReply;
-  output_lines_152_to_159_state = 0xff;
+  output_line_state.lines_152_to_159 = 0xff;
   return;
 }
 
@@ -49468,12 +49468,12 @@ byte cm848_readSwitchHardwareInput(uint param_1)
 //
 
 /* 32 logical switch inputs: datalink-sourced switches (switch_input_datalink_source_bits_cal) take
-   switch_input_datalink_state_bits / hardware switches read their line from the input-line image at
-   0x40c0f8 XOR switch_input_polarity_bits_cal / switches with no line keep their software-set
-   state; 4-sample debounce (all 4 set -> set / all 4 clear -> clear / else hold) into
-   switch_input_state_bits; also counts falling edges of the ignition key line (mios_mdasm30.SCRD
-   bit 15) into ignition_key_off_count (was mpc555_updateEngineCycleOutputs) |
-   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   switch_input_datalink_state_bits / hardware switches read their line from input_line_image XOR
+   switch_input_polarity_bits_cal / switches with no line keep their software-set state; 4-sample
+   debounce (all 4 set -> set / all 4 clear -> clear / else hold) into switch_input_state_bits; also
+   counts falling edges of the ignition key line (mios_mdasm30.SCRD bit 15) into
+   ignition_key_off_count (was mpc555_updateEngineCycleOutputs) | review-function-readability
+   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
 void cm848_scanAndDebounceSwitchInputs(void)
 
@@ -49502,8 +49502,9 @@ void cm848_scanAndDebounceSwitchInputs(void)
       }
       else {
         bVar2 = (byte)(1 << (uVar6 & 7));
-        if ((((uint)*(byte *)(((int)(uint)uVar1 >> 3) + 0x40c0f8) & 1 << (uVar1 & 7)) != 0) ==
-            (((uint)diagnostic_service_dispatch_table[iVar4 + 0x5a] & 1 << (uVar6 & 7)) != 0)) {
+        if ((((uint)(&input_line_image.lines_0_to_7)[(int)(uint)uVar1 >> 3] & 1 << (uVar1 & 7)) != 0
+            ) == (((uint)diagnostic_service_dispatch_table[iVar4 + 0x5a] & 1 << (uVar6 & 7)) != 0))
+        {
           switch_input_sample_bits[iVar4] = switch_input_sample_bits[iVar4] & ~bVar2;
         }
         else {
@@ -49569,7 +49570,7 @@ void hpcr_initProtectionAndOutputCycle(void)
     switch_input_state_bits[uVar2] = j1939_switch_input_default_state_bits[uVar2];
     uVar2 = uVar2 + 1 & 0xffff;
   } while (uVar2 < 4);
-  hpcr_injectorPulseWidthCalc();
+  cm848_refreshInputLineImage();
   uVar1 = 0;
   do {
     cm848_scanAndDebounceSwitchInputs();
@@ -49726,9 +49727,9 @@ void cm848_checkProtectionModeFlags(void)
 //
 
 /* Per-cycle: snapshots the request array then for each logical output writes its line command =
-   (request bit XOR polarity bit) into the output_lines_*_state shadow at
-   output_lines_0_to_7_state[line>>3] - no alarm logic (was cm848_protectionAlarmHandler) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   (request bit XOR polarity bit) into the output_line_state shadow (byte line>>3 / bit line%8) - no
+   alarm logic (was cm848_protectionAlarmHandler) | review-function-readability reviewed 2026-11-13
+   - Readability Medium Accuracy Confidence High */
 
 void cm848_applyLogicalOutputRequests(void)
 
@@ -49755,12 +49756,12 @@ void cm848_applyLogicalOutputRequests(void)
       uVar3 = *(byte *)((int)&protection_event_output_polarity_bits_cal + iVar2) & uVar3;
       iVar2 = (int)(uint)uVar1 >> 3;
       if ((uVar3 & ~uVar4) == 0 && (uVar4 & ~uVar3) == 0) {
-        (&output_lines_0_to_7_state)[iVar2] =
-             (&output_lines_0_to_7_state)[iVar2] & ~(byte)(1 << (uVar1 & 7));
+        (&output_line_state.lines_0_to_7)[iVar2] =
+             (&output_line_state.lines_0_to_7)[iVar2] & ~(byte)(1 << (uVar1 & 7));
       }
       else {
-        (&output_lines_0_to_7_state)[iVar2] =
-             (&output_lines_0_to_7_state)[iVar2] | (byte)(1 << (uVar1 & 7));
+        (&output_line_state.lines_0_to_7)[iVar2] =
+             (&output_line_state.lines_0_to_7)[iVar2] | (byte)(1 << (uVar1 & 7));
       }
     }
     uVar5 = uVar5 + 1 & 0xffff;
@@ -49791,10 +49792,10 @@ void cm848_processProtectionFaultsAndTiming(void)
 //
 
 /* (line): reads the port holding discrete input line N (MIOS1 / SIU_SGPIODT1 / SIU_SGPIODT2 / MIOS
-   pin states / RAM status bytes for lines 128-151) into the input-line image at 0x40c0f8 + N/8 and
-   returns the line's bit; lines below 8 and above 151 are not read (was
-   hpcr_protectionWarningHandler) | review-function-readability reviewed 2026-11-12 - Readability
-   Medium Accuracy Confidence Medium */
+   pin states / RAM status bytes for lines 128-151) into input_line_image (byte N/8) and returns the
+   line's bit; lines below 8 and above 151 are not read (was hpcr_protectionWarningHandler) |
+   review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
+    */
 
 undefined4
 cm848_readDiscreteInputLine(uint param_1,undefined4 param_2,undefined4 param_3,uint param_4)
@@ -49804,22 +49805,21 @@ cm848_readDiscreteInputLine(uint param_1,undefined4 param_2,undefined4 param_3,u
   word wVar2;
   undefined4 uVar3;
   int iVar4;
-  byte local_8;
-  byte bStack_7;
+  mios_port_data_register_t input_port_copy;
   siu_gpio_data_register_t gpio_register_copy;
   
   if ((int)param_1 < 8) goto LAB_0004f6ac;
   if ((int)param_1 < 0x10) {
-    wVar2 = mios1_ext_ctrl.ctrl_a;
-    bStack_7 = (byte)wVar2;
+    wVar2 = mios_mpiosm32.data;
+    input_port_copy.byte_1 = (byte)wVar2;
     iVar4 = 1;
     goto LAB_0004f6a0;
   }
   if ((int)param_1 < 0x18) {
-    wVar2 = mios1_ext_ctrl.ctrl_a;
-    local_8 = (byte)(wVar2 >> 8);
-    param_4 = (uint)local_8;
-    j1939_dm1_fault_spn_ext = local_8;
+    wVar2 = mios_mpiosm32.data;
+    input_port_copy.byte_0 = (byte)(wVar2 >> 8);
+    param_4 = (uint)input_port_copy.byte_0;
+    input_line_image.lines_16_to_23 = input_port_copy.byte_0;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x20) {
@@ -49828,7 +49828,7 @@ cm848_readDiscreteInputLine(uint param_1,undefined4 param_2,undefined4 param_3,u
     iVar4 = 3;
 LAB_0004f3cc:
     param_4 = (uint)gpio_register_copy.byte_0;
-    *(byte *)(iVar4 + 0x40c0f8) = gpio_register_copy.byte_0;
+    (&input_line_image.lines_0_to_7)[iVar4] = gpio_register_copy.byte_0;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x28) {
@@ -49837,7 +49837,7 @@ LAB_0004f3cc:
     iVar4 = 4;
 LAB_0004f3f8:
     param_4 = (uint)gpio_register_copy.byte_1;
-    *(byte *)(iVar4 + 0x40c0f8) = gpio_register_copy.byte_1;
+    (&input_line_image.lines_0_to_7)[iVar4] = gpio_register_copy.byte_1;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x30) {
@@ -49846,7 +49846,7 @@ LAB_0004f3f8:
     iVar4 = 5;
 LAB_0004f424:
     param_4 = (uint)gpio_register_copy.byte_2;
-    *(byte *)(iVar4 + 0x40c0f8) = gpio_register_copy.byte_2;
+    (&input_line_image.lines_0_to_7)[iVar4] = gpio_register_copy.byte_2;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x38) {
@@ -49854,7 +49854,7 @@ LAB_0004f424:
     iVar4 = 6;
 LAB_0004f450:
     param_4 = (uint)gpio_register_copy & 0xff;
-    *(byte *)(iVar4 + 0x40c0f8) = gpio_register_copy.byte_3;
+    (&input_line_image.lines_0_to_7)[iVar4] = gpio_register_copy.byte_3;
     goto LAB_0004f6ac;
   }
   if ((int)param_1 < 0x40) {
@@ -49891,7 +49891,7 @@ LAB_0004f450:
     }
     param_4 = 1;
 LAB_0004f5b4:
-    io_pin_status_byte = (byte)param_4 | io_pin_status_byte;
+    input_line_image.lines_120_to_127 = (byte)param_4 | input_line_image.lines_120_to_127;
     goto LAB_0004f6ac;
   case 0x79:
     wVar2 = MIOS_MDASM12_AR.SCRD;
@@ -49905,22 +49905,22 @@ LAB_0004f5b4:
   default:
 LAB_0004f638:
     if ((int)param_1 < 0x88) {
-      param_4 = j1939_protection_config_byte & 3 |
+      param_4 = input_line_image.lines_128_to_135 & 3 |
                 (supervisor_input_lines_130_to_135_state & 0x3f) << 2;
-      j1939_protection_config_byte = (byte)param_4;
+      input_line_image.lines_128_to_135 = (byte)param_4;
       goto LAB_0004f6ac;
     }
     if ((int)param_1 < 0x90) {
       param_4 = (uint)supervisor_input_lines_136_to_143_state;
-      j1939_dm1_parameter_byte = supervisor_input_lines_136_to_143_state;
+      input_line_image.lines_136_to_143 = supervisor_input_lines_136_to_143_state;
       goto LAB_0004f6ac;
     }
     if ((int)param_1 < 0x98) {
       iVar4 = 0x12;
-      bStack_7 = supervisor_input_lines_144_to_151_state;
+      input_port_copy.byte_1 = supervisor_input_lines_144_to_151_state;
 LAB_0004f6a0:
-      param_4 = (uint)bStack_7;
-      *(byte *)(iVar4 + 0x40c0f8) = bStack_7;
+      param_4 = (uint)input_port_copy.byte_1;
+      (&input_line_image.lines_0_to_7)[iVar4] = input_port_copy.byte_1;
       goto LAB_0004f6ac;
     }
     goto LAB_0004f6dc;
@@ -49962,15 +49962,15 @@ LAB_0004f6a0:
     wVar2 = mios_mdasm30.SCRD;
     if ((wVar2 & 0x8000) == 0) {
       param_4 = 0xfe;
-      j1939_protection_config_byte = j1939_protection_config_byte & 0xfe;
+      input_line_image.lines_128_to_135 = input_line_image.lines_128_to_135 & 0xfe;
     }
     else {
       param_4 = 1;
-      j1939_protection_config_byte = j1939_protection_config_byte | 1;
+      input_line_image.lines_128_to_135 = input_line_image.lines_128_to_135 | 1;
     }
     goto LAB_0004f6ac;
   }
-  io_pin_status_byte = (byte)param_4 & io_pin_status_byte;
+  input_line_image.lines_120_to_127 = (byte)param_4 & input_line_image.lines_120_to_127;
 LAB_0004f6ac:
   if ((param_4 & 0xff &
       1 << (param_1 + (((int)param_1 >> 3) + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
@@ -50005,7 +50005,7 @@ void mpc555_driveOutputLineHigh(uint param_1)
   mios_mpwmsm17_t *pmVar5;
   int iVar6;
   siu_gpio_data_register_t *psVar7;
-  mios1_ext_ctrl_t *pmVar8;
+  mios_mpiosm_t *pmVar8;
   byte bVar9;
   word local_8;
   siu_gpio_data_register_t gpio_register_copy;
@@ -50015,37 +50015,37 @@ void mpc555_driveOutputLineHigh(uint param_1)
   }
   iVar6 = (int)param_1 >> 3;
   if ((int)param_1 < 0x10) {
-    output_lines_8_to_15_state =
-         output_lines_8_to_15_state |
+    output_line_state.lines_8_to_15 =
+         output_line_state.lines_8_to_15 |
          (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 & 0x3f
                      ));
-    pmVar8 = &mios1_ext_ctrl;
-    wVar2 = mios1_ext_ctrl.ctrl_a;
+    pmVar8 = &mios_mpiosm32;
+    wVar2 = mios_mpiosm32.data;
     local_8 = wVar2 | (ushort)(1 << (param_1 + (((int)param_1 >> 4) +
                                                (uint)((int)param_1 < 0 && (param_1 & 0xf) != 0)) *
                                                -0x10 & 0x3f));
 LAB_00050f60:
-    pmVar8->ctrl_a = local_8;
+    pmVar8->data = local_8;
     return;
   }
   if ((int)param_1 < 0x18) {
-    output_lines_16_to_23_state =
-         output_lines_16_to_23_state |
+    output_line_state.lines_16_to_23 =
+         output_line_state.lines_16_to_23 |
          (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 & 0x3f
                      ));
-    pmVar8 = &mios1_ext_ctrl;
-    wVar2 = mios1_ext_ctrl.ctrl_a;
+    pmVar8 = &mios_mpiosm32;
+    wVar2 = mios_mpiosm32.data;
     local_8 = wVar2 | (ushort)(1 << (param_1 + (((int)param_1 >> 4) +
                                                (uint)((int)param_1 < 0 && (param_1 & 0xf) != 0)) *
                                                -0x10 & 0x3f));
 LAB_00050f24:
-    pmVar8->ctrl_a = local_8;
+    pmVar8->data = local_8;
     return;
   }
   if ((int)param_1 < 0x20) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    output_lines_24_to_31_state = output_lines_24_to_31_state | bVar9;
+    output_line_state.lines_24_to_31 = output_line_state.lines_24_to_31 | bVar9;
     psVar7 = &SIU_SGPIODT1;
     sVar1 = SIU_SGPIODT1;
     gpio_register_copy.byte_0 = sVar1.byte_0;
@@ -50058,7 +50058,7 @@ LAB_0004fab0:
   if ((int)param_1 < 0x28) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    output_lines_32_to_39_state = output_lines_32_to_39_state | bVar9;
+    output_line_state.lines_32_to_39 = output_line_state.lines_32_to_39 | bVar9;
     psVar7 = &SIU_SGPIODT1;
     sVar1 = SIU_SGPIODT1;
     gpio_register_copy.byte_1 = sVar1.byte_1;
@@ -50072,7 +50072,7 @@ LAB_0004fa50:
   if ((int)param_1 < 0x30) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    output_lines_40_to_47_state = output_lines_40_to_47_state | bVar9;
+    output_line_state.lines_40_to_47 = output_line_state.lines_40_to_47 | bVar9;
     psVar7 = &SIU_SGPIODT1;
     sVar1 = SIU_SGPIODT1;
     gpio_register_copy.byte_2 = sVar1.byte_2;
@@ -50086,7 +50086,7 @@ LAB_0004f9f0:
   if ((int)param_1 < 0x38) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    output_lines_48_to_55_state = output_lines_48_to_55_state | bVar9;
+    output_line_state.lines_48_to_55 = output_line_state.lines_48_to_55 | bVar9;
     psVar7 = &SIU_SGPIODT1;
     sVar1 = SIU_SGPIODT1;
     gpio_register_copy.byte_3 = sVar1.byte_3;
@@ -50099,7 +50099,7 @@ LAB_0004f990:
   if ((int)param_1 < 0x40) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    output_lines_56_to_63_state = output_lines_56_to_63_state | bVar9;
+    output_line_state.lines_56_to_63 = output_line_state.lines_56_to_63 | bVar9;
     sVar1 = SIU_SGPIODT2;
     gpio_register_copy.byte_0 = sVar1.byte_0;
     gpio_register_copy._1_3_ = sVar1._1_3_;
@@ -50110,7 +50110,7 @@ LAB_0004f990:
   if ((int)param_1 < 0x48) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    output_lines_64_to_71_state = output_lines_64_to_71_state | bVar9;
+    output_line_state.lines_64_to_71 = output_line_state.lines_64_to_71 | bVar9;
     sVar1 = SIU_SGPIODT2;
     gpio_register_copy.byte_1 = sVar1.byte_1;
     gpio_register_copy.byte_0 = sVar1.byte_0;
@@ -50122,7 +50122,7 @@ LAB_0004f990:
   if ((int)param_1 < 0x50) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    output_lines_72_to_79_state = output_lines_72_to_79_state | bVar9;
+    output_line_state.lines_72_to_79 = output_line_state.lines_72_to_79 | bVar9;
     sVar1 = SIU_SGPIODT2;
     gpio_register_copy.byte_2 = sVar1.byte_2;
     gpio_register_copy._0_2_ = sVar1._0_2_;
@@ -50134,7 +50134,7 @@ LAB_0004f990:
   if ((int)param_1 < 0x58) {
     bVar9 = (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
-    output_lines_80_to_87_state = output_lines_80_to_87_state | bVar9;
+    output_line_state.lines_80_to_87 = output_line_state.lines_80_to_87 | bVar9;
     sVar1 = SIU_SGPIODT2;
     gpio_register_copy.byte_3 = sVar1.byte_3;
     gpio_register_copy._0_3_ = sVar1._0_3_;
@@ -50144,7 +50144,7 @@ LAB_0004f990:
   }
   switch(param_1) {
   case 0x58:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 | 1;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 1;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xfffc;
     wVar2 = tpu_b_mcr.CIER;
@@ -50159,7 +50159,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR1 = wVar2 & 0xfffc | 1;
     break;
   case 0x59:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 | 2;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 2;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xfff3;
     wVar2 = tpu_b_mcr.CIER;
@@ -50174,7 +50174,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR1 = wVar2 & 0xfff3 | 4;
     break;
   case 0x5a:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 | 4;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 4;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xffcf;
     wVar2 = tpu_b_mcr.CIER;
@@ -50189,7 +50189,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR1 = wVar2 & 0xffcf | 0x10;
     break;
   case 0x5b:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 | 8;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 8;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xff3f;
     wVar2 = tpu_b_mcr.CIER;
@@ -50204,7 +50204,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR1 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x5c:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 | 0x10;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 0x10;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xfcff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50219,7 +50219,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR1 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x5d:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 | 0x20;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 0x20;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xf3ff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50234,7 +50234,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR1 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x5e:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 | 0x40;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 0x40;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xcfff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50249,7 +50249,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR1 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x5f:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 | 0x80;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 | 0x80;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0x3fff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50264,7 +50264,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR1 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x60:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 | 1;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 1;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xfffc;
     wVar2 = tpu_b_mcr.CIER;
@@ -50279,7 +50279,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR0 = wVar2 & 0xfffc | 1;
     break;
   case 0x61:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 | 2;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 2;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xfff3;
     wVar2 = tpu_b_mcr.CIER;
@@ -50294,7 +50294,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR0 = wVar2 & 0xfff3 | 4;
     break;
   case 0x62:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 | 4;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 4;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xffcf;
     wVar2 = tpu_b_mcr.CIER;
@@ -50309,7 +50309,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR0 = wVar2 & 0xffcf | 0x10;
     break;
   case 99:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 | 8;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 8;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xff3f;
     wVar2 = tpu_b_mcr.CIER;
@@ -50324,7 +50324,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR0 = wVar2 & 0xff3f | 0x40;
     break;
   case 100:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 | 0x10;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 0x10;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xfcff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50339,7 +50339,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR0 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x65:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 | 0x20;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 0x20;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xf3ff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50354,7 +50354,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR0 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x66:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 | 0x40;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 0x40;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xcfff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50369,7 +50369,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR0 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x67:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 | 0x80;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 | 0x80;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0x3fff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50384,7 +50384,7 @@ LAB_0004f990:
     tpu_b_mcr.CPR0 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x68:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status | 1;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 1;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xfffc;
     wVar2 = tpu_a_mcr.CIER;
@@ -50399,7 +50399,7 @@ LAB_0004f990:
     tpu_a_mcr.CPR1 = wVar2 & 0xfffc | 1;
     break;
   case 0x69:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status | 2;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 2;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xfff3;
     wVar2 = tpu_a_mcr.CIER;
@@ -50414,7 +50414,7 @@ LAB_0004f990:
     tpu_a_mcr.CPR1 = wVar2 & 0xfff3 | 4;
     break;
   case 0x6a:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status | 4;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 4;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xffcf;
     wVar2 = tpu_a_mcr.CIER;
@@ -50429,7 +50429,7 @@ LAB_0004f990:
     tpu_a_mcr.CPR1 = wVar2 & 0xffcf | 0x10;
     break;
   case 0x6b:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status | 8;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 8;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xff3f;
     wVar2 = tpu_a_mcr.CIER;
@@ -50444,7 +50444,7 @@ LAB_0004f990:
     tpu_a_mcr.CPR1 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x6c:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status | 0x10;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 0x10;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xfcff;
     wVar2 = tpu_a_mcr.CIER;
@@ -50459,7 +50459,7 @@ LAB_0004f990:
     tpu_a_mcr.CPR1 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x6d:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status | 0x20;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 0x20;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xf3ff;
     wVar2 = tpu_a_mcr.CIER;
@@ -50474,7 +50474,7 @@ LAB_0004f990:
     tpu_a_mcr.CPR1 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x6e:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status | 0x40;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 0x40;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xcfff;
     wVar2 = tpu_a_mcr.CIER;
@@ -50489,7 +50489,7 @@ LAB_0004f990:
     tpu_a_mcr.CPR1 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x6f:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status | 0x80;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 | 0x80;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0x3fff;
     wVar2 = tpu_a_mcr.CIER;
@@ -50504,7 +50504,7 @@ LAB_0004f990:
     tpu_a_mcr.CPR1 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x70:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode | 1;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 1;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xfffc;
     wVar2 = tpu_a_mcr.CIER;
@@ -50524,7 +50524,7 @@ LAB_0004f990:
   case 0x72:
     bVar9 = 4;
 LAB_00050a2c:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode | bVar9;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | bVar9;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xfff3;
     wVar2 = tpu_a_mcr.CIER;
@@ -50539,7 +50539,7 @@ LAB_00050a2c:
     tpu_a_mcr.CPR0 = wVar2 & 0xfff3 | 4;
     break;
   case 0x73:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode | 8;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 8;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xff3f;
     wVar2 = tpu_a_mcr.CIER;
@@ -50554,7 +50554,7 @@ LAB_00050a2c:
     tpu_a_mcr.CPR0 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x74:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode | 0x10;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 0x10;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xfcff;
     wVar2 = tpu_a_mcr.CIER;
@@ -50569,7 +50569,7 @@ LAB_00050a2c:
     tpu_a_mcr.CPR0 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x75:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode | 0x20;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 0x20;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xf3ff;
     wVar2 = tpu_a_mcr.CIER;
@@ -50584,7 +50584,7 @@ LAB_00050a2c:
     tpu_a_mcr.CPR0 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x76:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode | 0x40;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 0x40;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xcfff;
     wVar2 = tpu_a_mcr.CIER;
@@ -50599,7 +50599,7 @@ LAB_00050a2c:
     tpu_a_mcr.CPR0 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x77:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode | 0x80;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 | 0x80;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0x3fff;
     wVar2 = tpu_a_mcr.CIER;
@@ -50617,15 +50617,15 @@ LAB_00050a2c:
   default:
 LAB_00050f6c:
     if ((int)param_1 < 0x98) {
-      output_lines_144_to_151_state =
-           output_lines_144_to_151_state |
+      output_line_state.lines_144_to_151 =
+           output_line_state.lines_144_to_151 |
            (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                        0x3f));
       cm848_queueSupervisorOutputWrite();
     }
     else if ((int)param_1 < 0xa0) {
-      output_lines_152_to_159_state =
-           output_lines_152_to_159_state |
+      output_line_state.lines_152_to_159 =
+           output_line_state.lines_152_to_159 |
            (byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                        0x3f));
       cm848_queueSerialOutputDriverWrite();
@@ -50638,11 +50638,11 @@ LAB_00050f6c:
   case 0x7b:
     goto LAB_00050f6c;
   case 0x7c:
-    injector_control_t_0040c117.output_ch0 = injector_control_t_0040c117.output_ch0 | 0x10;
+    output_line_state.lines_120_to_127 = output_line_state.lines_120_to_127 | 0x10;
     MIOS_MDASM15_AR.SCRD = 0x405;
     break;
   case 0x7d:
-    injector_control_t_0040c117.output_ch0 = injector_control_t_0040c117.output_ch0 | 0x20;
+    output_line_state.lines_120_to_127 = output_line_state.lines_120_to_127 | 0x20;
     mios_mdasm27.SCRD = 0x405;
     break;
   case 0x7e:
@@ -50654,46 +50654,46 @@ LAB_00050f6c:
   case 0x81:
     goto LAB_00050f6c;
   case 0x82:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 4;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 | 4;
     pmVar5 = (mios_mpwmsm17_t *)&MIOS_MPWMSM0_PERR;
     goto LAB_00050ed8;
   case 0x83:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 8;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 | 8;
     pmVar4 = (mios_mpwmsm16_t *)&MIOS_MPWMSM1_PERR;
     goto LAB_00050ea0;
   case 0x84:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 0x10;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 | 0x10;
     pmVar3 = (mios_mpwmsm3_t *)&MIOS_MPWMSM2_PERR;
     goto LAB_00050e68;
   case 0x85:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 0x20;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 | 0x20;
     pmVar3 = &MIOS_MPWMSM3_PERR;
 LAB_00050e68:
     ((mios_mpwmsm2_t *)pmVar3)->SCR = ((mios_mpwmsm2_t *)pmVar3)->SCR | 0x4800;
     break;
   case 0x86:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 0x40;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 | 0x40;
     pmVar4 = &MIOS_MPWMSM16_PERR;
 LAB_00050ea0:
     ((mios_mpwmsm1_t *)pmVar4)->SCR = ((mios_mpwmsm1_t *)pmVar4)->SCR | 0x4800;
     break;
   case 0x87:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags | 0x80;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 | 0x80;
     pmVar5 = &MIOS_MPWMSM17_PERR;
 LAB_00050ed8:
     ((mios_mpwmsm_t *)pmVar5)->SCR = ((mios_mpwmsm_t *)pmVar5)->SCR | 0x4800;
     break;
   case 0x88:
-    injector_control_t_0040c117.output_ch1 = injector_control_t_0040c117.output_ch1 | 1;
+    output_line_state.lines_136_to_143 = output_line_state.lines_136_to_143 | 1;
     wVar2 = MIOS_MPWMSM18_PERR.SCR;
     local_8 = wVar2 | 0x4800;
-    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MPWMSM18_PERR.SCR;
+    pmVar8 = (mios_mpiosm_t *)&MIOS_MPWMSM18_PERR.SCR;
     goto LAB_00050f24;
   case 0x89:
-    injector_control_t_0040c117.output_ch1 = injector_control_t_0040c117.output_ch1 | 2;
+    output_line_state.lines_136_to_143 = output_line_state.lines_136_to_143 | 2;
     wVar2 = MIOS_MPWMSM19_PERR.SCR;
     local_8 = wVar2 | 0x4800;
-    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MPWMSM19_PERR.SCR;
+    pmVar8 = (mios_mpiosm_t *)&MIOS_MPWMSM19_PERR.SCR;
     goto LAB_00050f60;
   }
   return;
@@ -50720,7 +50720,7 @@ void mpc555_driveOutputLineLow(uint param_1)
   mios_mpwmsm17_t *pmVar5;
   int iVar6;
   siu_gpio_data_register_t *psVar7;
-  mios1_ext_ctrl_t *pmVar8;
+  mios_mpiosm_t *pmVar8;
   byte bVar9;
   ushort local_8;
   siu_gpio_data_register_t gpio_register_copy;
@@ -50730,37 +50730,37 @@ void mpc555_driveOutputLineLow(uint param_1)
   }
   iVar6 = (int)param_1 >> 3;
   if ((int)param_1 < 0x10) {
-    output_lines_8_to_15_state =
-         output_lines_8_to_15_state &
+    output_line_state.lines_8_to_15 =
+         output_line_state.lines_8_to_15 &
          ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                       0x3f));
-    pmVar8 = &mios1_ext_ctrl;
-    wVar2 = mios1_ext_ctrl.ctrl_a;
+    pmVar8 = &mios_mpiosm32;
+    wVar2 = mios_mpiosm32.data;
     local_8 = wVar2 & ~(ushort)(1 << (param_1 + (((int)param_1 >> 4) +
                                                 (uint)((int)param_1 < 0 && (param_1 & 0xf) != 0)) *
                                                 -0x10 & 0x3f));
 LAB_000528d8:
-    pmVar8->ctrl_a = local_8;
+    pmVar8->data = local_8;
     return;
   }
   if ((int)param_1 < 0x18) {
-    output_lines_16_to_23_state =
-         output_lines_16_to_23_state &
+    output_line_state.lines_16_to_23 =
+         output_line_state.lines_16_to_23 &
          ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                       0x3f));
-    pmVar8 = &mios1_ext_ctrl;
-    wVar2 = mios1_ext_ctrl.ctrl_a;
+    pmVar8 = &mios_mpiosm32;
+    wVar2 = mios_mpiosm32.data;
     local_8 = wVar2 & ~(ushort)(1 << (param_1 + (((int)param_1 >> 4) +
                                                 (uint)((int)param_1 < 0 && (param_1 & 0xf) != 0)) *
                                                 -0x10 & 0x3f));
 LAB_0005289c:
-    pmVar8->ctrl_a = local_8;
+    pmVar8->data = local_8;
     return;
   }
   if ((int)param_1 < 0x20) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    output_lines_24_to_31_state = output_lines_24_to_31_state & bVar9;
+    output_line_state.lines_24_to_31 = output_line_state.lines_24_to_31 & bVar9;
     psVar7 = &SIU_SGPIODT1;
     sVar1 = SIU_SGPIODT1;
     gpio_register_copy.byte_0 = sVar1.byte_0;
@@ -50773,7 +50773,7 @@ LAB_00051418:
   if ((int)param_1 < 0x28) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    output_lines_32_to_39_state = output_lines_32_to_39_state & bVar9;
+    output_line_state.lines_32_to_39 = output_line_state.lines_32_to_39 & bVar9;
     psVar7 = &SIU_SGPIODT1;
     sVar1 = SIU_SGPIODT1;
     gpio_register_copy.byte_1 = sVar1.byte_1;
@@ -50787,7 +50787,7 @@ LAB_000513b4:
   if ((int)param_1 < 0x30) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    output_lines_40_to_47_state = output_lines_40_to_47_state & bVar9;
+    output_line_state.lines_40_to_47 = output_line_state.lines_40_to_47 & bVar9;
     psVar7 = &SIU_SGPIODT1;
     sVar1 = SIU_SGPIODT1;
     gpio_register_copy.byte_2 = sVar1.byte_2;
@@ -50801,7 +50801,7 @@ LAB_00051350:
   if ((int)param_1 < 0x38) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    output_lines_48_to_55_state = output_lines_48_to_55_state & bVar9;
+    output_line_state.lines_48_to_55 = output_line_state.lines_48_to_55 & bVar9;
     psVar7 = &SIU_SGPIODT1;
     sVar1 = SIU_SGPIODT1;
     gpio_register_copy.byte_3 = sVar1.byte_3;
@@ -50814,7 +50814,7 @@ LAB_000512ec:
   if ((int)param_1 < 0x40) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    output_lines_56_to_63_state = output_lines_56_to_63_state & bVar9;
+    output_line_state.lines_56_to_63 = output_line_state.lines_56_to_63 & bVar9;
     sVar1 = SIU_SGPIODT2;
     gpio_register_copy.byte_0 = sVar1.byte_0;
     gpio_register_copy._1_3_ = sVar1._1_3_;
@@ -50825,7 +50825,7 @@ LAB_000512ec:
   if ((int)param_1 < 0x48) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    output_lines_64_to_71_state = output_lines_64_to_71_state & bVar9;
+    output_line_state.lines_64_to_71 = output_line_state.lines_64_to_71 & bVar9;
     sVar1 = SIU_SGPIODT2;
     gpio_register_copy.byte_1 = sVar1.byte_1;
     gpio_register_copy.byte_0 = sVar1.byte_0;
@@ -50837,7 +50837,7 @@ LAB_000512ec:
   if ((int)param_1 < 0x50) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    output_lines_72_to_79_state = output_lines_72_to_79_state & bVar9;
+    output_line_state.lines_72_to_79 = output_line_state.lines_72_to_79 & bVar9;
     sVar1 = SIU_SGPIODT2;
     gpio_register_copy.byte_2 = sVar1.byte_2;
     gpio_register_copy._0_2_ = sVar1._0_2_;
@@ -50849,7 +50849,7 @@ LAB_000512ec:
   if ((int)param_1 < 0x58) {
     bVar9 = ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                          0x3f));
-    output_lines_80_to_87_state = output_lines_80_to_87_state & bVar9;
+    output_line_state.lines_80_to_87 = output_line_state.lines_80_to_87 & bVar9;
     sVar1 = SIU_SGPIODT2;
     gpio_register_copy.byte_3 = sVar1.byte_3;
     gpio_register_copy._0_3_ = sVar1._0_3_;
@@ -50859,7 +50859,7 @@ LAB_000512ec:
   }
   switch(param_1) {
   case 0x58:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 & 0xfe;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xfe;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xfffc;
     wVar2 = tpu_b_mcr.CIER;
@@ -50874,7 +50874,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR1 = wVar2 & 0xfffc | 1;
     break;
   case 0x59:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 & 0xfd;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xfd;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xfff3;
     wVar2 = tpu_b_mcr.CIER;
@@ -50889,7 +50889,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR1 = wVar2 & 0xfff3 | 4;
     break;
   case 0x5a:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 & 0xfb;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xfb;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xffcf;
     wVar2 = tpu_b_mcr.CIER;
@@ -50904,7 +50904,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR1 = wVar2 & 0xffcf | 0x10;
     break;
   case 0x5b:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 & 0xf7;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xf7;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xff3f;
     wVar2 = tpu_b_mcr.CIER;
@@ -50919,7 +50919,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR1 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x5c:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 & 0xef;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xef;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xfcff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50934,7 +50934,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR1 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x5d:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 & 0xdf;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xdf;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xf3ff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50949,7 +50949,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR1 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x5e:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 & 0xbf;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0xbf;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0xcfff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50964,7 +50964,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR1 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x5f:
-    injector_control_t_0040c117.enable_ch0_7 = injector_control_t_0040c117.enable_ch0_7 & 0x7f;
+    output_line_state.lines_88_to_95 = output_line_state.lines_88_to_95 & 0x7f;
     wVar2 = tpu_b_mcr.CPR1;
     tpu_b_mcr.CPR1 = wVar2 & 0x3fff;
     wVar2 = tpu_b_mcr.CIER;
@@ -50979,7 +50979,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR1 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x60:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 & 0xfe;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xfe;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xfffc;
     wVar2 = tpu_b_mcr.CIER;
@@ -50994,7 +50994,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR0 = wVar2 & 0xfffc | 1;
     break;
   case 0x61:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 & 0xfd;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xfd;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xfff3;
     wVar2 = tpu_b_mcr.CIER;
@@ -51009,7 +51009,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR0 = wVar2 & 0xfff3 | 4;
     break;
   case 0x62:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 & 0xfb;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xfb;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xffcf;
     wVar2 = tpu_b_mcr.CIER;
@@ -51024,7 +51024,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR0 = wVar2 & 0xffcf | 0x10;
     break;
   case 99:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 & 0xf7;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xf7;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xff3f;
     wVar2 = tpu_b_mcr.CIER;
@@ -51039,7 +51039,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR0 = wVar2 & 0xff3f | 0x40;
     break;
   case 100:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 & 0xef;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xef;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xfcff;
     wVar2 = tpu_b_mcr.CIER;
@@ -51054,7 +51054,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR0 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x65:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 & 0xdf;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xdf;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xf3ff;
     wVar2 = tpu_b_mcr.CIER;
@@ -51069,7 +51069,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR0 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x66:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 & 0xbf;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0xbf;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0xcfff;
     wVar2 = tpu_b_mcr.CIER;
@@ -51084,7 +51084,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR0 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x67:
-    injector_control_t_0040c117.enable_ch8_15 = injector_control_t_0040c117.enable_ch8_15 & 0x7f;
+    output_line_state.lines_96_to_103 = output_line_state.lines_96_to_103 & 0x7f;
     wVar2 = tpu_b_mcr.CPR0;
     tpu_b_mcr.CPR0 = wVar2 & 0x3fff;
     wVar2 = tpu_b_mcr.CIER;
@@ -51099,7 +51099,7 @@ LAB_000512ec:
     tpu_b_mcr.CPR0 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x68:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status & 0xfe;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xfe;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xfffc;
     wVar2 = tpu_a_mcr.CIER;
@@ -51114,7 +51114,7 @@ LAB_000512ec:
     tpu_a_mcr.CPR1 = wVar2 & 0xfffc | 1;
     break;
   case 0x69:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status & 0xfd;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xfd;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xfff3;
     wVar2 = tpu_a_mcr.CIER;
@@ -51129,7 +51129,7 @@ LAB_000512ec:
     tpu_a_mcr.CPR1 = wVar2 & 0xfff3 | 4;
     break;
   case 0x6a:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status & 0xfb;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xfb;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xffcf;
     wVar2 = tpu_a_mcr.CIER;
@@ -51144,7 +51144,7 @@ LAB_000512ec:
     tpu_a_mcr.CPR1 = wVar2 & 0xffcf | 0x10;
     break;
   case 0x6b:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status & 0xf7;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xf7;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xff3f;
     wVar2 = tpu_a_mcr.CIER;
@@ -51159,7 +51159,7 @@ LAB_000512ec:
     tpu_a_mcr.CPR1 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x6c:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status & 0xef;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xef;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xfcff;
     wVar2 = tpu_a_mcr.CIER;
@@ -51174,7 +51174,7 @@ LAB_000512ec:
     tpu_a_mcr.CPR1 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x6d:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status & 0xdf;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xdf;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xf3ff;
     wVar2 = tpu_a_mcr.CIER;
@@ -51189,7 +51189,7 @@ LAB_000512ec:
     tpu_a_mcr.CPR1 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x6e:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status & 0xbf;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0xbf;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0xcfff;
     wVar2 = tpu_a_mcr.CIER;
@@ -51204,7 +51204,7 @@ LAB_000512ec:
     tpu_a_mcr.CPR1 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x6f:
-    injector_control_t_0040c117.channel_status = injector_control_t_0040c117.channel_status & 0x7f;
+    output_line_state.lines_104_to_111 = output_line_state.lines_104_to_111 & 0x7f;
     wVar2 = tpu_a_mcr.CPR1;
     tpu_a_mcr.CPR1 = wVar2 & 0x3fff;
     wVar2 = tpu_a_mcr.CIER;
@@ -51219,7 +51219,7 @@ LAB_000512ec:
     tpu_a_mcr.CPR1 = wVar2 & 0x3fff | 0x4000;
     break;
   case 0x70:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode & 0xfe;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xfe;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xfffc;
     wVar2 = tpu_a_mcr.CIER;
@@ -51239,7 +51239,7 @@ LAB_000512ec:
   case 0x72:
     bVar9 = 0xfb;
 LAB_000523a0:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode & bVar9;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & bVar9;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xfff3;
     wVar2 = tpu_a_mcr.CIER;
@@ -51254,7 +51254,7 @@ LAB_000523a0:
     tpu_a_mcr.CPR0 = wVar2 & 0xfff3 | 4;
     break;
   case 0x73:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode & 0xf7;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xf7;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xff3f;
     wVar2 = tpu_a_mcr.CIER;
@@ -51269,7 +51269,7 @@ LAB_000523a0:
     tpu_a_mcr.CPR0 = wVar2 & 0xff3f | 0x40;
     break;
   case 0x74:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode & 0xef;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xef;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xfcff;
     wVar2 = tpu_a_mcr.CIER;
@@ -51284,7 +51284,7 @@ LAB_000523a0:
     tpu_a_mcr.CPR0 = wVar2 & 0xfcff | 0x100;
     break;
   case 0x75:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode & 0xdf;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xdf;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xf3ff;
     wVar2 = tpu_a_mcr.CIER;
@@ -51299,7 +51299,7 @@ LAB_000523a0:
     tpu_a_mcr.CPR0 = wVar2 & 0xf3ff | 0x400;
     break;
   case 0x76:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode & 0xbf;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0xbf;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0xcfff;
     wVar2 = tpu_a_mcr.CIER;
@@ -51314,7 +51314,7 @@ LAB_000523a0:
     tpu_a_mcr.CPR0 = wVar2 & 0xcfff | 0x1000;
     break;
   case 0x77:
-    injector_control_t_0040c117.timing_mode = injector_control_t_0040c117.timing_mode & 0x7f;
+    output_line_state.lines_112_to_119 = output_line_state.lines_112_to_119 & 0x7f;
     wVar2 = tpu_a_mcr.CPR0;
     tpu_a_mcr.CPR0 = wVar2 & 0x3fff;
     wVar2 = tpu_a_mcr.CIER;
@@ -51332,15 +51332,15 @@ LAB_000523a0:
   default:
 LAB_000528e4:
     if ((int)param_1 < 0x98) {
-      output_lines_144_to_151_state =
-           output_lines_144_to_151_state &
+      output_line_state.lines_144_to_151 =
+           output_line_state.lines_144_to_151 &
            ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
       cm848_queueSupervisorOutputWrite();
     }
     else if ((int)param_1 < 0xa0) {
-      output_lines_152_to_159_state =
-           output_lines_152_to_159_state &
+      output_line_state.lines_152_to_159 =
+           output_line_state.lines_152_to_159 &
            ~(byte)(1 << (param_1 + (iVar6 + (uint)((int)param_1 < 0 && (param_1 & 7) != 0)) * -8 &
                         0x3f));
       cm848_queueSerialOutputDriverWrite();
@@ -51353,11 +51353,11 @@ LAB_000528e4:
   case 0x7b:
     goto LAB_000528e4;
   case 0x7c:
-    injector_control_t_0040c117.output_ch0 = injector_control_t_0040c117.output_ch0 & 0xef;
+    output_line_state.lines_120_to_127 = output_line_state.lines_120_to_127 & 0xef;
     MIOS_MDASM15_AR.SCRD = 0x205;
     break;
   case 0x7d:
-    injector_control_t_0040c117.output_ch0 = injector_control_t_0040c117.output_ch0 & 0xdf;
+    output_line_state.lines_120_to_127 = output_line_state.lines_120_to_127 & 0xdf;
     mios_mdasm27.SCRD = 0x205;
     break;
   case 0x7e:
@@ -51369,46 +51369,46 @@ LAB_000528e4:
   case 0x81:
     goto LAB_000528e4;
   case 0x82:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xfb;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 & 0xfb;
     pmVar5 = (mios_mpwmsm17_t *)&MIOS_MPWMSM0_PERR;
     goto LAB_00052850;
   case 0x83:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xf7;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 & 0xf7;
     pmVar4 = (mios_mpwmsm16_t *)&MIOS_MPWMSM1_PERR;
     goto LAB_00052818;
   case 0x84:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xef;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 & 0xef;
     pmVar3 = (mios_mpwmsm3_t *)&MIOS_MPWMSM2_PERR;
     goto LAB_000527e0;
   case 0x85:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xdf;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 & 0xdf;
     pmVar3 = &MIOS_MPWMSM3_PERR;
 LAB_000527e0:
     ((mios_mpwmsm2_t *)pmVar3)->SCR = ((mios_mpwmsm2_t *)pmVar3)->SCR & 0xf7ff;
     break;
   case 0x86:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0xbf;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 & 0xbf;
     pmVar4 = &MIOS_MPWMSM16_PERR;
 LAB_00052818:
     ((mios_mpwmsm1_t *)pmVar4)->SCR = ((mios_mpwmsm1_t *)pmVar4)->SCR & 0xf7ff;
     break;
   case 0x87:
-    injector_control_t_0040c117.fault_flags = injector_control_t_0040c117.fault_flags & 0x7f;
+    output_line_state.lines_128_to_135 = output_line_state.lines_128_to_135 & 0x7f;
     pmVar5 = &MIOS_MPWMSM17_PERR;
 LAB_00052850:
     ((mios_mpwmsm_t *)pmVar5)->SCR = ((mios_mpwmsm_t *)pmVar5)->SCR & 0xf7ff;
     break;
   case 0x88:
-    injector_control_t_0040c117.output_ch1 = injector_control_t_0040c117.output_ch1 & 0xfe;
+    output_line_state.lines_136_to_143 = output_line_state.lines_136_to_143 & 0xfe;
     wVar2 = MIOS_MPWMSM18_PERR.SCR;
     local_8 = wVar2 & 0xf7ff;
-    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MPWMSM18_PERR.SCR;
+    pmVar8 = (mios_mpiosm_t *)&MIOS_MPWMSM18_PERR.SCR;
     goto LAB_0005289c;
   case 0x89:
-    injector_control_t_0040c117.output_ch1 = injector_control_t_0040c117.output_ch1 & 0xfd;
+    output_line_state.lines_136_to_143 = output_line_state.lines_136_to_143 & 0xfd;
     wVar2 = MIOS_MPWMSM19_PERR.SCR;
     local_8 = wVar2 & 0xf7ff;
-    pmVar8 = (mios1_ext_ctrl_t *)&MIOS_MPWMSM19_PERR.SCR;
+    pmVar8 = (mios_mpiosm_t *)&MIOS_MPWMSM19_PERR.SCR;
     goto LAB_000528d8;
   }
   return;
@@ -51420,13 +51420,15 @@ LAB_00052850:
 // Function: cm848_refreshOutputPortsAndReadback @ 0x000529b8
 //
 
-/* Periodic output refresh: snapshots every output port (j1939_dm1_prev_b0..b10 = previous port
-   states) / reads back MIOS PWM + DASM pin states into j1939_lamp_status_byte_a..c / forces the
-   DASM outputs from injector_control_t.output_ch0 / applies the 80 protection-event outputs / then
-   rewrites SIU_SGPIODT1/2 + the MIOS port + the supervisor output register + the serial output
-   driver (lines 152-159) from their output_lines_*_state shadows. Not injector timing (was
-   injectorTimingCalculation) | review-function-readability reviewed 2026-11-11 - Readability Medium
-   Accuracy Confidence Medium */
+/* Periodic output refresh: reads every output port back into output_line_read_back (MIOS PWM + DASM
+   pin states into its lines 120-143) / forces the DASM outputs from
+   output_line_state.lines_120_to_127 / applies the 80 protection-event outputs / then rewrites
+   SIU_SGPIODT1/2 + the MIOS port + the supervisor output register + the serial output driver (lines
+   152-159) from output_line_state. Its MIOS port rebuild puts lines 8-15 in bits 7-0 and lines
+   16-23 in bits 15-8 - mpc555_driveOutputLineHigh / Low set bit (line mod 16) instead (the bytes
+   swapped) until the next refresh. Not injector timing (was injectorTimingCalculation) |
+   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
+    */
 
 void cm848_refreshOutputPortsAndReadback(void)
 
@@ -51448,68 +51450,69 @@ void cm848_refreshOutputPortsAndReadback(void)
   int iVar15;
   ushort *puVar16;
   undefined2 uVar17;
-  undefined2 local_30;
+  mios_port_data_register_t mios_port_copy;
   siu_gpio_data_register_t gpio_register_copy;
   
   bVar2 = false;
   sVar4 = SIU_SGPIODT1;
   gpio_register_copy.byte_0 = sVar4.byte_0;
-  j1939_dm1_prev_b2 = gpio_register_copy.byte_0;
+  output_line_read_back.lines_24_to_31 = gpio_register_copy.byte_0;
   gpio_register_copy.byte_1 = sVar4.byte_1;
-  j1939_dm1_prev_b3 = gpio_register_copy.byte_1;
+  output_line_read_back.lines_32_to_39 = gpio_register_copy.byte_1;
   gpio_register_copy.byte_2 = sVar4.byte_2;
-  j1939_dm1_prev_b4 = gpio_register_copy.byte_2;
+  output_line_read_back.lines_40_to_47 = gpio_register_copy.byte_2;
   gpio_register_copy.byte_3 = sVar4.byte_3;
-  j1939_dm1_prev_b5 = gpio_register_copy.byte_3;
+  output_line_read_back.lines_48_to_55 = gpio_register_copy.byte_3;
   sVar4 = SIU_SGPIODT2;
   gpio_register_copy.byte_0 = sVar4.byte_0;
-  j1939_dm1_prev_b6 = gpio_register_copy.byte_0;
+  output_line_read_back.lines_56_to_63 = gpio_register_copy.byte_0;
   gpio_register_copy.byte_1 = sVar4.byte_1;
-  j1939_dm1_prev_b7 = gpio_register_copy.byte_1;
+  output_line_read_back.lines_64_to_71 = gpio_register_copy.byte_1;
   gpio_register_copy.byte_2 = sVar4.byte_2;
-  j1939_dm1_prev_b8 = gpio_register_copy.byte_2;
+  output_line_read_back.lines_72_to_79 = gpio_register_copy.byte_2;
   gpio_register_copy.byte_3 = sVar4.byte_3;
-  j1939_dm1_prev_b9 = gpio_register_copy.byte_3;
-  gpio_register_copy.byte_0 = output_lines_24_to_31_state;
-  gpio_register_copy.byte_1 = output_lines_32_to_39_state;
-  gpio_register_copy.byte_2 = output_lines_40_to_47_state;
-  gpio_register_copy.byte_3 = output_lines_48_to_55_state;
+  output_line_read_back.lines_80_to_87 = gpio_register_copy.byte_3;
+  gpio_register_copy.byte_0 = output_line_state.lines_24_to_31;
+  gpio_register_copy.byte_1 = output_line_state.lines_32_to_39;
+  gpio_register_copy.byte_2 = output_line_state.lines_40_to_47;
+  gpio_register_copy.byte_3 = output_line_state.lines_48_to_55;
   SIU_SGPIODT1 = gpio_register_copy;
-  gpio_register_copy.byte_0 = output_lines_56_to_63_state;
-  gpio_register_copy.byte_1 = output_lines_64_to_71_state;
-  gpio_register_copy.byte_2 = output_lines_72_to_79_state;
-  gpio_register_copy.byte_3 = output_lines_80_to_87_state;
+  gpio_register_copy.byte_0 = output_line_state.lines_56_to_63;
+  gpio_register_copy.byte_1 = output_line_state.lines_64_to_71;
+  gpio_register_copy.byte_2 = output_line_state.lines_72_to_79;
+  gpio_register_copy.byte_3 = output_line_state.lines_80_to_87;
   SIU_SGPIODT2 = gpio_register_copy;
-  wVar9 = mios1_ext_ctrl.ctrl_a;
-  local_30._1_1_ = (byte)wVar9;
-  j1939_dm1_prev_b0 = (byte)local_30;
-  local_30._0_1_ = (byte)(wVar9 >> 8);
-  j1939_dm1_prev_b1 = local_30._0_1_;
-  local_30 = CONCAT11(output_lines_16_to_23_state,output_lines_8_to_15_state);
-  mios1_ext_ctrl.ctrl_a = local_30;
-  j1939_lamp_status_prev = supervisor_register_146_output_value;
-  supervisor_register_146_output_value = output_lines_144_to_151_state;
+  wVar9 = mios_mpiosm32.data;
+  mios_port_copy.byte_1 = (byte)wVar9;
+  output_line_read_back.lines_8_to_15 = mios_port_copy.byte_1;
+  mios_port_copy.byte_0 = (byte)(wVar9 >> 8);
+  output_line_read_back.lines_16_to_23 = mios_port_copy.byte_0;
+  mios_port_copy.byte_0 = output_line_state.lines_16_to_23;
+  mios_port_copy.byte_1 = output_line_state.lines_8_to_15;
+  mios_mpiosm32.data = (word)mios_port_copy;
+  output_line_read_back.lines_144_to_151 = supervisor_register_146_output_value;
+  supervisor_register_146_output_value = output_line_state.lines_144_to_151;
   cm848_queueSupervisorOutputWrite();
   wVar9 = MIOS_MDASM15_AR.SCRD;
   if ((wVar9 & 0x8000) == 0) {
-    bVar7 = j1939_lamp_status_byte_a & 0xef;
+    bVar7 = output_line_read_back.lines_120_to_127 & 0xef;
   }
   else {
-    bVar7 = j1939_lamp_status_byte_a | 0x10;
+    bVar7 = output_line_read_back.lines_120_to_127 | 0x10;
   }
   wVar9 = mios_mdasm27.SCRD;
   if ((wVar9 & 0x8000) == 0) {
-    j1939_lamp_status_byte_a = bVar7 & 0xdf;
+    output_line_read_back.lines_120_to_127 = bVar7 & 0xdf;
   }
   else {
-    j1939_lamp_status_byte_a = bVar7 | 0x20;
+    output_line_read_back.lines_120_to_127 = bVar7 | 0x20;
   }
   wVar9 = MIOS_MPWMSM0_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
-    bVar7 = j1939_lamp_status_byte_b & 0xfb;
+    bVar7 = output_line_read_back.lines_128_to_135 & 0xfb;
   }
   else {
-    bVar7 = j1939_lamp_status_byte_b | 4;
+    bVar7 = output_line_read_back.lines_128_to_135 | 4;
   }
   wVar9 = MIOS_MPWMSM1_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
@@ -51541,40 +51544,40 @@ void cm848_refreshOutputPortsAndReadback(void)
   }
   wVar9 = MIOS_MPWMSM17_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
-    j1939_lamp_status_byte_b = bVar7 & 0x7f;
+    output_line_read_back.lines_128_to_135 = bVar7 & 0x7f;
   }
   else {
-    j1939_lamp_status_byte_b = bVar7 | 0x80;
+    output_line_read_back.lines_128_to_135 = bVar7 | 0x80;
   }
   wVar9 = MIOS_MPWMSM18_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
-    bVar7 = j1939_lamp_status_byte_c & 0xfe;
+    bVar7 = output_line_read_back.lines_136_to_143 & 0xfe;
   }
   else {
-    bVar7 = j1939_lamp_status_byte_c | 1;
+    bVar7 = output_line_read_back.lines_136_to_143 | 1;
   }
   wVar9 = MIOS_MPWMSM19_PERR.SCR;
   if ((wVar9 & 0x800) == 0) {
-    j1939_lamp_status_byte_c = bVar7 & 0xfd;
+    output_line_read_back.lines_136_to_143 = bVar7 & 0xfd;
   }
   else {
-    j1939_lamp_status_byte_c = bVar7 | 2;
+    output_line_read_back.lines_136_to_143 = bVar7 | 2;
   }
-  if ((injector_control_t_0040c117.output_ch0 & 0x10) == 0) {
+  if ((output_line_state.lines_120_to_127 & 0x10) == 0) {
     wVar9 = 0x205;
   }
   else {
     wVar9 = 0x405;
   }
   MIOS_MDASM15_AR.SCRD = wVar9;
-  if ((injector_control_t_0040c117.output_ch0 & 0x20) == 0) {
+  if ((output_line_state.lines_120_to_127 & 0x20) == 0) {
     wVar9 = 0x205;
   }
   else {
     wVar9 = 0x405;
   }
   mios_mdasm27.SCRD = wVar9;
-  if ((injector_control_t_0040c117.fault_flags & 4) == 0) {
+  if ((output_line_state.lines_128_to_135 & 4) == 0) {
     wVar9 = MIOS_MPWMSM0_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
@@ -51583,7 +51586,7 @@ void cm848_refreshOutputPortsAndReadback(void)
     uVar12 = wVar9 | 0x4800;
   }
   MIOS_MPWMSM0_PERR.SCR = uVar12;
-  if ((injector_control_t_0040c117.fault_flags & 8) == 0) {
+  if ((output_line_state.lines_128_to_135 & 8) == 0) {
     wVar9 = MIOS_MPWMSM1_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
@@ -51592,7 +51595,7 @@ void cm848_refreshOutputPortsAndReadback(void)
     uVar12 = wVar9 | 0x4800;
   }
   MIOS_MPWMSM1_PERR.SCR = uVar12;
-  if ((injector_control_t_0040c117.fault_flags & 0x10) == 0) {
+  if ((output_line_state.lines_128_to_135 & 0x10) == 0) {
     wVar9 = MIOS_MPWMSM2_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
@@ -51601,7 +51604,7 @@ void cm848_refreshOutputPortsAndReadback(void)
     uVar12 = wVar9 | 0x4800;
   }
   MIOS_MPWMSM2_PERR.SCR = uVar12;
-  if ((injector_control_t_0040c117.fault_flags & 0x20) == 0) {
+  if ((output_line_state.lines_128_to_135 & 0x20) == 0) {
     wVar9 = MIOS_MPWMSM3_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
@@ -51610,7 +51613,7 @@ void cm848_refreshOutputPortsAndReadback(void)
     uVar12 = wVar9 | 0x4800;
   }
   MIOS_MPWMSM3_PERR.SCR = uVar12;
-  if ((injector_control_t_0040c117.fault_flags & 0x40) == 0) {
+  if ((output_line_state.lines_128_to_135 & 0x40) == 0) {
     wVar9 = MIOS_MPWMSM16_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
@@ -51619,7 +51622,7 @@ void cm848_refreshOutputPortsAndReadback(void)
     uVar12 = wVar9 | 0x4800;
   }
   MIOS_MPWMSM16_PERR.SCR = uVar12;
-  if ((injector_control_t_0040c117.fault_flags & 0x80) == 0) {
+  if ((output_line_state.lines_128_to_135 & 0x80) == 0) {
     wVar9 = MIOS_MPWMSM17_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
@@ -51628,7 +51631,7 @@ void cm848_refreshOutputPortsAndReadback(void)
     uVar12 = wVar9 | 0x4800;
   }
   MIOS_MPWMSM17_PERR.SCR = uVar12;
-  if ((injector_control_t_0040c117.output_ch1 & 1) == 0) {
+  if ((output_line_state.lines_136_to_143 & 1) == 0) {
     wVar9 = MIOS_MPWMSM18_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
@@ -51637,7 +51640,7 @@ void cm848_refreshOutputPortsAndReadback(void)
     uVar12 = wVar9 | 0x4800;
   }
   MIOS_MPWMSM18_PERR.SCR = uVar12;
-  if ((injector_control_t_0040c117.output_ch1 & 2) == 0) {
+  if ((output_line_state.lines_136_to_143 & 2) == 0) {
     wVar9 = MIOS_MPWMSM19_PERR.SCR;
     uVar12 = wVar9 & 0xf7ff;
   }
@@ -51658,8 +51661,8 @@ void cm848_refreshOutputPortsAndReadback(void)
       uVar1 = iVar15 * 2;
       iVar10 = (int)(uint)uVar12 >> 3;
       iVar6 = (int)uVar3 >> 2;
-      if (((uint)(&output_lines_0_to_7_state)[iVar10] & 1 << ((uint)uVar12 + iVar10 * -8 & 0x3f)) ==
-          0) {
+      if (((uint)(&output_line_state.lines_0_to_7)[iVar10] &
+          1 << ((uint)uVar12 + iVar10 * -8 & 0x3f)) == 0) {
         iVar10 = uVar3 + iVar5 * -8;
         *puVar14 = *puVar14 & ~(ushort)(3 << (iVar15 * 2 & 0x3fU)) |
                    (ushort)(0 << (iVar10 * 2 & 0x3fU));
@@ -51701,8 +51704,8 @@ void cm848_refreshOutputPortsAndReadback(void)
       uVar1 = iVar15 * 2;
       iVar10 = (int)(uint)uVar12 >> 3;
       iVar6 = (int)uVar3 >> 2;
-      if (((uint)(&output_lines_0_to_7_state)[iVar10] & 1 << ((uint)uVar12 + iVar10 * -8 & 0x3f)) ==
-          0) {
+      if (((uint)(&output_line_state.lines_0_to_7)[iVar10] &
+          1 << ((uint)uVar12 + iVar10 * -8 & 0x3f)) == 0) {
         iVar13 = uVar3 + iVar5 * -8;
         *puVar14 = *puVar14 & ~(ushort)(3 << (iVar15 * 2 & 0x3fU)) |
                    (ushort)(0 << (iVar13 * 2 & 0x3fU));
@@ -51741,8 +51744,8 @@ void cm848_refreshOutputPortsAndReadback(void)
     uVar8 = uVar8 + 1 & 0xffff;
   } while (uVar8 < 0x50);
   if (bVar2) {
-    j1939_dm1_prev_b10 = serial_output_driver_transmit_byte;
-    serial_output_driver_transmit_byte = output_lines_152_to_159_state;
+    output_line_read_back.lines_152_to_159 = serial_output_driver_transmit_byte;
+    serial_output_driver_transmit_byte = output_line_state.lines_152_to_159;
     cm848_queueSerialOutputDriverWrite();
   }
   return;
@@ -51751,30 +51754,36 @@ void cm848_refreshOutputPortsAndReadback(void)
 
 
 //
-// Function: hpcr_injectorPulseWidthCalc @ 0x000533e0
+// Function: cm848_refreshInputLineImage @ 0x000533e0
 //
 
-void hpcr_injectorPulseWidthCalc(void)
+/* Snapshots every discrete input port into input_line_image in one pass: the MIOS port data (lines
+   8-23) / SIU_SGPIODT1-2 (24-87) / the MDASM11-15 and 27-30 pin bits (120-128) / the supervisor
+   chip lines 130-151 / the serial output driver status byte (152-159); run by
+   hpcr_periodicTaskSet_fuelFinal and hpcr_initProtectionAndOutputCycle -
+   cm848_readDiscreteInputLine refreshes a single line. Not injector timing (was
+   hpcr_injectorPulseWidthCalc) */
+
+void cm848_refreshInputLineImage(void)
 
 {
   siu_gpio_data_register_t sVar1;
   word wVar2;
   byte bVar3;
-  undefined1 local_8;
-  undefined1 uStack_7;
+  mios_port_data_register_t mios_port_copy;
   siu_gpio_data_register_t gpio_register_copy;
   
-  wVar2 = mios1_ext_ctrl.ctrl_a;
-  uStack_7 = (byte)wVar2;
-  j1939_dm1_prev_b11 = uStack_7;
-  local_8 = (byte)(wVar2 >> 8);
-  j1939_dm1_fault_spn_ext = local_8;
+  wVar2 = mios_mpiosm32.data;
+  mios_port_copy.byte_1 = (byte)wVar2;
+  input_line_image.lines_8_to_15 = mios_port_copy.byte_1;
+  mios_port_copy.byte_0 = (byte)(wVar2 >> 8);
+  input_line_image.lines_16_to_23 = mios_port_copy.byte_0;
   wVar2 = MIOS_MDASM11_AR.SCRD;
   if ((wVar2 & 0x8000) == 0) {
-    bVar3 = io_pin_status_byte & 0xfe;
+    bVar3 = input_line_image.lines_120_to_127 & 0xfe;
   }
   else {
-    bVar3 = io_pin_status_byte | 1;
+    bVar3 = input_line_image.lines_120_to_127 | 1;
   }
   wVar2 = MIOS_MDASM12_AR.SCRD;
   if ((wVar2 & 0x8000) == 0) {
@@ -51806,40 +51815,40 @@ void hpcr_injectorPulseWidthCalc(void)
   }
   wVar2 = mios_mdasm29.SCRD;
   if ((wVar2 & 0x8000) == 0) {
-    io_pin_status_byte = bVar3 & 0x7f;
+    input_line_image.lines_120_to_127 = bVar3 & 0x7f;
   }
   else {
-    io_pin_status_byte = bVar3 | 0x80;
+    input_line_image.lines_120_to_127 = bVar3 | 0x80;
   }
   wVar2 = mios_mdasm30.SCRD;
   if ((wVar2 & 0x8000) == 0) {
-    bVar3 = j1939_protection_config_byte & 0xfe;
+    bVar3 = input_line_image.lines_128_to_135 & 0xfe;
   }
   else {
-    bVar3 = j1939_protection_config_byte | 1;
+    bVar3 = input_line_image.lines_128_to_135 | 1;
   }
   sVar1 = SIU_SGPIODT1;
   gpio_register_copy.byte_0 = sVar1.byte_0;
-  j1939_dm1_tx_b2 = gpio_register_copy.byte_0;
+  input_line_image.lines_24_to_31 = gpio_register_copy.byte_0;
   gpio_register_copy.byte_1 = sVar1.byte_1;
-  j1939_dm1_tx_b3 = gpio_register_copy.byte_1;
+  input_line_image.lines_32_to_39 = gpio_register_copy.byte_1;
   gpio_register_copy.byte_2 = sVar1.byte_2;
-  j1939_dm1_tx_b4 = gpio_register_copy.byte_2;
+  input_line_image.lines_40_to_47 = gpio_register_copy.byte_2;
   gpio_register_copy.byte_3 = sVar1.byte_3;
-  j1939_dm1_tx_b5 = gpio_register_copy.byte_3;
+  input_line_image.lines_48_to_55 = gpio_register_copy.byte_3;
   sVar1 = SIU_SGPIODT2;
   gpio_register_copy.byte_0 = sVar1.byte_0;
-  j1939_dm1_tx_b6 = gpio_register_copy.byte_0;
+  input_line_image.lines_56_to_63 = gpio_register_copy.byte_0;
   gpio_register_copy.byte_1 = sVar1.byte_1;
-  j1939_dm1_tx_b7 = gpio_register_copy.byte_1;
+  input_line_image.lines_64_to_71 = gpio_register_copy.byte_1;
   gpio_register_copy.byte_2 = sVar1.byte_2;
-  j1939_dm1_tx_b8 = gpio_register_copy.byte_2;
+  input_line_image.lines_72_to_79 = gpio_register_copy.byte_2;
   gpio_register_copy.byte_3 = sVar1.byte_3;
-  j1939_dm1_tx_b9 = gpio_register_copy.byte_3;
-  j1939_protection_config_byte = bVar3 & 3 | supervisor_input_lines_130_to_135_state << 2;
-  j1939_dm1_parameter_byte = supervisor_input_lines_136_to_143_state;
-  j1939_fault_occurrence_prev = supervisor_input_lines_144_to_151_state;
-  j1939_periodic_timer_prev = serial_output_driver_status_byte;
+  input_line_image.lines_80_to_87 = gpio_register_copy.byte_3;
+  input_line_image.lines_128_to_135 = bVar3 & 3 | supervisor_input_lines_130_to_135_state << 2;
+  input_line_image.lines_136_to_143 = supervisor_input_lines_136_to_143_state;
+  input_line_image.lines_144_to_151 = supervisor_input_lines_144_to_151_state;
+  input_line_image.lines_152_to_159 = serial_output_driver_status_byte;
   return;
 }
 
@@ -52592,7 +52601,7 @@ void mpc555_systemStartupInitialization(word param_1)
   dVar1 = USIU_BR0.OR1;
   USIU_BR0.OR1 = dVar1 | 0x20;
   USIU_BR0.BR1 = 0x400821;
-  mios1_ext_ctrl.ctrl_b = 0x2000;
+  mios_mpiosm32.data_direction = 0x2000;
   USIU_INITCFG = 0x2026;
   USIU_SYPCR = 0xb;
   USIU_PISCR.PISCR = 0x105;
@@ -65420,10 +65429,10 @@ void hpcr_configureTPUTimerInterrupts(void)
   wVar1 = tpu_b_mcr.CIER;
   tpu_b_mcr.CIER = wVar1 | 2;
   if (DAT_003ff70e == 0) {
-    output_lines_48_to_55_state = output_lines_48_to_55_state & 0xfd;
+    output_line_state.lines_48_to_55 = output_line_state.lines_48_to_55 & 0xfd;
   }
   else {
-    output_lines_48_to_55_state = output_lines_48_to_55_state | 2;
+    output_line_state.lines_48_to_55 = output_line_state.lines_48_to_55 | 2;
   }
   DAT_0040afec = 0xffffffff;
   egr_smoke_limit_status_flags = egr_smoke_limit_status_flags & 0xfbff;
