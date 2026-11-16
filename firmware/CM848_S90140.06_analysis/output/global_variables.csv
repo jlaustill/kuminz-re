@@ -842,41 +842,41 @@ address,name,type,comment
 0x003051c3,qsmcm_comdram_3,byte,QSPI command RAM entry 3 (was eeprom_timing_reg_3)
 0x003051c4,qsmcm_comdram_4,byte,QSPI command RAM entry 4 (was eeprom_timing_reg_4)
 0x003051c5,qsmcm_comdram_5,byte,QSPI command RAM entry 5 (was eeprom_timing_reg_5)
-0x00306000,MIOS_MPWMSM0_PERR,mios_mpwmsm_t,
+0x00306000,mios_mpwmsm0,mios_mpwmsm_t,(was MIOS_MPWMSM0_PERR)
 0x00306002,MIOS_MPWMSM0_PULR,,
 0x00306004,MIOS_MPWMSM0_CNTR,,
-0x00306008,MIOS_MPWMSM1_PERR,mios_mpwmsm1_t,
+0x00306008,mios_mpwmsm1,mios_mpwmsm_t,(was MIOS_MPWMSM1_PERR)
 0x0030600a,MIOS_MPWMSM1_PULR,,
 0x0030600c,MIOS_MPWMSM1_CNTR,,
-0x00306010,MIOS_MPWMSM2_PERR,mios_mpwmsm2_t,
+0x00306010,mios_mpwmsm2,mios_mpwmsm_t,(was MIOS_MPWMSM2_PERR)
 0x00306012,MIOS_MPWMSM2_PULR,,
 0x00306014,MIOS_MPWMSM2_CNTR,,
-0x00306018,MIOS_MPWMSM3_PERR,mios_mpwmsm3_t,
+0x00306018,mios_mpwmsm3,mios_mpwmsm_t,(was MIOS_MPWMSM3_PERR)
 0x0030601a,MIOS_MPWMSM3_PULR,,
 0x0030601c,MIOS_MPWMSM3_CNTR,,
 0x00306030,mios_mmcsm_cnt,mios_mmcsm_b_t,
 0x00306032,mios_mmcsm_ml,,
 0x00306036,mios_mmcsm_scrd,,
-0x00306058,MIOS_MDASM11_AR,mios_mdasm_t,
+0x00306058,mios_mdasm11,mios_mdasm_t,(was MIOS_MDASM11_AR)
 0x0030605a,MIOS_MDASM11_BR,,
 0x0030605e,MIOS_MDASM11_SCRD,,
-0x00306060,MIOS_MDASM12_AR,mios_mdasm12_t,
+0x00306060,mios_mdasm12,mios_mdasm_t,(was MIOS_MDASM12_AR)
 0x00306062,MIOS_MDASM12_BR,,
 0x00306066,MIOS_MDASM12_SCRD,,
-0x00306068,MIOS_MDASM13_AR,byte,
-0x0030606a,MIOS_MDASM13_BR,byte,
-0x0030606e,MIOS_MDASM13_SCRD,byte,
-0x00306070,MIOS_MDASM14_AR,byte,
-0x00306072,MIOS_MDASM14_BR,byte,
-0x00306076,MIOS_MDASM14_SCRD,byte,
-0x00306078,MIOS_MDASM15_AR,mios_mdasm15_t,
+0x00306068,mios_mdasm13,mios_mdasm_t,(was MIOS_MDASM13_AR)
+0x0030606a,MIOS_MDASM13_BR,,
+0x0030606e,MIOS_MDASM13_SCRD,,
+0x00306070,mios_mdasm14,mios_mdasm_t,(was MIOS_MDASM14_AR)
+0x00306072,MIOS_MDASM14_BR,,
+0x00306076,MIOS_MDASM14_SCRD,,
+0x00306078,mios_mdasm15,mios_mdasm_t,(was MIOS_MDASM15_AR)
 0x0030607a,MIOS_MDASM15_BR,,
-0x00306080,MIOS_MPWMSM16_PERR,mios_mpwmsm16_t,MIOS1 submodule 16 (PWM): cm848_miosPwm16* drive it with the same helpers as MPWMSM0-3 (mpc555_miosEnablePwmSubmodule / mpc555_miosSetPwmSubmoduleDuty / mpc555_miosSetPwmSubmodulePeriodMicroseconds) - was MIOS_MDASM0_AR
-0x00306088,MIOS_MPWMSM17_PERR,mios_mpwmsm17_t,MIOS1 submodule 17 (PWM): cm848_miosPwm17* - was MIOS_MDASM1_AR
-0x00306090,MIOS_MPWMSM18_PERR,mios_mpwmsm18_t,MIOS1 submodule 18 (PWM): cm848_miosPwm18* - was MIOS_MDASM2_AR
-0x00306098,MIOS_MPWMSM19_PERR,mios_mpwmsm19_t,MIOS1 submodule 19 (PWM): cm848_miosPwm19* - was MIOS_MDASM3_AR
+0x00306080,mios_mpwmsm16,mios_mpwmsm_t,MIOS1 submodule 16 (PWM): cm848_miosPwm16* drive it with the same helpers as MPWMSM0-3 (mpc555_miosEnablePwmSubmodule / mpc555_miosSetPwmSubmoduleDuty / mpc555_miosSetPwmSubmodulePeriodMicroseconds) - was MIOS_MDASM0_AR (was MIOS_MPWMSM16_PERR)
+0x00306088,mios_mpwmsm17,mios_mpwmsm_t,MIOS1 submodule 17 (PWM): cm848_miosPwm17* - was MIOS_MDASM1_AR (was MIOS_MPWMSM17_PERR)
+0x00306090,mios_mpwmsm18,mios_mpwmsm_t,MIOS1 submodule 18 (PWM): cm848_miosPwm18* - was MIOS_MDASM2_AR (was MIOS_MPWMSM18_PERR)
+0x00306098,mios_mpwmsm19,mios_mpwmsm_t,MIOS1 submodule 19 (PWM): cm848_miosPwm19* - was MIOS_MDASM3_AR (was MIOS_MPWMSM19_PERR)
 0x003060b0,mios_mmcsm22,mios_mmcsm_b_t,MIOS1 submodule 22 (modulus counter): ML (+2) is the shared PWM period - mpc555_miosSetChannelPwmPeriod writes it (-(value x 20) - 1) and mpc555_miosSetChannelPwmDuty scales MDASM duty edges from it - was MIOS_MDASM6_AR / _BR / _SCRD
-0x003060d8,mios_mdasm27,mios_mdasm27_t,
+0x003060d8,mios_mdasm27,mios_mdasm_t,
 0x003060de,mios_dasm_ctrl,,
 0x003060e0,mios_mdasm28,mios_mdasm_t,MIOS1 submodule 28: cm848_miosChannel28* pass this base; SCRD (+6) bit 15 = the MDA28 pin = discrete input line 126 - was MIOS_MIOS1TPCR / MIOS_MPWMSM4_*
 0x003060e8,mios_mdasm29,mios_mdasm_t,MIOS1 submodule 29: cm848_miosChannel29* pass this base; SCRD (+6) bit 15 = the MDA29 pin = discrete input line 127 - was MIOS_MPWMSM5_* (mios_mpwmsm5_t)

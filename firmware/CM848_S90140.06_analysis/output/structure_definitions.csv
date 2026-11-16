@@ -994,14 +994,25 @@ mios_mpwmsm_t,0x00306000,PERR,word,2,Period Register (sets PWM frequency),,verif
 mios_mpwmsm_t,0x00306000,PULR,word,2,Pulse Width Register (sets duty cycle),,verified
 mios_mpwmsm_t,0x00306000,CNTR,word,2,Counter Register (current count value),,verified
 mios_mpwmsm_t,0x00306000,SCR,word,2,Status/Control Register (0x9=enable 0x4ff=period-mode),,verified
+mios_mpwmsm_t,0x00306008,,,,MPWMSM1 instance - marker only (was mios_mpwmsm1_t),,verified
+mios_mpwmsm_t,0x00306010,,,,MPWMSM2 instance - marker only (was mios_mpwmsm2_t),,verified
+mios_mpwmsm_t,0x00306018,,,,MPWMSM3 instance - marker only (was mios_mpwmsm3_t),,verified
+mios_mpwmsm_t,0x00306080,,,,MPWMSM16 instance - marker only (was mios_mpwmsm16_t),,verified
+mios_mpwmsm_t,0x00306088,,,,MPWMSM17 instance - marker only (was mios_mpwmsm17_t),,verified
+mios_mpwmsm_t,0x00306090,,,,MPWMSM18 instance - marker only (was mios_mpwmsm18_t),,verified
+mios_mpwmsm_t,0x00306098,,,,MPWMSM19 instance - marker only (was mios_mpwmsm19_t),,verified
 # =============================================================================
 # MIOS Double Action Submodule (MDASM) - 4 x u16 = 8 bytes
 # Functions: mpc555_miosEnableChannelPwm, mpc555_miosSetChannelPwmDuty, mpc555_miosSetChannelPwmPeriod
 # Usage: param_1 = &MIOS_MDASMx_AR; *(param_1+6) = SCRD write (0x9=enable)
-mios_mdasm_t,0x00306058,AR,word,2,A Register (capture/compare value A),,verified
-mios_mdasm_t,0x00306058,BR,word,2,B Register (capture/compare value B),,verified
+mios_mdasm_t,0x00306058,AR_BR,dword,4,A and B registers as one 32-bit pair (AR = high half / BR = low half): the drivers read and write them with one access - edge captures in input mode / the PWM compare pair in output mode,,verified
 mios_mdasm_t,0x00306058,XR,word,2,X Register (extended capture/status value),,verified
 mios_mdasm_t,0x00306058,SCRD,word,2,Status/Control Register D (0x9=enable output),,verified
+mios_mdasm_t,0x00306060,,,,MDASM12 instance - marker only (was mios_mdasm12_t),,verified
+mios_mdasm_t,0x00306068,,,,MDASM13 instance - marker only (was byte-typed register rows),,verified
+mios_mdasm_t,0x00306070,,,,MDASM14 instance - marker only (was byte-typed register rows),,verified
+mios_mdasm_t,0x00306078,,,,MDASM15 instance - marker only (was mios_mdasm15_t),,verified
+mios_mdasm_t,0x003060d8,,,,MDASM27 instance - marker only (was mios_mdasm27_t) - SCRD 0x405 = enable / 0x205 = mode,,verified
 # =============================================================================
 # MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes: type mios_mmcsm_b_t (defined further down)
 # MMCSM6 = mios_mmcsm_cnt at 0x306030 and MMCSM22 = mios_mmcsm22 at 0x3060b0 (submodule n at 0x306000 + 8 x n).
@@ -1121,48 +1132,12 @@ tpub_ch14_params_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verifie
 # MDASM  = Double Action Submodule (AR/BR/XR/SCRD) - MDASM12 / MDASM15 here; MDASM11 and 28-31 use mios_mdasm_t
 # Per-channel types predate the marker-row pattern; they are kept (renamed in place) so decompiler casts stay stable
 # =============================================================================
-mios_mpwmsm1_t,0x00306008,PERR,word,2,MPWMSM1 Period Register,,verified
-mios_mpwmsm1_t,0x00306008,PULR,word,2,MPWMSM1 Pulse Width Register,,verified
-mios_mpwmsm1_t,0x00306008,CNTR,word,2,MPWMSM1 Counter Register,,verified
-mios_mpwmsm1_t,0x00306008,SCR,word,2,MPWMSM1 Status/Control Register,,verified
-mios_mpwmsm2_t,0x00306010,PERR,word,2,MPWMSM2 Period Register,,verified
-mios_mpwmsm2_t,0x00306010,PULR,word,2,MPWMSM2 Pulse Width Register,,verified
-mios_mpwmsm2_t,0x00306010,CNTR,word,2,MPWMSM2 Counter Register,,verified
-mios_mpwmsm2_t,0x00306010,SCR,word,2,MPWMSM2 Status/Control Register,,verified
-mios_mpwmsm3_t,0x00306018,PERR,word,2,MPWMSM3 Period Register,,verified
-mios_mpwmsm3_t,0x00306018,PULR,word,2,MPWMSM3 Pulse Width Register,,verified
-mios_mpwmsm3_t,0x00306018,CNTR,word,2,MPWMSM3 Counter Register,,verified
-mios_mpwmsm3_t,0x00306018,SCR,word,2,MPWMSM3 Status/Control Register,,verified
 # MMCSM second instance (slot at 0x306030 = MIOS_base+0x30; channel number from labels)
 mios_mmcsm_b_t,0x00306030,CNT,word,2,Up-Counter Register,,verified
 mios_mmcsm_b_t,0x00306030,ML,word,2,Modulus Latch Register (period/reload value),,verified
 mios_mmcsm_b_t,0x00306030,_pad,word,2,Reserved/unused padding,,verified
 mios_mmcsm_b_t,0x00306030,SCRD,word,2,Status/Control Register D,,verified
 mios_mmcsm_b_t,0x003060b0,,,,MMCSM22 instance - marker only,,verified
-mios_mdasm12_t,0x00306060,AR,word,2,MDASM12 A Register,,verified
-mios_mdasm12_t,0x00306060,BR,word,2,MDASM12 B Register,,verified
-mios_mdasm12_t,0x00306060,XR,word,2,MDASM12 X Register (extended status),,verified
-mios_mdasm12_t,0x00306060,SCRD,word,2,MDASM12 Status/Control Register D,,verified
-mios_mdasm15_t,0x00306078,AR,word,2,MDASM15 A Register,,verified
-mios_mdasm15_t,0x00306078,BR,word,2,MDASM15 B Register,,verified
-mios_mdasm15_t,0x00306078,XR,word,2,MDASM15 X Register,,verified
-mios_mdasm15_t,0x00306078,SCRD,word,2,MDASM15 Status/Control Register D,,verified
-mios_mpwmsm16_t,0x00306080,PERR,word,2,MPWMSM16 Period Register,,verified
-mios_mpwmsm16_t,0x00306080,PULR,word,2,MPWMSM16 Pulse Width Register,,verified
-mios_mpwmsm16_t,0x00306080,CNTR,word,2,MPWMSM16 Counter Register,,verified
-mios_mpwmsm16_t,0x00306080,SCR,word,2,MPWMSM16 Status/Control Register,,verified
-mios_mpwmsm17_t,0x00306088,PERR,word,2,MPWMSM17 Period Register,,verified
-mios_mpwmsm17_t,0x00306088,PULR,word,2,MPWMSM17 Pulse Width Register,,verified
-mios_mpwmsm17_t,0x00306088,CNTR,word,2,MPWMSM17 Counter Register,,verified
-mios_mpwmsm17_t,0x00306088,SCR,word,2,MPWMSM17 Status/Control Register,,verified
-mios_mpwmsm18_t,0x00306090,PERR,word,2,MPWMSM18 Period Register,,verified
-mios_mpwmsm18_t,0x00306090,PULR,word,2,MPWMSM18 Pulse Width Register,,verified
-mios_mpwmsm18_t,0x00306090,CNTR,word,2,MPWMSM18 Counter Register,,verified
-mios_mpwmsm18_t,0x00306090,SCR,word,2,MPWMSM18 Status/Control Register,,verified
-mios_mpwmsm19_t,0x00306098,PERR,word,2,MPWMSM19 Period Register,,verified
-mios_mpwmsm19_t,0x00306098,PULR,word,2,MPWMSM19 Pulse Width Register,,verified
-mios_mpwmsm19_t,0x00306098,CNTR,word,2,MPWMSM19 Counter Register,,verified
-mios_mpwmsm19_t,0x00306098,SCR,word,2,MPWMSM19 Status/Control Register,,verified
 # =============================================================================
 # TouCAN A Message Buffer structs - 16 bytes each (8 x u16)
 # MB area starts at TouCAN_A_base + 0x80; each MB = 16 bytes (spacing confirmed)
@@ -1411,10 +1386,6 @@ boot_state_t,0x003034a0,boot_phase,word,2,Boot phase counter (cycles 0-3 per PIS
 # Injector channel 0x7d - consecutive to MDASM15 (0x7c) in the switch dispatch
 # SCRD at offset 6 (0x3060de): written 0x405/0x205 for injector timing enable
 # =============================================================================
-mios_mdasm27_t,0x003060d8,AR,word,2,A Register (capture/compare value A),,verified
-mios_mdasm27_t,0x003060d8,BR,word,2,B Register (capture/compare value B),,verified
-mios_mdasm27_t,0x003060d8,XR,word,2,X Register (extended capture/status value),,verified
-mios_mdasm27_t,0x003060d8,SCRD,word,2,Status/Control Register D (0x405=enable / 0x205=mode),,verified
 # =============================================================================
 # MIOS1 extended control registers @ 0x306100
 # Unused MIOS1 sub-register file space repurposed as firmware RAM

@@ -108,7 +108,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00054ec4,mpc555_miosSetChannelPwmDuty,local_8,compare_register_pair,undefined4,AR (high half) : BR (low half) written as one word
 0x00054f48,mpc555_miosSetChannelPwmPeriod,wVar1,modulus_latch_value,word,Value written to the MMCSM22 modulus latch
 0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,uVar1,pulse_width,ushort,Value written to PULR
-0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar1,period_register_value,word,Value written to PERR
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,wVar1,period_register_value,word,Value written to PERR
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar2,period_divisor,uint,16 with prescaler byte 0xff / 2048 with 0x80
 0x00054e10,mpc555_miosCheckChannelFeedback,wVar1,feedback_result,word,0 agree / 1 reads high or toggling / 2 reads low or toggling
 # cm848_updateOutputReadBackFaultBits @ 0x0053a110 - read-back verdict of each output channel assignment table entry into output_read_back_fault_bits
