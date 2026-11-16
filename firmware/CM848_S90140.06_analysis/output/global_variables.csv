@@ -116,7 +116,7 @@ address,name,type,comment
 0x000597d6,,word[25],Lookup table - x axis of 24 breakpoints after its byte-length word - read by engine_protection_derateParam_priorityApply / engine_torqueLimit_upperCap_calc
 0x00059808,,word[25],Lookup table - data: 24 values (one per axis breakpoint) after a byte-length word - read by engine_protection_derateParam_priorityApply / engine_torqueLimit_upperCap_calc
 0x00059b32,BYTE_00059b32,byte,
-0x00059b5a,u_XY^__00059b5a,unicode,
+0x00059b5a,u_XY^__00059b5a,,
 0x00059e9c,fault_definition_table,byte,
 0x00059e9e,fault_entry_flags,byte,
 0x00059ece,fault_entry_config,byte,
@@ -295,7 +295,7 @@ address,name,type,comment
 0x0005c6f6,,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_runCoolingFanSpeedPid
 0x0005c708,,word[8],Lookup table - y axis of 7 breakpoints after its byte-length word - read by cm848_runCoolingFanSpeedPid
 0x0005c718,,word[56],Lookup table - 2-D grid: 7 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header) - read by cm848_runCoolingFanSpeedPid
-0x0005c788,u__0005c788,,
+0x0005c788,intake_air_heater_runup_holdoff_preset,word,ROM constant (lhz) cm848_countDownIntakeAirHeaterPreheat reloads intake_air_heater_runup_holdoff_countdown with on every preheat pass - the countdown starts from it once the preheat ends (was the auto-string label u__0005c788)
 0x0005c7ae,pci_message_timeout_grace,word,ROM constant 50 (lhz) - a PCI message is flagged timed out once its timer exceeds interval by more than this
 0x0005c7b0,pci_link_error_limit,word,ROM constant 255 (lhz) - pci_link_error_count value that latches the PCI link failure
 0x0005c7b2,pci_ecm_address,word,ROM word 0x0010: the ECM's J1850 node address - first byte of every OBD-II and diagnostic response (cm848_processPciObdRequest / cm848_processPciDiagnosticRequest) (was j1939_dm_node_id_cal)

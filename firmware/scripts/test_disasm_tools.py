@@ -55,6 +55,12 @@ def main():
     print(f"[{'PASS' if ro_ok else 'FAIL'}] xref 0x00408dfc read-only: {writes} writes / {len(refs)} fns")
     fails += not ro_ok
 
+    # an unnamed lookup table typed by a type-only row renders WORD_ARRAY_<addr>, not DAT_<addr>
+    name, refs = referencing_functions(0x0005fe88)
+    table_ok = not name and any(f == "cm848_sensor_channel_state_load" for _, f in refs)
+    print(f"[{'PASS' if table_ok else 'FAIL'}] xref 0x0005fe88 unnamed word array: {len(refs)} fns")
+    fails += not table_ok
+
     print(f"\n{'ALL PASS' if fails == 0 else str(fails) + ' FAILED'}")
     sys.exit(1 if fails else 0)
 

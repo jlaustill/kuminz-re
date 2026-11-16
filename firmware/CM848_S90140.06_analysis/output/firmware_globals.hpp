@@ -124,7 +124,7 @@ extern word wastegate_solenoid_read_back_fault_debounce_limit;  // 0x0005c668
 extern word accelerator_pedal_press_window_limit;  // 0x0005c66a
 extern word accelerator_pedal_press_threshold;  // 0x0005c66c
 extern word accelerator_pedal_release_threshold;  // 0x0005c66e
-extern undefined u__0005c788;  // 0x0005c788
+extern word intake_air_heater_runup_holdoff_preset;  // 0x0005c788
 extern word pci_message_timeout_grace;  // 0x0005c7ae
 extern word pci_link_error_limit;  // 0x0005c7b0
 extern word pci_ecm_address;  // 0x0005c7b2

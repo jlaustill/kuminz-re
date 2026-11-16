@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 15 22:41:04 MST 2026
+// Generated: Sun Nov 15 22:52:59 MST 2026
 
 
 //
@@ -69695,7 +69695,7 @@ void cm848_countDownIntakeAirHeaterPreheat(void)
       eeprom_shadow_header.eeprom_status_flags = 1;
     }
   }
-  intake_air_heater_runup_holdoff_countdown = u__0005c788;
+  intake_air_heater_runup_holdoff_countdown = intake_air_heater_runup_holdoff_preset;
   intake_air_heater_level6_grace_count = 100;
   return;
 }
