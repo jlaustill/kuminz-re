@@ -957,7 +957,6 @@ typedef struct engine_rpm_state_t engine_rpm_state_t;
 typedef struct sensor_readings_t sensor_readings_t;
 typedef struct eeprom_header_t eeprom_header_t;
 typedef struct governor_output_t governor_output_t;
-typedef struct injector_control_t injector_control_t;
 typedef struct pci_link_state_t pci_link_state_t;
 typedef struct fault_list_state_t fault_list_state_t;
 typedef struct data_transfer_state_t data_transfer_state_t;
@@ -974,7 +973,6 @@ typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
 typedef struct parameter_response_t parameter_response_t;
 typedef struct calterm_protocol_t calterm_protocol_t;
 typedef struct insite_protocol_t insite_protocol_t;
-typedef struct table_interp_args_t table_interp_args_t;
 typedef struct sensor_channel_config_t sensor_channel_config_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct dma_descriptor_t dma_descriptor_t;
@@ -1017,11 +1015,12 @@ typedef struct scheduler_task_stat_t scheduler_task_stat_t;
 typedef struct j1939_dm13_requester_slot_t j1939_dm13_requester_slot_t;
 typedef struct protection_threshold_set_t protection_threshold_set_t;
 typedef struct fault_entry_t fault_entry_t;
-typedef struct boost_in_range_config_t boost_in_range_config_t;
 typedef struct usiu_pit_t usiu_pit_t;
 typedef struct usiu_clock_t usiu_clock_t;
 typedef struct usiu_memc_t usiu_memc_t;
 typedef struct siu_gpio_data_register_t siu_gpio_data_register_t;
+typedef struct discrete_line_image_t discrete_line_image_t;
+typedef struct mios_port_data_register_t mios_port_data_register_t;
 typedef struct etc1_governor_state_t etc1_governor_state_t;
 typedef struct etc1_config_entry_t etc1_config_entry_t;
 typedef struct tpua_module_regs_t tpua_module_regs_t;
@@ -1038,16 +1037,7 @@ typedef struct tpua_ch14_params_t tpua_ch14_params_t;
 typedef struct tpub_ch0_params_t tpub_ch0_params_t;
 typedef struct tpub_ch11_params_t tpub_ch11_params_t;
 typedef struct tpub_ch14_params_t tpub_ch14_params_t;
-typedef struct mios_mpwmsm1_t mios_mpwmsm1_t;
-typedef struct mios_mpwmsm2_t mios_mpwmsm2_t;
-typedef struct mios_mpwmsm3_t mios_mpwmsm3_t;
 typedef struct mios_mmcsm_b_t mios_mmcsm_b_t;
-typedef struct mios_mdasm12_t mios_mdasm12_t;
-typedef struct mios_mdasm15_t mios_mdasm15_t;
-typedef struct mios_mpwmsm16_t mios_mpwmsm16_t;
-typedef struct mios_mpwmsm17_t mios_mpwmsm17_t;
-typedef struct mios_mpwmsm18_t mios_mpwmsm18_t;
-typedef struct mios_mpwmsm19_t mios_mpwmsm19_t;
 typedef struct toucan_a_mb0_t toucan_a_mb0_t;
 typedef struct toucan_a_mb1_t toucan_a_mb1_t;
 typedef struct toucan_a_mb2_t toucan_a_mb2_t;
@@ -1068,8 +1058,7 @@ typedef struct j1939_tp_pause_t j1939_tp_pause_t;
 typedef struct diag_buf_b_ctrl_t diag_buf_b_ctrl_t;
 typedef struct diag_buf_a_ctrl_t diag_buf_a_ctrl_t;
 typedef struct boot_state_t boot_state_t;
-typedef struct mios_mdasm27_t mios_mdasm27_t;
-typedef struct mios1_ext_ctrl_t mios1_ext_ctrl_t;
+typedef struct mios_mpiosm_t mios_mpiosm_t;
 typedef struct mios1_isr_t mios1_isr_t;
 typedef struct diag_clear_flags_t diag_clear_flags_t;
 typedef struct dual_axis_table_dims_t dual_axis_table_dims_t;
@@ -1205,16 +1194,6 @@ struct governor_output_t {
     uint32_t integrator;  /* Speed control PID integrator (Q16.16 fixed point) */
     uint16_t governor_output;  /* Governor output command (lower word) */
     uint16_t governor_output_high;  /* Governor output command (upper word) */
-};
-
-struct injector_control_t {
-    uint8_t enable_ch0_7;  /* Injector enable bitmap channels 0-7 */
-    uint8_t enable_ch8_15;  /* Injector enable bitmap channels 8-15 */
-    uint8_t channel_status;  /* Output channel status flags */
-    uint8_t timing_mode;  /* Injector timing mode selector */
-    uint8_t output_ch0;  /* Channel 0 output state */
-    uint8_t fault_flags;  /* Injector fault detection flags */
-    uint8_t output_ch1;  /* Channel 1 output state */
 };
 
 struct pci_link_state_t {
@@ -1368,13 +1347,6 @@ struct insite_protocol_t {
     uint8_t live_data_request;  /* Live data monitoring request flag */
     uint8_t status_flags;  /* Monitoring status flags */
     uint8_t response_data[6];  /* Live parameter response data */
-};
-
-struct table_interp_args_t {
-    uint16_t current_index;  /* Current interpolation index into table */
-    uint32_t x_axis_ptr;  /* Pointer to X-axis table (input values) */
-    uint16_t input_value;  /* Input value for table lookup */
-    uint32_t y_axis_ptr;  /* Pointer to Y-axis table (output values) */
 };
 
 struct sensor_channel_config_t {
@@ -1847,18 +1819,6 @@ struct fault_entry_t {
     uint16_t status_flags;  /* Fault entry status/severity flags (bit 0 = newly active) */
 };
 
-struct boost_in_range_config_t {
-    uint16_t deviation_count_threshold;  /* BIR deviation count threshold for setting fault */
-    uint16_t load_threshold;  /* BIR load threshold for high boost check (maps to DGLWTD) */
-    uint16_t unknown1;  /* BIR calibration value (unknown purpose) */
-    uint16_t operating_time_threshold;  /* BIR operating time threshold for fault (maps to DGBSHTTD) */
-    uint16_t timing_threshold;  /* BIR injection timing threshold */
-    uint16_t high_boost_threshold;  /* BIR high boost pressure threshold (maps to DGSTBSTD) */
-    uint16_t speed_threshold;  /* BIR RPM threshold (maps to DGLSRSOF) */
-    uint16_t unknown2;  /* BIR calibration value (gap at 0x0005c9a2) */
-    uint16_t consecutive_high_threshold;  /* BIR consecutive high count before deviation increment */
-};
-
 struct usiu_pit_t {
     uint16_t PISCR;  /* PIT Status and Control Register (firmware writes 0x101 to enable PIE+PS) */
     uint16_t _pad_piscr;  /* Padding after PISCR (16-bit register in 32-bit slot) */
@@ -1893,6 +1853,34 @@ struct siu_gpio_data_register_t {
     uint8_t byte_1;  /* Bits 23-16: lines 32-39 in SIU_SGPIODT1 / lines 64-71 in SIU_SGPIODT2 */
     uint8_t byte_2;  /* Bits 15-8: lines 40-47 in SIU_SGPIODT1 / lines 72-79 in SIU_SGPIODT2 */
     uint8_t byte_3;  /* Bits 7-0: lines 48-55 in SIU_SGPIODT1 / lines 80-87 in SIU_SGPIODT2 */
+};
+
+struct discrete_line_image_t {
+    uint8_t lines_0_to_7;  /* Lines 0-7 (bit = line - 0) */
+    uint8_t lines_8_to_15;  /* Lines 8-15 (bit = line - 8) */
+    uint8_t lines_16_to_23;  /* Lines 16-23 (bit = line - 16) */
+    uint8_t lines_24_to_31;  /* Lines 24-31 (bit = line - 24) */
+    uint8_t lines_32_to_39;  /* Lines 32-39 (bit = line - 32) */
+    uint8_t lines_40_to_47;  /* Lines 40-47 (bit = line - 40) */
+    uint8_t lines_48_to_55;  /* Lines 48-55 (bit = line - 48) */
+    uint8_t lines_56_to_63;  /* Lines 56-63 (bit = line - 56) */
+    uint8_t lines_64_to_71;  /* Lines 64-71 (bit = line - 64) */
+    uint8_t lines_72_to_79;  /* Lines 72-79 (bit = line - 72) */
+    uint8_t lines_80_to_87;  /* Lines 80-87 (bit = line - 80) */
+    uint8_t lines_88_to_95;  /* Lines 88-95 (bit = line - 88) */
+    uint8_t lines_96_to_103;  /* Lines 96-103 (bit = line - 96) */
+    uint8_t lines_104_to_111;  /* Lines 104-111 (bit = line - 104) */
+    uint8_t lines_112_to_119;  /* Lines 112-119 (bit = line - 112) */
+    uint8_t lines_120_to_127;  /* Lines 120-127 (bit = line - 120) */
+    uint8_t lines_128_to_135;  /* Lines 128-135 (bit = line - 128) */
+    uint8_t lines_136_to_143;  /* Lines 136-143 (bit = line - 136) */
+    uint8_t lines_144_to_151;  /* Lines 144-151 (bit = line - 144) */
+    uint8_t lines_152_to_159;  /* Lines 152-159 (bit = line - 152) */
+};
+
+struct mios_port_data_register_t {
+    uint8_t byte_0;  /* Bits 15-8 (the byte at the lower address): input lines 16-23 */
+    uint8_t byte_1;  /* Bits 7-0: input lines 8-15 */
 };
 
 struct etc1_governor_state_t {
@@ -2011,8 +1999,7 @@ struct mios_mpwmsm_t {
 };
 
 struct mios_mdasm_t {
-    uint16_t AR;  /* A Register (capture/compare value A) */
-    uint16_t BR;  /* B Register (capture/compare value B) */
+    uint32_t AR_BR;  /* A and B registers as one 32-bit pair (AR = high half / BR = low half): the drivers read and write them with one access - edge captures in input mode / the PWM compare pair in output mode */
     uint16_t XR;  /* X Register (extended capture/status value) */
     uint16_t SCRD;  /* Status/Control Register D (0x9=enable output) */
 };
@@ -2129,74 +2116,11 @@ struct tpub_ch14_params_t {
     uint16_t PARAM7;  /* TPUB Channel 14 parameter 7 */
 };
 
-struct mios_mpwmsm1_t {
-    uint16_t PERR;  /* MPWMSM1 Period Register */
-    uint16_t PULR;  /* MPWMSM1 Pulse Width Register */
-    uint16_t CNTR;  /* MPWMSM1 Counter Register */
-    uint16_t SCR;  /* MPWMSM1 Status/Control Register */
-};
-
-struct mios_mpwmsm2_t {
-    uint16_t PERR;  /* MPWMSM2 Period Register */
-    uint16_t PULR;  /* MPWMSM2 Pulse Width Register */
-    uint16_t CNTR;  /* MPWMSM2 Counter Register */
-    uint16_t SCR;  /* MPWMSM2 Status/Control Register */
-};
-
-struct mios_mpwmsm3_t {
-    uint16_t PERR;  /* MPWMSM3 Period Register */
-    uint16_t PULR;  /* MPWMSM3 Pulse Width Register */
-    uint16_t CNTR;  /* MPWMSM3 Counter Register */
-    uint16_t SCR;  /* MPWMSM3 Status/Control Register */
-};
-
 struct mios_mmcsm_b_t {
     uint16_t CNT;  /* Up-Counter Register */
     uint16_t ML;  /* Modulus Latch Register (period/reload value) */
     uint16_t _pad;  /* Reserved/unused padding */
     uint16_t SCRD;  /* Status/Control Register D */
-};
-
-struct mios_mdasm12_t {
-    uint16_t AR;  /* MDASM12 A Register */
-    uint16_t BR;  /* MDASM12 B Register */
-    uint16_t XR;  /* MDASM12 X Register (extended status) */
-    uint16_t SCRD;  /* MDASM12 Status/Control Register D */
-};
-
-struct mios_mdasm15_t {
-    uint16_t AR;  /* MDASM15 A Register */
-    uint16_t BR;  /* MDASM15 B Register */
-    uint16_t XR;  /* MDASM15 X Register */
-    uint16_t SCRD;  /* MDASM15 Status/Control Register D */
-};
-
-struct mios_mpwmsm16_t {
-    uint16_t PERR;  /* MPWMSM16 Period Register */
-    uint16_t PULR;  /* MPWMSM16 Pulse Width Register */
-    uint16_t CNTR;  /* MPWMSM16 Counter Register */
-    uint16_t SCR;  /* MPWMSM16 Status/Control Register */
-};
-
-struct mios_mpwmsm17_t {
-    uint16_t PERR;  /* MPWMSM17 Period Register */
-    uint16_t PULR;  /* MPWMSM17 Pulse Width Register */
-    uint16_t CNTR;  /* MPWMSM17 Counter Register */
-    uint16_t SCR;  /* MPWMSM17 Status/Control Register */
-};
-
-struct mios_mpwmsm18_t {
-    uint16_t PERR;  /* MPWMSM18 Period Register */
-    uint16_t PULR;  /* MPWMSM18 Pulse Width Register */
-    uint16_t CNTR;  /* MPWMSM18 Counter Register */
-    uint16_t SCR;  /* MPWMSM18 Status/Control Register */
-};
-
-struct mios_mpwmsm19_t {
-    uint16_t PERR;  /* MPWMSM19 Period Register */
-    uint16_t PULR;  /* MPWMSM19 Pulse Width Register */
-    uint16_t CNTR;  /* MPWMSM19 Counter Register */
-    uint16_t SCR;  /* MPWMSM19 Status/Control Register */
 };
 
 struct toucan_a_mb0_t {
@@ -2361,16 +2285,9 @@ struct boot_state_t {
     uint16_t boot_phase;  /* Boot phase counter (cycles 0-3 per PISCR interrupt) */
 };
 
-struct mios_mdasm27_t {
-    uint16_t AR;  /* A Register (capture/compare value A) */
-    uint16_t BR;  /* B Register (capture/compare value B) */
-    uint16_t XR;  /* X Register (extended capture/status value) */
-    uint16_t SCRD;  /* Status/Control Register D (0x405=enable / 0x205=mode) */
-};
-
-struct mios1_ext_ctrl_t {
-    uint16_t ctrl_a;  /* Control/status word A (bit 0x2000=capability flag) */
-    uint16_t ctrl_b;  /* Control/status word B (startup: 0x2000) */
+struct mios_mpiosm_t {
+    uint16_t data;  /* Port data register: pin n = bit n (whole-word read-modify-write by the output line drivers) */
+    uint16_t data_direction;  /* Port data direction register: bit n set = pin n is an output (0x2000 at startup / 0x200 / 0x8200 before driving pins 9 and 15) */
 };
 
 struct mios1_isr_t {

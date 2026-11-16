@@ -1226,7 +1226,7 @@ undefined4 cm848_readDiscreteInputLine(uint param_1,undefined4 param_2,undefined
 void mpc555_driveOutputLineHigh(uint param_1);  // @ 0x0004f6f0
 void mpc555_driveOutputLineLow(uint param_1);  // @ 0x00051038
 void cm848_refreshOutputPortsAndReadback(void);  // @ 0x000529b8
-void hpcr_injectorPulseWidthCalc(void);  // @ 0x000533e0
+void cm848_refreshInputLineImage(void);  // @ 0x000533e0
 void mpc555_processJ1939TxBufferSend(void);  // @ 0x000535e8
 void mpc555_queueCanReceiveMessage(int param_1);  // @ 0x00053720
 void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined1 *param_4);  // @ 0x00053858
@@ -1253,14 +1253,14 @@ void cm848_checkRpmOverspeedProtection(void);  // @ 0x00054224
 void mpc555_systemStartupInitialization(word param_1);  // @ 0x00054380
 void cm848_applicationMain(void);  // @ 0x000544c4
 void cm848_restartApplicationWithoutReset(void);  // @ 0x00054d30
-word mpc555_miosCheckChannelFeedback(int *channel_registers,int commanded_duty);  // @ 0x00054e10
-void mpc555_miosSetChannelInputMode(int channel_registers);  // @ 0x00054eac
-void mpc555_miosEnableChannelPwm(int channel_registers);  // @ 0x00054eb8
-void mpc555_miosSetChannelPwmDuty(undefined4 *channel_registers,word duty);  // @ 0x00054ec4
-void mpc555_miosSetChannelPwmPeriod(undefined4 unused_channel_registers,uint period_setting);  // @ 0x00054f48
-void mpc555_miosEnablePwmSubmodule(int pwm_registers);  // @ 0x00054f80
-void mpc555_miosSetPwmSubmoduleDuty(ushort *pwm_registers,word duty);  // @ 0x00054f8c
-void mpc555_miosSetPwmSubmodulePeriodMicroseconds(word *pwm_registers,uint period_microseconds);  // @ 0x00054fb8
+word mpc555_miosCheckChannelFeedback(mios_mdasm_t *channel_registers,int commanded_duty);  // @ 0x00054e10
+void mpc555_miosSetChannelInputMode(mios_mdasm_t *channel_registers);  // @ 0x00054eac
+void mpc555_miosEnableChannelPwm(mios_mdasm_t *channel_registers);  // @ 0x00054eb8
+void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty);  // @ 0x00054ec4
+void mpc555_miosSetChannelPwmPeriod(mios_mdasm_t *unused_channel_registers,uint period_setting);  // @ 0x00054f48
+void mpc555_miosEnablePwmSubmodule(mios_mpwmsm_t *pwm_registers);  // @ 0x00054f80
+void mpc555_miosSetPwmSubmoduleDuty(mios_mpwmsm_t *pwm_registers,word duty);  // @ 0x00054f8c
+void mpc555_miosSetPwmSubmodulePeriodMicroseconds (mios_mpwmsm_t *pwm_registers,uint period_microseconds);  // @ 0x00054fb8
 void mpc555_tpuBEnablePwmChannel(uint channel);  // @ 0x00055020
 void mpc555_tpuBSetPwmDuty(int channel,word duty);  // @ 0x00055178
 void mpc555_tpuBSetPwmPeriodMicroseconds(int channel,uint period_microseconds);  // @ 0x000551e4
@@ -1305,12 +1305,12 @@ void cm848_sensorChannelGeneric_init_configBundle(void);  // @ 0x00500004
 void cm848_sensorChannelGeneric_update_configBundle(void);  // @ 0x00500090
 void cm848_sensorChannel7_init_configBundle(void);  // @ 0x0050011c
 void cm848_sensorChannel7_update_configBundle(void);  // @ 0x005001a8
-void sensorChannelConfigInit (void *cal_ptr_1,void *cal_ptr_2,void *cal_ptr_3,void *cal_ptr_4,void *ram_buffer_1, void *ram_buffer_2,word adc_index_primary,word adc_index_secondary,word *output_raw, word *output_filtered,word param_11,word param_12,word param_13);  // @ 0x00500234
-void updateSensorChannelWithConfig (void *cal_ptr_1,void *cal_ptr_2,void *cal_ptr_3,void *cal_ptr_4,void *ram_buffer_1, void *ram_buffer_2,word adc_index_primary,word adc_index_secondary,word *output_raw, word *output_filtered,word param_11,word param_12,word param_13);  // @ 0x00500a4c
+void sensorChannelConfigInit (void *cal_ptr_1,void *cal_ptr_2,word *cached_axis_offset,word *x_axis,word *y_data, dword flags,word adc_index_primary,word adc_index_secondary,word *output_raw, word *output_filtered,word param_11,word param_12,word param_13);  // @ 0x00500234
+void updateSensorChannelWithConfig (void *cal_ptr_1,void *cal_ptr_2,word *cached_axis_offset,word *x_axis,word *y_data, dword flags,word adc_index_primary,word adc_index_secondary,word *output_raw, word *output_filtered,word param_11,word param_12,word param_13);  // @ 0x00500a4c
 void cm848_protection_init_configBundle(void);  // @ 0x005011c4
 void cm848_protection_update_configBundle(void);  // @ 0x00501250
-void sensorChannelTypeB_configInit (sensor_channel_config_t *config_ptr,word *state_ptr, table_interp_args_t *interp_args_ptr,void *table_ptr,void *axes_ptr,dword mode_flag, dword *ema_state_ptr,dword channel_index,dword high_fault_bit,dword low_fault_bit, word *raw_output_ptr,word *filtered_output_ptr,word *fault_output_ptr);  // @ 0x005012dc
-void sensorChannelTypeB_update (sensor_channel_config_t *config_ptr,word *state_ptr, table_interp_args_t *interp_args_ptr,void *table_ptr,void *axes_ptr,dword mode_flag, dword *ema_state_ptr,dword channel_index,dword high_fault_bit,dword low_fault_bit, word *raw_output_ptr,word *filtered_output_ptr,word *fault_output_ptr);  // @ 0x00501b4c
+void sensorChannelTypeB_configInit (sensor_channel_config_t *config_ptr,word *state_ptr,word *cached_axis_offset, word *x_axis,word *y_data,dword flags,dword *ema_state_ptr,dword channel_index, dword high_fault_bit,dword low_fault_bit,word *raw_output_ptr, word *filtered_output_ptr,word *fault_output_ptr);  // @ 0x005012dc
+void sensorChannelTypeB_update (sensor_channel_config_t *config_ptr,word *state_ptr,word *cached_axis_offset, word *x_axis,word *y_data,dword flags,dword *ema_state_ptr,dword channel_index, dword high_fault_bit,dword low_fault_bit,word *raw_output_ptr, word *filtered_output_ptr,word *fault_output_ptr);  // @ 0x00501b4c
 void hpcr_fuelFinal_periodic(void);  // @ 0x005022cc
 void cm848_initialization_step(void);  // @ 0x0050241c
 void cm848_calibrationGroup5_periodic(void);  // @ 0x00502464

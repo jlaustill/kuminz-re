@@ -49,7 +49,7 @@ TYPE-SHAPE: flat global | enum(<which/values>) | struct field(<struct·offset>) 
 SCOPE: <the unit being recommended> — if NOT a flat global, this is the CONTAINER (struct type / array), with the target located inside it as `<struct>.<field>@+<off>` or `<array>[<index>]`. (For a flat global, scope = the symbol itself.)
 
 VERDICT: NAMEABLE → recommend=<the SCOPE unit: flat name, OR `struct <T> instance @ <addr>` / `array <T>[N] @ <addr>`>
-         target-within-scope=<where the original symbol sits, e.g. table_interp_args_t.y_axis_ptr @ +8>
+         target-within-scope=<where the original symbol sits, e.g. discrete_line_image_t.lines_48_to_55 @ +6>
          type=<byte/word/dword/enum/struct/array/...>  csv=<file>  confidence=<high/med/low>
          rationale: <one line>   caveats: <layout discrepancies the applier must verify, or none>
    — or —
