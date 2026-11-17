@@ -18,10 +18,10 @@ The scripts that gated, applied and proved these renames are in `firmware/script
 | 5 | 40a41e7 | `result_W5_*` | `mapping_w5_*` (also `_enums`, `_types`) |
 | 6 | 1839d0b | `result_W6_*` | `mapping_w6_*` |
 | 7 | 4c39da3 | `result_W7_*` | `mapping_w7_*` |
-| 8 | (wave 8 commit) | `result_W8_*`, `manual_W8.jsonl` | `mapping_w8_*`, `mapping_cm550_w8.csv` (CM550) |
+| 8 | b66e3a7 | `result_W8_*`, `manual_W8.jsonl` (my rows) | `mapping_w8_*` (stage A labels, `_newrows_b` = stage B), `mapping_cm550_w8.csv` (CM550) |
 
-- `briefs/brief.md` is the method every wave followed; `brief_wave3.md` to `brief_wave6.md` are the addenda each later
-  wave read on top of it (wave 7 read all of them, plus per-agent leads taken from the wave-6 notes).
+- `briefs/brief.md` is the method every wave followed; `brief_wave3.md` to `brief_wave6.md` and `brief_wave8.md` are the addenda each
+  later wave read on top of it (wave 7 read waves 3-6, plus per-agent leads taken from the wave-6 notes).
 - **Result rows:** `kind` is `function`, `global`, `new_global`, `struct_field`, `enum_member`, `enum_type` or `note`;
   `verdict` is `confirmed`, `uncertain` or `rejected`. Other keys: `address`, `old`, `new`, `type` (new rows),
   `struct` (fields), `enum` (members), `plate_comment` (functions), `evidence`, `comment`, `text` (notes).
@@ -57,6 +57,9 @@ Each table's outcome (evidence, confidence, skip reason) is in `../table_naming_
 - **`session_folder_large_files.tar.xz`** (0.8 MB, 178 MB unpacked) holds the `.cpp` snapshots (each proof's
   baselines and reverse-mapped builds) and the build logs, 131 files. `session_folder_large_files.txt` lists them. Unpack
   with `tar -xJf session_folder_large_files.tar.xz -C session_folder`.
+- **`session_tmp_scratch.tar.xz`** (1.7 MB, 19 MB unpacked; list in `session_tmp_scratch_files.txt`) holds what the
+  agents wrote under `/tmp` instead of the scratch folder: their disassembly caches, scan results, snapshots of older
+  commits and generator scripts.
 - **`agent_prompts.md`** (and `agent_prompts.jsonl`) has the exact prompt of each of the 48 subagents the session
   started, in order (the transcript replays some calls; each is listed once).
 - **Not in this public repo:** the session and agent transcripts. They contain the session's private context and are

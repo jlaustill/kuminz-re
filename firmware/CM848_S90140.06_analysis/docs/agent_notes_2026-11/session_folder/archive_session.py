@@ -23,7 +23,7 @@ for root, dirs, files in os.walk(src):
         if f.endswith(".log") or (f.endswith(".cpp") and os.path.getsize(path) > 1_000_000):
             large.append(rel)
             continue
-        if rel != "archive_session.py" and PRIVATE.search(open(path, errors="replace").read()):
+        if rel not in ("archive_session.py", "archive_tmp_scratch.py") and PRIVATE.search(open(path, errors="replace").read()):
             sys.exit(f"private-looking text in {rel}: stop")
         os.makedirs(os.path.dirname(os.path.join(mirror, rel)), exist_ok=True)
         shutil.copy2(path, os.path.join(mirror, rel))

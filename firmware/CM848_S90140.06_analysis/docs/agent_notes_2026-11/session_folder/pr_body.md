@@ -188,6 +188,18 @@ Functions added / removed: 0. Local-rename warnings: none new, and 11 old Type B
     - **Naming decision:** new names say `initialize`, never `init`, recorded in `firmware/CLAUDE.md` and the gate. No name this PR added uses `init`.
     - **CM550 link (task 042):** wave 6 renamed CM848's shared `selectSensorRawChannels`; CM550 still has that name at 0x1d392, so check whether it is the same function.
 
+22. **Everything from the session kept (e7b795d, e21ff46; at the user's request).**
+    - **In the repo:** `firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/` holds the 505 scratch files, the 131 `.cpp` snapshots and build logs (0.8 MB compressed, checked byte-identical), and the exact prompt of each of the 48 subagents.
+    - **Outside this public repo:** the session and agent transcripts, kept privately because they hold the session's private context.
+23. **ROM-to-RAM thunk stage fixed (335ec12, todo 043).**
+    - **The fix:** where a named application variable sits in the 4 bytes a thunk would take, the stage now keeps the data and points the boot calls at the ROM function with `CALL_OVERRIDE_UNCONDITIONAL` references. This applies at 10 addresses.
+    - **Boot side:** boot calls now name their function (they used to render as calls to a variable).
+    - **Application side:** variables render under their own names, without `_`, and a crossed counter pair is fixed. 30 functions changed, all reviewed; 8 fewer overlap warnings.
+24. **Rename wave 8 (b66e3a7).**
+    - **Labels:** 36 functions, 260 globals and 38 new rows: the droop block, the auxiliary quantity maps, the EGR delta-pressure autozero, the charge manager, and the all-speed governor override record. The proof is label-only.
+    - **Types:** the arbitration struct split and the governor output struct, 46 retypes from load/store evidence, the split dwords, and three enums (`ENGINE_OPERATING_MODE` corrected from every store; `EGR_VALVE_CONTROL_STATE`, `COMBUSTION_CHI_SOURCE`). The 79-function diff was reviewed.
+    - **CM550:** `selectHighSpeedGovernorGainSet` is now shared with CM550 (proof EQUIVALENT).
+
 ## Finding for task 022: the J1939 pedal reaches fueling
 
 The 2026-11-12 "EEC2 pedal = dead end" conclusion was wrong. That value is the accelerator channel's `held_value` (state + 6), and the sensor-channel functions read it through `state_ptr`, which a name search can't see.
