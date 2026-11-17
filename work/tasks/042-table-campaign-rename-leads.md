@@ -530,7 +530,9 @@ differences are struct / word default labels of rows that had no name, a local d
   the entry label's name and swallows the 0x3fb54e row. Proof: the .cpp before the thunk stage (62b6cf1) prints both rows
   right; 8a72628 (the stage) is the first with crossed names. Same at 0x3fd1d8/da, 0x3fae3c/3e, 0x3fb528/2a, 0x3fd070,
   0x3fd1ac, 0x3fd284, 0x3fd298. Proposed fix (not applied): skip / shorten the thunk where named data rows own the
-  addresses, and check what the boot calls then render as.
+  addresses, and check what the boot calls then render as. Spot-checked 2026-11-17: 8a72628 is the direct child of
+  62b6cf1; `tc_lockup_disengage_state` renders 5 times at 62b6cf1 and 0 times at 8a72628 (1 today); the 0x3fd1d8 site
+  shows `_sensor_scan_cycle_counter` (5 of its 11 uses).
 
 - **Wave 7 type leftovers:** `egr_valve_position_autozeroed` (0x40a666, `word`) is signed in the code (sensor minus the learned offset with lha / subf; its readers cast it to `(short)`) - an `i16` candidate; `sensor_channel105_fault_combined` (0x40a662 dword) + its `+2` row: cm848_updateEgrValvePositionAutozero stores the selected EGR position zero offset into 0x40a664 with sth, so 0x40a664 is its own word (split candidate, like the wave-6 `<name>+2` rows).
 
