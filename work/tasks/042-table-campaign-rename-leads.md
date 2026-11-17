@@ -529,7 +529,7 @@ loop's twin is the EGR valve position servo (`egr_valve_*`; the agent proposed t
 differences are struct / word default labels of rows that had no name, a local declaration order in
 `cm848_validateWriteAuth`, and casts in the sensor channel 75 functions.
 
-- **Thunk-stage label crossing (todo 043):** `ApplyRomToRamThunks.java` puts a 4-byte thunk over 0x3fb54c-0x3fb54f (the
+- **Thunk-stage label crossing (todo 043 - FIXED 2026-11-17: call overrides instead of a thunk where a named row sits in the 4 bytes; see firmware/CLAUDE.md):** `ApplyRomToRamThunks.java` puts a 4-byte thunk over 0x3fb54c-0x3fb54f (the
   boot-kernel image of cm848_validateDiagnosticRequestLengthAndAuthorization, which the boot ROM calls); the thunk takes
   the entry label's name and swallows the 0x3fb54e row. Proof: the .cpp before the thunk stage (62b6cf1) prints both rows
   right; 8a72628 (the stage) is the first with crossed names. Same at 0x3fd1d8/da, 0x3fae3c/3e, 0x3fb528/2a, 0x3fd070,
