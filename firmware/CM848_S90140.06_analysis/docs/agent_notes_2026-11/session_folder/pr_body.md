@@ -183,13 +183,13 @@ Functions added / removed: 0. Local-rename warnings: none new, and 11 old Type B
 
 21. **Rename-wave toolchain and the agents' notes saved (1a35aec).**
     - **Toolchain:** `firmware/scripts/rename_waves/`, with a README of the steps. It holds the scripts that gated, applied and proved waves 1-7 (vocabulary pass, gate, appliers, label-only proof, reference refresh, comment sweep, header check), made reusable, with shared helpers in `common.py`.
-    - **Tests:** `firmware/scripts/test_rename_waves.py` runs 28 synthetic checks (cad969f added the gate, struct-type renames and stage-1 extras); a pure rename passes and a one-constant change is caught. A build with the new folder under `firmware/scripts/` changes only the `.cpp` timestamp. Re-running wave 7's proof with the saved scripts gives the same result byte for byte.
+    - **Tests:** `firmware/scripts/test_rename_waves.py` runs 29 synthetic checks (cad969f added the gate, struct-type renames and stage-1 extras; b66e3a7 the shared-name case); a pure rename passes and a one-constant change is caught. A build with the new folder under `firmware/scripts/` changes only the `.cpp` timestamp. Re-running wave 7's proof with the saved scripts gives the same result byte for byte.
     - **Notes:** `firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/` holds the agents' raw results, briefs and applied mappings for rename waves 1-7 and the table campaign (3.1 MB). Task 042 had quoted the notes cut short.
     - **Naming decision:** new names say `initialize`, never `init`, recorded in `firmware/CLAUDE.md` and the gate. No name this PR added uses `init`.
     - **CM550 link (task 042):** wave 6 renamed CM848's shared `selectSensorRawChannels`; CM550 still has that name at 0x1d392, so check whether it is the same function.
 
 22. **Everything from the session kept (e7b795d, e21ff46; at the user's request).**
-    - **In the repo:** `firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/` holds the 505 scratch files, the 131 `.cpp` snapshots and build logs (0.8 MB compressed, checked byte-identical), and the exact prompt of each of the 48 subagents.
+    - **In the repo:** `firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/` holds the 505 scratch files, the 131 `.cpp` snapshots and build logs (0.8 MB compressed, checked byte-identical), the agents' `/tmp` scratch (92b2d78, 1.7 MB), and the exact prompt of each of the 48 subagents.
     - **Outside this public repo:** the session and agent transcripts, kept privately because they hold the session's private context.
 23. **ROM-to-RAM thunk stage fixed (335ec12, todo 043).**
     - **The fix:** where a named application variable sits in the 4 bytes a thunk would take, the stage now keeps the data and points the boot calls at the ROM function with `CALL_OVERRIDE_UNCONDITIONAL` references. This applies at 10 addresses.
