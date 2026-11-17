@@ -540,6 +540,11 @@ differences are struct / word default labels of rows that had no name, a local d
 
 - **Wave 7 type leftovers:** `egr_valve_position_autozeroed` (0x40a666, `word`) is signed in the code (sensor minus the learned offset with lha / subf; its readers cast it to `(short)`) - an `i16` candidate; `sensor_channel105_fault_combined` (0x40a662 dword) + its `+2` row: cm848_updateEgrValvePositionAutozero stores the selected EGR position zero offset into 0x40a664 with sth, so 0x40a664 is its own word (split candidate, like the wave-6 `<name>+2` rows).
 
+- **CM550 shared-name check (waves 6-7, 2026-11-17):** one link broke. Wave 6 renamed CM848's shared (unprefixed)
+  `selectSensorRawChannels` to `cm848_selectHighSpeedGovernorGainSet`, but CM550 still has `selectSensorRawChannels`
+  at 0x1d392. Check whether CM550's function is the same (the high speed governor gain-set selector): if so, give
+  both the same unprefixed name; if not, CM550's keeps a CM550 name. No wave-7 old name is used by CM550.
+
 ### Wave 7: left uncertain
 - [W7 injection_rail] `torque_limit_offset_init` (0x003fd80c): EEPROM-backed word (dump 28000 = 3500 rpm = engine_speed_limit_maximum) read once, by cm848_initializeEngineSpeedLimitDefaults, as the initial torque_limit_offset_calc; that word is the speed argument
 - [W7 injection_rail] `torque_limit_control_flags` (0x003fdb84): EEPROM-backed word (inside the range, dump 0) with 0 direct reads / 0 writes by xref_addr.py: reached only indirectly, so its role cannot be settled from the code. Immediate scan of the boot ROM: 0 hi

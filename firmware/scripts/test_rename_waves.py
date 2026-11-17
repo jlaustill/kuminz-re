@@ -184,11 +184,91 @@ def check_new_row_comment(d):
              comment.endswith(f"word ... (new row {today})") and "cm848_calc" not in comment and len(comment) < 420)]
 
 
+
+def firmware_dir(out, gv_rows, fr_rows=(), sd_rows=()):
+    write(f"{out}/global_variables.csv", "address,name,type,comment\n" + "".join(r + "\n" for r in gv_rows))
+    write(f"{out}/function_renames.csv", "address,name,plate_comment\n" + "".join(r + "\n" for r in fr_rows))
+    write(f"{out}/structure_definitions.csv",
+          "struct_name,address,field_name,type,size,comment,dependency,Status\n" + "".join(r + "\n" for r in sd_rows))
+    for name, header in (("arrays.csv", "address,array_name,element_type,element_count,comment"),
+                         ("mpc555_registers.csv", "address,name,type,comment"),
+                         ("function_definitions.csv", "function_address,function_name,param_index,name,type,comment"),
+                         ("local_variables.csv", "function_address,function_name,old_name,new_name,type,comment")):
+        write(f"{out}/{name}", header + "\n")
+
+
+def check_gate(d):
+    out = f"{d}/fw"
+    firmware_dir(out, ["0x00401000,old_global,word,", "0x00401002,old_two,word,", "0x00401004,old_three,word,"],
+                 ["0x00001000,cm848_oldName,old plate"])
+    rows = [{"kind": "function", "verdict": "confirmed", "address": "0x00001000", "old": "cm848_oldName",
+             "new": "cm848_initValve", "plate_comment": "Sets the valve up."},
+            {"kind": "global", "verdict": "confirmed", "address": "0x00401000", "old": "old_global",
+             "new": "valve_position_command", "evidence": "word " * 78 + "cm848_calculateSomethingLong reads it"},
+            {"kind": "global", "verdict": "confirmed", "address": "0x00401002", "old": "old_two", "new": "valve_init_state"},
+            {"kind": "global", "verdict": "confirmed", "address": "0x00401004", "old": "old_three", "new": "valve_limit_cal"}]
+    write(f"{d}/aligned.jsonl", "".join(json.dumps(r) + "\n" for r in rows))
+    _, gate = run("apply_renames.py", out, f"{d}/aligned.jsonl")
+    problems = [l for l in gate.split("\n") if l.startswith("PROBLEM")]
+    write(f"{d}/clean.jsonl", json.dumps(rows[1]) + "\n")
+    code, _ = run("apply_renames.py", out, f"{d}/clean.jsonl", "--out", f"{d}/map.csv", "--apply")
+    row = [l for l in open(f"{out}/global_variables.csv").read().split("\n") if l.startswith("0x00401000,")]
+    return [("gate: init is a banned word (function and data names)",
+             any("cm848_initValve" in l and "banned" in l for l in problems)
+             and any("valve_init_state" in l and "banned" in l for l in problems)),
+            ("gate: _cal outside the EEPROM mirror is refused", any("valve_limit_cal" in l and "_cal" in l for l in problems)),
+            ("gate: a clean row raises no problem", not any("valve_position_command" in l for l in problems)),
+            ("gate: --apply renames the row; its comment is cut at a word boundary + (was old)",
+             code == 0 and bool(row) and row[0].startswith("0x00401000,valve_position_command,word,")
+             and row[0].endswith("word ... (was old_global)"))]
+
+
+def check_struct_type_rename(d):
+    out = f"{d}/fw"
+    firmware_dir(out, ["0x00401100,old_state_t_00401100,old_state_t,", "0x00401200,,old_state_t,"],
+                 sd_rows=["old_state_t,0x00401100,a,word,2,first,,verified",
+                          "old_state_t,0x00401100,b,word,2,second,,verified",
+                          "old_state_t,0x00401200,,,,second instance - marker only,,verified"])
+    run("rename_struct_types.py", out, f"{d}/map.csv", "old_state_t=new_state_t@0x00401100=valve_state")
+    sd = open(f"{out}/structure_definitions.csv").read()
+    gv = open(f"{out}/global_variables.csv").read()
+    old_cpp = ("// Function: f @ 0x00001000\nvoid f(void)\n{\n  old_state_t *p;\n  old_state_t_00401100.a = 1;\n"
+               "  old_state_t_00401200.b = 2;\n  return;\n}\n")
+    new_cpp = ("// Function: f @ 0x00001000\nvoid f(void)\n{\n  new_state_t *p;\n  valve_state.a = 1;\n"
+               "  new_state_t_00401200.b = 2;\n  return;\n}\n")
+    write(f"{d}/old.cpp", old_cpp)
+    write(f"{d}/new.cpp", new_cpp)
+    code, proof = run("reverse_names.py", f"{d}/old.cpp", f"{d}/new.cpp", f"{d}/map.csv", "--ignore-comments")
+    return [("struct type: every struct row and type column renamed, the instance named",
+             "old_state_t" not in sd and sd.count("new_state_t,") == 3
+             and "0x00401100,valve_state,new_state_t," in gv and "0x00401200,,new_state_t," in gv),
+            ("struct type: its mapping proves the rename (the unnamed instance's default label too)",
+             code == 0 and "EQUIVALENT" in proof and "NOT" not in proof)]
+
+
+def check_extras_stage1(d):
+    out = f"{d}/fw"
+    firmware_dir(out, ["0x00401300,valve_instance,valve_t,", "0x00401302,valve_instance.old_field,,",
+                       "0x00401400,junk_row,word,"],
+                 sd_rows=["valve_t,0x00401300,first_field,word,2,one,,verified",
+                          "valve_t,0x00401300,old_field,word,2,two,,verified"])
+    rows = [{"kind": "struct_field", "verdict": "confirmed", "struct": "valve_t", "old": "old_field", "new": "new_field"},
+            {"kind": "note", "text": "DELETE 0x00401400 junk_row: an auto-label with no users"}]
+    write(f"{d}/aligned.jsonl", "".join(json.dumps(r) + "\n" for r in rows))
+    run("apply_extras.py", out, f"{d}/map.csv", "1", f"{d}/aligned.jsonl")
+    sd = open(f"{out}/structure_definitions.csv").read()
+    gv = open(f"{out}/global_variables.csv").read()
+    kinds = [r["kind"] for r in csv.DictReader(open(f"{d}/map.csv"))] if os.path.exists(f"{d}/map.csv") else []
+    return [("extras stage 1: field renamed in the struct and its member-label row",
+             "valve_t,0x00401300,new_field,word,2,two" in sd and "valve_instance.new_field" in gv),
+            ("extras stage 1: a DELETE note removes the row and is mapped", "junk_row" not in gv and kinds == ["field", "delete"])]
+
 def main():
     fails = 0
     with tempfile.TemporaryDirectory() as d:
         checks = []
-        for i, fn in enumerate((check_common, check_proof, check_align, check_refresh, check_new_row_comment)):
+        for i, fn in enumerate((check_common, check_proof, check_align, check_refresh, check_new_row_comment, check_gate,
+                                 check_struct_type_rename, check_extras_stage1)):
             sub = os.path.join(d, str(i))
             os.makedirs(sub)
             checks += fn(sub)
