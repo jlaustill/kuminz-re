@@ -80,7 +80,7 @@ protection_timer_state_t,0x0040b100,state2_timer,word,2,Level 2 protection state
 engine_crank_state_t,0x0040b80a,start_counter,word,2,Engine start attempt counter,,verified
 engine_crank_state_t,0x0040b80a,crank_state,word,2,Cranking state machine value,,verified
 engine_crank_state_t,0x0040b80a,cranking_flag,word,2,Engine currently cranking flag (1=cranking),,verified
-engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state (ENGINE_OPERATING_MODE enum),,verified
+engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state written by mpc555_updateEngineRunState - a different variable from engine_operating_mode,,verified
 # Engine Sync State - crankshaft synchronization status
 # Used by engine position sensor ISR and sync detection
 # Total size: 6 bytes (0x0040b87f-0x0040b884)
@@ -235,18 +235,17 @@ boost_pressure_state_t,0x0040a406,pressure_ratio,word,2,Boost pressure ratio,,ve
 boost_pressure_state_t,0x0040a406,reserved_0a,word,2,Gap,,needs_review
 boost_pressure_state_t,0x0040a406,fresh_air_mass_flow_filtered,word,2,Gap,,needs_review
 boost_pressure_state_t,0x0040a406,reserved_0e,word,2,Gap,,needs_review
-# Torque Limit Arbitration - multi-source torque limit selection
-# Used by fuel limit arbitration and protection systems
-# Total size: 8 bytes (0x0040a2f6-0x0040a2fd)
-torque_limit_arb_t,0x0040a2f6,main_injection_timing_source_code,word,2,Winning source code of the main injection timing (codes 5 / 8 / 18-22 / 29 / 30 written by cm848_calculateMainInjectionTiming) - not part of the engine speed limit arbitration (was source_priority),,verified
-torque_limit_arb_t,0x0040a2f6,limiting_source_number,word,2,Currently active limit source ID,,verified
-torque_limit_arb_t,0x0040a2f6,applied_speed_limit,word,2,Torque limit source selector,,verified
-torque_limit_arb_t,0x0040a2f6,lowest_source_speed_limit,word,2,Minimum fuel limit from arbitration,,verified
-# Governor PID State - PID controller variables for speed control
-# Used by governor control loop
-# Total size: 10 bytes (0x0040af5a-0x0040af63)
-governor_pid_t,0x0040af5a,proportional_gain,word,2,PID proportional gain value,,verified
-governor_pid_t,0x0040af5a,integral_term,word,2,PID integral accumulator,,verified
+# Engine Speed Limit Arbitration - lowest-wins selection of the engine speed limit (the e2m HSG reference speed state block)
+# Written by cm848_selectEngineSpeedLimit and the source functions - read by the fuel limit and governor code
+# Total size: 6 bytes (0x0040a2f8-0x0040a2fd)
+engine_speed_limit_arbitration_t,0x0040a2f8,limiting_source_number,word,2,Number of the engine speed limit source that wins the arbitration (e2m HSG_Ref_Speed_State),,verified
+engine_speed_limit_arbitration_t,0x0040a2f8,applied_speed_limit,word,2,Engine speed limit applied by the governor in 0.125 rpm counts - the ramped limit or the ramped limit plus the droop term capped by the droop cap (e2m HSG_Reference_Speed),,verified
+engine_speed_limit_arbitration_t,0x0040a2f8,lowest_source_speed_limit,word,2,Lowest engine speed limit of the sources in the current pass in 0.125 rpm counts - reset to engine_speed_limit_default_cal at the end of cm848_selectEngineSpeedLimit (e2m HSG_Ref_Speed_Before_Droop),,verified
+# Operating Mode Governor Output - the fuel demand of the engine operating mode governor as the output stages see it
+# Written by cm848_runOperatingModeSpeedGovernor and cm848_updateGovernorFromProtection (was governor_pid_t: nothing in it is a PID term)
+# Total size: 4 bytes (0x0040af5a-0x0040af5d)
+operating_mode_governor_output_t,0x0040af5a,fuel_demand,word,2,Fuel demand of the engine operating mode governor as the output stages see it (engine_operating_mode_fuel_demand or the protection limit) (was proportional_gain),,verified
+operating_mode_governor_output_t,0x0040af5a,mode_code,word,2,Copy of engine_operating_mode (1 2 5 6 7 8 30 37 38) or 4 when the output is replaced by the limit in cm848_updateGovernorFromProtection (was integral_term),,verified
 # Protection Lockout State - thermal/load/rpm lockout flags
 # Used by protection system to prevent rapid cycling
 # Total size: 12 bytes (0x0040b11c-0x0040b127)

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Sun Nov 15 08:06:52 MST 2026
+// Generated: Tue Nov 17 14:00:48 MST 2026
 
 
 //
@@ -15957,7 +15957,7 @@ void vp44_periodicTaskSet_governorProtection(void)
   func_0x00044c76();
   cm550_FUN_0001d5a0();
   func_0x0004da56();
-  selectSensorRawChannels();
+  selectHighSpeedGovernorGainSet();
   cm550_initDiagnosticProtocol();
   func_0x00042496();
   cm550_FUN_0001cc72();
@@ -15982,7 +15982,7 @@ void vp44_engine_control_cycle(void)
   func_0x00044c76();
   cm550_FUN_0001d5a0();
   func_0x0004da56();
-  selectSensorRawChannels();
+  selectHighSpeedGovernorGainSet();
   cm550_initDiagnosticProtocol();
   func_0x00042496();
   cm550_FUN_0001cc72();
@@ -15998,7 +15998,7 @@ void vp44_engine_control_cycle(void)
 void cm550_slowCycle20ExtendedCoordinator(void)
 
 {
-  selectSensorRawChannels();
+  selectHighSpeedGovernorGainSet();
   cm550_initDiagnosticProtocol();
   func_0x00042496();
   cm550_FUN_0001cc72();
@@ -18534,12 +18534,14 @@ void cm550_update_engine_protection_thresholds(void)
 
 
 //
-// Function: selectSensorRawChannels @ 0x0001d392
+// Function: selectHighSpeedGovernorGainSet @ 0x0001d392
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Selects the high speed governor gain set (base / transient / low or high reference speed set) -
+   the same function as CM848 0x1fa20 (was selectSensorRawChannels) */
 
-uint selectSensorRawChannels(void)
+uint selectHighSpeedGovernorGainSet(void)
 
 {
   undefined2 uVar1;

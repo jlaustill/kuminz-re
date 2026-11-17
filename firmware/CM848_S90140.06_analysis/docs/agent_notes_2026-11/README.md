@@ -18,6 +18,7 @@ The scripts that gated, applied and proved these renames are in `firmware/script
 | 5 | 40a41e7 | `result_W5_*` | `mapping_w5_*` (also `_enums`, `_types`) |
 | 6 | 1839d0b | `result_W6_*` | `mapping_w6_*` |
 | 7 | 4c39da3 | `result_W7_*` | `mapping_w7_*` |
+| 8 | (wave 8 commit) | `result_W8_*`, `manual_W8.jsonl` | `mapping_w8_*`, `mapping_cm550_w8.csv` (CM550) |
 
 - `briefs/brief.md` is the method every wave followed; `brief_wave3.md` to `brief_wave6.md` are the addenda each later
   wave read on top of it (wave 7 read all of them, plus per-agent leads taken from the wave-6 notes).

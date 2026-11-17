@@ -101,11 +101,14 @@ typedef enum {
 } PROTECTION_OVERRIDE;
 
 typedef enum {
-    MODE_STOP = 0x00,  /* Engine stopped / key on state */
-    MODE_TRANSITION = 0x02,  /* Engine state transition */
-    MODE_RUN = 0x07,  /* Engine running / normal operation */
-    MODE_CRANK = 0x1e,  /* Engine cranking / starting (30 decimal) */
-    MODE_SHUTDOWN = 0x25  /* Engine shutdown sequence (37 decimal) */
+    ENGINE_OPERATING_MODE_NOT_SELECTED = 0,  /* Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) */
+    ENGINE_OPERATING_MODE_TSC1_TORQUE_CONTROL = 1,  /* cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is etc1_torque_limit_calc */
+    ENGINE_OPERATING_MODE_TSC1_SPEED_CONTROL = 2,  /* cm848_engineMode_reset: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record */
+    ENGINE_OPERATING_MODE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_setEngineOperatingMode5: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified */
+    ENGINE_OPERATING_MODE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 */
+    ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_initEngineOperatingMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) */
+    ENGINE_OPERATING_MODE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) */
+    ENGINE_OPERATING_MODE_ALL_SPEED_GOVERNOR_RESTORE = 30  /* cm848_restoreEngineOperatingMode: engine_operating_mode_restore_valid_flag nonzero; loads the restore record 0x40a216-0x40a246 (never set in this build and RAM is zeroed at every start) */
 } ENGINE_OPERATING_MODE;
 
 typedef enum {
@@ -942,6 +945,23 @@ typedef enum {
     FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT = 0x40  /* Fixed command (2865 here) while P0193 / P0192 / P0653 / P0652 are set (faults 304 / 305 / 377 / 378) - the open-loop fallback */
 } FUEL_PRESSURE_GOVERNOR_MODE;
 
+typedef enum {
+    EGR_VALVE_CLOSED_LOOP = 0,  /* PID position control: cm848_selectEgrValveDutyByControlState takes egr_valve_pid_duty */
+    EGR_VALVE_CLOSED_HOLD = 1,  /* Open-loop closed-hold duty: egr_valve_closed_hold_flag is set */
+    EGR_VALVE_USER_DUTY_OVERRIDE = 2,  /* Fixed duty override: bit 1 of egr_valve_user_override_flags_cal is set */
+    EGR_VALVE_AUTOZERO_DRIVE = 3,  /* Position autozero drive: the autozero holding duty is output (the dump is permanently here) */
+    EGR_VALVE_DISABLED = 4  /* Output disabled: logical output request 67 (the PWM enable) is clear; the duty is 0 */
+} EGR_VALVE_CONTROL_STATE;
+
+typedef enum {
+    COMBUSTION_CHI_SOURCE_AMBIENT_AIR_DENSITY = 1,  /* Base chi from the ambient air density protective chi table (the density chi is not smaller) */
+    COMBUSTION_CHI_SOURCE_COOLANT_TEMPERATURE = 3,  /* Base chi from the coolant temperature protective chi table (the density chi is smaller) */
+    COMBUSTION_CHI_SOURCE_EGR_OFF = 10,  /* Fixed EGR-off chi and level while EGR is requested off and no combustion status flag 0x08 / 0x10 / 0x200 is set; the normal state on this truck (dump: 10) */
+    COMBUSTION_CHI_SOURCE_FULL_USER_OVERRIDE = 12,  /* Calibrated override of chi and both map numbers (override mask 0x80 and 0x40 set) */
+    COMBUSTION_CHI_SOURCE_SINGLE_USER_OVERRIDE = 13,  /* Calibrated override with one whole chi that sets both map numbers (mask 0x80 set and 0x40 clear) */
+    COMBUSTION_CHI_SOURCE_STATUS_FLAG_FIXED_VALUE = 14  /* Fixed chi and level selected when a combustion status flag 0x08 / 0x10 / 0x200 is set */
+} COMBUSTION_CHI_SOURCE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -966,8 +986,8 @@ typedef struct wastegate_duty_controller_state_t wastegate_duty_controller_state
 typedef struct throttle_fuel_trim_t throttle_fuel_trim_t;
 typedef struct combustion_reference_state_t combustion_reference_state_t;
 typedef struct boost_pressure_state_t boost_pressure_state_t;
-typedef struct torque_limit_arb_t torque_limit_arb_t;
-typedef struct governor_pid_t governor_pid_t;
+typedef struct engine_speed_limit_arbitration_t engine_speed_limit_arbitration_t;
+typedef struct operating_mode_governor_output_t operating_mode_governor_output_t;
 typedef struct protection_lockout_t protection_lockout_t;
 typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
 typedef struct parameter_response_t parameter_response_t;
@@ -1150,7 +1170,7 @@ struct engine_crank_state_t {
     uint16_t start_counter;  /* Engine start attempt counter */
     uint16_t crank_state;  /* Cranking state machine value */
     uint16_t cranking_flag;  /* Engine currently cranking flag (1=cranking) */
-    uint16_t run_state;  /* Engine run state (ENGINE_OPERATING_MODE enum) */
+    uint16_t run_state;  /* Engine run state written by mpc555_updateEngineRunState - a different variable from engine_operating_mode */
 };
 
 struct engine_sync_state_t {
@@ -1304,16 +1324,15 @@ struct boost_pressure_state_t {
     uint16_t reserved_0e;  /* Gap */
 };
 
-struct torque_limit_arb_t {
-    uint16_t main_injection_timing_source_code;  /* Winning source code of the main injection timing (codes 5 / 8 / 18-22 / 29 / 30 written by cm848_calculateMainInjectionTiming) - not part of the engine speed limit arbitration (was source_priority) */
-    uint16_t limiting_source_number;  /* Currently active limit source ID */
-    uint16_t applied_speed_limit;  /* Torque limit source selector */
-    uint16_t lowest_source_speed_limit;  /* Minimum fuel limit from arbitration */
+struct engine_speed_limit_arbitration_t {
+    uint16_t limiting_source_number;  /* Number of the engine speed limit source that wins the arbitration (e2m HSG_Ref_Speed_State) */
+    uint16_t applied_speed_limit;  /* Engine speed limit applied by the governor in 0.125 rpm counts - the ramped limit or the ramped limit plus the droop term capped by the droop cap (e2m HSG_Reference_Speed) */
+    uint16_t lowest_source_speed_limit;  /* Lowest engine speed limit of the sources in the current pass in 0.125 rpm counts - reset to engine_speed_limit_default_cal at the end of cm848_selectEngineSpeedLimit (e2m HSG_Ref_Speed_Before_Droop) */
 };
 
-struct governor_pid_t {
-    uint16_t proportional_gain;  /* PID proportional gain value */
-    uint16_t integral_term;  /* PID integral accumulator */
+struct operating_mode_governor_output_t {
+    uint16_t fuel_demand;  /* Fuel demand of the engine operating mode governor as the output stages see it (engine_operating_mode_fuel_demand or the protection limit) (was proportional_gain) */
+    uint16_t mode_code;  /* Copy of engine_operating_mode (1 2 5 6 7 8 30 37 38) or 4 when the output is replaced by the limit in cm848_updateGovernorFromProtection (was integral_term) */
 };
 
 struct protection_lockout_t {

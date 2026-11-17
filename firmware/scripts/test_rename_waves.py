@@ -200,13 +200,15 @@ def firmware_dir(out, gv_rows, fr_rows=(), sd_rows=()):
 def check_gate(d):
     out = f"{d}/fw"
     firmware_dir(out, ["0x00401000,old_global,word,", "0x00401002,old_two,word,", "0x00401004,old_three,word,"],
-                 ["0x00001000,cm848_oldName,old plate"])
+                 ["0x00001000,cm848_oldName,old plate", "0x00001100,cm848_sharedOld,old plate"])
     rows = [{"kind": "function", "verdict": "confirmed", "address": "0x00001000", "old": "cm848_oldName",
              "new": "cm848_initValve", "plate_comment": "Sets the valve up."},
             {"kind": "global", "verdict": "confirmed", "address": "0x00401000", "old": "old_global",
              "new": "valve_position_command", "evidence": "word " * 78 + "cm848_calculateSomethingLong reads it"},
             {"kind": "global", "verdict": "confirmed", "address": "0x00401002", "old": "old_two", "new": "valve_init_state"},
-            {"kind": "global", "verdict": "confirmed", "address": "0x00401004", "old": "old_three", "new": "valve_limit_cal"}]
+            {"kind": "global", "verdict": "confirmed", "address": "0x00401004", "old": "old_three", "new": "valve_limit_cal"},
+            {"kind": "function", "verdict": "confirmed", "address": "0x00001100", "old": "cm848_sharedOld",
+             "new": "sharedValveFunction", "plate_comment": "Shared with the other firmware."}]
     write(f"{d}/aligned.jsonl", "".join(json.dumps(r) + "\n" for r in rows))
     _, gate = run("apply_renames.py", out, f"{d}/aligned.jsonl")
     problems = [l for l in gate.split("\n") if l.startswith("PROBLEM")]
@@ -218,6 +220,7 @@ def check_gate(d):
              and any("valve_init_state" in l and "banned" in l for l in problems)),
             ("gate: _cal outside the EEPROM mirror is refused", any("valve_limit_cal" in l and "_cal" in l for l in problems)),
             ("gate: a clean row raises no problem", not any("valve_position_command" in l for l in problems)),
+            ("gate: an unprefixed (shared) function name is allowed", not any("sharedValveFunction" in l for l in problems)),
             ("gate: --apply renames the row; its comment is cut at a word boundary + (was old)",
              code == 0 and bool(row) and row[0].startswith("0x00401000,valve_position_command,word,")
              and row[0].endswith("word ... (was old_global)"))]

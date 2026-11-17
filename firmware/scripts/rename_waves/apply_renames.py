@@ -110,7 +110,8 @@ for kind, a, old, new, plate, src in items:
     if re.search(r"(?<![a-z])0x|_[0-9a-f]*[a-f][0-9a-f]*\d[0-9a-f]*(_|$)", new):
         problems.append(f"{tag}: hex-looking part")
     if kind == "function":
-        if not re.fullmatch(r"(cm848|mpc555)_[a-z][A-Za-z0-9]*", new):
+        # a firmware / platform prefix (repo convention), or none for a function shared with the other firmware
+        if not re.fullmatch(r"((cm848|cm550|mpc555|mc68k|hpcr|vp44)_)?[a-z][A-Za-z0-9]*", new):
             problems.append(f"{tag}: function name format")
         rows = fr_rows.get(a, [])
         if len(rows) != 1 or fr_lines[rows[0]].split(",", 2)[1] != old:

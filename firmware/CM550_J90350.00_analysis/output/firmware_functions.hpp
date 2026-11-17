@@ -362,7 +362,7 @@ void cm550_FUN_0001ce58(void);  // @ 0x0001ce58
 void cm550_initDiagnosticProtocol(void);  // @ 0x0001ce7c
 void cm550_FUN_0001d252(void);  // @ 0x0001d252
 void cm550_update_engine_protection_thresholds(void);  // @ 0x0001d2e4
-uint selectSensorRawChannels(void);  // @ 0x0001d392
+uint selectHighSpeedGovernorGainSet(void);  // @ 0x0001d392
 void cm550_FUN_0001d5a0(void);  // @ 0x0001d5a0
 void cm550_FUN_0001d94e(void);  // @ 0x0001d94e
 uint vp44SensorStatusMonitor(void);  // @ 0x0001d9b4

@@ -368,7 +368,7 @@ address,name
 0x0001ce7c,cm550_initDiagnosticProtocol
 0x0001d252,cm550_FUN_0001d252
 0x0001d2e4,cm550_update_engine_protection_thresholds
-0x0001d392,selectSensorRawChannels
+0x0001d392,selectHighSpeedGovernorGainSet,Selects the high speed governor gain set (base / transient / low or high reference speed set) - the same function as CM848 0x1fa20 (was selectSensorRawChannels)
 0x0001d5a0,cm550_FUN_0001d5a0
 0x0001d94e,cm550_FUN_0001d94e
 0x0001d9b4,vp44SensorStatusMonitor
