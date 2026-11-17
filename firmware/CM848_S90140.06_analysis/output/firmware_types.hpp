@@ -1305,7 +1305,7 @@ struct boost_pressure_state_t {
 };
 
 struct torque_limit_arb_t {
-    uint16_t source_priority;  /* Limit source priority ranking */
+    uint16_t main_injection_timing_source_code;  /* Winning source code of the main injection timing (codes 5 / 8 / 18-22 / 29 / 30 written by cm848_calculateMainInjectionTiming) - not part of the engine speed limit arbitration (was source_priority) */
     uint16_t limiting_source_number;  /* Currently active limit source ID */
     uint16_t applied_speed_limit;  /* Torque limit source selector */
     uint16_t lowest_source_speed_limit;  /* Minimum fuel limit from arbitration */

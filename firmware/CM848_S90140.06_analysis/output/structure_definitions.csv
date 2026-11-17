@@ -238,7 +238,7 @@ boost_pressure_state_t,0x0040a406,reserved_0e,word,2,Gap,,needs_review
 # Torque Limit Arbitration - multi-source torque limit selection
 # Used by fuel limit arbitration and protection systems
 # Total size: 8 bytes (0x0040a2f6-0x0040a2fd)
-torque_limit_arb_t,0x0040a2f6,source_priority,word,2,Limit source priority ranking,,verified
+torque_limit_arb_t,0x0040a2f6,main_injection_timing_source_code,word,2,Winning source code of the main injection timing (codes 5 / 8 / 18-22 / 29 / 30 written by cm848_calculateMainInjectionTiming) - not part of the engine speed limit arbitration (was source_priority),,verified
 torque_limit_arb_t,0x0040a2f6,limiting_source_number,word,2,Currently active limit source ID,,verified
 torque_limit_arb_t,0x0040a2f6,applied_speed_limit,word,2,Torque limit source selector,,verified
 torque_limit_arb_t,0x0040a2f6,lowest_source_speed_limit,word,2,Minimum fuel limit from arbitration,,verified

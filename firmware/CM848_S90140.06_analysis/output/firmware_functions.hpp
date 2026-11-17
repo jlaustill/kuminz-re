@@ -276,9 +276,9 @@ void cm848_initLookupTableParams(void);  // @ 0x00010248
 void cm848_stubFunction3(void);  // @ 0x00010270
 undefined8 mpc555_timerInterruptHandler(undefined4 param_1,undefined4 param_2);  // @ 0x00010274
 void mpc555_fatalErrorHalt(void);  // @ 0x00010694
-void cm848_selectTurboModeParameters(void);  // @ 0x000107ec
-void cm848_updateTurboModeState(void);  // @ 0x0001083c
-void cm848_selectTemperatureTrimValue(void);  // @ 0x00010874
+void cm848_selectBatteryVoltage(void);  // @ 0x000107ec
+void cm848_updateBatteryVoltageSource(void);  // @ 0x0001083c
+void cm848_selectChargeManagerMassChargeFlowCommand(void);  // @ 0x00010874
 void cm848_calculateTurboRatioA(void);  // @ 0x000108a4
 void cm848_calculateTurboRatioB(void);  // @ 0x000109c8
 void cm848_calculateTurboRatios(void);  // @ 0x00010b04
@@ -398,38 +398,38 @@ void cm848_updateFaultStatusRegisters(void);  // @ 0x00018904
 void cm848_selectFaultProtectionValue(void);  // @ 0x00018a50
 void cm848_processFaultProtection(void);  // @ 0x00018ac0
 void mpc555_initFaultProtectionVariables(void);  // @ 0x00018afc
-void cm848_processSensorProtectionRamp(void);  // @ 0x00018bc0
-void cm848_processSensorFaultDetection(void);  // @ 0x00018cfc
-void cm848_initSensorFaultVariables(void);  // @ 0x00018f1c
-void cm848_calculateSensorDiagnosticValue(void);  // @ 0x00018f8c
-void cm848_updateBoostFuelCorrectionSquaredAverage(void);  // @ 0x000191a0
-void cm848_processSensorMonitoringLogic(void);  // @ 0x000191e8
-void cm848_updateEngineModeFromSensor(void);  // @ 0x00019390
-void mpc555_processSensorValidation(void);  // @ 0x0001956c
-void cm848_checkSensorRangeConditions(void);  // @ 0x000196a4
-void cm848_calculateSensorBlendFactor(void);  // @ 0x000197b4
-void cm848_processSensorBlendState(void);  // @ 0x00019830
-void cm848_selectSensorBlendOutput(void);  // @ 0x00019900
-void cm848_initSensorBlendVariables(void);  // @ 0x000199f4
-void cm848_processSensorBlendCalculation(void);  // @ 0x00019ac0
-void cm848_sensorMonitoringMainLoop(void);  // @ 0x00019b20
-void cm848_selectFuelDemandUpperLimit(int param_1);  // @ 0x00019e08
-void cm848_calculateFuelDemandLimits(void);  // @ 0x00019ea4
-void cm848_applyFuelDemandProtection(void);  // @ 0x00019fe0
-void cm848_processFuelDemandLimits(void);  // @ 0x0001a1b4
-void cm848_processSensorAndFuelDemand(void);  // @ 0x0001a1dc
-void cm848_initFuelDemandLimitVariables(void);  // @ 0x0001a204
-void cm848_processConditionTimerA(int param_1);  // @ 0x0001a340
-void cm848_processConditionTimerB(int param_1);  // @ 0x0001a47c
-void cm848_processConditionTimerC(void);  // @ 0x0001a608
-void cm848_processConditionTimerD(void);  // @ 0x0001a754
+void cm848_updateEgrValveDriverOverCurrentRetryCounter(void);  // @ 0x00018bc0
+void cm848_updateEgrValveDriverOverCurrentFault(void);  // @ 0x00018cfc
+void cm848_clearEgrValveDriverOverCurrentState(void);  // @ 0x00018f1c
+void cm848_estimateEgrValveMotorCurrent(void);  // @ 0x00018f8c
+void cm848_updateEgrValveMeanSquaredCurrent(void);  // @ 0x000191a0
+void cm848_updateEgrValveOverTemperatureFault(void);  // @ 0x000191e8
+void cm848_updateEgrValveMotorTemperature(void);  // @ 0x00019390
+void cm848_initializeEgrValveMotorThermalModel(void);  // @ 0x0001956c
+void cm848_checkEgrValveClosedHoldCondition(void);  // @ 0x000196a4
+void cm848_selectEgrValveControlState(void);  // @ 0x000197b4
+void cm848_selectEgrValveGainSet(void);  // @ 0x00019830
+void cm848_calculateEgrValveStagedPositionCommand(void);  // @ 0x00019900
+void cm848_updateEgrValvePositionCommandAndControlState(void);  // @ 0x000199f4
+void cm848_updateEgrValveIntegralEnable(void);  // @ 0x00019ac0
+void cm848_calculateEgrValvePidDuty(void);  // @ 0x00019b20
+void cm848_selectEgrValveDutyByControlState(int param_1);  // @ 0x00019e08
+void cm848_limitEgrValveBatteryCompensatedDuty(void);  // @ 0x00019ea4
+void cm848_outputEgrValveDirectionAndDuty(void);  // @ 0x00019fe0
+void cm848_driveEgrValveMotor(void);  // @ 0x0001a1b4
+void cm848_runEgrValvePositionControlLoop(void);  // @ 0x0001a1dc
+void cm848_initializeEgrValvePositionControlLoop(void);  // @ 0x0001a204
+void cm848_updateEgrValveHBridgeFaultRetryTimer(int param_1);  // @ 0x0001a340
+void cm848_updateEgrValveHBridgeFaultCounter(int param_1);  // @ 0x0001a47c
+void cm848_updateEgrValveHBridgeInrushRetryTimer(void);  // @ 0x0001a608
+void cm848_updateEgrValveHBridgeInrushFaultCounter(void);  // @ 0x0001a754
 undefined4 cm848_bothConditionsTrue(int param_1,int param_2);  // @ 0x0001a980
-void cm848_processFuelDemandFaultConditions(void);  // @ 0x0001a9a8
-void cm848_initFuelDemandFaultVariables(void);  // @ 0x0001ae2c
-void cm848_processFaultTimingConditions(void);  // @ 0x0001af94
-void cm848_updateFaultConditionState(void);  // @ 0x0001b120
-void cm848_initFaultTimingVariables(void);  // @ 0x0001b35c
-void cm848_processFaultAndFuelDemand(void);  // @ 0x0001b37c
+void cm848_processEgrValveHBridgeFaults(void);  // @ 0x0001a9a8
+void cm848_clearEgrValveHBridgeFaultState(void);  // @ 0x0001ae2c
+void cm848_updateEgrValveAutozeroConditions(void);  // @ 0x0001af94
+void cm848_updateEgrValveEnableAndDiagnosticConditions(void);  // @ 0x0001b120
+void cm848_initializeEgrValveAutozeroConditions(void);  // @ 0x0001b35c
+void cm848_runEgrValveFaultAndPositionControl(void);  // @ 0x0001b37c
 void faultTimerHandler(undefined4 *param_1);  // @ 0x0001b3a0
 undefined4 cm848_faultCounterDecrement(ushort param_1,int param_2);  // @ 0x0001b624
 undefined4 cm848_faultCounterIncrement(byte param_1,byte param_2);  // @ 0x0001b69c
@@ -472,7 +472,7 @@ void cm848_calculateProtectionRateLimited(void);  // @ 0x0001e4e8
 void cm848_processProtectionSelection(void);  // @ 0x0001e5a4
 void cm848_initEngineOperatingState(void);  // @ 0x0001e810
 void cm848_updateEngineTimingCompensation(void);  // @ 0x0001e830
-void cm848_processTorqueLimitState(void);  // @ 0x0001e870
+void cm848_calculateInjectionTimingOffset(void);  // @ 0x0001e870
 void cm848_initProtectionTableSizes(void);  // @ 0x0001ea6c
 void cm848_initFaultSeverityTables(void);  // @ 0x0001ea94
 void cm848_calculateFuelDemandChangeRate(void);  // @ 0x0001eae8
@@ -493,7 +493,7 @@ void cm848_initializeEngineSpeedLimitDefaults(void);  // @ 0x00020410
 undefined1 cm848_getLimitCategoryCode(int param_1);  // @ 0x000204a8
 void cm848_calculateProtectionActivationDelay(void);  // @ 0x00020500
 uint cm848_calculateEffectiveFuelLimit(void);  // @ 0x00020554
-void cm848_selectTorqueLimitStateMachine(void);  // @ 0x00020860
+void cm848_calculateDriverDemandPercentTorque(void);  // @ 0x00020860
 void cm848_calculateLoadRateOfChange(void);  // @ 0x000209e8
 void cm848_calculateLoadToFuelRatio(void);  // @ 0x00020a58
 void cm848_emptyStubFunction7(void);  // @ 0x00020aec
@@ -672,7 +672,7 @@ void cm848_updateFaultOnKeyoff(void);  // @ 0x0002bf44
 void cm848_blendGovernorTuningSets(void);  // @ 0x0002bf6c
 void cm848_emptyStubFunction6(void);  // @ 0x0002c0fc
 void cm848_initProtectionLimitVariables(void);  // @ 0x0002c100
-void cm848_updateTorqueLimitFromProtection(void);  // @ 0x0002c114
+void cm848_applySwitchSelectedEngineSpeedLimit(void);  // @ 0x0002c114
 void cm848_countAcceleratorPedalPresses(void);  // @ 0x0002c180
 void cm848_detectThreeAcceleratorPedalPresses(void);  // @ 0x0002c23c
 void cm848_checkAcceleratorPedalSensorFaults(void);  // @ 0x0002c318
@@ -933,7 +933,7 @@ void cm848_cruiseSpeedCommandStateMachine(void);  // @ 0x000409b0
 void cm848_initFuelRateFromCapability(void);  // @ 0x00040d40
 void cm848_validateFuelRateTarget(void);  // @ 0x00040d74
 void cm848_copyProtectionRampValue(void);  // @ 0x00040dd4
-void cm848_processTorqueLimitBounded(void);  // @ 0x00040de8
+void cm848_calculateGovernorFuelDemandUpperLimit(void);  // @ 0x00040de8
 void cm848_processGovernorFuelRate(void);  // @ 0x00040e4c
 void cm848_processProtectionRampTimer(void);  // @ 0x00040f80
 void cm848_calculateProtectionLevelLimit(void);  // @ 0x000411b0
@@ -954,10 +954,10 @@ void cm848_enableProtectionRateLimit(void);  // @ 0x0004271c
 void cm848_applyProtectionControlLimit(void);  // @ 0x0004272c
 void cm848_setProtectionControlValue(void);  // @ 0x00042770
 void cm848_copyProtectionAccumulator(void);  // @ 0x00042784
-void cm848_applyProtectionTorqueLimit(void);  // @ 0x0004279c
+void cm848_applyFuelPressureFaultFuelLimit(void);  // @ 0x0004279c
 void cm848_applySpeedControlProtectionLimit(void);  // @ 0x000427cc
 void cm848_processProtectionLimits(void);  // @ 0x0004280c
-void cm848_initProtectionTorqueLimit(void);  // @ 0x0004285c
+void cm848_initializeFuelDemandAndLimitInterpolationStates(void);  // @ 0x0004285c
 void cm848_setEngineOperatingMode1(void);  // @ 0x00042894
 void cm848_setEngineOperatingMode5(void);  // @ 0x000428d4
 void cm848_resetEngineOperatingMode(void);  // @ 0x00042918
@@ -1320,7 +1320,7 @@ void cm848_initialization_step(void);  // @ 0x0050241c
 void cm848_calibrationGroup5_periodic(void);  // @ 0x00502464
 void cm848_protection_limits(void);  // @ 0x00502af4
 void cm848_initialization_step_2(void);  // @ 0x00502b24
-void cm848_protection_torqueLimit(void);  // @ 0x00502b34
+void cm848_initializeBarometricFuelLimitInterpolationStates(void);  // @ 0x00502b34
 void hpcr_fuelFinal_exponentialAverage(void);  // @ 0x00502b6c
 void cm848_initialization_step_3(void);  // @ 0x00502eb8
 void cm848_engineMode_reset(int param_1);  // @ 0x00503074
@@ -1369,8 +1369,8 @@ void fuel_injectionTiming_cylinderCheck_update(void);  // @ 0x005057ec
 void cm848_calculateAmbientAirDensity(void);  // @ 0x005058a8
 void cm848_selectAmbientAirTemperatureInput(void);  // @ 0x005059ec
 void cm848_initializeAmbientAirTemperatureInput(void);  // @ 0x00505b3c
-void cm848_mainLoop_step_3(void);  // @ 0x00505b84
-void cm848_initialization_step_11(void);  // @ 0x00505bd8
+void cm848_selectCoolantTemperature(void);  // @ 0x00505b84
+void cm848_initializeCoolantTemperatureSource(void);  // @ 0x00505bd8
 void diag_dm1Buffer_circularFill(void);  // @ 0x00505c20
 void hpcr_exception_process(void);  // @ 0x00505d94
 void j1939_dm1_diagnosticMessage_send(void);  // @ 0x00505df0
@@ -1378,11 +1378,11 @@ void cm848_phase_groupB_calculation(int param_1);  // @ 0x00505f98
 void cm848_outputs2_periodic(void);  // @ 0x0050638c
 void cm848_advanceHourMeters(void);  // @ 0x00506780
 void cm848_loadHourMetersFromEeprom(void);  // @ 0x005067bc
-void governor_speedModeB_activeFlag_update(void);  // @ 0x005067e0
-void cm848_updateSensorChannel75ReferencedValue(void);  // @ 0x00506840
-void cm848_selectBoostPressureFromSensorChannel75(void);  // @ 0x00506964
-void cm848_phase_commonProcessing_calculation(void);  // @ 0x00506a3c
-void cm848_protection_init_2(void);  // @ 0x00506a64
+void cm848_updateEgrValveAutozeroActiveFlag(void);  // @ 0x005067e0
+void cm848_updateEgrValvePositionAutozero(void);  // @ 0x00506840
+void cm848_selectEgrValvePositionSource(void);  // @ 0x00506964
+void cm848_updateEgrValvePosition(void);  // @ 0x00506a3c
+void cm848_initializeEgrValvePosition(void);  // @ 0x00506a64
 void cm848_phase_groupA_exponentialAverage(void);  // @ 0x00506b34
 void cm848_initialization_step_12(void);  // @ 0x00506c94
 void cm848_calculateCombustionTemperatureRise(void);  // @ 0x00506cbc
@@ -1393,12 +1393,12 @@ void sensor_throttleTrim_ema_faultProcess(void);  // @ 0x00507028
 void sensor_throttleTrim_inputSelect(void);  // @ 0x0050716c
 void cm848_phase_groupB_calculation_2(void);  // @ 0x005071b8
 void cm848_initialization_step_14(void);  // @ 0x005071dc
-void cm848_calculateSensorChannel75DeviationDiagnosticConditions(void);  // @ 0x00507214
-void governor_speedStability_counter_syncDiag(void);  // @ 0x00507394
-void cm848_calibrationGroup11_periodic(void);  // @ 0x00507548
-void cm848_initialization_step_15(void);  // @ 0x005075b8
-void cm848_mainLoop_step_5(void);  // @ 0x00507644
-void cm848_initialization_step_16(void);  // @ 0x00507684
+void cm848_evaluateEgrValvePositionControlDiagnosticConditions(void);  // @ 0x00507214
+void cm848_updateEgrValvePositionControlFaultCounter(void);  // @ 0x00507394
+void cm848_runEgrValvePositionControlDiagnostic(void);  // @ 0x00507548
+void cm848_initializeEgrValvePositionControlDiagnostic(void);  // @ 0x005075b8
+void cm848_countEgrValveClosings(void);  // @ 0x00507644
+void cm848_initializeEgrValveClosedHoldPreviousFlag(void);  // @ 0x00507684
 void fuel_demandBlend_weight_calc(void);  // @ 0x00507694
 void fuel_demandBlend_rpmRange_check(void);  // @ 0x00507748
 void main_loop_callPhaseGroupProcessors(void);  // @ 0x005077fc
@@ -1418,7 +1418,7 @@ void protection_threshold_update(ushort *param_1,undefined4 *param_2,int param_3
 void protection_state_transition(int param_1,int param_2,int param_3);  // @ 0x00508408
 void governor_fault_derateCalc_channelIter(void);  // @ 0x005084b4
 void cm848_calculateFaultDerateEngineSpeedLimit(void);  // @ 0x0050860c
-void engine_torqueLimit_workingState_init(void);  // @ 0x005087e4
+void cm848_initializeFaultDerateEngineSpeedLimit(void);  // @ 0x005087e4
 void protection_event_timestamp(int param_1,int param_2,int param_3);  // @ 0x00508834
 void governor_faultDerate_mainLoop_update(void);  // @ 0x00508898
 void cm848_completeEngineStartSequence(void);  // @ 0x00508de8
@@ -1430,8 +1430,8 @@ void fault_snapshot_capture(int param_1);  // @ 0x00508f64
 void fault_event_timing_snapshot(int param_1);  // @ 0x005090fc
 void governor_fault_channelProcess_mainLoop(void);  // @ 0x00509278
 void cm848_enforceFuelLimitProtection(void);  // @ 0x00509510
-void engine_torqueLimit_upperCap_calc(void);  // @ 0x00509540
-void engine_protection_torqueLimit_reset(void);  // @ 0x00509814
+void cm848_calculateFaultDerateFuelLimit(void);  // @ 0x00509540
+void cm848_resetFaultDerateFuelLimit(void);  // @ 0x00509814
 void phase_group_a_validateEngineSync(void);  // @ 0x00509848
 void cm848_initBoostPressureFaultHandling(void);  // @ 0x00509a2c
 void cm848_updateSensorValidationFlags(void);  // @ 0x00509a7c
@@ -1515,7 +1515,7 @@ void phase_group_a_triggerControllerUpdates(void);  // @ 0x0050d60c
 undefined * j1939_selectResponseBuffer(int param_1);  // @ 0x0050d688
 void j1939_pgn_handler_init_ec00eb00(void);  // @ 0x0050d700
 undefined1 cm848_lookupApplicationMemoryRegionType(uint param_1,int param_2);  // @ 0x0050d784
-void cm848_calculateAuxiliaryTorqueLimitFromEngineRPM(void);  // @ 0x0050d864
+void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void);  // @ 0x0050d864
 void fuel_demand_periodSnapshot_save(void);  // @ 0x0050da7c
 void cm848_transitionEngineOperatingMode(int param_1);  // @ 0x0050daac
 void cm848_initDroopModeStateVariables(void);  // @ 0x0050db88
@@ -1789,7 +1789,7 @@ undefined2 governor_cruise_rampRate_calc(int param_1,int param_2);  // @ 0x00524
 uint governor_cruise_tableLimit_calc (int param_1,word *param_2,word param_3,word *param_4,word param_5,word *param_6, word *param_7,dword param_8);  // @ 0x00524d34
 uint governor_cruise_rampScale_calc(int param_1,uint param_2,uint param_3);  // @ 0x00524dd0
 void governorCruiseStateMachine(void);  // @ 0x00524df4
-void governor_cruise_torqueLimit_calc(void);  // @ 0x005250c0
+void cm848_calculateCruisePidRateGainScale(void);  // @ 0x005250c0
 int governor_cruise_speedError_torqueAdj(void);  // @ 0x00525134
 void protectionRampRateControl(void);  // @ 0x005251e4
 void protectionOutputActuatorControl(void);  // @ 0x00525504
