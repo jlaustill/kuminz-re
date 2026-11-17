@@ -1270,8 +1270,8 @@ struct wastegate_duty_controller_state_t {
 };
 
 struct throttle_fuel_trim_t {
-    uint16_t efficiency_filtered;  /* Throttle efficiency filtered value */
-    uint16_t fuel_demand_final;  /* Final throttle-based fuel demand */
+    uint16_t residual_oxygen_fraction_delayed_filtered;  /* Throttle efficiency filtered value */
+    uint16_t egr_fraction_actual;  /* Final throttle-based fuel demand */
     uint16_t final_trim;  /* Final fuel trim value */
     uint16_t load_adjusted;  /* Load-adjusted fuel value */
     uint16_t load_based_trim;  /* Load-based fuel trim */
@@ -1300,15 +1300,15 @@ struct boost_pressure_state_t {
     uint16_t computed_value;  /* Computed boost pressure value */
     uint16_t pressure_ratio;  /* Boost pressure ratio */
     uint16_t reserved_0a;  /* Gap */
-    uint16_t reserved_0c;  /* Gap */
+    uint16_t fresh_air_mass_flow_filtered;  /* Gap */
     uint16_t reserved_0e;  /* Gap */
 };
 
 struct torque_limit_arb_t {
     uint16_t source_priority;  /* Limit source priority ranking */
-    uint16_t source_active;  /* Currently active limit source ID */
-    uint16_t limit_source;  /* Torque limit source selector */
-    uint16_t fuel_minimum;  /* Minimum fuel limit from arbitration */
+    uint16_t limiting_source_number;  /* Currently active limit source ID */
+    uint16_t applied_speed_limit;  /* Torque limit source selector */
+    uint16_t lowest_source_speed_limit;  /* Minimum fuel limit from arbitration */
 };
 
 struct governor_pid_t {

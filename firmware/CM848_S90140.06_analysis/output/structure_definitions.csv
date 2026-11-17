@@ -203,8 +203,8 @@ wastegate_duty_controller_state_t,0x0040a3ca,engine_speed_ceiling_half_duty_coun
 # Throttle Fuel Trim State - throttle-based fuel calculations
 # Used by calculateFuelDemandValue and throttle processing
 # Total size: 24 bytes (0x0040a3ea-0x0040a401)
-throttle_fuel_trim_t,0x0040a3ea,efficiency_filtered,word,2,Throttle efficiency filtered value,,verified
-throttle_fuel_trim_t,0x0040a3ea,fuel_demand_final,word,2,Final throttle-based fuel demand,,verified
+throttle_fuel_trim_t,0x0040a3ea,residual_oxygen_fraction_delayed_filtered,word,2,Throttle efficiency filtered value,,verified
+throttle_fuel_trim_t,0x0040a3ea,egr_fraction_actual,word,2,Final throttle-based fuel demand,,verified
 throttle_fuel_trim_t,0x0040a3ea,final_trim,word,2,Final fuel trim value,,verified
 throttle_fuel_trim_t,0x0040a3ea,load_adjusted,word,2,Load-adjusted fuel value,,verified
 throttle_fuel_trim_t,0x0040a3ea,load_based_trim,word,2,Load-based fuel trim,,verified
@@ -233,15 +233,15 @@ boost_pressure_state_t,0x0040a406,lookup_result,word,2,Boost table lookup result
 boost_pressure_state_t,0x0040a406,computed_value,word,2,Computed boost pressure value,,verified
 boost_pressure_state_t,0x0040a406,pressure_ratio,word,2,Boost pressure ratio,,verified
 boost_pressure_state_t,0x0040a406,reserved_0a,word,2,Gap,,needs_review
-boost_pressure_state_t,0x0040a406,reserved_0c,word,2,Gap,,needs_review
+boost_pressure_state_t,0x0040a406,fresh_air_mass_flow_filtered,word,2,Gap,,needs_review
 boost_pressure_state_t,0x0040a406,reserved_0e,word,2,Gap,,needs_review
 # Torque Limit Arbitration - multi-source torque limit selection
 # Used by fuel limit arbitration and protection systems
 # Total size: 8 bytes (0x0040a2f6-0x0040a2fd)
 torque_limit_arb_t,0x0040a2f6,source_priority,word,2,Limit source priority ranking,,verified
-torque_limit_arb_t,0x0040a2f6,source_active,word,2,Currently active limit source ID,,verified
-torque_limit_arb_t,0x0040a2f6,limit_source,word,2,Torque limit source selector,,verified
-torque_limit_arb_t,0x0040a2f6,fuel_minimum,word,2,Minimum fuel limit from arbitration,,verified
+torque_limit_arb_t,0x0040a2f6,limiting_source_number,word,2,Currently active limit source ID,,verified
+torque_limit_arb_t,0x0040a2f6,applied_speed_limit,word,2,Torque limit source selector,,verified
+torque_limit_arb_t,0x0040a2f6,lowest_source_speed_limit,word,2,Minimum fuel limit from arbitration,,verified
 # Governor PID State - PID controller variables for speed control
 # Used by governor control loop
 # Total size: 10 bytes (0x0040af5a-0x0040af63)
