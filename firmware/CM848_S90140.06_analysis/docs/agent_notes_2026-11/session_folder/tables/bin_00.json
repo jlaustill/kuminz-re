@@ -1,0 +1,2275 @@
+{
+ "bin": 0,
+ "functions": [
+  "cm848_torque_limit_state_update"
+ ],
+ "assigned_tables": [
+  "0x000614c4",
+  "0x000614ec",
+  "0x0006150e",
+  "0x0006176e",
+  "0x00061780",
+  "0x00061792",
+  "0x00061812",
+  "0x0006182e",
+  "0x00061846",
+  "0x00061964",
+  "0x00061970",
+  "0x0006197c",
+  "0x00061992",
+  "0x000619a8",
+  "0x000619c4",
+  "0x000619dc",
+  "0x00061afa",
+  "0x00061b16",
+  "0x00061b2e",
+  "0x00061c4c",
+  "0x00061c66",
+  "0x00061c72",
+  "0x00061cea",
+  "0x00061d12",
+  "0x00061d34",
+  "0x00061f94",
+  "0x00061fb0",
+  "0x00061fc8",
+  "0x000620e6",
+  "0x00062102",
+  "0x0006211a",
+  "0x00062238",
+  "0x00062260",
+  "0x00062282",
+  "0x000624e2",
+  "0x0006250a",
+  "0x0006252c",
+  "0x0006278c",
+  "0x000627b4",
+  "0x000627d6",
+  "0x00062a36",
+  "0x00062a48",
+  "0x00062a5a",
+  "0x00062ada",
+  "0x00062af6",
+  "0x00062b0e",
+  "0x00062c2c",
+  "0x00062c40",
+  "0x00062c54"
+ ],
+ "lookups": [
+  {
+   "id": "L144",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000614c4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L144"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x000614ec",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L144"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0006150e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L144"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       210
+      ],
+      "grid_min_max_signed": [
+       0,
+       210
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29
+      ],
+      "last_row": [
+       63,
+       63,
+       54,
+       56,
+       88,
+       172,
+       191,
+       206,
+       191,
+       191,
+       196,
+       193,
+       169,
+       162,
+       147,
+       147,
+       96,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "wVar4 = cm848_dualAxisTableInterpolation (&DAT_003fd124,torque_limit_rpm_slewed,WORD_ARRAY_000614c4, torque_limit_fuel_demand_slewed,WORD_ARRAY_000614ec,WORD_ARRAY_0006150e,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L145",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0006176e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L145"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       62976,
+       64256,
+       0,
+       1280,
+       2560,
+       3840,
+       9600,
+       11520
+      ],
+      "breakpoints_signed": [
+       -2560,
+       -1280,
+       0,
+       1280,
+       2560,
+       3840,
+       9600,
+       11520
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00061780",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L145"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       62976,
+       64256,
+       0,
+       2560,
+       3520,
+       3840,
+       5120,
+       7680
+      ],
+      "breakpoints_signed": [
+       -2560,
+       -1280,
+       0,
+       2560,
+       3520,
+       3840,
+       5120,
+       7680
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00061792",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L145"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       4096,
+       20480
+      ],
+      "grid_min_max_signed": [
+       4096,
+       20480
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096
+      ],
+      "last_row": [
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "torque_limit_timing_warmup_correction = cm848_dualAxisTableInterpolation (&DAT_003fd130,sensor_readings_t_0040baf2.coolant_temp,WORD_ARRAY_0006176e, intake_manifold_temperature_sensor_filtered,WORD_ARRAY_00061780, WORD_ARRAY_00061792,3);",
+     "inputs": [
+      "sensor_readings_t_0040baf2.coolant_temp",
+      "intake_manifold_temperature_sensor_filtered"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L146",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00061812",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L146"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4000,
+       4800,
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0006182e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L146"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       177,
+       353,
+       471,
+       530,
+       796,
+       883,
+       1030,
+       1178,
+       1619,
+       1766
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00061846",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L146"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       29,
+       324
+      ],
+      "grid_min_max_signed": [
+       29,
+       324
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29
+      ],
+      "last_row": [
+       324,
+       324,
+       324,
+       324,
+       147,
+       147,
+       147,
+       147,
+       147,
+       147,
+       147,
+       147,
+       324
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "DAT_0040b940 = cm848_dualAxisTableInterpolation (&DAT_003fd138,torque_limit_rpm_slewed,WORD_ARRAY_00061812, torque_limit_fuel_demand_slewed,WORD_ARRAY_0006182e,WORD_ARRAY_00061846, 4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L147",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00061964",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L147"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "breakpoints_unsigned": [
+       64256,
+       1280,
+       3200,
+       6400,
+       9600
+      ],
+      "breakpoints_signed": [
+       -1280,
+       1280,
+       3200,
+       6400,
+       9600
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00061970",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L147"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "values_unsigned": [
+       4096,
+       4096,
+       4096,
+       4096,
+       2048
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "torque_limit_timing_warmup_correction = lookupTableInterpolation (&DAT_003fd10e,sensor_readings_t_0040baf2.coolant_temp,WORD_ARRAY_00061964, WORD_ARRAY_00061970,1);",
+     "inputs": [
+      "sensor_readings_t_0040baf2.coolant_temp"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L148",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0006197c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L148"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       62976,
+       64256,
+       0,
+       1280,
+       2560,
+       3840,
+       5120,
+       6400,
+       10880,
+       11520
+      ],
+      "breakpoints_signed": [
+       -2560,
+       -1280,
+       0,
+       1280,
+       2560,
+       3840,
+       5120,
+       6400,
+       10880,
+       11520
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00061992",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L148"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "wVar2 = lookupTableInterpolation(&DAT_003fd10c,wVar4,WORD_ARRAY_0006197c,WORD_ARRAY_00061992,1);",
+     "inputs": [
+      "wVar4"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L149",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000619a8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L149"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4000,
+       4800,
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x000619c4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L149"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       177,
+       353,
+       471,
+       530,
+       796,
+       883,
+       1030,
+       1178,
+       1619,
+       1766
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x000619dc",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L149"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       29,
+       324
+      ],
+      "grid_min_max_signed": [
+       29,
+       324
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29
+      ],
+      "last_row": [
+       324,
+       324,
+       324,
+       324,
+       147,
+       147,
+       147,
+       147,
+       147,
+       147,
+       147,
+       147,
+       324
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "wVar4 = cm848_dualAxisTableInterpolation (&DAT_003fd118,torque_limit_rpm_slewed,WORD_ARRAY_000619a8, torque_limit_fuel_demand_slewed,WORD_ARRAY_000619c4,WORD_ARRAY_000619dc,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L150",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00061afa",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L150"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4000,
+       4800,
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00061b16",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L150"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       88,
+       353,
+       471,
+       530,
+       662,
+       795,
+       1030,
+       1178,
+       1325,
+       1472
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00061b2e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L150"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       177,
+       486
+      ],
+      "grid_min_max_signed": [
+       177,
+       486
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       177,
+       177,
+       177,
+       177,
+       177,
+       177,
+       177,
+       177,
+       177,
+       177,
+       177,
+       177,
+       177
+      ],
+      "last_row": [
+       177,
+       486,
+       486,
+       486,
+       486,
+       486,
+       486,
+       486,
+       486,
+       486,
+       486,
+       486,
+       486
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "wVar4 = cm848_dualAxisTableInterpolation (&DAT_003fd120,torque_limit_rpm_slewed,WORD_ARRAY_00061afa, torque_limit_fuel_demand_slewed,WORD_ARRAY_00061b16,WORD_ARRAY_00061b2e,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L151",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00061c4c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L151"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 13,
+      "breakpoints_unsigned": [
+       62976,
+       64256,
+       0,
+       640,
+       1280,
+       1920,
+       2560,
+       3200,
+       4480,
+       5120,
+       10880,
+       16000
+      ],
+      "breakpoints_signed": [
+       -2560,
+       -1280,
+       0,
+       640,
+       1280,
+       1920,
+       2560,
+       3200,
+       4480,
+       5120,
+       10880,
+       16000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00061c66",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L151"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "breakpoints_unsigned": [
+       1152,
+       1280,
+       1408,
+       1536,
+       1856
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00061c72",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L151"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 60,
+      "grid_min_max_unsigned": [
+       20480,
+       20480
+      ],
+      "grid_min_max_signed": [
+       20480,
+       20480
+      ],
+      "shape_x_by_y": [
+       12,
+       5
+      ],
+      "first_row": [
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480
+      ],
+      "last_row": [
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480,
+       20480
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "wVar3 = cm848_dualAxisTableInterpolation (&DAT_003fd11c,wVar4,WORD_ARRAY_00061c4c,wVar3,WORD_ARRAY_00061c66, WORD_ARRAY_00061c72,5);",
+     "inputs": [
+      "wVar4",
+      "wVar3"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L152",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00061cea",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L152"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00061d12",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L152"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00061d34",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L152"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       221
+      ],
+      "grid_min_max_signed": [
+       0,
+       221
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29
+      ],
+      "last_row": [
+       63,
+       63,
+       54,
+       56,
+       88,
+       172,
+       191,
+       206,
+       191,
+       191,
+       203,
+       199,
+       175,
+       168,
+       147,
+       132,
+       96,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "unaff_r25 = cm848_dualAxisTableInterpolation (&timing_limit_boost_blend_interp_state,torque_limit_rpm_slewed, WORD_ARRAY_00061cea,torque_limit_fuel_demand_slewed,WORD_ARRAY_00061d12, WORD_ARRAY_00061d34,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "unaff_r23 = cm848_dualAxisTableInterpolation (&timing_limit_boost_blend_interp_state,torque_limit_rpm_slewed, WORD_ARRAY_00061cea,torque_limit_fuel_demand_slewed,WORD_ARRAY_00061d12, WORD_ARRAY_00061d34,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L153",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00061f94",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L153"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       24000,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00061fb0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L153"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       189,
+       314,
+       503,
+       629,
+       754,
+       1069,
+       1257,
+       1446,
+       1635,
+       2200
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00061fc8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L153"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       3277,
+       16384
+      ],
+      "grid_min_max_signed": [
+       3277,
+       16384
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       3277,
+       3277,
+       3277,
+       3277,
+       3277,
+       3277,
+       3277,
+       3277,
+       3277,
+       3277,
+       3277,
+       3277,
+       3277
+      ],
+      "last_row": [
+       16384,
+       16384,
+       16384,
+       16384,
+       16384,
+       16384,
+       16384,
+       16384,
+       16384,
+       16384,
+       16384,
+       16384,
+       16384
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "torque_limit_timing_load_base_factor = cm848_dualAxisTableInterpolation (&DAT_003fd128,torque_limit_rpm_slewed,WORD_ARRAY_00061f94,wVar4, WORD_ARRAY_00061fb0,WORD_ARRAY_00061fc8,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "wVar4"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L154",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000620e6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L154"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       24000,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00062102",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L154"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       442,
+       662,
+       883,
+       1030,
+       1178,
+       1325,
+       1472,
+       1619,
+       1766,
+       1914
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0006211a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L154"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       59,
+       324
+      ],
+      "grid_min_max_signed": [
+       59,
+       324
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       88,
+       88,
+       88,
+       88,
+       206
+      ],
+      "last_row": [
+       324,
+       324,
+       324,
+       324,
+       324,
+       324,
+       324,
+       324,
+       324,
+       324,
+       324,
+       324,
+       324
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "torque_limit_timing_load_scale_factor = cm848_dualAxisTableInterpolation (&DAT_003fd12c,torque_limit_rpm_slewed,WORD_ARRAY_000620e6, torque_limit_fuel_demand_slewed,WORD_ARRAY_00062102,WORD_ARRAY_0006211a,0);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L155",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062238",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L155"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00062260",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L155"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00062282",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L155"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       213
+      ],
+      "grid_min_max_signed": [
+       0,
+       213
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29
+      ],
+      "last_row": [
+       63,
+       63,
+       54,
+       56,
+       88,
+       172,
+       191,
+       206,
+       206,
+       191,
+       196,
+       193,
+       169,
+       162,
+       147,
+       132,
+       96,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "unaff_r25 = cm848_dualAxisTableInterpolation (&timing_limit_boost_blend_interp_state,torque_limit_rpm_slewed, WORD_ARRAY_00062238,torque_limit_fuel_demand_slewed,WORD_ARRAY_00062260, WORD_ARRAY_00062282,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "unaff_r23 = cm848_dualAxisTableInterpolation (&timing_limit_boost_blend_interp_state,torque_limit_rpm_slewed, WORD_ARRAY_00062238,torque_limit_fuel_demand_slewed,WORD_ARRAY_00062260, WORD_ARRAY_00062282,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L156",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000624e2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L156"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0006250a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L156"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0006252c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L156"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       213
+      ],
+      "grid_min_max_signed": [
+       0,
+       213
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29
+      ],
+      "last_row": [
+       63,
+       63,
+       54,
+       56,
+       88,
+       172,
+       191,
+       206,
+       206,
+       191,
+       196,
+       193,
+       169,
+       162,
+       147,
+       132,
+       96,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "unaff_r25 = cm848_dualAxisTableInterpolation (&timing_limit_boost_blend_interp_state,torque_limit_rpm_slewed, WORD_ARRAY_000624e2,torque_limit_fuel_demand_slewed,WORD_ARRAY_0006250a, WORD_ARRAY_0006252c,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "unaff_r23 = cm848_dualAxisTableInterpolation (&timing_limit_boost_blend_interp_state,torque_limit_rpm_slewed, WORD_ARRAY_000624e2,torque_limit_fuel_demand_slewed,WORD_ARRAY_0006250a, WORD_ARRAY_0006252c,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L157",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0006278c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L157"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x000627b4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L157"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x000627d6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L157"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       213
+      ],
+      "grid_min_max_signed": [
+       0,
+       213
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29,
+       29
+      ],
+      "last_row": [
+       63,
+       63,
+       54,
+       56,
+       88,
+       172,
+       191,
+       206,
+       206,
+       191,
+       196,
+       193,
+       169,
+       162,
+       147,
+       132,
+       96,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "unaff_r25 = cm848_dualAxisTableInterpolation (&timing_limit_boost_blend_interp_state,torque_limit_rpm_slewed, WORD_ARRAY_0006278c,torque_limit_fuel_demand_slewed,WORD_ARRAY_000627b4, WORD_ARRAY_000627d6,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "unaff_r23 = cm848_dualAxisTableInterpolation (&timing_limit_boost_blend_interp_state,torque_limit_rpm_slewed, WORD_ARRAY_0006278c,torque_limit_fuel_demand_slewed,WORD_ARRAY_000627b4, WORD_ARRAY_000627d6,4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L158",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062a36",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L158"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       64256,
+       1280,
+       1920,
+       2560,
+       3200,
+       3840,
+       4288,
+       11520
+      ],
+      "breakpoints_signed": [
+       -1280,
+       1280,
+       1920,
+       2560,
+       3200,
+       3840,
+       4288,
+       11520
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00062a48",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L158"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       64256,
+       1280,
+       1920,
+       3200,
+       4480,
+       5760,
+       6400,
+       7680
+      ],
+      "breakpoints_signed": [
+       -1280,
+       1280,
+       1920,
+       3200,
+       4480,
+       5760,
+       6400,
+       7680
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00062a5a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L158"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       0,
+       4096
+      ],
+      "grid_min_max_signed": [
+       0,
+       4096
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "torque_limit_timing_boost_load_factor_by_load = cm848_dualAxisTableInterpolation (&DAT_003fd110,x_input,WORD_ARRAY_00062a36,wVar4,WORD_ARRAY_00062a48, WORD_ARRAY_00062a5a,3);",
+     "inputs": [
+      "x_input",
+      "wVar4"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L159",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062ada",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L159"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4000,
+       4800,
+       5200,
+       5600,
+       6000,
+       6400,
+       6800,
+       7200,
+       7600,
+       8000,
+       8800,
+       9600,
+       10400
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00062af6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L159"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       589,
+       736,
+       883,
+       1030,
+       1251,
+       1619,
+       1914
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00062b0e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L159"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       0,
+       103
+      ],
+      "grid_min_max_signed": [
+       0,
+       103
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       59,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "DAT_0040b95c = cm848_dualAxisTableInterpolation (&DAT_003fd114,torque_limit_rpm_slewed,WORD_ARRAY_00062ada, torque_limit_fuel_demand_slewed,WORD_ARRAY_00062af6,WORD_ARRAY_00062b0e, 4);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "torque_limit_fuel_demand_slewed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L160",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062c2c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L160"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 10,
+      "breakpoints_unsigned": [
+       0,
+       4000,
+       8000,
+       12000,
+       16000,
+       20000,
+       24000,
+       28000,
+       36000
+      ],
+      "breakpoints_signed": [
+       0,
+       4000,
+       8000,
+       12000,
+       16000,
+       20000,
+       24000,
+       28000,
+       -29536
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00062c40",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L160"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 10,
+      "breakpoints_unsigned": [
+       62336,
+       0,
+       1600,
+       3200,
+       4800,
+       6400,
+       9600,
+       12800,
+       16320
+      ],
+      "breakpoints_signed": [
+       -3200,
+       0,
+       1600,
+       3200,
+       4800,
+       6400,
+       9600,
+       12800,
+       16320
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00062c54",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L160"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 81,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       9,
+       9
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_torque_limit_state_update",
+     "statement": "DAT_0040b95e = cm848_dualAxisTableInterpolation (&DAT_003fd13c,torque_limit_rpm_slewed,WORD_ARRAY_00062c2c,x_input, WORD_ARRAY_00062c40,WORD_ARRAY_00062c54,6);",
+     "inputs": [
+      "torque_limit_rpm_slewed",
+      "x_input"
+     ],
+     "output_argument": null
+    }
+   ]
+  }
+ ]
+}

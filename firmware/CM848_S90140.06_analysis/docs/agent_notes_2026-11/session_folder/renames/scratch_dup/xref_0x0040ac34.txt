@@ -1,0 +1,18 @@
+# xref 0x0040ac34  (engine_data_log_buffer)  — 5 referencing function(s)
+# total: 0 read(s), 0 write(s)   width(s): -
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_processJ1939TxBufferSend: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+mpc555_queueCanReceiveMessage: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+mpc555_sendJ1939SingleFrame: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_dispatchJ1939ReceivedMessages: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_j1939_system_init: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

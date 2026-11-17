@@ -1,0 +1,20 @@
+0x005012dc,sensorChannelTypeB_configInit,iVar10,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x005012dc,sensorChannelTypeB_configInit,iVar9,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
+0x005012dc,sensorChannelTypeB_configInit,iVar8,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
+0x005012dc,sensorChannelTypeB_configInit,sVar6,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x005012dc,sensorChannelTypeB_configInit,uVar11,sensor_value,uint,Reading compared against the thresholds and stored as lookup_input (the register is also reused for the channel bit mask and the dispatch index)
+0x005012dc,sensorChannelTypeB_configInit,uVar4,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
+0x005012dc,sensorChannelTypeB_configInit,wVar7,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
+0x005012dc,sensorChannelTypeB_configInit,dVar5,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x005012dc,sensorChannelTypeB_configInit,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
+0x005012dc,sensorChannelTypeB_configInit,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy
+0x005012dc,sensorChannelTypeB_configInit,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0 settled / 1 still counting / 2 limit reached
+0x00501b4c,sensorChannelTypeB_update,iVar8,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x00501b4c,sensorChannelTypeB_update,iVar9,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
+0x00501b4c,sensorChannelTypeB_update,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
+0x00501b4c,sensorChannelTypeB_update,sVar4,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x00501b4c,sensorChannelTypeB_update,uVar10,sensor_value,uint,Lookup input before it is stored in lookup_input (the register is also reused for the channel bit mask and the dispatch index)
+0x00501b4c,sensorChannelTypeB_update,uVar6,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
+0x00501b4c,sensorChannelTypeB_update,wVar5,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
+0x00501b4c,sensorChannelTypeB_update,dVar3,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x00501b4c,sensorChannelTypeB_update,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)

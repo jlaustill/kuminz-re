@@ -1,0 +1,592 @@
+diff --git a/firmware/CM848_S90140.06_analysis/output/global_variables.csv b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+index 6955422..35acffa 100644
+--- a/firmware/CM848_S90140.06_analysis/output/global_variables.csv
++++ b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+@@ -6,2 +6,2 @@ address,name,type,comment
+-0x00007f80,PTR_FUN_00007f80,byte,
+-0x00008104,PTR_DAT_00008104,pointer,
++0x00007f80,,byte,
++0x00008104,,pointer,
+@@ -9,12 +9,12 @@ address,name,type,comment
+-0x0000811a,PTR_DAT_0000811a,pointer,
+-0x00008600,BYTE_00008600,byte,
+-0x00008980,BYTE_00008980,byte,
+-0x00008b0a,BYTE_00008b0a,byte,
+-0x00008c00,BYTE_00008c00,byte,
+-0x00009c8a,BYTE_00009c8a,byte,
+-0x0000a002,BYTE_0000a002,byte,
+-0x0000a0fa,PTR_DAT_0000a0fa,pointer,
+-0x0000ac3a,BYTE_0000ac3a,byte,
+-0x0000b756,PTR_DAT_0000b756,pointer,
+-0x0000b75a,PTR_DAT_0000b75a,pointer,
+-0x0000b760,DWORD_0000b760,dword,
++0x0000811a,,pointer,
++0x00008600,,byte,
++0x00008980,,byte,
++0x00008b0a,,byte,
++0x00008c00,,byte,
++0x00009c8a,,byte,
++0x0000a002,,byte,
++0x0000a0fa,,pointer,
++0x0000ac3a,,byte,
++0x0000b756,,pointer,
++0x0000b75a,,pointer,
++0x0000b760,,dword,
+@@ -24 +24 @@ address,name,type,comment
+-0x00022c86,PTR_DAT_00022c86,pointer,
++0x00022c86,,pointer,
+@@ -41,2 +41,2 @@ address,name,type,comment
+-0x0005762e,PTR_DAT_0005762e,pointer,
+-0x00057632,PTR_DAT_00057632,pointer,
++0x0005762e,,pointer,
++0x00057632,,pointer,
+@@ -45,8 +45,8 @@ address,name,type,comment
+-0x0005763a,PTR_DAT_0005763a,pointer,
+-0x0005763e,BYTE_0005763e,byte,
+-0x00057642,BYTE_00057642,byte,
+-0x00057646,BYTE_00057646,byte,
+-0x0005764a,PTR_DAT_0005764a,pointer,
+-0x0005764e,PTR_DAT_0005764e,pointer,
+-0x00057652,BYTE_00057652,byte,
+-0x00057656,BYTE_00057656,byte,
++0x0005763a,,pointer,
++0x0005763e,,byte,
++0x00057642,,byte,
++0x00057646,,byte,
++0x0005764a,,pointer,
++0x0005764e,,pointer,
++0x00057652,,byte,
++0x00057656,,byte,
+@@ -55 +55 @@ address,name,type,comment
+-0x00057730,PTR_LAB_00057730,byte *,
++0x00057730,,byte *,
+@@ -65,8 +65,8 @@ address,name,type,comment
+-0x00057dd6,PTR_DAT_00057dd6,pointer,
+-0x00057dea,PTR_DAT_00057dea,pointer,
+-0x00057dee,PTR_DAT_00057dee,pointer,
+-0x00057e0a,PTR_DAT_00057e0a,pointer,
+-0x00057e12,PTR_DAT_00057e12,pointer,
+-0x00057e82,PTR_DAT_00057e82,pointer,
+-0x00057eca,PTR_DAT_00057eca,pointer,
+-0x000592a4,boost_pressure_fixed_reference,word,ROM constant 1132 (61 kPa): subtracted from intake manifold pressure instead of barometric pressure when boost_uses_barometric_pressure_flag is 0 (cm848_calculateBoostPressure / cm848_evaluateProtectionModeFlags) (was oil_pressure_baseline_ref)
++0x00057dd6,,pointer,
++0x00057dea,,pointer,
++0x00057dee,,pointer,
++0x00057e0a,,pointer,
++0x00057e12,,pointer,
++0x00057e82,,pointer,
++0x00057eca,,pointer,
++0x000592a2,barometric_pressure_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 3 (barometric pressure - AMB SPN 108); its default_value is the fixed reference cm848_calculateBoostPressure subtracts when it uses no barometer (was the interior label boost_pressure_fixed_reference)
+@@ -131,2 +131,2 @@ address,name,type,comment
+-0x00059b32,BYTE_00059b32,byte,
+-0x00059b5a,u_XY^__00059b5a,,
++0x00059b32,,byte,
++0x00059b5a,,,
+@@ -136 +136 @@ address,name,type,comment
+-0x0005a150,BYTE_0005a150,byte,
++0x0005a150,,byte,
+@@ -163,3 +163 @@ address,name,type,comment
+-0x0005ab84,cruise_switch_sensor_config,word,Base of the cruise-control switch QADC channel (0x2f/47) config struct; param_1 of cm848_processCruiseSwitchChannel/init; field +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; ROM-sourced so NO _cal
+-0x0005ab88,cruise_engage_adc_valid_upper,word,ROM const =976 (0x3d0); upper open/short validity bound for the analog QADC channel checked by governor_cruise_engage_check (asm lhz 4(r4) @0x512edc); ~95% of 10-bit FS; field +4 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
+-0x0005ab8a,cruise_engage_adc_valid_lower,word,ROM const =92 (0x5c); lower open/short validity bound (asm lhz 6(r4) @0x512ed0); ~9% of 10-bit FS; field +6 of sensor-config struct @0x5ab84; ROM-sourced so NO _cal
++0x0005ab84,cruise_switch_sensor_config,sensor_channel_config_t,Base of the cruise-control switch QADC channel (0x2f/47) config struct; param_1 of cm848_processCruiseSwitchChannel/init; field +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; ROM-sourced so NO _cal
+@@ -252,0 +251 @@ address,name,type,comment
++0x0005be66,cold_start_intake_temperature_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - cold_start_intake_temperature_filter_state.coefficient points here
+@@ -273,0 +273 @@ address,name,type,comment
++0x0005c2f2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbd2e.coefficient points here
+@@ -299,0 +300 @@ address,name,type,comment
++0x0005c48e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcbdc.coefficient points here
+@@ -335 +336 @@ address,name,type,comment
+-0x0005c7c0,PTR_PTR_0005c7c0,byte,
++0x0005c7c0,,byte,
+@@ -530 +531 @@ address,name,type,comment
+-0x000645b6,BYTE_000645b6,byte,
++0x000645b6,,byte,
+@@ -980,2 +981,2 @@ address,name,type,comment
+-0x003f98ae,PTR_DAT_003f98ae,pointer,
+-0x003f98ba,PTR_s_060410_003f98ba,pointer,
++0x003f98ae,,pointer,
++0x003f98ba,,pointer,
+@@ -990 +991 @@ address,name,type,comment
+-0x003fa016,sensor_channel0_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 0 (was DAT)
++0x003fa016,sensor_channel0_filter_state,ema_filter_state_t,config pointer for sensor channel 0 (was DAT) (was sensor_channel0_filter_config_ptr)
+@@ -992 +993 @@ address,name,type,comment
+-0x003fa020,sensor_channel1_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 1 (was PTR_DAT)
++0x003fa020,sensor_channel1_filter_state,ema_filter_state_t,config pointer for sensor channel 1 (was PTR_DAT) (was sensor_channel1_filter_config_ptr)
+@@ -1024 +1025 @@ address,name,type,comment
+-0x003fa0bc,sensor_channel16_filter_config_ptr,ema_filter_state_t,config pointer for sensor channel 16 (was PTR_DAT)
++0x003fa0bc,sensor_channel16_filter_state,ema_filter_state_t,config pointer for sensor channel 16 (was PTR_DAT) (was sensor_channel16_filter_config_ptr)
+@@ -1031,2 +1032 @@ address,name,type,comment
+-0x003fa0d2,PTR_DAT_003fa0d2,pointer,
+-0x003fa0d6,cold_start_intake_temp_shifted,dword,
++0x003fa0d2,cold_start_intake_temperature_filter_state,ema_filter_state_t,
+@@ -1062,3 +1062,3 @@ address,name,type,comment
+-0x003fa138,PTR_DAT_003fa138,pointer,
+-0x003fa140,PTR_DAT_003fa140,pointer,
+-0x003fa148,PTR_DAT_003fa148,pointer,
++0x003fa138,,pointer,
++0x003fa140,,pointer,
++0x003fa148,,pointer,
+@@ -1089,3 +1089,2 @@ address,name,type,comment
+-0x003fa5a0,BYTE_003fa5a0,byte,
+-0x003fa5ba,throttle_filter_coeff_table_pointer,pointer,
+-0x003fa5be,throttle_filter_coeff_table_index,dword,
++0x003fa5a0,,byte,
++0x003fa5ba,throttle_filter_state,ema_filter_state_t,(was throttle_filter_coeff_table_pointer)
+@@ -1098,2 +1097 @@ address,name,type,comment
+-0x003fa5d6,boost_modifier_table_pointer,pointer,
+-0x003fa5da,boost_modifier_table_index,word,
++0x003fa5d6,boost_modifier_filter_state,ema_filter_state_t,(was boost_modifier_table_pointer)
+@@ -1102,3 +1100,2 @@ address,name,type,comment
+-0x003fa5e2,fuel_blend_rpm_base_table_pointer,pointer,
+-0x003fa5e6,fuel_blend_rpm_base_table_index,word,
+-0x003fa5ea,PTR_DAT_003fa5ea,pointer,
++0x003fa5e2,fuel_blend_rpm_base_filter_state,ema_filter_state_t,(was fuel_blend_rpm_base_table_pointer)
++0x003fa5ea,,pointer,
+@@ -1111 +1108 @@ address,name,type,comment
+-0x003fa60e,PTR_DAT_003fa60e,pointer,
++0x003fa60e,,pointer,
+@@ -1117,2 +1114,2 @@ address,name,type,comment
+-0x003fa624,PTR_DAT_003fa624,pointer,
+-0x003fa62c,PTR_DAT_003fa62c,pointer,
++0x003fa624,,pointer,
++0x003fa62c,,pointer,
+@@ -1164 +1161 @@ address,name,type,comment
+-0x003fa716,PTR_DAT_003fa716,pointer,
++0x003fa716,,pointer,
+@@ -1186 +1183 @@ address,name,type,comment
+-0x003fa750,PTR_DAT_003fa750,pointer,
++0x003fa750,,pointer,
+@@ -1199,2 +1196 @@ address,name,type,comment
+-0x003fa786,boost_pressure_ema_state_pointer,pointer,
+-0x003fa78a,governor_speed_range_init_working,word,
++0x003fa786,boost_pressure_filter_state,ema_filter_state_t,(was boost_pressure_ema_state_pointer)
+@@ -1314,2 +1310 @@ address,name,type,comment
+-0x003fa884,fuel_mode_ema_min_ptr,pointer,
+-0x003fa888,fuel_demand_ema_index,word,
++0x003fa884,fuel_mode_filter_state,ema_filter_state_t,(was fuel_mode_ema_min_ptr)
+@@ -1335 +1330 @@ address,name,type,comment
+-0x003fa8b4,PTR_BYTE_0050c640_003fa8b4,pointer,
++0x003fa8b4,,pointer,
+@@ -1354 +1349 @@ address,name,type,comment
+-0x003fa9aa,PTR_j1939HandlePgn61443Eec2_003fa9aa,pointer,
++0x003fa9aa,,pointer,
+@@ -1482,2 +1477,2 @@ address,name,type,comment
+-0x003fadb6,PTR_j1939_status_byte_b_003fadb6,pointer,
+-0x003fadba,PTR_DAT_003fadba,pointer,
++0x003fadb6,,pointer,
++0x003fadba,,pointer,
+@@ -1493,2 +1488,2 @@ address,name,type,comment
+-0x003fade7,PTR_j1939_engine_load_byte_003fade7,pointer,
+-0x003fadeb,PTR_DAT_003fadeb,pointer,
++0x003fade7,,pointer,
++0x003fadeb,,pointer,
+@@ -1511 +1506 @@ address,name,type,comment
+-0x003fae3c,BYTE_003fae3c,byte,
++0x003fae3c,,byte,
+@@ -1513 +1508 @@ address,name,type,comment
+-0x003fae42,PTR_DAT_003fae42,pointer,
++0x003fae42,,pointer,
+@@ -1616,2 +1611 @@ address,name,type,comment
+-0x003fafcc,protection_smoothing_state_ptr,pointer,
+-0x003fafd0,protection_rpm_filter_working,dword,
++0x003fafcc,protection_smoothing_filter_state,ema_filter_state_t,(was protection_smoothing_state_ptr)
+@@ -1647 +1641 @@ address,name,type,comment
+-0x003fb01e,PTR_DAT_003fb01e,pointer,
++0x003fb01e,,pointer,
+@@ -1653,2 +1647 @@ address,name,type,comment
+-0x003fb036,governor_derivative_gain_working_ptr,pointer,
+-0x003fb03a,governor_fuel_integral_c,word,
++0x003fb036,governor_derivative_gain_filter_state,ema_filter_state_t,(was governor_derivative_gain_working_ptr)
+@@ -1712,2 +1705 @@ address,name,type,comment
+-0x003fb0b6,fault_status_filter_coeff_ptr,pointer,
+-0x003fb0ba,protection_load_filtered_shifted,dword,
++0x003fb0b6,load_protection_filter_state,ema_filter_state_t,(was fault_status_filter_coeff_ptr)
+@@ -1727,2 +1719 @@ address,name,type,comment
+-0x003fb170,transmission_vehicle_speed_filter_state,pointer,EMA state for transmission_vehicle_speed_filtered: pointer to transmission_vehicle_speed_filter_coefficient (set by cm848_initProtectionSystem) followed by the accumulator (was protection_load_filter_state_a_ptr)
+-0x003fb174,transmission_vehicle_speed_filter_accumulator,dword,16.16 accumulator of the transmission_vehicle_speed_filtered EMA (second word of transmission_vehicle_speed_filter_state) (was protection_load_filter_accum_a)
++0x003fb170,transmission_vehicle_speed_filter_state,ema_filter_state_t,EMA state for transmission_vehicle_speed_filtered: pointer to transmission_vehicle_speed_filter_coefficient (set by cm848_initProtectionSystem) followed by the accumulator (was protection_load_filter_state_a_ptr)
+@@ -1754,2 +1745 @@ address,name,type,comment
+-0x003fb1f4,cruise_switch_filter_coeff_ptr,pointer,EMA smoothing-coefficient pointer for the cruise-switch ADC filter; param_7 of cm848_process/initCruiseSwitchChannel and param_2[0] of exponentialMovingAverage (0x56594) where *(short*)*ptr is the alpha coefficient; +0 of the channel's 8-byte EMA state. Renamed from PTR_DAT_003fb1f4 (type pointer was already correct)
+-0x003fb1f8,cruise_switch_filter_accum,dword,EMA accumulator (running filtered value in <<16 fixed-point) for the cruise-switch ADC filter; param_2[1] of exponentialMovingAverage, written *(uint*)(state+4) @ sensorChannelTypeB_configInit; +4 of the channel's EMA state. Working RAM (ROM->RAM window) so no _cal
++0x003fb1f4,cruise_switch_filter_state,ema_filter_state_t,EMA smoothing-coefficient pointer for the cruise-switch ADC filter; param_7 of cm848_process/initCruiseSwitchChannel and param_2[0] of exponentialMovingAverage (0x56594) where *(short*)*ptr is the alpha coefficient; +0 of the channel's 8-byte EMA state. Renamed from PTR_DAT_003fb1f4 (type pointer was already correct) (was cruise_switch_filter_coeff_ptr)
+@@ -1953,2 +1943 @@ address,name,type,comment
+-0x003fb5c6,crank_filter_state_ptr,pointer,
+-0x003fb5ca,speed_setpoint_active_flag,dword,
++0x003fb5c6,crank_filter_state,ema_filter_state_t,(was crank_filter_state_ptr)
+@@ -2013,2 +2002 @@ address,name,type,comment
+-0x003fb697,cam_sync_speed_filter_pointer,pointer,
+-0x003fb69b,cam_sync_fault_filter_accum,word,
++0x003fb697,cam_sync_speed_filter_state,ema_filter_state_t,(was cam_sync_speed_filter_pointer)
+@@ -2022,2 +2010 @@ address,name,type,comment
+-0x003fb6b7,cam_sync_rpm_ema_state_pointer,pointer,
+-0x003fb6bb,cam_sync_rpm_ema_accum,word,
++0x003fb6b7,cam_sync_rpm_filter_state,ema_filter_state_t,(was cam_sync_rpm_ema_state_pointer)
+@@ -2124,2 +2111,2 @@ address,name,type,comment
+-0x003fb9e2,PTR_DAT_003fb9e2,pointer,
+-0x003fb9ea,boost_pressure_timing_ema_coeff_ptr,ema_filter_state_t,EMA coeff ptr for boost pressure timing filter
++0x003fb9e2,,pointer,
++0x003fb9ea,boost_pressure_timing_filter_state,ema_filter_state_t,EMA coeff ptr for boost pressure timing filter (was boost_pressure_timing_ema_coeff_ptr)
+@@ -2127,2 +2114,2 @@ address,name,type,comment
+-0x003fbcbe,PTR_DAT_003fbcbe,pointer,
+-0x003fbcde,PTR_PTR_003fbcde,pointer,
++0x003fbcbe,,pointer,
++0x003fbcde,,pointer,
+@@ -2137,2 +2124,2 @@ address,name,type,comment
+-0x003fbd4a,PTR_engine_rpm_trigger_ready_flag_003fbd4a,pointer,
+-0x003fbd7c,PTR_DAT_003fbd7c,pointer,
++0x003fbd4a,,pointer,
++0x003fbd7c,,pointer,
+@@ -2141,2 +2128,2 @@ address,name,type,comment
+-0x003fbdac,PTR_DAT_003fbdac,pointer,
+-0x003fbdcf,PTR_DAT_003fbdcf,pointer,
++0x003fbdac,,pointer,
++0x003fbdcf,,pointer,
+@@ -2146,4 +2133,4 @@ address,name,type,comment
+-0x003fc094,BYTE_003fc094,byte,
+-0x003fc0d8,BYTE_003fc0d8,byte,
+-0x003fc4b3,PTR_DAT_003fc4b3,pointer,
+-0x003fc4b7,PTR_DAT_003fc4b7,pointer,
++0x003fc094,,byte,
++0x003fc0d8,,byte,
++0x003fc4b3,,pointer,
++0x003fc4b7,,pointer,
+@@ -2151,3 +2138,3 @@ address,name,type,comment
+-0x003fc77c,BYTE_003fc77c,byte,
+-0x003fcbca,PTR_DAT_003fcbca,pointer,
+-0x003fcbce,PTR_DAT_003fcbce,pointer,
++0x003fc77c,,byte,
++0x003fcbca,,pointer,
++0x003fcbce,,pointer,
+@@ -2198,4 +2185,4 @@ address,name,type,comment
+-0x003fd012,PTR_DAT_003fd012,pointer,
+-0x003fd016,PTR_DAT_003fd016,pointer,
+-0x003fd022,PTR_DAT_003fd022,pointer,
+-0x003fd026,PTR_DAT_003fd026,pointer,
++0x003fd012,,pointer,
++0x003fd016,,pointer,
++0x003fd022,,pointer,
++0x003fd026,,pointer,
+@@ -2210 +2197 @@ address,name,type,comment
+-0x003fd1ac,BYTE_003fd1ac,byte,
++0x003fd1ac,,byte,
+@@ -2212,6 +2199,6 @@ address,name,type,comment
+-0x003fd284,BYTE_003fd284,byte,
+-0x003fd298,BYTE_003fd298,byte,
+-0x003fd2c4,PTR_DAT_003fd2c4,pointer,
+-0x003fd2c8,PTR_sensor_channel_ram_start_003fd2c8,pointer,
+-0x003fd2cc,PTR_DAT_003fd2cc,pointer,
+-0x003fd2d0,PTR_PTR_003fd2d0,pointer,
++0x003fd284,,byte,
++0x003fd298,,byte,
++0x003fd2c4,,pointer,
++0x003fd2c8,,pointer,
++0x003fd2cc,,pointer,
++0x003fd2d0,,pointer,
+@@ -2220,6 +2207,6 @@ address,name,type,comment
+-0x003fd2e8,PTR_j1939HandlePgn65265CruiseVehicleSpeed_003fd2e8,pointer,
+-0x003fd2f2,PTR_j1939GetEngineStateCode_003fd2f2,pointer,
+-0x003fd3b0,PTR_cm848_j1939BuildVehicleOperatingStatus_003fd3b0,pointer,
+-0x003fd3ba,PTR_cm848_j1939BuildProtocolModeStatus_003fd3ba,pointer,
+-0x003fd416,PTR_FUN_003fd416,pointer,
+-0x003fd41c,PTR_FUN_003fd41c,pointer,
++0x003fd2e8,,pointer,
++0x003fd2f2,,pointer,
++0x003fd3b0,,pointer,
++0x003fd3ba,,pointer,
++0x003fd416,,pointer,
++0x003fd41c,,pointer,
+@@ -2499 +2486 @@ address,name,type,comment
+-0x003fe197,PTR_DAT_003fe197,pointer,
++0x003fe197,,pointer,
+@@ -2504,2 +2491,2 @@ address,name,type,comment
+-0x003fe490,PTR_DAT_003fe490,pointer,
+-0x003fe4f9,PTR_DAT_003fe4f9,pointer,
++0x003fe490,,pointer,
++0x003fe4f9,,pointer,
+@@ -2627 +2614 @@ address,name,type,comment
+-0x003feda0,PTR_s_x9Md_003feda0,pointer,
++0x003feda0,,pointer,
+@@ -2829,0 +2817 @@ address,name,type,comment
++0x003ffcb4,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa19c.coefficient points here
+@@ -2847 +2835 @@ address,name,type,comment
+-0x004002e2,throttle_filter_coeff_table,byte,
++0x004002e2,throttle_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - throttle_filter_state.coefficient points here (was throttle_filter_coeff_table)
+@@ -2865 +2853 @@ address,name,type,comment
+-0x00400932,boost_modifier_table_cal,byte,
++0x00400932,boost_modifier_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - boost_modifier_filter_state.coefficient points here (was boost_modifier_table_cal)
+@@ -2881 +2869 @@ address,name,type,comment
+-0x004009d2,fuel_blend_rpm_base_table_cal,byte,
++0x004009d2,fuel_blend_rpm_base_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - fuel_blend_rpm_base_filter_state.coefficient points here (was fuel_blend_rpm_base_table_cal)
+@@ -2932,0 +2921 @@ address,name,type,comment
++0x00405112,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa5fe.coefficient points here
+@@ -3030,0 +3020 @@ address,name,type,comment
++0x004067b2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa758.coefficient points here
+@@ -3040,0 +3031,2 @@ address,name,type,comment
++0x004067cc,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa760.coefficient points here
++0x004067ce,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa768.coefficient points here
+@@ -3264 +3256 @@ address,name,type,comment
+-0x004071a0,protection_smoothing_state_cal,byte,
++0x004071a0,protection_smoothing_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - protection_smoothing_filter_state.coefficient points here (was protection_smoothing_state_cal)
+@@ -3273,0 +3266 @@ address,name,type,comment
++0x004072a0,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fb026.coefficient points here
+@@ -3348,0 +3342 @@ address,name,type,comment
++0x004077ba,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fccf6.coefficient points here
+@@ -3356 +3350 @@ address,name,type,comment
+-0x004077ee,fault_status_filter_coeff_cal,byte,
++0x004077ee,load_protection_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - load_protection_filter_state.coefficient points here (was fault_status_filter_coeff_cal)
+@@ -3658,0 +3653 @@ address,name,type,comment
++0x0040872a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd96.coefficient points here
+@@ -3785,0 +3781 @@ address,name,type,comment
++0x004088cc,radiator_fan_speed_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - radiator_fan_speed_filter_state.coefficient points here
+@@ -3794 +3790 @@ address,name,type,comment
+-0x004088e6,BYTE_004088e6,byte,
++0x004088e6,,byte,
+@@ -3908,0 +3905 @@ address,name,type,comment
++0x00408dfa,governor_override_speed_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - governor_override_speed_filter_state.coefficient points here
+@@ -3909,0 +3907 @@ address,name,type,comment
++0x00408e70,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fd03c.coefficient points here
+@@ -4005 +4003 @@ address,name,type,comment
+-0x00408f72,crank_filter_state_cal,byte,
++0x00408f72,crank_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - crank_filter_state.coefficient points here (was crank_filter_state_cal)
+@@ -4118 +4116 @@ address,name,type,comment
+-0x00409148,cam_sync_rpm_ema_state_cal,byte,
++0x00409148,cam_sync_rpm_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - cam_sync_rpm_filter_state.coefficient points here (was cam_sync_rpm_ema_state_cal)
+@@ -4260,2 +4258 @@ address,name,type,comment
+-0x0040a07a,sensor_channel2_ram,byte,
+-0x0040a07c,sensor_channel2_raw_value,word,
++0x0040a07a,sensor_channel2_ram,sensor_channel_state_t,
+@@ -4273,2 +4270 @@ address,name,type,comment
+-0x0040a116,sensor_channel13_ram,byte,
+-0x0040a11e,j1939_accelerator_pedal_source_priority,byte,Set to j1939_input_source_priority when the J1939 pedal writes; cm848_fuelDemandFinalCalculation skips the rate-limit / override stage while it is above that level (was fuel_demand_feature_threshold)
++0x0040a116,sensor_channel13_ram,sensor_channel_state_t,
+@@ -4340,2 +4336 @@ address,name,type,comment
+-0x0040a1f4,fuel_trim_speed_ema_state_ptr,pointer,
+-0x0040a1f8,fuel_trim_speed_high_word,dword,
++0x0040a1f4,fuel_trim_speed_filter_state,ema_filter_state_t,(was fuel_trim_speed_ema_state_ptr)
+@@ -4831,5 +4826,5 @@ address,name,type,comment
+-0x0040a73e,PTR_DAT_0040a73e,pointer,
+-0x0040a742,PTR_DAT_0040a742,pointer,
+-0x0040a746,PTR_DAT_0040a746,pointer,
+-0x0040a75a,PTR_DAT_0040a75a,pointer,
+-0x0040a75e,PTR_DAT_0040a75e,pointer,
++0x0040a73e,,pointer,
++0x0040a742,,pointer,
++0x0040a746,,pointer,
++0x0040a75a,,pointer,
++0x0040a75e,,pointer,
+@@ -4926 +4921 @@ address,name,type,comment
+-0x0040ac16,PTR_DAT_0040ac16,pointer,
++0x0040ac16,,pointer,
+@@ -5403 +5398 @@ address,name,type,comment
+-0x0040b302,radiator_fan_speed_filter_pointer,ema_filter_state_t,Filter state for the radiator_fan_speed moving average (set to 0x4088cc by cm848_initRadiatorFanSpeedMeasurement) (was tpu_rpm_ema_coeff_ptr)
++0x0040b302,radiator_fan_speed_filter_state,ema_filter_state_t,Filter state for the radiator_fan_speed moving average (set to 0x4088cc by cm848_initRadiatorFanSpeedMeasurement) (was tpu_rpm_ema_coeff_ptr) (was radiator_fan_speed_filter_pointer)
+@@ -5619,2 +5614 @@ address,name,type,comment
+-0x0040b5b2,vehicle_speed_filter_state,dword,EMA state word 0: pointer to vehicle_speed_filter_coefficient (was fuel_temp_trim_filter_state)
+-0x0040b5b6,vehicle_speed_filter_accumulator,dword,EMA state word 1: 16.16 accumulator (was fuel_temp_trim_init_flag)
++0x0040b5b2,vehicle_speed_filter_state,ema_filter_state_t,EMA state word 0: pointer to vehicle_speed_filter_coefficient (was fuel_temp_trim_filter_state)
+@@ -5671 +5665 @@ address,name,type,comment
+-0x0040b682,governor_override_speed_ema_coeff_ptr,ema_filter_state_t,EMA coeff pointer for governor override speed
++0x0040b682,governor_override_speed_filter_state,ema_filter_state_t,EMA coeff pointer for governor override speed (was governor_override_speed_ema_coeff_ptr)
+@@ -5689,2 +5683 @@ address,name,type,comment
+-0x0040b6e8,engine_temp_protection_ema_coeff_ptr,pointer,EMA coeff pointer for engine temp protection input
+-0x0040b6ec,engine_temp_protection_input_q16,dword,Q16 fixed-point (value << 16) of engine_temp_protection_input (or default DAT_0005c936); published in protectionTimeoutControl / initGovernorJ1939Bypass; write-only in ROM (consumed by diagnostics/CLIP)
++0x0040b6e8,engine_temperature_protection_filter_state,ema_filter_state_t,EMA coeff pointer for engine temp protection input (was engine_temp_protection_ema_coeff_ptr)
+@@ -5909,3 +5902,3 @@ address,name,type,comment
+-0x0040bd82,sensor_channel3_raw,word,
+-0x0040bd84,sensor_channel105_raw,word,
+-0x0040bd86,sensor_channel9_pressure_raw,word,
++0x0040bd82,sensor_channel3_value,word,(was sensor_channel3_raw)
++0x0040bd84,sensor_channel105_value,word,(was sensor_channel105_raw)
++0x0040bd86,sensor_channel9_pressure_value,word,(was sensor_channel9_pressure_raw)
+@@ -5913,17 +5906,17 @@ address,name,type,comment
+-0x0040bd8a,sensor_channel109_raw,word,
+-0x0040bd8c,sensor_channel10_raw,word,
+-0x0040bd8e,boost_pressure_sensor_raw,word,
+-0x0040bd90,sensor_channel20_raw,word,
+-0x0040bd92,sensor_channel69_raw,word,
+-0x0040bd94,sensor_channel108_raw,word,
+-0x0040bd96,governor_speed_input_raw,word,
+-0x0040bd9a,sensor_channel3_filtered,word,
+-0x0040bd9c,sensor_channel20_filtered,word,
+-0x0040bd9e,sensor_channel9_pressure_filtered,word,
+-0x0040bda0,governor_speed_input_filtered,word,
+-0x0040bda2,fuel_timing_sensor_raw,word,
+-0x0040bda4,fuel_timing_sensor_filtered,word,
+-0x0040bda6,boost_pressure_sensor_filtered,word,
+-0x0040bda8,sensor_channel105_filtered,word,
+-0x0040bdaa,sensor_channel10_filtered,word,
+-0x0040bdac,sensor_channel108_filtered,word,
++0x0040bd8a,sensor_channel109_value,word,(was sensor_channel109_raw)
++0x0040bd8c,sensor_channel10_value,word,(was sensor_channel10_raw)
++0x0040bd8e,boost_pressure_sensor_value,word,(was boost_pressure_sensor_raw)
++0x0040bd90,sensor_channel20_value,word,(was sensor_channel20_raw)
++0x0040bd92,sensor_channel69_value,word,(was sensor_channel69_raw)
++0x0040bd94,sensor_channel108_value,word,(was sensor_channel108_raw)
++0x0040bd96,governor_speed_input_value,word,(was governor_speed_input_raw)
++0x0040bd9a,sensor_channel3_default_value,word,(was sensor_channel3_filtered)
++0x0040bd9c,sensor_channel20_default_value,word,(was sensor_channel20_filtered)
++0x0040bd9e,sensor_channel9_pressure_default_value,word,(was sensor_channel9_pressure_filtered)
++0x0040bda0,governor_speed_input_default_value,word,(was governor_speed_input_filtered)
++0x0040bda2,fuel_timing_sensor_value,word,(was fuel_timing_sensor_raw)
++0x0040bda4,fuel_timing_sensor_default_value,word,(was fuel_timing_sensor_filtered)
++0x0040bda6,boost_pressure_sensor_default_value,word,(was boost_pressure_sensor_filtered)
++0x0040bda8,sensor_channel105_default_value,word,(was sensor_channel105_filtered)
++0x0040bdaa,sensor_channel10_default_value,word,(was sensor_channel10_filtered)
++0x0040bdac,sensor_channel108_default_value,word,(was sensor_channel108_filtered)
+@@ -5931,2 +5924,2 @@ address,name,type,comment
+-0x0040bdb0,sensor_channel109_filtered,word,
+-0x0040bdb2,sensor_channel69_filtered,word,
++0x0040bdb0,sensor_channel109_default_value,word,(was sensor_channel109_filtered)
++0x0040bdb2,sensor_channel69_default_value,word,(was sensor_channel69_filtered)
+@@ -5940,4 +5933,4 @@ address,name,type,comment
+-0x0040bdd0,sensor_channel7_raw,word,
+-0x0040bdd2,sensor_channel7_filtered,word,
+-0x0040bdd4,sensor_channel71_raw,word,
+-0x0040bdd6,sensor_channel71_filtered,word,
++0x0040bdd0,sensor_channel7_value,word,(was sensor_channel7_raw)
++0x0040bdd2,sensor_channel7_default_value,word,(was sensor_channel7_filtered)
++0x0040bdd4,sensor_channel71_value,word,(was sensor_channel71_raw)
++0x0040bdd6,sensor_channel71_default_value,word,(was sensor_channel71_filtered)
+@@ -5946,12 +5939,12 @@ address,name,type,comment
+-0x0040bddc,sensor_channel8_raw,word,
+-0x0040bdde,sensor_channel8_filtered,word,
+-0x0040bde0,sensor_channel13_raw,word,
+-0x0040bde2,sensor_channel13_filtered,word,
+-0x0040bde4,sensor_channel42_raw,word,
+-0x0040bde6,sensor_channel42_filtered,word,
+-0x0040bdec,sensor_channel21_raw,word,
+-0x0040bdee,sensor_channel21_filtered,word,
+-0x0040bdf0,sensor_channel15_raw,word,
+-0x0040bdf2,sensor_channel15_filtered,word,
+-0x0040bdf4,sensor_channel102_filtered,word,
+-0x0040bdf6,sensor_channel102_raw,word,
++0x0040bddc,sensor_channel8_value,word,(was sensor_channel8_raw)
++0x0040bdde,sensor_channel8_default_value,word,(was sensor_channel8_filtered)
++0x0040bde0,sensor_channel13_value,word,(was sensor_channel13_raw)
++0x0040bde2,sensor_channel13_default_value,word,(was sensor_channel13_filtered)
++0x0040bde4,sensor_channel42_value,word,(was sensor_channel42_raw)
++0x0040bde6,sensor_channel42_default_value,word,(was sensor_channel42_filtered)
++0x0040bdec,sensor_channel21_value,word,(was sensor_channel21_raw)
++0x0040bdee,sensor_channel21_default_value,word,(was sensor_channel21_filtered)
++0x0040bdf0,sensor_channel15_value,word,(was sensor_channel15_raw)
++0x0040bdf2,sensor_channel15_default_value,word,(was sensor_channel15_filtered)
++0x0040bdf4,sensor_channel102_default_value,word,(was sensor_channel102_filtered)
++0x0040bdf6,sensor_channel102_value,word,(was sensor_channel102_raw)
+@@ -5960,12 +5953,12 @@ address,name,type,comment
+-0x0040bdfc,sensor_channel54_raw,word,
+-0x0040bdfe,sensor_channel54_filtered,word,
+-0x0040be00,sensor_channel55_raw,word,
+-0x0040be02,sensor_channel55_filtered,word,
+-0x0040be04,sensor_channel76_raw,word,
+-0x0040be06,sensor_channel76_filtered,word,
+-0x0040be08,cruise_switch_adc_raw,word,Raw QADC reading of the cruise-control switch input (channel 0x2f/47; resistor-ladder steering-wheel switches); written by cm848_processCruiseSwitchChannel; working RAM so no _cal
+-0x0040be0a,cruise_switch_adc_filtered,word,EMA-filtered cruise-control switch ADC value (channel 0x2f/47); written by cm848_processCruiseSwitchChannel; working RAM so no _cal
+-0x0040be0c,sensor_channel97_raw,word,
+-0x0040be0e,sensor_channel97_filtered,word,
+-0x0040be10,sensor_channel98_raw,word,
+-0x0040be12,sensor_channel98_filtered,word,
++0x0040bdfc,sensor_channel54_value,word,(was sensor_channel54_raw)
++0x0040bdfe,sensor_channel54_default_value,word,(was sensor_channel54_filtered)
++0x0040be00,sensor_channel55_value,word,(was sensor_channel55_raw)
++0x0040be02,sensor_channel55_default_value,word,(was sensor_channel55_filtered)
++0x0040be04,sensor_channel76_value,word,(was sensor_channel76_raw)
++0x0040be06,sensor_channel76_default_value,word,(was sensor_channel76_filtered)
++0x0040be08,cruise_switch_value,word,Raw QADC reading of the cruise-control switch input (channel 0x2f/47; resistor-ladder steering-wheel switches); written by cm848_processCruiseSwitchChannel; working RAM so no _cal (was cruise_switch_adc_raw)
++0x0040be0a,cruise_switch_default_value,word,EMA-filtered cruise-control switch ADC value (channel 0x2f/47); written by cm848_processCruiseSwitchChannel; working RAM so no _cal (was cruise_switch_adc_filtered)
++0x0040be0c,sensor_channel97_value,word,(was sensor_channel97_raw)
++0x0040be0e,sensor_channel97_default_value,word,(was sensor_channel97_filtered)
++0x0040be10,sensor_channel98_value,word,(was sensor_channel98_raw)
++0x0040be12,sensor_channel98_default_value,word,(was sensor_channel98_filtered)
+@@ -6057,2 +6050,2 @@ address,name,type,comment
+-0x0050c640,BYTE_0050c640,byte,
+-0x0050f680,BYTE_0050f680,byte,
++0x0050c640,,byte,
++0x0050f680,,byte,
+@@ -6073,4 +6066,4 @@ address,name,type,comment
+-0x0053a33e,PTR_DAT_0053a33e,pointer,
+-0x0053a344,PTR_flash2_command_register_0053a344,pointer,
+-0x0053a9a2,PTR_FUN_0053a9a2,pointer,
+-0x0053a9a8,PTR_FUN_0053a9a8,pointer,
++0x0053a33e,,pointer,
++0x0053a344,,pointer,
++0x0053a9a2,,pointer,
++0x0053a9a8,,pointer,
+@@ -6081,14 +6074,14 @@ address,name,type,comment
+-0x0053ac96,PTR_cm848_tpuBReadBackChannel4EnablePwm_0053ac96,pointer,
+-0x0053ac9e,PTR_cm848_tpuBReadBackChannel4SetPwmPeriodMicroseconds_0053ac9e,pointer,
+-0x0053acb6,PTR_cm848_tpuBReadBackChannel6EnablePwm_0053acb6,pointer,
+-0x0053acba,PTR_cm848_tpuBReadBackChannel6ReadFeedback_0053acba,pointer,
+-0x0053acbe,PTR_cm848_tpuBReadBackChannel6SetPwmPeriodMicroseconds_0053acbe,pointer,
+-0x0053acc2,PTR_cm848_tpuBReadBackChannel6SetPwmDuty_0053acc2,pointer,
+-0x0053acc6,PTR_cm848_tpuBReadBackChannel7EnablePwm_0053acc6,pointer,
+-0x0053acce,PTR_cm848_tpuBReadBackChannel7SetPwmPeriodMicroseconds_0053acce,pointer,
+-0x0053acf6,PTR_cm848_tpuBReadBackChannel10EnablePwm_0053acf6,pointer,
+-0x0053acfe,PTR_cm848_tpuBReadBackChannel10SetPwmPeriodMicroseconds_0053acfe,pointer,
+-0x0053ad02,PTR_cm848_tpuBReadBackChannel10SetPwmDuty_0053ad02,pointer,
+-0x0053ad46,PTR_cm848_tpuBChannel15EnablePwm_0053ad46,pointer,
+-0x0053ad4e,PTR_cm848_tpuBChannel15SetPwmPeriodMicroseconds_0053ad4e,pointer,
+-0x0053be3a,PTR_DAT_0053be3a,pointer,
++0x0053ac96,,pointer,
++0x0053ac9e,,pointer,
++0x0053acb6,,pointer,
++0x0053acba,,pointer,
++0x0053acbe,,pointer,
++0x0053acc2,,pointer,
++0x0053acc6,,pointer,
++0x0053acce,,pointer,
++0x0053acf6,,pointer,
++0x0053acfe,,pointer,
++0x0053ad02,,pointer,
++0x0053ad46,,pointer,
++0x0053ad4e,,pointer,
++0x0053be3a,,pointer,
+@@ -6165,0 +6159 @@ address,name,type,comment
++0x00408e0a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fd00a.coefficient points here
+@@ -6181 +6174,0 @@ address,name,type,comment
+-0x0040b1a0,fuel_level_unfiltered,word,Fuel level from the channel 68 table in 1/2.55 percent (1 empty / 254 full) before filtering = state[1] of the channel state block (184 default on a sensor fault); feeds the 20-count stability test / the power-up check / the fast filter; RAM dump 252 (was calibBlock1_adaptive_trim_working)
+@@ -6248 +6240,0 @@ address,name,type,comment
+-0x0040a11c,j1939_accelerator_pedal_position,word,Accelerator pedal position 1 from EEC2 SPN 91 (raw x 16 / 10 = 0.25 %/bit - the local pedal scale); written only by cm848_processJ1939AcceleratorPedalPosition - NO reader in S90140.06 (was emission_fuel_demand_output)
+@@ -6261 +6253 @@ address,name,type,comment
+-0x0040b19e,fuel_level_sensor_adc_counts,word,Fuel level sensor (sensor channel 68) raw ADC counts 0-1023 = state[0] of the channel state block (state[1] = fuel_level_unfiltered); low voltage = full (ADC 65 -> 254 / 720 -> 1); RAM dump 70 (was calibBlock1_sensor_value)
++0x0040b19e,fuel_level_sensor_channel_state,sensor_channel_state_t,Fuel level sensor (sensor channel 68) raw ADC counts 0-1023 = state[0] of the channel state block (state[1] = fuel_level_unfiltered); low voltage = full (ADC 65 -> 254 / 720 -> 1); RAM dump 70 (was calibBlock1_sensor_value) (was fuel_level_sensor_adc_counts)
+@@ -6496,0 +6489 @@ address,name,type,comment
++0x003fefba,accelerator_pedal_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 13 (accelerator pedal); its default_value is the J1939 pedal fallback position cm848_processJ1939AcceleratorPedalPosition loads on a timeout (was the interior label j1939_accelerator_pedal_default_position)
+@@ -6846 +6839 @@ address,name,type,comment
+-0x0040a09e,sensor_channelGeneric_raw,word,generic sensor channel raw ADC value
++0x0040a09e,sensor_channelGeneric_ram,sensor_channel_state_t,generic sensor channel raw ADC value (was sensor_channelGeneric_raw)
+@@ -7172 +7164,0 @@ address,name,type,comment
+-0x003fefbc,j1939_accelerator_pedal_default_position,word,Position used while the J1939 pedal is suspended / lost / invalid; never written by code (was emission_fuel_demand_default_output)
+@@ -7178,0 +7171,2 @@ address,name,type,comment
++0x003ff07a,boost_pressure_timing_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - boost_pressure_timing_filter_state.coefficient points here
++0x003ff07e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fb9f6.coefficient points here
+@@ -7189,0 +7184 @@ address,name,type,comment
++0x003ff6fa,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcc08.coefficient points here
+@@ -7293,0 +7289 @@ address,name,type,comment
++0x004065c2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa70a.coefficient points here
+@@ -7350,0 +7347 @@ address,name,type,comment
++0x00406766,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbce2.coefficient points here
+@@ -7351,0 +7349 @@ address,name,type,comment
++0x00406770,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbcea.coefficient points here
+@@ -7356,0 +7355 @@ address,name,type,comment
++0x004067e2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbd10.coefficient points here
+@@ -7363,0 +7363 @@ address,name,type,comment
++0x0040777a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcce8.coefficient points here
+@@ -7365,0 +7366,2 @@ address,name,type,comment
++0x004077d4,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd18.coefficient points here
++0x004077d6,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd20.coefficient points here
+@@ -7444,0 +7447 @@ address,name,type,comment
++0x0040898a,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fceb4.coefficient points here
+@@ -7448,0 +7452 @@ address,name,type,comment
++0x00408a58,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcebe.coefficient points here
+@@ -7449,0 +7454 @@ address,name,type,comment
++0x00408a5e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcec6.coefficient points here
+@@ -7516 +7520,0 @@ address,name,type,comment
+-0x0040a0a0,sensor_channelGeneric_filtered,word,generic sensor channel filtered output
+@@ -7526,2 +7530,2 @@ address,name,type,comment
+-0x0040bdc0,sensor_channel28_raw,word,sensor channel 28 raw value
+-0x0040bdc2,sensor_channel28_filtered,word,sensor channel 28 filtered value
++0x0040bdc0,sensor_channel28_value,word,sensor channel 28 raw value (was sensor_channel28_raw)
++0x0040bdc2,sensor_channel28_default_value,word,sensor channel 28 filtered value (was sensor_channel28_filtered)
+@@ -7589,0 +7594 @@ address,name,type,comment
++0x00408a64,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcece.coefficient points here

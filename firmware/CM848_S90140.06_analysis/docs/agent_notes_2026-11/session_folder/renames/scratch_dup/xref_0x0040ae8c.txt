@@ -1,0 +1,17 @@
+# xref 0x0040ae8c  (governor_setpoint_table_ptr)  — 5 referencing function(s)
+# total: 1 read(s), 2 write(s)   width(s): dword
+
+cm848_processGovernorLoadCondition: 0r/1w
+  [store] dword  2897c:	91 2a ae 8c 	stw     r9,-20852(r10)
+
+cm848_updateGovernorSetpointParameters: 1r/0w
+  [load ] dword  28a70:	80 84 ae 8c 	lwz     r4,-20852(r4)
+
+cm848_processGovernorSpeedSetpoint: 0r/1w
+  [store] dword  426d0:	91 2c ae 8c 	stw     r9,-20852(r12)
+
+cm848_selectGovernorSetpointSource: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_getGovernorOverrideSource: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

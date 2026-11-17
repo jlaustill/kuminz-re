@@ -1,0 +1,9 @@
+# xref 0x00406fc4  (injection_timing_compensation_lower_cal)  — 2 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_processTorqueLimitTiming: 1r/0w
+  [load ] word   1f908:	ab de 6f c4 	lha     r30,28612(r30)
+
+cm848_calculateTimingCompensation: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

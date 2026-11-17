@@ -1,0 +1,2075 @@
+{
+ "bin": "retry",
+ "functions": [
+  "cm848_boostCompensatedRpmGovernor",
+  "cm848_calculateEngineFaultTiming",
+  "cm848_calculateLoadCompensation",
+  "cm848_calculateLoadGainValues",
+  "cm848_calculateThermalLimitValue",
+  "cm848_calculateTurboRatioA",
+  "cm848_calculateTurboRatioB",
+  "cm848_calculateTurboRatioWithMode",
+  "cm848_initialization_step_3",
+  "etc1_threshold_lookup",
+  "fuel_demandBlend_weight_calc",
+  "governor_cruise_setpoint_calc",
+  "governor_speedReference_ramp_calc",
+  "hpcr_fuelFinal_exponentialAverage",
+  "sensor_throttleTrim_ema_faultProcess"
+ ],
+ "assigned_tables": [
+  "0x0005b4d6",
+  "0x0005b502",
+  "0x0005b508",
+  "0x0005f8ac",
+  "0x0005f8e0",
+  "0x0005f8ee",
+  "0x0005fa1a",
+  "0x0005fa2c",
+  "0x0005fa3e",
+  "0x003ff0c4",
+  "0x003ff0e6",
+  "0x003ff108",
+  "0x003ff12e",
+  "0x003ff3b6",
+  "0x003ff746",
+  "0x003ff768",
+  "0x003ff78a",
+  "0x003ff7ac",
+  "0x003ff7ce",
+  "0x003ff7f0",
+  "0x003ff812",
+  "0x003ff834",
+  "0x003ffaf6",
+  "0x003ffb1e",
+  "0x003ffb46",
+  "0x003ffb54",
+  "0x003ffb62",
+  "0x003ffbfa",
+  "0x003ffc1c",
+  "0x003ffcb6",
+  "0x003ffcca",
+  "0x004062d8",
+  "0x004062ea",
+  "0x004062fc",
+  "0x0040637c",
+  "0x0040638e",
+  "0x004063a0",
+  "0x00406470",
+  "0x00406498",
+  "0x00406778",
+  "0x0040678c",
+  "0x0040770e",
+  "0x00407714",
+  "0x00408e30",
+  "0x00408e3e"
+ ],
+ "lookups": [
+  {
+   "id": "L014",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ffcb6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L014"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 10,
+      "breakpoints_unsigned": [
+       64286,
+       64911,
+       65036,
+       65286,
+       65348,
+       0,
+       625,
+       1250,
+       3125
+      ],
+      "breakpoints_signed": [
+       -1250,
+       -625,
+       -500,
+       -250,
+       -188,
+       0,
+       625,
+       1250,
+       3125
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ffcca",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L014"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 10,
+      "values_unsigned": [
+       96,
+       86,
+       77,
+       70,
+       64,
+       64,
+       64,
+       64,
+       64
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_boostCompensatedRpmGovernor",
+     "statement": "rpm_governor_state_t_0040a3ca.reserved_06 = lookupTableInterpolation(&DAT_003fa18a,(word)iVar7,WORD_ARRAY_003ffcb6,WORD_ARRAY_003ffcca,3) ;",
+     "inputs": [
+      "(word)iVar7"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L022",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005f8ac",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L022"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 26,
+      "breakpoints_unsigned": [
+       0,
+       0,
+       1,
+       1,
+       1,
+       2,
+       2,
+       2,
+       3,
+       3,
+       4,
+       4,
+       4,
+       5,
+       5,
+       5,
+       6,
+       6,
+       6,
+       7,
+       7,
+       8,
+       8,
+       8,
+       9
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005f8e0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L022"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       1250,
+       3750,
+       6250,
+       8750,
+       10238
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005f8ee",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L022"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 150,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       25,
+       6
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateEngineFaultTiming",
+     "statement": "wVar4 = cm848_dualAxisTableInterpolation (&injection_fault_timing_axis2_interp_state,fuel_quantity_axis2_index, WORD_ARRAY_0005f8ac,fuel_quantity_table_result,WORD_ARRAY_0005f8e0, WORD_ARRAY_0005f8ee,0);",
+     "inputs": [
+      "fuel_quantity_axis2_index",
+      "fuel_quantity_table_result"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L023",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005fa1a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L023"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       736,
+       1472,
+       2208,
+       2944,
+       3680,
+       4048,
+       4416
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005fa2c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L023"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       614,
+       1023,
+       1433,
+       1842,
+       2252,
+       2866,
+       3276
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005fa3e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L023"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateEngineFaultTiming",
+     "statement": "wVar3 = cm848_dualAxisTableInterpolation (&injection_fault_timing_scale_interp_state,engine_timing_delta, WORD_ARRAY_0005fa1a,fuel_pressure_sensor,WORD_ARRAY_0005fa2c, WORD_ARRAY_0005fa3e,6);",
+     "inputs": [
+      "engine_timing_delta",
+      "fuel_pressure_sensor"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L059",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ffb46",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L059"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       128,
+       256,
+       512,
+       768,
+       1024
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x003ffb54",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L059"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       126,
+       251,
+       377,
+       503,
+       880
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x003ffb62",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L059"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 36,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       6,
+       6
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateLoadCompensation",
+     "statement": "throttle_fuel_rate_factor = cm848_dualAxisTableInterpolation (&DAT_003fa168, (word)((uint)fuel_demand_rate_limiter * (uint)fuel_quantity_ema_filtered >> 0xd) ,WORD_ARRAY_003ffb46,boost_fuel_correction,WORD_ARRAY_003ffb54, WORD_ARRAY_003ffb62,2);",
+     "inputs": [
+      "(word)((uint)fuel_demand_rate_limiter * (uint)fuel_quantity_ema_filtered >> 0xd)",
+      "boost_fuel_correction"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L060",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ffaf6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L060"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "breakpoints_unsigned": [
+       64000,
+       64192,
+       64384,
+       64576,
+       64768,
+       64960,
+       65152,
+       65344,
+       0,
+       192,
+       384,
+       576,
+       768,
+       960,
+       1152,
+       1344,
+       1536,
+       1729,
+       1921
+      ],
+      "breakpoints_signed": [
+       -1536,
+       -1344,
+       -1152,
+       -960,
+       -768,
+       -576,
+       -384,
+       -192,
+       0,
+       192,
+       384,
+       576,
+       768,
+       960,
+       1152,
+       1344,
+       1536,
+       1729,
+       1921
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ffb1e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L060"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "values_unsigned": [
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateLoadGainValues",
+     "statement": "wVar2 = lookupTableInterpolation (&DAT_003fa164,throttle_position_scaled,WORD_ARRAY_003ffaf6,WORD_ARRAY_003ffb1e, 1);",
+     "inputs": [
+      "throttle_position_scaled"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L061",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ffbfa",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L061"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       65216,
+       65280,
+       65344,
+       65408,
+       65440,
+       65472,
+       65504,
+       65520,
+       0,
+       16,
+       32,
+       64,
+       96,
+       128,
+       192,
+       256
+      ],
+      "breakpoints_signed": [
+       -320,
+       -256,
+       -192,
+       -128,
+       -96,
+       -64,
+       -32,
+       -16,
+       0,
+       16,
+       32,
+       64,
+       96,
+       128,
+       192,
+       256
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ffc1c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L061"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "values_unsigned": [
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateLoadGainValues",
+     "statement": "wVar2 = lookupTableInterpolation (&DAT_003fa166,throttle_rate_control_input,WORD_ARRAY_003ffbfa, WORD_ARRAY_003ffc1c,1);",
+     "inputs": [
+      "throttle_rate_control_input"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L063",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005b4d6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L063"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 22,
+      "breakpoints_unsigned": [
+       8480,
+       9600,
+       10400,
+       11200,
+       12000,
+       12800,
+       13600,
+       14400,
+       15200,
+       16000,
+       16800,
+       17600,
+       18400,
+       19200,
+       20000,
+       20800,
+       21600,
+       22400,
+       23200,
+       24000,
+       24280
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005b502",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L063"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 3,
+      "breakpoints_unsigned": [
+       0,
+       16384
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005b508",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L063"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 42,
+      "grid_min_max_unsigned": [
+       2944,
+       2944
+      ],
+      "grid_min_max_signed": [
+       2944,
+       2944
+      ],
+      "shape_x_by_y": [
+       21,
+       2
+      ],
+      "first_row": [
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944
+      ],
+      "last_row": [
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944,
+       2944
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateThermalLimitValue",
+     "statement": "fuel_demand_offset_working = cm848_dualAxisTableInterpolation (&protection_limit_init_state_a,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_0005b4d6,fuel_blend_coefficient,WORD_ARRAY_0005b502, WORD_ARRAY_0005b508,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_blend_coefficient"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L067",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff7ce",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L067"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       27853,
+       30488,
+       30631,
+       31058,
+       31201,
+       31343,
+       31486,
+       31628,
+       31771,
+       31913,
+       32056,
+       32198,
+       32341,
+       32483,
+       32625,
+       32768
+      ],
+      "breakpoints_signed": [
+       27853,
+       30488,
+       30631,
+       31058,
+       31201,
+       31343,
+       31486,
+       31628,
+       31771,
+       31913,
+       32056,
+       32198,
+       32341,
+       32483,
+       32625,
+       -32768
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ff7f0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L067"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "values_unsigned": [
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152
+      ],
+      "values_signed": [
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateTurboRatioA",
+     "statement": "wVar1 = lookupTableInterpolation (&DAT_003fa134,(word)uVar4,WORD_ARRAY_003ff7ce,WORD_ARRAY_003ff7f0,2);",
+     "inputs": [
+      "(word)uVar4"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L068",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff812",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L068"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       16384,
+       22937,
+       26214,
+       29491,
+       31129,
+       31457,
+       31784,
+       31866,
+       31948,
+       32030,
+       32112,
+       32276,
+       32440,
+       32768,
+       32768
+      ],
+      "breakpoints_signed": [
+       0,
+       16384,
+       22937,
+       26214,
+       29491,
+       31129,
+       31457,
+       31784,
+       31866,
+       31948,
+       32030,
+       32112,
+       32276,
+       32440,
+       -32768,
+       -32768
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ff834",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L068"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "values_unsigned": [
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152
+      ],
+      "values_signed": [
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateTurboRatioB",
+     "statement": "wVar1 = lookupTableInterpolation (&DAT_003fa136,(word)uVar4,WORD_ARRAY_003ff812,WORD_ARRAY_003ff834,2);",
+     "inputs": [
+      "(word)uVar4"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L069",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff746",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L069"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       125,
+       251,
+       377,
+       502,
+       628,
+       754,
+       880,
+       1005,
+       1131,
+       1257,
+       1383,
+       1508,
+       1634,
+       1760,
+       1886
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ff768",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L069"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "values_unsigned": [
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768,
+       32768
+      ],
+      "values_signed": [
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768,
+       -32768
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateTurboRatioWithMode",
+     "statement": "wVar2 = lookupTableInterpolation (&DAT_003fa130,fuel_pressure_sensor_reference,WORD_ARRAY_003ff746, WORD_ARRAY_003ff768,0);",
+     "inputs": [
+      "fuel_pressure_sensor_reference"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L070",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff78a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L070"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       16384,
+       22937,
+       26214,
+       29491,
+       31129,
+       31457,
+       31784,
+       31866,
+       31948,
+       32030,
+       32112,
+       32276,
+       32440,
+       32768,
+       32768
+      ],
+      "breakpoints_signed": [
+       0,
+       16384,
+       22937,
+       26214,
+       29491,
+       31129,
+       31457,
+       31784,
+       31866,
+       31948,
+       32030,
+       32112,
+       32276,
+       32440,
+       -32768,
+       -32768
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ff7ac",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L070"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "values_unsigned": [
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152,
+       49152
+      ],
+      "values_signed": [
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384,
+       -16384
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateTurboRatioWithMode",
+     "statement": "wVar2 = lookupTableInterpolation (&DAT_003fa132,(word)uVar5,WORD_ARRAY_003ff78a,WORD_ARRAY_003ff7ac,2);",
+     "inputs": [
+      "(word)uVar5"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L194",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00406470",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L194"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "breakpoints_unsigned": [
+       6000,
+       6400,
+       7200,
+       8000,
+       9600,
+       11040,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       21600,
+       22400,
+       23200,
+       24000,
+       25760,
+       28000,
+       30400
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00406498",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L194"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "values_unsigned": [
+       1400,
+       1400,
+       1400,
+       1400,
+       1400,
+       1400,
+       1400,
+       1200,
+       1000,
+       900,
+       800,
+       700,
+       700,
+       700,
+       700,
+       700,
+       700,
+       700,
+       700
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "etc1_threshold_lookup",
+     "statement": "wVar1 = lookupTableInterpolation (&DAT_003fba1a,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_00406470, WORD_ARRAY_00406498,2);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L199",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x004062d8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L199"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       65236,
+       0,
+       2000,
+       4000,
+       6000,
+       8000,
+       10000,
+       12000
+      ],
+      "breakpoints_signed": [
+       -300,
+       0,
+       2000,
+       4000,
+       6000,
+       8000,
+       10000,
+       12000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x004062ea",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L199"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       62336,
+       63936,
+       0,
+       1600,
+       3200,
+       4800,
+       6400,
+       8000
+      ],
+      "breakpoints_signed": [
+       -3200,
+       -1600,
+       0,
+       1600,
+       3200,
+       4800,
+       6400,
+       8000
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x004062fc",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L199"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       1024,
+       1024
+      ],
+      "grid_min_max_signed": [
+       1024,
+       1024
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024
+      ],
+      "last_row": [
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "fuel_demandBlend_weight_calc",
+     "statement": "wVar1 = cm848_dualAxisTableInterpolation (&DAT_003fbd1c,governor_adjustment_input,WORD_ARRAY_004062d8, boost_fuel_demand_blend_a,WORD_ARRAY_004062ea,WORD_ARRAY_004062fc,3);",
+     "inputs": [
+      "governor_adjustment_input",
+      "boost_fuel_demand_blend_a"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L200",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0040637c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L200"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       4000,
+       8000,
+       12000,
+       16000,
+       20000,
+       24000,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0040638e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L200"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       65136,
+       65336,
+       0,
+       200,
+       400,
+       600,
+       800,
+       1000
+      ],
+      "breakpoints_signed": [
+       -400,
+       -200,
+       0,
+       200,
+       400,
+       600,
+       800,
+       1000
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x004063a0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L200"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       1024,
+       1024
+      ],
+      "grid_min_max_signed": [
+       1024,
+       1024
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024
+      ],
+      "last_row": [
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "fuel_demandBlend_weight_calc",
+     "statement": "wVar2 = cm848_dualAxisTableInterpolation (&DAT_003fbd20,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0040637c, fuel_demand_aux_blend_deviation,WORD_ARRAY_0040638e,WORD_ARRAY_004063a0,2);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_aux_blend_deviation"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L213",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00408e30",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L213"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 7,
+      "breakpoints_unsigned": [
+       1024,
+       2048,
+       3072,
+       4096,
+       6144,
+       10240
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00408e3e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L213"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 7,
+      "values_unsigned": [
+       100,
+       100,
+       100,
+       100,
+       100,
+       100
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "governor_cruise_setpoint_calc",
+     "statement": "cruise_pid_rate_gain_working = lookupTableInterpolation (&DAT_003fcffe,fuel_flow_rpm_divisor,WORD_ARRAY_00408e30,WORD_ARRAY_00408e3e,0);",
+     "inputs": [
+      "fuel_flow_rpm_divisor"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L215",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0040770e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L215"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 3,
+      "breakpoints_unsigned": [
+       0,
+       2500
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00407714",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L215"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 3,
+      "values_unsigned": [
+       0,
+       21425
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "governor_speedReference_ramp_calc",
+     "statement": "uVar1 = lookupTableInterpolation (&DAT_003fcc06,egr_fuel_pressure_ratio,WORD_ARRAY_0040770e,WORD_ARRAY_00407714 ,0);",
+     "inputs": [
+      "egr_fuel_pressure_ratio"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L220",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff0c4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L220"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       512,
+       1024,
+       1536,
+       2048,
+       2560,
+       3072,
+       3584,
+       4096,
+       4608,
+       5120,
+       5632,
+       6144,
+       6656,
+       7168,
+       7680
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ff0e6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L220"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "values_unsigned": [
+       0,
+       3,
+       4,
+       5,
+       8,
+       12,
+       18,
+       24,
+       32,
+       41,
+       51,
+       63,
+       76,
+       89,
+       105,
+       121
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "hpcr_fuelFinal_exponentialAverage",
+     "statement": "boost_fuel_pressure_offset_lookup = lookupTableInterpolation(&DAT_003fb9dc,(word)dVar2,WORD_ARRAY_003ff0c4,WORD_ARRAY_003ff0e6,0) ;",
+     "inputs": [
+      "(word)dVar2"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L221",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff108",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L221"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 19,
+      "breakpoints_unsigned": [
+       0,
+       384,
+       768,
+       1152,
+       1536,
+       1920,
+       2304,
+       2688,
+       3072,
+       3456,
+       3840,
+       4224,
+       4608,
+       4992,
+       5376,
+       5760,
+       6144,
+       6528
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x003ff3b6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L221"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 19,
+      "breakpoints_unsigned": [
+       0,
+       1280,
+       2560,
+       3840,
+       5120,
+       6400,
+       7680,
+       8960,
+       10240,
+       11520,
+       12800,
+       14080,
+       15360,
+       16640,
+       17920,
+       19200,
+       20480,
+       21760
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x003ff12e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L221"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 324,
+      "grid_min_max_unsigned": [
+       640,
+       640
+      ],
+      "grid_min_max_signed": [
+       640,
+       640
+      ],
+      "shape_x_by_y": [
+       18,
+       18
+      ],
+      "first_row": [
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640
+      ],
+      "last_row": [
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "hpcr_fuelFinal_exponentialAverage",
+     "statement": "boost_fuel_timing_target = cm848_dualAxisTableInterpolation (WORD_ARRAY_003fb9de,boost_pressure_timing_ema_filtered,WORD_ARRAY_003ff108, vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);",
+     "inputs": [
+      "boost_pressure_timing_ema_filtered",
+      "vehicle_speed_copy"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_initialization_step_3",
+     "statement": "boost_fuel_timing_target = cm848_dualAxisTableInterpolation (WORD_ARRAY_003fb9de,boost_pressure_timing_ema_filtered,WORD_ARRAY_003ff108, vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);",
+     "inputs": [
+      "boost_pressure_timing_ema_filtered",
+      "vehicle_speed_copy"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  },
+  {
+   "id": "L236",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00406778",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L236"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 10,
+      "breakpoints_unsigned": [
+       0,
+       6400,
+       12800,
+       19200,
+       25600,
+       32000,
+       38400,
+       44800,
+       51200
+      ],
+      "breakpoints_signed": [
+       0,
+       6400,
+       12800,
+       19200,
+       25600,
+       32000,
+       -27136,
+       -20736,
+       -14336
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0040678c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L236"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 10,
+      "values_unsigned": [
+       500,
+       500,
+       500,
+       500,
+       500,
+       500,
+       500,
+       500,
+       500
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "sensor_throttleTrim_ema_faultProcess",
+     "statement": "throttle_trim_predictor_gain_lookup = lookupTableInterpolation (&WORD_003fbcfe,fuel_quantity_ema,WORD_ARRAY_00406778,WORD_ARRAY_0040678c,0);",
+     "inputs": [
+      "fuel_quantity_ema"
+     ],
+     "output_argument": null
+    }
+   ],
+   "note": "statement / current_name fields are from before the 2026-11-16 renames; the .cpp is current - find the call there by the table addresses (WORD_ARRAY_<address>)"
+  }
+ ]
+}

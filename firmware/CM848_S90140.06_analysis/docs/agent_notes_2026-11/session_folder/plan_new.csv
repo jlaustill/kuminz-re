@@ -1,0 +1,26 @@
+address,action,name,old_type,count,roles,region,named_inside,tables_inside,structs,arrays,functions,notes,detail,readers
+0x000592e6,add_type_only,,,20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensorChannel1_init cm848_sensorChannel1_process
+0x0005930e,add_type_only,,,20,data,rom,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel1_init cm848_sensorChannel1_process
+0x000593ee,add_type_only,,,22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_sensorChannelGeneric_init_configBundle cm848_sensorChannelGeneric_update_configBundle
+0x0005941a,add_type_only,,,22,data,rom,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannelGeneric_init_configBundle cm848_sensorChannelGeneric_update_configBundle
+0x00059456,add_type_only,,,11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_sensorChannel7_init cm848_sensorChannel7_process
+0x0005946c,add_type_only,,,11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel7_init cm848_sensorChannel7_process
+0x00059492,add_type_only,,,11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_sensorChannel7_init_configBundle cm848_sensorChannel7_update_configBundle
+0x000594a8,add_type_only,,,11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel7_init_configBundle cm848_sensorChannel7_update_configBundle
+0x000594ce,add_type_only,,,22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_sensorChannel9_init cm848_sensorChannel9_process
+0x000594fa,add_type_only,,,22,data,rom,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel9_init cm848_sensorChannel9_process
+0x00059536,add_type_only,,,24,axis,rom,,,,,,,x axis of 23 breakpoints after its byte-length word,cm848_sensorChannel10_intakeManifoldTemperatureInit cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x00059566,add_type_only,,,24,data,rom,,,,,,,data: 23 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel10_intakeManifoldTemperatureInit cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x00059666,add_type_only,,,11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_protection_init_configBundle cm848_protection_update_configBundle
+0x0005967c,add_type_only,,,11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_protection_init_configBundle cm848_protection_update_configBundle
+0x0005ab34,add_type_only,,,20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensorChannel69_init cm848_sensorChannel69_process
+0x0005ab5c,add_type_only,,,20,data,rom,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel69_init cm848_sensorChannel69_process
+0x0005ab94,add_type_only,,,21,axis,rom,,,,cruise_switch_adc_band_table_x,,,x axis of 20 breakpoints after its byte-length word,cm848_initCruiseSwitchChannel cm848_processCruiseSwitchChannel
+0x0005abbe,add_type_only,,,21,data,rom,,,,cruise_switch_button_code_table_y,,,data: 20 values (one per axis breakpoint) after a byte-length word,cm848_initCruiseSwitchChannel cm848_processCruiseSwitchChannel
+0x0005abf8,add_type_only,,,21,axis,rom,,,,,,,x axis of 20 breakpoints after its byte-length word,sensorChannelTypeB_configInit_axis1 sensorChannelTypeB_update_axis1
+0x0005ac22,add_type_only,,,21,data,rom,,,,,,,data: 20 values (one per axis breakpoint) after a byte-length word,sensorChannelTypeB_configInit_axis1 sensorChannelTypeB_update_axis1
+0x0005ae08,add_type_only,,,20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,sensorChannelTypeA_configInit_axis5 sensorChannelTypeA_update_axis5
+0x0005ae30,add_type_only,,,20,data,rom,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,sensorChannelTypeA_configInit_axis5 sensorChannelTypeA_update_axis5
+0x003feee2,add_type_only,,,12,axis,ram,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_sensorChannel5_init cm848_sensorChannel5_process
+0x003feefa,add_type_only,,,12,data,ram,,,,,,,data: 11 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel5_init cm848_sensorChannel5_process
+0x00406504,junk_to_type_only,u__00406504,,17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,governor_adjustment_compare

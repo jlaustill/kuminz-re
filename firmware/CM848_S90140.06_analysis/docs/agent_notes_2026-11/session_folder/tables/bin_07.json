@@ -1,0 +1,1168 @@
+{
+ "bin": 7,
+ "functions": [
+  "cm848_processEnginePositionDiagnostics",
+  "cm848_boostCompensatedRpmGovernor"
+ ],
+ "assigned_tables": [
+  "0x00060bcc",
+  "0x00060be2",
+  "0x00060bf8",
+  "0x00060c0e",
+  "0x00060c24",
+  "0x00060c3a",
+  "0x00060c50",
+  "0x00060c66",
+  "0x00060c7c",
+  "0x00060c92",
+  "0x00060ca8",
+  "0x00060cbe",
+  "0x00060cd4",
+  "0x00060cea",
+  "0x003ffbaa",
+  "0x003ffbd2",
+  "0x003ffcb6",
+  "0x003ffcca",
+  "0x003ffcde",
+  "0x003ffd06",
+  "0x003ffd28",
+  "0x003fff88",
+  "0x003fff9a",
+  "0x003fffac",
+  "0x003fffd4",
+  "0x003ffff6"
+ ],
+ "lookups": [
+  {
+   "id": "L013",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ffbaa",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L013"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "breakpoints_unsigned": [
+       64896,
+       65216,
+       65312,
+       65344,
+       65408,
+       65440,
+       65472,
+       65504,
+       65520,
+       0,
+       16,
+       32,
+       64,
+       96,
+       128,
+       192,
+       224,
+       320,
+       640
+      ],
+      "breakpoints_signed": [
+       -640,
+       -320,
+       -224,
+       -192,
+       -128,
+       -96,
+       -64,
+       -32,
+       -16,
+       0,
+       16,
+       32,
+       64,
+       96,
+       128,
+       192,
+       224,
+       320,
+       640
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ffbd2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L013"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "values_unsigned": [
+       12288,
+       12288,
+       12288,
+       10240,
+       8192,
+       6937,
+       5451,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       5451,
+       6937,
+       8192,
+       10240,
+       12288,
+       12288,
+       12288
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_boostCompensatedRpmGovernor",
+     "statement": "wVar4 = lookupTableInterpolation (&DAT_003fa180,throttle_rate_filtered_sum,WORD_ARRAY_003ffbaa, WORD_ARRAY_003ffbd2,1);",
+     "inputs": [
+      "throttle_rate_filtered_sum"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L014",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ffcb6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L014"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 10,
+      "breakpoints_unsigned": [
+       64286,
+       64911,
+       65036,
+       65286,
+       65348,
+       0,
+       625,
+       1250,
+       3125
+      ],
+      "breakpoints_signed": [
+       -1250,
+       -625,
+       -500,
+       -250,
+       -188,
+       0,
+       625,
+       1250,
+       3125
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ffcca",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L014"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 10,
+      "values_unsigned": [
+       96,
+       86,
+       77,
+       70,
+       64,
+       64,
+       64,
+       64,
+       64
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_boostCompensatedRpmGovernor",
+     "statement": "rpm_governor_state_t_0040a3ca.reserved_06 = lookupTableInterpolation(&DAT_003fa18a,(word)iVar7,WORD_ARRAY_003ffcb6,WORD_ARRAY_003ffcca,3) ;",
+     "inputs": [
+      "(word)iVar7"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L015",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ffcde",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L015",
+      "L016"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "breakpoints_unsigned": [
+       3200,
+       4800,
+       6400,
+       7200,
+       8000,
+       8800,
+       9600,
+       10400,
+       11360,
+       11600,
+       12720,
+       14000,
+       15360,
+       16800,
+       18080,
+       19040,
+       20000,
+       22400,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0040027a",
+     "current_name": "governor_base_rpm_output_cal",
+     "to_name": false,
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "values_unsigned": [
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600,
+       9600
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_boostCompensatedRpmGovernor",
+     "statement": "rpm_governor_state_t_0040a3ca.base_rpm_lookup = lookupTableInterpolation (&DAT_003fa186,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_003ffcde, governor_base_rpm_output_cal,2);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L016",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ffcde",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L015",
+      "L016"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "breakpoints_unsigned": [
+       3200,
+       4800,
+       6400,
+       7200,
+       8000,
+       8800,
+       9600,
+       10400,
+       11360,
+       11600,
+       12720,
+       14000,
+       15360,
+       16800,
+       18080,
+       19040,
+       20000,
+       22400,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x003ffd06",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L016"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       1105,
+       1619,
+       2131,
+       2302,
+       2471,
+       2644,
+       2773,
+       2901,
+       3026,
+       3531,
+       4122,
+       4710,
+       5034,
+       5474,
+       5888
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x003ffd28",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L016"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       11532
+      ],
+      "grid_min_max_signed": [
+       0,
+       11532
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_boostCompensatedRpmGovernor",
+     "statement": "rpm_governor_state_t_0040a3ca.reserved_0c = cm848_dualAxisTableInterpolation (&DAT_003fa198,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_003ffcde, engine_load_input_b,WORD_ARRAY_003ffd06,WORD_ARRAY_003ffd28,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "engine_load_input_b"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L017",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003fff88",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L017"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       100,
+       300,
+       1000,
+       3000,
+       6000,
+       14000,
+       29035
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003fff9a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L017"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "values_unsigned": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_boostCompensatedRpmGovernor",
+     "statement": "rpm_governor_state_t_0040a3ca.adjustment_delta = lookupTableInterpolation (&DAT_003fa18c,governor_adjustment_input,WORD_ARRAY_003fff88,WORD_ARRAY_003fff9a,3) ;",
+     "inputs": [
+      "governor_adjustment_input"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L018",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003fffac",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L018"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "breakpoints_unsigned": [
+       0,
+       2368,
+       4000,
+       5224,
+       6608,
+       7584,
+       8568,
+       9600,
+       10360,
+       11176,
+       11992,
+       12808,
+       14440,
+       15576,
+       16800,
+       20800,
+       24000,
+       32000,
+       36000
+      ],
+      "breakpoints_signed": [
+       0,
+       2368,
+       4000,
+       5224,
+       6608,
+       7584,
+       8568,
+       9600,
+       10360,
+       11176,
+       11992,
+       12808,
+       14440,
+       15576,
+       16800,
+       20800,
+       24000,
+       32000,
+       -29536
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x003fffd4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L018"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       1105,
+       1619,
+       2131,
+       2302,
+       2471,
+       2644,
+       2773,
+       2901,
+       3026,
+       3531,
+       4122,
+       4710,
+       5034,
+       5474,
+       5888
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x003ffff6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L018"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       11532
+      ],
+      "grid_min_max_signed": [
+       0,
+       11532
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532,
+       11532
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_boostCompensatedRpmGovernor",
+     "statement": "rpm_governor_state_t_0040a3ca.reserved_0e = cm848_dualAxisTableInterpolation (&DAT_003fa194,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_003fffac, engine_load_input_b,WORD_ARRAY_003fffd4,WORD_ARRAY_003ffff6,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "engine_load_input_b"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L091",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00060bcc",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L091"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       0,
+       5600,
+       9600,
+       12400,
+       15760,
+       16800,
+       19040,
+       20000,
+       21600,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00060be2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L091"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       0,
+       102,
+       205,
+       205,
+       205,
+       205,
+       205,
+       205,
+       205,
+       205
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_processEnginePositionDiagnostics",
+     "statement": "wVar2 = lookupTableInterpolation (&cam_sync_filter_init_state_0,engine_rpm_measured,WORD_ARRAY_00060bcc, WORD_ARRAY_00060be2,2);",
+     "inputs": [
+      "engine_rpm_measured"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L092",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00060bf8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L092"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       0,
+       4000,
+       8000,
+       10000,
+       12000,
+       14000,
+       16000,
+       18000,
+       20000,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00060c0e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L092"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       62463,
+       62463,
+       62463,
+       62463,
+       62463,
+       62463,
+       62463,
+       62463,
+       62463,
+       62463
+      ],
+      "values_signed": [
+       -3073,
+       -3073,
+       -3073,
+       -3073,
+       -3073,
+       -3073,
+       -3073,
+       -3073,
+       -3073,
+       -3073
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_processEnginePositionDiagnostics",
+     "statement": "wVar2 = lookupTableInterpolation (&cam_sync_filter_init_state_1,engine_rpm_measured,WORD_ARRAY_00060bf8, WORD_ARRAY_00060c0e,2);",
+     "inputs": [
+      "engine_rpm_measured"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L093",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00060c24",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L093"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       0,
+       4000,
+       8000,
+       10000,
+       12000,
+       14000,
+       16000,
+       18000,
+       20000,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00060c3a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L093"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       3074,
+       3074,
+       3074,
+       3074,
+       3074,
+       3074,
+       3074,
+       3074,
+       3074,
+       3074
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_processEnginePositionDiagnostics",
+     "statement": "wVar2 = lookupTableInterpolation (&cam_sync_filter_init_state_2,engine_rpm_measured,WORD_ARRAY_00060c24, WORD_ARRAY_00060c3a,2);",
+     "inputs": [
+      "engine_rpm_measured"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L094",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00060c50",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L094"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       4000,
+       7200,
+       8800,
+       10400,
+       12000,
+       13600,
+       16800,
+       20000,
+       21600,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00060c66",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L094"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       2869,
+       2869,
+       2869,
+       2869,
+       2869,
+       2869,
+       2869,
+       2869,
+       2869,
+       2869
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_processEnginePositionDiagnostics",
+     "statement": "wVar3 = lookupTableInterpolation (&cam_sync_filter_init_state_3,engine_rpm_measured,WORD_ARRAY_00060c50, WORD_ARRAY_00060c66,2);",
+     "inputs": [
+      "engine_rpm_measured"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L095",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00060c7c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L095"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       102,
+       409,
+       819,
+       1433,
+       1638,
+       1842,
+       2047,
+       2354,
+       2661,
+       2866
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00060c92",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L095"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       1,
+       3,
+       5,
+       9,
+       5,
+       7,
+       11,
+       19,
+       28,
+       41
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_processEnginePositionDiagnostics",
+     "statement": "wVar2 = lookupTableInterpolation (&cam_sync_filter_init_state_5,cam_sync_reference_prev,WORD_ARRAY_00060c7c, WORD_ARRAY_00060c92,3);",
+     "inputs": [
+      "cam_sync_reference_prev"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L096",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00060ca8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L096"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       0,
+       204,
+       614,
+       1023,
+       1535,
+       2047,
+       2559,
+       3071,
+       3583,
+       4095
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00060cbe",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L096"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       4095,
+       4095,
+       4095,
+       4095,
+       4095,
+       4095,
+       4095,
+       4095,
+       4095,
+       4095
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_processEnginePositionDiagnostics",
+     "statement": "wVar2 = lookupTableInterpolation (&cam_sync_filter_init_state_6,fuel_pressure_sensor,WORD_ARRAY_00060ca8, WORD_ARRAY_00060cbe,3);",
+     "inputs": [
+      "fuel_pressure_sensor"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L097",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00060cd4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L097"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       4000,
+       7200,
+       8800,
+       10400,
+       12000,
+       13600,
+       16800,
+       20000,
+       21600,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00060cea",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L097"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       40,
+       40,
+       40,
+       40,
+       40,
+       40,
+       40,
+       40,
+       40,
+       40
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_processEnginePositionDiagnostics",
+     "statement": "wVar3 = lookupTableInterpolation (&cam_sync_filter_init_state_4,engine_rpm_measured,WORD_ARRAY_00060cd4, WORD_ARRAY_00060cea,2);",
+     "inputs": [
+      "engine_rpm_measured"
+     ],
+     "output_argument": null
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,665 @@
+{
+ "bin": 6,
+ "functions": [
+  "engine_camTiming_positionCorrection_calc"
+ ],
+ "assigned_tables": [
+  "0x00409b2c",
+  "0x00409b42",
+  "0x00409b58",
+  "0x00409b6e",
+  "0x00409b84",
+  "0x00409b96",
+  "0x00409ba8",
+  "0x00409c28",
+  "0x00409c3a",
+  "0x00409c4c",
+  "0x00409ccc",
+  "0x00409cde",
+  "0x00409cf0",
+  "0x00409d70",
+  "0x00409d82",
+  "0x00409d94",
+  "0x00409e14",
+  "0x00409e2a"
+ ],
+ "lookups": [
+  {
+   "id": "L170",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00409b2c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L170"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 11,
+      "breakpoints_unsigned": [
+       511,
+       1023,
+       1638,
+       1842,
+       2047,
+       2252,
+       2457,
+       2661,
+       2866,
+       3276
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00409b42",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L170"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 11,
+      "values_unsigned": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_camTiming_positionCorrection_calc",
+     "statement": "cam_timing_correction_time_constant = lookupTableInterpolation (&DAT_003fd0ee,fuel_pressure_feedback_filtered,WORD_ARRAY_00409b2c, WORD_ARRAY_00409b42,0);",
+     "inputs": [
+      "fuel_pressure_feedback_filtered"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L171",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00409b58",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L171"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 11,
+      "breakpoints_unsigned": [
+       1025,
+       1230,
+       1434,
+       1639,
+       1844,
+       2049,
+       2254,
+       2459,
+       2664,
+       2869
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00409b6e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L171"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 11,
+      "values_unsigned": [
+       316,
+       336,
+       352,
+       371,
+       402,
+       409,
+       427,
+       455,
+       484,
+       516
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_camTiming_positionCorrection_calc",
+     "statement": "cam_timing_position_correction_gain = lookupTableInterpolation (&DAT_003fd0f0,fuel_pressure_feedback_filtered,WORD_ARRAY_00409b58, WORD_ARRAY_00409b6e,0);",
+     "inputs": [
+      "fuel_pressure_feedback_filtered"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L172",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00409b84",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L172"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       2560,
+       3840,
+       5120,
+       6400,
+       7680,
+       8960,
+       10240,
+       11520
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00409b96",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L172"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       205,
+       615,
+       1230,
+       1844,
+       2459,
+       3074,
+       3689
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00409ba8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L172"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_camTiming_positionCorrection_calc",
+     "statement": "cam_timing_correction_coolant_offset = cm848_dualAxisTableInterpolation (&DAT_003fd0f2,x_input,WORD_ARRAY_00409b84,fuel_pressure_feedback_filtered, WORD_ARRAY_00409b96,WORD_ARRAY_00409ba8,1);",
+     "inputs": [
+      "x_input",
+      "fuel_pressure_feedback_filtered"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L173",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00409c28",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L173"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       1280,
+       2560,
+       3840,
+       5120,
+       6400,
+       7680,
+       8960
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00409c3a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L173"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       409,
+       819,
+       1228,
+       1638,
+       2047,
+       2457,
+       2866,
+       3276
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00409c4c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L173"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_camTiming_positionCorrection_calc",
+     "statement": "cam_timing_correction_coolant_component = cm848_dualAxisTableInterpolation (&DAT_003fd0f6,x_input,WORD_ARRAY_00409c28,fuel_pressure_feedback_filtered, WORD_ARRAY_00409c3a,WORD_ARRAY_00409c4c,1);",
+     "inputs": [
+      "x_input",
+      "fuel_pressure_feedback_filtered"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L174",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00409ccc",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L174"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       800,
+       4800,
+       9600,
+       13600,
+       17600,
+       21600,
+       25200,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00409cde",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L174"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       294,
+       588,
+       883,
+       1177,
+       1472,
+       1766,
+       2060
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00409cf0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L174"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_camTiming_positionCorrection_calc",
+     "statement": "cam_timing_correction_rpm_offset = cm848_dualAxisTableInterpolation (&DAT_003fd0fa,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_00409ccc, engine_timing_reference,WORD_ARRAY_00409cde,WORD_ARRAY_00409cf0,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L175",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00409d70",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L175"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       8000,
+       11200,
+       13600,
+       16000,
+       19200,
+       22400,
+       27200
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00409d82",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L175"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       294,
+       588,
+       883,
+       1177,
+       1472,
+       1766,
+       2060
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00409d94",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L175"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       557,
+       2077
+      ],
+      "grid_min_max_signed": [
+       557,
+       2077
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       557,
+       557,
+       557,
+       595,
+       632,
+       652,
+       680,
+       845
+      ],
+      "last_row": [
+       1152,
+       1152,
+       1152,
+       1164,
+       1250,
+       1423,
+       1655,
+       2077
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_camTiming_positionCorrection_calc",
+     "statement": "cam_timing_correction_rpm_component = cm848_dualAxisTableInterpolation (&DAT_003fd0fe,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_00409d70, engine_timing_reference,WORD_ARRAY_00409d82,WORD_ARRAY_00409d94,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L176",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00409e14",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L176"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 11,
+      "breakpoints_unsigned": [
+       0,
+       41,
+       205,
+       410,
+       820,
+       2049,
+       2459,
+       2664,
+       2828,
+       2869
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00409e2a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L176"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 11,
+      "values_unsigned": [
+       1391,
+       1207,
+       1131,
+       1056,
+       957,
+       728,
+       630,
+       566,
+       470,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_camTiming_positionCorrection_calc",
+     "statement": "cam_timing_fault_activation_threshold = lookupTableInterpolation (&DAT_003fd102,DAT_0040b8ea,WORD_ARRAY_00409e14,WORD_ARRAY_00409e2a,0);",
+     "inputs": [
+      "DAT_0040b8ea"
+     ],
+     "output_argument": null
+    }
+   ]
+  }
+ ]
+}

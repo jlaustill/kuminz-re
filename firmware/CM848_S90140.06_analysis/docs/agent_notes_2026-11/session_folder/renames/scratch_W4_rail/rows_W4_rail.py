@@ -1,0 +1,341 @@
+# -*- coding: ascii -*-
+# Data rows for result_W4_rail.jsonl; exec'd by gen_W4_rail.py (func / glob / newglob / sfield / note / uncertain).
+
+SPEED_UNIT = ("Unit: engine speed in 0.125 rpm counts - the arbitrated result of cm848_selectTorqueLimit is compared with "
+              "engine_rpm_state_t.current_rpm in cm848_calculateEffectiveFuelLimit (above the limit the fuel limit is cut in "
+              "proportion to the excess speed), and its dump values are rpm x 8 (default 30000 = 3750 rpm, cap 28000 = 3500 rpm, "
+              "floor 6800 = 850 rpm), so 20000 = 2500 rpm. ")
+
+# ------------------------------------------------------------------ functions
+func("0x00530d08", "engine_protection_fuelCorrection_stateMachine", "cm848_checkFuelPressureSensorPlausibilityByFuelDemand",
+     "Rail pressure sensor plausibility check that sets and clears fault 7 (P0191): while the coolant is at least 170 F, "
+     "vehicle_speed_copy and fuel_demand_governor_output are at or below their limits (both 0 here), engine speed is within 25 rpm of the "
+     "governor speed word (0x40aec2) and fuel_pressure_sensor is within 82 counts (4.0 MPa) of fuel_pressure_setpoint, it averages "
+     "fuel_demand_computed over 150 passes and compares the average with an averaged expected fuel demand for the load (a table of four "
+     "values, 16.9 to 25.2 mm3, chosen by the A/C clutch request and the alternator field duty, plus 13.6 mm3 for an automatic transmission "
+     "in gear). Three consecutive tests with the same result set fault 7 (average not below the expected value, state 3) or clear it "
+     "(state 2) and lock the verdict until the next start; called from cm848_runFuelPressureSensorPlausibilityMonitor. "
+     "(was engine_protection_fuelCorrection_stateMachine)",
+     "Read in full and re-checked against the ROM: fault 7 (fault_detected_bits_0_to_15 mask 0x80) decodes to slot 151 = P0191, the same "
+     "slot as fault 414 set by hpcr_checkRailPressureSensorBeforeStart. The wave 3 blocker (who else uses fuel_correction_ramp_state) is "
+     "settled: xref shows only the init, the abort check, this check and the wrapper cm848_calibration_group26_load, so no other feature "
+     "reads the state. Not fuel timing: all values are fuel quantities (cap 0x1700 = 5888 = 400 mm3). Constants in the dump: coolant "
+     "10880 = 170 F, vehicle speed limit 0, governor output limit 0, speed window 200 = 25 rpm, pressure window 82 counts (byte), 150 "
+     "passes, 3 consecutive results; the table at 0x409ee2 is a byte-length word (8) plus the four entries 249 / 311 / 342 / 371 = 16.9 / "
+     "21.1 / 23.2 / 25.2 mm3 (the 0.5 mm3 first 'entry' of wave 3 is the length word); the addend 200 = 13.6 mm3 applies when "
+     "transmission_type_cal is nonzero (3 here) and transmission_park_or_neutral_flag is 0. Four more gates: switch_input_state_bits[0] "
+     "mask 8 clear, governor_fuel_active_flag 0, logical output 11 not requested, fault 397 not detected. The monitor is enabled on this "
+     "truck: fault_feature_config_flags = 0x24 has bit 5. Established: what is computed and the fault it sets. Inferred: that a high "
+     "averaged idle fuel demand points at the rail pressure sensor - that rests on the P0191 mapping only.")
+
+func("0x005311e4", "cm848_calibration_group26_load", "cm848_runFuelPressureSensorPlausibilityMonitor",
+     "Monitor wrapper for the rail pressure sensor plausibility check, called from cm848_periodicTaskGroup26_calibration8: when bit 5 of "
+     "fault_feature_config_flags is set and the check is not aborted (state 4) it runs "
+     "cm848_abortFuelPressureSensorPlausibilityOnFaults and cm848_checkFuelPressureSensorPlausibilityByFuelDemand, and once a result "
+     "(state 2 or 3) agrees with the previous pass's fault 7 bit it sets bit 19 of diagnostic_monitor_complete_bits and clears the "
+     "monitor's pending bit 19 in fault_pending_flags (a fail clears fault_pending_flags_b first). (was cm848_calibration_group26_load)",
+     "Read in full: its only job is this one monitor (state tests, the fault 7 bit, monitor-complete and pending bit 0x80000 handling); "
+     "the single caller is cm848_periodicTaskGroup26_calibration8 (0xbd80).")
+
+func("0x00530968", "cm848_initialization_group13_state_cont", "cm848_initializeFuelPressureSensorPlausibilityState",
+     "Start-up initialization of the rail pressure sensor plausibility check: clears its state, step count, average fuel demand, the pass "
+     "and fail result counts and the verdict latch and lock flags, and the two bytes 0x3fd1d2 / 0x3fd1d3 that nothing else reads. Called "
+     "once from cm848_applicationMain. (was cm848_initialization_group13_state_cont)",
+     "Read in full (nine stores); every variable it clears is a field of the plausibility check, and the caller is "
+     "cm848_applicationMain (0x544c4).")
+
+func("0x005309bc", "engine_protection_faultOverride_check", "cm848_abortFuelPressureSensorPlausibilityOnFaults",
+     "Sets the plausibility check state to 4 (aborted) while any of 39 fault bits is detected: the rail pressure faults P0193 / P0192 / "
+     "P0088 and the before-start sensor check P0191 (fault 414), the fuel metering and pump faults P0251 / P0628 / P0629, the injector "
+     "group faults P2146 / P2149, the cylinder faults P0300-P0306, and input faults that change the fuel demand (coolant P0116 / P0117 / "
+     "P0118, accelerator pedal P2121 / P2122 / P2123 / P2127 / P2128, sensor supply P0642 / P0643, vehicle speed P0500). Called by "
+     "cm848_runFuelPressureSensorPlausibilityMonitor. (was engine_protection_faultOverride_check)",
+     "Read in full; the fault list was decoded bit by bit through ROM 0x5985a / 0x5b57c (39 bits: 16, 17, 29, 268, 269, 271, 272, 274, 275, "
+     "277, 278, 280, 281, 283, 284, 303, 304, 305, 329, 331, 333, 334, 337, 338, 347-350, 361-367, 386, 387, 401, 414). The codes are "
+     "read from the ROM; the category words in the plate (coolant, accelerator pedal, sensor supply, vehicle speed, cylinder, pump) are "
+     "the standard SAE J2012 titles recalled from memory, not stated by the firmware (the rail pressure, P0251 and injector group "
+     "readings are the ones the repo already uses). Its only write is state 4 and its only caller is the wrapper.")
+
+func("0x00530c54", "fuel_injector_timing_interpolate", "cm848_calculateExpectedFuelDemandAverage",
+     "Returns the next running average of the expected fuel demand for the rail pressure sensor plausibility check: (expected value x step "
+     "count / 10 + entry param_1 of the expected fuel demand table + the in-gear fuel addend) x 10 / (step count + 10), capped at 5888 "
+     "(the maximum fuel quantity). Called twice by cm848_checkFuelPressureSensorPlausibilityByFuelDemand. "
+     "(was fuel_injector_timing_interpolate)",
+     "Read in full; it interpolates nothing and has nothing to do with injector timing: it is the same weighted average the check applies "
+     "to fuel_demand_computed, applied to the expected value, and the caller stores the result in fuel_correction_timing_target.")
+
+func("0x005371f4", "cm848_initTimerInterrupts", "cm848_resetFuelPressureSetpointNotReachedMonitor",
+     "Start-up reset of the rail pressure setpoint-not-reached monitor: monitor state 0, accumulator and pass count zeroed "
+     "(cm848_resetFuelPressureSetpointNotReachedAccumulator), fault 352 cleared and the monitor marked inactive; when "
+     "protection_feature_flags bit 0x8000 is clear it also marks the monitor complete (clears bit 5 of fault_pending_flags, sets bit 5 of "
+     "diagnostic_monitor_complete_bits). Called once from cm848_applicationMain. (was cm848_initTimerInterrupts)",
+     "Read in full (14 lines): it touches only the setpoint-not-reached monitor (state, active flag, accumulator, fault 352, monitor bit "
+     "0x20) and no timer or interrupt register, so the old name was wrong. It is the sibling of cm848_resetFuelPressureTrackingErrorMonitor "
+     "(0x532208) for the other rail pressure monitor; its two variables already carry their new names "
+     "(fuel_pressure_setpoint_not_reached_monitor_state / _active_flag). Caller: cm848_applicationMain (0x544c4).")
+
+func("0x00049edc", "cm848_applyFuelLimitsForFuelPressureFaults", "cm848_applyFuelLimitsForFuelPressureFaults",
+     "Sets the fuel limit governor_fuel_limit_source and the engine speed limit fuel_pressure_fault_engine_speed_limit_working (input 7 of the "
+     "engine speed limit arbitration cm848_selectTorqueLimit; engine speed in 0.125 rpm counts, default 30000 = 3750 rpm) for the rail "
+     "pressure faults: P0193 / P0192 (304 / 305) use the sensor fault limits, fault 264 and P0251 (333) cap them at the fuel metering "
+     "fault limits, fault reaction bits 0 / 1 cap them at the reaction limits and P0088 (303) at the too-high limits; with none of these "
+     "the fuel limit is 0x1700 (the maximum) and the speed limit stays at its default. It adds fuel_demand_offset_correction to the fuel "
+     "limit when protection_feature_flags bit 3 is set and requests logical output 54 while a too-high bit of "
+     "fuel_pressure_diagnostic_snapshot is set and the enable word is non-zero. (was cm848_protectionSensorFaultHandler)",
+     "Name kept; plate refreshed only for the unit and the new names of the second limit (see the four *_engine_speed_limit rows).")
+
+# ------------------------------------------------------------------ second limit = engine speed limit
+glob("0x00409534", "sensor_fault_torque_fuel_min_cal", "fuel_pressure_sensor_fault_engine_speed_limit",
+     "Second limit for P0193 / P0192 (faults 304 / 305): the only user is cm848_applyFuelLimitsForFuelPressureFaults (xref: word, 1 read "
+     "/ 0 writes), which copies it into the working limit 0x40a300 = input 7 of cm848_selectTorqueLimit. " + SPEED_UNIT +
+     "Pairs with fuel_pressure_sensor_fault_fuel_limit (0x409532, 883 = 60 mm3). 20000 = 2500 rpm in the dump. ROM copy at 0x409534, outside "
+     "0x3fd482-0x3feec1, so no _cal. No user below 0x7F60 (not in the time-shared window).")
+
+glob("0x00409536", "torque_fuel_min_max_cal", "fuel_metering_fault_engine_speed_limit",
+     "Cap on the second limit while fault 264 or fault 333 (P0251) is registered (lowest wins against the working limit); one read in "
+     "cm848_applyFuelLimitsForFuelPressureFaults. " + SPEED_UNIT + "Pairs with fuel_metering_fault_fuel_limit (0x40952e). 20000 = 2500 rpm "
+     "in the dump. ROM copy, so no _cal; it is a limit, not a 'max' of anything.")
+
+glob("0x00409540", "cold_start_fuel_min_limit_cal", "fault_reaction_engine_speed_limit",
+     "Cap on the second limit while fault_reaction_request_bits bit 1 is set (cm848_applyFuelLimitsForFuelPressureFaults, 1 read); "
+     "nothing in it concerns cold start. " + SPEED_UNIT + "Pairs with fault_reaction_fuel_limit (0x40953c). 30400 = 3800 rpm in the dump, "
+     "above the 30000 default, so it never lowers the limit here. ROM copy, so no _cal.")
+
+glob("0x00409548", "torque_fuel_min_threshold_cal", "fuel_pressure_too_high_engine_speed_limit",
+     "Cap on the second limit while P0088 (fault 303) is registered: the working limit is lowered to it when the working limit is "
+     "above it (cm848_applyFuelLimitsForFuelPressureFaults, 1 read); it is a limit, not a threshold. " + SPEED_UNIT + "Pairs with "
+     "fuel_pressure_too_high_fuel_limit (0x409546). 20000 = 2500 rpm in the dump. ROM copy, so no _cal.")
+
+glob("0x0040a300", "torque_fuel_minimum_working", "fuel_pressure_fault_engine_speed_limit_working",
+     "Working copy of the second limit: reset to torque_limit_fuel_minimum (30000) by cm848_initTorqueLimitDefaults and each pass by "
+     "cm848_applyFuelLimitsForFuelPressureFaults, lowered to the four fault limits above, and read as source 7 of the engine speed limit "
+     "arbitration by cm848_selectTorqueLimit (xref: word, 4 reads / 5 writes in exactly these 3 functions). " + SPEED_UNIT +
+     "No user below 0x7F60.")
+
+# ------------------------------------------------------------------ 0x40951e
+glob("0x0040951e", "cam_sync_position_lower_threshold_cal", "fuel_pressure_sensor_second_too_high_threshold",
+     "Role from the code: one lha compare in cm848_diagnoseFuelPressureGovernor (xref: word, 1 read / 0 writes): fuel_pressure_sensor above "
+     "this signed word sets fuel_pressure_diagnostic_flags = 2, which is debounced (150 passes) into fuel_pressure_diagnostic_snapshot bit 2 "
+     "and fault 315 (no OBD slot), and cm848_applyFuelLimitsForFuelPressureFaults counts snapshot bit 2 like bit 0 (the too-high bit of "
+     "fuel_pressure_sensor_too_high_threshold, 3688) for the logical output 54 request. Value 30738 in the dump, far above the sensor "
+     "full scale 3689, so the flag cannot be set here; why the calibration carries it is calibration intent that the firmware cannot "
+     "answer. RAM copy of ROM at 0x40951e, outside 0x3fd482-0x3feec1, so no _cal. Role-only name, no claim about the value.")
+
+# ------------------------------------------------------------------ governor rows (0x3ff6a2-0x3ff6a8)
+glob("0x003fa0fc", "fuel_demand_integrator_max", "fuel_demand_decaying_peak",
+     "Decaying peak hold of fuel_demand_previous, used only in cm848_runOperatingModeSpeedGovernor (xref: word, 3 reads / 1 write). "
+     "Each pass it takes fuel_demand_previous when that is above it or above its ceiling, or when the step is 0; otherwise it is limited "
+     "to the ceiling (fuel_demand_base_offset minus the ceiling offset, floored at 0), lowered by the step and kept at or above "
+     "fuel_demand_previous - so it never lies below the demand and falls linearly after a peak. It is one of the inputs of the governor "
+     "output governor_proportional_gain (that output is fuel_demand_integrator_b_sum when this is below it, else the lower of this and "
+     "fuel_demand_ramp_state). It is not an accumulator, so 'integrator' is wrong. Time-shared window 0x3F9800-0x3FDB30: xref_addr.py "
+     "lists no user below 0x7F60 (the filter was checked on 0x3fee34 / 0x3fee3a, where it does find the boot users). No type change.")
+
+GOV = ("Read once, in cm848_runOperatingModeSpeedGovernor (xref: word, 1 read / 0 writes); ROM copy at 0x3ff6xx, outside the EEPROM "
+       "range, so no _cal, and not cam timing. Per pass, while fuel_demand_previous is at or below both fuel_demand_decaying_peak (new name "
+       "of fuel_demand_integrator_max, 0x3fa0fc) and its ceiling and the step is nonzero, the peak is limited to the ceiling "
+       "(fuel_demand_base_offset minus the ceiling offset, floored at 0), lowered by the step and kept at or above fuel_demand_previous. "
+       "The pair (step, ceiling offset) is chosen by fuel_pressure_setpoint - fuel_pressure_feedback_filtered against "
+       "fuel_pressure_error_threshold (-307, signed): above it the 4 / 44 pair, otherwise the 2 / 29 pair (equality takes the 2 / 29 "
+       "pair). ")
+glob("0x003ff6a2", "cam_timing_correction_high_cal", "fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold",
+     GOV + "This row is the step used above the threshold: 4 counts = 0.27 mm3 per pass.")
+glob("0x003ff6a4", "cam_timing_correction_low_cal", "fuel_demand_decaying_peak_decrease_step_below_pressure_error_threshold",
+     GOV + "This row is the step used at or below the threshold: 2 counts = 0.14 mm3 per pass.")
+glob("0x003ff6a6", "cam_timing_correction_high_b_cal", "fuel_demand_decaying_peak_ceiling_offset_above_pressure_error_threshold",
+     GOV + "This row is the ceiling offset used above the threshold: 44 counts = 3.0 mm3.")
+glob("0x003ff6a8", "cam_timing_correction_low_b_cal", "fuel_demand_decaying_peak_ceiling_offset_below_pressure_error_threshold",
+     GOV + "This row is the ceiling offset used at or below the threshold: 29 counts = 2.0 mm3.")
+
+# ------------------------------------------------------------------ plausibility check variables (10) + 2 flags
+glob("0x0040b9c0", "fuel_correction_ramp_state", "fuel_pressure_sensor_plausibility_state",
+     "State of the check: 0 not running, 1 averaging (all gates open), 2 passed (average below expected, fault 7 cleared), 3 failed "
+     "(fault 7 set), 4 aborted by faults (cm848_abortFuelPressureSensorPlausibilityOnFaults). xref: word, 3 reads / 5 writes; users are "
+     "the check, the wrapper, the abort check and the init only. Not a ramp and not a fuel correction.")
+glob("0x0040b9ba", "fuel_correction_ramp_demand", "fuel_pressure_sensor_plausibility_average_fuel_demand",
+     "Running average of fuel_demand_computed: (average x n / 10 + demand) x 10 / (n + 10), n = step count, capped at 5888; the first "
+     "pass (n = 0) takes the demand itself. Compared with the expected average at step 150. xref: word, 2 reads / 2 writes (check, init).")
+glob("0x0040b9bc", "fuel_correction_timing_target", "fuel_pressure_sensor_plausibility_expected_fuel_demand",
+     "Running average of the expected fuel demand (table value for the present load state plus the in-gear addend, averaged like the "
+     "demand by cm848_calculateExpectedFuelDemandAverage): a fuel quantity of 16.9 to 38.8 mm3, not an injection timing. xref: word, "
+     "2 reads / 2 writes (check, averaging helper).")
+glob("0x0040b9be", "fuel_correction_timing_base_addend", "fuel_pressure_sensor_plausibility_fuel_addend",
+     "Fuel quantity added to the expected demand: the constant at 0x409ed8 (200 = 13.6 mm3) when transmission_type_cal is nonzero "
+     "(3 = automatic here) and transmission_park_or_neutral_flag is 0 (in gear), else 0. xref: word, 1 read (the averaging helper) / "
+     "1 write (the check).")
+glob("0x00409ee2", "fuel_correction_timing_table", "fuel_pressure_sensor_plausibility_expected_fuel_demand_table",
+     "Byte-length word (8) followed by four expected fuel demands 249 / 311 / 342 / 371 (16.9 / 21.1 / 23.2 / 25.2 mm3): entry 1 = A/C "
+     "clutch request (air_conditioning_clutch_request_byte mask 0x40) off and alternator_field_duty_target at or below the threshold, "
+     "2 = A/C on and duty at or below, 3 = A/C off and duty above, 4 = A/C on and duty above. The code reads entries 1-4 only, so "
+     "the earlier 'five zones' and 0.5 mm3 are the length word. xref: 3 reads / 0 writes, ROM copy. Typed word: see the type note.")
+glob("0x00409ed6", "fuel_correction_timing_demand_threshold", "fuel_pressure_sensor_plausibility_alternator_field_duty_threshold",
+     "14080 = 55 percent of the 25600 duty scale: alternator_field_duty_target at or below it (or above) selects the expected table "
+     "entry (xref: word, 4 reads / 0 writes, all in the check). Not a demand threshold and not about timing.")
+glob("0x0040b9c2", "fuel_correction_ramp_step_count", "fuel_pressure_sensor_plausibility_step_count",
+     "Passes counted while all gates stay open, 0 to 150 (limit at 0x409ede): the weight n of both averages, and a test is evaluated "
+     "once at 150; set back to 0 whenever a gate closes. xref: word, 2 reads / 2 writes (check, init) plus the averaging helper read.")
+glob("0x0040b9b8", "fuel_correction_above_target_count", "fuel_pressure_sensor_plausibility_fail_result_count",
+     "Consecutive tests whose average fuel demand was not below the expected value; at "
+     "fuel_pressure_sensor_plausibility_result_count_limit (3) fault 7 is set (state 3). Reset to 0 when a test comes out the other way. "
+     "xref: byte, 2 reads / 3 writes (check, init).")
+glob("0x0040b9b9", "fuel_correction_below_target_count", "fuel_pressure_sensor_plausibility_pass_result_count",
+     "Consecutive tests whose average fuel demand was below the expected value; at "
+     "fuel_pressure_sensor_plausibility_result_count_limit (3) fault 7 is cleared (state 2). Reset to 0 when a test comes out the other "
+     "way. xref: byte, 2 reads / 3 writes (check, init).")
+glob("0x00409ed4", "fuel_correction_direction_stable_count_limit", "fuel_pressure_sensor_plausibility_result_count_limit",
+     "3 in the dump: number of consecutive tests with the same result needed for a verdict. xref: byte, 2 reads / 0 writes, all in the "
+     "check; ROM copy.")
+glob("0x003fd1d4", "fuel_correction_ramp_locked_flag", "fuel_pressure_sensor_plausibility_verdict_locked_flag",
+     "Set to 1 when a verdict (state 2 or 3) is reached; while set, a closing gate no longer resets the state, so the verdict holds "
+     "until the init at the next start. xref: word, 2 reads / 2 writes (check, init). Time-shared window 0x3F9800-0x3FDB30: xref_addr.py "
+     "lists no user below 0x7F60 (all users are the two plausibility functions). No type change proposed.")
+glob("0x003fd1d6", "fuel_correction_direction_latch_flag", "fuel_pressure_sensor_plausibility_result_counted_flag",
+     "Set after a test result has been counted (evaluation only once per test: the check returns at once while it is set) and cleared "
+     "with the state when a gate closes. xref: byte, 1 read / 3 writes (check, init). Time-shared window 0x3F9800-0x3FDB30: xref_addr.py "
+     "lists no user below 0x7F60. No type change proposed.")
+
+# ------------------------------------------------------------------ injector diagnostic chain leftovers
+glob("0x003fb704", "cylinder_period_working", "injector_diagnostic_word",
+     "Written once per cycle in cm848_evaluateInjectorDiagnostics with the 24-bit word (shifted left by 8) returned by "
+     "cm848_readInjectorDiagnosticWord and passed to cm848_updateInjectorDiagnosticBits; xref: dword, 0 reads / 1 write, 1 function, so "
+     "it is a stored copy of that word and has nothing to do with a cylinder period. Time-shared window: xref_addr.py lists no user "
+     "below 0x7F60. No type change.")
+glob("0x0040b780", "protection_fault_eval_input", "cylinder_cutout_mask",
+     "Per-cylinder-event cutout mask: engine_injectionAngle_updateCutoutAndTimingDemand ORs in 0x55 or 0xaa (alternate cylinder events, "
+     "one injector group) when injector_diagnostic_bits_b / _c / _d or injection_check_flags request it, and the injection dispatch tests "
+     "((crank_sync_inhibit_flag | mask) >> (cylinder_event_index & 0x3f)) & 1; when its countdown ends it clears the mask or, past the "
+     "shutdown cycle limit, clears a TPU-A channel 4 enable bit. cm848_evaluateInjectorDiagnostics passes it as the 'no healing' argument "
+     "for classes c, b and d (they do not heal while a cutout is active). xref: word, 11 reads / 4 writes in 6 functions "
+     "(cutout function 4r/3w, injector diagnostics 3r, per-cylinder timing scan 2r, three init / load functions).")
+glob("0x0040c086", "protection_config_flags", "logical_output_request_bits_48_to_55",
+     "Byte 6 of the 80-bit logical output request array at 0x40c080 (0x40c080 + 6; requests 48-55): cm848_setLogicalOutputRequest sets "
+     "bit (n & 7) of byte n >> 3, so request 54 (called with 0x36 by cm848_updateFuelPressureFaultReactionRequests and "
+     "cm848_applyFuelLimitsForFuelPressureFaults) is bit 0x40, the bit the injector diagnostics, the feedback circuit checks and the "
+     "cutout scan test; bit 0x20 (request 53) is tested in 4 more places. xref: byte, 11 reads / 0 direct writes (the writes are "
+     "indexed) in 8 functions. Same convention as logical_output_request_bits_8_to_15 (0x40c081); not the 'a' variant of "
+     "protection_config_flags_b (0x3fd5a8), which is an unrelated EEPROM word.")
+
+uncertain("global", "0x003fd5a8", "protection_config_flags_b",
+          "No single subject, so no name: its 25 reads (xref: word, 0 writes, 20 functions, none below 0x7F60 although it sits in the "
+          "time-shared window) test bit 0 (1 site, together with fuel_demand_mode_index), bit 1 (the rpm-table fuel limiter, 1 site), bit 2 "
+          "(10 sites, e.g. with protection_mode_changed_flag), bit 3 (the transmission gear 1 / 2 and lockup logic, 9 tests), bit 4 "
+          "(cruise switches learned, 2 sites), bit 5 (sensor deviation check pending, 1 site) and bit 15 (cruise engaged, 1 site). "
+          "EEPROM mirror (EEPROM 0x126), so a rename needs _cal; the honest name is a generic subject-free one, probably for the whole "
+          "word group 0x3fd5a0-0x3fd5b6 (they may be one feature configuration block - not checked), which is a family decision, not a "
+          "single-row one. 'protection' is the subject of none of these bits.")
+
+# ------------------------------------------------------------------ new globals (plausibility constants)
+newglob("0x00409ed2", "fuel_pressure_sensor_plausibility_minimum_coolant_temperature", "i16",
+        "10880 = 170 F (1/64 F per count): the check runs only with coolant_temp at or above it. Width: xref_addr.py says word (1 read / "
+        "0 writes), and the load is lha, a signed compare with the temperature. ROM copy, outside 0x3fd482-0x3feec1, so no _cal.")
+newglob("0x00409ed5", "fuel_pressure_sensor_plausibility_maximum_setpoint_error", "byte",
+        "82 counts = 4.0 MPa: largest |fuel_pressure_sensor - fuel_pressure_setpoint| for which the check runs. Width: xref_addr.py says "
+        "byte (1 read / 0 writes, lbz at an odd address); a word peek here gives 21047 = 0x5237, which is this byte (0x52) plus the "
+        "first byte of the next word 0x409ed6, so read it as one byte.")
+newglob("0x00409ed8", "fuel_pressure_sensor_plausibility_in_gear_fuel_addend", "word",
+        "200 = 13.6 mm3: fuel quantity added to the expected demand when transmission_type_cal is nonzero and "
+        "transmission_park_or_neutral_flag is 0. Width: xref_addr.py says word (1 read / 0 writes), lhz.")
+newglob("0x00409eda", "fuel_pressure_sensor_plausibility_maximum_governor_output", "word",
+        "0 in the dump: the check runs only while fuel_demand_governor_output is not above it. Width: xref_addr.py says word "
+        "(1 read / 0 writes), lhz.")
+newglob("0x00409edc", "fuel_pressure_sensor_plausibility_maximum_speed_error", "word",
+        "200 = 25 rpm: largest |engine_rpm_state_t.current_rpm - the governor speed word 0x40aec2| for which the check runs. Width: "
+        "xref_addr.py says word (1 read / 0 writes), lhz.")
+newglob("0x00409ede", "fuel_pressure_sensor_plausibility_step_limit", "word",
+        "150: passes averaged before a test is evaluated (the step count stops there). Width: xref_addr.py says word (1 read / 0 "
+        "writes), lhz.")
+newglob("0x00409ee0", "fuel_pressure_sensor_plausibility_maximum_vehicle_speed", "word",
+        "0 in the dump: the check runs only while vehicle_speed_copy is not above it (vehicle stopped). Width: xref_addr.py says word "
+        "(1 read / 0 writes), lhz.")
+
+# ------------------------------------------------------------------ struct fields of fault_entry_t (hpcr_setFaultActiveStatus)
+FE = ("Direct assignment in hpcr_setFaultActiveStatus (the capture of a newly active fault); the field has no other named access in "
+      "the decompile. ")
+sfield("fault_entry_t", "timing_snapshot", "key_on_hour_meter", FE + "(&fault_entry_t_003fe674)[n].timing_snapshot = key_on_hour_meter "
+       "(dword, 0.2 s counts); it is a time stamp, not a fuel timing value.")
+sfield("fault_entry_t", "sensor_scale_1", "diagnostic_fault_flags_a", FE + "= diagnostic_fault_flags_a (word); not a sensor scale factor.")
+sfield("fault_entry_t", "sensor_scale_2", "diagnostic_fault_flags_b", FE + "= diagnostic_fault_flags_b (word); not a sensor scale factor.")
+sfield("fault_entry_t", "pressure_adj", "governor_mode_code", FE + "= (byte)governor_mode_code; not a pressure adjustment.")
+sfield("fault_entry_t", "load_throttle", "fuel_demand_computed", FE + "= fuel_demand_computed (word); the fuel demand, not a load / throttle value.")
+sfield("fault_entry_t", "torque_limit", "main_injection_timing", FE + "= main_injection_timing (word, 0.1171875 degree counts); an injection angle, not a torque limit.")
+
+# ------------------------------------------------------------------ notes
+note("Fault decode re-checked against the ROM image (slot = u16 at 0x5985a + 2 x fault, code = BCD word at 0x5b57c + 2 x slot): 57 / 58 / "
+     "60 = slots 162 / 163 / 164 = P1221 / P1222 / P1223, 59 = slot 158 (code word 0000), 69 / 70 / 71 = the same three codes, 303 = P0088, "
+     "304 = P0193, 305 = P0192, 333 = P0251, 408 / 409 = P0148, and 264 / 265 / 270 / 273 / 276 / 279 / 282 / 285 / 290 / 315-317 / 323 / "
+     "324 / 352 = slot 170 (no code), as wave 3 said. New: fault 7 AND fault 414 both decode to slot 151 = P0191, so P0191 has two "
+     "detectors: the running plausibility check (fault 7, cm848_checkFuelPressureSensorPlausibilityByFuelDemand) and the before-start "
+     "sensor voltage check (fault 414, hpcr_checkRailPressureSensorBeforeStart); the running check is aborted while fault 414 is detected.")
+
+note("Out of group, not read in full: cm848_selectTorqueLimit (0x1fd94), cm848_initTorqueLimitDefaults and the torque_limit_* / "
+     "torque_fuel_* family are an ENGINE SPEED limit arbitration, not torque. Evidence: the arbitrated result "
+     "torque_limit_arb_t.fuel_minimum (lowest of the limit sources 2-16) is compared directly with engine_rpm_state_t.current_rpm in "
+     "cm848_calculateEffectiveFuelLimit (0x20554), which cuts the fuel limit in proportion to the speed above it; every value is rpm x 8: "
+     "default torque_limit_fuel_minimum (0x3fd814) 30000 = 3750 rpm, torque_fuel_limit_abs_max_cal 28000 = 3500 rpm (final cap), "
+     "torque_limit_bypass_threshold_cal 6800 = 850 rpm (floor), torque_limit_fuel_reference_init 25600 = 3200 rpm, "
+     "governor_speed_limit_output 6000 = 750 rpm; the converter function cm848_monitorConverterSlipAndFuelLimit feeds source 13 with an "
+     "rpm-scaled table value. Suggest renaming the whole family at once (engine_speed_limit_*, cm848_selectTorqueLimit -> "
+     "cm848_selectEngineSpeedLimit). 0x3fd814 itself is in the EEPROM mirror (so it needs _cal; xref: word, 29 reads in 15 functions, "
+     "none below 0x7F60) and in the time-shared window, so it is not renamed here.")
+
+note("CSV comment to replace for fault_reaction_request_bits (0x40b8a0): 'Fault reaction mask built by "
+     "cm848_updateFuelPressureFaultReactionRequests from the per-fault masks of faults 317, 290, 324, 408 and 352 (bit 3 of the previous "
+     "value is kept): bit 0 caps governor_fuel_limit_source at fault_reaction_fuel_limit, bit 1 caps the engine speed limit "
+     "fuel_pressure_fault_engine_speed_limit_working at fault_reaction_engine_speed_limit, bit 2 caps fuel_pressure_setpoint at "
+     "fuel_pressure_setpoint_fault_reaction_cap (4095 = no cap here), bit 3 requests logical output 54. A nonzero value also ramps the "
+     "speed limit down, blocks cruise and zeroes the PCI fuel level. In this calibration only fault 352 has a mask (5 = bits 0 and 2) and "
+     "its caps (5888 and 4095) have no effect. (was cold_start_qualifier_flag) (Medium confidence)'. Verified: bit 2 caps "
+     "fuel_pressure_setpoint (0x40b8b6, formerly cam_timing_measured) at line 82538; bits 0 / 1 in cm848_applyFuelLimitsForFuelPressureFaults; "
+     "bit 3 is kept from the previous value and requests output 54. The 'ramps the speed limit down / blocks cruise / zeroes the PCI "
+     "fuel level' part is the earlier comment's claim; the nonzero tests exist in 37304, 38459-38500 and 67651-68065 but were not traced.")
+
+note("Injector diagnostic chain (the wave 3 leftover): already renamed in wave 3, nothing re-proposed - cm848_evaluateInjectorDiagnostics "
+     "(was mpc555_evaluateProtectionSyncFaults), cm848_readInjectorDiagnosticWord (was cm848_getProtectionSyncState), "
+     "cm848_updateInjectorDiagnosticBits (was cm848_updateProtectionBitFlags), cm848_evaluateInjectorDiagnosticFault (was "
+     "cm848_protectionFaultEvaluator), the four bit bytes 0x40b8cc-0x40b8cf and the four debounce limits 0x409a8a-0x409a90. Re-read here: "
+     "the four calls pass class a (table offset 2, counter 0x3fb6fc, limit 0x409a8c), class c (4, 0x3fb6fe, 0x409a90), class b (6, "
+     "0x3fb700, 0x409a8e) and class d (8, 0x3fb702, 0x409a8a); the counters are reached only through the ushort pointer argument of "
+     "cm848_evaluateInjectorDiagnosticFault (word accesses in the callee), so xref_addr.py reports no width for them and no new_global is "
+     "proposed (time-shared window, xref lists no user below 0x7F60); names for later: injector_diagnostic_bits_a_debounce_count / _c_ / "
+     "_b_ / _d_. Three more misnamed globals of the chain are renamed above (injector_diagnostic_word, cylinder_cutout_mask, "
+     "logical_output_request_bits_48_to_55). The cutout logic in engine_injectionAngle_updateCutoutAndTimingDemand also has "
+     "protection_fault_category_enable_mask, protection_fault_debounce_counter, protection_cylinder_event_countdown, "
+     "protection_shutdown_cycle_limit / _count and protection_debounce_event_factor / protection_cylinder_event_factor: all part of the "
+     "injector group cutout, not checked in detail here.")
+
+note("Type notes, no change proposed: 0x409530 fuel_pressure_too_high_count_limit is typed word but its only access is one lbz (xref: byte, "
+     "1 read / 0 writes) and 0x409531 has no access at all (value 0, probably padding of the ROM block), so it should be a byte and "
+     "0x409531 needs no row. 0x409ee2 (fuel_pressure_sensor_plausibility_expected_fuel_demand_table) is a byte-length word plus four entries (word[5], the "
+     "first being the length), not a five-zone table. The 16 + 13 interpolation state words at 0x3fd0ca-0x3fd102 and the 7 + 1 words at "
+     "0x3fb6cc-0x3fb6da are in the time-shared window, so no array typing is proposed. 0x409a6d is read as a word at an odd address "
+     "because of how the ROM block is packed (no change).")
+
+note("cm848_runOperatingModeSpeedGovernor tail, read for the four cam_timing_correction_* rows (function name kept, the rest of its 565 "
+     "lines not verified): fuel_demand_integrator_max (0x3fa0fc, used only in this function) is a decaying peak hold of "
+     "fuel_demand_previous (it jumps up to a higher demand and otherwise falls by the step, never below fuel_demand_previous), not an "
+     "accumulator, so it is renamed fuel_demand_decaying_peak above and the four new row names are built on that name. The output "
+     "governor_proportional_gain is then fuel_demand_integrator_b_sum when that is above the peak, else the lower of the peak and "
+     "fuel_demand_ramp_state (a rate-limited ceiling that starts at 0x1700). The sibling names fuel_demand_integrator_b / "
+     "fuel_demand_integrator_b_sum / fuel_demand_integrator_b_limit (the rpm-drop fuel term) were not checked for the same doubt.")
+
+note("Facts for this truck's image: fault_feature_config_flags (0x3fd5b6) = 0x24, so bit 5 (the plausibility check enable) is set and "
+     "the check runs; transmission_type_cal = 3 (automatic), so the 13.6 mm3 in-gear addend applies while "
+     "transmission_park_or_neutral_flag is 0; the four second-limit rows are 20000 / 20000 / 30400 / 20000 = 2500 / 2500 / 3800 / 2500 rpm "
+     "(only the 3800 rpm one, above the 3750 rpm default, can never lower the speed limit), so a registered fault 304 / 305 / 264 / 333 / "
+     "303 feeds a 2500 rpm limit into the speed limit arbitration (the arbitration result itself was not traced to the end), next to "
+     "the 883 = 60 mm3 fuel limits (limp home mask 156 = faults 333 / 304 / 305 / 303).")
+
+note("Cross-firmware check: all 32 retired function and global names of this file were searched in the CM550 function_renames.csv and "
+     "global_variables.csv, docs/cross_firmware_variable_map.csv and firmware/cross_firmware_matches.csv: no hits, so no cross-firmware "
+     "link breaks (the three retired function names without a cm848_ prefix are not shared names). The boot-ROM user filter used for the "
+     "time-shared words (xref_addr.py hits below 0x7F60) was validated on 0x3fee34 and 0x3fee3a, where it does report the wave 3 boot "
+     "users; it reports none for 0x3fd1d4, 0x3fd1d6, 0x3fd5a8, 0x3fb704, 0x3fa0fc and 0x3fb6fc-0x3fb702.")
+
+note("Spelling of initialize: keep cm848_initializeFuelPressureSetpointState / cm848_initializeFuelPressureGovernorMonitorState / "
+     "cm848_initializeFuelPressureDiagnosticState and the new cm848_initializeFuelPressureSensorPlausibilityState: the naming rule "
+     "allows only the listed abbreviations (rpm, adc, pwm, ...) and init is not among them; the many existing cm848_init* names are "
+     "legacy and need no change for this.")
+
+note("hpcr_setFaultActiveStatus (0x1df64): name kept. It writes the same 22 values in the same order twice: into fault_entry_t (the six "
+     "renamed fields above are direct assignments with no other named access) and into a second buffer addressed by raw offsets "
+     "(fault_freeze_frame_data_buf, 0x3fe7f4 + entry x 0x30, DAT_003fe7f9 ...); only the first copy has field names.")

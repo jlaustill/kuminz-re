@@ -1,0 +1,40 @@
+cm848: type every lookup table as a word array; real Type B lookup prototype (todo 039)
+
+The table arguments of lookupTableInterpolation / cm848_dualAxisTableInterpolation /
+cm848_interpolateTableWithoutCache / cm848_interpolateFuelMapTable and the
+sensorChannelTypeB_* lookups were byte scalars, so ~1,100 call arguments
+rendered (word *)&name. 897 tables are now word[N] rows in
+global_variables.csv (the importer applies T[N] since the previous commit):
+
+- Addresses come from the decompiled call arguments AND the call-site
+  disassembly (register loads); 816 agree, the rest were found by one side only
+  (duplicate names, auto-string labels, branchy argument setup).
+- Sizes come from the dumps: an axis is 1 + (byte-length word) / 2 words and its
+  breakpoints must be monotonic (all 504 axes pass); 1-D data is one value per
+  axis point after a header word (all 251 headers match their axis); a 2-D grid
+  is nx * ny words, no header (142 grids). The hand-written word[10] / word[21]
+  tables get the same counts.
+- 538 unnamed tables are type-only rows (empty name - they render as
+  WORD_ARRAY_<address>) whose comment gives the role, the size and the readers,
+  for a later naming pass; 4 auto-string labels (u_...) go the same way.
+- Junk labels inside tables (u_HAN#_*, BYTE_*), the boost_in_range_config struct
+  (it overlapped the two axes of a 2-D table; its only use was as that y axis)
+  and fuel_demand_ema_lower_threshold_cal (= fuel_demand_rpm_limit_low_cal[3],
+  a breakpoint) are removed.
+- protection_fuel_limit_l2/l3/l4_axis_cal each named two tables: the copies at
+  0x40853e / 0x408566 / 0x40858e (the converter lockup schedule axes) are now
+  protection_fuel_limit_l2/l3/l4_values_axis_cal.
+- Lookup cache words: 38 typed word / word[2] (fuel_map_interpolation_state and
+  coolant_temp_interp_state hold two each - their junk "+2" rows are gone).
+
+sensorChannelTypeB_configInit / _update pass their table arguments straight to
+lookupTableInterpolation (the "UNUSED" table_ptr / axes_ptr are its x axis and
+y data, interp_args_ptr its cache word, mode_flag its flags), so their
+prototype now says so and the unused table_interp_args_t struct is removed.
+
+(word *)& lines 966 -> 75 (the rest are sensor-channel state / EEPROM buffers),
+table_interp_args_t 50 -> 0, no new _name globals; 216 functions change,
+none added or removed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+

@@ -1,0 +1,16 @@
+# xref 0x0040b53c  (fuel_demand_rate_output)  — 4 referencing function(s)
+# total: 2 read(s), 2 write(s)   width(s): word
+
+cm848_calculateFuelDemandLimit: 1r/2w
+  [store] word   3ce84:	b3 f7 00 00 	sth     r31,0(r23)
+  [store] word   3cedc:	b3 d3 00 00 	sth     r30,0(r19)
+  [load ] word   3cee0:	a1 97 00 00 	lhz     r12,0(r23)
+
+cm848_trackFuelDemandMinimum: 1r/0w
+  [load ] word   3cf1c:	a0 84 b5 3c 	lhz     r4,-19140(r4)
+
+cm848_calculateRpmLoadLimit: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_storeFuelLimitValues: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

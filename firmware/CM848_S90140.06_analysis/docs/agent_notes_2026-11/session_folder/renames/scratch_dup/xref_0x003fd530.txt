@@ -1,0 +1,15 @@
+# xref 0x003fd530  (j1939_tsc1_active_flag)  — 3 referencing function(s)
+# total: 4 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_buildPgn65265CruiseControlVehicleSpeedMessage: 4r/0w
+  [load ] word   243f8:	a1 63 00 00 	lhz     r11,0(r3)
+  [load ] word   2440c:	a1 83 00 00 	lhz     r12,0(r3)
+  [load ] word   244d4:	a1 64 00 00 	lhz     r11,0(r4)
+  [load ] word   244e8:	a1 84 00 00 	lhz     r12,0(r4)
+
+cm848_processFuelDemandEnableFlag: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_transitionEngineOperatingMode: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

@@ -1,0 +1,932 @@
+{
+ "bin": 8,
+ "functions": [
+  "cm848_filterProtectionOutput",
+  "hpcr_fuelFinal_exponentialAverage"
+ ],
+ "assigned_tables": [
+  "0x0005b0ce",
+  "0x0005b0e8",
+  "0x0005b122",
+  "0x0005b12e",
+  "0x0005b13a",
+  "0x0005b154",
+  "0x0005b16e",
+  "0x0005b17a",
+  "0x0005b186",
+  "0x0005b192",
+  "0x0005b19e",
+  "0x0005b1aa",
+  "0x003ff080",
+  "0x003ff0a2",
+  "0x003ff0c4",
+  "0x003ff0e6",
+  "0x003ff108",
+  "0x003ff12e",
+  "0x003ff3b6",
+  "0x003ff3dc",
+  "0x003ff404",
+  "0x003ff426"
+ ],
+ "lookups": [
+  {
+   "id": "L077",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005b0ce",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L077"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 13,
+      "breakpoints_unsigned": [
+       65529,
+       65530,
+       65531,
+       65532,
+       65534,
+       65535,
+       0,
+       1,
+       2,
+       4,
+       6,
+       7
+      ],
+      "breakpoints_signed": [
+       -7,
+       -6,
+       -5,
+       -4,
+       -2,
+       -1,
+       0,
+       1,
+       2,
+       4,
+       6,
+       7
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005b0e8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L077"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 13,
+      "values_unsigned": [
+       0,
+       2900,
+       5806,
+       8704,
+       11607,
+       14508,
+       17408,
+       19046,
+       20685,
+       22323,
+       23962,
+       25600
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_filterProtectionOutput",
+     "statement": "alternator_field_duty_target = lookupTableInterpolation (&can_subsystem_init_state_c,battery_voltage_delta,WORD_ARRAY_0005b0ce, WORD_ARRAY_0005b0e8,1);",
+     "inputs": [
+      "battery_voltage_delta"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L078",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005b122",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L078"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "breakpoints_unsigned": [
+       25,
+       43,
+       62,
+       81,
+       100
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005b12e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L078"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "values_unsigned": [
+       0,
+       6400,
+       12800,
+       19200,
+       25600
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_filterProtectionOutput",
+     "statement": "alternator_field_duty_target = lookupTableInterpolation (&can_subsystem_init_state_b,battery_voltage_scan_index,WORD_ARRAY_0005b122, WORD_ARRAY_0005b12e,0);",
+     "inputs": [
+      "battery_voltage_scan_index"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L079",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005b13a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L079"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 13,
+      "breakpoints_unsigned": [
+       65529,
+       7,
+       8,
+       9,
+       11,
+       12,
+       14,
+       16,
+       17,
+       19,
+       20,
+       22
+      ],
+      "breakpoints_signed": [
+       -7,
+       7,
+       8,
+       9,
+       11,
+       12,
+       14,
+       16,
+       17,
+       19,
+       20,
+       22
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005b154",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L079"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 13,
+      "values_unsigned": [
+       0,
+       25600,
+       25600,
+       25600,
+       25600,
+       25600,
+       25600,
+       25600,
+       25600,
+       25600,
+       25600,
+       25600
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_filterProtectionOutput",
+     "statement": "alternator_field_duty_target = lookupTableInterpolation (&can_subsystem_init_state_e,battery_voltage_delta,WORD_ARRAY_0005b13a, WORD_ARRAY_0005b154,1);",
+     "inputs": [
+      "battery_voltage_delta"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L080",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005b16e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L080"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "breakpoints_unsigned": [
+       4000,
+       5200,
+       5600,
+       6400,
+       7200
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005b17a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L080"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "values_unsigned": [
+       3,
+       11,
+       11,
+       11,
+       11
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_filterProtectionOutput",
+     "statement": "cruise_voltage_debounce_timer = lookupTableInterpolation (&can_subsystem_init_state_d,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_0005b16e,WORD_ARRAY_0005b17a,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L081",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005b186",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L081"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "breakpoints_unsigned": [
+       0,
+       10240,
+       16384,
+       25600,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005b192",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L081"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "values_unsigned": [
+       80,
+       40,
+       12,
+       8,
+       8
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_filterProtectionOutput",
+     "statement": "wVar2 = lookupTableInterpolation (&can_subsystem_init_state_g,alternator_field_duty_target, WORD_ARRAY_0005b186,WORD_ARRAY_0005b192,0);",
+     "inputs": [
+      "alternator_field_duty_target"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L082",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005b19e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L082"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "breakpoints_unsigned": [
+       3840,
+       5120,
+       6000,
+       8400,
+       8800
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005b1aa",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L082"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "values_unsigned": [
+       31,
+       41,
+       102,
+       1280,
+       1280
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_filterProtectionOutput",
+     "statement": "wVar1 = lookupTableInterpolation (&can_subsystem_init_state_f,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_0005b19e,WORD_ARRAY_0005b1aa,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L219",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff080",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L219"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       1105,
+       1149,
+       1196,
+       1244,
+       1293,
+       1344,
+       1396,
+       1452,
+       1507,
+       1564,
+       1624,
+       1685,
+       1749,
+       1814,
+       1880,
+       1899
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ff0a2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L219"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "values_unsigned": [
+       14000,
+       13000,
+       12000,
+       11000,
+       10000,
+       9000,
+       8000,
+       7000,
+       6000,
+       5000,
+       4000,
+       3000,
+       2000,
+       1000,
+       0,
+       65236
+      ],
+      "values_signed": [
+       14000,
+       13000,
+       12000,
+       11000,
+       10000,
+       9000,
+       8000,
+       7000,
+       6000,
+       5000,
+       4000,
+       3000,
+       2000,
+       1000,
+       0,
+       -300
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "hpcr_fuelFinal_exponentialAverage",
+     "statement": "governor_adjustment_input = lookupTableInterpolation (&governor_adjustment_input_table_row_count,fuel_pressure_sensor_reference, WORD_ARRAY_003ff080,WORD_ARRAY_003ff0a2,2);",
+     "inputs": [
+      "fuel_pressure_sensor_reference"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_initialization_step_3",
+     "statement": "governor_adjustment_input = lookupTableInterpolation (&governor_adjustment_input_table_row_count,fuel_pressure_sensor_reference, WORD_ARRAY_003ff080,WORD_ARRAY_003ff0a2,2);",
+     "inputs": [
+      "fuel_pressure_sensor_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L220",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff0c4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L220"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       512,
+       1024,
+       1536,
+       2048,
+       2560,
+       3072,
+       3584,
+       4096,
+       4608,
+       5120,
+       5632,
+       6144,
+       6656,
+       7168,
+       7680
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003ff0e6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L220"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "values_unsigned": [
+       0,
+       3,
+       4,
+       5,
+       8,
+       12,
+       18,
+       24,
+       32,
+       41,
+       51,
+       63,
+       76,
+       89,
+       105,
+       121
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "hpcr_fuelFinal_exponentialAverage",
+     "statement": "boost_fuel_pressure_offset_lookup = lookupTableInterpolation(&DAT_003fb9dc,(word)dVar2,WORD_ARRAY_003ff0c4,WORD_ARRAY_003ff0e6,0) ;",
+     "inputs": [
+      "(word)dVar2"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L221",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff108",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L221"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 19,
+      "breakpoints_unsigned": [
+       0,
+       384,
+       768,
+       1152,
+       1536,
+       1920,
+       2304,
+       2688,
+       3072,
+       3456,
+       3840,
+       4224,
+       4608,
+       4992,
+       5376,
+       5760,
+       6144,
+       6528
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x003ff3b6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L221"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 19,
+      "breakpoints_unsigned": [
+       0,
+       1280,
+       2560,
+       3840,
+       5120,
+       6400,
+       7680,
+       8960,
+       10240,
+       11520,
+       12800,
+       14080,
+       15360,
+       16640,
+       17920,
+       19200,
+       20480,
+       21760
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x003ff12e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L221"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 324,
+      "grid_min_max_unsigned": [
+       640,
+       640
+      ],
+      "grid_min_max_signed": [
+       640,
+       640
+      ],
+      "shape_x_by_y": [
+       18,
+       18
+      ],
+      "first_row": [
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640
+      ],
+      "last_row": [
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "hpcr_fuelFinal_exponentialAverage",
+     "statement": "boost_fuel_timing_target = cm848_dualAxisTableInterpolation (WORD_ARRAY_003fb9de,boost_pressure_timing_ema_filtered,WORD_ARRAY_003ff108, vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);",
+     "inputs": [
+      "boost_pressure_timing_ema_filtered",
+      "vehicle_speed_copy"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_initialization_step_3",
+     "statement": "boost_fuel_timing_target = cm848_dualAxisTableInterpolation (WORD_ARRAY_003fb9de,boost_pressure_timing_ema_filtered,WORD_ARRAY_003ff108, vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);",
+     "inputs": [
+      "boost_pressure_timing_ema_filtered",
+      "vehicle_speed_copy"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L222",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003ff3dc",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L222"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 20,
+      "breakpoints_unsigned": [
+       6400,
+       7200,
+       8000,
+       8800,
+       9600,
+       10400,
+       11200,
+       12000,
+       12800,
+       13600,
+       14400,
+       15200,
+       16000,
+       16800,
+       17600,
+       18400,
+       19200,
+       20000,
+       20800
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x003ff404",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L222"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       589,
+       736,
+       883,
+       1030,
+       1178,
+       1325,
+       1472,
+       1619,
+       1766,
+       1914,
+       2061,
+       2208
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x003ff426",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L222"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       1024,
+       1024
+      ],
+      "grid_min_max_signed": [
+       1024,
+       1024
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024
+      ],
+      "last_row": [
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024,
+       1024
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "hpcr_fuelFinal_exponentialAverage",
+     "statement": "boost_fuel_rpm_blend_scale = cm848_dualAxisTableInterpolation (&boost_fuel_rpm_blend_table_row_count,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_003ff3dc,fuel_demand_limit,WORD_ARRAY_003ff404,WORD_ARRAY_003ff426,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_limit"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_initialization_step_3",
+     "statement": "boost_fuel_rpm_blend_scale = cm848_dualAxisTableInterpolation (&boost_fuel_rpm_blend_table_row_count,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_003ff3dc,fuel_demand_limit,WORD_ARRAY_003ff404,WORD_ARRAY_003ff426,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_limit"
+     ],
+     "output_argument": null
+    }
+   ]
+  }
+ ]
+}

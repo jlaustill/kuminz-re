@@ -1,0 +1,142 @@
+all_speed_governor_coolant_fuel_adjustment x1 | -ratio blend weight (0..128), plus the coolant temperature adjustment all_speed_governor_coolant_fuel_adjustment; the sum is all_speed_governo
+all_speed_governor_friction_fuel_blend_0 x1 | _trim_speed_request_working in operating mode 30) blended between the all_speed_governor_friction_fuel_blend_0 and _128 tables by the gear-r
+battery_voltage_linearization x1 | lectBatteryVoltage copies the battery sensor value (sensor channel 4: battery_voltage_linearization 
+battery_voltage_scan_rate_cal x1 | - alternator_field_read_back_retest_active_flag) and period 1000000 / battery_voltage_scan_rate_cal us - this calibration: 11 = r
+boost_denominator_min128 x1 | boost_pressure_sensor_value` (0x40bd8e) → `selectLoadNormalizer()` → `boost_denominator_min128` → fuel calculations
+cam_timing_reference_b_min x1 | gine_camTiming_* / cm848_checkFuelPressureWithoutInjection). ROM. Was cam_timing_reference_b_min
+charging_voltage_target_by_battery_temperature x1 | _value if charging_voltage_target_fixed_select is non-zero, otherwise charging_voltage_target_by_battery_temperature interpolated at battery_tempe
+cm848_applyProtectionOutputDemand x2 | _frequency_hz us to alternator_field_output_channel_cal's record. Was cm848_applyProtectionOutputDemand
+cm848_calcula x2 |  = 850 rpm, normally 30000 = 3750 rpm), not any torque. It is read by cm848_calcula  | earlier note: 1 while park
+cm848_calculate x12 | +      - On-time: `cm848_calculate{Pilot,Main,Auxiliary}Injectio
+cm848_calculateEffectiveFuelL x1 | ctEngineSpeedLimit is compared with engine_rpm_state_t.current_rpm in cm848_calculateEffectiveFuelL 
+cm848_calculateEngineTimingOffset x1 |  / injection_timing_* names are older guesses still to re-domain. Was cm848_calculateEngineTimingOffset Quirk (disassembly): only gov
+cm848_calculateGovernorCompensa x1 | e2m ASG_Droop_Axis / ASG_Alt_Droop_Axis (0.0015 RPM/MM3S). Written by cm848_calculateGovernorCompensa 
+cm848_calculateTurboBlendOut x1 | m848_selectEgrValvePositionSource); readers: the EGR fraction limiter cm848_calculateTurboBlendOut 
+cm848_computeCruiseSpeedSetpoint x1 | lower..upper; default when fuel or RPM is 0 | renamed 2026-11-11 from cm848_computeCruiseSpeedSetpoint: limits are -171..512 in RAM 
+cm848_e x4 | ts 0 accesses (pointer-passed), so this departs from the wave-3 rule; cm848_e (new row 2026-11-16)
+cm848_eeprom x1 | ight_cal,word,EEPROM-backed (mirror offset 0xa4, reads 0 in originals/cm848_eeprom.bin) and never written. cm848
+cm848_fuelDemandErrorCal x1 | numerator of charge_fuel_ratio and the minuend of the fresh air flow (cm848_fuelDemandErrorCal 
+cm848_fuelDemandFilterUpdate x1 |  value outside the axis. Only cm848_lookupProtectiveChi calls it. Was cm848_fuelDemandFilterUpdate
+cm848_miosChannel x1 | croseconds`; MDASM11-15 and MDASM27-31 (0x3060d8-0x3060ff) share the `cm848_miosChannel{N}*` wrappers over the generi
+cm848_miosPwm16 x1 | +0x00306080,mios_mpwmsm16,mios_mpwmsm_t,MIOS1 submodule 16 (PWM): cm848_miosPwm16* drive it with the same helpe
+cm848_miosPwm17 x1 | +0x00306088,mios_mpwmsm17,mios_mpwmsm_t,MIOS1 submodule 17 (PWM): cm848_miosPwm17* - was MIOS_MDASM1_AR 
+cm848_miosPwm18 x1 | +0x00306090,mios_mpwmsm18,mios_mpwmsm_t,MIOS1 submodule 18 (PWM): cm848_miosPwm18* - was MIOS_MDASM2_AR 
+cm848_miosPwm19 x1 | +0x00306098,mios_mpwmsm19,mios_mpwmsm_t,MIOS1 submodule 19 (PWM): cm848_miosPwm19* - was MIOS_MDASM3_AR 
+cm848_outputChannelNone x1 | adBackFaultBits` polls the read-feedback slots. Record 0's stubs are `cm848_outputChannelNone{Enable,SetPeriod,SetDuty}` an
+cm848_process x1 | hing-coefficient pointer for the cruise-switch ADC filter; param_7 of cm848_process/initCruiseSwitchChannel and p
+cm848_processFuelRateConfig x1 | s and the duty to wastegate_solenoid_output_channel_cal's record. Was cm848_processFuelRateConfig
+cm848_processGovernor x1 | e) write. 0x0040ae8c is the table chosen by the load and speed logic (cm848_processGovernor 
+cm848_rom x1 | the end of state 1 and gates the ring sampling of state 2; 30 in ROM (cm848_rom.bin). xref_addr.py: word (1 r
+cm848_runOperatingMod x1 | 1_disable_control into it on the J1939 automatic drivetrains. Read by cm848_runOperatingMod 
+cm848_select x1 | s charge flow, main timing overrides and the timing increment enable, cm848_select*Command / cm848_applyCombusti
+cm848_selectTorqu x1 | , cm848_processJ1939RxMessage, cm848_updateProtectionStateMachine and cm848_selectTorqu 
+cm848_sensorChannelN_ x1 | t (the `sensor_channel_filtered_output` slot), not the number in the `cm848_sensorChannelN_*` wrapper name - those differ
+cm848_set x1 | l` bit is set (EEPROM 0x74c; the J1939 input layer writes it through `cm848_set/clearDatalinkSwitchStateIfPri
+cm848_tpuAChannel x1 | ead-feedback slot checks an MDASM pin), TPU-A channels 0-15 = 17-32 (`cm848_tpuAChannel{N}*`), the generic drivers be
+cm848_tpuBChannel x1 |  0 = no output (`blr` / return-0 stubs), TPU-B channels 0-15 = 1-16 (`cm848_tpuBChannel{N}EnablePwm` / `SetPwmPeriodM
+cm848_tpuBReadBackChannel x1 | odMicroseconds` / `SetPwmDuty`; channels 4 / 6 / 7 / 10 / 11 use the `cm848_tpuBReadBackChannel{N}*` records, whose read-feed
+cm848_transitionEngineO x1 | so zeroes governor_speed_demand_limit_prev when set) and read only by cm848_transitionEngineO 
+cm848_updateFaultConditionSt x1 | ionSource, cm848_evaluateEgrValvePositionControlDiagnosticConditions, cm848_updateFaultConditionSt 
+coolant_temperature_linearization x1 | 8_selectCoolantTemperature copies the generic sensor channel 2 value (coolant_temperature_linearization tables, fault bits 0x10 / 0x1
+crank_pattern_t x1 | ngineSyncPulses use it as the pattern-start condition: (tooth count = crank_pattern_t 
+crank_position_valid_flag x1 | +  `crank_position_valid_flag`, polarity reversed; P0336); 
+cruise_engage_adc_valid_upper x1 |  +2 read as ushort in sensorChannelTypeB_configInit, fields +4/+6 are cruise_engage_adc_valid_upper/lower; ROM-sourced so NO _cal
+cruise_speed_setpoint_b x1 | n cruise_speed_command < cruise_speed_setpoint_adjusted the output is cruise_speed_setpoint_b minus (difference x 1024 / cr
+cylinder_event_factor x1 | ad in full this wave) and cm848_resetCylinderCutoutState. Loaded with cylinder_event_factor x cylinder_event_count_max wh
+diag_state_group1_a x1 | nterpolationStates (barometric fuel limit), cm848_initFuelTableSizes (diag_state_group1_a..d, the first is the state ar
+diagnostic_service_dispatch_table x3 | sor slot 63 (0x40bc80 + 2 x 63, override bit 15 of the word at +78 of diagnostic_service_dispatch_table); its only user is cm848_upda
+egr_valve_position_sensor_de x1 | s 642 / 643) or, with a sensor fault, fault 718 or the control error, egr_valve_position_sensor_de 
+ema_filter_state_t_003fa19c x2 | controller state struct and the battery-voltage averaging accumulator ema_filter_state_t_003fa19c (coefficient pointer set to W
+ema_filter_state_t_003fa5fe x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa5fe.coefficient points here
+ema_filter_state_t_003fa70a x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa70a.coefficient points here
+ema_filter_state_t_003fa758 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa758.coefficient points here
+ema_filter_state_t_003fa760 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa760.coefficient points here
+ema_filter_state_t_003fa768 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fa768.coefficient points here
+ema_filter_state_t_003fb026 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fb026.coefficient points here
+ema_filter_state_t_003fb9f6 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fb9f6.coefficient points here
+ema_filter_state_t_003fbce2 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbce2.coefficient points here
+ema_filter_state_t_003fbcea x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbcea.coefficient points here
+ema_filter_state_t_003fbd10 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbd10.coefficient points here
+ema_filter_state_t_003fbd2e x2 | m848_selectEngineSpeedLimit) and the accumulator of its filter state (ema_filter_state_t_003fbd2e, coefficient WORD_0005c2f2) t
+ema_filter_state_t_003fcbdc x2 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcbdc.coefficient points here
+ema_filter_state_t_003fcc08 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcc08.coefficient points here
+ema_filter_state_t_003fcce8 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcce8.coefficient points here
+ema_filter_state_t_003fccf6 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fccf6.coefficient points here
+ema_filter_state_t_003fcd18 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd18.coefficient points here
+ema_filter_state_t_003fcd20 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd20.coefficient points here
+ema_filter_state_t_003fcd96 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcd96.coefficient points here
+ema_filter_state_t_003fceb4 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fceb4.coefficient points here
+ema_filter_state_t_003fcebe x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcebe.coefficient points here
+ema_filter_state_t_003fcec6 x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcec6.coefficient points here
+ema_filter_state_t_003fcece x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcece.coefficient points here
+ema_filter_state_t_003fd00a x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fd00a.coefficient points here
+ema_filter_state_t_003fd03c x1 | ent: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fd03c.coefficient points here
+engine_crank_state x2 | 44cc8,cm848_setEngineCrankState1,Crank state transition handler: sets engine_crank_state.crank_state to 1 and, when en
+engine_feature_enable_flags x1 | l_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100,,needs_review
+engine_load_normalized x1 | timing_fuel_limited_adjustment,word,2,dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag a
+engine_power_accumulator_increment x1 | engine_power_accumulator_cal,dword,Named for the table that feeds it (engine_power_accumulator_increment); 'soot' (the e2m OCM_Soot sl
+engine_retarder_torque_stage x1 | ine retarder torque reported in ERC1 (PGN 61440) byte 2, SPN 520: the engine_retarder_torque_stage table selected by the number 
+engine_retarder_torque_stage_1 x1 | ues[4], or stage 4 when the retarder has 4 stages), then the first of engine_retarder_torque_stage_1 to 5_values whose maximum at 
+engine_rpm_state x5 | ngine acceleration filter: engine_acceleration_unfiltered = change of engine_rpm_state.target_rpm since the previous
+engine_sync_speed_fault_flags x1 | ommand high (fault 264); while non-zero the feedback trim is off. Was engine_sync_speed_fault_flags
+fault_derate_fuel_limit_by_engine_speed x1 | 5c2ec (13) per call. With the ramp above 0 the limit lies between the fault_derate_fuel_limit_by_engine_speed curve (ramp 256) and protecti
+fault_diagnostic_word_1 x1 |  fault freeze frames and sent by SCI command 20 (x 0x33 / 0x333). Was fault_diagnostic_word_1
+fault_timing_snapshot x1 | ntry_t.key_on_hour_meter) and the PCI / SCI security seed source. Was fault_timing_snapshot
+fuel_blend_bypass_flag x1 | nt,word,2,dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active,,needs_review
+fuel_blend_enable_flag x1 | ustion_reference_state_t,0x0040a494,egr_off_flag,word,2,enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mo
+fuel_blend_lower x1 | b / _a / _boost5_lookup 0x40a4d4-0x40a4da) and picks / blends them by fuel_blend_lower / upper_map_number (the tail 
+fuel_blend_mode_override_cal x1 | _off_flag,word,2,enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_fl
+fuel_demand_arb x1 |  feeds DAT_0040a556. It is read as a signed value and subtracted from fuel_demand_arb 
+fuel_demand_blend_threshold_cal x1 | justment_active_flag,word,2,1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal,,needs_review
+fuel_level_unfiltered x1 | w ADC counts 0-1023 = state[0] of the channel state block (state[1] = fuel_level_unfiltered); low voltage = full (ADC 65 
+fuel_metering_feedback_min_by_demand_threshold x1 | 0x0040b8fe,fuel_metering_feedback_minimum_expected,word,Output of the fuel_metering_feedback_min_by_demand_threshold lookup at the demand threshol
+fuel_operation_mode_cou x1 | s_8_to_15 is set; cm848_initGovernorProtectionState sums all six into fuel_operation_mode_cou 
+fuel_pid_coeff2 x1 | 024) / 2, could also be a filter's) from the coefficient calibrations fuel_pid_coeff2/3/6/7/8_cal and a speed scale
+fuel_pressure_clamp_enable_cal x1 | 40xxxx; 0x408bxx is never written) so correctly NO _cal. Renamed from fuel_pressure_clamp_enable_cal (mislabeled - a speed clamp)
+fuel_pressure_fault_engine_spee x1 | ressureFaultFuelLimit (xref_addr.py: 6 reads / 6 writes). Parallel to fuel_pressure_fault_engine_spee 
+fuel_pressure_raw x1 | elRateRamp; width word confirmed lhz r9,0(r4) @ 0x4098c. Renamed from fuel_pressure_raw - it is NOT the fuel pressure
+fuel_pressure_setpoint_base_map x1 | liary-control task: the lower of the blended rpm x fuel quantity map (fuel_pressure_setpoint_base_map / _map_1 to _map_4), the cool
+fuel_pressure_threshold_b_cal x1 | ruiseSpeedLimit:39625); ROM-to-RAM region so NOT a _cal. Renamed from fuel_pressure_threshold_b_cal (mislabeled - a speed)
+fuel_pressure_threshold_prev x1 | it_working (cm848_calculateFaultCruiseSpeedLimit:39602). Renamed from fuel_pressure_threshold_prev (mislabeled - a speed)
+governor_speed_scale_factor_blend_0 x1 |  is the blend (weighted by the gear-ratio blend weight 0..128) of the governor_speed_scale_factor_blend_0 and _128 tables at the reques
+governor_status_overspeed_flag_snapshot x1 |  speed derate); only these 2 bits used; shadow @0x3fea2a; the sibling governor_status_overspeed_flag_snapshot is a wrong write-only name
+hpcr_injectorPulseWidthCalc x1 | mmand caches (`j1939_calib_handler_*`) and actuators c / d / e / g. (`hpcr_injectorPulseWidthCalc` at 0x533e0 was the discrete 
+injection_quantity_auxiliary x1 | on_quantity) injection_quantity_auxiliary_limit_unscaled: the blended injection_quantity_auxiliary map and the coolant, ambient 
+injection_quantity_pilot_ambient_map x1 | +0x0040b94a,injection_quantity_pilot_ambient_correction,word,(injection_quantity_pilot_ambient_map value x ambient factor) >> 12
+injection_quantity_pilot_base_map x1 | tion_quantity_pilot_map_N tables (current / target map index) against injection_quantity_pilot_base_map; first term of the arbitratio
+injection_quantity_pilot_boost_map x1 | +0x0040b94e,injection_quantity_pilot_boost_map_value,word,Output of injection_quantity_pilot_boost_map (x engine speed with hysteres
+injection_quantity_pilot_intake_temperature_factor x1 | value x intake temperature factor) >> 12 with the factor from the 1-D injection_quantity_pilot_intake_temperature_factor table: a quantity, not a slew
+injection_quantity_pilot_intake_temperature_map x1 | 0040b946,injection_quantity_pilot_intake_temperature_correction,word,(injection_quantity_pilot_intake_temperature_map value x intake temperature fa
+injection_timing_adjustment_flag x1 | on on); cm848_updateMainInjectionTimingByDeliveryMode builds bit 2 of injection_timing_adjustment_flag 
+injection_timing_auxiliary_map_1 x2 | _auxiliary_map_blend_cached_axis_offset,word,Lookup cache word of the injection_timing_auxiliary_map_1..4_grid lookups inside the au
+injection_timing_offset_map_1 x2 | iming_pilot_offset_map_blend,word,cm848_interpolateAlphaChiValue over injection_timing_offset_map_1..4_grid with injection_timing
+injection_timing_offset_map_a x1 | ming_offset_map_output: two engine speed x fuel_demand_computed maps (injection_timing_offset_map_a and injection_timing_offset_m
+injection_timing_offset_map_b x1 |  speed x fuel_demand_computed maps (injection_timing_offset_map_a and injection_timing_offset_map_b) blended by the combustion al
+intercooler_temp_raw x1 | olds applies. The old name came from the oil temperature slot 11 name intercooler_temp_raw. 
+l4_axis_cal x1 | +  - **Watch for:** `protection_fuel_limit_l2/l3/l4_axis_cal` used to name two tables each
+load_rate_cap x1 | +  / `fuel_blend_*` / `load_rate_cap` words there were these terms
+lower_rpm_limit x1 | rator fed by the fuel_demand_quantity and fuel_flow_rate error terms, lower_rpm_limit, desired_rpm); the ceiling is
+mios_mdasm12_t x1 | smN` / `mios_mpwmsmN` (the per-channel copies `mios_mpwmsm1_t` ... / `mios_mdasm12_t` ... and the `MIOS_MDASM11_AR
+mios_mpwmsm1_t x1 | `SCR`), named `mios_mdasmN` / `mios_mpwmsmN` (the per-channel copies `mios_mpwmsm1_t` ... / `mios_mdasm12_t` ... a
+mpc555_mios x1 |  and the `MIOS_MDASM11_AR`-style instance names are gone); the eight `mpc555_mios*` drivers take `mios_mdasm_t 
+mpc555_tpu x1 | ls 0-15 = 17-32 (`cm848_tpuAChannel{N}*`), the generic drivers being `mpc555_tpu{A,B}EnablePwmChannel` / `SetP
+mpc555_updateSensorDiagnosticFlags x1 | n of the boot ROM 0x0-0x7  | earlier note: EMA filter state - used by mpc555_updateSensorDiagnosticFlags 
+my_struct_t x1 | :** a `T[N]` type in `global_variables.csv` (`word[10]`, `byte[17]`, `my_struct_t[4]`) is applied by the import
+protection_ema_cal_offset x1 |  32-bit words equal to it) find none.  | earlier note: previous-cycle protection_ema_cal_offset
+protection_fuel_limit_l2 x1 | +  - **Watch for:** `protection_fuel_limit_l2/l3/l4_axis_cal` used to name 
+qadc_channel_index_table x1 | rd +80 of diagnostic_service_dispatch_table has mask 0x20 clear, with qadc_channel_index_table[0x45] (= 69) as the live chan
+rpm_governor_state x3 | _fixed x gain / 4096), non-zero selects the engine speed x load grid (rpm_governor_state.reserved_0c). 0 in the dump. 
+safety_bits_1 x4 | at 0. Used only by the monitor.  | earlier note: ramp counter setting safety_bits_1 0x1000 at limit
+stage_4_values x1 | neRetarderStagePercent from engine_retarder_torque_stage_6_values[4] (stage_4_values[4] when engine_retarder_stage
+switch_input_datalink_source_bits_cal x3 | `fuel_demand_feature_flags` is set and switch 7 is datalink-sourced (`switch_input_datalink_source_bits_cal` bit 7). That flag word is 0x
+switch_input_datalink_state_bits x2 | 8_scanAndDebounceSwitchInputs` (0x4eb48). Each switch comes from (a) `switch_input_datalink_state_bits` when its `switch_input_datal
+switch_input_polarity_bits_cal x2 | mage` in one pass and by `cm848_readDiscreteInputLine`, 0x4f2ec) XOR `switch_input_polarity_bits_cal`, or (c) its software-set val
+switch_input_source_priority x1 | hrough `cm848_set/clearDatalinkSwitchStateIfPriority`, arbitrated by `switch_input_source_priority`), (b) its hardware line `swi
+switch_input_state_bits x13 | lue when it has no line (e.g. switch 31). A 4-sample debounce writes `switch_input_state_bits` @ 0x40c050 (switch n = byte 
+table_interp_args_t x1 | state_ptr[5], x_axis, y_data, flags)`. The old prototype called them `table_interp_args_t *` / "unused" table / axes / 
+table_naming_campaign_2026 x1 | nce (40 % medium) or skip reason is in `CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv`. Bin 10's domain w
+test_lookup_tables x1 | +    - Tests: `python3 firmware/scripts/test_lookup_tables.py` (synthetic cases plus gro
+tpu_a_channel_interrupt_handler_table x2 | 6-11-11 - Readability Medium Accuracy Confidence Medium | reached via tpu_a_channel_interrupt_handler_table[10] - mpc555_tpuAInterruptDis
+upper_map_number x1 | okup 0x40a4d4-0x40a4da) and picks / blends them by fuel_blend_lower / upper_map_number (the tail of that function wa
+variable_geometry_turbochar x1 | (0x0119CB00) sits before T_VGT_Closed_Adjustment_Enable (0x0119CC00 = variable_geometry_turbochar 
+-- 141 unknown tokens

@@ -1,0 +1,921 @@
+address,action,name,old_type,count,roles,region,named_inside,tables_inside,structs,arrays,functions,notes,detail,readers
+0x000592b2,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_sensorChannel0_init cm848_sensorChannel0_process
+0x000592c4,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel0_init cm848_sensorChannel0_process
+0x000592e6,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensorChannel1_init cm848_sensorChannel1_process
+0x0005930e,retype_duplicate_name,,word[20],20,data,rom,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel1_init cm848_sensorChannel1_process
+0x00059346,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_sensorChannel2_init cm848_sensorChannel2_process
+0x00059358,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel2_init cm848_sensorChannel2_process
+0x0005937a,retype_named,boost_pressure_linearization_x_axis,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_sensorChannel3_boostPressureInit cm848_sensorChannel3_boostPressureProcess
+0x0005938c,retype_named,boost_pressure_linearization_y_axis,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel3_boostPressureInit cm848_sensorChannel3_boostPressureProcess
+0x000593ae,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_sensorChannel4_init cm848_sensorChannel4_process
+0x000593c6,retype_duplicate_name,,word[12],12,data,rom,,,,,,,data: 11 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel4_init cm848_sensorChannel4_process
+0x000593ee,retype_duplicate_name,,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_sensorChannelGeneric_init_configBundle cm848_sensorChannelGeneric_update_configBundle
+0x0005941a,retype_duplicate_name,,word[22],22,data,rom,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannelGeneric_init_configBundle cm848_sensorChannelGeneric_update_configBundle
+0x00059456,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_sensorChannel7_init cm848_sensorChannel7_process
+0x0005946c,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel7_init cm848_sensorChannel7_process
+0x00059492,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_sensorChannel7_init_configBundle cm848_sensorChannel7_update_configBundle
+0x000594a8,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel7_init_configBundle cm848_sensorChannel7_update_configBundle
+0x000594ce,retype_duplicate_name,,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_sensorChannel9_init cm848_sensorChannel9_process
+0x000594fa,retype_duplicate_name,,word[22],22,data,rom,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel9_init cm848_sensorChannel9_process
+0x00059536,retype_duplicate_name,,word[24],24,axis,rom,,,,,,,x axis of 23 breakpoints after its byte-length word,cm848_sensorChannel10_intakeManifoldTemperatureInit cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x00059566,retype_duplicate_name,,word[24],24,data,rom,,,,,,,data: 23 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel10_intakeManifoldTemperatureInit cm848_sensorChannel10_intakeManifoldTemperatureProcess
+0x000595a6,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_sensorChannel11_init cm848_sensorChannel11_process
+0x000595b8,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel11_init cm848_sensorChannel11_process
+0x000595da,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_sensorChannel12_init cm848_sensorChannel12_process
+0x000595ec,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel12_init cm848_sensorChannel12_process
+0x000595fe,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_sensorChannel13_init cm848_sensorChannel13_process
+0x00059610,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel13_init cm848_sensorChannel13_process
+0x00059632,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_sensorChannel14_init cm848_sensorChannel14_process
+0x00059644,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel14_init cm848_sensorChannel14_process
+0x00059666,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_protection_init_configBundle cm848_protection_update_configBundle
+0x0005967c,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_protection_init_configBundle cm848_protection_update_configBundle
+0x000596a2,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_sensorChannel15_init cm848_sensorChannel15_process
+0x000596ba,retype_duplicate_name,,word[12],12,data,rom,,,,,,,data: 11 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel15_init cm848_sensorChannel15_process
+0x000596d2,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_sensorChannel16_init cm848_sensorChannel16_process
+0x000596e8,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_sensorChannel16_init cm848_sensorChannel16_process
+0x000596fe,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel16_init cm848_sensorChannel16_process
+0x00059714,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel16_init cm848_sensorChannel16_process
+0x0005972a,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTimingBlend
+0x0005973c,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTimingBlend
+0x0005974e,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTrimValues
+0x0005975e,retype_duplicate_name,,word[8],8,data,rom,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTrimValues
+0x0005976e,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTrimValues
+0x0005977e,retype_duplicate_name,,word[8],8,data,rom,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTrimValues
+0x000597d6,retype_duplicate_name,,word[25],25,axis,rom,,,,,,,x axis of 24 breakpoints after its byte-length word,engine_protection_derateParam_priorityApply engine_torqueLimit_upperCap_calc
+0x00059808,retype_duplicate_name,,word[25],25,data,rom,,,,,,,data: 24 values (one per axis breakpoint) after a byte-length word,engine_protection_derateParam_priorityApply engine_torqueLimit_upperCap_calc
+0x0005a426,retype_named,governor_load_xaxis_cal,word[5],5,axis,rom,,,,,,,x axis of 4 breakpoints after its byte-length word,cm848_calculateSpeedControlError j1939FormatMultiFrameResponse
+0x0005a430,retype_duplicate_name,,word[5],5,data,rom,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,j1939FormatMultiFrameResponse
+0x0005a43a,retype_duplicate_name,,word[5],5,data,rom,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,j1939FormatMultiFrameResponse
+0x0005a444,retype_duplicate_name,,word[5],5,data,rom,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,j1939FormatMultiFrameResponse
+0x0005a44e,retype_duplicate_name,,word[5],5,data,rom,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,j1939FormatMultiFrameResponse
+0x0005a458,retype_duplicate_name,,word[5],5,data,rom,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,j1939FormatMultiFrameResponse
+0x0005a462,retype_duplicate_name,,word[5],5,data,rom,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,cm848_calculateSpeedControlError
+0x0005a77c,retype_named,calibration_table_base,word[10],10,axis,rom,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_calculateGovernorCompensation cm848_calculateProtectionRpmFilter cm848_calculateThrottleProtectionLimit cm848_faultSeverityEvaluation cm848_selectTorqueLimit governor_computeSpeedTargetWithThermalCorrection
+0x0005a790,retype_named,calibration_table_offset,word[10],10,data,rom,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_calculateGovernorCompensation cm848_calculateProtectionRpmFilter cm848_calculateThrottleProtectionLimit cm848_faultSeverityEvaluation cm848_selectTorqueLimit governor_computeSpeedTargetWithThermalCorrection
+0x0005a7a4,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_processThrottlePositionLookups cm848_selectTorqueLimit governor_computeSpeedTargetWithThermalCorrection
+0x0005a7bc,retype_duplicate_name,,word[12],12,data,rom,,,,,,,data: 11 values (one per axis breakpoint) after a byte-length word,cm848_processThrottlePositionLookups cm848_selectTorqueLimit governor_computeSpeedTargetWithThermalCorrection
+0x0005a7d4,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,governor_computeSpeedTargetWithThermalCorrection
+0x0005a7e6,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,governor_computeSpeedTargetWithThermalCorrection
+0x0005a7f8,retype_duplicate_name,,word[15],15,axis,rom,,,,,,,x axis of 14 breakpoints after its byte-length word,governor_computeSpeedTargetWithThermalCorrection
+0x0005a816,retype_duplicate_name,,word[15],15,axis,rom,,,,,,,y axis of 14 breakpoints after its byte-length word,governor_computeSpeedTargetWithThermalCorrection
+0x0005a834,retype_duplicate_name,,word[196],196,grid,rom,,,,,,,2-D grid: 14 rows of 14 values (z[(y - 1) x 14 + x - 1] / no header),governor_computeSpeedTargetWithThermalCorrection
+0x0005ab00,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_initSensorLookupTable5 cm848_processSensorLookupTable5
+0x0005ab12,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_initSensorLookupTable5 cm848_processSensorLookupTable5
+0x0005ab34,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensorChannel69_init cm848_sensorChannel69_process
+0x0005ab5c,retype_duplicate_name,,word[20],20,data,rom,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel69_init cm848_sensorChannel69_process
+0x0005ab94,add_type_only,,,21,axis,rom,,,,cruise_switch_adc_band_table_x,,,x axis of 20 breakpoints after its byte-length word,cm848_initCruiseSwitchChannel cm848_processCruiseSwitchChannel
+0x0005abbe,add_type_only,,,21,data,rom,,,,cruise_switch_button_code_table_y,,,data: 20 values (one per axis breakpoint) after a byte-length word,cm848_initCruiseSwitchChannel cm848_processCruiseSwitchChannel
+0x0005abf8,retype_duplicate_name,,word[21],21,axis,rom,,,,,,,x axis of 20 breakpoints after its byte-length word,sensorChannelTypeB_configInit_axis1 sensorChannelTypeB_update_axis1
+0x0005ac22,retype_duplicate_name,,word[21],21,data,rom,,,,,,,data: 20 values (one per axis breakpoint) after a byte-length word,sensorChannelTypeB_configInit_axis1 sensorChannelTypeB_update_axis1
+0x0005ac5c,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,x axis of 6 breakpoints after its byte-length word,sensorChannelTypeB_configInit_axis2 sensorChannelTypeB_update_axis2
+0x0005ac6a,retype_duplicate_name,,word[7],7,data,rom,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,sensorChannelTypeB_configInit_axis2 sensorChannelTypeB_update_axis2
+0x0005ac88,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,x axis of 6 breakpoints after its byte-length word,sensorChannelTypeB_configInit_axis3 sensorChannelTypeB_update_axis3
+0x0005ac96,retype_duplicate_name,,word[7],7,data,rom,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,sensorChannelTypeB_configInit_axis3 sensorChannelTypeB_update_axis3
+0x0005acb4,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,sensorChannelTypeB_configInit_axis4 sensorChannelTypeB_update_axis4
+0x0005acc6,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,sensorChannelTypeB_configInit_axis4 sensorChannelTypeB_update_axis4
+0x0005ace8,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_initSensorLookupTable3 cm848_processSensorLookupTable3
+0x0005acfa,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_initSensorLookupTable3 cm848_processSensorLookupTable3
+0x0005ad1c,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_initSensorLookupTable2 cm848_processSensorLookupTable2
+0x0005ad2e,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_initSensorLookupTable2 cm848_processSensorLookupTable2
+0x0005ad50,retype_duplicate_name,,word[27],27,axis,rom,,,,,,,x axis of 26 breakpoints after its byte-length word,cm848_initSensorLookupTable1 cm848_processSensorLookupTable0
+0x0005ad86,retype_duplicate_name,,word[27],27,data,rom,,,,,,,data: 26 values (one per axis breakpoint) after a byte-length word,cm848_initSensorLookupTable1 cm848_processSensorLookupTable0
+0x0005adcc,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_initSensorLookupTableInit1 cm848_processSensorLookupTable1
+0x0005ade2,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_initSensorLookupTableInit1 cm848_processSensorLookupTable1
+0x0005ae08,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,sensorChannelTypeA_configInit_axis5 sensorChannelTypeA_update_axis5
+0x0005ae30,retype_duplicate_name,,word[20],20,data,rom,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,sensorChannelTypeA_configInit_axis5 sensorChannelTypeA_update_axis5
+0x0005ae58,retype_duplicate_name,,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,fuel_coldStart_rpmLimit_select
+0x0005ae84,retype_duplicate_name,,word[22],22,data,rom,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,fuel_coldStart_rpmLimit_select
+0x0005aeb0,retype_duplicate_name,,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,fuel_coldStart_demandMin_2dLookup
+0x0005aedc,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,y axis of 10 breakpoints after its byte-length word,fuel_coldStart_demandMin_2dLookup
+0x0005aef2,retype_duplicate_name,,word[210],210,grid,rom,,,,,,,2-D grid: 10 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),fuel_coldStart_demandMin_2dLookup
+0x0005b096,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,governor_injectionTiming_modeAdj
+0x0005b0b2,retype_duplicate_name,,word[14],14,data,rom,,,,,,,data: 13 values (one per axis breakpoint) after a byte-length word,governor_injectionTiming_modeAdj
+0x0005b0ce,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_filterProtectionOutput
+0x0005b0e8,retype_duplicate_name,,word[13],13,data,rom,,,,,,,data: 12 values (one per axis breakpoint) after a byte-length word,cm848_filterProtectionOutput
+0x0005b102,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_processProtectionCoolantLookup
+0x0005b112,retype_duplicate_name,,word[8],8,data,rom,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionCoolantLookup
+0x0005b122,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_filterProtectionOutput
+0x0005b12e,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_filterProtectionOutput
+0x0005b13a,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_filterProtectionOutput
+0x0005b154,retype_duplicate_name,,word[13],13,data,rom,,,,,,,data: 12 values (one per axis breakpoint) after a byte-length word,cm848_filterProtectionOutput
+0x0005b16e,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_filterProtectionOutput
+0x0005b17a,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_filterProtectionOutput
+0x0005b186,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_filterProtectionOutput
+0x0005b192,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_filterProtectionOutput
+0x0005b19e,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_filterProtectionOutput
+0x0005b1aa,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_filterProtectionOutput
+0x0005b1be,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_calculateColdStartTempTable
+0x0005b1d8,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_calculateColdStartTempTable
+0x0005b1e4,retype_duplicate_name,,word[60],60,grid,rom,,,,,,,2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header),cm848_calculateColdStartTempTable
+0x0005b25c,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_calculateColdStartFuelAdjust
+0x0005b276,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_calculateColdStartFuelAdjust
+0x0005b282,retype_duplicate_name,,word[60],60,grid,rom,,,,,,,2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header),cm848_calculateColdStartFuelAdjust
+0x0005b2fa,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateColdStartTempTable
+0x0005b30c,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_calculateColdStartTempTable
+0x0005b338,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_updateIntakeAirHeaterPostheat
+0x0005b352,retype_duplicate_name,,word[13],13,data,rom,,,,,,,data: 12 values (one per axis breakpoint) after a byte-length word,cm848_updateIntakeAirHeaterPostheat
+0x0005b36c,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_updateIntakeAirHeaterPostheat
+0x0005b37c,retype_duplicate_name,,word[5],5,axis,rom,,,,,,,y axis of 4 breakpoints after its byte-length word,cm848_updateIntakeAirHeaterPostheat
+0x0005b386,retype_duplicate_name,,word[28],28,grid,rom,,,,,,,2-D grid: 4 rows of 7 values (z[(y - 1) x 7 + x - 1] / no header),cm848_updateIntakeAirHeaterPostheat
+0x0005b3be,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_computeIntakeAirHeaterPreheatDuration
+0x0005b3d8,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_computeIntakeAirHeaterPreheatDuration
+0x0005b3e4,retype_duplicate_name,,word[60],60,grid,rom,,,,,,,2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header),cm848_computeIntakeAirHeaterPreheatDuration
+0x0005b45c,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_pulseIntakeAirHeaterRelays
+0x0005b468,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_pulseIntakeAirHeaterRelays
+0x0005b474,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_processEngineOilPressure
+0x0005b480,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_processEngineOilPressure
+0x0005b48c,retype_duplicate_name,,word[25],25,grid,rom,,,,,,,2-D grid: 5 rows of 5 values (z[(y - 1) x 5 + x - 1] / no header),cm848_processEngineOilPressure
+0x0005b4d6,retype_duplicate_name,,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_calculateThermalLimitValue
+0x0005b502,retype_duplicate_name,,word[3],3,axis,rom,,,,,,,y axis of 2 breakpoints after its byte-length word,cm848_calculateThermalLimitValue
+0x0005b508,retype_duplicate_name,,word[42],42,grid,rom,,,,,,,2-D grid: 2 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateThermalLimitValue
+0x0005b8e6,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_runThermostatMonitor
+0x0005b8f2,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_runThermostatMonitor
+0x0005b8fe,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_runThermostatMonitor
+0x0005b90a,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_runThermostatMonitor
+0x0005b916,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_runThermostatMonitor
+0x0005b922,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_runThermostatMonitor
+0x0005b92e,retype_duplicate_name,,word[15],15,axis,rom,,,,,,,y axis of 14 breakpoints after its byte-length word,cm848_fuelDemandBlendCalculator
+0x0005b94c,retype_duplicate_name,,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_fuelDemandBlendCalculator
+0x0005b978,retype_duplicate_name,,word[294],294,grid,rom,,,,,,,2-D grid: 14 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_fuelDemandBlendCalculator
+0x0005bbc4,retype_duplicate_name,,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_fuelDemandBlendCalculator
+0x0005bbf0,retype_duplicate_name,,word[15],15,axis,rom,,,,,,,y axis of 14 breakpoints after its byte-length word,cm848_fuelDemandBlendCalculator
+0x0005bc0e,retype_duplicate_name,,word[294],294,grid,rom,,,,,,,2-D grid: 14 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_fuelDemandBlendCalculator
+0x0005be76,retype_duplicate_name,,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_calibrationGroup5_periodic
+0x0005bea2,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,y axis of 6 breakpoints after its byte-length word,cm848_calibrationGroup5_periodic
+0x0005beb0,retype_duplicate_name,,word[126],126,grid,rom,,,,,,,2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calibrationGroup5_periodic
+0x0005bfac,retype_duplicate_name,,word[126],126,grid,rom,,,,,,,2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calibrationGroup5_periodic
+0x0005c0a8,retype_duplicate_name,,word[126],126,grid,rom,,,,,,,2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calibrationGroup5_periodic
+0x0005c1a4,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_calibrationGroup5_periodic
+0x0005c1b2,retype_duplicate_name,,word[3],3,axis,rom,,,,,,,y axis of 2 breakpoints after its byte-length word,cm848_calibrationGroup5_periodic
+0x0005c1b8,retype_duplicate_name,,word[12],12,grid,rom,,,,,,,2-D grid: 2 rows of 6 values (z[(y - 1) x 6 + x - 1] / no header),cm848_calibrationGroup5_periodic
+0x0005c21e,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTimingBlend
+0x0005c230,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTimingBlend
+0x0005c242,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTimingBlend
+0x0005c25a,retype_duplicate_name,,word[12],12,data,rom,,,,,,,data: 11 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelDemandWithConditions cm848_calculateFuelTimingBlend
+0x0005c272,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_fuelTimingRateLimitedBlend
+0x0005c27e,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_fuelTimingRateLimitedBlend
+0x0005c4b6,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_updateSpeedLimitFromCoolant
+0x0005c4c8,retype_duplicate_name,,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_updateSpeedLimitFromCoolant
+0x0005c4da,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_calculateProtectionSpeedLimits
+0x0005c4e6,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_calculateProtectionSpeedLimits
+0x0005c4f2,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_processEngineConfigSpeedControl
+0x0005c500,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,y axis of 6 breakpoints after its byte-length word,cm848_processEngineConfigSpeedControl
+0x0005c50e,retype_duplicate_name,,word[36],36,grid,rom,,,,,,,2-D grid: 6 rows of 6 values (z[(y - 1) x 6 + x - 1] / no header),cm848_processEngineConfigSpeedControl
+0x0005c556,retype_named,j1939_fuel_table_xaxis_cal,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_calculateFuelDemandFilter cm848_initUdsServiceHandlers
+0x0005c582,retype_named,j1939_fuel_table_ystart_cal,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_calculateFuelDemandFilter cm848_initUdsServiceHandlers
+0x0005c58e,retype_named,j1939_fuel_table_yend_cal,word[105],105,grid,rom,,,,,,,2-D grid: 5 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateFuelDemandFilter cm848_initUdsServiceHandlers
+0x0005c67c,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_calculateFuelDemandOffsetTrim
+0x0005c690,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_calculateFuelDemandOffsetTrim
+0x0005c69c,retype_duplicate_name,,word[45],45,grid,rom,,,,,,,2-D grid: 5 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header),cm848_calculateFuelDemandOffsetTrim
+0x0005c6f6,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_runCoolingFanSpeedPid
+0x0005c708,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,y axis of 7 breakpoints after its byte-length word,cm848_runCoolingFanSpeedPid
+0x0005c718,retype_duplicate_name,,word[56],56,grid,rom,,,,,,,2-D grid: 7 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_runCoolingFanSpeedPid
+0x0005c7d2,retype_duplicate_name,,word[15],15,axis,rom,,,,,,,x axis of 14 breakpoints after its byte-length word,protection_fuel_demand_limiting
+0x0005c7f0,retype_duplicate_name,,word[15],15,data,rom,,,,,,,data: 14 values (one per axis breakpoint) after a byte-length word,protection_fuel_demand_limiting
+0x0005c80e,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,governorCruiseTimerManagement
+0x0005c824,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,y axis of 10 breakpoints after its byte-length word,governorCruiseTimerManagement
+0x0005c83a,retype_duplicate_name,,word[100],100,grid,rom,,,,,,,2-D grid: 10 rows of 10 values (z[(y - 1) x 10 + x - 1] / no header),governorCruiseTimerManagement
+0x0005c902,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,governorCruiseTimerManagement
+0x0005c918,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,governorCruiseTimerManagement
+0x0005c976,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005c99e,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005c9c0,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005cc20,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005cc3c,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005cc54,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005cd72,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005cd84,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005cd96,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005ce16,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005ce30,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005ce3c,retype_duplicate_name,,word[60],60,grid,rom,,,,,,,2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005ceb4,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005ced0,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005cee8,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005d006,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d022,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d03a,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005d158,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d174,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d18c,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005d2aa,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d2d2,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d2f4,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005d554,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d57c,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d59e,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005d7fe,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d826,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005d848,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005daa8,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005dad0,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateGovernorOutput
+0x0005daf2,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateGovernorOutput
+0x0005dd52,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005dd7a,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005dd9c,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005dffc,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e00e,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e020,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005e0a0,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e0bc,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e0d4,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005e1f2,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e20c,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e218,retype_duplicate_name,,word[60],60,grid,rom,,,,,,,2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005e290,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e2ac,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e2c4,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005e3e2,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e3fe,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e416,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005e534,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e550,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e568,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005e686,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e6ae,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e6d0,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005e930,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e958,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005e97a,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005ebda,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005ec02,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005ec24,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005ee84,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005eeac,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_auxiliary_boundary_condition_eval
+0x0005eece,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_auxiliary_boundary_condition_eval
+0x0005f12e,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,x axis of 7 breakpoints after its byte-length word,engine_injectionAngle_tpuUpdate
+0x0005f13e,retype_duplicate_name,,word[8],8,data,rom,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,engine_injectionAngle_tpuUpdate
+0x0005f166,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,engine_injectionAngle_lookupTimingTableOffset
+0x0005f172,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,engine_injectionAngle_lookupTimingTableOffset
+0x0005f18a,retype_duplicate_name,,word[55],55,grid,rom,,,,,,,2-D grid: 11 rows of 5 values (z[(y - 1) x 5 + x - 1] / no header),engine_injectionAngle_lookupTimingTableOffset
+0x0005f1f8,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_tpuMiosOutput_loadCalibration
+0x0005f208,retype_duplicate_name,,word[8],8,data,rom,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_tpuMiosOutput_loadCalibration
+0x0005f218,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_tpuMiosOutput_loadCalibration
+0x0005f224,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_tpuMiosOutput_loadCalibration
+0x0005f230,retype_named,cam_sync_timing_xaxis_cal,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateEngineFaultTiming cm848_calculateEngineTimingInterpolation cm848_calculateTimingWithTables
+0x0005f242,retype_named,cam_sync_timing_yaxis_cal,word[9],9,data,rom,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_calculateEngineFaultTiming cm848_calculateEngineTimingInterpolation cm848_calculateTimingWithTables
+0x0005f254,retype_duplicate_name,,word[25],25,axis,rom,,,,,,,x axis of 24 breakpoints after its byte-length word,cm848_calculateTimingWithTables
+0x0005f286,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateTimingWithTables
+0x0005f2a8,retype_duplicate_name,,word[384],384,grid,rom,,,,,,,2-D grid: 16 rows of 24 values (z[(y - 1) x 24 + x - 1] / no header),cm848_calculateTimingWithTables
+0x0005f5a8,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_calculateEngineTimingInterpolation
+0x0005f5c0,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,y axis of 9 breakpoints after its byte-length word,cm848_calculateEngineTimingInterpolation
+0x0005f5d4,retype_duplicate_name,,word[99],99,grid,rom,,,,,,,2-D grid: 9 rows of 11 values (z[(y - 1) x 11 + x - 1] / no header),cm848_calculateEngineTimingInterpolation
+0x0005f69a,retype_duplicate_name,,word[26],26,axis,rom,,,,,,,x axis of 25 breakpoints after its byte-length word,cm848_calculateTimingWithTables
+0x0005f6ce,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,y axis of 6 breakpoints after its byte-length word,cm848_calculateTimingWithTables
+0x0005f6dc,retype_duplicate_name,,word[150],150,grid,rom,,,,,,,2-D grid: 6 rows of 25 values (z[(y - 1) x 25 + x - 1] / no header),cm848_calculateTimingWithTables
+0x0005f808,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateTimingWithTables
+0x0005f81a,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_calculateTimingWithTables
+0x0005f82c,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_calculateTimingWithTables
+0x0005f8ac,retype_duplicate_name,,word[26],26,axis,rom,,,,,,,x axis of 25 breakpoints after its byte-length word,cm848_calculateEngineFaultTiming
+0x0005f8e0,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,y axis of 6 breakpoints after its byte-length word,cm848_calculateEngineFaultTiming
+0x0005f8ee,retype_duplicate_name,,word[150],150,grid,rom,,,,,,,2-D grid: 6 rows of 25 values (z[(y - 1) x 25 + x - 1] / no header),cm848_calculateEngineFaultTiming
+0x0005fa1a,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateEngineFaultTiming
+0x0005fa2c,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_calculateEngineFaultTiming
+0x0005fa3e,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_calculateEngineFaultTiming
+0x0005fabe,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_calculateEngineFaultTiming
+0x0005fad6,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,y axis of 9 breakpoints after its byte-length word,cm848_calculateEngineFaultTiming
+0x0005faea,retype_duplicate_name,,word[99],99,grid,rom,,,,,,,2-D grid: 9 rows of 11 values (z[(y - 1) x 11 + x - 1] / no header),cm848_calculateEngineFaultTiming
+0x0005fbc2,retype_named,fuel_pressure_sensor_volts_axis,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_processFuelPressureSensor
+0x0005fbce,retype_named,fuel_pressure_sensor_pressure_values,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_processFuelPressureSensor
+0x0005fbda,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fbec,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fbfe,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_sensor_channel_state_load
+0x0005fc7e,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fca6,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fcc8,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fce2,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fcfa,retype_duplicate_name,,word[132],132,grid,rom,,,,,,,2-D grid: 11 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header),cm848_sensor_channel_state_load
+0x0005fe02,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fe18,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fe24,retype_duplicate_name,,word[50],50,grid,rom,,,,,,,2-D grid: 5 rows of 10 values (z[(y - 1) x 10 + x - 1] / no header),cm848_sensor_channel_state_load
+0x0005fe88,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fea2,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0005fec4,retype_duplicate_name,,word[192],192,grid,rom,,,,,,,2-D grid: 16 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header),cm848_sensor_channel_state_load
+0x00060044,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x00060058,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x00060064,retype_duplicate_name,,word[45],45,grid,rom,,,,,,,2-D grid: 5 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header),cm848_sensor_channel_state_load
+0x000600be,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x000600e6,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x00060108,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x00060130,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x00060152,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_sensor_channel_state_load
+0x000603b2,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x000603da,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x000603fc,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_sensor_channel_state_load
+0x0006065c,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x00060684,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x000606a6,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_sensor_channel_state_load
+0x00060906,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x0006092e,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_sensor_channel_state_load
+0x00060950,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_sensor_channel_state_load
+0x00060bb0,retype_duplicate_name,,word[7],7,axis,rom,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_updateEngineDiagnosticCounters
+0x00060bbe,retype_duplicate_name,,word[7],7,data,rom,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_updateEngineDiagnosticCounters
+0x00060bcc,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_processEnginePositionDiagnostics
+0x00060be2,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_processEnginePositionDiagnostics
+0x00060bf8,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_processEnginePositionDiagnostics
+0x00060c0e,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_processEnginePositionDiagnostics
+0x00060c24,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_processEnginePositionDiagnostics
+0x00060c3a,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_processEnginePositionDiagnostics
+0x00060c50,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_processEnginePositionDiagnostics
+0x00060c66,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_processEnginePositionDiagnostics
+0x00060c7c,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_processEnginePositionDiagnostics
+0x00060c92,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_processEnginePositionDiagnostics
+0x00060ca8,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_processEnginePositionDiagnostics
+0x00060cbe,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_processEnginePositionDiagnostics
+0x00060cd4,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_processEnginePositionDiagnostics
+0x00060cea,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_processEnginePositionDiagnostics
+0x00060d00,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00060d12,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00060d24,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_calculateEngineTimingData
+0x00060da4,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00060dbe,retype_duplicate_name,,word[13],13,data,rom,,,,,,,data: 12 values (one per axis breakpoint) after a byte-length word,cm848_calculateEngineTimingData
+0x00060dd8,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00060de4,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_calculateEngineTimingData
+0x00060df0,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00060e04,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,y axis of 9 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00060e18,retype_duplicate_name,,word[81],81,grid,rom,,,,,,,2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header),cm848_calculateEngineTimingData
+0x00060eba,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00060ed6,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00060eee,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_calculateEngineTimingData
+0x0006100c,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00061028,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00061040,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_calculateEngineTimingData
+0x0006115e,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x0006117a,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00061192,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_calculateEngineTimingData
+0x000612b0,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x000612cc,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x000612e4,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_calculateEngineTimingData
+0x00061402,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x00061412,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateEngineTimingData
+0x0006142a,retype_duplicate_name,,word[77],77,grid,rom,,,,,,,2-D grid: 11 rows of 7 values (z[(y - 1) x 7 + x - 1] / no header),cm848_calculateEngineTimingData
+0x000614c4,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x000614ec,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x0006150e,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_torque_limit_state_update
+0x0006176e,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061780,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061792,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_torque_limit_state_update
+0x00061812,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x0006182e,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061846,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_torque_limit_state_update
+0x00061964,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061970,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_torque_limit_state_update
+0x0006197c,retype_duplicate_name,,word[11],11,axis,rom,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061992,retype_duplicate_name,,word[11],11,data,rom,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_torque_limit_state_update
+0x000619a8,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x000619c4,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x000619dc,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_torque_limit_state_update
+0x00061afa,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061b16,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061b2e,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_torque_limit_state_update
+0x00061c4c,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061c66,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061c72,retype_duplicate_name,,word[60],60,grid,rom,,,,,,,2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header),cm848_torque_limit_state_update
+0x00061cea,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061d12,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061d34,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_torque_limit_state_update
+0x00061f94,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061fb0,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00061fc8,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_torque_limit_state_update
+0x000620e6,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062102,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x0006211a,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_torque_limit_state_update
+0x00062238,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062260,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062282,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_torque_limit_state_update
+0x000624e2,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x0006250a,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x0006252c,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_torque_limit_state_update
+0x0006278c,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x000627b4,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x000627d6,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_torque_limit_state_update
+0x00062a36,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062a48,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062a5a,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_torque_limit_state_update
+0x00062ada,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062af6,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062b0e,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),cm848_torque_limit_state_update
+0x00062c2c,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062c40,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,y axis of 9 breakpoints after its byte-length word,cm848_torque_limit_state_update
+0x00062c54,retype_duplicate_name,,word[81],81,grid,rom,,,,,,,2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header),cm848_torque_limit_state_update
+0x00062cf6,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,x axis of 8 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00062d08,retype_duplicate_name,,word[9],9,axis,rom,,,,,,,y axis of 8 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00062d1a,retype_duplicate_name,,word[64],64,grid,rom,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x00062d9a,retype_duplicate_name,,word[13],13,axis,rom,,,,,,,x axis of 12 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00062db4,retype_duplicate_name,,word[13],13,data,rom,,,,,,,data: 12 values (one per axis breakpoint) after a byte-length word,engine_injectionTiming_arbitration_calc
+0x00062dce,retype_duplicate_name,,word[6],6,axis,rom,,,,,,,x axis of 5 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00062dda,retype_duplicate_name,,word[6],6,data,rom,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,engine_injectionTiming_arbitration_calc
+0x00062de6,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,x axis of 9 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00062dfa,retype_duplicate_name,,word[10],10,axis,rom,,,,,,,y axis of 9 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00062e0e,retype_duplicate_name,,word[81],81,grid,rom,,,,,,,2-D grid: 9 rows of 9 values (z[(y - 1) x 9 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x00062eb0,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00062ed8,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00062efa,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x0006315a,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00063176,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x0006318e,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x000632ac,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x000632c8,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x000632e0,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x000633fe,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x0006341a,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00063432,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x00063550,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x0006356c,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00063584,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x000636a2,retype_duplicate_name,,word[14],14,axis,rom,,,,,,,x axis of 13 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x000636be,retype_duplicate_name,,word[12],12,axis,rom,,,,,,,y axis of 11 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x000636d6,retype_duplicate_name,,word[143],143,grid,rom,,,,,,,2-D grid: 11 rows of 13 values (z[(y - 1) x 13 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x000637f4,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x0006381c,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x0006383e,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x00063a9e,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00063ac6,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00063ae8,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x00063d48,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00063d70,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x00063d92,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x00063ff2,retype_duplicate_name,,word[20],20,axis,rom,,,,,,,x axis of 19 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x0006401a,retype_duplicate_name,,word[17],17,axis,rom,,,,,,,y axis of 16 breakpoints after its byte-length word,engine_injectionTiming_arbitration_calc
+0x0006403c,retype_duplicate_name,,word[304],304,grid,rom,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),engine_injectionTiming_arbitration_calc
+0x0006429c,retype_duplicate_name,,word[3],3,axis,rom,,,,,,,x axis of 2 breakpoints after its byte-length word,cm848_initProtectionParameter1 cm848_processProtectionParameter1
+0x000642a2,retype_duplicate_name,,word[3],3,data,rom,,,,,,,data: 2 values (one per axis breakpoint) after a byte-length word,cm848_initProtectionParameter1 cm848_processProtectionParameter1
+0x000642a8,retype_duplicate_name,,word[3],3,axis,rom,,,,,,,x axis of 2 breakpoints after its byte-length word,cm848_initProtectionParameter2 cm848_processProtectionParameter2
+0x000642ae,retype_duplicate_name,,word[3],3,data,rom,,,,,,,data: 2 values (one per axis breakpoint) after a byte-length word,cm848_initProtectionParameter2 cm848_processProtectionParameter2
+0x0006443c,retype_duplicate_name,,word[8],8,axis,rom,,,,,,,x axis of 7 breakpoints after its byte-length word,hpcr_injectPressureTuning
+0x0006444c,retype_duplicate_name,,word[8],8,data,rom,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,hpcr_injectPressureTuning
+0x000645c4,retype_named,fault_table_entry_5,word[22],22,axis,rom,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_calculateFuel2DTableLookup
+0x000645f0,retype_named,fault_table_entry_6,word[7],7,axis,rom,,,,,,,y axis of 6 breakpoints after its byte-length word,cm848_calculateFuel2DTableLookup
+0x000645fe,retype_duplicate_name,,word[126],126,grid,rom,,,,,,,2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateFuel2DTableLookup
+0x000646fa,retype_duplicate_name,,word[126],126,grid,rom,,,,,,,2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateFuel2DTableLookup
+0x000647f6,retype_duplicate_name,,word[126],126,grid,rom,,,,,,,2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateFuel2DTableLookup
+0x000648f2,retype_duplicate_name,,word[126],126,grid,rom,,,,,,,2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateFuel2DTableLookup
+0x000649ee,retype_duplicate_name,,word[126],126,grid,rom,,,,,,,2-D grid: 6 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateFuel2DTableLookup
+0x003feee2,retype_duplicate_name,,word[12],12,axis,ram,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_sensorChannel5_init cm848_sensorChannel5_process
+0x003feefa,retype_duplicate_name,,word[12],12,data,ram,,,,,,,data: 11 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel5_init cm848_sensorChannel5_process
+0x003fef22,retype_duplicate_name,,word[22],22,axis,ram,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_sensorChannel6_init cm848_sensorChannel6_process
+0x003fef4e,retype_duplicate_name,,word[22],22,data,ram,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel6_init cm848_sensorChannel6_process
+0x003fef8a,retype_duplicate_name,,word[12],12,axis,ram,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_sensorChannel8_init cm848_sensorChannel8_process
+0x003fefa2,retype_duplicate_name,,word[12],12,data,ram,,,,,,,data: 11 values (one per axis breakpoint) after a byte-length word,cm848_sensorChannel8_init cm848_sensorChannel8_process
+0x003ff016,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_temperatureBasedFuelTrim
+0x003ff028,retype_duplicate_name,,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_temperatureBasedFuelTrim
+0x003ff03a,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_temperatureBasedFuelTrim
+0x003ff04c,retype_duplicate_name,,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_temperatureBasedFuelTrim
+0x003ff080,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_initialization_step_3 hpcr_fuelFinal_exponentialAverage
+0x003ff0a2,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_initialization_step_3 hpcr_fuelFinal_exponentialAverage
+0x003ff0c4,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,hpcr_fuelFinal_exponentialAverage
+0x003ff0e6,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,hpcr_fuelFinal_exponentialAverage
+0x003ff108,retype_duplicate_name,,word[19],19,axis,ram,,,,,,,x axis of 18 breakpoints after its byte-length word,cm848_initialization_step_3 hpcr_fuelFinal_exponentialAverage
+0x003ff12e,retype_duplicate_name,,word[324],324,grid,ram,,,,,,,2-D grid: 18 rows of 18 values (z[(y - 1) x 18 + x - 1] / no header),cm848_initialization_step_3 hpcr_fuelFinal_exponentialAverage
+0x003ff3b6,retype_duplicate_name,,word[19],19,axis,ram,,,,,,,y axis of 18 breakpoints after its byte-length word,cm848_initialization_step_3 hpcr_fuelFinal_exponentialAverage
+0x003ff3dc,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_initialization_step_3 hpcr_fuelFinal_exponentialAverage
+0x003ff404,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_initialization_step_3 hpcr_fuelFinal_exponentialAverage
+0x003ff426,retype_duplicate_name,,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_initialization_step_3 hpcr_fuelFinal_exponentialAverage
+0x003ff746,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateTurboRatioWithMode
+0x003ff768,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateTurboRatioWithMode
+0x003ff78a,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateTurboRatioWithMode
+0x003ff7ac,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateTurboRatioWithMode
+0x003ff7ce,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateTurboRatioA
+0x003ff7f0,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateTurboRatioA
+0x003ff812,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateTurboRatioB
+0x003ff834,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateTurboRatioB
+0x003ff862,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_lookupRpmLoadTable
+0x003ff884,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_lookupRpmLoadTable
+0x003ff8a6,retype_duplicate_name,,word[256],256,grid,ram,,,,,,,2-D grid: 16 rows of 16 values (z[(y - 1) x 16 + x - 1] / no header),cm848_lookupRpmLoadTable
+0x003ffaa6,retype_duplicate_name,,word[20],20,data,ram,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,cm848_calculateLoadAdjustmentFactors
+0x003fface,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateLoadAdjustmentFactors
+0x003ffaf6,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateLoadGainValues
+0x003ffb1e,retype_duplicate_name,,word[20],20,data,ram,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,cm848_calculateLoadGainValues
+0x003ffb46,retype_duplicate_name,,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_calculateLoadCompensation
+0x003ffb54,retype_duplicate_name,,word[7],7,axis,ram,,,,,,,y axis of 6 breakpoints after its byte-length word,cm848_calculateLoadCompensation
+0x003ffb62,retype_duplicate_name,,word[36],36,grid,ram,,,,,,,2-D grid: 6 rows of 6 values (z[(y - 1) x 6 + x - 1] / no header),cm848_calculateLoadCompensation
+0x003ffbaa,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x003ffbd2,retype_duplicate_name,,word[20],20,data,ram,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,cm848_boostCompensatedRpmGovernor
+0x003ffbfa,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateLoadGainValues
+0x003ffc1c,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateLoadGainValues
+0x003ffc3e,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateLoadBasedAdjustment
+0x003ffc60,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateLoadBasedAdjustment
+0x003ffcb6,retype_duplicate_name,,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x003ffcca,retype_duplicate_name,,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_boostCompensatedRpmGovernor
+0x003ffcde,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x003ffd06,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x003ffd28,retype_duplicate_name,,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_boostCompensatedRpmGovernor
+0x003fff88,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x003fff9a,retype_duplicate_name,,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_boostCompensatedRpmGovernor
+0x003fffac,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x003fffd4,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x003ffff6,retype_duplicate_name,,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_boostCompensatedRpmGovernor
+0x00400256,retype_named,governor_adjustment_rpm_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x00400268,retype_named,governor_adjustment_limit_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_boostCompensatedRpmGovernor
+0x0040027a,retype_named,governor_base_rpm_output_cal,word[20],20,data,ram,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,cm848_boostCompensatedRpmGovernor
+0x004002a2,retype_named,governor_trim_rpm_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x004002b6,retype_named,governor_trim_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_boostCompensatedRpmGovernor
+0x004002ca,retype_named,battery_voltage_axis_cal,word[6],6,axis,ram,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_boostCompensatedRpmGovernor
+0x004002d6,retype_named,battery_voltage_gain_output_cal,word[6],6,data,ram,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_boostCompensatedRpmGovernor
+0x004002f2,retype_named,boost_fuel_trim_pressure_axis_cal,word[19],19,axis,ram,,,,,,,x axis of 18 breakpoints after its byte-length word,cm848_calculateRpmBasedFuelTrim
+0x00400318,retype_named,boost_fuel_trim_ystart_cal,word[19],19,axis,ram,,,,,,,y axis of 18 breakpoints after its byte-length word,cm848_calculateRpmBasedFuelTrim
+0x0040033e,retype_named,boost_fuel_trim_yend_cal,word[324],324,grid,ram,,,,,,,2-D grid: 18 rows of 18 values (z[(y - 1) x 18 + x - 1] / no header),cm848_calculateRpmBasedFuelTrim
+0x004005c6,retype_named,boost_fuel_input_axis_cal,word[19],19,axis,ram,,,,,,,x axis of 18 breakpoints after its byte-length word,cm848_calculateRpmBasedFuelTrim
+0x004005ec,retype_named,boost_fuel_input_output_cal,word[19],19,data,ram,,,,,,,data: 18 values (one per axis breakpoint) after a byte-length word,cm848_calculateRpmBasedFuelTrim
+0x00400612,retype_named,throttle_rpm_axis_cal,word[19],19,axis,ram,,,,,,,x axis of 18 breakpoints after its byte-length word,cm848_calculateLoadBasedFuelTrim
+0x00400638,retype_named,throttle_rpm_ystart_cal,word[19],19,axis,ram,,,,,,,y axis of 18 breakpoints after its byte-length word,cm848_calculateLoadBasedFuelTrim
+0x0040065e,retype_named,throttle_rpm_yend_cal,word[324],324,grid,ram,,,,,,,2-D grid: 18 rows of 18 values (z[(y - 1) x 18 + x - 1] / no header),cm848_calculateLoadBasedFuelTrim
+0x004008e6,retype_named,throttle_trim_axis_cal,word[19],19,axis,ram,,,,,,,x axis of 18 breakpoints after its byte-length word,cm848_calculateLoadBasedFuelTrim
+0x0040090c,retype_named,throttle_trim_output_cal,word[19],19,data,ram,,,,,,,data: 18 values (one per axis breakpoint) after a byte-length word,cm848_calculateLoadBasedFuelTrim
+0x0040094a,retype_named,boost_rpm_scale_axis_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_boostBasedFuelModifier
+0x0040096c,retype_named,boost_rpm_scale_output_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_boostBasedFuelModifier
+0x0040098e,retype_named,boost_load_axis_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_boostBasedFuelModifier
+0x004009b0,retype_named,boost_load_output_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_boostBasedFuelModifier
+0x004009da,retype_named,fuel_blend_rpm_axis_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateFuelDemandTimingOffset
+0x00400a02,retype_named,fuel_blend_ystart_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateFuelDemandTimingOffset
+0x00400a24,retype_named,fuel_blend_yend_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateFuelDemandTimingOffset
+0x00400c84,retype_named,fuel_map_load_axis_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_processFuelMapInterpolation
+0x00400ca6,retype_named,fuel_map_load_values_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_processFuelMapInterpolation
+0x00400cc8,retype_named,fuel_map_load_filter_a_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_processFuelMapInterpolation
+0x00400cea,retype_named,fuel_map_load_filter_b_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_processFuelMapInterpolation
+0x00400d0c,retype_named,fuel_map_load_filter_c_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_processFuelMapInterpolation
+0x00400d2e,retype_named,fuel_map_load_filter_d_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_processFuelMapInterpolation
+0x00400d50,retype_named,fuel_map_boost_axis_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_processFuelMapInterpolation
+0x00400d72,retype_named,fuel_map_boost_filter_a_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_processFuelMapInterpolation
+0x00400d94,retype_named,fuel_map_boost_values_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_processFuelMapInterpolation
+0x00400db6,retype_named,fuel_map_boost_filter_b_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_processFuelMapInterpolation
+0x00400dd8,retype_named,fuel_map_boost_filter_c_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_processFuelMapInterpolation
+0x00400dfa,retype_named,fuel_map_boost_filter_d_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_processFuelMapInterpolation
+0x0040153c,retype_named,fuel_demand_mode_b_map_values_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateFuelDemandTimingOffset
+0x0040211c,retype_named,fuel_demand_rate_map_values_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateFuelDemandMode3
+0x00402cfc,retype_named,fuel_demand_rate_b_map_values_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateFuelDemandBlendTables
+0x004038dc,retype_named,fuel_demand_mode2_map_values_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateFuelDemandMode2
+0x004044bc,retype_named,fuel_demand_mode1_map_values_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateFuelDemandMode1
+0x0040497c,retype_named,fuel_table_load_axis_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x0040499e,retype_named,fuel_table_rpm_axis_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x004049c6,retype_named,fuel_demand_load_axis_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateBoostPressureOffset cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x004049e8,retype_named,fuel_demand_rpm_axis_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateBoostPressureOffset cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x00404a10,retype_named,fuel_demand_xaxis_cal_1,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x00404a32,retype_named,fuel_demand_xaxis_cal_2,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x00404a5a,retype_named,fuel_demand_xaxis_cal_3,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x00404a7c,retype_named,fuel_demand_xaxis_cal_4,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x00404aa4,retype_named,fuel_demand_xaxis_cal_5,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x00404ac6,retype_named,fuel_demand_xaxis_cal_6,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateFuelDemandBlendTables cm848_calculateFuelDemandMode1 cm848_calculateFuelDemandMode2 cm848_calculateFuelDemandMode3 cm848_calculateFuelDemandTimingOffset
+0x00404aee,retype_named,fuel_map_rpm_axis_cal,word[22],22,axis,ram,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_fuelDemandTableLookup cm848_lookupFuelDemandRpmTables
+0x00404b1a,retype_named,governor_fuel_demand_values_cal,word[22],22,data,ram,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_fuelDemandTableLookup cm848_lookupFuelDemandRpmTables
+0x00404b46,retype_named,fuel_rpm_table_boost1_cal,word[22],22,data,ram,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_fuelDemandTableLookup cm848_lookupFuelDemandRpmTables
+0x00404b72,retype_named,fuel_rpm_table_boost2_cal,word[22],22,data,ram,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_fuelDemandTableLookup cm848_lookupFuelDemandRpmTables
+0x00404b9e,retype_named,fuel_rpm_table_boost3_cal,word[22],22,data,ram,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_fuelDemandTableLookup cm848_lookupFuelDemandRpmTables
+0x00404bca,retype_named,fuel_rpm_table_boost4_cal,word[22],22,data,ram,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_fuelDemandTableLookup cm848_lookupFuelDemandRpmTables
+0x00404bf6,retype_named,fuel_load_table_rpm_axis_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateFuelLimitSource
+0x00404c1e,retype_named,fuel_load_table_ystart_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateFuelLimitSource
+0x00404c40,retype_named,fuel_load_table_yend_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateFuelLimitSource
+0x00404eac,retype_named,fuel_demand_blend_yend_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateBoostPressureOffset
+0x00405114,retype_named,fuel_timing_load_axis_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateBoostTorqueOffset
+0x00405136,retype_named,boost_fuel_threshold_offset_values_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateBoostTorqueOffset
+0x00405158,retype_named,fuel_demand_rpm_axis_b_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateBoostTorqueOffset
+0x0040517a,retype_named,boost_fuel_threshold_limit_values_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateBoostTorqueOffset
+0x0040519c,retype_named,fuel_demand_rpm_factor_values_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateBoostTorqueOffset
+0x004051be,retype_named,fuel_demand_base_quantity_values_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_calculateBoostTorqueOffset
+0x0040520c,retype_named,fuel_quantity_ema_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_calculatePressureSensorFiltered
+0x00405220,retype_named,fuel_quantity_ema_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_calculatePressureSensorFiltered
+0x0040523e,retype_named,injection_timing_rpm_axis_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateRpmLoadTables
+0x00405266,retype_named,injection_timing_load_axis_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateRpmLoadTables
+0x00405288,retype_named,injection_timing_advance_yend_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateRpmLoadTables
+0x004054e8,retype_named,injection_timing_mode2_rpm_axis_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_calculateRpmLoadTables
+0x00405510,retype_named,injection_timing_mode2_ystart_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateRpmLoadTables
+0x00405532,retype_named,injection_timing_mode2_yend_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_calculateRpmLoadTables
+0x00405792,retype_named,fuel_demand_load_rate_cap_rpm_axis_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_calculateRpmLoadLimit
+0x004057b4,retype_named,fuel_demand_load_rate_cap_ystart_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_calculateRpmLoadLimit
+0x004057d6,retype_named,fuel_demand_load_rate_cap_yend_cal,word[256],256,grid,ram,,,,,,,2-D grid: 16 rows of 16 values (z[(y - 1) x 16 + x - 1] / no header),cm848_calculateRpmLoadLimit
+0x00405a10,retype_named,fuel_demand_mode2_correction_axis_cal,word[8],8,axis,ram,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_calculateManifoldPressureOffset
+0x00405a20,retype_named,fuel_demand_mode2_correction_values_cal,word[8],8,data,ram,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_calculateManifoldPressureOffset
+0x00405a30,retype_named,fuel_correction_load_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelInjectionTiming
+0x00405a46,retype_named,fuel_correction_load_values_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelInjectionTiming
+0x00405a5c,retype_named,engine_load_correction_axis_cal,word[8],8,axis,ram,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_applyFuelDemandOffset
+0x00405a6c,retype_named,engine_load_correction_output_cal,word[8],8,data,ram,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_applyFuelDemandOffset
+0x00405a7c,retype_named,fuel_demand_correction_scale_axis_cal,word[8],8,axis,ram,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_calculateFuelDemandDelta
+0x00405a8c,retype_named,fuel_demand_correction_scale_output_cal,word[8],8,data,ram,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelDemandDelta
+0x00405aa0,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_auxiliaryControl_tableInterpolation
+0x00405ac8,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_auxiliaryControl_tableInterpolation
+0x00405aea,retype_duplicate_name,,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_auxiliaryControl_tableInterpolation
+0x00405d52,retype_named,protection_rpm_correction_axis_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_applyProtectionRpmCorrectionFilter cm848_auxiliaryControl_tableInterpolation cm848_fuelDemandRpmCorrection
+0x00405d7a,retype_named,protection_rpm_correction_ystart_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_applyProtectionRpmCorrectionFilter cm848_auxiliaryControl_tableInterpolation cm848_fuelDemandRpmCorrection
+0x00405d9c,retype_named,protection_rpm_correction_yend_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_applyProtectionRpmCorrectionFilter cm848_auxiliaryControl_tableInterpolation cm848_fuelDemandRpmCorrection
+0x0040600c,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,fuel_demandLimit_rpmLoad_calc
+0x00406034,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,fuel_demandLimit_rpmLoad_calc
+0x00406056,retype_duplicate_name,,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),fuel_demandLimit_rpmLoad_calc
+0x004062b6,retype_duplicate_name,,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,fuel_demandLimit_rpmLoad_calc
+0x004062c4,retype_duplicate_name,,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,fuel_demandLimit_rpmLoad_calc
+0x004062d8,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,fuel_demandBlend_weight_calc
+0x004062ea,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,y axis of 8 breakpoints after its byte-length word,fuel_demandBlend_weight_calc
+0x004062fc,retype_duplicate_name,,word[64],64,grid,ram,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),fuel_demandBlend_weight_calc
+0x0040637c,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,fuel_demandBlend_weight_calc
+0x0040638e,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,y axis of 8 breakpoints after its byte-length word,fuel_demandBlend_weight_calc
+0x004063a0,retype_duplicate_name,,word[64],64,grid,ram,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),fuel_demandBlend_weight_calc
+0x00406420,retype_duplicate_name,,word[8],8,axis,ram,,,,,,,x axis of 7 breakpoints after its byte-length word,fuel_demandBlend_rpmRange_check
+0x00406430,retype_duplicate_name,,word[8],8,data,ram,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,fuel_demandBlend_rpmRange_check
+0x00406440,retype_duplicate_name,,word[8],8,axis,ram,,,,,,,x axis of 7 breakpoints after its byte-length word,fuel_demandBlend_rpmRange_check
+0x00406450,retype_duplicate_name,,word[8],8,data,ram,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,fuel_demandBlend_rpmRange_check
+0x00406470,retype_duplicate_name,,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,etc1_threshold_lookup
+0x00406498,retype_duplicate_name,,word[20],20,data,ram,,,,,,,data: 19 values (one per axis breakpoint) after a byte-length word,etc1_threshold_lookup
+0x004064c0,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,governor_adjustment_compare
+0x004064e2,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,governor_adjustment_compare
+0x00406504,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,governor_adjustment_compare
+0x00406526,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,governor_adjustment_compare
+0x00406576,retype_duplicate_name,,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,fuel_demandBoost_overrideFlag_lookup
+0x00406598,retype_duplicate_name,,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,fuel_demandBoost_overrideFlag_lookup
+0x004065c6,retype_named,fuel_timing_boost_scale_yend_cal,word[121],121,grid,ram,,,,,,,2-D grid: 11 rows of 11 values (z[(y - 1) x 11 + x - 1] / no header),cm848_calculateFuelFlowRate
+0x004066b8,retype_named,fuel_timing_boost_scale_axis1_cal,word[12],12,axis,ram,,,,,,,x axis of 11 breakpoints after its byte-length word,cm848_calculateFuelFlowRate
+0x004066d0,retype_named,fuel_timing_boost_scale_ystart_cal,word[12],12,axis,ram,,,,,,,y axis of 11 breakpoints after its byte-length word,cm848_calculateFuelFlowRate
+0x004066e8,retype_named,fuel_timing_correction_b_axis_cal,word[21],21,axis,ram,,,,,,,x axis of 20 breakpoints after its byte-length word,cm848_calculateFuelFlowRate
+0x00406712,retype_named,fuel_timing_correction_b_output_cal,word[21],21,data,ram,,,,,,,data: 20 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelFlowRate
+0x00406778,retype_duplicate_name,,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,sensor_throttleTrim_ema_faultProcess
+0x0040678c,retype_duplicate_name,,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,sensor_throttleTrim_ema_faultProcess
+0x0040688a,retype_named,fuel_demand_rpm_threshold_cal,word[22],22,axis,ram,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_calculateDualAxisFuelLimit cm848_calculateFuelDemandWithTrim cm848_calculateThermalLimitValue cm848_processActiveFaultList cm848_processSpeedSensorCompensation cm848_throttlePositionProcessing
+0x004068b6,retype_named,fuel_demand_rpm_limit_low_cal,word[5],5,axis,ram,,,,,,,y axis of 4 breakpoints after its byte-length word,cm848_calculateDualAxisFuelLimit cm848_calculateFuelDemandWithTrim cm848_calculateThermalLimitValue cm848_processActiveFaultList cm848_processSpeedSensorCompensation cm848_throttlePositionProcessing
+0x004068c0,retype_named,fuel_demand_rpm_limit_high_cal,word[84],84,grid,ram,,,,,,,2-D grid: 4 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateDualAxisFuelLimit cm848_calculateFuelDemandWithTrim cm848_calculateThermalLimitValue cm848_processActiveFaultList cm848_processSpeedSensorCompensation cm848_throttlePositionProcessing
+0x00406968,retype_named,governor_fuel_table_xaxis_cal,word[22],22,axis,ram,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_calculateDualAxisFuelLimit cm848_calculateThermalLimitValue cm848_processActiveFaultList cm848_processSpeedSensorCompensation
+0x00406994,retype_named,governor_fuel_table_ystart_cal,word[5],5,axis,ram,,,,,,,y axis of 4 breakpoints after its byte-length word,cm848_calculateDualAxisFuelLimit cm848_calculateThermalLimitValue cm848_processActiveFaultList cm848_processSpeedSensorCompensation
+0x0040699e,retype_named,governor_fuel_table_yend_cal,word[84],84,grid,ram,,,,,,,2-D grid: 4 rows of 21 values (z[(y - 1) x 21 + x - 1] / no header),cm848_calculateDualAxisFuelLimit cm848_calculateThermalLimitValue cm848_processActiveFaultList cm848_processSpeedSensorCompensation
+0x00406a46,retype_named,fuel_mode_ema_axis_cal,word[6],6,axis,ram,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_calculateFuelDemandChangeRate
+0x00406a52,retype_named,fuel_mode_ema_output_cal,word[6],6,data,ram,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelDemandChangeRate
+0x00406a5e,retype_named,rpm_governor_offset_rpm_axis_a_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_processTorqueLimitState
+0x00406a86,retype_named,rpm_governor_offset_fuel_axis_a_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_processTorqueLimitState
+0x00406aa8,retype_named,rpm_governor_offset_values_a_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_processTorqueLimitState
+0x00406d08,retype_named,rpm_governor_offset_rpm_axis_b_cal,word[20],20,axis,ram,,,,,,,x axis of 19 breakpoints after its byte-length word,cm848_processTorqueLimitState
+0x00406d30,retype_named,rpm_governor_offset_fuel_axis_b_cal,word[17],17,axis,ram,,,,,,,y axis of 16 breakpoints after its byte-length word,cm848_processTorqueLimitState
+0x00406d52,retype_named,rpm_governor_offset_values_b_cal,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_processTorqueLimitState
+0x00406ff0,retype_named,fuel_ema_coeff3_scale_axis_cal,word[14],14,axis,ram,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_processTorqueLimitTiming
+0x0040700c,retype_named,fuel_ema_coeff3_scale_output_cal,word[14],14,data,ram,,,,,,,data: 13 values (one per axis breakpoint) after a byte-length word,cm848_processTorqueLimitTiming
+0x00407028,retype_named,fuel_ema_coeff1_scale_axis_cal,word[14],14,axis,ram,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_processTorqueLimitTiming
+0x00407044,retype_named,fuel_ema_coeff1_scale_output_cal,word[14],14,data,ram,,,,,,,data: 13 values (one per axis breakpoint) after a byte-length word,cm848_processTorqueLimitTiming
+0x00407060,retype_named,fuel_ema_coeff2_scale_axis_cal,word[14],14,axis,ram,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_processTorqueLimitTiming
+0x0040707c,retype_named,fuel_ema_coeff2_scale_output_cal,word[14],14,data,ram,,,,,,,data: 13 values (one per axis breakpoint) after a byte-length word,cm848_processTorqueLimitTiming
+0x0040713a,retype_named,governor_fuel_demand_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateGovernorCompensation
+0x0040714c,retype_named,governor_fuel_demand_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_calculateGovernorCompensation
+0x0040715e,retype_named,governor_minimum_speed_by_vehicle_speed_table,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_calculateProtectionSpeedLimits
+0x00407172,retype_named,governor_minimum_speed_by_vehicle_speed_axis,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_calculateProtectionSpeedLimits
+0x004071ac,retype_named,protection_rpm_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateProtectionRpmFilter initProtectionParamCalculation
+0x004071c2,retype_named,protection_rpm_values_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateProtectionRpmFilter initProtectionParamCalculation
+0x004071e0,retype_duplicate_name,,word[22],22,axis,ram,,,,,,,x axis of 21 breakpoints after its byte-length word,cm848_blendBoostAndThrottleFuelDemand fuel_demand_blend_compensate fuel_demand_boost_compensate fuel_demand_boost_emaFiltered_compensate fuel_demand_boost_ema_compensate
+0x0040720c,retype_duplicate_name,,word[22],22,data,ram,,,,,,,data: 21 values (one per axis breakpoint) after a byte-length word,cm848_blendBoostAndThrottleFuelDemand fuel_demand_blend_compensate fuel_demand_boost_compensate fuel_demand_boost_emaFiltered_compensate fuel_demand_boost_ema_compensate
+0x00407238,retype_duplicate_name,,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_blendBoostAndThrottleFuelDemand
+0x0040724e,retype_duplicate_name,,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_blendBoostAndThrottleFuelDemand
+0x004072a2,retype_named,injection_timing_temp_corr_axis1_cal,word[35],35,axis,ram,,,,,,,x axis of 34 breakpoints after its byte-length word,cm848_processProtectionEntry
+0x004072e8,retype_named,injection_timing_temp_corr_ystart_cal,word[16],16,axis,ram,,,,,,,y axis of 15 breakpoints after its byte-length word,cm848_processProtectionEntry
+0x00407308,retype_named,injection_timing_temp_corr_yend_cal,word[510],510,grid,ram,,,,,,,2-D grid: 15 rows of 34 values (z[(y - 1) x 34 + x - 1] / no header),cm848_processProtectionEntry
+0x0040770e,retype_duplicate_name,,word[3],3,axis,ram,,,,,,,x axis of 2 breakpoints after its byte-length word,governor_speedReference_ramp_calc
+0x00407714,retype_duplicate_name,,word[3],3,data,ram,,,,,,,data: 2 values (one per axis breakpoint) after a byte-length word,governor_speedReference_ramp_calc
+0x00407876,retype_named,protection_load_xaxis_cal_b,word[8],8,axis,ram,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_processProtectionStateFlags cm848_selectGovernorPressureNormal
+0x00407886,retype_named,protection_load_table_cal_b,word[8],8,data,ram,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionStateFlags cm848_selectGovernorPressureNormal
+0x00407896,retype_named,protection_load_timer_axis_cal,word[8],8,axis,ram,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_processProtectionStateFlags cm848_selectGovernorPressureNormal
+0x004078a6,retype_named,protection_load_timer_values_cal,word[8],8,data,ram,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionStateFlags cm848_selectGovernorPressureNormal
+0x004078b6,retype_named,protection_derate_l4_rpm_axis_cal,word[13],13,axis,ram,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_selectGovernorPressureCold
+0x004078d0,retype_named,protection_derate_l4_rpm_output_cal,word[13],13,data,ram,,,,,,,data: 12 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureCold
+0x004078ea,retype_named,protection_threshold_l2_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionStateTransitionCheck
+0x004078fc,retype_named,protection_threshold_l2_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionStateTransitionCheck
+0x0040790e,retype_named,protection_threshold_l1_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionStateTransitionCheck
+0x00407920,retype_named,protection_threshold_l1_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionStateTransitionCheck
+0x00407932,retype_named,protection_derate_l3_rpm_axis_cal,word[15],15,axis,ram,,,,,,,x axis of 14 breakpoints after its byte-length word,cm848_protectionStateTransitionCheck
+0x00407950,retype_named,protection_derate_l3_rpm_output_cal,word[15],15,data,ram,,,,,,,data: 14 values (one per axis breakpoint) after a byte-length word,cm848_protectionStateTransitionCheck
+0x0040796e,retype_named,fuel_demand_ctrl_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionOverloadHandler
+0x00407980,retype_named,fuel_demand_ctrl_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionOverloadHandler
+0x00407992,retype_named,protection_derate_l2_rpm_axis_a_cal,word[13],13,axis,ram,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_selectGovernorPressureBaseCurve
+0x004079ac,retype_named,protection_derate_l2_rpm_output_a_cal,word[13],13,data,ram,,,,,,,data: 12 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureBaseCurve
+0x004079c6,retype_named,protection_derate_l1_fuel_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_processProtectionStateFlags
+0x004079d8,retype_named,protection_derate_l1_fuel_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionStateFlags
+0x004079ea,retype_named,protection_derate_l2_fuel_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_processProtectionStateFlags
+0x004079fc,retype_named,protection_derate_l2_fuel_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionStateFlags
+0x00407a0e,retype_named,protection_overtemp_l3_coolant_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00407a20,retype_named,protection_overtemp_l3_coolant_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule
+0x00407a32,retype_named,protection_overtemp_coolant_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00407a44,retype_named,protection_overtemp_coolant_output_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule
+0x00407a56,retype_named,protection_fuel_threshold_l3_rpm_axis_cal,word[8],8,axis,ram,,,,,,,x axis of 7 breakpoints after its byte-length word,cm848_protectionCleanupHandler
+0x00407a66,retype_named,protection_fuel_threshold_l3_rpm_output_cal,word[8],8,data,ram,,,,,,,data: 7 values (one per axis breakpoint) after a byte-length word,cm848_protectionCleanupHandler
+0x00407a76,retype_named,fourth_gear_tcc_lockup_output_speed_axis,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00407a88,retype_named,fourth_gear_tcc_lockup_boost_axis,word[5],5,axis,ram,,,,,,,y axis of 4 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00407a92,retype_named,fourth_gear_tcc_lockup_fuel_demand_thresholds,word[32],32,grid,ram,,,,,,,2-D grid: 4 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_applyConverterLockupSchedule
+0x00407ad2,retype_named,protection_fuel_threshold_l4_rpm_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionCleanupHandler
+0x00407ae4,retype_named,protection_fuel_threshold_l4_rpm_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionCleanupHandler
+0x00407af6,retype_named,fourth_gear_tcc_lockup_cruise_output_speed_axis,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00407b08,retype_named,fourth_gear_tcc_lockup_cruise_boost_axis,word[5],5,axis,ram,,,,,,,y axis of 4 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00407b12,retype_named,fourth_gear_tcc_lockup_cruise_fuel_demand_thresholds,word[32],32,grid,ram,,,,,,,2-D grid: 4 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_applyConverterLockupSchedule
+0x00407b52,retype_named,protection_threshold_l2_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionNormalHandler
+0x00407b64,retype_named,protection_threshold_l2_output_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionNormalHandler
+0x00407b76,retype_named,protection_threshold_l1_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionNormalHandler
+0x00407b88,retype_named,protection_threshold_l1_output_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionNormalHandler
+0x00407b9a,retype_named,protection_derate_rpm_fuel_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionOverloadHandler
+0x00407bac,retype_named,protection_derate_rpm_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionOverloadHandler
+0x00407bbe,retype_named,protection_derate_l2_fuel_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionOverloadHandler
+0x00407bd0,retype_named,protection_derate_l2_fuel_output_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionOverloadHandler
+0x00407be2,retype_named,protection_load_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionOverloadHandler cm848_runTransmissionControl
+0x00407bf4,retype_named,protection_load_values_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionOverloadHandler cm848_runTransmissionControl
+0x00407c06,retype_named,protection_derate_l1_fuel_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionOverloadHandler
+0x00407c18,retype_named,protection_derate_l1_fuel_output_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionOverloadHandler
+0x00407c2a,retype_named,protection_derate_l1_fuel_axis_c_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionOverloadHandler
+0x00407c3c,retype_named,protection_derate_l1_fuel_output_c_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionOverloadHandler
+0x00407c4e,retype_named,protection_threshold_l3_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionFuelDemandCheck
+0x00407c60,retype_named,protection_threshold_l3_output_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionFuelDemandCheck
+0x00407c72,retype_named,protection_threshold_l4_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionFuelDemandCheck
+0x00407c84,retype_named,protection_threshold_l4_output_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionFuelDemandCheck
+0x00407c96,retype_named,protection_load_xaxis_cal_a,word[14],14,axis,ram,,,,,,,x axis of 13 breakpoints after its byte-length word,cm848_processProtectionStateFlags cm848_selectGovernorPressureBaseCurve
+0x00407cb2,retype_named,protection_load_table_cal_a,word[14],14,data,ram,,,,,,,data: 13 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionStateFlags cm848_selectGovernorPressureBaseCurve
+0x00407cce,retype_named,protection_scaled_limit_fuel_axis_a_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_processProtectionStateFlags
+0x00407cdc,retype_named,protection_scaled_limit_fuel_output_a_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionStateFlags
+0x00407cea,retype_named,protection_scaled_limit_fuel_axis_b_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_processProtectionStateFlags
+0x00407cf8,retype_named,protection_scaled_limit_fuel_output_b_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionStateFlags
+0x00407d06,retype_named,protection_scaled_limit_fuel_axis_c_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_processProtectionStateFlags
+0x00407d14,retype_named,protection_scaled_limit_fuel_output_c_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_processProtectionStateFlags
+0x00407d22,retype_named,protection_load_rate_l1_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_selectGovernorPressureNormal
+0x00407d30,retype_named,protection_load_rate_l1_output_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureNormal
+0x00407d3e,retype_named,protection_load_rate_l2_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_selectGovernorPressureNormal
+0x00407d4c,retype_named,protection_load_rate_l2_output_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureNormal
+0x00407d5a,retype_named,protection_load_rate_l3_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_selectGovernorPressureNormal
+0x00407d68,retype_named,protection_load_rate_l3_output_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureNormal
+0x00407d76,retype_named,protection_fuel_limit_l1_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_selectGovernorPressureNormal
+0x00407d84,retype_named,protection_fuel_limit_l1_output_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureNormal
+0x00407d92,retype_named,protection_fuel_limit_l2_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_selectGovernorPressureNormal
+0x00407da0,retype_named,protection_fuel_limit_l2_output_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureNormal
+0x00407dae,retype_named,protection_fuel_limit_l3_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_selectGovernorPressureNormal
+0x00407dbc,retype_named,protection_fuel_limit_l3_output_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureNormal
+0x00407dca,retype_named,protection_fuel_demand_corr_axis_cal,word[18],18,axis,ram,,,,,,,x axis of 17 breakpoints after its byte-length word,cm848_protectionScaledLimitCalculation
+0x00407dee,retype_named,protection_fuel_demand_corr_output_cal,word[18],18,data,ram,,,,,,,data: 17 values (one per axis breakpoint) after a byte-length word,cm848_protectionScaledLimitCalculation
+0x00407e12,retype_named,protection_rpm_corr_rpm_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_protectionScaledLimitCalculation
+0x00407e26,retype_named,protection_rpm_corr_rpm_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_protectionScaledLimitCalculation
+0x00407e3a,retype_named,protection_fuel_threshold_l3_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionCleanupHandler cm848_protectionShutdownHandler
+0x00407e4c,retype_named,protection_fuel_threshold_l3_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionCleanupHandler cm848_protectionShutdownHandler
+0x00407e5e,retype_named,protection_fuel_load_rate_a_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00407e70,retype_named,protection_fuel_load_rate_a_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00407e82,retype_named,protection_fuel_threshold_l4_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionCleanupHandler cm848_protectionShutdownHandler
+0x00407e94,retype_named,protection_fuel_threshold_l4_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionCleanupHandler cm848_protectionShutdownHandler
+0x00407ea6,retype_named,protection_fuel_load_rate_b_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00407eb8,retype_named,protection_fuel_load_rate_b_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00407eca,retype_named,protection_derate_default_rpm_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_selectGovernorPressureCold
+0x00407ee0,retype_named,protection_derate_default_rpm_output_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureCold
+0x00407ef6,retype_named,protection_load_axis_c_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_runTransmissionControl cm848_selectGovernorPressureNormal cm848_selectGovernorPressureWideOpenThrottle
+0x00407f0c,retype_named,protection_load_values_c_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_runTransmissionControl cm848_selectGovernorPressureNormal cm848_selectGovernorPressureWideOpenThrottle
+0x00407f22,retype_named,protection_load_axis_d_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionStateTransitionCheck cm848_selectGovernorPressureBaseCurve cm848_selectGovernorPressureCold
+0x00407f34,retype_named,protection_load_values_d_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionStateTransitionCheck cm848_selectGovernorPressureBaseCurve cm848_selectGovernorPressureCold
+0x00407f46,retype_named,protection_dual_axis_corr_axis1_cal,word[18],18,axis,ram,,,,,,,x axis of 17 breakpoints after its byte-length word,cm848_protectionScaledLimitCalculation
+0x00407f6a,retype_named,protection_dual_axis_corr_ystart_cal,word[10],10,axis,ram,,,,,,,y axis of 9 breakpoints after its byte-length word,cm848_protectionScaledLimitCalculation
+0x00407f7e,retype_named,protection_dual_axis_corr_yend_cal,word[153],153,grid,ram,,,,,,,2-D grid: 9 rows of 17 values (z[(y - 1) x 17 + x - 1] / no header),cm848_protectionScaledLimitCalculation
+0x004080b0,retype_named,protection_threshold_l4_axis_c_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionStateTransitionCheck
+0x004080c2,retype_named,protection_threshold_l4_output_c_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionStateTransitionCheck
+0x004080d4,retype_named,protection_threshold_l3_axis_c_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionStateTransitionCheck
+0x004080e6,retype_named,protection_threshold_l3_output_c_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionStateTransitionCheck
+0x004080f8,retype_named,fourth_gear_tcc_lockup_switch_12_output_speed_axis,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x0040810a,retype_named,fourth_gear_tcc_lockup_switch_12_boost_axis,word[5],5,axis,ram,,,,,,,y axis of 4 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00408114,retype_named,fourth_gear_tcc_lockup_switch_12_fuel_demand_thresholds,word[32],32,grid,ram,,,,,,,2-D grid: 4 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_applyConverterLockupSchedule
+0x00408154,retype_named,fourth_gear_tcc_lockup_cruise_switch_12_output_speed_axis,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00408166,retype_named,fourth_gear_tcc_lockup_cruise_switch_12_boost_axis,word[5],5,axis,ram,,,,,,,y axis of 4 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00408170,retype_named,fourth_gear_tcc_lockup_cruise_switch_12_fuel_demand_thresholds,word[32],32,grid,ram,,,,,,,2-D grid: 4 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_applyConverterLockupSchedule
+0x004081b0,retype_named,protection_threshold_l5_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionFuelDemandCheck
+0x004081c2,retype_named,protection_threshold_l5_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionFuelDemandCheck
+0x004081d4,retype_named,protection_threshold_l6_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_protectionFuelDemandCheck
+0x004081e6,retype_named,protection_threshold_l6_output_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_protectionFuelDemandCheck
+0x004081f8,retype_named,protection_fuel_threshold_f_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x0040820a,retype_named,protection_fuel_threshold_f_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x0040821c,retype_named,protection_fuel_threshold_g_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x0040822e,retype_named,protection_fuel_threshold_g_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00408240,retype_named,protection_fuel_limit_l2_axis_b_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00408252,retype_named,protection_fuel_limit_l2_output_b_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule
+0x00408264,retype_named,protection_fuel_threshold_h_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00408276,retype_named,protection_fuel_threshold_h_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00408288,retype_named,protection_load_rate_l4_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_selectGovernorPressureNormal
+0x00408296,retype_named,protection_load_rate_l4_output_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureNormal
+0x004082a4,retype_named,protection_fuel_limit_l4_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,cm848_selectGovernorPressureNormal
+0x004082b2,retype_named,protection_fuel_limit_l4_output_b_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureNormal
+0x004082c0,retype_named,protection_derate_l4_rpm_axis_b_cal,word[13],13,axis,ram,,,,,,,x axis of 12 breakpoints after its byte-length word,cm848_selectGovernorPressureBaseCurve
+0x004082da,retype_named,protection_derate_l4_rpm_output_b_cal,word[13],13,data,ram,,,,,,,data: 12 values (one per axis breakpoint) after a byte-length word,cm848_selectGovernorPressureBaseCurve
+0x0040838e,retype_named,protection_rpm_peak_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x004083a2,retype_named,protection_rpm_peak_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x004083b6,retype_named,protection_load_derate_l1_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x004083ca,retype_named,protection_load_derate_l1_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x004083de,retype_named,protection_rpm_peak_axis_b_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x004083f2,retype_named,protection_rpm_peak_output_b_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x00408406,retype_named,protection_load_derate_l2_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x0040841a,retype_named,protection_load_derate_l2_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x0040842e,retype_named,protection_threshold_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_calculateProtectionThresholdLimit
+0x00408440,retype_named,protection_threshold_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_calculateProtectionThresholdLimit
+0x00408452,retype_named,protection_load_axis_e_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions cm848_calculateProtectionThresholdLimit
+0x00408464,retype_named,protection_load_values_e_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions cm848_calculateProtectionThresholdLimit
+0x00408476,retype_named,protection_load_derate_l3_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x0040848a,retype_named,protection_load_derate_l3_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x0040849e,retype_named,protection_threshold_l7_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x004084b2,retype_named,protection_threshold_l7_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule
+0x004084c6,retype_named,protection_threshold_l8_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x004084da,retype_named,protection_threshold_l8_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule
+0x004084ee,retype_named,protection_threshold_l9_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x00408502,retype_named,protection_threshold_l9_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule
+0x00408516,retype_named,protection_threshold_l10_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule
+0x0040852a,retype_named,protection_threshold_l10_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule
+0x0040853e,retype_named,protection_fuel_limit_l2_values_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00408552,retype_named,protection_fuel_limit_l2_values_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x00408566,retype_named,protection_fuel_limit_l3_values_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x0040857a,retype_named,protection_fuel_limit_l3_values_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x0040858e,retype_named,protection_fuel_limit_l4_values_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x004085a2,retype_named,protection_fuel_limit_l4_values_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x004085b6,retype_named,protection_fuel_limit_l2_alt_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x004085ca,retype_named,protection_fuel_limit_l2_alt_values_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_applyConverterLockupSchedule cm848_applyConverterUnlockConditions
+0x004085de,retype_named,protection_load_derate_l4_axis_cal,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x004085f2,retype_named,protection_load_derate_l4_output_cal,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x00408606,retype_named,protection_fuel_derate2_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x0040861c,retype_named,protection_fuel_derate2_values_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x00408632,retype_named,protection_fuel_derate3_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x00408648,retype_named,protection_fuel_derate3_values_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x0040865e,retype_named,protection_fuel_derate4_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x00408674,retype_named,protection_fuel_derate4_values_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_determineCurrentGearAndLockupInhibit
+0x004086de,retype_duplicate_name,,word[10],10,axis,ram,,,,,,,x axis of 9 breakpoints after its byte-length word,cm848_updateParkNeutralExitTorqueLimitWindow
+0x004086f2,retype_duplicate_name,,word[10],10,data,ram,,,,,,,data: 9 values (one per axis breakpoint) after a byte-length word,cm848_updateParkNeutralExitTorqueLimitWindow
+0x004088e8,retype_named,safety_fuel_limit_rpm_axis_cal,word[25],25,axis,ram,,,,,,,x axis of 24 breakpoints after its byte-length word,cm848_processSafetyConditionProtection
+0x0040891a,retype_named,safety_fuel_limit_rpm_output_cal,word[25],25,data,ram,,,,,,,data: 24 values (one per axis breakpoint) after a byte-length word,cm848_processSafetyConditionProtection
+0x00408954,retype_duplicate_name,,word[3],3,axis,ram,,,,,,,x axis of 2 breakpoints after its byte-length word,fuel_quantity_demand_monitor
+0x0040895a,retype_duplicate_name,,word[3],3,data,ram,,,,,,,data: 2 values (one per axis breakpoint) after a byte-length word,fuel_quantity_demand_monitor
+0x0040899c,retype_named,fuel_demand_table_base_cal,word[15],15,axis,ram,,,,,,,x axis of 14 breakpoints after its byte-length word,cm848_calculateFuelDemandLimit
+0x004089ba,retype_named,fuel_demand_table_yaxis_cal,word[6],6,axis,ram,,,,,,,y axis of 5 breakpoints after its byte-length word,cm848_calculateFuelDemandLimit
+0x004089c6,retype_named,fuel_demand_table_xaxis_cal,word[70],70,grid,ram,,,,,,,2-D grid: 5 rows of 14 values (z[(y - 1) x 14 + x - 1] / no header),cm848_calculateFuelDemandLimit
+0x00408b36,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_controlGovernorPressureSolenoid
+0x00408b48,retype_duplicate_name,,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_controlGovernorPressureSolenoid
+0x00408bba,retype_named,torque_limit_load_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_monitorConverterSlipAndFuelLimit
+0x00408bd0,retype_named,torque_limit_table_fuel_cal,word[16],16,axis,ram,,,,,,,y axis of 15 breakpoints after its byte-length word,cm848_monitorConverterSlipAndFuelLimit
+0x00408bf0,retype_named,torque_limit_table_ext_cal,word[150],150,grid,ram,,,,,,,2-D grid: 15 rows of 10 values (z[(y - 1) x 10 + x - 1] / no header),cm848_monitorConverterSlipAndFuelLimit
+0x00408d7e,retype_duplicate_name,,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,initGovernorSpeedControl
+0x00408d94,retype_duplicate_name,,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,initGovernorSpeedControl
+0x00408e30,retype_duplicate_name,,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,governor_cruise_setpoint_calc
+0x00408e3e,retype_duplicate_name,,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,governor_cruise_setpoint_calc
+0x00408f32,retype_named,cylinder_seq_axis1_cal,word[3],3,axis,ram,,,,,,,x axis of 2 breakpoints after its byte-length word,hpcr_cbdCalculateCylinderTrims
+0x00408f38,retype_named,cylinder_seq_ystart_cal,word[3],3,axis,ram,,,,,,,y axis of 2 breakpoints after its byte-length word,hpcr_cbdCalculateCylinderTrims
+0x00408f3e,retype_named,cylinder_seq_yend_cal,word[4],4,grid,ram,,,,,,,2-D grid: 2 rows of 2 values (z[(y - 1) x 2 + x - 1] / no header),hpcr_cbdCalculateCylinderTrims
+0x00408fae,retype_named,crank_mios_timing_axis_cal,word[6],6,axis,ram,,,,,,,x axis of 5 breakpoints after its byte-length word,mpc555_updateSensorDiagnosticFlags
+0x00408fba,retype_named,crank_mios_timing_values_cal,word[6],6,data,ram,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,mpc555_updateSensorDiagnosticFlags
+0x00408fe0,retype_named,cylinder_event_axis_b_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,engine_injectionTiming_crankSyncDispatch
+0x00408ff6,retype_named,cylinder_event_values_b_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,engine_injectionTiming_crankSyncDispatch
+0x0040900c,retype_named,cylinder_event_axis_a_cal,word[18],18,axis,ram,,,,,,,x axis of 17 breakpoints after its byte-length word,engine_injectionTiming_crankSyncDispatch
+0x00409030,retype_named,cylinder_event_values_a_cal,word[18],18,data,ram,,,,,,,data: 17 values (one per axis breakpoint) after a byte-length word,engine_injectionTiming_crankSyncDispatch
+0x00409054,retype_named,engine_event_countdown_axis_cal,word[7],7,axis,ram,,,,,,,x axis of 6 breakpoints after its byte-length word,hpcr_processEngineSyncPulses
+0x00409062,retype_named,engine_event_countdown_values_cal,word[7],7,data,ram,,,,,,,data: 6 values (one per axis breakpoint) after a byte-length word,hpcr_processEngineSyncPulses
+0x0040915e,retype_named,cam_sync_ref_output_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409174,retype_named,cam_sync_ref_output_values_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x0040918a,retype_named,cam_sync_cyl1_timing_axis_a_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x004091a0,retype_named,cam_sync_cyl1_timing_values_a_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x004091b6,retype_named,cam_sync_cyl2_timing_axis_a_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x004091cc,retype_named,cam_sync_cyl2_timing_values_a_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x004091e2,retype_named,cam_sync_cyl3_timing_axis_a_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x004091f8,retype_named,cam_sync_cyl3_timing_values_a_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x0040920e,retype_named,cam_sync_cyl4_timing_axis_a_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409224,retype_named,cam_sync_cyl4_timing_values_a_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x0040923a,retype_named,cam_sync_cyl5_timing_axis_a_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409250,retype_named,cam_sync_cyl5_timing_values_a_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x00409266,retype_named,cam_sync_cyl6_timing_axis_a_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x0040927c,retype_named,cam_sync_cyl6_timing_values_a_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x00409292,retype_named,cam_sync_cyl4_timing_axis_b_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x004092a8,retype_named,cam_sync_cyl4_timing_values_b_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x004092be,retype_named,cam_sync_cyl5_timing_axis_b_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x004092d4,retype_named,cam_sync_cyl5_timing_values_b_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x004092ea,retype_named,cam_sync_cyl6_timing_axis_b_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409300,retype_named,cam_sync_cyl6_timing_values_b_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x00409316,retype_named,cam_sync_prot_gain_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x0040932c,retype_named,cam_sync_prot_gain_values_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x00409342,retype_named,cam_sync_scale_axis_cal,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409358,retype_named,cam_sync_scale_values_cal,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x0040936e,retype_named,cam_sync_output_a_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409380,retype_named,cam_sync_output_a_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x00409392,retype_named,cam_sync_speed_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x004093a4,retype_named,cam_sync_timing_axis_cal,word[9],9,axis,ram,,,,,,,y axis of 8 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x004093b6,retype_named,cam_sync_values_cal,word[64],64,grid,ram,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),cm848_calculateFuelMeteringCommand
+0x00409436,retype_named,cam_sync_speed_ref_limit_axis_cal,word[6],6,axis,ram,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409442,retype_named,cam_sync_speed_ref_limit_values_cal,word[6],6,data,ram,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x0040944e,retype_named,cam_sync_output_b_axis_cal,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409460,retype_named,cam_sync_output_b_values_cal,word[9],9,data,ram,,,,,,,data: 8 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x00409472,retype_named,cam_sync_speed_output_scale_axis_cal,word[6],6,axis,ram,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x0040947e,retype_named,cam_sync_speed_output_scale_values_cal,word[6],6,data,ram,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x0040948a,retype_named,engine_sync_speed_scale_axis_cal,word[6],6,axis,ram,,,,,,,x axis of 5 breakpoints after its byte-length word,cm848_calculateFuelMeteringCommand
+0x00409496,retype_named,engine_sync_speed_scale_values_cal,word[6],6,data,ram,,,,,,,data: 5 values (one per axis breakpoint) after a byte-length word,cm848_calculateFuelMeteringCommand
+0x00409554,retype_named,engine_sync_speed_correction_axis_cal,word[17],17,axis,ram,,,,,,,x axis of 16 breakpoints after its byte-length word,cm848_setFuelMeteringPwm mpc555_initTpuTimingInterrupts
+0x00409576,retype_named,engine_sync_speed_correction_values_cal,word[17],17,data,ram,,,,,,,data: 16 values (one per axis breakpoint) after a byte-length word,cm848_setFuelMeteringPwm mpc555_initTpuTimingInterrupts
+0x004095aa,retype_duplicate_name,,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_sensor_channel_state_load
+0x0040980a,retype_duplicate_name,,word[304],304,grid,ram,,,,,,,2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header),cm848_sensor_channel_state_load
+0x00409ad4,retype_duplicate_name,,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,engine_camSync_referenceCheck_update
+0x00409aea,retype_duplicate_name,,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,engine_camSync_referenceCheck_update
+0x00409b00,retype_duplicate_name,,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,engine_camSync_referenceCheck_update
+0x00409b16,retype_duplicate_name,,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,engine_camSync_referenceCheck_update
+0x00409b2c,retype_duplicate_name,,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409b42,retype_duplicate_name,,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,engine_camTiming_positionCorrection_calc
+0x00409b58,retype_duplicate_name,,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409b6e,retype_duplicate_name,,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,engine_camTiming_positionCorrection_calc
+0x00409b84,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409b96,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,y axis of 8 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409ba8,retype_duplicate_name,,word[64],64,grid,ram,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),engine_camTiming_positionCorrection_calc
+0x00409c28,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409c3a,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,y axis of 8 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409c4c,retype_duplicate_name,,word[64],64,grid,ram,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),engine_camTiming_positionCorrection_calc
+0x00409ccc,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409cde,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,y axis of 8 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409cf0,retype_duplicate_name,,word[64],64,grid,ram,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),engine_camTiming_positionCorrection_calc
+0x00409d70,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,x axis of 8 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409d82,retype_duplicate_name,,word[9],9,axis,ram,,,,,,,y axis of 8 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409d94,retype_duplicate_name,,word[64],64,grid,ram,,,,,,,2-D grid: 8 rows of 8 values (z[(y - 1) x 8 + x - 1] / no header),engine_camTiming_positionCorrection_calc
+0x00409e14,retype_duplicate_name,,word[11],11,axis,ram,,,,,,,x axis of 10 breakpoints after its byte-length word,engine_camTiming_positionCorrection_calc
+0x00409e2a,retype_duplicate_name,,word[11],11,data,ram,,,,,,,data: 10 values (one per axis breakpoint) after a byte-length word,engine_camTiming_positionCorrection_calc
+0x00409fea,retype_duplicate_name,,word[5],5,axis,ram,,,,,,,x axis of 4 breakpoints after its byte-length word,hpcr_fuelDemandProc
+0x00409ff4,retype_duplicate_name,,word[5],5,data,ram,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,hpcr_fuelDemandProc
+0x00409ffe,retype_duplicate_name,,word[5],5,axis,ram,,,,,,,x axis of 4 breakpoints after its byte-length word,hpcr_fuelDemandProc
+0x0040a008,retype_duplicate_name,,word[5],5,data,ram,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,hpcr_fuelDemandProc
+0x0040a012,retype_duplicate_name,,word[5],5,axis,ram,,,,,,,x axis of 4 breakpoints after its byte-length word,hpcr_fuelDemandProc
+0x0040a01c,retype_duplicate_name,,word[5],5,data,ram,,,,,,,data: 4 values (one per axis breakpoint) after a byte-length word,hpcr_fuelDemandProc

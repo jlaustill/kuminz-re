@@ -1,0 +1,1430 @@
+{
+ "bin": 9,
+ "functions": [
+  "cm848_calculateEngineFaultTiming",
+  "cm848_calculateTimingWithTables",
+  "cm848_calibrationGroup5_periodic"
+ ],
+ "assigned_tables": [
+  "0x0005be76",
+  "0x0005bea2",
+  "0x0005beb0",
+  "0x0005bfac",
+  "0x0005c0a8",
+  "0x0005c1a4",
+  "0x0005c1b2",
+  "0x0005c1b8",
+  "0x0005f254",
+  "0x0005f286",
+  "0x0005f2a8",
+  "0x0005f69a",
+  "0x0005f6ce",
+  "0x0005f6dc",
+  "0x0005f808",
+  "0x0005f81a",
+  "0x0005f82c",
+  "0x0005f8ac",
+  "0x0005f8e0",
+  "0x0005f8ee",
+  "0x0005fa1a",
+  "0x0005fa2c",
+  "0x0005fa3e",
+  "0x0005fabe",
+  "0x0005fad6",
+  "0x0005faea"
+ ],
+ "lookups": [
+  {
+   "id": "L022",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005f8ac",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L022"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 26,
+      "breakpoints_unsigned": [
+       0,
+       0,
+       1,
+       1,
+       1,
+       2,
+       2,
+       2,
+       3,
+       3,
+       4,
+       4,
+       4,
+       5,
+       5,
+       5,
+       6,
+       6,
+       6,
+       7,
+       7,
+       8,
+       8,
+       8,
+       9
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005f8e0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L022"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       1250,
+       3750,
+       6250,
+       8750,
+       10238
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005f8ee",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L022"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 150,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       25,
+       6
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateEngineFaultTiming",
+     "statement": "wVar4 = cm848_dualAxisTableInterpolation (&injection_fault_timing_axis2_interp_state,fuel_quantity_axis2_index, WORD_ARRAY_0005f8ac,fuel_quantity_table_result,WORD_ARRAY_0005f8e0, WORD_ARRAY_0005f8ee,0);",
+     "inputs": [
+      "fuel_quantity_axis2_index",
+      "fuel_quantity_table_result"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L023",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005fa1a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L023"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       736,
+       1472,
+       2208,
+       2944,
+       3680,
+       4048,
+       4416
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005fa2c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L023"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       614,
+       1023,
+       1433,
+       1842,
+       2252,
+       2866,
+       3276
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005fa3e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L023"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateEngineFaultTiming",
+     "statement": "wVar3 = cm848_dualAxisTableInterpolation (&injection_fault_timing_scale_interp_state,engine_timing_delta, WORD_ARRAY_0005fa1a,fuel_pressure_sensor,WORD_ARRAY_0005fa2c, WORD_ARRAY_0005fa3e,6);",
+     "inputs": [
+      "engine_timing_delta",
+      "fuel_pressure_sensor"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L024",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005fabe",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L024"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       15,
+       29,
+       74,
+       118,
+       177,
+       221,
+       294,
+       368,
+       442,
+       662
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005fad6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L024"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 10,
+      "breakpoints_unsigned": [
+       184,
+       307,
+       410,
+       512,
+       615,
+       820,
+       1025,
+       2049,
+       3279
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005faea",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L024"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 99,
+      "grid_min_max_unsigned": [
+       0,
+       7343
+      ],
+      "grid_min_max_signed": [
+       0,
+       7343
+      ],
+      "shape_x_by_y": [
+       11,
+       9
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       400,
+       400,
+       533,
+       578,
+       645,
+       700,
+       823,
+       910,
+       965,
+       1203
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateEngineFaultTiming",
+     "statement": "wVar3 = cm848_dualAxisTableInterpolation (&injection_fault_timing_output_interp_state,(word)uVar7,WORD_ARRAY_0005fabe ,fuel_pressure_sensor,WORD_ARRAY_0005fad6,WORD_ARRAY_0005faea,2);",
+     "inputs": [
+      "(word)uVar7",
+      "fuel_pressure_sensor"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L064",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005f254",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L064"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 25,
+      "breakpoints_unsigned": [
+       0,
+       15,
+       29,
+       74,
+       118,
+       177,
+       221,
+       294,
+       368,
+       442,
+       486,
+       515,
+       559,
+       589,
+       604,
+       648,
+       677,
+       707,
+       751,
+       883,
+       1178,
+       1472,
+       1766,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005f286",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L064"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       184,
+       307,
+       410,
+       512,
+       615,
+       820,
+       1025,
+       1230,
+       1434,
+       1639,
+       2049,
+       2254,
+       2459,
+       2869,
+       3279,
+       3689
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005f2a8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L064"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 384,
+      "grid_min_max_unsigned": [
+       0,
+       18500
+      ],
+      "grid_min_max_signed": [
+       0,
+       18500
+      ],
+      "shape_x_by_y": [
+       24,
+       16
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       7500,
+       11875,
+       13750,
+       15750,
+       18500
+      ],
+      "last_row": [
+       0,
+       400,
+       400,
+       500,
+       545,
+       608,
+       660,
+       775,
+       860,
+       910,
+       940,
+       965,
+       1003,
+       1030,
+       1043,
+       1105,
+       1160,
+       1243,
+       1450,
+       1805,
+       2565,
+       3290,
+       4010,
+       4725
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateTimingWithTables",
+     "statement": "uVar4 = cm848_dualAxisTableInterpolation (&injection_timing_fuel_table_interp_state,(word)uVar5,WORD_ARRAY_0005f254, fuel_pressure_sensor,WORD_ARRAY_0005f286,WORD_ARRAY_0005f2a8,2);",
+     "inputs": [
+      "(word)uVar5",
+      "fuel_pressure_sensor"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L065",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005f69a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L065"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 26,
+      "breakpoints_unsigned": [
+       188,
+       219,
+       250,
+       313,
+       344,
+       375,
+       406,
+       438,
+       469,
+       500,
+       531,
+       563,
+       594,
+       625,
+       656,
+       688,
+       719,
+       750,
+       781,
+       813,
+       875,
+       1000,
+       1125,
+       1250,
+       1375
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005f6ce",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L065"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       250,
+       500,
+       750,
+       1000,
+       1250
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005f6dc",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L065"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 150,
+      "grid_min_max_unsigned": [
+       0,
+       65529
+      ],
+      "grid_min_max_signed": [
+       -52,
+       132
+      ],
+      "shape_x_by_y": [
+       25,
+       6
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       59,
+       59,
+       66,
+       96,
+       96,
+       96,
+       103,
+       110,
+       118,
+       118,
+       110,
+       110,
+       88,
+       74,
+       52,
+       15,
+       0,
+       65529,
+       65514,
+       65501,
+       65514,
+       7,
+       7,
+       65514,
+       65526
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateTimingWithTables",
+     "statement": "wVar2 = cm848_dualAxisTableInterpolation (&injection_timing_trim_axis1_interp_state,fuel_quantity_axis1_index, WORD_ARRAY_0005f69a,fuel_quantity_trim,WORD_ARRAY_0005f6ce, WORD_ARRAY_0005f6dc,4);",
+     "inputs": [
+      "fuel_quantity_axis1_index",
+      "fuel_quantity_trim"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L066",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005f808",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L066"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       442,
+       589,
+       736,
+       883,
+       1030,
+       1472,
+       1766
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005f81a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L066"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       614,
+       1023,
+       1433,
+       1639,
+       2252,
+       2866,
+       3276
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005f82c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L066"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       3,
+       16
+      ],
+      "grid_min_max_signed": [
+       3,
+       16
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       16,
+       16,
+       16,
+       12,
+       8,
+       4,
+       3,
+       3
+      ],
+      "last_row": [
+       16,
+       16,
+       16,
+       12,
+       8,
+       4,
+       3,
+       3
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calculateTimingWithTables",
+     "statement": "wVar3 = cm848_dualAxisTableInterpolation (&injection_timing_trim_axis2_interp_state,uVar4,WORD_ARRAY_0005f808, fuel_pressure_sensor,WORD_ARRAY_0005f81a,WORD_ARRAY_0005f82c,6);",
+     "inputs": [
+      "uVar4",
+      "fuel_pressure_sensor"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L071",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005be76",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L071",
+      "L072",
+      "L073"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 22,
+      "breakpoints_unsigned": [
+       4800,
+       5200,
+       5600,
+       6400,
+       7200,
+       8000,
+       9600,
+       11040,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26000,
+       28800,
+       32000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005bea2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L071",
+      "L072",
+      "L073"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       1194,
+       1345,
+       1509,
+       1691,
+       1855
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005beb0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L071"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 126,
+      "grid_min_max_unsigned": [
+       0,
+       2134
+      ],
+      "grid_min_max_signed": [
+       0,
+       2134
+      ],
+      "shape_x_by_y": [
+       21,
+       6
+      ],
+      "first_row": [
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       1796,
+       1678,
+       1531,
+       1340,
+       1192,
+       1111,
+       1036,
+       991,
+       944,
+       876,
+       849,
+       849,
+       0
+      ],
+      "last_row": [
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calibrationGroup5_periodic",
+     "statement": "wVar2 = cm848_dualAxisTableInterpolation (&fuel_correction_table_dims_a,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_0005be76,wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005beb0,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "wVar1"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_calibrationGroup5_periodic",
+     "statement": "wVar1 = cm848_dualAxisTableInterpolation (&fuel_correction_table_dims_a,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_0005be76,wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005beb0,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "wVar1"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L072",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005be76",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L071",
+      "L072",
+      "L073"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 22,
+      "breakpoints_unsigned": [
+       4800,
+       5200,
+       5600,
+       6400,
+       7200,
+       8000,
+       9600,
+       11040,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26000,
+       28800,
+       32000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005bea2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L071",
+      "L072",
+      "L073"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       1194,
+       1345,
+       1509,
+       1691,
+       1855
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005bfac",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L072"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 126,
+      "grid_min_max_unsigned": [
+       0,
+       2134
+      ],
+      "grid_min_max_signed": [
+       0,
+       2134
+      ],
+      "shape_x_by_y": [
+       21,
+       6
+      ],
+      "first_row": [
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       1796,
+       1678,
+       1531,
+       1340,
+       1192,
+       1111,
+       1036,
+       991,
+       944,
+       876,
+       849,
+       849,
+       0
+      ],
+      "last_row": [
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calibrationGroup5_periodic",
+     "statement": "wVar1 = cm848_dualAxisTableInterpolation (&fuel_correction_table_dims_a,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_0005be76,wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005bfac,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "wVar1"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_calibrationGroup5_periodic",
+     "statement": "wVar1 = cm848_dualAxisTableInterpolation (&fuel_correction_table_dims_a,engine_rpm_state_t_0040b7ac.current_rpm, WORD_ARRAY_0005be76,wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005bfac,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "wVar1"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L073",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005be76",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L071",
+      "L072",
+      "L073"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 22,
+      "breakpoints_unsigned": [
+       4800,
+       5200,
+       5600,
+       6400,
+       7200,
+       8000,
+       9600,
+       11040,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26000,
+       28800,
+       32000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005bea2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L071",
+      "L072",
+      "L073"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       1194,
+       1345,
+       1509,
+       1691,
+       1855
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005c0a8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L073"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 126,
+      "grid_min_max_unsigned": [
+       0,
+       2134
+      ],
+      "grid_min_max_signed": [
+       0,
+       2134
+      ],
+      "shape_x_by_y": [
+       21,
+       6
+      ],
+      "first_row": [
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       1796,
+       1678,
+       1531,
+       1340,
+       1192,
+       1111,
+       1036,
+       991,
+       944,
+       876,
+       849,
+       849,
+       0
+      ],
+      "last_row": [
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       2134,
+       1796,
+       1800,
+       1761,
+       1759,
+       1624,
+       1546,
+       1487,
+       1575,
+       1628,
+       1400,
+       1325,
+       1060,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calibrationGroup5_periodic",
+     "statement": "fuel_correction_upper_limit_lookup = cm848_dualAxisTableInterpolation (&DAT_003fb9d2,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005be76, wVar1,WORD_ARRAY_0005bea2,WORD_ARRAY_0005c0a8,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "wVar1"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L074",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005c1a4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L074"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       1257,
+       1383,
+       1509,
+       1635,
+       1760,
+       1886
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005c1b2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L074"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 3,
+      "breakpoints_unsigned": [
+       0,
+       1
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005c1b8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L074"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "grid_min_max_unsigned": [
+       5760,
+       11520
+      ],
+      "grid_min_max_signed": [
+       5760,
+       11520
+      ],
+      "shape_x_by_y": [
+       6,
+       2
+      ],
+      "first_row": [
+       5760,
+       5760,
+       5760,
+       5760,
+       5760,
+       5760
+      ],
+      "last_row": [
+       11520,
+       11520,
+       11520,
+       11520,
+       11520,
+       11520
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_calibrationGroup5_periodic",
+     "statement": "fuel_correction_temp_band_lower = cm848_dualAxisTableInterpolation (&fuel_correction_temp_band_dims_b,wVar1,WORD_ARRAY_0005c1a4,0, WORD_ARRAY_0005c1b2,WORD_ARRAY_0005c1b8,4);",
+     "inputs": [
+      "wVar1",
+      "0"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_calibrationGroup5_periodic",
+     "statement": "fuel_correction_temp_band_upper = cm848_dualAxisTableInterpolation (&fuel_correction_temp_band_dims_b,wVar1,WORD_ARRAY_0005c1a4,1, WORD_ARRAY_0005c1b2,WORD_ARRAY_0005c1b8,4);",
+     "inputs": [
+      "wVar1",
+      "1"
+     ],
+     "output_argument": null
+    }
+   ]
+  }
+ ]
+}

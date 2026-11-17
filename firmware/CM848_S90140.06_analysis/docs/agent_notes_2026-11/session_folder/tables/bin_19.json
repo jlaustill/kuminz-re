@@ -1,0 +1,173 @@
+{
+ "bin": 19,
+ "functions": [
+  "cm848_sensorChannel2_init",
+  "cm848_sensorChannel7_init"
+ ],
+ "assigned_tables": [
+  "0x00059346",
+  "0x00059358",
+  "0x00059456",
+  "0x0005946c"
+ ],
+ "lookups": [
+  {
+   "id": "L121",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00059346",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L121"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       100,
+       200,
+       300,
+       400,
+       500,
+       600,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00059358",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L121"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "values_unsigned": [
+       0,
+       34,
+       68,
+       101,
+       135,
+       169,
+       203,
+       346
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel2_init",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_00059336,&sensor_channel2_ram,&WORD_003fa028, WORD_ARRAY_00059346,WORD_ARRAY_00059358,0,&ema_filter_state_t_003fa02a,4,0x43,0x42, &fuel_timing_sensor_value,&fuel_timing_sensor_default_value, &sensor_channel4_fault_status);",
+     "inputs": [
+      "4"
+     ],
+     "output_argument": "&fuel_timing_sensor_value"
+    },
+    {
+     "function": "cm848_sensorChannel2_process",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_00059336,&sensor_channel2_ram,&WORD_003fa028, WORD_ARRAY_00059346,WORD_ARRAY_00059358,0,&ema_filter_state_t_003fa02a,4,0x43,0x42, &fuel_timing_sensor_value,&fuel_timing_sensor_default_value, &sensor_channel4_fault_status);",
+     "inputs": [
+      "4"
+     ],
+     "output_argument": "&fuel_timing_sensor_value"
+    }
+   ]
+  },
+  {
+   "id": "L126",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00059456",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L126"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       0,
+       102,
+       204,
+       307,
+       409,
+       614,
+       716,
+       819,
+       921,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005946c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L126"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       63535,
+       65530,
+       1984,
+       3996,
+       5988,
+       9992,
+       11985,
+       13996,
+       15988,
+       17980
+      ],
+      "values_signed": [
+       -2001,
+       -6,
+       1984,
+       3996,
+       5988,
+       9992,
+       11985,
+       13996,
+       15988,
+       17980
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel7_init",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_00059446,&sensor_channel7_ram,&WORD_003fa060, WORD_ARRAY_00059456,WORD_ARRAY_0005946c,2,&ema_filter_state_t_003fa062,0x4b,0x282,0x283 ,&governor_speed_input_value,&governor_speed_input_default_value, &sensor_channel7_fault_status);",
+     "inputs": [
+      "0x4b"
+     ],
+     "output_argument": "&governor_speed_input_value"
+    },
+    {
+     "function": "cm848_sensorChannel7_process",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_00059446,&sensor_channel7_ram,&WORD_003fa060, WORD_ARRAY_00059456,WORD_ARRAY_0005946c,2,&ema_filter_state_t_003fa062,0x4b,0x282,0x283 ,&governor_speed_input_value,&governor_speed_input_default_value, &sensor_channel7_fault_status);",
+     "inputs": [
+      "0x4b"
+     ],
+     "output_argument": "&governor_speed_input_value"
+    }
+   ]
+  }
+ ]
+}

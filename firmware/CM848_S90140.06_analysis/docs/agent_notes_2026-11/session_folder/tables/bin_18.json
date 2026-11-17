@@ -1,0 +1,699 @@
+{
+ "bin": 18,
+ "functions": [
+  "initGovernorSpeedControl",
+  "protection_fuel_demand_limiting",
+  "sensorChannelTypeA_configInit_axis5",
+  "sensorChannelTypeB_configInit_axis1",
+  "sensorChannelTypeB_configInit_axis2",
+  "sensorChannelTypeB_configInit_axis3",
+  "sensorChannelTypeB_configInit_axis4",
+  "sensor_throttleTrim_ema_faultProcess"
+ ],
+ "assigned_tables": [
+  "0x0005abf8",
+  "0x0005ac22",
+  "0x0005ac5c",
+  "0x0005ac6a",
+  "0x0005ac88",
+  "0x0005ac96",
+  "0x0005acb4",
+  "0x0005acc6",
+  "0x0005ae08",
+  "0x0005ae30",
+  "0x0005c7d2",
+  "0x0005c7f0",
+  "0x00406778",
+  "0x0040678c",
+  "0x00408d7e",
+  "0x00408d94"
+ ],
+ "lookups": [
+  {
+   "id": "L224",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00408d7e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L224"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 11,
+      "breakpoints_unsigned": [
+       63296,
+       64256,
+       64896,
+       0,
+       640,
+       1280,
+       2240,
+       2880,
+       3520,
+       4480
+      ],
+      "breakpoints_signed": [
+       -2240,
+       -1280,
+       -640,
+       0,
+       640,
+       1280,
+       2240,
+       2880,
+       3520,
+       4480
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00408d94",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L224"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 11,
+      "values_unsigned": [
+       226,
+       173,
+       144,
+       121,
+       101,
+       85,
+       65,
+       54,
+       45,
+       35
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "initGovernorSpeedControl",
+     "statement": "wVar1 = lookupTableInterpolation (&DAT_003fcfc6,sensor_channelGeneric_ram.value,WORD_ARRAY_00408d7e, WORD_ARRAY_00408d94,1);",
+     "inputs": [
+      "sensor_channelGeneric_ram.value"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L230",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005c7d2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L230"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 15,
+      "breakpoints_unsigned": [
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       21600,
+       22400,
+       23200,
+       24000,
+       24800,
+       25600,
+       26400,
+       27200,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005c7f0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L230"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 15,
+      "values_unsigned": [
+       1855,
+       1796,
+       1678,
+       1516,
+       1398,
+       1295,
+       1266,
+       1119,
+       1119,
+       1119,
+       1119,
+       1119,
+       1119,
+       1119
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "protection_fuel_demand_limiting",
+     "statement": "wVar1 = lookupTableInterpolation (&DAT_003fceaa,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005c7d2, WORD_ARRAY_0005c7f0,0);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L231",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005ae08",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L231"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       0,
+       350,
+       357,
+       440,
+       462,
+       504,
+       523,
+       541,
+       559,
+       576,
+       593,
+       609,
+       624,
+       638,
+       652,
+       663,
+       671,
+       677,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005ae30",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L231"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "values_unsigned": [
+       62976,
+       62976,
+       64128,
+       2048,
+       3200,
+       5504,
+       6656,
+       7808,
+       8960,
+       10112,
+       11264,
+       12416,
+       13568,
+       14720,
+       15872,
+       17024,
+       18176,
+       19328,
+       19328
+      ],
+      "values_signed": [
+       -2560,
+       -2560,
+       -1408,
+       2048,
+       3200,
+       5504,
+       6656,
+       7808,
+       8960,
+       10112,
+       11264,
+       12416,
+       13568,
+       14720,
+       15872,
+       17024,
+       18176,
+       19328,
+       19328
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "sensorChannelTypeA_configInit_axis5",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_0005adf8,&sensor_channel_state_t_0040b1da,&WORD_003fcd54, WORD_ARRAY_0005ae08,WORD_ARRAY_0005ae30,2,&ema_filter_state_t_003fcd56,0x67,0x12d,0x12e ,&WORD_0040bdf8,&WORD_0040bdfa,&WORD_0040be50);",
+     "inputs": [
+      "0x67"
+     ],
+     "output_argument": "&WORD_0040bdf8"
+    },
+    {
+     "function": "sensorChannelTypeA_update_axis5",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_0005adf8,&sensor_channel_state_t_0040b1da,&WORD_003fcd54, WORD_ARRAY_0005ae08,WORD_ARRAY_0005ae30,2,&ema_filter_state_t_003fcd56,0x67,0x12d,0x12e ,&WORD_0040bdf8,&WORD_0040bdfa,&WORD_0040be50);",
+     "inputs": [
+      "0x67"
+     ],
+     "output_argument": "&WORD_0040bdf8"
+    }
+   ]
+  },
+  {
+   "id": "L232",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005abf8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L232"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 21,
+      "breakpoints_unsigned": [
+       0,
+       160,
+       195,
+       239,
+       264,
+       323,
+       391,
+       511,
+       685,
+       803,
+       868,
+       920,
+       958,
+       972,
+       993,
+       1007,
+       1015,
+       1020,
+       1022,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005ac22",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L232"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 21,
+      "values_unsigned": [
+       22033,
+       16448,
+       15296,
+       14131,
+       13568,
+       12416,
+       11264,
+       9536,
+       7225,
+       5504,
+       4352,
+       3200,
+       2031,
+       1472,
+       320,
+       64652,
+       63552,
+       62256,
+       60672,
+       59520
+      ],
+      "values_signed": [
+       22033,
+       16448,
+       15296,
+       14131,
+       13568,
+       12416,
+       11264,
+       9536,
+       7225,
+       5504,
+       4352,
+       3200,
+       2031,
+       1472,
+       320,
+       -884,
+       -1984,
+       -3280,
+       -4864,
+       -6016
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "sensorChannelTypeB_configInit_axis1",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_0005abe8,&sensor_channel_state_t_0040b17a,&WORD_003fcd2c, WORD_ARRAY_0005abf8,WORD_ARRAY_0005ac22,2,&ema_filter_state_t_003fcd2e,0x1a,0x133,0x132 ,&WORD_0040bdbc,&WORD_0040bdbe,&WORD_0040be32);",
+     "inputs": [
+      "0x1a"
+     ],
+     "output_argument": "&WORD_0040bdbc"
+    },
+    {
+     "function": "sensorChannelTypeB_update_axis1",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_0005abe8,&sensor_channel_state_t_0040b17a,&WORD_003fcd2c, WORD_ARRAY_0005abf8,WORD_ARRAY_0005ac22,2,&ema_filter_state_t_003fcd2e,0x1a,0x133,0x132 ,&WORD_0040bdbc,&WORD_0040bdbe,&WORD_0040be32);",
+     "inputs": [
+      "0x1a"
+     ],
+     "output_argument": "&WORD_0040bdbc"
+    }
+   ]
+  },
+  {
+   "id": "L233",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005ac5c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L233"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       200,
+       400,
+       600,
+       800,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005ac6a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L233"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "values_unsigned": [
+       0,
+       1201,
+       2402,
+       3604,
+       4805,
+       6144
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "sensorChannelTypeB_configInit_axis2",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_0005ac4c,&sensor_channel_state_t_0040b186,&WORD_003fcd36, WORD_ARRAY_0005ac5c,WORD_ARRAY_0005ac6a,0,&ema_filter_state_t_003fcd38,0x1c,0x179,0x17a ,&sensor_channel28_value,&sensor_channel28_default_value,&sensor_channel28_fault_status );",
+     "inputs": [
+      "0x1c"
+     ],
+     "output_argument": "&sensor_channel28_value"
+    },
+    {
+     "function": "sensorChannelTypeB_update_axis2",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_0005ac4c,&sensor_channel_state_t_0040b186,&WORD_003fcd36, WORD_ARRAY_0005ac5c,WORD_ARRAY_0005ac6a,0,&ema_filter_state_t_003fcd38,0x1c,0x179,0x17a ,&sensor_channel28_value,&sensor_channel28_default_value,&sensor_channel28_fault_status );",
+     "inputs": [
+      "0x1c"
+     ],
+     "output_argument": "&sensor_channel28_value"
+    }
+   ]
+  },
+  {
+   "id": "L234",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005ac88",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L234"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "breakpoints_unsigned": [
+       0,
+       200,
+       400,
+       600,
+       800,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005ac96",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L234"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 7,
+      "values_unsigned": [
+       0,
+       9,
+       19,
+       28,
+       38,
+       48
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "sensorChannelTypeB_configInit_axis3",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_0005ac78,&sensor_channel_state_t_0040b192,&WORD_003fcd40, WORD_ARRAY_0005ac88,WORD_ARRAY_0005ac96,0,&ema_filter_state_t_003fcd42,0x1d,0x177,0x178 ,&WORD_0040bdd8,&WORD_0040bdda,&WORD_0040be40);",
+     "inputs": [
+      "0x1d"
+     ],
+     "output_argument": "&WORD_0040bdd8"
+    },
+    {
+     "function": "sensorChannelTypeB_update_axis3",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_0005ac78,&sensor_channel_state_t_0040b192,&WORD_003fcd40, WORD_ARRAY_0005ac88,WORD_ARRAY_0005ac96,0,&ema_filter_state_t_003fcd42,0x1d,0x177,0x178 ,&WORD_0040bdd8,&WORD_0040bdda,&WORD_0040be40);",
+     "inputs": [
+      "0x1d"
+     ],
+     "output_argument": "&WORD_0040bdd8"
+    }
+   ]
+  },
+  {
+   "id": "L235",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005acb4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L235"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       64,
+       65,
+       228,
+       392,
+       552,
+       720,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005acc6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L235"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "values_unsigned": [
+       254,
+       254,
+       254,
+       179,
+       128,
+       78,
+       1,
+       1
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "sensorChannelTypeB_configInit_axis4",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_0005aca4,&fuel_level_sensor_channel_state,&WORD_003fcd4a, WORD_ARRAY_0005acb4,WORD_ARRAY_0005acc6,0,&ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e ,&WORD_0040bdb8,&WORD_0040bdba,&WORD_0040be30);",
+     "inputs": [
+      "0x44"
+     ],
+     "output_argument": "&WORD_0040bdb8"
+    },
+    {
+     "function": "sensorChannelTypeB_update_axis4",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_0005aca4,&fuel_level_sensor_channel_state,&WORD_003fcd4a, WORD_ARRAY_0005acb4,WORD_ARRAY_0005acc6,0,&ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e ,&WORD_0040bdb8,&WORD_0040bdba,&WORD_0040be30);",
+     "inputs": [
+      "0x44"
+     ],
+     "output_argument": "&WORD_0040bdb8"
+    }
+   ]
+  },
+  {
+   "id": "L236",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00406778",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L236"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 10,
+      "breakpoints_unsigned": [
+       0,
+       6400,
+       12800,
+       19200,
+       25600,
+       32000,
+       38400,
+       44800,
+       51200
+      ],
+      "breakpoints_signed": [
+       0,
+       6400,
+       12800,
+       19200,
+       25600,
+       32000,
+       -27136,
+       -20736,
+       -14336
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0040678c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L236"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 10,
+      "values_unsigned": [
+       500,
+       500,
+       500,
+       500,
+       500,
+       500,
+       500,
+       500,
+       500
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "sensor_throttleTrim_ema_faultProcess",
+     "statement": "throttle_trim_predictor_gain_lookup = lookupTableInterpolation (&WORD_003fbcfe,fuel_quantity_ema,WORD_ARRAY_00406778,WORD_ARRAY_0040678c,0);",
+     "inputs": [
+      "fuel_quantity_ema"
+     ],
+     "output_argument": null
+    }
+   ]
+  }
+ ]
+}

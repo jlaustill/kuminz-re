@@ -1,0 +1,39 @@
+address,name,old_type,words,gap,callees
+0x003fa014,sensor_channel0_interp_state,word,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa028,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa032,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa03c,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa056,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa06a,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa088,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa092,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa09c,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa0a6,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa0b0,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa0ba,sensor_channel16_interp_state,word,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fa5de,,,1,4,lookupTableInterpolation
+0x003fa5e0,,,1,2,lookupTableInterpolation
+0x003fa6cc,fuel_map_interpolation_state,dword,1,2,lookupTableInterpolation
+0x003fb1de,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb1f2,cruise_switch_interp_index,word,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb1fc,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb206,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb210,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb21a,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb564,,,1,20,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb56e,,,1,10,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fb652,,,1,6,lookupTableInterpolation
+0x003fb654,,,1,4,lookupTableInterpolation
+0x003fb656,,,1,2,lookupTableInterpolation
+0x003fb660,,,1,2,lookupTableInterpolation
+0x003fb738,,,2,4,cm848_dualAxisTableInterpolation
+0x003fb9de,,,2,4,cm848_dualAxisTableInterpolation
+0x003fba2e,,,1,10,lookupTableInterpolation
+0x003fba30,,,1,8,lookupTableInterpolation
+0x003fba32,,,1,6,lookupTableInterpolation
+0x003fba34,,,1,4,lookupTableInterpolation
+0x003fbcfe,,,1,2,lookupTableInterpolation
+0x003fcd36,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fcd40,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x003fcd4a,,,1,2,sensorChannelTypeB_configInit sensorChannelTypeB_update
+0x0040aefa,coolant_temp_interp_state,dword,1,2,lookupTableInterpolation

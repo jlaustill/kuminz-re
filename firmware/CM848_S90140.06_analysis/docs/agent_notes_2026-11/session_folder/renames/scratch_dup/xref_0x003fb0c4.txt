@@ -1,0 +1,7 @@
+# xref 0x003fb0c4  (protection_confirm_counter_b)  — 1 referencing function(s)
+# total: 2 read(s), 1 write(s)   width(s): word
+
+cm848_updateLoadProtectionConfirmCounterA: 2r/1w
+  [load ] word   2ee00:	a0 e6 00 00 	lhz     r7,0(r6)
+  [store] word   2ee18:	b1 28 00 00 	sth     r9,0(r8)
+  [load ] word   2ee1c:	a1 86 00 00 	lhz     r12,0(r6)

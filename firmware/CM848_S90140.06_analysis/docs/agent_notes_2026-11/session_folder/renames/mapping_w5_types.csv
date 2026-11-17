@@ -1,0 +1,5 @@
+address,name,old_label,kind
+,combustion_reference_state_t,fuel_blend_state_t,token
+0x0040a494,combustion_reference_state,fuel_blend_state_t_0040a494,global
+,combustion_chi_maximum_fuel_points_t,protection_threshold_set_t,token
+0x0040a502,combustion_chi_maximum_fuel_points,protection_threshold_set_t_0040a502,global

@@ -1,0 +1,19 @@
+55:0x005012dc,sensorChannelTypeB_configInit,iVar9,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+56:0x005012dc,sensorChannelTypeB_configInit,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault-status arrays
+57:0x005012dc,sensorChannelTypeB_configInit,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault-status arrays
+58:0x005012dc,sensorChannelTypeB_configInit,sVar4,validation_state,short,sensorChannelConditionValidator result - 0=ok 1=force-fault 2=force-skip
+59:0x005012dc,sensorChannelTypeB_configInit,uVar10,sensor_value,uint,Processed sensor value compared against thresholds and written to state_ptr[5] (also holds the channel-enable bitmask early in the body)
+60:0x005012dc,sensorChannelTypeB_configInit,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table / sensor_channel_type_table
+61:0x005012dc,sensorChannelTypeB_configInit,wVar5,sensor_raw,word,Raw sensor reading (QADC dispatch result or diag override) written to *state_ptr
+62:0x005012dc,sensorChannelTypeB_configInit,wVar6,ema_result,word,Final exponentialMovingAverage output written to sensor_channel_filtered_output
+63:0x005012dc,sensorChannelTypeB_configInit,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state field / debounce target depending on path)
+64:0x005012dc,sensorChannelTypeB_configInit,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy used in the in-range recovery path
+65:0x005012dc,sensorChannelTypeB_configInit,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0=none 1=ramping 2=limit reached (uninitialized when no threshold path runs)
+67:0x00501b4c,sensorChannelTypeB_update,iVar6,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+68:0x00501b4c,sensorChannelTypeB_update,iVar7,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault-status arrays
+69:0x00501b4c,sensorChannelTypeB_update,iVar5,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault-status arrays
+70:0x00501b4c,sensorChannelTypeB_update,sVar1,validation_state,short,sensorChannelConditionValidator result - 0=ok 1=force-fault 2=force-skip
+71:0x00501b4c,sensorChannelTypeB_update,uVar8,sensor_value,uint,Processed sensor value compared against thresholds (also holds the channel-enable bitmask early in the body)
+72:0x00501b4c,sensorChannelTypeB_update,uVar4,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table / sensor_channel_type_table
+73:0x00501b4c,sensorChannelTypeB_update,uVar2,scratch16,ushort,Reused 16-bit scratch (default value / state field / debounce target depending on path)
+74:0x00501b4c,sensorChannelTypeB_update,wVar3,sensor_scratch,word,Raw sensor reading / EMA result reused across paths and written to *state_ptr
