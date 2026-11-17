@@ -19,8 +19,9 @@ The scripts that gated, applied and proved these renames are in `firmware/script
 | 6 | 1839d0b | `result_W6_*` | `mapping_w6_*` |
 | 7 | 4c39da3 | `result_W7_*` | `mapping_w7_*` |
 | 8 | b66e3a7 | `result_W8_*`, `manual_W8.jsonl` (my rows) | `mapping_w8_*` (stage A labels, `_newrows_b` = stage B), `mapping_cm550_w8.csv` (CM550) |
+| 9 | (wave 9 commit) | `result_W9_*` | `mapping_w9_*` (`_newrows_b` = stage B), `mapping_cm550_w9.csv` (CM550) |
 
-- `briefs/brief.md` is the method every wave followed; `brief_wave3.md` to `brief_wave6.md` and `brief_wave8.md` are the addenda each
+- `briefs/brief.md` is the method every wave followed; `brief_wave3.md` to `brief_wave6.md`, `brief_wave8.md` and `brief_wave9.md` are the addenda each
   later wave read on top of it (wave 7 read waves 3-6, plus per-agent leads taken from the wave-6 notes).
 - **Result rows:** `kind` is `function`, `global`, `new_global`, `struct_field`, `enum_member`, `enum_type` or `note`;
   `verdict` is `confirmed`, `uncertain` or `rejected`. Other keys: `address`, `old`, `new`, `type` (new rows),

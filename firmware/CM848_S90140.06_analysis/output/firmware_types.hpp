@@ -962,6 +962,31 @@ typedef enum {
     COMBUSTION_CHI_SOURCE_STATUS_FLAG_FIXED_VALUE = 14  /* Fixed chi and level selected when a combustion status flag 0x08 / 0x10 / 0x200 is set */
 } COMBUSTION_CHI_SOURCE;
 
+typedef enum {
+    INJECTION_TIMING_INTERMEDIATE_SOURCE_OFFSET_MAPS = 0,  /* cm848_calculateInjectionTimingOffset: the timing offset comes from the two engine speed x fuel demand maps blended by the combustion alpha (engine_mode_control_flags bit 8 clear) */
+    INJECTION_TIMING_INTERMEDIATE_SOURCE_FIXED_OFFSET_CALIBRATION = 2,  /* cm848_calculateInjectionTimingOffset: the fixed injection_timing_offset_cal while engine_mode_control_flags bit 8 is set */
+    INJECTION_TIMING_INTERMEDIATE_SOURCE_PREVIOUS_VALUES_STORED = 25,  /* cm848_storeFuelDemandPreviousValues: one of the last tasks of every pass stores the compensated reference as the previous value */
+    INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MAXIMUM_LIMIT = 27,  /* cm848_applyCombustionTimingLimits: the timing reached the combustion maximum limit (cm848_calculateMainInjectionTiming turns it into 29) */
+    INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MINIMUM_LIMIT = 28  /* cm848_applyCombustionTimingLimits: the timing with the user increment is at or below the combustion minimum limit (becomes 30) */
+} INJECTION_TIMING_INTERMEDIATE_SOURCE;
+
+typedef enum {
+    MAIN_INJECTION_TIMING_SOURCE_COLD_START_MAP = 5,  /* cm848_calculateMainInjectionTiming: the cold start engine speed x coolant temperature map while cold_start_phase is CSP_ABOVE_RPM_TRIGGER / CSP_ABOVE_RPM_VIA_EVENTS / CSP_SETPOINT_UNDERRUN */
+    MAIN_INJECTION_TIMING_SOURCE_FIXED_OFFSET_CALIBRATION = 7,  /* cm848_updateMainInjectionTimingByDeliveryMode: injection_delivery_mode 2 uses the fixed injection_timing_offset_cal */
+    MAIN_INJECTION_TIMING_SOURCE_INITIAL = 8,  /* cm848_initTimingFilterStates: the value before the first pass */
+    MAIN_INJECTION_TIMING_SOURCE_DEMAND_FLOOR = 11,  /* cm848_calculateMainInjectionTiming: the demand was raised to injection_timing_demand_floor */
+    MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND = 18,  /* cm848_calculateMainInjectionTiming: the sum of the base command and the components (combination mode 0) or the base command won the highest / lowest comparison */
+    MAIN_INJECTION_TIMING_SOURCE_INTAKE_TEMPERATURE_COMPONENT = 19,  /* cm848_calculateMainInjectionTiming: the intake temperature component won (combination mode 1 / other) */
+    MAIN_INJECTION_TIMING_SOURCE_COOLANT_COMPONENT = 20,  /* cm848_calculateMainInjectionTiming: the coolant component won */
+    MAIN_INJECTION_TIMING_SOURCE_BAROMETRIC_PRESSURE_COMPONENT = 21,  /* cm848_calculateMainInjectionTiming: the barometric pressure component won */
+    MAIN_INJECTION_TIMING_SOURCE_BOOST_COMPONENT = 22,  /* cm848_calculateMainInjectionTiming: the boost component won */
+    MAIN_INJECTION_TIMING_SOURCE_GOVERNOR_LIMIT_MINIMUM = 23,  /* cm848_calculateMainInjectionTiming: raised to injection_timing_main_governor_limit_minimum while governor_speed_limit_active_flag is set */
+    MAIN_INJECTION_TIMING_SOURCE_WORKING_MINIMUM = 24,  /* cm848_calculateMainInjectionTiming: raised to injection_timing_demand_min_working */
+    MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MAXIMUM_LIMIT = 29,  /* cm848_calculateMainInjectionTiming: the base command won and the intermediate source code was 27 */
+    MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MINIMUM_LIMIT = 30,  /* cm848_calculateMainInjectionTiming: the base command won and the intermediate source code was 28 */
+    MAIN_INJECTION_TIMING_SOURCE_FUEL_PRESSURE_LIMP_HOME_COMPONENT = 31  /* cm848_calculateMainInjectionTiming: injection_timing_main_fuel_pressure_limp_home_component won */
+} MAIN_INJECTION_TIMING_SOURCE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;

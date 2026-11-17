@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 17 14:00:48 MST 2026
+// Generated: Tue Nov 17 16:41:14 MST 2026
 
 
 //
@@ -15955,10 +15955,10 @@ void vp44_periodicTaskSet_governorProtection(void)
   cm550_oil_pressure_shutdown_controller();
   vp44RpmBasedFaultDetector();
   func_0x00044c76();
-  cm550_FUN_0001d5a0();
+  selectEngineSpeedLimit();
   func_0x0004da56();
   selectHighSpeedGovernorGainSet();
-  cm550_initDiagnosticProtocol();
+  runHighSpeedGovernorPid();
   func_0x00042496();
   cm550_FUN_0001cc72();
   return;
@@ -15980,10 +15980,10 @@ void vp44_engine_control_cycle(void)
   cm550_oil_pressure_shutdown_controller();
   vp44RpmBasedFaultDetector();
   func_0x00044c76();
-  cm550_FUN_0001d5a0();
+  selectEngineSpeedLimit();
   func_0x0004da56();
   selectHighSpeedGovernorGainSet();
-  cm550_initDiagnosticProtocol();
+  runHighSpeedGovernorPid();
   func_0x00042496();
   cm550_FUN_0001cc72();
   return;
@@ -15999,7 +15999,7 @@ void cm550_slowCycle20ExtendedCoordinator(void)
 
 {
   selectHighSpeedGovernorGainSet();
-  cm550_initDiagnosticProtocol();
+  runHighSpeedGovernorPid();
   func_0x00042496();
   cm550_FUN_0001cc72();
   return;
@@ -16014,7 +16014,7 @@ void cm550_slowCycle20ExtendedCoordinator(void)
 void vp44ExtendedFaultDetectionCoordinator(void)
 
 {
-  cm550_initDiagnosticProtocol();
+  runHighSpeedGovernorPid();
   func_0x00042496();
   cm550_FUN_0001cc72();
   return;
@@ -18304,12 +18304,22 @@ void cm550_FUN_0001ce58(void)
 
 
 //
-// Function: cm550_initDiagnosticProtocol @ 0x0001ce7c
+// Function: runHighSpeedGovernorPid @ 0x0001ce7c
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Runs the high speed governor PID, the same structure as CM848 0x1f40c: the speed error
+   (hsg_reference_speed_after_droop minus the compensated engine speed, times the error filter gain
+   / 512) passes the first order filter into hsg_filtered_engine_speed_error and is clamped to its
+   minimum / maximum; the integrator is preset by cm550_FUN_0001d252 (later
+   presetHighSpeedGovernorIntegrator) and reset to its reset value when engine speed exceeds the
+   reference plus the reset offset with fueling state 12 and low fuel demand; otherwise the
+   proportional (error x gain / 960), derivative (error change x gain / 240) and integral (error x
+   gain / 15360) terms, each gain optionally scaled by a table of the absolute error (caps 0x1e00 /
+   0xffff / 0x7ae), are clamped and summed into the HSG fueling output (was
+   cm550_initDiagnosticProtocol). */
 
-void cm550_initDiagnosticProtocol(void)
+void runHighSpeedGovernorPid(void)
 
 {
   dword multiplier;
@@ -18332,7 +18342,7 @@ void cm550_initDiagnosticProtocol(void)
     _hsg_filtered_engine_speed_error = _hsg_minimum_filtered_engine_speed_error_1000_0;
     _DAT_0080d63a = _hsg_minimum_filtered_engine_speed_error_1000_0 * 0x10000 + -0x80000000;
   }
-  cm550_FUN_0001d252();
+  presetHighSpeedGovernorIntegrator();
   if ((((int)((int)_engine_speed_below_which_the_hsg_integrator_is_reset_1000_1000 +
              (uint)_hsg_reference_speed_after_droop) < (int)(uint)_engine_rpm_primary) &&
       (_lsg_governor_fuel_demand < _engine_fueling_below_which_the_hsg_integrator_may_be_reset_0_100
@@ -18460,12 +18470,17 @@ void cm550_initDiagnosticProtocol(void)
 
 
 //
-// Function: cm550_FUN_0001d252 @ 0x0001d252
+// Function: presetHighSpeedGovernorIntegrator @ 0x0001d252
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Integrator preset of the high speed governor, the same algorithm as CM848 0x1f34c: while the
+   fueling state is not 12 the integrator is set to the current fuel demand minus the positive part
+   of the proportional term, plus the smaller of that term and the preset offset limit, clamped
+   between the integrator preset minimum and maximum; keeps the previous integral output and
+   filtered error (was cm550_FUN_0001d252). */
 
-void cm550_FUN_0001d252(void)
+void presetHighSpeedGovernorIntegrator(void)
 
 {
   short sVar1;
@@ -18503,12 +18518,18 @@ void cm550_FUN_0001d252(void)
 
 
 //
-// Function: cm550_update_engine_protection_thresholds @ 0x0001d2e4
+// Function: initializeHighSpeedGovernorGainSet @ 0x0001d2e4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Start-up initialisation of the high speed governor, the same function as CM848 0x1f98c: loads the
+   base proportional, integral and derivative gains and the error filter coefficient into the live
+   set, selects gain set code 16, starts the integrator at its maximum, clears the error filter
+   state (0x80000000 = 0 in the offset binary the filter uses), points the filter coefficient
+   pointer at the selected coefficient and sets the three gain adjustment table descriptors (axis
+   and value pointers, size 2) (was cm550_update_engine_protection_thresholds). */
 
-void cm550_update_engine_protection_thresholds(void)
+void initializeHighSpeedGovernorGainSet(void)
 
 {
   _hsg_proportional_gain_base = _DAT_00808036;
@@ -18639,12 +18660,22 @@ uint selectHighSpeedGovernorGainSet(void)
 
 
 //
-// Function: cm550_FUN_0001d5a0 @ 0x0001d5a0
+// Function: selectEngineSpeedLimit @ 0x0001d5a0
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Lowest-wins arbitration of the high speed governor (HSG) reference speed, the same function as
+   CM848 0x1fd94: the J1939 high idle override (JCHII1OD, speed JCHSODES, source 8), otherwise the
+   lowest of the engine protection derate limit EPESLM (5), the base reference (6), the datalink
+   speed control mode 3 limit (9), the VSS tamper derate (4), anc_speed_limit_ramp_value (3),
+   DAT_0080a9d6 (2, or the isochronous cap in modes 2 / 3), the application group rpm derate (7),
+   the throttle fueling override limit (11) and DAT_0080d65c (10, slope 0), limited by DAT_00808144
+   and a minimum; the winner is recorded in hsg_reference_speed_winning_source_indicator (e2m
+   HSINRFST). The ramped reference (the derate speed used in the droop) follows it, then the droop
+   line (slope recomputed only when its inputs change) gives hsg_reference_speed_after_droop, capped
+   by the isochronous speed (was cm550_FUN_0001d5a0). */
 
-void cm550_FUN_0001d5a0(void)
+void selectEngineSpeedLimit(void)
 
 {
   division_operand_t divisor;
@@ -18832,12 +18863,18 @@ void cm550_FUN_0001d5a0(void)
 
 
 //
-// Function: cm550_FUN_0001d94e @ 0x0001d94e
+// Function: initializeEngineSpeedLimitDefaults @ 0x0001d94e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Resets the HSG reference speed arbitration, the same function as CM848 0x20410: points the base
+   reference pointer at the calibrated reference, starts the ramped reference (the derate speed used
+   in the droop) there, sets the winning source indicator and its HSINRFST copy to 6, the droop
+   no-load intercept speed to its default, the lowest-wins reference and the source 7 / 10 / 4
+   limits to the maximum rated engine speed, and forces a droop slope recompute (was
+   cm550_FUN_0001d94e). */
 
-void cm550_FUN_0001d94e(void)
+void initializeEngineSpeedLimitDefaults(void)
 
 {
   _DAT_0080d666 = &DAT_00803ba0;
@@ -29497,10 +29534,10 @@ void vp44_FUN_000284e8(void)
   cm550_diagnosticProtectionEvaluator();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8744;
-  cm550_update_engine_protection_thresholds();
+  initializeHighSpeedGovernorGainSet();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x874a;
-  cm550_FUN_0001d94e();
+  initializeEngineSpeedLimitDefaults();
   _DAT_00810ffa = 2;
   _DAT_00810ffc = 0x8750;
   cm550_engineRpmSourceInit();
@@ -29903,8 +29940,8 @@ void vp44_mainSystemInitialization(void)
   cm550_dmaControllerSetup1();
   vp44_engineProtectionSystemInit();
   cm550_diagnosticProtectionEvaluator();
-  cm550_update_engine_protection_thresholds();
-  cm550_FUN_0001d94e();
+  initializeHighSpeedGovernorGainSet();
+  initializeEngineSpeedLimitDefaults();
   cm550_engineRpmSourceInit();
   cm550_canBusTimingInit();
   cm550_FUN_00026e86();
