@@ -1,0 +1,7 @@
+address,name,old_label,kind
+,limiting_source_number,source_active,field
+,applied_speed_limit,limit_source,field
+,lowest_source_speed_limit,fuel_minimum,field
+,fresh_air_mass_flow_filtered,reserved_0c,field
+,egr_fraction_actual,fuel_demand_final,field
+,residual_oxygen_fraction_delayed_filtered,efficiency_filtered,field

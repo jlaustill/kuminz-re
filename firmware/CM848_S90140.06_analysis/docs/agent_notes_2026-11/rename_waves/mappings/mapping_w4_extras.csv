@@ -1,0 +1,7 @@
+address,name,old_label,kind
+,key_on_hour_meter,timing_snapshot,field
+,diagnostic_fault_flags_a,sensor_scale_1,field
+,diagnostic_fault_flags_b,sensor_scale_2,field
+,governor_mode_code,pressure_adj,field
+,fuel_demand_computed,load_throttle,field
+,main_injection_timing,torque_limit,field

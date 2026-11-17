@@ -6,6 +6,10 @@ outputs and recorded the misnamed functions and variables around them. These are
 renames**: check each against the code (and `xref_addr.py` / the disassembly) before renaming, per the
 `review-function-readability` skill. Where two agents agreed independently, it says so.
 
+**Full agent notes:** the wave sections below quote the agents' notes cut short. The full results, the briefs and
+the applied mappings are in `firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/`; the scripts that gated,
+applied and proved the waves are in `firmware/scripts/rename_waves/`.
+
 ## Functions (what they compute)
 
 | Function | What the code does | Evidence |
@@ -294,8 +298,8 @@ per-injector diagnostic bitmaps (P0201-P0206 / P2146 / P2149), `all_speed_govern
   duplicate names remain; the importer's type stats are unchanged.
 - CM550 also uses the old `governor_mode_state` (now `engine_retarder_override_control_mode` in CM848) - one more
   cross-firmware link to check on the CM550 side.
-- Naming convention left for the user: about nine wave-3 functions say `initialize` (spelled out by the renaming
-  gate), while the repo's older functions say `init`.
+- Naming convention DECIDED by the user (2026-11-17): new names say `initialize` (so the wave-3 functions keep it);
+  the repo's older `init` names stay until a rename touches them.
 
 ## Wave 4 (2026-11-16, PR #50)
 
