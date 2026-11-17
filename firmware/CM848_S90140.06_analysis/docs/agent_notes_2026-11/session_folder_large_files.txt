@@ -5,6 +5,7 @@ build_autolabel.log
 build_autolabel2.log
 build_baseline.log
 build_cm550.log
+build_cm550_w8.log
 build_dword.log
 build_final.log
 build_fix.log
@@ -31,6 +32,7 @@ build_tables.log
 build_tables2.log
 build_tables3.log
 build_tables4.log
+build_thunkfix.log
 build_toolchain.log
 build_typea.log
 build_typea2.log
@@ -50,9 +52,19 @@ build_w7.log
 build_w7b.log
 build_w7c.log
 build_w7d.log
+build_w8a.log
+build_w8b.log
+build_w8b2.log
+build_w8b3.log
+build_w8final.log
 final.cpp
 followup_pre.cpp
 r29_pre.cpp
+renames/a1.cpp
+renames/a2.cpp
+renames/cm550_pre.cpp
+renames/cm550_pre_canon.cpp
+renames/cm550_reversed.cpp
 renames/pre.cpp
 renames/pre10.cpp
 renames/pre2.cpp
@@ -72,6 +84,8 @@ renames/pre9_canon.cpp
 renames/pre9_canon_repo.cpp
 renames/pre9_canon_repo2.cpp
 renames/pre_nocomments.cpp
+renames/pre_w8.cpp
+renames/pre_w8_canon.cpp
 renames/reversed.cpp
 renames/reversed5.cpp
 renames/reversed6.cpp
@@ -81,6 +95,11 @@ renames/reversed9.cpp
 renames/reversed9_repo.cpp
 renames/reversed9_repo2.cpp
 renames/reversed_all.cpp
+renames/reversed_w8.cpp
+renames/w8_a.cpp
+renames/w8_a_canon.cpp
+renames/w8_b_canon.cpp
+renames/w8_b_final_pre.cpp
 sensor_build1.cpp
 sensor_pre.cpp
 step1.cpp
@@ -91,6 +110,7 @@ step4.cpp
 tables/final_pre.cpp
 tables/main_pre.cpp
 tables/pilot_pre.cpp
+thunk_pre.cpp
 typeb_unrenamed.cpp
 verify.log
 verify2.log
@@ -102,8 +122,10 @@ verify_final.log
 verify_final2.log
 verify_main.log
 verify_renames.log
+verify_thunkfix.log
 verify_w3.log
 verify_w4.log
 verify_w5.log
 verify_w6.log
 verify_w7.log
+verify_w8.log

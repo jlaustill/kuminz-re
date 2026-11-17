@@ -53,6 +53,12 @@ for line in open(transcript, errors="replace"):
             prompts.append({"timestamp": r.get("timestamp"), "description": i.get("description"),
                             "subagent_type": i.get("subagent_type"), "model": i.get("model"),
                             "background": i.get("run_in_background"), "prompt": i.get("prompt")})
+unique = {}
+for p in prompts:                        # the transcript replays some calls (no timestamp): keep one, timestamped first
+    key = (p["description"], p["prompt"])
+    if key not in unique or (unique[key]["timestamp"] is None and p["timestamp"]):
+        unique[key] = p
+prompts = sorted(unique.values(), key=lambda p: p["timestamp"] or "")
 text = "".join(json.dumps(p) + "\n" for p in prompts)
 if PRIVATE.search(text):
     sys.exit("private-looking text in the prompts: stop")

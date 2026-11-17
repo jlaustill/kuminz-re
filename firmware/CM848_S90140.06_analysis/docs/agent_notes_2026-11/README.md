@@ -47,17 +47,17 @@ Each table's outcome (evidence, confidence, skip reason) is in `../table_naming_
 
 ## Everything else from the session (kept at the user's request, 2026-11-17)
 
-- **`session_folder/`** holds the session's other scratch files as they were, 456 in all:
+- **`session_folder/`** holds the session's other scratch files as they were, 505 in all:
   - the one-off scripts: appliers, checks, and the doc and PR-description updaters;
   - the table-campaign producers: `table_census.py`, `table_worklist.py`, `plan_tables.py`, `size_tables.py`,
     `name_tables.py`, `rename_bases.py`, `rename_table_families.py`, `campaign_provenance.py`, `unseen_uses.py`;
   - the intermediate files: `renames/aligned_*.jsonl`, the agents' scratch folders, the bins and proposals.
 
   Paths inside them point at the scratch folder. The maintained rename-wave scripts are in `firmware/scripts/rename_waves/`.
-- **`session_folder_large_files.tar.xz`** (0.6 MB, 142 MB unpacked) holds the 44 `.cpp` snapshots (each proof's
-  baselines and reverse-mapped builds) and the 65 build logs. `session_folder_large_files.txt` lists them. Unpack
+- **`session_folder_large_files.tar.xz`** (0.8 MB, 178 MB unpacked) holds the `.cpp` snapshots (each proof's
+  baselines and reverse-mapped builds) and the build logs, 131 files. `session_folder_large_files.txt` lists them. Unpack
   with `tar -xJf session_folder_large_files.tar.xz -C session_folder`.
-- **`agent_prompts.md`** (and `agent_prompts.jsonl`) has the exact prompt of each of the 74 subagents the session
-  started, in order.
+- **`agent_prompts.md`** (and `agent_prompts.jsonl`) has the exact prompt of each of the 48 subagents the session
+  started, in order (the transcript replays some calls; each is listed once).
 - **Not in this public repo:** the session and agent transcripts. They contain the session's private context and are
   kept outside the repo.
