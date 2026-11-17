@@ -53,7 +53,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00512e70,governor_cruise_engage_check,uVar3,engage_allowed,undefined4,Return flag - 1 when cruise may engage this cycle
 # sensorChannelTypeB_configInit @ 0x005012dc - per-channel sensor read/validate/debounce (reviewed via review-function-readability)
 # sensorChannelTypeB_update @ 0x00501b4c - boot-time twin of configInit (same shape, fewer temps)
-0x0002f5a4,cm848_processLoadProtectionStatus,uVar1,engineLoadProtection,ENGINE_LOAD_PROTECTION_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
+0x0002f5a4,cm848_evaluateVariableGeometryTurbochargerPositionAdjustments,uVar1,engineLoadProtection,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
 0x00038ac8,cm848_checkPciMessageTimeouts,bVar2,all_transmits_overdue,byte,True until any timed TX entry is still within interval + grace; when it stays true link_event_code = 7
 0x00038ac8,cm848_checkPciMessageTimeouts,uVar4,message_index,uint,Entry index into pci_transmit_message_table then pci_receive_message_table (masked to 8 bits)
 0x00038ac8,cm848_checkPciMessageTimeouts,puVar3,transmit_timer,ushort *,Cached pci_transmit_message_table[message_index].timer

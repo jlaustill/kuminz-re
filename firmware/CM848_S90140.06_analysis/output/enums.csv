@@ -811,8 +811,8 @@ CRUISE_SWITCH_REQUEST,2,CRUISE_SWITCH_COAST,COAST button - decelerate (governor_
 CRUISE_SWITCH_REQUEST,3,CRUISE_SWITCH_SET,SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12,2
 CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12,2
 CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling value,2
-ENGINE_LOAD_PROTECTION_STATE,0,ENGINE_LOAD_PROTECTION_INACTIVE,engine-load protection not derating,2
-ENGINE_LOAD_PROTECTION_STATE,8,ENGINE_LOAD_PROTECTION_ACTIVE,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
+VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,0,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_NORMAL,engine-load protection not derating,2
+VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,8,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_ERROR,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
 # Reflash-kernel diagnostic service IDs - registered in diagnostic_service_dispatch_table by mpc555_initDiagnosticSubsystem (Calterm/Insite programming path)
 DIAGNOSTIC_SERVICE,0x02,DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT,mpc555_diagServiceInitEepromTransfer,1
 DIAGNOSTIC_SERVICE,0x07,DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_diagServiceDownloadCalibration,1

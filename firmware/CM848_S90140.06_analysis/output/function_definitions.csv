@@ -23,16 +23,16 @@ function_address,function_name,param_index,name,type,comment
 0x00015d2c,cm848_interpolateTableWithoutCache,1,x_axis,word *,X axis: first word = byte length of the unsigned breakpoints that follow
 0x00015d2c,cm848_interpolateTableWithoutCache,2,y_data,word *,Y data: one signed value per breakpoint
 
-0x00015e08,cm848_interpolateFuelMapTable,return,,void,Writes the result record through param 0
-0x00015e08,cm848_interpolateFuelMapTable,0,result,word *,Result record (3 dwords): [0] the x_axis / y_data value / [1] the larger of [0] and the reverse lookup of [2] / [2] [0] through second_axis -> second_data (raised to 2 x fuel_demand_min_threshold) / [3] [1] through fourth_data / [4] [1] through third_data / [5] not set
-0x00015e08,cm848_interpolateFuelMapTable,1,input,ushort,Value looked up on x_axis (r4)
-0x00015e08,cm848_interpolateFuelMapTable,2,x_axis,word *,X axis of the first lookup (r5)
-0x00015e08,cm848_interpolateFuelMapTable,3,y_data,word *,Y data of the first lookup (r6)
-0x00015e08,cm848_interpolateFuelMapTable,4,second_axis,word *,Axis of the follow-on lookups (r7) - also the data of the reverse lookup
-0x00015e08,cm848_interpolateFuelMapTable,5,second_data,word *,Data for [2] (r8) - also the axis of the reverse lookup
-0x00015e08,cm848_interpolateFuelMapTable,6,third_data,word *,Data for [4] (r9)
-0x00015e08,cm848_interpolateFuelMapTable,7,fourth_data,word *,Data for [3] (r10)
-0x00015e08,cm848_interpolateFuelMapTable,8,lookup_signed,int,Stack argument: non-zero passes flags 1 (signed x axis) to the first lookup
+0x00015e08,cm848_lookupProtectiveChi,return,,void,Writes the result record through param 0
+0x00015e08,cm848_lookupProtectiveChi,0,result,word *,Result record (3 dwords): [0] the x_axis / y_data value / [1] the larger of [0] and the reverse lookup of [2] / [2] [0] through second_axis -> second_data (raised to 2 x fuel_demand_min_threshold) / [3] [1] through fourth_data / [4] [1] through third_data / [5] not set
+0x00015e08,cm848_lookupProtectiveChi,1,input,ushort,Value looked up on x_axis (r4)
+0x00015e08,cm848_lookupProtectiveChi,2,x_axis,word *,X axis of the first lookup (r5)
+0x00015e08,cm848_lookupProtectiveChi,3,y_data,word *,Y data of the first lookup (r6)
+0x00015e08,cm848_lookupProtectiveChi,4,second_axis,word *,Axis of the follow-on lookups (r7) - also the data of the reverse lookup
+0x00015e08,cm848_lookupProtectiveChi,5,second_data,word *,Data for [2] (r8) - also the axis of the reverse lookup
+0x00015e08,cm848_lookupProtectiveChi,6,third_data,word *,Data for [4] (r9)
+0x00015e08,cm848_lookupProtectiveChi,7,fourth_data,word *,Data for [3] (r10)
+0x00015e08,cm848_lookupProtectiveChi,8,lookup_signed,int,Stack argument: non-zero passes flags 1 (signed x axis) to the first lookup
 
 # -----------------------------------------------------------------------------
 # CAN Message Transmission - Adapted from CM550 patterns
@@ -342,7 +342,7 @@ function_address,function_name,param_index,name,type,comment
 0x00501b4c,sensorChannelTypeB_update,10,value_output_ptr,word *,Receives sensor_channel_filtered_output[channel] - the filtered engineering value - at the end of each pass (was raw_output_ptr)
 0x00501b4c,sensorChannelTypeB_update,11,default_value_output_ptr,word *,Receives config_ptr->default_value (was filtered_output_ptr)
 0x00501b4c,sensorChannelTypeB_update,12,fault_status_output_ptr,word *,Receives the status: 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled
-0x0002e488,cm848_calculateLoadProtectionDeviationFlag,return,,void,explicit void(void) - writes only protection_rpm_below_confirm_flag - clears phantom args at the 0x2e4cc call site
+0x0002e488,cm848_checkVariableGeometryTurbochargerPositionNearOpenStop,return,,void,explicit void(void) - writes only protection_rpm_below_confirm_flag - clears phantom args at the 0x2e4cc call site
 # -----------------------------------------------------------------------------
 # QSPI job driver (reviewed 2026-11-11)
 # -----------------------------------------------------------------------------

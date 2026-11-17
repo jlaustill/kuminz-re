@@ -218,12 +218,12 @@ throttle_fuel_trim_t,0x0040a3ea,reserved_16,word,2,Gap,,needs_review
 # Fuel Blend State - fuel demand blending and mode selection
 # Used by calculateFuelBlendModeSelection
 # Total size: 12 bytes (0x0040a494-0x0040a49f)
-fuel_blend_state_t,0x0040a494,blend_mode,word,2,Fuel blend mode selector,,verified
-fuel_blend_state_t,0x0040a494,blend_enable,word,2,enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100,,needs_review
-fuel_blend_state_t,0x0040a494,demand_above_threshold,word,2,1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal,,needs_review
-fuel_blend_state_t,0x0040a494,bypass_load_correction,word,2,dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active,,needs_review
-fuel_blend_state_t,0x0040a494,fuel_demand_snapshot,word,2,snapshot of fuel_demand_arbitrated_snapshot,,needs_review
-fuel_blend_state_t,0x0040a494,blend_weight,word,2,Fuel blend weight factor (0-100%),,verified
+combustion_reference_state_t,0x0040a494,alpha_percent,word,2,Fuel blend mode selector,,verified
+combustion_reference_state_t,0x0040a494,egr_off_flag,word,2,enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100,,needs_review
+combustion_reference_state_t,0x0040a494,gross_fuel_timing_adjustment_active_flag,word,2,1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal,,needs_review
+combustion_reference_state_t,0x0040a494,injection_timing_fuel_limited_adjustment,word,2,dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active,,needs_review
+combustion_reference_state_t,0x0040a494,injection_quantity_gross_before_timing_adjustment,word,2,snapshot of fuel_demand_arbitrated_snapshot,,needs_review
+combustion_reference_state_t,0x0040a494,chi_hundredths,word,2,Fuel blend weight factor (0-100%),,verified
 # Boost Pressure State - turbocharger boost control values
 # Used by boostBasedFuelModifier and calculateBoostPressureOffset
 # Total size: 16 bytes (0x0040a406-0x0040a415)
@@ -754,11 +754,11 @@ j1939_dm13_requester_slot_t,0x0040addc,stop_broadcast_timer,word,2,Cummins DM13B
 # Set 1 (0x0040a502): Raw fuel demand table lookup results
 # Set 2 (0x0040a50c): RPM-corrected values via fuelDemandRpmCorrection()
 # lookupProtectionFuelDemand fills both sets sequentially (line 12544)
-protection_threshold_set_t,0x0040a502,threshold_scaled,word,2,Scaled protection threshold from table lookup,,verified
-protection_threshold_set_t,0x0040a502,recovery_threshold,word,2,Recovery/hysteresis exit threshold,,verified
-protection_threshold_set_t,0x0040a502,hysteresis,word,2,Protection hysteresis band value,,verified
-protection_threshold_set_t,0x0040a502,threshold_scaled_alt,word,2,Alternate scaled threshold (same input different context),,verified
-protection_threshold_set_t,0x0040a502,threshold_base,word,2,Base protection threshold before correction,,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_1,word,2,Scaled protection threshold from table lookup,,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_2,word,2,Recovery/hysteresis exit threshold,,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_3,word,2,Protection hysteresis band value,,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_4,word,2,Alternate scaled threshold (same input different context),,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_5,word,2,Base protection threshold before correction,,verified
 
 # ============================================================================
 # Fault Entry (Freeze Frame) - DTC snapshot of engine state at fault activation

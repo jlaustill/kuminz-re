@@ -911,9 +911,9 @@ typedef enum {
 } CRUISE_SWITCH_REQUEST;
 
 typedef enum {
-    ENGINE_LOAD_PROTECTION_INACTIVE = 0,  /* engine-load protection not derating */
-    ENGINE_LOAD_PROTECTION_ACTIVE = 8  /* engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000) */
-} ENGINE_LOAD_PROTECTION_STATE;
+    VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_NORMAL = 0,  /* engine-load protection not derating */
+    VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_ERROR = 8  /* engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000) */
+} VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE;
 
 typedef enum {
     DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT = 0x02,  /* mpc555_diagServiceInitEepromTransfer */
@@ -964,7 +964,7 @@ typedef struct diag_session_state_t diag_session_state_t;
 typedef struct system_status_flags_t system_status_flags_t;
 typedef struct wastegate_duty_controller_state_t wastegate_duty_controller_state_t;
 typedef struct throttle_fuel_trim_t throttle_fuel_trim_t;
-typedef struct fuel_blend_state_t fuel_blend_state_t;
+typedef struct combustion_reference_state_t combustion_reference_state_t;
 typedef struct boost_pressure_state_t boost_pressure_state_t;
 typedef struct torque_limit_arb_t torque_limit_arb_t;
 typedef struct governor_pid_t governor_pid_t;
@@ -1015,7 +1015,7 @@ typedef struct ef00_dispatch_entry_t ef00_dispatch_entry_t;
 typedef struct diag_dispatch_entry_t diag_dispatch_entry_t;
 typedef struct scheduler_task_stat_t scheduler_task_stat_t;
 typedef struct j1939_dm13_requester_slot_t j1939_dm13_requester_slot_t;
-typedef struct protection_threshold_set_t protection_threshold_set_t;
+typedef struct combustion_chi_maximum_fuel_points_t combustion_chi_maximum_fuel_points_t;
 typedef struct fault_entry_t fault_entry_t;
 typedef struct usiu_pit_t usiu_pit_t;
 typedef struct usiu_clock_t usiu_clock_t;
@@ -1284,13 +1284,13 @@ struct throttle_fuel_trim_t {
     uint16_t reserved_16;  /* Gap */
 };
 
-struct fuel_blend_state_t {
-    uint16_t blend_mode;  /* Fuel blend mode selector */
-    uint16_t blend_enable;  /* enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100 */
-    uint16_t demand_above_threshold;  /* 1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal */
-    uint16_t bypass_load_correction;  /* dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active */
-    uint16_t fuel_demand_snapshot;  /* snapshot of fuel_demand_arbitrated_snapshot */
-    uint16_t blend_weight;  /* Fuel blend weight factor (0-100%) */
+struct combustion_reference_state_t {
+    uint16_t alpha_percent;  /* Fuel blend mode selector */
+    uint16_t egr_off_flag;  /* enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100 */
+    uint16_t gross_fuel_timing_adjustment_active_flag;  /* 1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal */
+    uint16_t injection_timing_fuel_limited_adjustment;  /* dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active */
+    uint16_t injection_quantity_gross_before_timing_adjustment;  /* snapshot of fuel_demand_arbitrated_snapshot */
+    uint16_t chi_hundredths;  /* Fuel blend weight factor (0-100%) */
 };
 
 struct boost_pressure_state_t {
@@ -1801,12 +1801,12 @@ struct j1939_dm13_requester_slot_t {
     uint16_t stop_broadcast_timer;  /* Cummins DM13BDTn (0.1 s): reloaded with j1939_dm13_stop_broadcast_time_limit_cal (60 = 6 s) by this source's stop or hold message (byte 4 hold signal 0 or 1) and counted down; 0 = free slot and its flags return to 0xFFFF (was gain_schedule) */
 };
 
-struct protection_threshold_set_t {
-    uint16_t threshold_scaled;  /* Scaled protection threshold from table lookup */
-    uint16_t recovery_threshold;  /* Recovery/hysteresis exit threshold */
-    uint16_t hysteresis;  /* Protection hysteresis band value */
-    uint16_t threshold_scaled_alt;  /* Alternate scaled threshold (same input different context) */
-    uint16_t threshold_base;  /* Base protection threshold before correction */
+struct combustion_chi_maximum_fuel_points_t {
+    uint16_t chi_maximum_fuel_at_point_1;  /* Scaled protection threshold from table lookup */
+    uint16_t chi_maximum_fuel_at_point_2;  /* Recovery/hysteresis exit threshold */
+    uint16_t chi_maximum_fuel_at_point_3;  /* Protection hysteresis band value */
+    uint16_t chi_maximum_fuel_at_point_4;  /* Alternate scaled threshold (same input different context) */
+    uint16_t chi_maximum_fuel_at_point_5;  /* Base protection threshold before correction */
 };
 
 struct fault_entry_t {
