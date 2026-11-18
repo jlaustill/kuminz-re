@@ -1,8 +1,11 @@
 # Agent prompts (PR #51 session, 2026-11-17/18)
 
-All 4 subagents this session started are the wave 10 agents. They are listed in order, each with its exact prompt.
-Each prompt points at the briefs `rename_waves/briefs/brief.md`, `brief_wave9.md` and `brief_wave10.md`. The result
-files they wrote are kept in `session_folder/wave10/`; the paths in the prompts name the session's scratch folder.
+The session started 8 subagents: the 4 wave 10 agents and then the 4 wave 11 agents. They are listed in order, each
+with its exact prompt.
+- The wave 10 prompts point at the briefs `rename_waves/briefs/brief.md`, `brief_wave9.md` and `brief_wave10.md`.
+- The wave 11 prompts also point at `brief_wave11.md`.
+- The result files are kept in `session_folder/wave10/` and `session_folder/wave11/`. The paths in the prompts name
+  the session's scratch folder.
 
 ## 1. Wave 10 transmission leads (2026-11-18T15:41:04.707Z, general-purpose, sonnet)
 
@@ -75,4 +78,78 @@ Leads (each is a function whose name does not fit the DTC it sets; the SAE title
 Context (firmware/CLAUDE.md sensor table): slot 1 = intake manifold pressure (`sensor_readings_t.intake_manifold_pressure`, IC1 SPN 102), slot 3 = barometric pressure (SPN 108), `boost_pressure_above_barometric` = slot 1 - slot 3 (pressures 1/18.56 kPa per count), the wastegate solenoid output has its own read-back fault (P0243).
 
 For each lead: verdict on the function (rename only if the fault monitor is its whole job), plate comment, and the misnamed globals of its monitor group (detector / heal / initializer / caller state), plus new_global rows for unnamed ROM limits it uses. Follow the result format in brief.md and brief_wave10.md exactly. Final message: confirmed / rejected / uncertain counts and one line per lead.
+```
+
+## 5. Wave 11 arrays group (2026-11-18T17:28:59.713Z, general-purpose, sonnet)
+
+```
+You are typing data in the CM848 engine-controller firmware (read-only research). Read these briefs first, in order, from the repo root /home/linux/code/kuminz-re/.claude/worktrees/cm848-vehicle-speed-sensor-p0500 :
+1. firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/rename_waves/briefs/brief.md
+2. .../brief_wave9.md
+3. .../brief_wave10.md (its repo root overrides brief.md's; its sweep tool and rules apply)
+4. .../brief_wave11.md (structs / arrays / bitfields, the proposal formats and the exclusion zone)
+
+Your group: arrays. Result file: /home/linux/.claude/jobs/821efb84/tmp/wave11/result_W11_arrays.jsonl
+
+These named globals are indexed in the decompile as `(&name)[i]` (count of uses in brackets), which means the CSV types them as one scalar or one record instead of an array. For each: decide the element type (a scalar width, or an existing / new struct when the stride is a record), the stride, the count and a name; list every existing row inside the range (drop_rows); and propose it with an `array_proposal` (plus a `struct_proposal` when the element is a new record type). Check `arrays.csv` and `structure_definitions.csv` first: some may already have a record type (e.g. `pci_message_descriptor_t` for the two PCI tables, `fault_entry_t`), so the fix may only be the array count.
+- sci_buffer (151), fault_entry_t_003fe674 (113; an auto-named instance - give it a name), fault_active_status_array (69), qadc_channel_dispatch_table (58), fault_status_array (57), pci_transmit_message_table (56), pci_receive_message_table (47), sensor_channel_filtered_output (36), sensor_channel_type_table (31), previously_active_dtc_count (30), fault_entry_flags (28), adc_forced_reading_enable_bits_0_to_15_cal (27), tpu_b_ch0_param0 (26), sensor_channel_diag_override (25), j1939_dm13_requester_slot_0 (22).
+Use `grep -c '(&<name>)\[' firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp` for more of the same pattern if you have budget left (the next names in that census). Follow the result format exactly. Final message: counts per kind and one line per item.
+```
+
+## 6. Wave 11 pieces group (2026-11-18T17:29:07.562Z, general-purpose, sonnet)
+
+```
+You are typing data in the CM848 engine-controller firmware (read-only research). Read these briefs first, in order, from the repo root /home/linux/code/kuminz-re/.claude/worktrees/cm848-vehicle-speed-sensor-p0500 :
+1. firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/rename_waves/briefs/brief.md
+2. .../brief_wave9.md
+3. .../brief_wave10.md (its repo root overrides brief.md's; its sweep tool and rules apply)
+4. .../brief_wave11.md (structs / arrays / bitfields, the proposal formats and the exclusion zone)
+
+Your group: pieces. Result file: /home/linux/.claude/jobs/821efb84/tmp/wave11/result_W11_pieces.jsonl
+
+These names are read or written in pieces in the decompile (`name._N_M_` = M bytes at offset N; count of uses in brackets). A piece means the declared type does not match how the code uses the bytes: usually a dword that is really two words (or a word + two bytes), sometimes a struct field that should be split, sometimes a word that is a bitfield. Some names are struct FIELDS (e.g. `governor_output_t.integrator` - a wave-10 note says its high word is the low speed governor idle reference speed in 1/8 rpm, 6000 = 750 rpm in the RAM dump). For each: read the accesses and their asm widths (`disasm_func.py`), decide the real layout, and propose it (`struct_proposal` for a split / new record, `bitfield_proposal` for flag words, ordinary `global` / `struct_field` rows for renames). Skip a name with a one-line note when the pieces are only decompiler noise (e.g. a CONCAT of a 64-bit multiply) rather than a real layout.
+- status_code (66), integrator (53), logical_output_request_bits_16_to_31 (48), status_flags (43), governor_rpm_reference_integrator (41), protection_condition_state (27), protection_rate_integrator (25), status (18), diag_session_state_t_003fecbe (16), governor_integrator_state_b (15), fault_ring_epoch_counts (13), state (12), crank_sync_period_captured (12), pci_controller_command_word (11).
+Find each with `grep -n '<name>\._[0-9]*_[0-9]*_' firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp`. Follow the result format exactly. Final message: counts per kind and one line per item.
+```
+
+## 7. Wave 11 bitfields group (2026-11-18T17:29:17.764Z, general-purpose, sonnet)
+
+```
+You are typing data in the CM848 engine-controller firmware (read-only research). Read these briefs first, in order, from the repo root /home/linux/code/kuminz-re/.claude/worktrees/cm848-vehicle-speed-sensor-p0500 :
+1. firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/rename_waves/briefs/brief.md
+2. .../brief_wave9.md
+3. .../brief_wave10.md (its repo root overrides brief.md's; its sweep tool and rules apply)
+4. .../brief_wave11.md (structs / arrays / bitfields, the proposal formats and the exclusion zone)
+
+Your group: bitfields. Result file: /home/linux/.claude/jobs/821efb84/tmp/wave11/result_W11_bitfields.jsonl
+
+Leads (gate words that many monitors test with masks; each should become a bitfield struct with EVERY bit of every byte you touch declared - named, or `reserved_bit_N` when unused - plus a correct name):
+1. `protection_feature_status_flags` (0x0040b9d0, dword). A wave-10 agent found it is NOT a configuration word: `cm848_calibration_group27_load` (0x00531900) rebuilds all 32 bits every pass as "monitor n enabling conditions met" (cold_start_phase compares, battery voltage, ...). Decode what each bit's condition is (and which monitor reads it: bit 0 / 1 gate the P0500 paths 1 / 2, bit 28 the P0720 monitor), name the word and its bits, and rename `cm848_calibration_group27_load` if its whole job is building this word.
+2. `boost_fuel_bypass_flags` (0x0040b9d4, dword) - its bits are tested as "must be clear" by the same monitors (bits 0 / 1 for the P0500 paths); one writer sets bits with `|= uVar1` and clears to 0. Find what sets each bit (suspend / inhibit / already-reported?) and type it the same way.
+3. `fault_management_status_flags` (0x003fd5b4 = EEPROM 0x132, word; 0x2e06 in every dump) - a calibration enable word (bits 0x100 / 0x200 enable P0500 paths 1 / 2; bits 8, 0x10, 0x40, 0x400 are tested elsewhere). It is in the EEPROM mirror, so the name ends `_cal`.
+4. `system_feature_config_flags` (0x003fd5c0 = EEPROM 0x13e, 0x0008) and `operating_mode_flags_cal` (bit 0x100 gates the fuel temperature cold-soak check, 0x8000 the misfire monitor, 0x4 something else): same treatment if the bits can be identified.
+5. Enum leads: `COLD_START_PHASE` member `CSP_CRANKING` (1) means key on before the engine starts, not cranking (several monitors call it "pre start") - verify and propose the member rename (an enum_member row: {"kind": "enum_member", "enum": "COLD_START_PHASE", "old": "CSP_CRANKING", "new": "...", "evidence": "..."}); check the other members while you are there (CSP_SUSPENDED is documented as "shutdown inhibit with cold mode enabled").
+Follow the result format exactly. Final message: counts per kind and one line per item.
+```
+
+## 8. Wave 11 leftovers group (2026-11-18T17:29:30.470Z, general-purpose, sonnet)
+
+```
+You are verifying rename and typing leads in the CM848 engine-controller firmware (read-only research). Read these briefs first, in order, from the repo root /home/linux/code/kuminz-re/.claude/worktrees/cm848-vehicle-speed-sensor-p0500 :
+1. firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/rename_waves/briefs/brief.md
+2. .../brief_wave9.md
+3. .../brief_wave10.md (its repo root overrides brief.md's; its sweep tool and rules apply)
+4. .../brief_wave11.md (structs / arrays / bitfields, the proposal formats and the exclusion zone)
+
+Your group: leftovers. Result file: /home/linux/.claude/jobs/821efb84/tmp/wave11/result_W11_leftovers.jsonl
+
+Leads (from the wave-10 agents' notes, `work/tasks/044-cm848-dtc-code-name-clashes.md` "Follow-ups"; verify each from the code):
+1. `cm848_j1939BuildEngineStatusByte` (0x00024028), `cm848_initJ1939EngineStatusBuffer` (0x00024124) and `j1939_pgn65269_tx_data` are the ECM's PGN 65241 AUXIO1 message (aux I/O #01 / #02 / #03 = switches 19 / 11 / 2), not an engine status byte and not AMB. Rename the functions and the payload rows (the descriptor bytes themselves are in the exclusion zone). Use the j1939 Mongo DB (mongodb://localhost:27017/j1939, collection pgns, field `number`) for the SPN positions.
+2. The `qadc_control_word_*` rows at 0x3fdbb2-0x3fdbca are further entries of `switch_input_hardware_line_cal` (base 0x3fdb8e; entries 2 / 11 are already `switch_input_2_hardware_line_cal` / `switch_input_11_hardware_line_cal`). Decide the element width and count from the consumers and propose the whole table as an `array_proposal` (drop_rows = the per-entry rows; note the time-shared CMF caution for 0x3fdba4-0x3fdc38 in firmware/CLAUDE.md).
+3. The overspeed event log at 0x3fdfde (EEPROM mirror): 5 records x 8 bytes (dword key-on time, word speed at detection, word duration) typed as one dword - `struct_proposal` + array.
+4. Struct field renames: `engine_rpm_state_t.target_rpm` (holds the moving average of engine_rpm_measured = filtered engine speed), `protection_condition_flags_t.threshold_current` (a flags byte; bit 0x20 = the P0720 fault - a bitfield), `eeprom_header_t.calibration_block1` (the stored fuel level, 6 bytes at 0x3fee18: byte [0] fast filter ...).
+5. `hpcr_fuelFinal_periodic` (the barometric pressure selector: swaps in the barometric default while fault 340 or 778 is active), `protection_sensor_mode_flag` (means "boost is gauge pressure"), `cm848_calibration_group21_load_cont` (a separate monitor - identify it), `engine_protection_timerState_shiftCheck` (0x0052f32c, reads misfire_monitor_result - maybe an end-of-line in-plant test step).
+6. Type fixes: 0x408d4a / 0x408d52 are typed word but loaded with lha (signed -> i16; give `global` rows with the same name and `"type": "i16"` in the evidence, or a note); the orphan rows 0x3fee49 / 0x3fee4b (`sensor_val_state_t_003fee48.sensor_val_pad_01` / `..._003fee4a.sensor_val_pad_03`, pad labels of a struct that no longer exists) -> DELETE notes per the README format (`DELETE 0x<address> <name>: reason`).
+7. Unverified DTC setters (names vs the P-code they set; fault n -> ROM 0x5985a slot -> obd_dtc_code_table): `sensor_fault_safety_check` (0x005103ac, fault 56 = P2269 water in fuel), `fuel_quantity_demand_monitor` (0x00516c18, fault 388 = P0606), `cm848_tpu_interrupt_flag_init` (0x00528b90, fault 399 = P0607), `engine_coolant_overheat_check` / `engine_sensor_check_overheat` (0x0051361c / 0x0051375c, faults 390 / 389 = P0217).
+Follow the result format exactly. Final message: counts per kind and one line per item.
 ```

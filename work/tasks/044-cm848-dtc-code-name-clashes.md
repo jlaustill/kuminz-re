@@ -68,42 +68,72 @@ Plus, by hand:
 - **Misfire state:** the two misfire state words are dwords.
 - **Fault word:** `fault_registered_bits_512_to_527` (was `j1939_message_state_flags_b`).
 
-## Follow-ups (from the agents' notes; not done here)
+## Wave 11 (2026-11-18, PR #51): structs, arrays and bitfields
 
-- **Typing.**
-  - The overspeed event log at 0x3fdfde is 5 records of 8 bytes, currently typed as one dword.
-  - 0x408d4a / 0x408d52 are loaded with `lha`, so they should be `i16`.
-  - Two orphan `sensor_val_state_t_*` pad rows (0x3fee49 / 0x3fee4b).
-  - Suggested enums: the transmission temperature rationality state and the output speed sensor check states.
-- **Struct fields.**
-  - `engine_rpm_state_t.target_rpm` holds the filtered engine speed.
-  - The high word of `governor_output_t.integrator` is the idle reference speed.
-  - `protection_condition_flags_t.threshold_current` is a flags byte; bit 0x20 = P0720.
-  - `eeprom_header_t.calibration_block1` is the stored fuel level.
-- **Misnames found on the way.**
-  - `cm848_j1939BuildEngineStatusByte` / `cm848_initJ1939EngineStatusBuffer` / `j1939_pgn65269_tx_data` are the
-    PGN 65241 AUXIO1 message (aux I/O 1-3 = switches 19 / 11 / 2).
-  - The `qadc_control_word_*` rows at 0x3fdbb2-0x3fdbca are more entries of `switch_input_hardware_line_cal`.
-  - `hpcr_fuelFinal_periodic` is the barometric pressure selector.
-  - `protection_sensor_mode_flag` means "boost is gauge pressure".
-  - `cm848_calibration_group21_load_cont` is a separate monitor.
-  - `engine_protection_timerState_shiftCheck` reads `misfire_monitor_result` and may be an end-of-line test step.
-- **Gate words.**
-  - `protection_feature_status_flags` is not a configuration word. `cm848_calibration_group27_load` rebuilds it every
-    pass as a "monitor enabling conditions met" bitmap.
-  - `CSP_CRANKING` (1) means key on before the engine starts; it is an enum rename lead.
-- **Unresolved.**
-  - `sensor_validation_timeout_cal` (0x3fd944) is uncertain.
-  - The misfire response polarity needs a running-engine dump.
-  - `fault_setters.py` misses setters that write through a temporary (fault 777).
+Four read-only agents (brief `rename_waves/briefs/brief_wave11.md`) worked through a census of named-struct casts,
+piece accesses (`._N_M_`) and `(&name)[i]` indexing, plus the wave 10 leftovers. Each shape they proposed was
+checked against the asm and its users before it was applied. The results are in
+`docs/agent_notes_2026-11/session_2026-11-17_p0500/session_folder/wave11/`.
 
-Also suspect, not renamed: the three gate words of the P0500 monitors. `protection_feature_status_flags` (0x40b9d0)
-bits 0 / 1, `boost_fuel_bypass_flags` (0x40b9d4) bits 0 / 1 and `fault_management_status_flags` (0x3fd5b4 = EEPROM
-0x132, so it should be `_cal`) bits 0x100 / 0x200 enable / suspend paths 1 / 2. Each word is shared by 30+
-unrelated monitors, so they need their own review.
+| Commit | What |
+|---|---|
+| 3d8c707 | The 30 J1939 transmit descriptors are `j1939_tx_msg_t` instances. A ROM-to-RAM thunk is no longer made inside a named struct or array (the build log says "covering"). |
+| 72eb81e | The agents' label-only rows: 16 functions, 36 globals, 20 new rows and the `COLD_START_PHASE` members. |
+| 2eb48b0 | Batch A, ROM and the 0x40xxxx working RAM: record arrays, the monitor condition bitfields, word splits and 13 type fixes. |
+| (batch B) | The EEPROM mirror and the copy window: the fault records, the DTC lists, the sensor channel bitmaps, `end_of_line_test_settings_cal`, the algorithm enable bitfields and a pointer array type. |
+
+Pieces in the .cpp went from 917 to about 540. A pointer type such as `fault_entry_t *[N]` is now accepted in
+`global_variables.csv`; the change is in `ScriptUtils.ARRAY_TYPE` and has a JUnit test.
+
+**Deferred, with the reason:**
+- `sensor_channel_filtered_output` / `sensor_channel_adc_forced_reading` (word[128]): would replace named
+  per-sensor slots with array elements.
+- `qadc_channel_index_table` as word[128]: the extra words hold the boot kernel's `diagnostic_service_dispatch_table`
+  (0x3fdb30) and the named slot `transmission_temperature_qadc_channel_cal` (word 103).
+- `fault_registered_bits_*` / `fault_previous_pass_bits_*` as arrays: the flat names by fault-bit range are the
+  established convention.
+- `fault_status_records` (0x3feb92): slots 77-169 share their RAM with the boot kernel (`data_transfer_state_t`,
+  `diag_session_state_t`, ...).
+- `tpu_a/b_channel_parameters`: overlaps the register CSV.
+- `switch_input_hardware_line_cal` with the `qadc_control_word_*` rows: they share RAM with boot kernel rows.
+- `eeprom_header_t`: the boot header. Its `calibration_block1` is the stored fuel level.
+- `logical_output_request_bits` as byte[10]: conflicts with the bits 16-23 bitfield.
+- `COLD_START_PHASE` / `cold_start_phase`: its values are an engine run state. That needs its own review.
+
+**Reverted:** the bitfields on `protection_status_flags_t.status_flags` and
+`protection_condition_flags_t.fault_state_flags`. The code updates those bytes with `|` / `&` masks, and Ghidra 12.1
+prints such updates as pieces. See the note in `firmware/CLAUDE.md`.
+
+## Follow-ups (still open)
+
+- `engine_protection_timerStateMachine_init` / `engine_coldStart_protection_stateMachine` read and write
+  `end_of_line_test_settings_cal.test_flags_2`. They are probably end-of-line test steps, not protection.
+- Suggested enums: the transmission temperature rationality state and the output speed sensor check states.
+- The misfire response polarity needs a running-engine dump.
+- `fault_setters.py` misses setters that write through a temporary (fault 777).
+- `function_definitions.csv` carries 3 stale function names: 0x21918, 0x220e4 and 0x227a0. The build warns about
+  each, but the prototypes still apply. Check each prototype against its current function before renaming the rows.
+- Closed by wave 11:
+  - the overspeed log (`engine_overspeed_event_t[5]`);
+  - the `i16` limits at 0x408d4a / 0x408d52;
+  - the orphan pad rows;
+  - `engine_rpm_state_t.filtered_rpm` and `governor_output_t.idle_reference_speed`;
+  - the P0720 bit (0x20 of `fault_state_flags`);
+  - the misnames listed in wave 10 (commit 72eb81e);
+  - `sensor_validation_timeout_cal`, which is `end_of_line_test_settings_cal.maximum_miles` plus a spare byte;
+  - the three P0500 gate words: `monitor_enabling_conditions_met` / `monitor_battery_voltage_error_latch` (both
+    `monitor_condition_bits_t`) and `algorithm_enable_flags_12_cal`, where bits 8 / 9 are
+    `vehicle_speed_sensor_signal_loss_enable` / `vehicle_speed_sensor_zero_under_load_enable`.
 
 ## Investigation Log
 
 - 2026-11-17: the first find was on a checkout 36 commits behind main (the PGN 65213 Fan Drive builder, already
   renamed by PR #50); every claim above was rechecked on 809fd25. Notes, scripts, the sweep output and the build logs
   are in the session folder named above.
+- 2026-11-18: wave 11, in four commits on PR #51. The agents' drop lists predated commits 1-2, so the shape converter
+  (`apply_shapes.py`) recomputed the rows inside each shape from the current CSVs. Each batch was checked as follows:
+  - the census of the targeted patterns reached 0;
+  - the 7-byte record stride of `fault_state_t` was confirmed, since every index is multiplied by 7;
+  - no boot-ROM function changed beyond field renames;
+  - the underscore warnings stayed at 43 and the importer stats did not change;
+  - `piece_census.py` found the pieces added by the two RMW bitfields, which were reverted.

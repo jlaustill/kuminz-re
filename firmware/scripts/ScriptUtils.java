@@ -218,13 +218,8 @@ public class ScriptUtils {
     }
 
     private static final java.util.regex.Pattern ARRAY_TYPE =
-            java.util.regex.Pattern.compile("^\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*\\[\\s*(\\d+)\\s*\\]\\s*$");
+            java.util.regex.Pattern.compile("^\\s*([A-Za-z_][A-Za-z0-9_]*(?:\\s*\\*)?)\\s*\\[\\s*(\\d+)\\s*\\]\\s*$");
 
-    /**
-     * Parses a CSV array type {@code <element>[<count>]} — {@code word[10]}, {@code byte[17]},
-     * {@code my_struct_t[4]}. Returns null when the string is not an array type or the count is
-     * not positive, so callers can fall through to their scalar type mapping.
-     */
     /**
      * True for the global_variables.csv types the importer leaves to Ghidra on purpose
      * (blank, {@code undefined}, {@code undefined *}): they are neither applied nor reported.
@@ -236,6 +231,13 @@ public class ScriptUtils {
         return t.isEmpty() || t.equals("undefined") || t.equals("undefined *");
     }
 
+    /**
+     * Parses a CSV array type {@code <element>[<count>]} — {@code word[10]}, {@code byte[17]},
+     * {@code my_struct_t[4]}, or an array of pointers such as {@code fault_entry_t *[8]} (the element
+     * keeps its {@code *}, so the caller's pointer mapping resolves it). Returns null when the string is
+     * not an array type or the count is not positive, so callers can fall through to their scalar type
+     * mapping.
+     */
     public static ArrayTypeSpec parseArrayType(String typeStr) {
         if (typeStr == null) return null;
         java.util.regex.Matcher m = ARRAY_TYPE.matcher(typeStr);

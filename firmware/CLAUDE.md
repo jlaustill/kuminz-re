@@ -141,7 +141,7 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
   - **Stale-register quirk (confirmed 2026-11-16):** only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
   - **State:** four Q16.16 states, typed as `q16_fixed_point_t` globals (`.integer_part` / `.fractional_part`), at 0x3fb66a / 66e / 672 / 676. A struct-typed global made the raw `0x3fb672`-style call arguments render as `&name`. `cm848_resetEngineSyncState` never clears 0x3fb676: its fourth store pair repeats 0x3fb66e.
 - **Serial reflash hand-off (2026-11-15, PR #48, todo 038):** a serial (SCI) reflash goes through the boot ROM; the application only hands the session over.
-  - **SCI command 49 (0x31, `cm848_sciCommand49Callback`):** needs byte 1, `sci_security_state` 1 (unlocked) and `cold_start_phase` 1 (or `engine_sync_type_code` 5100). It writes `serial_reflash_unlock_request_cal` = 1 (EEPROM 0x56) and the boot-kernel magic 0x1d0a (EEPROM 0x00) with `cm848_writeEepromBytes` (was `cm848_memoryBlock_checksum_validate`), then calls `cm848_restartThroughBootRomAfterSciRequest`.
+  - **SCI command 49 (0x31, `cm848_sciCommand49Callback`):** needs byte 1, `sci_security_state` 1 (unlocked) and `cold_start_phase` 1 (or `end_of_line_test_settings_cal.field_mode_register` 5100). It writes `serial_reflash_unlock_request_cal` = 1 (EEPROM 0x56) and the boot-kernel magic 0x1d0a (EEPROM 0x00) with `cm848_writeEepromBytes` (was `cm848_memoryBlock_checksum_validate`), then calls `cm848_restartThroughBootRomAfterSciRequest`.
   - **`cm848_restartThroughBootRom` (0x216fc, was `mpc555_processJ1939RxQueue`):** saves two EEPROM dwords, acknowledges on SCI or J1939, sets chip-select 0, then jumps through the ROM 0x104 vector to `mpc555_hardwareInitialization`. J1939 PGN 61184 diagnostic service 11 (`cm848_handleJ1939RestartService`) uses it too.
   - **The boot ROM side:** it loads EEPROM 0x56 into `eeprom_shadow_header.serial_reflash_unlock_request`. `mpc555_initDiagnosticSession` then clears it and starts its SCI session at high speed (SCC1R0 0x14) with `boot_sci_security_state` (0x3fecc4) = 1, unlocked, so the seed is 0.
   - **Otherwise** the boot SCI security is locked (0). `cm848_bootSciCheckSecurityKey` answers 0 unlocked / 1 wrong key / 2 retry delay (`boot_sci_key_retry_delay` 1000) / 3 locked out (`boot_sci_failed_key_count` 3 → state 2).
@@ -194,7 +194,7 @@ The ECM speaks J1939/CAN **plus CCD (C1 pins 4/5), SCI (C2 pins 16/19 → PCM + 
 - **Consumers (whole-binary scan of both banks + 32-bit pointer search, 2026-11-12):** only EEC2 pedal position 1, the EEC2 low idle switch, EBC1 retarder selection (→ `j1939_engine_retarder_selection_percent`, read by `cm848_calculateEngineRetarderSelectionPercent`) and CM1 fan request have processors. The **CCVS1 cruise / brake / clutch / idle increment-decrement / test-mode switches, the EBC1 switches, pedal position 2 and the remote pedal position are received and supervised but read by NOTHING else** — J1939 cruise switches cannot drive cruise in S90140.06.
 - **J1939 pedal path (task 022 - CORRECTED 2026-11-16, was "drive-by-wire dead end"):**
   - `cm848_processJ1939AcceleratorPedalPosition` writes EEC2 SPN 91 (x 16 / 10 = 0.25 % per count, 400 = 100 %) into the accelerator pedal channel's state, `sensor_channel13_ram.held_value`, with its source priority in `.held_value_source_priority`.
-  - It runs only when bit 13 (0x2000) of `fuel_demand_feature_flags` is set and switch 7 is datalink-sourced (`switch_input_datalink_source_bits_cal` bit 7). That flag word is 0x3fda68 = EEPROM 0x5e6. It is really a per-channel bitmap: bit n makes channel n output its held value.
+  - It runs only when bit 13 (0x2000) of `sensor_channel_held_value_enable_bits_cal` is set and switch 7 is datalink-sourced (`switch_input_datalink_source_bits_cal` bit 7). That flag word is 0x3fda68 = EEPROM 0x5e6. It is really a per-channel bitmap: bit n makes channel n output its held value.
   - With that same bit set, the sensor-channel functions output `held_value` in place of the pedal sensor. So the J1939 pedal DOES reach `sensor_channel_filtered_output[13]` (`accelerator_pedal_sensor_filtered`).
   - The 2026-11-12 "has no reader" conclusion came from a name search. The channel reads the value through `state_ptr` + 6, which never names the address.
   - Bit 0x2000 also switches `cm848_fuelDemandFinalCalculation` / `cm848_fuelDemandCoordinator` to their J1939-pedal branches.
@@ -452,7 +452,7 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
   The old Type A prototype was misaligned. Its `adc_index_*` / `output_raw` / `output_filtered` / `param_11-13` were really the filter state, channel, fault bits and outputs, so the 22 Type A call sites passed 16-bit-truncated pointers (`0xbd90`) and the body read the outputs as `in_stack_` slots.
 - **The blocks:** each channel has a ROM / RAM block laid out as config (16 bytes) + x axis + y data, a 12-byte RAM state and an 8-byte EMA filter state (with the lookup cache word after it).
   - `sensor_channel_config_t`: `filter_coefficient` (was `config_word0`) / `default_value` / `high_threshold` / `low_threshold` / `debounce_step` / `recovery_decrement` / `debounce_limit` / `debounce_clear_threshold`.
-  - `sensor_channel_state_t`: `raw_adc_counts` / `value` (the lookup result) / `debounce_count` / `held_value` (output while the channel's `fuel_demand_feature_flags` bit is set; for the accelerator pedal channel 13 the J1939 input layer writes `sensor_channel13_ram.held_value` there and its source priority in `spare`) / `spare` / `lookup_input` (ratiometric reading, capped at 0x3ff).
+  - `sensor_channel_state_t`: `raw_adc_counts` / `value` (the lookup result) / `debounce_count` / `held_value` (output while the channel's `sensor_channel_held_value_enable_bits_cal` bit is set; for the accelerator pedal channel 13 the J1939 input layer writes `sensor_channel13_ram.held_value` there and its source priority in `spare`) / `spare` / `lookup_input` (ratiometric reading, capped at 0x3ff).
   - `ema_filter_state_t` (`exponentialMovingAverage`'s state, 45 callers): `coefficient` points at a `filter_coefficient`, and `accumulator` is Q16.16. Each pass moves the value (65536 - coefficient) / 65536 of the way, and 0 means no filtering.
 - **Outputs (renamed 2026-11-16):** `value_output_ptr` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_ptr` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `map_fuel_correction_factor` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
 - **Blocks with named fields (typed 2026-11-16):** 24 blocks used to keep a named row inside, and those rows are now struct fields:
@@ -627,6 +627,9 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   split it.
   - The case that needed it: the PGN 65270 transmit descriptor at 0x3fae38 covers the boot-called RAM copy of
     `dispatchCanMessageHandlers` at 0x3fae3c.
+  - Wave 11 added a second case: `sensor_channel_ratiometric_reference_channel_cal` (word[128] at 0x3fd948) covers the
+    5 boot calls to the RAM copy of `cm848_forceSupervisorWatchdogReset` at 0x3fd994. The build log now reads
+    21 thunks / 11 call overrides.
   - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_tx_msg_t` instance (`header.can_id` /
     `header.data_length` / `data_pointer` / `data_end_pointer`): `j1939_pgn<N>_tx_message`, `j1939_dm1_tx_message`, and
     so on (30 of them).
@@ -650,6 +653,50 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   **P0602 guards EEPROM 0x118-0x171** with a CRC16 whose expected value is the word at EEPROM 0x482
   (`rom_crc_stored_results_cal`[0]). Any tool that writes that block must update the word as well, or P0602 sets.
   The high speed governor's ROM gain sets (codes 17-21) are `high_speed_governor_gain_set_t` instances.
+- **Wave 11 (2026-11-18, PR #51, todo 044): structs, arrays and bitfields.** The agents proposed shapes. Each one was
+  checked against the asm and its users before it was applied; the deferred ones are listed in `work/tasks/044`.
+  - **Record arrays:**
+    - `fault_definition_table` (`fault_definition_t[170]`, ROM 0x59e9a).
+    - `fault_state_records_cal` (`fault_state_t[170]` at 0x3fe1ce): 7-byte records, and every user multiplies the
+      fault slot by 7.
+    - `fault_freeze_frame_entries_cal` (`fault_entry_t[16]`): records 8-15 are the shadow copy that the DM4 builder
+      indexes as part of one array. `fault_entry_pointer_queue_cal` holds 8 pointers into it.
+    - Also `fault_monitor_group_table`, `qadc_channel_dispatch_table`, the PCI message tables,
+      `j1939_dm13_requester_slots` and `engine_overspeed_log_cal` (`engine_overspeed_event_t[5]`).
+  - **Bitfields:**
+    - `monitor_condition_bits_t`: one bit per OBD monitor, on `monitor_enabling_conditions_met` and
+      `monitor_battery_voltage_error_latch`.
+    - `algorithm_enable_flags_12_t`, `algorithm_enable_flags_18_t` and `algorithm_enable_flags_41_t`, with the
+      e2m AENBLFLG bit names. Bits 8 / 9 of word 12 enable the two
+      P0500 detectors.
+    - `logical_output_request_bits_16_to_23_t`.
+    - A bit that nobody proved is `reserved_bit_N`, with the guess kept in its comment.
+    - **Use a bitfield only for a word that the code tests.** If the code updates the byte with `|` / `&` masks, keep
+      it a byte field and put the bit meanings in its comment. Ghidra 12.1 does not fold those read-modify-writes
+      into bitfield stores, so it prints them as `._8_1_` pieces of the struct. Wave 11 reverted two bitfields for
+      this reason: `protection_status_flags_t.status_flags` and `protection_condition_flags_t.fault_state_flags`.
+      The two bitfields had given 18 named tests but 31 pieces.
+    - Check a shape change with `piece_census.py` (in the session folder), which lists each symbol whose piece count
+      went up.
+  - **`end_of_line_test_settings_cal`** (0x3fd938 = EEPROM 0x4b6) is the Chrysler in-plant test block. The old names
+    of its bytes were `engine_sync_type_code`, `cold_start_protection_state_flags` and so on, all guesses.
+    - The in-plant mode ends after `maximum_miles` × 8000 distance pulses.
+    - `field_mode_register` = 5100 keeps the in-plant paths active.
+  - **The sensor channel configuration in 0x3fd948-0x3fdb88** is one block, in this order:
+    - `sensor_channel_ratiometric_reference_channel_cal` (word[128])
+    - `sensor_channel_enable_bits_cal` (word[8])
+    - an 8-word block that has no users
+    - `sensor_channel_held_value_enable_bits_cal` (word[8])
+    - `qadc_channel_index_table`
+    - `adc_forced_reading_enable_bits_cal` (word[8])
+  - **`qadc_channel_index_table` stays word[92]** (it ends at the 0x3fdb30 edge). Its users index 0-127, but words
+    92-127 also hold the boot kernel's `diagnostic_service_dispatch_table` and the named slot
+    `transmission_temperature_qadc_channel_cal` (word 103).
+  - **A `global_variables.csv` type can now be an array of pointers, `T *[N]`.** The first use is
+    `fault_entry_pointer_queue_cal` (`fault_entry_t *[8]`).
+  - **One expected boot-ROM render:** `mpc555_cmfEraseBlocks` stores the erase interlock word to flash block 0x58000.
+    That address is inside `qadc_channel_dispatch_table`, so the store renders as
+    `qadc_channel_dispatch_table._558_4_`.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

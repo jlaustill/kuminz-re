@@ -33,4 +33,23 @@ The snapshots and build logs are in the large-files archive. The proof result: a
 underscore variants. The 10 functions that differ change only in typing: the misfire state dwords, the array / byte /
 `i16` types of new rows, and the CRC `word[2]` pairs.
 
+**Wave 11 (2026-11-18, same PR):** four read-only agents proposed struct / array / bitfield shapes from a census of
+named-struct casts, piece accesses and `(&name)[i]` indexing. Their brief is `rename_waves/briefs/brief_wave11.md`
+and their prompts are entries 5-8 of `agent_prompts.md`. `session_folder/wave11/` has:
+- each agent's `result_W11_<group>.jsonl` and its `aligned_` copy. The `aligned_W11_pieces_commit2.jsonl` copy holds
+  back 0x3fed92.
+- The tools that applied the shapes:
+  - `descriptor_census.py` / `descriptor_struct.py`: the J1939 transmit descriptors.
+  - `triage_shapes.py` / `new_row_overlaps.py`: the triage.
+  - `apply_shapes.py`: the batch A / B converter. It recomputes the rows inside each shape from the current CSVs.
+  - `fix_*.py`: the label, comment and RMW-byte fixes.
+- The checks:
+  - `accept_shapes.py`: the pattern census, the boot-ROM function check, the warnings and the thunk log.
+  - `piece_census.py`: lists each symbol whose `._N_M_` piece count went up.
+- The proof and check outputs, the boot-ROM diff summaries, and the `refresh_references.py` mappings (`map_*.csv`).
+- `extract_agent_prompts.py`, which appended the wave 11 prompts to `agent_prompts.md` / `.jsonl`.
+
+The `.cpp` snapshots of each step, their canonical and reversed copies, and the build logs are in the large-files
+archive under `wave11/`. Overall the pieces in the `.cpp` went from 917 to 512.
+
 The session transcript and the subagent transcripts are kept privately, outside the repo.

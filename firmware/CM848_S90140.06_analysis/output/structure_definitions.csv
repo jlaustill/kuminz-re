@@ -57,26 +57,12 @@ protection_condition_flags_t,0x0040b0e8,reserved_04,byte,1,Gap/reserved byte at 
 protection_condition_flags_t,0x0040b0e8,condition_flags_3,byte,1,Protection condition flags set 3,,verified
 protection_condition_flags_t,0x0040b0e8,condition_flags_2,byte,1,Protection condition flags set 2,,verified
 protection_condition_flags_t,0x0040b0e8,reserved_07,byte,1,Gap/reserved byte at offset 0x07,,needs_review
-protection_condition_flags_t,0x0040b0e8,reserved_bit_0,bitfield:1@0,1,"tested (& 1) in cm848_determineCurrentGearAndLockupInhibit (lbz @ 0x34370, .cpp 33439; ORed with reserved_07 bit 0 into protection_status_flags_t.rate_limit_flags bit 0) but no store in either bank sets it",,verified
-protection_condition_flags_t,0x0040b0e8,reserved_bit_1,bitfield:1@1,0,never tested or set,,verified
-protection_condition_flags_t,0x0040b0e8,reserved_bit_2,bitfield:1@2,0,tested (& 4) together with bit 0 in the same place; never set,,verified
-protection_condition_flags_t,0x0040b0e8,reserved_bit_3,bitfield:1@3,0,never tested or set,,verified
-protection_condition_flags_t,0x0040b0e8,fault_141_active,bitfield:1@4,0,"set / cleared every pass from fault_detected_bits_128_to_143 & 0x2000 = fault 141 in cm848_processProtectionFaultSeverity (stb @ 0x34eac; ROM 0x5985a slot 133 = P2769, a hint only); tested (& 0x10) in cm848_evaluateProtectionFaultCondition (lbz @ 0x34a60), where it keeps logical output request 16 from being set",,verified
-protection_condition_flags_t,0x0040b0e8,output_speed_sensor_fault_active,bitfield:1@5,0,"set with fault 320 (P0720) and cleared with it in cm848_monitorTransmissionOutputSpeedSensor (stb @ 0x3dee4 / 0x3df60, | 0x20 / & 0xdf); read by cm848_calculateTransmissionOutputSpeed (lbz @ 0x3f768: substitutes vehicle_speed x the default or learned ratio), cm848_learnOutputSpeedToVehicleSpeedRatio (lbz @ 0x35e40: no learning while set) and cm848_updateTransmissionConditionFlags (lbz @ 0x34430: skips the transfer-case low-range test)",,verified
-protection_condition_flags_t,0x0040b0e8,reserved_bit_6,bitfield:1@6,0,never tested or set,,verified
-protection_condition_flags_t,0x0040b0e8,reserved_bit_7,bitfield:1@7,0,never tested or set,,verified
+protection_condition_flags_t,0x0040b0e8,fault_state_flags,byte,1,"Fault-active flags byte, updated with | / & masks (so a byte, not a bitfield: Ghidra 12.1 prints those updates as pieces). Bits: 0x01 unnamed: tested (& 1) in cm848_determineCurrentGearAndLockupInhibit (lbz @ 0x34370, .cpp 33439; ORed with reserved_07 bit 0 into protection_status_flags_t.rate_limit_flags bit 0) but no store in either bank sets it | 0x04 unnamed: tested (& 4) together with bit 0 in the same place; never set | 0x10 fault 141 active: set / cleared every pass from fault_detected_bits_128_to_143 & 0x2000 = fault 141 in cm848_processProtectionFaultSeverity (stb @ 0x34eac; ROM 0x5985a slot 133 = P2769, a hint only); tested (& 0x10) in cm848_evaluateProtectionFaultCondition (lbz @ 0x34a60), where it keeps logical output request 16 from being set | 0x20 output speed sensor fault active: set with fault 320 (P0720) and cleared with it in cm848_monitorTransmissionOutputSpeedSensor (stb @ 0x3dee4 / 0x3df60, | 0x20 / & 0xdf); read by cm848_calculateTransmissionOutputSpeed (lbz @ 0x3f768: substitutes vehicle_speed x the default or learned ratio), cm848_learnOutputSpeedToVehicleSpeedRatio (lbz @ 0x35e40: no learning while set) and cm848_updateTransmissionConditionFlags (lbz @ 0x34430: skips the transfer-case low-range test)",,verified
 protection_condition_flags_t,0x0040b0e8,action_flags,byte,1,Protection action trigger flags,,verified
 # Protection Status Flags - protection state machine status
 # Continuation of protection state at 0x0040b0f2
 # Total size: 8 bytes (0x0040b0f2-0x0040b0f9)
-protection_status_flags_t,0x0040b0f2,wide_open_throttle_flag,bitfield:1@7,1,"mask 0x80: set by cm848_updateTransmissionConditionFlags when fuel_demand_control_t.calculated exceeds protection_fuel_demand_status80_set_threshold_cal, cleared (& 0x1f, which also clears bits 5 and 6, and & 0x7f in cm848_initProtectionSystem) when it falls below protection_fuel_demand_status80_clear_threshold_cal; cm848_runTransmissionControl calls cm848_selectGovernorPressureWideOpenThrottle only while it is set and the base / normal curve handlers otherwise (decompile line 32865).",,verified
-protection_status_flags_t,0x0040b0f2,gear_1_pressure_elevated_flag,bitfield:1@6,0,mask 0x40: set (| 0x40) with governor_pressure_gear1_elevated_target (status code 8) in gear 1; cleared (& 0xbf) when the pressure returns to the curve; read in the gear 2 branch to run the gear 1 learned gain update and cleared there by & 0xb7.,,verified
-protection_status_flags_t,0x0040b0f2,gear_2_pressure_elevated_flag,bitfield:1@5,0,"mask 0x20: set (flags & 0xef | 0x20 / | 0x20) when governor_pressure_gear2_elevated_target is commanded (status code 10) in gear 2; cleared (& 0xdf) when the pressure returns to the curve; read in the gear 3 branch, where protection_recovery_timer == 0 triggers the gear 2 learned gain update and & 0x97 clears the elevation bits; also cleared in gear 1 (bVar3 = flags & 0xdf).",,verified
-protection_status_flags_t,0x0040b0f2,reserved_bit_4,bitfield:1@4,0,"guess (not proven, so reserved): an elevation delay timer armed flag - mask 0x10: set (| 0x10) together with protection_init_timer = protection_init_timer_cal when engine speed sits between protection_rpm_lower_bound_cal and the margin; tested to wait for protection_init_timer to reach 0 before the elevation; cleared (& 0xef) by the elevation. Medium confidence.",,verified
-protection_status_flags_t,0x0040b0f2,reserved_bit_3,bitfield:1@3,0,"guess (not proven, so reserved): a pressure elevation by timer flag - mask 8, cm848_selectGovernorPressureWideOpenThrottle: set (flags & 0xef | 8, lines 32266-32267 / LAB_00031ba8) when the elevated target is applied after the delay timer ran out; cleared (& 0xf7) when the delay timer is armed; while it is set the gain learning of the gear 1 / gear 2 learned gain is skipped ((flags & 8) == 0 guards both learning blocks). Medium confidence.",,verified
-protection_status_flags_t,0x0040b0f2,reserved_bit_2,bitfield:1@2,0,never tested or set,,verified
-protection_status_flags_t,0x0040b0f2,reserved_bit_1,bitfield:1@1,0,never tested or set,,verified
-protection_status_flags_t,0x0040b0f2,reserved_bit_0,bitfield:1@0,0,no mask uses bit 0 in any of the 43 uses (0x97 / 0xb7 / 0xef / 0x1f / 0xdf / 0xbf / 0x7f only preserve it),,verified
+protection_status_flags_t,0x0040b0f2,status_flags,byte,1,"Governor pressure / wide open throttle status byte, updated with | / & masks (so a byte, not a bitfield). Bits 0x10 / 0x08 are unproven guesses. Bits: 0x80 wide open throttle flag: mask 0x80: set by cm848_updateTransmissionConditionFlags when fuel_demand_control_t.calculated exceeds protection_fuel_demand_status80_set_threshold_cal, cleared (& 0x1f, which also clears bits 5 and 6, and & 0x7f in cm848_initProtectionSystem) when it falls below protection_fuel_demand_status80_clear_threshold_cal; cm848_runTransmissionControl calls cm848_selectGovernorPressureWideOpenThrottle only while it is set and the base / normal curve handlers otherwise (decompile line 32865). | 0x40 gear 1 pressure elevated flag: mask 0x40: set (| 0x40) with governor_pressure_gear1_elevated_target (status code 8) in gear 1; cleared (& 0xbf) when the pressure returns to the curve; read in the gear 2 branch to run the gear 1 learned gain update and cleared there by & 0xb7. | 0x20 gear 2 pressure elevated flag: mask 0x20: set (flags & 0xef | 0x20 / | 0x20) when governor_pressure_gear2_elevated_target is commanded (status code 10) in gear 2; cleared (& 0xdf) when the pressure returns to the curve; read in the gear 3 branch, where protection_recovery_timer == 0 triggers the gear 2 learned gain update and & 0x97 clears the elevation bits; also cleared in gear 1 (bVar3 = flags & 0xdf). | 0x10 unnamed: guess (not proven, so reserved): an elevation delay timer armed flag - mask 0x10: set (| 0x10) together with protection_init_timer = protection_init_timer_cal when engine speed sits between protection_rpm_lower_bound_cal and the margin; tested to wait for protection_init_timer to reach 0 before the elevation; cleared (& 0xef) by the elevation. Medium confidence. | 0x08 unnamed: guess (not proven, so reserved): a pressure elevation by timer flag - mask 8, cm848_selectGovernorPressureWideOpenThrottle: set (flags & 0xef | 8, lines 32266-32267 / LAB_00031ba8) when the elevated target is applied after the delay timer ran out; cleared (& 0xf7) when the delay timer is armed; while it is set the gain learning of the gear 1 / gear 2 learned gain is skipped ((flags & 8) == 0 guards both learning blocks). Medium confidence. | 0x01 unnamed: no mask uses bit 0 in any of the 43 uses (0x97 / 0xb7 / 0xef / 0x1f / 0xdf / 0xbf / 0x7f only preserve it)",,verified
 protection_status_flags_t,0x0040b0f2,reserved_01,byte,1,Pad byte of the old status_flags word (no access),,verified
 protection_status_flags_t,0x0040b0f2,flags,byte,3,Flags (3 bytes as before),,verified
 protection_status_flags_t,0x0040b0f2,output_flags,byte,1,Output flags,,verified
@@ -162,21 +148,20 @@ fault_list_state_t,0x003fe11a,total_emission_faults,word,2,Total emission fault 
 # Data Transfer State - diagnostic memory read/write operations
 # Used by diagMemoryReadHandler and calibration download
 # Total size: 8 bytes (0x003fec82-0x003fec89)
-data_transfer_state_t,0x003fec82,byte_count,word,2,Bytes remaining to transfer,,verified
-data_transfer_state_t,0x003fec82,buffer_write_enabled_flag,word,2,Gap (0x3fec84-0x3fec85),,needs_review
-data_transfer_state_t,0x003fec82,largest_write_length,word,2,Gap (0x3fec86-0x3fec87),,needs_review
-data_transfer_state_t,0x003fec82,reserved_06,word,2,Gap (0x3fec88-0x3fec89),,needs_review
-data_transfer_state_t,0x003fec82,state,word,2,Transfer state machine value,,verified
-data_transfer_state_t,0x003fec82,status,word,2,Transfer status/result code,,verified
+data_transfer_state_t,0x003fec82,byte_count,word,2,Byte count,,verified
+data_transfer_state_t,0x003fec82,buffer_write_enabled_flag,word,2,Buffer write enabled flag,,verified
+data_transfer_state_t,0x003fec82,largest_write_length,word,2,Largest write length,,verified
+data_transfer_state_t,0x003fec82,reserved_06,word,2,Reserved,,verified
+data_transfer_state_t,0x003fec82,pending_write_transport,byte,1,1 = CAN / 2 = serial (was the high byte of the state word),,verified
+data_transfer_state_t,0x003fec82,finish_requested_flag,byte,1,Finish requested (was the low byte of the state word),,verified
+data_transfer_state_t,0x003fec82,flash_program_step,byte,1,Step 1-5 of cm848_runFlashProgramStateMachine (was the high byte of the status word),,verified
+data_transfer_state_t,0x003fec82,flash2_erase_state,byte,1,Medium confidence: 1 programmed / 2 erasing / 3 erased (was the low byte of the status word),,verified
 # Diagnostic Session Flags - diagnostic service session state
 # Used by initDiagnosticSession and diagnostic handlers
 # Total size: 6 bytes (0x003fecbe-0x003fecc3)
-diag_session_state_t,0x003fecbe,session_flags,byte,1,Diagnostic session active flags,,verified
-diag_session_state_t,0x003fecbe,response_write_index,byte,1,Write cursor into diag_serial_buffer,,verified
-diag_session_state_t,0x003fecbe,eeprom_status,byte,1,EEPROM operation status byte,,verified
-diag_session_state_t,0x003fecbe,reserved_03,byte,1,Gap/reserved,,needs_review
-diag_session_state_t,0x003fecbe,reserved_04,byte,1,Gap/reserved,,needs_review
-diag_session_state_t,0x003fecbe,checksum_status,byte,1,EEPROM checksum validation status,,verified
+diag_session_state_t,0x003fecbe,session_flags,byte,1,Session flags,,verified
+diag_session_state_t,0x003fecbe,response_write_index,byte,1,Response write index,,verified
+diag_session_state_t,0x003fecbe,response_cursor_pointer,pointer,4,"Cursor into diag_serial_buffer (stw r9,-4928(r10) @ 0x6788 stores 0x3fecf0) - the decompiler showed it as four byte stores",,verified
 # System Status Flags - engine and protection status bitmaps
 # Used by condition monitoring and fault detection
 # Total size: 48 bytes (0x003fe974-0x003fe9a3)
@@ -789,30 +774,30 @@ combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_5,word
 # Iteration: addFaultToActiveList (0x0001cea4) uses pbVar3 += 0x30 with limit < 8
 # findFaultByTypeAndSeverity (0x0001ce28) uses puVar3 = &DAT_003fe674, puVar3 += 0xc (as dword*)
 # Note: fault_entry_table_base (0x003fe678) is at offset +4 (the fault_code byte), not struct base
-fault_entry_t,0x003fe674,key_on_hour_meter,dword,4,Fuel timing advance value at capture time,,verified
-fault_entry_t,0x003fe674,fault_code,byte,1,Fault code ID (0xAA = empty/available slot),,verified
-fault_entry_t,0x003fe674,vehicle_speed,word,2,Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim),,verified
-fault_entry_t,0x003fe674,filtered_rpm,word,2,Target engine RPM at fault time,,verified
-fault_entry_t,0x003fe674,diagnostic_fault_flags_a,word,2,Sensor scale factor 1,,verified
-fault_entry_t,0x003fe674,engine_load_at_current_speed,word,2,engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status),,verified
-fault_entry_t,0x003fe674,accelerator_pedal_position,word,2,accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high),,verified
-fault_entry_t,0x003fe674,intake_manifold_pressure,word,2,intake_manifold_pressure_in_use at capture (was protection_low),,verified
-fault_entry_t,0x003fe674,coolant_temperature,word,2,coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1),,verified
-fault_entry_t,0x003fe674,intake_manifold_temperature,word,2,intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2),,verified
-fault_entry_t,0x003fe674,oil_pressure,word,2,oil_pressure_sensor_filtered at capture (was timing_param_3),,verified
-fault_entry_t,0x003fe674,diagnostic_fault_flags_b,word,2,Sensor scale factor 2,,verified
-fault_entry_t,0x003fe674,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
-fault_entry_t,0x003fe674,governor_mode_code,byte,1,Pressure fuel adjustment byte,,verified
-fault_entry_t,0x003fe674,battery_voltage,word,2,Battery voltage reading at fault time,,verified
-fault_entry_t,0x003fe674,fuel_demand_computed,word,2,Processed load/throttle value,,verified
-fault_entry_t,0x003fe674,main_injection_timing,word,2,Torque limit factor at fault time,,verified
-fault_entry_t,0x003fe674,fuel_metering_feedback,word,2,Diagnostic data word 1,,verified
-fault_entry_t,0x003fe674,fuel_metering_feedback_fault,byte,1,Diagnostic data byte 3,,verified
-fault_entry_t,0x003fe674,fuel_pressure_diagnostic,byte,1,Diagnostic data byte 4,,verified
-fault_entry_t,0x003fe674,fuel_pressure_sensor_voltage,word,2,Diagnostic data word 2,,verified
-fault_entry_t,0x003fe674,fuel_pressure_setpoint,word,2,Diagnostic data word 3,,verified
-fault_entry_t,0x003fe674,fuel_temperature,word,2,fuel_temperature_sensor_filtered at capture (1/64 deg F) - not coolant (was coolant_temp_raw),,verified
-fault_entry_t,0x003fe674,status_flags,word,2,Fault entry status/severity flags (bit 0 = newly active),,verified
+fault_entry_t,,key_on_hour_meter,dword,4,Fuel timing advance value at capture time,,verified
+fault_entry_t,,fault_code,byte,1,Fault code ID (0xAA = empty/available slot),,verified
+fault_entry_t,,vehicle_speed,word,2,Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim),,verified
+fault_entry_t,,filtered_rpm,word,2,Target engine RPM at fault time,,verified
+fault_entry_t,,diagnostic_fault_flags_a,word,2,Sensor scale factor 1,,verified
+fault_entry_t,,engine_load_at_current_speed,word,2,engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status),,verified
+fault_entry_t,,accelerator_pedal_position,word,2,accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high),,verified
+fault_entry_t,,intake_manifold_pressure,word,2,intake_manifold_pressure_in_use at capture (was protection_low),,verified
+fault_entry_t,,coolant_temperature,word,2,coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1),,verified
+fault_entry_t,,intake_manifold_temperature,word,2,intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2),,verified
+fault_entry_t,,oil_pressure,word,2,oil_pressure_sensor_filtered at capture (was timing_param_3),,verified
+fault_entry_t,,diagnostic_fault_flags_b,word,2,Sensor scale factor 2,,verified
+fault_entry_t,,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
+fault_entry_t,,governor_mode_code,byte,1,Pressure fuel adjustment byte,,verified
+fault_entry_t,,battery_voltage,word,2,Battery voltage reading at fault time,,verified
+fault_entry_t,,fuel_demand_computed,word,2,Processed load/throttle value,,verified
+fault_entry_t,,main_injection_timing,word,2,Torque limit factor at fault time,,verified
+fault_entry_t,,fuel_metering_feedback,word,2,Diagnostic data word 1,,verified
+fault_entry_t,,fuel_metering_feedback_fault,byte,1,Diagnostic data byte 3,,verified
+fault_entry_t,,fuel_pressure_diagnostic,byte,1,Diagnostic data byte 4,,verified
+fault_entry_t,,fuel_pressure_sensor_voltage,word,2,Diagnostic data word 2,,verified
+fault_entry_t,,fuel_pressure_setpoint,word,2,Diagnostic data word 3,,verified
+fault_entry_t,,fuel_temperature,word,2,fuel_temperature_sensor_filtered at capture (1/64 deg F) - not coolant (was coolant_temp_raw),,verified
+fault_entry_t,,status_flags,word,2,Fault entry status/severity flags (bit 0 = newly active),,verified
 # Boost In Range (BIR) Configuration - ROM calibration thresholds for P0069/Fault 433
 # Loaded from EEPROM at boot, maps to BIR parameters (DGBSHTTD, DGSTBSTD, DGLWTD, etc.)
 # Total size: 18 bytes (0x0005c994-0x0005c9a5)
@@ -1504,16 +1489,12 @@ qspi_job_t,0x003fb325,,,,supervisor_register_46_read_job - instance,,verified
 qspi_job_t,0x003fb360,,,,serial_output_driver_job - instance,,verified
 
 # --- QSPI job driver data (reviewed 2026-11-11) ---
-qspi_device_slot_t,0x003fb434,spcr0,word,2,SPCR0 value for this device (mode + baud),,verified
-qspi_device_slot_t,0x003fb434,spcr1,word,2,SPCR1 value for this device (delays),,verified
-qspi_device_slot_t,0x003fb438,,,,device slot 2 - marker,,verified
-qspi_device_slot_t,0x003fb43c,,,,device slot 3 - marker,,verified
-qspi_device_slot_t,0x003fb440,,,,device slot 4 - marker,,verified
-qspi_job_queue_t,0x003fb446,active_index,byte,1,jobs[] index of the job being transferred,,verified
-qspi_job_queue_t,0x003fb446,write_index,byte,1,jobs[] index the next queued job is stored at (wraps at 16),,verified
-qspi_job_queue_t,0x003fb446,pending_count,byte,1,Jobs queued and not yet completed (max 16),,verified
-qspi_job_queue_t,0x003fb446,jobs,qspi_job_t*,64,Ring of 16 queued job pointers,,verified
-qspi_job_queue_t,0x003fb489,,,,job queue 1 - marker,,verified
+qspi_device_slot_t,,spcr0,word,2,SPCR0 value for this device (mode + baud),,verified
+qspi_device_slot_t,,spcr1,word,2,SPCR1 value for this device (delays),,verified
+qspi_job_queue_t,,active_index,byte,1,jobs[] index of the job being transferred,,verified
+qspi_job_queue_t,,write_index,byte,1,jobs[] index the next queued job is stored at (wraps at 16),,verified
+qspi_job_queue_t,,pending_count,byte,1,Jobs queued and not yet completed (max 16),,verified
+qspi_job_queue_t,,jobs,qspi_job_t*,64,Ring of 16 queued job pointers,,verified
 
 # --- memory_region_t: boot reflash kernel write-permission map (6 x 10 bytes @ RAM 0x3f9830 = ROM 0x3c60) ---
 memory_region_t,0x003f9830,start_address,dword,4,First address of the region,,verified
@@ -1612,3 +1593,85 @@ monitor_calibrated_condition_t,,parameter_id,word,2,Parameter ID of the value it
 monitor_calibrated_condition_t,,parameter_byte_offset,word,2,Byte offset added to the parameter's address,,verified
 monitor_calibrated_condition_t,,comparison_type,word,2,Comparison type,,verified
 monitor_calibrated_condition_t,,comparison_value,word,2,Comparison value,,verified
+# engine_overspeed_event_t: wave 11 shape (2026-11-18)
+engine_overspeed_event_t,,start_key_on_hour_meter,dword,4,Key-on hour meter when the overspeed started (lwz / stw),,verified
+engine_overspeed_event_t,,engine_speed_at_detection,word,2,Engine speed at detection (1/8 rpm),,verified
+engine_overspeed_event_t,,duration,word,2,Duration of the overspeed,,verified
+# dtc_list_t: wave 11 shape (2026-11-18)
+dtc_list_t,,count,byte,1,Number of codes in the list (the loops are 1-based from this byte),,verified
+dtc_list_t,,slots,byte,31,The listed fault slots,,verified
+# fault_state_t: wave 11 shape (2026-11-18)
+fault_state_t,,timestamp,dword,4,Key-on hour meter stamp of the fault (was fault_timestamp_array),,verified
+fault_state_t,,debounce_count,byte,1,Debounce count (was fault_entry_debounce_array),,verified
+fault_state_t,,status,byte,1,Status (was fault_entry_status_array),,verified
+fault_state_t,,timer,byte,1,Timer (was fault_timer_array),,verified
+# pci_controller_command_word_t: wave 11 shape (2026-11-18)
+pci_controller_command_word_t,,data_byte,byte,1,Data byte of the command word sent to the external J1850 controller,,verified
+pci_controller_command_word_t,,command_code,byte,1,Command code (the low byte; written bytewise - read once with lhz @ 0x39f14),,verified
+# end_of_line_test_settings_t: wave 11 shape (2026-11-18)
+end_of_line_test_settings_t,,test_results_1,byte,1,Chrysler in-plant test results 1 (SCI id 0x77),,verified
+end_of_line_test_settings_t,,test_results_3,byte,1,Test results 3,,verified
+end_of_line_test_settings_t,,final_test_results_1,byte,1,Final test results 1,,verified
+end_of_line_test_settings_t,,final_test_results_2,byte,1,Final test results 2,,verified
+end_of_line_test_settings_t,,field_mode_register,word,2,e2m Field Mode register (0xFFFF in the dumps),,verified
+end_of_line_test_settings_t,,test_flags_1,byte,1,Test flags 1,,verified
+end_of_line_test_settings_t,,test_flags_2,byte,1,Test flags 2,,verified
+end_of_line_test_settings_t,,test_flags_3,byte,1,Test flags 3,,verified
+end_of_line_test_settings_t,,test_flags_4,byte,1,Test flags 4,,verified
+end_of_line_test_settings_t,,test_flags_5,byte,1,Test flags 5 (bit 0x10 holds the end-of-line misfire test),,verified
+end_of_line_test_settings_t,,final_test_reserved_1,byte,1,Final test reserved byte,,verified
+end_of_line_test_settings_t,,maximum_miles,byte,1,Max miles for the in-plant mode (32 in the dumps),,verified
+end_of_line_test_settings_t,,reserved_13,byte,1,Reserved,,verified
+end_of_line_test_settings_t,,misfire_test_timeout_seconds,byte,1,Misfire test timeout (30 s in the dumps),,verified
+end_of_line_test_settings_t,,misfire_test_warm_up_seconds,byte,1,Misfire test warm-up (18 s in the dumps),,verified
+# algorithm_enable_flags_12_t: wave 11 shape (2026-11-18)
+algorithm_enable_flags_12_t,,reserved_bit_0,bitfield:1@0,2,"e2m Idle_Speed_Save_Enable (LSISSVEN, saves the last idle speed at shutdown). No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,reserved_bit_1,bitfield:1@1,0,"e2m Overspeed_FSO_Override (EPOSFSO, fuel shut-off valve on overspeed). No reader in either bank (sweep of both banks). Set in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,water_in_fuel_enable,bitfield:1@2,0,e2m Water_In_Fuel_Enable (WFAGEN). cm848_j1939SendSafetyStatusMessage (lhz at 0x26ea0: the PGN 65279 byte stays 0xff while clear) and cm848_monitorWaterInFuel (lhz at 0x5103b8: clears fault 56 bit 0x100 while clear). Code agrees with the e2m label. Set in this calibration (0x2e06).,,verified
+algorithm_enable_flags_12_t,,air_fuel_control_override_enable,bitfield:1@3,0,"e2m AFC_Override_Enable (AFENMAN). cm848_fuelDemandBlendCalculator (lhz 24(r26) at 0xdcf4): while clear it computes the limit from air_fuel_control_fuel_limit_grid, so set overrides it. Code agrees. Clear in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,electronic_smart_power_enable,bitfield:1@4,0,e2m ESP_Enable (SPAGEN; ESP = Electronic Smart Power per e2m Group_ESP_8). hpcr_calculateFuelTrimOutput (lhz at 0xe71c) and cm848_calculateFuelDemandWithTrim (lhz at 0x1f290): while set the thermal_fuel_limit_factor is zeroed around cm848_processActiveFaultList. A reader exists but its behaviour is not tied to the e2m label. Clear in this calibration (0x2e06).,,verified
+algorithm_enable_flags_12_t,,reserved_bit_5,bitfield:1@5,0,"e2m Reverse_ESP_Enable (SPRVEN, Electronic Smart Power launch application). No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,low_speed_governor_droop_enable,bitfield:1@6,0,e2m LSG_Droop_Enable (LSDPEN). cm848_updateProtectionParameters (lhz at 0x20b90) and governor_calculateIntegratorRpmOutput (lhz at 0x507a70): while set the governor integrator output is reduced by governor_integrator_correction_term times ROM 0x5c352 divided by 167 (a droop). Code agrees. Clear in this calibration (0x2e06).,,verified
+algorithm_enable_flags_12_t,,accelerator_interlock_enable,bitfield:1@7,0,e2m Accelerator_Interlock_Enable (ANEN). cm848_checkDiagnosticFuelOverride (lhz at 0x403e8: with switch 26 set it forces the fuel demand override to its minimum) and cm848_j1939BuildEngineControlByte (lhz 24(r5) at 0x25788). Code agrees. Clear in this calibration (0x2e06).,,verified
+algorithm_enable_flags_12_t,,vehicle_speed_sensor_signal_loss_enable,bitfield:1@8,0,"e2m VSS_Moving_Enable (VSMVEN): the sensor drops to 0 while the filtered speed is still above 10 mph. Named after the detector it gates. cm848_detectVehicleSpeedSensorSignalLoss (lhz at 0x526950, P0500 path 1) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526be8). Code agrees. Clear in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,vehicle_speed_sensor_zero_under_load_enable,bitfield:1@9,0,"e2m VSS_Stopped_Enable (VSSTEN): the sensor reads stopped (0) while the engine is under load. Named after the detector it gates. cm848_detectVehicleSpeedSensorZeroUnderLoad (lhz at 0x5269fc, P0500 path 2) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526bd8). Code agrees: the sensor reads 0 while the engine is under load. Set in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,obd_fault_handler_enable,bitfield:1@10,0,"e2m OBD_Fault_Handler_Enable (DGOBFUHN). 11 fault framework functions test it (cm848_registerFaultInActiveList at 0x1cf1c, cm848_clearDiagnosticState, cm848_processFaultScanGroup, diagnosticMainStateProcessor, cm848_updateFaultEntryCounters, cm848_resetFaultStatus, hpcr_setFaultActiveStatus, cm848_advanceDiagnosticActionState, cm848_j1939HandlePgn65228Dm3ClearDiag, cm848_completeBoostPressureMonitorReport, cm848_monitorEgrOrificeTemperatureSensorRationality); the names agree, the bodies were not read. Set in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,power_take_off_brake_override_enable,bitfield:1@11,0,"e2m PTO_Brake_Override_Enable (PTBRODEN). cm848_processProtectionControlStateMachine (lhz 24(r31) at 0x2b214) pairs it with protection_control_state_flags 0x10000, which that function sets from switch 11 (brake), to leave power take off control. Code agrees. Set in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,power_take_off_clutch_override_enable,bitfield:1@12,0,"e2m PTO_Clutch_Override_Enable (PTCHODEN). The same function pairs it with protection_control_state_flags 0x4000, set from switch 15 (clutch). Code agrees. Clear in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,oil_change_monitor_enable,bitfield:1@13,0,"e2m OCM_Enable (OCEA). cm848_updateOilChangeMonitor (lhz at 0x51a89c), together with j1939_governor_feature_byte mask 4. Code agrees. Set in this calibration (0x2e06).",,verified
+algorithm_enable_flags_12_t,,reserved_bit_14,bitfield:1@14,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06).,,verified
+algorithm_enable_flags_12_t,,reserved_bit_15,bitfield:1@15,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06).,,verified
+# algorithm_enable_flags_18_t: wave 11 shape (2026-11-18)
+algorithm_enable_flags_18_t,,high_speed_governor_gain_scheduling_enable,bitfield:1@0,2,"e2m HSG_Gain_Scheduling_Enable (HSGNSDEN). selectHighSpeedGovernorGainSet (lhz at 0x1fa24, clrlwi 31). Code agrees. Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,reserved_bit_1,bitfield:1@1,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
+algorithm_enable_flags_18_t,,reserved_bit_2,bitfield:1@2,0,"e2m DR_Enable (DREN, driver reward). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,reserved_bit_3,bitfield:1@3,0,"guess (not proven, so reserved): duty cycle monitor enable - e2m DC_Mon_Enable (DCMNEN, duty cycle monitor). cm848_outputs2_periodic (lhz at 0x5063a0, mask 8); the reader name agrees, the body was not read. Set in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,reserved_bit_4,bitfield:1@4,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
+algorithm_enable_flags_18_t,,reserved_bit_5,bitfield:1@5,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
+algorithm_enable_flags_18_t,,reserved_bit_6,bitfield:1@6,0,"e2m AC_Smart_Enable (ACEN, smart air compressor). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,executive_timing_enable,bitfield:1@7,0,"e2m Executive_Timing_Enable (SSECTMEA, executive timing data gatherer). main_loop (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,high_speed_governor_gear_ratio_gain_enable,bitfield:1@8,0,e2m HSG_Gear_Ratio_Gain_Enable (HSGRGSEN). cm848_loadHighSpeedGovernorWorkingGainSet (lhz at 0x4248c); the reader agrees by name. Clear in this calibration (0x0008).,,verified
+algorithm_enable_flags_18_t,,programmable_power_enable,bitfield:1@9,0,"e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateDualAxisFuelLimit (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateFuelDemandWithTrim (0x1f194), cm848_initProtectionDelayDefaults (0x212e0), cm848_updateProtectionDiagnostics (0x21d1c), governor_cruise_speedReference_update (0x524bdc), protectionRampRateControl (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,reserved_bit_10,bitfield:1@10,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).,,verified
+algorithm_enable_flags_18_t,,reserved_bit_11,bitfield:1@11,0,"e2m Cruise_Control_AR_Enable (AREN, cruise control auto resume). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,remote_throttle_enable,bitfield:1@12,0,"e2m Remote_Throttle_Enable (CTRMTHEN). cm848_j1939BuildEngineControlByte (0x256ac), cm848_buildPgn61443ElectronicEngineController2Message (0x25cbc), cm848_periodicControlLoopFaultHandling (0x50e62c), cm848_clearEngineProtectionFaultsConditional (0x50e784); the names agree, the bodies were not read. Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,reserved_bit_13,bitfield:1@13,0,"guess (not proven, so reserved): remote throttle transition verification enable - e2m Remote_Throttle_Transition_Verification_Enable (CTRTTZEN). cm848_periodicControlLoopFaultHandling (lhz at 0x50e6e4); the name agrees, the body was not read. Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,reserved_bit_14,bitfield:1@14,0,"guess (not proven, so reserved): engine retarder service brake activate enable - e2m EB_Service_Brake_Activate_Enable (EBBREN, EB = engine brake). cm848_updateEngineRetarderEnableState (lhz at 0x41610); the name agrees, the body was not read. Clear in this calibration (0x0008).",,verified
+algorithm_enable_flags_18_t,,reserved_bit_15,bitfield:1@15,0,"e2m EB_Rate_Limit_Enable (EBRTLMEA, engine brake level rate limit). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008).",,verified
+# algorithm_enable_flags_41_t: wave 11 shape (2026-11-18)
+algorithm_enable_flags_41_t,,engine_retarder_speed_limit_enable,bitfield:1@0,2,"no e2m name; code only. cm848_updateEngineRetarderEnableState (lhz at 0x41848), cm848_calculateEngineRetarderSelectionPercent (0x41998) and cm848_updateEngineRetarderActiveState (0x41e5c): while governor_speed_limit_active_flag is set and this bit is set the retarder selection percent is forced to 100 and engine_retarder_active_flag stays 0. Clear in this calibration (0x7ca6).",,verified
+algorithm_enable_flags_41_t,,brake_switch_diagnostic_enable,bitfield:1@1,0,e2m Brake_Switch_Diag_Enable. cm848_monitorBrakeSwitchPairAgreement (lhz 82(r31) at 0x512140). Code agrees (wave 10). Set in this calibration (0x7ca6).,,verified
+algorithm_enable_flags_41_t,,fuel_level_rationality_diagnostic_enable,bitfield:1@2,0,e2m Fuel_Lvl_Rationality_Enable. cm848_monitorFuelLevelLowDistance (lhz at 0x5307f8). Code agrees (wave 10). Set in this calibration (0x7ca6).,,verified
+algorithm_enable_flags_41_t,,reserved_bit_3,bitfield:1@3,0,no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x7ca6).,,verified
+algorithm_enable_flags_41_t,,thermostat_system_monitor_enable,bitfield:1@4,0,"e2m Tstat_System_Monitor_Enable. cm848_runThermostatMonitor (lhz at 0x536a04) and cm848_selectCoolingFanSpeedTarget (lhz at 0x5152e8, the thermostat monitor hold). Code agrees. Clear in this calibration (0x7ca6).",,verified
+algorithm_enable_flags_41_t,,electronic_voltage_regulator_pid_enable,bitfield:1@5,0,"e2m EVR_PID_Enable (EVR = Electronic Voltage Regulation per e2m EVR_Enable). cm848_calculateAlternatorFieldDutyByPid (lhz at 0x37a54), the charging voltage PI loop. Code agrees. Set in this calibration (0x7ca6).",,verified
+algorithm_enable_flags_41_t,,coolant_temperature_in_range_monitor_enable,bitfield:1@6,0,e2m CTIR_Monitor_Enable. cm848_checkCoolantTemperatureSensorPerformance (lhz at 0x52de5c). Code agrees. Clear in this calibration (0x7ca6).,,verified
+algorithm_enable_flags_41_t,,reserved_bit_7,bitfield:1@7,0,no e2m name. No reader in either bank (sweep of both banks). Set in this calibration (0x7ca6).,,verified
+algorithm_enable_flags_41_t,,fuel_temperature_in_range_monitor_enable,bitfield:1@8,0,e2m Fuel_Temp_Monitor_Enable. cm848_checkFuelTemperatureSensorAfterColdSoak (lhz at 0x530468); with the bit clear that check never starts. Code agrees (wave 10). Clear in this calibration (0x7ca6).,,verified
+algorithm_enable_flags_41_t,,intake_air_heater_monitor_enable,bitfield:1@9,0,"e2m IAH_Monitor_Enable. cm848_monitorIntakeAirHeaterPerformance (lhz at 0x53248c), cm848_computeIntakeAirHeaterPreheatDuration (0x517048), cm848_countDownIntakeAirHeaterPreheat (0x5171b4, 0x51726c). Code agrees. Clear in this calibration (0x7ca6).",,verified
+algorithm_enable_flags_41_t,,turbocharger_monitor_enable,bitfield:1@10,0,e2m Turbo_Monitor_Enable. cm848_monitorOverboostAndHighLoadBoostBand (lhz at 0x5372d0). Code agrees. Set in this calibration (0x7ca6).,,verified
+algorithm_enable_flags_41_t,,reserved_bit_11,bitfield:1@11,0,"guess (not proven, so reserved): torque normalization enable - e2m Torque_Normalization_Enable. cm848_calculateProtectionActivationDelay (lhz at 0x20504) and cm848_updateProtectionDiagnostics (lhz 82(r29) at 0x21db4); the reader names do not tie to the e2m text, so the name is e2m only. Set in this calibration (0x7ca6).",,verified
+algorithm_enable_flags_41_t,,reserved_bit_12,bitfield:1@12,0,"guess (not proven, so reserved): full throttle cold fuel increment enable - e2m Throttle_100_Cold_Increment_Enable. cm848_calculateFuelDemandWithTrim (lhz 82(r29) at 0x1f1a4); the name agrees, the body was not read. Set in this calibration (0x7ca6).",,verified
+algorithm_enable_flags_41_t,,reserved_bit_13,bitfield:1@13,0,"guess (not proven, so reserved): air fuel control cold fuel increment enable - e2m AFC_Cold_Increment_Enable. cm848_fuelDemandBlendCalculator (lhz 82(r26) at 0xe064), which also reads the air fuel control override bit of algorithm_enable_flags_12_cal; the name agrees, the body was not read. Set in this calibration (0x7ca6).",,verified
+algorithm_enable_flags_41_t,,reserved_bit_14,bitfield:1@14,0,no e2m name. No reader in either bank (sweep of both banks). Set in this calibration (0x7ca6).,,verified
+algorithm_enable_flags_41_t,,misfire_monitor_enable,bitfield:1@15,0,e2m Misfire_Monitor_Enable. cm848_initializeMisfireMonitor (lhz at 0x532bd8). Code agrees (wave 10). Clear in this calibration (0x7ca6).,,verified

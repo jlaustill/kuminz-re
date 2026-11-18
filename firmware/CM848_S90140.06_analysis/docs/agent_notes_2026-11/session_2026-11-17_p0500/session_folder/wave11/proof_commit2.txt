@@ -1,0 +1,6 @@
+names 81  rendered 78  underscore variants 0 []
+old WORD_ARRAY_ labels of named tables still in the new .cpp: 0 []
+NOT EQUIVALENT: 1969 vs 1969 function chunks
+DIFF in //Function:cm848_calibration_group21_load_cont@0x0
+   old ..._t_0040baf2.coolant_temp<(int)DAT_00409eac))&&(DAT_00409eb0<DAT_0040bbc8)))){fau
+   new ..._t_0040baf2.coolant_temp<(int)DAT_00409eac))&&(DAT_00409eb0<(short)DAT_0040bbc8)))){fau

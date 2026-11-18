@@ -1,0 +1,8 @@
+address,name,old_label,kind
+,buffer_write_enabled_flag,reserved_02,field
+,largest_write_length,reserved_04,field
+,filtered_rpm,target_rpm,field
+,filtered_rpm,target_rpm,field
+,fault_state_flags,threshold_current,field
+0x003fee49,,sensor_val_state_t_003fee48.sensor_val_pad_01,delete
+0x003fee4b,,sensor_val_state_t_003fee4a.sensor_val_pad_03,delete

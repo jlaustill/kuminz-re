@@ -1,0 +1,151 @@
+cm848_sendFaultTimerMessage: {'OTHER': 2}
+cm848_sendJ1939ProprietaryStatus: {'OTHER': 2}
+cm848_buildPgn65269AmbientConditionsMessage: {'OTHER': 2}
+cm848_j1939BuildEngineStatusByte: {'OTHER': 2}
+cm848_buildPgn65265CruiseControlVehicleSpeedMessage: {'OTHER': 2}
+j1939HandlePgn65261CruiseControlSetup: {'OTHER': 2}
+cm848_j1939HandlePgn65259ComponentId: {'OTHER': 2}
+cm848_j1939HandlePgn65234Dm10: {'OTHER': 2}
+j1939HandlePgn65226Dm1ActiveDtc: {'OTHER': 2}
+cm848_j1939HandlePgn65227Dm2PreviousDtc: {'OTHER': 2}
+cm848_j1939HandlePgn65229Dm4FreezeFrame: {'OTHER': 2}
+cm848_j1939HandlePgn65230Dm5Readiness: {'OTHER': 2}
+cm848_j1939SendDm1ResponseMessage: {'OTHER': 2}
+cm848_j1939BuildEngineControlByte: {'OTHER': 2}
+j1939GetEngineStateCode: {'OTHER': 2}
+cm848_buildPgn61443ElectronicEngineController2Message: {'OTHER': 2}
+cm848_buildPgn65247ElectronicEngineController3Message: {'OTHER': 2}
+cm848_buildPgn65263EngineFluidLevelPressure1Message: {'OTHER': 2}
+cm848_buildPgn65262EngineTemperature1Message: {'OTHER': 2}
+cm848_buildPgn61440ElectronicRetarderController1Message: {'OTHER': 2}
+cm848_buildPgn65213FanDrive1Message: {'OTHER': 2}
+cm848_buildPgn65270InletExhaustConditions1Message: {'OTHER': 2}
+cm848_buildPgn65249RetarderConfigurationMessage: {'OTHER': 2}
+cm848_j1939HandlePgn65242SoftwareId: {'OTHER': 2}
+cm848_j1939HandlePgn65504ProprietaryB: {'OTHER': 2}
+cm848_j1939HandlePgn65248VehicleDistance: {'OTHER': 2}
+cm848_j1939HandlePgn65271VehicleElectrical: {'OTHER': 2}
+cm848_j1939HandlePgn65260VehicleId: {'OTHER': 2}
+cm848_j1939SendSafetyStatusMessage: {'OTHER': 2}
+cm848_j1939HandlePgn65264Pto: {'OTHER': 2}
+TOTAL: {'OTHER': 60}
+OTHER cm848_sendFaultTimerMessage
+   - ) ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65251_tx_header
+   + ) ; sendJ1939Message ( & j1939_pgn65251_tx_message
+OTHER cm848_sendFaultTimerMessage
+   - j1939_tx_msg_t * ) & j1939_pgn65251_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_pgn65251_tx_message ) ;
+OTHER cm848_sendJ1939ProprietaryStatus
+   - j1939_prop_status_byte2 ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn56360_tx_header
+   + j1939_prop_status_byte2 ; sendJ1939Message ( & j1939_pgn56360_tx_message
+OTHER cm848_sendJ1939ProprietaryStatus
+   - j1939_tx_msg_t * ) & j1939_pgn56360_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_pgn56360_tx_message ) ;
+OTHER cm848_buildPgn65269AmbientConditionsMessage
+   - ; } sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65269_tx_header
+   + ; } sendJ1939Message ( & j1939_pgn65269_tx_message
+OTHER cm848_buildPgn65269AmbientConditionsMessage
+   - j1939_tx_msg_t * ) & j1939_pgn65269_tx_header ) ;
+   + } sendJ1939Message ( & j1939_pgn65269_tx_message ) ;
+OTHER cm848_j1939BuildEngineStatusByte
+   - L2 : sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65241_tx_header
+   + L2 : sendJ1939Message ( & j1939_pgn65241_tx_message
+OTHER cm848_j1939BuildEngineStatusByte
+   - j1939_tx_msg_t * ) & j1939_pgn65241_tx_header ) ;
+   + : sendJ1939Message ( & j1939_pgn65241_tx_message ) ;
+OTHER cm848_buildPgn65265CruiseControlVehicleSpeedMessage
+   - L7 : sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65265_tx_header
+   + L7 : sendJ1939Message ( & j1939_pgn65265_tx_message
+OTHER cm848_buildPgn65265CruiseControlVehicleSpeedMessage
+   - j1939_tx_msg_t * ) & j1939_pgn65265_tx_header ) ;
+   + : sendJ1939Message ( & j1939_pgn65265_tx_message ) ;
+OTHER j1939HandlePgn65261CruiseControlSetup
+   - L0 : sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65261_tx_header
+   + L0 : sendJ1939Message ( & j1939_pgn65261_tx_message
+OTHER j1939HandlePgn65261CruiseControlSetup
+   - j1939_tx_msg_t * ) & j1939_pgn65261_tx_header ) ;
+   + : sendJ1939Message ( & j1939_pgn65261_tx_message ) ;
+OTHER cm848_j1939HandlePgn65259ComponentId
+   - 0x2a ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65259_tx_header
+   + 0x2a ; sendJ1939Message ( & j1939_pgn65259_tx_message
+OTHER cm848_j1939HandlePgn65259ComponentId
+   - j1939_tx_msg_t * ) & j1939_pgn65259_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_pgn65259_tx_message ) ;
+OTHER cm848_j1939HandlePgn65234Dm10
+   - ) ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_dm11_tx_header
+   + ) ; sendJ1939Message ( & j1939_dm11_tx_message
+OTHER cm848_j1939HandlePgn65234Dm10
+   - j1939_tx_msg_t * ) & j1939_dm11_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_dm11_tx_message ) ;
+OTHER j1939HandlePgn65226Dm1ActiveDtc
+   - } } sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_dm1_tx_header
+   + } } sendJ1939Message ( & j1939_dm1_tx_message
+OTHER j1939HandlePgn65226Dm1ActiveDtc
+   - j1939_tx_msg_t * ) & j1939_dm1_tx_header ) ;
+   + } sendJ1939Message ( & j1939_dm1_tx_message ) ;
+OTHER cm848_j1939HandlePgn65227Dm2PreviousDtc
+   - } } sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_dm2_tx_header
+   + } } sendJ1939Message ( & j1939_dm2_tx_message
+OTHER cm848_j1939HandlePgn65227Dm2PreviousDtc
+   - j1939_tx_msg_t * ) & j1939_dm2_tx_header ) ;
+   + } sendJ1939Message ( & j1939_dm2_tx_message ) ;
+OTHER cm848_j1939HandlePgn65229Dm4FreezeFrame
+   - ; } sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65229_tx_header
+   + ; } sendJ1939Message ( & j1939_pgn65229_tx_message
+OTHER cm848_j1939HandlePgn65229Dm4FreezeFrame
+   - j1939_tx_msg_t * ) & j1939_pgn65229_tx_header ) ;
+   + } sendJ1939Message ( & j1939_pgn65229_tx_message ) ;
+OTHER cm848_j1939HandlePgn65230Dm5Readiness
+   - ) ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65230_tx_header
+   + ) ; sendJ1939Message ( & j1939_pgn65230_tx_message
+OTHER cm848_j1939HandlePgn65230Dm5Readiness
+   - j1939_tx_msg_t * ) & j1939_pgn65230_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_pgn65230_tx_message ) ;
+OTHER cm848_j1939SendDm1ResponseMessage
+   - ) ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65232_tx_header
+   + ) ; sendJ1939Message ( & j1939_pgn65232_tx_message
+OTHER cm848_j1939SendDm1ResponseMessage
+   - j1939_tx_msg_t * ) & j1939_pgn65232_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_pgn65232_tx_message ) ;
+OTHER cm848_j1939BuildEngineControlByte
+   - ; } sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn61441_tx_header
+   + ; } sendJ1939Message ( & j1939_pgn61441_tx_message
+OTHER cm848_j1939BuildEngineControlByte
+   - j1939_tx_msg_t * ) & j1939_pgn61441_tx_header ) ;
+   + } sendJ1939Message ( & j1939_pgn61441_tx_message ) ;
+OTHER j1939GetEngineStateCode
+   - local_8 ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn61444_tx_header
+   + local_8 ; sendJ1939Message ( & j1939_pgn61444_tx_message
+OTHER j1939GetEngineStateCode
+   - j1939_tx_msg_t * ) & j1939_pgn61444_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_pgn61444_tx_message ) ;
+OTHER cm848_buildPgn61443ElectronicEngineController2Message
+   - 0xff ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn61443_tx_header
+   + 0xff ; sendJ1939Message ( & j1939_pgn61443_tx_message
+OTHER cm848_buildPgn61443ElectronicEngineController2Message
+   - j1939_tx_msg_t * ) & j1939_pgn61443_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_pgn61443_tx_message ) ;
+OTHER cm848_buildPgn65247ElectronicEngineController3Message
+   - DAT_0005c384 ; sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65247_tx_header
+   + DAT_0005c384 ; sendJ1939Message ( & j1939_pgn65247_tx_message
+OTHER cm848_buildPgn65247ElectronicEngineController3Message
+   - j1939_tx_msg_t * ) & j1939_pgn65247_tx_header ) ;
+   + ; sendJ1939Message ( & j1939_pgn65247_tx_message ) ;
+OTHER cm848_buildPgn65263EngineFluidLevelPressure1Message
+   - ; } sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65263_tx_header
+   + ; } sendJ1939Message ( & j1939_pgn65263_tx_message
+OTHER cm848_buildPgn65263EngineFluidLevelPressure1Message
+   - j1939_tx_msg_t * ) & j1939_pgn65263_tx_header ) ;
+   + } sendJ1939Message ( & j1939_pgn65263_tx_message ) ;
+OTHER cm848_buildPgn65262EngineTemperature1Message
+   - ; } sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn65262_tx_header
+   + ; } sendJ1939Message ( & j1939_pgn65262_tx_message
+OTHER cm848_buildPgn65262EngineTemperature1Message
+   - j1939_tx_msg_t * ) & j1939_pgn65262_tx_header ) ;
+   + } sendJ1939Message ( & j1939_pgn65262_tx_message ) ;
+OTHER cm848_buildPgn61440ElectronicRetarderController1Message
+   - ; } sendJ1939Message ( ( j1939_tx_msg_t * ) & j1939_pgn61440_tx_header
+   + ; } sendJ1939Message ( & j1939_pgn61440_tx_message
+OTHER cm848_buildPgn61440ElectronicRetarderController1Message
+   - j1939_tx_msg_t * ) & j1939_pgn61440_tx_header ) ;
+   + } sendJ1939Message ( & j1939_pgn61440_tx_message ) ;

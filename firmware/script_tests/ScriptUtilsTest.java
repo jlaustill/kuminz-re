@@ -322,6 +322,19 @@ class ScriptUtilsTest {
         assertEquals(4, spec.count);
     }
 
+    @Test void parseArrayType_pointerElement() {
+        // CM848 fault_entry_pointer_queue_cal: 8 pointers into the freeze frame records
+        ScriptUtils.ArrayTypeSpec spec = ScriptUtils.parseArrayType("fault_entry_t *[8]");
+        assertNotNull(spec);
+        assertEquals("fault_entry_t *", spec.elementType);
+        assertEquals(8, spec.count);
+        assertTrue(ScriptUtils.isPointerType(spec.elementType));
+        assertEquals("fault_entry_t", ScriptUtils.stripPointer(spec.elementType));
+        assertEquals("byte*", ScriptUtils.parseArrayType("byte*[4]").elementType);
+        assertNull(ScriptUtils.parseArrayType("byte **[4]"));
+        assertNull(ScriptUtils.parseArrayType("*[4]"));
+    }
+
     @Test void parseArrayType_scalarIsNotAnArray() {
         assertNull(ScriptUtils.parseArrayType("word"));
         assertNull(ScriptUtils.parseArrayType("word *"));
