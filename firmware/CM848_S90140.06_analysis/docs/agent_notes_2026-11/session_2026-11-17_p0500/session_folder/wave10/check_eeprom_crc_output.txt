@@ -1,0 +1,4 @@
+cm848_eeprom.bin: stored 0x482 = 0x88ef  msb-first 0x4762  lsb-first 0x88ef  block diffs vs first: []
+eeprom_before_hpt.bin: stored 0x482 = 0x5e0e  msb-first 0xd6f7  lsb-first 0x5e0e  block diffs vs first: [('0x135', 36, 32)]
+eeprom_after_hpt_1.bin: stored 0x482 = 0x5e0e  msb-first 0xd6f7  lsb-first 0x5e0e  block diffs vs first: [('0x135', 36, 32)]
+eeprom_after_hpt_2.bin: stored 0x482 = 0x5e0e  msb-first 0xd6f7  lsb-first 0x5e0e  block diffs vs first: [('0x135', 36, 32)]

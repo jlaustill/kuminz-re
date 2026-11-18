@@ -140,8 +140,7 @@ function_address,function_name,param_index,name,type,comment
 0x000255c0,cm848_j1939SendDm1ResponseMessage,0,dest_address,byte,Destination address for DM1 response
 0x000255c0,cm848_j1939SendDm1ResponseMessage,1,fault_count,byte,Number of active DTCs to report
 
-0x0002641c,cm848_buildPgn65213FanDrive1Message,0,dest_address,byte,Destination address for status response
-0x0002641c,cm848_buildPgn65213FanDrive1Message,1,status_type,byte,Type of diagnostic status to send
+0x0002641c,cm848_buildPgn65213FanDrive1Message,return,,void,explicit void(void) - r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444) - the transmit queue calls it with no arguments - replaces the invented dest_address / status_type rows
 
 # -----------------------------------------------------------------------------
 # J1939 Queue/Transport Protocol

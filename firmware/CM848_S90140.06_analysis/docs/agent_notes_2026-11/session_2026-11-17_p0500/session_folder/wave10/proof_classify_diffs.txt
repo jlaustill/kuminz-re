@@ -1,0 +1,130 @@
+protection_j1939_control_logic: {'OTHER': 2}
+cm848_processPciObdRequest: {'OTHER': 2}
+governorSpeedLimitTable: {'OTHER': 3, 'pointer arithmetic -> array index': 1}
+engine_sync_state_init: {'underscore variant fixed': 1}
+cm848_initGovernor: {'underscore variant fixed': 4}
+engine_cbd_sync_qualification_check: {'OTHER': 4}
+cylinder_event_counter_check_active: {'underscore variant fixed': 2}
+engine_cbd_cylinderTiming_update: {'OTHER': 5, 'underscore variant fixed': 2}
+hpcr_coldBurndownControl: {'underscore variant fixed': 17, 'OTHER': 34, 'char literal -> integer': 1, 'cast added / removed': 1}
+TOTAL: {'OTHER': 50, 'pointer arithmetic -> array index': 1, 'underscore variant fixed': 26, 'char literal -> integer': 1, 'cast added / removed': 1}
+OTHER protection_j1939_control_logic
+   - ( DAT_0040871b ! = ' \ 0 '
+   + ( DAT_0040871b ! = 0 )
+OTHER protection_j1939_control_logic
+   - = ' \ 0 ' ) {
+   + DAT_0040871b ! = 0 ) {
+OTHER cm848_processPciObdRequest
+   - obd_response_data_a = 1 ; obd_response_staging [ 6 ] = ( byte ) ( ( ushort ) DAT_0040b670 > > 8 ) ; obd_response_staging [ 7 ] = ( byte ) DAT_0040b670 ; uVar6 =
+   + obd_response_data_a = 1 ; uVar6 =
+OTHER cm848_processPciObdRequest
+   - . _4_2_ = rom_crc_computed_results ; do
+   + . _4_2_ = rom_crc_computed_results [ 0 ] ; obd_response_staging . _6_2_ = rom_crc_computed_results [ 1 ] ; do
+OTHER governorSpeedLimitTable
+   - uint ) rom_crc_result_index ; ( & rom_crc_computed_results )
+   + uint ) rom_crc_result_index ; rom_crc_computed_results [
+OTHER governorSpeedLimitTable
+   - ; ( & rom_crc_computed_results ) [ uVar3
+   + ) rom_crc_result_index ; rom_crc_computed_results [ uVar3
+OTHER governorSpeedLimitTable
+   - * ) ( uVar3 * 2 + 0x3fd904 ) ! =
+   + ( DAT_003fd904 [ uVar3 ] ! =
+OTHER engine_cbd_sync_qualification_check
+   - ) ( uint ) ( ushort ) ( & DAT_0006447e )
+   + ) ( uint ) DAT_0006447e [
+OTHER engine_cbd_sync_qualification_check
+   - ) ( & DAT_0006447e ) [ uVar2
+   + ( uint ) DAT_0006447e [ uVar2
+OTHER engine_cbd_sync_qualification_check
+   - 1 < < ( ( & DAT_0006447e )
+   + 1 < < ( DAT_0006447e [
+OTHER engine_cbd_sync_qualification_check
+   - ( ( & DAT_0006447e ) [ uVar2
+   + < < ( DAT_0006447e [ uVar2
+OTHER engine_cbd_cylinderTiming_update
+   - & cylinder1_timing_offset ) [ ( byte ) ( & DAT_0006455a )
+   + & cylinder1_timing_offset ) [ DAT_0006455a [
+OTHER engine_cbd_cylinderTiming_update
+   - ) ( & DAT_0006455a ) [ uVar2
+   + cylinder1_timing_offset ) [ DAT_0006455a [ uVar2
+OTHER engine_cbd_cylinderTiming_update
+   - uVar2 ] ] ; * ( word * ) ( & DAT_0040b9fe +
+   + uVar2 ] ] ; DAT_0040b9fe [
+OTHER engine_cbd_cylinderTiming_update
+   - ) ( & DAT_0040b9fe + uVar2 *
+   + ] ] ; DAT_0040b9fe [ uVar2 ]
+OTHER engine_cbd_cylinderTiming_update
+   - & DAT_0040b9fe + uVar2 * 2 ) = wVar1
+   + ; DAT_0040b9fe [ uVar2 ] = wVar1
+OTHER hpcr_coldBurndownControl
+   - ) ( uint ) ( ushort ) ( & DAT_0006447e )
+   + ) ( uint ) DAT_0006447e [
+OTHER hpcr_coldBurndownControl
+   - ) ( & DAT_0006447e ) [ uVar1
+   + ( uint ) DAT_0006447e [ uVar1
+OTHER hpcr_coldBurndownControl
+   - 1 < < ( ( & DAT_0006447e )
+   + 1 < < ( DAT_0006447e [
+OTHER hpcr_coldBurndownControl
+   - ( ( & DAT_0006447e ) [ uVar1
+   + < < ( DAT_0006447e [ uVar1
+OTHER hpcr_coldBurndownControl
+   - . fault_detected_bits_0_to_15 ) [ ( ushort ) ( & DAT_00064548 )
+   + . fault_detected_bits_0_to_15 ) [ DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ) ( & DAT_00064548 ) [ uVar1
+   + fault_detected_bits_0_to_15 ) [ DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - . fault_detected_bits_0_to_15 ) [ ( ushort ) ( & DAT_00064548 )
+   + . fault_detected_bits_0_to_15 ) [ DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ) ( & DAT_00064548 ) [ uVar1
+   + fault_detected_bits_0_to_15 ) [ DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - 1 < < ( ( & DAT_00064548 )
+   + 1 < < ( DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ( ( & DAT_00064548 ) [ uVar1
+   + < < ( DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - . fault_detected_bits_0_to_15 ) [ ( ushort ) ( & DAT_00064548 )
+   + . fault_detected_bits_0_to_15 ) [ DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ) ( & DAT_00064548 ) [ uVar1
+   + fault_detected_bits_0_to_15 ) [ DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - . fault_detected_bits_0_to_15 ) [ ( ushort ) ( & DAT_00064548 )
+   + . fault_detected_bits_0_to_15 ) [ DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ) ( & DAT_00064548 ) [ uVar1
+   + fault_detected_bits_0_to_15 ) [ DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - 1 < < ( ( & DAT_00064548 )
+   + 1 < < ( DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ( ( & DAT_00064548 ) [ uVar1
+   + < < ( DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - & fault_active_status_array ) [ ( ushort ) ( & DAT_00064548 )
+   + & fault_active_status_array ) [ DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ) ( & DAT_00064548 ) [ uVar1
+   + fault_active_status_array ) [ DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - & fault_active_status_array ) [ ( ushort ) ( & DAT_00064548 )
+   + & fault_active_status_array ) [ DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ) ( & DAT_00064548 ) [ uVar1
+   + fault_active_status_array ) [ DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - 1 < < ( ( & DAT_00064548 )
+   + 1 < < ( DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ( ( & DAT_00064548 ) [ uVar1
+   + < < ( DAT_00064548 [ uVar1
+OTHER hpcr_coldBurndownControl
+   - . fault_detected_bits_0_to_15 ) [ ( ushort ) ( & DAT_00064548 )
+   + . fault_detected_bits_0_to_15 ) [ DAT_00064548 [
+OTHER hpcr_coldBurndownControl
+   - ) ( & DAT_00064548 ) [ uVar1
+   + fault_detected_bits_0_to_15 ) [ DAT_00064548 [ uVar1

@@ -1,0 +1,9 @@
+mpc555_areBootModeStrapPinsHigh: {'OTHER': 2}
+cm848_calibration_group21_load_cont: {'cast added / removed': 1}
+TOTAL: {'OTHER': 2, 'cast added / removed': 1}
+OTHER mpc555_areBootModeStrapPinsHigh
+   - * qadc_b_direction ; word qadc_b_pqb0_sample ;
+   + * qadc_b_direction ; word direction_register_value ; word qadc_b_pqb0_sample ;
+OTHER mpc555_areBootModeStrapPinsHigh
+   - qadc_b_pqa4_sample ; word qadc_a_pqa2_sample ; word direction_register_value ; qadc_b_direction
+   + qadc_b_pqa4_sample ; word qadc_a_pqa2_sample ; qadc_b_direction

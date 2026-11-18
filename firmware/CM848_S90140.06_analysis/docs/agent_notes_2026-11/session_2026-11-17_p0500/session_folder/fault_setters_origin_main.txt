@@ -1,0 +1,95 @@
+cm848_fuelDemandBlendCalculator @0x0000dcdc: 6=slot170
+cm848_fuelDemandSmoothingController @0x00017560: 62=P2127, 63=P2121, 68=P2128
+cm848_updateEgrDeltaPressureAutozero @0x00018904: 719=slot170
+cm848_updateEgrValveDriverOverCurrentFault @0x00018cfc: 727=slot170
+cm848_updateEgrValveOverTemperatureFault @0x000191e8: 795=slot170
+cm848_updateEgrValveMotorTemperature @0x00019390: 728=slot170
+cm848_updateEgrValveHBridgeInrushFaultCounter @0x0001a754: 724=slot170
+cm848_processEgrValveHBridgeFaults @0x0001a9a8: 720=slot170, 721=slot170, 722=slot170, 723=slot170, 726=slot170
+mpc555_processColdStartMainLoop @0x0001c28c: 27=P0219
+cm848_processGovernorModeTransition @0x0002715c: 29=P0500, 110=slot170, 112=slot170
+cm848_checkSwitch31OnTimeFault @0x0002c4fc: 73=slot170
+cm848_processVariableGeometryTurbochargerHBridgeFaults @0x0002dc40: 738=slot170, 739=slot170, 740=slot170, 741=slot170, 742=slot170, 744=P9978
+cm848_updateVariableGeometryTurbochargerDriverOverCurrentFault @0x0002ea58: 745=slot170
+cm848_evaluateVariableGeometryTurbochargerClosedAdjustment @0x0002efe4: 670=slot170
+cm848_evaluateVariableGeometryTurbochargerSpanAdjustment @0x0002f3a0: 671=slot170
+cm848_updateVariableGeometryTurbochargerPosition @0x0002f6a0: 709=slot170, 710=slot170
+cm848_monitorChargingSystemVoltageHighAndLow @0x00037f28: 369=P2504, 370=P2503
+cm848_testAlternatorOutputByCuttingField @0x00038120: 368=P2502
+cm848_handlePciLinkEvent @0x0003a290: 383=P1652
+cm848_diagnoseClusterLampStatusMessage @0x0003b910: 218=P0381, 219=P0381, 355=P1652
+cm848_latchAndCheckEngineOffTime @0x0003bd14: 308=slot170
+cm848_checkAcceleratorPedalChannelAgreement @0x0003d070: 334=P2121
+cm848_registerQspiDeviceSlot @0x0003d68c: 81=slot170
+cm848_queueQspiJob @0x0003da60: 80=slot170
+cm848_processEngineConditionFlags @0x0003dd98: 320=P0720
+cm848_updateEngineSpeedFromCrankSignal @0x00044374: 5=P0341, 92=P0335, 93=P0340, 117=P0016, 124=P0336
+cm848_enterSpeedLimpHome @0x00044b54: 335=P0336
+cm848_updateEngineStatusTimers @0x00046d90: 325=slot170, 326=slot170
+cm848_diagnoseFuelPressureGovernor @0x00049264: 290=slot170, 303=P0088, 315=slot170, 316=slot170, 317=slot170, 323=slot170, 324=slot170
+cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit @0x00049a54: 264=slot170, 265=slot170
+cm848_processFuelPressureSensor @0x0004a490: 304=P0193, 305=P0192
+cm848_pollEepromStatus @0x0004c188: 165=slot170
+cm848_runEepromPageWrite @0x0004c2d4: 165=slot170
+cm848_verifyEepromPageWrite @0x0004c8d8: 165=slot170
+cm848_initEepromDriverAndLoadMirror @0x0004cb64: 166=slot170
+mpc555_sendJ1939SingleFrame @0x00053858: 111=slot170
+cm848_checkRpmOverspeedProtection @0x00054224: 342=slot170, 343=slot170
+cm848_applicationMain @0x000544c4: 82=P2509, 84=slot170, 89=P2509, 91=P0606
+cm848_updateEgrValvePositionAutozero @0x00506840: 718=slot170
+cm848_updateEgrValvePositionControlFaultCounter @0x00507394: 725=slot170
+cm848_processJ1939AcceleratorPedalPosition @0x0050a700: 127=slot170
+cm848_processJ1939AcceleratorIdleSwitchPair @0x0050a9d4: 127=slot170
+cm848_processJ1939SwitchAndRequestInputs @0x0050aba8: 128=slot170, 130=slot170
+cm848_processJ1939AcceleratorInputs @0x0050ad1c: 128=slot170, 130=slot170
+cm848_debounceOutputReadBackFaults @0x0050e0a0: 121=P0480, 333=P0251, 351=P0748, 396=P0622, 403=P0243
+cm848_periodicControlLoopFaultHandling @0x0050e610: 171=slot170, 172=slot170
+cm848_diagnoseTurbochargerSpeedSensorFrequency @0x0050eeb0: 611=P2581, 613=P2580
+cm848_diagnoseTurbochargerSpeedSensorRateOfChange @0x0050f3b4: 618=P2579
+cm848_updateVariableGeometryTurbochargerPositionControlErrorFault @0x0050fbf8: 743=slot170
+cm848_updateVariableGeometryTurbochargerValveOverTemperatureFault @0x0050fd40: 794=slot170
+cm848_updateVariableGeometryTurbochargerMotorTemperature @0x0050fe54: 746=slot170
+sensor_fault_safety_check @0x005103ac: 56=P2269
+cm848_updateParkNeutralFlagAndTsc1Activity @0x00511b64: 356=slot170
+protection_enable_state_machine @0x00512130: 394=P0573, 395=P0572
+engine_coolant_overheat_check @0x0051361c: 390=P0217
+engine_sensor_check_overheat @0x0051375c: 389=P0217
+fuel_quantity_demand_monitor @0x00516c18: 388=P0606
+cm848_processEngineOilPressure @0x0051a0a8: 341=P0521, 393=P0524
+cm848_monitorGovernorPressureSensorOffset @0x0051ab70: 149=P1762
+cm848_monitorGovernorPressureTracking @0x0051aef8: 391=P1757, 392=P1756
+cm848_monitorParkNeutralSwitch @0x0051b56c: 148=P0850
+cm848_monitorConverterClutchAndOverdrivePerformance @0x0051babc: 319=P1740
+sensorValidationTimeout @0x005227ac: 406=P0837
+diag_eepromFault_pendingStatus_update @0x00522a30: 298=P0711
+cm848_runImmobilizerTask @0x00523f60: 344=P0630, 345=slot170, 346=P0633
+governorSpeedLimitTable @0x00524360: 357=P0602
+cm848_detectVehicleSpeedSensorSignalLoss @0x00526924: 29=P0500
+diag_boostLoad_overtemp_monitor @0x005269c0: 29=P0500
+cm848_main_loop_initialization @0x0052796c: 318=P0604
+cm848_tpu_interrupt_flag_init @0x00528b90: 399=P0607
+cm848_checkFuelPressureGovernorDemandAtGovernedSpeed @0x0052a9ac: 57=P1221
+cm848_checkFuelPressureWithoutInjection @0x0052acfc: 58=P1222, 59=P0000
+cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand @0x0052b32c: 60=P1223
+hpcr_calibration_group36_load @0x0052d40c: 340=P0106
+cm848_calibration_group21_load @0x0052d6a8: 64=P0236, 729=P0299, 778=P0069
+cm848_checkCoolantTemperatureSensorPerformance @0x0052de14: 401=P0116
+cm848_calibration_group22_load @0x0052e29c: 774=slot170, 775=slot170, 776=slot170
+cm848_checkRadiatorFanSpeedRationality @0x00530298: 407=P0483
+cm848_calibration_group37_load @0x00530428: 402=slot170
+cm848_main_loop_protection_eval @0x0053064c: 397=slot170, 398=P0461
+cm848_checkFuelPressureSensorPlausibilityByFuelDemand @0x00530d08: 7=P0191
+hpcr_checkRailPressureSensorBeforeStart @0x00531370: 414=P0191
+cm848_monitorFuelPressureTrackingError @0x00531d34: 408=P0148, 409=P0148
+cm848_monitorIntakeAirHeaterPerformance @0x00532418: 411=P2609
+hpcr_coldBurndownControl @0x00532fac: 367=P0300
+cm848_confirmIntakeManifoldTemperatureKeyOnRationality @0x00535868: 358=P0111
+cm848_checkBatteryTemperatureKeyOnRationality @0x00535964: 359=P0514
+cm848_checkAmbientAirTemperatureKeyOnRationality @0x00535b58: 360=P0071
+cm848_decideThermostatMonitorAtTargetTemperature @0x005366a0: 400=P0128
+cm848_decideThermostatMonitorBelowTargetTemperature @0x005367bc: 400=P0128
+cm848_monitorFuelPressureSetpointNotReached @0x00536e4c: 352=slot170
+cm848_monitorOverboostAndHighLoadBoostBand @0x005372c4: 415=P0234
+cm848_monitorWastegateBoostPressure @0x00537584: 332=P0234
+cm848_monitorWaterInFuelDistance @0x005379d8: 336=P0169
+cm848_initProtectionModule @0x00538a84: 0=P0606

@@ -1,0 +1,21 @@
+names 128  rendered 128  underscore variants 0 []
+old WORD_ARRAY_ labels of named tables still in the new .cpp: 0 []
+NOT EQUIVALENT: 1969 vs 1969 function chunks
+DIFF in //Function:cm848_sendFaultTimerMessage@0x0001b730/
+   old ...faultTimerHandler(&fault_timer_state_base);sendJ1939Message((j1939_tx_msg_t*)&j1939_pgn65251_tx_h
+   new ...faultTimerHandler(&fault_timer_state_base);sendJ1939Message(&j1939_pgn65251_tx_m
+DIFF in //Function:cm848_sendJ1939ProprietaryStatus@0x0002
+   old ...60_tx_header._2_1_=j1939_prop_status_byte2;sendJ1939Message((j1939_tx_msg_t*)&j1939_pgn56360_tx_h
+   new ...60_tx_header._2_1_=j1939_prop_status_byte2;sendJ1939Message(&j1939_pgn56360_tx_m
+DIFF in //Function:cm848_buildPgn65269AmbientConditionsMes
+   old ...rder16(local_8);}else{DAT_003faac5=0xfffe;}sendJ1939Message((j1939_tx_msg_t*)&j1939_pgn65269_tx_h
+   new ...rder16(local_8);}else{DAT_003faac5=0xfffe;}sendJ1939Message(&j1939_pgn65269_tx_m
+DIFF in //Function:cm848_j1939BuildEngineStatusByte@0x0002
+   old ...1=0;}j1939_pgn65269_tx_data=bVar2|bVar1;L2:sendJ1939Message((j1939_tx_msg_t*)&j1939_pgn65241_tx_h
+   new ...1=0;}j1939_pgn65269_tx_data=bVar2|bVar1;L2:sendJ1939Message(&j1939_pgn65241_tx_m
+DIFF in //Function:cm848_buildPgn65265CruiseControlVehicle
+   old ...te=j1939_ccvs1_idle_switches_byte|bVar3;L7:sendJ1939Message((j1939_tx_msg_t*)&j1939_pgn65265_tx_h
+   new ...te=j1939_ccvs1_idle_switches_byte|bVar3;L7:sendJ1939Message(&j1939_pgn65265_tx_m
+DIFF in //Function:j1939HandlePgn65261CruiseControlSetup@0
+   old ...03fab0a.cruise_low_set_limit_speed=0xff;L0:sendJ1939Message((j1939_tx_msg_t*)&j1939_pgn65261_tx_h
+   new ...03fab0a.cruise_low_set_limit_speed=0xff;L0:sendJ1939Message(&j1939_pgn65261_tx_m

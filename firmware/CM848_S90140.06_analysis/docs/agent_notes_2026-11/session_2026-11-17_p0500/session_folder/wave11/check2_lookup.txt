@@ -1,0 +1,2 @@
+lookup tables: 920 (axis 515, data 263, grid 142); typed: 920
+sizing problems: 0

@@ -1,0 +1,21 @@
+names 247  rendered 247  underscore variants 0 []
+old WORD_ARRAY_ labels of named tables still in the new .cpp: 0 []
+NOT EQUIVALENT: 1969 vs 1969 function chunks
+DIFF in //Function:protection_j1939_control_logic@0x00511e
+   old ...tive=(switch_input_sample_bits[3]&0x10)!=0;if(DAT_0040871b!='\0'){if((bool)protect
+   new ...tive=(switch_input_sample_bits[3]&0x10)!=0;if(DAT_0040871b!=0){if((bool)protecti
+DIFF in //Function:cm848_processPciObdRequest@0x00518680//
+   old ...case6:if(rom_crc_calc_phase!=4)gotoL0;obd_response_data_a=1;obd_response_staging[6]=(byte)((ushort)DAT_0040b670>>8);obd_response_staging[7]=(byte)DAT_0040b670;uVar6=4;obd_response
+   new ...case6:if(rom_crc_calc_phase!=4)gotoL0;obd_response_data_a=1;uVar6=4;obd_response
+DIFF in //Function:governorSpeedLimitTable@0x00524360//voi
+   old ...escriptor_table_ptr;}}else{uVar3=(uint)rom_crc_result_index;(&rom_crc_computed_res
+   new ...escriptor_table_ptr;}}else{uVar3=(uint)rom_crc_result_index;rom_crc_computed_res
+DIFF in //Function:engine_sync_state_init@0x00532ae4//void
+   old ...er=0;cbd_channel_enabled_flag=0;cbd_active_cylinder_count=0;_cbd_step_code=0;j193
+   new ...er=0;cbd_channel_enabled_flag=0;cbd_active_cylinder_count=0;cbd_step_code=0;j193
+DIFF in //Function:cm848_initGovernor@0x00532ba8//voidcm84
+   old ...2.integrator._0_2_;if((operating_mode_flags_cal&0x8000)==0){_cbd_phase_code=0;}el
+   new ...2.integrator._0_2_;if((operating_mode_flags_cal&0x8000)==0){cbd_phase_code=0;}el
+DIFF in //Function:engine_cbd_sync_qualification_check@0x0
+   old ...us_flags_t_003fe974.fault_detected_bits_0_to_15)[(int)(uint)(ushort)(&DAT_0006447e)[uVar2]
+   new ...us_flags_t_003fe974.fault_detected_bits_0_to_15)[(int)(uint)DAT_0006447e[uVar2]>

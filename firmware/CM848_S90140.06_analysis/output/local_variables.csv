@@ -130,3 +130,5 @@ function_address,function_name,old_name,new_name,type,comment
 0x00501b4c,sensorChannelTypeB_update,wVar4,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
 0x00501b4c,sensorChannelTypeB_update,dVar2,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
 0x00501b4c,sensorChannelTypeB_update,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
+0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,dVar1,filtered_engine_load,dword,exponentialMovingAverage output of engine_load_percent - also stored to vehicle_speed_zero_under_load_engine_load_filtered
+0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,cVar2,limits_reached_count,byte,How many of the two P0500 limits (accelerator off-idle entries / events) are reached - 2 sets fault 29
