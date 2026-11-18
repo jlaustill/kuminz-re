@@ -1258,11 +1258,7 @@ address,name,type,comment
 0x003fa82c,fault_counter_slot7_shadow,dword,
 0x003fa82e,fault_counter_slot7_shadow+2,,
 0x003fa82f,fault_counter_slot7_shadow+3,,
-0x003fa830,j1939_pgn65251_tx_header,dword,
-0x003fa833,j1939_pgn65251_tx_header+3,,
-0x003fa834,j1939_pgn65251_tx_length,word,
-0x003fa836,j1939_pgn65251_data_ptr,pointer,
-0x003fa83a,j1939_pgn65251_end_ptr,pointer,
+0x003fa830,j1939_pgn65251_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65251_tx_header / j1939_pgn65251_tx_length / j1939_pgn65251_data_ptr / j1939_pgn65251_end_ptr)
 0x003fa840,cold_start_rpm_threshold_updated_flag,word,
 0x003fa842,fault_slot_state_1,word,
 0x003fa844,fault_slot_state_2,word,
@@ -1350,42 +1346,20 @@ address,name,type,comment
 0x003faa80,engine_retarder_torque_stage_4_cached_axis_offset,word,Same as stage 1: cache word of the stage 4 table lookup in cm848_selectEngineRetarderStagePercent. (was diag_service_slot_state_4)
 0x003faa82,engine_retarder_torque_stage_5_cached_axis_offset,word,Same as stage 1: cache word of the stage 5 table lookup in cm848_selectEngineRetarderStagePercent. (was diag_service_slot_state_5)
 0x003faa88,j1939_pgn56360_prop_status_snapshot,word,
-0x003faa8c,j1939_pgn56360_tx_header,dword,
-0x003faa8e,j1939_pgn56360_tx_header+2,,
-0x003faa8f,j1939_pgn56360_tx_header+3,,
-0x003faa90,j1939_pgn56360_tx_length,word,
+0x003faa8c,j1939_pgn56360_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn56360_tx_header / j1939_pgn56360_tx_length)
 0x003faa9c,j1939_ackm_msg,j1939_tx_msg_t,
 0x003faa9e,j1939_dm1_cmd_word_b,,
 0x003faa9f,j1939_ackm_msg.can_id+3,,
 0x003faaa0,j1939_pgn56360_alt_tx_length,,
 0x003faaa2,j1939_pgn56360_alt_data_ptr,,
 0x003faaa6,j1939_pgn56360_alt_end_ptr,,
-0x003faaaa,j1939_ack_payload,,
-0x003faaab,j1939_ackm_msg.group_function,,
-0x003faaac,j1939_ack_payload.reserved_02,,
-0x003faaad,j1939_ack_payload.reserved_02+1,,
-0x003faaae,j1939_ackm_msg.address_acknowledged,,
-0x003faaaf,j1939_ackm_msg.pgn_low,,
-0x003faab0,j1939_ackm_msg.pgn_mid,,
-0x003faab1,j1939_ackm_msg.pgn_high,,
-0x003faab4,j1939_pgn65269_tx_header,dword,
-0x003faab7,j1939_pgn65269_tx_header+3,,
-0x003faab8,j1939_pgn65269_tx_length,word,
-0x003faaba,j1939_pgn65269_data_ptr,pointer,
-0x003faabe,j1939_pgn65269_end_ptr,pointer,
+0x003faaaa,j1939_ack_payload,j1939_acknowledgement_payload_t,The J1939-21 ACKM payload (8 bytes) right after j1939_ackm_msg - that descriptor's data_pointer / data_end_pointer point at it. Split out of j1939_tx_msg_t 2026-11-18 when the type was cut to the 14-byte descriptor (the member-label rows j1939_ackm_msg.<field> at 0x3faaab-0x3faab1 went with it)
+0x003faab4,j1939_pgn65269_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65269_tx_header / j1939_pgn65269_tx_length / j1939_pgn65269_data_ptr / j1939_pgn65269_end_ptr)
 0x003faac3,j1939_pgn65269_field1_init,word,
 0x003faac8,j1939_pgn65269_field2_init,word,
 0x003faacc,j1939_pgn65269_tx_data,byte,
-0x003faad4,j1939_pgn65241_tx_header,dword,
-0x003faad7,j1939_pgn65241_tx_header+3,,
-0x003faad8,j1939_pgn65241_tx_count,word,
-0x003faada,j1939_pgn65241_data_ptr,pointer,
-0x003faade,j1939_pgn65241_end_ptr,pointer,
-0x003faae4,j1939_pgn65265_tx_header,dword,
-0x003faae7,j1939_pgn65265_tx_header+3,,
-0x003faae8,j1939_dm1_tx_length,word,
-0x003faaea,j1939_dm1_status_data_ptr,pointer,
-0x003faaee,j1939_dm1_payload_end_ptr,pointer,
+0x003faad4,j1939_pgn65241_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65241_tx_header / j1939_pgn65241_tx_count / j1939_pgn65241_data_ptr / j1939_pgn65241_end_ptr)
+0x003faae4,j1939_pgn65265_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65265_tx_header / j1939_dm1_tx_length / j1939_dm1_status_data_ptr / j1939_dm1_payload_end_ptr)
 0x003faaf2,j1939_ccvs1_two_speed_axle_byte,byte,CCVS1 transmit byte 1: bits 1-2 two-speed axle switch (SPN 69) from switch 31 - 0xFF when two_speed_axle_enable_cal is 0 (was j1939_dm1_status_byte)
 0x003faaf3,j1939_ccvs1_wheel_based_vehicle_speed,word,CCVS1 transmit bytes 2-3 (low byte first): wheel-based vehicle speed (SPN 84 1/256 km/h) = vehicle_speed x 412/256 clamped at 156 mph - 0xFFFF when drivetrain_type < 1 (was etc1_transmission_ratio_scaled)
 0x003faaf4,j1939_ccvs1_wheel_based_vehicle_speed+1,,
@@ -1394,145 +1368,65 @@ address,name,type,comment
 0x003faaf7,j1939_ccvs1_cruise_set_speed_byte,byte,CCVS1 transmit byte 6: cruise control set speed (SPN 86 km/h) = cruise_speed_command x 412 >> 16; 0xFF when j1939_governor_feature_cal bit 6 is clear (was j1939_cruise_speed_byte)
 0x003faaf8,j1939_ccvs1_pto_and_cruise_state_byte,byte,CCVS1 transmit byte 7: bits 1-5 PTO governor state (SPN 976) = protection_event_code when j1939_governor_feature_cal bit 4 else 0x1F / bits 6-8 cruise control state (SPN 527) = ccvs1_cruise_control_state (was j1939_ccvs1_event_bits)
 0x003faaf9,j1939_ccvs1_idle_switches_byte,byte,CCVS1 transmit byte 8: idle increment / idle decrement / test mode fields derived from switch 31 - shutdown override always not available (was j1939_ccvs1_pto_flags)
-0x003faafc,j1939_pgn65261_tx_header,dword,
-0x003faaff,j1939_pgn65261_tx_header+3,,
-0x003fab00,j1939_pgn65261_tx_length,word,
-0x003fab02,j1939_pgn65261_data_ptr,pointer,
-0x003fab06,j1939_pgn65261_end_ptr,pointer,
-0x003fab14,j1939_pgn65259_tx_header,dword,
-0x003fab17,j1939_pgn65259_tx_header+3,,
-0x003fab18,j1939_pgn65259_tx_length,word,
-0x003fab1a,j1939_pgn65259_data_ptr,pointer,
-0x003fab1e,j1939_pgn65259_end_ptr,pointer,
+0x003faafc,j1939_pgn65261_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65261_tx_header / j1939_pgn65261_tx_length / j1939_pgn65261_data_ptr / j1939_pgn65261_end_ptr)
+0x003fab14,j1939_pgn65259_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65259_tx_header / j1939_pgn65259_tx_length / j1939_pgn65259_data_ptr / j1939_pgn65259_end_ptr)
 0x003fab50,j1939_response_param_working,word,
 0x003fab51,j1939_response_param_working+1,,
-0x003fab52,j1939_dm11_tx_header,dword,
-0x003fab55,j1939_dm11_tx_header+3,,
-0x003fab56,j1939_dm11_tx_length,word,
-0x003fab58,j1939_dm11_data_ptr,pointer,
-0x003fab5c,j1939_dm11_end_ptr,pointer,
+0x003fab52,j1939_dm11_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_dm11_tx_header / j1939_dm11_tx_length / j1939_dm11_data_ptr / j1939_dm11_end_ptr)
 0x003fab60,j1939_dm11_feature_config_word,word,
-0x003fab6a,j1939_dm1_tx_header,dword,
-0x003fab6d,j1939_dm1_tx_header+3,,
-0x003fab6e,j1939_dtc_byte_offset,word,
-0x003fab70,j1939_dm1_tx_buf_ptr,pointer,
-0x003fab74,j1939_dm1_fault_data_ptr,pointer,
+0x003fab6a,j1939_dm1_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_dm1_tx_header / j1939_dtc_byte_offset / j1939_dm1_tx_buf_ptr / j1939_dm1_fault_data_ptr)
 0x003fab78,j1939_dm1_lamp_status,byte,byte 0 of the DM1 (PGN 65226) TX payload = lamp status (MIL/RSL/AWL/PL); set to j1939_buildLampStatusByte() when faults pending else 0; tx_buf_ptr points here
 0x003fab79,j1939_dm1_flash_lamp_status,byte,byte 1 of the DM1 (PGN 65226) TX payload = flash lamp status; initialized to 0xff (not available) in cm848_initPgn65226Dm1Handler
 0x003fab7a,j1939_dm1_dtc_mask_working,dword,
 0x003fab7d,j1939_dm1_dtc_mask_working+3,,
-0x003fabcc,j1939_dm2_tx_header,dword,
-0x003fabcf,j1939_dm2_tx_header+3,,
-0x003fabd0,j1939_dtc_data_offset,word,
-0x003fabd2,j1939_dm2_data_ptr,pointer,
-0x003fabd6,j1939_dm2_end_ptr,pointer,
+0x003fabcc,j1939_dm2_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_dm2_tx_header / j1939_dtc_data_offset / j1939_dm2_data_ptr / j1939_dm2_end_ptr)
 0x003fabdc,j1939_dm2_dtc_mask_working,dword,
 0x003fabdf,j1939_dm2_dtc_mask_working+3,,
-0x003fac2e,j1939_pgn65229_tx_header,dword,
-0x003fac31,j1939_pgn65229_tx_header+3,,
-0x003fac32,j1939_dtc_tx_offset,word,
-0x003fac34,j1939_pgn65229_data_ptr,pointer,
-0x003fac38,j1939_pgn65229_end_ptr,pointer,
+0x003fac2e,j1939_pgn65229_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65229_tx_header / j1939_dtc_tx_offset / j1939_pgn65229_data_ptr / j1939_pgn65229_end_ptr)
 0x003fac3d,diag_init_byte_b,byte,
-0x003fad48,j1939_pgn65230_tx_header,dword,
-0x003fad4b,j1939_pgn65230_tx_header+3,,
-0x003fad4c,j1939_pgn65230_tx_byte_count,word,
-0x003fad4e,j1939_pgn65230_data_ptr,pointer,
-0x003fad52,j1939_pgn65230_data2_ptr,pointer,
+0x003fad48,j1939_pgn65230_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65230_tx_header / j1939_pgn65230_tx_byte_count / j1939_pgn65230_data_ptr / j1939_pgn65230_data2_ptr)
 0x003fad5a,j1939_feature_config_tx_word,word,
 0x003fad5c,j1939_dm1_active_faults_tx_word,word,
-0x003fad60,j1939_pgn65232_tx_header,dword,
-0x003fad63,j1939_pgn65232_tx_header+3,,
-0x003fad64,j1939_pgn65232_tx_byte_count,word,
-0x003fad66,j1939_pgn65232_data_ptr,pointer,
-0x003fad6a,j1939_pgn65232_data2_ptr,pointer,
+0x003fad60,j1939_pgn65232_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65232_tx_header / j1939_pgn65232_tx_byte_count / j1939_pgn65232_data_ptr / j1939_pgn65232_data2_ptr)
 0x003fad70,j1939_pgn65232_param_tx_word,word,
 0x003fad72,j1939_pgn65232_field1_init_word,word,
 0x003fad74,j1939_pgn65232_field2_init_word,word,
 0x003fad7b,j1939_status_byte_a,byte,
-0x003fad80,j1939_pgn61441_tx_header,dword,
-0x003fad83,j1939_pgn61441_tx_header+3,,
-0x003fad84,j1939_pgn61441_tx_byte_count,word,
-0x003fad86,j1939_pgn61441_data_ptr,pointer,
+0x003fad80,j1939_pgn61441_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn61441_tx_header / j1939_pgn61441_tx_byte_count / j1939_pgn61441_data_ptr)
 0x003fad90,j1939_engine_status_byte,byte,
 0x003fad92,j1939_dm1_spn_fmi_byte,byte,
-0x003fad98,j1939_pgn61444_tx_header,dword,
-0x003fad9b,j1939_pgn61444_tx_header+3,,
-0x003fad9c,j1939_pgn61444_tx_byte_count,word,
-0x003fad9e,j1939_pgn61444_data_ptr,pointer,
+0x003fad98,j1939_pgn61444_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn61444_tx_header / j1939_pgn61444_tx_byte_count / j1939_pgn61444_data_ptr)
 0x003fada8,j1939_eec2_low_idle_and_kickdown_byte,byte,EEC2 transmit byte 1: bits 1-2 accelerator low idle switch (SPN 558) / bits 3-4 kickdown (pedal above DAT_0005c392 - 2 on safety faults) / bits 5-8 not available (was j1939_status_byte_b)
-0x003fadb0,j1939_pgn61443_tx_header,dword,
-0x003fadb3,j1939_pgn61443_tx_header+3,,
-0x003fadb6,,pointer,
-0x003fadba,,pointer,
-0x003fadc8,j1939_pgn65247_tx_header,dword,
-0x003fadcb,j1939_pgn65247_tx_header+3,,
-0x003fadcc,j1939_pgn65247_tx_byte_count,word,
-0x003fadce,j1939_pgn65247_data_ptr,pointer,
-0x003fadd2,j1939_pgn65247_data2_ptr,pointer,
+0x003fadb0,j1939_pgn61443_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn61443_tx_header)
+0x003fadc8,j1939_pgn65247_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65247_tx_header / j1939_pgn65247_tx_byte_count / j1939_pgn65247_data_ptr / j1939_pgn65247_data2_ptr)
 0x003fadd9,j1939_eflp1_fuel_delivery_pressure,byte,EFL/P1 (PGN 65263) transmit byte 1: fuel delivery pressure (SPN 94 - 4 kPa/bit) from fuel_delivery_pressure_sensor_filtered (was j1939_engine_load_byte)
 0x003faddd,j1939_diag_response_word_b,word,
-0x003fade1,j1939_pgn65263_tx_header,dword,
-0x003fade4,j1939_pgn65263_tx_header+3,,
-0x003fade7,,pointer,
-0x003fadeb,,pointer,
-0x003fadf0,j1939_pgn65262_tx_header,dword,
-0x003fadf3,j1939_pgn65262_tx_header+3,,
-0x003fadf4,j1939_pgn65262_tx_byte_count,word,
-0x003fadf6,j1939_pgn65262_data_ptr,pointer,
-0x003fadfa,j1939_pgn65262_data2_ptr,pointer,
+0x003fade1,j1939_pgn65263_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65263_tx_header)
+0x003fadf0,j1939_pgn65262_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65262_tx_header / j1939_pgn65262_tx_byte_count / j1939_pgn65262_data_ptr / j1939_pgn65262_data2_ptr)
 0x003fae00,j1939_et1_engine_oil_temperature,word,ET1 (PGN 65262) transmit bytes 3-4 (low byte first): engine oil temperature (SPN 175 - 0.03125 deg C/bit - offset -273) from oil_temperature_sensor_filtered; 0xFEFE on its fault bits (was j1939_pgn65262_intercooler_temp)
 0x003fae02,j1939_pgn65262_field1_init_word,word,
 0x003fae08,j1939_erc1_torque_mode_and_enable_byte,byte,ERC1 byte 1: 0xFF when the retarder broadcast flag is clear, else 0xC0 / 0xD0 (SPN 571 brake assist switch bits 5-6 = 00 / 01, SPN 572 = 11 not available) OR-ed with the SPN 900 retarder torque mode nibble; written only by the ERC1 builder and pointed to by the ERC1 descriptor. (was j1939_vehicle_op_status_byte)
-0x003fae10,j1939_pgn61440_tx_header,dword,
-0x003fae13,j1939_pgn61440_tx_header+3,,
-0x003fae14,j1939_pgn61440_tx_length,word,Written once (word, value 2) by cm848_initializePgn61440ElectronicRetarderController1Buffer at +4 of the PGN 61440 descriptor 0x3fae10; the real PGN 65269 descriptor is at 0x3faab4 with its own j1939_pgn65269_tx_length at 0x3faab8. sendJ1939Message reads this field as the header data_length through the descriptor pointer only. Type stays word. (was j1939_pgn65269_tx_byte_count)
-0x003fae16,j1939_pgn61440_data_ptr,pointer,dword store of &j1939_erc1_torque_mode_and_enable_byte at +6 of the PGN 61440 descriptor (data_pointer field of j1939_tx_msg_t); mislabelled 65269. Type stays pointer / dword. (was j1939_pgn65269_tx2_data_ptr)
-0x003fae1a,j1939_pgn61440_end_ptr,pointer,dword store of 0x3fae1e at +10 of the PGN 61440 descriptor (data_end_pointer field of j1939_tx_msg_t), the first byte after the 14-byte descriptor; mislabelled 65269. Type stays pointer / dword. (was j1939_pgn65269_data2_ptr)
-0x003fae28,j1939_pgn65213_tx_header,dword,
-0x003fae38,j1939_pgn65270_tx_header,dword,
-0x003fae3b,j1939_pgn65270_tx_header+3,,
-0x003fae3c,j1939_pgn65270_tx_length,word,type byte -> word. The IC1 (PGN 65270, 0xfef6) transmit descriptor at 0x3fae38 has the j1939_tx_msg_t layout: +0 header dword (j1939_pgn65270_tx_header), +4 data_length word (j1939_msg_hdr_t.data_length is a word), +6 data pointer (0x3fae3e), +10 end pointer (0x3fae42); cm848_initJ1939InletExhaustConditionsBuffer stores the length 8 with ONE sth r9,4(r4) (disasm_func.py: word; the stw at 6(r4) ... (was )
-0x003fae3e,j1939_pgn65270_data_ptr,pointer,code: dword store of &DAT_003fae46 at +6 of the IC1 (PGN 65270) descriptor 0x3fae38 (data_pointer of j1939_tx_msg_t), the only access (stw r3,6(r4)); the generic name hid that it belongs to this one message, like j1939_pgn65251_data_ptr etc. Type stays pointer. The boot ROM has no access to 0x3fae38-0x3fae46 (see 0x3fae3c); the kernel image holds code here at boot (RAM copy of ROM 0x526c-0x5270). ... (was j1939_tx_buf_data_ptr)
-0x003fae42,j1939_pgn65270_end_ptr,pointer,code: dword store of 0x3fae4e (first byte after the 8 data bytes at 0x3fae46) at +10 of the IC1 descriptor 0x3fae38 (data_end_pointer of j1939_tx_msg_t), the only access (stw r11,10(r4)). Type stays pointer (row exists, name was blank; renders PTR_DAT_003fae42 today). The boot ROM has no access to 0x3fae42 (scanned, together with 0x3fae38-0x3fae46); the kernel image holds code at 0x3fae3c-0x3fae44 ... (was )
+0x003fae10,j1939_pgn61440_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn61440_tx_header / j1939_pgn61440_tx_length / j1939_pgn61440_data_ptr / j1939_pgn61440_end_ptr)
+0x003fae28,j1939_pgn65213_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65213_tx_header / j1939_pgn65213_tx_length / j1939_pgn65213_end_ptr)
+0x003fae38,j1939_pgn65270_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65270_tx_header / j1939_pgn65270_tx_length / j1939_pgn65270_data_ptr / j1939_pgn65270_end_ptr)
 0x003fae50,j1939_pgn65249_payload_byte_1,byte,cm848_buildPgn65249RetarderConfigurationMessage writes 0xFF / 0x14 / 3 from engine_retarder_configuration_mode into the first RC payload byte (0x3fae50 is the start of the 19 byte buffer); it is payload, not a destination address (the descriptor holds the address). The j1939 DB has no SPN list for PGN 65249, so the field (probably retarder type / location) is not named by SPN. Time-shared window ... (was j1939_pgn_dest_address)
 0x003fae51,j1939_pgn65249_payload_byte_2,byte,Second RC payload byte: 0xFF / 6 / 3 / 2 / 1 from engine_retarder_stage_1_weight (0 / 1 / 2 / 3 / 6); the old name byte0 contradicts its place (second byte). Field meaning is not in the j1939 DB. Time-shared window: xref_addr.py lists no access below 0x7F60 and a raw scan of the 8152 instructions in ROM 0x0-0x7F60 for the displacement finds none (no boot users; the same scan finds the known boot ... (was j1939_pgn65249_byte0)
-0x003fae63,j1939_pgn65249_tx_header,dword,
-0x003fae72,j1939_pgn65242_can_header,dword,
+0x003fae63,j1939_pgn65249_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65249_tx_header)
+0x003fae72,j1939_pgn65242_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65242_can_header)
 0x003faeb0,j1939_rpm_tx_word,word,
 0x003faeb1,j1939_rpm_tx_word+1,,
 0x003faeb2,j1939_etc1_speed_offset_tx_word,word,
 0x003faeb3,j1939_etc1_speed_offset_tx_word+1,,
-0x003faeb8,j1939_pgn57344_tx_header,dword,
-0x003faebb,j1939_pgn57344_tx_header+3,,
-0x003faebc,j1939_pgn57344_tx_byte_count,word,
-0x003faebe,j1939_pgn57344_data_ptr,pointer,
-0x003faec2,j1939_pgn57344_data2_ptr,pointer,
-0x003faec8,j1939_pgn65248_tx_header,dword,
-0x003faecb,j1939_pgn65248_tx_header+3,,
-0x003faecc,j1939_pgn65248_tx_byte_count,word,
-0x003faece,j1939_pgn65248_data_ptr,pointer,
-0x003faed2,j1939_pgn65248_data2_ptr,pointer,
+0x003faeb8,j1939_pgn57344_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn57344_tx_header / j1939_pgn57344_tx_byte_count / j1939_pgn57344_data_ptr / j1939_pgn57344_data2_ptr)
+0x003faec8,j1939_pgn65248_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65248_tx_header / j1939_pgn65248_tx_byte_count / j1939_pgn65248_data_ptr / j1939_pgn65248_data2_ptr)
 0x003faed6,j1939_pgn65248_field1_tx_dword,dword,
 0x003faeda,j1939_pgn65248_field2_tx_dword,dword,
-0x003faee0,j1939_pgn65271_tx_header,dword,
-0x003faee3,j1939_pgn65271_tx_header+3,,
-0x003faee4,j1939_pgn65271_tx_byte_count,word,
-0x003faee6,j1939_pgn65271_data_ptr,pointer,
-0x003faeea,j1939_pgn65271_data2_ptr,pointer,
+0x003faee0,j1939_pgn65271_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65271_tx_header / j1939_pgn65271_tx_byte_count / j1939_pgn65271_data_ptr / j1939_pgn65271_data2_ptr)
 0x003faef0,j1939_pgn65271_field1_init_word,word,
 0x003faef2,j1939_pgn65271_voltage_tx_word,word,
 0x003faef4,j1939_pgn65271_field2_init_word,word,
-0x003faef8,j1939_pgn65260_tx_header,dword,
-0x003faefb,j1939_pgn65260_tx_header+3,,
-0x003faefc,j1939_pgn65260_tx_byte_count,word,
-0x003faefe,j1939_pgn65260_data_ptr,pointer,
-0x003faf02,j1939_pgn65260_data2_ptr,pointer,
-0x003faf24,j1939_pgn65279_tx_header,dword,
-0x003faf27,j1939_pgn65279_tx_header+3,,
-0x003faf28,j1939_pgn65279_tx_byte_count,word,
-0x003faf2a,j1939_pgn65279_data_ptr,pointer,
-0x003faf2e,j1939_pgn65279_data2_ptr,pointer,
+0x003faef8,j1939_pgn65260_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65260_tx_header / j1939_pgn65260_tx_byte_count / j1939_pgn65260_data_ptr / j1939_pgn65260_data2_ptr)
+0x003faf24,j1939_pgn65279_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65279_tx_header / j1939_pgn65279_tx_byte_count / j1939_pgn65279_data_ptr / j1939_pgn65279_data2_ptr)
 0x003faf34,governor_mode_snapshot,word,
 0x003faf36,etc1_active_state_snapshot,word,
 0x003faf39,j1939_tsc1_override_snapshot,word,
@@ -1613,11 +1507,7 @@ address,name,type,comment
 0x003fafee,governor_rpm_ref_target_1_snapshot,word,
 0x003faff0,governor_rpm_ref_target_2_snapshot,word,
 0x003faff2,governor_rpm_ref_target_3_snapshot,word,
-0x003faff4,j1939_msg_header_working,dword,
-0x003faff7,j1939_msg_header_working+3,,
-0x003faff8,j1939_msg_byte_count_working,word,
-0x003faffa,j1939_msg_data_ptr,pointer,
-0x003faffe,j1939_msg_data_end_ptr,pointer,
+0x003faff4,j1939_working_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_msg_header_working / j1939_msg_byte_count_working / j1939_msg_data_ptr / j1939_msg_data_end_ptr)
 0x003fb003,j1939_msg_payload_init_word,word,
 0x003fb005,j1939_protection_rpm_tx_word,word,
 0x003fb007,j1939_protection_data_byte_a,byte,
@@ -7811,8 +7701,6 @@ address,name,type,comment
 0x00408a6e,oil_change_monitor_engine_power_accumulator_threshold,dword,Compared with oil_change_monitor_engine_power_accumulator_cal (0x3fee3e); value 89301300 in the RAM dump; xref_addr.py says dword (1 read). Named for the accumulator it limits, the soot reading was only by elimination. (new row 2026-11-16)
 0x003fd8ec,oil_change_monitor_minimum_distance_pulses_cal,dword,Minimum distance since reset before the change-due flag can be set (the flag also needs one accumulator over its threshold); value 16000000 = 2000 miles at 8000 pulses per mile; xref_addr.py says dword (1 read); 0x3fd8ec is inside the EEPROM mirror (0x3fd482-0x3feec1), so _cal applies. (new row 2026-11-16)
 0x003fae21,j1939_fd1_fan_drive_state_byte,byte,FD1 byte 2: fan_drive_state_code | 0xF0 (SPN 977 in the low nibble) or 0xFE; xref_addr.py says byte (0 reads / 1 write in cm848_buildPgn65213FanDrive1Message). (new row 2026-11-16)
-0x003fae2c,j1939_pgn65213_tx_length,word,Data length 2 of the FD1 descriptor at 0x3fae28 (the header data_length field at +4, like j1939_pgn61440_tx_length); xref_addr.py says word (0 reads / 1 write in the FD1 buffer init). (new row 2026-11-16)
-0x003fae32,j1939_pgn65213_end_ptr,pointer,data_end_pointer of the FD1 descriptor at 0x3fae28 (+10), set to 0x3fae36; xref_addr.py says dword (0 reads / 1 write in the FD1 buffer init). The data pointer at 0x3fae2e shows as PTR_j1939_pgn65213_diag_param_byte_003fae2e in the .cpp but xref_addr.py cannot see its store, so it is not proposed. (new row 2026-11-16)
 0x004087a8,alternator_field_regulator_start_engine_speed_threshold,word,State 0 handler (ROM 0x38338) moves to state 1 when engine speed (0x40b7ba) >= this (lhz) or cold_start_phase = 3, and fault 368 is clear; 3200 = 400 rpm (0.125 rpm per count) in the dump. xref_addr.py shows nothing (handler code is not decompiled); disasm_func.py 0x38338 shows one lhz read. (new row 2026-11-16)
 0x004087a2,alternator_field_regulator_stop_engine_speed_threshold,word,States 1, 2 and 3 (ROM 0x38384 / 0x383f0 / 0x3844c) fall back to state 0 when engine speed < this; 2880 = 360 rpm in the dump. Width: three lhz reads in disasm_func.py (xref_addr.py has no hits, the handlers are LAB_ code). (new row 2026-11-16)
 0x004087ac,alternator_field_load_response_fast_error_threshold,i16,State 2 handler (ROM 0x383f0) enters state 3 (load response) when charging_voltage_error_fast_component exceeds this; 192 (12 V) in the dump, i.e. state 3 cannot be entered in this calibration. Signed: lha read in disasm_func.py. (new row 2026-11-16)

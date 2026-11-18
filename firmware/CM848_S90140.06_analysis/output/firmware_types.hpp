@@ -1027,6 +1027,7 @@ typedef struct dma_descriptor_t dma_descriptor_t;
 typedef struct memory_patch_entry_t memory_patch_entry_t;
 typedef struct j1939_pgn_handler_entry_t j1939_pgn_handler_entry_t;
 typedef struct j1939_tx_msg_t j1939_tx_msg_t;
+typedef struct j1939_acknowledgement_payload_t j1939_acknowledgement_payload_t;
 typedef struct j1939_ack_msg_t j1939_ack_msg_t;
 typedef struct eeprom_param_t eeprom_param_t;
 typedef struct param_lookup_args_t param_lookup_args_t;
@@ -1455,9 +1456,12 @@ struct j1939_pgn_handler_entry_t {
 };
 
 struct j1939_tx_msg_t {
-    j1939_msg_hdr_t header;  /* J1939 TX message header (can_id + data_length); TX functions receive j1939_msg_hdr_t* pointing here */
-    void * data_pointer;  /* Pointer to payload start (self-ref: = &this.control_byte) */
-    void * data_end_pointer;  /* Pointer to payload end (self-ref: = &this.control_byte + 8) */
+    j1939_msg_hdr_t header;  /* J1939 TX message header (can_id + data_length) */
+    void * data_pointer;  /* Pointer to the first payload byte */
+    void * data_end_pointer;  /* Pointer one past the last payload byte */
+};
+
+struct j1939_acknowledgement_payload_t {
     J1939_ACK_TYPE control_byte;  /* J1939-21 ACKM control byte (ACK/NACK/ACCESS_DENIED/CANNOT_RESPOND) */
     uint8_t group_function;  /* Group function value (0xFF = not defined per J1939-21) */
     uint8_t reserved_byte2;  /* Reserved byte 2 (always 0xFF per J1939-21) */

@@ -345,19 +345,20 @@ j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PG
 # J1939 TX Message Descriptor - complete outgoing J1939 message with inline payload
 # Self-referential: data_ptr = &this.control_byte, data_end_ptr = &this.control_byte + 8
 # 22 bytes total (6 header + 4 data_ptr + 4 data_end_ptr + 8 payload)
-# Instance at 0x003faa9c: ACKM (J1939-21 Acknowledge, PGN 0xE800) TX buffer
-# Composition: embeds j1939_msg_hdr_t at offset 0 — callers pass &msg.header to TX functions
-j1939_tx_msg_t,0x003faa9c,header,j1939_msg_hdr_t,6,J1939 TX message header (can_id + data_length); TX functions receive j1939_msg_hdr_t* pointing here,,verified
-j1939_tx_msg_t,0x003faa9c,data_pointer,pointer,4,Pointer to payload start (self-ref: = &this.control_byte),,verified
-j1939_tx_msg_t,0x003faa9c,data_end_pointer,pointer,4,Pointer to payload end (self-ref: = &this.control_byte + 8),,verified
-j1939_tx_msg_t,0x003faa9c,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte (ACK/NACK/ACCESS_DENIED/CANNOT_RESPOND),,verified
-j1939_tx_msg_t,0x003faa9c,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
-j1939_tx_msg_t,0x003faa9c,reserved_byte2,byte,1,Reserved byte 2 (always 0xFF per J1939-21),,verified
-j1939_tx_msg_t,0x003faa9c,reserved_byte3,byte,1,Reserved byte 3 (always 0xFF per J1939-21),,verified
-j1939_tx_msg_t,0x003faa9c,address_acknowledged,byte,1,Source address of message being acknowledged (0xFF = global),,verified
-j1939_tx_msg_t,0x003faa9c,pgn_low,byte,1,Acknowledged PGN low byte (hardcoded 0 for PDU1 requests),,verified
-j1939_tx_msg_t,0x003faa9c,pgn_mid,byte,1,Acknowledged PGN mid byte (= pgn_pf of request),,verified
-j1939_tx_msg_t,0x003faa9c,pgn_high,byte,1,Acknowledged PGN high byte (= dest_address of request),,verified
+# j1939_tx_msg_t: one J1939 transmit descriptor (14 bytes), the argument of sendJ1939Message - type-only template since 2026-11-18;
+# every descriptor is a global row typed with it (j1939_ackm_msg at 0x3faa9c, j1939_pgn<N>_tx_message, ...). header is j1939_msg_hdr_t, so &msg.header is what cm848_transmitCanMessage takes
+j1939_tx_msg_t,,header,j1939_msg_hdr_t,6,J1939 TX message header (can_id + data_length),,verified
+j1939_tx_msg_t,,data_pointer,pointer,4,Pointer to the first payload byte,,verified
+j1939_tx_msg_t,,data_end_pointer,pointer,4,Pointer one past the last payload byte,,verified
+# j1939_acknowledgement_payload_t: the J1939-21 ACKM payload (PGN 59392) - j1939_ack_payload at 0x3faaaa (was the tail of j1939_tx_msg_t)
+j1939_acknowledgement_payload_t,,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte (ACK/NACK/ACCESS_DENIED/CANNOT_RESPOND),,verified
+j1939_acknowledgement_payload_t,,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
+j1939_acknowledgement_payload_t,,reserved_byte2,byte,1,Reserved byte 2 (always 0xFF per J1939-21),,verified
+j1939_acknowledgement_payload_t,,reserved_byte3,byte,1,Reserved byte 3 (always 0xFF per J1939-21),,verified
+j1939_acknowledgement_payload_t,,address_acknowledged,byte,1,Source address of message being acknowledged (0xFF = global),,verified
+j1939_acknowledgement_payload_t,,pgn_low,byte,1,Acknowledged PGN low byte (hardcoded 0 for PDU1 requests),,verified
+j1939_acknowledgement_payload_t,,pgn_mid,byte,1,Acknowledged PGN mid byte (= pgn_pf of request),,verified
+j1939_acknowledgement_payload_t,,pgn_high,byte,1,Acknowledged PGN high byte (= dest_address of request),,verified
 
 # J1939 Acknowledge Message - 8-byte ACKM payload type definition (kept for reference)
 # Absorbed into j1939_tx_msg_t fields above; no standalone instance

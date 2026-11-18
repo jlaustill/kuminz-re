@@ -622,6 +622,16 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   state with the on-delay counter's name). There the stage now makes no thunk: each boot call gets a primary
   `CALL_OVERRIDE_UNCONDITIONAL` reference to the ROM function, so the call renders with the function's name and the
   data rows stay (10 addresses; build log `Call override: ... data <name> kept`; 8 fewer underscore warnings).
+  **Since 2026-11-18 a named struct or array that covers those bytes counts too.** The build log then reads
+  `data <name> (covering) kept`. Before, an instance with no label of its own at the called address got a thunk that
+  split it.
+  - The case that needed it: the PGN 65270 transmit descriptor at 0x3fae38 covers the boot-called RAM copy of
+    `dispatchCanMessageHandlers` at 0x3fae3c.
+  - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_tx_msg_t` instance (`header.can_id` /
+    `header.data_length` / `data_pointer` / `data_end_pointer`): `j1939_pgn<N>_tx_message`, `j1939_dm1_tx_message`, and
+    so on (30 of them).
+  - The ACK message keeps `j1939_ackm_msg` and its payload is `j1939_ack_payload` (`j1939_acknowledgement_payload_t`).
+  - `sendJ1939Message(&j1939_pgn65262_tx_message)` now carries no cast (it carried one at 30 call sites).
 - **Wave 10 (2026-11-18, PR #51, todo 044): names checked against the DTC each function sets.** The P-code comes from
   fault n → ROM 0x5985a slot → `obd_dtc_code_table`. The monitors found, with the full table in `work/tasks/044`:
   - P0711: `cm848_checkTransmissionTemperatureSensorPerformance` / `cm848_updateTransmissionTemperatureSensorPerformanceFault`.

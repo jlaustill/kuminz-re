@@ -16,6 +16,9 @@
 // rendered as a call to the variable, and the next word's row was swallowed). There, no thunk is
 // made: each call into the RAM address gets a primary CALL_OVERRIDE_UNCONDITIONAL reference to
 // the ROM function instead, so the call renders with the function's name and the data rows stay.
+// The same goes for a named struct or array that covers those bytes without a label of its own
+// there (2026-11-18: the PGN 65270 transmit descriptor, typed j1939_tx_msg_t, covers the boot-called
+// RAM copy of dispatchCanMessageHandlers at +4): a thunk would split the instance.
 //
 // @author kuminz-re
 // @category Analysis
@@ -27,6 +30,9 @@ import ghidra.app.script.GhidraScript;
 import ghidra.app.cmd.function.CreateThunkFunctionCmd;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressSet;
+import ghidra.program.model.data.Array;
+import ghidra.program.model.data.Composite;
+import ghidra.program.model.listing.Data;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.FunctionIterator;
 import ghidra.program.model.listing.FunctionManager;
@@ -84,6 +90,9 @@ public class ApplyRomToRamThunks extends GhidraScript {
 
                 // Application data named in the thunk's 4 bytes: keep the data, override the calls.
                 String dataName = namedLabelIn(st, ramAddr, 4);
+                if (dataName == null) {
+                    dataName = namedCompositeCovering(listing, st, ramAddr, 4);
+                }
                 if (dataName != null && fm.getFunctionAt(ramAddr) == null) {
                     for (Reference call : calls) {
                         Reference over = rm.addMemoryReference(call.getFromAddress(), romFunc.getEntryPoint(),
@@ -130,6 +139,25 @@ public class ApplyRomToRamThunks extends GhidraScript {
         println("ROM-TO-RAM THUNKS: made " + made + ", call overrides " + overridden + ", skipped " + skipped
                 + ", failed " + failed);
         println("======================================================================");
+    }
+
+    /**
+     * The name of a named struct or array that covers [start, start + length) from an address before start
+     * (an instance with no label of its own in those bytes), or null. Only composite data counts: a scalar
+     * row that overlaps is handled by namedLabelIn.
+     */
+    private static String namedCompositeCovering(Listing listing, SymbolTable st, Address start, int length) {
+        for (int i = 0; i < length; i++) {
+            Data d = listing.getDataContaining(start.add(i));
+            if (d == null || !(d.getDataType() instanceof Composite || d.getDataType() instanceof Array)) {
+                continue;
+            }
+            Symbol s = st.getPrimarySymbol(d.getMinAddress());
+            if (s != null && s.getSource() != SourceType.DEFAULT) {
+                return s.getName() + " (covering)";
+            }
+        }
+        return null;
     }
 
     /** The first non-default label (a named data row) in [start, start + length), or null. */

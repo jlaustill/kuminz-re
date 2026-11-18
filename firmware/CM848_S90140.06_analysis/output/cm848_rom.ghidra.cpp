@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 18 09:30:26 MST 2026
+// Generated: Wed Nov 18 11:14:32 MST 2026
 
 
 //
@@ -17701,7 +17701,7 @@ void cm848_sendFaultTimerMessage(void)
 {
   if ((DAT_003fa83e & 0xf0) == 0) {
     faultTimerHandler(&fault_timer_state_base);
-    sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65251_tx_header);
+    sendJ1939Message(&j1939_pgn65251_tx_message);
   }
   return;
 }
@@ -17783,11 +17783,13 @@ void cm848_processFaultMessageTiming(void)
 void initFaultTimerMessage(void)
 
 {
-  j1939_pgn65251_tx_header = CONCAT13(((byte)j1939_pgn65251_priority & 7) << 2,0xfee300);
-  j1939_pgn65251_tx_header = CONCAT31(j1939_pgn65251_tx_header._0_3_,(char)j1939_source_address);
-  j1939_pgn65251_tx_length = 0x1c;
-  j1939_pgn65251_data_ptr = (undefined *)&fault_timer_state_base;
-  j1939_pgn65251_end_ptr = &DAT_003fa83e;
+  j1939_pgn65251_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65251_priority & 7) << 2,0xfee300);
+  j1939_pgn65251_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65251_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn65251_tx_message.header.data_length = 0x1c;
+  j1939_pgn65251_tx_message.data_pointer = (undefined *)&fault_timer_state_base;
+  j1939_pgn65251_tx_message.data_end_pointer = &DAT_003fa83e;
   ram0x003fa809 = 0xffff;
   ram0x003fa825 = 0xffff;
   fault_counter_slot7_target._2_1_ = 0x7d;
@@ -23168,9 +23170,9 @@ void cm848_sendJ1939ProprietaryStatus(void)
                    (byte)((int)(short)governor_prop_status_bits_1 << 4) |
                    (char)governor_prop_status_bits_2 << 2 | (byte)governor_prop_status_bits_0;
     _j1939_pgn56360_prop_status_snapshot = _governor_prop_status_byte_b;
-    j1939_pgn56360_tx_header._3_1_ = j1939_prop_status_byte3;
-    j1939_pgn56360_tx_header._2_1_ = j1939_prop_status_byte2;
-    sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn56360_tx_header);
+    j1939_pgn56360_tx_message.header.can_id._3_1_ = j1939_prop_status_byte3;
+    j1939_pgn56360_tx_message.header.can_id._2_1_ = j1939_prop_status_byte2;
+    sendJ1939Message(&j1939_pgn56360_tx_message);
     j1939_prop_status_tx_state = 0;
   }
   return;
@@ -23185,11 +23187,13 @@ void cm848_sendJ1939ProprietaryStatus(void)
 void cm848_initJ1939ProprietaryStatusBuffer(void)
 
 {
-  j1939_pgn56360_tx_header = CONCAT13(((byte)j1939_pgn56360_source_address_bits & 7) << 2,0xdc2800);
-  j1939_pgn56360_tx_header = CONCAT31(j1939_pgn56360_tx_header._0_3_,(char)j1939_source_address);
-  j1939_pgn56360_tx_length = 8;
-  PTR_DAT_003faa92 = &DAT_003faa84;
-  PTR_DAT_003faa96 = &DAT_003faa9a;
+  j1939_pgn56360_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn56360_source_address_bits & 7) << 2,0xdc2800);
+  j1939_pgn56360_tx_message.header.can_id =
+       CONCAT31(j1939_pgn56360_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn56360_tx_message.header.data_length = 8;
+  j1939_pgn56360_tx_message.data_pointer = &DAT_003faa84;
+  j1939_pgn56360_tx_message.data_end_pointer = &DAT_003faa9a;
   DAT_003faa85 = 0xff;
   DAT_003faa86 = 0xff;
   DAT_003faa87 = 0xff;
@@ -23207,10 +23211,10 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYP
 {
   j1939_ackm_msg.header.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
   j1939_ackm_msg.header.can_id._2_2_ = CONCAT11(0xff,request_msg->dest_address);
-  j1939_ackm_msg.pgn_low = 0;
-  j1939_ackm_msg.pgn_mid = request_msg->pgn_pf;
-  j1939_ackm_msg.pgn_high = request_msg->dest_address;
-  j1939_ackm_msg.control_byte = ack_type;
+  j1939_ack_payload.pgn_low = 0;
+  j1939_ack_payload.pgn_mid = request_msg->pgn_pf;
+  j1939_ack_payload.pgn_high = request_msg->dest_address;
+  j1939_ack_payload.control_byte = ack_type;
   sendJ1939Message(&j1939_ackm_msg);
   return;
 }
@@ -23229,10 +23233,10 @@ void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
   j1939_ackm_msg.header.can_id = CONCAT13(((byte)j1939_ackm_priority & 7) << 2,0xe8ff00);
   j1939_ackm_msg.header.can_id._2_2_ = CONCAT11(0xff,msg->dest_address);
   pbVar1 = msg->data_pointer;
-  j1939_ackm_msg.pgn_low = *pbVar1;
-  j1939_ackm_msg.pgn_mid = pbVar1[1];
-  j1939_ackm_msg.pgn_high = pbVar1[2];
-  j1939_ackm_msg.control_byte = ack_type;
+  j1939_ack_payload.pgn_low = *pbVar1;
+  j1939_ack_payload.pgn_mid = pbVar1[1];
+  j1939_ack_payload.pgn_high = pbVar1[2];
+  j1939_ack_payload.control_byte = ack_type;
   sendJ1939Message(&j1939_ackm_msg);
   return;
 }
@@ -23247,12 +23251,12 @@ void cm848_initJ1939AckBuffer(void)
 
 {
   j1939_ackm_msg.header.data_length = 8;
-  j1939_ackm_msg.data_pointer = &j1939_ackm_msg.control_byte;
+  j1939_ackm_msg.data_pointer = &j1939_ack_payload.control_byte;
   j1939_ackm_msg.data_end_pointer = &DAT_003faab2;
-  j1939_ackm_msg.group_function = 0xff;
-  j1939_ackm_msg.reserved_byte2 = 0xff;
-  j1939_ackm_msg.reserved_byte3 = 0xff;
-  j1939_ackm_msg.address_acknowledged = 0xff;
+  j1939_ack_payload.group_function = 0xff;
+  j1939_ack_payload.reserved_byte2 = 0xff;
+  j1939_ack_payload.reserved_byte3 = 0xff;
+  j1939_ack_payload.address_acknowledged = 0xff;
   j1939_dm1_active_flag = 0;
   return;
 }
@@ -23296,7 +23300,7 @@ void cm848_buildPgn65269AmbientConditionsMessage(void)
   else {
     DAT_003faac5 = 0xfffe;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65269_tx_header);
+  sendJ1939Message(&j1939_pgn65269_tx_message);
   return;
 }
 
@@ -23309,11 +23313,13 @@ void cm848_buildPgn65269AmbientConditionsMessage(void)
 void cm848_initJ1939AmbientConditionsBuffer(void)
 
 {
-  j1939_pgn65269_tx_header = CONCAT13(((byte)j1939_pgn65269_priority & 7) << 2,0xfef500);
-  j1939_pgn65269_tx_length = 8;
-  j1939_pgn65269_data_ptr = &j1939_amb_barometric_pressure;
-  j1939_pgn65269_end_ptr = &DAT_003faaca;
-  j1939_pgn65269_tx_header = CONCAT31(j1939_pgn65269_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65269_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65269_priority & 7) << 2,0xfef500);
+  j1939_pgn65269_tx_message.header.data_length = 8;
+  j1939_pgn65269_tx_message.data_pointer = &j1939_amb_barometric_pressure;
+  j1939_pgn65269_tx_message.data_end_pointer = &DAT_003faaca;
+  j1939_pgn65269_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65269_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn65269_field1_init = 0xffff;
   DAT_003faac7 = 0xff;
   j1939_pgn65269_field2_init = 0xffff;
@@ -23368,7 +23374,7 @@ LAB_000240c0:
   }
   j1939_pgn65269_tx_data = bVar2 | bVar1;
 LAB_00024104:
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65241_tx_header);
+  sendJ1939Message(&j1939_pgn65241_tx_message);
   return;
 }
 
@@ -23381,10 +23387,10 @@ LAB_00024104:
 void cm848_initJ1939EngineStatusBuffer(void)
 
 {
-  j1939_pgn65241_tx_header = CONCAT31(0x14fed9,(char)j1939_source_address);
-  j1939_pgn65241_tx_count = 1;
-  j1939_pgn65241_data_ptr = &j1939_pgn65269_tx_data;
-  j1939_pgn65241_end_ptr = &DAT_003faae2;
+  j1939_pgn65241_tx_message.header.can_id = CONCAT31(0x14fed9,(char)j1939_source_address);
+  j1939_pgn65241_tx_message.header.data_length = 1;
+  j1939_pgn65241_tx_message.data_pointer = &j1939_pgn65269_tx_data;
+  j1939_pgn65241_tx_message.data_end_pointer = &DAT_003faae2;
   return;
 }
 
@@ -23585,7 +23591,7 @@ LAB_00024604:
   }
   j1939_ccvs1_idle_switches_byte = j1939_ccvs1_idle_switches_byte | bVar3;
 LAB_00024648:
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65265_tx_header);
+  sendJ1939Message(&j1939_pgn65265_tx_message);
   return;
 }
 
@@ -23598,11 +23604,13 @@ LAB_00024648:
 void cm848_initPgn65265CruiseSpeedHandler(void)
 
 {
-  j1939_pgn65265_tx_header = CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfef100);
-  j1939_pgn65265_tx_header = CONCAT31(j1939_pgn65265_tx_header._0_3_,(char)j1939_source_address);
-  j1939_dm1_tx_length = 8;
-  j1939_dm1_status_data_ptr = &j1939_ccvs1_two_speed_axle_byte;
-  j1939_dm1_payload_end_ptr = &DAT_003faafa;
+  j1939_pgn65265_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfef100);
+  j1939_pgn65265_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65265_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn65265_tx_message.header.data_length = 8;
+  j1939_pgn65265_tx_message.data_pointer = &j1939_ccvs1_two_speed_axle_byte;
+  j1939_pgn65265_tx_message.data_end_pointer = &DAT_003faafa;
   j1939_ccvs1_two_speed_axle_byte = 0xf3;
   ccvs1_cruise_control_state = 7;
   cm848_j1939RegisterPgnHandler(0xfef1,cm848_buildPgn65265CruiseControlVehicleSpeedMessage);
@@ -23649,7 +23657,7 @@ void j1939HandlePgn65261CruiseControlSetup(void)
   }
   j1939_ccss_tx_payload_t_003fab0a.cruise_low_set_limit_speed = 0xff;
 LAB_000247e0:
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65261_tx_header);
+  sendJ1939Message(&j1939_pgn65261_tx_message);
   return;
 }
 
@@ -23662,11 +23670,14 @@ LAB_000247e0:
 void initPgn65261CruiseControlSetupStruct(void)
 
 {
-  j1939_pgn65261_tx_header = CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfeed00);
-  j1939_pgn65261_tx_length = 8;
-  j1939_pgn65261_data_ptr = &j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit;
-  j1939_pgn65261_end_ptr = &DAT_003fab12;
-  j1939_pgn65261_tx_header = CONCAT31(j1939_pgn65261_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65261_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_cruise_ctrl_priority & 7) << 2,0xfeed00);
+  j1939_pgn65261_tx_message.header.data_length = 8;
+  j1939_pgn65261_tx_message.data_pointer = &j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit
+  ;
+  j1939_pgn65261_tx_message.data_end_pointer = &DAT_003fab12;
+  j1939_pgn65261_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65261_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_ccss_tx_payload_t_003fab0a.reserved3 = 0xff;
   j1939_ccss_tx_payload_t_003fab0a.reserved4 = 0xff;
   j1939_ccss_tx_payload_t_003fab0a.reserved5 = 0xff;
@@ -23710,7 +23721,7 @@ void cm848_j1939HandlePgn65259ComponentId(void)
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 10);
   LAB_003fab4c_1 = 0x2a;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65259_tx_header);
+  sendJ1939Message(&j1939_pgn65259_tx_message);
   return;
 }
 
@@ -23723,11 +23734,13 @@ void cm848_j1939HandlePgn65259ComponentId(void)
 void cm848_initPgn65259ComponentIdHandler(void)
 
 {
-  j1939_pgn65259_tx_header = CONCAT13(((byte)j1939_pgn65259_priority & 7) << 2,0xfeeb00);
-  j1939_pgn65259_tx_length = 0x2c;
-  j1939_pgn65259_data_ptr = &DAT_003fab22;
-  j1939_pgn65259_end_ptr = &LAB_003fab4c_2;
-  j1939_pgn65259_tx_header = CONCAT31(j1939_pgn65259_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65259_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65259_priority & 7) << 2,0xfeeb00);
+  j1939_pgn65259_tx_message.header.data_length = 0x2c;
+  j1939_pgn65259_tx_message.data_pointer = &DAT_003fab22;
+  j1939_pgn65259_tx_message.data_end_pointer = &LAB_003fab4c_2;
+  j1939_pgn65259_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65259_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   cm848_j1939RegisterPgnHandler(0xfeeb,cm848_j1939HandlePgn65259ComponentId);
   return;
 }
@@ -23819,15 +23832,15 @@ void cm848_sendJ1939ExtendedResponse(undefined4 param_1,word param_2)
 //
 
 /* handles the J1939 request for PGN 65234 DM10 (non-continuously monitored test ID support) via
-   j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler) - sends j1939_dm11_tx_header and does
-   NOT clear DTCs (was cm848_j1939HandlePgn65234Dm11ClearActive) | registration-table-sweep reviewed
-   2026-11-13 */
+   j1939_pgn_dispatch_table (cm848_j1939DispatchPgnHandler) - sends
+   j1939_dm11_tx_message.header.can_id and does NOT clear DTCs (was
+   cm848_j1939HandlePgn65234Dm11ClearActive) | registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_j1939HandlePgn65234Dm10(void)
 
 {
   j1939_dm11_feature_config_word = j1939_reverseByteOrder16(&j1939_feature_config_word);
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_dm11_tx_header);
+  sendJ1939Message(&j1939_dm11_tx_message);
   return;
 }
 
@@ -23840,11 +23853,12 @@ void cm848_j1939HandlePgn65234Dm10(void)
 void cm848_initPgn65234Dm11Handler(void)
 
 {
-  j1939_dm11_tx_header = CONCAT13(((byte)j1939_dm11_priority & 7) << 2,0xfed200);
-  j1939_dm11_tx_length = 2;
-  j1939_dm11_data_ptr = (undefined *)&j1939_dm11_feature_config_word;
-  j1939_dm11_end_ptr = &DAT_003fab68;
-  j1939_dm11_tx_header = CONCAT31(j1939_dm11_tx_header._0_3_,(char)j1939_source_address);
+  j1939_dm11_tx_message.header.can_id = CONCAT13(((byte)j1939_dm11_priority & 7) << 2,0xfed200);
+  j1939_dm11_tx_message.header.data_length = 2;
+  j1939_dm11_tx_message.data_pointer = (undefined *)&j1939_dm11_feature_config_word;
+  j1939_dm11_tx_message.data_end_pointer = &DAT_003fab68;
+  j1939_dm11_tx_message.header.can_id =
+       CONCAT31(j1939_dm11_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   cm848_j1939RegisterPgnHandler(0xfed2,cm848_j1939HandlePgn65234Dm10);
   return;
 }
@@ -23869,13 +23883,13 @@ void j1939HandlePgn65226Dm1ActiveDtc(void)
   undefined1 local_14;
   undefined1 uStack_12;
   
-  j1939_dm1_fault_data_ptr = &j1939_dm1_fault_data_channel_byte;
+  j1939_dm1_tx_message.data_end_pointer = &j1939_dm1_fault_data_channel_byte;
   if ((j1939_dm1_fault_data_channel_byte & 0xf0) == 0) {
-    j1939_dtc_byte_offset = 2;
+    j1939_dm1_tx_message.header.data_length = 2;
     if (active_dtc_count == 0) {
       j1939_dm1_lamp_status = 0;
       j1939_dm1_dtc_mask_working = 0xffffffff;
-      j1939_dtc_byte_offset = 6;
+      j1939_dm1_tx_message.header.data_length = 6;
     }
     else {
       j1939_dm1_lamp_status = j1939_buildLampStatusByte();
@@ -23893,16 +23907,16 @@ void j1939HandlePgn65226Dm1ActiveDtc(void)
             uVar1 = *(uint *)(&DAT_0005a4aa + uVar4 * 4) & 0xffffe000;
             local_14 = (undefined1)(uVar1 >> 0x18);
             uStack_12 = (undefined1)(uVar1 >> 8);
-            *(uint *)((int)&j1939_dm1_fault_data_ptr + uVar3 * 4 + 2) =
+            *(uint *)((int)&j1939_dm1_tx_message.data_end_pointer + uVar3 * 4 + 2) =
                  ((uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_14),uStack_12) |
                  (byte)(&DAT_0005a4ac)[uVar4 * 4] & 0x1f) << 8 | uVar2 | 0x80;
-            j1939_dtc_byte_offset = j1939_dtc_byte_offset + 4;
+            j1939_dm1_tx_message.header.data_length = j1939_dm1_tx_message.header.data_length + 4;
           }
           uVar3 = uVar3 + 1 & 0xff;
         } while ((uVar3 <= active_dtc_count) && (uVar3 < 0x15));
       }
     }
-    sendJ1939Message((j1939_tx_msg_t *)&j1939_dm1_tx_header);
+    sendJ1939Message(&j1939_dm1_tx_message);
   }
   return;
 }
@@ -23938,10 +23952,11 @@ void cm848_processDm1FaultBroadcast(void)
 void cm848_initPgn65226Dm1Handler(void)
 
 {
-  j1939_dm1_tx_header = CONCAT13(((byte)j1939_dm1_priority & 7) << 2,0xfeca00);
-  j1939_dm1_tx_buf_ptr = &j1939_dm1_lamp_status;
-  j1939_dm1_fault_data_ptr = &j1939_dm1_fault_data_channel_byte;
-  j1939_dm1_tx_header = CONCAT31(j1939_dm1_tx_header._0_3_,(char)j1939_source_address);
+  j1939_dm1_tx_message.header.can_id = CONCAT13(((byte)j1939_dm1_priority & 7) << 2,0xfeca00);
+  j1939_dm1_tx_message.data_pointer = &j1939_dm1_lamp_status;
+  j1939_dm1_tx_message.data_end_pointer = &j1939_dm1_fault_data_channel_byte;
+  j1939_dm1_tx_message.header.can_id =
+       CONCAT31(j1939_dm1_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_dm1_flash_lamp_status = 0xff;
   j1939_dm1_dtc_mask_working._3_1_ = (byte)j1939_dm1_dtc_mask_working & 0x7f | 0x80;
   j1939_dm1_broadcast_pending_flag = 0;
@@ -23970,11 +23985,11 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
   undefined1 uStack_a;
   
   if ((DAT_003fac2c & 0xf0) == 0) {
-    j1939_dtc_data_offset = 2;
+    j1939_dm2_tx_message.header.data_length = 2;
     DAT_003fabda = j1939_buildLampStatusByte();
     if (previously_active_dtc_count == 0) {
       j1939_dm2_dtc_mask_working = 0xffffffff;
-      j1939_dtc_data_offset = j1939_dtc_data_offset + 4;
+      j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
     }
     else {
       uVar4 = 1;
@@ -23994,16 +24009,16 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
             uVar1 = *(uint *)(&DAT_0005a4aa + iVar2) & 0xffffe000;
             local_c = (undefined1)(uVar1 >> 0x18);
             uStack_a = (undefined1)(uVar1 >> 8);
-            *(uint *)((int)&j1939_dm2_end_ptr + uVar4 * 4 + 2) =
+            *(uint *)((int)&j1939_dm2_tx_message.data_end_pointer + uVar4 * 4 + 2) =
                  ((uint)CONCAT21(CONCAT11((char)(uVar1 >> 0x10),local_c),uStack_a) |
                  (byte)(&DAT_0005a4ac)[iVar2] & 0x1f) << 8 | uVar3 | 0x80;
-            j1939_dtc_data_offset = j1939_dtc_data_offset + 4;
+            j1939_dm2_tx_message.header.data_length = j1939_dm2_tx_message.header.data_length + 4;
           }
           uVar4 = uVar4 + 1 & 0xff;
         } while ((uVar4 <= previously_active_dtc_count) && (uVar4 < 0x15));
       }
     }
-    sendJ1939Message((j1939_tx_msg_t *)&j1939_dm2_tx_header);
+    sendJ1939Message(&j1939_dm2_tx_message);
   }
   return;
 }
@@ -24017,10 +24032,11 @@ void cm848_j1939HandlePgn65227Dm2PreviousDtc(void)
 void cm848_initPgn65227Dm2Handler(void)
 
 {
-  j1939_dm2_tx_header = CONCAT13(((byte)j1939_dm2_priority & 7) << 2,0xfecb00);
-  j1939_dm2_data_ptr = &DAT_003fabda;
-  j1939_dm2_end_ptr = &DAT_003fac2c;
-  j1939_dm2_tx_header = CONCAT31(j1939_dm2_tx_header._0_3_,(char)j1939_source_address);
+  j1939_dm2_tx_message.header.can_id = CONCAT13(((byte)j1939_dm2_priority & 7) << 2,0xfecb00);
+  j1939_dm2_tx_message.data_pointer = &DAT_003fabda;
+  j1939_dm2_tx_message.data_end_pointer = &DAT_003fac2c;
+  j1939_dm2_tx_message.header.can_id =
+       CONCAT31(j1939_dm2_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   DAT_003fabdb = 0xff;
   j1939_dm2_dtc_mask_working._3_1_ = (byte)j1939_dm2_dtc_mask_working & 0x7f | 0x80;
   cm848_j1939RegisterPgnHandler(0xfecb,cm848_j1939HandlePgn65227Dm2PreviousDtc);
@@ -24036,10 +24052,12 @@ void cm848_initPgn65227Dm2Handler(void)
 void cm848_initPgn65229Dm4Handler(void)
 
 {
-  j1939_pgn65229_tx_header = CONCAT13(((byte)j1939_pgn65229_priority & 7) << 2,0xfecd00);
-  j1939_pgn65229_data_ptr = &j1939_dm4_tx_record_size_byte;
-  j1939_pgn65229_end_ptr = &DAT_003fad46;
-  j1939_pgn65229_tx_header = CONCAT31(j1939_pgn65229_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65229_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65229_priority & 7) << 2,0xfecd00);
+  j1939_pgn65229_tx_message.data_pointer = &j1939_dm4_tx_record_size_byte;
+  j1939_pgn65229_tx_message.data_end_pointer = &DAT_003fad46;
+  j1939_pgn65229_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65229_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   cm848_j1939RegisterPgnHandler(0xfecd,cm848_j1939HandlePgn65229Dm4FreezeFrame);
   return;
 }
@@ -24132,7 +24150,8 @@ void cm848_j1939BuildDm4FreezeFrame(int param_1)
     else {
       sVar5 = 0xd;
     }
-    j1939_dtc_tx_offset = j1939_dtc_tx_offset + sVar5;
+    j1939_pgn65229_tx_message.header.data_length =
+         j1939_pgn65229_tx_message.header.data_length + sVar5;
   }
   return;
 }
@@ -24154,14 +24173,14 @@ void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
   byte bVar1;
   
   if ((DAT_003fad46 & 0xf0) == 0) {
-    j1939_dtc_tx_offset = 0;
+    j1939_pgn65229_tx_message.header.data_length = 0;
     if ((active_dtc_count == 0) && (previously_active_dtc_count == 0)) {
       j1939_dm4_tx_record_size_byte = 0;
       _diag_init_byte_b = 0;
       DAT_003fac41 = 0xff;
       DAT_003fac42 = 0xff;
       DAT_003fac43 = 0xff;
-      j1939_dtc_tx_offset = 8;
+      j1939_pgn65229_tx_message.header.data_length = 8;
     }
     else {
       bVar1 = 0;
@@ -24170,7 +24189,7 @@ void cm848_j1939HandlePgn65229Dm4FreezeFrame(void)
         bVar1 = bVar1 + 1;
       } while (bVar1 < 8);
     }
-    sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65229_tx_header);
+    sendJ1939Message(&j1939_pgn65229_tx_message);
   }
   return;
 }
@@ -24206,7 +24225,7 @@ void cm848_j1939HandlePgn65230Dm5Readiness(void)
     local_10[0] = local_10[0] & 0xfeff;
   }
   j1939_dm1_active_faults_tx_word = j1939_reverseByteOrder16(local_10);
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65230_tx_header);
+  sendJ1939Message(&j1939_pgn65230_tx_message);
   return;
 }
 
@@ -24219,11 +24238,13 @@ void cm848_j1939HandlePgn65230Dm5Readiness(void)
 void cm848_initPgn65230Dm5Handler(void)
 
 {
-  j1939_pgn65230_tx_header = CONCAT13(((byte)j1939_pgn65230_priority & 7) << 2,0xfece00);
-  j1939_pgn65230_tx_byte_count = 8;
-  j1939_pgn65230_data_ptr = &DAT_003fad56;
-  j1939_pgn65230_data2_ptr = &DAT_003fad5e;
-  j1939_pgn65230_tx_header = CONCAT31(j1939_pgn65230_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65230_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65230_priority & 7) << 2,0xfece00);
+  j1939_pgn65230_tx_message.header.data_length = 8;
+  j1939_pgn65230_tx_message.data_pointer = &DAT_003fad56;
+  j1939_pgn65230_tx_message.data_end_pointer = &DAT_003fad5e;
+  j1939_pgn65230_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65230_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   cm848_j1939RegisterPgnHandler(0xfece,cm848_j1939HandlePgn65230Dm5Readiness);
   return;
 }
@@ -24243,7 +24264,7 @@ void cm848_j1939SendDm1ResponseMessage(byte dest_address,byte fault_count)
   local_6 = CONCAT11(in_register_00000012,fault_count);
   DAT_003fad6e = dest_address;
   j1939_pgn65232_param_tx_word = j1939_reverseByteOrder16(&local_6);
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65232_tx_header);
+  sendJ1939Message(&j1939_pgn65232_tx_message);
   return;
 }
 
@@ -24256,11 +24277,13 @@ void cm848_j1939SendDm1ResponseMessage(byte dest_address,byte fault_count)
 void cm848_initJ1939EngineControlBuffer(void)
 
 {
-  j1939_pgn65232_tx_header = CONCAT13(((byte)j1939_pgn65232_priority & 7) << 2,0xfed000);
-  j1939_pgn65232_tx_byte_count = 8;
-  j1939_pgn65232_data_ptr = &DAT_003fad6e;
-  j1939_pgn65232_data2_ptr = &DAT_003fad76;
-  j1939_pgn65232_tx_header = CONCAT31(j1939_pgn65232_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65232_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65232_priority & 7) << 2,0xfed000);
+  j1939_pgn65232_tx_message.header.data_length = 8;
+  j1939_pgn65232_tx_message.data_pointer = &DAT_003fad6e;
+  j1939_pgn65232_tx_message.data_end_pointer = &DAT_003fad76;
+  j1939_pgn65232_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65232_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   DAT_003fad6f = 0xff;
   j1939_pgn65232_field1_init_word = 0xffff;
   j1939_pgn65232_field2_init_word = 0xffff;
@@ -24329,7 +24352,7 @@ LAB_000257c4:
   else {
     DAT_003fad7c = 0xff;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61441_tx_header);
+  sendJ1939Message(&j1939_pgn61441_tx_message);
   return;
 }
 
@@ -24342,14 +24365,16 @@ LAB_000257c4:
 void cm848_initJ1939Etc1ControlBuffer(void)
 
 {
-  j1939_pgn61441_tx_header = CONCAT13(((byte)j1939_pgn61441_source_address_bits & 7) << 2,0xf00100);
-  j1939_pgn61441_tx_header = CONCAT31(j1939_pgn61441_tx_header._0_3_,(char)j1939_source_address);
-  j1939_pgn61441_tx_byte_count = 5;
+  j1939_pgn61441_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn61441_source_address_bits & 7) << 2,0xf00100);
+  j1939_pgn61441_tx_message.header.can_id =
+       CONCAT31(j1939_pgn61441_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn61441_tx_message.header.data_length = 5;
   DAT_003fad78 = 0xff;
   DAT_003fad7a = 0xff;
   DAT_003fad79 = 0xff;
-  j1939_pgn61441_data_ptr = &DAT_003fad78;
-  PTR_DAT_003fad8a = &DAT_003fad8e;
+  j1939_pgn61441_tx_message.data_pointer = &DAT_003fad78;
+  j1939_pgn61441_tx_message.data_end_pointer = &DAT_003fad8e;
   return;
 }
 
@@ -24488,7 +24513,7 @@ LAB_00025a28:
   j1939_eec1_engine_speed_low_byte = bStack_7;
   local_8 = (byte)(engine_rpm_state_t_0040b7ac.current_rpm >> 8);
   j1939_eec1_engine_speed_high_byte = local_8;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61444_tx_header);
+  sendJ1939Message(&j1939_pgn61444_tx_message);
   return;
 }
 
@@ -24501,11 +24526,13 @@ LAB_00025a28:
 void cm848_initEec1TxDescriptor(void)
 
 {
-  j1939_pgn61444_tx_header = CONCAT13(((byte)j1939_pgn61444_priority & 7) << 2,0xf00400);
-  j1939_pgn61444_tx_header = CONCAT31(j1939_pgn61444_tx_header._0_3_,(char)j1939_source_address);
-  j1939_pgn61444_tx_byte_count = 5;
-  j1939_pgn61444_data_ptr = &j1939_engine_status_byte;
-  PTR_DAT_003fada2 = &DAT_003fada6;
+  j1939_pgn61444_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn61444_priority & 7) << 2,0xf00400);
+  j1939_pgn61444_tx_message.header.can_id =
+       CONCAT31(j1939_pgn61444_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn61444_tx_message.header.data_length = 5;
+  j1939_pgn61444_tx_message.data_pointer = &j1939_engine_status_byte;
+  j1939_pgn61444_tx_message.data_end_pointer = &DAT_003fada6;
   return;
 }
 
@@ -24593,7 +24620,7 @@ LAB_00025c0c:
   DAT_003fadad = 0xff;
   DAT_003fadae = 0xff;
   DAT_003fadaf = 0xff;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61443_tx_header);
+  sendJ1939Message(&j1939_pgn61443_tx_message);
   return;
 }
 
@@ -24606,11 +24633,13 @@ LAB_00025c0c:
 void cm848_initPgn61443Eec2Handler(void)
 
 {
-  j1939_pgn61443_tx_header = CONCAT13(((byte)j1939_pgn61443_priority & 7) << 2,0xf00300);
-  j1939_pgn61443_tx_header = CONCAT31(j1939_pgn61443_tx_header._0_3_,(char)j1939_source_address);
-  DAT_003fadb4 = 5;
-  PTR_j1939_eec2_low_idle_and_kickdown_byte_003fadb6 = &j1939_eec2_low_idle_and_kickdown_byte;
-  PTR_DAT_003fadba = &DAT_003fadbe;
+  j1939_pgn61443_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn61443_priority & 7) << 2,0xf00300);
+  j1939_pgn61443_tx_message.header.can_id =
+       CONCAT31(j1939_pgn61443_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn61443_tx_message.header.data_length = 5;
+  j1939_pgn61443_tx_message.data_pointer = &j1939_eec2_low_idle_and_kickdown_byte;
+  j1939_pgn61443_tx_message.data_end_pointer = &DAT_003fadbe;
   cm848_emptyStubFunction7();
   cm848_j1939RegisterPgnHandler(0xf003,cm848_buildPgn61443ElectronicEngineController2Message);
   return;
@@ -24642,7 +24671,7 @@ void cm848_buildPgn65247ElectronicEngineController3Message(void)
   local_8 = (byte)((ushort)DAT_0005c382 >> 8);
   j1939_eec3_desired_operating_speed_high_byte = local_8;
   j1939_eec3_desired_operating_speed_asymmetry = (byte)DAT_0005c384;
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65247_tx_header);
+  sendJ1939Message(&j1939_pgn65247_tx_message);
   return;
 }
 
@@ -24659,11 +24688,13 @@ void cm848_buildPgn65247ElectronicEngineController3Message(void)
 void cm848_initPgn65247ElectronicEngineController3Buffer(void)
 
 {
-  j1939_pgn65247_tx_header = CONCAT13(((byte)j1939_pgn65247_priority & 7) << 2,0xfedf00);
-  j1939_pgn65247_tx_header = CONCAT31(j1939_pgn65247_tx_header._0_3_,(char)j1939_source_address);
-  j1939_pgn65247_tx_byte_count = 4;
-  j1939_pgn65247_data_ptr = &j1939_eec3_nominal_friction_percent_torque;
-  j1939_pgn65247_data2_ptr = &DAT_003fadd6;
+  j1939_pgn65247_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65247_priority & 7) << 2,0xfedf00);
+  j1939_pgn65247_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65247_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn65247_tx_message.header.data_length = 4;
+  j1939_pgn65247_tx_message.data_pointer = &j1939_eec3_nominal_friction_percent_torque;
+  j1939_pgn65247_tx_message.data_end_pointer = &DAT_003fadd6;
   return;
 }
 
@@ -24704,7 +24735,7 @@ void cm848_buildPgn65263EngineFluidLevelPressure1Message(void)
     j1939_eflp1_coolant_pressure =
          (byte)(((uint)(coolant_pressure_sensor_filtered >> 7) * 0x1afa) / 1000 >> 1);
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65263_tx_header);
+  sendJ1939Message(&j1939_pgn65263_tx_message);
   return;
 }
 
@@ -24717,11 +24748,13 @@ void cm848_buildPgn65263EngineFluidLevelPressure1Message(void)
 void cm848_initJ1939FluidLevelPressureBuffer(void)
 
 {
-  j1939_pgn65263_tx_header = CONCAT13(((byte)j1939_pgn65263_priority & 7) << 2,0xfeef00);
-  DAT_003fade5 = 8;
-  PTR_j1939_eflp1_fuel_delivery_pressure_003fade7 = &j1939_eflp1_fuel_delivery_pressure;
-  PTR_DAT_003fadeb = &DAT_003fadd8;
-  j1939_pgn65263_tx_header = CONCAT31(j1939_pgn65263_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65263_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65263_priority & 7) << 2,0xfeef00);
+  j1939_pgn65263_tx_message.header.data_length = 8;
+  j1939_pgn65263_tx_message.data_pointer = &j1939_eflp1_fuel_delivery_pressure;
+  j1939_pgn65263_tx_message.data_end_pointer = &DAT_003fadd8;
+  j1939_pgn65263_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65263_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   DAT_003fadda = 0xff;
   j1939_diag_response_word_b = 0xffff;
   DAT_003fade0 = 0xff;
@@ -24779,7 +24812,7 @@ void cm848_buildPgn65262EngineTemperature1Message(void)
   else {
     j1939_et1_engine_oil_temperature = 0xfefe;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65262_tx_header);
+  sendJ1939Message(&j1939_pgn65262_tx_message);
   return;
 }
 
@@ -24792,11 +24825,13 @@ void cm848_buildPgn65262EngineTemperature1Message(void)
 void cm848_initPgn65262EngineTempHandler(void)
 
 {
-  j1939_pgn65262_tx_header = CONCAT13(((byte)j1939_pgn65262_source_address_bits & 7) << 2,0xfeee00);
-  j1939_pgn65262_tx_byte_count = 8;
-  j1939_pgn65262_data_ptr = &j1939_et1_coolant_temp_byte;
-  j1939_pgn65262_data2_ptr = &DAT_003fae06;
-  j1939_pgn65262_tx_header = CONCAT31(j1939_pgn65262_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65262_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65262_source_address_bits & 7) << 2,0xfeee00);
+  j1939_pgn65262_tx_message.header.data_length = 8;
+  j1939_pgn65262_tx_message.data_pointer = &j1939_et1_coolant_temp_byte;
+  j1939_pgn65262_tx_message.data_end_pointer = &DAT_003fae06;
+  j1939_pgn65262_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65262_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn65262_field1_init_word = 0xffff;
   DAT_003fae04 = 0xff;
   DAT_003fae05 = 0xff;
@@ -24881,7 +24916,7 @@ LAB_00026340:
     j1939_erc1_actual_retarder_percent_torque_byte =
          0x7d - (char)(engine_retarder_torque_percent_times_256 >> 8);
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn61440_tx_header);
+  sendJ1939Message(&j1939_pgn61440_tx_message);
   return;
 }
 
@@ -24893,20 +24928,23 @@ LAB_00026340:
 
 /* Initialises the ERC1 transmit descriptor (PGN 61440 at 0x3fae10): CAN identifier from the
    priority word j1939_pgn61440_priority, 0xF000 and the engine retarder source address
-   j1939_engine_retarder_source_address, data length 2 (j1939_pgn61440_tx_length), data pointer to
-   the ERC1 byte 1 / byte 2 buffer at 0x3fae08; also resets the retarder torque lookup cache through
+   j1939_engine_retarder_source_address, data length 2
+   (j1939_pgn61440_tx_message.header.data_length), data pointer to the ERC1 byte 1 / byte 2 buffer
+   at 0x3fae08; also resets the retarder torque lookup cache through
    cm848_initializeEngineRetarderTorqueLookupCache (was cm848_initJ1939SpeedControlMessage). */
 
 void cm848_initializePgn61440ElectronicRetarderController1Buffer(void)
 
 {
-  j1939_pgn61440_tx_header = CONCAT13(((byte)j1939_pgn61440_priority & 7) << 2,0xf00000);
-  j1939_pgn61440_tx_header =
-       CONCAT31(j1939_pgn61440_tx_header._0_3_,(char)j1939_engine_retarder_source_address);
+  j1939_pgn61440_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn61440_priority & 7) << 2,0xf00000);
+  j1939_pgn61440_tx_message.header.can_id =
+       CONCAT31(j1939_pgn61440_tx_message.header.can_id._0_3_,
+                (char)j1939_engine_retarder_source_address);
   cm848_initializeEngineRetarderTorqueLookupCache();
-  j1939_pgn61440_tx_length = 2;
-  j1939_pgn61440_data_ptr = &j1939_erc1_torque_mode_and_enable_byte;
-  j1939_pgn61440_end_ptr = &DAT_003fae1e;
+  j1939_pgn61440_tx_message.header.data_length = 2;
+  j1939_pgn61440_tx_message.data_pointer = &j1939_erc1_torque_mode_and_enable_byte;
+  j1939_pgn61440_tx_message.data_end_pointer = &DAT_003fae1e;
   return;
 }
 
@@ -24936,7 +24974,7 @@ void cm848_buildPgn65213FanDrive1Message(void)
   else {
     j1939_fd1_fan_drive_state_byte = 0xfe;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65213_tx_header);
+  sendJ1939Message(&j1939_pgn65213_tx_message);
   return;
 }
 
@@ -24954,12 +24992,13 @@ void cm848_buildPgn65213FanDrive1Message(void)
 void cm848_initializePgn65213FanDrive1Buffer(void)
 
 {
-  j1939_pgn65213_tx_header = CONCAT13(((byte)j1939_pgn65213_priority_cal & 7) << 2,0xfebd00);
-  j1939_pgn65213_tx_header = CONCAT31(j1939_pgn65213_tx_header._0_3_,(char)j1939_source_address);
-  j1939_pgn65213_tx_length = 2;
-  PTR_j1939_fan_drive_1_estimated_fan_speed_byte_003fae2e =
-       &j1939_fan_drive_1_estimated_fan_speed_byte;
-  j1939_pgn65213_end_ptr = &DAT_003fae36;
+  j1939_pgn65213_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65213_priority_cal & 7) << 2,0xfebd00);
+  j1939_pgn65213_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65213_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn65213_tx_message.header.data_length = 2;
+  j1939_pgn65213_tx_message.data_pointer = &j1939_fan_drive_1_estimated_fan_speed_byte;
+  j1939_pgn65213_tx_message.data_end_pointer = &DAT_003fae36;
   return;
 }
 
@@ -24996,7 +25035,7 @@ void cm848_buildPgn65270InletExhaustConditions1Message(void)
   else {
     j1939_ic1_intake_manifold_temperature = 0xfe;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65270_tx_header);
+  sendJ1939Message(&j1939_pgn65270_tx_message);
   return;
 }
 
@@ -25009,11 +25048,13 @@ void cm848_buildPgn65270InletExhaustConditions1Message(void)
 void cm848_initJ1939InletExhaustConditionsBuffer(void)
 
 {
-  j1939_pgn65270_tx_header = CONCAT13(((byte)j1939_pgn65270_source_address_bits & 7) << 2,0xfef600);
-  j1939_pgn65270_tx_length = 8;
-  j1939_pgn65270_data_ptr = &DAT_003fae46;
-  j1939_pgn65270_end_ptr = &DAT_003fae4e;
-  j1939_pgn65270_tx_header = CONCAT31(j1939_pgn65270_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65270_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65270_source_address_bits & 7) << 2,0xfef600);
+  j1939_pgn65270_tx_message.header.data_length = 8;
+  j1939_pgn65270_tx_message.data_pointer = &DAT_003fae46;
+  j1939_pgn65270_tx_message.data_end_pointer = &DAT_003fae4e;
+  j1939_pgn65270_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65270_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   DAT_003fae46 = 0xff;
   DAT_003fae49 = 0xff;
   DAT_003fae4a = 0xff;
@@ -25097,7 +25138,7 @@ void cm848_buildPgn65249RetarderConfigurationMessage(void)
     local_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
     DAT_003fae61 = local_8;
     DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
-    sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65249_tx_header);
+    sendJ1939Message(&j1939_pgn65249_tx_message);
   }
   return;
 }
@@ -25116,12 +25157,14 @@ void cm848_buildPgn65249RetarderConfigurationMessage(void)
 void cm848_initializePgn65249RetarderConfigurationBuffer(void)
 
 {
-  j1939_pgn65249_tx_header = CONCAT13(((byte)j1939_pgn65249_source_address_bits & 7) << 2,0xfee100);
-  j1939_pgn65249_tx_header =
-       CONCAT31(j1939_pgn65249_tx_header._0_3_,(char)j1939_engine_retarder_source_address);
-  DAT_003fae67 = 0x13;
-  PTR_j1939_pgn65249_payload_byte_1_003fae69 = &j1939_pgn65249_payload_byte_1;
-  PTR_DAT_003fae6d = &DAT_003fae71;
+  j1939_pgn65249_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65249_source_address_bits & 7) << 2,0xfee100);
+  j1939_pgn65249_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65249_tx_message.header.can_id._0_3_,
+                (char)j1939_engine_retarder_source_address);
+  j1939_pgn65249_tx_message.header.data_length = 0x13;
+  j1939_pgn65249_tx_message.data_pointer = &j1939_pgn65249_payload_byte_1;
+  j1939_pgn65249_tx_message.data_end_pointer = &DAT_003fae71;
   return;
 }
 
@@ -25138,7 +25181,7 @@ void cm848_initializePgn65249RetarderConfigurationBuffer(void)
 void cm848_j1939HandlePgn65242SoftwareId(void)
 
 {
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65242_can_header);
+  sendJ1939Message(&j1939_pgn65242_tx_message);
   return;
 }
 
@@ -25155,10 +25198,10 @@ void cm848_initPgn65242SoftwareIdHandler(void)
   undefined1 local_10;
   undefined1 uStack_f;
   
-  DAT_003fae76 = 0x2f;
-  PTR_j1939_pgn65242_field_count_byte_003fae78 = &j1939_pgn65242_field_count_byte;
-  PTR_DAT_003fae7c = &DAT_003faeaf;
-  j1939_pgn65242_can_header = CONCAT31(0x18feda,(char)j1939_source_address);
+  j1939_pgn65242_tx_message.header.data_length = 0x2f;
+  j1939_pgn65242_tx_message.data_pointer = &j1939_pgn65242_field_count_byte;
+  j1939_pgn65242_tx_message.data_end_pointer = &DAT_003faeaf;
+  j1939_pgn65242_tx_message.header.can_id = CONCAT31(0x18feda,(char)j1939_source_address);
   j1939_pgn65242_field_count_byte = 6;
   cm848_governorDroopCalculation(&DAT_003fd69b,&DAT_003fae81,8);
   DAT_003fae89 = 0x2a;
@@ -25232,7 +25275,7 @@ void cm848_j1939HandlePgn65504ProprietaryB(void)
     uVar1 = TBLr;
     DAT_003faeb7 = (byte)((uVar2 & 0x1a) << 3) | (byte)(uVar1 >> 7) & 0x2f;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn57344_tx_header);
+  sendJ1939Message(&j1939_pgn57344_tx_message);
   return;
 }
 
@@ -25245,11 +25288,13 @@ void cm848_j1939HandlePgn65504ProprietaryB(void)
 void cm848_initJ1939ProprietaryPgn65504Buffer(void)
 
 {
-  j1939_pgn57344_tx_header = CONCAT13(((byte)j1939_pgn57344_source_address_bits & 7) << 2,0xffe000);
-  j1939_pgn57344_tx_header = CONCAT31(j1939_pgn57344_tx_header._0_3_,(char)j1939_source_address);
-  j1939_pgn57344_tx_byte_count = 8;
-  j1939_pgn57344_data_ptr = (undefined *)&j1939_rpm_tx_word;
-  j1939_pgn57344_data2_ptr = &DAT_003faec6;
+  j1939_pgn57344_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn57344_source_address_bits & 7) << 2,0xffe000);
+  j1939_pgn57344_tx_message.header.can_id =
+       CONCAT31(j1939_pgn57344_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn57344_tx_message.header.data_length = 8;
+  j1939_pgn57344_tx_message.data_pointer = (undefined *)&j1939_rpm_tx_word;
+  j1939_pgn57344_tx_message.data_end_pointer = &DAT_003faec6;
   return;
 }
 
@@ -25277,7 +25322,7 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
              (CONCAT44((int)((ulonglong)lifetime_distance_pulses * 0xc47400 >> 0x20),
                        lifetime_distance_pulses * 0xc47400) / 0xdcd65000);
   j1939_pgn65248_field2_tx_dword = j1939_reverseByteOrder32(&local_10);
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65248_tx_header);
+  sendJ1939Message(&j1939_pgn65248_tx_message);
   return;
 }
 
@@ -25290,11 +25335,13 @@ void cm848_j1939HandlePgn65248VehicleDistance(void)
 void cm848_initPgn65248VehicleDistanceHandler(void)
 
 {
-  j1939_pgn65248_tx_header = CONCAT13(((byte)j1939_pgn65248_source_address_bits & 7) << 2,0xfee000);
-  j1939_pgn65248_tx_byte_count = 8;
-  j1939_pgn65248_data_ptr = (undefined *)&j1939_pgn65248_field1_tx_dword;
-  j1939_pgn65248_data2_ptr = &DAT_003faede;
-  j1939_pgn65248_tx_header = CONCAT31(j1939_pgn65248_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65248_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65248_source_address_bits & 7) << 2,0xfee000);
+  j1939_pgn65248_tx_message.header.data_length = 8;
+  j1939_pgn65248_tx_message.data_pointer = (undefined *)&j1939_pgn65248_field1_tx_dword;
+  j1939_pgn65248_tx_message.data_end_pointer = &DAT_003faede;
+  j1939_pgn65248_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65248_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   cm848_j1939RegisterPgnHandler(0xfee0,cm848_j1939HandlePgn65248VehicleDistance);
   return;
 }
@@ -25316,7 +25363,7 @@ void cm848_j1939HandlePgn65271VehicleElectrical(void)
   
   local_8[0] = (undefined2)((uint)sensor_readings_t_0040baf2.battery_voltage * 0x14 >> 3);
   j1939_pgn65271_voltage_tx_word = j1939_reverseByteOrder16(local_8);
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65271_tx_header);
+  sendJ1939Message(&j1939_pgn65271_tx_message);
   return;
 }
 
@@ -25329,11 +25376,13 @@ void cm848_j1939HandlePgn65271VehicleElectrical(void)
 void cm848_initJ1939VehicleElectricalBuffer(void)
 
 {
-  j1939_pgn65271_tx_header = CONCAT13(((byte)j1939_pgn65271_source_address_bits & 7) << 2,0xfef700);
-  j1939_pgn65271_tx_byte_count = 8;
-  j1939_pgn65271_data_ptr = &DAT_003faeee;
-  j1939_pgn65271_data2_ptr = &DAT_003faef6;
-  j1939_pgn65271_tx_header = CONCAT31(j1939_pgn65271_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65271_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65271_source_address_bits & 7) << 2,0xfef700);
+  j1939_pgn65271_tx_message.header.data_length = 8;
+  j1939_pgn65271_tx_message.data_pointer = &DAT_003faeee;
+  j1939_pgn65271_tx_message.data_end_pointer = &DAT_003faef6;
+  j1939_pgn65271_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65271_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   DAT_003faeee = 0xff;
   DAT_003faeef = 0xff;
   j1939_pgn65271_field1_init_word = 0xffff;
@@ -25354,7 +25403,7 @@ void cm848_initJ1939VehicleElectricalBuffer(void)
 void cm848_j1939HandlePgn65260VehicleId(void)
 
 {
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65260_tx_header);
+  sendJ1939Message(&j1939_pgn65260_tx_message);
   return;
 }
 
@@ -25369,11 +25418,13 @@ void cm848_initPgn65260VehicleIdHandler(void)
 {
   uint uVar1;
   
-  j1939_pgn65260_tx_header = CONCAT13(((byte)j1939_pgn65260_source_address_bits & 7) << 2,0xfeec00);
-  j1939_pgn65260_tx_byte_count = 0x15;
-  j1939_pgn65260_data_ptr = &DAT_003faf07;
-  j1939_pgn65260_data2_ptr = &DAT_003faf06;
-  j1939_pgn65260_tx_header = CONCAT31(j1939_pgn65260_tx_header._0_3_,(char)j1939_source_address);
+  j1939_pgn65260_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65260_source_address_bits & 7) << 2,0xfeec00);
+  j1939_pgn65260_tx_message.header.data_length = 0x15;
+  j1939_pgn65260_tx_message.data_pointer = &DAT_003faf07;
+  j1939_pgn65260_tx_message.data_end_pointer = &DAT_003faf06;
+  j1939_pgn65260_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65260_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   uVar1 = 0;
   do {
     (&DAT_003faf07)[uVar1] = vehicle_vin_string[uVar1];
@@ -25402,7 +25453,7 @@ void cm848_j1939SendSafetyStatusMessage(void)
   else {
     j1939_pgn65279_safety_status_byte = 0xfd;
   }
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_pgn65279_tx_header);
+  sendJ1939Message(&j1939_pgn65279_tx_message);
   return;
 }
 
@@ -25415,11 +25466,13 @@ void cm848_j1939SendSafetyStatusMessage(void)
 void cm848_initJ1939SafetyStatusBuffer(void)
 
 {
-  j1939_pgn65279_tx_header = CONCAT13(((byte)j1939_pgn65279_source_address_bits & 7) << 2,0xfeff00);
-  j1939_pgn65279_tx_header = CONCAT31(j1939_pgn65279_tx_header._0_3_,(char)j1939_source_address);
-  j1939_pgn65279_tx_byte_count = 1;
-  j1939_pgn65279_data_ptr = &j1939_pgn65279_safety_status_byte;
-  j1939_pgn65279_data2_ptr = &DAT_003faf32;
+  j1939_pgn65279_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65279_source_address_bits & 7) << 2,0xfeff00);
+  j1939_pgn65279_tx_message.header.can_id =
+       CONCAT31(j1939_pgn65279_tx_message.header.can_id._0_3_,(char)j1939_source_address);
+  j1939_pgn65279_tx_message.header.data_length = 1;
+  j1939_pgn65279_tx_message.data_pointer = &j1939_pgn65279_safety_status_byte;
+  j1939_pgn65279_tx_message.data_end_pointer = &DAT_003faf32;
   DAT_003faf1d = 0xff;
   DAT_003faf1e = 0xff;
   DAT_003faf1f = 0xff;
@@ -28243,7 +28296,7 @@ LAB_0002be0c:
   }
   j1939_protection_data_byte_b = j1939_protection_data_byte_b | bVar1;
 LAB_0002beb4:
-  sendJ1939Message((j1939_tx_msg_t *)&j1939_msg_header_working);
+  sendJ1939Message(&j1939_working_tx_message);
   return;
 }
 
@@ -28256,11 +28309,13 @@ LAB_0002beb4:
 void cm848_initJ1939PtoBuffer(void)
 
 {
-  j1939_msg_header_working = CONCAT13(((byte)j1939_pgn65264_source_address_bits & 7) << 2,0xfef000);
-  j1939_msg_byte_count_working = 8;
-  j1939_msg_data_ptr = &DAT_003fb002;
-  j1939_msg_data_end_ptr = &DAT_003fb00a;
-  j1939_msg_header_working = CONCAT31(j1939_msg_header_working._0_3_,(char)j1939_source_address);
+  j1939_working_tx_message.header.can_id =
+       CONCAT13(((byte)j1939_pgn65264_source_address_bits & 7) << 2,0xfef000);
+  j1939_working_tx_message.header.data_length = 8;
+  j1939_working_tx_message.data_pointer = &DAT_003fb002;
+  j1939_working_tx_message.data_end_pointer = &DAT_003fb00a;
+  j1939_working_tx_message.header.can_id =
+       CONCAT31(j1939_working_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   DAT_003fb002 = 0xff;
   j1939_msg_payload_init_word = 0xffff;
   DAT_003fb009 = 0xff;

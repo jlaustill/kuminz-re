@@ -1105,10 +1105,7 @@ extern word fault_slot_data_shadow_a;  // 0x003fa824
 extern undefined fault_slot_init_mask_b;  // 0x003fa825
 extern word fault_slot_data_shadow_b;  // 0x003fa828
 extern dword fault_counter_slot7_shadow;  // 0x003fa82c
-extern dword j1939_pgn65251_tx_header;  // 0x003fa830
-extern word j1939_pgn65251_tx_length;  // 0x003fa834
-extern void * j1939_pgn65251_data_ptr;  // 0x003fa836
-extern void * j1939_pgn65251_end_ptr;  // 0x003fa83a
+extern j1939_tx_msg_t j1939_pgn65251_tx_message;  // 0x003fa830
 extern word cold_start_rpm_threshold_updated_flag;  // 0x003fa840
 extern word fault_slot_state_1;  // 0x003fa842
 extern word fault_slot_state_2;  // 0x003fa844
@@ -1177,29 +1174,19 @@ extern word engine_retarder_torque_stage_3_cached_axis_offset;  // 0x003faa7e
 extern word engine_retarder_torque_stage_4_cached_axis_offset;  // 0x003faa80
 extern word engine_retarder_torque_stage_5_cached_axis_offset;  // 0x003faa82
 extern word j1939_pgn56360_prop_status_snapshot;  // 0x003faa88
-extern dword j1939_pgn56360_tx_header;  // 0x003faa8c
-extern word j1939_pgn56360_tx_length;  // 0x003faa90
+extern j1939_tx_msg_t j1939_pgn56360_tx_message;  // 0x003faa8c
 extern j1939_tx_msg_t j1939_ackm_msg;  // 0x003faa9c
 extern undefined j1939_dm1_cmd_word_b;  // 0x003faa9e
 extern undefined j1939_pgn56360_alt_tx_length;  // 0x003faaa0
 extern undefined j1939_pgn56360_alt_data_ptr;  // 0x003faaa2
 extern undefined j1939_pgn56360_alt_end_ptr;  // 0x003faaa6
-extern undefined j1939_ack_payload;  // 0x003faaaa
-extern dword j1939_pgn65269_tx_header;  // 0x003faab4
-extern word j1939_pgn65269_tx_length;  // 0x003faab8
-extern void * j1939_pgn65269_data_ptr;  // 0x003faaba
-extern void * j1939_pgn65269_end_ptr;  // 0x003faabe
+extern j1939_acknowledgement_payload_t j1939_ack_payload;  // 0x003faaaa
+extern j1939_tx_msg_t j1939_pgn65269_tx_message;  // 0x003faab4
 extern word j1939_pgn65269_field1_init;  // 0x003faac3
 extern word j1939_pgn65269_field2_init;  // 0x003faac8
 extern byte j1939_pgn65269_tx_data;  // 0x003faacc
-extern dword j1939_pgn65241_tx_header;  // 0x003faad4
-extern word j1939_pgn65241_tx_count;  // 0x003faad8
-extern void * j1939_pgn65241_data_ptr;  // 0x003faada
-extern void * j1939_pgn65241_end_ptr;  // 0x003faade
-extern dword j1939_pgn65265_tx_header;  // 0x003faae4
-extern word j1939_dm1_tx_length;  // 0x003faae8
-extern void * j1939_dm1_status_data_ptr;  // 0x003faaea
-extern void * j1939_dm1_payload_end_ptr;  // 0x003faaee
+extern j1939_tx_msg_t j1939_pgn65241_tx_message;  // 0x003faad4
+extern j1939_tx_msg_t j1939_pgn65265_tx_message;  // 0x003faae4
 extern byte j1939_ccvs1_two_speed_axle_byte;  // 0x003faaf2
 extern word j1939_ccvs1_wheel_based_vehicle_speed;  // 0x003faaf3
 extern byte j1939_ccvs1_cruise_brake_clutch_byte;  // 0x003faaf5
@@ -1207,115 +1194,60 @@ extern byte j1939_ccvs1_cruise_set_resume_byte;  // 0x003faaf6
 extern byte j1939_ccvs1_cruise_set_speed_byte;  // 0x003faaf7
 extern byte j1939_ccvs1_pto_and_cruise_state_byte;  // 0x003faaf8
 extern byte j1939_ccvs1_idle_switches_byte;  // 0x003faaf9
-extern dword j1939_pgn65261_tx_header;  // 0x003faafc
-extern word j1939_pgn65261_tx_length;  // 0x003fab00
-extern void * j1939_pgn65261_data_ptr;  // 0x003fab02
-extern void * j1939_pgn65261_end_ptr;  // 0x003fab06
-extern dword j1939_pgn65259_tx_header;  // 0x003fab14
-extern word j1939_pgn65259_tx_length;  // 0x003fab18
-extern void * j1939_pgn65259_data_ptr;  // 0x003fab1a
-extern void * j1939_pgn65259_end_ptr;  // 0x003fab1e
+extern j1939_tx_msg_t j1939_pgn65261_tx_message;  // 0x003faafc
+extern j1939_tx_msg_t j1939_pgn65259_tx_message;  // 0x003fab14
 extern word j1939_response_param_working;  // 0x003fab50
-extern dword j1939_dm11_tx_header;  // 0x003fab52
-extern word j1939_dm11_tx_length;  // 0x003fab56
-extern void * j1939_dm11_data_ptr;  // 0x003fab58
-extern void * j1939_dm11_end_ptr;  // 0x003fab5c
+extern j1939_tx_msg_t j1939_dm11_tx_message;  // 0x003fab52
 extern word j1939_dm11_feature_config_word;  // 0x003fab60
-extern dword j1939_dm1_tx_header;  // 0x003fab6a
-extern word j1939_dtc_byte_offset;  // 0x003fab6e
-extern void * j1939_dm1_tx_buf_ptr;  // 0x003fab70
-extern void * j1939_dm1_fault_data_ptr;  // 0x003fab74
+extern j1939_tx_msg_t j1939_dm1_tx_message;  // 0x003fab6a
 extern byte j1939_dm1_lamp_status;  // 0x003fab78
 extern byte j1939_dm1_flash_lamp_status;  // 0x003fab79
 extern dword j1939_dm1_dtc_mask_working;  // 0x003fab7a
-extern dword j1939_dm2_tx_header;  // 0x003fabcc
-extern word j1939_dtc_data_offset;  // 0x003fabd0
-extern void * j1939_dm2_data_ptr;  // 0x003fabd2
-extern void * j1939_dm2_end_ptr;  // 0x003fabd6
+extern j1939_tx_msg_t j1939_dm2_tx_message;  // 0x003fabcc
 extern dword j1939_dm2_dtc_mask_working;  // 0x003fabdc
-extern dword j1939_pgn65229_tx_header;  // 0x003fac2e
-extern word j1939_dtc_tx_offset;  // 0x003fac32
-extern void * j1939_pgn65229_data_ptr;  // 0x003fac34
-extern void * j1939_pgn65229_end_ptr;  // 0x003fac38
+extern j1939_tx_msg_t j1939_pgn65229_tx_message;  // 0x003fac2e
 extern byte diag_init_byte_b;  // 0x003fac3d
-extern dword j1939_pgn65230_tx_header;  // 0x003fad48
-extern word j1939_pgn65230_tx_byte_count;  // 0x003fad4c
-extern void * j1939_pgn65230_data_ptr;  // 0x003fad4e
-extern void * j1939_pgn65230_data2_ptr;  // 0x003fad52
+extern j1939_tx_msg_t j1939_pgn65230_tx_message;  // 0x003fad48
 extern word j1939_feature_config_tx_word;  // 0x003fad5a
 extern word j1939_dm1_active_faults_tx_word;  // 0x003fad5c
-extern dword j1939_pgn65232_tx_header;  // 0x003fad60
-extern word j1939_pgn65232_tx_byte_count;  // 0x003fad64
-extern void * j1939_pgn65232_data_ptr;  // 0x003fad66
-extern void * j1939_pgn65232_data2_ptr;  // 0x003fad6a
+extern j1939_tx_msg_t j1939_pgn65232_tx_message;  // 0x003fad60
 extern word j1939_pgn65232_param_tx_word;  // 0x003fad70
 extern word j1939_pgn65232_field1_init_word;  // 0x003fad72
 extern word j1939_pgn65232_field2_init_word;  // 0x003fad74
 extern byte j1939_status_byte_a;  // 0x003fad7b
-extern dword j1939_pgn61441_tx_header;  // 0x003fad80
-extern word j1939_pgn61441_tx_byte_count;  // 0x003fad84
-extern void * j1939_pgn61441_data_ptr;  // 0x003fad86
+extern j1939_tx_msg_t j1939_pgn61441_tx_message;  // 0x003fad80
 extern byte j1939_engine_status_byte;  // 0x003fad90
 extern byte j1939_dm1_spn_fmi_byte;  // 0x003fad92
-extern dword j1939_pgn61444_tx_header;  // 0x003fad98
-extern word j1939_pgn61444_tx_byte_count;  // 0x003fad9c
-extern void * j1939_pgn61444_data_ptr;  // 0x003fad9e
+extern j1939_tx_msg_t j1939_pgn61444_tx_message;  // 0x003fad98
 extern byte j1939_eec2_low_idle_and_kickdown_byte;  // 0x003fada8
-extern dword j1939_pgn61443_tx_header;  // 0x003fadb0
-extern dword j1939_pgn65247_tx_header;  // 0x003fadc8
-extern word j1939_pgn65247_tx_byte_count;  // 0x003fadcc
-extern void * j1939_pgn65247_data_ptr;  // 0x003fadce
-extern void * j1939_pgn65247_data2_ptr;  // 0x003fadd2
+extern j1939_tx_msg_t j1939_pgn61443_tx_message;  // 0x003fadb0
+extern j1939_tx_msg_t j1939_pgn65247_tx_message;  // 0x003fadc8
 extern byte j1939_eflp1_fuel_delivery_pressure;  // 0x003fadd9
 extern word j1939_diag_response_word_b;  // 0x003faddd
-extern dword j1939_pgn65263_tx_header;  // 0x003fade1
-extern dword j1939_pgn65262_tx_header;  // 0x003fadf0
-extern word j1939_pgn65262_tx_byte_count;  // 0x003fadf4
-extern void * j1939_pgn65262_data_ptr;  // 0x003fadf6
-extern void * j1939_pgn65262_data2_ptr;  // 0x003fadfa
+extern j1939_tx_msg_t j1939_pgn65263_tx_message;  // 0x003fade1
+extern j1939_tx_msg_t j1939_pgn65262_tx_message;  // 0x003fadf0
 extern word j1939_et1_engine_oil_temperature;  // 0x003fae00
 extern word j1939_pgn65262_field1_init_word;  // 0x003fae02
 extern byte j1939_erc1_torque_mode_and_enable_byte;  // 0x003fae08
-extern dword j1939_pgn61440_tx_header;  // 0x003fae10
-extern word j1939_pgn61440_tx_length;  // 0x003fae14
-extern void * j1939_pgn61440_data_ptr;  // 0x003fae16
-extern void * j1939_pgn61440_end_ptr;  // 0x003fae1a
-extern dword j1939_pgn65213_tx_header;  // 0x003fae28
-extern dword j1939_pgn65270_tx_header;  // 0x003fae38
-extern word j1939_pgn65270_tx_length;  // 0x003fae3c
-extern void * j1939_pgn65270_data_ptr;  // 0x003fae3e
-extern void * j1939_pgn65270_end_ptr;  // 0x003fae42
+extern j1939_tx_msg_t j1939_pgn61440_tx_message;  // 0x003fae10
+extern j1939_tx_msg_t j1939_pgn65213_tx_message;  // 0x003fae28
+extern j1939_tx_msg_t j1939_pgn65270_tx_message;  // 0x003fae38
 extern byte j1939_pgn65249_payload_byte_1;  // 0x003fae50
 extern byte j1939_pgn65249_payload_byte_2;  // 0x003fae51
-extern dword j1939_pgn65249_tx_header;  // 0x003fae63
-extern dword j1939_pgn65242_can_header;  // 0x003fae72
+extern j1939_tx_msg_t j1939_pgn65249_tx_message;  // 0x003fae63
+extern j1939_tx_msg_t j1939_pgn65242_tx_message;  // 0x003fae72
 extern word j1939_rpm_tx_word;  // 0x003faeb0
 extern word j1939_etc1_speed_offset_tx_word;  // 0x003faeb2
-extern dword j1939_pgn57344_tx_header;  // 0x003faeb8
-extern word j1939_pgn57344_tx_byte_count;  // 0x003faebc
-extern void * j1939_pgn57344_data_ptr;  // 0x003faebe
-extern void * j1939_pgn57344_data2_ptr;  // 0x003faec2
-extern dword j1939_pgn65248_tx_header;  // 0x003faec8
-extern word j1939_pgn65248_tx_byte_count;  // 0x003faecc
-extern void * j1939_pgn65248_data_ptr;  // 0x003faece
-extern void * j1939_pgn65248_data2_ptr;  // 0x003faed2
+extern j1939_tx_msg_t j1939_pgn57344_tx_message;  // 0x003faeb8
+extern j1939_tx_msg_t j1939_pgn65248_tx_message;  // 0x003faec8
 extern dword j1939_pgn65248_field1_tx_dword;  // 0x003faed6
 extern dword j1939_pgn65248_field2_tx_dword;  // 0x003faeda
-extern dword j1939_pgn65271_tx_header;  // 0x003faee0
-extern word j1939_pgn65271_tx_byte_count;  // 0x003faee4
-extern void * j1939_pgn65271_data_ptr;  // 0x003faee6
-extern void * j1939_pgn65271_data2_ptr;  // 0x003faeea
+extern j1939_tx_msg_t j1939_pgn65271_tx_message;  // 0x003faee0
 extern word j1939_pgn65271_field1_init_word;  // 0x003faef0
 extern word j1939_pgn65271_voltage_tx_word;  // 0x003faef2
 extern word j1939_pgn65271_field2_init_word;  // 0x003faef4
-extern dword j1939_pgn65260_tx_header;  // 0x003faef8
-extern word j1939_pgn65260_tx_byte_count;  // 0x003faefc
-extern void * j1939_pgn65260_data_ptr;  // 0x003faefe
-extern void * j1939_pgn65260_data2_ptr;  // 0x003faf02
-extern dword j1939_pgn65279_tx_header;  // 0x003faf24
-extern word j1939_pgn65279_tx_byte_count;  // 0x003faf28
-extern void * j1939_pgn65279_data_ptr;  // 0x003faf2a
-extern void * j1939_pgn65279_data2_ptr;  // 0x003faf2e
+extern j1939_tx_msg_t j1939_pgn65260_tx_message;  // 0x003faef8
+extern j1939_tx_msg_t j1939_pgn65279_tx_message;  // 0x003faf24
 extern word governor_mode_snapshot;  // 0x003faf34
 extern word etc1_active_state_snapshot;  // 0x003faf36
 extern word j1939_tsc1_override_snapshot;  // 0x003faf39
@@ -1394,10 +1326,7 @@ extern word governor_rpm_ref_target_0_snapshot;  // 0x003fafec
 extern word governor_rpm_ref_target_1_snapshot;  // 0x003fafee
 extern word governor_rpm_ref_target_2_snapshot;  // 0x003faff0
 extern word governor_rpm_ref_target_3_snapshot;  // 0x003faff2
-extern dword j1939_msg_header_working;  // 0x003faff4
-extern word j1939_msg_byte_count_working;  // 0x003faff8
-extern void * j1939_msg_data_ptr;  // 0x003faffa
-extern void * j1939_msg_data_end_ptr;  // 0x003faffe
+extern j1939_tx_msg_t j1939_working_tx_message;  // 0x003faff4
 extern word j1939_msg_payload_init_word;  // 0x003fb003
 extern word j1939_protection_rpm_tx_word;  // 0x003fb005
 extern byte j1939_protection_data_byte_a;  // 0x003fb007
@@ -7136,8 +7065,6 @@ extern dword oil_change_monitor_distance_threshold_pulses;  // 0x00408a6a
 extern dword oil_change_monitor_engine_power_accumulator_threshold;  // 0x00408a6e
 extern dword oil_change_monitor_minimum_distance_pulses_cal;  // 0x003fd8ec
 extern byte j1939_fd1_fan_drive_state_byte;  // 0x003fae21
-extern word j1939_pgn65213_tx_length;  // 0x003fae2c
-extern void * j1939_pgn65213_end_ptr;  // 0x003fae32
 extern word alternator_field_regulator_start_engine_speed_threshold;  // 0x004087a8
 extern word alternator_field_regulator_stop_engine_speed_threshold;  // 0x004087a2
 extern int16_t alternator_field_load_response_fast_error_threshold;  // 0x004087ac
