@@ -57,23 +57,39 @@ protection_condition_flags_t,0x0040b0e8,reserved_04,byte,1,Gap/reserved byte at 
 protection_condition_flags_t,0x0040b0e8,condition_flags_3,byte,1,Protection condition flags set 3,,verified
 protection_condition_flags_t,0x0040b0e8,condition_flags_2,byte,1,Protection condition flags set 2,,verified
 protection_condition_flags_t,0x0040b0e8,reserved_07,byte,1,Gap/reserved byte at offset 0x07,,needs_review
-protection_condition_flags_t,0x0040b0e8,fault_state_flags,byte,1,Current threshold index for protection lookup,,verified
+protection_condition_flags_t,0x0040b0e8,reserved_bit_0,bitfield:1@0,1,"tested (& 1) in cm848_determineCurrentGearAndLockupInhibit (lbz @ 0x34370, .cpp 33439; ORed with reserved_07 bit 0 into protection_status_flags_t.rate_limit_flags bit 0) but no store in either bank sets it",,verified
+protection_condition_flags_t,0x0040b0e8,reserved_bit_1,bitfield:1@1,0,never tested or set,,verified
+protection_condition_flags_t,0x0040b0e8,reserved_bit_2,bitfield:1@2,0,tested (& 4) together with bit 0 in the same place; never set,,verified
+protection_condition_flags_t,0x0040b0e8,reserved_bit_3,bitfield:1@3,0,never tested or set,,verified
+protection_condition_flags_t,0x0040b0e8,fault_141_active,bitfield:1@4,0,"set / cleared every pass from fault_detected_bits_128_to_143 & 0x2000 = fault 141 in cm848_processProtectionFaultSeverity (stb @ 0x34eac; ROM 0x5985a slot 133 = P2769, a hint only); tested (& 0x10) in cm848_evaluateProtectionFaultCondition (lbz @ 0x34a60), where it keeps logical output request 16 from being set",,verified
+protection_condition_flags_t,0x0040b0e8,output_speed_sensor_fault_active,bitfield:1@5,0,"set with fault 320 (P0720) and cleared with it in cm848_monitorTransmissionOutputSpeedSensor (stb @ 0x3dee4 / 0x3df60, | 0x20 / & 0xdf); read by cm848_calculateTransmissionOutputSpeed (lbz @ 0x3f768: substitutes vehicle_speed x the default or learned ratio), cm848_learnOutputSpeedToVehicleSpeedRatio (lbz @ 0x35e40: no learning while set) and cm848_updateTransmissionConditionFlags (lbz @ 0x34430: skips the transfer-case low-range test)",,verified
+protection_condition_flags_t,0x0040b0e8,reserved_bit_6,bitfield:1@6,0,never tested or set,,verified
+protection_condition_flags_t,0x0040b0e8,reserved_bit_7,bitfield:1@7,0,never tested or set,,verified
 protection_condition_flags_t,0x0040b0e8,action_flags,byte,1,Protection action trigger flags,,verified
 # Protection Status Flags - protection state machine status
 # Continuation of protection state at 0x0040b0f2
 # Total size: 8 bytes (0x0040b0f2-0x0040b0f9)
-protection_status_flags_t,0x0040b0f2,status_flags,word,2,Protection status word (bit flags),,verified
-protection_status_flags_t,0x0040b0f2,flags,byte,3,Protection flags (3 bytes of packed bits),,verified
-protection_status_flags_t,0x0040b0f2,output_flags,byte,1,Protection output control flags,,verified
-protection_status_flags_t,0x0040b0f2,reserved_06,byte,1,Gap/reserved,,needs_review
-protection_status_flags_t,0x0040b0f2,rate_limit_flags,byte,1,Rate limit protection flags (offset 0x0c from 0xb0f2 is 0xb0fe),,needs_review
+protection_status_flags_t,0x0040b0f2,wide_open_throttle_flag,bitfield:1@7,1,"mask 0x80: set by cm848_updateTransmissionConditionFlags when fuel_demand_control_t.calculated exceeds protection_fuel_demand_status80_set_threshold_cal, cleared (& 0x1f, which also clears bits 5 and 6, and & 0x7f in cm848_initProtectionSystem) when it falls below protection_fuel_demand_status80_clear_threshold_cal; cm848_runTransmissionControl calls cm848_selectGovernorPressureWideOpenThrottle only while it is set and the base / normal curve handlers otherwise (decompile line 32865).",,verified
+protection_status_flags_t,0x0040b0f2,gear_1_pressure_elevated_flag,bitfield:1@6,0,mask 0x40: set (| 0x40) with governor_pressure_gear1_elevated_target (status code 8) in gear 1; cleared (& 0xbf) when the pressure returns to the curve; read in the gear 2 branch to run the gear 1 learned gain update and cleared there by & 0xb7.,,verified
+protection_status_flags_t,0x0040b0f2,gear_2_pressure_elevated_flag,bitfield:1@5,0,"mask 0x20: set (flags & 0xef | 0x20 / | 0x20) when governor_pressure_gear2_elevated_target is commanded (status code 10) in gear 2; cleared (& 0xdf) when the pressure returns to the curve; read in the gear 3 branch, where protection_recovery_timer == 0 triggers the gear 2 learned gain update and & 0x97 clears the elevation bits; also cleared in gear 1 (bVar3 = flags & 0xdf).",,verified
+protection_status_flags_t,0x0040b0f2,reserved_bit_4,bitfield:1@4,0,"guess (not proven, so reserved): an elevation delay timer armed flag - mask 0x10: set (| 0x10) together with protection_init_timer = protection_init_timer_cal when engine speed sits between protection_rpm_lower_bound_cal and the margin; tested to wait for protection_init_timer to reach 0 before the elevation; cleared (& 0xef) by the elevation. Medium confidence.",,verified
+protection_status_flags_t,0x0040b0f2,reserved_bit_3,bitfield:1@3,0,"guess (not proven, so reserved): a pressure elevation by timer flag - mask 8, cm848_selectGovernorPressureWideOpenThrottle: set (flags & 0xef | 8, lines 32266-32267 / LAB_00031ba8) when the elevated target is applied after the delay timer ran out; cleared (& 0xf7) when the delay timer is armed; while it is set the gain learning of the gear 1 / gear 2 learned gain is skipped ((flags & 8) == 0 guards both learning blocks). Medium confidence.",,verified
+protection_status_flags_t,0x0040b0f2,reserved_bit_2,bitfield:1@2,0,never tested or set,,verified
+protection_status_flags_t,0x0040b0f2,reserved_bit_1,bitfield:1@1,0,never tested or set,,verified
+protection_status_flags_t,0x0040b0f2,reserved_bit_0,bitfield:1@0,0,no mask uses bit 0 in any of the 43 uses (0x97 / 0xb7 / 0xef / 0x1f / 0xdf / 0xbf / 0x7f only preserve it),,verified
+protection_status_flags_t,0x0040b0f2,reserved_01,byte,1,Pad byte of the old status_flags word (no access),,verified
+protection_status_flags_t,0x0040b0f2,flags,byte,3,Flags (3 bytes as before),,verified
+protection_status_flags_t,0x0040b0f2,output_flags,byte,1,Output flags,,verified
+protection_status_flags_t,0x0040b0f2,reserved_06,byte,1,Reserved,,verified
+protection_status_flags_t,0x0040b0f2,rate_limit_flags,byte,1,Rate limit flags,,verified
 # Protection Timer State - protection system timers and counters
 # Used by protectionTimeoutHandler and protectionStateMachine
 # Total size: 10 bytes (0x0040b100-0x0040b109)
-protection_timer_state_t,0x0040b100,status_code,dword,4,Protection status code (PROTECTION_STATUS_CODE enum),,verified
-protection_timer_state_t,0x0040b100,timeout_counter,word,2,Protection timeout countdown counter,,verified
-protection_timer_state_t,0x0040b100,state1_timer,word,2,Level 1 protection state timer value,,verified
-protection_timer_state_t,0x0040b100,state2_timer,word,2,Level 2 protection state timer value,,verified
+protection_timer_state_t,0x0040b100,status_code,word,2,Status code 1-0x18 (sth / lha / lhz) - the high word of the old status_code dword,,verified
+protection_timer_state_t,0x0040b100,status_code_hold_timer,word,2,Countdown loaded from protection_timer_status_code_b_cal and decremented in cm848_decrementProtectionTimers,,verified
+protection_timer_state_t,0x0040b100,timeout_counter,word,2,Timeout counter,,verified
+protection_timer_state_t,0x0040b100,state1_timer,word,2,State 1 timer,,verified
+protection_timer_state_t,0x0040b100,state2_timer,word,2,State 2 timer,,verified
 # Engine Crank/Run State - engine starting and running state machine
 # Used by bootStateMachine and keyOnStateMachine
 # Total size: 8 bytes (0x0040b80a-0x0040b811)
@@ -91,14 +107,12 @@ engine_sync_state_t,0x0040b87f,reserved_05,byte,1,Padding for alignment,,needs_r
 # Engine RPM State - current and target engine speed values
 # Used by processEngineRpmTarget and governor control
 # Total size: 16 bytes (0x0040b7ac-0x0040b7bb)
-engine_rpm_state_t,0x0040b7ac,filtered_rpm,word,2,Target engine RPM setpoint,,verified
-engine_rpm_state_t,0x0040b7ac,reserved_02,word,2,Gap/reserved (0xb7ae),,needs_review
-engine_rpm_state_t,0x0040b7ac,reserved_04,word,2,Gap/reserved (0xb7b0),,needs_review
-engine_rpm_state_t,0x0040b7ac,reserved_06,word,2,Gap/reserved (0xb7b2),,needs_review
-engine_rpm_state_t,0x0040b7ac,reserved_08,word,2,Gap/reserved (0xb7b4),,needs_review
-engine_rpm_state_t,0x0040b7ac,reserved_0a,word,2,Gap/reserved (0xb7b6),,needs_review
-engine_rpm_state_t,0x0040b7ac,reserved_0c,word,2,Gap/reserved (0xb7b8),,needs_review
-engine_rpm_state_t,0x0040b7ac,current_rpm,word,2,Current engine RPM measurement,,verified
+engine_rpm_state_t,0x0040b7ac,filtered_rpm,word,2,Moving average of engine_rpm_measured (1/8 rpm),,verified
+engine_rpm_state_t,0x0040b7ac,crank_capture_period_sum,dword,4,Crank capture period sum (lwz / stw) - averaged by the vehicle speed interrupt,,verified
+engine_rpm_state_t,0x0040b7ac,crank_tooth_period_sum,dword,4,Crank tooth period sum (lwz / stw),,verified
+engine_rpm_state_t,0x0040b7ac,crank_capture_period_sample_count,word,2,Samples in crank_capture_period_sum,,verified
+engine_rpm_state_t,0x0040b7ac,crank_tooth_period_sample_count,word,2,Samples in crank_tooth_period_sum,,verified
+engine_rpm_state_t,0x0040b7ac,current_rpm,word,2,Written with the same value as filtered_rpm by the same three writers,,verified
 # Primary Sensor Readings - core engine sensor inputs
 # Used by sensor processing and protection monitoring
 # Total size: 8 bytes (0x0040baf2-0x0040baf9)
@@ -123,9 +137,10 @@ eeprom_header_t,0x003fee08,serial_number,dword,4,ECU serial number from EEPROM,,
 # Governor Output State - speed control integrator and output
 # Used by governor PID controller
 # Total size: 8 bytes (0x0040aec2-0x0040aec9)
-governor_output_t,0x0040aec2,integrator,dword,4,Speed control PID integrator (Q16.16 fixed point),,verified
-governor_output_t,0x0040aec2,governor_output,word,2,Governor output command (lower word),,verified
-governor_output_t,0x0040aec2,governor_output_high,word,2,Governor output command (upper word),,verified
+governor_output_t,0x0040aec2,idle_reference_speed,word,2,Low speed governor idle reference speed in 1/8 rpm (6000 = 750 rpm in the RAM dump) - the high word of the old integrator dword,,verified
+governor_output_t,0x0040aec2,fuel_feed_forward_quantity,short,2,Signed fuel feed-forward quantity (lha @ 0x28060) - the low word of the old integrator dword,,verified
+governor_output_t,0x0040aec2,governor_output,word,2,Idle-speed candidate number 0-12 (name kept; see the wave-11 note),,verified
+governor_output_t,0x0040aec2,idle_speed_barometric_ramped,dword,4,Barometric-ramped idle speed (lwz / stw @ 0x2931c / 0x29440) - the old word field at +6 covered only its high half,,verified
 # Injector Control State - fuel injector enable and timing control
 # Used by fuel injection output drivers
 # Total size: 7 bytes (0x0040c117-0x0040c11d)
@@ -750,9 +765,9 @@ scheduler_task_stat_t,0x0040be6a,overrun_count,word,2,Number of deadline overrun
 # Accessed via (&governor_derivative_term)[uVar1 * 3] with while (uVar1 < 3)
 # processGovernorControlMessage matches channels by identifier, updates derivative bits
 # processSecurityAccessRequest clears bits per channel
-j1939_dm13_requester_slot_t,0x0040addc,broadcast_enable_flags,word,2,Cummins DM13BRDn - broadcast enable flags requested by this source (0xFFFF = nothing suspended): DM13 stop (00) clears J1587 bit 0 / J1922 bit 1 / J1939 network 1 bits 2 3 7 and start (01) sets them; back to 0xFFFF when the stop broadcast timer expires (was derivative_term),,verified
-j1939_dm13_requester_slot_t,0x0040addc,stop_broadcast_source_address,word,2,Cummins STPBRDSn - J1939 source address of the device whose DM13 asked this ECM to stop broadcasting; matched against the source address of each received DM13 (was channel_identifier),,verified
-j1939_dm13_requester_slot_t,0x0040addc,stop_broadcast_timer,word,2,Cummins DM13BDTn (0.1 s): reloaded with j1939_dm13_stop_broadcast_time_limit_cal (60 = 6 s) by this source's stop or hold message (byte 4 hold signal 0 or 1) and counted down; 0 = free slot and its flags return to 0xFFFF (was gain_schedule),,verified
+j1939_dm13_requester_slot_t,,broadcast_enable_flags,word,2,Cummins DM13BRDn - broadcast enable flags requested by this source (0xFFFF = nothing suspended): DM13 stop (00) clears J1587 bit 0 / J1922 bit 1 / J1939 network 1 bits 2 3 7 and start (01) sets them; back to 0xFFFF when the stop broadcast timer expires (was derivative_term),,verified
+j1939_dm13_requester_slot_t,,stop_broadcast_source_address,word,2,Cummins STPBRDSn - J1939 source address of the device whose DM13 asked this ECM to stop broadcasting; matched against the source address of each received DM13 (was channel_identifier),,verified
+j1939_dm13_requester_slot_t,,stop_broadcast_timer,word,2,Cummins DM13BDTn (0.1 s): reloaded with j1939_dm13_stop_broadcast_time_limit_cal (60 = 6 s) by this source's stop or hold message (byte 4 hold signal 0 or 1) and counted down; 0 = free slot and its flags return to 0xFFFF (was gain_schedule),,verified
 
 # Protection Threshold Lookup Results - fuel demand and RPM-corrected protection thresholds
 # 2 consecutive sets at 0x0040a502, 10 bytes each (5 u16 fields per set, 20 bytes total)
@@ -1454,57 +1469,18 @@ j1939_ccss_tx_payload_t,0x003fab0a,reserved7,byte,1,reserved - init 0xff (not av
 # Two contiguous ROM tables: RX at 0x5774b (15 entries) then TX at 0x578ef (25 entries); counts at 0x57bab / 0x57bad
 # Evidence: headers 68 6A / 48 6B = SAE J1850 OBD-II request (RX) / response (TX); 0x10 / 0xC0 / D1 03 / F0 xx VIN match mydb PCI broadcasts; RX has 0x37 (48RE shift lever)
 # Walked by cm848_checkPciMessageTimeouts (0x38ac8) and the PCI TX scheduler / RX matcher at 0x38cf0 / 0x39004 / 0x3adcc
-pci_message_descriptor_t,0x0005774b,header_byte_0,byte,1,J1850 message header byte 1 (message ID - e.g. 0x10 engine data / 0x37 shift lever / 0x68 OBD-II request),,verified
-pci_message_descriptor_t,0x0005774b,header_byte_1,byte,1,Header byte 2 - 0 terminates a 1-byte header (e.g. 0x6A in 68 6A / 0x03 in D1 03),,verified
-pci_message_descriptor_t,0x0005774b,header_byte_2,byte,1,Header byte 3 - 0 terminates,,verified
-pci_message_descriptor_t,0x0005774b,header_byte_3,byte,1,Header terminator (always 0 in ROM),,verified
-pci_message_descriptor_t,0x0005774b,data_buffer,byte*,4,RAM payload buffer: TX copies it after the header / RX stores received bytes into it,,verified
-pci_message_descriptor_t,0x0005774b,data_length,byte*,4,Pointer to the payload length byte (ROM 0x57741..0x57748 or RAM),,verified
-pci_message_descriptor_t,0x0005774b,interval,word,2,TX: send when *timer exceeds this / RX: receive timeout; 0 = event-driven (armed by writing 1 to *timer) and not timeout-checked; same units as *timer (+10 per monitor pass),,verified
-pci_message_descriptor_t,0x0005774b,timer,word*,4,RAM age timer: +10 per pass saturating at 0xff00; TX reset on own-message echo and RX reset on reception; RX starts at 0xff37 = never received,,verified
-pci_message_descriptor_t,0x0005774b,in_frame_response_enabled,byte,1,Nonzero = J1850 in-frame response: RX entry -> ECM sends in_frame_response_bytes inside the frame (pci_frame_match_flags 0x04); TX entry -> ECM expects them back (0x08). Only TX 0xB0 sets it in this ROM (RX path inactive under this cal),,verified
-pci_message_descriptor_t,0x0005774b,reserved_19,byte,1,Unused padding,,verified
-pci_message_descriptor_t,0x0005774b,in_frame_response_bytes,byte*,4,Zero-terminated in-frame response bytes (up to 12): RX entry = bytes the ECM sends (cm848_sendPciInFrameResponseByte) / TX entry = bytes expected back and compared against the frame tail (mismatch sets status bit 0x08); ROM 0x57740 (empty) except TX 0xB0 (RAM 0x40b4fd),,verified
-pci_message_descriptor_t,0x0005774b,status,byte*,4,RAM status byte: bit 0x10 = message timed out (latched; RX handler keeps it via &= 0x90) / bit 0x80 meaning unconfirmed,,verified
-pci_message_descriptor_t,0x00057767,,,,RX[1] header 24 interval 0,,verified
-pci_message_descriptor_t,0x00057783,,,,RX[2] header 0E interval 448,,verified
-pci_message_descriptor_t,0x0005779f,,,,RX[3] header 1A interval 348,,verified
-pci_message_descriptor_t,0x000577bb,,,,RX[4] header 2D interval 2778,,verified
-pci_message_descriptor_t,0x000577d7,,,,RX[5] header 37 interval 896,,verified
-pci_message_descriptor_t,0x000577f3,,,,RX[6] header 4F C0 interval 0,,verified
-pci_message_descriptor_t,0x0005780f,,,,RX[7] header 63 interval 1000,,verified
-pci_message_descriptor_t,0x0005782b,,,,RX[8] header 6C interval 3584,,verified
-pci_message_descriptor_t,0x00057847,,,,RX[9] header B5 interval 500,,verified
-pci_message_descriptor_t,0x00057863,,,,RX[10] header 52 interval 4000,,verified
-pci_message_descriptor_t,0x0005787f,,,,RX[11] header 72 interval 0,,verified
-pci_message_descriptor_t,0x0005789b,,,,RX[12] header B1 interval 500,,verified
-pci_message_descriptor_t,0x000578b7,,,,RX[13] header 92 interval 2000,,verified
-pci_message_descriptor_t,0x000578d3,,,,RX[14] header 42 interval 2000,,verified
-pci_message_descriptor_t,0x000578ef,,,,TX[0] header 10 interval 87,,verified
-pci_message_descriptor_t,0x0005790b,,,,TX[1] header 1E interval 352,,verified
-pci_message_descriptor_t,0x00057927,,,,TX[2] header 35 interval 348,,verified
-pci_message_descriptor_t,0x00057943,,,,TX[3] header B0 interval 2816,,verified
-pci_message_descriptor_t,0x0005795f,,,,TX[4] header D1 03 interval 340,,verified
-pci_message_descriptor_t,0x0005797b,,,,TX[5] header 53 interval 1000,,verified
-pci_message_descriptor_t,0x00057997,,,,TX[6] header 3A interval 896,,verified
-pci_message_descriptor_t,0x000579b3,,,,TX[7] header 3F interval 0,,verified
-pci_message_descriptor_t,0x000579cf,,,,TX[8] header 48 6B interval 0,,verified
-pci_message_descriptor_t,0x000579eb,,,,TX[9] header 4F 10 interval 0,,verified
-pci_message_descriptor_t,0x00057a07,,,,TX[10] header 26 interval 0,,verified
-pci_message_descriptor_t,0x00057a23,,,,TX[11] header 5D interval 348,,verified
-pci_message_descriptor_t,0x00057a3f,,,,TX[12] header 98 interval 2816,,verified
-pci_message_descriptor_t,0x00057a5b,,,,TX[13] header A4 interval 1204,,verified
-pci_message_descriptor_t,0x00057a77,,,,TX[14] header C0 interval 1392,,verified
-pci_message_descriptor_t,0x00057a93,,,,TX[15] header DF interval 2784,,verified
-pci_message_descriptor_t,0x00057aaf,,,,TX[16] header D2 interval 2784,,verified
-pci_message_descriptor_t,0x00057acb,,,,TX[17] header D1 01 interval 2784,,verified
-pci_message_descriptor_t,0x00057ae7,,,,TX[18] header EA interval 3584,,verified
-pci_message_descriptor_t,0x00057b03,,,,TX[19] header ED interval 2784,,verified
-pci_message_descriptor_t,0x00057b1f,,,,TX[20] header F0 01 interval 2784,,verified
-pci_message_descriptor_t,0x00057b3b,,,,TX[21] header F0 02 interval 2784,,verified
-pci_message_descriptor_t,0x00057b57,,,,TX[22] header F0 06 interval 2784,,verified
-pci_message_descriptor_t,0x00057b73,,,,TX[23] header F0 0A interval 2784,,verified
-pci_message_descriptor_t,0x00057b8f,,,,TX[24] header F0 0E interval 2784,,verified
+pci_message_descriptor_t,,header_byte_0,byte,1,J1850 message header byte 1 (message ID - e.g. 0x10 engine data / 0x37 shift lever / 0x68 OBD-II request),,verified
+pci_message_descriptor_t,,header_byte_1,byte,1,Header byte 2 - 0 terminates a 1-byte header (e.g. 0x6A in 68 6A / 0x03 in D1 03),,verified
+pci_message_descriptor_t,,header_byte_2,byte,1,Header byte 3 - 0 terminates,,verified
+pci_message_descriptor_t,,header_byte_3,byte,1,Header terminator (always 0 in ROM),,verified
+pci_message_descriptor_t,,data_buffer,byte*,4,RAM payload buffer: TX copies it after the header / RX stores received bytes into it,,verified
+pci_message_descriptor_t,,data_length,byte*,4,Pointer to the payload length byte (ROM 0x57741..0x57748 or RAM),,verified
+pci_message_descriptor_t,,interval,word,2,TX: send when *timer exceeds this / RX: receive timeout; 0 = event-driven (armed by writing 1 to *timer) and not timeout-checked; same units as *timer (+10 per monitor pass),,verified
+pci_message_descriptor_t,,timer,word*,4,RAM age timer: +10 per pass saturating at 0xff00; TX reset on own-message echo and RX reset on reception; RX starts at 0xff37 = never received,,verified
+pci_message_descriptor_t,,in_frame_response_enabled,byte,1,Nonzero = J1850 in-frame response: RX entry -> ECM sends in_frame_response_bytes inside the frame (pci_frame_match_flags 0x04); TX entry -> ECM expects them back (0x08). Only TX 0xB0 sets it in this ROM (RX path inactive under this cal),,verified
+pci_message_descriptor_t,,reserved_19,byte,1,Unused padding,,verified
+pci_message_descriptor_t,,in_frame_response_bytes,byte*,4,Zero-terminated in-frame response bytes (up to 12): RX entry = bytes the ECM sends (cm848_sendPciInFrameResponseByte) / TX entry = bytes expected back and compared against the frame tail (mismatch sets status bit 0x08); ROM 0x57740 (empty) except TX 0xB0 (RAM 0x40b4fd),,verified
+pci_message_descriptor_t,,status,byte*,4,RAM status byte: bit 0x10 = message timed out (latched; RX handler keeps it via &= 0x90) / bit 0x80 meaning unconfirmed,,verified
 
 # --- qspi_job_t: one queued QSPI transfer (22 bytes) - reviewed 2026-11-11 ---
 # Queued by cm848_queueQspiJob (generic QSPI job queue: 29 call sites); started by mpc555_qspiStartJob and finished by cm848_completeQspiJob
@@ -1577,3 +1553,62 @@ output_read_back_fault_bits_t,0x0040c258,wastegate_solenoid,bitfield:1@11,0,"Bit
 output_read_back_fault_bits_t,0x0040c258,fuel_metering,bitfield:1@4,2,"Bit 4 of word 1 = entry 20: fuel metering read-back fault (P0251 / fault 333)",,verified
 output_read_back_fault_bits_t,0x0040c258,alternator_field,bitfield:1@11,0,"Bit 11 of word 1 = entry 27: alternator field read-back fault (P0622 / fault 396)",,verified
 output_read_back_fault_bits_t,0x0040c258,entries_32_to_47,word,2,"Word 2 = entries 32-47 (no read-back output assigned in this calibration)",,verified
+
+# monitor_condition_bits_t: wave 11 shape (2026-11-18)
+monitor_condition_bits_t,,vehicle_speed_sensor_signal_loss,bitfield:1@0,4,"set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_detectVehicleSpeedSensorSignalLoss (lwz at 0x526928, clrlwi 31, P0500 path 1).",,verified
+monitor_condition_bits_t,,vehicle_speed_sensor_zero_under_load,bitfield:1@1,0,"set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_detectVehicleSpeedSensorZeroUnderLoad (lwz at 0x5269d4, mask 2, P0500 path 2).",,verified
+monitor_condition_bits_t,,overboost_and_high_load_boost_band,bitfield:1@2,0,"set when power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); monitor group 0 complete. Read by cm848_monitorOverboostAndHighLoadBoostBand (lwz at 0x5372e4, mask 4).",,verified
+monitor_condition_bits_t,,reserved_bit_3,bitfield:1@3,0,never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,coolant_temperature_sensor_performance,bitfield:1@4,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_checkCoolantTemperatureSensorPerformance (lwz at 0x52e090, mask 0x10).",,verified
+monitor_condition_bits_t,,fuel_level_low_distance,bitfield:1@5,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_monitorFuelLevelLowDistance (lwz at 0x5307e4, mask 0x20).",,verified
+monitor_condition_bits_t,,fuel_temperature_sensor_cold_soak_check,bitfield:1@6,0,"set when OBD battery voltage in range; cold_start_phase 1. Read by cm848_checkFuelTemperatureSensorAfterColdSoak (lwz at 0x53047c, mask 0x40).",,verified
+monitor_condition_bits_t,,fuel_pressure_tracking,bitfield:1@7,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); cold_start_phase 3; logical output request 53; NOT fault 397 registered (OBD fuel level low). Read by cm848_monitorFuelPressureTrackingError (lwz at 0x532184) and cm848_monitorFuelPressureSetpointNotReached (lwz at 0x536ea0, 0x537170), mask 0x80.",,verified
+monitor_condition_bits_t,,reserved_bit_8,bitfield:1@8,0,never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,reserved_bit_9,bitfield:1@9,0,never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,reserved_bit_10,bitfield:1@10,0,never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,thermostat_system,bitfield:1@11,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_runThermostatMonitor (lwz at 0x536b94, mask 0x800).",,verified
+monitor_condition_bits_t,,reserved_bit_12,bitfield:1@12,0,never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,boost_pressure_sensor_and_underboost,bitfield:1@13,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_monitorBoostPressureSensorAndUnderboost (lwz at 0x52d908, 0x52dae0, mask 0x2000).",,verified
+monitor_condition_bits_t,,misfire,bitfield:1@14,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); NOT fault 397 registered (OBD fuel level low). Read by cm848_checkMisfireMonitorTestConditions (lwz at 0x532dbc) and cm848_runMisfireMonitor (lwz at 0x533130, 0x53339c), mask 0x4000.",,verified
+monitor_condition_bits_t,,boost_fuel_weight_factor,bitfield:1@15,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_calculateBoostTorqueOffset (lwz at 0x13488, mask 0x8000; boost_fuel_weight_factor is forced to 0x80 while the bit is clear).",,verified
+monitor_condition_bits_t,,egr_delta_pressure_sensor_performance,bitfield:1@16,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). Read by cm848_checkEgrDeltaPressureSensorPerformance (lwz at 0x52e4c8 with mask 0x10000 in r29, .cpp line 87691).",,verified
+monitor_condition_bits_t,,reserved_bit_17,bitfield:1@17,0,set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,reserved_bit_18,bitfield:1@18,0,set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,reserved_bit_19,bitfield:1@19,0,set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,reserved_bit_20,bitfield:1@20,0,set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,reserved_bit_21,bitfield:1@21,0,set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,reserved_bit_22,bitfield:1@22,0,set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,unidentified_monitor_23,bitfield:1@23,0,"set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). Read by cm848_monitorEgrOrificeTemperatureSensorRationality (lwz at 0x52eb38 with mask 0x800000 in r27, .cpp line 87883, monitor not identified, faults 512 and 513 have no DTC slot).",,verified
+monitor_condition_bits_t,,wastegate_boost_pressure,bitfield:1@24,0,"set when power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); monitor group 0 complete. Read by cm848_monitorWastegateBoostPressure (lwz at 0x5375b0 with mask 0x1000000 in r31, .cpp line 92888).",,verified
+monitor_condition_bits_t,,reserved_bit_25,bitfield:1@25,0,set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0).,,verified
+monitor_condition_bits_t,,park_neutral_switch,bitfield:1@26,0,"set when NOT power take off active (switch 3 or governor_fuel_active_flag); NOT fault 397 registered (OBD fuel level low). Read by cm848_monitorParkNeutralSwitch (lwz at 0x51b628, 0x51b7c0, mask 0x4000000).",,verified
+monitor_condition_bits_t,,governor_pressure_sensor_offset,bitfield:1@27,0,"set when OBD battery voltage in range; power take off disengaged delay elapsed; cold_start_phase 3; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorGovernorPressureSensorOffset (lwz at 0x51ad34, mask 0x8000000).",,verified
+monitor_condition_bits_t,,transmission_output_speed_sensor,bitfield:1@28,0,"set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorTransmissionOutputSpeedSensor (lwz at 0x3de14, mask 0x10000000, P0720).",,verified
+monitor_condition_bits_t,,governor_pressure_tracking,bitfield:1@29,0,"set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorGovernorPressureTracking (lwz at 0x51aff0, mask 0x20000000).",,verified
+monitor_condition_bits_t,,converter_clutch_and_overdrive_performance,bitfield:1@30,0,"set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorConverterClutchAndOverdrivePerformance (lwz at 0x51bec0 with mask 0x40000000 in r21, .cpp line 75941).",,verified
+monitor_condition_bits_t,,reserved_bit_31,bitfield:1@31,0,set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. No reader in either bank (sweep of 0x40b9d0).,,verified
+# logical_output_request_bits_16_to_23_t: wave 11 shape (2026-11-18)
+logical_output_request_bits_16_to_23_t,,reserved_bit_0,bitfield:1@0,1,"guess (not proven, so reserved): a transmission solenoid enable request - output 16 (mask 1, 6 uses). cm848_evaluateProtectionFaultCondition sets it (cm848_setLogicalOutputRequest(0x10,0)) only while none of the transmission fault flags (condition_flags_2 bits 0 / 1, threshold_current 0x10, condition_flags_3 bit 0) is set and cold_start_phase is not CSP_CRANKING, and clears it otherwise. The read-back fault debounce of the governor pressure solenoid (cm848_debounceOutputReadBackFaults) and the output checks of outputs 17 / 18 (cm848_mainLoopMonitor: diag_faultMatch_outputCheck_update(0x11 ...) / (0x12 ...)) run only while it is set. Medium confidence: the old note said transmission relay; enable is what the gating shows.",,verified
+logical_output_request_bits_16_to_23_t,,overdrive_solenoid_request,bitfield:1@1,0,"output 17 (mask 2). cm848_processOverdriveSwitchAndShift sets it with cm848_setLogicalOutputRequest(0x11,0) together with overdrive_upshift_timer and clears it on the overdrive release; read with mask 2 in cm848_monitorConverterClutchAndOverdrivePerformance and cm848_determineCurrentGearAndLockupInhibit.",,verified
+logical_output_request_bits_16_to_23_t,,converter_clutch_solenoid_request,bitfield:1@2,0,"output 18 (mask 4, about 30 uses). cm848_applyConverterLockupSchedule sets it (cm848_setLogicalOutputRequest(0x12,0)); cm848_applyConverterUnlockConditions, cm848_protectionShutdownHandler and cm848_processOverdriveSwitchAndShift clear it (cm848_clearLogicalOutputRequest(0x12,0)).",,verified
+logical_output_request_bits_16_to_23_t,,cruise_vent_solenoid_request,bitfield:1@3,0,"output 19 (mask 8): cm848_setLogicalOutputRequest(0x13,...) in cm848_controlCruiseVacuumServo (decompile line 41596); wave 2 identified requests 19 / 20 / 21 as cruise vent / vacuum / servo supply. No direct read of this mask.",,verified
+logical_output_request_bits_16_to_23_t,,cruise_vacuum_solenoid_request,bitfield:1@4,0,"output 20 (mask 0x10): cm848_setLogicalOutputRequest(0x14,...) in cm848_controlCruiseVacuumServo (decompile line 41602). No direct read of this mask.",,verified
+logical_output_request_bits_16_to_23_t,,cruise_servo_supply_request,bitfield:1@5,0,"output 21 (mask 0x20): cm848_setLogicalOutputRequest(0x15,...) in cm848_controlCruiseVacuumServo (decompile line 41584); mask 0x20 is read by cm848_deriveSecondBrakeSwitchSignal and diag_faultMatch_outputCheck_update (the supply runs through the brake switch).",,verified
+logical_output_request_bits_16_to_23_t,,reserved_bit_6,bitfield:1@6,0,output 22: no direct read or write found,,verified
+logical_output_request_bits_16_to_23_t,,reserved_bit_7,bitfield:1@7,0,output 23: no direct read or write found,,verified
+# qadc_channel_dispatch_entry_t: wave 11 shape (2026-11-18)
+qadc_channel_dispatch_entry_t,,result_register,word*,4,Points at the QADC result register of this channel slot,,verified
+qadc_channel_dispatch_entry_t,,shared_zero_word_pointer,pointer,4,0x57dd0 in all 129 records,,verified
+# fault_definition_t: wave 11 shape (2026-11-18)
+fault_definition_t,,cummins_fault_code,word,2,Cummins fault code of the slot (cross-checked against obd_dtc_code_table for slots 1-13),,verified
+fault_definition_t,,definition_flags,word,2,Definition flags,,verified
+fault_definition_t,,entry_flags,byte,1,Entry flags,,verified
+fault_definition_t,,aging_flags,byte,1,Aging flags,,verified
+# fault_monitor_group_t: wave 11 shape (2026-11-18)
+fault_monitor_group_t,,fault_slots,byte,16,The fault slots of one OBD monitor group (lbzx @ 0x53469c),,verified
+# monitor_calibrated_condition_t: wave 11 shape (2026-11-18)
+monitor_calibrated_condition_t,,disabled_monitor_mask,dword,4,Monitors this condition disables,,verified
+monitor_calibrated_condition_t,,parameter_id,word,2,Parameter ID of the value it tests,,verified
+monitor_calibrated_condition_t,,parameter_byte_offset,word,2,Byte offset added to the parameter's address,,verified
+monitor_calibrated_condition_t,,comparison_type,word,2,Comparison type,,verified
+monitor_calibrated_condition_t,,comparison_value,word,2,Comparison value,,verified

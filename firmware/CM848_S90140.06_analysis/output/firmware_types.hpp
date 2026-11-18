@@ -1119,6 +1119,12 @@ typedef struct qspi_job_queue_t qspi_job_queue_t;
 typedef struct memory_region_t memory_region_t;
 typedef struct j1939_input_signal_descriptor_t j1939_input_signal_descriptor_t;
 typedef struct output_read_back_fault_bits_t output_read_back_fault_bits_t;
+typedef struct monitor_condition_bits_t monitor_condition_bits_t;
+typedef struct logical_output_request_bits_16_to_23_t logical_output_request_bits_16_to_23_t;
+typedef struct qadc_channel_dispatch_entry_t qadc_channel_dispatch_entry_t;
+typedef struct fault_definition_t fault_definition_t;
+typedef struct fault_monitor_group_t fault_monitor_group_t;
+typedef struct monitor_calibrated_condition_t monitor_calibrated_condition_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -1174,23 +1180,39 @@ struct protection_condition_flags_t {
     uint8_t condition_flags_3;  /* Protection condition flags set 3 */
     uint8_t condition_flags_2;  /* Protection condition flags set 2 */
     uint8_t reserved_07;  /* Gap/reserved byte at offset 0x07 */
-    uint8_t fault_state_flags;  /* Current threshold index for protection lookup */
+    uint8_t reserved_bit_0 : 1;  /* bit 0: tested (& 1) in cm848_determineCurrentGearAndLockupInhibit (lbz @ 0x34370, .cpp 33439; ORed with reserved_07 bit 0 into protection_status_flags_t.rate_limit_flags bit 0) but no store in either bank sets it */
+    uint8_t reserved_bit_1 : 1;  /* bit 1: never tested or set */
+    uint8_t reserved_bit_2 : 1;  /* bit 2: tested (& 4) together with bit 0 in the same place; never set */
+    uint8_t reserved_bit_3 : 1;  /* bit 3: never tested or set */
+    uint8_t fault_141_active : 1;  /* bit 4: set / cleared every pass from fault_detected_bits_128_to_143 & 0x2000 = fault 141 in cm848_processProtectionFaultSeverity (stb @ 0x34eac; ROM 0x5985a slot 133 = P2769, a hint only); tested (& 0x10) in cm848_evaluateProtectionFaultCondition (lbz @ 0x34a60), where it keeps logical output request 16 from being set */
+    uint8_t output_speed_sensor_fault_active : 1;  /* bit 5: set with fault 320 (P0720) and cleared with it in cm848_monitorTransmissionOutputSpeedSensor (stb @ 0x3dee4 / 0x3df60, | 0x20 / & 0xdf); read by cm848_calculateTransmissionOutputSpeed (lbz @ 0x3f768: substitutes vehicle_speed x the default or learned ratio), cm848_learnOutputSpeedToVehicleSpeedRatio (lbz @ 0x35e40: no learning while set) and cm848_updateTransmissionConditionFlags (lbz @ 0x34430: skips the transfer-case low-range test) */
+    uint8_t reserved_bit_6 : 1;  /* bit 6: never tested or set */
+    uint8_t reserved_bit_7 : 1;  /* bit 7: never tested or set */
     uint8_t action_flags;  /* Protection action trigger flags */
 };
 
 struct protection_status_flags_t {
-    uint16_t status_flags;  /* Protection status word (bit flags) */
-    uint8_t flags[3];  /* Protection flags (3 bytes of packed bits) */
-    uint8_t output_flags;  /* Protection output control flags */
-    uint8_t reserved_06;  /* Gap/reserved */
-    uint8_t rate_limit_flags;  /* Rate limit protection flags (offset 0x0c from 0xb0f2 is 0xb0fe) */
+    uint8_t reserved_bit_0 : 1;  /* bit 0: no mask uses bit 0 in any of the 43 uses (0x97 / 0xb7 / 0xef / 0x1f / 0xdf / 0xbf / 0x7f only preserve it) */
+    uint8_t reserved_bit_1 : 1;  /* bit 1: never tested or set */
+    uint8_t reserved_bit_2 : 1;  /* bit 2: never tested or set */
+    uint8_t reserved_bit_3 : 1;  /* bit 3: guess (not proven, so reserved): pressure_elevation_by_timer_flag - mask 8, cm848_selectGovernorPressureWideOpenThrottle: set (flags & 0xef | 8, lines 32266-32267 / LAB_00031ba8) when the elevated target is applied after the delay timer ran out; cleared (& 0xf7) when the delay timer is armed; while it is set the gain learning of the gear 1 / gear 2 learned gain is skipped ((flags & 8) == 0 guards both learning blocks). Medium confidence. */
+    uint8_t reserved_bit_4 : 1;  /* bit 4: guess (not proven, so reserved): elevation_delay_timer_armed_flag - mask 0x10: set (| 0x10) together with protection_init_timer = protection_init_timer_cal when engine speed sits between protection_rpm_lower_bound_cal and the margin; tested to wait for protection_init_timer to reach 0 before the elevation; cleared (& 0xef) by the elevation. Medium confidence. */
+    uint8_t gear_2_pressure_elevated_flag : 1;  /* bit 5: mask 0x20: set (flags & 0xef | 0x20 / | 0x20) when governor_pressure_gear2_elevated_target is commanded (status code 10) in gear 2; cleared (& 0xdf) when the pressure returns to the curve; read in the gear 3 branch, where protection_recovery_timer == 0 triggers the gear 2 learned gain update and & 0x97 clears the elevation bits; also cleared in gear 1 (bVar3 = flags & 0xdf). */
+    uint8_t gear_1_pressure_elevated_flag : 1;  /* bit 6: mask 0x40: set (| 0x40) with governor_pressure_gear1_elevated_target (status code 8) in gear 1; cleared (& 0xbf) when the pressure returns to the curve; read in the gear 2 branch to run the gear 1 learned gain update and cleared there by & 0xb7. */
+    uint8_t wide_open_throttle_flag : 1;  /* bit 7: mask 0x80: set by cm848_updateTransmissionConditionFlags when fuel_demand_control_t.calculated exceeds protection_fuel_demand_status80_set_threshold_cal, cleared (& 0x1f, which also clears bits 5 and 6, and & 0x7f in cm848_initProtectionSystem) when it falls below protection_fuel_demand_status80_clear_threshold_cal; cm848_runTransmissionControl calls cm848_selectGovernorPressureWideOpenThrottle only while it is set and the base / normal curve handlers otherwise (decompile line 32865). */
+    uint8_t reserved_01;  /* Pad byte of the old status_flags word (no access) */
+    uint8_t flags[3];  /* Flags (3 bytes as before) */
+    uint8_t output_flags;  /* Output flags */
+    uint8_t reserved_06;  /* Reserved */
+    uint8_t rate_limit_flags;  /* Rate limit flags */
 };
 
 struct protection_timer_state_t {
-    uint32_t status_code;  /* Protection status code (PROTECTION_STATUS_CODE enum) */
-    uint16_t timeout_counter;  /* Protection timeout countdown counter */
-    uint16_t state1_timer;  /* Level 1 protection state timer value */
-    uint16_t state2_timer;  /* Level 2 protection state timer value */
+    uint16_t status_code;  /* Status code 1-0x18 (sth / lha / lhz) - the high word of the old status_code dword */
+    uint16_t status_code_hold_timer;  /* Countdown loaded from protection_timer_status_code_b_cal and decremented in cm848_decrementProtectionTimers */
+    uint16_t timeout_counter;  /* Timeout counter */
+    uint16_t state1_timer;  /* State 1 timer */
+    uint16_t state2_timer;  /* State 2 timer */
 };
 
 struct engine_crank_state_t {
@@ -1208,14 +1230,12 @@ struct engine_sync_state_t {
 };
 
 struct engine_rpm_state_t {
-    uint16_t filtered_rpm;  /* Target engine RPM setpoint */
-    uint16_t reserved_02;  /* Gap/reserved (0xb7ae) */
-    uint16_t reserved_04;  /* Gap/reserved (0xb7b0) */
-    uint16_t reserved_06;  /* Gap/reserved (0xb7b2) */
-    uint16_t reserved_08;  /* Gap/reserved (0xb7b4) */
-    uint16_t reserved_0a;  /* Gap/reserved (0xb7b6) */
-    uint16_t reserved_0c;  /* Gap/reserved (0xb7b8) */
-    uint16_t current_rpm;  /* Current engine RPM measurement */
+    uint16_t filtered_rpm;  /* Moving average of engine_rpm_measured (1/8 rpm) */
+    uint32_t crank_capture_period_sum;  /* Crank capture period sum (lwz / stw) - averaged by the vehicle speed interrupt */
+    uint32_t crank_tooth_period_sum;  /* Crank tooth period sum (lwz / stw) */
+    uint16_t crank_capture_period_sample_count;  /* Samples in crank_capture_period_sum */
+    uint16_t crank_tooth_period_sample_count;  /* Samples in crank_tooth_period_sum */
+    uint16_t current_rpm;  /* Written with the same value as filtered_rpm by the same three writers */
 };
 
 struct sensor_readings_t {
@@ -1240,9 +1260,10 @@ struct eeprom_header_t {
 };
 
 struct governor_output_t {
-    uint32_t integrator;  /* Speed control PID integrator (Q16.16 fixed point) */
-    uint16_t governor_output;  /* Governor output command (lower word) */
-    uint16_t governor_output_high;  /* Governor output command (upper word) */
+    uint16_t idle_reference_speed;  /* Low speed governor idle reference speed in 1/8 rpm (6000 = 750 rpm in the RAM dump) - the high word of the old integrator dword */
+    int16_t fuel_feed_forward_quantity;  /* Signed fuel feed-forward quantity (lha @ 0x28060) - the low word of the old integrator dword */
+    uint16_t governor_output;  /* Idle-speed candidate number 0-12 (name kept; see the wave-11 note) */
+    uint32_t idle_speed_barometric_ramped;  /* Barometric-ramped idle speed (lwz / stw @ 0x2931c / 0x29440) - the old word field governor_output_high covered only its high half */
 };
 
 struct pci_link_state_t {
@@ -2455,4 +2476,74 @@ struct output_read_back_fault_bits_t {
     uint16_t alternator_field : 1;  /* bit 11: Bit 11 of word 1 = entry 27: alternator field read-back fault (P0622 / fault 396) */
     uint16_t : 4;
     uint16_t entries_32_to_47;  /* Word 2 = entries 32-47 (no read-back output assigned in this calibration) */
+};
+
+struct monitor_condition_bits_t {
+    uint32_t vehicle_speed_sensor_signal_loss : 1;  /* bit 0: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_detectVehicleSpeedSensorSignalLoss (lwz at 0x526928, clrlwi 31, P0500 path 1). */
+    uint32_t vehicle_speed_sensor_zero_under_load : 1;  /* bit 1: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_detectVehicleSpeedSensorZeroUnderLoad (lwz at 0x5269d4, mask 2, P0500 path 2). */
+    uint32_t overboost_and_high_load_boost_band : 1;  /* bit 2: set when power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); monitor group 0 complete. Read by cm848_monitorOverboostAndHighLoadBoostBand (lwz at 0x5372e4, mask 4). */
+    uint32_t reserved_bit_3 : 1;  /* bit 3: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t coolant_temperature_sensor_performance : 1;  /* bit 4: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_checkCoolantTemperatureSensorPerformance (lwz at 0x52e090, mask 0x10). */
+    uint32_t fuel_level_low_distance : 1;  /* bit 5: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_monitorFuelLevelLowDistance (lwz at 0x5307e4, mask 0x20). */
+    uint32_t fuel_temperature_sensor_cold_soak_check : 1;  /* bit 6: set when OBD battery voltage in range; cold_start_phase 1. Read by cm848_checkFuelTemperatureSensorAfterColdSoak (lwz at 0x53047c, mask 0x40). */
+    uint32_t fuel_pressure_tracking : 1;  /* bit 7: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); cold_start_phase 3; logical output request 53; NOT fault 397 registered (OBD fuel level low). Read by cm848_monitorFuelPressureTrackingError (lwz at 0x532184) and cm848_monitorFuelPressureSetpointNotReached (lwz at 0x536ea0, 0x537170), mask 0x80. */
+    uint32_t reserved_bit_8 : 1;  /* bit 8: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_9 : 1;  /* bit 9: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_10 : 1;  /* bit 10: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t thermostat_system : 1;  /* bit 11: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_runThermostatMonitor (lwz at 0x536b94, mask 0x800). */
+    uint32_t reserved_bit_12 : 1;  /* bit 12: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t boost_pressure_sensor_and_underboost : 1;  /* bit 13: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_monitorBoostPressureSensorAndUnderboost (lwz at 0x52d908, 0x52dae0, mask 0x2000). */
+    uint32_t misfire : 1;  /* bit 14: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); NOT fault 397 registered (OBD fuel level low). Read by cm848_checkMisfireMonitorTestConditions (lwz at 0x532dbc) and cm848_runMisfireMonitor (lwz at 0x533130, 0x53339c), mask 0x4000. */
+    uint32_t boost_fuel_weight_factor : 1;  /* bit 15: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_calculateBoostTorqueOffset (lwz at 0x13488, mask 0x8000; boost_fuel_weight_factor is forced to 0x80 while the bit is clear). */
+    uint32_t egr_delta_pressure_sensor_performance : 1;  /* bit 16: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). Read by cm848_checkEgrDeltaPressureSensorPerformance (lwz at 0x52e4c8 with mask 0x10000 in r29, .cpp line 87691). */
+    uint32_t reserved_bit_17 : 1;  /* bit 17: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_18 : 1;  /* bit 18: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_19 : 1;  /* bit 19: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_20 : 1;  /* bit 20: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_21 : 1;  /* bit 21: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_22 : 1;  /* bit 22: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t unidentified_monitor_23 : 1;  /* bit 23: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). Read by cm848_calibration_group21_load_cont (lwz at 0x52eb38 with mask 0x800000 in r27, .cpp line 87883, monitor not identified, faults 512 and 513 have no DTC slot). */
+    uint32_t wastegate_boost_pressure : 1;  /* bit 24: set when power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); monitor group 0 complete. Read by cm848_monitorWastegateBoostPressure (lwz at 0x5375b0 with mask 0x1000000 in r31, .cpp line 92888). */
+    uint32_t reserved_bit_25 : 1;  /* bit 25: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t park_neutral_switch : 1;  /* bit 26: set when NOT power take off active (switch 3 or governor_fuel_active_flag); NOT fault 397 registered (OBD fuel level low). Read by cm848_monitorParkNeutralSwitch (lwz at 0x51b628, 0x51b7c0, mask 0x4000000). */
+    uint32_t governor_pressure_sensor_offset : 1;  /* bit 27: set when OBD battery voltage in range; power take off disengaged delay elapsed; cold_start_phase 3; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorGovernorPressureSensorOffset (lwz at 0x51ad34, mask 0x8000000). */
+    uint32_t transmission_output_speed_sensor : 1;  /* bit 28: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorTransmissionOutputSpeedSensor (lwz at 0x3de14, mask 0x10000000, P0720). */
+    uint32_t governor_pressure_tracking : 1;  /* bit 29: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorGovernorPressureTracking (lwz at 0x51aff0, mask 0x20000000). */
+    uint32_t converter_clutch_and_overdrive_performance : 1;  /* bit 30: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorConverterClutchAndOverdrivePerformance (lwz at 0x51bec0 with mask 0x40000000 in r21, .cpp line 75941). */
+    uint32_t reserved_bit_31 : 1;  /* bit 31: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. No reader in either bank (sweep of 0x40b9d0). */
+};
+
+struct logical_output_request_bits_16_to_23_t {
+    uint8_t reserved_bit_0 : 1;  /* bit 0: guess (not proven, so reserved): transmission_solenoid_enable_request - output 16 (mask 1, 6 uses). cm848_evaluateProtectionFaultCondition sets it (cm848_setLogicalOutputRequest(0x10,0)) only while none of the transmission fault flags (condition_flags_2 bits 0 / 1, threshold_current 0x10, condition_flags_3 bit 0) is set and cold_start_phase is not CSP_CRANKING, and clears it otherwise. The read-back fault debounce of the governor pressure solenoid (cm848_debounceOutputReadBackFaults) and the output checks of outputs 17 / 18 (cm848_mainLoopMonitor: diag_faultMatch_outputCheck_update(0x11 ...) / (0x12 ...)) run only while it is set. Medium confidence: the old note said transmission relay; enable is what the gating shows. */
+    uint8_t overdrive_solenoid_request : 1;  /* bit 1: output 17 (mask 2). cm848_processOverdriveSwitchAndShift sets it with cm848_setLogicalOutputRequest(0x11,0) together with overdrive_upshift_timer and clears it on the overdrive release; read with mask 2 in cm848_monitorConverterClutchAndOverdrivePerformance and cm848_determineCurrentGearAndLockupInhibit. */
+    uint8_t converter_clutch_solenoid_request : 1;  /* bit 2: output 18 (mask 4, about 30 uses). cm848_applyConverterLockupSchedule sets it (cm848_setLogicalOutputRequest(0x12,0)); cm848_applyConverterUnlockConditions, cm848_protectionShutdownHandler and cm848_processOverdriveSwitchAndShift clear it (cm848_clearLogicalOutputRequest(0x12,0)). */
+    uint8_t cruise_vent_solenoid_request : 1;  /* bit 3: output 19 (mask 8): cm848_setLogicalOutputRequest(0x13,...) in cm848_controlCruiseVacuumServo (decompile line 41596); wave 2 identified requests 19 / 20 / 21 as cruise vent / vacuum / servo supply. No direct read of this mask. */
+    uint8_t cruise_vacuum_solenoid_request : 1;  /* bit 4: output 20 (mask 0x10): cm848_setLogicalOutputRequest(0x14,...) in cm848_controlCruiseVacuumServo (decompile line 41602). No direct read of this mask. */
+    uint8_t cruise_servo_supply_request : 1;  /* bit 5: output 21 (mask 0x20): cm848_setLogicalOutputRequest(0x15,...) in cm848_controlCruiseVacuumServo (decompile line 41584); mask 0x20 is read by cm848_deriveSecondBrakeSwitchSignal and diag_faultMatch_outputCheck_update (the supply runs through the brake switch). */
+    uint8_t reserved_bit_6 : 1;  /* bit 6: output 22: no direct read or write found */
+    uint8_t reserved_bit_7 : 1;  /* bit 7: output 23: no direct read or write found */
+};
+
+struct qadc_channel_dispatch_entry_t {
+    word* result_register;  /* Points at the QADC result register of this channel slot */
+    void * shared_zero_word_pointer;  /* 0x57dd0 in all 129 records */
+};
+
+struct fault_definition_t {
+    uint16_t cummins_fault_code;  /* Cummins fault code of the slot (cross-checked against obd_dtc_code_table for slots 1-13) */
+    uint16_t definition_flags;  /* Definition flags */
+    uint8_t entry_flags;  /* Entry flags */
+    uint8_t aging_flags;  /* Aging flags */
+};
+
+struct fault_monitor_group_t {
+    uint8_t fault_slots[16];  /* The fault slots of one OBD monitor group (lbzx @ 0x53469c) */
+};
+
+struct monitor_calibrated_condition_t {
+    uint32_t disabled_monitor_mask;  /* Monitors this condition disables */
+    uint16_t parameter_id;  /* Parameter ID of the value it tests */
+    uint16_t parameter_byte_offset;  /* Byte offset added to the parameter's address */
+    uint16_t comparison_type;  /* Comparison type */
+    uint16_t comparison_value;  /* Comparison value */
 };

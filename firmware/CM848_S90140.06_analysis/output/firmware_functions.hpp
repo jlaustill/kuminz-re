@@ -1929,7 +1929,7 @@ void cm848_crossCheckTemperatureSensorsBeforeStart(void);  // @ 0x005353c8
 void cm848_confirmIntakeManifoldTemperatureKeyOnRationality(void);  // @ 0x00535868
 void cm848_checkBatteryTemperatureKeyOnRationality(void);  // @ 0x00535964
 void cm848_checkAmbientAirTemperatureKeyOnRationality(void);  // @ 0x00535b58
-void cm848_checkSensorStuckOverDistance (int param_1,char *param_2,char *param_3,char *param_4,char *param_5,uint *param_6, word *param_7,byte *param_8,int param_9,uint param_10,uint param_11,uint param_12, int param_13,uint param_14,uint param_15,short *param_16,short *param_17, ushort *param_18,ushort *param_19,int param_20,uint param_21);  // @ 0x00535d34
+void cm848_checkSensorStuckOverDistance (int param_1,byte *param_2,char *param_3,char *param_4,char *param_5,uint *param_6, word *param_7,byte *param_8,int param_9,uint param_10,uint param_11,uint param_12, int param_13,uint param_14,uint param_15,short *param_16,short *param_17, ushort *param_18,ushort *param_19,int param_20,uint param_21);  // @ 0x00535d34
 void hpcr_injectPressureDiagnostic(void);  // @ 0x0053624c
 void cm848_initCommunication(void);  // @ 0x00536638
 void cm848_initMemoryLayout(void);  // @ 0x0053664c
