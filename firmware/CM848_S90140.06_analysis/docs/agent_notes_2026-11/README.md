@@ -68,6 +68,6 @@ Each table's outcome (evidence, confidence, skip reason) is in `../table_naming_
 
 ## Later session: the P0500 vehicle speed sensor monitor (2026-11-17, todo 044)
 
-`session_2026-11-17_p0500/` has the files of a later session (no subagents). It includes the DTC-code check
+`session_2026-11-17_p0500/` has the files of a later session. Wave 10's four agents and their results are listed in its README. It includes the DTC-code check
 `fault_setters.py`, which lists the P-code each function sets, and the label-only proof of the
 `diag_boostLoad_overtemp_monitor` → `cm848_detectVehicleSpeedSensorZeroUnderLoad` renames. See its README.

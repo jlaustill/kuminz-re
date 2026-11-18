@@ -622,6 +622,24 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   state with the on-delay counter's name). There the stage now makes no thunk: each boot call gets a primary
   `CALL_OVERRIDE_UNCONDITIONAL` reference to the ROM function, so the call renders with the function's name and the
   data rows stay (10 addresses; build log `Call override: ... data <name> kept`; 8 fewer underscore warnings).
+- **Wave 10 (2026-11-18, PR #51, todo 044): names checked against the DTC each function sets.** The P-code comes from
+  fault n → ROM 0x5985a slot → `obd_dtc_code_table`. The monitors found, with the full table in `work/tasks/044`:
+  - P0711: `cm848_checkTransmissionTemperatureSensorPerformance` / `cm848_updateTransmissionTemperatureSensorPerformanceFault`.
+  - P0837: `cm848_monitorFourWheelDriveSwitch` (sensor channel 76).
+  - P0720: `cm848_monitorTransmissionOutputSpeedSensor`.
+  - P0573 / P0572: `cm848_monitorBrakeSwitchPairAgreement` and `cm848_deriveSecondBrakeSwitchSignal`.
+  - P0461: `cm848_monitorFuelLevelLowDistance`.
+  - P0602: `cm848_verifyCalibrationAndCodeCrc`.
+  - P0300-P0306: `cm848_runMisfireMonitor`.
+  - P0219: inside `mpc555_processColdStartMainLoop`.
+  - P0106: `cm848_detectBarometricPressureSensorAboveMaximum`.
+  - P0236 / P0299 / P0069: `cm848_monitorBoostPressureSensorAndUnderboost`.
+  - Faults 774-777: `cm848_checkEgrDeltaPressureSensorPerformance`.
+  - Fault 402: `cm848_checkFuelTemperatureSensorAfterColdSoak`.
+
+  **P0602 guards EEPROM 0x118-0x171** with a CRC16 whose expected value is the word at EEPROM 0x482
+  (`rom_crc_stored_results_cal`[0]). Any tool that writes that block must update the word as well, or P0602 sets.
+  The high speed governor's ROM gain sets (codes 17-21) are `high_speed_governor_gain_set_t` instances.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

@@ -312,6 +312,11 @@ sensor_channel_state_t,,lookup_input,word,2,Table input: raw x sensor_channel_ra
 # ema_filter_state_t: exponentialMovingAverage's state - each pass the accumulator moves (65536 - coefficient) / 65536 of the way to the new value
 ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient (a sensor channel's config filter_coefficient): the weight of the previous value in 1/65536 - 0 = no filtering,,verified
 ema_filter_state_t,,accumulator,dword,4,Q16.16 filtered value - its integer part is the output,,verified
+# high_speed_governor_gain_set_t: one high speed governor gain set as the ROM stores it (codes 17-21: 0x5c32c / 0x5c324 / 0x5c31a / 0x5c954 / 0x5c95c) - the RAM copies use other orders and stay flat (2026-11-18)
+high_speed_governor_gain_set_t,,derivative_gain,word,2,Derivative gain (coefficient 3),,verified
+high_speed_governor_gain_set_t,,error_filter_coefficient,word,2,Error filter coefficient (coefficient 4): the weight of the previous filtered speed error in 1/65536 - 0 = no filtering,,verified
+high_speed_governor_gain_set_t,,integral_gain,word,2,Integral gain (coefficient 2),,verified
+high_speed_governor_gain_set_t,,proportional_gain,word,2,Proportional gain (coefficient 1),,verified
 
 # Q16.16 Fixed Point Structure - 32-bit with 16-bit integer and fractional parts
 # Used for PID controllers and accumulators needing fractional precision

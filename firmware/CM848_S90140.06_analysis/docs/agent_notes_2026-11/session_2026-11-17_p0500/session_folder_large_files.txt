@@ -4,3 +4,12 @@ snapshots/post1.cpp
 snapshots/pre.cpp
 snapshots/pre_canon.cpp
 snapshots/reversed.cpp
+wave10/build1.log
+wave10/build2.log
+wave10/build3.log
+wave10/post1.cpp
+wave10/post2.cpp
+wave10/post3.cpp
+wave10/pre.cpp
+wave10/pre_canon.cpp
+wave10/reversed.cpp

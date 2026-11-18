@@ -21,4 +21,16 @@ One session, no subagents. The request was to find at least one misnamed symbol 
 `session_folder_large_files.tar.xz` holds the files listed in `session_folder_large_files.txt`: the baseline and
 build-1 `.cpp`, their canonical and reversed copies, and the two build logs.
 
-The session transcript is kept privately, outside the repo.
+**Wave 10 (2026-11-18, same PR):** four read-only agents verified the ten DTC-code leads of task 044. Their prompts are
+in `agent_prompts.md` / `.jsonl`, and their brief is `rename_waves/briefs/brief_wave10.md`. `session_folder/wave10/` has:
+- each agent's `result_W10_<group>.jsonl` and its `aligned_` copy;
+- the mappings (`map_renames.csv`, `map_newrows.csv`, the hand edits in `map_hand.csv`, all of them in `map_all.csv`,
+  and `map_refresh.csv`);
+- the proof outputs;
+- `hsg_gain_set_rows.py`, the script that typed the high speed governor gain sets.
+
+The snapshots and build logs are in the large-files archive. The proof result: all 247 names render with no
+underscore variants. The 10 functions that differ change only in typing: the misfire state dwords, the array / byte /
+`i16` types of new rows, and the CRC `word[2]` pairs.
+
+The session transcript and the subagent transcripts are kept privately, outside the repo.

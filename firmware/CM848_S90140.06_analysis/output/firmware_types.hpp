@@ -1021,6 +1021,7 @@ typedef struct insite_protocol_t insite_protocol_t;
 typedef struct sensor_channel_config_t sensor_channel_config_t;
 typedef struct sensor_channel_state_t sensor_channel_state_t;
 typedef struct ema_filter_state_t ema_filter_state_t;
+typedef struct high_speed_governor_gain_set_t high_speed_governor_gain_set_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
 typedef struct dma_descriptor_t dma_descriptor_t;
 typedef struct memory_patch_entry_t memory_patch_entry_t;
@@ -1419,6 +1420,13 @@ struct sensor_channel_state_t {
 struct ema_filter_state_t {
     word* coefficient;  /* Points at the filter coefficient (a sensor channel's config filter_coefficient): the weight of the previous value in 1/65536 - 0 = no filtering */
     uint32_t accumulator;  /* Q16.16 filtered value - its integer part is the output */
+};
+
+struct high_speed_governor_gain_set_t {
+    uint16_t derivative_gain;  /* Derivative gain (coefficient 3) */
+    uint16_t error_filter_coefficient;  /* Error filter coefficient (coefficient 4): the weight of the previous filtered speed error in 1/65536 - 0 = no filtering */
+    uint16_t integral_gain;  /* Integral gain (coefficient 2) */
+    uint16_t proportional_gain;  /* Proportional gain (coefficient 1) */
 };
 
 struct q16_fixed_point_t {
