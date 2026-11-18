@@ -214,7 +214,8 @@ The ECM speaks J1939/CAN **plus CCD (C1 pins 4/5), SCI (C2 pins 16/19 → PCM + 
 - **P0500 = fault 29 (2026-11-17, todo 044).** `cm848_runVehicleSpeedSensorMonitors` (0x526c80) runs three functions:
   - `cm848_detectVehicleSpeedSensorSignalLoss`: the sensor drops to 0 while the filtered `vehicle_speed` is still above 10 mph. Enabled by EEPROM 0x132 bit 0x100, which is clear in this calibration.
   - `cm848_detectVehicleSpeedSensorZeroUnderLoad` (was `diag_boostLoad_overtemp_monitor`): 10 boost / load events (30 passes each: boost above baro over 94.8 kPa, filtered load over 40 %) plus 10 accelerator off-idle entries, all with the sensor at 0. Enabled by bit 0x200, which is set here.
-  - `cm848_clearHealedVehicleSpeedSensorFault`: heals P0500.
+  - `cm848_clearHealedVehicleSpeedSensorFault`: heals P0500 whichever source set it.
+  - A third source is in `cm848_processGovernorModeTransition` (0x2715c). On the J1939 automatic drivetrain (`DRIVETRAIN_AUTO_J1939_FULL`), when the ETC1 output shaft speed times out (`j1939_tsc1_override_state.etc1_speed_cmd_timeout` reaches 0), it zeroes `output_shaft_speed_current` and sets fault 29. This only happens with the key on and the engine cranking or past ROM 0x5c3a8 passes running.
 
   Function names that disagree with the P-code they set are misname leads. `docs/agent_notes_2026-11/session_2026-11-17_p0500/session_folder/fault_setters.py` lists the P-code each function sets. The open leads are in `work/tasks/044`.
 

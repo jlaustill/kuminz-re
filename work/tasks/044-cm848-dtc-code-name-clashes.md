@@ -27,6 +27,11 @@ P-codes. It reproduces every documented mapping (407 → P0483, 396 → P0622, 1
     load, the previous accelerator off-idle state) and the `ema_filter_state_t` at 0x3fd070 (was a flat dword
     `engine_load_ema_filter_pointer`);
   - the eight ROM limits at 0x5c964-0x5c974 (two of them belong to `cm848_detectVehicleSpeedSensorSignalLoss`).
+- P0500 has a third source, not renamed because the function does much more: `cm848_processGovernorModeTransition`
+  (0x2715c). On the J1939 automatic drivetrain, an ETC1 output shaft speed timeout (key on, engine cranking or running)
+  zeroes `output_shaft_speed_current` and sets fault 29. `cm848_clearHealedVehicleSpeedSensorFault` heals fault 29
+  whichever source set it. The plate comments of the two monitors say "path 1 / path 2" and don't mention this third
+  source yet.
 - `cm848_buildPgn65213FanDrive1Message` (0x2641c): the invented `dest_address` / `status_type` parameters are gone
   (`void (void)`; r3 / r4 are written before they are read).
 
