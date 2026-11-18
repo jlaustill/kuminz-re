@@ -1,0 +1,12 @@
+address,name,old_label,kind
+,chi_maximum_fuel_at_point_1,threshold_scaled,field
+,chi_maximum_fuel_at_point_2,recovery_threshold,field
+,chi_maximum_fuel_at_point_3,hysteresis,field
+,chi_maximum_fuel_at_point_4,threshold_scaled_alt,field
+,chi_maximum_fuel_at_point_5,threshold_base,field
+,alpha_percent,blend_mode,field
+,egr_off_flag,blend_enable,field
+,gross_fuel_timing_adjustment_active_flag,demand_above_threshold,field
+,injection_timing_fuel_limited_adjustment,bypass_load_correction,field
+,injection_quantity_gross_before_timing_adjustment,fuel_demand_snapshot,field
+,chi_hundredths,blend_weight,field

@@ -79,8 +79,8 @@ The CM848 ECU controls boost pressure via a PWM-driven wastegate solenoid (CWG -
 **Address:** 0x0000cc04 / 0x0000cc90
 
 Reads boost pressure from ADC channel and outputs to:
-- `boost_pressure_sensor_raw` (0x0040bd8e) - Raw sensor value
-- `boost_pressure_sensor_filtered` (0x0040bda6) - Filtered value
+- `boost_pressure_sensor_value` (0x0040bd8e) - the boost (channel 1 intake manifold pressure) channel output - filtered engineering value (was boost_pressure_sensor_raw)
+- `boost_pressure_sensor_default_value` (0x0040bda6) - the channel config default value - a fallback constant (was boost_pressure_sensor_filtered)
 - `boost_protection_input` (0x0040be20) - Protection system input
 
 **Scale Factor:** 0.0159064138077 IN_HG per raw count
@@ -273,8 +273,8 @@ if (((uVar4 & 0x80) == 0) || (((uVar4 & 2) == 0 && ((uVar4 & 0x20) == 0)))) {
 ### Sensor Inputs
 | Address | Name | Description |
 |---------|------|-------------|
-| 0x0040bd8e | boost_pressure_sensor_raw | Raw MAP sensor value |
-| 0x0040bda6 | boost_pressure_sensor_filtered | Filtered MAP value |
+| 0x0040bd8e | boost_pressure_sensor_value | MAP channel output (filtered value) |
+| 0x0040bda6 | boost_pressure_sensor_default_value | MAP channel config default (fallback) |
 | 0x0040be20 | boost_protection_input | Input to protection system |
 
 ### Turbo Ratio Control

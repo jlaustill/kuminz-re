@@ -1,0 +1,1856 @@
+{
+ "bin": 1,
+ "functions": [
+  "engine_injectionTiming_arbitration_calc"
+ ],
+ "assigned_tables": [
+  "0x00062cf6",
+  "0x00062d08",
+  "0x00062d1a",
+  "0x00062d9a",
+  "0x00062db4",
+  "0x00062dce",
+  "0x00062dda",
+  "0x00062de6",
+  "0x00062dfa",
+  "0x00062e0e",
+  "0x00062eb0",
+  "0x00062ed8",
+  "0x00062efa",
+  "0x0006315a",
+  "0x00063176",
+  "0x0006318e",
+  "0x000632ac",
+  "0x000632c8",
+  "0x000632e0",
+  "0x000633fe",
+  "0x0006341a",
+  "0x00063432",
+  "0x00063550",
+  "0x0006356c",
+  "0x00063584",
+  "0x000636a2",
+  "0x000636be",
+  "0x000636d6",
+  "0x000637f4",
+  "0x0006381c",
+  "0x0006383e",
+  "0x00063a9e",
+  "0x00063ac6",
+  "0x00063ae8",
+  "0x00063d48",
+  "0x00063d70",
+  "0x00063d92",
+  "0x00063ff2",
+  "0x0006401a",
+  "0x0006403c"
+ ],
+ "lookups": [
+  {
+   "id": "L179",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062cf6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L179"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       64256,
+       0,
+       1280,
+       3200,
+       4800,
+       5760,
+       10240,
+       11520
+      ],
+      "breakpoints_signed": [
+       -1280,
+       0,
+       1280,
+       3200,
+       4800,
+       5760,
+       10240,
+       11520
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00062d08",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L179"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       640,
+       1280,
+       1920,
+       3520,
+       3840,
+       5760,
+       7680
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00062d1a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L179"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       4096,
+       28672
+      ],
+      "grid_min_max_signed": [
+       4096,
+       28672
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096
+      ],
+      "last_row": [
+       6144,
+       6144,
+       6144,
+       6144,
+       8192,
+       12288,
+       16384,
+       28672
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "DAT_0040b972 = cm848_dualAxisTableInterpolation (&DAT_003fd158,DAT_003fd16a,WORD_ARRAY_00062cf6,DAT_003fd16c, WORD_ARRAY_00062d08,WORD_ARRAY_00062d1a,7);",
+     "inputs": [
+      "DAT_003fd16a",
+      "DAT_003fd16c"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L180",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062d9a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L180"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 13,
+      "breakpoints_unsigned": [
+       64256,
+       64576,
+       0,
+       640,
+       1280,
+       1920,
+       2560,
+       3520,
+       3840,
+       4928,
+       5760,
+       7680
+      ],
+      "breakpoints_signed": [
+       -1280,
+       -960,
+       0,
+       640,
+       1280,
+       1920,
+       2560,
+       3520,
+       3840,
+       4928,
+       5760,
+       7680
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00062db4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L180"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 13,
+      "values_unsigned": [
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       7373,
+       12247,
+       12247,
+       12247
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "DAT_0040b96a = lookupTableInterpolation (&DAT_003fd142,DAT_003fd16c,WORD_ARRAY_00062d9a,WORD_ARRAY_00062db4,3);",
+     "inputs": [
+      "DAT_003fd16c"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L181",
+   "interpolator": "lookupTableInterpolation",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062dce",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L181"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "breakpoints_unsigned": [
+       1257,
+       1383,
+       1509,
+       1635,
+       1886
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00062dda",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L181"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "values_unsigned": [
+       4096,
+       4096,
+       4915,
+       5734,
+       12288
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "DAT_0040b964 = lookupTableInterpolation (&DAT_003fd140,DAT_003fd168,WORD_ARRAY_00062dce,WORD_ARRAY_00062dda,2);",
+     "inputs": [
+      "DAT_003fd168"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L182",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062de6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L182"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 10,
+      "breakpoints_unsigned": [
+       0,
+       800,
+       1520,
+       1920,
+       3200,
+       4000,
+       4800,
+       5600,
+       7200
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00062dfa",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L182"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 10,
+      "breakpoints_unsigned": [
+       63616,
+       64256,
+       64896,
+       0,
+       640,
+       1920,
+       3200,
+       4480,
+       12160
+      ],
+      "breakpoints_signed": [
+       -1920,
+       -1280,
+       -640,
+       0,
+       640,
+       1920,
+       3200,
+       4480,
+       12160
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00062e0e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L182"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 81,
+      "grid_min_max_unsigned": [
+       68,
+       188
+      ],
+      "grid_min_max_signed": [
+       68,
+       188
+      ],
+      "shape_x_by_y": [
+       9,
+       9
+      ],
+      "first_row": [
+       68,
+       68,
+       68,
+       68,
+       68,
+       77,
+       77,
+       77,
+       77
+      ],
+      "last_row": [
+       188,
+       188,
+       188,
+       188,
+       188,
+       188,
+       188,
+       188,
+       188
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "injection_timing_offset_arbitrated = cm848_dualAxisTableInterpolation (&DAT_003fd160,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_00062de6, sensor_readings_t_0040baf2.coolant_temp,WORD_ARRAY_00062dfa,WORD_ARRAY_00062e0e, 6);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "sensor_readings_t_0040baf2.coolant_temp"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L183",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00062eb0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L183"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00062ed8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L183"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00062efa",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L183"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       81,
+       490
+      ],
+      "grid_min_max_signed": [
+       81,
+       490
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       111,
+       111,
+       111,
+       85,
+       81,
+       81,
+       81,
+       81,
+       81,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85
+      ],
+      "last_row": [
+       214,
+       214,
+       190,
+       159,
+       290,
+       393,
+       393,
+       404,
+       410,
+       490,
+       453,
+       446,
+       468,
+       429,
+       421,
+       444,
+       364,
+       299,
+       299
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "LAB_0052c910: wVar1 = cm848_dualAxisTableInterpolation (&DAT_003fd14c,injection_timing_rpm_axis,WORD_ARRAY_00062eb0, engine_timing_reference,WORD_ARRAY_00062ed8,WORD_ARRAY_00062efa,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L184",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0006315a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L184"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4000,
+       4800,
+       5200,
+       5600,
+       6400,
+       7600,
+       8000,
+       8400,
+       9600,
+       11200,
+       16000,
+       20000,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00063176",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L184"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       324,
+       427,
+       530,
+       633,
+       736,
+       883,
+       1030,
+       1472,
+       1619,
+       1766
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0006318e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L184"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       68,
+       299
+      ],
+      "grid_min_max_signed": [
+       68,
+       299
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       85,
+       68,
+       68,
+       68,
+       68,
+       68,
+       68,
+       77,
+       85,
+       85,
+       85,
+       85,
+       85
+      ],
+      "last_row": [
+       94,
+       102,
+       119,
+       119,
+       128,
+       128,
+       137,
+       154,
+       171,
+       256,
+       256,
+       299,
+       299
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "injection_timing_coolant_trim_rpm_factor = cm848_dualAxisTableInterpolation (&DAT_003fd15c,injection_timing_rpm_axis,WORD_ARRAY_0006315a, engine_timing_reference,WORD_ARRAY_00063176,WORD_ARRAY_0006318e,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L185",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000632ac",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L185"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       5600,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       24000,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x000632c8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L185"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       324,
+       427,
+       530,
+       633,
+       736,
+       883,
+       1030,
+       1178,
+       1472,
+       1693
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x000632e0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L185"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       171,
+       512
+      ],
+      "grid_min_max_signed": [
+       171,
+       512
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       512,
+       512,
+       512,
+       512,
+       179,
+       179,
+       179,
+       179,
+       179,
+       179,
+       179,
+       179,
+       179
+      ],
+      "last_row": [
+       512,
+       512,
+       512,
+       512,
+       299,
+       299,
+       299,
+       341,
+       341,
+       341,
+       341,
+       341,
+       341
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "injection_timing_arb_comp3_rpm_factor = cm848_dualAxisTableInterpolation (&DAT_003fd148,injection_timing_rpm_axis,WORD_ARRAY_000632ac, engine_timing_reference,WORD_ARRAY_000632c8,WORD_ARRAY_000632e0,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L186",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000633fe",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L186"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4000,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       26400
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0006341a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L186"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       368,
+       515,
+       662,
+       736,
+       883,
+       1178,
+       1472,
+       1766
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00063432",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L186"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       512,
+       512
+      ],
+      "grid_min_max_signed": [
+       512,
+       512
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512
+      ],
+      "last_row": [
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "injection_timing_arb_comp4_rpm_factor = cm848_dualAxisTableInterpolation (&DAT_003fd144,injection_timing_rpm_axis,WORD_ARRAY_000633fe, engine_timing_reference,WORD_ARRAY_0006341a,WORD_ARRAY_00063432,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L187",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00063550",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L187"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       24000,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0006356c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L187"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       442,
+       883,
+       1030,
+       1178,
+       1325,
+       1472,
+       1619,
+       1766,
+       1914,
+       2502
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00063584",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L187"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       213,
+       512
+      ],
+      "grid_min_max_signed": [
+       213,
+       512
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       213,
+       213,
+       213,
+       213,
+       213,
+       213,
+       213,
+       213,
+       213,
+       213,
+       213,
+       213,
+       213
+      ],
+      "last_row": [
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512,
+       512
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "injection_timing_arb_comp5_rpm_factor_a = cm848_dualAxisTableInterpolation (&DAT_003fd154,injection_timing_rpm_axis,WORD_ARRAY_00063550, engine_timing_reference,WORD_ARRAY_0006356c,WORD_ARRAY_00063584,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L188",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000636a2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L188"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       24000,
+       25600
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x000636be",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L188"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       189,
+       314,
+       629,
+       754,
+       1069,
+       1320,
+       1572,
+       1760,
+       2138,
+       2515,
+       2766
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x000636d6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L188"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       4096,
+       12288
+      ],
+      "grid_min_max_signed": [
+       4096,
+       12288
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       5120,
+       5120,
+       4506,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       4096
+      ],
+      "last_row": [
+       12288,
+       12288,
+       12288,
+       12288,
+       12288,
+       12288,
+       12288,
+       10240,
+       10240,
+       10240,
+       10240,
+       10240,
+       10240
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "DAT_0040b980 = cm848_dualAxisTableInterpolation (&DAT_003fd150,injection_timing_rpm_axis,WORD_ARRAY_000636a2,wVar1, WORD_ARRAY_000636be,WORD_ARRAY_000636d6,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "wVar1"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L189",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000637f4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L189"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0006381c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L189"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0006383e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L189"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       81,
+       491
+      ],
+      "grid_min_max_signed": [
+       81,
+       491
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       111,
+       85,
+       85,
+       85,
+       81,
+       81,
+       81,
+       81,
+       81,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85
+      ],
+      "last_row": [
+       214,
+       214,
+       190,
+       159,
+       290,
+       393,
+       393,
+       404,
+       410,
+       490,
+       457,
+       439,
+       457,
+       425,
+       421,
+       491,
+       364,
+       299,
+       299
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "unaff_r29 = cm848_dualAxisTableInterpolation (&injection_timing_arb_boost_blend_interp_state,injection_timing_rpm_axis, WORD_ARRAY_000637f4,engine_timing_reference,WORD_ARRAY_0006381c, WORD_ARRAY_0006383e,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "unaff_r27 = cm848_dualAxisTableInterpolation (&injection_timing_arb_boost_blend_interp_state,injection_timing_rpm_axis, WORD_ARRAY_000637f4,engine_timing_reference,WORD_ARRAY_0006381c, WORD_ARRAY_0006383e,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L190",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00063a9e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L190"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00063ac6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L190"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00063ae8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L190"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       85,
+       494
+      ],
+      "grid_min_max_signed": [
+       85,
+       494
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       111,
+       111,
+       111,
+       128,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85
+      ],
+      "last_row": [
+       214,
+       214,
+       190,
+       159,
+       290,
+       452,
+       472,
+       490,
+       494,
+       490,
+       453,
+       387,
+       410,
+       399,
+       401,
+       465,
+       284,
+       218,
+       218
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "unaff_r29 = cm848_dualAxisTableInterpolation (&injection_timing_arb_boost_blend_interp_state,injection_timing_rpm_axis, WORD_ARRAY_00063a9e,engine_timing_reference,WORD_ARRAY_00063ac6, WORD_ARRAY_00063ae8,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "unaff_r27 = cm848_dualAxisTableInterpolation (&injection_timing_arb_boost_blend_interp_state,injection_timing_rpm_axis, WORD_ARRAY_00063a9e,engine_timing_reference,WORD_ARRAY_00063ac6, WORD_ARRAY_00063ae8,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L191",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00063d48",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L191"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x00063d70",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L191"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x00063d92",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L191"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       85,
+       494
+      ],
+      "grid_min_max_signed": [
+       85,
+       494
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       111,
+       111,
+       111,
+       128,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85
+      ],
+      "last_row": [
+       214,
+       214,
+       190,
+       159,
+       290,
+       452,
+       472,
+       490,
+       494,
+       490,
+       445,
+       387,
+       410,
+       399,
+       401,
+       465,
+       284,
+       218,
+       218
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "unaff_r29 = cm848_dualAxisTableInterpolation (&injection_timing_arb_boost_blend_interp_state,injection_timing_rpm_axis, WORD_ARRAY_00063d48,engine_timing_reference,WORD_ARRAY_00063d70, WORD_ARRAY_00063d92,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "unaff_r27 = cm848_dualAxisTableInterpolation (&injection_timing_arb_boost_blend_interp_state,injection_timing_rpm_axis, WORD_ARRAY_00063d48,engine_timing_reference,WORD_ARRAY_00063d70, WORD_ARRAY_00063d92,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L192",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00063ff2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L192"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0006401a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L192"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       662,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0006403c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L192"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       85,
+       494
+      ],
+      "grid_min_max_signed": [
+       85,
+       494
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       111,
+       111,
+       111,
+       128,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85,
+       85
+      ],
+      "last_row": [
+       214,
+       214,
+       190,
+       159,
+       290,
+       452,
+       472,
+       490,
+       494,
+       473,
+       445,
+       387,
+       410,
+       399,
+       401,
+       465,
+       284,
+       218,
+       218
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "unaff_r29 = cm848_dualAxisTableInterpolation (&injection_timing_arb_boost_blend_interp_state,injection_timing_rpm_axis, WORD_ARRAY_00063ff2,engine_timing_reference,WORD_ARRAY_0006401a, WORD_ARRAY_0006403c,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "engine_injectionTiming_arbitration_calc",
+     "statement": "unaff_r27 = cm848_dualAxisTableInterpolation (&injection_timing_arb_boost_blend_interp_state,injection_timing_rpm_axis, WORD_ARRAY_00063ff2,engine_timing_reference,WORD_ARRAY_0006401a, WORD_ARRAY_0006403c,4);",
+     "inputs": [
+      "injection_timing_rpm_axis",
+      "engine_timing_reference"
+     ],
+     "output_argument": null
+    }
+   ]
+  }
+ ]
+}

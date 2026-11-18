@@ -1,0 +1,7 @@
+address,name,old_label,kind
+0x0040a664,egr_valve_position_autozero_offset,DAT_0040a664,new row
+0x003fa174,egr_assist_controller_egr_valve_staged_position,DAT_003fa174,new row
+0x003fa7cc,egr_valve_h_bridge_inrush_retry_timer_at_limit_flag,DAT_003fa7cc,new row
+0x003fa7be,egr_valve_h_bridge_inrush_retry_latch_flag,DAT_003fa7be,new row
+0x003fa7d2,egr_valve_h_bridge_status_a_input_flag,DAT_003fa7d2,new row
+0x0040a8a9,fuel_demand_sensor_validation_flags,DAT_0040a8a9,new row

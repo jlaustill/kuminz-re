@@ -1,0 +1,13 @@
+# xref 0x003fb08e  (protection_confirm_counter_a)  — 3 referencing function(s)
+# total: 2 read(s), 2 write(s)   width(s): word
+
+cm848_evaluateLoadProtectionOverspeedStage: 2r/1w
+  [load ] word   2e5e4:	a0 aa 00 00 	lhz     r5,0(r10)
+  [store] word   2e5fc:	b1 03 00 00 	sth     r8,0(r3)
+  [load ] word   2e604:	a1 8a 00 00 	lhz     r12,0(r10)
+
+cm848_clearLoadProtectionConfirmState: 0r/1w
+  [store] word   2ea20:	b0 69 b0 8e 	sth     r3,-20338(r9)
+
+cm848_updateLoadProtectionConfirmCounterB: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

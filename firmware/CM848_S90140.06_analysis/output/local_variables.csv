@@ -52,27 +52,8 @@ function_address,function_name,old_name,new_name,type,comment
 0x00512e70,governor_cruise_engage_check,uVar2,qadc_dispatch_index,uint,Clamped index into qadc_channel_dispatch_table for cruise-switch channel 0x2f
 0x00512e70,governor_cruise_engage_check,uVar3,engage_allowed,undefined4,Return flag - 1 when cruise may engage this cycle
 # sensorChannelTypeB_configInit @ 0x005012dc - per-channel sensor read/validate/debounce (reviewed via review-function-readability)
-0x005012dc,sensorChannelTypeB_configInit,iVar9,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
-0x005012dc,sensorChannelTypeB_configInit,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault-status arrays
-0x005012dc,sensorChannelTypeB_configInit,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault-status arrays
-0x005012dc,sensorChannelTypeB_configInit,sVar4,validation_state,short,sensorChannelConditionValidator result - 0=ok 1=force-fault 2=force-skip
-0x005012dc,sensorChannelTypeB_configInit,uVar10,sensor_value,uint,Processed sensor value compared against thresholds and written to state_ptr[5] (also holds the channel-enable bitmask early in the body)
-0x005012dc,sensorChannelTypeB_configInit,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table / sensor_channel_type_table
-0x005012dc,sensorChannelTypeB_configInit,wVar5,sensor_raw,word,Raw sensor reading (QADC dispatch result or diag override) written to *state_ptr
-0x005012dc,sensorChannelTypeB_configInit,wVar6,ema_result,word,Final exponentialMovingAverage output written to sensor_channel_filtered_output
-0x005012dc,sensorChannelTypeB_configInit,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state field / debounce target depending on path)
-0x005012dc,sensorChannelTypeB_configInit,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy used in the in-range recovery path
-0x005012dc,sensorChannelTypeB_configInit,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0=none 1=ramping 2=limit reached (uninitialized when no threshold path runs)
 # sensorChannelTypeB_update @ 0x00501b4c - boot-time twin of configInit (same shape, fewer temps)
-0x00501b4c,sensorChannelTypeB_update,iVar6,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
-0x00501b4c,sensorChannelTypeB_update,iVar7,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault-status arrays
-0x00501b4c,sensorChannelTypeB_update,iVar5,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault-status arrays
-0x00501b4c,sensorChannelTypeB_update,sVar1,validation_state,short,sensorChannelConditionValidator result - 0=ok 1=force-fault 2=force-skip
-0x00501b4c,sensorChannelTypeB_update,uVar8,sensor_value,uint,Processed sensor value compared against thresholds (also holds the channel-enable bitmask early in the body)
-0x00501b4c,sensorChannelTypeB_update,uVar4,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table / sensor_channel_type_table
-0x00501b4c,sensorChannelTypeB_update,uVar2,scratch16,ushort,Reused 16-bit scratch (default value / state field / debounce target depending on path)
-0x00501b4c,sensorChannelTypeB_update,wVar3,sensor_scratch,word,Raw sensor reading / EMA result reused across paths and written to *state_ptr
-0x0002f5a4,cm848_processLoadProtectionStatus,uVar1,engineLoadProtection,ENGINE_LOAD_PROTECTION_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
+0x0002f5a4,cm848_evaluateVariableGeometryTurbochargerPositionAdjustments,uVar1,engineLoadProtection,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
 0x00038ac8,cm848_checkPciMessageTimeouts,bVar2,all_transmits_overdue,byte,True until any timed TX entry is still within interval + grace; when it stays true link_event_code = 7
 0x00038ac8,cm848_checkPciMessageTimeouts,uVar4,message_index,uint,Entry index into pci_transmit_message_table then pci_receive_message_table (masked to 8 bits)
 0x00038ac8,cm848_checkPciMessageTimeouts,puVar3,transmit_timer,ushort *,Cached pci_transmit_message_table[message_index].timer
@@ -108,7 +89,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x00054ec4,mpc555_miosSetChannelPwmDuty,local_8,compare_register_pair,undefined4,AR (high half) : BR (low half) written as one word
 0x00054f48,mpc555_miosSetChannelPwmPeriod,wVar1,modulus_latch_value,word,Value written to the MMCSM22 modulus latch
 0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,uVar1,pulse_width,ushort,Value written to PULR
-0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar1,period_register_value,word,Value written to PERR
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,wVar1,period_register_value,word,Value written to PERR
 0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar2,period_divisor,uint,16 with prescaler byte 0xff / 2048 with 0x80
 0x00054e10,mpc555_miosCheckChannelFeedback,wVar1,feedback_result,word,0 agree / 1 reads high or toggling / 2 reads low or toggling
 # cm848_updateOutputReadBackFaultBits @ 0x0053a110 - read-back verdict of each output channel assignment table entry into output_read_back_fault_bits
@@ -121,4 +102,31 @@ function_address,function_name,old_name,new_name,type,comment
 0x0004f6f0,mpc555_driveOutputLineHigh,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 or SIU_SGPIODT2: read whole (lwz) / one byte ORed with the line bit (lbz-stb) / written back whole (stw)
 0x00051038,mpc555_driveOutputLineLow,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 or SIU_SGPIODT2: read whole (lwz) / one byte ANDed with the inverted line bit (lbz-stb) / written back whole (stw)
 0x000529b8,cm848_refreshOutputPortsAndReadback,local_2c,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 then SIU_SGPIODT2: snapshotted byte by byte then rebuilt from the output_lines_*_state shadows and written back whole
-0x000533e0,hpcr_injectorPulseWidthCalc,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 then SIU_SGPIODT2 - its four bytes are copied out to the j1939_dm1_tx_b2..b9 snapshot bytes
+0x000533e0,cm848_refreshInputLineImage,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 then SIU_SGPIODT2 - its four bytes are copied to input_line_image.lines_24_to_31 .. lines_80_to_87
+0x000533e0,cm848_refreshInputLineImage,local_8,mios_port_copy,mios_port_data_register_t,Stack copy of mios_mpiosm32.data - byte_1 (bits 7-0) = input lines 8-15 / byte_0 (bits 15-8) = lines 16-23
+0x0004f2ec,cm848_readDiscreteInputLine,local_8,input_port_copy,mios_port_data_register_t,Stack halfword the MIOS port data (lines 8-23) is copied through - its byte_1 also carries the supervisor lines 144-151 byte on the shared store tail
+0x000529b8,cm848_refreshOutputPortsAndReadback,local_30,mios_port_copy,mios_port_data_register_t,Stack copy of mios_mpiosm32.data - read back into output_line_read_back then rebuilt from output_line_state (byte_1 = lines 8-15 / byte_0 = lines 16-23)
+0x00042918,cm848_resetEngineOperatingMode,iVar1,previous_engine_operating_mode,int32_t,Mode read before it is cleared; passed to the three selectors that compare the previous mode
+0x000160ac,cm848_selectChiAndAlpha,local_1a,chi_source_code,COMBUSTION_CHI_SOURCE,Chi source code of this pass
+0x00015f34,cm848_determineBaseChi,local_1a,chi_source_code,COMBUSTION_CHI_SOURCE,Base chi source code (1 or 3)
+0x00015f34,cm848_determineBaseChi,CVar1,selected_chi_source_code,COMBUSTION_CHI_SOURCE,Return value of cm848_selectChiSourceCode (compared with 1 and 3)
+0x005012dc,sensorChannelTypeB_configInit,iVar9,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x005012dc,sensorChannelTypeB_configInit,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
+0x005012dc,sensorChannelTypeB_configInit,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
+0x005012dc,sensorChannelTypeB_configInit,sVar5,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x005012dc,sensorChannelTypeB_configInit,uVar10,sensor_value,uint,Reading compared against the thresholds and stored as lookup_input (the register is also reused for the channel bit mask and the dispatch index)
+0x005012dc,sensorChannelTypeB_configInit,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
+0x005012dc,sensorChannelTypeB_configInit,wVar6,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
+0x005012dc,sensorChannelTypeB_configInit,dVar4,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x005012dc,sensorChannelTypeB_configInit,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
+0x005012dc,sensorChannelTypeB_configInit,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy
+0x005012dc,sensorChannelTypeB_configInit,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0 settled / 1 still counting / 2 limit reached
+0x00501b4c,sensorChannelTypeB_update,iVar7,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x00501b4c,sensorChannelTypeB_update,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
+0x00501b4c,sensorChannelTypeB_update,iVar6,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
+0x00501b4c,sensorChannelTypeB_update,sVar3,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x00501b4c,sensorChannelTypeB_update,uVar9,sensor_value,uint,Lookup input before it is stored in lookup_input (the register is also reused for the channel bit mask and the dispatch index)
+0x00501b4c,sensorChannelTypeB_update,uVar5,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
+0x00501b4c,sensorChannelTypeB_update,wVar4,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
+0x00501b4c,sensorChannelTypeB_update,dVar2,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x00501b4c,sensorChannelTypeB_update,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)

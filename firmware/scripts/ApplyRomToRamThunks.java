@@ -10,6 +10,13 @@
 // address ONLY when it is actually called (has an incoming CALL reference) — so the output
 // gains real names without unused-thunk clutter. Idempotent.
 //
+// Time-shared RAM (todo 043): the application reuses this RAM for its own variables after boot.
+// Where a named data row (a non-default label) sits in the 4 bytes a thunk would take, a thunk
+// would clear those data units and adopt the data label as the function's name (so the boot call
+// rendered as a call to the variable, and the next word's row was swallowed). There, no thunk is
+// made: each call into the RAM address gets a primary CALL_OVERRIDE_UNCONDITIONAL reference to
+// the ROM function instead, so the call renders with the function's name and the data rows stay.
+//
 // @author kuminz-re
 // @category Analysis
 // @keybinding
@@ -25,8 +32,16 @@ import ghidra.program.model.listing.FunctionIterator;
 import ghidra.program.model.listing.FunctionManager;
 import ghidra.program.model.listing.Listing;
 import ghidra.program.model.mem.Memory;
+import ghidra.program.model.symbol.RefType;
 import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceManager;
+import ghidra.program.model.symbol.SourceType;
+import ghidra.program.model.symbol.Symbol;
+import ghidra.program.model.symbol.SymbolTable;
+import ghidra.program.model.symbol.SymbolType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ApplyRomToRamThunks extends GhidraScript {
 
@@ -41,8 +56,9 @@ public class ApplyRomToRamThunks extends GhidraScript {
         Memory mem = currentProgram.getMemory();
         Listing listing = currentProgram.getListing();
         ReferenceManager rm = currentProgram.getReferenceManager();
+        SymbolTable st = currentProgram.getSymbolTable();
 
-        int made = 0, skipped = 0, failed = 0;
+        int made = 0, overridden = 0, skipped = 0, failed = 0;
         int txId = currentProgram.startTransaction("Apply ROM-to-RAM thunks");
         try {
             FunctionIterator it = fm.getFunctions(toAddr(ROM_LO), true);
@@ -60,11 +76,25 @@ public class ApplyRomToRamThunks extends GhidraScript {
                 // Only thunk addresses that are actually called from somewhere — that is what
                 // turns a func_0x003fxxxx() into a named call. Unreferenced RAM copies are left
                 // alone (no clutter).
-                boolean called = false;
+                List<Reference> calls = new ArrayList<>();
                 for (Reference ref : rm.getReferencesTo(ramAddr)) {
-                    if (ref.getReferenceType().isCall()) { called = true; break; }
+                    if (ref.getReferenceType().isCall()) calls.add(ref);
                 }
-                if (!called) { skipped++; continue; }
+                if (calls.isEmpty()) { skipped++; continue; }
+
+                // Application data named in the thunk's 4 bytes: keep the data, override the calls.
+                String dataName = namedLabelIn(st, ramAddr, 4);
+                if (dataName != null && fm.getFunctionAt(ramAddr) == null) {
+                    for (Reference call : calls) {
+                        Reference over = rm.addMemoryReference(call.getFromAddress(), romFunc.getEntryPoint(),
+                                RefType.CALL_OVERRIDE_UNCONDITIONAL, SourceType.USER_DEFINED, call.getOperandIndex());
+                        rm.setPrimary(over, true);
+                    }
+                    println(String.format("  Call override: %d call(s) to RAM 0x%06x -> ROM 0x%06x (%s); data %s kept",
+                            calls.size(), ram, rom, romFunc.getName(), dataName));
+                    overridden++;
+                    continue;
+                }
 
                 Function existing = fm.getFunctionAt(ramAddr);
                 if (existing != null) {
@@ -97,7 +127,20 @@ public class ApplyRomToRamThunks extends GhidraScript {
         }
 
         println("======================================================================");
-        println("ROM-TO-RAM THUNKS: made " + made + ", skipped " + skipped + ", failed " + failed);
+        println("ROM-TO-RAM THUNKS: made " + made + ", call overrides " + overridden + ", skipped " + skipped
+                + ", failed " + failed);
         println("======================================================================");
+    }
+
+    /** The first non-default label (a named data row) in [start, start + length), or null. */
+    private static String namedLabelIn(SymbolTable st, Address start, int length) {
+        for (int i = 0; i < length; i++) {
+            for (Symbol s : st.getSymbols(start.add(i))) {
+                if (s.getSymbolType() == SymbolType.LABEL && s.getSource() != SourceType.DEFAULT) {
+                    return s.getName();
+                }
+            }
+        }
+        return null;
     }
 }

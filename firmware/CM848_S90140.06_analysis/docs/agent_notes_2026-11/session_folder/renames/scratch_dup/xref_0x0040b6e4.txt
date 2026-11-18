@@ -1,0 +1,25 @@
+# xref 0x0040b6e4  (cruise_speed_target_working)  — 5 referencing function(s)
+# total: 5 read(s), 5 write(s)   width(s): word
+
+cm848_cruiseSpeedCommandStateMachine: 5r/4w
+  [store] word   40a70:	b0 67 00 00 	sth     r3,0(r7)
+  [store] word   40a9c:	b1 07 00 00 	sth     r8,0(r7)
+  [load ] word   40ad8:	a1 29 b6 e4 	lhz     r9,-18716(r9)
+  [load ] word   40be0:	a1 6b b6 e4 	lhz     r11,-18716(r11)
+  [load ] word   40c34:	a1 6b b6 e4 	lhz     r11,-18716(r11)
+  [load ] word   40c5c:	a3 ff b6 e4 	lhz     r31,-18716(r31)
+  [store] word   40c80:	b0 ff 00 00 	sth     r7,0(r31)
+  [store] word   40c9c:	b1 9f 00 00 	sth     r12,0(r31)
+  [load ] word   40ca4:	a3 ff b6 e4 	lhz     r31,-18716(r31)
+
+cm848_validateFuelRateTarget: 0r/1w
+  [store] word   40dcc:	b0 6c b6 e4 	sth     r3,-18716(r12)
+
+cm848_processOperatingModeFlags: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_processFuelDemandEnableFlag: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_processCalibration12FuelDemand: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

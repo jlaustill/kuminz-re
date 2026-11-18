@@ -1,0 +1,7 @@
+address,name,old_label,kind
+0x003fdb7a,adc_forced_reading_enable_bits_16_to_31_cal,DAT_003fdb7a,new row
+0x003fdb80,adc_forced_reading_enable_bits_64_to_79_cal,DAT_003fdb80,new row
+0x003fdb82,adc_forced_reading_enable_bits_80_to_95_cal,DAT_003fdb82,new row
+0x003fdb86,adc_forced_reading_enable_bits_112_to_127_cal,DAT_003fdb86,new row
+0x0040a68a,exhaust_metal_temperature,DAT_0040a68a,new row
+0x0040a690,egr_orifice_temperature_state,DAT_0040a690,new row

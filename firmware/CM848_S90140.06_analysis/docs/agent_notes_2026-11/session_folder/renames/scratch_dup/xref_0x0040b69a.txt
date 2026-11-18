@@ -1,0 +1,14 @@
+# xref 0x0040b69a  (cruise_speed_setpoint_b)  — 4 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): word
+
+cm848_processGovernorFuelRate: 1r/0w
+  [load ] word   40f44:	a1 8c b6 9a 	lhz     r12,-18790(r12)
+
+governorCruiseStateMachine: 0r/1w
+  [store] word   525070:	b3 eb b6 9a 	sth     r31,-18790(r11)
+
+cm848_processCalibration12FuelDemand: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_initFuelDemandLimits: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

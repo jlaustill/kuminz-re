@@ -1,0 +1,17 @@
+# xref 0x0040ad24  (engine_data_log_read_ptr)  — 5 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): dword
+
+mpc555_processJ1939TxBufferSend: 1r/0w
+  [load ] dword  53644:	81 5f 00 00 	lwz     r10,0(r31)
+
+cm848_j1939_system_init: 0r/1w
+  [store] dword  5391c8:	90 df 00 00 	stw     r6,0(r31)
+
+mpc555_queueCanReceiveMessage: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+mpc555_sendJ1939SingleFrame: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_dispatchJ1939ReceivedMessages: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

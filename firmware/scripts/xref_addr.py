@@ -6,7 +6,8 @@ each access's read/write + width across BOTH banks, and a reads/writes summary �
 Usage:
     python3 xref_addr.py <0xDATA_ADDR>
 
-Resolves the symbol name from global_variables.csv (falls back to Ghidra DAT_/_DAT_/PTR_DAT_),
+Resolves the symbol name from global_variables.csv (falls back to Ghidra's default labels: DAT_ /
+_DAT_ / PTR_DAT_ for untyped data, WORD_ARRAY_ / WORD_ / BYTE_ ... for data typed by a type-only row),
 greps cm848_rom.ghidra.cpp to find every referencing function, then runs the disasm width-check
 on each. A "NEVER WRITTEN" banner flags read-only addresses (ROM/EEPROM-loaded constants) — the
 read-only detector several naming agents asked for. CM848 / PowerPC big-endian only.
@@ -37,7 +38,10 @@ def referencing_functions(addr):
     """(name, [(start, fname)]) — functions whose .cpp body references the symbol at addr."""
     name = symbol_name(addr)
     a8 = f"{addr:08x}"
+    # Ghidra's default labels: untyped data, and data typed without a name (a type-only
+    # global_variables.csv row, e.g. a lookup table that renders WORD_ARRAY_0005fe88).
     toks = {f"DAT_{a8}", f"_DAT_{a8}", f"PTR_DAT_{a8}"}
+    toks |= {f"{kind}{suffix}_{a8}" for kind in ("BYTE", "WORD", "DWORD") for suffix in ("", "_ARRAY")}
     if name:
         toks.add(name)
     tokpat = re.compile(r"(?<![\w])(" + "|".join(re.escape(t) for t in toks) + r")(?![\w])")
@@ -58,7 +62,7 @@ def main():
     addr = int(sys.argv[1], 16)
     name, refs = referencing_functions(addr)
     funcs = D.function_table()
-    print(f"# xref 0x{addr:08x}  ({name or 'unnamed DAT_'})  — {len(refs)} referencing function(s)")
+    print(f"# xref 0x{addr:08x}  ({name or 'unnamed'})  — {len(refs)} referencing function(s)")
 
     total_r = total_w = 0
     widths = set()

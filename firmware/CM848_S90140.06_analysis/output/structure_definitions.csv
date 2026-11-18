@@ -80,7 +80,7 @@ protection_timer_state_t,0x0040b100,state2_timer,word,2,Level 2 protection state
 engine_crank_state_t,0x0040b80a,start_counter,word,2,Engine start attempt counter,,verified
 engine_crank_state_t,0x0040b80a,crank_state,word,2,Cranking state machine value,,verified
 engine_crank_state_t,0x0040b80a,cranking_flag,word,2,Engine currently cranking flag (1=cranking),,verified
-engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state (ENGINE_OPERATING_MODE enum),,verified
+engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state written by mpc555_updateEngineRunState - a different variable from engine_operating_mode,,verified
 # Engine Sync State - crankshaft synchronization status
 # Used by engine position sensor ISR and sync detection
 # Total size: 6 bytes (0x0040b87f-0x0040b884)
@@ -129,13 +129,6 @@ governor_output_t,0x0040aec2,governor_output_high,word,2,Governor output command
 # Injector Control State - fuel injector enable and timing control
 # Used by fuel injection output drivers
 # Total size: 7 bytes (0x0040c117-0x0040c11d)
-injector_control_t,0x0040c117,enable_ch0_7,byte,1,Injector enable bitmap channels 0-7,,verified
-injector_control_t,0x0040c117,enable_ch8_15,byte,1,Injector enable bitmap channels 8-15,,verified
-injector_control_t,0x0040c117,channel_status,byte,1,Output channel status flags,,verified
-injector_control_t,0x0040c117,timing_mode,byte,1,Injector timing mode selector,,verified
-injector_control_t,0x0040c117,output_ch0,byte,1,Channel 0 output state,,verified
-injector_control_t,0x0040c117,fault_flags,byte,1,Injector fault detection flags,,verified
-injector_control_t,0x0040c117,output_ch1,byte,1,Channel 1 output state,,verified
 # J1850 PCI link state (was can_rx_state_t - not J1939/CAN) - reviewed 2026-11-11
 # Indexes into pci_receive_message_table / pci_transmit_message_table for the frame being received
 # Total size: 8 bytes (0x0040b34e-0x0040b355); all four leading fields are byte-accessed (lbz/stb)
@@ -196,22 +189,22 @@ system_status_flags_t,0x003fe974,fault_detected_bits_320_to_335,word,2,Word 20 o
 # Speed Control State - vehicle/engine speed setpoints and limits
 # Used by processEngineRpmTarget and speed governor
 # Total size: 22 bytes (0x0040a3ca-0x0040a3df)
-rpm_governor_state_t,0x0040a3ca,commanded_rpm,word,2,Governor output RPM,,verified
-rpm_governor_state_t,0x0040a3ca,reserved_02,word,2,Gap (0xa3cc),,needs_review
-rpm_governor_state_t,0x0040a3ca,reserved_04,word,2,Gap (0xa3ce),,needs_review
-rpm_governor_state_t,0x0040a3ca,reserved_06,word,2,Gap (0xa3d0),,needs_review
-rpm_governor_state_t,0x0040a3ca,lower_rpm_limit,word,2,Bottom of governor droop band,,verified
-rpm_governor_state_t,0x0040a3ca,limit_adjustment,word,2,Pressure-based limit trim,,verified
-rpm_governor_state_t,0x0040a3ca,reserved_0c,word,2,Gap (0xa3d6),,needs_review
-rpm_governor_state_t,0x0040a3ca,reserved_0e,word,2,Gap (0xa3d8),,needs_review
-rpm_governor_state_t,0x0040a3ca,desired_rpm,word,2,Target RPM setpoint,,verified
-rpm_governor_state_t,0x0040a3ca,adjustment_delta,word,2,Pressure-based setpoint trim,,verified
-rpm_governor_state_t,0x0040a3ca,base_rpm_lookup,word,2,Base RPM from calibration table before adjustments,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,request_half_duty_counts,word,2,Governor output RPM,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,selected_control_term,word,2,Gap (0xa3cc),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,first_error_proportional_derivative_term,word,2,Gap (0xa3ce),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,first_error_gain,word,2,Gap (0xa3d0),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,floor_half_duty_counts,word,2,Bottom of governor droop band,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,floor_altitude_adjustment_half_duty_counts,word,2,Pressure-based limit trim,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,ceiling_grid_lookup_half_duty_counts,word,2,Gap (0xa3d6),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,floor_grid_lookup_half_duty_counts,word,2,Gap (0xa3d8),,needs_review
+wastegate_duty_controller_state_t,0x0040a3ca,ceiling_half_duty_counts,word,2,Target RPM setpoint,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,ceiling_altitude_adjustment_half_duty_counts,word,2,Pressure-based setpoint trim,,verified
+wastegate_duty_controller_state_t,0x0040a3ca,engine_speed_ceiling_half_duty_counts,word,2,Base RPM from calibration table before adjustments,,verified
 # Throttle Fuel Trim State - throttle-based fuel calculations
 # Used by calculateFuelDemandValue and throttle processing
 # Total size: 24 bytes (0x0040a3ea-0x0040a401)
-throttle_fuel_trim_t,0x0040a3ea,efficiency_filtered,word,2,Throttle efficiency filtered value,,verified
-throttle_fuel_trim_t,0x0040a3ea,fuel_demand_final,word,2,Final throttle-based fuel demand,,verified
+throttle_fuel_trim_t,0x0040a3ea,residual_oxygen_fraction_delayed_filtered,word,2,Throttle efficiency filtered value,,verified
+throttle_fuel_trim_t,0x0040a3ea,egr_fraction_actual,word,2,Final throttle-based fuel demand,,verified
 throttle_fuel_trim_t,0x0040a3ea,final_trim,word,2,Final fuel trim value,,verified
 throttle_fuel_trim_t,0x0040a3ea,load_adjusted,word,2,Load-adjusted fuel value,,verified
 throttle_fuel_trim_t,0x0040a3ea,load_based_trim,word,2,Load-based fuel trim,,verified
@@ -225,12 +218,12 @@ throttle_fuel_trim_t,0x0040a3ea,reserved_16,word,2,Gap,,needs_review
 # Fuel Blend State - fuel demand blending and mode selection
 # Used by calculateFuelBlendModeSelection
 # Total size: 12 bytes (0x0040a494-0x0040a49f)
-fuel_blend_state_t,0x0040a494,blend_mode,word,2,Fuel blend mode selector,,verified
-fuel_blend_state_t,0x0040a494,blend_enable,word,2,enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100,,needs_review
-fuel_blend_state_t,0x0040a494,demand_above_threshold,word,2,1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal,,needs_review
-fuel_blend_state_t,0x0040a494,bypass_load_correction,word,2,dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active,,needs_review
-fuel_blend_state_t,0x0040a494,fuel_demand_snapshot,word,2,snapshot of fuel_demand_arbitrated_snapshot,,needs_review
-fuel_blend_state_t,0x0040a494,blend_weight,word,2,Fuel blend weight factor (0-100%),,verified
+combustion_reference_state_t,0x0040a494,alpha_percent,word,2,Fuel blend mode selector,,verified
+combustion_reference_state_t,0x0040a494,egr_off_flag,word,2,enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100,,needs_review
+combustion_reference_state_t,0x0040a494,gross_fuel_timing_adjustment_active_flag,word,2,1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal,,needs_review
+combustion_reference_state_t,0x0040a494,injection_timing_fuel_limited_adjustment,word,2,dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active,,needs_review
+combustion_reference_state_t,0x0040a494,injection_quantity_gross_before_timing_adjustment,word,2,snapshot of fuel_demand_arbitrated_snapshot,,needs_review
+combustion_reference_state_t,0x0040a494,chi_hundredths,word,2,Fuel blend weight factor (0-100%),,verified
 # Boost Pressure State - turbocharger boost control values
 # Used by boostBasedFuelModifier and calculateBoostPressureOffset
 # Total size: 16 bytes (0x0040a406-0x0040a415)
@@ -240,20 +233,19 @@ boost_pressure_state_t,0x0040a406,lookup_result,word,2,Boost table lookup result
 boost_pressure_state_t,0x0040a406,computed_value,word,2,Computed boost pressure value,,verified
 boost_pressure_state_t,0x0040a406,pressure_ratio,word,2,Boost pressure ratio,,verified
 boost_pressure_state_t,0x0040a406,reserved_0a,word,2,Gap,,needs_review
-boost_pressure_state_t,0x0040a406,reserved_0c,word,2,Gap,,needs_review
+boost_pressure_state_t,0x0040a406,fresh_air_mass_flow_filtered,word,2,Gap,,needs_review
 boost_pressure_state_t,0x0040a406,reserved_0e,word,2,Gap,,needs_review
-# Torque Limit Arbitration - multi-source torque limit selection
-# Used by fuel limit arbitration and protection systems
-# Total size: 8 bytes (0x0040a2f6-0x0040a2fd)
-torque_limit_arb_t,0x0040a2f6,source_priority,word,2,Limit source priority ranking,,verified
-torque_limit_arb_t,0x0040a2f6,source_active,word,2,Currently active limit source ID,,verified
-torque_limit_arb_t,0x0040a2f6,limit_source,word,2,Torque limit source selector,,verified
-torque_limit_arb_t,0x0040a2f6,fuel_minimum,word,2,Minimum fuel limit from arbitration,,verified
-# Governor PID State - PID controller variables for speed control
-# Used by governor control loop
-# Total size: 10 bytes (0x0040af5a-0x0040af63)
-governor_pid_t,0x0040af5a,proportional_gain,word,2,PID proportional gain value,,verified
-governor_pid_t,0x0040af5a,integral_term,word,2,PID integral accumulator,,verified
+# Engine Speed Limit Arbitration - lowest-wins selection of the engine speed limit (the e2m HSG reference speed state block)
+# Written by cm848_selectEngineSpeedLimit and the source functions - read by the fuel limit and governor code
+# Total size: 6 bytes (0x0040a2f8-0x0040a2fd)
+engine_speed_limit_arbitration_t,0x0040a2f8,limiting_source_number,word,2,Number of the engine speed limit source that wins the arbitration (e2m HSG_Ref_Speed_State),,verified
+engine_speed_limit_arbitration_t,0x0040a2f8,applied_speed_limit,word,2,Engine speed limit applied by the governor in 0.125 rpm counts - the ramped limit or the ramped limit plus the droop term capped by the droop cap (e2m HSG_Reference_Speed),,verified
+engine_speed_limit_arbitration_t,0x0040a2f8,lowest_source_speed_limit,word,2,Lowest engine speed limit of the sources in the current pass in 0.125 rpm counts - reset to engine_speed_limit_default_cal at the end of cm848_selectEngineSpeedLimit (e2m HSG_Ref_Speed_Before_Droop),,verified
+# Operating Mode Governor Output - the fuel demand of the engine operating mode governor as the output stages see it
+# Written by cm848_runOperatingModeSpeedGovernor and cm848_updateGovernorFromProtection (was governor_pid_t: nothing in it is a PID term)
+# Total size: 4 bytes (0x0040af5a-0x0040af5d)
+operating_mode_governor_output_t,0x0040af5a,fuel_demand,word,2,Fuel demand of the engine operating mode governor as the output stages see it (engine_operating_mode_fuel_demand or the protection limit) (was proportional_gain),,verified
+operating_mode_governor_output_t,0x0040af5a,mode_code,word,2,Copy of engine_operating_mode (1 2 5 6 7 8 30 37 38) or 4 when the output is replaced by the limit in cm848_updateGovernorFromProtection (was integral_term),,verified
 # Protection Lockout State - thermal/load/rpm lockout flags
 # Used by protection system to prevent rapid cycling
 # Total size: 12 bytes (0x0040b11c-0x0040b127)
@@ -300,12 +292,8 @@ insite_protocol_t,,response_data,byte,6,Live parameter response data,,verified
 
 # Table Interpolation Arguments - generic lookup table input structure
 # Note: CM848 passes these as function parameters, not a structure pointer
-table_interp_args_t,,current_index,word,2,Current interpolation index into table,,verified
-table_interp_args_t,,x_axis_ptr,dword,4,Pointer to X-axis table (input values),,verified
-table_interp_args_t,,input_value,word,2,Input value for table lookup,,verified
-table_interp_args_t,,y_axis_ptr,dword,4,Pointer to Y-axis table (output values),,verified
 # Per-sensor-channel calibration config (ROM). Pointer-passed to sensorChannelTypeB_configInit/_update; field offsets verified from the threshold/debounce logic at 0x005012dc
-sensor_channel_config_t,,config_word0,word,2,Offset 0 - not accessed by sensorChannelTypeB; purpose unconfirmed,,review
+sensor_channel_config_t,,filter_coefficient,word,2,EMA coefficient: the weight of the previous filtered value in 1/65536 (0 = no filtering) - the channel's ema_filter_state_t.coefficient points here (was config_word0),,verified
 sensor_channel_config_t,,default_value,word,2,Nominal/fault fallback value (written to filtered output and state_ptr[1]),,verified
 sensor_channel_config_t,,high_threshold,word,2,Upper limit - sensor value above this trips the high fault path,,verified
 sensor_channel_config_t,,low_threshold,word,2,Lower limit - sensor value below this trips the low fault path,,verified
@@ -313,6 +301,17 @@ sensor_channel_config_t,,debounce_step,word,2,Per-cycle increment added to the d
 sensor_channel_config_t,,recovery_decrement,word,2,Per-cycle decrement applied to the debounce counter when back in range,,verified
 sensor_channel_config_t,,debounce_limit,word,2,Debounce counter target - reached = fault confirmed,,verified
 sensor_channel_config_t,,debounce_clear_threshold,word,2,Counter at or below this clears the confirmed-fault flags,,verified
+# sensor_channel_state_t: the 12-byte RAM state of one sensor channel (sensorChannelConfigInit / updateSensorChannelWithConfig / sensorChannelTypeB_*)
+sensor_channel_state_t,,raw_adc_counts,word,2,QADC result read this pass (sensor_channel_diag_override while diagnostics override the channel),,verified
+sensor_channel_state_t,,value,word,2,Engineering value: the table lookup of lookup_input (config default_value while the channel is disabled or faulted) - filtered into sensor_channel_filtered_output[channel],,verified
+sensor_channel_state_t,,debounce_count,word,2,Fault debounce: + debounce_step toward debounce_limit while out of range / - recovery_decrement back in range,,verified
+sensor_channel_state_t,,held_value,word,2,Output while the channel is held (its fuel_demand_feature_flags bit set) - config default_value from the boot pass,,verified
+sensor_channel_state_t,,held_value_source_priority,byte,1,Priority of the source that last wrote held_value - the J1939 input layer arbitrates with it (the accelerator pedal channel 13 - cm848_processJ1939AcceleratorPedalPosition); not used by the sensor-channel functions,,verified
+sensor_channel_state_t,,spare,byte,1,Not accessed,,verified
+sensor_channel_state_t,,lookup_input,word,2,Table input: raw x sensor_channel_ratio_scale / the supply channel's filtered output (capped at 0x3ff) or the raw reading for type-0 channels,,verified
+# ema_filter_state_t: exponentialMovingAverage's state - each pass the accumulator moves (65536 - coefficient) / 65536 of the way to the new value
+ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient (a sensor channel's config filter_coefficient): the weight of the previous value in 1/65536 - 0 = no filtering,,verified
+ema_filter_state_t,,accumulator,dword,4,Q16.16 filtered value - its integer part is the output,,verified
 
 # Q16.16 Fixed Point Structure - 32-bit with 16-bit integer and fractional parts
 # Used for PID controllers and accumulators needing fractional precision
@@ -754,11 +753,11 @@ j1939_dm13_requester_slot_t,0x0040addc,stop_broadcast_timer,word,2,Cummins DM13B
 # Set 1 (0x0040a502): Raw fuel demand table lookup results
 # Set 2 (0x0040a50c): RPM-corrected values via fuelDemandRpmCorrection()
 # lookupProtectionFuelDemand fills both sets sequentially (line 12544)
-protection_threshold_set_t,0x0040a502,threshold_scaled,word,2,Scaled protection threshold from table lookup,,verified
-protection_threshold_set_t,0x0040a502,recovery_threshold,word,2,Recovery/hysteresis exit threshold,,verified
-protection_threshold_set_t,0x0040a502,hysteresis,word,2,Protection hysteresis band value,,verified
-protection_threshold_set_t,0x0040a502,threshold_scaled_alt,word,2,Alternate scaled threshold (same input different context),,verified
-protection_threshold_set_t,0x0040a502,threshold_base,word,2,Base protection threshold before correction,,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_1,word,2,Scaled protection threshold from table lookup,,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_2,word,2,Recovery/hysteresis exit threshold,,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_3,word,2,Protection hysteresis band value,,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_4,word,2,Alternate scaled threshold (same input different context),,verified
+combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_5,word,2,Base protection threshold before correction,,verified
 
 # ============================================================================
 # Fault Entry (Freeze Frame) - DTC snapshot of engine state at fault activation
@@ -769,42 +768,33 @@ protection_threshold_set_t,0x0040a502,threshold_base,word,2,Base protection thre
 # Iteration: addFaultToActiveList (0x0001cea4) uses pbVar3 += 0x30 with limit < 8
 # findFaultByTypeAndSeverity (0x0001ce28) uses puVar3 = &DAT_003fe674, puVar3 += 0xc (as dword*)
 # Note: fault_entry_table_base (0x003fe678) is at offset +4 (the fault_code byte), not struct base
-fault_entry_t,0x003fe674,timing_snapshot,dword,4,Fuel timing advance value at capture time,,verified
+fault_entry_t,0x003fe674,key_on_hour_meter,dword,4,Fuel timing advance value at capture time,,verified
 fault_entry_t,0x003fe674,fault_code,byte,1,Fault code ID (0xAA = empty/available slot),,verified
 fault_entry_t,0x003fe674,vehicle_speed,word,2,Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim),,verified
 fault_entry_t,0x003fe674,target_rpm,word,2,Target engine RPM at fault time,,verified
-fault_entry_t,0x003fe674,sensor_scale_1,word,2,Sensor scale factor 1,,verified
+fault_entry_t,0x003fe674,diagnostic_fault_flags_a,word,2,Sensor scale factor 1,,verified
 fault_entry_t,0x003fe674,engine_load_at_current_speed,word,2,engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status),,verified
 fault_entry_t,0x003fe674,accelerator_pedal_position,word,2,accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high),,verified
 fault_entry_t,0x003fe674,intake_manifold_pressure,word,2,intake_manifold_pressure_in_use at capture (was protection_low),,verified
 fault_entry_t,0x003fe674,coolant_temperature,word,2,coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1),,verified
 fault_entry_t,0x003fe674,intake_manifold_temperature,word,2,intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2),,verified
 fault_entry_t,0x003fe674,oil_pressure,word,2,oil_pressure_sensor_filtered at capture (was timing_param_3),,verified
-fault_entry_t,0x003fe674,sensor_scale_2,word,2,Sensor scale factor 2,,verified
+fault_entry_t,0x003fe674,diagnostic_fault_flags_b,word,2,Sensor scale factor 2,,verified
 fault_entry_t,0x003fe674,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
-fault_entry_t,0x003fe674,pressure_adj,byte,1,Pressure fuel adjustment byte,,verified
+fault_entry_t,0x003fe674,governor_mode_code,byte,1,Pressure fuel adjustment byte,,verified
 fault_entry_t,0x003fe674,battery_voltage,word,2,Battery voltage reading at fault time,,verified
-fault_entry_t,0x003fe674,load_throttle,word,2,Processed load/throttle value,,verified
-fault_entry_t,0x003fe674,torque_limit,word,2,Torque limit factor at fault time,,verified
-fault_entry_t,0x003fe674,diagnostic_word_1,word,2,Diagnostic data word 1,,verified
-fault_entry_t,0x003fe674,diagnostic_byte_3,byte,1,Diagnostic data byte 3,,verified
-fault_entry_t,0x003fe674,diagnostic_byte_4,byte,1,Diagnostic data byte 4,,verified
-fault_entry_t,0x003fe674,diagnostic_word_2,word,2,Diagnostic data word 2,,verified
-fault_entry_t,0x003fe674,diagnostic_word_3,word,2,Diagnostic data word 3,,verified
+fault_entry_t,0x003fe674,fuel_demand_computed,word,2,Processed load/throttle value,,verified
+fault_entry_t,0x003fe674,main_injection_timing,word,2,Torque limit factor at fault time,,verified
+fault_entry_t,0x003fe674,fuel_metering_feedback,word,2,Diagnostic data word 1,,verified
+fault_entry_t,0x003fe674,fuel_metering_feedback_fault,byte,1,Diagnostic data byte 3,,verified
+fault_entry_t,0x003fe674,fuel_pressure_diagnostic,byte,1,Diagnostic data byte 4,,verified
+fault_entry_t,0x003fe674,fuel_pressure_sensor_voltage,word,2,Diagnostic data word 2,,verified
+fault_entry_t,0x003fe674,fuel_pressure_setpoint,word,2,Diagnostic data word 3,,verified
 fault_entry_t,0x003fe674,fuel_temperature,word,2,fuel_temperature_sensor_filtered at capture (1/64 deg F) - not coolant (was coolant_temp_raw),,verified
 fault_entry_t,0x003fe674,status_flags,word,2,Fault entry status/severity flags (bit 0 = newly active),,verified
 # Boost In Range (BIR) Configuration - ROM calibration thresholds for P0069/Fault 433
 # Loaded from EEPROM at boot, maps to BIR parameters (DGBSHTTD, DGSTBSTD, DGLWTD, etc.)
 # Total size: 18 bytes (0x0005c994-0x0005c9a5)
-boost_in_range_config_t,0x0005c994,deviation_count_threshold,word,2,BIR deviation count threshold for setting fault,,needs_review
-boost_in_range_config_t,0x0005c994,load_threshold,word,2,BIR load threshold for high boost check (maps to DGLWTD),,needs_review
-boost_in_range_config_t,0x0005c994,unknown1,word,2,BIR calibration value (unknown purpose),,needs_review
-boost_in_range_config_t,0x0005c994,operating_time_threshold,word,2,BIR operating time threshold for fault (maps to DGBSHTTD),,needs_review
-boost_in_range_config_t,0x0005c994,timing_threshold,word,2,BIR injection timing threshold,,needs_review
-boost_in_range_config_t,0x0005c994,high_boost_threshold,word,2,BIR high boost pressure threshold (maps to DGSTBSTD),,needs_review
-boost_in_range_config_t,0x0005c994,speed_threshold,word,2,BIR RPM threshold (maps to DGLSRSOF),,needs_review
-boost_in_range_config_t,0x0005c994,unknown2,word,2,BIR calibration value (gap at 0x0005c9a2),,needs_review
-boost_in_range_config_t,0x0005c994,consecutive_high_threshold,word,2,BIR consecutive high count before deviation increment,,needs_review
 # Boost In Range (BIR) State - RAM working state for BIR diagnostic
 # Total size: 10 bytes (0x003fd064-0x003fd06d)
 # Boost In Range (BIR) Counters - RAM fault accumulation counters
@@ -860,9 +850,34 @@ siu_gpio_data_register_t,,byte_0,byte,1,Bits 31-24: lines 24-31 in SIU_SGPIODT1 
 siu_gpio_data_register_t,,byte_1,byte,1,Bits 23-16: lines 32-39 in SIU_SGPIODT1 / lines 64-71 in SIU_SGPIODT2,,verified
 siu_gpio_data_register_t,,byte_2,byte,1,Bits 15-8: lines 40-47 in SIU_SGPIODT1 / lines 72-79 in SIU_SGPIODT2,,verified
 siu_gpio_data_register_t,,byte_3,byte,1,Bits 7-0: lines 48-55 in SIU_SGPIODT1 / lines 80-87 in SIU_SGPIODT2,,verified
+# discrete_line_image_t: one byte per 8 discrete lines (line N = byte N/8 bit N%8); three instances:
+#   output_line_read_back 0x40c0e4 / input_line_image 0x40c0f8 / output_line_state 0x40c10c
+discrete_line_image_t,,lines_0_to_7,byte,1,Lines 0-7 (bit = line - 0),,verified
+discrete_line_image_t,,lines_8_to_15,byte,1,Lines 8-15 (bit = line - 8),,verified
+discrete_line_image_t,,lines_16_to_23,byte,1,Lines 16-23 (bit = line - 16),,verified
+discrete_line_image_t,,lines_24_to_31,byte,1,Lines 24-31 (bit = line - 24),,verified
+discrete_line_image_t,,lines_32_to_39,byte,1,Lines 32-39 (bit = line - 32),,verified
+discrete_line_image_t,,lines_40_to_47,byte,1,Lines 40-47 (bit = line - 40),,verified
+discrete_line_image_t,,lines_48_to_55,byte,1,Lines 48-55 (bit = line - 48),,verified
+discrete_line_image_t,,lines_56_to_63,byte,1,Lines 56-63 (bit = line - 56),,verified
+discrete_line_image_t,,lines_64_to_71,byte,1,Lines 64-71 (bit = line - 64),,verified
+discrete_line_image_t,,lines_72_to_79,byte,1,Lines 72-79 (bit = line - 72),,verified
+discrete_line_image_t,,lines_80_to_87,byte,1,Lines 80-87 (bit = line - 80),,verified
+discrete_line_image_t,,lines_88_to_95,byte,1,Lines 88-95 (bit = line - 88),,verified
+discrete_line_image_t,,lines_96_to_103,byte,1,Lines 96-103 (bit = line - 96),,verified
+discrete_line_image_t,,lines_104_to_111,byte,1,Lines 104-111 (bit = line - 104),,verified
+discrete_line_image_t,,lines_112_to_119,byte,1,Lines 112-119 (bit = line - 112),,verified
+discrete_line_image_t,,lines_120_to_127,byte,1,Lines 120-127 (bit = line - 120),,verified
+discrete_line_image_t,,lines_128_to_135,byte,1,Lines 128-135 (bit = line - 128),,verified
+discrete_line_image_t,,lines_136_to_143,byte,1,Lines 136-143 (bit = line - 136),,verified
+discrete_line_image_t,,lines_144_to_151,byte,1,Lines 144-151 (bit = line - 144),,verified
+discrete_line_image_t,,lines_152_to_159,byte,1,Lines 152-159 (bit = line - 152),,verified
+# mios_port_data_register_t: byte view of a copy of the MIOS parallel port data register (big-endian)
+mios_port_data_register_t,,byte_0,byte,1,Bits 15-8 (the byte at the lower address): input lines 16-23,,verified
+mios_port_data_register_t,,byte_1,byte,1,Bits 7-0: input lines 8-15,,verified
 # ETC1 / Governor State Block - combined ETC1 handler and governor control state
 # Used by cm848_j1939ProcessTorqueSpeedControl, torqueControlModeHandler,
-#   cm848_j1939ProcessGovernorRequest, cm848_processGovernorModeTransition
+#   cm848_processEngineRetarderTsc1Request (was cm848_j1939ProcessGovernorRequest), cm848_processGovernorModeTransition
 # Total size: 86 bytes (0x0040adf8-0x0040ae4d)
 etc1_governor_state_t,0x0040adf8,governor_mode,word,2,GOV_DISABLED=0 GOV_SPEED_CONTROL=1 GOV_TORQUE_CONTROL=2 GOV_SPEED_TORQUE=3,,verified
 etc1_governor_state_t,0x0040adf8,torque_limit_mode_select,word,2,Selects which torque limit algorithm is active,,verified
@@ -989,14 +1004,25 @@ mios_mpwmsm_t,0x00306000,PERR,word,2,Period Register (sets PWM frequency),,verif
 mios_mpwmsm_t,0x00306000,PULR,word,2,Pulse Width Register (sets duty cycle),,verified
 mios_mpwmsm_t,0x00306000,CNTR,word,2,Counter Register (current count value),,verified
 mios_mpwmsm_t,0x00306000,SCR,word,2,Status/Control Register (0x9=enable 0x4ff=period-mode),,verified
+mios_mpwmsm_t,0x00306008,,,,MPWMSM1 instance - marker only (was mios_mpwmsm1_t),,verified
+mios_mpwmsm_t,0x00306010,,,,MPWMSM2 instance - marker only (was mios_mpwmsm2_t),,verified
+mios_mpwmsm_t,0x00306018,,,,MPWMSM3 instance - marker only (was mios_mpwmsm3_t),,verified
+mios_mpwmsm_t,0x00306080,,,,MPWMSM16 instance - marker only (was mios_mpwmsm16_t),,verified
+mios_mpwmsm_t,0x00306088,,,,MPWMSM17 instance - marker only (was mios_mpwmsm17_t),,verified
+mios_mpwmsm_t,0x00306090,,,,MPWMSM18 instance - marker only (was mios_mpwmsm18_t),,verified
+mios_mpwmsm_t,0x00306098,,,,MPWMSM19 instance - marker only (was mios_mpwmsm19_t),,verified
 # =============================================================================
 # MIOS Double Action Submodule (MDASM) - 4 x u16 = 8 bytes
 # Functions: mpc555_miosEnableChannelPwm, mpc555_miosSetChannelPwmDuty, mpc555_miosSetChannelPwmPeriod
 # Usage: param_1 = &MIOS_MDASMx_AR; *(param_1+6) = SCRD write (0x9=enable)
-mios_mdasm_t,0x00306058,AR,word,2,A Register (capture/compare value A),,verified
-mios_mdasm_t,0x00306058,BR,word,2,B Register (capture/compare value B),,verified
+mios_mdasm_t,0x00306058,AR_BR,dword,4,A and B registers as one 32-bit pair (AR = high half / BR = low half): the drivers read and write them with one access - edge captures in input mode / the PWM compare pair in output mode,,verified
 mios_mdasm_t,0x00306058,XR,word,2,X Register (extended capture/status value),,verified
 mios_mdasm_t,0x00306058,SCRD,word,2,Status/Control Register D (0x9=enable output),,verified
+mios_mdasm_t,0x00306060,,,,MDASM12 instance - marker only (was mios_mdasm12_t),,verified
+mios_mdasm_t,0x00306068,,,,MDASM13 instance - marker only (was byte-typed register rows),,verified
+mios_mdasm_t,0x00306070,,,,MDASM14 instance - marker only (was byte-typed register rows),,verified
+mios_mdasm_t,0x00306078,,,,MDASM15 instance - marker only (was mios_mdasm15_t),,verified
+mios_mdasm_t,0x003060d8,,,,MDASM27 instance - marker only (was mios_mdasm27_t) - SCRD 0x405 = enable / 0x205 = mode,,verified
 # =============================================================================
 # MIOS Modulus Counter Submodule (MMCSM) - 4 x u16 = 8 bytes: type mios_mmcsm_b_t (defined further down)
 # MMCSM6 = mios_mmcsm_cnt at 0x306030 and MMCSM22 = mios_mmcsm22 at 0x3060b0 (submodule n at 0x306000 + 8 x n).
@@ -1116,48 +1142,12 @@ tpub_ch14_params_t,0x003045e0,PARAM7,word,2,TPUB Channel 14 parameter 7,,verifie
 # MDASM  = Double Action Submodule (AR/BR/XR/SCRD) - MDASM12 / MDASM15 here; MDASM11 and 28-31 use mios_mdasm_t
 # Per-channel types predate the marker-row pattern; they are kept (renamed in place) so decompiler casts stay stable
 # =============================================================================
-mios_mpwmsm1_t,0x00306008,PERR,word,2,MPWMSM1 Period Register,,verified
-mios_mpwmsm1_t,0x00306008,PULR,word,2,MPWMSM1 Pulse Width Register,,verified
-mios_mpwmsm1_t,0x00306008,CNTR,word,2,MPWMSM1 Counter Register,,verified
-mios_mpwmsm1_t,0x00306008,SCR,word,2,MPWMSM1 Status/Control Register,,verified
-mios_mpwmsm2_t,0x00306010,PERR,word,2,MPWMSM2 Period Register,,verified
-mios_mpwmsm2_t,0x00306010,PULR,word,2,MPWMSM2 Pulse Width Register,,verified
-mios_mpwmsm2_t,0x00306010,CNTR,word,2,MPWMSM2 Counter Register,,verified
-mios_mpwmsm2_t,0x00306010,SCR,word,2,MPWMSM2 Status/Control Register,,verified
-mios_mpwmsm3_t,0x00306018,PERR,word,2,MPWMSM3 Period Register,,verified
-mios_mpwmsm3_t,0x00306018,PULR,word,2,MPWMSM3 Pulse Width Register,,verified
-mios_mpwmsm3_t,0x00306018,CNTR,word,2,MPWMSM3 Counter Register,,verified
-mios_mpwmsm3_t,0x00306018,SCR,word,2,MPWMSM3 Status/Control Register,,verified
 # MMCSM second instance (slot at 0x306030 = MIOS_base+0x30; channel number from labels)
 mios_mmcsm_b_t,0x00306030,CNT,word,2,Up-Counter Register,,verified
 mios_mmcsm_b_t,0x00306030,ML,word,2,Modulus Latch Register (period/reload value),,verified
 mios_mmcsm_b_t,0x00306030,_pad,word,2,Reserved/unused padding,,verified
 mios_mmcsm_b_t,0x00306030,SCRD,word,2,Status/Control Register D,,verified
 mios_mmcsm_b_t,0x003060b0,,,,MMCSM22 instance - marker only,,verified
-mios_mdasm12_t,0x00306060,AR,word,2,MDASM12 A Register,,verified
-mios_mdasm12_t,0x00306060,BR,word,2,MDASM12 B Register,,verified
-mios_mdasm12_t,0x00306060,XR,word,2,MDASM12 X Register (extended status),,verified
-mios_mdasm12_t,0x00306060,SCRD,word,2,MDASM12 Status/Control Register D,,verified
-mios_mdasm15_t,0x00306078,AR,word,2,MDASM15 A Register,,verified
-mios_mdasm15_t,0x00306078,BR,word,2,MDASM15 B Register,,verified
-mios_mdasm15_t,0x00306078,XR,word,2,MDASM15 X Register,,verified
-mios_mdasm15_t,0x00306078,SCRD,word,2,MDASM15 Status/Control Register D,,verified
-mios_mpwmsm16_t,0x00306080,PERR,word,2,MPWMSM16 Period Register,,verified
-mios_mpwmsm16_t,0x00306080,PULR,word,2,MPWMSM16 Pulse Width Register,,verified
-mios_mpwmsm16_t,0x00306080,CNTR,word,2,MPWMSM16 Counter Register,,verified
-mios_mpwmsm16_t,0x00306080,SCR,word,2,MPWMSM16 Status/Control Register,,verified
-mios_mpwmsm17_t,0x00306088,PERR,word,2,MPWMSM17 Period Register,,verified
-mios_mpwmsm17_t,0x00306088,PULR,word,2,MPWMSM17 Pulse Width Register,,verified
-mios_mpwmsm17_t,0x00306088,CNTR,word,2,MPWMSM17 Counter Register,,verified
-mios_mpwmsm17_t,0x00306088,SCR,word,2,MPWMSM17 Status/Control Register,,verified
-mios_mpwmsm18_t,0x00306090,PERR,word,2,MPWMSM18 Period Register,,verified
-mios_mpwmsm18_t,0x00306090,PULR,word,2,MPWMSM18 Pulse Width Register,,verified
-mios_mpwmsm18_t,0x00306090,CNTR,word,2,MPWMSM18 Counter Register,,verified
-mios_mpwmsm18_t,0x00306090,SCR,word,2,MPWMSM18 Status/Control Register,,verified
-mios_mpwmsm19_t,0x00306098,PERR,word,2,MPWMSM19 Period Register,,verified
-mios_mpwmsm19_t,0x00306098,PULR,word,2,MPWMSM19 Pulse Width Register,,verified
-mios_mpwmsm19_t,0x00306098,CNTR,word,2,MPWMSM19 Counter Register,,verified
-mios_mpwmsm19_t,0x00306098,SCR,word,2,MPWMSM19 Status/Control Register,,verified
 # =============================================================================
 # TouCAN A Message Buffer structs - 16 bytes each (8 x u16)
 # MB area starts at TouCAN_A_base + 0x80; each MB = 16 bytes (spacing confirmed)
@@ -1406,10 +1396,6 @@ boot_state_t,0x003034a0,boot_phase,word,2,Boot phase counter (cycles 0-3 per PIS
 # Injector channel 0x7d - consecutive to MDASM15 (0x7c) in the switch dispatch
 # SCRD at offset 6 (0x3060de): written 0x405/0x205 for injector timing enable
 # =============================================================================
-mios_mdasm27_t,0x003060d8,AR,word,2,A Register (capture/compare value A),,verified
-mios_mdasm27_t,0x003060d8,BR,word,2,B Register (capture/compare value B),,verified
-mios_mdasm27_t,0x003060d8,XR,word,2,X Register (extended capture/status value),,verified
-mios_mdasm27_t,0x003060d8,SCRD,word,2,Status/Control Register D (0x405=enable / 0x205=mode),,verified
 # =============================================================================
 # MIOS1 extended control registers @ 0x306100
 # Unused MIOS1 sub-register file space repurposed as firmware RAM
@@ -1417,8 +1403,8 @@ mios_mdasm27_t,0x003060d8,SCRD,word,2,Status/Control Register D (0x405=enable / 
 # ctrl_b: initialized 0x2000 at startup; bits 0x8200 by flash init
 # Also buffers DM1 lamp status bytes during J1939 DM1 transmission
 # =============================================================================
-mios1_ext_ctrl_t,0x00306100,ctrl_a,word,2,Control/status word A (bit 0x2000=capability flag),,verified
-mios1_ext_ctrl_t,0x00306100,ctrl_b,word,2,Control/status word B (startup: 0x2000),,verified
+mios_mpiosm_t,0x00306100,data,word,2,Port data register: pin n = bit n (whole-word read-modify-write by the output line drivers),,verified
+mios_mpiosm_t,0x00306100,data_direction,word,2,Port data direction register: bit n set = pin n is an output (0x2000 at startup / 0x200 / 0x8200 before driving pins 9 and 15),,verified
 # =============================================================================
 # MIOS1 ISR flag and enable registers @ 0x306c00
 # MBAR + 0xEC00 = 0x306C00 - MIOS1 interrupt service registers

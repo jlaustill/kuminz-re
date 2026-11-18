@@ -1,0 +1,12 @@
+ERROR REPORT SCRIPT ERROR:  (HeadlessAnalyzer) ghidra.program.model.mem.MemoryConflictException: Part of range (00300000, 00307fff) already exists in memory.
+INFO  SetCallingConvention.java>   cm848_anyJ1939InputDataErrorActive @ 00509e58 (GhidraScript)  
+INFO  SetCallingConvention.java>   cm848_clearJ1939InputDataErrorBit @ 00509d98 (GhidraScript)  
+INFO  SetCallingConvention.java>   cm848_monitorFuelPressureTrackingError @ 00531d34 (GhidraScript)  
+INFO  SetCallingConvention.java>   cm848_pidError_calc @ 0051ba6c (GhidraScript)  
+INFO  SetCallingConvention.java>   cm848_resetFuelPressureTrackingErrorAccumulators @ 00531d10 (GhidraScript)  
+INFO  SetCallingConvention.java>   cm848_resetFuelPressureTrackingErrorMonitor @ 00532208 (GhidraScript)  
+INFO  SetCallingConvention.java>   cm848_setJ1939InputDataErrorBit @ 00509f18 (GhidraScript)  
+INFO  SetCallingConvention.java>   cm848_updateVariableGeometryTurbochargerPositionControlErrorFault @ 0050fbf8 (GhidraScript)  
+INFO  SetCallingConvention.java>   governor_cruise_speedError_integrate @ 005127d8 (GhidraScript)  
+INFO  SetCallingConvention.java>   governor_cruise_speedError_torqueAdj @ 00525134 (GhidraScript)  
+WARN  Decompiling 0000b44c, pcode error at 0000b450: Unable to resolve constructor at 0000b450 (DecompileCallback)  

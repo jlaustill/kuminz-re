@@ -1,0 +1,1598 @@
+{
+ "bin": 2,
+ "functions": [
+  "cm848_auxiliary_boundary_condition_eval"
+ ],
+ "assigned_tables": [
+  "0x0005dd52",
+  "0x0005dd7a",
+  "0x0005dd9c",
+  "0x0005dffc",
+  "0x0005e00e",
+  "0x0005e020",
+  "0x0005e0a0",
+  "0x0005e0bc",
+  "0x0005e0d4",
+  "0x0005e1f2",
+  "0x0005e20c",
+  "0x0005e218",
+  "0x0005e290",
+  "0x0005e2ac",
+  "0x0005e2c4",
+  "0x0005e3e2",
+  "0x0005e3fe",
+  "0x0005e416",
+  "0x0005e534",
+  "0x0005e550",
+  "0x0005e568",
+  "0x0005e686",
+  "0x0005e6ae",
+  "0x0005e6d0",
+  "0x0005e930",
+  "0x0005e958",
+  "0x0005e97a",
+  "0x0005ebda",
+  "0x0005ec02",
+  "0x0005ec24",
+  "0x0005ee84",
+  "0x0005eeac",
+  "0x0005eece"
+ ],
+ "lookups": [
+  {
+   "id": "L001",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005dd52",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L001"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005dd7a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L001"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       589,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005dd9c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L001"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       143
+      ],
+      "grid_min_max_signed": [
+       0,
+       143
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       0,
+       68,
+       68,
+       94,
+       115,
+       120,
+       125,
+       130,
+       132,
+       132,
+       132,
+       132,
+       132,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       77,
+       107,
+       120,
+       127,
+       123,
+       132,
+       136,
+       143
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar3 = cm848_dualAxisTableInterpolation (&DAT_003fd0a6,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005dd52, fuel_demand_computed,WORD_ARRAY_0005dd7a,WORD_ARRAY_0005dd9c,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L002",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005dffc",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L002"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       62976,
+       64256,
+       2560,
+       3840,
+       7680,
+       10240,
+       10880,
+       11520
+      ],
+      "breakpoints_signed": [
+       -2560,
+       -1280,
+       2560,
+       3840,
+       7680,
+       10240,
+       10880,
+       11520
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005e00e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L002"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       62976,
+       64256,
+       0,
+       1280,
+       2560,
+       3840,
+       5120,
+       6400
+      ],
+      "breakpoints_signed": [
+       -2560,
+       -1280,
+       0,
+       1280,
+       2560,
+       3840,
+       5120,
+       6400
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005e020",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L002"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 64,
+      "grid_min_max_unsigned": [
+       0,
+       4096
+      ],
+      "grid_min_max_signed": [
+       0,
+       4096
+      ],
+      "shape_x_by_y": [
+       8,
+       8
+      ],
+      "first_row": [
+       4096,
+       4096,
+       4096,
+       4096,
+       4096,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "injection_timing_aux_coolant_factor = cm848_dualAxisTableInterpolation (&DAT_003fd08e,sensor_readings_t_0040baf2.coolant_temp,WORD_ARRAY_0005dffc, intake_manifold_temperature_sensor_filtered,WORD_ARRAY_0005e00e, WORD_ARRAY_0005e020,7);",
+     "inputs": [
+      "sensor_readings_t_0040baf2.coolant_temp",
+      "intake_manifold_temperature_sensor_filtered"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L003",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005e0a0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L003"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4400,
+       4800,
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005e0bc",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L003"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       589,
+       736,
+       883,
+       1030,
+       1178,
+       1325,
+       1472
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005e0d4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L003"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       0,
+       145
+      ],
+      "grid_min_max_signed": [
+       0,
+       145
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       0,
+       85,
+       85,
+       85,
+       102,
+       119,
+       128,
+       145,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "injection_timing_aux_rpm_factor = cm848_dualAxisTableInterpolation (&DAT_003fd092,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e0a0, fuel_demand_computed,WORD_ARRAY_0005e0bc,WORD_ARRAY_0005e0d4,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L004",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005e1f2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L004"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 13,
+      "breakpoints_unsigned": [
+       64256,
+       0,
+       640,
+       1280,
+       1920,
+       2560,
+       3200,
+       3840,
+       4480,
+       5120,
+       5760,
+       6400
+      ],
+      "breakpoints_signed": [
+       -1280,
+       0,
+       640,
+       1280,
+       1920,
+       2560,
+       3200,
+       3840,
+       4480,
+       5120,
+       5760,
+       6400
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005e20c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L004"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 6,
+      "breakpoints_unsigned": [
+       1194,
+       1320,
+       1446,
+       1572,
+       1697
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005e218",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L004"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 60,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       12,
+       5
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar3 = cm848_dualAxisTableInterpolation (&DAT_003fd096,wVar4,WORD_ARRAY_0005e1f2,wVar3,WORD_ARRAY_0005e20c, WORD_ARRAY_0005e218,5);",
+     "inputs": [
+      "wVar4",
+      "wVar3"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L005",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005e290",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L005"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4000,
+       4800,
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005e2ac",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L005"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       294,
+       589,
+       883,
+       1178,
+       1472,
+       1766,
+       2061,
+       2355,
+       2650,
+       2944
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005e2c4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L005"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar4 = cm848_dualAxisTableInterpolation (&DAT_003fd09a,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e290, fuel_demand_computed,WORD_ARRAY_0005e2ac,WORD_ARRAY_0005e2c4,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L006",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005e3e2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L006"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4800,
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005e3fe",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L006"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       629,
+       1257,
+       1886,
+       2515,
+       3143,
+       3772,
+       4401,
+       5029,
+       5658,
+       6287
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005e416",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L006"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "injection_timing_auxiliary_boost_factor = cm848_dualAxisTableInterpolation (&DAT_003fd09e,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e3e2,wVar3, WORD_ARRAY_0005e3fe,WORD_ARRAY_0005e416,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "wVar3"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L007",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005e534",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L007"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 14,
+      "breakpoints_unsigned": [
+       4800,
+       6400,
+       8000,
+       9600,
+       11200,
+       12800,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       24000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005e550",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L007"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       294,
+       589,
+       883,
+       1178,
+       1472,
+       1766,
+       2061,
+       2355,
+       2650,
+       2944
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005e568",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L007"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 143,
+      "grid_min_max_unsigned": [
+       0,
+       0
+      ],
+      "grid_min_max_signed": [
+       0,
+       0
+      ],
+      "shape_x_by_y": [
+       13,
+       11
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "injection_timing_auxiliary_fuel_demand_factor = cm848_dualAxisTableInterpolation (&DAT_003fd0a2,engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e534, fuel_demand_computed,WORD_ARRAY_0005e550,WORD_ARRAY_0005e568,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L008",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005e686",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L008"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005e6ae",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L008"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       589,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005e6d0",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L008"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       143
+      ],
+      "grid_min_max_signed": [
+       0,
+       143
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       0,
+       68,
+       68,
+       94,
+       115,
+       120,
+       125,
+       130,
+       132,
+       132,
+       132,
+       132,
+       132,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       0,
+       68,
+       68,
+       94,
+       115,
+       120,
+       125,
+       130,
+       132,
+       132,
+       132,
+       77,
+       107,
+       120,
+       127,
+       123,
+       132,
+       136,
+       143
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar5 = cm848_dualAxisTableInterpolation (&aux_boundary_boost_blend_interp_state, engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e686, fuel_demand_computed,WORD_ARRAY_0005e6ae,WORD_ARRAY_0005e6d0,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar6 = cm848_dualAxisTableInterpolation (&aux_boundary_boost_blend_interp_state, engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e686, fuel_demand_computed,WORD_ARRAY_0005e6ae,WORD_ARRAY_0005e6d0,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L009",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005e930",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L009"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005e958",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L009"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       589,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005e97a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L009"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       127
+      ],
+      "grid_min_max_signed": [
+       0,
+       127
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       34,
+       34,
+       34,
+       43,
+       51,
+       58,
+       64,
+       68,
+       77,
+       85,
+       85,
+       102,
+       102,
+       120,
+       127,
+       117,
+       98,
+       88,
+       69
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar5 = cm848_dualAxisTableInterpolation (&aux_boundary_boost_blend_interp_state, engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e930, fuel_demand_computed,WORD_ARRAY_0005e958,WORD_ARRAY_0005e97a,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar6 = cm848_dualAxisTableInterpolation (&aux_boundary_boost_blend_interp_state, engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005e930, fuel_demand_computed,WORD_ARRAY_0005e958,WORD_ARRAY_0005e97a,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L010",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005ebda",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L010"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005ec02",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L010"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       589,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005ec24",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L010"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       127
+      ],
+      "grid_min_max_signed": [
+       0,
+       127
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       34,
+       34,
+       34,
+       43,
+       51,
+       58,
+       64,
+       68,
+       77,
+       85,
+       85,
+       102,
+       102,
+       120,
+       127,
+       117,
+       98,
+       88,
+       69
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar5 = cm848_dualAxisTableInterpolation (&aux_boundary_boost_blend_interp_state, engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005ebda, fuel_demand_computed,WORD_ARRAY_0005ec02,WORD_ARRAY_0005ec24,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar6 = cm848_dualAxisTableInterpolation (&aux_boundary_boost_blend_interp_state, engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005ebda, fuel_demand_computed,WORD_ARRAY_0005ec02,WORD_ARRAY_0005ec24,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    }
+   ]
+  },
+  {
+   "id": "L011",
+   "interpolator": "cm848_dualAxisTableInterpolation",
+   "kind": "2-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005ee84",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L011"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       4960,
+       5200,
+       6400,
+       8000,
+       9600,
+       11200,
+       12400,
+       13600,
+       14400,
+       16000,
+       17600,
+       19200,
+       20800,
+       22400,
+       23200,
+       24000,
+       25600,
+       26400,
+       28000
+      ]
+     }
+    },
+    {
+     "role": "y_axis",
+     "address": "0x0005eeac",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L011"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 17,
+      "breakpoints_unsigned": [
+       0,
+       147,
+       294,
+       442,
+       589,
+       810,
+       957,
+       1104,
+       1251,
+       1398,
+       1619,
+       1766,
+       1840,
+       1914,
+       1987,
+       2061
+      ]
+     }
+    },
+    {
+     "role": "grid",
+     "address": "0x0005eece",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L011"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 304,
+      "grid_min_max_unsigned": [
+       0,
+       127
+      ],
+      "grid_min_max_signed": [
+       0,
+       127
+      ],
+      "shape_x_by_y": [
+       19,
+       16
+      ],
+      "first_row": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "last_row": [
+       34,
+       34,
+       34,
+       43,
+       51,
+       58,
+       64,
+       68,
+       77,
+       85,
+       85,
+       102,
+       102,
+       120,
+       127,
+       117,
+       98,
+       88,
+       69
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar5 = cm848_dualAxisTableInterpolation (&aux_boundary_boost_blend_interp_state, engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005ee84, fuel_demand_computed,WORD_ARRAY_0005eeac,WORD_ARRAY_0005eece,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    },
+    {
+     "function": "cm848_auxiliary_boundary_condition_eval",
+     "statement": "wVar6 = cm848_dualAxisTableInterpolation (&aux_boundary_boost_blend_interp_state, engine_rpm_state_t_0040b7ac.current_rpm,WORD_ARRAY_0005ee84, fuel_demand_computed,WORD_ARRAY_0005eeac,WORD_ARRAY_0005eece,4);",
+     "inputs": [
+      "engine_rpm_state_t_0040b7ac.current_rpm",
+      "fuel_demand_computed"
+     ],
+     "output_argument": null
+    }
+   ]
+  }
+ ]
+}

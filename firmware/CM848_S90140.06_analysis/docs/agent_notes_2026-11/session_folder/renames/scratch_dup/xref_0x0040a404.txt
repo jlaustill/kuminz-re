@@ -1,0 +1,14 @@
+# xref 0x0040a404  (fuel_demand_rpm_factor)  — 4 referencing function(s)
+# total: 2 read(s), 1 write(s)   width(s): word
+
+cm848_throttleBasedFuelCalculation: 1r/0w
+  [load ] word   128b8:	a1 8c a4 04 	lhz     r12,-23548(r12)
+
+cm848_boostBasedFuelModifier: 0r/1w
+  [store] word   12cdc:	b3 cc a4 04 	sth     r30,-23548(r12)
+
+cm848_loadBasedFuelAdjustment: 1r/0w
+  [load ] word   12d14:	a1 6b a4 04 	lhz     r11,-23548(r11)
+
+cm848_calculateBoostTorqueOffset: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

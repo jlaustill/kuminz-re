@@ -1,0 +1,1411 @@
+{
+ "bin": 16,
+ "functions": [
+  "cm848_sensorChannel0_init",
+  "cm848_sensorChannel10_intakeManifoldTemperatureInit",
+  "cm848_sensorChannel11_init",
+  "cm848_sensorChannel12_init",
+  "cm848_sensorChannel13_init",
+  "cm848_sensorChannel14_init",
+  "cm848_sensorChannel15_init",
+  "cm848_sensorChannel1_init",
+  "cm848_sensorChannel4_init",
+  "cm848_sensorChannel5_init",
+  "cm848_sensorChannel69_init",
+  "cm848_sensorChannel6_init",
+  "cm848_sensorChannel7_init_configBundle",
+  "cm848_sensorChannel8_init",
+  "cm848_sensorChannel9_init"
+ ],
+ "assigned_tables": [
+  "0x000592b2",
+  "0x000592c4",
+  "0x000592e6",
+  "0x0005930e",
+  "0x000593ae",
+  "0x000593c6",
+  "0x00059492",
+  "0x000594a8",
+  "0x000594ce",
+  "0x000594fa",
+  "0x00059536",
+  "0x00059566",
+  "0x000595a6",
+  "0x000595b8",
+  "0x000595da",
+  "0x000595ec",
+  "0x000595fe",
+  "0x00059610",
+  "0x00059632",
+  "0x00059644",
+  "0x000596a2",
+  "0x000596ba",
+  "0x0005ab34",
+  "0x0005ab5c",
+  "0x003feee2",
+  "0x003feefa",
+  "0x003fef22",
+  "0x003fef4e",
+  "0x003fef8a",
+  "0x003fefa2"
+ ],
+ "lookups": [
+  {
+   "id": "L111",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000592b2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L111"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       41,
+       61,
+       82,
+       102,
+       922,
+       942,
+       963,
+       983
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x000592c4",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L111"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "values_unsigned": [
+       832,
+       832,
+       832,
+       832,
+       2048,
+       2048,
+       2048,
+       2048
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel0_init",
+     "statement": "sensorChannelTypeB_configInit (&barometric_pressure_sensor_config,&sensor_channel0_ram,&sensor_channel0_interp_state, WORD_ARRAY_000592b2,WORD_ARRAY_000592c4,0,&sensor_channel0_filter_state,3,0x19,0x1a, &sensor_channel3_value,&sensor_channel3_default_value,&sensor_channel3_fault_status);",
+     "inputs": [
+      "3"
+     ],
+     "output_argument": "&sensor_channel3_value"
+    },
+    {
+     "function": "cm848_sensorChannel0_process",
+     "statement": "sensorChannelTypeB_update (&barometric_pressure_sensor_config,&sensor_channel0_ram,&sensor_channel0_interp_state, WORD_ARRAY_000592b2,WORD_ARRAY_000592c4,0,&sensor_channel0_filter_state,3,0x19,0x1a, &sensor_channel3_value,&sensor_channel3_default_value,&sensor_channel3_fault_status);",
+     "inputs": [
+      "3"
+     ],
+     "output_argument": "&sensor_channel3_value"
+    }
+   ]
+  },
+  {
+   "id": "L112",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00059536",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L112"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 24,
+      "breakpoints_unsigned": [
+       0,
+       11,
+       12,
+       15,
+       19,
+       24,
+       31,
+       40,
+       53,
+       71,
+       95,
+       129,
+       175,
+       236,
+       274,
+       316,
+       414,
+       526,
+       644,
+       753,
+       845,
+       920,
+       945
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00059566",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L112"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 24,
+      "values_unsigned": [
+       7360,
+       7360,
+       17024,
+       17024,
+       15872,
+       14720,
+       13568,
+       12416,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4928,
+       4352,
+       3200,
+       2048,
+       896,
+       65280,
+       64128,
+       62976,
+       62336
+      ],
+      "values_signed": [
+       7360,
+       7360,
+       17024,
+       17024,
+       15872,
+       14720,
+       13568,
+       12416,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4928,
+       4352,
+       3200,
+       2048,
+       896,
+       -256,
+       -1408,
+       -2560,
+       -3200
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel10_intakeManifoldTemperatureInit",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_00059526,&sensor_channel10_ram,&WORD_003fa07e, WORD_ARRAY_00059536,WORD_ARRAY_00059566,2,&ema_filter_state_t_003fa080,9,0x13,0x14, &sensor_channel9_pressure_value,&sensor_channel9_pressure_default_value, &sensor_channel9_fault_status);",
+     "inputs": [
+      "9"
+     ],
+     "output_argument": "&sensor_channel9_pressure_value"
+    },
+    {
+     "function": "cm848_sensorChannel10_intakeManifoldTemperatureProcess",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_00059526,&sensor_channel10_ram,&WORD_003fa07e, WORD_ARRAY_00059536,WORD_ARRAY_00059566,2,&ema_filter_state_t_003fa080,9,0x13,0x14, &sensor_channel9_pressure_value,&sensor_channel9_pressure_default_value, &sensor_channel9_fault_status);",
+     "inputs": [
+      "9"
+     ],
+     "output_argument": "&sensor_channel9_pressure_value"
+    }
+   ]
+  },
+  {
+   "id": "L113",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000595a6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L113"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       100,
+       101,
+       102,
+       921,
+       948,
+       1022,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x000595b8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L113"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "values_unsigned": [
+       832,
+       832,
+       832,
+       832,
+       13632,
+       13632,
+       13632,
+       13632
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel11_init",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_00059596,&sensor_channel11_ram,&WORD_003fa088, WORD_ARRAY_000595a6,WORD_ARRAY_000595b8,0,&ema_filter_state_t_003fa08a,10,0xc,0xd, &sensor_channel10_value,&sensor_channel10_default_value,&sensor_channel10_fault_status) ;",
+     "inputs": [
+      "10"
+     ],
+     "output_argument": "&sensor_channel10_value"
+    },
+    {
+     "function": "cm848_sensorChannel11_process",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_00059596,&sensor_channel11_ram,&WORD_003fa088, WORD_ARRAY_000595a6,WORD_ARRAY_000595b8,0,&ema_filter_state_t_003fa08a,10,0xc,0xd, &sensor_channel10_value,&sensor_channel10_default_value,&sensor_channel10_fault_status) ;",
+     "inputs": [
+      "10"
+     ],
+     "output_argument": "&sensor_channel10_value"
+    }
+   ]
+  },
+  {
+   "id": "L114",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000595da",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L114"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       146,
+       292,
+       438,
+       584,
+       730,
+       876,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x000595ec",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L114"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "values_unsigned": [
+       0,
+       57,
+       114,
+       171,
+       228,
+       285,
+       342,
+       400
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel12_init",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_000595ca,&sensor_channel12_ram,&WORD_003fa092, WORD_ARRAY_000595da,WORD_ARRAY_000595ec,0,&ema_filter_state_t_003fa094,8,0x4d,0x4e, &sensor_channel8_value,&sensor_channel8_default_value,&sensor_channel8_fault_status);",
+     "inputs": [
+      "8"
+     ],
+     "output_argument": "&sensor_channel8_value"
+    },
+    {
+     "function": "cm848_sensorChannel12_process",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_000595ca,&sensor_channel12_ram,&WORD_003fa092, WORD_ARRAY_000595da,WORD_ARRAY_000595ec,0,&ema_filter_state_t_003fa094,8,0x4d,0x4e, &sensor_channel8_value,&sensor_channel8_default_value,&sensor_channel8_fault_status);",
+     "inputs": [
+      "8"
+     ],
+     "output_argument": "&sensor_channel8_value"
+    }
+   ]
+  },
+  {
+   "id": "L115",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000595fe",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L115"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       9,
+       10,
+       39,
+       839,
+       866,
+       867,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00059610",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L115"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "values_unsigned": [
+       0,
+       0,
+       0,
+       0,
+       400,
+       400,
+       0,
+       0
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel13_init",
+     "statement": "sensorChannelTypeB_configInit (&accelerator_pedal_sensor_config,&sensor_channel13_ram,&WORD_003fa09c, WORD_ARRAY_000595fe,WORD_ARRAY_00059610,0,&ema_filter_state_t_003fa09e,0xd,10,0xb, &sensor_channel13_value,&sensor_channel13_default_value,&sensor_channel13_fault_status) ;",
+     "inputs": [
+      "0xd"
+     ],
+     "output_argument": "&sensor_channel13_value"
+    },
+    {
+     "function": "cm848_sensorChannel13_process",
+     "statement": "sensorChannelTypeB_update (&accelerator_pedal_sensor_config,&sensor_channel13_ram,&WORD_003fa09c, WORD_ARRAY_000595fe,WORD_ARRAY_00059610,0,&ema_filter_state_t_003fa09e,0xd,10,0xb, &sensor_channel13_value,&sensor_channel13_default_value,&sensor_channel13_fault_status) ;",
+     "inputs": [
+      "0xd"
+     ],
+     "output_argument": "&sensor_channel13_value"
+    }
+   ]
+  },
+  {
+   "id": "L116",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00059632",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L116"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "breakpoints_unsigned": [
+       0,
+       200,
+       400,
+       600,
+       800,
+       900,
+       1000,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x00059644",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L116"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 9,
+      "values_unsigned": [
+       0,
+       1201,
+       2402,
+       3604,
+       4805,
+       5405,
+       6006,
+       6144
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel14_init",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_00059622,&sensor_channel14_ram,&WORD_003fa0a6, WORD_ARRAY_00059632,WORD_ARRAY_00059644,0,&ema_filter_state_t_003fa0a8,0x2a,0x152,0x151 ,&sensor_channel42_value,&sensor_channel42_default_value,&sensor_channel42_fault_status );",
+     "inputs": [
+      "0x2a"
+     ],
+     "output_argument": "&sensor_channel42_value"
+    },
+    {
+     "function": "cm848_sensorChannel14_process",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_00059622,&sensor_channel14_ram,&WORD_003fa0a6, WORD_ARRAY_00059632,WORD_ARRAY_00059644,0,&ema_filter_state_t_003fa0a8,0x2a,0x152,0x151 ,&sensor_channel42_value,&sensor_channel42_default_value,&sensor_channel42_fault_status );",
+     "inputs": [
+      "0x2a"
+     ],
+     "output_argument": "&sensor_channel42_value"
+    }
+   ]
+  },
+  {
+   "id": "L117",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000596a2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L117"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       100,
+       200,
+       300,
+       400,
+       500,
+       600,
+       700,
+       800,
+       900,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x000596ba",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L117"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "values_unsigned": [
+       0,
+       601,
+       1201,
+       1802,
+       2402,
+       3003,
+       3604,
+       4204,
+       4805,
+       5405,
+       6144
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel15_init",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_00059692,&sensor_channel15_ram,&WORD_003fa0b0, WORD_ARRAY_000596a2,WORD_ARRAY_000596ba,0,&ema_filter_state_t_003fa0b2,0x15,0xc4,0xc5, &sensor_channel21_value,&sensor_channel21_default_value,&sensor_channel21_fault_status) ;",
+     "inputs": [
+      "0x15"
+     ],
+     "output_argument": "&sensor_channel21_value"
+    },
+    {
+     "function": "cm848_sensorChannel15_process",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_00059692,&sensor_channel15_ram,&WORD_003fa0b0, WORD_ARRAY_000596a2,WORD_ARRAY_000596ba,0,&ema_filter_state_t_003fa0b2,0x15,0xc4,0xc5, &sensor_channel21_value,&sensor_channel21_default_value,&sensor_channel21_fault_status) ;",
+     "inputs": [
+      "0x15"
+     ],
+     "output_argument": "&sensor_channel21_value"
+    }
+   ]
+  },
+  {
+   "id": "L120",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000592e6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L120"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       41,
+       51,
+       64,
+       82,
+       104,
+       134,
+       173,
+       222,
+       286,
+       362,
+       453,
+       551,
+       653,
+       750,
+       833,
+       898,
+       945,
+       977,
+       978
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005930e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L120"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "values_unsigned": [
+       17024,
+       15872,
+       14720,
+       13568,
+       12416,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4352,
+       3200,
+       2048,
+       896,
+       65280,
+       64128,
+       62976,
+       62976
+      ],
+      "values_signed": [
+       17024,
+       15872,
+       14720,
+       13568,
+       12416,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4352,
+       3200,
+       2048,
+       896,
+       -256,
+       -1408,
+       -2560,
+       -2560
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel1_init",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_000592d6,&sensor_channel1_ram,&sensor_channel1_interp_state, WORD_ARRAY_000592e6,WORD_ARRAY_0005930e,2,&sensor_channel1_filter_state,0x14,0x96,0x97, &sensor_channel20_value,&sensor_channel20_default_value,&sensor_channel20_fault_status) ;",
+     "inputs": [
+      "0x14"
+     ],
+     "output_argument": "&sensor_channel20_value"
+    },
+    {
+     "function": "cm848_sensorChannel1_process",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_000592d6,&sensor_channel1_ram,&sensor_channel1_interp_state, WORD_ARRAY_000592e6,WORD_ARRAY_0005930e,2,&sensor_channel1_filter_state,0x14,0x96,0x97, &sensor_channel20_value,&sensor_channel20_default_value,&sensor_channel20_fault_status) ;",
+     "inputs": [
+      "0x14"
+     ],
+     "output_argument": "&sensor_channel20_value"
+    }
+   ]
+  },
+  {
+   "id": "L122",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000593ae",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L122"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       17,
+       18,
+       101,
+       102,
+       921,
+       922,
+       923,
+       1021,
+       1022,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x000593c6",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L122"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 12,
+      "values_unsigned": [
+       754,
+       754,
+       754,
+       754,
+       754,
+       6585,
+       6585,
+       6585,
+       6585,
+       6585,
+       6585
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel4_init",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_0005939e,&sensor_channel4_ram,&WORD_003fa03c, WORD_ARRAY_000593ae,WORD_ARRAY_000593c6,0,&ema_filter_state_t_003fa03e,0x4d,0x288,0x289 ,&WORD_003fa046,&WORD_003fa048,&WORD_003fa04a);",
+     "inputs": [
+      "0x4d"
+     ],
+     "output_argument": "&WORD_003fa046"
+    },
+    {
+     "function": "cm848_sensorChannel4_process",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_0005939e,&sensor_channel4_ram,&WORD_003fa03c, WORD_ARRAY_000593ae,WORD_ARRAY_000593c6,0,&ema_filter_state_t_003fa03e,0x4d,0x288,0x289 ,&WORD_003fa046,&WORD_003fa048,&WORD_003fa04a);",
+     "inputs": [
+      "0x4d"
+     ],
+     "output_argument": "&WORD_003fa046"
+    }
+   ]
+  },
+  {
+   "id": "L123",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003feee2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L123"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       99,
+       100,
+       101,
+       102,
+       921,
+       922,
+       923,
+       924,
+       925,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003feefa",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L123"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 12,
+      "values_unsigned": [
+       65504,
+       65504,
+       65504,
+       65504,
+       65504,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640
+      ],
+      "values_signed": [
+       -32,
+       -32,
+       -32,
+       -32,
+       -32,
+       640,
+       640,
+       640,
+       640,
+       640,
+       640
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel5_init",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_003feed2,&sensor_channel5_ram,&WORD_003fa04c, WORD_ARRAY_003feee2,WORD_ARRAY_003feefa,2,&ema_filter_state_t_003fa04e,0x69,0x2b2,0x2b3 ,&sensor_channel105_value,&sensor_channel105_default_value, &sensor_channel105_fault_status);",
+     "inputs": [
+      "0x69"
+     ],
+     "output_argument": "&sensor_channel105_value"
+    },
+    {
+     "function": "cm848_sensorChannel5_process",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_003feed2,&sensor_channel5_ram,&WORD_003fa04c, WORD_ARRAY_003feee2,WORD_ARRAY_003feefa,2,&ema_filter_state_t_003fa04e,0x69,0x2b2,0x2b3 ,&sensor_channel105_value,&sensor_channel105_default_value, &sensor_channel105_fault_status);",
+     "inputs": [
+      "0x69"
+     ],
+     "output_argument": "&sensor_channel105_value"
+    }
+   ]
+  },
+  {
+   "id": "L124",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x0005ab34",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L124"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "breakpoints_unsigned": [
+       41,
+       51,
+       65,
+       86,
+       110,
+       143,
+       186,
+       243,
+       315,
+       399,
+       497,
+       604,
+       655,
+       706,
+       798,
+       874,
+       929,
+       968,
+       992
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x0005ab5c",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L124"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 20,
+      "values_unsigned": [
+       18176,
+       17024,
+       15872,
+       14720,
+       13568,
+       12416,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4928,
+       4352,
+       3200,
+       2048,
+       896,
+       65280,
+       64128
+      ],
+      "values_signed": [
+       18176,
+       17024,
+       15872,
+       14720,
+       13568,
+       12416,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4928,
+       4352,
+       3200,
+       2048,
+       896,
+       -256,
+       -1408
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel69_init",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_0005ab24,&sensor_channel_6_state,&WORD_003fb1e8, WORD_ARRAY_0005ab34,WORD_ARRAY_0005ab5c,2,&ema_filter_state_t_003fb1ea,0x45,0x17b,0x17c ,&sensor_channel69_value,&sensor_channel69_default_value,&sensor_channel69_fault_status );",
+     "inputs": [
+      "0x45"
+     ],
+     "output_argument": "&sensor_channel69_value"
+    },
+    {
+     "function": "cm848_sensorChannel69_process",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_0005ab24,&sensor_channel_6_state,&WORD_003fb1e8, WORD_ARRAY_0005ab34,WORD_ARRAY_0005ab5c,2,&ema_filter_state_t_003fb1ea,0x45,0x17b,0x17c ,&sensor_channel69_value,&sensor_channel69_default_value,&sensor_channel69_fault_status );",
+     "inputs": [
+      "0x45"
+     ],
+     "output_argument": "&sensor_channel69_value"
+    }
+   ]
+  },
+  {
+   "id": "L125",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003fef22",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L125"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 22,
+      "breakpoints_unsigned": [
+       19,
+       25,
+       34,
+       46,
+       64,
+       91,
+       131,
+       191,
+       277,
+       395,
+       540,
+       694,
+       765,
+       828,
+       881,
+       923,
+       955,
+       979,
+       995,
+       1006,
+       1013
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003fef4e",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L125"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 22,
+      "values_unsigned": [
+       36608,
+       34304,
+       32000,
+       29696,
+       27392,
+       25088,
+       22784,
+       20480,
+       18176,
+       15872,
+       13568,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4352,
+       3200,
+       2048,
+       896
+      ],
+      "values_signed": [
+       -28928,
+       -31232,
+       32000,
+       29696,
+       27392,
+       25088,
+       22784,
+       20480,
+       18176,
+       15872,
+       13568,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4352,
+       3200,
+       2048,
+       896
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel6_init",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_003fef12,&sensor_channel6_ram,&WORD_003fa056, WORD_ARRAY_003fef22,WORD_ARRAY_003fef4e,0,&ema_filter_state_t_003fa058,0x6c,0x31c,0x31d ,&sensor_channel108_value,&sensor_channel108_default_value, &sensor_channel108_fault_status);",
+     "inputs": [
+      "0x6c"
+     ],
+     "output_argument": "&sensor_channel108_value"
+    },
+    {
+     "function": "cm848_sensorChannel6_process",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_003fef12,&sensor_channel6_ram,&WORD_003fa056, WORD_ARRAY_003fef22,WORD_ARRAY_003fef4e,0,&ema_filter_state_t_003fa058,0x6c,0x31c,0x31d ,&sensor_channel108_value,&sensor_channel108_default_value, &sensor_channel108_fault_status);",
+     "inputs": [
+      "0x6c"
+     ],
+     "output_argument": "&sensor_channel108_value"
+    }
+   ]
+  },
+  {
+   "id": "L127",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x00059492",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L127"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "breakpoints_unsigned": [
+       0,
+       92,
+       168,
+       318,
+       473,
+       626,
+       778,
+       931,
+       1011,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x000594a8",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L127"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 11,
+      "values_unsigned": [
+       12800,
+       11648,
+       8576,
+       5504,
+       2432,
+       64896,
+       61824,
+       59136,
+       56576,
+       52736
+      ],
+      "values_signed": [
+       12800,
+       11648,
+       8576,
+       5504,
+       2432,
+       -640,
+       -3712,
+       -6400,
+       -8960,
+       -12800
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel7_init_configBundle",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_00059482,&sensor_channel_state_t_0040a0da,&WORD_003fb9b6, WORD_ARRAY_00059492,WORD_ARRAY_000594a8,2,&ema_filter_state_t_003fb9b8,0x58,0x292,0x293 ,&sensor_channel7_value,&sensor_channel7_default_value,&sensor_channel7_fault_status);",
+     "inputs": [
+      "0x58"
+     ],
+     "output_argument": "&sensor_channel7_value"
+    },
+    {
+     "function": "cm848_sensorChannel7_update_configBundle",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_00059482,&sensor_channel_state_t_0040a0da,&WORD_003fb9b6, WORD_ARRAY_00059492,WORD_ARRAY_000594a8,2,&ema_filter_state_t_003fb9b8,0x58,0x292,0x293 ,&sensor_channel7_value,&sensor_channel7_default_value,&sensor_channel7_fault_status);",
+     "inputs": [
+      "0x58"
+     ],
+     "output_argument": "&sensor_channel7_value"
+    }
+   ]
+  },
+  {
+   "id": "L128",
+   "interpolator": "sensorChannelTypeB_configInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x003fef8a",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L128"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 12,
+      "breakpoints_unsigned": [
+       0,
+       99,
+       100,
+       101,
+       102,
+       921,
+       922,
+       923,
+       924,
+       925,
+       1023
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x003fefa2",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L128"
+     ],
+     "contents": {
+      "region": "ram",
+      "words": 12,
+      "values_unsigned": [
+       832,
+       832,
+       832,
+       832,
+       832,
+       11520,
+       11520,
+       11520,
+       11520,
+       11520,
+       11520
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel8_init",
+     "statement": "sensorChannelTypeB_configInit (&sensor_channel_config_t_003fef7a,&sensor_channel8_ram,&WORD_003fa06a, WORD_ARRAY_003fef8a,WORD_ARRAY_003fefa2,0,&ema_filter_state_t_003fa06c,0x6d,0x2a0,0x2a1 ,&sensor_channel109_value,&sensor_channel109_default_value, &sensor_channel109_fault_status);",
+     "inputs": [
+      "0x6d"
+     ],
+     "output_argument": "&sensor_channel109_value"
+    },
+    {
+     "function": "cm848_sensorChannel8_process",
+     "statement": "sensorChannelTypeB_update (&sensor_channel_config_t_003fef7a,&sensor_channel8_ram,&WORD_003fa06a, WORD_ARRAY_003fef8a,WORD_ARRAY_003fefa2,0,&ema_filter_state_t_003fa06c,0x6d,0x2a0,0x2a1 ,&sensor_channel109_value,&sensor_channel109_default_value, &sensor_channel109_fault_status);",
+     "inputs": [
+      "0x6d"
+     ],
+     "output_argument": "&sensor_channel109_value"
+    }
+   ]
+  },
+  {
+   "id": "L129",
+   "interpolator": "sensorChannelConfigInit",
+   "kind": "1-D",
+   "tables": [
+    {
+     "role": "x_axis",
+     "address": "0x000594ce",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L129"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 22,
+      "breakpoints_unsigned": [
+       60,
+       68,
+       84,
+       104,
+       129,
+       160,
+       200,
+       250,
+       310,
+       382,
+       480,
+       553,
+       645,
+       688,
+       731,
+       810,
+       875,
+       925,
+       961,
+       985,
+       1001
+      ]
+     }
+    },
+    {
+     "role": "values",
+     "address": "0x000594fa",
+     "current_name": null,
+     "to_name": true,
+     "shared_by_lookups": [
+      "L129"
+     ],
+     "contents": {
+      "region": "rom",
+      "words": 22,
+      "values_unsigned": [
+       12160,
+       18176,
+       17024,
+       15872,
+       14720,
+       13568,
+       12416,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4928,
+       4352,
+       3200,
+       2048,
+       896,
+       65280,
+       64128,
+       62976
+      ],
+      "values_signed": [
+       12160,
+       18176,
+       17024,
+       15872,
+       14720,
+       13568,
+       12416,
+       11264,
+       10112,
+       8960,
+       7808,
+       6656,
+       5504,
+       4928,
+       4352,
+       3200,
+       2048,
+       896,
+       -256,
+       -1408,
+       -2560
+      ]
+     }
+    }
+   ],
+   "calls": [
+    {
+     "function": "cm848_sensorChannel9_init",
+     "statement": "sensorChannelConfigInit (&sensor_channel_config_t_000594be,&sensor_channel9_ram,&WORD_003fa074, WORD_ARRAY_000594ce,WORD_ARRAY_000594fa,2,&ema_filter_state_t_003fa076,7,0x2f,0x30, &sensor_channel7_value,&sensor_channel7_default_value,&sensor_channel7_fault_status);",
+     "inputs": [
+      "7"
+     ],
+     "output_argument": "&sensor_channel7_value"
+    },
+    {
+     "function": "cm848_sensorChannel9_process",
+     "statement": "updateSensorChannelWithConfig (&sensor_channel_config_t_000594be,&sensor_channel9_ram,&WORD_003fa074, WORD_ARRAY_000594ce,WORD_ARRAY_000594fa,2,&ema_filter_state_t_003fa076,7,0x2f,0x30, &sensor_channel7_value,&sensor_channel7_default_value,&sensor_channel7_fault_status);",
+     "inputs": [
+      "7"
+     ],
+     "output_argument": "&sensor_channel7_value"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+address,name,old_label,kind
+0x0040a450,variable_geometry_turbocharger_failure_flag,DAT_0040a450,new row
+0x0040a548,air_fuel_ratio,DAT_0040a548,new row
+0x0040a54a,fuel_air_equivalence_ratio,DAT_0040a54a,new row
+0x0040a556,total_injection_quantity_timing_adjusted,DAT_0040a556,new row
+0x0040a558,combustion_torque,DAT_0040a558,new row
+0x0040a560,cylinder_charge_mass,DAT_0040a560,new row
+0x0040a562,cylinder_air_mass,DAT_0040a562,new row
+0x0040a564,cylinder_egr_mass,DAT_0040a564,new row
+0x0040a568,cylinder_oxygen_mass_in_air,DAT_0040a568,new row
+0x0040a56a,cylinder_oxygen_mass_in_exhaust_gas,DAT_0040a56a,new row
+0x0040a570,residual_oxygen_fraction,DAT_0040a570,new row
+0x0040a578,cylinder_residual_gas_mass_unclamped,DAT_0040a578,new row

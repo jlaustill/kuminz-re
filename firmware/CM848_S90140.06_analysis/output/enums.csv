@@ -52,12 +52,15 @@ PROTECTION_FLAGS,0x08,FLAG_CONDITION_CHECK,Condition check flag,1
 # Protection Override Mode (DAT_0040b4ff values)
 PROTECTION_OVERRIDE,0x7e,OVERRIDE_ACTIVE_126,Protection override mode active (~),1
 PROTECTION_OVERRIDE,0x7f,OVERRIDE_ACTIVE_127,Protection override mode active (DEL),1
-# Engine Operating Mode State Machine (engine_operating_mode values)
-ENGINE_OPERATING_MODE,0x00,MODE_STOP,Engine stopped / key on state,2
-ENGINE_OPERATING_MODE,0x02,MODE_TRANSITION,Engine state transition,2
-ENGINE_OPERATING_MODE,0x07,MODE_RUN,Engine running / normal operation,2
-ENGINE_OPERATING_MODE,0x1e,MODE_CRANK,Engine cranking / starting (30 decimal),2
-ENGINE_OPERATING_MODE,0x25,MODE_SHUTDOWN,Engine shutdown sequence (37 decimal),2
+# Engine Operating Mode (engine_operating_mode 0x40b000): which governor drives the fuel this pass (corrected 2026-11-17 from every store of 0x40b000; 37 and 38 are only compared - never stored - so they have no member)
+ENGINE_OPERATING_MODE,0,ENGINE_OPERATING_MODE_NOT_SELECTED,Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins),2
+ENGINE_OPERATING_MODE,1,ENGINE_OPERATING_MODE_TSC1_TORQUE_CONTROL,cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is etc1_torque_limit_calc,2
+ENGINE_OPERATING_MODE,2,ENGINE_OPERATING_MODE_TSC1_SPEED_CONTROL,cm848_engineMode_reset: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record,2
+ENGINE_OPERATING_MODE,5,ENGINE_OPERATING_MODE_CALIBRATED_FIXED_FUEL_DEMAND,cm848_setEngineOperatingMode5: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified,2
+ENGINE_OPERATING_MODE,6,ENGINE_OPERATING_MODE_ACCELERATOR_PEDAL_FAULT,cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6,2
+ENGINE_OPERATING_MODE,7,ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR,cm848_initEngineOperatingMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7),2
+ENGINE_OPERATING_MODE,8,ENGINE_OPERATING_MODE_DUAL_AXIS_FUEL_DEMAND_TABLE,cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables),2
+ENGINE_OPERATING_MODE,30,ENGINE_OPERATING_MODE_ALL_SPEED_GOVERNOR_RESTORE,cm848_restoreEngineOperatingMode: engine_operating_mode_restore_valid_flag nonzero; loads the restore record 0x40a216-0x40a246 (never set in this build and RAM is zeroed at every start),2
 # J1939 SPN (Suspect Parameter Number) Reference
 J1939_SPN,51,SPN_51_THROTTLE_PLATE,Throttle Plate Position Sensor,2
 J1939_SPN,84,SPN_84_VEHICLE_SPEED,Vehicle Speed Signal,2
@@ -811,8 +814,8 @@ CRUISE_SWITCH_REQUEST,2,CRUISE_SWITCH_COAST,COAST button - decelerate (governor_
 CRUISE_SWITCH_REQUEST,3,CRUISE_SWITCH_SET,SET button - rising edge latches setpoint (CRUISE_SET). Confirmed live 2026-06-12,2
 CRUISE_SWITCH_REQUEST,4,CRUISE_SWITCH_RESUME,RESUME/ACCEL button - tap returns CRUISE_RESUME - held accelerates (CRUISE_ACCELERATE). Confirmed live 2026-06-12,2
 CRUISE_SWITCH_REQUEST,5,CRUISE_SWITCH_IDLE,No button pressed / debounce-settling value,2
-ENGINE_LOAD_PROTECTION_STATE,0,ENGINE_LOAD_PROTECTION_INACTIVE,engine-load protection not derating,2
-ENGINE_LOAD_PROTECTION_STATE,8,ENGINE_LOAD_PROTECTION_ACTIVE,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
+VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,0,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_NORMAL,engine-load protection not derating,2
+VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,8,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_ERROR,engine-load protection actively derating - bit3 (0x08) of the protection status word mirrors governor_status_flags confirm-B (0x8000),2
 # Reflash-kernel diagnostic service IDs - registered in diagnostic_service_dispatch_table by mpc555_initDiagnosticSubsystem (Calterm/Insite programming path)
 DIAGNOSTIC_SERVICE,0x02,DIAGNOSTIC_SERVICE_EEPROM_TRANSFER_INIT,mpc555_diagServiceInitEepromTransfer,1
 DIAGNOSTIC_SERVICE,0x07,DIAGNOSTIC_SERVICE_DOWNLOAD_CALIBRATION,cm848_diagServiceDownloadCalibration,1
@@ -837,3 +840,38 @@ FUEL_PRESSURE_GOVERNOR_MODE,8,FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED,Timed fi
 FUEL_PRESSURE_GOVERNOR_MODE,0x10,FUEL_PRESSURE_GOVERNOR_KEY_OFF,Fixed command while the ignition key switch is off and no shutdown is running,1
 FUEL_PRESSURE_GOVERNOR_MODE,0x20,FUEL_PRESSURE_GOVERNOR_DISABLED,Fixed command while fuel_pressure_governor_disable is set,1
 FUEL_PRESSURE_GOVERNOR_MODE,0x40,FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT,Fixed command (2865 here) while P0193 / P0192 / P0653 / P0652 are set (faults 304 / 305 / 377 / 378) - the open-loop fallback,1
+
+# EGR valve control state (egr_valve_control_state 0x40a6ca / _previous 0x3fa78e; every store is in cm848_selectEgrValveControlState)
+EGR_VALVE_CONTROL_STATE,0,EGR_VALVE_CLOSED_LOOP,PID position control: cm848_selectEgrValveDutyByControlState takes egr_valve_pid_duty,2
+EGR_VALVE_CONTROL_STATE,1,EGR_VALVE_CLOSED_HOLD,Open-loop closed-hold duty: egr_valve_closed_hold_flag is set,2
+EGR_VALVE_CONTROL_STATE,2,EGR_VALVE_USER_DUTY_OVERRIDE,Fixed duty override: bit 1 of egr_valve_user_override_flags_cal is set,2
+EGR_VALVE_CONTROL_STATE,3,EGR_VALVE_AUTOZERO_DRIVE,Position autozero drive: the autozero holding duty is output (the dump is permanently here),2
+EGR_VALVE_CONTROL_STATE,4,EGR_VALVE_DISABLED,Output disabled: logical output request 67 (the PWM enable) is clear; the duty is 0,2
+# Combustion chi source (combustion_chi_source_code 0x40a4a4 / combustion_base_chi_source_code 0x40a4e4; the values assigned in cm848_selectChiAndAlpha and cm848_determineBaseChi)
+COMBUSTION_CHI_SOURCE,1,COMBUSTION_CHI_SOURCE_AMBIENT_AIR_DENSITY,Base chi from the ambient air density protective chi table (the density chi is not smaller),2
+COMBUSTION_CHI_SOURCE,3,COMBUSTION_CHI_SOURCE_COOLANT_TEMPERATURE,Base chi from the coolant temperature protective chi table (the density chi is smaller),2
+COMBUSTION_CHI_SOURCE,10,COMBUSTION_CHI_SOURCE_EGR_OFF,Fixed EGR-off chi and level while EGR is requested off and no combustion status flag 0x08 / 0x10 / 0x200 is set; the normal state on this truck (dump: 10),2
+COMBUSTION_CHI_SOURCE,12,COMBUSTION_CHI_SOURCE_FULL_USER_OVERRIDE,Calibrated override of chi and both map numbers (override mask 0x80 and 0x40 set),2
+COMBUSTION_CHI_SOURCE,13,COMBUSTION_CHI_SOURCE_SINGLE_USER_OVERRIDE,Calibrated override with one whole chi that sets both map numbers (mask 0x80 set and 0x40 clear),2
+COMBUSTION_CHI_SOURCE,14,COMBUSTION_CHI_SOURCE_STATUS_FLAG_FIXED_VALUE,Fixed chi and level selected when a combustion status flag 0x08 / 0x10 / 0x200 is set,2
+# Injection timing intermediate source (injection_timing_intermediate_source_code 0x40a2f2 / injection_timing_source_code_before_combustion_limits 0x40a476; e2m SOI_State; every value proven by a store)
+INJECTION_TIMING_INTERMEDIATE_SOURCE,0,INJECTION_TIMING_INTERMEDIATE_SOURCE_OFFSET_MAPS,cm848_calculateInjectionTimingOffset: the timing offset comes from the two engine speed x fuel demand maps blended by the combustion alpha (engine_mode_control_flags bit 8 clear),2
+INJECTION_TIMING_INTERMEDIATE_SOURCE,2,INJECTION_TIMING_INTERMEDIATE_SOURCE_FIXED_OFFSET_CALIBRATION,cm848_calculateInjectionTimingOffset: the fixed injection_timing_offset_cal while engine_mode_control_flags bit 8 is set,2
+INJECTION_TIMING_INTERMEDIATE_SOURCE,25,INJECTION_TIMING_INTERMEDIATE_SOURCE_PREVIOUS_VALUES_STORED,cm848_storeFuelDemandPreviousValues: one of the last tasks of every pass stores the compensated reference as the previous value,2
+INJECTION_TIMING_INTERMEDIATE_SOURCE,27,INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MAXIMUM_LIMIT,cm848_applyCombustionTimingLimits: the timing reached the combustion maximum limit (cm848_calculateMainInjectionTiming turns it into 29),2
+INJECTION_TIMING_INTERMEDIATE_SOURCE,28,INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MINIMUM_LIMIT,cm848_applyCombustionTimingLimits: the timing with the user increment is at or below the combustion minimum limit (becomes 30),2
+# Main injection timing source (main_injection_timing_source_code 0x40a2f6; every value proven by a store)
+MAIN_INJECTION_TIMING_SOURCE,5,MAIN_INJECTION_TIMING_SOURCE_COLD_START_MAP,cm848_calculateMainInjectionTiming: the cold start engine speed x coolant temperature map while cold_start_phase is CSP_ABOVE_RPM_TRIGGER / CSP_ABOVE_RPM_VIA_EVENTS / CSP_SETPOINT_UNDERRUN,2
+MAIN_INJECTION_TIMING_SOURCE,7,MAIN_INJECTION_TIMING_SOURCE_FIXED_OFFSET_CALIBRATION,cm848_updateMainInjectionTimingByDeliveryMode: injection_delivery_mode 2 uses the fixed injection_timing_offset_cal,2
+MAIN_INJECTION_TIMING_SOURCE,8,MAIN_INJECTION_TIMING_SOURCE_INITIAL,cm848_initTimingFilterStates: the value before the first pass,2
+MAIN_INJECTION_TIMING_SOURCE,11,MAIN_INJECTION_TIMING_SOURCE_DEMAND_FLOOR,cm848_calculateMainInjectionTiming: the demand was raised to injection_timing_demand_floor,2
+MAIN_INJECTION_TIMING_SOURCE,18,MAIN_INJECTION_TIMING_SOURCE_BASE_COMMAND,cm848_calculateMainInjectionTiming: the sum of the base command and the components (combination mode 0) or the base command won the highest / lowest comparison,2
+MAIN_INJECTION_TIMING_SOURCE,19,MAIN_INJECTION_TIMING_SOURCE_INTAKE_TEMPERATURE_COMPONENT,cm848_calculateMainInjectionTiming: the intake temperature component won (combination mode 1 / other),2
+MAIN_INJECTION_TIMING_SOURCE,20,MAIN_INJECTION_TIMING_SOURCE_COOLANT_COMPONENT,cm848_calculateMainInjectionTiming: the coolant component won,2
+MAIN_INJECTION_TIMING_SOURCE,21,MAIN_INJECTION_TIMING_SOURCE_BAROMETRIC_PRESSURE_COMPONENT,cm848_calculateMainInjectionTiming: the barometric pressure component won,2
+MAIN_INJECTION_TIMING_SOURCE,22,MAIN_INJECTION_TIMING_SOURCE_BOOST_COMPONENT,cm848_calculateMainInjectionTiming: the boost component won,2
+MAIN_INJECTION_TIMING_SOURCE,23,MAIN_INJECTION_TIMING_SOURCE_GOVERNOR_LIMIT_MINIMUM,cm848_calculateMainInjectionTiming: raised to injection_timing_main_governor_limit_minimum while governor_speed_limit_active_flag is set,2
+MAIN_INJECTION_TIMING_SOURCE,24,MAIN_INJECTION_TIMING_SOURCE_WORKING_MINIMUM,cm848_calculateMainInjectionTiming: raised to injection_timing_demand_min_working,2
+MAIN_INJECTION_TIMING_SOURCE,29,MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MAXIMUM_LIMIT,cm848_calculateMainInjectionTiming: the base command won and the intermediate source code was 27,2
+MAIN_INJECTION_TIMING_SOURCE,30,MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MINIMUM_LIMIT,cm848_calculateMainInjectionTiming: the base command won and the intermediate source code was 28,2
+MAIN_INJECTION_TIMING_SOURCE,31,MAIN_INJECTION_TIMING_SOURCE_FUEL_PRESSURE_LIMP_HOME_COMPONENT,cm848_calculateMainInjectionTiming: injection_timing_main_fuel_pressure_limp_home_component won,2

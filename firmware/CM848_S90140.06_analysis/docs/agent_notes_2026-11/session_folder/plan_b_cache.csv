@@ -1,0 +1,11 @@
+address,name,old_type,words,gap,callees
+0x003fa04c,,,1,10,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fa060,,,1,2,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fa074,,,1,2,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fa07e,,,1,2,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fb1e8,,,1,2,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fb9ac,,,1,2,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fb9b6,,,1,12,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fb9c0,,,1,2,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fcd2c,,,1,2,sensorChannelConfigInit updateSensorChannelWithConfig
+0x003fcd54,,,1,2,sensorChannelConfigInit updateSensorChannelWithConfig

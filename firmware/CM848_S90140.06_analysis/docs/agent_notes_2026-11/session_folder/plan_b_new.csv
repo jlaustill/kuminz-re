@@ -1,0 +1,3 @@
+address,action,name,old_type,count,roles,region,named_inside,tables_inside,structs,arrays,functions,notes,detail,readers
+0x0005ab94,add_type_only,,,21,axis,rom,,,,cruise_switch_adc_band_table_x,,,x axis of 20 breakpoints after its byte-length word,cm848_initCruiseSwitchChannel cm848_processCruiseSwitchChannel
+0x0005abbe,add_type_only,,,21,data,rom,,,,cruise_switch_button_code_table_y,,,data: 20 values (one per axis breakpoint) after a byte-length word,cm848_initCruiseSwitchChannel cm848_processCruiseSwitchChannel

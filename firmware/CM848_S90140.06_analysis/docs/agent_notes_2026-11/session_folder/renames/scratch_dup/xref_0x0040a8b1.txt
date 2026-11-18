@@ -1,0 +1,21 @@
+# xref 0x0040a8b1  (fuel_demand_mode_code)  — 6 referencing function(s)
+# total: 1 read(s), 2 write(s)   width(s): word
+
+cm848_processSystemStatusLimits: 0r/2w
+  [store] word   424dc:	b1 6c a8 b1 	sth     r11,-22351(r12)
+  [store] word   42524:	b1 6c a8 b1 	sth     r11,-22351(r12)
+
+selectSensorRawChannels: 1r/0w
+  [load ] word   1fbe8:	a8 63 a8 b1 	lha     r3,-22351(r3)
+
+cm848_calculateRpmLoadTables: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_storeFuelDemandPreviousValues: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_processTorqueLimitState: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_calculateMainInjectionTiming: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

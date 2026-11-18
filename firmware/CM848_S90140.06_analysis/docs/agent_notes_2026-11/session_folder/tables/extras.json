@@ -1,0 +1,17 @@
+{
+ "scripted": [
+  [
+   "L121",
+   "fuel_timing_sensor_value"
+  ],
+  [
+   "L126",
+   "governor_speed_input_value"
+  ]
+ ],
+ "missing": [
+  "0x0005a462",
+  "0x0005ab94",
+  "0x0005abbe"
+ ]
+}

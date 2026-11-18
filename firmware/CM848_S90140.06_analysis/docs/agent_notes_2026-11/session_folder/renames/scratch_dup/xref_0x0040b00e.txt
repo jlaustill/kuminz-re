@@ -1,0 +1,20 @@
+# xref 0x0040b00e  (governor_speed_error_delta)  — 6 referencing function(s)
+# total: 0 read(s), 1 write(s)   width(s): word
+
+cm848_calculateSpeedControlFiltered: 0r/1w
+  [store] word   2cf80:	b0 ac b0 0e 	sth     r5,-20466(r12)
+
+cm848_updateSpeedProtectionLimits: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_processSpeedGovernorControl: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_processGovernorLoadCondition: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_calculateSpeedRateLimiting: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_processGovernorSpeedSetpoint: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)

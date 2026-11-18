@@ -74,6 +74,38 @@ def objdump(start, stop):
     return subprocess.run(cmd, capture_output=True, text=True).stdout.splitlines(), binary
 
 
+ASM_LINE = re.compile(r"^\s*([0-9a-f]+):\t[0-9a-f ]+\t\s*(\S+)\s*(.*)$")   # address, mnemonic, operands
+MASK32 = 0xffffffff
+
+
+def register_base(regs, idx):
+    """Value of rIDX used as an address base (r0 reads as the literal 0), or None if unknown."""
+    return 0 if idx == 0 else regs.get(idx)
+
+
+def step_address_registers(regs, mnem, op):
+    """Apply one non-load/store instruction to the tracked GPR values in `regs` ({index: value}).
+
+    lis / addi / addic / li / ori / mr build addresses; any other instruction whose first operand
+    is a GPR clobbers it. `op` is the operand list with spaces removed (e.g. ["r5", "r5", "-31856"]).
+    Shared by find_accesses and lookup_tables.py so both read register-built addresses the same way.
+    """
+    if mnem == "lis" and len(op) == 2:
+        regs[int(op[0][1:])] = (int(op[1], 0) & 0xffff) << 16
+    elif mnem in ("addi", "addic") and len(op) == 3:
+        b = register_base(regs, int(op[1][1:]))
+        regs[int(op[0][1:])] = None if b is None else (b + int(op[2])) & MASK32
+    elif mnem == "li" and len(op) == 2:
+        regs[int(op[0][1:])] = int(op[1]) & MASK32
+    elif mnem == "ori" and len(op) == 3:
+        b = register_base(regs, int(op[1][1:]))
+        regs[int(op[0][1:])] = None if b is None else (b | (int(op[2], 0) & 0xffff))
+    elif mnem == "mr" and len(op) == 2:
+        regs[int(op[0][1:])] = register_base(regs, int(op[1][1:]))
+    elif op and re.fullmatch(r"r\d+", op[0]):              # any other op clobbers its dest GPR
+        regs.pop(int(op[0][1:]), None)
+
+
 def find_accesses(lines, data):
     """Scan disassembled `lines`, tracking GPR contents, and return (hits, member_offsets).
 
@@ -81,21 +113,20 @@ def find_accesses(lines, data):
     Handles all four addressing forms: displacement, lis+addi exact, struct-member, and indexed.
     Importable so callers (e.g. xref_addr.py) reuse the exact width-check logic. CM848/PPC big-endian.
     """
-    asm_re = re.compile(r"^\s*[0-9a-f]+:\t[0-9a-f ]+\t\s*(\S+)\s*(.*)$")
     ld_st = re.compile(r"^r(\d+),(-?\d+)\(r(\d+)\)$")           # rD,disp(rA)
     ld_x = re.compile(r"^r(\d+),r(\d+),r(\d+)$")                # rD,rA,rB (indexed: EA = rA+rB)
-    mask32 = 0xffffffff
+    mask32 = MASK32
     regs = {0: 0}
 
     def base(idx):                       # r0 reads as literal 0 in addr context
-        return 0 if idx == 0 else regs.get(idx)
+        return register_base(regs, idx)
 
     hits, member_offsets = [], set()
     for ln in lines:
-        m = asm_re.match(ln)
+        m = ASM_LINE.match(ln)
         if not m:
             continue
-        mnem, ops = m.group(1), m.group(2).replace(" ", "")
+        mnem, ops = m.group(2), m.group(3).replace(" ", "")
         op = ops.split(",")
         w = WIDTH.get(mnem)
         if w:                                                  # a load or store
@@ -126,21 +157,7 @@ def find_accesses(lines, data):
             if rd is not None and not mnem.startswith("st"):   # load writes rD
                 regs.pop(rd, None)
             continue
-        # address-building ops
-        if mnem == "lis" and len(op) == 2:
-            regs[int(op[0][1:])] = (int(op[1], 0) & 0xffff) << 16
-        elif mnem in ("addi", "addic") and len(op) == 3:
-            b = base(int(op[1][1:]))
-            regs[int(op[0][1:])] = None if b is None else (b + int(op[2])) & mask32
-        elif mnem == "li" and len(op) == 2:
-            regs[int(op[0][1:])] = int(op[1]) & mask32
-        elif mnem == "ori" and len(op) == 3:
-            b = base(int(op[1][1:]))
-            regs[int(op[0][1:])] = None if b is None else (b | (int(op[2], 0) & 0xffff))
-        elif mnem == "mr" and len(op) == 2:
-            regs[int(op[0][1:])] = base(int(op[1][1:]))
-        elif op and re.fullmatch(r"r\d+", op[0]):              # any other op clobbers its dest GPR
-            regs.pop(int(op[0][1:]), None)
+        step_address_registers(regs, mnem, op)                 # address-building ops / clobbers
     return hits, member_offsets
 
 

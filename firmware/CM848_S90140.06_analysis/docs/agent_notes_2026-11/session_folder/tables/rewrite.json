@@ -1,0 +1,22 @@
+{
+ "lookups": {
+  "L179": "injection_timing_offset_coolant_factor",
+  "L184": "injection_timing_offset_coolant_angle",
+  "L180": "injection_timing_offset_intake_temperature_factor",
+  "L181": "injection_timing_offset_barometric_pressure_factor",
+  "L186": "injection_timing_offset_barometric_pressure_angle",
+  "L187": "injection_timing_offset_boost_angle",
+  "L188": "injection_timing_offset_boost_factor",
+  "L182": "injection_timing_offset_start_run_up",
+  "L131": "fuel_pressure_setpoint_coolant_factor",
+  "L133": "fuel_pressure_setpoint_coolant_limit",
+  "L134": "fuel_pressure_setpoint_ambient_factor",
+  "L135": "fuel_pressure_setpoint_ambient_limit",
+  "L136": "fuel_pressure_setpoint_start_run_up",
+  "L144": "pilot_quantity_base_map",
+  "L118": "sensor_channel15_linearization_feature_bit_4_off",
+  "L119": "sensor_channel15_linearization_feature_bit_4_on",
+  "L197": "fuel_demand_auxiliary_blend_deviation_maximum_by_rpm",
+  "L198": "fuel_demand_auxiliary_blend_deviation_minimum_by_rpm"
+ }
+}
