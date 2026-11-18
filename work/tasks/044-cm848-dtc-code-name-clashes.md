@@ -80,9 +80,9 @@ checked against the asm and its users before it was applied. The results are in
 | 3d8c707 | The 30 J1939 transmit descriptors are `j1939_tx_msg_t` instances. A ROM-to-RAM thunk is no longer made inside a named struct or array (the build log says "covering"). |
 | 72eb81e | The agents' label-only rows: 16 functions, 36 globals, 20 new rows and the `COLD_START_PHASE` members. |
 | 2eb48b0 | Batch A, ROM and the 0x40xxxx working RAM: record arrays, the monitor condition bitfields, word splits and 13 type fixes. |
-| (batch B) | The EEPROM mirror and the copy window: the fault records, the DTC lists, the sensor channel bitmaps, `end_of_line_test_settings_cal`, the algorithm enable bitfields and a pointer array type. |
+| 073d3c8 | Batch B, the EEPROM mirror and the copy window: the fault records, the DTC lists, the sensor channel bitmaps, `end_of_line_test_settings_cal`, the algorithm enable bitfields and a pointer array type. |
 
-Pieces in the .cpp went from 917 to about 540. A pointer type such as `fault_entry_t *[N]` is now accepted in
+Pieces in the .cpp went from 917 to 512. A pointer type such as `fault_entry_t *[N]` is now accepted in
 `global_variables.csv`; the change is in `ScriptUtils.ARRAY_TYPE` and has a JUnit test.
 
 **Deferred, with the reason:**
@@ -96,7 +96,8 @@ Pieces in the .cpp went from 917 to about 540. A pointer type such as `fault_ent
   `diag_session_state_t`, ...).
 - `tpu_a/b_channel_parameters`: overlaps the register CSV.
 - `switch_input_hardware_line_cal` with the `qadc_control_word_*` rows: they share RAM with boot kernel rows.
-- `eeprom_header_t`: the boot header. Its `calibration_block1` is the stored fuel level.
+- `eeprom_header_t`: the boot header. Its `calibration_block1` is the stored fuel level. The coolant bucket totals
+  that `cm848_accumulateCoolantTemperatureBuckets` adds at `DAT_003fee04` + 4 x i run into it, so they wait with it.
 - `logical_output_request_bits` as byte[10]: conflicts with the bits 16-23 bitfield.
 - `COLD_START_PHASE` / `cold_start_phase`: its values are an engine run state. That needs its own review.
 
