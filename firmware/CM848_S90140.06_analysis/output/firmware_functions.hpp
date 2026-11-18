@@ -557,8 +557,8 @@ void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type);  /
 void cm848_initJ1939AckBuffer(void);  // @ 0x00023e40
 void cm848_buildPgn65269AmbientConditionsMessage(void);  // @ 0x00023e8c
 void cm848_initJ1939AmbientConditionsBuffer(void);  // @ 0x00023fb8
-void cm848_j1939BuildEngineStatusByte(void);  // @ 0x00024028
-void cm848_initJ1939EngineStatusBuffer(void);  // @ 0x00024124
+void cm848_buildPgn65241AuxiliaryInputOutputStatus1Message(void);  // @ 0x00024028
+void cm848_initializePgn65241AuxiliaryInputOutputStatus1Buffer(void);  // @ 0x00024124
 void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void);  // @ 0x00024178
 void cm848_initPgn65265CruiseSpeedHandler(void);  // @ 0x00024664
 void j1939HandlePgn65261CruiseControlSetup(void);  // @ 0x000246fc
@@ -1027,7 +1027,7 @@ void cm848_calculateMainInjectionTiming(void);  // @ 0x0004ae20
 void cm848_updateMainInjectionTimingByDeliveryMode(void);  // @ 0x0004b5b8
 void cm848_calculateFuel2DTableLookup(void);  // @ 0x0004b6cc
 void cm848_applyProtectionLimit(void);  // @ 0x0004b9ac
-void cm848_processMemoryScanValidation(void);  // @ 0x0004ba48
+void cm848_evaluateCalibratedMonitorDisableConditions(void);  // @ 0x0004ba48
 void cm848_copyRomToRamBuffer(void);  // @ 0x0004bd00
 bool cm848_isEepromWriteQueueEmpty(void);  // @ 0x0004bd3c
 void cm848_startEepromBlockRead(void);  // @ 0x0004bd5c
@@ -1315,8 +1315,8 @@ void cm848_readVariableGeometryTurbochargerPositionSensor(void);  // @ 0x005011c
 void cm848_initializeVariableGeometryTurbochargerPositionSensor(void);  // @ 0x00501250
 void sensorChannelTypeB_configInit (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr, word *cached_axis_offset,word *x_axis,word *y_data,dword flags, ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit, dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr, word *fault_status_output_ptr);  // @ 0x005012dc
 void sensorChannelTypeB_update (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr, word *cached_axis_offset,word *x_axis,word *y_data,dword flags, ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit, dword low_fault_bit,word *value_output_ptr,word *default_value_output_ptr, word *fault_status_output_ptr);  // @ 0x00501b4c
-void hpcr_fuelFinal_periodic(void);  // @ 0x005022cc
-void cm848_initialization_step(void);  // @ 0x0050241c
+void cm848_selectBarometricPressure(void);  // @ 0x005022cc
+void cm848_initializeBarometricPressureSelection(void);  // @ 0x0050241c
 void cm848_calibrationGroup5_periodic(void);  // @ 0x00502464
 void cm848_protection_limits(void);  // @ 0x00502af4
 void cm848_initialization_step_2(void);  // @ 0x00502b24
@@ -1555,7 +1555,7 @@ void cm848_updateVariableGeometryTurbochargerMotorTemperature(void);  // @ 0x005
 void cm848_estimateVariableGeometryTurbochargerMotorCurrent(void);  // @ 0x0051008c
 void cm848_updateVariableGeometryTurbochargerMeanSquaredCurrent(void);  // @ 0x0051027c
 void cm848_initializeVariableGeometryTurbochargerMotorThermalModel(void);  // @ 0x005102d4
-void sensor_fault_safety_check(void);  // @ 0x005103ac
+void cm848_monitorWaterInFuel(void);  // @ 0x005103ac
 void cm848_processOverdriveSwitchAndShift(void);  // @ 0x00510520
 void protection_event_11_reset(void);  // @ 0x00510978
 void sensorChannelTypeB_configInit_axis1(void);  // @ 0x005109bc
@@ -1592,9 +1592,9 @@ undefined4 governor_cruise_standbyState_get(void);  // @ 0x00512f18
 void cm848_cruiseControlPeriodicUpdate(void);  // @ 0x00512ff4
 void cm848_updateEngineWarningFlags(void);  // @ 0x00513200
 void cm848_initEngineWarningFlags(void);  // @ 0x005134e8
-void engine_coolantTemp_bucket_accumulate(void);  // @ 0x00513508
+void cm848_accumulateCoolantTemperatureBuckets(void);  // @ 0x00513508
 void engine_coolant_overheat_check(void);  // @ 0x0051361c
-void engine_sensor_check_overheat(void);  // @ 0x0051375c
+void cm848_monitorCoolantTemperatureBucketOverheat(void);  // @ 0x0051375c
 void governor_cruise_dualCalc_dispatch(void);  // @ 0x0051395c
 void engine_coolantTemp_delta_calc(void);  // @ 0x00513980
 void fuel_coldStart_integralCorrection_update(void);  // @ 0x005139b8
@@ -1855,12 +1855,12 @@ void cm848_completeCoolantTemperatureSensorMonitorReport(void);  // @ 0x0052dd64
 void cm848_checkCoolantTemperatureSensorPerformance(void);  // @ 0x0052de14
 void cm848_initializeEgrDeltaPressureSensorPerformanceCheck(void);  // @ 0x0052e24c
 void cm848_checkEgrDeltaPressureSensorPerformance(void);  // @ 0x0052e29c
-void cm848_initialization_group22_state_cont(void);  // @ 0x0052eac8
-void cm848_calibration_group21_load_cont(void);  // @ 0x0052eae8
+void cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor(void);  // @ 0x0052eac8
+void cm848_monitorEgrOrificeTemperatureSensorRationality(void);  // @ 0x0052eae8
 void cm848_initialization_group21_state_cont(void);  // @ 0x0052ef90
 undefined4 engine_protection_timerStateMachine_init(void);  // @ 0x0052f030
 undefined4 diag_camSync_deviation_check(void);  // @ 0x0052f250
-undefined4 engine_protection_timerState_shiftCheck(void);  // @ 0x0052f32c
+undefined4 cm848_runEndOfLineMisfireTestStep(void);  // @ 0x0052f32c
 undefined4 cm848_checkRadiatorFanSpeedSignalNoise(void);  // @ 0x0052f448
 undefined4 engine_coldStart_batteryVoltage_monitor(void);  // @ 0x0052f5d4
 undefined4 engine_protection_timerBitCheck_dispatch(void);  // @ 0x0052f770
@@ -1869,7 +1869,7 @@ undefined4 fault_event_check_conflict(int param_1);  // @ 0x0052f938
 void fault_event_queue_set_active(int param_1,word param_2);  // @ 0x0052f994
 void fault_event_queue_clear_active(ushort param_1);  // @ 0x0052f9d8
 undefined2 engine_coldStart_protection_stateMachine(void);  // @ 0x0052fa34
-void hpcr_calibration_group25_load(void);  // @ 0x0053005c
+void cm848_runEndOfLineTestSequence(void);  // @ 0x0053005c
 void cm848_initialization_group25_state(void);  // @ 0x00530288
 void cm848_checkRadiatorFanSpeedRationality(void);  // @ 0x00530298
 void cm848_initializeFuelTemperatureSensorColdSoakCheck(void);  // @ 0x00530364
@@ -1884,10 +1884,10 @@ void cm848_checkFuelPressureSensorPlausibilityByFuelDemand(void);  // @ 0x00530d
 void cm848_runFuelPressureSensorPlausibilityMonitor(void);  // @ 0x005311e4
 void hpcr_checkRailPressureSensorBeforeStart(void);  // @ 0x00531370
 void cm848_initialization_group26_state(void);  // @ 0x0053168c
-void hpcr_calibration_group25_load_cont(void);  // @ 0x005316ac
-void cm848_initialization_group25_state_cont(void);  // @ 0x005318e8
-void cm848_calibration_group27_load(void);  // @ 0x00531900
-void cm848_clearProtectionFlags(void);  // @ 0x00531cf8
+void cm848_updateMonitorEnablingConditionInputs(void);  // @ 0x005316ac
+void cm848_initializeBatteryVoltageInRangeFlags(void);  // @ 0x005318e8
+void cm848_updateMonitorEnablingConditions(void);  // @ 0x00531900
+void cm848_clearMonitorEnablingConditions(void);  // @ 0x00531cf8
 void cm848_resetFuelPressureTrackingErrorAccumulators(void);  // @ 0x00531d10
 void cm848_monitorFuelPressureTrackingError(void);  // @ 0x00531d34
 void cm848_resetFuelPressureTrackingErrorMonitor(void);  // @ 0x00532208

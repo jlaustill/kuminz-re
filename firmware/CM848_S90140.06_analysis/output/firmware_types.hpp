@@ -874,15 +874,15 @@ typedef enum {
 } TSC1_OVERRIDE_MODE;
 
 typedef enum {
-    CSP_INIT = 0,  /* Reset/power-on default; immediately transitions to CRANKING */
-    CSP_CRANKING = 1,  /* Engine at idle/crank speed; RPM below trigger threshold */
-    CSP_ABOVE_RPM_TRIGGER = 2,  /* RPM exceeded trigger but below governor setpoint; warming up */
-    CSP_AT_GOVERNOR_SETPOINT = 3,  /* RPM at or above governor setpoint; cold start governor active */
-    CSP_FUEL_MODE_SWITCH = 4,  /* Fuel mode switch active; waiting for switch to release */
-    CSP_SUSPENDED = 5,  /* Cold start suspended due to shutdown inhibit with cold mode enabled */
-    CSP_ABOVE_RPM_VIA_EVENTS = 6,  /* Same as ABOVE_RPM_TRIGGER but entered via crank event counter overflow */
-    CSP_SETPOINT_UNDERRUN = 7,  /* Dropped below governor setpoint after reaching it (phase 3 backtrack) */
-    CSP_ENGINE_STANDBY = 8  /* Engine cranking (RPM=0) or MIOS crank signal stopped; pre/post-run standby */
+    COLD_START_PHASE_INITIAL = 0,  /* Reset/power-on default; immediately transitions to CRANKING */
+    COLD_START_PHASE_KEY_ON_ENGINE_STOPPED = 1,  /* Engine at idle/crank speed; RPM below trigger threshold */
+    COLD_START_PHASE_ABOVE_RPM_TRIGGER = 2,  /* RPM exceeded trigger but below governor setpoint; warming up */
+    COLD_START_PHASE_AT_GOVERNOR_SETPOINT = 3,  /* RPM at or above governor setpoint; cold start governor active */
+    COLD_START_PHASE_ENGINE_RETARDER_ACTIVE = 4,  /* Fuel mode switch active; waiting for switch to release */
+    COLD_START_PHASE_ENGINE_OVERSPEED = 5,  /* Cold start suspended due to shutdown inhibit with cold mode enabled */
+    COLD_START_PHASE_ABOVE_RPM_VIA_CRANK_EVENTS = 6,  /* Same as ABOVE_RPM_TRIGGER but entered via crank event counter overflow */
+    COLD_START_PHASE_SETPOINT_UNDERRUN = 7,  /* Dropped below governor setpoint after reaching it (phase 3 backtrack) */
+    COLD_START_PHASE_ENGINE_STANDBY = 8  /* Engine cranking (RPM=0) or MIOS crank signal stopped; pre/post-run standby */
 } COLD_START_PHASE;
 
 typedef enum {
@@ -1174,7 +1174,7 @@ struct protection_condition_flags_t {
     uint8_t condition_flags_3;  /* Protection condition flags set 3 */
     uint8_t condition_flags_2;  /* Protection condition flags set 2 */
     uint8_t reserved_07;  /* Gap/reserved byte at offset 0x07 */
-    uint8_t threshold_current;  /* Current threshold index for protection lookup */
+    uint8_t fault_state_flags;  /* Current threshold index for protection lookup */
     uint8_t action_flags;  /* Protection action trigger flags */
 };
 
@@ -1208,7 +1208,7 @@ struct engine_sync_state_t {
 };
 
 struct engine_rpm_state_t {
-    uint16_t target_rpm;  /* Target engine RPM setpoint */
+    uint16_t filtered_rpm;  /* Target engine RPM setpoint */
     uint16_t reserved_02;  /* Gap/reserved (0xb7ae) */
     uint16_t reserved_04;  /* Gap/reserved (0xb7b0) */
     uint16_t reserved_06;  /* Gap/reserved (0xb7b2) */
@@ -1262,8 +1262,8 @@ struct fault_list_state_t {
 
 struct data_transfer_state_t {
     uint16_t byte_count;  /* Bytes remaining to transfer */
-    uint16_t reserved_02;  /* Gap (0x3fec84-0x3fec85) */
-    uint16_t reserved_04;  /* Gap (0x3fec86-0x3fec87) */
+    uint16_t buffer_write_enabled_flag;  /* Gap (0x3fec84-0x3fec85) */
+    uint16_t largest_write_length;  /* Gap (0x3fec86-0x3fec87) */
     uint16_t reserved_06;  /* Gap (0x3fec88-0x3fec89) */
     uint16_t state;  /* Transfer state machine value */
     uint16_t status;  /* Transfer status/result code */
@@ -1869,7 +1869,7 @@ struct fault_entry_t {
     uint32_t key_on_hour_meter;  /* Fuel timing advance value at capture time */
     uint8_t fault_code;  /* Fault code ID (0xAA = empty/available slot) */
     uint16_t vehicle_speed;  /* Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim) */
-    uint16_t target_rpm;  /* Target engine RPM at fault time */
+    uint16_t filtered_rpm;  /* Target engine RPM at fault time */
     uint16_t diagnostic_fault_flags_a;  /* Sensor scale factor 1 */
     uint16_t engine_load_at_current_speed;  /* engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status) */
     uint16_t accelerator_pedal_position;  /* accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high) */

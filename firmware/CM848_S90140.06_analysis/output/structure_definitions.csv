@@ -57,7 +57,7 @@ protection_condition_flags_t,0x0040b0e8,reserved_04,byte,1,Gap/reserved byte at 
 protection_condition_flags_t,0x0040b0e8,condition_flags_3,byte,1,Protection condition flags set 3,,verified
 protection_condition_flags_t,0x0040b0e8,condition_flags_2,byte,1,Protection condition flags set 2,,verified
 protection_condition_flags_t,0x0040b0e8,reserved_07,byte,1,Gap/reserved byte at offset 0x07,,needs_review
-protection_condition_flags_t,0x0040b0e8,threshold_current,byte,1,Current threshold index for protection lookup,,verified
+protection_condition_flags_t,0x0040b0e8,fault_state_flags,byte,1,Current threshold index for protection lookup,,verified
 protection_condition_flags_t,0x0040b0e8,action_flags,byte,1,Protection action trigger flags,,verified
 # Protection Status Flags - protection state machine status
 # Continuation of protection state at 0x0040b0f2
@@ -91,7 +91,7 @@ engine_sync_state_t,0x0040b87f,reserved_05,byte,1,Padding for alignment,,needs_r
 # Engine RPM State - current and target engine speed values
 # Used by processEngineRpmTarget and governor control
 # Total size: 16 bytes (0x0040b7ac-0x0040b7bb)
-engine_rpm_state_t,0x0040b7ac,target_rpm,word,2,Target engine RPM setpoint,,verified
+engine_rpm_state_t,0x0040b7ac,filtered_rpm,word,2,Target engine RPM setpoint,,verified
 engine_rpm_state_t,0x0040b7ac,reserved_02,word,2,Gap/reserved (0xb7ae),,needs_review
 engine_rpm_state_t,0x0040b7ac,reserved_04,word,2,Gap/reserved (0xb7b0),,needs_review
 engine_rpm_state_t,0x0040b7ac,reserved_06,word,2,Gap/reserved (0xb7b2),,needs_review
@@ -148,8 +148,8 @@ fault_list_state_t,0x003fe11a,total_emission_faults,word,2,Total emission fault 
 # Used by diagMemoryReadHandler and calibration download
 # Total size: 8 bytes (0x003fec82-0x003fec89)
 data_transfer_state_t,0x003fec82,byte_count,word,2,Bytes remaining to transfer,,verified
-data_transfer_state_t,0x003fec82,reserved_02,word,2,Gap (0x3fec84-0x3fec85),,needs_review
-data_transfer_state_t,0x003fec82,reserved_04,word,2,Gap (0x3fec86-0x3fec87),,needs_review
+data_transfer_state_t,0x003fec82,buffer_write_enabled_flag,word,2,Gap (0x3fec84-0x3fec85),,needs_review
+data_transfer_state_t,0x003fec82,largest_write_length,word,2,Gap (0x3fec86-0x3fec87),,needs_review
 data_transfer_state_t,0x003fec82,reserved_06,word,2,Gap (0x3fec88-0x3fec89),,needs_review
 data_transfer_state_t,0x003fec82,state,word,2,Transfer state machine value,,verified
 data_transfer_state_t,0x003fec82,status,word,2,Transfer status/result code,,verified
@@ -777,7 +777,7 @@ combustion_chi_maximum_fuel_points_t,0x0040a502,chi_maximum_fuel_at_point_5,word
 fault_entry_t,0x003fe674,key_on_hour_meter,dword,4,Fuel timing advance value at capture time,,verified
 fault_entry_t,0x003fe674,fault_code,byte,1,Fault code ID (0xAA = empty/available slot),,verified
 fault_entry_t,0x003fe674,vehicle_speed,word,2,Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim),,verified
-fault_entry_t,0x003fe674,target_rpm,word,2,Target engine RPM at fault time,,verified
+fault_entry_t,0x003fe674,filtered_rpm,word,2,Target engine RPM at fault time,,verified
 fault_entry_t,0x003fe674,diagnostic_fault_flags_a,word,2,Sensor scale factor 1,,verified
 fault_entry_t,0x003fe674,engine_load_at_current_speed,word,2,engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status),,verified
 fault_entry_t,0x003fe674,accelerator_pedal_position,word,2,accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high),,verified
