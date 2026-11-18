@@ -1,0 +1,52 @@
+[PASS] parse_calls_handles_wrapped_and_nested_arguments
+[PASS] resolve_argument_forms
+[PASS] axis_points_accepts_ascending_axes_only
+[PASS] size_tables_sizes_axis_data_and_grid
+[PASS] size_tables_reports_data_header_mismatch
+[PASS] disassembly_reads_argument_registers_and_resets_at_branches
+[PASS] audit_and_plan_rows_fix_only_conflict_free_findings
+[PASS] write_rows_edits_in_place_and_inserts_after_the_lower_neighbour
+[PASS] dumps_size_the_hand_written_tables_the_same
+[PASS] disassembly_pairs_the_twice_named_governor_pressure_axis
+[PASS] committed_state_audits_clean
+
+ALL PASS
+[PASS] 0x0050ecc4 @ 0x40afd8 (cm848_selectTurbochargerSpeedSource: displacement sth): widths=['word'] expected=['word']
+[PASS] 0x0051a878 @ 0x40b788 (cm848_updateOilChangeMonitor: displacement lwz): widths=['dword'] expected=['dword']
+[PASS] 0x005161c0 @ 0x40b2f8 (cm848_initRadiatorFanSpeedMeasurement: displacement stw): widths=['dword'] expected=['dword']
+[PASS] 0x0053473c @ 0x40af0c (cm848_clearMilForHealedFaults: INDEXED lbzx (the fix)): widths=['byte'] expected=['byte']
+[PASS] xref 0x00408dfc read-only: 0 writes / 2 fns
+[PASS] xref 0x5b4d6 unnamed word array: 1 fns
+
+ALL PASS
+[PASS] common.clip: short text unchanged
+[PASS] common.clip: a cut identifier is dropped
+[PASS] common.clip: the word before the cut is kept
+[PASS] common.clip: text without a space is cut hard
+[PASS] common.canonical_labels: per function, by first appearance
+[PASS] proof: a pure rename is EQUIVALENT
+[PASS] proof: the canonical baseline matches the reversed build
+[PASS] proof: reordered local declarations stay EQUIVALENT
+[PASS] proof: a changed constant is NOT EQUIVALENT
+[PASS] proof: squash_changed names the changed function
+[PASS] align: cm848_initX -> cm848_initializeX (and in its plate)
+[PASS] align: fooInitBar -> fooInitializeBar
+[PASS] align: Initial is not touched
+[PASS] align: --swap applies to names and evidence
+[PASS] align: <name>+N sub-label rows are left out
+[PASS] refresh: history kept, the later mention refreshed
+[PASS] refresh: a name that is still in use is left alone
+[PASS] refresh: a 'were a / b' list is history
+[PASS] refresh: --text files are refreshed
+[PASS] new row: comment cut at a word boundary and marked
+[PASS] gate: init is a banned word (function and data names)
+[PASS] gate: _cal outside the EEPROM mirror is refused
+[PASS] gate: a clean row raises no problem
+[PASS] gate: an unprefixed (shared) function name is allowed
+[PASS] gate: --apply renames the row; its comment is cut at a word boundary + (was old)
+[PASS] struct type: every struct row and type column renamed, the instance named
+[PASS] struct type: its mapping proves the rename (the unnamed instance's default label too)
+[PASS] extras stage 1: field renamed in the struct and its member-label row
+[PASS] extras stage 1: a DELETE note removes the row and is mapped
+
+ALL PASS

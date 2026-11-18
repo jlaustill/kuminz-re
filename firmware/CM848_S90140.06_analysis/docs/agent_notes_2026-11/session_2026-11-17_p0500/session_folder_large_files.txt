@@ -1,0 +1,6 @@
+snapshots/build1.log
+snapshots/build2.log
+snapshots/post1.cpp
+snapshots/pre.cpp
+snapshots/pre_canon.cpp
+snapshots/reversed.cpp

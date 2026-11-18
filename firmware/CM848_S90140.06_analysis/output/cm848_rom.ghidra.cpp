@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Tue Nov 17 16:39:17 MST 2026
+// Generated: Tue Nov 17 21:48:48 MST 2026
 
 
 //
@@ -7136,7 +7136,7 @@ void cm848_periodicTaskGroup30_calibration12(void)
 
 {
   sensorChannelTypeB_configInit_axis3();
-  cm848_calibration_group30_execute();
+  cm848_runVehicleSpeedSensorMonitors();
   cm848_learnAcceleratorPedalIdlePositions();
   cm848_monitorParkNeutralSwitch();
   return;
@@ -24902,10 +24902,11 @@ void cm848_initializePgn61440ElectronicRetarderController1Buffer(void)
    fan_drive_estimated_speed_percent_times_256 x 5 >> 9, so 25600 gives 250 = 100 percent), byte 2 =
    fan drive state (SPN 977) in the low nibble with the reserved nibble set, 0xFE when
    fan_drive_state_code is above 15. Neither input is written anywhere in this firmware, so the
-   frame always reports 0 percent and state 0 (fan off); the two parameters of the function are
-   unused (was cm848_j1939SendDiagnosticStatusMessage). */
+   frame always reports 0 percent and state 0 (fan off). It takes no arguments: r3 / r4 are written
+   before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444), so its invented dest_address /
+   status_type parameters were removed 2026-11-17 (was cm848_j1939SendDiagnosticStatusMessage). */
 
-void cm848_buildPgn65213FanDrive1Message(byte dest_address,byte status_type)
+void cm848_buildPgn65213FanDrive1Message(void)
 
 {
   j1939_fan_drive_1_estimated_fan_speed_byte =
@@ -55612,7 +55613,7 @@ void cm848_applicationMain(void)
   cm848_initTemperatureTrimTableSizes();
   cm848_initializeConverterSlipEngineSpeedLimit();
   cm848_initVehicleSpeedSensorChannel();
-  cm848_state_variables_reset();
+  cm848_initializeVehicleSpeedSensorZeroUnderLoadMonitor();
   cm848_initializeVehicleSpeedAndCruiseState();
   cm848_copyROMCalibrationToRAM();
   cm848_initJ1939InputProcessing();
@@ -83048,19 +83049,24 @@ void cm848_computeProtectionTrimDivisors(void)
 // Function: cm848_detectVehicleSpeedSensorSignalLoss @ 0x00526924
 //
 
-/* Sets condition_monitor bit 13 (vehicle speed sensor fault) when the sensor reads 0 while
-   vehicle_speed is still above DAT_0005c96c and engine_load_percent >= DAT_0005c970 (signal lost
-   while moving under load); vehicle_speed_sensor_ok_flag mirrors the bit (was
-   diag_fuelTempTrim_overtemp_check) | review-function-readability reviewed 2026-11-12 - Readability
-   Medium Accuracy Confidence Medium */
+/* P0500 vehicle speed sensor rationality path 1 (fault 29 = fault_detected_bits_16_to_31 bit 13;
+   ROM 0x5985a[29] = slot 24 -> obd_dtc_code_table P0500): with protection_feature_status_flags bit
+   0 set / boost_fuel_bypass_flags bit 0 clear / fault_management_status_flags bit 0x100 set (clear
+   in this calibration: EEPROM 0x132 = 0x2e06) it sets P0500 when the sensor reads 0 while the
+   filtered vehicle_speed is still above vehicle_speed_signal_loss_minimum_vehicle_speed (10 mph)
+   and engine_load_percent is at least vehicle_speed_signal_loss_minimum_engine_load (15 %) - the
+   signal was lost while moving under load; vehicle_speed_sensor_ok_flag mirrors the bit. Path 2 is
+   cm848_detectVehicleSpeedSensorZeroUnderLoad (was diag_fuelTempTrim_overtemp_check) |
+   review-function-readability reviewed 2026-11-17 - Readability Medium Accuracy Confidence High */
 
 void cm848_detectVehicleSpeedSensorSignalLoss(void)
 
 {
   if (((((protection_feature_status_flags & 1) != 0) && ((boost_fuel_bypass_flags & 1) == 0)) &&
       ((fault_management_status_flags & 0x100) != 0)) &&
-     (((vehicle_speed_unfiltered == 0 && (DAT_0005c96c < vehicle_speed)) &&
-      (DAT_0005c970 <= engine_load_percent)))) {
+     (((vehicle_speed_unfiltered == 0 &&
+       (vehicle_speed_signal_loss_minimum_vehicle_speed < vehicle_speed)) &&
+      (vehicle_speed_signal_loss_minimum_engine_load <= engine_load_percent)))) {
     system_status_flags_t_003fe974.fault_detected_bits_16_to_31 =
          system_status_flags_t_003fe974.fault_detected_bits_16_to_31 | 0x2000;
   }
@@ -83070,56 +83076,83 @@ void cm848_detectVehicleSpeedSensorSignalLoss(void)
 
 
 //
-// Function: diag_boostLoad_overtemp_monitor @ 0x005269c0
+// Function: cm848_detectVehicleSpeedSensorZeroUnderLoad @ 0x005269c0
 //
 
-void diag_boostLoad_overtemp_monitor(void)
+/* P0500 vehicle speed sensor rationality path 2 (fault 29 = fault_detected_bits_16_to_31 bit 13 ->
+   slot 24 -> P0500; set with an interrupt-safe lhz / ori 0x2000 / sth @ 0x526b7c): runs while
+   protection_feature_status_flags bit 1 is set / boost_fuel_bypass_flags bit 1 is clear /
+   fault_management_status_flags bit 0x200 is set (set in this calibration: EEPROM 0x132 = 0x2e06).
+   With vehicle_speed_unfiltered at 0 and the boost sensor healthy (faults 8 / 9 = P0238 / P0237
+   clear) it filters engine_load_percent through
+   vehicle_speed_zero_under_load_engine_load_filter_state; a pass with
+   boost_pressure_above_barometric over vehicle_speed_zero_under_load_minimum_boost_pressure (94.8
+   kPa) and the filtered load over vehicle_speed_zero_under_load_minimum_engine_load (40 %) adds to
+   vehicle_speed_zero_under_load_pass_count and 30 passes make one event; each accelerator off-idle
+   entry at the governor setpoint adds to the entry count. P0500 sets when both reach their limits
+   (10 events / 10 entries): the engine pulled hard again and again while the speed sensor read 0.
+   Otherwise (path 2 off / the sensor reads non-zero / boost sensor fault) it zeroes both counts and
+   passes the raw load through. Nothing here is a temperature - the overtemp name probably dates
+   from when vehicle_speed was read as fuel temperature trim (path 1 was
+   diag_fuelTempTrim_overtemp_check). The RAM dump has protection_feature_status_flags = 0x06ff4040
+   (bit 1 clear) so it was not running then (was diag_boostLoad_overtemp_monitor) |
+   review-function-readability reviewed 2026-11-17 - Readability Medium Accuracy Confidence High */
+
+void cm848_detectVehicleSpeedSensorZeroUnderLoad(void)
 
 {
-  dword dVar1;
-  char cVar2;
+  dword filtered_engine_load;
+  byte limits_reached_count;
   
   if (((protection_feature_status_flags & 2) != 0) && ((boost_fuel_bypass_flags & 2) == 0)) {
     if (((fault_management_status_flags & 0x200) == 0) ||
        (((vehicle_speed_unfiltered != 0 ||
          ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x100) != 0)) ||
         ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x200) != 0)))) {
-      protection_channel_load_snapshot = engine_load_percent;
-      diag_boostLoad_overtemp_demand_qualify_count = 0;
-      diag_boostLoad_overtemp_event_count = 0;
+      vehicle_speed_zero_under_load_engine_load_filtered = engine_load_percent;
+      vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal = 0;
+      vehicle_speed_zero_under_load_event_count_cal = 0;
     }
     else {
-      dVar1 = exponentialMovingAverage
-                        ((uint)engine_load_percent,
-                         (ema_filter_state_t *)&engine_load_ema_filter_pointer);
-      protection_channel_load_snapshot = (word)dVar1;
-      if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) && (fuel_demand_enable_snapshot == 0)) &&
+      filtered_engine_load =
+           exponentialMovingAverage
+                     ((uint)engine_load_percent,
+                      &vehicle_speed_zero_under_load_engine_load_filter_state);
+      vehicle_speed_zero_under_load_engine_load_filtered = (word)filtered_engine_load;
+      if (((cold_start_phase == CSP_AT_GOVERNOR_SETPOINT) &&
+          (vehicle_speed_zero_under_load_accelerator_off_idle_previous == 0)) &&
          (fuel_demand_control_t_0040a57a.accelerator_off_idle == 1)) {
-        diag_boostLoad_overtemp_demand_qualify_count =
-             diag_boostLoad_overtemp_demand_qualify_count + 1;
+        vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal =
+             vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal + 1;
       }
-      if (DAT_0005c966 < boost_pressure_above_barometric) {
-        if ((uint)DAT_0005c96e < (dVar1 & 0xffff)) {
-          diag_boostLoad_overtemp_qualifying_cycle_count =
-               diag_boostLoad_overtemp_qualifying_cycle_count + 1;
+      if (vehicle_speed_zero_under_load_minimum_boost_pressure < boost_pressure_above_barometric) {
+        if ((uint)vehicle_speed_zero_under_load_minimum_engine_load <
+            (filtered_engine_load & 0xffff)) {
+          vehicle_speed_zero_under_load_pass_count = vehicle_speed_zero_under_load_pass_count + 1;
         }
       }
       else {
-        diag_boostLoad_overtemp_qualifying_cycle_count = 0;
+        vehicle_speed_zero_under_load_pass_count = 0;
       }
-      if (DAT_0005c974 <= diag_boostLoad_overtemp_qualifying_cycle_count) {
-        diag_boostLoad_overtemp_event_count = diag_boostLoad_overtemp_event_count + 1;
-        diag_boostLoad_overtemp_qualifying_cycle_count = 0;
+      if (vehicle_speed_zero_under_load_passes_per_event <= vehicle_speed_zero_under_load_pass_count
+         ) {
+        vehicle_speed_zero_under_load_event_count_cal =
+             vehicle_speed_zero_under_load_event_count_cal + 1;
+        vehicle_speed_zero_under_load_pass_count = 0;
       }
-      cVar2 = DAT_0005c96a <= diag_boostLoad_overtemp_demand_qualify_count;
-      if ((bool)cVar2) {
-        diag_boostLoad_overtemp_demand_qualify_count = DAT_0005c96a;
+      limits_reached_count =
+           vehicle_speed_zero_under_load_accelerator_off_idle_entry_limit <=
+           vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal;
+      if ((bool)limits_reached_count) {
+        vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal =
+             vehicle_speed_zero_under_load_accelerator_off_idle_entry_limit;
       }
-      if (DAT_0005c964 <= diag_boostLoad_overtemp_event_count) {
-        diag_boostLoad_overtemp_event_count = DAT_0005c964;
-        cVar2 = cVar2 + '\x01';
+      if (vehicle_speed_zero_under_load_event_limit <= vehicle_speed_zero_under_load_event_count_cal
+         ) {
+        vehicle_speed_zero_under_load_event_count_cal = vehicle_speed_zero_under_load_event_limit;
+        limits_reached_count = limits_reached_count + 1;
       }
-      if (cVar2 == '\x02') {
+      if (limits_reached_count == 2) {
         system_status_flags_t_003fe974.fault_detected_bits_16_to_31 =
              system_status_flags_t_003fe974.fault_detected_bits_16_to_31 | 0x2000;
       }
@@ -83131,10 +83164,17 @@ void diag_boostLoad_overtemp_monitor(void)
 
 
 //
-// Function: diag_boostLoad_overtemp_clear @ 0x00526bc8
+// Function: cm848_clearHealedVehicleSpeedSensorFault @ 0x00526bc8
 //
 
-void diag_boostLoad_overtemp_clear(void)
+/* Heals P0500 (fault 29): when both vehicle speed sensor paths are off
+   (fault_management_status_flags bits 0x200 and 0x100 clear) or the sensor reads non-zero with the
+   engine at the governor setpoint - and fault 29 is set - it clears fault 29 in
+   fault_detected_bits_16_to_31 and fault_registered_bits_16_to_31 and zeroes the zero-under-load
+   event / accelerator off-idle entry / pass counts (was diag_boostLoad_overtemp_clear) |
+   review-function-readability reviewed 2026-11-17 - Readability Medium Accuracy Confidence High */
+
+void cm848_clearHealedVehicleSpeedSensorFault(void)
 
 {
   if (((((fault_management_status_flags & 0x200) == 0) &&
@@ -83144,9 +83184,9 @@ void diag_boostLoad_overtemp_clear(void)
     system_status_flags_t_003fe974.fault_detected_bits_16_to_31 =
          system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0xdfff;
     fault_registered_bits_16_to_31 = fault_registered_bits_16_to_31 & 0xdfff;
-    diag_boostLoad_overtemp_demand_qualify_count = 0;
-    diag_boostLoad_overtemp_event_count = 0;
-    diag_boostLoad_overtemp_qualifying_cycle_count = 0;
+    vehicle_speed_zero_under_load_accelerator_off_idle_entry_count_cal = 0;
+    vehicle_speed_zero_under_load_event_count_cal = 0;
+    vehicle_speed_zero_under_load_pass_count = 0;
   }
   return;
 }
@@ -83154,31 +83194,46 @@ void diag_boostLoad_overtemp_clear(void)
 
 
 //
-// Function: cm848_calibration_group30_execute @ 0x00526c80
+// Function: cm848_runVehicleSpeedSensorMonitors @ 0x00526c80
 //
 
-void cm848_calibration_group30_execute(void)
+/* The vehicle speed sensor (P0500) monitor task called from
+   cm848_periodicTaskGroup30_calibration12: cm848_detectVehicleSpeedSensorSignalLoss (path 1) /
+   cm848_detectVehicleSpeedSensorZeroUnderLoad (path 2) / cm848_clearHealedVehicleSpeedSensorFault -
+   then it keeps this pass's accelerator_off_idle for the next pass's off-idle entry test (was
+   cm848_calibration_group30_execute) | review-function-readability reviewed 2026-11-17 -
+   Readability Medium Accuracy Confidence High */
+
+void cm848_runVehicleSpeedSensorMonitors(void)
 
 {
   cm848_detectVehicleSpeedSensorSignalLoss();
-  diag_boostLoad_overtemp_monitor();
-  diag_boostLoad_overtemp_clear();
-  fuel_demand_enable_snapshot = fuel_demand_control_t_0040a57a.accelerator_off_idle;
+  cm848_detectVehicleSpeedSensorZeroUnderLoad();
+  cm848_clearHealedVehicleSpeedSensorFault();
+  vehicle_speed_zero_under_load_accelerator_off_idle_previous =
+       fuel_demand_control_t_0040a57a.accelerator_off_idle;
   return;
 }
 
 
 
 //
-// Function: cm848_state_variables_reset @ 0x00526cb8
+// Function: cm848_initializeVehicleSpeedSensorZeroUnderLoadMonitor @ 0x00526cb8
 //
 
-void cm848_state_variables_reset(void)
+/* Initializes the P0500 zero-under-load monitor: zeroes the engine load filter's accumulator /
+   points its coefficient at vehicle_speed_zero_under_load_engine_load_filter_coefficient (ROM
+   0x5c972) / clears vehicle_speed_zero_under_load_pass_count; the EEPROM-backed event and
+   accelerator off-idle entry counts keep their saved values (was cm848_state_variables_reset) |
+   review-function-readability reviewed 2026-11-17 - Readability High Accuracy Confidence High */
+
+void cm848_initializeVehicleSpeedSensorZeroUnderLoadMonitor(void)
 
 {
-  DAT_003fd074 = 0;
-  engine_load_ema_filter_pointer = (dword)&DAT_0005c972;
-  diag_boostLoad_overtemp_qualifying_cycle_count = 0;
+  vehicle_speed_zero_under_load_engine_load_filter_state.accumulator = 0;
+  vehicle_speed_zero_under_load_engine_load_filter_state.coefficient =
+       &vehicle_speed_zero_under_load_engine_load_filter_coefficient;
+  vehicle_speed_zero_under_load_pass_count = 0;
   return;
 }
 

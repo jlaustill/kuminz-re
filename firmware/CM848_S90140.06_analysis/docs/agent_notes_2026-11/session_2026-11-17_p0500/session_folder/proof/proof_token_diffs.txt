@@ -1,0 +1,11 @@
+=== cm848_buildPgn65213FanDrive1Message
+replace: [byte dest_address , byte status_type] -> [void]   ctx: / / void cm848_buildPgn65213FanDrive1Message (
+=== diag_boostLoad_overtemp_monitor
+replace: [char] -> [byte]   ctx: void ) { dword dVar1 ;
+delete: [( ema_filter_state_t * )] -> []   ctx: ( ( uint ) engine_load_percent ,
+replace: [' \ x01 '] -> [1]   ctx: DAT_0005c964 ; cVar2 = cVar2 +
+replace: [' \ x02 '] -> [2]   ctx: } if ( cVar2 = =
+=== cm848_state_variables_reset
+replace: [DAT_003fd074] -> [engine_load_ema_filter_pointer . accumulator]   ctx: void cm848_state_variables_reset ( void ) {
+insert: [] -> [. coefficient]   ctx: { DAT_003fd074 = 0 ; engine_load_ema_filter_pointer
+delete: [( dword )] -> []   ctx: DAT_003fd074 = 0 ; engine_load_ema_filter_pointer =

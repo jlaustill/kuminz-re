@@ -1,0 +1,16 @@
+cm848_buildPgn65213FanDrive1Message: {'OTHER': 1}
+diag_boostLoad_overtemp_monitor: {'cast / declaration type': 1, 'OTHER': 1, 'char literal -> integer': 2}
+cm848_state_variables_reset: {'OTHER': 2, 'cast added / removed': 1}
+TOTAL: {'OTHER': 4, 'cast / declaration type': 1, 'char literal -> integer': 2, 'cast added / removed': 1}
+OTHER cm848_buildPgn65213FanDrive1Message
+   - / void cm848_buildPgn65213FanDrive1Message ( byte dest_address , byte status_type ) {
+   + / void cm848_buildPgn65213FanDrive1Message ( void ) {
+OTHER diag_boostLoad_overtemp_monitor
+   - uint ) engine_load_percent , ( ema_filter_state_t * ) & engine_load_ema_filter_pointer
+   + uint ) engine_load_percent , & engine_load_ema_filter_pointer
+OTHER cm848_state_variables_reset
+   - ( void ) { DAT_003fd074 = 0
+   + ( void ) { engine_load_ema_filter_pointer . accumulator = 0
+OTHER cm848_state_variables_reset
+   - = 0 ; engine_load_ema_filter_pointer = (
+   + = 0 ; engine_load_ema_filter_pointer . coefficient = &

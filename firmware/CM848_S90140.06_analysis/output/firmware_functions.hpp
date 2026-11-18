@@ -595,7 +595,7 @@ void cm848_buildPgn65262EngineTemperature1Message(void);  // @ 0x00026024
 void cm848_initPgn65262EngineTempHandler(void);  // @ 0x0002619c
 void cm848_buildPgn61440ElectronicRetarderController1Message(void);  // @ 0x00026238
 void cm848_initializePgn61440ElectronicRetarderController1Buffer(void);  // @ 0x000263a4
-void cm848_buildPgn65213FanDrive1Message(byte dest_address,byte status_type);  // @ 0x0002641c
+void cm848_buildPgn65213FanDrive1Message(void);  // @ 0x0002641c
 void cm848_initializePgn65213FanDrive1Buffer(void);  // @ 0x00026480
 void cm848_buildPgn65270InletExhaustConditions1Message(void);  // @ 0x000264d8
 void cm848_initJ1939InletExhaustConditionsBuffer(void);  // @ 0x000265d8
@@ -1804,10 +1804,10 @@ void cm848_output_shaft_speed_save(void);  // @ 0x005267e0
 void cm848_calculateVehicleSpeedFromOutputShaft(void);  // @ 0x005267f4
 void cm848_computeProtectionTrimDivisors(void);  // @ 0x005268e8
 void cm848_detectVehicleSpeedSensorSignalLoss(void);  // @ 0x00526924
-void diag_boostLoad_overtemp_monitor(void);  // @ 0x005269c0
-void diag_boostLoad_overtemp_clear(void);  // @ 0x00526bc8
-void cm848_calibration_group30_execute(void);  // @ 0x00526c80
-void cm848_state_variables_reset(void);  // @ 0x00526cb8
+void cm848_detectVehicleSpeedSensorZeroUnderLoad(void);  // @ 0x005269c0
+void cm848_clearHealedVehicleSpeedSensorFault(void);  // @ 0x00526bc8
+void cm848_runVehicleSpeedSensorMonitors(void);  // @ 0x00526c80
+void cm848_initializeVehicleSpeedSensorZeroUnderLoadMonitor(void);  // @ 0x00526cb8
 void cm848_vehicleSpeedSensorInterruptHandler(void);  // @ 0x00526ce4
 void cm848_initVehicleSpeedSensorChannel(void);  // @ 0x00527050
 void engine_injectionAngle_updateCutoutAndTimingDemand(void);  // @ 0x0052731c

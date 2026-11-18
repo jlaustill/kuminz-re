@@ -1,0 +1,12 @@
+names 20  rendered 20  underscore variants 0 []
+old WORD_ARRAY_ labels of named tables still in the new .cpp: 0 []
+NOT EQUIVALENT: 1969 vs 1969 function chunks
+DIFF in //Function:cm848_buildPgn65213FanDrive1Message@0x0
+   old ...Message@0x0002641c//voidcm848_buildPgn65213FanDrive1Message(bytedest_address,bytesta
+   new ...Message@0x0002641c//voidcm848_buildPgn65213FanDrive1Message(void){j1939_fan_drive_1
+DIFF in //Function:diag_boostLoad_overtemp_monitor@0x00526
+   old ...nitor@0x005269c0//voiddiag_boostLoad_overtemp_monitor(void){charcVar2;dworddVar1;if(
+   new ...nitor@0x005269c0//voiddiag_boostLoad_overtemp_monitor(void){bytecVar2;dworddVar1;if(
+DIFF in //Function:cm848_state_variables_reset@0x00526cb8/
+   old ...les_reset@0x00526cb8//voidcm848_state_variables_reset(void){DAT_003fd074=0;engine_l
+   new ...les_reset@0x00526cb8//voidcm848_state_variables_reset(void){engine_load_ema_filter_poi
