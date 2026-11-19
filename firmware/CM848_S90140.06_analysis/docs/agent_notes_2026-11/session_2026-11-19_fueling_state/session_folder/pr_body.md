@@ -1,11 +1,12 @@
 ## Summary
 
-`governor_fuel_demand_mode` (0x40a154) is an enum: the Cummins **FSGVFLST** governed fueling state ("indicator as to which algorithm is in control of fueling after it is governed"). Its codes come from one numbering that every fueling stage shares, so the enum is shared too. This PR does four stages:
+`governor_fuel_demand_mode` (0x40a154) is an enum: the Cummins **FSGVFLST** governed fueling state ("indicator as to which algorithm is in control of fueling after it is governed"). Its codes come from one numbering that every fueling stage shares, so the enum is shared too. This PR does five stages:
 
 1. **The enum.** `ENGINE_OPERATING_MODE` is now **`FUELING_STATE`**. Members 4 / 9 / 10 / 11 / 12 are new, the user and governed carriers are typed, 0x40b67c is renamed and the dword at 0x3fb526 is split.
 2. **The later stages.** The derate, combustion and final stages get 17 more members proved from their setters, plus 16 `FUELING_STATE_UNIDENTIFIED_<n>` placeholders. Ten more carriers are typed, including `governor_mode_code`, now `final_fueling_state`.
 3. **The arbitration.** 16 functions and 10 words of the fueling arbitration are renamed from legacy `*Protection*` / `governor_*` guesses.
 4. **Cummins' own value labels.** A labelled Chrysler calibration in the repo gives every code's label (with hex keys). It confirms the code-derived members and names 11 more. `cold_start_phase` turns out to be the **engine state** (`ENGINE_STATE`). The **power take-off governor** is proved in code (J1939 SPN 976). The limiter producers are renamed: altitude derate, air fuel control, net torque, coolant overheat derate.
+5. **The words behind them.** The power take-off governor's words and the crank routine are named from e2m blocks that line up by offset. Two flags turn out to mean the opposite of their names: `engine_starting` is the shutdown command, and `engine_shutdown_active_flag` stops a key-off shutdown. Code 32 is the master / slave override.
 
 `cm848_arbitrateGovernedFueling` (was `cm848_processProtectionRampControl`) now reads:
 
@@ -95,23 +96,50 @@ The words are `vehicle_speed_limit_fueling`, `cruise_control_fueling`, `high_spe
   - the coolant overheat derate. This family was the "unidentified `fuel_coldStart_*` helpers".
 - **How it was done.** Two read-only agents read the engine state and the PTO cluster. Their key claims were re-checked here against the code, the dumps and the e2m file. Their prompts and reports are in the session notes.
 
+## Stage 5: the power take-off words, the crank routine, two backwards flags
+
+- **The power take-off governor's words.** Five e2m blocks line up by offset, with matching units and RAM-dump values:
+  - **10AB, the PID terms:** filtered speed error, the proportional / derivative / integral terms, droop, the smoothed reference, the QD / QI / QP gain adjustments (0x80 = 1.0) and the no-load fuel.
+  - **109E:** `power_take_off_requested_engine_speed`.
+  - **11B4, EEPROM:** remote speeds 2-5 = 1400 / 1600 / 1800 / 2000 rpm, set / resume 1100 rpm, minimum reference 1100 rpm, a 2 mph road speed limit, the remote count limit, the ramp rate.
+  - **109D:** the 300-1200 rpm engage window.
+  - **10AA, the gains and clamps.** The +-1000 rpm speed-error clamps had their names swapped. The "byte" filter constant is the word coefficient 0.8.
+- **The crank routine** (e2m 105E / 105F / 1032). The `cold_start_*`, `fuel_timing_*` and `governor_*` words at 0x40a798-0x40a7be are Cummins' crank words:
+  - `crank_exit_speed`: CRANKING ends at it;
+  - `crank_fuel`: the CRANKING fuel (it was named an rpm);
+  - `crank_reentry_speed`: RUNNING drops to REENTRY at it;
+  - the crank tables;
+  - the ROM settings at 0x406852-0x40687c, which lose a wrong `_cal`;
+  - `engine_stopped_speed` (10 rpm; was `engine_rpm_trigger_cal`), `ecm_power_down_timer_threshold` / `_delay`;
+  - `engine_brake_driveline_brake_type_cal` = 1 (retarder), so ENGINE_BRAKE is never entered on this truck.
+- **Two flags that read backwards:**
+  - `engine_starting` is now `engine_shutdown_command_flag` (e2m 10B1 +12 Shutdown). It forces SHUTDOWN and zeroes the injection and the rail pressure setpoint.
+  - `engine_shutdown_active_flag` is now `key_off_shutdown_inhibit_flag`: 1 stops a key-off shutdown. Only J1939 diagnostic service 24 sets it.
+  - Their setters are `cm848_commandEngineShutdown` and `cm848_inhibitKeyOffShutdown`.
+- **The rest:**
+  - the engine start / extended idle / extreme ambient AECD words (e2m `EMO_*_AECD_Active` / `_Cap_EL`);
+  - code 32 = `FUELING_STATE_MASTER_SLAVE_OVERRIDE` (e2m MSOVRIDE, `[MSODEN]` "Enable overriding slave Final_Fueling");
+  - the stale `CSP_*` state names in 32 comments, now `ENGINE_STATE_*`.
+- **How it was done.** A read-only agent mapped the crank routine. Its e2m offsets, code anchors and dump values were re-checked here before anything was applied. The low-confidence words and the i16 retypes are left for later.
+
 ## Checks
 
 - **Stage 1.** A fresh baseline build equals the committed `.cpp`. One function is **not label-only**: the reused local in `cm848_arbitrateGovernedFueling` (`wVar1`, first the state and later the fuel) is now two locals, `FVar1` / `wVar2`, with the same values and control flow.
 - **Stage 2.** After `reverse_names.py`, the strict check (`check_enum_proof.py`: members and numbers to values, enum type to `word`, locals to placeholders) finds **0 differing functions** and no OR render.
 - **Stage 3.** `reverse_names.py` says **EQUIVALENT**: a pure label rename, with all 26 names rendered.
 - **Stage 4.** All 103 names render with no `_` variant. After normalizing the members of the four enums, **0 functions differ**, and there is no OR render.
+- **Stage 5.** All 104 names render with no `_` variant and no OR render. With the names reversed, one line still differs: an `(undefined *)` cast where the power take-off filter record takes the coefficient's address. It comes from the byte → word fix; `cm848_signedFirstOrderFilter` reads the coefficient as `*(short *)`.
 - Every `FUELING_STATE_` name in the `.cpp` sits on a carrier.
 - The build warnings are unchanged at each stage. `./analyze.sh verify` is deterministic. `lookup_tables.py` is clean. `test_rename_waves`, `test_lookup_tables` and `test_disasm_tools` pass. The headers are regenerated and compile with 0 errors; CM550's are unchanged.
 
 ## Not covered (task 045)
 
-- Codes 32 (MSOVRIDE) / 37 (T2SPD) / 38 (T2TORQ) / 49 (OFCSTATE) / 50 (AFRSTATE) are still unidentified.
+- Codes 37 (T2SPD) / 38 (T2TORQ) / 49 (OFCSTATE) / 50 (AFRSTATE) are still unidentified.
 - CM550's FSGVFLST typing.
-- The agents' leads that were not applied:
-  - the `power_take_off_governor_t` struct and the PTO speed calibrations;
-  - `engine_starting` / `engine_shutdown_active_flag`, which may read backwards;
-  - the remaining `cold_start_*` crank-routine words.
+- The six power take-off helper functions, including 0x2abc8, which initializes the whole governor.
+- The power take-off filter record (0x3fafb2 pointer + 0x3fafb6 state).
+- A shared struct for the 16 `cm848_signedFirstOrderFilter` records.
+- The i16 retypes of the signed crank words, and the four low-confidence crank words.
 - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
