@@ -174,6 +174,24 @@ Key RAM-executed functions called from `mainLoopIteration`:
 
 **Note:** E2M file S90140.12 is V11.20.13.16 - different from ECU's V11.46.06. Use live dumps for analysis.
 
+### e2m records to addresses: the ECU's parameter ID table (found 2026-11-19)
+
+The ECU carries its own map from e2m records to addresses, so e2m names no longer need offset matching.
+- **Where it is.** `cm848_lookupParameterIdAddress` (0x539768) searches a table in flash2 at 0x53be38-0x53ea6c: 6-byte
+  records [block id u16][address u32], big-endian.
+- **How to resolve a record.** The block id is column 3 of an e2m record (`Crank_Exit_Speed,RPM,105E,0012,...`), so
+  the record's address is table[block] + column 4.
+- **EEPROM records.** The table gives EEPROM addresses as 0x01000000 + offset; the application reads them from the
+  mirror at 0x3fd482 + offset (`_cal`).
+- **The tool.** `python3 firmware/scripts/e2m_block_addresses.py 105E 1997 ...` lists each record with its address and
+  the current CSV name; `--address 0x40a5b4` goes the other way. Tests: `test_e2m_block_addresses.py`.
+- **Limits.**
+  - `originals/cm848_flash2_live.bin` holds 1441 of the 1886 records; the rest lie past the end of the dump.
+  - The labelled e2m is CHR_CC_11.45.01.07 and the truck runs 11.46.06, so keep checking each name against the code
+    and the dump.
+- **Validation.** It reproduces every block base proved before by offsets (105E, 1068, 10AA, 19A1-19B3, 1254 ...).
+  Stage 6b of PR #52 named the emission manager and the power take-off settings with it.
+
 ### CM848 External Datalinks (per 2004 Dodge FSM)
 
 The ECM speaks J1939/CAN **plus CCD (C1 pins 4/5), SCI (C2 pins 16/19 → PCM + DRB), and PCI/J1850 VPW (C2 pin 28)**. The MPC555 **QSMCM = QSPI + 2 SCIs** — don't dismiss it as QSPI-only. **SCI1** (`qsmcm_sccr1` @ 0x305008) is the ECM↔PCM/DRB serial link: a DRB-style diagnostic protocol (`mpc555_sci*`, boot side) **and** the application's SCI command protocol `cm848_sci*` (19-entry dispatch table @ 0x53a9a0; **was misnamed `cm848_fuelDemand*` — re-domained 2026-11-12, PR #46**: command 18 = high-speed mode (SCC1R0 0xa0 -> 0x14) with 0xF5-0xFD table reads / 0xFE exit, 23 = clear diagnostics, 39/40 = EEPROM setting write/read, 43/44 = security seed/key (`cm848_sciValidateSecurityKey`), 50/51/52 = fault SPN reports). The real fuel-demand math (`cm848_fuelDemand*` at 0xdcdc-0x17980) is unrelated and keeps its names. SCI2 is unused; the **CCD driver is still undiscovered** (external transceiver/bit-bang — not SCI2, not MIOS).
@@ -443,7 +461,7 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
 ### Rolling 2-bit Edge Detector
 - `(flags & 0x55555) * 2` shifts current-state even bits to previous-state odd positions, creating a "previous state" snapshot in one instruction
 - Downstream `(flags & 0xc0) == 0x80` checks are falling-edge detectors (was 1, now 0)
-- `protection_control_state_flags` (0x003fafd4) uses this for 10 channels; look for `& 0x55555` in other status registers
+- `power_take_off_governor_switch_state_bits` (0x003fafd4) uses this for 10 channels; look for `& 0x55555` in other status registers
 
 ### Sensor Channel Architecture
 - Sensor channels use paired wrappers: `sensorChannelN_init()` calls the periodic pass, `sensorChannelN_process()` the boot pass (the suffixes are inverted - see the memory note in PR #39).
@@ -798,16 +816,28 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       while the low speed or power take-off governor has the fueling) and `extreme_ambient_overheat_protection_*`
       (19A1-19A4: a 217 / 222 °F coolant hysteresis, not a cold start boost override).
       - Each `_active_flag` puts its `_emission_level_cap` into the max-select of
-        `fuel_demandMin_maxSelect_rateLimit`. EL = emission level: the condensation cap is the "NOx cap value".
+        `cm848_calculateEmissionLevelCapCommand`. EL = emission level: the condensation cap is the "NOx cap value".
       - Stage 5 first named the flags `*_emission_control_active_flag`, which reads backwards (an AECD relaxes NOx
         control); stage 5b fixed it.
       - The enable bits 0x1000 / 0x800 / 0x200 of `algorithm_enable_flags_20_cal` are clear on this truck (0x0100).
     - stage 5b also fixed the comments that still used the old cold-start-phase state words: "at the governor
       setpoint" is RUNNING, "fuel mode switch" is ENGINE_BRAKE. `fuel_cold_start_phase3_compensation_enable_flag` is
-      now `condensation_count_enable_flag`. `combustion_status_flags` bit 0x02 is "engine stopped"; the dump's 0x402
+      now `condensation_count_enable_flag`. `emission_manager_engine_protection_state` bit 0x02 is "engine stopped"; the dump's 0x402
       only shows that the engine was off.
     - code 32 = `FUELING_STATE_MASTER_SLAVE_OVERRIDE` (e2m MSOVRIDE / [MSODEN]);
     - the stale `CSP_*` state names in 32 comments.
+  - **Stage 6a: the `cm848_signedFirstOrderFilter` records are `ema_filter_state_t`.** The signed twin of
+    `exponentialMovingAverage` reads the same {`word*` coefficient, Q16.16 accumulator} record.
+    - The 33 global records are named `<what it filters>_filter`, with their coefficients typed `word`.
+    - The prototype returns `sword`: a 32-bit return put a temp and a cast at all 39 calls.
+    - There are 39 calls; a one-line grep finds only 15, because many calls wrap their arguments.
+  - **Stage 6b: the emission manager (EMO / EMM), named through the ECU's parameter ID table (above).**
+    - `emission_level_cap_command` (was `fuel_demand_min_threshold`) is the rate-limited maximum of the AECD caps. It is
+      a lower bound on the combustion chi, not a fuel demand floor.
+    - `emission_manager_engine_protection_state` (was `combustion_status_flags`) is e2m EMM_Protection_State.
+    - The air handling system protection AECD (`algorithm_enable_flags_20_cal` bit 0x100) is the only AECD enabled on
+      this truck.
+    - The power take-off helpers and settings are named too (see task 045).
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

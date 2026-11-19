@@ -347,12 +347,60 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - one declaration order change;
   - the unnamed instance's default label.
 
+## Stage 6b - the ECU's parameter ID table, the emission manager, the power take-off helpers (2026-11-19, PR #52)
+
+- **The ECU resolves e2m records itself.** `cm848_lookupParameterIdAddress` (0x539768) searches a table in flash2 at
+  0x53be38-0x53ea6c: 6-byte records [e2m block id u16][address u32].
+  - So an e2m record's address is table[column 3] + column 4. EEPROM addresses come back as 0x01000000 + offset, which
+    the application reads at 0x3fd482 + offset.
+  - The live flash2 dump holds 1441 of the 1886 records; the table runs past the end of the dump.
+  - The table reproduces every block base proved earlier by matching offsets: 105E / 105F / 1032 / 10B1 / 1068 /
+    10AA / 109D / 109E / 11B4 / 19A1-19B3 / 1180 / 1254.
+  - `firmware/scripts/e2m_block_addresses.py` resolves blocks or one address, with the current CSV names
+    (`test_e2m_block_addresses.py`). The emission manager agent found the table.
+- **The emission manager (EMO / EMM, about 60 rows and 15 functions).** Every e2m identity was re-resolved with the
+  tool.
+  - **`emission_level_cap_command`** (was `fuel_demand_min_threshold`, e2m 198E EMM_Cap_EL_Cmd "Emission level cap after
+    AECDs") is the rate-limited maximum of the AECD caps and `emission_level_cap_reference`. It is a lower bound on the
+    combustion chi (`cm848_lookupProtectiveChi`), not a fuel demand floor.
+  - Its calculation is `cm848_calculateEmissionLevelCapCommand`, with its rate limits, override value and EEPROM user
+    override.
+  - The reference is a cap table over altitude x ambient temperature times a speed x torque ratio table
+    (`cm848_calculateEmissionLevelCapReference`). The not-to-exceed zone flag and its 150-sample averages are named.
+  - **`emission_manager_engine_protection_state`** (was `combustion_status_flags`, e2m 19B5 +2 EMM_Protection_State)
+    and `emission_manager_auxiliary_emission_control_state` (19B5 +0 EMM_AECD_State, the eight AECD bits).
+  - **The air handling system protection AECD** (e2m 1990-1997: levels 1-3, the compressor outlet temperature /
+    turbocharger speed / exhaust temperature limits and their tables, high load). Enabled by
+    `algorithm_enable_flags_20_cal` bit 0x100, it is the only AECD active on this truck (level 2 / 3 caps 2.0).
+  - **White smoke and misfire protection** (19A8 / 19A9): the old `injection_timing_temperature_component_check_flags`.
+  - **General engine protection** (1A41 / 1A42): the old `fuel_demand_sensor_validation_*`.
+- **The power take-off helpers (the second agent).**
+  - **Six functions:** the governor initialization, the reference filter, the smoothed reference preset, the throttle
+    override initialization, the PGN 65264 power take-off information message and its buffer.
+  - **The working words:** the gain adjustment multiplier (Q14, calculated or from the e2m 13B2 / 13B3 tables), the
+    PID integrator and the previous-pass copies, the switch state bits, the engagement ramp, the target / saved cab
+    target, and the remote switch counts.
+  - **`power_take_off_remote_speed_by_press_count`**, a `word[6]` read indexed (it was six words).
+  - **The EEPROM block 0008 settings:** remote speed 1, maximum reference 1500 rpm, droop slope, gain adjustment
+    offset / slope, resume / set speeds.
+  - **The PGN 65264 / 65270 / 65249 priority words**, which were misnamed `_source_address_bits`.
+- **Comments the power take-off agent found wrong, now fixed:**
+  - the reference step limit is a minimum step;
+  - the speed error starts from the smoothed reference, not the requested speed;
+  - the ramp writes the requested speed;
+  - `power_take_off_governor_droop_compensated_speed_error` has no writer.
+- **Also renamed:** `emission_manager_engine_protection_fixed_chi_hundredths` (was
+  `combustion_status_flag_chi_hundredths`) and `cm848_debounceCruiseSwitchRequest`.
+
 ## Follow-ups (open)
 
-- [ ] **The rest of the EMO family.** The other inputs of `fuel_demandMin_maxSelect_rateLimit` and its output
-  `fuel_demand_min_threshold` look like AECD caps and the selected NOx emission level cap, not fuel demands. Also
-  `DAT_0040a5ec` (the AECD flag pack; e2m `EMM_AECD_State` per the `combustion_status_flags` note) and the
-  calibration words `DAT_00406568` / `DAT_0040656a`.
+- [ ] **An e2m audit of the whole CSV with the parameter ID table.** Resolve every e2m record, then compare each
+  address's current name with the record. Many blocks are already consistent (1711, the CBO off-nominal words), but
+  the table can name hundreds of rows and catch misnames mechanically. 445 of the 1886 records lie past the end of the
+  flash2 dump; a fuller dump would complete it.
+- [ ] **The rest of the emission manager:** DAT_003fba26 / DAT_003fba36 (no writer found); the store-only 0x3fba22 /
+  0x3fba24 (level 1 / 2 ambient temperature limits, medium); the `j1939_tsc1_override_state.proprietary_offset_value`
+  misname (a torque); the compressor outlet temperature scale (the CSV says 1/64, the code and e2m suggest 1/32).
 
 - [ ] **Codes 37 / 38 (T2SPD / T2TORQ) and 49 / 50 (OFCSTATE / AFRSTATE):** only compared in this build. The e2m T2
   family looks like a two-speed axle or transfer case shift controller; OFC is the combustion oxygen-fuel control; AFR
@@ -362,13 +410,8 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - the low-confidence crank words 0x40a79c (Crank_4D_Timing), 0x40a7a2 (Crank_Wet_Stack_Timing), 0x40a7b8
     (SOI_Before_Startup) and 0x3fdfdc (Engine_Startup_Inhibit);
   - the unnamed crank defaults DAT_0005b1b6-0x5b1bc;
-  - the power take-off fueling clamp maximum 0x407196 (no row; the code takes `cruise_speed_blend_working`);
-  - the six power take-off helper functions. 0x2abc8 `cm848_initProtectionFilterState` initializes the whole
-    governor: the filter, the smoothing pointer, the QD / QI / QP adjustments = 0x80 and the four
-    `governor_pid_interp_state_*` = 2.
-  - the other power take-off words with "protection" names (`protection_monitored_rpm_snapshot`,
-    `protection_rpm_axis_cal` / `_values_cal`, `governor_speed_gain_factor`);
-  - `governor_rpm_reference_snapshot` (the 1500 rpm maximum set speed).
+  - the power take-off fueling clamp maximum 0x407196 and the QD / QI / QP reference limits 0x4071a4-0x4071aa (no
+    readers; the PID's fuel maximum is `cruise_speed_blend_working`);
 - [ ] **CM550:** type FSGVFLST (0x0080a8f2) and the 13-41 word (0x0080deca) with a shared enum. CM550's own
   `ENGINE_OPERATING_MODE` (ENGINE_IDLE ...) and `FUEL_SOURCE_ID` (0x09 governor low / 0x0A high / 0x0B diagnostic)
   contradict the CM848 code: guesses to replace, not to reuse.

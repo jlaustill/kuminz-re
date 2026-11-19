@@ -24,7 +24,7 @@ function_address,function_name,param_index,name,type,comment
 0x00015d2c,cm848_interpolateTableWithoutCache,2,y_data,word *,Y data: one signed value per breakpoint
 
 0x00015e08,cm848_lookupProtectiveChi,return,,void,Writes the result record through param 0
-0x00015e08,cm848_lookupProtectiveChi,0,result,word *,Result record (3 dwords): [0] the x_axis / y_data value / [1] the larger of [0] and the reverse lookup of [2] / [2] [0] through second_axis -> second_data (raised to 2 x fuel_demand_min_threshold) / [3] [1] through fourth_data / [4] [1] through third_data / [5] not set
+0x00015e08,cm848_lookupProtectiveChi,0,result,word *,Result record (3 dwords): [0] the x_axis / y_data value / [1] the larger of [0] and the reverse lookup of [2] / [2] [0] through second_axis -> second_data (raised to 2 x emission_level_cap_command) / [3] [1] through fourth_data / [4] [1] through third_data / [5] not set
 0x00015e08,cm848_lookupProtectiveChi,1,input,ushort,Value looked up on x_axis (r4)
 0x00015e08,cm848_lookupProtectiveChi,2,x_axis,word *,X axis of the first lookup (r5)
 0x00015e08,cm848_lookupProtectiveChi,3,y_data,word *,Y data of the first lookup (r6)
