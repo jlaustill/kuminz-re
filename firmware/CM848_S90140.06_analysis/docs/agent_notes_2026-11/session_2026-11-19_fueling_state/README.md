@@ -44,6 +44,13 @@ ran: two in stage 4 and one in stage 5.
     baseline build log.
   - `stage5.diff`: the uncommitted stage-5 diff that the privacy scan read.
   - `update_pr_body_stage5.py`: the stage-5 edit of `pr_body.md`.
+- **Stage 5b** (the fix forward after a review of stage 5):
+  - `apply_stage5b_aecd.py`: the AECD words, four new calibration rows, the three update functions and three plate
+    shorthand tokens. It writes `map_stage5b.csv`.
+  - `apply_stage5b_prose.py`: `condensation_count_enable_flag`, the "cold start phase 3" plates, and the
+    `combustion_status_flags` bits.
+  - `apply_stage5b_state_prose.py`: ten comments that still described `engine_state` with the old state words.
+  - `stage5b.diff` / `update_pr_body_stage5b.py`: the diff the privacy scan read, and the PR body edit.
 - **The agents** (two in stage 4, one in stage 5):
   - `agent_prompts.jsonl`: their exact prompts.
   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked
@@ -60,8 +67,8 @@ ran: two in stage 4 and one in stage 5.
 
 `session_folder_large_files.tar.xz` holds the files listed in `session_folder_large_files.txt`:
 - `all.dis`: the full disassembly of both banks that the access census scanned.
-- `pre.cpp` / `pre_canon.cpp` / `reversed.cpp`: the baseline build and the two proof inputs. `pre2`-`pre5` and
-  `reversed2`-`reversed5` are the same inputs for stages 2-5.
+- `pre.cpp` / `pre_canon.cpp` / `reversed.cpp`: the baseline build and the two proof inputs. `pre2`-`pre5b` and
+  `reversed2`-`reversed5b` are the same inputs for stages 2-5b.
 - The build and verify logs of every stage.
 - The committed headers used as the compile baseline.
 - The check logs.

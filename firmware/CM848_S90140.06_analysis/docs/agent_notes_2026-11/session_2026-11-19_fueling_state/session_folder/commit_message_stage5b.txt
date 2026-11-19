@@ -1,0 +1,37 @@
+cm848: FUELING_STATE stage 5b - the AECD words fixed, the old engine state prose
+
+A review of stage 5 found 16 applied rows that had not been checked.
+Checking them led to these fixes:
+
+- the e2m EMO auxiliary emission control device (AECD) words. Stage 5's
+  *_emission_control_active_flag read backwards: an AECD relaxes NOx control
+  while it is active. They now follow wave 9's condensation_protection_*
+  family: engine_start_warmup_protection_* (e2m 19B2 / 19B3),
+  extended_idle_protection_* (19B0 / 19B1; the 300 s timer runs only while
+  the low speed or power take-off governor has the fueling) and
+  extreme_ambient_overheat_protection_* (19A1-19A4: a 217 / 222 degF coolant
+  hysteresis, not the "cold start boost override" of the old names). Each
+  cap goes into the max-select of fuel_demandMin_maxSelect_rateLimit; EL =
+  emission level (the condensation AECD's cap is the "NOx cap value"). Four
+  calibration rows added; the three update functions renamed. None of the
+  three is enabled on this truck (algorithm_enable_flags_20_cal = 0x0100)
+- fuel_cold_start_phase3_compensation_enable_flag = condensation_count_enable_flag
+- comments that still described engine_state with the old cold start phase
+  words: "at the governor setpoint" = RUNNING, "fuel mode switch" =
+  ENGINE_BRAKE, "cold start phase 3" = engine_is_active_flag (each checked
+  against the compare in the code)
+- combustion_status_flags bit 0x02 means "engine stopped", so the dump's 0x402
+  only shows that it was taken with the engine off; the old note "why EGR is
+  requested off on this truck" was a misreading
+- three plate shorthand tokens now use full names
+
+Checked with no change: the crank tables (e2m 8A44-8A4C axes and
+destinations) and ENGINE_BRAKE (one entry, gated by
+engine_brake_driveline_brake_type_cal = 0; e2m 1 = retarder; dump 1).
+
+Proof: reverse_names.py says EQUIVALENT - a pure label rename (all 17
+names render, no _ variant; one function differs only in the order of
+its local declarations). Build warnings match stage 4's; headers
+regenerated (0 errors); lookup_tables.py clean; tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

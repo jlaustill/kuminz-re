@@ -6,7 +6,7 @@
 2. **The later stages.** The derate, combustion and final stages get 17 more members proved from their setters, plus 16 `FUELING_STATE_UNIDENTIFIED_<n>` placeholders. Ten more carriers are typed, including `governor_mode_code`, now `final_fueling_state`.
 3. **The arbitration.** 16 functions and 10 words of the fueling arbitration are renamed from legacy `*Protection*` / `governor_*` guesses.
 4. **Cummins' own value labels.** A labelled Chrysler calibration in the repo gives every code's label (with hex keys). It confirms the code-derived members and names 11 more. `cold_start_phase` turns out to be the **engine state** (`ENGINE_STATE`). The **power take-off governor** is proved in code (J1939 SPN 976). The limiter producers are renamed: altitude derate, air fuel control, net torque, coolant overheat derate.
-5. **The words behind them.** The power take-off governor's words and the crank routine are named from e2m blocks that line up by offset. Two flags turn out to mean the opposite of their names: `engine_starting` is the shutdown command, and `engine_shutdown_active_flag` stops a key-off shutdown. Code 32 is the master / slave override.
+5. **The words behind them.** The power take-off governor's words and the crank routine are named from e2m blocks that line up by offset. Two flags turn out to mean the opposite of their names: `engine_starting` is the shutdown command, and `engine_shutdown_active_flag` stops a key-off shutdown. Code 32 is the master / slave override. A follow-up (5b) renamed the emission control (AECD) words, which read backwards, and fixed the comments that still used the old engine state words.
 
 `cm848_arbitrateGovernedFueling` (was `cm848_processProtectionRampControl`) now reads:
 
@@ -117,10 +117,26 @@ The words are `vehicle_speed_limit_fueling`, `cruise_control_fueling`, `high_spe
   - `engine_shutdown_active_flag` is now `key_off_shutdown_inhibit_flag`: 1 stops a key-off shutdown. Only J1939 diagnostic service 24 sets it.
   - Their setters are `cm848_commandEngineShutdown` and `cm848_inhibitKeyOffShutdown`.
 - **The rest:**
-  - the engine start / extended idle / extreme ambient AECD words (e2m `EMO_*_AECD_Active` / `_Cap_EL`);
+  - the engine start / extended idle / extreme ambient AECD words (e2m `EMO_*_AECD_Active` / `_Cap_EL`), renamed again in stage 5b;
   - code 32 = `FUELING_STATE_MASTER_SLAVE_OVERRIDE` (e2m MSOVRIDE, `[MSODEN]` "Enable overriding slave Final_Fueling");
   - the stale `CSP_*` state names in 32 comments, now `ENGINE_STATE_*`.
 - **How it was done.** A read-only agent mapped the crank routine. Its e2m offsets, code anchors and dump values were re-checked here before anything was applied. The low-confidence words and the i16 retypes are left for later.
+
+## Stage 5b: the AECD words fixed, the old engine state prose
+
+A review of stage 5 found 16 applied rows that had not been checked. Checking them led to these fixes:
+
+- **The AECD words.** Stage 5's `*_emission_control_active_flag` read backwards: an auxiliary emission control device relaxes NOx control while it is active. They now follow wave 9's `condensation_protection_*` family:
+  - `engine_start_warmup_protection_*` (e2m 19B2 / 19B3);
+  - `extended_idle_protection_*` (19B0 / 19B1). Its 300 s timer runs only while the low speed governor or the power take-off governor has the fueling;
+  - `extreme_ambient_overheat_protection_*` (19A1-19A4): a 217 / 222 °F coolant hysteresis. The old names called it a cold start boost override.
+  - Each `_emission_level_cap` goes into the max-select of `fuel_demandMin_maxSelect_rateLimit`. EL is the emission level: the condensation AECD's cap is the "NOx cap value to be used when condensation triggers EGR off".
+  - Four calibration rows were added and the three update functions renamed. None of the three AECDs is enabled on this truck (`algorithm_enable_flags_20_cal` = 0x0100).
+- **The old engine state words in comments.** "At the governor setpoint" is RUNNING, "fuel mode switch" is ENGINE_BRAKE and "cold start phase 3" is `engine_is_active_flag`. All ten comments were checked against the compare in the code. `fuel_cold_start_phase3_compensation_enable_flag` is now `condensation_count_enable_flag`.
+- **A correction.** `combustion_status_flags` bit 0x02 means "engine stopped", so the dump's 0x402 only shows that it was taken with the engine off. The old note "why EGR is requested off on this truck" was a misreading.
+- **Checked, no change:**
+  - the crank tables: the e2m 8A44-8A4C axes and destinations match the code;
+  - ENGINE_BRAKE: its only entry needs `engine_brake_driveline_brake_type_cal` = 0 (e2m: 1 = retarder), and the dump has 1.
 
 ## Checks
 
@@ -129,6 +145,7 @@ The words are `vehicle_speed_limit_fueling`, `cruise_control_fueling`, `high_spe
 - **Stage 3.** `reverse_names.py` says **EQUIVALENT**: a pure label rename, with all 26 names rendered.
 - **Stage 4.** All 103 names render with no `_` variant. After normalizing the members of the four enums, **0 functions differ**, and there is no OR render.
 - **Stage 5.** All 104 names render with no `_` variant and no OR render. With the names reversed, one line still differs: an `(undefined *)` cast where the power take-off filter record takes the coefficient's address. It comes from the byte → word fix; `cm848_signedFirstOrderFilter` reads the coefficient as `*(short *)`.
+- **Stage 5b.** `reverse_names.py` says **EQUIVALENT**: a pure label rename, all 17 names rendered (one function differs only in the order of its local declarations).
 - Every `FUELING_STATE_` name in the `.cpp` sits on a carrier.
 - The build warnings are unchanged at each stage. `./analyze.sh verify` is deterministic. `lookup_tables.py` is clean. `test_rename_waves`, `test_lookup_tables` and `test_disasm_tools` pass. The headers are regenerated and compile with 0 errors; CM550's are unchanged.
 
@@ -140,6 +157,7 @@ The words are `vehicle_speed_limit_fueling`, `cruise_control_fueling`, `high_spe
 - The power take-off filter record (0x3fafb2 pointer + 0x3fafb6 state).
 - A shared struct for the 16 `cm848_signedFirstOrderFilter` records.
 - The i16 retypes of the signed crank words, and the four low-confidence crank words.
+- The rest of the EMO family: the other inputs of `fuel_demandMin_maxSelect_rateLimit` and its output `fuel_demand_min_threshold`, which look like AECD caps rather than fuel demands.
 - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
