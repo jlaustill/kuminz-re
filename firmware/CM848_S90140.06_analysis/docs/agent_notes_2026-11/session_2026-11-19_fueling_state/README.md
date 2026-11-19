@@ -2,8 +2,8 @@
 
 The question was whether `governor_fuel_demand_mode` (0x40a154) is an enum. It is the Cummins FSGVFLST governed
 fueling state, so `ENGINE_OPERATING_MODE` became the shared `FUELING_STATE` enum. The findings and follow-ups are in
-`work/tasks/045-cm848-fueling-state-enum.md`. This folder keeps the session's scratch work. Three read-only subagents
-ran: two in stage 4 and one in stage 5.
+`work/tasks/045-cm848-fueling-state-enum.md`. This folder keeps the session's scratch work. Five read-only subagents
+ran: two in stage 4, one in stage 5 and two in stage 6.
 
 `session_folder/` has these files:
 - `apply_fueling_state.py`: the CSV edit. It checks each old row before it replaces it.
@@ -51,7 +51,25 @@ ran: two in stage 4 and one in stage 5.
     `combustion_status_flags` bits.
   - `apply_stage5b_state_prose.py`: ten comments that still described `engine_state` with the old state words.
   - `stage5b.diff` / `update_pr_body_stage5b.py`: the diff the privacy scan read, and the PR body edit.
-- **The agents** (two in stage 4, one in stage 5):
+- **Stage 6a** (the signed filter records typed as `ema_filter_state_t`):
+  - `filter_call_census.py`: every call of a function, with calls split over several lines joined (a one-line grep
+    had found 15 of the 39).
+  - `filter_records.py` / `filter_record_rows.py` / `filter_coefficients.py`: the rows, uses and dump values of each
+    record and coefficient.
+  - `apply_stage6a_filter_records.py`, then `fix_stage6a_comments.py`: the edit and its comment fixes.
+  - `check_stage6a.py`: maps each field access back to the flat form it replaced and lists what still differs.
+- **Stage 6b** (the parameter ID table, the emission manager, the power take-off helpers):
+  - `parameter_id_table.py`: the first, independent parse of the ECU's table. It became
+    `firmware/scripts/e2m_block_addresses.py`.
+  - `apply_stage6b.py`: the edit from both agents' reports.
+  - `refresh_default_labels.py`: replaces `DAT_` / `WORD_ARRAY_` labels that now have names, which
+    `refresh_references.py` leaves alone.
+  - `extract_handback_reports.py` / `append_stage6_agent_notes.py`: the stage-6 agents' reports, taken from their own
+    transcripts.
+  - `agent_scratch_stage6_emission_manager/` and `agent_scratch_stage6_power_take_off/`: the two agents' own scratch
+    scripts. Their large `.cpp` snapshots are in the tar.xz.
+  - `update_pr_body_stage6.py`, `stage6a.diff` / `stage6b.diff`.
+- **The agents** (two in stage 4, one in stage 5, two in stage 6):
   - `agent_prompts.jsonl`: their exact prompts.
   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked
     before applying.

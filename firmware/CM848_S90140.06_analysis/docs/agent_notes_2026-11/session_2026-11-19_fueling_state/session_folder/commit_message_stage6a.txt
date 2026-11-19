@@ -1,0 +1,39 @@
+cm848: the signed first order filter records typed as ema_filter_state_t (stage 6a)
+
+cm848_signedFirstOrderFilter reads its record exactly as
+exponentialMovingAverage reads an ema_filter_state_t: [0] points at the
+16-bit coefficient (0 = no filtering), [1] is the Q16.16 accumulator. It
+moves the accumulator (65536 - coefficient) / 65536 of the way to the
+sample and returns the integer part, signed. Two of its records and the
+sensor channels' records were already ema_filter_state_t.
+
+- the 33 other global records (39 call sites; an earlier one-line grep found
+  15) are ema_filter_state_t instances named after what they filter, e.g.
+  power_take_off_speed_error_filter (was protection_filter_state_ptr +
+  governor_integrator_working), governor_speed_error_delta_filter (was
+  governor_bank2_cal_ptr), fuel_demand_delta_filter (was
+  throttle_fuel_pgn_handler_pointer), the fuel metering / fuel pressure
+  governor records that were cam_sync_*; 0x3fb9e2 typed but unnamed
+- the 23 accumulator rows at +4 removed; the narrow ones had rendered
+  `_name` because the code stores a dword there; resets and presets now
+  read <record>.accumulator
+- 13 coefficients retyped to word (12 were byte; the filter reads 16 bits),
+  misleading names and the ROM-copy _cal fixed; 11 unnamed coefficients get
+  rows (one type only)
+- prototypes for cm848_signedFirstOrderFilter / cm848_conditionalFirstOrderFilter:
+  ema_filter_state_t *, return sword (the value is a sign-extended 16-bit;
+  int32_t put a temp and a cast at all 39 call sites)
+- generate_headers.py: typedefs for Ghidra's signed sbyte / sword / sdword /
+  sqword (the new signatures use sword); both firmwares' headers regenerated
+- csv-type-reference.md: `sword` as the signed 16-bit prototype type
+
+Check: all 46 names render (no _ variant), build warnings unchanged. With
+every field access mapped back to the flat form it replaced, 15 functions
+still differ, all explained: init functions whose unnamed +4 bytes now read
+.accumulator, the two prototypes, local type propagation (the fuel metering
+function's 2992-token skeleton is identical), one division rendered through
+ulonglong (same value: a 16-bit sample << 13 stays below 2^32), one local
+declaration order, and the unnamed instance's default label. Headers compile
+for both firmwares; lookup_tables.py clean; tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,3 +1,7 @@
+agent_scratch_stage6_power_take_off/head.cpp
+agent_scratch_stage6_power_take_off/sm.dis
+agent_scratch_stage6_power_take_off/snap.cpp
+agent_scratch_stage6_power_take_off/snap_globals.csv
 all.dis
 build_baseline.log
 build_change.log
@@ -8,6 +12,11 @@ build_stage3.log
 build_stage4.log
 build_stage5.log
 build_stage5b.log
+build_stage6a.log
+build_stage6a2.log
+build_stage6a3.log
+build_stage6a4.log
+build_stage6b.log
 hdr_base_CM550_J90350.00_analysis/firmware_functions.hpp
 hdr_base_CM550_J90350.00_analysis/firmware_globals.hpp
 hdr_base_CM550_J90350.00_analysis/firmware_types.hpp
@@ -26,6 +35,10 @@ pre5.cpp
 pre5_canon.cpp
 pre5b.cpp
 pre5b_canon.cpp
+pre6a.cpp
+pre6a_canon.cpp
+pre6b.cpp
+pre6b_canon.cpp
 pre_canon.cpp
 reversed.cpp
 reversed2.cpp
@@ -34,7 +47,10 @@ reversed3b.cpp
 reversed4.cpp
 reversed5.cpp
 reversed5b.cpp
+reversed6a.cpp
+reversed6b.cpp
 test_disasm_tools.py.log
+test_e2m_block_addresses.py.log
 test_lookup_tables.py.log
 test_rename_waves.py.log
 verify.log
@@ -42,3 +58,5 @@ verify_stage3.log
 verify_stage4.log
 verify_stage5.log
 verify_stage5b.log
+verify_stage6a.log
+verify_stage6b.log

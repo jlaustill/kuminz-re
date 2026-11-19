@@ -2,7 +2,7 @@
 Plain files go to <notes>/session_folder/, the large ones (.cpp snapshots, build logs, the full disassembly, the
 baseline headers) into one tar.xz next to it. The session transcript goes to a private archive outside the repo
 (mode 600) because it holds the session's private context, together with the session folder next to it (the
-three read-only agents' own transcripts and the saved tool results). The agents' exact prompts and their reports
+five read-only agents' own transcripts and the saved tool results). The agents' exact prompts and their reports
 are in agent_prompts.jsonl / agent_prompts_and_reports.md.
 usage: archive_fueling_state_session.py <scratch dir> <notes dir> <transcript.jsonl> <private archive.tar.xz>"""
 import os

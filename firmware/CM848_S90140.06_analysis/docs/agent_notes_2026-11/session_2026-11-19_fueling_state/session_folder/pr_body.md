@@ -1,12 +1,13 @@
 ## Summary
 
-`governor_fuel_demand_mode` (0x40a154) is an enum: the Cummins **FSGVFLST** governed fueling state ("indicator as to which algorithm is in control of fueling after it is governed"). Its codes come from one numbering that every fueling stage shares, so the enum is shared too. This PR does five stages:
+`governor_fuel_demand_mode` (0x40a154) is an enum: the Cummins **FSGVFLST** governed fueling state ("indicator as to which algorithm is in control of fueling after it is governed"). Its codes come from one numbering that every fueling stage shares, so the enum is shared too. This PR does six stages:
 
 1. **The enum.** `ENGINE_OPERATING_MODE` is now **`FUELING_STATE`**. Members 4 / 9 / 10 / 11 / 12 are new, the user and governed carriers are typed, 0x40b67c is renamed and the dword at 0x3fb526 is split.
 2. **The later stages.** The derate, combustion and final stages get 17 more members proved from their setters, plus 16 `FUELING_STATE_UNIDENTIFIED_<n>` placeholders. Ten more carriers are typed, including `governor_mode_code`, now `final_fueling_state`.
 3. **The arbitration.** 16 functions and 10 words of the fueling arbitration are renamed from legacy `*Protection*` / `governor_*` guesses.
 4. **Cummins' own value labels.** A labelled Chrysler calibration in the repo gives every code's label (with hex keys). It confirms the code-derived members and names 11 more. `cold_start_phase` turns out to be the **engine state** (`ENGINE_STATE`). The **power take-off governor** is proved in code (J1939 SPN 976). The limiter producers are renamed: altitude derate, air fuel control, net torque, coolant overheat derate.
 5. **The words behind them.** The power take-off governor's words and the crank routine are named from e2m blocks that line up by offset. Two flags turn out to mean the opposite of their names: `engine_starting` is the shutdown command, and `engine_shutdown_active_flag` stops a key-off shutdown. Code 32 is the master / slave override. A follow-up (5b) renamed the emission control (AECD) words, which read backwards, and fixed the comments that still used the old engine state words.
+6. **The ECU's own e2m map, and the structures.** The ECU's parameter ID table in flash2 maps every e2m block to its address, so e2m names no longer rest on offset matching (`firmware/scripts/e2m_block_addresses.py`). It names the emission manager and the power take-off settings. The 33 `cm848_signedFirstOrderFilter` records are now `ema_filter_state_t`.
 
 `cm848_arbitrateGovernedFueling` (was `cm848_processProtectionRampControl`) now reads:
 
@@ -138,6 +139,31 @@ A review of stage 5 found 16 applied rows that had not been checked. Checking th
   - the crank tables: the e2m 8A44-8A4C axes and destinations match the code;
   - ENGINE_BRAKE: its only entry needs `engine_brake_driveline_brake_type_cal` = 0 (e2m: 1 = retarder), and the dump has 1.
 
+## Stage 6: the filter records, the ECU's parameter ID table, the emission manager
+
+- **6a, the signed filter records.**
+  - `cm848_signedFirstOrderFilter` reads its record exactly as `exponentialMovingAverage` reads an `ema_filter_state_t`: a pointer to the 16-bit coefficient, then the Q16.16 accumulator.
+  - Its 33 global records (39 call sites) are now instances named after what they filter, e.g. `power_take_off_speed_error_filter` (was `protection_filter_state_ptr` + `governor_integrator_working`) and `governor_speed_error_delta_filter` (was `governor_bank2_cal_ptr`).
+  - The 23 accumulator rows went away, so `rec.accumulator = 0` replaces `_cam_sync_fuel_filter_accum = 0`. The coefficients are typed `word` (12 were `byte`).
+  - The prototype returns `sword`. The `int32_t` attempt put a temp and a cast at all 39 calls.
+  - `generate_headers.py` now aliases Ghidra's signed `sbyte` / `sword` / `sdword` / `sqword`.
+- **6b, the ECU's parameter ID table.** `cm848_lookupParameterIdAddress` (0x539768) searches a flash2 table of `[e2m block id][address]` records at 0x53be38.
+  - An e2m record's address is the table entry plus its offset.
+  - It reproduces every block base this PR had proved by matching offsets.
+  - `firmware/scripts/e2m_block_addresses.py` resolves blocks or an address with the current CSV names, and has tests.
+- **6b, the emission manager (EMO / EMM).** Every e2m identity was resolved with the table.
+  - **`emission_level_cap_command`** (was `fuel_demand_min_threshold`, e2m EMM_Cap_EL_Cmd) is the rate-limited maximum of the AECD caps and a scheduled reference. It is a lower bound on the combustion chi, not a fuel demand floor.
+  - **`emission_manager_engine_protection_state`** (was `combustion_status_flags`) and the AECD state pack.
+  - **The air handling system protection AECD** (e2m 1990-1997) is the only one enabled on this truck.
+  - **White smoke and misfire protection** and **general engine protection** (their old names were injection timing / sensor validation guesses).
+  - 15 functions in all.
+- **6b, the power take-off helpers.** Six functions are named, among them the PGN 65264 power take-off information message.
+  - The working words: the gain adjustment multiplier and its e2m 13B2 / 13B3 tables, the PID integrator, the switch state bits, the engagement ramp and the remote switch counts.
+  - A `word[6]` remote speed array, read indexed.
+  - The e2m 0008 EEPROM settings, and three PGN priority words that were misnamed `_source_address_bits`.
+  - Four stage-5 comments the agent found wrong are fixed.
+- **How it was done.** Two read-only agents mapped the power take-off helpers and the emission manager. The table claim was checked with an independent parser, and every e2m address both agents gave was re-resolved before applying.
+
 ## Checks
 
 - **Stage 1.** A fresh baseline build equals the committed `.cpp`. One function is **not label-only**: the reused local in `cm848_arbitrateGovernedFueling` (`wVar1`, first the state and later the fuel) is now two locals, `FVar1` / `wVar2`, with the same values and control flow.
@@ -146,6 +172,17 @@ A review of stage 5 found 16 applied rows that had not been checked. Checking th
 - **Stage 4.** All 103 names render with no `_` variant. After normalizing the members of the four enums, **0 functions differ**, and there is no OR render.
 - **Stage 5.** All 104 names render with no `_` variant and no OR render. With the names reversed, one line still differs: an `(undefined *)` cast where the power take-off filter record takes the coefficient's address. It comes from the byte → word fix; `cm848_signedFirstOrderFilter` reads the coefficient as `*(short *)`.
 - **Stage 5b.** `reverse_names.py` says **EQUIVALENT**: a pure label rename, all 17 names rendered (one function differs only in the order of its local declarations).
+- **Stage 6a.** All 46 names render. After mapping each field access back to the flat form it replaced, 15 functions still differ, all explained:
+  - the init functions' unnamed +4 bytes now read `.accumulator`;
+  - the two prototypes;
+  - local type propagation (the fuel metering function's 2992-token skeleton is identical);
+  - a division rendered through `ulonglong` (same value);
+  - a local declaration order;
+  - an unnamed instance's default label.
+- **Stage 6b.** All 123 names render. Six functions differ:
+  - the `word[6]` array in two power take-off functions;
+  - two `(word)` casts from new rows;
+  - two local declaration orders.
 - Every `FUELING_STATE_` name in the `.cpp` sits on a carrier.
 - The build warnings are unchanged at each stage. `./analyze.sh verify` is deterministic. `lookup_tables.py` is clean. `test_rename_waves`, `test_lookup_tables` and `test_disasm_tools` pass. The headers are regenerated and compile with 0 errors; CM550's are unchanged.
 
@@ -153,11 +190,9 @@ A review of stage 5 found 16 applied rows that had not been checked. Checking th
 
 - Codes 37 (T2SPD) / 38 (T2TORQ) / 49 (OFCSTATE) / 50 (AFRSTATE) are still unidentified.
 - CM550's FSGVFLST typing.
-- The six power take-off helper functions, including 0x2abc8, which initializes the whole governor.
-- The power take-off filter record (0x3fafb2 pointer + 0x3fafb6 state).
-- A shared struct for the 13 global `cm848_signedFirstOrderFilter` records (15 call sites; two pass a pointer through).
+- An audit of the whole CSV against the parameter ID table. 445 of its 1886 records lie past the end of the flash2 dump.
+- The rest of the emission manager: two words with no writer, two store-only limits, and the compressor outlet temperature scale.
 - The i16 retypes of the signed crank words, and the four low-confidence crank words.
-- The rest of the EMO family: the other inputs of `fuel_demandMin_maxSelect_rateLimit` and its output `fuel_demand_min_threshold`, which look like AECD caps rather than fuel demands.
 - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

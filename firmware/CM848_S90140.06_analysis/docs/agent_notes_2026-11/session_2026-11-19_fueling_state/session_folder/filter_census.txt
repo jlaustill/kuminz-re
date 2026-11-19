@@ -1,0 +1,40 @@
+10132 | cm848_calculateChargeFlowCompressorOutletTemperatureDerate |  | &PTR_DAT_003fa140
+10184 | cm848_calculateChargeFlowDeltaPressureDerate |  | &PTR_DAT_003fa148
+10357 | cm848_calculateChargeFlowTurbochargerSpeedDerate |  | &PTR_DAT_003fa138
+11420 | cm848_calculateLoadBasedFuelTrim | x_input | &throttle_filter_coeff_data_pointer
+11638 | cm848_throttleBasedFuelCalculation |  | &throttle_filter_coeff_table_b_pointer
+11939 | cm848_calculatePredictedIntakeManifoldTemperature |  | &PTR_DAT_003fa5ea
+12395 | cm848_processBoostProtectionMode |  | &PTR_DAT_003fa60e
+12490 | cm848_calculatePressureSensorFiltered |  | &PTR_DAT_003fa624
+12491 | cm848_calculatePressureSensorFiltered | wVar1 | &PTR_DAT_003fa62c
+14924 | cm848_fuelDemandFinalCalculation |  | &throttle_fuel_pgn_handler_pointer
+15470 | cm848_conditionalFirstOrderFilter | sVar1 | param_3
+16091 | cm848_updateEgrValveOverTemperatureFault | sVar1 | &egr_valve_delta_pressure_filter_state
+16528 | cm848_calculateEgrValvePidDuty | wVar3 | &egr_valve_derivative_filter_state
+20145 | runHighSpeedGovernorPid |  | &high_speed_governor_error_filter_coefficient_pointer
+26379 | cm848_runLowSpeedGovernor |  | &governor_speed_filter_state_ptr
+26715 | cm848_calculateSpeedRateLimiting | governor_speed_error_delta | &governor_bank2_cal_ptr
+27494 | cm848_calculatePowerTakeOffGovernorSpeedError |  | &protection_filter_state_ptr
+28935 | cm848_estimateTurbochargerSpeed |  | &PTR_DAT_003fb01e
+29383 | cm848_calculateVariableGeometryTurbochargerPidDuty | wVar3 | &variable_geometry_turbocharger_derivative_filter_coefficient_pointer
+30907 | cm848_filterVariableGeometryTurbochargerClosedPosition |  | &variable_geometry_turbocharger_closed_position_filter_coefficient_pointer
+33821 | cm848_updateTransmissionConditionFlags |  | &protection_load_scaled_filter_state_ptr
+33906 | cm848_filterProtectionLoadValue |  | &protection_load_filter_state_b_ptr
+36524 | cm848_processEngineRpmDerivative |  | &engine_acceleration_first_stage_filter_state
+36539 | cm848_processEngineRpmDerivative |  | &engine_acceleration_second_stage_filter_state
+39371 | cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures |  | &coolant_temp_filter_state_ptr
+46888 | cm848_calculateFuelMeteringCommand |  | &cam_sync_fuel_filter_state_pointer
+46894 | cm848_calculateFuelMeteringCommand | sVar6 | &cam_sync_filter_state_pointer
+47063 | cm848_calculateFuelMeteringCommand | sVar6 | &cam_sync_fault_filter_ptr
+47064 | cm848_calculateFuelMeteringCommand | sVar7 | &cam_sync_speed_filter_ptr
+47166 | cm848_calculateFuelMeteringCommand |  | &cam_sync_rate_filter_state_pointer
+48049 | cm848_filterFuelPressureFeedback |  | &fuel_pressure_feedback_filter_pointer
+48056 | cm848_filterFuelPressureFeedback |  | &fuel_pressure_feedback_filter_pointer
+48066 | cm848_filterFuelPressureFeedback |  | &fuel_pressure_feedback_filter_pointer
+58617 | sensorChannelConfigInit | wVar6 | filter_state_ptr
+59832 | hpcr_fuelFinal_exponentialAverage | wVar3 | &PTR_DAT_003fb9e2
+72152 | cm848_selectCoolingFanSpeedTarget |  | &cooling_fan_coolant_temperature_filter
+72293 | cm848_selectCoolingFanSpeedTarget |  | &cooling_fan_intake_temperature_filter
+72635 | cm848_runCoolingFanSpeedPid |  | &cooling_fan_speed_feedback_filter
+72661 | cm848_runCoolingFanSpeedPid |  | &cooling_fan_proportional_derivative_filter
+39 calls

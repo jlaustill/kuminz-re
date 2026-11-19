@@ -1,0 +1,1825 @@
+diff --git a/.claude/skills/editing-firmware-csvs/csv-type-reference.md b/.claude/skills/editing-firmware-csvs/csv-type-reference.md
+index cd8a389..ca26168 100644
+--- a/.claude/skills/editing-firmware-csvs/csv-type-reference.md
++++ b/.claude/skills/editing-firmware-csvs/csv-type-reference.md
+@@ -83,7 +83,10 @@ call site. To undo a bad prototype, fix/remove the row and rebuild.
+ 
+ **Type keywords (`function_definitions.csv` and `local_variables.csv`):**
+ - `int` / `uint` / `dword` / `uint32_t` → unsigned `dword`. For a signed 32-bit value use **`int32_t`** (signed `int`, added 2026-11-14). The `int` mapping was left alone so existing rows do not re-render.
+-- `short` / `ushort` / `word` / `uint16_t` → unsigned `word`. There is no signed 16-bit keyword for prototypes or locals yet.
++- `short` / `ushort` / `word` / `uint16_t` → unsigned `word`. There is no signed 16-bit keyword, but **`sword`** works: unknown names fall through to a by-name lookup, and `sword` is Ghidra's signed word (the program has it once any global is `i16`). It was found 2026-11-19 on `cm848_signedFirstOrderFilter`, which returns a sign-extended 16-bit value.
++  - `int32_t` there put `iVar = f(...); x = (word)iVar;` at all 39 call sites: a locked 32-bit return is kept whole.
++  - `sword` gave back the direct `x = f(...)`.
++  - The headers need `typedef int16_t sword;`; `generate_headers.py` has carried `sbyte` / `sword` / `sdword` / `sqword` since then.
+ - The other CSVs use different mappers: `structure_definitions.csv` (ApplyStructures) maps `int` / `short` to **signed** types, and `global_variables.csv` (ImportAnalysis) has its own signed keywords `i8` / `i16` / `i32` and no `int` case (an `int` there goes to a named-type lookup). ApplyGlobalVariableTypes is a further copy, but only the unused `cmd_vartypes` reaches it.
+ - `undefined4` locks only the **name**; the decompiler keeps inferring the type. Use it for a 4-byte parameter whose inferred type is already right.
+ - A 2-byte parameter committed as `undefined4` renders as `x._2_2_` sub-pieces — give it `ushort`.
+diff --git a/firmware/CM550_J90350.00_analysis/output/firmware_types.hpp b/firmware/CM550_J90350.00_analysis/output/firmware_types.hpp
+index 6aaf899..f0b6287 100644
+--- a/firmware/CM550_J90350.00_analysis/output/firmware_types.hpp
++++ b/firmware/CM550_J90350.00_analysis/output/firmware_types.hpp
+@@ -14,6 +14,10 @@ typedef uint16_t  ushort;
+ typedef uint32_t  uint;
+ typedef uint16_t  word;
+ typedef uint32_t  dword;
++typedef int8_t    sbyte;
++typedef int16_t   sword;
++typedef int32_t   sdword;
++typedef int64_t   sqword;
+ typedef int32_t   bool32;
+ 
+ // Ghidra CONCATxy macros — concatenate x bytes of a with y bytes of b
+diff --git a/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp b/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
+index 75b808f..2d398b4 100644
+--- a/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
++++ b/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
+@@ -1,5 +1,5 @@
+ // Ghidra C++ Decompilation Export - cm848_rom Firmware
+-// Generated: Thu Nov 19 13:01:57 MST 2026
++// Generated: Thu Nov 19 13:39:50 MST 2026
+ 
+ 
+ //
+@@ -10129,7 +10129,9 @@ void cm848_calculateChargeFlowCompressorOutletTemperatureDerate(void)
+     wVar1 = wVar2;
+   }
+   charge_flow_compressor_outlet_temperature_derate_offset =
+-       cm848_signedFirstOrderFilter((int)(short)wVar1,&PTR_DAT_003fa140);
++       cm848_signedFirstOrderFilter
++                 ((int)(short)wVar1,&charge_flow_compressor_outlet_temperature_derate_offset_filter)
++  ;
+   if (uVar4 < charge_flow_compressor_outlet_temperature_derate_ratio) {
+     charge_flow_compressor_outlet_temperature_derate_offset = 0xe700;
+   }
+@@ -10181,7 +10183,8 @@ void cm848_calculateChargeFlowDeltaPressureDerate(void)
+     wVar1 = wVar2;
+   }
+   charge_flow_delta_pressure_derate_offset =
+-       cm848_signedFirstOrderFilter((int)(short)wVar1,&PTR_DAT_003fa148);
++       cm848_signedFirstOrderFilter
++                 ((int)(short)wVar1,&charge_flow_delta_pressure_derate_offset_filter);
+   if (uVar4 < charge_flow_delta_pressure_derate_ratio) {
+     charge_flow_delta_pressure_derate_offset = 0xe700;
+   }
+@@ -10354,7 +10357,8 @@ void cm848_calculateChargeFlowTurbochargerSpeedDerate(void)
+     wVar2 = wVar3;
+   }
+   charge_flow_turbocharger_speed_derate_offset =
+-       cm848_signedFirstOrderFilter((int)(short)wVar2,&PTR_DAT_003fa138);
++       cm848_signedFirstOrderFilter
++                 ((int)(short)wVar2,&charge_flow_turbocharger_speed_derate_offset_filter);
+   if (uVar5 < charge_flow_turbocharger_speed_derate_ratio) {
+     charge_flow_turbocharger_speed_derate_offset = 0xe700;
+   }
+@@ -10388,12 +10392,15 @@ void cm848_initializeChargeManagerLimiters(void)
+   DAT_003fa132 = 2;
+   DAT_003fa134 = 2;
+   DAT_003fa136 = 2;
+-  DAT_003fa13c = 0;
+-  PTR_DAT_003fa138 = &DAT_003ff72c;
+-  DAT_003fa144 = 0;
+-  PTR_DAT_003fa140 = &DAT_003ff71c;
+-  DAT_003fa14c = 0;
+-  PTR_DAT_003fa148 = &DAT_003ff724;
++  charge_flow_turbocharger_speed_derate_offset_filter.accumulator = 0;
++  charge_flow_turbocharger_speed_derate_offset_filter.coefficient =
++       &charge_flow_turbocharger_speed_derate_offset_filter_coefficient;
++  charge_flow_compressor_outlet_temperature_derate_offset_filter.accumulator = 0;
++  charge_flow_compressor_outlet_temperature_derate_offset_filter.coefficient =
++       &charge_flow_compressor_outlet_temperature_derate_offset_filter_coefficient;
++  charge_flow_delta_pressure_derate_offset_filter.accumulator = 0;
++  charge_flow_delta_pressure_derate_offset_filter.coefficient =
++       &charge_flow_delta_pressure_derate_offset_filter_coefficient;
+   return;
+ }
+ 
+@@ -11417,8 +11424,7 @@ void cm848_calculateLoadBasedFuelTrim(void)
+   }
+   throttle_fuel_trim_t_0040a3ea.rpm_conversion = 0x8148;
+ LAB_000124ac:
+-  x_input = cm848_signedFirstOrderFilter
+-                      ((int)(short)egr_valve_position,&throttle_filter_coeff_data_pointer);
++  x_input = cm848_signedFirstOrderFilter((int)(short)egr_valve_position,&egr_valve_position_filter);
+   throttle_fuel_trim_t_0040a3ea.reserved_0c =
+        cm848_dualAxisTableInterpolation
+                  (&diag_state_group5_c_state,x_input,throttle_rpm_axis_cal,
+@@ -11635,12 +11641,13 @@ void cm848_throttleBasedFuelCalculation(void)
+                     (&DAT_003fa3b8,(int)(short)throttle_fuel_trim_t_0040a3ea.final_trim,
+                      (uVar4 & 0xffff) / 10);
+   egr_mass_flow_delayed_filtered =
+-       cm848_signedFirstOrderFilter((int)sVar3,&throttle_filter_coeff_table_b_pointer);
++       cm848_signedFirstOrderFilter((int)sVar3,&egr_mass_flow_delayed_filter);
+   if ((short)charge_mass_flow_filtered < 0x41) {
+     uVar4 = 0;
+   }
+   else {
+-    uVar4 = ((uint)egr_mass_flow_delayed_filtered << 0xd) / (uint)charge_mass_flow_filtered;
++    uVar4 = (uint)(((ulonglong)egr_mass_flow_delayed_filtered << 0xd) /
++                  (ulonglong)charge_mass_flow_filtered);
+     if (0x1fff < uVar4) {
+       uVar4 = 0x2000;
+     }
+@@ -11665,11 +11672,11 @@ void cm848_initFilterCoefficients(void)
+   diag_state_group6_a_state = 2;
+   diag_state_group6_b_state = 2;
+   throttle_filter_state.accumulator = 0;
+-  throttle_filter_state.coefficient = &throttle_filter_coefficient;
+-  throttle_filter_coeff_table_b_index = 0;
+-  throttle_filter_coeff_table_b_pointer = (undefined *)&throttle_filter_coefficient;
+-  throttle_filter_coeff_data_index = 0;
+-  throttle_filter_coeff_data_pointer = &throttle_filter_coeff_data_cal;
++  throttle_filter_state.coefficient = &egr_mass_flow_delayed_filter_coefficient;
++  egr_mass_flow_delayed_filter.accumulator = 0;
++  egr_mass_flow_delayed_filter.coefficient = &egr_mass_flow_delayed_filter_coefficient;
++  egr_valve_position_filter.accumulator = 0;
++  egr_valve_position_filter.coefficient = &egr_valve_position_filter_coefficient;
+   return;
+ }
+ 
+@@ -11936,7 +11943,8 @@ void cm848_calculatePredictedIntakeManifoldTemperature(void)
+             (short)iVar4;
+   }
+   predicted_intake_manifold_temperature =
+-       cm848_signedFirstOrderFilter((int)(short)wVar5,&PTR_DAT_003fa5ea);
++       cm848_signedFirstOrderFilter((int)(short)wVar5,&predicted_intake_manifold_temperature_filter)
++  ;
+   return;
+ }
+ 
+@@ -11950,8 +11958,10 @@ void mpc555_initManifoldPressureFilter(void)
+ 
+ {
+   predicted_intake_manifold_temperature = intake_manifold_temperature_filtered;
+-  DAT_003fa5ee = (int)(short)intake_manifold_temperature_filtered << 0x10;
+-  PTR_DAT_003fa5ea = &DAT_004009d6;
++  predicted_intake_manifold_temperature_filter.accumulator =
++       (int)(short)intake_manifold_temperature_filtered << 0x10;
++  predicted_intake_manifold_temperature_filter.coefficient =
++       &predicted_intake_manifold_temperature_filter_coefficient;
+   return;
+ }
+ 
+@@ -12392,7 +12402,7 @@ void cm848_processBoostProtectionMode(undefined4 param_1,int param_2)
+     iVar1 = 0x5780;
+   }
+   fuel_demand_boost_offset_filtered =
+-       cm848_signedFirstOrderFilter((int)(short)iVar1,&PTR_DAT_003fa60e);
++       cm848_signedFirstOrderFilter((int)(short)iVar1,&fuel_demand_boost_offset_filter);
+   return;
+ }
+ 
+@@ -12405,8 +12415,8 @@ void cm848_processBoostProtectionMode(undefined4 param_1,int param_2)
+ void cm848_initBoostProtectionState(void)
+ 
+ {
+-  DAT_003fa612 = (int)(short)sensor_channel9_pressure_value << 0x10;
+-  PTR_DAT_003fa60e = &DAT_00405200;
++  fuel_demand_boost_offset_filter.accumulator = (int)(short)sensor_channel9_pressure_value << 0x10;
++  fuel_demand_boost_offset_filter.coefficient = &fuel_demand_boost_offset_filter_coefficient;
+   if ((fuel_demand_state_b == 2) ||
+      ((combustion_override_and_estimation_enable_flags_cal & 0x4000) == 0)) {
+     injection_enable_mode_byte = 0x80;
+@@ -12487,9 +12497,11 @@ void cm848_calculatePressureSensorFiltered(void)
+   if (((iVar2 == 0) && (air_handling_compensation_and_diagnostic_bypass_cal == 0)) &&
+      ((algorithm_enable_flags_20_cal & 0x4000) != 0)) {
+     pressure_correction_filter1_working =
+-         cm848_signedFirstOrderFilter((int)(short)pressure_correction_raw,&PTR_DAT_003fa624);
++         cm848_signedFirstOrderFilter
++                   ((int)(short)pressure_correction_raw,&pressure_correction_first_filter);
+     wVar1 = cm848_signedFirstOrderFilter
+-                      ((int)(short)pressure_correction_filter1_working,&PTR_DAT_003fa62c);
++                      ((int)(short)pressure_correction_filter1_working,
++                       &pressure_correction_second_filter);
+   }
+   condition_monitor_status_working = wVar1;
+   if ((((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 8) != 0) &&
+@@ -12546,10 +12558,11 @@ void cm848_initializeIntakeTemperatureFilterStates(void)
+   sensor_channel9_pressure_snapshot = sensor_channel9_pressure_value;
+   intake_manifold_temperature_filtered = sensor_channel9_pressure_value;
+   DAT_003fa618 = 2;
+-  DAT_003fa628 = (int)(short)sensor_channel9_pressure_value << 0x10;
+-  PTR_DAT_003fa624 = &DAT_00405206;
+-  DAT_003fa630 = (int)(short)sensor_channel9_pressure_value << 0x10;
+-  PTR_DAT_003fa62c = &DAT_00405206;
++  pressure_correction_first_filter.accumulator = (int)(short)sensor_channel9_pressure_value << 0x10;
++  pressure_correction_first_filter.coefficient = &pressure_correction_filter_coefficient;
++  pressure_correction_second_filter.accumulator = (int)(short)sensor_channel9_pressure_value << 0x10
++  ;
++  pressure_correction_second_filter.coefficient = &pressure_correction_filter_coefficient;
+   if ((sensor_channel9_fault_status == 0) || (sensor_channel9_fault_status == 1)) {
+     fuel_demand_phase_state = 0;
+   }
+@@ -14922,8 +14935,7 @@ LAB_000178d0:
+        fuel_demand_control_t_0040a57a.calculated - throttle_fuel_enable_flag._2_2_;
+   fuel_demand_control_t_0040a57a.delta_filtered =
+        cm848_signedFirstOrderFilter
+-                 ((int)(short)fuel_demand_control_t_0040a57a.delta,
+-                  &throttle_fuel_pgn_handler_pointer);
++                 ((int)(short)fuel_demand_control_t_0040a57a.delta,&fuel_demand_delta_filter);
+   throttle_fuel_enable_flag._2_2_ = fuel_demand_control_t_0040a57a.calculated;
+   return;
+ }
+@@ -14990,8 +15002,8 @@ void cm848_initFuelDemandRateVariables(void)
+   fuel_demand_control_t_0040a57a.throttle_based = throttle_fuel_demand_threshold_cal + 4;
+   fuel_demand_control_t_0040a57a.accelerator_off_idle = 0;
+   throttle_fuel_enable_flag._2_2_ = 0;
+-  throttle_fuel_pgn_handler_index = 0;
+-  throttle_fuel_pgn_handler_pointer = &DAT_0005c2aa;
++  fuel_demand_delta_filter.accumulator = 0;
++  fuel_demand_delta_filter.coefficient = &fuel_demand_delta_filter_coefficient;
+   return;
+ }
+ 
+@@ -15458,18 +15470,19 @@ void cm848_updateEgrDeltaPressureAutozeroCompleteFlag(void)
+ // Function: cm848_conditionalFirstOrderFilter @ 0x000185cc
+ //
+ 
+-int cm848_conditionalFirstOrderFilter(undefined4 param_1,int param_2,int param_3)
++sword cm848_conditionalFirstOrderFilter
++                (int value,int update_enable,ema_filter_state_t *filter_state)
+ 
+ {
+-  short sVar1;
++  sword sVar1;
+   
+-  if (param_2 == 0) {
+-    sVar1 = (short)((uint)*(undefined4 *)(param_3 + 4) >> 0x10);
++  if (update_enable == 0) {
++    sVar1 = (sword)(filter_state->accumulator >> 0x10);
+   }
+   else {
+-    sVar1 = cm848_signedFirstOrderFilter(param_1,param_3);
++    sVar1 = cm848_signedFirstOrderFilter(value,filter_state);
+   }
+-  return (int)sVar1;
++  return sVar1;
+ }
+ 
+ 
+@@ -15579,26 +15592,26 @@ void cm848_updateAutozeroErrorCounter(short *param_1)
+    filters the sample into the offset (cm848_conditionalFirstOrderFilter) only when the enable time
+    has passed and the sample is inside the tolerance. (was cm848_processFaultStateWithFilter) */
+ 
+-void cm848_updateAutozeroOffset(undefined2 *param_1)
++void cm848_updateAutozeroOffset(sword *param_1)
+ 
+ {
+   ushort uVar1;
+-  undefined2 uVar2;
++  sword sVar2;
+   uint uVar3;
+   uint uVar4;
+   uint uVar5;
+-  undefined4 uVar6;
++  int update_enable;
+   ushort local_20;
+-  undefined2 local_1e;
+-  undefined2 local_1c;
++  sword local_1e;
++  sword local_1c;
+   ushort local_1a;
+-  undefined2 local_18;
+-  undefined2 local_16;
+-  undefined2 local_14;
+-  undefined2 local_12;
++  sword local_18;
++  sword local_16;
++  sword local_14;
++  sword local_12;
+   undefined2 local_10;
+-  undefined2 local_e;
+-  undefined2 local_c;
++  sword local_e;
++  sword local_c;
+   
+   uVar1 = param_1[4];
+   uVar3 = (uint)(ushort)param_1[5];
+@@ -15612,9 +15625,9 @@ void cm848_updateAutozeroOffset(undefined2 *param_1)
+       uVar5 = uVar1 + uVar4;
+     }
+   }
+-  param_1[4] = (short)uVar5;
++  param_1[4] = (sword)uVar5;
+   local_20 = (ushort)(uVar3 <= (uVar5 & 0xffff));
+-  uVar3 = (uint)(short)param_1[1];
++  uVar3 = (uint)param_1[1];
+   if ((int)uVar3 < 0) {
+     uVar3 = -uVar3;
+   }
+@@ -15633,14 +15646,14 @@ void cm848_updateAutozeroOffset(undefined2 *param_1)
+   param_1[7] = local_18;
+   param_1[10] = local_c;
+   if ((local_20 == 0) || (local_1a != 0)) {
+-    uVar6 = 0;
++    update_enable = 0;
+   }
+   else {
+-    uVar6 = 1;
++    update_enable = 1;
+   }
+-  uVar2 = cm848_conditionalFirstOrderFilter
+-                    ((int)(short)param_1[1],uVar6,*(undefined4 *)(param_1 + 0xc));
+-  *param_1 = uVar2;
++  sVar2 = cm848_conditionalFirstOrderFilter
++                    ((int)param_1[1],update_enable,*(ema_filter_state_t **)(param_1 + 0xc));
++  *param_1 = sVar2;
+   return;
+ }
+ 
+@@ -16082,7 +16095,7 @@ void cm848_updateEgrValveMeanSquaredCurrent(void)
+ void cm848_updateEgrValveOverTemperatureFault(void)
+ 
+ {
+-  short sVar1;
++  sword sVar1;
+   uint uVar2;
+   uint uVar3;
+   
+@@ -20142,14 +20155,13 @@ void runHighSpeedGovernorPid(void)
+     iVar8 = 0x7fff;
+   }
+   high_speed_governor_filtered_error =
+-       cm848_signedFirstOrderFilter
+-                 ((int)(short)iVar8,&high_speed_governor_error_filter_coefficient_pointer);
++       cm848_signedFirstOrderFilter((int)(short)iVar8,&high_speed_governor_error_filter);
+   wVar3 = high_speed_governor_filtered_error_maximum;
+   if (((short)high_speed_governor_filtered_error_maximum < (short)high_speed_governor_filtered_error
+       ) || (wVar3 = high_speed_governor_filtered_error_minimum,
+            (short)high_speed_governor_filtered_error <
+            (short)high_speed_governor_filtered_error_minimum)) {
+-    high_speed_governor_error_filter_accumulator = (int)(short)wVar3 << 0x10;
++    high_speed_governor_error_filter.accumulator = (int)(short)wVar3 << 0x10;
+     high_speed_governor_filtered_error = wVar3;
+   }
+   if ((((int)((uint)engine_speed_limit_arbitration.applied_speed_limit +
+@@ -20160,7 +20172,7 @@ void runHighSpeedGovernorPid(void)
+     high_speed_governor_integrator = (uint)high_speed_governor_integrator_reset_value << 0x10;
+     high_speed_governor_integral_term = high_speed_governor_integrator_reset_value;
+     high_speed_governor_filtered_error = 0;
+-    high_speed_governor_error_filter_accumulator = 0;
++    high_speed_governor_error_filter.accumulator = 0;
+   }
+   else {
+     wVar3 = high_speed_governor_derivative_gain;
+@@ -20313,9 +20325,8 @@ void initializeHighSpeedGovernorGainSet(void)
+   high_speed_governor_error_filter_coefficient = high_speed_governor_error_filter_coefficient_base;
+   high_speed_governor_gain_set_code = 0x10;
+   high_speed_governor_integral_term = high_speed_governor_integrator_maximum;
+-  high_speed_governor_error_filter_accumulator = 0;
+-  high_speed_governor_error_filter_coefficient_pointer =
+-       (undefined *)&high_speed_governor_error_filter_coefficient;
++  high_speed_governor_error_filter.accumulator = 0;
++  high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient;
+   high_speed_governor_derivative_gain_adjustment_cached_axis_offset = 2;
+   high_speed_governor_proportional_gain_adjustment_cached_axis_offset = 2;
+   high_speed_governor_integral_gain_adjustment_cached_axis_offset = 2;
+@@ -20433,8 +20444,8 @@ void selectHighSpeedGovernorGainSet(void)
+                high_speed_governor_error_filter_coefficient_working;
+           high_speed_governor_gain_set_code = high_speed_governor_working_gain_set_code;
+         }
+-        high_speed_governor_error_filter_coefficient_pointer =
+-             (undefined *)&high_speed_governor_error_filter_coefficient;
++        high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient
++        ;
+       }
+     }
+     else if (high_speed_governor_gain_set_code != 0x11) {
+@@ -20445,8 +20456,7 @@ void selectHighSpeedGovernorGainSet(void)
+       high_speed_governor_error_filter_coefficient =
+            high_speed_governor_transient_gain_set.error_filter_coefficient;
+       high_speed_governor_gain_set_code = 0x11;
+-      high_speed_governor_error_filter_coefficient_pointer =
+-           (undefined *)&high_speed_governor_error_filter_coefficient;
++      high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient;
+       high_speed_governor_transient_gain_set_pass_counter = 0;
+     }
+     high_speed_governor_transient_gain_set_pass_counter =
+@@ -26380,7 +26390,7 @@ LAB_000284d4:
+                    ((int)(short)((int)((uint)governor_speed_filter_input_scale_cal *
+                                       ((uint)alternator_field_duty_target -
+                                       (uint)governor_speed_filter_fuel_offset_cal)) >> 0xe),
+-                    &governor_speed_filter_state_ptr);
++                    &governor_speed_filter);
+     iVar6 = (int)(short)governor_speed_weight_a + (int)(short)governor_speed_weight_b +
+             (int)(short)governor_fuel_demand_correction +
+             (int)(short)governor_speed_error_derivative + iVar6 +
+@@ -26437,7 +26447,7 @@ void cm848_initSpeedProtectionParameters(void)
+   governor_pid_gain_factor_b = 0x80;
+   governor_speed_pid_gain = 0x80;
+   governor_speed_setpoint_integrated = 0x1700;
+-  governor_speed_filter_state_ptr = &governor_speed_filter_state_cal;
++  governor_speed_filter.coefficient = &governor_speed_filter_coefficient;
+   return;
+ }
+ 
+@@ -26712,12 +26722,13 @@ void cm848_calculateSpeedRateLimiting(void)
+     sStack_e = (short)iVar6;
+     iVar6 = (int)sStack_e;
+   }
+-  governor_speed_error_delta = cm848_signedFirstOrderFilter(iVar6,&governor_bank2_cal_ptr);
++  governor_speed_error_delta =
++       cm848_signedFirstOrderFilter(iVar6,&governor_speed_error_delta_filter);
+   wVar2 = governor_speed_error_rate;
+   wVar3 = DAT_0005c4b2;
+   if (((short)DAT_0005c4b2 < (short)governor_speed_error_delta) ||
+      (wVar3 = DAT_0005c4b4, (short)governor_speed_error_delta < (short)DAT_0005c4b4)) {
+-    governor_speed_error_clamped_dword = (int)(short)wVar3 << 0x10;
++    governor_speed_error_delta_filter.accumulator = (int)(short)wVar3 << 0x10;
+     governor_speed_error_delta = wVar3;
+   }
+   governor_speed_error_rate = governor_speed_error_delta - wVar1;
+@@ -26742,7 +26753,7 @@ void cm848_calculateSpeedRateLimiting(void)
+ void cm848_setGovernorFilterPointer(void)
+ 
+ {
+-  governor_bank2_cal_ptr = &DAT_0005c4ae;
++  governor_speed_error_delta_filter.coefficient = &governor_speed_error_delta_filter_coefficient;
+   return;
+ }
+ 
+@@ -27491,14 +27502,14 @@ void cm848_calculatePowerTakeOffGovernorSpeedError(void)
+   protection_monitored_rpm_snapshot = power_take_off_governor_smoothed_reference_engine_speed;
+   wStack_1e = (word)((int)(short)wVar1 * (int)(short)governor_speed_gain_factor >> 0xe);
+   power_take_off_governor_filtered_speed_error =
+-       cm848_signedFirstOrderFilter((int)(short)wStack_1e,&protection_filter_state_ptr);
++       cm848_signedFirstOrderFilter((int)(short)wStack_1e,&power_take_off_speed_error_filter);
+   wVar1 = power_take_off_speed_error_clamp_maximum;
+   if (((short)power_take_off_speed_error_clamp_maximum <
+        power_take_off_governor_filtered_speed_error) ||
+      (wVar1 = power_take_off_speed_error_clamp_minimum,
+      power_take_off_governor_filtered_speed_error < (short)power_take_off_speed_error_clamp_minimum)
+      ) {
+-    governor_integrator_working = (int)(short)wVar1 << 0x10;
++    power_take_off_speed_error_filter.accumulator = (int)(short)wVar1 << 0x10;
+     power_take_off_governor_filtered_speed_error = wVar1;
+   }
+   wVar1 = lookupTableInterpolation
+@@ -27694,7 +27705,7 @@ void cm848_presetPowerTakeOffGovernorOnEngagement(void)
+   
+   power_take_off_governor_proportional_derivative_fueling = 0;
+   cm848_setProtectionParamFromRpm();
+-  governor_integrator_working = 0;
++  power_take_off_speed_error_filter.accumulator = 0;
+   power_take_off_governor_filtered_speed_error = 0;
+   if (power_take_off_gain_adjustment_mode == 0) {
+     uVar3 = (uint)protection_rpm_gain_factor_cal *
+@@ -27776,8 +27787,8 @@ void cm848_runPowerTakeOffGovernor(void)
+ void cm848_initProtectionFilterState(void)
+ 
+ {
+-  governor_integrator_working = 0;
+-  protection_filter_state_ptr = (undefined *)&power_take_off_speed_error_filter_coefficient;
++  power_take_off_speed_error_filter.accumulator = 0;
++  power_take_off_speed_error_filter.coefficient = &power_take_off_speed_error_filter_coefficient;
+   cm848_initProtectionSmoothingPointer();
+   power_take_off_governor_derivative_gain_adjustment = 0x80;
+   power_take_off_governor_integral_gain_adjustment = 0x80;
+@@ -28934,7 +28945,7 @@ void cm848_estimateTurbochargerSpeed(void)
+   turbocharger_speed_estimate_boost_lead_term =
+        cm848_signedFirstOrderFilter
+                  ((int)(short)turbocharger_speed_estimate_boost_lead_term_unfiltered,
+-                  &PTR_DAT_003fb01e);
++                  &turbocharger_speed_estimate_boost_lead_term_filter);
+   if ((boost_fuel_scale_divisor == 0) ||
+      (uVar3 = (uint)(((ulonglong)map_fuel_correction_factor << 0xc) /
+                     (ulonglong)(uint)boost_fuel_scale_divisor), 0xfffe < uVar3)) {
+@@ -28993,8 +29004,9 @@ void cm848_initializeTurbochargerSpeedEstimate(void)
+   map_fuel_correction_prev_snapshot = 0;
+   DAT_003fb01a = 2;
+   DAT_003fb01c = 2;
+-  DAT_003fb022 = 0;
+-  PTR_DAT_003fb01e = &DAT_0040729e;
++  turbocharger_speed_estimate_boost_lead_term_filter.accumulator = 0;
++  turbocharger_speed_estimate_boost_lead_term_filter.coefficient =
++       &turbocharger_speed_estimate_boost_lead_term_filter_coefficient;
+   ema_filter_state_t_003fb026.accumulator = 0;
+   ema_filter_state_t_003fb026.coefficient = &WORD_004072a0;
+   return;
+@@ -29382,7 +29394,7 @@ void cm848_calculateVariableGeometryTurbochargerPidDuty(void)
+   variable_geometry_turbocharger_proportional_term = (word)iVar4;
+   wVar3 = cm848_signedFirstOrderFilter
+                     ((int)(short)variable_geometry_turbocharger_position_error,
+-                     &variable_geometry_turbocharger_derivative_filter_coefficient_pointer);
++                     &variable_geometry_turbocharger_derivative_filter);
+   variable_geometry_turbocharger_position_error_derivative =
+        wVar3 - variable_geometry_turbocharger_position_error_filtered_previous;
+   variable_geometry_turbocharger_position_error_filtered_previous = wVar3;
+@@ -29753,8 +29765,8 @@ void cm848_initializeVariableGeometryTurbochargerPositionControlLoop(void)
+   variable_geometry_turbocharger_position_reference_filter_state.accumulator = 0;
+   variable_geometry_turbocharger_position_reference_filter_state.coefficient =
+        &variable_geometry_turbocharger_position_reference_filter_coefficient;
+-  variable_geometry_turbocharger_derivative_filter_accumulator = 0;
+-  variable_geometry_turbocharger_derivative_filter_coefficient_pointer =
++  variable_geometry_turbocharger_derivative_filter.accumulator = 0;
++  variable_geometry_turbocharger_derivative_filter.coefficient =
+        &variable_geometry_turbocharger_derivative_filter_coefficient;
+   variable_geometry_turbocharger_position_error_filtered_previous = 0;
+   variable_geometry_turbocharger_motor_pwm_duty_scaled = 0;
+@@ -30905,8 +30917,7 @@ void cm848_filterVariableGeometryTurbochargerClosedPosition(void)
+   }
+   variable_geometry_turbocharger_closed_position =
+        cm848_signedFirstOrderFilter
+-                 ((int)(short)wVar1,
+-                  &variable_geometry_turbocharger_closed_position_filter_coefficient_pointer);
++                 ((int)(short)wVar1,&variable_geometry_turbocharger_closed_position_filter);
+   variable_geometry_turbocharger_closed_position_filtered =
+        variable_geometry_turbocharger_closed_position;
+   if ((fault_detected_bits_656_to_671 & 0x4000) != 0) {
+@@ -31345,10 +31356,10 @@ void cm848_initializeVariableGeometryTurbochargerAdjustmentFilters(void)
+        &variable_geometry_turbocharger_adjustment_filter_coefficient;
+   variable_geometry_turbocharger_closed_stop_unsettled_flag = 0;
+   variable_geometry_turbocharger_closed_adjustment_timeout_error_flag = 0;
+-  variable_geometry_turbocharger_closed_position_filter_accumulator =
++  variable_geometry_turbocharger_closed_position_filter.accumulator =
+        (int)(short)variable_geometry_turbocharger_saved_closed_position_cal << 0x10;
+-  variable_geometry_turbocharger_closed_position_filter_coefficient_pointer =
+-       (undefined *)&variable_geometry_turbocharger_adjustment_filter_coefficient;
++  variable_geometry_turbocharger_closed_position_filter.coefficient =
++       &variable_geometry_turbocharger_adjustment_filter_coefficient;
+   if (variable_geometry_turbocharger_enable_flag == 0) {
+     fault_detected_bits_704_to_719 = fault_detected_bits_704_to_719 & 0xff9f;
+     fault_registered_bits_704_to_719 = fault_registered_bits_704_to_719 & 0xff9f;
+@@ -33820,7 +33831,7 @@ void cm848_updateTransmissionConditionFlags(void)
+   protection_load_scaled_input =
+        cm848_signedFirstOrderFilter
+                  ((int)((short)engine_acceleration_unfiltered >> 1),
+-                  &protection_load_scaled_filter_state_ptr);
++                  &protection_load_scaled_input_filter);
+   if (((short)protection_load_scaled_input < 0) ||
+      (protection_load_scaled_input < protection_load_scaled_min_threshold_cal)) {
+     protection_engine_load_scaled = 0;
+@@ -33904,7 +33915,8 @@ void cm848_filterProtectionLoadValue(void)
+     protection_load_history_index = (word)uVar3;
+     transmission_output_speed_change =
+          cm848_signedFirstOrderFilter
+-                   ((int)(short)protection_load_rate_delta,&protection_load_filter_state_b_ptr);
++                   ((int)(short)protection_load_rate_delta,&transmission_output_speed_change_filter)
++    ;
+   }
+   return;
+ }
+@@ -34025,10 +34037,12 @@ void cm848_initProtectionSystem(void)
+   protection_filter_stage_8_state = 2;
+   protection_filter_stage_9_state = 2;
+   protection_filter_stage_10_state = 2;
+-  protection_load_filter_accum_b = 0;
+-  protection_load_filter_state_b_ptr = &protection_load_filter_state_b_cal;
+-  protection_load_scaled_filter_accum = 0;
+-  protection_load_scaled_filter_state_ptr = &protection_load_scaled_filter_state_cal;
++  transmission_output_speed_change_filter.accumulator = 0;
++  transmission_output_speed_change_filter.coefficient =
++       &transmission_output_speed_change_filter_coefficient;
++  protection_load_scaled_input_filter.accumulator = 0;
++  protection_load_scaled_input_filter.coefficient = &protection_load_scaled_input_filter_coefficient
++  ;
+   transmission_vehicle_speed_filter_state.accumulator = 0;
+   transmission_vehicle_speed_filter_state.coefficient =
+        &transmission_vehicle_speed_filter_coefficient;
+@@ -36533,7 +36547,7 @@ void cm848_processEngineRpmDerivative(void)
+     if ((short)engine_acceleration_first_stage_filtered <= iVar1) goto LAB_000387f4;
+     engine_acceleration_first_stage_filtered = engine_acceleration_first_stage_clamp_maximum;
+   }
+-  engine_acceleration_first_stage_filter_accumulator = iVar1 << 0x10;
++  engine_acceleration_first_stage_filter_state.accumulator = iVar1 << 0x10;
+ LAB_000387f4:
+   engine_acceleration_second_stage_filtered =
+        cm848_signedFirstOrderFilter
+@@ -36551,11 +36565,11 @@ LAB_000387f4:
+ void cm848_initEngineRpmFilterPointers(void)
+ 
+ {
+-  engine_acceleration_first_stage_filter_accumulator = 0;
+-  engine_acceleration_first_stage_filter_state = &engine_acceleration_first_stage_filter_coefficient
+-  ;
+-  engine_acceleration_second_stage_filter_accumulator = 0;
+-  engine_acceleration_second_stage_filter_state =
++  engine_acceleration_first_stage_filter_state.accumulator = 0;
++  engine_acceleration_first_stage_filter_state.coefficient =
++       &engine_acceleration_first_stage_filter_coefficient;
++  engine_acceleration_second_stage_filter_state.accumulator = 0;
++  engine_acceleration_second_stage_filter_state.coefficient =
+        &engine_acceleration_second_stage_filter_coefficient;
+   engine_acceleration_target_rpm_previous = 0;
+   return;
+@@ -36675,8 +36689,8 @@ void cm848_checkPciMessageTimeouts(void)
+   word *transmit_timer;
+   dword message_index;
+   uint uVar1;
+-  ushort receive_interval;
+   byte all_transmits_overdue;
++  ushort receive_interval;
+   
+   all_transmits_overdue = 1;
+   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
+@@ -39369,7 +39383,7 @@ void cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures(void)
+   local_8[1] = (byte)uVar3;
+   coolant_temp_filtered =
+        cm848_signedFirstOrderFilter
+-                 ((int)(short)coolant_temperature_in_use,&coolant_temp_filter_state_ptr);
++                 ((int)(short)coolant_temperature_in_use,&pci_coolant_temperature_filter);
+   uVar3 = (uint)(short)((short)(((short)(coolant_temp_filtered - 0x800) * 5) / 9) + 0xa00);
+   iVar2 = ((int)uVar3 >> 6) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3f) != 0);
+   if ((short)iVar2 < 0xff) {
+@@ -39410,8 +39424,8 @@ void cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures(void)
+ void mpc555_initFuelDemandFilterPointers(void)
+ 
+ {
+-  DAT_003fb418 = 0;
+-  coolant_temp_filter_state_ptr = &DAT_00408972;
++  pci_coolant_temperature_filter.accumulator = 0;
++  pci_coolant_temperature_filter.coefficient = &pci_coolant_temperature_filter_coefficient;
+   return;
+ }
+ 
+@@ -46587,8 +46601,8 @@ void cm848_calculateFuelMeteringCommand(void)
+   word wVar4;
+   word wVar5;
+   short sVar6;
+-  short sVar7;
+-  short sVar8;
++  sword sVar7;
++  sword sVar8;
+   short sVar9;
+   dword dVar2;
+   word unaff_r23;
+@@ -46885,19 +46899,20 @@ LAB_0004800c:
+         iVar11 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
+       }
+       fuel_pressure_governor_accelerator_feed_forward =
+-           cm848_signedFirstOrderFilter(iVar11,&cam_sync_fuel_filter_state_pointer);
++           cm848_signedFirstOrderFilter
++                     (iVar11,&fuel_pressure_governor_accelerator_feed_forward_filter);
+       wVar5 = fuel_pressure_setpoint;
+       fuel_demand_calculated_snapshot = fuel_demand_control_t_0040a57a.calculated;
+-      sVar7 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
++      sVar6 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
+       fuel_pressure_feedback_previous = fuel_pressure_feedback_filtered;
+-      cam_sync_filter_state_pointer = (undefined *)awStack_68;
+-      sVar6 = cm848_signedFirstOrderFilter
+-                        ((int)(short)fuel_pressure_sensor,&cam_sync_filter_state_pointer);
++      fuel_pressure_sensor_filter.coefficient = awStack_68;
++      sVar7 = cm848_signedFirstOrderFilter
++                        ((int)(short)fuel_pressure_sensor,&fuel_pressure_sensor_filter);
+       fuel_pressure_governor_proportional_term =
+-           cm848_applyPiecewiseLinearGain(&local_64,(int)sVar7);
++           cm848_applyPiecewiseLinearGain(&local_64,(int)sVar6);
+       fuel_pressure_governor_integral_term =
+            cm848_integrateWithZoneGain
+-                     (&local_54,&fuel_pressure_governor_integrator,(int)sVar7,10000);
++                     (&local_54,&fuel_pressure_governor_integrator,(int)sVar6,10000);
+       if ((engine_sync_rpm_phase_acquired_flag == 1) && (engine_sync_state_a == 5)) {
+         wVar4 = lookupTableInterpolation
+                           (&engine_sync_init_state_k,engine_rpm_measured,cam_sync_output_a_axis_cal,
+@@ -46936,7 +46951,7 @@ LAB_0004800c:
+       fuel_pressure_governor_derivative_term =
+            cm848_calculateFilteredDerivative
+                      (&local_44,&fuel_pressure_governor_derivative_filter,
+-                      (int)(short)(wVar5 - sVar6));
++                      (int)(short)(wVar5 - sVar7));
+       wVar5 = fuel_pressure_governor_proportional_term + fuel_pressure_governor_integral_term +
+               fuel_pressure_governor_derivative_term +
+               fuel_pressure_governor_accelerator_feed_forward;
+@@ -47060,18 +47075,18 @@ LAB_000489d0:
+                  (&cam_sync_ref_prot_handler_state_cal,&fuel_metering_base_command_derivative_filter
+                   ,(int)sVar6);
+   wVar14 = sVar6 + fuel_metering_base_command_derivative_term;
+-  sVar6 = cm848_signedFirstOrderFilter((int)(short)wVar5,&cam_sync_fault_filter_ptr);
+-  sVar7 = cm848_signedFirstOrderFilter
+-                    ((int)(short)fuel_metering_feedback_input,&cam_sync_speed_filter_ptr);
+-  fuel_metering_feedback_error = sVar6 - sVar7;
++  sVar7 = cm848_signedFirstOrderFilter((int)(short)wVar5,&fuel_metering_reference_filter);
++  sVar8 = cm848_signedFirstOrderFilter
++                    ((int)(short)fuel_metering_feedback_input,&fuel_metering_feedback_filter);
++  fuel_metering_feedback_error = sVar7 - sVar8;
+   if (fuel_metering_feedback_fault_code == 0) {
+-    sVar8 = cm848_applyPiecewiseLinearGain
++    sVar6 = cm848_applyPiecewiseLinearGain
+                       (&cam_sync_speed_error_prot_state_cal,(int)(short)fuel_metering_feedback_error
+                       );
+     sVar9 = cm848_integrateWithZoneGain
+                       (&cam_sync_speed_error_prot_mode_cal,&fuel_metering_feedback_trim_integrator,
+                        (int)(short)fuel_metering_feedback_error,10000);
+-    if ((sVar6 == 0) && (engine_rpm_measured == 0)) {
++    if ((sVar7 == 0) && (engine_rpm_measured == 0)) {
+       fuel_metering_feedback_trim_integrator.integer_part =
+            lookupTableInterpolation
+                      (&WORD_003fb660,unaff_r29,engine_sync_speed_scale_axis_cal,
+@@ -47087,15 +47102,15 @@ LAB_000489d0:
+       engine_sync_confirmed_flag = 0;
+       engine_sync_signal_flag = 1;
+     }
+-    iVar11 = (int)(short)(sVar8 + sVar9);
++    iVar11 = (int)(short)(sVar6 + sVar9);
+     if ((short)engine_sync_protection_upper_limit_cal < iVar11) {
+       fuel_metering_feedback_trim_integrator.integer_part =
+-           engine_sync_protection_upper_limit_cal - sVar8;
++           engine_sync_protection_upper_limit_cal - sVar6;
+       iVar11 = (int)(short)engine_sync_protection_upper_limit_cal;
+     }
+     else if (iVar11 < (short)engine_sync_protection_lower_limit_cal) {
+       fuel_metering_feedback_trim_integrator.integer_part =
+-           engine_sync_protection_lower_limit_cal - sVar8;
++           engine_sync_protection_lower_limit_cal - sVar6;
+       iVar11 = (int)(short)engine_sync_protection_lower_limit_cal;
+     }
+     engine_sync_state_t_0040b87f.fuel_metering_command =
+@@ -47165,15 +47180,15 @@ LAB_000489d0:
+     cam_speed_rate =
+          cm848_signedFirstOrderFilter
+                    ((int)(short)engine_sync_state_t_0040b87f.fuel_metering_command,
+-                    &cam_sync_rate_filter_state_pointer);
+-    if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar7) &&
++                    &fuel_metering_command_filter);
++    if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar8) &&
+        ((int)(uint)cam_speed_rate_threshold_cal < (int)(short)cam_speed_rate)) {
+       engine_sync_phase_counter = engine_sync_phase_counter + 1;
+       if (engine_sync_phase_counter_max_cal < engine_sync_phase_counter) {
+         engine_sync_phase_counter = engine_sync_phase_counter_max_cal;
+       }
+       uVar15 = ((int)(short)cam_speed_rate * (uint)sensor_readings_t_0040baf2.battery_voltage * 5) /
+-               (uint)(sVar7 * 2);
++               (uint)(sVar8 * 2);
+       engine_sync_rpm_raw_working = (word)uVar15;
+       dVar2 = exponentialMovingAverage(uVar15 & 0xffff,&cam_sync_rpm_filter_state);
+       engine_sync_rpm_filtered = (word)dVar2;
+@@ -47226,7 +47241,6 @@ void cm848_countFuelPressureGovernorStartRevolutions(void)
+ // Function: cm848_resetEngineSyncState @ 0x00049004
+ //
+ 
+-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+ /* Resets the fuel pressure governor / fuel metering state (cm848_calculateFuelMeteringCommand):
+    command, demand, governor mode 1, counters, the table interpolation states and filters. Of the
+    four Q16.16 PID states it clears fuel_pressure_governor_integrator,
+@@ -47271,18 +47285,19 @@ void cm848_resetEngineSyncState(void)
+   engine_sync_init_state_o = 2;
+   engine_sync_init_state_p = 2;
+   engine_sync_init_state_q = 2;
+-  cam_sync_filter_accum_init = 0;
+-  cam_sync_speed_filter_ptr = &cam_sync_speed_error_filter_state_cal;
+-  _cam_sync_speed_filter_accum = 0;
+-  cam_sync_fault_filter_ptr = &cam_sync_fault_filter_state_cal;
++  fuel_metering_feedback_filter.accumulator = 0;
++  fuel_metering_feedback_filter.coefficient = &fuel_metering_feedback_filter_coefficient;
++  fuel_metering_reference_filter.accumulator = 0;
++  fuel_metering_reference_filter.coefficient = &fuel_metering_reference_filter_coefficient;
+   cam_sync_speed_filter_state.accumulator = 0;
+   cam_sync_speed_filter_state.coefficient = &sensor_channel_config_t_00059336.filter_coefficient;
+-  _cam_sync_speed_filter_state_accum = 0;
+-  cam_sync_filter_state_pointer = (undefined *)&engine_sync_scale_factor_cal;
+-  _cam_sync_fuel_filter_accum = 0;
+-  cam_sync_fuel_filter_state_pointer = &cam_sync_fuel_filter_state_cal;
+-  _cam_sync_rate_filter_accum = 0;
+-  cam_sync_rate_filter_state_pointer = &cam_sync_rate_filter_state_cal;
++  fuel_pressure_sensor_filter.accumulator = 0;
++  fuel_pressure_sensor_filter.coefficient = &engine_sync_scale_factor_cal;
++  fuel_pressure_governor_accelerator_feed_forward_filter.accumulator = 0;
++  fuel_pressure_governor_accelerator_feed_forward_filter.coefficient =
++       &fuel_pressure_governor_accelerator_feed_forward_filter_coefficient;
++  fuel_metering_command_filter.accumulator = 0;
++  fuel_metering_command_filter.coefficient = &fuel_metering_command_filter_coefficient;
+   cam_sync_rpm_filter_state.accumulator = 0;
+   cam_sync_rpm_filter_state.coefficient = &cam_sync_rpm_filter_coefficient;
+   cam_speed_rate = 0;
+@@ -48048,14 +48063,14 @@ void cm848_filterFuelPressureFeedback(void)
+       fuel_pressure_feedback_filtered =
+            cm848_signedFirstOrderFilter
+                      ((int)(short)fuel_pressure_at_injection_scheduling,
+-                      &fuel_pressure_feedback_filter_pointer);
++                      &fuel_pressure_feedback_filter);
+       return;
+     }
+     if (fuel_pressure_feedback_source_select == 1) {
+       fuel_pressure_feedback_filtered =
+            cm848_signedFirstOrderFilter
+-                     ((int)(short)fuel_pressure_at_other_angle_events,
+-                      &fuel_pressure_feedback_filter_pointer);
++                     ((int)(short)fuel_pressure_at_other_angle_events,&fuel_pressure_feedback_filter
++                     );
+       return;
+     }
+     if (fuel_pressure_feedback_source_select != 2) {
+@@ -48063,8 +48078,8 @@ void cm848_filterFuelPressureFeedback(void)
+     }
+   }
+   fuel_pressure_feedback_filtered =
+-       cm848_signedFirstOrderFilter
+-                 ((int)(short)fuel_pressure_sensor,&fuel_pressure_feedback_filter_pointer);
++       cm848_signedFirstOrderFilter((int)(short)fuel_pressure_sensor,&fuel_pressure_feedback_filter)
++  ;
+   return;
+ }
+ 
+@@ -48074,7 +48089,6 @@ void cm848_filterFuelPressureFeedback(void)
+ // Function: cm848_initFuelPressureSensor @ 0x0004a858
+ //
+ 
+-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+ /* Clears the rail pressure sensor state (volts / pressure / feedback / codes / debounce counts) and
+    sets up the feedback filter and the table cache. Called from cm848_applicationMain. Was
+    cm848_initEnginePositionState */
+@@ -48089,8 +48103,8 @@ void cm848_initFuelPressureSensor(void)
+   fuel_pressure_sensor_code = 0;
+   fuel_pressure_sensor_fault_debounce_count = 0;
+   fuel_pressure_sensor_recovery_debounce_count = 0;
+-  _engine_sync_timeout_counter_c = 0;
+-  fuel_pressure_feedback_filter_pointer = &fuel_pressure_feedback_filter_constants;
++  fuel_pressure_feedback_filter.accumulator = 0;
++  fuel_pressure_feedback_filter.coefficient = &fuel_pressure_feedback_filter_coefficient;
+   fuel_pressure_sensor_table_cached_offset = 2;
+   fuel_pressure_feedback_filter_accumulator = 0;
+   return;
+@@ -57372,36 +57386,36 @@ uint cm848_saturatingDivision16(uint param_1,uint param_2)
+ // Function: cm848_signedFirstOrderFilter @ 0x0005644c
+ //
+ 
+-int cm848_signedFirstOrderFilter(int param_1,undefined4 *param_2)
++sword cm848_signedFirstOrderFilter(int value,ema_filter_state_t *filter_state)
+ 
+ {
+   uint uVar1;
+   int iVar2;
+   int iVar3;
+-  int iVar4;
++  dword dVar4;
+   
+-  if (*(short *)*param_2 == 0) {
+-    param_1 = param_1 << 0x10;
++  if (*filter_state->coefficient == 0) {
++    dVar4 = value << 0x10;
+   }
+   else {
+-    iVar4 = param_2[1];
+-    iVar2 = iVar4 >> 0x10;
+-    if (param_1 <= iVar2) {
+-      uVar1 = iVar2 - param_1;
++    dVar4 = filter_state->accumulator;
++    iVar2 = (int)dVar4 >> 0x10;
++    if (value <= iVar2) {
++      uVar1 = iVar2 - value;
+     }
+     else {
+-      uVar1 = param_1 - iVar2;
++      uVar1 = value - iVar2;
+     }
+-    iVar3 = (uVar1 & 0xffff) * (uint)(ushort)-*(short *)*param_2;
+-    if (param_1 <= iVar2) {
+-      param_1 = iVar4 - iVar3;
++    iVar3 = (uVar1 & 0xffff) * (uint)(ushort)-*filter_state->coefficient;
++    if (value <= iVar2) {
++      dVar4 = dVar4 - iVar3;
+     }
+     else {
+-      param_1 = iVar3 + iVar4;
++      dVar4 = iVar3 + dVar4;
+     }
+   }
+-  param_2[1] = param_1;
+-  return (int)(short)((uint)param_1 >> 0x10);
++  filter_state->accumulator = dVar4;
++  return (sword)(dVar4 >> 0x10);
+ }
+ 
+ 
+@@ -59831,7 +59845,7 @@ void hpcr_fuelFinal_exponentialAverage(void)
+      (wVar3 = DAT_003ff07c, wVar1 = DAT_003ff07c, fuel_demand_timing_mode_state != 2)) {
+     wVar3 = cm848_signedFirstOrderFilter
+                       ((int)(short)(ambient_air_temperature_selected - boost_fuel_timing_target),
+-                       &PTR_DAT_003fb9e2);
++                       &ema_filter_state_t_003fb9e2);
+     wVar1 = wVar3;
+   }
+   boost_fuel_timing_demand_filter_output = wVar1;
+@@ -59922,8 +59936,9 @@ void cm848_initialization_step_3(void)
+                   vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);
+   boost_fuel_timing_demand_filter_output =
+        ambient_air_temperature_selected - boost_fuel_timing_target;
+-  DAT_003fb9e6 = (int)(short)boost_fuel_timing_demand_filter_output << 0x10;
+-  PTR_DAT_003fb9e2 = &DAT_003ff076;
++  ema_filter_state_t_003fb9e2.accumulator =
++       (int)(short)boost_fuel_timing_demand_filter_output << 0x10;
++  ema_filter_state_t_003fb9e2.coefficient = &WORD_003ff076;
+   boost_fuel_demand_blend_a = ambient_air_temperature_selected;
+   fuel_demand_timing_mode_state = fuel_demand_state_b;
+   DAT_0040a1a6 = fuel_boost_mode_state;
+@@ -72929,17 +72944,17 @@ void cm848_initCoolingFanControl(void)
+   cooling_fan_intake_request_hold_count = 0;
+   cooling_fan_feed_forward_table = 2;
+   DAT_003fcdfd = 2;
+-  cooling_fan_speed_feedback_filter_state = 0;
+-  cooling_fan_speed_feedback_filter = (undefined *)&cooling_fan_speed_feedback_filter_coefficient;
+-  cooling_fan_proportional_derivative_filter_state = 0;
+-  cooling_fan_proportional_derivative_filter =
+-       (undefined *)&cooling_fan_proportional_derivative_filter_coefficient;
+-  cooling_fan_coolant_temperature_filter_state = 0;
+-  cooling_fan_coolant_temperature_filter =
+-       (undefined *)&cooling_fan_coolant_temperature_filter_coefficient;
+-  cooling_fan_intake_temperature_filter_state = 0;
+-  cooling_fan_intake_temperature_filter =
+-       (undefined *)&cooling_fan_intake_temperature_filter_coefficient;
++  cooling_fan_speed_feedback_filter.accumulator = 0;
++  cooling_fan_speed_feedback_filter.coefficient = &cooling_fan_speed_feedback_filter_coefficient;
++  cooling_fan_proportional_derivative_filter.accumulator = 0;
++  cooling_fan_proportional_derivative_filter.coefficient =
++       &cooling_fan_proportional_derivative_filter_coefficient;
++  cooling_fan_coolant_temperature_filter.accumulator = 0;
++  cooling_fan_coolant_temperature_filter.coefficient =
++       &cooling_fan_coolant_temperature_filter_coefficient;
++  cooling_fan_intake_temperature_filter.accumulator = 0;
++  cooling_fan_intake_temperature_filter.coefficient =
++       &cooling_fan_intake_temperature_filter_coefficient;
+   if ((cooling_fan_output_channel_cal != 0) && (cooling_fan_output_channel_cal < 0x33)) {
+     (**(code **)(&output_channel_driver_table_enable + (uint)cooling_fan_output_channel_cal * 0x10))
+               ();
+diff --git a/firmware/CM848_S90140.06_analysis/output/firmware_functions.hpp b/firmware/CM848_S90140.06_analysis/output/firmware_functions.hpp
+index 68755ab..f23701a 100644
+--- a/firmware/CM848_S90140.06_analysis/output/firmware_functions.hpp
++++ b/firmware/CM848_S90140.06_analysis/output/firmware_functions.hpp
+@@ -391,9 +391,9 @@ void cm848_processThrottlePositionLookups(void);  // @ 0x0001820c
+ void cm848_calculateThrottleProtectionLimit(void);  // @ 0x000182e8
+ void cm848_updateEgrDeltaPressureAutozeroConditions(void);  // @ 0x00018384
+ void cm848_updateEgrDeltaPressureAutozeroCompleteFlag(void);  // @ 0x000184f0
+-int cm848_conditionalFirstOrderFilter(undefined4 param_1,int param_2,int param_3);  // @ 0x000185cc
++sword cm848_conditionalFirstOrderFilter (int value,int update_enable,ema_filter_state_t *filter_state);  // @ 0x000185cc
+ void cm848_updateAutozeroErrorCounter(short *param_1);  // @ 0x0001860c
+-void cm848_updateAutozeroOffset(undefined2 *param_1);  // @ 0x00018780
++void cm848_updateAutozeroOffset(sword *param_1);  // @ 0x00018780
+ void cm848_updateEgrDeltaPressureAutozero(void);  // @ 0x00018904
+ void cm848_selectEgrDeltaPressure(void);  // @ 0x00018a50
+ void cm848_runEgrDeltaPressureAutozero(void);  // @ 0x00018ac0
+@@ -1286,7 +1286,7 @@ void cm848_extendedDivisionWithRemainder (uint param_1,uint param_2,uint param_3
+ int cm848_signedDivisionWithSaturation(uint param_1,int param_2);  // @ 0x00056260
+ int cm848_clampedDivisionWithBounds(uint param_1,int param_2,int param_3,int param_4);  // @ 0x000562fc
+ uint cm848_saturatingDivision16(uint param_1,uint param_2);  // @ 0x000563e8
+-int cm848_signedFirstOrderFilter(int param_1,undefined4 *param_2);  // @ 0x0005644c
++sword cm848_signedFirstOrderFilter(int value,ema_filter_state_t *filter_state);  // @ 0x0005644c
+ int cm848_secondOrderFilter(short param_1,undefined4 *param_2);  // @ 0x000564c0
+ dword exponentialMovingAverage(dword value,ema_filter_state_t *filter_state);  // @ 0x00056594
+ undefined4 cm848_interpolateTableLinearStep(int param_1,undefined4 *param_2);  // @ 0x00056608
+diff --git a/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp b/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
+index 9aa4026..6a2b671 100644
+--- a/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
++++ b/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
+@@ -197,6 +197,7 @@ extern word fuel_demand_rate_limit_debounce_low_cal;  // 0x0005c29a
+ extern word fuel_demand_cal_offset;  // 0x0005c29e
+ extern word idle_validation_fault_minimum_vehicle_speed;  // 0x0005c2a0
+ extern word fuel_demand_rate_limit_debounce_cal;  // 0x0005c2a4
++extern word fuel_demand_delta_filter_coefficient;  // 0x0005c2aa
+ extern word fuel_demand_maximum;  // 0x0005c306
+ extern word timing_limit_upper;  // 0x0005c30c
+ extern word j1939_input_source_priority;  // 0x0005c340
+@@ -222,6 +223,7 @@ extern word etc2_timeout_reload_count;  // 0x0005c39e
+ extern etc1_config_entry_t etc1_config_entry_t_0005c3b4;  // 0x0005c3b4
+ extern word engine_retarder_configuration_mode;  // 0x0005c47c
+ extern word engine_retarder_stage_1_weight;  // 0x0005c47e
++extern word governor_speed_error_delta_filter_coefficient;  // 0x0005c4ae
+ extern word governor_speed_limit_by_coolant_temperature_axis[9];  // 0x0005c4b6
+ extern word governor_speed_limit_by_coolant_temperature_values[9];  // 0x0005c4c8
+ extern word governor_idle_speed_by_barometric_pressure_axis[6];  // 0x0005c4da
+@@ -924,6 +926,9 @@ extern word unused_lookup_cached_axis_offset_2;  // 0x003fa116
+ extern dword interrupt_tick_accum_high;  // 0x003fa124
+ extern dword interrupt_tick_accum_low;  // 0x003fa128
+ extern word egr_fraction_command_above_on_threshold_flag;  // 0x003fa12e
++extern ema_filter_state_t charge_flow_turbocharger_speed_derate_offset_filter;  // 0x003fa138
++extern ema_filter_state_t charge_flow_compressor_outlet_temperature_derate_offset_filter;  // 0x003fa140
++extern ema_filter_state_t charge_flow_delta_pressure_derate_offset_filter;  // 0x003fa148
+ extern word charge_system_aggressiveness_threshold_exceeded_flag;  // 0x003fa158
+ extern word charge_system_transform_cosine;  // 0x003fa15a
+ extern word charge_system_transform_sine;  // 0x003fa15c
+@@ -947,24 +952,26 @@ extern word diag_state_group5_b_state;  // 0x003fa1b0
+ extern word diag_state_group5_c_state;  // 0x003fa1b2
+ extern word diag_state_group5_d_state;  // 0x003fa1b4
+ extern ema_filter_state_t throttle_filter_state;  // 0x003fa5ba
+-extern void * throttle_filter_coeff_table_b_pointer;  // 0x003fa5c2
+-extern dword throttle_filter_coeff_table_b_index;  // 0x003fa5c6
+-extern void * throttle_filter_coeff_data_pointer;  // 0x003fa5ca
+-extern dword throttle_filter_coeff_data_index;  // 0x003fa5ce
++extern ema_filter_state_t egr_mass_flow_delayed_filter;  // 0x003fa5c2
++extern ema_filter_state_t egr_valve_position_filter;  // 0x003fa5ca
+ extern word diag_state_group6_a_state;  // 0x003fa5d2
+ extern word diag_state_group6_b_state;  // 0x003fa5d4
+ extern ema_filter_state_t boost_modifier_filter_state;  // 0x003fa5d6
+ extern ema_filter_state_t fuel_blend_rpm_base_filter_state;  // 0x003fa5e2
++extern ema_filter_state_t predicted_intake_manifold_temperature_filter;  // 0x003fa5ea
+ extern word diag_state_group7_a_state;  // 0x003fa5f2
+ extern word diag_state_group7_b_state;  // 0x003fa5f4
+ extern dword boost_pressure_target_unclamped;  // 0x003fa606
+ extern word fuel_demand_cal_percent;  // 0x003fa60a
+ extern word fuel_mode_flags_combined;  // 0x003fa60c
++extern ema_filter_state_t fuel_demand_boost_offset_filter;  // 0x003fa60e
+ extern word cold_start_pressure_scale_working;  // 0x003fa616
+ extern word sensor_channel9_pressure_snapshot;  // 0x003fa61a
+ extern word fuel_demand_limit_b_working;  // 0x003fa61c
+ extern word pressure_correction_filter1_working;  // 0x003fa620
+ extern word condition_monitor_status_working;  // 0x003fa622
++extern ema_filter_state_t pressure_correction_first_filter;  // 0x003fa624
++extern ema_filter_state_t pressure_correction_second_filter;  // 0x003fa62c
+ extern word injection_timing_with_user_increment;  // 0x003fa63c
+ extern word injection_timing_after_minimum_limit;  // 0x003fa642
+ extern word injection_timing_source_code_after_minimum_limit;  // 0x003fa644
+@@ -1000,8 +1007,7 @@ extern word throttle_fuel_demand_lower_bound;  // 0x003fa6ea
+ extern word throttle_fuel_demand_upper_bound;  // 0x003fa6ec
+ extern word accelerator_pedal_sensor_counts;  // 0x003fa6ee
+ extern dword throttle_fuel_enable_flag;  // 0x003fa6f0
+-extern void * throttle_fuel_pgn_handler_pointer;  // 0x003fa6f4
+-extern dword throttle_fuel_pgn_handler_index;  // 0x003fa6f8
++extern ema_filter_state_t fuel_demand_delta_filter;  // 0x003fa6f4
+ extern word fuel_demand_override_counter;  // 0x003fa6fc
+ extern word governor_speed_output_snapshot;  // 0x003fa6fe
+ extern word fuel_correction_output_b_working;  // 0x003fa700
+@@ -1265,13 +1271,12 @@ extern word governor_speed_setpoint_working;  // 0x003faf4e
+ extern word governor_speed_debounce_active_flag;  // 0x003faf50
+ extern word governor_speed_error_prev_snapshot;  // 0x003faf52
+ extern word governor_speed_low_clamp;  // 0x003faf54
+-extern void * governor_speed_filter_state_ptr;  // 0x003faf56
++extern ema_filter_state_t governor_speed_filter;  // 0x003faf56
+ extern word governor_cold_start_load_timer;  // 0x003faf5e
+ extern word governor_active_flag;  // 0x003faf60
+ extern word governor_speed_error_settled_count;  // 0x003faf62
+ extern word cold_start_delay_counter;  // 0x003faf64
+-extern void * governor_bank2_cal_ptr;  // 0x003faf66
+-extern dword governor_speed_error_clamped_dword;  // 0x003faf6a
++extern ema_filter_state_t governor_speed_error_delta_filter;  // 0x003faf66
+ extern word governor_interp_table_state_a;  // 0x003faf6e
+ extern word governor_speed_disengage_timer;  // 0x003faf70
+ extern word governor_speed_limit_count;  // 0x003faf72
+@@ -1303,8 +1308,7 @@ extern word sensor_deviation_check_pending_flag;  // 0x003fafaa
+ extern word protection_monitored_rpm_snapshot;  // 0x003fafac
+ extern word governor_speed_gain_factor;  // 0x003fafae
+ extern word governor_integrator_prev_snapshot;  // 0x003fafb0
+-extern void * protection_filter_state_ptr;  // 0x003fafb2
+-extern dword governor_integrator_working;  // 0x003fafb6
++extern ema_filter_state_t power_take_off_speed_error_filter;  // 0x003fafb2
+ extern dword governor_pid_derivative_snapshot;  // 0x003fafba
+ extern dword governor_speed_product;  // 0x003fafbe
+ extern word governor_fuel_active_prev_flag;  // 0x003fafc2
+@@ -1338,13 +1342,13 @@ extern byte accelerator_pedal_sensor_fault_hold_flag;  // 0x003fb010
+ extern dword accelerator_pedal_pressed_flag;  // 0x003fb012
+ extern word switch_31_on_time_counter;  // 0x003fb016
+ extern word map_fuel_correction_prev_snapshot;  // 0x003fb018
++extern ema_filter_state_t turbocharger_speed_estimate_boost_lead_term_filter;  // 0x003fb01e
+ extern word variable_geometry_turbocharger_hold_open_confirm_counter;  // 0x003fb02e
+ extern word variable_geometry_turbocharger_open_stage_ramp;  // 0x003fb030
+ extern word variable_geometry_turbocharger_closed_stage_ramp;  // 0x003fb032
+ extern word variable_geometry_turbocharger_position_command_closed_staged;  // 0x003fb034
+ extern ema_filter_state_t variable_geometry_turbocharger_position_reference_filter_state;  // 0x003fb036
+-extern void * variable_geometry_turbocharger_derivative_filter_coefficient_pointer;  // 0x003fb03e
+-extern dword variable_geometry_turbocharger_derivative_filter_accumulator;  // 0x003fb042
++extern ema_filter_state_t variable_geometry_turbocharger_derivative_filter;  // 0x003fb03e
+ extern word variable_geometry_turbocharger_position_error_filtered_previous;  // 0x003fb046
+ extern word variable_geometry_turbocharger_control_state_previous;  // 0x003fb048
+ extern dword variable_geometry_turbocharger_integral_accumulator;  // 0x003fb04a
+@@ -1407,8 +1411,7 @@ extern word variable_geometry_turbocharger_closed_adjustment_error_latched_flag;
+ extern word variable_geometry_turbocharger_closed_adjustment_delay_elapsed_flag;  // 0x003fb0cc
+ extern word variable_geometry_turbocharger_closed_adjustment_error_counter_snapshot;  // 0x003fb0ce
+ extern word variable_geometry_turbocharger_closed_position_valid_flag;  // 0x003fb0d0
+-extern void * variable_geometry_turbocharger_closed_position_filter_coefficient_pointer;  // 0x003fb0d2
+-extern dword variable_geometry_turbocharger_closed_position_filter_accumulator;  // 0x003fb0d6
++extern ema_filter_state_t variable_geometry_turbocharger_closed_position_filter;  // 0x003fb0d2
+ extern word fuel_demand_limit_working;  // 0x003fb138
+ extern ema_filter_state_t transmission_vehicle_speed_filter_state;  // 0x003fb170
+ extern word protection_mode_changed_flag;  // 0x003fb178
+@@ -1427,10 +1430,8 @@ extern word protection_monitor_scan_counter;  // 0x003fb190
+ extern word protection_load_history_index;  // 0x003fb1c8
+ extern word protection_action_mode_snapshot;  // 0x003fb1ca
+ extern word protection_condition_state_bit0_flag;  // 0x003fb1cc
+-extern void * protection_load_filter_state_b_ptr;  // 0x003fb1ce
+-extern dword protection_load_filter_accum_b;  // 0x003fb1d2
+-extern void * protection_load_scaled_filter_state_ptr;  // 0x003fb1d6
+-extern dword protection_load_scaled_filter_accum;  // 0x003fb1da
++extern ema_filter_state_t transmission_output_speed_change_filter;  // 0x003fb1ce
++extern ema_filter_state_t protection_load_scaled_input_filter;  // 0x003fb1d6
+ extern word cruise_switch_interp_index;  // 0x003fb1f2
+ extern ema_filter_state_t cruise_switch_filter_state;  // 0x003fb1f4
+ extern word protection_iat_scale_pending_flag;  // 0x003fb224
+@@ -1488,10 +1489,8 @@ extern word alternator_field_duty_pid_derivative_rate_working;  // 0x003fb3a8
+ extern word charging_voltage_error_previous;  // 0x003fb3aa
+ extern word alternator_field_retest_fault_count;  // 0x003fb3ac
+ extern word engine_acceleration_target_rpm_previous;  // 0x003fb3ae
+-extern void * engine_acceleration_first_stage_filter_state;  // 0x003fb3b0
+-extern dword engine_acceleration_first_stage_filter_accumulator;  // 0x003fb3b4
+-extern void * engine_acceleration_second_stage_filter_state;  // 0x003fb3b8
+-extern dword engine_acceleration_second_stage_filter_accumulator;  // 0x003fb3bc
++extern ema_filter_state_t engine_acceleration_first_stage_filter_state;  // 0x003fb3b0
++extern ema_filter_state_t engine_acceleration_second_stage_filter_state;  // 0x003fb3b8
+ extern word safety_condition_prev_flag;  // 0x003fb3c0
+ extern byte pci_controller_byte_index;  // 0x003fb3c4
+ extern byte pci_receive_status;  // 0x003fb3c5
+@@ -1523,7 +1522,7 @@ extern word pci_transmit_message_11_pulse_total_previous;  // 0x003fb40a
+ extern word pci_transmit_message_11_vehicle_speed_at_send;  // 0x003fb40d
+ extern word pci_transmit_message_11_timer_previous;  // 0x003fb40f
+ extern word fuel_level_ready_flag_previous;  // 0x003fb412
+-extern void * coolant_temp_filter_state_ptr;  // 0x003fb414
++extern ema_filter_state_t pci_coolant_temperature_filter;  // 0x003fb414
+ extern word fuel_demand_rate_limiter_state;  // 0x003fb420
+ extern word fuel_demand_rate_lookup_a;  // 0x003fb422
+ extern word fuel_demand_rate_lookup_b;  // 0x003fb424
+@@ -1664,17 +1663,12 @@ extern word fuel_pressure_governor_low_pressure_fixed_passes;  // 0x003fb67f
+ extern word fuel_pressure_governor_start_revolutions;  // 0x003fb681
+ extern word fuel_demand_calculated_snapshot;  // 0x003fb683
+ extern word fuel_pressure_governor_feed_forward;  // 0x003fb685
+-extern void * cam_sync_speed_filter_ptr;  // 0x003fb687
+-extern dword cam_sync_filter_accum_init;  // 0x003fb68b
+-extern void * cam_sync_fault_filter_ptr;  // 0x003fb68f
+-extern word cam_sync_speed_filter_accum;  // 0x003fb693
++extern ema_filter_state_t fuel_metering_feedback_filter;  // 0x003fb687
++extern ema_filter_state_t fuel_metering_reference_filter;  // 0x003fb68f
+ extern ema_filter_state_t cam_sync_speed_filter_state;  // 0x003fb697
+-extern void * cam_sync_filter_state_pointer;  // 0x003fb69f
+-extern word cam_sync_speed_filter_state_accum;  // 0x003fb6a3
+-extern void * cam_sync_fuel_filter_state_pointer;  // 0x003fb6a7
+-extern word cam_sync_fuel_filter_accum;  // 0x003fb6ab
+-extern void * cam_sync_rate_filter_state_pointer;  // 0x003fb6af
+-extern word cam_sync_rate_filter_accum;  // 0x003fb6b3
++extern ema_filter_state_t fuel_pressure_sensor_filter;  // 0x003fb69f
++extern ema_filter_state_t fuel_pressure_governor_accelerator_feed_forward_filter;  // 0x003fb6a7
++extern ema_filter_state_t fuel_metering_command_filter;  // 0x003fb6af
+ extern ema_filter_state_t cam_sync_rpm_filter_state;  // 0x003fb6b7
+ extern word fuel_metering_base_command_derivative_term;  // 0x003fb6bf
+ extern word governor_zero_speed_count;  // 0x003fb6c1
+@@ -1703,8 +1697,7 @@ extern byte fuel_pressure_sensor_code;  // 0x003fb6ee
+ extern byte fuel_pressure_sensor_fault_debounce_count;  // 0x003fb6ef
+ extern byte fuel_pressure_sensor_recovery_debounce_count;  // 0x003fb6f0
+ extern word fuel_pressure_feedback_filter_accumulator;  // 0x003fb6f1
+-extern void * fuel_pressure_feedback_filter_pointer;  // 0x003fb6f3
+-extern word engine_sync_timeout_counter_c;  // 0x003fb6f7
++extern ema_filter_state_t fuel_pressure_feedback_filter;  // 0x003fb6f3
+ extern dword injector_diagnostic_word;  // 0x003fb704
+ extern word injection_timing_main_cold_start_interpolation_state;  // 0x003fb708
+ extern word injection_timing_main_cold_start_interpolation_state_y;  // 0x003fb70a
+@@ -2322,14 +2315,14 @@ extern word wastegate_duty_second_error_gain_by_error_axis[10];  // 0x004002a2
+ extern word wastegate_duty_second_error_gain_by_error_values[10];  // 0x004002b6
+ extern word wastegate_duty_ceiling_battery_voltage_gain_axis[6];  // 0x004002ca
+ extern word wastegate_duty_ceiling_battery_voltage_gain_values[6];  // 0x004002d6
+-extern word throttle_filter_coefficient;  // 0x004002e2
++extern word egr_mass_flow_delayed_filter_coefficient;  // 0x004002e2
+ extern word throttle_fuel_trim_lower_cal;  // 0x004002e4
+ extern word throttle_fuel_trim_upper_cal;  // 0x004002e6
+ extern word throttle_conversion_scale_cal;  // 0x004002e8
+ extern word egr_flow_cold_side_algorithm_select;  // 0x004002ea
+ extern word rpm_fuel_trim_select_cal;  // 0x004002ec
+ extern word throttle_load_scale_factor_cal;  // 0x004002ee
+-extern byte throttle_filter_coeff_data_cal;  // 0x004002f0
++extern word egr_valve_position_filter_coefficient;  // 0x004002f0
+ extern word boost_fuel_trim_pressure_axis_cal[19];  // 0x004002f2
+ extern word boost_fuel_trim_ystart_cal[19];  // 0x00400318
+ extern word boost_fuel_trim_yend_cal[324];  // 0x0040033e
+@@ -2358,6 +2351,7 @@ extern word boost_load_axis_cal[17];  // 0x0040098e
+ extern word boost_load_output_cal[17];  // 0x004009b0
+ extern word fuel_blend_rpm_base_filter_coefficient;  // 0x004009d2
+ extern word boost_fuel_blend_weight_a_cal;  // 0x004009d4
++extern word predicted_intake_manifold_temperature_filter_coefficient;  // 0x004009d6
+ extern word boost_fuel_blend_weight_b_cal;  // 0x004009d8
+ extern word injection_timing_fuel_limited_adjustment_x_axis[20];  // 0x004009da
+ extern word injection_timing_fuel_limited_adjustment_y_axis[17];  // 0x00400a02
+@@ -2688,7 +2682,7 @@ extern word cold_start_governor_speed_clamp_threshold_cal;  // 0x004070dc
+ extern word governor_fuel_demand_correction_maximum_vehicle_speed;  // 0x004070de
+ extern word governor_speed_filter_input_scale_cal;  // 0x004070e0
+ extern word governor_speed_filter_fuel_offset_cal;  // 0x004070e2
+-extern byte governor_speed_filter_state_cal;  // 0x004070e4
++extern word governor_speed_filter_coefficient;  // 0x004070e4
+ extern word governor_setpoint_table_a;  // 0x004070e6
+ extern word governor_j1939_d_gain_default_cal;  // 0x004070e8
+ extern word governor_j1939_p_gain_default_cal;  // 0x004070ea
+@@ -2758,7 +2752,7 @@ extern word injection_timing_temp_corr_yend_cal[510];  // 0x00407308
+ extern word variable_geometry_turbocharger_position_command_override_value;  // 0x0040771a
+ extern word variable_geometry_turbocharger_derivative_gain_normal;  // 0x0040771c
+ extern word variable_geometry_turbocharger_derivative_gain_open;  // 0x0040771e
+-extern byte variable_geometry_turbocharger_derivative_filter_coefficient;  // 0x00407720
++extern word variable_geometry_turbocharger_derivative_filter_coefficient;  // 0x00407720
+ extern word variable_geometry_turbocharger_derivative_noise_band;  // 0x00407722
+ extern word variable_geometry_turbocharger_integral_gain_normal;  // 0x00407724
+ extern word variable_geometry_turbocharger_integral_gain_open;  // 0x00407726
+@@ -3045,7 +3039,7 @@ extern word transmission_temperature_range_2_threshold;  // 0x00408342
+ extern word transmission_temperature_range_3_threshold;  // 0x00408344
+ extern word transmission_temperature_range_4_threshold;  // 0x00408346
+ extern word transmission_temperature_range_5_threshold;  // 0x00408348
+-extern byte protection_load_scaled_filter_state_cal;  // 0x0040834a
++extern word protection_load_scaled_input_filter_coefficient;  // 0x0040834a
+ extern word governor_pressure_gear2_locked_target;  // 0x0040834c
+ extern word protection_derate_countdown_init_cal;  // 0x0040834e
+ extern word protection_entry_countdown_init_cal;  // 0x00408350
+@@ -3057,7 +3051,7 @@ extern word hot_mode_coolant_clear_temperature;  // 0x0040835a
+ extern word gear_1_speed_ratio_threshold_lockup;  // 0x0040835c
+ extern word protection_derate_ramp_exit_threshold_cal;  // 0x0040835e
+ extern word protection_derate_rpm_limit_floor_cal;  // 0x00408360
+-extern byte protection_load_filter_state_b_cal;  // 0x00408362
++extern word transmission_output_speed_change_filter_coefficient;  // 0x00408362
+ extern word protection_monitor_enable_cal;  // 0x00408364
+ extern word gear_2_speed_ratio_threshold_lockup;  // 0x00408366
+ extern word protection_derate_countdown_cal;  // 0x00408368
+@@ -3193,8 +3187,8 @@ extern word cruise_speed_setpoint_default_cal;  // 0x00408800
+ extern word fuel_quantity_active_addend_cal;  // 0x00408802
+ extern word cruise_speed_upper_limit_cal;  // 0x00408804
+ extern word cruise_speed_lower_limit_cal;  // 0x00408806
+-extern byte engine_acceleration_first_stage_filter_coefficient;  // 0x00408808
+-extern byte engine_acceleration_second_stage_filter_coefficient;  // 0x0040880a
++extern word engine_acceleration_first_stage_filter_coefficient;  // 0x00408808
++extern word engine_acceleration_second_stage_filter_coefficient;  // 0x0040880a
+ extern word engine_acceleration_first_stage_clamp_maximum;  // 0x0040880c
+ extern word engine_acceleration_first_stage_clamp_minimum;  // 0x0040880e
+ extern word engine_speed_sim_mode_cal;  // 0x00408810
+@@ -3578,11 +3572,11 @@ extern word fuel_pressure_governor_disabled_command;  // 0x0040911e
+ extern byte engine_speed_override_enable_cal;  // 0x00409120
+ extern word engine_speed_override_value_cal;  // 0x00409121
+ extern word fuel_pressure_governor_low_pressure_command;  // 0x00409123
+-extern byte cam_sync_speed_error_filter_state_cal;  // 0x00409126
+-extern byte cam_sync_fault_filter_state_cal;  // 0x00409128
++extern word fuel_metering_feedback_filter_coefficient;  // 0x00409126
++extern word fuel_metering_reference_filter_coefficient;  // 0x00409128
+ extern byte cam_sync_speed_filter_state_cal;  // 0x0040912a
+ extern word engine_sync_scale_factor_cal;  // 0x0040912c
+-extern byte cam_sync_fuel_filter_state_cal;  // 0x0040912e
++extern word fuel_pressure_governor_accelerator_feed_forward_filter_coefficient;  // 0x0040912e
+ extern word cam_sync_fuel_scale_gain_cal;  // 0x00409130
+ extern word cam_sync_fuel_scale_lower_limit_cal;  // 0x00409132
+ extern word cam_sync_fuel_scale_upper_limit_cal;  // 0x00409134
+@@ -3598,7 +3592,7 @@ extern word engine_sync_cold_start_enable2_cal;  // 0x00409146
+ extern word cam_sync_rpm_filter_coefficient;  // 0x00409148
+ extern word engine_sync_phase_counter_max_cal;  // 0x0040914a
+ extern word engine_sync_state_b;  // 0x0040914c
+-extern byte cam_sync_rate_filter_state_cal;  // 0x0040914e
++extern word fuel_metering_command_filter_coefficient;  // 0x0040914e
+ extern word engine_sync_rpm_filter_initial_cal;  // 0x00409150
+ extern word engine_sync_zero_speed_output_cal;  // 0x00409152
+ extern word governor_zero_speed_count_cal;  // 0x00409154
+@@ -3702,7 +3696,7 @@ extern word fuel_pressure_sensor_volts_high_limit;  // 0x00409598
+ extern word fuel_pressure_sensor_volts_low_limit;  // 0x0040959a
+ extern word fuel_pressure_sensor_recovery_debounce_limit;  // 0x0040959c
+ extern word fuel_pressure_sensor_fault_debounce_limit;  // 0x0040959e
+-extern byte fuel_pressure_feedback_filter_constants;  // 0x004095a2
++extern word fuel_pressure_feedback_filter_coefficient;  // 0x004095a2
+ extern byte fuel_pressure_sensor_override_enable;  // 0x004095a4
+ extern word fuel_pressure_sensor_override_value;  // 0x004095a5
+ extern byte fuel_pressure_feedback_source_select;  // 0x004095a7
+@@ -4322,8 +4316,7 @@ extern word high_speed_governor_proportional_gain;  // 0x0040a8cb
+ extern word high_speed_governor_integral_gain;  // 0x0040a8cd
+ extern word high_speed_governor_derivative_gain;  // 0x0040a8cf
+ extern word high_speed_governor_error_filter_coefficient;  // 0x0040a8d1
+-extern void * high_speed_governor_error_filter_coefficient_pointer;  // 0x0040a8d3
+-extern dword high_speed_governor_error_filter_accumulator;  // 0x0040a8d7
++extern ema_filter_state_t high_speed_governor_error_filter;  // 0x0040a8d3
+ extern word high_speed_governor_proportional_gain_adjusted;  // 0x0040a8db
+ extern word high_speed_governor_derivative_gain_adjusted;  // 0x0040a8dd
+ extern word high_speed_governor_integral_gain_adjusted;  // 0x0040a8df
+@@ -4731,14 +4724,10 @@ extern word engine_acceleration_second_stage_filtered;  // 0x0040b28e
+ extern word engine_acceleration_unfiltered;  // 0x0040b290
+ extern word cooling_fan_speed_target;  // 0x0040b294
+ extern word cooling_fan_speed_target_source;  // 0x0040b2a0
+-extern void * cooling_fan_speed_feedback_filter;  // 0x0040b2d4
+-extern dword cooling_fan_speed_feedback_filter_state;  // 0x0040b2d8
+-extern void * cooling_fan_proportional_derivative_filter;  // 0x0040b2dc
+-extern dword cooling_fan_proportional_derivative_filter_state;  // 0x0040b2e0
+-extern void * cooling_fan_coolant_temperature_filter;  // 0x0040b2e4
+-extern dword cooling_fan_coolant_temperature_filter_state;  // 0x0040b2e8
+-extern void * cooling_fan_intake_temperature_filter;  // 0x0040b2ec
+-extern dword cooling_fan_intake_temperature_filter_state;  // 0x0040b2f0
++extern ema_filter_state_t cooling_fan_speed_feedback_filter;  // 0x0040b2d4
++extern ema_filter_state_t cooling_fan_proportional_derivative_filter;  // 0x0040b2dc
++extern ema_filter_state_t cooling_fan_coolant_temperature_filter;  // 0x0040b2e4
++extern ema_filter_state_t cooling_fan_intake_temperature_filter;  // 0x0040b2ec
+ extern word radiator_fan_speed_unfiltered;  // 0x0040b2f6
+ extern ema_filter_state_t radiator_fan_speed_filter_state;  // 0x0040b302
+ extern word total_injection_quantity_for_air_handling;  // 0x0040b30a
+@@ -6801,6 +6790,7 @@ extern word mil_engine_off_start_tick;  // 0x00408964
+ extern word dtc_display_step_period_ticks;  // 0x00408966
+ extern word mil_blink_end_tick;  // 0x00408968
+ extern dword mil_blink_inhibit_fault_pending_value;  // 0x0040896a
++extern word pci_coolant_temperature_filter_coefficient;  // 0x00408972
+ extern word engine_to_vehicle_speed_ratio_high_threshold;  // 0x00408a60
+ extern word vehicle_speed_pulse_timeout_reload;  // 0x00408b62
+ extern word transmission_temperature_check_minimum_engine_off_time;  // 0x00408d56
+@@ -7172,6 +7162,8 @@ extern word egr_cooler_fouling_coolant_temperature_threshold;  // 0x004051ec
+ extern word egr_cooler_fouling_flow_threshold;  // 0x004051f0
+ extern word egr_cooler_fouling_delta_pressure_threshold;  // 0x004051f2
+ extern word egr_cooler_fouling_valve_position_threshold;  // 0x004051f4
++extern word fuel_demand_boost_offset_filter_coefficient;  // 0x00405200
++extern word pressure_correction_filter_coefficient;  // 0x00405206
+ extern word high_speed_governor_transient_acceleration_threshold;  // 0x0005c314
+ extern word high_speed_governor_transient_gain_set_time_limit;  // 0x0005c316
+ extern word high_speed_governor_high_reference_speed_threshold;  // 0x0005c318
+@@ -7207,6 +7199,7 @@ extern word turbocharger_speed_sensor_override_value_cal;  // 0x003fd8b0
+ extern word turbocharger_speed_state_override_value;  // 0x0040770c
+ extern word turbocharger_overspeed_immediate_derate_waiting_time;  // 0x00407298
+ extern word turbocharger_overspeed_immediate_derate_speed_threshold;  // 0x0040729a
++extern word turbocharger_speed_estimate_boost_lead_term_filter_coefficient;  // 0x0040729e
+ extern word turbocharger_speed_sensor_in_range_error_count_limit;  // 0x003ff6ec
+ extern word turbocharger_speed_sensor_pressure_ratio_threshold;  // 0x003ff6f0
+ extern word turbocharger_speed_sensor_fault_clear_count;  // 0x003ff6f2
+@@ -7222,6 +7215,9 @@ extern word turbocharger_speed_rate_limit_threshold;  // 0x003ff714
+ extern word turbocharger_speed_envelope_filter_buffer_size;  // 0x003ff718
+ extern word turbocharger_speed_sensor_installed;  // 0x003ff71a
+ extern int16_t turbocharger_speed_sensor_maximum_negative_rate;  // 0x003ff702
++extern word charge_flow_compressor_outlet_temperature_derate_offset_filter_coefficient;  // 0x003ff71c
++extern word charge_flow_delta_pressure_derate_offset_filter_coefficient;  // 0x003ff724
++extern word charge_flow_turbocharger_speed_derate_offset_filter_coefficient;  // 0x003ff72c
+ extern int16_t intake_condensation_temperature_difference;  // 0x0040a5da
+ extern int16_t intake_condensation_partial_pressure_difference;  // 0x0040a5cc
+ extern int16_t intake_condensation_mass_rate;  // 0x0040a5ea
+diff --git a/firmware/CM848_S90140.06_analysis/output/firmware_types.hpp b/firmware/CM848_S90140.06_analysis/output/firmware_types.hpp
+index 7f32496..47826bc 100644
+--- a/firmware/CM848_S90140.06_analysis/output/firmware_types.hpp
++++ b/firmware/CM848_S90140.06_analysis/output/firmware_types.hpp
+@@ -14,6 +14,10 @@ typedef uint16_t  ushort;
+ typedef uint32_t  uint;
+ typedef uint16_t  word;
+ typedef uint32_t  dword;
++typedef int8_t    sbyte;
++typedef int16_t   sword;
++typedef int32_t   sdword;
++typedef int64_t   sqword;
+ typedef int32_t   bool32;
+ 
+ // Ghidra CONCATxy macros — concatenate x bytes of a with y bytes of b
+diff --git a/firmware/CM848_S90140.06_analysis/output/function_definitions.csv b/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
+index bdd9e29..ce41b9c 100644
+--- a/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
++++ b/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
+@@ -407,6 +407,13 @@ function_address,function_name,param_index,name,type,comment
+ 0x00056594,exponentialMovingAverage,return,,uint,Filtered value: the integer part of the updated accumulator
+ 0x00056594,exponentialMovingAverage,0,value,uint,New sample (r3)
+ 0x00056594,exponentialMovingAverage,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place
++0x0005644c,cm848_signedFirstOrderFilter,return,,sword,Filtered value: the integer part of the updated accumulator (signed)
++0x0005644c,cm848_signedFirstOrderFilter,0,value,int32_t,New sample (r3) - signed
++0x0005644c,cm848_signedFirstOrderFilter,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place; coefficient 0 = no filtering (the signed twin of exponentialMovingAverage)
++0x000185cc,cm848_conditionalFirstOrderFilter,return,,sword,The filtered value - or with update_enable 0 the integer part of the accumulator unchanged
++0x000185cc,cm848_conditionalFirstOrderFilter,0,value,int32_t,New sample (r3)
++0x000185cc,cm848_conditionalFirstOrderFilter,1,update_enable,int32_t,0 = only read the filter output (r4)
++0x000185cc,cm848_conditionalFirstOrderFilter,2,filter_state,ema_filter_state_t *,Filter state (r5) passed to cm848_signedFirstOrderFilter
+ 0x00010110,cm848_initEngineOperatingMode,return,,void,
+ 0x00010110,cm848_initEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
+ 0x00503074,cm848_engineMode_reset,return,,void,
+diff --git a/firmware/CM848_S90140.06_analysis/output/global_variables.csv b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+index 3420e74..3698a4c 100644
+--- a/firmware/CM848_S90140.06_analysis/output/global_variables.csv
++++ b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+@@ -247,6 +247,7 @@ address,name,type,comment
+ 0x0005c29e,fuel_demand_cal_offset,word,
+ 0x0005c2a0,idle_validation_fault_minimum_vehicle_speed,word,vehicle_speed must exceed this (2560 = 10 mph) for the idle validation fault debounce (P2121 / P2127 / P2128) to advance while the idle position fuel_demand_cal_index is above fuel_demand_cal_offset + 116 - ROM constant so no _cal (was fuel_demand_smoothing_temp_threshold_cal)
+ 0x0005c2a4,fuel_demand_rate_limit_debounce_cal,word,Default debounce count for the fuel-demand rate limiter; per-mode increment reaching it latches a protection safety bit (safety_bits_1 0x4000/0x8000 or safety_bits_2 0x10)
++0x0005c2aa,fuel_demand_delta_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 32768 = 0.500 in the flash; 0 = no filtering (new row 2026-11-19)
+ 0x0005c2f2,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fbd2e.coefficient points here
+ 0x0005c306,fuel_demand_maximum,word,ROM constant 5888 (0x1700) = the full scale of the fuel demand words (400 mm3 per stroke): the 'no limit' initial value of the fuel limits (fault_derate_fuel_limit = it in cm848_runFaultDerateScheduler and the reset; 8 readers, 0 writers: cm848_initColdStartTablePointers, cm848_selectFinalFueling, cm848_updateProtectionStateMachine, cm848_initializeFuelDemandAndLimitInterpolationStates ... (was timing_limit_lower)
+ 0x0005c30c,timing_limit_upper,word,
+@@ -275,6 +276,7 @@ address,name,type,comment
+ 0x0005c47c,engine_retarder_configuration_mode,word,ROM word = 1 at the start of the retarder block (0x5c47c; the stage weights engine_retarder_stage_1_weight and the ramp words follow); its only readers are the retarder TSC1 handler (returns when 0), the ERC1 builder (byte 2 = 0xFF when 0) and the RC builder (byte 1 = 0xFF / 0x14 / 3 for 0 / 1 / above 1). 'dm' (diagnostic message) has nothing to do with it. (was j1939_dm_feature_mode)
+ 0x0005c47e,engine_retarder_stage_1_weight,word,Extra: ROM constant (1), the first of six consecutive stage weights at 0x5c47e / 0x5c480 / 0x5c482 / 0x5c484 / 0x5c486 / 0x5c488 (values 1,0,0,0,0,0; the last five are unnamed DAT_ words). cm848_calculateEngineRetarderTorque adds weight n to the engaged stage count when flag bit (3 + n - 1) of logical_output_request_bits_8_to_15 is set; cm848_initGovernorProtectionState sums all six into ... (was cal_fuel_operation_mode_1_en)
+ 0x0005c48e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcbdc.coefficient points here
++0x0005c4ae,governor_speed_error_delta_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 0 = 0.000 in the flash; 0 = no filtering (new row 2026-11-19)
+ 0x0005c4b6,governor_speed_limit_by_coolant_temperature_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_updateSpeedLimitFromCoolant
+ 0x0005c4c8,governor_speed_limit_by_coolant_temperature_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_updateSpeedLimitFromCoolant
+ 0x0005c4da,governor_idle_speed_by_barometric_pressure_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_calculateProtectionSpeedLimits
+@@ -1047,9 +1049,9 @@ address,name,type,comment
+ 0x003fa124,interrupt_tick_accum_high,dword,
+ 0x003fa128,interrupt_tick_accum_low,dword,
+ 0x003fa12e,egr_fraction_command_above_on_threshold_flag,word,code: hysteresis flag of cm848_limitChargeManagerCommands on egr_fraction_combustion_command: set at or above egr_fraction_on_threshold, cleared at or below egr_fraction_off_threshold. e2m: C_CHL_EGR_Frac_Thd_On / _Off. Dump 0. Time-shared window: no access below 0x7F60 (xref scan; boot-ROM low-halfword / 32-bit constant scan of 0x0-0x7F5F: none). (was fuel_demand_high_limit_exceeded_flag)
+-0x003fa138,,pointer,
+-0x003fa140,,pointer,
+-0x003fa148,,pointer,
++0x003fa138,charge_flow_turbocharger_speed_derate_offset_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateChargeFlowTurbochargerSpeedDerate: produces charge_flow_turbocharger_speed_derate_offset
++0x003fa140,charge_flow_compressor_outlet_temperature_derate_offset_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateChargeFlowCompressorOutletTemperatureDerate: produces charge_flow_compressor_outlet_temperature_derate_offset
++0x003fa148,charge_flow_delta_pressure_derate_offset_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateChargeFlowDeltaPressureDerate: produces charge_flow_delta_pressure_derate_offset
+ 0x003fa158,charge_system_aggressiveness_threshold_exceeded_flag,word,code: hysteresis flag of cm848_calculateChargeSystemAdjustedMassChargeFlowError on fuel_limit_ratio_compensated_reference (on at the upper threshold, off at the lower). Dump 0. Time-shared window: no access below 0x7F60 (xref scan; boot-ROM low-halfword / 32-bit constant scan of 0x0-0x7F5F: none). (was speed_threshold_exceeded_flag)
+ 0x003fa15a,charge_system_transform_cosine,word,code: cos(charge_system_transform_angle) in Q13 from charge_system_transform_cosine_values (not Q14, and not a half-angle: see the table note). Dump 0 (angle 90 degrees = cos 0). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60 and a scan of the boot ROM 0x0-0x7F5F (low halfword of the address in a load / store / addi / ori, and aligned 32-bit constants equal to ... (was charge_system_transform_half_angle_cosine) | earlier note: code: lookup of the half-angle cosine table at charge_system_transform_angle (Q14); the rotation's cosine. Dump 0. Time-shared window: no access below 0x7F60 (xref scan; boot-ROM low-halfword / 32-bit constant scan of 0x0-0x7F5F: none). (was throttle_load_gain_positive)
+ 0x003fa15c,charge_system_transform_sine,word,code: the same table read at 0xb400 minus the angle = cos(90 degrees - angle) = sin(angle), Q13. Dump 8192 (sin 90 degrees = 1.0). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60 and a scan of the boot ROM 0x0-0x7F5F (low halfword of the address in a load / store / addi / ori, and aligned 32-bit constants equal to it) finds none. (was ... (was charge_system_transform_half_angle_sine) | earlier note: code: the same table read at 0xb400 - angle: the rotation's sine. Dump 8192. Time-shared window: no access below 0x7F60 (xref scan; boot-ROM low-halfword / 32-bit constant scan of 0x0-0x7F5F: none). (was throttle_load_gain_negative)
+@@ -1075,31 +1077,29 @@ address,name,type,comment
+ 0x003fa1b4,diag_state_group5_d_state,word,
+ 0x003fa5a0,,byte,
+ 0x003fa5ba,throttle_filter_state,ema_filter_state_t,(was throttle_filter_coeff_table_pointer)
+-0x003fa5c2,throttle_filter_coeff_table_b_pointer,pointer,
+-0x003fa5c6,throttle_filter_coeff_table_b_index,dword,
+-0x003fa5ca,throttle_filter_coeff_data_pointer,pointer,
+-0x003fa5ce,throttle_filter_coeff_data_index,dword,
++0x003fa5c2,egr_mass_flow_delayed_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_throttleBasedFuelCalculation: produces egr_mass_flow_delayed_filtered from the circular-buffer-delayed sample (was throttle_filter_coeff_table_b_pointer + the accumulator row at +4 throttle_filter_coeff_table_b_index, dword)
++0x003fa5ca,egr_valve_position_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateLoadBasedFuelTrim: smooths egr_valve_position (into x_input) (was throttle_filter_coeff_data_pointer + the accumulator row at +4 throttle_filter_coeff_data_index, dword)
+ 0x003fa5d2,diag_state_group6_a_state,word,
+ 0x003fa5d4,diag_state_group6_b_state,word,
+ 0x003fa5d6,boost_modifier_filter_state,ema_filter_state_t,(was boost_modifier_table_pointer)
+ 0x003fa5de,,word,Lookup cache: the last axis segment offset (2 x index) kept by lookupTableInterpolation
+ 0x003fa5e0,,word,Lookup cache: the last axis segment offset (2 x index) kept by lookupTableInterpolation
+ 0x003fa5e2,fuel_blend_rpm_base_filter_state,ema_filter_state_t,(was fuel_blend_rpm_base_table_pointer)
+-0x003fa5ea,,pointer,
++0x003fa5ea,predicted_intake_manifold_temperature_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculatePredictedIntakeManifoldTemperature: produces predicted_intake_manifold_temperature
+ 0x003fa5f2,diag_state_group7_a_state,word,
+ 0x003fa5f4,diag_state_group7_b_state,word,
+ 0x003fa5fe,,ema_filter_state_t,EMA filter state - used by cm848_calculateBoostTorqueOffset (was PTR_DAT_003fa5fe)
+ 0x003fa606,boost_pressure_target_unclamped,dword,cm848_calculateBoostTorqueOffset: base quantity x rpm factor x boost_fuel_scale_divisor / 0xfa000 - fuel_demand_correction_offset_cal; clamped to 0-0x3200 and EMA-filtered into boost_pressure_target_filtered - copy-window RAM, app side (was fuel_demand_computed - the same name as 0x40a2ce)
+ 0x003fa60a,fuel_demand_cal_percent,word,
+ 0x003fa60c,fuel_mode_flags_combined,word,
+-0x003fa60e,,pointer,
++0x003fa60e,fuel_demand_boost_offset_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_processBoostProtectionMode: produces fuel_demand_boost_offset_filtered
+ 0x003fa616,cold_start_pressure_scale_working,word,
+ 0x003fa61a,sensor_channel9_pressure_snapshot,word,
+ 0x003fa61c,fuel_demand_limit_b_working,word,
+ 0x003fa620,pressure_correction_filter1_working,word,
+ 0x003fa622,condition_monitor_status_working,word,
+-0x003fa624,,pointer,
+-0x003fa62c,,pointer,
++0x003fa624,pressure_correction_first_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculatePressureSensorFiltered: the first of two cascaded filters: pressure_correction_raw into pressure_correction_filter1_working
++0x003fa62c,pressure_correction_second_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculatePressureSensorFiltered: the second cascaded filter, on pressure_correction_filter1_working; same coefficient as the first
+ 0x003fa63c,injection_timing_with_user_increment,word,Code: cm848_applyCombustionTimingLimits stores injection_timing_compensated_reference_previous (+ injection_timing_user_increment when combustion_override_and_estimation_enable_flags_cal bit 3 is set) here, then compares it with the minimum limit. xref_addr.py: 1 read / 1 write, word, only that function; time-shared window 0x3F9800-0x3FDB30 but no user below 0x7F60 (xref_addr.py). No type change. (was fuel_correction_output_working)
+ 0x003fa642,injection_timing_after_minimum_limit,word,Code: set to the sum above, or to injection_timing_combustion_minimum_limit when the sum is below it (injection_timing_intermediate_source_code 28); then compared with the maximum limit to give injection_timing_main_base_before_override. xref_addr.py: 1 read / 2 writes, word, one function; time-shared window, no user below 0x7F60. No type change. (was fuel_demand_lookup_working)
+ 0x003fa644,injection_timing_source_code_after_minimum_limit,word,Code: write-only copy of injection_timing_intermediate_source_code taken right after the minimum-limit step (28 when the minimum limit applied), before the maximum-limit step may set 27. xref_addr.py: 0 reads / 1 write, word; time-shared window, no user below 0x7F60. No type change. (was fuel_demand_mode_code_prev_snapshot)
+@@ -1136,8 +1136,7 @@ address,name,type,comment
+ 0x003fa6ee,accelerator_pedal_sensor_counts,word,Copy of accelerator_pedal_sensor_filtered taken by cm848_fuelDemandBaseCalculation; compared with the idle position by cm848_evaluateIdleValidationSwitches (was throttle_fuel_demand_adjusted)
+ 0x003fa6f0,throttle_fuel_enable_flag,dword,
+ 0x003fa6f2,throttle_fuel_enable_flag+2,,
+-0x003fa6f4,throttle_fuel_pgn_handler_pointer,pointer,
+-0x003fa6f8,throttle_fuel_pgn_handler_index,dword,
++0x003fa6f4,fuel_demand_delta_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_fuelDemandFinalCalculation: produces fuel_demand_control_t_0040a57a.delta_filtered from fuel_demand_control_t_0040a57a.delta (was throttle_fuel_pgn_handler_pointer + the accumulator row at +4 throttle_fuel_pgn_handler_index, dword)
+ 0x003fa6fc,fuel_demand_override_counter,word,
+ 0x003fa6fe,governor_speed_output_snapshot,word,
+ 0x003fa700,fuel_correction_output_b_working,word,
+@@ -1437,13 +1436,12 @@ address,name,type,comment
+ 0x003faf50,governor_speed_debounce_active_flag,word,
+ 0x003faf52,governor_speed_error_prev_snapshot,word,
+ 0x003faf54,governor_speed_low_clamp,word,
+-0x003faf56,governor_speed_filter_state_ptr,pointer,
++0x003faf56,governor_speed_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_runLowSpeedGovernor: produces governor_speed_filter_output (was governor_speed_filter_state_ptr)
+ 0x003faf5e,governor_cold_start_load_timer,word,
+ 0x003faf60,governor_active_flag,word,
+ 0x003faf62,governor_speed_error_settled_count,word,Passes in a row of cm848_processGovernorLoadCondition (governor_fuel_demand_mode 11) with |governor_speed_error_delta| at or below 4000 (500 rpm) - cap 75 / reset above; 75 with vehicle_speed at or above 4 mph and governor_active_flag sets governor_enabled_flag (was fuel_temp_trim_confirm_counter)
+ 0x003faf64,cold_start_delay_counter,word,
+-0x003faf66,governor_bank2_cal_ptr,pointer,
+-0x003faf6a,governor_speed_error_clamped_dword,dword,
++0x003faf66,governor_speed_error_delta_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateSpeedRateLimiting: produces governor_speed_error_delta; the code presets the accumulator to the clamped value << 16 (was governor_bank2_cal_ptr + the accumulator row at +4 governor_speed_error_clamped_dword, dword)
+ 0x003faf6e,governor_interp_table_state_a,word,
+ 0x003faf70,governor_speed_disengage_timer,word,
+ 0x003faf72,governor_speed_limit_count,word,
+@@ -1476,8 +1474,7 @@ address,name,type,comment
+ 0x003fafac,protection_monitored_rpm_snapshot,word,
+ 0x003fafae,governor_speed_gain_factor,word,
+ 0x003fafb0,governor_integrator_prev_snapshot,word,
+-0x003fafb2,protection_filter_state_ptr,pointer,
+-0x003fafb6,governor_integrator_working,dword,
++0x003fafb2,power_take_off_speed_error_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculatePowerTakeOffGovernorSpeedError: produces power_take_off_governor_filtered_speed_error; the accumulator is preset to the clamped value << 16 and zeroed at initialization and on engagement (was protection_filter_state_ptr + the accumulator row at +4 governor_integrator_working, dword)
+ 0x003fafba,governor_pid_derivative_snapshot,dword,
+ 0x003fafbe,governor_speed_product,dword,
+ 0x003fafc2,governor_fuel_active_prev_flag,word,
+@@ -1511,15 +1508,14 @@ address,name,type,comment
+ 0x003fb012,accelerator_pedal_pressed_flag,dword,1 = the accelerator reached accelerator_pedal_press_threshold (280 = 70 percent) and has not yet come back to accelerator_pedal_release_threshold (120 = 30 percent); that return counts one press (was fuel_demand_hysteresis_flag)
+ 0x003fb016,switch_31_on_time_counter,word,20 ms passes switch 31 has been on - counted only while switch_31_on_time_fault_enable (ROM 0x5c28c) is nonzero (0 here); 50 (1 s) sets fault bit 73 (safety_bits_2 bit 9) (was governor_overspeed_protection_enable_flag)
+ 0x003fb018,map_fuel_correction_prev_snapshot,word,
+-0x003fb01e,,pointer,
++0x003fb01e,turbocharger_speed_estimate_boost_lead_term_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_estimateTurbochargerSpeed: produces turbocharger_speed_estimate_boost_lead_term from turbocharger_speed_estimate_boost_lead_term_unfiltered
+ 0x003fb026,,ema_filter_state_t,EMA filter state - used by cm848_estimateTurbochargerSpeed (was PTR_DAT_003fb026)
+ 0x003fb02e,variable_geometry_turbocharger_hold_open_confirm_counter,word,code: passes the position command has been 0, counted up to the open hold maximum time (cm848_checkVariableGeometryTurbochargerHoldOpenCondition). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) find none. (was throttle_zero_confirm_counter)
+ 0x003fb030,variable_geometry_turbocharger_open_stage_ramp,word,code: state of the open staging ramp, stepped by the open stage ramp rate (3 reads / 4 writes in cm848_calculateVariableGeometryTurbochargerOpenStagedPositionCommand and the loop init). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) ... (was throttle_speed_rate_lower)
+ 0x003fb032,variable_geometry_turbocharger_closed_stage_ramp,word,code: state of the closed staging ramp, stepped by the closed stage ramp rate. Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) find none. (was throttle_speed_rate_upper)
+ 0x003fb034,variable_geometry_turbocharger_position_command_closed_staged,word,code: smaller of the closed staging ramp and the open staged command: the position command after both staging stages (copied to variable_geometry_turbocharger_position_command_final). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) find ... (was governor_output_prev_working)
+ 0x003fb036,variable_geometry_turbocharger_position_reference_filter_state,ema_filter_state_t,code: first-order filter state (accumulator + coefficient pointer) of the position reference; its coefficient pointer is variable_geometry_turbocharger_position_reference_filter_coefficient. Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to ... (was governor_derivative_gain_filter_state) | earlier note: (was governor_derivative_gain_working_ptr)
+-0x003fb03e,variable_geometry_turbocharger_derivative_filter_coefficient_pointer,pointer,code: pointer to the coefficient word of the first-order filter on the position error (cm848_signedFirstOrderFilter takes the address of this word and the accumulator 0x3fb042 as one filter state). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words ... (was governor_ema_filter_state_ptr)
+-0x003fb042,variable_geometry_turbocharger_derivative_filter_accumulator,dword,code: accumulator of the first-order filter on the position error (zeroed by the loop init). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) find none. (was governor_speed_error_filter_accum)
++0x003fb03e,variable_geometry_turbocharger_derivative_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateVariableGeometryTurbochargerPidDuty: the derivative term filter of the variable geometry turbocharger PID (was variable_geometry_turbocharger_derivative_filter_coefficient_pointer + the accumulator row at +4 variable_geometry_turbocharger_derivative_filter_accumulator, dword)
+ 0x003fb046,variable_geometry_turbocharger_position_error_filtered_previous,word,code: filtered position error of the previous pass; the difference to the new one is the error change of the derivative term. Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) find none. (was governor_speed_error_filtered_snapshot)
+ 0x003fb048,variable_geometry_turbocharger_control_state_previous,word,code: control state of the previous pass (3 after init); the integral accumulates only when it is 0. Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) find none. (was governor_fuel_mode_prev_snapshot)
+ 0x003fb04a,variable_geometry_turbocharger_integral_accumulator,dword,code: PID integral accumulator, limited by the integral term limits << 14; the integral term is this >> 14. Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60, and scans of the boot ROM 0x0-0x7F5F (load / store / addi / ori with the low halfword of the address; 32-bit words equal to it) find none. (was governor_fuel_integral_b)
+@@ -1586,8 +1582,7 @@ address,name,type,comment
+ 0x003fb0cc,variable_geometry_turbocharger_closed_adjustment_delay_elapsed_flag,word,code: delay limit == delay counter (true at 0 == 0 in the dump). Time-shared window (0x3F9800-0x3FDB30): no boot-ROM user (xref_addr.py plus three scans of the boot ROM). (was load_protection_confirm_a_delay_elapsed_flag) | earlier note: Written by function A as (delay counter == limit_a), read by cm848_evaluateVariableGeometryTurbochargerClosedAdjustment (1 read / 1 write). Time-shared window: xref_addr.py lists no access below 0x7F60 and a raw scan of the 8152 instructions in ROM 0x0-0x7F60 for the displacement finds none (no boot users; the same scan finds the known boot users of 0x3fdba4 / 0x3fdbb2 / 0x3fee34, so it works). (was protection_confirm_counter_b_match_flag)
+ 0x003fb0ce,variable_geometry_turbocharger_closed_adjustment_error_counter_snapshot,word,code: copy of the closed error counter; no reader found by name-grep xref. Time-shared window (0x3F9800-0x3FDB30): no boot-ROM user (xref_addr.py plus three scans of the boot ROM). (was load_protection_confirm_a_hysteresis_counter_snapshot) | earlier note: Copy of the stage 2 counter written by function A; write-only (0 reads / 1 write). Time-shared window: xref_addr.py lists no access below 0x7F60 and a raw scan of the 8152 instructions in ROM 0x0-0x7F60 for the displacement finds none (no boot users; the same scan finds the known boot users of 0x3fdba4 / 0x3fdbb2 / 0x3fee34, so it works). (was protection_confirm_counter_b_snapshot)
+ 0x003fb0d0,variable_geometry_turbocharger_closed_position_valid_flag,word,code: sensor inside the closed tolerance window and the delay elapsed; the closed-position filter follows the sensor only while it is set. Time-shared window (0x3F9800-0x3FDB30): no boot-ROM user (xref_addr.py plus three scans of the boot ROM). (was protection_ema_condition_flag)
+-0x003fb0d2,variable_geometry_turbocharger_closed_position_filter_coefficient_pointer,pointer,code: first half of the closed-position filter state passed to cm848_signedFirstOrderFilter (coefficient pointer set by init). Typing (ema_filter_state_t split in two globals) is a note. Time-shared window (0x3F9800-0x3FDB30): no boot-ROM user (xref_addr.py plus three scans of the boot ROM). (was fault_status_filter_coeff_b_ptr)
+-0x003fb0d6,variable_geometry_turbocharger_closed_position_filter_accumulator,dword,code: second half of that filter state; init loads it from the saved closed position << 16. Dump 0x2a8f5000 = 10895.3, not explained by the hold logic (the saved word is 12800, and the filter can only follow the sensor inside 10944..14656). Time-shared window (0x3F9800-0x3FDB30): no boot-ROM user (xref_addr.py plus three scans of the boot ROM). (was protection_ema_output_shifted)
++0x003fb0d2,variable_geometry_turbocharger_closed_position_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_filterVariableGeometryTurbochargerClosedPosition: smooths the variable geometry turbocharger closed position (was variable_geometry_turbocharger_closed_position_filter_coefficient_pointer + the accumulator row at +4 variable_geometry_turbocharger_closed_position_filter_accumulator, dword)
+ 0x003fb138,fuel_demand_limit_working,word,
+ 0x003fb170,transmission_vehicle_speed_filter_state,ema_filter_state_t,EMA state for transmission_vehicle_speed_filtered: pointer to transmission_vehicle_speed_filter_coefficient (set by cm848_initProtectionSystem) followed by the accumulator (was protection_load_filter_state_a_ptr)
+ 0x003fb178,protection_mode_changed_flag,word,
+@@ -1606,10 +1601,8 @@ address,name,type,comment
+ 0x003fb1c8,protection_load_history_index,word,
+ 0x003fb1ca,protection_action_mode_snapshot,word,
+ 0x003fb1cc,protection_condition_state_bit0_flag,word,
+-0x003fb1ce,protection_load_filter_state_b_ptr,pointer,
+-0x003fb1d2,protection_load_filter_accum_b,dword,
+-0x003fb1d6,protection_load_scaled_filter_state_ptr,pointer,
+-0x003fb1da,protection_load_scaled_filter_accum,dword,
++0x003fb1ce,transmission_output_speed_change_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_filterProtectionLoadValue: produces transmission_output_speed_change from protection_load_rate_delta (was protection_load_filter_state_b_ptr + the accumulator row at +4 protection_load_filter_accum_b, dword)
++0x003fb1d6,protection_load_scaled_input_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_updateTransmissionConditionFlags: produces protection_load_scaled_input from half of engine_acceleration_unfiltered (was protection_load_scaled_filter_state_ptr + the accumulator row at +4 protection_load_scaled_filter_accum, dword)
+ 0x003fb1de,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
+ 0x003fb1e0,,ema_filter_state_t,EMA filter state - used by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5 (was PTR_DAT_003fb1e0)
+ 0x003fb1e8,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
+@@ -1680,10 +1673,8 @@ address,name,type,comment
+ 0x003fb3aa,charging_voltage_error_previous,word,Written in cm848_calculateChargingVoltageError as the copy of charging_voltage_error before it is updated and read as the previous error in the PID derivative; no other user. (was battery_voltage_delta_snapshot)
+ 0x003fb3ac,alternator_field_retest_fault_count,word,Alternator field retest: passes the read-back fault bit has stayed set during the retest (restarts it at alternator_field_retest_fault_confirm_passes) (was battery_monitor_timer)
+ 0x003fb3ae,engine_acceleration_target_rpm_previous,word,Code: the previous engine_rpm_state.target_rpm of cm848_processEngineRpmDerivative (engine_acceleration_unfiltered = target_rpm - this, then this = target_rpm); zeroed by cm848_initEngineRpmFilterPointers; no governor use. xref_addr.py: 1 read / 2 writes, word, only those two functions; time-shared window, no user below 0x7F60. No type change. (was governor_target_rpm_snapshot)
+-0x003fb3b0,engine_acceleration_first_stage_filter_state,pointer,Layout checked in cm848_signedFirstOrderFilter (disassembly 0x5644c): the state argument is two dwords, +0 = pointer to the 16-bit coefficient word (0 = no filtering) and +4 = Q16 accumulator. cm848_processEngineRpmDerivative passes &this word as the state of the first-stage filter (engine_acceleration_unfiltered -> engine_acceleration_first_stage_filtered); cm848_initEngineRpmFilterPointers ... (was cruise_filter_state_a_ptr)
+-0x003fb3b4,engine_acceleration_first_stage_filter_accumulator,dword,Layout checked in cm848_signedFirstOrderFilter (disassembly 0x5644c): the state argument is two dwords, +0 = pointer to the 16-bit coefficient word (0 = no filtering) and +4 = Q16 accumulator. This is the +4 accumulator of the first-stage state; cm848_processEngineRpmDerivative resets it to the clamp value << 16 when the filtered acceleration leaves engine_acceleration_first_stage_clamp_minimum .. ... (was cruise_filter_accumulator_working)
+-0x003fb3b8,engine_acceleration_second_stage_filter_state,pointer,Layout checked in cm848_signedFirstOrderFilter (disassembly 0x5644c): the state argument is two dwords, +0 = pointer to the 16-bit coefficient word (0 = no filtering) and +4 = Q16 accumulator. Passed as the state of the second filter (first stage -> engine_acceleration_second_stage_filtered); initialised to point at 0x40880a. xref_addr.py: 0 reads / 1 write, dword; no user below 0x7F60. No type ... (was cruise_filter_state_b_ptr)
+-0x003fb3bc,engine_acceleration_second_stage_filter_accumulator,dword,Layout checked in cm848_signedFirstOrderFilter (disassembly 0x5644c): the state argument is two dwords, +0 = pointer to the 16-bit coefficient word (0 = no filtering) and +4 = Q16 accumulator. The +4 accumulator of the second-stage state (0x3fb3b8 + 4); the only named access is its zeroing in cm848_initEngineRpmFilterPointers, the filter updates it through the state pointer. xref_addr.py: 0 reads ... (was cruise_filter_accumulator_init)
++0x003fb3b0,engine_acceleration_first_stage_filter_state,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_processEngineRpmDerivative: the first of the two engine acceleration filters (was a pointer row + the accumulator row at +4 engine_acceleration_first_stage_filter_accumulator, dword) | earlier note: Layout checked in cm848_signedFirstOrderFilter (disassembly 0x5644c): the state argument is two dwords, +0 = pointer to the 16-bit coefficient word (0 = no filtering) and +4 = Q16 accumulator. cm848_processEngineRpmDerivative passes &this word as the state of the first-stage filter (engine_acceleration_unfiltered -> engine_acceleration_first_stage_filtered); cm848_initEngineRpmFilterPointers ... (was cruise_filter_state_a_ptr)
++0x003fb3b8,engine_acceleration_second_stage_filter_state,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_processEngineRpmDerivative: the second of the two engine acceleration filters (was a pointer row + the accumulator row at +4 engine_acceleration_second_stage_filter_accumulator, dword) | earlier note: Layout checked in cm848_signedFirstOrderFilter (disassembly 0x5644c): the state argument is two dwords, +0 = pointer to the 16-bit coefficient word (0 = no filtering) and +4 = Q16 accumulator. Passed as the state of the second filter (first stage -> engine_acceleration_second_stage_filtered); initialised to point at 0x40880a. xref_addr.py: 0 reads / 1 write, dword; no user below 0x7F60. No type ... (was cruise_filter_state_b_ptr)
+ 0x003fb3c0,safety_condition_prev_flag,word,
+ 0x003fb3c4,pci_controller_byte_index,byte,Index of the next byte handed to the J1850 controller - shared by frame bytes (cm848_sendPciFrameByte) and in-frame response bytes
+ 0x003fb3c5,pci_receive_status,byte,Top 3 bits of the current pci_receive_word (0x20/0x40/0x80 = data byte; 0xa0/0xc0/0xe0 = end of frame); reused by cm848_completePciFrame as the error bits of an unmatched frame
+@@ -1716,7 +1707,7 @@ address,name,type,comment
+ 0x003fb40d,pci_transmit_message_11_vehicle_speed_at_send,word,vehicle_speed copied at each PCI 0x5D send; no reader found (was fuel_temperature_trim_working)
+ 0x003fb40f,pci_transmit_message_11_timer_previous,word,Last seen pci_transmit_message_11_timer (header 5D); a drop means the message was just sent - used by cm848_buildPciTransmitMessage11DistanceAndFuelUsed
+ 0x003fb412,fuel_level_ready_flag_previous,word,Previous fuel_level_ready_flag for the PCI TX[13] builder: the rising edge sends the 0xA4 fuel level at once; working RAM in the time-shared ROM-to-RAM window (was cbd_enable_state_prev)
+-0x003fb414,coolant_temp_filter_state_ptr,pointer,IIR filter state ptr for coolant temp
++0x003fb414,pci_coolant_temperature_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures: produces coolant_temp_filtered from coolant_temperature_in_use for PCI message 14 (was coolant_temp_filter_state_ptr)
+ 0x003fb420,fuel_demand_rate_limiter_state,word,
+ 0x003fb422,fuel_demand_rate_lookup_a,word,
+ 0x003fb424,fuel_demand_rate_lookup_b,word,
+@@ -1867,18 +1858,12 @@ address,name,type,comment
+ 0x003fb681,fuel_pressure_governor_start_revolutions,word,Revolutions counted in FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START: +2 per full cylinder-event cycle (cm848_countFuelPressureGovernorStartRevolutions). Was engine_sync_tooth_count
+ 0x003fb683,fuel_demand_calculated_snapshot,word,
+ 0x003fb685,fuel_pressure_governor_feed_forward,word,The rpm-table feed-forward of the fuel pressure governor (cm848_dualAxisTableInterpolation of engine_rpm_measured). Was engine_sync_reference_snapshot
+-0x003fb687,cam_sync_speed_filter_ptr,pointer,
+-0x003fb68b,cam_sync_filter_accum_init,dword,
+-0x003fb68f,cam_sync_fault_filter_ptr,pointer,
+-0x003fb693,cam_sync_speed_filter_accum,word,
++0x003fb687,fuel_metering_feedback_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateFuelMeteringCommand: smooths fuel_metering_feedback_input; fuel_metering_feedback_error = fuel_metering_reference_filter's output minus this one's (was cam_sync_speed_filter_ptr + the accumulator row at +4 cam_sync_filter_accum_init, dword)
++0x003fb68f,fuel_metering_reference_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateFuelMeteringCommand: smooths the reference looked up from cam_sync_ref_output_axis_cal / cam_sync_ref_output_values_cal (was cam_sync_fault_filter_ptr + the accumulator row at +4 cam_sync_speed_filter_accum, word)
+ 0x003fb697,cam_sync_speed_filter_state,ema_filter_state_t,(was cam_sync_speed_filter_pointer)
+-0x003fb69f,cam_sync_filter_state_pointer,pointer,
+-0x003fb6a3,cam_sync_speed_filter_state_accum,word,
+-0x003fb6a7,cam_sync_fuel_filter_state_pointer,pointer,
+-0x003fb6ab,cam_sync_fuel_filter_accum,word,
+-0x003fb6ac,cam_sync_fuel_filter_accum+1,,
+-0x003fb6af,cam_sync_rate_filter_state_pointer,pointer,
+-0x003fb6b3,cam_sync_rate_filter_accum,word,
++0x003fb69f,fuel_pressure_sensor_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateFuelMeteringCommand: smooths fuel_pressure_sensor for the fuel pressure governor; before each call the code points the coefficient at a value it computes on the stack (cm848_resetEngineSyncState starts it at engine_sync_scale_factor_cal) (was cam_sync_filter_state_pointer + the accumulator row at +4 cam_sync_speed_filter_state_accum, word)
++0x003fb6a7,fuel_pressure_governor_accelerator_feed_forward_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateFuelMeteringCommand: produces fuel_pressure_governor_accelerator_feed_forward (was cam_sync_fuel_filter_state_pointer + the accumulator row at +4 cam_sync_fuel_filter_accum, word, and a label-only row cam_sync_fuel_filter_accum+1 at +5)
++0x003fb6af,fuel_metering_command_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateFuelMeteringCommand: smooths engine_sync_state_t_0040b87f.fuel_metering_command (into cam_speed_rate) (was cam_sync_rate_filter_state_pointer + the accumulator row at +4 cam_sync_rate_filter_accum, word)
+ 0x003fb6b7,cam_sync_rpm_filter_state,ema_filter_state_t,(was cam_sync_rpm_ema_state_pointer)
+ 0x003fb6bf,fuel_metering_base_command_derivative_term,word,Derivative (lead) term added to the fuel metering base command (+/-4095; from fuel_metering_base_command_derivative_filter). Was cam_sync_protection_state_prev
+ 0x003fb6c1,governor_zero_speed_count,word,
+@@ -1907,8 +1892,7 @@ address,name,type,comment
+ 0x003fb6ef,fuel_pressure_sensor_fault_debounce_count,byte,Samples with a code the confirmed code does not have yet (cm848_countFuelPressureSensorCodeChanges). Was engine_sync_timeout_counter_a
+ 0x003fb6f0,fuel_pressure_sensor_recovery_debounce_count,byte,Good samples while a code is still confirmed (cm848_countFuelPressureSensorCodeChanges). Was engine_sync_timeout_counter_b
+ 0x003fb6f1,fuel_pressure_feedback_filter_accumulator,word,Accumulator of the governor's pressure feedback filter (cleared by cm848_initFuelPressureSensor). Was cam_timing_reference_filter_accum
+-0x003fb6f3,fuel_pressure_feedback_filter_pointer,pointer,Filter state passed to cm848_signedFirstOrderFilter by cm848_filterFuelPressureFeedback (points at fuel_pressure_feedback_filter_constants). Was cam_timing_reference_filter_state_pointer
+-0x003fb6f7,engine_sync_timeout_counter_c,word,
++0x003fb6f3,fuel_pressure_feedback_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_filterFuelPressureFeedback: produces fuel_pressure_feedback_filtered from fuel_pressure_at_injection_scheduling (was fuel_pressure_feedback_filter_pointer + the accumulator row at +4 engine_sync_timeout_counter_c, word)
+ 0x003fb704,injector_diagnostic_word,dword,Written once per cycle in cm848_evaluateInjectorDiagnostics with the 24-bit word (shifted left by 8) returned by cm848_readInjectorDiagnosticWord and passed to cm848_updateInjectorDiagnosticBits; xref: dword, 0 reads / 1 write, 1 function, so it is a stored copy of that word and has nothing to do with a cylinder period. Time-shared window: xref_addr.py lists no user below 0x7F60. No type change. (was cylinder_period_working)
+ 0x003fb708,injection_timing_main_cold_start_interpolation_state,word,Lookup cache (x segment offset, the next row is y) of the injection_timing_main_cold_start lookup in cm848_calculateMainInjectionTiming (2-D: x = engine_rpm_state_t.current_rpm, y = coolant_temp). Set to 2 by cm848_initTimingFilterStates; only these two functions use it. Time-shared window: no boot-ROM user (< 0x7F60, immediate scan). Label only. (was torque_limit_init_state_0)
+ 0x003fb70a,injection_timing_main_cold_start_interpolation_state_y,word,Second word (y segment offset) of the 2-D lookup cache of injection_timing_main_cold_start (cm848_dualAxisTableInterpolation uses the pair starting at the previous row); set to 2 by cm848_initTimingFilterStates. Time-shared window: no boot-ROM user (< 0x7F60, immediate scan). Label only. (was torque_limit_init_state_1)
+@@ -1980,7 +1964,7 @@ address,name,type,comment
+ 0x003fb9b8,,ema_filter_state_t,EMA filter state - used by cm848_sensorChannel7_init_configBundle / cm848_sensorChannel7_update_configBundle
+ 0x003fb9c0,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelConfigInit updateSensorChannelWithConfig
+ 0x003fb9c2,,ema_filter_state_t,EMA filter state - used by cm848_readVariableGeometryTurbochargerPositionSensor / cm848_initializeVariableGeometryTurbochargerPositionSensor (was PTR_DAT_003fb9c2)
+-0x003fb9e2,,pointer,
++0x003fb9e2,,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - hpcr_fuelFinal_exponentialAverage: smooths ambient_air_temperature_selected minus boost_fuel_timing_target - left unnamed because those two names look suspect
+ 0x003fb9ea,boost_pressure_timing_filter_state,ema_filter_state_t,EMA coeff ptr for boost pressure timing filter (was boost_pressure_timing_ema_coeff_ptr)
+ 0x003fb9f6,,ema_filter_state_t,EMA filter state - used by hpcr_fuelFinal_exponentialAverage (was PTR_DAT_003fb9f6)
+ 0x003fbcbe,,pointer,
+@@ -2677,14 +2661,14 @@ address,name,type,comment
+ 0x004002b6,wastegate_duty_second_error_gain_by_error_values,word[10],y values of the same lookup: the result (governor_trim_lookup_result) multiplies the second error before fuel_flow_rate_gain_cal; no _cal outside the EEPROM mirror. (was governor_trim_output_cal)
+ 0x004002ca,wastegate_duty_ceiling_battery_voltage_gain_axis,word[6],x axis (battery voltage EMA, 1/16 V: 0 / 160 / 224 / 240 / 256) of the gain lookup in cm848_calculateWastegateDutyRequest; its only reader. Address 0x4002ca is outside the EEPROM mirror, so the _cal suffix is wrong. (was battery_voltage_axis_cal)
+ 0x004002d6,wastegate_duty_ceiling_battery_voltage_gain_values,word[6],Q12 gain values (5202 / 5202 / 4096 / 4096 / 4096 = 1.27 at or below 10 V, 1.0 at or above 14 V) multiplied into the fixed duty ceiling; only reader is cm848_calculateWastegateDutyRequest. Not EEPROM, so no _cal. (was battery_voltage_gain_output_cal)
+-0x004002e2,throttle_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - throttle_filter_state.coefficient points here (was throttle_filter_coeff_table)
++0x004002e2,egr_mass_flow_delayed_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (59638 = 0.910 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was throttle_filter_coefficient, typed word)
+ 0x004002e4,throttle_fuel_trim_lower_cal,word,
+ 0x004002e6,throttle_fuel_trim_upper_cal,word,
+ 0x004002e8,throttle_conversion_scale_cal,word,
+ 0x004002ea,egr_flow_cold_side_algorithm_select,word,code: selector read by six functions (xref_addr.py 6 reads / 0 writes, all lhz): 0 = the EGR delta pressure is the delta pressure sensor output, non-zero (dump 1) = it is computed from two other pressures ((boost_pressure_current_raw - boost_pressure_baseline_cal) - map_fuel_correction_factor); the EGR valve autozero command is 12800 for 0 and 0 for non-zero; the cooler fouling monitor needs ... (was boost_correction_alt_mode_cal)
+ 0x004002ec,rpm_fuel_trim_select_cal,word,
+ 0x004002ee,throttle_load_scale_factor_cal,word,
+-0x004002f0,throttle_filter_coeff_data_cal,byte,
++0x004002f0,egr_valve_position_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (32768 = 0.500 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was throttle_filter_coeff_data_cal, typed byte)
+ 0x004002f2,boost_fuel_trim_pressure_axis_cal,word[19],
+ 0x00400318,boost_fuel_trim_ystart_cal,word[19],
+ 0x0040033e,boost_fuel_trim_yend_cal,word[324],
+@@ -2713,6 +2697,7 @@ address,name,type,comment
+ 0x004009b0,boost_load_output_cal,word[17],
+ 0x004009d2,fuel_blend_rpm_base_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - fuel_blend_rpm_base_filter_state.coefficient points here (was fuel_blend_rpm_base_table_cal)
+ 0x004009d4,boost_fuel_blend_weight_a_cal,word,
++0x004009d6,predicted_intake_manifold_temperature_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 53738 = 0.820 in the RAM dump; 0 = no filtering (new row 2026-11-19)
+ 0x004009d8,boost_fuel_blend_weight_b_cal,word,
+ 0x004009da,injection_timing_fuel_limited_adjustment_x_axis,word[20],Code: cm848_calculateCombustionTimingReference looks up engine speed against injection_quantity_combustion_reference (19 x 16) into injection_timing_fuel_limited_adjustment, added to the timing reference only when alpha is 0 and injection_quantity_combustion_limited_flag is set. e2m: C_CBR_OFC_Limit_SOI_Speed_Axis 0x0116EE00 / OFC_Limit_SOI_Fuel_Axis 0x0116EF00 / OFC_Limit_SOI_Adj_Table 0x0116F000 ... (was fuel_blend_rpm_axis_cal)
+ 0x00400a02,injection_timing_fuel_limited_adjustment_y_axis,word[17],Code: cm848_calculateCombustionTimingReference looks up engine speed against injection_quantity_combustion_reference (19 x 16) into injection_timing_fuel_limited_adjustment, added to the timing reference only when alpha is 0 and injection_quantity_combustion_limited_flag is set. e2m: C_CBR_OFC_Limit_SOI_Speed_Axis 0x0116EE00 / OFC_Limit_SOI_Fuel_Axis 0x0116EF00 / OFC_Limit_SOI_Adj_Table 0x0116F000 ... (was fuel_blend_ystart_cal)
+@@ -3044,7 +3029,7 @@ address,name,type,comment
+ 0x004070de,governor_fuel_demand_correction_maximum_vehicle_speed,word,At or below this vehicle_speed (2560 = 10 mph) or with governor_speed_low_clamp below -480 - at governor setpoint with cold_start_fuel_demand_correction_enable_cal set - cm848_updateSpeedProtectionLimits sets governor_fuel_demand_correction_active_flag (was cold_start_fuel_temp_trim_threshold_cal)
+ 0x004070e0,governor_speed_filter_input_scale_cal,word,
+ 0x004070e2,governor_speed_filter_fuel_offset_cal,word,
+-0x004070e4,governor_speed_filter_state_cal,byte,
++0x004070e4,governor_speed_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (32706 = 0.499 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was governor_speed_filter_state_cal, typed byte)
+ 0x004070e6,governor_setpoint_table_a,word,
+ 0x004070e8,governor_j1939_d_gain_default_cal,word,
+ 0x004070ea,governor_j1939_p_gain_default_cal,word,
+@@ -3117,7 +3102,7 @@ address,name,type,comment
+ 0x0040771a,variable_geometry_turbocharger_position_command_override_value,word,code: single reader cm848_calculateVariableGeometryTurbochargerPositionCommand uses it as the position command when bit 0 of the user override flags is set (dump 0); xref: 1 read / 0 writes. e2m: C_VGA_Cmd_Override_Value (0x01183000) is +0x00 of the block that anchors 0x40771a. (was actuator_e_setpoint_override) | earlier note: Single reader cm848_calculateVariableGeometryTurbochargerPositionCommand uses it as the setpoint when bit 0 of the override flag word is set; dump 0. Outside the EEPROM mirror, so no _cal; not an rpm. (was governor_commanded_rpm_override_cal)
+ 0x0040771c,variable_geometry_turbocharger_derivative_gain_normal,word,code: copied to the derivative gain when the position command is above the gain scheduling threshold (dump 0); xref: 1 read / 0 writes. e2m: C_VGA_D_Gain_Normal (0x01183002) is +0x02 of the block that anchors 0x40771a. Outside the EEPROM mirror, so no _cal. (was governor_speed_i_gain_b_high_cal)
+ 0x0040771e,variable_geometry_turbocharger_derivative_gain_open,word,code: copied to the derivative gain at or below the gain scheduling threshold (dump 0); xref: 1 read / 0 writes. e2m: C_VGA_D_Gain_Open (0x01183004) is +0x04 of the block that anchors 0x40771a. Outside the EEPROM mirror, so no _cal. (was governor_speed_i_gain_b_low_cal)
+-0x00407720,variable_geometry_turbocharger_derivative_filter_coefficient,byte,code: coefficient word of the first-order filter on the position error (the pointer variable_geometry_turbocharger_derivative_filter_coefficient_pointer is set to its address by the loop init; dump 32768 = 0.5); the row is typed byte, the filter reads it as a word; xref_addr.py lists no load / store (reached by address in the loop init). e2m: C_VGA_Der_Dtime_Cnst (0x01183006) is +0x06 of the block ... (was governor_ema_filter_state_cal)
++0x00407720,variable_geometry_turbocharger_derivative_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (32768 = 0.500 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was typed byte)
+ 0x00407722,variable_geometry_turbocharger_derivative_noise_band,word,code: the derivative term is 0 while the magnitude of the filtered error change is below it (dump 0); xref: 1 read / 0 writes. e2m: C_VGA_Der_Noise_Band (0x01183008) is +0x08 of the block that anchors 0x40771a. Outside the EEPROM mirror, so no _cal. (was governor_speed_i_gain_deadzone_cal)
+ 0x00407724,variable_geometry_turbocharger_integral_gain_normal,word,code: copied to the integral gain in the normal gain set (dump 0); xref: 1 read / 0 writes. e2m: C_VGA_I_Gain_Normal (0x0118300a) is +0x0a of the block that anchors 0x40771a. Outside the EEPROM mirror, so no _cal. (was governor_proportional_gain_high_cal)
+ 0x00407726,variable_geometry_turbocharger_integral_gain_open,word,code: copied to the integral gain in the open gain set (dump 0); xref: 1 read / 0 writes. e2m: C_VGA_I_Gain_Open (0x0118300c) is +0x0c of the block that anchors 0x40771a. Outside the EEPROM mirror, so no _cal. (was governor_proportional_gain_low_cal)
+@@ -3404,7 +3389,7 @@ address,name,type,comment
+ 0x00408344,transmission_temperature_range_3_threshold,word,Range 3 or more above this (9536 = 149 deg F) (was protection_status_level3_threshold_cal)
+ 0x00408346,transmission_temperature_range_4_threshold,word,Range 4 or more above this (12800 = 200 deg F) (was protection_status_level4_threshold_cal)
+ 0x00408348,transmission_temperature_range_5_threshold,word,Range 5 above this (16000 = 250 deg F) (was protection_status_level5_threshold_cal)
+-0x0040834a,protection_load_scaled_filter_state_cal,byte,
++0x0040834a,protection_load_scaled_input_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (60293 = 0.920 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was protection_load_scaled_filter_state_cal, typed byte)
+ 0x0040834c,governor_pressure_gear2_locked_target,word,48RE governor pressure target in 1/18.56 kPa (7168 = 56 psi) - commanded in gear 2 with the converter clutch apply request active and the selector held in 1st or 2nd (0x7e/0x7f) - status 0x11 - outside the EEPROM mirror so no _cal (was protection_derate_l2_ramp_rpm_limit_cal) (Medium confidence)
+ 0x0040834e,protection_derate_countdown_init_cal,word,
+ 0x00408350,protection_entry_countdown_init_cal,word,
+@@ -3416,7 +3401,7 @@ address,name,type,comment
+ 0x0040835c,gear_1_speed_ratio_threshold_lockup,word,First-gear speed ratio threshold used while the converter clutch solenoid (logical output 18) is on (80 = 2.50) (was protection_debounce_fuel_threshold_b_cal) (Medium confidence)
+ 0x0040835e,protection_derate_ramp_exit_threshold_cal,word,
+ 0x00408360,protection_derate_rpm_limit_floor_cal,word,
+-0x00408362,protection_load_filter_state_b_cal,byte,
++0x00408362,transmission_output_speed_change_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (64225 = 0.980 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was protection_load_filter_state_b_cal, typed byte)
+ 0x00408364,protection_monitor_enable_cal,word,
+ 0x00408366,gear_2_speed_ratio_threshold_lockup,word,Second / third gear boundary used while the converter clutch solenoid is on (45 = 1.41) (was protection_load_eval_secondary_threshold_cal) (Medium confidence)
+ 0x00408368,protection_derate_countdown_cal,word,
+@@ -3553,8 +3538,8 @@ address,name,type,comment
+ 0x00408802,fuel_quantity_active_addend_cal,word,
+ 0x00408804,cruise_speed_upper_limit_cal,word,
+ 0x00408806,cruise_speed_lower_limit_cal,word,
+-0x00408808,engine_acceleration_first_stage_filter_coefficient,byte,Code: cm848_initEngineRpmFilterPointers stores its address as the coefficient pointer of the first-stage state, and cm848_signedFirstOrderFilter reads it as a 16-bit word (disassembly: lhz r7,0(r12)). 0x408808 is outside 0x3fd482-0x3feec1, so the _cal suffix goes. Type note (no change proposed here): the row says byte, the filter reads a word. (was cruise_filter_state_a_cal)
+-0x0040880a,engine_acceleration_second_stage_filter_coefficient,byte,Code: coefficient word of the second-stage state (pointer set in cm848_initEngineRpmFilterPointers). No _cal (outside the EEPROM range). Same byte-vs-word type note. (was cruise_filter_state_b_cal)
++0x00408808,engine_acceleration_first_stage_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (0 = 0.000 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was typed byte)
++0x0040880a,engine_acceleration_second_stage_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (57671 = 0.880 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was typed byte)
+ 0x0040880c,engine_acceleration_first_stage_clamp_maximum,word,Names are swapped: cm848_processEngineRpmDerivative clamps the first-stage value DOWN to this word when it is larger (dump +94), so it is the maximum. Not a governor speed error; outside the EEPROM range, so no _cal suffix. (was governor_speed_error_b_lower_limit_cal)
+ 0x0040880e,engine_acceleration_first_stage_clamp_minimum,word,The first-stage value is raised to this word when it is smaller (dump -94), so it is the minimum, not an upper limit. Same function and reasons as 0x40880c. (was governor_speed_error_b_upper_limit_cal)
+ 0x00408810,engine_speed_sim_mode_cal,word,
+@@ -3941,11 +3926,11 @@ address,name,type,comment
+ 0x00409120,engine_speed_override_enable_cal,byte,
+ 0x00409121,engine_speed_override_value_cal,word,
+ 0x00409123,fuel_pressure_governor_low_pressure_command,word,Demand in FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED (328). Was cam_sync_ref_count_state8_cal
+-0x00409126,cam_sync_speed_error_filter_state_cal,byte,
+-0x00409128,cam_sync_fault_filter_state_cal,byte,
++0x00409126,fuel_metering_feedback_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (59297 = 0.905 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was cam_sync_speed_error_filter_state_cal, typed byte)
++0x00409128,fuel_metering_reference_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (0 = 0.000 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was cam_sync_fault_filter_state_cal, typed byte)
+ 0x0040912a,cam_sync_speed_filter_state_cal,byte,
+ 0x0040912c,engine_sync_scale_factor_cal,word,
+-0x0040912e,cam_sync_fuel_filter_state_cal,byte,
++0x0040912e,fuel_pressure_governor_accelerator_feed_forward_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (58982 = 0.900 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was cam_sync_fuel_filter_state_cal, typed byte)
+ 0x00409130,cam_sync_fuel_scale_gain_cal,word,
+ 0x00409132,cam_sync_fuel_scale_lower_limit_cal,word,
+ 0x00409134,cam_sync_fuel_scale_upper_limit_cal,word,
+@@ -3961,7 +3946,7 @@ address,name,type,comment
+ 0x00409148,cam_sync_rpm_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - cam_sync_rpm_filter_state.coefficient points here (was cam_sync_rpm_ema_state_cal)
+ 0x0040914a,engine_sync_phase_counter_max_cal,word,
+ 0x0040914c,engine_sync_state_b,word,
+-0x0040914e,cam_sync_rate_filter_state_cal,byte,
++0x0040914e,fuel_metering_command_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (16384 = 0.250 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was cam_sync_rate_filter_state_cal, typed byte)
+ 0x00409150,engine_sync_rpm_filter_initial_cal,word,
+ 0x00409152,engine_sync_zero_speed_output_cal,word,
+ 0x00409154,governor_zero_speed_count_cal,word,
+@@ -4067,7 +4052,7 @@ address,name,type,comment
+ 0x0040959a,fuel_pressure_sensor_volts_low_limit,word,fuel_pressure_sensor_volts below this (164 = 0.20 V) is code 8 -> fault 305 = P0192 (rail pressure sensor circuit low). Was engine_timing_diag_lower_threshold_cal
+ 0x0040959c,fuel_pressure_sensor_recovery_debounce_limit,word,Good samples (40) before a confirmed rail pressure sensor code clears. Was engine_sync_timeout_b_threshold_cal
+ 0x0040959e,fuel_pressure_sensor_fault_debounce_limit,word,Faulty samples (40) before a rail pressure sensor code is confirmed. Was engine_sync_timeout_a_threshold_cal
+-0x004095a2,fuel_pressure_feedback_filter_constants,byte,Filter constants of the governor's pressure feedback filter (fuel_pressure_feedback_filter_pointer points here). Was cam_timing_reference_filter_state_cal
++0x004095a2,fuel_pressure_feedback_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (0 = 0.000 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was fuel_pressure_feedback_filter_constants, typed byte)
+ 0x004095a4,fuel_pressure_sensor_override_enable,byte,Non-zero: cm848_processFuelPressureSensor skips the sensor and uses fuel_pressure_sensor_override_value (0 here). Not EEPROM-backed. Was cam_sync_position_override_enable_cal
+ 0x004095a5,fuel_pressure_sensor_override_value,word,Rail pressure used while fuel_pressure_sensor_override_enable is set. Was cam_sync_position_override_cal
+ 0x004095a7,fuel_pressure_feedback_source_select,byte,Pressure the governor feedback filters while the engine run / crank state is 4: 0 = fuel_pressure_at_injection_scheduling / 1 = fuel_pressure_at_other_angle_events / 2 = fuel_pressure_sensor (2 here; other values freeze the feedback). Was cam_timing_source_select_cal
+@@ -4745,8 +4730,7 @@ address,name,type,comment
+ 0x0040a8cd,high_speed_governor_integral_gain,word,Selected set coefficient 2 = integral gain (same writers / reader): scaled into high_speed_governor_integral_gain_adjusted (cap 0x3d70) and used as I term increment = error x it / 17809. Dump 262. (was fuel_ema_coeff_2)
+ 0x0040a8cf,high_speed_governor_derivative_gain,word,Selected set coefficient 3 = derivative gain (same writers / reader): scaled into high_speed_governor_derivative_gain_adjusted and used as D term = error change x it x 100 / 3478. Dump 2. (was fuel_ema_coeff_3)
+ 0x0040a8d1,high_speed_governor_error_filter_coefficient,word,CORRECTION of the wave 4 name so the whole coefficient set shares one family: coefficient 4 is the error filter coefficient of the same selected set (written together with coefficients 1-3 by the same set selector). Selected set value the filter coefficient pointer points at. (was fuel_demand_filter_coefficient_4) | earlier note: xref_addr.py and the .cpp (runHighSpeedGovernorPid / selectHighSpeedGovernorGainSet): Selected set coefficient 4: the filter coefficient the pointer word points at (7 writes, read through the pointer). (was fuel_ema_coeff_4)
+-0x0040a8d3,high_speed_governor_error_filter_coefficient_pointer,pointer,CORRECTION of the wave 4 name so the whole coefficient set shares one family: coefficient 4 is the error filter coefficient of the same selected set (written together with coefficients 1-3 by the same set selector). Pointer to the selected coefficient, passed to cm848_signedFirstOrderFilter for the speed error. (was fuel_demand_filter_coefficient_pointer) | earlier note: xref_addr.py and the .cpp (runHighSpeedGovernorPid / selectHighSpeedGovernorGainSet): Pointer to coefficient 4, first word of the filter state passed to cm848_signedFirstOrderFilter (0 reads by address, 3 writes). (was fuel_demand_ema_coeff_ptr)
+-0x0040a8d7,high_speed_governor_error_filter_accumulator,dword,Code: state[1] of cm848_signedFirstOrderFilter(error, &high_speed_governor_error_filter_coefficient_pointer) (state[0] = pointer to the coefficient word 0x40a8d1; the filter returns accumulator >> 16); reset to the limit << 16 when the filtered error hits its limits, cleared by the overspeed reset and the init. Dump 0x1f400000 -> 8000 = high_speed_governor_filtered_error. Users: the PID and the ... (was injection_timing_compensation_int)
++0x0040a8d3,high_speed_governor_error_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - runHighSpeedGovernorPid: the speed error filter of the high speed governor PID (its coefficient is computed) (was high_speed_governor_error_filter_coefficient_pointer + the accumulator row at +4 high_speed_governor_error_filter_accumulator, dword)
+ 0x0040a8db,high_speed_governor_proportional_gain_adjusted,word,Code: proportional gain after the |filtered error| scaling table (multiplier / 256, capped 0xf000) when the proportional adjustment enable is nonzero, else the plain gain; used x error / 1113 for the proportional term and (previous value) in the integrator gain-switch compensation. Dump 287 (plain gain 82, enable = 1). Only user: the PID. (was injection_timing_scale_factor)
+ 0x0040a8dd,high_speed_governor_derivative_gain_adjusted,word,Code: derivative gain after its scaling table (cap 0xffff) when the derivative adjustment enable is nonzero, else the plain gain; used in the derivative term. Dump 2 (enable 0). Only user: the PID. (was injection_timing_compensation_scale)
+ 0x0040a8df,high_speed_governor_integral_gain_adjusted,word,Code: integral gain after its scaling table (cap 0x3d70) when the integral adjustment enable is nonzero, else the plain gain; the integrator increment is error x this / 17809. Dump 262 (enable 0). Only user: the PID. (was injection_timing_ema_coeff_computed)
+@@ -5220,14 +5204,10 @@ address,name,type,comment
+ 0x0040b290,engine_acceleration_unfiltered,word,Written only by cm848_processEngineRpmDerivative as engine_rpm_state.target_rpm - engine_acceleration_target_rpm_previous (change of target rpm per call). e2m Unfiltered_Engine_Acceleration 0x018A4304 = +4 from 0x40b28c. Other readers (4 reads): cm848_processGovernorLoadCondition, cm848_runLowSpeedGovernor and cm848_updateTransmissionConditionFlags; they add it to a previous-snapshot copy and compare (was governor_speed_error_filtered)
+ 0x0040b294,cooling_fan_speed_target,word,Target radiator fan speed (0.125 rpm) - set by cm848_selectCoolingFanSpeedTarget; the PID's error is this minus cooling_fan_speed_feedback_filtered, and cm848_selectCoolingFanDutySource compares it with its limits (was governor_speed_reference)
+ 0x0040b2a0,cooling_fan_speed_target_source,word,What set cooling_fan_speed_target: 0 base / 1 coolant / 2 A/C / 3 intake / 4 transmission / 5 6 0xb-0xf high-engine-rpm ramp / 7 engine-driven limit / 8 ceiling / 9 override / 10 thermostat monitor (was governor_speed_limit_source)
+-0x0040b2d4,cooling_fan_speed_feedback_filter,pointer,Filter state passed to cm848_signedFirstOrderFilter for cooling_fan_speed_feedback_filtered (was PTR_DAT_0040b2d4)
+-0x0040b2d8,cooling_fan_speed_feedback_filter_state,dword,State of cooling_fan_speed_feedback_filter (zeroed at init)
+-0x0040b2dc,cooling_fan_proportional_derivative_filter,pointer,Filter state passed to cm848_signedFirstOrderFilter for cooling_fan_proportional_derivative_term (was PTR_DAT_0040b2dc)
+-0x0040b2e0,cooling_fan_proportional_derivative_filter_state,dword,State of cooling_fan_proportional_derivative_filter (zeroed at init)
+-0x0040b2e4,cooling_fan_coolant_temperature_filter,pointer,Filter state for cooling_fan_coolant_temperature_filtered (was PTR_DAT_0040b2e4)
+-0x0040b2e8,cooling_fan_coolant_temperature_filter_state,dword,State of cooling_fan_coolant_temperature_filter (zeroed at init)
+-0x0040b2ec,cooling_fan_intake_temperature_filter,pointer,Filter state for cooling_fan_intake_temperature_filtered (was PTR_DAT_0040b2ec)
+-0x0040b2f0,cooling_fan_intake_temperature_filter_state,dword,State of cooling_fan_intake_temperature_filter (zeroed at init)
++0x0040b2d4,cooling_fan_speed_feedback_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_runCoolingFanSpeedPid: produces cooling_fan_speed_feedback_filtered (was a pointer row + the accumulator row at +4 cooling_fan_speed_feedback_filter_state, dword) | earlier note: Filter state passed to cm848_signedFirstOrderFilter for cooling_fan_speed_feedback_filtered (was PTR_DAT_0040b2d4)
++0x0040b2dc,cooling_fan_proportional_derivative_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_runCoolingFanSpeedPid: produces cooling_fan_proportional_derivative_term (was a pointer row + the accumulator row at +4 cooling_fan_proportional_derivative_filter_state, dword) | earlier note: Filter state passed to cm848_signedFirstOrderFilter for cooling_fan_proportional_derivative_term (was PTR_DAT_0040b2dc)
++0x0040b2e4,cooling_fan_coolant_temperature_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_selectCoolingFanSpeedTarget: smooths the coolant temperature for the fan speed target (was a pointer row + the accumulator row at +4 cooling_fan_coolant_temperature_filter_state, dword) | earlier note: Filter state for cooling_fan_coolant_temperature_filtered (was PTR_DAT_0040b2e4)
++0x0040b2ec,cooling_fan_intake_temperature_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_selectCoolingFanSpeedTarget: smooths the intake temperature for the fan speed target (was a pointer row + the accumulator row at +4 cooling_fan_intake_temperature_filter_state, dword) | earlier note: Filter state for cooling_fan_intake_temperature_filtered (was PTR_DAT_0040b2ec)
+ 0x0040b2f6,radiator_fan_speed_unfiltered,word,Fan speed before the moving average (0.125 rpm) - cm848_measureRadiatorFanSpeed
+ 0x0040b302,radiator_fan_speed_filter_state,ema_filter_state_t,Filter state for the radiator_fan_speed moving average (set to 0x4088cc by cm848_initRadiatorFanSpeedMeasurement) (was tpu_rpm_ema_coeff_ptr) (was radiator_fan_speed_filter_pointer)
+ 0x0040b30a,total_injection_quantity_for_air_handling,word,Code: the only writer engine_injectionAngle_selectCylinderInjector sets it to total_injection_quantity (the cylinder's whole pilot + main + auxiliary quantity) together with injection_fuel_quantity_snapshot, so it is the total fueling implemented at the last injection; the 7 readers use it as a fuel quantity axis (wastegate duty, boost offset, fuel limit scales, the torque chain, the fuel flow) ... (was engine_load_input_b)
+@@ -6985,6 +6965,7 @@ address,name,type,comment
+ 0x003ff06b,fuel_timing_demand_fault_gate_enable,byte,ROM fault-gate bitmask (fuel timing demand)
+ 0x003ff06f,fuel_boost_protect_fault_gate_enable,byte,ROM fault-gate bitmask (boost protection)
+ 0x003ff073,fuel_pressure_phase_fault_gate_enable,byte,ROM fault-gate bitmask (fuel pressure phase)
++0x003ff076,,word,Coefficient of the unnamed cm848_signedFirstOrderFilter record at 0x3fb9e2 (hpcr_fuelFinal_exponentialAverage; read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 65470 = 0.999 in the RAM dump; type only, like the record (new row 2026-11-19)
+ 0x003ff07a,boost_pressure_timing_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - boost_pressure_timing_filter_state.coefficient points here
+ 0x003ff07e,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fb9f6.coefficient points here
+ 0x003ff080,altitude_from_barometric_pressure_axis,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_initialization_step_3 / hpcr_fuelFinal_exponentialAverage
+@@ -7405,6 +7386,7 @@ address,name,type,comment
+ 0x00408966,dtc_display_step_period_ticks,word,Boot copy of ROM 0x6e580: DTC display step period in builder passes; 0 (this build) = step instead when the 0x2D lamp bit 0x02 is clear after pass 12 (was DAT_00408966)
+ 0x00408968,mil_blink_end_tick,word,Boot copy of ROM 0x6e582: end of the engine-off MIL blink window (on 5 / off 5 passes); 50 is below mil_engine_off_start_tick (150) so the blink never runs in this build (was DAT_00408968)
+ 0x0040896a,mil_blink_inhibit_fault_pending_value,dword,Boot copy of ROM 0x6e584 (0xFFFFB41E): fault_pending_flags value that stops the engine-off MIL blink; fault_pending_flags holds monitor-incomplete bits (bit 8 = OBD PID 1 misfire incomplete) so this is probably the readiness flash (was DAT_0040896a) (Medium confidence)
++0x00408972,pci_coolant_temperature_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 57672 = 0.880 in the RAM dump; 0 = no filtering (new row 2026-11-19)
+ 0x00408a60,engine_to_vehicle_speed_ratio_high_threshold,word,ROM constant 2400 = 300 rpm per mph (8 counts per rpm per mph): engine_to_vehicle_speed_ratio_filtered above it below 44 mph with a stable ratio and fuel demand above 8 sets engine_to_vehicle_speed_ratio_high_flag (was DAT_00408a60) (Medium confidence)
+ 0x00408a64,,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - ema_filter_state_t_003fcece.coefficient points here
+ 0x00408b62,vehicle_speed_pulse_timeout_reload,word,Pulse timeout reload value (25)
+@@ -7777,6 +7759,8 @@ address,name,type,comment
+ 0x004051f0,egr_cooler_fouling_flow_threshold,word,code: xref_addr.py says word (1 read / 0 writes): minimum EGR mass flow (egr_mass_flow_delayed_filtered, 1/128 lb/min); dump 128 = 1 lb/min. e2m: C_EGR_Cooler_Fouling_Flow_Thd (0x011A5608). Dump 128. (new row 2026-11-17)
+ 0x004051f2,egr_cooler_fouling_delta_pressure_threshold,word,code: xref_addr.py says word (1 read / 0 writes): the selected EGR delta pressure snapshot must be at or above it; dump 63 (1 inHg). e2m: not in the .12 parameter list (the cell after C_EGR_Cooler_Fouling_Flow_Thd). Dump 63. (new row 2026-11-17)
+ 0x004051f4,egr_cooler_fouling_valve_position_threshold,word,code: xref_addr.py says word (1 read / 0 writes): egr_valve_position (12800 = 100 percent) must be at or above it; dump 1920 = 15 percent. e2m: not in the .12 parameter list. Dump 1920. (new row 2026-11-17)
++0x00405200,fuel_demand_boost_offset_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 65404 = 0.998 in the RAM dump; 0 = no filtering (new row 2026-11-19)
++0x00405206,pressure_correction_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 62966 = 0.961 in the RAM dump; 0 = no filtering (new row 2026-11-19)
+ 0x0005c314,high_speed_governor_transient_acceleration_threshold,word,CODE: read only (lhz, ROM word, no writer) by selectHighSpeedGovernorGainSet, role as in the name: engine_acceleration_second_stage_filtered at or below it (or final_fueling_state_prev = 12) = no transient. CROSS-FIRMWARE (corroboration by relative offset, the CM550 body is the same function): CM550 hsg_acceleration_rate_threshold_for_transient_conditions @0x808118. Width: scan of both banks ... (new row 2026-11-17)
+ 0x0005c316,high_speed_governor_transient_gain_set_time_limit,word,CODE: read only (lhz, ROM word, no writer) by selectHighSpeedGovernorGainSet, role as in the name: the transient timer (pass counter x 20) is clamped to it and the low / high / base set selection runs once it is exceeded. CROSS-FIRMWARE (corroboration by relative offset, the CM550 body is the same function): CM550 hsg_acceleration_reference_time_for_transient_conditions @0x80811a. Width ... (new row 2026-11-17)
+ 0x0005c318,high_speed_governor_high_reference_speed_threshold,word,CODE: read only (lhz, ROM word, no writer) by selectHighSpeedGovernorGainSet, role as in the name: engine_speed_limit_arbitrated above it selects the high reference speed set (code 19). CROSS-FIRMWARE (corroboration by relative offset, the CM550 body is the same function): CM550 hsg_speed_threshold_for_high_reference_speed_region @0x80811c. Width: scan of both banks says word (lhz). ROM ... (new row 2026-11-17)
+@@ -7812,6 +7796,7 @@ address,name,type,comment
+ 0x0040770c,turbocharger_speed_state_override_value,word,width: xref_addr.py says word (1 read / 0 writes in cm848_selectTurbochargerSpeedSource); ROM-to-RAM cell, no _cal. code: the state used while turbocharger_speed_state_user_override_enable_cal is non-zero. e2m: C_Turbo_Spd_State_Override_Val (0x011A3408, HEX). Dump 0. (new row 2026-11-17)
+ 0x00407298,turbocharger_overspeed_immediate_derate_waiting_time,word,width: xref_addr.py says word (1 read / 0 writes in cm848_updateTurbochargerOverspeedImmediateDerate); ROM-to-RAM cell, no _cal. code: passes at or above the speed threshold before the flag is set. e2m: AH_Fuel_Derate_Imm_Waiting_Time (0x01180500, SEC 0.05). Dump 2. (new row 2026-11-17)
+ 0x0040729a,turbocharger_overspeed_immediate_derate_speed_threshold,word,width: xref_addr.py says word (1 read / 0 writes in cm848_updateTurbochargerOverspeedImmediateDerate); ROM-to-RAM cell. code: turbocharger_speed at or above it counts the waiting time. e2m: TU_WG_Immediate_Speed_Derate_Thr (0x01180502, KRPM 0.008). Dump 17000 = 136 KRPM. (new row 2026-11-17)
++0x0040729e,turbocharger_speed_estimate_boost_lead_term_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 63896 = 0.975 in the RAM dump; 0 = no filtering (new row 2026-11-19)
+ 0x003ff6ec,turbocharger_speed_sensor_in_range_error_count_limit,word,ROM-to-RAM cell, no _cal; xref_addr.py: read only, never written, word. e2m: Turbo_Speed_Diag_Count_Limit (0x0117CA00, 'above this count number the in-range error flag is set') at equal block offset. code: dump 20; read by cm848_diagnoseTurbochargerSpeedSensorRateOfChange. (new row 2026-11-17)
+ 0x003ff6f0,turbocharger_speed_sensor_pressure_ratio_threshold,word,ROM-to-RAM cell, no _cal; xref_addr.py: read only, never written, word. e2m: Turbo_Speed_Pressure_Ratio_Thd (0x0117CA04, UNITLESS 1/256, 'pressure ratio threshold for sensor error detection') at equal block offset. code: dump 512 = 2.0; lhz; read by the frequency and rate-of-change diagnostics. (new row 2026-11-17)
+ 0x003ff6f2,turbocharger_speed_sensor_fault_clear_count,word,ROM-to-RAM cell, no _cal; xref_addr.py: read only, never written, word. e2m: Turbo_Speed_Fault_Clear (0x0117CA06) at equal block offset. code: dump 1; the frequency fault bits clear below it. (new row 2026-11-17)
+@@ -7827,6 +7812,9 @@ address,name,type,comment
+ 0x003ff718,turbocharger_speed_envelope_filter_buffer_size,word,ROM-to-RAM cell, no _cal; xref_addr.py: read only, never written, word. e2m: C_Envelope_Filter_Buffer_Size (0x0117CA2C, 'number of past 0.01 sec samples in high env filter') at equal block offset. code: dump 1 (a ring of one sample); sizes the ring at 0x3fcc20. (new row 2026-11-17)
+ 0x003ff71a,turbocharger_speed_sensor_installed,word,ROM-to-RAM cell, no _cal; xref_addr.py: read only, never written, word. e2m: Turbo_Speed_Sensor_Installed (0x0117CA2E, 'when 0 disables the turbo speed (sensor) processing') at equal block offset. code: dump 0: this truck's calibration has the sensor disabled and runs on the estimate. (new row 2026-11-17)
+ 0x003ff702,turbocharger_speed_sensor_maximum_negative_rate,i16,type i16: the only load is lha (cm848_diagnoseTurbochargerSpeedSensorRateOfChange 0x50f424), 1 read / 0 writes. ROM-to-RAM cell, no _cal. e2m: Turbo_Speed_Max_Neg_Rate (0x0117CA16, RPM/SEC 8) at equal block offset. code: dump 40536 = -25000; a speed step below it counts an in-range error. (new row 2026-11-17)
++0x003ff71c,charge_flow_compressor_outlet_temperature_derate_offset_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 0 = 0.000 in the RAM dump; 0 = no filtering (new row 2026-11-19)
++0x003ff724,charge_flow_delta_pressure_derate_offset_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 64684 = 0.987 in the RAM dump; 0 = no filtering (new row 2026-11-19)
++0x003ff72c,charge_flow_turbocharger_speed_derate_offset_filter_coefficient,word,Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 0 = 0.000 in the RAM dump; 0 = no filtering (new row 2026-11-19)
+ 0x0040a5da,intake_condensation_temperature_difference,i16,CODE: store-only (sth 0x504b44, 0 reads; xref width word) in cm848_updateIntakeCondensationCount: predicted_intake_manifold_temperature - condensation_protection_temperature_margin - charge_saturation_temperature (1/64 F), dump -280 reproduces it exactly. Typed i16 like its twin egr_cooler_condensation_temperature_difference (the value is signed, no load proves it). E2M: EMO_Intake_Cond_Delta_T ... (new row 2026-11-17)
+ 0x0040a5cc,intake_condensation_partial_pressure_difference,i16,CODE: store-only (sth 0x504b84, xref width word) in cm848_updateIntakeCondensationCount: (charge_water_vapor_partial_pressure_times_4 >> 2) - the saturation vapor pressure at (predicted intake manifold temperature - margin); sets the step direction. i16 like its twin egr_cooler_condensation_partial_pressure_difference. E2M: EMO_Intake_Cond_Delta_PP 0x01196F16. (new row 2026-11-17)
+ 0x0040a5ea,intake_condensation_mass_rate,i16,CODE: store-only (sth 0x504aac, xref width word) in cm848_calculateIntakeCondensationMassRate: (charge_water_vapor_fraction - the saturation ratio) x charge_mass_flow_filtered / 2724, 0 when negative, capped 0xfffe. i16 like its twin egr_cooler_condensation_mass_rate. E2M: EMO_Intake_Cndst_Mass_Rate 0x01196F34. (new row 2026-11-17)
+diff --git a/firmware/scripts/generate_headers.py b/firmware/scripts/generate_headers.py
+index e6d7275..329b73f 100644
+--- a/firmware/scripts/generate_headers.py
++++ b/firmware/scripts/generate_headers.py
+@@ -160,6 +160,10 @@ typedef uint16_t  ushort;
+ typedef uint32_t  uint;
+ typedef uint16_t  word;
+ typedef uint32_t  dword;
++typedef int8_t    sbyte;
++typedef int16_t   sword;
++typedef int32_t   sdword;
++typedef int64_t   sqword;
+ typedef int32_t   bool32;
+ 
+ // Ghidra CONCATxy macros — concatenate x bytes of a with y bytes of b
+diff --git a/work/tasks/045-cm848-fueling-state-enum.md b/work/tasks/045-cm848-fueling-state-enum.md
+index da50420..506019e 100644
+--- a/work/tasks/045-cm848-fueling-state-enum.md
++++ b/work/tasks/045-cm848-fueling-state-enum.md
+@@ -301,6 +301,52 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
+ - **The three plate shorthand tokens** are now full names.
+ - **Cross-firmware:** none of the stage 5 old names occur in CM550's CSVs or the cross-firmware maps.
+ 
++## Stage 6a - the signed filter records typed (2026-11-19, PR #52)
++
++- **The record type already existed.** `cm848_signedFirstOrderFilter` (0x5644c) reads its record exactly as
++  `exponentialMovingAverage` reads an `ema_filter_state_t`:
++  - [0] points at the 16-bit coefficient (read as `*(short *)`; 0 = no filtering);
++  - [1] is the Q16.16 accumulator, written whole;
++  - each pass moves the accumulator (65536 - coefficient) / 65536 of the way to the sample and returns the integer
++    part, signed.
++
++  Two of its records (`egr_valve_delta_pressure_filter_state` / `egr_valve_derivative_filter_state`) and the sensor
++  channels' records were already `ema_filter_state_t`.
++- **The count.** There are 39 call sites, not the 15 found earlier: a one-line grep missed every call whose arguments
++  wrap onto the next line. 33 global records were not yet typed, and two more records are passed through a pointer.
++- **The records.** All 33 are now `ema_filter_state_t` instances, named after what they filter: the call's output,
++  or its input when the output is a local. Examples:
++  - `power_take_off_speed_error_filter` (was `protection_filter_state_ptr` + `governor_integrator_working`);
++  - `governor_speed_error_delta_filter` (was `governor_bank2_cal_ptr`);
++  - `fuel_demand_delta_filter` (was `throttle_fuel_pgn_handler_pointer`);
++  - the five fuel metering / fuel pressure governor records that were `cam_sync_*`;
++  - `pressure_correction_first_filter` / `_second_filter` (two cascaded filters);
++  - the three charge flow derate offset filters.
++
++  Names that already fit stay (the cooling fan and engine acceleration records). 0x3fb9e2 is typed but left unnamed,
++  because the names around it look suspect.
++- **The accumulator rows.** The 23 +4 rows are gone. The narrow ones had rendered `_cam_sync_*_accum = 0` because the
++  code stores a dword there. The accumulators now read `<record>.accumulator`, for example the presets
++  `power_take_off_speed_error_filter.accumulator = (int)(short)x << 0x10`.
++- **The coefficients.** 13 rows are retyped to `word`, since the filter reads 16 bits and 12 of them were typed `byte`.
++  The misleading names (`*_filter_state_cal`, `_constants`) and the ROM-copy `_cal` are gone. Eleven unnamed
++  coefficients get rows (one type only). The RAM-dump values run from 0 to 0.999.
++- **The prototypes.** `cm848_signedFirstOrderFilter` / `cm848_conditionalFirstOrderFilter` now take
++  `ema_filter_state_t *`. The return is `sword`, because the filter returns a sign-extended 16-bit value. Two wrong
++  attempts first:
++  - `int` maps to an unsigned dword in `ApplyFunctionDefinitions` (see `csv-type-reference.md`);
++  - with `int32_t`, the locked 32-bit return put a temp and a cast at every call site.
++- **Check.** All 46 names render, with no `_` variant. After mapping each field access back to the flat form it
++  replaced, 15 functions still differ, all explained:
++  - the init functions whose unnamed +4 bytes now read `.accumulator`;
++  - the two filter prototypes;
++  - type propagation in `cm848_updateAutozeroOffset` / `cm848_calculateFuelMeteringCommand` /
++    `cm848_updateEgrValveOverTemperatureFault` (the skeleton of the 2992-token fuel metering function is identical);
++  - one division in `cm848_throttleBasedFuelCalculation` that now renders through `ulonglong` (the same value: a
++    16-bit sample << 13 stays below 2^32);
++  - one declaration order change;
++  - the unnamed instance's default label.
++
+ ## Follow-ups (open)
+ 
+ - [ ] **The rest of the EMO family.** The other inputs of `fuel_demandMin_maxSelect_rateLimit` and its output
+@@ -320,12 +366,6 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
+   - the six power take-off helper functions. 0x2abc8 `cm848_initProtectionFilterState` initializes the whole
+     governor: the filter, the smoothing pointer, the QD / QI / QP adjustments = 0x80 and the four
+     `governor_pid_interp_state_*` = 2.
+-  - the power take-off speed-error filter record that `cm848_calculatePowerTakeOffGovernorSpeedError` passes to
+-    `cm848_signedFirstOrderFilter`: 0x3fafb2 `protection_filter_state_ptr` (it points at
+-    `power_take_off_speed_error_filter_coefficient`) + 0x3fafb6 `governor_integrator_working` (the filter state).
+-    These would become `power_take_off_speed_error_filter` / `_filter_state`, like `cooling_fan_speed_feedback_filter`.
+-  - a shared `{coefficient pointer, state}` struct for the 13 global `cm848_signedFirstOrderFilter` records (15 call sites; two pass a pointer through). Today each one
+-    is a flat pointer + dword.
+   - the other power take-off words with "protection" names (`protection_monitored_rpm_snapshot`,
+     `protection_rpm_axis_cal` / `_values_cal`, `governor_speed_gain_factor`);
+   - `governor_rpm_reference_snapshot` (the 1500 rpm maximum set speed).
