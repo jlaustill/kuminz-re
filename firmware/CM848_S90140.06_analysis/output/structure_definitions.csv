@@ -220,9 +220,9 @@ throttle_fuel_trim_t,0x0040a3ea,reserved_16,word,2,Gap,,needs_review
 # Total size: 12 bytes (0x0040a494-0x0040a49f)
 combustion_reference_state_t,0x0040a494,alpha_percent,word,2,Fuel blend mode selector,,verified
 combustion_reference_state_t,0x0040a494,egr_off_flag,word,2,enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100,,needs_review
-combustion_reference_state_t,0x0040a494,gross_fuel_timing_adjustment_active_flag,word,2,1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal,,needs_review
+combustion_reference_state_t,0x0040a494,gross_fuel_timing_adjustment_active_flag,word,2,1 when final_fueling_before_combustion_reference >= injection_quantity_combustion_gross_timing_adjustment_threshold,,needs_review
 combustion_reference_state_t,0x0040a494,injection_timing_fuel_limited_adjustment,word,2,dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active,,needs_review
-combustion_reference_state_t,0x0040a494,injection_quantity_gross_before_timing_adjustment,word,2,snapshot of fuel_demand_arbitrated_snapshot,,needs_review
+combustion_reference_state_t,0x0040a494,injection_quantity_gross_before_timing_adjustment,word,2,snapshot of final_fueling_before_combustion_reference,,needs_review
 combustion_reference_state_t,0x0040a494,chi_hundredths,word,2,Fuel blend weight factor (0-100%),,verified
 # Boost Pressure State - turbocharger boost control values
 # Used by boostBasedFuelModifier and calculateBoostPressureOffset
@@ -789,7 +789,7 @@ fault_entry_t,,diagnostic_fault_flags_b,word,2,Sensor scale factor 2,,verified
 fault_entry_t,,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
 fault_entry_t,,final_fueling_state,byte,1,Low byte of final_fueling_state when the freeze frame was stored (hpcr_setFaultActiveStatus) (was governor_mode_code - Pressure fuel adjustment byte),,verified
 fault_entry_t,,battery_voltage,word,2,Battery voltage reading at fault time,,verified
-fault_entry_t,,fuel_demand_computed,word,2,Processed load/throttle value,,verified
+fault_entry_t,,final_fueling,word,2,final_fueling (e2m Final_Fueling) when the fault was recorded (was fuel_demand_computed: Processed load/throttle value),,verified
 fault_entry_t,,main_injection_timing,word,2,Torque limit factor at fault time,,verified
 fault_entry_t,,fuel_metering_feedback,word,2,Diagnostic data word 1,,verified
 fault_entry_t,,fuel_metering_feedback_fault,byte,1,Diagnostic data byte 3,,verified

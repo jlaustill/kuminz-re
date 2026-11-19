@@ -735,12 +735,12 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     55 / 58 / 61 ...) and named the rest. Only 32 / 37 / 38 / 49 / 50 stay `FUELING_STATE_UNIDENTIFIED_<n>`.
   - **The chain:** `engine_operating_mode` → `operating_mode_governor_output.mode_code` (adds 4, the power take-off
     governor) → `governor_fuel_demand_working_mode` (0x40b67c, was `governor_pid_integral_snapshot`; adds 9, cruise
-    control) → `governor_fuel_demand_mode` (0x40a154; adds 10 vehicle speed limit, 11 low speed governor, 12 high
+    control) → `adjusted_user_fueling_state` (0x40a154; adds 10 vehicle speed limit, 11 low speed governor, 12 high
     speed governor).
-  - **The arbitration:** `cm848_arbitrateGovernedFueling` sets `governor_fuel_demand_mode` to the smallest of the
+  - **The arbitration:** `cm848_arbitrateGovernedFueling` sets `adjusted_user_fueling_state` to the smallest of the
     user demand, the high speed governor fuel and the vehicle speed limit fuel. Then the low speed governor wins as a
     max select at or below its speed.
-  - **One numbering, proved in the code:** `cm848_arbitrateRequestedFueling` writes either `governor_fuel_demand_mode`
+  - **One numbering, proved in the code:** `cm848_arbitrateRequestedFueling` writes either `adjusted_user_fueling_state`
     or `torque_derate_fuel_source_code` (13, 20, ...) into `requested_fueling_state`, as CM550 does into FSLMDSST.
   - **The later stages (stage 2):** the derate chain `torque_derate_fuel_source_code` (FSLMFLST), then
     `fuel_demand_arbitrated_state` (with `fuel_demand_minimum_tracked_state`), then the combustion stage
@@ -842,6 +842,13 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - The air handling system protection AECD (`algorithm_enable_flags_20_cal` bit 0x100) is the only AECD enabled on
       this truck.
     - The power take-off helpers and settings are named too (see task 045).
+  - **Stage 7: the whole-CSV e2m audit and rename wave 12.**
+    - `firmware/scripts/e2m_name_audit.py` lists every table-resolved e2m record against the row at its address.
+    - Wave 12 named the 383 unnamed addresses the code uses, after six agents checked each record's code use and width.
+    - Layout drift between the 11.45 e2m and the truck's 11.46.06 exists: the 10E3 tail is block 1228, 8A2B +24 is 8A37,
+      and 8A14 / 1930 / 1902 / 1253 drift partway. Check a record's code use before trusting its offset.
+    - The fueling chain took its e2m names: `adjusted_user_fueling_state` (was `governor_fuel_demand_mode`, [FSGVFLST]),
+      `final_fueling`, `requested_fueling`, `torque_derate_torque_limit`.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

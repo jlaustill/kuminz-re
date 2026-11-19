@@ -392,12 +392,80 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - **Also renamed:** `emission_manager_engine_protection_fixed_chi_hundredths` (was
   `combustion_status_flag_chi_hundredths`) and `cm848_debounceCruiseSwitchRequest`.
 
+## Stage 7 - the whole-CSV e2m audit and rename wave 12 (2026-11-19, PR #52)
+
+- **The audit.** `firmware/scripts/e2m_name_audit.py` resolves every scalar e2m record through the parameter ID table
+  and lists the row at its address (tests: `test_e2m_name_audit.py`). It also gives the dump value against the
+  record's range and a word-overlap score against the current name.
+  - **4691 records resolve:** 3000 already named, 1397 without a row, 244 inside a wider row (struct / array / dword),
+    50 on unnamed rows.
+  - **The 1610 low-overlap named rows** are mostly struct instances (compared by instance, not by field) and synonyms.
+    Real misnames are among them. They are the next wave, not this one.
+- **Wave 12: the unnamed records the code uses.** 398 records had no name, a code reference and an in-range dump
+  value.
+  - Six read-only Sonnet agents each took one bin of whole blocks, with precomputed context: code lines, width
+    census, the block's named rows. They named each record from the e2m, checked the code use and the width, and
+    rejected drift.
+  - **Verdicts:** 384 confirmed, 6 uncertain, 8 rejected. The gate (apply_renames.py rules plus cross-bin duplicates,
+    collisions, present rows and type against size) passed 383; one address is resolved by two blocks.
+  - **Layout drift between the labelled 11.45 e2m and the truck's 11.46.06:**
+    - the 10E3 tail is block 1228;
+    - 8A2B +24 is 8A37 +0;
+    - 8A14 drifts from +2C, 1930 from +12, and 1902 at +2A-+2E;
+    - block 1253's fault slot order differs.
+    In every case the code confirmed the table's block, not the e2m offset.
+  - **After the build:**
+    - all 393 names render, with no `_` variants; build warnings are unchanged;
+    - 32 functions differ, all from typing the new rows: casts, local types and renumbered temporaries, local
+      declaration order, `PTR_<target>_<address>` labels of unnamed pointers, one table base now indexed as dwords;
+    - one bad render was fixed: a 4-byte software version read bytewise, now `byte[4]`.
+- **The fueling chain's own e2m names (blocks 1045 / 1051, checked against their writers):**
+  - `adjusted_user_fueling` / `adjusted_user_fueling_state` (were `governor_fuel_demand_value` /
+    `governor_fuel_demand_mode`, [FSGVFL] / [FSGVFLST]: the symbol this PR started from);
+  - `final_fueling` (was `fuel_demand_computed`, [FSFNFL], plus the freeze-frame field) and `requested_fueling`;
+  - `master_slave_control_flag` and `torque_control_indication_flag`;
+  - `torque_derate_torque_limit` / `_state`. Stage 4 named these after the power take-off, which is only one of their
+    sources;
+  - the two "before combustion reference" values.
+
 ## Follow-ups (open)
 
-- [ ] **An e2m audit of the whole CSV with the parameter ID table.** Resolve every e2m record, then compare each
-  address's current name with the record. Many blocks are already consistent (1711, the CBO off-nominal words), but
-  the table can name hundreds of rows and catch misnames mechanically. 445 of the 1886 records lie past the end of the
-  flash2 dump; a fuller dump would complete it.
+- [ ] **Wave 13: the misname review** (the audit's 1610 low-overlap named rows, the 244 rows inside wider rows, the 24
+  out-of-range records). The wave-12 agents' leads, all table-resolved or proved in code:
+  - the `diag_dm1_*` words around 0x3fddb6 / 0x40c278 are the e2m data collector (blocks 0030-003B), not DM1;
+  - `sensor_channel109_*` is the exhaust pressure sensor. `boost_pressure_synthetic_ema` / `boost_synthetic_ema_*` /
+    `boost_correction_mode_flags` are the exhaust pressure estimate (1772);
+  - `boost_target_*` is the exhaust temperature estimate;
+  - `engine_to_vehicle_speed_ratio_*` is the transfer case low-range detection (8C60);
+  - `engine_temperature_protection_filter_state` is the exponentialMovingAverage record of `drivetrain_ratio` (it
+    filters `drivetrain_ratio_raw`), not a temperature;
+  - `cruise_speed_factor_*` / `cruise_speed_offset*` are the high speed governor lead / lag compensator and fueling
+    top-droop offsets. `cruise_ramp_zone_*_fuel_demand_threshold` are the top droop widths;
+  - the `etc1_*` timers reload from the 10E7 cells; `j1939_fault_load_protection_*` is the P1762 monitor; the
+    `protection_*` rows at 0x408ad2-0x408ade are P1740 converter clutch rationality; the 8C59 rows are the 48RE
+    governor pressure monitors;
+  - `faultTimerHandler` / `cm848_updateProtection*` build PGN 65251 (engine configuration);
+    `cm848_j1939FormatDm1Message` is the TSC1 lost management; `cm848_governorDroopCalculation` is a number-to-text
+    helper;
+  - the alpha names in 0xe0f4-0xe518 (`cold_start_*`, `intake_temp_ema`, `fuel_demand_ramp_factor`);
+    `thermal_fuel_limit_factor` is Fuel_Interp_Factor; `injection_timing_demand_output` is the low-horsepower-curve
+    full-throttle fueling;
+  - `cam_sync_validation_*` is the fuel pressure key-on rationality; the 10EB gains sit on `governor_*_from_table`
+    names; `j1939_feature_config_word` is DM5's non-continuous monitors;
+  - wrong `_cal` on ROM cells: `etc1_torque_mode_timeout_cal`, `fuel_demand_norm_zero_cal`, `cruise_speed_default_cal`,
+    `protection_threshold_scale_cal`.
+- [ ] **Shapes found by wave 12:**
+  - the J1939 DTC definition table (0x5a4aa, `dword[170]`);
+  - the fault aging table (0x5983a, 4 x {elapsed, rate});
+  - the cruise gain sets (0x408e02 / 18 / 26); the 36-byte fault derate channel record (0x597b2); the 10EB gain set
+    (0x5c4a6).
+- [ ] **Wave-12 rows left out:**
+  - the tau-0 / tau-1 polarity of 0x5c35a-0x5c362 (the code reads the "Tau_0" pair at the other blend end);
+  - the `j1939_command_security_flags` shape (`dword` or `byte[4]`);
+  - `exhaust_pressure_sensor_value_copy`;
+  - the 8 drift rejects (with code-based names in their evidence).
+
+- [x] **An e2m audit of the whole CSV with the parameter ID table:** done in stage 7 (`e2m_name_audit.py`, wave 12). The misname half is wave 13 above.
 - [ ] **Leads from the stage-6 reports, not yet applied:**
   - 0x40a19a `boost_fuel_demand_blend_a` is e2m 1921 +6 Ambient_Air_Tmptr, the real ambient air temperature.
     0x40a608 `ambient_air_temperature_selected` is e2m 1A0C +0 Compressor_Inlet_Tmptr. Both were checked with
