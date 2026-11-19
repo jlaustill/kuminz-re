@@ -407,6 +407,13 @@ function_address,function_name,param_index,name,type,comment
 0x00056594,exponentialMovingAverage,return,,uint,Filtered value: the integer part of the updated accumulator
 0x00056594,exponentialMovingAverage,0,value,uint,New sample (r3)
 0x00056594,exponentialMovingAverage,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place
+0x0005644c,cm848_signedFirstOrderFilter,return,,sword,Filtered value: the integer part of the updated accumulator (signed)
+0x0005644c,cm848_signedFirstOrderFilter,0,value,int32_t,New sample (r3) - signed
+0x0005644c,cm848_signedFirstOrderFilter,1,filter_state,ema_filter_state_t *,Filter state (r4) - coefficient pointer and Q16.16 accumulator - updated in place; coefficient 0 = no filtering (the signed twin of exponentialMovingAverage)
+0x000185cc,cm848_conditionalFirstOrderFilter,return,,sword,The filtered value - or with update_enable 0 the integer part of the accumulator unchanged
+0x000185cc,cm848_conditionalFirstOrderFilter,0,value,int32_t,New sample (r3)
+0x000185cc,cm848_conditionalFirstOrderFilter,1,update_enable,int32_t,0 = only read the filter output (r4)
+0x000185cc,cm848_conditionalFirstOrderFilter,2,filter_state,ema_filter_state_t *,Filter state (r5) passed to cm848_signedFirstOrderFilter
 0x00010110,cm848_initEngineOperatingMode,return,,void,
 0x00010110,cm848_initEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
 0x00503074,cm848_engineMode_reset,return,,void,

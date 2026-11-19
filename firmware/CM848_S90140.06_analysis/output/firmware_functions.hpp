@@ -391,9 +391,9 @@ void cm848_processThrottlePositionLookups(void);  // @ 0x0001820c
 void cm848_calculateThrottleProtectionLimit(void);  // @ 0x000182e8
 void cm848_updateEgrDeltaPressureAutozeroConditions(void);  // @ 0x00018384
 void cm848_updateEgrDeltaPressureAutozeroCompleteFlag(void);  // @ 0x000184f0
-int cm848_conditionalFirstOrderFilter(undefined4 param_1,int param_2,int param_3);  // @ 0x000185cc
+sword cm848_conditionalFirstOrderFilter (int value,int update_enable,ema_filter_state_t *filter_state);  // @ 0x000185cc
 void cm848_updateAutozeroErrorCounter(short *param_1);  // @ 0x0001860c
-void cm848_updateAutozeroOffset(undefined2 *param_1);  // @ 0x00018780
+void cm848_updateAutozeroOffset(sword *param_1);  // @ 0x00018780
 void cm848_updateEgrDeltaPressureAutozero(void);  // @ 0x00018904
 void cm848_selectEgrDeltaPressure(void);  // @ 0x00018a50
 void cm848_runEgrDeltaPressureAutozero(void);  // @ 0x00018ac0
@@ -1286,7 +1286,7 @@ void cm848_extendedDivisionWithRemainder (uint param_1,uint param_2,uint param_3
 int cm848_signedDivisionWithSaturation(uint param_1,int param_2);  // @ 0x00056260
 int cm848_clampedDivisionWithBounds(uint param_1,int param_2,int param_3,int param_4);  // @ 0x000562fc
 uint cm848_saturatingDivision16(uint param_1,uint param_2);  // @ 0x000563e8
-int cm848_signedFirstOrderFilter(int param_1,undefined4 *param_2);  // @ 0x0005644c
+sword cm848_signedFirstOrderFilter(int value,ema_filter_state_t *filter_state);  // @ 0x0005644c
 int cm848_secondOrderFilter(short param_1,undefined4 *param_2);  // @ 0x000564c0
 dword exponentialMovingAverage(dword value,ema_filter_state_t *filter_state);  // @ 0x00056594
 undefined4 cm848_interpolateTableLinearStep(int param_1,undefined4 *param_2);  // @ 0x00056608

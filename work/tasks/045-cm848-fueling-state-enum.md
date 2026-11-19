@@ -301,6 +301,52 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - **The three plate shorthand tokens** are now full names.
 - **Cross-firmware:** none of the stage 5 old names occur in CM550's CSVs or the cross-firmware maps.
 
+## Stage 6a - the signed filter records typed (2026-11-19, PR #52)
+
+- **The record type already existed.** `cm848_signedFirstOrderFilter` (0x5644c) reads its record exactly as
+  `exponentialMovingAverage` reads an `ema_filter_state_t`:
+  - [0] points at the 16-bit coefficient (read as `*(short *)`; 0 = no filtering);
+  - [1] is the Q16.16 accumulator, written whole;
+  - each pass moves the accumulator (65536 - coefficient) / 65536 of the way to the sample and returns the integer
+    part, signed.
+
+  Two of its records (`egr_valve_delta_pressure_filter_state` / `egr_valve_derivative_filter_state`) and the sensor
+  channels' records were already `ema_filter_state_t`.
+- **The count.** There are 39 call sites, not the 15 found earlier: a one-line grep missed every call whose arguments
+  wrap onto the next line. 33 global records were not yet typed, and two more records are passed through a pointer.
+- **The records.** All 33 are now `ema_filter_state_t` instances, named after what they filter: the call's output,
+  or its input when the output is a local. Examples:
+  - `power_take_off_speed_error_filter` (was `protection_filter_state_ptr` + `governor_integrator_working`);
+  - `governor_speed_error_delta_filter` (was `governor_bank2_cal_ptr`);
+  - `fuel_demand_delta_filter` (was `throttle_fuel_pgn_handler_pointer`);
+  - the five fuel metering / fuel pressure governor records that were `cam_sync_*`;
+  - `pressure_correction_first_filter` / `_second_filter` (two cascaded filters);
+  - the three charge flow derate offset filters.
+
+  Names that already fit stay (the cooling fan and engine acceleration records). 0x3fb9e2 is typed but left unnamed,
+  because the names around it look suspect.
+- **The accumulator rows.** The 23 +4 rows are gone. The narrow ones had rendered `_cam_sync_*_accum = 0` because the
+  code stores a dword there. The accumulators now read `<record>.accumulator`, for example the presets
+  `power_take_off_speed_error_filter.accumulator = (int)(short)x << 0x10`.
+- **The coefficients.** 13 rows are retyped to `word`, since the filter reads 16 bits and 12 of them were typed `byte`.
+  The misleading names (`*_filter_state_cal`, `_constants`) and the ROM-copy `_cal` are gone. Eleven unnamed
+  coefficients get rows (one type only). The RAM-dump values run from 0 to 0.999.
+- **The prototypes.** `cm848_signedFirstOrderFilter` / `cm848_conditionalFirstOrderFilter` now take
+  `ema_filter_state_t *`. The return is `sword`, because the filter returns a sign-extended 16-bit value. Two wrong
+  attempts first:
+  - `int` maps to an unsigned dword in `ApplyFunctionDefinitions` (see `csv-type-reference.md`);
+  - with `int32_t`, the locked 32-bit return put a temp and a cast at every call site.
+- **Check.** All 46 names render, with no `_` variant. After mapping each field access back to the flat form it
+  replaced, 15 functions still differ, all explained:
+  - the init functions whose unnamed +4 bytes now read `.accumulator`;
+  - the two filter prototypes;
+  - type propagation in `cm848_updateAutozeroOffset` / `cm848_calculateFuelMeteringCommand` /
+    `cm848_updateEgrValveOverTemperatureFault` (the skeleton of the 2992-token fuel metering function is identical);
+  - one division in `cm848_throttleBasedFuelCalculation` that now renders through `ulonglong` (the same value: a
+    16-bit sample << 13 stays below 2^32);
+  - one declaration order change;
+  - the unnamed instance's default label.
+
 ## Follow-ups (open)
 
 - [ ] **The rest of the EMO family.** The other inputs of `fuel_demandMin_maxSelect_rateLimit` and its output
@@ -320,12 +366,6 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - the six power take-off helper functions. 0x2abc8 `cm848_initProtectionFilterState` initializes the whole
     governor: the filter, the smoothing pointer, the QD / QI / QP adjustments = 0x80 and the four
     `governor_pid_interp_state_*` = 2.
-  - the power take-off speed-error filter record that `cm848_calculatePowerTakeOffGovernorSpeedError` passes to
-    `cm848_signedFirstOrderFilter`: 0x3fafb2 `protection_filter_state_ptr` (it points at
-    `power_take_off_speed_error_filter_coefficient`) + 0x3fafb6 `governor_integrator_working` (the filter state).
-    These would become `power_take_off_speed_error_filter` / `_filter_state`, like `cooling_fan_speed_feedback_filter`.
-  - a shared `{coefficient pointer, state}` struct for the 13 global `cm848_signedFirstOrderFilter` records (15 call sites; two pass a pointer through). Today each one
-    is a flat pointer + dword.
   - the other power take-off words with "protection" names (`protection_monitored_rpm_snapshot`,
     `protection_rpm_axis_cal` / `_values_cal`, `governor_speed_gain_factor`);
   - `governor_rpm_reference_snapshot` (the 1500 rpm maximum set speed).

@@ -83,7 +83,10 @@ call site. To undo a bad prototype, fix/remove the row and rebuild.
 
 **Type keywords (`function_definitions.csv` and `local_variables.csv`):**
 - `int` / `uint` / `dword` / `uint32_t` → unsigned `dword`. For a signed 32-bit value use **`int32_t`** (signed `int`, added 2026-11-14). The `int` mapping was left alone so existing rows do not re-render.
-- `short` / `ushort` / `word` / `uint16_t` → unsigned `word`. There is no signed 16-bit keyword for prototypes or locals yet.
+- `short` / `ushort` / `word` / `uint16_t` → unsigned `word`. There is no signed 16-bit keyword, but **`sword`** works: unknown names fall through to a by-name lookup, and `sword` is Ghidra's signed word (the program has it once any global is `i16`). It was found 2026-11-19 on `cm848_signedFirstOrderFilter`, which returns a sign-extended 16-bit value.
+  - `int32_t` there put `iVar = f(...); x = (word)iVar;` at all 39 call sites: a locked 32-bit return is kept whole.
+  - `sword` gave back the direct `x = f(...)`.
+  - The headers need `typedef int16_t sword;`; `generate_headers.py` has carried `sbyte` / `sword` / `sdword` / `sqword` since then.
 - The other CSVs use different mappers: `structure_definitions.csv` (ApplyStructures) maps `int` / `short` to **signed** types, and `global_variables.csv` (ImportAnalysis) has its own signed keywords `i8` / `i16` / `i32` and no `int` case (an `int` there goes to a named-type lookup). ApplyGlobalVariableTypes is a further copy, but only the unused `cmd_vartypes` reaches it.
 - `undefined4` locks only the **name**; the decompiler keeps inferring the type. Use it for a 4-byte parameter whose inferred type is already right.
 - A 2-byte parameter committed as `undefined4` renders as `x._2_2_` sub-pieces — give it `ushort`.

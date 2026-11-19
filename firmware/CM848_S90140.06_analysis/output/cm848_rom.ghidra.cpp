@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Nov 19 13:01:57 MST 2026
+// Generated: Thu Nov 19 13:39:50 MST 2026
 
 
 //
@@ -10129,7 +10129,9 @@ void cm848_calculateChargeFlowCompressorOutletTemperatureDerate(void)
     wVar1 = wVar2;
   }
   charge_flow_compressor_outlet_temperature_derate_offset =
-       cm848_signedFirstOrderFilter((int)(short)wVar1,&PTR_DAT_003fa140);
+       cm848_signedFirstOrderFilter
+                 ((int)(short)wVar1,&charge_flow_compressor_outlet_temperature_derate_offset_filter)
+  ;
   if (uVar4 < charge_flow_compressor_outlet_temperature_derate_ratio) {
     charge_flow_compressor_outlet_temperature_derate_offset = 0xe700;
   }
@@ -10181,7 +10183,8 @@ void cm848_calculateChargeFlowDeltaPressureDerate(void)
     wVar1 = wVar2;
   }
   charge_flow_delta_pressure_derate_offset =
-       cm848_signedFirstOrderFilter((int)(short)wVar1,&PTR_DAT_003fa148);
+       cm848_signedFirstOrderFilter
+                 ((int)(short)wVar1,&charge_flow_delta_pressure_derate_offset_filter);
   if (uVar4 < charge_flow_delta_pressure_derate_ratio) {
     charge_flow_delta_pressure_derate_offset = 0xe700;
   }
@@ -10354,7 +10357,8 @@ void cm848_calculateChargeFlowTurbochargerSpeedDerate(void)
     wVar2 = wVar3;
   }
   charge_flow_turbocharger_speed_derate_offset =
-       cm848_signedFirstOrderFilter((int)(short)wVar2,&PTR_DAT_003fa138);
+       cm848_signedFirstOrderFilter
+                 ((int)(short)wVar2,&charge_flow_turbocharger_speed_derate_offset_filter);
   if (uVar5 < charge_flow_turbocharger_speed_derate_ratio) {
     charge_flow_turbocharger_speed_derate_offset = 0xe700;
   }
@@ -10388,12 +10392,15 @@ void cm848_initializeChargeManagerLimiters(void)
   DAT_003fa132 = 2;
   DAT_003fa134 = 2;
   DAT_003fa136 = 2;
-  DAT_003fa13c = 0;
-  PTR_DAT_003fa138 = &DAT_003ff72c;
-  DAT_003fa144 = 0;
-  PTR_DAT_003fa140 = &DAT_003ff71c;
-  DAT_003fa14c = 0;
-  PTR_DAT_003fa148 = &DAT_003ff724;
+  charge_flow_turbocharger_speed_derate_offset_filter.accumulator = 0;
+  charge_flow_turbocharger_speed_derate_offset_filter.coefficient =
+       &charge_flow_turbocharger_speed_derate_offset_filter_coefficient;
+  charge_flow_compressor_outlet_temperature_derate_offset_filter.accumulator = 0;
+  charge_flow_compressor_outlet_temperature_derate_offset_filter.coefficient =
+       &charge_flow_compressor_outlet_temperature_derate_offset_filter_coefficient;
+  charge_flow_delta_pressure_derate_offset_filter.accumulator = 0;
+  charge_flow_delta_pressure_derate_offset_filter.coefficient =
+       &charge_flow_delta_pressure_derate_offset_filter_coefficient;
   return;
 }
 
@@ -11417,8 +11424,7 @@ void cm848_calculateLoadBasedFuelTrim(void)
   }
   throttle_fuel_trim_t_0040a3ea.rpm_conversion = 0x8148;
 LAB_000124ac:
-  x_input = cm848_signedFirstOrderFilter
-                      ((int)(short)egr_valve_position,&throttle_filter_coeff_data_pointer);
+  x_input = cm848_signedFirstOrderFilter((int)(short)egr_valve_position,&egr_valve_position_filter);
   throttle_fuel_trim_t_0040a3ea.reserved_0c =
        cm848_dualAxisTableInterpolation
                  (&diag_state_group5_c_state,x_input,throttle_rpm_axis_cal,
@@ -11635,12 +11641,13 @@ void cm848_throttleBasedFuelCalculation(void)
                     (&DAT_003fa3b8,(int)(short)throttle_fuel_trim_t_0040a3ea.final_trim,
                      (uVar4 & 0xffff) / 10);
   egr_mass_flow_delayed_filtered =
-       cm848_signedFirstOrderFilter((int)sVar3,&throttle_filter_coeff_table_b_pointer);
+       cm848_signedFirstOrderFilter((int)sVar3,&egr_mass_flow_delayed_filter);
   if ((short)charge_mass_flow_filtered < 0x41) {
     uVar4 = 0;
   }
   else {
-    uVar4 = ((uint)egr_mass_flow_delayed_filtered << 0xd) / (uint)charge_mass_flow_filtered;
+    uVar4 = (uint)(((ulonglong)egr_mass_flow_delayed_filtered << 0xd) /
+                  (ulonglong)charge_mass_flow_filtered);
     if (0x1fff < uVar4) {
       uVar4 = 0x2000;
     }
@@ -11665,11 +11672,11 @@ void cm848_initFilterCoefficients(void)
   diag_state_group6_a_state = 2;
   diag_state_group6_b_state = 2;
   throttle_filter_state.accumulator = 0;
-  throttle_filter_state.coefficient = &throttle_filter_coefficient;
-  throttle_filter_coeff_table_b_index = 0;
-  throttle_filter_coeff_table_b_pointer = (undefined *)&throttle_filter_coefficient;
-  throttle_filter_coeff_data_index = 0;
-  throttle_filter_coeff_data_pointer = &throttle_filter_coeff_data_cal;
+  throttle_filter_state.coefficient = &egr_mass_flow_delayed_filter_coefficient;
+  egr_mass_flow_delayed_filter.accumulator = 0;
+  egr_mass_flow_delayed_filter.coefficient = &egr_mass_flow_delayed_filter_coefficient;
+  egr_valve_position_filter.accumulator = 0;
+  egr_valve_position_filter.coefficient = &egr_valve_position_filter_coefficient;
   return;
 }
 
@@ -11936,7 +11943,8 @@ void cm848_calculatePredictedIntakeManifoldTemperature(void)
             (short)iVar4;
   }
   predicted_intake_manifold_temperature =
-       cm848_signedFirstOrderFilter((int)(short)wVar5,&PTR_DAT_003fa5ea);
+       cm848_signedFirstOrderFilter((int)(short)wVar5,&predicted_intake_manifold_temperature_filter)
+  ;
   return;
 }
 
@@ -11950,8 +11958,10 @@ void mpc555_initManifoldPressureFilter(void)
 
 {
   predicted_intake_manifold_temperature = intake_manifold_temperature_filtered;
-  DAT_003fa5ee = (int)(short)intake_manifold_temperature_filtered << 0x10;
-  PTR_DAT_003fa5ea = &DAT_004009d6;
+  predicted_intake_manifold_temperature_filter.accumulator =
+       (int)(short)intake_manifold_temperature_filtered << 0x10;
+  predicted_intake_manifold_temperature_filter.coefficient =
+       &predicted_intake_manifold_temperature_filter_coefficient;
   return;
 }
 
@@ -12392,7 +12402,7 @@ void cm848_processBoostProtectionMode(undefined4 param_1,int param_2)
     iVar1 = 0x5780;
   }
   fuel_demand_boost_offset_filtered =
-       cm848_signedFirstOrderFilter((int)(short)iVar1,&PTR_DAT_003fa60e);
+       cm848_signedFirstOrderFilter((int)(short)iVar1,&fuel_demand_boost_offset_filter);
   return;
 }
 
@@ -12405,8 +12415,8 @@ void cm848_processBoostProtectionMode(undefined4 param_1,int param_2)
 void cm848_initBoostProtectionState(void)
 
 {
-  DAT_003fa612 = (int)(short)sensor_channel9_pressure_value << 0x10;
-  PTR_DAT_003fa60e = &DAT_00405200;
+  fuel_demand_boost_offset_filter.accumulator = (int)(short)sensor_channel9_pressure_value << 0x10;
+  fuel_demand_boost_offset_filter.coefficient = &fuel_demand_boost_offset_filter_coefficient;
   if ((fuel_demand_state_b == 2) ||
      ((combustion_override_and_estimation_enable_flags_cal & 0x4000) == 0)) {
     injection_enable_mode_byte = 0x80;
@@ -12487,9 +12497,11 @@ void cm848_calculatePressureSensorFiltered(void)
   if (((iVar2 == 0) && (air_handling_compensation_and_diagnostic_bypass_cal == 0)) &&
      ((algorithm_enable_flags_20_cal & 0x4000) != 0)) {
     pressure_correction_filter1_working =
-         cm848_signedFirstOrderFilter((int)(short)pressure_correction_raw,&PTR_DAT_003fa624);
+         cm848_signedFirstOrderFilter
+                   ((int)(short)pressure_correction_raw,&pressure_correction_first_filter);
     wVar1 = cm848_signedFirstOrderFilter
-                      ((int)(short)pressure_correction_filter1_working,&PTR_DAT_003fa62c);
+                      ((int)(short)pressure_correction_filter1_working,
+                       &pressure_correction_second_filter);
   }
   condition_monitor_status_working = wVar1;
   if ((((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 8) != 0) &&
@@ -12546,10 +12558,11 @@ void cm848_initializeIntakeTemperatureFilterStates(void)
   sensor_channel9_pressure_snapshot = sensor_channel9_pressure_value;
   intake_manifold_temperature_filtered = sensor_channel9_pressure_value;
   DAT_003fa618 = 2;
-  DAT_003fa628 = (int)(short)sensor_channel9_pressure_value << 0x10;
-  PTR_DAT_003fa624 = &DAT_00405206;
-  DAT_003fa630 = (int)(short)sensor_channel9_pressure_value << 0x10;
-  PTR_DAT_003fa62c = &DAT_00405206;
+  pressure_correction_first_filter.accumulator = (int)(short)sensor_channel9_pressure_value << 0x10;
+  pressure_correction_first_filter.coefficient = &pressure_correction_filter_coefficient;
+  pressure_correction_second_filter.accumulator = (int)(short)sensor_channel9_pressure_value << 0x10
+  ;
+  pressure_correction_second_filter.coefficient = &pressure_correction_filter_coefficient;
   if ((sensor_channel9_fault_status == 0) || (sensor_channel9_fault_status == 1)) {
     fuel_demand_phase_state = 0;
   }
@@ -14922,8 +14935,7 @@ LAB_000178d0:
        fuel_demand_control_t_0040a57a.calculated - throttle_fuel_enable_flag._2_2_;
   fuel_demand_control_t_0040a57a.delta_filtered =
        cm848_signedFirstOrderFilter
-                 ((int)(short)fuel_demand_control_t_0040a57a.delta,
-                  &throttle_fuel_pgn_handler_pointer);
+                 ((int)(short)fuel_demand_control_t_0040a57a.delta,&fuel_demand_delta_filter);
   throttle_fuel_enable_flag._2_2_ = fuel_demand_control_t_0040a57a.calculated;
   return;
 }
@@ -14990,8 +15002,8 @@ void cm848_initFuelDemandRateVariables(void)
   fuel_demand_control_t_0040a57a.throttle_based = throttle_fuel_demand_threshold_cal + 4;
   fuel_demand_control_t_0040a57a.accelerator_off_idle = 0;
   throttle_fuel_enable_flag._2_2_ = 0;
-  throttle_fuel_pgn_handler_index = 0;
-  throttle_fuel_pgn_handler_pointer = &DAT_0005c2aa;
+  fuel_demand_delta_filter.accumulator = 0;
+  fuel_demand_delta_filter.coefficient = &fuel_demand_delta_filter_coefficient;
   return;
 }
 
@@ -15458,18 +15470,19 @@ void cm848_updateEgrDeltaPressureAutozeroCompleteFlag(void)
 // Function: cm848_conditionalFirstOrderFilter @ 0x000185cc
 //
 
-int cm848_conditionalFirstOrderFilter(undefined4 param_1,int param_2,int param_3)
+sword cm848_conditionalFirstOrderFilter
+                (int value,int update_enable,ema_filter_state_t *filter_state)
 
 {
-  short sVar1;
+  sword sVar1;
   
-  if (param_2 == 0) {
-    sVar1 = (short)((uint)*(undefined4 *)(param_3 + 4) >> 0x10);
+  if (update_enable == 0) {
+    sVar1 = (sword)(filter_state->accumulator >> 0x10);
   }
   else {
-    sVar1 = cm848_signedFirstOrderFilter(param_1,param_3);
+    sVar1 = cm848_signedFirstOrderFilter(value,filter_state);
   }
-  return (int)sVar1;
+  return sVar1;
 }
 
 
@@ -15579,26 +15592,26 @@ void cm848_updateAutozeroErrorCounter(short *param_1)
    filters the sample into the offset (cm848_conditionalFirstOrderFilter) only when the enable time
    has passed and the sample is inside the tolerance. (was cm848_processFaultStateWithFilter) */
 
-void cm848_updateAutozeroOffset(undefined2 *param_1)
+void cm848_updateAutozeroOffset(sword *param_1)
 
 {
   ushort uVar1;
-  undefined2 uVar2;
+  sword sVar2;
   uint uVar3;
   uint uVar4;
   uint uVar5;
-  undefined4 uVar6;
+  int update_enable;
   ushort local_20;
-  undefined2 local_1e;
-  undefined2 local_1c;
+  sword local_1e;
+  sword local_1c;
   ushort local_1a;
-  undefined2 local_18;
-  undefined2 local_16;
-  undefined2 local_14;
-  undefined2 local_12;
+  sword local_18;
+  sword local_16;
+  sword local_14;
+  sword local_12;
   undefined2 local_10;
-  undefined2 local_e;
-  undefined2 local_c;
+  sword local_e;
+  sword local_c;
   
   uVar1 = param_1[4];
   uVar3 = (uint)(ushort)param_1[5];
@@ -15612,9 +15625,9 @@ void cm848_updateAutozeroOffset(undefined2 *param_1)
       uVar5 = uVar1 + uVar4;
     }
   }
-  param_1[4] = (short)uVar5;
+  param_1[4] = (sword)uVar5;
   local_20 = (ushort)(uVar3 <= (uVar5 & 0xffff));
-  uVar3 = (uint)(short)param_1[1];
+  uVar3 = (uint)param_1[1];
   if ((int)uVar3 < 0) {
     uVar3 = -uVar3;
   }
@@ -15633,14 +15646,14 @@ void cm848_updateAutozeroOffset(undefined2 *param_1)
   param_1[7] = local_18;
   param_1[10] = local_c;
   if ((local_20 == 0) || (local_1a != 0)) {
-    uVar6 = 0;
+    update_enable = 0;
   }
   else {
-    uVar6 = 1;
+    update_enable = 1;
   }
-  uVar2 = cm848_conditionalFirstOrderFilter
-                    ((int)(short)param_1[1],uVar6,*(undefined4 *)(param_1 + 0xc));
-  *param_1 = uVar2;
+  sVar2 = cm848_conditionalFirstOrderFilter
+                    ((int)param_1[1],update_enable,*(ema_filter_state_t **)(param_1 + 0xc));
+  *param_1 = sVar2;
   return;
 }
 
@@ -16082,7 +16095,7 @@ void cm848_updateEgrValveMeanSquaredCurrent(void)
 void cm848_updateEgrValveOverTemperatureFault(void)
 
 {
-  short sVar1;
+  sword sVar1;
   uint uVar2;
   uint uVar3;
   
@@ -20142,14 +20155,13 @@ void runHighSpeedGovernorPid(void)
     iVar8 = 0x7fff;
   }
   high_speed_governor_filtered_error =
-       cm848_signedFirstOrderFilter
-                 ((int)(short)iVar8,&high_speed_governor_error_filter_coefficient_pointer);
+       cm848_signedFirstOrderFilter((int)(short)iVar8,&high_speed_governor_error_filter);
   wVar3 = high_speed_governor_filtered_error_maximum;
   if (((short)high_speed_governor_filtered_error_maximum < (short)high_speed_governor_filtered_error
       ) || (wVar3 = high_speed_governor_filtered_error_minimum,
            (short)high_speed_governor_filtered_error <
            (short)high_speed_governor_filtered_error_minimum)) {
-    high_speed_governor_error_filter_accumulator = (int)(short)wVar3 << 0x10;
+    high_speed_governor_error_filter.accumulator = (int)(short)wVar3 << 0x10;
     high_speed_governor_filtered_error = wVar3;
   }
   if ((((int)((uint)engine_speed_limit_arbitration.applied_speed_limit +
@@ -20160,7 +20172,7 @@ void runHighSpeedGovernorPid(void)
     high_speed_governor_integrator = (uint)high_speed_governor_integrator_reset_value << 0x10;
     high_speed_governor_integral_term = high_speed_governor_integrator_reset_value;
     high_speed_governor_filtered_error = 0;
-    high_speed_governor_error_filter_accumulator = 0;
+    high_speed_governor_error_filter.accumulator = 0;
   }
   else {
     wVar3 = high_speed_governor_derivative_gain;
@@ -20313,9 +20325,8 @@ void initializeHighSpeedGovernorGainSet(void)
   high_speed_governor_error_filter_coefficient = high_speed_governor_error_filter_coefficient_base;
   high_speed_governor_gain_set_code = 0x10;
   high_speed_governor_integral_term = high_speed_governor_integrator_maximum;
-  high_speed_governor_error_filter_accumulator = 0;
-  high_speed_governor_error_filter_coefficient_pointer =
-       (undefined *)&high_speed_governor_error_filter_coefficient;
+  high_speed_governor_error_filter.accumulator = 0;
+  high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient;
   high_speed_governor_derivative_gain_adjustment_cached_axis_offset = 2;
   high_speed_governor_proportional_gain_adjustment_cached_axis_offset = 2;
   high_speed_governor_integral_gain_adjustment_cached_axis_offset = 2;
@@ -20433,8 +20444,8 @@ void selectHighSpeedGovernorGainSet(void)
                high_speed_governor_error_filter_coefficient_working;
           high_speed_governor_gain_set_code = high_speed_governor_working_gain_set_code;
         }
-        high_speed_governor_error_filter_coefficient_pointer =
-             (undefined *)&high_speed_governor_error_filter_coefficient;
+        high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient
+        ;
       }
     }
     else if (high_speed_governor_gain_set_code != 0x11) {
@@ -20445,8 +20456,7 @@ void selectHighSpeedGovernorGainSet(void)
       high_speed_governor_error_filter_coefficient =
            high_speed_governor_transient_gain_set.error_filter_coefficient;
       high_speed_governor_gain_set_code = 0x11;
-      high_speed_governor_error_filter_coefficient_pointer =
-           (undefined *)&high_speed_governor_error_filter_coefficient;
+      high_speed_governor_error_filter.coefficient = &high_speed_governor_error_filter_coefficient;
       high_speed_governor_transient_gain_set_pass_counter = 0;
     }
     high_speed_governor_transient_gain_set_pass_counter =
@@ -26380,7 +26390,7 @@ LAB_000284d4:
                    ((int)(short)((int)((uint)governor_speed_filter_input_scale_cal *
                                       ((uint)alternator_field_duty_target -
                                       (uint)governor_speed_filter_fuel_offset_cal)) >> 0xe),
-                    &governor_speed_filter_state_ptr);
+                    &governor_speed_filter);
     iVar6 = (int)(short)governor_speed_weight_a + (int)(short)governor_speed_weight_b +
             (int)(short)governor_fuel_demand_correction +
             (int)(short)governor_speed_error_derivative + iVar6 +
@@ -26437,7 +26447,7 @@ void cm848_initSpeedProtectionParameters(void)
   governor_pid_gain_factor_b = 0x80;
   governor_speed_pid_gain = 0x80;
   governor_speed_setpoint_integrated = 0x1700;
-  governor_speed_filter_state_ptr = &governor_speed_filter_state_cal;
+  governor_speed_filter.coefficient = &governor_speed_filter_coefficient;
   return;
 }
 
@@ -26712,12 +26722,13 @@ void cm848_calculateSpeedRateLimiting(void)
     sStack_e = (short)iVar6;
     iVar6 = (int)sStack_e;
   }
-  governor_speed_error_delta = cm848_signedFirstOrderFilter(iVar6,&governor_bank2_cal_ptr);
+  governor_speed_error_delta =
+       cm848_signedFirstOrderFilter(iVar6,&governor_speed_error_delta_filter);
   wVar2 = governor_speed_error_rate;
   wVar3 = DAT_0005c4b2;
   if (((short)DAT_0005c4b2 < (short)governor_speed_error_delta) ||
      (wVar3 = DAT_0005c4b4, (short)governor_speed_error_delta < (short)DAT_0005c4b4)) {
-    governor_speed_error_clamped_dword = (int)(short)wVar3 << 0x10;
+    governor_speed_error_delta_filter.accumulator = (int)(short)wVar3 << 0x10;
     governor_speed_error_delta = wVar3;
   }
   governor_speed_error_rate = governor_speed_error_delta - wVar1;
@@ -26742,7 +26753,7 @@ void cm848_calculateSpeedRateLimiting(void)
 void cm848_setGovernorFilterPointer(void)
 
 {
-  governor_bank2_cal_ptr = &DAT_0005c4ae;
+  governor_speed_error_delta_filter.coefficient = &governor_speed_error_delta_filter_coefficient;
   return;
 }
 
@@ -27491,14 +27502,14 @@ void cm848_calculatePowerTakeOffGovernorSpeedError(void)
   protection_monitored_rpm_snapshot = power_take_off_governor_smoothed_reference_engine_speed;
   wStack_1e = (word)((int)(short)wVar1 * (int)(short)governor_speed_gain_factor >> 0xe);
   power_take_off_governor_filtered_speed_error =
-       cm848_signedFirstOrderFilter((int)(short)wStack_1e,&protection_filter_state_ptr);
+       cm848_signedFirstOrderFilter((int)(short)wStack_1e,&power_take_off_speed_error_filter);
   wVar1 = power_take_off_speed_error_clamp_maximum;
   if (((short)power_take_off_speed_error_clamp_maximum <
        power_take_off_governor_filtered_speed_error) ||
      (wVar1 = power_take_off_speed_error_clamp_minimum,
      power_take_off_governor_filtered_speed_error < (short)power_take_off_speed_error_clamp_minimum)
      ) {
-    governor_integrator_working = (int)(short)wVar1 << 0x10;
+    power_take_off_speed_error_filter.accumulator = (int)(short)wVar1 << 0x10;
     power_take_off_governor_filtered_speed_error = wVar1;
   }
   wVar1 = lookupTableInterpolation
@@ -27694,7 +27705,7 @@ void cm848_presetPowerTakeOffGovernorOnEngagement(void)
   
   power_take_off_governor_proportional_derivative_fueling = 0;
   cm848_setProtectionParamFromRpm();
-  governor_integrator_working = 0;
+  power_take_off_speed_error_filter.accumulator = 0;
   power_take_off_governor_filtered_speed_error = 0;
   if (power_take_off_gain_adjustment_mode == 0) {
     uVar3 = (uint)protection_rpm_gain_factor_cal *
@@ -27776,8 +27787,8 @@ void cm848_runPowerTakeOffGovernor(void)
 void cm848_initProtectionFilterState(void)
 
 {
-  governor_integrator_working = 0;
-  protection_filter_state_ptr = (undefined *)&power_take_off_speed_error_filter_coefficient;
+  power_take_off_speed_error_filter.accumulator = 0;
+  power_take_off_speed_error_filter.coefficient = &power_take_off_speed_error_filter_coefficient;
   cm848_initProtectionSmoothingPointer();
   power_take_off_governor_derivative_gain_adjustment = 0x80;
   power_take_off_governor_integral_gain_adjustment = 0x80;
@@ -28934,7 +28945,7 @@ void cm848_estimateTurbochargerSpeed(void)
   turbocharger_speed_estimate_boost_lead_term =
        cm848_signedFirstOrderFilter
                  ((int)(short)turbocharger_speed_estimate_boost_lead_term_unfiltered,
-                  &PTR_DAT_003fb01e);
+                  &turbocharger_speed_estimate_boost_lead_term_filter);
   if ((boost_fuel_scale_divisor == 0) ||
      (uVar3 = (uint)(((ulonglong)map_fuel_correction_factor << 0xc) /
                     (ulonglong)(uint)boost_fuel_scale_divisor), 0xfffe < uVar3)) {
@@ -28993,8 +29004,9 @@ void cm848_initializeTurbochargerSpeedEstimate(void)
   map_fuel_correction_prev_snapshot = 0;
   DAT_003fb01a = 2;
   DAT_003fb01c = 2;
-  DAT_003fb022 = 0;
-  PTR_DAT_003fb01e = &DAT_0040729e;
+  turbocharger_speed_estimate_boost_lead_term_filter.accumulator = 0;
+  turbocharger_speed_estimate_boost_lead_term_filter.coefficient =
+       &turbocharger_speed_estimate_boost_lead_term_filter_coefficient;
   ema_filter_state_t_003fb026.accumulator = 0;
   ema_filter_state_t_003fb026.coefficient = &WORD_004072a0;
   return;
@@ -29382,7 +29394,7 @@ void cm848_calculateVariableGeometryTurbochargerPidDuty(void)
   variable_geometry_turbocharger_proportional_term = (word)iVar4;
   wVar3 = cm848_signedFirstOrderFilter
                     ((int)(short)variable_geometry_turbocharger_position_error,
-                     &variable_geometry_turbocharger_derivative_filter_coefficient_pointer);
+                     &variable_geometry_turbocharger_derivative_filter);
   variable_geometry_turbocharger_position_error_derivative =
        wVar3 - variable_geometry_turbocharger_position_error_filtered_previous;
   variable_geometry_turbocharger_position_error_filtered_previous = wVar3;
@@ -29753,8 +29765,8 @@ void cm848_initializeVariableGeometryTurbochargerPositionControlLoop(void)
   variable_geometry_turbocharger_position_reference_filter_state.accumulator = 0;
   variable_geometry_turbocharger_position_reference_filter_state.coefficient =
        &variable_geometry_turbocharger_position_reference_filter_coefficient;
-  variable_geometry_turbocharger_derivative_filter_accumulator = 0;
-  variable_geometry_turbocharger_derivative_filter_coefficient_pointer =
+  variable_geometry_turbocharger_derivative_filter.accumulator = 0;
+  variable_geometry_turbocharger_derivative_filter.coefficient =
        &variable_geometry_turbocharger_derivative_filter_coefficient;
   variable_geometry_turbocharger_position_error_filtered_previous = 0;
   variable_geometry_turbocharger_motor_pwm_duty_scaled = 0;
@@ -30905,8 +30917,7 @@ void cm848_filterVariableGeometryTurbochargerClosedPosition(void)
   }
   variable_geometry_turbocharger_closed_position =
        cm848_signedFirstOrderFilter
-                 ((int)(short)wVar1,
-                  &variable_geometry_turbocharger_closed_position_filter_coefficient_pointer);
+                 ((int)(short)wVar1,&variable_geometry_turbocharger_closed_position_filter);
   variable_geometry_turbocharger_closed_position_filtered =
        variable_geometry_turbocharger_closed_position;
   if ((fault_detected_bits_656_to_671 & 0x4000) != 0) {
@@ -31345,10 +31356,10 @@ void cm848_initializeVariableGeometryTurbochargerAdjustmentFilters(void)
        &variable_geometry_turbocharger_adjustment_filter_coefficient;
   variable_geometry_turbocharger_closed_stop_unsettled_flag = 0;
   variable_geometry_turbocharger_closed_adjustment_timeout_error_flag = 0;
-  variable_geometry_turbocharger_closed_position_filter_accumulator =
+  variable_geometry_turbocharger_closed_position_filter.accumulator =
        (int)(short)variable_geometry_turbocharger_saved_closed_position_cal << 0x10;
-  variable_geometry_turbocharger_closed_position_filter_coefficient_pointer =
-       (undefined *)&variable_geometry_turbocharger_adjustment_filter_coefficient;
+  variable_geometry_turbocharger_closed_position_filter.coefficient =
+       &variable_geometry_turbocharger_adjustment_filter_coefficient;
   if (variable_geometry_turbocharger_enable_flag == 0) {
     fault_detected_bits_704_to_719 = fault_detected_bits_704_to_719 & 0xff9f;
     fault_registered_bits_704_to_719 = fault_registered_bits_704_to_719 & 0xff9f;
@@ -33820,7 +33831,7 @@ void cm848_updateTransmissionConditionFlags(void)
   protection_load_scaled_input =
        cm848_signedFirstOrderFilter
                  ((int)((short)engine_acceleration_unfiltered >> 1),
-                  &protection_load_scaled_filter_state_ptr);
+                  &protection_load_scaled_input_filter);
   if (((short)protection_load_scaled_input < 0) ||
      (protection_load_scaled_input < protection_load_scaled_min_threshold_cal)) {
     protection_engine_load_scaled = 0;
@@ -33904,7 +33915,8 @@ void cm848_filterProtectionLoadValue(void)
     protection_load_history_index = (word)uVar3;
     transmission_output_speed_change =
          cm848_signedFirstOrderFilter
-                   ((int)(short)protection_load_rate_delta,&protection_load_filter_state_b_ptr);
+                   ((int)(short)protection_load_rate_delta,&transmission_output_speed_change_filter)
+    ;
   }
   return;
 }
@@ -34025,10 +34037,12 @@ void cm848_initProtectionSystem(void)
   protection_filter_stage_8_state = 2;
   protection_filter_stage_9_state = 2;
   protection_filter_stage_10_state = 2;
-  protection_load_filter_accum_b = 0;
-  protection_load_filter_state_b_ptr = &protection_load_filter_state_b_cal;
-  protection_load_scaled_filter_accum = 0;
-  protection_load_scaled_filter_state_ptr = &protection_load_scaled_filter_state_cal;
+  transmission_output_speed_change_filter.accumulator = 0;
+  transmission_output_speed_change_filter.coefficient =
+       &transmission_output_speed_change_filter_coefficient;
+  protection_load_scaled_input_filter.accumulator = 0;
+  protection_load_scaled_input_filter.coefficient = &protection_load_scaled_input_filter_coefficient
+  ;
   transmission_vehicle_speed_filter_state.accumulator = 0;
   transmission_vehicle_speed_filter_state.coefficient =
        &transmission_vehicle_speed_filter_coefficient;
@@ -36533,7 +36547,7 @@ void cm848_processEngineRpmDerivative(void)
     if ((short)engine_acceleration_first_stage_filtered <= iVar1) goto LAB_000387f4;
     engine_acceleration_first_stage_filtered = engine_acceleration_first_stage_clamp_maximum;
   }
-  engine_acceleration_first_stage_filter_accumulator = iVar1 << 0x10;
+  engine_acceleration_first_stage_filter_state.accumulator = iVar1 << 0x10;
 LAB_000387f4:
   engine_acceleration_second_stage_filtered =
        cm848_signedFirstOrderFilter
@@ -36551,11 +36565,11 @@ LAB_000387f4:
 void cm848_initEngineRpmFilterPointers(void)
 
 {
-  engine_acceleration_first_stage_filter_accumulator = 0;
-  engine_acceleration_first_stage_filter_state = &engine_acceleration_first_stage_filter_coefficient
-  ;
-  engine_acceleration_second_stage_filter_accumulator = 0;
-  engine_acceleration_second_stage_filter_state =
+  engine_acceleration_first_stage_filter_state.accumulator = 0;
+  engine_acceleration_first_stage_filter_state.coefficient =
+       &engine_acceleration_first_stage_filter_coefficient;
+  engine_acceleration_second_stage_filter_state.accumulator = 0;
+  engine_acceleration_second_stage_filter_state.coefficient =
        &engine_acceleration_second_stage_filter_coefficient;
   engine_acceleration_target_rpm_previous = 0;
   return;
@@ -36675,8 +36689,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
@@ -39369,7 +39383,7 @@ void cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures(void)
   local_8[1] = (byte)uVar3;
   coolant_temp_filtered =
        cm848_signedFirstOrderFilter
-                 ((int)(short)coolant_temperature_in_use,&coolant_temp_filter_state_ptr);
+                 ((int)(short)coolant_temperature_in_use,&pci_coolant_temperature_filter);
   uVar3 = (uint)(short)((short)(((short)(coolant_temp_filtered - 0x800) * 5) / 9) + 0xa00);
   iVar2 = ((int)uVar3 >> 6) + (uint)((int)uVar3 < 0 && (uVar3 & 0x3f) != 0);
   if ((short)iVar2 < 0xff) {
@@ -39410,8 +39424,8 @@ void cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures(void)
 void mpc555_initFuelDemandFilterPointers(void)
 
 {
-  DAT_003fb418 = 0;
-  coolant_temp_filter_state_ptr = &DAT_00408972;
+  pci_coolant_temperature_filter.accumulator = 0;
+  pci_coolant_temperature_filter.coefficient = &pci_coolant_temperature_filter_coefficient;
   return;
 }
 
@@ -46587,8 +46601,8 @@ void cm848_calculateFuelMeteringCommand(void)
   word wVar4;
   word wVar5;
   short sVar6;
-  short sVar7;
-  short sVar8;
+  sword sVar7;
+  sword sVar8;
   short sVar9;
   dword dVar2;
   word unaff_r23;
@@ -46885,19 +46899,20 @@ LAB_0004800c:
         iVar11 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
       }
       fuel_pressure_governor_accelerator_feed_forward =
-           cm848_signedFirstOrderFilter(iVar11,&cam_sync_fuel_filter_state_pointer);
+           cm848_signedFirstOrderFilter
+                     (iVar11,&fuel_pressure_governor_accelerator_feed_forward_filter);
       wVar5 = fuel_pressure_setpoint;
       fuel_demand_calculated_snapshot = fuel_demand_control_t_0040a57a.calculated;
-      sVar7 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
+      sVar6 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
       fuel_pressure_feedback_previous = fuel_pressure_feedback_filtered;
-      cam_sync_filter_state_pointer = (undefined *)awStack_68;
-      sVar6 = cm848_signedFirstOrderFilter
-                        ((int)(short)fuel_pressure_sensor,&cam_sync_filter_state_pointer);
+      fuel_pressure_sensor_filter.coefficient = awStack_68;
+      sVar7 = cm848_signedFirstOrderFilter
+                        ((int)(short)fuel_pressure_sensor,&fuel_pressure_sensor_filter);
       fuel_pressure_governor_proportional_term =
-           cm848_applyPiecewiseLinearGain(&local_64,(int)sVar7);
+           cm848_applyPiecewiseLinearGain(&local_64,(int)sVar6);
       fuel_pressure_governor_integral_term =
            cm848_integrateWithZoneGain
-                     (&local_54,&fuel_pressure_governor_integrator,(int)sVar7,10000);
+                     (&local_54,&fuel_pressure_governor_integrator,(int)sVar6,10000);
       if ((engine_sync_rpm_phase_acquired_flag == 1) && (engine_sync_state_a == 5)) {
         wVar4 = lookupTableInterpolation
                           (&engine_sync_init_state_k,engine_rpm_measured,cam_sync_output_a_axis_cal,
@@ -46936,7 +46951,7 @@ LAB_0004800c:
       fuel_pressure_governor_derivative_term =
            cm848_calculateFilteredDerivative
                      (&local_44,&fuel_pressure_governor_derivative_filter,
-                      (int)(short)(wVar5 - sVar6));
+                      (int)(short)(wVar5 - sVar7));
       wVar5 = fuel_pressure_governor_proportional_term + fuel_pressure_governor_integral_term +
               fuel_pressure_governor_derivative_term +
               fuel_pressure_governor_accelerator_feed_forward;
@@ -47060,18 +47075,18 @@ LAB_000489d0:
                  (&cam_sync_ref_prot_handler_state_cal,&fuel_metering_base_command_derivative_filter
                   ,(int)sVar6);
   wVar14 = sVar6 + fuel_metering_base_command_derivative_term;
-  sVar6 = cm848_signedFirstOrderFilter((int)(short)wVar5,&cam_sync_fault_filter_ptr);
-  sVar7 = cm848_signedFirstOrderFilter
-                    ((int)(short)fuel_metering_feedback_input,&cam_sync_speed_filter_ptr);
-  fuel_metering_feedback_error = sVar6 - sVar7;
+  sVar7 = cm848_signedFirstOrderFilter((int)(short)wVar5,&fuel_metering_reference_filter);
+  sVar8 = cm848_signedFirstOrderFilter
+                    ((int)(short)fuel_metering_feedback_input,&fuel_metering_feedback_filter);
+  fuel_metering_feedback_error = sVar7 - sVar8;
   if (fuel_metering_feedback_fault_code == 0) {
-    sVar8 = cm848_applyPiecewiseLinearGain
+    sVar6 = cm848_applyPiecewiseLinearGain
                       (&cam_sync_speed_error_prot_state_cal,(int)(short)fuel_metering_feedback_error
                       );
     sVar9 = cm848_integrateWithZoneGain
                       (&cam_sync_speed_error_prot_mode_cal,&fuel_metering_feedback_trim_integrator,
                        (int)(short)fuel_metering_feedback_error,10000);
-    if ((sVar6 == 0) && (engine_rpm_measured == 0)) {
+    if ((sVar7 == 0) && (engine_rpm_measured == 0)) {
       fuel_metering_feedback_trim_integrator.integer_part =
            lookupTableInterpolation
                      (&WORD_003fb660,unaff_r29,engine_sync_speed_scale_axis_cal,
@@ -47087,15 +47102,15 @@ LAB_000489d0:
       engine_sync_confirmed_flag = 0;
       engine_sync_signal_flag = 1;
     }
-    iVar11 = (int)(short)(sVar8 + sVar9);
+    iVar11 = (int)(short)(sVar6 + sVar9);
     if ((short)engine_sync_protection_upper_limit_cal < iVar11) {
       fuel_metering_feedback_trim_integrator.integer_part =
-           engine_sync_protection_upper_limit_cal - sVar8;
+           engine_sync_protection_upper_limit_cal - sVar6;
       iVar11 = (int)(short)engine_sync_protection_upper_limit_cal;
     }
     else if (iVar11 < (short)engine_sync_protection_lower_limit_cal) {
       fuel_metering_feedback_trim_integrator.integer_part =
-           engine_sync_protection_lower_limit_cal - sVar8;
+           engine_sync_protection_lower_limit_cal - sVar6;
       iVar11 = (int)(short)engine_sync_protection_lower_limit_cal;
     }
     engine_sync_state_t_0040b87f.fuel_metering_command =
@@ -47165,15 +47180,15 @@ LAB_000489d0:
     cam_speed_rate =
          cm848_signedFirstOrderFilter
                    ((int)(short)engine_sync_state_t_0040b87f.fuel_metering_command,
-                    &cam_sync_rate_filter_state_pointer);
-    if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar7) &&
+                    &fuel_metering_command_filter);
+    if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar8) &&
        ((int)(uint)cam_speed_rate_threshold_cal < (int)(short)cam_speed_rate)) {
       engine_sync_phase_counter = engine_sync_phase_counter + 1;
       if (engine_sync_phase_counter_max_cal < engine_sync_phase_counter) {
         engine_sync_phase_counter = engine_sync_phase_counter_max_cal;
       }
       uVar15 = ((int)(short)cam_speed_rate * (uint)sensor_readings_t_0040baf2.battery_voltage * 5) /
-               (uint)(sVar7 * 2);
+               (uint)(sVar8 * 2);
       engine_sync_rpm_raw_working = (word)uVar15;
       dVar2 = exponentialMovingAverage(uVar15 & 0xffff,&cam_sync_rpm_filter_state);
       engine_sync_rpm_filtered = (word)dVar2;
@@ -47226,7 +47241,6 @@ void cm848_countFuelPressureGovernorStartRevolutions(void)
 // Function: cm848_resetEngineSyncState @ 0x00049004
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Resets the fuel pressure governor / fuel metering state (cm848_calculateFuelMeteringCommand):
    command, demand, governor mode 1, counters, the table interpolation states and filters. Of the
    four Q16.16 PID states it clears fuel_pressure_governor_integrator,
@@ -47271,18 +47285,19 @@ void cm848_resetEngineSyncState(void)
   engine_sync_init_state_o = 2;
   engine_sync_init_state_p = 2;
   engine_sync_init_state_q = 2;
-  cam_sync_filter_accum_init = 0;
-  cam_sync_speed_filter_ptr = &cam_sync_speed_error_filter_state_cal;
-  _cam_sync_speed_filter_accum = 0;
-  cam_sync_fault_filter_ptr = &cam_sync_fault_filter_state_cal;
+  fuel_metering_feedback_filter.accumulator = 0;
+  fuel_metering_feedback_filter.coefficient = &fuel_metering_feedback_filter_coefficient;
+  fuel_metering_reference_filter.accumulator = 0;
+  fuel_metering_reference_filter.coefficient = &fuel_metering_reference_filter_coefficient;
   cam_sync_speed_filter_state.accumulator = 0;
   cam_sync_speed_filter_state.coefficient = &sensor_channel_config_t_00059336.filter_coefficient;
-  _cam_sync_speed_filter_state_accum = 0;
-  cam_sync_filter_state_pointer = (undefined *)&engine_sync_scale_factor_cal;
-  _cam_sync_fuel_filter_accum = 0;
-  cam_sync_fuel_filter_state_pointer = &cam_sync_fuel_filter_state_cal;
-  _cam_sync_rate_filter_accum = 0;
-  cam_sync_rate_filter_state_pointer = &cam_sync_rate_filter_state_cal;
+  fuel_pressure_sensor_filter.accumulator = 0;
+  fuel_pressure_sensor_filter.coefficient = &engine_sync_scale_factor_cal;
+  fuel_pressure_governor_accelerator_feed_forward_filter.accumulator = 0;
+  fuel_pressure_governor_accelerator_feed_forward_filter.coefficient =
+       &fuel_pressure_governor_accelerator_feed_forward_filter_coefficient;
+  fuel_metering_command_filter.accumulator = 0;
+  fuel_metering_command_filter.coefficient = &fuel_metering_command_filter_coefficient;
   cam_sync_rpm_filter_state.accumulator = 0;
   cam_sync_rpm_filter_state.coefficient = &cam_sync_rpm_filter_coefficient;
   cam_speed_rate = 0;
@@ -48048,14 +48063,14 @@ void cm848_filterFuelPressureFeedback(void)
       fuel_pressure_feedback_filtered =
            cm848_signedFirstOrderFilter
                      ((int)(short)fuel_pressure_at_injection_scheduling,
-                      &fuel_pressure_feedback_filter_pointer);
+                      &fuel_pressure_feedback_filter);
       return;
     }
     if (fuel_pressure_feedback_source_select == 1) {
       fuel_pressure_feedback_filtered =
            cm848_signedFirstOrderFilter
-                     ((int)(short)fuel_pressure_at_other_angle_events,
-                      &fuel_pressure_feedback_filter_pointer);
+                     ((int)(short)fuel_pressure_at_other_angle_events,&fuel_pressure_feedback_filter
+                     );
       return;
     }
     if (fuel_pressure_feedback_source_select != 2) {
@@ -48063,8 +48078,8 @@ void cm848_filterFuelPressureFeedback(void)
     }
   }
   fuel_pressure_feedback_filtered =
-       cm848_signedFirstOrderFilter
-                 ((int)(short)fuel_pressure_sensor,&fuel_pressure_feedback_filter_pointer);
+       cm848_signedFirstOrderFilter((int)(short)fuel_pressure_sensor,&fuel_pressure_feedback_filter)
+  ;
   return;
 }
 
@@ -48074,7 +48089,6 @@ void cm848_filterFuelPressureFeedback(void)
 // Function: cm848_initFuelPressureSensor @ 0x0004a858
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Clears the rail pressure sensor state (volts / pressure / feedback / codes / debounce counts) and
    sets up the feedback filter and the table cache. Called from cm848_applicationMain. Was
    cm848_initEnginePositionState */
@@ -48089,8 +48103,8 @@ void cm848_initFuelPressureSensor(void)
   fuel_pressure_sensor_code = 0;
   fuel_pressure_sensor_fault_debounce_count = 0;
   fuel_pressure_sensor_recovery_debounce_count = 0;
-  _engine_sync_timeout_counter_c = 0;
-  fuel_pressure_feedback_filter_pointer = &fuel_pressure_feedback_filter_constants;
+  fuel_pressure_feedback_filter.accumulator = 0;
+  fuel_pressure_feedback_filter.coefficient = &fuel_pressure_feedback_filter_coefficient;
   fuel_pressure_sensor_table_cached_offset = 2;
   fuel_pressure_feedback_filter_accumulator = 0;
   return;
@@ -57372,36 +57386,36 @@ uint cm848_saturatingDivision16(uint param_1,uint param_2)
 // Function: cm848_signedFirstOrderFilter @ 0x0005644c
 //
 
-int cm848_signedFirstOrderFilter(int param_1,undefined4 *param_2)
+sword cm848_signedFirstOrderFilter(int value,ema_filter_state_t *filter_state)
 
 {
   uint uVar1;
   int iVar2;
   int iVar3;
-  int iVar4;
+  dword dVar4;
   
-  if (*(short *)*param_2 == 0) {
-    param_1 = param_1 << 0x10;
+  if (*filter_state->coefficient == 0) {
+    dVar4 = value << 0x10;
   }
   else {
-    iVar4 = param_2[1];
-    iVar2 = iVar4 >> 0x10;
-    if (param_1 <= iVar2) {
-      uVar1 = iVar2 - param_1;
+    dVar4 = filter_state->accumulator;
+    iVar2 = (int)dVar4 >> 0x10;
+    if (value <= iVar2) {
+      uVar1 = iVar2 - value;
     }
     else {
-      uVar1 = param_1 - iVar2;
+      uVar1 = value - iVar2;
     }
-    iVar3 = (uVar1 & 0xffff) * (uint)(ushort)-*(short *)*param_2;
-    if (param_1 <= iVar2) {
-      param_1 = iVar4 - iVar3;
+    iVar3 = (uVar1 & 0xffff) * (uint)(ushort)-*filter_state->coefficient;
+    if (value <= iVar2) {
+      dVar4 = dVar4 - iVar3;
     }
     else {
-      param_1 = iVar3 + iVar4;
+      dVar4 = iVar3 + dVar4;
     }
   }
-  param_2[1] = param_1;
-  return (int)(short)((uint)param_1 >> 0x10);
+  filter_state->accumulator = dVar4;
+  return (sword)(dVar4 >> 0x10);
 }
 
 
@@ -59831,7 +59845,7 @@ void hpcr_fuelFinal_exponentialAverage(void)
      (wVar3 = DAT_003ff07c, wVar1 = DAT_003ff07c, fuel_demand_timing_mode_state != 2)) {
     wVar3 = cm848_signedFirstOrderFilter
                       ((int)(short)(ambient_air_temperature_selected - boost_fuel_timing_target),
-                       &PTR_DAT_003fb9e2);
+                       &ema_filter_state_t_003fb9e2);
     wVar1 = wVar3;
   }
   boost_fuel_timing_demand_filter_output = wVar1;
@@ -59922,8 +59936,9 @@ void cm848_initialization_step_3(void)
                   vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);
   boost_fuel_timing_demand_filter_output =
        ambient_air_temperature_selected - boost_fuel_timing_target;
-  DAT_003fb9e6 = (int)(short)boost_fuel_timing_demand_filter_output << 0x10;
-  PTR_DAT_003fb9e2 = &DAT_003ff076;
+  ema_filter_state_t_003fb9e2.accumulator =
+       (int)(short)boost_fuel_timing_demand_filter_output << 0x10;
+  ema_filter_state_t_003fb9e2.coefficient = &WORD_003ff076;
   boost_fuel_demand_blend_a = ambient_air_temperature_selected;
   fuel_demand_timing_mode_state = fuel_demand_state_b;
   DAT_0040a1a6 = fuel_boost_mode_state;
@@ -72929,17 +72944,17 @@ void cm848_initCoolingFanControl(void)
   cooling_fan_intake_request_hold_count = 0;
   cooling_fan_feed_forward_table = 2;
   DAT_003fcdfd = 2;
-  cooling_fan_speed_feedback_filter_state = 0;
-  cooling_fan_speed_feedback_filter = (undefined *)&cooling_fan_speed_feedback_filter_coefficient;
-  cooling_fan_proportional_derivative_filter_state = 0;
-  cooling_fan_proportional_derivative_filter =
-       (undefined *)&cooling_fan_proportional_derivative_filter_coefficient;
-  cooling_fan_coolant_temperature_filter_state = 0;
-  cooling_fan_coolant_temperature_filter =
-       (undefined *)&cooling_fan_coolant_temperature_filter_coefficient;
-  cooling_fan_intake_temperature_filter_state = 0;
-  cooling_fan_intake_temperature_filter =
-       (undefined *)&cooling_fan_intake_temperature_filter_coefficient;
+  cooling_fan_speed_feedback_filter.accumulator = 0;
+  cooling_fan_speed_feedback_filter.coefficient = &cooling_fan_speed_feedback_filter_coefficient;
+  cooling_fan_proportional_derivative_filter.accumulator = 0;
+  cooling_fan_proportional_derivative_filter.coefficient =
+       &cooling_fan_proportional_derivative_filter_coefficient;
+  cooling_fan_coolant_temperature_filter.accumulator = 0;
+  cooling_fan_coolant_temperature_filter.coefficient =
+       &cooling_fan_coolant_temperature_filter_coefficient;
+  cooling_fan_intake_temperature_filter.accumulator = 0;
+  cooling_fan_intake_temperature_filter.coefficient =
+       &cooling_fan_intake_temperature_filter_coefficient;
   if ((cooling_fan_output_channel_cal != 0) && (cooling_fan_output_channel_cal < 0x33)) {
     (**(code **)(&output_channel_driver_table_enable + (uint)cooling_fan_output_channel_cal * 0x10))
               ();
