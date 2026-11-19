@@ -5,6 +5,7 @@ build_stage2.log
 build_stage2b.log
 build_stage2c.log
 build_stage3.log
+build_stage4.log
 hdr_base_CM550_J90350.00_analysis/firmware_functions.hpp
 hdr_base_CM550_J90350.00_analysis/firmware_globals.hpp
 hdr_base_CM550_J90350.00_analysis/firmware_types.hpp
@@ -17,13 +18,17 @@ pre2.cpp
 pre2_canon.cpp
 pre3.cpp
 pre3_canon.cpp
+pre4.cpp
+pre4_canon.cpp
 pre_canon.cpp
 reversed.cpp
 reversed2.cpp
 reversed3.cpp
 reversed3b.cpp
+reversed4.cpp
 test_disasm_tools.py.log
 test_lookup_tables.py.log
 test_rename_waves.py.log
 verify.log
 verify_stage3.log
+verify_stage4.log

@@ -12,7 +12,15 @@ import sys
 
 src, notes, transcript, private = sys.argv[1:5]
 mirror = os.path.join(notes, "session_folder")
-PRIVATE = re.compile(r"jlaustill@|gmail\.com|ghp_|github_pat_|sk-ant-", re.I)
+def private_pattern():
+    """The owner's address and handle from the local git config (never written into this public file) plus
+    generic token prefixes."""
+    email = subprocess.run(["git", "config", "user.email"], capture_output=True, text=True).stdout.strip()
+    parts = [re.escape(email), re.escape(email.split("@")[0] + "@")] if "@" in email else []
+    return re.compile("|".join(parts + ["ghp_", "github_pat_", "sk-ant-"]), re.I)
+
+
+PRIVATE = private_pattern()
 large, copied = [], 0
 for root, dirs, files in os.walk(src):
     dirs[:] = sorted(d for d in dirs if d != "__pycache__")
@@ -24,7 +32,7 @@ for root, dirs, files in os.walk(src):
         if f.endswith((".log", ".cpp", ".dis", ".hpp")) or os.path.getsize(path) > 1_000_000:
             large.append(rel)
             continue
-        if f != os.path.basename(__file__) and PRIVATE.search(open(path, errors="replace").read()):
+        if f not in (os.path.basename(__file__), "scan_private.py") and PRIVATE.search(open(path, errors="replace").read()):
             sys.exit(f"private-looking text in {rel}: stop")
         os.makedirs(os.path.dirname(os.path.join(mirror, rel)), exist_ok=True)
         shutil.copy2(path, os.path.join(mirror, rel))

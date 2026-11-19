@@ -1,0 +1,39 @@
+cm848: FUELING_STATE stage 4 - e2m value labels, engine state, power take-off governor
+
+The labelled Chrysler calibration e2m-analysis/CHR/CHR_CC_11.45.01.07.e2m
+(the truck runs V11.46.06) lists Cummins' value labels with HEX keys:
+Fueling_Control_State 00-3D, Engine_State 1-8 and the PTST description.
+They confirm the code-derived members and name the rest. Correction:
+"29=ATDERAT" is 0x29 = 41, the anti-theft derate (immobilizer); 29 is
+EPFDERAT, the fault derate.
+
+- FUELING_STATE: every member comment quotes its label; 13 / 19 / 22 / 28
+  renamed to the labels (TORQUE_DERATE_OVERRIDE, MAXIMUM_THROTTLE,
+  CRANKING, FUEL_SYSTEM_DERATE); 15 ALTITUDE_DERATE / 16
+  AIR_FUEL_CONTROL_DERATE / 24 ENGINE_BRAKE / 25 OVERSPEED / 27 SHUTDOWN /
+  34 POWER_TAKE_OFF_DERATE / 40 NO_DERATE / 42 FUEL_LIMIT_BY_RPM_AND_DEMAND /
+  46 COOLANT_OVERHEAT_DERATE / 47 FREE_ACCELERATION / 59 NET_TORQUE named;
+  32 / 37 / 38 / 49 / 50 stay UNIDENTIFIED with their labels
+- COLD_START_PHASE -> ENGINE_STATE (STOPPED / CRANKING / RUNNING /
+  ENGINE_BRAKE / OVERSPEED / JUMP_START / REENTRY / SHUTDOWN):
+  cold_start_phase = engine_state, set by cm848_updateEngineState (was
+  mpc555_processColdStartMainLoop); e2m block 1068 lines up 7/7
+  (power_down_start_flag, ecm_power_down_timer, crank / run time,
+  engine_is_active_flag / engine_is_starting_flag)
+- the power take-off governor, proved in code: J1939 CCVS1 SPN 976 and OBD-II
+  PID 0x1E; POWER_TAKE_OFF_GOVERNOR_STATE (e2m PTST) and
+  POWER_TAKE_OFF_GOVERNOR_J1939_STATE; 10 functions and 9 words renamed; the
+  0x3fd89a dword split into two EEPROM words
+- the limiter producers renamed: the altitude derate, the air fuel control
+  limit, the net torque limit, the fuel limit by rpm and demand, and the
+  coolant overheat derate family (the unidentified fuel_coldStart_* helpers)
+
+Two read-only agents read the engine state and the power take-off cluster;
+their key claims were checked against the code, the dumps and the e2m file
+before they were applied.
+
+Proof: all 103 names render (no _ variant); after normalizing the four
+enums' members no function differs; no OR render; build warnings
+unchanged; headers regenerated (0 errors); lookup_tables.py clean; tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

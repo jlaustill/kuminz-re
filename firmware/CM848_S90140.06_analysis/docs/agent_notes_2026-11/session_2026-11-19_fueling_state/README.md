@@ -29,6 +29,17 @@ subagents.
   - `writers.py`: lists every assignment of a global.
   - `carrier_census.py`: lists the constants compared or assigned per carrier, and any ordering compare.
   - `width_census.py`: displacement-form access widths from `all.dis`.
+- **Stage 4** (the e2m value labels, the engine state, the power take-off governor, the limiters):
+  - `apply_fueling_state_stage4.py`: the main edit.
+  - `stage4_power_take_off.py`: the power take-off part, merged into it.
+  - `check_enum_proof2.py`: the strict check for several enums at once.
+  - `map_stage4*.csv`: the reverse mappings.
+- **The two stage-4 agents:**
+  - `agent_prompts.jsonl`: their exact prompts.
+  - `agent_prompts_and_reports.md`: their prompts and reports in short, and what was checked before applying.
+  - `extract_agent_prompts.py`: pulls the prompts out of the transcript.
+- `scan_private.py`: the privacy scan used before archiving. It reads the owner's address from the local git config,
+  so the file itself carries none.
 - `commit_message*.txt` / `pr_body.md`: the commit messages and the PR #52 body.
 
 `session_folder_large_files.tar.xz` holds the files listed in `session_folder_large_files.txt`:

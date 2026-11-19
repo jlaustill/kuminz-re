@@ -1,10 +1,11 @@
 ## Summary
 
-`governor_fuel_demand_mode` (0x40a154) is an enum: the Cummins **FSGVFLST** governed fueling state ("indicator as to which algorithm is in control of fueling after it is governed"). Its codes come from one numbering that every fueling stage shares, so the enum is shared too. This PR does three stages:
+`governor_fuel_demand_mode` (0x40a154) is an enum: the Cummins **FSGVFLST** governed fueling state ("indicator as to which algorithm is in control of fueling after it is governed"). Its codes come from one numbering that every fueling stage shares, so the enum is shared too. This PR does four stages:
 
 1. **The enum.** `ENGINE_OPERATING_MODE` is now **`FUELING_STATE`**. Members 4 / 9 / 10 / 11 / 12 are new, the user and governed carriers are typed, 0x40b67c is renamed and the dword at 0x3fb526 is split.
 2. **The later stages.** The derate, combustion and final stages get 17 more members proved from their setters, plus 16 `FUELING_STATE_UNIDENTIFIED_<n>` placeholders. Ten more carriers are typed, including `governor_mode_code`, now `final_fueling_state`.
 3. **The arbitration.** 16 functions and 10 words of the fueling arbitration are renamed from legacy `*Protection*` / `governor_*` guesses.
+4. **Cummins' own value labels.** A labelled Chrysler calibration in the repo gives every code's label (with hex keys). It confirms the code-derived members and names 11 more. `cold_start_phase` turns out to be the **engine state** (`ENGINE_STATE`). The **power take-off governor** is proved in code (J1939 SPN 976). The limiter producers are renamed: altitude derate, air fuel control, net torque, coolant overheat derate.
 
 `cm848_arbitrateGovernedFueling` (was `cm848_processProtectionRampControl`) now reads:
 
@@ -23,7 +24,7 @@ if ((governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) ||
 - **Value chain.** `engine_operating_mode` → `operating_mode_governor_output.mode_code` (+4) → 0x40b67c (+9) → 0x40a154 (+10 / 11 / 12). The RAM dump reads 7 → 7 → 7 → 11.
 - **CM550.** 0x0080a8f2 is e2m FSGVFLST and is compared with 12 in the shared `runHighSpeedGovernorPid`.
 - **e2m blocks.** Block 1045 (FSGVFL / FSGVFLST / LSLOFG) and block 1265 (PTTHDQRP / PTTHOV / PTSLFL / PTSLFLST) line up by offset.
-- **Members.** 9 cruise control / 10 vehicle speed limit / 11 low speed governor / 12 high speed governor come from the code. 4 power take-off is **e2m-derived**: the code shows only another governor's command replacing the user fuel.
+- **Members.** 9 cruise control / 10 vehicle speed limit / 11 low speed governor / 12 high speed governor come from the code. 4 power take-off was e2m-derived in stage 1 and is code-proven in stage 4.
 
 ## Stage 2: the derate, combustion and final stages
 
@@ -37,7 +38,7 @@ if ((governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) ||
   - 52 / 53 / 54 / 55 / 58, the combustion limits;
   - 61 rail pressure shortfall, 62 fuel pressure governor fault blend.
 
-  e2m labels 29 ATDERAT, but CM848's 29 is the fault derate: its numbering differs from the e2m list above 12.
+  Stage 2 said CM848's numbering differs from the e2m list above 12, because e2m labels 29 ATDERAT. That was a decimal misread, corrected in stage 4: the label keys are hex, so 0x29 = 41 is the anti-theft derate, and the numbering matches.
 - **`FUELING_STATE_UNIDENTIFIED_<n>`.** These cover the codes stored or only compared whose algorithm is not proved yet: 15 16 24 25 27 32 34 37 38 40 42 46 47 49 50 59. Without an exact member, **Ghidra 12.1 prints such a value as an OR of members**: 15 rendered as `FUELING_STATE_HIGH_SPEED_GOVERNOR | FUELING_STATE_TSC1_SPEED_CONTROL | FUELING_STATE_TSC1_TORQUE_CONTROL`. That is why 37 and 38 now have members too.
 - **Carriers typed `FUELING_STATE`:**
   - `torque_derate_fuel_source_code`
@@ -71,19 +72,46 @@ if ((governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) ||
 
 The words are `vehicle_speed_limit_fueling`, `cruise_control_fueling`, `high_speed_governor_fueling_snapshot`, `low_speed_governor_fueling` (+ `_working`), `low_speed_governor_active_flag` (e2m LSLOFG), `vehicle_speed_rise_limited` (+ `_prev`) and `power_take_off_throttle_override_engine_speed_limit` / `_flag` (e2m PTTHDQRP / PTTHOV). Each plate comment and comment gives the evidence and the old name.
 
+## Stage 4: Cummins' value labels, the engine state, the power take-off governor
+
+- **The labels.** `e2m-analysis/CHR/CHR_CC_11.45.01.07.e2m` is a Chrysler calibration close to the truck's V11.46.06. It lists `Fueling_Control_State` 00-3D, `Engine_State` 1-8 and the PTO `[PTST]` states, all with hex keys. Every `FUELING_STATE` member comment now quotes its label.
+  - **Confirmed:** 4 PTO, 10 RSG, 16 AFCDERAT, 19 MAXTHROT, 20 JCTRQDER, 26 STOP, 28 FSSDERAT, 29 EPFDERAT, 41 ATDERAT, 45 TORQMGMT, 46 CTDERAT, 52 AIRDENLM, 53 CHIFULLM, 55 GROSSOVR, 58 OFCDERAT, 61 LOFPRDER.
+  - **Renamed to the labels:** 13 `TORQUE_DERATE_OVERRIDE`, 19 `MAXIMUM_THROTTLE`, 22 `CRANKING`, 28 `FUEL_SYSTEM_DERATE`.
+  - **Named:** 15 `ALTITUDE_DERATE`, 16 `AIR_FUEL_CONTROL_DERATE`, 24 `ENGINE_BRAKE`, 25 `OVERSPEED`, 27 `SHUTDOWN`, 34 `POWER_TAKE_OFF_DERATE`, 40 `NO_DERATE`, 42 `FUEL_LIMIT_BY_RPM_AND_DEMAND`, 46 `COOLANT_OVERHEAT_DERATE`, 47 `FREE_ACCELERATION`, 59 `NET_TORQUE`.
+  - **Still `UNIDENTIFIED`** (their labels are in the comments): 32 / 37 / 38 / 49 / 50.
+- **`COLD_START_PHASE` → `ENGINE_STATE`.** `cold_start_phase` is the Cummins engine state FSEGST, now `engine_state`: STOPPED / CRANKING / RUNNING / ENGINE_BRAKE / OVERSPEED / JUMP_START / REENTRY / SHUTDOWN. The old names and comments disagreed for 1 / 4 / 5 / 8.
+  - `cm848_updateEngineState` (was `mpc555_processColdStartMainLoop`) sets it.
+  - e2m block 1068 lines up 7/7: `power_down_start_flag`, `ecm_power_down_timer`, crank / run time, `engine_is_active_flag` / `engine_is_starting_flag`.
+- **The power take-off governor (code-proven).**
+  - The CCVS1 builder sends its state as J1939 SPN 976 (PTO governor state), and OBD-II PID 0x1E reports its active flag.
+  - Two new enums: `POWER_TAKE_OFF_GOVERNOR_STATE` (e2m PTST remote count / remote run / wait / normal) and `POWER_TAKE_OFF_GOVERNOR_J1939_STATE` (the J1939-71 values).
+  - 10 functions and 9 words are renamed, and the dword at 0x3fd89a is split into its two EEPROM words.
+  - Entry needs EEPROM 0x480 bits 0 / 1, which are 0 on this truck, so the governor never engages.
+- **The limiters.** Each producer is renamed:
+  - the altitude derate: engine speed x barometric pressure, cool / hot ambient grids and an air-handling fault grid;
+  - the air fuel control (boost smoke) limit;
+  - the net torque limit;
+  - the variable-speed-governor fuel limit by rpm and demand;
+  - the coolant overheat derate. This family was the "unidentified `fuel_coldStart_*` helpers".
+- **How it was done.** Two read-only agents read the engine state and the PTO cluster. Their key claims were re-checked here against the code, the dumps and the e2m file. Their prompts and reports are in the session notes.
+
 ## Checks
 
 - **Stage 1.** A fresh baseline build equals the committed `.cpp`. One function is **not label-only**: the reused local in `cm848_arbitrateGovernedFueling` (`wVar1`, first the state and later the fuel) is now two locals, `FVar1` / `wVar2`, with the same values and control flow.
 - **Stage 2.** After `reverse_names.py`, the strict check (`check_enum_proof.py`: members and numbers to values, enum type to `word`, locals to placeholders) finds **0 differing functions** and no OR render.
 - **Stage 3.** `reverse_names.py` says **EQUIVALENT**: a pure label rename, with all 26 names rendered.
+- **Stage 4.** All 103 names render with no `_` variant. After normalizing the members of the four enums, **0 functions differ**, and there is no OR render.
 - Every `FUELING_STATE_` name in the `.cpp` sits on a carrier.
 - The build warnings are unchanged at each stage. `./analyze.sh verify` is deterministic. `lookup_tables.py` is clean. `test_rename_waves`, `test_lookup_tables` and `test_disasm_tools` pass. The headers are regenerated and compile with 0 errors; CM550's are unchanged.
 
 ## Not covered (task 045)
 
-- The 16 `FUELING_STATE_UNIDENTIFIED_<n>` codes still need names. 24 / 25 / 27 first need the `COLD_START_PHASE` members 4 / 5 / 8, which disagree with their own comments.
+- Codes 32 (MSOVRIDE) / 37 (T2SPD) / 38 (T2TORQ) / 49 (OFCSTATE) / 50 (AFRSTATE) are still unidentified.
 - CM550's FSGVFLST typing.
-- The rest of the power take-off cluster at 0x2a4b0-0x2bbe8.
+- The agents' leads that were not applied:
+  - the `power_take_off_governor_t` struct and the PTO speed calibrations;
+  - `engine_starting` / `engine_shutdown_active_flag`, which may read backwards;
+  - the remaining `cold_start_*` crank-routine words.
 - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
