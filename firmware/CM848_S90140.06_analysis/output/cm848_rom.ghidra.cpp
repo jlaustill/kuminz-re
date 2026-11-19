@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Nov 19 12:27:14 MST 2026
+// Generated: Thu Nov 19 13:01:57 MST 2026
 
 
 //
@@ -36675,8 +36675,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
@@ -47321,15 +47321,15 @@ void cm848_filterEngineSensorValue(void)
 //
 
 /* Rail pressure diagnostics, run in cm848_phase_group_b_processing right after
-   cm848_calculateFuelMeteringCommand while engine_state is at the governor setpoint and the
-   pressure sensor has no confirmed fault: it sets up to seven bits of
-   fuel_pressure_diagnostic_flags (pressure above the too-high threshold for 150 passes, above a
-   second range limit, below the rpm table minimum, above or below the setpoint while the governor
-   demand is low or high, below the leak-down model or demand above its limit with no fuel, demand
-   above 283 with governor mode 11 at its target speed), debounces them into
-   fuel_pressure_diagnostic_snapshot (150 passes) and sets the fault bits. Only the too-high bit
-   (fault 303, P0088) has an OBD code; the other six go to fault bits 315, 323, 316, 317, 290 and
-   324, which have no OBD slot. (was cm848_processEnginePositionDiagnostics) */
+   cm848_calculateFuelMeteringCommand while engine_state is ENGINE_STATE_RUNNING and the pressure
+   sensor has no confirmed fault: it sets up to seven bits of fuel_pressure_diagnostic_flags
+   (pressure above the too-high threshold for 150 passes, above a second range limit, below the rpm
+   table minimum, above or below the setpoint while the governor demand is low or high, below the
+   leak-down model or demand above its limit with no fuel, demand above 283 with governor mode 11 at
+   its target speed), debounces them into fuel_pressure_diagnostic_snapshot (150 passes) and sets
+   the fault bits. Only the too-high bit (fault 303, P0088) has an OBD code; the other six go to
+   fault bits 315, 323, 316, 317, 290 and 324, which have no OBD slot. (was
+   cm848_processEnginePositionDiagnostics) */
 
 void cm848_diagnoseFuelPressureGovernor(void)
 
@@ -48103,7 +48103,7 @@ void cm848_initFuelPressureSensor(void)
 //
 
 /* Periodic rail pressure sample (phase group b) unless the engine is cranking (crank state 4 - then
-   the injection-angle events sample it) or engine_state is the fuel mode switch phase: reads QADC
+   the injection-angle events sample it) or engine_state is ENGINE_STATE_ENGINE_BRAKE: reads QADC
    index slot 34 and runs cm848_processFuelPressureSensor. Was cm848_updateEnginePosition */
 
 void cm848_sampleFuelPressureSensor(void)
@@ -60979,15 +60979,15 @@ void fuel_demandMin_maxSelect_rateLimit(void)
   if (uVar2 < uVar1) {
     uVar2 = uVar1;
   }
-  uVar1 = (uint)engine_start_emission_level_cap;
+  uVar1 = (uint)engine_start_warmup_protection_emission_level_cap;
   if (uVar1 < uVar2) {
     uVar1 = uVar2;
   }
-  uVar2 = (uint)extended_idle_emission_level_cap;
+  uVar2 = (uint)extended_idle_protection_emission_level_cap;
   if (uVar2 < uVar1) {
     uVar2 = uVar1;
   }
-  uVar1 = (uint)extreme_ambient_emission_level_cap;
+  uVar1 = (uint)extreme_ambient_overheat_protection_emission_level_cap;
   if (uVar1 < uVar2) {
     uVar1 = uVar2;
   }
@@ -61045,11 +61045,11 @@ void cm848_mainLoop_step(void)
   cm848_calculateLoadRateOfChange();
   governor_speedRatio_etcFuelCorrection_calc();
   fuel_blendMode_conditionCheck_update();
-  cm848_updateColdStartBoostOverrideFuelDemand();
+  cm848_updateExtremeAmbientOverheatProtection();
   cm848_updateCondensationProtection();
   cm848_updateInjectionTimingTemperatureComponentCheckFlags();
-  governor_coldStart_fuelModeCounter_update();
-  fuel_coldStart_phase26_flagUpdate();
+  cm848_updateExtendedIdleProtection();
+  cm848_updateEngineStartWarmupProtection();
   fuel_demandMin_maxSelect_rateLimit();
   fuel_modeStatusFlags_update();
   fuel_modeStatusBits_pack();
@@ -61067,10 +61067,10 @@ void cm848_mainLoop_step(void)
 /* Looks up the water saturation vapor pressure at the filtered intake manifold temperature
    (intake_saturation_vapor_pressure), forms the intake condensation rate as
    (charge_water_vapor_fraction minus the saturation ratio, map_fuel_correction_factor x 8 over that
-   pressure, scaled) times charge_mass_flow_filtered (stored in 0x40a5ea) and, in cold start phase 3
-   with the EGR valve not closed, adds a fifth of it to the dword at 0x3fddb2. Called by
-   cm848_updateIntakeCondensationCount. The twin of cm848_calculateEgrCoolerCondensationMassRate
-   (was fuel_demand_boost_emaFiltered_compensate). */
+   pressure, scaled) times charge_mass_flow_filtered (stored in 0x40a5ea) and, while
+   engine_is_active_flag is set and the EGR valve is not closed, adds a fifth of it to the dword at
+   0x3fddb2. Called by cm848_updateIntakeCondensationCount. The twin of
+   cm848_calculateEgrCoolerCondensationMassRate (was fuel_demand_boost_emaFiltered_compensate). */
 
 void cm848_calculateIntakeCondensationMassRate(void)
 
@@ -61132,8 +61132,8 @@ LAB_00504a4c:
    0x40a5da) and the partial pressure difference (charge_water_vapor_partial_pressure_times_4 / 4
    minus the saturation vapor pressure at the predicted temperature minus the margin, stored in
    0x40a5cc) set the step direction; the step is the intake on / off gain times the difference /
-   640; the count follows the step only while fuel_cold_start_phase3_compensation_enable_flag is set
-   (and, going up, while the EGR fraction is at or above its threshold), is limited to
+   640; the count follows the step only while condensation_count_enable_flag is set (and, going up,
+   while the EGR fraction is at or above its threshold), is limited to
    intake_condensation_count_maximum and raises the at-limit flag there. Calls
    cm848_calculateIntakeCondensationMassRate. The twin of cm848_updateEgrCoolerCondensationCount
    (was fuel_demand_blend_compensate). */
@@ -61185,7 +61185,7 @@ void cm848_updateIntakeCondensationCount(void)
   else {
     bVar3 = true;
   }
-  if (fuel_cold_start_phase3_compensation_enable_flag != 0) {
+  if (condensation_count_enable_flag != 0) {
     dVar1 = intake_condensation_count;
     if ((!bVar3) && (intake_condensation_increasing_flag != 0)) goto LAB_00504cf4;
     if (intake_condensation_increasing_flag != 0) {
@@ -61229,8 +61229,8 @@ LAB_00504cf4:
 /* Looks up the water saturation vapor pressure at the coolant temperature
    (egr_cooler_saturation_vapor_pressure), forms the condensation rate as
    (exhaust_water_vapor_fraction minus map_fuel_correction_factor x 8 over that pressure, scaled)
-   times the delayed filtered EGR mass flow (stored in 0x40a5e8) and, in cold start phase 3 with the
-   EGR valve not closed, adds a fifth of it to the dword at 0x3fddae. Called by
+   times the delayed filtered EGR mass flow (stored in 0x40a5e8) and, while engine_is_active_flag is
+   set and the EGR valve is not closed, adds a fifth of it to the dword at 0x3fddae. Called by
    cm848_updateEgrCoolerCondensationCount. (was fuel_demand_boost_ema_compensate) */
 
 void cm848_calculateEgrCoolerCondensationMassRate(void)
@@ -61293,9 +61293,8 @@ LAB_00504df0:
    difference (weighted MAP correction / 4 minus the saturation vapor pressure at the coolant
    temperature minus the setpoint, stored in 0x40a5c2) set the step direction; the step is the on /
    off step rate times the difference / 640; the count follows the step only while
-   fuel_cold_start_phase3_compensation_enable_flag is set, is limited to its maximum and raises the
-   at-limit flag there. Calls cm848_calculateEgrCoolerCondensationMassRate. (was
-   fuel_demand_boost_compensate) */
+   condensation_count_enable_flag is set, is limited to its maximum and raises the at-limit flag
+   there. Calls cm848_calculateEgrCoolerCondensationMassRate. (was fuel_demand_boost_compensate) */
 
 void cm848_updateEgrCoolerCondensationCount(void)
 
@@ -61340,7 +61339,7 @@ void cm848_updateEgrCoolerCondensationCount(void)
          (dword)(CONCAT44(uVar3 * iVar5 + (int)((ulonglong)uVar3 * (ulonglong)uVar4 >> 0x20),
                           uVar3 * uVar4) / 0x280);
   }
-  if (fuel_cold_start_phase3_compensation_enable_flag != 0) {
+  if (condensation_count_enable_flag != 0) {
     if (egr_cooler_condensation_increasing_flag != 0) {
       dVar2 = egr_cooler_condensation_count_maximum;
       if (((int)egr_cooler_condensation_increment <= (int)egr_cooler_condensation_count_maximum) &&
@@ -61376,13 +61375,13 @@ LAB_005050ac:
 // Function: cm848_updateCondensationProtection @ 0x005050f4
 //
 
-/* Condensation protection driver (e2m EMO condensation AECD):
-   fuel_cold_start_phase3_compensation_enable_flag = feature_enable_flags_cal bit 0x200 and cold
-   start phase 3; scales the four condensation on / off gains (EGR cooler and intake) by
-   charge_mass_flow_filtered x scale / 128; runs cm848_updateIntakeCondensationCount and
-   cm848_updateEgrCoolerCondensationCount; while either count is at its limit sets
-   condensation_protection_active_flag and condensation_protection_emission_level_cap (the
-   calibrated cap 0x40654e), else clears both (was fuel_coldStart_quantityScale_update). */
+/* Condensation protection driver (e2m EMO condensation AECD): condensation_count_enable_flag =
+   feature_enable_flags_cal bit 0x200 and engine_is_active_flag; scales the four condensation on /
+   off gains (EGR cooler and intake) by charge_mass_flow_filtered x scale / 128; runs
+   cm848_updateIntakeCondensationCount and cm848_updateEgrCoolerCondensationCount; while either
+   count is at its limit sets condensation_protection_active_flag and
+   condensation_protection_emission_level_cap (the calibrated cap 0x40654e), else clears both (was
+   fuel_coldStart_quantityScale_update). */
 
 void cm848_updateCondensationProtection(void)
 
@@ -61390,10 +61389,10 @@ void cm848_updateCondensationProtection(void)
   uint uVar1;
   
   if (((feature_enable_flags_cal & 0x200) == 0) || (engine_is_active_flag != 1)) {
-    fuel_cold_start_phase3_compensation_enable_flag = 0;
+    condensation_count_enable_flag = 0;
   }
   else {
-    fuel_cold_start_phase3_compensation_enable_flag = 1;
+    condensation_count_enable_flag = 1;
   }
   uVar1 = (uint)charge_mass_flow_filtered;
   if (uVar1 * egr_cooler_condensation_off_gain < 0x3fc001) {
@@ -61445,11 +61444,11 @@ void cm848_updateCondensationProtection(void)
 void fuel_modeStatusBits_pack(void)
 
 {
-  DAT_0040a5ec = fuel_blendMode_active_flag | extreme_ambient_emission_control_active_flag * 2 |
+  DAT_0040a5ec = fuel_blendMode_active_flag | extreme_ambient_overheat_protection_active_flag * 2 |
                  condensation_protection_active_flag << 2 |
                  (ushort)(injection_timing_temperature_component_check_flags != 0) << 3 |
-                 extended_idle_emission_control_active_flag << 4 |
-                 engine_start_emission_control_active_flag << 5 |
+                 extended_idle_protection_active_flag << 4 |
+                 engine_start_warmup_protection_active_flag << 5 |
                  (ushort)(fuel_demand_sensor_validation_flags != 0) << 6 | DAT_003fba36 << 7;
   return;
 }
@@ -61467,7 +61466,7 @@ void fuel_modeStatusFlags_update(void)
   
   combustion_status_flags = DAT_00406568;
   if (DAT_003fd7ea == 0) {
-    if (engine_start_emission_control_active_flag == 0) {
+    if (engine_start_warmup_protection_active_flag == 0) {
       uVar1 = fuel_demand_sensor_validation_flags |
               injection_timing_temperature_component_check_flags;
     }
@@ -61475,8 +61474,7 @@ void fuel_modeStatusFlags_update(void)
       uVar1 = fuel_demand_sensor_validation_flags |
               injection_timing_temperature_component_check_flags | 1;
     }
-    if ((extended_idle_emission_control_active_flag != 0) ||
-       (condensation_protection_active_flag != 0)) {
+    if ((extended_idle_protection_active_flag != 0) || (condensation_protection_active_flag != 0)) {
       uVar1 = uVar1 | 0x80;
     }
     if ((engine_is_starting_flag == 0) && (engine_is_active_flag == 0)) {
@@ -61580,21 +61578,29 @@ void cm848_initialization_step_8(void)
 
 
 //
-// Function: fuel_coldStart_phase26_flagUpdate @ 0x005055a0
+// Function: cm848_updateEngineStartWarmupProtection @ 0x005055a0
 //
 
-void fuel_coldStart_phase26_flagUpdate(void)
+/* The e2m EMO Engine Starting and Warmup Protection AECD (blocks 19B2 / 19B3):
+   engine_start_warmup_protection_active_flag is 1 while algorithm_enable_flags_20_cal bit 0x1000 is
+   set and engine_is_starting_flag is 1 (CRANKING / JUMP_START); then
+   engine_start_warmup_protection_emission_level_cap =
+   engine_start_warmup_protection_emission_level_cap_when_active (1.0 here), else 0. The bit is
+   clear on this truck (0x0100), so it never activates (was fuel_coldStart_phase26_flagUpdate) */
+
+void cm848_updateEngineStartWarmupProtection(void)
 
 {
   if (((algorithm_enable_flags_20_cal & 0x1000) == 0) || (engine_is_starting_flag == 0)) {
-    engine_start_emission_control_active_flag = 0;
+    engine_start_warmup_protection_active_flag = 0;
   }
   else {
-    engine_start_emission_control_active_flag = 1;
+    engine_start_warmup_protection_active_flag = 1;
   }
-  engine_start_emission_level_cap = DAT_0040656c;
-  if (engine_start_emission_control_active_flag == 0) {
-    engine_start_emission_level_cap = 0;
+  engine_start_warmup_protection_emission_level_cap =
+       engine_start_warmup_protection_emission_level_cap_when_active;
+  if (engine_start_warmup_protection_active_flag == 0) {
+    engine_start_warmup_protection_emission_level_cap = 0;
   }
   return;
 }
@@ -61602,10 +61608,19 @@ void fuel_coldStart_phase26_flagUpdate(void)
 
 
 //
-// Function: governor_coldStart_fuelModeCounter_update @ 0x00505600
+// Function: cm848_updateExtendedIdleProtection @ 0x00505600
 //
 
-void governor_coldStart_fuelModeCounter_update(void)
+/* The e2m EMO Extended Idle and PTO Protection AECD (blocks 19B0 / 19B1): extended_idle_timer
+   counts up by 2 per pass to extended_idle_time_threshold (3000 = 300 s here) while
+   algorithm_enable_flags_20_cal bit 0x800 is set, engine_is_active_flag is 1 and
+   fuel_demand_arbitrated_state_snapshot is FUELING_STATE_LOW_SPEED_GOVERNOR or
+   FUELING_STATE_POWER_TAKE_OFF, and is 0 otherwise; extended_idle_protection_active_flag is 1 once
+   it reaches the threshold, and then extended_idle_protection_emission_level_cap =
+   extended_idle_protection_emission_level_cap_when_active (1.0 here), else 0. The bit is clear on
+   this truck (was governor_coldStart_fuelModeCounter_update) */
+
+void cm848_updateExtendedIdleProtection(void)
 
 {
   bool bVar1;
@@ -61639,10 +61654,11 @@ void governor_coldStart_fuelModeCounter_update(void)
     }
   }
   extended_idle_timer = wVar3;
-  extended_idle_emission_control_active_flag = (ushort)(uVar4 <= extended_idle_timer);
-  extended_idle_emission_level_cap = DAT_0040656e;
+  extended_idle_protection_active_flag = (ushort)(uVar4 <= extended_idle_timer);
+  extended_idle_protection_emission_level_cap =
+       extended_idle_protection_emission_level_cap_when_active;
   if (uVar4 > extended_idle_timer) {
-    extended_idle_emission_level_cap = 0;
+    extended_idle_protection_emission_level_cap = 0;
   }
   return;
 }
@@ -61650,41 +61666,48 @@ void governor_coldStart_fuelModeCounter_update(void)
 
 
 //
-// Function: cm848_updateColdStartBoostOverrideFuelDemand @ 0x005056f8
+// Function: cm848_updateExtremeAmbientOverheatProtection @ 0x005056f8
 //
 
-/* Cold start boost override: a coolant temperature hysteresis (DAT_00406574 / DAT_00406572) sets
-   cold_start_boost_demand_above_threshold_flag; with algorithm_enable_flags_20_cal bit 0x200 it
-   activates extreme_ambient_emission_control_active_flag and publishes the fuel demand floor
-   interpolated from the coolant temperature as extreme_ambient_emission_level_cap (0 while
-   inactive). (was fuel_demandBoost_overrideFlag_lookup) */
+/* The e2m EMO extreme ambient overheat protection AECD (blocks 19A1-19A4), a hot-coolant
+   protection: extreme_ambient_coolant_temperature_high_flag sets at coolant_temperature_selected >=
+   extreme_ambient_overheat_protection_on_coolant_temperature (222 degF) and clears at <=
+   extreme_ambient_overheat_protection_off_coolant_temperature (217 degF); with
+   algorithm_enable_flags_20_cal bit 0x200 it makes extreme_ambient_overheat_protection_active_flag
+   1, and extreme_ambient_overheat_protection_emission_level_cap is the coolant temperature lookup
+   of extreme_ambient_overheat_protection_cap_axis / _values (C_EMO_Extreme_Amb_Cap_Table, all 1.0
+   here) while active, else 0. The bit is clear on this truck (was
+   cm848_updateColdStartBoostOverrideFuelDemand, before that fuel_demandBoost_overrideFlag_lookup)
+    */
 
-void cm848_updateColdStartBoostOverrideFuelDemand(void)
+void cm848_updateExtremeAmbientOverheatProtection(void)
 
 {
-  if ((short)coolant_temperature_selected < DAT_00406574) {
-    if ((short)coolant_temperature_selected <= DAT_00406572) {
-      cold_start_boost_demand_above_threshold_flag = 0;
+  if ((short)coolant_temperature_selected <
+      extreme_ambient_overheat_protection_on_coolant_temperature) {
+    if ((short)coolant_temperature_selected <=
+        extreme_ambient_overheat_protection_off_coolant_temperature) {
+      extreme_ambient_coolant_temperature_high_flag = 0;
     }
   }
   else {
-    cold_start_boost_demand_above_threshold_flag = 1;
+    extreme_ambient_coolant_temperature_high_flag = 1;
   }
   if (((algorithm_enable_flags_20_cal & 0x200) == 0) ||
-     (cold_start_boost_demand_above_threshold_flag == 0)) {
-    extreme_ambient_emission_control_active_flag = 0;
+     (extreme_ambient_coolant_temperature_high_flag == 0)) {
+    extreme_ambient_overheat_protection_active_flag = 0;
   }
   else {
-    extreme_ambient_emission_control_active_flag = 1;
+    extreme_ambient_overheat_protection_active_flag = 1;
   }
-  extreme_ambient_emission_level_cap =
+  extreme_ambient_overheat_protection_emission_level_cap =
        lookupTableInterpolation
                  (&DAT_003fbc9e,coolant_temperature_selected,
-                  cold_start_override_fuel_demand_floor_axis,
-                  cold_start_override_fuel_demand_floor_values,1);
-  DAT_003fbca0 = extreme_ambient_emission_level_cap;
-  if (extreme_ambient_emission_control_active_flag == 0) {
-    extreme_ambient_emission_level_cap = 0;
+                  extreme_ambient_overheat_protection_cap_axis,
+                  extreme_ambient_overheat_protection_cap_values,1);
+  DAT_003fbca0 = extreme_ambient_overheat_protection_emission_level_cap;
+  if (extreme_ambient_overheat_protection_active_flag == 0) {
+    extreme_ambient_overheat_protection_emission_level_cap = 0;
   }
   return;
 }
@@ -74503,16 +74526,17 @@ void cm848_runPciMessageHandlers(void)
 /* WARNING: Removing unreachable block (ram,0x00518b50) */
 /* WARNING: Removing unreachable block (ram,0x005189e8) */
 /* WARNING: Removing unreachable block (ram,0x005190fc) */
-/* SAE J1979 OBD-II service on the PCI (J1850) bus - answers a request in pci_receive_message_0
-   (header 68 6A - requester address 0xF0-0xFD) with pci_transmit_message_8 (header 48 6B): mode 1
-   current data (PID 0 supported PIDs / 1 DTC count + MIL + monitor bytes / 4 engine load / 5
-   coolant temperature / 0x0B intake manifold pressure / 0x0C engine speed / 0x0D vehicle speed /
-   0x0F intake temperature = intake manifold temperature / 0x11 accelerator pedal / 0x1C OBD
-   standard) / mode 2 the same PIDs from the freeze frame (+ PID 2 = the DTC that stored it) / modes
-   3 and 7 stored and pending DTCs three per frame from obd_dtc_code_table / mode 4 clears DTCs
-   (only while engine_state is ENGINE_STATE_STOPPED) / mode 9 VIN (5 frames) + calibration ID + CVN
-   (was j1939_dm_message_processor - nothing in it is J1939) | review-function-readability reviewed
-   2026-11-12 - Readability Medium Accuracy Confidence High */
+/* SAE J1979 OBD-II service on the PCI (J1850) bus - answers a request in
+   pci_receive_message_table[0] (header 68 6A - requester address 0xF0-0xFD) with
+   pci_transmit_message_table[8] (header 48 6B): mode 1 current data (PID 0 supported PIDs / 1 DTC
+   count + MIL + monitor bytes / 4 engine load / 5 coolant temperature / 0x0B intake manifold
+   pressure / 0x0C engine speed / 0x0D vehicle speed / 0x0F intake temperature = intake manifold
+   temperature / 0x11 accelerator pedal / 0x1C OBD standard) / mode 2 the same PIDs from the freeze
+   frame (+ PID 2 = the DTC that stored it) / modes 3 and 7 stored and pending DTCs three per frame
+   from obd_dtc_code_table / mode 4 clears DTCs (only while engine_state is ENGINE_STATE_STOPPED) /
+   mode 9 VIN (5 frames) + calibration ID + CVN (was j1939_dm_message_processor - nothing in it is
+   J1939) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence
+   High */
 
 void cm848_processPciObdRequest(void)
 
@@ -84219,7 +84243,7 @@ void cm848_resetCylinderCutoutState(void)
    main_injection_timing / pilot_injection_timing / auxiliary_injection_timing into the *_snapshot
    words 0x3fd07c-0x3fd086; engine_injectionAngle_updateCutoutAndTimingDemand scales and applies
    them per cylinder event. Also resets injection_quantity_scale_factor to 51200 (1.0) unless
-   engine_state is at the governor setpoint or the fuel mode switch (was
+   engine_state is ENGINE_STATE_RUNNING or ENGINE_STATE_ENGINE_BRAKE (was
    cm848_fuel_demand_state_capture). */
 
 void cm848_captureInjectionQuantityAndTimingSnapshots(void)
@@ -85678,14 +85702,14 @@ void cm848_sensor_diagnostic_flag_update(void)
 
 /* Calculates the rail pressure setpoint fuel_pressure_setpoint (0.0488 MPa per count; this is its
    only writer) in the auxiliary-control task: the lower of the blended rpm x fuel quantity map
-   (fuel_pressure_setpoint_base_map / _map_1 to _map_4), the coolant limit and the ambient limit
-   (their sum when the byte at 0x409a71 is 0; it is 1 here) plus a slewed offset table, held in a
-   dead band at low speed and load. While cranking it uses the cold-start table and then ramps out
-   of it, and the result is clamped to the calibration minimum and maximum (3279 counts = 160 MPa
-   here); a forced or additive override, 0 while engine_shutdown_command_flag, a fixed value in
-   governor_speed_limit_mode 1 and the fault-reaction cap (fault_reaction_request_bits bit 2) also
-   act on it. The winning term goes to fuel_pressure_setpoint_winning_term_code (was
-   cm848_sensor_channel_state_load). */
+   (fuel_pressure_setpoint_base_map_grid and fuel_pressure_setpoint_map_1_grid to
+   fuel_pressure_setpoint_map_4_grid), the coolant limit and the ambient limit (their sum when the
+   byte at 0x409a71 is 0; it is 1 here) plus a slewed offset table, held in a dead band at low speed
+   and load. While cranking it uses the cold-start table and then ramps out of it, and the result is
+   clamped to the calibration minimum and maximum (3279 counts = 160 MPa here); a forced or additive
+   override, 0 while engine_shutdown_command_flag, a fixed value in governor_speed_limit_mode 1 and
+   the fault-reaction cap (fault_reaction_request_bits bit 2) also act on it. The winning term goes
+   to fuel_pressure_setpoint_winning_term_code (was cm848_sensor_channel_state_load). */
 
 void cm848_calculateFuelPressureSetpoint(void)
 
@@ -86036,8 +86060,8 @@ void cm848_initializeFuelPressureSetpointState(void)
 
 /* Third rail pressure governor monitor, switched off in this calibration (byte 0x409aa0 = 0): when
    the engine speed is within 160 counts (20 rpm) of governor_speed_limit_output with the vehicle
-   stopped, engine_state at the governor setpoint, coolant 180-205 F and no injector, rail pressure
-   or related fault, it debounces (80 net passes) fuel_pressure_governor_demand above 283 and sets
+   stopped, engine_state ENGINE_STATE_RUNNING, coolant 180-205 F and no injector, rail pressure or
+   related fault, it debounces (80 net passes) fuel_pressure_governor_demand above 283 and sets
    fault 57 (P1221), clearing it when the count returns to 0. (was
    engine_camTiming_speedWindow_update; not cam timing) */
 
@@ -90779,13 +90803,12 @@ void cm848_initializeMisfireMonitor(void)
 /* Sets misfire_monitor_conditions_valid_flag to 1 when every misfire test condition holds, else 0:
    no fault of misfire_monitor_disabling_fault_numbers (ROM 0x6447e, 100 fault numbers) is active
    (the list is skipped when end_of_line_test_settings_cal.field_mode_register is 5100),
-   engine_state is at the governor setpoint, the filtered engine speed
-   (engine_rpm_state_t.target_rpm, the moving average of engine_rpm_measured) is within
-   misfire_monitor_idle_reference_speed_offset of the idle reference (governor_output_t.integrator
-   high word) and at most misfire_monitor_maximum_engine_speed, load at most
-   misfire_monitor_maximum_engine_load, accelerator demand under
-   misfire_monitor_maximum_accelerator_demand, governor_fuel_demand_mode 11, the idle reference
-   equal to misfire_monitor_idle_reference_speed_previous, coolant at least
+   engine_state is ENGINE_STATE_RUNNING, the filtered engine speed (engine_rpm_state_t.target_rpm,
+   the moving average of engine_rpm_measured) is within misfire_monitor_idle_reference_speed_offset
+   of the idle reference (governor_output_t.integrator high word) and at most
+   misfire_monitor_maximum_engine_speed, load at most misfire_monitor_maximum_engine_load,
+   accelerator demand under misfire_monitor_maximum_accelerator_demand, governor_fuel_demand_mode
+   11, the idle reference equal to misfire_monitor_idle_reference_speed_previous, coolant at least
    misfire_monitor_minimum_coolant_temperature (or, with type code 5100, the warm-up passes done),
    vehicle speed under misfire_monitor_maximum_vehicle_speed and bit 0x4000 of
    monitor_enabling_conditions_met still equal to misfire_monitor_start_status_bit_state (was

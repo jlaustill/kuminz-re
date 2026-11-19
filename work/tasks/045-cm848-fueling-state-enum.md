@@ -236,7 +236,8 @@ here before anything was applied.
   - EEPROM: `crank_exit_speed_switch_cal`, `engine_brake_driveline_brake_type_cal` (1 = retarder, so ENGINE_BRAKE is
     never entered here) and `algorithm_enable_flags_20_cal`.
   - The crank tables (`crank_initial_fuel_*`, `crank_exit_fuel_*`, `crank_initial_speed_*`).
-  - The AECD words: engine start / extended idle / extreme ambient (e2m `EMO_*_AECD_Active` / `_Cap_EL`).
+  - The AECD words: engine start / extended idle / extreme ambient (e2m `EMO_*_AECD_Active` / `_Cap_EL`). Stage 5b
+    renamed them again (below).
 - **Two flags that read backwards.**
   - `engine_starting` is now `engine_shutdown_command_flag` (e2m 10B1 +12 Shutdown, block anchored at +A
     `fault_derate_fuel_limit`). It forces SHUTDOWN and zeroes the injection and the rail pressure setpoint.
@@ -255,7 +256,57 @@ here before anything was applied.
   - The build warnings match stage 4's, once `function_definitions.csv` had the two new function names
     (`refresh_references.py` does not touch that column).
 
+## Stage 5b - the AECD words fixed, the old engine state prose (2026-11-19, PR #52)
+
+A review after stage 5 found that 16 applied rows had not been checked: the crank tables and the AECD words.
+- **The crank tables, checked.** Their e2m axes match the code:
+  - `Crank_Initial_Fuel_Table` (8A47, coolant x ambient pressure) feeds `crank_initial_fuel` (105E +16);
+  - `Crank_Exit_Fuel_Table` (8A4A) feeds `crank_coolant_exit_fuel` (+C);
+  - `Crank_Initial_Speed_Table` (8A45, rpm over coolant) feeds the rpm word `crank_initial_fuel_break_speed` (+1C);
+  - with `system_status_flags` fault bit 16 or 17 set, the code takes the 8A44 defaults (`DAT_0005b1b6` / `b8`,
+    Crank_Initial_Default_Fuel / _RPM) instead.
+- **The AECD words, renamed again.** Stage 5's `*_emission_control_active_flag` reads backwards: an auxiliary
+  emission control device relaxes NOx control while it is active. The family already has wave 9's
+  `condensation_protection_active_flag` / `_emission_level_cap`, so the words follow it, with the condition from the
+  e2m AECD name:
+  - **`engine_start_warmup_protection_*`** (19B2 / 19B3). Active while `algorithm_enable_flags_20_cal` bit 0x1000 and
+    `engine_is_starting_flag` (CRANKING / JUMP_START) are set.
+  - **`extended_idle_protection_*`** (19B0 / 19B1, "Extended Idle and PTO Protection"). `extended_idle_timer` counts
+    +2 per pass (0.1 s units) while bit 0x800, `engine_is_active_flag` and the low speed governor or power take-off
+    fueling are all set. The flag goes active at `extended_idle_time_threshold`, 3000 = 300 s.
+  - **`extreme_ambient_overheat_protection_*`** (19A1-19A4). A coolant hysteresis
+    (`extreme_ambient_coolant_temperature_high_flag`: on at 222 °F, off at 217 °F) with bit 0x200. The cap comes from
+    the coolant table (`extreme_ambient_overheat_protection_cap_axis` / `_values`: -50 to 250 °F, all 1.0). The old
+    names called this a cold start boost override.
+  - **The rest of the family:** four new rows for the calibrations the code reads (the two `_when_active` caps of
+    1.0, the 217 / 222 °F thresholds, `i16` for the `lha` pair). The three update functions are now
+    `cm848_updateEngineStartWarmupProtection`, `cm848_updateExtendedIdleProtection` and
+    `cm848_updateExtremeAmbientOverheatProtection`.
+  - **EL is the emission level.** The same family's `C_EMO_Condensation_AECD_Cap` is the "NOx cap value to be used
+    when condensation triggers EGR off" (1/1024), and `fuel_demandMin_maxSelect_rateLimit` takes the largest active
+    cap.
+  - **None of the three is active on this truck.** The enable bits 0x1000 / 0x800 / 0x200 are clear in
+    `algorithm_enable_flags_20_cal` (0x0100).
+- **ENGINE_BRAKE, checked.** It has one entry (`cm848_updateEngineState`), gated by `engine_retarder_active_flag` and
+  `engine_brake_driveline_brake_type_cal == 0`, which is that word's only reader. e2m: "0=Exhaust/Engine Brake, 1=
+  Retarder"; the dump has 1.
+- **The prose left from the old engine state reading**, each checked against the compare in the code:
+  - "at the governor setpoint" = RUNNING, "fuel mode switch" = ENGINE_BRAKE, "cold start phase 3" =
+    `engine_is_active_flag`.
+  - `fuel_cold_start_phase3_compensation_enable_flag` is now `condensation_count_enable_flag` (feature bit 0x200 and
+    `engine_is_active_flag`; the two condensation counts follow their step only while it is 1).
+  - `combustion_status_flags` bit 0x02 means "neither starting nor active", so the dump's 0x402 only shows that it
+    was taken with the engine stopped (`engine_state` 1). The old note "why EGR is requested off on this truck" was a
+    misreading.
+- **The three plate shorthand tokens** are now full names.
+- **Cross-firmware:** none of the stage 5 old names occur in CM550's CSVs or the cross-firmware maps.
+
 ## Follow-ups (open)
+
+- [ ] **The rest of the EMO family.** The other inputs of `fuel_demandMin_maxSelect_rateLimit` and its output
+  `fuel_demand_min_threshold` look like AECD caps and the selected NOx emission level cap, not fuel demands. Also
+  `DAT_0040a5ec` (the AECD flag pack; e2m `EMM_AECD_State` per the `combustion_status_flags` note) and the
+  calibration words `DAT_00406568` / `DAT_0040656a`.
 
 - [ ] **Codes 37 / 38 (T2SPD / T2TORQ) and 49 / 50 (OFCSTATE / AFRSTATE):** only compared in this build. The e2m T2
   family looks like a two-speed axle or transfer case shift controller; OFC is the combustion oxygen-fuel control; AFR

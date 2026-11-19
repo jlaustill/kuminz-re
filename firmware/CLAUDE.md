@@ -793,7 +793,19 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - `engine_shutdown_active_flag` is now `key_off_shutdown_inhibit_flag`: 1 stops a key-off shutdown, and only J1939
       service 24 sets it.
   - **Also in stage 5:**
-    - the engine start / extended idle / extreme ambient AECD words (e2m `EMO_*_AECD_Active` / `_Cap_EL`);
+    - the e2m EMO auxiliary emission control device (AECD) words. They follow wave 9's `condensation_protection_*`:
+      `engine_start_warmup_protection_*` (19B2 / 19B3), `extended_idle_protection_*` (19B0 / 19B1: the timer runs only
+      while the low speed or power take-off governor has the fueling) and `extreme_ambient_overheat_protection_*`
+      (19A1-19A4: a 217 / 222 °F coolant hysteresis, not a cold start boost override).
+      - Each `_active_flag` puts its `_emission_level_cap` into the max-select of
+        `fuel_demandMin_maxSelect_rateLimit`. EL = emission level: the condensation cap is the "NOx cap value".
+      - Stage 5 first named the flags `*_emission_control_active_flag`, which reads backwards (an AECD relaxes NOx
+        control); stage 5b fixed it.
+      - The enable bits 0x1000 / 0x800 / 0x200 of `algorithm_enable_flags_20_cal` are clear on this truck (0x0100).
+    - stage 5b also fixed the comments that still used the old cold-start-phase state words: "at the governor
+      setpoint" is RUNNING, "fuel mode switch" is ENGINE_BRAKE. `fuel_cold_start_phase3_compensation_enable_flag` is
+      now `condensation_count_enable_flag`. `combustion_status_flags` bit 0x02 is "engine stopped"; the dump's 0x402
+      only shows that the engine was off.
     - code 32 = `FUELING_STATE_MASTER_SLAVE_OVERRIDE` (e2m MSOVRIDE / [MSODEN]);
     - the stale `CSP_*` state names in 32 comments.
 

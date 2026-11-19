@@ -1361,9 +1361,9 @@ void fuel_modeStatusFlags_update(void);  // @ 0x0050530c
 void cm848_initialization_step_7(void);  // @ 0x005053d0
 void fuel_demandTiming_rollingAverage_update(void);  // @ 0x005053e0
 void cm848_initialization_step_8(void);  // @ 0x00505574
-void fuel_coldStart_phase26_flagUpdate(void);  // @ 0x005055a0
-void governor_coldStart_fuelModeCounter_update(void);  // @ 0x00505600
-void cm848_updateColdStartBoostOverrideFuelDemand(void);  // @ 0x005056f8
+void cm848_updateEngineStartWarmupProtection(void);  // @ 0x005055a0
+void cm848_updateExtendedIdleProtection(void);  // @ 0x00505600
+void cm848_updateExtremeAmbientOverheatProtection(void);  // @ 0x005056f8
 void cm848_initialization_step_9(void);  // @ 0x005057dc
 void cm848_updateInjectionTimingTemperatureComponentCheckFlags(void);  // @ 0x005057ec
 void cm848_calculateAmbientAirDensity(void);  // @ 0x005058a8
