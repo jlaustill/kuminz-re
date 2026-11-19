@@ -1,0 +1,29 @@
+cm848: FUELING_STATE stage 2 - the derate, combustion and final stages
+
+The governed fueling state flows on through the derate chain
+(cm848_processProtectionSelection), the combustion stage and the final
+selection (cm848_selectFuelDemandSource). Every carrier holds the same
+numbering; the RAM dump (key on, engine stopped) reads governed 11 ->
+derate 62 -> final 26. e2m blocks 1051 (FSFNFL / FSFNFLST) and 105D
+(FSLMFL / FSLMFLST / FSAPLMFL) line up with 0x40a2ce / 0x40a2d0 and
+0x40afac / 0x40afae / 0x40afb0.
+
+- 17 members proved from their setter: 13 calibrated fixed fuel limit /
+  19 maximum fuel curve / 20 TSC1 torque limit / 22 engine starting /
+  23 fuel override / 26 engine stopped / 28 fuel pressure fault limit /
+  29 fault derate / 41 immobilizer fuel disable / 45 torque management /
+  52-55 + 58 the combustion limits / 61 rail pressure shortfall /
+  62 the fuel pressure governor fault blend
+- 16 FUELING_STATE_UNIDENTIFIED_<n> members for the codes stored or
+  compared but not proved yet: with no exact member Ghidra 12.1 printed
+  them as ORs of members (15 = HIGH_SPEED_GOVERNOR | TSC1_SPEED_CONTROL |
+  TSC1_TORQUE_CONTROL)
+- ten carriers typed FUELING_STATE; governor_mode_code ->
+  final_fueling_state (+ _prev and the fault_entry_t freeze-frame byte),
+  governor_fuel_mode_arbitrated -> requested_fueling_state, and the other
+  governor_fuel_mode_* words named after the fuel value they belong to
+
+Proof: no function differs once enum substitution is normalized; no OR
+render left; build warnings unchanged; headers regenerated (0 errors).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

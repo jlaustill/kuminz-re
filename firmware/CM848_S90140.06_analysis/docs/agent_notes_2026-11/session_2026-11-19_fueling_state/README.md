@@ -14,6 +14,22 @@ subagents.
 - `follow.sh`: prints the first users of the register after each load of the target. Every load fed a `cmpwi` or a
   copy.
 - `archive_fueling_state_session.py`: writes this folder, and writes the private transcript archive outside the repo.
+  `check_archive_restore.py` checks that the tar.xz restores byte-identically.
+- **Stage 2** (the derate, combustion and final stages):
+  - `apply_fueling_state_stage2.py`: 17 members, ten carriers typed and renamed.
+  - `apply_fueling_state_stage2b.py`: the 16 `FUELING_STATE_UNIDENTIFIED_<n>` members. Ghidra printed 15 / 27 / 59 as
+    ORs of members until they had members of their own.
+  - `map_stage2*.csv`: the reverse mappings.
+- **Stage 3:**
+  - `apply_fueling_state_stage3.py`: 16 functions and 10 words of the arbitration. It also writes `map_stage3.csv`.
+  - `refresh_other_csvs.py`: refreshes the comments in `enums.csv` / `structure_definitions.csv`, which
+    `refresh_references.py` does not cover.
+- **Investigation helpers:**
+  - `fnbody.py`: prints function bodies.
+  - `writers.py`: lists every assignment of a global.
+  - `carrier_census.py`: lists the constants compared or assigned per carrier, and any ordering compare.
+  - `width_census.py`: displacement-form access widths from `all.dis`.
+- `commit_message*.txt` / `pr_body.md`: the commit messages and the PR #52 body.
 
 `session_folder_large_files.tar.xz` holds the files listed in `session_folder_large_files.txt`:
 - `all.dis`: the full disassembly of both banks that the access census scanned.
