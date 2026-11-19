@@ -1,0 +1,3509 @@
+[
+ {
+  "address": "0x0005c310",
+  "block": "1034",
+  "offset": "0000",
+  "record": "Fuel_Delivery_Rate_Offset",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478200",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[FDFLRTOF] Conversion offset of line converting cubic millimeter fuel to project FU.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c310",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "fuelDemandProportionalCalculationSlowCycle40Coordinator: if ((uint)total_injection_quantity_for_air_handling < (uint)DAT_0005c310) {",
+   "fuelDemandProportionalCalculationSlowCycle40Coordinator: uVar2 = (uint)total_injection_quantity_for_air_handling - (uint)DAT_0005c310;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c312",
+  "block": "1034",
+  "offset": "0002",
+  "record": "Fuel_Delivery_Rate_Scale",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0.01",
+  "max": "5000",
+  "description": "[FDFLRTSC] Constant used to convert fuel delivery rate from rpm%fuel to lbs/hr",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c312",
+  "references": 1,
+  "dump_raw": "7520",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "fuelDemandProportionalCalculationSlowCycle40Coordinator: (ulonglong)((uint)DAT_0005c312 * 0x1d7));"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2b2",
+  "block": "10DF",
+  "offset": "0006",
+  "record": "Jcomm_Pk_Fueling_Tau_0",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[JCMXT0FL] Jcomm Peak Fueling Tau 0 Max fueling on 100% throttle curve for tau = 0",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2b2",
+  "references": 1,
+  "dump_raw": "1501",
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_throttlePositionProcessing: (int)(short)(DAT_0005c2b2 - throttle_demand_processed));"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2b4",
+  "block": "10DF",
+  "offset": "0008",
+  "record": "Jcomm_Rated_Speed_Tau_0",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "3000",
+  "description": "[JCRTT0RP] Jcomm Rated Speed Tau 0 rated max engine speed tau = 0 also no derate hsg break",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2b4",
+  "references": 2,
+  "dump_raw": "23200",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_faultSeverityEvaluation: (&friction_fuel_by_engine_speed_interpolation_state,DAT_0005c2b4,",
+   "cm848_processThrottlePositionLookups: cm848_throttlePositionProcessing(DAT_0005c2b4,(int)(short)throttle_cal_b4_lookup);"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2b6",
+  "block": "10DF",
+  "offset": "000A",
+  "record": "Jcomm_Speed_Brkpt_3_Tau_0",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "3000",
+  "description": "[JCT0RP03] Jcomm Speed Breakpoint 3 Tau 0 engine speed breakpoint 3 defined for tau = 0",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2b6",
+  "references": 2,
+  "dump_raw": "11200",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_faultSeverityEvaluation: (&friction_fuel_by_engine_speed_interpolation_state,DAT_0005c2b6,",
+   "cm848_processThrottlePositionLookups: cm848_throttlePositionProcessing(DAT_0005c2b6,(int)(short)throttle_cal_b6_lookup);"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2b8",
+  "block": "10DF",
+  "offset": "000C",
+  "record": "Jcomm_Speed_Brkpt_4_Tau_0",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "3000",
+  "description": "[JCT0RP04] Jcomm Speed Breakpoint 4 Tau 0 engine speed breakpoint 4 defined for tau = 0",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2b8",
+  "references": 3,
+  "dump_raw": "20800",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "cm848_faultSeverityEvaluation: (&friction_fuel_by_engine_speed_interpolation_state,DAT_0005c2b8,",
+   "cm848_processThrottlePositionLookups: cm848_throttlePositionProcessing(DAT_0005c2b8,(int)(short)throttle_demand_processed);",
+   "cm848_calculateThrottleProtectionLimit: (&friction_fuel_by_engine_speed_interpolation_state,DAT_0005c2b8,"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2ba",
+  "block": "10DF",
+  "offset": "000E",
+  "record": "Jcomm_Speed_Brkpt_5_Tau_0",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "3000",
+  "description": "[JCT0RP05] Jcomm Speed Breakpoint 5 Tau 0 engine speed breakpoint 5 defined for tau = 0",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2ba",
+  "references": 2,
+  "dump_raw": "22400",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_faultSeverityEvaluation: (&friction_fuel_by_engine_speed_interpolation_state,DAT_0005c2ba,",
+   "cm848_processThrottlePositionLookups: cm848_throttlePositionProcessing(DAT_0005c2ba,(int)(short)throttle_cal_ba_lookup);"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c4a6",
+  "block": "10EB",
+  "offset": "0000",
+  "record": "Jcomm_LSG_Proportional_Gain",
+  "unit": "MM3S/RPM",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.00048828120",
+  "min": "0.000000",
+  "max": "1.739200",
+  "description": "[LSJCPPGN] LSG P gain passed from fuel system specific algorithm.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c4a6",
+  "references": 1,
+  "dump_raw": "154",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_getGovernorOverrideSource: governor_setpoint_table_ptr = &DAT_0005c4a6;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040a74e",
+  "block": "1152",
+  "offset": "001A",
+  "record": "Fuel_Temperature_Fuel_Shutdown_Time_Count",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "65535",
+  "description": "[EPFTFSCU] Amount of time over fuel temperature fuel shutdown threshold",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040a74e",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "governor_faultDerate_mainLoop_update: DAT_0040a74e = 0;",
+   "cm848_completeEngineStartSequence: DAT_0040a74e = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Fuel_Temperature_Input_Source",
+    "fuel_temperature_derate_input_pointer",
+    "0.75"
+   ],
+   [
+    "0018",
+    "Fuel_Temperature_Precrank_Error",
+    "governor_faultDerate_ch0_threshold_exceeded",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040a750",
+  "block": "1152",
+  "offset": "001C",
+  "record": "Fuel_Temperature_RPM_Shutdown_Time_Count",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "65535",
+  "description": "[EPFTRSCU] Amount of time over fuel temperature RPM shutdown threshold",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040a750",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "governor_faultDerate_mainLoop_update: DAT_0040a750 = 0;",
+   "cm848_completeEngineStartSequence: DAT_0040a750 = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Fuel_Temperature_Input_Source",
+    "fuel_temperature_derate_input_pointer",
+    "0.75"
+   ],
+   [
+    "0018",
+    "Fuel_Temperature_Precrank_Error",
+    "governor_faultDerate_ch0_threshold_exceeded",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040b6c6",
+  "block": "118A",
+  "offset": "0002",
+  "record": "Cruise_RSG_Derivative_Fuel",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793478400",
+  "min": "-400.000000",
+  "max": "400.000000",
+  "description": "THE CURRENT DERIVATIVE FUELING OF THE CRUISE / RSG.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040b6c6",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: DAT_0040b6c6 = wStack_36;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_RSG_Fueling",
+    "cruise_fuel_demand_hold",
+    "0.25"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Error",
+    "governor_cruise_speed_error_working",
+    "0.67"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Error_After_Droop",
+    "governor_cruise_speed_error_net",
+    "0.40"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_External_Reset",
+    "cruise_confirm_flag_a",
+    "0.25"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Proportional_Fuel",
+    "cruise_pid_p_term_working",
+    "0.25"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Reference_Speed",
+    "governor_override_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Gain_Auto",
+    "cruise_pid_rate_gain_scale",
+    "0.50"
+   ],
+   [
+    "0014",
+    "Cruise_Rate_Limit_Preset",
+    "cruise_confirm_flag_b",
+    "0.25"
+   ],
+   [
+    "0018",
+    "CC_RS_Preset_Fueling",
+    "cruise_fuel_demand_stable_ref",
+    "0.25"
+   ],
+   [
+    "001A",
+    "CC_RS_Sump_Fuel",
+    "governor_cruise_fuel_demand_delta",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040b6ce",
+  "block": "118A",
+  "offset": "000A",
+  "record": "Cruise_RSG_Integral_Adj_Fuel",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793478400",
+  "min": "-400.000000",
+  "max": "400.000000",
+  "description": "Integral Adjustment Fueling for CC/RSG Governor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040b6ce",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: DAT_0040b6ce = local_34._0_2_;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_RSG_Fueling",
+    "cruise_fuel_demand_hold",
+    "0.25"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Error",
+    "governor_cruise_speed_error_working",
+    "0.67"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Error_After_Droop",
+    "governor_cruise_speed_error_net",
+    "0.40"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_External_Reset",
+    "cruise_confirm_flag_a",
+    "0.25"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Proportional_Fuel",
+    "cruise_pid_p_term_working",
+    "0.25"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Reference_Speed",
+    "governor_override_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Gain_Auto",
+    "cruise_pid_rate_gain_scale",
+    "0.50"
+   ],
+   [
+    "0014",
+    "Cruise_Rate_Limit_Preset",
+    "cruise_confirm_flag_b",
+    "0.25"
+   ],
+   [
+    "0018",
+    "CC_RS_Preset_Fueling",
+    "cruise_fuel_demand_stable_ref",
+    "0.25"
+   ],
+   [
+    "001A",
+    "CC_RS_Sump_Fuel",
+    "governor_cruise_fuel_demand_delta",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040b6d0",
+  "block": "118A",
+  "offset": "000C",
+  "record": "Cruise_RSG_Integral_Fuel",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "CRUISE RSG INTEGRAL FUEL",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040b6d0",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "code": [
+   "protectionRampRateControl: DAT_0040b6d0 = cruise_pid_integrator_q16;",
+   "protectionOutputActuatorControl: DAT_0040b6d0 = cruise_pid_integrator_q16;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_RSG_Fueling",
+    "cruise_fuel_demand_hold",
+    "0.25"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Error",
+    "governor_cruise_speed_error_working",
+    "0.67"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Error_After_Droop",
+    "governor_cruise_speed_error_net",
+    "0.40"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_External_Reset",
+    "cruise_confirm_flag_a",
+    "0.25"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Proportional_Fuel",
+    "cruise_pid_p_term_working",
+    "0.25"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Reference_Speed",
+    "governor_override_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Gain_Auto",
+    "cruise_pid_rate_gain_scale",
+    "0.50"
+   ],
+   [
+    "0014",
+    "Cruise_Rate_Limit_Preset",
+    "cruise_confirm_flag_b",
+    "0.25"
+   ],
+   [
+    "0018",
+    "CC_RS_Preset_Fueling",
+    "cruise_fuel_demand_stable_ref",
+    "0.25"
+   ],
+   [
+    "001A",
+    "CC_RS_Sump_Fuel",
+    "governor_cruise_fuel_demand_delta",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c334",
+  "block": "12BD",
+  "offset": "0000",
+  "record": "Jcomm_LSG_Ref_Speed_Offset",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.125",
+  "min": "-3600",
+  "max": "3600",
+  "description": "[JCLSRFOF] Offset from LSG Reference which is broadcast pt1",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c334",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_updateProtectionThresholdsIfLow: iVar2 = (uint)governor_output_t_0040aec2.idle_reference_speed + (int)DAT_0005c334;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c336",
+  "block": "12BD",
+  "offset": "0002",
+  "record": "Throttle_Speed_At_Point_3",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "8000",
+  "description": "[PPTHES03] Jcomm Speed at point 3 for broadcast",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c336",
+  "references": 1,
+  "dump_raw": "11200",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_updateProtectionThresholdsIfLow: protection_threshold_lookup_rpm = DAT_0005c336;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c338",
+  "block": "12BD",
+  "offset": "0004",
+  "record": "Throttle_Speed_At_Point_4",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "8000",
+  "description": "[PPTHES04] Jcomm Speed at point 4 for broadcast",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c338",
+  "references": 1,
+  "dump_raw": "20800",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_updateProtectionThresholdsIfLow: protection_threshold_scale_working = DAT_0005c338;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c33a",
+  "block": "12BD",
+  "offset": "0006",
+  "record": "Throttle_Speed_At_Point_5",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "8000",
+  "description": "[PPTHES05] Jcomm Speed at point 5 for broadcast",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c33a",
+  "references": 1,
+  "dump_raw": "22400",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_updateProtectionThresholdsIfLow: protection_base_threshold_working = DAT_0005c33a;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c33c",
+  "block": "12BD",
+  "offset": "0008",
+  "record": "Throttle_100_Min_Config",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[FSMXTHCG] Bitmap indicating when a feature should CLAMP a fueling point",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c33c",
+  "references": 1,
+  "dump_raw": "128",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_updateProtectionDiagnostics: if ((DAT_0005c33c & uVar7) == 0) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c33e",
+  "block": "12BD",
+  "offset": "000A",
+  "record": "Throttle_100_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "15",
+  "description": "[FSMXMNCG] Bitmap indicating which algorithms wish to set RPMs",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c33e",
+  "references": 2,
+  "dump_raw": "7",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_updateProtectionThresholdsIfLow: uVar1 = 1 << (DAT_0005c33e & 0x3f) & 0xffff;",
+   "cm848_updateProtectionDiagnostics: protection_mode_request_bit = (word)(1 << (DAT_0005c33e & 0x3f));"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c346",
+  "block": "12FE",
+  "offset": "0006",
+  "record": "Mux_Fault_Delay",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.01",
+  "min": "0",
+  "max": "120",
+  "description": "[JCMXFUDY] Maximum wait before starting to log mux faults again",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c346",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_tickJ1939InputSupervision: if (j1939_input_monitor_startup_timer <= DAT_0005c346) {",
+   "cm848_tickJ1939InputSupervision: (DAT_0005c346 <= j1939_input_monitor_startup_timer)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Mux_Module_Priority",
+    "j1939_input_source_priority",
+    "0.33"
+   ],
+   [
+    "0002",
+    "EB_Switch_Level_Global_Default",
+    "j1939_engine_retarder_selection_default_percent",
+    "0.33"
+   ],
+   [
+    "0004",
+    "Manual_Fan_Level_Global_Default",
+    "j1939_engine_fan_requested_speed_default",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000642e2",
+  "block": "164A",
+  "offset": "0000",
+  "record": "EOL_Lift_Pump_On_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "255",
+  "description": "Amount of time Lift Pump is held on for testing",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000642e2",
+  "references": 1,
+  "dump_raw": "200",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_coldStart_protection_stateMachine: wVar4 = DAT_000642e2;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "EOL_Fan_Speed_Max_Pos_Delta",
+    "radiator_fan_speed_spike_up_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EOL_Fan_Speed_Max_Neg_Delta",
+    "radiator_fan_speed_spike_down_limit",
+    "0.33"
+   ],
+   [
+    "0016",
+    "EOL_Fan_Speed_Time_Limit",
+    "radiator_fan_speed_noise_check_passes",
+    "0.40"
+   ],
+   [
+    "0018",
+    "EOL_Fan_Speed_Min_Pass_Ratio",
+    "radiator_fan_speed_clean_sample_ratio_minimum",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000642e4",
+  "block": "164A",
+  "offset": "0002",
+  "record": "EOL_Relay_On_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "255",
+  "description": "Amount of time relays are held on for testing",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000642e4",
+  "references": 4,
+  "dump_raw": "60",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "engine_coldStart_protection_stateMachine: wVar4 = DAT_000642e4;",
+   "engine_coldStart_protection_stateMachine: wVar4 = DAT_000642e4;",
+   "engine_coldStart_protection_stateMachine: cold_start_protection_timer_countdown = DAT_000642e4;",
+   "engine_coldStart_protection_stateMachine: cold_start_protection_timer_countdown = DAT_000642e4;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "EOL_Fan_Speed_Max_Pos_Delta",
+    "radiator_fan_speed_spike_up_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EOL_Fan_Speed_Max_Neg_Delta",
+    "radiator_fan_speed_spike_down_limit",
+    "0.33"
+   ],
+   [
+    "0016",
+    "EOL_Fan_Speed_Time_Limit",
+    "radiator_fan_speed_noise_check_passes",
+    "0.40"
+   ],
+   [
+    "0018",
+    "EOL_Fan_Speed_Min_Pass_Ratio",
+    "radiator_fan_speed_clean_sample_ratio_minimum",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000642e6",
+  "block": "164A",
+  "offset": "0004",
+  "record": "EOL_Relay_Off_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "255",
+  "description": "Amount of time between relay tests",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000642e6",
+  "references": 3,
+  "dump_raw": "30",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "engine_coldStart_protection_stateMachine: cold_start_protection_timer_countdown = DAT_000642e6;",
+   "engine_coldStart_protection_stateMachine: cold_start_protection_timer_countdown = DAT_000642e6;",
+   "engine_coldStart_protection_stateMachine: cold_start_protection_timer_countdown = DAT_000642e6;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "EOL_Fan_Speed_Max_Pos_Delta",
+    "radiator_fan_speed_spike_up_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EOL_Fan_Speed_Max_Neg_Delta",
+    "radiator_fan_speed_spike_down_limit",
+    "0.33"
+   ],
+   [
+    "0016",
+    "EOL_Fan_Speed_Time_Limit",
+    "radiator_fan_speed_noise_check_passes",
+    "0.40"
+   ],
+   [
+    "0018",
+    "EOL_Fan_Speed_Min_Pass_Ratio",
+    "radiator_fan_speed_clean_sample_ratio_minimum",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000642e8",
+  "block": "164A",
+  "offset": "0006",
+  "record": "EOL_Test_Enable",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "2303",
+  "description": "Flags that enable individual EOL tests",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000642e8",
+  "references": 13,
+  "dump_raw": "253",
+  "access_widths": "{'lhz': 4} -> 2 byte",
+  "code": [
+   "engine_protection_timerStateMachine_init: if ((DAT_000642e8 & 1) == 0) {",
+   "engine_protection_timerStateMachine_init: if ((DAT_000642e8 & 0x20) == 0) {",
+   "engine_protection_timerStateMachine_init: if ((DAT_000642e8 & 2) == 0) {",
+   "engine_coldStart_protection_stateMachine: if (((end_of_line_test_settings_cal.test_flags_5 & 1) != 0) && ((DAT_000642e8 & 1) != 0)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "EOL_Fan_Speed_Max_Pos_Delta",
+    "radiator_fan_speed_spike_up_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EOL_Fan_Speed_Max_Neg_Delta",
+    "radiator_fan_speed_spike_down_limit",
+    "0.33"
+   ],
+   [
+    "0016",
+    "EOL_Fan_Speed_Time_Limit",
+    "radiator_fan_speed_noise_check_passes",
+    "0.40"
+   ],
+   [
+    "0018",
+    "EOL_Fan_Speed_Min_Pass_Ratio",
+    "radiator_fan_speed_clean_sample_ratio_minimum",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000642ea",
+  "block": "164A",
+  "offset": "0008",
+  "record": "IAH_Voltage_Reading_Delay_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "255",
+  "description": "Delay between turning grids on and reading battery voltage",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000642ea",
+  "references": 2,
+  "dump_raw": "5",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "engine_coldStart_protection_stateMachine: cold_start_battery_timer_a = DAT_000642ea;",
+   "engine_coldStart_protection_stateMachine: cold_start_battery_timer_b = DAT_000642ea;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "EOL_Fan_Speed_Max_Pos_Delta",
+    "radiator_fan_speed_spike_up_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EOL_Fan_Speed_Max_Neg_Delta",
+    "radiator_fan_speed_spike_down_limit",
+    "0.33"
+   ],
+   [
+    "0016",
+    "EOL_Fan_Speed_Time_Limit",
+    "radiator_fan_speed_noise_check_passes",
+    "0.40"
+   ],
+   [
+    "0018",
+    "EOL_Fan_Speed_Min_Pass_Ratio",
+    "radiator_fan_speed_clean_sample_ratio_minimum",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000642ec",
+  "block": "164A",
+  "offset": "000A",
+  "record": "IAH_Minimum_Delta_Voltage_Threshold",
+  "unit": "VOLT",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0625",
+  "min": "0",
+  "max": "40",
+  "description": "delta voltage below which an error is set",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000642ec",
+  "references": 2,
+  "dump_raw": "2",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "diag_camSync_deviation_check: if ((uint)DAT_000642ec < (uVar1 & 0xffff)) {",
+   "diag_camSync_deviation_check: if ((uint)DAT_000642ec < (uVar1 & 0xffff)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "EOL_Fan_Speed_Max_Pos_Delta",
+    "radiator_fan_speed_spike_up_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EOL_Fan_Speed_Max_Neg_Delta",
+    "radiator_fan_speed_spike_down_limit",
+    "0.33"
+   ],
+   [
+    "0016",
+    "EOL_Fan_Speed_Time_Limit",
+    "radiator_fan_speed_noise_check_passes",
+    "0.40"
+   ],
+   [
+    "0018",
+    "EOL_Fan_Speed_Min_Pass_Ratio",
+    "radiator_fan_speed_clean_sample_ratio_minimum",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000642f0",
+  "block": "164A",
+  "offset": "000E",
+  "record": "EOL_EVR_Test_Delay",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "60",
+  "description": "Delay after starting before alternator test",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000642f0",
+  "references": 1,
+  "dump_raw": "100",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_coldStart_batteryVoltage_monitor: if (DAT_000642f0 < DAT_003fd1ae) {"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "EOL_Fan_Speed_Max_Pos_Delta",
+    "radiator_fan_speed_spike_up_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EOL_Fan_Speed_Max_Neg_Delta",
+    "radiator_fan_speed_spike_down_limit",
+    "0.33"
+   ],
+   [
+    "0016",
+    "EOL_Fan_Speed_Time_Limit",
+    "radiator_fan_speed_noise_check_passes",
+    "0.40"
+   ],
+   [
+    "0018",
+    "EOL_Fan_Speed_Min_Pass_Ratio",
+    "radiator_fan_speed_clean_sample_ratio_minimum",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000642f2",
+  "block": "164A",
+  "offset": "0010",
+  "record": "EOL_EVR_Voltage_Threshold",
+  "unit": "VOLT",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0625",
+  "min": "0",
+  "max": "10",
+  "description": "Delta voltage threshold for EOL alternator test",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000642f2",
+  "references": 1,
+  "dump_raw": "5",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_coldStart_batteryVoltage_monitor: if (DAT_000642f2 < uVar2) {"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "EOL_Fan_Speed_Max_Pos_Delta",
+    "radiator_fan_speed_spike_up_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EOL_Fan_Speed_Max_Neg_Delta",
+    "radiator_fan_speed_spike_down_limit",
+    "0.33"
+   ],
+   [
+    "0016",
+    "EOL_Fan_Speed_Time_Limit",
+    "radiator_fan_speed_noise_check_passes",
+    "0.40"
+   ],
+   [
+    "0018",
+    "EOL_Fan_Speed_Min_Pass_Ratio",
+    "radiator_fan_speed_clean_sample_ratio_minimum",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040a026",
+  "block": "1918",
+  "offset": "0000",
+  "record": "WIF_Mileage_Threshold",
+  "unit": "MI",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "9999999",
+  "description": "Threshold for WIF too long miles",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040a026",
+  "references": 1,
+  "dump_raw": "128000",
+  "access_widths": "{'lwz': 1} -> 4 byte",
+  "code": [
+   "cm848_monitorWaterInFuelDistance: if (DAT_0040a026 <= water_in_fuel_distance) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feea6",
+  "block": "1930",
+  "offset": "0000",
+  "record": "Battery_Temperature_Cycle_Counter",
+  "unit": "CNTS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "Number of warm up cycles in which the monitor failed",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feea6",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &DAT_003fd23a,&DAT_003feea6,DAT_00409f80,0x17b,0x17c,DAT_00409f74,DAT_00409f78,0x161,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feea7",
+  "block": "1930",
+  "offset": "0001",
+  "record": "Intake_Manifold_Temperature_Cycle_Counter",
+  "unit": "CNTS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "Number of warm up cycles in which the monitor failed",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feea7",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: ,&DAT_003feea7,DAT_00409f82,0x13,0x14,DAT_00409f7a,DAT_00409f7e,0x162,0x166,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feea8",
+  "block": "1930",
+  "offset": "0002",
+  "record": "Battery_Temperature_Fail_Previous",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "1",
+  "description": "Indicates if monitor failed on previous run",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feea8",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (0x45,&DAT_003feeaa,&DAT_003feea8,&DAT_003fd251,&DAT_003fd254,&DAT_0040ba1e,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feea9",
+  "block": "1930",
+  "offset": "0003",
+  "record": "Intake_Manifold_Temperature_Fail_Previous",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "1",
+  "description": "Indicates if monitor failed on previous run",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feea9",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (9,&DAT_003feeab,&DAT_003feea9,&DAT_003fd252,&DAT_003fd255,&DAT_0040ba22,&DAT_003fd23c"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feeaa",
+  "block": "1930",
+  "offset": "0004",
+  "record": "Battery_Temperature_Previous_Cycle",
+  "unit": "CNTS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "Number of warm up cycle when monitor failed last",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feeaa",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (0x45,&DAT_003feeaa,&DAT_003feea8,&DAT_003fd251,&DAT_003fd254,&DAT_0040ba1e,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feeab",
+  "block": "1930",
+  "offset": "0005",
+  "record": "Intake_Manifold_Temperature_Previous_Cycle",
+  "unit": "CNTS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "Number of warm up cycle when monitor failed last",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feeab",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (9,&DAT_003feeab,&DAT_003feea9,&DAT_003fd252,&DAT_003fd255,&DAT_0040ba22,&DAT_003fd23c"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feeac",
+  "block": "1930",
+  "offset": "0006",
+  "record": "Ambient_Air_Temperature_Cycle_Counter",
+  "unit": "CNTS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "Number of warm up cycles in which the monitor failed",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feeac",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &DAT_003fd238,&DAT_003feeac,DAT_00409f8a,0x96,0x97,DAT_00409f86,DAT_00409f84,0x153,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feead",
+  "block": "1930",
+  "offset": "0007",
+  "record": "Ambient_Air_Temperature_Fail_Previous",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "1",
+  "description": "Indicates if monitor failed on previous run",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feead",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (0x14,&DAT_003feeae,&DAT_003feead,&DAT_003fd250,&DAT_003fd253,&DAT_0040ba26,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feeae",
+  "block": "1930",
+  "offset": "0008",
+  "record": "Ambient_Air_Temperature_Previous_Cycle",
+  "unit": "CNTS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "jNumber of warm up cycles when monitor failed last",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feeae",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (0x14,&DAT_003feeae,&DAT_003feead,&DAT_003fd250,&DAT_003fd253,&DAT_0040ba26,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feeb0",
+  "block": "1930",
+  "offset": "000A",
+  "record": "Battery_Temperature_Accum_Miles",
+  "unit": "MI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "999",
+  "description": "Accumulated miles for battery temp rationality",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feeb0",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &battery_temperature_key_on_rationality_state,&DAT_003feeb0,&DAT_003fd240,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feeb2",
+  "block": "1930",
+  "offset": "000C",
+  "record": "Intake_Manifold_Temperature_Accum_Miles",
+  "unit": "MI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "999",
+  "description": "Accumulated miles for intake manifold temp rationality",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feeb2",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &intake_manifold_temperature_key_on_rationality_state,&DAT_003feeb2,&DAT_003fd242,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feeb4",
+  "block": "1930",
+  "offset": "000E",
+  "record": "Ambient_Air_Temperature_Accum_Miles",
+  "unit": "MI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "999",
+  "description": "Accumulated miles for ambient air temp rationality",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feeb4",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &ambient_air_temperature_key_on_rationality_state,&DAT_003feeb4,&DAT_003fd23e,"
+  ],
+  "block_named_rows": [
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ],
+   [
+    "0016",
+    "BTR_Numerator",
+    "protection_b_fault_active_flag",
+    "0.00"
+   ],
+   [
+    "0018",
+    "BTR_Denominator",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00405d4a",
+  "block": "1965",
+  "offset": "0000",
+  "record": "C_TFC_Fuel_Limit_ULim",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478200",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "TFC upper fuel limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00405d4a",
+  "references": 2,
+  "dump_raw": "2944",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateTemperatureHeadroomFuelCap: if ((uVar3 <= uVar1) && (uVar3 = uVar1, DAT_00405d4a < uVar1)) {",
+   "cm848_calculateTemperatureHeadroomFuelCap: uVar3 = (uint)DAT_00405d4a;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00405d4c",
+  "block": "1965",
+  "offset": "0002",
+  "record": "C_TFC_Fuel_Limit_LLim",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478200",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "TFC lower fuel limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00405d4c",
+  "references": 1,
+  "dump_raw": "2944",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateTemperatureHeadroomFuelCap: uVar3 = (uint)DAT_00405d4c;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00405d50",
+  "block": "1965",
+  "offset": "0006",
+  "record": "C_TFC_Texh_Lim_Gain",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "20",
+  "description": "Exhaust Metal Temperature gain for TFC fuel limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00405d50",
+  "references": 2,
+  "dump_raw": "640",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateTemperatureHeadroomFuelCap: iVar2 = (int)(CONCAT44((int)((ulonglong)((longlong)iVar2 * (longlong)(int)(uint)DAT_00405d50) >>",
+   "cm848_calculateTemperatureHeadroomFuelCap: 0x20),iVar2 * (uint)DAT_00405d50) / 0x80) + (uint)DAT_00405d4e * 0x20;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fddae",
+  "block": "1A9B",
+  "offset": "0000",
+  "record": "T_EMO_Cooler_Cond_Damage",
+  "unit": "UNITLESS",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.0001220703",
+  "min": "0",
+  "max": "524287",
+  "description": "Powerdown trim for EGR cooler condensation damage indicator for life of engine.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fddae",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateEgrCoolerCondensationMassRate: DAT_003fddae = DAT_003fddae + (uVar2 & 0xffff) / 5;",
+   "cm848_calculateEgrCoolerCondensationMassRate: DAT_003fddae = DAT_003fddae + (uVar2 & 0xffff) / 5;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fddb2",
+  "block": "1A9B",
+  "offset": "0004",
+  "record": "T_EMO_Intake_Cond_Damage",
+  "unit": "UNITLESS",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.0001220703",
+  "min": "0",
+  "max": "524287",
+  "description": "Powerdown trim for intake condensation damage indicator for life of engine.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fddb2",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateIntakeCondensationMassRate: DAT_003fddb2 = DAT_003fddb2 + (uVar2 & 0xffff) / 5;",
+   "cm848_calculateIntakeCondensationMassRate: DAT_003fddb2 = DAT_003fddb2 + (uVar2 & 0xffff) / 5;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040b996",
+  "block": "806C",
+  "offset": "0036",
+  "record": "Static_Wakeup_Location",
+  "unit": "CRANK_DEG",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.1171875",
+  "min": "-120",
+  "max": "120",
+  "description": "Calculated crank angle location of static wakeup, as calibrated",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040b996",
+  "references": 2,
+  "dump_raw": "616",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePilotInjectionTiming: DAT_0040b996 = DAT_0005fbb2 / 5 -",
+   "cm848_calculatePilotInjectionTiming: pilot_injection_timing_maximum_possible = DAT_0040b996 - injection_timing_speed_component;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Pilot_SOI",
+    "pilot_injection_timing",
+    "1.00"
+   ],
+   [
+    "0002",
+    "Pilot_SOI_Air_Press_Correction",
+    "injection_timing_pilot_offset_barometric_pressure_component",
+    "0.60"
+   ],
+   [
+    "0004",
+    "Pilot_SOI_Air_Press_Factor",
+    "injection_timing_pilot_offset_barometric_pressure_factor",
+    "0.80"
+   ],
+   [
+    "0006",
+    "Pilot_SOI_Air_Press_Precorr",
+    "injection_timing_pilot_offset_barometric_pressure_angle",
+    "0.60"
+   ],
+   [
+    "0008",
+    "Pilot_SOI_Air_Temp_Correction",
+    "injection_timing_pilot_offset_intake_temperature_component",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Pilot_SOI_Air_Temp_Factor",
+    "injection_timing_pilot_offset_intake_temperature_factor",
+    "0.80"
+   ],
+   [
+    "000C",
+    "Pilot_SOI_Air_Temp_Precorr",
+    "injection_timing_pilot_offset_intake_temperature_angle",
+    "0.60"
+   ],
+   [
+    "000E",
+    "Pilot_SOI_Base",
+    "injection_timing_pilot_offset_map_blend",
+    "0.67"
+   ],
+   [
+    "0010",
+    "Pilot_SOI_Cool_Correction",
+    "injection_timing_pilot_offset_coolant_component",
+    "0.50"
+   ],
+   [
+    "0012",
+    "Pilot_SOI_Cool_Factor",
+    "injection_timing_pilot_offset_coolant_factor",
+    "0.75"
+   ],
+   [
+    "0014",
+    "Pilot_SOI_Cool_Precorr",
+    "injection_timing_pilot_offset_coolant_angle",
+    "0.50"
+   ],
+   [
+    "001E",
+    "Pilot_SOI_Boost_Correction",
+    "injection_timing_pilot_offset_boost_component",
+    "0.75"
+   ],
+   [
+    "0020",
+    "Pilot_SOI_Boost_Factor",
+    "injection_timing_pilot_offset_boost_factor",
+    "1.00"
+   ],
+   [
+    "0022",
+    "Pilot_SOI_Boost_Precorr",
+    "injection_timing_pilot_offset_boost_angle",
+    "0.75"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408f4e",
+  "block": "81C9",
+  "offset": "0008",
+  "record": "Speed_Limp_Derate_Slew_Rate",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.001953125",
+  "min": "0",
+  "max": "127.0",
+  "description": "Fueling derate percentage change per exec. for Fuel Derate Limit on backup EPS",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408f4e",
+  "references": 1,
+  "dump_raw": "256",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_injectionAngle_updateCutoutAndTimingDemand: uVar5 = (uint)DAT_00408f4e;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Bank_Retest_Count",
+    "cylinder_cutout_duration_event_factor",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Bank_Shutdown_Threshold",
+    "cylinder_cutout_expiry_limit",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Bank_Diagnostic_Count",
+    "cylinder_cutout_debounce_event_factor",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Bank_Shutdown_Enables",
+    "cylinder_cutout_diagnostic_class_enable_mask",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408f50",
+  "block": "81C9",
+  "offset": "000A",
+  "record": "Speed_Limp_Home_Aggressive_Fuel_Limit",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Final Fueling level that implements an aggressive derate Fuel % on backup EPS",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408f50",
+  "references": 2,
+  "dump_raw": "1472",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_injectionAngle_updateCutoutAndTimingDemand: else if ((uint)DAT_00408f50 < (uint)fuel_demand_computed_snapshot) {",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: (((uint)DAT_00408f54 - (uint)DAT_00408f52) * (uint)DAT_00408f50) /"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Bank_Retest_Count",
+    "cylinder_cutout_duration_event_factor",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Bank_Shutdown_Threshold",
+    "cylinder_cutout_expiry_limit",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Bank_Diagnostic_Count",
+    "cylinder_cutout_debounce_event_factor",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Bank_Shutdown_Enables",
+    "cylinder_cutout_diagnostic_class_enable_mask",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408f52",
+  "block": "81C9",
+  "offset": "000C",
+  "record": "Speed_Limp_Home_High_Fuel_Derate",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.001953125",
+  "min": "0",
+  "max": "127.0",
+  "description": "Fueling derate additional percentage when above the Aggressive Fuel Limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408f52",
+  "references": 2,
+  "dump_raw": "25600",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_injectionAngle_updateCutoutAndTimingDemand: uVar3 = (uint)DAT_00408f52 +",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: (((uint)DAT_00408f54 - (uint)DAT_00408f52) * (uint)DAT_00408f50) /"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Bank_Retest_Count",
+    "cylinder_cutout_duration_event_factor",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Bank_Shutdown_Threshold",
+    "cylinder_cutout_expiry_limit",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Bank_Diagnostic_Count",
+    "cylinder_cutout_debounce_event_factor",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Bank_Shutdown_Enables",
+    "cylinder_cutout_diagnostic_class_enable_mask",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408f54",
+  "block": "81C9",
+  "offset": "000E",
+  "record": "Speed_Limp_Home_Low_Fuel_Derate",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.001953125",
+  "min": "0",
+  "max": "127.0",
+  "description": "Fueling derate percentage when below the Aggressive Fuel Limit on backup EPS",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408f54",
+  "references": 2,
+  "dump_raw": "50176",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "engine_injectionAngle_updateCutoutAndTimingDemand: (((uint)DAT_00408f54 - (uint)DAT_00408f52) * (uint)DAT_00408f50) /",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: uVar3 = (uint)DAT_00408f54;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Bank_Retest_Count",
+    "cylinder_cutout_duration_event_factor",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Bank_Shutdown_Threshold",
+    "cylinder_cutout_expiry_limit",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Bank_Diagnostic_Count",
+    "cylinder_cutout_debounce_event_factor",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Bank_Shutdown_Enables",
+    "cylinder_cutout_diagnostic_class_enable_mask",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040869a",
+  "block": "8A14",
+  "offset": "0000",
+  "record": "AC_WOT_Off",
+  "unit": "%THROTTLE",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.25",
+  "min": "0",
+  "max": "100",
+  "description": "If throttle > this, ac driver turned off for AC_WOT_Cutout_Time",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040869a",
+  "references": 1,
+  "dump_raw": "396",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (((DAT_0040869a < fuel_demand_control_t_0040a57a.calculated) && (vehicle_speed < DAT_004086bc))"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086a4",
+  "block": "8A14",
+  "offset": "000A",
+  "record": "AC_High_Coolant_Off",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "If Coolant temp greater than this value, ac driver will be turned off",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086a4",
+  "references": 1,
+  "dump_raw": "15424",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (DAT_004086a4 < (short)sensor_readings_t_0040baf2.coolant_temp) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086a6",
+  "block": "8A14",
+  "offset": "000C",
+  "record": "AC_High_Coolant_On",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "If Coolant temp less than this value, ac driver can be turned on",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086a6",
+  "references": 1,
+  "dump_raw": "15296",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if ((short)sensor_readings_t_0040baf2.coolant_temp < DAT_004086a6) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086aa",
+  "block": "8A14",
+  "offset": "0010",
+  "record": "AC_High_Pressure_On",
+  "unit": "PSI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "500",
+  "description": "If AC_Pressure less than this value, ac driver can be turned on",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086aa",
+  "references": 1,
+  "dump_raw": "54528",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (air_conditioning_pressure_sensor_filtered < DAT_004086aa) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086ac",
+  "block": "8A14",
+  "offset": "0012",
+  "record": "AC_High_RPM_Off",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "If RPM greater than this value, ac driver will be turned off",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086ac",
+  "references": 1,
+  "dump_raw": "28000",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (DAT_004086ac < engine_rpm_state_t_0040b7ac.current_rpm) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086ae",
+  "block": "8A14",
+  "offset": "0014",
+  "record": "AC_High_RPM_On",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "If RPM less than this value, ac driver can be turned on",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086ae",
+  "references": 1,
+  "dump_raw": "27200",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (engine_rpm_state_t_0040b7ac.current_rpm < DAT_004086ae) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086b0",
+  "block": "8A14",
+  "offset": "0016",
+  "record": "AC_Low_Pressure_Off",
+  "unit": "PSI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "500",
+  "description": "If AC_Pressure less than this value, ac driver will be turned off",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086b0",
+  "references": 1,
+  "dump_raw": "2048",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (air_conditioning_pressure_sensor_filtered < DAT_004086b0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086b2",
+  "block": "8A14",
+  "offset": "0018",
+  "record": "AC_Low_Pressure_On",
+  "unit": "PSI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "500",
+  "description": "If AC_Pressure greater than this value, ac driver can be turned on",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086b2",
+  "references": 1,
+  "dump_raw": "4096",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (DAT_004086b2 < air_conditioning_pressure_sensor_filtered) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086b6",
+  "block": "8A14",
+  "offset": "001C",
+  "record": "AC_Low_RPM_On",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "If RPM greater than this value, ac driver can be turned on",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086b6",
+  "references": 1,
+  "dump_raw": "4608",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (DAT_004086b6 < engine_rpm_state_t_0040b7ac.current_rpm) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086ba",
+  "block": "8A14",
+  "offset": "0020",
+  "record": "AC_WOT_Cutout_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "255",
+  "description": "Amount of time that ac driver will be turned off during WOT condition",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086ba",
+  "references": 1,
+  "dump_raw": "50",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (DAT_004086ba <= air_conditioning_high_fuel_demand_cutout_count) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086bc",
+  "block": "8A14",
+  "offset": "0022",
+  "record": "AC_WOT_MPH",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "255",
+  "description": "If throttle at WOT and MPH < this, ac driver turned off for AC_WOT_Cutout_Time",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086bc",
+  "references": 1,
+  "dump_raw": "30720",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (((DAT_0040869a < fuel_demand_control_t_0040a57a.calculated) && (vehicle_speed < DAT_004086bc))"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086c0",
+  "block": "8A14",
+  "offset": "0026",
+  "record": "AC_Pressure_Learn_Raw_Maximum",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1023",
+  "description": "Upper limit below which the ac pressure can be learned",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086c0",
+  "references": 1,
+  "dump_raw": "1000",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (((diag_clear_flags_t_003fedfc._0_2_ == 0) && (DAT_004086c2 < uVar1)) && (uVar1 < DAT_004086c0)"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086c2",
+  "block": "8A14",
+  "offset": "0028",
+  "record": "AC_Pressure_Learn_Raw_Minimum",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1023",
+  "description": "Lower limit above which the ac pressure can be learned",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086c2",
+  "references": 1,
+  "dump_raw": "27",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (((diag_clear_flags_t_003fedfc._0_2_ == 0) && (DAT_004086c2 < uVar1)) && (uVar1 < DAT_004086c0)"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086c4",
+  "block": "8A14",
+  "offset": "002A",
+  "record": "AC_Pressure_Learn_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0.0",
+  "max": "255.0",
+  "description": "Amount of time that ac pressure must be in range before considered learned",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086c4",
+  "references": 1,
+  "dump_raw": "300",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (DAT_004086c4 <= protection_event26_sensor_threshold_count) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004086ca",
+  "block": "8A14",
+  "offset": "0030",
+  "record": "AC_Driver_ON_Max_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "100",
+  "description": "Max time ac should run to guarantee a slugging event in next drive cycle",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004086ca",
+  "references": 1,
+  "dump_raw": "1",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "fuel_demand_timing_initialize: j1939_tsc1_active_duration_counter = DAT_004086ca;"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "protection_interval_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ],
+   [
+    "001E",
+    "AC_Low_RPM_On_Time",
+    "protection_event26_rpm_high_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0024",
+    "AC_WOT_Reset_Time",
+    "air_conditioning_high_fuel_demand_cutout_rearm_count_limit",
+    "0.00"
+   ],
+   [
+    "002C",
+    "AC_Anti_Slugging_Driver_Off_Time",
+    "protection_iat_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "002E",
+    "AC_Anti_Slugging_Tmptr_Thd",
+    "j1939_tsc1_active_duration_reload",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ }
+]

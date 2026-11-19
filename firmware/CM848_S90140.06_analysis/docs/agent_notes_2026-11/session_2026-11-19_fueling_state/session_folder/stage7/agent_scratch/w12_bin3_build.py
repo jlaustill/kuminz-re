@@ -1,0 +1,299 @@
+import json
+
+bin_path = "/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/bins/bin3.json"
+out_path = "/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin3.jsonl"
+bin_rows = json.load(open(bin_path))
+by_addr = {r["address"]: r for r in bin_rows}
+
+PREFIX_NOTE = "(address from the ECU's parameter ID table)"
+results = {}
+
+
+def prefix(addr, eeprom=None):
+    r = by_addr[addr]
+    off = int(r["offset"], 16)
+    p = f"e2m {r['block']} +{off:X} {r['record']} '{r['description']}' {PREFIX_NOTE}"
+    if eeprom:
+        p = f"EEPROM {eeprom} - " + p
+    return p
+
+
+def add(addr, new, typ, verdict, evidence, tail, eeprom=None):
+    assert addr in by_addr, addr
+    assert addr not in results, addr
+    comment = (prefix(addr, eeprom) + (" " + tail if tail else "")) if verdict != "rejected" else ""
+    results[addr] = {"kind": "new_global", "verdict": verdict, "address": addr, "new": new, "type": typ,
+                     "evidence": evidence, "comment": comment}
+
+
+# ---------------------------------------------------------------- block 1008 (vehicle speed sensor, tachograph)
+add("0x0040b718", "vehicle_speed_sensor_tachograph_pulse_width", "dword", "confirmed",
+    "e2m 1008 +0A Tachograph_Pulse_Width (CNTS, 4 bytes): in cm848_vehicleSpeedSensorInterruptHandler (DRIVETRAIN_MANUAL_TPU branch only) it is tested ==0 with the valid flag and then loaded from PARAM4:PARAM5 of the vehicle speed TPU channel; cm848_initVehicleSpeedSensorChannel clears it; stw (the two halfword stores are the high / low half); dump 0",
+    "(24-bit TPU accumulator in a dword; 0 here, this truck is not a manual TPU drivetrain): captured once by cm848_vehicleSpeedSensorInterruptHandler from PARAM4:PARAM5 of the vehicle speed TPU channel (TPU-B channel 2) while vehicle_speed_sensor_tachograph_pulse_width_valid_flag and this are both 0 (DRIVETRAIN_MANUAL_TPU only; the handler then switches the channel to period mode and later reads the same parameters as vehicle_speed_sensor_period); cm848_initVehicleSpeedSensorChannel clears it. Sibling of vehicle_speed_sensor_period and vehicle_speed_sensor_pulse_total. Working RAM, no _cal")
+add("0x0040b71c", "vehicle_speed_sensor_tachograph_pulse_width_valid_flag", "word", "confirmed",
+    "e2m 1008 +0E Tachograph_Valid_Pulse_Width_Flag (HEX, 0/1): ==0 is the capture gate in cm848_vehicleSpeedSensorInterruptHandler and it is set to 1 right after the pulse width is stored (DRIVETRAIN_MANUAL_TPU only); cleared by cm848_initVehicleSpeedSensorChannel; sth; dump 0",
+    "(0 here): 0 lets cm848_vehicleSpeedSensorInterruptHandler capture vehicle_speed_sensor_tachograph_pulse_width (DRIVETRAIN_MANUAL_TPU only); the handler sets it to 1 right after the capture, cm848_initVehicleSpeedSensorChannel clears it. Working RAM, no _cal")
+
+# ---------------------------------------------------------------- block 10BF (percent load)
+add("0x0040af26", "engine_load_low_horsepower_curve_percent", "word", "confirmed",
+    "e2m 10BF +04 Tau_0_Percent_Load (%, 1/256, 0..255): cm848_validateFuelDemandRelativeToTiming stores (fuel_demand_computed - fuel_demand_base_offset) x 0x6400 / (injection_timing_demand_output - fuel_demand_base_offset) clamped at 0xff00 (= 255.0); the denominator is e2m 105A +2 Tau_0_Throttle_100_Fueling ('fueling if the engine used the low hp curve', 0x40a899); sth; dump 0",
+    "(1/256 percent: 0x6400 = 100, clamped at 0xff00 = 255; 0 here, engine stopped): written only by cm848_validateFuelDemandRelativeToTiming: (fuel_demand_computed - fuel_demand_base_offset) x 100 percent over (injection_timing_demand_output - fuel_demand_base_offset), 0 unless both differences are positive. injection_timing_demand_output (0x40a899) is e2m 105A +2 Tau_0_Throttle_100_Fueling, the full throttle fueling of the low horsepower (tau 0) curve, so this is the engine load relative to that curve, the sibling of engine_load_percent and engine_load_at_current_speed_percent (cm848_calculateEngineLoadPercentages). Working RAM, no _cal")
+
+# ---------------------------------------------------------------- block 10CE (pedal fault mode = e2m limp home)
+LH = "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit"
+add("0x0005c490", "pedal_fault_mode_fuel_demand_limit_slope", "word", "confirmed",
+    f"e2m 10CE +02 Limp_Home_Fueling_Slope (MM3S/RPM, 1/65536): in {LH} the filtered engine speed x it / 0x8b21 is subtracted from the offset to form the fuel demand limit; 0x8b21 = 35617 = 65536 x 0.0679348 / 0.125 reproduces the e2m scale; lhz; dump 0",
+    f"(mm3 per stroke per rpm in 1/65536; 0 here, so the limit is flat): {LH} subtracts (this x the filtered engine speed pedal_fault_mode_target_speed_filtered / 35617) from pedal_fault_mode_fuel_demand_limit_offset to get the fuel demand limit of the pedal fault mode (engine operating mode 6, the e2m's limp home). Flash constant, no _cal")
+add("0x0005c492", "pedal_fault_mode_fuel_demand_limit_offset", "word", "confirmed",
+    f"e2m 10CE +04 Limp_Home_Fueling_Offset (MM3S, 0.0679): in {LH} the limit is this minus slope x speed (used while that stays at or above the minimum limit); lhz; dump 854 = 58.0 mm3",
+    f"(0.0679 mm3 per count; 854 = 58.0 mm3 here): the starting value of pedal_fault_mode_fuel_demand_limit in {LH}, reduced by pedal_fault_mode_fuel_demand_limit_slope x the filtered engine speed and floored at pedal_fault_mode_fuel_demand_limit_minimum. Flash constant, no _cal")
+add("0x0005c494", "pedal_fault_mode_fuel_demand_ramp_increment", "word", "confirmed",
+    f"e2m 10CE +06 Limp_Home_Fueling_Increment (MM3S/SEC, 0.679): {LH} adds it to pedal_fault_mode_fuel_demand_ramp once per call while accelerator_off_idle stays 1; lhz; dump 9",
+    f"(0.679 mm3/s per count in the e2m; 9 here): pedal_fault_mode_fuel_demand_ramp rises by it on every call of {LH} while the accelerator stays off idle, up to the slewed limit pedal_fault_mode_fuel_demand_limit_previous. Flash constant, no _cal")
+add("0x0005c496", "pedal_fault_mode_fuel_demand_limit_minimum", "word", "confirmed",
+    f"e2m 10CE +08 Minimum_Limp_Home_Max_Fueling (MM3S): {LH} assigns it to pedal_fault_mode_fuel_demand_limit first and keeps it unless offset - slope x speed is still at least this much; lhz; dump 854 = 58.0 mm3",
+    f"(0.0679 mm3 per count; 854 = 58.0 mm3 here, equal to the offset): the floor of pedal_fault_mode_fuel_demand_limit while the brake / clutch switch condition is not active (limit = the larger of this and offset - slope x speed). Flash constant, no _cal")
+add("0x0005c498", "pedal_fault_mode_fuel_demand_ramp_initial_value", "word", "confirmed",
+    f"e2m 10CE +0A Minimum_Limp_Home_Fueling (MM3S): {LH} loads it into pedal_fault_mode_fuel_demand_ramp on the pass accelerator_off_idle becomes 1 (the previous off-idle flag was not 1); lhz; dump 250 = 17.0 mm3",
+    f"(0.0679 mm3 per count; 250 = 17.0 mm3 here): the value pedal_fault_mode_fuel_demand_ramp starts from on the pass the accelerator comes off idle in the pedal fault mode ({LH}); from the next pass it rises by pedal_fault_mode_fuel_demand_ramp_increment. Flash constant, no _cal")
+add("0x0005c49a", "pedal_fault_mode_enable_flag", "word", "confirmed",
+    "e2m 10CE +0C Limp_Home_Algorithm_Enable_N (and Limp_Home_Algorithm_Enable [LHFLEN], same offset): cm848_transitionEngineOperatingMode returns at once when it is 0, so operating mode 6 (FUELING_STATE_ACCELERATOR_PEDAL_FAULT) is never entered; lhz; dump 1",
+    "(also e2m Limp_Home_Algorithm_Enable [LHFLEN]; 1 here = enabled): 0 makes cm848_transitionEngineOperatingMode return before it can enter FUELING_STATE_ACCELERATOR_PEDAL_FAULT (the pedal fault mode, operating mode 6, the e2m's limp home). Flash constant, no _cal")
+add("0x0005c49c", "pedal_fault_mode_fuel_demand_limit_decrease_rate", "word", "confirmed",
+    f"e2m 10CE +0E Limp_Home_Max_Fuel_Ramp_Rate (MM3S/SEC, 0.679): in {LH} pedal_fault_mode_fuel_demand_limit_previous falls by at most it per call (limit + rate < previous gives previous - rate); lhz; dump 9",
+    f"(0.679 mm3/s per count in the e2m; 9 here): the most pedal_fault_mode_fuel_demand_limit_previous may fall per call of {LH} when the new limit is lower (a rising limit follows at once). Flash constant, no _cal")
+add("0x0005c49e", "pedal_fault_mode_speed_derate_engine_speed_limit", "word", "confirmed",
+    f"e2m 10CE +10 Limp_Home_Engine_Speed_Limit (RPM, 0.125): {LH} lowers engine_speed_limit_pedal_fault_mode to it while vehicle_speed exceeds DAT_0005c4a2 (the road speed threshold); lhz; dump 15600 = 1950 rpm",
+    f"(0.125 rpm per count; 15600 = 1950 rpm here): the engine speed cap of the speed derate in the pedal fault mode: engine_speed_limit_pedal_fault_mode (source 14 of selectEngineSpeedLimit) is lowered to it while vehicle_speed is above pedal_fault_mode_speed_derate_road_speed_threshold. Flash constant, no _cal")
+add("0x0005c4a0", "pedal_fault_mode_brake_on_engine_speed_limit", "word", "confirmed",
+    f"e2m 10CE +12 Limp_Home_Engine_Speed_Limit_Brake_On (RPM, 0.125): {LH} assigns it to engine_speed_limit_pedal_fault_mode when the brake / clutch switch condition (switch_input_state_bits[1] bit 8 or [0] bit 4) or fault bit 395 is active; lhz; dump 6800 = 850 rpm",
+    f"(0.125 rpm per count; 6800 = 850 rpm here): the pedal fault mode engine speed limit while the brake / clutch switch input (switch_input_state_bits[1] bit 8 or [0] bit 4) or fault bit 395 (fault_detected_bits_384_to_399 0x800) is active; otherwise engine_speed_limit_default_cal applies. The e2m text says 'no Brake'; the code and the record name use it with the brake on. Flash constant, no _cal")
+add("0x0005c4a2", "pedal_fault_mode_speed_derate_road_speed_threshold", "word", "confirmed",
+    f"e2m 10CE +14 Limp_Home_Speed_Derate_Road_Speed_Threshold (MPH, 1/256): {LH} applies the DAT_0005c49e cap only while this < vehicle_speed (vehicle_speed is e2m Road_Speed, 1/256 mph); lhz; dump 8960 = 35 mph",
+    f"(1/256 mph; 8960 = 35.0 mph here): vehicle_speed must exceed it before pedal_fault_mode_speed_derate_engine_speed_limit caps engine_speed_limit_pedal_fault_mode in {LH}. Flash constant, no _cal")
+add("0x0005c4a4", "pedal_fault_mode_brake_on_fuel_demand_limit_minimum", "word", "confirmed",
+    f"e2m 10CE +16 Minimum_Limp_Home_Max_Fueling_Brake_On (MM3S): {LH} assigns it to pedal_fault_mode_fuel_demand_limit (no slope term) under the brake / clutch switch or fault 395 condition; lhz; dump 427 = 29.0 mm3",
+    "(0.0679 mm3 per count; 427 = 29.0 mm3 here): the pedal fault mode fuel demand limit while the brake / clutch switch input or fault bit 395 is active (a flat value, no slope term); the sibling of pedal_fault_mode_fuel_demand_limit_minimum. Flash constant, no _cal")
+
+# ---------------------------------------------------------------- block 1100 (J1939 engine / retarder control log), EEPROM mirror range
+add("0x003feb86", "j1939_engine_control_source_index_cal", "word", "confirmed",
+    "e2m 1100 +04 J1939_Engine_Control_Source ([JCEGCOSA] 0 NONE 1 TRANS 2 ABS 3 ASR 4 UNKNOWN): governor_sourceData_init(0) stores _j1939_governor_source_index (cm848_lookupJ1939SourceAddressIndex of the TSC1 sender) here together with +0 (0x3feb82, 1 = control active); written only; sth; dump 0; the ECU's table lists block 1100 as a plain RAM address, but 0x3feb86 lies inside the EEPROM mirror range 0x3fd482-0x3feec1 (EEPROM offset 0x1704 by arithmetic), so _cal by the brief's region rule although it is a logged runtime value",
+    "(0 here = no control session): the sender index of the J1939 engine control (TSC1) request that opened the control session, copied from _j1939_governor_source_index by governor_sourceData_init(0) together with the status word at +0 (0x3feb82); written there only. The parameter ID table lists block 1100 as a plain RAM address (not 0x01xxxxxx); 0x3feb86 is inside the EEPROM mirror range 0x3fd482-0x3feec1 (EEPROM offset 0x1704 by arithmetic, beside the J1939 control history ring), so the name ends _cal by the region rule although this is a logged runtime source, not a tunable")
+add("0x003feb88", "j1939_retarder_control_source_index_cal", "word", "confirmed",
+    "e2m 1100 +06 J1939_Retarder_Control_Source ([JCRDCOSA] 0 NONE 1 TRANS 2 ABS 3 ASR 4 UNKNOWN): governor_sourceData_init(1) stores engine_retarder_controlling_source_index here together with +2 (0x3feb84, 1 = control active); written only; sth; dump 0; the ECU's table lists block 1100 as a plain RAM address, but 0x3feb88 lies inside the EEPROM mirror range 0x3fd482-0x3feec1 (EEPROM offset 0x1706 by arithmetic), so _cal by the brief's region rule although it is a logged runtime value",
+    "(0 here = no control session): the sender index of the J1939 retarder control request that opened the control session, copied from engine_retarder_controlling_source_index by governor_sourceData_init(1) together with the status word at +2 (0x3feb84); written there only. The parameter ID table lists block 1100 as a plain RAM address (not 0x01xxxxxx); 0x3feb88 is inside the EEPROM mirror range 0x3fd482-0x3feec1 (EEPROM offset 0x1706 by arithmetic, beside the J1939 control history ring), so the name ends _cal by the region rule although this is a logged runtime source, not a tunable")
+
+# ---------------------------------------------------------------- block 112E (fuel temperature fault derate channel)
+add("0x000597b2", "fuel_temperature_derate_configuration_flags", "word", "confirmed",
+    "e2m 112E +00 Fuel_Temperature_EPF_Configuration ([EPFTCG], HEX): first word of the only fault derate channel record (36 bytes = 0x12 words, 0x597b2-0x597d5; the loops of governor_fault_eventCounter_update / governor_fault_derateCalc_channelIter stop at 0x597d6); protection_threshold_check / protection_threshold_update test bits 0x1 / 0x2 / 0x4 / 0x30 / 0x40; census blind (the address is used as a record base); lhz r7,0(r3) at 0x507ebc through the record pointer by disassembly; dump 0x87 (135)",
+    "(bit field; 0x87 here = bits 0x1, 0x2, 0x4 and 0x80): first word of the only fault derate channel record (36 bytes, 0x597b2-0x597d5, stride 0x12 words in governor_fault_eventCounter_update / protection_threshold_update; the channel input is fuel_temperature_derate_input_pointer = fuel_temperature_sensor_filtered). Bits seen in the code: 0x1 fueling limiting enabled, 0x2 engine speed limiting enabled, 0x4 trips at or above the thresholds (clear = below), 0x10 / 0x20 switch-type input, 0x40 full derate level without the ramp, 0x1000 selects the target of PTR_DAT_0040a75e in hpcr_initFuelTemperatureSensorChannel. The other 17 fields of the record are e2m 112E +2..+0x22. Flash constant, no _cal")
+add("0x000597bc", "fuel_temperature_derate_fueling_minimum_temperature", "word", "confirmed",
+    "e2m 112E +0A Fuel_Temperature_Fueling_Min_Threshold (DEG_F, 1/64): hpcr_initFuelTemperatureSensorChannel stores &DAT_000597bc in the channel pointer at +10 (0x40a73e); protection_threshold_check loads it with lha as the trip temperature of the fueling limit and protection_threshold_update ramps the derate level from it to the maximum threshold; census blind (pointer reads); dump 12800 = 200 F, the same 200-210 F ramp the fuel_temperature_derate_input_pointer comment found from code",
+    "(1/64 degF; 12800 = 200 degF here): the fuel temperature (fuel_temperature_sensor_filtered) at which the fault derate fueling limit starts; protection_threshold_update ramps the derate level from 0 here to 256 at fuel_temperature_derate_fueling_maximum_temperature (threshold_value_interpolate), reading it through the channel pointer at 0x40a73e (lha). Flash constant, no _cal")
+add("0x000597be", "fuel_temperature_derate_fueling_maximum_temperature", "word", "confirmed",
+    "e2m 112E +0C Fuel_Temperature_Fueling_Max_Threshold (DEG_F, 1/64): hpcr_initFuelTemperatureSensorChannel stores &DAT_000597be in the channel pointer at +14 (0x40a742); protection_threshold_check (level 1) and protection_threshold_update (ramp end) load it with lha; census blind (pointer reads); dump 13440 = 210 F",
+    "(1/64 degF; 13440 = 210 degF here): the fuel temperature at which the fault derate fueling limit reaches full level (256); the end of the ramp that starts at fuel_temperature_derate_fueling_minimum_temperature (threshold_value_interpolate in protection_threshold_update), read through the channel pointer at 0x40a742 (lha). Flash constant, no _cal")
+add("0x000597c0", "fuel_temperature_derate_engine_speed_minimum_temperature", "i16", "confirmed",
+    "e2m 112E +0E Fuel_Temperature_RPM_Lower_Limit (DEG_F, S 1/64): hpcr_initFuelTemperatureSensorChannel stores &DAT_000597c0 in the channel pointer at +18 (0x40a746); its only reader protection_threshold_check loads it through that pointer with lha (lwz r12,18(r4); lha r3,0(r12) at 0x507fd8); census blind (pointer read), so i16 rests on the e2m S flag plus the lha by disassembly; dump 12416 = 194 F",
+    "(1/64 degF, signed in the e2m and loaded with lha; 12416 = 194 degF here): the minimum fuel temperature (the e2m's 'minimum threshold for fuel temperature RPM limiting') at or above which the fault derate engine speed limit applies at full level (protection_threshold_update sets the engine speed derate level to 256 or 0, no ramp); read through the channel pointer at 0x40a746. Flash constant, no _cal")
+
+# ---------------------------------------------------------------- block 1185 (cruise / road speed governor droop), EEPROM mirror
+add("0x003fd910", "cruise_bottom_droop_width_cal", "word", "confirmed",
+    "e2m 1185 +02 Cruise_Bottom_Droop_Width (MPH, 1/256, EEPROM 0x48e): governorCruiseStateMachine turns it into cruise ramp rate A with governor_cruise_rampScale_calc (width x 1024 / (governor_cruise_fuel_demand_setpoint - governor_cruise_fuel_demand_min)); cm848_calculateEngineRetarderCruisePermissionPercent adds it to cruise_speed_command; lhz x2; dump 0; layout check: widths +2 / +4 / +6 / +8 feed ramp rates A / B / C / D in that order",
+    "(1/256 mph; 0 here): the speed width of the lower droop line of the cruise governor: governorCruiseStateMachine turns it into cruise ramp rate A (cruise_ramp_rate_a_working = width x 1024 / (governor_cruise_fuel_demand_setpoint - governor_cruise_fuel_demand_min), via governor_cruise_rampScale_calc); cm848_calculateEngineRetarderCruisePermissionPercent also adds it to cruise_speed_command in the retarder permission test. The top width (e2m +4, 0x3fd912, named cruise_ramp_zone_b_fuel_demand_threshold) is subtracted from cruise_fuel_demand_ramp_ceiling = 21760 = 85 mph, so it is a speed width too",
+    eeprom="0x48e")
+add("0x003fd914", "road_speed_governor_bottom_droop_width_cal", "word", "confirmed",
+    "e2m 1185 +06 RSG_Bottom_Droop_Width (MPH, 1/256, EEPROM 0x492): governorCruiseStateMachine turns it into cruise ramp rate C (cruise_ramp_rate_c_working) with governor_cruise_rampScale_calc, the twin of +2 for ramp rate A; lhz; dump 0",
+    "(1/256 mph; 0 here): the speed width of the lower droop line of the road speed governor (e2m RSG): governorCruiseStateMachine turns it into cruise_ramp_rate_c_working = width x 1024 / (governor_cruise_fuel_demand_setpoint - governor_cruise_fuel_demand_min) with governor_cruise_rampScale_calc, the twin of cruise_bottom_droop_width_cal (ramp rate A). The top width (e2m +8, 0x3fd916, named cruise_ramp_zone_d_fuel_demand_threshold) is the matching input of ramp rate D",
+    eeprom="0x492")
+add("0x003fd918", "top_gear_ratio_cal", "word", "confirmed",
+    "e2m 1185 +0A Top_Gear_Ratio (UNITLESS, 1/2048, EEPROM 0x496): protectionTimeoutControl raises it by (DAT_00408b78 + 0x6400) / 0x6400 into governor_bypass_threshold_low and drivetrain_ratio below that sets governor_j1939_bypass_flag 1; governor_cruise_rampRate_calc multiplies it with protection_timing_period_cal / 60; lhz x2; dump 1638 = 0.80 (the e2m text says 'above which', the code tests drivetrain_ratio below it; drivetrain_ratio is the J1939 ETC2 gear ratio, so top gear is the low ratio)",
+    "(1/2048; 1638 = 0.80 here, the 48RE overdrive is about 0.69): the drivetrain ratio (engine to output speed; J1939 ETC2 gear ratio x 2048 / 1000) that marks top gear: protectionTimeoutControl raises it by the margin DAT_00408b78 (clamped at DAT_0005c932) into governor_bypass_threshold_low and drivetrain_ratio below that sets governor_j1939_bypass_flag to 1; governor_cruise_rampRate_calc multiplies it with protection_timing_period_cal / 60 and the axle ratio (an engine speed clamped to 8000-36000). The e2m text says 'above which' but the code compares with drivetrain_ratio below it",
+    eeprom="0x496")
+
+# ---------------------------------------------------------------- block 1253 (fault data J1939 table base) - rejected
+add("0x0005a4aa", "", "dword", "rejected",
+    "NOT a bad address or a width problem: e2m 1253 +02 Fault_Data_J1939_111 ([DG0111JC] SPN 629) is right at 0x5a4aa itself (slot 0 is fault 111 = fault_definition_table[0], the value 0x00600275 carries SPN 629, 4-byte lwzx read by the DM1 builder); what fails is the rest of block 1253 and the row shape: the e2m (11.45) slot order differs from this ROM (ROM slot order 111, 122, 123, 124, 131, 131, 132 ... vs e2m 111, 912, 184, 185, 115 ...; only 1 of 90 e2m SPNs matches the ROM at the e2m offsets), and 0x5a4aa is the base of a stride-4 table of 170 entries (header word 0x02a8 = 680 bytes at 0x5a4a8) indexed by fault slot in j1939HandlePgn65226Dm1ActiveDtc / cm848_j1939HandlePgn65227Dm2PreviousDtc / cm848_j1939BuildDm4FreezeFrame (census blind), so a scalar fault_data_j1939_111 row would sit on the base of an array. Recommend one array row dword[170] j1939_dtc_definition_table at 0x5a4aa instead; leave this scalar unapplied",
+    "")
+
+# ---------------------------------------------------------------- block 17A1 / 17A2 (exhaust temperature estimate)
+add("0x0040a680", "exhaust_temperature_rise_over_intake_manifold_temperature", "word", "confirmed",
+    "e2m 17A1 +02 TPE_Delta_Exhaust_Tmptr (DEG_F, 0.5): cm848_auxiliaryControl_exponentialAverage stores boost_target_fuel_normalized_ratio (the rise from cm848_calculateCombustionTemperatureRise, capped at 3000) or 0 while the model is inhibited, then exhaust_temperature = max(0, intake manifold temperature in 0.5 F + it); sth; dump 0 (engine stopped); layout check: +4 / +8 / +C carry the 15000-53000 clamp, exhaust_temperature and exhaust_metal_temperature",
+    "(0.5 degF per count; 0 here, engine stopped): the temperature rise added to the filtered intake manifold temperature (in 0.5 degF units) to form exhaust_temperature in cm848_auxiliaryControl_exponentialAverage; a copy of the calculated rise (e2m +0 Temperature_Delta, boost_target_fuel_normalized_ratio) or 0 while the model is inhibited (engine speed under 1 rpm or charge_fuel_ratio under 128). Working RAM, no _cal")
+CTR = "cm848_calculateCombustionTemperatureRise"
+add("0x00406768", "exhaust_temperature_estimate_boost_pressure_coefficient", "word", "confirmed",
+    f"e2m 17A2 +00 C_TPE_Exhaust_Boost_Parameter (DEG_F/IN_HG, 1/128): {CTR} adds it x map_fuel_correction_factor (= e2m 1A2D Charge_Press, 0.0159 inHg = 1/128 psi per count) / 0x4000 to the temperature rise sum; the injection timing (+4, / 1092 vs the exact 1092.3) and engine speed (+6, / 1024) divisors reproduce the e2m scales, the boost divisor 16384 = 128 x 128 gives degF per psi (the e2m labels the coefficient per IN_HG, a 2.04x unit label difference with no effect on the identity); lhz; dump 0; +8 is the filter coefficient of exhaust_metal_temperature",
+    f"(1/128 degF per pressure unit; 0 here; the e2m labels it per inHg but the divisor 16384 = 128 x 128 treats Charge_Press as 1/128 psi per count): the boost pressure term of the combustion temperature rise polynomial in {CTR}: this x map_fuel_correction_factor (e2m 1A2D Charge_Press) / 16384, summed with the injection timing (boost_target_load_gain, e2m +4), engine speed (+6) and offset (+2) terms and clamped to 15000-53000 (boost_target_load_rpm_output, e2m TPE_Energy_Fraction). ROM copy, no _cal")
+add("0x0040676a", "exhaust_temperature_estimate_offset", "word", "confirmed",
+    f"e2m 17A2 +02 C_TPE_Exhaust_Offset_Parameter (DEG_F, 1.0): {CTR} adds it unscaled to the sum that is clamped to 15000-53000 (the e2m range of TPE_Energy_Fraction, max 45000 here); lhz; dump 0",
+    f"(degF, scale 1; 0 here): the constant term of the combustion temperature rise polynomial in {CTR}, added unscaled to the injection timing, engine speed and boost pressure terms before the 15000-53000 clamp (boost_target_load_rpm_output). ROM copy, no _cal")
+add("0x0040676e", "exhaust_temperature_estimate_engine_speed_coefficient", "word", "confirmed",
+    f"e2m 17A2 +06 C_TPE_Exhaust_Speed_Parameter (DEG_F/RPM, 1/128): {CTR} adds it x engine_rpm_state_t.current_rpm (rpm x 8) / 0x400 to the sum; 1/128 x 1/8 = 1/1024 matches the divisor exactly; lhz; dump 0",
+    f"(degF per rpm in 1/128; 0 here): the engine speed term of the combustion temperature rise polynomial in {CTR}: this x engine_rpm_state_t.current_rpm (rpm x 8) / 1024, summed with the injection timing, boost pressure and offset terms and clamped to 15000-53000. ROM copy, no _cal")
+
+# ---------------------------------------------------------------- block 1901 / 1902 (temperature sensor stuck check over distance)
+SC = "cm848_checkSensorStuckOverDistance"
+HP = "hpcr_injectPressureDiagnostic"
+sensors = {
+    "battery": dict(name="battery_temperature", call="the battery temperature call (slot 69, P0514)", counter="DAT_003feea6", acc="0x40ba1e"),
+    "intake": dict(name="intake_manifold_temperature", call="the intake manifold temperature call (slot 9, P0111)", counter="DAT_003feea7", acc="0x40ba22"),
+    "ambient": dict(name="ambient_air_temperature", call="the ambient air temperature call (slot 20, P0071)", counter="DAT_003feeac", acc="0x40ba26"),
+}
+
+
+def stuck_distance(addr, key):
+    s = sensors[key]
+    n = s["name"]
+    r = by_addr[addr]
+    add(addr, f"{n}_stuck_check_distance_threshold", "dword", "confirmed",
+        f"e2m 1901 +{int(r['offset'],16):02X} {r['record']} (MI, 4 bytes, 1.085e-7): {HP} passes it as arg 12 of {SC} ({s['call']}); the distance accumulator ({s['acc']}) is compared with it while the reading stays within the temperature delta; lwz; dump 138239929 = 15.0 mi",
+        f"(1.085e-7 mi per count = 1 / 9216000; 138239929 = 15.0 mi here): in {SC} (called by {HP} for the {n.replace('_', ' ')} sensor) the distance accumulated in {n}_stuck_check_distance_traveled ({s['acc']}; vehicle_speed summed once per pass) must reach it while the sensor reading stays within {n}_stuck_check_temperature_delta of its reference sample to count one failed monitor cycle. ROM copy, no _cal")
+
+
+def stuck_delta(addr, key, dump, eng):
+    s = sensors[key]
+    n = s["name"]
+    r = by_addr[addr]
+    add(addr, f"{n}_stuck_check_temperature_delta", "word", "confirmed",
+        f"e2m 1901 +{int(r['offset'],16):02X} {r['record']} (DEG_F, 1/64): {HP} passes it as arg 13 of {SC} ({s['call']}); the reading counts as stuck while |filtered sensor value - reference sample| is below it; lhz; dump {dump} = {eng} F",
+        f"(1/64 degF; {dump} = {eng} degF here): in {SC} (called by {HP} for the {n.replace('_', ' ')} sensor) the reading counts as stuck while |sensor_channel_filtered_output - the reference sample taken at the start of the monitor| stays below it; once the reading moves by this much the monitor passes (state 2) and its failed cycle counter and accumulated distance counters are cleared. ROM copy, no _cal")
+
+
+def stuck_cycles(addr, key):
+    s = sensors[key]
+    n = s["name"]
+    r = by_addr[addr]
+    add(addr, f"{n}_stuck_check_failed_cycle_limit", "word", "confirmed",
+        f"e2m 1901 +{int(r['offset'],16):02X} {r['record']} (CNTS, 1): {HP} passes it as arg 9 of {SC} ({s['call']}); the fault is set when the failed warm-up cycle counter {s['counter']} reaches it (and the accumulated distance exceeds the accumulated distance limit); lhz; dump 5",
+        f"(5 here): the number of failed warm-up cycles (one per cycle in which the distance threshold passes with the reading stuck; counter {s['counter']}) needed in {SC} (called by {HP} for the {n.replace('_', ' ')} sensor) before the stuck sensor fault is set, together with {n}_stuck_check_accumulated_distance_limit. ROM copy, no _cal")
+
+
+def stuck_accum(addr, key, idx):
+    s = sensors[key]
+    n = s["name"]
+    r = by_addr[addr]
+    add(addr, f"{n}_stuck_check_accumulated_distance_limit", "word", "confirmed",
+        f"e2m 1901 +{int(r['offset'],16):02X} {r['record']} (MI, 0.1): {HP} passes it as arg 20 of {SC} with monitor index {idx} ({s['call']}); the fault needs the accumulated tenth-mile counter above it (distance / 0xe1000 = 0.1 mi); lhz; dump 1960 = 196.0 mi",
+        f"(0.1 mi per count; 1960 = 196.0 mi here): the distance in 0.1 mile units (accumulated across warm-up cycles) that must be exceeded in {SC} (monitor index {idx}, called by {HP} for the {n.replace('_', ' ')} sensor) before the stuck sensor fault is set, together with {n}_stuck_check_failed_cycle_limit. ROM copy, no _cal")
+
+
+def stuck_traveled(addr, key):
+    s = sensors[key]
+    n = s["name"]
+    r = by_addr[addr]
+    add(addr, f"{n}_stuck_check_distance_traveled", "dword", "confirmed",
+        f"e2m 1902 +{int(r['offset'],16):02X} {r['record']} (MI, 4 bytes, 1.085e-7): {HP} passes &DAT_{addr[2:]} as arg 6 of {SC} ({s['call']}); the callee clears it with stw and adds vehicle_speed to it each pass (uint pointer, 4 bytes); census blind (pointer); dump 0",
+        f"(1.085e-7 mi per count = 1 / 9216000; 0 here): the distance traveled while the {n.replace('_', ' ')} sensor reading stays within {n}_stuck_check_temperature_delta of its reference: {SC} (called by {HP}) clears it at the start of the monitor and adds vehicle_speed (1/256 mph) every pass; the failed cycle is counted when it reaches {n}_stuck_check_distance_threshold, and distance / 0xe1000 gives the 0.1 mile counter. Working RAM, no _cal")
+
+
+stuck_distance("0x00409f74", "battery")
+stuck_delta("0x00409f78", "battery", 230, "3.6")
+stuck_distance("0x00409f7a", "intake")
+stuck_delta("0x00409f7e", "intake", 460, "7.2")
+stuck_cycles("0x00409f80", "battery")
+stuck_cycles("0x00409f82", "intake")
+stuck_delta("0x00409f84", "ambient", 230, "3.6")
+stuck_distance("0x00409f86", "ambient")
+stuck_cycles("0x00409f8a", "ambient")
+stuck_accum("0x00409f8c", "battery", 1)
+stuck_accum("0x00409f8e", "intake", 2)
+stuck_accum("0x00409f90", "ambient", 3)
+
+# key-on rationality parameters of the ambient air / battery temperature monitors
+AAT = "cm848_checkAmbientAirTemperatureKeyOnRationality"
+BTK = "cm848_checkBatteryTemperatureKeyOnRationality"
+add("0x00409f98", "ambient_air_temperature_key_on_rationality_cycle_count_limit", "word", "confirmed",
+    f"e2m 1901 +24 Ambient_Air_Temperature_Max_Time (CNTS, 0.1): in {AAT} ambient_air_temperature_key_on_rationality_cycle_count (+1 per pass while the state is 1) must stay at or below it, otherwise the monitor aborts (state 4); lhz; dump 30000",
+    f"(0.1 per count in the e2m; 30000 counts here): the longest the ambient air temperature key-on rationality may run: {AAT} counts ambient_air_temperature_key_on_rationality_cycle_count up and aborts the test (state 4) once it exceeds this. ROM copy, no _cal")
+add("0x00409f9a", "ambient_air_temperature_key_on_rationality_driving_count_limit", "word", "confirmed",
+    f"e2m 1901 +26 Ambient_Air_Temperature_Rat_Max_RS_Time (CNTS, 0.1): in {AAT} the failure branch (P0071) is reached only when ambient_air_temperature_key_on_rationality_driving_count (passes with vehicle_speed above the minimum) exceeds it; lhz; dump 300 (the function header's '300 cycles above 25 mph')",
+    f"(0.1 per count in the e2m; 300 counts here): the number of passes above ambient_air_temperature_key_on_rationality_minimum_vehicle_speed that {AAT} waits before it declares the ambient air temperature sensor implausible (sets bit 0x100 of fault_detected_bits_352_to_367, state 3) when the sample still disagrees with the coolant and battery temperatures. ROM copy, no _cal")
+add("0x00409f9c", "ambient_air_temperature_key_on_rationality_minimum_vehicle_speed", "word", "confirmed",
+    f"e2m 1901 +28 Ambient_Air_Temperature_Rat_Min_RS (MPH, 1/256): in {AAT} vehicle_speed above it increments ambient_air_temperature_key_on_rationality_driving_count, otherwise the count restarts at 0; lhz; dump 6400 = 25 mph",
+    f"(1/256 mph; 6400 = 25.0 mph here): the road speed that vehicle_speed must exceed in {AAT} for ambient_air_temperature_key_on_rationality_driving_count to count; below it the count is reset to 0. ROM copy, no _cal")
+add("0x00409fa6", "battery_temperature_key_on_rationality_minimum_vehicle_speed", "word", "confirmed",
+    f"e2m 1901 +32 C_BT_Min_Vehicle_Speed (MPH, 1/256; the e2m description is a copy-paste of the coolant one): in {BTK} vehicle_speed below it resets battery_temperature_key_on_rationality_moving_count and the mismatch count; lhz; dump 256 = 1 mph (function header: re-check from 1 mph)",
+    f"(1/256 mph; 256 = 1.0 mph here; the e2m description 'Minimum coolant temp to run the temp sensor key on rat' is a copy-paste, the record name and the code are a vehicle speed): {BTK} counts battery_temperature_key_on_rationality_moving_count only while vehicle_speed is at or above it; below it the moving and mismatch counts restart at 0. ROM copy, no _cal")
+add("0x00409fa8", "battery_temperature_key_on_rationality_moving_count_threshold", "word", "confirmed",
+    f"e2m 1901 +34 C_BT_VSS_Min_Timer (CNTS, 1; the e2m description is shared with C_BT_Max_Counts): in {BTK} the samples are compared only once battery_temperature_key_on_rationality_moving_count has reached it, and the decision comes at it plus battery_temperature_rationality_mismatch_count_threshold; lhz; dump 1",
+    f"(1 here): the number of passes at or above battery_temperature_key_on_rationality_minimum_vehicle_speed that {BTK} waits before it starts comparing the battery temperature sample with the coolant and ambient samples; the decision comes after this plus battery_temperature_rationality_mismatch_count_threshold passes. ROM copy, no _cal")
+
+stuck_traveled("0x0040ba1e", "battery")
+stuck_traveled("0x0040ba22", "intake")
+stuck_traveled("0x0040ba26", "ambient")
+
+add("0x0040ba4c", "", "word", "rejected",
+    "e2m 1902 +2E IMTR_Ratio (UNITLESS, 1/8192, the in-use performance ratio of the intake manifold temperature rationality): the code uses the word as a fuel total: cm848_runThermostatMonitor stores (short)(injected_fuel_running_total x 0x1900 / 0x21366040) in it when a decision is due and computes thermostat_monitor_fuel_since_start = it - thermostat_monitor_start_fuel_total; its e2m neighbours AATR_Ratio (+2A) and BTR_Ratio (+2C) at 0x40ba48 / 0x40ba4a are likewise the thermostat monitor's fuel words, so the +2A..+2E layout drifted from 11.45; sth; code-based candidate (not an e2m name): thermostat_monitor_current_fuel_total",
+    "")
+
+# ---------------------------------------------------------------- block 197E (ambient trims), EEPROM mirror
+add("0x003fd518", "barometric_pressure_sensor_senses_ambient_air_flag_cal", "word", "confirmed",
+    "e2m 197E +00 T_AMB_Sensing_Ambient_Pressure (UNITLESS, 0/1, EEPROM 0x96): hpcr_fuelFinal_exponentialAverage branches on ==0: barometric_pressure_reference = barometric_pressure_selected + boost_fuel_pressure_offset_lookup (sensor at the compressor inlet) versus barometric_pressure_selected unchanged and the divisor = selected - the lookup (sensor in ambient air); the lookup's axis / values are WORD_ARRAY_003ff0c4 / 003ff0e6 = e2m 197A C_AMB_Pressure_Drop_Flow_Axis / 197B C_AMB_Pressure_Drop_Table per the parameter ID table; lhz; dump 0",
+    "(0 here): 0 = the pressure sensor reads at the compressor inlet, so hpcr_fuelFinal_exponentialAverage adds the fresh air flow pressure drop lookup (boost_fuel_pressure_offset_lookup, e2m C_AMB_Pressure_Drop_Table 197B at 0x3ff0e6 over the flow axis 197A at 0x3ff0c4) to barometric_pressure_selected to get barometric_pressure_reference; 1 = the sensor reads ambient air, the reference is barometric_pressure_selected and the drop is subtracted for boost_fuel_scale_divisor. Same block 197E as ambient_air_temperature_user_override_enable_cal; the C_AMB_* constants of e2m block 1977 (0x3ff074..0x3ff07e per the parameter ID table) are read by the same function",
+    eeprom="0x96")
+add("0x003fd51a", "ambient_air_temperature_user_override_enable_cal", "word", "confirmed",
+    "e2m 197E +02 T_AMB_Amb_Tmptr_User_Override (UNITLESS, 0/1, EEPROM 0x98): hpcr_fuelFinal_exponentialAverage: ==0 runs the filtered ambient temperature path, nonzero takes DAT_003ff078 as boost_fuel_demand_blend_a; the parameter ID table puts e2m 1977 +4 C_AMB_Amb_Tmptr_Override_Value at 0x3ff078 and +8 C_AMB_Ambient_Air_Tmptr_Default at 0x3ff07c (the value used when the timing mode state is 2); lhz; dump 0",
+    "(0 here): nonzero makes hpcr_fuelFinal_exponentialAverage use the user override ambient temperature (DAT_003ff078 = e2m 1977 +4 C_AMB_Amb_Tmptr_Override_Value, address from the parameter ID table) instead of the filtered ambient air temperature path; 0 runs the filtered path (or the default value DAT_003ff07c = e2m 1977 +8 C_AMB_Ambient_Air_Tmptr_Default when the timing mode state is 2)",
+    eeprom="0x98")
+
+# ---------------------------------------------------------------- block 1B2C (fuel pressure key-on rationality)
+add("0x00409efa", "fuel_pressure_sensor_pre_start_check_enable_flag", "word", "confirmed",
+    "e2m 1B2C +0E Fuel_Pressure_Keyon_Rat_Enable (UNITLESS, 0/1): cm848_initialization_group26_state sets cam_sync_validation_state = 1 only when it is nonzero, and hpcr_checkRailPressureSensorBeforeStart returns at once unless that state is 1; lhz; dump 0 (state 0)",
+    "(0 here): cm848_initialization_group26_state arms the rail pressure sensor key-on check (cam_sync_validation_state = 1, run by hpcr_checkRailPressureSensorBeforeStart with the fuel_pressure_sensor_pre_start_* limits of the same block) only when this is not 0; 0 here, so the check is off in this calibration. ROM copy, no _cal")
+
+# ---------------------------------------------------------------- block 8041 (injector driver / TPU-A channel 4)
+LOAD = "cm848_tpuMiosOutput_loadCalibration"
+add("0x004090a2", "injector_driver_decay_duration", "word", "confirmed",
+    f"e2m 8041 +02 HPCR_Decay_Duration (uSEC, 0.4): {LOAD} copies it to DAT_0030414a = TPU-A channel 4 PARAM5; neighbours +0 / +4 are tpu_ch3_param_period_ref / tpu_output_ch_param7_ref (HPCR_Pullin_Duration / HPCR_Delay_Duration) loaded by the same function; lhz; dump 300 = 120 us",
+    f"(0.4 us per count; 300 = 120 us here): copied to TPU-A channel 4 PARAM5 (0x30414a) by {LOAD}, one of the injector driver timing values loaded together with tpu_ch3_param_period_ref (e2m +0 HPCR_Pullin_Duration) and tpu_output_ch_param7_ref (e2m +4 HPCR_Delay_Duration, 'between the end of fat decay and the next cylinder select'). ROM copy, no _cal")
+add("0x004090a6", "injector_driver_recharge_duration", "word", "confirmed",
+    f"e2m 8041 +06 HPCR_Recharge_Duration (uSEC, 0.4): {LOAD} stores it x the battery voltage scale (tpu_a_channel_4_scale_by_battery_voltage lookup) / 0xfff in DAT_0030414c = TPU-A channel 4 PARAM6; lhz; dump 7500 = 3000 us",
+    f"(0.4 us per count; 7500 = 3000 us here): scaled by the tpu_a_channel_4_scale_by_battery_voltage lookup (/ 0xfff) and stored in TPU-A channel 4 PARAM6 (0x30414c) by {LOAD}; the on-time of the recharge (the e2m's booster capacitor recharge) of the injector driver. ROM copy, no _cal")
+add("0x004090c0", "injector_driver_bank_cutoff_recharge_interval", "dword", "confirmed",
+    f"e2m 8041 +20 HPCR_Bank_Cutoff_Recharge_Interval (uSEC, 4 bytes, 0.4): {LOAD} stores it in DAT_00304146 (TPU-A channel 4 PARAM3:PARAM4, 32 bit) when cylinder_cutout_mask is not 0, else the +1C HPCR_Continuous_Rchg_Interval (0x4090bc); lwz; dump 16750000 = 6.7 s",
+    f"(0.4 us per count; 16750000 = 6.7 s here, close to the 24-bit TPU maximum): the recharge interval {LOAD} stores in TPU-A channel 4 PARAM3:PARAM4 (0x304146, 32 bit) while cylinder_cutout_mask is not 0 (bank cutoff commanded); with no cutout the interval at 0x4090bc (e2m +1C HPCR_Continuous_Rchg_Interval) is used. ROM copy, no _cal")
+add("0x004090c6", "injector_driver_booster_recharge_off_delay", "word", "confirmed",
+    "e2m 8041 +26 HPCR_Booster_Recharge_Off_Delay (MSEC, 100 per count): cm848_protection_timer_init compares protection_crank_event_counter (+1 per pass while engine_state is STOPPED) with it (and != 0xffff) and then clears bit 0x8000 of TPUA_CH4_PARAM0 and tpu_channel_control.PARAM0 and tpu_protection_enable_flag; lhz; dump 1200 = 120 s",
+    "(100 ms per count in the e2m; 1200 = 120 s here): cm848_protection_timer_init stops the injector driver recharge (clears the enable bit 0x8000 of TPUA_CH4_PARAM0 and tpu_channel_control.PARAM0, and tpu_protection_enable_flag) when protection_crank_event_counter, which counts passes with the engine stopped after key on, reaches it; 0xffff = never. ROM copy, no _cal")
+add("0x004090c8", "fuel_system_hardware_shutdown_fail_count_threshold", "word", "confirmed",
+    "e2m 8041 +28 FS_HW_Shutdown_Fail_Count_Threshold (UNITLESS, 255 = off): cm848_tpu_interrupt_flag_init sets fault bit 0x8000 of fault_detected_bits_384_to_399 (fault 399) when tpu_init_retry_count (capped at 255) exceeds it and it is not 0xffff; lhz; dump 1",
+    "(255 = off in the e2m; 1 here): the number of injection TPU channel set restarts (tpu_init_retry_count, capped at 255) that cm848_tpu_interrupt_flag_init tolerates before it sets fault 399 (bit 0x8000 of fault_detected_bits_384_to_399, P0607); 0xffff and 255 can never be exceeded. ROM copy, no _cal")
+add("0x004090ca", "fuel_system_hardware_shutdown_error_threshold", "word", "confirmed",
+    "e2m 8041 +2A FS_HW_Shutdown_Error_Threshold (UNITLESS, 0..800): cm848_protection_timer_init, in ENGINE_STATE_SHUTDOWN with tpu_protection_enable_flag set and no cylinder cutout, compares the QADC readings of slots 54 and 55 with it; either at or above it ends the check, both below clear tpu_init_retry_count; lhz; dump 600",
+    "(raw ADC counts, 0..800; 600 here): in ENGINE_STATE_SHUTDOWN cm848_protection_timer_init compares the QADC results of channel slots 54 and 55 (the e2m's booster capacitor voltage) with it: either at or above it leaves tpu_init_retry_count alone, both below it clear the count (the retry count that fuel_system_hardware_shutdown_fail_count_threshold limits). ROM copy, no _cal")
+
+# ---------------------------------------------------------------- block 8C59 (48RE governor pressure monitors)
+GPM = "cm848_monitorGovernorPressureTracking"
+add("0x00408a96", "governor_pressure_zero_check_fail_count_limit", "word", "confirmed",
+    f"e2m 8C59 +00 RE_Governor_Pr_Zero_Rat_Fail_Count_Limit (CNTS, 1): {GPM} counts protection_coldStart_channelA_trip_count while it is below it, the next failure sets bit 0x80 of fault_detected_bits_384_to_399; lhz; dump 1",
+    f"(1 here): the 48RE governor pressure zero check of {GPM} (vehicle stopped, governor_pressure_target at or below the zero set limit): protection_coldStart_channelA_trip_count counts failed evaluations while it is below this, and the next failure sets bit 0x80 of fault_detected_bits_384_to_399 (P1757). ROM copy, no _cal")
+add("0x00408a98", "governor_pressure_zero_check_debounce_count_limit", "word", "confirmed",
+    f"e2m 8C59 +02 RE_Governor_Pr_Zero_Rat_Max_Time (CNTS, 1): {GPM} counts protection_coldStart_channelA_debounce_count (one per evaluation, every fifth pass) and counts a failure when it exceeds it; lhz; dump 5",
+    f"(5 here): the debounce of the 48RE governor pressure zero check in {GPM}: protection_coldStart_channelA_debounce_count must exceed it (one count per evaluation, every fifth pass) before one failure is counted. ROM copy, no _cal")
+add("0x00408a9a", "governor_pressure_zero_check_high_limit", "word", "confirmed",
+    f"e2m 8C59 +04 RE_Governor_Pr_Zero_High_Limit (PSI, 1/128): {GPM} counts a failed evaluation while governor_pressure is above it, otherwise the check passes (state 2) and clears the fault; lhz; dump 384 = 3.0 psi (the function header's 'above 3 psi')",
+    f"(1/128 psi; 384 = 3.0 psi here): governor_pressure above it is a failed evaluation of the 48RE governor pressure zero check in {GPM}; at or below it the check passes (state 2) and clears the fault. ROM copy, no _cal")
+add("0x00408a9e", "governor_pressure_mid_range_check_fail_count_limit", "word", "confirmed",
+    f"e2m 8C59 +08 RE_Governor_Pr_Mid_Rat_Fail_Count_Limit (CNTS, 1): {GPM} counts protection_coldStart_channelB_trip_count while it is below it, the next failure sets bit 0x100 of fault_detected_bits_384_to_399; lhz; dump 80",
+    f"(80 here): the 48RE governor pressure mid range check of {GPM} (governor_pressure_target inside the mid set window): protection_coldStart_channelB_trip_count counts failed evaluations while it is below this, and the next failure sets bit 0x100 of fault_detected_bits_384_to_399 (P1756). ROM copy, no _cal")
+add("0x00408aa0", "governor_pressure_mid_range_check_debounce_count_limit", "word", "confirmed",
+    f"e2m 8C59 +0A RE_Governor_Pr_Mid_Rat_Max_Time (CNTS, 1): {GPM} counts protection_coldStart_channelB_debounce_count and counts a failure when it exceeds it; lhz; dump 5",
+    f"(5 here): the debounce of the 48RE governor pressure mid range check in {GPM}: protection_coldStart_channelB_debounce_count must exceed it (one count per evaluation, every fifth pass) before one failure is counted. ROM copy, no _cal")
+add("0x00408aa2", "governor_pressure_mid_range_check_low_limit", "word", "confirmed",
+    f"e2m 8C59 +0C RE_Governor_Pr_Mid_Low_Limit (PSI, 1/128): {GPM} counts a failed evaluation when governor_pressure < it or > DAT_00408aa6; lhz; dump 3712 = 29.0 psi (the function header's 29-44 psi)",
+    f"(1/128 psi; 3712 = 29.0 psi here): governor_pressure below it (or above governor_pressure_mid_range_check_high_limit) is a failed evaluation of the 48RE governor pressure mid range check in {GPM}. ROM copy, no _cal")
+add("0x00408aa6", "governor_pressure_mid_range_check_high_limit", "word", "confirmed",
+    f"e2m 8C59 +10 RE_Governor_Pr_Mid_High_Limit (PSI, 1/128): {GPM} counts a failed evaluation when governor_pressure > it or < DAT_00408aa2; lhz; dump 5632 = 44.0 psi (the function header's 29-44 psi)",
+    f"(1/128 psi; 5632 = 44.0 psi here): governor_pressure above it (or below governor_pressure_mid_range_check_low_limit) is a failed evaluation of the 48RE governor pressure mid range check in {GPM}. ROM copy, no _cal")
+add("0x00408aaa", "governor_pressure_check_maximum_accelerator_position", "word", "confirmed",
+    f"e2m 8C59 +14 RE_Governor_Pr_Control_Rat_Max_Throttle (%THROTTLE, 0.25): {GPM} runs only while fuel_demand_control_t.calculated (accelerator position, 400 = 100 percent) is at or below it; lhz; dump 200 = 50 percent (400 raw = 100 percent matches the 0.25 scale)",
+    f"(0.25 percent per count; 200 = 50.0 percent here): the 48RE governor pressure monitors of {GPM} run only while the accelerator position fuel_demand_control_t.calculated (400 = 100 percent) is at or below it (e2m: 'throttle above this will disable the monitor'). ROM copy, no _cal")
+
+# ---------------------------------------------------------------- write in bin order
+assert set(results) == set(by_addr), (set(by_addr) - set(results), set(results) - set(by_addr))
+names = [v["new"] for v in results.values() if v["new"]]
+assert len(names) == len(set(names)), "duplicate names"
+with open(out_path, "w") as f:
+    for r in bin_rows:
+        f.write(json.dumps(results[r["address"]], ensure_ascii=True) + "\n")
+print(len(bin_rows), "lines written;", len(names), "names;", sum(1 for v in results.values() if v["verdict"] == "rejected"), "rejected")

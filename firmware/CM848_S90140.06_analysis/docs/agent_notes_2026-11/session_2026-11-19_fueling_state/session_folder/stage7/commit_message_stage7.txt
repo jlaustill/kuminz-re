@@ -1,0 +1,35 @@
+cm848: e2m audit against the parameter ID table, rename wave 12 (383 rows), the fueling chain's e2m names (stage 7)
+
+- firmware/scripts/e2m_name_audit.py (tested): every scalar e2m record the
+  ECU's parameter ID table resolves, against the row at its address, with
+  the dump value against the record's range. 4691 records: 3000 named, 1397
+  without a row, 244 inside a wider row, 50 on unnamed rows.
+- rename wave 12: the 398 records with no name, a code reference and an
+  in-range dump value, in six bins of whole blocks. Six read-only agents
+  named each record from the e2m, checked its code use and access width,
+  and rejected layout drift between the labelled 11.45 e2m and the truck's
+  11.46.06 (the 10E3 tail is block 1228, 8A2B +24 is 8A37 +0, 8A14 / 1930 /
+  1902 / 1253 drift partway). 384 confirmed, 6 uncertain, 8 rejected; the
+  gate (rename_waves rules + cross-bin duplicates, collisions, rows already
+  present, type against size) passed 383 new rows.
+- the fueling chain (e2m 1045 / 1051, checked against the writers):
+  adjusted_user_fueling / adjusted_user_fueling_state (were
+  governor_fuel_demand_value / governor_fuel_demand_mode, [FSGVFL] /
+  [FSGVFLST]), final_fueling (was fuel_demand_computed; and
+  fault_entry_t.final_fueling), requested_fueling, master_slave_control_flag,
+  torque_derate_torque_limit / _state (stage 4 had named them after the power
+  take-off, only one of their sources), torque_control_indication_flag, and
+  the two values before the combustion reference.
+- stale comment tokens fixed; the agents' leads (wave 13: the misname review)
+  are in task 045.
+
+Check: all 393 names render, no _ variant; distinct DAT_ labels 1433 -> 1047
+(the 383 rows + 3 byte labels inside a byte[4]); build warnings unchanged.
+The 33 differing functions all come from typing the new rows: casts and
+local types, renumbered temporaries, local declaration order,
+PTR_<target>_<address> labels of unnamed pointers whose targets now have
+names, one table base indexed in dwords. One bad render fixed (a 4-byte
+version read bytewise is byte[4]). Headers compile; lookup_tables.py clean;
+five test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

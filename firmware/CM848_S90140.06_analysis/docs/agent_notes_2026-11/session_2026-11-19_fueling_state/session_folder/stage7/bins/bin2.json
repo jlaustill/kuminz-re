@@ -1,0 +1,3450 @@
+[
+ {
+  "address": "0x0005983a",
+  "block": "0023",
+  "offset": "0000",
+  "record": "Fault_Countdown_Elapsed_Time_Mode_0",
+  "unit": "HR",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "5.55556E-5",
+  "min": "0.0",
+  "max": "50.0",
+  "description": "[DG00ELTM] Current definition is: No countdown shall occur for a mode 0 fault.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005983a",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_faultTimeoutHandler: (*(uint *)(&DAT_0005983a + iVar1) <"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": [
+   "Fault_Data"
+  ]
+ },
+ {
+  "address": "0x0005983e",
+  "block": "0023",
+  "offset": "0004",
+  "record": "Fault_Countdown_Count_Down_Rate_Mode_0",
+  "unit": "HR",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "5.55556E-5",
+  "min": "0.0",
+  "max": "50.0",
+  "description": "[DG00CUDN] Current definition is: No countdown shall occur for a mode 0 fault.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005983e",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_faultTimeoutHandler: (*(uint *)(&DAT_0005983e + iVar1) <"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c296",
+  "block": "1048",
+  "offset": "0008",
+  "record": "Maximum_Confidence_Count",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "100.0",
+  "min": "0",
+  "max": "25500",
+  "description": "[CTMXCBCU] Time to delay before setting a new Throttle_Min",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c296",
+  "references": 2,
+  "dump_raw": "8",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandOverrideHandler: fuel_demand_control_t_0040a57a.rate_delta = DAT_0005c296;",
+   "cm848_fuelDemandOverrideHandler: if (fuel_demand_control_t_0040a57a.rate_delta == DAT_0005c296) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "Highest_Throttle_Min",
+    "throttle_fuel_demand_threshold_cal",
+    "0.33"
+   ],
+   [
+    "000C",
+    "Throttle_Fault_Delay",
+    "fuel_demand_rate_limit_debounce_low_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Auto_Zero_Offset",
+    "fuel_demand_cal_offset",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Throttle_Diagnostic_MPH_Threshold",
+    "idle_validation_fault_minimum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Throttle_Fault_Delay_At_Idle",
+    "fuel_demand_rate_limit_debounce_cal",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Delta_Throttle_Filter_Constant",
+    "fuel_demand_delta_filter_coefficient",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c298",
+  "block": "1048",
+  "offset": "000A",
+  "record": "Confidence_Band",
+  "unit": "%THROTTLE",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.25",
+  "min": "0",
+  "max": "4",
+  "description": "[CTCB] confidence range to allow for noise in Throttle_Min logic",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c298",
+  "references": 1,
+  "dump_raw": "4",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandOverrideHandler: else if ((uint)throttle_fuel_demand_tracked + (uint)DAT_0005c298 <"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "Highest_Throttle_Min",
+    "throttle_fuel_demand_threshold_cal",
+    "0.33"
+   ],
+   [
+    "000C",
+    "Throttle_Fault_Delay",
+    "fuel_demand_rate_limit_debounce_low_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Auto_Zero_Offset",
+    "fuel_demand_cal_offset",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Throttle_Diagnostic_MPH_Threshold",
+    "idle_validation_fault_minimum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Throttle_Fault_Delay_At_Idle",
+    "fuel_demand_rate_limit_debounce_cal",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Delta_Throttle_Filter_Constant",
+    "fuel_demand_delta_filter_coefficient",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c29c",
+  "block": "1048",
+  "offset": "000E",
+  "record": "Test_Cell_Auto_Zero",
+  "unit": "%THROTTLE",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.2500000000",
+  "min": "6",
+  "max": "33",
+  "description": "[CTTEZR] Auto_Zero value when in test cell",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c29c",
+  "references": 1,
+  "dump_raw": "60",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandBaseCalculation: uVar1 = (uint)DAT_0005c29c;"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "Highest_Throttle_Min",
+    "throttle_fuel_demand_threshold_cal",
+    "0.33"
+   ],
+   [
+    "000C",
+    "Throttle_Fault_Delay",
+    "fuel_demand_rate_limit_debounce_low_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Auto_Zero_Offset",
+    "fuel_demand_cal_offset",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Throttle_Diagnostic_MPH_Threshold",
+    "idle_validation_fault_minimum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Throttle_Fault_Delay_At_Idle",
+    "fuel_demand_rate_limit_debounce_cal",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Delta_Throttle_Filter_Constant",
+    "fuel_demand_delta_filter_coefficient",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2a2",
+  "block": "1048",
+  "offset": "0014",
+  "record": "Throttle_Transition_Range",
+  "unit": "%THROTTLE",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.25",
+  "min": "12",
+  "max": "52",
+  "description": "[CTTHTZRN] Sum of this and Throttle_Min defines % where pot is considered ABOVE_IDLE",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2a2",
+  "references": 1,
+  "dump_raw": "56",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandRateLimiterStateMachine: if ((uint)fuel_demand_control_t_0040a57a.throttle_based + (uint)DAT_0005c2a2 <"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "Highest_Throttle_Min",
+    "throttle_fuel_demand_threshold_cal",
+    "0.33"
+   ],
+   [
+    "000C",
+    "Throttle_Fault_Delay",
+    "fuel_demand_rate_limit_debounce_low_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Auto_Zero_Offset",
+    "fuel_demand_cal_offset",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Throttle_Diagnostic_MPH_Threshold",
+    "idle_validation_fault_minimum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Throttle_Fault_Delay_At_Idle",
+    "fuel_demand_rate_limit_debounce_cal",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Delta_Throttle_Filter_Constant",
+    "fuel_demand_delta_filter_coefficient",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2a8",
+  "block": "1048",
+  "offset": "001A",
+  "record": "TPS_AZ_Update_Limit",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "1",
+  "max": "255",
+  "description": "Update occurance limit to allow for setting a new Throttle_Min & Auto_Zero",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2a8",
+  "references": 1,
+  "dump_raw": "4",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandOverrideHandler: (DAT_0005c2a8 < governor_speed_output_snapshot)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "Highest_Throttle_Min",
+    "throttle_fuel_demand_threshold_cal",
+    "0.33"
+   ],
+   [
+    "000C",
+    "Throttle_Fault_Delay",
+    "fuel_demand_rate_limit_debounce_low_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Auto_Zero_Offset",
+    "fuel_demand_cal_offset",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Throttle_Diagnostic_MPH_Threshold",
+    "idle_validation_fault_minimum_vehicle_speed",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Throttle_Fault_Delay_At_Idle",
+    "fuel_demand_rate_limit_debounce_cal",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Delta_Throttle_Filter_Constant",
+    "fuel_demand_delta_filter_coefficient",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c930",
+  "block": "106D",
+  "offset": "0002",
+  "record": "Gear_Ratio_Min_Limit",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00048828125",
+  "min": "0.1",
+  "max": "15.99",
+  "description": "Minimum gear ratio limit below which out of gear is true",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c930",
+  "references": 3,
+  "dump_raw": "205",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: if ((((DAT_0005c930 < uVar4) && (uVar4 < DAT_0005c932)) && ((uVar3 & 0xffff) <= (uint)uVar5)",
+   "protectionTimeoutControl: uVar5 = DAT_0005c930;",
+   "protectionTimeoutControl: if ((uVar4 < DAT_0005c930) || (uVar5 = DAT_0005c932, DAT_0005c932 < uVar4)) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c934",
+  "block": "106D",
+  "offset": "0006",
+  "record": "Gear_Ratio_Filter_Constant",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.000015258789",
+  "min": "0",
+  "max": "0.99998474",
+  "description": "TIME CONSTANT OF THE FILTER USED IN THE GEAR RATIO CALCULATIONS",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c934",
+  "references": 2,
+  "dump_raw": "64408",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: local_30[0] = DAT_0005c934;",
+   "initGovernorJ1939Bypass: engine_temperature_protection_filter_state.coefficient = &DAT_0005c934;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c936",
+  "block": "106D",
+  "offset": "0008",
+  "record": "Default_Gear_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00048828125",
+  "min": "0.1",
+  "max": "16.00",
+  "description": "GEAR RATIO WHICH IS INITIALIZED UPON POWER-UP",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c936",
+  "references": 10,
+  "dump_raw": "32768",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: drivetrain_ratio_raw = DAT_0005c936;",
+   "protectionTimeoutControl: drivetrain_ratio = DAT_0005c936;",
+   "protectionTimeoutControl: fuel_flow_rpm_divisor = DAT_0005c936;",
+   "protectionTimeoutControl: fuel_flow_rpm_divisor_saved = DAT_0005c936;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c938",
+  "block": "106D",
+  "offset": "000A",
+  "record": "Out_Of_Gear_GR_Delay",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.04",
+  "min": "0",
+  "max": "100",
+  "description": "Minimum time the vehicle is out of gear due to a Gear Ratio change",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c938",
+  "references": 1,
+  "dump_raw": "13",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: fuel_flow_divisor_settle_counter = DAT_0005c938;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c93a",
+  "block": "106D",
+  "offset": "000C",
+  "record": "Out_Of_Gear_Spd_Delay",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.04",
+  "min": "0",
+  "max": "100",
+  "description": "TIME DELAY FORCED FOR RSG OVERRIDE FOR MISMATCH OF VEH. AND ENG. SPEEDS",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c93a",
+  "references": 1,
+  "dump_raw": "150",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: (wVar1 = DAT_0005c93a, vehicle_speed <= DAT_0005c93c)) &&"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c93c",
+  "block": "106D",
+  "offset": "000E",
+  "record": "Out_Of_Gear_Speed",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390629983",
+  "min": "0",
+  "max": "255.9961",
+  "description": "VEHICLE SPEED ABOVE WHICH AN OUT OF GEAR CONDITION IS CONSIDERED",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c93c",
+  "references": 1,
+  "dump_raw": "15872",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: (wVar1 = DAT_0005c93a, vehicle_speed <= DAT_0005c93c)) &&"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c940",
+  "block": "106D",
+  "offset": "0012",
+  "record": "Out_Of_Gear_Settling_Delay",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.040",
+  "min": "0",
+  "max": "20",
+  "description": "The additional time added when over RSG",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c940",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: drivetrain_ratio_unsettled_release_timer = DAT_0005c940;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c942",
+  "block": "106D",
+  "offset": "0014",
+  "record": "Gear_Ratio_OOG_Filter_Constant",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.000015258789",
+  "min": "0",
+  "max": "0.99998474",
+  "description": "Gear Ratio Filter Constant while OOG",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c942",
+  "references": 1,
+  "dump_raw": "48496",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: local_30[0] = DAT_0005c942;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c946",
+  "block": "106D",
+  "offset": "0018",
+  "record": "Gear_Ratio_Fraction_Tolerance",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00048828125",
+  "min": "0",
+  "max": "1",
+  "description": "tolerance for determining out of gear",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c946",
+  "references": 1,
+  "dump_raw": "184",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionTimeoutControl: ) && ((((uVar3 & 0xffff) << 0xb) / (dVar2 & 0xffff) & 0xffff) <= (uint)DAT_0005c946)) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2f0",
+  "block": "10B5",
+  "offset": "0000",
+  "record": "Maximum_Derate_RPM",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1250",
+  "min": "0",
+  "max": "3000",
+  "description": "[EPMXDQRP] MAXIMUM ENGINE RPM WHEN FULLY DERATED, I.E. SEVERITY INDEX = 1.0.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2f0",
+  "references": 2,
+  "dump_raw": "19200",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initializeFaultDerateEngineSpeedLimit: engine_speed_limit_fault_derate_span to the default minus DAT_0005c2f0 (19200 = 2400 rpm). Called",
+   "cm848_initializeFaultDerateEngineSpeedLimit: engine_speed_limit_fault_derate_span = engine_speed_limit_default_cal - DAT_0005c2f0;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005a46c",
+  "block": "10E3",
+  "offset": "0000",
+  "record": "J1939_Default_Engine_Source_Address",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "[JCDFEGSA] Default J1939 network address for ECM as engine node",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005a46c",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_copyROMCalibrationToRAM: j1939_source_address = DAT_0005a46c;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005a46e",
+  "block": "10E3",
+  "offset": "0002",
+  "record": "J1939_Default_Retarder_Source_Address",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "[JCDFRDSA] Default J1939 network address for ECM as retarder node upon power-up",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005a46e",
+  "references": 1,
+  "dump_raw": "41",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_copyROMCalibrationToRAM: j1939_engine_retarder_source_address = DAT_0005a46e;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005a486",
+  "block": "10E3",
+  "offset": "001A",
+  "record": "Command_Security_Flags",
+  "unit": "UNITLESS",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "4294967296",
+  "description": "[JCCZSUFG] bit-mapped parameter determining access restriction of commands",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005a486",
+  "references": 1,
+  "dump_raw": "1141899011",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "j1939_diagServiceDispatch: if (((1 << (bVar1 & 7) & (uint)(byte)(&DAT_0005a486)[bVar1 >> 3]) == 0) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005a48e",
+  "block": "10E3",
+  "offset": "0022",
+  "record": "Jcomm_DD_CC_I_Gain",
+  "unit": "MM3S/MPH/SEC",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.17391304400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Driver Demand mimic Cruise adjustment integrator gain, for JCOMM COMMAND mode.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005a48e",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_j1939BuildDm4FreezeFrame: if (DAT_0005a48e == 1) {"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [
+   "Jcomm_Diag_MPH_in_Snapshot"
+  ]
+ },
+ {
+  "address": "0x0005a490",
+  "block": "10E3",
+  "offset": "0024",
+  "record": "Jcomm_DD_PTO_I_Gain",
+  "unit": "MM3S/RPM/SEC",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.17391304400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Driver Demand mimic PTO adjustment integrator gain, for JCOMM COMMAND mode.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005a490",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_j1939HandlePgn65230Dm5Readiness: DAT_003fad58 = (undefined1)DAT_0005a490;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [
+   "OBD_Compliance"
+  ]
+ },
+ {
+  "address": "0x0005a492",
+  "block": "10E3",
+  "offset": "0026",
+  "record": "DDT_TSC_ASG_Filter_Constant",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.5258789E-5",
+  "min": "0",
+  "max": "0.99998474",
+  "description": "Calibrated first order filter for driver demand ASG throttle ref. engine speed",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005a492",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_j1939HandlePgn65230Dm5Readiness: DAT_003fad59 = (undefined1)DAT_0005a492;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [
+   "Supported_Continuous_Monitors"
+  ]
+ },
+ {
+  "address": "0x0005c36c",
+  "block": "10FC",
+  "offset": "0002",
+  "record": "Jcomm_Retarder_Shift_Assist_Limit",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[JCEBSILM] limit to which User Fueling is compared to determine if engine brakes should be",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c36c",
+  "references": 2,
+  "dump_raw": "589",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_processEngineRetarderTsc1Request: ((DAT_0005c36c <= engine_operating_mode_fuel_demand && (wVar4 != 0)))) {",
+   "governor_resetModeStateOnCondition: (DAT_0005c36c <= engine_operating_mode_fuel_demand)))) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c376",
+  "block": "10FC",
+  "offset": "000C",
+  "record": "Jcomm_Retarder_Torque_at_Idle",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "3.90625E-3",
+  "min": "0",
+  "max": "125",
+  "description": "[JCRDISTQ] Jcomm Retarder Torque at Idle available torque that retarder can provide at i",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c376",
+  "references": 2,
+  "dump_raw": "15104",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_buildPgn65249RetarderConfigurationMessage: (125 minus the percent) from the j1939_pgn65249_* / j1939_protocol_mode_* / DAT_0005c376",
+   "cm848_buildPgn65249RetarderConfigurationMessage: DAT_003fae54 = '}' - (char)((ushort)DAT_0005c376 >> 8);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Reference_Retarder_Torque",
+    "j1939_protocol_mode_speed_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Retarder_Speed_at_Idle",
+    "j1939_pgn65249_cal_a",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Retarder_Speed_at_Peak_Torque",
+    "j1939_protocol_mode_fuel_cal_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Retarder_Speed_at_Point_3",
+    "j1939_protocol_mode_fuel_cal_c",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Retarder_Speed_at_Point_4",
+    "j1939_protocol_mode_fuel_cal_d",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Jcomm_Retarder_Torque_at_Max_Speed",
+    "j1939_dtc_spn_cal_a",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Retarder_Torque_at_Point_3",
+    "j1939_dtc_spn_cal_b",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Jcomm_Retarder_Torque_at_Point_4",
+    "j1939_dtc_spn_cal_c",
+    "0.00"
+   ],
+   [
+    "0014",
+    "Jcomm_Maximum_Retarder_Speed",
+    "j1939_pgn65249_cal_b",
+    "0.00"
+   ],
+   [
+    "0016",
+    "Jcomm_Retarder_Torque_at_Point_5",
+    "j1939_dtc_spn_cal_d",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fdfc0",
+  "block": "1143",
+  "offset": "0002",
+  "record": "Fuel_Temperature_RPM_Index",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0.0",
+  "max": "1.0",
+  "description": "[EPFTRPIX] Fuel temperature RPM severity index.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fdfc0",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "governor_faultDerate_mainLoop_update: ((&DAT_003fdfc0)[uVar7 * 0xf] == 0)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Fuel_Temperature_Fueling_Index",
+    "governor_faultDerate_channel_state",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fdd7e",
+  "block": "117F",
+  "offset": "0012",
+  "record": "Jcomm_AT_Command_State",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "6",
+  "description": "[JCATCMST] indicates command being requested via datalink (for VAT)",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fdd7e",
+  "references": 2,
+  "dump_raw": "6",
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "code": [
+   "j1939_receivePgn56576Handler: DAT_003fdd7e = 6;",
+   "j1939_receivePgn56576Handler: DAT_003fdd7e = (ushort)(bVar1 >> 5);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Total_Distance",
+    "lifetime_distance_pulses",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Trip_Distance",
+    "protection_freq_divisor_working",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Trip_Average_Fuel_Economy",
+    "trip_average_fuel_economy",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Total_Idle_Fuel_Used",
+    "lifetime_fuel_used_at_governed_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "Current_HP_Peak_Fueling",
+    "cruise_speed_blend_working",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Cruise_Max_Road_Speed",
+    "cruise_speed_high_limit",
+    "0.50"
+   ],
+   [
+    "0014",
+    "Jcomm_AT_Component_Status",
+    "governor_prop_status_bits_1",
+    "0.33"
+   ],
+   [
+    "001A",
+    "Jcomm_AT_Encryption_Seed",
+    "governor_prop_status_byte_b",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Jcomm_AT_Encryption_Seed_Present",
+    "governor_prop_status_bits_0",
+    "0.00"
+   ],
+   [
+    "0020",
+    "Jcomm_AT_Password_Valid",
+    "governor_prop_status_bits_2",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Jcomm_AT_Send_Status_Report",
+    "governor_prop_status_pending_flag",
+    "0.25"
+   ],
+   [
+    "0024",
+    "Jcomm_AT_Status_Of_Request",
+    "governor_prop_status_bits_3",
+    "0.33"
+   ],
+   [
+    "0026",
+    "TW_New_Tires_Installed_Flag",
+    "ascii_zero_detect_flag",
+    "0.20"
+   ],
+   [
+    "003A",
+    "RSC_Sensor_Type",
+    "drivetrain_type",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fdd82",
+  "block": "117F",
+  "offset": "0016",
+  "record": "Jcomm_AT_Desired_Exit_Mode",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "2",
+  "description": "[JCATEXMD] indicates desired mode of engine locking at keyoff(for VAT)",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fdd82",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "j1939_receivePgn56576Handler: DAT_003fdd82 = (undefined2)((int)(bVar1 & 0x18) >> 3);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Total_Distance",
+    "lifetime_distance_pulses",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Trip_Distance",
+    "protection_freq_divisor_working",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Trip_Average_Fuel_Economy",
+    "trip_average_fuel_economy",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Total_Idle_Fuel_Used",
+    "lifetime_fuel_used_at_governed_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "Current_HP_Peak_Fueling",
+    "cruise_speed_blend_working",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Cruise_Max_Road_Speed",
+    "cruise_speed_high_limit",
+    "0.50"
+   ],
+   [
+    "0014",
+    "Jcomm_AT_Component_Status",
+    "governor_prop_status_bits_1",
+    "0.33"
+   ],
+   [
+    "001A",
+    "Jcomm_AT_Encryption_Seed",
+    "governor_prop_status_byte_b",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Jcomm_AT_Encryption_Seed_Present",
+    "governor_prop_status_bits_0",
+    "0.00"
+   ],
+   [
+    "0020",
+    "Jcomm_AT_Password_Valid",
+    "governor_prop_status_bits_2",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Jcomm_AT_Send_Status_Report",
+    "governor_prop_status_pending_flag",
+    "0.25"
+   ],
+   [
+    "0024",
+    "Jcomm_AT_Status_Of_Request",
+    "governor_prop_status_bits_3",
+    "0.33"
+   ],
+   [
+    "0026",
+    "TW_New_Tires_Installed_Flag",
+    "ascii_zero_detect_flag",
+    "0.20"
+   ],
+   [
+    "003A",
+    "RSC_Sensor_Type",
+    "drivetrain_type",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fdd84",
+  "block": "117F",
+  "offset": "0018",
+  "record": "Jcomm_AT_Encryption_Indicator",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "2",
+  "description": "[JCATEYID] indicates via DL if VAT encryption seed is req'd or if PW is present",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fdd84",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "j1939_receivePgn56576Handler: DAT_003fdd84 = (undefined2)((int)(bVar1 & 6) >> 1);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Total_Distance",
+    "lifetime_distance_pulses",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Trip_Distance",
+    "protection_freq_divisor_working",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Trip_Average_Fuel_Economy",
+    "trip_average_fuel_economy",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Total_Idle_Fuel_Used",
+    "lifetime_fuel_used_at_governed_speed",
+    "0.50"
+   ],
+   [
+    "000E",
+    "Current_HP_Peak_Fueling",
+    "cruise_speed_blend_working",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Cruise_Max_Road_Speed",
+    "cruise_speed_high_limit",
+    "0.50"
+   ],
+   [
+    "0014",
+    "Jcomm_AT_Component_Status",
+    "governor_prop_status_bits_1",
+    "0.33"
+   ],
+   [
+    "001A",
+    "Jcomm_AT_Encryption_Seed",
+    "governor_prop_status_byte_b",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Jcomm_AT_Encryption_Seed_Present",
+    "governor_prop_status_bits_0",
+    "0.00"
+   ],
+   [
+    "0020",
+    "Jcomm_AT_Password_Valid",
+    "governor_prop_status_bits_2",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Jcomm_AT_Send_Status_Report",
+    "governor_prop_status_pending_flag",
+    "0.25"
+   ],
+   [
+    "0024",
+    "Jcomm_AT_Status_Of_Request",
+    "governor_prop_status_bits_3",
+    "0.33"
+   ],
+   [
+    "0026",
+    "TW_New_Tires_Installed_Flag",
+    "ascii_zero_detect_flag",
+    "0.20"
+   ],
+   [
+    "003A",
+    "RSC_Sensor_Type",
+    "drivetrain_type",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e4c",
+  "block": "1189",
+  "offset": "0000",
+  "record": "CC_Reference_Rate_Pos",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.09765625",
+  "min": "0",
+  "max": "20",
+  "description": "Positive Slew Rate Limit on Cruise Control Reference",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e4c",
+  "references": 2,
+  "dump_raw": "8",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: wVar12 = (word)(uVar13 + DAT_00408e4c);",
+   "protectionOutputActuatorControl: if ((uVar13 + DAT_00408e4c & 0xffff) < uVar4) {"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e4e",
+  "block": "1189",
+  "offset": "0002",
+  "record": "CC_Reference_Rate_Neg",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.09765625",
+  "min": "0",
+  "max": "20",
+  "description": "Negative Slew Rate Limit on Cruise Control Reference",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e4e",
+  "references": 2,
+  "dump_raw": "10",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: else if ((uVar4 < uVar13) && (uVar4 + DAT_00408e4e < uVar13)) {",
+   "protectionOutputActuatorControl: wVar12 = cruise_ramp_target_prev - DAT_00408e4e;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e50",
+  "block": "1189",
+  "offset": "0004",
+  "record": "Cruise_RSG_Derivative_Filter_C1",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.52590E-05",
+  "min": "0",
+  "max": "1",
+  "description": "2nd order derivative filter in cc/rsg gov., coefficient 1",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e50",
+  "references": 1,
+  "dump_raw": "8384",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "initCruiseConfirmFlags: PTR_DAT_003fd022 = &DAT_00408e50;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e52",
+  "block": "1189",
+  "offset": "0006",
+  "record": "Cruise_RSG_Derivative_Filter_C3",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.52590E-05",
+  "min": "0",
+  "max": "1",
+  "description": "2nd order derivative filter in cc/rsg gov., coefficient 3",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e52",
+  "references": 1,
+  "dump_raw": "26004",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "initCruiseConfirmFlags: PTR_DAT_003fd026 = &DAT_00408e52;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e54",
+  "block": "1189",
+  "offset": "0008",
+  "record": "Cruise_RSG_Diff_Path_Max",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.006875",
+  "min": "0",
+  "max": "200",
+  "description": "Max limit on the output off the differential path in the cc/rsg gov.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e54",
+  "references": 1,
+  "dump_raw": "14545",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: iVar10 = (int)DAT_00408e54;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e56",
+  "block": "1189",
+  "offset": "000A",
+  "record": "Cruise_RSG_Diff_Path_Min",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.006875",
+  "min": "-200",
+  "max": "0",
+  "description": "Min limit on the output of the differential path in the cc/rsg gov.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e56",
+  "references": 1,
+  "dump_raw": "-14545",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: if ((iVar9 < iVar10 * 0x16) && (iVar10 = (int)DAT_00408e56, iVar10 * 0x16 < iVar9)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e58",
+  "block": "1189",
+  "offset": "000C",
+  "record": "Cruise_RSG_Driveline_Filter_C1",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.52590E-05",
+  "min": "0",
+  "max": "1",
+  "description": "2nd order driveline filter in cc/rsg gov., coefficient 1",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e58",
+  "references": 1,
+  "dump_raw": "21608",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "initCruiseConfirmFlags: PTR_DAT_003fd012 = &DAT_00408e58;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e5a",
+  "block": "1189",
+  "offset": "000E",
+  "record": "Cruise_RSG_Driveline_Filter_C3",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.52590E-05",
+  "min": "0",
+  "max": "1",
+  "description": "2nd order driveline filter in cc/rsg gov., coefficient 3",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e5a",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "initCruiseConfirmFlags: PTR_DAT_003fd016 = &DAT_00408e5a;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e5c",
+  "block": "1189",
+  "offset": "0010",
+  "record": "Cruise_RSG_Fueling_Clamp_Max",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "CC/RSG fueling clamp max.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e5c",
+  "references": 1,
+  "dump_raw": "2944",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "protectionRampRateControl: _cruise_speed_upper_limit_ptr = &DAT_00408e5c;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e60",
+  "block": "1189",
+  "offset": "0014",
+  "record": "Cruise_RSG_Gain_Mult",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0009765625",
+  "min": "0.1",
+  "max": "12.25",
+  "description": "CRUISE CONTROL LOOP GAIN MULTIPLIER",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e60",
+  "references": 2,
+  "dump_raw": "2529",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateCruisePidRateGainScale: protection_temp_scale_factor / 60) x 100 >> 7) x DAT_00408e60 >> 10, capped at DAT_00408e6a",
+   "cm848_calculateCruisePidRateGainScale: 0xffff) * 100 >> 7) * (uint)DAT_00408e60 >> 10;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e62",
+  "block": "1189",
+  "offset": "0016",
+  "record": "Cruise_RSG_Integral_Adj_Gain",
+  "unit": "1/SEC",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "3.05176E-05",
+  "min": "0",
+  "max": "0.999970",
+  "description": "THE INTEGRAL ADJUSTMENT GAIN OF THE CRUISE / RSG",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e62",
+  "references": 1,
+  "dump_raw": "4925",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: (int)DAT_00408e62 * 2;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e6a",
+  "block": "1189",
+  "offset": "001E",
+  "record": "Tool_UL_Cruise_RSG_Gain",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.01",
+  "min": "1",
+  "max": "294",
+  "description": "TOOL MAXIMUM ACCEPTABLE CRUISE_RSG_GAIN VALUE",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e6a",
+  "references": 3,
+  "dump_raw": "4900",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateCruisePidRateGainScale: protection_temp_scale_factor / 60) x 100 >> 7) x DAT_00408e60 >> 10, capped at DAT_00408e6a",
+   "cm848_calculateCruisePidRateGainScale: if (DAT_00408e6a < uVar1) {",
+   "cm848_calculateCruisePidRateGainScale: uVar1 = (uint)DAT_00408e6a;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e6c",
+  "block": "1189",
+  "offset": "0020",
+  "record": "Cruise_RSG_RSG_Reset_Fuel_Offset",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793480000",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Adjustment to RSG Integrator Preset Fuel Calculation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e6c",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "protectionRampRateControl: wVar5 = fuel_demand_computed - DAT_00408e6c;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e72",
+  "block": "1189",
+  "offset": "0026",
+  "record": "Cruise_RSG_Preset_Fueling_Thres_Accel",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.09765625",
+  "min": "0",
+  "max": "5",
+  "description": "Accel. threshold used in cruise preset fueling calculation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e72",
+  "references": 2,
+  "dump_raw": "3",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: (DAT_00408e72 < iVar8)))) || (iVar8 < -(int)DAT_00408e72)) {",
+   "protectionOutputActuatorControl: (DAT_00408e72 < iVar8)))) || (iVar8 < -(int)DAT_00408e72)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e76",
+  "block": "1189",
+  "offset": "002A",
+  "record": "Cruise_RSG_Sump_Fuel_Init_Gain",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.69565217600",
+  "min": "0.000000",
+  "max": "160.000000",
+  "description": "This gain multiplied by differential_error determines sump_fuel",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e76",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: cruise_speed_rate_term = DAT_00408e76 * (short)iVar8;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e80",
+  "block": "1189",
+  "offset": "0034",
+  "record": "Cruise_RSG_Sump_Thres_Gain",
+  "unit": "1/SEC",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.03125",
+  "min": "-5",
+  "max": "5",
+  "description": "Gain used in cruise sump activation equation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e80",
+  "references": 1,
+  "dump_raw": "8",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: (short)(((int)DAT_00408e80 * (int)(short)governor_cruise_speed_error_net) / 0x19)"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e82",
+  "block": "1189",
+  "offset": "0036",
+  "record": "Cruise_RSG_Sump_Decrement_Rate",
+  "unit": "MM3S/SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.69836000000",
+  "min": "0.000000",
+  "max": "10000.000000",
+  "description": "Cruise RSG Sump Decrement Ramp Rate",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e82",
+  "references": 2,
+  "dump_raw": "35",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: else if (iVar8 < DAT_00408e82) {",
+   "protectionOutputActuatorControl: governor_cruise_fuel_demand_delta = governor_cruise_fuel_demand_delta - DAT_00408e82;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408e84",
+  "block": "1189",
+  "offset": "0038",
+  "record": "Cruise_RSG_Sump_Increment_Rate",
+  "unit": "MM3S/SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.69836000000",
+  "min": "0.000000",
+  "max": "10000.000000",
+  "description": "Cruise RSG Sump Increment Ramp Rate",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408e84",
+  "references": 2,
+  "dump_raw": "6",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "protectionOutputActuatorControl: if (-(int)DAT_00408e84 < iVar8) goto LAB_00525d1c;",
+   "protectionOutputActuatorControl: governor_cruise_fuel_demand_delta = governor_cruise_fuel_demand_delta + DAT_00408e84;"
+  ],
+  "block_named_rows": [
+   [
+    "0012",
+    "Cruise_RSG_Fueling_Clamp_Min",
+    "cruise_fuel_demand_floor",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Max_Road_Speed_Diff",
+    "cruise_speed_error_clamp_max",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Min_Road_Speed_Diff",
+    "cruise_speed_error_clamp_min",
+    "0.50"
+   ],
+   [
+    "001C",
+    "Governor_No_Fuel_Fueling",
+    "governor_cruise_fuel_demand_min",
+    "0.50"
+   ],
+   [
+    "0022",
+    "Cruise_RSG_Min_Fuel_Ramp_Rate",
+    "fuel_demand_corrected_step_cal",
+    "0.17"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Preset_Fueling_Time",
+    "cruise_stable_speed_countdown_initial",
+    "0.20"
+   ],
+   [
+    "002C",
+    "Cruise_RSG_Sump_Prevent_Time",
+    "cruise_rate_correction_holdoff_initial",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2f6",
+  "block": "12BA",
+  "offset": "0000",
+  "record": "EPF_Curve_LSG_Intercept_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[EPLSINFL] Intercept fueling between LSG Ref and the EPF Curve.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2f6",
+  "references": 2,
+  "dump_raw": "2296",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_calculateIntegratorRpmOutput: ((longlong)iVar1 * (longlong)(int)(uint)DAT_0005c2f6) >> 0x20)",
+   "governor_calculateIntegratorRpmOutput: ,iVar1 * (uint)DAT_0005c2f6) / 0xa7));"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2f8",
+  "block": "12BA",
+  "offset": "0002",
+  "record": "EPF_Curve_HSG_Intercept_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[EPHSINFL] Intercept fueling between HSG Brkpt and the EPF Curve.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2f8",
+  "references": 2,
+  "dump_raw": "2296",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_calculateIntegratorRpmOutput: - (uint)DAT_0005c2f8) *",
+   "governor_calculateIntegratorRpmOutput: (uint)DAT_0005c2f8) * (int)engine_speed_limit_droop_slope) / 0x1111"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2fa",
+  "block": "12BA",
+  "offset": "0004",
+  "record": "EPF_Curve_RPM_At_Point_2",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "5000",
+  "description": "[EPRPP2] EPF Curve speed at breakpoint 2.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2fa",
+  "references": 1,
+  "dump_raw": "14400",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_calculateIntegratorRpmOutput: puVar2 = (undefined *)(uint)DAT_0005c2fa;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2fc",
+  "block": "12BA",
+  "offset": "0006",
+  "record": "EPF_Curve_RPM_At_Point_3",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "5000",
+  "description": "[EPRPP3] EPF Curve speed at breakpoint 3.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2fc",
+  "references": 1,
+  "dump_raw": "8800",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_calculateIntegratorRpmOutput: protection_threshold_lookup_rpm = DAT_0005c2fc;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c2fe",
+  "block": "12BA",
+  "offset": "0008",
+  "record": "EPF_Curve_RPM_At_Point_4",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "5000",
+  "description": "[EPRPP4] EPF Curve speed at breakpoint 4.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c2fe",
+  "references": 1,
+  "dump_raw": "9600",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_calculateIntegratorRpmOutput: protection_threshold_scale_working = DAT_0005c2fe;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c300",
+  "block": "12BA",
+  "offset": "000A",
+  "record": "EPF_Curve_RPM_At_Point_5",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "5000",
+  "description": "[EPRPP5] EPF Curve speed at breakpoint 5.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c300",
+  "references": 1,
+  "dump_raw": "11200",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_calculateIntegratorRpmOutput: protection_base_threshold_working = DAT_0005c300;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c302",
+  "block": "12BA",
+  "offset": "000C",
+  "record": "EPF_Torque_Curve_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "15",
+  "description": "[EPTQPZ] Priority level of the EPF Curve configuration and bit position used",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c302",
+  "references": 1,
+  "dump_raw": "15",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "fault_initBitwiseTimerMask: governor_faultDerate_channel_bit = (word)(1 << (DAT_0005c302 & 0x3f));"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c304",
+  "block": "12BA",
+  "offset": "000E",
+  "record": "EPF_Torque_Curve_Min_Config",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "65535",
+  "description": "[EPTQCG] Bitmap indicating when a feature should CLAMP a fueling point",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c304",
+  "references": 1,
+  "dump_raw": "32768",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_derateParam_priorityApply: if ((DAT_0005c304 & uVar6) == 0) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040afb6",
+  "block": "175C",
+  "offset": "0000",
+  "record": "Friction_Torque",
+  "unit": "FT*LB",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.5",
+  "min": "-4000",
+  "max": "4000",
+  "description": "Friction torque",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040afb6",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_applyProtectionRpmCorrectionFilter: DAT_0040afb6 = fuel_demand_rpm_correction_lookup - DAT_0040afb8;",
+   "cm848_applyProtectionRpmCorrectionFilter: DAT_0040afba = DAT_0040afb6 + fuel_demand_blend_adjusted;"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "Coolant_Torque_Adjustment",
+    "fuel_demand_rpm_correction_lookup",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Net_Engine_Torque",
+    "net_combustion_torque_copy",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040afb8",
+  "block": "175C",
+  "offset": "0002",
+  "record": "Zero_Fuel_Torque",
+  "unit": "FT*LB",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.5",
+  "min": "-4000",
+  "max": "4000",
+  "description": "Base friction torque at zero fueling at current speed (before cold engine adj)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040afb8",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_applyProtectionRpmCorrectionFilter: DAT_0040afb8 = cm848_dualAxisTableInterpolation",
+   "cm848_applyProtectionRpmCorrectionFilter: DAT_0040afb6 = fuel_demand_rpm_correction_lookup - DAT_0040afb8;"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "Coolant_Torque_Adjustment",
+    "fuel_demand_rpm_correction_lookup",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Net_Engine_Torque",
+    "net_combustion_torque_copy",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040afba",
+  "block": "175C",
+  "offset": "0004",
+  "record": "No_Load_Torque",
+  "unit": "FT*LB",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.5",
+  "min": "-4000",
+  "max": "4000",
+  "description": "Engine no load torque",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040afba",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_applyProtectionRpmCorrectionFilter: DAT_0040afba = DAT_0040afb6 + fuel_demand_blend_adjusted;"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "Coolant_Torque_Adjustment",
+    "fuel_demand_rpm_correction_lookup",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Net_Engine_Torque",
+    "net_combustion_torque_copy",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040afbc",
+  "block": "175C",
+  "offset": "0006",
+  "record": "Net_Machine_Torque",
+  "unit": "FT*LB",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.5",
+  "min": "-14000",
+  "max": "14000",
+  "description": "Net machine torque, actual torque corresponding to Ndot_Net_Torque_Cmd",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040afbc",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_applyProtectionRpmCorrectionFilter: DAT_0040afbc = net_combustion_torque_copy - wVar1;"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "Coolant_Torque_Adjustment",
+    "fuel_demand_rpm_correction_lookup",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Net_Engine_Torque",
+    "net_combustion_torque_copy",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00406000",
+  "block": "1791",
+  "offset": "0000",
+  "record": "C_OFC_Fuel_Limit_Override_Value",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478200",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Override value for OFC fuel limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00406000",
+  "references": 2,
+  "dump_raw": "5888",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateOxygenFuelLimit: capped at 0x1700 (DAT_00406000 replaces it when bit 0x1000 is set), then clamped between",
+   "cm848_calculateOxygenFuelLimit: injection_quantity_oxygen_limit = DAT_00406000;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "C_CBP_Stoic_OF_Ratio",
+    "injection_timing_period_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_OFC_Fuel_Limit_ULim",
+    "injection_quantity_oxygen_limit_maximum",
+    "0.25"
+   ],
+   [
+    "000A",
+    "C_OFC_Fuel_Limit_LLim",
+    "injection_quantity_oxygen_limit_minimum",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00406002",
+  "block": "1791",
+  "offset": "0002",
+  "record": "C_OFC_Equiv_Ratio_Value",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "15",
+  "description": "OFC equivalence ratio user override value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00406002",
+  "references": 2,
+  "dump_raw": "128",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateOxygenFuelLimit: or DAT_00406002 when combustion_override_and_estimation_enable_flags_cal bit 0x800 is set) x a",
+   "cm848_calculateOxygenFuelLimit: oxygen_limit_equivalence_ratio = DAT_00406002;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "C_CBP_Stoic_OF_Ratio",
+    "injection_timing_period_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_OFC_Fuel_Limit_ULim",
+    "injection_quantity_oxygen_limit_maximum",
+    "0.25"
+   ],
+   [
+    "000A",
+    "C_OFC_Fuel_Limit_LLim",
+    "injection_quantity_oxygen_limit_minimum",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00406006",
+  "block": "1791",
+  "offset": "0006",
+  "record": "C_OFC_Gain_Adjustment",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00048828125",
+  "min": "0",
+  "max": "20",
+  "description": "Multiplier used to adjust OFC_Fuel_Limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00406006",
+  "references": 1,
+  "dump_raw": "40960",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateOxygenFuelLimit: uVar2 = ((uint)DAT_00406006 * (uint)wVar1 >> 0xb & 0xffff) * (uint)oxygen_limit_equivalence_ratio;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "C_CBP_Stoic_OF_Ratio",
+    "injection_timing_period_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_OFC_Fuel_Limit_ULim",
+    "injection_quantity_oxygen_limit_maximum",
+    "0.25"
+   ],
+   [
+    "000A",
+    "C_OFC_Fuel_Limit_LLim",
+    "injection_quantity_oxygen_limit_minimum",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00406752",
+  "block": "179C",
+  "offset": "0004",
+  "record": "C_EGR_Position_AZ_Fil_Cnst",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.52588E-05",
+  "min": "0",
+  "max": "1",
+  "description": "Filter constant for filtering EGR position samples for zero offset calculation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00406752",
+  "references": 1,
+  "dump_raw": "62338",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_initializeEgrValvePosition: PTR_DAT_003fbcbe = &DAT_00406752;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_EGR_Position_AZ_Enable_Time",
+    "egr_valve_position_autozero_enable_time",
+    "0.80"
+   ],
+   [
+    "0002",
+    "C_EGR_Position_AZ_Fault_Time",
+    "egr_valve_position_autozero_fault_time",
+    "0.80"
+   ],
+   [
+    "0006",
+    "C_EGR_Position_AZ_Tolerance",
+    "egr_valve_position_autozero_tolerance",
+    "0.75"
+   ],
+   [
+    "0008",
+    "C_EGR_Pos_AZ_Override_Value",
+    "egr_valve_position_autozero_override_value",
+    "0.80"
+   ],
+   [
+    "000A",
+    "C_EGR_Valve_Is_Closed_Thd",
+    "egr_valve_closed_position_tolerance",
+    "0.75"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003ff078",
+  "block": "1977",
+  "offset": "0004",
+  "record": "C_AMB_Amb_Tmptr_Override_Value",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "150",
+  "description": "Ambient temperature user override value",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003ff078",
+  "references": 1,
+  "dump_raw": "4480",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "hpcr_fuelFinal_exponentialAverage: wVar3 = DAT_003ff078;"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "C_AMB_Air_Flow_Fil_Cnst",
+    "boost_pressure_timing_filter_coefficient",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003ff07c",
+  "block": "1977",
+  "offset": "0008",
+  "record": "C_AMB_Ambient_Air_Tmptr_Default",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "150",
+  "description": "Ambient air temperature default value to be used when the Source is DEFAULT",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003ff07c",
+  "references": 2,
+  "dump_raw": "4480",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "hpcr_fuelFinal_exponentialAverage: (wVar3 = DAT_003ff07c, wVar1 = DAT_003ff07c, fuel_demand_timing_mode_state != 2)) {",
+   "hpcr_fuelFinal_exponentialAverage: (wVar3 = DAT_003ff07c, wVar1 = DAT_003ff07c, fuel_demand_timing_mode_state != 2)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "C_AMB_Air_Flow_Fil_Cnst",
+    "boost_pressure_timing_filter_coefficient",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409ebe",
+  "block": "1A53",
+  "offset": "0012",
+  "record": "EGR_Orifice_Temp_Wait_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "60",
+  "description": "Time for A/D to stabilize after key on before running monitor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409ebe",
+  "references": 2,
+  "dump_raw": "10",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor: flag and loads the startup delay count from DAT_00409ebe (the e2m EGR_Orifice_Temp_Wait_Time, 10",
+   "cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor: egr_orifice_temperature_rationality_startup_delay_count = (byte)DAT_00409ebe;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_Orifice_Temp_Coolant_Threshold",
+    "egr_orifice_temperature_rationality_coolant_temperature_threshold",
+    "1.00"
+   ],
+   [
+    "0002",
+    "EGR_Orifice_Temp_Delta_Temp_Threshold",
+    "egr_orifice_temperature_rationality_soak_temperature_difference_threshold",
+    "0.80"
+   ],
+   [
+    "0004",
+    "EGR_Orifice_Temp_Startup_Threshold",
+    "egr_orifice_temperature_rationality_startup_temperature_threshold",
+    "1.00"
+   ],
+   [
+    "0006",
+    "EGR_Orifice_Temp_Temperature_Threshold",
+    "egr_orifice_temperature_rationality_running_temperature_threshold",
+    "1.00"
+   ],
+   [
+    "0008",
+    "EGR_Orifice_Temp_Engine_Speed_Threshold",
+    "egr_orifice_temperature_rationality_engine_speed_threshold",
+    "1.00"
+   ],
+   [
+    "000A",
+    "EGR_Orifice_Temp_Load_Threshold",
+    "egr_orifice_temperature_rationality_load_threshold",
+    "1.00"
+   ],
+   [
+    "000C",
+    "EGR_Orifice_Temp_Position_Threshold",
+    "egr_orifice_temperature_rationality_valve_position_threshold",
+    "1.00"
+   ],
+   [
+    "000E",
+    "EGR_Orifice_Temp_Stabilized_Time_Threshold",
+    "egr_orifice_temperature_rationality_stabilized_time_limit",
+    "0.83"
+   ],
+   [
+    "0010",
+    "EGR_Orifice_Temp_Time_Threshold",
+    "egr_orifice_temperature_rationality_debounce_limit",
+    "0.60"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005b336",
+  "block": "8A41",
+  "offset": "0000",
+  "record": "IAH_Crank_Temp",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "220",
+  "description": "IF IMT below this value, enables heaters during crank",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005b336",
+  "references": 1,
+  "dump_raw": "4224",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_updateIntakeAirHeaterRunupPhase: if ((short)intake_air_heater_start_temperature <= DAT_0005b336) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ }
+]

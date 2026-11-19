@@ -1,6 +1,6 @@
 ## Summary
 
-`governor_fuel_demand_mode` (0x40a154) is an enum: the Cummins **FSGVFLST** governed fueling state ("indicator as to which algorithm is in control of fueling after it is governed"). Its codes come from one numbering that every fueling stage shares, so the enum is shared too. This PR does six stages:
+`governor_fuel_demand_mode` (0x40a154) is an enum: the Cummins **FSGVFLST** governed fueling state ("indicator as to which algorithm is in control of fueling after it is governed"). Its codes come from one numbering that every fueling stage shares, so the enum is shared too. This PR does seven stages:
 
 1. **The enum.** `ENGINE_OPERATING_MODE` is now **`FUELING_STATE`**. Members 4 / 9 / 10 / 11 / 12 are new, the user and governed carriers are typed, 0x40b67c is renamed and the dword at 0x3fb526 is split.
 2. **The later stages.** The derate, combustion and final stages get 17 more members proved from their setters, plus 16 `FUELING_STATE_UNIDENTIFIED_<n>` placeholders. Ten more carriers are typed, including `governor_mode_code`, now `final_fueling_state`.
@@ -8,6 +8,7 @@
 4. **Cummins' own value labels.** A labelled Chrysler calibration in the repo gives every code's label (with hex keys). It confirms the code-derived members and names 11 more. `cold_start_phase` turns out to be the **engine state** (`ENGINE_STATE`). The **power take-off governor** is proved in code (J1939 SPN 976). The limiter producers are renamed: altitude derate, air fuel control, net torque, coolant overheat derate.
 5. **The words behind them.** The power take-off governor's words and the crank routine are named from e2m blocks that line up by offset. Two flags turn out to mean the opposite of their names: `engine_starting` is the shutdown command, and `engine_shutdown_active_flag` stops a key-off shutdown. Code 32 is the master / slave override. A follow-up (5b) renamed the emission control (AECD) words, which read backwards, and fixed the comments that still used the old engine state words.
 6. **The ECU's own e2m map, and the structures.** The ECU's parameter ID table in flash2 maps every e2m block to its address, so e2m names no longer rest on offset matching (`firmware/scripts/e2m_block_addresses.py`). It names the emission manager and the power take-off settings. The 33 `cm848_signedFirstOrderFilter` records are now `ema_filter_state_t`.
+7. **The audit.** Every e2m record the table resolves was compared with the CSV, and 383 unnamed addresses the code uses got names (rename wave 12). The fueling chain takes its e2m names: `governor_fuel_demand_mode`, where this PR began, is `adjusted_user_fueling_state` ([FSGVFLST]).
 
 `cm848_arbitrateGovernedFueling` (was `cm848_processProtectionRampControl`) now reads:
 
@@ -162,7 +163,20 @@ A review of stage 5 found 16 applied rows that had not been checked. Checking th
   - A `word[6]` remote speed array, read indexed.
   - The e2m 0008 EEPROM settings, and three PGN priority words that were misnamed `_source_address_bits`.
   - Four stage-5 comments the agent found wrong are fixed.
-- **How it was done.** Two read-only agents mapped the power take-off helpers and the emission manager. The table claim was checked with an independent parser, and every e2m address both agents gave was re-resolved before applying.
+- **How it was done.** Two read-only agents mapped the power take-off helpers and the emission manager. The table claim was checked with an independent parser, and every e2m address both agents gave was re-resolved before applying. After applying, the names that rest on code reading alone (the power take-off working words and helpers, `cm848_lookupProtectiveChi`) and every dump value quoted in the new comments were checked as well.
+
+## Stage 7: the e2m audit, rename wave 12, the fueling chain's e2m names
+
+- **The audit.** `firmware/scripts/e2m_name_audit.py` (tested) resolves every scalar e2m record through the parameter ID table and reports the row at its address: 4691 records, 3000 already named, 1397 without a row, 244 inside a wider row and 50 on unnamed rows. It also gives each dump value against the record's range and a word-overlap score against the current name.
+- **Rename wave 12.** 398 records had no name, a code reference and an in-range dump value. Six read-only agents each took a bin of whole blocks, named each record from the e2m, checked its code use and access width, and rejected layout drift.
+  - **Verdicts:** 384 confirmed, 6 uncertain, 8 rejected.
+  - **Drift:** the labelled e2m is 11.45 and the truck runs 11.46.06. Five blocks shifted, and in each case the code confirmed the table's block, not the e2m offset.
+  - **The gate** (the rename_waves rules, cross-bin duplicates, collisions, rows already present, type against size) passed **383 new rows**.
+- **The fueling chain's e2m names** (blocks 1045 / 1051, each checked against its writer):
+  - `adjusted_user_fueling` / `adjusted_user_fueling_state` (were `governor_fuel_demand_value` / `governor_fuel_demand_mode`, [FSGVFL] / [FSGVFLST]);
+  - `final_fueling` (was `fuel_demand_computed`) and its freeze-frame field, `requested_fueling` and `master_slave_control_flag`;
+  - `torque_derate_torque_limit` / `_state`. Stage 4 had named these after the power take-off, which is only one source of that limit;
+  - `torque_control_indication_flag` and the two "before combustion reference" values.
 
 ## Checks
 
@@ -183,6 +197,12 @@ A review of stage 5 found 16 applied rows that had not been checked. Checking th
   - the `word[6]` array in two power take-off functions;
   - two `(word)` casts from new rows;
   - two local declaration orders.
+- **Stage 7.** All 393 names render, with no `_` variant. Distinct `DAT_` labels fell from 1433 to 1047, which is the 383 new rows plus three byte labels now inside a `byte[4]`. Build warnings are unchanged. The 33 differing functions all come from typing the new rows:
+  - casts and local types;
+  - renumbered temporaries and local declaration order;
+  - `PTR_<target>_<address>` labels of unnamed pointers whose targets now have names;
+  - one table base now indexed in dwords.
+  One bad render was fixed: a 4-byte version read bytewise, now `byte[4]`.
 - Every `FUELING_STATE_` name in the `.cpp` sits on a carrier.
 - The build warnings are unchanged at each stage. `./analyze.sh verify` is deterministic. `lookup_tables.py` is clean. `test_rename_waves`, `test_lookup_tables` and `test_disasm_tools` pass. The headers are regenerated and compile with 0 errors; CM550's are unchanged.
 
@@ -190,7 +210,7 @@ A review of stage 5 found 16 applied rows that had not been checked. Checking th
 
 - Codes 37 (T2SPD) / 38 (T2TORQ) / 49 (OFCSTATE) / 50 (AFRSTATE) are still unidentified.
 - CM550's FSGVFLST typing.
-- An audit of the whole CSV against the parameter ID table. 445 of its 1886 records lie past the end of the flash2 dump.
+- **Wave 13, the misname half of the audit:** the 1610 named rows with a low word overlap (mostly struct instances and synonyms, but real misnames too), the 244 rows inside wider rows, and the 24 records whose dump value is out of range. Task 045 lists the wave-12 agents' leads. 445 of the table's 1886 records lie past the end of the flash2 dump.
 - The rest of the emission manager: two words with no writer, two store-only limits, and the compressor outlet temperature scale.
 - The i16 retypes of the signed crank words, and the four low-confidence crank words.
 - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.

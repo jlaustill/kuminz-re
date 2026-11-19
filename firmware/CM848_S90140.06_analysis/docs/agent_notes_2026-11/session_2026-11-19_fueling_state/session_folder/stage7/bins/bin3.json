@@ -1,0 +1,4390 @@
+[
+ {
+  "address": "0x0040b718",
+  "block": "1008",
+  "offset": "000A",
+  "record": "Tachograph_Pulse_Width",
+  "unit": "CNTS",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "875520",
+  "description": "TPU clock ticks accumulated while Tachograph pulse was high.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040b718",
+  "references": 4,
+  "dump_raw": "0",
+  "access_widths": "{'stw': 1} -> 4 byte",
+  "code": [
+   "cm848_vehicleSpeedSensorInterruptHandler: if (((drivetrain_type == DRIVETRAIN_MANUAL_TPU) && (DAT_0040b71c == 0)) && (DAT_0040b718 == 0)) {",
+   "cm848_vehicleSpeedSensorInterruptHandler: DAT_0040b718._0_2_ = (&tpu_b_ch0_param0)[uVar5].PARAM4;",
+   "cm848_vehicleSpeedSensorInterruptHandler: DAT_0040b718._2_2_ = (&tpu_b_ch0_param0)[uVar5].PARAM5;",
+   "cm848_initVehicleSpeedSensorChannel: DAT_0040b718 = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "VSS_Period",
+    "vehicle_speed_sensor_period",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Average_EPS_Sample_Period",
+    "drivetrain_ratio_engine_period_average",
+    "0.50"
+   ],
+   [
+    "0008",
+    "Road_Speed_Timer",
+    "vehicle_speed_pulse_timeout",
+    "0.33"
+   ],
+   [
+    "0010",
+    "Accumulated_TPU_Pulses",
+    "vehicle_speed_sensor_pulse_total",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040b71c",
+  "block": "1008",
+  "offset": "000E",
+  "record": "Tachograph_Valid_Pulse_Width_Flag",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "1",
+  "description": "Indicates interrupt algorithm has extracted pulse width info;0=FALSE,1=TRUE",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040b71c",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_vehicleSpeedSensorInterruptHandler: if (((drivetrain_type == DRIVETRAIN_MANUAL_TPU) && (DAT_0040b71c == 0)) && (DAT_0040b718 == 0)) {",
+   "cm848_vehicleSpeedSensorInterruptHandler: DAT_0040b71c = 1;",
+   "cm848_initVehicleSpeedSensorChannel: DAT_0040b71c = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "VSS_Period",
+    "vehicle_speed_sensor_period",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Average_EPS_Sample_Period",
+    "drivetrain_ratio_engine_period_average",
+    "0.50"
+   ],
+   [
+    "0008",
+    "Road_Speed_Timer",
+    "vehicle_speed_pulse_timeout",
+    "0.33"
+   ],
+   [
+    "0010",
+    "Accumulated_TPU_Pulses",
+    "vehicle_speed_sensor_pulse_total",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040af26",
+  "block": "10BF",
+  "offset": "0004",
+  "record": "Tau_0_Percent_Load",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "255",
+  "description": "[SPT0PCLD] Percent Load based on Low HP Torque curve",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040af26",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_validateFuelDemandRelativeToTiming: DAT_0040af26 = (short)uVar2;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1587_Percent_Load",
+    "engine_load_at_current_speed_percent",
+    "0.50"
+   ],
+   [
+    "0002",
+    "Percent_Load",
+    "engine_load_percent",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c490",
+  "block": "10CE",
+  "offset": "0002",
+  "record": "Limp_Home_Fueling_Slope",
+  "unit": "MM3S/RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00001525879",
+  "min": "0.000000",
+  "max": "0.579600",
+  "description": "[LHSLFL] Fueling Slope used to determine Limp_Home_Max_Fueling",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c490",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: minus a target speed term whose coefficient DAT_0005c490 is 0, or DAT_0005c4a4 while a switch",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: uVar3 = ((uint)DAT_0005c490 * (dVar2 & 0xffff)) / 0x8b21;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c492",
+  "block": "10CE",
+  "offset": "0004",
+  "record": "Limp_Home_Fueling_Offset",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[LHOFFL] FUELING Offset used to determine Limp_Home_Max_Fueling",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c492",
+  "references": 3,
+  "dump_raw": "854",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: rises DAT_0005c494 (9) per call up to pedal_fault_mode_fuel_demand_limit (DAT_0005c492 = 854",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: if ((uVar3 & 0xffff) + (uint)DAT_0005c496 <= (uint)DAT_0005c492) {",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: pedal_fault_mode_fuel_demand_limit = DAT_0005c492 - (short)uVar3;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c494",
+  "block": "10CE",
+  "offset": "0006",
+  "record": "Limp_Home_Fueling_Increment",
+  "unit": "MM3S/SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.67934782400",
+  "min": "0.000000",
+  "max": "176.000000",
+  "description": "[LHICFL] Calibrated fueling increase for each execution when throttle not-idle",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c494",
+  "references": 2,
+  "dump_raw": "9",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: rises DAT_0005c494 (9) per call up to pedal_fault_mode_fuel_demand_limit (DAT_0005c492 = 854",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: (pedal_fault_mode_fuel_demand_ramp = pedal_fault_mode_fuel_demand_ramp + DAT_0005c494,"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c496",
+  "block": "10CE",
+  "offset": "0008",
+  "record": "Minimum_Limp_Home_Max_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[LHMNMXFL] Calibrated value which determines the lowest Limp_Home_Max_Fueling",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c496",
+  "references": 2,
+  "dump_raw": "854",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: pedal_fault_mode_fuel_demand_limit = DAT_0005c496;",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: if ((uVar3 & 0xffff) + (uint)DAT_0005c496 <= (uint)DAT_0005c492) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c498",
+  "block": "10CE",
+  "offset": "000A",
+  "record": "Minimum_Limp_Home_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "173.600000",
+  "description": "[LHMNFL] Calibrated fueling when throttle status transitions to off idle",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c498",
+  "references": 2,
+  "dump_raw": "250",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: is 0 while accelerator_off_idle is not 1, starts at DAT_0005c498 (250) when it becomes 1 and then",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: (wVar1 = DAT_0005c498, pedal_fault_mode_accelerator_off_idle_previous != 1)) ||"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c49a",
+  "block": "10CE",
+  "offset": "000C",
+  "record": "Limp_Home_Algorithm_Enable_N",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "65535",
+  "description": "Enable bit for the limphome fueling algorithm.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c49a",
+  "references": 1,
+  "dump_raw": "1",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_transitionEngineOperatingMode: if (DAT_0005c49a == 0) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c49c",
+  "block": "10CE",
+  "offset": "000E",
+  "record": "Limp_Home_Max_Fuel_Ramp_Rate",
+  "unit": "MM3S/SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.67934784000",
+  "min": "0.000000",
+  "max": "1600.000000",
+  "description": "[LHFLRMRT] Ramp down rate of max limp home fueling when > Limp_Home_Max_Fueling",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c49c",
+  "references": 3,
+  "dump_raw": "9",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: slewed down at most DAT_0005c49c (9) per call. Also sets engine_speed_limit_pedal_fault_mode",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: if (uVar3 + DAT_0005c49c < (uint)pedal_fault_mode_fuel_demand_limit_previous) {",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: uVar3 = (uint)pedal_fault_mode_fuel_demand_limit_previous - (uint)DAT_0005c49c;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c49e",
+  "block": "10CE",
+  "offset": "0010",
+  "record": "Limp_Home_Engine_Speed_Limit",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "RPM derate while Throttle_Status=NOT IDLE, no Brake & VSS > cal.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c49e",
+  "references": 3,
+  "dump_raw": "15600",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: condition, and at most DAT_0005c49e above vehicle speed DAT_0005c4a2; outside mode 6 it is the",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: if ((DAT_0005c4a2 < vehicle_speed) && (DAT_0005c49e < engine_speed_limit_pedal_fault_mode)) {",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: engine_speed_limit_pedal_fault_mode = DAT_0005c49e;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c4a0",
+  "block": "10CE",
+  "offset": "0012",
+  "record": "Limp_Home_Engine_Speed_Limit_Brake_On",
+  "unit": "RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "4500",
+  "description": "RPM derate while Throttle_Status=NOT IDLE, no Brake & VSS > cal threshold.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c4a0",
+  "references": 2,
+  "dump_raw": "6800",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: (source 14 of selectEngineSpeedLimit): the default, DAT_0005c4a0 under the same switch / fault",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: engine_speed_limit_pedal_fault_mode = DAT_0005c4a0;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c4a2",
+  "block": "10CE",
+  "offset": "0014",
+  "record": "Limp_Home_Speed_Derate_Road_Speed_Threshold",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "150",
+  "description": "Engages Limp Home HSG Limit when Road_Speed exceeds this threshold",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c4a2",
+  "references": 2,
+  "dump_raw": "8960",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: condition, and at most DAT_0005c49e above vehicle speed DAT_0005c4a2; outside mode 6 it is the",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: if ((DAT_0005c4a2 < vehicle_speed) && (DAT_0005c49e < engine_speed_limit_pedal_fault_mode)) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005c4a4",
+  "block": "10CE",
+  "offset": "0016",
+  "record": "Minimum_Limp_Home_Max_Fueling_Brake_On",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "1600.000000",
+  "description": "Calibrated value which determines the lowest Limp_Home_Max_Fueling",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005c4a4",
+  "references": 2,
+  "dump_raw": "427",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: minus a target speed term whose coefficient DAT_0005c490 is 0, or DAT_0005c4a4 while a switch",
+   "cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit: pedal_fault_mode_fuel_demand_limit = DAT_0005c4a4;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feb86",
+  "block": "1100",
+  "offset": "0004",
+  "record": "J1939_Engine_Control_Source",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "3",
+  "description": "[JCEGCOSA] 0 = NONE 1 = TRANS 2 = ABS 3 = ASR 4 = UNKNOWN",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feb86",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "governor_sourceData_init: DAT_003feb86 = _j1939_governor_source_index;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1939_Engine_Control_Status",
+    "etc1_governor_calib_session_active",
+    "0.00"
+   ],
+   [
+    "0002",
+    "J1939_Retarder_Control_Status",
+    "governor_mode_calib_session_active",
+    "0.00"
+   ],
+   [
+    "0008",
+    "J1939_History_Table_Next_Entry",
+    "governor_calib_snapshot_write_index",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003feb88",
+  "block": "1100",
+  "offset": "0006",
+  "record": "J1939_Retarder_Control_Source",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "3",
+  "description": "[JCRDCOSA] 0 = NONE 1 = TRANS 2 = ABS 3 = ASR 4 = UNKNOWN",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003feb88",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "governor_sourceData_init: DAT_003feb88 = engine_retarder_controlling_source_index;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1939_Engine_Control_Status",
+    "etc1_governor_calib_session_active",
+    "0.00"
+   ],
+   [
+    "0002",
+    "J1939_Retarder_Control_Status",
+    "governor_mode_calib_session_active",
+    "0.00"
+   ],
+   [
+    "0008",
+    "J1939_History_Table_Next_Entry",
+    "governor_calib_snapshot_write_index",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000597b2",
+  "block": "112E",
+  "offset": "0000",
+  "record": "Fuel_Temperature_EPF_Configuration",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[EPFTCG] Configuration word for fuel temperature EPF input",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000597b2",
+  "references": 8,
+  "dump_raw": "135",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_initFuelTemperatureSensorChannel: if ((DAT_000597b2 & 0x1000) == 0) {",
+   "governor_fault_eventCounter_update: puVar5 = &DAT_000597b2;",
+   "governor_coldStart_faultDerate_trigger: puVar8 = &DAT_000597b2 + (short)governor_faultDerate_active_channel * 0x12;",
+   "governor_fault_derateCalc_channelIter: pwVar1 = &DAT_000597b2;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000597bc",
+  "block": "112E",
+  "offset": "000A",
+  "record": "Fuel_Temperature_Fueling_Min_Threshold",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.015625",
+  "min": "0",
+  "max": "1023.98",
+  "description": "[EPFTMNTD] Minimum temperature threshold for fuel temperature fuel limiting",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000597bc",
+  "references": 1,
+  "dump_raw": "12800",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_initFuelTemperatureSensorChannel: PTR_DAT_0040a73e = (undefined *)&DAT_000597bc;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000597be",
+  "block": "112E",
+  "offset": "000C",
+  "record": "Fuel_Temperature_Fueling_Max_Threshold",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.015625",
+  "min": "0",
+  "max": "1023.98",
+  "description": "[EPFTMXTD] Maximum threshold for fuel temperature fuel limiting",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000597be",
+  "references": 1,
+  "dump_raw": "13440",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_initFuelTemperatureSensorChannel: PTR_DAT_0040a742 = (undefined *)&DAT_000597be;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x000597c0",
+  "block": "112E",
+  "offset": "000E",
+  "record": "Fuel_Temperature_RPM_Lower_Limit",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "0",
+  "max": "255",
+  "description": "[EPFTRPLL] Minimum threshold for fuel temperature RPM limiting",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_000597c0",
+  "references": 1,
+  "dump_raw": "12416",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_initFuelTemperatureSensorChannel: PTR_DAT_0040a746 = &DAT_000597c0;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fd910",
+  "block": "1185",
+  "offset": "0002",
+  "record": "Cruise_Bottom_Droop_Width",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "10",
+  "description": "BOTTOM DROOP WIDTH FOR CRUISE CONTROL.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fd910",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateEngineRetarderCruisePermissionPercent: iVar2 = (dVar1 & 0xffff) - ((uint)cruise_speed_command + (uint)DAT_003fd910);",
+   "governorCruiseStateMachine: uVar2 = governor_cruise_rampScale_calc(DAT_003fd910,iVar5,uVar4);"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Cruise_Top_Droop_Width",
+    "cruise_ramp_zone_b_fuel_demand_threshold",
+    "0.25"
+   ],
+   [
+    "0008",
+    "RSG_Top_Droop_Width",
+    "cruise_ramp_zone_d_fuel_demand_threshold",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fd914",
+  "block": "1185",
+  "offset": "0006",
+  "record": "RSG_Bottom_Droop_Width",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "10",
+  "description": "BOTTOM DROOP WIDTH FOR RSG.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fd914",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governorCruiseStateMachine: cruise_ramp_rate_c_working = governor_cruise_rampScale_calc(DAT_003fd914,iVar5,uVar4);"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Cruise_Top_Droop_Width",
+    "cruise_ramp_zone_b_fuel_demand_threshold",
+    "0.25"
+   ],
+   [
+    "0008",
+    "RSG_Top_Droop_Width",
+    "cruise_ramp_zone_d_fuel_demand_threshold",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fd918",
+  "block": "1185",
+  "offset": "000A",
+  "record": "Top_Gear_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00048828125",
+  "min": "0.1",
+  "max": "2.0",
+  "description": "GEAR RATIO ABOVE WHICH THE TRANSMISSION IS CONSIDERED IN TOP GEAR",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fd918",
+  "references": 2,
+  "dump_raw": "1638",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "governor_cruise_rampRate_calc: uVar2 = (((uint)protection_timing_period_cal * (uint)DAT_003fd918) / 0x3c & 0xffff) * param_2;",
+   "protectionTimeoutControl: uVar4 = ((DAT_00408b78 + 0x6400) * (uint)DAT_003fd918) / 0x6400;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "Cruise_Top_Droop_Width",
+    "cruise_ramp_zone_b_fuel_demand_threshold",
+    "0.25"
+   ],
+   [
+    "0008",
+    "RSG_Top_Droop_Width",
+    "cruise_ramp_zone_d_fuel_demand_threshold",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0005a4aa",
+  "block": "1253",
+  "offset": "0002",
+  "record": "Fault_Data_J1939_111",
+  "unit": "HEX",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "4294967295",
+  "description": "[DG0111JC] ECM Internal Failure, Mission Disabling, Hardware. SPN 629. Red.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0005a4aa",
+  "references": 3,
+  "dump_raw": "6292085",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "j1939HandlePgn65226Dm1ActiveDtc: uVar1 = *(uint *)(&DAT_0005a4aa + uVar4 * 4) & 0xffffe000;",
+   "cm848_j1939HandlePgn65227Dm2PreviousDtc: uVar1 = *(uint *)(&DAT_0005a4aa + uVar4 * 4) & 0xffffe000;",
+   "cm848_j1939BuildDm4FreezeFrame: uVar1 = *(uint *)(&DAT_0005a4aa + uVar7 * 4) & 0xffffe000;"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040a680",
+  "block": "17A1",
+  "offset": "0002",
+  "record": "TPE_Delta_Exhaust_Tmptr",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.5",
+  "min": "0",
+  "max": "1500",
+  "description": "Difference between IMT and exhaust temperature",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040a680",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_auxiliaryControl_exponentialAverage: DAT_0040a680 = (short)uVar2;",
+   "cm848_auxiliaryControl_exponentialAverage: if ((int)(short)iVar3 + (int)DAT_0040a680 < 0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Temperature_Delta",
+    "boost_target_fuel_normalized_ratio",
+    "0.00"
+   ],
+   [
+    "0004",
+    "TPE_Energy_Fraction",
+    "boost_target_load_rpm_output",
+    "0.00"
+   ],
+   [
+    "0006",
+    "TPE_Invalid_Model",
+    "boost_target_calc_inhibit_flag",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Exhaust_Tmptr",
+    "exhaust_temperature",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Exhaust_Metal_Tmptr",
+    "exhaust_metal_temperature",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00406768",
+  "block": "17A2",
+  "offset": "0000",
+  "record": "C_TPE_Exhaust_Boost_Parameter",
+  "unit": "DEG_F/IN_HG",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "200",
+  "description": "Constant used in exhaust temperature estimate",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00406768",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateCombustionTemperatureRise: ((uint)DAT_00406768 * (uint)map_fuel_correction_factor) / 0x4000 + (uint)DAT_0040676a;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "C_TPE_Exhaust_SOI_Parameter",
+    "boost_target_load_gain",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040676a",
+  "block": "17A2",
+  "offset": "0002",
+  "record": "C_TPE_Exhaust_Offset_Parameter",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "45000",
+  "description": "Constant used in exhaust temperature estimate",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040676a",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateCombustionTemperatureRise: ((uint)DAT_00406768 * (uint)map_fuel_correction_factor) / 0x4000 + (uint)DAT_0040676a;"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "C_TPE_Exhaust_SOI_Parameter",
+    "boost_target_load_gain",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040676e",
+  "block": "17A2",
+  "offset": "0006",
+  "record": "C_TPE_Exhaust_Speed_Parameter",
+  "unit": "DEG_F/RPM",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "16",
+  "description": "Constant used in exhaust temperature estimate",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040676e",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateCombustionTemperatureRise: ((uint)DAT_0040676e * (uint)engine_rpm_state_t_0040b7ac.current_rpm) / 0x400 +"
+  ],
+  "block_named_rows": [
+   [
+    "0004",
+    "C_TPE_Exhaust_SOI_Parameter",
+    "boost_target_load_gain",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f74",
+  "block": "1901",
+  "offset": "0000",
+  "record": "Battery_Temperature_Mileage",
+  "unit": "MI",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1.08507E-7",
+  "min": "0",
+  "max": "256",
+  "description": "Mileage threshold for battery temp sensor rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f74",
+  "references": 1,
+  "dump_raw": "138239929",
+  "access_widths": "{'lwz': 1} -> 4 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &DAT_003fd23a,&DAT_003feea6,DAT_00409f80,0x17b,0x17c,DAT_00409f74,DAT_00409f78,0x161,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f78",
+  "block": "1901",
+  "offset": "0004",
+  "record": "Battery_Temperature_Temp_Delta",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.015625",
+  "min": "0",
+  "max": "100",
+  "description": "Temp delta for battery temp rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f78",
+  "references": 1,
+  "dump_raw": "230",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &DAT_003fd23a,&DAT_003feea6,DAT_00409f80,0x17b,0x17c,DAT_00409f74,DAT_00409f78,0x161,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f7a",
+  "block": "1901",
+  "offset": "0006",
+  "record": "Intake_Manifold_Temperature_Mileage",
+  "unit": "MI",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1.08507E-7",
+  "min": "0",
+  "max": "256",
+  "description": "Mileage threshold for intake manifold temp sensor rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f7a",
+  "references": 1,
+  "dump_raw": "138239929",
+  "access_widths": "{'lwz': 1} -> 4 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: ,&DAT_003feea7,DAT_00409f82,0x13,0x14,DAT_00409f7a,DAT_00409f7e,0x162,0x166,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f7e",
+  "block": "1901",
+  "offset": "000A",
+  "record": "Intake_Manifold_Temperature_Temp_Delta",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.015625",
+  "min": "0",
+  "max": "100",
+  "description": "Temp delta for intake manifold temp sensor rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f7e",
+  "references": 1,
+  "dump_raw": "460",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: ,&DAT_003feea7,DAT_00409f82,0x13,0x14,DAT_00409f7a,DAT_00409f7e,0x162,0x166,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f80",
+  "block": "1901",
+  "offset": "000C",
+  "record": "Battery_Temperature_Cycle_Limit",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "Number of warm up cycle/monitor fails to set fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f80",
+  "references": 1,
+  "dump_raw": "5",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &DAT_003fd23a,&DAT_003feea6,DAT_00409f80,0x17b,0x17c,DAT_00409f74,DAT_00409f78,0x161,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f82",
+  "block": "1901",
+  "offset": "000E",
+  "record": "Intake_Manifold_Temperature_Cycle_Limit",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "Number of warm up cycle/monitor fails to set fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f82",
+  "references": 1,
+  "dump_raw": "5",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: ,&DAT_003feea7,DAT_00409f82,0x13,0x14,DAT_00409f7a,DAT_00409f7e,0x162,0x166,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f84",
+  "block": "1901",
+  "offset": "0010",
+  "record": "Ambient_Air_Temperature_Temp_Delta",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.015625",
+  "min": "0",
+  "max": "100",
+  "description": "Temp delta for ambient temp rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f84",
+  "references": 1,
+  "dump_raw": "230",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &DAT_003fd238,&DAT_003feeac,DAT_00409f8a,0x96,0x97,DAT_00409f86,DAT_00409f84,0x153,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f86",
+  "block": "1901",
+  "offset": "0012",
+  "record": "Ambient_Air_Temperature_Mileage",
+  "unit": "MI",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1.08507E-7",
+  "min": "0",
+  "max": "256",
+  "description": "Mileage threshold for ambient air temp sensor rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f86",
+  "references": 1,
+  "dump_raw": "138239929",
+  "access_widths": "{'lwz': 1} -> 4 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &DAT_003fd238,&DAT_003feeac,DAT_00409f8a,0x96,0x97,DAT_00409f86,DAT_00409f84,0x153,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f8a",
+  "block": "1901",
+  "offset": "0016",
+  "record": "Ambient_Air_Temperature_Cycle_Limit",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "100",
+  "description": "Number of warm up cycle/monitor fails to set fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f8a",
+  "references": 1,
+  "dump_raw": "5",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: &DAT_003fd238,&DAT_003feeac,DAT_00409f8a,0x96,0x97,DAT_00409f86,DAT_00409f84,0x153,"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f8c",
+  "block": "1901",
+  "offset": "0018",
+  "record": "Battery_Temperature_Accum_Miles_Limit",
+  "unit": "MI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "999",
+  "description": "Accumulated miles limit for battery temp rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f8c",
+  "references": 1,
+  "dump_raw": "1960",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: DAT_00409f8c,1);"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f8e",
+  "block": "1901",
+  "offset": "001A",
+  "record": "Intake_Manifold_Temperature_Accum_Miles_Limit",
+  "unit": "MI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "999",
+  "description": "Accumulated miles limit for intake manifold temp rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f8e",
+  "references": 1,
+  "dump_raw": "1960",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: DAT_00409f8e,2);"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f90",
+  "block": "1901",
+  "offset": "001C",
+  "record": "Ambient_Air_Temperature_Accum_Miles_Limit",
+  "unit": "MI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "999",
+  "description": "Accumulated miles limit for ambient air temp rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f90",
+  "references": 1,
+  "dump_raw": "1960",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: DAT_00409f90,3);"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f98",
+  "block": "1901",
+  "offset": "0024",
+  "record": "Ambient_Air_Temperature_Max_Time",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "6553.5",
+  "description": "Max time since keyon to run AAT keyon rat",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f98",
+  "references": 1,
+  "dump_raw": "30000",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkAmbientAirTemperatureKeyOnRationality: if (ambient_air_temperature_key_on_rationality_cycle_count <= DAT_00409f98) {"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f9a",
+  "block": "1901",
+  "offset": "0026",
+  "record": "Ambient_Air_Temperature_Rat_Max_RS_Time",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "6553.5",
+  "description": "Time with road speed > threshold for AAT rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f9a",
+  "references": 1,
+  "dump_raw": "300",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkAmbientAirTemperatureKeyOnRationality: if (ambient_air_temperature_key_on_rationality_driving_count <= DAT_00409f9a) {"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409f9c",
+  "block": "1901",
+  "offset": "0028",
+  "record": "Ambient_Air_Temperature_Rat_Min_RS",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "255.9961",
+  "description": "Min road speed to start AAT rat timer",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409f9c",
+  "references": 1,
+  "dump_raw": "6400",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkAmbientAirTemperatureKeyOnRationality: if (DAT_00409f9c < vehicle_speed) {"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409fa6",
+  "block": "1901",
+  "offset": "0032",
+  "record": "C_BT_Min_Vehicle_Speed",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "255",
+  "description": "Minimum coolant temp to run the temp sensor key on rat",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409fa6",
+  "references": 1,
+  "dump_raw": "256",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkBatteryTemperatureKeyOnRationality: if (vehicle_speed < DAT_00409fa6) {"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409fa8",
+  "block": "1901",
+  "offset": "0034",
+  "record": "C_BT_VSS_Min_Timer",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "100",
+  "description": "Debounce counter limit for BT key-on fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409fa8",
+  "references": 1,
+  "dump_raw": "1",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_checkBatteryTemperatureKeyOnRationality: uVar1 = (uint)DAT_00409fa8;"
+  ],
+  "block_named_rows": [
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Temperature_Rationality_Max_Delta",
+    "temperature_rationality_sensor_agreement_threshold",
+    "0.50"
+   ],
+   [
+    "002A",
+    "Battery_Temperature_Rat_Max_Delta",
+    "battery_temperature_rationality_deviation_threshold",
+    "0.40"
+   ],
+   [
+    "002C",
+    "Intake_Manifold_Temperature_Rat_Max_Delta",
+    "intake_manifold_temperature_cranking_outlier_threshold",
+    "0.50"
+   ],
+   [
+    "002E",
+    "Ambient_Air_Temperature_Keyon_Rat_Max_Delta",
+    "ambient_air_temperature_key_on_rationality_tolerance",
+    "0.43"
+   ],
+   [
+    "0030",
+    "C_BT_Max_Counts",
+    "battery_temperature_rationality_mismatch_count_threshold",
+    "0.00"
+   ],
+   [
+    "0036",
+    "C_CT_BH_Min_Delta",
+    "temperature_rationality_confirm_coolant_drop_threshold",
+    "0.40"
+   ],
+   [
+    "0038",
+    "C_Coolant_Temperature_Min_Delta",
+    "temperature_rationality_coolant_soak_drop_threshold",
+    "0.50"
+   ],
+   [
+    "003A",
+    "C_IMT_Gridheaters_Max_Threshold",
+    "intake_manifold_temperature_cranking_outlier_threshold_wide",
+    "0.67"
+   ],
+   [
+    "003C",
+    "C_IMT_Max_Counts",
+    "intake_manifold_temperature_cranking_mismatch_count_threshold",
+    "0.60"
+   ],
+   [
+    "003E",
+    "C_Rationality_Debounce_Delay",
+    "temperature_rationality_cranking_decision_count",
+    "0.33"
+   ],
+   [
+    "0040",
+    "C_Rationality_Intake_Temp_Time_Delay",
+    "temperature_rationality_confirm_dwell_limit",
+    "0.40"
+   ],
+   [
+    "0042",
+    "C_Temp_Rat_Min_Coolant",
+    "temperature_rationality_cranking_coolant_maximum",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040ba1e",
+  "block": "1902",
+  "offset": "0000",
+  "record": "Battery_Temperature_Miles",
+  "unit": "MI",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1.08507E-7",
+  "min": "0",
+  "max": "256",
+  "description": "Miles traveled for the battery temp sensor rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040ba1e",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (0x45,&DAT_003feeaa,&DAT_003feea8,&DAT_003fd251,&DAT_003fd254,&DAT_0040ba1e,"
+  ],
+  "block_named_rows": [
+   [
+    "0018",
+    "BT_Error_Counter",
+    "battery_temperature_cranking_mismatch_count",
+    "0.00"
+   ],
+   [
+    "001A",
+    "IMT_Error_Counter",
+    "intake_manifold_temperature_cranking_mismatch_count",
+    "0.60"
+   ],
+   [
+    "001C",
+    "Temp_Rat_Initial_Battery_Temp",
+    "temperature_rationality_start_battery_temperature",
+    "0.50"
+   ],
+   [
+    "001E",
+    "Temp_Rat_Initial_Coolant_Temp",
+    "temperature_rationality_coolant_baseline",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Temp_Rat_Min_Coolant",
+    "temperature_rationality_confirm_coolant_minimum",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Rationality_Engine_Run_Timer",
+    "temperature_rationality_confirm_dwell_count",
+    "0.25"
+   ],
+   [
+    "0024",
+    "Rationality_Startup_Timer",
+    "temperature_rationality_cranking_cycle_count",
+    "0.33"
+   ],
+   [
+    "0028",
+    "TSR_Coolant_Temperature",
+    "temperature_rationality_coolant_soak_reference_working",
+    "0.67"
+   ],
+   [
+    "002A",
+    "AATR_Ratio",
+    "thermostat_monitor_fuel_since_start",
+    "0.00"
+   ],
+   [
+    "002C",
+    "BTR_Ratio",
+    "thermostat_monitor_start_fuel_total",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040ba22",
+  "block": "1902",
+  "offset": "0004",
+  "record": "Intake_Manifold_Temperature_Miles",
+  "unit": "MI",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1.08507E-7",
+  "min": "0",
+  "max": "256",
+  "description": "Miles traveled for IMT sensor rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040ba22",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (9,&DAT_003feeab,&DAT_003feea9,&DAT_003fd252,&DAT_003fd255,&DAT_0040ba22,&DAT_003fd23c"
+  ],
+  "block_named_rows": [
+   [
+    "0018",
+    "BT_Error_Counter",
+    "battery_temperature_cranking_mismatch_count",
+    "0.00"
+   ],
+   [
+    "001A",
+    "IMT_Error_Counter",
+    "intake_manifold_temperature_cranking_mismatch_count",
+    "0.60"
+   ],
+   [
+    "001C",
+    "Temp_Rat_Initial_Battery_Temp",
+    "temperature_rationality_start_battery_temperature",
+    "0.50"
+   ],
+   [
+    "001E",
+    "Temp_Rat_Initial_Coolant_Temp",
+    "temperature_rationality_coolant_baseline",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Temp_Rat_Min_Coolant",
+    "temperature_rationality_confirm_coolant_minimum",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Rationality_Engine_Run_Timer",
+    "temperature_rationality_confirm_dwell_count",
+    "0.25"
+   ],
+   [
+    "0024",
+    "Rationality_Startup_Timer",
+    "temperature_rationality_cranking_cycle_count",
+    "0.33"
+   ],
+   [
+    "0028",
+    "TSR_Coolant_Temperature",
+    "temperature_rationality_coolant_soak_reference_working",
+    "0.67"
+   ],
+   [
+    "002A",
+    "AATR_Ratio",
+    "thermostat_monitor_fuel_since_start",
+    "0.00"
+   ],
+   [
+    "002C",
+    "BTR_Ratio",
+    "thermostat_monitor_start_fuel_total",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040ba26",
+  "block": "1902",
+  "offset": "0008",
+  "record": "Ambient_Air_Temperature_Miles",
+  "unit": "MI",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1.08507E-7",
+  "min": "0",
+  "max": "256",
+  "description": "Miles traveled for the ambient air temp sensor rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040ba26",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "hpcr_injectPressureDiagnostic: (0x14,&DAT_003feeae,&DAT_003feead,&DAT_003fd250,&DAT_003fd253,&DAT_0040ba26,"
+  ],
+  "block_named_rows": [
+   [
+    "0018",
+    "BT_Error_Counter",
+    "battery_temperature_cranking_mismatch_count",
+    "0.00"
+   ],
+   [
+    "001A",
+    "IMT_Error_Counter",
+    "intake_manifold_temperature_cranking_mismatch_count",
+    "0.60"
+   ],
+   [
+    "001C",
+    "Temp_Rat_Initial_Battery_Temp",
+    "temperature_rationality_start_battery_temperature",
+    "0.50"
+   ],
+   [
+    "001E",
+    "Temp_Rat_Initial_Coolant_Temp",
+    "temperature_rationality_coolant_baseline",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Temp_Rat_Min_Coolant",
+    "temperature_rationality_confirm_coolant_minimum",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Rationality_Engine_Run_Timer",
+    "temperature_rationality_confirm_dwell_count",
+    "0.25"
+   ],
+   [
+    "0024",
+    "Rationality_Startup_Timer",
+    "temperature_rationality_cranking_cycle_count",
+    "0.33"
+   ],
+   [
+    "0028",
+    "TSR_Coolant_Temperature",
+    "temperature_rationality_coolant_soak_reference_working",
+    "0.67"
+   ],
+   [
+    "002A",
+    "AATR_Ratio",
+    "thermostat_monitor_fuel_since_start",
+    "0.00"
+   ],
+   [
+    "002C",
+    "BTR_Ratio",
+    "thermostat_monitor_start_fuel_total",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x0040ba4c",
+  "block": "1902",
+  "offset": "002E",
+  "record": "IMTR_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.000122070",
+  "min": "0",
+  "max": "7.99527",
+  "description": "The in-use performance ratio for the Intake Manifold Temp rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_0040ba4c",
+  "references": 2,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_runThermostatMonitor: DAT_0040ba4c = (short)uVar1;",
+   "cm848_runThermostatMonitor: thermostat_monitor_fuel_since_start = DAT_0040ba4c - thermostat_monitor_start_fuel_total;"
+  ],
+  "block_named_rows": [
+   [
+    "0018",
+    "BT_Error_Counter",
+    "battery_temperature_cranking_mismatch_count",
+    "0.00"
+   ],
+   [
+    "001A",
+    "IMT_Error_Counter",
+    "intake_manifold_temperature_cranking_mismatch_count",
+    "0.60"
+   ],
+   [
+    "001C",
+    "Temp_Rat_Initial_Battery_Temp",
+    "temperature_rationality_start_battery_temperature",
+    "0.50"
+   ],
+   [
+    "001E",
+    "Temp_Rat_Initial_Coolant_Temp",
+    "temperature_rationality_coolant_baseline",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Temp_Rat_Min_Coolant",
+    "temperature_rationality_confirm_coolant_minimum",
+    "0.75"
+   ],
+   [
+    "0022",
+    "Rationality_Engine_Run_Timer",
+    "temperature_rationality_confirm_dwell_count",
+    "0.25"
+   ],
+   [
+    "0024",
+    "Rationality_Startup_Timer",
+    "temperature_rationality_cranking_cycle_count",
+    "0.33"
+   ],
+   [
+    "0028",
+    "TSR_Coolant_Temperature",
+    "temperature_rationality_coolant_soak_reference_working",
+    "0.67"
+   ],
+   [
+    "002A",
+    "AATR_Ratio",
+    "thermostat_monitor_fuel_since_start",
+    "0.00"
+   ],
+   [
+    "002C",
+    "BTR_Ratio",
+    "thermostat_monitor_start_fuel_total",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fd518",
+  "block": "197E",
+  "offset": "0000",
+  "record": "T_AMB_Sensing_Ambient_Pressure",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1",
+  "description": "Pressure Sensor Trim 0=Compressor Inlet, 1=Ambient Air",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fd518",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_fuelFinal_exponentialAverage: if (DAT_003fd518 == 0) {"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x003fd51a",
+  "block": "197E",
+  "offset": "0002",
+  "record": "T_AMB_Amb_Tmptr_User_Override",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1",
+  "description": "Ambient temperature user override enable trim: 0=FALSE, 1=TRUE",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_003fd51a",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_fuelFinal_exponentialAverage: if ((DAT_003fd51a == 0) &&"
+  ],
+  "block_named_rows": [],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00409efa",
+  "block": "1B2C",
+  "offset": "000E",
+  "record": "Fuel_Pressure_Keyon_Rat_Enable",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1",
+  "description": "Fuel Pressure Keyon Rationality Monitor Enable",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00409efa",
+  "references": 1,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initialization_group26_state: if (DAT_00409efa != 0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Fuel_Pressure_Keyon_Rat_Max_Count_Limit",
+    "fuel_pressure_sensor_pre_start_high_sample_limit",
+    "0.43"
+   ],
+   [
+    "0002",
+    "Fuel_Pressure_Keyon_Rat_Max_Voltage",
+    "fuel_pressure_sensor_pre_start_high_volts_threshold",
+    "0.33"
+   ],
+   [
+    "0004",
+    "Fuel_Pressure_Keyon_Rat_Min_Count_Limit",
+    "fuel_pressure_sensor_pre_start_low_sample_limit",
+    "0.43"
+   ],
+   [
+    "0006",
+    "Fuel_Pressure_Keyon_Rat_Min_Voltage",
+    "fuel_pressure_sensor_pre_start_low_volts_threshold",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Fuel_Pressure_Keyon_Rat_Run_Time",
+    "cam_sync_validation_crank_tick_min",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Fuel_Pressure_Rat_Min_Off_Time",
+    "rail_pressure_check_minimum_engine_off_time",
+    "0.67"
+   ],
+   [
+    "000C",
+    "Fuel_Pressure_Rationality_Start_Delay",
+    "cam_sync_validation_dwell_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004090a2",
+  "block": "8041",
+  "offset": "0002",
+  "record": "HPCR_Decay_Duration",
+  "unit": "uSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.4",
+  "min": "0",
+  "max": "26214",
+  "description": "Duration of fat decay",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004090a2",
+  "references": 1,
+  "dump_raw": "300",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_tpuMiosOutput_loadCalibration: DAT_0030414a = DAT_004090a2;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Pullin_Duration",
+    "tpu_ch3_param_period_ref",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Delay_Duration",
+    "tpu_output_ch_param7_ref",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_UCBOOS_Period",
+    "mios_pwm16_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "000C",
+    "HPCR_UCBOOS_Voltage",
+    "mios_pwm16_duty_ref",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_URCHG_Period",
+    "mios_pwm17_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_URCHG_Voltage",
+    "mios_pwm17_duty_ref",
+    "0.00"
+   ],
+   [
+    "0012",
+    "HPCR_IRCHG_Period",
+    "tpu_ch14_period_base",
+    "0.33"
+   ],
+   [
+    "0014",
+    "HPCR_ISOLLH_Current",
+    "mios_pwm18_duty_ref",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_ISOLLA_Current",
+    "mios_pwm19_duty_ref",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_ISOLLH_Period",
+    "mios_pwm18_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HPCR_ISOLLA_Period",
+    "mios_pwm19_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0024",
+    "HPCR_Open_Injector_Recharge_Offset",
+    "injection_cylinder_fault_index_offset",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004090a6",
+  "block": "8041",
+  "offset": "0006",
+  "record": "HPCR_Recharge_Duration",
+  "unit": "uSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.4",
+  "min": "0",
+  "max": "26214",
+  "description": "Duration of recharge",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004090a6",
+  "references": 1,
+  "dump_raw": "7500",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_tpuMiosOutput_loadCalibration: DAT_0030414c = (short)(((uint)DAT_004090a6 * (uint)wVar2) / 0xfff);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Pullin_Duration",
+    "tpu_ch3_param_period_ref",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Delay_Duration",
+    "tpu_output_ch_param7_ref",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_UCBOOS_Period",
+    "mios_pwm16_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "000C",
+    "HPCR_UCBOOS_Voltage",
+    "mios_pwm16_duty_ref",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_URCHG_Period",
+    "mios_pwm17_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_URCHG_Voltage",
+    "mios_pwm17_duty_ref",
+    "0.00"
+   ],
+   [
+    "0012",
+    "HPCR_IRCHG_Period",
+    "tpu_ch14_period_base",
+    "0.33"
+   ],
+   [
+    "0014",
+    "HPCR_ISOLLH_Current",
+    "mios_pwm18_duty_ref",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_ISOLLA_Current",
+    "mios_pwm19_duty_ref",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_ISOLLH_Period",
+    "mios_pwm18_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HPCR_ISOLLA_Period",
+    "mios_pwm19_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0024",
+    "HPCR_Open_Injector_Recharge_Offset",
+    "injection_cylinder_fault_index_offset",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004090c0",
+  "block": "8041",
+  "offset": "0020",
+  "record": "HPCR_Bank_Cutoff_Recharge_Interval",
+  "unit": "uSEC",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.4",
+  "min": "0",
+  "max": "6710000",
+  "description": "Interval of continuous recharge when Bank_Cutoff is commanded > 0.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004090c0",
+  "references": 1,
+  "dump_raw": "16750000",
+  "access_widths": "{'lwz': 1} -> 4 byte",
+  "code": [
+   "cm848_tpuMiosOutput_loadCalibration: uVar1 = DAT_004090c0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Pullin_Duration",
+    "tpu_ch3_param_period_ref",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Delay_Duration",
+    "tpu_output_ch_param7_ref",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_UCBOOS_Period",
+    "mios_pwm16_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "000C",
+    "HPCR_UCBOOS_Voltage",
+    "mios_pwm16_duty_ref",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_URCHG_Period",
+    "mios_pwm17_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_URCHG_Voltage",
+    "mios_pwm17_duty_ref",
+    "0.00"
+   ],
+   [
+    "0012",
+    "HPCR_IRCHG_Period",
+    "tpu_ch14_period_base",
+    "0.33"
+   ],
+   [
+    "0014",
+    "HPCR_ISOLLH_Current",
+    "mios_pwm18_duty_ref",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_ISOLLA_Current",
+    "mios_pwm19_duty_ref",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_ISOLLH_Period",
+    "mios_pwm18_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HPCR_ISOLLA_Period",
+    "mios_pwm19_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0024",
+    "HPCR_Open_Injector_Recharge_Offset",
+    "injection_cylinder_fault_index_offset",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004090c6",
+  "block": "8041",
+  "offset": "0026",
+  "record": "HPCR_Booster_Recharge_Off_Delay",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "100",
+  "min": "0",
+  "max": "6553500",
+  "description": "Time limit for booster cap to recharge without engine speed and key on.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004090c6",
+  "references": 2,
+  "dump_raw": "1200",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_protection_timer_init: if ((protection_crank_event_counter == DAT_004090c6) && (DAT_004090c6 != 0xffff)) {",
+   "cm848_protection_timer_init: if ((protection_crank_event_counter == DAT_004090c6) && (DAT_004090c6 != 0xffff)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Pullin_Duration",
+    "tpu_ch3_param_period_ref",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Delay_Duration",
+    "tpu_output_ch_param7_ref",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_UCBOOS_Period",
+    "mios_pwm16_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "000C",
+    "HPCR_UCBOOS_Voltage",
+    "mios_pwm16_duty_ref",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_URCHG_Period",
+    "mios_pwm17_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_URCHG_Voltage",
+    "mios_pwm17_duty_ref",
+    "0.00"
+   ],
+   [
+    "0012",
+    "HPCR_IRCHG_Period",
+    "tpu_ch14_period_base",
+    "0.33"
+   ],
+   [
+    "0014",
+    "HPCR_ISOLLH_Current",
+    "mios_pwm18_duty_ref",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_ISOLLA_Current",
+    "mios_pwm19_duty_ref",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_ISOLLH_Period",
+    "mios_pwm18_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HPCR_ISOLLA_Period",
+    "mios_pwm19_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0024",
+    "HPCR_Open_Injector_Recharge_Offset",
+    "injection_cylinder_fault_index_offset",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004090c8",
+  "block": "8041",
+  "offset": "0028",
+  "record": "FS_HW_Shutdown_Fail_Count_Threshold",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Calibration of fuel system hardware failures counted to set fault. 255=off.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004090c8",
+  "references": 3,
+  "dump_raw": "1",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_tpu_interrupt_flag_init: count already exceeds the ROM limit DAT_004090c8 (0xffff = never) it sets fault 399 (P0607,",
+   "cm848_tpu_interrupt_flag_init: if ((DAT_004090c8 < tpu_init_retry_count) && (DAT_004090c8 != 0xffff)) {",
+   "cm848_tpu_interrupt_flag_init: if ((DAT_004090c8 < tpu_init_retry_count) && (DAT_004090c8 != 0xffff)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Pullin_Duration",
+    "tpu_ch3_param_period_ref",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Delay_Duration",
+    "tpu_output_ch_param7_ref",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_UCBOOS_Period",
+    "mios_pwm16_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "000C",
+    "HPCR_UCBOOS_Voltage",
+    "mios_pwm16_duty_ref",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_URCHG_Period",
+    "mios_pwm17_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_URCHG_Voltage",
+    "mios_pwm17_duty_ref",
+    "0.00"
+   ],
+   [
+    "0012",
+    "HPCR_IRCHG_Period",
+    "tpu_ch14_period_base",
+    "0.33"
+   ],
+   [
+    "0014",
+    "HPCR_ISOLLH_Current",
+    "mios_pwm18_duty_ref",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_ISOLLA_Current",
+    "mios_pwm19_duty_ref",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_ISOLLH_Period",
+    "mios_pwm18_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HPCR_ISOLLA_Period",
+    "mios_pwm19_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0024",
+    "HPCR_Open_Injector_Recharge_Offset",
+    "injection_cylinder_fault_index_offset",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x004090ca",
+  "block": "8041",
+  "offset": "002A",
+  "record": "FS_HW_Shutdown_Error_Threshold",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "800",
+  "description": "Calibration of booster cap voltage level that increments fault count.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_004090ca",
+  "references": 3,
+  "dump_raw": "600",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_tpu_interrupt_flag_init: check of QADC slots 54 / 55 against DAT_004090ca passes. Name kept: the fault is the retry-limit",
+   "cm848_protection_timer_init: if (DAT_004090ca <= uVar1) {",
+   "cm848_protection_timer_init: if (DAT_004090ca <= uVar2) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Pullin_Duration",
+    "tpu_ch3_param_period_ref",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Delay_Duration",
+    "tpu_output_ch_param7_ref",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_UCBOOS_Period",
+    "mios_pwm16_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "000C",
+    "HPCR_UCBOOS_Voltage",
+    "mios_pwm16_duty_ref",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_URCHG_Period",
+    "mios_pwm17_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_URCHG_Voltage",
+    "mios_pwm17_duty_ref",
+    "0.00"
+   ],
+   [
+    "0012",
+    "HPCR_IRCHG_Period",
+    "tpu_ch14_period_base",
+    "0.33"
+   ],
+   [
+    "0014",
+    "HPCR_ISOLLH_Current",
+    "mios_pwm18_duty_ref",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_ISOLLA_Current",
+    "mios_pwm19_duty_ref",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_ISOLLH_Period",
+    "mios_pwm18_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HPCR_ISOLLA_Period",
+    "mios_pwm19_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0024",
+    "HPCR_Open_Injector_Recharge_Offset",
+    "injection_cylinder_fault_index_offset",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408a96",
+  "block": "8C59",
+  "offset": "0000",
+  "record": "RE_Governor_Pr_Zero_Rat_Fail_Count_Limit",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Number of failures detected befor setting fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408a96",
+  "references": 1,
+  "dump_raw": "1",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorGovernorPressureTracking: if (protection_coldStart_channelA_trip_count < DAT_00408a96) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "RE_Governor_Pr_Zero_Set_High_Limit",
+    "protection_coldStart_channelA_rpm_min_threshold",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_Governor_Pr_Mid_Set_Low_Limit",
+    "protection_coldStart_channelB_rpm_lower_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "RE_Governor_Pr_Mid_Set_High_Limit",
+    "protection_coldStart_channelB_rpm_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "RE_Governor_Pr_Control_Rat_Max_Oil_Temp",
+    "protection_load_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0018",
+    "RE_Governor_Pr_Control_Rat_Min_Oil_Temp",
+    "protection_load_lower_threshold",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Gov_Press_Control_Driver_On_Max_Time",
+    "output_speed_sensor_check_fault_set_passes",
+    "0.00"
+   ],
+   [
+    "001C",
+    "RE_Governor_Pr_Mid_Rat_Pass_Count_Limit",
+    "output_speed_sensor_check_minimum_output_speed",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408a98",
+  "block": "8C59",
+  "offset": "0002",
+  "record": "RE_Governor_Pr_Zero_Rat_Max_Time",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Max time for monitor to pass before error",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408a98",
+  "references": 1,
+  "dump_raw": "5",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorGovernorPressureTracking: if (DAT_00408a98 < protection_coldStart_channelA_debounce_count) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "RE_Governor_Pr_Zero_Set_High_Limit",
+    "protection_coldStart_channelA_rpm_min_threshold",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_Governor_Pr_Mid_Set_Low_Limit",
+    "protection_coldStart_channelB_rpm_lower_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "RE_Governor_Pr_Mid_Set_High_Limit",
+    "protection_coldStart_channelB_rpm_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "RE_Governor_Pr_Control_Rat_Max_Oil_Temp",
+    "protection_load_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0018",
+    "RE_Governor_Pr_Control_Rat_Min_Oil_Temp",
+    "protection_load_lower_threshold",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Gov_Press_Control_Driver_On_Max_Time",
+    "output_speed_sensor_check_fault_set_passes",
+    "0.00"
+   ],
+   [
+    "001C",
+    "RE_Governor_Pr_Mid_Rat_Pass_Count_Limit",
+    "output_speed_sensor_check_minimum_output_speed",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408a9a",
+  "block": "8C59",
+  "offset": "0004",
+  "record": "RE_Governor_Pr_Zero_High_Limit",
+  "unit": "PSI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "500",
+  "description": "Governor pressure below this will allow monitor to pass",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408a9a",
+  "references": 1,
+  "dump_raw": "384",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorGovernorPressureTracking: if (DAT_00408a9a < governor_pressure) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "RE_Governor_Pr_Zero_Set_High_Limit",
+    "protection_coldStart_channelA_rpm_min_threshold",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_Governor_Pr_Mid_Set_Low_Limit",
+    "protection_coldStart_channelB_rpm_lower_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "RE_Governor_Pr_Mid_Set_High_Limit",
+    "protection_coldStart_channelB_rpm_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "RE_Governor_Pr_Control_Rat_Max_Oil_Temp",
+    "protection_load_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0018",
+    "RE_Governor_Pr_Control_Rat_Min_Oil_Temp",
+    "protection_load_lower_threshold",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Gov_Press_Control_Driver_On_Max_Time",
+    "output_speed_sensor_check_fault_set_passes",
+    "0.00"
+   ],
+   [
+    "001C",
+    "RE_Governor_Pr_Mid_Rat_Pass_Count_Limit",
+    "output_speed_sensor_check_minimum_output_speed",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408a9e",
+  "block": "8C59",
+  "offset": "0008",
+  "record": "RE_Governor_Pr_Mid_Rat_Fail_Count_Limit",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Number of failures detected befor setting mid range fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408a9e",
+  "references": 1,
+  "dump_raw": "80",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorGovernorPressureTracking: if (protection_coldStart_channelB_trip_count < DAT_00408a9e) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "RE_Governor_Pr_Zero_Set_High_Limit",
+    "protection_coldStart_channelA_rpm_min_threshold",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_Governor_Pr_Mid_Set_Low_Limit",
+    "protection_coldStart_channelB_rpm_lower_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "RE_Governor_Pr_Mid_Set_High_Limit",
+    "protection_coldStart_channelB_rpm_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "RE_Governor_Pr_Control_Rat_Max_Oil_Temp",
+    "protection_load_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0018",
+    "RE_Governor_Pr_Control_Rat_Min_Oil_Temp",
+    "protection_load_lower_threshold",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Gov_Press_Control_Driver_On_Max_Time",
+    "output_speed_sensor_check_fault_set_passes",
+    "0.00"
+   ],
+   [
+    "001C",
+    "RE_Governor_Pr_Mid_Rat_Pass_Count_Limit",
+    "output_speed_sensor_check_minimum_output_speed",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408aa0",
+  "block": "8C59",
+  "offset": "000A",
+  "record": "RE_Governor_Pr_Mid_Rat_Max_Time",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Max time for monitor to pass before mid range error",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408aa0",
+  "references": 1,
+  "dump_raw": "5",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorGovernorPressureTracking: if (DAT_00408aa0 < protection_coldStart_channelB_debounce_count) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "RE_Governor_Pr_Zero_Set_High_Limit",
+    "protection_coldStart_channelA_rpm_min_threshold",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_Governor_Pr_Mid_Set_Low_Limit",
+    "protection_coldStart_channelB_rpm_lower_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "RE_Governor_Pr_Mid_Set_High_Limit",
+    "protection_coldStart_channelB_rpm_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "RE_Governor_Pr_Control_Rat_Max_Oil_Temp",
+    "protection_load_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0018",
+    "RE_Governor_Pr_Control_Rat_Min_Oil_Temp",
+    "protection_load_lower_threshold",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Gov_Press_Control_Driver_On_Max_Time",
+    "output_speed_sensor_check_fault_set_passes",
+    "0.00"
+   ],
+   [
+    "001C",
+    "RE_Governor_Pr_Mid_Rat_Pass_Count_Limit",
+    "output_speed_sensor_check_minimum_output_speed",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408aa2",
+  "block": "8C59",
+  "offset": "000C",
+  "record": "RE_Governor_Pr_Mid_Low_Limit",
+  "unit": "PSI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "500",
+  "description": "Governor pressure above this will allow monitor to pass",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408aa2",
+  "references": 1,
+  "dump_raw": "3712",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorGovernorPressureTracking: if ((DAT_00408aa6 < governor_pressure) || (governor_pressure < DAT_00408aa2)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "RE_Governor_Pr_Zero_Set_High_Limit",
+    "protection_coldStart_channelA_rpm_min_threshold",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_Governor_Pr_Mid_Set_Low_Limit",
+    "protection_coldStart_channelB_rpm_lower_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "RE_Governor_Pr_Mid_Set_High_Limit",
+    "protection_coldStart_channelB_rpm_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "RE_Governor_Pr_Control_Rat_Max_Oil_Temp",
+    "protection_load_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0018",
+    "RE_Governor_Pr_Control_Rat_Min_Oil_Temp",
+    "protection_load_lower_threshold",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Gov_Press_Control_Driver_On_Max_Time",
+    "output_speed_sensor_check_fault_set_passes",
+    "0.00"
+   ],
+   [
+    "001C",
+    "RE_Governor_Pr_Mid_Rat_Pass_Count_Limit",
+    "output_speed_sensor_check_minimum_output_speed",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408aa6",
+  "block": "8C59",
+  "offset": "0010",
+  "record": "RE_Governor_Pr_Mid_High_Limit",
+  "unit": "PSI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "500",
+  "description": "Governor pressure below this will allow monitor to pass",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408aa6",
+  "references": 1,
+  "dump_raw": "5632",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorGovernorPressureTracking: if ((DAT_00408aa6 < governor_pressure) || (governor_pressure < DAT_00408aa2)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "RE_Governor_Pr_Zero_Set_High_Limit",
+    "protection_coldStart_channelA_rpm_min_threshold",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_Governor_Pr_Mid_Set_Low_Limit",
+    "protection_coldStart_channelB_rpm_lower_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "RE_Governor_Pr_Mid_Set_High_Limit",
+    "protection_coldStart_channelB_rpm_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "RE_Governor_Pr_Control_Rat_Max_Oil_Temp",
+    "protection_load_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0018",
+    "RE_Governor_Pr_Control_Rat_Min_Oil_Temp",
+    "protection_load_lower_threshold",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Gov_Press_Control_Driver_On_Max_Time",
+    "output_speed_sensor_check_fault_set_passes",
+    "0.00"
+   ],
+   [
+    "001C",
+    "RE_Governor_Pr_Mid_Rat_Pass_Count_Limit",
+    "output_speed_sensor_check_minimum_output_speed",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ },
+ {
+  "address": "0x00408aaa",
+  "block": "8C59",
+  "offset": "0014",
+  "record": "RE_Governor_Pr_Control_Rat_Max_Throttle",
+  "unit": "%THROTTLE",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.25",
+  "min": "0",
+  "max": "100",
+  "description": "throttle above this will disable the montitor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "none",
+  "current_row_type": "",
+  "label_in_cpp": "DAT_00408aaa",
+  "references": 1,
+  "dump_raw": "200",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorGovernorPressureTracking: (fuel_demand_control_t_0040a57a.calculated <= DAT_00408aaa)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0006",
+    "RE_Governor_Pr_Zero_Set_High_Limit",
+    "protection_coldStart_channelA_rpm_min_threshold",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_Governor_Pr_Mid_Set_Low_Limit",
+    "protection_coldStart_channelB_rpm_lower_threshold",
+    "0.00"
+   ],
+   [
+    "0012",
+    "RE_Governor_Pr_Mid_Set_High_Limit",
+    "protection_coldStart_channelB_rpm_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "RE_Governor_Pr_Control_Rat_Max_Oil_Temp",
+    "protection_load_upper_threshold",
+    "0.00"
+   ],
+   [
+    "0018",
+    "RE_Governor_Pr_Control_Rat_Min_Oil_Temp",
+    "protection_load_lower_threshold",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Gov_Press_Control_Driver_On_Max_Time",
+    "output_speed_sensor_check_fault_set_passes",
+    "0.00"
+   ],
+   [
+    "001C",
+    "RE_Governor_Pr_Mid_Rat_Pass_Count_Limit",
+    "output_speed_sensor_check_minimum_output_speed",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": []
+ }
+]

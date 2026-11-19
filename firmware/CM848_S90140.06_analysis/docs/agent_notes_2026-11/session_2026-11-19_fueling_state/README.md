@@ -2,8 +2,8 @@
 
 The question was whether `governor_fuel_demand_mode` (0x40a154) is an enum. It is the Cummins FSGVFLST governed
 fueling state, so `ENGINE_OPERATING_MODE` became the shared `FUELING_STATE` enum. The findings and follow-ups are in
-`work/tasks/045-cm848-fueling-state-enum.md`. This folder keeps the session's scratch work. Five read-only subagents
-ran: two in stage 4, one in stage 5 and two in stage 6.
+`work/tasks/045-cm848-fueling-state-enum.md`. This folder keeps the session's scratch work. Eleven read-only subagents
+ran: two in stage 4, one in stage 5, two in stage 6 and six in stage 7.
 
 `session_folder/` has these files:
 - `apply_fueling_state.py`: the CSV edit. It checks each old row before it replaces it.
@@ -69,7 +69,17 @@ ran: two in stage 4, one in stage 5 and two in stage 6.
   - `agent_scratch_stage6_emission_manager/` and `agent_scratch_stage6_power_take_off/`: the two agents' own scratch
     scripts. Their large `.cpp` snapshots are in the tar.xz.
   - `update_pr_body_stage6.py`, `stage6a.diff` / `stage6b.diff`.
-- **The agents** (two in stage 4, one in stage 5, two in stage 6):
+- **Stage 7** (the e2m audit, rename wave 12, the fueling chain), in `stage7/`:
+  - `audit.csv`: the output of `firmware/scripts/e2m_name_audit.py`, one line per resolved record.
+  - `build_context.py`, then `bins/`: the six agents' inputs.
+  - `brief_W12.md`: the shared brief.
+  - `result_W12_bin*.jsonl` / `aligned_W12_*` / `gated_W12.jsonl`: the agents' results, then the gate's output.
+  - `gate_W12.py` / `apply_W12.py`: the gate and the apply.
+  - `apply_stage7_fueling_chain.py`: the hand renames of blocks 1045 / 1051.
+  - `map_stage7.csv`, `classify7.txt`: the proof map and the classified differences.
+  - `reports/`: the six handback reports. `agent_scratch/`: the agents' own scratch scripts.
+  - `update_pr_body_stage7.py`, `append_W12_agent_notes.py`, `commit_message_stage7.txt`, `stage7.diff`.
+- **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7):
   - `agent_prompts.jsonl`: their exact prompts.
   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked
     before applying.

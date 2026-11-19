@@ -482,3 +482,480 @@ Units: EL (emission level) is 1/1024; the chi/level tables are 1/2048. Line numb
 
 **Scratch scripts to archive** (all in /tmp/cm848_research_scratch/): access_list.py `<all.dis> <addr>...` (instruction-level accesses incl. lis/addi forms), find_table_refs.py `<all.dis> <lo> <hi>` (address-forming scan), find_pointer.py `<originals> <addr>...` (BE pointer search), block_table2.py `<flash2> 0x53be38 0x53ea6c [id...]` (parse the ID table; block_table.py is an earlier walker), join_e2m.py `<originals> <e2m> <global_variables.csv> <block ids>` (e2m records + table + current names).
 ````
+
+# Stage 7 agents: rename wave 12 (2026-11-19, PR #52)
+
+Six read-only `general-purpose` agents (model sonnet), started in parallel, one bin of 66-67 e2m records each.
+Each wrote one JSONL result file in the scratch folder and nothing else.
+
+The main session built the bins with `stage7/build_context.py`: every scalar e2m record that the parameter ID
+table resolves, that has no name yet, that the .cpp uses, and whose dump value is in range. Then:
+- `stage7/gate_W12.py` ran the gate. It applies apply_renames.py's rules and adds duplicates across bins,
+  collisions, rows already present, and type against size. Only confirmed rows passed: 383 of 398;
+- a random sample was spot-checked against the code and the width census;
+- after the build, every differing function was classified (`classify_diffs.py`). The one bad render
+  (a 4-byte version read bytewise, so `byte[4]`) was fixed.
+
+## The shared brief (exact text)
+
+````text
+# Rename wave 12 (CM848): name the e2m records the ECU's parameter ID table resolves
+
+Read-only research plus ONE output file. Do not edit any repository file, do not run `analyze.sh`, do not commit.
+Write your results only to the result file named in your prompt.
+
+## What is already proved
+The CM848 carries its own e2m record -> address table. `cm848_lookupParameterIdAddress` searches 6-byte records
+[e2m block id][address] in flash2. Each record in your bin sits at its `address`; that identity is not in question.
+Two risks remain:
+- **layout drift:** the labelled e2m is calibration 11.45 and the truck runs 11.46.06, so an offset inside a block may
+  have moved;
+- **naming quality.**
+
+Each record in your bin has no name yet. The code uses it as `label_in_cpp` (a `DAT_<address>` label), and its dump
+value is inside the record's min..max.
+
+## Files
+- Your bin: a JSON list (path in your prompt). Each item has:
+  - the record: `record`, `unit`, `size_bytes`, `signed`, `scale`, `min`, `max`, `description`;
+  - the code context: `code` (up to 4 lines that use the label, `function: line`) and `access_widths` (the load /
+    store census; "none" means the census could not see the access);
+  - `block_named_rows`: the same block's records that already have names, with a word-overlap score. Use them for
+    naming consistency and as a drift check;
+  - `region` (it decides `_cal`), `current_row` (`none` or `unnamed`) and `other_records_at_this_address`.
+- Decompiled code: /home/linux/code/kuminz-re/.claude/worktrees/cm848-fueling-state-enum/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
+  and the CSVs next to it (global_variables.csv: address,name,type,comment).
+- Helpers (python3):
+  - /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/fnbody.py `<cpp> name:maxlines`;
+  - .../width_census.py `<all.dis> 0xADDR` (all.dis is in the same folder);
+  - /home/linux/code/kuminz-re/.claude/worktrees/cm848-fueling-state-enum/firmware/scripts/e2m_block_addresses.py
+    `BLOCK` or `--address 0xADDR` (all records of a block with their addresses and current names).
+
+## Per record
+1. **Read the code lines.** Open the function when the line alone does not show the role. Check that the use fits
+   the record: a flag compared with 0 / 1, a temperature compared with temperatures, a timer counted, a calibration
+   only read, a table index used as one.
+2. **Check the width.** The record's size (1 / 2 / 4 bytes) must match the access widths when the census shows them.
+3. **Name it** in snake_case from the record name and description, following the rules below. Keep the block's
+   conventions: a sibling named `air_handling_system_protection_*` means this one gets that prefix too.
+4. **Give a verdict:**
+   - `confirmed`: the use fits and the width matches;
+   - `uncertain`: you cannot tell, or the use only weakly fits;
+   - `rejected`: the use contradicts the record (drift), or the width disagrees. Say why.
+   A wrong name is worse than no name.
+
+## Naming rules
+- Spell words out. No invented abbreviations. Allowed as written: rpm, j1939, pgn, spn, dtc, obd, ecm, egr, nox,
+  id, adc, pwm, can, pid, tpu, qadc, vin.
+- The `C_` (calibration) and `T_` (trim) prefixes only say "setting": drop them. `_cal` is decided by the region
+  alone. In the EEPROM mirror (0x3fd482-0x3feec1) the name ends `_cal`; everywhere else it never does.
+- Translate the Cummins abbreviations:
+  - **Basic words:** Tmptr / Temp = temperature; Thd = threshold; Cmd = command; Amb = ambient; Ref = reference;
+    Avg = average; Frac = fraction; Adj = adjustment; Cnt = count; Ctr = counter; Lmt / Lim = limit; Sw = switch;
+    Stat = status; Val = value; Pos = position; Filt = filtered; Diag = diagnostic; Ovr = override; Vlv = valve;
+    Pct = percent; Cyl = cylinder; Max / Min = maximum / minimum.
+  - **Engine terms:** Inj = injection or injector (from context); SOI = start of injection (the repo writes
+    `injection_timing`); Veh = vehicle; Baro = barometric; Alt = altitude; Trq = torque; Batt = battery;
+    IMT = intake_manifold_temperature; CT = coolant_temperature; APS = accelerator_pedal; Accel = accelerator or
+    acceleration (from context); Decel = deceleration.
+  - **Systems:** COT = compressor_outlet_temperature; MCF / CMF = charge_mass_flow; VGT =
+    variable_geometry_turbocharger; PTO = power_take_off; CC = cruise_control; EB = engine_brake; Jcomm = j1939;
+    EL = emission_level.
+  - **Governors:** LSG / HSG / ASG / VSG = low / high / all / variable speed governor.
+  - **AECD** = auxiliary emission control device. Follow the repo's `<condition>_protection_*` family
+    (`condensation_protection_active_flag`) rather than spelling the acronym.
+- Module prefixes (EMO_, EMM_, CBR_, CBO_, FSS_, ...) are Cummins-internal. Use the words the rest of the block uses
+  in its existing names, or drop the prefix when the remaining words are specific enough.
+- Never a bare "protection": say protection of what.
+- Use initialize, never init. Numbers in decimal.
+- Flags end `_flag`; counters `_count` / `_counter`; timers `_timer`.
+- The new name must not already exist (grep global_variables.csv and the .cpp). Two records in your bin must not get
+  the same name.
+
+## Types
+- Use the record's size: 1 = `byte`, 2 = `word`, 4 = `dword`.
+- Use `i16` only when the record is signed (S) and every access in the census is `lha`.
+- If the census width disagrees with the record's size, reject the record and say so.
+
+## Output: one JSON object per line, one line per record of your bin (rejected ones too)
+- `current_row` `none`: `{"kind": "new_global", "verdict": ..., "address": "0x...", "new": "...", "type": "word",
+  "evidence": "...", "comment": "..."}`
+- `current_row` `unnamed`: `{"kind": "global", "verdict": ..., "address": "0x...", "old": "", "new": "...",
+  "evidence": "...", "comment": "..."}`
+- `evidence`: one line, for example `e2m 1997 +0E EMO_Air_Handling_COT_Limit (DEG_F, 1/64): compared with the
+  compressor outlet temperature in cm848_checkAirHandlingSystemNearLimits; lhz; dump 13440`.
+- `comment`: the CSV comment for the row. Lead with the e2m record and its description, then the role in the code.
+  Include the dump value in engineering units when it helps (`(2048 = 2.0 here)`).
+
+Finish with a short summary in your final message: counts per verdict, and the drift / width problems found.
+````
+
+## 6. Name e2m records bin 1 (680k tokens, 39 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 12 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/brief_W12.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/bins/bin1.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin1.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+W12 bin1 is done: 67 lines in /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin1.jsonl, one per bin record in bin order, all `kind` new_global with `type`. No repository file was edited. I checked the file for uniqueness against the CSVs and .cpp, banned words, `_cal`, type against size, and cited identifiers (see the last section).
+
+**Verdicts:** 66 confirmed, 1 uncertain, 0 rejected.
+- Uncertain is 0x40a672, named `exhaust_pressure_sensor_value_copy`. The e2m calls Exhaust_Pressure the calculated pressure, but the code stores the raw `sensor_channel109_value` (0 in the dump while `boost_pressure_current_raw` reads 1784). The two 191B rows keep `*_virtual_sensor_copy`.
+
+**Drift (1):** 0x5c7ac is claimed by both 8A2B +24 IAH_Pulsewidth_Time_Duration and 8A37 +0 IAH_Default_IMT. The only code use is a signed temperature fallback, so I confirmed IAH_Default_IMT. 8A2B therefore ends at +22 in 11.46.06. Every other block aligned: siblings and neighbours resolve to the cells their own code uses.
+
+**Width:** no disagreements.
+- The census was empty at 0x5c1d0 and 0x5c7ac. I resolved both by disassembly: 0x5c1d0 is `lhz r9,0(r3)` at 0x5031a0, and 0x5c7ac is `lha` at 0x5183a4 (typed `i16`).
+- `i16` is on six rows: 0x3fddb6, 0x409fd4, 0x409fd6, 0x409fd8, 0x409fda and 0x5c7ac.
+- 0x40babe is signed but only stored (`sth`), so it is `word`.
+- 0x409fce is `dword`; 0x408a94 and 0x408a95 are `byte`.
+- Only 0x3fddb6 ends `_cal` (EEPROM 0x934).
+
+**e2m wording that contradicts the code (the names follow the code):**
+- 8C5A +2: the text says "Max speed", but the code needs vehicle speed above it.
+- 8C5F +10: the description is another record's; the name, scale and pedal compare say minimum pedal position.
+- 1772 +0: "Calculated" versus the raw sensor copy, which is the uncertain row.
+
+**Naming choices:**
+- `tsc1` is on four rows (0x5c3aa, 0x5c3ae, 0x5c3b0, 0x5c3b2). Swap it in one pass if you prefer it spelled out.
+- Message acronyms are written as decimal PGNs (`j1939_pgn61442_*`, `j1939_pgn65247_*`, `j1939_pgn61443_*`).
+- 10B6 mirrors the throttle-mode twins at 0x3ff6d0-d4: `..._reference_filter_coefficient`, `governor_fuel_demand_tracking_{limit,floor}_j1939`.
+
+**Leads (legacy misnames, no extra JSON lines):**
+
+Table-resolved:
+- The `diag_dm1_*` words around 0x3fddb6 are the e2m data collector (0030-003B), not J1939 DM1.
+- `sensor_channel109_value`, `_default_value` and `_fault_status` are the exhaust pressure sensor (1966 +A, 1966 +30, 1963 +18).
+- `engine_to_vehicle_speed_ratio_*` is the e2m Tcase_NV transfer case low-range detection. In 8C60, `_high_flag` is Tcase_Low_Range_Flag and `_invalid_flag` is Tcase_Launch_Flag.
+- `throttle_trim_predictor_output_min` is 1A2E +4 C_INM_EGRT_Min (EGR orifice temperature).
+- `j1939_address_cached` (0x40a030) is 1042 +4 ASIC_Feedback_Delay_Time (100 us).
+- `boost_pressure_synthetic_ema` and `boost_correction_mode_flags` are 1772 +A and +8, the exhaust pressure estimate and its state.
+- ROM cells with a wrong `_cal`: `etc1_torque_mode_timeout_cal` (10E7 +A), `fuel_demand_norm_zero_cal` (10E7 +16), `cruise_speed_default_cal` (13B4 +4).
+- 155A is past the end of the dumped table, so its link to the 0x5c1d6 gain sets is by offset only.
+
+Inferred from use:
+- `cruise_speed_factor_a`, `cruise_speed_factor_b` and `cruise_speed_offset*` are the high speed governor lead/lag compensator state.
+- The `etc1_*` timer fields reload from the 10E7 cells:
+
+  | Field | Reloaded from |
+  |---|---|
+  | `etc1_torque_mode_timer` | overspeed enable timeout |
+  | `etc1_torque_active_timer` | overspeed time limit |
+  | `etc1_torque_limit_timer` | progressive shift disable timeout |
+  | `etc1_speed_override_timer` | driveline disengaged timeout |
+  | `etc1_mode_timeout` | out of gear timeout |
+  | `etc1_override_timeout` | torque converter lockup timeout |
+  | `etc1_speed_cmd_timeout` | output shaft speed timeout |
+  | `etc1_message_timeout` | message timeout |
+
+- `j1939_fault_load_protection_*`, `j1939_fault_state*` and `j1939_load_protection_fault_reported_flag` are the P1762 governor pressure offset monitor state.
+- `cm848_j1939FormatDm1Message` is the TSC1 lost management (e2m Jcomm_TSC_Lost_Fault).
+- `faultTimerHandler` builds the 28-byte `j1939_pgn65251_tx_message` payload.
+- `phase_group_a_validateEngineSync` is the exhaust pressure source selection.
+- `sensor_channel108_filter` is the EGR orifice temperature lead predictor.
+
+**Checks:** each of my names is unique and absent as a token from the CSVs, the .cpp and the three generated headers. The names also pass the gate's banned-word and hex-looking-part checks, and the `_cal` rule. An emulation of `comment_name_sweep.py` flags nothing in the new comments.
+
+**Scratch (in /tmp, nothing in the repo):**
+- /tmp/w12bin1_make.py is the generator; it holds all text and rewrites the JSONL.
+- /tmp/w12bin1_check.py, /tmp/w12bin1_idcheck.py and /tmp/w12bin1_sweepcheck.py are the checks.
+- /tmp/w12bin1_extract.py prints the full e2m descriptions.
+- /tmp/w12bin1_xref.json holds the `xref_addr.py` output for all 67 addresses.
+````
+
+## 7. Name e2m records bin 2 (546k tokens, 36 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 12 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/brief_W12.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/bins/bin2.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin2.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+W12 bin2 is done: 67 lines written to /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin2.jsonl. Counts: 63 confirmed, 1 uncertain, 3 rejected.
+
+I ran my own self-check, and it passed. That covers the line count, the address order against the bin, and the gate rules from `apply_renames.py` (banned words, hex-looking parts, `_cal` only inside the mirror). It also covers uniqueness against `global_variables.csv`, `function_renames.csv`, `arrays.csv` and the .cpp, and every comment staying within the 400-character clip. No repo file was touched.
+
+**Drift (the 3 rejected rows)**
+- 0x5a48e, 0x5a490 and 0x5a492 are 10E3 +22 / +24 / +26 in the labelled e2m. In the truck they are block 1228 +02 / +04 / +06.
+- The code at those addresses is the DM4 freeze-frame vehicle-speed switch (`== 1`) and the DM5 OBD-compliance and continuous-monitors bytes. Block 1228 starts at 0x5a48c, so block 10E3 ends before +20 in the truck.
+- These rows have an empty `new`, because bin 6 owns the three addresses.
+- No other drift turned up. Anchors from existing named rows hold in 1189, 1048, 106D, 12BA, 1791, 179C, 1977, 1A53, 117F, 1143 and 175C.
+
+**Shape (the 1 uncertain row, plus a collision)**
+- 0x5a486 `j1939_command_security_flags` is typed `dword`, but the only access is bytewise (`lbzx` over 4 bytes). The role fits, so I marked it uncertain for the shape only. `byte[4]` against `dword` is your call.
+- 0x5983a and 0x5983e are entry 0 of a 4-mode × 2-dword table. `cm848_faultTimeoutHandler` indexes it by `(aging_flags & 3) * 8`, and the mode-0 pair is never read.
+- Bin 5 will also propose a row for 0x5983a (000F `Fault_Data`), so two `new_global` rows will hit that address.
+
+**Width and sign**
+- No census width contradicts a record.
+- Several records are typed `word` despite their sign, because the rule needs every access to be `lha` for `i16`.
+  - 0x408e6c is signed but loaded with `lhz`.
+  - 0x408e72, 0x408e82 and 0x408e84 are unsigned but loaded with `lha`.
+  - 0x40afb6, 0x40afb8, 0x40afba and 0x40afbc are signed but only ever stored. They are never read in the binary, and their torque grid is all zero, so the dump proves nothing there.
+- Where the census said "none", I took the width from my own assembly reads. That covers the filter coefficients through the two second-order filter helpers, and 0x408e5c through `lha 0(r31)` at 0x52547c. It also covers 0x3fdfc0 (`sth 2(r27)`, r27 = 0x3fdfbe), 0x406752 and 0x5983a / 0x5983e.
+- `i16` is used only on 0x408e54, 0x408e56, 0x408e62, 0x408e76, 0x408e80, 0x3ff078, 0x3ff07c and 0x5b336.
+- `_cal` is on exactly 0x3fdfc0, 0x3fdd7e, 0x3fdd82 and 0x3fdd84.
+
+**Neighbours noticed:** the named 10FC rows (`j1939_pgn65249_cal_*`, `j1939_protocol_mode_*`, `j1939_dtc_spn_cal_*`) are the PGN 65249 retarder-configuration points in e2m order. 0x5a494 `j1939_feature_config_word` is 1228 +08, the DM5 non-continuous monitors word.
+````
+
+## 8. Name e2m records bin 3 (594k tokens, 38 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 12 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/brief_W12.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/bins/bin3.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin3.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+W12 bin3 is finished: 66 result lines, in bin order, written to /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin3.jsonl. All 66 records are `new_global`. 64 names are unique and none collides with global_variables.csv or the .cpp. No name is a word-order permutation of an existing name.
+
+**Verdicts: 64 confirmed, 0 uncertain, 2 rejected.**
+
+**Rejected (neither is a bad address or a width problem):**
+- **0x5a4aa, e2m 1253 +2 Fault_Data_J1939_111.**
+  - The record is right at that address: slot 0 is fault 111, the value 0x00600275 carries SPN 629, and the DM1 builder reads it with `lwzx` (4 bytes).
+  - What fails is the rest of block 1253. The e2m 11.45 slot order does not match this ROM (ROM: 111, 122, 123, 124, 131, 131, 132 ...; e2m: 111, 912, 184, 185, 115 ...). Only 1 of 90 e2m SPNs matches at the e2m offsets.
+  - Also, 0x5a4aa is the base of a stride-4 table of 170 entries (header word 0x2a8 at 0x5a4a8), indexed by fault slot in three J1939 functions.
+  - A scalar row would sit on that array base. I suggest one `dword[170]` row `j1939_dtc_definition_table` instead, and the scalar left unapplied.
+- **0x40ba4c, e2m 1902 +2E IMTR_Ratio.**
+  - The code uses the word as the thermostat monitor's current fuel total (`cm848_runThermostatMonitor`).
+  - Its e2m neighbours AATR_Ratio and BTR_Ratio at 0x40ba48 / 0x40ba4a are already named thermostat fuel words.
+  - So the +2A..+2E layout drifted from 11.45. A code-based candidate name is in the evidence: `thermostat_monitor_current_fuel_total`.
+
+**Drift and widths:**
+- **Drift:** block 1253 slot order and block 1902 +2A..+2E, as above.
+- **Smaller e2m label problems, none affecting identity:**
+  - Top_Gear_Ratio says "above which"; the code tests the ratio below it.
+  - The 0x406768 boost coefficient is labelled per inHg, but the `/16384` divisor works in psi. The injection timing and engine speed divisors do reproduce the e2m scales.
+  - The e2m descriptions of C_BT_Min_Vehicle_Speed and C_BT_VSS_Min_Timer are copy-pasted.
+- **Widths:** no disagreements. Census-blind records were resolved by disassembly:
+  - 0x597b2 (`lhz` through the record pointer);
+  - 0x597bc, 0x597be and 0x597c0 (`lha` through the channel pointers; the 0x597c0 read is at 0x507fd8);
+  - 0x40ba1e, 0x40ba22 and 0x40ba26 (4-byte `stw` through a pointer);
+  - 0x5a4aa (4-byte `lwzx`, rejected).
+- **Types:** by record size, except 0x597c0 `Fuel_Temperature_RPM_Lower_Limit`, typed `i16`. It is the only signed record, and its only reader is `lha`.
+- **Block 1977/197A/197B check:** run with the tool; 1977 +4 = 0x3ff078 and +8 = 0x3ff07c. 197A / 197B resolve to 0x3ff0c4 / 0x3ff0e6, the pressure-drop lookup's axis and values used by the 197E code.
+
+**Caveats for you:**
+- **`_cal` on 0x3feb86 / 0x3feb88 (block 1100).** I applied `_cal` by the brief's region rule. These are logged J1939 control source slots, not tunables. The parameter ID table lists block 1100 as a plain RAM address, so the "EEPROM 0x1704 / 0x1706" offsets in the comments are my arithmetic, and the comments say so.
+- **Prefix choices.**
+  - Block 10CE uses the code's `pedal_fault_mode_` family, not the e2m's "limp home".
+  - Block 8041 uses `injector_driver_`.
+  - Block 112E uses `fuel_temperature_derate_` and spells the three temperatures as `_temperature`.
+  - Block 17A2 uses `exhaust_temperature_estimate_`, not the neighbours' misleading `boost_target_*`.
+  - I renamed 0x5c49e, 0x5c4a0, 0x5c4a2 and 0x5c4a4 so they are not a word permutation of the existing `engine_speed_limit_pedal_fault_mode`.
+
+**Sibling rows outside my bin that look wrong (leads for you):**
+- 0x40a899 `injection_timing_demand_output` is e2m 105A +2 Tau_0_Throttle_100_Fueling, the low-horsepower-curve full-throttle fueling. `cm848_validateFuelDemandRelativeToTiming` is really the engine load relative to that curve.
+- 0x3fd912 / 0x3fd916 `cruise_ramp_zone_b/d_fuel_demand_threshold` are the cruise and road speed governor top droop widths in 1/256 mph. They are subtracted from `cruise_fuel_demand_ramp_ceiling` = 21760 = 85 mph.
+- 0x40676c `boost_target_load_gain`, 0x40a67e `boost_target_fuel_normalized_ratio` and 0x40a682 `boost_target_load_rpm_output` belong to the exhaust temperature estimate, not a boost target.
+- 0x3feb82 / 0x3feb84 / 0x3feb8a `*_calib_*` are J1939 engine and retarder control status and the history index.
+- The `protection_coldStart_channelA/B_*` and `protection_load_*_threshold` rows in block 8C59 are the 48RE governor pressure zero and mid range monitors and their transmission temperature window.
+- 0x40b9c6 `cam_sync_validation_state` is the fuel pressure key-on rationality state (`hpcr_checkRailPressureSensorBeforeStart`). The `cam_sync_validation_*` siblings in block 1B2C are its rationality parameters.
+- 0x597b2..0x597d5 is a single 36-byte fault derate channel record, a candidate for a struct.
+- 0x5c48e (the e2m limp home engine speed filter coefficient) already has an unnamed row; `pedal_fault_mode_target_speed_filter_coefficient` would fit.
+
+**Files:** I modified only the result file. I also created two scratch scripts outside the repo, and they are still there:
+- `/tmp/w12_bin3_build.py` is the generator that writes the result file.
+- `/tmp/w12_bin3_check.py` is the validator.
+
+Archive or delete them as you prefer.
+````
+
+## 9. Name e2m records bin 4 (556k tokens, 37 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 12 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/brief_W12.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/bins/bin4.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin4.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+Wave 12 bin4 is done. The result file is /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin4.jsonl. It has 66 lines in bin order, all kind `new_global`. I validated it by script: every bin address is present once, no name is duplicated, and no name exists in global_variables.csv, the .cpp, or the other agents' result files. `_cal` appears if and only if the address is in the EEPROM mirror, and every type matches its record size.
+
+**Counts:** 65 confirmed, 0 uncertain, 1 rejected (0x004086ca `AC_Driver_ON_Max_Time`, with `new` empty like bin2's rejected rows).
+
+**Width:** no width rejects. The census was blind for three groups, so the widths come from the instructions cited in each evidence line.
+- 0x5c4a6: `lha 0/2/4/6(r3)` at 0x28a80-0x28aa4. The address is taken as a pointer.
+- 0x40a74e and 0x40a750: `sth r4,26(r5)` and `sth r4,28(r5)` at 0x508e34 and 0x508e38. These are fields +0x1a and +0x1c of a 62-byte per-input record at 0x40a734.
+- The 12 rows of block 1930: `stb`/`lbz` and `sth`/`lhz` through the pointer arguments of `cm848_checkSensorStuckOverDistance`.
+- 0x3fddae and 0x3fddb2 are `lwz`/`stw` (4 bytes).
+- Types: `i16` only for 0x5c334, 0x4086a4 and 0x4086a6. The signed rows 0x40b6c6, 0x40b6ce, 0x40b6d0, 0x40b996 and 0x5c4a6 stay `word`, because their census is store-only or empty. 0x5c2b2 is unsigned but read with `lha`, so it is also `word`.
+
+**Drift:**
+- **Block 8A14:** it fits the code through +2A (0x4086c4) and not from +2C.
+  - 0x4086ca is rejected. Its only reader loads it into the TSC1 activity counter, and its dump is 1 (0.1 s), which cannot be a maximum A/C run time.
+  - The existing rows 0x4086c6 (`protection_iat_scale_factor_cal`, a percent factor of barometric pressure) and 0x4086c8 (`j1939_tsc1_active_duration_reload`) must not get e2m 8A14 comments.
+- **Block 1930:** it fits through +10 and not from +12. The 12 in-bin rows (+00 to +0E) are proven by the callee, which uses each address in the matching argument slot.
+  - From +12, the e2m's AATR_Numerator is a word, but the code puts the dword `water_in_fuel_distance` at 0x3feeb8, and BTR_Numerator/Denominator sit on unrelated names.
+  - 0x3feec0 holds 0xa1a1, a marker rather than a counter.
+- **No drift in the other blocks:**
+  - Block 10DF's dump matches the truck's rating: 555 ft-lb, 1600 rpm, 2900 rpm rated.
+  - Block 1152 matches its 62-byte layout.
+  - Blocks 1034, 10EB, 118A, 12BD, 12FE, 164A, 1918, 1965, 1A9B, 806C and 81C9 also fit the code.
+
+**Naming departures your consistency check will flag:**
+- Block 8A14 uses `air_conditioning_*`, not the sibling `protection_event26_*`. That function is the A/C clutch request logic (logical output 38).
+- Block 164A uses `end_of_line_test_*`, not the sibling `radiator_fan_speed_*`. The two intake air heater rows (IAH, 0x642ea and 0x642ec) are prefixed `end_of_line_test_` too, because their only readers are the end-of-line sequence.
+- The 1930 rows end `_cal` as the brief requires. The existing rows at 0x3feeb6 and 0x3feeb8 sit in the same mirror without it.
+- Rows 0x405d4a, 0x405d4c and 0x405d50 reuse the stem `injection_quantity_temperature_headroom_cap_`.
+- Block 1152 follows the sibling prefix `fuel_temperature_derate_`.
+
+**Leads:**
+- `governor_speed_setpoint_raw`, `governor_d_gain_from_table`, `governor_p_gain_from_table` and `governor_j1939_gain_extra_working` actually hold the P, I, D and J gains of block 10EB. I checked the consumer code in `cm848_runLowSpeedGovernor`. The four words at 0x5c4a6 are a struct candidate.
+- `faultTimerHandler` builds the 28-byte J1939 PGN 65251 payload, which is what the five speed points of block 12BD feed. The `throttle_position_*` words are e2m block 10E2 Jcomm percent peak torque.
+- The note on `injection_quantity_temperature_headroom_cap` ("neither word has an e2m counterpart") is now outdated. 0x405d4e `C_TFC_Texhaust_Lim` is unnamed because its dump is out of range (6000 = 3000 F against a 0..1500 e2m range), and the cap is a constant 200 mm3 here (both limits are 2944).
+- 0x642ee `EOL_EVR_Test_Time` (dump 150 = 15.0 s, over its e2m maximum of 10 s) is the alternator test end time, next to my 0x642f0 and 0x642f2 rows.
+- In the compiled code, any battery voltage fall passes the 0x642f2 threshold, and no fall fails. The row comment says so.
+````
+
+## 10. Name e2m records bin 5 (473k tokens, 30 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 12 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/brief_W12.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/bins/bin5.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin5.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+Wave 12 bin 5: 66 rows written to /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin5.jsonl (read-only research; no repo file touched, no build, no commit). The file passes my checks: it has 66 lines, its address set equals the bin, and every row is `new_global` with a `type`. All names are unique, none ends `_cal`, and none exists in the repo's CSVs, headers or .cpp. They also do not collide with bin3's finished result.
+
+**Verdicts:** 61 confirmed, 5 uncertain, 0 rejected.
+- **Types:** 56 word, 5 byte, 3 dword, 2 i16. The i16 rows are 0x5a9bc and 0x40675c (signed, `lha` only). 0x40add4 is signed but its only census access is `sth`, so it stays `word`.
+- **Widths:** no census width disagrees with a record size. Five records are census-blind (array or address-taken access): 0x5983a, 0x408e02, 0x408e18, 0x408e26 and 0x6457a. Their width comes from the decompile (`uint *`, `word *`, `ushort`) and matches.
+- **Offset drift:** none inside my 16 blocks.
+  - The code proves the layouts: stride-8 fault table, zone gain sets in P/I/D/I-acc order, sum 10+2+1+1=14 for the J1939 receive groups, and 1052 bracketed by its clamp bounds.
+  - The humidity block 1982 matches the dump to the digit: (71<<10)/1647 = 44.
+  - The exhaust-pressure terms in 198C each match their e2m label.
+  - The fuel-level block 8A22 ties to the 0.8 s task period.
+  - The PCI slot 125 equals P0720's slot (ROM 0x5985a[320] = 125).
+
+**Uncertain: tau polarity (0x5c35a, 0x5c35c, 0x5c35e, 0x5c360, 0x5c362).**
+- The roles fit: these are the derated point-2 speed and fueling of the PGN 65251 engine configuration message, plus the point-5 intersection speed.
+- The tau index is not proved.
+  - Disassembly 0x20dac-0x20ea0 reads the Tau_0-labelled pair when `thermal_fuel_limit_factor` equals 0x4000.
+  - That variable is e2m 1053 +2 Fuel_Interp_Factor (a startup/run alpha blend written by `hpcr_calculateFuelTrimOutput`).
+  - With it forced to 0, the code computes the e2m "ESP Tau 0" fueling, so the labels read inverted.
+  - The cal holds identical pairs (17600 / 736), so the dump cannot decide.
+- 0x5c364 (the Tau_1 intersection) has no reader.
+- I kept `tau_0` / `tau_1` in the names. If you apply them, the digits may need swapping.
+
+**Overlap with bin2:** 0x5983a (`Fault_Data`, block 000F) is the same address as block 0023 `Fault_Countdown_Elapsed_Time_Mode_0`. Both rows must get one name; mine is `fault_countdown_elapsed_time_mode_0` (dword).
+- In code the label is only the base of the fault aging table: 4 × {elapsed, rate} dwords at stride 8, indexed by `aging_flags & 3` with mode 0 excluded.
+- The table is a struct-array candidate; all eight words are 0 in the ROM.
+
+**Leads outside my scope:**
+- **Collector:** the `diag_dm1_buffer_*` rows at 0x40c278 / 0x40c27c / 0x40c280 / 0x40c284 are e2m 0033-0036 Collector_Start / Center / End_Address / Status, so the data collector, not DM1.
+  - My name `data_collector_table_address` follows the e2m, not those neighbours.
+  - The whole 0x40c270-0x40c290 block reads 0 in the RAM dump, even pointers the init sets, so no dump value is quoted.
+- **Engine configuration cluster:** `faultTimerHandler` (0x1b3a0, sent by `cm848_sendFaultTimerMessage`) builds the PGN 65251 engine configuration message. The `cm848_updateProtection*` functions and the `protection_*` variables in block 1104 (e.g. `protection_threshold_scale_cal` at 0x5c34e) are its point calculation. The existing `_cal` names there are wrong twice: they are legacy misnomers, and they sit in flash.
+- **Cruise names:** `cruise_speed_offset_*` are fueling top-droop offsets in mm3, not speeds. My rows use `cruise_top_droop_offset_*`.
+- **Other legacy names:** `boost_synthetic_ema_*` and `boost_pressure_synthetic_ema` are the exhaust-pressure estimate. `thermal_fuel_limit_factor` is the e2m Fuel_Interp_Factor.
+- **Block 11F9:** +8 (OBD_Fuel_Type, 0x5a9c4) lands on a lookup-table length word (12), probably drift or a dropped record there. My +0 / +4 / +6 are code-proved.
+- **Struct candidates:** the three 4-word cruise gain sets at 0x408e02 / 0x408e18 / 0x408e26, and the fault aging table.
+- **Behaviour note, tachometer cutoff:** 0x645c2 floors a non-zero speed to 300 rpm rather than dropping it to zero as the e2m text says. I confirmed it because "cutoff" holds either way, and the comment says so.
+
+**Name choices to be aware of:**
+- **Spelled out, not abbreviated:** 0x40add4 is `environmental_protection_agency_indicated_friction_torque_percent_times_256` because EPA is not on the allowed abbreviation list.
+- **Sibling convention:** the retarder stages follow the existing `engine_retarder_stage_1_weight` as `engine_retarder_stage_2` through `stage_6_weight`.
+- **Fuel-level family:** the fuel-level rows use the existing `fuel_level_sensor_high_voltage_*` family rather than the e2m's "out of range" wording.
+````
+
+## 11. Name e2m records bin 6 (583k tokens, 35 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 12 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/brief_W12.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/bins/bin6.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin6.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+W12 bin6 is done. All 66 records are in /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage7/result_W12_bin6.jsonl. I made no repo edits and ran no builds. The untracked firmware/scripts/test_e2m_name_audit.py is not mine.
+
+**Checks run on the file**
+- 66 lines of valid JSON, in bin order, with the schema keys.
+- Addresses match the bin.
+- 64 names, all unique, none already in global_variables.csv or the .cpp.
+- Types follow the size and signedness rules.
+
+**Verdicts:** 64 confirmed, 0 uncertain, 2 rejected. The two rejected rows have `new` and `type` empty.
+
+**Drift and width problems**
+- **0x5c7ac, 8A2B +24 IAH_Pulsewidth_Time_Duration (rejected, drift):** the address belongs to block 8A37 +00 IAH_Default_IMT (signed DEG_F). The only code, cm848_captureIntakeAirHeaterStartTemperature, loads it with `lha` as the default start temperature. Block 8A2B ends at +22 in this ROM. That 8A37 record needs its own name, for example `intake_air_heater_default_intake_manifold_temperature` with type `i16`.
+- **0x3ff06c, 10A0 +0E C_TSE_Charge_Press_Derate (rejected, width):** the record is a 4-byte bitmap (dump 0x010f000f), but the only access is one `lbz` of byte 0. Bytes +1 and +3 are separate byte rows (0x3ff06d, 0x3ff06f), so a dword row would swallow them.
+- **0x5a48e / 0x5a490 / 0x5a492 (1228, kept):** the 10E3 tail records +22 / +24 / +26 resolve to the same addresses. Block 1228 starts at 0x5a48c, which is 10E3 + 0x20, so the 10E3 tail is not in this ROM. The DM4 and DM5 code fits 1228.
+- **12F7 +14 J1939_Mux_Wet_Tank_Pressure (0x40aaba, not in my bin):** in this ROM it receives EEC2 accelerator pedal position 2, so that one e2m label does not match. The +11 to +13 and +15 records do match.
+
+**Deliberate deviations (each is stated in the row's evidence)**
+- **0x3fe9a8 fault_detected_bits_416_to_431 has no `_cal`.** The region rule says it should end `_cal`. I followed its 20+ siblings and the 0x3fe9c4 note "no _cal: runtime state". The e2m defines its bits 0x1 and 0x2 as the cylinder 7 and 8 misfire errors, and the misfire monitor tests exactly those masks.
+- **0x408adc has a direction-neutral name (`converter_clutch_lockup_fourth_gear_ratio_limit`).** The e2m calls it "Min", but the code passes when the ratio is at or below it, so it is a ceiling in use. The neighbours +0C, +0E, +12 and +13 all fit, so this is a label issue, not drift. Verdict is confirmed.
+- **The four PGN 65264 PTO rows use e2m-derived names** (`j1939_received_power_take_off_*`, `j1939_received_remote_power_take_off_switch`). They deviate from the sibling SPN-name convention because the local database has no usable PGN 65264 layout, so the SPN names cannot be verified. The A/C row uses SPN 985 (A/C High Pressure Fan Switch), from the SHUTDN positions the database files under number 65251.
+- **0x3ff05e is `altitude_derate_engine_speed_threshold`.** I left out "air handling fault" because the early return also skips the normal cool and hot grids.
+- **0xb74a is `application_overlay_core_software_version`.** It avoids a mix-up with the EEPROM calibration V11.46.06; the dump is 0x11201401.
+- **The TCC rows use the repo's `converter_clutch_` prefix** rather than `torque_converter_clutch_`.
+
+**Leads, outside my bin**
+- The `cold_start_*` and `intake_temp_ema` names in the 0xe0f4-0xe518 functions are alpha names. `fuel_demand_ramp_factor` is alpha, and 0x5be66 `cold_start_intake_temperature_filter_coefficient` is e2m Alpha_Fuel_Rate_Filter_Constant.
+- The `diag_dm1_*` names around cm848_phase_groupB_calculation are the e2m data collector. Collector_Schedule, Collector_Trigger and Collector_Stop_Mode sit at 0x3fddb6, 0x3fddb8 and 0x3fddba.
+- `throttle_trim_predictor_output` (0x40a692) and `throttle_trim_predictor_gain` (0x40a696) are INM_EGRT_After_Lead and the lead time constant of EGR orifice temperature.
+- `j1939_feature_config_word` (0x5a494) is Supported_Non_Continuous_Monitors, and `cm848_governorDroopCalculation` is a number-to-decimal-text helper.
+- The `protection_*` rows at 0x408ad2-0x408ade are the P1740 converter clutch rationality values (e2m TCC_Rationality_* and TCC_Steady_Throttle_Count_Limit).
+````
