@@ -397,8 +397,10 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - **The audit.** `firmware/scripts/e2m_name_audit.py` resolves every scalar e2m record through the parameter ID table
   and lists the row at its address (tests: `test_e2m_name_audit.py`). It also gives the dump value against the
   record's range and a word-overlap score against the current name.
-  - **4691 records resolve:** 3000 already named, 1397 without a row, 244 inside a wider row (struct / array / dword),
-    50 on unnamed rows.
+  - **4691 records resolve.** After wave 12: 3388 named, 776 without a row, 477 inside a wider row (struct / array /
+    dword) and 50 on unnamed rows.
+  - **A correction.** The first run gave struct instances zero width and counted 244 "inside". Struct sizes from
+    `structure_definitions.csv` are counted now, and none of the 383 new rows starts inside or covers another row.
   - **The 1610 low-overlap named rows** are mostly struct instances (compared by instance, not by field) and synonyms.
     Real misnames are among them. They are the next wave, not this one.
 - **Wave 12: the unnamed records the code uses.** 398 records had no name, a code reference and an in-range dump

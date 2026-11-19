@@ -10,14 +10,14 @@
 6. **The ECU's own e2m map, and the structures.** The ECU's parameter ID table in flash2 maps every e2m block to its address, so e2m names no longer rest on offset matching (`firmware/scripts/e2m_block_addresses.py`). It names the emission manager and the power take-off settings. The 33 `cm848_signedFirstOrderFilter` records are now `ema_filter_state_t`.
 7. **The audit.** Every e2m record the table resolves was compared with the CSV, and 383 unnamed addresses the code uses got names (rename wave 12). The fueling chain takes its e2m names: `governor_fuel_demand_mode`, where this PR began, is `adjusted_user_fueling_state` ([FSGVFLST]).
 
-`cm848_arbitrateGovernedFueling` (was `cm848_processProtectionRampControl`) now reads:
+`cm848_arbitrateGovernedFueling` (was `cm848_processProtectionRampControl`) now reads (`adjusted_user_fueling_state` is the FSGVFLST word this PR started from, `governor_fuel_demand_mode` until stage 7):
 
 ```c
 FVar1 = FUELING_STATE_HIGH_SPEED_GOVERNOR;            // was 0xc
 ...
-governor_fuel_demand_mode = FUELING_STATE_LOW_SPEED_GOVERNOR;   // was 0xb
-if ((governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) ||
-    (governor_fuel_demand_mode == FUELING_STATE_VEHICLE_SPEED_LIMIT)) {   // were 9 / 10
+adjusted_user_fueling_state = FUELING_STATE_LOW_SPEED_GOVERNOR;   // was 0xb
+if ((adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL) ||
+    (adjusted_user_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT)) {   // were 9 / 10
 ```
 
 ## Stage 1: the enum
@@ -167,7 +167,7 @@ A review of stage 5 found 16 applied rows that had not been checked. Checking th
 
 ## Stage 7: the e2m audit, rename wave 12, the fueling chain's e2m names
 
-- **The audit.** `firmware/scripts/e2m_name_audit.py` (tested) resolves every scalar e2m record through the parameter ID table and reports the row at its address: 4691 records, 3000 already named, 1397 without a row, 244 inside a wider row and 50 on unnamed rows. It also gives each dump value against the record's range and a word-overlap score against the current name.
+- **The audit.** `firmware/scripts/e2m_name_audit.py` (tested) resolves every scalar e2m record through the parameter ID table and reports the row at its address. Of the 4691 records, after wave 12, 3388 are named, 776 have no row, 477 sit inside a wider row and 50 are on unnamed rows. (The first run gave struct instances zero width; struct sizes are counted now, and none of the 383 new rows overlaps a struct.) It also gives each dump value against the record's range and a word-overlap score against the current name.
 - **Rename wave 12.** 398 records had no name, a code reference and an in-range dump value. Six read-only agents each took a bin of whole blocks, named each record from the e2m, checked its code use and access width, and rejected layout drift.
   - **Verdicts:** 384 confirmed, 6 uncertain, 8 rejected.
   - **Drift:** the labelled e2m is 11.45 and the truck runs 11.46.06. Five blocks shifted, and in each case the code confirmed the table's block, not the e2m offset.

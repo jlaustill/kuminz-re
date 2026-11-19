@@ -26,6 +26,10 @@ check("width: scalar", m.width("word"), 2)
 check("width: array", m.width("word[17]"), 34)
 check("width: byte array", m.width("byte[5]"), 5)
 check("width: struct (unknown)", m.width("ema_filter_state_t"), 0)
+m.STRUCT_SIZES["ema_filter_state_t"] = 8
+check("width: struct (known)", m.width("ema_filter_state_t"), 8)
+check("width: struct array", m.width("ema_filter_state_t[3]"), 24)
+m.STRUCT_SIZES.clear()
 
 print("\n".join(failures) if failures else "ALL PASS")
 sys.exit(1 if failures else 0)

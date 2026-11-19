@@ -51,6 +51,7 @@ reversed5.cpp
 reversed5b.cpp
 reversed6a.cpp
 reversed6b.cpp
+stage7/audit_after.csv
 stage7/pre7.cpp
 stage7/pre7_canon.cpp
 stage7/reversed7.cpp

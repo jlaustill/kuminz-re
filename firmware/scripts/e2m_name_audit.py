@@ -4,7 +4,7 @@
 For every scalar e2m record (type N) whose block the table holds, the record's address is table[block] + offset
 (e2m_block_addresses.py). This reports, per record:
 - the row there: `named` / `unnamed` (a row starts at the address), `inside` (a wider row - a struct, an array or a
-  dword - starts earlier and covers it) or `none`;
+  dword - starts earlier and covers it; struct sizes come from structure_definitions.csv) or `none`;
 - the row's name and type, and the label the .cpp renders (the name, or DAT_<addr>) with its reference count;
 - the e2m size (column 8, bytes) against the row's width;
 - the dump value at the e2m size and signedness (the RAM dump; flash addresses from the ROM image) and whether
@@ -77,11 +77,28 @@ def load_rows(path):
     return rows
 
 
+STRUCT_SIZES = {}
+
+
+def load_struct_sizes(path):
+    """Struct type -> byte size, from structure_definitions.csv (the sum of each field's size column; a bitfield
+    packed into the same unit has size 0)."""
+    sizes = {}
+    for parts in csv.reader(open(path, errors="replace")):
+        if len(parts) < 5 or not parts[0] or parts[0].startswith("#") or parts[0] == "struct_name":
+            continue
+        try:
+            sizes[parts[0]] = sizes.get(parts[0], 0) + int(parts[4] or 0)
+        except ValueError:
+            pass
+    return sizes
+
+
 def width(typ):
     m = re.match(r"(\w+)\s*\[(\d+)\]$", typ)
     if m:
-        return SIZES.get(m.group(1), 2) * int(m.group(2))
-    return SIZES.get(typ, 0)
+        return (SIZES.get(m.group(1)) or STRUCT_SIZES.get(m.group(1)) or 2) * int(m.group(2))
+    return SIZES.get(typ) or STRUCT_SIZES.get(typ, 0)
 
 
 def main(argv):
@@ -90,6 +107,7 @@ def main(argv):
     parser.add_argument("--summary", action="store_true")
     args = parser.parse_args(argv)
     table = table_tool.parse_table(open(table_tool.DEFAULTS["flash2"], "rb").read())
+    STRUCT_SIZES.update(load_struct_sizes(os.path.join(CM848, "output", "structure_definitions.csv")))
     rows = load_rows(table_tool.DEFAULTS["globals"])
     starts = {a: (n, t) for a, n, t in rows}
     spans = sorted((a, a + max(width(t), 1), n, t) for a, n, t in rows)
