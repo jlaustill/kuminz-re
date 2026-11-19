@@ -157,13 +157,72 @@ Kept on purpose:
 - The `fuel_flow_rpm_*` drivetrain ratio words.
 - The limiter functions of the unidentified codes.
 
+## Stage 4 - the e2m labels, the engine state, the power take-off governor, the limiters (2026-11-19, PR #52)
+
+Two read-only agents did the reading: the engine state, and the 0x2a2d0-0x2bed4 cluster. Their key claims were checked
+here before anything was applied.
+
+- **The labels.** `e2m-analysis/CHR/CHR_CC_11.45.01.07.e2m` is a Chrysler calibration; the truck runs V11.46.06. It
+  gives Cummins' value labels with HEX keys:
+  - `Fueling_Control_State` / `User_Fueling_State` 00-3D;
+  - `Engine_State` 1-8;
+  - the `[PTST]` description.
+
+  **Correction:** `29=ATDERAT` is 0x29 = 41, the anti-theft derate, which is `FUELING_STATE_IMMOBILIZER_FUEL_DISABLE`.
+  0x1D = 29 is EPFDERAT, the fault derate. The stage 2 notes "CM848 numbers its limiters differently above 12 / e2m 29
+  ATDERAT" were a decimal misread.
+- **`FUELING_STATE`.**
+  - Every member comment quotes its label.
+  - Renamed to the labels: 13 `TORQUE_DERATE_OVERRIDE` (TRQDROVR), 19 `MAXIMUM_THROTTLE` (MAXTHROT), 22 `CRANKING`
+    (CRANK), 28 `FUEL_SYSTEM_DERATE` (FSSDERAT).
+  - Named: 15 `ALTITUDE_DERATE`, 16 `AIR_FUEL_CONTROL_DERATE`, 24 `ENGINE_BRAKE`, 25 `OVERSPEED`, 27 `SHUTDOWN`, 34
+    `POWER_TAKE_OFF_DERATE`, 40 `NO_DERATE`, 42 `FUEL_LIMIT_BY_RPM_AND_DEMAND` (label PTTHLM; the code shows only a
+    variable-speed-governor limit by engine speed and accelerator demand), 46 `COOLANT_OVERHEAT_DERATE` (CTDERAT), 47
+    `FREE_ACCELERATION`, 59 `NET_TORQUE`.
+  - Still `UNIDENTIFIED`, with their labels in the comments: 32 MSOVRIDE, 37 T2SPD, 38 T2TORQ, 49 OFCSTATE, 50 AFRSTATE.
+  - Code 15 is the altitude derate: the engine speed x barometric pressure grids for cool / hot ambient air. The
+    air handling faults only switch it to a fault grid. An earlier note read the fault path as the whole function.
+- **`ENGINE_STATE`** (was `COLD_START_PHASE`).
+  - `cold_start_phase` → `engine_state` (Cummins FSEGST). Its transitions were checked in `cm848_updateEngineState`
+    (was `mpc555_processColdStartMainLoop`).
+  - Block 1068 lines up 7/7 with sizes: `power_down_start_flag` (was `hardware_operation_complete_flag`; it ends the
+    main loop), `ecm_power_down_timer` (was `governor_speed_engage_count`), `engine_state_crank_time` / `_run_time`,
+    `engine_is_active_flag` / `engine_is_starting_flag`.
+  - The five `engine_state_prev_*` words share the type.
+- **The power take-off governor, now code-proven.**
+  - J1939 CCVS1 sends `power_take_off_governor_j1939_state` as SPN 976, the PTO governor state. The enum
+    `POWER_TAKE_OFF_GOVERNOR_J1939_STATE` uses the J1939-71 values.
+  - OBD-II PID 0x1E sends `power_take_off_governor_active_flag` | switch 3.
+  - `power_take_off_governor_state` uses `POWER_TAKE_OFF_GOVERNOR_STATE` (e2m PTST 0 remote count / 1 remote run / 2
+    wait / 3 normal).
+  - 10 functions renamed (`cm848_runPowerTakeOffGovernorStateMachine`, `cm848_runPowerTakeOffGovernorPid`,
+    `cm848_applyPowerTakeOffTorqueLimit` ...).
+  - The dword at 0x3fd89a is now two EEPROM words: `power_take_off_remote_switch_mode_cal` and
+    `power_take_off_throttle_override_maximum_engine_speed_cal` (28000 = 3500 rpm).
+  - `j1939_governor_feature_byte` (EEPROM 0x480) is 0 on this truck, so the governor never engages. The RAM dump reads
+    WAIT.
+- **The limiter families renamed:**
+  - the altitude derate: `cm848_calculateAltitudeDerateFuelLimit` / `cm848_applyAltitudeDerateFuelLimit`;
+  - the air fuel control limit: `cm848_calculateAirFuelControlFuelLimit`, `air_fuel_control_fuel_limit`;
+  - the net torque limit: `cm848_calculateNetTorqueFuelLimit`;
+  - the fuel limit by rpm and demand: `cm848_calculateFuelLimitByRpmAndDemand`, with its axes and blend words;
+  - the coolant overheat derate: `cm848_runCoolantOverheatFuelDerate` and 6 more functions, 14 words and the two
+    tables. These were the "unidentified `fuel_coldStart_*` helpers".
+
 ## Follow-ups (open)
 
-- [ ] **Name the `FUELING_STATE_UNIDENTIFIED_<n>` codes:**
-  - each limiter input: 15 `fuel_correction_upper_limit`, 16 `fuel_demand_load_based`, 32 `fuel_demand_arbitrated_a`,
-    42 `protection_fuel_limit_working`, 46 `cold_start_fuel_demand_ramp_output`, 59 `fuel_demand_rate_output`;
-  - 34 / 40 (the `governor_fuel_limit_cap` path);
-  - 24 / 25 / 27: the `COLD_START_PHASE` members 4 / 5 / 8 disagree with their own comments, so name the phases first.
+- [ ] **Name the last `FUELING_STATE_UNIDENTIFIED_<n>` codes:**
+  - 32 MSOVRIDE: its two words have no writer;
+  - 37 T2SPD / 38 T2TORQ: only compared, next to the TSC1 modes;
+  - 49 OFCSTATE / 50 AFRSTATE: only compared.
+- [ ] **Agent leads not applied yet:**
+  - power take-off: the `power_take_off_governor_t` struct over 0x40af28-0x40af41 (e2m block 10AB), the speed
+    calibrations (e2m block 11B4: the `governor_rpm_ref_target_*` remote speeds, set / resume, ramp rates), the four
+    `governor_integrator_*` / `protection_rpm_*` misnames, and the six helper functions 2abc8 / 2ad28 / 2ad48 / 2bd38 /
+    2bd58 / 2bed4;
+  - engine state: `engine_starting` reads as a protection-shutdown latch and `engine_shutdown_active_flag` as a key-off
+    suppression; both names may be backwards. The remaining `cold_start_*` words of the crank routine (e2m blocks 105E
+    / 105F).
 - [ ] **CM550:** type FSGVFLST (0x0080a8f2) and the 13-41 word (0x0080deca) with a shared enum. CM550's own
   `ENGINE_OPERATING_MODE` (ENGINE_IDLE ...) and `FUEL_SOURCE_ID` (0x09 governor low / 0x0A high / 0x0B diagnostic)
   contradict the CM848 code: guesses to replace, not to reuse.

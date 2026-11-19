@@ -108,7 +108,7 @@ address,reason
 0x0003c928,mid-function split inside cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures +0x3c (was hpcr_processVoltageProtectionState)
 0x0003caec,mid-function split inside cm848_buildPciTransmitMessage17FaultBits +0x3c (was cm848_evaluateVoltageThresholds)
 0x0003cc10,mid-function split inside cm848_buildPciTransmitMessage16AirConditioningPressure +0x3c (was cm848_storePressureConversionResult)
-0x0003ccd4,mid-function split inside cm848_calculateFuelDemandLimit +0x20 (was cm848_calculateFuelDemandLimitState)
+0x0003ccd4,mid-function split inside cm848_calculateNetTorqueFuelLimit +0x20 (was cm848_calculateFuelDemandLimitState)
 0x0003e914,mid-function split inside cm848_sciCallbackTimeout +0x3c (was cm848_sciRestoreDefaultCallback)
 0x0003e974,mid-function split inside cm848_monitorConverterSlipAndEngineSpeedLimit +0x8 (was cm848_calculateTorqueLimitType1)
 0x0003e984,mid-function split inside cm848_monitorConverterSlipAndEngineSpeedLimit +0x18 (was cm848_calculateTorqueLimits)
