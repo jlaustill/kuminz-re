@@ -244,8 +244,8 @@ engine_speed_limit_arbitration_t,0x0040a2f8,lowest_source_speed_limit,word,2,Low
 # Operating Mode Governor Output - the fuel demand of the engine operating mode governor as the output stages see it
 # Written by cm848_runOperatingModeSpeedGovernor and cm848_updateGovernorFromProtection (was governor_pid_t: nothing in it is a PID term)
 # Total size: 4 bytes (0x0040af5a-0x0040af5d)
-operating_mode_governor_output_t,0x0040af5a,fuel_demand,word,2,Fuel demand of the engine operating mode governor as the output stages see it (engine_operating_mode_fuel_demand or the protection limit) (was proportional_gain),,verified
-operating_mode_governor_output_t,0x0040af5a,mode_code,word,2,Copy of engine_operating_mode (1 2 5 6 7 8 30 37 38) or 4 when the output is replaced by the limit in cm848_updateGovernorFromProtection (was integral_term),,verified
+operating_mode_governor_output_t,0x0040af5a,fuel_demand,word,2,Fuel demand of the engine operating mode governor as the output stages see it: engine_operating_mode_fuel_demand or governor_fuel_demand_command (the power take-off fuel - Cummins PTSLFL per e2m block 1265 +4) (was proportional_gain),,verified
+operating_mode_governor_output_t,0x0040af5a,mode_code,FUELING_STATE,2,The user fueling state after the power take-off selection (Cummins PTSLFLST per e2m block 1265 +6 - 1-8): engine_operating_mode (1 2 5 6 7 8 30 37 38) or FUELING_STATE_POWER_TAKE_OFF when cm848_updateGovernorFromProtection lets governor_fuel_demand_command replace the fuel (was integral_term),,verified
 # Protection Lockout State - thermal/load/rpm lockout flags
 # Used by protection system to prevent rapid cycling
 # Total size: 12 bytes (0x0040b11c-0x0040b127)

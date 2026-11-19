@@ -101,15 +101,20 @@ typedef enum {
 } PROTECTION_OVERRIDE;
 
 typedef enum {
-    ENGINE_OPERATING_MODE_NOT_SELECTED = 0,  /* Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) */
-    ENGINE_OPERATING_MODE_TSC1_TORQUE_CONTROL = 1,  /* cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is etc1_torque_limit_calc */
-    ENGINE_OPERATING_MODE_TSC1_SPEED_CONTROL = 2,  /* cm848_engineMode_reset: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record */
-    ENGINE_OPERATING_MODE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_setEngineOperatingMode5: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified */
-    ENGINE_OPERATING_MODE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 */
-    ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_initEngineOperatingMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) */
-    ENGINE_OPERATING_MODE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) */
-    ENGINE_OPERATING_MODE_ALL_SPEED_GOVERNOR_RESTORE = 30  /* cm848_restoreEngineOperatingMode: engine_operating_mode_restore_valid_flag nonzero; loads the restore record 0x40a216-0x40a246 (never set in this build and RAM is zeroed at every start) */
-} ENGINE_OPERATING_MODE;
+    FUELING_STATE_NOT_SELECTED = 0,  /* Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) */
+    FUELING_STATE_TSC1_TORQUE_CONTROL = 1,  /* cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is etc1_torque_limit_calc */
+    FUELING_STATE_TSC1_SPEED_CONTROL = 2,  /* cm848_engineMode_reset: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record */
+    FUELING_STATE_POWER_TAKE_OFF = 4,  /* operating_mode_governor_output.mode_code only (cm848_updateGovernorFromProtection): governor_fuel_demand_command (another speed governor - the PID of cm848_calculateProtectionLoadCompensation) replaces the user fueling while governor_fuel_active_flag is 1 and j1939_governor_feature_cal bit 0x10 is set (modes 5 / 6 always; 7 / 8 / 30 unless the user fueling is larger and governor_feature_config_word bit 0x2000 is set). Power take-off is e2m-derived: block 1265 PTTHDQRP / PTTHOV / PTSLFL / PTSLFLST line up with 0x40af56 / 0x40af58 / 0x40af5a / 0x40af5c; the code alone shows only the replacement */
+    FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_setEngineOperatingMode5: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified */
+    FUELING_STATE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 */
+    FUELING_STATE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_initEngineOperatingMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) */
+    FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) */
+    FUELING_STATE_CRUISE_CONTROL = 9,  /* governor_fuel_demand_working_mode only (cm848_calculateProtectionLevelLimit): cruise control is engaged and the cruise PID fuel governor_pid_fuel_output replaces the user fueling; governor_cruise_setpoint_calc and protectionRampRateControl run their cruise branches (cruise_control_state set / resume / accelerate / decelerate) in 9 */
+    FUELING_STATE_VEHICLE_SPEED_LIMIT = 10,  /* governor_fuel_demand_mode (cm848_processProtectionRampControl): the vehicle speed limit fuel cruise_fuel_demand_setpoint (cm848_processProtectionRampTimer: cruise_speed_setpoint_adjusted - the vehicle speed - against cruise_speed_limit_working; no limit while j1939_governor_feature_cal bit 0x80 is clear) is the smallest demand; protectionRampRateControl runs the limit-minus-speed error in 10 */
+    FUELING_STATE_LOW_SPEED_GOVERNOR = 11,  /* governor_fuel_demand_mode (cm848_processProtectionRampControl and the initial value of cm848_initFuelFilterCoefficients): at or below the governor speed the low speed governor asks for more fuel than the selected demand (a max select); only in 11 does cm848_processSpeedGovernorControl write its fuel into governor_fuel_demand_value (e2m FSGVFL: fueling as limited by limiting governors LSG / HSG) and governor_request_active_flag latch. RAM dump: 11 */
+    FUELING_STATE_HIGH_SPEED_GOVERNOR = 12,  /* governor_fuel_demand_mode (cm848_processProtectionRampControl): high_speed_governor_fueling is the smallest demand and becomes governor_fuel_demand_value; runHighSpeedGovernorPid resets its integrator in 12 (the same compare as CM550 0x1ce7c on FSGVFLST) */
+    FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE = 30  /* cm848_restoreEngineOperatingMode: engine_operating_mode_restore_valid_flag nonzero; loads the restore record 0x40a216-0x40a246 (never set in this build and RAM is zeroed at every start) */
+} FUELING_STATE;
 
 typedef enum {
     SPN_51_THROTTLE_PLATE = 51,  /* Throttle Plate Position Sensor */
@@ -1372,8 +1377,8 @@ struct engine_speed_limit_arbitration_t {
 };
 
 struct operating_mode_governor_output_t {
-    uint16_t fuel_demand;  /* Fuel demand of the engine operating mode governor as the output stages see it (engine_operating_mode_fuel_demand or the protection limit) (was proportional_gain) */
-    uint16_t mode_code;  /* Copy of engine_operating_mode (1 2 5 6 7 8 30 37 38) or 4 when the output is replaced by the limit in cm848_updateGovernorFromProtection (was integral_term) */
+    uint16_t fuel_demand;  /* Fuel demand of the engine operating mode governor as the output stages see it: engine_operating_mode_fuel_demand or governor_fuel_demand_command (the power take-off fuel - Cummins PTSLFL per e2m block 1265 +4) (was proportional_gain) */
+    FUELING_STATE mode_code;  /* The user fueling state after the power take-off selection (Cummins PTSLFLST per e2m block 1265 +6 - 1-8): engine_operating_mode (1 2 5 6 7 8 30 37 38) or FUELING_STATE_POWER_TAKE_OFF when cm848_updateGovernorFromProtection lets governor_fuel_demand_command replace the fuel (was integral_term) */
 };
 
 struct protection_lockout_t {

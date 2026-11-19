@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Wed Nov 18 12:03:49 MST 2026
+// Generated: Thu Nov 19 06:50:50 MST 2026
 
 
 //
@@ -9006,7 +9006,7 @@ void cm848_calculateGovernorReferenceSpeedBlend(void)
   uint uVar1;
   
   speed_request_rate_limited_prev = speed_request_rate_limited;
-  if (engine_operating_mode_previous_pass != 7) {
+  if (engine_operating_mode_previous_pass != FUELING_STATE_VARIABLE_SPEED_GOVERNOR) {
     speed_request_rate_limited_prev = (uint)governor_reference_speed_filtered;
   }
   uVar1 = (uint)speed_request_rate_limit_cal;
@@ -9073,9 +9073,9 @@ void cm848_runOperatingModeSpeedGovernor(void)
   uint uVar18;
   word wStack_2e;
   
-  if ((((engine_operating_mode != ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR) &&
-       (engine_operating_mode != ENGINE_OPERATING_MODE_TSC1_SPEED_CONTROL)) &&
-      (engine_operating_mode != ENGINE_OPERATING_MODE_ALL_SPEED_GOVERNOR_RESTORE)) &&
+  if ((((engine_operating_mode != FUELING_STATE_VARIABLE_SPEED_GOVERNOR) &&
+       (engine_operating_mode != FUELING_STATE_TSC1_SPEED_CONTROL)) &&
+      (engine_operating_mode != FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE)) &&
      (engine_operating_mode != 0x25)) {
     engine_operating_mode_previous_pass = engine_operating_mode;
     return;
@@ -9130,7 +9130,7 @@ void cm848_runOperatingModeSpeedGovernor(void)
       iVar16 = 32000;
     }
   }
-  if (engine_operating_mode == ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR) {
+  if (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) {
     cm848_calculateGovernorReferenceSpeedBlend();
     if ((((((switch_input_state_bits[1] & 8) == 0) && ((switch_input_state_bits[0] & 4) == 0)) ||
          (all_speed_governor_reference_slew_brake_inhibit_flag == 0)) &&
@@ -9639,9 +9639,9 @@ void cm848_initFuelDemandVariables(void)
 void cm848_restoreEngineOperatingMode(void)
 
 {
-  if ((engine_operating_mode == ENGINE_OPERATING_MODE_NOT_SELECTED) &&
+  if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
      (engine_operating_mode_restore_valid_flag != 0)) {
-    engine_operating_mode = ENGINE_OPERATING_MODE_ALL_SPEED_GOVERNOR_RESTORE;
+    engine_operating_mode = FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE;
     speed_request_unfiltered = engine_operating_mode_restore_speed_request;
     all_speed_governor_droop_gain_1 = engine_operating_mode_restore_droop_gain_1;
     all_speed_governor_droop_gain_2 = engine_operating_mode_restore_droop_gain_2;
@@ -9705,7 +9705,7 @@ void cm848_calculateAllSpeedGovernorNoLoadFuel(void)
   word wVar3;
   
   wVar2 = speed_request_unfiltered;
-  if (engine_operating_mode == ENGINE_OPERATING_MODE_ALL_SPEED_GOVERNOR_RESTORE) {
+  if (engine_operating_mode == FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE) {
     wVar2 = all_speed_governor_no_load_fuel_reference_speed;
   }
   wVar1 = lookupTableInterpolation
@@ -9876,10 +9876,10 @@ LAB_000100d0:
 void cm848_initEngineOperatingMode(int previous_engine_operating_mode)
 
 {
-  if ((engine_operating_mode == ENGINE_OPERATING_MODE_NOT_SELECTED) &&
+  if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
      (variable_speed_governor_selected_flag == 1)) {
     cm848_blendGovernorTuningSets();
-    engine_operating_mode = ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR;
+    engine_operating_mode = FUELING_STATE_VARIABLE_SPEED_GOVERNOR;
     cm848_calculateFuelTimingTarget();
     cm848_emptyStubFunction6();
     cm848_calculateGovernorCompensatorCoefficients();
@@ -19444,7 +19444,7 @@ void cm848_calculateProtectionRateLimited(void)
 void cm848_processProtectionSelection(void)
 
 {
-  word wVar1;
+  FUELING_STATE FVar1;
   
   if ((governor_feature_flags & 0x10) == 0) {
     governor_fuel_limit_cap = 0xffff;
@@ -19458,34 +19458,34 @@ void cm848_processProtectionSelection(void)
   }
   if (governor_fuel_demand_value < torque_derate_fuel_quantity) {
     fuel_demand_arbitration_working = governor_fuel_demand_value;
-    wVar1 = governor_fuel_demand_mode;
+    FVar1 = governor_fuel_demand_mode;
   }
   else {
     fuel_demand_arbitration_working = torque_derate_fuel_quantity;
-    wVar1 = torque_derate_fuel_source_code;
+    FVar1 = torque_derate_fuel_source_code;
   }
-  governor_fuel_mode_arbitrated = wVar1;
+  governor_fuel_mode_arbitrated = FVar1;
   if (torque_derate_fuel_source_code == 0xd) {
     fuel_demand_arbitrated = fuel_demand_arbitration_working;
-    governor_fuel_mode_prev = wVar1;
+    governor_fuel_mode_prev = FVar1;
     goto LAB_0001e768;
   }
   if ((fuel_limit_mode_active_flag._0_2_ == 1) && (fuel_limit_secondary_flag == 1)) {
     if (fuel_demand_arbitrated_a < fuel_demand_minimum_tracked) {
       fuel_demand_arbitrated = fuel_demand_arbitrated_a;
-      wVar1 = 0x20;
+      FVar1 = 0x20;
     }
     else {
       fuel_demand_arbitrated = fuel_demand_minimum_tracked;
-      wVar1 = governor_fuel_mode_input;
+      FVar1 = governor_fuel_mode_input;
     }
 LAB_0001e744:
-    governor_fuel_mode_prev = wVar1;
+    governor_fuel_mode_prev = FVar1;
   }
   else if ((fuel_limit_mode_active_flag._0_2_ == 0) || (fuel_limit_secondary_flag == 0)) {
     if (fuel_demand_arbitration_working < fuel_demand_minimum_tracked) {
       fuel_demand_arbitrated = fuel_demand_arbitration_working;
-      governor_fuel_mode_prev = wVar1;
+      governor_fuel_mode_prev = FVar1;
     }
     else {
       fuel_demand_arbitrated = fuel_demand_minimum_tracked;
@@ -19498,7 +19498,8 @@ LAB_0001e744:
     torque_derate_fuel_source_code = governor_fuel_mode_input;
   }
 LAB_0001e768:
-  if (((governor_fuel_demand_mode == 0xb) && (torque_derate_fuel_source_code == 0x14)) &&
+  if (((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
+      (torque_derate_fuel_source_code == 0x14)) &&
      (torque_derate_fuel_quantity <= fuel_demand_minimum_tracked)) {
     fuel_demand_arbitrated = governor_fuel_demand_value;
     governor_fuel_mode_prev = 0xb;
@@ -19526,8 +19527,8 @@ LAB_0001e768:
 void cm848_initEngineOperatingState(void)
 
 {
-  if (engine_operating_mode == ENGINE_OPERATING_MODE_NOT_SELECTED) {
-    engine_operating_mode = ENGINE_OPERATING_MODE_DUAL_AXIS_FUEL_DEMAND_TABLE;
+  if (engine_operating_mode == FUELING_STATE_NOT_SELECTED) {
+    engine_operating_mode = FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE;
   }
   return;
 }
@@ -19541,7 +19542,7 @@ void cm848_initEngineOperatingState(void)
 void cm848_updateEngineTimingCompensation(void)
 
 {
-  if (engine_operating_mode == ENGINE_OPERATING_MODE_DUAL_AXIS_FUEL_DEMAND_TABLE) {
+  if (engine_operating_mode == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE) {
     governor_proportional_gain_calc = cm848_calculateDualAxisFuelLimit();
     engine_operating_mode_fuel_demand = governor_proportional_gain_calc;
   }
@@ -20132,7 +20133,7 @@ void runHighSpeedGovernorPid(void)
              (int)(short)high_speed_governor_integrator_reset_speed_offset) <
         (int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) &&
       (governor_fuel_demand_value < high_speed_governor_integrator_reset_fuel_demand_threshold)) &&
-     (governor_fuel_demand_mode == 0xc)) {
+     (governor_fuel_demand_mode == FUELING_STATE_HIGH_SPEED_GOVERNOR)) {
     high_speed_governor_integrator = (uint)high_speed_governor_integrator_reset_value << 0x10;
     high_speed_governor_integral_term = high_speed_governor_integrator_reset_value;
     high_speed_governor_filtered_error = 0;
@@ -20826,7 +20827,7 @@ uint cm848_calculateEffectiveFuelLimit(void)
   if (((engine_feature_enable_flags_cal & 0x800) == 0) || (torque_derate_fuel_source_code == 0x14))
   {
     uVar2 = governor_reference_speed_filtered - uVar2;
-    if (engine_operating_mode == ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR) {
+    if (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) {
       all_speed_governor_droop_snapshot = all_speed_governor_droop;
     }
     uVar5 = (uint)all_speed_governor_droop_snapshot;
@@ -20890,23 +20891,29 @@ void cm848_calculateDriverDemandPercentTorque(void)
     wVar2 = cm848_calculateEffectiveFuelLimit();
   }
   wVar1 = governor_fuel_demand_value;
-  if (((((((governor_fuel_demand_mode != 5) &&
-          (wVar1 = governor_fuel_demand_value, governor_fuel_demand_mode != 9)) &&
-         (wVar1 = governor_fuel_demand_value, governor_fuel_demand_mode != 6)) &&
-        ((wVar1 = governor_fuel_demand_value, governor_fuel_demand_mode != 10 &&
-         (wVar1 = governor_fuel_demand_value, governor_fuel_demand_mode != 4)))) &&
-       ((wVar1 = wVar2, governor_fuel_demand_mode != 8 &&
-        ((governor_fuel_demand_mode != 7 &&
-         (wVar1 = driver_demand_fuel_quantity, operating_mode_governor_output.mode_code != 1))))))
-      && (operating_mode_governor_output.mode_code != 2)) &&
+  if (((((((governor_fuel_demand_mode != FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND) &&
+          (wVar1 = governor_fuel_demand_value,
+          governor_fuel_demand_mode != FUELING_STATE_CRUISE_CONTROL)) &&
+         (wVar1 = governor_fuel_demand_value,
+         governor_fuel_demand_mode != FUELING_STATE_ACCELERATOR_PEDAL_FAULT)) &&
+        ((wVar1 = governor_fuel_demand_value,
+         governor_fuel_demand_mode != FUELING_STATE_VEHICLE_SPEED_LIMIT &&
+         (wVar1 = governor_fuel_demand_value,
+         governor_fuel_demand_mode != FUELING_STATE_POWER_TAKE_OFF)))) &&
+       ((wVar1 = wVar2, governor_fuel_demand_mode != FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE &&
+        ((governor_fuel_demand_mode != FUELING_STATE_VARIABLE_SPEED_GOVERNOR &&
+         (wVar1 = driver_demand_fuel_quantity,
+         operating_mode_governor_output.mode_code != FUELING_STATE_TSC1_TORQUE_CONTROL)))))) &&
+      (operating_mode_governor_output.mode_code != FUELING_STATE_TSC1_SPEED_CONTROL)) &&
      ((operating_mode_governor_output.mode_code != 0x25 &&
       (operating_mode_governor_output.mode_code != 0x26)))) {
-    if ((governor_fuel_demand_mode == 0xb) ||
-       ((governor_fuel_demand_mode == 0xc &&
+    if ((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) ||
+       ((governor_fuel_demand_mode == FUELING_STATE_HIGH_SPEED_GOVERNOR &&
         ((governor_fuel_demand_value < operating_mode_governor_output.fuel_demand ||
          (cruise_control_engaged_flag == 0)))))) {
-      if ((operating_mode_governor_output.mode_code == 6) ||
-         (wVar1 = wVar2, operating_mode_governor_output.mode_code == 4)) {
+      if ((operating_mode_governor_output.mode_code == FUELING_STATE_ACCELERATOR_PEDAL_FAULT) ||
+         (wVar1 = wVar2, operating_mode_governor_output.mode_code == FUELING_STATE_POWER_TAKE_OFF))
+      {
         wVar1 = operating_mode_governor_output.fuel_demand;
       }
     }
@@ -26353,7 +26360,7 @@ LAB_000284d4:
       wStack_4e = (word)iVar6;
     }
     governor_fuel_demand_upper_working = wStack_4e;
-    if (governor_fuel_demand_mode == 0xb) {
+    if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
       governor_fuel_demand_value = wStack_4e;
     }
   }
@@ -26414,7 +26421,8 @@ void cm848_processGovernorLoadCondition(void)
   int iVar1;
   word wVar2;
   
-  if (((governor_feature_flags & 0x1000) != 0) && (governor_fuel_demand_mode == 0xb)) {
+  if (((governor_feature_flags & 0x1000) != 0) &&
+     (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR)) {
     if (((governor_cold_start_load_timer == 0) &&
         (cold_start_phase == COLD_START_PHASE_AT_GOVERNOR_SETPOINT)) ||
        ((governor_cold_start_load_timer != 0 &&
@@ -26755,7 +26763,7 @@ void cm848_updateSpeedLimitFromCoolant(void)
   }
   if (((governor_speed_disengage_timer_limit != 0) &&
       (iVar3 < (short)governor_disengage_timer_threshold_cal)) &&
-     ((governor_fuel_demand_mode == 0xb &&
+     ((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR &&
       (cold_start_phase == COLD_START_PHASE_AT_GOVERNOR_SETPOINT)))) {
     governor_speed_disengage_timer = governor_speed_disengage_timer + 1;
   }
@@ -26769,7 +26777,7 @@ void cm848_updateSpeedLimitFromCoolant(void)
   }
   iVar2 = (int)(short)governor_speed_limit_threshold_cal;
   if (governor_speed_limit_count_cal != 0) {
-    if (((iVar2 <= iVar3) && (governor_fuel_demand_mode == 0xb)) &&
+    if (((iVar2 <= iVar3) && (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR)) &&
        (cold_start_phase == COLD_START_PHASE_AT_GOVERNOR_SETPOINT)) {
       governor_speed_limit_count = governor_speed_limit_count + 1;
     }
@@ -26784,7 +26792,7 @@ void cm848_updateSpeedLimitFromCoolant(void)
     }
   }
   if (((governor_speed_engage_timer_limit != 0) && (iVar2 <= iVar3)) &&
-     ((governor_fuel_demand_mode == 0xb &&
+     ((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR &&
       ((cold_start_phase == COLD_START_PHASE_AT_GOVERNOR_SETPOINT &&
        (governor_output_t_0040aec2.idle_reference_speed == governor_speed_limit_cal)))))) {
     governor_speed_engage_timer = governor_speed_engage_timer + 1;
@@ -26826,7 +26834,7 @@ void cm848_calculateProtectionSpeedLimits(void)
   if ((switch_input_state_bits[1] & 0x20) == 0) {
     governor_speed_limit_cal_b = 0;
   }
-  if (((((governor_fuel_demand_mode == 0xb) &&
+  if (((((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
         (cold_start_phase == COLD_START_PHASE_AT_GOVERNOR_SETPOINT)) &&
        (transmission_park_or_neutral_flag != 0)) &&
       (((short)battery_temperature_sensor_filtered <
@@ -26908,7 +26916,7 @@ void cm848_calculateProtectionSpeedLimits(void)
            governor_speed_setpoint_snapshot - governor_cold_start_band_cal;
     }
   }
-  if (((((governor_fuel_demand_mode != 0xb) ||
+  if (((((governor_fuel_demand_mode != FUELING_STATE_LOW_SPEED_GOVERNOR) ||
         (cold_start_phase != COLD_START_PHASE_AT_GOVERNOR_SETPOINT)) ||
        (((transmission_park_or_neutral_flag == 0 ||
          (((switch_input_state_bits[1] & 8) != 0 || ((switch_input_state_bits[0] & 4) != 0)))) ||
@@ -26922,7 +26930,8 @@ void cm848_calculateProtectionSpeedLimits(void)
   if (governor_speed_limit_enable_flag == 0) {
     governor_speed_limit_mode = 0;
   }
-  else if ((((((protection_feature_flags & 0x10) == 0) || (governor_fuel_demand_mode != 0xb)) ||
+  else if ((((((protection_feature_flags & 0x10) == 0) ||
+             (governor_fuel_demand_mode != FUELING_STATE_LOW_SPEED_GOVERNOR)) ||
             (cold_start_phase != COLD_START_PHASE_AT_GOVERNOR_SETPOINT)) ||
            ((transmission_park_or_neutral_flag == 0 || ((switch_input_state_bits[1] & 8) != 0)))) ||
           ((((switch_input_state_bits[0] & 4) != 0 ||
@@ -28234,16 +28243,16 @@ void cm848_initProtectionEvalState(void)
 void cm848_updateGovernorFromProtection(void)
 
 {
-  if ((((engine_operating_mode == ENGINE_OPERATING_MODE_TSC1_TORQUE_CONTROL) ||
-       (engine_operating_mode == ENGINE_OPERATING_MODE_TSC1_SPEED_CONTROL)) ||
+  if ((((engine_operating_mode == FUELING_STATE_TSC1_TORQUE_CONTROL) ||
+       (engine_operating_mode == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
       (engine_operating_mode == 0x25)) || (engine_operating_mode == 0x26)) {
     operating_mode_governor_output.mode_code = engine_operating_mode;
     operating_mode_governor_output.fuel_demand = engine_operating_mode_fuel_demand;
   }
   else if ((governor_fuel_active_flag == 1) && ((j1939_governor_feature_cal & 0x10) != 0)) {
-    if (((engine_operating_mode == ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR) ||
-        (engine_operating_mode == ENGINE_OPERATING_MODE_ALL_SPEED_GOVERNOR_RESTORE)) ||
-       (engine_operating_mode == ENGINE_OPERATING_MODE_DUAL_AXIS_FUEL_DEMAND_TABLE)) {
+    if (((engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) ||
+        (engine_operating_mode == FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE)) ||
+       (engine_operating_mode == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)) {
       if ((governor_fuel_demand_command <= engine_operating_mode_fuel_demand) &&
          ((governor_feature_config_word & 0x2000) != 0)) {
         governor_fuel_idle_limit = protection_override_active_flag._2_2_;
@@ -28253,15 +28262,15 @@ void cm848_updateGovernorFromProtection(void)
         return;
       }
       operating_mode_governor_output.fuel_demand = governor_fuel_demand_command;
-      operating_mode_governor_output.mode_code = 4;
+      operating_mode_governor_output.mode_code = FUELING_STATE_POWER_TAKE_OFF;
     }
     else {
-      if ((engine_operating_mode != ENGINE_OPERATING_MODE_ACCELERATOR_PEDAL_FAULT) &&
-         (engine_operating_mode != ENGINE_OPERATING_MODE_CALIBRATED_FIXED_FUEL_DEMAND)) {
+      if ((engine_operating_mode != FUELING_STATE_ACCELERATOR_PEDAL_FAULT) &&
+         (engine_operating_mode != FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND)) {
         return;
       }
       operating_mode_governor_output.fuel_demand = governor_fuel_demand_command;
-      operating_mode_governor_output.mode_code = 4;
+      operating_mode_governor_output.mode_code = FUELING_STATE_POWER_TAKE_OFF;
     }
   }
   else {
@@ -41851,78 +41860,82 @@ void cm848_checkDiagnosticFuelOverride(void)
 void cm848_processProtectionRampControl(void)
 
 {
-  word wVar1;
+  FUELING_STATE FVar1;
+  word wVar2;
   
   governor_fuel_demand_mode_prev = governor_fuel_demand_mode;
-  governor_pid_integral_working._0_2_ = governor_pid_integral_snapshot;
+  governor_fuel_demand_working_mode_prev = governor_fuel_demand_working_mode;
   cm848_copyProtectionRampValue();
   cm848_calculateGovernorFuelDemandUpperLimit();
   cm848_processGovernorFuelRate();
   cm848_processProtectionRampTimer();
   cm848_calculateProtectionLevelLimit();
   if ((governor_fuel_demand_low_threshold <= governor_fuel_demand_working) ||
-     (wVar1 = governor_pid_integral_snapshot,
+     (FVar1 = governor_fuel_demand_working_mode,
      cruise_fuel_demand_setpoint < governor_fuel_demand_working)) {
     if ((cruise_fuel_demand_setpoint < governor_fuel_demand_working) ||
        (governor_fuel_demand_working < governor_fuel_demand_low_threshold)) {
       if ((governor_fuel_demand_working < governor_fuel_demand_low_threshold) &&
          (cruise_fuel_demand_setpoint < governor_fuel_demand_working)) {
         if ((fuel_demand_computed <= governor_fuel_demand_working) ||
-           (wVar1 = governor_pid_integral_snapshot,
-           operating_mode_governor_output.mode_code != governor_pid_integral_snapshot)) {
-          wVar1 = 10;
+           (FVar1 = governor_fuel_demand_working_mode,
+           operating_mode_governor_output.mode_code != governor_fuel_demand_working_mode)) {
+          FVar1 = FUELING_STATE_VEHICLE_SPEED_LIMIT;
         }
       }
       else {
-        wVar1 = governor_fuel_demand_mode;
+        FVar1 = governor_fuel_demand_mode;
         if ((governor_fuel_demand_low_threshold <= governor_fuel_demand_working) &&
            (cruise_fuel_demand_setpoint < governor_fuel_demand_working)) {
           if ((governor_fuel_demand_low_threshold <= cruise_fuel_demand_setpoint) ||
              (governor_fuel_demand_low_threshold < governor_fuel_demand_value)) goto LAB_00040548;
-          wVar1 = 10;
+          FVar1 = FUELING_STATE_VEHICLE_SPEED_LIMIT;
         }
       }
     }
     else {
 LAB_00040548:
-      wVar1 = 0xc;
+      FVar1 = FUELING_STATE_HIGH_SPEED_GOVERNOR;
     }
   }
-  governor_fuel_demand_mode = wVar1;
-  if ((((governor_fuel_demand_mode_prev == 0xb) ||
+  governor_fuel_demand_mode = FVar1;
+  if ((((governor_fuel_demand_mode_prev == FUELING_STATE_LOW_SPEED_GOVERNOR) ||
        (engine_rpm_state_t_0040b7ac.current_rpm <= governor_speed_demand_working)) &&
       ((governor_fuel_demand_working < governor_fuel_demand_upper ||
        ((j1939_tsc1_override_state.governor_mode == 3 &&
         (j1939_tsc1_override_state.etc1_mode3_torque_limit < governor_fuel_demand_upper)))))) ||
-     (((governor_fuel_demand_mode_prev == 0xb ||
+     (((governor_fuel_demand_mode_prev == FUELING_STATE_LOW_SPEED_GOVERNOR ||
        ((uint)engine_rpm_state_t_0040b7ac.current_rpm <=
         (uint)governor_speed_demand_working + (uint)governor_integrator_deadband_cal)) &&
       (((fuel_demand_control_t_0040a57a.calculated == 0 && (cruise_control_engaged_flag != 1)) &&
-       ((operating_mode_governor_output.mode_code == 7 ||
-        (operating_mode_governor_output.mode_code == 8)))))))) {
-    governor_fuel_demand_mode = 0xb;
+       ((operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR ||
+        (operating_mode_governor_output.mode_code == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE))))))
+     )) {
+    governor_fuel_demand_mode = FUELING_STATE_LOW_SPEED_GOVERNOR;
   }
-  if ((governor_fuel_demand_mode == 9) || (governor_fuel_demand_mode == 10)) {
-    if ((governor_fuel_demand_mode_prev != 9) &&
-       ((governor_fuel_demand_mode_prev != 10 && (governor_pid_integral_working._2_2_ == 0)))) {
+  if ((governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) ||
+     (governor_fuel_demand_mode == FUELING_STATE_VEHICLE_SPEED_LIMIT)) {
+    if ((governor_fuel_demand_mode_prev != FUELING_STATE_CRUISE_CONTROL) &&
+       ((governor_fuel_demand_mode_prev != FUELING_STATE_VEHICLE_SPEED_LIMIT &&
+        (fuel_demand_enable_sync_flag_shadow == 0)))) {
       protectionRampRateControl();
     }
     goto LAB_000406b0;
   }
-  wVar1 = high_speed_governor_fueling;
-  if (governor_fuel_demand_mode != 0xc) {
-    if (governor_fuel_demand_mode == 0xb) {
+  wVar2 = high_speed_governor_fueling;
+  if (governor_fuel_demand_mode != FUELING_STATE_HIGH_SPEED_GOVERNOR) {
+    if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
       if (governor_request_active_flag == 0) {
         cm848_resetSpeedControlTracking();
       }
       goto LAB_000406b0;
     }
-    wVar1 = operating_mode_governor_output.fuel_demand;
+    wVar2 = operating_mode_governor_output.fuel_demand;
     if (operating_mode_governor_output.mode_code != governor_fuel_demand_mode) goto LAB_000406b0;
   }
-  governor_fuel_demand_value = wVar1;
+  governor_fuel_demand_value = wVar2;
 LAB_000406b0:
-  governor_pid_integral_working._2_2_ = fuel_demand_enable_sync_flag;
+  fuel_demand_enable_sync_flag_shadow = fuel_demand_enable_sync_flag;
   if ((fuel_demand_enable_sync_flag_shadow_2 == 1) && (cruise_control_engaged_flag == 0)) {
     fuel_demand_corrected_working = fuel_demand_computed;
   }
@@ -41945,14 +41958,14 @@ LAB_000406b0:
     fuel_demand_corrected_working = 0;
   }
   if ((((governor_fuel_demand_value < fuel_demand_corrected_working) &&
-       (operating_mode_governor_output.mode_code != 2)) &&
-      (operating_mode_governor_output.mode_code != 1)) &&
+       (operating_mode_governor_output.mode_code != FUELING_STATE_TSC1_SPEED_CONTROL)) &&
+      (operating_mode_governor_output.mode_code != FUELING_STATE_TSC1_TORQUE_CONTROL)) &&
      ((operating_mode_governor_output.mode_code != 0x25 &&
       (operating_mode_governor_output.mode_code != 0x26)))) {
     governor_fuel_demand_value = fuel_demand_corrected_working;
   }
   fuel_demand_enable_sync_flag_shadow_2 = cruise_control_engaged_flag;
-  if (governor_fuel_demand_mode == 0xb) {
+  if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
     governor_request_active_flag = 1;
   }
   else if ((int)((uint)governor_speed_demand_working + (int)(short)governor_integrator_offset_cal) <
@@ -41972,7 +41985,7 @@ void cm848_initFuelFilterCoefficients(void)
 
 {
   fuel_demand_corrected_working = 0;
-  governor_fuel_demand_mode = 0xb;
+  governor_fuel_demand_mode = FUELING_STATE_LOW_SPEED_GOVERNOR;
   return;
 }
 
@@ -42126,8 +42139,9 @@ void cm848_cruiseSpeedCommandStateMachine(void)
        (((((governor_mode_code == 0x13 || (governor_mode_code == 0x10)) ||
           ((governor_mode_code == 0x3b ||
            ((governor_mode_code == 0x35 || (governor_mode_code == 0x2d)))))) &&
-         ((governor_fuel_demand_mode == 7 ||
-          ((governor_fuel_demand_mode == 8 || (governor_fuel_demand_mode == 9)))))) &&
+         ((governor_fuel_demand_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR ||
+          ((governor_fuel_demand_mode == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE ||
+           (governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL)))))) &&
         ((uint)cruise_speed_command <
          (uint)cruise_speed_setpoint_adjusted + (uint)cruise_speed_margin_cal)))) {
       cm848_protectionFuelRateRamp(cruise_speed_margin_cal);
@@ -42246,7 +42260,7 @@ void cm848_calculateGovernorFuelDemandUpperLimit(void)
 
 {
   governor_fuel_demand_upper = governor_fuel_demand_upper_working;
-  if (governor_fuel_demand_mode == 0xb) {
+  if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
     governor_fuel_demand_upper = governor_fuel_demand_value + governor_fuel_demand_mode_b_offset_cal
     ;
   }
@@ -42331,8 +42345,8 @@ void cm848_processProtectionRampTimer(void)
   
   if (((((j1939_governor_feature_cal & 0x80) == 0) ||
        ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
-      (operating_mode_governor_output.mode_code == 2)) ||
-     (operating_mode_governor_output.mode_code == 1)) {
+      (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
+     (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) {
     cruise_fuel_demand_setpoint = 0x1700;
     return;
   }
@@ -42388,7 +42402,7 @@ LAB_000410d0:
     }
     cruise_fuel_demand_setpoint = (word)dVar3;
   }
-  if ((governor_fuel_demand_mode == 10) &&
+  if ((governor_fuel_demand_mode == FUELING_STATE_VEHICLE_SPEED_LIMIT) &&
      (governor_fuel_demand_value + 0x3a < (uint)cruise_fuel_demand_setpoint)) {
     if (governor_fuel_demand_value + 0x3a < 0x1701) {
       cruise_fuel_demand_setpoint = governor_fuel_demand_value + 0x3a;
@@ -42419,7 +42433,7 @@ void cm848_calculateProtectionLevelLimit(void)
   }
   uVar1 = governor_pid_fuel_output;
   if (((cruise_control_engaged_flag == 0) || ((uint)governor_override_threshold <= (uVar2 & 0xffff))
-      ) && (governor_fuel_demand_mode == 9)) {
+      ) && (governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL)) {
     uVar1 = governor_fuel_demand_value;
   }
   if ((((cruise_control_engaged_flag == 0) ||
@@ -42427,16 +42441,16 @@ void cm848_calculateProtectionLevelLimit(void)
           (governor_override_fuel_threshold_cal < fuel_demand_control_t_0040a57a.calculated)) &&
          ((cruise_speed_command != cruise_speed_limit_working ||
           (governor_pid_fuel_output != cruise_fuel_demand_setpoint)))) ||
-        ((operating_mode_governor_output.mode_code == 2 ||
-         (operating_mode_governor_output.mode_code == 1)))))) ||
+        ((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL ||
+         (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)))))) ||
       (operating_mode_governor_output.mode_code == 0x25)) ||
      ((operating_mode_governor_output.mode_code == 0x26 ||
-      (operating_mode_governor_output.mode_code == 5)))) {
-    governor_pid_integral_snapshot = operating_mode_governor_output.mode_code;
+      (operating_mode_governor_output.mode_code == FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND)))) {
+    governor_fuel_demand_working_mode = operating_mode_governor_output.mode_code;
     governor_fuel_demand_working = operating_mode_governor_output.fuel_demand;
   }
   else {
-    governor_pid_integral_snapshot = 9;
+    governor_fuel_demand_working_mode = FUELING_STATE_CRUISE_CONTROL;
     governor_fuel_demand_working = governor_pid_fuel_output;
     if (governor_fuel_demand_value <= governor_pid_fuel_output) {
       governor_fuel_demand_working = governor_fuel_demand_value;
@@ -42492,16 +42506,17 @@ void cm848_updateEngineRetarderEnableState(void)
         && (engine_retarder_enter_minimum_engine_speed_warm_oil <
             engine_rpm_state_t_0040b7ac.current_rpm)))) &&
       (uVar1 = cm848_calculateBoostPressure(), uVar1 < engine_retarder_enter_maximum_boost_pressure)
-      ) && ((((((governor_fuel_demand_mode != 0xb && (governor_fuel_demand_mode != 4)) &&
+      ) && ((((((governor_fuel_demand_mode != FUELING_STATE_LOW_SPEED_GOVERNOR &&
+                (governor_fuel_demand_mode != FUELING_STATE_POWER_TAKE_OFF)) &&
                (fuel_demand_computed <= fuel_demand_computed_min_cal)) ||
-              ((governor_fuel_demand_mode == 0xb &&
+              ((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR &&
                (((uint)fuel_demand_computed <= (uint)fuel_demand_computed_min_cal ||
                 (((uint)fuel_demand_computed <=
                   (uint)engine_retarder_fuel_demand_threshold_governor_mode_11 +
                   (uint)fuel_demand_offset_correction &&
                  ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
                   (short)engine_retarder_coolant_temperature_threshold + -0x140)))))))) ||
-             ((governor_fuel_demand_mode == 4 &&
+             ((governor_fuel_demand_mode == FUELING_STATE_POWER_TAKE_OFF &&
               ((((uint)fuel_demand_computed <=
                  (uint)engine_retarder_fuel_demand_threshold_governor_mode_4 +
                  (uint)fuel_demand_offset_correction &&
@@ -42531,17 +42546,18 @@ void cm848_updateEngineRetarderEnableState(void)
             (short)oil_temperature_sensor_filtered &&
            (engine_rpm_state_t_0040b7ac.current_rpm <=
             engine_retarder_exit_engine_speed_warm_oil_cal)))) ||
-      (((governor_fuel_demand_mode != 0xb && (governor_fuel_demand_mode != 4)) &&
+      (((governor_fuel_demand_mode != FUELING_STATE_LOW_SPEED_GOVERNOR &&
+        (governor_fuel_demand_mode != FUELING_STATE_POWER_TAKE_OFF)) &&
        ((fuel_demand_computed_min_cal < governor_fuel_demand_value &&
         (vehicle_speed <= engine_retarder_exit_maximum_vehicle_speed_cal)))))) ||
-     (((governor_fuel_demand_mode == 0xb &&
+     (((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR &&
        (((uint)engine_retarder_fuel_demand_threshold_governor_mode_11 +
          (uint)fuel_demand_offset_correction < (uint)fuel_demand_computed ||
         ((((short)engine_retarder_coolant_temperature_threshold <
            (short)sensor_readings_t_0040baf2.coolant_temp &&
           (vehicle_speed <= engine_retarder_exit_maximum_vehicle_speed_cal)) &&
          ((uint)fuel_demand_computed_min_cal < (uint)fuel_demand_computed)))))) ||
-      (((governor_fuel_demand_mode == 4 &&
+      (((governor_fuel_demand_mode == FUELING_STATE_POWER_TAKE_OFF &&
         ((((uint)engine_retarder_fuel_demand_threshold_governor_mode_4 +
            (uint)fuel_demand_offset_correction < (uint)fuel_demand_computed ||
           (engine_retarder_monitored_rpm_threshold_governor_mode_4 < protection_monitored_rpm)) ||
@@ -43143,7 +43159,7 @@ void cm848_processGovernorSpeedSetpoint(void)
 {
   uint uVar1;
   
-  if (governor_fuel_demand_mode == 0xb) {
+  if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
     if (governor_enabled_flag == 1) {
       if (((short)governor_speed_error_exit_upper_cal < (short)governor_speed_error_delta) ||
          ((short)governor_speed_error_delta < (short)governor_speed_error_exit_lower_cal)) {
@@ -43353,9 +43369,9 @@ void cm848_initializeFuelDemandAndLimitInterpolationStates(void)
 void cm848_setEngineOperatingMode1(void)
 
 {
-  if ((engine_operating_mode == ENGINE_OPERATING_MODE_NOT_SELECTED) &&
+  if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
      (j1939_tsc1_override_state.governor_mode == 2)) {
-    engine_operating_mode = ENGINE_OPERATING_MODE_TSC1_TORQUE_CONTROL;
+    engine_operating_mode = FUELING_STATE_TSC1_TORQUE_CONTROL;
     engine_operating_mode_fuel_demand = j1939_tsc1_override_state.etc1_torque_limit_calc;
   }
   return;
@@ -43370,9 +43386,9 @@ void cm848_setEngineOperatingMode1(void)
 void cm848_setEngineOperatingMode5(void)
 
 {
-  if ((engine_operating_mode == ENGINE_OPERATING_MODE_NOT_SELECTED) &&
+  if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
      ((engine_mode_control_flags & 1) != 0)) {
-    engine_operating_mode = ENGINE_OPERATING_MODE_CALIBRATED_FIXED_FUEL_DEMAND;
+    engine_operating_mode = FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND;
     engine_operating_mode_fuel_demand = governor_proportional_gain_cal;
   }
   return;
@@ -43390,7 +43406,7 @@ void cm848_resetEngineOperatingMode(void)
   int previous_engine_operating_mode;
   
   previous_engine_operating_mode = (int)(short)engine_operating_mode;
-  engine_operating_mode = ENGINE_OPERATING_MODE_NOT_SELECTED;
+  engine_operating_mode = FUELING_STATE_NOT_SELECTED;
   cm848_restoreEngineOperatingMode();
   cm848_setEngineOperatingMode1();
   cm848_engineMode_reset(previous_engine_operating_mode);
@@ -45263,12 +45279,15 @@ void cm848_calculateFuelDemandWithConditions(void)
     return;
   }
   bVar1 = false;
-  if ((((governor_fuel_demand_mode == 7) &&
+  if ((((governor_fuel_demand_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) &&
        ((((fuel_feature_control_flags & 0x10) != 0 || (fuel_demand_pilot_active_flag._0_2_ != 1)) ||
         (fuel_demand_integrator == 0)))) ||
-      ((((governor_fuel_demand_mode == 0xb || (governor_fuel_demand_mode == 2)) ||
-        (governor_fuel_demand_mode == 1)) || (governor_mode_code == 0x14)))) ||
-     ((((governor_fuel_demand_mode == 0xc && (operating_mode_governor_output.mode_code == 7)) &&
+      ((((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR ||
+         (governor_fuel_demand_mode == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
+        (governor_fuel_demand_mode == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
+       (governor_mode_code == 0x14)))) ||
+     ((((governor_fuel_demand_mode == FUELING_STATE_HIGH_SPEED_GOVERNOR &&
+        (operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) &&
        (governor_fuel_demand_value < operating_mode_governor_output.fuel_demand)) ||
       (0x80 < governor_tuning_set_blend_weight)))) {
     if ((fuel_feature_control_flags & 0x10) == 0) {
@@ -48434,7 +48453,7 @@ void cm848_calculateFuel2DTableLookup(void)
 
 {
   if (((injection_timing_enable_flags & 1) != 0) &&
-     (engine_operating_mode == ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR)) {
+     (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) {
     injection_timing_trim_working =
          cm848_dualAxisTableInterpolation
                    (WORD_ARRAY_003fb738,engine_rpm_state_t_0040b7ac.current_rpm,fault_table_entry_5,
@@ -48527,7 +48546,7 @@ void cm848_applyProtectionLimit(void)
 
 {
   if ((((injection_timing_enable_flags & 1) != 0) &&
-      (engine_operating_mode == ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR)) &&
+      (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) &&
      (protection_fuel_limit_working < torque_derate_fuel_quantity)) {
     torque_derate_fuel_quantity = protection_fuel_limit_working;
     torque_derate_fuel_source_code = 0x2a;
@@ -59752,9 +59771,9 @@ void cm848_engineMode_reset(int previous_engine_operating_mode)
 {
   int iVar1;
   
-  if ((engine_operating_mode == ENGINE_OPERATING_MODE_NOT_SELECTED) &&
+  if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
      (j1939_tsc1_override_state.governor_mode == 1)) {
-    engine_operating_mode = ENGINE_OPERATING_MODE_TSC1_SPEED_CONTROL;
+    engine_operating_mode = FUELING_STATE_TSC1_SPEED_CONTROL;
     speed_request_unfiltered = j1939_tsc1_override_state.etc1_capped_speed_target;
     iVar1 = (uint)j1939_tsc1_override_state.etc1_speed_control_mode * 0x12;
     fuel_demand_pid_coeffs = (dword)(&DAT_0005c1d6 + iVar1);
@@ -67589,7 +67608,7 @@ void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void)
   dword dVar2;
   uint uVar3;
   
-  if (engine_operating_mode == ENGINE_OPERATING_MODE_ACCELERATOR_PEDAL_FAULT) {
+  if (engine_operating_mode == FUELING_STATE_ACCELERATOR_PEDAL_FAULT) {
     dVar2 = exponentialMovingAverage
                       ((uint)engine_rpm_state_t_0040b7ac.filtered_rpm,&ema_filter_state_t_003fcbdc);
     pedal_fault_mode_target_speed_filtered = (word)dVar2;
@@ -67661,7 +67680,7 @@ void cm848_transitionEngineOperatingMode(int previous_engine_operating_mode)
   if (DAT_0005c49a == 0) {
     return;
   }
-  if (engine_operating_mode != ENGINE_OPERATING_MODE_NOT_SELECTED) {
+  if (engine_operating_mode != FUELING_STATE_NOT_SELECTED) {
     return;
   }
   if ((sensor_channel_held_value_enable_bits_cal[0] & 0x2000) == 0) {
@@ -67680,7 +67699,7 @@ void cm848_transitionEngineOperatingMode(int previous_engine_operating_mode)
     return;
   }
 LAB_0050db64:
-  engine_operating_mode = ENGINE_OPERATING_MODE_ACCELERATOR_PEDAL_FAULT;
+  engine_operating_mode = FUELING_STATE_ACCELERATOR_PEDAL_FAULT;
   if (previous_engine_operating_mode != 6) {
     fuel_demand_periodSnapshot_save();
   }
@@ -71138,7 +71157,7 @@ LAB_00513154:
   ccvs1_cruise_control_state = 0;
 LAB_00513168:
   if (((ccvs1_cruise_control_state != 0) && (cruise_fuel_demand_hold < fuel_demand_previous)) &&
-     (governor_fuel_demand_mode != 9)) {
+     (governor_fuel_demand_mode != FUELING_STATE_CRUISE_CONTROL)) {
     ccvs1_cruise_control_state = 6;
   }
   cruise_switch_request_raw_previous = cruise_switch_request_raw;
@@ -72401,7 +72420,8 @@ void cm848_runCoolingFanSpeedPid(void)
   cooling_fan_proportional_term_previous = dVar1;
   cooling_fan_proportional_derivative_term =
        cm848_signedFirstOrderFilter((int)(short)iVar4,&cooling_fan_proportional_derivative_filter);
-  if ((((governor_fuel_demand_mode != 0xb) && (cooling_fan_duty_source_code == 8)) &&
+  if ((((governor_fuel_demand_mode != FUELING_STATE_LOW_SPEED_GOVERNOR) &&
+       (cooling_fan_duty_source_code == 8)) &&
       (cooling_fan_air_conditioning_speed_request < cooling_fan_coolant_speed_request)) &&
      ((cooling_fan_intake_speed_request < cooling_fan_coolant_speed_request &&
       (cooling_fan_transmission_speed_request < cooling_fan_coolant_speed_request)))) {
@@ -72459,7 +72479,7 @@ LAB_005155c8:
 void cm848_selectCoolingFanDutySource(void)
 
 {
-  if ((((governor_fuel_demand_mode == 0xb) &&
+  if ((((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
        (fuel_demand_control_t_0040a57a.calculated <= cooling_fan_idle_accelerator_maximum)) &&
       (vehicle_speed <= cooling_fan_idle_vehicle_speed_maximum)) &&
      (engine_rpm_state_t_0040b7ac.current_rpm < cooling_fan_idle_engine_rpm_limit)) {
@@ -81340,7 +81360,7 @@ void cm848_updateTripAndLifetimeCounters(void)
       trip_counters_reset_pending_flag = 0;
     }
     uVar2 = (uint)engine_rpm_state_t_0040b7ac.current_rpm;
-    if (((governor_fuel_demand_mode == 0xb) &&
+    if (((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
         ((int)(governor_output_t_0040aec2.idle_reference_speed - 400) <= (int)uVar2)) &&
        (uVar2 <= governor_output_t_0040aec2.idle_reference_speed + 400)) {
       engine_at_governed_speed_flag = 1;
@@ -82204,12 +82224,13 @@ void governor_cruise_setpoint_calc(int param_1)
   word wStack_e;
   
   cruise_zone_transition_flag = 0;
-  if ((governor_fuel_demand_mode == 9) || (governor_fuel_demand_mode == 10)) {
+  if ((governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) ||
+     (governor_fuel_demand_mode == FUELING_STATE_VEHICLE_SPEED_LIMIT)) {
     cruise_pid_rate_gain_working =
          lookupTableInterpolation
                    (&DAT_003fcffe,fuel_flow_rpm_divisor,WORD_ARRAY_00408e30,WORD_ARRAY_00408e3e,0);
   }
-  if (governor_fuel_demand_mode == 9) {
+  if (governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) {
     if ((((cruise_control_state == CRUISE_SET) || (cruise_control_state == CRUISE_DECELERATE)) ||
         (cruise_control_state == CRUISE_RESUME)) || (cruise_control_state == CRUISE_ACCELERATE)) {
       cruise_deadband_active_flag = 0;
@@ -82227,18 +82248,20 @@ void governor_cruise_setpoint_calc(int param_1)
       }
     }
   }
-  if ((governor_fuel_demand_mode != 9) && (governor_fuel_demand_mode != 10)) {
+  if ((governor_fuel_demand_mode != FUELING_STATE_CRUISE_CONTROL) &&
+     (governor_fuel_demand_mode != FUELING_STATE_VEHICLE_SPEED_LIMIT)) {
     return;
   }
-  if (((cruise_deadband_active_flag == 0) && (governor_fuel_demand_mode == 9)) ||
-     ((governor_fuel_demand_mode == 10 &&
+  if (((cruise_deadband_active_flag == 0) &&
+      (governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL)) ||
+     ((governor_fuel_demand_mode == FUELING_STATE_VEHICLE_SPEED_LIMIT &&
       (((j1939_governor_feature_cal & 0x100) != 0 && (governor_j1939_bypass_flag != 1)))))) {
 LAB_00524934:
     cruise_speed_setpoint_active = 0;
   }
   else if ((int)(uint)cruise_speed_offset_latched < param_1) {
     uVar2 = cruise_ramp_rate_d_working;
-    if (governor_fuel_demand_mode == 9) {
+    if (governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) {
       uVar2 = cruise_ramp_rate_b_working;
     }
     wStack_e = (word)((param_1 - (uint)cruise_speed_offset_latched) * (uint)uVar2 >> 10);
@@ -82251,7 +82274,7 @@ LAB_0052492c:
   else {
     if ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1) goto LAB_00524934;
     wVar6 = cruise_ramp_rate_c_working;
-    if (governor_fuel_demand_mode == 9) {
+    if (governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL) {
       wVar6 = cruise_ramp_rate_a_working;
     }
     wStack_e = (word)(((int)(short)param_1 - (int)(short)governor_cruise_fuel_demand_setpoint) *
@@ -82671,8 +82694,9 @@ LAB_00525398:
     local_10 = (uint)uVar8;
   }
   wVar5 = cruise_fuel_demand_stable_ref;
-  if (((cruise_fuel_demand_mode_prev == 7) || (cruise_fuel_demand_mode_prev == 9)) ||
-     (cruise_fuel_demand_mode_prev == 8)) {
+  if (((cruise_fuel_demand_mode_prev == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) ||
+      (cruise_fuel_demand_mode_prev == FUELING_STATE_CRUISE_CONTROL)) ||
+     (cruise_fuel_demand_mode_prev == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)) {
     if (iVar4 == 10) {
       wVar5 = fuel_demand_computed - DAT_00408e6c;
     }
@@ -82681,7 +82705,8 @@ LAB_0052540c:
     cruise_pid_integrator_q16 = wVar5 - local_10._2_2_;
   }
   else {
-    if (((cruise_fuel_demand_mode_prev == 2) || (cruise_fuel_demand_mode_prev == 1)) ||
+    if (((cruise_fuel_demand_mode_prev == FUELING_STATE_TSC1_SPEED_CONTROL) ||
+        (cruise_fuel_demand_mode_prev == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
        ((cruise_fuel_demand_mode_prev == 0x25 || (cruise_fuel_demand_mode_prev == 0x26))))
     goto LAB_0052540c;
     governor_cruise_fuel_demand_delta = 0;
@@ -82723,7 +82748,7 @@ LAB_005254b0:
 void protectionOutputActuatorControl(void)
 
 {
-  word wVar1;
+  FUELING_STATE FVar1;
   dword dVar2;
   short sVar3;
   uint uVar4;
@@ -82746,7 +82771,7 @@ void protectionOutputActuatorControl(void)
   DAT_003fd044 = (word)dVar2;
   cruise_setpoint_interp_prev =
        cm848_interpolateTableLinearStep(cruise_speed_setpoint_adjusted,&PTR_DAT_003fd022);
-  wVar1 = governor_fuel_demand_mode;
+  FVar1 = governor_fuel_demand_mode;
   iVar8 = (int)(short)(cruise_setpoint_interp_prev - wVar12);
   if (iVar8 < 0x67) {
     if (iVar8 < -0x66) {
@@ -82756,8 +82781,8 @@ void protectionOutputActuatorControl(void)
   else {
     iVar8 = 0x66;
   }
-  if (((((operating_mode_governor_output.mode_code == 2) ||
-        (operating_mode_governor_output.mode_code == 1)) ||
+  if (((((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL) ||
+        (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
        (operating_mode_governor_output.mode_code == 0x25)) ||
       ((operating_mode_governor_output.mode_code == 0x26 || (DAT_00408e72 < iVar8)))) ||
      (iVar8 < -(int)DAT_00408e72)) {
@@ -82788,13 +82813,14 @@ LAB_00525668:
     cruise_ramp_target_prev = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
     cruise_confirm_flag_b = 0;
   }
-  if ((governor_fuel_demand_mode != 9) && (governor_fuel_demand_mode != 10)) goto LAB_00525db0;
+  if ((governor_fuel_demand_mode != FUELING_STATE_CRUISE_CONTROL) &&
+     (governor_fuel_demand_mode != FUELING_STATE_VEHICLE_SPEED_LIMIT)) goto LAB_00525db0;
   if (cruise_confirm_flag_a == 1) {
     protectionRampRateControl();
     goto LAB_00525db0;
   }
   cm848_calculateCruisePidRateGainScale();
-  if (wVar1 == 9) {
+  if (FVar1 == FUELING_STATE_CRUISE_CONTROL) {
     uVar4 = (uint)cruise_speed_command;
     cruise_ramp_target_speed = cruise_speed_command;
     uVar13 = (uint)cruise_ramp_target_prev;
@@ -90611,7 +90637,7 @@ void cm848_checkMisfireMonitorTestConditions(void)
              (uint)misfire_monitor_maximum_engine_speed &&
             (engine_load_at_current_speed_percent <= misfire_monitor_maximum_engine_load)) &&
            (fuel_demand_control_t_0040a57a.calculated < misfire_monitor_maximum_accelerator_demand))
-          && ((governor_fuel_demand_mode == 0xb &&
+          && ((governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR &&
               ((uint)misfire_monitor_idle_reference_speed_previous ==
                (uint)governor_output_t_0040aec2.idle_reference_speed)))))) &&
         ((misfire_monitor_minimum_coolant_temperature <=
@@ -90813,7 +90839,7 @@ void cm848_runMisfireMonitor(void)
             (uint)misfire_monitor_maximum_engine_speed)) &&
           (engine_load_at_current_speed_percent <= misfire_monitor_maximum_engine_load)) &&
          ((fuel_demand_control_t_0040a57a.calculated < misfire_monitor_maximum_accelerator_demand &&
-          (governor_fuel_demand_mode == 0xb)))) {
+          (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR)))) {
         misfire_monitor_disabled_by_fault_flag = 0;
         if ((ushort)(misfire_monitor_idle_pass_count + 1) < misfire_monitor_minimum_idle_pass_count)
         {

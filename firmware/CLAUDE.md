@@ -697,6 +697,25 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - **One expected boot-ROM render:** `mpc555_cmfEraseBlocks` stores the erase interlock word to flash block 0x58000.
     That address is inside `qadc_channel_dispatch_table`, so the store renders as
     `qadc_channel_dispatch_table._558_4_`.
+- **Fueling state enum (2026-11-19, todo 045).** `ENGINE_OPERATING_MODE` is now `FUELING_STATE` (members
+  `FUELING_STATE_*`). It is one numbering for every fueling stage. The Cummins e2m lists number them the same way:
+  FSDSFLST user fueling state 1-8 / 38, FSGVFLST governed state 1-12, FSLMFLST limited state 13-41, FSFNFLST final
+  state 1-41. An e2m state parameter's description ends with its value range (`~1-12`).
+  - **The chain:** `engine_operating_mode` → `operating_mode_governor_output.mode_code` (adds 4, power take-off,
+    e2m-derived) → `governor_fuel_demand_working_mode` (0x40b67c, was `governor_pid_integral_snapshot`; adds 9, cruise
+    control) → `governor_fuel_demand_mode` (0x40a154; adds 10 vehicle speed limit, 11 low speed governor, 12 high
+    speed governor).
+  - **The arbitration:** `cm848_processProtectionRampControl` sets `governor_fuel_demand_mode` to the smallest of the
+    user demand, the high speed governor fuel and the vehicle speed limit fuel. Then the low speed governor wins as a
+    max select at or below its speed.
+  - **One numbering, proved in the code:** `cm848_processProtectionSelection` writes either `governor_fuel_demand_mode`
+    or `torque_derate_fuel_source_code` (13, 20, ...) into `governor_fuel_mode_arbitrated`, as CM550 does into FSLMDSST.
+    The 13-41 codes have no members yet.
+  - **e2m blocks that line up by offset:** block 1045 FSGVFL / FSGVFLST / LSLOFG = 0x40a152 / 0x40a154 / 0x40a156;
+    block 1265 PTTHDQRP / PTTHOV / PTSLFL / PTSLFLST = 0x40af56 / 0x40af58 / 0x40af5a / 0x40af5c.
+  - The dword at 0x3fb526 was two words: `governor_fuel_demand_working_mode_prev` (`sth` @ 0x40474) and
+    `fuel_demand_enable_sync_flag_shadow` (`lhz` @ 0x4064c / `sth` @ 0x406b8).
+  - The 37 / 38 compares and the `(int)(short)` temporary compare in `protectionRampRateControl` still render as numbers.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.
