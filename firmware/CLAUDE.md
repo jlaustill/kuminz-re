@@ -771,6 +771,31 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - 46, the coolant overheat derate: the 0x5139b8-0x513f5c family `cm848_runCoolantOverheatFuelDerate`. These were
       the "unidentified `fuel_coldStart_*` helpers";
     - 59, the net torque limit: `cm848_calculateNetTorqueFuelLimit`.
+  - **Stage 5, the power take-off governor's words.** They are named from e2m blocks that line up by offset, with
+    matching units and dump values:
+    - 10AB: the governor terms, from `power_take_off_governor_proportional_term` to `_no_load_fuel`, plus the QD / QI / QP
+      gain adjustments. The old `_d_gain_factor_b` is the integral adjustment.
+    - 109E: `power_take_off_requested_engine_speed`.
+    - 11B4, EEPROM: the remote speeds 1400-2000 rpm, set / resume 1100 rpm and the 2 mph road speed limit.
+    - 109D: the 300-1200 rpm engage window.
+    - 10AA: the gains. The +-1000 rpm speed-error clamps had their names swapped.
+  - **Stage 5, the crank routine (e2m 105E / 105F / 1032).** The `cold_start_*` / `fuel_timing_*` / `governor_*` words at
+    0x40a798-0x40a7be and the ROM settings at 0x406852-0x40687c are Cummins' crank routine:
+    - `crank_exit_speed`: CRANKING ends at it;
+    - `crank_fuel`: the CRANKING fuel (the old name called it an rpm);
+    - `crank_reentry_speed`, `engine_stopped_speed` (was `engine_rpm_trigger_cal`), `ecm_power_down_timer_threshold` /
+      `_delay`.
+
+    The wrong `_cal` on the ROM words is gone.
+  - **Two flags that read backwards:**
+    - `engine_starting` is now `engine_shutdown_command_flag` (e2m 10B1 +12 Shutdown): it forces SHUTDOWN and zeroes the
+      injection.
+    - `engine_shutdown_active_flag` is now `key_off_shutdown_inhibit_flag`: 1 stops a key-off shutdown, and only J1939
+      service 24 sets it.
+  - **Also in stage 5:**
+    - the engine start / extended idle / extreme ambient AECD words (e2m `EMO_*_AECD_Active` / `_Cap_EL`);
+    - code 32 = `FUELING_STATE_MASTER_SLAVE_OVERRIDE` (e2m MSOVRIDE / [MSODEN]);
+    - the stale `CSP_*` state names in 32 comments.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

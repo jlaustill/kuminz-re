@@ -509,11 +509,11 @@ DIAG_RESPONSE cm848_advanceDiagnosticActionState(void);  // @ 0x00021584
 DIAG_RESPONSE cm848_activateDiagnosticSession(void);  // @ 0x00021624
 DIAG_RESPONSE cm848_resetDiagnosticSession(void);  // @ 0x00021668
 DIAG_RESPONSE cm848_forceActivateDiagnosticSession(void);  // @ 0x00021694
-DIAG_RESPONSE cm848_setEngineStarting(void);  // @ 0x000216e8
+DIAG_RESPONSE cm848_commandEngineShutdown(void);  // @ 0x000216e8
 undefined4 cm848_restartThroughBootRom(undefined4 param_1,int param_2);  // @ 0x000216fc
 undefined1 cm848_restartThroughBootRomAfterSciRequest(void);  // @ 0x000218b0
 undefined1 cm848_handleJ1939RestartService(undefined4 param_1);  // @ 0x000218dc
-DIAG_RESPONSE cm848_setColdStartMode2Flag(void);  // @ 0x00021904
+DIAG_RESPONSE cm848_inhibitKeyOffShutdown(void);  // @ 0x00021904
 DIAG_RESPONSE cm848_commitEepromMirrorToEeprom(void);  // @ 0x00021918
 void cm848_registerJ1939DiagnosticHandlers(void);  // @ 0x00021a24
 undefined2 cm848_initUdsServiceHandlers(word param_1);  // @ 0x00021ac0

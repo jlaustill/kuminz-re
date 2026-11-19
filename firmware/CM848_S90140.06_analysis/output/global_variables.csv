@@ -185,14 +185,14 @@ address,name,type,comment
 0x0005b192,alternator_field_load_response_ramp_by_duty_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateAlternatorFieldDutyByRegulatorState
 0x0005b19e,alternator_field_load_response_ramp_by_rpm_axis,word[6],Lookup table - x axis of 5 breakpoints after its byte-length word - read by cm848_calculateAlternatorFieldDutyByRegulatorState
 0x0005b1aa,alternator_field_load_response_ramp_by_rpm_values,word[6],Lookup table - data: 5 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateAlternatorFieldDutyByRegulatorState
-0x0005b1be,cold_start_fuel_demand_base_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
-0x0005b1d8,cold_start_fuel_demand_base_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
-0x0005b1e4,cold_start_fuel_demand_base_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_calculateColdStartTempTable
-0x0005b25c,cold_start_fuel_demand_at_governor_setpoint_x_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_calculateColdStartFuelAdjust
-0x0005b276,cold_start_fuel_demand_at_governor_setpoint_y_axis,word[6],Lookup table - y axis of 5 breakpoints after its byte-length word - read by cm848_calculateColdStartFuelAdjust
-0x0005b282,cold_start_fuel_demand_at_governor_setpoint_grid,word[60],Lookup table - 2-D grid: 5 rows of 12 values (z[(y - 1) x 12 + x - 1] / no header) - read by cm848_calculateColdStartFuelAdjust
-0x0005b2fa,cold_start_fuel_ramp_start_rpm_axis,word[9],Lookup table - x axis of 8 breakpoints after its byte-length word - read by cm848_calculateColdStartTempTable
-0x0005b30c,cold_start_fuel_ramp_start_rpm_values,word[9],Lookup table - data: 8 values (one per axis breakpoint) after a byte-length word - read by cm848_calculateColdStartTempTable
+0x0005b1be,crank_initial_fuel_x_axis,word[13],e2m 8A49 crank table (was cold_start_fuel_demand_base_x_axis)
+0x0005b1d8,crank_initial_fuel_y_axis,word[6],e2m 8A48 crank table (was cold_start_fuel_demand_base_y_axis)
+0x0005b1e4,crank_initial_fuel_grid,word[60],e2m 8A47 crank table (was cold_start_fuel_demand_base_grid)
+0x0005b25c,crank_exit_fuel_x_axis,word[13],e2m 8A4C crank table (was cold_start_fuel_demand_at_governor_setpoint_x_axis)
+0x0005b276,crank_exit_fuel_y_axis,word[6],e2m 8A4B crank table (was cold_start_fuel_demand_at_governor_setpoint_y_axis)
+0x0005b282,crank_exit_fuel_grid,word[60],e2m 8A4A crank table (was cold_start_fuel_demand_at_governor_setpoint_grid)
+0x0005b2fa,crank_initial_speed_axis,word[9],e2m 8A46 crank table (was cold_start_fuel_ramp_start_rpm_axis)
+0x0005b30c,crank_initial_speed_values,word[9],e2m 8A45 crank table (was cold_start_fuel_ramp_start_rpm_values)
 0x0005b338,intake_air_heater_postheat_schedule_level_axis,word[13],Lookup table - x axis of 12 breakpoints after its byte-length word - read by cm848_updateIntakeAirHeaterPostheat
 0x0005b352,intake_air_heater_postheat_schedule_level_values,word[13],Lookup table - data: 12 values (one per axis breakpoint) after a byte-length word - read by cm848_updateIntakeAirHeaterPostheat
 0x0005b36c,intake_air_heater_postheat_pulse_duration_x_axis,word[8],Lookup table - x axis of 7 breakpoints after its byte-length word - read by cm848_updateIntakeAirHeaterPostheat
@@ -1253,7 +1253,7 @@ address,name,type,comment
 0x003fa82e,fault_counter_slot7_shadow+2,,
 0x003fa82f,fault_counter_slot7_shadow+3,,
 0x003fa830,j1939_pgn65251_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65251_tx_header / j1939_pgn65251_tx_length / j1939_pgn65251_data_ptr / j1939_pgn65251_end_ptr)
-0x003fa840,cold_start_rpm_threshold_updated_flag,word,
+0x003fa840,crank_reentry_speed_offset_applied_flag,word,1 once crank_reentry_speed has taken crank_exited_reentry_speed_offset (no e2m record) (was cold_start_rpm_threshold_updated_flag)
 0x003fa842,fault_slot_state_1,word,
 0x003fa844,fault_slot_state_2,word,
 0x003fa846,fault_slot_state_3,word,
@@ -1488,7 +1488,7 @@ address,name,type,comment
 0x003fafcc,protection_smoothing_filter_state,ema_filter_state_t,(was protection_smoothing_state_ptr)
 0x003fafd4,protection_control_state_flags,dword,
 0x003fafd8,governor_rpm_transition_flag,word,
-0x003fafda,governor_rpm_reference_ramped,word,The dword is two words (all 6 accesses of 0x3fafda are lhz / sth; no lwz / stw, 7 decompiled uses ._0_2_). +0 is the reference ramped toward the target by governor_rpm_integrator_step per pass: lhz r4,0(r6) @ 0x2ba9c, sth r12,0(r6) @ 0x2bad4 (cm848_rampPowerTakeOffReferenceEngineSpeed, sets governor_rpm_transition_flag when it reaches the target and copies it to power_take_off_governor_reference_engine_speed), sth ... (was governor_rpm_reference_integrator) | retyped dword -> word 2026-11-18
+0x003fafda,governor_rpm_reference_ramped,word,The dword is two words (all 6 accesses of 0x3fafda are lhz / sth; no lwz / stw, 7 decompiled uses ._0_2_). +0 is the reference ramped toward the target by power_take_off_engagement_slew_rate_cal per pass: lhz r4,0(r6) @ 0x2ba9c, sth r12,0(r6) @ 0x2bad4 (cm848_rampPowerTakeOffReferenceEngineSpeed, sets governor_rpm_transition_flag when it reaches the target and copies it to power_take_off_requested_engine_speed), sth ... (was governor_rpm_reference_integrator) | retyped dword -> word 2026-11-18
 0x003fafdc,governor_rpm_reference_target,word,+2 word of the old dword (the old label row governor_rpm_reference_target has no type and is not rendered; the decompile shows .governor_rpm_reference_ramped._2_2_, 34 uses): sth r4,-20516(r12) @ 0x2b848 (cm848_runPowerTakeOffGovernorStateMachine writes the target: a stored reference, the current engine rpm, or the current rpm plus (fuel_demand_computed - fuel_demand_base_offset) x ... (was governor_demand_snapshot) | retyped  -> word 2026-11-18
 0x003fafde,governor_rpm_integrator_high,word,
 0x003fafe0,protection_eval_step_index,word,
@@ -2099,7 +2099,7 @@ address,name,type,comment
 0x003fd532,protection_system_init_flag,word,
 0x003fd534,protection_temp_scale_cal,word,
 0x003fd536,two_speed_axle_enable_cal,word,EEPROM-backed (EEPROM 0xb4 = 0 here - RAM matches EEPROM not the boot-kernel ROM copy 0x7966 = 44): 1 = two-speed axle - switch 31 picks the second axle ratio (protection_temp_scale_cal / protection_trim_divisor_cal) and CCVS1 byte 1 shows the axle switch (was protection_control_licensed)
-0x003fd53e,cold_start_fuel_mode_ready_flag,word,
+0x003fd53e,engine_brake_driveline_brake_type_cal,word,EEPROM 0xbc - e2m 1180 +16 EB_Driveline_Brake_Type: ENGINE_BRAKE is entered only while it is 0 (1 here = retarder) (was cold_start_fuel_mode_ready_flag)
 # 0x003fd544 removed - is function cm848_serviceSupervisorWatchdog (ROM 0x7974) not a variable
 0x003fd59c,governor_fault_status_flags,word,
 0x003fd59e,governor_feature_flags,word,
@@ -2112,7 +2112,7 @@ address,name,type,comment
 0x003fd5b6,fault_feature_config_flags,word,
 0x003fd5c0,algorithm_enable_flags_18_cal,algorithm_enable_flags_18_t,Word 18 of the algorithm enable flags table (EEPROM 0x11a + 36 = 0x13e; readers use displacement 36 from base 0x3fd59c). e2m 0x01106B26 (descriptions say word 12h) names 12 bits: HSG gain scheduling, driver reward, duty cycle monitor, executive timing, programmable power, remote throttle, engine brake service brake activate. (was system_feature_config_flags) | retyped word -> algorithm_enable_flags_18_t 2026-11-18
 0x003fd5c2,feature_enable_flags_cal,word,code: inside the EEPROM mirror; six functions test the masks 0x08, 0x20, 0x80, 0x200 and 0x2000. e2m: the same masks of the engineering trim word 0x01106B28 are CWG_Monitor_Enable (0008), Alpha_Altitude_Derate_Override_Enable (0020), COT_Estimation_Enable (0080), ESP_Smart_Torque_Enable / T_EMO_Condensation_AECD_Enable (0200) and T_EGR_Cooler_Fouling_Enable (2000; the .12 file lists ... (was cold_start_feature_flags)
-0x003fd5c4,cold_start_feature_enable_flags,word,
+0x003fd5c4,algorithm_enable_flags_20_cal,word,EEPROM 0x142 - word 20 of the algorithm enable flags (word 0 at 0x3fd59c like algorithm_enable_flags_12_cal); 0x0100 here (was cold_start_feature_enable_flags)
 0x003fd5c6,governor_feature_config_flags,word,
 0x003fd5ce,governor_mode_config_flags,word,
 0x003fd5d2,governor_system_config_flags,word,
@@ -2188,7 +2188,7 @@ address,name,type,comment
 0x003fd868,j1939_pgn65249_source_address_bits,word,
 0x003fd86a,j1939_pgn65248_source_address_bits,word,
 0x003fd86c,j1939_pgn65271_source_address_bits,word,
-0x003fd872,cold_start_rpm_active_flag,word,
+0x003fd872,crank_exit_speed_switch_cal,word,EEPROM 0x3f0 - e2m 1254 +38 Crank_Exit_Speed_Switch: picks the crank exit speed source (0 here = the idle reference) (was cold_start_rpm_active_flag)
 0x003fd876,j1939_pgn65260_source_address_bits,word,
 0x003fd878,j1939_pgn61441_source_address_bits,word,
 0x003fd87a,j1939_pgn65213_priority_cal,word,cm848_initializePgn65213FanDrive1Buffer uses (value & 7) << 2 as the top byte of the 29-bit CAN id, i.e. the 3-bit priority (same pattern as j1939_pgn61440_priority), not source address bits. Address 0x3fd87a is inside the EEPROM mirror (0x3fd482-0x3feec1), so the _cal suffix applies. Same issue for j1939_pgn61440_priority (0x3fd858) and j1939_pgn65269_priority (0x3fd83c): EEPROM-backed names without _ (was j1939_pgn65213_source_address_bits)
@@ -2196,17 +2196,17 @@ address,name,type,comment
 0x003fd87e,j1939_pgn57344_source_address_bits,word,
 0x003fd880,j1939_pgn56360_source_address_bits,word,
 0x003fd882,governor_speed_target_trim,word,
-0x003fd886,governor_rpm_integrator_step,word,
-0x003fd888,engine_speed_control_maximum_vehicle_speed_cal,word,EEPROM 0x406: 512 = 2 mph - the switch-set engine speed control in cm848_runPowerTakeOffGovernorStateMachine (power_take_off_governor_state 1 / 3 = power_take_off_governor_active_flag) drops to state 2 or will not engage while vehicle_speed is above this (was fuel_temperature_trim_threshold) (Medium confidence)
-0x003fd88a,protection_rpm_high_reference,word,
-0x003fd88c,protection_eval_step_count,word,
-0x003fd88e,governor_rpm_ref_target_0,word,
-0x003fd890,governor_rpm_ref_target_1,word,
-0x003fd892,governor_rpm_ref_target_2,word,
-0x003fd894,governor_rpm_ref_target_3,word,
-0x003fd896,governor_rpm_ref_target_4,word,
-0x003fd898,governor_rpm_ref_step_delta,word,
-0x003fd89a,power_take_off_remote_switch_mode_cal,word,EEPROM 0x418 (0 here): 0 lets the remote switch (19) take over from cab control in cm848_runPowerTakeOffGovernorStateMachine - the meaning of the other values is not proved (was the first word of the dword protection_override_active_flag)
+0x003fd886,power_take_off_engagement_slew_rate_cal,word,EEPROM 0x404 - e2m 11B4 +2 PTO_Engagement_Slew_Rate (64) (was governor_rpm_integrator_step)
+0x003fd888,power_take_off_maximum_vehicle_speed_cal,word,EEPROM 0x406 - e2m 11B4 +4 PTO_Max_Road_Speed (512 = 2 mph): the power take-off governor waits above it (was engine_speed_control_maximum_vehicle_speed_cal)
+0x003fd88a,power_take_off_minimum_reference_engine_speed_cal,word,EEPROM 0x408 - e2m 11B4 +6 PTO_Minimum_Reference_Speed (8800 = 1100 rpm) (was protection_rpm_high_reference)
+0x003fd88c,power_take_off_remote_count_limit_cal,word,EEPROM 0x40a - e2m 11B4 +8 PTO_Remote_Count_Limit (5): remote switch presses counted (was protection_eval_step_count)
+0x003fd88e,power_take_off_remote_speed_2_cal,word,EEPROM 0x40c - e2m 11B4 +A PTO_Remote_Speed_2 (11200 = 1400 rpm) (was governor_rpm_ref_target_0)
+0x003fd890,power_take_off_remote_speed_3_cal,word,EEPROM 0x40e - e2m 11B4 +C PTO_Remote_Speed_3 (12800 = 1600 rpm) (was governor_rpm_ref_target_1)
+0x003fd892,power_take_off_remote_speed_4_cal,word,EEPROM 0x410 - e2m 11B4 +E PTO_Remote_Speed_4 (14400 = 1800 rpm) (was governor_rpm_ref_target_2)
+0x003fd894,power_take_off_remote_speed_5_cal,word,EEPROM 0x412 - e2m 11B4 +10 PTO_Remote_Speed_5 (16000 = 2000 rpm) (was governor_rpm_ref_target_3)
+0x003fd896,power_take_off_set_resume_speed_cal,word,EEPROM 0x414 - e2m 11B4 +12 PTO_Set_Resume_Speed (8800 = 1100 rpm) (was governor_rpm_ref_target_4)
+0x003fd898,power_take_off_ramp_rate_cal,word,EEPROM 0x416 - e2m 11B4 +14 PTO_Ramp_Rate (200): the accelerate / coast step (was governor_rpm_ref_step_delta)
+0x003fd89a,power_take_off_switch_enable_option_cal,word,EEPROM 0x418 - e2m 11B4 +16 PTO_Switch_Enable_Option (0 here; 0 lets the remote switch 19 take over from cab control) (was power_take_off_remote_switch_mode_cal - the first word of the dword protection_override_active_flag)
 0x003fd89c,power_take_off_throttle_override_maximum_engine_speed_cal,word,EEPROM 0x41a (28000 = 3500 rpm): power_take_off_throttle_override_engine_speed_limit while the throttle overrides the power take-off fuel (was the second word of protection_override_active_flag)
 0x003fd89e,power_take_off_maximum_torque_cal,word,EEPROM 0x41c: the power take-off maximum torque (10000 = none) that cm848_applyPowerTakeOffTorqueLimit applies while the governor is active (was governor_fuel_limit_override)
 0x003fd8b4,governor_proportional_gain_cal,word,
@@ -2331,7 +2331,7 @@ address,name,type,comment
 0x003fdd90,governor_prop_status_bits_3,word,
 0x003fdd92,ascii_zero_detect_flag,word,
 0x003fdda6,drivetrain_type,DRIVETRAIN_TYPE,
-0x003fdda8,ignition_key_off_count,word,Count of 1->0 edges of the ignition key line (0x3060F6 bit 15 = discrete line 128 = switch 0 / low drops engine_state to CSP_ENGINE_STANDBY and starts the boot power-down save); EEPROM 0x926 = 340; drives the 0xB0 DTC display (was cold_start_crank_counter)
+0x003fdda8,ignition_key_off_count,word,Count of 1->0 edges of the ignition key line (0x3060F6 bit 15 = discrete line 128 = switch 0 / low drops engine_state to ENGINE_STATE_SHUTDOWN and starts the boot power-down save); EEPROM 0x926 = 340; drives the 0xB0 DTC display (was cold_start_crank_counter)
 0x003fddaa,fuel_demand_cal_index,word,
 0x003fddac,protection_mode_80_enable_flag,word,
 0x003fdf98,percent_time_at_load_cal,word[10],EEPROM mirror (EEPROM 0xb16): DRB SCI read FD-84 to FD-97 '% OF TIME @ 0-10% ... 91-100% LOAD' via flash2 SCI table 253 - ten coarse load bins (25600 = 100 %) that cm848_outputs2_periodic sums from the 82 fine dword counters at 0x3fde4e; cleared with them
@@ -2497,7 +2497,7 @@ address,name,type,comment
 0x003fee2d,eeprom_write_buffer+3,,
 0x003fee30,flash2_operation_active_flag,word,
 0x003fee31,flash2_operation_active_flag+1,,
-0x003fee32,immobilizer_present_flag,word,TIME-SHARED. App: EEPROM-mirror word (EEPROM 0x19b0) set to 1 by cm848_processImmobilizerStatusMessage when a PCI 0xB1 SKIM frame arrives in CSP_CRANKING = immobilizer fitted (persistent); gates the P0633 key check and the 4F C0 handshake in cm848_runImmobilizerTask. Boot ROM (before the mirror load): cm848_processDiagnosticTimeout / cm848_setDataTransferMode use its first byte as a diagnostic response timeout (was system_init_delay_timer) (Medium confidence)
+0x003fee32,immobilizer_present_flag,word,TIME-SHARED. App: EEPROM-mirror word (EEPROM 0x19b0) set to 1 by cm848_processImmobilizerStatusMessage when a PCI 0xB1 SKIM frame arrives in ENGINE_STATE_STOPPED = immobilizer fitted (persistent); gates the P0633 key check and the 4F C0 handshake in cm848_runImmobilizerTask. Boot ROM (before the mirror load): cm848_processDiagnosticTimeout / cm848_setDataTransferMode use its first byte as a diagnostic response timeout (was system_init_delay_timer) (Medium confidence)
 0x003fee34,oil_change_monitor_fault_event_bits_cal,dword,TIME-SHARED with the boot ROM (0x3fee34-0x3fee3d): mpc555_eepromValidationCycle counts in the dword at 0x3fee34, cm848_lookupEepromParameterAddress returns 0x3fee38 and cm848_bootSciCheckSecurityKey reads the bytes 0x3fee3a-0x3fee3d, so no single type fits both users; the types stay as they were. cm848_updateOilChangeMonitor ORs 4 (fault bits 80-95 mask 0x200) and 0x100 (fault bits 16-31 mask 0x2000) into the halfword at 0x3fee34 and clears it on the reset command; EEPROM mirror word (offset 0x19b2). Type note (do not change here): typed dword, but the code accesses a word at 0x3fee34 (the following halfword 0x3fee36 belongs to the fuel counter dword); the boot ROM time-shares it as a dwor (was sensor_initialization_sequence_count)
 0x003fee36,oil_change_monitor_fuel_hundredth_gallons_cal,,TIME-SHARED with the boot ROM (0x3fee34-0x3fee3d): mpc555_eepromValidationCycle counts in the dword at 0x3fee34, cm848_lookupEepromParameterAddress returns 0x3fee38 and cm848_bootSciCheckSecurityKey reads the bytes 0x3fee3a-0x3fee3d, so no single type fits both users; the types stay as they were. Alias row inside the old dword. disasm_func.py: dword loads / stores at 0x3fee36 in cm848_updateOilChangeMonitor: +1 per 557210 weighted injected-fuel units (0x8809a; 557210 x 0.06793478 mm3 = 37854 mm3 = 0.01 US gallon) and compared with the dword 250000 at DAT_00408a66 (2500 gallons); cleared by the reset command. EEPROM offset 0x19b4. Type note: this row should be a dword at 0x3fee36 (the +2 al (was sensor_initialization_sequence_count+2)
 0x003fee3a,oil_change_monitor_distance_pulses_cal,word,TIME-SHARED with the boot ROM (0x3fee34-0x3fee3d): mpc555_eepromValidationCycle counts in the dword at 0x3fee34, cm848_lookupEepromParameterAddress returns 0x3fee38 and cm848_bootSciCheckSecurityKey reads the bytes 0x3fee3a-0x3fee3d, so no single type fits both users; the types stay as they were. dword accesses in cm848_updateOilChangeMonitor: lifetime_distance_pulses - DAT_003fee42 (the lifetime distance at the last reset), compared with the dword 120000000 at DAT_00408a6a = 15000 miles at 8000 pulses per mile, and with the 16000000 (2000 miles) minimum at DAT_003fd8ec; cleared by the reset command. EEPROM offset 0x19b8. Type note: typed word, used as dword. (was sensor_validation_delta)
@@ -2931,34 +2931,34 @@ address,name,type,comment
 0x0040684c,egr_valve_autozero_active_time,word,code: users: cm848_updateEgrValveAutozeroConditions. limit of the autozero hold counter (egr_valve_autozero_hold_counter). e2m: C_EGA_Autozero_Active_Time (0x0117c000) is +0x00 of the block that anchors 0x40684c. (was cold_start_fuel_confirm_count_cal)
 0x0040684e,egr_valve_autozero_drive_duty,word,code: users: cm848_updateEgrValveAutozeroConditions. holding duty of control state 3 (loaded into egr_valve_drive_diagnostic_override_value). e2m: C_EGA_Autozero_PWM_Value (0x0117c002) is +0x02 of the block that anchors 0x40684c. (was governor_mode3_speed_param_cal)
 0x00406850,egr_valve_autozero_retry_time,word,code: users: cm848_updateEgrValveAutozeroConditions. limit of the hysteresis counter that gates the autozero conditions. e2m: C_EGA_Autozero_Retry_Time (0x0117c004) is +0x04 of the block that anchors 0x40684c. (was governor_speed_hysteresis_count_cal)
-0x00406852,fuel_timing_correction_c_cal,word,
-0x00406854,fuel_timing_correction_b_max_cal,word,
-0x00406856,cold_start_fuel_timing_correction_addend_cal,word,
-0x00406858,fuel_timing_correction_load_max_cal,word,
-0x0040685a,fuel_timing_correction_offset_cal,word,
-0x0040685c,torque_fuel_timing_offset_cal,word,
-0x0040685e,cold_start_fuel_timing_rpm_threshold_cal,word,
-0x00406860,cold_start_rpm_setpoint_cal,word,
-0x00406862,cold_start_advance_count_cal,word,
-0x00406864,cold_start_coolant_temp_threshold_cal,word,
-0x00406866,fuel_timing_correction_a_high_cal,word,
-0x00406868,fuel_timing_correction_a_low_cal,word,
-0x0040686a,fuel_timing_advance_high_cal,word,
-0x0040686c,fuel_timing_advance_low_cal,word,
-0x0040686e,cold_start_rpm_base_cal,word,
-0x00406870,cold_start_rpm_threshold_addend_cal,word,
-0x00406872,cold_start_torque_fuel_offset_cal,word,
-0x00406874,governor_fuel_timing_offset_addend_cal,word,
-0x00406876,fuel_timing_base_limit_cal,word,
-0x00406878,fuel_timing_table_override_cal,word,
-0x0040687a,cold_start_governor_fuel_timing_offset_cal,word,
-0x0040687c,cold_start_crank_event_threshold_cal,word,
+0x00406852,crank_exit_fuel_override,word,e2m 105F +0 Crank_Exit_Fuel_Override - ROM copy, no _cal (was fuel_timing_correction_c_cal)
+0x00406854,crank_exit_fuel_ramp_maximum,word,e2m 105F +2 Crank_Exit_Fuel_Ramp_Max - ROM copy, no _cal (was fuel_timing_correction_b_max_cal)
+0x00406856,crank_exit_fuel_ramp_rate,word,e2m 105F +4 Crank_Exit_Fuel_Ramp_Rate - ROM copy, no _cal (was cold_start_fuel_timing_correction_addend_cal)
+0x00406858,crank_high_manifold_temperature,word,e2m 105F +6 Crank_Hi_Manifold_Temp - ROM copy, no _cal (was fuel_timing_correction_load_max_cal)
+0x0040685a,crank_low_manifold_temperature,word,e2m 105F +8 Crank_Lo_Manifold_Temp - ROM copy, no _cal (was fuel_timing_correction_offset_cal)
+0x0040685c,crank_jump_start_rpm_ramp_rate,word,e2m 105F +A Crank_Jumpstart_RPM_Ramp_Rate - ROM copy, no _cal (was torque_fuel_timing_offset_cal)
+0x0040685e,crank_exit_fuel_ramp_rpm,word,e2m 105F +C Crank_Exit_Fuel_Ramp_RPM - ROM copy, no _cal (was cold_start_fuel_timing_rpm_threshold_cal)
+0x00406860,crank_exit_rpm,word,e2m 105F +E Crank_Exit_RPM - ROM copy, no _cal (was cold_start_rpm_setpoint_cal)
+0x00406862,crank_exit_time,word,e2m 105F +10 Crank_Exit_Time - ROM copy, no _cal (was cold_start_advance_count_cal)
+0x00406864,crank_jump_start_temperature_threshold,word,e2m 105F +12 Crank_Jumpstart_Temperature_Threshold - ROM copy, no _cal (was cold_start_coolant_temp_threshold_cal)
+0x00406866,crank_high_manifold_temperature_timing,word,e2m 105F +14 Crank_Hi_Manifold_Temp_Timing - ROM copy, no _cal (was fuel_timing_correction_a_high_cal)
+0x00406868,crank_low_manifold_temperature_timing,word,e2m 105F +16 Crank_Lo_Manifold_Temp_Timing - ROM copy, no _cal (was fuel_timing_correction_a_low_cal)
+0x0040686a,crank_high_manifold_temperature_rpm,word,e2m 105F +18 Crank_Hi_Manifold_Temp_RPM - ROM copy, no _cal (was fuel_timing_advance_high_cal)
+0x0040686c,crank_low_manifold_temperature_rpm,word,e2m 105F +1A Crank_Lo_Manifold_Temp_RPM - ROM copy, no _cal (was fuel_timing_advance_low_cal)
+0x0040686e,crank_initial_reentry_speed,word,e2m 105F +1C Crank_Initial_Reentry_Speed - ROM copy, no _cal (was cold_start_rpm_base_cal)
+0x00406870,crank_exited_reentry_speed_offset,word,e2m 105F +1E Crank_Exited_Reentry_Speed_Offset - ROM copy, no _cal (was cold_start_rpm_threshold_addend_cal)
+0x00406872,crank_exited_initial_rpm_offset,word,e2m 105F +20 Crank_Exited_Initial_RPM_Offset - ROM copy, no _cal (was cold_start_torque_fuel_offset_cal)
+0x00406874,crank_jump_start_fueling_ramp_rate,word,e2m 105F +22 Crank_Jumpstart_Fueling_Ramp_Rate - ROM copy, no _cal (was governor_fuel_timing_offset_addend_cal)
+0x00406876,crank_initial_fuel_override,word,e2m 105F +24 Crank_Initial_Fuel_Override - ROM copy, no _cal (was fuel_timing_base_limit_cal)
+0x00406878,crank_initial_speed_override,word,e2m 105F +26 Crank_Initial_Speed_Override - ROM copy, no _cal (was fuel_timing_table_override_cal)
+0x0040687a,crank_exited_initial_fueling_offset,word,e2m 105F +28 Crank_Exited_Initial_Fueling_Offset - ROM copy, no _cal (was cold_start_governor_fuel_timing_offset_cal)
+0x0040687c,crank_jump_start_time,word,e2m 105F +2A Crank_Jumpstart_Time: the CRANKING passes before JUMP_START - ROM copy, no _cal (was cold_start_crank_event_threshold_cal)
 0x0040687e,engine_overspeed_set_rpm_threshold,word,Engine speed that starts the overspeed debounce, 1/8 rpm: 33600 = 4200 rpm. ROM-copied calibration (ROM block 0x6c496 -> 0x40687c, outside the EEPROM mirror, so no _cal); lhz @ 0x1c2c4, the only reader (was cold_start_enable_rpm_threshold_cal)
 0x00406880,engine_overspeed_clear_rpm_threshold,word,Engine speed below which the overspeed latch and fault 27 clear, 1/8 rpm: 32000 = 4000 rpm (200 rpm under the set threshold). ROM-copied calibration (ROM 0x6c49a, outside the EEPROM mirror, so no _cal); lhz @ 0x1c3d4, the only reader (was cold_start_exit_rpm_threshold_cal)
 0x00406882,engine_overspeed_debounce_limit,word,Passes the engine speed must stay at or above the set threshold before the overspeed latches: the monitor needs the count to exceed this value, 3, i.e. 4 passes = 80 ms. ROM-copied calibration (ROM 0x6c49c, so no _cal); lhz @ 0x1c2ec, the only reader (was cold_start_event_count_threshold_cal)
-0x00406884,engine_rpm_trigger_cal,word,
-0x00406886,governor_speed_engage_count_target_cal,word,
-0x00406888,governor_speed_engage_fault_count_threshold_cal,word,
+0x00406884,engine_stopped_speed,word,e2m 1032 +6 Engine_Stopped_Speed: engine_state is STOPPED at or below it (ROM copy, no _cal) (was engine_rpm_trigger_cal)
+0x00406886,ecm_power_down_timer_threshold,word,e2m 1032 +8 ECM_Powerdown_Timer_Threshold: ecm_power_down_timer target in SHUTDOWN (ROM copy, no _cal) (was governor_speed_engage_count_target_cal)
+0x00406888,ecm_power_down_delay,word,e2m 1032 +A ECM_Powerdown_Delay (ROM copy, no _cal) (was governor_speed_engage_fault_count_threshold_cal)
 0x0040688a,fuel_demand_rpm_threshold_cal,word[22],
 0x004068b6,fuel_demand_rpm_limit_low_cal,word[5],
 0x004068c0,fuel_demand_rpm_limit_high_cal,word[84],
@@ -3090,21 +3090,21 @@ address,name,type,comment
 0x00407188,governor_speed_margin_cal_b,word,
 0x0040718a,governor_speed_margin_cal_c,word,
 0x0040718c,cold_start_sensor_deviation_delay_cal,word,
-0x0040718e,governor_speed_d_scale_cal,word,
-0x00407190,protection_filter_state_cal,byte,
-0x00407192,governor_integrator_lower_bound_cal,word,
-0x00407194,governor_integrator_upper_bound_cal,word,
-0x00407198,governor_speed_p_scale_cal,word,
-0x0040719a,governor_blend_factor_cal,word,
-0x0040719c,governor_speed_gain_scale_cal,word,
-0x0040719e,protection_rpm_hysteresis_cal,word,
-0x004071a0,protection_smoothing_filter_coefficient,word,EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - protection_smoothing_filter_state.coefficient points here (was protection_smoothing_state_cal)
-0x004071a2,protection_rpm_monitor_mode_cal,word,
+0x0040718e,power_take_off_derivative_gain,word,e2m 10AA +0 PTO_Derivative_Gain (was governor_speed_d_scale_cal)
+0x00407190,power_take_off_speed_error_filter_coefficient,word,e2m 10AA +2 PTO_Error_Filter_Constant (a word): the coefficient the speed error filter state points at (was protection_filter_state_cal, typed byte)
+0x00407192,power_take_off_speed_error_clamp_maximum,word,e2m 10AA +4 PTO_Filter_Clamp_Max (+8000 = 1000 rpm): the upper clamp of the speed error - the old name had it as the lower bound (was governor_integrator_lower_bound_cal)
+0x00407194,power_take_off_speed_error_clamp_minimum,word,e2m 10AA +6 PTO_Filter_Clamp_Min (-8000): the lower clamp of the speed error (was governor_integrator_upper_bound_cal)
+0x00407198,power_take_off_fueling_clamp_minimum,word,e2m 10AA +A PTO_Fueling_Clamp_Min: the floor of the integral and of power_take_off_governor_fuel_demand (was governor_speed_p_scale_cal)
+0x0040719a,power_take_off_integral_constant,word,e2m 10AA +C PTO_Integral_Constant: its complement (0x8000 - it) scales the integral step (was governor_blend_factor_cal)
+0x0040719c,power_take_off_proportional_gain,word,e2m 10AA +E PTO_Proportional_Gain (was governor_speed_gain_scale_cal)
+0x0040719e,power_take_off_reference_step_limit,word,e2m 10AA +10 PTO_Reference_Step_Limit: the largest step of the smoothed reference per pass (was protection_rpm_hysteresis_cal)
+0x004071a0,power_take_off_reference_filter_coefficient,word,e2m 10AA +12 PTO_Reference_Ramp_Const: the EMA coefficient of the smoothed reference (was protection_smoothing_filter_coefficient)
+0x004071a2,power_take_off_gain_adjustment_mode,word,e2m 10AA +14 PTO_Gain_Adj_Mode (was protection_rpm_monitor_mode_cal)
 0x004071ac,protection_rpm_axis_cal,word[11],
 0x004071c2,protection_rpm_values_cal,word[11],
-0x004071d8,protection_eval_rpm_upper_cal,word,
-0x004071da,protection_eval_rpm_lower_cal,word,
-0x004071dc,protection_eval_frame_limit_cal,word,
+0x004071d8,power_take_off_maximum_engage_engine_speed,word,e2m 109D +0 PTO_Maximum_Engage_Speed: the engine speed window for engaging (was protection_eval_rpm_upper_cal)
+0x004071da,power_take_off_minimum_engage_engine_speed,word,e2m 109D +2 PTO_Minimum_Engage_Speed (was protection_eval_rpm_lower_cal)
+0x004071dc,power_take_off_remote_switch_timeout,word,e2m 109D +4 PTO_Remote_Switch_Timeout: the time limit of the remote switch press count (passes) (was protection_eval_frame_limit_cal)
 0x00407264,high_idle_override_reset_enable_cal,word,
 0x00407266,engine_speed_limit_droop_cap_alternate_disable,word,Code: cm848_applySwitchSelectedEngineSpeedLimit takes the alternate droop cap only while this is 0 (dump 0), so a nonzero value disables it and the old "enable" has the sense reversed. One read, never written; ROM word outside the EEPROM mirror, so no _cal. (was torque_limit_multi_source_enable_cal)
 0x0040729c,boost_fuel_correction_gain_cal,word,
@@ -3774,7 +3774,7 @@ address,name,type,comment
 0x00408eb6,engine_retarder_shift_hold_passes,word,Single read in cm848_updateEngineRetarderActiveState as the pass limit of the shift hold. ROM address, no _cal. (was fuel_correction_trigger_threshold_cal)
 0x00408eb8,engine_retarder_fuel_demand_threshold_governor_mode_11,word,Two reads in cm848_updateEngineRetarderEnableState, both inside governor_fuel_demand_mode == 11 (0xb) tests, added to fuel_demand_offset_correction. ROM address, no _cal. (was fuel_demand_threshold_a_cal)
 0x00408eba,engine_retarder_fuel_demand_threshold_governor_mode_4,word,Two reads in cm848_updateEngineRetarderEnableState, both inside governor_fuel_demand_mode == 4 tests. ROM address, no _cal. (was fuel_demand_threshold_b_cal)
-0x00408ebc,engine_retarder_monitored_rpm_threshold_governor_mode_4,word,Code: only user is cm848_updateEngineRetarderEnableState, in the governor fuel demand mode 4 branch: entry needs protection_monitored_rpm <= this, exit when this < protection_monitored_rpm. protection_monitored_rpm (0x40af40) is an rpm x 8 word that is current_rpm (cm848_setProtectionParamFromRpm) or, while power_take_off_governor_active_flag is 1, follows power_take_off_governor_reference_engine_speed inside a ... (was protection_monitored_rpm_threshold_cal)
+0x00408ebc,engine_retarder_monitored_rpm_threshold_governor_mode_4,word,Code: only user is cm848_updateEngineRetarderEnableState, in the governor fuel demand mode 4 branch: entry needs power_take_off_governor_smoothed_reference_engine_speed <= this, exit when this < power_take_off_governor_smoothed_reference_engine_speed. power_take_off_governor_smoothed_reference_engine_speed (0x40af40) is an rpm x 8 word that is current_rpm (cm848_setProtectionParamFromRpm) or, while power_take_off_governor_active_flag is 1, follows power_take_off_requested_engine_speed inside a ... (was protection_monitored_rpm_threshold_cal)
 0x00408ebe,engine_retarder_coolant_temperature_threshold,word,Four reads, all in cm848_updateEngineRetarderEnableState (governor mode 11 / 4 enter and exit tests, with a minus 320 count offset = 5 degrees F); no other user. (was coolant_temp_threshold)
 0x00408ec0,engine_retarder_request_on_delay_passes,word,Read twice in cm848_driveEngineRetarderOutput as the on-delay limit of the counter at 0x3fb54c. ROM address (0x408ec0), so no _cal. (was governor_j1939_fuel_input_threshold_cal)
 0x00408ec2,engine_retarder_output_mode_flags,word,Three reads in cm848_driveEngineRetarderOutput: bit 0 enables logical output 11, bit 1 enables the engaged flag; with both set the output is cleared above the speed threshold. (was governor_engage_mode_flags)
@@ -4672,29 +4672,29 @@ address,name,type,comment
 0x0040a77c,fault_derate_fuel_limit,word,Written by cm848_calculateFaultDerateFuelLimit (limit between the speed curve and protection_fuel_limit_cal_active) and reset to fuel_demand_maximum (5888 = none) by cm848_resetFaultDerateFuelLimit and cm848_runFaultDerateScheduler; read by cm848_calculateEffectiveFuelLimit and cm848_applyFaultDerateFuelLimit as a fuel quantity limit (xref_addr.py: 2 reads / 3 writes). Dump 5888. (was torque_limit_fuel_upper_cap)
 0x0040a77e,fault_derate_active_flag,word,Writers: cm848_runFaultDerateScheduler (0 when the derate feature bit 0x10 of governor_feature_config_word is off), cm848_calculateFaultDerateFuelLimit (ramp above 0) and cm848_resetFaultDerateFuelLimit (0) - so it is the derate-active flag. Readers (xref_addr.py: 2): hpcr_calculateFuelTrimOutput (cpp 8867, part of the condition that sets governor_startup_state 3 and combustion_alpha_input ... (was governor_startup_ready_flag)
 0x0040a780,engine_speed_limit_fault_derate,word,Source 5 of the arbitration; written (EMA) only by cm848_calculateFaultDerateEngineSpeedLimit (was engine_torqueLimit_min_emaCalc) = default speed limit minus the largest fault derate ramp x span / 256; also reset to the default in two init functions. xref_addr.py: 1 read / 3 writes, word, no user below 0x7F60 (working RAM). (was torque_limit_fuel_min_alt)
-0x0040a784,engine_starting,word,
+0x0040a784,engine_shutdown_command_flag,word,e2m 10B1 +12 Shutdown (the engine protection block; base 0x40a772 - +A Engine_Protection_Derate_Fueling = fault_derate_fuel_limit): set by the fault derate monitor and a J1939 diagnostic service (cm848_commandEngineShutdown); takes engine_state to SHUTDOWN and zeroes the injection quantity and the rail pressure setpoint; cleared at engine speed 0 in SHUTDOWN. Reads backwards under its old name (was engine_starting)
 0x0040a794,engine_hour_meter,dword,ENGINE-RUNNING time in 0.2 s counts (hours = counts / 18000): +1 every 40-phase main-loop cycle unless engine_state is 1 (engine stopped / cranking) - cm848_advanceHourMeters. Loaded from engine_hour_meter_cal (EEPROM 0x42) at start and saved there at power-down and before a reflash restart. During the two HP Tuners flash sessions (key on - engine off) it advanced 2 s while key_on_hour_meter advanced 44.7 / 19.8 min. Was protection_timer_config_a
-0x0040a798,cold_start_advance_counter,word,
-0x0040a79a,cold_start_rpm_adjust_b,word,
+0x0040a798,crank_exit_timer,word,e2m 105E +0 Crank_Exit_Timer (was cold_start_advance_counter)
+0x0040a79a,crank_advance,word,e2m 105E +2 Crank_Advance (signed - lha) (was cold_start_rpm_adjust_b)
 0x0040a79c,cold_start_rpm_adjust_c,word,
-0x0040a79e,injection_timing_base_limit_working,word,
-0x0040a7a0,fuel_timing_rpm_upper_limit,word,
-0x0040a7a4,fuel_timing_correction_c,word,
-0x0040a7a6,fuel_timing_correction_a,word,
-0x0040a7a8,fuel_timing_correction_b,word,
-0x0040a7aa,governor_rpm_setpoint_output,word,
-0x0040a7ac,governor_cold_start_rpm_output,word,
-0x0040a7ae,fuel_timing_base_limit,word,
-0x0040a7b0,governor_fuel_timing_offset,word,
-0x0040a7b2,fuel_timing_advance_cal,word,
-0x0040a7b4,fuel_timing_table_output,word,
-0x0040a7b6,cold_start_rpm_adjust_a,word,
-0x0040a7ba,torque_fuel_offset_trim,word,
-0x0040a7bc,crank_event_sample_counter,word,
-0x0040a7be,cold_start_rpm_threshold,word,
+0x0040a79e,crank_adjusted_initial_fuel,word,e2m 105E +6 Crank_Adjusted_Initial_Fuel (was injection_timing_base_limit_working)
+0x0040a7a0,crank_adjusted_initial_rpm,word,e2m 105E +8 Crank_Adjusted_Initial_RPM (was fuel_timing_rpm_upper_limit)
+0x0040a7a4,crank_coolant_exit_fuel,word,e2m 105E +C Crank_Coolant_Exit_Fuel (was fuel_timing_correction_c)
+0x0040a7a6,crank_initial_advance,word,e2m 105E +E Crank_Initial_Advance (signed - lha) (was fuel_timing_correction_a)
+0x0040a7a8,crank_exit_fuel_adjustment,word,e2m 105E +10 Crank_Exit_Fuel_Adjustment (was fuel_timing_correction_b)
+0x0040a7aa,crank_exit_speed,word,e2m 105E +12 Crank_Exit_Speed: CRANKING ends at it (cm848_updateEngineState) (was governor_rpm_setpoint_output)
+0x0040a7ac,crank_fuel,word,e2m 105E +14 Crank_Fuel: the CRANKING fuel of cm848_selectFinalFueling (FUELING_STATE_CRANKING) - a fuel quantity, not an rpm (was governor_cold_start_rpm_output)
+0x0040a7ae,crank_initial_fuel,word,e2m 105E +16 Crank_Initial_Fuel (was fuel_timing_base_limit)
+0x0040a7b0,crank_initial_fuel_adjustment,word,e2m 105E +18 Crank_Initial_Fuel_Adjustment (was governor_fuel_timing_offset)
+0x0040a7b2,crank_initial_advance_break_speed,word,e2m 105E +1A Crank_Initial_Advance_Break_Speed (working RAM - no _cal) (was fuel_timing_advance_cal)
+0x0040a7b4,crank_initial_fuel_break_speed,word,e2m 105E +1C Crank_Initial_Fuel_Break_Speed (was fuel_timing_table_output)
+0x0040a7b6,crank_exit_advance,word,e2m 105E +1E Crank_Exit_Advance (signed - lha) (was cold_start_rpm_adjust_a)
+0x0040a7ba,crank_initial_rpm_adjustment,word,e2m 105E +22 Crank_Initial_RPM_Adjustment (was torque_fuel_offset_trim)
+0x0040a7bc,crank_jump_start_timer,word,e2m 105E +24 Crank_Jumpstart_Timer: CRANKING passes toward JUMP_START (was crank_event_sample_counter)
+0x0040a7be,crank_reentry_speed,word,e2m 105E +26 Crank_Reentry_Speed: RUNNING drops to REENTRY at it (cm848_updateEngineState) (was cold_start_rpm_threshold)
 0x0040a7c0,engine_state,ENGINE_STATE,The engine state (Cummins FSEGST - e2m block 1068 +0): ENGINE_STATE, set by cm848_updateEngineState. RAM dump: 1 STOPPED (was cold_start_phase)
 0x0040a7c2,power_down_start_flag,word,e2m block 1068 +2 Start_Power_Down: set when ecm_power_down_timer reaches its target in SHUTDOWN; ends the application main loop (was hardware_operation_complete_flag)
-0x0040a7c4,ecm_power_down_timer,word,e2m block 1068 +4 ECM_Powerdown_Timer: passes in SHUTDOWN with the engine stopped - at governor_speed_engage_count_target_cal it sets power_down_start_flag (was governor_speed_engage_count)
+0x0040a7c4,ecm_power_down_timer,word,e2m block 1068 +4 ECM_Powerdown_Timer: passes in SHUTDOWN with the engine stopped - at ecm_power_down_timer_threshold it sets power_down_start_flag (was governor_speed_engage_count)
 0x0040a7c6,engine_state_crank_time,dword,e2m block 1068 +6 Engine_State_Crank_Time: the time base elapsed when CRANKING starts (was crank_event_timebase_e)
 0x0040a7ca,engine_state_run_time,dword,e2m block 1068 +A Engine_State_Run_Time: the time base elapsed when RUNNING starts (was crank_event_timebase_d)
 0x0040a7ce,engine_is_active_flag,byte,e2m block 1068 +E Engine_Is_Active: 1 while engine_state is RUNNING (was cold_start_phase3_flag)
@@ -4752,7 +4752,7 @@ address,name,type,comment
 0x0040a8df,high_speed_governor_integral_gain_adjusted,word,Code: integral gain after its scaling table (cap 0x3d70) when the integral adjustment enable is nonzero, else the plain gain; the integrator increment is error x this / 17809. Dump 262 (enable 0). Only user: the PID. (was injection_timing_ema_coeff_computed)
 0x0040aa82,pending_fault_added_flag,word,
 0x0040aa84,active_fault_added_flag,dword,
-0x0040aa98,engine_shutdown_active_flag,word,
+0x0040aa98,key_off_shutdown_inhibit_flag,word,1 stops a key-off from shutting the engine down (cm848_updateEngineState / the injection gate); set only by J1939 diagnostic service 24 (cm848_inhibitKeyOffShutdown), cleared at the next key-on edge. Reads backwards under its old name (was engine_shutdown_active_flag)
 0x0040aa9a,j1939_standby_flag,J1939_STANDBY_STATE,
 0x0040aaa2,engine_retarder_torque_percent_times_256,word,Written only by cm848_calculateEngineRetarderTorque, read only by the ERC1 builder (byte 2 = 0x7d - (value >> 8), SPN 520). The value is percent x 256 (table / full-scale ratio times the ramp; 25600 = 100 percent, clamp 32000 = 125 percent, 0x8300 = invalid), 0 with no stage engaged; the scale is in the name because plain 'percent' would be 256 times off. (was j1939_engine_torque_encoded)
 0x0040aac2,j1939_engine_retarder_selection_percent,word,Engine retarder selection from EBC1 SPN 973 (1 %/bit) - read by cm848_calculateEngineRetarderSelectionPercent (was governor_load_percent_computed)
@@ -4944,19 +4944,19 @@ address,name,type,comment
 0x0040af22,engine_load_at_current_speed_percent,word,Engine load at the current speed in 1/256 percent = fuel above the base offset over what is available at this engine speed (cm848_calculateEngineLoadPercentages); stored in the freeze frame (OBD-II mode 2 PID 4) (was fault_status_active)
 0x0040af24,engine_load_percent,word,Engine load in 1/256 percent (0x6400 = 100 - clamped at 0x7f80) = fuel above the base offset over the full load axis (cm848_calculateEngineLoadPercentages); OBD-II PID 4 and PCI 0xD1 03 byte 1 (was protection_channel_load_raw)
 0x0040af28,power_take_off_governor_fuel_demand,word,The power take-off governor fuel demand (cm848_runPowerTakeOffGovernorPid; preset to fuel_demand_computed on engagement, 0 while inactive); only cm848_selectPowerTakeOffOrUserFueling reads it. All 6 accesses are lhz / sth words (was governor_fuel_demand_command)
-0x0040af2a,governor_speed_error_term,i16,Signed speed error term - the low word of the old power_take_off_governor_fuel_demand dword (lha) (new row 2026-11-18) (was governor_integrator_state_b+2)
-0x0040af2c,governor_pid_derivative_clamped,dword,
-0x0040af30,governor_pid_derivative_component,dword,
-0x0040af34,governor_speed_product_cached,dword,
-0x0040af38,governor_pid_derivative_prev,dword,
-0x0040af3c,governor_pid_derivative,dword,
-0x0040af40,protection_monitored_rpm,word,
-0x0040af42,governor_fuel_integral_error,word,
-0x0040af44,governor_speed_d_gain_factor,word,
-0x0040af46,governor_speed_d_gain_factor_b,word,
-0x0040af48,governor_speed_p_gain_factor,word,
-0x0040af4a,governor_speed_target_ceiling,word,
-0x0040af4c,power_take_off_governor_reference_engine_speed,word,The power take-off governor's ramped engine speed target (rpm x 8); the engine speed while inactive; PGN 65264 bytes 4-5 (was protection_rpm_reference)
+0x0040af2a,power_take_off_governor_filtered_speed_error,i16,e2m 10AB +2 PTO_Filtered_Error_Term (rpm x 8): the filtered speed error of cm848_calculatePowerTakeOffGovernorSpeedError (was governor_speed_error_term)
+0x0040af2c,power_take_off_governor_proportional_term,dword,e2m 10AB +4 PTO_Proportional_Term: power_take_off_proportional_gain x power_take_off_governor_proportional_gain_adjustment x the speed error, clamped (was governor_pid_derivative_clamped)
+0x0040af30,power_take_off_governor_derivative_term,dword,e2m 10AB +8 PTO_Derivative_Term: power_take_off_derivative_gain x power_take_off_governor_derivative_gain_adjustment x the error change, clamped (was governor_pid_derivative_component)
+0x0040af34,power_take_off_governor_integral_fueling,dword,e2m 10AB +C PTO_Integral_Fueling (was governor_speed_product_cached)
+0x0040af38,power_take_off_governor_droop_adjusted_fueling,dword,e2m 10AB +10 PTO_Droop_Adjusted_Fueling: the fuel above power_take_off_governor_no_load_fuel scaled by the droop (was governor_pid_derivative_prev)
+0x0040af3c,power_take_off_governor_proportional_derivative_fueling,dword,e2m 10AB +14 PTO_PD_Fueling: the proportional + derivative terms, clamped (was governor_pid_derivative)
+0x0040af40,power_take_off_governor_smoothed_reference_engine_speed,word,e2m 10AB +18 PTO_Reference_Speed: power_take_off_requested_engine_speed smoothed by cm848_smoothPowerTakeOffReferenceEngineSpeed (stale while inactive) (was protection_monitored_rpm)
+0x0040af42,power_take_off_governor_droop_compensated_speed_error,word,e2m 10AB +1A PTO_Droop_Compensated_Error (was governor_fuel_integral_error)
+0x0040af44,power_take_off_governor_derivative_gain_adjustment,word,e2m 10AB +1C PTO_QD_Adjustment (x 1/128; 0x80 = 1.0): scales the derivative term (was governor_speed_d_gain_factor)
+0x0040af46,power_take_off_governor_integral_gain_adjustment,word,e2m 10AB +1E PTO_QI_Adjustment (x 1/128; 0x80 = 1.0): scales the integral step - not a second derivative factor (was governor_speed_d_gain_factor_b)
+0x0040af48,power_take_off_governor_proportional_gain_adjustment,word,e2m 10AB +20 PTO_QP_Adjustment (x 1/128; 0x80 = 1.0): scales the proportional term (was governor_speed_p_gain_factor)
+0x0040af4a,power_take_off_governor_no_load_fuel,word,e2m 10AB +22 PTO_No_Load_Fuel: the fuel the droop is measured from (was governor_speed_target_ceiling)
+0x0040af4c,power_take_off_requested_engine_speed,word,e2m 109E +0 PTO_Requested_Speed (rpm x 8): the target the state machine sets and cm848_rampPowerTakeOffReferenceEngineSpeed ramps; the engine speed while inactive; PGN 65264 bytes 4-5. 109E goes on with PTO_Status / PTO_State / J1939_PTO_State / Chrysler_Park_Neutral_Flag = 0x40af4e / 50 / 52 / 54 (was power_take_off_governor_reference_engine_speed / protection_rpm_reference)
 0x0040af4e,power_take_off_governor_active_flag,word,1 while the power take-off governor runs (POWER_TAKE_OFF_GOVERNOR_STATE 1 / 3; 0 in 2); OBD-II PID 0x1E sends it with switch 3. RAM dump: 0 (was governor_fuel_active_flag)
 0x0040af50,power_take_off_governor_state,POWER_TAKE_OFF_GOVERNOR_STATE,The power take-off governor state (e2m PTST): cm848_runPowerTakeOffGovernorStateMachine. RAM dump: 2 WAIT (was protection_eval_state)
 0x0040af52,power_take_off_governor_j1939_state,POWER_TAKE_OFF_GOVERNOR_J1939_STATE,The J1939 SPN 976 PTO governor state of cm848_updatePowerTakeOffGovernorJ1939State, sent in CCVS1 byte 7 bits 1-5 (was protection_event_code)
@@ -5412,7 +5412,7 @@ address,name,type,comment
 0x0040b502,pci_received_mil_request_flag,byte,1 = PCI RX[8] header 0x6C byte 4 bit 7 asks for the MIL (ignored while diagnostic_suppress_flag is set) - ORed with the ECM's own MIL request into PCI 0xB0 byte 1 bit 7 (MIL on) by cm848_buildPciTransmitMessage3MilAndDtcDisplay; RX[8] is timed out on this truck (was diagnostic_active_flag)
 0x0040b503,trip_counters_reset_pending_flag,byte,Set by SCI command 35 (cm848_sciCommand35Callback); cm848_updateTripAndLifetimeCounters zeroes the trip set and clears it (was fuel_demand_cmd21_pending_flag)
 0x0040b512,immobilizer_valid_key_flag,word,1 = the immobilizer (SKIM) answered the seed the ECM sent in PCI TX[7] 0x3F with the expected key (RX[6] 4F C0 command 0); sent as TX[2] 0x35 byte 1 bit 0 (DRB Key Status VALID); still 0 when the wait ends = no fuel (was j1939_governor_auth_granted)
-0x0040b516,immobilizer_fuel_disable_flag,word,1 = immobilizer fuel cut: set by cm848_runImmobilizerTask when the authorization window ends unauthorized with no failure latch; once the engine leaves CSP_CRANKING cm848_selectFinalFueling forces fuel demand 0 (mode 0x29); cleared by init / 0xB1 restart (was governor_mode_override_active)
+0x0040b516,immobilizer_fuel_disable_flag,word,1 = immobilizer fuel cut: set by cm848_runImmobilizerTask when the authorization window ends unauthorized with no failure latch; once the engine leaves ENGINE_STATE_STOPPED cm848_selectFinalFueling forces fuel demand 0 (mode 0x29); cleared by init / 0xB1 restart (was governor_mode_override_active)
 0x0040b51c,immobilizer_secret_key_send_enable,byte,1 requests the PCI TX[9] 4F 10 secret-key send - set by the SCI command 0x23 (35) callback on sub-byte 0x13 when sci_security_key_matched_flag and sci_receive_flag are set while cranking - cleared after frame 2 (was j1939_tsc1_override_enable) (Medium confidence)
 0x0040b51d,pci_security_seed,word,Seed sent in the 67 01 reply (bytes 4-5): low 16 bits of key_on_hour_meter (0 -> 1) - 0 once unlocked; checked against the key by cm848_validatePciSecurityKey (was uds_security_challenge)
 0x0040b51f,pci_security_key,word,Key received with service 0x27 sub-function 2 = (request byte 4 << 8) + request byte 5 (was uds_security_seed_word - it is the tester's key not the seed)
@@ -5693,7 +5693,7 @@ address,name,type,comment
 0x0040b944,injection_quantity_pilot_engine_speed_with_hysteresis,word,Follows current_rpm but only moves once the difference exceeds the step (current -/+ step): a dead band, not a slew. x input of every pilot_quantity map. e2m RPM_With_Hyst. (was torque_limit_rpm_slewed) | earlier note: slew-limited engine speed: tracks current_rpm but capped to +/-DAT_00409e56 step per update in cm848_calculatePilotInjectionQuantity; used as the rpm axis of the torque-limit dualAxisTableInterpolation lookups
 0x0040b94a,injection_quantity_pilot_ambient_correction,word,(injection_quantity_pilot_ambient_map value x ambient factor) >> 12 inside cm848_calculatePilotInjectionQuantity, the third term of the arbitration; only user is that function. e2m Pilot_Quantity_Ambient_Correction (offset 0x12 of the pilot block). (was injection_timing_table_output_b)
 0x0040b956,injection_quantity_pilot_source_code,word,Written in cm848_calculatePilotInjectionQuantity with the winning term: 1 map blend, 2 coolant, 3 intake temperature, 4 ambient, 5 boost, 6 cold-start coolant curve, 7 override, 11 sum, 13 ratio cap reached, 14 forced zero or negative, 15 fuel pressure limp home, 16 / 17 cold correction, 19 cold-start override; packed with the other event source codes by cm848_updateMainInjectionTimingByDeliveryMode. e2m ... (was engine_timing_arb_byte_16_23)
-0x0040b98a,injection_timing_rpm_axis,word,engine speed arbitrated for injection-timing tables (governor integrator / protection_monitored_rpm / current_rpm by mode) in cm848_calculatePilotInjectionTimingOffset; used as the rpm axis of the injection-timing dualAxisTableInterpolation lookups
+0x0040b98a,injection_timing_rpm_axis,word,engine speed arbitrated for injection-timing tables (governor integrator / power_take_off_governor_smoothed_reference_engine_speed / current_rpm by mode) in cm848_calculatePilotInjectionTimingOffset; used as the rpm axis of the injection-timing dualAxisTableInterpolation lookups
 0x0040b998,injection_timing_pilot_source_code,word,which term set the pilot timing: 0 computed offset, 7 the override DAT_00409e6e, 8 the governor-limit floor (cm848_calculatePilotInjectionTiming) (was engine_timing_arb_byte_24_31)
 0x0040b99c,fuel_limit_by_rpm_and_demand,word,The variable speed governor's engine speed x accelerator demand fuel limit (cm848_calculateFuelLimitByRpmAndDemand) (was protection_fuel_limit_working)
 0x0040b9cb,general_diagnostic_battery_voltage_in_range_flag,byte,byte: 1 while ROM 0x64308 (128 = 8.0 V) < battery_voltage < ROM 0x6430a (264 = 16.5 V); its reader is cm848_buildFaultConditionMask (lbz at 0x1d914), so it widens the voltage window for general fault processing beyond the 10.5 V OBD limit. e2m Gen_Diag_Battery_Voltage_In_Range (0x01160A03, size 1). (was fault_enable_override_flag)
@@ -6058,8 +6058,8 @@ address,name,type,comment
 0x0040aaa6,j1939_accelerator_position_error_fallback_flag,byte,1 = the J1939 pedal position reports error (0xFE) while the low idle switch is valid - the off-idle flag then follows the switch; read by cm848_transitionEngineOperatingMode (was emission_feature_engage_flag)
 0x0040b9bc,fuel_pressure_sensor_plausibility_expected_fuel_demand,word,Running average of the expected fuel demand (table value for the present load state plus the in-gear addend, averaged like the demand by cm848_calculateExpectedFuelDemandAverage): a fuel quantity of 16.9 to 38.8 mm3, not an injection timing. xref: word, 2 reads / 2 writes (check, averaging helper). (was fuel_correction_timing_target) | earlier note: target injection timing offset for protection fuel correction
 0x0040b5a0,governor_pressure_sensor_zero_offset,word,Governor pressure sensor zero: governor_pressure_sensor_filtered captured while it is inside the clamp window (else the clamp value) by cm848_throttlePosition_clamp_update; 1852 in the RAM dump (was protection_throttle_position_measured) (Medium confidence)
-0x0040a5f4,cold_start_phase26_fuel_mode_flag,word,cold-start phase 2.6 fuel mode flag
-0x0040a600,injection_timing_temperature_component_check_flags,word,CODE: cm848_updateInjectionTimingTemperatureComponentCheckFlags writes only bits 0x20 (injection_timing_combustion_reference_at_base_chi below injection_timing_main_intake_temperature_component) and 0x40 (below injection_timing_main_coolant_component and coolant_temperature_selected <= DAT_004065ba), both only with cold_start_feature_enable_flags bit 0x400, else the word is 0; the bits are ORed into ... (was injection_timing_cylinder_check_flags) | earlier note: per-cylinder injection timing shortfall bitmask
+0x0040a5f4,engine_start_emission_control_active_flag,word,e2m 19B3 +0 EMO_Engine_Start_AECD_Active (CRANKING / JUMP_START) (was cold_start_phase26_fuel_mode_flag)
+0x0040a600,injection_timing_temperature_component_check_flags,word,CODE: cm848_updateInjectionTimingTemperatureComponentCheckFlags writes only bits 0x20 (injection_timing_combustion_reference_at_base_chi below injection_timing_main_intake_temperature_component) and 0x40 (below injection_timing_main_coolant_component and coolant_temperature_selected <= DAT_004065ba), both only with algorithm_enable_flags_20_cal bit 0x400, else the word is 0; the bits are ORed into ... (was injection_timing_cylinder_check_flags) | earlier note: per-cylinder injection timing shortfall bitmask
 0x0040a6b6,egr_valve_control_diagnostic_count_enabled_flag,word,code: users: cm848_initializeEgrValvePositionControlDiagnostic, cm848_updateEgrValvePositionControlFaultCounter. set when the conditions flag has held for the enable time; the fault counter may then count. e2m: EGA_Control_Diag_Count_Enabled (0x0117af02) is +0x02 of the block that anchors 0x40a6b4. (was governor_speed_sync_stable_flag) | earlier note: governor speed sync stable gate for diag counter
 0x0040a6ba,egr_valve_control_diagnostic_fault_counter,word,code: users: cm848_initializeEgrValvePositionControlDiagnostic, cm848_updateEgrValvePositionControlFaultCounter. fault counter of the position control diagnostic: fault 725 at the fail threshold. e2m: EGA_Control_Diag_Fault_Count (0x0117af06) is +0x06 of the block that anchors 0x40a6b4. (was governor_speed_stability_diag_counter) | earlier note: integrating speed-instability diagnostic counter
 0x0040b084,variable_geometry_turbocharger_motor_winding_temperature,word,code: filtered winding temperature in 1/8 degree F, limited to 4800; compared with the high / low / warning thresholds. e2m: VGA_Temperature (0x01183806) is +0x06 of the block that anchors 0x40b07e. (was governor_b_boost_demand_ema_eighth) | earlier note: med EMA of governor-B combined demand scaled 1/8
@@ -6179,12 +6179,12 @@ address,name,type,comment
 0x003fcbee,governor_pressure_solenoid_read_back_fault_debounce_count,word,Passes the governor pressure solenoid read-back fault bit has stayed set while logical output request 16 is on (cm848_debounceOutputReadBackFaults - P0748 above governor_pressure_solenoid_read_back_fault_debounce_limit) (was j1939_protection_receive_delay_counter)
 0x003fcbf0,wastegate_solenoid_read_back_fault_debounce_count,word,Passes the wastegate solenoid read-back fault bit has stayed set (cm848_debounceOutputReadBackFaults - P0243 above wastegate_solenoid_read_back_fault_debounce_limit) (was governor_load_cycle_delay_counter)
 0x003fd948,sensor_channel_ratiometric_reference_channel_cal,word[128],Per sensor channel: the number of ANOTHER channel whose filtered value divides this reading (ratiometric; dump: entry 1 = 28 / entry 3 = 42) (was sensor_channel_type_table) (was sensor_channel_type_table) | earlier note: NEVER-WRITTEN ROM table; channel->override/QADC type (array base)
-0x003fcea1,mil_message_state_flags,byte,PCI 0xB0 builder state: bit 0 = MIL state for the request logic edge test - copied from payload bit 7 outside CSP_CRANKING / CSP_ENGINE_STANDBY / set when 0x3fdda8 passes base 0x3fce9e / cleared when the engine-off rule forces it / bit 2 = hold the DTC (clear = step) (was j1939_dm1_tx_control_flags)
+0x003fcea1,mil_message_state_flags,byte,PCI 0xB0 builder state: bit 0 = MIL state for the request logic edge test - copied from payload bit 7 outside ENGINE_STATE_STOPPED / ENGINE_STATE_SHUTDOWN / set when 0x3fdda8 passes base 0x3fce9e / cleared when the engine-off rule forces it / bit 2 = hold the DTC (clear = step) (was j1939_dm1_tx_control_flags)
 0x003fee9b,diag_suppress_request_flag,byte,set=1 by protection FSMs to request diag suppression
 0x003fea68,fault_previous_bits_352_to_367,word,Word 22 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected word here each pass for edge detect - bit map as fault_detected_bits_352_to_367 (misfire) (was injection_fault_shadow_snapshot)
 0x003fee50,lifetime_distance_8_mile_record,word[4],EEPROM 0x19ce: 4-entry ring of lifetime_distance_pulses / 64000 (8-mile units) written by cm848_recordLifetimeDistanceEvery8Miles (was sensor_validation_accum_table) | retyped word -> word[4] 2026-11-18
-0x003fce9e,dtc_display_key_off_count_base,word,Baseline of the ignition key-off count (0x3fdda8) for the DTC display: it starts when that count reaches this + 2 in engine_state CSP_CRANKING (key ON-OFF-ON-OFF-ON); re-armed to count + 1 while the engine runs / after the list ends / after 2.5 s key on (was j1939_dm1_crank_counter_prev) (Medium confidence)
-0x003fcea2,mil_message_tick,word,Pass counter of the PCI TX[3] 0xB0 builder (~100 ms per pass / saturates at 65535) reset to 1 each pass while engine_state is CSP_ENGINE_STANDBY: forced engine-off MIL from 150 / blink mod 10 / DTC step hold-off 12 / 0x3fce9e base re-arm 25 (was j1939_dm1_cycle_tick)
+0x003fce9e,dtc_display_key_off_count_base,word,Baseline of the ignition key-off count (0x3fdda8) for the DTC display: it starts when that count reaches this + 2 in engine_state ENGINE_STATE_STOPPED (key ON-OFF-ON-OFF-ON); re-armed to count + 1 while the engine runs / after the list ends / after 2.5 s key on (was j1939_dm1_crank_counter_prev) (Medium confidence)
+0x003fcea2,mil_message_tick,word,Pass counter of the PCI TX[3] 0xB0 builder (~100 ms per pass / saturates at 65535) reset to 1 each pass while engine_state is ENGINE_STATE_SHUTDOWN: forced engine-off MIL from 150 / blink mod 10 / DTC step hold-off 12 / 0x3fce9e base re-arm 25 (was j1939_dm1_cycle_tick)
 0x003fda48,sensor_channel_enable_bits_cal,word[8],Per-sensor-channel enable bitmap (channel n = word n/16 bit n%16) (was sensor_channel_enable_flags) (was sensor_channel_enable_flags) | earlier note: NEVER-WRITTEN ROM; per-group channel enable bits (array base)
 0x003fe9e8,fault_registered_bits_128_to_143,word,Word 8 of the second fault bit array (fault_active_status_array at 0x3fe9d8 - bits ORed in while present): companion of system_status_flags_t_003fe974.fault_detected_bits_128_to_143 - the J1939 input tasks clear bits 0 / 2 here when the condition is gone (was governor_cal_status_shadow_flags)
 0x003fe9c0,fault_detected_bits_608_to_623,word,Word 38 of fault-detected array 0x3fe974 ((0x3fe9c0 - 0x3fe974) / 2; fault bit = word x 16 + bit via ROM 0x5985a -> obd_dtc_code_table): b3 P2581 (turbocharger speed sensor frequency high, fault 611), b5 P2580 (low, fault 613), b10 P2579 (rate of change / in range, fault 618); b11 / b12 (faults 619 / 620) map to slot 78 = B1934 (raw 0x9934: the letter comes from the top two bits, checked against ... (was egr_smoke_limit_status_flags) | earlier note: EGR overpressure/upper-range/transient bits
@@ -6378,7 +6378,7 @@ address,name,type,comment
 0x003fcddc,cold_start_fuel_demand_integral_q8_scaled,dword,Q-scaled cold-start overheat integral accumulator (x0x2280)
 0x003fcea4,protection_event35_crank_cycle_count,word,crank cycle counter for protection event 0x35 ambient qualify
 0x003fcea6,protection_event35_qualification_state,word,event 0x35 ambient qualification state 1/2/3
-0x003fd172,boost_pressure_sensor_high_reading_dwell_count,word,word: +1 per pass up to ROM 110 (0x642b4) while engine_state is CSP_AT_GOVERNOR_SETPOINT, engine load is at most 7 percent and the MAP circuit faults 8 / 9 are clear; reset to 0 when a condition fails. The debounce vote starts when it reaches the limit. (was protection_group21_pathB_dwell_count) | earlier note: group21 path B entry-dwell debounce
+0x003fd172,boost_pressure_sensor_high_reading_dwell_count,word,word: +1 per pass up to ROM 110 (0x642b4) while engine_state is ENGINE_STATE_RUNNING, engine load is at most 7 percent and the MAP circuit faults 8 / 9 are clear; reset to 0 when a condition fails. The debounce vote starts when it reaches the limit. (was protection_group21_pathB_dwell_count) | earlier note: group21 path B entry-dwell debounce
 0x003fd174,boost_pressure_sensor_high_reading_debounce_count,word,word, 1 after initialization: once the dwell is complete +1 per pass (cap 36) while boost is above 1917 (103.3 kPa), -1 otherwise; above 35 sets fault 64 (P0236), 0 clears it. The old comment (oil pressure vote accumulator) is wrong: it votes on the boost reading. (was protection_group21_pathB_vote_count) | earlier note: group21 path B oil-pressure vote accumulator
 0x003fd178,boost_pressure_sensor_high_reading_result_bits,byte,byte: bit 0 is ORed in when this check sets fault 64, bit 1 when it clears it; cm848_completeBoostPressureMonitorReport only tests it for non-zero as a gate. (was protection_group21_pathB_ring_trigger) | earlier note: group21 path B fault-ring notification bits
 0x003fd179,underboost_result_bits,byte,byte: bit 0 is ORed in when the underboost check sets fault 729, bit 1 when it clears it; gate for cm848_completeBoostPressureMonitorReport. (was protection_group21_pathA_ring_trigger) | earlier note: group21 path A fault-ring notification bits
@@ -6398,7 +6398,7 @@ address,name,type,comment
 0x003fb9fe,egr_cooler_fouling_precondition_dwell_counter,word,code: counts passes of the precondition up to 10 (cm848_updateEgrCoolerFoulingFaultCounter); the efficiency comparison is only used at 10. Dump 0. Time-shared window: no access below 0x7F60 (xref scan; boot-ROM low-halfword / 32-bit constant scan of 0x0-0x7F5F: none). (was boost_corr_eligible_dwell_count) | earlier note: dwell confirming boost-correction eligibility stable
 0x003fea6e,fault_previous_bits_400_to_415,word,Word 25 of the fault previous-pass snapshot array 0x3fea3c - cm848_processFaultScanGroup copies the detected word here each pass for edge detect - bit map as fault_detected_bits_400_to_415 (was protection_monitor_shadow_snapshot)
 0x003fd1e6,fuel_pressure_tracking_error_monitor_active_flag,byte,byte, set when the enable bits are present, cleared when the switch input bit 0 is clear; only the monitor and its reset use it. (was cam_timing_monitor_active_flag) | earlier note: cam-timing measurement active 0/1
-0x003fd19e,egr_delta_pressure_pre_start_check_dwell_count_a,word,word: +1 per pass up to ROM 100 while key on, engine_state is CSP_CRANKING (before the engine starts), no gating fault is set and egr_valve_position is below the pre-start limit; reset to 0 (with the done flag set) when they fail. (was boost_corr_crank_phase_dwell_a) | earlier note: cold-start boost-correction dwell channel A
+0x003fd19e,egr_delta_pressure_pre_start_check_dwell_count_a,word,word: +1 per pass up to ROM 100 while key on, engine_state is ENGINE_STATE_STOPPED (before the engine starts), no gating fault is set and egr_valve_position is below the pre-start limit; reset to 0 (with the done flag set) when they fail. (was boost_corr_crank_phase_dwell_a) | earlier note: cold-start boost-correction dwell channel A
 0x003fbc90,fuel_demand_timing_demand_window_sum,dword,150-sample rolling sum of fuel_demand_min_threshold
 0x003fbc94,fuel_demand_timing_correction_window_sum,dword,150-sample rolling sum of nitrogen_oxide_target_off_nominal_adjusted
 0x003fbc98,fuel_demand_timing_rolling_avg_index,word,rolling-average ring buffer write index 0-149
@@ -6418,7 +6418,7 @@ address,name,type,comment
 0x003fd226,fault_service_monitor_subtask_step,byte,subtask step 1-4 in mainLoopServiceMonitor
 0x003fd47c,key_on_during_power_down_save_flag,word,Set by cm848_saveEepromForPowerDown when the ignition key line (mios_mdasm30.SCRD bit 15) stays on for more than 80 samples while it waits for the EEPROM mirror save; then it calls cm848_restartOnKeyOnDuringPowerDown (was startup_mios_engine_event_flag)
 0x003fb612,injection_timing_min_fuel_interp_state,word,Lookup cache word (last axis segment offset) for the minimum fuel quantity floor lookup
-0x003fbc9c,cold_start_phase3_fuel_mode_count,word,cold-start phase-3 fuel-mode qualifying event count
+0x003fbc9c,extended_idle_timer,word,the extended idle time count (no e2m record) (was cold_start_phase3_fuel_mode_count)
 0x003fcbfe,turbocharger_overspeed_immediate_derate_wait_counter,word,code: passes counted at or above the speed threshold (saturating at 0xffff). Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60 and a scan of the boot ROM 0x0-0x7F5F (low halfword of the address in a load / store / addi / ori, and aligned 32-bit constants equal to it) finds none. (was throttle_rate_filter_above_threshold_count) (was throttle_rate_filter_above_threshold_count) | earlier note: cycles fuel demand above threshold before filter reset
 0x003fcdce,sensor_overheat_recovery_count,word,recovery dwell in cm848_monitorCoolantTemperatureBucketOverheat
 0x003fcdda,coolant_overheat_fuel_floor,word,RPM-indexed min fuel demand floor for cold-start integral (was cold_start_fuel_demand_min_floor)
@@ -6497,13 +6497,13 @@ address,name,type,comment
 0x0040a5d2,egr_cooler_condensation_adjusted_on_gain,word,CODE: loaded in cm848_updateEgrCoolerCondensationCount (0x504f70) as the step rate when the vapor pressure difference is positive, STORED by cm848_updateCondensationProtection (0x50519c): a computed value. E2M: EMO_Cooler_Cond_Adj_On_Gain (0x01196F1C); the intake twins 0x40a5d4 / 0x40a5d6 (fuel_demand_blend_compensation_step_rate_*) are EMO_Intake_Cond_Adj_Off / On_Gain, used by ... (was fuel_demand_boost_compensation_step_rate_positive) | earlier note: boost compensation step rate (positive-error branch)
 0x0040a5d4,intake_condensation_adjusted_off_gain,word,CODE (mirror of the accepted cooler names; the two functions are line for line twins): base gain x filtered charge mass flow >> 7 (cm848_updateCondensationProtection), the step rate in the negative branch; e2m EMO_Intake_Cond_Adj_Off_Gain. E2M (relative offset): the words 0x40a5b6-0x40a5ea sit at the same offsets as the EMO condensation block 0x01196F00-0x01196F34 (0x40a5b6 = ... (was fuel_demand_blend_compensation_step_rate_negative) | earlier note: blend compensation step rate (negative-error branch)
 0x0040a5d6,intake_condensation_adjusted_on_gain,word,CODE (mirror of the accepted cooler names; the two functions are line for line twins): the same for the positive branch; e2m EMO_Intake_Cond_Adj_On_Gain. E2M (relative offset): the words 0x40a5b6-0x40a5ea sit at the same offsets as the EMO condensation block 0x01196F00-0x01196F34 (0x40a5b6 = Condensation_AECD_Active, 0x40a5be = Cooler_Cond_Count, 0x40a5c8 = Intake_Cond_Count, 0x40a5ea = ... (was fuel_demand_blend_compensation_step_rate_positive) | earlier note: blend compensation step rate (positive-error branch)
-0x0040a5f8,cold_start_phase3_fuel_mode_count_met_flag,word,cold-start phase-3 count reached threshold 0/1
-0x0040a5fa,cold_start_phase3_fuel_demand_floor,word,cold-start phase-3 fuel demand floor when count at max
-0x0040a5fc,cold_start_boost_override_active_flag,word,cold-start boost override active 0/1
-0x0040a5fe,cold_start_boost_override_fuel_demand,word,interpolated boost-override fuel demand floor
+0x0040a5f8,extended_idle_emission_control_active_flag,word,e2m 19B1 +0 EMO_Extended_Idle_AECD_Active (was cold_start_phase3_fuel_mode_count_met_flag)
+0x0040a5fa,extended_idle_emission_level_cap,word,e2m 19B1 +2 EMO_Extended_Idle_Cap_EL (was cold_start_phase3_fuel_demand_floor)
+0x0040a5fc,extreme_ambient_emission_control_active_flag,word,e2m 19A4 +0 EMO_Extreme_Amb_AECD_Active (was cold_start_boost_override_active_flag)
+0x0040a5fe,extreme_ambient_emission_level_cap,word,e2m 19A4 +2 EMO_Extreme_Amb_Cap_EL (was cold_start_boost_override_fuel_demand)
 0x0040a602,fuel_timing_cylinder_check_demand_floor,word,per-cylinder injection-timing shortfall demand floor
 0x0040a8ab,fuel_demand_sensor_validation_floor,word,fuel demand floor when sensor-validation flags active
-0x00406570,cold_start_phase3_fuel_mode_count_max,word,read-only ROM ceiling for phase-3 fuel mode count
+0x00406570,extended_idle_time_threshold,word,e2m 19B0 +2 C_EMO_Extended_Idle_Timer (ROM copy, no _cal) (was cold_start_phase3_fuel_mode_count_max)
 0x00406576,cold_start_override_fuel_demand_floor_axis,word[17],Lookup table - x axis of 16 breakpoints after its byte-length word - read by cm848_updateColdStartBoostOverrideFuelDemand
 0x00406598,cold_start_override_fuel_demand_floor_values,word[17],Lookup table - data: 16 values (one per axis breakpoint) after a byte-length word - read by cm848_updateColdStartBoostOverrideFuelDemand
 0x0040a6b8,egr_valve_control_diagnostic_enable_flag,word,code: users: cm848_evaluateEgrValvePositionControlDiagnosticConditions, cm848_initializeEgrValvePositionControlDiagnostic, cm848_updateEgrValvePositionControlFaultCounter. enable flag of the position control diagnostic (cm848_evaluateEgrValvePositionControlDiagnosticConditions). e2m: EGA_Control_Diag_Enable (0x0117af04) is +0x04 of the block that anchors 0x40a6b4. (was governor_speed_stability_conditions_flag) | earlier note: all-conditions-met flag for governor speed-stability diag
@@ -6670,7 +6670,7 @@ address,name,type,comment
 0x0040a5b8,condensation_protection_emission_level_cap,word,CODE: = condensation_protection_emission_level_cap_when_active (0x40654e) while condensation_protection_active_flag is 1, else 0; its only reader fuel_demandMin_maxSelect_rateLimit takes the maximum of this and the other protection floors (cold start phase 2.6 / 3, boost override, sensor validation, cylinder check, blend) and rate limits it into fuel_demand_min_threshold, which ... (was fuel_coldStart_compensation_demand_floor) | earlier note: fuel demand floor when cold-start compensation saturates
 0x0040a5e4,egr_cooler_saturation_vapor_pressure,word,CODE: one store (0x504d7c) in cm848_calculateEgrCoolerCondensationMassRate and no load in either bank: the water saturation vapor pressure at coolant_temperature_selected (a table lookup result, not a decay coefficient). E2M: EMO_Cooler_Satur_PP (IN_HG, 0x01196F2E) at this offset; the next word 0x40a5e6 (intake_saturation_vapor_pressure) is EMO_Intake_Satur_PP. E2M (corroboration): anchoring 0x40a5d0 on ... (was boost_demand_ema_decay_coeff) | earlier note: MAP-table EMA decay coeff for boost demand compensator
 0x0040a5e6,intake_saturation_vapor_pressure,word,CODE (mirror of the accepted cooler names; the two functions are line for line twins): water saturation vapor pressure at the filtered intake manifold temperature (lookupTableInterpolation of water_saturation_vapor_pressure_by_temperature, stored in cm848_calculateIntakeCondensationMassRate); e2m EMO_Intake_Satur_PP; twin of egr_cooler_saturation_vapor_pressure (96 counts at 32 F = 0.19 inHg; this ... (was blend_demand_ema_filtered_decay_coeff) | earlier note: MAP-table EMA decay coeff for filtered blend compensator
-0x0040a5f6,fuel_coldStart_phase26_demand_floor,word,phase-2.6 fuel demand floor
+0x0040a5f6,engine_start_emission_level_cap,word,e2m 19B3 +2 EMO_Engine_Start_Cap_EL (was fuel_coldStart_phase26_demand_floor)
 0x0040a78e,governor_derate_j1939_trigger_pending,word,edge-trigger latch feeding j1939 derate latch
 0x0040ae6e,pedal_fault_mode_fuel_demand_limit,word,cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit (cpp 66389+): the upper limit of the pedal fault mode fuel demand ramp (DAT_0005c492 = 854 or DAT_0005c4a4 or DAT_0005c496 = 9); xref_addr.py: 1 read / 2 writes, this function only. (was aux_torque_fuel_demand_limit) | earlier note: RPM-derived fuel demand limit for aux torque mode 6
 0x0040af0b,diag_suppress_active_flag,byte,diagnostic suppression active state 0/1
@@ -6696,9 +6696,9 @@ address,name,type,comment
 0x0040b564,protection_coldStart_channelB_trip_count,word,cold-start protection channel B trip count
 0x0040b568,protection_coldStart_channelB_debounce_count,word,cold-start protection channel B debounce
 0x0040b572,park_neutral_switch_driving_neutral_count,word,Samples with switch 20 at park/neutral while driving (vehicle_speed over 10 mph / transmission_output_speed_in_use output shaft over 90 rpm / 0x40b116 and 0x40b592 terms in range); 30 sets the stuck-in-park/neutral failure (0x3fcefa); reset when the switch reads in gear (was fuel_temp_derate_entry_counter)
-0x0040b574,park_neutral_switch_start_sample_count,word,Samples during engine run-up (engine_state CSP_ABOVE_RPM_TRIGGER) with vehicle_speed under 2 mph (512); the start check is judged only when this is under 50 (was fuel_temp_derate_cycles_below_threshold)
+0x0040b574,park_neutral_switch_start_sample_count,word,Samples during engine run-up (engine_state ENGINE_STATE_CRANKING) with vehicle_speed under 2 mph (512); the start check is judged only when this is under 50 (was fuel_temp_derate_cycles_below_threshold)
 0x0040b576,park_neutral_switch_start_neutral_count,word,Run-up samples in which switch 20 read park/neutral; more than 9 run-up samples without it fail the start check (0x3fcef6 - the engine started while the switch read in gear) (was fuel_temp_derate_cycles_protected)
-0x0040b578,park_neutral_switch_start_check_delay_count,word,Engine-running samples (engine_state CSP_AT_GOVERNOR_SETPOINT) counted to 100 before the park/neutral start check is judged and 0x3fcef4 set; cleared by cm848_initParkNeutralSwitchMonitor (was fuel_temp_derate_cycles_at_setpoint)
+0x0040b578,park_neutral_switch_start_check_delay_count,word,Engine-running samples (engine_state ENGINE_STATE_RUNNING) counted to 100 before the park/neutral start check is judged and 0x3fcef4 set; cleared by cm848_initParkNeutralSwitchMonitor (was fuel_temp_derate_cycles_at_setpoint)
 0x0040b596,protection_throttle_error_delta,dword,D-term of protection throttle error
 0x0040bbbc,governor_pressure_sensor_filtered,word,sensor_channel_filtered_output[102]: governor pressure sensor in 1/18.56 kPa - its table maps 0.45-4.45 V to 1856-14656 (100 kPa plus 0-100 psi gauge); 1856 at rest in the RAM dump; the source of governor_pressure (was protection_throttle_position_received)
 0x0040c14c,governor_pressure_solenoid_duty_command,word,Last duty 0-25600 = 0-100 % sent to the governor pressure solenoid (output channel assignment table entry 10; the per-entry duty cache at 0x40c138 + 2 x entry) - written by cm848_controlGovernorPressureSolenoid / protectionPhaseGroupA_Init / cm848_throttlePosition_clamp_update next to each set-duty call; cm848_sciCommand37Callback also sets it and cm848_controlGovernorPressureSolenoid compares it (was protection_throttle_hpcr_setpoint)
@@ -6935,7 +6935,7 @@ address,name,type,comment
 0x003fd0ba,tpu_protection_enable_flag,byte,TPU protection enable / restart gate
 0x003fd0bb,tpu_init_restart_pending_flag,byte,TPU one-shot restart token
 0x003fd176,boost_pressure_pre_start_check_pass_count,word,word: +1 every pass while the evaluation count is below 4 (lhz / sth @ 0x52d6f0-0x52d6f8); the pre-start checks of faults 64 / 778 start when it reaches ROM 25 (0x642c0). (was protection_group21_qualifying_event_count) | earlier note: group21 qualifying event count
-0x003fd17a,boost_pressure_pre_start_check_evaluation_count,byte,byte, stops at 4 (stb @ 0x52d714): +1 on every pass from pass 25 on, so the pre-start checks get four consecutive evaluations per initialization (about 2.5 s after initialization), each acting only while engine_state is CSP_CRANKING (key on, before the engine starts). (was protection_group21_qualifying_epoch_count) | earlier note: group21 qualifying epoch count (max 4)
+0x003fd17a,boost_pressure_pre_start_check_evaluation_count,byte,byte, stops at 4 (stb @ 0x52d714): +1 on every pass from pass 25 on, so the pre-start checks get four consecutive evaluations per initialization (about 2.5 s after initialization), each acting only while engine_state is ENGINE_STATE_STOPPED (key on, before the engine starts). (was protection_group21_qualifying_epoch_count) | earlier note: group21 qualifying epoch count (max 4)
 0x003fea9c,fault_previous_pass_bits_768_to_783,word,Word 48 of the previous-pass array 0x3fea3c ((0x3fea9c - 0x3fea3c) / 2): previous-pass copy of fault_detected_bits_768_to_783 (mask 0x400 = fault 778, P0069). (was diagnostic_status_flags_ring_snapshot) (was diagnostic_status_flags_ring_snapshot) | earlier note: fault-ring shadow of fault_detected_bits_768_to_783
 0x003fd18a,cssc_coolant_temp_min,word,running min coolant temp (CSSC thermostat)
 0x003fd18c,cssc_coolant_temp_max,word,running max coolant temp (CSSC thermostat)
@@ -7884,7 +7884,7 @@ address,name,type,comment
 0x000642b8,boost_pressure_sensor_high_reading_maximum_engine_load,word,ROM word = 1792: engine_load_percent (1/256 percent) must be at most this, 7 percent (lhz @ 0x52db20). (new row 2026-11-18)
 0x000642ba,boost_pressure_sensor_high_reading_target_speed_margin,word,ROM word = 15600: target_rpm must not exceed the governor output word 0x40aec2 (governor_output_t.integrator integer part, 6000 = 750 rpm in the dump) plus this, 15600 x 0.125 = 1950 rpm (lhz @ 0x52db04). (new row 2026-11-18)
 0x000642bc,boost_pressure_sensor_high_reading_minimum_boost_pressure,word,ROM word = 1917: boost above this counts toward fault 64, 103.3 kPa at 1/18.56 kPa per count (lhz @ 0x52db98). (new row 2026-11-18)
-0x000642be,boost_pressure_pre_start_check_maximum_manifold_pressure,word,ROM word = 2254: while engine_state is CSP_CRANKING (key on, before the engine starts), intake manifold pressure above this sets fault 64, 121.4 kPa (lhz @ 0x52d764). (new row 2026-11-18)
+0x000642be,boost_pressure_pre_start_check_maximum_manifold_pressure,word,ROM word = 2254: while engine_state is ENGINE_STATE_STOPPED (key on, before the engine starts), intake manifold pressure above this sets fault 64, 121.4 kPa (lhz @ 0x52d764). (new row 2026-11-18)
 0x000642c0,boost_pressure_pre_start_check_start_pass_count,word,ROM word = 25: passes after the initializer before the pre-start checks run (lhz @ 0x52d704). (new row 2026-11-18)
 0x000642c2,underboost_dwell_limit,word,ROM word = 110: passes of the underboost conditions before its debounce vote starts (lhz @ 0x52d958). (new row 2026-11-18)
 0x000642c4,underboost_minimum_target_speed,word,ROM word = 16000: target_rpm (0.125 rpm) must be at least this, 2000 rpm (lhz @ 0x52d924). (new row 2026-11-18)
@@ -7927,5 +7927,5 @@ address,name,type,comment
 0x00409eb8,egr_orifice_temperature_rationality_valve_position_threshold,i16,lha @ 0x52ed4c; 2560 = 20 percent at 1/128: the running test needs egr_valve_position at or above it (e2m Position_Threshold). (new row 2026-11-18)
 0x0040bbc8,egr_orifice_temperature_sensor_filtered,word,lha r6,216(r26) @ 0x52ec14 (r26 = 0x40baf0): sensor_channel_filtered_output[108], the filtered output of sensorChannelTypeB channel 108 (index argument 0x6c, fault bits 0x31c / 0x31d) = the EGR orifice temperature sensor, 1/64 deg F (4608 = 72 deg F in the RAM dump); same naming as transmission_temperature_sensor_filtered (slot 103). (new row 2026-11-18)
 0x004077f0,water_in_fuel_running_heal_threshold,word,lhz @ 0x510478: while running the water-in-fuel fault heals when the reading is above it; 1999 in the RAM dump. ROM-copied, no _cal. (new row 2026-11-18)
-0x004077f2,water_in_fuel_key_on_heal_threshold,word,lhz @ 0x510424: at key on (CSP_CRANKING) the fault heals when the reading is above it; 1300. (new row 2026-11-18)
+0x004077f2,water_in_fuel_key_on_heal_threshold,word,lhz @ 0x510424: at key on (ENGINE_STATE_STOPPED) the fault heals when the reading is above it; 1300. (new row 2026-11-18)
 0x004077f4,water_in_fuel_maximum_wet_reading,word,lhz @ 0x5103dc: the wet band is 999 < reading <= this; 1300. (new row 2026-11-18)

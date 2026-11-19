@@ -209,20 +209,75 @@ here before anything was applied.
   - the coolant overheat derate: `cm848_runCoolantOverheatFuelDerate` and 6 more functions, 14 words and the two
     tables. These were the "unidentified `fuel_coldStart_*` helpers".
 
+## Stage 5 - the power take-off words, the crank routine, two backwards flags (2026-11-19, PR #52)
+
+- **The power take-off governor's words.** They are named from five e2m blocks that line up by offset, with matching
+  units and RAM-dump values:
+  - 10AB, the terms: `power_take_off_governor_filtered_speed_error`, `_proportional_term`, `_derivative_term`,
+    `_integral_fueling`, `_droop_adjusted_fueling`, `_proportional_derivative_fueling`,
+    `_smoothed_reference_engine_speed`, `_droop_compensated_speed_error`, the QD / QI / QP `_gain_adjustment` words
+    (0x80 = 1.0; the old `_d_gain_factor_b` is QI) and `_no_load_fuel`.
+  - 109E: `power_take_off_requested_engine_speed` (PTO_Requested_Speed).
+  - 11B4, EEPROM 0x404-0x418: the engagement slew rate, max road speed 2 mph, minimum reference 1100 rpm, remote count
+    limit 5, remote speeds 2-5 = 1400 / 1600 / 1800 / 2000 rpm, set / resume 1100 rpm, ramp rate and switch enable
+    option (`power_take_off_*_cal`).
+  - 109D: the engage window, 300-1200 rpm, and the remote switch timeout.
+  - 10AA: the gains and clamps.
+    - The +-1000 rpm speed-error clamps had their names swapped (the "lower bound" held +8000).
+    - The "byte" filter constant is the word EMA coefficient 0.8.
+    - The fueling clamp minimum and the integral constant were checked in the PID code.
+
+  The PID reaches each word by its own address, not base + offset, so they stay flat words, not a struct.
+- **The crank routine.** A read-only agent read it, and its e2m blocks, anchors and dump values were checked here.
+  - e2m 105E: the 0x40a798-0x40a7be words, `crank_*`. They include `crank_exit_speed` (CRANKING ends at it),
+    `crank_fuel` (the CRANKING fuel; it was named an rpm) and `crank_reentry_speed`.
+  - e2m 105F: the ROM settings 0x406852-0x40687c, which lost a wrong `_cal`.
+  - e2m 1032: `engine_stopped_speed` (10 rpm), `ecm_power_down_timer_threshold`, `ecm_power_down_delay`.
+  - EEPROM: `crank_exit_speed_switch_cal`, `engine_brake_driveline_brake_type_cal` (1 = retarder, so ENGINE_BRAKE is
+    never entered here) and `algorithm_enable_flags_20_cal`.
+  - The crank tables (`crank_initial_fuel_*`, `crank_exit_fuel_*`, `crank_initial_speed_*`).
+  - The AECD words: engine start / extended idle / extreme ambient (e2m `EMO_*_AECD_Active` / `_Cap_EL`).
+- **Two flags that read backwards.**
+  - `engine_starting` is now `engine_shutdown_command_flag` (e2m 10B1 +12 Shutdown, block anchored at +A
+    `fault_derate_fuel_limit`). It forces SHUTDOWN and zeroes the injection and the rail pressure setpoint.
+  - `engine_shutdown_active_flag` is now `key_off_shutdown_inhibit_flag`: 1 stops a key-off shutdown. Only J1939
+    service 24 sets it (`cm848_inhibitKeyOffShutdown`, was `cm848_setColdStartMode2Flag`), and the next key-on edge
+    clears it.
+  - `cm848_setEngineStarting` is now `cm848_commandEngineShutdown`. The user's review note is kept.
+- **Code 32** is `FUELING_STATE_MASTER_SLAVE_OVERRIDE` (e2m MSOVRIDE; [MSODEN] "Enable overriding slave Final_Fueling").
+  Codes 37 / 38 / 49 / 50 keep placeholders, with the e2m T2 / OFC / AFR leads in their comments.
+- **The stale `CSP_*` state names** in 32 comments now use `ENGINE_STATE_*`.
+- **Proof:**
+  - All 104 names render, with no `_` variants and no OR renders.
+  - With the names reversed, one line still differs: an `(undefined *)` cast in `cm848_initProtectionFilterState`. It
+    comes from the byte → word fix of `power_take_off_speed_error_filter_coefficient`; `cm848_signedFirstOrderFilter`
+    reads it as `*(short *)`.
+  - The build warnings match stage 4's, once `function_definitions.csv` had the two new function names
+    (`refresh_references.py` does not touch that column).
+
 ## Follow-ups (open)
 
-- [ ] **Name the last `FUELING_STATE_UNIDENTIFIED_<n>` codes:**
-  - 32 MSOVRIDE: its two words have no writer;
-  - 37 T2SPD / 38 T2TORQ: only compared, next to the TSC1 modes;
-  - 49 OFCSTATE / 50 AFRSTATE: only compared.
-- [ ] **Agent leads not applied yet:**
-  - power take-off: the `power_take_off_governor_t` struct over 0x40af28-0x40af41 (e2m block 10AB), the speed
-    calibrations (e2m block 11B4: the `governor_rpm_ref_target_*` remote speeds, set / resume, ramp rates), the four
-    `governor_integrator_*` / `protection_rpm_*` misnames, and the six helper functions 2abc8 / 2ad28 / 2ad48 / 2bd38 /
-    2bd58 / 2bed4;
-  - engine state: `engine_starting` reads as a protection-shutdown latch and `engine_shutdown_active_flag` as a key-off
-    suppression; both names may be backwards. The remaining `cold_start_*` words of the crank routine (e2m blocks 105E
-    / 105F).
+- [ ] **Codes 37 / 38 (T2SPD / T2TORQ) and 49 / 50 (OFCSTATE / AFRSTATE):** only compared in this build. The e2m T2
+  family looks like a two-speed axle or transfer case shift controller; OFC is the combustion oxygen-fuel control; AFR
+  is the air-fuel ratio.
+- [ ] **Not applied yet:**
+  - the i16 retypes of the signed crank words (0x40a79a / 9c / a2 / a6 / b6 / b8, 0x406858 / 5a / 64 / 66 / 68 - lha);
+  - the low-confidence crank words 0x40a79c (Crank_4D_Timing), 0x40a7a2 (Crank_Wet_Stack_Timing), 0x40a7b8
+    (SOI_Before_Startup) and 0x3fdfdc (Engine_Startup_Inhibit);
+  - the unnamed crank defaults DAT_0005b1b6-0x5b1bc;
+  - the power take-off fueling clamp maximum 0x407196 (no row; the code takes `cruise_speed_blend_working`);
+  - the six power take-off helper functions. 0x2abc8 `cm848_initProtectionFilterState` initializes the whole
+    governor: the filter, the smoothing pointer, the QD / QI / QP adjustments = 0x80 and the four
+    `governor_pid_interp_state_*` = 2.
+  - the power take-off speed-error filter record that `cm848_calculatePowerTakeOffGovernorSpeedError` passes to
+    `cm848_signedFirstOrderFilter`: 0x3fafb2 `protection_filter_state_ptr` (it points at
+    `power_take_off_speed_error_filter_coefficient`) + 0x3fafb6 `governor_integrator_working` (the filter state).
+    These would become `power_take_off_speed_error_filter` / `_filter_state`, like `cooling_fan_speed_feedback_filter`.
+  - a shared `{coefficient pointer, state}` struct for the 16 `cm848_signedFirstOrderFilter` records. Today each one
+    is a flat pointer + dword.
+  - the other power take-off words with "protection" names (`protection_monitored_rpm_snapshot`,
+    `protection_rpm_axis_cal` / `_values_cal`, `governor_speed_gain_factor`);
+  - `governor_rpm_reference_snapshot` (the 1500 rpm maximum set speed).
 - [ ] **CM550:** type FSGVFLST (0x0080a8f2) and the 13-41 word (0x0080deca) with a shared enum. CM550's own
   `ENGINE_OPERATING_MODE` (ENGINE_IDLE ...) and `FUEL_SOURCE_ID` (0x09 governor low / 0x0A high / 0x0B diagnostic)
   contradict the CM848 code: guesses to replace, not to reuse.
