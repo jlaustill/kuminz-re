@@ -14,3 +14,4 @@ reversed.cpp
 test_disasm_tools.py.log
 test_lookup_tables.py.log
 test_rename_waves.py.log
+verify.log

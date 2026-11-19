@@ -53,7 +53,7 @@ is shared too: `ENGINE_OPERATING_MODE` was renamed `FUELING_STATE`.
   the rpm limit and the flag are set in the throttle-wins branch of `cm848_updateGovernorFromProtection`, and the
   fuel / state are `operating_mode_governor_output`.
 
-## Changes (2026-11-19, branch cm848/fueling-state-enum)
+## Changes (2026-11-19, PR #52, branch cm848/fueling-state-enum)
 
 - `enums.csv`: `ENGINE_OPERATING_MODE` → `FUELING_STATE` (members renamed), + 4 / 9 / 10 / 11 / 12.
 - Typed `FUELING_STATE`: 0x40b000 `engine_operating_mode`, 0x3fa0ec `engine_operating_mode_previous_pass`,

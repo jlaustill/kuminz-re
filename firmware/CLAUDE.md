@@ -697,7 +697,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - **One expected boot-ROM render:** `mpc555_cmfEraseBlocks` stores the erase interlock word to flash block 0x58000.
     That address is inside `qadc_channel_dispatch_table`, so the store renders as
     `qadc_channel_dispatch_table._558_4_`.
-- **Fueling state enum (2026-11-19, todo 045).** `ENGINE_OPERATING_MODE` is now `FUELING_STATE` (members
+- **Fueling state enum (2026-11-19, PR #52, todo 045).** `ENGINE_OPERATING_MODE` is now `FUELING_STATE` (members
   `FUELING_STATE_*`). It is one numbering for every fueling stage. The Cummins e2m lists number them the same way:
   FSDSFLST user fueling state 1-8 / 38, FSGVFLST governed state 1-12, FSLMFLST limited state 13-41, FSFNFLST final
   state 1-41. An e2m state parameter's description ends with its value range (`~1-12`).
