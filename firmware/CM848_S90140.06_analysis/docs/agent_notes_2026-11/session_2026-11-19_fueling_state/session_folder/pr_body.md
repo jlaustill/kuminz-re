@@ -155,7 +155,7 @@ A review of stage 5 found 16 applied rows that had not been checked. Checking th
 - CM550's FSGVFLST typing.
 - The six power take-off helper functions, including 0x2abc8, which initializes the whole governor.
 - The power take-off filter record (0x3fafb2 pointer + 0x3fafb6 state).
-- A shared struct for the 16 `cm848_signedFirstOrderFilter` records.
+- A shared struct for the 13 global `cm848_signedFirstOrderFilter` records (15 call sites; two pass a pointer through).
 - The i16 retypes of the signed crank words, and the four low-confidence crank words.
 - The rest of the EMO family: the other inputs of `fuel_demandMin_maxSelect_rateLimit` and its output `fuel_demand_min_threshold`, which look like AECD caps rather than fuel demands.
 - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.

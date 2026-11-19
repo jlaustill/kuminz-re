@@ -324,7 +324,7 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
     `cm848_signedFirstOrderFilter`: 0x3fafb2 `protection_filter_state_ptr` (it points at
     `power_take_off_speed_error_filter_coefficient`) + 0x3fafb6 `governor_integrator_working` (the filter state).
     These would become `power_take_off_speed_error_filter` / `_filter_state`, like `cooling_fan_speed_feedback_filter`.
-  - a shared `{coefficient pointer, state}` struct for the 16 `cm848_signedFirstOrderFilter` records. Today each one
+  - a shared `{coefficient pointer, state}` struct for the 13 global `cm848_signedFirstOrderFilter` records (15 call sites; two pass a pointer through). Today each one
     is a flat pointer + dword.
   - the other power take-off words with "protection" names (`protection_monitored_rpm_snapshot`,
     `protection_rpm_axis_cal` / `_values_cal`, `governor_speed_gain_factor`);
