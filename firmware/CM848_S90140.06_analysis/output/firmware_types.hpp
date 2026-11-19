@@ -113,7 +113,40 @@ typedef enum {
     FUELING_STATE_VEHICLE_SPEED_LIMIT = 10,  /* governor_fuel_demand_mode (cm848_processProtectionRampControl): the vehicle speed limit fuel cruise_fuel_demand_setpoint (cm848_processProtectionRampTimer: cruise_speed_setpoint_adjusted - the vehicle speed - against cruise_speed_limit_working; no limit while j1939_governor_feature_cal bit 0x80 is clear) is the smallest demand; protectionRampRateControl runs the limit-minus-speed error in 10 */
     FUELING_STATE_LOW_SPEED_GOVERNOR = 11,  /* governor_fuel_demand_mode (cm848_processProtectionRampControl and the initial value of cm848_initFuelFilterCoefficients): at or below the governor speed the low speed governor asks for more fuel than the selected demand (a max select); only in 11 does cm848_processSpeedGovernorControl write its fuel into governor_fuel_demand_value (e2m FSGVFL: fueling as limited by limiting governors LSG / HSG) and governor_request_active_flag latch. RAM dump: 11 */
     FUELING_STATE_HIGH_SPEED_GOVERNOR = 12,  /* governor_fuel_demand_mode (cm848_processProtectionRampControl): high_speed_governor_fueling is the smallest demand and becomes governor_fuel_demand_value; runHighSpeedGovernorPid resets its integrator in 12 (the same compare as CM550 0x1ce7c on FSGVFLST) */
-    FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE = 30  /* cm848_restoreEngineOperatingMode: engine_operating_mode_restore_valid_flag nonzero; loads the restore record 0x40a216-0x40a246 (never set in this build and RAM is zeroed at every start) */
+    FUELING_STATE_CALIBRATED_FIXED_FUEL_LIMIT = 13,  /* torque_derate_fuel_source_code (cm848_processProtectionSelection): while governor_feature_flags bit 0x10 is set the EEPROM limit protection_fuel_limit_c_working (EEPROM 0x380) replaces the whole derate chain. Off in the dump: the flags are 0x1020 and the limit is 5888 */
+    FUELING_STATE_UNIDENTIFIED_15 = 15,  /* stored - torque_derate_fuel_source_code (cm848_protection_limits): fuel_correction_upper_limit (cm848_calibrationGroup5_periodic) below the running derate */
+    FUELING_STATE_UNIDENTIFIED_16 = 16,  /* stored - fuel_demand_minimum_tracked_state (cm848_trackMinimumFuelDemand): fuel_demand_load_based (cm848_fuelDemandBlendCalculator) below fuel_demand_minimum_tracked. RAM dump: 16 */
+    FUELING_STATE_MAXIMUM_FUEL_CURVE = 19,  /* torque_derate_fuel_source_code starting value (cm848_initProtectionStateWithFuelDemand): protection_fuel_limit_cal_active - cm848_processActiveFaultList(engine speed / 400) blends two engine speed x 400 fuel tables by thermal_fuel_limit_factor - before any derate source takes over */
+    FUELING_STATE_TSC1_TORQUE_LIMIT = 20,  /* torque_derate_fuel_source_code (cm848_applySpeedControlProtectionLimit): J1939 TSC1 override control mode 3 with etc1_mode3_torque_limit below the running derate */
+    FUELING_STATE_ENGINE_STARTING = 22,  /* final_fueling_state (cm848_selectFuelDemandSource): cold_start_phase 2 / 6 (above the start rpm trigger) or 7 with the command below it; the fuel is governor_cold_start_rpm_output */
+    FUELING_STATE_FUEL_OVERRIDE = 23,  /* final_fueling_state while governor_feature_flags bit 2 is set (fuel_timing_target_working) and injection_quantity_combustion_reference_source_code while combustion_override_and_estimation_enable_flags_cal bit 9 is set (injection_quantity_combustion_reference_override_value) */
+    FUELING_STATE_UNIDENTIFIED_24 = 24,  /* stored - final_fueling_state (cm848_selectFuelDemandSource): cold_start_phase 4 (named ENGINE_RETARDER_ACTIVE - its own comment disagrees); the fuel is the ROM word 0x5c308 */
+    FUELING_STATE_UNIDENTIFIED_25 = 25,  /* stored - final_fueling_state (cm848_selectFuelDemandSource): cold_start_phase 5 (named ENGINE_OVERSPEED - its own comment disagrees); the fuel is the ROM word 0x5c30a */
+    FUELING_STATE_ENGINE_STOPPED = 26,  /* final_fueling_state (cm848_selectFuelDemandSource): cold_start_phase 1 - the final fuel is 0. RAM dump (key on / engine stopped): 26 with cold_start_phase 1 */
+    FUELING_STATE_UNIDENTIFIED_27 = 27,  /* stored - final_fueling_state (cm848_selectFuelDemandSource): cold_start_phase 8 (named ENGINE_STANDBY); the fuel is timing_limit_upper */
+    FUELING_STATE_FUEL_PRESSURE_FAULT_LIMIT = 28,  /* torque_derate_fuel_source_code (cm848_applyFuelPressureFaultFuelLimit): fuel_pressure_fault_fuel_limit_working from cm848_applyFuelLimitsForFuelPressureFaults (rail pressure faults) - e2m block 105D +4 FSAPLMFL fuel system specific fuel derate */
+    FUELING_STATE_FAULT_DERATE = 29,  /* torque_derate_fuel_source_code (cm848_enforceFuelLimitProtection): fault_derate_fuel_limit from cm848_calculateFaultDerateFuelLimit. The CM550-era e2m label for 29 is ATDERAT: CM848 numbers its limiters differently above 12 */
+    FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE = 30,  /* cm848_restoreEngineOperatingMode: engine_operating_mode_restore_valid_flag nonzero; loads the restore record 0x40a216-0x40a246 (never set in this build and RAM is zeroed at every start) */
+    FUELING_STATE_UNIDENTIFIED_32 = 32,  /* stored - final_fueling_state / fuel_demand_arbitrated_state: fuel_limit_mode_active_flag set without fuel_limit_secondary_flag - the fuel is fuel_demand_arbitrated_a */
+    FUELING_STATE_UNIDENTIFIED_34 = 34,  /* stored - governor_fuel_limit_cap_state (cm848_checkProtectionParamLimit): governor_fuel_limit_override lowers governor_fuel_limit_cap while governor_fuel_active_flag (the power take-off flag of code 4) is 1 */
+    FUELING_STATE_UNIDENTIFIED_37 = 37,  /* only compared (engine_operating_mode / operating_mode_governor_output.mode_code / cruise_fuel_demand_mode_prev) - never stored in this build; e2m ASRFST lists 37 among the all-speed governor reference states */
+    FUELING_STATE_UNIDENTIFIED_38 = 38,  /* only compared (engine_operating_mode / operating_mode_governor_output.mode_code / cruise_fuel_demand_mode_prev) - never stored in this build; e2m FSDSFLST lists 38 among the user fueling states */
+    FUELING_STATE_UNIDENTIFIED_40 = 40,  /* stored - governor_fuel_limit_cap_state default (cm848_processProtectionSelection) and the starting value of fuel_demand_minimum_tracked_state (cm848_initProtectionStateWithFuelDemand) */
+    FUELING_STATE_IMMOBILIZER_FUEL_DISABLE = 41,  /* final_fueling_state (cm848_selectFuelDemandSource): immobilizer_fuel_disable_flag is 1 - the final fuel is 0 */
+    FUELING_STATE_UNIDENTIFIED_42 = 42,  /* stored - torque_derate_fuel_source_code (cm848_applyProtectionLimit): protection_fuel_limit_working (cm848_calculateFuel2DTableLookup) in the variable speed governor (engine_operating_mode 7) while injection_timing_enable_flags bit 0 is set */
+    FUELING_STATE_TORQUE_MANAGEMENT = 45,  /* torque_derate_fuel_source_code (cm848_applyTorqueManagementFuelLimit): torque_management_fuel_limit */
+    FUELING_STATE_UNIDENTIFIED_46 = 46,  /* stored - torque_derate_fuel_source_code (protection_fuel_limit_check): cold_start_fuel_demand_ramp_output (fuel_coldStart_demandRamp_rateLimiter) */
+    FUELING_STATE_UNIDENTIFIED_47 = 47,  /* only compared (final_fueling_state) - never stored in this build */
+    FUELING_STATE_UNIDENTIFIED_49 = 49,  /* only compared (final_fueling_state) - never stored in this build */
+    FUELING_STATE_UNIDENTIFIED_50 = 50,  /* only compared (final_fueling_state) - never stored in this build */
+    FUELING_STATE_COMBUSTION_DENSITY_MAXIMUM = 52,  /* injection_quantity_combustion_gross_source_code (cm848_calculateCombustionGrossFuel): the density maximum (engine speed x ambient_air_density) limits the gross fuel */
+    FUELING_STATE_COMBUSTION_CHI_MAXIMUM = 53,  /* injection_quantity_combustion_gross_source_code (cm848_calculateCombustionGrossFuel): the chi maximum fuel limits the gross fuel */
+    FUELING_STATE_COMBUSTION_TEMPERATURE_HEADROOM = 54,  /* injection_quantity_combustion_reference_source_code (cm848_calculateCombustionFuelReference): injection_quantity_temperature_headroom_cap */
+    FUELING_STATE_COMBUSTION_GROSS_FUEL_OVERRIDE = 55,  /* injection_quantity_combustion_gross_source_code: combustion_override_and_estimation_enable_flags_cal bit 10 - injection_quantity_combustion_gross_override_value */
+    FUELING_STATE_COMBUSTION_OXYGEN_LIMIT = 58,  /* injection_quantity_combustion_reference_source_code (cm848_calculateCombustionFuelReference): injection_quantity_oxygen_limit */
+    FUELING_STATE_UNIDENTIFIED_59 = 59,  /* stored - fuel_demand_minimum_tracked_state (cm848_trackFuelDemandMinimum): fuel_demand_rate_output (the rate limiter of cm848_calculateFuelDemandLimit) while fault_feature_config_flags bit 2 is set */
+    FUELING_STATE_RAIL_PRESSURE_SHORTFALL_LIMIT = 61,  /* torque_derate_fuel_source_code (cm848_limitFuelQuantityOnRailPressureShortfall) */
+    FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND = 62  /* torque_derate_fuel_source_code (cm848_processSafetyConditionProtection while safety_system_enable_cal is set): injection_quantity_combustion_chi_maximum - blended toward an engine speed table limit while fault 57 / 58 / 60 (P1221 / P1222 / P1223 - the fuel pressure governor plausibility checks) or 59 is set. RAM dump: 62 */
 } FUELING_STATE;
 
 typedef enum {
@@ -1898,7 +1931,7 @@ struct fault_entry_t {
     uint16_t oil_pressure;  /* oil_pressure_sensor_filtered at capture (was timing_param_3) */
     uint16_t diagnostic_fault_flags_b;  /* Sensor scale factor 2 */
     uint32_t reserved;  /* Reserved gap (not written by set/capture functions) */
-    uint8_t governor_mode_code;  /* Pressure fuel adjustment byte */
+    uint8_t final_fueling_state;  /* Low byte of final_fueling_state when the freeze frame was stored (hpcr_setFaultActiveStatus) (was governor_mode_code - Pressure fuel adjustment byte) */
     uint16_t battery_voltage;  /* Battery voltage reading at fault time */
     uint16_t fuel_demand_computed;  /* Processed load/throttle value */
     uint16_t main_injection_timing;  /* Torque limit factor at fault time */

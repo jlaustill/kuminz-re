@@ -75,18 +75,66 @@ is shared too: `ENGINE_OPERATING_MODE` was renamed `FUELING_STATE`.
 - Build warnings unchanged; `lookup_tables.py` clean; `test_rename_waves` / `test_lookup_tables` / `test_disasm_tools`
   pass; headers regenerated (CM848 types + globals; CM550 unchanged), both compile with 0 errors.
 
+## Stage 2 - the derate, combustion and final stages (2026-11-19, PR #52)
+
+The governed state flows on through `cm848_processProtectionSelection` (the min with the derate chain and the
+tracked minimum), the combustion stage and `cm848_selectFuelDemandSource` (the engine-state overrides). Every carrier
+holds the same numbering. The RAM dump (key on, engine stopped) reads governed 11 → derate 62 → snapshot / gross /
+reference 62 → final 26. CM848 stores derate codes up to 62; the CM550-era e2m range ends at 41.
+
+- **e2m blocks that line up:**
+  - block 1051 FSFNFL / FSFNFLST = 0x40a2ce `fuel_demand_computed` / 0x40a2d0;
+  - block 105D FSLMFL / FSLMFLST / FSAPLMFL (fuel system specific derate) = 0x40afac `torque_derate_fuel_quantity` /
+    0x40afae / 0x40afb0 `fuel_pressure_fault_fuel_limit_working`.
+- **Carriers typed `FUELING_STATE` (all 16-bit; no ordering compare):** `torque_derate_fuel_source_code` and
+  `injection_quantity_combustion_reference_source_code`, plus these renamed ones:
+
+  | Address | New name | Old name |
+  |---|---|---|
+  | 0x40a2d0 | `final_fueling_state` | `governor_mode_code` |
+  | 0x40a2de | `final_fueling_state_prev` | `governor_mode_code_prev` |
+  | 0x40a2d4 | `requested_fueling_state` | `governor_fuel_mode_arbitrated` |
+  | 0x3fa874 | `fuel_demand_arbitrated_state` | `governor_fuel_mode_prev` |
+  | 0x40a2e2 | `fuel_demand_arbitrated_state_snapshot` | `governor_fuel_mode_snapshot` |
+  | 0x40afb4 | `fuel_demand_minimum_tracked_state` | `governor_fuel_mode_input` |
+  | 0x40a2da | `governor_fuel_limit_cap_state` | `governor_fuel_mode_command_cached` |
+  | 0x3fa6d0 | `injection_quantity_combustion_gross_source_code` | `governor_fuel_mode_working` |
+
+  The freeze-frame byte `fault_entry_t.governor_mode_code` is now `final_fueling_state`.
+- **Members proved from their setter:**
+  - 13 calibrated fixed fuel limit;
+  - 19 maximum fuel curve (the derate chain's starting value);
+  - 20 TSC1 torque limit;
+  - 22 engine starting, 23 fuel override, 26 engine stopped;
+  - 28 fuel pressure fault limit, 29 fault derate (not the e2m ATDERAT);
+  - 41 immobilizer fuel disable, 45 torque management;
+  - 52 / 53 / 54 / 55 / 58 the combustion density maximum, chi maximum, temperature headroom, gross fuel override and
+    oxygen limit;
+  - 61 rail pressure shortfall, 62 the fuel pressure governor fault blend.
+- **`FUELING_STATE_UNIDENTIFIED_<n>`:** codes stored (15 16 24 25 27 32 34 40 42 46 59) or only compared (37 38 47 49
+  50) whose algorithm is not proved yet. Ghidra 12.1 prints a value with no exact member as an OR of members: 15
+  rendered as `FUELING_STATE_HIGH_SPEED_GOVERNOR | FUELING_STATE_TSC1_SPEED_CONTROL | FUELING_STATE_TSC1_TORQUE_CONTROL`,
+  27 as `26 | 1`, 59 as `58 | 1`. So every value a carrier holds needs a member.
+
 ## Follow-ups (open)
 
-- [ ] **The 13-41 limiter codes:** carriers `torque_derate_fuel_source_code`, `governor_fuel_mode_arbitrated`,
-  `governor_fuel_mode_prev`, `governor_fuel_mode_snapshot`, `governor_fuel_mode_input`,
-  `governor_fuel_mode_command_cached` (0x28 = 40), `governor_mode_code` (0x40a2d0: 0x16-0x29 or
-  `injection_quantity_combustion_reference_source_code`; dump 26). Name each member from its setter (e2m FSFNFLST has
-  `29=ATDERAT`), then type the carriers with `FUELING_STATE`.
+- [ ] **Name the `FUELING_STATE_UNIDENTIFIED_<n>` codes:**
+  - each limiter input: 15 `fuel_correction_upper_limit`, 16 `fuel_demand_load_based`, 32 `fuel_demand_arbitrated_a`,
+    42 `protection_fuel_limit_working`, 46 `cold_start_fuel_demand_ramp_output`, 59 `fuel_demand_rate_output`;
+  - 34 / 40 (the `governor_fuel_limit_cap` path);
+  - 24 / 25 / 27: the `COLD_START_PHASE` members 4 / 5 / 8 disagree with their own comments, so name the phases first.
 - [ ] **CM550:** type FSGVFLST (0x0080a8f2) and the 13-41 word (0x0080deca) with a shared enum. CM550's own
   `ENGINE_OPERATING_MODE` (ENGINE_IDLE ...) and `FUEL_SOURCE_ID` (0x09 governor low / 0x0A high / 0x0B diagnostic)
   contradict the CM848 code: guesses to replace, not to reuse.
-- [ ] **CM848 `FUEL_TIMING_MODE`** (0x18-0x1b, "fuel demand accumulator state"): its values sit in the 13-41 range;
-  check its carrier against the limiter codes.
+- [x] **CM848 `FUEL_TIMING_MODE`:** applied to nothing, like `FUEL_DEMAND_SOURCE` / `FUEL_DEMAND_LIMIT` /
+  `SHUTDOWN_SELECTOR_SOURCE` / `FUEL_CONTROL_MODE_SELECT` / `GOVERNOR_MODE`. No global, field, local or prototype uses
+  them: they are unused CM550-era guesses. Their 0x18-0x1b values are final states 24-27 here. Removing them is a
+  cleanup for later.
+- [ ] **Misnamed functions found in stage 2:**
+  - `cm848_processActiveFaultList` (0x1f03c) is the maximum fuel curve: two engine speed x 400 tables blended by
+    `thermal_fuel_limit_factor`.
+  - `cm848_processSafetyConditionProtection` (0x3889c) and its `safety_*` words are the code 62 fault blend for the
+    fuel pressure governor faults.
 - [ ] **Misnamed words around the arbitration** (code-checked, not renamed here):
   - `cruise_fuel_demand_setpoint` (0x40b674) = the vehicle speed limit fuel; `cruise_speed_setpoint_adjusted` (0x40b6e0)
     = the vehicle speed (rate limited); `cruise_speed_limit_working` = the vehicle speed limit.

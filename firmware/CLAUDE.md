@@ -709,13 +709,26 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     user demand, the high speed governor fuel and the vehicle speed limit fuel. Then the low speed governor wins as a
     max select at or below its speed.
   - **One numbering, proved in the code:** `cm848_processProtectionSelection` writes either `governor_fuel_demand_mode`
-    or `torque_derate_fuel_source_code` (13, 20, ...) into `governor_fuel_mode_arbitrated`, as CM550 does into FSLMDSST.
-    The 13-41 codes have no members yet.
-  - **e2m blocks that line up by offset:** block 1045 FSGVFL / FSGVFLST / LSLOFG = 0x40a152 / 0x40a154 / 0x40a156;
-    block 1265 PTTHDQRP / PTTHOV / PTSLFL / PTSLFLST = 0x40af56 / 0x40af58 / 0x40af5a / 0x40af5c.
+    or `torque_derate_fuel_source_code` (13, 20, ...) into `requested_fueling_state`, as CM550 does into FSLMDSST.
+  - **The later stages (stage 2):** the derate chain `torque_derate_fuel_source_code` (FSLMFLST), then
+    `fuel_demand_arbitrated_state` (with `fuel_demand_minimum_tracked_state`), then the combustion stage
+    `injection_quantity_combustion_gross_source_code` / `_reference_source_code` (52-58), then `final_fueling_state`
+    (was `governor_mode_code`; FSFNFLST) with the engine-state overrides 22-41. The RAM dump (key on, engine stopped)
+    reads governed 11 → derate 62 → final 26. CM848 stores derate codes up to 62 and numbers them differently from the
+    CM550-era e2m list above 12: e2m labels 29 ATDERAT, but CM848's 29 is the fault derate.
+  - **e2m blocks that line up by offset:**
+    - block 1045 FSGVFL / FSGVFLST / LSLOFG = 0x40a152 / 0x40a154 / 0x40a156;
+    - block 1265 PTTHDQRP / PTTHOV / PTSLFL / PTSLFLST = 0x40af56 / 0x40af58 / 0x40af5a / 0x40af5c;
+    - block 1051 FSFNFL / FSFNFLST = 0x40a2ce / 0x40a2d0;
+    - block 105D FSLMFL / FSLMFLST / FSAPLMFL = 0x40afac / 0x40afae / 0x40afb0.
+  - **Every value a carrier holds needs a member (Ghidra 12.1).** A value with no exact member renders as an OR of
+    members: 15 printed as `FUELING_STATE_HIGH_SPEED_GOVERNOR | FUELING_STATE_TSC1_SPEED_CONTROL |
+    FUELING_STATE_TSC1_TORQUE_CONTROL`. So the codes not proved yet (stored or only compared) are
+    `FUELING_STATE_UNIDENTIFIED_<n>`, with the setter in the comment. A value-normalizing diff (the session's
+    `check_enum_proof.py`) finds any OR render after an enum change.
   - The dword at 0x3fb526 was two words: `governor_fuel_demand_working_mode_prev` (`sth` @ 0x40474) and
     `fuel_demand_enable_sync_flag_shadow` (`lhz` @ 0x4064c / `sth` @ 0x406b8).
-  - The 37 / 38 compares and the `(int)(short)` temporary compare in `protectionRampRateControl` still render as numbers.
+  - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

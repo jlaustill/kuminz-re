@@ -787,7 +787,7 @@ fault_entry_t,,intake_manifold_temperature,word,2,intake_manifold_temperature_in
 fault_entry_t,,oil_pressure,word,2,oil_pressure_sensor_filtered at capture (was timing_param_3),,verified
 fault_entry_t,,diagnostic_fault_flags_b,word,2,Sensor scale factor 2,,verified
 fault_entry_t,,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
-fault_entry_t,,governor_mode_code,byte,1,Pressure fuel adjustment byte,,verified
+fault_entry_t,,final_fueling_state,byte,1,Low byte of final_fueling_state when the freeze frame was stored (hpcr_setFaultActiveStatus) (was governor_mode_code - Pressure fuel adjustment byte),,verified
 fault_entry_t,,battery_voltage,word,2,Battery voltage reading at fault time,,verified
 fault_entry_t,,fuel_demand_computed,word,2,Processed load/throttle value,,verified
 fault_entry_t,,main_injection_timing,word,2,Torque limit factor at fault time,,verified
