@@ -398,6 +398,15 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   address's current name with the record. Many blocks are already consistent (1711, the CBO off-nominal words), but
   the table can name hundreds of rows and catch misnames mechanically. 445 of the 1886 records lie past the end of the
   flash2 dump; a fuller dump would complete it.
+- [ ] **Leads from the stage-6 reports, not yet applied:**
+  - 0x40a19a `boost_fuel_demand_blend_a` is e2m 1921 +6 Ambient_Air_Tmptr, the real ambient air temperature.
+    0x40a608 `ambient_air_temperature_selected` is e2m 1A0C +0 Compressor_Inlet_Tmptr. Both were checked with
+    `e2m_block_addresses.py --address`. This is why the 0x3fb9e2 filter record stayed unnamed.
+  - `cm848_dispatchModeHandlers` (0x42978) is a boot initializer; it calls the power take-off initialization.
+  - `emission_manager_engine_protection_state` could become a bitfield: nine masked tests in
+    `cm848_selectChiAndAlpha`. Run a piece census first.
+  - The "6-byte table at 0x539508" in PTR_POINTERS_DOCUMENTATION.md is unbacked: those flash2 bytes are code.
+  - The local j1939 Mongo entry for 65264 is wrong: it holds PGN 65266's fuel economy parameters.
 - [ ] **The rest of the emission manager:** DAT_003fba26 / DAT_003fba36 (no writer found); the store-only 0x3fba22 /
   0x3fba24 (level 1 / 2 ambient temperature limits, medium); the `j1939_tsc1_override_state.proprietary_offset_value`
   misname (a torque); the compressor outlet temperature scale (the CSV says 1/64, the code and e2m suggest 1/32).

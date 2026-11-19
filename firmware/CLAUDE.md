@@ -179,6 +179,10 @@ Key RAM-executed functions called from `mainLoopIteration`:
 The ECU carries its own map from e2m records to addresses, so e2m names no longer need offset matching.
 - **Where it is.** `cm848_lookupParameterIdAddress` (0x539768) searches a table in flash2 at 0x53be38-0x53ea6c: 6-byte
   records [block id u16][address u32], big-endian.
+  - It is a hash lookup: bucket = id mod 1889, through an index at 0x53af76.
+  - The code itself bounds the table at 0x53ea6c and 0x75e = 1886 records.
+  - Callers: the PCI diagnostic request handler, `j1939_writeDiagMemoryByParameterId` and
+    `cm848_evaluateCalibratedMonitorDisableConditions`.
 - **How to resolve a record.** The block id is column 3 of an e2m record (`Crank_Exit_Speed,RPM,105E,0012,...`), so
   the record's address is table[block] + column 4.
 - **EEPROM records.** The table gives EEPROM addresses as 0x01000000 + offset; the application reads them from the
