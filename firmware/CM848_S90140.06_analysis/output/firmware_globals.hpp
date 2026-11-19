@@ -1569,7 +1569,7 @@ extern word fuel_demand_corrected_working;  // 0x003fb522
 extern FUELING_STATE governor_fuel_demand_mode_prev;  // 0x003fb524
 extern FUELING_STATE governor_fuel_demand_working_mode_prev;  // 0x003fb526
 extern word fuel_demand_enable_sync_flag_shadow;  // 0x003fb528
-extern word cruise_speed_setpoint_prev;  // 0x003fb52c
+extern word vehicle_speed_rise_limited_prev;  // 0x003fb52c
 extern CRUISE_CONTROL_STATE cruise_speed_mode_prev;  // 0x003fb52e
 extern dword governor_override_active_prev_flag;  // 0x003fb530
 extern dword cruise_speed_deviation;  // 0x003fb534
@@ -3751,7 +3751,7 @@ extern sensor_channel_state_t sensor_channel15_ram;  // 0x0040a13a
 extern sensor_channel_state_t fuel_demand_table_xaxis_base;  // 0x0040a146
 extern word governor_fuel_demand_value;  // 0x0040a152
 extern FUELING_STATE governor_fuel_demand_mode;  // 0x0040a154
-extern word governor_request_active_flag;  // 0x0040a156
+extern word low_speed_governor_active_flag;  // 0x0040a156
 extern word fuel_demand_load_based;  // 0x0040a158
 extern word boost_fuel_limit_blend_target;  // 0x0040a15a
 extern word fuel_ramp_increase_counter;  // 0x0040a15c
@@ -4428,7 +4428,7 @@ extern word governor_j1939_i_gain_stored;  // 0x0040ae88
 extern word governor_j1939_gain_extra_working;  // 0x0040ae8a
 extern void * governor_setpoint_table_requested_ptr;  // 0x0040ae8c
 extern void * governor_setpoint_table_ptr;  // 0x0040ae90
-extern word governor_fuel_demand_upper_working;  // 0x0040ae94
+extern word low_speed_governor_fueling_working;  // 0x0040ae94
 extern word governor_speed_weight_a;  // 0x0040ae96
 extern word governor_speed_weight_b;  // 0x0040ae98
 extern word governor_fuel_demand_correction;  // 0x0040ae9a
@@ -4498,8 +4498,8 @@ extern word governor_fuel_active_flag;  // 0x0040af4e
 extern word protection_eval_state;  // 0x0040af50
 extern word protection_event_code;  // 0x0040af52
 extern word transmission_park_or_neutral_flag;  // 0x0040af54
-extern word governor_fuel_idle_limit;  // 0x0040af56
-extern word governor_idle_transition_flag;  // 0x0040af58
+extern word power_take_off_throttle_override_engine_speed_limit;  // 0x0040af56
+extern word power_take_off_throttle_override_flag;  // 0x0040af58
 extern operating_mode_governor_output_t operating_mode_governor_output;  // 0x0040af5a
 extern word alternator_field_read_back_fault_debounce_count;  // 0x0040af5e
 extern word cooling_fan_read_back_fault_debounce_count;  // 0x0040af60
@@ -4989,11 +4989,11 @@ extern word fuel_step_counter;  // 0x0040b662
 extern dword fuel_demand_p_term;  // 0x0040b664
 extern word wastegate_solenoid_read_back_retest_active_flag;  // 0x0040b668
 extern word wastegate_solenoid_retest_pass_count;  // 0x0040b66a
-extern word governor_fuel_demand_low_threshold;  // 0x0040b672
-extern word cruise_fuel_demand_setpoint;  // 0x0040b674
-extern word governor_pid_fuel_output;  // 0x0040b676
+extern word high_speed_governor_fueling_snapshot;  // 0x0040b672
+extern word vehicle_speed_limit_fueling;  // 0x0040b674
+extern word cruise_control_fueling;  // 0x0040b676
 extern word governor_fuel_demand_working;  // 0x0040b678
-extern word governor_fuel_demand_upper;  // 0x0040b67a
+extern word low_speed_governor_fueling;  // 0x0040b67a
 extern FUELING_STATE governor_fuel_demand_working_mode;  // 0x0040b67c
 extern ema_filter_state_t engine_retarder_cruise_permission_speed_filter_state;  // 0x0040b682
 extern CRUISE_CONTROL_STATE cruise_control_state;  // 0x0040b68e
@@ -5009,7 +5009,7 @@ extern word cruise_speed_offset_c;  // 0x0040b6ba
 extern word cruise_confirm_flag_a;  // 0x0040b6cc
 extern word governor_override_threshold;  // 0x0040b6d4
 extern word cruise_confirm_flag_b;  // 0x0040b6d8
-extern word cruise_speed_setpoint_adjusted;  // 0x0040b6e0
+extern word vehicle_speed_rise_limited;  // 0x0040b6e0
 extern word fuel_flow_rpm_numerator;  // 0x0040b6e2
 extern word cruise_speed_target_working;  // 0x0040b6e4
 extern word cruise_set_speed_valid_flag;  // 0x0040b6e6

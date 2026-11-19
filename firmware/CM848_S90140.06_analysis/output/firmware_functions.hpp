@@ -466,10 +466,10 @@ void cm848_markFaultForReplacement(void);  // @ 0x0001dd10
 void cm848_updateFaultEntryCounters(uint param_1);  // @ 0x0001de4c
 void cm848_resetFaultStatus(int param_1);  // @ 0x0001dee0
 void hpcr_setFaultActiveStatus(int param_1,uint param_2);  // @ 0x0001df64
-void cm848_selectFuelDemandSource(void);  // @ 0x0001e22c
+void cm848_selectFinalFueling(void);  // @ 0x0001e22c
 void cm848_clearFuelDemandFlag(void);  // @ 0x0001e4d8
 void cm848_calculateProtectionRateLimited(void);  // @ 0x0001e4e8
-void cm848_processProtectionSelection(void);  // @ 0x0001e5a4
+void cm848_arbitrateRequestedFueling(void);  // @ 0x0001e5a4
 void cm848_initEngineOperatingState(void);  // @ 0x0001e810
 void cm848_updateEngineTimingCompensation(void);  // @ 0x0001e830
 void cm848_calculateInjectionTimingOffset(void);  // @ 0x0001e870
@@ -480,10 +480,10 @@ void cm848_clampFuelDemandToValidRange(short *param_1);  // @ 0x0001ec48
 uint cm848_calculateDualAxisFuelLimit(void);  // @ 0x0001ec70
 void cm848_initFuelDemandTracking(void);  // @ 0x0001ef30
 void fuelDemandProportionalCalculationSlowCycle40Coordinator(void);  // @ 0x0001ef88
-uint cm848_processActiveFaultList(word param_1,word param_2);  // @ 0x0001f03c
+uint cm848_calculateMaximumFuelCurve(word param_1,word param_2);  // @ 0x0001f03c
 void cm848_calculateFuelDemandWithTrim(void);  // @ 0x0001f17c
 void cm848_initFuelDemandTableDimensions(void);  // @ 0x0001f300
-void cm848_initProtectionStateWithFuelDemand(void);  // @ 0x0001f318
+void cm848_initializeFuelLimitChains(void);  // @ 0x0001f318
 void presetHighSpeedGovernorIntegrator(void);  // @ 0x0001f34c
 void runHighSpeedGovernorPid(void);  // @ 0x0001f40c
 void initializeHighSpeedGovernorGainSet(void);  // @ 0x0001f98c
@@ -622,7 +622,7 @@ void cm848_governorDroopCalculation(uint *param_1,int param_2,int param_3);  // 
 undefined4 cm848_governorSpeedControl(int param_1,uint param_2);  // @ 0x00027cc4
 void cm848_processSpeedSensorCompensation(void);  // @ 0x00027d38
 void cm848_updateSpeedProtectionLimits(int param_1);  // @ 0x00027e4c
-void cm848_processSpeedGovernorControl(void);  // @ 0x00027ff8
+void cm848_runLowSpeedGovernor(void);  // @ 0x00027ff8
 void cm848_resetSpeedControlTracking(void);  // @ 0x000285e4
 void cm848_initSpeedProtectionParameters(void);  // @ 0x00028618
 void cm848_processGovernorLoadCondition(void);  // @ 0x00028670
@@ -664,7 +664,7 @@ void cm848_evaluateProtectionCondition(void);  // @ 0x0002ad68
 void cm848_processProtectionControlStateMachine(void);  // @ 0x0002afd0
 void cm848_updateProtectionPreviousParam(void);  // @ 0x0002ba7c
 void cm848_initProtectionEvalState(void);  // @ 0x0002bb24
-void cm848_updateGovernorFromProtection(void);  // @ 0x0002bbe8
+void cm848_selectPowerTakeOffOrUserFueling(void);  // @ 0x0002bbe8
 void cm848_resetProtectionBypass(void);  // @ 0x0002bd38
 void cm848_j1939HandlePgn65264Pto(void);  // @ 0x0002bd58
 void cm848_initJ1939PtoBuffer(void);  // @ 0x0002bed4
@@ -818,7 +818,7 @@ void cm848_computeFuelRpmCompensatedOffset(void);  // @ 0x0003866c
 void cm848_processEngineRpmDerivative(void);  // @ 0x00038760
 void cm848_initEngineRpmFilterPointers(void);  // @ 0x00038824
 void cm848_setEngineRpmFromCalibration(void);  // @ 0x00038868
-void cm848_processSafetyConditionProtection(void);  // @ 0x0003889c
+void cm848_applyFuelPressureGovernorFaultBlend(void);  // @ 0x0003889c
 void cm848_initProtectionFilterLimits(void);  // @ 0x00038a98
 void cm848_checkPciMessageTimeouts(void);  // @ 0x00038ac8
 void cm848_onPciControllerInterrupt(void);  // @ 0x00038c90
@@ -923,20 +923,20 @@ void cm848_controlCruiseVacuumServo(void);  // @ 0x0003fc24
 void cm848_applyWastegateSolenoidDuty(void);  // @ 0x000400b8
 void cm848_dispatchCalibrationBlockHandlers(void);  // @ 0x000402d4
 void cm848_checkDiagnosticFuelOverride(void);  // @ 0x000403e4
-void cm848_processProtectionRampControl(void);  // @ 0x0004043c
+void cm848_arbitrateGovernedFueling(void);  // @ 0x0004043c
 void cm848_initFuelFilterCoefficients(void);  // @ 0x00040828
-void cm848_calculateFuelRateFromRpm(void);  // @ 0x00040844
+void cm848_calculateRiseLimitedVehicleSpeed(void);  // @ 0x00040844
 uint cm848_calculateProtectionFuelLimit(uint param_1,uint param_2);  // @ 0x0004091c
 void cm848_protectionFuelRateStep(int param_1);  // @ 0x00040938
 void cm848_protectionFuelRateRamp(int param_1);  // @ 0x00040978
 void cm848_cruiseSpeedCommandStateMachine(void);  // @ 0x000409b0
 void cm848_initFuelRateFromCapability(void);  // @ 0x00040d40
 void cm848_validateFuelRateTarget(void);  // @ 0x00040d74
-void cm848_copyProtectionRampValue(void);  // @ 0x00040dd4
-void cm848_calculateGovernorFuelDemandUpperLimit(void);  // @ 0x00040de8
-void cm848_processGovernorFuelRate(void);  // @ 0x00040e4c
-void cm848_processProtectionRampTimer(void);  // @ 0x00040f80
-void cm848_calculateProtectionLevelLimit(void);  // @ 0x000411b0
+void cm848_snapshotHighSpeedGovernorFueling(void);  // @ 0x00040dd4
+void cm848_limitLowSpeedGovernorFueling(void);  // @ 0x00040de8
+void cm848_calculateCruiseControlFueling(void);  // @ 0x00040e4c
+void cm848_calculateVehicleSpeedLimitFueling(void);  // @ 0x00040f80
+void cm848_selectCruiseOrUserFueling(void);  // @ 0x000411b0
 void cm848_updateEngineRetarderEnableState(void);  // @ 0x00041368
 void cm848_calculateEngineRetarderSelectionPercent(void);  // @ 0x00041938
 void cm848_limitEngineRetarderPercentToOperatorSelection(void);  // @ 0x00041a10
@@ -955,7 +955,7 @@ void cm848_applyProtectionControlLimit(void);  // @ 0x0004272c
 void cm848_setProtectionControlValue(void);  // @ 0x00042770
 void cm848_copyMainInjectionTiming(void);  // @ 0x00042784
 void cm848_applyFuelPressureFaultFuelLimit(void);  // @ 0x0004279c
-void cm848_applySpeedControlProtectionLimit(void);  // @ 0x000427cc
+void cm848_applyTsc1TorqueLimit(void);  // @ 0x000427cc
 void cm848_processProtectionLimits(void);  // @ 0x0004280c
 void cm848_initializeFuelDemandAndLimitInterpolationStates(void);  // @ 0x0004285c
 void cm848_setEngineOperatingMode1(void);  // @ 0x00042894
@@ -1429,7 +1429,7 @@ undefined4 protection_condition_eval(int param_1,int param_2,uint param_3);  // 
 void fault_snapshot_capture(int param_1);  // @ 0x00508f64
 void fault_event_timing_snapshot(int param_1);  // @ 0x005090fc
 void governor_fault_channelProcess_mainLoop(void);  // @ 0x00509278
-void cm848_enforceFuelLimitProtection(void);  // @ 0x00509510
+void cm848_applyFaultDerateFuelLimit(void);  // @ 0x00509510
 void cm848_calculateFaultDerateFuelLimit(void);  // @ 0x00509540
 void cm848_resetFaultDerateFuelLimit(void);  // @ 0x00509814
 void phase_group_a_validateEngineSync(void);  // @ 0x00509848

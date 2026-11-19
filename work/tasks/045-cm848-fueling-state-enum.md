@@ -116,6 +116,47 @@ reference 62 → final 26. CM848 stores derate codes up to 62; the CM550-era e2m
   rendered as `FUELING_STATE_HIGH_SPEED_GOVERNOR | FUELING_STATE_TSC1_SPEED_CONTROL | FUELING_STATE_TSC1_TORQUE_CONTROL`,
   27 as `26 | 1`, 59 as `58 | 1`. So every value a carrier holds needs a member.
 
+## Stage 3 - the arbitration functions and words (2026-11-19, PR #52)
+
+The earlier sections use the old names. Each rename's plate comment or comment gives the evidence and the old name.
+
+| Address | New function | Was |
+|---|---|---|
+| 0x4043c | `cm848_arbitrateGovernedFueling` | `cm848_processProtectionRampControl` |
+| 0x1e5a4 | `cm848_arbitrateRequestedFueling` | `cm848_processProtectionSelection` |
+| 0x1e22c | `cm848_selectFinalFueling` | `cm848_selectFuelDemandSource` |
+| 0x1f03c | `cm848_calculateMaximumFuelCurve` | `cm848_processActiveFaultList` |
+| 0x3889c | `cm848_applyFuelPressureGovernorFaultBlend` | `cm848_processSafetyConditionProtection` |
+| 0x40f80 | `cm848_calculateVehicleSpeedLimitFueling` | `cm848_processProtectionRampTimer` |
+| 0x40e4c | `cm848_calculateCruiseControlFueling` | `cm848_processGovernorFuelRate` |
+| 0x411b0 | `cm848_selectCruiseOrUserFueling` | `cm848_calculateProtectionLevelLimit` |
+| 0x40dd4 | `cm848_snapshotHighSpeedGovernorFueling` | `cm848_copyProtectionRampValue` |
+| 0x40de8 | `cm848_limitLowSpeedGovernorFueling` | `cm848_calculateGovernorFuelDemandUpperLimit` |
+| 0x27ff8 | `cm848_runLowSpeedGovernor` | `cm848_processSpeedGovernorControl` |
+| 0x427cc | `cm848_applyTsc1TorqueLimit` | `cm848_applySpeedControlProtectionLimit` |
+| 0x509510 | `cm848_applyFaultDerateFuelLimit` | `cm848_enforceFuelLimitProtection` |
+| 0x40844 | `cm848_calculateRiseLimitedVehicleSpeed` | `cm848_calculateFuelRateFromRpm` |
+| 0x2bbe8 | `cm848_selectPowerTakeOffOrUserFueling` | `cm848_updateGovernorFromProtection` |
+| 0x1f318 | `cm848_initializeFuelLimitChains` | `cm848_initProtectionStateWithFuelDemand` |
+
+| Address | New word | Was |
+|---|---|---|
+| 0x40b674 | `vehicle_speed_limit_fueling` | `cruise_fuel_demand_setpoint` |
+| 0x40b676 | `cruise_control_fueling` | `governor_pid_fuel_output` |
+| 0x40b672 | `high_speed_governor_fueling_snapshot` | `governor_fuel_demand_low_threshold` |
+| 0x40b67a | `low_speed_governor_fueling` | `governor_fuel_demand_upper` |
+| 0x40ae94 | `low_speed_governor_fueling_working` | `governor_fuel_demand_upper_working` |
+| 0x40a156 | `low_speed_governor_active_flag` (e2m LSLOFG) | `governor_request_active_flag` |
+| 0x40b6e0 | `vehicle_speed_rise_limited` | `cruise_speed_setpoint_adjusted` |
+| 0x3fb52c | `vehicle_speed_rise_limited_prev` | `cruise_speed_setpoint_prev` |
+| 0x40af56 | `power_take_off_throttle_override_engine_speed_limit` (e2m PTTHDQRP) | `governor_fuel_idle_limit` |
+| 0x40af58 | `power_take_off_throttle_override_flag` (e2m PTTHOV) | `governor_idle_transition_flag` |
+
+Kept on purpose:
+- `cruise_speed_limit_working`: both the cruise control and the vehicle speed limiter use it.
+- The `fuel_flow_rpm_*` drivetrain ratio words.
+- The limiter functions of the unidentified codes.
+
 ## Follow-ups (open)
 
 - [ ] **Name the `FUELING_STATE_UNIDENTIFIED_<n>` codes:**
@@ -130,12 +171,12 @@ reference 62 → final 26. CM848 stores derate codes up to 62; the CM550-era e2m
   `SHUTDOWN_SELECTOR_SOURCE` / `FUEL_CONTROL_MODE_SELECT` / `GOVERNOR_MODE`. No global, field, local or prototype uses
   them: they are unused CM550-era guesses. Their 0x18-0x1b values are final states 24-27 here. Removing them is a
   cleanup for later.
-- [ ] **Misnamed functions found in stage 2:**
+- [x] **Misnamed functions found in stage 2** (renamed in stage 3):
   - `cm848_processActiveFaultList` (0x1f03c) is the maximum fuel curve: two engine speed x 400 tables blended by
     `thermal_fuel_limit_factor`.
   - `cm848_processSafetyConditionProtection` (0x3889c) and its `safety_*` words are the code 62 fault blend for the
     fuel pressure governor faults.
-- [ ] **Misnamed words around the arbitration** (code-checked, not renamed here):
+- [x] **Misnamed words around the arbitration** (renamed in stage 3 except `cruise_speed_limit_working`; still open: the rest of the power take-off cluster below and the 0x3fb52a row):
   - `cruise_fuel_demand_setpoint` (0x40b674) = the vehicle speed limit fuel; `cruise_speed_setpoint_adjusted` (0x40b6e0)
     = the vehicle speed (rate limited); `cruise_speed_limit_working` = the vehicle speed limit.
   - `governor_fuel_demand_low_threshold` (0x40b672) = the copy of `high_speed_governor_fueling`;

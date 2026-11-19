@@ -705,10 +705,10 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     e2m-derived) → `governor_fuel_demand_working_mode` (0x40b67c, was `governor_pid_integral_snapshot`; adds 9, cruise
     control) → `governor_fuel_demand_mode` (0x40a154; adds 10 vehicle speed limit, 11 low speed governor, 12 high
     speed governor).
-  - **The arbitration:** `cm848_processProtectionRampControl` sets `governor_fuel_demand_mode` to the smallest of the
+  - **The arbitration:** `cm848_arbitrateGovernedFueling` sets `governor_fuel_demand_mode` to the smallest of the
     user demand, the high speed governor fuel and the vehicle speed limit fuel. Then the low speed governor wins as a
     max select at or below its speed.
-  - **One numbering, proved in the code:** `cm848_processProtectionSelection` writes either `governor_fuel_demand_mode`
+  - **One numbering, proved in the code:** `cm848_arbitrateRequestedFueling` writes either `governor_fuel_demand_mode`
     or `torque_derate_fuel_source_code` (13, 20, ...) into `requested_fueling_state`, as CM550 does into FSLMDSST.
   - **The later stages (stage 2):** the derate chain `torque_derate_fuel_source_code` (FSLMFLST), then
     `fuel_demand_arbitrated_state` (with `fuel_demand_minimum_tracked_state`), then the combustion stage
@@ -729,6 +729,17 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - The dword at 0x3fb526 was two words: `governor_fuel_demand_working_mode_prev` (`sth` @ 0x40474) and
     `fuel_demand_enable_sync_flag_shadow` (`lhz` @ 0x4064c / `sth` @ 0x406b8).
   - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
+  - **The arbitration functions (stage 3, renamed from `*Protection*` names):**
+    - user fueling: `cm848_selectPowerTakeOffOrUserFueling`, then `cm848_calculateCruiseControlFueling` /
+      `cm848_selectCruiseOrUserFueling`;
+    - limiting governors: `cm848_calculateVehicleSpeedLimitFueling` (on `vehicle_speed_rise_limited`),
+      `cm848_runLowSpeedGovernor` / `cm848_limitLowSpeedGovernorFueling`, and `cm848_arbitrateGovernedFueling`;
+    - derate chain: `cm848_initializeFuelLimitChains`,
+      `cm848_calculateMaximumFuelCurve` (was `cm848_processActiveFaultList`), `cm848_applyTsc1TorqueLimit`, `cm848_applyFaultDerateFuelLimit` and
+      `cm848_applyFuelPressureGovernorFaultBlend`, then `cm848_arbitrateRequestedFueling`;
+    - final: `cm848_selectFinalFueling`.
+
+    The old names and the evidence are in each plate comment and in task 045.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Thu Nov 19 07:49:08 MST 2026
+// Generated: Thu Nov 19 08:31:10 MST 2026
 
 
 //
@@ -6725,12 +6725,12 @@ void cm848_periodicTaskSet_sensorProcessing(void)
   cm848_updateEngineTimingCompensation();
   cm848_smoothProtectionParamTransition();
   cm848_processProtectionParamDelta();
-  cm848_updateGovernorFromProtection();
+  cm848_selectPowerTakeOffOrUserFueling();
   cm848_updateGovernorSpeedLimits();
   cm848_calculateGovernorCompensation();
   cm848_processGovernorLoadCondition();
   cm848_processGovernorSpeedSetpoint();
-  cm848_processSpeedGovernorControl();
+  cm848_runLowSpeedGovernor();
   cm848_processEngineRetarderRequest();
   cm848_calculateSpeedRateLimiting();
   cm848_processEngineRpmDiagnostic();
@@ -6766,7 +6766,7 @@ void cm848_periodicTaskSet_controlLoop(void)
   selectHighSpeedGovernorGainSet();
   runHighSpeedGovernorPid();
   cm848_loadHighSpeedGovernorWorkingGainSet();
-  cm848_processProtectionRampControl();
+  cm848_arbitrateGovernedFueling();
   cm848_calculateFuelDemandWithTrim();
   cm848_fuelDemandBlendCalculator();
   cm848_coldStartRpmTableLookup();
@@ -6774,7 +6774,7 @@ void cm848_periodicTaskSet_controlLoop(void)
   cm848_coldStartFuelFactorLookup();
   cm848_calculateColdStartFuelAdjust();
   cm848_calculateFuelDemandLimit();
-  cm848_processProtectionSelection();
+  cm848_arbitrateRequestedFueling();
   hpcr_processLoadThrottle();
   cm848_calculateFuel2DTableLookup();
   cm848_calculateFuelDemandOffsetTrim();
@@ -6801,7 +6801,7 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
   cm848_calculateColdStartRpmAdjust();
   cm848_processEngineConfigSpeedControl();
   cm848_runCombustionLimits();
-  cm848_selectFuelDemandSource();
+  cm848_selectFinalFueling();
   cm848_calculateFuelPressureSetpoint();
   cm848_updateMainInjectionTimingByDeliveryMode();
   cm848_calculateAuxiliaryInjectionTiming();
@@ -6833,7 +6833,7 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
 void cm848_periodicTaskSet_canTx(void)
 
 {
-  cm848_calculateFuelRateFromRpm();
+  cm848_calculateRiseLimitedVehicleSpeed();
   cm848_processSensorLookupTable5();
   cm848_calculateVehicleSpeed();
   return;
@@ -12627,7 +12627,7 @@ void cm848_applyCombustionTimingLimits(void)
 /* Selects the combustion fuel command injection_quantity_combustion_command:
    fuel_quantity_compensated_reference (the fuel reference after the off-nominal stage), or the
    calibrated override value (0x405236) when combustion_override_and_estimation_enable_flags_cal bit
-   1 (2) is set. Its reader cm848_selectFuelDemandSource takes it as the base of the cranking /
+   1 (2) is set. Its reader cm848_selectFinalFueling takes it as the base of the cranking /
    cold-start fuel arbitration. (was cm848_selectFuelDemandOverride) */
 
 void cm848_selectCombustionFuelCommand(void)
@@ -19308,10 +19308,16 @@ void hpcr_setFaultActiveStatus(int param_1,uint param_2)
 
 
 //
-// Function: cm848_selectFuelDemandSource @ 0x0001e22c
+// Function: cm848_selectFinalFueling @ 0x0001e22c
 //
 
-void cm848_selectFuelDemandSource(void)
+/* Sets the final fueling fuel_demand_computed and final_fueling_state (Cummins FSFNFL / FSFNFLST,
+   e2m block 1051): the combustion reference and its source code, overridden by the engine state
+   (cold_start_phase: 26 engine stopped, 22 starting, 24 / 25 / 27), 41 immobilizer fuel disable, 23
+   fuel override and 32 limit mode, clamped to timing_limit_upper..fuel_demand_maximum (was
+   cm848_selectFuelDemandSource) */
+
+void cm848_selectFinalFueling(void)
 
 {
   word wVar1;
@@ -19446,10 +19452,16 @@ void cm848_calculateProtectionRateLimited(void)
 
 
 //
-// Function: cm848_processProtectionSelection @ 0x0001e5a4
+// Function: cm848_arbitrateRequestedFueling @ 0x0001e5a4
 //
 
-void cm848_processProtectionSelection(void)
+/* Runs the derate chain (torque_derate_fuel_quantity / torque_derate_fuel_source_code, or the
+   calibrated fixed limit 13 while governor_feature_flags bit 0x10 is set), takes the smaller of it
+   and the governed fuel into fuel_demand_arbitration_working / requested_fueling_state (Cummins
+   FSLMDSST) and the smaller of that and fuel_demand_minimum_tracked into fuel_demand_arbitrated /
+   fuel_demand_arbitrated_state (was cm848_processProtectionSelection) */
+
+void cm848_arbitrateRequestedFueling(void)
 
 {
   FUELING_STATE FVar1;
@@ -19903,10 +19915,17 @@ void fuelDemandProportionalCalculationSlowCycle40Coordinator(void)
 
 
 //
-// Function: cm848_processActiveFaultList @ 0x0001f03c
+// Function: cm848_calculateMaximumFuelCurve @ 0x0001f03c
 //
 
-uint cm848_processActiveFaultList(word param_1,word param_2)
+/* Returns the maximum fuel at (param_1 engine speed, param_2): two engine speed x param_2 tables
+   blended by thermal_fuel_limit_factor (Q14; 0 = the governor_fuel_table_yend_cal grid, 0x4000 =
+   the fuel_demand_rpm_limit_high_cal grid), clamped to timing_limit_upper..5888. Called with
+   param_2 = 400 for protection_fuel_limit_cal_active (FUELING_STATE_MAXIMUM_FUEL_CURVE) and
+   active_fault_fuel_correction. Nothing in it reads a fault list (was cm848_processActiveFaultList)
+    */
+
+uint cm848_calculateMaximumFuelCurve(word param_1,word param_2)
 
 {
   uint uVar1;
@@ -19966,7 +19985,7 @@ void cm848_calculateFuelDemandWithTrim(void)
     if (algorithm_enable_flags_41_cal.reserved_bit_12 == 0) {
       wVar3 = 0;
     }
-    sVar1 = cm848_processActiveFaultList(engine_rpm_state_t_0040b7ac.current_rpm,400);
+    sVar1 = cm848_calculateMaximumFuelCurve(engine_rpm_state_t_0040b7ac.current_rpm,400);
     protection_fuel_limit_cal_active = sVar1 + wVar3;
     sVar1 = cm848_lookupChiMaximumFuelAtSpeed(engine_speed_limit_reference);
     engine_speed_limit_reference_maximum_fuel_quantity = sVar1 + wVar3;
@@ -19988,12 +20007,12 @@ void cm848_calculateFuelDemandWithTrim(void)
   wVar3 = thermal_fuel_limit_factor;
   if (algorithm_enable_flags_12_cal.electronic_smart_power_enable == 0) {
     active_fault_fuel_correction =
-         cm848_processActiveFaultList(engine_rpm_state_t_0040b7ac.current_rpm,400);
+         cm848_calculateMaximumFuelCurve(engine_rpm_state_t_0040b7ac.current_rpm,400);
   }
   else {
     thermal_fuel_limit_factor = 0;
     active_fault_fuel_correction =
-         cm848_processActiveFaultList(engine_rpm_state_t_0040b7ac.current_rpm,400);
+         cm848_calculateMaximumFuelCurve(engine_rpm_state_t_0040b7ac.current_rpm,400);
     thermal_fuel_limit_factor = wVar3;
   }
   return;
@@ -20016,10 +20035,14 @@ void cm848_initFuelDemandTableDimensions(void)
 
 
 //
-// Function: cm848_initProtectionStateWithFuelDemand @ 0x0001f318
+// Function: cm848_initializeFuelLimitChains @ 0x0001f318
 //
 
-void cm848_initProtectionStateWithFuelDemand(void)
+/* Starts both running minimums at protection_fuel_limit_cal_active (the maximum fuel curve):
+   torque_derate_fuel_quantity with state 19 (FUELING_STATE_MAXIMUM_FUEL_CURVE) and
+   fuel_demand_minimum_tracked with state 40 (was cm848_initProtectionStateWithFuelDemand) */
+
+void cm848_initializeFuelLimitChains(void)
 
 {
   torque_derate_fuel_quantity = protection_fuel_limit_cal_active;
@@ -20453,18 +20476,18 @@ void selectHighSpeedGovernorGainSet(void)
    2 / 4 / 10 engine_speed_limit_source_2 / _4 / _10, 5 engine_speed_limit_fault_derate, 6
    engine_speed_limit_reference, 7 fuel_pressure_fault_engine_speed_limit_working, 8 the TSC1
    override mode select 1 request (the e2m Jcomm high idle override speed, DAT_0005c39a), 9
-   j1939_tsc1_override_state.etc1_torque_limit_value (governor mode 3), 11 governor_fuel_idle_limit,
-   13 engine_speed_limit_converter_slip, 14 engine_speed_limit_pedal_fault_mode, 15
-   engine_speed_limit_park_neutral_exit, 16 engine_speed_limit_source_16
-   (turbocharger_speed_limiter_active_flag set). Sources 16 and 8 return early with their own value
-   as applied_speed_limit. Otherwise the result is held between engine_speed_limit_minimum (850 rpm)
-   and engine_speed_limit_maximum (3500 rpm) and stored in engine_speed_limit_arbitrated;
-   engine_speed_limit_ramped follows it (up by engine_speed_limit_ramp_up_step per pass, down at
-   once). Sources 9 (with ETC1 active), 11 and, while
-   engine_speed_limit_torque_converter_droop_enable is 0, 13 and 15 apply the ramped limit directly;
-   every other pass applies the droop line unless the slope is 0: engine_speed_limit_droop_slope =
-   (engine_speed_limit_droop_no_load_speed - engine_speed_limit_reference) x 4369 /
-   (engine_speed_limit_reference_maximum_fuel_quantity -
+   j1939_tsc1_override_state.etc1_torque_limit_value (governor mode 3), 11
+   power_take_off_throttle_override_engine_speed_limit, 13 engine_speed_limit_converter_slip, 14
+   engine_speed_limit_pedal_fault_mode, 15 engine_speed_limit_park_neutral_exit, 16
+   engine_speed_limit_source_16 (turbocharger_speed_limiter_active_flag set). Sources 16 and 8
+   return early with their own value as applied_speed_limit. Otherwise the result is held between
+   engine_speed_limit_minimum (850 rpm) and engine_speed_limit_maximum (3500 rpm) and stored in
+   engine_speed_limit_arbitrated; engine_speed_limit_ramped follows it (up by
+   engine_speed_limit_ramp_up_step per pass, down at once). Sources 9 (with ETC1 active), 11 and,
+   while engine_speed_limit_torque_converter_droop_enable is 0, 13 and 15 apply the ramped limit
+   directly; every other pass applies the droop line unless the slope is 0:
+   engine_speed_limit_droop_slope = (engine_speed_limit_droop_no_load_speed -
+   engine_speed_limit_reference) x 4369 / (engine_speed_limit_reference_maximum_fuel_quantity -
    engine_speed_limit_droop_no_load_fuel_quantity) is recomputed unless
    engine_speed_limit_droop_slope_bypass_flag is set (source 10 zeroes the slope first, which sticks
    only while that flag is set), and applied_speed_limit = engine_speed_limit_ramped + slope x
@@ -20562,8 +20585,10 @@ void selectEngineSpeedLimit(void)
          fuel_pressure_fault_engine_speed_limit_working;
     engine_speed_limit_arbitration.limiting_source_number = 7;
   }
-  if (governor_fuel_idle_limit <= engine_speed_limit_arbitration.lowest_source_speed_limit) {
-    engine_speed_limit_arbitration.lowest_source_speed_limit = governor_fuel_idle_limit;
+  if (power_take_off_throttle_override_engine_speed_limit <=
+      engine_speed_limit_arbitration.lowest_source_speed_limit) {
+    engine_speed_limit_arbitration.lowest_source_speed_limit =
+         power_take_off_throttle_override_engine_speed_limit;
     engine_speed_limit_arbitration.limiting_source_number = 0xb;
   }
   if (engine_speed_limit_source_10 <= engine_speed_limit_arbitration.lowest_source_speed_limit) {
@@ -26177,7 +26202,7 @@ LAB_00027fb0:
   governor_speed_weight_a = 0;
   governor_speed_weight_b = 0;
   governor_speed_error_derivative = 0;
-  governor_fuel_demand_upper_working = fuel_demand_computed;
+  low_speed_governor_fueling_working = fuel_demand_computed;
   governor_speed_setpoint_working = governor_speed_setpoint_raw;
   return;
 }
@@ -26185,12 +26210,17 @@ LAB_00027fb0:
 
 
 //
-// Function: cm848_processSpeedGovernorControl @ 0x00027ff8
+// Function: cm848_runLowSpeedGovernor @ 0x00027ff8
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* The low speed governor: while low_speed_governor_active_flag is set it sums its speed-error terms
+   into low_speed_governor_fueling_working (clamped between governor_cold_start_fuel_step_cal and
+   governor_speed_setpoint_integrated) and, in FUELING_STATE_LOW_SPEED_GOVERNOR, writes it into
+   governor_fuel_demand_value; else the working value follows governor_speed_setpoint_integrated
+   (was cm848_processSpeedGovernorControl) */
 
-void cm848_processSpeedGovernorControl(void)
+void cm848_runLowSpeedGovernor(void)
 
 {
   bool bVar1;
@@ -26203,8 +26233,8 @@ void cm848_processSpeedGovernorControl(void)
   short sVar8;
   word wStack_4e;
   
-  if (governor_request_active_flag == 0) {
-    governor_fuel_demand_upper_working = governor_speed_setpoint_integrated;
+  if (low_speed_governor_active_flag == 0) {
+    low_speed_governor_fueling_working = governor_speed_setpoint_integrated;
     governor_speed_debounce_b = 0;
     governor_speed_debounce_active_flag = 0;
     goto LAB_00028594;
@@ -26369,7 +26399,7 @@ LAB_000284d4:
        (int)(uint)governor_cold_start_fuel_step_cal <= iVar6)) {
       wStack_4e = (word)iVar6;
     }
-    governor_fuel_demand_upper_working = wStack_4e;
+    low_speed_governor_fueling_working = wStack_4e;
     if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
       governor_fuel_demand_value = wStack_4e;
     }
@@ -27833,7 +27863,7 @@ void cm848_evaluateProtectionCondition(void)
       protection_event_code = 2;
       return;
     }
-    if (governor_idle_transition_flag == 0) {
+    if (power_take_off_throttle_override_flag == 0) {
       if ((governor_rpm_reference_working == governor_rpm_reference_target) &&
          (protection_monitored_rpm != governor_rpm_reference_target)) {
         protection_event_code = 0xc;
@@ -27890,7 +27920,7 @@ void cm848_evaluateProtectionCondition(void)
       protection_event_code = 8;
       return;
     }
-    if (governor_idle_transition_flag == 0) {
+    if (power_take_off_throttle_override_flag == 0) {
       if (protection_rpm_reference_b == governor_rpm_reference_target) {
         if ((protection_control_state_flags & 5) == 5) {
           return;
@@ -28247,10 +28277,18 @@ void cm848_initProtectionEvalState(void)
 
 
 //
-// Function: cm848_updateGovernorFromProtection @ 0x0002bbe8
+// Function: cm848_selectPowerTakeOffOrUserFueling @ 0x0002bbe8
 //
 
-void cm848_updateGovernorFromProtection(void)
+/* Sets operating_mode_governor_output: the user fueling (engine_operating_mode_fuel_demand with
+   engine_operating_mode) or, while governor_fuel_active_flag is 1 and j1939_governor_feature_cal
+   bit 0x10 is set, governor_fuel_demand_command with FUELING_STATE_POWER_TAKE_OFF (modes 5 / 6
+   always; 7 / 8 / 30 unless the user fuel is larger and governor_feature_config_word bit 0x2000
+   lets the throttle override - then power_take_off_throttle_override_flag and its engine speed
+   limit are set). Power take-off is e2m-derived (block 1265) (was
+   cm848_updateGovernorFromProtection) */
+
+void cm848_selectPowerTakeOffOrUserFueling(void)
 
 {
   if ((((engine_operating_mode == FUELING_STATE_TSC1_TORQUE_CONTROL) ||
@@ -28266,8 +28304,8 @@ void cm848_updateGovernorFromProtection(void)
        (engine_operating_mode == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)) {
       if ((governor_fuel_demand_command <= engine_operating_mode_fuel_demand) &&
          ((governor_feature_config_word & 0x2000) != 0)) {
-        governor_fuel_idle_limit = protection_override_active_flag._2_2_;
-        governor_idle_transition_flag = 1;
+        power_take_off_throttle_override_engine_speed_limit = protection_override_active_flag._2_2_;
+        power_take_off_throttle_override_flag = 1;
         operating_mode_governor_output.fuel_demand = engine_operating_mode_fuel_demand;
         operating_mode_governor_output.mode_code = engine_operating_mode;
         return;
@@ -28288,8 +28326,8 @@ void cm848_updateGovernorFromProtection(void)
     operating_mode_governor_output.fuel_demand = engine_operating_mode_fuel_demand;
     operating_mode_governor_output.mode_code = engine_operating_mode;
   }
-  governor_idle_transition_flag = 0;
-  governor_fuel_idle_limit = engine_speed_limit_default_cal;
+  power_take_off_throttle_override_flag = 0;
+  power_take_off_throttle_override_engine_speed_limit = engine_speed_limit_default_cal;
   return;
 }
 
@@ -28302,8 +28340,8 @@ void cm848_updateGovernorFromProtection(void)
 void cm848_resetProtectionBypass(void)
 
 {
-  governor_idle_transition_flag = 0;
-  governor_fuel_idle_limit = engine_speed_limit_default_cal;
+  power_take_off_throttle_override_flag = 0;
+  power_take_off_throttle_override_engine_speed_limit = engine_speed_limit_default_cal;
   return;
 }
 
@@ -36482,12 +36520,18 @@ void cm848_setEngineRpmFromCalibration(void)
 
 
 //
-// Function: cm848_processSafetyConditionProtection @ 0x0003889c
+// Function: cm848_applyFuelPressureGovernorFaultBlend @ 0x0003889c
 //
 
 /* WARNING: Removing unreachable block (ram,0x00038a04) */
+/* While safety_system_enable_cal is set: takes injection_quantity_combustion_chi_maximum as a
+   derate limit (code 62, FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND) and, while fault 57 / 58
+   / 60 (P1221 / P1222 / P1223, the fuel pressure governor plausibility checks) or 59 is set, blends
+   it toward the engine speed table safety_fuel_limit_rpm_output_cal at
+   safety_fuel_blend_increment_cal per pass (back at safety_fuel_blend_decrement_cal) (was
+   cm848_processSafetyConditionProtection) */
 
-void cm848_processSafetyConditionProtection(void)
+void cm848_applyFuelPressureGovernorFaultBlend(void)
 
 {
   uint uVar1;
@@ -41866,10 +41910,17 @@ void cm848_checkDiagnosticFuelOverride(void)
 
 
 //
-// Function: cm848_processProtectionRampControl @ 0x0004043c
+// Function: cm848_arbitrateGovernedFueling @ 0x0004043c
 //
 
-void cm848_processProtectionRampControl(void)
+/* Sets governor_fuel_demand_value and its state governor_fuel_demand_mode (the Cummins FSGVFLST
+   governed fueling state): the smallest of the user fueling governor_fuel_demand_working (state
+   governor_fuel_demand_working_mode), high_speed_governor_fueling_snapshot (12) and
+   vehicle_speed_limit_fueling (10), then the low speed governor (11) as a max select at or below
+   its speed (low_speed_governor_fueling); starts protectionRampRateControl on the first pass of 9 /
+   10 and latches low_speed_governor_active_flag in 11 (was cm848_processProtectionRampControl) */
+
+void cm848_arbitrateGovernedFueling(void)
 
 {
   FUELING_STATE FVar1;
@@ -41877,18 +41928,18 @@ void cm848_processProtectionRampControl(void)
   
   governor_fuel_demand_mode_prev = governor_fuel_demand_mode;
   governor_fuel_demand_working_mode_prev = governor_fuel_demand_working_mode;
-  cm848_copyProtectionRampValue();
-  cm848_calculateGovernorFuelDemandUpperLimit();
-  cm848_processGovernorFuelRate();
-  cm848_processProtectionRampTimer();
-  cm848_calculateProtectionLevelLimit();
-  if ((governor_fuel_demand_low_threshold <= governor_fuel_demand_working) ||
+  cm848_snapshotHighSpeedGovernorFueling();
+  cm848_limitLowSpeedGovernorFueling();
+  cm848_calculateCruiseControlFueling();
+  cm848_calculateVehicleSpeedLimitFueling();
+  cm848_selectCruiseOrUserFueling();
+  if ((high_speed_governor_fueling_snapshot <= governor_fuel_demand_working) ||
      (FVar1 = governor_fuel_demand_working_mode,
-     cruise_fuel_demand_setpoint < governor_fuel_demand_working)) {
-    if ((cruise_fuel_demand_setpoint < governor_fuel_demand_working) ||
-       (governor_fuel_demand_working < governor_fuel_demand_low_threshold)) {
-      if ((governor_fuel_demand_working < governor_fuel_demand_low_threshold) &&
-         (cruise_fuel_demand_setpoint < governor_fuel_demand_working)) {
+     vehicle_speed_limit_fueling < governor_fuel_demand_working)) {
+    if ((vehicle_speed_limit_fueling < governor_fuel_demand_working) ||
+       (governor_fuel_demand_working < high_speed_governor_fueling_snapshot)) {
+      if ((governor_fuel_demand_working < high_speed_governor_fueling_snapshot) &&
+         (vehicle_speed_limit_fueling < governor_fuel_demand_working)) {
         if ((fuel_demand_computed <= governor_fuel_demand_working) ||
            (FVar1 = governor_fuel_demand_working_mode,
            operating_mode_governor_output.mode_code != governor_fuel_demand_working_mode)) {
@@ -41897,10 +41948,10 @@ void cm848_processProtectionRampControl(void)
       }
       else {
         FVar1 = governor_fuel_demand_mode;
-        if ((governor_fuel_demand_low_threshold <= governor_fuel_demand_working) &&
-           (cruise_fuel_demand_setpoint < governor_fuel_demand_working)) {
-          if ((governor_fuel_demand_low_threshold <= cruise_fuel_demand_setpoint) ||
-             (governor_fuel_demand_low_threshold < governor_fuel_demand_value)) goto LAB_00040548;
+        if ((high_speed_governor_fueling_snapshot <= governor_fuel_demand_working) &&
+           (vehicle_speed_limit_fueling < governor_fuel_demand_working)) {
+          if ((high_speed_governor_fueling_snapshot <= vehicle_speed_limit_fueling) ||
+             (high_speed_governor_fueling_snapshot < governor_fuel_demand_value)) goto LAB_00040548;
           FVar1 = FUELING_STATE_VEHICLE_SPEED_LIMIT;
         }
       }
@@ -41913,9 +41964,9 @@ LAB_00040548:
   governor_fuel_demand_mode = FVar1;
   if ((((governor_fuel_demand_mode_prev == FUELING_STATE_LOW_SPEED_GOVERNOR) ||
        (engine_rpm_state_t_0040b7ac.current_rpm <= governor_speed_demand_working)) &&
-      ((governor_fuel_demand_working < governor_fuel_demand_upper ||
+      ((governor_fuel_demand_working < low_speed_governor_fueling ||
        ((j1939_tsc1_override_state.governor_mode == 3 &&
-        (j1939_tsc1_override_state.etc1_mode3_torque_limit < governor_fuel_demand_upper)))))) ||
+        (j1939_tsc1_override_state.etc1_mode3_torque_limit < low_speed_governor_fueling)))))) ||
      (((governor_fuel_demand_mode_prev == FUELING_STATE_LOW_SPEED_GOVERNOR ||
        ((uint)engine_rpm_state_t_0040b7ac.current_rpm <=
         (uint)governor_speed_demand_working + (uint)governor_integrator_deadband_cal)) &&
@@ -41937,7 +41988,7 @@ LAB_00040548:
   wVar2 = high_speed_governor_fueling;
   if (governor_fuel_demand_mode != FUELING_STATE_HIGH_SPEED_GOVERNOR) {
     if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
-      if (governor_request_active_flag == 0) {
+      if (low_speed_governor_active_flag == 0) {
         cm848_resetSpeedControlTracking();
       }
       goto LAB_000406b0;
@@ -41978,11 +42029,11 @@ LAB_000406b0:
   }
   fuel_demand_enable_sync_flag_shadow_2 = cruise_control_engaged_flag;
   if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
-    governor_request_active_flag = 1;
+    low_speed_governor_active_flag = 1;
   }
   else if ((int)((uint)governor_speed_demand_working + (int)(short)governor_integrator_offset_cal) <
            (int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) {
-    governor_request_active_flag = 0;
+    low_speed_governor_active_flag = 0;
   }
   return;
 }
@@ -42004,10 +42055,15 @@ void cm848_initFuelFilterCoefficients(void)
 
 
 //
-// Function: cm848_calculateFuelRateFromRpm @ 0x00040844
+// Function: cm848_calculateRiseLimitedVehicleSpeed @ 0x00040844
 //
 
-void cm848_calculateFuelRateFromRpm(void)
+/* Sets vehicle_speed_rise_limited: vehicle_speed, or (fuel_flow_rpm_mode_flag 0) engine speed over
+   the drivetrain ratio terms fuel_flow_rpm_numerator / fuel_flow_rpm_divisor, with each rise
+   limited to cruise_speed_setpoint_adj_offset_cal per pass; the speed the cruise control and
+   vehicle speed limit fueling work on (was cm848_calculateFuelRateFromRpm) */
+
+void cm848_calculateRiseLimitedVehicleSpeed(void)
 
 {
   uint uVar1;
@@ -42024,14 +42080,14 @@ void cm848_calculateFuelRateFromRpm(void)
   else {
     uVar1 = (uint)vehicle_speed;
   }
-  cruise_speed_setpoint_adjusted = (word)uVar1;
-  if (((uint)cruise_speed_setpoint_prev < (uVar1 & 0xffff)) &&
+  vehicle_speed_rise_limited = (word)uVar1;
+  if (((uint)vehicle_speed_rise_limited_prev < (uVar1 & 0xffff)) &&
      ((int)(uint)cruise_speed_setpoint_adj_offset_cal <
-      (int)((uVar1 & 0xffff) - (uint)cruise_speed_setpoint_prev))) {
-    cruise_speed_setpoint_adjusted =
-         cruise_speed_setpoint_prev + cruise_speed_setpoint_adj_offset_cal;
+      (int)((uVar1 & 0xffff) - (uint)vehicle_speed_rise_limited_prev))) {
+    vehicle_speed_rise_limited =
+         vehicle_speed_rise_limited_prev + cruise_speed_setpoint_adj_offset_cal;
   }
-  cruise_speed_setpoint_prev = cruise_speed_setpoint_adjusted;
+  vehicle_speed_rise_limited_prev = vehicle_speed_rise_limited;
   return;
 }
 
@@ -42120,7 +42176,7 @@ void cm848_cruiseSpeedCommandStateMachine(void)
   case 1:
     pwVar5 = &cruise_speed_high_limit;
     pwVar4 = &cruise_speed_target_working;
-    uVar3 = (uint)cruise_speed_setpoint_adjusted;
+    uVar3 = (uint)vehicle_speed_rise_limited;
     cruise_speed_command = cm848_calculateProtectionFuelLimit(uVar3,cruise_speed_high_limit);
     *pwVar4 = cruise_speed_command;
     if ((int)(uint)*pwVar5 < (int)(uVar3 + cruise_speed_margin_cal)) {
@@ -42159,7 +42215,7 @@ void cm848_cruiseSpeedCommandStateMachine(void)
           ((governor_fuel_demand_mode == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE ||
            (governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL)))))) &&
         ((uint)cruise_speed_command <
-         (uint)cruise_speed_setpoint_adjusted + (uint)cruise_speed_margin_cal)))) {
+         (uint)vehicle_speed_rise_limited + (uint)cruise_speed_margin_cal)))) {
       cm848_protectionFuelRateRamp(cruise_speed_margin_cal);
     }
     break;
@@ -42175,16 +42231,15 @@ void cm848_cruiseSpeedCommandStateMachine(void)
     if ((iVar6 != 4) &&
        ((cruise_speed_mode_prev == CRUISE_ACCELERATE &&
         (wVar2 = cruise_speed_target_working,
-        cruise_speed_target_working < cruise_speed_setpoint_adjusted)))) {
-      wVar2 = cm848_calculateProtectionFuelLimit
-                        (cruise_speed_setpoint_adjusted,cruise_speed_high_limit);
+        cruise_speed_target_working < vehicle_speed_rise_limited)))) {
+      wVar2 = cm848_calculateProtectionFuelLimit(vehicle_speed_rise_limited,cruise_speed_high_limit)
+      ;
     }
   }
   else {
     wVar2 = cruise_speed_target_working;
-    if ((cruise_speed_setpoint_adjusted < cruise_speed_target_working) &&
-       (wVar2 = cruise_speed_setpoint_adjusted,
-       cruise_speed_setpoint_adjusted < cruise_speed_min_cal)) {
+    if ((vehicle_speed_rise_limited < cruise_speed_target_working) &&
+       (wVar2 = vehicle_speed_rise_limited, vehicle_speed_rise_limited < cruise_speed_min_cal)) {
       cruise_control_engaged_flag = 0;
       wVar2 = cruise_speed_command;
     }
@@ -42203,7 +42258,7 @@ void cm848_cruiseSpeedCommandStateMachine(void)
     cruise_set_speed_valid_flag = 1;
   }
   if ((cruise_control_engaged_flag != 1) ||
-     (((iVar6 != 2 && (iVar6 != 7)) || (cruise_speed_command <= cruise_speed_setpoint_adjusted)))) {
+     (((iVar6 != 2 && (iVar6 != 7)) || (cruise_speed_command <= vehicle_speed_rise_limited)))) {
     fuel_demand_enable_sync_flag = 0;
   }
   cruise_speed_mode_prev = CVar1;
@@ -42248,40 +42303,42 @@ void cm848_validateFuelRateTarget(void)
 
 
 //
-// Function: cm848_copyProtectionRampValue @ 0x00040dd4
+// Function: cm848_snapshotHighSpeedGovernorFueling @ 0x00040dd4
 //
 
-void cm848_copyProtectionRampValue(void)
+/* Copies high_speed_governor_fueling into high_speed_governor_fueling_snapshot for the arbitration
+   (was cm848_copyProtectionRampValue) */
+
+void cm848_snapshotHighSpeedGovernorFueling(void)
 
 {
-  governor_fuel_demand_low_threshold = high_speed_governor_fueling;
+  high_speed_governor_fueling_snapshot = high_speed_governor_fueling;
   return;
 }
 
 
 
 //
-// Function: cm848_calculateGovernorFuelDemandUpperLimit @ 0x00040de8
+// Function: cm848_limitLowSpeedGovernorFueling @ 0x00040de8
 //
 
 /* WARNING: Removing unreachable block (ram,0x00040e40) */
-/* Sets governor_fuel_demand_upper, the upper bound of the governor fuel demand (fuel quantity
-   counts), to governor_fuel_demand_upper_working, or to governor_fuel_demand_value +
-   governor_fuel_demand_mode_b_offset_cal while governor_fuel_demand_mode is 11, and caps it at 5888
-   (the 400 mm3 fuel maximum). Called from cm848_processProtectionRampControl, whose mode logic
-   compares governor_fuel_demand_working and the TSC1 mode 3 limit with it. (was
-   cm848_processTorqueLimitBounded) */
+/* Sets low_speed_governor_fueling (fuel quantity counts) to low_speed_governor_fueling_working, or
+   to governor_fuel_demand_value + governor_fuel_demand_mode_b_offset_cal while
+   governor_fuel_demand_mode is 11 (the low speed governor), and caps it at 5888 (the 400 mm3 fuel
+   maximum). cm848_arbitrateGovernedFueling compares the user fueling and the TSC1 mode 3 limit with
+   it (was cm848_calculateGovernorFuelDemandUpperLimit, cm848_processTorqueLimitBounded) */
 
-void cm848_calculateGovernorFuelDemandUpperLimit(void)
+void cm848_limitLowSpeedGovernorFueling(void)
 
 {
-  governor_fuel_demand_upper = governor_fuel_demand_upper_working;
+  low_speed_governor_fueling = low_speed_governor_fueling_working;
   if (governor_fuel_demand_mode == FUELING_STATE_LOW_SPEED_GOVERNOR) {
-    governor_fuel_demand_upper = governor_fuel_demand_value + governor_fuel_demand_mode_b_offset_cal
+    low_speed_governor_fueling = governor_fuel_demand_value + governor_fuel_demand_mode_b_offset_cal
     ;
   }
-  if (0x1700 < governor_fuel_demand_upper) {
-    governor_fuel_demand_upper = 0x1700;
+  if (0x1700 < low_speed_governor_fueling) {
+    low_speed_governor_fueling = 0x1700;
   }
   return;
 }
@@ -42289,10 +42346,15 @@ void cm848_calculateGovernorFuelDemandUpperLimit(void)
 
 
 //
-// Function: cm848_processGovernorFuelRate @ 0x00040e4c
+// Function: cm848_calculateCruiseControlFueling @ 0x00040e4c
 //
 
-void cm848_processGovernorFuelRate(void)
+/* Sets cruise_control_fueling: while governor_override_active_prev_flag is 1 from the error between
+   cruise_speed_command and vehicle_speed_rise_limited through cruise_speed_reference_a / _b, else
+   the operating mode governor fuel (operating_mode_governor_output.fuel_demand) (was
+   cm848_processGovernorFuelRate) */
+
+void cm848_calculateCruiseControlFueling(void)
 
 {
   uint uVar1;
@@ -42301,10 +42363,10 @@ void cm848_processGovernorFuelRate(void)
   int iVar4;
   
   if (governor_override_active_prev_flag != 1) {
-    governor_pid_fuel_output = operating_mode_governor_output.fuel_demand;
+    cruise_control_fueling = operating_mode_governor_output.fuel_demand;
     goto LAB_00040f7c;
   }
-  uVar1 = (uint)cruise_speed_setpoint_adjusted;
+  uVar1 = (uint)vehicle_speed_rise_limited;
   uVar2 = (uint)cruise_speed_command;
   if (uVar2 < uVar1) {
     if (cruise_speed_reference_a != 0) {
@@ -42338,7 +42400,7 @@ LAB_00040f00:
     dVar3 = 0x1700;
   }
 LAB_00040f74:
-  governor_pid_fuel_output = (word)dVar3;
+  cruise_control_fueling = (word)dVar3;
 LAB_00040f7c:
   governor_override_active_prev_flag = (dword)cruise_control_engaged_flag;
   return;
@@ -42347,12 +42409,17 @@ LAB_00040f7c:
 
 
 //
-// Function: cm848_processProtectionRampTimer @ 0x00040f80
+// Function: cm848_calculateVehicleSpeedLimitFueling @ 0x00040f80
 //
 
 /* WARNING: Removing unreachable block (ram,0x00041198) */
+/* Sets vehicle_speed_limit_fueling (FUELING_STATE_VEHICLE_SPEED_LIMIT when it wins the
+   arbitration): from the error between vehicle_speed_rise_limited and cruise_speed_limit_working
+   through cruise_speed_reference_c / _d (5888 = no limit while j1939_governor_feature_cal bit 0x80
+   is clear, fault 29 (P0500 vehicle speed sensor) is set or TSC1 controls the engine); capped at
+   governor_fuel_demand_value + 58 while the limit governs (was cm848_processProtectionRampTimer) */
 
-void cm848_processProtectionRampTimer(void)
+void cm848_calculateVehicleSpeedLimitFueling(void)
 
 {
   uint uVar1;
@@ -42363,11 +42430,11 @@ void cm848_processProtectionRampTimer(void)
        ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
       (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
      (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) {
-    cruise_fuel_demand_setpoint = 0x1700;
+    vehicle_speed_limit_fueling = 0x1700;
     return;
   }
   if (((j1939_governor_feature_cal & 0x100) == 0) || (governor_j1939_bypass_flag == 1)) {
-    uVar1 = (uint)cruise_speed_setpoint_adjusted;
+    uVar1 = (uint)vehicle_speed_rise_limited;
     uVar2 = (uint)cruise_speed_limit_working;
     if (uVar2 < uVar1) {
       if (cruise_speed_reference_c != 0) {
@@ -42376,7 +42443,7 @@ void cm848_processProtectionRampTimer(void)
         cruise_speed_deviation = (uVar1 - uVar2) * 0x400;
         goto LAB_000410d0;
       }
-      cruise_fuel_demand_setpoint = 0;
+      vehicle_speed_limit_fueling = 0;
     }
     else {
       if (cruise_speed_reference_d != 0) {
@@ -42385,16 +42452,16 @@ void cm848_processProtectionRampTimer(void)
         cruise_speed_deviation = (uVar2 - uVar1) * 0x400;
         goto LAB_000410d0;
       }
-      cruise_fuel_demand_setpoint = 0x1700;
+      vehicle_speed_limit_fueling = 0x1700;
     }
     cruise_speed_reference_active = 0;
   }
   else {
-    if (cruise_speed_limit_working < cruise_speed_setpoint_adjusted) {
-      cruise_fuel_demand_setpoint = 0;
+    if (cruise_speed_limit_working < vehicle_speed_rise_limited) {
+      vehicle_speed_limit_fueling = 0;
     }
     else {
-      cruise_fuel_demand_setpoint = 0x1700;
+      vehicle_speed_limit_fueling = 0x1700;
     }
     cruise_speed_reference_active = 0;
   }
@@ -42416,15 +42483,15 @@ LAB_000410d0:
     else {
       dVar3 = 0x1700;
     }
-    cruise_fuel_demand_setpoint = (word)dVar3;
+    vehicle_speed_limit_fueling = (word)dVar3;
   }
   if ((governor_fuel_demand_mode == FUELING_STATE_VEHICLE_SPEED_LIMIT) &&
-     (governor_fuel_demand_value + 0x3a < (uint)cruise_fuel_demand_setpoint)) {
+     (governor_fuel_demand_value + 0x3a < (uint)vehicle_speed_limit_fueling)) {
     if (governor_fuel_demand_value + 0x3a < 0x1701) {
-      cruise_fuel_demand_setpoint = governor_fuel_demand_value + 0x3a;
+      vehicle_speed_limit_fueling = governor_fuel_demand_value + 0x3a;
     }
     else {
-      cruise_fuel_demand_setpoint = 0x1700;
+      vehicle_speed_limit_fueling = 0x1700;
     }
   }
   return;
@@ -42433,21 +42500,28 @@ LAB_000410d0:
 
 
 //
-// Function: cm848_calculateProtectionLevelLimit @ 0x000411b0
+// Function: cm848_selectCruiseOrUserFueling @ 0x000411b0
 //
 
-void cm848_calculateProtectionLevelLimit(void)
+/* Sets the user fueling governor_fuel_demand_working and its state
+   governor_fuel_demand_working_mode: cruise_control_fueling with FUELING_STATE_CRUISE_CONTROL while
+   cruise control is engaged - unless the accelerator asks for more fuel than cruise
+   (fuel_demand_control.calculated above governor_override_fuel_threshold_cal) or TSC1 / mode 5 / 37
+   / 38 controls - else the operating mode governor output and its mode_code (was
+   cm848_calculateProtectionLevelLimit) */
+
+void cm848_selectCruiseOrUserFueling(void)
 
 {
   ushort uVar1;
   uint uVar2;
   
   uVar2 = ((uint)cruise_speed_margin_cal * (uint)cruise_speed_margin_scale_cal >> 8) +
-          (uint)cruise_speed_setpoint_adjusted;
+          (uint)vehicle_speed_rise_limited;
   if (0xffff < uVar2) {
     uVar2 = 0xffff;
   }
-  uVar1 = governor_pid_fuel_output;
+  uVar1 = cruise_control_fueling;
   if (((cruise_control_engaged_flag == 0) || ((uint)governor_override_threshold <= (uVar2 & 0xffff))
       ) && (governor_fuel_demand_mode == FUELING_STATE_CRUISE_CONTROL)) {
     uVar1 = governor_fuel_demand_value;
@@ -42456,7 +42530,7 @@ void cm848_calculateProtectionLevelLimit(void)
        ((((uVar1 < operating_mode_governor_output.fuel_demand &&
           (governor_override_fuel_threshold_cal < fuel_demand_control_t_0040a57a.calculated)) &&
          ((cruise_speed_command != cruise_speed_limit_working ||
-          (governor_pid_fuel_output != cruise_fuel_demand_setpoint)))) ||
+          (cruise_control_fueling != vehicle_speed_limit_fueling)))) ||
         ((operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL ||
          (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)))))) ||
       (operating_mode_governor_output.mode_code == FUELING_STATE_UNIDENTIFIED_37)) ||
@@ -42467,10 +42541,10 @@ void cm848_calculateProtectionLevelLimit(void)
   }
   else {
     governor_fuel_demand_working_mode = FUELING_STATE_CRUISE_CONTROL;
-    governor_fuel_demand_working = governor_pid_fuel_output;
-    if (governor_fuel_demand_value <= governor_pid_fuel_output) {
+    governor_fuel_demand_working = cruise_control_fueling;
+    if (governor_fuel_demand_value <= cruise_control_fueling) {
       governor_fuel_demand_working = governor_fuel_demand_value;
-      governor_pid_fuel_output = governor_fuel_demand_value;
+      cruise_control_fueling = governor_fuel_demand_value;
     }
   }
   if (torque_derate_fuel_quantity + 0x3a < (uint)governor_fuel_demand_working) {
@@ -43296,7 +43370,7 @@ void cm848_copyMainInjectionTiming(void)
    cm848_applyFuelLimitsForFuelPressureFaults; 5888 = none) into the running minimum fuel limit
    torque_derate_fuel_quantity and records source code 28 in torque_derate_fuel_source_code when it
    is the lower one. One of the fuel limit steps run by cm848_processProtectionLimits; its sibling
-   cm848_enforceFuelLimitProtection does the same for the fault derate fuel limit with code 29. (was
+   cm848_applyFaultDerateFuelLimit does the same for the fault derate fuel limit with code 29. (was
    cm848_applyProtectionTorqueLimit) */
 
 void cm848_applyFuelPressureFaultFuelLimit(void)
@@ -43312,10 +43386,14 @@ void cm848_applyFuelPressureFaultFuelLimit(void)
 
 
 //
-// Function: cm848_applySpeedControlProtectionLimit @ 0x000427cc
+// Function: cm848_applyTsc1TorqueLimit @ 0x000427cc
 //
 
-void cm848_applySpeedControlProtectionLimit(void)
+/* J1939 TSC1 override control mode 3: takes j1939_tsc1_override_state.etc1_mode3_torque_limit as
+   the derate limit (FUELING_STATE_TSC1_TORQUE_LIMIT) when it is below torque_derate_fuel_quantity
+   (was cm848_applySpeedControlProtectionLimit) */
+
+void cm848_applyTsc1TorqueLimit(void)
 
 {
   if ((j1939_tsc1_override_state.governor_mode == 3) &&
@@ -43335,19 +43413,19 @@ void cm848_applySpeedControlProtectionLimit(void)
 void cm848_processProtectionLimits(void)
 
 {
-  cm848_initProtectionStateWithFuelDemand();
+  cm848_initializeFuelLimitChains();
   cm848_checkProtectionParamLimit();
   cm848_trackMinimumFuelDemand();
   cm848_protection_limits();
-  cm848_enforceFuelLimitProtection();
-  cm848_applySpeedControlProtectionLimit();
+  cm848_applyFaultDerateFuelLimit();
+  cm848_applyTsc1TorqueLimit();
   cm848_applyFuelPressureFaultFuelLimit();
   protection_fuel_limit_check();
   cm848_applyTorqueManagementFuelLimit();
   cm848_applyProtectionLimit();
   cm848_trackFuelDemandMinimum();
   cm848_limitFuelQuantityOnRailPressureShortfall();
-  cm848_processSafetyConditionProtection();
+  cm848_applyFuelPressureGovernorFaultBlend();
   return;
 }
 
@@ -45449,7 +45527,7 @@ LAB_00046214:
     }
     else {
       uVar9 = ((uint)governor_override_threshold - (int)(short)cruise_speed_setpoint_active) -
-              (uint)cruise_speed_setpoint_adjusted;
+              (uint)vehicle_speed_rise_limited;
       uVar9 = ((int)uVar9 >> 1) + (uint)((int)uVar9 < 0 && (uVar9 & 1) != 0);
       uVar10 = uVar9;
     }
@@ -64276,10 +64354,13 @@ LAB_0050946c:
 
 
 //
-// Function: cm848_enforceFuelLimitProtection @ 0x00509510
+// Function: cm848_applyFaultDerateFuelLimit @ 0x00509510
 //
 
-void cm848_enforceFuelLimitProtection(void)
+/* Takes fault_derate_fuel_limit as the derate limit (FUELING_STATE_FAULT_DERATE) when it is below
+   torque_derate_fuel_quantity (was cm848_enforceFuelLimitProtection) */
+
+void cm848_applyFaultDerateFuelLimit(void)
 
 {
   if (fault_derate_fuel_limit < torque_derate_fuel_quantity) {
@@ -70722,11 +70803,11 @@ void governor_cruise_rpmRatio_ema(void)
   uint uVar2;
   
   uVar2 = ((uint)engine_rpm_state_t_0040b7ac.current_rpm + (uint)cruise_rpm_prev_sample) * 0x80;
-  if ((uint)cruise_speed_setpoint_adjusted * 0xffff < uVar2) {
+  if ((uint)vehicle_speed_rise_limited * 0xffff < uVar2) {
     uVar2 = 0xffff;
   }
   else {
-    uVar2 = uVar2 / cruise_speed_setpoint_adjusted;
+    uVar2 = uVar2 / vehicle_speed_rise_limited;
   }
   dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fcd96);
   cruise_rpm_ratio_ema = (word)dVar1;
@@ -70808,10 +70889,9 @@ int governor_cruise_resumeButton_handler(void)
 //
 
 /* Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3
-   && prev!=3) with cruise_speed_setpoint_adjusted>=cruise_speed_min_cal returns CRUISE_SET(1) to
-   LATCH the setpoint; held returns CRUISE_DECELERATE(3). Was
-   governor_cruiseOverride_state3_handler. NOTE the SET capture only runs when
-   governor_cruise_deniedStatus_update()==0. */
+   && prev!=3) with vehicle_speed_rise_limited>=cruise_speed_min_cal returns CRUISE_SET(1) to LATCH
+   the setpoint; held returns CRUISE_DECELERATE(3). Was governor_cruiseOverride_state3_handler. NOTE
+   the SET capture only runs when governor_cruise_deniedStatus_update()==0. */
 
 int governor_cruise_setButton_handler(void)
 
@@ -70830,7 +70910,7 @@ int governor_cruise_setButton_handler(void)
       }
     }
   }
-  else if (cruise_speed_min_cal <= cruise_speed_setpoint_adjusted) {
+  else if (cruise_speed_min_cal <= vehicle_speed_rise_limited) {
     CVar1 = CRUISE_SET;
     governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_reload;
   }
@@ -70920,7 +71000,7 @@ undefined4 governor_cruise_deniedStatus_update(void)
             }
             uVar1 = 1;
           }
-          else if (cruise_speed_setpoint_adjusted < cruise_speed_low_limit) {
+          else if (vehicle_speed_rise_limited < cruise_speed_low_limit) {
             cruise_control_denied_status = 8;
             if (cruise_control_engaged_flag != 0) {
               cruise_control_last_cutout_reason = 8;
@@ -82146,7 +82226,7 @@ LAB_0052443c:
 
 /* Sets engine_retarder_cruise_permission_percent: 0 (no retarder braking) while cruise control is
    engaged (cruise_control_engaged_flag, with algorithm_enable_flags_6_cal bit 0x8000) and the
-   filtered cruise_speed_setpoint_adjusted has not passed cruise_speed_command plus an offset (with
+   filtered vehicle_speed_rise_limited has not passed cruise_speed_command plus an offset (with
    hysteresis), or is at or below cruise_speed_min_threshold; otherwise 100. It is the cruise
    control limit, source code 2, of the retarder request (was governorOverrideSpeedControl). */
 
@@ -82158,12 +82238,12 @@ void cm848_calculateEngineRetarderCruisePermissionPercent(void)
   
   if (((algorithm_enable_flags_6_cal & 0x8000) != 0) && (cruise_control_engaged_flag != 0)) {
     dVar1 = exponentialMovingAverage
-                      ((uint)cruise_speed_setpoint_adjusted,
+                      ((uint)vehicle_speed_rise_limited,
                        &engine_retarder_cruise_permission_speed_filter_state);
     iVar2 = (dVar1 & 0xffff) - ((uint)cruise_speed_command + (uint)DAT_003fd910);
     if (engine_retarder_cruise_permission_hysteresis_state < 100) {
       if ((iVar2 <= (int)(uint)engine_retarder_cruise_permission_speed_threshold_cal) ||
-         (cruise_speed_setpoint_adjusted <= cruise_speed_min_threshold)) {
+         (vehicle_speed_rise_limited <= cruise_speed_min_threshold)) {
         engine_retarder_cruise_permission_hysteresis_state = 0;
         engine_retarder_cruise_permission_percent = 0;
         return;
@@ -82171,7 +82251,7 @@ void cm848_calculateEngineRetarderCruisePermissionPercent(void)
     }
     else if ((iVar2 <= (int)((uint)engine_retarder_cruise_permission_speed_threshold_cal -
                              (uint)engine_retarder_cruise_permission_hysteresis & 0xffff)) ||
-            (cruise_speed_setpoint_adjusted <= cruise_speed_min_threshold)) {
+            (vehicle_speed_rise_limited <= cruise_speed_min_threshold)) {
       engine_retarder_cruise_permission_hysteresis_state = 0;
       engine_retarder_cruise_permission_percent = 0;
       return;
@@ -82209,7 +82289,7 @@ void cm848_limitEngineRetarderPercentToCruisePermission(void)
 // Function: cm848_initializeEngineRetarderCruisePermissionFilter @ 0x005246e0
 //
 
-/* Clears the accumulator of the filter on cruise_speed_setpoint_adjusted used by
+/* Clears the accumulator of the filter on vehicle_speed_rise_limited used by
    cm848_calculateEngineRetarderCruisePermissionPercent, points it at its coefficient word and
    clears engine_retarder_cruise_permission_hysteresis_state (was initHpcr_ExceptionHandler). */
 
@@ -82253,11 +82333,11 @@ void governor_cruise_setpoint_calc(int param_1)
       cruise_deadband_active_flag = 0;
     }
     else {
-      if (cruise_speed_command < cruise_speed_setpoint_adjusted) {
-        uVar2 = cruise_speed_setpoint_adjusted - cruise_speed_command;
+      if (cruise_speed_command < vehicle_speed_rise_limited) {
+        uVar2 = vehicle_speed_rise_limited - cruise_speed_command;
       }
       else {
-        uVar2 = cruise_speed_command - cruise_speed_setpoint_adjusted;
+        uVar2 = cruise_speed_command - vehicle_speed_rise_limited;
       }
       if (((uVar2 < DAT_00408e00) && (param_1 <= (int)(uint)cruise_speed_offset_latched)) &&
          ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1)) {
@@ -82655,13 +82735,12 @@ void protectionRampRateControl(void)
   
   cruise_ramp_rate_control_called_flag = 1;
   governor_cruise_setpoint_calc(cruise_fuel_demand_ema);
-  wVar5 = cruise_speed_setpoint_adjusted;
+  wVar5 = vehicle_speed_rise_limited;
   iVar4 = (int)(short)governor_fuel_demand_mode;
-  iVar7 = (int)(short)cruise_speed_setpoint_adjusted;
+  iVar7 = (int)(short)vehicle_speed_rise_limited;
   pwVar3 = &cruise_confirm_flag_a;
   if (iVar4 == 10) {
-    governor_cruise_speed_error_working =
-         cruise_speed_limit_working - cruise_speed_setpoint_adjusted;
+    governor_cruise_speed_error_working = cruise_speed_limit_working - vehicle_speed_rise_limited;
     wVar1 = cruise_speed_error_clamp_max;
     if (((short)cruise_speed_error_clamp_max <= (short)governor_cruise_speed_error_working) ||
        (wVar1 = cruise_speed_error_clamp_min,
@@ -82671,7 +82750,7 @@ void protectionRampRateControl(void)
   else {
     if ((cruise_control_state == CRUISE_RESUME) ||
        (wVar1 = cruise_speed_command, cruise_confirm_flag_a != 0)) {
-      wVar1 = cruise_speed_setpoint_adjusted;
+      wVar1 = vehicle_speed_rise_limited;
     }
     cruise_ramp_target_speed = wVar1 + cruise_speed_setpoint_active;
     governor_override_threshold = cruise_ramp_target_speed;
@@ -82787,7 +82866,7 @@ void protectionOutputActuatorControl(void)
   wVar12 = cruise_setpoint_interp_prev;
   DAT_003fd044 = (word)dVar2;
   cruise_setpoint_interp_prev =
-       cm848_interpolateTableLinearStep(cruise_speed_setpoint_adjusted,&PTR_DAT_003fd022);
+       cm848_interpolateTableLinearStep(vehicle_speed_rise_limited,&PTR_DAT_003fd022);
   FVar1 = governor_fuel_demand_mode;
   iVar8 = (int)(short)(cruise_setpoint_interp_prev - wVar12);
   if (iVar8 < 0x67) {
@@ -82813,8 +82892,8 @@ LAB_00525668:
     if (cruise_stable_speed_countdown != 0) {
       cruise_stable_speed_countdown = cruise_stable_speed_countdown - 1;
     }
-    if ((cruise_stable_speed_countdown == 0) &&
-       (cruise_speed_min_cal < cruise_speed_setpoint_adjusted)) {
+    if ((cruise_stable_speed_countdown == 0) && (cruise_speed_min_cal < vehicle_speed_rise_limited))
+    {
       DAT_003fd04e = '\x01';
       cruise_fuel_demand_stable_ref = DAT_003fd046;
       goto LAB_00525668;
@@ -82827,7 +82906,7 @@ LAB_00525668:
     cruise_ramp_target_prev = cruise_ramp_target_speed;
   }
   else {
-    cruise_ramp_target_prev = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+    cruise_ramp_target_prev = vehicle_speed_rise_limited + cruise_speed_setpoint_active;
     cruise_confirm_flag_b = 0;
   }
   if ((governor_fuel_demand_mode != FUELING_STATE_CRUISE_CONTROL) &&
@@ -82863,8 +82942,7 @@ LAB_005257a0:
   else {
     governor_override_threshold = cruise_speed_limit_working;
   }
-  governor_cruise_speed_error_working = governor_override_threshold - cruise_speed_setpoint_adjusted
-  ;
+  governor_cruise_speed_error_working = governor_override_threshold - vehicle_speed_rise_limited;
   wVar12 = cruise_speed_error_clamp_max;
   if (((short)cruise_speed_error_clamp_max < (short)governor_cruise_speed_error_working) ||
      (wVar12 = cruise_speed_error_clamp_min,

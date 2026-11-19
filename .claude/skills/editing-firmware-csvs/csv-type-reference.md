@@ -23,6 +23,18 @@ to the `enum_name`.
 
 Enum names render for whole-value compares only: `if (state == CSP_CRANKING)`.
 
+**The enum name renders WRONG when a value has no member (Ghidra 12.1).** A code-like enum whose values share bits
+(1, 2, 4, 5, 12 ...) gets printed as an OR of members for any value without an exact member. Example (CM848
+`FUELING_STATE`, 2026-11-19): 15 rendered as `FUELING_STATE_HIGH_SPEED_GOVERNOR | FUELING_STATE_TSC1_SPEED_CONTROL |
+FUELING_STATE_TSC1_TORQUE_CONTROL`, which reads as a flag set.
+- Give every value the enum's carriers store or compare a member. Unproven values get a placeholder,
+  `<ENUM>_UNIDENTIFIED_<n>`, with the setter in its comment.
+- Adding members can make new ORs possible. With 16 and 32 as members, the compared-only 37 = 32 | 5 and 49 = 32 | 16 | 1
+  become representable, so the compared-only values need members too.
+- After any enum change, diff the build with members and numbers normalized to their values (the 2026-11-19 session's
+  `check_enum_proof.py` in `docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/`), and grep for
+  `<ENUM>_\w+ | `.
+
 ## Struct bitfields (`structure_definitions.csv`)
 
 Columns: `struct_name,address,field_name,type,size,comment,dependency,Status`
