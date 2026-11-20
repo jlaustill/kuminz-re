@@ -86,10 +86,10 @@ engine_crank_state_t,0x0040b80a,run_state,word,2,Engine run state written by mpc
 # Engine Sync State - crankshaft synchronization status
 # Used by engine position sensor ISR and sync detection
 # Total size: 6 bytes (0x0040b87f-0x0040b884)
-engine_sync_state_t,0x0040b87f,fuel_pressure_governor_mode,FUEL_PRESSURE_GOVERNOR_MODE,1,Fuel pressure governor mode (FUEL_PRESSURE_GOVERNOR_MODE; was sync_status),,verified
-engine_sync_state_t,0x0040b87f,fuel_pressure_governor_demand,word,2,Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count),,verified
-engine_sync_state_t,0x0040b87f,fuel_metering_command,word,2,"Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw)",,verified
-engine_sync_state_t,0x0040b87f,reserved_05,byte,1,Padding for alignment,,needs_review
+fuel_pressure_governor_state_t,0x0040b87f,fuel_pressure_governor_mode,FUEL_PRESSURE_GOVERNOR_MODE,1,Fuel pressure governor mode (FUEL_PRESSURE_GOVERNOR_MODE; was sync_status),,verified
+fuel_pressure_governor_state_t,0x0040b87f,fuel_pressure_governor_demand,word,2,Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count),,verified
+fuel_pressure_governor_state_t,0x0040b87f,fuel_metering_command,word,2,"Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw)",,verified
+fuel_pressure_governor_state_t,0x0040b87f,filtered_battery_voltage,word,2,"e2m 8019 +5 HPCR_Filtered_Battery_Voltage (volts): stored by cm848_filterEngineSensorValue (sth) and read by cm848_calculateFuelMeteringCommand for its battery voltage compensation (lhz) - a word, so the struct is 7 bytes (was the 1-byte reserved_05)",,needs_review
 # Engine RPM State - current and target engine speed values
 # Used by processEngineRpmTarget and governor control
 # Total size: 16 bytes (0x0040b7ac-0x0040b7bb)
@@ -227,14 +227,14 @@ combustion_reference_state_t,0x0040a494,chi_hundredths,word,2,Fuel blend weight 
 # Boost Pressure State - turbocharger boost control values
 # Used by boostBasedFuelModifier and calculateBoostPressureOffset
 # Total size: 16 bytes (0x0040a406-0x0040a415)
-boost_pressure_state_t,0x0040a406,load_input,word,2,Boost-based load input,,verified
-boost_pressure_state_t,0x0040a406,rpm_modifier,word,2,RPM-based boost modifier,,verified
-boost_pressure_state_t,0x0040a406,lookup_result,word,2,Boost table lookup result,,verified
-boost_pressure_state_t,0x0040a406,computed_value,word,2,Computed boost pressure value,,verified
-boost_pressure_state_t,0x0040a406,pressure_ratio,word,2,Boost pressure ratio,,verified
-boost_pressure_state_t,0x0040a406,reserved_0a,word,2,Gap,,needs_review
-boost_pressure_state_t,0x0040a406,fresh_air_mass_flow_filtered,word,2,Gap,,needs_review
-boost_pressure_state_t,0x0040a406,reserved_0e,word,2,Gap,,needs_review
+charge_flow_estimate_terms_t,0x0040a406,intake_manifold_temperature_rankine,word,2,"e2m 177D +2 CHP_Intake_Manifold_Tmptr_R: the intake manifold temperature in degrees Rankine (intake_manifold_temperature_filtered + 0x7300)",,verified
+charge_flow_estimate_terms_t,0x0040a406,volumetric_efficiency_mach,word,2,"e2m 177D +4 CHP_Veff_Mach: the volumetric efficiency test point based on engine speed and stroke",,verified
+charge_flow_estimate_terms_t,0x0040a406,volumetric_efficiency_square_root,word,2,"e2m 177D +6 CHP_Veff_Sqrt: the volumetric efficiency test point based only on energy",,verified
+charge_flow_estimate_terms_t,0x0040a406,flow_area_constant,word,2,"e2m 177D +8 CHP_Flow_Area_Constant",,verified
+charge_flow_estimate_terms_t,0x0040a406,pressure_ratio,word,2,"e2m 177D +A CHP_Pratio: the charge flow pressure ratio",,verified
+charge_flow_estimate_terms_t,0x0040a406,charge_flow_source,word,2,"e2m 177D +C Charge_Flow_Source: 0 primary / 1 backup",,needs_review
+charge_flow_estimate_terms_t,0x0040a406,fresh_air_mass_flow_filtered,word,2,"e2m 177B +0 Fresh_Air_Flow: the fresh air flow virtual sensor (lb/min)",,needs_review
+charge_flow_estimate_terms_t,0x0040a406,fresh_air_flow_source,word,2,"e2m 177B +2 Fresh_Air_Flow_Source: 0 primary / 1 backup",,needs_review
 # Engine Speed Limit Arbitration - lowest-wins selection of the engine speed limit (the e2m HSG reference speed state block)
 # Written by cm848_selectEngineSpeedLimit and the source functions - read by the fuel limit and governor code
 # Total size: 6 bytes (0x0040a2f8-0x0040a2fd)

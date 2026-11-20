@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Tue Nov 17 16:41:14 MST 2026
+// Generated: Fri Nov 20 04:14:45 MST 2026
 
 
 //
@@ -1795,12 +1795,15 @@ void cm550_FUN_0000c2ee(void)
 
 
 //
-// Function: vp44RpmBasedFaultDetector @ 0x0000c326
+// Function: calculateAlpha @ 0x0000c326
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0xe518 (verified stage 9b): the alpha source selector: the LSG / AFC alpha
+   timeouts, the call of calculateAlphaBase and the alpha state / blend factor outputs. (was
+   vp44RpmBasedFaultDetector) */
 
-ushort vp44RpmBasedFaultDetector(void)
+ushort calculateAlpha(void)
 
 {
   if (((_smoke_limiter_output_value == 1) || (_smoke_limiter_output_value == 2)) ||
@@ -1816,7 +1819,7 @@ ushort vp44RpmBasedFaultDetector(void)
     _APAPBA = 0;
   }
   else {
-    timingProtectionFlagsOrchestrator();
+    calculateAlphaBase();
   }
   if (_DAT_0080a926 == 0) {
     if ((_calibration_feature_enable_flags_word_1 & 1) == 0) {
@@ -1851,12 +1854,14 @@ ushort vp44RpmBasedFaultDetector(void)
 
 
 //
-// Function: cm550_FUN_0000c404 @ 0x0000c404
+// Function: calculateAlphaFuelRateResult @ 0x0000c404
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0xe164 (verified stage 9b): the alpha fuel rate condition (_APFLRTAP, enable bit
+   0x1000). (was cm550_FUN_0000c404) */
 
-undefined2 cm550_FUN_0000c404(void)
+undefined2 calculateAlphaFuelRateResult(void)
 
 {
   ushort uVar1;
@@ -1885,12 +1890,14 @@ undefined2 cm550_FUN_0000c404(void)
 
 
 //
-// Function: cm550_FUN_0000c496 @ 0x0000c496
+// Function: calculateAlphaOnGovernorResult @ 0x0000c496
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0xe218 (verified stage 9b): the alpha on-governor condition (_APGVAP, enable bit
+   0x2000). (was cm550_FUN_0000c496) */
 
-uint cm550_FUN_0000c496(void)
+uint calculateAlphaOnGovernorResult(void)
 
 {
   uint in_D0;
@@ -1904,12 +1911,14 @@ uint cm550_FUN_0000c496(void)
 
 
 //
-// Function: cm550_FUN_0000c4b2 @ 0x0000c4b2
+// Function: calculateAlphaLowSpeedGovernorResult @ 0x0000c4b2
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0xe248 (verified stage 9b): the alpha low speed governor condition (_APLSAP, enable
+   bit 0x400). (was cm550_FUN_0000c4b2) */
 
-int cm550_FUN_0000c4b2(void)
+int calculateAlphaLowSpeedGovernorResult(void)
 
 {
   ushort uVar1;
@@ -1936,12 +1945,14 @@ int cm550_FUN_0000c4b2(void)
 
 
 //
-// Function: cm550_fuelModeTransitionCountdownHandler @ 0x0000c504
+// Function: calculateAlphaAirFuelControlResult @ 0x0000c504
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0xe2cc (verified stage 9b): the alpha air fuel control condition (_APAFSS, enable
+   bit 0x800). (was cm550_fuelModeTransitionCountdownHandler) */
 
-int cm550_fuelModeTransitionCountdownHandler(void)
+int calculateAlphaAirFuelControlResult(void)
 
 {
   ushort uVar1;
@@ -1966,12 +1977,14 @@ int cm550_fuelModeTransitionCountdownHandler(void)
 
 
 //
-// Function: cm550_FUN_0000c556 @ 0x0000c556
+// Function: calculateAlphaLowAmbientAirPressureResult @ 0x0000c556
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0xe360 (verified stage 9b): the alpha low ambient air pressure condition
+   (_APAAPRSS, enable bit 0x8000). (was cm550_FUN_0000c556) */
 
-undefined2 cm550_FUN_0000c556(void)
+undefined2 calculateAlphaLowAmbientAirPressureResult(void)
 
 {
   if (_filtered_ambient_air_pressure_as_read_and_scaled_from_a_d_algor_0_15 < _DAT_00807ab8) {
@@ -1986,12 +1999,16 @@ undefined2 cm550_FUN_0000c556(void)
 
 
 //
-// Function: timingProtectionFlagsOrchestrator @ 0x0000c582
+// Function: calculateAlphaBase @ 0x0000c582
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0xe3a4 (verified stage 9b): ORs the five alpha condition results (enable bits 0x400
+   / 0x800 / 0x1000 / 0x2000 / 0x8000 of the feature word) and ramps the alpha base (_APAPBA) toward
+   0x4000 with two rates around a threshold; 0 when no condition is set. (was
+   timingProtectionFlagsOrchestrator) */
 
-uint timingProtectionFlagsOrchestrator(void)
+uint calculateAlphaBase(void)
 
 {
   ushort uVar2;
@@ -1999,24 +2016,24 @@ uint timingProtectionFlagsOrchestrator(void)
   
   uVar2 = 0;
   if ((_calibration_feature_enable_flags_word_0 & 0x400) != 0) {
-    uVar2 = cm550_FUN_0000c4b2();
+    uVar2 = calculateAlphaLowSpeedGovernorResult();
     _APLSAP = uVar2;
   }
   if ((_calibration_feature_enable_flags_word_0 & 0x800) != 0) {
-    _APAFSS = cm550_fuelModeTransitionCountdownHandler();
+    _APAFSS = calculateAlphaAirFuelControlResult();
     uVar2 = _APAFSS | uVar2;
   }
   if ((_calibration_feature_enable_flags_word_0 & 0x1000) != 0) {
-    _APFLRTAP = cm550_FUN_0000c404();
+    _APFLRTAP = calculateAlphaFuelRateResult();
     uVar2 = _APFLRTAP | uVar2;
   }
   if ((_calibration_feature_enable_flags_word_0 & 0x2000) != 0) {
-    _APGVAP = cm550_FUN_0000c496();
+    _APGVAP = calculateAlphaOnGovernorResult();
     uVar2 = _APGVAP | uVar2;
   }
   uVar1 = _calibration_feature_enable_flags_word_0 & 0xffff8000;
   if ((_calibration_feature_enable_flags_word_0 & 0x8000) != 0) {
-    uVar1 = cm550_FUN_0000c556();
+    uVar1 = calculateAlphaLowAmbientAirPressureResult();
     _APAAPRSS = (ushort)uVar1;
     uVar2 = _APAAPRSS | uVar2;
   }
@@ -15953,7 +15970,7 @@ void vp44_periodicTaskSet_governorProtection(void)
   cm550_FUN_0002dbde();
   initProtectionParamCalculation();
   cm550_oil_pressure_shutdown_controller();
-  vp44RpmBasedFaultDetector();
+  calculateAlpha();
   func_0x00044c76();
   selectEngineSpeedLimit();
   func_0x0004da56();
@@ -15978,7 +15995,7 @@ void vp44_engine_control_cycle(void)
   cm550_FUN_0002dbde();
   initProtectionParamCalculation();
   cm550_oil_pressure_shutdown_controller();
-  vp44RpmBasedFaultDetector();
+  calculateAlpha();
   func_0x00044c76();
   selectEngineSpeedLimit();
   func_0x0004da56();
@@ -36224,12 +36241,15 @@ void vp44_FUN_00032c22(void)
 
 
 //
-// Function: j1939GetEngineStateCode @ 0x00032c76
+// Function: sendPgn61444ElectronicEngineController1Message @ 0x00032c76
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0x2588c (verified stage 9b): builds EEC1 (the torque mode from the speed control
+   mode and the fuel limit state, then the engine speed) and sends it with cm550_sendCanMessage.
+   (was j1939GetEngineStateCode) */
 
-void j1939GetEngineStateCode(void)
+void sendPgn61444ElectronicEngineController1Message(void)
 
 {
   undefined1 local_6;
@@ -36663,12 +36683,15 @@ void vp44_engineFluidLevelPGN_65263_Builder(void)
 
 
 //
-// Function: faultTimerHandler @ 0x0003320e
+// Function: buildPgn65251EngineConfiguration1Payload @ 0x0003320e
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Twin of CM848 0x1b3a0 (verified stage 9b): fills the PGN 65251 engine configuration payload
+   buffer (param_1) from the engine configuration words, starting with the idle point speed. (was
+   faultTimerHandler) */
 
-void faultTimerHandler(undefined4 *param_1)
+void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1)
 
 {
   undefined2 uVar1;
@@ -36866,7 +36889,7 @@ void cm550_FUN_000334ec(void)
   _DAT_0080351e = _calibration_checksum_expected_2;
   _DAT_00803522 = _DAT_00803506;
   _DAT_00803526 = _DAT_0080350a;
-  faultTimerHandler(&DAT_008034f2);
+  buildPgn65251EngineConfiguration1Payload(&DAT_008034f2);
   uVar2 = cm550_FUN_000333d6(_DAT_008034f2 >> 0x10);
   if ((char)uVar2 != '\x01') {
     uVar1 = (undefined1)((ushort)uVar2 >> 8);
@@ -36935,7 +36958,7 @@ byte cm550_FUN_0003366a(void)
   
   bVar1 = DAT_00803538 & 0xf0;
   if (bVar1 == 0) {
-    faultTimerHandler(&DAT_008034f2);
+    buildPgn65251EngineConfiguration1Payload(&DAT_008034f2);
     bVar1 = cm550_sendCanMessage((j1939_header_t *)&DAT_0080352a);
   }
   return bVar1;

@@ -866,7 +866,7 @@ DIAGNOSTIC_SERVICE,0x4b,DIAGNOSTIC_SERVICE_MEMORY_WRITE_75,kernel memory-write,1
 DIAGNOSTIC_SERVICE,0x4c,DIAGNOSTIC_SERVICE_MEMORY_READ_EXT,cm848_diagService76_memoryReadExt,1
 DIAGNOSTIC_SERVICE,0x4d,DIAGNOSTIC_SERVICE_MEMORY_WRITE_EXT,kernel memory-write ext,1
 
-# FUEL_PRESSURE_GOVERNOR_MODE - engine_sync_state_t.fuel_pressure_governor_mode (cm848_calculateFuelMeteringCommand)
+# FUEL_PRESSURE_GOVERNOR_MODE - fuel_pressure_governor_state_t.fuel_pressure_governor_mode (cm848_calculateFuelMeteringCommand)
 FUEL_PRESSURE_GOVERNOR_MODE,1,FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START,Open-loop start command (two tables blended by the input engine_sync_state_a picks); the mode the others fall back to,1
 FUEL_PRESSURE_GOVERNOR_MODE,2,FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START,PID on fuel_pressure_setpoint - fuel_pressure_feedback_filtered for the first 1000 revolutions (fuel_pressure_governor_start_revolutions),1
 FUEL_PRESSURE_GOVERNOR_MODE,4,FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP,PID after the start revolutions,1

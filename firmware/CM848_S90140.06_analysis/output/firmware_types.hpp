@@ -1072,7 +1072,7 @@ typedef struct protection_condition_flags_t protection_condition_flags_t;
 typedef struct protection_status_flags_t protection_status_flags_t;
 typedef struct protection_timer_state_t protection_timer_state_t;
 typedef struct engine_crank_state_t engine_crank_state_t;
-typedef struct engine_sync_state_t engine_sync_state_t;
+typedef struct fuel_pressure_governor_state_t fuel_pressure_governor_state_t;
 typedef struct engine_rpm_state_t engine_rpm_state_t;
 typedef struct sensor_readings_t sensor_readings_t;
 typedef struct eeprom_header_t eeprom_header_t;
@@ -1085,7 +1085,7 @@ typedef struct system_status_flags_t system_status_flags_t;
 typedef struct wastegate_duty_controller_state_t wastegate_duty_controller_state_t;
 typedef struct throttle_fuel_trim_t throttle_fuel_trim_t;
 typedef struct combustion_reference_state_t combustion_reference_state_t;
-typedef struct boost_pressure_state_t boost_pressure_state_t;
+typedef struct charge_flow_estimate_terms_t charge_flow_estimate_terms_t;
 typedef struct engine_speed_limit_arbitration_t engine_speed_limit_arbitration_t;
 typedef struct operating_mode_governor_output_t operating_mode_governor_output_t;
 typedef struct protection_lockout_t protection_lockout_t;
@@ -1293,11 +1293,11 @@ struct engine_crank_state_t {
     uint16_t run_state;  /* Engine run state written by mpc555_updateEngineRunState - a different variable from engine_operating_mode */
 };
 
-struct engine_sync_state_t {
+struct fuel_pressure_governor_state_t {
     FUEL_PRESSURE_GOVERNOR_MODE fuel_pressure_governor_mode;  /* Fuel pressure governor mode (FUEL_PRESSURE_GOVERNOR_MODE; was sync_status) */
     uint16_t fuel_pressure_governor_demand;  /* Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count) */
     uint16_t fuel_metering_command;  /* Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw) */
-    uint8_t reserved_05;  /* Padding for alignment */
+    uint16_t filtered_battery_voltage;  /* e2m 8019 +5 HPCR_Filtered_Battery_Voltage (volts): stored by cm848_filterEngineSensorValue (sth) and read by cm848_calculateFuelMeteringCommand for its battery voltage compensation (lhz) - a word, so the struct is 7 bytes (was the 1-byte reserved_05) */
 };
 
 struct engine_rpm_state_t {
@@ -1431,15 +1431,15 @@ struct combustion_reference_state_t {
     uint16_t chi_hundredths;  /* Fuel blend weight factor (0-100%) */
 };
 
-struct boost_pressure_state_t {
-    uint16_t load_input;  /* Boost-based load input */
-    uint16_t rpm_modifier;  /* RPM-based boost modifier */
-    uint16_t lookup_result;  /* Boost table lookup result */
-    uint16_t computed_value;  /* Computed boost pressure value */
-    uint16_t pressure_ratio;  /* Boost pressure ratio */
-    uint16_t reserved_0a;  /* Gap */
-    uint16_t fresh_air_mass_flow_filtered;  /* Gap */
-    uint16_t reserved_0e;  /* Gap */
+struct charge_flow_estimate_terms_t {
+    uint16_t intake_manifold_temperature_rankine;  /* e2m 177D +2 CHP_Intake_Manifold_Tmptr_R: the intake manifold temperature in degrees Rankine (intake_manifold_temperature_filtered + 0x7300) */
+    uint16_t volumetric_efficiency_mach;  /* e2m 177D +4 CHP_Veff_Mach: the volumetric efficiency test point based on engine speed and stroke */
+    uint16_t volumetric_efficiency_square_root;  /* e2m 177D +6 CHP_Veff_Sqrt: the volumetric efficiency test point based only on energy */
+    uint16_t flow_area_constant;  /* e2m 177D +8 CHP_Flow_Area_Constant */
+    uint16_t pressure_ratio;  /* e2m 177D +A CHP_Pratio: the charge flow pressure ratio */
+    uint16_t charge_flow_source;  /* e2m 177D +C Charge_Flow_Source: 0 primary / 1 backup */
+    uint16_t fresh_air_mass_flow_filtered;  /* e2m 177B +0 Fresh_Air_Flow: the fresh air flow virtual sensor (lb/min) */
+    uint16_t fresh_air_flow_source;  /* e2m 177B +2 Fresh_Air_Flow_Source: 0 primary / 1 backup */
 };
 
 struct engine_speed_limit_arbitration_t {

@@ -36,13 +36,13 @@ void cm550_diagnosticDataBufferSetup(void);  // @ 0x0000c24c
 void cm550_shutdownMinimumSelector16(void);  // @ 0x0000c2a0
 void cm550_diagnosticTimingIncrementController(void);  // @ 0x0000c2be
 void cm550_FUN_0000c2ee(void);  // @ 0x0000c2ee
-ushort vp44RpmBasedFaultDetector(void);  // @ 0x0000c326
-undefined2 cm550_FUN_0000c404(void);  // @ 0x0000c404
-uint cm550_FUN_0000c496(void);  // @ 0x0000c496
-int cm550_FUN_0000c4b2(void);  // @ 0x0000c4b2
-int cm550_fuelModeTransitionCountdownHandler(void);  // @ 0x0000c504
-undefined2 cm550_FUN_0000c556(void);  // @ 0x0000c556
-uint timingProtectionFlagsOrchestrator(void);  // @ 0x0000c582
+ushort calculateAlpha(void);  // @ 0x0000c326
+undefined2 calculateAlphaFuelRateResult(void);  // @ 0x0000c404
+uint calculateAlphaOnGovernorResult(void);  // @ 0x0000c496
+int calculateAlphaLowSpeedGovernorResult(void);  // @ 0x0000c4b2
+int calculateAlphaAirFuelControlResult(void);  // @ 0x0000c504
+undefined2 calculateAlphaLowAmbientAirPressureResult(void);  // @ 0x0000c556
+uint calculateAlphaBase(void);  // @ 0x0000c582
 void cm550_phase2_slot_5_handler(void);  // @ 0x0000c658
 ushort cm550_rpmHistogramAndProtectionStatisticsAccumulator(void);  // @ 0x0000c66a
 void cm550_fuelParameterPointerSetup(void);  // @ 0x0000c714
@@ -708,7 +708,7 @@ void cm550_diagnosticDM5PGN_65230_Builder(void);  // @ 0x00032ae2
 void vp44_diagnosticByteResponseSender(word response_code);  // @ 0x00032b38
 void vp44_diagnosticDM8PGN_65232_Builder(void);  // @ 0x00032b64
 void vp44_FUN_00032c22(void);  // @ 0x00032c22
-void j1939GetEngineStateCode(void);  // @ 0x00032c76
+void sendPgn61444ElectronicEngineController1Message(void);  // @ 0x00032c76
 void vp44Message300FaultFlagProcessor(void);  // @ 0x00032c7a
 void vp44Command0x100Builder(void);  // @ 0x00032e08
 void j1939HandlePgn61443Eec2(void);  // @ 0x00032e4c
@@ -717,7 +717,7 @@ void vp44_configParamCanBuilder(void);  // @ 0x000330c4
 void vp44_secondaryParamPGN_65247_Builder(void);  // @ 0x00033120
 void vp44_FUN_00033164(void);  // @ 0x00033164
 void vp44_engineFluidLevelPGN_65263_Builder(void);  // @ 0x000331ae
-void faultTimerHandler(undefined4 *param_1);  // @ 0x0003320e
+void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1);  // @ 0x0003320e
 uint cm550_FUN_000333d6(uint param_1);  // @ 0x000333d6
 uint cm550_FUN_00033460(uint param_1);  // @ 0x00033460
 void cm550_FUN_000334ec(void);  // @ 0x000334ec

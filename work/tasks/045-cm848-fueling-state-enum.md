@@ -609,7 +609,8 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - the HPCR settings (8000), the air handling source words, charge pressure in range;
   - the 1102 torque curve calculated / reference fuelings;
   - 88 wrong `_cal`s dropped.
-- **Held for the owner:**
+- **Held in stage 9, applied in stage 9b** (the owner, 2026-11-20: "I don't understand why anything is waiting for
+  me"):
   - **Three functions with the owner's signed 2026-05-25 review notes.** The code shows the "activate" services
     exit development mode, so the proposals are:
     - 0x21624 `cm848_activateDiagnosticSession` -> `cm848_exitDevelopmentMode`;
@@ -653,9 +654,37 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - **A slip, recovered:** a `git checkout` of the .cpp after the verify restored the pre-wave version. A rebuild
     produced it again; its reversed form is byte-identical to the verified build's, and the warnings match.
 
+## Stage 9b - the wave-14 holds applied (2026-11-20, PR #52)
+
+- **The three development mode functions** are renamed: `cm848_exitDevelopmentMode` (0x21624),
+  `cm848_enterDevelopmentMode` (0x21668), `cm848_forceExitDevelopmentMode` (0x21694). The owner's 2026-05-25 review notes
+  stay verbatim at the end of the plates; they are history, not a veto.
+- **Nine twins now share one unprefixed name in both firmwares** (the convergence convention). The main session checked
+  each CM550 body:
+  - **The alpha selector and base:** CM550 0xc326 / CM848 0xe518 `calculateAlpha`, and CM550 0xc582 / CM848 0xe3a4
+    `calculateAlphaBase`. The base ORs the five condition results under the same enable bits 0x400 / 0x800 / 0x1000 /
+    0x2000 / 0x8000 and ramps alpha to 0x4000 the same way.
+  - **The five alpha conditions, paired one to one by those bits:** CM550 0xc4b2 / 0xc504 / 0xc404 / 0xc496 / 0xc556
+    and CM848 0xe248 / 0xe2cc / 0xe164 / 0xe218 / 0xe360 are `calculateAlphaLowSpeedGovernorResult` /
+    `...AirFuelControlResult` / `...FuelRateResult` / `...OnGovernorResult` / `...LowAmbientAirPressureResult`.
+  - **The PGN 65251 builder:** `buildPgn65251EngineConfiguration1Payload` (CM550 0x3320e / CM848 0x1b3a0, was
+    `faultTimerHandler`). Both fill a buffer from the engine configuration words.
+  - **The EEC1 sender:** `sendPgn61444ElectronicEngineController1Message` (CM550 0x32c76 / CM848 0x2588c, was
+    `j1939GetEngineStateCode`). Both build EEC1 and send it.
+  - The CM550 relocation map follows. The repo gate checked the CM550 side against a copy with empty stand-ins for its
+    CM848-only inputs.
+- **The two structs:**
+  - `boost_pressure_state_t` (0x40a406) is `charge_flow_estimate_terms_t` / `charge_flow_estimate_terms`, its fields
+    named from e2m 177D +2..+C and 177B +0 / +2: `intake_manifold_temperature_rankine`, `volumetric_efficiency_mach`,
+    `volumetric_efficiency_square_root`, `flow_area_constant`, `pressure_ratio`, `charge_flow_source`,
+    `fresh_air_mass_flow_filtered`, `fresh_air_flow_source`.
+  - `engine_sync_state_t` (0x40b87f) is `fuel_pressure_governor_state_t` / `fuel_pressure_governor_state`, 7 bytes. Its
+    last field is the word `filtered_battery_voltage` (8019 +5), which was a byte, `reserved_05`. The fields' signedness
+    is unchanged (an i16 follow-up).
+
 ## Follow-ups (open)
 
-- [ ] **The wave-14 holds** (stage 9 above):
+- [x] **The wave-14 holds:** applied in stage 9b.
   - the owner's three development mode function names;
   - the five CM550-shared functions, which need a cross-firmware rename;
   - the two struct items (0x40a406 `charge_flow_estimate_terms_t`, 0x40b87f 7 bytes).

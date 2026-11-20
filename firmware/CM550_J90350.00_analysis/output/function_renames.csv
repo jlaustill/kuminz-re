@@ -39,13 +39,13 @@ address,name
 0x0000c2a0,cm550_shutdownMinimumSelector16
 0x0000c2be,cm550_diagnosticTimingIncrementController
 0x0000c2ee,cm550_FUN_0000c2ee
-0x0000c326,vp44RpmBasedFaultDetector
-0x0000c404,cm550_FUN_0000c404
-0x0000c496,cm550_FUN_0000c496
-0x0000c4b2,cm550_FUN_0000c4b2
-0x0000c504,cm550_fuelModeTransitionCountdownHandler
-0x0000c556,cm550_FUN_0000c556
-0x0000c582,timingProtectionFlagsOrchestrator
+0x0000c326,calculateAlpha,Twin of CM848 0xe518 (verified stage 9b): the alpha source selector: the LSG / AFC alpha timeouts, the call of calculateAlphaBase and the alpha state / blend factor outputs. (was vp44RpmBasedFaultDetector)
+0x0000c404,calculateAlphaFuelRateResult,Twin of CM848 0xe164 (verified stage 9b): the alpha fuel rate condition (_APFLRTAP, enable bit 0x1000). (was cm550_FUN_0000c404)
+0x0000c496,calculateAlphaOnGovernorResult,Twin of CM848 0xe218 (verified stage 9b): the alpha on-governor condition (_APGVAP, enable bit 0x2000). (was cm550_FUN_0000c496)
+0x0000c4b2,calculateAlphaLowSpeedGovernorResult,Twin of CM848 0xe248 (verified stage 9b): the alpha low speed governor condition (_APLSAP, enable bit 0x400). (was cm550_FUN_0000c4b2)
+0x0000c504,calculateAlphaAirFuelControlResult,Twin of CM848 0xe2cc (verified stage 9b): the alpha air fuel control condition (_APAFSS, enable bit 0x800). (was cm550_fuelModeTransitionCountdownHandler)
+0x0000c556,calculateAlphaLowAmbientAirPressureResult,Twin of CM848 0xe360 (verified stage 9b): the alpha low ambient air pressure condition (_APAAPRSS, enable bit 0x8000). (was cm550_FUN_0000c556)
+0x0000c582,calculateAlphaBase,Twin of CM848 0xe3a4 (verified stage 9b): ORs the five alpha condition results (enable bits 0x400 / 0x800 / 0x1000 / 0x2000 / 0x8000 of the feature word) and ramps the alpha base (_APAPBA) toward 0x4000 with two rates around a threshold; 0 when no condition is set. (was timingProtectionFlagsOrchestrator)
 0x0000c658,cm550_phase2_slot_5_handler
 0x0000c66a,cm550_rpmHistogramAndProtectionStatisticsAccumulator
 0x0000c714,cm550_fuelParameterPointerSetup
@@ -718,7 +718,7 @@ address,name
 0x00032b38,vp44_diagnosticByteResponseSender
 0x00032b64,vp44_diagnosticDM8PGN_65232_Builder
 0x00032c22,vp44_FUN_00032c22
-0x00032c76,j1939GetEngineStateCode
+0x00032c76,sendPgn61444ElectronicEngineController1Message,Twin of CM848 0x2588c (verified stage 9b): builds EEC1 (the torque mode from the speed control mode and the fuel limit state, then the engine speed) and sends it with cm550_sendCanMessage. (was j1939GetEngineStateCode)
 0x00032c7a,vp44Message300FaultFlagProcessor
 0x00032e08,vp44Command0x100Builder
 0x00032e4c,j1939HandlePgn61443Eec2
@@ -727,7 +727,7 @@ address,name
 0x00033120,vp44_secondaryParamPGN_65247_Builder
 0x00033164,vp44_FUN_00033164
 0x000331ae,vp44_engineFluidLevelPGN_65263_Builder
-0x0003320e,faultTimerHandler
+0x0003320e,buildPgn65251EngineConfiguration1Payload,Twin of CM848 0x1b3a0 (verified stage 9b): fills the PGN 65251 engine configuration payload buffer (param_1) from the engine configuration words, starting with the idle point speed. (was faultTimerHandler)
 0x000333d6,cm550_FUN_000333d6
 0x00033460,cm550_FUN_00033460
 0x000334ec,cm550_FUN_000334ec

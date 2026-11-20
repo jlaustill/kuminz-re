@@ -247,7 +247,7 @@ function_address,function_name,param_index,name,type,comment
 # DIAG_RESPONSE callback contract (ACK=0, NACK_NOT_READY=4, NACK_PROTECTED=7)
 # -----------------------------------------------------------------------------
 0x00021584,cm848_advanceDiagnosticActionState,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)
-0x00021668,cm848_resetDiagnosticSession,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional state clear
+0x00021668,cm848_enterDevelopmentMode,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional state clear
 0x000216e8,cm848_commandEngineShutdown,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
 0x00021904,cm848_inhibitKeyOffShutdown,return,,DIAG_RESPONSE,Always DIAG_ACK - unconditional flag set
 0x00021918,cm848_validateCalibrationMemory,return,,DIAG_RESPONSE,Returns DIAG_ACK(0) or DIAG_NACK_PROTECTED(7)

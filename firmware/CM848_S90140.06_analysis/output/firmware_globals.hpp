@@ -4201,7 +4201,7 @@ extern word battery_voltage_gain_lookup;  // 0x0040a3e8
 extern throttle_fuel_trim_t throttle_fuel_trim_t_0040a3ea;  // 0x0040a3ea
 extern word engine_fuel_fault_status;  // 0x0040a402
 extern word engine_volumetric_efficiency;  // 0x0040a404
-extern boost_pressure_state_t boost_pressure_state_t_0040a406;  // 0x0040a406
+extern charge_flow_estimate_terms_t charge_flow_estimate_terms;  // 0x0040a406
 extern word predicted_intake_manifold_temperature;  // 0x0040a416
 extern word fuel_demand_blend_lookup;  // 0x0040a418
 extern word pumping_torque_adjustment;  // 0x0040a41a
@@ -5334,7 +5334,7 @@ extern byte injection_timing_tooth_b_phase;  // 0x0040b876
 extern byte injection_timing_tooth_separation_per_cylinder;  // 0x0040b878
 extern word fuel_pressure_at_other_angle_events;  // 0x0040b879
 extern word fuel_pressure_at_injection_scheduling;  // 0x0040b87b
-extern engine_sync_state_t engine_sync_state_t_0040b87f;  // 0x0040b87f
+extern fuel_pressure_governor_state_t fuel_pressure_governor_state;  // 0x0040b87f
 extern word fuel_pressure_governor_proportional_term;  // 0x0040b886
 extern word fuel_pressure_governor_integral_term;  // 0x0040b888
 extern word fuel_pressure_governor_derivative_term;  // 0x0040b88a

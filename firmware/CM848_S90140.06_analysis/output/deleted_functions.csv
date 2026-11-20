@@ -84,7 +84,7 @@ address,reason
 0x00023d14,mid-function split inside cm848_initJ1939ProprietaryStatusBuffer +0x40 (was cm848_initJ1939DmHandlerBuffer)
 0x00023e2c,mid-function split inside cm848_sendJ1939NegativeAck +0x70 (was cm848_flushJ1939FrameBuffer)
 0x00023f4c,mid-function split inside cm848_buildPgn65269AmbientConditionsMessage +0xc0 (was cm848_sendJ1939ErrorFrame)
-0x00025908,mid-function split inside j1939GetEngineStateCode +0x7c (was cm848_j1939SendEtc1NotAvailable)
+0x00025908,mid-function split inside sendPgn61444ElectronicEngineController1Message +0x7c (was cm848_j1939SendEtc1NotAvailable)
 0x0002bfd0,mid-function split inside cm848_blendGovernorTuningSets +0x64 (was cm848_j1939SendPgn65264_FEF0_PowerTakeoff)
 0x0002c14c,mid-function split inside cm848_applySwitchSelectedEngineSpeedLimit +0x38 (was cm848_updateTorqueLimitFromThreshold)
 0x00035d48,mid-function split inside cm848_processSensorTemperatureData +0x48 (was cm848_computeTemperatureDifferential)
