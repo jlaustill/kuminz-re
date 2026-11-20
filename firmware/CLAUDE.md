@@ -893,17 +893,26 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - Read 0x40c280 and up at address - 0x80; there is no data for 0x40c200-0x40c27f.
     - The proof: the collector end pointer 0x40c28a, then 0 and the table address 0x3fddc4, sit at dump 0x40c200, and
       the file is exactly 0x80 short of 0x440000.
-- **The EGR transport delay stage (2026-11-20, todo 046).** `cm848_calculateDelayedEgrFlowAndFraction` (0x128a0, was
-  `cm848_throttleBasedFuelCalculation`) is the charge properties model's EGR stage. The parameter ID table maps every
-  word it writes to e2m 177F, which is now `egr_flow_estimate_terms_t` (was `throttle_fuel_trim_t`).
-  - CHP_O2_Flow_Delay = C_CHP_Volume_Fraction x 120 x 1000 / (volumetric efficiency x speed) ms.
-  - It delays the residual oxygen fraction and the EGR mass flow through two 256-sample `delay_line_t` rings
-    (`cm848_delayUnsignedSample` / `cm848_delaySignedSample`; delay / 10 = 10 ms samples).
-  - It then forms CHP_O2_Frac_EGR and EGR_Fraction = delayed EGR flow x 8192 / charge flow.
-  - The rings sit in the boot kernel's RAM image and cover two boot-ROM call targets, 0x3fa2f0 and 0x3fa5a0, which
-    are now call overrides.
-  - The rest of the family (0x12dc4 / 0x12e60 / 0x12eb4, the initializers, the EGR tables at 0x4002f2-0x40090c) is
-    still misnamed; the leads are in task 046.
+- **The CHP charge flow model (2026-11-20, todo 046).** CHP is the e2m prefix of the charge, EGR and fresh air flow
+  records; the e2m never spells it out.
+  - **The EGR stage:** `cm848_calculateDelayedEgrFlowAndFraction` (0x128a0, was `cm848_throttleBasedFuelCalculation`).
+    The parameter ID table maps every word it writes to e2m 177F, which is now `egr_flow_estimate_terms_t` (was
+    `throttle_fuel_trim_t`).
+    - CHP_O2_Flow_Delay = C_CHP_Volume_Fraction x 120 x 1000 / (volumetric efficiency x speed) ms.
+    - It delays the residual oxygen fraction and the EGR mass flow through two 256-sample `delay_line_t` rings
+      (`cm848_delayUnsignedSample` / `cm848_delaySignedSample`; delay / 10 = 10 ms samples).
+    - It then forms CHP_O2_Frac_EGR and EGR_Fraction = delayed EGR flow x 8192 / charge flow.
+    - The rings sit in the boot kernel's RAM image and cover two boot-ROM call targets, 0x3fa2f0 and 0x3fa5a0, which
+      are now call overrides.
+  - **The 10 ms task:** `cm848_calculateChargeFlows` runs `cm848_calculateChargeFlowEstimate` (177C / 177D: the
+    speed-density charge mass flow), the EGR stage, then `cm848_calculateFreshAirMassFlow` (177B: charge - EGR).
+    `cm848_initializeChargeFlows` initializes them at boot.
+  - **The pumping torque** (`cm848_calculatePumpingTorqueAdjustment`, e2m 1780 / 1781 / 1954) is in the same family.
+  - **The exhaust pressure** that the model reads is e2m 1A5D: `exhaust_pressure` (was `boost_pressure_current_raw`) from
+    `cm848_calculateExhaustPressure` (was `phase_group_a_validateEngineSync`).
+    - On this truck `exhaust_pressure_estimate_as_primary_cal` (EEPROM 0x468) = 1, so it is the e2m 1772 estimate.
+    - The estimator `cm848_phase_groupA_exponentialAverage` is the TPE module (e2m 198C) and keeps its old name.
+  - **Leads:** task 046.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

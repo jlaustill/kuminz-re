@@ -1,0 +1,16 @@
+docs: task 046 / todo / CLAUDE.md and the session archive for the rest of the CHP family
+
+- Task 046: the Done section for stages 3 / 4 (the scope rule: e2m
+  CHP_ / C_CHP_ records plus inputs a family function would misname),
+  the new leads (the TPE exhaust pressure estimator 0x506b34 / e2m
+  198C, sensor channel 109 = the exhaust pressure sensor, the unnamed
+  1772 rows, 0x13294's likely stale prototype), and the CHP wording
+  (the e2m never spells CHP out; "charge properties" was a guess).
+- todo 046 and the firmware/CLAUDE.md bullet: the whole CHP charge flow
+  model, the pumping torque and the exhaust pressure it reads.
+- Session archive: apply_stage3.py / apply_stage4.py, the comment fix,
+  users.py, the stage 3 mappings, the predicted stage 4 set, commit
+  messages, the PR text, and build6 / build7 / verify2 in the tar.xz
+  (checked to restore byte-identically).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

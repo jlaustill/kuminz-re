@@ -3,10 +3,12 @@
 ## Problem Statement
 
 On 2026-11-20 the user asked whether `cm848_throttleBasedFuelCalculation` (0x128a0) is named properly. It is not.
-The function computes nothing about the throttle or fueling. It is the EGR transport delay stage of the Cummins
-charge properties (CHP) model. Wave 14 (task 045) had already flagged it: "reads as the charge flow / EGR fraction
-model, but I have no proved name". The ECU's own parameter ID table (found 2026-11-19) now proves the name: it
-resolves every word the function writes to e2m block 177F.
+The function computes nothing about the throttle or fueling. It is the EGR transport delay stage of the CHP charge
+flow model. CHP is the e2m prefix of the charge, EGR and fresh air flow records; the e2m never spells it out, so names
+here avoid guessing an expansion. Wave 14 (task 045) had already flagged the function: "reads as the charge flow /
+EGR fraction model, but I have no proved name". The ECU's own parameter ID table (found 2026-11-19) now proves the
+name: it resolves every word the function writes to e2m block 177F. On the same day the user asked for the rest of
+the family as well (stages 3 / 4 below).
 
 ## Evidence
 
@@ -63,37 +65,61 @@ resolves every word the function writes to e2m block 177F.
     thunks 21 → 19, overrides 11 → 13), and the boot calls still render by name. The type-only byte row at 0x3fa5a0
     is removed.
 
+## Done, the rest of the family (stages 3 / 4, 2026-11-20, same PR)
+
+The scope rule: a symbol is in if its e2m record is `CHP_` / `C_CHP_`, or if it is an input that a family function
+would otherwise misname.
+- **Stage 3, label-only** (`reverse_names.py` EQUIVALENT; 49 names, all render):
+  - **Functions:**
+    - `cm848_calculateChargeFlows` (0x12e60, was `cm848_fuelControlMainCalculation`): the 10 ms task.
+    - `cm848_initializeChargeFlows` (0x12e88, was `cm848_initFuelControlFilterSystem`): its boot initializer.
+    - `cm848_calculateChargeFlowEstimate` (0x12dc4, was `cm848_fuelDemandWithLoadCompensation`): the Rankine
+      temperature, volumetric efficiency, charge mass flow and Charge_Flow_Source.
+    - `cm848_calculateFreshAirMassFlow` (0x12eb4, was `cm848_fuelDemandErrorCalculation`): e2m 177B, charge -
+      delayed EGR, filtered.
+    - `cm848_calculateDownstreamEgrFlowSource` / `cm848_calculateUpstreamEgrFlowSource` (0x12724 / 0x12778).
+    - The four initializers: `cm848_initializeEgrFlowEstimate`, `cm848_initializeChargeMassFlowFilter`,
+      `cm848_initializeFreshAirMassFlowFilter`, `cm848_initializePumpingTorqueLookupCache`.
+  - **The exhaust pressure (e2m 1A5D / 1772):**
+    - The functions are `cm848_calculateExhaustPressure` (0x509848, was `phase_group_a_validateEngineSync`; every
+      10 ms) and `cm848_initializeExhaustPressure` (0x509a2c, was `cm848_initBoostPressureFaultHandling`; boot).
+    - `exhaust_pressure` / `_source` / `_state` (were `boost_pressure_current_raw` / `fuel_demand_droop_state` /
+      `boost_pressure_source_flags`).
+    - `exhaust_pressure_estimate` / `_estimate_state` (were `boost_pressure_synthetic_ema` / `boost_correction_mode_flags`).
+    - The new row `exhaust_pressure_estimate_as_primary_cal` (EEPROM 0x468). It is 1 on this truck, so the estimate is
+      the primary exhaust pressure: the dump reads 1784 against an estimate of 1785.
+  - **Tables:** the EGR model's 10 and the volumetric efficiency's 4, named from e2m 18E3-18E5 / 193D-193F / 1974-1975 /
+    1946 + 1940 / 1782 / 1783 / 1961 / 1962. They had `boost_fuel_*` / `throttle_*` / `boost_rpm_scale_*` /
+    `boost_load_*` names with a wrong `_cal`.
+  - **Pumping torque (e2m 1780 / 1781 / 1954):** 8 words and the nominal engine delta pressure grid (were
+    `fuel_demand_blend_*` / `fuel_demand_*_cal`).
+  - **Filters and caches:**
+    - `charge_mass_flow_filter_state`, plus `fresh_air_mass_flow_filter_state` with its 1A0F coefficient.
+    - `egr_oxygen_fraction_filter_state`: an EMA record, so it takes `_filter_state`, the EMA-record convention.
+    - Four 1-D lookup caches named `<table>_cached_axis_offset`.
+- **Stage 4, shape:**
+  - The three 2-D lookup caches are `word[2]` `<table>_cached_axis_offsets`. They were `diag_state_group5_a`..`_d` and
+    `group7_a` / `_b`; each second word had no reader of its own.
+  - `void(void)` prototypes for 0x12ad4, 0x12dc4 and 0x130dc. The asm writes r3 / r4 before any read, so their old
+    two-parameter rows were stale.
+  - `word` returns for the two source checks (`clrlwi r3,r4,16`).
+  - `i16` for the pumping torque words that are e2m `S` and loaded with `lha`.
+
 ## Leads (not in this PR)
 
-- **The rest of the charge properties family, all misnamed (wave 14's ideas in brackets):**
-  - 0x12e60 `cm848_fuelControlMainCalculation`: the charge properties task. It runs the charge flow model, then 0x128a0,
-    then the fresh air flow. [`cm848_calculateChargeProperties`?]
-  - 0x12dc4 `cm848_fuelDemandWithLoadCompensation`: stores the intake manifold temperature in Rankine (177D +2), runs
-    the volumetric efficiency and the charge mass flow, and sets Charge_Flow_Source. [`cm848_calculateChargeMassFlowModel`]
-  - 0x12eb4 `cm848_fuelDemandErrorCalculation`: the fresh air flow, e2m 177B +0 Fresh_Air_Flow = charge - delayed EGR
-    (floor 0), filtered, plus 177B +2 Fresh_Air_Flow_Source. Its filter is `fuel_blend_rpm_base_filter_state`, and its
-    initializer is 0x12f40 `cm848_initFuelDemandBlendPointers`.
-  - 0x12724 `cm848_checkFuelSystemFaultFlags` / 0x12778 `cm848_checkEngineFaultConditions`: the EGR_Flow_Source checks of
-    the downstream / upstream models. [`cm848_calculateDownstreamEgrMassFlowSource` / `...Upstream...`]
-  - 0x12a58 `cm848_initFilterCoefficients` initializes the EGR model: the lookup caches and the three filters.
-    0x12e40 `cm848_initFilterTablePointers` initializes the charge mass flow filter, and 0x12e88
-    `cm848_initFuelControlFilterSystem` is the charge properties initializer.
-- **The EGR model's lookup caches** `diag_state_group5_a_state` .. `_d_state` (0x3fa1ae-0x3fa1b4) and
-  `diag_state_group6_a_state` / `_b_state` (0x3fa5d2 / 0x3fa5d4) are table caches, not diagnostic states. 5a+5b and
-  5c+5d look like the word[2] caches of the two 3-D tables.
-  - Together with the delay lines and the three filters, the EGR model's RAM runs 0x3fa1ae-0x3fa5d5. It could be one
-    struct.
-- **The EGR model's tables (ROM-copied RAM, so their `_cal` is wrong):**
-  - upstream corrected flow: `boost_fuel_trim_pressure_axis_cal` / `_ystart_cal` / `_yend_cal` (0x4002f2 / 0x400318 /
-    0x40033e, e2m 18E3 / 18E4 / 18E5);
-  - square root of the exhaust temperature: `boost_fuel_input_axis_cal` / `_output_cal` (0x4005c6 / 0x4005ec,
-    e2m 1974 / 1975);
-  - downstream corrected flow: `throttle_rpm_axis_cal` / `_ystart_cal` / `_yend_cal` (0x400612 / 0x400638 / 0x40065e,
-    e2m 193D / 193E / 193F);
-  - square root of the orifice temperature: `throttle_trim_axis_cal` / `_output_cal` (0x4008e6 / 0x40090c,
-    e2m 1946 / 1940).
-- **`boost_pressure_current_raw` (0x40a7d0)** is e2m 1A5D +0 Exhaust_Press per the upstream model's plate comment. It
-  is the exhaust pressure, not boost.
+- **The exhaust pressure estimator** `cm848_phase_groupA_exponentialAverage` (0x506b34) writes
+  `exhaust_pressure_estimate` / `_state` from the e2m 198C `C_TPE_EMP_*` constants (`boost_synthetic_ema_*_coef`). That
+  is the TPE module, which also holds the intake manifold temperature prediction (0x12f60), so it is out of the CHP
+  scope.
+- **Sensor channel 109** is the exhaust pressure sensor: it is the measurement on the cold side EGR algorithm. Its
+  `sensor_channel109_*` names could take that name.
+- **The unnamed e2m 1772 rows:** +2 Engine_Delta_Pressure, +4 EGR_Valve_Delta_Pressure and +6 EGR_Orifice_Delta_Pressure
+  (0x40a674-0x40a678).
+- **The functions just past the family** (0x12f60, 0x130ac, 0x13294-0x13774) belong to the TPE and charge pressure
+  modules.
+  - 0x13294 `cm848_calculateBoostTorqueOffset` looks like the next stale two-parameter prototype (`boost_input`,
+    `rpm`). Its caller passes it the return value of `cm848_processVariableGeometryTurbochargerHBridgeFaults`. Check r3 /
+    r4 in the asm, as for 0x130dc.
 - **Open question:** the dump's write indices differ (191 / 215) although both advance once per pass in the same
   function. The kernel-image bytes the boot copy leaves under them (ROM 0x47e6 / 0x49e8) differ by 63, not 24, so the
   start values are unexplained.
@@ -102,5 +128,6 @@ resolves every word the function writes to e2m block 177F.
   rows. The same goes for the old `output/bank2_functions.cpp`, `output/internal_names_crossref.md` and the
   `output/worklist_*` batches.
 - `output/fuel_injection_analysis.md` ("Related Functions") lists 0x128a0 / 0x12ad4 / 0x12cf4 / 0x12dc4 by their old
-  names as a "Fuel Demand Calculation Chain". They are the charge properties model: the delayed EGR flow, the volumetric
-  efficiency, the charge mass flow and its wrapper. Rewrite that section when the family is renamed.
+  names as a "Fuel Demand Calculation Chain". They are the CHP charge flow model: the delayed EGR flow, the volumetric
+  efficiency, the charge mass flow and its wrapper. Rewrite that section (now `cm848_calculateDelayedEgrFlowAndFraction`
+  / `cm848_calculateVolumetricEfficiency` / `cm848_calculateChargeMassFlow` / `cm848_calculateChargeFlowEstimate`).
