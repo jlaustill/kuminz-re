@@ -208,8 +208,8 @@ function_address,function_name,param_index,name,type,comment
 0x0001392c,cm848_selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
 
 
-0x00013294,cm848_calculateBoostTorqueOffset,0,boost_input,ushort,Boost pressure input
-0x00013294,cm848_calculateBoostTorqueOffset,1,rpm,ushort,Engine RPM for calculation
+0x00013294,cm848_estimateChargePressure,0,boost_input,ushort,Boost pressure input
+0x00013294,cm848_estimateChargePressure,1,rpm,ushort,Engine RPM for calculation
 
 
 # -----------------------------------------------------------------------------

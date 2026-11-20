@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 09:03:45 MST 2026
+// Generated: Fri Nov 20 15:18:23 MST 2026
 
 
 //
@@ -6601,7 +6601,7 @@ void cm848_phase_group_a_processing(void)
   cm848_sensorChannel6_init();
   cm848_sensorChannel5_init();
   cm848_processSensorLookupTable1();
-  cm848_sensorChannel8_init();
+  cm848_sensorChannel8_exhaustPressureInit();
   cm848_deriveSecondBrakeSwitchSignal();
   cm848_learnOutputSpeedToVehicleSpeedRatio();
   cm848_monitorTransmissionOutputSpeedSensor();
@@ -6613,7 +6613,7 @@ void cm848_phase_group_a_processing(void)
   cm848_calculateEgrDeltaPressures();
   cm848_calculateExhaustPressure();
   cm848_updateVariableGeometryTurbochargerDriverOverCurrentFault();
-  cm848_phase_groupA_exponentialAverage();
+  cm848_estimateExhaustPressure();
   cm848_calculateChargeFlowTurbochargerSpeedDerate();
   cm848_calculateChargeSystemErrors();
   cm848_runWastegateDutyController();
@@ -6757,7 +6757,7 @@ void cm848_periodicTaskSet_controlLoop(void)
   
   cm848_checkDiagnosticFuelOverride();
   boost_input = cm848_processVariableGeometryTurbochargerHBridgeFaults();
-  cm848_calculateBoostTorqueOffset(boost_input,rpm);
+  cm848_estimateChargePressure(boost_input,rpm);
   cm848_calculateEngineOutputTorque();
   cm848_calculateHighSpeedGovernorCompensatedEngineSpeed();
   cm848_updateParkNeutralExitEngineSpeedLimitWindow();
@@ -8097,34 +8097,45 @@ void cm848_sensorChannel7_process(void)
 
 
 //
-// Function: cm848_sensorChannel8_init @ 0x0000d17c
+// Function: cm848_sensorChannel8_exhaustPressureInit @ 0x0000d17c
 //
 
-void cm848_sensorChannel8_init(void)
+/* Exhaust pressure sensor channel (sensor channel 109; e2m 1966 +A Exhaust_Press_Sensor): the
+   periodic pass (sensorChannelTypeB_configInit; the _init / _process suffixes are inverted in this
+   firmware) on exhaust_pressure_sensor_config / exhaust_pressure_sensor_channel_state and the
+   linearization table, fault bits 672 / 673, outputs exhaust_pressure_sensor_value / _default_value
+   / _fault_status. (was cm848_sensorChannel8_init) */
+
+void cm848_sensorChannel8_exhaustPressureInit(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_003fef7a,&sensor_channel8_ram,&WORD_003fa06a,
-             sensor_channel109_linearization_axis,sensor_channel109_linearization_values,0,
-             &ema_filter_state_t_003fa06c,0x6d,0x2a0,0x2a1,&sensor_channel109_value,
-             &sensor_channel109_default_value,&sensor_channel109_fault_status);
+            (&exhaust_pressure_sensor_config,&exhaust_pressure_sensor_channel_state,
+             &exhaust_pressure_sensor_cached_axis_offset,exhaust_pressure_sensor_linearization_axis,
+             exhaust_pressure_sensor_linearization_values,0,&exhaust_pressure_sensor_filter_state,
+             0x6d,0x2a0,0x2a1,&exhaust_pressure_sensor_value,&exhaust_pressure_sensor_default_value,
+             &exhaust_pressure_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel8_process @ 0x0000d208
+// Function: cm848_sensorChannel8_exhaustPressureProcess @ 0x0000d208
 //
 
-void cm848_sensorChannel8_process(void)
+/* Boot pass of the exhaust pressure sensor channel (sensorChannelTypeB_update, the same arguments
+   as cm848_sensorChannel8_exhaustPressureInit). (was cm848_sensorChannel8_process) */
+
+void cm848_sensorChannel8_exhaustPressureProcess(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_003fef7a,&sensor_channel8_ram,&WORD_003fa06a,
-             sensor_channel109_linearization_axis,sensor_channel109_linearization_values,0,
-             &ema_filter_state_t_003fa06c,0x6d,0x2a0,0x2a1,&sensor_channel109_value,
-             &sensor_channel109_default_value,&sensor_channel109_fault_status);
+            (&exhaust_pressure_sensor_config,&exhaust_pressure_sensor_channel_state,
+             &exhaust_pressure_sensor_cached_axis_offset,exhaust_pressure_sensor_linearization_axis,
+             exhaust_pressure_sensor_linearization_values,0,&exhaust_pressure_sensor_filter_state,
+             0x6d,0x2a0,0x2a1,&exhaust_pressure_sensor_value,&exhaust_pressure_sensor_default_value,
+             &exhaust_pressure_sensor_fault_status);
   return;
 }
 
@@ -10270,8 +10281,8 @@ void cm848_calculateChargeFlowCompressorOutletTemperatureDerate(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* Charge flow derate for high EGR delta pressure: ratio = egr_delta_pressure / the delta pressure
-   limit (Q15), looked up and scaled by the gain, capped at the maximum, filtered into
+/* Charge flow derate for high EGR delta pressure: ratio = egr_valve_delta_pressure / the delta
+   pressure limit (Q15), looked up and scaled by the gain, capped at the maximum, filtered into
    charge_flow_delta_pressure_derate_offset and flagged in
    charge_flow_delta_pressure_derate_active_flag. (was cm848_calculateTurboRatioB) */
 
@@ -10283,7 +10294,7 @@ void cm848_calculateChargeFlowDeltaPressureDerate(void)
   uint uVar3;
   uint uVar4;
   
-  uVar4 = (uint)(short)egr_delta_pressure;
+  uVar4 = (uint)(short)egr_valve_delta_pressure;
   if ((int)uVar4 < 0) {
     uVar4 = 0;
   }
@@ -10347,9 +10358,9 @@ void cm848_calculateChargeFlowDerates(void)
    and when a derate flag is active limits the mass charge flow command to charge_mass_flow_filtered
    - 2 x that offset into mass_charge_flow_limited_command (charge_flow_derate_active_flag when it
    limited); passes egr_fraction_combustion_command only while the EGR fraction is on and the valve
-   is open or egr_delta_pressure is below egr_valve_maximum_opening_delta_pressure, slew-limited by
-   egr_fraction_slew_up_rate / egr_fraction_slew_down_rate, into egr_fraction_limited_command. (was
-   cm848_calculateTurboBlendOutput) */
+   is open or egr_valve_delta_pressure is below egr_valve_maximum_opening_delta_pressure,
+   slew-limited by egr_fraction_slew_up_rate / egr_fraction_slew_down_rate, into
+   egr_fraction_limited_command. (was cm848_calculateTurboBlendOutput) */
 
 void cm848_limitChargeManagerCommands(void)
 
@@ -10402,7 +10413,7 @@ void cm848_limitChargeManagerCommands(void)
     charge_flow_derate_active_flag = 0;
   }
   if (((egr_valve_closed_flag == 0) ||
-      ((short)egr_delta_pressure < (short)egr_valve_maximum_opening_delta_pressure)) &&
+      ((short)egr_valve_delta_pressure < (short)egr_valve_maximum_opening_delta_pressure)) &&
      (egr_fraction_command_above_on_threshold_flag != 0)) {
     egr_fraction_limited_command_with_shutoff = egr_fraction_combustion_command;
     iVar3 = (int)(short)egr_fraction_slew_down_rate;
@@ -10815,9 +10826,9 @@ void cm848_selectEgrAssistControllerLimits(void)
 
 /* Preset of the EGR / assist controller integrator: while the preset is active
    egr_assist_controller_preset_lift is a dual-axis table on the EGR mass flow
-   (egr_fraction_limited_command x charge_mass_flow_filtered >> 13) and egr_delta_pressure; the
-   preset is the EGR valve upper limit minus lift x the preset gain >> 12, kept between the lower
-   and upper limits. (was cm848_calculateLoadCompensation) */
+   (egr_fraction_limited_command x charge_mass_flow_filtered >> 13) and egr_valve_delta_pressure;
+   the preset is the EGR valve upper limit minus lift x the preset gain >> 12, kept between the
+   lower and upper limits. (was cm848_calculateLoadCompensation) */
 
 void cm848_calculateEgrAssistControllerPreset(void)
 
@@ -10830,7 +10841,7 @@ void cm848_calculateEgrAssistControllerPreset(void)
          cm848_dualAxisTableInterpolation
                    (&DAT_003fa168,
                     (word)((uint)egr_fraction_limited_command * (uint)charge_mass_flow_filtered >>
-                          0xd),egr_assist_controller_preset_lift_x_axis,egr_delta_pressure,
+                          0xd),egr_assist_controller_preset_lift_x_axis,egr_valve_delta_pressure,
                     egr_assist_controller_preset_lift_y_axis,egr_assist_controller_preset_lift_grid,
                     2);
   }
@@ -12271,10 +12282,17 @@ void cm848_calculatePredictedIntakeManifoldTemperature(void)
 
 
 //
-// Function: mpc555_initManifoldPressureFilter @ 0x000130ac
+// Function: cm848_initializePredictedIntakeManifoldTemperature @ 0x000130ac
 //
 
-void mpc555_initManifoldPressureFilter(void)
+/* Boot initialization of the CHP predicted intake manifold temperature (e2m 1945 +0
+   CHP_Predicted_IMT), called by cm848_applicationMain: predicted_intake_manifold_temperature and
+   its filter predicted_intake_manifold_temperature_filter start at
+   intake_manifold_temperature_filtered, on the coefficient
+   predicted_intake_manifold_temperature_filter_coefficient (e2m 1944 +2
+   C_CHP_Predicted_IMT_Fil_Cnst). (was mpc555_initManifoldPressureFilter) */
+
+void cm848_initializePredictedIntakeManifoldTemperature(void)
 
 {
   predicted_intake_manifold_temperature = intake_manifold_temperature_filtered;
@@ -12295,7 +12313,7 @@ void mpc555_initManifoldPressureFilter(void)
 /* Pumping torque (e2m 1781): looks up the nominal engine delta pressure of the engine speed x
    total_injection_quantity_for_air_handling grid (e2m 1954 C_CHP_Nominal_Delta_P_Table) into
    nominal_engine_delta_pressure (+0 CHP_Nominal_Engine_Delta_P), subtracts the actual engine delta
-   pressure egr_delta_pressure_negated (e2m 1A19 +8 Engine_Delta_Press), applies the deadband
+   pressure engine_delta_pressure (e2m 1A19 +8 Engine_Delta_Press), applies the deadband
    pumping_torque_engine_delta_pressure_deadband (e2m 1780 +8 C_CHP_Pump_Torque_Deadband), converts
    the difference to torque with engine_displacement_cubic_inches and pumping_torque_multiplier (e2m
    1780 +4 C_CHP_Pump_Torque_Multiplier) and limits it to +-8000 into pumping_torque_without_offset
@@ -12322,7 +12340,7 @@ void cm848_calculatePumpingTorqueAdjustment(void)
                   engine_rpm_state_t_0040b7ac.current_rpm,combustion_map_1_engine_speed_x_axis,
                   total_injection_quantity_for_air_handling,combustion_map_1_fuel_quantity_y_axis,
                   nominal_engine_delta_pressure_grid,4);
-  sVar2 = nominal_engine_delta_pressure - egr_delta_pressure_negated;
+  sVar2 = nominal_engine_delta_pressure - engine_delta_pressure;
   if ((int)sVar2 + (int)pumping_torque_engine_delta_pressure_deadband < 0) {
     sVar2 = sVar2 + pumping_torque_engine_delta_pressure_deadband;
   }
@@ -12383,103 +12401,138 @@ void cm848_initializePumpingTorqueLookupCache(void)
 
 
 //
-// Function: cm848_calculateBoostTorqueOffset @ 0x00013294
+// Function: cm848_estimateChargePressure @ 0x00013294
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* Charge pressure estimate (e2m 1A23; constants 1A22, tables 1A24-1A29), from
+   cm848_periodicTaskSet_controlLoop. It looks up charge_pressure_estimate_offset /
+   charge_pressure_estimate_tolerance / compressor_pressure_ratio_estimate against
+   compressor_map_corrected_turbocharger_speed and compressor_pressure_ratio_scale against engine
+   speed. charge_pressure_estimate_unclamped = compressor_inlet_pressure x pressure ratio x scale /
+   0xfa000 - charge_pressure_estimate_calibration_offset, limited to 0 .. 0x3200 and filtered
+   (charge_pressure_estimate_filter_state) into both
+   charge_pressure_estimate_with_turbocharger_speed and charge_pressure_estimate. The state
+   (charge_pressure_estimate_with_turbocharger_speed_state, copied to
+   charge_pressure_estimate_state) is 0x80 while combustion_override_and_estimation_enable_flags_cal
+   bit 0x8000 is clear, the turbocharger speed is DEFAULT or outside
+   charge_pressure_estimate_turbocharger_speed_low_threshold .. _high_threshold, an input source
+   (intake manifold temperature, compressor inlet temperature, barometric pressure) is DEFAULT, or
+   the monitor condition bit charge_pressure_estimate_enable is clear or latched; 0x40 while one of
+   those sources or the turbocharger speed is BACKUP; else 0. (was cm848_calculateBoostTorqueOffset)
+    */
 
-void cm848_calculateBoostTorqueOffset(word boost_input,word rpm)
+void cm848_estimateChargePressure(word boost_input,word rpm)
 
 {
   dword dVar1;
   uint uVar2;
   uint uVar3;
   
-  boost_fuel_threshold_offset =
+  charge_pressure_estimate_offset =
        lookupTableInterpolation
-                 (&DAT_003fa5f6,compressor_map_corrected_turbocharger_speed,
-                  fuel_timing_load_axis_cal,boost_fuel_threshold_offset_values_cal,2);
-  boost_fuel_threshold_limit =
+                 (&charge_pressure_estimate_offset_cached_axis_offset,
+                  compressor_map_corrected_turbocharger_speed,
+                  charge_pressure_estimate_corrected_turbocharger_speed_axis,
+                  charge_pressure_estimate_offset_values,2);
+  charge_pressure_estimate_tolerance =
        lookupTableInterpolation
-                 (&DAT_003fa5f8,compressor_map_corrected_turbocharger_speed,
-                  fuel_timing_load_axis_cal,boost_fuel_threshold_limit_values_cal,0);
-  fuel_demand_base_quantity =
+                 (&charge_pressure_estimate_tolerance_cached_axis_offset,
+                  compressor_map_corrected_turbocharger_speed,
+                  charge_pressure_estimate_corrected_turbocharger_speed_axis,
+                  charge_pressure_estimate_tolerance_values,0);
+  compressor_pressure_ratio_estimate =
        lookupTableInterpolation
-                 (&DAT_003fa5fa,compressor_map_corrected_turbocharger_speed,
-                  fuel_timing_load_axis_cal,fuel_demand_base_quantity_values_cal,0);
-  fuel_demand_rpm_factor =
+                 (&compressor_pressure_ratio_estimate_cached_axis_offset,
+                  compressor_map_corrected_turbocharger_speed,
+                  charge_pressure_estimate_corrected_turbocharger_speed_axis,
+                  compressor_pressure_ratio_estimate_values,0);
+  compressor_pressure_ratio_scale =
        lookupTableInterpolation
-                 (&DAT_003fa5fc,engine_rpm_state_t_0040b7ac.current_rpm,fuel_demand_rpm_axis_b_cal,
-                  fuel_demand_rpm_factor_values_cal,0);
-  uVar3 = (uint)fuel_demand_base_quantity * (uint)fuel_demand_rpm_factor;
+                 (&compressor_pressure_ratio_scale_cached_axis_offset,
+                  engine_rpm_state_t_0040b7ac.current_rpm,compressor_pressure_ratio_scale_axis,
+                  compressor_pressure_ratio_scale_values,0);
+  uVar3 = (uint)compressor_pressure_ratio_estimate * (uint)compressor_pressure_ratio_scale;
   uVar2 = (uint)compressor_inlet_pressure;
-  boost_pressure_target_unclamped =
+  charge_pressure_estimate_unclamped =
        (int)(CONCAT44((int)((ulonglong)uVar2 * (ulonglong)uVar3 >> 0x20) +
                       uVar2 * ((int)uVar3 >> 0x1f),uVar2 * uVar3) / 0xfa000) -
-       (uint)fuel_demand_correction_offset_cal;
-  if ((int)boost_pressure_target_unclamped < 0) {
+       (uint)charge_pressure_estimate_calibration_offset;
+  if ((int)charge_pressure_estimate_unclamped < 0) {
     uVar2 = 0;
   }
   else {
-    uVar2 = boost_pressure_target_unclamped;
-    if (0x3200 < (int)boost_pressure_target_unclamped) {
+    uVar2 = charge_pressure_estimate_unclamped;
+    if (0x3200 < (int)charge_pressure_estimate_unclamped) {
       uVar2 = 0x3200;
     }
   }
-  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fa5fe);
-  boost_pressure_target_filtered = (word)dVar1;
+  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&charge_pressure_estimate_filter_state);
+  charge_pressure_estimate_with_turbocharger_speed = (word)dVar1;
   if ((((((combustion_override_and_estimation_enable_flags_cal & 0x8000) == 0) ||
         (turbocharger_speed_source == 2)) ||
-       (turbocharger_speed < boost_control_fuel_lower_threshold_cal)) ||
-      (((boost_control_fuel_upper_threshold_cal < turbocharger_speed ||
+       (turbocharger_speed < charge_pressure_estimate_turbocharger_speed_low_threshold)) ||
+      (((charge_pressure_estimate_turbocharger_speed_high_threshold < turbocharger_speed ||
         (intake_manifold_temperature_filtered_source == 2)) ||
-       ((fuel_demand_state_b == 2 ||
-        ((fuel_boost_mode_state == 2 ||
-         (monitor_enabling_conditions_met.boost_fuel_weight_factor == 0)))))))) ||
-     (monitor_battery_voltage_error_latch.boost_fuel_weight_factor != 0)) {
-    boost_fuel_weight_factor = 0x80;
+       ((compressor_inlet_temperature_source == 2 ||
+        ((barometric_pressure_selected_source == 2 ||
+         (monitor_enabling_conditions_met.charge_pressure_estimate_enable == 0)))))))) ||
+     (monitor_battery_voltage_error_latch.charge_pressure_estimate_enable != 0)) {
+    charge_pressure_estimate_with_turbocharger_speed_state = 0x80;
   }
-  else if ((((intake_manifold_temperature_filtered_source == 1) || (fuel_demand_state_b == 1)) ||
-           (fuel_boost_mode_state == 1)) || (turbocharger_speed_source == 1)) {
-    boost_fuel_weight_factor = 0x40;
+  else if ((((intake_manifold_temperature_filtered_source == 1) ||
+            (compressor_inlet_temperature_source == 1)) ||
+           (barometric_pressure_selected_source == 1)) || (turbocharger_speed_source == 1)) {
+    charge_pressure_estimate_with_turbocharger_speed_state = 0x40;
   }
   else {
-    boost_fuel_weight_factor = 0;
+    charge_pressure_estimate_with_turbocharger_speed_state = 0;
   }
-  boost_pressure_target = (word)dVar1;
-  boost_fuel_weight_snapshot = boost_fuel_weight_factor;
+  charge_pressure_estimate = (word)dVar1;
+  charge_pressure_estimate_state = charge_pressure_estimate_with_turbocharger_speed_state;
   return;
 }
 
 
 
 //
-// Function: cm848_initFuelDemandFilterState @ 0x0001350c
+// Function: cm848_initializeChargePressureEstimate @ 0x0001350c
 //
 
-void cm848_initFuelDemandFilterState(void)
+/* Boot initialization of the charge pressure estimate, called by cm848_applicationMain: presets its
+   four lookup caches to 2, seeds charge_pressure_estimate_filter_state with
+   compressor_inlet_pressure (no boost at key on) on the coefficient
+   charge_pressure_estimate_filter_coefficient (e2m 1A22 +6 C_TPE_ICP_Est_Filter_Constant), and
+   clears charge_pressure_estimate_state. (was cm848_initFuelDemandFilterState) */
+
+void cm848_initializeChargePressureEstimate(void)
 
 {
-  DAT_003fa5f6 = 2;
-  DAT_003fa5f8 = 2;
-  DAT_003fa5fa = 2;
-  DAT_003fa5fc = 2;
-  ema_filter_state_t_003fa5fe.accumulator = (uint)compressor_inlet_pressure << 0x10;
-  ema_filter_state_t_003fa5fe.coefficient = &WORD_00405112;
-  boost_fuel_weight_snapshot = 0;
+  charge_pressure_estimate_offset_cached_axis_offset = 2;
+  charge_pressure_estimate_tolerance_cached_axis_offset = 2;
+  compressor_pressure_ratio_estimate_cached_axis_offset = 2;
+  compressor_pressure_ratio_scale_cached_axis_offset = 2;
+  charge_pressure_estimate_filter_state.accumulator = (uint)compressor_inlet_pressure << 0x10;
+  charge_pressure_estimate_filter_state.coefficient = &charge_pressure_estimate_filter_coefficient;
+  charge_pressure_estimate_state = 0;
   return;
 }
 
 
 
 //
-// Function: cm848_checkBoostControlCondition @ 0x00013564
+// Function: cm848_calculateChargePressureInRangeEnable @ 0x00013564
 //
 
-void cm848_checkBoostControlCondition(void)
+/* e2m 1A2D +8 Charge_Press_IR_Enable: charge_pressure_in_range_enable_flag = 1 while the charge
+   pressure sensor has no fault (map_sensor_fault_status 0) and the estimate is good
+   (charge_pressure_estimate_state 0), else 0. Called by cm848_monitorChargePressureInRange. (was
+   cm848_checkBoostControlCondition) */
+
+void cm848_calculateChargePressureInRangeEnable(void)
 
 {
-  if ((map_sensor_fault_status == 0) && (boost_fuel_weight_snapshot == 0)) {
+  if ((map_sensor_fault_status == 0) && (charge_pressure_estimate_state == 0)) {
     charge_pressure_in_range_enable_flag = 1;
   }
   else {
@@ -12495,7 +12548,7 @@ void cm848_checkBoostControlCondition(void)
 //
 
 /* Charge pressure in range fault counter (e2m 1A2D +A Charge_Press_IR_Fault_Cnt), run every pass by
-   cm848_processBoostProtectionConditions after it sets Charge_Press_IR_Cond
+   cm848_monitorChargePressureInRange after it sets Charge_Press_IR_Cond
    (charge_pressure_in_range_condition: 0 good, 1 suspect). With the monitor disabled (bit 0x10 of
    governor_feature_config_flags clear, or air_handling_compensation_and_diagnostic_bypass_cal
    nonzero) the count is 0. While Charge_Press_IR_Enable (charge_pressure_in_range_enable_flag, e2m
@@ -12587,10 +12640,19 @@ LAB_00013704:
 
 
 //
-// Function: cm848_processBoostProtectionConditions @ 0x00013774
+// Function: cm848_monitorChargePressureInRange @ 0x00013774
 //
 
-void cm848_processBoostProtectionConditions(void)
+/* Charge pressure in range monitor (e2m 1A2D): runs cm848_calculateChargePressureInRangeEnable,
+   sets charge_pressure_in_range_condition (+6 Charge_Press_IR_Cond, 1 = suspect) when
+   |charge_pressure_estimate - boost_pressure_sensor_value - charge_pressure_estimate_offset|
+   exceeds charge_pressure_estimate_tolerance, runs cm848_updateChargePressureInRangeFaultCount, and
+   writes charge_pressure_sensor_state_flags: the sensor fault status while fault bit 8 or 9 is set
+   and enabled in charge_pressure_sensor_fault_gate_bits (bits 0 / 1), | 0x20 while fault 64 or 729
+   is active with its fault_status_array bit 0x10 and gate bit 2 / 3, or fault 527 is set. No direct
+   caller in the decompile. (was cm848_processBoostProtectionConditions) */
+
+void cm848_monitorChargePressureInRange(void)
 
 {
   bool bVar1;
@@ -12599,28 +12661,29 @@ void cm848_processBoostProtectionConditions(void)
   
   uVar2 = map_sensor_fault_status;
   if ((((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x100) == 0) ||
-      ((fuel_boost_protect_fault_gate_enable & 1) == 0)) &&
+      ((charge_pressure_sensor_fault_gate_bits & 1) == 0)) &&
      (((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x200) == 0 ||
-      ((fuel_boost_protect_fault_gate_enable >> 1 & 1) == 0)))) {
+      ((charge_pressure_sensor_fault_gate_bits >> 1 & 1) == 0)))) {
     uVar2 = 0;
   }
   if (((((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 1) == 0) ||
        (((&fault_status_array)[DAT_000598da * 3] & 0x10) == 0)) ||
-      ((fuel_boost_protect_fault_gate_enable >> 2 & 1) == 0)) &&
+      ((charge_pressure_sensor_fault_gate_bits >> 2 & 1) == 0)) &&
      ((((fault_detected_bits_720_to_735 & 0x200) == 0 ||
        (((&fault_status_array)[DAT_00059e0c * 3] & 0x10) == 0)) ||
-      ((fuel_boost_protect_fault_gate_enable >> 3 & 1) == 0)))) {
+      ((charge_pressure_sensor_fault_gate_bits >> 3 & 1) == 0)))) {
     bVar1 = false;
   }
   else {
     bVar1 = true;
   }
-  cm848_checkBoostControlCondition();
-  uVar3 = (boost_pressure_target - boost_pressure_sensor_value) - boost_fuel_threshold_offset;
+  cm848_calculateChargePressureInRangeEnable();
+  uVar3 = (charge_pressure_estimate - boost_pressure_sensor_value) - charge_pressure_estimate_offset
+  ;
   if ((short)uVar3 < 0) {
     uVar3 = -uVar3;
   }
-  charge_pressure_in_range_condition = (word)(boost_fuel_threshold_limit < uVar3);
+  charge_pressure_in_range_condition = (word)(charge_pressure_estimate_tolerance < uVar3);
   cm848_updateChargePressureInRangeFaultCount();
   if ((bVar1) || ((fault_detected_bits_512_to_527 & 0x8000) != 0)) {
     uVar3 = 0x20;
@@ -12628,7 +12691,7 @@ void cm848_processBoostProtectionConditions(void)
   else {
     uVar3 = 0;
   }
-  fuel_mode_flags_combined = uVar2 | uVar3;
+  charge_pressure_sensor_state_flags = uVar2 | uVar3;
   return;
 }
 
@@ -12645,7 +12708,7 @@ void cm848_selectLoadNormalizer
   ushort uVar1;
   ushort uVar2;
   
-  charge_pressure_state = fuel_mode_flags_combined | boost_fuel_weight_snapshot;
+  charge_pressure_state = charge_pressure_sensor_state_flags | charge_pressure_estimate_state;
   uVar1 = charge_pressure_state & 0x80;
   if (((uVar1 == 0) && ((charge_pressure_state & 0x40) == 0)) ||
      (((charge_pressure_state & 0x20) == 0 && ((charge_pressure_state & 2) == 0)))) {
@@ -12662,11 +12725,11 @@ void cm848_selectLoadNormalizer
       charge_pressure_source = 1;
       if ((((uVar2 == 0) && ((charge_pressure_state & 2) == 0)) ||
           ((uVar1 != 0 || ((charge_pressure_state & 0x40) != 0)))) &&
-         (boost_pressure_sensor_value <= boost_pressure_target)) {
+         (boost_pressure_sensor_value <= charge_pressure_estimate)) {
         charge_pressure = boost_pressure_sensor_value;
       }
       else {
-        charge_pressure = boost_pressure_target;
+        charge_pressure = charge_pressure_estimate;
       }
     }
   }
@@ -12690,7 +12753,7 @@ void cm848_processLoadNormalizerSelection
   word selector;
   word raw_boost;
   
-  selector = cm848_processBoostProtectionConditions();
+  selector = cm848_monitorChargePressureInRange();
   cm848_selectLoadNormalizer(selector,raw_boost,param_3,param_4);
   return;
 }
@@ -12707,11 +12770,11 @@ void cm848_processBoostProtectionMode(undefined4 param_1,int param_2)
   int unaff_r31;
   int iVar1;
   
-  if ((fuel_demand_state_b == 2) ||
+  if ((compressor_inlet_temperature_source == 2) ||
      ((combustion_override_and_estimation_enable_flags_cal & 0x4000) == 0)) {
     injection_enable_mode_byte = 0x80;
   }
-  else if (fuel_demand_state_b == 1) {
+  else if (compressor_inlet_temperature_source == 1) {
     injection_enable_mode_byte = 0x40;
   }
   else {
@@ -12773,11 +12836,11 @@ void cm848_initBoostProtectionState(void)
 {
   fuel_demand_boost_offset_filter.accumulator = (int)(short)sensor_channel9_pressure_value << 0x10;
   fuel_demand_boost_offset_filter.coefficient = &fuel_demand_boost_offset_filter_coefficient;
-  if ((fuel_demand_state_b == 2) ||
+  if ((compressor_inlet_temperature_source == 2) ||
      ((combustion_override_and_estimation_enable_flags_cal & 0x4000) == 0)) {
     injection_enable_mode_byte = 0x80;
   }
-  else if (fuel_demand_state_b == 1) {
+  else if (compressor_inlet_temperature_source == 1) {
     injection_enable_mode_byte = 0x40;
   }
   else {
@@ -15518,7 +15581,7 @@ uint cm848_estimateCompressorOutletTemperature(void)
 void cm848_selectCompressorOutletTemperature(void)
 
 {
-  if (((compressor_inlet_pressure_source == 2) && (fuel_demand_state_b == 2)) ||
+  if (((compressor_inlet_pressure_source == 2) && (compressor_inlet_temperature_source == 2)) ||
      ((feature_enable_flags_cal & 0x80) == 0)) {
     compressor_outlet_temperature_estimation_active_flag = 0;
   }
@@ -15531,7 +15594,7 @@ void cm848_selectCompressorOutletTemperature(void)
   }
   else {
     compressor_outlet_temperature = cm848_estimateCompressorOutletTemperature();
-    if (((compressor_inlet_pressure_source == 0) && (fuel_demand_state_b == 0)) &&
+    if (((compressor_inlet_pressure_source == 0) && (compressor_inlet_temperature_source == 0)) &&
        ((charge_flow_estimate_terms.fresh_air_flow_source == 0 && (turbocharger_speed_source != 2)))
        ) {
       compressor_outlet_temperature_source = 0;
@@ -15615,46 +15678,46 @@ LAB_00017f34:
 
 /* EGR delta pressures (e2m 1A19). egr_flow_cold_side_algorithm_select (e2m 177E +8
    C_CHP_Downstream_Delta_P_Active: 0 = hot side, nonzero = cold side algorithm; not the model
-   select egr_flow_downstream_model_select) = 0: egr_delta_pressure (+4 EGR_Valve_Delta_Press) is
-   the sensor output egr_delta_pressure_sensor_output (channel 105 after the autozero),
+   select egr_flow_downstream_model_select) = 0: egr_valve_delta_pressure (+4 EGR_Valve_Delta_Press)
+   is the sensor output egr_delta_pressure_sensor_output (channel 105 after the autozero),
    egr_orifice_delta_pressure (+0 EGR_Orifice_Delta_Press) is 0 with its source
    egr_orifice_delta_pressure_source (+2) = 2 (default), and the engine delta pressure source
-   egr_delta_pressure_negated_source (+A Engine_Delta_Press_Source) is
-   egr_delta_pressure_sensor_source. Nonzero: egr_delta_pressure = (exhaust_pressure (e2m 1A5D +0
-   Exhaust_Press) - boost_pressure_baseline_cal) - charge_pressure (Charge_Press),
-   egr_orifice_delta_pressure is the sensor output (egr_orifice_delta_pressure_source = its source),
-   and the computed source is 2 when the exhaust and charge pressure sources
-   (exhaust_pressure_source, charge_pressure_source) are both 2, 0 when both are 0, else 1. Then
-   egr_delta_pressure_negated = -egr_delta_pressure (+8 Engine_Delta_Press) and
-   egr_delta_pressure_source (+6 EGR_Valve_Delta_Press_Source) = the engine delta pressure source.
-   Caller cm848_phase_group_a_processing. (was cm848_calculateFuelFlowWithMode) */
+   engine_delta_pressure_source (+A Engine_Delta_Press_Source) is egr_delta_pressure_sensor_source.
+   Nonzero: egr_valve_delta_pressure = (exhaust_pressure (e2m 1A5D +0 Exhaust_Press) -
+   exhaust_pressure_offset) - charge_pressure (Charge_Press), egr_orifice_delta_pressure is the
+   sensor output (egr_orifice_delta_pressure_source = its source), and the computed source is 2 when
+   the exhaust and charge pressure sources (exhaust_pressure_source, charge_pressure_source) are
+   both 2, 0 when both are 0, else 1. Then engine_delta_pressure = -egr_valve_delta_pressure (+8
+   Engine_Delta_Press) and egr_valve_delta_pressure_source (+6 EGR_Valve_Delta_Press_Source) = the
+   engine delta pressure source. Caller cm848_phase_group_a_processing. (was
+   cm848_calculateFuelFlowWithMode) */
 
 void cm848_calculateEgrDeltaPressures(void)
 
 {
   if (egr_flow_cold_side_algorithm_select == 0) {
-    egr_delta_pressure = egr_delta_pressure_sensor_output;
+    egr_valve_delta_pressure = egr_delta_pressure_sensor_output;
     egr_orifice_delta_pressure = 0;
     egr_orifice_delta_pressure_source = 2;
-    egr_delta_pressure_negated_source = egr_delta_pressure_sensor_source;
+    engine_delta_pressure_source = egr_delta_pressure_sensor_source;
   }
   else {
-    egr_delta_pressure = (exhaust_pressure - boost_pressure_baseline_cal) - charge_pressure;
+    egr_valve_delta_pressure = (exhaust_pressure - exhaust_pressure_offset) - charge_pressure;
     egr_orifice_delta_pressure = egr_delta_pressure_sensor_output;
     if ((exhaust_pressure_source == 2) && (charge_pressure_source == 2)) {
-      egr_delta_pressure_source = 2;
+      egr_valve_delta_pressure_source = 2;
     }
     else if ((exhaust_pressure_source == 0) && (charge_pressure_source == 0)) {
-      egr_delta_pressure_source = 0;
+      egr_valve_delta_pressure_source = 0;
     }
     else {
-      egr_delta_pressure_source = 1;
+      egr_valve_delta_pressure_source = 1;
     }
     egr_orifice_delta_pressure_source = egr_delta_pressure_sensor_source;
-    egr_delta_pressure_negated_source = egr_delta_pressure_source;
+    engine_delta_pressure_source = egr_valve_delta_pressure_source;
   }
-  egr_delta_pressure_negated = -egr_delta_pressure;
-  egr_delta_pressure_source = egr_delta_pressure_negated_source;
+  engine_delta_pressure = -egr_valve_delta_pressure;
+  egr_valve_delta_pressure_source = engine_delta_pressure_source;
   return;
 }
 
@@ -16586,7 +16649,7 @@ void cm848_updateEgrValveMeanSquaredCurrent(void)
 
 /* Valve over-temperature timer of the EGR valve: counts up to
    egr_valve_over_temperature_inhibit_time while the coolant temperature is below its default, the
-   coolant source is the sensor, and the filtered egr_delta_pressure is below
+   coolant source is the sensor, and the filtered egr_valve_delta_pressure is below
    egr_valve_over_temperature_delta_pressure_threshold; when the count is reached while motor
    over-temperature fault 728 (mask 0x100 of fault_detected_bits_720_to_735) is set it sets mask
    0x800 (fault 795) of fault_detected_bits_784_to_799. A test (fault_detected_bits_720_to_735 &
@@ -16603,10 +16666,10 @@ void cm848_updateEgrValveOverTemperatureFault(void)
   egr_valve_coolant_temperature_at_or_above_default_flag =
        (word)((short)egr_valve_coolant_temperature_default <= (short)coolant_temperature_selected);
   sVar1 = cm848_signedFirstOrderFilter
-                    ((int)(short)egr_delta_pressure,&egr_valve_delta_pressure_filter_state);
+                    ((int)(short)egr_valve_delta_pressure,&egr_valve_delta_pressure_filter_state);
   egr_valve_delta_pressure_over_temperature_threshold_reached_flag =
        (ushort)((short)egr_valve_over_temperature_delta_pressure_threshold <= sVar1);
-  if ((coolant_temperature_source == 0) && (egr_delta_pressure_source == 0)) {
+  if ((coolant_temperature_source == 0) && (egr_valve_delta_pressure_source == 0)) {
     egr_valve_over_temperature_timer_inhibit_flag = 0;
   }
   else {
@@ -16729,7 +16792,7 @@ void cm848_initializeEgrValveMotorThermalModel(void)
   egr_valve_motor_mean_squared_current_filter_state.accumulator = 0;
   egr_valve_motor_mean_squared_current_filter_state.coefficient =
        &egr_valve_mean_squared_current_filter_coefficient;
-  egr_valve_delta_pressure_filter_state.accumulator = (int)(short)egr_delta_pressure << 0x10;
+  egr_valve_delta_pressure_filter_state.accumulator = (int)(short)egr_valve_delta_pressure << 0x10;
   egr_valve_delta_pressure_filter_state.coefficient =
        &egr_valve_motor_winding_temperature_filter_coefficient;
   if ((short)coolant_temperature_selected < 1) {
@@ -29870,11 +29933,13 @@ void cm848_estimateTurbochargerSpeed(void)
   turbocharger_speed_estimate_sensor_snapshot = turbocharger_speed_sensor_value;
   if (((((algorithm_enable_flags_6_cal & 1) == 0) || (charge_pressure_source == 2)) ||
       (compressor_inlet_pressure_source == 2)) ||
-     ((fuel_demand_state_b == 2 || (intake_manifold_temperature_filtered_source == 2)))) {
+     ((compressor_inlet_temperature_source == 2 ||
+      (intake_manifold_temperature_filtered_source == 2)))) {
     turbocharger_speed_estimation_status = 0x80;
   }
   else if (((charge_pressure_source == 1) || (compressor_inlet_pressure_source == 1)) ||
-          ((fuel_demand_state_b == 1 || (intake_manifold_temperature_filtered_source == 1)))) {
+          ((compressor_inlet_temperature_source == 1 ||
+           (intake_manifold_temperature_filtered_source == 1)))) {
     turbocharger_speed_estimation_status = 0x40;
   }
   else {
@@ -37584,8 +37649,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
@@ -57127,7 +57192,7 @@ void cm848_applicationMain(void)
   cm848_clearEgrValveHBridgeFaultState();
   cm848_initializeEgrValveClosedHoldPreviousFlag();
   cm848_initThrottleRateFilterState();
-  mpc555_initManifoldPressureFilter();
+  cm848_initializePredictedIntakeManifoldTemperature();
   cm848_initializeTurbochargerSpeedEstimate();
   cm848_initSensorRetryCounters();
   cm848_sensorChannel6_process();
@@ -57146,7 +57211,7 @@ void cm848_applicationMain(void)
   cm848_initializeParkNeutralExitEngineSpeedLimit();
   cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor();
   cm848_initializeEgrDeltaPressureSensorPerformanceCheck();
-  cm848_sensorChannel8_process();
+  cm848_sensorChannel8_exhaustPressureProcess();
   cm848_initializeTransmissionOutputSpeedSensorMonitor();
   initProtectionOutputFlags();
   initHpcr_HandlerRoutines();
@@ -57186,7 +57251,7 @@ void cm848_applicationMain(void)
   initHpcr_FaultCounters();
   cm848_initParkNeutralSwitchMonitor();
   cm848_initialization_step_3();
-  cm848_initialization_step_12();
+  cm848_initializeExhaustPressureEstimate();
   cm848_initialization_step_13();
   cm848_initializeEgrDeltaPressureAutozero();
   cm848_initializeEgrValvePosition();
@@ -57205,7 +57270,7 @@ void cm848_applicationMain(void)
   cm848_initialization_group26_state();
   hpcr_clearTimingCalibrationData();
   cm848_synchronizeProtectionEnableShadowFlags();
-  cm848_initFuelDemandFilterState();
+  cm848_initializeChargePressureEstimate();
   cm848_initializeAlpha();
   protection_speed_limit_initialize();
   cm848_startTurbochargerSpeedLimiter();
@@ -60585,12 +60650,12 @@ LAB_005022a4:
 //
 
 /* Selects the barometric pressure the fuel and boost calculations use: barometric_pressure_selected
-   = the sensor value, or the sensor channel's default value with fuel_boost_mode_state = 2 when the
-   sensor status shows a confirmed fault or the fault 340 (P0106) / 778 (P0069) gate is on. The
-   circuit status is the sensor channel status gated by faults 25 / 26 (P0108 / P0107) through bits
-   0 / 1 of fuel_boost_final_fault_gate_enable; faults 340 / 778 count only through bits 4 / 7 and
-   when their fault_status_array entry allows it. The combined status goes to DAT_0040a166
-   (write-only) (was hpcr_fuelFinal_periodic). */
+   = the sensor value, or the sensor channel's default value with
+   barometric_pressure_selected_source = 2 when the sensor status shows a confirmed fault or the
+   fault 340 (P0106) / 778 (P0069) gate is on. The circuit status is the sensor channel status gated
+   by faults 25 / 26 (P0108 / P0107) through bits 0 / 1 of fuel_boost_final_fault_gate_enable;
+   faults 340 / 778 count only through bits 4 / 7 and when their fault_status_array entry allows it.
+   The combined status goes to DAT_0040a166 (write-only) (was hpcr_fuelFinal_periodic). */
 
 void cm848_selectBarometricPressure(void)
 
@@ -60619,11 +60684,11 @@ void cm848_selectBarometricPressure(void)
   barometric_pressure_selection_fault_flags = uVar2 | uVar1;
   if ((uVar2 & 0x22) == 0 && uVar1 == 0) {
     barometric_pressure_selected = barometric_pressure_sensor_value;
-    fuel_boost_mode_state = 0;
+    barometric_pressure_selected_source = 0;
   }
   else {
     barometric_pressure_selected = barometric_pressure_sensor_default_value;
-    fuel_boost_mode_state = 2;
+    barometric_pressure_selected_source = 2;
   }
   return;
 }
@@ -60634,7 +60699,7 @@ void cm848_selectBarometricPressure(void)
 // Function: cm848_initializeBarometricPressureSelection @ 0x0050241c
 //
 
-/* Initializer of cm848_selectBarometricPressure: fuel_boost_mode_state = 0 when
+/* Initializer of cm848_selectBarometricPressure: barometric_pressure_selected_source = 0 when
    barometric_pressure_sensor_fault_status is 0 or 1, 2 when it is 2, and
    barometric_pressure_selected = barometric_pressure_sensor_value (was cm848_initialization_step).
     */
@@ -60644,10 +60709,10 @@ void cm848_initializeBarometricPressureSelection(void)
 {
   if ((barometric_pressure_sensor_fault_status == 0) ||
      (barometric_pressure_sensor_fault_status == 1)) {
-    fuel_boost_mode_state = 0;
+    barometric_pressure_selected_source = 0;
   }
   else if (barometric_pressure_sensor_fault_status == 2) {
-    fuel_boost_mode_state = 2;
+    barometric_pressure_selected_source = 2;
   }
   barometric_pressure_selected = barometric_pressure_sensor_value;
   return;
@@ -60921,8 +60986,8 @@ void cm848_initializeBarometricFuelLimitInterpolationStates(void)
    ambient_air_temperature_override_value when ambient_air_temperature_user_override_enable_cal is
    set, or ambient_air_temperature_default_value when its source
    ambient_air_temperature_reference_source (+8 Ambient_Air_Tmptr_Source: the larger of
-   fuel_demand_state_b = e2m 1A0C +2 Compressor_Inlet_Tmptr_Source and the fresh air flow source, 0
-   primary / 1 backup / 2 default) is 2. Looks up the inlet pressure drop
+   compressor_inlet_temperature_source = e2m 1A0C +2 Compressor_Inlet_Tmptr_Source and the fresh air
+   flow source, 0 primary / 1 backup / 2 default) is 2. Looks up the inlet pressure drop
    compressor_inlet_pressure_drop (+E Compressor_Inlet_Pressure_Drop) from the filtered fresh air
    flow, then barometric_pressure_reference (+2 Ambient_Air_Press) and compressor_inlet_pressure (+A
    Compressor_Inlet_Press) from barometric_pressure_selected: with
@@ -60952,10 +61017,12 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
        cm848_dualAxisTableInterpolation
                  (WORD_ARRAY_003fb9de,boost_pressure_timing_ema_filtered,WORD_ARRAY_003ff108,
                   vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);
-  if ((fuel_demand_state_b == 2) || (charge_flow_estimate_terms.fresh_air_flow_source == 2)) {
+  if ((compressor_inlet_temperature_source == 2) ||
+     (charge_flow_estimate_terms.fresh_air_flow_source == 2)) {
     ambient_air_temperature_reference_source = 2;
   }
-  else if ((fuel_demand_state_b == 1) || (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
+  else if ((compressor_inlet_temperature_source == 1) ||
+          (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
     ambient_air_temperature_reference_source = 1;
   }
   else {
@@ -60985,12 +61052,13 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
     if (barometric_pressure_selected == 0) {
       compressor_inlet_pressure = 1;
     }
-    compressor_inlet_pressure_source = fuel_boost_mode_state;
-    if ((charge_flow_estimate_terms.fresh_air_flow_source == 2) || (fuel_boost_mode_state == 2)) {
+    compressor_inlet_pressure_source = barometric_pressure_selected_source;
+    if ((charge_flow_estimate_terms.fresh_air_flow_source == 2) ||
+       (barometric_pressure_selected_source == 2)) {
       barometric_pressure_reference_source = 2;
     }
-    else if ((fuel_boost_mode_state == 1) || (charge_flow_estimate_terms.fresh_air_flow_source == 1)
-            ) {
+    else if ((barometric_pressure_selected_source == 1) ||
+            (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
       barometric_pressure_reference_source = 1;
     }
     else {
@@ -61005,12 +61073,13 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
     else {
       compressor_inlet_pressure = barometric_pressure_selected - compressor_inlet_pressure_drop;
     }
-    barometric_pressure_reference_source = fuel_boost_mode_state;
-    if ((charge_flow_estimate_terms.fresh_air_flow_source == 2) || (fuel_boost_mode_state == 2)) {
+    barometric_pressure_reference_source = barometric_pressure_selected_source;
+    if ((charge_flow_estimate_terms.fresh_air_flow_source == 2) ||
+       (barometric_pressure_selected_source == 2)) {
       compressor_inlet_pressure_source = 2;
     }
-    else if ((fuel_boost_mode_state == 1) || (charge_flow_estimate_terms.fresh_air_flow_source == 1)
-            ) {
+    else if ((barometric_pressure_selected_source == 1) ||
+            (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
       compressor_inlet_pressure_source = 1;
     }
     else {
@@ -61064,8 +61133,8 @@ void cm848_initialization_step_3(void)
        (int)(short)boost_fuel_timing_demand_filter_output << 0x10;
   ema_filter_state_t_003fb9e2.coefficient = &WORD_003ff076;
   ambient_air_temperature_reference = ambient_air_temperature_selected;
-  ambient_air_temperature_reference_source = fuel_demand_state_b;
-  DAT_0040a1a6 = fuel_boost_mode_state;
+  ambient_air_temperature_reference_source = compressor_inlet_temperature_source;
+  DAT_0040a1a6 = barometric_pressure_selected_source;
   barometric_pressure_reference = barometric_pressure_selected;
   compressor_inlet_pressure = barometric_pressure_selected;
   boost_fuel_rpm_blend_table_row_count = 2;
@@ -63039,10 +63108,10 @@ void cm848_calculateAmbientAirDensity(void)
     }
   }
   ambient_air_density = wVar3;
-  if ((compressor_inlet_pressure_source == 2) && (fuel_demand_state_b == 2)) {
+  if ((compressor_inlet_pressure_source == 2) && (compressor_inlet_temperature_source == 2)) {
     DAT_0040a606 = 2;
   }
-  else if ((compressor_inlet_pressure_source == 0) && (fuel_demand_state_b == 0)) {
+  else if ((compressor_inlet_pressure_source == 0) && (compressor_inlet_temperature_source == 0)) {
     DAT_0040a606 = 0;
   }
   else {
@@ -63059,9 +63128,9 @@ void cm848_calculateAmbientAirDensity(void)
 
 /* Chooses the ambient air temperature input: sensor_channel20_value
    (ambient_air_temperature_sensor_filtered) into ambient_air_temperature_selected with
-   fuel_demand_state_b = 0, or sensor_channel20_default_value with state 2 when the channel fault
-   status or one of the gated fault bits is set (gates in fuel_timing_demand_fault_gate_enable).
-   (was cm848_communication_periodic) */
+   compressor_inlet_temperature_source = 0, or sensor_channel20_default_value with state 2 when the
+   channel fault status or one of the gated fault bits is set (gates in
+   fuel_timing_demand_fault_gate_enable). (was cm848_communication_periodic) */
 
 void cm848_selectAmbientAirTemperatureInput(void)
 
@@ -63090,11 +63159,11 @@ void cm848_selectAmbientAirTemperatureInput(void)
   DAT_0040a60c = uVar2 | uVar1;
   if ((uVar2 & 0x22) == 0 && uVar1 == 0) {
     ambient_air_temperature_selected = sensor_channel20_value;
-    fuel_demand_state_b = 0;
+    compressor_inlet_temperature_source = 0;
   }
   else {
     ambient_air_temperature_selected = sensor_channel20_default_value;
-    fuel_demand_state_b = 2;
+    compressor_inlet_temperature_source = 2;
   }
   return;
 }
@@ -63105,7 +63174,7 @@ void cm848_selectAmbientAirTemperatureInput(void)
 // Function: cm848_initializeAmbientAirTemperatureInput @ 0x00505b3c
 //
 
-/* Boot pass of the ambient air temperature input: fuel_demand_state_b from
+/* Boot pass of the ambient air temperature input: compressor_inlet_temperature_source from
    sensor_channel20_fault_status (0 or 1 -> 0, 2 -> 2) and ambient_air_temperature_selected =
    sensor_channel20_value. (was cm848_initialization_step_10) */
 
@@ -63113,10 +63182,10 @@ void cm848_initializeAmbientAirTemperatureInput(void)
 
 {
   if ((sensor_channel20_fault_status == 0) || (sensor_channel20_fault_status == 1)) {
-    fuel_demand_state_b = 0;
+    compressor_inlet_temperature_source = 0;
   }
   else if (sensor_channel20_fault_status == 2) {
-    fuel_demand_state_b = 2;
+    compressor_inlet_temperature_source = 2;
   }
   ambient_air_temperature_selected = sensor_channel20_value;
   return;
@@ -63898,39 +63967,52 @@ void cm848_initializeEgrValvePosition(void)
 
 
 //
-// Function: cm848_phase_groupA_exponentialAverage @ 0x00506b34
+// Function: cm848_estimateExhaustPressure @ 0x00506b34
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* Exhaust pressure estimate (e2m 1772 +A Exhaust_Press_Est: the TPE model with the e2m 198C
+   constants), every 10 ms from cm848_phase_group_a_processing: engine speed x
+   exhaust_pressure_estimate_engine_speed_constant / 1024 + egr_valve_position x
+   exhaust_pressure_estimate_egr_valve_position_constant / 4096 + charge_pressure x
+   exhaust_pressure_estimate_charge_pressure_constant / 4096 + exhaust_pressure_estimate_constant,
+   limited to 0 .. 0xffff and filtered (exhaust_pressure_estimate_filter_state) into
+   exhaust_pressure_estimate. exhaust_pressure_estimate_state (1772 +8 Exhaust_Press_EStat): 0x80
+   while combustion_override_and_estimation_enable_flags_cal bit 0x2000 is clear or the valve
+   position / charge pressure source is DEFAULT, 0x40 while one is BACKUP, else 0. (was
+   cm848_phase_groupA_exponentialAverage) */
 
-void cm848_phase_groupA_exponentialAverage(void)
+void cm848_estimateExhaustPressure(void)
 
 {
   dword dVar1;
   uint uVar2;
   
   uVar2 = (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)(int)(short)boost_synthetic_ema_rpm_coef *
+                               ((longlong)
+                                (int)(short)exhaust_pressure_estimate_engine_speed_constant *
                                (longlong)(int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) >> 0x20
-                              ),(int)(short)boost_synthetic_ema_rpm_coef *
+                              ),(int)(short)exhaust_pressure_estimate_engine_speed_constant *
                                 (uint)engine_rpm_state_t_0040b7ac.current_rpm) / 0x400) +
           (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)(int)(short)boost_synthetic_ema_boost_pressure_coef *
+                               ((longlong)
+                                (int)(short)exhaust_pressure_estimate_egr_valve_position_constant *
                                (longlong)(int)(short)egr_valve_position) >> 0x20),
-                         (int)(short)boost_synthetic_ema_boost_pressure_coef *
+                         (int)(short)exhaust_pressure_estimate_egr_valve_position_constant *
                          (int)(short)egr_valve_position) / 0x1000) +
           (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)(int)(short)boost_synthetic_ema_map_coef *
+                               ((longlong)
+                                (int)(short)exhaust_pressure_estimate_charge_pressure_constant *
                                (longlong)(int)(uint)charge_pressure) >> 0x20),
-                         (int)(short)boost_synthetic_ema_map_coef * (uint)charge_pressure) / 0x1000)
-          + (int)exhaust_pressure_estimate_constant;
+                         (int)(short)exhaust_pressure_estimate_charge_pressure_constant *
+                         (uint)charge_pressure) / 0x1000) + (int)exhaust_pressure_estimate_constant;
   if ((int)uVar2 < 0) {
     uVar2 = 0;
   }
   else if (0xffff < (int)uVar2) {
     uVar2 = 0xffff;
   }
-  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fbce2);
+  dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&exhaust_pressure_estimate_filter_state);
   exhaust_pressure_estimate = (word)dVar1;
   if ((((combustion_override_and_estimation_enable_flags_cal & 0x2000) == 0) ||
       (egr_valve_position_source == 2)) || (charge_pressure_source == 2)) {
@@ -63948,14 +64030,22 @@ void cm848_phase_groupA_exponentialAverage(void)
 
 
 //
-// Function: cm848_initialization_step_12 @ 0x00506c94
+// Function: cm848_initializeExhaustPressureEstimate @ 0x00506c94
 //
 
-void cm848_initialization_step_12(void)
+/* Boot initialization of the exhaust pressure estimate: seeds
+   exhaust_pressure_estimate_filter_state with the exhaust pressure sensor's filtered value
+   (exhaust_pressure_sensor_filtered, sensor_channel_filtered_output slot 109) and points its
+   coefficient at exhaust_pressure_estimate_filter_coefficient (e2m 198C +C C_TPE_EMP_Est_Fil_Cnst).
+   (was cm848_initialization_step_12) */
+
+void cm848_initializeExhaustPressureEstimate(void)
 
 {
-  ema_filter_state_t_003fbce2.accumulator = (uint)DAT_0040bbca << 0x10;
-  ema_filter_state_t_003fbce2.coefficient = &WORD_00406766;
+  exhaust_pressure_estimate_filter_state.accumulator =
+       (uint)exhaust_pressure_sensor_filtered << 0x10;
+  exhaust_pressure_estimate_filter_state.coefficient = &exhaust_pressure_estimate_filter_coefficient
+  ;
   return;
 }
 
@@ -66079,12 +66169,12 @@ void cm848_resetFaultDerateFuelLimit(void)
 /* Exhaust pressure post-processing (e2m 1A5D), every 10 ms from cm848_phase_group_a_processing.
    With egr_flow_cold_side_algorithm_select set (e2m 177E +8, the cold side EGR flow algorithm) the
    measurement is sensor channel 109 and exhaust_pressure_state = exhaust_pressure_estimate_state |
-   sensor_channel109_fault_status; otherwise the measurement is charge_pressure +
+   exhaust_pressure_sensor_fault_status; otherwise the measurement is charge_pressure +
    egr_delta_pressure_sensor_output and the state gets 8 / 4 for a DEFAULT / BACKUP charge pressure
    or delta pressure source. Fault bit 524 (fault_detected_bits_512_to_527 0x1000) adds 0x20 in
    both. Then: no 0x2a state bit - the measurement (negative values clamped to 0),
    exhaust_pressure_source 0 PRIMARY; else no 0x80 bit - exhaust_pressure_estimate (e2m 1772 +A),
-   source 1 BACKUP; else the sensor default sensor_channel109_default_value, source 2 DEFAULT.
+   source 1 BACKUP; else the sensor default exhaust_pressure_sensor_default_value, source 2 DEFAULT.
    exhaust_pressure_estimate_as_primary_cal (1 on this truck) forces the estimate with source 0.
    exhaust_pressure_virtual_sensor_copy (1772 +0) keeps the raw sensor value. (was
    phase_group_a_validateEngineSync) */
@@ -66102,8 +66192,8 @@ void cm848_calculateExhaustPressure(void)
       uVar1 = 0x20;
     }
     exhaust_pressure_state =
-         exhaust_pressure_estimate_state | sensor_channel109_fault_status | uVar1;
-    exhaust_pressure = sensor_channel109_value;
+         exhaust_pressure_estimate_state | exhaust_pressure_sensor_fault_status | uVar1;
+    exhaust_pressure = exhaust_pressure_sensor_value;
     goto LAB_00509978;
   }
   exhaust_pressure = charge_pressure + egr_delta_pressure_sensor_output;
@@ -66146,14 +66236,14 @@ LAB_00509978:
     exhaust_pressure_source = 1;
   }
   else {
-    exhaust_pressure = sensor_channel109_default_value;
+    exhaust_pressure = exhaust_pressure_sensor_default_value;
     exhaust_pressure_source = 2;
   }
   if (exhaust_pressure_estimate_as_primary_cal != 0) {
     exhaust_pressure_source = 0;
     exhaust_pressure = exhaust_pressure_estimate;
   }
-  exhaust_pressure_virtual_sensor_copy = sensor_channel109_value;
+  exhaust_pressure_virtual_sensor_copy = exhaust_pressure_sensor_value;
   return;
 }
 
@@ -66164,21 +66254,21 @@ LAB_00509978:
 //
 
 /* Boot initialization of the exhaust pressure (e2m 1A5D), called by cm848_applicationMain:
-   exhaust_pressure and exhaust_pressure_virtual_sensor_copy = sensor_channel109_value;
-   exhaust_pressure_source 0 PRIMARY while sensor_channel109_fault_status is 0 or 1 and 2 DEFAULT
-   when it is 2. (was cm848_initBoostPressureFaultHandling) */
+   exhaust_pressure and exhaust_pressure_virtual_sensor_copy = exhaust_pressure_sensor_value;
+   exhaust_pressure_source 0 PRIMARY while exhaust_pressure_sensor_fault_status is 0 or 1 and 2
+   DEFAULT when it is 2. (was cm848_initBoostPressureFaultHandling) */
 
 void cm848_initializeExhaustPressure(void)
 
 {
-  if ((sensor_channel109_fault_status == 0) || (sensor_channel109_fault_status == 1)) {
+  if ((exhaust_pressure_sensor_fault_status == 0) || (exhaust_pressure_sensor_fault_status == 1)) {
     exhaust_pressure_source = 0;
   }
-  else if (sensor_channel109_fault_status == 2) {
+  else if (exhaust_pressure_sensor_fault_status == 2) {
     exhaust_pressure_source = 2;
   }
-  exhaust_pressure = sensor_channel109_value;
-  exhaust_pressure_virtual_sensor_copy = sensor_channel109_value;
+  exhaust_pressure = exhaust_pressure_sensor_value;
+  exhaust_pressure_virtual_sensor_copy = exhaust_pressure_sensor_value;
   return;
 }
 
@@ -91969,7 +92059,7 @@ void cm848_clearMonitorEnablingConditions(void)
   monitor_enabling_conditions_met.reserved_bit_18 = 0;
   monitor_enabling_conditions_met.reserved_bit_17 = 0;
   monitor_enabling_conditions_met.egr_delta_pressure_sensor_performance = 0;
-  monitor_enabling_conditions_met.boost_fuel_weight_factor = 0;
+  monitor_enabling_conditions_met.charge_pressure_estimate_enable = 0;
   monitor_enabling_conditions_met.misfire = 0;
   monitor_enabling_conditions_met.boost_pressure_sensor_and_underboost = 0;
   monitor_enabling_conditions_met.reserved_bit_12 = 0;
@@ -92001,7 +92091,7 @@ void cm848_clearMonitorEnablingConditions(void)
   monitor_battery_voltage_error_latch.reserved_bit_18 = 0;
   monitor_battery_voltage_error_latch.reserved_bit_17 = 0;
   monitor_battery_voltage_error_latch.egr_delta_pressure_sensor_performance = 0;
-  monitor_battery_voltage_error_latch.boost_fuel_weight_factor = 0;
+  monitor_battery_voltage_error_latch.charge_pressure_estimate_enable = 0;
   monitor_battery_voltage_error_latch.misfire = 0;
   monitor_battery_voltage_error_latch.boost_pressure_sensor_and_underboost = 0;
   monitor_battery_voltage_error_latch.reserved_bit_12 = 0;

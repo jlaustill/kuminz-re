@@ -229,8 +229,8 @@ void cm848_sensorChannel6_init(void);  // @ 0x0000cf4c
 void cm848_sensorChannel6_process(void);  // @ 0x0000cfd8
 void cm848_sensorChannel7_init(void);  // @ 0x0000d064
 void cm848_sensorChannel7_process(void);  // @ 0x0000d0f0
-void cm848_sensorChannel8_init(void);  // @ 0x0000d17c
-void cm848_sensorChannel8_process(void);  // @ 0x0000d208
+void cm848_sensorChannel8_exhaustPressureInit(void);  // @ 0x0000d17c
+void cm848_sensorChannel8_exhaustPressureProcess(void);  // @ 0x0000d208
 void cm848_sensorChannel9_init(void);  // @ 0x0000d294
 void cm848_sensorChannel9_process(void);  // @ 0x0000d320
 void cm848_sensorChannel10_intakeManifoldTemperatureInit(void);  // @ 0x0000d3ac
@@ -319,14 +319,14 @@ void cm848_initializeChargeFlows(void);  // @ 0x00012e88
 void cm848_calculateFreshAirMassFlow(void);  // @ 0x00012eb4
 void cm848_initializeFreshAirMassFlowFilter(void);  // @ 0x00012f40
 void cm848_calculatePredictedIntakeManifoldTemperature(void);  // @ 0x00012f60
-void mpc555_initManifoldPressureFilter(void);  // @ 0x000130ac
+void cm848_initializePredictedIntakeManifoldTemperature(void);  // @ 0x000130ac
 void cm848_calculatePumpingTorqueAdjustment(void);  // @ 0x000130dc
 void cm848_initializePumpingTorqueLookupCache(void);  // @ 0x0001327c
-void cm848_calculateBoostTorqueOffset(word boost_input,word rpm);  // @ 0x00013294
-void cm848_initFuelDemandFilterState(void);  // @ 0x0001350c
-void cm848_checkBoostControlCondition(void);  // @ 0x00013564
+void cm848_estimateChargePressure(word boost_input,word rpm);  // @ 0x00013294
+void cm848_initializeChargePressureEstimate(void);  // @ 0x0001350c
+void cm848_calculateChargePressureInRangeEnable(void);  // @ 0x00013564
 void cm848_updateChargePressureInRangeFaultCount(void);  // @ 0x0001359c
-void cm848_processBoostProtectionConditions(void);  // @ 0x00013774
+void cm848_monitorChargePressureInRange(void);  // @ 0x00013774
 void cm848_selectLoadNormalizer (word selector,word raw_boost,word computed_boost,word filtered_boost);  // @ 0x0001392c
 void cm848_processLoadNormalizerSelection (undefined4 param_1,undefined4 param_2,word param_3,word param_4);  // @ 0x00013a80
 void cm848_processBoostProtectionMode(undefined4 param_1,int param_2);  // @ 0x00013aec
@@ -1383,8 +1383,8 @@ void cm848_updateEgrValvePositionAutozero(void);  // @ 0x00506840
 void cm848_selectEgrValvePositionSource(void);  // @ 0x00506964
 void cm848_updateEgrValvePosition(void);  // @ 0x00506a3c
 void cm848_initializeEgrValvePosition(void);  // @ 0x00506a64
-void cm848_phase_groupA_exponentialAverage(void);  // @ 0x00506b34
-void cm848_initialization_step_12(void);  // @ 0x00506c94
+void cm848_estimateExhaustPressure(void);  // @ 0x00506b34
+void cm848_initializeExhaustPressureEstimate(void);  // @ 0x00506c94
 void cm848_calculateCombustionTemperatureRise(void);  // @ 0x00506cbc
 void cm848_estimateExhaustTemperature(void);  // @ 0x00506e28
 void cm848_initialization_step_13(void);  // @ 0x00506f68
