@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 07:48:43 MST 2026
+// Generated: Fri Nov 20 08:59:55 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6596,7 +6596,7 @@ void cm848_phase_group_a_processing(void)
   cm848_sensorChannel4_init();
   cm848_processLoadNormalizerSelection();
   cm848_sensorChannel10_intakeManifoldTemperatureInit();
-  cm848_fuelControlMainCalculation();
+  cm848_calculateChargeFlows();
   cm848_updateEgrValveDriverOverCurrentFault();
   cm848_sensorChannel6_init();
   cm848_sensorChannel5_init();
@@ -6611,7 +6611,7 @@ void cm848_phase_group_a_processing(void)
   cm848_calculateTransmissionOutputSpeed();
   cm848_selectBatteryVoltage();
   cm848_calculateEgrDeltaPressures();
-  phase_group_a_validateEngineSync();
+  cm848_calculateExhaustPressure();
   cm848_updateVariableGeometryTurbochargerDriverOverCurrentFault();
   cm848_phase_groupA_exponentialAverage();
   cm848_calculateChargeFlowTurbochargerSpeedDerate();
@@ -11576,13 +11576,14 @@ LAB_000124ac:
   x_input = cm848_signedFirstOrderFilter((int)(short)egr_valve_position,&egr_valve_position_filter);
   egr_flow_estimate_terms.downstream_egr_corrected_flow =
        cm848_dualAxisTableInterpolation
-                 (&diag_state_group5_c_state,x_input,throttle_rpm_axis_cal,
-                  egr_flow_estimate_terms.downstream_egr_pressure_ratio,throttle_rpm_ystart_cal,
-                  throttle_rpm_yend_cal,7);
+                 (&diag_state_group5_c_state,x_input,downstream_egr_corrected_flow_x_axis,
+                  egr_flow_estimate_terms.downstream_egr_pressure_ratio,
+                  downstream_egr_corrected_flow_y_axis,downstream_egr_corrected_flow_grid,7);
   egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root =
        lookupTableInterpolation
-                 (&diag_state_group6_b_state,egr_orifice_temperature,throttle_trim_axis_cal,
-                  throttle_trim_output_cal,0);
+                 (&egr_orifice_temperature_rankine_square_root_cached_axis_offset,
+                  egr_orifice_temperature,egr_orifice_temperature_rankine_square_root_axis,
+                  egr_orifice_temperature_rankine_square_root_values,0);
   uVar1 = (uint)charge_pressure;
   iVar2 = (int)egr_flow_estimate_terms.downstream_egr_corrected_flow;
   if ((int)(iVar2 * uVar1) <
@@ -11631,9 +11632,9 @@ LAB_000124ac:
    charge_flow_estimate_terms.pressure_ratio = e2m 177D +A CHP_Pratio; tables e2m 18E3 / 18E4 /
    18E5); exhaust_temperature_rankine_square_root = +10 CHP_Sqrt_Texhaust_R (table of
    exhaust_temperature, e2m 1974 / 1975); upstream_egr_mass_flow = +A CHP_Upstream_EGR_Flow =
-   corrected flow x boost_pressure_current_raw (e2m 1A5D +0 Exhaust_Press) / sqrt(exhaust
-   temperature), saturated at +-25600 (+-200 lb/min). Only caller
-   cm848_calculateEgrMassFlowBeforeDelay. (was cm848_calculateRpmBasedFuelTrim) */
+   corrected flow x exhaust_pressure (e2m 1A5D +0 Exhaust_Press) / sqrt(exhaust temperature),
+   saturated at +-25600 (+-200 lb/min). Only caller cm848_calculateEgrMassFlowBeforeDelay. (was
+   cm848_calculateRpmBasedFuelTrim) */
 
 void cm848_calculateUpstreamEgrMassFlow(void)
 
@@ -11643,21 +11644,22 @@ void cm848_calculateUpstreamEgrMassFlow(void)
   
   egr_flow_estimate_terms.upstream_egr_corrected_flow =
        cm848_dualAxisTableInterpolation
-                 (&diag_state_group5_a_state,egr_valve_position,boost_fuel_trim_pressure_axis_cal,
-                  charge_flow_estimate_terms.pressure_ratio,boost_fuel_trim_ystart_cal,
-                  boost_fuel_trim_yend_cal,5);
+                 (&diag_state_group5_a_state,egr_valve_position,upstream_egr_corrected_flow_x_axis,
+                  charge_flow_estimate_terms.pressure_ratio,upstream_egr_corrected_flow_y_axis,
+                  upstream_egr_corrected_flow_grid,5);
   egr_flow_estimate_terms.exhaust_temperature_rankine_square_root =
        lookupTableInterpolation
-                 (&diag_state_group6_a_state,exhaust_temperature,boost_fuel_input_axis_cal,
-                  boost_fuel_input_output_cal,0);
+                 (&exhaust_temperature_rankine_square_root_cached_axis_offset,exhaust_temperature,
+                  exhaust_temperature_rankine_square_root_axis,
+                  exhaust_temperature_rankine_square_root_values,0);
   iVar2 = (int)egr_flow_estimate_terms.upstream_egr_corrected_flow;
-  iVar1 = iVar2 * (uint)boost_pressure_current_raw;
+  iVar1 = iVar2 * (uint)exhaust_pressure;
   if (iVar1 < (int)((uint)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root * 0x6400))
   {
     if ((int)((uint)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root * -0x6400) <
         iVar1) {
       if (egr_flow_estimate_terms.exhaust_temperature_rankine_square_root == 0) {
-        if ((iVar2 == 0) || (boost_pressure_current_raw == 0)) {
+        if ((iVar2 == 0) || (exhaust_pressure == 0)) {
           egr_flow_estimate_terms.upstream_egr_mass_flow = 0;
         }
         else if (iVar2 < 1) {
@@ -11669,7 +11671,7 @@ void cm848_calculateUpstreamEgrMassFlow(void)
       }
       else {
         egr_flow_estimate_terms.upstream_egr_mass_flow =
-             (short)((iVar2 * (short)boost_pressure_current_raw) /
+             (short)((iVar2 * (short)exhaust_pressure) /
                     (int)(short)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root);
       }
     }
@@ -11686,10 +11688,16 @@ void cm848_calculateUpstreamEgrMassFlow(void)
 
 
 //
-// Function: cm848_checkFuelSystemFaultFlags @ 0x00012724
+// Function: cm848_calculateDownstreamEgrFlowSource @ 0x00012724
 //
 
-undefined4 cm848_checkFuelSystemFaultFlags(void)
+/* e2m 177F +18 EGR_Flow_Source of the downstream EGR flow model (0 = PRIMARY / 1 = BACKUP): 0 only
+   while egr_valve_position_source, egr_orifice_delta_pressure_source, charge_pressure_source and
+   egr_orifice_temperature_source are all 0 (the model's inputs).
+   cm848_calculateEgrMassFlowBeforeDelay stores it in egr_flow_source while
+   egr_flow_downstream_model_select is nonzero. (was cm848_checkFuelSystemFaultFlags) */
+
+undefined4 cm848_calculateDownstreamEgrFlowSource(void)
 
 {
   undefined4 uVar1;
@@ -11707,15 +11715,20 @@ undefined4 cm848_checkFuelSystemFaultFlags(void)
 
 
 //
-// Function: cm848_checkEngineFaultConditions @ 0x00012778
+// Function: cm848_calculateUpstreamEgrFlowSource @ 0x00012778
 //
 
-undefined4 cm848_checkEngineFaultConditions(void)
+/* e2m 177F +18 EGR_Flow_Source of the upstream EGR flow model (0 = PRIMARY / 1 = BACKUP): 0 only
+   while egr_valve_position_source, exhaust_pressure_source and exhaust_temperature_source are all 0
+   (the model's inputs). cm848_calculateEgrMassFlowBeforeDelay stores it in egr_flow_source while
+   egr_flow_downstream_model_select is 0. (was cm848_checkEngineFaultConditions) */
+
+undefined4 cm848_calculateUpstreamEgrFlowSource(void)
 
 {
   undefined4 uVar1;
   
-  if (((egr_valve_position_source == 0) && (fuel_demand_droop_state == 0)) &&
+  if (((egr_valve_position_source == 0) && (exhaust_pressure_source == 0)) &&
      (exhaust_temperature_source == 0)) {
     uVar1 = 0;
   }
@@ -11735,9 +11748,9 @@ undefined4 cm848_checkEngineFaultConditions(void)
    delay is imposed', lb/min x 128; egr_flow_estimate_terms.egr_mass_flow_before_delay). Runs the
    model that egr_flow_downstream_model_select chooses (e2m 177E +A C_CHP_Venturi_Vrt_Sensor_Active,
    'select Upstream (0) or Downstream (1) EGR Flow Model'): 0 -> cm848_calculateUpstreamEgrMassFlow
-   (upstream, upstream_egr_mass_flow) and egr_flow_source from cm848_checkEngineFaultConditions;
+   (upstream, upstream_egr_mass_flow) and egr_flow_source from cm848_calculateUpstreamEgrFlowSource;
    nonzero -> cm848_calculateDownstreamEgrMassFlow (downstream, downstream_egr_mass_flow) and
-   egr_flow_source from cm848_checkFuelSystemFaultFlags. The flow is limited to
+   egr_flow_source from cm848_calculateDownstreamEgrFlowSource. The flow is limited to
    egr_mass_flow_estimate_minimum .. egr_mass_flow_estimate_maximum (e2m 177E +4 C_CHP_EGR_Flow_Min
    / +2 C_CHP_EGR_Flow_Max) and forced to 0 while egr_valve_closed_flag is set. egr_flow_source is
    e2m 177F +18 EGR_Flow_Source (0 primary, 1 backup). Only caller
@@ -11757,7 +11770,7 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
        egr_mass_flow_estimate_maximum < egr_flow_estimate_terms.upstream_egr_mass_flow)) {
       egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_maximum;
     }
-    egr_flow_source = cm848_checkEngineFaultConditions();
+    egr_flow_source = cm848_calculateUpstreamEgrFlowSource();
   }
   else {
     cm848_calculateDownstreamEgrMassFlow();
@@ -11768,7 +11781,7 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
        egr_mass_flow_estimate_maximum < egr_flow_estimate_terms.downstream_egr_mass_flow)) {
       egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_maximum;
     }
-    egr_flow_source = cm848_checkFuelSystemFaultFlags();
+    egr_flow_source = cm848_calculateDownstreamEgrFlowSource();
   }
   if (egr_valve_closed_flag != 0) {
     egr_flow_estimate_terms.egr_mass_flow_before_delay = 0;
@@ -11783,11 +11796,12 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* EGR transport delay stage of the charge properties model (e2m 177F, resolved by the ECU's
-   parameter ID table): it carries the EGR mass flow and the exhaust oxygen fraction from where they
-   are computed to the intake valve, then forms the EGR fraction. Runs every 10 ms (called by
-   cm848_fuelControlMainCalculation, which cm848_phase_group_a_processing runs in the 20 even phases
-   of the 40-phase main loop). (1) cm848_calculateEgrMassFlowBeforeDelay sets
+/* EGR transport delay stage of the CHP charge flow model (CHP is the e2m prefix of the charge, EGR
+   and fresh air flow records and is never spelled out; e2m 177F, resolved by the ECU's parameter ID
+   table): it carries the EGR mass flow and the exhaust oxygen fraction from where they are computed
+   to the intake valve, then forms the EGR fraction. Runs every 10 ms (called by
+   cm848_calculateChargeFlows, which cm848_phase_group_a_processing runs in the 20 even phases of
+   the 40-phase main loop). (1) cm848_calculateEgrMassFlowBeforeDelay sets
    egr_flow_estimate_terms.egr_mass_flow_before_delay (+4 CHP_EGR_Flow_Before_Delay). (2)
    oxygen_flow_delay_milliseconds (+14 CHP_O2_Flow_Delay, 0.001 s per count) =
    oxygen_flow_delay_volume_fraction (e2m 177E +6 C_CHP_Volume_Fraction) x 120 x 1000 /
@@ -11797,8 +11811,8 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
    fraction term (fraction x 120 >> 10) is 0xffff instead. (3) residual_oxygen_fraction_before_delay
    goes into the 256-sample delay line egr_oxygen_fraction_delay_line (cm848_delayUnsignedSample);
    the sample from delay / 10 passes back is filtered by exponentialMovingAverage
-   (egr_oxygen_fraction_filter, coefficient egr_mass_flow_delayed_filter_coefficient = e2m 177E +0
-   C_CHP_EGR_Flow_Fil_Cnst) into egr_oxygen_fraction (+0 CHP_O2_Frac_EGR). (4)
+   (egr_oxygen_fraction_filter_state, coefficient egr_mass_flow_delayed_filter_coefficient = e2m
+   177E +0 C_CHP_EGR_Flow_Fil_Cnst) into egr_oxygen_fraction (+0 CHP_O2_Frac_EGR). (4)
    egr_flow_delay_milliseconds (+6 CHP_EGR_Flow_Delay) = the oxygen delay x egr_flow_delay_fraction
    (e2m 177E +C; 0 in the dump) / 32767. (5) egr_mass_flow_before_delay goes into
    egr_mass_flow_delay_line (cm848_delaySignedSample); the sample from delay / 10 passes back is
@@ -11810,7 +11824,7 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
    cm848_calculateAirFuelRatioAndIntakeOxygenFraction /
    cm848_calculateWaterVaporAndSaturationTemperatures; egr_oxygen_fraction in
    cm848_calculateCylinderOxygenMasses; egr_mass_flow_delayed_filtered in
-   cm848_fuelDemandErrorCalculation (fresh air flow = charge - EGR) and the cylinder masses. (was
+   cm848_calculateFreshAirMassFlow (fresh air flow = charge - EGR) and the cylinder masses. (was
    cm848_throttleBasedFuelCalculation) | review-function-readability reviewed 2026-11-20 -
    Readability Medium Accuracy Confidence High */
 
@@ -11846,7 +11860,7 @@ void cm848_calculateDelayedEgrFlowAndFraction(void)
                  (&egr_oxygen_fraction_delay_line,residual_oxygen_fraction_before_delay,
                   (uVar1 & 0xffff) / 10);
   filtered_oxygen_fraction =
-       exponentialMovingAverage((uint)delayed_oxygen_fraction,&egr_oxygen_fraction_filter);
+       exponentialMovingAverage((uint)delayed_oxygen_fraction,&egr_oxygen_fraction_filter_state);
   egr_flow_estimate_terms.egr_oxygen_fraction = (word)filtered_oxygen_fraction;
   uVar1 = ((uint)egr_flow_estimate_terms.oxygen_flow_delay_milliseconds *
           (uint)egr_flow_delay_fraction) / 0x7fff;
@@ -11874,20 +11888,28 @@ void cm848_calculateDelayedEgrFlowAndFraction(void)
 
 
 //
-// Function: cm848_initFilterCoefficients @ 0x00012a58
+// Function: cm848_initializeEgrFlowEstimate @ 0x00012a58
 //
 
-void cm848_initFilterCoefficients(void)
+/* Boot initialization of the EGR flow estimate (e2m 177E / 177F), called by
+   cm848_initializeChargeFlows: presets the lookup caches of the upstream and downstream corrected
+   flow grids and of the two square-root temperature tables to 2, and clears the three filters -
+   egr_oxygen_fraction_filter_state and egr_mass_flow_delayed_filter on
+   egr_mass_flow_delayed_filter_coefficient (C_CHP_EGR_Flow_Fil_Cnst), egr_valve_position_filter on
+   egr_valve_position_filter_coefficient (C_CHP_EGR_Pos_Delay_Fil_Cnst). (was
+   cm848_initFilterCoefficients) */
+
+void cm848_initializeEgrFlowEstimate(void)
 
 {
   diag_state_group5_a_state = 2;
   diag_state_group5_b_state = 2;
   diag_state_group5_c_state = 2;
   diag_state_group5_d_state = 2;
-  diag_state_group6_a_state = 2;
-  diag_state_group6_b_state = 2;
-  egr_oxygen_fraction_filter.accumulator = 0;
-  egr_oxygen_fraction_filter.coefficient = &egr_mass_flow_delayed_filter_coefficient;
+  exhaust_temperature_rankine_square_root_cached_axis_offset = 2;
+  egr_orifice_temperature_rankine_square_root_cached_axis_offset = 2;
+  egr_oxygen_fraction_filter_state.accumulator = 0;
+  egr_oxygen_fraction_filter_state.coefficient = &egr_mass_flow_delayed_filter_coefficient;
   egr_mass_flow_delayed_filter.accumulator = 0;
   egr_mass_flow_delayed_filter.coefficient = &egr_mass_flow_delayed_filter_coefficient;
   egr_valve_position_filter.accumulator = 0;
@@ -11909,16 +11931,16 @@ void cm848_initFilterCoefficients(void)
    load_input, the intake manifold temperature in degrees Rankine = e2m 177D +2), computed_value =
    +8 CHP_Flow_Area_Constant (bore squared over valve diameter squared x 1024, limited to 0x5000;
    engine_bore_inches / engine_valve_diameter_inches = e2m 177C +A C_CHP_Veff_Bore / +C
-   C_CHP_Veff_Valve_Diameter) and pressure_ratio = +A CHP_Pratio (boost_pressure_current_raw = e2m
-   1A5D +0 Exhaust_Press, x 1024 over charge_pressure = Charge_Press, limited to 0x1400 = 5.0). The
+   C_CHP_Veff_Valve_Diameter) and pressure_ratio = +A CHP_Pratio (exhaust_pressure = e2m 1A5D +0
+   Exhaust_Press, x 1024 over charge_pressure = Charge_Press, limited to 0x1400 = 5.0). The
    efficiency is engine_volumetric_efficiency_parameter_c (e2m 177C +16 C_CHP_Veff_Parameter_C)
    minus the smaller of that and (pressure_ratio + engine_volumetric_efficiency_parameter_b (+14
    Parameter_B)) x -engine_volumetric_efficiency_parameter_a (+12 Parameter_A) x rpm_modifier x
    computed_value / lookup_result, limited to engine_volumetric_efficiency_minimum ..
    engine_volumetric_efficiency_maximum (e2m 177C +10 C_CHP_Veff_Min / +E C_CHP_Veff_Max). It reads
    engine speed and the globals directly: the two parameters in function_definitions.csv are never
-   read (the disassembly overwrites r3 and r4 first). Caller cm848_fuelDemandWithLoadCompensation.
-   (was cm848_boostBasedFuelModifier) */
+   read (the disassembly overwrites r3 and r4 first). Caller cm848_calculateChargeFlowEstimate. (was
+   cm848_boostBasedFuelModifier) */
 
 void cm848_calculateVolumetricEfficiency(word boost_denominator,word base_fueling)
 
@@ -11929,13 +11951,16 @@ void cm848_calculateVolumetricEfficiency(word boost_denominator,word base_fuelin
   
   charge_flow_estimate_terms.volumetric_efficiency_mach =
        lookupTableInterpolation
-                 (&WORD_003fa5de,
+                 (&volumetric_efficiency_mach_cached_axis_offset,
                   (word)((uint)engine_rpm_state_t_0040b7ac.current_rpm * (uint)engine_stroke_inches
-                        >> 0x10),boost_rpm_scale_axis_cal,boost_rpm_scale_output_cal,0);
+                        >> 0x10),volumetric_efficiency_mach_axis,volumetric_efficiency_mach_values,0
+                 );
   charge_flow_estimate_terms.volumetric_efficiency_square_root =
        lookupTableInterpolation
-                 (&WORD_003fa5e0,charge_flow_estimate_terms.intake_manifold_temperature_rankine,
-                  boost_load_axis_cal,boost_load_output_cal,0);
+                 (&volumetric_efficiency_square_root_cached_axis_offset,
+                  charge_flow_estimate_terms.intake_manifold_temperature_rankine,
+                  volumetric_efficiency_square_root_axis,volumetric_efficiency_square_root_values,0)
+  ;
   uVar2 = (uint)engine_bore_inches * (uint)engine_bore_inches;
   uVar1 = (uint)engine_valve_diameter_inches;
   if (uVar1 < 0x334) {
@@ -11950,7 +11975,7 @@ void cm848_calculateVolumetricEfficiency(word boost_denominator,word base_fuelin
   if (uVar2 < 0x81) {
     uVar2 = 0x80;
   }
-  uVar2 = (uint)(((ulonglong)boost_pressure_current_raw << 10) / (ulonglong)uVar2);
+  uVar2 = (uint)(((ulonglong)exhaust_pressure << 10) / (ulonglong)uVar2);
   if (0x13ff < uVar2) {
     uVar2 = 0x1400;
   }
@@ -11990,9 +12015,9 @@ void cm848_calculateVolumetricEfficiency(word boost_denominator,word base_fuelin
    temperature in degrees Rankine (e2m 177D +2 CHP_Intake_Manifold_Tmptr_R). The result is limited
    to charge_mass_flow_estimate_minimum .. charge_mass_flow_estimate_maximum (e2m 177C +4
    C_CHP_Charge_Flow_Min / +2 C_CHP_Charge_Flow_Max) and filtered by exponentialMovingAverage (state
-   boost_modifier_filter_state, coefficient charge_mass_flow_filter_coefficient = e2m 177C +0
+   charge_mass_flow_filter_state, coefficient charge_mass_flow_filter_coefficient = e2m 177C +0
    C_CHP_Charge_Flow_Fil_Cnst) into charge_mass_flow_filtered, the divisor of the EGR fraction in
-   cm848_calculateDelayedEgrFlowAndFraction. Caller cm848_fuelDemandWithLoadCompensation. (was
+   cm848_calculateDelayedEgrFlowAndFraction. Caller cm848_calculateChargeFlowEstimate. (was
    cm848_loadBasedFuelAdjustment) */
 
 void cm848_calculateChargeMassFlow(void)
@@ -12018,7 +12043,7 @@ void cm848_calculateChargeMassFlow(void)
   if ((uVar3 <= uVar1) && (uVar3 = uVar1, charge_mass_flow_estimate_maximum < uVar1)) {
     uVar3 = (uint)charge_mass_flow_estimate_maximum;
   }
-  dVar2 = exponentialMovingAverage(uVar3 & 0xffff,&boost_modifier_filter_state);
+  dVar2 = exponentialMovingAverage(uVar3 & 0xffff,&charge_mass_flow_filter_state);
   charge_mass_flow_filtered = (word)dVar2;
   return;
 }
@@ -12026,10 +12051,20 @@ void cm848_calculateChargeMassFlow(void)
 
 
 //
-// Function: cm848_fuelDemandWithLoadCompensation @ 0x00012dc4
+// Function: cm848_calculateChargeFlowEstimate @ 0x00012dc4
 //
 
-void cm848_fuelDemandWithLoadCompensation(word param_1,word param_2)
+/* The charge flow estimate (e2m 177C / 177D), called by cm848_calculateChargeFlows: stores the
+   intake manifold temperature in degrees Rankine
+   (charge_flow_estimate_terms.intake_manifold_temperature_rankine =
+   intake_manifold_temperature_filtered + 0x7300, i.e. + 460 F at 1/64 F per count; 177D +2
+   CHP_Intake_Manifold_Tmptr_R), runs cm848_calculateVolumetricEfficiency and
+   cm848_calculateChargeMassFlow, and sets charge_flow_estimate_terms.charge_flow_source (177D +C
+   Charge_Flow_Source): 0 PRIMARY only while intake_manifold_temperature_filtered_source,
+   charge_pressure_source and exhaust_pressure_source are all 0. (was
+   cm848_fuelDemandWithLoadCompensation) */
+
+void cm848_calculateChargeFlowEstimate(word param_1,word param_2)
 
 {
   charge_flow_estimate_terms.intake_manifold_temperature_rankine =
@@ -12037,7 +12072,7 @@ void cm848_fuelDemandWithLoadCompensation(word param_1,word param_2)
   cm848_calculateVolumetricEfficiency(param_1,param_2);
   cm848_calculateChargeMassFlow();
   if (((intake_manifold_temperature_filtered_source == 0) && (charge_pressure_source == 0)) &&
-     (fuel_demand_droop_state == 0)) {
+     (exhaust_pressure_source == 0)) {
     charge_flow_estimate_terms.charge_flow_source = 0;
   }
   else {
@@ -12049,55 +12084,79 @@ void cm848_fuelDemandWithLoadCompensation(word param_1,word param_2)
 
 
 //
-// Function: cm848_initFilterTablePointers @ 0x00012e40
+// Function: cm848_initializeChargeMassFlowFilter @ 0x00012e40
 //
 
-void cm848_initFilterTablePointers(void)
+/* Boot initialization of the charge mass flow filter, called by cm848_initializeChargeFlows: clears
+   charge_mass_flow_filter_state and points its coefficient at charge_mass_flow_filter_coefficient
+   (e2m 177C +0 C_CHP_Charge_Flow_Fil_Cnst). (was cm848_initFilterTablePointers) */
+
+void cm848_initializeChargeMassFlowFilter(void)
 
 {
-  boost_modifier_filter_state.accumulator = 0;
-  boost_modifier_filter_state.coefficient = &charge_mass_flow_filter_coefficient;
+  charge_mass_flow_filter_state.accumulator = 0;
+  charge_mass_flow_filter_state.coefficient = &charge_mass_flow_filter_coefficient;
   return;
 }
 
 
 
 //
-// Function: cm848_fuelControlMainCalculation @ 0x00012e60
+// Function: cm848_calculateChargeFlows @ 0x00012e60
 //
 
-void cm848_fuelControlMainCalculation(void)
+/* The CHP charge flow model's 10 ms task (cm848_phase_group_a_processing, every even phase of the
+   40-phase main loop): cm848_calculateChargeFlowEstimate (the speed-density charge mass flow, e2m
+   177C / 177D), cm848_calculateDelayedEgrFlowAndFraction (the EGR mass flow, its transport delay
+   and the EGR fraction, 177E / 177F) and cm848_calculateFreshAirMassFlow (charge minus EGR, 177B).
+   CHP is the e2m prefix of all these records; the e2m never spells it out. (was
+   cm848_fuelControlMainCalculation) */
+
+void cm848_calculateChargeFlows(void)
 
 {
-  cm848_fuelDemandWithLoadCompensation();
+  cm848_calculateChargeFlowEstimate();
   cm848_calculateDelayedEgrFlowAndFraction();
-  cm848_fuelDemandErrorCalculation();
+  cm848_calculateFreshAirMassFlow();
   return;
 }
 
 
 
 //
-// Function: cm848_initFuelControlFilterSystem @ 0x00012e88
+// Function: cm848_initializeChargeFlows @ 0x00012e88
 //
 
-void cm848_initFuelControlFilterSystem(void)
+/* Boot initialization of the CHP charge flow model, called by cm848_applicationMain:
+   cm848_initializeChargeMassFlowFilter, cm848_initializeEgrFlowEstimate,
+   cm848_initializeFreshAirMassFlowFilter and cm848_initializePumpingTorqueLookupCache. (was
+   cm848_initFuelControlFilterSystem) */
+
+void cm848_initializeChargeFlows(void)
 
 {
-  cm848_initFilterTablePointers();
-  cm848_initFilterCoefficients();
-  cm848_initFuelDemandBlendPointers();
-  cm848_initFuelFilterDefaults();
+  cm848_initializeChargeMassFlowFilter();
+  cm848_initializeEgrFlowEstimate();
+  cm848_initializeFreshAirMassFlowFilter();
+  cm848_initializePumpingTorqueLookupCache();
   return;
 }
 
 
 
 //
-// Function: cm848_fuelDemandErrorCalculation @ 0x00012eb4
+// Function: cm848_calculateFreshAirMassFlow @ 0x00012eb4
 //
 
-void cm848_fuelDemandErrorCalculation(void)
+/* The fresh air mass flow (e2m 177B), called by cm848_calculateChargeFlows:
+   charge_mass_flow_filtered - egr_mass_flow_delayed_filtered (0 unless the EGR flow is the
+   smaller), filtered by exponentialMovingAverage (fresh_air_mass_flow_filter_state, coefficient
+   fresh_air_mass_flow_filter_coefficient = e2m 1A0F +0 C_CHP_Fresh_Air_Flow_Fil_Cnst) into
+   charge_flow_estimate_terms.fresh_air_mass_flow_filtered (177B +0 Fresh_Air_Flow);
+   charge_flow_estimate_terms.fresh_air_flow_source (177B +2) is 0 PRIMARY only while
+   charge_flow_source and egr_flow_source are 0. (was cm848_fuelDemandErrorCalculation) */
+
+void cm848_calculateFreshAirMassFlow(void)
 
 {
   dword dVar1;
@@ -12109,7 +12168,7 @@ void cm848_fuelDemandErrorCalculation(void)
   else {
     uVar2 = 0;
   }
-  dVar1 = exponentialMovingAverage((uint)uVar2,&fuel_blend_rpm_base_filter_state);
+  dVar1 = exponentialMovingAverage((uint)uVar2,&fresh_air_mass_flow_filter_state);
   charge_flow_estimate_terms.fresh_air_mass_flow_filtered = (word)dVar1;
   if ((charge_flow_estimate_terms.charge_flow_source == 0) && (egr_flow_source == 0)) {
     charge_flow_estimate_terms.fresh_air_flow_source = 0;
@@ -12123,14 +12182,19 @@ void cm848_fuelDemandErrorCalculation(void)
 
 
 //
-// Function: cm848_initFuelDemandBlendPointers @ 0x00012f40
+// Function: cm848_initializeFreshAirMassFlowFilter @ 0x00012f40
 //
 
-void cm848_initFuelDemandBlendPointers(void)
+/* Boot initialization of the fresh air mass flow filter, called by cm848_initializeChargeFlows:
+   clears fresh_air_mass_flow_filter_state and points its coefficient at
+   fresh_air_mass_flow_filter_coefficient (e2m 1A0F +0 C_CHP_Fresh_Air_Flow_Fil_Cnst). (was
+   cm848_initFuelDemandBlendPointers) */
+
+void cm848_initializeFreshAirMassFlowFilter(void)
 
 {
-  fuel_blend_rpm_base_filter_state.accumulator = 0;
-  fuel_blend_rpm_base_filter_state.coefficient = &fuel_blend_rpm_base_filter_coefficient;
+  fresh_air_mass_flow_filter_state.accumulator = 0;
+  fresh_air_mass_flow_filter_state.coefficient = &fresh_air_mass_flow_filter_coefficient;
   return;
 }
 
@@ -12230,18 +12294,18 @@ void mpc555_initManifoldPressureFilter(void)
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
 /* Pumping torque (e2m 1781): looks up the nominal engine delta pressure of the engine speed x
    total_injection_quantity_for_air_handling grid (e2m 1954 C_CHP_Nominal_Delta_P_Table) into
-   fuel_demand_blend_lookup (+0 CHP_Nominal_Engine_Delta_P), subtracts the actual engine delta
+   nominal_engine_delta_pressure (+0 CHP_Nominal_Engine_Delta_P), subtracts the actual engine delta
    pressure egr_delta_pressure_negated (e2m 1A19 +8 Engine_Delta_Press), applies the deadband
-   fuel_demand_deadband_cal (e2m 1780 +8 C_CHP_Pump_Torque_Deadband), converts the difference to
-   torque with engine_displacement_cubic_inches and fuel_demand_percent_scale_cal (e2m 1780 +4
-   C_CHP_Pump_Torque_Multiplier) and limits it to +-8000 into fuel_demand_blend_intermediate (+4
-   CHP_Pumping_Torque_No_Offset). The same torque plus fuel_demand_blend_offset_cal (e2m 1780 +6
+   pumping_torque_engine_delta_pressure_deadband (e2m 1780 +8 C_CHP_Pump_Torque_Deadband), converts
+   the difference to torque with engine_displacement_cubic_inches and pumping_torque_multiplier (e2m
+   1780 +4 C_CHP_Pump_Torque_Multiplier) and limits it to +-8000 into pumping_torque_without_offset
+   (+4 CHP_Pumping_Torque_No_Offset). The same torque plus pumping_torque_offset (e2m 1780 +6
    C_CHP_Pump_Torque_Offset), set to 0 while total_injection_quantity_for_air_handling is below
-   fuel_demand_load_threshold_cal (e2m 1780 +A C_CHP_Pump_Torque_Min_Fuel) and limited to
-   fuel_demand_min_limit_cal .. fuel_demand_blend_upper_cal (e2m 1780 +2 / +0
-   C_CHP_Pumping_Torque_Min / _Max), is pumping_torque_adjustment (+2 CHP_Pumping_Torque_Adj), the
-   term between net and gross torque. It reads engine speed and the globals directly: the two
-   parameters in function_definitions.csv are never read (r3 and r4 are overwritten first). Caller
+   pumping_torque_minimum_fuel (e2m 1780 +A C_CHP_Pump_Torque_Min_Fuel) and limited to
+   pumping_torque_minimum .. pumping_torque_maximum (e2m 1780 +2 / +0 C_CHP_Pumping_Torque_Min /
+   _Max), is pumping_torque_adjustment (+2 CHP_Pumping_Torque_Adj), the term between net and gross
+   torque. It reads engine speed and the globals directly: the two parameters in
+   function_definitions.csv are never read (r3 and r4 are overwritten first). Caller
    cm848_periodicTaskSet_controlLoop. (was cm848_calculateBoostPressureOffset) */
 
 void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
@@ -12252,29 +12316,28 @@ void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
   uint uVar3;
   int iVar4;
   
-  fuel_demand_blend_lookup =
+  nominal_engine_delta_pressure =
        cm848_dualAxisTableInterpolation
                  (&diag_state_group7_a_state,engine_rpm_state_t_0040b7ac.current_rpm,
                   combustion_map_1_engine_speed_x_axis,total_injection_quantity_for_air_handling,
-                  combustion_map_1_fuel_quantity_y_axis,fuel_demand_blend_yend_cal,4);
-  sVar2 = fuel_demand_blend_lookup - egr_delta_pressure_negated;
-  if ((int)sVar2 + (int)(short)fuel_demand_deadband_cal < 0) {
-    sVar2 = sVar2 + fuel_demand_deadband_cal;
+                  combustion_map_1_fuel_quantity_y_axis,nominal_engine_delta_pressure_grid,4);
+  sVar2 = nominal_engine_delta_pressure - egr_delta_pressure_negated;
+  if ((int)sVar2 + (int)(short)pumping_torque_engine_delta_pressure_deadband < 0) {
+    sVar2 = sVar2 + pumping_torque_engine_delta_pressure_deadband;
   }
-  else if ((int)sVar2 - (int)(short)fuel_demand_deadband_cal < 1) {
+  else if ((int)sVar2 - (int)(short)pumping_torque_engine_delta_pressure_deadband < 1) {
     sVar2 = 0;
   }
   else {
-    sVar2 = sVar2 - fuel_demand_deadband_cal;
+    sVar2 = sVar2 - pumping_torque_engine_delta_pressure_deadband;
   }
   uVar3 = (int)(short)((sVar2 * 5) / 10) *
           (int)(short)(((uint)engine_displacement_cubic_inches * 0x52e) / 100000);
   iVar1 = (int)(short)((short)((int)uVar3 >> 0xb) + (ushort)((int)uVar3 < 0 && (uVar3 & 0x7ff) != 0)
                       );
   iVar1 = (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)iVar1 *
-                               (longlong)(int)(short)fuel_demand_percent_scale_cal) >> 0x20),
-                         iVar1 * (short)fuel_demand_percent_scale_cal) / 100);
+                               ((longlong)iVar1 * (longlong)(int)(short)pumping_torque_multiplier)
+                              >> 0x20),iVar1 * (short)pumping_torque_multiplier) / 100);
   if (iVar1 < 0x1f41) {
     iVar4 = iVar1;
     if (iVar1 < -8000) {
@@ -12284,14 +12347,14 @@ void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
   else {
     iVar4 = 8000;
   }
-  fuel_demand_blend_intermediate = (word)iVar4;
-  iVar1 = iVar1 + (short)fuel_demand_blend_offset_cal;
-  if (total_injection_quantity_for_air_handling < fuel_demand_load_threshold_cal) {
+  pumping_torque_without_offset = (word)iVar4;
+  iVar1 = iVar1 + (short)pumping_torque_offset;
+  if (total_injection_quantity_for_air_handling < pumping_torque_minimum_fuel) {
     iVar1 = 0;
   }
-  iVar4 = (int)(short)fuel_demand_blend_upper_cal;
-  if ((iVar1 <= iVar4) && (iVar4 = iVar1, iVar1 < (short)fuel_demand_min_limit_cal)) {
-    iVar4 = (int)(short)fuel_demand_min_limit_cal;
+  iVar4 = (int)(short)pumping_torque_maximum;
+  if ((iVar1 <= iVar4) && (iVar4 = iVar1, iVar1 < (short)pumping_torque_minimum)) {
+    iVar4 = (int)(short)pumping_torque_minimum;
   }
   pumping_torque_adjustment = (word)iVar4;
   return;
@@ -12300,10 +12363,15 @@ void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
 
 
 //
-// Function: cm848_initFuelFilterDefaults @ 0x0001327c
+// Function: cm848_initializePumpingTorqueLookupCache @ 0x0001327c
 //
 
-void cm848_initFuelFilterDefaults(void)
+/* Boot initialization of the pumping torque lookup, called by cm848_initializeChargeFlows: presets
+   both words of the 2-D lookup cache that cm848_calculatePumpingTorqueAdjustment passes to
+   cm848_dualAxisTableInterpolation (the nominal engine delta pressure grid, e2m 1954) to 2. (was
+   cm848_initFuelFilterDefaults) */
+
+void cm848_initializePumpingTorqueLookupCache(void)
 
 {
   diag_state_group7_a_state = 2;
@@ -15551,11 +15619,11 @@ LAB_00017f34:
    egr_orifice_delta_pressure (+0 EGR_Orifice_Delta_Press) is 0 with its source
    egr_orifice_delta_pressure_source (+2) = 2 (default), and the engine delta pressure source
    egr_delta_pressure_negated_source (+A Engine_Delta_Press_Source) is
-   egr_delta_pressure_sensor_source. Nonzero: egr_delta_pressure = (boost_pressure_current_raw (e2m
-   1A5D +0 Exhaust_Press) - boost_pressure_baseline_cal) - charge_pressure (Charge_Press),
+   egr_delta_pressure_sensor_source. Nonzero: egr_delta_pressure = (exhaust_pressure (e2m 1A5D +0
+   Exhaust_Press) - boost_pressure_baseline_cal) - charge_pressure (Charge_Press),
    egr_orifice_delta_pressure is the sensor output (egr_orifice_delta_pressure_source = its source),
    and the computed source is 2 when the exhaust and charge pressure sources
-   (fuel_demand_droop_state, charge_pressure_source) are both 2, 0 when both are 0, else 1. Then
+   (exhaust_pressure_source, charge_pressure_source) are both 2, 0 when both are 0, else 1. Then
    egr_delta_pressure_negated = -egr_delta_pressure (+8 Engine_Delta_Press) and
    egr_delta_pressure_source (+6 EGR_Valve_Delta_Press_Source) = the engine delta pressure source.
    Caller cm848_phase_group_a_processing. (was cm848_calculateFuelFlowWithMode) */
@@ -15570,13 +15638,12 @@ void cm848_calculateEgrDeltaPressures(void)
     egr_delta_pressure_negated_source = egr_delta_pressure_sensor_source;
   }
   else {
-    egr_delta_pressure =
-         (boost_pressure_current_raw - boost_pressure_baseline_cal) - charge_pressure;
+    egr_delta_pressure = (exhaust_pressure - boost_pressure_baseline_cal) - charge_pressure;
     egr_orifice_delta_pressure = egr_delta_pressure_sensor_output;
-    if ((fuel_demand_droop_state == 2) && (charge_pressure_source == 2)) {
+    if ((exhaust_pressure_source == 2) && (charge_pressure_source == 2)) {
       egr_delta_pressure_source = 2;
     }
-    else if ((fuel_demand_droop_state == 0) && (charge_pressure_source == 0)) {
+    else if ((exhaust_pressure_source == 0) && (charge_pressure_source == 0)) {
       egr_delta_pressure_source = 0;
     }
     else {
@@ -57023,8 +57090,8 @@ void cm848_applicationMain(void)
   cm848_sensorChannel4_process();
   cm848_sensorChannel7_update_configBundle();
   cm848_sensorChannel7_process();
-  cm848_initFuelControlFilterSystem();
-  cm848_initFuelFilterDefaults();
+  cm848_initializeChargeFlows();
+  cm848_initializePumpingTorqueLookupCache();
   cm848_initializeOffNominalCompensationLookupCaches();
   cm848_initializeCombustionLimitLookupCaches();
   cm848_initializeCombustionReferenceMapPointers();
@@ -57104,7 +57171,7 @@ void cm848_applicationMain(void)
   emptyStubFunction3();
   cm848_initialization_step_14();
   hpcr_initializeTimerRegisters();
-  cm848_initBoostPressureFaultHandling();
+  cm848_initializeExhaustPressure();
   cm848_initFlowControlStateVariables();
   cm848_initBoostControlInterpolationState();
   cm848_initializeTurbochargerSpeedSource();
@@ -61288,7 +61355,7 @@ void cm848_calculateEgrCoolerEfficiency(void)
 //
 
 /* Runs cm848_calculateEgrCoolerEfficiency, then sets egr_system_failure_flag when any EGR input or
-   actuator state is bad (charge_pressure_source or fuel_demand_droop_state 2,
+   actuator state is bad (charge_pressure_source or exhaust_pressure_source 2,
    intake_manifold_temperature_filtered_source non-zero, egr_delta_pressure_sensor_source or
    egr_valve_position_source non-zero, faults 726 / 727 / 728 of the EGR valve, or the cooler
    fouled) and the first word of fuel_blend_correction_inhibit_flag when either of the two state
@@ -61298,7 +61365,7 @@ void cm848_updateEgrSystemHealthFlags(void)
 
 {
   cm848_calculateEgrCoolerEfficiency();
-  if ((((((charge_pressure_source == 2) || (fuel_demand_droop_state == 2)) ||
+  if ((((((charge_pressure_source == 2) || (exhaust_pressure_source == 2)) ||
         (intake_manifold_temperature_filtered_source != 0)) ||
        ((egr_delta_pressure_sensor_source != 0 || (egr_valve_position_source != 0)))) ||
       ((egr_orifice_temperature_source != 0 ||
@@ -61311,7 +61378,7 @@ void cm848_updateEgrSystemHealthFlags(void)
   else {
     egr_system_failure_flag = 0;
   }
-  if ((charge_pressure_source == 1) || (fuel_demand_droop_state == 1)) {
+  if ((charge_pressure_source == 1) || (exhaust_pressure_source == 1)) {
     fuel_blend_correction_inhibit_flag._0_2_ = 1;
   }
   else {
@@ -61811,8 +61878,8 @@ void fuel_demandLimit_calPtrs_init(void)
 
 /* Converts exhaust_temperature (twice the intake manifold temperature in degF plus the combustion
    temperature rise from cm848_estimateExhaustTemperature) with x 8542 + 7858640 / 1000 into
-   DAT_003fba18, divides cylinder_residual_gas_mass_density_constant x boost_pressure_current_raw by
-   it into cylinder_residual_gas_mass_unclamped and clamps that between
+   DAT_003fba18, divides cylinder_residual_gas_mass_density_constant x exhaust_pressure by it into
+   cylinder_residual_gas_mass_unclamped and clamps that between
    cylinder_residual_gas_mass_lower_limit and _upper_limit into cylinder_residual_gas_mass.
    cm848_calculateCylinderOxygenMasses multiplies the clamped value by the residual oxygen fraction.
    (was cm848_sensorProcessing_periodic) */
@@ -61824,7 +61891,7 @@ void cm848_calculateResidualGasMass(void)
   
   uVar1 = ((uint)exhaust_temperature * 0x215e + 0x77e9d0) / 1000;
   DAT_003fba18 = (short)uVar1;
-  uVar1 = ((uint)cylinder_residual_gas_mass_density_constant * (uint)boost_pressure_current_raw) /
+  uVar1 = ((uint)cylinder_residual_gas_mass_density_constant * (uint)exhaust_pressure) /
           (uVar1 & 0xffff);
   cylinder_residual_gas_mass_unclamped = (word)uVar1;
   uVar1 = uVar1 & 0xffff;
@@ -63863,16 +63930,16 @@ void cm848_phase_groupA_exponentialAverage(void)
     uVar2 = 0xffff;
   }
   dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fbce2);
-  boost_pressure_synthetic_ema = (word)dVar1;
+  exhaust_pressure_estimate = (word)dVar1;
   if ((((combustion_override_and_estimation_enable_flags_cal & 0x2000) == 0) ||
       (egr_valve_position_source == 2)) || (charge_pressure_source == 2)) {
-    boost_correction_mode_flags = 0x80;
+    exhaust_pressure_estimate_state = 0x80;
   }
   else if ((egr_valve_position_source == 1) || (charge_pressure_source == 1)) {
-    boost_correction_mode_flags = 0x40;
+    exhaust_pressure_estimate_state = 0x40;
   }
   else {
-    boost_correction_mode_flags = 0;
+    exhaust_pressure_estimate_state = 0;
   }
   return;
 }
@@ -66005,10 +66072,23 @@ void cm848_resetFaultDerateFuelLimit(void)
 
 
 //
-// Function: phase_group_a_validateEngineSync @ 0x00509848
+// Function: cm848_calculateExhaustPressure @ 0x00509848
 //
 
-void phase_group_a_validateEngineSync(void)
+/* Exhaust pressure post-processing (e2m 1A5D), every 10 ms from cm848_phase_group_a_processing.
+   With egr_flow_cold_side_algorithm_select set (e2m 177E +8, the cold side EGR flow algorithm) the
+   measurement is sensor channel 109 and exhaust_pressure_state = exhaust_pressure_estimate_state |
+   sensor_channel109_fault_status; otherwise the measurement is charge_pressure +
+   egr_delta_pressure_sensor_output and the state gets 8 / 4 for a DEFAULT / BACKUP charge pressure
+   or delta pressure source. Fault bit 524 (fault_detected_bits_512_to_527 0x1000) adds 0x20 in
+   both. Then: no 0x2a state bit - the measurement (negative values clamped to 0),
+   exhaust_pressure_source 0 PRIMARY; else no 0x80 bit - exhaust_pressure_estimate (e2m 1772 +A),
+   source 1 BACKUP; else the sensor default sensor_channel109_default_value, source 2 DEFAULT.
+   exhaust_pressure_estimate_as_primary_cal (1 on this truck) forces the estimate with source 0.
+   exhaust_pressure_virtual_sensor_copy (1772 +0) keeps the raw sensor value. (was
+   phase_group_a_validateEngineSync) */
+
+void cm848_calculateExhaustPressure(void)
 
 {
   ushort uVar1;
@@ -66020,12 +66100,12 @@ void phase_group_a_validateEngineSync(void)
     else {
       uVar1 = 0x20;
     }
-    boost_pressure_source_flags =
-         boost_correction_mode_flags | sensor_channel109_fault_status | uVar1;
-    boost_pressure_current_raw = sensor_channel109_value;
+    exhaust_pressure_state =
+         exhaust_pressure_estimate_state | sensor_channel109_fault_status | uVar1;
+    exhaust_pressure = sensor_channel109_value;
     goto LAB_00509978;
   }
-  boost_pressure_current_raw = charge_pressure + egr_delta_pressure_sensor_output;
+  exhaust_pressure = charge_pressure + egr_delta_pressure_sensor_output;
   if ((fault_detected_bits_512_to_527 & 0x1000) == 0) {
     if ((charge_pressure_source == 2) || (egr_delta_pressure_sensor_source == 2)) {
       uVar1 = 8;
@@ -66042,35 +66122,35 @@ void phase_group_a_validateEngineSync(void)
       if ((charge_pressure_source == 1) || (egr_delta_pressure_sensor_source == 1)) {
         uVar1 = 0x24;
 LAB_00509918:
-        boost_pressure_source_flags = boost_correction_mode_flags | uVar1;
+        exhaust_pressure_state = exhaust_pressure_estimate_state | uVar1;
         goto LAB_00509978;
       }
       uVar1 = 0x20;
 LAB_005098f4:
-      boost_pressure_source_flags = boost_correction_mode_flags | uVar1;
+      exhaust_pressure_state = exhaust_pressure_estimate_state | uVar1;
       goto LAB_00509978;
     }
     uVar1 = 0x28;
   }
-  boost_pressure_source_flags = boost_correction_mode_flags | uVar1;
+  exhaust_pressure_state = exhaust_pressure_estimate_state | uVar1;
 LAB_00509978:
-  if ((boost_pressure_source_flags & 0x2a) == 0) {
-    if ((short)boost_pressure_current_raw < 0) {
-      boost_pressure_current_raw = 0;
+  if ((exhaust_pressure_state & 0x2a) == 0) {
+    if ((short)exhaust_pressure < 0) {
+      exhaust_pressure = 0;
     }
-    fuel_demand_droop_state = 0;
+    exhaust_pressure_source = 0;
   }
-  else if ((boost_pressure_source_flags & 0x80) == 0) {
-    boost_pressure_current_raw = boost_pressure_synthetic_ema;
-    fuel_demand_droop_state = 1;
+  else if ((exhaust_pressure_state & 0x80) == 0) {
+    exhaust_pressure = exhaust_pressure_estimate;
+    exhaust_pressure_source = 1;
   }
   else {
-    boost_pressure_current_raw = sensor_channel109_default_value;
-    fuel_demand_droop_state = 2;
+    exhaust_pressure = sensor_channel109_default_value;
+    exhaust_pressure_source = 2;
   }
-  if (DAT_003fd8ea != 0) {
-    fuel_demand_droop_state = 0;
-    boost_pressure_current_raw = boost_pressure_synthetic_ema;
+  if (exhaust_pressure_estimate_as_primary_cal != 0) {
+    exhaust_pressure_source = 0;
+    exhaust_pressure = exhaust_pressure_estimate;
   }
   exhaust_pressure_virtual_sensor_copy = sensor_channel109_value;
   return;
@@ -66079,19 +66159,24 @@ LAB_00509978:
 
 
 //
-// Function: cm848_initBoostPressureFaultHandling @ 0x00509a2c
+// Function: cm848_initializeExhaustPressure @ 0x00509a2c
 //
 
-void cm848_initBoostPressureFaultHandling(void)
+/* Boot initialization of the exhaust pressure (e2m 1A5D), called by cm848_applicationMain:
+   exhaust_pressure and exhaust_pressure_virtual_sensor_copy = sensor_channel109_value;
+   exhaust_pressure_source 0 PRIMARY while sensor_channel109_fault_status is 0 or 1 and 2 DEFAULT
+   when it is 2. (was cm848_initBoostPressureFaultHandling) */
+
+void cm848_initializeExhaustPressure(void)
 
 {
   if ((sensor_channel109_fault_status == 0) || (sensor_channel109_fault_status == 1)) {
-    fuel_demand_droop_state = 0;
+    exhaust_pressure_source = 0;
   }
   else if (sensor_channel109_fault_status == 2) {
-    fuel_demand_droop_state = 2;
+    exhaust_pressure_source = 2;
   }
-  boost_pressure_current_raw = sensor_channel109_value;
+  exhaust_pressure = sensor_channel109_value;
   exhaust_pressure_virtual_sensor_copy = sensor_channel109_value;
   return;
 }
