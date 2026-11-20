@@ -90,15 +90,15 @@ fuel_pressure_governor_state_t,0x0040b87f,fuel_pressure_governor_mode,FUEL_PRESS
 fuel_pressure_governor_state_t,0x0040b87f,fuel_pressure_governor_demand,word,2,Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count),,verified
 fuel_pressure_governor_state_t,0x0040b87f,fuel_metering_command,word,2,"Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw)",,verified
 fuel_pressure_governor_state_t,0x0040b87f,filtered_battery_voltage,word,2,"e2m 8019 +5 HPCR_Filtered_Battery_Voltage (volts): stored by cm848_filterEngineSensorValue (sth) and read by cm848_calculateFuelMeteringCommand for its battery voltage compensation (lhz) - a word, so the struct is 7 bytes (was the 1-byte reserved_05)",,needs_review
-# Engine RPM State - current and target engine speed values
-# Used by processEngineRpmTarget and governor control
+# Engine speed state - e2m 819B +1E .. +2D (the engine speed module ES)
+# Written by the speed interrupts; filtered_engine_speed is the engine speed the whole firmware reads
 # Total size: 16 bytes (0x0040b7ac-0x0040b7bb)
-engine_rpm_state_t,0x0040b7ac,filtered_rpm,word,2,Moving average of engine_rpm_measured (1/8 rpm),,verified
-engine_rpm_state_t,0x0040b7ac,crank_capture_period_sum,dword,4,Crank capture period sum (lwz / stw) - averaged by the vehicle speed interrupt,,verified
-engine_rpm_state_t,0x0040b7ac,crank_tooth_period_sum,dword,4,Crank tooth period sum (lwz / stw),,verified
-engine_rpm_state_t,0x0040b7ac,crank_capture_period_sample_count,word,2,Samples in crank_capture_period_sum,,verified
-engine_rpm_state_t,0x0040b7ac,crank_tooth_period_sample_count,word,2,Samples in crank_tooth_period_sum,,verified
-engine_rpm_state_t,0x0040b7ac,current_rpm,word,2,Written with the same value as filtered_rpm by the same three writers,,verified
+engine_speed_state_t,0x0040b7ac,engine_speed,word,2,"e2m 819B +1E Engine_Speed '[ESCMES] Engine speed based from period of one cam rev' (1/8 rpm): in this firmware written with the same value as filtered_engine_speed by the same writers; the fault freeze frames copy it (was filtered_rpm)",,verified
+engine_speed_state_t,0x0040b7ac,main_speed_period_sum_between_vss_pulses,dword,4,"e2m 819B +20 EPS_VSS_Accumulator '[ESACGR] Accumulated main EPS period between VSS interrupts': hpcr_processEngineSyncPulses adds each crank_accumulated_period; cm848_vehicleSpeedSensorInterruptHandler divides it by the count (was crank_capture_period_sum)",,verified
+engine_speed_state_t,0x0040b7ac,backup_speed_period_sum_between_vss_pulses,dword,4,"e2m 819B +24 EPS_VSS_Accumulator_Backup '[ESACBKGR] Accumulated backup EPS period between VSS interrupts': added by mpc555_handleCamSignalInterrupt; divided by the count in cm848_vehicleSpeedSensorInterruptHandler (was crank_tooth_period_sum)",,verified
+engine_speed_state_t,0x0040b7ac,main_speed_pulse_count_between_vss_pulses,word,2,"e2m 819B +28 EPS_VSS_Counter '[ESCTGR] Number of main EPS interrupts between VSS interrupts' (was crank_capture_period_sample_count)",,verified
+engine_speed_state_t,0x0040b7ac,backup_speed_pulse_count_between_vss_pulses,word,2,"e2m 819B +2A EPS_VSS_Counter_Backup '[ESCTBKGR] Number of backup EPS interrupts between VSS interrupts' (was crank_tooth_period_sample_count)",,verified
+engine_speed_state_t,0x0040b7ac,filtered_engine_speed,word,2,"e2m 819B +2C Filtered_Engine_Speed '[ENGRPM] Variable 2^n pulse averaged and filtered engine speed' (1/8 rpm; x 0.125 verified live at 0x40b7ba 2026-01-31): the engine speed the rest of the firmware reads (was current_rpm)",,verified
 # Primary Sensor Readings - core engine sensor inputs
 # Used by sensor processing and protection monitoring
 # Total size: 8 bytes (0x0040baf2-0x0040baf9)

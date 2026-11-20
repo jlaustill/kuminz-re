@@ -1073,7 +1073,7 @@ typedef struct protection_status_flags_t protection_status_flags_t;
 typedef struct protection_timer_state_t protection_timer_state_t;
 typedef struct engine_crank_state_t engine_crank_state_t;
 typedef struct fuel_pressure_governor_state_t fuel_pressure_governor_state_t;
-typedef struct engine_rpm_state_t engine_rpm_state_t;
+typedef struct engine_speed_state_t engine_speed_state_t;
 typedef struct sensor_readings_t sensor_readings_t;
 typedef struct eeprom_header_t eeprom_header_t;
 typedef struct governor_output_t governor_output_t;
@@ -1301,13 +1301,13 @@ struct fuel_pressure_governor_state_t {
     uint16_t filtered_battery_voltage;  /* e2m 8019 +5 HPCR_Filtered_Battery_Voltage (volts): stored by cm848_filterEngineSensorValue (sth) and read by cm848_calculateFuelMeteringCommand for its battery voltage compensation (lhz) - a word, so the struct is 7 bytes (was the 1-byte reserved_05) */
 };
 
-struct engine_rpm_state_t {
-    uint16_t filtered_rpm;  /* Moving average of engine_rpm_measured (1/8 rpm) */
-    uint32_t crank_capture_period_sum;  /* Crank capture period sum (lwz / stw) - averaged by the vehicle speed interrupt */
-    uint32_t crank_tooth_period_sum;  /* Crank tooth period sum (lwz / stw) */
-    uint16_t crank_capture_period_sample_count;  /* Samples in crank_capture_period_sum */
-    uint16_t crank_tooth_period_sample_count;  /* Samples in crank_tooth_period_sum */
-    uint16_t current_rpm;  /* Written with the same value as filtered_rpm by the same three writers */
+struct engine_speed_state_t {
+    uint16_t engine_speed;  /* e2m 819B +1E Engine_Speed '[ESCMES] Engine speed based from period of one cam rev' (1/8 rpm): in this firmware written with the same value as filtered_engine_speed by the same writers; the fault freeze frames copy it (was filtered_rpm) */
+    uint32_t main_speed_period_sum_between_vss_pulses;  /* e2m 819B +20 EPS_VSS_Accumulator '[ESACGR] Accumulated main EPS period between VSS interrupts': hpcr_processEngineSyncPulses adds each crank_accumulated_period; cm848_vehicleSpeedSensorInterruptHandler divides it by the count (was crank_capture_period_sum) */
+    uint32_t backup_speed_period_sum_between_vss_pulses;  /* e2m 819B +24 EPS_VSS_Accumulator_Backup '[ESACBKGR] Accumulated backup EPS period between VSS interrupts': added by mpc555_handleCamSignalInterrupt; divided by the count in cm848_vehicleSpeedSensorInterruptHandler (was crank_tooth_period_sum) */
+    uint16_t main_speed_pulse_count_between_vss_pulses;  /* e2m 819B +28 EPS_VSS_Counter '[ESCTGR] Number of main EPS interrupts between VSS interrupts' (was crank_capture_period_sample_count) */
+    uint16_t backup_speed_pulse_count_between_vss_pulses;  /* e2m 819B +2A EPS_VSS_Counter_Backup '[ESCTBKGR] Number of backup EPS interrupts between VSS interrupts' (was crank_tooth_period_sample_count) */
+    uint16_t filtered_engine_speed;  /* e2m 819B +2C Filtered_Engine_Speed '[ENGRPM] Variable 2^n pulse averaged and filtered engine speed' (1/8 rpm; x 0.125 verified live at 0x40b7ba 2026-01-31): the engine speed the rest of the firmware reads (was current_rpm) */
 };
 
 struct sensor_readings_t {
