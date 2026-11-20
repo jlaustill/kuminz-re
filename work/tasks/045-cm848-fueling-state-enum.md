@@ -490,6 +490,8 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - the 80EF dword gains read at their old word width;
   - a number with thousands separators.
   A read 2 bytes off fails 79 of the 92.
+  Caveat (stage 9): the rows at 0x40c200 and up were checked on the flat read, before the dump gap was found.
+  0x40c27c's quoted 0 has no dump data behind it; its comment was fixed in stage 9.
 
 ## Stage 8b - the fuel pressure governor / fuel metering gain records as structs (2026-11-19, PR #52)
 
@@ -636,6 +638,20 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - So from 0x40c280 up, read the dump at address - 0x80. 0x40c200-0x40c27f has no data: 15 named rows, the PWM
     period commands and the collector words.
   - `e2m_name_audit.py` / `lookup_tables.py` still read it flat (follow-up).
+- **Review after the apply** (advisor):
+  - **Function bodies read by the main session:** the five names where an agent overrode the proposal (0x42770,
+    0x5268e8, 0x533b5c, 0x21ac0, 0x49004). All fit the code. 0x255c0's PGN 65232 is the CAN id of its transmit
+    descriptor (0x18fed000).
+  - **Cross-firmware, by address:** 10 applied functions have review-tier rows in `cross_firmware_matches.csv`.
+    Their CM550 sides have other names (`vp44_FUN_*`, `cm550_*`), so no shared name broke. CM550's
+    `diagnostic_session_state` (0x80dc92, untyped, no comment, not in the variable map) is only a name
+    coincidence; it may be CM550's RAM refresh enable (lead).
+  - **Stale names:** the all-CSV sweep over the 324 old names is clean. The one hit is the label row
+    `fuel_demand_enable_sync_flag_shadow+2` (0x3fb52a); per wave 14 it is the previous-pass
+    `cruise_control_engaged_flag` (lead). No comment cites a held proposal as if it had been applied.
+  - **Dump gap comments:** 0x40c274 and 0x40c27c no longer quote a dump value.
+  - **A slip, recovered:** a `git checkout` of the .cpp after the verify restored the pre-wave version. A rebuild
+    produced it again; its reversed form is byte-identical to the verified build's, and the warnings match.
 
 ## Follow-ups (open)
 
