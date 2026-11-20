@@ -138,7 +138,7 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
     - their sum, `fuel_pressure_governor_state.fuel_pressure_governor_demand` (was `reference_count`). It is clamped to a lower limit and an rpm table, and the integrator is put back while the demand is outside them.
   - **Loop 2, feedback trim:** a table turns the clamped demand into a target for `fuel_metering_feedback_input` (QADC index slot 63 x 4; the physical signal is not identified). The command is base + PI trim x base / 4096.
   - **Shared helpers:** `cm848_applyPiecewiseLinearGain`, `cm848_integrateWithZoneGain` and `cm848_calculateFilteredDerivative`.
-  - **Stale-register quirk (confirmed 2026-11-16):** only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
+  - **Stale-register quirk (confirmed 2026-11-16):** only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while average_engine_speed is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
   - **State:** four Q16.16 states, typed as `q16_fixed_point_t` globals (`.integer_part` / `.fractional_part`), at 0x3fb66a / 66e / 672 / 676. A struct-typed global made the raw `0x3fb672`-style call arguments render as `&name`. `cm848_initializeFuelPressureGovernorState` never clears 0x3fb676: its fourth store pair repeats 0x3fb66e.
 - **Serial reflash hand-off (2026-11-15, PR #48, todo 038):** a serial (SCI) reflash goes through the boot ROM; the application only hands the session over.
   - **SCI command 49 (0x31, `cm848_sciCommand49Callback`):** needs byte 1, `sci_security_state` 1 (unlocked) and `engine_state` 1 (or `end_of_line_test_settings_cal.field_mode_register` 5100). It writes `serial_reflash_unlock_request_cal` = 1 (EEPROM 0x56) and the boot-kernel magic 0x1d0a (EEPROM 0x00) with `cm848_writeEepromBytes` (was `cm848_memoryBlock_checksum_validate`), then calls `cm848_restartThroughBootRomAfterSciRequest`.
@@ -911,8 +911,29 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - **The exhaust pressure** that the model reads is e2m 1A5D: `exhaust_pressure` (was `boost_pressure_current_raw`) from
     `cm848_calculateExhaustPressure` (was `phase_group_a_validateEngineSync`).
     - On this truck `exhaust_pressure_estimate_as_primary_cal` (EEPROM 0x468) = 1, so it is the e2m 1772 estimate.
-    - The estimator `cm848_phase_groupA_exponentialAverage` is the TPE module (e2m 198C) and keeps its old name.
+    - The estimate comes from `cm848_estimateExhaustPressure` (was `cm848_phase_groupA_exponentialAverage`; the TPE
+      model, e2m 198C). The sensor is channel 109 (`exhaust_pressure_sensor_*`, e2m 1966 +A Exhaust_Press_Sensor).
+  - **The TPE charge pressure estimate** (`cm848_estimateChargePressure`, was `cm848_calculateBoostTorqueOffset`;
+    e2m 1A22-1A29): `charge_pressure_estimate` (was `boost_pressure_target`) = compressor inlet pressure x the
+    compressor pressure ratio from the corrected turbocharger speed x an engine speed scale. The in range monitor
+    (`cm848_monitorChargePressureInRange`, e2m 1A2D) compares it with the sensor.
   - **Leads:** task 046.
+- **Engine speed (e2m 819B, 2026-11-20, todo 046).** The speed the whole firmware reads is
+  `engine_speed_state.filtered_engine_speed` (0x40b7ba, Filtered_Engine_Speed; was
+  `engine_rpm_state_t_0040b7ac.current_rpm`).
+  - `average_engine_speed` (was `engine_rpm_measured`) is `main_engine_speed` or `backup_engine_speed` (Main_RPM /
+    Backup_RPM, the primary / secondary sensor), chosen by `engine_speed_from_backup_sensor_flag`.
+  - The cam / crank sync counters are `cam_crank_mismatch_count`, `cam_crank_plausibility_count_1` / `_2`,
+    `crank_resync_count` and `start_sync_count`.
+  - The start times since the first speed interrupt are `first_cylinder_fire_time_ticks`, `crank_preliminary_sync_time_ticks`,
+    `cam_have_sync_time_ticks` and `crank_have_sync_time_ticks`.
+- **Signedness sweep (2026-11-20, todo 046).** A named `word` row becomes `i16` when its e2m record is signed 16-bit and
+  every load of it is an `lha`.
+  - 430 rows; `classify_signed_loads.py` in the session archive lists them.
+  - Keep `word` when the address is passed to a `word *` parameter (every call gains a cast), or when a shared pointer
+    loads it with `lhz`.
+  - Prove a type-only change with a cast-normalized diff (`cast_normalized_diff.py`). The sweep removed 617 `(short)`
+    casts.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.
@@ -932,7 +953,7 @@ Verified memory addresses for live ECU queries:
 
 | Address | Variable | Scale | Verified |
 |---------|----------|-------|----------|
-| 0x0040B7BA | `current_engine_rpm` | × 0.125 RPM | ✓ 2026-01-31 |
+| 0x0040B7BA | `engine_speed_state.filtered_engine_speed` (e2m 819B +2C Filtered_Engine_Speed) | × 0.125 RPM | ✓ 2026-01-31 |
 | 0x0040BD8E | `boost_pressure_sensor_value` | × 0.0159 IN_HG | ✓ 2026-01-31 |
 | 0x00408EF6 | `cbd_enable_flag` | 1=enabled | ✓ (prior session) |
 

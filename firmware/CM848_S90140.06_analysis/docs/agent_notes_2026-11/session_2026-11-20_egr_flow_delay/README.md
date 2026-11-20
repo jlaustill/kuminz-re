@@ -50,7 +50,32 @@ the edits of each round and before the end.
   - `predicted_stage4.txt` is the changed-function set, written before the build. The 10 core functions changed as
     predicted. The two `pumping_torque_adjustment` readers did not, because they never cast it. One more function only
     reorders its declarations.
-- `commit1.txt` .. `commit6.txt` are the commit messages, and `pr_body.md` is the pull request text.
+- **Round 3, stages 5-8 (the user: "keep going, nothing is out of scope"):**
+  - **Investigation helpers:**
+    - `symbol_e2m_table.py` lists every global a function uses with the e2m record at its address (from an
+      `e2m_name_audit.py` output).
+    - `use_lines.py` prints a few code lines per symbol, and `fault_dtc.py` maps fault bit -> OBD DTC.
+  - **Stage 5:**
+    - `apply_stage5.py` does the TPE charge pressure estimate, the in range monitor, the exhaust pressure estimate and
+      sensor, the EGR delta pressures, two source words and the monitor bit.
+    - `fix_stage5_collision.py`: the first build's proof failed. The bit's first name equalled a new global's name, so
+      the global reversal also rewrote `.field`. This script renames it `charge_pressure_estimate_enable` and fixes the
+      name column of 0x13294's prototype rows.
+    - The mappings are `map_stage5.csv` / `map_refresh_stage5.csv`.
+  - **Stage 6:** `apply_stage6.py`, the `i16` words and 0x13294's `void` prototype.
+  - **Stage 7:**
+    - `apply_stage7.py` does the 819B engine speed block. Run `rename_struct_types.py ...
+      engine_rpm_state_t=engine_speed_state_t@0x0040b7ac=engine_speed_state` first.
+    - The mappings are `map_struct7.csv` / `map_stage7.csv` / `map_refresh_stage7*.csv`. `7b` maps the bare
+      `current_rpm` in comments.
+  - **Stage 8, the signedness sweep:**
+    - `signed_candidates.py` counts the candidates.
+    - `classify_signed_loads.py` writes `signed_loads.csv` with each candidate's loads (lha-only / has-lhz / no-load).
+    - `apply_stage8.py` applies the sweep.
+    - `revert_pointer_passed.py` restores `word` on the rows in `revert_ptr.txt` (passed to `word *` parameters) and
+      `revert_ptr2.txt` (read through an `lhz` pointer).
+    - `cast_normalized_diff.py` is the proof.
+- `commit1.txt` .. `commit12.txt` are the commit messages, and `pr_body.md` is the pull request text.
 
 `session_folder_large_files.tar.xz` holds the build logs:
 - `build1.log`: stage 1;
@@ -60,7 +85,11 @@ the edits of each round and before the end.
 - `build5.log`: the review comment fix;
 - `verify.log`: `./analyze.sh verify` after round 1, two byte-identical builds;
 - `build6.log` / `build7.log`: stages 3 / 4;
-- `verify2.log`: `./analyze.sh verify` after stage 4.
+- `verify2.log`: `./analyze.sh verify` after stage 4;
+- `build8.log` / `build9.log`: stage 5, before / after the collision fix;
+- `build10.log` / `build11.log`: stages 6 / 7;
+- `build12.log` / `build13.log` / `build14.log`: the sweep, then its two reverts;
+- `verify3.log`: `./analyze.sh verify` after stage 8.
 
 It also holds `stage2.cpp`, the stage 2 output before the locals were named.
 - The other snapshots are in git: the pre-session `.cpp` is 9ba021f's and stage 1's is a513107's.

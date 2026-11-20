@@ -71,11 +71,31 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   - `word` returns for the source checks.
   - `i16` for the signed pumping torque words.
 
+**Round 3: the user asked to "keep going, nothing is out of scope".**
+- **Stage 5, label-only (ba425ad).** EQUIVALENT, 57 names.
+  - **The TPE charge pressure estimate:** `cm848_estimateChargePressure` (was `cm848_calculateBoostTorqueOffset`; e2m
+    1A22-1A29), with `charge_pressure_estimate` (was `boost_pressure_target`), its tables, caches and filter.
+  - **The charge pressure in range monitor:** e2m 1A2D.
+  - **The exhaust pressure:** the estimate `cm848_estimateExhaustPressure` (198C / 1772) and the sensor, channel 109
+    (`exhaust_pressure_sensor_*`).
+  - **The EGR delta pressures:** e2m 1A19, `egr_valve_delta_pressure` / `engine_delta_pressure`.
+- **Stage 6, shape (9a2ba1f).** `i16` for eight of those words, and `void(void)` for 0x13294.
+- **Stage 7, label-only (8022da1).** EQUIVALENT, 0 functions differ. The engine speed block e2m 819B:
+  - `engine_rpm_state_t_0040b7ac.current_rpm` (356 lines) is `engine_speed_state.filtered_engine_speed`;
+  - the main and backup speeds;
+  - the cam / crank sync counters and the start times.
+- **Stage 8, the signedness sweep (cd7ad20).**
+  - **The rule:** 430 words become `i16`: each one's e2m record is signed 16-bit and every load of it is an `lha`.
+  - **Kept `word`:** 14 words whose address goes to a `word *` parameter, and one read through an `lhz` pointer.
+  - **Proof:** a cast-normalized diff. 133 functions changed, and the 6 that still differ are cosmetic.
+  - **Effect:** 617 fewer `(short)` casts.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the two stale-prototype warnings
   that stage 4 removes.
-- [x] Stages 1 and 3: the label-only proof is EQUIVALENT.
+- [x] Stages 1, 3, 5 and 7: the label-only proof is EQUIVALENT.
+- [x] Stage 8: the cast-normalized proof leaves 6 differing functions, all cosmetic.
 - [x] Stage 2 changed only the intended functions. Stage 4 changed only the functions predicted before its build (the
   two readers of `pumping_torque_adjustment` needed no cast, so they did not change). Apart from those, only
   declaration orders changed, and the piece count stays 508 → 508.
@@ -90,9 +110,9 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
 
 - **What 0x128a0 still shows:** it rates Readability Medium. One `uVar1` (the reused register's later values) and the
   default-labelled `engine_rpm_state_t_0040b7ac` remain.
-- **The TPE exhaust pressure estimator** `cm848_phase_groupA_exponentialAverage` (e2m 198C) and its constants.
-- **Sensor channel 109** is the exhaust pressure sensor.
-- **The unnamed e2m 1772 rows** (0x40a674-0x40a678).
-- **The TPE / charge pressure functions past the family.** 0x13294's two-parameter prototype also looks stale.
+- **The engine speed module's functions** have mixed prefixes: `hpcr_processEngineSyncPulses`,
+  `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
+- **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
+- **The rest of the e2m audit's low-overlap rows,** which would suit a wave of agents.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

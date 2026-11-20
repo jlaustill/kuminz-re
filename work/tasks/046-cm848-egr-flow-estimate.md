@@ -105,21 +105,68 @@ would otherwise misname.
   - `word` returns for the two source checks (`clrlwi r3,r4,16`).
   - `i16` for the pumping torque words that are e2m `S` and loaded with `lha`.
 
+## Done, round 3 (stages 5-8, 2026-11-20, same PR; the user: "keep going, nothing is out of scope")
+
+- **Stage 5, label-only** (EQUIVALENT; 57 names):
+  - **TPE charge pressure estimate (e2m 1A22-1A29):** `cm848_estimateChargePressure` (was
+    `cm848_calculateBoostTorqueOffset`). `charge_pressure_estimate` (was `boost_pressure_target`) = compressor inlet
+    pressure x `compressor_pressure_ratio_estimate` (from the corrected turbocharger speed) x
+    `compressor_pressure_ratio_scale` (from engine speed). Also renamed: its offset / tolerance / state words, the six
+    tables, four new cache rows, the filter and the initializer.
+  - **Charge pressure in range monitor (1A2D):** `cm848_calculateChargePressureInRangeEnable` /
+    `cm848_monitorChargePressureInRange`.
+  - **Exhaust pressure estimate (198C / 1772):** `cm848_estimateExhaustPressure` (was
+    `cm848_phase_groupA_exponentialAverage`) with its constants and filter. The exhaust pressure sensor is channel 109
+    (1966 +A): `exhaust_pressure_sensor_*`, plus a new row for slot 109 of `sensor_channel_filtered_output`.
+  - **EGR delta pressures (1A19):** `egr_valve_delta_pressure` / `engine_delta_pressure` (were `egr_delta_pressure` /
+    `egr_delta_pressure_negated`). `exhaust_pressure_offset` is 198C +0.
+  - **Two source words:** `compressor_inlet_temperature_source` (1A0C +2) and `barometric_pressure_selected_source`
+    (1A11 +2).
+  - **The rest:** the predicted IMT initializer, and the monitor bit `charge_pressure_estimate_enable`.
+  - **A naming lesson:** a field named like a global (the first try was `charge_pressure_estimate`) breaks the
+    label-only proof, whose global reversal also rewrites `.field`, and it confuses readers. Keep field names distinct.
+- **Stage 6, shape:**
+  - `i16` for eight e2m-signed `lha` words (the 198C offset and constants, the estimate offset, the three 1A19 delta
+    pressures).
+  - `void(void)` for 0x13294, which drops its stale-prototype warning.
+- **Stage 7, label-only** (EQUIVALENT; 0 functions differ): the engine speed block e2m 819B.
+  - `engine_rpm_state_t_0040b7ac.current_rpm` (356 lines) is `engine_speed_state.filtered_engine_speed`
+    (Filtered_Engine_Speed).
+  - `engine_rpm_measured` = `average_engine_speed`, `crank_derived_rpm` / `crank_tooth_rpm` = `main_engine_speed` /
+    `backup_engine_speed`, and the EPS sums / counts between VSS pulses.
+  - The cam / crank sync counters and the four start times.
+  - Each record's code use fits its description, usually through a limit an earlier wave named.
+- **Stage 8, the signedness sweep (shape):**
+  - **The rule:** every named `word` row whose e2m record is signed 16-bit and whose every load is an `lha` becomes
+    `i16`. `classify_signed_loads.py` found 444 such rows; 35 have an `lhz` load and 104 no load.
+  - **Exceptions, kept `word`:**
+    - 14 rows whose address is passed to a `word *` parameter: the sensor channel outputs and two duty limits. As
+      `i16`, every call gained a `(word *)&` cast.
+    - `variable_geometry_turbocharger_position`, which a shared pointer reads with `lhz`.
+  - **Proof:** `cast_normalized_diff.py` compares the builds after removing casts, declarations and auto-names, and
+    folding literals to 16 bits. Only cosmetic differences remain:
+    - `(word *)` → `(sword *)` pointer casts;
+    - one auto-name renumber;
+    - `timer - 1` → `timer + -1` beside two removed casts.
+  - **Also in stage 8:** `pulse_period_table_backup` is `dword[4]`, and `cylinder_acceleration` / `fuel_pressure_start_undershoot`
+    are `i16`.
+
 ## Leads (not in this PR)
 
-- **The exhaust pressure estimator** `cm848_phase_groupA_exponentialAverage` (0x506b34) writes
-  `exhaust_pressure_estimate` / `_state` from the e2m 198C `C_TPE_EMP_*` constants (`boost_synthetic_ema_*_coef`). That
-  is the TPE module, which also holds the intake manifold temperature prediction (0x12f60), so it is out of the CHP
-  scope.
-- **Sensor channel 109** is the exhaust pressure sensor: it is the measurement on the cold side EGR algorithm. Its
-  `sensor_channel109_*` names could take that name.
-- **The unnamed e2m 1772 rows:** +2 Engine_Delta_Pressure, +4 EGR_Valve_Delta_Pressure and +6 EGR_Orifice_Delta_Pressure
-  (0x40a674-0x40a678).
-- **The functions just past the family** (0x12f60, 0x130ac, 0x13294-0x13774) belong to the TPE and charge pressure
-  modules.
-  - 0x13294 `cm848_calculateBoostTorqueOffset` looks like the next stale two-parameter prototype (`boost_input`,
-    `rpm`). Its caller passes it the return value of `cm848_processVariableGeometryTurbochargerHBridgeFaults`. Check r3 /
-    r4 in the asm, as for 0x130dc.
+- **The engine speed module's functions** have mixed, partly wrong prefixes: `hpcr_processEngineSyncPulses` (the main
+  speed interrupt), `mpc555_handleCamSignalInterrupt` (the backup speed interrupt), `mpc555_updateEngineRunState` (the
+  crank sync state machine), `mpc555_resetEngineTimingAccumulators`, and `cm848_engineRunState3Handler` and its
+  siblings. Rename them once each state's behaviour is read.
+- **The signedness sweep's remainder:**
+  - The 35 `has-lhz` rows need a per-row look: zero-extending loads usually mean the code treats the value as unsigned.
+  - The 104 `no-load` rows are stored or pointer-passed only.
+- **The rest of the e2m audit's low-overlap rows** (task 045 counted ~1300). A wave of agents would suit it.
+
+- **Unused unnamed e2m rows:** 1772 +2 Engine_Delta_Pressure, +4 EGR_Valve_Delta_Pressure and +6
+  EGR_Orifice_Delta_Pressure (0x40a674-0x40a678), and 198C +A C_TPE_EMP_VT_Cmd_Cnst (0x406764). No code in the
+  decompile references them, so they have no rows.
+- Resolved in round 3: the TPE exhaust pressure estimator, sensor channel 109, 0x13294's stale prototype, and the
+  functions just past the family (0x130ac, 0x13294-0x13774).
 - **Open question:** the dump's write indices differ (191 / 215) although both advance once per pass in the same
   function. The kernel-image bytes the boot copy leaves under them (ROM 0x47e6 / 0x49e8) differ by 63, not 24, so the
   start values are unexplained.

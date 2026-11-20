@@ -38,7 +38,7 @@ Byte 5:    Length (1-255 bytes)
 Bytes 6-7: 0x00 (unused)
 ```
 
-**Example:** Read 2 bytes from 0x0040B7BA (current_engine_rpm):
+**Example:** Read 2 bytes from 0x0040B7BA (engine_speed_state.filtered_engine_speed, e2m 819B +2C Filtered_Engine_Speed):
 ```
 4A 00 40 B7 BA 02 00 00
 ```
@@ -75,7 +75,7 @@ For larger reads, the ECU responds using J1939 Transport Protocol:
 
 | Address | Variable | Scale | Units | Verified |
 |---------|----------|-------|-------|----------|
-| 0x0040B7BA | `current_engine_rpm` | × 0.125 | RPM | ✓ |
+| 0x0040B7BA | `engine_speed_state.filtered_engine_speed` | × 0.125 | RPM | ✓ |
 | 0x0040B78E | `engine_rpm_derivative` | varies | RPM/s | |
 | 0x0040B7AC | `target_engine_rpm` | × 0.125 | RPM | |
 
@@ -155,7 +155,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 // CAN frame for RPM read request
 uint8_t request[8] = {
     0x4A,       // Service ID
-    0x00, 0x40, 0xB7, 0xBA,  // Address: current_engine_rpm
+    0x00, 0x40, 0xB7, 0xBA,  // Address: engine_speed_state.filtered_engine_speed
     0x02,       // Length: 2 bytes
     0x00, 0x00  // Unused
 };

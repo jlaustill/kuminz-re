@@ -1,0 +1,44 @@
+cm848: the TPE charge pressure estimate, the in range monitor, the exhaust pressure estimate and sensor, the EGR delta pressures (e2m)
+
+Label-only (reverse_names.py EQUIVALENT; 57 names, all render; 1
+function differs only in declaration order). Every name is resolved by
+the ECU's parameter ID table and checked against its code.
+
+Functions:
+- cm848_calculateBoostTorqueOffset -> cm848_estimateChargePressure (e2m
+  1A23: compressor inlet pressure x the compressor pressure ratio from
+  the corrected turbocharger speed x an engine speed scale, filtered;
+  the estimate state 0x80 / 0x40 / 0)
+- cm848_initFuelDemandFilterState -> cm848_initializeChargePressureEstimate
+- cm848_checkBoostControlCondition -> cm848_calculateChargePressureInRangeEnable
+  (1A2D +8 Charge_Press_IR_Enable)
+- cm848_processBoostProtectionConditions -> cm848_monitorChargePressureInRange
+  (|estimate - sensor - offset| > tolerance = Charge_Press_IR_Cond)
+- cm848_phase_groupA_exponentialAverage -> cm848_estimateExhaustPressure
+  (1772 +A Exhaust_Press_Est from the 198C C_TPE_EMP_* constants) and
+  cm848_initialization_step_12 -> cm848_initializeExhaustPressureEstimate
+- mpc555_initManifoldPressureFilter -> cm848_initializePredictedIntakeManifoldTemperature
+- cm848_sensorChannel8_init / _process -> cm848_sensorChannel8_exhaustPressureInit /
+  _exhaustPressureProcess (sensor channel 109 = 1966 +A Exhaust_Press_Sensor)
+
+Globals:
+- the charge pressure estimate (1A22 / 1A23 and the tables 1A24-1A29):
+  boost_pressure_target = charge_pressure_estimate, boost_fuel_threshold_offset
+  / _limit = charge_pressure_estimate_offset / _tolerance, fuel_demand_base_quantity
+  / fuel_demand_rpm_factor = compressor_pressure_ratio_estimate / _scale,
+  the two state words, the turbocharger speed window, the filter, the
+  four lookup caches (new rows) and the six tables
+- the exhaust pressure estimate constants (198C) and filter, and the
+  exhaust pressure sensor channel (value / default / fault status / the
+  new row for its filtered slot 109 / config / state / table / cache /
+  filter; were sensor_channel109_* / sensor_channel8_ram)
+- the EGR delta pressures (1A19): egr_delta_pressure = egr_valve_delta_pressure,
+  egr_delta_pressure_negated = engine_delta_pressure, and their sources;
+  boost_pressure_baseline_cal = exhaust_pressure_offset (198C +0)
+- fuel_demand_state_b = compressor_inlet_temperature_source (1A0C +2),
+  fuel_boost_mode_state = barometric_pressure_selected_source (1A11 +2)
+- the charge pressure sensor state flags / fault gate bits of the monitor
+- monitor_condition_bits_t.boost_fuel_weight_factor ->
+  charge_pressure_estimate_enable (the estimate's enabling condition)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -5,6 +5,14 @@
 201289 build5.log
 201286 build6.log
 200889 build7.log
+201079 build8.log
+200888 build9.log
+200692 build10.log
+200695 build11.log
+200695 build12.log
+200691 build13.log
+200696 build14.log
 402904 verify.log
 402089 verify2.log
+401704 verify3.log
 3544401 stage2.cpp
