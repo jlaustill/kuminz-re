@@ -207,14 +207,10 @@ function_address,function_name,param_index,name,type,comment
 0x0001392c,cm848_selectLoadNormalizer,2,computed_boost,ushort,Computed boost value
 0x0001392c,cm848_selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
 
-0x000130dc,cm848_calculatePumpingTorqueAdjustment,0,manifold_pressure,ushort,Filtered manifold pressure input
-0x000130dc,cm848_calculatePumpingTorqueAdjustment,1,rpm,ushort,Engine RPM for table lookup
 
 0x00013294,cm848_calculateBoostTorqueOffset,0,boost_input,ushort,Boost pressure input
 0x00013294,cm848_calculateBoostTorqueOffset,1,rpm,ushort,Engine RPM for calculation
 
-0x00012ad4,cm848_calculateVolumetricEfficiency,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
-0x00012ad4,cm848_calculateVolumetricEfficiency,1,base_fueling,ushort,Base fueling command to modify
 
 # -----------------------------------------------------------------------------
 # Parameter-by-ID Lookup System - CM848 diagnostic parameter resolution
@@ -443,3 +439,8 @@ function_address,function_name,param_index,name,type,comment
 0x00047a88,cm848_calculateFilteredDerivative,0,gain,derivative_gain_t *,Derivative gain record (r3)
 0x00047a88,cm848_calculateFilteredDerivative,1,filter_state,q16_fixed_point_t *,Q16.16 filter state (r4) - updated in place
 0x00047a88,cm848_calculateFilteredDerivative,2,input,int32_t,Signed input (r5)
+0x00012ad4,cm848_calculateVolumetricEfficiency,return,,void,Takes no parameters: r3 and r4 are written before any read (lis r3 @ 0x12b04, clrlwi r4 @ 0x12b0c); the old boost_denominator / base_fueling rows were stale
+0x00012dc4,cm848_calculateChargeFlowEstimate,return,,void,Takes no parameters: it never reads r3 / r4 (its caller cm848_calculateChargeFlows passes none); the decompiler only showed two because cm848_calculateVolumetricEfficiency declared them
+0x000130dc,cm848_calculatePumpingTorqueAdjustment,return,,void,Takes no parameters: r3 and r4 are written before any read (lis r3 @ 0x130fc, lis r4 @ 0x13104); the old manifold_pressure / rpm rows were stale
+0x00012724,cm848_calculateDownstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16 @ 0x12770)
+0x00012778,cm848_calculateUpstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16)

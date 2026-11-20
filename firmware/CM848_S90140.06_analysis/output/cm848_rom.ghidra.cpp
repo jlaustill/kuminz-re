@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 08:59:55 MST 2026
+// Generated: Fri Nov 20 09:03:45 MST 2026
 
 
 //
@@ -6752,13 +6752,12 @@ void cm848_periodicTaskSet_sensorProcessing(void)
 void cm848_periodicTaskSet_controlLoop(void)
 
 {
-  word wVar1;
+  word boost_input;
   word rpm;
-  word rpm_00;
   
   cm848_checkDiagnosticFuelOverride();
-  wVar1 = cm848_processVariableGeometryTurbochargerHBridgeFaults();
-  cm848_calculateBoostTorqueOffset(wVar1,rpm);
+  boost_input = cm848_processVariableGeometryTurbochargerHBridgeFaults();
+  cm848_calculateBoostTorqueOffset(boost_input,rpm);
   cm848_calculateEngineOutputTorque();
   cm848_calculateHighSpeedGovernorCompensatedEngineSpeed();
   cm848_updateParkNeutralExitEngineSpeedLimitWindow();
@@ -6779,8 +6778,8 @@ void cm848_periodicTaskSet_controlLoop(void)
   hpcr_filterCylinderBalanceFueling();
   cm848_calculateFuelLimitByRpmAndDemand();
   cm848_calculateFuelDemandOffsetTrim();
-  wVar1 = cm848_periodicControlLoopFaultHandling();
-  cm848_calculatePumpingTorqueAdjustment(wVar1,rpm_00);
+  cm848_periodicControlLoopFaultHandling();
+  cm848_calculatePumpingTorqueAdjustment();
   cm848_runCombustionReference();
   cm848_runOffNominalCompensation();
   return;
@@ -11576,7 +11575,8 @@ LAB_000124ac:
   x_input = cm848_signedFirstOrderFilter((int)(short)egr_valve_position,&egr_valve_position_filter);
   egr_flow_estimate_terms.downstream_egr_corrected_flow =
        cm848_dualAxisTableInterpolation
-                 (&diag_state_group5_c_state,x_input,downstream_egr_corrected_flow_x_axis,
+                 (downstream_egr_corrected_flow_cached_axis_offsets,x_input,
+                  downstream_egr_corrected_flow_x_axis,
                   egr_flow_estimate_terms.downstream_egr_pressure_ratio,
                   downstream_egr_corrected_flow_y_axis,downstream_egr_corrected_flow_grid,7);
   egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root =
@@ -11644,9 +11644,9 @@ void cm848_calculateUpstreamEgrMassFlow(void)
   
   egr_flow_estimate_terms.upstream_egr_corrected_flow =
        cm848_dualAxisTableInterpolation
-                 (&diag_state_group5_a_state,egr_valve_position,upstream_egr_corrected_flow_x_axis,
-                  charge_flow_estimate_terms.pressure_ratio,upstream_egr_corrected_flow_y_axis,
-                  upstream_egr_corrected_flow_grid,5);
+                 (upstream_egr_corrected_flow_cached_axis_offsets,egr_valve_position,
+                  upstream_egr_corrected_flow_x_axis,charge_flow_estimate_terms.pressure_ratio,
+                  upstream_egr_corrected_flow_y_axis,upstream_egr_corrected_flow_grid,5);
   egr_flow_estimate_terms.exhaust_temperature_rankine_square_root =
        lookupTableInterpolation
                  (&exhaust_temperature_rankine_square_root_cached_axis_offset,exhaust_temperature,
@@ -11697,19 +11697,19 @@ void cm848_calculateUpstreamEgrMassFlow(void)
    cm848_calculateEgrMassFlowBeforeDelay stores it in egr_flow_source while
    egr_flow_downstream_model_select is nonzero. (was cm848_checkFuelSystemFaultFlags) */
 
-undefined4 cm848_calculateDownstreamEgrFlowSource(void)
+word cm848_calculateDownstreamEgrFlowSource(void)
 
 {
-  undefined4 uVar1;
+  word wVar1;
   
   if ((((egr_valve_position_source == 0) && (egr_orifice_delta_pressure_source == 0)) &&
       (charge_pressure_source == 0)) && (egr_orifice_temperature_source == 0)) {
-    uVar1 = 0;
+    wVar1 = 0;
   }
   else {
-    uVar1 = 1;
+    wVar1 = 1;
   }
-  return uVar1;
+  return wVar1;
 }
 
 
@@ -11723,19 +11723,19 @@ undefined4 cm848_calculateDownstreamEgrFlowSource(void)
    (the model's inputs). cm848_calculateEgrMassFlowBeforeDelay stores it in egr_flow_source while
    egr_flow_downstream_model_select is 0. (was cm848_checkEngineFaultConditions) */
 
-undefined4 cm848_calculateUpstreamEgrFlowSource(void)
+word cm848_calculateUpstreamEgrFlowSource(void)
 
 {
-  undefined4 uVar1;
+  word wVar1;
   
   if (((egr_valve_position_source == 0) && (exhaust_pressure_source == 0)) &&
      (exhaust_temperature_source == 0)) {
-    uVar1 = 0;
+    wVar1 = 0;
   }
   else {
-    uVar1 = 1;
+    wVar1 = 1;
   }
-  return uVar1;
+  return wVar1;
 }
 
 
@@ -11902,10 +11902,10 @@ void cm848_calculateDelayedEgrFlowAndFraction(void)
 void cm848_initializeEgrFlowEstimate(void)
 
 {
-  diag_state_group5_a_state = 2;
-  diag_state_group5_b_state = 2;
-  diag_state_group5_c_state = 2;
-  diag_state_group5_d_state = 2;
+  upstream_egr_corrected_flow_cached_axis_offsets[0] = 2;
+  upstream_egr_corrected_flow_cached_axis_offsets[1] = 2;
+  downstream_egr_corrected_flow_cached_axis_offsets[0] = 2;
+  downstream_egr_corrected_flow_cached_axis_offsets[1] = 2;
   exhaust_temperature_rankine_square_root_cached_axis_offset = 2;
   egr_orifice_temperature_rankine_square_root_cached_axis_offset = 2;
   egr_oxygen_fraction_filter_state.accumulator = 0;
@@ -11942,7 +11942,7 @@ void cm848_initializeEgrFlowEstimate(void)
    read (the disassembly overwrites r3 and r4 first). Caller cm848_calculateChargeFlowEstimate. (was
    cm848_boostBasedFuelModifier) */
 
-void cm848_calculateVolumetricEfficiency(word boost_denominator,word base_fueling)
+void cm848_calculateVolumetricEfficiency(void)
 
 {
   uint uVar1;
@@ -12064,12 +12064,12 @@ void cm848_calculateChargeMassFlow(void)
    charge_pressure_source and exhaust_pressure_source are all 0. (was
    cm848_fuelDemandWithLoadCompensation) */
 
-void cm848_calculateChargeFlowEstimate(word param_1,word param_2)
+void cm848_calculateChargeFlowEstimate(void)
 
 {
   charge_flow_estimate_terms.intake_manifold_temperature_rankine =
        intake_manifold_temperature_filtered + 0x7300;
-  cm848_calculateVolumetricEfficiency(param_1,param_2);
+  cm848_calculateVolumetricEfficiency();
   cm848_calculateChargeMassFlow();
   if (((intake_manifold_temperature_filtered_source == 0) && (charge_pressure_source == 0)) &&
      (exhaust_pressure_source == 0)) {
@@ -12308,7 +12308,7 @@ void mpc555_initManifoldPressureFilter(void)
    function_definitions.csv are never read (r3 and r4 are overwritten first). Caller
    cm848_periodicTaskSet_controlLoop. (was cm848_calculateBoostPressureOffset) */
 
-void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
+void cm848_calculatePumpingTorqueAdjustment(void)
 
 {
   int iVar1;
@@ -12318,14 +12318,15 @@ void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
   
   nominal_engine_delta_pressure =
        cm848_dualAxisTableInterpolation
-                 (&diag_state_group7_a_state,engine_rpm_state_t_0040b7ac.current_rpm,
-                  combustion_map_1_engine_speed_x_axis,total_injection_quantity_for_air_handling,
-                  combustion_map_1_fuel_quantity_y_axis,nominal_engine_delta_pressure_grid,4);
+                 (nominal_engine_delta_pressure_cached_axis_offsets,
+                  engine_rpm_state_t_0040b7ac.current_rpm,combustion_map_1_engine_speed_x_axis,
+                  total_injection_quantity_for_air_handling,combustion_map_1_fuel_quantity_y_axis,
+                  nominal_engine_delta_pressure_grid,4);
   sVar2 = nominal_engine_delta_pressure - egr_delta_pressure_negated;
-  if ((int)sVar2 + (int)(short)pumping_torque_engine_delta_pressure_deadband < 0) {
+  if ((int)sVar2 + (int)pumping_torque_engine_delta_pressure_deadband < 0) {
     sVar2 = sVar2 + pumping_torque_engine_delta_pressure_deadband;
   }
-  else if ((int)sVar2 - (int)(short)pumping_torque_engine_delta_pressure_deadband < 1) {
+  else if ((int)sVar2 - (int)pumping_torque_engine_delta_pressure_deadband < 1) {
     sVar2 = 0;
   }
   else {
@@ -12336,8 +12337,8 @@ void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
   iVar1 = (int)(short)((short)((int)uVar3 >> 0xb) + (ushort)((int)uVar3 < 0 && (uVar3 & 0x7ff) != 0)
                       );
   iVar1 = (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)iVar1 * (longlong)(int)(short)pumping_torque_multiplier)
-                              >> 0x20),iVar1 * (short)pumping_torque_multiplier) / 100);
+                               ((longlong)iVar1 * (longlong)(int)pumping_torque_multiplier) >> 0x20)
+                         ,iVar1 * pumping_torque_multiplier) / 100);
   if (iVar1 < 0x1f41) {
     iVar4 = iVar1;
     if (iVar1 < -8000) {
@@ -12347,16 +12348,16 @@ void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
   else {
     iVar4 = 8000;
   }
-  pumping_torque_without_offset = (word)iVar4;
-  iVar1 = iVar1 + (short)pumping_torque_offset;
+  pumping_torque_without_offset = (sword)iVar4;
+  iVar1 = iVar1 + pumping_torque_offset;
   if (total_injection_quantity_for_air_handling < pumping_torque_minimum_fuel) {
     iVar1 = 0;
   }
-  iVar4 = (int)(short)pumping_torque_maximum;
-  if ((iVar1 <= iVar4) && (iVar4 = iVar1, iVar1 < (short)pumping_torque_minimum)) {
-    iVar4 = (int)(short)pumping_torque_minimum;
+  iVar4 = (int)pumping_torque_maximum;
+  if ((iVar1 <= iVar4) && (iVar4 = iVar1, iVar1 < pumping_torque_minimum)) {
+    iVar4 = (int)pumping_torque_minimum;
   }
-  pumping_torque_adjustment = (word)iVar4;
+  pumping_torque_adjustment = (sword)iVar4;
   return;
 }
 
@@ -12374,8 +12375,8 @@ void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm)
 void cm848_initializePumpingTorqueLookupCache(void)
 
 {
-  diag_state_group7_a_state = 2;
-  diag_state_group7_b_state = 2;
+  nominal_engine_delta_pressure_cached_axis_offsets[0] = 2;
+  nominal_engine_delta_pressure_cached_axis_offsets[1] = 2;
   return;
 }
 
@@ -37583,8 +37584,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {

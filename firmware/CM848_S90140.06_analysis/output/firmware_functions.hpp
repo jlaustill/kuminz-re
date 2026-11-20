@@ -305,14 +305,14 @@ word cm848_delayUnsignedSample(delay_line_t *delay_line,word sample,dword delay_
 sword cm848_delaySignedSample(delay_line_t *delay_line,sword sample,dword delay_samples);  // @ 0x00012404
 void cm848_calculateDownstreamEgrMassFlow(void);  // @ 0x0001242c
 void cm848_calculateUpstreamEgrMassFlow(void);  // @ 0x000125f4
-undefined4 cm848_calculateDownstreamEgrFlowSource(void);  // @ 0x00012724
-undefined4 cm848_calculateUpstreamEgrFlowSource(void);  // @ 0x00012778
+word cm848_calculateDownstreamEgrFlowSource(void);  // @ 0x00012724
+word cm848_calculateUpstreamEgrFlowSource(void);  // @ 0x00012778
 void cm848_calculateEgrMassFlowBeforeDelay(void);  // @ 0x000127bc
 void cm848_calculateDelayedEgrFlowAndFraction(void);  // @ 0x000128a0
 void cm848_initializeEgrFlowEstimate(void);  // @ 0x00012a58
-void cm848_calculateVolumetricEfficiency(word boost_denominator,word base_fueling);  // @ 0x00012ad4
+void cm848_calculateVolumetricEfficiency(void);  // @ 0x00012ad4
 void cm848_calculateChargeMassFlow(void);  // @ 0x00012cf4
-void cm848_calculateChargeFlowEstimate(word param_1,word param_2);  // @ 0x00012dc4
+void cm848_calculateChargeFlowEstimate(void);  // @ 0x00012dc4
 void cm848_initializeChargeMassFlowFilter(void);  // @ 0x00012e40
 void cm848_calculateChargeFlows(void);  // @ 0x00012e60
 void cm848_initializeChargeFlows(void);  // @ 0x00012e88
@@ -320,7 +320,7 @@ void cm848_calculateFreshAirMassFlow(void);  // @ 0x00012eb4
 void cm848_initializeFreshAirMassFlowFilter(void);  // @ 0x00012f40
 void cm848_calculatePredictedIntakeManifoldTemperature(void);  // @ 0x00012f60
 void mpc555_initManifoldPressureFilter(void);  // @ 0x000130ac
-void cm848_calculatePumpingTorqueAdjustment(word manifold_pressure,word rpm);  // @ 0x000130dc
+void cm848_calculatePumpingTorqueAdjustment(void);  // @ 0x000130dc
 void cm848_initializePumpingTorqueLookupCache(void);  // @ 0x0001327c
 void cm848_calculateBoostTorqueOffset(word boost_input,word rpm);  // @ 0x00013294
 void cm848_initFuelDemandFilterState(void);  // @ 0x0001350c
