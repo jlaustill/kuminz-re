@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 07:35:43 MST 2026
+// Generated: Fri Nov 20 07:48:43 MST 2026
 
 
 //
@@ -11793,19 +11793,20 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
    oxygen_flow_delay_volume_fraction (e2m 177E +6 C_CHP_Volume_Fraction) x 120 x 1000 /
    (engine_volumetric_efficiency x engine speed): the time the engine takes to draw in that fraction
    of its displacement (one displacement per two revolutions). Volumetric efficiency x speed is
-   limited to 1600 (200 rpm at 1.0) .. 0xffff counts, and a fraction above 8192 (1.0) is replaced by
-   0xffff. (3) residual_oxygen_fraction_before_delay goes into the 256-sample delay line
-   egr_oxygen_fraction_delay_line (cm848_delayUnsignedSample); the sample from delay / 10 passes
-   back is filtered by exponentialMovingAverage (egr_oxygen_fraction_filter, coefficient
-   egr_mass_flow_delayed_filter_coefficient = e2m 177E +0 C_CHP_EGR_Flow_Fil_Cnst) into
-   egr_oxygen_fraction (+0 CHP_O2_Frac_EGR). (4) egr_flow_delay_milliseconds (+6 CHP_EGR_Flow_Delay)
-   = the oxygen delay x egr_flow_delay_fraction (e2m 177E +C; 0 in the dump) / 32767. (5)
-   egr_mass_flow_before_delay goes into egr_mass_flow_delay_line (cm848_delaySignedSample); the
-   sample from delay / 10 passes back is filtered by cm848_signedFirstOrderFilter
-   (egr_mass_flow_delayed_filter) into egr_mass_flow_delayed_filtered. (6) egr_fraction_actual (+2
-   EGR_Fraction) = egr_mass_flow_delayed_filtered x 8192 / charge_mass_flow_filtered, capped at 8192
-   (1.0); 0 while the charge flow is 64 counts (0.5 lb/min) or less. The read-back position wraps
-   modulo 256 samples. Readers: egr_fraction_actual in cm848_calculateChargeSystemErrors /
+   limited to 1600 (200 rpm at 1.0) .. 0xffff counts, and above a fraction of 8192 (1.0) the scaled
+   fraction term (fraction x 120 >> 10) is 0xffff instead. (3) residual_oxygen_fraction_before_delay
+   goes into the 256-sample delay line egr_oxygen_fraction_delay_line (cm848_delayUnsignedSample);
+   the sample from delay / 10 passes back is filtered by exponentialMovingAverage
+   (egr_oxygen_fraction_filter, coefficient egr_mass_flow_delayed_filter_coefficient = e2m 177E +0
+   C_CHP_EGR_Flow_Fil_Cnst) into egr_oxygen_fraction (+0 CHP_O2_Frac_EGR). (4)
+   egr_flow_delay_milliseconds (+6 CHP_EGR_Flow_Delay) = the oxygen delay x egr_flow_delay_fraction
+   (e2m 177E +C; 0 in the dump) / 32767. (5) egr_mass_flow_before_delay goes into
+   egr_mass_flow_delay_line (cm848_delaySignedSample); the sample from delay / 10 passes back is
+   filtered by cm848_signedFirstOrderFilter (egr_mass_flow_delayed_filter) into
+   egr_mass_flow_delayed_filtered. (6) egr_fraction_actual (+2 EGR_Fraction) =
+   egr_mass_flow_delayed_filtered x 8192 / charge_mass_flow_filtered, capped at 8192 (1.0); 0 while
+   the charge flow is 64 counts (0.5 lb/min) or less. The read-back position wraps modulo 256
+   samples. Readers: egr_fraction_actual in cm848_calculateChargeSystemErrors /
    cm848_calculateAirFuelRatioAndIntakeOxygenFraction /
    cm848_calculateWaterVaporAndSaturationTemperatures; egr_oxygen_fraction in
    cm848_calculateCylinderOxygenMasses; egr_mass_flow_delayed_filtered in

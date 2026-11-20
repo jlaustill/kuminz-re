@@ -97,5 +97,10 @@ resolves every word the function writes to e2m block 177F.
 - **Open question:** the dump's write indices differ (191 / 215) although both advance once per pass in the same
   function. The kernel-image bytes the boot copy leaves under them (ROM 0x47e6 / 0x49e8) differ by 63, not 24, so the
   start values are unexplained.
-- `firmware/classification.csv` and `docs/memory-mappings/bank1.txt` are stale generated snapshots: wave 14 did not
-  refresh them either, and 0x127bc still reads `selectFuelTrimMode` there. Regenerate them rather than patching rows.
+- `firmware/classification.csv` and `docs/memory-mappings/bank1.txt` / `ram.txt` are stale generated snapshots: wave 14
+  did not refresh them either, and 0x127bc still reads `selectFuelTrimMode` there. Regenerate them rather than patching
+  rows. The same goes for the old `output/bank2_functions.cpp`, `output/internal_names_crossref.md` and the
+  `output/worklist_*` batches.
+- `output/fuel_injection_analysis.md` ("Related Functions") lists 0x128a0 / 0x12ad4 / 0x12cf4 / 0x12dc4 by their old
+  names as a "Fuel Demand Calculation Chain". They are the charge properties model: the delayed EGR flow, the volumetric
+  efficiency, the charge mass flow and its wrapper. Rewrite that section when the family is renamed.

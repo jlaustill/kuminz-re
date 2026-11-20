@@ -1,0 +1,18 @@
+docs: task 046 and the session archive for the EGR transport delay stage
+
+- work/tasks/046-cm848-egr-flow-estimate.md: the evidence (e2m 177F
+  through the parameter ID table, the delay arithmetic, the RAM dump,
+  the asm widths and signedness) and the leads this PR leaves open: the
+  rest of the charge properties family (0x12e60 / 0x12dc4 / 0x12eb4 /
+  0x12724 / 0x12778 / the initializers), the EGR model's lookup caches
+  and tables, boost_pressure_current_raw = the exhaust pressure.
+- work/todo.md: 046.
+- firmware/CLAUDE.md: the EGR stage bullet, and the local_variables
+  gotcha (naming a reused register splits it; the split temp gets a
+  fresh auto-name no row can reach in the same build).
+- docs/agent_notes_2026-11/session_2026-11-20_egr_flow_delay/: the
+  apply / fix scripts, the proof and refresh mappings, the commit
+  messages, and the build logs + stage 2 snapshot in a tar.xz (checked
+  to restore byte-identically).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

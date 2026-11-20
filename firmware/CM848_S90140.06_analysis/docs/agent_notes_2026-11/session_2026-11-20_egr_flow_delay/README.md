@@ -30,10 +30,19 @@ before the edits.
   - `apply_stage2b.py` retypes the two EGR flow limits as `i16` and names the five locals.
     - The `uVar5` row was renamed by hand afterwards to `volumetric_efficiency_speed_product`: committing a name on
       it splits the reused register, which is why that one rename was needed.
-- `commit1.txt` / `commit2.txt` are the commit messages.
+- **Review fixes:** `fix_review_comments.py`, from the advisor's final review. Above a fraction of 1.0 it is the scaled
+  term that becomes 0xffff, not the delay. The first delay line's comment now names its boot call target.
+- `commit1.txt` / `commit2.txt` / `commit3.txt` are the commit messages, and `pr_body.md` is the pull request text.
 
-`session_folder_large_files.tar.xz` holds the build logs (`build1.log`-`build4.log`: stage 1, stage 2, stage 2b, and
-the final locals) and `stage2.cpp`, the stage 2 output before the locals were named.
+`session_folder_large_files.tar.xz` holds the build logs:
+- `build1.log`: stage 1;
+- `build2.log`: stage 2;
+- `build3.log`: stage 2b;
+- `build4.log`: the final locals;
+- `build5.log`: the review comment fix;
+- `verify.log`: `./analyze.sh verify`, two byte-identical builds.
+
+It also holds `stage2.cpp`, the stage 2 output before the locals were named.
 - The other snapshots are in git: the pre-session `.cpp` is 9ba021f's and stage 1's is a513107's.
 - The proof's canonical / reversed copies can be regenerated with the commands in
   `firmware/scripts/rename_waves/README.md`.

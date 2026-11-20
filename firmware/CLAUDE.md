@@ -650,8 +650,11 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - The case that needed it: the PGN 65270 transmit descriptor at 0x3fae38 covers the boot-called RAM copy of
     `dispatchCanMessageHandlers` at 0x3fae3c.
   - Wave 11 added a second case: `sensor_channel_ratiometric_reference_channel_cal` (word[128] at 0x3fd948) covers the
-    5 boot calls to the RAM copy of `cm848_forceSupervisorWatchdogReset` at 0x3fd994. The build log now reads
+    5 boot calls to the RAM copy of `cm848_forceSupervisorWatchdogReset` at 0x3fd994. The build log then read
     21 thunks / 11 call overrides.
+  - Todo 046 (2026-11-20) added two more: the EGR delay lines `egr_oxygen_fraction_delay_line` /
+    `egr_mass_flow_delay_line` cover the boot calls to 0x3fa2f0 (`cm848_runFlashProgramStateMachine`) and 0x3fa5a0
+    (`mpc555_cmfEraseBlocks`). The build log now reads 19 thunks / 13 call overrides.
   - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_tx_msg_t` instance (`header.can_id` /
     `header.data_length` / `data_pointer` / `data_end_pointer`): `j1939_pgn<N>_tx_message`, `j1939_dm1_tx_message`, and
     so on (30 of them).
