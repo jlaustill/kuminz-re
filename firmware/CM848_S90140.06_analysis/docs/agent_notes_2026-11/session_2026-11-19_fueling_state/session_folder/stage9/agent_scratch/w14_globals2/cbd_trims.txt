@@ -1,0 +1,402 @@
+=== hpcr_cbdCalculateCylinderTrims (lines 43902-44325, 418 non-blank)
+43902: // Function: hpcr_cbdCalculateCylinderTrims @ 0x00042d78
+43903: //
+43905: void hpcr_cbdCalculateCylinderTrims(void)
+43907: {
+43908:   word wVar1;
+43909:   int iVar2;
+43910:   int iVar3;
+43911:   int iVar4;
+43912:   short sVar6;
+43913:   int iVar5;
+43914:   uint uVar7;
+43915:   word wVar8;
+43916:   int iVar9;
+43917:   int iVar10;
+43918:   uint uVar11;
+43919:   int unaff_r23;
+43920:   short unaff_r25;
+43921:   short sVar12;
+43922:   word wVar13;
+43923:   word wVar14;
+43924:   int unaff_r27;
+43925:   uint uVar15;
+43926:   uint unaff_r30;
+43927:   uint uVar16;
+43928:   short local_58 [8];
+43929:   short local_48 [10];
+43931:   if ((cbd_enable_flag != 1) && (misfire_monitor_speed_buffer_enable_flag != 1)) {
+43932:     return;
+43933:   }
+43934:   wVar1 = cm848_dualAxisTableInterpolation
+43935:                     (&cylinder_event_init_state_a,engine_rpm_state_t_0040b7ac.filtered_rpm,
+43936:                      cylinder_seq_axis1_cal,cylinder_balance_filtered_fueling,
+43937:                      cylinder_seq_ystart_cal,cylinder_seq_yend_cal,0);
+43938:   if (wVar1 == 0) {
+43939:     cylinder_event_seq_counter = 0xff;
+43940:   }
+43941:   if (wVar1 < 0x80) {
+43942: LAB_00042e48:
+43943:     cylinder_sync_valid_flag = true;
+43944:   }
+43945:   else {
+43946:     uVar15 = (uint)target_rpm_snapshot;
+43947:     uVar16 = (uint)engine_rpm_state_t_0040b7ac.filtered_rpm;
+43948:     if (uVar15 < uVar16) {
+43949:       iVar4 = uVar16 - uVar15;
+43950:     }
+43951:     else {
+43952:       iVar4 = uVar15 - uVar16;
+43953:     }
+43954:     if (((int)(uint)cylinder_sync_rpm_delta_threshold_cal < iVar4) ||
+43955:        (engine_state != ENGINE_STATE_RUNNING)) goto LAB_00042e48;
+43956:     cylinder_sync_valid_flag = false;
+43957:   }
+43958:   uVar15 = (uint)engine_rpm_state_t_0040b7ac.filtered_rpm;
+43959:   target_rpm_snapshot = engine_rpm_state_t_0040b7ac.filtered_rpm;
+43960:   uVar16 = (uint)cylinder_event_count_max;
+43961:   if ((cylinder_event_seq_counter != uVar16) || (wVar1 == 0)) goto LAB_00043994;
+43962:   uVar11 = (uint)cylinder_timing_scale_cal;
+43963:   if ((uVar16 == 8) || (uVar16 == 6)) {
+43964:     iVar9 = (int)(short)cylinder1_timing_offset;
+43965:     iVar2 = (int)(short)cylinder5_timing_offset;
+43966:     iVar4 = (int)(short)cylinder4_timing_offset;
+43967:     iVar3 = (int)(short)cylinder2_timing_offset;
+43968:     uVar7 = ((iVar9 + iVar2) - iVar3) - iVar4;
+43969:     sVar12 = (((short)((int)uVar7 >> 1) + (ushort)((int)uVar7 < 0 && (uVar7 & 1) != 0)) -
+43970:              cylinder3_timing_offset) + cylinder_balance_acceleration_buffer_6;
+43971:     uVar7 = ((int)(short)cylinder_balance_fourier_real_component_1 - (int)sVar12) * uVar11;
+43972:     cylinder_balance_fourier_real_component_1 =
+43973:          sVar12 + (short)((int)uVar7 >> 0xd) + (ushort)((int)uVar7 < 0 && (uVar7 & 0x1fff) != 0);
+43974:     uVar7 = (((iVar9 + iVar3) - iVar4) - iVar2) * 0x377;
+43975:     sVar12 = (short)((int)uVar7 >> 10) + (ushort)((int)uVar7 < 0 && (uVar7 & 0x3ff) != 0);
+43976:     uVar7 = ((int)(short)cylinder_balance_fourier_imaginary_component_1 - (int)sVar12) * uVar11;
+43977:     cylinder_balance_fourier_imaginary_component_1 =
+43978:          sVar12 + (short)((int)uVar7 >> 0xd) + (ushort)((int)uVar7 < 0 && (uVar7 & 0x1fff) != 0);
+43979:     uVar7 = iVar9 + iVar3 + iVar4 + iVar2;
+43980:     unaff_r27 = (int)(short)((cylinder3_timing_offset + cylinder_balance_acceleration_buffer_6) -
+43981:                             ((short)((int)uVar7 >> 1) + (ushort)((int)uVar7 < 0 && (uVar7 & 1) != 0)
+43982:                             ));
+43983:     uVar7 = (((iVar9 + iVar4) - iVar3) - iVar2) * 0x377;
+43984:     unaff_r23 = (int)(short)((short)((int)uVar7 >> 10) +
+43985:                             (ushort)((int)uVar7 < 0 && (uVar7 & 0x3ff) != 0));
+43986:     unaff_r25 = (((cylinder2_timing_offset + cylinder4_timing_offset +
+43987:                   cylinder_balance_acceleration_buffer_6) - cylinder1_timing_offset) -
+43988:                 cylinder3_timing_offset) - cylinder5_timing_offset;
+43989:   }
+43990:   else if (uVar16 == 4) {
+43991:     unaff_r27 = (int)(short)(cylinder4_timing_offset - cylinder2_timing_offset);
+43992:     unaff_r23 = (int)(short)(cylinder1_timing_offset - cylinder3_timing_offset);
+43993:     unaff_r25 = ((cylinder4_timing_offset + cylinder2_timing_offset) - cylinder1_timing_offset) -
+43994:                 cylinder3_timing_offset;
+43995:   }
+43996:   if (unaff_r27 - (short)cylinder_balance_real_dynamic_compensation_cal < -0x7fff) {
+43997:     sVar12 = -0x7fff;
+43998:   }
+43999:   else if (unaff_r27 - (short)cylinder_balance_real_dynamic_compensation_cal < 0x8000) {
+44000:     sVar12 = (short)unaff_r27 - cylinder_balance_real_dynamic_compensation_cal;
+44001:   }
+44002:   else {
+44003:     sVar12 = 0x7fff;
+44004:   }
+44005:   if (unaff_r23 - (short)cylinder_balance_imaginary_dynamic_compensation_cal < -0x7fff) {
+44006:     sVar6 = -0x7fff;
+44007:   }
+44008:   else if (unaff_r23 - (short)cylinder_balance_imaginary_dynamic_compensation_cal < 0x8000) {
+44009:     sVar6 = (short)unaff_r23 - cylinder_balance_imaginary_dynamic_compensation_cal;
+44010:   }
+44011:   else {
+44012:     sVar6 = 0x7fff;
+44013:   }
+44014:   if ((((cylinder_balance_filtered_fueling <= fuel_demand_setpoint_zero_threshold_cal) &&
+44015:        (final_fueling == 0)) && (fuel_demand_zero_rpm_lower_cal < uVar15)) &&
+44016:      ((uVar15 < fuel_demand_zero_rpm_upper_cal && (engine_state == ENGINE_STATE_RUNNING)))) {
+44017:     uVar7 = (uint)cylinder_timing_rpm_divisor_cal;
+44018:     if (uVar7 != 0) {
+44019:       unaff_r27 = (int)(uVar15 * unaff_r27) / (int)uVar7;
+44020:       if (unaff_r27 < -0x7fff) {
+44021:         unaff_r27 = -0x7fff;
+44022:       }
+44023:       else if (0x7fff < unaff_r27) {
+44024:         unaff_r27 = 0x7fff;
+44025:       }
+44026:       unaff_r23 = (int)(uVar15 * unaff_r23) / (int)uVar7;
+44027:       if (unaff_r23 < -0x7fff) {
+44028:         unaff_r23 = -0x7fff;
+44029:       }
+44030:       else if (0x7fff < unaff_r23) {
+44031:         unaff_r23 = 0x7fff;
+44032:       }
+44033:     }
+44034:     uVar15 = ((int)(short)unaff_r27 - (int)(short)cylinder_balance_real_dynamic_compensation_cal) *
+44035:              (uint)cam_timing_delta_scale_cal;
+44036:     wVar8 = (short)unaff_r27 -
+44037:             ((short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0));
+44038:     cylinder_balance_real_dynamic_compensation_cal = cylinder_balance_dynamic_compensation_minimum;
+44039:     if (((short)cylinder_balance_dynamic_compensation_minimum <= (short)wVar8) &&
+44040:        (cylinder_balance_real_dynamic_compensation_cal = wVar8,
+44041:        (short)cylinder_balance_dynamic_compensation_maximum < (short)wVar8)) {
+44042:       cylinder_balance_real_dynamic_compensation_cal = cylinder_balance_dynamic_compensation_maximum
+44043:       ;
+44044:     }
+44045:     uVar15 = ((int)(short)unaff_r23 -
+44046:              (int)(short)cylinder_balance_imaginary_dynamic_compensation_cal) *
+44047:              (uint)cam_timing_delta_scale_cal;
+44048:     wVar8 = (short)unaff_r23 -
+44049:             ((short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0));
+44050:     cylinder_balance_imaginary_dynamic_compensation_cal =
+44051:          cylinder_balance_dynamic_compensation_minimum;
+44052:     if (((short)cylinder_balance_dynamic_compensation_minimum <= (short)wVar8) &&
+44053:        (cylinder_balance_imaginary_dynamic_compensation_cal = wVar8,
+44054:        (short)cylinder_balance_dynamic_compensation_maximum < (short)wVar8)) {
+44055:       cylinder_balance_imaginary_dynamic_compensation_cal =
+44056:            cylinder_balance_dynamic_compensation_maximum;
+44057:     }
+44058:   }
+44059:   if (cam_timing_reset_enable_cal == 1) {
+44060:     cylinder_balance_real_dynamic_compensation_cal = 0;
+44061:     cylinder_balance_imaginary_dynamic_compensation_cal = 0;
+44062:   }
+44063:   uVar15 = ((int)(short)cylinder_balance_adjusted_real_component_3 -
+44064:            ((int)unaff_r25 - (int)(short)cylinder_diag_offset_cal)) * uVar11;
+44065:   cylinder_balance_adjusted_real_component_3 =
+44066:        (unaff_r25 - cylinder_diag_offset_cal) +
+44067:        (short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0);
+44068:   uVar15 = ((int)(short)cylinder_balance_adjusted_real_component_2 - (int)sVar12) * uVar11;
+44069:   cylinder_balance_adjusted_real_component_2 =
+44070:        sVar12 + (short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0);
+44071:   uVar11 = ((int)(short)cylinder_balance_adjusted_imaginary_component_2 - (int)sVar6) * uVar11;
+44072:   cylinder_balance_adjusted_imaginary_component_2 =
+44073:        sVar6 + (short)((int)uVar11 >> 0xd) + (ushort)((int)uVar11 < 0 && (uVar11 & 0x1fff) != 0);
+44074:   iVar2 = (int)(short)cylinder_balance_fourier_real_component_1;
+44075:   iVar4 = iVar2;
+44076:   if (iVar2 < 0) {
+44077:     iVar4 = -iVar2;
+44078:   }
+44079:   iVar9 = (int)(short)cylinder_balance_fourier_imaginary_component_1;
+44080:   iVar3 = iVar9;
+44081:   if (iVar9 < 0) {
+44082:     iVar3 = -iVar9;
+44083:   }
+44084:   uVar15 = (uint)cylinder_diag_timing_delta_threshold_cal;
+44085:   wVar8 = cylinder_balance_fueling_trim_gain;
+44086:   if (iVar4 + iVar3 <= (int)uVar15) {
+44087:     wVar8 = 0;
+44088:   }
+44089:   iVar3 = (int)(short)cylinder_balance_adjusted_real_component_2;
+44090:   iVar4 = iVar3;
+44091:   if (iVar3 < 0) {
+44092:     iVar4 = -iVar3;
+44093:   }
+44094:   iVar10 = (int)(short)cylinder_balance_adjusted_imaginary_component_2;
+44095:   iVar5 = iVar10;
+44096:   if (iVar10 < 0) {
+44097:     iVar5 = -iVar10;
+44098:   }
+44099:   wVar14 = cylinder_balance_fueling_trim_gain;
+44100:   if (iVar4 + iVar5 <= (int)uVar15) {
+44101:     wVar14 = 0;
+44102:   }
+44103:   iVar5 = (int)(short)cylinder_balance_adjusted_real_component_3;
+44104:   iVar4 = iVar5;
+44105:   if (iVar5 < 0) {
+44106:     iVar4 = -iVar5;
+44107:   }
+44108:   wVar13 = cylinder_balance_fueling_trim_gain;
+44109:   if (iVar4 <= (int)uVar15) {
+44110:     wVar13 = 0;
+44111:   }
+44112:   if (uVar16 == 6) {
+44113:     uVar15 = (short)cylinder_balance_coeff_6cyl_a_cal * iVar2 +
+44114:              (short)cylinder_balance_coeff_6cyl_b_cal * iVar9;
+44115:     local_48[0] = (short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0);
+44116:     uVar15 = (short)cylinder_balance_coeff_6cyl_c_cal * iVar2 +
+44117:              (short)cylinder_balance_coeff_6cyl_d_cal * iVar9;
+44118:     local_48[1] = (short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0);
+44119:     uVar15 = (short)cylinder_balance_coeff_6cyl_e_cal * iVar2 +
+44120:              (short)cylinder_balance_coeff_6cyl_f_cal * iVar9;
+44121:     local_48[2] = (short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0);
+44122:     local_48[3] = -local_48[0];
+44123:     local_48[4] = -local_48[1];
+44124:     local_48[5] = -local_48[2];
+44125:     unaff_r30 = 0;
+44126:     uVar15 = 1;
+44127:     do {
+44128:       if (local_48[0] < local_48[uVar15]) {
+44129:         unaff_r30 = uVar15;
+44130:         local_48[0] = local_48[uVar15];
+44131:       }
+44132:       uVar15 = uVar15 + 1 & 0xff;
+44133:     } while (uVar15 < 6);
+44134:   }
+44135:   uVar15 = (short)cylinder_balance_coeff_4cyl_a_cal * iVar3 +
+44136:            (short)cylinder_balance_coeff_4cyl_b_cal * iVar10;
+44137:   local_48[0] = (short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0);
+44138:   uVar15 = (short)cylinder_balance_coeff_4cyl_e_cal * iVar3 +
+44139:            (short)cylinder_balance_coeff_4cyl_f_cal * iVar10;
+44140:   sVar12 = (short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0);
+44141:   local_48[2] = sVar12;
+44142:   if (uVar16 == 6) {
+44143:     uVar15 = (short)cylinder_balance_coeff_4cyl_c_cal * iVar3 +
+44144:              (short)cylinder_balance_coeff_4cyl_d_cal * iVar10;
+44145:     local_48[1] = (short)((int)uVar15 >> 0xd) + (ushort)((int)uVar15 < 0 && (uVar15 & 0x1fff) != 0);
+44146:     local_48[3] = -local_48[0];
+44147:     local_48[4] = -local_48[1];
+44148:     iVar4 = 10;
+44149: LAB_000434f0:
+44150:     *(short *)((int)local_48 + iVar4) = -sVar12;
+44151:   }
+44152:   else if (uVar16 == 4) {
+44153:     local_48[1] = sVar12;
+44154:     local_48[2] = -local_48[0];
+44155:     iVar4 = 6;
+44156:     goto LAB_000434f0;
+44157:   }
+44158:   uVar11 = 0;
+44159:   uVar15 = 1;
+44160:   if (1 < uVar16) {
+44161:     do {
+44162:       if (local_48[0] < local_48[uVar15]) {
+44163:         uVar11 = uVar15;
+44164:         local_48[0] = local_48[uVar15];
+44165:       }
+44166:       uVar15 = uVar15 + 1 & 0xff;
+44167:     } while (uVar15 < uVar16);
+44168:   }
+44169:   if (iVar5 < 0) {
+44170:     uVar15 = (int)(short)crank_state_default_value_cal & 0xff;
+44171:   }
+44172:   else if (crank_state_default_value_cal == 0) {
+44173:     uVar15 = 1;
+44174:   }
+44175:   else {
+44176:     uVar15 = 0;
+44177:   }
+44178:   if (crank_state_debounce_timer != 0) {
+44179:     crank_state_debounce_timer = crank_state_debounce_timer - 1;
+44180:   }
+44181:   if (cylinder_cutout_test_mask != 0) {
+44182:     crank_state_debounce_timer = crank_state_debounce_timer_cal;
+44183:   }
+44184:   if ((((misfire_monitor_cylinder_balance_suspend_flag != 0) ||
+44185:        (cylinder_balance_compensation_enable_cal != 1)) || ((bool)cylinder_sync_valid_flag)) ||
+44186:      (((engine_crank_state_t_0040b80a.run_state != 4 || (crank_state_debounce_timer != 0)) ||
+44187:       ((cylinder_trim_learn_maximum_vehicle_speed < vehicle_speed ||
+44188:        (((short)sensor_readings_t_0040baf2.coolant_temp <= (short)crank_sync_coolant_threshold_cal
+44189:         || ((short)intake_manifold_temperature_sensor_filtered <=
+44190:             (short)crank_sync_load_threshold_cal)))))))) {
+44191:     uVar15 = 0;
+44192:     if (uVar16 != 0) {
+44193:       do {
+44194:         local_58[uVar15] = 0;
+44195:         uVar15 = uVar15 + 1 & 0xff;
+44196:       } while (uVar15 < uVar16);
+44197:     }
+44198:   }
+44199:   else if (uVar16 == 6) {
+44200:     uVar7 = 0;
+44201:     do {
+44202:       iVar4 = uVar7 * 2;
+44203:       local_58[uVar7] =
+44204:            wVar8 * *(short *)((unaff_r30 & 0xff) * 0x10 + 0x57bde + iVar4) +
+44205:            wVar14 * *(short *)(uVar11 * 0x10 + 0x57c5e + iVar4) +
+44206:            wVar13 * *(short *)(uVar15 * 0x10 + 0x57cde + iVar4);
+44207:       uVar7 = uVar7 + 1 & 0xff;
+44208:     } while (uVar7 < 6);
+44209:   }
+44210:   else {
+44211:     uVar7 = 0;
+44212:     if (uVar16 != 0) {
+44213:       do {
+44214:         local_58[uVar7] =
+44215:              wVar14 * *(short *)(uVar11 * 8 + 0x57cfe + uVar7 * 2) +
+44216:              wVar13 * *(short *)(uVar15 * 8 + 0x57d1e + uVar7 * 2);
+44217:         uVar7 = uVar7 + 1 & 0xff;
+44218:       } while (uVar7 < uVar16);
+44219:     }
+44220:   }
+44221:   if ((misfire_monitor_cylinder_balance_suspend_flag == 0) &&
+44222:      (cylinder_balance_compensation_enable_cal == 1)) {
+44223:     uVar15 = 0;
+44224:     if (uVar16 != 0) {
+44225:       do {
+44226:         (&cylinder_balance_fueling_trim_cal)[uVar15] =
+44227:              (&cylinder_balance_fueling_trim_cal)[uVar15] + local_58[uVar15];
+44228:         uVar15 = uVar15 + 1 & 0xff;
+44229:       } while (uVar15 < uVar16);
+44230:     }
+44231:     if (cylinder_balance_fueling_trim_limit_mode == 0) {
+44232:       crank_pattern_sync_flag = 0;
+44233:     }
+44234:     uVar15 = 0;
+44235:     if (uVar16 != 0) {
+44236:       do {
+44237:         if ((short)cylinder_balance_fueling_trim_maximum <
+44238:             (short)(&cylinder_balance_fueling_trim_cal)[uVar15]) {
+44239:           crank_pattern_sync_flag = 1;
+44240:         }
+44241:         if ((short)(&cylinder_balance_fueling_trim_cal)[uVar15] <
+44242:             (short)cylinder_balance_fueling_trim_minimum) {
+44243:           crank_pattern_sync_flag = 1;
+44244:         }
+44245:         uVar15 = uVar15 + 1 & 0xff;
+44246:       } while (uVar15 < uVar16);
+44247:     }
+44248:     if (crank_pattern_sync_flag == 1) {
+44249:       if (cylinder_balance_fueling_trim_limit_mode == 0) {
+44250:         uVar15 = 0;
+44251:         if (uVar16 != 0) {
+44252:           do {
+44253:             (&cylinder_balance_fueling_trim_cal)[uVar15] =
+44254:                  (&cylinder_balance_fueling_trim_cal)[uVar15] - local_58[uVar15];
+44255:             uVar15 = uVar15 + 1 & 0xff;
+44256:           } while (uVar15 < uVar16);
+44257:         }
+44258:       }
+44259:       else if (cylinder_balance_fueling_trim_limit_mode == 1) {
+44260:         uVar15 = 0;
+44261:         if (uVar16 != 0) {
+44262:           do {
+44263:             (&cylinder_balance_fueling_trim_cal)[uVar15] = (&DAT_003fb580)[uVar15];
+44264:             uVar15 = uVar15 + 1 & 0xff;
+44265:           } while (uVar15 < uVar16);
+44266:         }
+44267:       }
+44268:       else if ((cylinder_balance_fueling_trim_limit_mode == 2) && (uVar15 = 0, uVar16 != 0)) {
+44269:         do {
+44270:           (&cylinder_balance_fueling_trim_cal)[uVar15] = 0;
+44271:           uVar15 = uVar15 + 1 & 0xff;
+44272:         } while (uVar15 < uVar16);
+44273:       }
+44274:     }
+44275:     sVar12 = 0;
+44276:     sVar6 = 0;
+44277:     uVar15 = 0;
+44278:     if (uVar16 != 0) {
+44279:       do {
+44280:         sVar6 = sVar12 + (&cylinder_balance_fueling_trim_cal)[uVar15];
+44281:         uVar15 = uVar15 + 1 & 0xff;
+44282:         sVar12 = sVar6;
+44283:       } while (uVar15 < uVar16);
+44284:     }
+44285:     uVar15 = 0;
+44286:     if (uVar16 != 0) {
+44287:       do {
+44288:         (&cylinder_balance_fueling_trim_cal)[uVar15] =
+44289:              (&cylinder_balance_fueling_trim_cal)[uVar15] - (short)((int)sVar6 / (int)uVar16);
+44290:         uVar15 = uVar15 + 1 & 0xff;
+44291:       } while (uVar15 < uVar16);
+44292:     }
+44293:   }
+44294:   cylinder_event_seq_counter = 0xff;
+44295: LAB_00043994:
+44296:   if ((cylinder_balance_compensation_enable_cal != 0) &&
+44297:      (misfire_monitor_cylinder_balance_suspend_flag == 0)) {
+44298:     if (crank_state_debounce_timer == 0) {
+44299:       uVar15 = 0;
+44300:       if (uVar16 != 0) {
+44301:         do {
+44302:           uVar11 = (int)(short)(&cylinder_balance_fueling_trim_cal)[uVar15] * (int)(short)wVar1;
+44303:           *(ushort *)(&cylinder_fueling_offset + uVar15 * 2) =
+44304:                (short)((int)uVar11 >> 7) + (ushort)((int)uVar11 < 0 && (uVar11 & 0x7f) != 0);
+... 18 more lines

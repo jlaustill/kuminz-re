@@ -1,0 +1,317 @@
+[
+ {
+  "kind": "function",
+  "verdict": "confirmed",
+  "address": "0x0000e164",
+  "old": "cm848_calculateSensorEma",
+  "new": "cm848_calculateAlphaFuelRateResult",
+  "evidence": "Filters fuel_mass_flow_raw with exponentialMovingAverage into alpha_filtered_fuel_delivery_rate (e2m 104A +14 Filtered_Fuel_Delivery_Rate, LB/HR) and returns a hysteresis: 1 when alpha_threshold_fuel_rate < filtered, 0 when alpha_reset_fuel_rate >= filtered, else the previous alpha_fuel_rate_result (e2m 104A +8 Alpha_Fuel_Rate '[APFLRTAP] result of Fuel Rate algorithm'); ROM reset 330 < threshold 363. No sensor is involved: the old name read the EMA as a sensor filter. Shared-name note: cross_firmware_matches.csv line 16 maps CM550 0xc404 to it as 'calculateSensorEma' (review); CM550 0xc404 is the same function (called as _APFLRTAP = cm550_FUN_0000c404() in the CM550 alpha ramp 0xc582).",
+  "code_quote": "if ((uint)alpha_threshold_fuel_rate < (dVar1 & 0xffff)) {",
+  "plate_comment": "Alpha fuel rate result (e2m 104A +8 Alpha_Fuel_Rate, '[APFLRTAP] result of Fuel Rate algorithm'): filters fuel_mass_flow_raw with exponentialMovingAverage (state cold_start_intake_temperature_filter_state, coefficient e2m 104B +C Alpha_Fuel_Rate_Filter_Constant at ROM 0x5be66) into alpha_filtered_fuel_delivery_rate (e2m 104A +14 Filtered_Fuel_Delivery_Rate, LB/HR). Result is a hysteresis on that rate: 1 above alpha_threshold_fuel_rate (e2m 104B +1A C_Alpha_Threshold_Rate), 0 at or below alpha_reset_fuel_rate (e2m 104B +18 C_Alpha_Reset_Rate), else the previous alpha_fuel_rate_result. While alpha_low_speed_governor_state_detected_flag is 1 and the filtered rate is above the reset rate, the filter accumulator is first pulled down to the reset rate. Called by timingProtectionFlagsOrchestrator when bit 0x1000 of governor_fault_status_flags (algorithm enable flags word 0, 0x3fd59c) is set; a 1 lets alpha_base ramp toward 1.0.",
+  "_bin": "functions1",
+  "_line": 2,
+  "why": "shared with CM550 (a true twin the agent found)"
+ },
+ {
+  "kind": "function",
+  "verdict": "confirmed",
+  "address": "0x0000e3a4",
+  "old": "timingProtectionFlagsOrchestrator",
+  "new": "cm848_calculateAlphaBase",
+  "evidence": "Runs the five alpha conditions enabled by bits 0x400 / 0x800 / 0x1000 / 0x2000 / 0x8000 of governor_fault_status_flags (low speed governor, air fuel control, fuel rate, on governor, low ambient air pressure) and ORs the results: alpha_base is cleared to 0 when none is 1, otherwise it ramps by alpha_ramp_rate_below_threshold while alpha_base < alpha_ramp_threshold and by alpha_ramp_rate_at_or_above_threshold from there on (e2m 104B +0 / +2 / +4), capped at 0x4000 = 1.0. alpha_base is e2m 104A +2 Alpha_Base '[APAPBA] result of AFC, LSG, On Governor, and Fuel Rate alpha comparison'. Nothing about timing or protection. SHARED NAME: CM550 0xc582 has the same name and is the same function (it writes _APAPBA, _APLSAP, _APAFSS, _APFLRTAP, _APGVAP, _APAAPRSS), so the main session holds this rename for both firmwares.",
+  "code_quote": "alpha_base = alpha_base + wVar1;",
+  "plate_comment": "Alpha ramp (e2m 104A +2 Alpha_Base, '[APAPBA] result of AFC, LSG, On Governor, and Fuel Rate alpha comparison'; alpha 16384 = 1.0 = open road, 0 = urban). Runs the alpha conditions that bits of governor_fault_status_flags (algorithm enable flags word 0) enable and stores each result: 0x400 cm848_checkPressureFuelDelayA (low speed governor) into pressure_fuel_delay_a_status, 0x800 cm848_checkPressureFuelDelayB (air fuel control) into pressure_fuel_delay_b_status, 0x1000 cm848_calculateSensorEma (fuel rate) into alpha_fuel_rate_result, 0x2000 cm848_checkFuelRateCondition (on governor) into fuel_rate_condition_status and 0x8000 cm848_checkPressureHysteresis (low ambient air pressure) into pressure_hysteresis_state. When none of them is 1 alpha_base is reset to 0; otherwise it ramps up each pass by alpha_ramp_rate_below_threshold while it is below alpha_ramp_threshold and by alpha_ramp_rate_at_or_above_threshold from there on (e2m 104B +0 Alpha_Ramp_Rate_1 / +2 Alpha_Ramp_Rate_2 / +4 Alpha_Ramp_Threshold), capped at 16384. It then copies final_fueling_state to governor_mode_code_snapshot and clears alpha_low_speed_governor_state_detected_flag and alpha_air_fuel_control_state_detected_flag. Only caller hpcr_calculateFuelTrimOutput (every pass outside the engine states STOPPED, CRANKING and JUMP_START).",
+  "_bin": "functions1",
+  "_line": 7,
+  "why": "shared with CM550"
+ },
+ {
+  "kind": "function",
+  "verdict": "confirmed",
+  "address": "0x0000e518",
+  "old": "hpcr_calculateFuelTrimOutput",
+  "new": "cm848_calculateAlpha",
+  "evidence": "Selects the alpha source and writes combustion_alpha_input (e2m 104A +0 Alpha 'ALPHA PARAMETER 0.0 = URBAN 1.0 = OPEN ROAD') and governor_startup_state (e2m 104A +4 Alpha_State 'source (base, user, altitude, epf, slave, esp)'), codes 0 base / 1 user / 2 altitude / 3 engine protection / 4 slave / 5 esp, from the disassembly 0xe5b4-0xe6fc (the decompile around the 0xe0f4 call renders its result as a 64-bit pointer, pwVar1 / uVar2 & 0xffff00000000). It also copies the alpha to thermal_fuel_limit_factor (e2m 1053 +2 Fuel_Interp_Factor, the 4-D fueling interpolation factor) unless algorithm_enable_flags_12_cal bit 0x10 (ESP enable) is set (disassembly 0xe71c-0xe734: sth to 0x40a889). It is not a fuel trim. SHARED NAME: the flagged cross-firmware match (CM550 0x1abb2, review tier) is wrong: cm550_FUN_0001abb2 is the ESP / throttle fueling function; the CM550 twin of this function is vp44RpmBasedFaultDetector @ 0xc326 (writes _APAPST, _APAPBA and _alpha_blend_factor and calls timingProtectionFlagsOrchestrator). The main session holds this rename.",
+  "code_quote": "combustion_alpha_input = engine_protection_alpha;",
+  "plate_comment": "Selects the alpha (0 = urban, 16384 = 1.0 = open road; e2m 104A +0 Alpha) and its source code (e2m 104A +4 Alpha_State) into combustion_alpha_input and governor_startup_state: 0 base (alpha_base), 1 user (fuel_blend_coefficient_startup_cal), 2 altitude (altitude_derate_alpha, e2m 104B +8), 3 engine protection (engine_protection_alpha, e2m 104B +12), 4 slave override (governor_startup_fuel_blend_coeff), 5 ESP (fuel_blend_coefficient_run_cal). In the engine states STOPPED, CRANKING and JUMP_START it preloads cold_start_timer_a / _b with low_speed_governor_alpha_timeout / air_fuel_control_alpha_timeout (active flags 1), clears alpha_altitude_derate_timer, alpha_filtered_fuel_delivery_rate, the fuel rate filter accumulator, alpha_base and governor_mode_code_snapshot; in every other state it runs timingProtectionFlagsOrchestrator (the alpha ramp). Source priority, tested in this order (disassembly 0xe5b4-0xe6fc): master_slave_override_enable_flag nonzero -> 4; bit 0x8000 of governor_feature_config_flags set and governor_startup_threshold = 0x4000 -> 5; mask 0x01 of governor_feature_flags set -> 1; cm848_checkPressureFuelState nonzero (altitude derate latched) -> 2; mask 0x4000 of governor_fault_status_flags set and fault_derate_active_flag = 1, unless alpha_altitude_derate_timer is nonzero while mask 0x20 of feature_enable_flags_cal is set -> 3; else 0. The alpha is limited to 16384 and copied to thermal_fuel_limit_factor (e2m 1053 +2 Fuel_Interp_Factor) unless bit 0x10 of algorithm_enable_flags_12_cal (ESP enable) is set. Caller main_loop.",
+  "_bin": "functions1",
+  "_line": 8,
+  "why": "shared with CM550"
+ },
+ {
+  "kind": "function",
+  "verdict": "confirmed",
+  "address": "0x0001b3a0",
+  "old": "faultTimerHandler",
+  "new": "cm848_buildPgn65251EngineConfiguration1Payload",
+  "evidence": "PGN proof in initFaultTimerMessage (0x1b900): j1939_pgn65251_tx_message.header.can_id is built from the constant 0xfee300 (PGN 65251), data_length = 0x1c = 28 and data_pointer = fault_timer_state_base; cm848_sendFaultTimerMessage (0x1b730) calls this function on that buffer and then sendJ1939Message(&j1939_pgn65251_tx_message). The 7 dwords it stores decode as the 28 bytes of Engine Configuration 1: SPN 188 / 539 (idle, point 1), 528 / 540, 529 / 541, 530 / 542, 531 / 543, 532 (high idle, point 6), 545 (0xffff), 544 (reference_engine_torque_working), 533 / 534 (ROM 0x5c39a and the time limit / 10 = 0.1 s per bit), 535 / 536 (/ 0x50 = 10 rpm per bit), 537 / 538; the local automotive DB table j1939_spns lists exactly these SPNs and resolutions for PGN 65251. It fills a buffer and sends nothing, so Payload, not Message. SHARED: faultTimerHandler is also CM550 0x3320e (function_renames.csv), so the main session holds this rename.",
+  "code_quote": "(char)(j1939_pgn61442_engine_overspeed_enable_time_limit / 10));",
+  "plate_comment": "Fills the 28-byte payload of the J1939 engine configuration message, PGN 65251 (Engine Configuration 1), into the buffer param_1 (fault_timer_state_base; the transmit descriptor j1939_pgn65251_tx_message has its can_id built from 0xfee300 and length 28, set by initFaultTimerMessage at 0x1b900). First it refreshes the torque curve with governor_calculateIntegratorRpmOutput (0x507a20, the fault derate speed points) and cm848_updateProtectionStateMachine (0x20d10). Then, byte swapped to J1939 little endian, it stores: the speeds and percent torques of curve points 1-5 (e2m 1102 Jcomm_Determined_RPM_Point_1-5 at +16 / +12 / +18 / +1A / +14, SPN 188 / 528 / 529 / 530 / 531; the high byte of j1939_indicated_percent_torque_at_* plus 125, SPN 539 .. 543), the high idle speed of point 6 (engine_speed_limit_arbitration.lowest_source_speed_limit, or the droop corrected limit capped at 0xfaff, SPN 532), 0xffff for the endspeed governor gain (SPN 545), reference_engine_torque_working (1102 +1E, SPN 544), the maximum momentary override speed ROM 0x5c39a (e2m 10E7 +18 Jcomm_High_Idle_Override_Speed, SPN 533) and its time limit j1939_pgn61442_engine_overspeed_enable_time_limit / 10 (SPN 534), the speed control range limits governor_rpm_limit_cal / 80 and engine_speed_limit_maximum / 80 (10 rpm per bit, SPN 535 / 536) and the torque control range, 0 percent and the largest point torque (SPN 537 / 538). It sends nothing: cm848_sendFaultTimerMessage (0x1b730, registered for PGN 65251 in the periodic transmit queue) and cm848_processFaultMessageTiming (0x1b778, which resends when a value changed) call it and send the descriptor.",
+  "_bin": "functions2",
+  "_line": 5,
+  "why": "shared with CM550"
+ },
+ {
+  "kind": "function",
+  "verdict": "confirmed",
+  "address": "0x0002588c",
+  "old": "j1939GetEngineStateCode",
+  "new": "cm848_buildPgn61444ElectronicEngineController1Message",
+  "evidence": "PGN proof in cm848_initEec1TxDescriptor (0x25ab8): j1939_pgn61444_tx_message.header.can_id is built from the constant 0xf00400 (PGN 61444), data_length 5, data pointer j1939_engine_status_byte; this function fills those bytes and ends with sendJ1939Message(&j1939_pgn61444_tx_message); the periodic queue registers it for header 0xf004 (diag_record_queue_add_entry(0,0xf004,0x14,0,...)). Byte 1 = engine torque mode (SPN 899) from final_fueling_state: 0xf0 low speed governor (11), 0xf2 cruise control (9), 0xf3 power take-off (4), 0xf4 vehicle speed limit (10), 0xf9 high speed governor (12), 0xfa engine brake (24), 0xf1 for states 7 / 8 / 30 / 37, 0xf8 when torque_derate_fuel_source_code equals final_fueling_state, 0xf6 / 0xf7 / 0xf5 for the TSC1 source index 1 / 2 / 3 = transmission / ABS / ASR (the same order as e2m 117D +14); byte 2 = cm848_calculateDriverDemandPercentTorque + 125 (SPN 512), byte 3 = actual percent torque + 125 (SPN 513), bytes 4-5 = engine_rpm_state_t_0040b7ac.current_rpm (SPN 190). SHARED: j1939GetEngineStateCode is also CM550 0x32c76 (function_renames.csv), so the main session holds this rename.",
+  "code_quote": "sendJ1939Message(&j1939_pgn61444_tx_message);",
+  "plate_comment": "Builds and sends the ECM's own EEC1 broadcast, PGN 61444: the transmit descriptor j1939_pgn61444_tx_message (can_id built from 0xf00400, 5 bytes, set by cm848_initEec1TxDescriptor at 0x25ab8) is registered in the periodic transmit queue with diag_record_queue_add_entry. Byte 1 is the engine torque mode (SPN 899): while a TSC1 override is active (j1939_tsc1_override_state.governor_mode non-zero in the TSC1 fueling states) 0xf6 / 0xf7 / 0xf5 for the sender index 1 / 2 / 3 (transmission / ABS / ASR), otherwise from final_fueling_state: 0xf8 (torque limiting) when torque_derate_fuel_source_code equals it, 0xf0 low speed governor, 0xf2 cruise control, 0xf3 power take-off governor, 0xf4 vehicle speed limit, 0xf9 high speed governor, 0xfa engine brake, 0xf1 accelerator pedal for the other user fueling states, else 0xfe. Byte 2 is the driver demand percent torque plus 125 (cm848_calculateDriverDemandPercentTorque, SPN 512), byte 3 the actual engine percent torque plus 125 (cm848_calculateLoadRateOfChange at 0x209e8, SPN 513; 0xfe when j1939_broadcast_enable_flag is 1) and bytes 4-5 the engine speed (engine_rpm_state_t_0040b7ac.current_rpm, SPN 190).",
+  "_bin": "functions2",
+  "_line": 14,
+  "why": "shared with CM550"
+ },
+ {
+  "kind": "function",
+  "verdict": "confirmed",
+  "address": "0x00021624",
+  "old": "cm848_activateDiagnosticSession",
+  "new": "cm848_exitDevelopmentMode",
+  "evidence": "Accepts only while j1939_standby_flag == STANDING_BY (1) (else DIAG_NACK_NOT_READY); then j1939_standby_flag = SESSION_ACTIVE (0), diagnostic_session_state = ACTIVE (1) and cal_write_mode = 0xee, DIAG_ACK. The rows are e2m 1328 +0 Development_Mode, 10C7 +0 RAM_Refresh_Enable and 0010 +0 RUN_LOC; 0 / 1 / 0xee is also the start-up (cal_write_mode = 0xee in the boot list), power-down (cm848_runPowerDownSequence) and dump state, so this LEAVES development mode and turns the RAM refresh on. Registered as J1939 diagnostic service 7 (cm848_registerJ1939DiagnosticHandlers). The owner's review note is kept at the end of the plate; the main session shows the rename to the owner.",
+  "code_quote": "if (j1939_standby_flag == STANDING_BY) {",
+  "plate_comment": "Leaves development mode and turns the RAM refresh back on (J1939 diagnostic service 7): accepted only while j1939_standby_flag is STANDING_BY (e2m 1328 +0 Development_Mode = 1), otherwise it returns DIAG_NACK_NOT_READY. Then it sets j1939_standby_flag = SESSION_ACTIVE (development mode 0), diagnostic_session_state = ACTIVE (e2m 10C7 +0 RAM_Refresh_Enable = 1) and cal_write_mode = 0xee (e2m 0010 +0 RUN_LOC; 0xee is also the start-up value) and returns DIAG_ACK. There is no engine state check; the force variant (service 22, 0x21694) requires the engine to be stopped but not development mode. | jlaustill reviewed - hopefully accurate",
+  "_bin": "functions3",
+  "_line": 20,
+  "why": "owner's review note"
+ },
+ {
+  "kind": "function",
+  "verdict": "confirmed",
+  "address": "0x00021668",
+  "old": "cm848_resetDiagnosticSession",
+  "new": "cm848_enterDevelopmentMode",
+  "evidence": "Stores diagnostic_session_state = INACTIVE (RAM_Refresh_Enable 0), j1939_standby_flag = STANDING_BY (Development_Mode 1) and cal_write_mode = 0xea (RUN_LOC), returns DIAG_ACK: the opposite of the boot / power-down / dump state, so it ENTERS development mode. Called as diagnostic service 10 and by cm848_processPciDiagnosticRequest right after pci_security_unlocked_flag = 1 (the security key was accepted). With the refresh disabled cm848_onEepromBlockRead stops reloading the mirror, j1939_writeDiagMemory writes EEPROM addresses only to the RAM mirror (its queue branch needs diagnostic_session_state == ACTIVE) and cm848_lookupApplicationMemoryRegionType gives the register ranges type 3 instead of 10 (table 0x53a33a, STANDING_BY column). The owner's review note is kept at the end of the plate; the main session shows the rename to the owner.",
+  "code_quote": "j1939_standby_flag = STANDING_BY;",
+  "plate_comment": "Enters development mode (J1939 diagnostic service 10, also called by cm848_processPciDiagnosticRequest right after the PCI security key has been accepted): disables the RAM refresh (diagnostic_session_state = INACTIVE, e2m 10C7 +0 RAM_Refresh_Enable = 0), sets j1939_standby_flag = STANDING_BY (e2m 1328 +0 Development_Mode = 1) and cal_write_mode = 0xea (e2m 0010 +0 RUN_LOC), and returns DIAG_ACK. With the refresh off, RAM calibration edits are not overwritten (the refresh pass and the periodic EEPROM mirror reload, cm848_onEepromBlockRead, stop), diagnostic writes to EEPROM addresses and EEPROM parameter ID writes go to the RAM mirror only (cm848_lookupParameterIdAddress, j1939_writeDiagMemory), and the two register address ranges of the diagnostic memory services open (cm848_lookupApplicationMemoryRegionType). The way back is service 7 (0x21624) or, with the engine stopped, service 22 (0x21694). | jlaustill review 2026-05-25 - hopefully accurate",
+  "_bin": "functions3",
+  "_line": 21,
+  "why": "owner's review note"
+ },
+ {
+  "kind": "function",
+  "verdict": "confirmed",
+  "address": "0x00021694",
+  "old": "cm848_forceActivateDiagnosticSession",
+  "new": "cm848_forceExitDevelopmentMode",
+  "evidence": "Refuses with DIAG_NACK_PROTECTED while not_safe_to_program_flag == 1 (engine_state != STOPPED, 0x2bf44); otherwise it always stores diagnostic_session_state = ACTIVE (refresh on) and, only if cal_write_mode == 0xea (development), cal_write_mode = 0xee and j1939_standby_flag = SESSION_ACTIVE, so it LEAVES development mode without requiring it (service 7 requires it); the only unconditional store is the refresh enable, so cm848_forceEnableRamRefresh is the alternative name if the owner prefers that half. Registered as diagnostic service 22 (0x16). The owner's note is about != 1 and == 0xea / 0xee not rendering as enums: cal_write_mode is e2m 0010 +0 RUN_LOC (0xee normal / 0xea development here) and not_safe_to_program_flag is e2m 000D SAFE2PRG, both enum candidates. The note is kept at the end of the plate; the main session shows the rename to the owner.",
+  "code_quote": "if (not_safe_to_program_flag != 1) {",
+  "plate_comment": "Forces an exit from development mode when it is safe to program (J1939 diagnostic service 22): with not_safe_to_program_flag clear (engine stopped) it always turns the RAM refresh on (diagnostic_session_state = ACTIVE, e2m 10C7 +0 RAM_Refresh_Enable = 1) and, only if cal_write_mode is 0xea (development mode), also restores cal_write_mode = 0xee and j1939_standby_flag = SESSION_ACTIVE (e2m 1328 +0 Development_Mode = 0); it returns DIAG_ACK. With the engine not stopped it returns DIAG_NACK_PROTECTED and changes nothing. Unlike service 7 (0x21624) it does not require development mode to be on. | jlaustill reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums",
+  "_bin": "functions3",
+  "_line": 22,
+  "why": "owner's review note"
+ },
+ {
+  "kind": "enum",
+  "verdict": "confirmed",
+  "address": "0x0040c04a",
+  "old": "diagnostic_session_state",
+  "new": "ram_refresh_enable",
+  "enum_old": "DIAG_SESSION_STATE",
+  "enum_new": "RAM_REFRESH_STATE",
+  "members": [
+   {
+    "value": 0,
+    "old": "INACTIVE",
+    "new": "RAM_REFRESH_DISABLED",
+    "comment": "RAM refresh off (development mode); the refresh pass and the EEPROM mirror reload do nothing; stored by the reset service and temporarily by cm848_runCylinderContributionTest"
+   },
+   {
+    "value": 1,
+    "old": "ACTIVE",
+    "new": "RAM_REFRESH_ENABLED",
+    "comment": "RAM refresh on (the normal state); stored at start-up and power-down and by the activate services"
+   },
+   {
+    "value": 2,
+    "old": "LOCKED_OUT",
+    "new": "",
+    "comment": "Remove; nothing stores or tests 2 and the e2m record has no value labels"
+   }
+  ],
+  "comment": "e2m 10C7 +0 RAM_Refresh_Enable '[RREN] ENABLES COMPARE RAM TO EEPROM ALGORITHM' (HEX, word; 1 in the dump; address from the ECU's parameter ID table). 1 = RAM refresh enabled (the start-up and normal state), 0 = disabled (development mode). While enabled: the refresh pass cm848_initProtectionModule (the background loop of cm848_applicationMain) compares the sensor channel calibration block 0x3feed0-0x40a046 with ROM 0x64aea and rewrites differing words (setting fault 0 = P0606, e2m 1036 +0 RAM_Image_Word_Error, when it had to), the periodic EEPROM block read (cm848_periodicTaskSet_protection2 -> cm848_startEepromBlockRead) is copied into the RAM mirror by cm848_onEepromBlockRead, and j1939_writeDiagMemory refuses RAM writes into 0x3fd480-0x40a046 and queues EEPROM-address writes to the EEPROM. Stored 1 at start-up (cm848_initEepromDriverAndLoadMirror), by cm848_runPowerDownSequence, uds_session_state_init and the activate services; stored 0 by the reset service and, while it edits calibration words, by cm848_runCylinderContributionTest (1 again after). The supervisor chip register 46 read and the periodic supervisor configuration rewrite run only while it is 0. main_loop's psVar4 < &diagnostic_session_state is a loop-end address, not a use.",
+  "evidence": "Stores: 0 (INACTIVE) in the reset service and at the start of cm848_runCylinderContributionTest; 1 (ACTIVE) in cm848_initEepromDriverAndLoadMirror, the activate and force-activate services, cm848_runPowerDownSequence, uds_session_state_init and the end of the cylinder test; every compare is == INACTIVE, != INACTIVE or == ACTIVE and nothing stores or tests 2. e2m 10C7 +0 RAM_Refresh_Enable resolves here through the parameter ID table; dump (word) 1. Enabled: the refresh pass cm848_initProtectionModule runs, cm848_onEepromBlockRead copies the block into the mirror only under if (diagnostic_session_state != INACTIVE) (the periodic read: cm848_periodicTaskSet_protection2 -> cm848_startEepromBlockRead), j1939_writeDiagMemory refuses RAM writes into the protected window; the supervisor register 46 read and configuration rewrite need == INACTIVE. e2m fit: RREN 'ENABLES COMPARE RAM TO EEPROM ALGORITHM' is that EEPROM mirror reload; the other half is the flash block loop cm848_initProtectionModule (RAM 0x3feed0-0x40a046 against ROM 0x64aea, after the mirror end 0x3feec1), whose e2m record is 10C7 +2 Powerdown_Refresh_Enable (sensor_validation_result, set to 1 by uds_session_state_init, cleared by a successful cm848_commitEepromMirrorToEeprom and read by nothing in the decompile). main_loop's psVar4 < &diagnostic_session_state is a loop-end address, not a use. A plain word flag would do (nothing differs from 0 / 1); the two-member enum keeps the compares readable.",
+  "_bin": "functions3",
+  "_line": 25,
+  "why": "enum item (applied by hand)"
+ },
+ {
+  "kind": "enum",
+  "verdict": "confirmed",
+  "address": "0x0040aa9a",
+  "old": "j1939_standby_flag",
+  "new": "development_mode",
+  "enum_old": "J1939_STANDBY_STATE",
+  "enum_new": "DEVELOPMENT_MODE_STATE",
+  "members": [
+   {
+    "value": 0,
+    "old": "SESSION_ACTIVE",
+    "new": "DEVELOPMENT_MODE_OFF",
+    "comment": "Normal operation; stored by the activate services and the power-down sequence; the register address ranges of the diagnostic memory services are refused"
+   },
+   {
+    "value": 1,
+    "old": "STANDING_BY",
+    "new": "DEVELOPMENT_MODE_ON",
+    "comment": "Development mode; stored only by the reset service together with the RAM refresh disabled; the activate service needs it and the register address ranges of the diagnostic memory services open"
+   }
+  ],
+  "comment": "e2m 1328 +0 Development_Mode '[SSDVMD] RAM Refresh disabled mode indicated by config name RUN_LOC = AAh' (UNITLESS, word; 0 in the dump; address from the ECU's parameter ID table). 1 = development mode: set by the reset service (also after a PCI security key is accepted) together with diagnostic_session_state INACTIVE (RAM refresh disabled) and cal_write_mode (e2m 0010 +0 RUN_LOC) = 0xea - this build uses 0xea, not the 0xaa of the e2m text; 0 = normal: stored by the activate service, by the force-activate service (only when cal_write_mode was 0xea) and by cm848_runPowerDownSequence. Tested == STANDING_BY only: the activate service accepts only while it is 1 (else DIAG_NACK_NOT_READY), and cm848_lookupApplicationMemoryRegionType gives the register ranges 0x2fc000-0x301fff and 0x303800-0x307fff type 3 (accessible) while it is 1 and type 10 (refused) otherwise (table 0x53a33a). No J1939 broadcast is gated by it.",
+  "evidence": "Stores: 1 (STANDING_BY) only in the reset service, together with the refresh disabled and cal_write_mode = 0xea; 0 (SESSION_ACTIVE) in the activate service, in the force-activate service (only when cal_write_mode == 0xea) and in cm848_runPowerDownSequence; compares: the activate gate == STANDING_BY and cm848_lookupApplicationMemoryRegionType == STANDING_BY. The flash2 table at 0x53a33a (dumped) has type 3 for the register ranges 0x2fc000-0x301fff and 0x303800-0x307fff in the STANDING_BY column and 10 in the other, all other regions identical in both: an independent sign that 1 is the development state. Dump (word) 0; e2m 1328 +0 Development_Mode resolves here through the parameter ID table. e2m mismatch: it says RUN_LOC = AAh, this build writes 0xea. No J1939 broadcast depends on it, so the old 'J1939 broadcasts suppressed' / 'standing by' wording has no basis in the code. A plain word flag would do.",
+  "_bin": "functions3",
+  "_line": 26,
+  "why": "enum item (applied by hand)"
+ },
+ {
+  "kind": "global",
+  "verdict": "confirmed",
+  "address": "0x003fddc4",
+  "old": "diag_dm1_fault_source_table",
+  "new": "data_collector_address_table_cal",
+  "evidence": "diag_dm1Buffer_circularFill reads each dword entry (4 lwz) and stores the byte it points at (`pdVar2 = &diag_dm1_fault_source_table;`, an address below 0x1000000, else 0); hpcr_exception_process stores its address in data_collector_table_address; cm848_phase_groupB_calculation counts the non-zero entries up to load_histogram_start_engine_hours_cal (0x3fde44 = 32 entries from 0x3fddc4); e2m 003B +0 Collector_Table 'Table to be collected by the data collector' (its first word, the length, is at 0x3fddc2); EEPROM mirror, so _cal",
+  "code_quote": "data_collector_table_address = (dword)&diag_dm1_fault_source_table;",
+  "comment": "e2m 003B Collector_Table (HEX): 'Table to be collected by the data collector'. The table of up to 32 byte addresses the data collector samples (dword entries, a 0 ends the list), EEPROM mirror so _cal: the e2m record starts at 0x3fddc2 with the table length word (0x0080 = 32 x 4 bytes in the dump, see data_collector_table_address) and these entries start at 0x3fddc4 and end at load_histogram_start_engine_hours_cal (0x3fde44). cm848_phase_groupB_calculation counts the non-zero entries (data_collector_table_entry_count) and diag_dm1Buffer_circularFill stores the byte each entry points at (an address below 0x1000000, else 0) into the ring buffer once per sample; hpcr_exception_process stores the table address in data_collector_table_address. Row typed dword: the table is dword[32]. Not a DM1 fault source table.",
+  "type_note": "one dword row at the head of a 32-entry table of dword byte addresses (0x3fddc4-0x3fde43, ends at load_histogram_start_engine_hours_cal; 4 lwz in the two readers); the e2m record 003B +0 Collector_Table starts at 0x3fddc2 with a length word (128 in the dump = 0x80 bytes = 32 x 4) and covers the table, so the row should be dword[32] (and 0x3fddc2 a word row for the length)",
+  "old_comment_wrong": true,
+  "_bin": "globals1",
+  "_line": 19,
+  "why": "type note / split (width, by hand)"
+ },
+ {
+  "kind": "global",
+  "verdict": "confirmed",
+  "address": "0x00408f8c",
+  "old": "crank_period_capture_index_max_cal",
+  "new": "backup_period_capture_count",
+  "evidence": "e2m 8194 +36 Period_Meas_Per_Backup 'Number of cam measurements used in speed calculation' (1 byte) and +37 Periods_Per_Sum 'Number of crank periods per interrupt' (1 byte): mpc555_updateEngineCrankState reads the high byte 0x408f8c (`uVar8 = (uint)crank_period_capture_index_max_cal._0_1_;`, lbz) as the number of captured backup tooth periods summed into crank_tooth_period_raw and the wrap point of crank_period_capture_index (the ring is written by the TPU-A channel 1 cam handler: the backup path, hence backup_ and not crank_); mpc555_resetEngineTimingAccumulators reads the low byte 0x408f8d (`(byte)crank_period_capture_index_max_cal * engine_speed_interrupts_per_cylinder;`, lbz r10,0(r8) with r8 = 0x408f8d @ 0x43edc and 0x44168); 2 in the dump (0x408f8c)",
+  "code_quote": "uVar8 = (uint)crank_period_capture_index_max_cal._0_1_;",
+  "comment": "e2m 8194 +36 Period_Meas_Per_Backup (UNITLESS, 1 byte, 0-255): 'Number of cam measurements used in speed calculation'. The number of captured backup (TPU-A channel 1 cam signal) tooth periods that make up the backup speed: mpc555_updateEngineCrankState stores each capture in crank_period_capture_array[backup_period_capture_index], wraps the index to 0 at this count (read with lbz as the high byte of this word) and sums this many entries into crank_tooth_period_raw (e2m 819B +6 Average_Pulse_Period_Backup). 2 in the dump. The row is typed word and also covers the next byte 0x408f8d (e2m +37 Periods_Per_Sum): mpc555_resetEngineTimingAccumulators reads it as (byte) of this word (2 lbz) - see the split. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal. It is the entry count of the backup period ring (the index wraps to 0 when it reaches it), not a maximum index; the ring and its index are the backup (cam) path, as in the e2m Period_Meas_Per_Backup / Next_Table_Position_Backup names.",
+  "type_note": "word row over two 1-byte e2m records: +36 Period_Meas_Per_Backup at 0x408f8c (lbz in mpc555_updateEngineCrankState, the ._0_1_ read) and +37 Periods_Per_Sum at 0x408f8d (lbz in mpc555_resetEngineTimingAccumulators, the (byte) read; the typeless label row crank_period_reference_scale_cal sits there); should be two byte rows",
+  "split": [
+   {
+    "address": "0x00408f8c",
+    "name": "backup_period_capture_count",
+    "type": "byte",
+    "comment": "e2m 8194 +36 Period_Meas_Per_Backup (UNITLESS, 1 byte, 0-255): 'Number of cam measurements used in speed calculation'. The number of captured backup (TPU-A channel 1 cam signal) tooth periods that make up the backup speed: mpc555_updateEngineCrankState stores each capture in crank_period_capture_array[backup_period_capture_index], wraps the index to 0 at this count and sums this many entries into crank_tooth_period_raw (e2m 819B +6 Average_Pulse_Period_Backup). lbz. 2 in the dump. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal."
+   },
+   {
+    "address": "0x00408f8d",
+    "name": "crank_periods_per_speed_interrupt",
+    "type": "byte",
+    "comment": "e2m 8194 +37 Periods_Per_Sum (UNITLESS, 1 byte, 0-255): 'Number of crank periods per interrupt'. The number of crank tooth periods the TPU-A channel 12 sums per speed interrupt: mpc555_resetEngineTimingAccumulators (2 lbz, 0x43edc and 0x44168) multiplies it by engine_speed_interrupts_per_cylinder (e2m +4A Sums_Per_Cylinder) into crank_period_scale_divisor (e2m 819B +46 RPM_Cylinder_Width 'number of crank teeth per cylinder': 5 x 4 = 20), programs TPUA_CH12_PARAM0.PARAM6 with it x 256 - 256 and presets the TPU-A channel 11 / 12 period buffers with it x 20000000 / tooth_period_buffer_initial_engine_speed. lbz. 5 in the dump. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal."
+   }
+  ],
+  "_bin": "globals1",
+  "_line": 43,
+  "why": "type note / split (width, by hand)"
+ },
+ {
+  "kind": "global",
+  "verdict": "confirmed",
+  "address": "0x00408fa3",
+  "old": "crank_sync_period_limit_state1_cal",
+  "new": "crank_lost_resync_cam_tooth_threshold",
+  "evidence": "e2m 8194 +4D Lost_Resync_With_Cam_Threshold 'Cam tooth threshold at which +1 tooth resync in LOST crank state is allowed' (1 byte) and +4E Prelim_Resync_With_Cam_Threshold 'Cam tooth threshold at which +1 tooth resync to PRELIM crank bank is allowed' (1 byte): mpc555_updateEngineCrankState compares crank_sync_period_counter with the byte 0x408fa3 in crank run state 1 (`crank_sync_period_limit_state1_cal._0_1_ < crank_sync_period_counter`, lbz @ 0x45ab8 after cmpwi 1) and with the byte 0x408fa4 in run state 3 (`(byte)crank_sync_period_limit_state1_cal < crank_sync_period_counter`, lbz @ 0x45aa0 after cmpwi 3); 1 in the dump (0x408fa3)",
+  "code_quote": "(crank_sync_period_limit_state1_cal._0_1_ < crank_sync_period_counter)))))) &&",
+  "comment": "e2m 8194 +4D Lost_Resync_With_Cam_Threshold (UNITLESS, 1 byte, 0-255): 'Cam tooth threshold at which +1 tooth resync in LOST crank state is allowed'. mpc555_updateEngineCrankState compares crank_sync_period_counter (e2m 819B +14 Cam_Crank_Plausibility_2) with it in crank run state 1 (lbz @ 0x45ab8 after cmpwi 1) and, above it with the tooth counter at zero, no firing detections and no speed limp home, requests the +1 tooth resync (tpu_a_mcr.HSRR1 = 1, crank_tbl_event_counter + 1). 1 in the dump. The row is typed word and also covers the next byte 0x408fa4 (e2m +4E Prelim_Resync_With_Cam_Threshold), which the run state 3 branch reads (lbz @ 0x45aa0, rendered as (byte) of this word) - see the split. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal.",
+  "type_note": "word row over two 1-byte e2m records: +4D Lost_Resync_With_Cam_Threshold at 0x408fa3 (lbz @ 0x45ab8, run state 1, the ._0_1_ read) and +4E Prelim_Resync_With_Cam_Threshold at 0x408fa4 (lbz @ 0x45aa0, run state 3, the (byte) read; the typeless label row crank_sync_period_limit_state3_cal sits there); should be two byte rows",
+  "split": [
+   {
+    "address": "0x00408fa3",
+    "name": "crank_lost_resync_cam_tooth_threshold",
+    "type": "byte",
+    "comment": "e2m 8194 +4D Lost_Resync_With_Cam_Threshold (UNITLESS, 1 byte, 0-255): 'Cam tooth threshold at which +1 tooth resync in LOST crank state is allowed'. mpc555_updateEngineCrankState compares crank_sync_period_counter (e2m 819B +14 Cam_Crank_Plausibility_2) with it in crank run state 1 (lbz @ 0x45ab8 after cmpwi 1) and, above it with the tooth counter at zero, no firing detections and no speed limp home, requests the +1 tooth resync (tpu_a_mcr.HSRR1 = 1, crank_tbl_event_counter + 1). lbz. 1 in the dump. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal."
+   },
+   {
+    "address": "0x00408fa4",
+    "name": "crank_preliminary_resync_cam_tooth_threshold",
+    "type": "byte",
+    "comment": "e2m 8194 +4E Prelim_Resync_With_Cam_Threshold (UNITLESS, 1 byte, 0-255): 'Cam tooth threshold at which +1 tooth resync to PRELIM crank bank is allowed'. The preliminary sync twin of crank_lost_resync_cam_tooth_threshold: mpc555_updateEngineCrankState compares crank_sync_period_counter with it in crank run state 3 (lbz @ 0x45aa0 after cmpwi 3) before it requests the +1 tooth resync. lbz. 5 in the dump. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal."
+   }
+  ],
+  "_bin": "globals1",
+  "_line": 57,
+  "why": "type note / split (width, by hand)"
+ },
+ {
+  "kind": "global",
+  "verdict": "confirmed",
+  "address": "0x00408fa5",
+  "old": "crank_tooth_timer_max_cal",
+  "new": "crank_preliminary_sync_tooth_shift_upper_threshold",
+  "evidence": "e2m 8194 +4F Speed_Latency_Sync_Threshold 'Crank Speed ISR tooth shift limit for PRELIM sync determination += 1' (1 byte) and +50 Speed_Negative_Shift_Threshold 'Crank Speed ISR tooth shift lower limit for PRELIM sync determination' (2 bytes at 0x408fa6): hpcr_processEngineSyncPulses skips the check while the tooth shift (wVar5 & 0xff) is below the word at 0x408fa6 (lhz @ 0x45224, `blt`) and subtracts 1 from crank_tooth_count_a when `(uint)((ushort)crank_tooth_timer_max_cal._0_1_ < (wVar5 & 0xff))` (lbz @ 0x4523c, `ble` skip): the byte at 0x408fa5 is the upper limit; 25 in the dump (0x408fa5)",
+  "code_quote": "(uint)((ushort)crank_tooth_timer_max_cal._0_1_ < (wVar5 & 0xff));",
+  "comment": "e2m 8194 +4F Speed_Latency_Sync_Threshold (UNITLESS, 1 byte, 0-255): 'Crank Speed ISR tooth shift limit for PRELIM sync determination += 1.'. The upper limit of the tooth shift of the crank speed interrupt in the preliminary sync determination: hpcr_processEngineSyncPulses (the TPU-A channel 11 speed interrupt, crank run state 2) subtracts 1 from the cam pulse count crank_tooth_count_a before comparing it with crank_pattern_tooth_count_cal when the shift (tpu_a_ch0_param0.PARAM4 low byte, less crank_signal_tooth_count while the window bit is set) is above it (lbz @ 0x4523c). 25 in the dump. The row is typed word and also covers the first byte of the 2-byte record 0x408fa6 (e2m +50 Speed_Negative_Shift_Threshold), the lower limit: the check is skipped while the shift is below it (lhz @ 0x45224) - see the split. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal.",
+  "type_note": "word row at 0x408fa5 over the 1-byte e2m record +4F Speed_Latency_Sync_Threshold (lbz @ 0x4523c, the ._0_1_ read) and the first byte of the 2-byte record +50 Speed_Negative_Shift_Threshold at 0x408fa6 (lhz @ 0x45224; the typeless label row crank_tooth_timer_min_cal sits there); should be a byte row at 0x408fa5 and a word row at 0x408fa6",
+  "split": [
+   {
+    "address": "0x00408fa5",
+    "name": "crank_preliminary_sync_tooth_shift_upper_threshold",
+    "type": "byte",
+    "comment": "e2m 8194 +4F Speed_Latency_Sync_Threshold (UNITLESS, 1 byte, 0-255): 'Crank Speed ISR tooth shift limit for PRELIM sync determination += 1.'. The upper limit of the tooth shift of the crank speed interrupt in the preliminary sync determination: hpcr_processEngineSyncPulses (the TPU-A channel 11 speed interrupt, crank run state 2) subtracts 1 from the cam pulse count crank_tooth_count_a before comparing it with crank_pattern_tooth_count_cal when the shift (tpu_a_ch0_param0.PARAM4 low byte, less crank_signal_tooth_count while the window bit is set) is above it (lbz @ 0x4523c). 25 in the dump. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal."
+   },
+   {
+    "address": "0x00408fa6",
+    "name": "crank_preliminary_sync_tooth_shift_lower_threshold",
+    "type": "word",
+    "comment": "e2m 8194 +50 Speed_Negative_Shift_Threshold (UNITLESS, 2 bytes, 0-255): 'Crank Speed ISR tooth shift lower limit for PRELIM sync determination.'. The lower limit of the tooth shift of the crank speed interrupt in the preliminary sync determination: hpcr_processEngineSyncPulses skips the cam pulse count check while the shift (tpu_a_ch0_param0.PARAM4 low byte, less crank_signal_tooth_count while the window bit is set) is below it (lhz @ 0x45224, blt), so shifts from this word up to crank_preliminary_sync_tooth_shift_upper_threshold are the normal range. lhz. 19 in the dump. ROM-copied constant in RAM (never written) outside the EEPROM mirror, so no _cal."
+   }
+  ],
+  "_bin": "globals1",
+  "_line": 58,
+  "why": "type note / split (width, by hand)"
+ },
+ {
+  "kind": "global",
+  "verdict": "confirmed",
+  "address": "0x0040a406",
+  "old": "boost_pressure_state_t_0040a406",
+  "new": "charge_flow_estimate_terms",
+  "evidence": "16-byte record of charge flow model terms: load_input = intake_manifold_temperature_filtered + 0x7300 (1/64 F + 460 F = Rankine, e2m 177D +2 CHP_Intake_Manifold_Tmptr_R, 32042 in the dump = 500.7 R); rpm_modifier / lookup_result / computed_value / pressure_ratio = Veff Mach / Veff Sqrt / flow area constant / pressure ratio (177D +4..+A, written by cm848_boostBasedFuelModifier); reserved_0a = 177D +C Charge_Flow_Source (set 0 or 1); fresh_air_mass_flow_filtered / reserved_0e = 177B +0 Fresh_Air_Flow / +2 Fresh_Air_Flow_Source; nothing in it is a boost pressure state.",
+  "code_quote": "boost_pressure_state_t_0040a406.load_input = intake_manifold_temperature_filtered + 0x7300;",
+  "comment": "Record of the charge flow model terms (8 words): e2m 177D +2 CHP_Intake_Manifold_Tmptr_R (degrees Rankine = intake_manifold_temperature_filtered + 460 F; 32042 in the dump), +4 CHP_Veff_Mach, +6 CHP_Veff_Sqrt, +8 CHP_Flow_Area_Constant, +A CHP_Pratio, +C Charge_Flow_Source, then e2m 177B +0 Fresh_Air_Flow and +2 Fresh_Air_Flow_Source. Written by cm848_boostBasedFuelModifier.",
+  "type_note": "Struct instance: renaming the row alone leaves the type name boost_pressure_state_t, the field names and the seven dotted label rows 0x40a408..0x40a414 (boost_pressure_state_t_0040a406.<field>) stale. Hold for the main session: rename the type to charge_flow_estimate_terms_t and the fields load_input -> intake_manifold_temperature_rankine (177D +2), rpm_modifier -> volumetric_efficiency_mach (+4), lookup_result -> volumetric_efficiency_sqrt (+6), computed_value -> flow_area_constant (+8), pressure_ratio (+A, keep), reserved_0a -> charge_flow_source (+C), fresh_air_mass_flow_filtered -> fresh_air_flow_filtered (177B +0), reserved_0e -> fresh_air_flow_source (177B +2); drop or rename the dotted rows with the prefix.",
+  "_bin": "globals2",
+  "_line": 19,
+  "why": "type note / split (width, by hand)"
+ },
+ {
+  "kind": "global",
+  "verdict": "confirmed",
+  "address": "0x0040912a",
+  "old": "cam_sync_speed_filter_state_cal",
+  "new": "fuel_metering_battery_voltage_filter_coefficient",
+  "evidence": "cm848_calculateFuelMeteringCommand points cam_sync_speed_filter_state.coefficient at this address (at sensor_channel_config_t_00059336, the channel's own coefficient, while the governor mode is OPEN_LOOP_START); cm848_filterEngineSensorValue filters sensor_channel2_ram.value (the battery voltage channel: cm848_sensorChannel2_init passes battery_voltage_linearization_axis and slot 4) with that record into the word at 0x40b884 (engine_sync_state_t reserved_05), the input of the cam_sync_speed_output_scale lookup that scales fuel_metering_command; e2m 8000 +30 HPCR_Battery_Voltage_Filter_Constant is 2 B and this row is a byte; 0 in the dump (byte and word).",
+  "code_quote": "pbVar13 = &cam_sync_speed_filter_state_cal;",
+  "comment": "e2m 8000 +30 HPCR_Battery_Voltage_Filter_Constant 'Time constant for the battery voltage filter for fuel pressure control' (UNITLESS, 1/65536, 2 B; 0 in the dump = no filtering): the weight of the previous value of the battery voltage filter record cam_sync_speed_filter_state (0x3fb697); cm848_calculateFuelMeteringCommand points its coefficient here (at the sensor channel's own coefficient while the governor mode is OPEN_LOOP_START), and the filtered value, the word at 0x40b884 (engine_sync_state_t reserved_05), feeds the lookup that scales fuel_metering_command. RAM outside the EEPROM mirror, so no _cal.",
+  "type_note": "row is a byte but the e2m record is 2 B and the filter reads the coefficient as a 16-bit word through its pointer: widen to word (0x40912b has no row, the next row is 0x40912c)",
+  "split": [
+   {
+    "address": "0x0040912a",
+    "name": "fuel_metering_battery_voltage_filter_coefficient",
+    "type": "word",
+    "comment": "e2m 8000 +30 HPCR_Battery_Voltage_Filter_Constant 'Time constant for the battery voltage filter for fuel pressure control' (UNITLESS, 1/65536, 2 B; 0 in the dump = no filtering): the weight of the previous value of the battery voltage filter record cam_sync_speed_filter_state, whose coefficient pointer cm848_calculateFuelMeteringCommand points here (at the sensor channel's own coefficient while the governor mode is OPEN_LOOP_START). RAM outside the EEPROM mirror, so no _cal."
+   }
+  ],
+  "_bin": "globals3",
+  "_line": 54,
+  "why": "type note / split (width, by hand)"
+ },
+ {
+  "kind": "global",
+  "verdict": "confirmed",
+  "address": "0x0040b87f",
+  "old": "engine_sync_state_t_0040b87f",
+  "new": "fuel_pressure_governor_state",
+  "evidence": "e2m 8019 +0 HPCR_Fuelpr_Operating_Mode_N (1 B) / +1 HPCR_Dutycycle_Monitoring (2 B) / +3 HPCR_Dutycycle_Output (2 B) / +5 HPCR_Filtered_Battery_Voltage (2 B) at 0x40b87f-0x40b885 is the fuel pressure controller (fuel metering valve) state read and written by cm848_calculateFuelMeteringCommand, not an engine sync state; its fields are already fuel_pressure_governor_mode / _demand and fuel_metering_command; the struct ends in a 1-byte reserved_05 but 0x40b884 is a word (lhz at 0x48d14, sth at 0x49250).",
+  "code_quote": "engine_sync_state_t_0040b87f.fuel_pressure_governor_mode = FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START;",
+  "comment": "e2m 8019 +0 .. +5 (HPCR_Fuelpr_Operating_Mode_N byte, HPCR_Dutycycle_Monitoring, HPCR_Dutycycle_Output, HPCR_Filtered_Battery_Voltage): the fuel pressure governor state record of cm848_calculateFuelMeteringCommand: fuel_pressure_governor_mode (FUEL_PRESSURE_GOVERNOR_MODE), fuel_pressure_governor_demand, fuel_metering_command (0-4095) and the filtered battery voltage word at 0x40b884 that the struct does not cover. Not an engine sync state.",
+  "type_note": "struct engine_sync_state_t is 6 bytes (byte mode, word demand, word command, byte reserved_05) but the e2m 8019 +5 HPCR_Filtered_Battery_Voltage record at 0x40b884 is a word (cm848_filterEngineSensorValue stores the average of sensor_channel2_ram.value there as ram0x0040b884 with sth at 0x49250; cm848_calculateFuelMeteringCommand reads it with lhz at 0x48d14 for its voltage lookup), so the last field should be a 2-byte word and the struct 7 bytes (0x40b87f-0x40b885); the decompile renders ram0x0040b884 outside the struct. The type and its field labels (engine_sync_state_t_0040b87f.*) want the matching fuel_pressure_governor_state_t rename in the same change.",
+  "_bin": "globals4",
+  "_line": 58,
+  "why": "type note / split (width, by hand)"
+ }
+]

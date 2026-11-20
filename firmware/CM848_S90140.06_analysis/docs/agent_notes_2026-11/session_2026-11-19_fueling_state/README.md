@@ -2,8 +2,8 @@
 
 The question was whether `governor_fuel_demand_mode` (0x40a154) is an enum. It is the Cummins FSGVFLST governed
 fueling state, so `ENGINE_OPERATING_MODE` became the shared `FUELING_STATE` enum. The findings and follow-ups are in
-`work/tasks/045-cm848-fueling-state-enum.md`. This folder keeps the session's scratch work. Seventeen read-only
-subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7 and six in stage 8.
+`work/tasks/045-cm848-fueling-state-enum.md`. This folder keeps the session's scratch work. Twenty-four read-only
+subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8 and seven in stage 9.
 
 `session_folder/` has these files:
 - `apply_fueling_state.py`: the CSV edit. It checks each old row before it replaces it.
@@ -107,7 +107,21 @@ subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7 an
   - `gain_scaling_tables.py`: maps each scaled gain field to its curve and e2m block.
   - `apply_stage8c.py` (with `map_stage8c.csv`, `gate_input_stage8c.jsonl`, and `gate8c_out/`, the pre-8c CSVs the
     gate ran against).
-- **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8):
+- **Stage 9** (rename wave 14: the function misnames and the sibling rows), in `stage9/`:
+  - **Worklists:**
+    - `extract_function_leads.py` -> `function_leads.json`;
+    - `sibling_candidates.py`, `report_mentions.py`, `expand_worklist.py` -> `global_worklist_*.json`. `_later.json`
+      holds the deferred rows.
+  - **Bins:** `build_context_W14.py` -> `bins/functions1-3.json`, `bins/globals1-4.json`; `brief_W14.md`.
+  - **Results and apply:**
+    - `result_W14_*.jsonl`;
+    - `apply_W14.py` (the checks, the holds in `held_W14.json`, the repo gate on `gate_input_W14*.jsonl`);
+    - `apply_stage9_hand.py` / `apply_stage9_hand_b.py`: the splits, the collector table array and the enums;
+    - `map_stage9*.csv`.
+  - **Proof:** `map_stage9_proof.csv`, plus `real_code_diffs.py` (the code-only differences, auto-named locals
+    renumbered per kind) and `show_code_diffs.py`. `check_quoted_dump_values_W14.py` knows the dump gap.
+  - `reports/`, `agent_scratch/` (all seven agents' scratch), `append_W14_agent_notes.py`, `sweep9.txt`.
+- **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8, seven in stage 9):
   - `agent_prompts.jsonl`: their exact prompts.
   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked
     before applying.

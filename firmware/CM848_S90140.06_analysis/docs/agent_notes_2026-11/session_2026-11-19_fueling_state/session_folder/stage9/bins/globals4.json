@@ -1,0 +1,2327 @@
+[
+ {
+  "address": "0x003fcd92",
+  "current_name": "governor_cruiseOverride_holdoff_countdown",
+  "current_type": "word",
+  "current_comment": "holdoff before accepting a new override transition",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 4, 'lhz': 2} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "governor_cruise_coastButton_handler: if (governor_cruiseOverride_holdoff_countdown == 0) {",
+   "governor_cruise_coastButton_handler: governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_countdown - 1;",
+   "governor_cruise_coastButton_handler: governor_cruiseOverride_holdoff_countdown = governor_cruiseOverride_holdoff_countdown - 1;",
+   "governor_cruise_coastButton_handler: governor_cruiseOverride_holdoff_countdown = cruise_coast_accelerate_hold_time;",
+   "governor_cruise_resumeButton_handler: governor_cruiseOverride_holdoff_countdown = cruise_coast_accelerate_hold_time;",
+   "governor_cruise_resumeButton_handler: if (governor_cruiseOverride_holdoff_countdown == 0) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 0x3fcd92 `governor_cruiseOverride_holdoff_countdown`"
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fcff0",
+  "current_name": "cruise_ramp_rate_b_computed",
+  "current_type": "word",
+  "current_comment": "computed cruise ramp rate B (normal path)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "governor_cruise_speedReference_update: cruise_ramp_rate_b_working = cruise_ramp_rate_b_computed;",
+   "governorCruiseStateMachine: cruise_ramp_rate_b_computed =",
+   "governorCruiseStateMachine: cruise_ramp_rate_b_working = cruise_ramp_rate_b_computed;",
+   "governorCruiseStateMachine: cruise_ramp_rate_b_working = cruise_ramp_rate_b_computed;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": [],
+  "added_by": "family stem of cruise_ramp_rate_d_computed"
+ },
+ {
+  "address": "0x003fcff4",
+  "current_name": "cruise_ramp_rate_d_computed",
+  "current_type": "word",
+  "current_comment": "computed cruise ramp rate D (normal path)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "governor_cruise_speedReference_update: road_speed_governor_top_droop_gain = cruise_ramp_rate_d_computed;",
+   "governorCruiseStateMachine: cruise_ramp_rate_d_computed =",
+   "governorCruiseStateMachine: road_speed_governor_top_droop_gain = cruise_ramp_rate_d_computed;",
+   "governorCruiseStateMachine: road_speed_governor_top_droop_gain = cruise_ramp_rate_d_computed;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - For 0x40b6bc (`road_speed_governor_top_droop_gain`), the old name `cruise_ramp_rate_d_working` is a different address from the existing `cruise_ramp_rate_d_computed` (0x3fcff4)."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a198",
+  "current_name": "boost_pressure_fuel_mode_state",
+  "current_type": "word",
+  "current_comment": "mode 0/1/2 normal/degraded/fault for boost-pressure fuel path",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "hpcr_fuelFinal_exponentialAverage: boost_pressure_fuel_mode_state = 2;",
+   "hpcr_fuelFinal_exponentialAverage: boost_pressure_fuel_mode_state = 1;",
+   "hpcr_fuelFinal_exponentialAverage: boost_pressure_fuel_mode_state = 0;",
+   "hpcr_fuelFinal_exponentialAverage: boost_pressure_fuel_mode_state = fuel_boost_mode_state;",
+   "hpcr_fuelFinal_exponentialAverage: DAT_0040a1a6 = boost_pressure_fuel_mode_state;",
+   "cm848_blendBoostAndThrottleFuelDemand: (boost_pressure_fuel_mode_state == 0)) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 1921 sources and pressure drop: 0x40a198 / 0x40a19c / 0x40a1a0 / 0x40a1a2 / `DAT_0040a1a6`"
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a19c",
+  "current_name": "fuel_demand_timing_mode_state",
+  "current_type": "word",
+  "current_comment": "mode 0/1/2 gating the timing/blend filter",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 2, 'lha': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "hpcr_fuelFinal_exponentialAverage: fuel_demand_timing_mode_state = 2;",
+   "hpcr_fuelFinal_exponentialAverage: fuel_demand_timing_mode_state = 1;",
+   "hpcr_fuelFinal_exponentialAverage: fuel_demand_timing_mode_state = 0;",
+   "hpcr_fuelFinal_exponentialAverage: fuel_demand_timing_mode_state != 2)) {",
+   "cm848_initialization_step_3: fuel_demand_timing_mode_state = fuel_demand_state_b;",
+   "cm848_blendBoostAndThrottleFuelDemand: if (((fuel_demand_mode_index == 0) && (fuel_demand_timing_mode_state == 0)) &&"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 1921 sources and pressure drop: 0x40a198 / 0x40a19c / 0x40a1a0 / 0x40a1a2 / `DAT_0040a1a6`"
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a1a0",
+  "current_name": "fuel_demand_mode_state",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 2, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_selectCompressorOutletTemperature: if (((fuel_demand_mode_state == 2) && (fuel_demand_state_b == 2)) ||",
+   "cm848_selectCompressorOutletTemperature: if (((fuel_demand_mode_state == 0) && (fuel_demand_state_b == 0)) &&",
+   "cm848_estimateTurbochargerSpeed: (fuel_demand_mode_state == 2)) ||",
+   "cm848_estimateTurbochargerSpeed: else if (((fuel_demand_mode_index == 1) || (fuel_demand_mode_state == 1)) ||",
+   "hpcr_fuelFinal_exponentialAverage: fuel_demand_mode_state = fuel_boost_mode_state;",
+   "hpcr_fuelFinal_exponentialAverage: fuel_demand_mode_state = 2;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 1921 sources and pressure drop: 0x40a198 / 0x40a19c / 0x40a1a0 / 0x40a1a2 / `DAT_0040a1a6`"
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a430",
+  "current_name": "fuel_demand_mode_index",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 11, 'sth': 3} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_checkFuelSystemFaultFlags: (fuel_demand_mode_index == 0)) && (egr_orifice_temperature_source == 0)) {",
+   "cm848_fuelDemandWithLoadCompensation: if (((fuel_demand_phase_state == 0) && (fuel_demand_mode_index == 0)) &&",
+   "cm848_selectLoadNormalizer: fuel_demand_mode_index = 0;",
+   "cm848_selectLoadNormalizer: fuel_demand_mode_index = 1;",
+   "cm848_selectLoadNormalizer: fuel_demand_mode_index = 2;",
+   "cm848_calculateFuelFlowWithMode: if ((fuel_demand_droop_state == 2) && (fuel_demand_mode_index == 2)) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x40a42e / 0x40a430 / 0x40a432 / 0x40a434 / 0x40a436 are Charge_Press / Source / State / IR_Cond / IR_Enable and are named `map_*`, `fuel_*` and `boost_*`."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a432",
+  "current_name": "fuel_mode_combined_flags",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_selectLoadNormalizer: fuel_mode_combined_flags = fuel_mode_flags_combined | boost_fuel_weight_snapshot;",
+   "cm848_selectLoadNormalizer: uVar1 = fuel_mode_combined_flags & 0x80;",
+   "cm848_selectLoadNormalizer: if (((uVar1 == 0) && ((fuel_mode_combined_flags & 0x40) == 0)) ||",
+   "cm848_selectLoadNormalizer: (((fuel_mode_combined_flags & 0x20) == 0 && ((fuel_mode_combined_flags & 2) == 0)))) {",
+   "cm848_selectLoadNormalizer: (((fuel_mode_combined_flags & 0x20) == 0 && ((fuel_mode_combined_flags & 2) == 0)))) {",
+   "cm848_selectLoadNormalizer: uVar2 = fuel_mode_combined_flags & 0x20;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x40a42e / 0x40a430 / 0x40a432 / 0x40a434 / 0x40a436 are Charge_Press / Source / State / IR_Cond / IR_Enable and are named `map_*`, `fuel_*` and `boost_*`."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a434",
+  "current_name": "boost_fuel_below_threshold_flag",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_processBoostControlState: if ((fuel_demand_cal_percent != 100) || (boost_fuel_below_threshold_flag == 0)) {",
+   "cm848_processBoostControlState: if ((fuel_demand_cal_percent != 100) || (boost_fuel_below_threshold_flag != 0)) {",
+   "cm848_processBoostProtectionConditions: boost_fuel_below_threshold_flag = (word)(boost_fuel_threshold_limit < uVar3);"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x40a42e / 0x40a430 / 0x40a432 / 0x40a434 / 0x40a436 are Charge_Press / Source / State / IR_Cond / IR_Enable and are named `map_*`, `fuel_*` and `boost_*`."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a436",
+  "current_name": "boost_condition_active_flag",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_checkBoostControlCondition: boost_condition_active_flag = 1;",
+   "cm848_checkBoostControlCondition: boost_condition_active_flag = 0;",
+   "cm848_processBoostControlState: if (boost_condition_active_flag == 0) {",
+   "cm848_processBoostControlState: else if (boost_condition_active_flag != 0) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x40a42e / 0x40a430 / 0x40a432 / 0x40a434 / 0x40a436 are Charge_Press / Source / State / IR_Cond / IR_Enable and are named `map_*`, `fuel_*` and `boost_*`."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a462",
+  "current_name": "fuel_demand_phase_state",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 6, 'sth': 4} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_fuelDemandWithLoadCompensation: if (((fuel_demand_phase_state == 0) && (fuel_demand_mode_index == 0)) &&",
+   "cm848_calculateBoostTorqueOffset: (fuel_demand_phase_state == 2)) ||",
+   "cm848_calculateBoostTorqueOffset: else if ((((fuel_demand_phase_state == 1) || (fuel_demand_state_b == 1)) ||",
+   "cm848_calculatePressureSensorFiltered: fuel_demand_phase_state = 0;",
+   "cm848_calculatePressureSensorFiltered: fuel_demand_phase_state = 1;",
+   "cm848_calculatePressureSensorFiltered: fuel_demand_phase_state = 2;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40a462 `fuel_demand_phase_state` and 0x40a464 `fuel_demand_phase_status_flags` are Charge_Tmptr_Source / State."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a618",
+  "current_name": "fuel_timing_state_code",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_selectCompressorOutletTemperature: estimate); sets the state code 0 / 1 / 2 (fuel_timing_state_code). (was cm848_selectFuelFlowMode)",
+   "cm848_selectCompressorOutletTemperature: fuel_timing_state_code = 2;",
+   "cm848_selectCompressorOutletTemperature: fuel_timing_state_code = 0;",
+   "cm848_selectCompressorOutletTemperature: fuel_timing_state_code = 1;",
+   "mpc555_initFuelFlowRateVariables: fuel_timing_state_code = 0;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 0x40a618 `fuel_timing_state_code` \u2192 `compressor_outlet_temperature_source`"
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a626",
+  "current_name": "boost_fuel_mode_state",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_checkFuelSystemFaultFlags: if ((((egr_valve_position_source == 0) && (boost_fuel_mode_state == 0)) &&",
+   "cm848_calculateFuelFlowWithMode: boost_fuel_mode_state = 2;",
+   "cm848_calculateFuelFlowWithMode: boost_fuel_mode_state = egr_delta_pressure_sensor_source;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - EGR 1A19: `boost_fuel_mode_state` (0x40a626, EGR_Orifice_Delta_Press_Source) and `fuel_demand_enable_state_cached` (0x40a62e, Engine_Delta_Press_Source)."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a62e",
+  "current_name": "fuel_demand_enable_state_cached",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_calculateFuelFlowWithMode: fuel_demand_enable_state_cached = egr_delta_pressure_sensor_source;",
+   "cm848_calculateFuelFlowWithMode: fuel_demand_enable_state_cached = egr_delta_pressure_source;",
+   "cm848_calculateFuelFlowWithMode: egr_delta_pressure_source = fuel_demand_enable_state_cached;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - EGR 1A19: `boost_fuel_mode_state` (0x40a626, EGR_Orifice_Delta_Press_Source) and `fuel_demand_enable_state_cached` (0x40a62e, Engine_Delta_Press_Source)."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a78a",
+  "current_name": "governor_fuel_derate_j1939_latch",
+  "current_type": "byte",
+  "current_comment": "J1939 derate trigger latch",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1, 'stb': 3} -> 1 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "protection_state_transition: if ((bVar1) && (governor_fuel_derate_j1939_latch == 1)) {",
+   "governor_faultDerate_mainLoop_update: governor_fuel_derate_j1939_latch = 0;",
+   "governor_faultDerate_mainLoop_update: (engine_protection_shutdown_approaching_flag = 1, governor_fuel_derate_j1939_latch != 0",
+   "governor_faultDerate_mainLoop_update: (engine_protection_shutdown_approaching_flag = 1, governor_fuel_derate_j1939_latch != 0))",
+   "governor_faultDerate_mainLoop_update: governor_fuel_derate_j1939_latch = 0;",
+   "cm848_completeEngineStartSequence: governor_fuel_derate_j1939_latch = 0;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - 0x40a78a `governor_fuel_derate_j1939_latch` is the shutdown override request."
+  ],
+  "block": "",
+  "row_width_bytes": 1,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a790",
+  "current_name": "governor_fuel_derate_state",
+  "current_type": "word",
+  "current_comment": "med derate state 0/1/3 status word",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 3} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_runFaultDerateScheduler: governor_fuel_derate_state = 3;",
+   "governor_faultDerate_mainLoop_update: governor_fuel_derate_state = 3;",
+   "governor_faultDerate_mainLoop_update: governor_fuel_derate_state = 0;",
+   "governor_faultDerate_mainLoop_update: governor_fuel_derate_state = 1;",
+   "cm848_completeEngineStartSequence: governor_fuel_derate_state = 0;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - 0x40a790 `governor_fuel_derate_state` is the engine protection timer state."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040a891",
+  "current_name": "fuel_limit_mode_flags",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_calculateFuelDemandChangeRate: if ((fuel_limit_mode_flags & 2) == 0) {",
+   "cm848_calculateFuelDemandChangeRate: fuel_limit_mode_flags = fuel_limit_mode_flags | 3;",
+   "cm848_calculateFuelDemandChangeRate: fuel_limit_mode_flags = fuel_limit_mode_flags | 3;",
+   "cm848_calculateFuelDemandChangeRate: fuel_limit_mode_flags = fuel_limit_mode_flags | 2;",
+   "cm848_calculateFuelDemandChangeRate: fuel_limit_mode_flags = fuel_limit_mode_flags | 2;",
+   "cm848_calculateFuelDemandChangeRate: if ((fuel_limit_mode_flags & 1) == 0) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **1053:** 0x40a889 `thermal_fuel_limit_factor` is the 4-D interpolation factor. 0x40a891 `fuel_limit_mode_flags` holds the throttle transient/decrease flags. The `fuel_mode_ema_*` rows at 0x3fa880-0x3fa884, 0x406a46 and 0x406a52 are the same throttle filter."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040b57f",
+  "current_name": "protection_output_controller_phase",
+  "current_type": "word",
+  "current_comment": "phase 1/2/3/4 run/recovery/derate/abort",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_monitorConverterClutchAndOverdrivePerformance: if ((((protection_output_controller_phase == 4) ||",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: protection_output_controller_phase = 4;",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: ((protection_output_controller_phase == 2 || (protection_output_controller_phase == 3)))) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: ((protection_output_controller_phase == 2 || (protection_output_controller_phase == 3)))) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: protection_output_controller_phase = 1;",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: protection_output_controller_phase = 3;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **8C33 / 8C34 leftovers:** 0x408ad2, 0x408ad3, 0x408ade, 0x40b57d, 0x40b57f, 0x40b58b and the monitor's snapshot words still read `protection_*`. In the same order they are fail count limit, minimum ratio delta sum, overdrive rationality time, ratio delta, monitor state, third lockup flag."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040b58b",
+  "current_name": "protection_fuel_derate_active_flag",
+  "current_type": "byte",
+  "current_comment": "set when fuel temp derate confirmed; gates PID run",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'stb': 1, 'lbz': 4} -> 1 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_monitorConverterClutchAndOverdrivePerformance: protection_fuel_derate_active_flag = 0;",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: (protection_fuel_derate_active_flag == 0)) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: (protection_fuel_derate_active_flag == 0)) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: (protection_fuel_derate_active_flag == 0)) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: (protection_action_mode_b2_snapshot != uVar9)) && (protection_fuel_derate_active_flag == 0)) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: if (((protection_fuel_derate_active_flag != 0) && (bVar1 == 0)) || (bVar2 == 0)) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **8C33 / 8C34 leftovers:** 0x408ad2, 0x408ad3, 0x408ade, 0x40b57d, 0x40b57f, 0x40b58b and the monitor's snapshot words still read `protection_*`. In the same order they are fail count limit, minimum ratio delta sum, overdrive rationality time, ratio delta, monitor state, third lockup flag."
+  ],
+  "block": "",
+  "row_width_bytes": 1,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040b746",
+  "current_name": "cylinder_sync_valid_flag",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'stb': 1, 'lbz': 1} -> 1 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "hpcr_cbdCalculateCylinderTrims: cylinder_sync_valid_flag = true;",
+   "hpcr_cbdCalculateCylinderTrims: cylinder_sync_valid_flag = false;",
+   "hpcr_cbdCalculateCylinderTrims: (cylinder_balance_compensation_enable_cal != 1)) || ((bool)cylinder_sync_valid_flag)) ||",
+   "cm848_runCylinderContributionTest: else if (((((cylinder_balance_compensation_enable_cal == 0) || (cylinder_sync_valid_flag != 0)) ||"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - 0x40b746 `cylinder_sync_valid_flag` and 0x40b747 `crank_pattern_sync_flag` are CBD_Stop_Compensation_Flag and CBD_Trim_Limits_Exceeded."
+  ],
+  "block": "",
+  "row_width_bytes": 1,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040b747",
+  "current_name": "crank_pattern_sync_flag",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'stb': 1} -> 1 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "hpcr_cbdCalculateCylinderTrims: crank_pattern_sync_flag = 0;",
+   "hpcr_cbdCalculateCylinderTrims: crank_pattern_sync_flag = 1;",
+   "hpcr_cbdCalculateCylinderTrims: crank_pattern_sync_flag = 1;",
+   "hpcr_cbdCalculateCylinderTrims: if (crank_pattern_sync_flag == 1) {",
+   "cm848_runCylinderContributionTest: crank_pattern_sync_flag = 0;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - 0x40b746 `cylinder_sync_valid_flag` and 0x40b747 `crank_pattern_sync_flag` are CBD_Stop_Compensation_Flag and CBD_Trim_Limits_Exceeded."
+  ],
+  "block": "",
+  "row_width_bytes": 1,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040b9a4",
+  "current_name": "cssc_coolant_temp_span",
+  "current_type": "word",
+  "current_comment": "coolant temp max-min span for CSSC thermostat diag",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_temp_span = cssc_coolant_temp_max - cssc_coolant_temp_min;",
+   "cm848_checkCoolantTemperatureSensorPerformance: if (DAT_000642d6 <= (short)cssc_coolant_temp_span) {",
+   "cm848_checkCoolantTemperatureSensorPerformance: if (DAT_000642d6 <= (short)cssc_coolant_temp_span) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **`cssc_*` family:** 0x40b9a2, 0x40b9a4, 0x40b9a6, 0x3fd18a-0x3fd190 should become `coolant_temperature_sensor_performance_*`. The drifted row would be `coolant_temperature_sensor_performance_monitoring_cycle_count`.",
+   "review_e2m_names_wave_13_bin_5.md: - **0x40b9a2:** e2m 1632 +4 BIR_Ratio resolves here, but the code holds the coolant-sensor monitor's pass counter, next to `cssc_coolant_temp_span` and `engine_cssc_coolant_state`. Block 1632 ends after +2 in this build. I left the name; `cssc` is an invented abbreviation, so the whole family wants one rename (see leads)."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040b9a6",
+  "current_name": "engine_cssc_coolant_state",
+  "current_type": "word",
+  "current_comment": "CSSC coolant-thermostat diagnostic state 0-6",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_initialization_group22_state: engine_cssc_coolant_state = 0;",
+   "cm848_completeCoolantTemperatureSensorMonitorReport: if ((engine_cssc_coolant_state == 2) || ((fault_pending_flags_b & 0x200) == 0)) {",
+   "cm848_completeCoolantTemperatureSensorMonitorReport: if (engine_cssc_coolant_state == 2) {",
+   "cm848_completeCoolantTemperatureSensorMonitorReport: engine_cssc_coolant_state = 4;",
+   "cm848_completeCoolantTemperatureSensorMonitorReport: engine_cssc_coolant_state = 5;",
+   "cm848_checkCoolantTemperatureSensorPerformance: if (engine_cssc_coolant_state == 0) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **`cssc_*` family:** 0x40b9a2, 0x40b9a4, 0x40b9a6, 0x3fd18a-0x3fd190 should become `coolant_temperature_sensor_performance_*`. The drifted row would be `coolant_temperature_sensor_performance_monitoring_cycle_count`.",
+   "review_e2m_names_wave_13_bin_5.md: - **0x40b9a2:** e2m 1632 +4 BIR_Ratio resolves here, but the code holds the coolant-sensor monitor's pass counter, next to `cssc_coolant_temp_span` and `engine_cssc_coolant_state`. Block 1632 ends after +2 in this build. I left the name; `cssc` is an invented abbreviation, so the whole family wants one rename (see leads)."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040b9c6",
+  "current_name": "cam_sync_validation_state",
+  "current_type": "word",
+  "current_comment": "cam-sync validation phase 1/2/3/4",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "hpcr_checkRailPressureSensorBeforeStart: if (cam_sync_validation_state != 1) {",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_state = 4;",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_state = 4;",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_state = 4;",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_state = 4;",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_state = 4;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 1B2D +0 and +2 (0x40b9c4 / 0x40b9c6) hold: they are the key-on rationality abort code and state.",
+   "review_e2m_names_wave_13_bin_2.md: - **1B2D +0 / +2:** 0x40b9c4 and 0x40b9c6 `cam_sync_validation_abort_reason` / `_state` are the fuel pressure key-on rationality abort code and state."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040b9cb",
+  "current_name": "general_diagnostic_battery_voltage_in_range_flag",
+  "current_type": "byte",
+  "current_comment": "byte: 1 while ROM 0x64308 (128 = 8.0 V) < battery_voltage < ROM 0x6430a (264 = 16.5 V); its reader is cm848_buildFaultConditionMask (lbz at 0x1d914), so it widens the voltage window for general fault processing beyond the 10.5 V OBD limit. e2m Gen_Diag_Battery_Voltage_In_Range (0x01160A03, size 1). (was fault_enable_override_flag)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1, 'stb': 2} -> 1 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_buildFaultConditionMask: bVar3 = general_diagnostic_battery_voltage_in_range_flag;",
+   "cm848_updateMonitorEnablingConditionInputs: 10.5-16.5 V at 1/16 V per count) and general_diagnostic_battery_voltage_in_range_flag",
+   "cm848_updateMonitorEnablingConditionInputs: general_diagnostic_battery_voltage_in_range_flag = 1;",
+   "cm848_updateMonitorEnablingConditionInputs: general_diagnostic_battery_voltage_in_range_flag = 0;",
+   "cm848_initializeBatteryVoltageInRangeFlags: general_diagnostic_battery_voltage_in_range_flag = 1;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 1,
+  "covered_records": [],
+  "added_by": "range 0x40b9c8..ce in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040bb3c",
+  "current_name": "governor_integrator_bound_b",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_checkSensorDeviationFlags: uVar2 = cm848_absoluteValue16(uVar2 - governor_integrator_bound_b);",
+   "cm848_checkSensorDeviationFlags: uVar2 = cm848_absoluteValue16(uVar2 - governor_integrator_bound_b);",
+   "cm848_checkSensorDeviationFlags: uVar2 = (uint)governor_integrator_bound_b;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **165C / 177D:** 0x40718c `cold_start_sensor_deviation_delay_cal` has a wrong `_cal`, and `iat_sensor_deviation_flags` (0x3fe9be) says iat for pressure flags. `governor_integrator_bound_a` / `_b` (0x40bb8a / 0x40bb3c) are sensor channels 77 and 38. 0x400940 / 0x400942 `fuel_demand_rpm_factor_upper_cal` / `_base_cal` are the volumetric efficiency clamps (1.0 / 0.8) with a wrong `_cal` in RAM."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040bb8a",
+  "current_name": "governor_integrator_bound_a",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_checkSensorDeviationFlags: uVar1 = cm848_absoluteValue16(uVar2 - governor_integrator_bound_a);",
+   "cm848_checkSensorDeviationFlags: uVar2 = (uint)governor_integrator_bound_a;",
+   "cm848_checkSensorDeviationFlags: uVar2 = cm848_absoluteValue16(uVar2 - governor_integrator_bound_a);",
+   "cm848_diagnoseTurbochargerSpeedSensorFrequency: (uVar1 = (uint)(((ulonglong)governor_integrator_bound_a << 8) /"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **165C / 177D:** 0x40718c `cold_start_sensor_deviation_delay_cal` has a wrong `_cal`, and `iat_sensor_deviation_flags` (0x3fe9be) says iat for pressure flags. `governor_integrator_bound_a` / `_b` (0x40bb8a / 0x40bb3c) are sensor channels 77 and 38. 0x400940 / 0x400942 `fuel_demand_rpm_factor_upper_cal` / `_base_cal` are the volumetric efficiency clamps (1.0 / 0.8) with a wrong `_cal` in RAM."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fddba",
+  "current_name": "diag_dm1_fill_mode_config",
+  "current_type": "word",
+  "current_comment": "NEVER-WRITTEN ROM; DM1 fill mode selector 1/2/3",
+  "region": "EEPROM mirror (name ends _cal)",
+  "access_widths": "{'lha': 5} -> 2 byte",
+  "e2m_records_here": [
+   "0030 +0004 Collector_Stop_Mode [UNITLESS, 2 B, S, scale 1, 0..2]: data collector stop flag"
+  ],
+  "dump_raw": "0",
+  "references": 7,
+  "code": [
+   "diag_dm1Buffer_circularFill: if (diag_dm1_fill_mode_config == 3) {",
+   "j1939_dm1_diagnosticMessage_send: if ((diag_dm1_fill_mode_config == 3) &&",
+   "cm848_phase_groupB_calculation: if (diag_dm1_fill_mode_config == 1) {",
+   "cm848_phase_groupB_calculation: if (diag_dm1_fill_mode_config == 2) {",
+   "cm848_phase_groupB_calculation: if (diag_dm1_fill_mode_config != 3) {",
+   "cm848_phase_groupB_calculation: if (diag_dm1_fill_mode_config == 1) {"
+  ],
+  "block_named_rows": [
+   "+0004 Collector_Stop_Mode -> diag_dm1_fill_mode_config"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - **Data collector:** 0x40c270..84 `diag_dm1_buffer_*`, 0x3fddba and 0x3fddb8. Mechanical names would be `data_collector_buffer_start_address` and so on.",
+   "review_e2m_names_wave_13_bin_4.md: - Remaining `diag_dm1_*` collector rows: 0x40c270-0x40c284, 0x3fbca6-0x3fbcb8, 0x3fddba (Collector_Stop_Mode), 0x3fddc4 (Collector_Table)."
+  ],
+  "block": "0030",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x003fddba 0030 +0004 Collector_Stop_Mode (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b6f6",
+  "current_name": "fuel_flow_rpm_divisor",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 4, 'sth': 4} -> 2 byte",
+  "e2m_records_here": [
+   "106C +0002 User_Filtered_Gear_Ratio [UNITLESS, 2 B, U, scale 0.000488281250, 0.1..15.999]: FILTERED GEAR RATIO USED BY THE SYSTEM -MAY BE FROZEN UPON GEAR SHIFT"
+  ],
+  "dump_raw": "32768",
+  "references": 12,
+  "code": [
+   "cm848_calculateRiseLimitedVehicleSpeed: the drivetrain ratio terms fuel_flow_rpm_numerator / fuel_flow_rpm_divisor, with each rise",
+   "cm848_calculateRiseLimitedVehicleSpeed: (uVar1 * fuel_flow_rpm_divisor >> 9) >> 2;",
+   "cm848_loadHighSpeedGovernorWorkingGainSet: fuel_flow_rpm_divisor is below high_speed_governor_working_gain_set_selection_threshold (205) -",
+   "cm848_loadHighSpeedGovernorWorkingGainSet: if (fuel_flow_rpm_divisor < high_speed_governor_working_gain_set_selection_threshold) {",
+   "governor_cruise_setpoint_calc: (&DAT_003fcffe,fuel_flow_rpm_divisor,WORD_ARRAY_00408e30,WORD_ARRAY_00408e3e,0);",
+   "protectionTimeoutControl: fuel_flow_rpm_divisor = drivetrain_ratio_default;"
+  ],
+  "block_named_rows": [
+   "+0000 Gear_Ratio -> drivetrain_ratio_raw",
+   "+0002 User_Filtered_Gear_Ratio -> fuel_flow_rpm_divisor",
+   "+0004 Out_Of_Gear_Cruise_Disable_Flag -> fuel_flow_divisor_invalid_flag",
+   "+0006 Out_Of_Gear_Spd_Timer -> drivetrain_ratio_decoupled_hold_counter",
+   "+0008 Out_Of_Gear_GR_Timer -> drivetrain_ratio_change_settle_counter",
+   "+000A Gear_Ratio_When_Loaded -> fuel_flow_rpm_divisor_saved",
+   "+000C Out_Of_Gear_Settling_Timer -> drivetrain_ratio_unsettled_release_timer"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **106C:** 0x40b6f6 `fuel_flow_rpm_divisor` (User_Filtered_Gear_Ratio), 0x40b6f8 `fuel_flow_divisor_invalid_flag`, 0x40b6fe `fuel_flow_rpm_divisor_saved`. They hold the drivetrain ratio, not fuel flow."
+  ],
+  "block": "106C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b6f6 106C +0002 User_Filtered_Gear_Ratio (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b6f8",
+  "current_name": "fuel_flow_divisor_invalid_flag",
+  "current_type": "word",
+  "current_comment": "0 = smoothed divisor valid/in-window; 1 = out-of-tolerance (protectionTimeoutControl) or = j1939_tsc1_override_state.etc1_disable_control (etcTransmissionModeControl); signals the speed-ratio result should not be trusted this cycle",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 3} -> 2 byte",
+  "e2m_records_here": [
+   "106C +0004 Out_Of_Gear_Cruise_Disable_Flag [UNITLESS, 2 B, U, scale 1, 0..65535]: Flag that can be used to disable cruise when out of gear."
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "protectionTimeoutControl: fuel_flow_divisor_invalid_flag = 0;",
+   "protectionTimeoutControl: fuel_flow_divisor_invalid_flag = 1;",
+   "etcTransmissionModeControl: fuel_flow_divisor_invalid_flag = j1939_tsc1_override_state.etc1_disable_control;"
+  ],
+  "block_named_rows": [
+   "+0000 Gear_Ratio -> drivetrain_ratio_raw",
+   "+0002 User_Filtered_Gear_Ratio -> fuel_flow_rpm_divisor",
+   "+0004 Out_Of_Gear_Cruise_Disable_Flag -> fuel_flow_divisor_invalid_flag",
+   "+0006 Out_Of_Gear_Spd_Timer -> drivetrain_ratio_decoupled_hold_counter",
+   "+0008 Out_Of_Gear_GR_Timer -> drivetrain_ratio_change_settle_counter",
+   "+000A Gear_Ratio_When_Loaded -> fuel_flow_rpm_divisor_saved",
+   "+000C Out_Of_Gear_Settling_Timer -> drivetrain_ratio_unsettled_release_timer"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **106C:** 0x40b6f6 `fuel_flow_rpm_divisor` (User_Filtered_Gear_Ratio), 0x40b6f8 `fuel_flow_divisor_invalid_flag`, 0x40b6fe `fuel_flow_rpm_divisor_saved`. They hold the drivetrain ratio, not fuel flow."
+  ],
+  "block": "106C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b6f8 106C +0004 Out_Of_Gear_Cruise_Disable_Flag (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a1aa",
+  "current_name": "governor_demand_rate_limited",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "107C +0000 ASG_Derivative_Term [MM3S, 2 B, S, scale 0.06793478400, -400.000000..400.000000]: [ASDV] ASG derivative term"
+  ],
+  "dump_raw": "0",
+  "references": 7,
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: governor_demand_rate_limited = wStack_2e + governor_demand_rate_limit_window;",
+   "cm848_runOperatingModeSpeedGovernor: if ((int)(short)governor_demand_rate_limited <= -(int)(short)governor_demand_rate_limit_max) {",
+   "cm848_runOperatingModeSpeedGovernor: governor_demand_rate_limited = -governor_demand_rate_limit_max;",
+   "cm848_runOperatingModeSpeedGovernor: governor_demand_rate_limited = wStack_2e - governor_demand_rate_limit_window;",
+   "cm848_runOperatingModeSpeedGovernor: if ((short)governor_demand_rate_limit_max <= (short)governor_demand_rate_limited) {",
+   "cm848_runOperatingModeSpeedGovernor: governor_demand_rate_limited = wVar10;"
+  ],
+  "block_named_rows": [
+   "+0000 ASG_Derivative_Term -> governor_demand_rate_limited",
+   "+0002 ASG_Error_Difference -> all_speed_governor_error_difference",
+   "+0004 ASG_Feedback_Difference -> all_speed_governor_feedback_difference",
+   "+0006 ASG_Filtered_Reference -> governor_reference_speed_filtered",
+   "+0008 ASG_Reset_State -> fuel_correction_output_active_flag",
+   "+000A ASG_100_Fueling -> all_speed_governor_fueling",
+   "+000A ASG_Fueling -> all_speed_governor_fueling",
+   "+000C ASG_State_X1 -> all_speed_governor_state_speed_error",
+   "+000E ASG_State_X2 -> governor_pid_integral_saved",
+   "+0010 ASG_State_X4 -> governor_pid_integral_clamp_value",
+   "+0012 ASG_State_X5 -> governor_pid_integral_clamped",
+   "+0014 ASG_State_X6 -> all_speed_governor_state_fuel_demand_correction",
+   "+0016 Selected_Throttle_Control -> variable_speed_governor_selected_flag",
+   "+001A ASG_QD_Adjustment -> governor_demand_filter_accumulator",
+   "+0022 ASG_QI_Adjustment -> fuel_demand_pid_accum_hi",
+   "+002A ASG_QP_Adjustment -> fuel_demand_pid_accum_lo",
+   "+0032 ASG_Coefficient_1_Selected -> all_speed_governor_compensation_filter_coefficient_1_selected",
+   "+0034 ASG_Coefficient_2_Selected -> all_speed_governor_compensation_filter_coefficient_2_selected",
+   "+0036 ASG_Coefficient_3_Selected -> all_speed_governor_compensation_filter_coefficient_3_selected",
+   "+0038 ASG_Derivative_Gain_1_Selected -> all_speed_governor_derivative_gain_1_selected",
+   "+003A ASG_Derivative_Gain_2_Selected -> all_speed_governor_derivative_gain_2_selected",
+   "+003C ASG_Filter_Coef_Selected -> all_speed_governor_reference_filter_coefficient_selected",
+   "+003E ASG_Integral_Gain_1_Selected -> all_speed_governor_integral_gain_1_selected",
+   "+0040 ASG_Integral_Gain_2_Selected -> all_speed_governor_integral_gain_2_selected"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - **107C siblings** to take `all_speed_governor_*`: 0x40a1aa, 0x40a1b2, 0x40a1b8, 0x40a1ba, 0x40a1bc, 0x40a1c4, 0x40a1cc, 0x40a1d4, and 0x40a208 `fuel_demand_integrator_b_sum` (e2m Decel_Limit_Fuel)."
+  ],
+  "block": "107C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a1aa 107C +0000 ASG_Derivative_Term (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a1b8",
+  "current_name": "governor_pid_integral_saved",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "107C +000E ASG_State_X2 [MM3S, 2 B, S, scale 0.06793478400, -400.000000..400.000000]: [ASSTX2] ASG state X2"
+  ],
+  "dump_raw": "-116",
+  "references": 1,
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: governor_pid_integral_saved = governor_pid_integral_state._0_2_;"
+  ],
+  "block_named_rows": [
+   "+0000 ASG_Derivative_Term -> governor_demand_rate_limited",
+   "+0002 ASG_Error_Difference -> all_speed_governor_error_difference",
+   "+0004 ASG_Feedback_Difference -> all_speed_governor_feedback_difference",
+   "+0006 ASG_Filtered_Reference -> governor_reference_speed_filtered",
+   "+0008 ASG_Reset_State -> fuel_correction_output_active_flag",
+   "+000A ASG_100_Fueling -> all_speed_governor_fueling",
+   "+000A ASG_Fueling -> all_speed_governor_fueling",
+   "+000C ASG_State_X1 -> all_speed_governor_state_speed_error",
+   "+000E ASG_State_X2 -> governor_pid_integral_saved",
+   "+0010 ASG_State_X4 -> governor_pid_integral_clamp_value",
+   "+0012 ASG_State_X5 -> governor_pid_integral_clamped",
+   "+0014 ASG_State_X6 -> all_speed_governor_state_fuel_demand_correction",
+   "+0016 Selected_Throttle_Control -> variable_speed_governor_selected_flag",
+   "+001A ASG_QD_Adjustment -> governor_demand_filter_accumulator",
+   "+0022 ASG_QI_Adjustment -> fuel_demand_pid_accum_hi",
+   "+002A ASG_QP_Adjustment -> fuel_demand_pid_accum_lo",
+   "+0032 ASG_Coefficient_1_Selected -> all_speed_governor_compensation_filter_coefficient_1_selected",
+   "+0034 ASG_Coefficient_2_Selected -> all_speed_governor_compensation_filter_coefficient_2_selected",
+   "+0036 ASG_Coefficient_3_Selected -> all_speed_governor_compensation_filter_coefficient_3_selected",
+   "+0038 ASG_Derivative_Gain_1_Selected -> all_speed_governor_derivative_gain_1_selected",
+   "+003A ASG_Derivative_Gain_2_Selected -> all_speed_governor_derivative_gain_2_selected",
+   "+003C ASG_Filter_Coef_Selected -> all_speed_governor_reference_filter_coefficient_selected",
+   "+003E ASG_Integral_Gain_1_Selected -> all_speed_governor_integral_gain_1_selected",
+   "+0040 ASG_Integral_Gain_2_Selected -> all_speed_governor_integral_gain_2_selected"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - **107C siblings** to take `all_speed_governor_*`: 0x40a1aa, 0x40a1b2, 0x40a1b8, 0x40a1ba, 0x40a1bc, 0x40a1c4, 0x40a1cc, 0x40a1d4, and 0x40a208 `fuel_demand_integrator_b_sum` (e2m Decel_Limit_Fuel)."
+  ],
+  "block": "107C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a1b8 107C +000E ASG_State_X2 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a1ba",
+  "current_name": "governor_pid_integral_clamp_value",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "107C +0010 ASG_State_X4 [MM3S, 2 B, S, scale 0.06793478400, -400.000000..400.000000]: [ASSTX4] ASG state X4"
+  ],
+  "dump_raw": "0",
+  "references": 5,
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: iVar14 = (int)(short)governor_pid_integral_clamp_value;",
+   "cm848_runOperatingModeSpeedGovernor: governor_pid_integral_clamp_value = wStack_2e;",
+   "cm848_runOperatingModeSpeedGovernor: governor_pid_integral_clamp_value = 0xe900;",
+   "cm848_runOperatingModeSpeedGovernor: governor_pid_integral_clamp_value = 0x1700;",
+   "cm848_runOperatingModeSpeedGovernor: governor_pid_integral_state._0_2_ + governor_pid_integral_clamp_value;"
+  ],
+  "block_named_rows": [
+   "+0000 ASG_Derivative_Term -> governor_demand_rate_limited",
+   "+0002 ASG_Error_Difference -> all_speed_governor_error_difference",
+   "+0004 ASG_Feedback_Difference -> all_speed_governor_feedback_difference",
+   "+0006 ASG_Filtered_Reference -> governor_reference_speed_filtered",
+   "+0008 ASG_Reset_State -> fuel_correction_output_active_flag",
+   "+000A ASG_100_Fueling -> all_speed_governor_fueling",
+   "+000A ASG_Fueling -> all_speed_governor_fueling",
+   "+000C ASG_State_X1 -> all_speed_governor_state_speed_error",
+   "+000E ASG_State_X2 -> governor_pid_integral_saved",
+   "+0010 ASG_State_X4 -> governor_pid_integral_clamp_value",
+   "+0012 ASG_State_X5 -> governor_pid_integral_clamped",
+   "+0014 ASG_State_X6 -> all_speed_governor_state_fuel_demand_correction",
+   "+0016 Selected_Throttle_Control -> variable_speed_governor_selected_flag",
+   "+001A ASG_QD_Adjustment -> governor_demand_filter_accumulator",
+   "+0022 ASG_QI_Adjustment -> fuel_demand_pid_accum_hi",
+   "+002A ASG_QP_Adjustment -> fuel_demand_pid_accum_lo",
+   "+0032 ASG_Coefficient_1_Selected -> all_speed_governor_compensation_filter_coefficient_1_selected",
+   "+0034 ASG_Coefficient_2_Selected -> all_speed_governor_compensation_filter_coefficient_2_selected",
+   "+0036 ASG_Coefficient_3_Selected -> all_speed_governor_compensation_filter_coefficient_3_selected",
+   "+0038 ASG_Derivative_Gain_1_Selected -> all_speed_governor_derivative_gain_1_selected",
+   "+003A ASG_Derivative_Gain_2_Selected -> all_speed_governor_derivative_gain_2_selected",
+   "+003C ASG_Filter_Coef_Selected -> all_speed_governor_reference_filter_coefficient_selected",
+   "+003E ASG_Integral_Gain_1_Selected -> all_speed_governor_integral_gain_1_selected",
+   "+0040 ASG_Integral_Gain_2_Selected -> all_speed_governor_integral_gain_2_selected"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - **107C siblings** to take `all_speed_governor_*`: 0x40a1aa, 0x40a1b2, 0x40a1b8, 0x40a1ba, 0x40a1bc, 0x40a1c4, 0x40a1cc, 0x40a1d4, and 0x40a208 `fuel_demand_integrator_b_sum` (e2m Decel_Limit_Fuel)."
+  ],
+  "block": "107C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a1ba 107C +0010 ASG_State_X4 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a1bc",
+  "current_name": "governor_pid_integral_clamped",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "107C +0012 ASG_State_X5 [MM3S, 2 B, S, scale 0.06793478400, -400.000000..400.000000]: [ASSTX5] ASG state X5"
+  ],
+  "dump_raw": "-116",
+  "references": 7,
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: uVar12 = governor_pid_integral_clamped;",
+   "cm848_runOperatingModeSpeedGovernor: governor_pid_integral_clamped =",
+   "cm848_runOperatingModeSpeedGovernor: if ((short)governor_pid_integral_clamped < -0x16ff) {",
+   "cm848_runOperatingModeSpeedGovernor: governor_pid_integral_clamped = 0xe900;",
+   "cm848_runOperatingModeSpeedGovernor: else if (0x1700 < (short)governor_pid_integral_clamped) {",
+   "cm848_runOperatingModeSpeedGovernor: governor_pid_integral_clamped = 0x1700;"
+  ],
+  "block_named_rows": [
+   "+0000 ASG_Derivative_Term -> governor_demand_rate_limited",
+   "+0002 ASG_Error_Difference -> all_speed_governor_error_difference",
+   "+0004 ASG_Feedback_Difference -> all_speed_governor_feedback_difference",
+   "+0006 ASG_Filtered_Reference -> governor_reference_speed_filtered",
+   "+0008 ASG_Reset_State -> fuel_correction_output_active_flag",
+   "+000A ASG_100_Fueling -> all_speed_governor_fueling",
+   "+000A ASG_Fueling -> all_speed_governor_fueling",
+   "+000C ASG_State_X1 -> all_speed_governor_state_speed_error",
+   "+000E ASG_State_X2 -> governor_pid_integral_saved",
+   "+0010 ASG_State_X4 -> governor_pid_integral_clamp_value",
+   "+0012 ASG_State_X5 -> governor_pid_integral_clamped",
+   "+0014 ASG_State_X6 -> all_speed_governor_state_fuel_demand_correction",
+   "+0016 Selected_Throttle_Control -> variable_speed_governor_selected_flag",
+   "+001A ASG_QD_Adjustment -> governor_demand_filter_accumulator",
+   "+0022 ASG_QI_Adjustment -> fuel_demand_pid_accum_hi",
+   "+002A ASG_QP_Adjustment -> fuel_demand_pid_accum_lo",
+   "+0032 ASG_Coefficient_1_Selected -> all_speed_governor_compensation_filter_coefficient_1_selected",
+   "+0034 ASG_Coefficient_2_Selected -> all_speed_governor_compensation_filter_coefficient_2_selected",
+   "+0036 ASG_Coefficient_3_Selected -> all_speed_governor_compensation_filter_coefficient_3_selected",
+   "+0038 ASG_Derivative_Gain_1_Selected -> all_speed_governor_derivative_gain_1_selected",
+   "+003A ASG_Derivative_Gain_2_Selected -> all_speed_governor_derivative_gain_2_selected",
+   "+003C ASG_Filter_Coef_Selected -> all_speed_governor_reference_filter_coefficient_selected",
+   "+003E ASG_Integral_Gain_1_Selected -> all_speed_governor_integral_gain_1_selected",
+   "+0040 ASG_Integral_Gain_2_Selected -> all_speed_governor_integral_gain_2_selected"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - **107C siblings** to take `all_speed_governor_*`: 0x40a1aa, 0x40a1b2, 0x40a1b8, 0x40a1ba, 0x40a1bc, 0x40a1c4, 0x40a1cc, 0x40a1d4, and 0x40a208 `fuel_demand_integrator_b_sum` (e2m Decel_Limit_Fuel)."
+  ],
+  "block": "107C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a1bc 107C +0012 ASG_State_X5 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a1c4",
+  "current_name": "governor_demand_filter_accumulator",
+  "current_type": "dword",
+  "current_comment": "Not a fuel timing blend: its only read is the state term in the second difference equation of the PID loop in cm848_runOperatingModeSpeedGovernor, (acc + input x coeff[8] / 4 - previous output x coeff[10] / 4) >> 11, clamped into governor_demand_rate_limited, and its only write is the zero store in cm848_initFuelDemandVariables (xref: 1 read / 1 write); fuel_demand_pid_accum_hi / _lo (0x40a1cc ... (was fuel_timing_blend_accumulator)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lwz': 1, 'stw': 1} -> 4 byte",
+  "e2m_records_here": [
+   "107C +001A ASG_QD_Adjustment [MM3S, 4 B, S, scale 0.00003317128, -400.000000..400.000000]: [ASQDAJ] ASG Quadratic Derivative Adjustment"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: iVar16 = (int)(governor_demand_filter_accumulator +",
+   "cm848_initFuelDemandVariables: governor_demand_filter_accumulator = 0;"
+  ],
+  "block_named_rows": [
+   "+0000 ASG_Derivative_Term -> governor_demand_rate_limited",
+   "+0002 ASG_Error_Difference -> all_speed_governor_error_difference",
+   "+0004 ASG_Feedback_Difference -> all_speed_governor_feedback_difference",
+   "+0006 ASG_Filtered_Reference -> governor_reference_speed_filtered",
+   "+0008 ASG_Reset_State -> fuel_correction_output_active_flag",
+   "+000A ASG_100_Fueling -> all_speed_governor_fueling",
+   "+000A ASG_Fueling -> all_speed_governor_fueling",
+   "+000C ASG_State_X1 -> all_speed_governor_state_speed_error",
+   "+000E ASG_State_X2 -> governor_pid_integral_saved",
+   "+0010 ASG_State_X4 -> governor_pid_integral_clamp_value",
+   "+0012 ASG_State_X5 -> governor_pid_integral_clamped",
+   "+0014 ASG_State_X6 -> all_speed_governor_state_fuel_demand_correction",
+   "+0016 Selected_Throttle_Control -> variable_speed_governor_selected_flag",
+   "+001A ASG_QD_Adjustment -> governor_demand_filter_accumulator",
+   "+0022 ASG_QI_Adjustment -> fuel_demand_pid_accum_hi",
+   "+002A ASG_QP_Adjustment -> fuel_demand_pid_accum_lo",
+   "+0032 ASG_Coefficient_1_Selected -> all_speed_governor_compensation_filter_coefficient_1_selected",
+   "+0034 ASG_Coefficient_2_Selected -> all_speed_governor_compensation_filter_coefficient_2_selected",
+   "+0036 ASG_Coefficient_3_Selected -> all_speed_governor_compensation_filter_coefficient_3_selected",
+   "+0038 ASG_Derivative_Gain_1_Selected -> all_speed_governor_derivative_gain_1_selected",
+   "+003A ASG_Derivative_Gain_2_Selected -> all_speed_governor_derivative_gain_2_selected",
+   "+003C ASG_Filter_Coef_Selected -> all_speed_governor_reference_filter_coefficient_selected",
+   "+003E ASG_Integral_Gain_1_Selected -> all_speed_governor_integral_gain_1_selected",
+   "+0040 ASG_Integral_Gain_2_Selected -> all_speed_governor_integral_gain_2_selected"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - **107C siblings** to take `all_speed_governor_*`: 0x40a1aa, 0x40a1b2, 0x40a1b8, 0x40a1ba, 0x40a1bc, 0x40a1c4, 0x40a1cc, 0x40a1d4, and 0x40a208 `fuel_demand_integrator_b_sum` (e2m Decel_Limit_Fuel)."
+  ],
+  "block": "107C",
+  "row_width_bytes": 4,
+  "covered_records": [
+   "0x0040a1c4 107C +001A ASG_QD_Adjustment (4 B)"
+  ]
+ },
+ {
+  "address": "0x0040ad90",
+  "current_name": "j1939_engine_torque_output_b",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 2, 'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0006 Jcomm_Ind_Friction_Torque [%, 2 B, U, scale 0.00390625, 0..125]: [JCINFCTQ] Jcomm Ind Friction Torque amount of torque required by base engine"
+  ],
+  "dump_raw": "0",
+  "references": 8,
+  "code": [
+   "cm848_calculateNominalFrictionPercentTorque: 125 percent into j1939_engine_torque_output_b for EEC3 (was",
+   "cm848_calculateNominalFrictionPercentTorque: j1939_engine_torque_output_b = 0x8300;",
+   "cm848_calculateNominalFrictionPercentTorque: j1939_engine_torque_output_b = 0x8300;",
+   "cm848_calculateNominalFrictionPercentTorque: j1939_engine_torque_output_b =",
+   "cm848_calculateNominalFrictionPercentTorque: if (32000 < j1939_engine_torque_output_b) {",
+   "cm848_calculateNominalFrictionPercentTorque: j1939_engine_torque_output_b = 32000;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40ad90 `j1939_engine_torque_output_b` is the EEC3 nominal friction percent."
+  ],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040ad90 1102 +0006 Jcomm_Ind_Friction_Torque (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040ada0",
+  "current_name": "governor_integrator_rpm_output_cached",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0016 Jcomm_Determined_RPM_Point_1 [RPM, 2 B, U, scale 0.125, 0..8031.875]: [JCEVRPP1] Jcomm determined RPM at engine configuration idle speed."
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "faultTimerHandler: local_28._1_1_ = (undefined1)governor_integrator_rpm_output_cached;",
+   "faultTimerHandler: local_28._0_1_ = (undefined1)(governor_integrator_rpm_output_cached >> 8);",
+   "cm848_updateProtectionStateMachine: governor_integrator_rpm_output_cached = governor_integrator_rpm_output;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40ada0 and 0x40ada2 are the determined speeds at points 1 and 3."
+  ],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040ada0 1102 +0016 Jcomm_Determined_RPM_Point_1 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040ada2",
+  "current_name": "protection_threshold_rpm_cached",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0018 Jcomm_Determined_RPM_Point_3 [RPM, 2 B, U, scale 0.125, 0..8031.875]: [JCEVRPP3] Jcomm determine rpm at engine configuration point 3."
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "faultTimerHandler: local_28._1_1_ = (undefined1)protection_threshold_rpm_cached;",
+   "faultTimerHandler: local_28._0_1_ = (undefined1)(protection_threshold_rpm_cached >> 8);",
+   "cm848_updateProtectionStateMachine: protection_threshold_rpm_cached = protection_threshold_lookup_rpm;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40ada0 and 0x40ada2 are the determined speeds at points 1 and 3."
+  ],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040ada2 1102 +0018 Jcomm_Determined_RPM_Point_3 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040adac",
+  "current_name": "governor_integrator_rpm_output",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 3, 'lhz': 5} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0022 Jcomm_RPM_At_Point_1 [RPM, 2 B, U, scale 0.125, 0..5000]: [JCTQRPP1] Torque curve speed at breakpoint 1 (LSG Reference)."
+  ],
+  "dump_raw": "6000",
+  "references": 18,
+  "code": [
+   "cm848_calculateChiMaximumFuelAtSpeedPoints: cm848_lookupChiMaximumFuelAtSpeed(governor_integrator_rpm_output);",
+   "cm848_calculateChiMaximumFuelAtSpeedPoints: governor_integrator_rpm_output);",
+   "cm848_updateProtectionParameters: governor_integrator_rpm_output = governor_output_t_0040aec2.idle_reference_speed;",
+   "cm848_updateProtectionParameters: (governor_integrator_rpm_output =",
+   "cm848_updateProtectionParameters: (short)governor_integrator_rpm_output < 0)) {",
+   "cm848_updateProtectionParameters: governor_integrator_rpm_output = 0;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40adac and 0x40adb0 are the torque curve speeds at points 1 and 3."
+  ],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adac 1102 +0022 Jcomm_RPM_At_Point_1 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040adb0",
+  "current_name": "protection_threshold_lookup_rpm",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 4, 'lhz': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0026 Jcomm_RPM_At_Point_3 [RPM, 2 B, U, scale 0.125, 0..5000]: [JCTQRPP3] Torque curve speed at breakpoint 3."
+  ],
+  "dump_raw": "11200",
+  "references": 17,
+  "code": [
+   "cm848_calculateChiMaximumFuelAtSpeedPoints: cm848_lookupChiMaximumFuelAtSpeed(protection_threshold_lookup_rpm);",
+   "cm848_calculateChiMaximumFuelAtSpeedPoints: protection_threshold_lookup_rpm);",
+   "cm848_updateProtectionInputs: if (protection_threshold_lookup_rpm < governor_integrator_rpm_output) {",
+   "cm848_updateProtectionInputs: protection_threshold_lookup_rpm = governor_integrator_rpm_output;",
+   "cm848_updateProtectionInputs: protection_threshold_lookup_rpm = j1939_engine_speed_at_point_3;",
+   "cm848_updateProtectionStateMachine: protection_threshold_lookup_rpm = j1939_engine_speed_at_point_3;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40adac and 0x40adb0 are the torque curve speeds at points 1 and 3."
+  ],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adb0 1102 +0026 Jcomm_RPM_At_Point_3 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040adb6",
+  "current_name": "protection_cal_level1_working",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 3, 'lhz': 3} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +002C Jcomm_Fueling_At_Point_1 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: [JCTQFLP1] Torque curve fueling at idle speed breakpoint."
+  ],
+  "dump_raw": "0",
+  "references": 16,
+  "code": [
+   "cm848_updateProtectionParameters: protection_cal_level1_working = j1939_derated_fueling_at_idle;",
+   "cm848_updateProtectionInputs: j1939_torque_curve_fueling_at_point_3 = protection_cal_level1_working;",
+   "cm848_updateProtectionStateMachine: j1939_torque_curve_fueling_at_point_3 = protection_cal_level1_working;",
+   "cm848_updateProtectionStateMachine: j1939_torque_curve_fueling_at_point_3 = protection_cal_level1_working;",
+   "cm848_updateProtectionStateMachine: (((uint)protection_cal_level1_working - (uint)fuel_demand_norm_zero_cal) * 0x6400,",
+   "cm848_updateProtectionStateMachine: protection_cal_level1_cached = protection_cal_level1_working;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40adb6 is the point 1 fueling."
+  ],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adb6 1102 +002C Jcomm_Fueling_At_Point_1 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040adc0",
+  "current_name": "protection_cal_level1_cached",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0036 Jcomm_Calc_Fueling_At_Point_1 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: Calculated value of Jcomm_Fueling_At_Point_1 before reseting to Maximum_Fueling"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_updateProtectionStateMachine: protection_cal_level1_cached = protection_cal_level1_working;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40adc0..c8 `protection_*_cached` are the Calc_Fueling points 1-5."
+  ],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adc0 1102 +0036 Jcomm_Calc_Fueling_At_Point_1 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040adc2",
+  "current_name": "protection_cal_numerator_b_cached",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0038 Jcomm_Calc_Fueling_At_Point_2 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: Calculated value of Jcomm_Fueling_At_Point_2 before reseting to Maximum_Fueling"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_updateProtectionStateMachine: protection_cal_numerator_b_cached = j1939_torque_curve_fueling_at_point_2;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adc2 1102 +0038 Jcomm_Calc_Fueling_At_Point_2 (2 B)"
+  ],
+  "added_by": "range 0x40adc0..c8 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040adc4",
+  "current_name": "protection_cal_numerator_c_cached",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +003A Jcomm_Calc_Fueling_At_Point_3 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: Calculated value of Jcomm_Fueling_At_Point_3 before reseting to Maximum_Fueling"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_updateProtectionStateMachine: protection_cal_numerator_c_cached = j1939_torque_curve_fueling_at_point_3;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adc4 1102 +003A Jcomm_Calc_Fueling_At_Point_3 (2 B)"
+  ],
+  "added_by": "range 0x40adc0..c8 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040adc6",
+  "current_name": "protection_output_cal_cached",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +003C Jcomm_Calc_Fueling_At_Point_4 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: Calculated value of Jcomm_Fueling_At_Point_4 before reseting to Maximum_Fueling"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_updateProtectionStateMachine: protection_output_cal_cached = j1939_torque_curve_fueling_at_point_4;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adc6 1102 +003C Jcomm_Calc_Fueling_At_Point_4 (2 B)"
+  ],
+  "added_by": "range 0x40adc0..c8 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040adc8",
+  "current_name": "protection_derate_numerator_cached",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +003E Jcomm_Calc_Fueling_At_Point_5 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: Calculated value of Jcomm_Fueling_At_Point_5 before reseting to Maximum_Fueling"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_updateProtectionStateMachine: protection_derate_numerator_cached = j1939_torque_curve_fueling_at_point_5;"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adc8 1102 +003E Jcomm_Calc_Fueling_At_Point_5 (2 B)"
+  ],
+  "added_by": "range 0x40adc0..c8 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040adca",
+  "current_name": "governor_speed_ref_channel_a",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0040 Jcomm_Reference_Fueling_At_Point_1 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: Torque curve fueling reference idle speed breakpoint."
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "cm848_updateProtectionStateMachine: (int)(short)(governor_speed_ref_channel_a - fuel_demand_norm_zero_cal),32000,",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_a = j1939_reference_engine_fueling;",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_a ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40adca..d2 `governor_speed_ref_channel_a..e` are the per-point reference fuelings."
+  ],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adca 1102 +0040 Jcomm_Reference_Fueling_At_Point_1 (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040adcc",
+  "current_name": "governor_speed_ref_channel_b",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0042 Jcomm_Reference_Fueling_At_Point_2 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: Torque curve fueling reference HSG speed breakpoint."
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "cm848_updateProtectionStateMachine: 0x6400,(int)(short)(governor_speed_ref_channel_b - fuel_demand_norm_zero_cal),",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_b = j1939_reference_engine_fueling;",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_b ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adcc 1102 +0042 Jcomm_Reference_Fueling_At_Point_2 (2 B)"
+  ],
+  "added_by": "range 0x40adca..d2 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040adce",
+  "current_name": "governor_speed_ref_channel_c",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0044 Jcomm_Reference_Fueling_At_Point_3 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: 1st Torque curve fueling reference between idle and hsg speed breakpoint."
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "cm848_updateProtectionStateMachine: 0x6400,(int)(short)(governor_speed_ref_channel_c - fuel_demand_norm_zero_cal),",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_c = j1939_reference_engine_fueling;",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_c ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040adce 1102 +0044 Jcomm_Reference_Fueling_At_Point_3 (2 B)"
+  ],
+  "added_by": "range 0x40adca..d2 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040add0",
+  "current_name": "governor_speed_ref_channel_d",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0046 Jcomm_Reference_Fueling_At_Point_4 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: 2nd Torque curve fueling reference between idle and hsg speed breakpoint."
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "cm848_updateProtectionStateMachine: 0x6400,(int)(short)(governor_speed_ref_channel_d - fuel_demand_norm_zero_cal),",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_d = j1939_reference_engine_fueling;",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_d ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040add0 1102 +0046 Jcomm_Reference_Fueling_At_Point_4 (2 B)"
+  ],
+  "added_by": "range 0x40adca..d2 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040add2",
+  "current_name": "governor_speed_ref_channel_e",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1102 +0048 Jcomm_Reference_Fueling_At_Point_5 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: 3rd Torque curve fueling reference between idle and hsg speed breakpoint."
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "cm848_updateProtectionStateMachine: 0x6400,(int)(short)(governor_speed_ref_channel_e - fuel_demand_norm_zero_cal),",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_e = j1939_reference_engine_fueling;",
+   "cm848_updateProtectionDiagnostics: governor_speed_ref_channel_e ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_Actual_Engine_Ind_Torque -> actual_engine_percent_torque_times_256",
+   "+0002 Jcomm_Drivers_Demand_Ind_Torque -> driver_demand_percent_torque_times_256",
+   "+0004 Jcomm_Ind_Percent_Load -> j1939_engine_percent_load_at_current_speed_times_256",
+   "+0006 Jcomm_Ind_Friction_Torque -> j1939_engine_torque_output_b",
+   "+0008 Jcomm_Ind_Torque_at_Idle -> j1939_indicated_percent_torque_at_idle_times_256",
+   "+000A Jcomm_Ind_Torque_at_Point_2 -> j1939_indicated_percent_torque_at_point_2_times_256",
+   "+000C Jcomm_Ind_Torque_at_Point_3 -> protection_speed_ratio_c",
+   "+000E Jcomm_Ind_Torque_at_Point_4 -> protection_speed_ratio_d",
+   "+0010 Jcomm_Ind_Torque_at_Point_5 -> j1939_indicated_percent_torque_at_point_5_times_256",
+   "+0012 Jcomm_Determined_RPM_Point_2 -> j1939_determined_engine_speed_at_point_2",
+   "+0014 Jcomm_Determined_RPM_Point_5 -> j1939_determined_engine_speed_at_point_5",
+   "+0016 Jcomm_Determined_RPM_Point_1 -> governor_integrator_rpm_output_cached",
+   "+0018 Jcomm_Determined_RPM_Point_3 -> protection_threshold_rpm_cached",
+   "+001A Jcomm_Determined_RPM_Point_4 -> j1939_determined_engine_speed_at_point_4",
+   "+001C Jcomm_Reference_Engine_Fueling -> j1939_reference_engine_fueling",
+   "+001E Reference_Engine_Torque -> reference_engine_torque_working",
+   "+0020 Jcomm_Drivers_Demand_Ind_Fuel -> driver_demand_fuel_quantity_copy",
+   "+0022 Jcomm_RPM_At_Point_1 -> governor_integrator_rpm_output",
+   "+0024 Jcomm_RPM_At_Point_2 -> j1939_torque_curve_speed_at_point_2",
+   "+0026 Jcomm_RPM_At_Point_3 -> protection_threshold_lookup_rpm",
+   "+0028 Jcomm_RPM_At_Point_4 -> j1939_torque_curve_speed_at_point_4",
+   "+002A Jcomm_RPM_At_Point_5 -> j1939_torque_curve_speed_at_point_5",
+   "+002C Jcomm_Fueling_At_Point_1 -> protection_cal_level1_working",
+   "+002E Jcomm_Fueling_At_Point_2 -> j1939_torque_curve_fueling_at_point_2"
+  ],
+  "report_leads": [],
+  "block": "1102",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040add2 1102 +0048 Jcomm_Reference_Fueling_At_Point_5 (2 B)"
+  ],
+  "added_by": "range 0x40adca..d2 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x0040af54",
+  "current_name": "transmission_park_or_neutral_flag",
+  "current_type": "word",
+  "current_comment": "1 = park or neutral (or gear unknown): the J1939 ETC2 selected gear (SPN 524 0xfb / 0x7d) when cm848_j1939ProcessPgn61445Etc2 stored one - else switch 20 (park-neutral switch / used when EEPROM 0x734 is nonzero - 13 here) - else the PCI RX[5] 0x37 lever gear; init 1; blocks cruise (denied reason 12) and the converter slip check; the forwarded Allison ETC2 clears it (was fuel_correction_mode_flag)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 19, 'sth': 3} -> 2 byte",
+  "e2m_records_here": [
+   "1226 +0056 CANC_Requested_MIL [UNITLESS, 2 B, U, scale 1, 0..0]: Indicates a CANC request for MIL illumination."
+  ],
+  "dump_raw": "1",
+  "references": 34,
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: ((transmission_park_or_neutral_flag == 0 ||",
+   "cm848_j1939ProcessPgn61445Etc2: 0x3fa98c; the gear drives transmission_park_or_neutral_flag (was part of",
+   "cm848_updateSpeedProtectionLimits: if (((transmission_park_or_neutral_flag != 0) &&",
+   "cm848_updateSpeedProtectionLimits: ((transmission_park_or_neutral_flag == 0 &&",
+   "cm848_updateSpeedLimitFromCoolant: ((transmission_park_or_neutral_flag == 0 ||",
+   "cm848_calculateProtectionSpeedLimits: if ((transmission_park_or_neutral_flag == 0) ||"
+  ],
+  "block_named_rows": [
+   "+0000 NC_Monitor_Status -> diagnostic_monitor_complete_bits",
+   "+0004 Previous_NC_Monitor_Status -> diagnostic_monitor_complete_handled_bits",
+   "+0008 Drive_Cycle -> fault_aging_triggered_flag",
+   "+0009 Warm_Up_Cycle_Flag -> warm_up_cycle_condition_flags",
+   "+000C EOL_Mil_State -> end_of_line_test_malfunction_indicator_lamp_override_state",
+   "+000D EOL_Mil_Flash -> end_of_line_test_malfunction_indicator_lamp_flash_request_flag",
+   "+0056 CANC_Requested_MIL -> transmission_park_or_neutral_flag"
+  ],
+  "report_leads": [],
+  "block": "1226",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040af54 1226 +0056 CANC_Requested_MIL (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a1a2",
+  "current_name": "boost_fuel_pressure_offset_lookup",
+  "current_type": "word",
+  "current_comment": "pressure offset for boost fuel scale divisor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1921 +000E Compressor_Inlet_Pressure_Drop [IN_HG, 2 B, U, scale 0.0159062501, 0..31]: Pressure drop from ambient to compressor inlet"
+  ],
+  "dump_raw": "0",
+  "references": 4,
+  "code": [
+   "hpcr_fuelFinal_exponentialAverage: boost_fuel_pressure_offset_lookup =",
+   "hpcr_fuelFinal_exponentialAverage: barometric_pressure_reference = barometric_pressure_selected + boost_fuel_pressure_offset_lookup",
+   "hpcr_fuelFinal_exponentialAverage: if ((int)((uint)barometric_pressure_selected - (uint)boost_fuel_pressure_offset_lookup) < 1) {",
+   "hpcr_fuelFinal_exponentialAverage: compressor_inlet_pressure = barometric_pressure_selected - boost_fuel_pressure_offset_lookup;"
+  ],
+  "block_named_rows": [
+   "+0000 Altitude -> barometric_altitude_feet",
+   "+0002 Ambient_Air_Press -> barometric_pressure_reference",
+   "+0006 Ambient_Air_Tmptr -> ambient_air_temperature_reference",
+   "+000A Compressor_Inlet_Press -> compressor_inlet_pressure",
+   "+000E Compressor_Inlet_Pressure_Drop -> boost_fuel_pressure_offset_lookup",
+   "+0010 Compressor_Inlet_Tmptr_Rise -> compressor_inlet_temperature_rise",
+   "+0014 Ambient_Relative_Humidity -> ambient_relative_humidity"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 1921 sources and pressure drop: 0x40a198 / 0x40a19c / 0x40a1a0 / 0x40a1a2 / `DAT_0040a1a6`"
+  ],
+  "block": "1921",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a1a2 1921 +000E Compressor_Inlet_Pressure_Drop (2 B)"
+  ]
+ },
+ {
+  "address": "0x004051e0",
+  "current_name": "fuel_demand_step_min_threshold_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1A2C +0000 C_Charge_Press_Fault_Clear [CNTS, 2 B, U, scale 1, 0..65535]: Calibration for fail to pass threshold"
+  ],
+  "dump_raw": "2",
+  "references": 1,
+  "code": [
+   "cm848_processBoostControlState: if ((uint)charge_pressure_in_range_fault_count <= (uint)fuel_demand_step_min_threshold_cal) {"
+  ],
+  "block_named_rows": [
+   "+0000 C_Charge_Press_Fault_Clear -> fuel_demand_step_min_threshold_cal",
+   "+0002 C_Charge_Press_Fault_Cnt_Decrt -> fuel_demand_step_decrement_cal",
+   "+0004 C_Charge_Press_Fault_Cnt_Incrt -> charge_pressure_in_range_fault_count_increment",
+   "+0006 C_Charge_Press_Fault_Set -> charge_pressure_in_range_fault_set_threshold"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x4051e0 `fuel_demand_step_min_threshold_cal` becomes `charge_pressure_in_range_fault_clear_threshold`"
+  ],
+  "block": "1A2C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x004051e0 1A2C +0000 C_Charge_Press_Fault_Clear (2 B)"
+  ]
+ },
+ {
+  "address": "0x004051e2",
+  "current_name": "fuel_demand_step_decrement_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1A2C +0002 C_Charge_Press_Fault_Cnt_Decrt [UNITLESS, 2 B, U, scale 1, 0..10]: Charge pressure in range fault count decrement amount"
+  ],
+  "dump_raw": "1",
+  "references": 2,
+  "code": [
+   "cm848_processBoostControlState: if (fuel_demand_step_decrement_cal < charge_pressure_in_range_fault_count) {",
+   "cm848_processBoostControlState: wVar4 = charge_pressure_in_range_fault_count - fuel_demand_step_decrement_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 C_Charge_Press_Fault_Clear -> fuel_demand_step_min_threshold_cal",
+   "+0002 C_Charge_Press_Fault_Cnt_Decrt -> fuel_demand_step_decrement_cal",
+   "+0004 C_Charge_Press_Fault_Cnt_Incrt -> charge_pressure_in_range_fault_count_increment",
+   "+0006 C_Charge_Press_Fault_Set -> charge_pressure_in_range_fault_set_threshold"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x4051e2 `fuel_demand_step_decrement_cal` becomes `charge_pressure_in_range_fault_count_decrement`"
+  ],
+  "block": "1A2C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x004051e2 1A2C +0002 C_Charge_Press_Fault_Cnt_Decrt (2 B)"
+  ]
+ },
+ {
+  "address": "0x00406776",
+  "current_name": "throttle_trim_predictor_output_min",
+  "current_type": "word",
+  "current_comment": "ROM lower clamp for throttle trim predictor output",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1A2E +0004 C_INM_EGRT_Min [DEG_F, 2 B, U, scale 0.015625, 0..600]: Minimum limit for estimated EGR orifice temperature"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "sensor_channel108_filter: (uVar1 = uVar2, (int)uVar2 <= (int)(uint)throttle_trim_predictor_output_min)) {",
+   "sensor_channel108_filter: uVar1 = (uint)throttle_trim_predictor_output_min;"
+  ],
+  "block_named_rows": [
+   "+0002 C_INM_EGRT_Max -> egr_orifice_temperature_estimate_maximum_limit",
+   "+0004 C_INM_EGRT_Min -> throttle_trim_predictor_output_min"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - EGR orifice temperature: `throttle_trim_predictor_gain_lookup` (0x3fbcf8) and `throttle_trim_predictor_output_min` (0x406776)."
+  ],
+  "block": "1A2E",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00406776 1A2E +0004 C_INM_EGRT_Min (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b9c4",
+  "current_name": "cam_sync_validation_abort_reason",
+  "current_type": "word",
+  "current_comment": "med abort reason code 1-5 (write-only diag)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 4} -> 2 byte",
+  "e2m_records_here": [
+   "1B2D +0000 Fuel_Pressure_Keyon_Rat_Abort_Code [UNITLESS, 2 B, U, scale 1, 0..5]: 1 not cold soaked, 2 pressure error, 3,4 unstable pressure, 5 keyon too long"
+  ],
+  "dump_raw": "0",
+  "references": 5,
+  "code": [
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_abort_reason = 1;",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_abort_reason = 2;",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_abort_reason = 3;",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_abort_reason = 4;",
+   "hpcr_checkRailPressureSensorBeforeStart: cam_sync_validation_abort_reason = 5;"
+  ],
+  "block_named_rows": [
+   "+0000 Fuel_Pressure_Keyon_Rat_Abort_Code -> cam_sync_validation_abort_reason",
+   "+0004 FP_Ratio -> power_take_off_disengaged_delay_elapsed_flag",
+   "+0006 Fuel_Pressure_Rat_Start_Delay_Counter -> obd_battery_voltage_in_range_flag",
+   "+0008 Fuelpr_Keyon_Debounce_Timer_Counter -> obd_engine_running_flag",
+   "+000A Fuelpr_Keyon_Below_Min_Counter -> obd_battery_voltage_post_crank_lockout_count",
+   "+000C Fuelpr_Keyon_Above_Max_Counter -> monitor_enabling_conditions_met"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 1B2D +0 and +2 (0x40b9c4 / 0x40b9c6) hold: they are the key-on rationality abort code and state.",
+   "review_e2m_names_wave_13_bin_2.md: - **1B2D +0 / +2:** 0x40b9c4 and 0x40b9c6 `cam_sync_validation_abort_reason` / `_state` are the fuel pressure key-on rationality abort code and state."
+  ],
+  "block": "1B2D",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b9c4 1B2D +0000 Fuel_Pressure_Keyon_Rat_Abort_Code (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b87f",
+  "current_name": "engine_sync_state_t_0040b87f",
+  "current_type": "engine_sync_state_t",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'stb': 2} -> 1 byte",
+  "e2m_records_here": [
+   "8019 +0000 HPCR_Fuelpr_Operating_Mode_N [UNITLESS, 1 B, U, scale 1, 0..255]: Operating mode of fuel pressure controller"
+  ],
+  "dump_raw": "1",
+  "references": 74,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: in engine_sync_state_t_0040b87f.fuel_pressure_governor_mode picks fuel_pressure_governor_demand -",
+   "cm848_calculateFuelMeteringCommand: engine_sync_state_t_0040b87f.fuel_metering_command = engine_speed_override_value_cal;",
+   "cm848_calculateFuelMeteringCommand: engine_sync_state_t_0040b87f.fuel_metering_command = engine_sync_cold_start_speed_cal;",
+   "cm848_calculateFuelMeteringCommand: ((engine_sync_state_t_0040b87f.fuel_pressure_governor_mode !=",
+   "cm848_calculateFuelMeteringCommand: (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode != FUEL_PRESSURE_GOVERNOR_KEY_OFF)",
+   "cm848_calculateFuelMeteringCommand: fuel_pressure_governor_mode_saved = engine_sync_state_t_0040b87f.fuel_pressure_governor_mode"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Fuelpr_Operating_Mode_N -> engine_sync_state_t_0040b87f",
+   "+0001 HPCR_Dutycycle_Monitoring -> engine_sync_state_t_0040b87f.fuel_pressure_governor_demand",
+   "+0003 HPCR_Dutycycle_Output -> engine_sync_state_t_0040b87f.fuel_metering_command",
+   "+0005 HPCR_Filtered_Battery_Voltage -> engine_sync_state_t_0040b87f.reserved_05",
+   "+0007 HPCR_Fuelpr_Prop_Dutycycle -> fuel_pressure_governor_proportional_term",
+   "+0009 HPCR_Fuelpr_Integral_Dutycycle -> fuel_pressure_governor_integral_term",
+   "+000B HPCR_Fuelpr_Derivative_Dutycycle -> fuel_pressure_governor_derivative_term",
+   "+000D HPCR_Fuelpr_Throttle_FF_Dutycycle -> fuel_pressure_governor_accelerator_feed_forward",
+   "+000F HPCR_Fuelpr_Current_Comp_Error_Current -> fuel_metering_feedback_error",
+   "+0012 HPCR_Filtered_Fuelpr_Control -> fuel_pressure_feedback_previous",
+   "+0014 HPCR_Filtered_Dutycycle_Output -> fuel_metering_command_filtered",
+   "+0016 HPCR_MPROP_Coil_Resistance -> fuel_metering_coil_resistance_filtered",
+   "+0018 MPROP_Coil_Temperature -> fuel_metering_coil_temperature"
+  ],
+  "report_leads": [],
+  "block": "8019",
+  "row_width_bytes": 6,
+  "covered_records": [
+   "0x0040b87f 8019 +0000 HPCR_Fuelpr_Operating_Mode_N (1 B)",
+   "0x0040b880 8019 +0001 HPCR_Dutycycle_Monitoring (2 B)",
+   "0x0040b882 8019 +0003 HPCR_Dutycycle_Output (2 B)",
+   "0x0040b884 8019 +0005 HPCR_Filtered_Battery_Voltage (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408a9c",
+  "current_name": "protection_coldStart_channelA_rpm_min_threshold",
+  "current_type": "word",
+  "current_comment": "ROM RPM min for cold-start protection channel A",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "e2m_records_here": [
+   "8C59 +0006 RE_Governor_Pr_Zero_Set_High_Limit [PSI, 2 B, U, scale 0.0078125, 0..500]: Governor pressure below this will allow monitor to run"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_monitorGovernorPressureTracking: (protection_coldStart_channelA_rpm_min_threshold < governor_pressure_target)) {",
+   "cm848_monitorGovernorPressureTracking: (governor_pressure_target <= protection_coldStart_channelA_rpm_min_threshold)) &&"
+  ],
+  "block_named_rows": [
+   "+0000 RE_Governor_Pr_Zero_Rat_Fail_Count_Limit -> governor_pressure_zero_check_fail_count_limit",
+   "+0002 RE_Governor_Pr_Zero_Rat_Max_Time -> governor_pressure_zero_check_debounce_count_limit",
+   "+0004 RE_Governor_Pr_Zero_High_Limit -> governor_pressure_zero_check_high_limit",
+   "+0006 RE_Governor_Pr_Zero_Set_High_Limit -> protection_coldStart_channelA_rpm_min_threshold",
+   "+0008 RE_Governor_Pr_Mid_Rat_Fail_Count_Limit -> governor_pressure_mid_range_check_fail_count_limit",
+   "+000A RE_Governor_Pr_Mid_Rat_Max_Time -> governor_pressure_mid_range_check_debounce_count_limit",
+   "+000C RE_Governor_Pr_Mid_Low_Limit -> governor_pressure_mid_range_check_low_limit",
+   "+000E RE_Governor_Pr_Mid_Set_Low_Limit -> protection_coldStart_channelB_rpm_lower_threshold",
+   "+0010 RE_Governor_Pr_Mid_High_Limit -> governor_pressure_mid_range_check_high_limit",
+   "+0012 RE_Governor_Pr_Mid_Set_High_Limit -> protection_coldStart_channelB_rpm_upper_threshold",
+   "+0014 RE_Governor_Pr_Control_Rat_Max_Throttle -> governor_pressure_check_maximum_accelerator_position",
+   "+0016 RE_Governor_Pr_Control_Rat_Max_Oil_Temp -> protection_load_upper_threshold",
+   "+0018 RE_Governor_Pr_Control_Rat_Min_Oil_Temp -> protection_load_lower_threshold",
+   "+001A Gov_Press_Control_Driver_On_Max_Time -> output_speed_sensor_check_fault_set_passes",
+   "+001C RE_Governor_Pr_Mid_Rat_Pass_Count_Limit -> output_speed_sensor_check_minimum_output_speed"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - The window_active flags and 0x408a9c / 0x408aa4 / 0x408aa8 `protection_coldStart_*_threshold`. These are governor pressure target limits, not rpm."
+  ],
+  "block": "8C59",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408a9c 8C59 +0006 RE_Governor_Pr_Zero_Set_High_Limit (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408aa4",
+  "current_name": "protection_coldStart_channelB_rpm_lower_threshold",
+  "current_type": "word",
+  "current_comment": "ROM RPM lower bound for channel B window",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "e2m_records_here": [
+   "8C59 +000E RE_Governor_Pr_Mid_Set_Low_Limit [PSI, 2 B, U, scale 0.0078125, 0..500]: Governor pressure below this will disable the monitor"
+  ],
+  "dump_raw": "4224",
+  "references": 2,
+  "code": [
+   "cm848_monitorGovernorPressureTracking: (governor_pressure_target < protection_coldStart_channelB_rpm_lower_threshold)) {",
+   "cm848_monitorGovernorPressureTracking: (protection_coldStart_channelB_rpm_lower_threshold <= governor_pressure_target)) &&"
+  ],
+  "block_named_rows": [
+   "+0000 RE_Governor_Pr_Zero_Rat_Fail_Count_Limit -> governor_pressure_zero_check_fail_count_limit",
+   "+0002 RE_Governor_Pr_Zero_Rat_Max_Time -> governor_pressure_zero_check_debounce_count_limit",
+   "+0004 RE_Governor_Pr_Zero_High_Limit -> governor_pressure_zero_check_high_limit",
+   "+0006 RE_Governor_Pr_Zero_Set_High_Limit -> protection_coldStart_channelA_rpm_min_threshold",
+   "+0008 RE_Governor_Pr_Mid_Rat_Fail_Count_Limit -> governor_pressure_mid_range_check_fail_count_limit",
+   "+000A RE_Governor_Pr_Mid_Rat_Max_Time -> governor_pressure_mid_range_check_debounce_count_limit",
+   "+000C RE_Governor_Pr_Mid_Low_Limit -> governor_pressure_mid_range_check_low_limit",
+   "+000E RE_Governor_Pr_Mid_Set_Low_Limit -> protection_coldStart_channelB_rpm_lower_threshold",
+   "+0010 RE_Governor_Pr_Mid_High_Limit -> governor_pressure_mid_range_check_high_limit",
+   "+0012 RE_Governor_Pr_Mid_Set_High_Limit -> protection_coldStart_channelB_rpm_upper_threshold",
+   "+0014 RE_Governor_Pr_Control_Rat_Max_Throttle -> governor_pressure_check_maximum_accelerator_position",
+   "+0016 RE_Governor_Pr_Control_Rat_Max_Oil_Temp -> protection_load_upper_threshold",
+   "+0018 RE_Governor_Pr_Control_Rat_Min_Oil_Temp -> protection_load_lower_threshold",
+   "+001A Gov_Press_Control_Driver_On_Max_Time -> output_speed_sensor_check_fault_set_passes",
+   "+001C RE_Governor_Pr_Mid_Rat_Pass_Count_Limit -> output_speed_sensor_check_minimum_output_speed"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - The window_active flags and 0x408a9c / 0x408aa4 / 0x408aa8 `protection_coldStart_*_threshold`. These are governor pressure target limits, not rpm."
+  ],
+  "block": "8C59",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408aa4 8C59 +000E RE_Governor_Pr_Mid_Set_Low_Limit (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408aa8",
+  "current_name": "protection_coldStart_channelB_rpm_upper_threshold",
+  "current_type": "word",
+  "current_comment": "ROM RPM upper bound for channel B window",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8C59 +0012 RE_Governor_Pr_Mid_Set_High_Limit [PSI, 2 B, U, scale 0.0078125, 0..500]: Governor pressure above this will disable the monitor"
+  ],
+  "dump_raw": "5120",
+  "references": 2,
+  "code": [
+   "cm848_monitorGovernorPressureTracking: if ((protection_coldStart_channelB_rpm_upper_threshold < governor_pressure_target) ||",
+   "cm848_monitorGovernorPressureTracking: if ((((governor_pressure_target <= protection_coldStart_channelB_rpm_upper_threshold) &&"
+  ],
+  "block_named_rows": [
+   "+0000 RE_Governor_Pr_Zero_Rat_Fail_Count_Limit -> governor_pressure_zero_check_fail_count_limit",
+   "+0002 RE_Governor_Pr_Zero_Rat_Max_Time -> governor_pressure_zero_check_debounce_count_limit",
+   "+0004 RE_Governor_Pr_Zero_High_Limit -> governor_pressure_zero_check_high_limit",
+   "+0006 RE_Governor_Pr_Zero_Set_High_Limit -> protection_coldStart_channelA_rpm_min_threshold",
+   "+0008 RE_Governor_Pr_Mid_Rat_Fail_Count_Limit -> governor_pressure_mid_range_check_fail_count_limit",
+   "+000A RE_Governor_Pr_Mid_Rat_Max_Time -> governor_pressure_mid_range_check_debounce_count_limit",
+   "+000C RE_Governor_Pr_Mid_Low_Limit -> governor_pressure_mid_range_check_low_limit",
+   "+000E RE_Governor_Pr_Mid_Set_Low_Limit -> protection_coldStart_channelB_rpm_lower_threshold",
+   "+0010 RE_Governor_Pr_Mid_High_Limit -> governor_pressure_mid_range_check_high_limit",
+   "+0012 RE_Governor_Pr_Mid_Set_High_Limit -> protection_coldStart_channelB_rpm_upper_threshold",
+   "+0014 RE_Governor_Pr_Control_Rat_Max_Throttle -> governor_pressure_check_maximum_accelerator_position",
+   "+0016 RE_Governor_Pr_Control_Rat_Max_Oil_Temp -> protection_load_upper_threshold",
+   "+0018 RE_Governor_Pr_Control_Rat_Min_Oil_Temp -> protection_load_lower_threshold",
+   "+001A Gov_Press_Control_Driver_On_Max_Time -> output_speed_sensor_check_fault_set_passes",
+   "+001C RE_Governor_Pr_Mid_Rat_Pass_Count_Limit -> output_speed_sensor_check_minimum_output_speed"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - The window_active flags and 0x408a9c / 0x408aa4 / 0x408aa8 `protection_coldStart_*_threshold`. These are governor pressure target limits, not rpm."
+  ],
+  "block": "8C59",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408aa8 8C59 +0012 RE_Governor_Pr_Mid_Set_High_Limit (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408aac",
+  "current_name": "protection_load_upper_threshold",
+  "current_type": "word",
+  "current_comment": "ROM upper bound on transmission_temperature_sensor_filtered",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "e2m_records_here": [
+   "8C59 +0016 RE_Governor_Pr_Control_Rat_Max_Oil_Temp [DEG_F, 2 B, S, scale 0.015625, -50..350]: Transmission oil temp above this will disable monitor"
+  ],
+  "dump_raw": "14080",
+  "references": 2,
+  "code": [
+   "cm848_monitorGovernorPressureSensorOffset: (int)(uint)protection_load_upper_threshold)) &&",
+   "cm848_monitorGovernorPressureTracking: (int)(uint)protection_load_upper_threshold)) &&"
+  ],
+  "block_named_rows": [
+   "+0000 RE_Governor_Pr_Zero_Rat_Fail_Count_Limit -> governor_pressure_zero_check_fail_count_limit",
+   "+0002 RE_Governor_Pr_Zero_Rat_Max_Time -> governor_pressure_zero_check_debounce_count_limit",
+   "+0004 RE_Governor_Pr_Zero_High_Limit -> governor_pressure_zero_check_high_limit",
+   "+0006 RE_Governor_Pr_Zero_Set_High_Limit -> protection_coldStart_channelA_rpm_min_threshold",
+   "+0008 RE_Governor_Pr_Mid_Rat_Fail_Count_Limit -> governor_pressure_mid_range_check_fail_count_limit",
+   "+000A RE_Governor_Pr_Mid_Rat_Max_Time -> governor_pressure_mid_range_check_debounce_count_limit",
+   "+000C RE_Governor_Pr_Mid_Low_Limit -> governor_pressure_mid_range_check_low_limit",
+   "+000E RE_Governor_Pr_Mid_Set_Low_Limit -> protection_coldStart_channelB_rpm_lower_threshold",
+   "+0010 RE_Governor_Pr_Mid_High_Limit -> governor_pressure_mid_range_check_high_limit",
+   "+0012 RE_Governor_Pr_Mid_Set_High_Limit -> protection_coldStart_channelB_rpm_upper_threshold",
+   "+0014 RE_Governor_Pr_Control_Rat_Max_Throttle -> governor_pressure_check_maximum_accelerator_position",
+   "+0016 RE_Governor_Pr_Control_Rat_Max_Oil_Temp -> protection_load_upper_threshold",
+   "+0018 RE_Governor_Pr_Control_Rat_Min_Oil_Temp -> protection_load_lower_threshold",
+   "+001A Gov_Press_Control_Driver_On_Max_Time -> output_speed_sensor_check_fault_set_passes",
+   "+001C RE_Governor_Pr_Mid_Rat_Pass_Count_Limit -> output_speed_sensor_check_minimum_output_speed"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - 0x408aac / 0x408aae `protection_load_*_threshold`, a transmission temperature window."
+  ],
+  "block": "8C59",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408aac 8C59 +0016 RE_Governor_Pr_Control_Rat_Max_Oil_Temp (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408aae",
+  "current_name": "protection_load_lower_threshold",
+  "current_type": "word",
+  "current_comment": "ROM lower bound on transmission_temperature_sensor_filtered",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "e2m_records_here": [
+   "8C59 +0018 RE_Governor_Pr_Control_Rat_Min_Oil_Temp [DEG_F, 2 B, S, scale 0.015625, -50..350]: Transmission oil temp below this will disable monitor"
+  ],
+  "dump_raw": "8512",
+  "references": 2,
+  "code": [
+   "cm848_monitorGovernorPressureSensorOffset: ((((int)(uint)protection_load_lower_threshold <",
+   "cm848_monitorGovernorPressureTracking: (((int)(uint)protection_load_lower_threshold <="
+  ],
+  "block_named_rows": [
+   "+0000 RE_Governor_Pr_Zero_Rat_Fail_Count_Limit -> governor_pressure_zero_check_fail_count_limit",
+   "+0002 RE_Governor_Pr_Zero_Rat_Max_Time -> governor_pressure_zero_check_debounce_count_limit",
+   "+0004 RE_Governor_Pr_Zero_High_Limit -> governor_pressure_zero_check_high_limit",
+   "+0006 RE_Governor_Pr_Zero_Set_High_Limit -> protection_coldStart_channelA_rpm_min_threshold",
+   "+0008 RE_Governor_Pr_Mid_Rat_Fail_Count_Limit -> governor_pressure_mid_range_check_fail_count_limit",
+   "+000A RE_Governor_Pr_Mid_Rat_Max_Time -> governor_pressure_mid_range_check_debounce_count_limit",
+   "+000C RE_Governor_Pr_Mid_Low_Limit -> governor_pressure_mid_range_check_low_limit",
+   "+000E RE_Governor_Pr_Mid_Set_Low_Limit -> protection_coldStart_channelB_rpm_lower_threshold",
+   "+0010 RE_Governor_Pr_Mid_High_Limit -> governor_pressure_mid_range_check_high_limit",
+   "+0012 RE_Governor_Pr_Mid_Set_High_Limit -> protection_coldStart_channelB_rpm_upper_threshold",
+   "+0014 RE_Governor_Pr_Control_Rat_Max_Throttle -> governor_pressure_check_maximum_accelerator_position",
+   "+0016 RE_Governor_Pr_Control_Rat_Max_Oil_Temp -> protection_load_upper_threshold",
+   "+0018 RE_Governor_Pr_Control_Rat_Min_Oil_Temp -> protection_load_lower_threshold",
+   "+001A Gov_Press_Control_Driver_On_Max_Time -> output_speed_sensor_check_fault_set_passes",
+   "+001C RE_Governor_Pr_Mid_Rat_Pass_Count_Limit -> output_speed_sensor_check_minimum_output_speed"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - 0x408aac / 0x408aae `protection_load_*_threshold`, a transmission temperature window."
+  ],
+  "block": "8C59",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408aae 8C59 +0018 RE_Governor_Pr_Control_Rat_Min_Oil_Temp (2 B)"
+  ]
+ }
+]

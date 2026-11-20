@@ -1,0 +1,2513 @@
+[
+ {
+  "address": "0x003fb528",
+  "current_name": "fuel_demand_enable_sync_flag_shadow",
+  "current_type": "word",
+  "current_comment": "cruise_resume_active_flag at the end of the last pass (lhz @ 0x4064c / sth @ 0x406b8 in cm848_arbitrateGovernedFueling); a first pass of 9 / 10 with it 0 runs protectionRampRateControl. Was the upper half of the governor_pid_integral_working dword",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_arbitrateGovernedFueling: (fuel_demand_enable_sync_flag_shadow == 0)))) {",
+   "cm848_arbitrateGovernedFueling: fuel_demand_enable_sync_flag_shadow = cruise_resume_active_flag;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - Cruise resume: `fuel_demand_enable_sync_flag_shadow` (0x3fb528) and `_shadow_2` embed the old name."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fb5a4",
+  "current_name": "cylinder_diag_low_threshold_snapshot",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 1, 'lha': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_runCylinderContributionTest: cylinder_diag_low_threshold_snapshot = cylinder_balance_fueling_trim_maximum;",
+   "cm848_runCylinderContributionTest: cylinder_balance_fueling_trim_maximum = cylinder_diag_low_threshold_snapshot;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x3fb5a4 and 0x3fb5a6 are the matching snapshots."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fb5a6",
+  "current_name": "cylinder_diag_high_threshold_snapshot",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 1, 'lha': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_runCylinderContributionTest: cylinder_diag_high_threshold_snapshot = cylinder_balance_fueling_trim_minimum;",
+   "cm848_runCylinderContributionTest: cylinder_balance_fueling_trim_minimum = cylinder_diag_high_threshold_snapshot;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x3fb5a4 and 0x3fb5a6 are the matching snapshots."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fbca6",
+  "current_name": "diag_dm1_buffer_fill_end_ptr",
+  "current_type": "dword",
+  "current_comment": "DM1 ring-buffer fill endpoint ptr (ROM-aliased)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'lwz': 1, 'stw': 1} -> 4 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "diag_dm1Buffer_circularFill: dVar1 = diag_dm1_buffer_fill_end_ptr;",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_fill_end_ptr = (dword)(diag_dm1_buffer_start_ptr + (0x8000 - iVar4));",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_fill_end_ptr = (dword)(diag_dm1_buffer_start_ptr + uVar3 * (uVar2 >> 1) + -1);",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_fill_end_ptr = (dword)diag_dm1_buffer_end_ptr;",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_fill_end_ptr =",
+   "cm848_phase_groupB_calculation: if (diag_dm1_buffer_end_ptr < diag_dm1_buffer_fill_end_ptr) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - Remaining `diag_dm1_*` collector rows: 0x40c270-0x40c284, 0x3fbca6-0x3fbcb8, 0x3fddba (Collector_Stop_Mode), 0x3fddc4 (Collector_Table)."
+  ],
+  "block": "",
+  "row_width_bytes": 4,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fbcaa",
+  "current_name": "diag_dm1_buffer_fill_phase",
+  "current_type": "dword",
+  "current_comment": "DM1 fill state 0/1/2/3 (ROM-aliased)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'stw': 4} -> 4 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "diag_dm1Buffer_circularFill: diag_dm1_buffer_fill_phase = 3;",
+   "diag_dm1Buffer_circularFill: diag_dm1_buffer_fill_phase = 3;",
+   "diag_dm1Buffer_circularFill: diag_dm1_buffer_fill_phase = 3;",
+   "hpcr_exception_process: diag_dm1_buffer_fill_phase = 0;",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_fill_phase = 0;",
+   "cm848_phase_groupB_calculation: if (diag_dm1_buffer_fill_phase == 0) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 4,
+  "covered_records": [],
+  "added_by": "range 0x3fbca6-0x3fbcb8 in review_e2m_names_wave_13_bin_4.md"
+ },
+ {
+  "address": "0x003fbcae",
+  "current_name": "diag_dm1_buffer_slot_started_flag",
+  "current_type": "word",
+  "current_comment": "DM1 buffer slot write started 0/1",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 3} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "diag_dm1Buffer_circularFill: if (diag_dm1_buffer_slot_started_flag != 0) break;",
+   "diag_dm1Buffer_circularFill: diag_dm1_buffer_slot_started_flag = 1;",
+   "diag_dm1Buffer_circularFill: diag_dm1_buffer_slot_started_flag = 1;",
+   "j1939_dm1_diagnosticMessage_send: diag_dm1_buffer_slot_started_flag = 0;",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_slot_started_flag = 0;",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_slot_started_flag = 0;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": [],
+  "added_by": "range 0x3fbca6-0x3fbcb8 in review_e2m_names_wave_13_bin_4.md"
+ },
+ {
+  "address": "0x003fbcb0",
+  "current_name": "diag_dm1_protection_repeat_countdown",
+  "current_type": "word",
+  "current_comment": "DM1 protection warning repeat-interval countdown",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_phase_groupB_calculation: if (diag_dm1_protection_repeat_countdown != 0) {",
+   "cm848_phase_groupB_calculation: diag_dm1_protection_repeat_countdown = diag_dm1_protection_repeat_countdown - 1;",
+   "cm848_phase_groupB_calculation: diag_dm1_protection_repeat_countdown = diag_dm1_protection_repeat_countdown - 1;",
+   "cm848_phase_groupB_calculation: diag_dm1_protection_repeat_countdown = data_collector_multiple_cal - 1;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": [],
+  "added_by": "range 0x3fbca6-0x3fbcb8 in review_e2m_names_wave_13_bin_4.md"
+ },
+ {
+  "address": "0x003fbcb2",
+  "current_name": "diag_dm1_active_fault_entry_count",
+  "current_type": "word",
+  "current_comment": "count of active fault entries to fill into DM1",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'lhz': 5, 'sth': 3} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "diag_dm1Buffer_circularFill: uVar3 = (uint)diag_dm1_active_fault_entry_count;",
+   "hpcr_exception_process: diag_dm1_active_fault_entry_count = 0;",
+   "j1939_dm1_diagnosticMessage_send: uVar5 = (uint)diag_dm1_active_fault_entry_count;",
+   "cm848_phase_groupB_calculation: diag_dm1_active_fault_entry_count = diag_dm1_active_fault_entry_count + 1;",
+   "cm848_phase_groupB_calculation: diag_dm1_active_fault_entry_count = diag_dm1_active_fault_entry_count + 1;",
+   "cm848_phase_groupB_calculation: uVar3 = (uint)diag_dm1_active_fault_entry_count;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": [],
+  "added_by": "range 0x3fbca6-0x3fbcb8 in review_e2m_names_wave_13_bin_4.md"
+ },
+ {
+  "address": "0x003fbcb6",
+  "current_name": "diag_dm1_bytes_per_fault_slot",
+  "current_type": "word",
+  "current_comment": "DM1 ring bytes-per-fault-slot (0x8000/count)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_phase_groupB_calculation: diag_dm1_bytes_per_fault_slot = (word)uVar2;",
+   "cm848_phase_groupB_calculation: DAT_003fbcb4 = diag_dm1_active_fault_entry_count * diag_dm1_bytes_per_fault_slot;",
+   "cm848_phase_groupB_calculation: (uint)(diag_dm1_bytes_per_fault_slot >> 1));"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": [],
+  "added_by": "range 0x3fbca6-0x3fbcb8 in review_e2m_names_wave_13_bin_4.md"
+ },
+ {
+  "address": "0x003fbcb8",
+  "current_name": "diag_dm1_protection_warning_latch",
+  "current_type": "word",
+  "current_comment": "DM1 protection warning event-count latch",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_phase_groupB_calculation: diag_dm1_protection_warning_latch = 0;",
+   "cm848_phase_groupB_calculation: if (diag_dm1_protection_warning_latch == 0) {",
+   "cm848_phase_groupB_calculation: diag_dm1_protection_warning_latch = 1;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - Remaining `diag_dm1_*` collector rows: 0x40c270-0x40c284, 0x3fbca6-0x3fbcb8, 0x3fddba (Collector_Stop_Mode), 0x3fddc4 (Collector_Table)."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fbcf8",
+  "current_name": "throttle_trim_predictor_gain_lookup",
+  "current_type": "word",
+  "current_comment": "throttle trim predictor gain (table lookup)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "sensor_throttleTrim_ema_faultProcess: throttle_trim_predictor_gain_lookup =",
+   "sensor_throttleTrim_ema_faultProcess: (egr_orifice_temperature_lead_time_constant = throttle_trim_predictor_gain_lookup,",
+   "cm848_initialization_step_14: ema_filter_state_t_003fbd00.coefficient = &throttle_trim_predictor_gain_lookup;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - EGR orifice temperature: `throttle_trim_predictor_gain_lookup` (0x3fbcf8) and `throttle_trim_predictor_output_min` (0x406776)."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fd062",
+  "current_name": "protection_trim_divisor_working",
+  "current_type": "dword",
+  "current_comment": "= rear_axle_ratio_low_cal * protection_timing_period_cal; shaft-speed fuel-trim divisor used when NOT actively limiting (normal path)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'lwz': 1, 'stw': 1} -> 4 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_calculateVehicleSpeedFromOutputShaft: two_speed_axle_enable_cal and switch 31 are set else protection_trim_divisor_working - capped at",
+   "cm848_calculateVehicleSpeedFromOutputShaft: (ulonglong)protection_trim_divisor_working);",
+   "cm848_computeProtectionTrimDivisors: protection_trim_divisor_working ="
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40a298 `protection_temp_scale_factor` is the axle ratio in use, and 0x3fd062 / 0x3fd066 `protection_trim_divisor_*` are the axle ratio times the timing period."
+  ],
+  "block": "",
+  "row_width_bytes": 4,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fd066",
+  "current_name": "protection_trim_divisor_cal",
+  "current_type": "dword",
+  "current_comment": "= rear_axle_ratio_high_cal * protection_timing_period_cal; shaft-speed fuel-trim divisor used when protection IS active (limiting path)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'lwz': 1, 'stw': 1} -> 4 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_calculateVehicleSpeedFromOutputShaft: 0x3c000 / axle divisor - protection_trim_divisor_cal (the second axle ratio) when",
+   "cm848_calculateVehicleSpeedFromOutputShaft: (ulonglong)protection_trim_divisor_cal);",
+   "cm848_computeProtectionTrimDivisors: protection_trim_divisor_cal = (uint)rear_axle_ratio_high_cal * (uint)protection_timing_period_cal;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x40a298 `protection_temp_scale_factor` is the axle ratio in use, and 0x3fd062 / 0x3fd066 `protection_trim_divisor_*` are the axle ratio times the timing period.",
+   "review_e2m_names_wave_13_bin_4.md: - `protection_trim_divisor_cal` / `_working` are the timing period times those two."
+  ],
+  "block": "",
+  "row_width_bytes": 4,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fd18a",
+  "current_name": "cssc_coolant_temp_min",
+  "current_type": "word",
+  "current_comment": "running min coolant temp (CSSC thermostat)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_temp_min = protection_group29_coolant_temp_snapshot;",
+   "cm848_checkCoolantTemperatureSensorPerformance: if ((short)sensor_readings_t_0040baf2.coolant_temp < (short)cssc_coolant_temp_min) {",
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_temp_min = sensor_readings_t_0040baf2.coolant_temp;",
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_temp_span = cssc_coolant_temp_max - cssc_coolant_temp_min;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **`cssc_*` family:** 0x40b9a2, 0x40b9a4, 0x40b9a6, 0x3fd18a-0x3fd190 should become `coolant_temperature_sensor_performance_*`. The drifted row would be `coolant_temperature_sensor_performance_monitoring_cycle_count`."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fd18c",
+  "current_name": "cssc_coolant_temp_max",
+  "current_type": "word",
+  "current_comment": "running max coolant temp (CSSC thermostat)",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_temp_max = protection_group29_coolant_temp_snapshot;",
+   "cm848_checkCoolantTemperatureSensorPerformance: if ((short)cssc_coolant_temp_max < (short)sensor_readings_t_0040baf2.coolant_temp) {",
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_temp_max = sensor_readings_t_0040baf2.coolant_temp;",
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_temp_span = cssc_coolant_temp_max - cssc_coolant_temp_min;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": [],
+  "added_by": "range 0x3fd18a-0x3fd190 in review_e2m_names_wave_13_bin_5.md"
+ },
+ {
+  "address": "0x003fd18e",
+  "current_name": "cssc_coolant_snapshot_taken_flag",
+  "current_type": "byte",
+  "current_comment": "one-shot coolant snapshot guard",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'stb': 1} -> 1 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_initialization_group22_state: cssc_coolant_snapshot_taken_flag = 0;",
+   "cm848_checkCoolantTemperatureSensorPerformance: if ((cssc_coolant_snapshot_taken_flag == 0) &&",
+   "cm848_checkCoolantTemperatureSensorPerformance: ((((cssc_coolant_snapshot_taken_flag = 1,"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 1,
+  "covered_records": [],
+  "added_by": "range 0x3fd18a-0x3fd190 in review_e2m_names_wave_13_bin_5.md"
+ },
+ {
+  "address": "0x003fd18f",
+  "current_name": "protection_group29_conditions_met_flag",
+  "current_type": "byte",
+  "current_comment": "group29 conditions met 0/1",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'stb': 2, 'lbz': 1} -> 1 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_initialization_group22_state: protection_group29_conditions_met_flag = 0;",
+   "cm848_checkCoolantTemperatureSensorPerformance: protection_group29_conditions_met_flag = 1;",
+   "cm848_checkCoolantTemperatureSensorPerformance: protection_group29_conditions_met_flag = 1;",
+   "cm848_checkCoolantTemperatureSensorPerformance: protection_group29_conditions_met_flag = 1;",
+   "cm848_checkCoolantTemperatureSensorPerformance: if (protection_group29_conditions_met_flag != 1) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [],
+  "block": "",
+  "row_width_bytes": 1,
+  "covered_records": [],
+  "added_by": "range 0x3fd18a-0x3fd190 in review_e2m_names_wave_13_bin_5.md"
+ },
+ {
+  "address": "0x003fd190",
+  "current_name": "cssc_coolant_precheck_dwell_count",
+  "current_type": "word",
+  "current_comment": "dwell before CSSC coolant snapshot",
+  "region": "RAM in the ROM-to-RAM copy window (no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_initialization_group22_state: cssc_coolant_precheck_dwell_count = 0;",
+   "cm848_checkCoolantTemperatureSensorPerformance: if (cssc_coolant_precheck_dwell_count < DAT_000642e0) {",
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_precheck_dwell_count = cssc_coolant_precheck_dwell_count + 1;",
+   "cm848_checkCoolantTemperatureSensorPerformance: cssc_coolant_precheck_dwell_count = cssc_coolant_precheck_dwell_count + 1;"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **`cssc_*` family:** 0x40b9a2, 0x40b9a4, 0x40b9a6, 0x3fd18a-0x3fd190 should become `coolant_temperature_sensor_performance_*`. The drifted row would be `coolant_temperature_sensor_performance_monitoring_cycle_count`."
+  ],
+  "block": "",
+  "row_width_bytes": 2,
+  "covered_records": []
+ },
+ {
+  "address": "0x003fddc4",
+  "current_name": "diag_dm1_fault_source_table",
+  "current_type": "dword",
+  "current_comment": "32-entry DM1 fault data-source ptr array base",
+  "region": "EEPROM mirror (name ends _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "diag_dm1Buffer_circularFill: pdVar2 = &diag_dm1_fault_source_table;",
+   "diag_dm1Buffer_circularFill: if (&diag_dm1_fault_source_table + uVar3 <= pdVar2) {",
+   "hpcr_exception_process: data_collector_table_address = (dword)&diag_dm1_fault_source_table;",
+   "cm848_phase_groupB_calculation: pdVar5 = &diag_dm1_fault_source_table;",
+   "cm848_phase_groupB_calculation: if (diag_dm1_fault_source_table == 0) {",
+   "cm848_phase_groupB_calculation: if (diag_dm1_fault_source_table != 0) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - Remaining `diag_dm1_*` collector rows: 0x40c270-0x40c284, 0x3fbca6-0x3fbcb8, 0x3fddba (Collector_Stop_Mode), 0x3fddc4 (Collector_Table).",
+   "review_e2m_names_wave_13_bin_6.md: - the remaining `diag_dm1_buffer_*` physical start and end pointers (0x40c270 / 0x40c274), fill and slot words, and `diag_dm1_fault_source_table`"
+  ],
+  "block": "",
+  "row_width_bytes": 4,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040c085",
+  "current_name": "protection_enable_byte_35",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "diagnosticMainStateProcessor: if ((protection_enable_byte_35 & 8) == 0) {",
+   "diagnosticMainStateProcessor: if ((protection_enable_byte_35 & 0x10) == 0) {",
+   "cm848_updateIntakeAirHeaterRunupPhase: if (((protection_enable_byte_35 & 8) != 0) && ((protection_enable_byte_35 & 0x10) != 0)) {",
+   "cm848_updateIntakeAirHeaterRunupPhase: if (((protection_enable_byte_35 & 8) != 0) && ((protection_enable_byte_35 & 0x10) != 0)) {",
+   "cm848_mainLoopMonitor: if ((protection_enable_byte_35 & 8) != 0) {",
+   "cm848_mainLoopMonitor: if ((protection_enable_byte_35 & 0x10) != 0) {"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - `protection_enable_byte_35` (0x40c085) is byte 5 of `logical_output_request_bits`, requests 40-47."
+  ],
+  "block": "",
+  "row_width_bytes": 1,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040c274",
+  "current_name": "diag_dm1_buffer_end_ptr",
+  "current_type": "pointer",
+  "current_comment": "DM1 diagnostic ring buffer end pointer",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lwz': 5, 'stw': 1} -> 4 byte",
+  "e2m_records_here": [
+   "0032 +0004 Buffer_End [HEX, 4 B, U, scale 1, 0..4294967295]: Physical RAM address of the end of the data collector buffer"
+  ],
+  "dump_raw": "0",
+  "references": 10,
+  "code": [
+   "diag_dm1Buffer_circularFill: if (diag_dm1_buffer_end_ptr < data_collector_end_address) {",
+   "diag_dm1Buffer_circularFill: data_collector_end_address = diag_dm1_buffer_end_ptr;",
+   "diag_dm1Buffer_circularFill: if (diag_dm1_buffer_end_ptr < data_collector_start_address) {",
+   "j1939_dm1_diagnosticMessage_send: puVar4 = diag_dm1_buffer_end_ptr +",
+   "j1939_dm1_diagnosticMessage_send: if (diag_dm1_buffer_end_ptr < puVar6) {",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_end_ptr = diag_dm1_buffer_start_ptr + (0x7fff - iVar4);"
+  ],
+  "block_named_rows": [
+   "+0004 Buffer_End -> diag_dm1_buffer_end_ptr"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - the remaining `diag_dm1_buffer_*` physical start and end pointers (0x40c270 / 0x40c274), fill and slot words, and `diag_dm1_fault_source_table`"
+  ],
+  "block": "0032",
+  "row_width_bytes": 4,
+  "covered_records": [
+   "0x0040c274 0032 +0004 Buffer_End (4 B)"
+  ]
+ },
+ {
+  "address": "0x0040a16c",
+  "current_name": "governor_startup_state",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 6} -> 2 byte",
+  "e2m_records_here": [
+   "104A +0004 Alpha_State [UNITLESS, 2 B, U, scale 1, 0..5]: [APAPST] Indicate the source (base, user, altitude, epf, slave, esp) of alpha"
+  ],
+  "dump_raw": "0",
+  "references": 6,
+  "code": [
+   "hpcr_calculateFuelTrimOutput: governor_startup_state = 3;",
+   "hpcr_calculateFuelTrimOutput: governor_startup_state = 0;",
+   "hpcr_calculateFuelTrimOutput: governor_startup_state = 2;",
+   "hpcr_calculateFuelTrimOutput: governor_startup_state = 1;",
+   "hpcr_calculateFuelTrimOutput: governor_startup_state = 5;",
+   "hpcr_calculateFuelTrimOutput: governor_startup_state = 4;"
+  ],
+  "block_named_rows": [
+   "+0000 Alpha -> combustion_alpha_input",
+   "+0002 Alpha_Base -> alpha_base",
+   "+0004 Alpha_State -> governor_startup_state",
+   "+0006 Alpha_AFC -> pressure_fuel_delay_b_status",
+   "+0008 Alpha_Fuel_Rate -> alpha_fuel_rate_result",
+   "+000A Alpha_Governor -> fuel_rate_condition_status",
+   "+000C Alpha_LSG -> pressure_fuel_delay_a_status",
+   "+000E Fueling_AFC_State_Detected -> alpha_air_fuel_control_state_detected_flag",
+   "+0010 Fueling_LSG_State_Detected -> alpha_low_speed_governor_state_detected_flag",
+   "+0012 Alpha_Low_Ambient_Air_Pressure -> pressure_hysteresis_state",
+   "+0014 Filtered_Fuel_Delivery_Rate -> alpha_filtered_fuel_delivery_rate",
+   "+0016 Alpha_LSG_Timer -> cold_start_timer_a",
+   "+0018 Alpha_AFC_Timer -> cold_start_timer_b",
+   "+001A Alpha_Altitude_Derate_Timer -> alpha_altitude_derate_timer"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 0x40a16c `governor_startup_state` \u2192 `alpha_state`"
+  ],
+  "block": "104A",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a16c 104A +0004 Alpha_State (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a17a",
+  "current_name": "pressure_hysteresis_state",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "104A +0012 Alpha_Low_Ambient_Air_Pressure [UNITLESS, 2 B, U, scale 1.0, 0..65535]: [APAAPRSS] Alpha based only on ambient air pressure logic"
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "cm848_checkPressureHysteresis: iVar1 = (int)(short)pressure_hysteresis_state;",
+   "timingProtectionFlagsOrchestrator: pressure_hysteresis_state = cm848_checkPressureHysteresis();",
+   "timingProtectionFlagsOrchestrator: uVar2 = uVar2 | pressure_hysteresis_state;"
+  ],
+  "block_named_rows": [
+   "+0000 Alpha -> combustion_alpha_input",
+   "+0002 Alpha_Base -> alpha_base",
+   "+0004 Alpha_State -> governor_startup_state",
+   "+0006 Alpha_AFC -> pressure_fuel_delay_b_status",
+   "+0008 Alpha_Fuel_Rate -> alpha_fuel_rate_result",
+   "+000A Alpha_Governor -> fuel_rate_condition_status",
+   "+000C Alpha_LSG -> pressure_fuel_delay_a_status",
+   "+000E Fueling_AFC_State_Detected -> alpha_air_fuel_control_state_detected_flag",
+   "+0010 Fueling_LSG_State_Detected -> alpha_low_speed_governor_state_detected_flag",
+   "+0012 Alpha_Low_Ambient_Air_Pressure -> pressure_hysteresis_state",
+   "+0014 Filtered_Fuel_Delivery_Rate -> alpha_filtered_fuel_delivery_rate",
+   "+0016 Alpha_LSG_Timer -> cold_start_timer_a",
+   "+0018 Alpha_AFC_Timer -> cold_start_timer_b",
+   "+001A Alpha_Altitude_Derate_Timer -> alpha_altitude_derate_timer"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 0x40a17a `pressure_hysteresis_state` \u2192 `alpha_low_ambient_air_pressure_result`"
+  ],
+  "block": "104A",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a17a 104A +0012 Alpha_Low_Ambient_Air_Pressure (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a17e",
+  "current_name": "cold_start_timer_a",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "104A +0016 Alpha_LSG_Timer [SEC, 2 B, U, scale 0.2, 0..900]: [APLSTR] Trace the time since fueling state has left LSG state"
+  ],
+  "dump_raw": "1550",
+  "references": 5,
+  "code": [
+   "cm848_checkPressureFuelDelayA: cold_start_timer_a = low_speed_governor_alpha_timeout;",
+   "cm848_checkPressureFuelDelayA: else if ((cold_start_timer_a_active_flag == 1) && (cold_start_timer_a != 0)) {",
+   "cm848_checkPressureFuelDelayA: cold_start_timer_a = cold_start_timer_a - 1;",
+   "cm848_checkPressureFuelDelayA: cold_start_timer_a = cold_start_timer_a - 1;",
+   "hpcr_calculateFuelTrimOutput: cold_start_timer_a = low_speed_governor_alpha_timeout;"
+  ],
+  "block_named_rows": [
+   "+0000 Alpha -> combustion_alpha_input",
+   "+0002 Alpha_Base -> alpha_base",
+   "+0004 Alpha_State -> governor_startup_state",
+   "+0006 Alpha_AFC -> pressure_fuel_delay_b_status",
+   "+0008 Alpha_Fuel_Rate -> alpha_fuel_rate_result",
+   "+000A Alpha_Governor -> fuel_rate_condition_status",
+   "+000C Alpha_LSG -> pressure_fuel_delay_a_status",
+   "+000E Fueling_AFC_State_Detected -> alpha_air_fuel_control_state_detected_flag",
+   "+0010 Fueling_LSG_State_Detected -> alpha_low_speed_governor_state_detected_flag",
+   "+0012 Alpha_Low_Ambient_Air_Pressure -> pressure_hysteresis_state",
+   "+0014 Filtered_Fuel_Delivery_Rate -> alpha_filtered_fuel_delivery_rate",
+   "+0016 Alpha_LSG_Timer -> cold_start_timer_a",
+   "+0018 Alpha_AFC_Timer -> cold_start_timer_b",
+   "+001A Alpha_Altitude_Derate_Timer -> alpha_altitude_derate_timer"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 0x40a17e / 0x40a180 `cold_start_timer_a` / `cold_start_timer_b`, 0x3fa0da / 0x3fa0dc `cold_start_timer_*_active_flag`"
+  ],
+  "block": "104A",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a17e 104A +0016 Alpha_LSG_Timer (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a180",
+  "current_name": "cold_start_timer_b",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "104A +0018 Alpha_AFC_Timer [SEC, 2 B, U, scale 0.2, 0..900]: [APAFTR] Trace the time since fueling state is not AFC or LSG."
+  ],
+  "dump_raw": "1750",
+  "references": 5,
+  "code": [
+   "cm848_checkPressureFuelDelayB: cold_start_timer_b = air_fuel_control_alpha_timeout;",
+   "cm848_checkPressureFuelDelayB: else if ((cold_start_timer_b_active_flag == 1) && (cold_start_timer_b != 0)) {",
+   "cm848_checkPressureFuelDelayB: cold_start_timer_b = cold_start_timer_b - 1;",
+   "cm848_checkPressureFuelDelayB: cold_start_timer_b = cold_start_timer_b - 1;",
+   "hpcr_calculateFuelTrimOutput: cold_start_timer_b = air_fuel_control_alpha_timeout;"
+  ],
+  "block_named_rows": [
+   "+0000 Alpha -> combustion_alpha_input",
+   "+0002 Alpha_Base -> alpha_base",
+   "+0004 Alpha_State -> governor_startup_state",
+   "+0006 Alpha_AFC -> pressure_fuel_delay_b_status",
+   "+0008 Alpha_Fuel_Rate -> alpha_fuel_rate_result",
+   "+000A Alpha_Governor -> fuel_rate_condition_status",
+   "+000C Alpha_LSG -> pressure_fuel_delay_a_status",
+   "+000E Fueling_AFC_State_Detected -> alpha_air_fuel_control_state_detected_flag",
+   "+0010 Fueling_LSG_State_Detected -> alpha_low_speed_governor_state_detected_flag",
+   "+0012 Alpha_Low_Ambient_Air_Pressure -> pressure_hysteresis_state",
+   "+0014 Filtered_Fuel_Delivery_Rate -> alpha_filtered_fuel_delivery_rate",
+   "+0016 Alpha_LSG_Timer -> cold_start_timer_a",
+   "+0018 Alpha_AFC_Timer -> cold_start_timer_b",
+   "+001A Alpha_Altitude_Derate_Timer -> alpha_altitude_derate_timer"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 0x40a17e / 0x40a180 `cold_start_timer_a` / `cold_start_timer_b`, 0x3fa0da / 0x3fa0dc `cold_start_timer_*_active_flag`"
+  ],
+  "block": "104A",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a180 104A +0018 Alpha_AFC_Timer (2 B)"
+  ]
+ },
+ {
+  "address": "0x003fd912",
+  "current_name": "cruise_ramp_zone_b_fuel_demand_threshold",
+  "current_type": "word",
+  "current_comment": "ROM cruise ramp zone B fuel-demand threshold",
+  "region": "EEPROM mirror (name ends _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "1185 +0004 Cruise_Top_Droop_Width [MPH, 2 B, U, scale 0.00390625, 0..10]: TOP DROOP WIDTH FOR CRUISE CONTROL."
+  ],
+  "dump_raw": "0",
+  "references": 4,
+  "code": [
+   "governorCruiseStateMachine: (cruise_fuel_demand_ramp_ceiling - cruise_ramp_zone_b_fuel_demand_threshold,",
+   "governorCruiseStateMachine: (cruise_ramp_zone_b_fuel_demand_threshold,&local_30,uVar2,",
+   "governorCruiseStateMachine: (cruise_fuel_demand_ramp_ceiling - cruise_ramp_zone_b_fuel_demand_threshold,",
+   "governorCruiseStateMachine: (cruise_ramp_zone_b_fuel_demand_threshold,&local_30,uVar2,"
+  ],
+  "block_named_rows": [
+   "+0002 Cruise_Bottom_Droop_Width -> cruise_bottom_droop_width_cal",
+   "+0004 Cruise_Top_Droop_Width -> cruise_ramp_zone_b_fuel_demand_threshold",
+   "+0006 RSG_Bottom_Droop_Width -> road_speed_governor_bottom_droop_width_cal",
+   "+0008 RSG_Top_Droop_Width -> road_speed_governor_top_droop_width_cal",
+   "+000A Top_Gear_Ratio -> top_gear_ratio_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - **1185 +4:** 0x3fd912 `cruise_ramp_zone_b_fuel_demand_threshold` should be `cruise_top_droop_width_cal`."
+  ],
+  "block": "1185",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x003fd912 1185 +0004 Cruise_Top_Droop_Width (2 B)"
+  ]
+ },
+ {
+  "address": "0x003feb8c",
+  "current_name": "etc1_state_timeout_counter",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "EEPROM mirror (name ends _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "11C1 +0000 J1708_Link_Fault_Timeout_Count [CNTS, 2 B, U, scale 1.0, 0..1000]: [JC17TMCU] Current number of J1708 (J1922) time-outs since powerdown or fault set"
+  ],
+  "dump_raw": "0",
+  "references": 5,
+  "code": [
+   "cm848_processGovernorModeTransition: if ((int)(uint)etc1_state_timeout_counter < (int)(j1939_link_fault_timeout_count_limit - 1)) {",
+   "cm848_processGovernorModeTransition: etc1_state_timeout_counter = etc1_state_timeout_counter + 1;",
+   "cm848_processGovernorModeTransition: etc1_state_timeout_counter = etc1_state_timeout_counter + 1;",
+   "cm848_processGovernorModeTransition: etc1_state_timeout_counter = 0;",
+   "cm848_processGovernorModeTransition: etc1_state_timeout_counter = 0;"
+  ],
+  "block_named_rows": [
+   "+0000 J1708_Link_Fault_Timeout_Count -> etc1_state_timeout_counter",
+   "+0002 J1939_Link_Fault_Timeout_Count -> j1939_link_fault_timeout_count_cal",
+   "+0004 TSC_Lost_Max_Throttle_Disable -> etc1_fuel_demand_high_limit"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **11C1:** 0x3feb8c `etc1_state_timeout_counter` is e2m J1708_Link_Fault_Timeout_Count, and 0x3feb90 `etc1_fuel_demand_high_limit` is TSC_Lost_Max_Throttle_Disable. Both sit in the EEPROM mirror without `_cal`; 0x3feb8c would become `j1708_link_fault_timeout_count_cal`."
+  ],
+  "block": "11C1",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x003feb8c 11C1 +0000 J1708_Link_Fault_Timeout_Count (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040718c",
+  "current_name": "cold_start_sensor_deviation_delay_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "165C +0006 Pressure_Check_Delay_Time [SEC, 2 B, U, scale 0.005, 0..327.675]: Delay time since last shutdown before running pressure check algorithm"
+  ],
+  "dump_raw": "400",
+  "references": 1,
+  "code": [
+   "cm848_processSensorDeviationOnKeyoff: if (cold_start_sensor_deviation_delay_cal < cold_start_deviation_delay_timer) {"
+  ],
+  "block_named_rows": [
+   "+0000 Ambient_Air_Sensor_Tolerence -> barometric_pressure_sensor_tolerance",
+   "+0002 Boost_Sensor_Tolerence -> boost_pressure_sensor_tolerance",
+   "+0004 Oil_Sensor_Tolerence -> oil_pressure_sensor_tolerance",
+   "+0006 Pressure_Check_Delay_Time -> cold_start_sensor_deviation_delay_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **165C / 177D:** 0x40718c `cold_start_sensor_deviation_delay_cal` has a wrong `_cal`, and `iat_sensor_deviation_flags` (0x3fe9be) says iat for pressure flags. `governor_integrator_bound_a` / `_b` (0x40bb8a / 0x40bb3c) are sensor channels 77 and 38. 0x400940 / 0x400942 `fuel_demand_rpm_factor_upper_cal` / `_base_cal` are the volumetric efficiency clamps (1.0 / 0.8) with a wrong `_cal` in RAM."
+  ],
+  "block": "165C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040718c 165C +0006 Pressure_Check_Delay_Time (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a3ca",
+  "current_name": "wastegate_duty_controller_state",
+  "current_type": "wastegate_duty_controller_state_t",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 3, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "16A2 +000C TGC_VT_Cmd [%, 2 B, U, scale 0.0078125, 0..100]: Turbocharger position command to actuator controller"
+  ],
+  "dump_raw": "10896",
+  "references": 51,
+  "code": [
+   "cm848_updateWastegateDutyIntegratorEnable: if ((wastegate_duty_controller_state.request_half_duty_counts <",
+   "cm848_updateWastegateDutyIntegratorEnable: wastegate_duty_controller_state.ceiling_half_duty_counts) ||",
+   "cm848_updateWastegateDutyIntegratorEnable: if ((wastegate_duty_controller_state.floor_half_duty_counts <",
+   "cm848_updateWastegateDutyIntegratorEnable: wastegate_duty_controller_state.request_half_duty_counts) ||",
+   "cm848_calculateWastegateDutyRequest: wastegate_duty_controller_state.request_half_duty_counts, the wastegate duty request in half-duty",
+   "cm848_calculateWastegateDutyRequest: wastegate_duty_controller_state.first_error_gain ="
+  ],
+  "block_named_rows": [
+   "+0000 TGC_Feedforward_Term -> wastegate_duty_feedforward_term",
+   "+0002 TGC_Integral_Term -> wastegate_duty_integrator_whole_counts",
+   "+0004 TGC_Proportional_Term -> wastegate_duty_proportional_term",
+   "+0006 TGC_Adjusted_I_Gain -> wastegate_duty_integral_gain",
+   "+000C TGC_VT_Cmd -> wastegate_duty_controller_state",
+   "+000E TGC_Error -> wastegate_duty_controller_state.selected_control_term",
+   "+0010 TGC_Turbo_Spd_Drt_Error -> wastegate_duty_controller_state.first_error_proportional_derivative_term",
+   "+0012 TGC_Turbo_Drt_SET_Gain -> wastegate_duty_controller_state.first_error_gain",
+   "+0014 TGC_Final_LLim -> wastegate_duty_controller_state.floor_half_duty_counts",
+   "+0016 TGC_LLim_Altitude_Offset -> wastegate_duty_controller_state.floor_altitude_adjustment_half_duty_counts",
+   "+0018 TGC_Max_Closing -> wastegate_duty_controller_state.ceiling_grid_lookup_half_duty_counts",
+   "+001A TGC_Min_Closing -> wastegate_duty_controller_state.floor_grid_lookup_half_duty_counts",
+   "+001C TGC_Final_ULim -> wastegate_duty_controller_state.ceiling_half_duty_counts",
+   "+001E TGC_ULim_Altitude_Offset -> wastegate_duty_controller_state.ceiling_altitude_adjustment_half_duty_counts",
+   "+0020 TGC_E_Brake_ULim -> wastegate_duty_controller_state.engine_speed_ceiling_half_duty_counts",
+   "+0022 TGC_Turbo_Deriv_Term -> governor_pid_adjustment_output",
+   "+0024 TGC_COT_Drt_SET_Gain -> governor_trim_lookup_result",
+   "+0026 TGC_COT_Deriv_Term -> governor_rpm_correction_term",
+   "+0028 TGC_COT_Drt_Error -> wastegate_duty_compressor_outlet_temperature_derate_error_term",
+   "+002A TGC_ULim_Battery_Voltage_Comp -> battery_voltage_gain_lookup"
+  ],
+  "report_leads": [],
+  "block": "16A2",
+  "row_width_bytes": 22,
+  "covered_records": [
+   "0x0040a3ca 16A2 +000C TGC_VT_Cmd (2 B)",
+   "0x0040a3cc 16A2 +000E TGC_Error (2 B)",
+   "0x0040a3ce 16A2 +0010 TGC_Turbo_Spd_Drt_Error (2 B)",
+   "0x0040a3d0 16A2 +0012 TGC_Turbo_Drt_SET_Gain (2 B)",
+   "0x0040a3d2 16A2 +0014 TGC_Final_LLim (2 B)",
+   "0x0040a3d4 16A2 +0016 TGC_LLim_Altitude_Offset (2 B)",
+   "0x0040a3d6 16A2 +0018 TGC_Max_Closing (2 B)",
+   "0x0040a3d8 16A2 +001A TGC_Min_Closing (2 B)",
+   "0x0040a3da 16A2 +001C TGC_Final_ULim (2 B)",
+   "0x0040a3dc 16A2 +001E TGC_ULim_Altitude_Offset (2 B)",
+   "0x0040a3de 16A2 +0020 TGC_E_Brake_ULim (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a3e4",
+  "current_name": "governor_rpm_correction_term",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "16A2 +0026 TGC_COT_Deriv_Term [UNITLESS, 2 B, S, scale 0.03125, -800..800]: COT limiter derivative term"
+  ],
+  "dump_raw": "1",
+  "references": 4,
+  "code": [
+   "cm848_calculateWastegateDutyRequest: governor_rpm_correction_term = 0x9c00;",
+   "cm848_calculateWastegateDutyRequest: governor_rpm_correction_term = (word)lVar1;",
+   "cm848_calculateWastegateDutyRequest: governor_rpm_correction_term = 0x6400;",
+   "cm848_calculateWastegateDutyRequest: (int)(short)governor_rpm_correction_term;"
+  ],
+  "block_named_rows": [
+   "+0000 TGC_Feedforward_Term -> wastegate_duty_feedforward_term",
+   "+0002 TGC_Integral_Term -> wastegate_duty_integrator_whole_counts",
+   "+0004 TGC_Proportional_Term -> wastegate_duty_proportional_term",
+   "+0006 TGC_Adjusted_I_Gain -> wastegate_duty_integral_gain",
+   "+000C TGC_VT_Cmd -> wastegate_duty_controller_state",
+   "+000E TGC_Error -> wastegate_duty_controller_state.selected_control_term",
+   "+0010 TGC_Turbo_Spd_Drt_Error -> wastegate_duty_controller_state.first_error_proportional_derivative_term",
+   "+0012 TGC_Turbo_Drt_SET_Gain -> wastegate_duty_controller_state.first_error_gain",
+   "+0014 TGC_Final_LLim -> wastegate_duty_controller_state.floor_half_duty_counts",
+   "+0016 TGC_LLim_Altitude_Offset -> wastegate_duty_controller_state.floor_altitude_adjustment_half_duty_counts",
+   "+0018 TGC_Max_Closing -> wastegate_duty_controller_state.ceiling_grid_lookup_half_duty_counts",
+   "+001A TGC_Min_Closing -> wastegate_duty_controller_state.floor_grid_lookup_half_duty_counts",
+   "+001C TGC_Final_ULim -> wastegate_duty_controller_state.ceiling_half_duty_counts",
+   "+001E TGC_ULim_Altitude_Offset -> wastegate_duty_controller_state.ceiling_altitude_adjustment_half_duty_counts",
+   "+0020 TGC_E_Brake_ULim -> wastegate_duty_controller_state.engine_speed_ceiling_half_duty_counts",
+   "+0022 TGC_Turbo_Deriv_Term -> governor_pid_adjustment_output",
+   "+0024 TGC_COT_Drt_SET_Gain -> governor_trim_lookup_result",
+   "+0026 TGC_COT_Deriv_Term -> governor_rpm_correction_term",
+   "+0028 TGC_COT_Drt_Error -> wastegate_duty_compressor_outlet_temperature_derate_error_term",
+   "+002A TGC_ULim_Battery_Voltage_Comp -> battery_voltage_gain_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - 0x40a3e4 `governor_rpm_correction_term` \u2192 `wastegate_duty_second_error_derivative_term`"
+  ],
+  "block": "16A2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a3e4 16A2 +0026 TGC_COT_Deriv_Term (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040be14",
+  "current_name": "barometric_pressure_sensor_fault_status",
+  "current_type": "word",
+  "current_comment": "Fault-status output of the same call; read at the barometric selection gate (0 / 1 / 2 tests at lines 56951 / 56990-56993 of the decompile). (was sensor_channel3_fault_status)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1, 'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1966 +0094 TVA_Position_Sensor [DEG, 2 B, S, scale 0.0078125, -125..125]: TVA_Position input linearized and filtered value"
+  ],
+  "dump_raw": "0",
+  "references": 7,
+  "code": [
+   "cm848_sensorChannel0_init: &barometric_pressure_sensor_fault_status);",
+   "cm848_sensorChannel0_process: &barometric_pressure_sensor_fault_status);",
+   "cm848_selectBarometricPressure: uVar2 = barometric_pressure_sensor_fault_status;",
+   "cm848_initializeBarometricPressureSelection: barometric_pressure_sensor_fault_status is 0 or 1, 2 when it is 2, and",
+   "cm848_initializeBarometricPressureSelection: if ((barometric_pressure_sensor_fault_status == 0) ||",
+   "cm848_initializeBarometricPressureSelection: (barometric_pressure_sensor_fault_status == 1)) {"
+  ],
+  "block_named_rows": [
+   "+0002 Air_Press_Sensor -> barometric_pressure_sensor_value",
+   "+0004 EGR_Delta_Press_Sensor -> sensor_channel105_value",
+   "+0006 Charge_Tmptr_Sensor -> sensor_channel9_pressure_value",
+   "+0008 Coolant_Tmptr_Sensor -> coolant_temperature_sensor_value",
+   "+000A Exhaust_Press_Sensor -> sensor_channel109_value",
+   "+000C Oil_Press_Sensor -> sensor_channel10_value",
+   "+000E Charge_Press_Sensor -> boost_pressure_sensor_value",
+   "+0010 Compressor_Inlet_Tmptr_Sensor -> sensor_channel20_value",
+   "+0012 Battery_Tmptr_Sensor -> sensor_channel69_value",
+   "+0014 EGR_Orifice_Tmptr_Sensor -> sensor_channel108_value",
+   "+0016 EGR_Position_Sensor -> egr_valve_position_sensor_value",
+   "+001A Air_Press_Default -> barometric_pressure_sensor_default_value",
+   "+001C Compressor_Inlet_Tmptr_Default -> sensor_channel20_default_value",
+   "+001E Charge_Tmptr_Default -> sensor_channel9_pressure_default_value",
+   "+0020 EGR_Position_Default -> egr_valve_position_sensor_default_value",
+   "+0022 Battery_Volt_Sensor -> battery_voltage_sensor_value",
+   "+0024 Battery_Volt_Default -> battery_voltage_sensor_default_value",
+   "+0026 Charge_Press_Default -> boost_pressure_sensor_default_value",
+   "+0028 EGR_Delta_Press_Default -> sensor_channel105_default_value",
+   "+002A Oil_Press_Default -> sensor_channel10_default_value",
+   "+002C EGR_Orifice_Tmptr_Default -> sensor_channel108_default_value",
+   "+002E Coolant_Tmptr_Default -> coolant_temperature_sensor_default_value",
+   "+0030 Exhaust_Press_Default -> sensor_channel109_default_value",
+   "+0032 Battery_Tmptr_Default -> sensor_channel69_default_value"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - **1966, +94 on (0x40be16):** the value/default pairs end at +92, and fault status words start at 0x40be14."
+  ],
+  "block": "1966",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040be14 1966 +0094 TVA_Position_Sensor (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f5a",
+  "current_name": "crank_sync_timeout_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +0004 Cam_Crank_Mismatch_Threshold [UNITLESS, 2 B, U, scale 1, 0..255]: value of cam-crank mismatch persistence counter which sets error"
+  ],
+  "dump_raw": "60",
+  "references": 3,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: if (crank_sync_timeout_count < crank_sync_timeout_limit_cal) {",
+   "cm848_updateEngineSpeedFromCrankSignal: crank_sync_timeout_count = crank_sync_timeout_limit_cal;",
+   "mpc555_updateEngineCrankState: if (crank_sync_timeout_count < crank_sync_timeout_limit_cal) {"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f5a 8194 +0004 Cam_Crank_Mismatch_Threshold (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f5c",
+  "current_name": "engine_start_counter_min_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "8194 +0006 Cam_Sync_Max_Count [CNTS, 2 B, U, scale 1, 0..65535]: [CSCMMXCU] limit on cam sync error count"
+  ],
+  "dump_raw": "130",
+  "references": 2,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: if (engine_crank_state_t_0040b80a.start_counter < engine_start_counter_min_cal) {",
+   "cm848_updateEngineSpeedFromCrankSignal: engine_crank_state_t_0040b80a.start_counter = engine_start_counter_min_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f5c 8194 +0006 Cam_Sync_Max_Count (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f60",
+  "current_name": "crank_tooth_position_target_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +000A Crank_Sync_Determination_Count [UNITLESS, 2 B, U, scale 1, 0..255]: Number of speed interrupts before cam pulse count is checked"
+  ],
+  "dump_raw": "5",
+  "references": 1,
+  "code": [
+   "hpcr_processEngineSyncPulses: wVar3 == crank_tooth_position_target_cal)) {"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f60 8194 +000A Crank_Sync_Determination_Count (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f62",
+  "current_name": "cranking_flag_threshold_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +000C Crank_Sync_Fail_Count [CNTS, 2 B, U, scale 1, 0..65535]: [CSCKFXCU] Threshold at which crank sensor no longer used"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "mpc555_updateEngineCrankState: (cranking_flag_threshold_cal < engine_crank_state_t_0040b80a.cranking_flag)) {"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f62 8194 +000C Crank_Sync_Fail_Count (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f64",
+  "current_name": "engine_cranking_flag_min_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "8194 +000E Crank_Sync_Max_Count [CNTS, 2 B, U, scale 1, 0..65535]: [CSCKMXCU] limit on crank sync error count"
+  ],
+  "dump_raw": "40",
+  "references": 2,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: if (engine_crank_state_t_0040b80a.cranking_flag < engine_cranking_flag_min_cal) {",
+   "cm848_updateEngineSpeedFromCrankSignal: engine_crank_state_t_0040b80a.cranking_flag = engine_cranking_flag_min_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f64 8194 +000E Crank_Sync_Max_Count (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f6c",
+  "current_name": "crank_tooth_rpm_divisor_cal",
+  "current_type": "dword",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lwz': 1} -> 4 byte",
+  "e2m_records_here": [
+   "8194 +0016 Engine_Speed_Constant_1_Backup [UNITLESS, 4 B, U, scale 0.125, 0..134217728]: [ESCUCF02] Engine_Speed_Constant_1_Backup: Conversion factor from tcnts to rpm - secondary"
+  ],
+  "dump_raw": "400000000",
+  "references": 1,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: crank_tooth_rpm = (word)(crank_tooth_rpm_divisor_cal / crank_tooth_period_raw);"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **8194 backup/primary pairs:** 0x408f80 `crank_sync_period_confirm_count_cal` (Main_Consec_Error_Thres), 0x408f82 `crank_period_raw` (Maximum_Pulse_Period_Timeout) and 0x408f6c `crank_tooth_rpm_divisor_cal` (the backup speed constant) should pair with my primary/backup names."
+  ],
+  "block": "8194",
+  "row_width_bytes": 4,
+  "covered_records": [
+   "0x00408f6c 8194 +0016 Engine_Speed_Constant_1_Backup (4 B)"
+  ]
+ },
+ {
+  "address": "0x00408f74",
+  "current_name": "crank_period_tooth_count_threshold_cal",
+  "current_type": "dword",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lwz': 1} -> 4 byte",
+  "e2m_records_here": [
+   "8194 +001E Firing_Acceleration_Threshold [RPM/SEC, 4 B, S, scale 1, -5000..5000]: Acceleration level which indicates cylinder combustion"
+  ],
+  "dump_raw": "500",
+  "references": 1,
+  "code": [
+   "hpcr_processEngineSyncPulses: ((int)crank_period_tooth_count_threshold_cal < (int)(short)crank_period_variation_metric)) {"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 4,
+  "covered_records": [
+   "0x00408f74 8194 +001E Firing_Acceleration_Threshold (4 B)"
+  ]
+ },
+ {
+  "address": "0x00408f80",
+  "current_name": "crank_sync_period_confirm_count_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "8194 +002A Main_Consec_Error_Thres [CNTS, 2 B, U, scale 1, 0..255]: [ESTDCU01] Main_Consec_Error_Thresh:Threshold count at which ESS is lost."
+  ],
+  "dump_raw": "150",
+  "references": 2,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: if (crank_period_timeout_count < crank_sync_period_confirm_count_cal) {",
+   "cm848_updateEngineSpeedFromCrankSignal: crank_period_timeout_count = crank_sync_period_confirm_count_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **8194 backup/primary pairs:** 0x408f80 `crank_sync_period_confirm_count_cal` (Main_Consec_Error_Thres), 0x408f82 `crank_period_raw` (Maximum_Pulse_Period_Timeout) and 0x408f6c `crank_tooth_rpm_divisor_cal` (the backup speed constant) should pair with my primary/backup names."
+  ],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f80 8194 +002A Main_Consec_Error_Thres (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f82",
+  "current_name": "crank_period_raw",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 4} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +002C Maximum_Pulse_Period_Timeout [MSEC, 2 B, U, scale 20.0, 0..1000000]: [ESMXTM01] Maximum_Pulse_Period_Timeout: max reset value for Main_Lost_Counter"
+  ],
+  "dump_raw": "16",
+  "references": 4,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: crank_period_prev_snapshot = (dword)crank_period_raw;",
+   "cm848_updateEngineSpeedFromCrankSignal: crank_period_adjusted_working = crank_period_raw;",
+   "cm848_updateEngineSpeedFromCrankSignal: crank_period_adjusted_working = crank_period_raw >> 2;",
+   "cm848_updateEngineSpeedFromCrankSignal: crank_period_adjusted_working = (word)(crank_period_raw / uVar3);"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **8194 backup/primary pairs:** 0x408f80 `crank_sync_period_confirm_count_cal` (Main_Consec_Error_Thres), 0x408f82 `crank_period_raw` (Maximum_Pulse_Period_Timeout) and 0x408f6c `crank_tooth_rpm_divisor_cal` (the backup speed constant) should pair with my primary/backup names."
+  ],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f82 8194 +002C Maximum_Pulse_Period_Timeout (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f86",
+  "current_name": "crank_sync_period_captured_threshold_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +0030 Min_Fuel_For_Accel [MM3S, 2 B, U, scale 0.06793478000, 0.000000..400.000000]: Minimum fueling command to detect cylinder firing"
+  ],
+  "dump_raw": "515",
+  "references": 1,
+  "code": [
+   "hpcr_processEngineSyncPulses: if ((crank_sync_period_captured_threshold_cal < injection_fuel_quantity_snapshot_previous) &&"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f86 8194 +0030 Min_Fuel_For_Accel (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f88",
+  "current_name": "crank_sync_period_counter_threshold_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +0032 Min_Good_Pulses_For_Crank_Recovery [UNITLESS, 2 B, U, scale 1, 0..255]: Min number of good cam pulses to resync crank"
+  ],
+  "dump_raw": "3",
+  "references": 1,
+  "code": [
+   "mpc555_updateEngineRunState: (crank_sync_period_counter_threshold_cal < crank_sync_period_counter)) {"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f88 8194 +0032 Min_Good_Pulses_For_Crank_Recovery (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f8c",
+  "current_name": "crank_period_capture_index_max_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +0036 Period_Meas_Per_Backup [UNITLESS, 1 B, U, scale 1, 0..255]: Number of cam measurements used in speed calculation"
+  ],
+  "dump_raw": "2",
+  "references": 4,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: (byte)crank_period_capture_index_max_cal * engine_speed_interrupts_per_cylinder;",
+   "mpc555_resetEngineTimingAccumulators: TPUA_CH12_PARAM0.PARAM6 = (ushort)(byte)crank_period_capture_index_max_cal * 0x100 - 0x100;",
+   "mpc555_resetEngineTimingAccumulators: uVar2 = (uint)(byte)crank_period_capture_index_max_cal * 20000000;",
+   "mpc555_updateEngineCrankState: uVar8 = (uint)crank_period_capture_index_max_cal._0_1_;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f8c 8194 +0036 Period_Meas_Per_Backup (1 B)",
+   "0x00408f8d 8194 +0037 Periods_Per_Sum (1 B)"
+  ],
+  "width_problem": "the row width differs from its record(s): name each covered record in 'split'"
+ },
+ {
+  "address": "0x00408f8e",
+  "current_name": "crank_tooth_pattern_size_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +0038 Plausible_Cam_Positions [UNITLESS, 2 B, U, scale 1, 0..255]: Number of elements in the Cam_2_Crank_Position_Array"
+  ],
+  "dump_raw": "26",
+  "references": 2,
+  "code": [
+   "mpc555_updateEngineCrankState: if (crank_tooth_pattern_size_cal != 0) {",
+   "mpc555_updateEngineCrankState: } while (uVar5 < crank_tooth_pattern_size_cal);"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f8e 8194 +0038 Plausible_Cam_Positions (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f90",
+  "current_name": "crank_mios_period_byte_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 2} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +003A PMA_Low_Speed_Special_Window [UNITLESS, 1 B, U, scale 0.015625, 0..3.984375]: Tooth fraction defining special cam tooth at low speed"
+  ],
+  "dump_raw": "26",
+  "references": 2,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: tpu_a_ch1_param2.PARAM7 = (ushort)crank_mios_period_byte_cal << 8 | 0x40;",
+   "cm848_updateEngineSpeedFromCrankSignal: (ushort)crank_mios_period_byte_cal << 8 |"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f90 8194 +003A PMA_Low_Speed_Special_Window (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f91",
+  "current_name": "mios_timing_byte_b_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +003B PMA_Special_Count [UNITLESS, 1 B, U, scale 1.0, 0..255]: Number of teeth on cam wheel"
+  ],
+  "dump_raw": "13",
+  "references": 1,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: tpu_a_ch1_param2.PARAM6 = (ushort)mios_timing_byte_b_cal << 8 | 0x40;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f91 8194 +003B PMA_Special_Count (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f92",
+  "current_name": "mios_timing_byte_a_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +003C PMA_Special_Window [UNITLESS, 1 B, U, scale 0.015625, 0..3.984]: Fraction of tooth defining special pulse"
+  ],
+  "dump_raw": "31",
+  "references": 1,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: (ushort)mios_timing_byte_a_cal << 8 | (crank_tooth_good_window_fraction >> 1) + 0x40 & 0xff"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f92 8194 +003C PMA_Special_Window (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f93",
+  "current_name": "mios_config_byte_a_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +003D PMM_Early_Window [UNITLESS, 1 B, U, scale 0.015625, 0..3.984375]: Tooth fraction where tooth is too early to be plausible"
+  ],
+  "dump_raw": "51",
+  "references": 1,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: tpu_a_ch0_param0.PARAM7 = CONCAT11(mios_config_byte_a_cal,crank_mios_config_e_cal);"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f93 8194 +003D PMM_Early_Window (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f94",
+  "current_name": "mios_config_byte_b_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +003E PMM_Good_Window [UNITLESS, 1 B, U, scale 0.015625, 0..3.984375]: Tooth Fraction where tooth is plausible"
+  ],
+  "dump_raw": "77",
+  "references": 1,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: tpu_a_ch0_param0.PARAM6 = wVar1 & 0xff00 | (ushort)mios_config_byte_b_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f94 8194 +003E PMM_Good_Window (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f95",
+  "current_name": "crank_mios_config_e_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +003F PMM_Late_Window [UNITLESS, 1 B, U, scale 0.015625, 0..3.984375]: Tooth fraction which defines a late (not plausible) tooth"
+  ],
+  "dump_raw": "147",
+  "references": 1,
+  "code": [
+   "cm848_updateEngineSpeedFromCrankSignal: tpu_a_ch0_param0.PARAM7 = CONCAT11(mios_config_byte_a_cal,crank_mios_config_e_cal);"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f95 8194 +003F PMM_Late_Window (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f96",
+  "current_name": "crank_mios_compare_a_high_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 2} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +0040 PMM_Low_Speed_Early_Window [UNITLESS, 1 B, U, scale 0.015625, 0..3.984375]: Low Speed Tooth fraction where tooth is too early to be plausible"
+  ],
+  "dump_raw": "32",
+  "references": 2,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: tpu_a_ch0_param0.PARAM7 = CONCAT11(crank_mios_compare_a_high_cal,crank_mios_compare_a_low_cal);",
+   "cm848_updateEngineSpeedFromCrankSignal: tpu_a_ch0_param0.PARAM7 = CONCAT11(crank_mios_compare_a_high_cal,crank_mios_compare_a_low_cal);"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f96 8194 +0040 PMM_Low_Speed_Early_Window (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f97",
+  "current_name": "crank_mios_compare_b_low_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 2} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +0041 PMM_Low_Speed_Good_Window [UNITLESS, 1 B, U, scale 0.015625, 0..3.984375]: Low speed Tooth Fraction where tooth is plausible"
+  ],
+  "dump_raw": "96",
+  "references": 2,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: tpu_a_ch0_param0.PARAM6 = CONCAT11(crank_mios_compare_b_high_cal,crank_mios_compare_b_low_cal);",
+   "cm848_updateEngineSpeedFromCrankSignal: tpu_a_ch0_param0.PARAM6 = wVar1 & 0xff00 | (ushort)crank_mios_compare_b_low_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f97 8194 +0041 PMM_Low_Speed_Good_Window (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f98",
+  "current_name": "crank_mios_compare_a_low_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 2} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +0042 PMM_Low_Speed_Late_Window [UNITLESS, 1 B, U, scale 0.015625, 0..3.984375]: Low Speed Tooth fraction which defines a late (not plausible) tooth"
+  ],
+  "dump_raw": "180",
+  "references": 2,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: tpu_a_ch0_param0.PARAM7 = CONCAT11(crank_mios_compare_a_high_cal,crank_mios_compare_a_low_cal);",
+   "cm848_updateEngineSpeedFromCrankSignal: tpu_a_ch0_param0.PARAM7 = CONCAT11(crank_mios_compare_a_high_cal,crank_mios_compare_a_low_cal);"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f98 8194 +0042 PMM_Low_Speed_Late_Window (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f99",
+  "current_name": "crank_mios_compare_b_high_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 2} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +0043 PMM_Special_Count [UNITLESS, 1 B, U, scale 1, 0..255]: Expected cam tooth number at additional pulse"
+  ],
+  "dump_raw": "58",
+  "references": 2,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: tpu_a_ch0_param0.PARAM6 = CONCAT11(crank_mios_compare_b_high_cal,crank_mios_compare_b_low_cal);",
+   "hpcr_processEngineSyncPulses: wVar5 = wVar5 - crank_mios_compare_b_high_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408f99 8194 +0043 PMM_Special_Count (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408f9a",
+  "current_name": "crank_tooth_count_b_min_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +0044 Prelim_Sync_Detection_Threshold [UNITLESS, 2 B, U, scale 1, 0..255]: Number of firing detections needed to verify crank sync"
+  ],
+  "dump_raw": "3",
+  "references": 1,
+  "code": [
+   "mpc555_updateEngineRunState: if (crank_tooth_count_b_min_cal <= crank_tooth_count_b) {"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f9a 8194 +0044 Prelim_Sync_Detection_Threshold (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f9e",
+  "current_name": "crank_sync_attempt_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8194 +0048 Start_Sync_Max_Count [UNITLESS, 2 B, U, scale 1, 0..255]: Max number of crank revs to stay in Start_Sync before forcing Prelim sync"
+  ],
+  "dump_raw": "1",
+  "references": 1,
+  "code": [
+   "mpc555_updateEngineRunState: if (crank_sync_attempt_limit_cal <= crank_sync_attempt_counter) {"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f9e 8194 +0048 Start_Sync_Max_Count (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408fa3",
+  "current_name": "crank_sync_period_limit_state1_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +004D Lost_Resync_With_Cam_Threshold [UNITLESS, 1 B, U, scale 1, 0..255]: Cam tooth threshold at which +1 tooth resync in LOST crank state is allowed"
+  ],
+  "dump_raw": "1",
+  "references": 2,
+  "code": [
+   "mpc555_updateEngineCrankState: ((byte)crank_sync_period_limit_state1_cal < crank_sync_period_counter)) ||",
+   "mpc555_updateEngineCrankState: (crank_sync_period_limit_state1_cal._0_1_ < crank_sync_period_counter)))))) &&"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408fa3 8194 +004D Lost_Resync_With_Cam_Threshold (1 B)",
+   "0x00408fa4 8194 +004E Prelim_Resync_With_Cam_Threshold (1 B)"
+  ],
+  "width_problem": "the row width differs from its record(s): name each covered record in 'split'"
+ },
+ {
+  "address": "0x00408fa5",
+  "current_name": "crank_tooth_timer_max_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +004F Speed_Latency_Sync_Threshold [UNITLESS, 1 B, U, scale 1, 0..255]: Crank Speed ISR tooth shift limit for PRELIM sync determination += 1."
+  ],
+  "dump_raw": "25",
+  "references": 1,
+  "code": [
+   "hpcr_processEngineSyncPulses: (uint)((ushort)crank_tooth_timer_max_cal._0_1_ < (wVar5 & 0xff));"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408fa5 8194 +004F Speed_Latency_Sync_Threshold (1 B)",
+   "0x00408fa6 8194 +0050 Speed_Negative_Shift_Threshold (2 B)"
+  ],
+  "width_problem": "the row width differs from its record(s): name each covered record in 'split'"
+ },
+ {
+  "address": "0x00408fac",
+  "current_name": "crank_mios_channel1_config_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +0056 PMA_Edge_Type_N [UNITLESS, 1 B, U, scale 1, 0..2]: Capture edge for cam signal : 0 = rising, 2 = falling"
+  ],
+  "dump_raw": "2",
+  "references": 1,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: tpu_a_ch1_param2.PARAM0 = crank_mios_channel1_config_cal | 0x10;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408fac 8194 +0056 PMA_Edge_Type_N (1 B)"
+  ]
+ },
+ {
+  "address": "0x00408fad",
+  "current_name": "crank_mios_channel0_config_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "e2m_records_here": [
+   "8194 +0057 PMM_Edge_Type_N [UNITLESS, 1 B, U, scale 1, 0..2]: Capture edge for crank signal : 0 = rising, 2 = falling"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: tpu_a_ch0_param0.PARAM0 = crank_mios_channel0_config_cal | 0xb1;"
+  ],
+  "block_named_rows": [
+   "+0000 Backup_Consec_Error_Thresh -> backup_consecutive_error_threshold",
+   "+0001 Bank_With_Added_Tooth -> crank_signal_window_with_added_tooth",
+   "+0002 Cam_Count_With_Added_Tooth -> crank_pattern_tooth_count_cal",
+   "+0004 Cam_Crank_Mismatch_Threshold -> crank_sync_timeout_limit_cal",
+   "+0006 Cam_Sync_Max_Count -> engine_start_counter_min_cal",
+   "+0008 Crank_Out_Of_Phase_Threshold -> crank_sync_phase_counter_threshold_cal",
+   "+000A Crank_Sync_Determination_Count -> crank_tooth_position_target_cal",
+   "+000C Crank_Sync_Fail_Count -> cranking_flag_threshold_cal",
+   "+000E Crank_Sync_Max_Count -> engine_cranking_flag_min_cal",
+   "+0010 Crank_Sync_Tooth -> crank_timer_offset_cal",
+   "+0011 Crank_Teeth_Per_Cam_Measure -> crank_timer_offset_cal+1",
+   "+0012 Engine_Speed_Constant_1 -> primary_period_rpm_conversion_factor",
+   "+0016 Engine_Speed_Constant_1_Backup -> crank_tooth_rpm_divisor_cal",
+   "+001A EPS_Failure_Detect_RPM -> speed_setpoint_minimum",
+   "+001C Filtered_Engine_Speed_Constant -> crank_filter_coefficient",
+   "+001E Firing_Acceleration_Threshold -> crank_period_tooth_count_threshold_cal",
+   "+0022 Initial_Engine_Speed -> tooth_period_buffer_initial_engine_speed",
+   "+0028 Low_Speed_Filtering_Threshold -> crank_speed_setpoint_threshold_cal",
+   "+002A Main_Consec_Error_Thres -> crank_sync_period_confirm_count_cal",
+   "+002C Maximum_Pulse_Period_Timeout -> crank_period_raw",
+   "+002E Maximum_Pulse_Period_Timeout_Backup -> backup_pulse_period_timeout",
+   "+0030 Min_Fuel_For_Accel -> crank_sync_period_captured_threshold_cal",
+   "+0032 Min_Good_Pulses_For_Crank_Recovery -> crank_sync_period_counter_threshold_cal",
+   "+0034 Number_Of_Cam_Pulses -> cam_wheel_pulse_count"
+  ],
+  "report_leads": [],
+  "block": "8194",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00408fad 8194 +0057 PMM_Edge_Type_N (1 B)"
+  ]
+ },
+ {
+  "address": "0x0040b7cc",
+  "current_name": "crank_period_capture_index",
+  "current_type": "dword",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'stw': 1} -> 4 byte",
+  "e2m_records_here": [
+   "819B +003E Next_Table_Position_Backup [HEX, 4 B, U, scale 1, 8388608..8650751]: [ESNXPS02] Next_Table_Position_Backup: pointer to next spot in backup Pulse_period tabl"
+  ],
+  "dump_raw": "0",
+  "references": 6,
+  "code": [
+   "mpc555_resetEngineTimingAccumulators: crank_period_capture_index = 0;",
+   "mpc555_updateEngineCrankState: (&crank_period_capture_array)[crank_period_capture_index] = uVar5 & 0xffffff;",
+   "mpc555_updateEngineCrankState: crank_period_capture_index = crank_period_capture_index + 1;",
+   "mpc555_updateEngineCrankState: crank_period_capture_index = crank_period_capture_index + 1;",
+   "mpc555_updateEngineCrankState: if (uVar8 <= crank_period_capture_index) {",
+   "mpc555_updateEngineCrankState: crank_period_capture_index = 0;"
+  ],
+  "block_named_rows": [
+   "+0000 Average_Engine_Speed -> engine_rpm_measured",
+   "+0002 Average_Pulse_Period -> crank_period_accumulator",
+   "+0006 Average_Pulse_Period_Backup -> crank_tooth_period_raw",
+   "+000A Backup_Lost_Counter -> backup_pulse_period_countdown",
+   "+000C Backup_RPM -> crank_tooth_rpm",
+   "+000E Cam_2_Crank_Tooth_Number -> crank_period_computed",
+   "+0010 Cam_Crank_Mismatch_Count -> crank_sync_timeout_count",
+   "+0012 Cam_Crank_Plausibility_1 -> crank_tooth_count_a",
+   "+0014 Cam_Crank_Plausibility_2 -> crank_sync_period_counter",
+   "+0016 Crank_Accumulated_Period -> crank_capture_period_packed",
+   "+001A Crank_Speed_Count -> crank_tooth_position_count",
+   "+001C Cylinder_Acceleration -> crank_period_variation_metric",
+   "+001E Engine_Speed -> engine_rpm_state_t_0040b7ac",
+   "+0020 EPS_VSS_Accumulator -> engine_rpm_state_t_0040b7ac.crank_capture_period_sum",
+   "+0024 EPS_VSS_Accumulator_Backup -> engine_rpm_state_t_0040b7ac.crank_tooth_period_sum",
+   "+0028 EPS_VSS_Counter -> engine_rpm_state_t_0040b7ac.crank_capture_period_sample_count",
+   "+002A EPS_VSS_Counter_Backup -> engine_rpm_state_t_0040b7ac.crank_tooth_period_sample_count",
+   "+002C Filtered_Engine_Speed -> engine_rpm_state_t_0040b7ac.current_rpm",
+   "+002E Firing_Detection_Count -> crank_tooth_count_b",
+   "+0030 Low_Speed_Filtering -> crank_low_speed_filtering_flag",
+   "+0032 Main_Lost_Counter -> crank_period_countdown",
+   "+0034 Main_RPM -> crank_derived_rpm",
+   "+003E Next_Table_Position_Backup -> crank_period_capture_index",
+   "+0042 PMA_Good_Window -> crank_tooth_good_window_fraction"
+  ],
+  "report_leads": [],
+  "block": "819B",
+  "row_width_bytes": 4,
+  "covered_records": [
+   "0x0040b7cc 819B +003E Next_Table_Position_Backup (4 B)"
+  ]
+ },
+ {
+  "address": "0x00408f2c",
+  "current_name": "cylinder_diag_low_threshold_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8C73 +0004 CBD_Service_Trim_Maximum [MM3S, 2 B, S, scale 0.06793478400, 0.000000..400.000000]: Cylinder Balancing Fueling Trim Service Maximum"
+  ],
+  "dump_raw": "147",
+  "references": 1,
+  "code": [
+   "cm848_runCylinderContributionTest: cylinder_balance_fueling_trim_maximum = cylinder_diag_low_threshold_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 CBD_Service_Max_Coolant_Temp -> engine_sync_coolant_upper_threshold_cal",
+   "+0002 CBD_Service_Min_Coolant_Temp -> engine_sync_coolant_lower_threshold_cal",
+   "+0004 CBD_Service_Trim_Maximum -> cylinder_diag_low_threshold_cal",
+   "+0006 CBD_Service_Trim_Minimum -> cylinder_diag_high_threshold_cal",
+   "+0008 Cylinder_Contribution_Gain -> cylinder_diag_scale_factor_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x408f2c and 0x408f2e `cylinder_diag_*_threshold_cal` are the CBD service trim maximum / minimum, with a `_cal` outside the mirror."
+  ],
+  "block": "8C73",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f2c 8C73 +0004 CBD_Service_Trim_Maximum (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f2e",
+  "current_name": "cylinder_diag_high_threshold_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8C73 +0006 CBD_Service_Trim_Minimum [MM3S, 2 B, S, scale 0.06793478400, -400.000000..0.000000]: Cylinder Balancing Fueling Trim Service Minimum"
+  ],
+  "dump_raw": "-147",
+  "references": 1,
+  "code": [
+   "cm848_runCylinderContributionTest: cylinder_balance_fueling_trim_minimum = cylinder_diag_high_threshold_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 CBD_Service_Max_Coolant_Temp -> engine_sync_coolant_upper_threshold_cal",
+   "+0002 CBD_Service_Min_Coolant_Temp -> engine_sync_coolant_lower_threshold_cal",
+   "+0004 CBD_Service_Trim_Maximum -> cylinder_diag_low_threshold_cal",
+   "+0006 CBD_Service_Trim_Minimum -> cylinder_diag_high_threshold_cal",
+   "+0008 Cylinder_Contribution_Gain -> cylinder_diag_scale_factor_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x408f2c and 0x408f2e `cylinder_diag_*_threshold_cal` are the CBD service trim maximum / minimum, with a `_cal` outside the mirror."
+  ],
+  "block": "8C73",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f2e 8C73 +0006 CBD_Service_Trim_Minimum (2 B)"
+  ]
+ },
+ {
+  "address": "0x00408f30",
+  "current_name": "cylinder_diag_scale_factor_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8C73 +0008 Cylinder_Contribution_Gain [UNITLESS, 2 B, U, scale 0.125, 0..10]: Gain for cylinder contribution calculation (100 - delta fueling * gain)"
+  ],
+  "dump_raw": "24",
+  "references": 2,
+  "code": [
+   "cm848_runCylinderContributionTest: cylinder_diag_scale_factor_cal x 4 / 471 % (0-200) - slots 1-6 = cylinders 1 / 5 / 3 / 6 / 2 / 4",
+   "cm848_runCylinderContributionTest: uVar3 = (uint)cylinder_diag_scale_factor_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 CBD_Service_Max_Coolant_Temp -> engine_sync_coolant_upper_threshold_cal",
+   "+0002 CBD_Service_Min_Coolant_Temp -> engine_sync_coolant_lower_threshold_cal",
+   "+0004 CBD_Service_Trim_Maximum -> cylinder_diag_low_threshold_cal",
+   "+0006 CBD_Service_Trim_Minimum -> cylinder_diag_high_threshold_cal",
+   "+0008 Cylinder_Contribution_Gain -> cylinder_diag_scale_factor_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - 0x408f30 is the cylinder contribution gain."
+  ],
+  "block": "8C73",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00408f30 8C73 +0008 Cylinder_Contribution_Gain (2 B)"
+  ]
+ }
+]

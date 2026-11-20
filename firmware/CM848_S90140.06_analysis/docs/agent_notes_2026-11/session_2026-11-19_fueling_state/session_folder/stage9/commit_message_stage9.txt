@@ -1,0 +1,35 @@
+cm848: rename wave 14 - 75 function misnames, 231 sibling rows, the deceleration limit and crank splits, three enums (stage 9)
+
+Seven agents reviewed the 83 function misnames the wave-12 / wave-13 reports had proposed and
+253 sibling rows those waves left (low-overlap or wrong-_cal rows of the renamed e2m blocks, every
+row a report named, with report ranges and family stems added so no family ends half-renamed).
+Every rename carries a code_quote that the apply checked against the function body or the .cpp;
+the repo gate (apply_renames.py) passed all of them.
+
+- Functions (75): alpha; the EGR mass flow / charge flow / intake manifold temperature / EGR
+  orifice temperature models; the J1939 percent peak torque, friction and PGN 65251 torque curve;
+  J1939 control sessions; the data collector; engine protection shutdown; rear axle and drivetrain
+  ratio; diagnostics (not safe to program, warm-up cycle, engine start counts, duty cycle monitor).
+  Plates keep the old plate as an earlier note.
+- Globals (231): cylinder balance, the equivalent throttle governor, the TPU-A channel 0 crank /
+  channel 1 cam settings (8194), the HPCR settings (8000), the air handling source words, charge
+  pressure in range, the 1102 torque curve fuelings; 88 wrong _cal suffixes dropped.
+- By hand: the rpm deceleration limit (the dword over the I and P terms -> two i16 rows, e2m 107C
+  +5A / +5C, plus +5E and 107D +2E); byte splits of four 8194 word rows; 0x40912a widened; the data
+  collector address table as dword[32].
+- Enums: ram_refresh_enable (RAM_REFRESH_STATE, was diagnostic_session_state), development_mode
+  (DEVELOPMENT_MODE_STATE, was j1939_standby_flag) and run_location (RUN_LOCATION 0xee normal / 0xea
+  development, was cal_write_mode, e2m 0010 RUN_LOC).
+- Held for the owner, not applied: three functions with the owner's signed review notes, five
+  functions whose names CM550 shares, and two struct fixes (listed in task 045).
+- Finding: cm848_ram.bin misses the 0x80 bytes at 0x40c200-0x40c27f; from 0x40c280 up it must be
+  read at address - 0x80 (task 045, firmware/CLAUDE.md).
+- e2m_name_audit.py knows enum sizes now (load_enum_sizes, with tests).
+
+Proof: after reversing the 324 renames and the enum names, exactly 10 functions differ, each by the
+intended retypes (pieces and (short) casts gone, a cast pair gone after the widening, array
+indexing in the collector functions). Warnings are stage 4's set with three prototype warnings now
+naming renamed functions; verify deterministic; headers compile; the script tests pass; 186 / 186
+quoted dump values are right; no renamed row is wider than its e2m record.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
