@@ -1204,6 +1204,8 @@ typedef struct end_of_line_test_settings_t end_of_line_test_settings_t;
 typedef struct algorithm_enable_flags_12_t algorithm_enable_flags_12_t;
 typedef struct algorithm_enable_flags_18_t algorithm_enable_flags_18_t;
 typedef struct algorithm_enable_flags_41_t algorithm_enable_flags_41_t;
+typedef struct piecewise_linear_gain_t piecewise_linear_gain_t;
+typedef struct derivative_gain_t derivative_gain_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2708,4 +2710,21 @@ struct algorithm_enable_flags_41_t {
     uint16_t reserved_bit_13 : 1;  /* bit 13: guess (not proven, so reserved): air fuel control cold fuel increment enable - e2m AFC_Cold_Increment_Enable. cm848_calculateAirFuelControlFuelLimit (lhz 82(r26) at 0xe064), which also reads the air fuel control override bit of algorithm_enable_flags_12_cal; the name agrees, the body was not read. Set in this calibration (0x7ca6). */
     uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m name. No reader in either bank (sweep of both banks). Set in this calibration (0x7ca6). */
     uint16_t misfire_monitor_enable : 1;  /* bit 15: e2m Misfire_Monitor_Enable. cm848_initializeMisfireMonitor (lhz at 0x532bd8). Code agrees (wave 10). Clear in this calibration (0x7ca6). */
+};
+
+struct piecewise_linear_gain_t {
+    uint32_t small_signal_gain;  /* Gain while the input is inside the window (Q16: output = gain x input >> 16; units per instance) */
+    uint32_t positive_large_signal_gain;  /* Gain above positive_window_width: the proportional step applies it to the part above; the integral step uses it for the whole error */
+    uint32_t negative_large_signal_gain;  /* Gain below negative_window_width (the same way as the positive one) */
+    int16_t positive_window_width;  /* Upper breakpoint of the window (>= 0; in the input's units) */
+    int16_t negative_window_width;  /* Lower breakpoint of the window (<= 0) */
+};
+
+struct derivative_gain_t {
+    uint16_t filter_coefficient;  /* Weight of the previous state in 1/65536 (e2m Derivative_Gain_Constant): the state moves toward gain x input by 1 - coefficient / 65536 per call */
+    uint32_t small_signal_gain;  /* Gain while the input is inside the window */
+    uint32_t positive_large_signal_gain;  /* Gain while the input is above positive_window_width */
+    uint32_t negative_large_signal_gain;  /* Gain while the input is below negative_window_width */
+    int16_t positive_window_width;  /* Upper breakpoint of the window (>= 0) */
+    int16_t negative_window_width;  /* Lower breakpoint of the window */
 };

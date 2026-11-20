@@ -423,3 +423,15 @@ function_address,function_name,param_index,name,type,comment
 0x00014508,cm848_selectChiSourceCode,return,,COMBUSTION_CHI_SOURCE,1 when the air density chi is not smaller than the coolant temperature chi - else 3
 0x00014508,cm848_selectChiSourceCode,0,air_density_chi_hundredths,int32_t,
 0x00014508,cm848_selectChiSourceCode,1,coolant_temperature_chi_hundredths,int32_t,
+0x00047838,cm848_applyPiecewiseLinearGain,return,,sword,Gain x input >> 16 - the large-signal gains apply to the part past the window - clamped to +/-4095
+0x00047838,cm848_applyPiecewiseLinearGain,0,gain,piecewise_linear_gain_t *,Gain record (r3)
+0x00047838,cm848_applyPiecewiseLinearGain,1,input,int32_t,Signed input (r4): an error or a command
+0x00047978,cm848_integrateWithZoneGain,return,,sword,Integer part of the accumulator after the step - clamped to +/-4095
+0x00047978,cm848_integrateWithZoneGain,0,gain,piecewise_linear_gain_t *,Gain record (r3): the error's zone picks the gain
+0x00047978,cm848_integrateWithZoneGain,1,accumulator,q16_fixed_point_t *,Q16.16 integrator (r4) - updated in place
+0x00047978,cm848_integrateWithZoneGain,2,error,int32_t,Signed error (r5)
+0x00047978,cm848_integrateWithZoneGain,3,step,uint,Step factor (r6) - its low 16 bits are used (10000 at both calls)
+0x00047a88,cm848_calculateFilteredDerivative,return,,sword,Integer part of gain x input minus the state - clamped to +/-4095
+0x00047a88,cm848_calculateFilteredDerivative,0,gain,derivative_gain_t *,Derivative gain record (r3)
+0x00047a88,cm848_calculateFilteredDerivative,1,filter_state,q16_fixed_point_t *,Q16.16 filter state (r4) - updated in place
+0x00047a88,cm848_calculateFilteredDerivative,2,input,int32_t,Signed input (r5)

@@ -69,6 +69,17 @@ Listing fields at two addresses instead creates one oversize type applied only a
 **Commas in comments must be quoted** — this file uses a quote-aware parser, unlike
 `global_variables.csv`/`function_renames.csv` which absorb commas into the last column.
 
+**Struct type only, instances in `global_variables.csv`:** a struct whose instances have their own names can be
+defined once with an empty address (`ema_filter_state_t`, `piecewise_linear_gain_t`). Each instance is then a
+`global_variables.csv` row typed with the struct name. Edit the instance's first row in place and delete the rows
+inside it, including `<name>+2` label rows.
+
+**Records passed by pointer (stage 8b, 2026-11-19):** type the consumer's parameter as `<struct> *` with a full
+prototype. Ghidra then often types the caller's stack copies of the record by itself. If it does not, a
+`local_variables.csv` row can give a stack local a struct type. When the code's last store into the copy runs past the
+struct's end, that one store renders as a raw stack or register name; say so in the plate. Unaligned dword fields
+that the code copies as two halfwords render as `._0_2_` / `._2_2_` pieces; that is correct, not a width error.
+
 ## Function prototypes (`function_definitions.csv`)
 
 Columns: `function_address,function_name,param_index,name,type,comment`

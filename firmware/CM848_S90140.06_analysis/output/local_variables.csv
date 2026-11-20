@@ -132,3 +132,6 @@ function_address,function_name,old_name,new_name,type,comment
 0x00501b4c,sensorChannelTypeB_update,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
 0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,dVar1,filtered_engine_load,dword,exponentialMovingAverage output of engine_load_percent - also stored to vehicle_speed_zero_under_load_engine_load_filtered
 0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,cVar2,limits_reached_count,byte,How many of the two P0500 limits (accelerator off-idle entries / events) are reached - 2 sets fault 29
+0x00047bd0,cm848_calculateFuelMeteringCommand,local_64,working_proportional_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_proportional_gains (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is 0) passed to cm848_applyPiecewiseLinearGain
+0x00047bd0,cm848_calculateFuelMeteringCommand,local_54,working_integral_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_integral_gains (scaled the same way) passed to cm848_integrateWithZoneGain
+0x00047bd0,cm848_calculateFuelMeteringCommand,local_44,working_derivative_gains,derivative_gain_t,Stack copy of fuel_pressure_governor_derivative_gains (scaled the same way; the 4-byte gains are copied as halfwords because they are not 4-aligned) passed to cm848_calculateFilteredDerivative

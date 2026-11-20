@@ -999,9 +999,9 @@ void cm848_calculatePilotInjectionPulseWidth(void);  // @ 0x00047140
 void cm848_calculateAuxiliaryInjectionPulseWidth(int param_1);  // @ 0x00047394
 void cm848_setMainQuantityAndPulseWidthLimits(void);  // @ 0x0004769c
 void mpc555_clearTimingDataAndFilters(void);  // @ 0x00047784
-int cm848_applyPiecewiseLinearGain(int *param_1,int param_2);  // @ 0x00047838
-int cm848_integrateWithZoneGain(int param_1,int *param_2,int param_3,uint param_4);  // @ 0x00047978
-int cm848_calculateFilteredDerivative(ushort *param_1,uint *param_2,int param_3);  // @ 0x00047a88
+sword cm848_applyPiecewiseLinearGain(piecewise_linear_gain_t *gain,int input);  // @ 0x00047838
+sword cm848_integrateWithZoneGain (piecewise_linear_gain_t *gain,q16_fixed_point_t *accumulator,int error,dword step);  // @ 0x00047978
+sword cm848_calculateFilteredDerivative (derivative_gain_t *gain,q16_fixed_point_t *filter_state,int input);  // @ 0x00047a88
 void cm848_calculateFuelMeteringCommand(void);  // @ 0x00047bd0
 void cm848_countFuelPressureGovernorStartRevolutions(void);  // @ 0x00048fa0
 void cm848_resetEngineSyncState(void);  // @ 0x00049004

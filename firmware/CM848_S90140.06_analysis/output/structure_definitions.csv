@@ -1675,3 +1675,15 @@ algorithm_enable_flags_41_t,,reserved_bit_12,bitfield:1@12,0,"guess (not proven,
 algorithm_enable_flags_41_t,,reserved_bit_13,bitfield:1@13,0,"guess (not proven, so reserved): air fuel control cold fuel increment enable - e2m AFC_Cold_Increment_Enable. cm848_calculateAirFuelControlFuelLimit (lhz 82(r26) at 0xe064), which also reads the air fuel control override bit of algorithm_enable_flags_12_cal; the name agrees, the body was not read. Set in this calibration (0x7ca6).",,verified
 algorithm_enable_flags_41_t,,reserved_bit_14,bitfield:1@14,0,no e2m name. No reader in either bank (sweep of both banks). Set in this calibration (0x7ca6).,,verified
 algorithm_enable_flags_41_t,,misfire_monitor_enable,bitfield:1@15,0,e2m Misfire_Monitor_Enable. cm848_initializeMisfireMonitor (lhz at 0x532bd8). Code agrees (wave 10). Clear in this calibration (0x7ca6).,,verified
+# piecewise_linear_gain_t / derivative_gain_t: the gain records of the fuel pressure governor and the fuel metering current compensation (e2m 8014-8018 / 80EF / 80F2), read by cm848_applyPiecewiseLinearGain, cm848_integrateWithZoneGain and cm848_calculateFilteredDerivative (stage 8b, PR #52)
+piecewise_linear_gain_t,,small_signal_gain,dword,4,"Gain while the input is inside the window (Q16: output = gain x input >> 16; units per instance)",,verified
+piecewise_linear_gain_t,,positive_large_signal_gain,dword,4,"Gain above positive_window_width: the proportional step applies it to the part above; the integral step uses it for the whole error",,verified
+piecewise_linear_gain_t,,negative_large_signal_gain,dword,4,"Gain below negative_window_width (the same way as the positive one)",,verified
+piecewise_linear_gain_t,,positive_window_width,short,2,"Upper breakpoint of the window (>= 0; in the input's units)",,verified
+piecewise_linear_gain_t,,negative_window_width,short,2,"Lower breakpoint of the window (<= 0)",,verified
+derivative_gain_t,,filter_coefficient,word,2,"Weight of the previous state in 1/65536 (e2m Derivative_Gain_Constant): the state moves toward gain x input by 1 - coefficient / 65536 per call",,verified
+derivative_gain_t,,small_signal_gain,dword,4,"Gain while the input is inside the window",,verified
+derivative_gain_t,,positive_large_signal_gain,dword,4,"Gain while the input is above positive_window_width",,verified
+derivative_gain_t,,negative_large_signal_gain,dword,4,"Gain while the input is below negative_window_width",,verified
+derivative_gain_t,,positive_window_width,short,2,"Upper breakpoint of the window (>= 0)",,verified
+derivative_gain_t,,negative_window_width,short,2,"Lower breakpoint of the window",,verified

@@ -483,6 +483,58 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   are identical to stage 4.
 - **The audit after wave 13:** 1489 named rows have a token overlap under 0.34 (1610 after stage 7). The keeps stay in
   that count; they now carry the record as a cross-reference.
+- **The quoted dump values:** the renamed rows' comments quote 92 dump values (`check_quoted_dump_values_W13.py`).
+  All 92 are right. 13 needed a manual read:
+  - a raw value followed by its scaled form ("25600 in the dump = 3200 rpm");
+  - a neighbour's value;
+  - the 80EF dword gains read at their old word width;
+  - a number with thousands separators.
+  A read 2 bytes off fails 79 of the 92.
+
+## Stage 8b - the fuel pressure governor / fuel metering gain records as structs (2026-11-19, PR #52)
+
+- **The consumers prove the layout.**
+  - `cm848_applyPiecewiseLinearGain` and `cm848_integrateWithZoneGain` read a 16-byte record: three dword gains at +0 /
+    +4 / +8 (small signal / positive large / negative large), then the signed window widths at +12 / +14.
+  - `cm848_calculateFilteredDerivative` reads an 18-byte one: a word filter coefficient, then the same five fields.
+  - The proportional step applies a large-signal gain to the part of the input past the window. The integral and
+    derivative steps use the zone's gain for the whole input.
+- **Seven e2m blocks of exactly those sizes resolve to the records** through the parameter ID table. The new types are
+  `piecewise_linear_gain_t` and `derivative_gain_t`.
+
+  | Record | e2m | Type | Dump |
+  |---|---|---|---|
+  | `fuel_pressure_governor_proportional_gains` 0x4094a2 | 8014 | piecewise | 0.5 / 0.1 / 0.6 %/MPa, +-10 MPa |
+  | `fuel_pressure_governor_integral_gains` 0x4094b2 | 8015 | piecewise | 1.0 / 0.6 / 1.0 %/MPa/s |
+  | `fuel_pressure_governor_derivative_gains` 0x4094c2 | 80EF | derivative | coefficient 0.667, 0.005 / 0.02 / 0.02 |
+  | `fuel_metering_current_compensation_proportional_gains` 0x4094d4 | 8016 | piecewise | all gains 0 (off) |
+  | `fuel_metering_current_compensation_integral_gains` 0x4094e4 | 8017 | piecewise | 0.001 / 0.0001 / 0.0001, +-4000 mA |
+  | `fuel_metering_uncompensated_duty_cycle_proportional_gains` 0x4094f4 | 8018 | piecewise | 0.029 / 0.016 / 0.0254 %/mA |
+  | `fuel_metering_current_compensation_derivative_gains` 0x409504 | 80F2 | derivative | all 0 (off) |
+
+  Every field reads in range, with the positive windows >= 0 and the negative ones <= 0 (`read_gain_blocks.py`).
+- **Before:** 23 flat rows, several of them wrong:
+  - the 80EF dword gains were word rows over their high halves, plus `_lo_cal` rows over the low halves;
+  - 8016-8018 / 80F2 were byte rows named `cam_sync_*_prot_*_cal`;
+  - the window pairs were dwords with `+2` label rows.
+  They became 7 instances (16 interior rows deleted).
+- **Prototypes:** the three consumers have full prototypes (`sword` return, `int32_t` input, `q16_fixed_point_t *` for
+  the integrator / filter state, so the call sites stay cast-free).
+- **The stack copies:** `cm848_calculateFuelMeteringCommand` copies the P / I / D records to the stack before the calls.
+  Each gain and coefficient is scaled by its own lookup table while e2m 8000 +0 HPCR_Governor_Mode
+  (`cam_timing_alt_mode_enable_cal`) is 0. The copies are typed in `local_variables.csv` (`working_*_gains`).
+- **Proof:** exactly the four predicted functions changed (the three consumers and `cm848_calculateFuelMeteringCommand`).
+  One more function changed only the order of its local declarations. The warnings and type stats are identical to
+  stage 4. No retired name is left, and no instance renders with a `_` prefix.
+- **Known artifacts:**
+  - The derivative gains are not 4-aligned. The code copies them as halfwords, which render as `._0_2_` / `._2_2_`
+    pieces.
+  - The copy of the derivative record's negative window is one 4-byte store at +16 that runs past the 18-byte record.
+    Ghidra prints a raw stack or register name for it (explained in the plate). The unscaled branch loads that word
+    at 0x4094d2 across the D record's end and the 8016 record (`ram0x004094d2 & 0xffff0000`).
+  - In the integral and derivative steps the zone gain is a computed-offset load.
+  - `q16_fixed_point_t.integer_part` is an unsigned `word`, so the integral clamp shows `0xf001` for -4095.
+- **Also:** the 80B9 short to ground / short to battery caveat (e2m byte order only) on its six rows.
 
 ## Follow-ups (open)
 
@@ -491,9 +543,15 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   (`hpcr_calculateFuelTrimOutput`), PGN 65251 (`faultTimerHandler`), EEC1 (`j1939GetEngineStateCode`), the drivetrain
   ratio estimator (`protectionTimeoutControl`), the EGR orifice / mass flow models, the warm-up cycle monitor
   (`engine_coolantTemp_overheat_monitor`), the RAM refresh, the 48RE governor pressure code.
+- [ ] **The HPCR governor settings (block 8000) and the gain scheduling curves:**
+  - `cam_timing_alt_mode_enable_cal` (0x4090fa) is e2m 8000 +0 HPCR_Governor_Mode. At 0 every gain is scheduled on
+    engine speed. The row has a wrong `_cal`.
+  - The HPCR_SF_* scaling curves (80E9 / 80EC, ...) are named `cam_sync_cyl*_timing_*`.
+  - The rest of block 8000 (0x409110-0x409138: `engine_sync_*_cal` / `cam_sync_*_cal` / `engine_speed_override_*_cal`)
+    has wrong `_cal`s too.
 - [ ] **Shapes and types from wave 13:**
-  - split 0x40a204 (I / P terms), 0x4094ae / 0x4094be (window widths) and 0x4094c4 / c8 / cc (4-byte gains with
-    `_lo_cal` rows);
+  - split 0x40a204 (the rpm deceleration limit's I / P terms, e2m 107C +5A / +5C). The 0x4094xx gain records were done
+    in stage 8b;
   - 0x408f56 swallows the byte at 0x408f57. 0x408f66 `crank_timer_offset_cal` is a word over two byte records (8194
     +10 Crank_Sync_Tooth, +11 Crank_Teeth_Per_Cam_Measure), and its `_cal` is wrong for the region;
   - the `i16` candidates listed in the reports.

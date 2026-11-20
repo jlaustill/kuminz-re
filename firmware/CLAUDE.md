@@ -861,6 +861,14 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - More drift: 8D14 from +2, 1B2D from +4, 1966 from +94, 1649 from +10. The 8C58 tail overlaps 8C4E. The last
       "ratio" record of 8C34 / 8C56 / 8C5B / 1632 has no storage of its own in 11.46.
     - Leads for the next waves are in task 045: about 70 misnamed functions, the out-of-bin siblings, splits and types.
+  - **Stage 8b: the HPCR gain records are structs.**
+    - `cm848_applyPiecewiseLinearGain` / `cm848_integrateWithZoneGain` take a `piecewise_linear_gain_t` (16 bytes: three
+      dword gains, then the signed positive / negative window widths). `cm848_calculateFilteredDerivative` takes a
+      `derivative_gain_t` (a word filter coefficient first, 18 bytes).
+    - Seven instances, from e2m 8014-8018 / 80EF / 80F2: the fuel pressure governor's P / I / D gains, and the fuel
+      metering current compensation and uncompensated duty cycle gains.
+    - A prototype that takes the struct pointer lets Ghidra type the caller's stack copies by itself. A local whose last
+      store runs past the struct renders a raw stack or register name for that store.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.
