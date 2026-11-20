@@ -76,8 +76,11 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the two stale-prototype warnings
   that stage 4 removes.
 - [x] Stages 1 and 3: the label-only proof is EQUIVALENT.
-- [x] Stages 2 and 4: only the predicted functions changed, plus declaration-order reorders, and the piece count stays
-  508 → 508.
+- [x] Stage 2 changed only the intended functions. Stage 4 changed only the functions predicted before its build (the
+  two readers of `pumping_torque_adjustment` needed no cast, so they did not change). Apart from those, only
+  declaration orders changed, and the piece count stays 508 → 508.
+- [x] No new name shadows a parameter or a local. CM550 and the cross-firmware maps cite none of the old names. Every
+  stage 3 row's width matches its e2m record.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.

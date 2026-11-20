@@ -738,6 +738,9 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - the `diag_dm1_*` words around 0x3fddb6 / 0x40c278 are the e2m data collector (blocks 0030-003B), not DM1;
   - `sensor_channel109_*` is the exhaust pressure sensor. `boost_pressure_synthetic_ema` / `boost_synthetic_ema_*` /
     `boost_correction_mode_flags` are the exhaust pressure estimate (1772);
+    - Partly done in task 046 (2026-11-20): `boost_pressure_synthetic_ema` / `boost_correction_mode_flags` are now
+      `exhaust_pressure_estimate` / `_estimate_state`. Still open: `sensor_channel109_*` and the 198C
+      `boost_synthetic_ema_*_coef` constants of the TPE estimator.
   - `boost_target_*` is the exhaust temperature estimate;
   - `engine_to_vehicle_speed_ratio_*` is the transfer case low-range detection (8C60);
   - `engine_temperature_protection_filter_state` is the exponentialMovingAverage record of `drivetrain_ratio` (it

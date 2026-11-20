@@ -1,0 +1,14 @@
+docs: mark the leads round 2 resolved (tasks 042 / 045) and archive the final checks
+
+- Task 042 (W9 charge_turbo left-overs): boost_pressure_current_raw is
+  e2m 1A5D +0 Exhaust_Press, now exhaust_pressure.
+- Task 045 (wave-12 leads): the 1772 estimate words are renamed; still
+  open: sensor channel 109 and the 198C TPE estimator constants.
+- Task 046: the stage 1 filter name carries its stage 3 rename.
+- Session archive: grep_old_names.py (the repo-wide search for the
+  round-2 old names outside history and snapshots), mark_resolved_leads.py
+  and the final PR text. The final checks: no new name shadows a
+  parameter or local, CM550 and the cross-firmware maps cite none of
+  the old names, and every stage 3 row's width matches its e2m record.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
