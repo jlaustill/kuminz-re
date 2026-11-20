@@ -91,6 +91,15 @@ subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7 an
     order, and give the 80B9 debounce rows their bits bytes' meanings.
   - `reports/`: the six handback reports. `agent_scratch/`: the scratch scripts of bins 4-6 (bins 1-3 wrote none).
   - `append_W13_agent_notes.py`, `sweep8.txt` (the comment sweep), `commit_message_stage8.txt`, `stage8.diff`.
+  - `check_quoted_dump_values_W13.py` / `show_quote_context.py` / `dump_check_W13.txt`: the wave-13 comments' quoted
+    dump values (`--negative` reads 2 bytes off).
+- **Stage 8b** (the HPCR gain records as structs), also in `stage8/`:
+  - `read_gain_blocks.py`: reads the seven records from the dump at field width and checks them against the e2m.
+  - `apply_stage8b_gain_records.py`: the two struct types, the seven instances, the three prototypes, the 80B9
+    caveat. It writes `map_stage8b.csv`.
+  - `apply_stage8b_locals.py`: the second build's typed stack copies.
+  - `check_stage8b.py`: the changed functions against the prediction. `diff8b_fuel_metering.txt` is the first
+    build's diff of `cm848_calculateFuelMeteringCommand`; `build1_8b.cpp` / `pre8b.cpp` are in the tar.xz.
 - **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8):
   - `agent_prompts.jsonl`: their exact prompts.
   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked

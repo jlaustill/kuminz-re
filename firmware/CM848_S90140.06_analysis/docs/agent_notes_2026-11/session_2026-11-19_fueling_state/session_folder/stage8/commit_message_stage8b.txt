@@ -1,0 +1,27 @@
+cm848: the HPCR gain records as structs - piecewise_linear_gain_t / derivative_gain_t (stage 8b)
+
+cm848_applyPiecewiseLinearGain and cm848_integrateWithZoneGain read a 16-byte record (three
+dword gains - small signal / positive large / negative large - then the signed positive and
+negative window widths); cm848_calculateFilteredDerivative reads an 18-byte one (a word filter
+coefficient first). The ECU's parameter ID table resolves seven e2m blocks of exactly those
+sizes to the records, and the dump reads in range at the field widths:
+- fuel_pressure_governor_proportional_gains / _integral_gains / _derivative_gains (8014 /
+  8015 / 80EF);
+- fuel_metering_current_compensation_proportional_gains / _integral_gains /
+  _derivative_gains (8016 / 8017 / 80F2; the P gains and the derivative record are all 0 on
+  this truck) and fuel_metering_uncompensated_duty_cycle_proportional_gains (8018).
+
+Before, the records were 23 flat rows, several wrong: the 80EF dword gains were word rows over
+their high halves plus _lo_cal rows over the low halves, 8016-8018 / 80F2 were byte rows named
+cam_sync_*_prot_*_cal, and the window pairs were dwords with +2 label rows. The three consumers
+have full prototypes now (sword return, int32_t input, q16_fixed_point_t * state). The stack
+copies in cm848_calculateFuelMeteringCommand are typed (working_*_gains), and its plate explains
+the one store that runs past the derivative record.
+
+Proof: exactly the four predicted functions changed (the three consumers and
+cm848_calculateFuelMeteringCommand), plus one local declaration reorder elsewhere; the warnings
+and type stats are identical to stage 4; verify is deterministic; headers compile; the script
+tests pass. Also: wave 13's 92 quoted dump values re-read (all right), and the 80B9 short to
+ground / short to battery caveat on its six rows.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
