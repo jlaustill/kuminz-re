@@ -1,0 +1,31 @@
+cm848: rename wave 13, the misname review (226 renames, 143 e2m cross-references) (stage 8)
+
+Six agents reviewed the 381 named rows whose name shares no word with the e2m record the ECU's
+parameter ID table resolves to their address (3+ code references, dump value in range). Each
+record was checked against the code: 221 renames, 143 keeps (accurate synonyms, now with an
+"| e2m:" cross-reference), 17 drift (the 11.45 e2m layout does not match 11.46.06 there).
+
+Families named from the code and the record:
+- data_collector_* (was diag_dm1_*: the Cummins data collector, not J1939 DM1);
+- the PGN 65251 engine configuration / torque curve words (e2m 1102, were protection_*);
+- alpha_* (104A), all_speed_governor_* (107C), friction fueling (109C);
+- converter_clutch_* / governor_pressure_* (the 48RE monitors 8C33 / 8C34 / 8C58);
+- cylinder_balance_* (81AE-81B0), the fuel pressure governor gains, the fuel metering coil;
+- the TPU-A channel 1 backup_* cam signal words (8194 / 819B);
+- the compressor map, ambient / compressor inlet conditions, exhaust temperature model;
+- the _cal fixes (missing in the EEPROM mirror, wrong outside it).
+
+Held back: two enum-typed rows whose enum members still follow the old reading, and a dword
+over two terms that needs a split first. The repo gate (apply_renames.py) passed all 218 agent
+renames; none of the old names is shared with CM550.
+
+Follow-up fixes in the same change: the 80B9 debounce counters and limits took their bits bytes'
+new meanings (8 rows; the code pairs them by letter), one old comment's proved facts were
+restored, the rename note was moved to the repo order on 54 rows, and the comment sweep's stale
+tokens were fixed.
+
+Proof: all 226 names render with no _ variant; the label-only proof is EQUIVALENT; the build
+warnings and type stats are identical to stage 4; headers compile; the five script test suites
+pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

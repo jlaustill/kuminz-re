@@ -1,0 +1,16 @@
+air_conditioning_load_fuel_demand_offset x1 [prefix of 2 names] |  A/C clutch engagement.' (MM3S, 0.0679 mm3 per count; 0 in the dump): air_conditioning_load_fuel_demand_offset at the engine speed while the
+cm848_calculate x1 [prefix of 138 names] | ns against crank_period_accumulator: angle x period / (this x 256) in cm848_calculate{Pilot,Auxiliary}InjectionPuls
+cm848_protection_condition_eval_set1 x1 | same wrap logic as injection_timing_tooth) computed in FUN_00529284 + cm848_protection_condition_eval_set1; paired with phase byte DAT_0
+cm848_sensorChannel4 x1 [prefix of 2 names] | ntegrator_bound_a = sensor_channel_filtered_output[77], configured by cm848_sensorChannel4: 1703 counts in the RAM dump 
+combustion_torque_by_fuel_quantity x1 [prefix of 3 names] | ion torque of the coolant friction fuel adjustment (e2m 109C +4) from combustion_torque_by_fuel_quantity at the engine speed (cm848_ap
+crank_timer_offset x1 [prefix of 2 names] | , its only user (27 reads), fills crank_period_capture_array with the crank_timer_offset byte (e2m Crank_Sync_Tooth) x
+fault_derate_fuel_limit_by_engine_speed x1 [prefix of 2 names] | 5c2ec (13) per call. With the ramp above 0 the limit lies between the fault_derate_fuel_limit_by_engine_speed curve (ramp 256) and throttle
+friction_fuel_correction_by_coolant_temperature x1 [prefix of 2 names] | o coolant temperature' (MM3S, 0.0679 mm3 per count; 124 in the dump): friction_fuel_correction_by_coolant_temperature at the coolant temperature (g
+fuel_demand_rpm_limit x1 [prefix of 2 names] | ve. cm848_calculateFuelDemandWithTrim stores the interpolation of the fuel_demand_rpm_limit grid (axes fuel_demand_rpm_th
+fuel_quantity_ema x1 [prefix of 3 names] | ng used for IMT estimation' (SEC, 0.01 per count; 0 in the dump): the fuel_quantity_ema table lookup at the filtered 
+governor_fuel_table x1 [prefix of 3 names] | is set it forces thermal_fuel_limit_factor to 0 around that call (the governor_fuel_table grid alone) and restores it. 
+governor_status_overspeed_flag_snapshot x1 |  speed derate); only these 2 bits used; shadow @0x3fea2a; the sibling governor_status_overspeed_flag_snapshot is a wrong write-only name | 
+pci_transmit_message_8 x1 [prefix of 2 names] | +0x0040b44f,obd_response_length,byte,Payload length of pci_transmit_message_8 (2 / 4 / 5 / 6 / 7 / 8)  | e2
+radiator_fan_load_fuel_demand_offset x1 [prefix of 3 names] | . engine speed.' (MM3S, signed, 0.0679 mm3 per count; 0 in the dump): radiator_fan_load_fuel_demand_offset grid looked up at the radiato
+safety_bits_1 x1 | ,Sum of vehicle_speed (1/256 mph) per pass while P2269 water in fuel (safety_bits_1 bit 8) is active - each 36000
+-- 15 unknown tokens

@@ -2,8 +2,8 @@
 
 The question was whether `governor_fuel_demand_mode` (0x40a154) is an enum. It is the Cummins FSGVFLST governed
 fueling state, so `ENGINE_OPERATING_MODE` became the shared `FUELING_STATE` enum. The findings and follow-ups are in
-`work/tasks/045-cm848-fueling-state-enum.md`. This folder keeps the session's scratch work. Eleven read-only subagents
-ran: two in stage 4, one in stage 5, two in stage 6 and six in stage 7.
+`work/tasks/045-cm848-fueling-state-enum.md`. This folder keeps the session's scratch work. Seventeen read-only
+subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7 and six in stage 8.
 
 `session_folder/` has these files:
 - `apply_fueling_state.py`: the CSV edit. It checks each old row before it replaces it.
@@ -79,7 +79,19 @@ ran: two in stage 4, one in stage 5, two in stage 6 and six in stage 7.
   - `map_stage7.csv`, `classify7.txt`: the proof map and the classified differences.
   - `reports/`: the six handback reports. `agent_scratch/`: the agents' own scratch scripts.
   - `update_pr_body_stage7.py`, `append_W12_agent_notes.py`, `commit_message_stage7.txt`, `stage7.diff`.
-- **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7):
+- **Stage 8** (rename wave 13, the misname review), in `stage8/`:
+  - `build_context_W13.py`, then `bins/`: the six agents' inputs. A row is in a bin when its name shares no word with
+    its table-resolved e2m record.
+  - `brief_W13.md`: the shared brief.
+  - `result_W13_bin*.jsonl`: the agents' verdicts (rename / keep / drift / uncertain).
+  - `apply_W13.py`: the hold list, the cross-firmware check, the repo gate (`gate_input_W13.jsonl`), the apply and
+    `map_stage8.csv`.
+  - `fix_stage8_comments.py`, `fix_stage8_note_order.py`, `apply_stage8_injector_family.py`: the fixes after the
+    apply. They restore one old comment's proved facts and fix stale tokens. They move the rename note to the repo
+    order, and give the 80B9 debounce rows their bits bytes' meanings.
+  - `reports/`: the six handback reports. `agent_scratch/`: the scratch scripts of bins 4-6 (bins 1-3 wrote none).
+  - `append_W13_agent_notes.py`, `sweep8.txt` (the comment sweep), `commit_message_stage8.txt`, `stage8.diff`.
+- **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8):
   - `agent_prompts.jsonl`: their exact prompts.
   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked
     before applying.

@@ -959,3 +959,777 @@ W12 bin6 is done. All 66 records are in /home/linux/.claude/jobs/f6a06670/tmp/fu
 - `j1939_feature_config_word` (0x5a494) is Supported_Non_Continuous_Monitors, and `cm848_governorDroopCalculation` is a number-to-decimal-text helper.
 - The `protection_*` rows at 0x408ad2-0x408ade are the P1740 converter clutch rationality values (e2m TCC_Rationality_* and TCC_Steady_Throttle_Count_Limit).
 ````
+
+# Stage 8 agents: rename wave 13, the misname review (2026-11-19, PR #52)
+
+Six read-only `general-purpose` agents (model sonnet), started in parallel, one bin of 63-64 e2m records each.
+Each wrote one JSONL result file in the scratch folder and nothing else.
+
+The main session built the bins with `stage8/build_context_W13.py`. A record went in when it is a named
+scalar / enum / array row whose name shares no word with its table-resolved e2m record, with 3+ code
+references and a dump value in range: 381 records, whole blocks per bin. Then:
+- `stage8/apply_W13.py` held back 3 rows: two enum-typed rows whose enum members still follow the old reading,
+  and a dword to split first. It checked the old names against CM550 and the cross-firmware maps (none
+  shared) and ran the repo's apply_renames.py gate on the 218 renames (no PROBLEM line);
+- a random sample of 9 renames was spot-checked against the code;
+- the main session reconciled one cross-bin name: 0x40b798 became `backup_pulse_period_countdown`, to pair
+  with bin 5's `backup_pulse_period_timeout`, because the code reloads it from that timeout;
+- old comments stay as earlier notes, except 11 that an agent showed to be wrong. The proved facts of one of
+  them (0x3fed94) were restored by hand. 54 rows got the rename note moved to the repo order;
+- the 80B9 debounce counters and limits (8 rows) took their bits bytes' new meanings (code pairing checked);
+- after the build, the label-only proof was EQUIVALENT, and the build warnings were identical to stage 4.
+
+## The shared brief (exact text)
+
+````text
+# Rename wave 13 (CM848): review names that disagree with their e2m record
+
+Read-only research plus ONE output file. Do not edit any repository file, do not run `analyze.sh`, do not commit.
+Write your results only to the result file named in your prompt.
+
+## Background
+- The CM848 carries its own e2m record -> address table: `cm848_lookupParameterIdAddress` searches 6-byte records
+  [e2m block id][address] in flash2.
+- Every record in your bin sits at its `address`, but that address already has a name, and the name shares no word with
+  the record. Usually one of three things is going on:
+  1. **Synonym (keep):** the name is accurate, only worded differently. `key_on_hour_meter` for ECM_Run_Time,
+     "Time key switch is on and ECM is running", stays.
+  2. **Misname (rename):** the name describes something else. Examples: `boost_*` on an exhaust pressure estimate;
+     `diag_dm1_*` on the data collector; `protection_*` on a monitor's parameters; a `_cal` on a ROM constant.
+  3. **Drift (no change):** the labelled e2m is calibration 11.45 and the truck runs 11.46.06. A record can sit at a
+     shifted offset, so the code use contradicts the record, and the current name, based on the code, may be right.
+     Wave 12 found drift in blocks 10E3 / 1228, 8A2B / 8A37, 8A14 (+2C on), 1930 (+12 on), 1902 (+2A..+2E) and 1253.
+- Many current names came from careful earlier work. Their comments often hold proved facts. Read the comment before
+  you judge the name.
+
+## Files
+- Your bin: a JSON list (path in your prompt). Each item has:
+  - the record: `record`, `unit`, `size_bytes`, `signed`, `scale`, `min`, `max`, `description`;
+  - the current row: `label_in_cpp` (the current name), `current_row_type`, `current_comment`;
+  - the code context: `code` (up to 4 lines that use the name) and `access_widths`;
+  - `region` (it decides `_cal`), `block_named_rows` (the block's named rows with their word-overlap scores) and
+    `other_records_at_this_address`.
+- Decompiled code: /home/linux/code/kuminz-re/.claude/worktrees/cm848-fueling-state-enum/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
+  and the CSVs next to it (global_variables.csv: address,name,type,comment).
+- Helpers (python3):
+  - /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/fnbody.py `<cpp> name:maxlines`;
+  - .../width_census.py `<all.dis> 0xADDR` (all.dis is in the same folder);
+  - /home/linux/code/kuminz-re/.claude/worktrees/cm848-fueling-state-enum/firmware/scripts/e2m_block_addresses.py
+    `BLOCK` or `--address 0xADDR`.
+
+## Per record
+1. Read the current comment and the code that uses the name. Open the function when the line alone does not show the
+   role.
+2. Decide which case it is:
+   - **keep:** the current name is accurate. A synonym, or more specific than the record, is fine.
+   - **rename:** the current name is wrong or misleading for what the code does, and the record matches the code. A
+     name that breaks a rule also gets a rename, even when its meaning is right: an invented abbreviation (temp, cnt,
+     ref, val, calc, init, cfg ...), or a wrong `_cal` (`_cal` only in the EEPROM mirror 0x3fd482-0x3feec1).
+   - **drift:** the record does not match the code at this address. Leave the name; say what the code shows.
+   - **uncertain:** you cannot tell.
+3. For a rename, name it in snake_case from the record name and description (the rules below). Keep the accurate
+   specifics of the current name and comment, such as units, direction and which monitor or message. Rename a misnamed
+   family in your bin consistently: siblings with the same wrong prefix get the same new prefix.
+
+## Naming rules
+- Spell words out. No invented abbreviations. Allowed as written: rpm, j1939, pgn, spn, dtc, obd, ecm, egr, nox, id,
+  adc, pwm, can, pid, tpu, qadc, vin, tsc1.
+- Drop the e2m `C_` / `T_` prefixes. `_cal` is decided by the region alone: in the EEPROM mirror the name ends `_cal`,
+  everywhere else it never does.
+- Cummins abbreviations:
+  - **Basic words:** Tmptr = temperature; Thd = threshold; Cmd = command; Amb = ambient; Ref = reference;
+    Avg = average; Frac = fraction; Adj = adjustment; Cnt = count; Lmt / Lim = limit; Sw = switch; Val = value;
+    Pos = position; Filt = filtered; Diag = diagnostic; Ovr = override; Vlv = valve; Pct = percent; Cyl = cylinder.
+  - **Engine terms:** Inj = injection or injector; SOI = start of injection (the repo writes `injection_timing`);
+    Veh = vehicle; Baro = barometric; Alt = altitude; Trq = torque; Batt = battery; IMT =
+    intake_manifold_temperature; CT = coolant_temperature; APS = accelerator_pedal.
+  - **Systems:** COT = compressor_outlet_temperature; MCF / CMF = charge_mass_flow; VGT =
+    variable_geometry_turbocharger; PTO = power_take_off; CC = cruise_control; EB = engine_brake; Jcomm = j1939;
+    EL = emission_level.
+  - **Governors:** LSG / HSG / ASG / VSG = low / high / all / variable speed governor.
+  - **AECD:** use the repo's `<condition>_protection_*` family.
+- Module prefixes (EMO_, CBR_, FSS_ ...) are Cummins-internal: use the words the block's other names use.
+- Never a bare "protection": say protection of what. Use initialize, never init. Numbers in decimal.
+- The new name must not exist anywhere yet (grep global_variables.csv and the .cpp). No two rows may get one name.
+
+## Output: one JSON object per line, one line per record of your bin
+- **rename:** `{"kind": "global", "verdict": "confirmed", "address": "0x...", "old": "<current name>", "new": "...",
+  "evidence": "...", "comment": "..."}`
+  - The `comment` is the full new CSV comment. Lead with the e2m record and its description, then the role in the
+    code. Keep the old comment's proved facts. Do not add "(was ...)": the apply adds it.
+- **keep:** `{"kind": "global", "verdict": "keep", "address": "0x...", "old": "<current name>", "new": "<same>",
+  "e2m_note": "e2m <block> +<offset> <record> '<short description>'"}`. The note is appended to the comment, as a
+  cross-reference.
+- **drift:** `{"kind": "global", "verdict": "drift", "address": "0x...", "old": "<current name>", "evidence": "<what the
+  code shows vs the record>"}`
+- **uncertain:** `{"kind": "global", "verdict": "uncertain", "address": "0x...", "old": "<current name>", "evidence":
+  "..."}`
+- `evidence`: one line with code function names and line facts, for example `e2m 1772 +A EXP_Exhaust_Pressure_Est
+  (IN_HG): written by phase_group_a_validateEngineSync as the exhaust pressure estimate; the old name says boost`.
+- Do not change types. If a type looks wrong, say so in the evidence.
+
+Finish with a short summary in your final message:
+- counts per verdict;
+- the families you renamed;
+- drift found;
+- any function whose name your evidence shows is wrong (address, current name, proposed name, one-line reason). These
+  are not applied automatically.
+````
+
+## 12. Review e2m names wave 13 bin 1 (557k tokens, 36 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 13 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/brief_W13.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/bins/bin1.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin1.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+W13 bin1 is written: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin1.jsonl. It has 64 lines in bin order. The `old` names match global_variables.csv, and the 28 new names pass the apply_renames / gate_W12 name rules and appear nowhere else in the firmware tree. `git status` is clean.
+
+## Counts
+- 28 rename (verdict `confirmed`), 31 keep, 5 drift, 0 uncertain.
+- Comment clipping: the comments run up to ~980 characters. The apply clips at 360-400, so only the e2m record and the role sentence survive. Raise the limit if the lead wants more.
+
+## Families renamed
+- `engine_speed_limit_droop_type_select_cal` (0x3fdd38)
+- `data_collector_center_address` (0x40c27c)
+- `accelerator_pedal_autozero_cal` (0x3fddaa)
+- `fault_detected_bits_592_to_607` (0x3fe9be, was `iat_sensor_deviation_flags`)
+- `throttle_100_fueling`, `throttle_100_fueling_low_horsepower_curve`, `throttle_100_fueling_without_programmable_power` (0x40a897 / 899 / 89f)
+- `j1939_derated_fueling_at_point_4` / `_5` (0x5c356 / 0x5c358)
+- `fuel_temperature_derate_precrank_error_flag` (0x40a74c)
+- The road speed governor (RSG) droop words in two prefixes:
+  - Values passed to the fueling code: `vehicle_speed_limit_fueling_bottom_droop_gain`, `_top_droop_gain` and `_top_droop_offset` (0x40b6b2, 0x40b6b8, 0x40b6ba).
+  - Values computed by the governor: `road_speed_governor_bottom_droop_gain` and `road_speed_governor_top_droop_gain` (0x40b6b6, 0x40b6bc).
+  - Another bin may hold the Cruise twins or block 1102, so the lead may need to reconcile the prefixes.
+- `j1939_pgn65251_speed_points_request_flags` (0x40a732)
+- `wastegate_duty_feedforward_term`, `wastegate_duty_proportional_term`, `wastegate_duty_compressor_outlet_temperature_derate_error_term` (0x40a3be / 3c2 / 3e6)
+- `egr_mass_flow_estimate_maximum` / `_minimum` (0x4002e4 / e6). The old `lower` / `upper` meaning was swapped: 0x4002e4 is the ceiling.
+- `stoichiometric_oxygen_fuel_ratio` (0x406004)
+- `injector_driver_pull_in_duration`, `injector_driver_delay_duration` (0x4090a0 / a4)
+- `fuel_pressure_governor_derivative_gain_small_signal`, `_positive_large_signal`, `_negative_large_signal` (0x4094c4 / c8 / cc)
+- `cruise_resume_downshift_delay_timer` (0x40b0ac)
+
+## Type flags (types not changed)
+- 0x4002e4 and 0x4002e6 are signed (`lha`, e2m S): i16.
+- 0x4094c4 / c8 / cc are 4-byte records read with `lwz`, but the rows are `word`. Retype to dword and remove the `_lo_cal` rows at 0x4094c6 / ca / ce. The apply tool should not carry that to-do into the comments.
+
+## Drift
+- **1930 +16 (0x3feebc, BTR_Numerator) confirms the known drift from +12 on.** The word is a 0/1 latch for the engine retarder selector switch (switch 12), set in `cm848_mainLoopMonitor` and gating the logical output 11 check (faults 41/42 = P0478/P0477). The name also breaks the rules: EEPROM mirror without `_cal`, and a bare `protection_b`. A later pass should rename it to `engine_retarder_switch_learned_flag_cal`.
+- **8D14 from +2 is new drift.** +0 holds (0x40b0ac, renamed): it reloads 150 = 1.5 s, counts down in 4th gear with the cruise flag, and gates the 4-3 downshift request. +2, +4, +C and +E (0x40b0ae / b0 / b8 / ba) are 16-bit shift-prediction words of the 48RE transmission governor pressure code, not timers or a lamp. Their `protection_*` prefix is wrong for that code.
+- **8C4E +6 OSS_Ratio and 8C58 +12 Gov_Press_Control_Ratio alias one word with 8C5B +0 RE_PN_Rationality_Status.** That word is `park_neutral_switch_monitor_state` (0x40b570). I used `keep` with the 8C5B note, which also names the bin's records. The lead can flip it to drift if the gate wants the bin's record.
+- Everything else matched: 0004, 0008, 0034, 101A, 1036, 105A, 1080, 1104, 1152, 1187, 11A4, 12BB, 162E, 16A2, 174F, 177E, 1791, 17AC, 801A, 8041, 80EF.
+
+## Notes for the apply
+- The old comment on 0x40b0ac ("overtemp ... derate level 4") is wrong. Do not carry it as "earlier note".
+- The keep note for 0x6456c duplicates the wave 12 comment, which already leads with that record. Skip appending it.
+- For 0x40b6bc (`road_speed_governor_top_droop_gain`), the old name `cruise_ramp_rate_d_working` is a different address from the existing `cruise_ramp_rate_d_computed` (0x3fcff4).
+- 0x40a899 and 0x40a89f rest on e2m labels plus code corroboration. The "ESP Tau 0" wording on 0x40a89f is not reproduced by the code and is left open in the evidence and comment.
+
+## Out-of-bin siblings, same wrong names (not applied)
+- 0x3fea22 `j1939_tsc1_mode_shadow` → `fault_registered_bits_592_to_607` (registered twin of word 37)
+- 0x5c34e / 0x5c350 `protection_threshold_scale_cal` / `_base_cal` → `j1939_engine_speed_at_point_4` / `_5`
+- 0x40b6b4 `cruise_speed_setpoint_c` → `vehicle_speed_limit_fueling_bottom_droop_offset`
+- Cruise twins, with proposed names:
+  - 0x40b698 `cruise_speed_reference_a` → `cruise_control_fueling_bottom_droop_gain`
+  - 0x40b6ac `cruise_speed_reference_b` → `cruise_control_fueling_top_droop_gain`
+  - 0x40b6ae `cruise_speed_offset_b` → `cruise_control_fueling_top_droop_offset`
+  - 0x40b69a `cruise_governor_fuel_demand_lower_ramp_start` → `cruise_control_fueling_bottom_droop_offset`
+  - 0x40b69c / 0x40b6b0 `cruise_ramp_rate_a_working` / `_b_working` → `cruise_bottom_droop_gain` / `cruise_top_droop_gain`
+- 0x3fa8ae / 0x3fa8b0 `protection_mode_request_bit` / `protection_mode_request_initialized_flag` (same wrong prefix as 0x40a732)
+- 16A2:
+  - 0x40a3e0 `governor_pid_adjustment_output` → `wastegate_duty_first_error_derivative_term`
+  - 0x40a3e2 `governor_trim_lookup_result` → `wastegate_duty_second_error_gain`
+  - 0x40a3e4 `governor_rpm_correction_term` → `wastegate_duty_second_error_derivative_term`
+  - The feedforward calibration source 0x3ffca6 `throttle_rate_integrator_cal`, and its `throttle_rate_*` cal siblings, also belong to the wastegate controller.
+- 177E +6 / +A / +C: 0x4002e8 `throttle_conversion_scale_cal`, 0x4002ec `rpm_fuel_trim_select_cal` (upstream/downstream EGR flow model select), 0x4002ee `throttle_load_scale_factor_cal`
+- 80EF: 0x4094c2 `engine_sync_prot_gain_cal` → `fuel_pressure_governor_derivative_gain_constant`; 0x4094d0 `engine_sync_prot_limit_cal` and 0x4094d2 `engine_sync_prot_gain_b_cal` → `fuel_pressure_governor_derivative_positive_window_width` / `_negative_window_width`
+- 8041: `mios_pwm16..19_*_ref` and `tpu_ch14_period_base` still carry `ref`
+
+## Function names the evidence shows wrong (not applied)
+| Address | Current name | Proposed name | Reason |
+|---|---|---|---|
+| 0x0001f17c | `cm848_calculateFuelDemandWithTrim` | `cm848_calculateThrottle100Fueling` | stores the five e2m 105A Throttle_100 fueling values |
+| 0x000173a8 | `cm848_fuelDemandOverrideHandler` | `cm848_learnAcceleratorPedalAutozero` | tracks the lowest pedal reading with the idle switch on and writes the EEPROM autozero |
+| 0x00020c64 | `cm848_processJ1939RxMessage` | `cm848_setTorqueCurvePoints2And5AtDroopLineFueling` | takes a fueling in param_1 and sets curve points 2 and 5; handles no message |
+| 0x00020d10 | `cm848_updateProtectionStateMachine` | `cm848_updateJ1939EngineConfigurationTorqueCurve` | fills the e2m 1102 Jcomm speed / fueling / torque points of PGN 65251 |
+| 0x00021ac0 | `cm848_initUdsServiceHandlers` | `cm848_lookupJ1939FuelTableAtEngineSpeed` | returns the chi/alpha-interpolated `j1939_fuel_table` value at the engine speed passed; no UDS |
+| 0x000127bc | `cm848_selectFuelTrimMode` | `cm848_selectEgrMassFlowModel` | clamps the EGR mass flow estimate (`throttle_fuel_trim_t.final_trim`) |
+| 0x000125f4 | `cm848_calculateRpmBasedFuelTrim` | `cm848_calculateEgrMassFlowUpstreamModel` | feeds that EGR estimate; selected by `rpm_fuel_trim_select_cal` = 0 |
+| 0x0001242c | `cm848_calculateLoadBasedFuelTrim` | `cm848_calculateEgrMassFlowDownstreamModel` | feeds that EGR estimate; selected by `rpm_fuel_trim_select_cal` != 0 |
+
+Cluster lead, no names proposed: `cm848_protectionScaledLimitCalculation` (0x320e0), `cm848_protectionRateOfChangeCalculation` (0x32250), `cm848_calculateProtectionFuelDemandThreshold` (0x3241c) and `cm848_processProtectionStateFlags` (0x3257c). They are 48RE shift / governor pressure code (`transmission_current_gear`, `transmission_output_speed_change`, `governor_pressure_target`), not protection.
+````
+
+## 13. Review e2m names wave 13 bin 2 (703k tokens, 43 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 13 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/brief_W13.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/bins/bin2.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin2.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+W13 bin2 is done: 64 lines written to /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin2.jsonl, in bin order. Nothing else was touched; `git status` is clean.
+
+My own self-check passed. It covered address and `old` against the bin and the CSV row, name uniqueness against CSV fields and .cpp tokens, the BANNED set, `_cal` by region, comments of 360 characters or fewer, quoted dump values against `dump_raw`, and no comment citing a name this bin renames.
+
+**Verdicts:** 48 rename (confirmed), 10 keep, 6 drift, 0 uncertain.
+
+**Families renamed**
+- **104C AFC (3):** `air_fuel_control_{normal_boost_timer, low_boost_timer, low_boost_blend_fraction}`. The old `fuel_ramp_*` names read backwards.
+- **109C friction fuel (4) and 175C +8:** `friction_fueling` and `friction_fuel_adjustment_for_{coolant_temperature, air_conditioning_clutch, radiator_fan}`; `friction_torque_adjustment_for_coolant_temperature`. The old names said `governor_*` and `fuel_demand_rpm_correction_lookup`.
+- **1102 Jcomm block (17):** the old `protection_*` / `j1939_dm1_*` / `fuel_demand_*` names, which are the PGN 65251 engine configuration and torque curve. New names:
+  - `actual_engine_percent_torque_times_256`
+  - `j1939_engine_percent_load_at_current_speed_times_256`
+  - `j1939_indicated_percent_torque_at_{idle,point_2,point_5}_times_256`
+  - `j1939_determined_engine_speed_at_point_{2,4,5}`
+  - `j1939_reference_engine_fueling`
+  - `reference_engine_torque_working` (old `_cal` was wrong)
+  - `j1939_torque_curve_speed_at_point_{2,4,5}`
+  - `j1939_torque_curve_fueling_at_point_{2..5}`
+- **81AE/81AF cylinder balance (9):** `cylinder_balance_*`. The old "low / high threshold" names were reversed, and `cam_timing_*` was wrong.
+- **18D9 intake manifold temperature lead (3):** `intake_manifold_temperature_{after_lead, lead_term, lead_time_constant}`. The old names said pressure.
+- **Singles:**
+  - `data_collector_end_address` (was `diag_dm1_*`)
+  - `supervisor_chip_driver_feedback_delay_microseconds` (was `j1939_address_cached`)
+  - `cruise_driver_fault_match_debounce_threshold` (was `protection_*`)
+  - `ram_refresh_enable` and `development_mode` (see judgment calls)
+  - `rear_axle_ratio_{low,high}_cal`
+  - `road_speed_governor_top_droop_width_cal` (gains the mirror `_cal`)
+  - `key_off_shutdown_mode`
+  - `total_fueling`
+  - `exhaust_temperature_estimate_injection_timing_coefficient`
+
+**Drift**
+- **1B2D, +4 on (4 rows, 0x40b9c8..ce):**
+  - The code there is the OBD monitor enabling inputs, which an earlier pass tied to block 160A. Block 160A is outside the dumped ID table.
+  - 1B2D +0 and +2 (0x40b9c4 / 0x40b9c6) hold: they are the key-on rationality abort code and state.
+- **1966, +94 on (0x40be16):** the value/default pairs end at +92, and fault status words start at 0x40be14.
+- **1649, +10 on (0x3fd948):**
+  - The 193A +0 Test_Sensor1_Ratio_Supply_ID array starts here; the in-plant EOL struct ends at +F.
+  - 193A +0 matches the current name and could be added as the cross-reference.
+
+**Judgment calls to review**
+- **0x40c04a `diagnostic_session_state` -> `ram_refresh_enable`, and 0x40aa9a `j1939_standby_flag` -> `development_mode`.** The evidence is strong:
+  - `cm848_initProtectionModule` is the compare-and-rewrite loop, and it sets fault bit 0x1, which is e2m `RAM_Image_Word_Error`.
+  - `cm848_runCylinderContributionTest` clears the flag while it edits calibration RAM.
+  - Boot sets it ACTIVE.
+  - The reset service sets `development_mode` and clears the refresh enable together.
+
+  The enums `DIAG_SESSION_STATE` / `J1939_STANDBY_STATE` and their member descriptions still follow the old reading, and I did not change types.
+- **0x40a33a `fuel_timing_arbitration_output` -> `total_fueling`.** There is no timing in it. `timing_limit_upper` (0x5c30c) is e2m 1052 +6 Minimum_Fueling.
+- **0x3fd482 `eeprom_mirror`:** kept without `_cal`, as the base symbol of the whole mirror. It is the one mirror-region row I left deliberately.
+- **`friction_fueling` and `total_fueling`:** these equal names in `e2m_variables.csv`. They are not in `global_variables.csv` or the .cpp, and 18 globals already coincide with that file.
+- **Type remarks:**
+  - Signed records typed `word` with `lha` reads are `i16` candidates: 0x40aef6, 0x40ad8a, 0x40afbe, 0x40676c, 0x40a458, 0x408eee and 0x408ef0.
+  - 0x40a45a, 0x408f24, 0x408f26, 0x3fee94 and 0x3fee96 are signed and read through `(short)` casts.
+  - 0x408ef2 is unsigned but read with `lha`.
+
+**Functions whose names the evidence shows are wrong (not applied automatically)**
+
+| Address | Current -> proposed | Reason |
+|---|---|---|
+| 0x0001b3a0 | `faultTimerHandler` -> `cm848_buildPgn65251EngineConfigurationMessage` | Fills the 28-byte PGN 65251 payload from the torque curve snapshots. |
+| 0x00020d10 | `cm848_updateProtectionStateMachine` -> `cm848_updateJ1939TorqueCurve` | Builds the speeds, fuelings and percent torques at points 1-5; no protection state. |
+| 0x00020c64 | `cm848_processJ1939RxMessage` -> `cm848_calculateJ1939TorqueCurveDroopBreakpoint` | Tail helper of the above, not a receive handler. |
+| 0x00020500 | `cm848_calculateProtectionActivationDelay` -> `cm848_calculateReferenceEngineFueling` | Computes the Jcomm peak fueling. |
+| 0x000209e8 | `cm848_calculateLoadRateOfChange` -> `cm848_calculateActualEnginePercentTorque` | Computes the EEC1 actual percent torque x 256. |
+| 0x00020a58 | `cm848_calculateLoadToFuelRatio` -> `cm848_calculateEnginePercentLoadAtCurrentSpeed` | Computes the EEC2 percent load. |
+| 0x0002588c | `j1939GetEngineStateCode` -> `cm848_buildPgn61444ElectronicEngineController1Message` | Builds and sends EEC1. |
+| 0x000212dc | `cm848_initProtectionDelayDefaults` -> `cm848_initializeJ1939ReferenceEngineFuelingAndTorque` | Loads the ROM peak fueling and reference torque. |
+| 0x00021cd4 | `cm848_updateProtectionDiagnostics` -> `cm848_updateJ1939TorqueCurveReferenceFuelings` | Skimmed only: it sets the five per-point reference fuelings. |
+| 0x0050dba8 | `governor_computeSpeedTargetWithThermalCorrection` -> `cm848_calculateNoLoadFuel` | Sums friction fuel plus the coolant, A/C and fan adjustments. |
+| 0x0050eaa8 | `cm848_applyProtectionRpmCorrectionFilter` -> `cm848_calculateEngineFrictionAndNetMachineTorque` | Computes the 175C friction, no-load and net machine torques. |
+| 0x00013d14 / 0x00013dc8 | `cm848_calculatePressureSensorDerivative` / `...Filtered` -> `cm848_calculateIntakeManifoldTemperatureLeadTerm` / `cm848_filterIntakeManifoldTemperature` | Channel 9 is the intake manifold temperature. |
+| 0x00538a84 / 0x005389c4 | `cm848_initProtectionModule` / `uds_session_state_init` -> `cm848_refreshRamCalibration` / `cm848_initializeRamRefresh` | The RAM refresh loop and its setup. |
+| 0x00021624 / 0x00021668 / 0x00021694 | `cm848_activate` / `reset` / `forceActivateDiagnosticSession` | They set or clear `ram_refresh_enable` and `development_mode`; reset enters development mode. Review the names. |
+| 0x00505c20 | `diag_dm1Buffer_circularFill` -> `cm848_fillDataCollectorBuffer` | It is the data collector. |
+| 0x0004272c / 0x00042770 / 0x005268e8 | `cm848_applyProtectionControlLimit` / `cm848_setProtectionControlValue` / `cm848_computeProtectionTrimDivisors` -> `cm848_selectRearAxleRatioInUse` / `cm848_selectRearAxleRatioHigh` / `cm848_calculateRearAxleTrimDivisors` | Axle ratio selection and its trim divisors. |
+
+**Siblings outside the bin that keep wrong names (for another pass)**
+- **1102:**
+  - 0x40ad90 `j1939_engine_torque_output_b` is the EEC3 nominal friction percent.
+  - 0x40ad96 `protection_speed_ratio_c` and 0x40ad98 `protection_speed_ratio_d` are the point 3 and 4 percent torques.
+  - 0x40ada0 and 0x40ada2 are the determined speeds at points 1 and 3.
+  - 0x40adac and 0x40adb0 are the torque curve speeds at points 1 and 3.
+  - 0x40adb6 is the point 1 fueling.
+  - 0x40adc0..c8 `protection_*_cached` are the Calc_Fueling points 1-5.
+  - 0x40adca..d2 `governor_speed_ref_channel_a..e` are the per-point reference fuelings.
+  - ROM 1104: 0x5c34e, 0x5c350, 0x5c356 and 0x5c358 (`protection_*_cal`) are the Jcomm speeds and derated fuelings at points 4 and 5.
+  - 0x40a298 `protection_temp_scale_factor` is the axle ratio in use, and 0x3fd062 / 0x3fd066 `protection_trim_divisor_*` are the axle ratio times the timing period.
+- **18D9:**
+  - 0x40a462 `fuel_demand_phase_state` and 0x40a464 `fuel_demand_phase_status_flags` are Charge_Tmptr_Source / State.
+  - The `sensor_channel9_pressure_*` rows are the intake manifold temperature channel.
+- **10C7 +2:** 0x40c04c `sensor_validation_result` is Powerdown_Refresh_Enable.
+- **1B2D +0 / +2:** 0x40b9c4 and 0x40b9c6 `cam_sync_validation_abort_reason` / `_state` are the fuel pressure key-on rationality abort code and state.
+- **1042:**
+  - 0x40a036 `fault_active_recovery_threshold_ch19_20` carries a `ch` abbreviation; it is Cruise_Driver_Recover_Count.
+  - The `j1939_can_frame_word_*` / `j1939_timer_*` rows are supervisor chip words.
+- **11D5:** 0x3ff00a..10 `fuel_ramp_*_cal` carry a `_cal` outside the mirror. They are the AFC time delay and select slew records.
+- **Data collector:** 0x40c270..84 `diag_dm1_buffer_*`, 0x3fddba and 0x3fddb8. Mechanical names would be `data_collector_buffer_start_address` and so on.
+- **120C:** 0x5c30c `timing_limit_upper`, 0x3fa86c, 0x3fa870 and 0x3feaa2 carry the same misread "timing".
+- **1185 +4:** 0x3fd912 `cruise_ramp_zone_b_fuel_demand_threshold` should be `cruise_top_droop_width_cal`.
+- **81AE:**
+  - 0x408f2c and 0x408f2e `cylinder_diag_*_threshold_cal` are the CBD service trim maximum / minimum, with a `_cal` outside the mirror.
+  - 0x3fb5a4 and 0x3fb5a6 are the matching snapshots.
+  - 0x408f30 is the cylinder contribution gain.
+  - 0x408f13 and 0x408eec `cam_timing_*` also need a pass.
+````
+
+## 14. Review e2m names wave 13 bin 3 (689k tokens, 38 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 13 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/brief_W13.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/bins/bin3.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin3.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+W13 bin3 is finished: 64 lines in /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin3.jsonl, in bin order. I edited no repo file and made no scratch file. A script check found no problems: `old` is exactly label_in_cpp, no bad names or `_cal` errors, comments at most 396 characters with no "(was". None of the 40 new names exists in the CSVs, .cpp or .hpp, and none collides with the names in the bin1/2/4/5/6 result files present when I checked.
+
+**Verdicts:** 40 confirmed renames, 20 keep, 4 drift, 0 uncertain.
+
+**Renames, by family**
+- **`_cal` fixes (meaning right, rule broken):**
+  - Missing `_cal` in the EEPROM mirror: `fault_aging_drive_cycle_counter_cal` (0x3fed90) and `engine_start_count_since_fault_logged_cal` (0x3fedce, was a bare "protection").
+  - `_cal` outside the mirror, dropped: the 1944 rows (0x4009d4 and 0x4009d8, which were also the wrong domain) and `shift_in_process_hold_off_time_limit` (0x40869c).
+- **Misnames:**
+  - **000D:** `not_safe_to_program_flag` (0x40af66, was `prior_boot_faulted`). It holds engine_state != STOPPED.
+  - **0036:** `data_collector_status` (0x40c284). The `diag_dm1_*` words around it are the data collector, not J1939 DM1.
+  - **1052:** `fuel_demand_minimum` (0x5c30c, was `timing_limit_upper`). Every use is a lower bound. It is not `fuel_demand_minimum_tracked`.
+  - **1053:** `four_dimensional_fueling`, `four_dimensional_fueling_user_maximum`, `commanded_throttle_filter_coefficient` and `commanded_throttle_filtered`.
+  - **106C:** `drivetrain_ratio_change_settle_counter` (0x40b6fc). `fuel_flow_divisor` is the wrong domain.
+  - **10B1:**
+    - `engine_protection_precrank_shutdown_command_flag` (0x40a782).
+    - `engine_protection_shutdown_approaching_flag` (0x40a786). The old name duplicated `fault_derate_active_flag`; the code sets this when a channel's timer passes the start-warning time.
+  - **10E2:** `j1939_friction_load_fueling_at_breakpoint_4` (0x40a644).
+  - **118A:** `cruise_governor_reference_speed` (0x40b6d4).
+  - **11D4:** `master_slave_final_override_fueling` (0x40a87b) and `master_slave_override_enable_flag` (0x40a87d).
+  - **1211:** `monitor_readiness_code_cal` (0x3fed94). The old comment's "clear as faults resolve" is wrong. The bits are OBD monitors still to run.
+  - **16A3:** `wastegate_duty_first_error_term_limit_enable_flag_cal` (0x3fd7de). It matches the existing `wastegate_duty_second_error_term_limit_enable_flag_cal`.
+  - **1981:** `end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal` (0x3fee9b).
+  - **80B9:** `injector_diagnostic_bits_{fast_decay, open_circuit, short_to_ground, short_to_battery}`, replacing the letters d, a, b and c.
+  - **81B0:** `cylinder_balance_{filtered_fueling, fourier_real_component_1, fourier_imaginary_component_1, adjusted_real_component_2, adjusted_imaginary_component_2, adjusted_real_component_3, acceleration_buffer_6}`. I derived these from the harmonic sums in `hpcr_cbdCalculateCylinderTrims`, because two e2m descriptions are copy-pasted.
+  - **8A14:** `shift_in_process_hold_off_time_limit` (0x40869c).
+  - **8C33:** `converter_clutch_rationality_maximum_engagement_time` and `converter_clutch_steady_throttle_count_limit`.
+  - **8C58:** `governor_pressure_zero_check_{state, debounce_count}` and `governor_pressure_mid_range_check_{fail_count, state, debounce_count}`. They match the existing 8C59 cal names; the monitors are P1757 and P1756, checked against the ROM tables.
+- **Keep (accurate synonyms):** 0x40b6fa, 0x40a77e, 0x40a792, 0x3fed92, 0x3fd7f0, 0x40a706, 0x40ba36, 0x40b856, 0x4086be, 0x40b0a8, 0x40b44f, 0x40b450 and the eight 8A13 timers.
+
+**Drift**
+- **0x40ba48 and 0x40ba4a (1902 +2A / +2C):** the code uses them as the thermostat monitor's fuel words, not performance ratios.
+- **0x4086c8 (8A14 +2E):** only the TSC1 reload fits; dump 20 is 0.3 deg F.
+- **0x40b56e (8C58 +10), new:** the word is the P0720 output speed sensor state, which is e2m 8C4E +4 OSS_Rationality_Monitor_State at the same address. 8C4E +0 resolves to 0x40b56a, which is 8C58 +C, so the 8C58 tail (+C..+12) overlaps 8C4E. 8C59 +1A / +1C land on 8C4F +0 / +2.
+
+**Vocabulary choices**
+- `four_dimensional_*` follows the e2m ("4D"). The repo's `cm848_calculateDualAxisFuelLimit` and the enum say "dual axis".
+- `malfunction_indicator_lamp` is spelled out; the repo's existing `mil_*` names are not on the brief's allow-list.
+- `fourier` stands for FFT.
+- `cylinder_balance_` follows the existing 81AF rows.
+- 80B9 splits a family: eight out-of-bin rows keep the letters. Map: a = open_circuit, b = short_to_ground, c = short_to_battery, d = fast_decay.
+  - The out-of-bin rows are `injector_diagnostic_bits_{a,c,b,d}_debounce_count` at 0x3fb6fc / 0x3fb6fe / 0x3fb700 / 0x3fb702 and `_debounce_limit` at 0x409a8c / 0x409a90 / 0x409a8e / 0x409a8a.
+  - Short-to-ground versus short-to-battery rests on the e2m byte order only; both bytes feed P2146 / P2149. Open circuit is anchored by P0201-P0206.
+
+**Type notes (not changed)**
+- 0x40a87d is `dword` but should be `word`: the record is 2 bytes, every load is `lhz`, and it covers 11D4 +4 at 0x40a87f.
+- 0x40b73c, 0x40b73e, 0x40b740, 0x40b742, 0x40b744 and 0x40b756 are signed records read only with `lha`, so `i16` would fit.
+- 0x40b856 (a keep) is also signed with three `lha` loads.
+
+**Old facts only in the evidence**
+- Comments assume the apply keeps the old comment as an earlier note.
+- 0x3fed94: the `lwz`/`stw` proof site (@ 0x52d634) and the note that it is distinct from `diagnostic_fault_flags_a/b` (0x40a813) are not repeated.
+- Check the other renames if the apply drops old notes.
+
+**Function names the evidence shows are wrong (not applied; proposed names not gate-checked)**
+- 0x2bf44 `cm848_updateFaultOnKeyoff` -> `cm848_updateNotSafeToProgramFlag`. It runs every pass and only stores engine_state != STOPPED.
+- 0x1e830 `cm848_updateEngineTimingCompensation` -> `cm848_updateFourDimensionalFueling`. It stores the 4-D fueling; nothing about timing.
+- 0x1eae8 `cm848_calculateFuelDemandChangeRate` -> `cm848_filterCommandedThrottle`.
+- 0x525e54 `protectionTimeoutControl` -> `cm848_updateDrivetrainRatio`. It computes and filters the drivetrain ratio and its out-of-gear and settle timers.
+- 0x508130 `governor_coldStart_faultDerate_trigger` -> `cm848_examineEngineProtectionBeforeCranking`.
+- 0x508898 `governor_faultDerate_mainLoop_update` -> `cm848_updateEngineProtectionShutdown`.
+- 0x508e78 `cm848_updateJ1939ReceptionControlFlag` -> `cm848_detectEngineProtectionShutdownOverrideRequest`. It edge-detects the override switch, not J1939 reception.
+- 0x508ee0 `governor_derateTrigger_latch_clear` -> `cm848_latchEngineProtectionShutdownOverride`.
+- 0x1811c `cm848_faultSeverityEvaluation` -> `cm848_calculateFrictionFuelingAtBreakpoints`.
+- 0x182e8 `cm848_calculateThrottleProtectionLimit` -> `cm848_calculateJ1939PercentPeakTorque`.
+- 0x1820c `cm848_processThrottlePositionLookups` -> `cm848_calculateJ1939PercentPeakTorquePoints`.
+- 0x18070 `cm848_throttlePositionProcessing` -> `cm848_calculatePercentPeakTorqueAtSpeed`.
+- 0x50ddb4 `diag_suppress_stateMachine` -> `cm848_controlEndOfLineTestMilRequest`. It sets diagnostic_suppress_flag, which forces the MIL on.
+- 0x533b18 / 0x533b5c / 0x533b94 `diag_protection_history_increment / _shiftIn / _shift` -> `cm848_incrementEngineStartCountsSinceFaultLogged` / `cm848_shiftInEngineStartCountsSinceFaultLogged` / `cm848_shiftEngineStartCountsSinceFaultLogged`.
+- 0x42cfc `hpcr_processLoadThrottle` -> `hpcr_filterCylinderBalanceFueling`. It filters final_fueling for the cylinder balance code.
+
+**Out-of-bin sibling leads (not in my bin)**
+- **10E2:** 0x40a630-0x40a646.
+  - Percent peak torque rows: `throttle_protection_load_ratio`, `throttle_position_b6` / `b8` / `ba` / `b4`, `throttle_position_from_integrator`.
+  - Friction rows: `throttle_torque_integrator_lookup`, `throttle_cal_b4_lookup`, `throttle_cal_b6_lookup`, `throttle_cal_ba_lookup`.
+  - They fit `j1939_percent_peak_torque_at_*` and `j1939_friction_load_fueling_at_*`.
+  - I did not verify that the percent-torque words feed PGN 65251.
+- **106C:** 0x40b6f6 `fuel_flow_rpm_divisor` (User_Filtered_Gear_Ratio), 0x40b6f8 `fuel_flow_divisor_invalid_flag`, 0x40b6fe `fuel_flow_rpm_divisor_saved`. They hold the drivetrain ratio, not fuel flow.
+- **10B1:**
+  - 0x40a78a `governor_fuel_derate_j1939_latch` is the shutdown override request.
+  - 0x40a790 `governor_fuel_derate_state` is the engine protection timer state.
+  - 0x40a772 and 0x40a774 (`governor_faultDerate_*`) are camelCase legacy names.
+  - 0x40a74c `governor_faultDerate_ch0_threshold_exceeded` is 1152 +18 Fuel_Temperature_Precrank_Error.
+- **1053:** 0x40a889 `thermal_fuel_limit_factor` is the 4-D interpolation factor. 0x40a891 `fuel_limit_mode_flags` holds the throttle transient/decrease flags. The `fuel_mode_ema_*` rows at 0x3fa880-0x3fa884, 0x406a46 and 0x406a52 are the same throttle filter.
+- **8C33 / 8C34:** the P1740 `protection_*` rows at 0x408ad2, 0x408ad3, 0x408ade and 0x40b57a-0x40b58e. That includes `protection_pid_step_counter` (TCC_Rationality_Timer), `protection_output_stability_counter`, and `governor_pressure_error` (OD_Function_Timer).
+- **8C58 / 8C59:**
+  - 0x40b55e `protection_coldStart_channelA_trip_count` -> `governor_pressure_zero_check_fail_count`.
+  - The window_active flags and 0x408a9c / 0x408aa4 / 0x408aa8 `protection_coldStart_*_threshold`. These are governor pressure target limits, not rpm.
+  - 0x408aac / 0x408aae `protection_load_*_threshold`, a transmission temperature window.
+- **81B0 and neighbours:**
+  - 0x40b74c-0x40b754 `cylinder1..5_timing_offset` are Accel_Buffer_1..5, so `cylinder_balance_acceleration_buffer_1..5`.
+  - 0x40b746 `cylinder_sync_valid_flag` and 0x40b747 `crank_pattern_sync_flag` are CBD_Stop_Compensation_Flag and CBD_Trim_Limits_Exceeded.
+  - The 81AF rows `cam_timing_prev_capture_a/b` and `cylinder_sync_state`, and the 81B1-3 `cylinder_seq_*` rows.
+- **0x3fed98 `fault_pending_flags_b`:** Pending_Readiness_Code, so `monitor_pending_readiness_code_cal`.
+- **0x3fedbc `protection_event_spn_history`:** the fault code history; it is in the EEPROM mirror and lacks `_cal`.
+- **0x40a19a `boost_fuel_demand_blend_a`:** holds `ambient_air_temperature_selected`.
+````
+
+## 15. Review e2m names wave 13 bin 4 (580k tokens, 32 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 13 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/brief_W13.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/bins/bin4.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin4.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+Wave 13 bin 4 is done: 63 lines, one per record, in /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin4.jsonl. The repo gate was not run (see "Gate not run"); my hand copy of its checks passes.
+
+**Counts:** 21 rename (verdict confirmed), 42 keep, 0 drift, 0 uncertain.
+
+**Families renamed** (each comment leads with the e2m record, then the code role):
+- Data collector: 0x3fddb8 `diag_dm1_protection_warning_active` -> `data_collector_trigger_active_cal`. It is in the EEPROM mirror, so `_cal`.
+- System switch status, e2m 1092: `diagnostic_fault_flags_a` / `_b` -> `system_switch_status` / `_2`. The dump reads 0x60 (accelerator at idle plus key on).
+- J1939 source addresses, e2m 10E3 +4 / +6 / +8: `j1939_tsc1_*_sa` -> `j1939_transmission_source_address`, `j1939_anti_lock_brake_source_address`, `j1939_anti_slip_regulation_source_address`.
+  - Independent proof: e2m 117D +14 orders the devices TRANS / ABS / ASR / UNKNOWN as 1 / 2 / 3 / 4, which is what `cm848_lookupJ1939SourceAddressIndex` returns.
+- Non-continuous monitors: 0x5a494 `j1939_feature_config_word` -> `supported_non_continuous_monitors_bits` (see drift below).
+- EGR orifice, e2m 19CA / 1A19:
+  - `throttle_trim_predictor_output` -> `egr_orifice_temperature_after_lead`.
+  - `throttle_trim_predictor_gain` -> `egr_orifice_temperature_lead_time_constant`.
+  - `boost_fuel_correction_prev` -> `egr_orifice_delta_pressure`.
+- Fuel pressure governor proportional gains, e2m 8014: `injection_timing_scale_cyl1_a_cal`, `cyl2_a_cal`, `cyl3_a_cal` -> `fuel_pressure_governor_proportional_gain_small_signal`, `_positive_large_signal`, `_negative_large_signal`.
+  - Proof: they are the gain block of `cm848_applyPiecewiseLinearGain`. The window words at 0x4094ae read +-10 MPa. Each gain has its own e2m 8005-800A scaling curve.
+- Injection scheduler, e2m 805C / 805E:
+  - `injection_timing_tooth_base_offset_mode2` -> `injection_timing_tooth_base_offset_cylinder_0`. 'mode2' is wrong because both scheduling paths use it.
+  - `injection_tpu_timing_mode` -> `injection_tpu_period_parameter_address`. The values 2 and 0x12 are the low bytes of 0x304102 / 0x304112, which are TPU-A channel 0 / channel 1 parameter 1.
+  - `cam_sync_position_high_byte` -> `injection_timing_tooth_separation_per_cylinder`. It is tooth count / cylinders = 120 / 6 = 20.
+- Singles:
+  - `fuel_demand_cmd20_pending_flag` -> `duty_cycle_monitor_map_reset_pending_flag`.
+  - `protection_temp_scale_factor` -> `rear_axle_ratio` (dump 453 = 3.54).
+  - `governor_speed_engage_reset_flag` -> `ecm_power_down_delay_request_flag`.
+  - `fuel_demand_enable_sync_flag` -> `cruise_resume_active_flag`.
+  - `map_fuel_correction_multiplier_cal` -> `engine_displacement_cubic_inches` (359.2 cu in). The old `_cal` was wrong.
+
+**Drift found**
+- 0x5a494: the labelled record, e2m 10E3 +28 DDT_TSC_ASG_Filter_Slew_Rate, is the 11.45 e2m's shifted tail. The record that also resolves there, 1228 +8 Supported_Non_Continuous_Monitors, matches the DM5 / DM10 / DM7 code. This line is a rename taken from the 1228 record, so the caller can downgrade it to leave-as-is.
+- No drift in 10E3 +4 / +6 / +8, 117D, 805C / 805E, or 8A12. For 8A12 I checked all seven timer / status pointers against the PCI descriptor tables.
+
+**Function names the evidence shows are wrong** (not applied)
+
+| Address | Current | Proposed | Reason |
+|---|---|---|---|
+| 0x00505c20 | `diag_dm1Buffer_circularFill` | `cm848_fillDataCollectorRingBuffer` | fills the data collector ring buffer, not DM1 |
+| 0x00505f98 | `cm848_phase_groupB_calculation` | `cm848_runDataCollector` | the collector pass |
+| 0x00505d94 | `hpcr_exception_process` | `cm848_resetDataCollector` | resets the collector, called at start-up by `cm848_applicationMain` |
+| 0x00505df0 | `j1939_dm1_diagnosticMessage_send` | `cm848_sendDataCollectorBuffer` | sends the collector buffer by transport protocol in stop mode 3 |
+| 0x0050638c | `cm848_outputs2_periodic` | `cm848_updateDutyCycleMonitor` | the duty cycle monitor load histogram |
+| 0x0004272c | `cm848_applyProtectionControlLimit` | `cm848_selectTwoSpeedRearAxleRatio` | selects `rear_axle_ratio` |
+| 0x00042770 | `cm848_setProtectionControlValue` | `cm848_selectSingleSpeedRearAxleRatio` | loads `rear_axle_ratio` from the EEPROM word |
+| 0x0003e210 | `cm848_setFuelDemandActiveFlag` | `cm848_requestPowerDownDelayWhileMoving` | sets the power-down delay flag |
+| 0x00529ea4 | `cm848_sensor_diagnostic_flag_update` | `cm848_initializeInjectionAngleScheduler` | sets state 1, TPU address 2, channel 6 and the tooth separation |
+| 0x00506f88 | `sensor_channel108_filter` | `cm848_applyEgrOrificeTemperatureLeadCompensation` | channel 108 is the EGR orifice temperature sensor |
+| 0x00507028 | `sensor_throttleTrim_ema_faultProcess` | `cm848_filterEgrOrificeTemperature` | same |
+| 0x0050716c | `sensor_throttleTrim_inputSelect` | `cm848_selectEgrOrificeTemperature` | same |
+| 0x00017f50 | `cm848_calculateFuelFlowWithMode` | `cm848_calculateEgrDeltaPressures` | writes the orifice / valve / engine delta pressures |
+| 0x0001242c | `cm848_calculateLoadBasedFuelTrim` | `cm848_calculateEgrOrificeFlowTerms` | medium confidence; its inputs are the EGR orifice delta pressure ratio, valve position and orifice temperature |
+| 0x00012cf4 | `cm848_loadBasedFuelAdjustment` | `cm848_calculateChargeMassFlow` | speed-density charge flow |
+| 0x00525e54 | `protectionTimeoutControl` | `cm848_estimateDrivetrainRatio` | it is the drivetrain ratio estimator |
+
+**Out-of-bin siblings** (summary only, no lines written)
+- Cruise resume: `fuel_demand_enable_sync_flag_shadow` (0x3fb528) and `_shadow_2` embed the old name.
+- Axle ratio, e2m 1180:
+  - `protection_temp_scale_cal` (0x3fd534) is Rear_Axle_Ratio_High, so `rear_axle_ratio_high_cal`.
+  - `protection_temp_scale_factor_working` (0x3fd52e) is Rear_Axle_Ratio_Low, so `rear_axle_ratio_low_cal`.
+  - `protection_trim_divisor_cal` / `_working` are the timing period times those two.
+- EGR 1A19: `boost_fuel_mode_state` (0x40a626, EGR_Orifice_Delta_Press_Source) and `fuel_demand_enable_state_cached` (0x40a62e, Engine_Delta_Press_Source).
+- EGR orifice temperature: `throttle_trim_predictor_gain_lookup` (0x3fbcf8) and `throttle_trim_predictor_output_min` (0x406776).
+- 177C charge flow: the rest of 0x400932-0x400948 (C_CHP_* words) carry `boost_*` / `fuel_*` names, several with a wrong `_cal`.
+- 8014 and 8005-800A:
+  - `engine_sync_prot_scale_a_cal` (0x4094ae) is a dword over the two window widths, with a junk `+2` label row.
+  - `injection_timing_scale_cyl4_a` / `cyl5_a` / `cyl6_a_cal` are the integral gains.
+  - `cam_sync_cyl1-3_timing_{axis,values}_a_cal` (0x40918a, 0x4091a0, 0x4091b6, 0x4091cc, 0x4091e2, 0x4091f8) are the HPCR_SF_Propcomp curves.
+  - `cam_timing_alt_mode_enable_cal` (0x4090fa) is HPCR_Governor_Mode.
+- Remaining `diag_dm1_*` collector rows: 0x40c270-0x40c284, 0x3fbca6-0x3fbcb8, 0x3fddba (Collector_Stop_Mode), 0x3fddc4 (Collector_Table).
+- Struct `fault_entry_t`: fields `diagnostic_fault_flags_a` / `_b` have stale "Sensor scale factor" comments.
+- `protection_enable_byte_35` (0x40c085) is byte 5 of `logical_output_request_bits`, requests 40-47.
+- `governor_startup_threshold` (0x40a2c4) is e2m 117D +5C ESP_Tau.
+- 81C9 cutout: the four kept `cylinder_cutout_*` rows act on one injector bank (masks 0x55 / 0xaa, three cylinders each), and the e2m says bank. I kept them because the rest of the `cylinder_cutout_*` family is outside my bin. Rename the whole family if you want the bank wording.
+- 8A12: the e2m calls message $98 an Rx message, but the PCI tables list it as TX[12].
+
+**Type notes**
+- Renamed rows: 0x40a2b4 is a dword accessed as a halfword (should be word). 0x40a624 is a word read signed (i16). 0x3fddb8 is a word but e2m signed with lha reads (i16).
+- Kept rows: 0x40b05c is a dword read as a word. 0x40b9e0 is a word used signed.
+
+**Gate not run:** the repo's `apply_renames.py` was denied by the permission system, so I did not retry it. A hand copy of its rules (banned words, name format, `_cal` rule, no existing name, one CSV row per address with a matching old name) shows no PROBLEM lines. New names do not collide with the result files of bins 1, 3, 5 and 6; bin 2 had no result file when I checked.
+
+**Scratch folder to archive:** /tmp/w13_bin4 (spec.py, build.py, gate_check.py, collide.py, peek.py, show.py).
+````
+
+## 16. Review e2m names wave 13 bin 5 (773k tokens, 42 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 13 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/brief_W13.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/bins/bin5.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin5.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+W13 bin5 is done: 63 lines in /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin5.jsonl, address set equal to the bin, and no repo file touched (git status is clean). Checks: every `old` equals the row's current name in global_variables.csv; every new name is free in all CSVs, the .cpp and the headers, is snake_case, avoids the gate's BANNED words (plus `mil`) and keeps the `_cal` rule; none of the five other result_W13 bins uses the same new name.
+
+**Counts:** 42 renames (verdict `confirmed`), 20 keeps, 1 drift (0x40b9a2). 0x40b55e is counted as a rename, but the bin's own record there is drift; report it under both.
+
+**Families renamed**
+- **Converter clutch rationality monitor (8C34), 8 rows:** `protection_*` become `converter_clutch_*`.
+  - Rows: 0x40b57a, 0x40b57c, 0x40b581, 0x40b583, 0x40b585, 0x40b586, 0x40b588, 0x40b58a.
+  - The `protection_*` / 0x408ad5 / 0x408ad6 names in bin3 already use the same prefix.
+- **48RE governor pressure monitors:** `governor_pressure_rationality_fail_count` (0x40b55a), `governor_pressure_rationality_timer` (0x40b55b) and `governor_pressure_zero_check_fail_count` (0x40b55e). Same prefix as the wave-12 cals and bin3's siblings.
+- **Fuel metering coil resistance estimator (8019):** `fuel_metering_command_filtered` (0x40b893), `fuel_metering_coil_resistance_filtered` (0x40b895) and `fuel_metering_coil_temperature` (0x40b897). The old `cam_speed_rate` / `engine_sync_*` names were cam-sync guesses.
+- **Fuel pressure governor integral gains (8015):** `fuel_pressure_governor_integral_gain_small_signal` / `_positive_large_signal` / `_negative_large_signal` (0x4094b2, 0x4094b6, 0x4094ba). The prefix matches bin1 and bin4.
+- **Charge pressure in range (1A2C / 1A2D):** `charge_pressure_in_range_fault_count_increment` (0x4051e4), `_set_threshold` (0x4051e6) and `_fault_count` (0x40a438). I avoided "boost in range" because block 1632 (BIR) is a different monitor.
+- **Pressure sensor agreement tolerances (165C):** `barometric_pressure_sensor_tolerance`, `boost_pressure_sensor_tolerance` and `oil_pressure_sensor_tolerance` (0x407186, 0x407188, 0x40718a). The check is off in this calibration (`algorithm_enable_flags_6_cal` bit 0x20 clear) and all three tolerances read 0. Channel 38 behind the "oil" one has no sensor wrapper and reads 0, so oil comes from the e2m order, not from the channel.
+- **Crank/cam block 8194, 7 rows:**
+  - 0x408f56 `backup_consecutive_error_threshold`
+  - 0x408f68 `primary_period_rpm_conversion_factor`
+  - 0x408f78 `tooth_period_buffer_initial_engine_speed`. The old `crank_teeth_per_rev` was an initial speed, 120 x 0.125 = 15 rpm, and the code's ×8 supports that.
+  - 0x408f84 `backup_pulse_period_timeout`
+  - 0x408f8a `cam_wheel_pulse_count`
+  - 0x408f9c `crank_preliminary_sync_evaluation_count`
+  - 0x408fa0 `engine_speed_interrupts_per_cylinder`
+  - "Backup" is the TPU-A channel 1 (cam signal) path, so I did not call it crank.
+- **End-of-line test lamp override:** `end_of_line_test_malfunction_indicator_lamp_override_state` (0x40af0a) and `_flash_request_flag` (0x40af0b). The prefix is aligned with bin3 and "mil" is spelled out.
+- **EEPROM-mirror `_cal` fixes:** 0x3fde48 `load_histogram_total_sample_count_cal`, 0x3feb8e `j1939_link_fault_timeout_count_cal`, 0x3fedfa `transmission_learned_information_stored_flags_byte_1_cal` and 0x3fedfb `output_speed_to_vehicle_speed_ratio_learned_flag_cal`. For 0x3fedfa, the byte's only code users are the boot kernel's SCI routines; its application meaning comes from the table's address map.
+- **Single renames:**
+  - 0x3fd510 `calibration_download_security_key_cal`. The 0xFF value bypasses the six seed/key checks.
+  - 0x40aeb0 `low_speed_governor_alternator_load_fuel`. This is LSG Alternator_Load; the e2m LSG_EVR_Gain / LSG_EVR_Offset cals sit at its inputs.
+  - 0x40af07 `warm_up_cycle_condition_flags`
+  - 0x40a404 `engine_volumetric_efficiency`
+  - 0x40b778 `cylinder_cutout_test_mask`
+  - 0x409082 `equivalent_throttle_vacuum_all_speed_governor_offset`. The e2m's own Vac_Throttle_* records define "vac" as the vacuum throttle actuator.
+
+**Keeps (20), listed so you can override:** 0x3fd4b2, 0x40ae6c, 0x40ae6e, 0x40afaa, 0x40b99e, 0x40a532, 0x40ba62, 0x40b886, 0x40b88c, 0x40b766, 0x40b784 and the four PCI rows 0x40b38e, 0x40b3a5, 0x40b3bc, 0x40b3bd are plain synonyms. The generic ones I left alone:
+- 0x40af06 `fault_aging_triggered_flag` is Drive_Cycle, next to a renamed Warm_Up sibling. An option is `drive_cycle_completed_flag`.
+- 0x40b78c `injection_quantity_scale_factor` is the speed limp home derate. An option is `speed_limp_home_fuel_derate_scale`.
+- 0x408fa2 `cylinder_event_count_max` is Engine_Cylinders. An option is `engine_cylinder_count`.
+- 0x40b780 `cylinder_cutout_mask` is Bank_Cutoff.
+- 0x40b891 `fuel_pressure_feedback_previous` is the governor's copy of the filtered feedback.
+
+**Drift**
+- **0x40b9a2:** e2m 1632 +4 BIR_Ratio resolves here, but the code holds the coolant-sensor monitor's pass counter, next to `cssc_coolant_temp_span` and `engine_cssc_coolant_state`. Block 1632 ends after +2 in this build. I left the name; `cssc` is an invented abbreviation, so the whole family wants one rename (see leads).
+- **0x40b55e:** the bin's record 8C56 +4 Gov_Press_Rat_Ratio is drift, but the table also resolves 8C58 +0 RE_Governor_Pr_Zero_Rat_Fails_This_DC to this address and the code matches that one, so I renamed from it. Say so if you would rather treat it as plain drift and keep `protection_coldStart_channelA_trip_count`.
+- **Pattern:** every in-use "ratio" record I hit is the last record of its block and has no storage of its own here. BIR_Ratio, Gov_Press_Rat_Ratio and PN_Ratio (8C5B +A, which resolves to 0x40b57a, a bin5 row; I documented the TCC record there) land on another variable's address. TCC_Ratio (8C34 +16, 0x40b590) lands inside the dword `governor_pressure_error`. Gov_Press_Control_Ratio (8C58 +12) lands on the next block's first word, `park_neutral_switch_monitor_state`.
+- 8C34 +12 / +14 (0x40b58c `protection_throttle_velocity_term`, 0x40b58e `governor_pressure_error`) probably drift too: the governor pressure solenoid loop uses them, not TCC / OD timers.
+
+**Function names the evidence shows are wrong (not applied)**
+
+| Address | Current | Proposed | Reason |
+|---|---|---|---|
+| 0x5341a8 | `engine_coolantTemp_overheat_monitor` | `cm848_monitorWarmUpCycle` | Sets the OBD warm-up bits: rise over 40 F and above 140 F. At 3 it counts a cycle and auto-clears the fault ring. No overheat check. |
+| 0x50ddb4 | `diag_suppress_stateMachine` | `cm848_setEndOfLineTestMalfunctionIndicatorLampOverride` | It is the in-plant end-of-line test's lamp override states 0-3. |
+| 0x29f54 | `cm848_checkSensorDeviationFlags` | `cm848_checkPressureSensorAgreement` | Compares barometric pressure with two other pressure readings using the three tolerances. |
+| 0x1359c | `cm848_processBoostControlState` | `cm848_updateChargePressureInRangeFaultCount` | It is the up/down fault counter that sets and clears fault 527. |
+| 0x12ad4 | `cm848_boostBasedFuelModifier` | `cm848_calculateVolumetricEfficiency` | It computes the clamped volumetric efficiency and the pressure-ratio terms, not a fuel modifier. |
+| 0x50638c | `cm848_outputs2_periodic` | `cm848_updateLoadHistogram` | It is the duty cycle monitor histogram, every 0.1 s. |
+| 0x51ba6c | `cm848_pidError_calc` | `cm848_calculateConverterClutchRatioDelta` | Previous ratio minus ratio, not a PID error. |
+| 0x51ba1c | `cm848_pidIntegrator_accumulate` | `cm848_accumulateConverterClutchRatioDeltaSum` | Sums those deltas. |
+| 0x457d0 | `mpc555_updateEngineCrankState` | `mpc555_handleCamSignalInterrupt` | Weaker lead: it is the TPU-A channel 1 handler, and e2m PMA_Edge_Type (channel 1) says cam signal. |
+
+`cm848_throttleBasedFuelCalculation` (0x128a0) also reads as the charge flow / EGR fraction model, but I have no proved name.
+
+**Sibling leads outside the bin (not in my output)**
+- **8015:** the window dword 0x4094be `engine_sync_prot_scale_b_cal` holds two signed words, +205 and -204. Split it into positive and negative window widths. 0x4094ae `engine_sync_prot_scale_a_cal` holds the same values for the proportional gains.
+- **LSG_EVR cals:**
+  - 0x4070e0 `governor_speed_filter_input_scale_cal`, e2m 1064 +2A LSG_EVR_Gain
+  - 0x4070e2 `governor_speed_filter_fuel_offset_cal`, +2C LSG_EVR_Offset
+  - 0x4070e4 `governor_speed_filter_coefficient`, +2E Alternator_Load_Filter_Coefficient
+  - 0x3faf56 `governor_speed_filter`, the filter state
+
+  The first two carry a wrong `_cal` in RAM; a family like `low_speed_governor_alternator_*` fits all four.
+- **1A2C / 1A2D:**
+  - 0x4051e0 `fuel_demand_step_min_threshold_cal` becomes `charge_pressure_in_range_fault_clear_threshold`
+  - 0x4051e2 `fuel_demand_step_decrement_cal` becomes `charge_pressure_in_range_fault_count_decrement`
+  - 0x40a42e / 0x40a430 / 0x40a432 / 0x40a434 / 0x40a436 are Charge_Press / Source / State / IR_Cond / IR_Enable and are named `map_*`, `fuel_*` and `boost_*`.
+- **8C33 / 8C34 leftovers:** 0x408ad2, 0x408ad3, 0x408ade, 0x40b57d, 0x40b57f, 0x40b58b and the monitor's snapshot words still read `protection_*`. In the same order they are fail count limit, minimum ratio delta sum, overdrive rationality time, ratio delta, monitor state, third lockup flag.
+- **`cssc_*` family:** 0x40b9a2, 0x40b9a4, 0x40b9a6, 0x3fd18a-0x3fd190 should become `coolant_temperature_sensor_performance_*`. The drifted row would be `coolant_temperature_sensor_performance_monitoring_cycle_count`.
+- **165C / 177D:** 0x40718c `cold_start_sensor_deviation_delay_cal` has a wrong `_cal`, and `iat_sensor_deviation_flags` (0x3fe9be) says iat for pressure flags. `governor_integrator_bound_a` / `_b` (0x40bb8a / 0x40bb3c) are sensor channels 77 and 38. 0x400940 / 0x400942 `fuel_demand_rpm_factor_upper_cal` / `_base_cal` are the volumetric efficiency clamps (1.0 / 0.8) with a wrong `_cal` in RAM.
+- **8194 backup/primary pairs:** 0x408f80 `crank_sync_period_confirm_count_cal` (Main_Consec_Error_Thres), 0x408f82 `crank_period_raw` (Maximum_Pulse_Period_Timeout) and 0x408f6c `crank_tooth_rpm_divisor_cal` (the backup speed constant) should pair with my primary/backup names.
+- **Cross-bin mismatch:** bin6 renamed 0x40b798 to `crank_tooth_period_countdown`, the reload target of my `backup_pulse_period_timeout` and part of the same channel 1 backup path. `backup_pulse_period_countdown` would pair better; please reconcile.
+- **11C1:** 0x3feb8c `etc1_state_timeout_counter` is e2m J1708_Link_Fault_Timeout_Count, and 0x3feb90 `etc1_fuel_demand_high_limit` is TSC_Lost_Max_Throttle_Disable. Both sit in the EEPROM mirror without `_cal`; 0x3feb8c would become `j1708_link_fault_timeout_count_cal`.
+
+**Type remarks (types unchanged)**
+- 0x40aeb0, 0x40b897 and 0x40b583 are signed with `lha` accesses, so `i16` would fit.
+- The `word` row at 0x408f56 swallows the byte at 0x408f57, e2m +1 Bank_With_Added_Tooth, which already has a typeless label `crank_sync_reference_flag_cal`. It should be a byte row plus a byte row at 0x408f57. Until then the `(byte)` reads of the second byte render under my new name.
+````
+
+## 17. Review e2m names wave 13 bin 6 (739k tokens, 42 min)
+
+### Prompt (exact text)
+
+````text
+You are one of six parallel agents in CM848 rename wave 13 (Cummins ISB firmware reverse engineering). Read the brief first and follow it exactly:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/brief_W13.md
+
+Your bin: /home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/bins/bin6.json
+Write your results (one JSON object per line, one line per record in your bin) ONLY to:
+/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin6.jsonl
+
+Do not edit any other file. No builds, no commits. Finish with the short summary the brief asks for.
+````
+
+### Report (exact text, the agent's handback message)
+
+````text
+Wave 13, bin 6 is done: 63 verdicts in `/home/linux/.claude/jobs/f6a06670/tmp/fueling_state/stage8/result_W13_bin6.jsonl`, one line per bin record, in bin order. Nothing else was edited, built or committed. The repo gate script was blocked by the permission classifier, so I ran a read-only re-implementation of its name rules on the file: BANNED words, `_cal` by region, hex-looking parts, format, old name equals the CSV row. It reports 0 problems. Checks against global_variables.csv, the .cpp and bins 1-5 found no collision. None of my old names is shared with CM550, so none would be held back.
+
+## Counts
+- 42 rename (`confirmed`), 20 keep, 1 drift, 0 uncertain.
+
+## Families renamed
+- **alpha** (e2m 104A): the `cold_start_*` words, `intake_temp_ema`, `governor_init_countdown` and `fuel_demand_ramp_factor` become `alpha_*`. `timingProtectionFlagsOrchestrator` is the alpha ramp. 6 rows.
+- **all-speed governor** (107C): the `fuel_demand_*` / `governor_*` words become `all_speed_governor_*` (6 rows) and `rpm_deceleration_limit_integral_term`. The e2m reset-state block 1170 fixes the state meanings: X1 is the speed error, X6 the fuel correction.
+- **data collector**: `diag_dm1_buffer_read_ptr` becomes `data_collector_start_address`, matching bins 1-3, which name the center, end and status words.
+- **J1939 control session**: `etc1_*` / `governor_*calib*` become `j1939_*_cal` (3 rows). All three lacked `_cal` in the EEPROM mirror.
+- **compressor map** (175F, 3 rows) and **ambient / compressor inlet** (1921, 4 rows): the `fuel_timing_*` and `boost_fuel_*` names become `compressor_*` / `ambient_*`. `ambient_air_temperature_reference` parallels `barometric_pressure_reference`. 1921 +14 is relative humidity, since the code multiplies saturation vapor pressure by it >> 10.
+- **exhaust temperature model** (17A1, 2 rows): `boost_target_*` becomes `exhaust_temperature_model_*`.
+- **HPCR fuel metering** (8000, 3 rows): `engine_sync_*_cal` becomes `fuel_metering_feedback_trim_{maximum,minimum}_scaling_factor` and `fuel_pressure_sensor_filter_coefficient`. The old `_cal` was wrong for this RAM region.
+- **crank** (819B, 7 rows):
+  - `engine_sync_startup_countdown` becomes `crank_tooth_period_countdown`. `mpc555_updateEngineCrankState` reloads it on every tooth capture.
+  - `crank_sync_valid_flag` becomes `crank_low_speed_filtering_flag`.
+  - `crank_mios_timing_output` becomes `crank_tooth_good_window_fraction`. It programs TPU-A channel 1, not MIOS.
+  - `engine_event_countdown` becomes `crank_preliminary_sync_count`. I flipped this one from keep because bin 5 renames its `_cal` twin to `crank_preliminary_sync_evaluation_count`.
+  - `timebase_previous_capture` becomes `first_speed_interrupt_time_ticks`, and `timebase_delta_ticks` becomes `crank_resync_time_ticks`.
+  - `cam_sync_position_min` becomes `fuel_pressure_start_undershoot`. It is the lowest rail pressure reading during the start.
+- **Singles**:
+  - `pumping_torque_adjustment` (was `fuel_demand_blend_adjusted`)
+  - `cylinder_residual_gas_mass_lower_limit`
+  - `fuel_temperature_derate_fueling_severity_index_cal` (the first word of the single fault-derate channel record)
+  - `water_in_fuel_distance_cal` (the name only gains `_cal`)
+  - `cruise_coast_accelerate_hold_time` (was camelCase `cruiseOverride`)
+  - `intake_air_heater_monitor_result` (see the judgment call below)
+
+## Drift
+- **0x40b9ee** (`misfire_monitor_cylinder_attempt_counts`), e2m 162B +A IAH_Function_Timer. It resolves to the same address as e2m 1651 +0 Misfire_Cyl_1_Attempt_Number, which the code matches. The IAH words end at +8, so 162B +A and +C (IAH_Ratio at 0x40b9f0) have no counterpart. I kept the name.
+- **Block 1930 +12**: AATR_Numerator resolves to 0x3feeb8, but the code matches 191A WIF_Miles, not that record.
+- **8C5B +A** (not in my bin): PN_Ratio resolves to 0x40b57a. That is `protection_output_hold_flag` in `cm848_monitorConverterClutchAndOverdrivePerformance`.
+- **1B2E +A / +C** (not in my bin, unverified): they land on the `wastegate_monitor_fail_high_boost_pressure_axis` word[5] table and an unnamed word.
+
+## Functions whose names the evidence shows are wrong (not auto-applied)
+
+| Address | Current name | Proposed name | Reason |
+|---|---|---|---|
+| 0xe518 | `hpcr_calculateFuelTrimOutput` | `cm848_calculateAlpha` | selects the alpha source and outputs `combustion_alpha_input` |
+| 0xe3a4 | `timingProtectionFlagsOrchestrator` | `cm848_calculateAlphaBase` | the alpha ramp |
+| 0xe164 | `cm848_calculateSensorEma` | `cm848_calculateAlphaFuelRate` | fuel rate hysteresis on `fuel_mass_flow_raw` |
+| 0xe218 | `cm848_checkFuelRateCondition` | `cm848_calculateAlphaGovernor` | on-governor condition |
+| 0xe248 | `cm848_checkPressureFuelDelayA` | `cm848_calculateAlphaLowSpeedGovernor` | low speed governor alpha latch |
+| 0xe2cc | `cm848_checkPressureFuelDelayB` | `cm848_calculateAlphaAirFuelControl` | air fuel control alpha latch |
+| 0xe360 | `cm848_checkPressureHysteresis` | `cm848_calculateAlphaLowAmbientAirPressure` | barometric hysteresis of alpha |
+| 0xe0f4 | `cm848_checkPressureFuelState` | `cm848_calculateAlphaAltitudeDerateLatch` | altitude derate alpha timer |
+| 0xe748 | `cm848_initFuelPressureVariables` | `cm848_initializeAlpha` | clears the alpha latches, timers and filter |
+| 0x505c20 | `diag_dm1Buffer_circularFill` | `cm848_fillDataCollectorBuffer` | data collector, not DM1 |
+| 0x505d94 | `hpcr_exception_process` | `cm848_initializeDataCollector` | sets the collector pointers |
+| 0x505df0 | `j1939_dm1_diagnosticMessage_send` | `cm848_sendDataCollectorBuffer` | sends the collector ring over the transport protocol |
+| 0x505f98 | `cm848_phase_groupB_calculation` | `cm848_runDataCollector` | uses `data_collector_schedule_cal`, trigger line and count |
+| 0x50beec | `governor_sourceData_init` | `cm848_startJ1939ControlSession` | opens an engine or retarder control session |
+| 0x50bff4 | `phase_group_a_setupETC1Controller` | `cm848_trackJ1939ControlSessions` | opens, closes and files control sessions |
+| 0x50be6c | `governor_calibSnapshot_rollingBuffer_update` | `cm848_storeJ1939ControlSessionInHistoryTable` | 5 x 24-byte history ring |
+| 0x255c0 | `cm848_j1939SendDm1ResponseMessage` | `cm848_j1939SendDm8TestResultMessage` | sends PGN 65232 with test id and value |
+| 0x130dc | `cm848_calculateBoostPressureOffset` | `cm848_calculatePumpingTorque` | e2m 1781 CHP pumping torque |
+| 0x502b6c | `hpcr_fuelFinal_exponentialAverage` | `cm848_calculateAmbientConditions` | e2m 1921 ambient and compressor inlet conditions |
+| 0x506e28 | `cm848_auxiliaryControl_exponentialAverage` | `cm848_calculateExhaustTemperatureEstimate` | exhaust virtual temperature and metal temperature |
+| 0x50e7f4 | `cm848_blendBoostAndThrottleFuelDemand` | `cm848_calculateWaterVaporFractions` | humidity, vapor pressure and dew point model |
+| 0x49004 | `cm848_resetEngineSyncState` | `cm848_resetFuelPressureGovernorState` | its own plate comment says it resets the fuel pressure governor |
+
+## Out-of-bin twins left half-renamed
+- **0x4062d2** `boost_pressure_ratio_upper_limit` should be `cylinder_residual_gas_mass_upper_limit` (e2m C_CBP_Residual_Mass_Max).
+- **Alpha siblings:** all are alpha results or timers, none is a pressure or fuel-rate flag.
+  - 0x40a16c `governor_startup_state` → `alpha_state`
+  - 0x40a16e `pressure_fuel_delay_b_status` → `alpha_air_fuel_control_result`
+  - 0x40a172 `fuel_rate_condition_status` → `alpha_governor_result` (it is the On Governor result and now reads confusingly next to `alpha_fuel_rate_result`)
+  - 0x40a174 `pressure_fuel_delay_a_status` → `alpha_low_speed_governor_result`
+  - 0x40a17a `pressure_hysteresis_state` → `alpha_low_ambient_air_pressure_result`
+  - 0x40a17e / 0x40a180 `cold_start_timer_a` / `cold_start_timer_b`, 0x3fa0da / 0x3fa0dc `cold_start_timer_*_active_flag`
+  - 0x3fa0d2 `cold_start_intake_temperature_filter_state`, 0x5be66 `cold_start_intake_temperature_filter_coefficient`
+- **107C siblings** to take `all_speed_governor_*`: 0x40a1aa, 0x40a1b2, 0x40a1b8, 0x40a1ba, 0x40a1bc, 0x40a1c4, 0x40a1cc, 0x40a1d4, and 0x40a208 `fuel_demand_integrator_b_sum` (e2m Decel_Limit_Fuel).
+- **Compressor map:**
+  - 0x40a60e `boost_pressure_normalized` → `compressor_map_corrected_air_flow`
+  - 0x40a612 `fuel_timing_boost_scale_lookup` → compressor map output ratio
+  - 0x40a618 `fuel_timing_state_code` → `compressor_outlet_temperature_source`
+- **Other siblings:**
+  - 0x40a418 and 0x40a41c (CHP nominal delta-P and pumping torque without offset)
+  - 0x40a682 `boost_target_load_rpm_output` → `exhaust_temperature_model_energy_fraction`
+  - 1921 sources and pressure drop: 0x40a198 / 0x40a19c / 0x40a1a0 / 0x40a1a2 / `DAT_0040a1a6`
+  - the remaining `diag_dm1_buffer_*` physical start and end pointers (0x40c270 / 0x40c274), fill and slot words, and `diag_dm1_fault_source_table`
+  - `crank_tbl_event_counter` (Crank_Resync_Count)
+  - 0x3fcd92 `governor_cruiseOverride_holdoff_countdown`
+  - the rest of block 8000 (0x409110-0x409138): `engine_sync_*_cal`, `cam_sync_*_cal` and `engine_speed_override_*_cal` are HPCR governor settings and carry a wrong `_cal` in that RAM region
+
+## Notes for the apply
+- **Types (not changed).**
+  - Signed in the e2m and loaded with `lha` or cast to short: 0x40a1ac, 0x40a1ae, 0x40a1b6, 0x40a1be, 0x40a41a, 0x40a19a, 0x40911a, 0x40911c. The rows are `word`, so `i16` would fit.
+  - 0x40b808 is compared as short, and its e2m record is signed.
+  - 0x40a204 (`fuel_demand_integrator_b`) is a dword over the I term and the P term. After the rename the P term would render as `rpm_deceleration_limit_integral_term._2_2_`, and the `fuel_demand_integrator_b+2` sub-row goes stale. Split the row: word at 0x40a204, word at 0x40a206 (e2m +5C).
+- **Old comments that are wrong** (candidates for `WRONG_OLD_COMMENTS`): 0x3feb82, 0x3feb84, 0x3feb8a, 0x3fdfbe ("2x30B array"; there is one 30-byte channel record), 0x40a67e, 0x40a684, 0x40a1a4, 0x40a1a8, 0x408720.
+- **[44] finding.** e2m 801D +0 says `fuel_metering_feedback_input` is the pressure regulator valve current (mA, 1.2218 per count). The repo notes still call that signal unidentified. I kept the name and put this in the note.
+- **Judgment calls.**
+  - 0x40ad82: the intake air heater attribution comes from the e2m name and the DM7 test order (test 0 = this word, test 1 = `misfire_monitor_result`). The word has no store anywhere in ROM or flash2.
+  - `pumping_torque_adjustment` follows the brief's "Adj = adjustment" and fits net = gross minus it.
+- **`e2m_variables.csv` coincidence.** `alpha_altitude_derate_timer` and `ambient_relative_humidity` also appear in `output/e2m_variables.csv`, a reference list of mechanical e2m names at e2m virtual addresses that no build step reads. They pass the brief's check against global_variables.csv and the .cpp, but a stricter grep over `output/*.csv` would flag them.
+
+Scratch scripts are in `/tmp/w13b6`.
+````

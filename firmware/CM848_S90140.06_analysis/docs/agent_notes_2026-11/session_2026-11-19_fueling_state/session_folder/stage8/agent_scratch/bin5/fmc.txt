@@ -1,0 +1,402 @@
+=== cm848_calculateFuelMeteringCommand (lines 46648-47294, 640 non-blank)
+46648: // Function: cm848_calculateFuelMeteringCommand @ 0x00047bd0
+46649: //
+46651: /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+46652: /* Fuel metering command controller (cm848_phase_group_b_processing; output channel assignment table
+46653:    entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is the
+46654:    fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its
+46655:    inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override
+46656:    (engine_speed_override_enable_cal) and a cranking value return early; otherwise the governor mode
+46657:    in engine_sync_state_t_0040b87f.fuel_pressure_governor_mode picks fuel_pressure_governor_demand -
+46658:    modes 2 / 4 sum the PID terms on fuel_pressure_setpoint - fuel_pressure_feedback_filtered
+46659:    (fuel_pressure_governor_proportional_term / _integral_term / _derivative_term) plus
+46660:    fuel_pressure_governor_accelerator_feed_forward and an rpm table; modes 8 / 0x10
+46661:    (switch_input_state_bits[0] bit 0 clear and key_off_shutdown_inhibit_flag 0) / 0x20
+46662:    (fuel_pressure_governor_disable set) / 0x40 (faults 304 / 305 / 377 / 378) use the fixed
+46663:    fuel_pressure_governor_*_command values; mode 1 is the low-rpm mode the others fall back to. The
+46664:    demand is clamped to a lower limit and an rpm table (the integrator is put back when it is
+46665:    outside them). (2) a table turns the clamped demand into a feedback target; the base command is
+46666:    that target through a piecewise-linear gain plus fuel_metering_base_command_derivative_term; a PI
+46667:    trim on fuel_metering_feedback_error (target - fuel_metering_feedback_input) scales it:
+46668:    fuel_metering_command = base + trim x base / 4096 (no trim while
+46669:    fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back
+46670:    retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining
+46671:    engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Was
+46672:    cm848_calculateEngineTimingOffset Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START)
+46673:    sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command
+46674:    modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while
+46675:    engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it
+46676:    only runs with the engine stopped and mode 1 recomputes the preset before a start. */
+46678: void cm848_calculateFuelMeteringCommand(void)
+46680: {
+46681:   ushort uVar1;
+46682:   word wVar3;
+46683:   word wVar4;
+46684:   word wVar5;
+46685:   short sVar6;
+46686:   sword sVar7;
+46687:   sword sVar8;
+46688:   short sVar9;
+46689:   dword dVar2;
+46690:   word unaff_r23;
+46691:   int iVar10;
+46692:   word unaff_r28;
+46693:   word unaff_r29;
+46694:   int iVar11;
+46695:   byte *pbVar12;
+46696:   int iVar13;
+46697:   word wVar14;
+46698:   uint uVar15;
+46699:   word awStack_68 [2];
+46700:   dword local_64;
+46701:   dword local_60;
+46702:   dword local_5c;
+46703:   dword local_58;
+46704:   dword local_54;
+46705:   dword local_50;
+46706:   dword local_4c;
+46707:   dword local_48;
+46708:   word local_44;
+46709:   ushort uStack_42;
+46710:   word wStack_40;
+46711:   ushort local_3e;
+46712:   word wStack_3c;
+46713:   ushort local_3a;
+46714:   word wStack_38;
+46715:   word local_36;
+46716:   uint local_34;
+46718:   if (engine_speed_override_enable_cal != 0) {
+46719:     engine_sync_state_t_0040b87f.fuel_metering_command = engine_speed_override_value_cal;
+46720:     return;
+46721:   }
+46722:   if ((engine_sync_cold_start_flag != 0) &&
+46723:      ((engine_state == ENGINE_STATE_STOPPED || (engine_sync_cold_start_enable2_cal == 1)))) {
+46724:     engine_sync_state_t_0040b87f.fuel_metering_command = engine_sync_cold_start_speed_cal;
+46725:     return;
+46726:   }
+46727:   wVar5 = fuel_pressure_governor_integrator.integer_part;
+46728:   if (fuel_pressure_governor_disable == 0) {
+46729:     if (((((short)fuel_pressure_feedback_filtered <
+46730:            (short)fuel_pressure_governor_low_pressure_threshold) &&
+46731:          (fuel_pressure_governor_low_pressure_minimum_rpm < engine_rpm_measured)) &&
+46732:         (engine_rpm_measured < fuel_pressure_governor_low_pressure_maximum_rpm)) &&
+46733:        ((engine_sync_state_t_0040b87f.fuel_pressure_governor_mode !=
+46734:          FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED &&
+46735:         (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode != FUEL_PRESSURE_GOVERNOR_KEY_OFF)
+46736:         ))) {
+46737:       if (fuel_pressure_governor_low_pressure_entry_count <
+46738:           fuel_pressure_governor_low_pressure_count) {
+46739:         fuel_pressure_governor_mode_saved = engine_sync_state_t_0040b87f.fuel_pressure_governor_mode
+46740:         ;
+46741:         engine_sync_state_t_0040b87f.fuel_pressure_governor_mode =
+46742:              FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED;
+46743:         fuel_pressure_governor_counting_start_revolutions = 0;
+46744:       }
+46745:       else {
+46746:         fuel_pressure_governor_low_pressure_count = fuel_pressure_governor_low_pressure_count + 1;
+46747:       }
+46748:     }
+46749:     if ((((system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 1) != 0) ||
+46750:         ((system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 2) != 0)) ||
+46751:        (((fault_detected_bits_368_to_383 & 0x200) != 0 ||
+46752:         ((fault_detected_bits_368_to_383 & 0x400) != 0)))) {
+46753:       engine_sync_state_t_0040b87f.fuel_pressure_governor_mode = FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT
+46754:       ;
+46755:     }
+46756:     if (((switch_input_state_bits[0] & 1) == 0) && (key_off_shutdown_inhibit_flag == 0)) {
+46757:       engine_sync_state_t_0040b87f.fuel_pressure_governor_mode = FUEL_PRESSURE_GOVERNOR_KEY_OFF;
+46758:     }
+46759:     wVar14 = fuel_pressure_governor_integrator.integer_part;
+46760:     if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode <
+46761:         (FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED|FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START)) {
+46762:       if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46763:           FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED) {
+46764:         fuel_pressure_governor_low_pressure_fixed_passes =
+46765:              fuel_pressure_governor_low_pressure_fixed_passes + 1;
+46766:         if ((((fuel_pressure_governor_low_pressure_fixed_limit <
+46767:                fuel_pressure_governor_low_pressure_fixed_passes) ||
+46768:              ((short)fuel_pressure_governor_low_pressure_threshold <=
+46769:               (short)fuel_pressure_feedback_filtered)) ||
+46770:             (fuel_pressure_governor_low_pressure_maximum_rpm <= engine_rpm_measured)) ||
+46771:            (engine_rpm_measured <= fuel_pressure_governor_low_pressure_minimum_rpm)) {
+46772:           engine_sync_state_t_0040b87f.fuel_pressure_governor_mode =
+46773:                fuel_pressure_governor_mode_saved;
+46774:           fuel_pressure_governor_low_pressure_fixed_passes = 0;
+46775:           fuel_pressure_governor_low_pressure_count = 0;
+46776:           if (((fuel_pressure_governor_mode_saved == FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START)
+46777:               || (fuel_pressure_governor_mode_saved == FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP)) &&
+46778:              (wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+46779:              wVar5 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+46780:              fuel_pressure_governor_feed_forward_enable != 0)) goto LAB_00047f84;
+46781:         }
+46782:       }
+46783:       else if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46784:                FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START) {
+46785:         if (((fuel_pressure_governor_closed_loop_entry_rpm < engine_rpm_measured) ||
+46786:             ((short)fuel_pressure_governor_closed_loop_entry_pressure <
+46787:              (short)fuel_pressure_feedback_filtered)) &&
+46788:            (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode =
+46789:                  FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START,
+46790:            wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+46791:            wVar5 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+46792:            fuel_pressure_governor_feed_forward_enable != 0)) {
+46793:           fuel_pressure_governor_feed_forward =
+46794:                cm848_dualAxisTableInterpolation
+46795:                          (&engine_sync_init_state_n,engine_rpm_measured,cam_sync_speed_axis_cal,
+46796:                           total_injection_quantity,cam_sync_timing_axis_cal,cam_sync_values_cal,4);
+46797: LAB_00047f84:
+46798:           wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
+46799:                    fuel_pressure_governor_feed_forward;
+46800:           wVar5 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
+46801:                   fuel_pressure_governor_feed_forward;
+46802:         }
+46803:       }
+46804:       else if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46805:                FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START) {
+46806:         if (fuel_pressure_governor_start_revolution_limit < fuel_pressure_governor_start_revolutions
+46807:            ) {
+46808:           engine_sync_state_t_0040b87f.fuel_pressure_governor_mode =
+46809:                FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP;
+46810:         }
+46811:         fuel_pressure_governor_counting_start_revolutions =
+46812:              fuel_pressure_governor_start_revolution_limit >=
+46813:              fuel_pressure_governor_start_revolutions;
+46814:         if ((engine_rpm_measured < fuel_pressure_governor_closed_loop_exit_rpm) &&
+46815:            ((short)fuel_pressure_feedback_filtered <
+46816:             (short)fuel_pressure_governor_closed_loop_exit_pressure)) {
+46817:           engine_sync_state_t_0040b87f.fuel_pressure_governor_mode =
+46818:                FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START;
+46819:           fuel_pressure_governor_counting_start_revolutions = 0;
+46820:         }
+46821:       }
+46822:       else if (((engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46823:                  FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP) &&
+46824:                (engine_rpm_measured < fuel_pressure_governor_closed_loop_exit_rpm)) &&
+46825:               ((short)fuel_pressure_feedback_filtered <
+46826:                (short)fuel_pressure_governor_closed_loop_exit_pressure)) {
+46827:         engine_sync_state_t_0040b87f.fuel_pressure_governor_mode =
+46828:              FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START;
+46829:       }
+46830:     }
+46831:     else if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46832:              FUEL_PRESSURE_GOVERNOR_KEY_OFF) {
+46833:       if (((switch_input_state_bits[0] & 1) != 0) || (key_off_shutdown_inhibit_flag == 1))
+46834:       goto LAB_0004800c;
+46835:     }
+46836:     else if ((engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46837:               FUEL_PRESSURE_GOVERNOR_DISABLED) ||
+46838:             (((engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46839:                FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT &&
+46840:               ((system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 1) == 0)) &&
+46841:              (((system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 2) == 0 &&
+46842:               (((fault_detected_bits_368_to_383 & 0x200) == 0 &&
+46843:                ((fault_detected_bits_368_to_383 & 0x400) == 0)))))))) {
+46844: LAB_0004800c:
+46845:       engine_sync_state_t_0040b87f.fuel_pressure_governor_mode =
+46846:            FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START;
+46847:     }
+46848:   }
+46849:   else {
+46850:     engine_sync_state_t_0040b87f.fuel_pressure_governor_mode = FUEL_PRESSURE_GOVERNOR_DISABLED;
+46851:     wVar14 = unaff_r23;
+46852:   }
+46853:   fuel_pressure_governor_integrator.integer_part = wVar5;
+46854:   if (FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED <
+46855:       engine_sync_state_t_0040b87f.fuel_pressure_governor_mode) {
+46856:     wVar5 = fuel_pressure_governor_key_off_command;
+46857:     if (((engine_sync_state_t_0040b87f.fuel_pressure_governor_mode != FUEL_PRESSURE_GOVERNOR_KEY_OFF
+46858:          ) && (wVar5 = fuel_pressure_governor_disabled_command,
+46859:               engine_sync_state_t_0040b87f.fuel_pressure_governor_mode !=
+46860:               FUEL_PRESSURE_GOVERNOR_DISABLED)) &&
+46861:        (wVar5 = fuel_pressure_governor_sensor_fault_command,
+46862:        engine_sync_state_t_0040b87f.fuel_pressure_governor_mode !=
+46863:        FUEL_PRESSURE_GOVERNOR_SENSOR_FAULT)) {
+46864:       wVar5 = unaff_r28;
+46865:     }
+46866:     goto LAB_000489d0;
+46867:   }
+46868:   wVar5 = fuel_pressure_governor_low_pressure_command;
+46869:   if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46870:       FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED) goto LAB_000489d0;
+46871:   if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode !=
+46872:       FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START) {
+46873:     if ((engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46874:          FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START) ||
+46875:        (wVar5 = unaff_r28,
+46876:        engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+46877:        FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP)) {
+46878:       if (cam_timing_alt_mode_enable_cal == 0) {
+46879:         wVar5 = lookupTableInterpolation
+46880:                           (&engine_sync_init_state_c,engine_rpm_measured,
+46881:                            cam_sync_cyl1_timing_axis_a_cal,cam_sync_cyl1_timing_values_a_cal,0);
+46882:         local_64 = (int)((ulonglong)injection_timing_scale_cyl1_a_cal * (ulonglong)(uint)wVar5 >>
+46883:                         0x20) << 0x14 | injection_timing_scale_cyl1_a_cal * wVar5 >> 0xc;
+46884:         wVar5 = lookupTableInterpolation
+46885:                           (&engine_sync_init_state_d,engine_rpm_measured,
+46886:                            cam_sync_cyl2_timing_axis_a_cal,cam_sync_cyl2_timing_values_a_cal,0);
+46887:         local_60 = (int)((ulonglong)injection_timing_scale_cyl2_a_cal * (ulonglong)(uint)wVar5 >>
+46888:                         0x20) << 0x14 | injection_timing_scale_cyl2_a_cal * wVar5 >> 0xc;
+46889:         wVar5 = lookupTableInterpolation
+46890:                           (&engine_sync_init_state_e,engine_rpm_measured,
+46891:                            cam_sync_cyl3_timing_axis_a_cal,cam_sync_cyl3_timing_values_a_cal,0);
+46892:         local_5c = (int)((ulonglong)injection_timing_scale_cyl3_a_cal * (ulonglong)(uint)wVar5 >>
+46893:                         0x20) << 0x14 | injection_timing_scale_cyl3_a_cal * wVar5 >> 0xc;
+46894:         local_58 = engine_sync_prot_scale_a_cal;
+46895:         wVar5 = lookupTableInterpolation
+46896:                           (&engine_sync_init_state_f,engine_rpm_measured,
+46897:                            cam_sync_cyl4_timing_axis_a_cal,cam_sync_cyl4_timing_values_a_cal,0);
+46898:         local_54 = (int)((ulonglong)injection_timing_scale_cyl4_a_cal * (ulonglong)(uint)wVar5 >>
+46899:                         0x20) << 0x14 | injection_timing_scale_cyl4_a_cal * wVar5 >> 0xc;
+46900:         wVar5 = lookupTableInterpolation
+46901:                           (&engine_sync_init_state_g,engine_rpm_measured,
+46902:                            cam_sync_cyl5_timing_axis_a_cal,cam_sync_cyl5_timing_values_a_cal,0);
+46903:         local_50 = (int)((ulonglong)injection_timing_scale_cyl5_a_cal * (ulonglong)(uint)wVar5 >>
+46904:                         0x20) << 0x14 | injection_timing_scale_cyl5_a_cal * wVar5 >> 0xc;
+46905:         wVar5 = lookupTableInterpolation
+46906:                           (&engine_sync_init_state_h,engine_rpm_measured,
+46907:                            cam_sync_cyl6_timing_axis_a_cal,cam_sync_cyl6_timing_values_a_cal,0);
+46908:         local_4c = (int)((ulonglong)injection_timing_scale_cyl6_a_cal * (ulonglong)(uint)wVar5 >>
+46909:                         0x20) << 0x14 | injection_timing_scale_cyl6_a_cal * wVar5 >> 0xc;
+46910:         local_48 = engine_sync_prot_scale_b_cal;
+46911:         wVar5 = lookupTableInterpolation
+46912:                           (&engine_sync_init_state_i,engine_rpm_measured,cam_sync_prot_gain_axis_cal
+46913:                            ,cam_sync_prot_gain_values_cal,0);
+46914:         local_44 = (word)((uint)engine_sync_prot_gain_cal * (uint)wVar5 >> 0x10);
+46915:         wVar5 = lookupTableInterpolation
+46916:                           (&WORD_003fb652,engine_rpm_measured,cam_sync_cyl4_timing_axis_b_cal,
+46917:                            cam_sync_cyl4_timing_values_b_cal,0);
+46918:         uVar15 = CONCAT22(injection_timing_scale_cyl4_hi_cal,injection_timing_scale_cyl4_lo_cal) *
+46919:                  (uint)wVar5;
+46920:         uStack_42 = (ushort)((uint)((int)((ulonglong)
+46921:                                           CONCAT22(injection_timing_scale_cyl4_hi_cal,
+46922:                                                    injection_timing_scale_cyl4_lo_cal) *
+46923:                                           (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+46924:                     (ushort)(uVar15 >> 0x1c);
+46925:         wStack_40 = (word)(uVar15 >> 0xc);
+46926:         wVar5 = lookupTableInterpolation
+46927:                           (&WORD_003fb654,engine_rpm_measured,cam_sync_cyl5_timing_axis_b_cal,
+46928:                            cam_sync_cyl5_timing_values_b_cal,0);
+46929:         uVar15 = CONCAT22(injection_timing_scale_cyl5_hi_cal,injection_timing_scale_cyl5_lo_cal) *
+46930:                  (uint)wVar5;
+46931:         local_3e = (ushort)((uint)((int)((ulonglong)
+46932:                                          CONCAT22(injection_timing_scale_cyl5_hi_cal,
+46933:                                                   injection_timing_scale_cyl5_lo_cal) *
+46934:                                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+46935:                    (ushort)(uVar15 >> 0x1c);
+46936:         wStack_3c = (word)(uVar15 >> 0xc);
+46937:         wVar5 = lookupTableInterpolation
+46938:                           (&WORD_003fb656,engine_rpm_measured,cam_sync_cyl6_timing_axis_b_cal,
+46939:                            cam_sync_cyl6_timing_values_b_cal,0);
+46940:         uVar15 = CONCAT22(injection_timing_scale_cyl6_hi_cal,injection_timing_scale_cyl6_lo_cal) *
+46941:                  (uint)wVar5;
+46942:         local_3a = (ushort)((uint)((int)((ulonglong)
+46943:                                          CONCAT22(injection_timing_scale_cyl6_hi_cal,
+46944:                                                   injection_timing_scale_cyl6_lo_cal) *
+46945:                                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+46946:                    (ushort)(uVar15 >> 0x1c);
+46947:         wStack_38 = (word)(uVar15 >> 0xc);
+46948:         local_36 = engine_sync_prot_limit_cal;
+46949:         local_34 = CONCAT22(engine_sync_prot_gain_b_cal,local_34._2_2_);
+46950:         wVar5 = lookupTableInterpolation
+46951:                           (&engine_sync_init_state_m,engine_rpm_measured,cam_sync_scale_axis_cal,
+46952:                            cam_sync_scale_values_cal,0);
+46953:         awStack_68[0] = (word)((uint)engine_sync_scale_factor_cal * (uint)wVar5 >> 0x10);
+46954:       }
+46955:       else {
+46956:         local_64 = injection_timing_scale_cyl1_a_cal;
+46957:         local_60 = injection_timing_scale_cyl2_a_cal;
+46958:         local_5c = injection_timing_scale_cyl3_a_cal;
+46959:         local_58 = engine_sync_prot_scale_a_cal;
+46960:         local_54 = injection_timing_scale_cyl4_a_cal;
+46961:         local_50 = injection_timing_scale_cyl5_a_cal;
+46962:         local_4c = injection_timing_scale_cyl6_a_cal;
+46963:         local_48 = engine_sync_prot_scale_b_cal;
+46964:         local_44 = engine_sync_prot_gain_cal;
+46965:         uStack_42 = injection_timing_scale_cyl4_hi_cal;
+46966:         wStack_40 = injection_timing_scale_cyl4_lo_cal;
+46967:         local_3e = injection_timing_scale_cyl5_hi_cal;
+46968:         wStack_3c = injection_timing_scale_cyl5_lo_cal;
+46969:         local_3a = injection_timing_scale_cyl6_hi_cal;
+46970:         wStack_38 = injection_timing_scale_cyl6_lo_cal;
+46971:         local_36 = engine_sync_prot_limit_cal;
+46972:         local_34 = _engine_sync_prot_gain_b_cal & 0xffff0000;
+46973:         awStack_68[0] = engine_sync_scale_factor_cal;
+46974:       }
+46975:       iVar13 = (int)(short)((int)((uint)cam_sync_fuel_scale_gain_cal *
+46976:                                  ((uint)fuel_demand_control_t_0040a57a.calculated -
+46977:                                  (uint)fuel_demand_calculated_snapshot)) >> 10);
+46978:       iVar11 = (int)(short)cam_sync_fuel_scale_lower_limit_cal;
+46979:       if ((iVar11 <= iVar13) &&
+46980:          (iVar11 = iVar13, (short)cam_sync_fuel_scale_upper_limit_cal < iVar13)) {
+46981:         iVar11 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
+46982:       }
+46983:       fuel_pressure_governor_accelerator_feed_forward =
+46984:            cm848_signedFirstOrderFilter
+46985:                      (iVar11,&fuel_pressure_governor_accelerator_feed_forward_filter);
+46986:       wVar5 = fuel_pressure_setpoint;
+46987:       fuel_demand_calculated_snapshot = fuel_demand_control_t_0040a57a.calculated;
+46988:       sVar6 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
+46989:       fuel_pressure_feedback_previous = fuel_pressure_feedback_filtered;
+46990:       fuel_pressure_sensor_filter.coefficient = awStack_68;
+46991:       sVar7 = cm848_signedFirstOrderFilter
+46992:                         ((int)(short)fuel_pressure_sensor,&fuel_pressure_sensor_filter);
+46993:       fuel_pressure_governor_proportional_term =
+46994:            cm848_applyPiecewiseLinearGain(&local_64,(int)sVar6);
+46995:       fuel_pressure_governor_integral_term =
+46996:            cm848_integrateWithZoneGain
+46997:                      (&local_54,&fuel_pressure_governor_integrator,(int)sVar6,10000);
+46998:       if ((engine_sync_rpm_phase_acquired_flag == 1) && (engine_sync_state_a == 5)) {
+46999:         wVar4 = lookupTableInterpolation
+47000:                           (&engine_sync_init_state_k,engine_rpm_measured,cam_sync_output_a_axis_cal,
+47001:                            cam_sync_output_a_values_cal,2);
+47002:         wVar3 = lookupTableInterpolation
+47003:                           (&engine_sync_init_state_l,engine_rpm_measured,cam_sync_output_b_axis_cal,
+47004:                            cam_sync_output_b_values_cal,2);
+47005:         iVar11 = (int)(short)engine_sync_speed_raw;
+47006:         iVar13 = (int)(short)cam_sync_speed_interp_lower_cal;
+47007:         wVar14 = wVar4;
+47008:         if ((iVar13 < iVar11) && (wVar14 = wVar3, iVar11 < (short)engine_sync_timing_max_cal)) {
+47009:           wVar14 = wVar4 + (short)(((iVar11 - iVar13) * ((int)(short)wVar3 - (int)(short)wVar4)) /
+47010:                                   ((short)engine_sync_timing_max_cal - iVar13));
+47011:         }
+47012:         if (fuel_pressure_governor_feed_forward_enable == 1) {
+47013:           fuel_pressure_governor_feed_forward =
+47014:                cm848_dualAxisTableInterpolation
+47015:                          (&engine_sync_init_state_n,engine_rpm_measured,cam_sync_speed_axis_cal,
+47016:                           total_injection_quantity,cam_sync_timing_axis_cal,cam_sync_values_cal,4);
+47017:           wVar14 = wVar14 - fuel_pressure_governor_feed_forward;
+47018:         }
+47019:         if ((short)wVar14 < 0x1000) {
+47020:           fuel_pressure_governor_integral_term = wVar14;
+47021:           if ((short)wVar14 < -0xfff) {
+47022:             fuel_pressure_governor_integral_term = 0xf001;
+47023:           }
+47024:         }
+47025:         else {
+47026:           fuel_pressure_governor_integral_term = 0xfff;
+47027:         }
+47028:         fuel_pressure_governor_integrator.integer_part = fuel_pressure_governor_integral_term;
+47029:         engine_sync_signal_flag = 1;
+47030:         engine_sync_rpm_phase_acquired_flag = 0;
+47031:         wVar14 = fuel_pressure_governor_integral_term;
+47032:       }
+47033:       fuel_pressure_governor_derivative_term =
+47034:            cm848_calculateFilteredDerivative
+47035:                      (&local_44,&fuel_pressure_governor_derivative_filter,
+47036:                       (int)(short)(wVar5 - sVar7));
+47037:       wVar5 = fuel_pressure_governor_proportional_term + fuel_pressure_governor_integral_term +
+47038:               fuel_pressure_governor_derivative_term +
+47039:               fuel_pressure_governor_accelerator_feed_forward;
+47040:       if (fuel_pressure_governor_feed_forward_enable != 0) {
+47041:         fuel_pressure_governor_feed_forward =
+47042:              cm848_dualAxisTableInterpolation
+47043:                        (&engine_sync_init_state_n,engine_rpm_measured,cam_sync_speed_axis_cal,
+47044:                         total_injection_quantity,cam_sync_timing_axis_cal,cam_sync_values_cal,4);
+47045:         wVar5 = wVar5 + fuel_pressure_governor_feed_forward;
+47046:       }
+47047:     }
+47048:     goto LAB_000489d0;
+47049:   }
+47050:   wVar4 = lookupTableInterpolation
+47051:                     (&engine_sync_init_state_k,engine_rpm_measured,cam_sync_output_a_axis_cal,
+... 240 more lines

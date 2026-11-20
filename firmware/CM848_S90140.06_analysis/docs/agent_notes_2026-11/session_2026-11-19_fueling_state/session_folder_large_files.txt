@@ -19,6 +19,8 @@ build_stage6a4.log
 build_stage6b.log
 build_stage7.log
 build_stage7b.log
+build_stage8.log
+build_stage8b.log
 hdr_base_CM550_J90350.00_analysis/firmware_functions.hpp
 hdr_base_CM550_J90350.00_analysis/firmware_globals.hpp
 hdr_base_CM550_J90350.00_analysis/firmware_types.hpp
@@ -56,6 +58,13 @@ stage7/pre7.cpp
 stage7/pre7_canon.cpp
 stage7/reversed7.cpp
 stage7/stage7.diff
+stage8/audit_after8.csv
+stage8/committed8.cpp
+stage8/global_variables_pre8.csv
+stage8/pre8.cpp
+stage8/pre8_canon.cpp
+stage8/reversed8.cpp
+stage8/stage8.diff
 test_disasm_tools.py.log
 test_e2m_block_addresses.py.log
 test_e2m_name_audit.py.log
@@ -69,3 +78,4 @@ verify_stage5b.log
 verify_stage6a.log
 verify_stage6b.log
 verify_stage7.log
+verify_stage8.log
