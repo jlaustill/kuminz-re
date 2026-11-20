@@ -121,6 +121,12 @@ subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7, s
   - **Proof:** `map_stage9_proof.csv`, plus `real_code_diffs.py` (the code-only differences, auto-named locals
     renumbered per kind) and `show_code_diffs.py`. `check_quoted_dump_values_W14.py` knows the dump gap.
   - `reports/`, `agent_scratch/` (all seven agents' scratch), `append_W14_agent_notes.py`, `sweep9.txt`.
+- **Stage 9b** (the wave-14 holds applied), also in `stage9/`:
+  - `apply_stage9b.py`: the 12 CM848 and 9 CM550 function renames through the repo gate (CM550 against `gate9b_cm550/`,
+    a copy with empty stand-ins for the CM848-only gate inputs), and the two struct fixes. It writes
+    `map_stage9b_cm848.csv` / `map_stage9b_cm550.csv`.
+  - `refresh_stage9b_tokens.py`: the struct / instance / field and enum-member tokens, and the CM550 relocation map.
+  - `cross_firmware_check_W14.py`: the cross-firmware check by address.
 - **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8, seven in stage 9):
   - `agent_prompts.jsonl`: their exact prompts.
   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked

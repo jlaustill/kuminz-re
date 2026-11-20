@@ -1,0 +1,166 @@
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/commit_message_archive9.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/commit_message_archive9.txt
+new file mode 100644
+index 0000000..e4b9d68
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/commit_message_archive9.txt
+@@ -0,0 +1,8 @@
++docs: session archive for stage 9 (wave 14 worklists, bins, brief, results, holds, seven agents' reports and scratch)
++
++The wave-14 worklist builders, the bins and brief, the result files, apply_W14.py with its holds
++(held_W14.json) and gate inputs, the hand scripts, the proof tools (real_code_diffs.py), the
++seven agents' prompts / reports (agent_prompts_and_reports.md) and their scratch. The tar.xz
++restores byte-identically.
++
++Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/commit_message_review9.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/commit_message_review9.txt
+new file mode 100644
+index 0000000..9c94bd4
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/commit_message_review9.txt
+@@ -0,0 +1,10 @@
++cm848: stage 9 review - dump-gap comments, the cross-firmware and stale-name checks recorded
++
++- 0x40c274 / 0x40c27c no longer quote a dump value: the RAM dump has no data for 0x40c200-0x40c27f.
++- Task 045: the review after the wave-14 apply. Five overridden function names read in code;
++  PGN 65232 confirmed from its transmit descriptor; the cross-firmware check by address (no
++  shared name broken; CM550's diagnostic_session_state is a lead); the all-CSV stale-name sweep;
++  the caveat on wave 13's quoted dump values above 0x40c200; and the .cpp checkout slip and its
++  recovery.
++
++Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/cross_firmware_check_W14.py b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/cross_firmware_check_W14.py
+new file mode 100644
+index 0000000..0447be1
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/cross_firmware_check_W14.py
+@@ -0,0 +1,53 @@
++"""Stage 9 cross-firmware check (after the advisor review), by address as well as by name:
++- functions: every applied function rename joined against firmware/cross_firmware_matches.csv by CM848 address and by
++  the old name; for each hit, the CM550 side's current name (CM550 function_renames.csv) and whether it is the same bare
++  name as the CM848 old name (a shared name = a true twin by name);
++- globals: every renamed global's old name grepped in CM550's CSVs and the two cross-firmware maps (apply_W13.py's
++  check, which apply_W14.py dropped), and every renamed address joined against docs/cross_firmware_variable_map.csv;
++- stale CM848 names: rows of the two maps whose CM848 name is an old name renamed in stage 9.
++usage: cross_firmware_check_W14.py <stage9 dir> <repo>"""
++import csv
++import os
++import re
++import sys
++
++here, repo = sys.argv[1:3]
++fw = os.path.join(repo, "firmware")
++cm550 = {}
++for line in open(os.path.join(fw, "CM550_J90350.00_analysis", "output", "function_renames.csv"), errors="replace"):
++    if line.startswith("0x"):
++        a, n = line.rstrip("\r\n").split(",")[:2]
++        cm550[int(a, 16)] = n
++matches = list(csv.DictReader(open(os.path.join(fw, "cross_firmware_matches.csv"))))
++varmap = list(csv.DictReader(open(os.path.join(repo, "docs", "cross_firmware_variable_map.csv"))))
++mapping = list(csv.DictReader(open(os.path.join(here, "map_stage9_all.csv"))))
++print("== functions (by address or old name in cross_firmware_matches.csv)")
++for r in [m for m in mapping if m["kind"] == "function"]:
++    a = int(r["address"], 16)
++    for m in matches:
++        if (m["cm848_addr"] and int(m["cm848_addr"], 16) == a) or m["cm848_name"] == r["old_label"]:
++            cm550_now = cm550.get(int(m["cm550_addr"], 16), "?")
++            bare = re.sub(r"^(cm848|cm550|hpcr|vp44|mpc555|mc68k)_", "", r["old_label"])
++            shared = cm550_now in (r["old_label"], bare)
++            print(f"  {r['address']} {r['old_label']} -> {r['name']} | map row cm550 {m['cm550_addr']} {m['cm550_name']}"
++                  f" (now {cm550_now}), score {m['score']}, {m['action']}{' | SHARED NAME' if shared else ''}")
++shared_text = ""
++for name in os.listdir(os.path.join(fw, "CM550_J90350.00_analysis", "output")):
++    if name.endswith(".csv"):
++        shared_text += open(os.path.join(fw, "CM550_J90350.00_analysis", "output", name), errors="replace").read()
++shared_text += open(os.path.join(fw, "cross_firmware_matches.csv")).read()
++shared_text += open(os.path.join(repo, "docs", "cross_firmware_variable_map.csv")).read()
++print("== globals (old name in CM550's CSVs or the maps; address in the variable map)")
++var_by_address = {int(v["cm848_address"], 16): v for v in varmap if v.get("cm848_address")}
++for r in [m for m in mapping if m["kind"] == "global"]:
++    a = int(r["address"], 16)
++    hit = re.search(rf"(?<![A-Za-z0-9_]){re.escape(r['old_label'])}(?![A-Za-z0-9_])", shared_text) if "+" not in r["old_label"] else None
++    v = var_by_address.get(a)
++    if hit or v:
++        print(f"  {r['address']} {r['old_label']} -> {r['name']} | name in CM550 / maps: {bool(hit)}"
++              f"{' | variable map: ' + v['name'] + ' (' + v['match_type'] + ')' if v else ''}")
++olds = {r["old_label"] for r in mapping}
++stale = [m for m in matches if m["cm848_name"] in olds] + [v for v in varmap if v["name"] in olds]
++print(f"== map rows naming a stage-9 old name: {len(stale)}")
++for s in stale[:20]:
++    print("  ", {k: s[k] for k in list(s)[:4]})
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/stage9_review.diff b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/stage9_review.diff
+new file mode 100644
+index 0000000..d223c61
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage9/stage9_review.diff
+@@ -0,0 +1,56 @@
++diff --git a/firmware/CM848_S90140.06_analysis/output/global_variables.csv b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
++index 1869c14..f25e242 100644
++--- a/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+++++ b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
++@@ -6186,7 +6186,7 @@ address,name,type,comment
++ 0x0040b51a,immobilizer_handshake_status_flags,byte,Immobilizer handshake flags: bit 0 seed sent / bit 1 expected key ready (the compare needs it) / bit 2 key result sent on PCI 0x35 / bit 3 RX[12] B1 status seen - bits 0-3 cleared at key off / bits 0-2 on a B1 restart (was j1939_governor_auth_status_flags)
++ 0x0040b9a6,coolant_temperature_sensor_performance_state,word,State of the coolant temperature sensor performance monitor (P0116, cm848_checkCoolantTemperatureSensorPerformance): 0 waiting for the start checks, 1 watching the coolant rise while the engine runs, 2 passed, 3 failed (sets fault 401, also at once in the hot-start shortcut), 4 / 5 pass / fail reported (cm848_completeCoolantTemperatureSensorMonitorReport), 6 not run or aborted. No e2m record here. Not a thermostat diagnostic. (was engine_cssc_coolant_state)
++ 0x0040c270,data_collector_buffer_start_address,pointer,e2m 0031 +0 Buffer_Start 'Actual starting RAM address of the data collector buffer' (HEX, 4 B; no dump value: the RAM dump is missing 0x40c200-0x40c27f): the physical start of the data collector's ring buffer, the first byte after the collector variables (cm848_resetDataCollector stores 0x40c28a here and in the logical start and end pointers). The fill and the sender wrap the logical pointers back to it after they pass the buffer end pointer data_collector_buffer_end_address (0x40c274); the buffer is 0x8000 bytes cut into equal slots. A ring buffer start pointer of the Cummins data collector, not of J1939 DM1. RAM outside the EEPROM mirror, so no _cal. (was diag_dm1_buffer_start_ptr)
++-0x0040c274,data_collector_buffer_end_address,pointer,e2m 0032 +4 Buffer_End [HEX] 'Physical RAM address of the end of the data collector buffer' (4 bytes; 0 in the dump, the collector is idle): the last usable byte of the data collector ring buffer. cm848_runDataCollector sets it to the buffer start (data_collector_buffer_start_address, e2m 0031 Buffer_Start, storage from 0x40c28a) + 0x7fff - the unused remainder of the 0x8000 byte buffer (data_collector_sample_capacity x table entries bytes are used) when it starts the buffer; cm848_fillDataCollectorRingBuffer wraps the write pointer data_collector_end_address and the read pointer data_collector_start_address back to the buffer start once they pass it, and cm848_sendDataCollectorBuffer wraps its read position the same way. Not a DM1 buffer. (was diag_dm1_buffer_end_ptr)
+++0x0040c274,data_collector_buffer_end_address,pointer,e2m 0032 +4 Buffer_End [HEX] 'Physical RAM address of the end of the data collector buffer' (4 bytes; no dump value: the RAM dump misses 0x40c200-0x40c27f): the last usable byte of the data collector ring buffer. cm848_runDataCollector sets it to the buffer start (data_collector_buffer_start_address, e2m 0031 Buffer_Start, storage from 0x40c28a) + 0x7fff - the unused remainder of the 0x8000 byte buffer (data_collector_sample_capacity x table entries bytes are used) when it starts the buffer; cm848_fillDataCollectorRingBuffer wraps the write pointer data_collector_end_address and the read pointer data_collector_start_address back to the buffer start once they pass it, and cm848_sendDataCollectorBuffer wraps its read position the same way. Not a DM1 buffer. (was diag_dm1_buffer_end_ptr)
++ 0x0040c284,data_collector_status,word,e2m 0036 +14 Collector_Status 'Indicator of when the data_collector is collecting data, not collecting data or ...' (0-2; e2m text cut off; 0 in the dump). Data collector state: 0 not collecting, 1 collecting (cm848_runDataCollector), 2 buffer full and stopped (stop mode 3, cm848_fillDataCollectorRingBuffer); 0 again at init. Not J1939 DM1. (was diag_dm1_buffer_fill_state) | earlier note: DM1 ring buffer fill state 0/1/2 idle/fill/overflow
++ 0x0040c286,data_collector_table_address,dword,e2m 0037 +16 Collector_Table_Address (HEX): 'Table of addresses to be collected by the data collector'. Pointer to the collector address table (e2m 003B Collector_Table: a length word at 0x3fddc2, 0x0080 = 32 x 4 bytes in the dump, then 32 address entries from 0x3fddc4 = data_collector_address_table_cal); stored once by cm848_resetDataCollector, the collector ... (new row 2026-11-19, wave 12)
++ 0x004090e8,injection_timing_tooth_count,byte,total tooth count for injection timing modulo-wrap (read-only) | e2m: e2m 805C +0 HPCR_Total_Increments 'Total number of increments'
++@@ -7013,7 +7013,7 @@ address,name,type,comment
++ 0x0040b9e0,fuel_pressure_tracking_error_per_pass,word,word, one store in the monitor: (fuel_pressure_setpoint - fuel_pressure_feedback_previous) / ROM divisor; added to the accumulators. (was cam_timing_delta_per_cycle) | earlier note: per-cycle cam timing delta (advance/retard accum) | e2m: e2m 1627 +8 HPCR_Cusum_Delta 'HPCR rail pressure deviation from setpoint'
++ 0x0040ba6a,high_load_boost_band_event_count,word,Counts each time boost holds between 48 and 53 inHg (ROM 0x64568 / 0x64564 - absolute MAP when boost_is_gauge_pressure_flag is 0) with engine_load_at_current_speed_percent above 80 and RPM above 2200 for 25 passes (2.5 s at a 5 ms PIT tick); zeroed at boot (was hpcr_oil_pressure_fault_trigger_count) | e2m: e2m 162F +0 Turbo_Pass_Counter 'Gives how many times the wastegate monitor passes during the monitoring trip.'
++ 0x0040ba6c,high_load_boost_band_duration_count,word,Passes (100 ms each at a 5 ms PIT tick) spent with the high-load boost band condition confirmed - added every pass while the 0x3fd26a debounce sits at its limit; companion of high_load_boost_band_event_count; zeroed at boot (was hpcr_oil_pressure_debounce_saturate_count) | e2m: e2m 162F +2 Turbo_Total_Pass_Time 'Total time when the wastegate monitor passes during the monitoring trip.' (0.1 s per count)
++-0x0040c27c,data_collector_center_address,pointer,e2m 0034 +C Collector_Center_Address [HEX] 'Logical address center value stored to the data collector buffer' (address from the ECU's parameter ID table) (pointer, 4 bytes; 0 here): the buffer position of the trigger. cm848_runDataCollector (the data collector fill; the diag_dm1_* names around it are collector names, not J1939 DM1) sets it to the write pointer + 1, wrapped to the buffer start past the end, when the trigger arrives in fill mode 1: it is where the post-trigger phase 2 fill starts. Written twice (stw), no reader found (was diag_dm1_buffer_phase2_start_ptr) | earlier note: DM1 buffer phase-2 fill start pointer
+++0x0040c27c,data_collector_center_address,pointer,e2m 0034 +C Collector_Center_Address [HEX] 'Logical address center value stored to the data collector buffer' (address from the ECU's parameter ID table) (pointer, 4 bytes; no dump value: the RAM dump misses 0x40c200-0x40c27f): the buffer position of the trigger. cm848_runDataCollector (the data collector fill; the diag_dm1_* names around it are collector names, not J1939 DM1) sets it to the write pointer + 1, wrapped to the buffer start past the end, when the trigger arrives in fill mode 1: it is where the post-trigger phase 2 fill starts. Written twice (stw), no reader found (was diag_dm1_buffer_phase2_start_ptr) | earlier note: DM1 buffer phase-2 fill start pointer
++ 0x003fa97a,j1939_dm1_request_mode_byte,byte,DM1 request mode byte (broadcast vs dest-specific)
++ 0x003faa66,engine_retarder_controlling_override_priority_bits,byte,cm848_processEngineRetarderTsc1Request stores tsc1_rx_byte_0 & 0x30 into it (bVar5), i.e. TSC1 byte 1 bits 5-6 = SPN 897 Override Control Mode Priority (j1939 DB), not SPN 695 (that is mask 0x03, engine_retarder_override_control_mode); a new sender whose value is numerically larger (lower priority) is rejected. xref_addr.py: 1 read, 1 write, only that function. Time-shared window: xref_addr.py ... (was tsc1_override_mode_bits_prev) | earlier note: cached TSC1 override mode bits (SPN 695)
++ 0x003fabca,j1939_dm1_fault_data_channel_byte,byte,DM1 fault data region channel/control byte
++diff --git a/work/tasks/045-cm848-fueling-state-enum.md b/work/tasks/045-cm848-fueling-state-enum.md
++index 3ec33df..04bc031 100644
++--- a/work/tasks/045-cm848-fueling-state-enum.md
+++++ b/work/tasks/045-cm848-fueling-state-enum.md
++@@ -490,6 +490,8 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
++   - the 80EF dword gains read at their old word width;
++   - a number with thousands separators.
++   A read 2 bytes off fails 79 of the 92.
+++  Caveat (stage 9): the rows at 0x40c200 and up were checked on the flat read, before the dump gap was found.
+++  0x40c27c's quoted 0 has no dump data behind it; its comment was fixed in stage 9.
++ 
++ ## Stage 8b - the fuel pressure governor / fuel metering gain records as structs (2026-11-19, PR #52)
++ 
++@@ -636,6 +638,20 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
++   - So from 0x40c280 up, read the dump at address - 0x80. 0x40c200-0x40c27f has no data: 15 named rows, the PWM
++     period commands and the collector words.
++   - `e2m_name_audit.py` / `lookup_tables.py` still read it flat (follow-up).
+++- **Review after the apply** (advisor):
+++  - **Function bodies read by the main session:** the five names where an agent overrode the proposal (0x42770,
+++    0x5268e8, 0x533b5c, 0x21ac0, 0x49004). All fit the code. 0x255c0's PGN 65232 is the CAN id of its transmit
+++    descriptor (0x18fed000).
+++  - **Cross-firmware, by address:** 10 applied functions have review-tier rows in `cross_firmware_matches.csv`.
+++    Their CM550 sides have other names (`vp44_FUN_*`, `cm550_*`), so no shared name broke. CM550's
+++    `diagnostic_session_state` (0x80dc92, untyped, no comment, not in the variable map) is only a name
+++    coincidence; it may be CM550's RAM refresh enable (lead).
+++  - **Stale names:** the all-CSV sweep over the 324 old names is clean. The one hit is the label row
+++    `fuel_demand_enable_sync_flag_shadow+2` (0x3fb52a); per wave 14 it is the previous-pass
+++    `cruise_control_engaged_flag` (lead). No comment cites a held proposal as if it had been applied.
+++  - **Dump gap comments:** 0x40c274 and 0x40c27c no longer quote a dump value.
+++  - **A slip, recovered:** a `git checkout` of the .cpp after the verify restored the pre-wave version. A rebuild
+++    produced it again; its reversed form is byte-identical to the verified build's, and the warnings match.
++ 
++ ## Follow-ups (open)
++ 
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.tar.xz b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.tar.xz
+index 07e184f..3ba9c74 100644
+Binary files a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.tar.xz and b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.tar.xz differ
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.txt
+index 3891c94..17eeeb1 100644
+--- a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.txt
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.txt
+@@ -81,6 +81,7 @@ stage8/reversed8.cpp
+ stage8/reversed8c.cpp
+ stage8/reversed8c_final.cpp
+ stage8/stage8.diff
++stage9/archive9.diff
+ stage9/audit_after9.csv
+ stage9/pre9.cpp
+ stage9/pre9_canon.cpp

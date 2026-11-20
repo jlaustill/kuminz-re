@@ -1,0 +1,5 @@
+docs: session archive for the stage 9 review (cross-firmware check by address, review diffs)
+
+cross_firmware_check_W14.py and the review diffs; the tar.xz restores byte-identically.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
