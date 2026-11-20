@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 15:40:48 MST 2026
+// Generated: Fri Nov 20 15:57:19 MST 2026
 
 
 //
@@ -12466,14 +12466,14 @@ void cm848_estimateChargePressure(void)
        (turbocharger_speed < charge_pressure_estimate_turbocharger_speed_low_threshold)) ||
       (((charge_pressure_estimate_turbocharger_speed_high_threshold < turbocharger_speed ||
         (intake_manifold_temperature_filtered_source == 2)) ||
-       ((compressor_inlet_temperature_source == 2 ||
+       ((ambient_air_temperature_selected_source == 2 ||
         ((barometric_pressure_selected_source == 2 ||
          (monitor_enabling_conditions_met.charge_pressure_estimate_enable == 0)))))))) ||
      (monitor_battery_voltage_error_latch.charge_pressure_estimate_enable != 0)) {
     charge_pressure_estimate_with_turbocharger_speed_state = 0x80;
   }
   else if ((((intake_manifold_temperature_filtered_source == 1) ||
-            (compressor_inlet_temperature_source == 1)) ||
+            (ambient_air_temperature_selected_source == 1)) ||
            (barometric_pressure_selected_source == 1)) || (turbocharger_speed_source == 1)) {
     charge_pressure_estimate_with_turbocharger_speed_state = 0x40;
   }
@@ -12762,11 +12762,11 @@ void cm848_processBoostProtectionMode(undefined4 param_1,int param_2)
   int unaff_r31;
   int iVar1;
   
-  if ((compressor_inlet_temperature_source == 2) ||
+  if ((ambient_air_temperature_selected_source == 2) ||
      ((combustion_override_and_estimation_enable_flags_cal & 0x4000) == 0)) {
     injection_enable_mode_byte = 0x80;
   }
-  else if (compressor_inlet_temperature_source == 1) {
+  else if (ambient_air_temperature_selected_source == 1) {
     injection_enable_mode_byte = 0x40;
   }
   else {
@@ -12827,11 +12827,11 @@ void cm848_initBoostProtectionState(void)
 {
   fuel_demand_boost_offset_filter.accumulator = (int)(short)sensor_channel9_pressure_value << 0x10;
   fuel_demand_boost_offset_filter.coefficient = &fuel_demand_boost_offset_filter_coefficient;
-  if ((compressor_inlet_temperature_source == 2) ||
+  if ((ambient_air_temperature_selected_source == 2) ||
      ((combustion_override_and_estimation_enable_flags_cal & 0x4000) == 0)) {
     injection_enable_mode_byte = 0x80;
   }
-  else if (compressor_inlet_temperature_source == 1) {
+  else if (ambient_air_temperature_selected_source == 1) {
     injection_enable_mode_byte = 0x40;
   }
   else {
@@ -15568,7 +15568,7 @@ uint cm848_estimateCompressorOutletTemperature(void)
 void cm848_selectCompressorOutletTemperature(void)
 
 {
-  if (((compressor_inlet_pressure_source == 2) && (compressor_inlet_temperature_source == 2)) ||
+  if (((compressor_inlet_pressure_source == 2) && (ambient_air_temperature_selected_source == 2)) ||
      ((feature_enable_flags_cal & 0x80) == 0)) {
     compressor_outlet_temperature_estimation_active_flag = 0;
   }
@@ -15581,9 +15581,9 @@ void cm848_selectCompressorOutletTemperature(void)
   }
   else {
     compressor_outlet_temperature = cm848_estimateCompressorOutletTemperature();
-    if (((compressor_inlet_pressure_source == 0) && (compressor_inlet_temperature_source == 0)) &&
-       ((charge_flow_estimate_terms.fresh_air_flow_source == 0 && (turbocharger_speed_source != 2)))
-       ) {
+    if (((compressor_inlet_pressure_source == 0) && (ambient_air_temperature_selected_source == 0))
+       && ((charge_flow_estimate_terms.fresh_air_flow_source == 0 &&
+           (turbocharger_speed_source != 2)))) {
       compressor_outlet_temperature_source = 0;
     }
     else {
@@ -29911,12 +29911,12 @@ void cm848_estimateTurbochargerSpeed(void)
   turbocharger_speed_estimate_sensor_snapshot = turbocharger_speed_sensor_value;
   if (((((algorithm_enable_flags_6_cal & 1) == 0) || (charge_pressure_source == 2)) ||
       (compressor_inlet_pressure_source == 2)) ||
-     ((compressor_inlet_temperature_source == 2 ||
+     ((ambient_air_temperature_selected_source == 2 ||
       (intake_manifold_temperature_filtered_source == 2)))) {
     turbocharger_speed_estimation_status = 0x80;
   }
   else if (((charge_pressure_source == 1) || (compressor_inlet_pressure_source == 1)) ||
-          ((compressor_inlet_temperature_source == 1 ||
+          ((ambient_air_temperature_selected_source == 1 ||
            (intake_manifold_temperature_filtered_source == 1)))) {
     turbocharger_speed_estimation_status = 0x40;
   }
@@ -60949,8 +60949,8 @@ void cm848_initializeBarometricFuelLimitInterpolationStates(void)
    ambient_air_temperature_override_value when ambient_air_temperature_user_override_enable_cal is
    set, or ambient_air_temperature_default_value when its source
    ambient_air_temperature_reference_source (+8 Ambient_Air_Tmptr_Source: the larger of
-   compressor_inlet_temperature_source = e2m 1A0C +2 Compressor_Inlet_Tmptr_Source and the fresh air
-   flow source, 0 primary / 1 backup / 2 default) is 2. Looks up the inlet pressure drop
+   ambient_air_temperature_selected_source = e2m 1A0C +2 Compressor_Inlet_Tmptr_Source and the fresh
+   air flow source, 0 primary / 1 backup / 2 default) is 2. Looks up the inlet pressure drop
    compressor_inlet_pressure_drop (+E Compressor_Inlet_Pressure_Drop) from the filtered fresh air
    flow, then barometric_pressure_reference (+2 Ambient_Air_Press) and compressor_inlet_pressure (+A
    Compressor_Inlet_Press) from barometric_pressure_selected: with
@@ -60980,11 +60980,11 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
        cm848_dualAxisTableInterpolation
                  (WORD_ARRAY_003fb9de,boost_pressure_timing_ema_filtered,WORD_ARRAY_003ff108,
                   vehicle_speed_copy,WORD_ARRAY_003ff3b6,WORD_ARRAY_003ff12e,0);
-  if ((compressor_inlet_temperature_source == 2) ||
+  if ((ambient_air_temperature_selected_source == 2) ||
      (charge_flow_estimate_terms.fresh_air_flow_source == 2)) {
     ambient_air_temperature_reference_source = 2;
   }
-  else if ((compressor_inlet_temperature_source == 1) ||
+  else if ((ambient_air_temperature_selected_source == 1) ||
           (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
     ambient_air_temperature_reference_source = 1;
   }
@@ -61096,7 +61096,7 @@ void cm848_initialization_step_3(void)
        (int)(short)boost_fuel_timing_demand_filter_output << 0x10;
   ema_filter_state_t_003fb9e2.coefficient = &WORD_003ff076;
   ambient_air_temperature_reference = ambient_air_temperature_selected;
-  ambient_air_temperature_reference_source = compressor_inlet_temperature_source;
+  ambient_air_temperature_reference_source = ambient_air_temperature_selected_source;
   DAT_0040a1a6 = barometric_pressure_selected_source;
   barometric_pressure_reference = barometric_pressure_selected;
   compressor_inlet_pressure = barometric_pressure_selected;
@@ -63066,10 +63066,11 @@ void cm848_calculateAmbientAirDensity(void)
     }
   }
   ambient_air_density = wVar3;
-  if ((compressor_inlet_pressure_source == 2) && (compressor_inlet_temperature_source == 2)) {
+  if ((compressor_inlet_pressure_source == 2) && (ambient_air_temperature_selected_source == 2)) {
     DAT_0040a606 = 2;
   }
-  else if ((compressor_inlet_pressure_source == 0) && (compressor_inlet_temperature_source == 0)) {
+  else if ((compressor_inlet_pressure_source == 0) && (ambient_air_temperature_selected_source == 0)
+          ) {
     DAT_0040a606 = 0;
   }
   else {
@@ -63086,8 +63087,8 @@ void cm848_calculateAmbientAirDensity(void)
 
 /* Chooses the ambient air temperature input: sensor_channel20_value
    (ambient_air_temperature_sensor_filtered) into ambient_air_temperature_selected with
-   compressor_inlet_temperature_source = 0, or sensor_channel20_default_value with state 2 when the
-   channel fault status or one of the gated fault bits is set (gates in
+   ambient_air_temperature_selected_source = 0, or sensor_channel20_default_value with state 2 when
+   the channel fault status or one of the gated fault bits is set (gates in
    fuel_timing_demand_fault_gate_enable). (was cm848_communication_periodic) */
 
 void cm848_selectAmbientAirTemperatureInput(void)
@@ -63117,11 +63118,11 @@ void cm848_selectAmbientAirTemperatureInput(void)
   DAT_0040a60c = uVar2 | uVar1;
   if ((uVar2 & 0x22) == 0 && uVar1 == 0) {
     ambient_air_temperature_selected = sensor_channel20_value;
-    compressor_inlet_temperature_source = 0;
+    ambient_air_temperature_selected_source = 0;
   }
   else {
     ambient_air_temperature_selected = sensor_channel20_default_value;
-    compressor_inlet_temperature_source = 2;
+    ambient_air_temperature_selected_source = 2;
   }
   return;
 }
@@ -63132,7 +63133,7 @@ void cm848_selectAmbientAirTemperatureInput(void)
 // Function: cm848_initializeAmbientAirTemperatureInput @ 0x00505b3c
 //
 
-/* Boot pass of the ambient air temperature input: compressor_inlet_temperature_source from
+/* Boot pass of the ambient air temperature input: ambient_air_temperature_selected_source from
    sensor_channel20_fault_status (0 or 1 -> 0, 2 -> 2) and ambient_air_temperature_selected =
    sensor_channel20_value. (was cm848_initialization_step_10) */
 
@@ -63140,10 +63141,10 @@ void cm848_initializeAmbientAirTemperatureInput(void)
 
 {
   if ((sensor_channel20_fault_status == 0) || (sensor_channel20_fault_status == 1)) {
-    compressor_inlet_temperature_source = 0;
+    ambient_air_temperature_selected_source = 0;
   }
   else if (sensor_channel20_fault_status == 2) {
-    compressor_inlet_temperature_source = 2;
+    ambient_air_temperature_selected_source = 2;
   }
   ambient_air_temperature_selected = sensor_channel20_value;
   return;

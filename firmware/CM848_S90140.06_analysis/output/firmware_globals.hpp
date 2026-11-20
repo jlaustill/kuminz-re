@@ -4346,7 +4346,7 @@ extern word emission_level_cap_command;  // 0x0040a5b4
 extern word emission_manager_engine_protection_state;  // 0x0040a5ee
 extern word ambient_air_density;  // 0x0040a604
 extern word ambient_air_temperature_selected;  // 0x0040a608
-extern word compressor_inlet_temperature_source;  // 0x0040a60a
+extern word ambient_air_temperature_selected_source;  // 0x0040a60a
 extern word boost_pressure_normalized;  // 0x0040a60e
 extern word compressor_map_corrected_turbocharger_speed;  // 0x0040a610
 extern word fuel_timing_boost_scale_lookup;  // 0x0040a612

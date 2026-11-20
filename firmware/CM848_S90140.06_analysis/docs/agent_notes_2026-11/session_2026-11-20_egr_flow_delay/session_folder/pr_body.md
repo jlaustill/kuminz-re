@@ -92,15 +92,19 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
 
 ## Test plan
 
-- [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the two stale-prototype warnings
-  that stage 4 removes.
+- [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
+  that stages 4 and 6 remove.
 - [x] Stages 1, 3, 5 and 7: the label-only proof is EQUIVALENT.
 - [x] Stage 8: the cast-normalized proof leaves 6 differing functions, all cosmetic.
 - [x] Stage 2 changed only the intended functions. Stage 4 changed only the functions predicted before its build (the
   two readers of `pumping_torque_adjustment` needed no cast, so they did not change). Apart from those, only
   declaration orders changed, and the piece count stays 508 → 508.
-- [x] No new name shadows a parameter or a local. CM550 and the cross-firmware maps cite none of the old names. Every
-  stage 3 row's width matches its e2m record.
+- [x] Rounds 2 and 3 (stages 3, 5 and 7):
+  - no new name shadows a parameter or a local;
+  - CM550 and the cross-firmware maps cite none of the old names;
+  - every renamed row's width matches its e2m record (the only hits are struct instances).
+- [x] Stage 8: every new `(ushort)` / `(uint)` cast on a retyped word was checked against its instruction. All 10 sit
+  on `lha` loads whose value the code then shifts logically, so none needed a revert.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.

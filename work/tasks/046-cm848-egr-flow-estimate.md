@@ -120,7 +120,7 @@ would otherwise misname.
     (1966 +A): `exhaust_pressure_sensor_*`, plus a new row for slot 109 of `sensor_channel_filtered_output`.
   - **EGR delta pressures (1A19):** `egr_valve_delta_pressure` / `engine_delta_pressure` (were `egr_delta_pressure` /
     `egr_delta_pressure_negated`). `exhaust_pressure_offset` is 198C +0.
-  - **Two source words:** `compressor_inlet_temperature_source` (1A0C +2) and `barometric_pressure_selected_source`
+  - **Two source words:** `ambient_air_temperature_selected_source` (1A0C +2, beside +0 `ambient_air_temperature_selected`) and `barometric_pressure_selected_source`
     (1A11 +2).
   - **The rest:** the predicted IMT initializer, and the monitor bit `charge_pressure_estimate_enable`.
   - **A naming lesson:** a field named like a global (the first try was `charge_pressure_estimate`) breaks the
