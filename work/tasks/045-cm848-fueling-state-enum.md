@@ -568,9 +568,101 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - Each table is word[11] (a header word, then 10 points), on 400-4000 rpm.
 - **Gate:** the repo's `apply_renames.py` passed all 24 renames against the pre-8c CSVs.
 
+## Stage 9 - rename wave 14, the function misnames and the sibling rows (2026-11-19, PR #52)
+
+- **Worklists:**
+  - **83 functions:** the renames the wave-12 / wave-13 reports proposed (`extract_function_leads.py`), plus 9 by hand.
+  - **253 globals:** the low-overlap and wrong-`_cal` rows of the e2m blocks wave 13 renamed into, and every row a
+    report named. The report ranges and family stems were added (`expand_worklist.py`). 84 weaker rows and 125 rows
+    with 0.2-0.34 overlap were deferred.
+- **Precomputed before dispatch** (after an advisor review):
+  - the CM550 shared-name check and the owner's signed review notes;
+  - each row's width against the records it covers;
+  - full plates, and a `code_quote` that the apply checks against the function body or the .cpp.
+- **Seven agents:** three function bins by family and four global bins by block; 4.78M tokens, 31-41 min each.
+  - Verdicts: 83 function renames; 238 global renames, 13 keeps, 2 drift; 2 enum rows.
+- **Applied** (`apply_W14.py`, through the repo gate): 75 function renames (the plate keeps the old one as an earlier
+  note), 231 global renames, 12 e2m cross-references on keeps. By hand:
+  - **The rpm deceleration limit (e2m 107C +5A / +5C / +5E, 107D +2E):** the dword `fuel_demand_integrator_b` was
+    the I term and the P term. They are now the `i16` rows `rpm_deceleration_limit_integral_term` /
+    `_proportional_term`, plus `rpm_deceleration_limit_fuel` / `_fuel_maximum`.
+  - **Byte splits of 8194 word rows:** `crank_sync_tooth` / `crank_teeth_per_cam_measurement`,
+    `backup_period_capture_count` / `crank_periods_per_speed_interrupt`, the two resync cam tooth thresholds, and the
+    tooth shift upper (byte) / lower (word) thresholds.
+  - **Widths and arrays:** 0x40912a is a word. `data_collector_address_table_cal` is `dword[32]`, and its length
+    word has a row.
+  - **Enums:**
+    - `ram_refresh_enable` is RAM_REFRESH_STATE (was `diagnostic_session_state` / DIAG_SESSION_STATE; LOCKED_OUT
+      was never stored and is dropped).
+    - `development_mode` is DEVELOPMENT_MODE_STATE (was `j1939_standby_flag` / J1939_STANDBY_STATE).
+    - `run_location` is the new RUN_LOCATION {0xee normal, 0xea development} (was `cal_write_mode`, e2m 0010
+      RUN_LOC). The owner's 2026-05-25 review note on 0x21694 asked for these compares as enums.
+- **Families renamed:**
+  - alpha (9 functions + words);
+  - the EGR mass flow / charge flow / intake manifold temperature / EGR orifice temperature models;
+  - the J1939 percent peak torque / friction / PGN 65251 torque curve functions;
+  - J1939 control sessions, the data collector, engine protection shutdown, the rear axle and drivetrain ratio;
+  - cylinder balance (81AE / 81B0), the equivalent throttle governor (81A9);
+  - the TPU-A channel 0 crank / channel 1 cam signal settings (8194);
+  - the HPCR settings (8000), the air handling source words, charge pressure in range;
+  - the 1102 torque curve calculated / reference fuelings;
+  - 88 wrong `_cal`s dropped.
+- **Held for the owner:**
+  - **Three functions with the owner's signed 2026-05-25 review notes.** The code shows the "activate" services
+    exit development mode, so the proposals are:
+    - 0x21624 `cm848_activateDiagnosticSession` -> `cm848_exitDevelopmentMode`;
+    - 0x21668 `cm848_resetDiagnosticSession` -> `cm848_enterDevelopmentMode`;
+    - 0x21694 `cm848_forceActivateDiagnosticSession` -> `cm848_forceExitDevelopmentMode`.
+  - **Five functions whose names CM550 shares:** 0xe164 / 0xe3a4 / 0xe518 (alpha), 0x1b3a0 (PGN 65251 payload),
+    0x2588c (EEC1). They need a cross-firmware rename. Per the agents, 0xe518's cross-firmware match row is false.
+  - **Two struct items:**
+    - `boost_pressure_state_t` (0x40a406) is the charge flow estimate terms; the agents give the field -> record
+      mapping;
+    - `engine_sync_state_t` (0x40b87f) is 7 bytes, not 6: 8019 +5 is a word.
+- **Proof:**
+  - The 324 renames and the enum maps reverse cleanly except in 10 functions. Each of those is explained by the
+    retypes: pieces gone, `(short)` casts gone on the `i16` rows, one `(byte *)` / `(word *)` cast pair gone after
+    the 0x40912a widening, and array indexing in the three collector functions (`real_code_diffs.py`).
+  - The warnings are stage 4's, with 3 prototype warnings now naming renamed functions.
+  - Headers compile, the tests pass, and the comment sweep is clean.
+  - The width check is clean once the audit knows enum sizes (`load_enum_sizes`, new). 186 / 186 quoted dump values
+    are right (one false positive read a scaled value); a 2-byte-shifted read fails 141.
+  - Direction-word renames were checked against their compares.
+- **The audit after wave 14:** 1344 named rows have a token overlap under 0.34 (1483 after wave 13).
+- **Finding: the RAM dump misses 0x80 bytes at 0x40c200-0x40c27f** (wave 14 globals3, checked by the main session).
+  - `cm848_ram.bin` is 0x45f80 bytes, exactly 0x80 short of 0x440000.
+  - At 0x40c200 it holds what the code gives 0x40c280 / 84 / 86: the collector end pointer 0x40c28a, 0, and the
+    collector table address 0x3fddc4. The rows' own addresses read 0.
+  - So from 0x40c280 up, read the dump at address - 0x80. 0x40c200-0x40c27f has no data: 15 named rows, the PWM
+    period commands and the collector words.
+  - `e2m_name_audit.py` / `lookup_tables.py` still read it flat (follow-up).
+
 ## Follow-ups (open)
 
-- [ ] **Wave 14: the function names.** The wave-12 / wave-13 agents proved about 70 misnamed functions in their reports
+- [ ] **The wave-14 holds** (stage 9 above):
+  - the owner's three development mode function names;
+  - the five CM550-shared functions, which need a cross-firmware rename;
+  - the two struct items (0x40a406 `charge_flow_estimate_terms_t`, 0x40b87f 7 bytes).
+- [ ] **The RAM dump gap in the tools:** `e2m_name_audit.py` and `lookup_tables.py` read `cm848_ram.bin` flat. Add one
+  helper that reads 0x40c280+ at -0x80 and refuses 0x40c200-0x40c27f, and check the comments that quote dump values
+  of those 15 rows.
+- [ ] **Leads from the wave-14 reports** (`agent_prompts_and_reports.md`, stage 9 section):
+  - **Crank / cam:** `engine_crank_state_t`'s fields are 819C Cam_Sync_Error_Count / Cam_Sync_State /
+    Crank_Sync_Error_Count / Crank_Sync_State. `mpc555_updateEngineRunState` is the TPU-A channel 0 crank handler. The
+    819B backup words are still `crank_*`.
+  - **Converter clutch:** the `protection_*` rows still left.
+  - **Thermostat monitor:** the `cssc_*` rows and `engine_cssc_oilTemp_*` functions (P0128).
+  - **Torque map:** `j1939_fuel_table_*` (0x5c556 / 82 / 8e) is the MT_Max_Torque_Map in lb-ft, with a wrong `_cal`.
+  - **The 8194 / 81AE / 8000 rows** still with a wrong `_cal`, and the 84 + 125 deferred sibling rows.
+  - **Stale prototypes:** 0x12ad4 / 0x130dc declare two parameters but take none (build warning).
+  - **TPU-A registers:** `mpc555_registers.csv` lists the TPU-A CFSR / HSQR / HSRR / CPR channel groups in the wrong
+    order (the firmware's own channel setups fix them).
+  - **End-of-line test:** the step functions' names do not match the sequencer.
+  - **RAM refresh:** the `sensor_cal_*` rows at 0x3fd2d4-0x3fd2e0.
+  - **The fault bitmap rows:** 49 rows in the EEPROM mirror are named without `_cal`. Decide the rule for EEPROM-backed
+    non-calibration data.
+
+- [x] **Wave 14: the function names** (done in stage 9: 75 renamed, 8 held). The wave-12 / wave-13 agents proved about 70 misnamed functions in their reports
   (archived in `agent_prompts_and_reports.md`). Examples: the data collector (`diag_dm1Buffer_circularFill`), alpha
   (`hpcr_calculateFuelTrimOutput`), PGN 65251 (`faultTimerHandler`), EEC1 (`j1939GetEngineStateCode`), the drivetrain
   ratio estimator (`protectionTimeoutControl`), the EGR orifice / mass flow models, the warm-up cycle monitor
@@ -578,15 +670,12 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - [ ] **The rest of the HPCR governor settings:** block 8000 (0x409110-0x409138: `engine_sync_*_cal` /
   `cam_sync_*_cal` / `engine_speed_override_*_cal`) has wrong `_cal`s. HPCR_Governor_Mode and the gain scheduling
   curves were done in stage 8c.
-- [ ] **Shapes and types from wave 13:**
-  - split 0x40a204 (the rpm deceleration limit's I / P terms, e2m 107C +5A / +5C). The 0x4094xx gain records were done
-    in stage 8b;
-  - 0x408f66 `crank_timer_offset_cal` is a word over two byte records (8194 +10 Crank_Sync_Tooth, +11
-    Crank_Teeth_Per_Cam_Measure), and its `_cal` is wrong for the region (0x408f56 was split in stage 8c);
-  - the `i16` candidates listed in the reports.
-- [ ] **The held renames:** `diagnostic_session_state` -> `ram_refresh_enable` and `j1939_standby_flag` ->
+- [ ] **Shapes and types from wave 13:** the 0x40a204 and 0x408f66 splits were done in stage 9, the 0x4094xx gain
+  records in stage 8b and 0x408f56 in stage 8c. Still open: the `i16` candidates listed in the wave-13 / wave-14
+  reports.
+- [x] **The held renames** (done in stage 9 with their enums): `diagnostic_session_state` -> `ram_refresh_enable` and `j1939_standby_flag` ->
   `development_mode` need their enums (`DIAG_SESSION_STATE` / `J1939_STANDBY_STATE`) re-read first.
-- [ ] **The out-of-bin siblings the wave-13 agents listed** (in their reports, `agent_prompts_and_reports.md`): rows
+- [x] **The out-of-bin siblings the wave-13 agents listed** (done in stage 9; the rest is in the stage-9 follow-ups) (in their reports, `agent_prompts_and_reports.md`): rows
   that keep a wrong name next to a renamed family. Examples:
   - the rest of the alpha (0x40a16c-0x40a180, 0x3fa0d2-0x3fa0dc) and all-speed governor (0x40a1aa-0x40a208) words;
   - the PGN 65251 points 1 / 3 and the per-point reference fuelings (0x40ad90-0x40add2, ROM 1104);

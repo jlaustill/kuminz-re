@@ -94,11 +94,29 @@ def load_struct_sizes(path):
     return sizes
 
 
+ENUM_SIZES = {}
+
+
+def load_enum_sizes(path):
+    """Enum type -> byte size, from enums.csv (enum_name,value,member_name,comment,size: the size is the last column,
+    so a comment with a comma does not shift it)."""
+    sizes = {}
+    for line in open(path, errors="replace"):
+        name = line.split(",", 1)[0].strip()
+        if not name or name.startswith("#") or name == "enum_name":
+            continue
+        size = line.rstrip("\r\n").rsplit(",", 1)[-1].strip()
+        if size.isdigit() and int(size) > 0:
+            sizes[name] = int(size)
+    return sizes
+
+
 def width(typ):
     m = re.match(r"(\w+)\s*\[(\d+)\]$", typ)
     if m:
-        return (SIZES.get(m.group(1)) or STRUCT_SIZES.get(m.group(1)) or 2) * int(m.group(2))
-    return SIZES.get(typ) or STRUCT_SIZES.get(typ, 0)
+        base = m.group(1)
+        return (SIZES.get(base) or STRUCT_SIZES.get(base) or ENUM_SIZES.get(base) or 2) * int(m.group(2))
+    return SIZES.get(typ) or STRUCT_SIZES.get(typ) or ENUM_SIZES.get(typ, 0)
 
 
 def main(argv):
@@ -108,6 +126,7 @@ def main(argv):
     args = parser.parse_args(argv)
     table = table_tool.parse_table(open(table_tool.DEFAULTS["flash2"], "rb").read())
     STRUCT_SIZES.update(load_struct_sizes(os.path.join(CM848, "output", "structure_definitions.csv")))
+    ENUM_SIZES.update(load_enum_sizes(os.path.join(CM848, "output", "enums.csv")))
     rows = load_rows(table_tool.DEFAULTS["globals"])
     starts = {a: (n, t) for a, n, t in rows}
     spans = sorted((a, a + max(width(t), 1), n, t) for a, n, t in rows)

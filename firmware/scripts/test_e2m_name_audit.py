@@ -30,6 +30,19 @@ m.STRUCT_SIZES["ema_filter_state_t"] = 8
 check("width: struct (known)", m.width("ema_filter_state_t"), 8)
 check("width: struct array", m.width("ema_filter_state_t[3]"), 24)
 m.STRUCT_SIZES.clear()
+check("width: enum (unknown)", m.width("RUN_LOCATION"), 0)
+m.ENUM_SIZES["RUN_LOCATION"] = 1
+check("width: enum (known)", m.width("RUN_LOCATION"), 1)
+m.ENUM_SIZES.clear()
+import tempfile  # noqa: E402
+with tempfile.NamedTemporaryFile("w", suffix=".csv", delete=False) as f:
+    f.write("enum_name,value,member_name,comment,size\n"
+            "RAM_REFRESH_STATE,0,RAM_REFRESH_DISABLED,off; a comment, with a comma,2\n"
+            "RAM_REFRESH_STATE,1,RAM_REFRESH_ENABLED,on,2\n"
+            "RUN_LOCATION,0xee,RUN_LOCATION_NORMAL,normal,1\n"
+            "NO_SIZE,0,NO_SIZE_ZERO,no size column\n")
+check("enum sizes: the last column, commas in comments", m.load_enum_sizes(f.name),
+      {"RAM_REFRESH_STATE": 2, "RUN_LOCATION": 1})
 
 print("\n".join(failures) if failures else "ALL PASS")
 sys.exit(1 if failures else 0)

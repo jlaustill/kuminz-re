@@ -68,7 +68,7 @@ function_address,function_name,param_index,name,type,comment
 # J1939 PGN Handlers - Common pattern for diagnostic message handlers
 # Pattern: First param is always a pointer to the received CAN message descriptor
 # -----------------------------------------------------------------------------
-0x00020c64,cm848_processJ1939RxMessage,0,rx_msg,j1939_rx_msg_t*,Pointer to received CAN message descriptor
+0x00020c64,cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling,0,rx_msg,j1939_rx_msg_t*,Pointer to received CAN message descriptor
 
 0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,0,rx_msg,j1939_rx_msg_t*,Pointer to received diagnostic message
 0x0000628c,mpc555_dispatchJ1939TransportConnectionManagement,1,service_code,byte,Diagnostic service code from message
@@ -137,8 +137,8 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x000227a0,cm848_j1939HandleDm1RequestMessage,0,request_msg,j1939_rx_msg_t*,Pointer to DM1 (Active DTC) request
 
-0x000255c0,cm848_j1939SendDm1ResponseMessage,0,dest_address,byte,Destination address for DM1 response
-0x000255c0,cm848_j1939SendDm1ResponseMessage,1,fault_count,byte,Number of active DTCs to report
+0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,0,dest_address,byte,Destination address for DM1 response
+0x000255c0,cm848_sendPgn65232NonContinuousMonitorTestResultMessage,1,fault_count,byte,Number of active DTCs to report
 
 0x0002641c,cm848_buildPgn65213FanDrive1Message,return,,void,explicit void(void) - r3 / r4 are written before they are read (lis r3 @ 0x26428 / lis r4 @ 0x26444) - the transmit queue calls it with no arguments - replaces the invented dest_address / status_type rows
 
@@ -199,14 +199,14 @@ function_address,function_name,param_index,name,type,comment
 0x0001392c,cm848_selectLoadNormalizer,2,computed_boost,ushort,Computed boost value
 0x0001392c,cm848_selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
 
-0x000130dc,cm848_calculateBoostPressureOffset,0,manifold_pressure,ushort,Filtered manifold pressure input
-0x000130dc,cm848_calculateBoostPressureOffset,1,rpm,ushort,Engine RPM for table lookup
+0x000130dc,cm848_calculatePumpingTorqueAdjustment,0,manifold_pressure,ushort,Filtered manifold pressure input
+0x000130dc,cm848_calculatePumpingTorqueAdjustment,1,rpm,ushort,Engine RPM for table lookup
 
 0x00013294,cm848_calculateBoostTorqueOffset,0,boost_input,ushort,Boost pressure input
 0x00013294,cm848_calculateBoostTorqueOffset,1,rpm,ushort,Engine RPM for calculation
 
-0x00012ad4,cm848_boostBasedFuelModifier,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
-0x00012ad4,cm848_boostBasedFuelModifier,1,base_fueling,ushort,Base fueling command to modify
+0x00012ad4,cm848_calculateVolumetricEfficiency,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
+0x00012ad4,cm848_calculateVolumetricEfficiency,1,base_fueling,ushort,Base fueling command to modify
 
 # -----------------------------------------------------------------------------
 # Parameter-by-ID Lookup System - CM848 diagnostic parameter resolution

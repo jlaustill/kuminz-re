@@ -139,7 +139,7 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
   - **Loop 2, feedback trim:** a table turns the clamped demand into a target for `fuel_metering_feedback_input` (QADC index slot 63 x 4; the physical signal is not identified). The command is base + PI trim x base / 4096.
   - **Shared helpers:** `cm848_applyPiecewiseLinearGain`, `cm848_integrateWithZoneGain` and `cm848_calculateFilteredDerivative`.
   - **Stale-register quirk (confirmed 2026-11-16):** only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
-  - **State:** four Q16.16 states, typed as `q16_fixed_point_t` globals (`.integer_part` / `.fractional_part`), at 0x3fb66a / 66e / 672 / 676. A struct-typed global made the raw `0x3fb672`-style call arguments render as `&name`. `cm848_resetEngineSyncState` never clears 0x3fb676: its fourth store pair repeats 0x3fb66e.
+  - **State:** four Q16.16 states, typed as `q16_fixed_point_t` globals (`.integer_part` / `.fractional_part`), at 0x3fb66a / 66e / 672 / 676. A struct-typed global made the raw `0x3fb672`-style call arguments render as `&name`. `cm848_initializeFuelPressureGovernorState` never clears 0x3fb676: its fourth store pair repeats 0x3fb66e.
 - **Serial reflash hand-off (2026-11-15, PR #48, todo 038):** a serial (SCI) reflash goes through the boot ROM; the application only hands the session over.
   - **SCI command 49 (0x31, `cm848_sciCommand49Callback`):** needs byte 1, `sci_security_state` 1 (unlocked) and `engine_state` 1 (or `end_of_line_test_settings_cal.field_mode_register` 5100). It writes `serial_reflash_unlock_request_cal` = 1 (EEPROM 0x56) and the boot-kernel magic 0x1d0a (EEPROM 0x00) with `cm848_writeEepromBytes` (was `cm848_memoryBlock_checksum_validate`), then calls `cm848_restartThroughBootRomAfterSciRequest`.
   - **`cm848_restartThroughBootRom` (0x216fc, was `mpc555_processJ1939RxQueue`):** saves two EEPROM dwords, acknowledges on SCI or J1939, sets chip-select 0, then jumps through the ROM 0x104 vector to `mpc555_hardwareInitialization`. J1939 PGN 61184 diagnostic service 11 (`cm848_handleJ1939RestartService`) uses it too.
@@ -476,7 +476,7 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
   - `sensor_channel_config_t`: `filter_coefficient` (was `config_word0`) / `default_value` / `high_threshold` / `low_threshold` / `debounce_step` / `recovery_decrement` / `debounce_limit` / `debounce_clear_threshold`.
   - `sensor_channel_state_t`: `raw_adc_counts` / `value` (the lookup result) / `debounce_count` / `held_value` (output while the channel's `sensor_channel_held_value_enable_bits_cal` bit is set; for the accelerator pedal channel 13 the J1939 input layer writes `sensor_channel13_ram.held_value` there and its source priority in `spare`) / `spare` / `lookup_input` (ratiometric reading, capped at 0x3ff).
   - `ema_filter_state_t` (`exponentialMovingAverage`'s state, 45 callers): `coefficient` points at a `filter_coefficient`, and `accumulator` is Q16.16. Each pass moves the value (65536 - coefficient) / 65536 of the way, and 0 means no filtering.
-- **Outputs (renamed 2026-11-16):** `value_output_ptr` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_ptr` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `map_fuel_correction_factor` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
+- **Outputs (renamed 2026-11-16):** `value_output_ptr` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_ptr` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `charge_pressure` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
 - **Blocks with named fields (typed 2026-11-16):** 24 blocks used to keep a named row inside, and those rows are now struct fields:
   - the barometric channel's default `barometric_pressure_sensor_config.default_value` (was `boost_pressure_fixed_reference`), which `cm848_calculateBoostPressure` subtracts when it uses no barometer;
   - the cruise switch validity window `cruise_switch_sensor_config.high_threshold` / `.low_threshold` (were `cruise_engage_adc_valid_upper` / `_lower`);
@@ -758,7 +758,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     `FUELING_STATE_UNIDENTIFIED_<n>`, with the setter in the comment. A value-normalizing diff (the session's
     `check_enum_proof.py`) finds any OR render after an enum change.
   - The dword at 0x3fb526 was two words: `governor_fuel_demand_working_mode_prev` (`sth` @ 0x40474) and
-    `fuel_demand_enable_sync_flag_shadow` (`lhz` @ 0x4064c / `sth` @ 0x406b8).
+    `cruise_resume_active_flag_previous` (`lhz` @ 0x4064c / `sth` @ 0x406b8).
   - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
   - **The arbitration functions (stage 3, renamed from `*Protection*` names):**
     - user fueling: `cm848_selectPowerTakeOffOrUserFueling`, then `cm848_calculateCruiseControlFueling` /
@@ -875,6 +875,18 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - The gain scheduling curves are `fuel_pressure_governor_*_gain_scaling_axis` / `_values` (e2m 8005-8010 /
       80E7-80EE / 80F0-80F1), selected by `fuel_pressure_governor_gain_mode` (HPCR_Governor_Mode, 0 = scheduled).
     - The 80B9 injector bits run in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4).
+  - **Stage 9: rename wave 14.** 75 function renames and 231 global renames, plus the splits and three enums by hand.
+    - Function families: alpha; the EGR mass flow / charge flow / intake manifold temperature models; the J1939
+      percent peak torque and PGN 65251 torque curve; J1939 control sessions; the data collector; engine protection
+      shutdown.
+    - `ram_refresh_enable` (RAM_REFRESH_STATE), `development_mode` (DEVELOPMENT_MODE_STATE) and `run_location`
+      (RUN_LOCATION: 0xee normal / 0xea development, e2m 0010 RUN_LOC). The "activate" services leave development
+      mode. Their names are held for the owner, who reviewed them on 2026-05-25.
+    - Held: five functions whose names CM550 shares (alpha, PGN 65251, EEC1); a cross-firmware rename is needed.
+  - **The RAM dump has a gap (found in wave 14):** `cm848_ram.bin` misses the 0x80 bytes at 0x40c200-0x40c27f.
+    - Read 0x40c280 and up at address - 0x80; there is no data for 0x40c200-0x40c27f.
+    - The proof: the collector end pointer 0x40c28a, then 0 and the table address 0x3fddc4, sit at dump 0x40c200, and
+      the file is exactly 0x80 short of 0x440000.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

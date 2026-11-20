@@ -68,7 +68,7 @@ address,reason
 0x0001df88,mid-function split inside hpcr_setFaultActiveStatus +0x24 (was hpcr_captureFreezeFrameData)
 0x0001e158,mid-function split inside hpcr_setFaultActiveStatus +0x1f4 (was hpcr_processDiagnosticFrame)
 0x00020c60,mid-function split inside cm848_updateProtectionInputs +0x64 (was cm848_initProtectionDefaults)
-0x00021b28,mid-function split inside cm848_initUdsServiceHandlers +0x68 (was cm848_applyFuelDemandFilter)
+0x00021b28,mid-function split inside cm848_lookupMaximumTorqueAtEngineSpeed +0x68 (was cm848_applyFuelDemandFilter)
 0x00021c9c,mid-function split inside cm848_updateProtectionThresholdsIfLow +0x60 (was cm848_setProtectionThresholdParameters)
 0x0002232c,mid-function split inside cm848_initJ1939Dm13Handler +0x14 (was cm848_initGovernorControlHandler)
 0x0002235c,mid-function split inside cm848_initJ1939Dm13Handler +0x44 (was cm848_noOperation)
