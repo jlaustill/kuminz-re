@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 15:18:23 MST 2026
+// Generated: Fri Nov 20 15:22:05 MST 2026
 
 
 //
@@ -6752,12 +6752,9 @@ void cm848_periodicTaskSet_sensorProcessing(void)
 void cm848_periodicTaskSet_controlLoop(void)
 
 {
-  word boost_input;
-  word rpm;
-  
   cm848_checkDiagnosticFuelOverride();
-  boost_input = cm848_processVariableGeometryTurbochargerHBridgeFaults();
-  cm848_estimateChargePressure(boost_input,rpm);
+  cm848_processVariableGeometryTurbochargerHBridgeFaults();
+  cm848_estimateChargePressure();
   cm848_calculateEngineOutputTorque();
   cm848_calculateHighSpeedGovernorCompensatedEngineSpeed();
   cm848_updateParkNeutralExitEngineSpeedLimitWindow();
@@ -10294,7 +10291,7 @@ void cm848_calculateChargeFlowDeltaPressureDerate(void)
   uint uVar3;
   uint uVar4;
   
-  uVar4 = (uint)(short)egr_valve_delta_pressure;
+  uVar4 = (uint)egr_valve_delta_pressure;
   if ((int)uVar4 < 0) {
     uVar4 = 0;
   }
@@ -10413,7 +10410,7 @@ void cm848_limitChargeManagerCommands(void)
     charge_flow_derate_active_flag = 0;
   }
   if (((egr_valve_closed_flag == 0) ||
-      ((short)egr_valve_delta_pressure < (short)egr_valve_maximum_opening_delta_pressure)) &&
+      (egr_valve_delta_pressure < (short)egr_valve_maximum_opening_delta_pressure)) &&
      (egr_fraction_command_above_on_threshold_flag != 0)) {
     egr_fraction_limited_command_with_shutoff = egr_fraction_combustion_command;
     iVar3 = (int)(short)egr_fraction_slew_down_rate;
@@ -11560,7 +11557,7 @@ void cm848_calculateDownstreamEgrMassFlow(void)
   int iVar3;
   
   uVar1 = (uint)charge_pressure;
-  iVar3 = (int)(short)egr_orifice_delta_pressure;
+  iVar3 = (int)egr_orifice_delta_pressure;
   iVar2 = iVar3 * 0x7fff;
   if ((int)(uVar1 * 0x7eb8) <= iVar2) {
     egr_flow_estimate_terms.downstream_egr_pressure_ratio = 0x7eb8;
@@ -12422,7 +12419,7 @@ void cm848_initializePumpingTorqueLookupCache(void)
    those sources or the turbocharger speed is BACKUP; else 0. (was cm848_calculateBoostTorqueOffset)
     */
 
-void cm848_estimateChargePressure(word boost_input,word rpm)
+void cm848_estimateChargePressure(void)
 
 {
   dword dVar1;
@@ -16666,7 +16663,7 @@ void cm848_updateEgrValveOverTemperatureFault(void)
   egr_valve_coolant_temperature_at_or_above_default_flag =
        (word)((short)egr_valve_coolant_temperature_default <= (short)coolant_temperature_selected);
   sVar1 = cm848_signedFirstOrderFilter
-                    ((int)(short)egr_valve_delta_pressure,&egr_valve_delta_pressure_filter_state);
+                    ((int)egr_valve_delta_pressure,&egr_valve_delta_pressure_filter_state);
   egr_valve_delta_pressure_over_temperature_threshold_reached_flag =
        (ushort)((short)egr_valve_over_temperature_delta_pressure_threshold <= sVar1);
   if ((coolant_temperature_source == 0) && (egr_valve_delta_pressure_source == 0)) {
@@ -16792,7 +16789,7 @@ void cm848_initializeEgrValveMotorThermalModel(void)
   egr_valve_motor_mean_squared_current_filter_state.accumulator = 0;
   egr_valve_motor_mean_squared_current_filter_state.coefficient =
        &egr_valve_mean_squared_current_filter_coefficient;
-  egr_valve_delta_pressure_filter_state.accumulator = (int)(short)egr_valve_delta_pressure << 0x10;
+  egr_valve_delta_pressure_filter_state.accumulator = (int)egr_valve_delta_pressure << 0x10;
   egr_valve_delta_pressure_filter_state.coefficient =
        &egr_valve_motor_winding_temperature_filter_coefficient;
   if ((short)coolant_temperature_selected < 1) {
@@ -63989,22 +63986,19 @@ void cm848_estimateExhaustPressure(void)
   uint uVar2;
   
   uVar2 = (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)
-                                (int)(short)exhaust_pressure_estimate_engine_speed_constant *
+                               ((longlong)(int)exhaust_pressure_estimate_engine_speed_constant *
                                (longlong)(int)(uint)engine_rpm_state_t_0040b7ac.current_rpm) >> 0x20
-                              ),(int)(short)exhaust_pressure_estimate_engine_speed_constant *
+                              ),(int)exhaust_pressure_estimate_engine_speed_constant *
                                 (uint)engine_rpm_state_t_0040b7ac.current_rpm) / 0x400) +
           (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)
-                                (int)(short)exhaust_pressure_estimate_egr_valve_position_constant *
-                               (longlong)(int)(short)egr_valve_position) >> 0x20),
-                         (int)(short)exhaust_pressure_estimate_egr_valve_position_constant *
+                               ((longlong)(int)exhaust_pressure_estimate_egr_valve_position_constant
+                               * (longlong)(int)(short)egr_valve_position) >> 0x20),
+                         (int)exhaust_pressure_estimate_egr_valve_position_constant *
                          (int)(short)egr_valve_position) / 0x1000) +
           (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)
-                                (int)(short)exhaust_pressure_estimate_charge_pressure_constant *
+                               ((longlong)(int)exhaust_pressure_estimate_charge_pressure_constant *
                                (longlong)(int)(uint)charge_pressure) >> 0x20),
-                         (int)(short)exhaust_pressure_estimate_charge_pressure_constant *
+                         (int)exhaust_pressure_estimate_charge_pressure_constant *
                          (uint)charge_pressure) / 0x1000) + (int)exhaust_pressure_estimate_constant;
   if ((int)uVar2 < 0) {
     uVar2 = 0;

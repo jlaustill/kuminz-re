@@ -208,8 +208,6 @@ function_address,function_name,param_index,name,type,comment
 0x0001392c,cm848_selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
 
 
-0x00013294,cm848_estimateChargePressure,0,boost_input,ushort,Boost pressure input
-0x00013294,cm848_estimateChargePressure,1,rpm,ushort,Engine RPM for calculation
 
 
 # -----------------------------------------------------------------------------
@@ -444,3 +442,4 @@ function_address,function_name,param_index,name,type,comment
 0x000130dc,cm848_calculatePumpingTorqueAdjustment,return,,void,Takes no parameters: r3 and r4 are written before any read (lis r3 @ 0x130fc, lis r4 @ 0x13104); the old manifold_pressure / rpm rows were stale
 0x00012724,cm848_calculateDownstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16 @ 0x12770)
 0x00012778,cm848_calculateUpstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16)
+0x00013294,cm848_estimateChargePressure,return,,void,Takes no parameters: r4 and r3 are written before any read (lhz r4 @ 0x132b4, lis r3 @ 0x132b8); the old boost_input / rpm rows were stale

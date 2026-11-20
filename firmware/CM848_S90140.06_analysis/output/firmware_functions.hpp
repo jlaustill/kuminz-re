@@ -322,7 +322,7 @@ void cm848_calculatePredictedIntakeManifoldTemperature(void);  // @ 0x00012f60
 void cm848_initializePredictedIntakeManifoldTemperature(void);  // @ 0x000130ac
 void cm848_calculatePumpingTorqueAdjustment(void);  // @ 0x000130dc
 void cm848_initializePumpingTorqueLookupCache(void);  // @ 0x0001327c
-void cm848_estimateChargePressure(word boost_input,word rpm);  // @ 0x00013294
+void cm848_estimateChargePressure(void);  // @ 0x00013294
 void cm848_initializeChargePressureEstimate(void);  // @ 0x0001350c
 void cm848_calculateChargePressureInRangeEnable(void);  // @ 0x00013564
 void cm848_updateChargePressureInRangeFaultCount(void);  // @ 0x0001359c

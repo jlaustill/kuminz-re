@@ -2676,7 +2676,7 @@ extern word egr_delta_pressure_autozero_coolant_temperature_threshold;  // 0x004
 extern word egr_delta_pressure_autozero_intake_manifold_temperature_threshold;  // 0x0040674a
 extern word egr_delta_pressure_autozero_turbocharger_speed_threshold;  // 0x0040674c
 extern word egr_valve_position_autozero_tolerance;  // 0x00406754
-extern word exhaust_pressure_offset;  // 0x0040675a
+extern int16_t exhaust_pressure_offset;  // 0x0040675a
 extern int16_t exhaust_pressure_estimate_constant;  // 0x0040675c
 extern word egr_valve_driver_over_current_clear_time;  // 0x004067a0
 extern word egr_valve_driver_over_current_fail_increment;  // 0x004067a2
@@ -4219,7 +4219,7 @@ extern int16_t pumping_torque_adjustment;  // 0x0040a41a
 extern int16_t pumping_torque_without_offset;  // 0x0040a41c
 extern word charge_pressure_estimate_state;  // 0x0040a41e
 extern word charge_pressure_estimate;  // 0x0040a420
-extern word charge_pressure_estimate_offset;  // 0x0040a422
+extern int16_t charge_pressure_estimate_offset;  // 0x0040a422
 extern word charge_pressure_estimate_tolerance;  // 0x0040a424
 extern word compressor_pressure_ratio_scale;  // 0x0040a426
 extern word compressor_pressure_ratio_estimate;  // 0x0040a428
@@ -4357,11 +4357,11 @@ extern word compressor_outlet_temperature_estimation_active_flag;  // 0x0040a61a
 extern word coolant_temperature_selected;  // 0x0040a61c
 extern word coolant_temperature_source;  // 0x0040a61e
 extern word engine_torque_estimate;  // 0x0040a622
-extern word egr_orifice_delta_pressure;  // 0x0040a624
+extern int16_t egr_orifice_delta_pressure;  // 0x0040a624
 extern word egr_orifice_delta_pressure_source;  // 0x0040a626
-extern word egr_valve_delta_pressure;  // 0x0040a628
+extern int16_t egr_valve_delta_pressure;  // 0x0040a628
 extern word egr_valve_delta_pressure_source;  // 0x0040a62a
-extern word engine_delta_pressure;  // 0x0040a62c
+extern int16_t engine_delta_pressure;  // 0x0040a62c
 extern word engine_delta_pressure_source;  // 0x0040a62e
 extern word j1939_no_load_fueling;  // 0x0040a630
 extern word j1939_percent_peak_torque_at_current_speed_times_256;  // 0x0040a632
@@ -6870,9 +6870,9 @@ extern word egr_cooler_condensation_on_gain;  // 0x00406558
 extern word intake_condensation_off_gain;  // 0x00406560
 extern word intake_condensation_on_gain;  // 0x00406562
 extern word condensation_protection_temperature_margin;  // 0x00406566
-extern word exhaust_pressure_estimate_egr_valve_position_constant;  // 0x0040675e
-extern word exhaust_pressure_estimate_engine_speed_constant;  // 0x00406760
-extern word exhaust_pressure_estimate_charge_pressure_constant;  // 0x00406762
+extern int16_t exhaust_pressure_estimate_egr_valve_position_constant;  // 0x0040675e
+extern int16_t exhaust_pressure_estimate_engine_speed_constant;  // 0x00406760
+extern int16_t exhaust_pressure_estimate_charge_pressure_constant;  // 0x00406762
 extern word exhaust_pressure_estimate_filter_coefficient;  // 0x00406766
 extern word exhaust_temperature_estimate_boost_pressure_coefficient;  // 0x00406768
 extern word exhaust_temperature_estimate_offset;  // 0x0040676a
