@@ -1111,6 +1111,8 @@ extern word diag_state_group5_a_state;  // 0x003fa1ae
 extern word diag_state_group5_b_state;  // 0x003fa1b0
 extern word diag_state_group5_c_state;  // 0x003fa1b2
 extern word diag_state_group5_d_state;  // 0x003fa1b4
+extern delay_line_t egr_oxygen_fraction_delay_line;  // 0x003fa1b6
+extern delay_line_t egr_mass_flow_delay_line;  // 0x003fa3b8
 extern ema_filter_state_t egr_oxygen_fraction_filter;  // 0x003fa5ba
 extern ema_filter_state_t egr_mass_flow_delayed_filter;  // 0x003fa5c2
 extern ema_filter_state_t egr_valve_position_filter;  // 0x003fa5ca
@@ -2484,8 +2486,8 @@ extern word wastegate_duty_second_error_gain_by_error_values[10];  // 0x004002b6
 extern word wastegate_duty_ceiling_battery_voltage_gain_axis[6];  // 0x004002ca
 extern word wastegate_duty_ceiling_battery_voltage_gain_values[6];  // 0x004002d6
 extern word egr_mass_flow_delayed_filter_coefficient;  // 0x004002e2
-extern word egr_mass_flow_estimate_maximum;  // 0x004002e4
-extern word egr_mass_flow_estimate_minimum;  // 0x004002e6
+extern int16_t egr_mass_flow_estimate_maximum;  // 0x004002e4
+extern int16_t egr_mass_flow_estimate_minimum;  // 0x004002e6
 extern word oxygen_flow_delay_volume_fraction;  // 0x004002e8
 extern word egr_flow_cold_side_algorithm_select;  // 0x004002ea
 extern word egr_flow_downstream_model_select;  // 0x004002ec

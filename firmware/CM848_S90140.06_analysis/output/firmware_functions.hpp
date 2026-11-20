@@ -301,8 +301,8 @@ void cm848_updateWastegateDutyIntegratorEnable(void);  // @ 0x00011a4c
 void cm848_calculateWastegateDutyRequest(void);  // @ 0x00011ab4
 void cm848_runWastegateDutyController(void);  // @ 0x0001231c
 void cm848_initializeWastegateDutyController(void);  // @ 0x0001233c
-undefined2 cm848_delayUnsignedSample(int param_1,undefined2 param_2,int param_3);  // @ 0x000123dc
-int cm848_delaySignedSample(int param_1,undefined2 param_2,int param_3);  // @ 0x00012404
+word cm848_delayUnsignedSample(delay_line_t *delay_line,word sample,dword delay_samples);  // @ 0x000123dc
+sword cm848_delaySignedSample(delay_line_t *delay_line,sword sample,dword delay_samples);  // @ 0x00012404
 void cm848_calculateDownstreamEgrMassFlow(void);  // @ 0x0001242c
 void cm848_calculateUpstreamEgrMassFlow(void);  // @ 0x000125f4
 undefined4 cm848_checkFuelSystemFaultFlags(void);  // @ 0x00012724

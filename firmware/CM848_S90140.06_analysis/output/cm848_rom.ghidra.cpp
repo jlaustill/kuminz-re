@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 07:23:26 MST 2026
+// Generated: Fri Nov 20 07:35:43 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -11482,21 +11482,22 @@ void cm848_initializeWastegateDutyController(void)
 // Function: cm848_delayUnsignedSample @ 0x000123dc
 //
 
-/* Delay line write and delayed read, unsigned: stores the sample at the line's write index (the
-   byte at +0x200, after a ring of 256 words), advances the index and returns the word written
-   delay_samples calls earlier (position (index - delay_samples) mod 256; 0 returns the sample just
-   written; lhzx, zero-extended). Only caller cm848_calculateDelayedEgrFlowAndFraction (the residual
-   oxygen fraction, delay line at 0x3fa1b6). (was cm848_circularBufferWriteUnsigned) */
+/* Delay line write and delayed read, unsigned: stores the sample at delay_line->write_index (the
+   byte at +0x200, after the 256-word ring delay_line->samples), advances the index and returns the
+   word written delay_samples calls earlier (position (index - delay_samples) mod 256; 0 returns the
+   sample just written; lhzx, zero-extended). Only caller cm848_calculateDelayedEgrFlowAndFraction
+   (the residual oxygen fraction, egr_oxygen_fraction_delay_line). (was
+   cm848_circularBufferWriteUnsigned) */
 
-undefined2 cm848_delayUnsignedSample(int param_1,undefined2 param_2,int param_3)
+word cm848_delayUnsignedSample(delay_line_t *delay_line,word sample,dword delay_samples)
 
 {
   byte bVar1;
   
-  bVar1 = *(byte *)(param_1 + 0x200);
-  *(undefined2 *)(param_1 + (uint)bVar1 * 2) = param_2;
-  *(byte *)(param_1 + 0x200) = bVar1 + 1;
-  return *(undefined2 *)(param_1 + (((uint)bVar1 - param_3) * 2 & 0x1fe));
+  bVar1 = delay_line->write_index;
+  delay_line->samples[bVar1] = sample;
+  delay_line->write_index = bVar1 + 1;
+  return *(word *)((int)delay_line->samples + ((bVar1 - delay_samples) * 2 & 0x1fe));
 }
 
 
@@ -11507,17 +11508,17 @@ undefined2 cm848_delayUnsignedSample(int param_1,undefined2 param_2,int param_3)
 
 /* Signed twin of cm848_delayUnsignedSample: the same 256-word delay line write and delayed read,
    with the result sign-extended (lhax). Only caller cm848_calculateDelayedEgrFlowAndFraction (the
-   EGR mass flow before delay, delay line at 0x3fa3b8). (was cm848_circularBufferWriteSigned) */
+   EGR mass flow before delay, egr_mass_flow_delay_line). (was cm848_circularBufferWriteSigned) */
 
-int cm848_delaySignedSample(int param_1,undefined2 param_2,int param_3)
+sword cm848_delaySignedSample(delay_line_t *delay_line,sword sample,dword delay_samples)
 
 {
   byte bVar1;
   
-  bVar1 = *(byte *)(param_1 + 0x200);
-  *(undefined2 *)(param_1 + (uint)bVar1 * 2) = param_2;
-  *(byte *)(param_1 + 0x200) = bVar1 + 1;
-  return (int)*(short *)(param_1 + (((uint)bVar1 - param_3) * 2 & 0x1fe));
+  bVar1 = delay_line->write_index;
+  delay_line->samples[bVar1] = sample;
+  delay_line->write_index = bVar1 + 1;
+  return *(sword *)((int)delay_line->samples + ((bVar1 - delay_samples) * 2 & 0x1fe));
 }
 
 
@@ -11558,7 +11559,7 @@ void cm848_calculateDownstreamEgrMassFlow(void)
   if ((int)(uVar1 * -0x7eb8) < iVar2) {
     if (uVar1 != 0) {
       egr_flow_estimate_terms.downstream_egr_pressure_ratio =
-           (word)(iVar2 / (int)(short)charge_pressure);
+           (short)(iVar2 / (int)(short)charge_pressure);
       goto LAB_000124ac;
     }
     if (0 < iVar3) {
@@ -11570,7 +11571,7 @@ void cm848_calculateDownstreamEgrMassFlow(void)
       goto LAB_000124ac;
     }
   }
-  egr_flow_estimate_terms.downstream_egr_pressure_ratio = 0x8148;
+  egr_flow_estimate_terms.downstream_egr_pressure_ratio = -0x7eb8;
 LAB_000124ac:
   x_input = cm848_signedFirstOrderFilter((int)(short)egr_valve_position,&egr_valve_position_filter);
   egr_flow_estimate_terms.downstream_egr_corrected_flow =
@@ -11583,7 +11584,7 @@ LAB_000124ac:
                  (&diag_state_group6_b_state,egr_orifice_temperature,throttle_trim_axis_cal,
                   throttle_trim_output_cal,0);
   uVar1 = (uint)charge_pressure;
-  iVar2 = (int)(short)egr_flow_estimate_terms.downstream_egr_corrected_flow;
+  iVar2 = (int)egr_flow_estimate_terms.downstream_egr_corrected_flow;
   if ((int)(iVar2 * uVar1) <
       (int)((uint)egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root * 0x6400)) {
     if ((int)((uint)egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root * -0x6400) <
@@ -11593,7 +11594,7 @@ LAB_000124ac:
           egr_flow_estimate_terms.downstream_egr_mass_flow = 0;
         }
         else if ((iVar2 < 1) || (uVar1 == 0)) {
-          egr_flow_estimate_terms.downstream_egr_mass_flow = 0x9c00;
+          egr_flow_estimate_terms.downstream_egr_mass_flow = -0x6400;
         }
         else {
           egr_flow_estimate_terms.downstream_egr_mass_flow = 0x6400;
@@ -11601,12 +11602,13 @@ LAB_000124ac:
       }
       else {
         egr_flow_estimate_terms.downstream_egr_mass_flow =
-             (word)((iVar2 * (short)charge_pressure) /
-                   (int)(short)egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root);
+             (short)((iVar2 * (short)charge_pressure) /
+                    (int)(short)egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root)
+        ;
       }
     }
     else {
-      egr_flow_estimate_terms.downstream_egr_mass_flow = 0x9c00;
+      egr_flow_estimate_terms.downstream_egr_mass_flow = -0x6400;
     }
   }
   else {
@@ -11648,7 +11650,7 @@ void cm848_calculateUpstreamEgrMassFlow(void)
        lookupTableInterpolation
                  (&diag_state_group6_a_state,exhaust_temperature,boost_fuel_input_axis_cal,
                   boost_fuel_input_output_cal,0);
-  iVar2 = (int)(short)egr_flow_estimate_terms.upstream_egr_corrected_flow;
+  iVar2 = (int)egr_flow_estimate_terms.upstream_egr_corrected_flow;
   iVar1 = iVar2 * (uint)boost_pressure_current_raw;
   if (iVar1 < (int)((uint)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root * 0x6400))
   {
@@ -11659,7 +11661,7 @@ void cm848_calculateUpstreamEgrMassFlow(void)
           egr_flow_estimate_terms.upstream_egr_mass_flow = 0;
         }
         else if (iVar2 < 1) {
-          egr_flow_estimate_terms.upstream_egr_mass_flow = 0x9c00;
+          egr_flow_estimate_terms.upstream_egr_mass_flow = -0x6400;
         }
         else {
           egr_flow_estimate_terms.upstream_egr_mass_flow = 0x6400;
@@ -11667,12 +11669,12 @@ void cm848_calculateUpstreamEgrMassFlow(void)
       }
       else {
         egr_flow_estimate_terms.upstream_egr_mass_flow =
-             (word)((iVar2 * (short)boost_pressure_current_raw) /
-                   (int)(short)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root);
+             (short)((iVar2 * (short)boost_pressure_current_raw) /
+                    (int)(short)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root);
       }
     }
     else {
-      egr_flow_estimate_terms.upstream_egr_mass_flow = 0x9c00;
+      egr_flow_estimate_terms.upstream_egr_mass_flow = -0x6400;
     }
   }
   else {
@@ -11749,12 +11751,10 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
   if (egr_flow_downstream_model_select == 0) {
     cm848_calculateUpstreamEgrMassFlow();
     egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_minimum;
-    if (((short)egr_mass_flow_estimate_minimum <=
-         (short)egr_flow_estimate_terms.upstream_egr_mass_flow) &&
+    if ((egr_mass_flow_estimate_minimum <= egr_flow_estimate_terms.upstream_egr_mass_flow) &&
        (egr_flow_estimate_terms.egr_mass_flow_before_delay =
              egr_flow_estimate_terms.upstream_egr_mass_flow,
-       (short)egr_mass_flow_estimate_maximum < (short)egr_flow_estimate_terms.upstream_egr_mass_flow
-       )) {
+       egr_mass_flow_estimate_maximum < egr_flow_estimate_terms.upstream_egr_mass_flow)) {
       egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_maximum;
     }
     egr_flow_source = cm848_checkEngineFaultConditions();
@@ -11762,12 +11762,10 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
   else {
     cm848_calculateDownstreamEgrMassFlow();
     egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_minimum;
-    if (((short)egr_mass_flow_estimate_minimum <=
-         (short)egr_flow_estimate_terms.downstream_egr_mass_flow) &&
+    if ((egr_mass_flow_estimate_minimum <= egr_flow_estimate_terms.downstream_egr_mass_flow) &&
        (egr_flow_estimate_terms.egr_mass_flow_before_delay =
              egr_flow_estimate_terms.downstream_egr_mass_flow,
-       (short)egr_mass_flow_estimate_maximum <
-       (short)egr_flow_estimate_terms.downstream_egr_mass_flow)) {
+       egr_mass_flow_estimate_maximum < egr_flow_estimate_terms.downstream_egr_mass_flow)) {
       egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_maximum;
     }
     egr_flow_source = cm848_checkFuelSystemFaultFlags();
@@ -11796,13 +11794,13 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
    (engine_volumetric_efficiency x engine speed): the time the engine takes to draw in that fraction
    of its displacement (one displacement per two revolutions). Volumetric efficiency x speed is
    limited to 1600 (200 rpm at 1.0) .. 0xffff counts, and a fraction above 8192 (1.0) is replaced by
-   0xffff. (3) residual_oxygen_fraction_before_delay goes into the 256-sample delay line at 0x3fa1b6
-   (cm848_delayUnsignedSample); the sample from delay / 10 passes back is filtered by
-   exponentialMovingAverage (egr_oxygen_fraction_filter, coefficient
+   0xffff. (3) residual_oxygen_fraction_before_delay goes into the 256-sample delay line
+   egr_oxygen_fraction_delay_line (cm848_delayUnsignedSample); the sample from delay / 10 passes
+   back is filtered by exponentialMovingAverage (egr_oxygen_fraction_filter, coefficient
    egr_mass_flow_delayed_filter_coefficient = e2m 177E +0 C_CHP_EGR_Flow_Fil_Cnst) into
    egr_oxygen_fraction (+0 CHP_O2_Frac_EGR). (4) egr_flow_delay_milliseconds (+6 CHP_EGR_Flow_Delay)
    = the oxygen delay x egr_flow_delay_fraction (e2m 177E +C; 0 in the dump) / 32767. (5)
-   egr_mass_flow_before_delay goes into the delay line at 0x3fa3b8 (cm848_delaySignedSample); the
+   egr_mass_flow_before_delay goes into egr_mass_flow_delay_line (cm848_delaySignedSample); the
    sample from delay / 10 passes back is filtered by cm848_signedFirstOrderFilter
    (egr_mass_flow_delayed_filter) into egr_mass_flow_delayed_filtered. (6) egr_fraction_actual (+2
    EGR_Fraction) = egr_mass_flow_delayed_filtered x 8192 / charge_mass_flow_filtered, capped at 8192
@@ -11818,50 +11816,57 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
 void cm848_calculateDelayedEgrFlowAndFraction(void)
 
 {
+  dword delay_volume_term;
+  word delayed_oxygen_fraction;
+  dword filtered_oxygen_fraction;
+  sword delayed_egr_mass_flow;
+  dword volumetric_efficiency_speed_product;
   uint uVar1;
-  dword dVar2;
-  short sVar3;
-  uint uVar4;
   
   cm848_calculateEgrMassFlowBeforeDelay();
-  uVar4 = (uint)engine_volumetric_efficiency * (uint)engine_rpm_state_t_0040b7ac.current_rpm >> 0xd;
-  if (uVar4 < 0x640) {
-    uVar4 = 0x640;
+  volumetric_efficiency_speed_product =
+       (uint)engine_volumetric_efficiency * (uint)engine_rpm_state_t_0040b7ac.current_rpm >> 0xd;
+  if (volumetric_efficiency_speed_product < 0x640) {
+    volumetric_efficiency_speed_product = 0x640;
   }
-  else if (0xffff < uVar4) {
-    uVar4 = 0xffff;
+  else if (0xffff < volumetric_efficiency_speed_product) {
+    volumetric_efficiency_speed_product = 0xffff;
   }
   if (oxygen_flow_delay_volume_fraction < 0x2001) {
-    uVar1 = (uint)oxygen_flow_delay_volume_fraction * 0x78 >> 10;
+    delay_volume_term = (uint)oxygen_flow_delay_volume_fraction * 0x78 >> 10;
   }
   else {
-    uVar1 = 0xffff;
+    delay_volume_term = 0xffff;
   }
-  uVar4 = (uVar1 * 1000) / (uVar4 & 0xffff);
-  egr_flow_estimate_terms.oxygen_flow_delay_milliseconds = (word)uVar4;
-  uVar4 = cm848_delayUnsignedSample
-                    (&DAT_003fa1b6,residual_oxygen_fraction_before_delay,(uVar4 & 0xffff) / 10);
-  dVar2 = exponentialMovingAverage(uVar4 & 0xffff,&egr_oxygen_fraction_filter);
-  egr_flow_estimate_terms.egr_oxygen_fraction = (word)dVar2;
-  uVar4 = ((uint)egr_flow_estimate_terms.oxygen_flow_delay_milliseconds *
+  uVar1 = (delay_volume_term * 1000) / (volumetric_efficiency_speed_product & 0xffff);
+  egr_flow_estimate_terms.oxygen_flow_delay_milliseconds = (word)uVar1;
+  delayed_oxygen_fraction =
+       cm848_delayUnsignedSample
+                 (&egr_oxygen_fraction_delay_line,residual_oxygen_fraction_before_delay,
+                  (uVar1 & 0xffff) / 10);
+  filtered_oxygen_fraction =
+       exponentialMovingAverage((uint)delayed_oxygen_fraction,&egr_oxygen_fraction_filter);
+  egr_flow_estimate_terms.egr_oxygen_fraction = (word)filtered_oxygen_fraction;
+  uVar1 = ((uint)egr_flow_estimate_terms.oxygen_flow_delay_milliseconds *
           (uint)egr_flow_delay_fraction) / 0x7fff;
-  egr_flow_estimate_terms.egr_flow_delay_milliseconds = (word)uVar4;
-  sVar3 = cm848_delaySignedSample
-                    (&DAT_003fa3b8,(int)(short)egr_flow_estimate_terms.egr_mass_flow_before_delay,
-                     (uVar4 & 0xffff) / 10);
+  egr_flow_estimate_terms.egr_flow_delay_milliseconds = (word)uVar1;
+  delayed_egr_mass_flow =
+       cm848_delaySignedSample
+                 (&egr_mass_flow_delay_line,egr_flow_estimate_terms.egr_mass_flow_before_delay,
+                  (uVar1 & 0xffff) / 10);
   egr_mass_flow_delayed_filtered =
-       cm848_signedFirstOrderFilter((int)sVar3,&egr_mass_flow_delayed_filter);
+       cm848_signedFirstOrderFilter((int)delayed_egr_mass_flow,&egr_mass_flow_delayed_filter);
   if ((short)charge_mass_flow_filtered < 0x41) {
-    uVar4 = 0;
+    uVar1 = 0;
   }
   else {
-    uVar4 = (uint)(((ulonglong)egr_mass_flow_delayed_filtered << 0xd) /
+    uVar1 = (uint)(((ulonglong)egr_mass_flow_delayed_filtered << 0xd) /
                   (ulonglong)charge_mass_flow_filtered);
-    if (0x1fff < uVar4) {
-      uVar4 = 0x2000;
+    if (0x1fff < uVar1) {
+      uVar1 = 0x2000;
     }
   }
-  egr_flow_estimate_terms.egr_fraction_actual = (word)uVar4;
+  egr_flow_estimate_terms.egr_fraction_actual = (word)uVar1;
   return;
 }
 
@@ -37510,8 +37515,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if ((engine_feature_enable_flags_cal & 0x40) != 0) {
@@ -57312,8 +57317,8 @@ void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
 
 {
   undefined4 compare_register_pair;
-  word modulus_period_value;
   word modulus_start_value;
+  word modulus_period_value;
   
   if (duty < 0x6400) {
     if (duty == 0) {

@@ -2,6 +2,14 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions - Ported from CM550 (same pattern across ECU families)
 # -----------------------------------------------------------------------------
+0x000123dc,cm848_delayUnsignedSample,return,,word,The sample written delay_samples calls earlier (lhzx r3: zero-extended)
+0x000123dc,cm848_delayUnsignedSample,0,delay_line,delay_line_t *,The delay line (r3)
+0x000123dc,cm848_delayUnsignedSample,1,sample,word,The new sample (r4) - stored with sthx
+0x000123dc,cm848_delayUnsignedSample,2,delay_samples,uint,The delay in calls (r5): the read position is (write_index - delay_samples) mod 256
+0x00012404,cm848_delaySignedSample,return,,sword,The sample written delay_samples calls earlier (lhax r3: sign-extended)
+0x00012404,cm848_delaySignedSample,0,delay_line,delay_line_t *,The delay line (r3)
+0x00012404,cm848_delaySignedSample,1,sample,sword,The new sample (r4) - stored with sthx
+0x00012404,cm848_delaySignedSample,2,delay_samples,uint,The delay in calls (r5): the read position is (write_index - delay_samples) mod 256
 0x00055ef4,lookupTableInterpolation,return,,word,Y value at the input: linear between the two breakpoints around it (or the step value with flags bit 3) and the end value outside the axis
 0x00055ef4,lookupTableInterpolation,0,cached_axis_offset,word *,Byte offset (2 x index) of the axis segment found last time - the search starts there and the new one is written back; the globals passed here are the *_interp_state / *_interp_index / engine_sync_init_state_* words
 0x00055ef4,lookupTableInterpolation,1,input,ushort,Value looked up on the x axis (r4)
