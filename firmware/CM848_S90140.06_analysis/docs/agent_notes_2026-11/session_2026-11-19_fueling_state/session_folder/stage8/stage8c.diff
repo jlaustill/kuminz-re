@@ -1,0 +1,600 @@
+diff --git a/firmware/CLAUDE.md b/firmware/CLAUDE.md
+index c452b00..88374d5 100644
+--- a/firmware/CLAUDE.md
++++ b/firmware/CLAUDE.md
+@@ -869,6 +869,12 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
+       metering current compensation and uncompensated duty cycle gains.
+     - A prototype that takes the struct pointer lets Ghidra type the caller's stack copies by itself. A local whose last
+       store runs past the struct renders a raw stack or register name for that store.
++  - **Stage 8c: review fixes.**
++    - A label-only proof cannot see a right name on a wrong-width row. After a rename wave, compare each renamed row's
++      width with its e2m record (`width_mismatches_W13.py` in the session archive).
++    - The gain scheduling curves are `fuel_pressure_governor_*_gain_scaling_axis` / `_values` (e2m 8005-8010 /
++      80E7-80EE / 80F0-80F1), selected by `fuel_pressure_governor_gain_mode` (HPCR_Governor_Mode, 0 = scheduled).
++    - The 80B9 injector bits run in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4).
+ 
+ ### Naming wave 2 (2026-11-13, PR #47)
+ - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.
+diff --git a/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp b/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
+index 7e4e201..31519d4 100644
+--- a/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
++++ b/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
+@@ -1,5 +1,5 @@
+ // Ghidra C++ Decompilation Export - cm848_rom Firmware
+-// Generated: Thu Nov 19 17:42:38 MST 2026
++// Generated: Thu Nov 19 18:06:29 MST 2026
+ 
+ 
+ //
+@@ -8873,7 +8873,7 @@ void hpcr_calculateFuelTrimOutput(void)
+     timingProtectionFlagsOrchestrator();
+   }
+   pwVar1 = &governor_fault_status_flags;
+-  if (master_slave_override_enable_flag._0_2_ == 0) {
++  if (master_slave_override_enable_flag == 0) {
+     if (((governor_feature_config_flags & 0x8000) == 0) || (governor_startup_threshold != 0x4000)) {
+       if ((governor_feature_flags & 1) == 0) {
+         uVar2 = cm848_checkPressureFuelState();
+@@ -18402,13 +18402,13 @@ LAB_0001c714:
+       ecm_power_down_timer = 0;
+     }
+     if ((ecm_power_down_timer_threshold == ecm_power_down_timer) ||
+-       (((ecm_power_down_timer != 0 && (ecm_power_down_delay_request_flag._0_2_ == 0)) &&
++       (((ecm_power_down_timer != 0 && (ecm_power_down_delay_request_flag == 0)) &&
+         ((ecm_power_down_delay <= ecm_power_down_timer &&
+          (egr_delta_pressure_autozero_complete_flag != 0)))))) {
+       power_down_start_flag = 1;
+     }
+     if (engine_state == ENGINE_STATE_SHUTDOWN) {
+-      ecm_power_down_delay_request_flag._0_2_ = 0;
++      ecm_power_down_delay_request_flag = 0;
+     }
+     goto LAB_0001c8b8;
+   }
+@@ -19369,7 +19369,7 @@ void cm848_selectFinalFueling(void)
+   
+   fuel_timing_target_arbitrated = injection_quantity_combustion_command;
+   final_fueling_state = injection_quantity_combustion_reference_source_code;
+-  if ((master_slave_override_enable_flag._0_2_ == 0) || (master_slave_control_flag != 0)) {
++  if ((master_slave_override_enable_flag == 0) || (master_slave_control_flag != 0)) {
+     if (engine_state == ENGINE_STATE_STOPPED) {
+       final_fueling_state = FUELING_STATE_ENGINE_STOPPED;
+     }
+@@ -19535,7 +19535,7 @@ void cm848_arbitrateRequestedFueling(void)
+     fuel_demand_arbitrated_state = FVar1;
+     goto LAB_0001e768;
+   }
+-  if ((master_slave_override_enable_flag._0_2_ == 1) && (master_slave_control_flag == 1)) {
++  if ((master_slave_override_enable_flag == 1) && (master_slave_control_flag == 1)) {
+     if (master_slave_final_override_fueling < fuel_demand_minimum_tracked) {
+       fuel_demand_arbitrated = master_slave_final_override_fueling;
+       FVar1 = FUELING_STATE_MASTER_SLAVE_OVERRIDE;
+@@ -19547,7 +19547,7 @@ void cm848_arbitrateRequestedFueling(void)
+ LAB_0001e744:
+     fuel_demand_arbitrated_state = FVar1;
+   }
+-  else if ((master_slave_override_enable_flag._0_2_ == 0) || (master_slave_control_flag == 0)) {
++  else if ((master_slave_override_enable_flag == 0) || (master_slave_control_flag == 0)) {
+     if (requested_fueling < fuel_demand_minimum_tracked) {
+       fuel_demand_arbitrated = requested_fueling;
+       fuel_demand_arbitrated_state = FVar1;
+@@ -40594,7 +40594,7 @@ void cm848_setFuelDemandActiveFlag(void)
+ 
+ {
+   if (vehicle_speed_unfiltered != 0) {
+-    ecm_power_down_delay_request_flag._0_2_ = 1;
++    ecm_power_down_delay_request_flag = 1;
+   }
+   return;
+ }
+@@ -44640,7 +44640,7 @@ void cm848_updateEngineSpeedFromCrankSignal(void)
+   else {
+     crank_sync_event_count = 0;
+   }
+-  if (crank_sync_event_count < backup_consecutive_error_threshold._0_1_) {
++  if (crank_sync_event_count < backup_consecutive_error_threshold) {
+     system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
+          system_status_flags_t_003fe974.fault_detected_bits_80_to_95 & 0xdfff;
+     fault_registered_bits_80_to_95 = fault_registered_bits_80_to_95 & 0xdfff;
+@@ -44648,7 +44648,7 @@ void cm848_updateEngineSpeedFromCrankSignal(void)
+   else {
+     system_status_flags_t_003fe974.fault_detected_bits_80_to_95 =
+          system_status_flags_t_003fe974.fault_detected_bits_80_to_95 | 0x2000;
+-    crank_sync_event_count = (word)backup_consecutive_error_threshold._0_1_;
++    crank_sync_event_count = (word)backup_consecutive_error_threshold;
+   }
+   if (engine_crank_state_t_0040b80a.cranking_flag < engine_cranking_flag_min_cal) {
+     if (engine_crank_state_t_0040b80a.cranking_flag == 0) {
+@@ -45200,7 +45200,7 @@ LAB_00045154:
+               (uint)((ushort)crank_tooth_timer_max_cal._0_1_ < (wVar5 & 0xff));
+       crank_tooth_position_count = wVar3;
+       if ((uVar4 == crank_pattern_tooth_count_cal) || (crank_tooth_counter_zero_flag != 0)) {
+-        if ((byte)backup_consecutive_error_threshold != uVar6) {
++        if (crank_signal_window_with_added_tooth != uVar6) {
+           tpu_a_mcr.HSRR1 = 1;
+           iVar1 = TBLr;
+           crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
+@@ -45216,7 +45216,7 @@ LAB_00045154:
+       else {
+         wVar2 = wVar3;
+         if (crank_pattern_tooth_count_cal - 1 == uVar4) {
+-          if ((byte)backup_consecutive_error_threshold == uVar6) {
++          if (crank_signal_window_with_added_tooth == uVar6) {
+             tpu_a_mcr.HSRR1 = 1;
+             iVar1 = TBLr;
+             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
+@@ -45478,7 +45478,7 @@ LAB_00045970:
+            (crank_tooth_count_b == 0)) {
+           wVar3 = tpu_a_ch0_param0.PARAM0;
+           DAT_003fb5b8 = (byte)(wVar3 >> 0xf);
+-          if (wVar3 >> 0xf != (ushort)(byte)backup_consecutive_error_threshold) {
++          if (wVar3 >> 0xf != (ushort)crank_signal_window_with_added_tooth) {
+             tpu_a_mcr.HSRR1 = 1;
+             iVar1 = TBLr;
+             crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
+@@ -46758,8 +46758,8 @@ LAB_00047b98:
+    engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Gain
+    records (stage 8b): the P / I / D terms use fuel_pressure_governor_proportional_gains /
+    fuel_pressure_governor_integral_gains / fuel_pressure_governor_derivative_gains through working
+-   copies on the stack (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is
+-   0); the base command uses fuel_metering_uncompensated_duty_cycle_proportional_gains and
++   copies on the stack (each gain scaled by its lookup table while fuel_pressure_governor_gain_mode
++   is 0); the base command uses fuel_metering_uncompensated_duty_cycle_proportional_gains and
+    fuel_metering_current_compensation_derivative_gains; the trim uses
+    fuel_metering_current_compensation_proportional_gains and
+    fuel_metering_current_compensation_integral_gains. The copy of the derivative record's negative
+@@ -46959,24 +46959,31 @@ LAB_0004800c:
+        (wVar5 = unaff_r28,
+        engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
+        FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP)) {
+-      if (cam_timing_alt_mode_enable_cal == 0) {
++      if (fuel_pressure_governor_gain_mode == 0) {
+         wVar5 = lookupTableInterpolation
+                           (&engine_sync_init_state_c,engine_rpm_measured,
+-                           cam_sync_cyl1_timing_axis_a_cal,cam_sync_cyl1_timing_values_a_cal,0);
++                           fuel_pressure_governor_proportional_small_signal_gain_scaling_axis,
++                           fuel_pressure_governor_proportional_small_signal_gain_scaling_values,0);
+         working_proportional_gains.small_signal_gain =
+              (int)((ulonglong)fuel_pressure_governor_proportional_gains.small_signal_gain *
+                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+              fuel_pressure_governor_proportional_gains.small_signal_gain * wVar5 >> 0xc;
+         wVar5 = lookupTableInterpolation
+                           (&engine_sync_init_state_d,engine_rpm_measured,
+-                           cam_sync_cyl2_timing_axis_a_cal,cam_sync_cyl2_timing_values_a_cal,0);
++                           fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_axis
++                           ,
++                           fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_values
++                           ,0);
+         working_proportional_gains.positive_large_signal_gain =
+              (int)((ulonglong)fuel_pressure_governor_proportional_gains.positive_large_signal_gain *
+                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+              fuel_pressure_governor_proportional_gains.positive_large_signal_gain * wVar5 >> 0xc;
+         wVar5 = lookupTableInterpolation
+                           (&engine_sync_init_state_e,engine_rpm_measured,
+-                           cam_sync_cyl3_timing_axis_a_cal,cam_sync_cyl3_timing_values_a_cal,0);
++                           fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_axis
++                           ,
++                           fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_values
++                           ,0);
+         working_proportional_gains.negative_large_signal_gain =
+              (int)((ulonglong)fuel_pressure_governor_proportional_gains.negative_large_signal_gain *
+                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+@@ -46987,21 +46994,26 @@ LAB_0004800c:
+              fuel_pressure_governor_proportional_gains.negative_window_width;
+         wVar5 = lookupTableInterpolation
+                           (&engine_sync_init_state_f,engine_rpm_measured,
+-                           cam_sync_cyl4_timing_axis_a_cal,cam_sync_cyl4_timing_values_a_cal,0);
++                           fuel_pressure_governor_integral_small_signal_gain_scaling_axis,
++                           fuel_pressure_governor_integral_small_signal_gain_scaling_values,0);
+         working_integral_gains.small_signal_gain =
+              (int)((ulonglong)fuel_pressure_governor_integral_gains.small_signal_gain *
+                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+              fuel_pressure_governor_integral_gains.small_signal_gain * wVar5 >> 0xc;
+         wVar5 = lookupTableInterpolation
+                           (&engine_sync_init_state_g,engine_rpm_measured,
+-                           cam_sync_cyl5_timing_axis_a_cal,cam_sync_cyl5_timing_values_a_cal,0);
++                           fuel_pressure_governor_integral_positive_large_signal_gain_scaling_axis,
++                           fuel_pressure_governor_integral_positive_large_signal_gain_scaling_values
++                           ,0);
+         working_integral_gains.positive_large_signal_gain =
+              (int)((ulonglong)fuel_pressure_governor_integral_gains.positive_large_signal_gain *
+                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+              fuel_pressure_governor_integral_gains.positive_large_signal_gain * wVar5 >> 0xc;
+         wVar5 = lookupTableInterpolation
+                           (&engine_sync_init_state_h,engine_rpm_measured,
+-                           cam_sync_cyl6_timing_axis_a_cal,cam_sync_cyl6_timing_values_a_cal,0);
++                           fuel_pressure_governor_integral_negative_large_signal_gain_scaling_axis,
++                           fuel_pressure_governor_integral_negative_large_signal_gain_scaling_values
++                           ,0);
+         working_integral_gains.negative_large_signal_gain =
+              (int)((ulonglong)fuel_pressure_governor_integral_gains.negative_large_signal_gain *
+                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+@@ -47011,14 +47023,16 @@ LAB_0004800c:
+         working_integral_gains.negative_window_width =
+              fuel_pressure_governor_integral_gains.negative_window_width;
+         wVar5 = lookupTableInterpolation
+-                          (&engine_sync_init_state_i,engine_rpm_measured,cam_sync_prot_gain_axis_cal
+-                           ,cam_sync_prot_gain_values_cal,0);
++                          (&engine_sync_init_state_i,engine_rpm_measured,
++                           fuel_pressure_governor_derivative_filter_coefficient_scaling_axis,
++                           fuel_pressure_governor_derivative_filter_coefficient_scaling_values,0);
+         working_derivative_gains.filter_coefficient =
+              (word)((uint)fuel_pressure_governor_derivative_gains.filter_coefficient * (uint)wVar5
+                    >> 0x10);
+         wVar5 = lookupTableInterpolation
+-                          (&WORD_003fb652,engine_rpm_measured,cam_sync_cyl4_timing_axis_b_cal,
+-                           cam_sync_cyl4_timing_values_b_cal,0);
++                          (&WORD_003fb652,engine_rpm_measured,
++                           fuel_pressure_governor_derivative_small_signal_gain_scaling_axis,
++                           fuel_pressure_governor_derivative_small_signal_gain_scaling_values,0);
+         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.small_signal_gain._0_2_,
+                           fuel_pressure_governor_derivative_gains.small_signal_gain._2_2_) *
+                  (uint)wVar5;
+@@ -47031,8 +47045,11 @@ LAB_0004800c:
+                                   0x20) << 0x14) >> 0x10) | (ushort)(uVar16 >> 0x1c);
+         working_derivative_gains.small_signal_gain._2_2_ = (undefined2)(uVar16 >> 0xc);
+         wVar5 = lookupTableInterpolation
+-                          (&WORD_003fb654,engine_rpm_measured,cam_sync_cyl5_timing_axis_b_cal,
+-                           cam_sync_cyl5_timing_values_b_cal,0);
++                          (&WORD_003fb654,engine_rpm_measured,
++                           fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_axis
++                           ,
++                           fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_values
++                           ,0);
+         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.positive_large_signal_gain._0_2_,
+                           fuel_pressure_governor_derivative_gains.positive_large_signal_gain._2_2_)
+                  * (uint)wVar5;
+@@ -47046,8 +47063,11 @@ LAB_0004800c:
+              (ushort)(uVar16 >> 0x1c);
+         working_derivative_gains.positive_large_signal_gain._2_2_ = (undefined2)(uVar16 >> 0xc);
+         wVar5 = lookupTableInterpolation
+-                          (&WORD_003fb656,engine_rpm_measured,cam_sync_cyl6_timing_axis_b_cal,
+-                           cam_sync_cyl6_timing_values_b_cal,0);
++                          (&WORD_003fb656,engine_rpm_measured,
++                           fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_axis
++                           ,
++                           fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_values
++                           ,0);
+         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.negative_large_signal_gain._0_2_,
+                           fuel_pressure_governor_derivative_gains.negative_large_signal_gain._2_2_)
+                  * (uint)wVar5;
+@@ -47065,8 +47085,9 @@ LAB_0004800c:
+         stack0xffffffcc =
+              CONCAT22(fuel_pressure_governor_derivative_gains.negative_window_width,uStack_32);
+         wVar5 = lookupTableInterpolation
+-                          (&engine_sync_init_state_m,engine_rpm_measured,cam_sync_scale_axis_cal,
+-                           cam_sync_scale_values_cal,0);
++                          (&engine_sync_init_state_m,engine_rpm_measured,
++                           fuel_pressure_sensor_filter_coefficient_scaling_axis,
++                           fuel_pressure_sensor_filter_coefficient_scaling_values,0);
+         awStack_68[0] = (word)((uint)fuel_pressure_sensor_filter_coefficient * (uint)wVar5 >> 0x10);
+       }
+       else {
+diff --git a/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp b/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
+index cca66cd..52fabd5 100644
+--- a/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
++++ b/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
+@@ -3661,8 +3661,8 @@ extern word cylinder_diag_scale_factor_cal;  // 0x00408f30
+ extern word cylinder_seq_axis1_cal[3];  // 0x00408f32
+ extern word cylinder_seq_ystart_cal[3];  // 0x00408f38
+ extern word cylinder_seq_yend_cal[4];  // 0x00408f3e
+-extern word backup_consecutive_error_threshold;  // 0x00408f56
+-extern undefined crank_sync_reference_flag_cal;  // 0x00408f57
++extern byte backup_consecutive_error_threshold;  // 0x00408f56
++extern byte crank_signal_window_with_added_tooth;  // 0x00408f57
+ extern word crank_pattern_tooth_count_cal;  // 0x00408f58
+ extern word crank_sync_timeout_limit_cal;  // 0x00408f5a
+ extern word engine_start_counter_min_cal;  // 0x00408f5c
+@@ -3748,7 +3748,7 @@ extern word auxiliary_injection_pulse_width_override_value;  // 0x004090db
+ extern word main_to_auxiliary_injection_minimum_interval;  // 0x004090dd
+ extern byte auxiliary_injection_pulse_width_maximum_shift_factor;  // 0x004090df
+ extern word injection_timing_auxiliary_relative_to_main_end_flag;  // 0x004090f6
+-extern byte cam_timing_alt_mode_enable_cal;  // 0x004090fa
++extern byte fuel_pressure_governor_gain_mode;  // 0x004090fa
+ extern byte fuel_pressure_governor_feed_forward_enable;  // 0x004090fb
+ extern byte fuel_pressure_governor_disable;  // 0x004090fd
+ extern word fuel_pressure_governor_low_pressure_entry_count;  // 0x004090fe
+@@ -3800,28 +3800,28 @@ extern word cam_sync_error_rate_threshold_cal;  // 0x0040915a
+ extern word cam_speed_rate_threshold_cal;  // 0x0040915c
+ extern word cam_sync_ref_output_axis_cal[11];  // 0x0040915e
+ extern word cam_sync_ref_output_values_cal[11];  // 0x00409174
+-extern word cam_sync_cyl1_timing_axis_a_cal[11];  // 0x0040918a
+-extern word cam_sync_cyl1_timing_values_a_cal[11];  // 0x004091a0
+-extern word cam_sync_cyl2_timing_axis_a_cal[11];  // 0x004091b6
+-extern word cam_sync_cyl2_timing_values_a_cal[11];  // 0x004091cc
+-extern word cam_sync_cyl3_timing_axis_a_cal[11];  // 0x004091e2
+-extern word cam_sync_cyl3_timing_values_a_cal[11];  // 0x004091f8
+-extern word cam_sync_cyl4_timing_axis_a_cal[11];  // 0x0040920e
+-extern word cam_sync_cyl4_timing_values_a_cal[11];  // 0x00409224
+-extern word cam_sync_cyl5_timing_axis_a_cal[11];  // 0x0040923a
+-extern word cam_sync_cyl5_timing_values_a_cal[11];  // 0x00409250
+-extern word cam_sync_cyl6_timing_axis_a_cal[11];  // 0x00409266
+-extern word cam_sync_cyl6_timing_values_a_cal[11];  // 0x0040927c
+-extern word cam_sync_cyl4_timing_axis_b_cal[11];  // 0x00409292
+-extern word cam_sync_cyl4_timing_values_b_cal[11];  // 0x004092a8
+-extern word cam_sync_cyl5_timing_axis_b_cal[11];  // 0x004092be
+-extern word cam_sync_cyl5_timing_values_b_cal[11];  // 0x004092d4
+-extern word cam_sync_cyl6_timing_axis_b_cal[11];  // 0x004092ea
+-extern word cam_sync_cyl6_timing_values_b_cal[11];  // 0x00409300
+-extern word cam_sync_prot_gain_axis_cal[11];  // 0x00409316
+-extern word cam_sync_prot_gain_values_cal[11];  // 0x0040932c
+-extern word cam_sync_scale_axis_cal[11];  // 0x00409342
+-extern word cam_sync_scale_values_cal[11];  // 0x00409358
++extern word fuel_pressure_governor_proportional_small_signal_gain_scaling_axis[11];  // 0x0040918a
++extern word fuel_pressure_governor_proportional_small_signal_gain_scaling_values[11];  // 0x004091a0
++extern word fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_axis[11];  // 0x004091b6
++extern word fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_values[11];  // 0x004091cc
++extern word fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_axis[11];  // 0x004091e2
++extern word fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_values[11];  // 0x004091f8
++extern word fuel_pressure_governor_integral_small_signal_gain_scaling_axis[11];  // 0x0040920e
++extern word fuel_pressure_governor_integral_small_signal_gain_scaling_values[11];  // 0x00409224
++extern word fuel_pressure_governor_integral_positive_large_signal_gain_scaling_axis[11];  // 0x0040923a
++extern word fuel_pressure_governor_integral_positive_large_signal_gain_scaling_values[11];  // 0x00409250
++extern word fuel_pressure_governor_integral_negative_large_signal_gain_scaling_axis[11];  // 0x00409266
++extern word fuel_pressure_governor_integral_negative_large_signal_gain_scaling_values[11];  // 0x0040927c
++extern word fuel_pressure_governor_derivative_small_signal_gain_scaling_axis[11];  // 0x00409292
++extern word fuel_pressure_governor_derivative_small_signal_gain_scaling_values[11];  // 0x004092a8
++extern word fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_axis[11];  // 0x004092be
++extern word fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_values[11];  // 0x004092d4
++extern word fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_axis[11];  // 0x004092ea
++extern word fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_values[11];  // 0x00409300
++extern word fuel_pressure_governor_derivative_filter_coefficient_scaling_axis[11];  // 0x00409316
++extern word fuel_pressure_governor_derivative_filter_coefficient_scaling_values[11];  // 0x0040932c
++extern word fuel_pressure_sensor_filter_coefficient_scaling_axis[11];  // 0x00409342
++extern word fuel_pressure_sensor_filter_coefficient_scaling_values[11];  // 0x00409358
+ extern word cam_sync_output_a_axis_cal[9];  // 0x0040936e
+ extern word cam_sync_output_a_values_cal[9];  // 0x00409380
+ extern word cam_sync_speed_axis_cal[9];  // 0x00409392
+@@ -4078,7 +4078,7 @@ extern word etc2_gear_ratio_valid_flag;  // 0x0040a2ac
+ extern word output_shaft_speed_current;  // 0x0040a2ae
+ extern word protection_transition_block_flag;  // 0x0040a2b0
+ extern word engine_retarder_request_percent;  // 0x0040a2b2
+-extern dword ecm_power_down_delay_request_flag;  // 0x0040a2b4
++extern word ecm_power_down_delay_request_flag;  // 0x0040a2b4
+ extern word ccvs1_cruise_control_state;  // 0x0040a2bc
+ extern word j1939_prop_status_tx_state;  // 0x0040a2c2
+ extern word governor_startup_threshold;  // 0x0040a2c4
+@@ -4476,7 +4476,7 @@ extern word system_switch_status;  // 0x0040a813
+ extern word system_switch_status_2;  // 0x0040a815
+ extern word fault_enable_bitmask_array[50];  // 0x0040a817
+ extern word master_slave_final_override_fueling;  // 0x0040a87b
+-extern dword master_slave_override_enable_flag;  // 0x0040a87d
++extern word master_slave_override_enable_flag;  // 0x0040a87d
+ extern word governor_startup_fuel_blend_coeff;  // 0x0040a885
+ extern word four_dimensional_fueling;  // 0x0040a887
+ extern word thermal_fuel_limit_factor;  // 0x0040a889
+diff --git a/firmware/CM848_S90140.06_analysis/output/function_renames.csv b/firmware/CM848_S90140.06_analysis/output/function_renames.csv
+index 64889b6..566cf22 100644
+--- a/firmware/CM848_S90140.06_analysis/output/function_renames.csv
++++ b/firmware/CM848_S90140.06_analysis/output/function_renames.csv
+@@ -1363,7 +1363,7 @@ address,name
+ 0x00047838,cm848_applyPiecewiseLinearGain,Piecewise-linear gain used by the fuel pressure governor: x times gain 0 between two breakpoints (shorts at +12 upper / +14 lower), with gain 1 (+4) above the upper and gain 2 (+8) below the lower breakpoint for the part past it; result >> 16, clamped to +/-4095. Was cm848_protectionRecoveryHandler
+ 0x00047978,cm848_integrateWithZoneGain,Integral term step: adds gain x error x step >> 16 to a Q16.16 accumulator (param 2), with the gain picked by the error's zone (+4 above the short at +12, +0 between, +8 below the short at +14); clamps the integer part to +/-4095 and returns it. Was cm848_protectionModeSelector
+ 0x00047a88,cm848_calculateFilteredDerivative,Filtered derivative term: returns the integer part of gain x input - state (clamped to +/-4095), then moves the Q16.16 state (param 2) toward gain x input by 1 - coefficient / 65536 (coefficient = first word). The gain is picked by the input's zone (+6 above the short at +14, +10 below the short at +16, +2 between). Was cm848_protectionStateHandler
+-0x00047bd0,cm848_calculateFuelMeteringCommand,Fuel metering command controller (cm848_phase_group_b_processing; output channel assignment table entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is the fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override (engine_speed_override_enable_cal) and a cranking value return early; otherwise the governor mode in engine_sync_state_t_0040b87f.fuel_pressure_governor_mode picks fuel_pressure_governor_demand - modes 2 / 4 sum the PID terms on fuel_pressure_setpoint - fuel_pressure_feedback_filtered (fuel_pressure_governor_proportional_term / _integral_term / _derivative_term) plus fuel_pressure_governor_accelerator_feed_forward and an rpm table; modes 8 / 0x10 (switch_input_state_bits[0] bit 0 clear and key_off_shutdown_inhibit_flag 0) / 0x20 (fuel_pressure_governor_disable set) / 0x40 (faults 304 / 305 / 377 / 378) use the fixed fuel_pressure_governor_*_command values; mode 1 is the low-rpm mode the others fall back to. The demand is clamped to a lower limit and an rpm table (the integrator is put back when it is outside them). (2) a table turns the clamped demand into a feedback target; the base command is that target through a piecewise-linear gain plus fuel_metering_base_command_derivative_term; a PI trim on fuel_metering_feedback_error (target - fuel_metering_feedback_input) scales it: fuel_metering_command = base + trim x base / 4096 (no trim while fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Gain records (stage 8b): the P / I / D terms use fuel_pressure_governor_proportional_gains / fuel_pressure_governor_integral_gains / fuel_pressure_governor_derivative_gains through working copies on the stack (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is 0); the base command uses fuel_metering_uncompensated_duty_cycle_proportional_gains and fuel_metering_current_compensation_derivative_gains; the trim uses fuel_metering_current_compensation_proportional_gains and fuel_metering_current_compensation_integral_gains. The copy of the derivative record's negative window is one 4-byte store at offset 16 that runs 2 bytes past the 18-byte record - so Ghidra prints a raw stack or register name for its destination. Was cm848_calculateEngineTimingOffset Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
++0x00047bd0,cm848_calculateFuelMeteringCommand,Fuel metering command controller (cm848_phase_group_b_processing; output channel assignment table entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is the fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override (engine_speed_override_enable_cal) and a cranking value return early; otherwise the governor mode in engine_sync_state_t_0040b87f.fuel_pressure_governor_mode picks fuel_pressure_governor_demand - modes 2 / 4 sum the PID terms on fuel_pressure_setpoint - fuel_pressure_feedback_filtered (fuel_pressure_governor_proportional_term / _integral_term / _derivative_term) plus fuel_pressure_governor_accelerator_feed_forward and an rpm table; modes 8 / 0x10 (switch_input_state_bits[0] bit 0 clear and key_off_shutdown_inhibit_flag 0) / 0x20 (fuel_pressure_governor_disable set) / 0x40 (faults 304 / 305 / 377 / 378) use the fixed fuel_pressure_governor_*_command values; mode 1 is the low-rpm mode the others fall back to. The demand is clamped to a lower limit and an rpm table (the integrator is put back when it is outside them). (2) a table turns the clamped demand into a feedback target; the base command is that target through a piecewise-linear gain plus fuel_metering_base_command_derivative_term; a PI trim on fuel_metering_feedback_error (target - fuel_metering_feedback_input) scales it: fuel_metering_command = base + trim x base / 4096 (no trim while fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Gain records (stage 8b): the P / I / D terms use fuel_pressure_governor_proportional_gains / fuel_pressure_governor_integral_gains / fuel_pressure_governor_derivative_gains through working copies on the stack (each gain scaled by its lookup table while fuel_pressure_governor_gain_mode is 0); the base command uses fuel_metering_uncompensated_duty_cycle_proportional_gains and fuel_metering_current_compensation_derivative_gains; the trim uses fuel_metering_current_compensation_proportional_gains and fuel_metering_current_compensation_integral_gains. The copy of the derivative record's negative window is one 4-byte store at offset 16 that runs 2 bytes past the 18-byte record - so Ghidra prints a raw stack or register name for its destination. Was cm848_calculateEngineTimingOffset Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
+ 0x00048fa0,cm848_countFuelPressureGovernorStartRevolutions,Injection-angle state 1 task: while fuel_pressure_governor_counting_start_revolutions is set it counts cylinder events and adds 2 to fuel_pressure_governor_start_revolutions per full cycle (cylinder_event_count_max events); otherwise it clears the count. Was cm848_updateSyncOffsetCounter
+ 0x00049004,cm848_resetEngineSyncState,Resets the fuel pressure governor / fuel metering state (cm848_calculateFuelMeteringCommand): command, demand, governor mode 1, counters, the table interpolation states and filters. Of the four Q16.16 PID states it clears fuel_pressure_governor_integrator, fuel_metering_feedback_trim_integrator (twice) and fuel_pressure_governor_derivative_filter; fuel_metering_base_command_derivative_filter (0x3fb676) is never cleared because the fourth store pair repeats 0x3fb66e
+ 0x0004922c,cm848_filterEngineSensorValue
+diff --git a/firmware/CM848_S90140.06_analysis/output/global_variables.csv b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+index 79936b6..c7ba458 100644
+--- a/firmware/CM848_S90140.06_analysis/output/global_variables.csv
++++ b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+@@ -4014,8 +4014,8 @@ address,name,type,comment
+ 0x00408f32,cylinder_seq_axis1_cal,word[3],
+ 0x00408f38,cylinder_seq_ystart_cal,word[3],
+ 0x00408f3e,cylinder_seq_yend_cal,word[4],
+-0x00408f56,backup_consecutive_error_threshold,word,e2m 8194 +0 [ESTDCU02] Backup_Consec_Error_Thresh (UNITLESS, 1 byte): 'threshold count at which eps is lost'. Threshold of the consecutive error count of the backup engine position signal, the TPU-A channel 1 path (the cam signal: mpc555_updateEngineCrankState is its interrupt handler and reloads backup_pulse_period_countdown from backup_pulse_period_timeout on every tooth event): cm848_updateEngineSpeedFromCrankSignal adds 1 to crank_sync_event_count per pass while that countdown is 0 and the engine speed is non-zero, else clears it; at this threshold it sets fault_detected_bits_80_to_95 bit 0x2000 (fault 93) and holds the count here. The main signal counterpart is e2m Main_Consec_Error_Thres, crank_sync_period_confirm_count_cal at 0x408f80 (fault 92). 255 in the RAM dump. TYPE: this row is typed word but the record is the HIGH byte (read as ._0_1_); the word type swallows the byte at 0x408f57 (1 in the dump) = e2m +1 Bank_With_Added_Tooth, 'which crank signal window has the cam +1 pulse' (typeless label crank_sync_reference_flag_cal), which hpcr_processEngineSyncPulses and mpc555_updateEngineCrankState read as (byte) of this word; this row should be typed byte and 0x408f57 given a byte row of its own (was crank_sync_event_count_min_cal)
+-0x00408f57,crank_sync_reference_flag_cal,,
++0x00408f56,backup_consecutive_error_threshold,byte,e2m 8194 +0 [ESTDCU02] Backup_Consec_Error_Thresh (UNITLESS, 1 byte): 'threshold count at which eps is lost'. Threshold of the consecutive error count of the backup engine position signal, the TPU-A channel 1 path (the cam signal: mpc555_updateEngineCrankState is its interrupt handler and reloads backup_pulse_period_countdown from backup_pulse_period_timeout on every tooth event): cm848_updateEngineSpeedFromCrankSignal adds 1 to crank_sync_event_count per pass while that countdown is 0 and the engine speed is non-zero, else clears it; at this threshold it sets fault_detected_bits_80_to_95 bit 0x2000 (fault 93) and holds the count here. The main signal counterpart is e2m Main_Consec_Error_Thres, crank_sync_period_confirm_count_cal at 0x408f80 (fault 92). 255 in the RAM dump. TYPE: this row is typed word but the record is the HIGH byte (read as ._0_1_); the word type swallows the byte at 0x408f57 (1 in the dump) = e2m +1 Bank_With_Added_Tooth, 'which crank signal window has the cam +1 pulse' (typeless label crank_signal_window_with_added_tooth), which hpcr_processEngineSyncPulses and mpc555_updateEngineCrankState read as (byte) of this word; this row should be typed byte and 0x408f57 given a byte row of its own Byte (stage 8c): the word row also covered 8194 +1, whose three lbz reads rendered under this name. (was crank_sync_event_count_min_cal)
++0x00408f57,crank_signal_window_with_added_tooth,byte,e2m 8194 +1 Bank_With_Added_Tooth 'which crank signal window has the cam +1 pulse' (UNITLESS, 0 / 1, 1 byte; 1 here): read three times with lbz - compared twice with the current crank signal window and once with bit 15 of tpu_a_ch0_param0.PARAM0. RAM outside the EEPROM mirror, so no _cal. (was crank_sync_reference_flag_cal)
+ 0x00408f58,crank_pattern_tooth_count_cal,word,
+ 0x00408f5a,crank_sync_timeout_limit_cal,word,
+ 0x00408f5c,engine_start_counter_min_cal,word,
+@@ -4102,7 +4102,7 @@ address,name,type,comment
+ 0x004090dd,main_to_auxiliary_injection_minimum_interval,word,Only user cm848_calculateAuxiliaryInjectionPulseWidth: third pulse allowed only if the gap after the main pulse is at least this many ticks (1500 = 600 us in the dump). Matches e2m HPCR_Min_Interval_Main_Aux. It is a time, not a quantity threshold. (was fuel_injection_quantity_threshold)
+ 0x004090df,auxiliary_injection_pulse_width_maximum_shift_factor,byte,Only user cm848_setMainQuantityAndPulseWidthLimits: value 2 doubles the auxiliary maximum on-time (2 in the dump). Matches e2m HPCR_Max_Auxinj_Duration_Shiftfactor. Not EEPROM-backed. (was injection_timing_mode_b_cal)
+ 0x004090f6,injection_timing_auxiliary_relative_to_main_end_flag,word,Disassembled all three readers. (1) engine_injectionAngle_tpuChannel6EventHandler state 2 (lhz 0x5296d0, beq 0x529704): value 0 -> third-event shift r31 = 0; nonzero -> shift = main on-time as an angle (main_injection_pulse_width x injection_timing_tooth_separation_per_cylinder x 256 / crank_period_accumulator), added to the auxiliary start angle 0x40b87d. (2) cm848_calculateAuxiliaryInjectionPulseWidth (lhz ... (was injection_timing_timing_mode_cal)
+-0x004090fa,cam_timing_alt_mode_enable_cal,byte,
++0x004090fa,fuel_pressure_governor_gain_mode,byte,e2m 8000 +0 HPCR_Governor_Mode 'Switch to select governor mode' (byte; 0 here): its only use in the code is the test in cm848_calculateFuelMeteringCommand that, at 0, multiplies every fuel pressure governor gain and filter coefficient by its engine speed curve (the gain scaling tables at 0x40918a-0x40936d) before the P / I / D steps; otherwise the gains are used as stored. RAM outside the EEPROM mirror, so no _cal. (was cam_timing_alt_mode_enable_cal)
+ 0x004090fb,fuel_pressure_governor_feed_forward_enable,byte,Non-zero: the rpm-table feed-forward (fuel_pressure_governor_feed_forward) is added to the demand and used for the bumpless integrator presets (1 here). Was engine_sync_reference_valid_flag | e2m: e2m 8000 +1 HPCR_Precontrol 'Switch to select/deselect Precontrol' (precontrol = the rpm-table feed-forward)
+ 0x004090fd,fuel_pressure_governor_disable,byte,Non-zero: FUEL_PRESSURE_GOVERNOR_DISABLED (0 here). Was cam_sync_disable_cal | e2m: e2m 8000 +3 HPCR_Testbench 'Switch to select test bench mode' (test bench mode = governor disabled; the replacement duty is e2m +24 HPCR_Dutycycle_Repl_Testbench = fuel_pressure_governor_disabled_command)
+ 0x004090fe,fuel_pressure_governor_low_pressure_entry_count,word,Passes inside the low-pressure window before FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED starts (500). Was cam_sync_confirm_count_threshold_cal
+@@ -4154,28 +4154,28 @@ address,name,type,comment
+ 0x0040915c,cam_speed_rate_threshold_cal,word,
+ 0x0040915e,cam_sync_ref_output_axis_cal,word[11],
+ 0x00409174,cam_sync_ref_output_values_cal,word[11],
+-0x0040918a,cam_sync_cyl1_timing_axis_a_cal,word[11],
+-0x004091a0,cam_sync_cyl1_timing_values_a_cal,word[11],
+-0x004091b6,cam_sync_cyl2_timing_axis_a_cal,word[11],
+-0x004091cc,cam_sync_cyl2_timing_values_a_cal,word[11],
+-0x004091e2,cam_sync_cyl3_timing_axis_a_cal,word[11],
+-0x004091f8,cam_sync_cyl3_timing_values_a_cal,word[11],
+-0x0040920e,cam_sync_cyl4_timing_axis_a_cal,word[11],
+-0x00409224,cam_sync_cyl4_timing_values_a_cal,word[11],
+-0x0040923a,cam_sync_cyl5_timing_axis_a_cal,word[11],
+-0x00409250,cam_sync_cyl5_timing_values_a_cal,word[11],
+-0x00409266,cam_sync_cyl6_timing_axis_a_cal,word[11],
+-0x0040927c,cam_sync_cyl6_timing_values_a_cal,word[11],
+-0x00409292,cam_sync_cyl4_timing_axis_b_cal,word[11],
+-0x004092a8,cam_sync_cyl4_timing_values_b_cal,word[11],
+-0x004092be,cam_sync_cyl5_timing_axis_b_cal,word[11],
+-0x004092d4,cam_sync_cyl5_timing_values_b_cal,word[11],
+-0x004092ea,cam_sync_cyl6_timing_axis_b_cal,word[11],
+-0x00409300,cam_sync_cyl6_timing_values_b_cal,word[11],
+-0x00409316,cam_sync_prot_gain_axis_cal,word[11],
+-0x0040932c,cam_sync_prot_gain_values_cal,word[11],
+-0x00409342,cam_sync_scale_axis_cal,word[11],
+-0x00409358,cam_sync_scale_values_cal,word[11],
++0x0040918a,fuel_pressure_governor_proportional_small_signal_gain_scaling_axis,word[11],e2m 8005 +0 HPCR_SF_Propcomp_Small_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_proportional_gains.small_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl1_timing_axis_a_cal)
++0x004091a0,fuel_pressure_governor_proportional_small_signal_gain_scaling_values,word[11],e2m 8008 +0 HPCR_SF_Propcomp_Small_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.22 to 0.60 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_proportional_gains.small_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl1_timing_values_a_cal)
++0x004091b6,fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_axis,word[11],e2m 8006 +0 HPCR_SF_Propcomp_Positive_Large_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_proportional_gains.positive_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl2_timing_axis_a_cal)
++0x004091cc,fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_values,word[11],e2m 8009 +0 HPCR_SF_Propcomp_Positive_Large_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.22 to 0.45 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_proportional_gains.positive_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl2_timing_values_a_cal)
++0x004091e2,fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_axis,word[11],e2m 8007 +0 HPCR_SF_Propcomp_Negative_Large_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_proportional_gains.negative_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl3_timing_axis_a_cal)
++0x004091f8,fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_values,word[11],e2m 800A +0 HPCR_SF_Propcomp_Negative_Large_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.20 to 0.45 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_proportional_gains.negative_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl3_timing_values_a_cal)
++0x0040920e,fuel_pressure_governor_integral_small_signal_gain_scaling_axis,word[11],e2m 800B +0 HPCR_SF_Integral_Small_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_integral_gains.small_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl4_timing_axis_a_cal)
++0x00409224,fuel_pressure_governor_integral_small_signal_gain_scaling_values,word[11],e2m 800E +0 HPCR_SF_Integral_Small_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.22 to 0.95 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_integral_gains.small_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl4_timing_values_a_cal)
++0x0040923a,fuel_pressure_governor_integral_positive_large_signal_gain_scaling_axis,word[11],e2m 800C +0 HPCR_SF_Integral_Positive_Large_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_integral_gains.positive_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl5_timing_axis_a_cal)
++0x00409250,fuel_pressure_governor_integral_positive_large_signal_gain_scaling_values,word[11],e2m 800F +0 HPCR_SF_Integral_Positive_Large_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.22 to 0.47 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_integral_gains.positive_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl5_timing_values_a_cal)
++0x00409266,fuel_pressure_governor_integral_negative_large_signal_gain_scaling_axis,word[11],e2m 800D +0 HPCR_SF_Integral_Negative_Large_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_integral_gains.negative_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl6_timing_axis_a_cal)
++0x0040927c,fuel_pressure_governor_integral_negative_large_signal_gain_scaling_values,word[11],e2m 8010 +0 HPCR_SF_Integral_Negative_Large_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.20 to 0.48 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_integral_gains.negative_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl6_timing_values_a_cal)
++0x00409292,fuel_pressure_governor_derivative_small_signal_gain_scaling_axis,word[11],e2m 80E7 +0 HPCR_SF_Derivative_Small_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_derivative_gains.small_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl4_timing_axis_b_cal)
++0x004092a8,fuel_pressure_governor_derivative_small_signal_gain_scaling_values,word[11],e2m 80EA +0 HPCR_SF_Derivative_Small_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.00 to 0.00 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_derivative_gains.small_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl4_timing_values_b_cal)
++0x004092be,fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_axis,word[11],e2m 80E8 +0 HPCR_SF_Derivative_Positive_Large_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_derivative_gains.positive_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl5_timing_axis_b_cal)
++0x004092d4,fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_values,word[11],e2m 80EB +0 HPCR_SF_Derivative_Positive_Large_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.10 to 0.21 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_derivative_gains.positive_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl5_timing_values_b_cal)
++0x004092ea,fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_axis,word[11],e2m 80E9 +0 HPCR_SF_Derivative_Negative_Large_Signal_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_derivative_gains.negative_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl6_timing_axis_b_cal)
++0x00409300,fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_values,word[11],e2m 80EC +0 HPCR_SF_Derivative_Negative_Large_Signal_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/4096; 0.04 to 0.21 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_derivative_gains.negative_large_signal_gain by (product >> 12) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_cyl6_timing_values_b_cal)
++0x00409316,fuel_pressure_governor_derivative_filter_coefficient_scaling_axis,word[11],e2m 80ED +0 HPCR_SF_Derivative_Constant_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 400-4000 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_derivative_gains.filter_coefficient by (product >> 16) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_prot_gain_axis_cal)
++0x0040932c,fuel_pressure_governor_derivative_filter_coefficient_scaling_values,word[11],e2m 80EE +0 HPCR_SF_Derivative_Constant_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/65536; 1.00 to 1.00 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_governor_derivative_gains.filter_coefficient by (product >> 16) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_prot_gain_values_cal)
++0x00409342,fuel_pressure_sensor_filter_coefficient_scaling_axis,word[11],e2m 80F0 +0 HPCR_SF_Fuel_Pressure_Constant_RPM_Axis: the engine speed axis (word[11]: header 20, then 10 points; 600-3500 rpm here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_sensor_filter_coefficient (the pressure sensor filter) by (product >> 16) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_scale_axis_cal)
++0x00409358,fuel_pressure_sensor_filter_coefficient_scaling_values,word[11],e2m 80F1 +0 HPCR_SF_Fuel_Pressure_Constant_SF_Axis: the scaling factors (word[11]: header 20, then 10 points in 1/65536; 1.00 to 1.00 here) of the curve that cm848_calculateFuelMeteringCommand multiplies fuel_pressure_sensor_filter_coefficient (the pressure sensor filter) by (product >> 16) while fuel_pressure_governor_gain_mode is 0. RAM outside the EEPROM mirror, so no _cal. (was cam_sync_scale_values_cal)
+ 0x0040936e,cam_sync_output_a_axis_cal,word[9],
+ 0x00409380,cam_sync_output_a_values_cal,word[9],
+ 0x00409392,cam_sync_speed_axis_cal,word[9],
+@@ -4189,9 +4189,9 @@ address,name,type,comment
+ 0x0040947e,cam_sync_speed_output_scale_values_cal,word[6],
+ 0x0040948a,engine_sync_speed_scale_axis_cal,word[6],
+ 0x00409496,engine_sync_speed_scale_values_cal,word[6],
+-0x004094a2,fuel_pressure_governor_proportional_gains,piecewise_linear_gain_t,e2m 8014 HPCR_Propgain_* 'Fuel pressure governor P-component' (addresses from the ECU's parameter ID table): small / positive large / negative large signal gains (%/MPa, 7.6293e-6 per count; 65537 / 13107 / 78644 here = 0.5 / 0.1 / 0.6) and the window widths (MPa, 0.0488 per count; 205 / -204 here = +10.0 / -10.0). cm848_calculateFuelMeteringCommand copies the P / I / D records to the stack (each gain and coefficient scaled by its own lookup table while cam_timing_alt_mode_enable_cal is 0; the window widths unscaled); cm848_applyPiecewiseLinearGain applies it to the pressure error (fuel_pressure_setpoint - fuel_pressure_feedback_filtered) for fuel_pressure_governor_proportional_term. (was fuel_pressure_governor_proportional_gain_small_signal, fuel_pressure_governor_proportional_gain_positive_large_signal, fuel_pressure_governor_proportional_gain_negative_large_signal, engine_sync_prot_scale_a_cal)
+-0x004094b2,fuel_pressure_governor_integral_gains,piecewise_linear_gain_t,e2m 8015 HPCR_Integral_Gain_* 'Fuel pressure governor Integral-component': small / positive large / negative large signal gains (%/MPa/SEC, 0.00011641 per count; 8590 / 5154 / 8590 here = 1.0 / 0.6 / 1.0) and the window widths (MPa, 0.0488 per count; 205 / -204 here). After the stack copy (see fuel_pressure_governor_proportional_gains) cm848_integrateWithZoneGain integrates the pressure error into fuel_pressure_governor_integrator (step 10000) for fuel_pressure_governor_integral_term. (was fuel_pressure_governor_integral_gain_small_signal, fuel_pressure_governor_integral_gain_positive_large_signal, fuel_pressure_governor_integral_gain_negative_large_signal, engine_sync_prot_scale_b_cal)
+-0x004094c2,fuel_pressure_governor_derivative_gains,derivative_gain_t,e2m 80EF HPCR_Derivative_Gain_* 'Fuel pressure governor D-Component': the filter coefficient (Derivative_Gain_Constant, 1/65536; 43713 here = 0.667), small / positive large / negative large signal gains (%/MPa/SEC, 7.6293e-8 per count; 65537 / 262147 / 262147 here = 0.005 / 0.02 / 0.02) and the window widths (MPa, 0.0488 per count; 205 / -204 here). After the stack copy (see fuel_pressure_governor_proportional_gains) cm848_calculateFilteredDerivative computes fuel_pressure_governor_derivative_term from the setpoint minus the filtered sensor, with fuel_pressure_governor_derivative_filter as its state. The 4-byte gains used to be word rows over their high halves plus `_lo_cal` rows over the low halves. (was engine_sync_prot_gain_cal, fuel_pressure_governor_derivative_gain_small_signal, injection_timing_scale_cyl4_lo_cal, fuel_pressure_governor_derivative_gain_positive_large_signal, injection_timing_scale_cyl5_lo_cal, fuel_pressure_governor_derivative_gain_negative_large_signal, injection_timing_scale_cyl6_lo_cal, engine_sync_prot_limit_cal, engine_sync_prot_gain_b_cal)
++0x004094a2,fuel_pressure_governor_proportional_gains,piecewise_linear_gain_t,e2m 8014 HPCR_Propgain_* 'Fuel pressure governor P-component' (addresses from the ECU's parameter ID table): small / positive large / negative large signal gains (%/MPa, 7.6293e-6 per count; 65537 / 13107 / 78644 here = 0.5 / 0.1 / 0.6) and the window widths (MPa, 0.0488 per count; 205 / -204 here = +10.0 / -10.0). cm848_calculateFuelMeteringCommand copies the P / I / D records to the stack (each gain and coefficient scaled by its own lookup table while fuel_pressure_governor_gain_mode is 0; the window widths unscaled); cm848_applyPiecewiseLinearGain applies it to the pressure error (fuel_pressure_setpoint - fuel_pressure_feedback_filtered) for fuel_pressure_governor_proportional_term. Scaling curves (engine speed; the product >> 12): e2m 8005 / 8008 for the small signal gain, 8006 / 8009 positive large, 8007 / 800A negative large. The error is setpoint minus feedback, so the positive window lies about 10 MPa below the setpoint. Never written by the code (constants copied to RAM), so no _cal. (was fuel_pressure_governor_proportional_gain_small_signal, fuel_pressure_governor_proportional_gain_positive_large_signal, fuel_pressure_governor_proportional_gain_negative_large_signal, engine_sync_prot_scale_a_cal)
++0x004094b2,fuel_pressure_governor_integral_gains,piecewise_linear_gain_t,e2m 8015 HPCR_Integral_Gain_* 'Fuel pressure governor Integral-component': small / positive large / negative large signal gains (%/MPa/SEC, 0.00011641 per count; 8590 / 5154 / 8590 here = 1.0 / 0.6 / 1.0) and the window widths (MPa, 0.0488 per count; 205 / -204 here). After the stack copy (see fuel_pressure_governor_proportional_gains) cm848_integrateWithZoneGain integrates the pressure error into fuel_pressure_governor_integrator (step 10000) for fuel_pressure_governor_integral_term. Scaling curves (the product >> 12): e2m 800B / 800E, 800C / 800F, 800D / 8010. (was fuel_pressure_governor_integral_gain_small_signal, fuel_pressure_governor_integral_gain_positive_large_signal, fuel_pressure_governor_integral_gain_negative_large_signal, engine_sync_prot_scale_b_cal)
++0x004094c2,fuel_pressure_governor_derivative_gains,derivative_gain_t,e2m 80EF HPCR_Derivative_Gain_* 'Fuel pressure governor D-Component': the filter coefficient (Derivative_Gain_Constant, 1/65536; 43713 here = 0.667), small / positive large / negative large signal gains (%/MPa/SEC, 7.6293e-8 per count; 65537 / 262147 / 262147 here = 0.005 / 0.02 / 0.02) and the window widths (MPa, 0.0488 per count; 205 / -204 here). After the stack copy (see fuel_pressure_governor_proportional_gains) cm848_calculateFilteredDerivative computes fuel_pressure_governor_derivative_term from the setpoint minus the filtered sensor, with fuel_pressure_governor_derivative_filter as its state. The 4-byte gains used to be word rows over their high halves plus `_lo_cal` rows over the low halves. Scaling curves: e2m 80ED / 80EE for the filter coefficient (the product >> 16); 80E7 / 80EA, 80E8 / 80EB and 80E9 / 80EC for the gains (>> 12). Never written by the code (constants copied to RAM), so no _cal. (was engine_sync_prot_gain_cal, fuel_pressure_governor_derivative_gain_small_signal, injection_timing_scale_cyl4_lo_cal, fuel_pressure_governor_derivative_gain_positive_large_signal, injection_timing_scale_cyl5_lo_cal, fuel_pressure_governor_derivative_gain_negative_large_signal, injection_timing_scale_cyl6_lo_cal, engine_sync_prot_limit_cal, engine_sync_prot_gain_b_cal)
+ 0x004094d4,fuel_metering_current_compensation_proportional_gains,piecewise_linear_gain_t,e2m 8016 HPCR_Currentcomp_Propgain_* 'Current compensation governor P-component': small / positive large / negative large signal gains (CNTS/mA, 3.0517e-9 per count; all 0 here, so the proportional part of the current compensation is off) and the window widths (mA, 1.2218 per count; 409 / 0 here = +500 / 0 mA). cm848_calculateFuelMeteringCommand applies it with cm848_applyPiecewiseLinearGain to fuel_metering_feedback_error (commanded minus measured current, mA) while fuel_metering_feedback_fault_code is 0. (was cam_sync_speed_error_prot_state_cal)
+ 0x004094e4,fuel_metering_current_compensation_integral_gains,piecewise_linear_gain_t,e2m 8017 HPCR_Currentcomp_Integral_* 'Current compensation governor Integral-component': small / positive large / negative large signal gains (CNTS/mA/SEC, 4.6566e-8 per count; 21475 / 2147 / 2147 here = 0.001 / 0.0001 / 0.0001) and the window widths (mA, 1.2218 per count; 3274 / -3272 here = +4000 / -3998 mA). cm848_integrateWithZoneGain integrates fuel_metering_feedback_error into fuel_metering_feedback_trim_integrator (step 10000). (was cam_sync_speed_error_prot_mode_cal)
+ 0x004094f4,fuel_metering_uncompensated_duty_cycle_proportional_gains,piecewise_linear_gain_t,e2m 8018 HPCR_Propcomp_Dutycycle_* 'gain for P-component non compensated duty cycle': small / positive large / negative large signal gains (%/mA, 3.05175e-7 per count; 95027 / 52429 / 83231 here = 0.029 / 0.016 / 0.0254) and the window widths (mA, 1.2218 per count; 3274 / -3272 here). cm848_calculateFuelMeteringCommand applies it with cm848_applyPiecewiseLinearGain to the commanded current (mA, the output of the cam_sync_ref_output_values_cal table) for the uncompensated duty cycle. (was cam_sync_ref_prot_state_cal)
+@@ -4243,8 +4243,8 @@ address,name,type,comment
+ 0x0040980a,fuel_pressure_setpoint_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateFuelPressureSetpoint
+ 0x00409a8a,injector_diagnostic_bits_fast_decay_debounce_limit,word,Debounce limit of injector_diagnostic_bits_fast_decay (e2m 80B9, the bits byte that was letter d): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_d_debounce_limit) | earlier note: ROM copy (65535), not EEPROM: limit passed to cm848_evaluateInjectorDiagnosticFault for class d; zero-extending lhz load at 0x4ad68, so the counter never exceeds it. (was engine_pos_fault_eval_threshold_cal)
+ 0x00409a8c,injector_diagnostic_bits_open_circuit_debounce_limit,word,Debounce limit of injector_diagnostic_bits_open_circuit (e2m 80B9, the bits byte that was letter a): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_a_debounce_limit) | earlier note: ROM copy (2): limit for class a. (was prot_fault_status_a_threshold_cal)
+-0x00409a8e,injector_diagnostic_bits_short_to_ground_debounce_limit,word,Debounce limit of injector_diagnostic_bits_short_to_ground (e2m 80B9, the bits byte that was letter b): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_b_debounce_limit) | earlier note: ROM copy (1): limit for class b. (was prot_fault_status_b_threshold_cal)
+-0x00409a90,injector_diagnostic_bits_short_to_battery_debounce_limit,word,Debounce limit of injector_diagnostic_bits_short_to_battery (e2m 80B9, the bits byte that was letter c): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_c_debounce_limit) | earlier note: ROM copy (1): limit for class c. (was prot_fault_status_c_threshold_cal)
++0x00409a8e,injector_diagnostic_bits_short_to_ground_debounce_limit,word,Debounce limit of injector_diagnostic_bits_short_to_ground (e2m 80B9, the bits byte that was letter b): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The two short classes set different internal faults (268 / 269 for the first injector in the ROM row table at 0x57d76) but both map to one OBD slot (P2146 for cylinders 1-3, P2149 for 4-6), so nothing in the code says which byte is short to ground: that rests on the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) alone. (was injector_diagnostic_bits_b_debounce_limit) | earlier note: ROM copy (1): limit for class b. (was prot_fault_status_b_threshold_cal)
++0x00409a90,injector_diagnostic_bits_short_to_battery_debounce_limit,word,Debounce limit of injector_diagnostic_bits_short_to_battery (e2m 80B9, the bits byte that was letter c): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The two short classes set different internal faults (268 / 269 for the first injector in the ROM row table at 0x57d76) but both map to one OBD slot (P2146 for cylinders 1-3, P2149 for 4-6), so nothing in the code says which byte is short to ground: that rests on the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) alone. (was injector_diagnostic_bits_c_debounce_limit) | earlier note: ROM copy (1): limit for class c. (was prot_fault_status_c_threshold_cal)
+ 0x00409e40,injection_delivery_mode,word,
+ 0x00409e42,injection_timing_main_combination_mode,word,cm848_calculateMainInjectionTiming: 0 = sum (clamped +/-1024), 1 = highest, other = lowest of the components (1 in the dump, so highest); the address is outside the EEPROM range 0x3fd482-0x3feec1, so no _cal. (was injection_timing_select_mode_cal)
+ 0x00409e44,injection_timing_main_governor_limit_minimum,word,The main timing is raised to this (68 counts = 8 deg, source 23) while governor_speed_limit_active_flag is set, and cm848_calculatePilotInjectionTiming tests main timing = this to switch the pilot offset to its governor-limit floor; the address is outside the EEPROM range, so no _cal. (was injection_timing_demand_lower_limit_cal)
+@@ -4434,7 +4434,7 @@ address,name,type,comment
+ 0x0040a2ae,output_shaft_speed_current,word,latest J1939 ETC1 (PGN 61442) SPN191 Transmission Output Shaft Speed; set each message in cm848_j1939ProcessPgn61442Etc1 (prior value -> etc1_message_t.speed_previous first); consumed by the shaft-speed smoother + cm848_fuelTrimFromOutputShaftSpeed; word confirmed via lhz/sth r,0(r7) @ 0x22a54. (renamed from _prev which was backwards - the real previous is speed_previous)
+ 0x0040a2b0,protection_transition_block_flag,word,
+ 0x0040a2b2,engine_retarder_request_percent,word,cm848_driveEngineRetarderOutput assigns it engine_retarder_arbitrated_request_percent (the arbitrated retarder percent) or holds the old value while engine_retarder_request_shift_hold_flag is set; with engine_retarder_output_mode_flags bit 0 set it sets logical output 11 (cm848_setLogicalOutputRequest(0xb, 0)) once the value has been 50 percent or more for engine_retarder_request_on_delay_passes calls, and clears it below 50 percent. (was j1939_governor_fuel_input)
+-0x0040a2b4,ecm_power_down_delay_request_flag,dword,e2m 117D +4C Powerdown_Delay_Request '[SDDYFG] The ECM will not powerdown until this is inactive' (address from the ECU's parameter ID table) (HEX; 0 here): a power-down hold request. In the SHUTDOWN state cm848_updateEngineState starts the delayed power-down (power_down_start_flag once ecm_power_down_timer reaches ecm_power_down_delay and egr_delta_pressure_autozero_complete_flag is set) only while this is 0, and clears it at the end of every SHUTDOWN pass (the immediate path at ecm_power_down_timer_threshold ignores it). cm848_setFuelDemandActiveFlag, run every pass of cm848_periodicTaskSet_sensorProcessing, sets it to 1 while vehicle_speed_unfiltered is nonzero. Accessed as a halfword. (was governor_speed_engage_reset_flag)
++0x0040a2b4,ecm_power_down_delay_request_flag,word,e2m 117D +4C Powerdown_Delay_Request '[SDDYFG] The ECM will not powerdown until this is inactive' (address from the ECU's parameter ID table) (HEX; 0 here): a power-down hold request. In the SHUTDOWN state cm848_updateEngineState starts the delayed power-down (power_down_start_flag once ecm_power_down_timer reaches ecm_power_down_delay and egr_delta_pressure_autozero_complete_flag is set) only while this is 0, and clears it at the end of every SHUTDOWN pass (the immediate path at ecm_power_down_timer_threshold ignores it). cm848_setFuelDemandActiveFlag, run every pass of cm848_periodicTaskSet_sensorProcessing, sets it to 1 while vehicle_speed_unfiltered is nonzero. Accessed as a halfword. Word (stage 8c): every access is lhz / sth; the dword row also covered 117D +4E (0x40a2b6). (was governor_speed_engage_reset_flag)
+ 0x0040a2bc,ccvs1_cruise_control_state,word,J1939 CCVS1 PGN 65265 cruise control state SPN 527 3-bit field - set 0-6 by cruise state (0 off 1 hold 2 accel 3 decel 4 resume 5 set 6 override - 7 not available at init) - CCVS1 builder shifts it left 5 into its byte (was j1939_status_field_3bit)
+ 0x0040a2c2,j1939_prop_status_tx_state,word,
+ 0x0040a2c4,governor_startup_threshold,word,
+@@ -4888,7 +4888,7 @@ address,name,type,comment
+ 0x0040a815,system_switch_status_2,word,e2m 1092 +2 System_Switch_Status_2 '[SSSWSS02] bit mapped system switch status' (address from the ECU's parameter ID table) (HEX; 0 here): the second bit-mapped status word, not a fault flag word. diagnosticMainStateProcessor rebuilds it every pass: bit 0 = logical output request 4, bit 1 = request 53, bits 2 / 3 = requests 43 / 44 (byte 5 of logical_output_request_bits, the row named protection_enable_byte_35), bit 4 = request 11, bit 12 = switch 19 (switch_input_state_bits[2] bit 3). hpcr_setFaultActiveStatus copies it with system_switch_status into every fault freeze frame (fault_entry_t.system_switch_status_2). (was diagnostic_fault_flags_b)
+ 0x0040a817,fault_enable_bitmask_array,word[50], | retyped word -> word[50] 2026-11-18
+ 0x0040a87b,master_slave_final_override_fueling,word,e2m 11D4 +0 MS_Final_Override_Fueling '[MSFNODFL] Override fueling to slave fuel selection' (mm3, 0.0679 per count; 0 in the dump). Master / slave override fueling: cm848_selectFinalFueling outputs it as the final fueling (FUELING_STATE_MASTER_SLAVE_OVERRIDE) when the e2m 11D4 +2 enable is set and master_slave_control_flag is 0. Nothing stores it. (was fuel_demand_arbitrated_a)
+-0x0040a87d,master_slave_override_enable_flag,dword,e2m 11D4 +2 MS_Override_Enable '[MSODEN] Enable overriding slave Final_Fueling, Final_Timing'. Master / slave override enable: set together with master_slave_control_flag = 0 it makes cm848_selectFinalFueling output the override fueling (e2m 11D4 +0); also read in cm848_arbitrateRequestedFueling and hpcr_calculateFuelTrimOutput. Nothing stores it. (was fuel_limit_mode_active_flag)
++0x0040a87d,master_slave_override_enable_flag,word,e2m 11D4 +2 MS_Override_Enable '[MSODEN] Enable overriding slave Final_Fueling, Final_Timing'. Master / slave override enable: set together with master_slave_control_flag = 0 it makes cm848_selectFinalFueling output the override fueling (e2m 11D4 +0); also read in cm848_arbitrateRequestedFueling and hpcr_calculateFuelTrimOutput. Nothing stores it. Word (stage 8c): every access is lhz; the dword row also covered 11D4 +4 MS_Final_Override_Timing (0x40a87f). (was fuel_limit_mode_active_flag)
+ 0x0040a885,governor_startup_fuel_blend_coeff,word,
+ 0x0040a887,four_dimensional_fueling,word,e2m 1053 +0 Four_D_Fueling '[_5DFL] Fueling value calculated from the 4D fueling tables' (mm3, 0.0679 per count; 0 in the dump). Result of cm848_calculateDualAxisFuelLimit (engine speed x filtered throttle tables), stored in the dual axis fuel demand table mode and copied to engine_operating_mode_fuel_demand; read for the driver demand percent torque. (was governor_proportional_gain_calc)
+ 0x0040a889,thermal_fuel_limit_factor,word,
+@@ -5859,10 +5859,10 @@ address,name,type,comment
+ 0x0040b8b4,fuel_pressure_sensor_confirmed_code,byte,Debounced rail pressure sensor code (0 ok / 4 = fault 304 P0193 / 8 = fault 305 P0192): sets the fault bits and makes fuel_pressure_sensor = fuel_pressure_sensor_fault_default. Was cold_start_sync_status | e2m: e2m 8021 +6 HPCR_Fuelpr_Defect_N 'Defect status of fuel pressure sensor'
+ 0x0040b8b6,fuel_pressure_setpoint,word,DRB SCI read FD-27-28 'FUEL PRESS SETPOINT' - flash2 SCI table 253 (0x53a5ec, one byte address per FD index, FD n -> entry n - 1) maps FD-27-28 to this word's two bytes; 1000 in the RAM dump; cm848_calculateFuelMeteringCommand's error is this minus fuel_pressure_feedback_filtered (0x40b8b2 - which reads the same as fuel_pressure_sensor in the dump); cm848_calculateFuelPressureSetpoint writes it most (was cam_timing_measured)
+ 0x0040b8ca,fuel_pressure_setpoint_winning_term_code,word,Written only by the setpoint calculator (10 stores) and its init (1 store): 1 engine starting (setpoint 0), 2 map, 3 coolant limit, 4 ambient limit, 5 forced override, 6 cold-start table, 7 sum mode, 8-11 = 2 / 3 / 4 / 7 with the offset active, 12 / 13 = ramp up / down out of the cold-start value, 14 maximum clamp, 15 fault-reaction cap, 16 / 17 minimum clamp (cranking / running); 6 in the RAM ... (was engine_timing_arb_byte_8_15)
+-0x0040b8cc,injector_diagnostic_bits_fast_decay,byte,e2m 80B9 +0 HPCR_Fast_Decay 'LSB is injector 1 - fast decay error' (HEX; bit n = injector n + 1). Set from a separate flag bit of the 24-bit injector driver word in cm848_updateInjectorDiagnosticBits (the other bytes use its 2-bit code), debounced into six faults without an OBD slot (270 / 276 / 273 / 282 / 285 / 279); debounce limit 65535. Read by engine_injectionAngle_selectCylinderInjector. (was injector_diagnostic_bits_d) | earlier note: byte, one bit per injector: set from a separate flag bit of the 24-bit word (cm848_updateInjectorDiagnosticBits), debounced into six faults without OBD slot (270 / 276 / 273 / 282 / 285 / 279); read for the injector selection in engine_injectionAngle_selectCylinderInjector. Nothing in it concerns engine position. Its debounce limit (0x409a8a, loaded with lhz, so it stays 65535) is 65535 here, so ... (was engine_position_diag_flags)
+-0x0040b8cd,injector_diagnostic_bits_open_circuit,byte,e2m 80B9 +1 HPCR_Open_Circuit 'LSB is injector 1 - open circuit error' (HEX; bit n = injector n + 1; 0 in the dump). Set for the 2-bit code 1 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P0201-P0206 (injector circuit per cylinder). (was injector_diagnostic_bits_a) | earlier note: byte, one bit per injector, set for 2-bit code 1; its faults are P0201-P0206 (injector circuit per cylinder). (was protection_fault_status_a)
+-0x0040b8ce,injector_diagnostic_bits_short_to_ground,byte,e2m 80B9 +2 HPCR_Short_Ground 'LSB is injector 1 - short to ground error' (HEX; bit n = injector n + 1; 0 in the dump). Set for the 2-bit code 0 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P2146 / P2149 (injector group supply voltage). Read for the cylinder cutout masks. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_b) | earlier note: byte, one bit per injector, set for code 0; its faults are P2146 / P2149 (injector group supply voltage). (was protection_fault_status_b)
+-0x0040b8cf,injector_diagnostic_bits_short_to_battery,byte,e2m 80B9 +3 HPCR_Short_Vbatt 'LSB is injector 1 - short to vbatt error' (HEX; bit n = injector n + 1; 0 in the dump). Set for the 2-bit code 2 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P2146 / P2149 (injector group supply voltage). Read for the cylinder cutout masks. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_c) | earlier note: byte, one bit per injector, set for code 2; its faults are P2146 / P2149. (was protection_fault_status_c)
++0x0040b8cc,injector_diagnostic_bits_fast_decay,byte,e2m 80B9 +0 HPCR_Fast_Decay 'LSB is injector 1 - fast decay error' (HEX; bit n = injector n + 1 in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4 by the open circuit codes P0201 / P0205 / P0203 / P0206 / P0202 / P0204 of the ROM row table at 0x57d76)). Set from a separate flag bit of the 24-bit injector driver word in cm848_updateInjectorDiagnosticBits (the other bytes use its 2-bit code), debounced into six faults without an OBD slot (270 / 276 / 273 / 282 / 285 / 279); debounce limit 65535. Read by engine_injectionAngle_selectCylinderInjector. (was injector_diagnostic_bits_d) | earlier note: byte, one bit per injector: set from a separate flag bit of the 24-bit word (cm848_updateInjectorDiagnosticBits), debounced into six faults without OBD slot (270 / 276 / 273 / 282 / 285 / 279); read for the injector selection in engine_injectionAngle_selectCylinderInjector. Nothing in it concerns engine position. Its debounce limit (0x409a8a, loaded with lhz, so it stays 65535) is 65535 here, so ... (was engine_position_diag_flags)
++0x0040b8cd,injector_diagnostic_bits_open_circuit,byte,e2m 80B9 +1 HPCR_Open_Circuit 'LSB is injector 1 - open circuit error' (HEX; bit n = injector n + 1 in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4 by the open circuit codes P0201 / P0205 / P0203 / P0206 / P0202 / P0204 of the ROM row table at 0x57d76); 0 in the dump). Set for the 2-bit code 1 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P0201-P0206 (injector circuit per cylinder). (was injector_diagnostic_bits_a) | earlier note: byte, one bit per injector, set for 2-bit code 1; its faults are P0201-P0206 (injector circuit per cylinder). (was protection_fault_status_a)
++0x0040b8ce,injector_diagnostic_bits_short_to_ground,byte,e2m 80B9 +2 HPCR_Short_Ground 'LSB is injector 1 - short to ground error' (HEX; bit n = injector n + 1 in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4 by the open circuit codes P0201 / P0205 / P0203 / P0206 / P0202 / P0204 of the ROM row table at 0x57d76); 0 in the dump). Set for the 2-bit code 0 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P2146 / P2149 (injector group supply voltage). Read for the cylinder cutout masks. The two short classes set different internal faults (268 / 269 for the first injector in the ROM row table at 0x57d76) but both map to one OBD slot (P2146 for cylinders 1-3, P2149 for 4-6), so nothing in the code says which byte is short to ground: that rests on the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) alone. (was injector_diagnostic_bits_b) | earlier note: byte, one bit per injector, set for code 0; its faults are P2146 / P2149 (injector group supply voltage). (was protection_fault_status_b)
++0x0040b8cf,injector_diagnostic_bits_short_to_battery,byte,e2m 80B9 +3 HPCR_Short_Vbatt 'LSB is injector 1 - short to vbatt error' (HEX; bit n = injector n + 1 in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4 by the open circuit codes P0201 / P0205 / P0203 / P0206 / P0202 / P0204 of the ROM row table at 0x57d76); 0 in the dump). Set for the 2-bit code 2 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P2146 / P2149 (injector group supply voltage). Read for the cylinder cutout masks. The two short classes set different internal faults (268 / 269 for the first injector in the ROM row table at 0x57d76) but both map to one OBD slot (P2146 for cylinders 1-3, P2149 for 4-6), so nothing in the code says which byte is short to ground: that rests on the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) alone. (was injector_diagnostic_bits_c) | earlier note: byte, one bit per injector, set for code 2; its faults are P2146 / P2149. (was protection_fault_status_c)
+ 0x0040b90e,injection_timing_main_barometric_pressure_component,word,(barometric angle x factor) / 4096; 0 in the dump. The old name says nothing; the code multiplies the base_a / base_b pair, which are the barometric tables. (was injection_timing_demand_calc)
+ 0x0040b910,injection_timing_main_barometric_pressure_factor,word,Q12 output of the 1-D table injection_timing_main_barometric_pressure_factor_values keyed by timing_barometric_pressure_snapshot (0 at this altitude in the dump). (was injection_timing_factor_base_b)
+ 0x0040b912,injection_timing_main_barometric_pressure_angle,word,Output of rpm x final_fueling table injection_timing_main_barometric_pressure_angle_grid (flat 43 counts = 5 deg in the dump), multiplied by the barometric factor into injection_timing_main_barometric_pressure_component. (was injection_timing_factor_base_a)
+@@ -8086,8 +8086,8 @@ address,name,type,comment
+ 0x0040ae70,pedal_fault_mode_target_speed_filtered,word,cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit (cpp 66389+): xref_addr.py: 0 reads / 1 write, width word (sth of the low half of the exponentialMovingAverage of engine_rpm_state_t.target_rpm, filter state ema_filter_state_t_003fcbdc); working RAM outside the time-shared window; the stored value feeds nothing that was found (the term pedal_fault_mode_fuel_demand_limit_slope x filtered speed is 0 in the dump). (new row 2026-11-17)
+ 0x003fcbe4,pedal_fault_mode_accelerator_off_idle_previous,word,cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit (cpp 66389+): xref_addr.py: 1 read / 1 write, width word, this function only (stores fuel_demand_control_t.accelerator_off_idle at the end of every call and compares it with 1 on the next one). Time-shared window: no other user listed, immediate scan of 0..0x7F5F for 0xcbe4: 0 hits. (new row 2026-11-17)
+ 0x003fb6fc,injector_diagnostic_bits_open_circuit_debounce_count,word,Debounce counter of injector_diagnostic_bits_open_circuit (e2m 80B9, the bits byte that was letter a): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_a_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
+-0x003fb6fe,injector_diagnostic_bits_short_to_battery_debounce_count,word,Debounce counter of injector_diagnostic_bits_short_to_battery (e2m 80B9, the bits byte that was letter c): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_c_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
+-0x003fb700,injector_diagnostic_bits_short_to_ground_debounce_count,word,Debounce counter of injector_diagnostic_bits_short_to_ground (e2m 80B9, the bits byte that was letter b): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_b_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
++0x003fb6fe,injector_diagnostic_bits_short_to_battery_debounce_count,word,Debounce counter of injector_diagnostic_bits_short_to_battery (e2m 80B9, the bits byte that was letter c): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The two short classes set different internal faults (268 / 269 for the first injector in the ROM row table at 0x57d76) but both map to one OBD slot (P2146 for cylinders 1-3, P2149 for 4-6), so nothing in the code says which byte is short to ground: that rests on the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) alone. (was injector_diagnostic_bits_c_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
++0x003fb700,injector_diagnostic_bits_short_to_ground_debounce_count,word,Debounce counter of injector_diagnostic_bits_short_to_ground (e2m 80B9, the bits byte that was letter b): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The two short classes set different internal faults (268 / 269 for the first injector in the ROM row table at 0x57d76) but both map to one OBD slot (P2146 for cylinders 1-3, P2149 for 4-6), so nothing in the code says which byte is short to ground: that rests on the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) alone. (was injector_diagnostic_bits_b_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
+ 0x003fb702,injector_diagnostic_bits_fast_decay_debounce_count,word,Debounce counter of injector_diagnostic_bits_fast_decay (e2m 80B9, the bits byte that was letter d): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_d_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
+ 0x004067d8,egr_valve_steady_state_command_deviation_threshold,word,code: xref_addr.py says word (1 read / 0 writes): only reader cm848_evaluateEgrValvePositionControlDiagnosticConditions: the diagnostic runs only while |final position command - its filtered average| is below it (DAT_004067d8). e2m: C_EGA_Cmd_Rate_Thd (0x0117AE00) is +0x00 of the block that anchors 0x4067d8. (new row 2026-11-17)
+ 0x004067da,egr_valve_control_error_threshold,word,code: xref_addr.py says word (1 read / 0 writes): only reader cm848_runEgrValvePositionControlDiagnostic: the control error condition is set when |autozeroed position - final command| is above it. e2m: C_EGA_Control_Error_Thd (0x0117AE02) is +0x02 of the block that anchors 0x4067d8. (new row 2026-11-17)
+diff --git a/work/tasks/045-cm848-fueling-state-enum.md b/work/tasks/045-cm848-fueling-state-enum.md
+index e80e3e3..0e459cf 100644
+--- a/work/tasks/045-cm848-fueling-state-enum.md
++++ b/work/tasks/045-cm848-fueling-state-enum.md
+@@ -536,6 +536,38 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
+   - `q16_fixed_point_t.integer_part` is an unsigned `word`, so the integral clamp shows `0xf001` for -4095.
+ - **Also:** the 80B9 short to ground / short to battery caveat (e2m byte order only) on its six rows.
+ 
++## Stage 8c - the review fixes after stages 8 / 8b (2026-11-19, PR #52)
++
++- **Widths:** the label-only proof cannot see a right name on a wrong-width row. Seven wave-13 rows are wider or
++  narrower than their record (`width_mismatches_W13.py`). Four of them are right: an array, two struct instances, and
++  0x3feeb8, which is also 191A WIF_Miles (4 bytes). Three were fixed:
++  - 0x408f56 `backup_consecutive_error_threshold` word -> byte. Its three `lbz` reads of +1 rendered as
++    `(byte)backup_consecutive_error_threshold`. They are 8194 +1 Bank_With_Added_Tooth, now the byte
++    `crank_signal_window_with_added_tooth` (was the typeless `crank_sync_reference_flag_cal`).
++  - 0x40a87d `master_slave_override_enable_flag` dword -> word: lhz only. It rendered `._0_2_` and covered 11D4 +4.
++  - 0x40a2b4 `ecm_power_down_delay_request_flag` dword -> word: lhz / sth only. It rendered `._0_2_` and covered
++    117D +4E.
++- **80B9:** `cm848_evaluateInjectorDiagnosticFault` takes each injector's fault numbers from the ROM row table at
++  0x57d76 (10 bytes per row, the class picks the offset 2 / 4 / 6 / 8; `injector_fault_codes.py`).
++  - The open circuit codes put the bits in firing order: bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4.
++  - The two short classes set different internal faults (268 / 269 for the first injector), but both map to one OBD
++    slot: P2146 for cylinders 1-3, P2149 for 4-6. So ground vs battery still rests on the e2m byte order alone. The
++    comments said "the code treats the bytes alike", which is not right; they are reworded.
++- **Spot check against the code:** 10 random direction-word renames (enable / limit / maximum / minimum / negative ...)
++  were checked against their deciding compare or use. All 10 are right; the cylinder balance trim and dynamic
++  compensation limits really were reversed before wave 13.
++- **The facts stage 8b dropped** were put back: the scaling curves' e2m blocks, the window direction, and "never
++  written, so no `_cal`".
++- **The gain scheduling curves:** `cm848_calculateFuelMeteringCommand` multiplies each gain and filter coefficient by
++  its own engine speed curve while `fuel_pressure_governor_gain_mode` (e2m 8000 +0 HPCR_Governor_Mode, was
++  `cam_timing_alt_mode_enable_cal`) is 0. The code use maps each curve to its field (`gain_scaling_tables.py`), and
++  the table resolves it to its e2m block.
++  - The 22 tables were `cam_sync_cyl*_timing_*` / `cam_sync_prot_gain_*` / `cam_sync_scale_*` with a wrong `_cal`.
++  - They are now `fuel_pressure_governor_<term>_<signal>_gain_scaling_axis` / `_values`, plus the derivative filter
++    coefficient and the pressure sensor filter coefficient curves (e2m 8005-8010, 80E7-80EE, 80F0 / 80F1).
++  - Each table is word[11] (a header word, then 10 points), on 400-4000 rpm.
++- **Gate:** the repo's `apply_renames.py` passed all 24 renames against the pre-8c CSVs.
++
+ ## Follow-ups (open)
+ 
+ - [ ] **Wave 14: the function names.** The wave-12 / wave-13 agents proved about 70 misnamed functions in their reports
+@@ -543,17 +575,14 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
+   (`hpcr_calculateFuelTrimOutput`), PGN 65251 (`faultTimerHandler`), EEC1 (`j1939GetEngineStateCode`), the drivetrain
+   ratio estimator (`protectionTimeoutControl`), the EGR orifice / mass flow models, the warm-up cycle monitor
+   (`engine_coolantTemp_overheat_monitor`), the RAM refresh, the 48RE governor pressure code.
+-- [ ] **The HPCR governor settings (block 8000) and the gain scheduling curves:**
+-  - `cam_timing_alt_mode_enable_cal` (0x4090fa) is e2m 8000 +0 HPCR_Governor_Mode. At 0 every gain is scheduled on
+-    engine speed. The row has a wrong `_cal`.
+-  - The HPCR_SF_* scaling curves (80E9 / 80EC, ...) are named `cam_sync_cyl*_timing_*`.
+-  - The rest of block 8000 (0x409110-0x409138: `engine_sync_*_cal` / `cam_sync_*_cal` / `engine_speed_override_*_cal`)
+-    has wrong `_cal`s too.
++- [ ] **The rest of the HPCR governor settings:** block 8000 (0x409110-0x409138: `engine_sync_*_cal` /
++  `cam_sync_*_cal` / `engine_speed_override_*_cal`) has wrong `_cal`s. HPCR_Governor_Mode and the gain scheduling
++  curves were done in stage 8c.
+ - [ ] **Shapes and types from wave 13:**
+   - split 0x40a204 (the rpm deceleration limit's I / P terms, e2m 107C +5A / +5C). The 0x4094xx gain records were done
+     in stage 8b;
+-  - 0x408f56 swallows the byte at 0x408f57. 0x408f66 `crank_timer_offset_cal` is a word over two byte records (8194
+-    +10 Crank_Sync_Tooth, +11 Crank_Teeth_Per_Cam_Measure), and its `_cal` is wrong for the region;
++  - 0x408f66 `crank_timer_offset_cal` is a word over two byte records (8194 +10 Crank_Sync_Tooth, +11
++    Crank_Teeth_Per_Cam_Measure), and its `_cal` is wrong for the region (0x408f56 was split in stage 8c);
+   - the `i16` candidates listed in the reports.
+ - [ ] **The held renames:** `diagnostic_session_state` -> `ram_refresh_enable` and `j1939_standby_flag` ->
+   `development_mode` need their enums (`DIAG_SESSION_STATE` / `J1939_STANDBY_STATE`) re-read first.
+diff --git a/work/todo.md b/work/todo.md
+index f7153a1..41d2485 100644
+--- a/work/todo.md
++++ b/work/todo.md
+@@ -47,7 +47,7 @@
+ 042 [>] [firmware] CM848D rename leads from the table-naming campaign: DONE for the listed leads (PR #50, 2026-11-16): 27 functions + 237 globals verified and renamed (pilot / main / auxiliary injection timing, quantity and on-time chains; rail pressure setpoint and monitors; wastegate duty + monitor; charging regulator; intake air heater test; retarder; oil change monitor), duplicate names fixed; wave 3 DONE too (53 functions, 183 globals, 16 struct fields, 21 duplicate names, 31 junk rows, 113 new rows); wave 4 DONE too (44 functions + 4 new, 219 globals, 6 struct fields, 12 new rows); still open: wave 4's 29 uncertain items and 44 notes, in tasks/042-table-campaign-rename-leads.md; wave 5 DONE (load-protection dispute resolved: the cluster is the variable geometry turbocharger position servo; the combustion manager re-domained; 9 uncertain, 28 notes left); wave 6 DONE (52 functions, 399 globals, 6 struct fields, 44 new rows; 14 uncertain, 37 notes left); wave 7 DONE (59 functions, 309 globals, 23 new rows - the EGR valve servo; 15 uncertain, 34 notes left); wave 8 DONE (labels + types: three enums, two struct changes, 46 retypes; CM550 shared name; 9 uncertain, 36 notes left); wave 9 DONE (torque management, turbocharger speed chain, charge manager tables, condensation model, two enums, kernel table cut, five CM550 shared names; 9 uncertain, 31 notes left)
+ 043 [X] [firmware] CM848D ROM-to-RAM thunk stage crosses data labels: ApplyRomToRamThunks.java puts a 4-byte thunk on kernel-image addresses the boot ROM calls; where the application keeps data there the thunk takes the data row's name and swallows the next word's row (0x3fb54c / 0x3fb54e and 7 more sites, listed in tasks/042 wave 7) - fix the stage (skip or shorten the thunk where named data rows own the bytes) and check the boot calls' rendering - DONE 2026-11-17: where a named row sits in the 4 bytes the stage adds call overrides instead of a thunk (10 addresses)
+ 044 [>] [firmware] CM848D names that clash with the DTC a function sets (work/tasks/044): the P0500 vehicle speed sensor zero-under-load monitor renamed (was diag_boostLoad_overtemp_monitor / _clear / cm848_calibration_group30_execute / cm848_state_variables_reset + their state, the 0x3fd070 filter typed ema_filter_state_t, 8 ROM limits) and the PGN 65213 builder made void(void) - PR #51 (branch cm848/vehicle-speed-sensor-p0500-monitor); wave 10 (2026-11-18, same PR) verified and renamed all 10 leads (P0711 / P0837 / P0720 / P0572-P0573 / P0461 / P0602 / P0300-P0306 / P0219 / P0106 / P0236-P0299-P0069 + faults 774-777 / 402) plus the high speed governor gain-set struct; wave 11 (2026-11-18, same PR) typed the struct / array / bitfield shapes (fault records, DTC lists, J1939 transmit descriptors, monitor condition and algorithm enable bitfields, the Chrysler end-of-line block; pieces 917 -> 512); open: the follow-ups listed in task 044
+-045 [>] [firmware] CM848D fueling state enum (work/tasks/045): governor_fuel_demand_mode is the Cummins FSGVFLST governed fueling state - ENGINE_OPERATING_MODE renamed FUELING_STATE with members 4 power take-off / 9 cruise control / 10 vehicle speed limit / 11 low speed governor / 12 high speed governor; seven carriers typed, 0x40b67c renamed, the 0x3fb526 dword split (2026-11-19); stage 2 (same day): the derate / combustion / final stages - 17 more members proved, 16 FUELING_STATE_UNIDENTIFIED_<n> placeholders (Ghidra prints a value with no member as an OR of members), ten carriers typed (governor_mode_code = final_fueling_state, governor_fuel_mode_* named after their fuel values); stage 3: 16 functions and 10 words of the arbitration renamed (cm848_arbitrateGovernedFueling, cm848_selectFinalFueling, the low speed governor, the vehicle speed limit and cruise fueling, ...); stage 4: the labelled Chrysler e2m (CHR_CC_11.45.01.07, hex keys) names every code - 11 placeholders named, 4 members renamed to the labels; COLD_START_PHASE = the engine state (ENGINE_STATE, cold_start_phase = engine_state); the power take-off governor proved in code (CCVS1 SPN 976, two enums, 10 functions); the altitude / air fuel control / net torque / coolant overheat limiters renamed; stage 5: the power take-off governor's words from e2m 10AB / 109E / 11B4 / 109D / 10AA (the swapped speed-error clamps fixed), the crank routine (e2m 105E / 105F / 1032: crank_exit_speed, crank_fuel, crank_reentry_speed, engine_stopped_speed), engine_starting = engine_shutdown_command_flag and engine_shutdown_active_flag = key_off_shutdown_inhibit_flag (both read backwards), code 32 = MASTER_SLAVE_OVERRIDE; stage 6: the cm848_signedFirstOrderFilter records as ema_filter_state_t (33 records), the ECU's parameter ID table (flash2 0x53be38, e2m block -> address; firmware/scripts/e2m_block_addresses.py), the emission manager and the power take-off helpers; stage 7: the whole-CSV e2m audit (e2m_name_audit.py), rename wave 12 (383 new rows) and the fueling chain's e2m names (governor_fuel_demand_mode = adjusted_user_fueling_state); stage 8: rename wave 13, the misname review (226 renames of named rows whose name shared no word with their e2m record: the data collector, PGN 65251, alpha, the all-speed governor, the 48RE monitors, cylinder balance; 143 keeps cross-referenced); stage 8b: the HPCR gain records as structs (piecewise_linear_gain_t / derivative_gain_t, seven instances from e2m 8014-8018 / 80EF / 80F2, the three gain routines' prototypes) - PR #52 (branch cm848/fueling-state-enum); open: wave 14 (about 70 misnamed functions, the out-of-bin siblings), the rest of the misname review, codes 37 38 49 50, the CM550 FSGVFLST typing, the leads in task 045
++045 [>] [firmware] CM848D fueling state enum (work/tasks/045): governor_fuel_demand_mode is the Cummins FSGVFLST governed fueling state - ENGINE_OPERATING_MODE renamed FUELING_STATE with members 4 power take-off / 9 cruise control / 10 vehicle speed limit / 11 low speed governor / 12 high speed governor; seven carriers typed, 0x40b67c renamed, the 0x3fb526 dword split (2026-11-19); stage 2 (same day): the derate / combustion / final stages - 17 more members proved, 16 FUELING_STATE_UNIDENTIFIED_<n> placeholders (Ghidra prints a value with no member as an OR of members), ten carriers typed (governor_mode_code = final_fueling_state, governor_fuel_mode_* named after their fuel values); stage 3: 16 functions and 10 words of the arbitration renamed (cm848_arbitrateGovernedFueling, cm848_selectFinalFueling, the low speed governor, the vehicle speed limit and cruise fueling, ...); stage 4: the labelled Chrysler e2m (CHR_CC_11.45.01.07, hex keys) names every code - 11 placeholders named, 4 members renamed to the labels; COLD_START_PHASE = the engine state (ENGINE_STATE, cold_start_phase = engine_state); the power take-off governor proved in code (CCVS1 SPN 976, two enums, 10 functions); the altitude / air fuel control / net torque / coolant overheat limiters renamed; stage 5: the power take-off governor's words from e2m 10AB / 109E / 11B4 / 109D / 10AA (the swapped speed-error clamps fixed), the crank routine (e2m 105E / 105F / 1032: crank_exit_speed, crank_fuel, crank_reentry_speed, engine_stopped_speed), engine_starting = engine_shutdown_command_flag and engine_shutdown_active_flag = key_off_shutdown_inhibit_flag (both read backwards), code 32 = MASTER_SLAVE_OVERRIDE; stage 6: the cm848_signedFirstOrderFilter records as ema_filter_state_t (33 records), the ECU's parameter ID table (flash2 0x53be38, e2m block -> address; firmware/scripts/e2m_block_addresses.py), the emission manager and the power take-off helpers; stage 7: the whole-CSV e2m audit (e2m_name_audit.py), rename wave 12 (383 new rows) and the fueling chain's e2m names (governor_fuel_demand_mode = adjusted_user_fueling_state); stage 8: rename wave 13, the misname review (226 renames of named rows whose name shared no word with their e2m record: the data collector, PGN 65251, alpha, the all-speed governor, the 48RE monitors, cylinder balance; 143 keeps cross-referenced); stage 8b: the HPCR gain records as structs (piecewise_linear_gain_t / derivative_gain_t, seven instances from e2m 8014-8018 / 80EF / 80F2, the three gain routines' prototypes); stage 8c: review fixes (three wave-13 width errors, the 80B9 firing order, the 22 gain scheduling curves named from e2m 8005-8010 / 80E7-80F1) - PR #52 (branch cm848/fueling-state-enum); open: wave 14 (about 70 misnamed functions, the out-of-bin siblings), the rest of the misname review, codes 37 38 49 50, the CM550 FSGVFLST typing, the leads in task 045
+ 029 [ ] [firmware] CM848D sweep held proposals — 25 catch-all re-domainings + Low guesses held for focused review (output-channel / battery-voltage-regulator / USIU) (work/tasks/029, PR #47)
+ 028 [?] [firmware/tools] CM848D engine hours — RESOLVED: EEPROM 0x30 is NOT wiped by HPT (no restore needed), 0x1C00 is static/dead; tools/read_engine_hours.sh reads 0x30 and prints the OCT seed (engineHoursTruckLifetime=<hrs>). REMAINING: one timed key cycle to confirm the 0.200/0.205/0.667 s/count scale, then --calibrate + seed OCT (PR #47)
+ 026 [?] [firmware] CM848D naming wave 2 — 196 names applied + verified (output speed / fault arrays / governor pressure / fault healing / cold-start temp / cruise servo drivers / intake air heater); commit pending push (work/tasks/026, PR #47)

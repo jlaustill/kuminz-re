@@ -100,6 +100,13 @@ subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7 an
   - `apply_stage8b_locals.py`: the second build's typed stack copies.
   - `check_stage8b.py`: the changed functions against the prediction. `diff8b_fuel_metering.txt` is the first
     build's diff of `cm848_calculateFuelMeteringCommand`; `build1_8b.cpp` / `pre8b.cpp` are in the tar.xz.
+- **Stage 8c** (the review fixes), also in `stage8/`:
+  - `width_mismatches_W13.py`: the wave-13 rows whose width differs from their e2m record.
+  - `injector_fault_codes.py`: the 80B9 classes' fault numbers and P-codes from the ROM row table at 0x57d76.
+  - `direction_sample.txt`: the 10 direction-word renames checked against the code.
+  - `gain_scaling_tables.py`: maps each scaled gain field to its curve and e2m block.
+  - `apply_stage8c.py` (with `map_stage8c.csv`, `gate_input_stage8c.jsonl`, and `gate8c_out/`, the pre-8c CSVs the
+    gate ran against).
 - **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8):
   - `agent_prompts.jsonl`: their exact prompts.
   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked

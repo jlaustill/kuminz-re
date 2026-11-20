@@ -1,0 +1,27 @@
+cm848: review fixes after waves 13 / 8b - three width errors, the 80B9 firing order, the gain scheduling curves (stage 8c)
+
+- Widths. A label-only proof cannot see a right name on a wrong-width row, so every wave-13 row
+  was compared with the size of its e2m record (seven differ; four are right). Three were fixed:
+  - 0x408f56 backup_consecutive_error_threshold word -> byte. Its three lbz reads of +1 rendered as
+    (byte)backup_consecutive_error_threshold. They are 8194 +1 Bank_With_Added_Tooth, now the byte
+    crank_signal_window_with_added_tooth (was the typeless crank_sync_reference_flag_cal).
+  - 0x40a87d master_slave_override_enable_flag and 0x40a2b4 ecm_power_down_delay_request_flag
+    dword -> word (lhz / sth only; they rendered ._0_2_).
+- 80B9. The ROM row table at 0x57d76 gives each injector's fault numbers. The open circuit codes put
+  the bits in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4). The two short classes set
+  different internal faults that share one OBD slot (P2146 / P2149), so ground vs battery still
+  rests on the e2m byte order; the comments now say so accurately.
+- The gain scheduling curves. cm848_calculateFuelMeteringCommand multiplies each fuel pressure
+  governor gain and filter coefficient by its own engine speed curve while
+  fuel_pressure_governor_gain_mode (e2m 8000 HPCR_Governor_Mode, was cam_timing_alt_mode_enable_cal)
+  is 0. The 22 word[11] curves were cam_sync_*_timing_* rows with a wrong _cal; they are now named
+  from their e2m records (8005-8010, 80E7-80EE, 80F0 / 80F1), each mapped to its field by the code.
+- The facts stage 8b dropped from the gain comments are back (the curves, the window direction,
+  "never written, so no _cal").
+- Checked against the code: 10 random direction-word renames of wave 13, all right.
+
+Proof: exactly the 8 functions predicted for the width fixes differ after the 24 renames are
+reversed; the rest is label-only. Warnings and type stats identical to stage 4; verify
+deterministic; headers compile; the script tests pass; the repo gate passed the 24 renames.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

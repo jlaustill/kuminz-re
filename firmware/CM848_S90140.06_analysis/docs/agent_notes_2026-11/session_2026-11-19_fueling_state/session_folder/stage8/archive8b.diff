@@ -1,0 +1,2336 @@
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/README.md b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/README.md
+index a49ac53..7568c36 100644
+--- a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/README.md
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/README.md
+@@ -91,6 +91,15 @@ subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7 an
+     order, and give the 80B9 debounce rows their bits bytes' meanings.
+   - `reports/`: the six handback reports. `agent_scratch/`: the scratch scripts of bins 4-6 (bins 1-3 wrote none).
+   - `append_W13_agent_notes.py`, `sweep8.txt` (the comment sweep), `commit_message_stage8.txt`, `stage8.diff`.
++  - `check_quoted_dump_values_W13.py` / `show_quote_context.py` / `dump_check_W13.txt`: the wave-13 comments' quoted
++    dump values (`--negative` reads 2 bytes off).
++- **Stage 8b** (the HPCR gain records as structs), also in `stage8/`:
++  - `read_gain_blocks.py`: reads the seven records from the dump at field width and checks them against the e2m.
++  - `apply_stage8b_gain_records.py`: the two struct types, the seven instances, the three prototypes, the 80B9
++    caveat. It writes `map_stage8b.csv`.
++  - `apply_stage8b_locals.py`: the second build's typed stack copies.
++  - `check_stage8b.py`: the changed functions against the prediction. `diff8b_fuel_metering.txt` is the first
++    build's diff of `cm848_calculateFuelMeteringCommand`; `build1_8b.cpp` / `pre8b.cpp` are in the tar.xz.
+ - **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8):
+   - `agent_prompts.jsonl`: their exact prompts.
+   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/apply_stage8b_gain_records.py b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/apply_stage8b_gain_records.py
+new file mode 100644
+index 0000000..f552da9
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/apply_stage8b_gain_records.py
+@@ -0,0 +1,184 @@
++"""Stage 8b: the fuel pressure governor / fuel metering gain records as structs.
++cm848_applyPiecewiseLinearGain and cm848_integrateWithZoneGain read a 16-byte record (three dword gains at +0 / +4 / +8,
++the signed window widths at +12 / +14); cm848_calculateFilteredDerivative reads an 18-byte one (a word filter
++coefficient, then the same five fields). The ECU's parameter ID table resolves e2m 8014 / 8015 / 8016 / 8017 / 8018
++(16 bytes each) and 80EF / 80F2 (18 bytes) to the seven records, and the dump reads in range at those field widths
++(read_gain_blocks.py). Before this the records were flat word / dword / byte rows, some of them wrong (the 80EF dword
++gains as word rows over their high halves plus `_lo_cal` rows over the low halves; 8016-8018 / 80F2 as byte rows).
++Edits: the two struct types (structure_definitions.csv), the seven instances (the first row of each edited in place,
++16 interior rows deleted), the three consumers' full prototypes (function_definitions.csv), and the 80B9 short to
++ground / short to battery caveat on six rows. Writes map_stage8b.csv (address,name,old_label,kind).
++usage: apply_stage8b_gain_records.py <stage8 dir> <CM848 output dir>"""
++import os
++import sys
++
++here, out = sys.argv[1:3]
++
++STRUCT_ROWS = [
++    "# piecewise_linear_gain_t / derivative_gain_t: the gain records of the fuel pressure governor and the fuel metering"
++    " current compensation (e2m 8014-8018 / 80EF / 80F2), read by cm848_applyPiecewiseLinearGain,"
++    " cm848_integrateWithZoneGain and cm848_calculateFilteredDerivative (stage 8b, PR #52)",
++    'piecewise_linear_gain_t,,small_signal_gain,dword,4,"Gain while the input is inside the window (Q16: output = gain'
++    ' x input >> 16; units per instance)",,verified',
++    'piecewise_linear_gain_t,,positive_large_signal_gain,dword,4,"Gain above positive_window_width: the proportional'
++    ' step applies it to the part above; the integral step uses it for the whole error",,verified',
++    'piecewise_linear_gain_t,,negative_large_signal_gain,dword,4,"Gain below negative_window_width (the same way as the'
++    ' positive one)",,verified',
++    'piecewise_linear_gain_t,,positive_window_width,short,2,"Upper breakpoint of the window (>= 0; in the input\'s'
++    ' units)",,verified',
++    'piecewise_linear_gain_t,,negative_window_width,short,2,"Lower breakpoint of the window (<= 0)",,verified',
++    'derivative_gain_t,,filter_coefficient,word,2,"Weight of the previous state in 1/65536 (e2m Derivative_Gain_Constant):'
++    ' the state moves toward gain x input by 1 - coefficient / 65536 per call",,verified',
++    'derivative_gain_t,,small_signal_gain,dword,4,"Gain while the input is inside the window",,verified',
++    'derivative_gain_t,,positive_large_signal_gain,dword,4,"Gain while the input is above positive_window_width",,verified',
++    'derivative_gain_t,,negative_large_signal_gain,dword,4,"Gain while the input is below negative_window_width",,verified',
++    'derivative_gain_t,,positive_window_width,short,2,"Upper breakpoint of the window (>= 0)",,verified',
++    'derivative_gain_t,,negative_window_width,short,2,"Lower breakpoint of the window",,verified',
++]
++
++COPY = ("cm848_calculateFuelMeteringCommand copies the P / I / D records to the stack (each gain and coefficient scaled by"
++        " its own lookup table while cam_timing_alt_mode_enable_cal is 0; the window widths unscaled)")
++# address: (old first-row name, old type, new name, new type, comment, interior rows {address: old name})
++INSTANCES = {
++    "0x004094a2": ("fuel_pressure_governor_proportional_gain_small_signal", "dword",
++                   "fuel_pressure_governor_proportional_gains", "piecewise_linear_gain_t",
++                   "e2m 8014 HPCR_Propgain_* 'Fuel pressure governor P-component' (addresses from the ECU's parameter ID"
++                   " table): small / positive large / negative large signal gains (%/MPa, 7.6293e-6 per count; 65537 /"
++                   " 13107 / 78644 here = 0.5 / 0.1 / 0.6) and the window widths (MPa, 0.0488 per count; 205 / -204 here ="
++                   " +10.0 / -10.0). " + COPY + "; cm848_applyPiecewiseLinearGain applies it to the pressure error"
++                   " (fuel_pressure_setpoint - fuel_pressure_feedback_filtered) for fuel_pressure_governor_proportional_term.",
++                   {"0x004094a6": "fuel_pressure_governor_proportional_gain_positive_large_signal",
++                    "0x004094aa": "fuel_pressure_governor_proportional_gain_negative_large_signal",
++                    "0x004094ae": "engine_sync_prot_scale_a_cal", "0x004094b0": "engine_sync_prot_scale_a_cal+2"}),
++    "0x004094b2": ("fuel_pressure_governor_integral_gain_small_signal", "dword",
++                   "fuel_pressure_governor_integral_gains", "piecewise_linear_gain_t",
++                   "e2m 8015 HPCR_Integral_Gain_* 'Fuel pressure governor Integral-component': small / positive large /"
++                   " negative large signal gains (%/MPa/SEC, 0.00011641 per count; 8590 / 5154 / 8590 here = 1.0 / 0.6 /"
++                   " 1.0) and the window widths (MPa, 0.0488 per count; 205 / -204 here). After the stack copy (see"
++                   " fuel_pressure_governor_proportional_gains) cm848_integrateWithZoneGain integrates the pressure error"
++                   " into fuel_pressure_governor_integrator (step 10000) for fuel_pressure_governor_integral_term.",
++                   {"0x004094b6": "fuel_pressure_governor_integral_gain_positive_large_signal",
++                    "0x004094ba": "fuel_pressure_governor_integral_gain_negative_large_signal",
++                    "0x004094be": "engine_sync_prot_scale_b_cal", "0x004094c0": "engine_sync_prot_scale_b_cal+2"}),
++    "0x004094c2": ("engine_sync_prot_gain_cal", "word", "fuel_pressure_governor_derivative_gains", "derivative_gain_t",
++                   "e2m 80EF HPCR_Derivative_Gain_* 'Fuel pressure governor D-Component': the filter coefficient"
++                   " (Derivative_Gain_Constant, 1/65536; 43713 here = 0.667), small / positive large / negative large"
++                   " signal gains (%/MPa/SEC, 7.6293e-8 per count; 65537 / 262147 / 262147 here = 0.005 / 0.02 / 0.02) and"
++                   " the window widths (MPa, 0.0488 per count; 205 / -204 here). After the stack copy (see"
++                   " fuel_pressure_governor_proportional_gains) cm848_calculateFilteredDerivative computes"
++                   " fuel_pressure_governor_derivative_term from the setpoint minus the filtered sensor, with"
++                   " fuel_pressure_governor_derivative_filter as its state. The 4-byte gains used to be word rows over"
++                   " their high halves plus `_lo_cal` rows over the low halves.",
++                   {"0x004094c4": "fuel_pressure_governor_derivative_gain_small_signal",
++                    "0x004094c6": "injection_timing_scale_cyl4_lo_cal",
++                    "0x004094c8": "fuel_pressure_governor_derivative_gain_positive_large_signal",
++                    "0x004094ca": "injection_timing_scale_cyl5_lo_cal",
++                    "0x004094cc": "fuel_pressure_governor_derivative_gain_negative_large_signal",
++                    "0x004094ce": "injection_timing_scale_cyl6_lo_cal",
++                    "0x004094d0": "engine_sync_prot_limit_cal", "0x004094d2": "engine_sync_prot_gain_b_cal"}),
++    "0x004094d4": ("cam_sync_speed_error_prot_state_cal", "byte",
++                   "fuel_metering_current_compensation_proportional_gains", "piecewise_linear_gain_t",
++                   "e2m 8016 HPCR_Currentcomp_Propgain_* 'Current compensation governor P-component': small / positive"
++                   " large / negative large signal gains (CNTS/mA, 3.0517e-9 per count; all 0 here, so the proportional"
++                   " part of the current compensation is off) and the window widths (mA, 1.2218 per count; 409 / 0 here ="
++                   " +500 / 0 mA). cm848_calculateFuelMeteringCommand applies it with cm848_applyPiecewiseLinearGain to"
++                   " fuel_metering_feedback_error (commanded minus measured current, mA) while"
++                   " fuel_metering_feedback_fault_code is 0.", {}),
++    "0x004094e4": ("cam_sync_speed_error_prot_mode_cal", "byte",
++                   "fuel_metering_current_compensation_integral_gains", "piecewise_linear_gain_t",
++                   "e2m 8017 HPCR_Currentcomp_Integral_* 'Current compensation governor Integral-component': small /"
++                   " positive large / negative large signal gains (CNTS/mA/SEC, 4.6566e-8 per count; 21475 / 2147 / 2147"
++                   " here = 0.001 / 0.0001 / 0.0001) and the window widths (mA, 1.2218 per count; 3274 / -3272 here = +4000"
++                   " / -3998 mA). cm848_integrateWithZoneGain integrates fuel_metering_feedback_error into"
++                   " fuel_metering_feedback_trim_integrator (step 10000).", {}),
++    "0x004094f4": ("cam_sync_ref_prot_state_cal", "byte",
++                   "fuel_metering_uncompensated_duty_cycle_proportional_gains", "piecewise_linear_gain_t",
++                   "e2m 8018 HPCR_Propcomp_Dutycycle_* 'gain for P-component non compensated duty cycle': small / positive"
++                   " large / negative large signal gains (%/mA, 3.05175e-7 per count; 95027 / 52429 / 83231 here = 0.029 /"
++                   " 0.016 / 0.0254) and the window widths (mA, 1.2218 per count; 3274 / -3272 here). "
++                   "cm848_calculateFuelMeteringCommand applies it with cm848_applyPiecewiseLinearGain to the commanded"
++                   " current (mA, the output of the cam_sync_ref_output_values_cal table) for the uncompensated duty"
++                   " cycle.", {}),
++    "0x00409504": ("cam_sync_ref_prot_handler_state_cal", "byte",
++                   "fuel_metering_current_compensation_derivative_gains", "derivative_gain_t",
++                   "e2m 80F2 HPCR_Current_Comp_Derivative_Gain_* / HPCR_Curr_Comp_Der_Gain_* 'Current compensation"
++                   " derivative': the filter coefficient (1/65536), small / positive large / negative large signal gains"
++                   " (%/SEC, 1.52587e-5 per count) and the window widths (%, 0.0244 per count); every field is 0 here, so"
++                   " this derivative term is off. cm848_calculateFilteredDerivative applies it to the uncompensated duty"
++                   " cycle for fuel_metering_base_command_derivative_term (state"
++                   " fuel_metering_base_command_derivative_filter).", {}),
++}
++
++PROTOTYPES = [
++    "0x00047838,cm848_applyPiecewiseLinearGain,return,,sword,Gain x input >> 16 - the large-signal gains apply to the part"
++    " past the window - clamped to +/-4095",
++    "0x00047838,cm848_applyPiecewiseLinearGain,0,gain,piecewise_linear_gain_t *,Gain record (r3)",
++    "0x00047838,cm848_applyPiecewiseLinearGain,1,input,int32_t,Signed input (r4): an error or a command",
++    "0x00047978,cm848_integrateWithZoneGain,return,,sword,Integer part of the accumulator after the step - clamped to"
++    " +/-4095",
++    "0x00047978,cm848_integrateWithZoneGain,0,gain,piecewise_linear_gain_t *,Gain record (r3): the error's zone picks the"
++    " gain",
++    "0x00047978,cm848_integrateWithZoneGain,1,accumulator,q16_fixed_point_t *,Q16.16 integrator (r4) - updated in place",
++    "0x00047978,cm848_integrateWithZoneGain,2,error,int32_t,Signed error (r5)",
++    "0x00047978,cm848_integrateWithZoneGain,3,step,uint,Step factor (r6) - its low 16 bits are used (10000 at both calls)",
++    "0x00047a88,cm848_calculateFilteredDerivative,return,,sword,Integer part of gain x input minus the state - clamped to"
++    " +/-4095",
++    "0x00047a88,cm848_calculateFilteredDerivative,0,gain,derivative_gain_t *,Derivative gain record (r3)",
++    "0x00047a88,cm848_calculateFilteredDerivative,1,filter_state,q16_fixed_point_t *,Q16.16 filter state (r4) - updated in"
++    " place",
++    "0x00047a88,cm848_calculateFilteredDerivative,2,input,int32_t,Signed input (r5)",
++]
++
++CAVEAT = (" The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground /"
++          " +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3).")
++CAVEAT_ROWS = {"0x0040b8ce": "injector_diagnostic_bits_short_to_ground",
++               "0x0040b8cf": "injector_diagnostic_bits_short_to_battery",
++               "0x003fb700": "injector_diagnostic_bits_short_to_ground_debounce_count",
++               "0x003fb6fe": "injector_diagnostic_bits_short_to_battery_debounce_count",
++               "0x00409a8e": "injector_diagnostic_bits_short_to_ground_debounce_limit",
++               "0x00409a90": "injector_diagnostic_bits_short_to_battery_debounce_limit"}
++
++# global_variables.csv
++path = os.path.join(out, "global_variables.csv")
++lines = open(path, newline="").read().split("\n")
++index = {l.split(",", 1)[0]: i for i, l in enumerate(lines) if l.startswith("0x")}
++delete, mapping = set(), []
++for address, (old, old_type, new, new_type, comment, interior) in INSTANCES.items():
++    i = index[address]
++    a, name, typ, _ = (lines[i].split(",", 3) + [""])[:4]
++    assert (name, typ) == (old, old_type), (address, name, typ)
++    olds = [old] + [n for n in interior.values() if "+" not in n]
++    lines[i] = ",".join([a, new, new_type, f"{comment} (was {', '.join(olds)})"])
++    mapping.append((address, new, old))
++    for inner, inner_old in interior.items():
++        j = index[inner]
++        assert lines[j].split(",")[1] == inner_old, (inner, lines[j][:60])
++        delete.add(j)
++for address, name in CAVEAT_ROWS.items():
++    i = index[address]
++    assert lines[i].split(",")[1] == name and CAVEAT not in lines[i], address
++    at = lines[i].find(" (was ")
++    assert at > 0, address
++    lines[i] = lines[i][:at] + CAVEAT + lines[i][at:]
++lines = [l for i, l in enumerate(lines) if i not in delete]
++open(path, "w", newline="").write("\n".join(lines))
++
++# structure_definitions.csv
++path = os.path.join(out, "structure_definitions.csv")
++text = open(path, newline="").read()
++assert "piecewise_linear_gain_t" not in text and "derivative_gain_t," not in text
++open(path, "w", newline="").write(text.rstrip("\n") + "\n" + "\n".join(STRUCT_ROWS) + "\n")
++
++# function_definitions.csv
++path = os.path.join(out, "function_definitions.csv")
++text = open(path, newline="").read()
++for address in ("0x00047838", "0x00047978", "0x00047a88"):
++    assert f"\n{address}," not in text, address
++open(path, "w", newline="").write(text.rstrip("\n") + "\n" + "\n".join(PROTOTYPES) + "\n")
++
++with open(os.path.join(here, "map_stage8b.csv"), "w") as f:
++    f.write("address,name,old_label,kind\n")
++    for address, new, old in mapping:
++        f.write(f"{address},{new},{old},global\n")
++print(f"{len(INSTANCES)} instances, {len(delete)} interior rows deleted, {len(STRUCT_ROWS) - 1} struct rows,"
++      f" {len(PROTOTYPES)} prototype rows, {len(CAVEAT_ROWS)} caveats")
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/apply_stage8b_locals.py b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/apply_stage8b_locals.py
+new file mode 100644
+index 0000000..d9ecb41
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/apply_stage8b_locals.py
+@@ -0,0 +1,23 @@
++"""Stage 8b, second build: name and type the three stack copies of the gain records in
++cm848_calculateFuelMeteringCommand. Ghidra typed local_64 / local_54 as piecewise_linear_gain_t on its own after the
++first build; local_44 (the derivative record) stayed undefined1[20], so its call took a (derivative_gain_t *) cast.
++usage: apply_stage8b_locals.py <CM848 output dir>"""
++import os
++import sys
++
++out = sys.argv[1]
++ROWS = [
++    "0x00047bd0,cm848_calculateFuelMeteringCommand,local_64,working_proportional_gains,piecewise_linear_gain_t,Stack copy"
++    " of fuel_pressure_governor_proportional_gains (each gain scaled by its lookup table while"
++    " cam_timing_alt_mode_enable_cal is 0) passed to cm848_applyPiecewiseLinearGain",
++    "0x00047bd0,cm848_calculateFuelMeteringCommand,local_54,working_integral_gains,piecewise_linear_gain_t,Stack copy of"
++    " fuel_pressure_governor_integral_gains (scaled the same way) passed to cm848_integrateWithZoneGain",
++    "0x00047bd0,cm848_calculateFuelMeteringCommand,local_44,working_derivative_gains,derivative_gain_t,Stack copy of"
++    " fuel_pressure_governor_derivative_gains (scaled the same way; the 4-byte gains are copied as halfwords because they"
++    " are not 4-aligned) passed to cm848_calculateFilteredDerivative",
++]
++path = os.path.join(out, "local_variables.csv")
++text = open(path, newline="").read()
++assert "\n0x00047bd0," not in text
++open(path, "w", newline="").write(text.rstrip("\n") + "\n" + "\n".join(ROWS) + "\n")
++print(f"appended {len(ROWS)} local rows")
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/check_quoted_dump_values_W13.py b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/check_quoted_dump_values_W13.py
+new file mode 100644
+index 0000000..e4410df
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/check_quoted_dump_values_W13.py
+@@ -0,0 +1,51 @@
++"""Re-read the dump values the wave-13 comments quote. For each new row: the RAM dump (ROM image below 0x3f0000) at the
++row's width (byte 1, word / i16 2, dword 4; byte[N] reads N bytes), and every number the comment quotes as a dump
++value ("<n> here", "<n> = ... here", "dump <n>", "dump 0x<h>"). Prints only rows where no quoted number equals the
++value (raw unsigned, raw signed, or one byte of an array).
++usage: check_quoted_dump_values_W13.py <stage8 dir> <CM848 analysis dir> [--negative: read 2 bytes off, every row should fail]"""
++import json
++import os
++import re
++import sys
++
++here, analysis = sys.argv[1:3]
++ram = open(os.path.join(analysis, "originals", "cm848_ram.bin"), "rb").read()
++rom = open(os.path.join(analysis, "originals", "cm848_rom.bin"), "rb").read()
++rows = {}
++for line in open(os.path.join(analysis, "output", "global_variables.csv"), errors="replace"):
++    if line.startswith("0x"):
++        address, name, typ, comment = (line.rstrip("\n").split(",", 3) + ["", ""])[:4]
++        rows[name] = (int(address, 16), typ, comment)
++WIDTH = {"byte": 1, "word": 2, "i16": 2, "dword": 4}
++checked = mismatches = 0
++import csv as _csv
++NEGATIVE = "--negative" in sys.argv
++for row in _csv.DictReader(open(os.path.join(here, "map_stage8.csv"))):
++    name = row["name"]
++    address, typ, comment = rows[name]
++    m = re.match(r"byte\[(\d+)\]$", typ)
++    size = int(m.group(1)) if m else WIDTH.get(typ, 2)
++    data, at = (rom, address) if address < 0x3f0000 else (ram, address - 0x3FA000)
++    at += 2 if NEGATIVE else 0
++    raw = data[at:at + size]
++    if len(raw) < size:
++        continue
++    candidates = set()
++    if m:
++        candidates |= set(raw)
++    else:
++        u = int.from_bytes(raw, "big")
++        candidates |= {u, int.from_bytes(raw, "big", signed=True)}
++    quoted = []
++    for q in re.findall(r"(-?0x[0-9a-fA-F]+|-?\d+)(?: = [^;()]{0,40})? here\b", comment):
++        quoted.append(q)
++    for q in re.findall(r"\bdump (?:value )?(?:is |=\s*)?(-?0x[0-9a-fA-F]+|-?\d+)\b", comment):
++        quoted.append(q)
++    if not quoted:
++        continue
++    checked += 1
++    values = {int(q, 16) if "0x" in q.lower() else int(q) for q in quoted}
++    if not values & candidates:
++        mismatches += 1
++        print(f"{address:#x} {name} [{typ}] dump {sorted(candidates)[:4]} quoted {sorted(values)[:4]} | {comment[:120]}")
++print(f"{checked} rows quote a dump value; {mismatches} without a match")
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/check_stage8b.py b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/check_stage8b.py
+new file mode 100644
+index 0000000..60074b4
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/check_stage8b.py
+@@ -0,0 +1,43 @@
++"""Stage 8b check: the functions whose text changed must be exactly the predicted ones (the three gain consumers, whose
++first parameter is now a struct pointer, and cm848_calculateFuelMeteringCommand, the only function that touches the
++seven records). Also: no function appears or disappears, every instance name renders, no `_<instance>` variant, and no
++retired name is left in the code.
++usage: check_stage8b.py <pre .cpp> <new .cpp>"""
++import re
++import sys
++
++old_path, new_path = sys.argv[1:3]
++HEADER = re.compile(r"^// Function: (\S+) @ (0x[0-9a-f]+)$", re.M)
++PREDICTED = {"cm848_applyPiecewiseLinearGain", "cm848_integrateWithZoneGain", "cm848_calculateFilteredDerivative",
++             "cm848_calculateFuelMeteringCommand"}
++INSTANCES = ["fuel_pressure_governor_proportional_gains", "fuel_pressure_governor_integral_gains",
++             "fuel_pressure_governor_derivative_gains", "fuel_metering_current_compensation_proportional_gains",
++             "fuel_metering_current_compensation_integral_gains",
++             "fuel_metering_uncompensated_duty_cycle_proportional_gains",
++             "fuel_metering_current_compensation_derivative_gains"]
++RETIRED = ["fuel_pressure_governor_proportional_gain_small_signal", "engine_sync_prot_scale_a_cal",
++           "fuel_pressure_governor_integral_gain_small_signal", "engine_sync_prot_scale_b_cal", "engine_sync_prot_gain_cal",
++           "fuel_pressure_governor_derivative_gain_small_signal", "injection_timing_scale_cyl4_lo_cal",
++           "injection_timing_scale_cyl5_lo_cal", "injection_timing_scale_cyl6_lo_cal", "engine_sync_prot_limit_cal",
++           "engine_sync_prot_gain_b_cal", "cam_sync_speed_error_prot_state_cal", "cam_sync_speed_error_prot_mode_cal",
++           "cam_sync_ref_prot_state_cal", "cam_sync_ref_prot_handler_state_cal"]
++
++
++def split(path):
++    parts = HEADER.split(open(path, errors="replace").read())
++    return {parts[i]: parts[i + 2] for i in range(1, len(parts), 3)}
++
++
++old, new = split(old_path), split(new_path)
++changed = {name for name in old if name in new and old[name] != new[name]}
++print(f"functions: {len(old)} before, {len(new)} after; added {sorted(set(new) - set(old))}, removed"
++      f" {sorted(set(old) - set(new))}")
++print(f"changed: {sorted(changed)}")
++print("changed == predicted:", changed == PREDICTED, "| unexpected:", sorted(changed - PREDICTED), "| missing:",
++      sorted(PREDICTED - changed))
++text = open(new_path, errors="replace").read()
++for name in INSTANCES:
++    print(f"  {name}: {len(re.findall(r'(?<![A-Za-z0-9_])' + name + r'(?![A-Za-z0-9_])', text))} uses,"
++          f" {len(re.findall(r'(?<![A-Za-z0-9_])_' + name + r'(?![A-Za-z0-9_])', text))} underscore variants")
++left = {n: len(re.findall(r"(?<![A-Za-z0-9])_?" + n + r"(?![A-Za-z0-9_])", text)) for n in RETIRED}
++print("retired names left in the code:", {n: c for n, c in left.items() if c})
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/commit_message_archive8.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/commit_message_archive8.txt
+new file mode 100644
+index 0000000..df057c4
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/commit_message_archive8.txt
+@@ -0,0 +1,7 @@
++docs: session archive for stage 8 (wave 13 bins / brief / results / gate, six agents' reports and scratch)
++
++The wave-13 bins, brief, results, apply and fix scripts, the six handback reports and prompts
++(agent_prompts_and_reports.md), and bins 4-6's scratch scripts. Large files (.cpp snapshots,
++build logs) are in session_folder_large_files.tar.xz; it restores byte-identically.
++
++Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/commit_message_stage8b.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/commit_message_stage8b.txt
+new file mode 100644
+index 0000000..bf3c04b
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/commit_message_stage8b.txt
+@@ -0,0 +1,27 @@
++cm848: the HPCR gain records as structs - piecewise_linear_gain_t / derivative_gain_t (stage 8b)
++
++cm848_applyPiecewiseLinearGain and cm848_integrateWithZoneGain read a 16-byte record (three
++dword gains - small signal / positive large / negative large - then the signed positive and
++negative window widths); cm848_calculateFilteredDerivative reads an 18-byte one (a word filter
++coefficient first). The ECU's parameter ID table resolves seven e2m blocks of exactly those
++sizes to the records, and the dump reads in range at the field widths:
++- fuel_pressure_governor_proportional_gains / _integral_gains / _derivative_gains (8014 /
++  8015 / 80EF);
++- fuel_metering_current_compensation_proportional_gains / _integral_gains /
++  _derivative_gains (8016 / 8017 / 80F2; the P gains and the derivative record are all 0 on
++  this truck) and fuel_metering_uncompensated_duty_cycle_proportional_gains (8018).
++
++Before, the records were 23 flat rows, several wrong: the 80EF dword gains were word rows over
++their high halves plus _lo_cal rows over the low halves, 8016-8018 / 80F2 were byte rows named
++cam_sync_*_prot_*_cal, and the window pairs were dwords with +2 label rows. The three consumers
++have full prototypes now (sword return, int32_t input, q16_fixed_point_t * state). The stack
++copies in cm848_calculateFuelMeteringCommand are typed (working_*_gains), and its plate explains
++the one store that runs past the derivative record.
++
++Proof: exactly the four predicted functions changed (the three consumers and
++cm848_calculateFuelMeteringCommand), plus one local declaration reorder elsewhere; the warnings
++and type stats are identical to stage 4; verify is deterministic; headers compile; the script
++tests pass. Also: wave 13's 92 quoted dump values re-read (all right), and the 80B9 short to
++ground / short to battery caveat on its six rows.
++
++Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/diff8b_fuel_metering.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/diff8b_fuel_metering.txt
+new file mode 100644
+index 0000000..be6fa92
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/diff8b_fuel_metering.txt
+@@ -0,0 +1,525 @@
++1c1
++< === cm848_calculateFuelMeteringCommand (lines 46722-47375, 647 non-blank)
++---
++> === cm848_calculateFuelMeteringCommand (lines 46735-47412, 671 non-blank)
++36c36
++<   short sVar6;
++---
++>   sword sVar6;
++39c39
++<   short sVar9;
++---
++>   sword sVar9;
++40a41
++>   short sVar10;
++42c43
++<   int iVar10;
++---
++>   int iVar11;
++45,49c46,50
++<   int iVar11;
++<   byte *pbVar12;
++<   int iVar13;
++<   word wVar14;
++<   uint uVar15;
++---
++>   int iVar12;
++>   byte *pbVar13;
++>   int iVar14;
++>   word wVar15;
++>   uint uVar16;
++51,67c52,54
++<   dword local_64;
++<   dword local_60;
++<   dword local_5c;
++<   dword local_58;
++<   dword local_54;
++<   dword local_50;
++<   dword local_4c;
++<   dword local_48;
++<   word local_44;
++<   ushort uStack_42;
++<   word wStack_40;
++<   ushort local_3e;
++<   word wStack_3c;
++<   ushort local_3a;
++<   word wStack_38;
++<   word local_36;
++<   uint local_34;
++---
++>   piecewise_linear_gain_t local_64;
++>   piecewise_linear_gain_t local_54;
++>   undefined1 local_44 [20];
++109c96
++<     wVar14 = fuel_pressure_governor_integrator.integer_part;
++---
++>     wVar15 = fuel_pressure_governor_integrator.integer_part;
++128c115
++<              (wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
++---
++>              (wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
++140c127
++<            wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
++---
++>            wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
++148c135
++<           wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
++---
++>           wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
++201c188
++<     wVar14 = unaff_r23;
++---
++>     wVar15 = unaff_r23;
++232,234c219,222
++<         local_64 = (int)((ulonglong)fuel_pressure_governor_proportional_gain_small_signal *
++<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++<                    fuel_pressure_governor_proportional_gain_small_signal * wVar5 >> 0xc;
++---
++>         local_64.small_signal_gain =
++>              (int)((ulonglong)fuel_pressure_governor_proportional_gains.small_signal_gain *
++>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++>              fuel_pressure_governor_proportional_gains.small_signal_gain * wVar5 >> 0xc;
++238,240c226,229
++<         local_60 = (int)((ulonglong)fuel_pressure_governor_proportional_gain_positive_large_signal *
++<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++<                    fuel_pressure_governor_proportional_gain_positive_large_signal * wVar5 >> 0xc;
++---
++>         local_64.positive_large_signal_gain =
++>              (int)((ulonglong)fuel_pressure_governor_proportional_gains.positive_large_signal_gain *
++>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++>              fuel_pressure_governor_proportional_gains.positive_large_signal_gain * wVar5 >> 0xc;
++244,247c233,240
++<         local_5c = (int)((ulonglong)fuel_pressure_governor_proportional_gain_negative_large_signal *
++<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++<                    fuel_pressure_governor_proportional_gain_negative_large_signal * wVar5 >> 0xc;
++<         local_58 = engine_sync_prot_scale_a_cal;
++---
++>         local_64.negative_large_signal_gain =
++>              (int)((ulonglong)fuel_pressure_governor_proportional_gains.negative_large_signal_gain *
++>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++>              fuel_pressure_governor_proportional_gains.negative_large_signal_gain * wVar5 >> 0xc;
++>         local_64.positive_window_width =
++>              fuel_pressure_governor_proportional_gains.positive_window_width;
++>         local_64.negative_window_width =
++>              fuel_pressure_governor_proportional_gains.negative_window_width;
++251,253c244,247
++<         local_54 = (int)((ulonglong)fuel_pressure_governor_integral_gain_small_signal *
++<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++<                    fuel_pressure_governor_integral_gain_small_signal * wVar5 >> 0xc;
++---
++>         local_54.small_signal_gain =
++>              (int)((ulonglong)fuel_pressure_governor_integral_gains.small_signal_gain *
++>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++>              fuel_pressure_governor_integral_gains.small_signal_gain * wVar5 >> 0xc;
++257,259c251,254
++<         local_50 = (int)((ulonglong)fuel_pressure_governor_integral_gain_positive_large_signal *
++<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++<                    fuel_pressure_governor_integral_gain_positive_large_signal * wVar5 >> 0xc;
++---
++>         local_54.positive_large_signal_gain =
++>              (int)((ulonglong)fuel_pressure_governor_integral_gains.positive_large_signal_gain *
++>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++>              fuel_pressure_governor_integral_gains.positive_large_signal_gain * wVar5 >> 0xc;
++263,266c258,265
++<         local_4c = (int)((ulonglong)fuel_pressure_governor_integral_gain_negative_large_signal *
++<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++<                    fuel_pressure_governor_integral_gain_negative_large_signal * wVar5 >> 0xc;
++<         local_48 = engine_sync_prot_scale_b_cal;
++---
++>         local_54.negative_large_signal_gain =
++>              (int)((ulonglong)fuel_pressure_governor_integral_gains.negative_large_signal_gain *
++>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++>              fuel_pressure_governor_integral_gains.negative_large_signal_gain * wVar5 >> 0xc;
++>         local_54.positive_window_width = fuel_pressure_governor_integral_gains.positive_window_width
++>         ;
++>         local_54.negative_window_width = fuel_pressure_governor_integral_gains.negative_window_width
++>         ;
++270c269,272
++<         local_44 = (word)((uint)engine_sync_prot_gain_cal * (uint)wVar5 >> 0x10);
++---
++>         local_44._0_2_ =
++>              (undefined2)
++>              ((uint)fuel_pressure_governor_derivative_gains.filter_coefficient * (uint)wVar5 >> 0x10
++>              );
++274,282c276,286
++<         uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_small_signal,
++<                           injection_timing_scale_cyl4_lo_cal) * (uint)wVar5;
++<         uStack_42 = (ushort)((uint)((int)((ulonglong)
++<                                           CONCAT22(
++<                                                   fuel_pressure_governor_derivative_gain_small_signal
++<                                                   ,injection_timing_scale_cyl4_lo_cal) *
++<                                           (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
++<                     (ushort)(uVar15 >> 0x1c);
++<         wStack_40 = (word)(uVar15 >> 0xc);
++---
++>         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.small_signal_gain._0_2_,
++>                           fuel_pressure_governor_derivative_gains.small_signal_gain._2_2_) *
++>                  (uint)wVar5;
++>         local_44._2_2_ =
++>              (ushort)((uint)((int)((ulonglong)
++>                                    CONCAT22(fuel_pressure_governor_derivative_gains.
++>                                             small_signal_gain._0_2_,
++>                                             fuel_pressure_governor_derivative_gains.
++>                                             small_signal_gain._2_2_) * (ulonglong)(uint)wVar5 >>
++>                                   0x20) << 0x14) >> 0x10) | (ushort)(uVar16 >> 0x1c);
++>         local_44._4_2_ = (undefined2)(uVar16 >> 0xc);
++286,293c290,301
++<         uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_positive_large_signal,
++<                           injection_timing_scale_cyl5_lo_cal) * (uint)wVar5;
++<         local_3e = (ushort)((uint)((int)((ulonglong)
++<                                          CONCAT22(fuel_pressure_governor_derivative_gain_positive_large_signal
++<                                                   ,injection_timing_scale_cyl5_lo_cal) *
++<                                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
++<                    (ushort)(uVar15 >> 0x1c);
++<         wStack_3c = (word)(uVar15 >> 0xc);
++---
++>         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.positive_large_signal_gain._0_2_,
++>                           fuel_pressure_governor_derivative_gains.positive_large_signal_gain._2_2_)
++>                  * (uint)wVar5;
++>         local_44._6_2_ =
++>              (ushort)((uint)((int)((ulonglong)
++>                                    CONCAT22(fuel_pressure_governor_derivative_gains.
++>                                             positive_large_signal_gain._0_2_,
++>                                             fuel_pressure_governor_derivative_gains.
++>                                             positive_large_signal_gain._2_2_) *
++>                                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
++>              (ushort)(uVar16 >> 0x1c);
++>         local_44._8_2_ = (undefined2)(uVar16 >> 0xc);
++297,306c305,318
++<         uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_negative_large_signal,
++<                           injection_timing_scale_cyl6_lo_cal) * (uint)wVar5;
++<         local_3a = (ushort)((uint)((int)((ulonglong)
++<                                          CONCAT22(fuel_pressure_governor_derivative_gain_negative_large_signal
++<                                                   ,injection_timing_scale_cyl6_lo_cal) *
++<                                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
++<                    (ushort)(uVar15 >> 0x1c);
++<         wStack_38 = (word)(uVar15 >> 0xc);
++<         local_36 = engine_sync_prot_limit_cal;
++<         local_34 = CONCAT22(engine_sync_prot_gain_b_cal,local_34._2_2_);
++---
++>         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.negative_large_signal_gain._0_2_,
++>                           fuel_pressure_governor_derivative_gains.negative_large_signal_gain._2_2_)
++>                  * (uint)wVar5;
++>         local_44._10_2_ =
++>              (ushort)((uint)((int)((ulonglong)
++>                                    CONCAT22(fuel_pressure_governor_derivative_gains.
++>                                             negative_large_signal_gain._0_2_,
++>                                             fuel_pressure_governor_derivative_gains.
++>                                             negative_large_signal_gain._2_2_) *
++>                                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
++>              (ushort)(uVar16 >> 0x1c);
++>         local_44._12_2_ = (undefined2)(uVar16 >> 0xc);
++>         local_44._14_2_ = fuel_pressure_governor_derivative_gains.positive_window_width;
++>         local_44._16_2_ = fuel_pressure_governor_derivative_gains.negative_window_width;
++313,329c325,351
++<         local_64 = fuel_pressure_governor_proportional_gain_small_signal;
++<         local_60 = fuel_pressure_governor_proportional_gain_positive_large_signal;
++<         local_5c = fuel_pressure_governor_proportional_gain_negative_large_signal;
++<         local_58 = engine_sync_prot_scale_a_cal;
++<         local_54 = fuel_pressure_governor_integral_gain_small_signal;
++<         local_50 = fuel_pressure_governor_integral_gain_positive_large_signal;
++<         local_4c = fuel_pressure_governor_integral_gain_negative_large_signal;
++<         local_48 = engine_sync_prot_scale_b_cal;
++<         local_44 = engine_sync_prot_gain_cal;
++<         uStack_42 = fuel_pressure_governor_derivative_gain_small_signal;
++<         wStack_40 = injection_timing_scale_cyl4_lo_cal;
++<         local_3e = fuel_pressure_governor_derivative_gain_positive_large_signal;
++<         wStack_3c = injection_timing_scale_cyl5_lo_cal;
++<         local_3a = fuel_pressure_governor_derivative_gain_negative_large_signal;
++<         wStack_38 = injection_timing_scale_cyl6_lo_cal;
++<         local_36 = engine_sync_prot_limit_cal;
++<         local_34 = _engine_sync_prot_gain_b_cal & 0xffff0000;
++---
++>         local_64.small_signal_gain = fuel_pressure_governor_proportional_gains.small_signal_gain;
++>         local_64.positive_large_signal_gain =
++>              fuel_pressure_governor_proportional_gains.positive_large_signal_gain;
++>         local_64.negative_large_signal_gain =
++>              fuel_pressure_governor_proportional_gains.negative_large_signal_gain;
++>         local_64.positive_window_width =
++>              fuel_pressure_governor_proportional_gains.positive_window_width;
++>         local_64.negative_window_width =
++>              fuel_pressure_governor_proportional_gains.negative_window_width;
++>         local_54.small_signal_gain = fuel_pressure_governor_integral_gains.small_signal_gain;
++>         local_54.positive_large_signal_gain =
++>              fuel_pressure_governor_integral_gains.positive_large_signal_gain;
++>         local_54.negative_large_signal_gain =
++>              fuel_pressure_governor_integral_gains.negative_large_signal_gain;
++>         local_54.positive_window_width = fuel_pressure_governor_integral_gains.positive_window_width
++>         ;
++>         local_54.negative_window_width = fuel_pressure_governor_integral_gains.negative_window_width
++>         ;
++>         local_44._0_2_ = fuel_pressure_governor_derivative_gains.filter_coefficient;
++>         local_44._2_2_ = fuel_pressure_governor_derivative_gains.small_signal_gain._0_2_;
++>         local_44._4_2_ = fuel_pressure_governor_derivative_gains.small_signal_gain._2_2_;
++>         local_44._6_2_ = fuel_pressure_governor_derivative_gains.positive_large_signal_gain._0_2_;
++>         local_44._8_2_ = fuel_pressure_governor_derivative_gains.positive_large_signal_gain._2_2_;
++>         local_44._10_2_ = fuel_pressure_governor_derivative_gains.negative_large_signal_gain._0_2_;
++>         local_44._12_2_ = fuel_pressure_governor_derivative_gains.negative_large_signal_gain._2_2_;
++>         local_44._14_2_ = fuel_pressure_governor_derivative_gains.positive_window_width;
++>         local_44._16_4_ = ram0x004094d2 & 0xffff0000;
++332c354
++<       iVar13 = (int)(short)((int)((uint)cam_sync_fuel_scale_gain_cal *
++---
++>       iVar14 = (int)(short)((int)((uint)cam_sync_fuel_scale_gain_cal *
++335,338c357,360
++<       iVar11 = (int)(short)cam_sync_fuel_scale_lower_limit_cal;
++<       if ((iVar11 <= iVar13) &&
++<          (iVar11 = iVar13, (short)cam_sync_fuel_scale_upper_limit_cal < iVar13)) {
++<         iVar11 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
++---
++>       iVar12 = (int)(short)cam_sync_fuel_scale_lower_limit_cal;
++>       if ((iVar12 <= iVar14) &&
++>          (iVar12 = iVar14, (short)cam_sync_fuel_scale_upper_limit_cal < iVar14)) {
++>         iVar12 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
++342c364
++<                      (iVar11,&fuel_pressure_governor_accelerator_feed_forward_filter);
++---
++>                      (iVar12,&fuel_pressure_governor_accelerator_feed_forward_filter);
++345c367
++<       sVar6 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
++---
++>       sVar10 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
++348c370
++<       sVar7 = cm848_signedFirstOrderFilter
++---
++>       sVar6 = cm848_signedFirstOrderFilter
++351c373
++<            cm848_applyPiecewiseLinearGain(&local_64,(int)sVar6);
++---
++>            cm848_applyPiecewiseLinearGain(&local_64,(int)sVar10);
++354c376
++<                      (&local_54,&fuel_pressure_governor_integrator,(int)sVar6,10000);
++---
++>                      (&local_54,&fuel_pressure_governor_integrator,(int)sVar10,10000);
++362,367c384,389
++<         iVar11 = (int)(short)fuel_metering_coil_temperature;
++<         iVar13 = (int)(short)cam_sync_speed_interp_lower_cal;
++<         wVar14 = wVar4;
++<         if ((iVar13 < iVar11) && (wVar14 = wVar3, iVar11 < (short)engine_sync_timing_max_cal)) {
++<           wVar14 = wVar4 + (short)(((iVar11 - iVar13) * ((int)(short)wVar3 - (int)(short)wVar4)) /
++<                                   ((short)engine_sync_timing_max_cal - iVar13));
++---
++>         iVar12 = (int)(short)fuel_metering_coil_temperature;
++>         iVar14 = (int)(short)cam_sync_speed_interp_lower_cal;
++>         wVar15 = wVar4;
++>         if ((iVar14 < iVar12) && (wVar15 = wVar3, iVar12 < (short)engine_sync_timing_max_cal)) {
++>           wVar15 = wVar4 + (short)(((iVar12 - iVar14) * ((int)(short)wVar3 - (int)(short)wVar4)) /
++>                                   ((short)engine_sync_timing_max_cal - iVar14));
++374c396
++<           wVar14 = wVar14 - fuel_pressure_governor_feed_forward;
++---
++>           wVar15 = wVar15 - fuel_pressure_governor_feed_forward;
++376,378c398,400
++<         if ((short)wVar14 < 0x1000) {
++<           fuel_pressure_governor_integral_term = wVar14;
++<           if ((short)wVar14 < -0xfff) {
++---
++>         if ((short)wVar15 < 0x1000) {
++>           fuel_pressure_governor_integral_term = wVar15;
++>           if ((short)wVar15 < -0xfff) {
++388c410
++<         wVar14 = fuel_pressure_governor_integral_term;
++---
++>         wVar15 = fuel_pressure_governor_integral_term;
++392,393c414,415
++<                      (&local_44,&fuel_pressure_governor_derivative_filter,
++<                       (int)(short)(wVar5 - sVar7));
++---
++>                      ((derivative_gain_t *)local_44,&fuel_pressure_governor_derivative_filter,
++>                       (int)(short)(wVar5 - sVar6));
++414c436
++<     iVar11 = 0xe;
++---
++>     iVar12 = 0xe;
++416c438
++<     iVar11 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar11);
++---
++>     iVar12 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar12);
++419c441
++<     iVar11 = 4;
++---
++>     iVar12 = 4;
++421c443
++<     iVar11 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar11);
++---
++>     iVar12 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar12);
++424c446
++<     iVar11 = (int)(short)intake_manifold_temperature_sensor_filtered;
++---
++>     iVar12 = (int)(short)intake_manifold_temperature_sensor_filtered;
++428c450
++<       iVar11 = 0x8a;
++---
++>       iVar12 = 0x8a;
++432c454
++<       iVar11 = 0x28;
++---
++>       iVar12 = 0x28;
++436c458
++<       iVar11 = (int)(short)fuel_metering_coil_temperature;
++---
++>       iVar12 = (int)(short)fuel_metering_coil_temperature;
++439,441c461,463
++<       iVar11 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
++<       if ((short)intake_manifold_temperature_sensor_filtered < iVar11) {
++<         iVar11 = (int)(short)intake_manifold_temperature_sensor_filtered;
++---
++>       iVar12 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
++>       if ((short)intake_manifold_temperature_sensor_filtered < iVar12) {
++>         iVar12 = (int)(short)intake_manifold_temperature_sensor_filtered;
++443,444c465,466
++<       if ((short)battery_temperature_sensor_filtered < iVar11) {
++<         iVar11 = (int)(short)battery_temperature_sensor_filtered;
++---
++>       if ((short)battery_temperature_sensor_filtered < iVar12) {
++>         iVar12 = (int)(short)battery_temperature_sensor_filtered;
++449c471
++<     iVar13 = 0xe;
++---
++>     iVar14 = 0xe;
++451c473
++<     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar13);
++---
++>     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar14);
++454c476
++<     iVar13 = 4;
++---
++>     iVar14 = 4;
++456c478
++<     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar13);
++---
++>     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar14);
++462c484
++<         iVar13 = 0x8a;
++---
++>         iVar14 = 0x8a;
++466c488
++<         iVar13 = 0x28;
++---
++>         iVar14 = 0x28;
++482c504
++<   iVar13 = (int)(short)cam_sync_speed_interp_lower_cal;
++---
++>   iVar14 = (int)(short)cam_sync_speed_interp_lower_cal;
++484,488c506,510
++<   if (((iVar13 < iVar11) &&
++<       (iVar10 = (int)(short)engine_sync_timing_max_cal, wVar5 = wVar3, iVar11 < iVar10)) &&
++<      (wVar5 = wVar4, iVar13 != iVar10)) {
++<     wVar5 = wVar4 + (short)(((iVar11 - iVar13) * ((int)(short)wVar3 - (int)(short)wVar4)) /
++<                            (iVar10 - iVar13));
++---
++>   if (((iVar14 < iVar12) &&
++>       (iVar11 = (int)(short)engine_sync_timing_max_cal, wVar5 = wVar3, iVar12 < iVar11)) &&
++>      (wVar5 = wVar4, iVar14 != iVar11)) {
++>     wVar5 = wVar4 + (short)(((iVar12 - iVar14) * ((int)(short)wVar3 - (int)(short)wVar4)) /
++>                            (iVar11 - iVar14));
++502c524
++<     fuel_pressure_governor_integrator.integer_part = wVar14;
++---
++>     fuel_pressure_governor_integrator.integer_part = wVar15;
++511c533,534
++<   sVar6 = cm848_applyPiecewiseLinearGain(&cam_sync_ref_prot_state_cal,(int)(short)wVar5);
++---
++>   sVar6 = cm848_applyPiecewiseLinearGain
++>                     (&fuel_metering_uncompensated_duty_cycle_proportional_gains,(int)(short)wVar5);
++514,518c537,541
++<                  (&cam_sync_ref_prot_handler_state_cal,&fuel_metering_base_command_derivative_filter
++<                   ,(int)sVar6);
++<   wVar14 = sVar6 + fuel_metering_base_command_derivative_term;
++<   sVar7 = cm848_signedFirstOrderFilter((int)(short)wVar5,&fuel_metering_reference_filter);
++<   sVar8 = cm848_signedFirstOrderFilter
++---
++>                  (&fuel_metering_current_compensation_derivative_gains,
++>                   &fuel_metering_base_command_derivative_filter,(int)sVar6);
++>   wVar15 = sVar6 + fuel_metering_base_command_derivative_term;
++>   sVar6 = cm848_signedFirstOrderFilter((int)(short)wVar5,&fuel_metering_reference_filter);
++>   sVar7 = cm848_signedFirstOrderFilter
++520c543
++<   fuel_metering_feedback_error = sVar7 - sVar8;
++---
++>   fuel_metering_feedback_error = sVar6 - sVar7;
++522,524c545,547
++<     sVar6 = cm848_applyPiecewiseLinearGain
++<                       (&cam_sync_speed_error_prot_state_cal,(int)(short)fuel_metering_feedback_error
++<                       );
++---
++>     sVar8 = cm848_applyPiecewiseLinearGain
++>                       (&fuel_metering_current_compensation_proportional_gains,
++>                        (int)(short)fuel_metering_feedback_error);
++526c549,550
++<                       (&cam_sync_speed_error_prot_mode_cal,&fuel_metering_feedback_trim_integrator,
++---
++>                       (&fuel_metering_current_compensation_integral_gains,
++>                        &fuel_metering_feedback_trim_integrator,
++528c552
++<     if ((sVar7 == 0) && (engine_rpm_measured == 0)) {
++---
++>     if ((sVar6 == 0) && (engine_rpm_measured == 0)) {
++544,545c568,569
++<     iVar11 = (int)(short)(sVar6 + sVar9);
++<     if ((short)fuel_metering_feedback_trim_maximum_scaling_factor < iVar11) {
++---
++>     iVar12 = (int)(short)(sVar8 + sVar9);
++>     if ((short)fuel_metering_feedback_trim_maximum_scaling_factor < iVar12) {
++547,548c571,572
++<            fuel_metering_feedback_trim_maximum_scaling_factor - sVar6;
++<       iVar11 = (int)(short)fuel_metering_feedback_trim_maximum_scaling_factor;
++---
++>            fuel_metering_feedback_trim_maximum_scaling_factor - sVar8;
++>       iVar12 = (int)(short)fuel_metering_feedback_trim_maximum_scaling_factor;
++550c574
++<     else if (iVar11 < (short)fuel_metering_feedback_trim_minimum_scaling_factor) {
++---
++>     else if (iVar12 < (short)fuel_metering_feedback_trim_minimum_scaling_factor) {
++552,553c576,577
++<            fuel_metering_feedback_trim_minimum_scaling_factor - sVar6;
++<       iVar11 = (int)(short)fuel_metering_feedback_trim_minimum_scaling_factor;
++---
++>            fuel_metering_feedback_trim_minimum_scaling_factor - sVar8;
++>       iVar12 = (int)(short)fuel_metering_feedback_trim_minimum_scaling_factor;
++556c580
++<          (short)(iVar11 * (short)wVar14 >> 0xc) + wVar14;
++---
++>          (short)(iVar12 * (short)wVar15 >> 0xc) + wVar15;
++568c592
++<     engine_sync_state_t_0040b87f.fuel_metering_command = wVar14;
++---
++>     engine_sync_state_t_0040b87f.fuel_metering_command = wVar15;
++572c596
++<     pbVar12 = (byte *)&sensor_channel_config_t_00059336;
++---
++>     pbVar13 = (byte *)&sensor_channel_config_t_00059336;
++575c599
++<     pbVar12 = &cam_sync_speed_filter_state_cal;
++---
++>     pbVar13 = &cam_sync_speed_filter_state_cal;
++577,602c601,602
++<   cam_sync_speed_filter_state.coefficient = (word *)pbVar12;
++<   wVar5 = lookupTableInterpolation
++<                     (&engine_sync_init_state_j,ram0x0040b884,cam_sync_speed_output_scale_axis_cal,
++<                      cam_sync_speed_output_scale_values_cal,0);
++<   engine_sync_state_t_0040b87f.fuel_metering_command =
++<        (word)((int)((int)(short)engine_sync_state_t_0040b87f.fuel_metering_command * (uint)wVar5) >>
++<              0xc);
++<   wVar5 = engine_sync_speed_upper_limit_cal;
++<   if (((short)engine_sync_speed_upper_limit_cal <
++<        (short)engine_sync_state_t_0040b87f.fuel_metering_command) ||
++<      (wVar5 = engine_sync_speed_lower_limit_cal,
++<      (short)engine_sync_state_t_0040b87f.fuel_metering_command <
++<      (short)engine_sync_speed_lower_limit_cal)) {
++<     engine_sync_state_t_0040b87f.fuel_metering_command = wVar5;
++<   }
++<   if (fuel_metering_read_back_retest_active_flag != 0) {
++<     fuel_metering_retest_pass_count = fuel_metering_retest_pass_count + 1;
++<     if ((uint)fuel_metering_retest_pass_count < (uint)fuel_metering_retest_off_passes) {
++<       engine_sync_state_t_0040b87f.fuel_metering_command = 0;
++<     }
++<     else if ((uint)fuel_metering_retest_pass_count <
++<              (uint)fuel_metering_retest_off_passes +
++<              (uint)fuel_metering_retest_fault_confirm_passes * 2) {
++<       engine_sync_state_t_0040b87f.fuel_metering_command = 0xfff;
++<     }
++< ... 47 more lines
++---
++>   cam_sync_speed_filter_state.coefficient = (word *)pbVar13;
++> ... 71 more lines
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/dump_check_W13.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/dump_check_W13.txt
+new file mode 100644
+index 0000000..cd4913a
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/dump_check_W13.txt
+@@ -0,0 +1,14 @@
++0x4094c4 fuel_pressure_governor_derivative_gain_small_signal [word] dump [1] quoted [65537] | e2m 80EF +2 HPCR_Derivative_Gain_Small_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component small signal gain' (addres
++0x4094c8 fuel_pressure_governor_derivative_gain_positive_large_signal [word] dump [4] quoted [262147] | e2m 80EF +6 HPCR_Derivative_Gain_Positive_Large_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component positive large si
++0x4094cc fuel_pressure_governor_derivative_gain_negative_large_signal [word] dump [4] quoted [262147] | e2m 80EF +A HPCR_Derivative_Gain_Negative_Large_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component negative large si
++0x40adae j1939_torque_curve_speed_at_point_2 [word] dump [25600] quoted [3200] | e2m 1102 +24 Jcomm_RPM_At_Point_2 '[JCTQRPP2] Torque curve speed at breakpoint 2 (HSG Breakpoint).' (RPM, 0.125 per coun
++0x40adb2 j1939_torque_curve_speed_at_point_4 [word] dump [20800] quoted [2600] | e2m 1102 +28 Jcomm_RPM_At_Point_4 '[JCTQRPP4] Torque curve speed at breakpoint 4.' (RPM, 0.125 per count; 20800 in the d
++0x40adb4 j1939_torque_curve_speed_at_point_5 [word] dump [22400] quoted [2800] | e2m 1102 +2A Jcomm_RPM_At_Point_5 '[JCTQRPP5] Torque curve speed at breakpoint 5.' (RPM, 0.125 per count; 22400 in the d
++0x3fd52e rear_axle_ratio_low_cal [word] dump [453] quoted [3] | EEPROM 0xac - e2m 1180 +6 Rear_Axle_Ratio_Low '[VSRRAXRL] Ratio of trans. to axle revs (hi gear/low numeric ratio if 2 s
++0x3fd534 rear_axle_ratio_high_cal [word] dump [453] quoted [3] | EEPROM 0xb2 - e2m 1180 +C Rear_Axle_Ratio_High '[VSRRAXRH] ratio of trans. to axle revs. (lo gear/hi numeric ratio if tw
++0x40a458 intake_manifold_temperature_after_lead [word] dump [2602] quoted [40] | e2m 18D9 +0 TPE_IMT_After_Lead 'Estimated IMT after sensor compensation but before limits' (DEG_F, signed, 1/64 deg F; 2
++0x40b8cc injector_diagnostic_bits_fast_decay [byte] dump [0] quoted [65535] | e2m 80B9 +0 HPCR_Fast_Decay 'LSB is injector 1 - fast decay error' (HEX; bit n = injector n + 1). Set from a separate fl
++0x3feb8e j1939_link_fault_timeout_count_cal [word] dump [0] quoted [100] | e2m 11C1 +2 [JC39TMCU] J1939_Link_Fault_Timeout_Count (CNTS, 0-1000): 'Current number of J1939 time-outs since powerdown
++0x407186 barometric_pressure_sensor_tolerance [word] dump [0] quoted [32799] | e2m 165C +0 Ambient_Air_Sensor_Tolerence (IN_HG, 0.0159 per count = 1/18.56 kPa, 0-20): 'Error Tolerence of Ambient Air 
++0x408f68 primary_period_rpm_conversion_factor [dword] dump [400000000] quoted [0] | e2m 8194 +12 [ESCUCF01] Engine_Speed_Constant_1 (UNITLESS, x 0.125, 4 bytes): 'Engine_Speed_Constant_1: Conversion facto
++92 rows quote a dump value; 13 without a match
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/dump_mismatch_names.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/dump_mismatch_names.txt
+new file mode 100644
+index 0000000..f7d5b92
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/dump_mismatch_names.txt
+@@ -0,0 +1,13 @@
++fuel_pressure_governor_derivative_gain_small_signal
++fuel_pressure_governor_derivative_gain_positive_large_signal
++fuel_pressure_governor_derivative_gain_negative_large_signal
++j1939_torque_curve_speed_at_point_2
++j1939_torque_curve_speed_at_point_4
++j1939_torque_curve_speed_at_point_5
++rear_axle_ratio_low_cal
++rear_axle_ratio_high_cal
++intake_manifold_temperature_after_lead
++injector_diagnostic_bits_fast_decay
++j1939_link_fault_timeout_count_cal
++barometric_pressure_sensor_tolerance
++primary_period_rpm_conversion_factor
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/map_stage8b.csv b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/map_stage8b.csv
+new file mode 100644
+index 0000000..2007485
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/map_stage8b.csv
+@@ -0,0 +1,8 @@
++address,name,old_label,kind
++0x004094a2,fuel_pressure_governor_proportional_gains,fuel_pressure_governor_proportional_gain_small_signal,global
++0x004094b2,fuel_pressure_governor_integral_gains,fuel_pressure_governor_integral_gain_small_signal,global
++0x004094c2,fuel_pressure_governor_derivative_gains,engine_sync_prot_gain_cal,global
++0x004094d4,fuel_metering_current_compensation_proportional_gains,cam_sync_speed_error_prot_state_cal,global
++0x004094e4,fuel_metering_current_compensation_integral_gains,cam_sync_speed_error_prot_mode_cal,global
++0x004094f4,fuel_metering_uncompensated_duty_cycle_proportional_gains,cam_sync_ref_prot_state_cal,global
++0x00409504,fuel_metering_current_compensation_derivative_gains,cam_sync_ref_prot_handler_state_cal,global
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/read_gain_blocks.py b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/read_gain_blocks.py
+new file mode 100644
+index 0000000..89ec33a
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/read_gain_blocks.py
+@@ -0,0 +1,35 @@
++"""Read the seven fuel pressure governor / fuel metering gain blocks from the RAM dump at their field widths, and check
++them against the e2m: window widths positive >= 0 and negative <= 0, gains inside the record's min..max (scaled).
++usage: read_gain_blocks.py <CM848 analysis dir> <audit csv>"""
++import csv
++import os
++import sys
++
++analysis, audit = sys.argv[1:3]
++ram = open(os.path.join(analysis, "originals", "cm848_ram.bin"), "rb").read()
++records = {}
++for r in csv.DictReader(open(audit)):
++    records[int(r["address"], 16)] = r
++BLOCKS = [("8014", 0x4094a2, False), ("8015", 0x4094b2, False), ("80EF", 0x4094c2, True), ("8016", 0x4094d4, False),
++          ("8017", 0x4094e4, False), ("8018", 0x4094f4, False), ("80F2", 0x409504, True)]
++FIELDS = [("small_signal_gain", 4, False), ("positive_large_signal_gain", 4, False),
++          ("negative_large_signal_gain", 4, False), ("positive_window_width", 2, True), ("negative_window_width", 2, True)]
++problems = 0
++for block, base, derivative in BLOCKS:
++    fields = ([("filter_coefficient", 2, False)] if derivative else []) + FIELDS
++    at, parts = base, []
++    for name, size, signed in fields:
++        raw = int.from_bytes(ram[at - 0x3FA000:at - 0x3FA000 + size], "big", signed=signed)
++        r = records.get(at)
++        assert r is not None and r["block"] == block and int(r["size"]) == size, (block, hex(at), name, r and r["record"])
++        value = raw * float(r["scale"])
++        ok = float(r["min"]) - 1e-9 <= value <= float(r["max"]) + 1e-9
++        if name == "positive_window_width":
++            ok = ok and raw >= 0
++        if name == "negative_window_width":
++            ok = ok and raw <= 0
++        problems += not ok
++        parts.append(f"{name}={raw} ({value:.6g} {r['unit']}){'' if ok else ' OUT OF RANGE'}")
++        at += size
++    print(f"{block} @ {base:#x}: " + "; ".join(parts))
++print(f"problems: {problems}")
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/show_quote_context.py b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/show_quote_context.py
+new file mode 100644
+index 0000000..35f8fac
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/show_quote_context.py
+@@ -0,0 +1,12 @@
++"""Print every dump-value quote (the patterns check_quoted_dump_values_W13.py reads) of the named rows, with context.
++usage: show_quote_context.py <names.txt> <global_variables.csv>"""
++import re
++import sys
++
++names = open(sys.argv[1]).read().split()
++rows = {l.split(",")[1]: l.rstrip("\n").split(",", 3)[3] for l in open(sys.argv[2], errors="replace") if l.startswith("0x")}
++QUOTE = re.compile(r"(-?0x[0-9a-fA-F]+|-?\d+)(?: = [^;()]{0,40})? here\b|\bdump (?:value )?(?:is |=\s*)?(-?0x[0-9a-fA-F]+|-?\d+)\b")
++for n in names:
++    c = rows[n]
++    for m in QUOTE.finditer(c):
++        print(f"{n}: ...{c[max(0, m.start() - 60):m.end() + 12]}...")
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/stage8b.diff b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/stage8b.diff
+new file mode 100644
+index 0000000..558b6c1
+--- /dev/null
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/stage8/stage8b.diff
+@@ -0,0 +1,1260 @@
++diff --git a/.claude/skills/editing-firmware-csvs/csv-type-reference.md b/.claude/skills/editing-firmware-csvs/csv-type-reference.md
++index ca26168..dc037ca 100644
++--- a/.claude/skills/editing-firmware-csvs/csv-type-reference.md
+++++ b/.claude/skills/editing-firmware-csvs/csv-type-reference.md
++@@ -69,6 +69,17 @@ Listing fields at two addresses instead creates one oversize type applied only a
++ **Commas in comments must be quoted** — this file uses a quote-aware parser, unlike
++ `global_variables.csv`/`function_renames.csv` which absorb commas into the last column.
++ 
+++**Struct type only, instances in `global_variables.csv`:** a struct whose instances have their own names can be
+++defined once with an empty address (`ema_filter_state_t`, `piecewise_linear_gain_t`). Each instance is then a
+++`global_variables.csv` row typed with the struct name. Edit the instance's first row in place and delete the rows
+++inside it, including `<name>+2` label rows.
+++
+++**Records passed by pointer (stage 8b, 2026-11-19):** type the consumer's parameter as `<struct> *` with a full
+++prototype. Ghidra then often types the caller's stack copies of the record by itself. If it does not, a
+++`local_variables.csv` row can give a stack local a struct type. When the code's last store into the copy runs past the
+++struct's end, that one store renders as a raw stack or register name; say so in the plate. Unaligned dword fields
+++that the code copies as two halfwords render as `._0_2_` / `._2_2_` pieces; that is correct, not a width error.
+++
++ ## Function prototypes (`function_definitions.csv`)
++ 
++ Columns: `function_address,function_name,param_index,name,type,comment`
++diff --git a/firmware/CLAUDE.md b/firmware/CLAUDE.md
++index f26b4e1..c452b00 100644
++--- a/firmware/CLAUDE.md
+++++ b/firmware/CLAUDE.md
++@@ -861,6 +861,14 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
++     - More drift: 8D14 from +2, 1B2D from +4, 1966 from +94, 1649 from +10. The 8C58 tail overlaps 8C4E. The last
++       "ratio" record of 8C34 / 8C56 / 8C5B / 1632 has no storage of its own in 11.46.
++     - Leads for the next waves are in task 045: about 70 misnamed functions, the out-of-bin siblings, splits and types.
+++  - **Stage 8b: the HPCR gain records are structs.**
+++    - `cm848_applyPiecewiseLinearGain` / `cm848_integrateWithZoneGain` take a `piecewise_linear_gain_t` (16 bytes: three
+++      dword gains, then the signed positive / negative window widths). `cm848_calculateFilteredDerivative` takes a
+++      `derivative_gain_t` (a word filter coefficient first, 18 bytes).
+++    - Seven instances, from e2m 8014-8018 / 80EF / 80F2: the fuel pressure governor's P / I / D gains, and the fuel
+++      metering current compensation and uncompensated duty cycle gains.
+++    - A prototype that takes the struct pointer lets Ghidra type the caller's stack copies by itself. A local whose last
+++      store runs past the struct renders a raw stack or register name for that store.
++ 
++ ### Naming wave 2 (2026-11-13, PR #47)
++ - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.
++diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/README.md b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/README.md
++index a49ac53..7568c36 100644
++--- a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/README.md
+++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/README.md
++@@ -91,6 +91,15 @@ subagents ran: two in stage 4, one in stage 5, two in stage 6, six in stage 7 an
++     order, and give the 80B9 debounce rows their bits bytes' meanings.
++   - `reports/`: the six handback reports. `agent_scratch/`: the scratch scripts of bins 4-6 (bins 1-3 wrote none).
++   - `append_W13_agent_notes.py`, `sweep8.txt` (the comment sweep), `commit_message_stage8.txt`, `stage8.diff`.
+++  - `check_quoted_dump_values_W13.py` / `show_quote_context.py` / `dump_check_W13.txt`: the wave-13 comments' quoted
+++    dump values (`--negative` reads 2 bytes off).
+++- **Stage 8b** (the HPCR gain records as structs), also in `stage8/`:
+++  - `read_gain_blocks.py`: reads the seven records from the dump at field width and checks them against the e2m.
+++  - `apply_stage8b_gain_records.py`: the two struct types, the seven instances, the three prototypes, the 80B9
+++    caveat. It writes `map_stage8b.csv`.
+++  - `apply_stage8b_locals.py`: the second build's typed stack copies.
+++  - `check_stage8b.py`: the changed functions against the prediction. `diff8b_fuel_metering.txt` is the first
+++    build's diff of `cm848_calculateFuelMeteringCommand`; `build1_8b.cpp` / `pre8b.cpp` are in the tar.xz.
++ - **The agents** (two in stage 4, one in stage 5, two in stage 6, six in stage 7, six in stage 8):
++   - `agent_prompts.jsonl`: their exact prompts.
++   - `agent_prompts_and_reports.md`: the stage-4 prompts and reports in short, stage 5's in full, and what was checked
++diff --git a/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp b/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
++index 2387e58..7e4e201 100644
++--- a/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
+++++ b/firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp
++@@ -1,5 +1,5 @@
++ // Ghidra C++ Decompilation Export - cm848_rom Firmware
++-// Generated: Thu Nov 19 17:10:35 MST 2026
+++// Generated: Thu Nov 19 17:42:38 MST 2026
++ 
++ 
++ //
++@@ -6092,9 +6092,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
++ 
++ {
++   word wVar1;
++-  word counter_value;
++   byte prescaler_count;
++   dword runtime_value;
+++  word counter_value;
++   
++   prescaler_count = watchdog_tick_prescaler;
++   if (prescaler_count < 0x28) {
++@@ -46576,22 +46576,24 @@ void mpc555_clearTimingDataAndFilters(void)
++    lower breakpoint for the part past it; result >> 16, clamped to +/-4095. Was
++    cm848_protectionRecoveryHandler */
++ 
++-int cm848_applyPiecewiseLinearGain(int *param_1,int param_2)
+++sword cm848_applyPiecewiseLinearGain(piecewise_linear_gain_t *gain,int input)
++ 
++ {
++   short sVar1;
++   
++-  sVar1 = *(short *)(param_1 + 3);
++-  if (sVar1 < param_2) {
++-    sVar1 = (short)((uint)(*param_1 * (int)sVar1 + param_1[1] * (param_2 - sVar1)) >> 0x10);
+++  sVar1 = gain->positive_window_width;
+++  if (sVar1 < input) {
+++    sVar1 = (short)(gain->small_signal_gain * (int)sVar1 +
+++                    gain->positive_large_signal_gain * (input - sVar1) >> 0x10);
++   }
++   else {
++-    sVar1 = *(short *)((int)param_1 + 0xe);
++-    if (param_2 < sVar1) {
++-      sVar1 = (short)((uint)(*param_1 * (int)sVar1 + param_1[2] * (param_2 - sVar1)) >> 0x10);
+++    sVar1 = gain->negative_window_width;
+++    if (input < sVar1) {
+++      sVar1 = (short)(gain->small_signal_gain * (int)sVar1 +
+++                      gain->negative_large_signal_gain * (input - sVar1) >> 0x10);
++     }
++     else {
++-      sVar1 = (short)((uint)(*param_1 * (int)(short)param_2) >> 0x10);
+++      sVar1 = (short)(gain->small_signal_gain * (int)(short)input >> 0x10);
++     }
++   }
++   if (sVar1 < 0x1000) {
++@@ -46602,7 +46604,7 @@ int cm848_applyPiecewiseLinearGain(int *param_1,int param_2)
++   else {
++     sVar1 = 0xfff;
++   }
++-  return (int)sVar1;
+++  return sVar1;
++ }
++ 
++ 
++@@ -46615,49 +46617,54 @@ int cm848_applyPiecewiseLinearGain(int *param_1,int param_2)
++    gain picked by the error's zone (+4 above the short at +12, +0 between, +8 below the short at
++    +14); clamps the integer part to +/-4095 and returns it. Was cm848_protectionModeSelector */
++ 
++-int cm848_integrateWithZoneGain(int param_1,int *param_2,int param_3,uint param_4)
+++sword cm848_integrateWithZoneGain
+++                (piecewise_linear_gain_t *gain,q16_fixed_point_t *accumulator,int error,dword step)
++ 
++ {
++-  int iVar1;
++-  uint uVar2;
+++  uint uVar1;
+++  int iVar2;
++   uint uVar3;
++-  short sVar4;
+++  uint uVar4;
+++  q16_fixed_point_t qVar5;
+++  word wVar6;
++   
++-  if (*(short *)(param_1 + 0xc) < param_3) {
++-    iVar1 = 4;
+++  if (gain->positive_window_width < error) {
+++    iVar2 = 4;
++ LAB_00047a04:
++-    param_4 = param_4 & 0xffff;
++-    uVar3 = *(uint *)(param_1 + iVar1);
++-    uVar2 = (uint)(short)param_3;
++-    iVar1 = *param_2 +
++-            (((int)((ulonglong)param_4 * (ulonglong)(uVar3 * uVar2) >> 0x20) +
++-             param_4 * ((int)((ulonglong)uVar3 * (ulonglong)uVar2 >> 0x20) +
++-                       uVar3 * ((int)uVar2 >> 0x1f))) * 0x10000 | param_4 * uVar3 * uVar2 >> 0x10);
+++    uVar1 = step & 0xffff;
+++    uVar4 = *(uint *)((int)&gain->small_signal_gain + iVar2);
+++    uVar3 = (uint)(short)error;
+++    qVar5 = (q16_fixed_point_t)
+++            ((int)*accumulator +
+++            (((int)((ulonglong)uVar1 * (ulonglong)(uVar4 * uVar3) >> 0x20) +
+++             uVar1 * ((int)((ulonglong)uVar4 * (ulonglong)uVar3 >> 0x20) +
+++                     uVar4 * ((int)uVar3 >> 0x1f))) * 0x10000 | uVar1 * uVar4 * uVar3 >> 0x10));
++   }
++   else {
++-    if (*(short *)(param_1 + 0xe) <= param_3) {
++-      iVar1 = 0;
+++    if (gain->negative_window_width <= error) {
+++      iVar2 = 0;
++       goto LAB_00047a04;
++     }
++-    param_4 = param_4 & 0xffff;
++-    uVar3 = *(uint *)(param_1 + 8);
++-    uVar2 = (uint)(short)param_3;
++-    iVar1 = *param_2 +
++-            (((int)((ulonglong)param_4 * (ulonglong)(uVar3 * uVar2) >> 0x20) +
++-             param_4 * ((int)((ulonglong)uVar3 * (ulonglong)uVar2 >> 0x20) +
++-                       uVar3 * ((int)uVar2 >> 0x1f))) * 0x10000 | param_4 * uVar3 * uVar2 >> 0x10);
+++    uVar1 = step & 0xffff;
+++    uVar4 = gain->negative_large_signal_gain;
+++    uVar3 = (uint)(short)error;
+++    qVar5 = (q16_fixed_point_t)
+++            ((int)*accumulator +
+++            (((int)((ulonglong)uVar1 * (ulonglong)(uVar4 * uVar3) >> 0x20) +
+++             uVar1 * ((int)((ulonglong)uVar4 * (ulonglong)uVar3 >> 0x20) +
+++                     uVar4 * ((int)uVar3 >> 0x1f))) * 0x10000 | uVar1 * uVar4 * uVar3 >> 0x10));
++   }
++-  *param_2 = iVar1;
++-  if (*(short *)param_2 < 0x1000) {
++-    if (-0x1000 < *(short *)param_2) goto LAB_00047a78;
++-    sVar4 = -0xfff;
+++  *accumulator = qVar5;
+++  if ((short)accumulator->integer_part < 0x1000) {
+++    if (-0x1000 < (short)accumulator->integer_part) goto LAB_00047a78;
+++    wVar6 = 0xf001;
++   }
++   else {
++-    sVar4 = 0xfff;
+++    wVar6 = 0xfff;
++   }
++-  *(short *)param_2 = sVar4;
+++  accumulator->integer_part = wVar6;
++ LAB_00047a78:
++-  return (int)*(short *)param_2;
+++  return accumulator->integer_part;
++ }
++ 
++ 
++@@ -46671,40 +46678,46 @@ LAB_00047a78:
++    = first word). The gain is picked by the input's zone (+6 above the short at +14, +10 below the
++    short at +16, +2 between). Was cm848_protectionStateHandler */
++ 
++-int cm848_calculateFilteredDerivative(ushort *param_1,uint *param_2,int param_3)
+++sword cm848_calculateFilteredDerivative
+++                (derivative_gain_t *gain,q16_fixed_point_t *filter_state,int input)
++ 
++ {
++-  int iVar1;
++-  uint uVar2;
+++  uint uVar1;
+++  int iVar2;
++   uint uVar3;
++-  uint uVar4;
+++  q16_fixed_point_t qVar4;
+++  uint uVar5;
++   uint local_8;
++   
++-  if ((short)param_1[7] < param_3) {
++-    iVar1 = 6;
+++  if (gain->positive_window_width < input) {
+++    iVar2 = 6;
++   }
++   else {
++-    if (param_3 < (short)param_1[8]) {
++-      local_8 = *(int *)(param_1 + 5) * param_3 - *param_2;
++-      uVar2 = *(int *)(param_1 + 5) * (int)(short)param_3;
++-      uVar3 = uVar2 * 0x10000;
++-      uVar4 = (uint)*param_1;
++-      uVar3 = ((uVar2 >> 0x10) -
++-              ((int)((ulonglong)uVar4 * (ulonglong)local_8 >> 0x20) + uVar4 * ((int)local_8 >> 0x1f)
++-              + (uint)(uVar3 < uVar4 * local_8))) * 0x10000 | uVar3 - uVar4 * local_8 >> 0x10;
+++    if (input < gain->negative_window_width) {
+++      local_8 = gain->negative_large_signal_gain * input - (int)*filter_state;
+++      uVar3 = gain->negative_large_signal_gain * (int)(short)input;
+++      uVar1 = uVar3 * 0x10000;
+++      uVar5 = (uint)gain->filter_coefficient;
+++      qVar4 = (q16_fixed_point_t)
+++              (((uVar3 >> 0x10) -
+++               ((int)((ulonglong)uVar5 * (ulonglong)local_8 >> 0x20) +
+++                uVar5 * ((int)local_8 >> 0x1f) + (uint)(uVar1 < uVar5 * local_8))) * 0x10000 |
+++              uVar1 - uVar5 * local_8 >> 0x10);
++       goto LAB_00047b98;
++     }
++-    iVar1 = 2;
+++    iVar2 = 2;
++   }
++-  local_8 = *(int *)((int)param_1 + iVar1) * param_3 - *param_2;
++-  uVar2 = *(int *)((int)param_1 + iVar1) * (int)(short)param_3;
++-  uVar3 = uVar2 * 0x10000;
++-  uVar4 = (uint)*param_1;
++-  uVar3 = ((uVar2 >> 0x10) -
++-          ((int)((ulonglong)uVar4 * (ulonglong)local_8 >> 0x20) + uVar4 * ((int)local_8 >> 0x1f) +
++-          (uint)(uVar3 < uVar4 * local_8))) * 0x10000 | uVar3 - uVar4 * local_8 >> 0x10;
+++  iVar2 = *(int *)((int)&gain->filter_coefficient + iVar2);
+++  local_8 = iVar2 * input - (int)*filter_state;
+++  uVar3 = iVar2 * (short)input;
+++  uVar1 = uVar3 * 0x10000;
+++  uVar5 = (uint)gain->filter_coefficient;
+++  qVar4 = (q16_fixed_point_t)
+++          (((uVar3 >> 0x10) -
+++           ((int)((ulonglong)uVar5 * (ulonglong)local_8 >> 0x20) + uVar5 * ((int)local_8 >> 0x1f) +
+++           (uint)(uVar1 < uVar5 * local_8))) * 0x10000 | uVar1 - uVar5 * local_8 >> 0x10);
++ LAB_00047b98:
++-  *param_2 = uVar3;
+++  *filter_state = qVar4;
++   if (local_8._0_2_ < 0x1000) {
++     if (local_8._0_2_ < -0xfff) {
++       local_8._0_2_ = -0xfff;
++@@ -46713,7 +46726,7 @@ LAB_00047b98:
++   else {
++     local_8._0_2_ = 0xfff;
++   }
++-  return (int)local_8._0_2_;
+++  return local_8._0_2_;
++ }
++ 
++ 
++@@ -46742,12 +46755,21 @@ LAB_00047b98:
++    fuel_metering_command = base + trim x base / 4096 (no trim while
++    fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back
++    retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining
++-   engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Was
++-   cm848_calculateEngineTimingOffset Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START)
++-   sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command
++-   modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while
++-   engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it
++-   only runs with the engine stopped and mode 1 recomputes the preset before a start. */
+++   engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Gain
+++   records (stage 8b): the P / I / D terms use fuel_pressure_governor_proportional_gains /
+++   fuel_pressure_governor_integral_gains / fuel_pressure_governor_derivative_gains through working
+++   copies on the stack (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is
+++   0); the base command uses fuel_metering_uncompensated_duty_cycle_proportional_gains and
+++   fuel_metering_current_compensation_derivative_gains; the trim uses
+++   fuel_metering_current_compensation_proportional_gains and
+++   fuel_metering_current_compensation_integral_gains. The copy of the derivative record's negative
+++   window is one 4-byte store at offset 16 that runs 2 bytes past the 18-byte record - so Ghidra
+++   prints a raw stack or register name for its destination. Was cm848_calculateEngineTimingOffset
+++   Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature
+++   chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past
+++   it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the
+++   caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and
+++   mode 1 recomputes the preset before a start. */
++ 
++ void cm848_calculateFuelMeteringCommand(void)
++ 
++@@ -46756,38 +46778,26 @@ void cm848_calculateFuelMeteringCommand(void)
++   word wVar3;
++   word wVar4;
++   word wVar5;
++-  short sVar6;
+++  sword sVar6;
++   sword sVar7;
++   sword sVar8;
++-  short sVar9;
+++  sword sVar9;
++   dword dVar2;
+++  short sVar10;
++   word unaff_r23;
++-  int iVar10;
+++  int iVar11;
++   word unaff_r28;
++   word unaff_r29;
++-  int iVar11;
++-  byte *pbVar12;
++-  int iVar13;
++-  word wVar14;
++-  uint uVar15;
+++  int iVar12;
+++  byte *pbVar13;
+++  int iVar14;
+++  word wVar15;
+++  uint uVar16;
++   word awStack_68 [2];
++-  dword local_64;
++-  dword local_60;
++-  dword local_5c;
++-  dword local_58;
++-  dword local_54;
++-  dword local_50;
++-  dword local_4c;
++-  dword local_48;
++-  word local_44;
++-  ushort uStack_42;
++-  word wStack_40;
++-  ushort local_3e;
++-  word wStack_3c;
++-  ushort local_3a;
++-  word wStack_38;
++-  word local_36;
++-  uint local_34;
+++  piecewise_linear_gain_t working_proportional_gains;
+++  piecewise_linear_gain_t working_integral_gains;
+++  derivative_gain_t working_derivative_gains;
+++  undefined2 uStack_32;
++   
++   if (engine_speed_override_enable_cal != 0) {
++     engine_sync_state_t_0040b87f.fuel_metering_command = engine_speed_override_value_cal;
++@@ -46830,7 +46840,7 @@ void cm848_calculateFuelMeteringCommand(void)
++     if (((switch_input_state_bits[0] & 1) == 0) && (key_off_shutdown_inhibit_flag == 0)) {
++       engine_sync_state_t_0040b87f.fuel_pressure_governor_mode = FUEL_PRESSURE_GOVERNOR_KEY_OFF;
++     }
++-    wVar14 = fuel_pressure_governor_integrator.integer_part;
+++    wVar15 = fuel_pressure_governor_integrator.integer_part;
++     if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode <
++         (FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED|FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START)) {
++       if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
++@@ -46849,7 +46859,7 @@ void cm848_calculateFuelMeteringCommand(void)
++           fuel_pressure_governor_low_pressure_count = 0;
++           if (((fuel_pressure_governor_mode_saved == FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START)
++               || (fuel_pressure_governor_mode_saved == FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP)) &&
++-             (wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+++             (wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
++              wVar5 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
++              fuel_pressure_governor_feed_forward_enable != 0)) goto LAB_00047f84;
++         }
++@@ -46861,7 +46871,7 @@ void cm848_calculateFuelMeteringCommand(void)
++              (short)fuel_pressure_feedback_filtered)) &&
++            (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode =
++                  FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START,
++-           wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+++           wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
++            wVar5 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
++            fuel_pressure_governor_feed_forward_enable != 0)) {
++           fuel_pressure_governor_feed_forward =
++@@ -46869,7 +46879,7 @@ void cm848_calculateFuelMeteringCommand(void)
++                          (&engine_sync_init_state_n,engine_rpm_measured,cam_sync_speed_axis_cal,
++                           total_injection_quantity,cam_sync_timing_axis_cal,cam_sync_values_cal,4);
++ LAB_00047f84:
++-          wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
+++          wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
++                    fuel_pressure_governor_feed_forward;
++           wVar5 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
++                   fuel_pressure_governor_feed_forward;
++@@ -46922,7 +46932,7 @@ LAB_0004800c:
++   }
++   else {
++     engine_sync_state_t_0040b87f.fuel_pressure_governor_mode = FUEL_PRESSURE_GOVERNOR_DISABLED;
++-    wVar14 = unaff_r23;
+++    wVar15 = unaff_r23;
++   }
++   fuel_pressure_governor_integrator.integer_part = wVar5;
++   if (FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED <
++@@ -46953,129 +46963,175 @@ LAB_0004800c:
++         wVar5 = lookupTableInterpolation
++                           (&engine_sync_init_state_c,engine_rpm_measured,
++                            cam_sync_cyl1_timing_axis_a_cal,cam_sync_cyl1_timing_values_a_cal,0);
++-        local_64 = (int)((ulonglong)fuel_pressure_governor_proportional_gain_small_signal *
++-                         (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++-                   fuel_pressure_governor_proportional_gain_small_signal * wVar5 >> 0xc;
+++        working_proportional_gains.small_signal_gain =
+++             (int)((ulonglong)fuel_pressure_governor_proportional_gains.small_signal_gain *
+++                   (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+++             fuel_pressure_governor_proportional_gains.small_signal_gain * wVar5 >> 0xc;
++         wVar5 = lookupTableInterpolation
++                           (&engine_sync_init_state_d,engine_rpm_measured,
++                            cam_sync_cyl2_timing_axis_a_cal,cam_sync_cyl2_timing_values_a_cal,0);
++-        local_60 = (int)((ulonglong)fuel_pressure_governor_proportional_gain_positive_large_signal *
++-                         (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++-                   fuel_pressure_governor_proportional_gain_positive_large_signal * wVar5 >> 0xc;
+++        working_proportional_gains.positive_large_signal_gain =
+++             (int)((ulonglong)fuel_pressure_governor_proportional_gains.positive_large_signal_gain *
+++                   (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+++             fuel_pressure_governor_proportional_gains.positive_large_signal_gain * wVar5 >> 0xc;
++         wVar5 = lookupTableInterpolation
++                           (&engine_sync_init_state_e,engine_rpm_measured,
++                            cam_sync_cyl3_timing_axis_a_cal,cam_sync_cyl3_timing_values_a_cal,0);
++-        local_5c = (int)((ulonglong)fuel_pressure_governor_proportional_gain_negative_large_signal *
++-                         (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++-                   fuel_pressure_governor_proportional_gain_negative_large_signal * wVar5 >> 0xc;
++-        local_58 = engine_sync_prot_scale_a_cal;
+++        working_proportional_gains.negative_large_signal_gain =
+++             (int)((ulonglong)fuel_pressure_governor_proportional_gains.negative_large_signal_gain *
+++                   (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+++             fuel_pressure_governor_proportional_gains.negative_large_signal_gain * wVar5 >> 0xc;
+++        working_proportional_gains.positive_window_width =
+++             fuel_pressure_governor_proportional_gains.positive_window_width;
+++        working_proportional_gains.negative_window_width =
+++             fuel_pressure_governor_proportional_gains.negative_window_width;
++         wVar5 = lookupTableInterpolation
++                           (&engine_sync_init_state_f,engine_rpm_measured,
++                            cam_sync_cyl4_timing_axis_a_cal,cam_sync_cyl4_timing_values_a_cal,0);
++-        local_54 = (int)((ulonglong)fuel_pressure_governor_integral_gain_small_signal *
++-                         (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++-                   fuel_pressure_governor_integral_gain_small_signal * wVar5 >> 0xc;
+++        working_integral_gains.small_signal_gain =
+++             (int)((ulonglong)fuel_pressure_governor_integral_gains.small_signal_gain *
+++                   (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+++             fuel_pressure_governor_integral_gains.small_signal_gain * wVar5 >> 0xc;
++         wVar5 = lookupTableInterpolation
++                           (&engine_sync_init_state_g,engine_rpm_measured,
++                            cam_sync_cyl5_timing_axis_a_cal,cam_sync_cyl5_timing_values_a_cal,0);
++-        local_50 = (int)((ulonglong)fuel_pressure_governor_integral_gain_positive_large_signal *
++-                         (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++-                   fuel_pressure_governor_integral_gain_positive_large_signal * wVar5 >> 0xc;
+++        working_integral_gains.positive_large_signal_gain =
+++             (int)((ulonglong)fuel_pressure_governor_integral_gains.positive_large_signal_gain *
+++                   (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+++             fuel_pressure_governor_integral_gains.positive_large_signal_gain * wVar5 >> 0xc;
++         wVar5 = lookupTableInterpolation
++                           (&engine_sync_init_state_h,engine_rpm_measured,
++                            cam_sync_cyl6_timing_axis_a_cal,cam_sync_cyl6_timing_values_a_cal,0);
++-        local_4c = (int)((ulonglong)fuel_pressure_governor_integral_gain_negative_large_signal *
++-                         (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
++-                   fuel_pressure_governor_integral_gain_negative_large_signal * wVar5 >> 0xc;
++-        local_48 = engine_sync_prot_scale_b_cal;
+++        working_integral_gains.negative_large_signal_gain =
+++             (int)((ulonglong)fuel_pressure_governor_integral_gains.negative_large_signal_gain *
+++                   (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+++             fuel_pressure_governor_integral_gains.negative_large_signal_gain * wVar5 >> 0xc;
+++        working_integral_gains.positive_window_width =
+++             fuel_pressure_governor_integral_gains.positive_window_width;
+++        working_integral_gains.negative_window_width =
+++             fuel_pressure_governor_integral_gains.negative_window_width;
++         wVar5 = lookupTableInterpolation
++                           (&engine_sync_init_state_i,engine_rpm_measured,cam_sync_prot_gain_axis_cal
++                            ,cam_sync_prot_gain_values_cal,0);
++-        local_44 = (word)((uint)engine_sync_prot_gain_cal * (uint)wVar5 >> 0x10);
+++        working_derivative_gains.filter_coefficient =
+++             (word)((uint)fuel_pressure_governor_derivative_gains.filter_coefficient * (uint)wVar5
+++                   >> 0x10);
++         wVar5 = lookupTableInterpolation
++                           (&WORD_003fb652,engine_rpm_measured,cam_sync_cyl4_timing_axis_b_cal,
++                            cam_sync_cyl4_timing_values_b_cal,0);
++-        uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_small_signal,
++-                          injection_timing_scale_cyl4_lo_cal) * (uint)wVar5;
++-        uStack_42 = (ushort)((uint)((int)((ulonglong)
++-                                          CONCAT22(
++-                                                  fuel_pressure_governor_derivative_gain_small_signal
++-                                                  ,injection_timing_scale_cyl4_lo_cal) *
++-                                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
++-                    (ushort)(uVar15 >> 0x1c);
++-        wStack_40 = (word)(uVar15 >> 0xc);
+++        uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.small_signal_gain._0_2_,
+++                          fuel_pressure_governor_derivative_gains.small_signal_gain._2_2_) *
+++                 (uint)wVar5;
+++        working_derivative_gains.small_signal_gain._0_2_ =
+++             (ushort)((uint)((int)((ulonglong)
+++                                   CONCAT22(fuel_pressure_governor_derivative_gains.
+++                                            small_signal_gain._0_2_,
+++                                            fuel_pressure_governor_derivative_gains.
+++                                            small_signal_gain._2_2_) * (ulonglong)(uint)wVar5 >>
+++                                  0x20) << 0x14) >> 0x10) | (ushort)(uVar16 >> 0x1c);
+++        working_derivative_gains.small_signal_gain._2_2_ = (undefined2)(uVar16 >> 0xc);
++         wVar5 = lookupTableInterpolation
++                           (&WORD_003fb654,engine_rpm_measured,cam_sync_cyl5_timing_axis_b_cal,
++                            cam_sync_cyl5_timing_values_b_cal,0);
++-        uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_positive_large_signal,
++-                          injection_timing_scale_cyl5_lo_cal) * (uint)wVar5;
++-        local_3e = (ushort)((uint)((int)((ulonglong)
++-                                         CONCAT22(fuel_pressure_governor_derivative_gain_positive_large_signal
++-                                                  ,injection_timing_scale_cyl5_lo_cal) *
++-                                         (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
++-                   (ushort)(uVar15 >> 0x1c);
++-        wStack_3c = (word)(uVar15 >> 0xc);
+++        uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.positive_large_signal_gain._0_2_,
+++                          fuel_pressure_governor_derivative_gains.positive_large_signal_gain._2_2_)
+++                 * (uint)wVar5;
+++        working_derivative_gains.positive_large_signal_gain._0_2_ =
+++             (ushort)((uint)((int)((ulonglong)
+++                                   CONCAT22(fuel_pressure_governor_derivative_gains.
+++                                            positive_large_signal_gain._0_2_,
+++                                            fuel_pressure_governor_derivative_gains.
+++                                            positive_large_signal_gain._2_2_) *
+++                                   (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+++             (ushort)(uVar16 >> 0x1c);
+++        working_derivative_gains.positive_large_signal_gain._2_2_ = (undefined2)(uVar16 >> 0xc);
++         wVar5 = lookupTableInterpolation
++                           (&WORD_003fb656,engine_rpm_measured,cam_sync_cyl6_timing_axis_b_cal,
++                            cam_sync_cyl6_timing_values_b_cal,0);
++-        uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_negative_large_signal,
++-                          injection_timing_scale_cyl6_lo_cal) * (uint)wVar5;
++-        local_3a = (ushort)((uint)((int)((ulonglong)
++-                                         CONCAT22(fuel_pressure_governor_derivative_gain_negative_large_signal
++-                                                  ,injection_timing_scale_cyl6_lo_cal) *
++-                                         (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
++-                   (ushort)(uVar15 >> 0x1c);
++-        wStack_38 = (word)(uVar15 >> 0xc);
++-        local_36 = engine_sync_prot_limit_cal;
++-        local_34 = CONCAT22(engine_sync_prot_gain_b_cal,local_34._2_2_);
+++        uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.negative_large_signal_gain._0_2_,
+++                          fuel_pressure_governor_derivative_gains.negative_large_signal_gain._2_2_)
+++                 * (uint)wVar5;
+++        working_derivative_gains.negative_large_signal_gain._0_2_ =
+++             (ushort)((uint)((int)((ulonglong)
+++                                   CONCAT22(fuel_pressure_governor_derivative_gains.
+++                                            negative_large_signal_gain._0_2_,
+++                                            fuel_pressure_governor_derivative_gains.
+++                                            negative_large_signal_gain._2_2_) *
+++                                   (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+++             (ushort)(uVar16 >> 0x1c);
+++        working_derivative_gains.negative_large_signal_gain._2_2_ = (undefined2)(uVar16 >> 0xc);
+++        working_derivative_gains.positive_window_width =
+++             fuel_pressure_governor_derivative_gains.positive_window_width;
+++        stack0xffffffcc =
+++             CONCAT22(fuel_pressure_governor_derivative_gains.negative_window_width,uStack_32);
++         wVar5 = lookupTableInterpolation
++                           (&engine_sync_init_state_m,engine_rpm_measured,cam_sync_scale_axis_cal,
++                            cam_sync_scale_values_cal,0);
++         awStack_68[0] = (word)((uint)fuel_pressure_sensor_filter_coefficient * (uint)wVar5 >> 0x10);
++       }
++       else {
++-        local_64 = fuel_pressure_governor_proportional_gain_small_signal;
++-        local_60 = fuel_pressure_governor_proportional_gain_positive_large_signal;
++-        local_5c = fuel_pressure_governor_proportional_gain_negative_large_signal;
++-        local_58 = engine_sync_prot_scale_a_cal;
++-        local_54 = fuel_pressure_governor_integral_gain_small_signal;
++-        local_50 = fuel_pressure_governor_integral_gain_positive_large_signal;
++-        local_4c = fuel_pressure_governor_integral_gain_negative_large_signal;
++-        local_48 = engine_sync_prot_scale_b_cal;
++-        local_44 = engine_sync_prot_gain_cal;
++-        uStack_42 = fuel_pressure_governor_derivative_gain_small_signal;
++-        wStack_40 = injection_timing_scale_cyl4_lo_cal;
++-        local_3e = fuel_pressure_governor_derivative_gain_positive_large_signal;
++-        wStack_3c = injection_timing_scale_cyl5_lo_cal;
++-        local_3a = fuel_pressure_governor_derivative_gain_negative_large_signal;
++-        wStack_38 = injection_timing_scale_cyl6_lo_cal;
++-        local_36 = engine_sync_prot_limit_cal;
++-        local_34 = _engine_sync_prot_gain_b_cal & 0xffff0000;
+++        working_proportional_gains.small_signal_gain =
+++             fuel_pressure_governor_proportional_gains.small_signal_gain;
+++        working_proportional_gains.positive_large_signal_gain =
+++             fuel_pressure_governor_proportional_gains.positive_large_signal_gain;
+++        working_proportional_gains.negative_large_signal_gain =
+++             fuel_pressure_governor_proportional_gains.negative_large_signal_gain;
+++        working_proportional_gains.positive_window_width =
+++             fuel_pressure_governor_proportional_gains.positive_window_width;
+++        working_proportional_gains.negative_window_width =
+++             fuel_pressure_governor_proportional_gains.negative_window_width;
+++        working_integral_gains.small_signal_gain =
+++             fuel_pressure_governor_integral_gains.small_signal_gain;
+++        working_integral_gains.positive_large_signal_gain =
+++             fuel_pressure_governor_integral_gains.positive_large_signal_gain;
+++        working_integral_gains.negative_large_signal_gain =
+++             fuel_pressure_governor_integral_gains.negative_large_signal_gain;
+++        working_integral_gains.positive_window_width =
+++             fuel_pressure_governor_integral_gains.positive_window_width;
+++        working_integral_gains.negative_window_width =
+++             fuel_pressure_governor_integral_gains.negative_window_width;
+++        working_derivative_gains.filter_coefficient =
+++             fuel_pressure_governor_derivative_gains.filter_coefficient;
+++        working_derivative_gains.small_signal_gain._0_2_ =
+++             fuel_pressure_governor_derivative_gains.small_signal_gain._0_2_;
+++        working_derivative_gains.small_signal_gain._2_2_ =
+++             fuel_pressure_governor_derivative_gains.small_signal_gain._2_2_;
+++        working_derivative_gains.positive_large_signal_gain._0_2_ =
+++             fuel_pressure_governor_derivative_gains.positive_large_signal_gain._0_2_;
+++        working_derivative_gains.positive_large_signal_gain._2_2_ =
+++             fuel_pressure_governor_derivative_gains.positive_large_signal_gain._2_2_;
+++        working_derivative_gains.negative_large_signal_gain._0_2_ =
+++             fuel_pressure_governor_derivative_gains.negative_large_signal_gain._0_2_;
+++        working_derivative_gains.negative_large_signal_gain._2_2_ =
+++             fuel_pressure_governor_derivative_gains.negative_large_signal_gain._2_2_;
+++        working_derivative_gains.positive_window_width =
+++             fuel_pressure_governor_derivative_gains.positive_window_width;
+++        register0x0000001c = ram0x004094d2 & 0xffff0000;
++         awStack_68[0] = fuel_pressure_sensor_filter_coefficient;
++       }
++-      iVar13 = (int)(short)((int)((uint)cam_sync_fuel_scale_gain_cal *
+++      iVar14 = (int)(short)((int)((uint)cam_sync_fuel_scale_gain_cal *
++                                  ((uint)fuel_demand_control_t_0040a57a.calculated -
++                                  (uint)fuel_demand_calculated_snapshot)) >> 10);
++-      iVar11 = (int)(short)cam_sync_fuel_scale_lower_limit_cal;
++-      if ((iVar11 <= iVar13) &&
++-         (iVar11 = iVar13, (short)cam_sync_fuel_scale_upper_limit_cal < iVar13)) {
++-        iVar11 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
+++      iVar12 = (int)(short)cam_sync_fuel_scale_lower_limit_cal;
+++      if ((iVar12 <= iVar14) &&
+++         (iVar12 = iVar14, (short)cam_sync_fuel_scale_upper_limit_cal < iVar14)) {
+++        iVar12 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
++       }
++       fuel_pressure_governor_accelerator_feed_forward =
++            cm848_signedFirstOrderFilter
++-                     (iVar11,&fuel_pressure_governor_accelerator_feed_forward_filter);
+++                     (iVar12,&fuel_pressure_governor_accelerator_feed_forward_filter);
++       wVar5 = fuel_pressure_setpoint;
++       fuel_demand_calculated_snapshot = fuel_demand_control_t_0040a57a.calculated;
++-      sVar6 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
+++      sVar10 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
++       fuel_pressure_feedback_previous = fuel_pressure_feedback_filtered;
++       fuel_pressure_sensor_filter.coefficient = awStack_68;
++-      sVar7 = cm848_signedFirstOrderFilter
+++      sVar6 = cm848_signedFirstOrderFilter
++                         ((int)(short)fuel_pressure_sensor,&fuel_pressure_sensor_filter);
++       fuel_pressure_governor_proportional_term =
++-           cm848_applyPiecewiseLinearGain(&local_64,(int)sVar6);
+++           cm848_applyPiecewiseLinearGain(&working_proportional_gains,(int)sVar10);
++       fuel_pressure_governor_integral_term =
++            cm848_integrateWithZoneGain
++-                     (&local_54,&fuel_pressure_governor_integrator,(int)sVar6,10000);
+++                     (&working_integral_gains,&fuel_pressure_governor_integrator,(int)sVar10,10000);
++       if ((engine_sync_rpm_phase_acquired_flag == 1) && (engine_sync_state_a == 5)) {
++         wVar4 = lookupTableInterpolation
++                           (&engine_sync_init_state_k,engine_rpm_measured,cam_sync_output_a_axis_cal,
++@@ -47083,23 +47139,23 @@ LAB_0004800c:
++         wVar3 = lookupTableInterpolation
++                           (&engine_sync_init_state_l,engine_rpm_measured,cam_sync_output_b_axis_cal,
++                            cam_sync_output_b_values_cal,2);
++-        iVar11 = (int)(short)fuel_metering_coil_temperature;
++-        iVar13 = (int)(short)cam_sync_speed_interp_lower_cal;
++-        wVar14 = wVar4;
++-        if ((iVar13 < iVar11) && (wVar14 = wVar3, iVar11 < (short)engine_sync_timing_max_cal)) {
++-          wVar14 = wVar4 + (short)(((iVar11 - iVar13) * ((int)(short)wVar3 - (int)(short)wVar4)) /
++-                                  ((short)engine_sync_timing_max_cal - iVar13));
+++        iVar12 = (int)(short)fuel_metering_coil_temperature;
+++        iVar14 = (int)(short)cam_sync_speed_interp_lower_cal;
+++        wVar15 = wVar4;
+++        if ((iVar14 < iVar12) && (wVar15 = wVar3, iVar12 < (short)engine_sync_timing_max_cal)) {
+++          wVar15 = wVar4 + (short)(((iVar12 - iVar14) * ((int)(short)wVar3 - (int)(short)wVar4)) /
+++                                  ((short)engine_sync_timing_max_cal - iVar14));
++         }
++         if (fuel_pressure_governor_feed_forward_enable == 1) {
++           fuel_pressure_governor_feed_forward =
++                cm848_dualAxisTableInterpolation
++                          (&engine_sync_init_state_n,engine_rpm_measured,cam_sync_speed_axis_cal,
++                           total_injection_quantity,cam_sync_timing_axis_cal,cam_sync_values_cal,4);
++-          wVar14 = wVar14 - fuel_pressure_governor_feed_forward;
+++          wVar15 = wVar15 - fuel_pressure_governor_feed_forward;
++         }
++-        if ((short)wVar14 < 0x1000) {
++-          fuel_pressure_governor_integral_term = wVar14;
++-          if ((short)wVar14 < -0xfff) {
+++        if ((short)wVar15 < 0x1000) {
+++          fuel_pressure_governor_integral_term = wVar15;
+++          if ((short)wVar15 < -0xfff) {
++             fuel_pressure_governor_integral_term = 0xf001;
++           }
++         }
++@@ -47109,12 +47165,12 @@ LAB_0004800c:
++         fuel_pressure_governor_integrator.integer_part = fuel_pressure_governor_integral_term;
++         engine_sync_signal_flag = 1;
++         engine_sync_rpm_phase_acquired_flag = 0;
++-        wVar14 = fuel_pressure_governor_integral_term;
+++        wVar15 = fuel_pressure_governor_integral_term;
++       }
++       fuel_pressure_governor_derivative_term =
++            cm848_calculateFilteredDerivative
++-                     (&local_44,&fuel_pressure_governor_derivative_filter,
++-                      (int)(short)(wVar5 - sVar7));
+++                     (&working_derivative_gains,&fuel_pressure_governor_derivative_filter,
+++                      (int)(short)(wVar5 - sVar6));
++       wVar5 = fuel_pressure_governor_proportional_term + fuel_pressure_governor_integral_term +
++               fuel_pressure_governor_derivative_term +
++               fuel_pressure_governor_accelerator_feed_forward;
++@@ -47135,59 +47191,59 @@ LAB_0004800c:
++                     (&engine_sync_init_state_l,engine_rpm_measured,cam_sync_output_b_axis_cal,
++                      cam_sync_output_b_values_cal,2);
++   if (engine_sync_state_a == 0) {
++-    iVar11 = 0xe;
+++    iVar12 = 0xe;
++ LAB_00048130:
++-    iVar11 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar11);
+++    iVar12 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar12);
++   }
++   else if (engine_sync_state_a == 1) {
++-    iVar11 = 4;
+++    iVar12 = 4;
++ LAB_00048114:
++-    iVar11 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar11);
+++    iVar12 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar12);
++   }
++   else if (engine_sync_state_a == 2) {
++-    iVar11 = (int)(short)intake_manifold_temperature_sensor_filtered;
+++    iVar12 = (int)(short)intake_manifold_temperature_sensor_filtered;
++   }
++   else {
++     if (engine_sync_state_a == 3) {
++-      iVar11 = 0x8a;
+++      iVar12 = 0x8a;
++       goto LAB_00048114;
++     }
++     if (engine_sync_state_a == 4) {
++-      iVar11 = 0x28;
+++      iVar12 = 0x28;
++       goto LAB_00048130;
++     }
++     if (engine_sync_state_a == 5) {
++-      iVar11 = (int)(short)fuel_metering_coil_temperature;
+++      iVar12 = (int)(short)fuel_metering_coil_temperature;
++     }
++     else {
++-      iVar11 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
++-      if ((short)intake_manifold_temperature_sensor_filtered < iVar11) {
++-        iVar11 = (int)(short)intake_manifold_temperature_sensor_filtered;
+++      iVar12 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
+++      if ((short)intake_manifold_temperature_sensor_filtered < iVar12) {
+++        iVar12 = (int)(short)intake_manifold_temperature_sensor_filtered;
++       }
++-      if ((short)battery_temperature_sensor_filtered < iVar11) {
++-        iVar11 = (int)(short)battery_temperature_sensor_filtered;
+++      if ((short)battery_temperature_sensor_filtered < iVar12) {
+++        iVar12 = (int)(short)battery_temperature_sensor_filtered;
++       }
++     }
++   }
++   if (engine_sync_state_b == 0) {
++-    iVar13 = 0xe;
+++    iVar14 = 0xe;
++ LAB_000481e4:
++-    unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar13);
+++    unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar14);
++   }
++   else if (engine_sync_state_b == 1) {
++-    iVar13 = 4;
+++    iVar14 = 4;
++ LAB_000481c8:
++-    unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar13);
+++    unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar14);
++   }
++   else {
++     unaff_r29 = intake_manifold_temperature_sensor_filtered;
++     if (engine_sync_state_b != 2) {
++       if (engine_sync_state_b == 3) {
++-        iVar13 = 0x8a;
+++        iVar14 = 0x8a;
++         goto LAB_000481c8;
++       }
++       if (engine_sync_state_b == 4) {
++-        iVar13 = 0x28;
+++        iVar14 = 0x28;
++         goto LAB_000481e4;
++       }
++       unaff_r29 = fuel_metering_coil_temperature;
++@@ -47203,13 +47259,13 @@ LAB_000481c8:
++       }
++     }
++   }
++-  iVar13 = (int)(short)cam_sync_speed_interp_lower_cal;
+++  iVar14 = (int)(short)cam_sync_speed_interp_lower_cal;
++   wVar5 = wVar4;
++-  if (((iVar13 < iVar11) &&
++-      (iVar10 = (int)(short)engine_sync_timing_max_cal, wVar5 = wVar3, iVar11 < iVar10)) &&
++-     (wVar5 = wVar4, iVar13 != iVar10)) {
++-    wVar5 = wVar4 + (short)(((iVar11 - iVar13) * ((int)(short)wVar3 - (int)(short)wVar4)) /
++-                           (iVar10 - iVar13));
+++  if (((iVar14 < iVar12) &&
+++      (iVar11 = (int)(short)engine_sync_timing_max_cal, wVar5 = wVar3, iVar12 < iVar11)) &&
+++     (wVar5 = wVar4, iVar14 != iVar11)) {
+++    wVar5 = wVar4 + (short)(((iVar12 - iVar14) * ((int)(short)wVar3 - (int)(short)wVar4)) /
+++                           (iVar11 - iVar14));
++   }
++ LAB_000489d0:
++   engine_sync_state_t_0040b87f.fuel_pressure_governor_demand = wVar5;
++@@ -47223,7 +47279,7 @@ LAB_000489d0:
++   if (((short)wVar4 < (short)engine_sync_state_t_0040b87f.fuel_pressure_governor_demand) ||
++      (wVar3 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand, wVar4 = wVar5,
++      (short)engine_sync_state_t_0040b87f.fuel_pressure_governor_demand < (short)wVar5)) {
++-    fuel_pressure_governor_integrator.integer_part = wVar14;
+++    fuel_pressure_governor_integrator.integer_part = wVar15;
++     wVar3 = wVar4;
++   }
++   if (engine_rpm_measured == 0) {
++@@ -47232,24 +47288,26 @@ LAB_000489d0:
++   wVar5 = lookupTableInterpolation
++                     (&engine_sync_init_state_a,wVar3,cam_sync_ref_output_axis_cal,
++                      cam_sync_ref_output_values_cal,3);
++-  sVar6 = cm848_applyPiecewiseLinearGain(&cam_sync_ref_prot_state_cal,(int)(short)wVar5);
+++  sVar6 = cm848_applyPiecewiseLinearGain
+++                    (&fuel_metering_uncompensated_duty_cycle_proportional_gains,(int)(short)wVar5);
++   fuel_metering_base_command_derivative_term =
++        cm848_calculateFilteredDerivative
++-                 (&cam_sync_ref_prot_handler_state_cal,&fuel_metering_base_command_derivative_filter
++-                  ,(int)sVar6);
++-  wVar14 = sVar6 + fuel_metering_base_command_derivative_term;
++-  sVar7 = cm848_signedFirstOrderFilter((int)(short)wVar5,&fuel_metering_reference_filter);
++-  sVar8 = cm848_signedFirstOrderFilter
+++                 (&fuel_metering_current_compensation_derivative_gains,
+++                  &fuel_metering_base_command_derivative_filter,(int)sVar6);
+++  wVar15 = sVar6 + fuel_metering_base_command_derivative_term;
+++  sVar6 = cm848_signedFirstOrderFilter((int)(short)wVar5,&fuel_metering_reference_filter);
+++  sVar7 = cm848_signedFirstOrderFilter
++                     ((int)(short)fuel_metering_feedback_input,&fuel_metering_feedback_filter);
++-  fuel_metering_feedback_error = sVar7 - sVar8;
+++  fuel_metering_feedback_error = sVar6 - sVar7;
++   if (fuel_metering_feedback_fault_code == 0) {
++-    sVar6 = cm848_applyPiecewiseLinearGain
++-                      (&cam_sync_speed_error_prot_state_cal,(int)(short)fuel_metering_feedback_error
++-                      );
+++    sVar8 = cm848_applyPiecewiseLinearGain
+++                      (&fuel_metering_current_compensation_proportional_gains,
+++                       (int)(short)fuel_metering_feedback_error);
++     sVar9 = cm848_integrateWithZoneGain
++-                      (&cam_sync_speed_error_prot_mode_cal,&fuel_metering_feedback_trim_integrator,
+++                      (&fuel_metering_current_compensation_integral_gains,
+++                       &fuel_metering_feedback_trim_integrator,
++                        (int)(short)fuel_metering_feedback_error,10000);
++-    if ((sVar7 == 0) && (engine_rpm_measured == 0)) {
+++    if ((sVar6 == 0) && (engine_rpm_measured == 0)) {
++       fuel_metering_feedback_trim_integrator.integer_part =
++            lookupTableInterpolation
++                      (&WORD_003fb660,unaff_r29,engine_sync_speed_scale_axis_cal,
++@@ -47265,19 +47323,19 @@ LAB_000489d0:
++       engine_sync_confirmed_flag = 0;
++       engine_sync_signal_flag = 1;
++     }
++-    iVar11 = (int)(short)(sVar6 + sVar9);
++-    if ((short)fuel_metering_feedback_trim_maximum_scaling_factor < iVar11) {
+++    iVar12 = (int)(short)(sVar8 + sVar9);
+++    if ((short)fuel_metering_feedback_trim_maximum_scaling_factor < iVar12) {
++       fuel_metering_feedback_trim_integrator.integer_part =
++-           fuel_metering_feedback_trim_maximum_scaling_factor - sVar6;
++-      iVar11 = (int)(short)fuel_metering_feedback_trim_maximum_scaling_factor;
+++           fuel_metering_feedback_trim_maximum_scaling_factor - sVar8;
+++      iVar12 = (int)(short)fuel_metering_feedback_trim_maximum_scaling_factor;
++     }
++-    else if (iVar11 < (short)fuel_metering_feedback_trim_minimum_scaling_factor) {
+++    else if (iVar12 < (short)fuel_metering_feedback_trim_minimum_scaling_factor) {
++       fuel_metering_feedback_trim_integrator.integer_part =
++-           fuel_metering_feedback_trim_minimum_scaling_factor - sVar6;
++-      iVar11 = (int)(short)fuel_metering_feedback_trim_minimum_scaling_factor;
+++           fuel_metering_feedback_trim_minimum_scaling_factor - sVar8;
+++      iVar12 = (int)(short)fuel_metering_feedback_trim_minimum_scaling_factor;
++     }
++     engine_sync_state_t_0040b87f.fuel_metering_command =
++-         (short)(iVar11 * (short)wVar14 >> 0xc) + wVar14;
+++         (short)(iVar12 * (short)wVar15 >> 0xc) + wVar15;
++     if ((engine_rpm_measured == 0) && (governor_zero_speed_count < governor_zero_speed_count_cal)) {
++       engine_sync_state_t_0040b87f.fuel_metering_command = engine_sync_zero_speed_output_cal;
++     }
++@@ -47289,16 +47347,16 @@ LAB_000489d0:
++   }
++   else {
++     fuel_metering_feedback_trim_integrator.integer_part = 0;
++-    engine_sync_state_t_0040b87f.fuel_metering_command = wVar14;
+++    engine_sync_state_t_0040b87f.fuel_metering_command = wVar15;
++   }
++   if (engine_sync_state_t_0040b87f.fuel_pressure_governor_mode ==
++       FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START) {
++-    pbVar12 = (byte *)&sensor_channel_config_t_00059336;
+++    pbVar13 = (byte *)&sensor_channel_config_t_00059336;
++   }
++   else {
++-    pbVar12 = &cam_sync_speed_filter_state_cal;
+++    pbVar13 = &cam_sync_speed_filter_state_cal;
++   }
++-  cam_sync_speed_filter_state.coefficient = (word *)pbVar12;
+++  cam_sync_speed_filter_state.coefficient = (word *)pbVar13;
++   wVar5 = lookupTableInterpolation
++                     (&engine_sync_init_state_j,ram0x0040b884,cam_sync_speed_output_scale_axis_cal,
++                      cam_sync_speed_output_scale_values_cal,0);
++@@ -47344,16 +47402,16 @@ LAB_000489d0:
++          cm848_signedFirstOrderFilter
++                    ((int)(short)engine_sync_state_t_0040b87f.fuel_metering_command,
++                     &fuel_metering_command_filter);
++-    if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar8) &&
+++    if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar7) &&
++        ((int)(uint)cam_speed_rate_threshold_cal < (int)(short)fuel_metering_command_filtered)) {
++       engine_sync_phase_counter = engine_sync_phase_counter + 1;
++       if (engine_sync_phase_counter_max_cal < engine_sync_phase_counter) {
++         engine_sync_phase_counter = engine_sync_phase_counter_max_cal;
++       }
++-      uVar15 = ((int)(short)fuel_metering_command_filtered *
++-                (uint)sensor_readings_t_0040baf2.battery_voltage * 5) / (uint)(sVar8 * 2);
++-      engine_sync_rpm_raw_working = (word)uVar15;
++-      dVar2 = exponentialMovingAverage(uVar15 & 0xffff,&cam_sync_rpm_filter_state);
+++      uVar16 = ((int)(short)fuel_metering_command_filtered *
+++                (uint)sensor_readings_t_0040baf2.battery_voltage * 5) / (uint)(sVar7 * 2);
+++      engine_sync_rpm_raw_working = (word)uVar16;
+++      dVar2 = exponentialMovingAverage(uVar16 & 0xffff,&cam_sync_rpm_filter_state);
++       fuel_metering_coil_resistance_filtered = (word)dVar2;
++     }
++     else {
++diff --git a/firmware/CM848_S90140.06_analysis/output/firmware_functions.hpp b/firmware/CM848_S90140.06_analysis/output/firmware_functions.hpp
++index a4b860d..c4c0029 100644
++--- a/firmware/CM848_S90140.06_analysis/output/firmware_functions.hpp
+++++ b/firmware/CM848_S90140.06_analysis/output/firmware_functions.hpp
++@@ -999,9 +999,9 @@ void cm848_calculatePilotInjectionPulseWidth(void);  // @ 0x00047140
++ void cm848_calculateAuxiliaryInjectionPulseWidth(int param_1);  // @ 0x00047394
++ void cm848_setMainQuantityAndPulseWidthLimits(void);  // @ 0x0004769c
++ void mpc555_clearTimingDataAndFilters(void);  // @ 0x00047784
++-int cm848_applyPiecewiseLinearGain(int *param_1,int param_2);  // @ 0x00047838
++-int cm848_integrateWithZoneGain(int param_1,int *param_2,int param_3,uint param_4);  // @ 0x00047978
++-int cm848_calculateFilteredDerivative(ushort *param_1,uint *param_2,int param_3);  // @ 0x00047a88
+++sword cm848_applyPiecewiseLinearGain(piecewise_linear_gain_t *gain,int input);  // @ 0x00047838
+++sword cm848_integrateWithZoneGain (piecewise_linear_gain_t *gain,q16_fixed_point_t *accumulator,int error,dword step);  // @ 0x00047978
+++sword cm848_calculateFilteredDerivative (derivative_gain_t *gain,q16_fixed_point_t *filter_state,int input);  // @ 0x00047a88
++ void cm848_calculateFuelMeteringCommand(void);  // @ 0x00047bd0
++ void cm848_countFuelPressureGovernorStartRevolutions(void);  // @ 0x00048fa0
++ void cm848_resetEngineSyncState(void);  // @ 0x00049004
++diff --git a/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp b/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
++index 609067e..cca66cd 100644
++--- a/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
+++++ b/firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp
++@@ -3835,27 +3835,13 @@ extern word cam_sync_speed_output_scale_axis_cal[6];  // 0x00409472
++ extern word cam_sync_speed_output_scale_values_cal[6];  // 0x0040947e
++ extern word engine_sync_speed_scale_axis_cal[6];  // 0x0040948a
++ extern word engine_sync_speed_scale_values_cal[6];  // 0x00409496
++-extern dword fuel_pressure_governor_proportional_gain_small_signal;  // 0x004094a2
++-extern dword fuel_pressure_governor_proportional_gain_positive_large_signal;  // 0x004094a6
++-extern dword fuel_pressure_governor_proportional_gain_negative_large_signal;  // 0x004094aa
++-extern dword engine_sync_prot_scale_a_cal;  // 0x004094ae
++-extern dword fuel_pressure_governor_integral_gain_small_signal;  // 0x004094b2
++-extern dword fuel_pressure_governor_integral_gain_positive_large_signal;  // 0x004094b6
++-extern dword fuel_pressure_governor_integral_gain_negative_large_signal;  // 0x004094ba
++-extern dword engine_sync_prot_scale_b_cal;  // 0x004094be
++-extern word engine_sync_prot_gain_cal;  // 0x004094c2
++-extern word fuel_pressure_governor_derivative_gain_small_signal;  // 0x004094c4
++-extern word injection_timing_scale_cyl4_lo_cal;  // 0x004094c6
++-extern word fuel_pressure_governor_derivative_gain_positive_large_signal;  // 0x004094c8
++-extern word injection_timing_scale_cyl5_lo_cal;  // 0x004094ca
++-extern word fuel_pressure_governor_derivative_gain_negative_large_signal;  // 0x004094cc
++-extern word injection_timing_scale_cyl6_lo_cal;  // 0x004094ce
++-extern word engine_sync_prot_limit_cal;  // 0x004094d0
++-extern word engine_sync_prot_gain_b_cal;  // 0x004094d2
++-extern byte cam_sync_speed_error_prot_state_cal;  // 0x004094d4
++-extern byte cam_sync_speed_error_prot_mode_cal;  // 0x004094e4
++-extern byte cam_sync_ref_prot_state_cal;  // 0x004094f4
++-extern byte cam_sync_ref_prot_handler_state_cal;  // 0x00409504
+++extern piecewise_linear_gain_t fuel_pressure_governor_proportional_gains;  // 0x004094a2
+++extern piecewise_linear_gain_t fuel_pressure_governor_integral_gains;  // 0x004094b2
+++extern derivative_gain_t fuel_pressure_governor_derivative_gains;  // 0x004094c2
+++extern piecewise_linear_gain_t fuel_metering_current_compensation_proportional_gains;  // 0x004094d4
+++extern piecewise_linear_gain_t fuel_metering_current_compensation_integral_gains;  // 0x004094e4
+++extern piecewise_linear_gain_t fuel_metering_uncompensated_duty_cycle_proportional_gains;  // 0x004094f4
+++extern derivative_gain_t fuel_metering_current_compensation_derivative_gains;  // 0x00409504
++ extern word fuel_pressure_sensor_too_high_threshold;  // 0x00409516
++ extern word fuel_metering_feedback_circuit_high_threshold;  // 0x00409518
++ extern word fuel_pressure_diagnostic_set_debounce_limit;  // 0x0040951a
++diff --git a/firmware/CM848_S90140.06_analysis/output/firmware_types.hpp b/firmware/CM848_S90140.06_analysis/output/firmware_types.hpp
++index f34427b..1805866 100644
++--- a/firmware/CM848_S90140.06_analysis/output/firmware_types.hpp
+++++ b/firmware/CM848_S90140.06_analysis/output/firmware_types.hpp
++@@ -1204,6 +1204,8 @@ typedef struct end_of_line_test_settings_t end_of_line_test_settings_t;
++ typedef struct algorithm_enable_flags_12_t algorithm_enable_flags_12_t;
++ typedef struct algorithm_enable_flags_18_t algorithm_enable_flags_18_t;
++ typedef struct algorithm_enable_flags_41_t algorithm_enable_flags_41_t;
+++typedef struct piecewise_linear_gain_t piecewise_linear_gain_t;
+++typedef struct derivative_gain_t derivative_gain_t;
++ 
++ struct j1939_rx_msg_t {
++     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
++@@ -2709,3 +2711,20 @@ struct algorithm_enable_flags_41_t {
++     uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m name. No reader in either bank (sweep of both banks). Set in this calibration (0x7ca6). */
++     uint16_t misfire_monitor_enable : 1;  /* bit 15: e2m Misfire_Monitor_Enable. cm848_initializeMisfireMonitor (lhz at 0x532bd8). Code agrees (wave 10). Clear in this calibration (0x7ca6). */
++ };
+++
+++struct piecewise_linear_gain_t {
+++    uint32_t small_signal_gain;  /* Gain while the input is inside the window (Q16: output = gain x input >> 16; units per instance) */
+++    uint32_t positive_large_signal_gain;  /* Gain above positive_window_width: the proportional step applies it to the part above; the integral step uses it for the whole error */
+++    uint32_t negative_large_signal_gain;  /* Gain below negative_window_width (the same way as the positive one) */
+++    int16_t positive_window_width;  /* Upper breakpoint of the window (>= 0; in the input's units) */
+++    int16_t negative_window_width;  /* Lower breakpoint of the window (<= 0) */
+++};
+++
+++struct derivative_gain_t {
+++    uint16_t filter_coefficient;  /* Weight of the previous state in 1/65536 (e2m Derivative_Gain_Constant): the state moves toward gain x input by 1 - coefficient / 65536 per call */
+++    uint32_t small_signal_gain;  /* Gain while the input is inside the window */
+++    uint32_t positive_large_signal_gain;  /* Gain while the input is above positive_window_width */
+++    uint32_t negative_large_signal_gain;  /* Gain while the input is below negative_window_width */
+++    int16_t positive_window_width;  /* Upper breakpoint of the window (>= 0) */
+++    int16_t negative_window_width;  /* Lower breakpoint of the window */
+++};
++diff --git a/firmware/CM848_S90140.06_analysis/output/function_definitions.csv b/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
++index e2f2b14..ca3462e 100644
++--- a/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
+++++ b/firmware/CM848_S90140.06_analysis/output/function_definitions.csv
++@@ -422,4 +422,16 @@ function_address,function_name,param_index,name,type,comment
++ 0x0050daac,cm848_transitionEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the pedal fault snapshot is saved when it is not 6
++ 0x00014508,cm848_selectChiSourceCode,return,,COMBUSTION_CHI_SOURCE,1 when the air density chi is not smaller than the coolant temperature chi - else 3
++ 0x00014508,cm848_selectChiSourceCode,0,air_density_chi_hundredths,int32_t,
++-0x00014508,cm848_selectChiSourceCode,1,coolant_temperature_chi_hundredths,int32_t,
++\ No newline at end of file
+++0x00014508,cm848_selectChiSourceCode,1,coolant_temperature_chi_hundredths,int32_t,
+++0x00047838,cm848_applyPiecewiseLinearGain,return,,sword,Gain x input >> 16 - the large-signal gains apply to the part past the window - clamped to +/-4095
+++0x00047838,cm848_applyPiecewiseLinearGain,0,gain,piecewise_linear_gain_t *,Gain record (r3)
+++0x00047838,cm848_applyPiecewiseLinearGain,1,input,int32_t,Signed input (r4): an error or a command
+++0x00047978,cm848_integrateWithZoneGain,return,,sword,Integer part of the accumulator after the step - clamped to +/-4095
+++0x00047978,cm848_integrateWithZoneGain,0,gain,piecewise_linear_gain_t *,Gain record (r3): the error's zone picks the gain
+++0x00047978,cm848_integrateWithZoneGain,1,accumulator,q16_fixed_point_t *,Q16.16 integrator (r4) - updated in place
+++0x00047978,cm848_integrateWithZoneGain,2,error,int32_t,Signed error (r5)
+++0x00047978,cm848_integrateWithZoneGain,3,step,uint,Step factor (r6) - its low 16 bits are used (10000 at both calls)
+++0x00047a88,cm848_calculateFilteredDerivative,return,,sword,Integer part of gain x input minus the state - clamped to +/-4095
+++0x00047a88,cm848_calculateFilteredDerivative,0,gain,derivative_gain_t *,Derivative gain record (r3)
+++0x00047a88,cm848_calculateFilteredDerivative,1,filter_state,q16_fixed_point_t *,Q16.16 filter state (r4) - updated in place
+++0x00047a88,cm848_calculateFilteredDerivative,2,input,int32_t,Signed input (r5)
++diff --git a/firmware/CM848_S90140.06_analysis/output/function_renames.csv b/firmware/CM848_S90140.06_analysis/output/function_renames.csv
++index 1a20a5c..64889b6 100644
++--- a/firmware/CM848_S90140.06_analysis/output/function_renames.csv
+++++ b/firmware/CM848_S90140.06_analysis/output/function_renames.csv
++@@ -1363,7 +1363,7 @@ address,name
++ 0x00047838,cm848_applyPiecewiseLinearGain,Piecewise-linear gain used by the fuel pressure governor: x times gain 0 between two breakpoints (shorts at +12 upper / +14 lower), with gain 1 (+4) above the upper and gain 2 (+8) below the lower breakpoint for the part past it; result >> 16, clamped to +/-4095. Was cm848_protectionRecoveryHandler
++ 0x00047978,cm848_integrateWithZoneGain,Integral term step: adds gain x error x step >> 16 to a Q16.16 accumulator (param 2), with the gain picked by the error's zone (+4 above the short at +12, +0 between, +8 below the short at +14); clamps the integer part to +/-4095 and returns it. Was cm848_protectionModeSelector
++ 0x00047a88,cm848_calculateFilteredDerivative,Filtered derivative term: returns the integer part of gain x input - state (clamped to +/-4095), then moves the Q16.16 state (param 2) toward gain x input by 1 - coefficient / 65536 (coefficient = first word). The gain is picked by the input's zone (+6 above the short at +14, +10 below the short at +16, +2 between). Was cm848_protectionStateHandler
++-0x00047bd0,cm848_calculateFuelMeteringCommand,Fuel metering command controller (cm848_phase_group_b_processing; output channel assignment table entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is the fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override (engine_speed_override_enable_cal) and a cranking value return early; otherwise the governor mode in engine_sync_state_t_0040b87f.fuel_pressure_governor_mode picks fuel_pressure_governor_demand - modes 2 / 4 sum the PID terms on fuel_pressure_setpoint - fuel_pressure_feedback_filtered (fuel_pressure_governor_proportional_term / _integral_term / _derivative_term) plus fuel_pressure_governor_accelerator_feed_forward and an rpm table; modes 8 / 0x10 (switch_input_state_bits[0] bit 0 clear and key_off_shutdown_inhibit_flag 0) / 0x20 (fuel_pressure_governor_disable set) / 0x40 (faults 304 / 305 / 377 / 378) use the fixed fuel_pressure_governor_*_command values; mode 1 is the low-rpm mode the others fall back to. The demand is clamped to a lower limit and an rpm table (the integrator is put back when it is outside them). (2) a table turns the clamped demand into a feedback target; the base command is that target through a piecewise-linear gain plus fuel_metering_base_command_derivative_term; a PI trim on fuel_metering_feedback_error (target - fuel_metering_feedback_input) scales it: fuel_metering_command = base + trim x base / 4096 (no trim while fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Was cm848_calculateEngineTimingOffset Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
+++0x00047bd0,cm848_calculateFuelMeteringCommand,Fuel metering command controller (cm848_phase_group_b_processing; output channel assignment table entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is the fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override (engine_speed_override_enable_cal) and a cranking value return early; otherwise the governor mode in engine_sync_state_t_0040b87f.fuel_pressure_governor_mode picks fuel_pressure_governor_demand - modes 2 / 4 sum the PID terms on fuel_pressure_setpoint - fuel_pressure_feedback_filtered (fuel_pressure_governor_proportional_term / _integral_term / _derivative_term) plus fuel_pressure_governor_accelerator_feed_forward and an rpm table; modes 8 / 0x10 (switch_input_state_bits[0] bit 0 clear and key_off_shutdown_inhibit_flag 0) / 0x20 (fuel_pressure_governor_disable set) / 0x40 (faults 304 / 305 / 377 / 378) use the fixed fuel_pressure_governor_*_command values; mode 1 is the low-rpm mode the others fall back to. The demand is clamped to a lower limit and an rpm table (the integrator is put back when it is outside them). (2) a table turns the clamped demand into a feedback target; the base command is that target through a piecewise-linear gain plus fuel_metering_base_command_derivative_term; a PI trim on fuel_metering_feedback_error (target - fuel_metering_feedback_input) scales it: fuel_metering_command = base + trim x base / 4096 (no trim while fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Gain records (stage 8b): the P / I / D terms use fuel_pressure_governor_proportional_gains / fuel_pressure_governor_integral_gains / fuel_pressure_governor_derivative_gains through working copies on the stack (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is 0); the base command uses fuel_metering_uncompensated_duty_cycle_proportional_gains and fuel_metering_current_compensation_derivative_gains; the trim uses fuel_metering_current_compensation_proportional_gains and fuel_metering_current_compensation_integral_gains. The copy of the derivative record's negative window is one 4-byte store at offset 16 that runs 2 bytes past the 18-byte record - so Ghidra prints a raw stack or register name for its destination. Was cm848_calculateEngineTimingOffset Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
++ 0x00048fa0,cm848_countFuelPressureGovernorStartRevolutions,Injection-angle state 1 task: while fuel_pressure_governor_counting_start_revolutions is set it counts cylinder events and adds 2 to fuel_pressure_governor_start_revolutions per full cycle (cylinder_event_count_max events); otherwise it clears the count. Was cm848_updateSyncOffsetCounter
++ 0x00049004,cm848_resetEngineSyncState,Resets the fuel pressure governor / fuel metering state (cm848_calculateFuelMeteringCommand): command, demand, governor mode 1, counters, the table interpolation states and filters. Of the four Q16.16 PID states it clears fuel_pressure_governor_integrator, fuel_metering_feedback_trim_integrator (twice) and fuel_pressure_governor_derivative_filter; fuel_metering_base_command_derivative_filter (0x3fb676) is never cleared because the fourth store pair repeats 0x3fb66e
++ 0x0004922c,cm848_filterEngineSensorValue
++diff --git a/firmware/CM848_S90140.06_analysis/output/global_variables.csv b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
++index 0ff2d5e..79936b6 100644
++--- a/firmware/CM848_S90140.06_analysis/output/global_variables.csv
+++++ b/firmware/CM848_S90140.06_analysis/output/global_variables.csv
++@@ -4189,29 +4189,13 @@ address,name,type,comment
++ 0x0040947e,cam_sync_speed_output_scale_values_cal,word[6],
++ 0x0040948a,engine_sync_speed_scale_axis_cal,word[6],
++ 0x00409496,engine_sync_speed_scale_values_cal,word[6],
++-0x004094a2,fuel_pressure_governor_proportional_gain_small_signal,dword,e2m 8014 +0 HPCR_Propgain_Small_Signal 'Fuel pressure governor P-Component small signal gain' (address from the ECU's parameter ID table) (%/MPa, 1/131072 per count; 65537 = 0.5 here): dword, gain 0 of the fuel pressure governor's proportional term. cm848_calculateFuelMeteringCommand builds the gain block of cm848_applyPiecewiseLinearGain from it (multiplied by the engine speed curve cam_sync_cyl1_timing_axis_a_cal / _values_a_cal, e2m 8005 / 8008 HPCR_SF_Propcomp_Small_Signal_*, >> 12 while cam_timing_alt_mode_enable_cal, e2m HPCR_Governor_Mode, is 0 as in the dump; used directly otherwise); the helper applies it to fuel_pressure_setpoint - fuel_pressure_feedback_filtered between the window breakpoints (+-10 MPa here, e2m 8014 +C / +E at 0x4094ae). ROM constant copied to RAM, no _cal. (was injection_timing_scale_cyl1_a_cal)
++-0x004094a6,fuel_pressure_governor_proportional_gain_positive_large_signal,dword,e2m 8014 +4 HPCR_Propgain_Positive_Large_Signal 'Fuel pressure governor P-Component positive large signal gain' (address from the ECU's parameter ID table) (%/MPa, 1/131072 per count; 13107 = 0.1 here): dword, gain 1 of the fuel pressure governor's proportional term. cm848_calculateFuelMeteringCommand builds it into the gain block of cm848_applyPiecewiseLinearGain (multiplied by the engine speed curve cam_sync_cyl2_timing_axis_a_cal / _values_a_cal, e2m 8006 / 8009 HPCR_SF_Propcomp_Positive_Large_Signal_*, >> 12 while cam_timing_alt_mode_enable_cal is 0); the helper applies it to the part of fuel_pressure_setpoint - fuel_pressure_feedback_filtered above the positive window width. ROM constant copied to RAM, no _cal. (was injection_timing_scale_cyl2_a_cal)
++-0x004094aa,fuel_pressure_governor_proportional_gain_negative_large_signal,dword,e2m 8014 +8 HPCR_Propgain_Negative_Large_Signal 'Fuel pressure governor P-Component negative large signal gain' (address from the ECU's parameter ID table) (%/MPa, 1/131072 per count; 78644 = 0.6 here): dword, gain 2 of the fuel pressure governor's proportional term. cm848_calculateFuelMeteringCommand builds it into the gain block of cm848_applyPiecewiseLinearGain (multiplied by the engine speed curve cam_sync_cyl3_timing_axis_a_cal / _values_a_cal, e2m 8007 / 800A HPCR_SF_Propcomp_Negative_Large_Signal_*, >> 12 while cam_timing_alt_mode_enable_cal is 0); the helper applies it to the part of fuel_pressure_setpoint - fuel_pressure_feedback_filtered below the negative window width. ROM constant copied to RAM, no _cal. (was injection_timing_scale_cyl3_a_cal)
++-0x004094ae,engine_sync_prot_scale_a_cal,dword,
++-0x004094b0,engine_sync_prot_scale_a_cal+2,,
++-0x004094b2,fuel_pressure_governor_integral_gain_small_signal,dword,e2m 8015 +0 HPCR_Integral_Gain_Small_Signal (%/MPa/SEC, 0.00011641 per count, 4 bytes): 'Fuel pressure governor I-Component small signal gain'. Integral gain of the fuel (rail) pressure governor while the pressure error is inside the zone window: cm848_calculateFuelMeteringCommand builds the gain record (&local_54: this dword, +4 fuel_pressure_governor_integral_gain_positive_large_signal, +8 fuel_pressure_governor_integral_gain_negative_large_signal, +12 / +14 the two window shorts at 0x4094be / 0x4094c0 = e2m +C Positive_Window_Width / +E Negative_Window_Width, +205 / -204 counts of 0.0488 MPa = about +-10 MPa) and cm848_integrateWithZoneGain adds gain x error x step >> 16 to the integrator fuel_pressure_governor_integrator, with this gain while the error (fuel_pressure_setpoint minus fuel_pressure_feedback_filtered) is between the windows. With cam_timing_alt_mode_enable_cal 0 (as here) the word is first multiplied by an rpm table value (>> 12). 8590 = 1.0 here (was injection_timing_scale_cyl4_a_cal)
++-0x004094b6,fuel_pressure_governor_integral_gain_positive_large_signal,dword,e2m 8015 +4 HPCR_Integral_Gain_Positive_Large_Signal (%/MPa/SEC, 0.00011641 per count, 4 bytes): 'Fuel pressure governor I-Component positive large signal gain'. Integral gain of the fuel pressure governor used by cm848_integrateWithZoneGain when the error (fuel_pressure_setpoint minus fuel_pressure_feedback_filtered) is above the positive window (+205 counts = about 10 MPa below the setpoint; e2m +C Positive_Window_Width at 0x4094be); see fuel_pressure_governor_integral_gain_small_signal. 5154 = 0.6 here (was injection_timing_scale_cyl5_a_cal)
++-0x004094ba,fuel_pressure_governor_integral_gain_negative_large_signal,dword,e2m 8015 +8 HPCR_Integral_Gain_Negative_Large_Signal (%/MPa/SEC, 0.00011641 per count, 4 bytes): 'Fuel pressure governor I-Component negative large signal gain'. Integral gain of the fuel pressure governor used by cm848_integrateWithZoneGain when the error (fuel_pressure_setpoint minus fuel_pressure_feedback_filtered) is below the negative window (-204 counts = about 10 MPa above the setpoint; e2m +E Negative_Window_Width at 0x4094c0); see fuel_pressure_governor_integral_gain_small_signal. 8590 = 1.0 here (was injection_timing_scale_cyl6_a_cal)
++-0x004094be,engine_sync_prot_scale_b_cal,dword,
++-0x004094c0,engine_sync_prot_scale_b_cal+2,,
++-0x004094c2,engine_sync_prot_gain_cal,word,
++-0x004094c4,fuel_pressure_governor_derivative_gain_small_signal,word,e2m 80EF +2 HPCR_Derivative_Gain_Small_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component small signal gain' (address from the ECU's parameter ID table) (4 bytes, 7.63e-8 per count; 65537 = 0.005 here): a derivative gain of the fuel pressure governor PID that cm848_calculateFuelMeteringCommand builds from the block at 0x4094c2 (gain constant +0, three dword gains +2 / +6 / +A, window widths +E / +10), scaled with an engine speed lookup unless cam_timing_alt_mode_enable_cal is set. Read as one dword (lwz at the block base + 2). Never written (RAM-initialized constant, so no _cal) (was injection_timing_scale_cyl4_hi_cal)
++-0x004094c6,injection_timing_scale_cyl4_lo_cal,word,
++-0x004094c8,fuel_pressure_governor_derivative_gain_positive_large_signal,word,e2m 80EF +6 HPCR_Derivative_Gain_Positive_Large_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component positive large signal gain' (address from the ECU's parameter ID table) (4 bytes, 7.63e-8 per count; 262147 = 0.02 here): a derivative gain of the fuel pressure governor PID that cm848_calculateFuelMeteringCommand builds from the block at 0x4094c2 (gain constant +0, three dword gains +2 / +6 / +A, window widths +E / +10), scaled with an engine speed lookup unless cam_timing_alt_mode_enable_cal is set. Read as one dword (lwz at the block base + 6). Never written (RAM-initialized constant, so no _cal) (was injection_timing_scale_cyl5_hi_cal)
++-0x004094ca,injection_timing_scale_cyl5_lo_cal,word,
++-0x004094cc,fuel_pressure_governor_derivative_gain_negative_large_signal,word,e2m 80EF +A HPCR_Derivative_Gain_Negative_Large_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component negative large signal gain' (address from the ECU's parameter ID table) (4 bytes, 7.63e-8 per count; 262147 = 0.02 here): a derivative gain of the fuel pressure governor PID that cm848_calculateFuelMeteringCommand builds from the block at 0x4094c2 (gain constant +0, three dword gains +2 / +6 / +A, window widths +E / +10), scaled with an engine speed lookup unless cam_timing_alt_mode_enable_cal is set. Read as one dword (lwz at the block base + A). Never written (RAM-initialized constant, so no _cal) (was injection_timing_scale_cyl6_hi_cal)
++-0x004094ce,injection_timing_scale_cyl6_lo_cal,word,
++-0x004094d0,engine_sync_prot_limit_cal,word,
++-0x004094d2,engine_sync_prot_gain_b_cal,word,
++-0x004094d4,cam_sync_speed_error_prot_state_cal,byte,
++-0x004094e4,cam_sync_speed_error_prot_mode_cal,byte,
++-0x004094f4,cam_sync_ref_prot_state_cal,byte,
++-0x00409504,cam_sync_ref_prot_handler_state_cal,byte,
+++0x004094a2,fuel_pressure_governor_proportional_gains,piecewise_linear_gain_t,e2m 8014 HPCR_Propgain_* 'Fuel pressure governor P-component' (addresses from the ECU's parameter ID table): small / positive large / negative large signal gains (%/MPa, 7.6293e-6 per count; 65537 / 13107 / 78644 here = 0.5 / 0.1 / 0.6) and the window widths (MPa, 0.0488 per count; 205 / -204 here = +10.0 / -10.0). cm848_calculateFuelMeteringCommand copies the P / I / D records to the stack (each gain and coefficient scaled by its own lookup table while cam_timing_alt_mode_enable_cal is 0; the window widths unscaled); cm848_applyPiecewiseLinearGain applies it to the pressure error (fuel_pressure_setpoint - fuel_pressure_feedback_filtered) for fuel_pressure_governor_proportional_term. (was fuel_pressure_governor_proportional_gain_small_signal, fuel_pressure_governor_proportional_gain_positive_large_signal, fuel_pressure_governor_proportional_gain_negative_large_signal, engine_sync_prot_scale_a_cal)
+++0x004094b2,fuel_pressure_governor_integral_gains,piecewise_linear_gain_t,e2m 8015 HPCR_Integral_Gain_* 'Fuel pressure governor Integral-component': small / positive large / negative large signal gains (%/MPa/SEC, 0.00011641 per count; 8590 / 5154 / 8590 here = 1.0 / 0.6 / 1.0) and the window widths (MPa, 0.0488 per count; 205 / -204 here). After the stack copy (see fuel_pressure_governor_proportional_gains) cm848_integrateWithZoneGain integrates the pressure error into fuel_pressure_governor_integrator (step 10000) for fuel_pressure_governor_integral_term. (was fuel_pressure_governor_integral_gain_small_signal, fuel_pressure_governor_integral_gain_positive_large_signal, fuel_pressure_governor_integral_gain_negative_large_signal, engine_sync_prot_scale_b_cal)
+++0x004094c2,fuel_pressure_governor_derivative_gains,derivative_gain_t,e2m 80EF HPCR_Derivative_Gain_* 'Fuel pressure governor D-Component': the filter coefficient (Derivative_Gain_Constant, 1/65536; 43713 here = 0.667), small / positive large / negative large signal gains (%/MPa/SEC, 7.6293e-8 per count; 65537 / 262147 / 262147 here = 0.005 / 0.02 / 0.02) and the window widths (MPa, 0.0488 per count; 205 / -204 here). After the stack copy (see fuel_pressure_governor_proportional_gains) cm848_calculateFilteredDerivative computes fuel_pressure_governor_derivative_term from the setpoint minus the filtered sensor, with fuel_pressure_governor_derivative_filter as its state. The 4-byte gains used to be word rows over their high halves plus `_lo_cal` rows over the low halves. (was engine_sync_prot_gain_cal, fuel_pressure_governor_derivative_gain_small_signal, injection_timing_scale_cyl4_lo_cal, fuel_pressure_governor_derivative_gain_positive_large_signal, injection_timing_scale_cyl5_lo_cal, fuel_pressure_governor_derivative_gain_negative_large_signal, injection_timing_scale_cyl6_lo_cal, engine_sync_prot_limit_cal, engine_sync_prot_gain_b_cal)
+++0x004094d4,fuel_metering_current_compensation_proportional_gains,piecewise_linear_gain_t,e2m 8016 HPCR_Currentcomp_Propgain_* 'Current compensation governor P-component': small / positive large / negative large signal gains (CNTS/mA, 3.0517e-9 per count; all 0 here, so the proportional part of the current compensation is off) and the window widths (mA, 1.2218 per count; 409 / 0 here = +500 / 0 mA). cm848_calculateFuelMeteringCommand applies it with cm848_applyPiecewiseLinearGain to fuel_metering_feedback_error (commanded minus measured current, mA) while fuel_metering_feedback_fault_code is 0. (was cam_sync_speed_error_prot_state_cal)
+++0x004094e4,fuel_metering_current_compensation_integral_gains,piecewise_linear_gain_t,e2m 8017 HPCR_Currentcomp_Integral_* 'Current compensation governor Integral-component': small / positive large / negative large signal gains (CNTS/mA/SEC, 4.6566e-8 per count; 21475 / 2147 / 2147 here = 0.001 / 0.0001 / 0.0001) and the window widths (mA, 1.2218 per count; 3274 / -3272 here = +4000 / -3998 mA). cm848_integrateWithZoneGain integrates fuel_metering_feedback_error into fuel_metering_feedback_trim_integrator (step 10000). (was cam_sync_speed_error_prot_mode_cal)
+++0x004094f4,fuel_metering_uncompensated_duty_cycle_proportional_gains,piecewise_linear_gain_t,e2m 8018 HPCR_Propcomp_Dutycycle_* 'gain for P-component non compensated duty cycle': small / positive large / negative large signal gains (%/mA, 3.05175e-7 per count; 95027 / 52429 / 83231 here = 0.029 / 0.016 / 0.0254) and the window widths (mA, 1.2218 per count; 3274 / -3272 here). cm848_calculateFuelMeteringCommand applies it with cm848_applyPiecewiseLinearGain to the commanded current (mA, the output of the cam_sync_ref_output_values_cal table) for the uncompensated duty cycle. (was cam_sync_ref_prot_state_cal)
+++0x00409504,fuel_metering_current_compensation_derivative_gains,derivative_gain_t,e2m 80F2 HPCR_Current_Comp_Derivative_Gain_* / HPCR_Curr_Comp_Der_Gain_* 'Current compensation derivative': the filter coefficient (1/65536), small / positive large / negative large signal gains (%/SEC, 1.52587e-5 per count) and the window widths (%, 0.0244 per count); every field is 0 here, so this derivative term is off. cm848_calculateFilteredDerivative applies it to the uncompensated duty cycle for fuel_metering_base_command_derivative_term (state fuel_metering_base_command_derivative_filter). (was cam_sync_ref_prot_handler_state_cal)
++ 0x00409516,fuel_pressure_sensor_too_high_threshold,word,3688 counts (180 MPa; the sensor full scale is 3689). RAM copy of ROM at 0x4095xx, outside the EEPROM mirror 0x3fd482-0x3feec1, so no _cal. Only the diagnostics read it. (was cam_sync_position_upper_threshold_cal)
++ 0x00409518,fuel_metering_feedback_circuit_high_threshold,word,ROM copy (0x409518 is not in the EEPROM range, so no _cal), value 4092; fuel_metering_feedback_input above it is the high condition. (was engine_sync_fault_word_threshold_hi_cal)
++ 0x0040951a,fuel_pressure_diagnostic_set_debounce_limit,word,150 in the dump; trip value of the set debounce count. RAM copy of ROM: no _cal. (was engine_sync_counter_b_max_cal)
++@@ -4259,8 +4243,8 @@ address,name,type,comment
++ 0x0040980a,fuel_pressure_setpoint_base_map_grid,word[304],Lookup table - 2-D grid: 16 rows of 19 values (z[(y - 1) x 19 + x - 1] / no header) - read by cm848_calculateFuelPressureSetpoint
++ 0x00409a8a,injector_diagnostic_bits_fast_decay_debounce_limit,word,Debounce limit of injector_diagnostic_bits_fast_decay (e2m 80B9, the bits byte that was letter d): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_d_debounce_limit) | earlier note: ROM copy (65535), not EEPROM: limit passed to cm848_evaluateInjectorDiagnosticFault for class d; zero-extending lhz load at 0x4ad68, so the counter never exceeds it. (was engine_pos_fault_eval_threshold_cal)
++ 0x00409a8c,injector_diagnostic_bits_open_circuit_debounce_limit,word,Debounce limit of injector_diagnostic_bits_open_circuit (e2m 80B9, the bits byte that was letter a): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_a_debounce_limit) | earlier note: ROM copy (2): limit for class a. (was prot_fault_status_a_threshold_cal)
++-0x00409a8e,injector_diagnostic_bits_short_to_ground_debounce_limit,word,Debounce limit of injector_diagnostic_bits_short_to_ground (e2m 80B9, the bits byte that was letter b): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_b_debounce_limit) | earlier note: ROM copy (1): limit for class b. (was prot_fault_status_b_threshold_cal)
++-0x00409a90,injector_diagnostic_bits_short_to_battery_debounce_limit,word,Debounce limit of injector_diagnostic_bits_short_to_battery (e2m 80B9, the bits byte that was letter c): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_c_debounce_limit) | earlier note: ROM copy (1): limit for class c. (was prot_fault_status_c_threshold_cal)
+++0x00409a8e,injector_diagnostic_bits_short_to_ground_debounce_limit,word,Debounce limit of injector_diagnostic_bits_short_to_ground (e2m 80B9, the bits byte that was letter b): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_b_debounce_limit) | earlier note: ROM copy (1): limit for class b. (was prot_fault_status_b_threshold_cal)
+++0x00409a90,injector_diagnostic_bits_short_to_battery_debounce_limit,word,Debounce limit of injector_diagnostic_bits_short_to_battery (e2m 80B9, the bits byte that was letter c): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_c_debounce_limit) | earlier note: ROM copy (1): limit for class c. (was prot_fault_status_c_threshold_cal)
++ 0x00409e40,injection_delivery_mode,word,
++ 0x00409e42,injection_timing_main_combination_mode,word,cm848_calculateMainInjectionTiming: 0 = sum (clamped +/-1024), 1 = highest, other = lowest of the components (1 in the dump, so highest); the address is outside the EEPROM range 0x3fd482-0x3feec1, so no _cal. (was injection_timing_select_mode_cal)
++ 0x00409e44,injection_timing_main_governor_limit_minimum,word,The main timing is raised to this (68 counts = 8 deg, source 23) while governor_speed_limit_active_flag is set, and cm848_calculatePilotInjectionTiming tests main timing = this to switch the pilot offset to its governor-limit floor; the address is outside the EEPROM range, so no _cal. (was injection_timing_demand_lower_limit_cal)
++@@ -5877,8 +5861,8 @@ address,name,type,comment
++ 0x0040b8ca,fuel_pressure_setpoint_winning_term_code,word,Written only by the setpoint calculator (10 stores) and its init (1 store): 1 engine starting (setpoint 0), 2 map, 3 coolant limit, 4 ambient limit, 5 forced override, 6 cold-start table, 7 sum mode, 8-11 = 2 / 3 / 4 / 7 with the offset active, 12 / 13 = ramp up / down out of the cold-start value, 14 maximum clamp, 15 fault-reaction cap, 16 / 17 minimum clamp (cranking / running); 6 in the RAM ... (was engine_timing_arb_byte_8_15)
++ 0x0040b8cc,injector_diagnostic_bits_fast_decay,byte,e2m 80B9 +0 HPCR_Fast_Decay 'LSB is injector 1 - fast decay error' (HEX; bit n = injector n + 1). Set from a separate flag bit of the 24-bit injector driver word in cm848_updateInjectorDiagnosticBits (the other bytes use its 2-bit code), debounced into six faults without an OBD slot (270 / 276 / 273 / 282 / 285 / 279); debounce limit 65535. Read by engine_injectionAngle_selectCylinderInjector. (was injector_diagnostic_bits_d) | earlier note: byte, one bit per injector: set from a separate flag bit of the 24-bit word (cm848_updateInjectorDiagnosticBits), debounced into six faults without OBD slot (270 / 276 / 273 / 282 / 285 / 279); read for the injector selection in engine_injectionAngle_selectCylinderInjector. Nothing in it concerns engine position. Its debounce limit (0x409a8a, loaded with lhz, so it stays 65535) is 65535 here, so ... (was engine_position_diag_flags)
++ 0x0040b8cd,injector_diagnostic_bits_open_circuit,byte,e2m 80B9 +1 HPCR_Open_Circuit 'LSB is injector 1 - open circuit error' (HEX; bit n = injector n + 1; 0 in the dump). Set for the 2-bit code 1 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P0201-P0206 (injector circuit per cylinder). (was injector_diagnostic_bits_a) | earlier note: byte, one bit per injector, set for 2-bit code 1; its faults are P0201-P0206 (injector circuit per cylinder). (was protection_fault_status_a)
++-0x0040b8ce,injector_diagnostic_bits_short_to_ground,byte,e2m 80B9 +2 HPCR_Short_Ground 'LSB is injector 1 - short to ground error' (HEX; bit n = injector n + 1; 0 in the dump). Set for the 2-bit code 0 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P2146 / P2149 (injector group supply voltage). Read for the cylinder cutout masks. (was injector_diagnostic_bits_b) | earlier note: byte, one bit per injector, set for code 0; its faults are P2146 / P2149 (injector group supply voltage). (was protection_fault_status_b)
++-0x0040b8cf,injector_diagnostic_bits_short_to_battery,byte,e2m 80B9 +3 HPCR_Short_Vbatt 'LSB is injector 1 - short to vbatt error' (HEX; bit n = injector n + 1; 0 in the dump). Set for the 2-bit code 2 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P2146 / P2149 (injector group supply voltage). Read for the cylinder cutout masks. (was injector_diagnostic_bits_c) | earlier note: byte, one bit per injector, set for code 2; its faults are P2146 / P2149. (was protection_fault_status_c)
+++0x0040b8ce,injector_diagnostic_bits_short_to_ground,byte,e2m 80B9 +2 HPCR_Short_Ground 'LSB is injector 1 - short to ground error' (HEX; bit n = injector n + 1; 0 in the dump). Set for the 2-bit code 0 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P2146 / P2149 (injector group supply voltage). Read for the cylinder cutout masks. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_b) | earlier note: byte, one bit per injector, set for code 0; its faults are P2146 / P2149 (injector group supply voltage). (was protection_fault_status_b)
+++0x0040b8cf,injector_diagnostic_bits_short_to_battery,byte,e2m 80B9 +3 HPCR_Short_Vbatt 'LSB is injector 1 - short to vbatt error' (HEX; bit n = injector n + 1; 0 in the dump). Set for the 2-bit code 2 of the 24-bit injector driver word (cm848_updateInjectorDiagnosticBits); its faults are P2146 / P2149 (injector group supply voltage). Read for the cylinder cutout masks. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_c) | earlier note: byte, one bit per injector, set for code 2; its faults are P2146 / P2149. (was protection_fault_status_c)
++ 0x0040b90e,injection_timing_main_barometric_pressure_component,word,(barometric angle x factor) / 4096; 0 in the dump. The old name says nothing; the code multiplies the base_a / base_b pair, which are the barometric tables. (was injection_timing_demand_calc)
++ 0x0040b910,injection_timing_main_barometric_pressure_factor,word,Q12 output of the 1-D table injection_timing_main_barometric_pressure_factor_values keyed by timing_barometric_pressure_snapshot (0 at this altitude in the dump). (was injection_timing_factor_base_b)
++ 0x0040b912,injection_timing_main_barometric_pressure_angle,word,Output of rpm x final_fueling table injection_timing_main_barometric_pressure_angle_grid (flat 43 counts = 5 deg in the dump), multiplied by the barometric factor into injection_timing_main_barometric_pressure_component. (was injection_timing_factor_base_a)
++@@ -8102,8 +8086,8 @@ address,name,type,comment
++ 0x0040ae70,pedal_fault_mode_target_speed_filtered,word,cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit (cpp 66389+): xref_addr.py: 0 reads / 1 write, width word (sth of the low half of the exponentialMovingAverage of engine_rpm_state_t.target_rpm, filter state ema_filter_state_t_003fcbdc); working RAM outside the time-shared window; the stored value feeds nothing that was found (the term pedal_fault_mode_fuel_demand_limit_slope x filtered speed is 0 in the dump). (new row 2026-11-17)
++ 0x003fcbe4,pedal_fault_mode_accelerator_off_idle_previous,word,cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit (cpp 66389+): xref_addr.py: 1 read / 1 write, width word, this function only (stores fuel_demand_control_t.accelerator_off_idle at the end of every call and compares it with 1 on the next one). Time-shared window: no other user listed, immediate scan of 0..0x7F5F for 0xcbe4: 0 hits. (new row 2026-11-17)
++ 0x003fb6fc,injector_diagnostic_bits_open_circuit_debounce_count,word,Debounce counter of injector_diagnostic_bits_open_circuit (e2m 80B9, the bits byte that was letter a): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_a_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
++-0x003fb6fe,injector_diagnostic_bits_short_to_battery_debounce_count,word,Debounce counter of injector_diagnostic_bits_short_to_battery (e2m 80B9, the bits byte that was letter c): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_c_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
++-0x003fb700,injector_diagnostic_bits_short_to_ground_debounce_count,word,Debounce counter of injector_diagnostic_bits_short_to_ground (e2m 80B9, the bits byte that was letter b): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_b_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
+++0x003fb6fe,injector_diagnostic_bits_short_to_battery_debounce_count,word,Debounce counter of injector_diagnostic_bits_short_to_battery (e2m 80B9, the bits byte that was letter c): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_c_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
+++0x003fb700,injector_diagnostic_bits_short_to_ground_debounce_count,word,Debounce counter of injector_diagnostic_bits_short_to_ground (e2m 80B9, the bits byte that was letter b): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. The code treats the short to ground and short to battery bytes alike, so the e2m byte order (+2 Short_Ground / +3 Short_Vbatt) is the only evidence for which is which (wave 13 bin 3). (was injector_diagnostic_bits_b_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
++ 0x003fb702,injector_diagnostic_bits_fast_decay_debounce_count,word,Debounce counter of injector_diagnostic_bits_fast_decay (e2m 80B9, the bits byte that was letter d): cm848_evaluateInjectorDiagnostics passes them together to cm848_evaluateInjectorDiagnosticFault. (was injector_diagnostic_bits_d_debounce_count) | earlier note: Injector diagnostic debounce counter of cm848_evaluateInjectorDiagnostics (cpp 47113+), passed as &DAT_003fb6xx to cm848_evaluateInjectorDiagnosticFault, which counts up while any bit of its class is set (stops above the limit) and down while none is. WIDTH FROM THE CALLEE DISASSEMBLY, NOT xref_addr.py: xref_addr.py reports 0 accesses (pointer-passed), so this departs from the wave-3 rule ... (new row 2026-11-17)
++ 0x004067d8,egr_valve_steady_state_command_deviation_threshold,word,code: xref_addr.py says word (1 read / 0 writes): only reader cm848_evaluateEgrValvePositionControlDiagnosticConditions: the diagnostic runs only while |final position command - its filtered average| is below it (DAT_004067d8). e2m: C_EGA_Cmd_Rate_Thd (0x0117AE00) is +0x00 of the block that anchors 0x4067d8. (new row 2026-11-17)
++ 0x004067da,egr_valve_control_error_threshold,word,code: xref_addr.py says word (1 read / 0 writes): only reader cm848_runEgrValvePositionControlDiagnostic: the control error condition is set when |autozeroed position - final command| is above it. e2m: C_EGA_Control_Error_Thd (0x0117AE02) is +0x02 of the block that anchors 0x4067d8. (new row 2026-11-17)
++diff --git a/firmware/CM848_S90140.06_analysis/output/local_variables.csv b/firmware/CM848_S90140.06_analysis/output/local_variables.csv
++index e521a9c..cb93c94 100644
++--- a/firmware/CM848_S90140.06_analysis/output/local_variables.csv
+++++ b/firmware/CM848_S90140.06_analysis/output/local_variables.csv
++@@ -132,3 +132,6 @@ function_address,function_name,old_name,new_name,type,comment
++ 0x00501b4c,sensorChannelTypeB_update,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
++ 0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,dVar1,filtered_engine_load,dword,exponentialMovingAverage output of engine_load_percent - also stored to vehicle_speed_zero_under_load_engine_load_filtered
++ 0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,cVar2,limits_reached_count,byte,How many of the two P0500 limits (accelerator off-idle entries / events) are reached - 2 sets fault 29
+++0x00047bd0,cm848_calculateFuelMeteringCommand,local_64,working_proportional_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_proportional_gains (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is 0) passed to cm848_applyPiecewiseLinearGain
+++0x00047bd0,cm848_calculateFuelMeteringCommand,local_54,working_integral_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_integral_gains (scaled the same way) passed to cm848_integrateWithZoneGain
+++0x00047bd0,cm848_calculateFuelMeteringCommand,local_44,working_derivative_gains,derivative_gain_t,Stack copy of fuel_pressure_governor_derivative_gains (scaled the same way; the 4-byte gains are copied as halfwords because they are not 4-aligned) passed to cm848_calculateFilteredDerivative
++diff --git a/firmware/CM848_S90140.06_analysis/output/structure_definitions.csv b/firmware/CM848_S90140.06_analysis/output/structure_definitions.csv
++index 4406204..810736d 100644
++--- a/firmware/CM848_S90140.06_analysis/output/structure_definitions.csv
+++++ b/firmware/CM848_S90140.06_analysis/output/structure_definitions.csv
++@@ -1674,4 +1674,16 @@ algorithm_enable_flags_41_t,,reserved_bit_11,bitfield:1@11,0,"guess (not proven,
++ algorithm_enable_flags_41_t,,reserved_bit_12,bitfield:1@12,0,"guess (not proven, so reserved): full throttle cold fuel increment enable - e2m Throttle_100_Cold_Increment_Enable. cm848_calculateFuelDemandWithTrim (lhz 82(r29) at 0x1f1a4); the name agrees, the body was not read. Set in this calibration (0x7ca6).",,verified
++ algorithm_enable_flags_41_t,,reserved_bit_13,bitfield:1@13,0,"guess (not proven, so reserved): air fuel control cold fuel increment enable - e2m AFC_Cold_Increment_Enable. cm848_calculateAirFuelControlFuelLimit (lhz 82(r26) at 0xe064), which also reads the air fuel control override bit of algorithm_enable_flags_12_cal; the name agrees, the body was not read. Set in this calibration (0x7ca6).",,verified
++ algorithm_enable_flags_41_t,,reserved_bit_14,bitfield:1@14,0,no e2m name. No reader in either bank (sweep of both banks). Set in this calibration (0x7ca6).,,verified
++-algorithm_enable_flags_41_t,,misfire_monitor_enable,bitfield:1@15,0,e2m Misfire_Monitor_Enable. cm848_initializeMisfireMonitor (lhz at 0x532bd8). Code agrees (wave 10). Clear in this calibration (0x7ca6).,,verified
++\ No newline at end of file
+++algorithm_enable_flags_41_t,,misfire_monitor_enable,bitfield:1@15,0,e2m Misfire_Monitor_Enable. cm848_initializeMisfireMonitor (lhz at 0x532bd8). Code agrees (wave 10). Clear in this calibration (0x7ca6).,,verified
+++# piecewise_linear_gain_t / derivative_gain_t: the gain records of the fuel pressure governor and the fuel metering current compensation (e2m 8014-8018 / 80EF / 80F2), read by cm848_applyPiecewiseLinearGain, cm848_integrateWithZoneGain and cm848_calculateFilteredDerivative (stage 8b, PR #52)
+++piecewise_linear_gain_t,,small_signal_gain,dword,4,"Gain while the input is inside the window (Q16: output = gain x input >> 16; units per instance)",,verified
+++piecewise_linear_gain_t,,positive_large_signal_gain,dword,4,"Gain above positive_window_width: the proportional step applies it to the part above; the integral step uses it for the whole error",,verified
+++piecewise_linear_gain_t,,negative_large_signal_gain,dword,4,"Gain below negative_window_width (the same way as the positive one)",,verified
+++piecewise_linear_gain_t,,positive_window_width,short,2,"Upper breakpoint of the window (>= 0; in the input's units)",,verified
+++piecewise_linear_gain_t,,negative_window_width,short,2,"Lower breakpoint of the window (<= 0)",,verified
+++derivative_gain_t,,filter_coefficient,word,2,"Weight of the previous state in 1/65536 (e2m Derivative_Gain_Constant): the state moves toward gain x input by 1 - coefficient / 65536 per call",,verified
+++derivative_gain_t,,small_signal_gain,dword,4,"Gain while the input is inside the window",,verified
+++derivative_gain_t,,positive_large_signal_gain,dword,4,"Gain while the input is above positive_window_width",,verified
+++derivative_gain_t,,negative_large_signal_gain,dword,4,"Gain while the input is below negative_window_width",,verified
+++derivative_gain_t,,positive_window_width,short,2,"Upper breakpoint of the window (>= 0)",,verified
+++derivative_gain_t,,negative_window_width,short,2,"Lower breakpoint of the window",,verified
++diff --git a/work/tasks/045-cm848-fueling-state-enum.md b/work/tasks/045-cm848-fueling-state-enum.md
++index d2aa9c6..e80e3e3 100644
++--- a/work/tasks/045-cm848-fueling-state-enum.md
+++++ b/work/tasks/045-cm848-fueling-state-enum.md
++@@ -483,6 +483,58 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
++   are identical to stage 4.
++ - **The audit after wave 13:** 1489 named rows have a token overlap under 0.34 (1610 after stage 7). The keeps stay in
++   that count; they now carry the record as a cross-reference.
+++- **The quoted dump values:** the renamed rows' comments quote 92 dump values (`check_quoted_dump_values_W13.py`).
+++  All 92 are right. 13 needed a manual read:
+++  - a raw value followed by its scaled form ("25600 in the dump = 3200 rpm");
+++  - a neighbour's value;
+++  - the 80EF dword gains read at their old word width;
+++  - a number with thousands separators.
+++  A read 2 bytes off fails 79 of the 92.
+++
+++## Stage 8b - the fuel pressure governor / fuel metering gain records as structs (2026-11-19, PR #52)
+++
+++- **The consumers prove the layout.**
+++  - `cm848_applyPiecewiseLinearGain` and `cm848_integrateWithZoneGain` read a 16-byte record: three dword gains at +0 /
+++    +4 / +8 (small signal / positive large / negative large), then the signed window widths at +12 / +14.
+++  - `cm848_calculateFilteredDerivative` reads an 18-byte one: a word filter coefficient, then the same five fields.
+++  - The proportional step applies a large-signal gain to the part of the input past the window. The integral and
+++    derivative steps use the zone's gain for the whole input.
+++- **Seven e2m blocks of exactly those sizes resolve to the records** through the parameter ID table. The new types are
+++  `piecewise_linear_gain_t` and `derivative_gain_t`.
+++
+++  | Record | e2m | Type | Dump |
+++  |---|---|---|---|
+++  | `fuel_pressure_governor_proportional_gains` 0x4094a2 | 8014 | piecewise | 0.5 / 0.1 / 0.6 %/MPa, +-10 MPa |
+++  | `fuel_pressure_governor_integral_gains` 0x4094b2 | 8015 | piecewise | 1.0 / 0.6 / 1.0 %/MPa/s |
+++  | `fuel_pressure_governor_derivative_gains` 0x4094c2 | 80EF | derivative | coefficient 0.667, 0.005 / 0.02 / 0.02 |
+++  | `fuel_metering_current_compensation_proportional_gains` 0x4094d4 | 8016 | piecewise | all gains 0 (off) |
+++  | `fuel_metering_current_compensation_integral_gains` 0x4094e4 | 8017 | piecewise | 0.001 / 0.0001 / 0.0001, +-4000 mA |
+++  | `fuel_metering_uncompensated_duty_cycle_proportional_gains` 0x4094f4 | 8018 | piecewise | 0.029 / 0.016 / 0.0254 %/mA |
+++  | `fuel_metering_current_compensation_derivative_gains` 0x409504 | 80F2 | derivative | all 0 (off) |
+++
+++  Every field reads in range, with the positive windows >= 0 and the negative ones <= 0 (`read_gain_blocks.py`).
+++- **Before:** 23 flat rows, several of them wrong:
+++  - the 80EF dword gains were word rows over their high halves, plus `_lo_cal` rows over the low halves;
+++  - 8016-8018 / 80F2 were byte rows named `cam_sync_*_prot_*_cal`;
+++  - the window pairs were dwords with `+2` label rows.
+++  They became 7 instances (16 interior rows deleted).
+++- **Prototypes:** the three consumers have full prototypes (`sword` return, `int32_t` input, `q16_fixed_point_t *` for
+++  the integrator / filter state, so the call sites stay cast-free).
+++- **The stack copies:** `cm848_calculateFuelMeteringCommand` copies the P / I / D records to the stack before the calls.
+++  Each gain and coefficient is scaled by its own lookup table while e2m 8000 +0 HPCR_Governor_Mode
+++  (`cam_timing_alt_mode_enable_cal`) is 0. The copies are typed in `local_variables.csv` (`working_*_gains`).
+++- **Proof:** exactly the four predicted functions changed (the three consumers and `cm848_calculateFuelMeteringCommand`).
+++  One more function changed only the order of its local declarations. The warnings and type stats are identical to
+++  stage 4. No retired name is left, and no instance renders with a `_` prefix.
+++- **Known artifacts:**
+++  - The derivative gains are not 4-aligned. The code copies them as halfwords, which render as `._0_2_` / `._2_2_`
+++    pieces.
+++  - The copy of the derivative record's negative window is one 4-byte store at +16 that runs past the 18-byte record.
+++    Ghidra prints a raw stack or register name for it (explained in the plate). The unscaled branch loads that word
+++    at 0x4094d2 across the D record's end and the 8016 record (`ram0x004094d2 & 0xffff0000`).
+++  - In the integral and derivative steps the zone gain is a computed-offset load.
+++  - `q16_fixed_point_t.integer_part` is an unsigned `word`, so the integral clamp shows `0xf001` for -4095.
+++- **Also:** the 80B9 short to ground / short to battery caveat (e2m byte order only) on its six rows.
++ 
++ ## Follow-ups (open)
++ 
++@@ -491,9 +543,15 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
++   (`hpcr_calculateFuelTrimOutput`), PGN 65251 (`faultTimerHandler`), EEC1 (`j1939GetEngineStateCode`), the drivetrain
++   ratio estimator (`protectionTimeoutControl`), the EGR orifice / mass flow models, the warm-up cycle monitor
++   (`engine_coolantTemp_overheat_monitor`), the RAM refresh, the 48RE governor pressure code.
+++- [ ] **The HPCR governor settings (block 8000) and the gain scheduling curves:**
+++  - `cam_timing_alt_mode_enable_cal` (0x4090fa) is e2m 8000 +0 HPCR_Governor_Mode. At 0 every gain is scheduled on
+++    engine speed. The row has a wrong `_cal`.
+++  - The HPCR_SF_* scaling curves (80E9 / 80EC, ...) are named `cam_sync_cyl*_timing_*`.
+++  - The rest of block 8000 (0x409110-0x409138: `engine_sync_*_cal` / `cam_sync_*_cal` / `engine_speed_override_*_cal`)
+++    has wrong `_cal`s too.
++ - [ ] **Shapes and types from wave 13:**
++-  - split 0x40a204 (I / P terms), 0x4094ae / 0x4094be (window widths) and 0x4094c4 / c8 / cc (4-byte gains with
++-    `_lo_cal` rows);
+++  - split 0x40a204 (the rpm deceleration limit's I / P terms, e2m 107C +5A / +5C). The 0x4094xx gain records were done
+++    in stage 8b;
++   - 0x408f56 swallows the byte at 0x408f57. 0x408f66 `crank_timer_offset_cal` is a word over two byte records (8194
++     +10 Crank_Sync_Tooth, +11 Crank_Teeth_Per_Cam_Measure), and its `_cal` is wrong for the region;
++   - the `i16` candidates listed in the reports.
++diff --git a/work/todo.md b/work/todo.md
++index c7340a7..f7153a1 100644
++--- a/work/todo.md
+++++ b/work/todo.md
++@@ -47,7 +47,7 @@
++ 042 [>] [firmware] CM848D rename leads from the table-naming campaign: DONE for the listed leads (PR #50, 2026-11-16): 27 functions + 237 globals verified and renamed (pilot / main / auxiliary injection timing, quantity and on-time chains; rail pressure setpoint and monitors; wastegate duty + monitor; charging regulator; intake air heater test; retarder; oil change monitor), duplicate names fixed; wave 3 DONE too (53 functions, 183 globals, 16 struct fields, 21 duplicate names, 31 junk rows, 113 new rows); wave 4 DONE too (44 functions + 4 new, 219 globals, 6 struct fields, 12 new rows); still open: wave 4's 29 uncertain items and 44 notes, in tasks/042-table-campaign-rename-leads.md; wave 5 DONE (load-protection dispute resolved: the cluster is the variable geometry turbocharger position servo; the combustion manager re-domained; 9 uncertain, 28 notes left); wave 6 DONE (52 functions, 399 globals, 6 struct fields, 44 new rows; 14 uncertain, 37 notes left); wave 7 DONE (59 functions, 309 globals, 23 new rows - the EGR valve servo; 15 uncertain, 34 notes left); wave 8 DONE (labels + types: three enums, two struct changes, 46 retypes; CM550 shared name; 9 uncertain, 36 notes left); wave 9 DONE (torque management, turbocharger speed chain, charge manager tables, condensation model, two enums, kernel table cut, five CM550 shared names; 9 uncertain, 31 notes left)
++ 043 [X] [firmware] CM848D ROM-to-RAM thunk stage crosses data labels: ApplyRomToRamThunks.java puts a 4-byte thunk on kernel-image addresses the boot ROM calls; where the application keeps data there the thunk takes the data row's name and swallows the next word's row (0x3fb54c / 0x3fb54e and 7 more sites, listed in tasks/042 wave 7) - fix the stage (skip or shorten the thunk where named data rows own the bytes) and check the boot calls' rendering - DONE 2026-11-17: where a named row sits in the 4 bytes the stage adds call overrides instead of a thunk (10 addresses)
++ 044 [>] [firmware] CM848D names that clash with the DTC a function sets (work/tasks/044): the P0500 vehicle speed sensor zero-under-load monitor renamed (was diag_boostLoad_overtemp_monitor / _clear / cm848_calibration_group30_execute / cm848_state_variables_reset + their state, the 0x3fd070 filter typed ema_filter_state_t, 8 ROM limits) and the PGN 65213 builder made void(void) - PR #51 (branch cm848/vehicle-speed-sensor-p0500-monitor); wave 10 (2026-11-18, same PR) verified and renamed all 10 leads (P0711 / P0837 / P0720 / P0572-P0573 / P0461 / P0602 / P0300-P0306 / P0219 / P0106 / P0236-P0299-P0069 + faults 774-777 / 402) plus the high speed governor gain-set struct; wave 11 (2026-11-18, same PR) typed the struct / array / bitfield shapes (fault records, DTC lists, J1939 transmit descriptors, monitor condition and algorithm enable bitfields, the Chrysler end-of-line block; pieces 917 -> 512); open: the follow-ups listed in task 044
++-045 [>] [firmware] CM848D fueling state enum (work/tasks/045): governor_fuel_demand_mode is the Cummins FSGVFLST governed fueling state - ENGINE_OPERATING_MODE renamed FUELING_STATE with members 4 power take-off / 9 cruise control / 10 vehicle speed limit / 11 low speed governor / 12 high speed governor; seven carriers typed, 0x40b67c renamed, the 0x3fb526 dword split (2026-11-19); stage 2 (same day): the derate / combustion / final stages - 17 more members proved, 16 FUELING_STATE_UNIDENTIFIED_<n> placeholders (Ghidra prints a value with no member as an OR of members), ten carriers typed (governor_mode_code = final_fueling_state, governor_fuel_mode_* named after their fuel values); stage 3: 16 functions and 10 words of the arbitration renamed (cm848_arbitrateGovernedFueling, cm848_selectFinalFueling, the low speed governor, the vehicle speed limit and cruise fueling, ...); stage 4: the labelled Chrysler e2m (CHR_CC_11.45.01.07, hex keys) names every code - 11 placeholders named, 4 members renamed to the labels; COLD_START_PHASE = the engine state (ENGINE_STATE, cold_start_phase = engine_state); the power take-off governor proved in code (CCVS1 SPN 976, two enums, 10 functions); the altitude / air fuel control / net torque / coolant overheat limiters renamed; stage 5: the power take-off governor's words from e2m 10AB / 109E / 11B4 / 109D / 10AA (the swapped speed-error clamps fixed), the crank routine (e2m 105E / 105F / 1032: crank_exit_speed, crank_fuel, crank_reentry_speed, engine_stopped_speed), engine_starting = engine_shutdown_command_flag and engine_shutdown_active_flag = key_off_shutdown_inhibit_flag (both read backwards), code 32 = MASTER_SLAVE_OVERRIDE; stage 6: the cm848_signedFirstOrderFilter records as ema_filter_state_t (33 records), the ECU's parameter ID table (flash2 0x53be38, e2m block -> address; firmware/scripts/e2m_block_addresses.py), the emission manager and the power take-off helpers; stage 7: the whole-CSV e2m audit (e2m_name_audit.py), rename wave 12 (383 new rows) and the fueling chain's e2m names (governor_fuel_demand_mode = adjusted_user_fueling_state); stage 8: rename wave 13, the misname review (226 renames of named rows whose name shared no word with their e2m record: the data collector, PGN 65251, alpha, the all-speed governor, the 48RE monitors, cylinder balance; 143 keeps cross-referenced) - PR #52 (branch cm848/fueling-state-enum); open: wave 14 (about 70 misnamed functions, the out-of-bin siblings), the rest of the misname review, codes 37 38 49 50, the CM550 FSGVFLST typing, the leads in task 045
+++045 [>] [firmware] CM848D fueling state enum (work/tasks/045): governor_fuel_demand_mode is the Cummins FSGVFLST governed fueling state - ENGINE_OPERATING_MODE renamed FUELING_STATE with members 4 power take-off / 9 cruise control / 10 vehicle speed limit / 11 low speed governor / 12 high speed governor; seven carriers typed, 0x40b67c renamed, the 0x3fb526 dword split (2026-11-19); stage 2 (same day): the derate / combustion / final stages - 17 more members proved, 16 FUELING_STATE_UNIDENTIFIED_<n> placeholders (Ghidra prints a value with no member as an OR of members), ten carriers typed (governor_mode_code = final_fueling_state, governor_fuel_mode_* named after their fuel values); stage 3: 16 functions and 10 words of the arbitration renamed (cm848_arbitrateGovernedFueling, cm848_selectFinalFueling, the low speed governor, the vehicle speed limit and cruise fueling, ...); stage 4: the labelled Chrysler e2m (CHR_CC_11.45.01.07, hex keys) names every code - 11 placeholders named, 4 members renamed to the labels; COLD_START_PHASE = the engine state (ENGINE_STATE, cold_start_phase = engine_state); the power take-off governor proved in code (CCVS1 SPN 976, two enums, 10 functions); the altitude / air fuel control / net torque / coolant overheat limiters renamed; stage 5: the power take-off governor's words from e2m 10AB / 109E / 11B4 / 109D / 10AA (the swapped speed-error clamps fixed), the crank routine (e2m 105E / 105F / 1032: crank_exit_speed, crank_fuel, crank_reentry_speed, engine_stopped_speed), engine_starting = engine_shutdown_command_flag and engine_shutdown_active_flag = key_off_shutdown_inhibit_flag (both read backwards), code 32 = MASTER_SLAVE_OVERRIDE; stage 6: the cm848_signedFirstOrderFilter records as ema_filter_state_t (33 records), the ECU's parameter ID table (flash2 0x53be38, e2m block -> address; firmware/scripts/e2m_block_addresses.py), the emission manager and the power take-off helpers; stage 7: the whole-CSV e2m audit (e2m_name_audit.py), rename wave 12 (383 new rows) and the fueling chain's e2m names (governor_fuel_demand_mode = adjusted_user_fueling_state); stage 8: rename wave 13, the misname review (226 renames of named rows whose name shared no word with their e2m record: the data collector, PGN 65251, alpha, the all-speed governor, the 48RE monitors, cylinder balance; 143 keeps cross-referenced); stage 8b: the HPCR gain records as structs (piecewise_linear_gain_t / derivative_gain_t, seven instances from e2m 8014-8018 / 80EF / 80F2, the three gain routines' prototypes) - PR #52 (branch cm848/fueling-state-enum); open: wave 14 (about 70 misnamed functions, the out-of-bin siblings), the rest of the misname review, codes 37 38 49 50, the CM550 FSGVFLST typing, the leads in task 045
++ 029 [ ] [firmware] CM848D sweep held proposals — 25 catch-all re-domainings + Low guesses held for focused review (output-channel / battery-voltage-regulator / USIU) (work/tasks/029, PR #47)
++ 028 [?] [firmware/tools] CM848D engine hours — RESOLVED: EEPROM 0x30 is NOT wiped by HPT (no restore needed), 0x1C00 is static/dead; tools/read_engine_hours.sh reads 0x30 and prints the OCT seed (engineHoursTruckLifetime=<hrs>). REMAINING: one timed key cycle to confirm the 0.200/0.205/0.667 s/count scale, then --calibrate + seed OCT (PR #47)
++ 026 [?] [firmware] CM848D naming wave 2 — 196 names applied + verified (output speed / fault arrays / governor pressure / fault healing / cold-start temp / cruise servo drivers / intake air heater); commit pending push (work/tasks/026, PR #47)
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.tar.xz b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.tar.xz
+index 88966b4..1c6b75c 100644
+Binary files a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.tar.xz and b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.tar.xz differ
+diff --git a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.txt b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.txt
+index 3d38e2b..e405a34 100644
+--- a/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.txt
++++ b/firmware/CM848_S90140.06_analysis/docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder_large_files.txt
+@@ -21,6 +21,8 @@ build_stage7.log
+ build_stage7b.log
+ build_stage8.log
+ build_stage8b.log
++build_stage8b2.log
++build_stage8b3.log
+ hdr_base_CM550_J90350.00_analysis/firmware_functions.hpp
+ hdr_base_CM550_J90350.00_analysis/firmware_globals.hpp
+ hdr_base_CM550_J90350.00_analysis/firmware_types.hpp
+@@ -58,11 +60,14 @@ stage7/pre7.cpp
+ stage7/pre7_canon.cpp
+ stage7/reversed7.cpp
+ stage7/stage7.diff
++stage8/archive8.diff
+ stage8/audit_after8.csv
++stage8/build1_8b.cpp
+ stage8/committed8.cpp
+ stage8/global_variables_pre8.csv
+ stage8/pre8.cpp
+ stage8/pre8_canon.cpp
++stage8/pre8b.cpp
+ stage8/reversed8.cpp
+ stage8/stage8.diff
+ test_disasm_tools.py.log
+@@ -79,3 +84,4 @@ verify_stage6a.log
+ verify_stage6b.log
+ verify_stage7.log
+ verify_stage8.log
++verify_stage8b.log
