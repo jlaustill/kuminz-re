@@ -849,6 +849,18 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       and 8A14 / 1930 / 1902 / 1253 drift partway. Check a record's code use before trusting its offset.
     - The fueling chain took its e2m names: `adjusted_user_fueling_state` (was `governor_fuel_demand_mode`, [FSGVFLST]),
       `final_fueling`, `requested_fueling`, `torque_derate_torque_limit`.
+  - **Stage 8: rename wave 13, the misname review.** Six agents checked the 381 named rows whose name shares no word with
+    their table-resolved e2m record. Results: 218 renames, 143 keeps (each keep got an `| e2m:` cross-reference), 17 drift.
+    - Families now named from the code and the record:
+      - `data_collector_*` (was `diag_dm1_*`; the Cummins data collector, not J1939 DM1);
+      - the PGN 65251 engine configuration / torque curve words (e2m 1102, were `protection_*`);
+      - `alpha_*` (104A) and `all_speed_governor_*` (107C);
+      - `converter_clutch_*` and `governor_pressure_*` (the 48RE monitors 8C33 / 8C34 / 8C58, were `protection_*`);
+      - `cylinder_balance_*` (81AE-81B0);
+      - the fuel metering coil (8019) and the TPU-A channel 1 `backup_*` cam signal words (8194 / 819B).
+    - More drift: 8D14 from +2, 1B2D from +4, 1966 from +94, 1649 from +10. The 8C58 tail overlaps 8C4E. The last
+      "ratio" record of 8C34 / 8C56 / 8C5B / 1632 has no storage of its own in 11.46.
+    - Leads for the next waves are in task 045: about 70 misnamed functions, the out-of-bin siblings, splits and types.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

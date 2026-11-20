@@ -430,10 +430,90 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
     sources;
   - the two "before combustion reference" values.
 
+## Stage 8 - rename wave 13, the misname review (2026-11-19, PR #52)
+
+- **The worklist:** the named rows whose name shares no word with their table-resolved e2m record, with 3+ code
+  references and an in-range dump value: 381 rows in six bins of whole blocks.
+- **The agents' task:** keep (an accurate synonym, which also gains an `| e2m:` cross-reference), rename (wrong or
+  misleading, a banned abbreviation, or a wrong / missing `_cal`), drift, or uncertain.
+- **Verdicts:** 221 renames, 143 keeps, 17 drift.
+- **Held back (3):**
+  - `diagnostic_session_state` -> `ram_refresh_enable` and `j1939_standby_flag` -> `development_mode`. Both rows are
+    enum-typed, and the enum members still follow the old reading.
+  - 0x40a204. It is a dword over the integral and proportional terms; split it into two words first.
+- **The gate:** the repo's `apply_renames.py` passed the 218 renames with no PROBLEM line. None of the old names occurs
+  in CM550's CSVs or the cross-firmware maps.
+- **The new drift:**
+  - 8D14 from +2;
+  - the 8C58 tail overlaps 8C4E;
+  - 1B2D from +4;
+  - 1966 from +94;
+  - 1649 from +10.
+  - The "ratio" records at the end of 8C34 / 8C56 / 8C5B / 1632 have no storage of their own in 11.46.
+- **The families renamed:**
+  - the data collector (`data_collector_*`, was `diag_dm1_*`);
+  - the PGN 65251 engine configuration / torque curve words (e2m 1102);
+  - alpha (104A), the all-speed governor (107C);
+  - the converter clutch and governor pressure monitors (8C33 / 8C34 / 8C58);
+  - cylinder balance (81AE / 81AF / 81B0), the fuel pressure governor gains (8014 / 8015 / 80EF);
+  - the fuel metering coil (8019), the crank / backup cam signal words (8194 / 819B);
+  - the EGR orifice and intake manifold temperature lead terms, the compressor map, the ambient / compressor inlet
+    conditions (1921);
+  - friction fueling (109C), the J1939 control session history, the rear axle ratio, the wastegate duty terms;
+  - the `_cal` fixes.
+- **Single renames worth noting:**
+  - `engine_displacement_cubic_inches` (359.2) and `rear_axle_ratio` (3.54);
+  - `total_fueling`;
+  - `not_safe_to_program_flag` (was `prior_boot_faulted`);
+  - `monitor_readiness_code_cal`.
+- **Checks and fixes by the main session after the apply:**
+  - A random sample of 9 renames was checked against the code.
+  - 0x40b798 became `backup_pulse_period_countdown`. Bin 6 had named it `crank_tooth_period_countdown`. The code
+    reloads it from bin 5's `backup_pulse_period_timeout` (e2m 8194 +2E).
+  - An old comment stays as an `| earlier note:`, except for 11 that an agent showed to be wrong. 0x3fed94 had two
+    proved facts in its old comment: the dword width at 0x52d634, and that it is distinct from 0x40a813. They were put
+    back.
+  - On 54 rows the rename note was moved to the repo order: `<comment> (was <old>) | earlier note: <old comment>`.
+  - The 80B9 debounce counters and limits (8 rows) took their bits bytes' new meanings. The code pairs each with its
+    old letter (a = open circuit, b = short to ground, c = short to battery, d = fast decay). This makes 226 renames.
+  - The comment sweep found stale tokens: `safety_bits_1` / `_2` (now `fault_detected_bits_48_to_63` / `_64_to_79`),
+    `governor_status_overspeed_flag_snapshot`, `cm848_protection_condition_eval_set1`, `throttle_fuel_demand_adjusted`
+    and a shorthand. They were fixed.
+- **Proof:** all 226 names render, with no `_` variant. The label-only proof is EQUIVALENT. The warnings and type stats
+  are identical to stage 4.
+- **The audit after wave 13:** 1489 named rows have a token overlap under 0.34 (1610 after stage 7). The keeps stay in
+  that count; they now carry the record as a cross-reference.
+
 ## Follow-ups (open)
 
-- [ ] **Wave 13: the misname review** (the audit's 1610 low-overlap named rows, the 244 rows inside wider rows, the 24
-  out-of-range records). The wave-12 agents' leads, all table-resolved or proved in code:
+- [ ] **Wave 14: the function names.** The wave-12 / wave-13 agents proved about 70 misnamed functions in their reports
+  (archived in `agent_prompts_and_reports.md`). Examples: the data collector (`diag_dm1Buffer_circularFill`), alpha
+  (`hpcr_calculateFuelTrimOutput`), PGN 65251 (`faultTimerHandler`), EEC1 (`j1939GetEngineStateCode`), the drivetrain
+  ratio estimator (`protectionTimeoutControl`), the EGR orifice / mass flow models, the warm-up cycle monitor
+  (`engine_coolantTemp_overheat_monitor`), the RAM refresh, the 48RE governor pressure code.
+- [ ] **Shapes and types from wave 13:**
+  - split 0x40a204 (I / P terms), 0x4094ae / 0x4094be (window widths) and 0x4094c4 / c8 / cc (4-byte gains with
+    `_lo_cal` rows);
+  - 0x408f56 swallows the byte at 0x408f57. 0x408f66 `crank_timer_offset_cal` is a word over two byte records (8194
+    +10 Crank_Sync_Tooth, +11 Crank_Teeth_Per_Cam_Measure), and its `_cal` is wrong for the region;
+  - the `i16` candidates listed in the reports.
+- [ ] **The held renames:** `diagnostic_session_state` -> `ram_refresh_enable` and `j1939_standby_flag` ->
+  `development_mode` need their enums (`DIAG_SESSION_STATE` / `J1939_STANDBY_STATE`) re-read first.
+- [ ] **The out-of-bin siblings the wave-13 agents listed** (in their reports, `agent_prompts_and_reports.md`): rows
+  that keep a wrong name next to a renamed family. Examples:
+  - the rest of the alpha (0x40a16c-0x40a180, 0x3fa0d2-0x3fa0dc) and all-speed governor (0x40a1aa-0x40a208) words;
+  - the PGN 65251 points 1 / 3 and the per-point reference fuelings (0x40ad90-0x40add2, ROM 1104);
+  - the converter clutch (8C33 / 8C34) and 8C58 leftovers still named `protection_*`;
+  - the data collector pointers (0x40c270-0x40c284);
+  - the `cssc_*` coolant sensor family, the `cylinder1..5_timing_offset` acceleration buffers, the LSG_EVR
+    alternator-load rows;
+  - the block 8000 governor settings with a wrong `_cal`.
+- [ ] **The rest of the misname review:** wave 13 took the zero-overlap rows with 3+ references. Still to review: the
+  other low-overlap named rows (1489 in the audit now, keeps included), the 244 rows inside wider rows and the 24
+  out-of-range records.
+- [x] **Wave 13: the misname review**, zero-overlap part: done in stage 8 (226 renames). Some wave-12 leads below were
+  covered there: the data collector, the PGN 65251 builder's words, alpha, the 8C59 / P1740 monitors and part of
+  `boost_target_*`. The wave-12 agents' leads, all table-resolved or proved in code:
   - the `diag_dm1_*` words around 0x3fddb6 / 0x40c278 are the e2m data collector (blocks 0030-003B), not DM1;
   - `sensor_channel109_*` is the exhaust pressure sensor. `boost_pressure_synthetic_ema` / `boost_synthetic_ema_*` /
     `boost_correction_mode_flags` are the exhaust pressure estimate (1772);

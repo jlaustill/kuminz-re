@@ -778,14 +778,14 @@ fault_entry_t,,key_on_hour_meter,dword,4,Fuel timing advance value at capture ti
 fault_entry_t,,fault_code,byte,1,Fault code ID (0xAA = empty/available slot),,verified
 fault_entry_t,,vehicle_speed,word,2,Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim),,verified
 fault_entry_t,,filtered_rpm,word,2,Target engine RPM at fault time,,verified
-fault_entry_t,,diagnostic_fault_flags_a,word,2,Sensor scale factor 1,,verified
+fault_entry_t,,system_switch_status,word,2,Sensor scale factor 1,,verified
 fault_entry_t,,engine_load_at_current_speed,word,2,engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status),,verified
 fault_entry_t,,accelerator_pedal_position,word,2,accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high),,verified
 fault_entry_t,,intake_manifold_pressure,word,2,intake_manifold_pressure_in_use at capture (was protection_low),,verified
 fault_entry_t,,coolant_temperature,word,2,coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1),,verified
 fault_entry_t,,intake_manifold_temperature,word,2,intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2),,verified
 fault_entry_t,,oil_pressure,word,2,oil_pressure_sensor_filtered at capture (was timing_param_3),,verified
-fault_entry_t,,diagnostic_fault_flags_b,word,2,Sensor scale factor 2,,verified
+fault_entry_t,,system_switch_status_2,word,2,Sensor scale factor 2,,verified
 fault_entry_t,,reserved,dword,4,Reserved gap (not written by set/capture functions),,verified
 fault_entry_t,,final_fueling_state,byte,1,Low byte of final_fueling_state when the freeze frame was stored (hpcr_setFaultActiveStatus) (was governor_mode_code - Pressure fuel adjustment byte),,verified
 fault_entry_t,,battery_voltage,word,2,Battery voltage reading at fault time,,verified
