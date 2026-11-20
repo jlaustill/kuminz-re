@@ -536,6 +536,38 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - `q16_fixed_point_t.integer_part` is an unsigned `word`, so the integral clamp shows `0xf001` for -4095.
 - **Also:** the 80B9 short to ground / short to battery caveat (e2m byte order only) on its six rows.
 
+## Stage 8c - the review fixes after stages 8 / 8b (2026-11-19, PR #52)
+
+- **Widths:** the label-only proof cannot see a right name on a wrong-width row. Seven wave-13 rows are wider or
+  narrower than their record (`width_mismatches_W13.py`). Four of them are right: an array, two struct instances, and
+  0x3feeb8, which is also 191A WIF_Miles (4 bytes). Three were fixed:
+  - 0x408f56 `backup_consecutive_error_threshold` word -> byte. Its three `lbz` reads of +1 rendered as
+    `(byte)backup_consecutive_error_threshold`. They are 8194 +1 Bank_With_Added_Tooth, now the byte
+    `crank_signal_window_with_added_tooth` (was the typeless `crank_sync_reference_flag_cal`).
+  - 0x40a87d `master_slave_override_enable_flag` dword -> word: lhz only. It rendered `._0_2_` and covered 11D4 +4.
+  - 0x40a2b4 `ecm_power_down_delay_request_flag` dword -> word: lhz / sth only. It rendered `._0_2_` and covered
+    117D +4E.
+- **80B9:** `cm848_evaluateInjectorDiagnosticFault` takes each injector's fault numbers from the ROM row table at
+  0x57d76 (10 bytes per row, the class picks the offset 2 / 4 / 6 / 8; `injector_fault_codes.py`).
+  - The open circuit codes put the bits in firing order: bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4.
+  - The two short classes set different internal faults (268 / 269 for the first injector), but both map to one OBD
+    slot: P2146 for cylinders 1-3, P2149 for 4-6. So ground vs battery still rests on the e2m byte order alone. The
+    comments said "the code treats the bytes alike", which is not right; they are reworded.
+- **Spot check against the code:** 10 random direction-word renames (enable / limit / maximum / minimum / negative ...)
+  were checked against their deciding compare or use. All 10 are right; the cylinder balance trim and dynamic
+  compensation limits really were reversed before wave 13.
+- **The facts stage 8b dropped** were put back: the scaling curves' e2m blocks, the window direction, and "never
+  written, so no `_cal`".
+- **The gain scheduling curves:** `cm848_calculateFuelMeteringCommand` multiplies each gain and filter coefficient by
+  its own engine speed curve while `fuel_pressure_governor_gain_mode` (e2m 8000 +0 HPCR_Governor_Mode, was
+  `cam_timing_alt_mode_enable_cal`) is 0. The code use maps each curve to its field (`gain_scaling_tables.py`), and
+  the table resolves it to its e2m block.
+  - The 22 tables were `cam_sync_cyl*_timing_*` / `cam_sync_prot_gain_*` / `cam_sync_scale_*` with a wrong `_cal`.
+  - They are now `fuel_pressure_governor_<term>_<signal>_gain_scaling_axis` / `_values`, plus the derivative filter
+    coefficient and the pressure sensor filter coefficient curves (e2m 8005-8010, 80E7-80EE, 80F0 / 80F1).
+  - Each table is word[11] (a header word, then 10 points), on 400-4000 rpm.
+- **Gate:** the repo's `apply_renames.py` passed all 24 renames against the pre-8c CSVs.
+
 ## Follow-ups (open)
 
 - [ ] **Wave 14: the function names.** The wave-12 / wave-13 agents proved about 70 misnamed functions in their reports
@@ -543,17 +575,14 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   (`hpcr_calculateFuelTrimOutput`), PGN 65251 (`faultTimerHandler`), EEC1 (`j1939GetEngineStateCode`), the drivetrain
   ratio estimator (`protectionTimeoutControl`), the EGR orifice / mass flow models, the warm-up cycle monitor
   (`engine_coolantTemp_overheat_monitor`), the RAM refresh, the 48RE governor pressure code.
-- [ ] **The HPCR governor settings (block 8000) and the gain scheduling curves:**
-  - `cam_timing_alt_mode_enable_cal` (0x4090fa) is e2m 8000 +0 HPCR_Governor_Mode. At 0 every gain is scheduled on
-    engine speed. The row has a wrong `_cal`.
-  - The HPCR_SF_* scaling curves (80E9 / 80EC, ...) are named `cam_sync_cyl*_timing_*`.
-  - The rest of block 8000 (0x409110-0x409138: `engine_sync_*_cal` / `cam_sync_*_cal` / `engine_speed_override_*_cal`)
-    has wrong `_cal`s too.
+- [ ] **The rest of the HPCR governor settings:** block 8000 (0x409110-0x409138: `engine_sync_*_cal` /
+  `cam_sync_*_cal` / `engine_speed_override_*_cal`) has wrong `_cal`s. HPCR_Governor_Mode and the gain scheduling
+  curves were done in stage 8c.
 - [ ] **Shapes and types from wave 13:**
   - split 0x40a204 (the rpm deceleration limit's I / P terms, e2m 107C +5A / +5C). The 0x4094xx gain records were done
     in stage 8b;
-  - 0x408f56 swallows the byte at 0x408f57. 0x408f66 `crank_timer_offset_cal` is a word over two byte records (8194
-    +10 Crank_Sync_Tooth, +11 Crank_Teeth_Per_Cam_Measure), and its `_cal` is wrong for the region;
+  - 0x408f66 `crank_timer_offset_cal` is a word over two byte records (8194 +10 Crank_Sync_Tooth, +11
+    Crank_Teeth_Per_Cam_Measure), and its `_cal` is wrong for the region (0x408f56 was split in stage 8c);
   - the `i16` candidates listed in the reports.
 - [ ] **The held renames:** `diagnostic_session_state` -> `ram_refresh_enable` and `j1939_standby_flag` ->
   `development_mode` need their enums (`DIAG_SESSION_STATE` / `J1939_STANDBY_STATE`) re-read first.

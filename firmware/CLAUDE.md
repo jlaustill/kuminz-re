@@ -869,6 +869,12 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       metering current compensation and uncompensated duty cycle gains.
     - A prototype that takes the struct pointer lets Ghidra type the caller's stack copies by itself. A local whose last
       store runs past the struct renders a raw stack or register name for that store.
+  - **Stage 8c: review fixes.**
+    - A label-only proof cannot see a right name on a wrong-width row. After a rename wave, compare each renamed row's
+      width with its e2m record (`width_mismatches_W13.py` in the session archive).
+    - The gain scheduling curves are `fuel_pressure_governor_*_gain_scaling_axis` / `_values` (e2m 8005-8010 /
+      80E7-80EE / 80F0-80F1), selected by `fuel_pressure_governor_gain_mode` (HPCR_Governor_Mode, 0 = scheduled).
+    - The 80B9 injector bits run in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4).
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.
