@@ -14,6 +14,10 @@ typedef uint16_t  ushort;
 typedef uint32_t  uint;
 typedef uint16_t  word;
 typedef uint32_t  dword;
+typedef int8_t    sbyte;
+typedef int16_t   sword;
+typedef int32_t   sdword;
+typedef int64_t   sqword;
 typedef int32_t   bool32;
 
 // Ghidra CONCATxy macros — concatenate x bytes of a with y bytes of b
@@ -101,15 +105,53 @@ typedef enum {
 } PROTECTION_OVERRIDE;
 
 typedef enum {
-    ENGINE_OPERATING_MODE_NOT_SELECTED = 0,  /* Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) */
-    ENGINE_OPERATING_MODE_TSC1_TORQUE_CONTROL = 1,  /* cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is etc1_torque_limit_calc */
-    ENGINE_OPERATING_MODE_TSC1_SPEED_CONTROL = 2,  /* cm848_engineMode_reset: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record */
-    ENGINE_OPERATING_MODE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_setEngineOperatingMode5: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified */
-    ENGINE_OPERATING_MODE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 */
-    ENGINE_OPERATING_MODE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_initEngineOperatingMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) */
-    ENGINE_OPERATING_MODE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) */
-    ENGINE_OPERATING_MODE_ALL_SPEED_GOVERNOR_RESTORE = 30  /* cm848_restoreEngineOperatingMode: engine_operating_mode_restore_valid_flag nonzero; loads the restore record 0x40a216-0x40a246 (never set in this build and RAM is zeroed at every start) */
-} ENGINE_OPERATING_MODE;
+    FUELING_STATE_NOT_SELECTED = 0,  /* Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) - e2m label NOT_SET (CHR_CC_11.45.01.07 0x00) */
+    FUELING_STATE_TSC1_TORQUE_CONTROL = 1,  /* cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is etc1_torque_limit_calc - e2m label JCOMTORQ (CHR_CC_11.45.01.07 0x01) */
+    FUELING_STATE_TSC1_SPEED_CONTROL = 2,  /* cm848_engineMode_reset: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record - e2m label JCOMSPED (CHR_CC_11.45.01.07 0x02) */
+    FUELING_STATE_POWER_TAKE_OFF = 4,  /* operating_mode_governor_output.mode_code only (cm848_selectPowerTakeOffOrUserFueling): power_take_off_governor_fuel_demand replaces the user fueling while power_take_off_governor_active_flag is 1 and j1939_governor_feature_cal bit 0x10 is set (modes 5 / 6 always; 7 / 8 / 30 unless the user fuel is larger and governor_feature_config_word bit 0x2000 lets the throttle override). Code-proven: the governor's state goes out as J1939 SPN 976 (CCVS1) and OBD-II PID 0x1E - e2m label PTO (CHR_CC_11.45.01.07 0x04) */
+    FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_setEngineOperatingMode5: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified - e2m label USERCOMD (CHR_CC_11.45.01.07 0x05) */
+    FUELING_STATE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06) */
+    FUELING_STATE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_initEngineOperatingMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) - e2m label ASGTHROT (CHR_CC_11.45.01.07 0x07) */
+    FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) - e2m label FOUR_D (CHR_CC_11.45.01.07 0x08) */
+    FUELING_STATE_CRUISE_CONTROL = 9,  /* governor_fuel_demand_working_mode only (cm848_selectCruiseOrUserFueling): cruise control is engaged and the cruise PID fuel cruise_control_fueling replaces the user fueling; governor_cruise_setpoint_calc and protectionRampRateControl run their cruise branches (cruise_control_state set / resume / accelerate / decelerate) in 9 - e2m label CRUISE (CHR_CC_11.45.01.07 0x09) */
+    FUELING_STATE_VEHICLE_SPEED_LIMIT = 10,  /* adjusted_user_fueling_state (cm848_arbitrateGovernedFueling): the vehicle speed limit fuel vehicle_speed_limit_fueling (cm848_calculateVehicleSpeedLimitFueling: vehicle_speed_rise_limited - the vehicle speed - against cruise_speed_limit_working; no limit while j1939_governor_feature_cal bit 0x80 is clear) is the smallest demand; protectionRampRateControl runs the limit-minus-speed error in 10 - e2m label RSG (CHR_CC_11.45.01.07 0x0A) */
+    FUELING_STATE_LOW_SPEED_GOVERNOR = 11,  /* adjusted_user_fueling_state (cm848_arbitrateGovernedFueling and the initial value of cm848_initFuelFilterCoefficients): at or below the governor speed the low speed governor asks for more fuel than the selected demand (a max select); only in 11 does cm848_runLowSpeedGovernor write its fuel into adjusted_user_fueling (e2m FSGVFL: fueling as limited by limiting governors LSG / HSG) and low_speed_governor_active_flag latch. RAM dump: 11 - e2m label LSG (CHR_CC_11.45.01.07 0x0B) */
+    FUELING_STATE_HIGH_SPEED_GOVERNOR = 12,  /* adjusted_user_fueling_state (cm848_arbitrateGovernedFueling): high_speed_governor_fueling is the smallest demand and becomes adjusted_user_fueling; runHighSpeedGovernorPid resets its integrator in 12 (the same compare as CM550 0x1ce7c on FSGVFLST) - e2m label HSG (CHR_CC_11.45.01.07 0x0C) */
+    FUELING_STATE_TORQUE_DERATE_OVERRIDE = 13,  /* torque_derate_fuel_source_code (cm848_arbitrateRequestedFueling): while governor_feature_flags bit 0x10 is set the EEPROM limit protection_fuel_limit_c_working (EEPROM 0x380) replaces the whole derate chain. Off in the dump: the flags are 0x1020 and the limit is 5888 - e2m label TRQDROVR (CHR_CC_11.45.01.07 0x0D) */
+    FUELING_STATE_ALTITUDE_DERATE = 15,  /* torque_derate_fuel_source_code (cm848_applyAltitudeDerateFuelLimit): altitude_derate_fuel_limit - the engine speed x barometric pressure grids for cool / hot ambient air blended by ambient air temperature (or the air handling fault grid while an enabled boost / intake manifold pressure / barometric / intake air or ambient air temperature / wastegate fault is set); cm848_calculateAltitudeDerateFuelLimit - e2m label ALTDERAT (CHR_CC_11.45.01.07 0x0F) */
+    FUELING_STATE_AIR_FUEL_CONTROL_DERATE = 16,  /* fuel_demand_minimum_tracked_state (cm848_applyAirFuelControlFuelLimit): air_fuel_control_fuel_limit - the engine speed x boost pressure grid air_fuel_control_fuel_limit_grid blended toward air_fuel_control_low_boost_fuel_limit_grid (cm848_calculateAirFuelControlFuelLimit). RAM dump: 16 (no boost at key on) - e2m label AFCDERAT (CHR_CC_11.45.01.07 0x10) */
+    FUELING_STATE_MAXIMUM_THROTTLE = 19,  /* torque_derate_fuel_source_code starting value (cm848_initializeFuelLimitChains): throttle_100_fueling - cm848_calculateMaximumFuelCurve(engine speed / 400) is the fuel at full accelerator (400 = 100 %) - before any derate source takes over - e2m label MAXTHROT (CHR_CC_11.45.01.07 0x13) */
+    FUELING_STATE_TSC1_TORQUE_LIMIT = 20,  /* torque_derate_fuel_source_code (cm848_applyTsc1TorqueLimit): J1939 TSC1 override control mode 3 with etc1_mode3_torque_limit below the running derate - e2m label JCTRQDER (CHR_CC_11.45.01.07 0x14) */
+    FUELING_STATE_CRANKING = 22,  /* final_fueling_state (cm848_selectFinalFueling): engine_state CRANKING / JUMP_START (or REENTRY with the command below it) - the fuel is crank_fuel - e2m label CRANK (CHR_CC_11.45.01.07 0x16) */
+    FUELING_STATE_FUEL_OVERRIDE = 23,  /* final_fueling_state while governor_feature_flags bit 2 is set (fuel_timing_target_working) and injection_quantity_combustion_reference_source_code while combustion_override_and_estimation_enable_flags_cal bit 9 is set (injection_quantity_combustion_reference_override_value) - e2m label OVERRIDE (CHR_CC_11.45.01.07 0x17) */
+    FUELING_STATE_ENGINE_BRAKE = 24,  /* final_fueling_state (cm848_selectFinalFueling): engine_state ENGINE_BRAKE - the fuel is the ROM word 0x5c308 (0 here) - e2m label ENGBRAKE (CHR_CC_11.45.01.07 0x18) */
+    FUELING_STATE_OVERSPEED = 25,  /* final_fueling_state (cm848_selectFinalFueling): engine_state OVERSPEED - the fuel is the ROM word 0x5c30a (0 here) - e2m label OVERSPED (CHR_CC_11.45.01.07 0x19) */
+    FUELING_STATE_ENGINE_STOPPED = 26,  /* final_fueling_state (cm848_selectFinalFueling): engine_state 1 - the final fuel is 0. RAM dump (key on / engine stopped): 26 with engine_state 1 - e2m label STOP (CHR_CC_11.45.01.07 0x1A) */
+    FUELING_STATE_SHUTDOWN = 27,  /* final_fueling_state (cm848_selectFinalFueling): engine_state SHUTDOWN - the fuel is fuel_demand_minimum (0 here) - e2m label SHUTDOWN (CHR_CC_11.45.01.07 0x1B) */
+    FUELING_STATE_FUEL_SYSTEM_DERATE = 28,  /* torque_derate_fuel_source_code (cm848_applyFuelPressureFaultFuelLimit): fuel_pressure_fault_fuel_limit_working from cm848_applyFuelLimitsForFuelPressureFaults (rail pressure faults) - e2m block 105D +4 FSAPLMFL fuel system specific fuel derate - e2m label FSSDERAT (CHR_CC_11.45.01.07 0x1C) */
+    FUELING_STATE_FAULT_DERATE = 29,  /* torque_derate_fuel_source_code (cm848_applyFaultDerateFuelLimit): fault_derate_fuel_limit from cm848_calculateFaultDerateFuelLimit - e2m label EPFDERAT (CHR_CC_11.45.01.07 0x1D) */
+    FUELING_STATE_ALL_SPEED_GOVERNOR_RESTORE = 30,  /* cm848_restoreEngineOperatingMode: engine_operating_mode_restore_valid_flag nonzero; loads the restore record 0x40a216-0x40a246 (never set in this build and RAM is zeroed at every start) - e2m label ASG_APPL (CHR_CC_11.45.01.07 0x1E) */
+    FUELING_STATE_MASTER_SLAVE_OVERRIDE = 32,  /* final_fueling_state / fuel_demand_arbitrated_state: master_slave_override_enable_flag set without master_slave_control_flag - the fuel is master_slave_final_override_fueling. e2m MSOVRIDE with [MSODEN] Enable overriding slave Final_Fueling / Final_Timing: one ECM overrides another's final fueling. Nothing stores either word (both only lhz; 0 in the RAM dump): not fitted on this single-ECM truck - e2m label MSOVRIDE (CHR_CC_11.45.01.07 0x20) */
+    FUELING_STATE_POWER_TAKE_OFF_DERATE = 34,  /* torque_derate_torque_limit_state (cm848_applyPowerTakeOffTorqueLimit): power_take_off_maximum_torque_cal lowers torque_derate_torque_limit while power_take_off_governor_active_flag is 1 - e2m label PTODERAT (CHR_CC_11.45.01.07 0x22) */
+    FUELING_STATE_UNIDENTIFIED_37 = 37,  /* only compared (engine_operating_mode / operating_mode_governor_output.mode_code / cruise_fuel_demand_mode_prev - next to the TSC1 modes 1 / 2) - never stored in this build. The e2m T2 family has high gear / low gear / neutral / shift / lockout / lamp drivers: probably a two-speed axle or transfer case shift controller (not proved) - e2m label T2SPD (CHR_CC_11.45.01.07 0x25) */
+    FUELING_STATE_UNIDENTIFIED_38 = 38,  /* only compared (engine_operating_mode / operating_mode_governor_output.mode_code / cruise_fuel_demand_mode_prev - next to the TSC1 modes 1 / 2) - never stored in this build; see 37 for the T2 family - e2m label T2TORQ (CHR_CC_11.45.01.07 0x26) */
+    FUELING_STATE_NO_DERATE = 40,  /* torque_derate_torque_limit_state default (cm848_arbitrateRequestedFueling) and the starting value of fuel_demand_minimum_tracked_state (cm848_initializeFuelLimitChains) - e2m label NODERAT (CHR_CC_11.45.01.07 0x28) */
+    FUELING_STATE_IMMOBILIZER_FUEL_DISABLE = 41,  /* final_fueling_state (cm848_selectFinalFueling): immobilizer_fuel_disable_flag is 1 - the final fuel is 0 - e2m label ATDERAT (CHR_CC_11.45.01.07 0x29) */
+    FUELING_STATE_FUEL_LIMIT_BY_RPM_AND_DEMAND = 42,  /* torque_derate_fuel_source_code (cm848_applyFuelLimitByRpmAndDemand): fuel_limit_by_rpm_and_demand - the alpha / chi blend of the engine speed x accelerator demand grids - computed only in the variable speed governor (engine_operating_mode 7) while injection_timing_enable_flags bit 0 is set - e2m label PTTHLM (CHR_CC_11.45.01.07 0x2A) */
+    FUELING_STATE_TORQUE_MANAGEMENT = 45,  /* torque_derate_fuel_source_code (cm848_applyTorqueManagementFuelLimit): torque_management_fuel_limit - e2m label TORQMGMT (CHR_CC_11.45.01.07 0x2D) */
+    FUELING_STATE_COOLANT_OVERHEAT_DERATE = 46,  /* torque_derate_fuel_source_code (cm848_applyCoolantOverheatFuelDerate): coolant_overheat_fuel_derate - the ramped smaller of the PI limit on the coolant temperature error and the engine speed limit of the coolant temperature buckets (cm848_runCoolantOverheatFuelDerate; enabled by engine_feature_enable_flags_cal bit 1) - e2m label CTDERAT (CHR_CC_11.45.01.07 0x2E) */
+    FUELING_STATE_FREE_ACCELERATION = 47,  /* only compared (final_fueling_state) - never stored in this build - e2m label FREEACCL (CHR_CC_11.45.01.07 0x2F) */
+    FUELING_STATE_UNIDENTIFIED_49 = 49,  /* only compared (final_fueling_state) - never stored in this build. OFC is the combustion reference's oxygen-fuel control (e2m CBR_OFC_*; code 58 OFCDERAT is its derate) - e2m label OFCSTATE (CHR_CC_11.45.01.07 0x31) */
+    FUELING_STATE_UNIDENTIFIED_50 = 50,  /* only compared (final_fueling_state) - never stored in this build. AFR is the air-fuel ratio (e2m CBO_Air_Fuel_Ratio_Ref / CBP_Air_Fuel_Ratio) - e2m label AFRSTATE (CHR_CC_11.45.01.07 0x32) */
+    FUELING_STATE_COMBUSTION_DENSITY_MAXIMUM = 52,  /* injection_quantity_combustion_gross_source_code (cm848_calculateCombustionGrossFuel): the density maximum (engine speed x ambient_air_density) limits the gross fuel - e2m label AIRDENLM (CHR_CC_11.45.01.07 0x34) */
+    FUELING_STATE_COMBUSTION_CHI_MAXIMUM = 53,  /* injection_quantity_combustion_gross_source_code (cm848_calculateCombustionGrossFuel): the chi maximum fuel limits the gross fuel - e2m label CHIFULLM (CHR_CC_11.45.01.07 0x35) */
+    FUELING_STATE_COMBUSTION_TEMPERATURE_HEADROOM = 54,  /* injection_quantity_combustion_reference_source_code (cm848_calculateCombustionFuelReference): injection_quantity_temperature_headroom_cap - e2m label TFCDERAT (CHR_CC_11.45.01.07 0x36) */
+    FUELING_STATE_COMBUSTION_GROSS_FUEL_OVERRIDE = 55,  /* injection_quantity_combustion_gross_source_code: combustion_override_and_estimation_enable_flags_cal bit 10 - injection_quantity_combustion_gross_override_value - e2m label GROSSOVR (CHR_CC_11.45.01.07 0x37) */
+    FUELING_STATE_COMBUSTION_OXYGEN_LIMIT = 58,  /* injection_quantity_combustion_reference_source_code (cm848_calculateCombustionFuelReference): injection_quantity_oxygen_limit - e2m label OFCDERAT (CHR_CC_11.45.01.07 0x3A) */
+    FUELING_STATE_NET_TORQUE = 59,  /* fuel_demand_minimum_tracked_state (cm848_applyNetTorqueFuelLimit): net_torque_fuel_limit - a rate-limited engine speed fuel curve from the alpha / chi map blend of fuel_demand_table_base_cal (cm848_calculateNetTorqueFuelLimit) while fault_feature_config_flags bit 2 is set - e2m label NETTORQ (CHR_CC_11.45.01.07 0x3B) */
+    FUELING_STATE_RAIL_PRESSURE_SHORTFALL_LIMIT = 61,  /* torque_derate_fuel_source_code (cm848_limitFuelQuantityOnRailPressureShortfall) - e2m label LOFPRDER (CHR_CC_11.45.01.07 0x3D) */
+    FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND = 62  /* torque_derate_fuel_source_code (cm848_applyFuelPressureGovernorFaultBlend while safety_system_enable_cal is set): injection_quantity_combustion_chi_maximum - blended toward an engine speed table limit while fault 57 / 58 / 60 (P1221 / P1222 / P1223 - the fuel pressure governor plausibility checks) or 59 is set. RAM dump: 62 */
+} FUELING_STATE;
 
 typedef enum {
     SPN_51_THROTTLE_PLATE = 51,  /* Throttle Plate Position Sensor */
@@ -837,19 +879,23 @@ typedef enum {
 } PRIOR_BOOT_STATE;
 
 typedef enum {
-    INACTIVE = 0,  /* No session; J1939 broadcasts running normally */
-    ACTIVE = 1,  /* Session healthy; broadcasts suppressed; writes permitted */
-    LOCKED_OUT = 2  /* Keep-alive auth failed 3 times; session frozen */
-} DIAG_SESSION_STATE;
+    RAM_REFRESH_DISABLED = 0,  /* RAM refresh off (development mode); the refresh pass and the EEPROM mirror reload do nothing; stored by the reset service and temporarily by cm848_runCylinderContributionTest */
+    RAM_REFRESH_ENABLED = 1  /* RAM refresh on (the normal state); stored at start-up and power-down and by the activate services */
+} RAM_REFRESH_STATE;
 
 typedef enum {
-    SESSION_ACTIVE = 0,  /* Diagnostic session running; J1939 broadcasts suppressed */
-    STANDING_BY = 1  /* ECU armed and waiting for tool to activate session */
-} J1939_STANDBY_STATE;
+    DEVELOPMENT_MODE_OFF = 0,  /* Normal operation; stored by the activate services and the power-down sequence; the register address ranges of the diagnostic memory services are refused */
+    DEVELOPMENT_MODE_ON = 1  /* Development mode; stored only by the reset service together with the RAM refresh disabled; the activate service needs it and the register address ranges of the diagnostic memory services open */
+} DEVELOPMENT_MODE_STATE;
+
+typedef enum {
+    RUN_LOCATION_DEVELOPMENT = 0xea,  /* Development: set by cm848_resetDiagnosticSession together with development_mode on and the RAM refresh off */
+    RUN_LOCATION_NORMAL = 0xee  /* Normal: set at boot / power-down and by the activate services; the only value for which cm848_lookupParameterIdAddress gives raw EEPROM addresses */
+} RUN_LOCATION;
 
 typedef enum {
     DIAG_ACK = 0,  /* Request fulfilled successfully */
-    DIAG_NACK_NOT_READY = 4,  /* Rejected: ECU not in standby (j1939_standby_flag was 0) */
+    DIAG_NACK_NOT_READY = 4,  /* Rejected: ECU not in standby (development_mode was 0) */
     DIAG_NACK_PROTECTED = 7  /* Rejected: protection mode active */
 } DIAG_RESPONSE;
 
@@ -874,16 +920,16 @@ typedef enum {
 } TSC1_OVERRIDE_MODE;
 
 typedef enum {
-    COLD_START_PHASE_INITIAL = 0,  /* Reset/power-on default; immediately transitions to CRANKING */
-    COLD_START_PHASE_KEY_ON_ENGINE_STOPPED = 1,  /* Engine at idle/crank speed; RPM below trigger threshold */
-    COLD_START_PHASE_ABOVE_RPM_TRIGGER = 2,  /* RPM exceeded trigger but below governor setpoint; warming up */
-    COLD_START_PHASE_AT_GOVERNOR_SETPOINT = 3,  /* RPM at or above governor setpoint; cold start governor active */
-    COLD_START_PHASE_ENGINE_RETARDER_ACTIVE = 4,  /* Fuel mode switch active; waiting for switch to release */
-    COLD_START_PHASE_ENGINE_OVERSPEED = 5,  /* Cold start suspended due to shutdown inhibit with cold mode enabled */
-    COLD_START_PHASE_ABOVE_RPM_VIA_CRANK_EVENTS = 6,  /* Same as ABOVE_RPM_TRIGGER but entered via crank event counter overflow */
-    COLD_START_PHASE_SETPOINT_UNDERRUN = 7,  /* Dropped below governor setpoint after reaching it (phase 3 backtrack) */
-    COLD_START_PHASE_ENGINE_STANDBY = 8  /* Engine cranking (RPM=0) or MIOS crank signal stopped; pre/post-run standby */
-} COLD_START_PHASE;
+    ENGINE_STATE_UNINITIALIZED = 0,  /* Zeroed RAM: cm848_updateEngineState turns 0 (or anything above 8) into STOPPED */
+    ENGINE_STATE_STOPPED = 1,  /* e2m STOP: engine speed at or below engine_stopped_speed - the final fuel is 0 (FUELING_STATE_ENGINE_STOPPED). RAM dump (key on / engine stopped): 1 */
+    ENGINE_STATE_CRANKING = 2,  /* e2m CRANK: above engine_stopped_speed until crank_exit_speed - the fuel is crank_fuel (FUELING_STATE_CRANKING) */
+    ENGINE_STATE_RUNNING = 3,  /* e2m RUN: at or above crank_exit_speed; no final-fuel override; engine_is_active_flag is 1 */
+    ENGINE_STATE_ENGINE_BRAKE = 4,  /* e2m ENGBRAKE: from RUN while engine_retarder_active_flag is 1 (and engine_brake_driveline_brake_type_cal 0) until it clears - the fuel is the ROM word 0x5c308 (FUELING_STATE_ENGINE_BRAKE) */
+    ENGINE_STATE_OVERSPEED = 5,  /* e2m OVERSPED: while engine_overspeed_active_flag is 1 (P0219) - the fuel is the ROM word 0x5c30a (FUELING_STATE_OVERSPEED) */
+    ENGINE_STATE_JUMP_START = 6,  /* e2m JUMPSTRT: from CRANK after the crank pass count passes its limit; the consumers treat it like CRANK */
+    ENGINE_STATE_REENTRY = 7,  /* e2m REENTRY: from RUN when engine speed drops to crank_reentry_speed - the crank fuel is a floor (FUELING_STATE_CRANKING) */
+    ENGINE_STATE_SHUTDOWN = 8  /* e2m SHUTDOWN: the key line (mios_mdasm30.SCRD bit 15) is off without key_off_shutdown_inhibit_flag - or engine_shutdown_command_flag is 1; ecm_power_down_timer runs - the fuel is fuel_demand_minimum (FUELING_STATE_SHUTDOWN) */
+} ENGINE_STATE;
 
 typedef enum {
     J1939_ACK = 0,  /* Positive acknowledgment - request fulfilled */
@@ -971,7 +1017,7 @@ typedef enum {
 } INJECTION_TIMING_INTERMEDIATE_SOURCE;
 
 typedef enum {
-    MAIN_INJECTION_TIMING_SOURCE_COLD_START_MAP = 5,  /* cm848_calculateMainInjectionTiming: the cold start engine speed x coolant temperature map while cold_start_phase is CSP_ABOVE_RPM_TRIGGER / CSP_ABOVE_RPM_VIA_EVENTS / CSP_SETPOINT_UNDERRUN */
+    MAIN_INJECTION_TIMING_SOURCE_COLD_START_MAP = 5,  /* cm848_calculateMainInjectionTiming: the cold start engine speed x coolant temperature map while engine_state is ENGINE_STATE_CRANKING / ENGINE_STATE_JUMP_START / ENGINE_STATE_REENTRY */
     MAIN_INJECTION_TIMING_SOURCE_FIXED_OFFSET_CALIBRATION = 7,  /* cm848_updateMainInjectionTimingByDeliveryMode: injection_delivery_mode 2 uses the fixed injection_timing_offset_cal */
     MAIN_INJECTION_TIMING_SOURCE_INITIAL = 8,  /* cm848_initTimingFilterStates: the value before the first pass */
     MAIN_INJECTION_TIMING_SOURCE_DEMAND_FLOOR = 11,  /* cm848_calculateMainInjectionTiming: the demand was raised to injection_timing_demand_floor */
@@ -987,6 +1033,35 @@ typedef enum {
     MAIN_INJECTION_TIMING_SOURCE_FUEL_PRESSURE_LIMP_HOME_COMPONENT = 31  /* cm848_calculateMainInjectionTiming: injection_timing_main_fuel_pressure_limp_home_component won */
 } MAIN_INJECTION_TIMING_SOURCE;
 
+typedef enum {
+    POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT = 0,  /* Counting presses of the remote switch (j1939_governor_feature_byte bit 1) - the count picks a preset speed */
+    POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_RUN = 1,  /* Running at the remote preset speed until the switch opens or a cancel condition */
+    POWER_TAKE_OFF_GOVERNOR_STATE_WAIT = 2,  /* Waiting: vehicle speed / engine speed window / faults / engine stopped / brake or clutch cancel. RAM dump: 2 */
+    POWER_TAKE_OFF_GOVERNOR_STATE_NORMAL = 3  /* Running under cab control from the set / resume speeds (j1939_governor_feature_byte bit 0) */
+} POWER_TAKE_OFF_GOVERNOR_STATE;
+
+typedef enum {
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_OFF_OR_DISABLED = 0,  /* SPN 976 value 0 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_HOLD = 1,  /* SPN 976 value 1 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_REMOTE_HOLD = 2,  /* SPN 976 value 2 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_STANDBY = 3,  /* SPN 976 value 3 - not stored */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_REMOTE_STANDBY = 4,  /* SPN 976 value 4 - not stored */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_SET = 5,  /* SPN 976 value 5 - not stored */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_DECELERATE_OR_COAST = 6,  /* SPN 976 value 6 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_RESUME = 7,  /* SPN 976 value 7 - not stored */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_ACCELERATE = 8,  /* SPN 976 value 8 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_ACCELERATOR_OVERRIDE = 9,  /* SPN 976 value 9 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_1 = 10,  /* SPN 976 value 10 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_2 = 11,  /* SPN 976 value 11 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_3 = 12,  /* SPN 976 value 12 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_4 = 13,  /* SPN 976 value 13 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_5 = 14,  /* SPN 976 value 14 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_6 = 15,  /* SPN 976 value 15 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_7 = 16,  /* SPN 976 value 16 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_PREPROGRAMMED_SET_SPEED_8 = 17,  /* SPN 976 value 17 */
+    POWER_TAKE_OFF_GOVERNOR_J1939_STATE_NOT_AVAILABLE = 31  /* SPN 976 value 31 - sent as 0x1F while the power take-off feature is off */
+} POWER_TAKE_OFF_GOVERNOR_J1939_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -997,7 +1072,7 @@ typedef struct protection_condition_flags_t protection_condition_flags_t;
 typedef struct protection_status_flags_t protection_status_flags_t;
 typedef struct protection_timer_state_t protection_timer_state_t;
 typedef struct engine_crank_state_t engine_crank_state_t;
-typedef struct engine_sync_state_t engine_sync_state_t;
+typedef struct fuel_pressure_governor_state_t fuel_pressure_governor_state_t;
 typedef struct engine_rpm_state_t engine_rpm_state_t;
 typedef struct sensor_readings_t sensor_readings_t;
 typedef struct eeprom_header_t eeprom_header_t;
@@ -1010,7 +1085,7 @@ typedef struct system_status_flags_t system_status_flags_t;
 typedef struct wastegate_duty_controller_state_t wastegate_duty_controller_state_t;
 typedef struct throttle_fuel_trim_t throttle_fuel_trim_t;
 typedef struct combustion_reference_state_t combustion_reference_state_t;
-typedef struct boost_pressure_state_t boost_pressure_state_t;
+typedef struct charge_flow_estimate_terms_t charge_flow_estimate_terms_t;
 typedef struct engine_speed_limit_arbitration_t engine_speed_limit_arbitration_t;
 typedef struct operating_mode_governor_output_t operating_mode_governor_output_t;
 typedef struct protection_lockout_t protection_lockout_t;
@@ -1133,6 +1208,8 @@ typedef struct end_of_line_test_settings_t end_of_line_test_settings_t;
 typedef struct algorithm_enable_flags_12_t algorithm_enable_flags_12_t;
 typedef struct algorithm_enable_flags_18_t algorithm_enable_flags_18_t;
 typedef struct algorithm_enable_flags_41_t algorithm_enable_flags_41_t;
+typedef struct piecewise_linear_gain_t piecewise_linear_gain_t;
+typedef struct derivative_gain_t derivative_gain_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -1216,11 +1293,11 @@ struct engine_crank_state_t {
     uint16_t run_state;  /* Engine run state written by mpc555_updateEngineRunState - a different variable from engine_operating_mode */
 };
 
-struct engine_sync_state_t {
+struct fuel_pressure_governor_state_t {
     FUEL_PRESSURE_GOVERNOR_MODE fuel_pressure_governor_mode;  /* Fuel pressure governor mode (FUEL_PRESSURE_GOVERNOR_MODE; was sync_status) */
     uint16_t fuel_pressure_governor_demand;  /* Fuel pressure governor demand: the PID / fixed-mode result of cm848_calculateFuelMeteringCommand before its limits; its table turns the clamped value into the fuel metering feedback target (was reference_count) */
     uint16_t fuel_metering_command;  /* Fuel metering command 0-4095 (= 0-100 % on-time of TPU-B channel 11 via cm848_setFuelMeteringPwm) from cm848_calculateFuelMeteringCommand - not an engine speed (was speed_raw) */
-    uint8_t reserved_05;  /* Padding for alignment */
+    uint16_t filtered_battery_voltage;  /* e2m 8019 +5 HPCR_Filtered_Battery_Voltage (volts): stored by cm848_filterEngineSensorValue (sth) and read by cm848_calculateFuelMeteringCommand for its battery voltage compensation (lhz) - a word, so the struct is 7 bytes (was the 1-byte reserved_05) */
 };
 
 struct engine_rpm_state_t {
@@ -1348,21 +1425,21 @@ struct throttle_fuel_trim_t {
 struct combustion_reference_state_t {
     uint16_t alpha_percent;  /* Fuel blend mode selector */
     uint16_t egr_off_flag;  /* enable flag (=fuel_blend_enable_flag); overridden by fuel_blend_mode_override_cal when engine_feature_enable_flags & 0x100 */
-    uint16_t gross_fuel_timing_adjustment_active_flag;  /* 1 when fuel_demand_arbitrated_snapshot >= fuel_demand_blend_threshold_cal */
+    uint16_t gross_fuel_timing_adjustment_active_flag;  /* 1 when final_fueling_before_combustion_reference >= injection_quantity_combustion_gross_timing_adjustment_threshold */
     uint16_t injection_timing_fuel_limited_adjustment;  /* dual-axis table result added to engine_load_normalized when fuel_blend_bypass_flag active */
-    uint16_t injection_quantity_gross_before_timing_adjustment;  /* snapshot of fuel_demand_arbitrated_snapshot */
+    uint16_t injection_quantity_gross_before_timing_adjustment;  /* snapshot of final_fueling_before_combustion_reference */
     uint16_t chi_hundredths;  /* Fuel blend weight factor (0-100%) */
 };
 
-struct boost_pressure_state_t {
-    uint16_t load_input;  /* Boost-based load input */
-    uint16_t rpm_modifier;  /* RPM-based boost modifier */
-    uint16_t lookup_result;  /* Boost table lookup result */
-    uint16_t computed_value;  /* Computed boost pressure value */
-    uint16_t pressure_ratio;  /* Boost pressure ratio */
-    uint16_t reserved_0a;  /* Gap */
-    uint16_t fresh_air_mass_flow_filtered;  /* Gap */
-    uint16_t reserved_0e;  /* Gap */
+struct charge_flow_estimate_terms_t {
+    uint16_t intake_manifold_temperature_rankine;  /* e2m 177D +2 CHP_Intake_Manifold_Tmptr_R: the intake manifold temperature in degrees Rankine (intake_manifold_temperature_filtered + 0x7300) */
+    uint16_t volumetric_efficiency_mach;  /* e2m 177D +4 CHP_Veff_Mach: the volumetric efficiency test point based on engine speed and stroke */
+    uint16_t volumetric_efficiency_square_root;  /* e2m 177D +6 CHP_Veff_Sqrt: the volumetric efficiency test point based only on energy */
+    uint16_t flow_area_constant;  /* e2m 177D +8 CHP_Flow_Area_Constant */
+    uint16_t pressure_ratio;  /* e2m 177D +A CHP_Pratio: the charge flow pressure ratio */
+    uint16_t charge_flow_source;  /* e2m 177D +C Charge_Flow_Source: 0 primary / 1 backup */
+    uint16_t fresh_air_mass_flow_filtered;  /* e2m 177B +0 Fresh_Air_Flow: the fresh air flow virtual sensor (lb/min) */
+    uint16_t fresh_air_flow_source;  /* e2m 177B +2 Fresh_Air_Flow_Source: 0 primary / 1 backup */
 };
 
 struct engine_speed_limit_arbitration_t {
@@ -1372,8 +1449,8 @@ struct engine_speed_limit_arbitration_t {
 };
 
 struct operating_mode_governor_output_t {
-    uint16_t fuel_demand;  /* Fuel demand of the engine operating mode governor as the output stages see it (engine_operating_mode_fuel_demand or the protection limit) (was proportional_gain) */
-    uint16_t mode_code;  /* Copy of engine_operating_mode (1 2 5 6 7 8 30 37 38) or 4 when the output is replaced by the limit in cm848_updateGovernorFromProtection (was integral_term) */
+    uint16_t fuel_demand;  /* Fuel demand of the engine operating mode governor as the output stages see it: engine_operating_mode_fuel_demand or power_take_off_governor_fuel_demand (the power take-off fuel - Cummins PTSLFL per e2m block 1265 +4) (was proportional_gain) */
+    FUELING_STATE mode_code;  /* The user fueling state after the power take-off selection (Cummins PTSLFLST per e2m block 1265 +6 - 1-8): engine_operating_mode (1 2 5 6 7 8 30 37 38) or FUELING_STATE_POWER_TAKE_OFF when cm848_selectPowerTakeOffOrUserFueling lets power_take_off_governor_fuel_demand replace the fuel (was integral_term) */
 };
 
 struct protection_lockout_t {
@@ -1884,18 +1961,18 @@ struct fault_entry_t {
     uint8_t fault_code;  /* Fault code ID (0xAA = empty/available slot) */
     uint16_t vehicle_speed;  /* Vehicle speed when the fault was captured (copy of vehicle_speed - 1/256 mph) (was temperature_trim) */
     uint16_t filtered_rpm;  /* Target engine RPM at fault time */
-    uint16_t diagnostic_fault_flags_a;  /* Sensor scale factor 1 */
+    uint16_t system_switch_status;  /* Sensor scale factor 1 */
     uint16_t engine_load_at_current_speed;  /* engine_load_at_current_speed_percent at capture (1/256 percent) - OBD-II mode 2 PID 4 (was fault_status) */
     uint16_t accelerator_pedal_position;  /* accelerator_pedal_position_in_use at capture - OBD-II mode 2 PID 0x11 (was protection_high) */
     uint16_t intake_manifold_pressure;  /* intake_manifold_pressure_in_use at capture (was protection_low) */
     uint16_t coolant_temperature;  /* coolant_temperature_in_use at capture (1/64 deg F) (was timing_param_1) */
     uint16_t intake_manifold_temperature;  /* intake_manifold_temperature_in_use at capture (1/64 deg F) (was timing_param_2) */
     uint16_t oil_pressure;  /* oil_pressure_sensor_filtered at capture (was timing_param_3) */
-    uint16_t diagnostic_fault_flags_b;  /* Sensor scale factor 2 */
+    uint16_t system_switch_status_2;  /* Sensor scale factor 2 */
     uint32_t reserved;  /* Reserved gap (not written by set/capture functions) */
-    uint8_t governor_mode_code;  /* Pressure fuel adjustment byte */
+    uint8_t final_fueling_state;  /* Low byte of final_fueling_state when the freeze frame was stored (hpcr_setFaultActiveStatus) (was governor_mode_code - Pressure fuel adjustment byte) */
     uint16_t battery_voltage;  /* Battery voltage reading at fault time */
-    uint16_t fuel_demand_computed;  /* Processed load/throttle value */
+    uint16_t final_fueling;  /* final_fueling (e2m Final_Fueling) when the fault was recorded (was fuel_demand_computed: Processed load/throttle value) */
     uint16_t main_injection_timing;  /* Torque limit factor at fault time */
     uint16_t fuel_metering_feedback;  /* Diagnostic data word 1 */
     uint8_t fuel_metering_feedback_fault;  /* Diagnostic data byte 3 */
@@ -2472,34 +2549,34 @@ struct output_read_back_fault_bits_t {
 };
 
 struct monitor_condition_bits_t {
-    uint32_t vehicle_speed_sensor_signal_loss : 1;  /* bit 0: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_detectVehicleSpeedSensorSignalLoss (lwz at 0x526928, clrlwi 31, P0500 path 1). */
-    uint32_t vehicle_speed_sensor_zero_under_load : 1;  /* bit 1: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_detectVehicleSpeedSensorZeroUnderLoad (lwz at 0x5269d4, mask 2, P0500 path 2). */
-    uint32_t overboost_and_high_load_boost_band : 1;  /* bit 2: set when power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); monitor group 0 complete. Read by cm848_monitorOverboostAndHighLoadBoostBand (lwz at 0x5372e4, mask 4). */
+    uint32_t vehicle_speed_sensor_signal_loss : 1;  /* bit 0: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT power take off active (switch 3 or power_take_off_governor_active_flag); OBD engine running. Read by cm848_detectVehicleSpeedSensorSignalLoss (lwz at 0x526928, clrlwi 31, P0500 path 1). */
+    uint32_t vehicle_speed_sensor_zero_under_load : 1;  /* bit 1: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT power take off active (switch 3 or power_take_off_governor_active_flag); OBD engine running. Read by cm848_detectVehicleSpeedSensorZeroUnderLoad (lwz at 0x5269d4, mask 2, P0500 path 2). */
+    uint32_t overboost_and_high_load_boost_band : 1;  /* bit 2: set when power take off disengaged delay elapsed; NOT power take off active (switch 3 or power_take_off_governor_active_flag); monitor group 0 complete. Read by cm848_monitorOverboostAndHighLoadBoostBand (lwz at 0x5372e4, mask 4). */
     uint32_t reserved_bit_3 : 1;  /* bit 3: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t coolant_temperature_sensor_performance : 1;  /* bit 4: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_checkCoolantTemperatureSensorPerformance (lwz at 0x52e090, mask 0x10). */
-    uint32_t fuel_level_low_distance : 1;  /* bit 5: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_monitorFuelLevelLowDistance (lwz at 0x5307e4, mask 0x20). */
-    uint32_t fuel_temperature_sensor_cold_soak_check : 1;  /* bit 6: set when OBD battery voltage in range; cold_start_phase 1. Read by cm848_checkFuelTemperatureSensorAfterColdSoak (lwz at 0x53047c, mask 0x40). */
-    uint32_t fuel_pressure_tracking : 1;  /* bit 7: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); cold_start_phase 3; logical output request 53; NOT fault 397 registered (OBD fuel level low). Read by cm848_monitorFuelPressureTrackingError (lwz at 0x532184) and cm848_monitorFuelPressureSetpointNotReached (lwz at 0x536ea0, 0x537170), mask 0x80. */
+    uint32_t coolant_temperature_sensor_performance : 1;  /* bit 4: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag); OBD engine running. Read by cm848_checkCoolantTemperatureSensorPerformance (lwz at 0x52e090, mask 0x10). */
+    uint32_t fuel_level_low_distance : 1;  /* bit 5: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag); OBD engine running. Read by cm848_monitorFuelLevelLowDistance (lwz at 0x5307e4, mask 0x20). */
+    uint32_t fuel_temperature_sensor_cold_soak_check : 1;  /* bit 6: set when OBD battery voltage in range; engine_state 1. Read by cm848_checkFuelTemperatureSensorAfterColdSoak (lwz at 0x53047c, mask 0x40). */
+    uint32_t fuel_pressure_tracking : 1;  /* bit 7: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag); engine_state 3; logical output request 53; NOT fault 397 registered (OBD fuel level low). Read by cm848_monitorFuelPressureTrackingError (lwz at 0x532184) and cm848_monitorFuelPressureSetpointNotReached (lwz at 0x536ea0, 0x537170), mask 0x80. */
     uint32_t reserved_bit_8 : 1;  /* bit 8: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
     uint32_t reserved_bit_9 : 1;  /* bit 9: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
     uint32_t reserved_bit_10 : 1;  /* bit 10: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t thermostat_system : 1;  /* bit 11: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_runThermostatMonitor (lwz at 0x536b94, mask 0x800). */
+    uint32_t thermostat_system : 1;  /* bit 11: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag); OBD engine running. Read by cm848_runThermostatMonitor (lwz at 0x536b94, mask 0x800). */
     uint32_t reserved_bit_12 : 1;  /* bit 12: never set: ROM mask 0 with expected 0xfff7 can not match. No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t boost_pressure_sensor_and_underboost : 1;  /* bit 13: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_monitorBoostPressureSensorAndUnderboost (lwz at 0x52d908, 0x52dae0, mask 0x2000). */
-    uint32_t misfire : 1;  /* bit 14: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); NOT fault 397 registered (OBD fuel level low). Read by cm848_checkMisfireMonitorTestConditions (lwz at 0x532dbc) and cm848_runMisfireMonitor (lwz at 0x533130, 0x53339c), mask 0x4000. */
-    uint32_t boost_fuel_weight_factor : 1;  /* bit 15: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag); OBD engine running. Read by cm848_calculateBoostTorqueOffset (lwz at 0x13488, mask 0x8000; boost_fuel_weight_factor is forced to 0x80 while the bit is clear). */
-    uint32_t egr_delta_pressure_sensor_performance : 1;  /* bit 16: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). Read by cm848_checkEgrDeltaPressureSensorPerformance (lwz at 0x52e4c8 with mask 0x10000 in r29, .cpp line 87691). */
-    uint32_t reserved_bit_17 : 1;  /* bit 17: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t reserved_bit_18 : 1;  /* bit 18: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t reserved_bit_19 : 1;  /* bit 19: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t reserved_bit_20 : 1;  /* bit 20: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t reserved_bit_21 : 1;  /* bit 21: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t reserved_bit_22 : 1;  /* bit 22: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t unidentified_monitor_23 : 1;  /* bit 23: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). Read by cm848_monitorEgrOrificeTemperatureSensorRationality (lwz at 0x52eb38 with mask 0x800000 in r27, .cpp line 87883, monitor not identified, faults 512 and 513 have no DTC slot). */
-    uint32_t wastegate_boost_pressure : 1;  /* bit 24: set when power take off disengaged delay elapsed; NOT power take off active (switch 3 or governor_fuel_active_flag); monitor group 0 complete. Read by cm848_monitorWastegateBoostPressure (lwz at 0x5375b0 with mask 0x1000000 in r31, .cpp line 92888). */
-    uint32_t reserved_bit_25 : 1;  /* bit 25: set when OBD battery voltage in range; NOT power take off active (switch 3 or governor_fuel_active_flag). No reader in either bank (sweep of 0x40b9d0). */
-    uint32_t park_neutral_switch : 1;  /* bit 26: set when NOT power take off active (switch 3 or governor_fuel_active_flag); NOT fault 397 registered (OBD fuel level low). Read by cm848_monitorParkNeutralSwitch (lwz at 0x51b628, 0x51b7c0, mask 0x4000000). */
-    uint32_t governor_pressure_sensor_offset : 1;  /* bit 27: set when OBD battery voltage in range; power take off disengaged delay elapsed; cold_start_phase 3; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorGovernorPressureSensorOffset (lwz at 0x51ad34, mask 0x8000000). */
+    uint32_t boost_pressure_sensor_and_underboost : 1;  /* bit 13: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag); OBD engine running. Read by cm848_monitorBoostPressureSensorAndUnderboost (lwz at 0x52d908, 0x52dae0, mask 0x2000). */
+    uint32_t misfire : 1;  /* bit 14: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag); NOT fault 397 registered (OBD fuel level low). Read by cm848_checkMisfireMonitorTestConditions (lwz at 0x532dbc) and cm848_runMisfireMonitor (lwz at 0x533130, 0x53339c), mask 0x4000. */
+    uint32_t boost_fuel_weight_factor : 1;  /* bit 15: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag); OBD engine running. Read by cm848_calculateBoostTorqueOffset (lwz at 0x13488, mask 0x8000; boost_fuel_weight_factor is forced to 0x80 while the bit is clear). */
+    uint32_t egr_delta_pressure_sensor_performance : 1;  /* bit 16: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). Read by cm848_checkEgrDeltaPressureSensorPerformance (lwz at 0x52e4c8 with mask 0x10000 in r29, .cpp line 87691). */
+    uint32_t reserved_bit_17 : 1;  /* bit 17: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_18 : 1;  /* bit 18: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_19 : 1;  /* bit 19: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_20 : 1;  /* bit 20: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_21 : 1;  /* bit 21: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t reserved_bit_22 : 1;  /* bit 22: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t unidentified_monitor_23 : 1;  /* bit 23: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). Read by cm848_monitorEgrOrificeTemperatureSensorRationality (lwz at 0x52eb38 with mask 0x800000 in r27, .cpp line 87883, monitor not identified, faults 512 and 513 have no DTC slot). */
+    uint32_t wastegate_boost_pressure : 1;  /* bit 24: set when power take off disengaged delay elapsed; NOT power take off active (switch 3 or power_take_off_governor_active_flag); monitor group 0 complete. Read by cm848_monitorWastegateBoostPressure (lwz at 0x5375b0 with mask 0x1000000 in r31, .cpp line 92888). */
+    uint32_t reserved_bit_25 : 1;  /* bit 25: set when OBD battery voltage in range; NOT power take off active (switch 3 or power_take_off_governor_active_flag). No reader in either bank (sweep of 0x40b9d0). */
+    uint32_t park_neutral_switch : 1;  /* bit 26: set when NOT power take off active (switch 3 or power_take_off_governor_active_flag); NOT fault 397 registered (OBD fuel level low). Read by cm848_monitorParkNeutralSwitch (lwz at 0x51b628, 0x51b7c0, mask 0x4000000). */
+    uint32_t governor_pressure_sensor_offset : 1;  /* bit 27: set when OBD battery voltage in range; power take off disengaged delay elapsed; engine_state 3; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorGovernorPressureSensorOffset (lwz at 0x51ad34, mask 0x8000000). */
     uint32_t transmission_output_speed_sensor : 1;  /* bit 28: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorTransmissionOutputSpeedSensor (lwz at 0x3de14, mask 0x10000000, P0720). */
     uint32_t governor_pressure_tracking : 1;  /* bit 29: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorGovernorPressureTracking (lwz at 0x51aff0, mask 0x20000000). */
     uint32_t converter_clutch_and_overdrive_performance : 1;  /* bit 30: set when OBD battery voltage in range; power take off disengaged delay elapsed; NOT fault 397 registered (OBD fuel level low); OBD engine running. Read by cm848_monitorConverterClutchAndOverdrivePerformance (lwz at 0x51bec0 with mask 0x40000000 in r21, .cpp line 75941). */
@@ -2507,7 +2584,7 @@ struct monitor_condition_bits_t {
 };
 
 struct logical_output_request_bits_16_to_23_t {
-    uint8_t reserved_bit_0 : 1;  /* bit 0: guess (not proven, so reserved): a transmission solenoid enable request - output 16 (mask 1, 6 uses). cm848_evaluateProtectionFaultCondition sets it (cm848_setLogicalOutputRequest(0x10,0)) only while none of the transmission fault flags (condition_flags_2 bits 0 / 1, threshold_current 0x10, condition_flags_3 bit 0) is set and cold_start_phase is not CSP_CRANKING, and clears it otherwise. The read-back fault debounce of the governor pressure solenoid (cm848_debounceOutputReadBackFaults) and the output checks of outputs 17 / 18 (cm848_mainLoopMonitor: diag_faultMatch_outputCheck_update(0x11 ...) / (0x12 ...)) run only while it is set. Medium confidence: the old note said transmission relay; enable is what the gating shows. */
+    uint8_t reserved_bit_0 : 1;  /* bit 0: guess (not proven, so reserved): a transmission solenoid enable request - output 16 (mask 1, 6 uses). cm848_evaluateProtectionFaultCondition sets it (cm848_setLogicalOutputRequest(0x10,0)) only while none of the transmission fault flags (condition_flags_2 bits 0 / 1, threshold_current 0x10, condition_flags_3 bit 0) is set and engine_state is not ENGINE_STATE_STOPPED, and clears it otherwise. The read-back fault debounce of the governor pressure solenoid (cm848_debounceOutputReadBackFaults) and the output checks of outputs 17 / 18 (cm848_mainLoopMonitor: diag_faultMatch_outputCheck_update(0x11 ...) / (0x12 ...)) run only while it is set. Medium confidence: the old note said transmission relay; enable is what the gating shows. */
     uint8_t overdrive_solenoid_request : 1;  /* bit 1: output 17 (mask 2). cm848_processOverdriveSwitchAndShift sets it with cm848_setLogicalOutputRequest(0x11,0) together with overdrive_upshift_timer and clears it on the overdrive release; read with mask 2 in cm848_monitorConverterClutchAndOverdrivePerformance and cm848_determineCurrentGearAndLockupInhibit. */
     uint8_t converter_clutch_solenoid_request : 1;  /* bit 2: output 18 (mask 4, about 30 uses). cm848_applyConverterLockupSchedule sets it (cm848_setLogicalOutputRequest(0x12,0)); cm848_applyConverterUnlockConditions, cm848_protectionShutdownHandler and cm848_processOverdriveSwitchAndShift clear it (cm848_clearLogicalOutputRequest(0x12,0)). */
     uint8_t cruise_vent_solenoid_request : 1;  /* bit 3: output 19 (mask 8): cm848_setLogicalOutputRequest(0x13,...) in cm848_controlCruiseVacuumServo (decompile line 41596); wave 2 identified requests 19 / 20 / 21 as cruise vent / vacuum / servo supply. No direct read of this mask. */
@@ -2586,16 +2663,16 @@ struct algorithm_enable_flags_12_t {
     uint16_t reserved_bit_0 : 1;  /* bit 0: e2m Idle_Speed_Save_Enable (LSISSVEN, saves the last idle speed at shutdown). No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). */
     uint16_t reserved_bit_1 : 1;  /* bit 1: e2m Overspeed_FSO_Override (EPOSFSO, fuel shut-off valve on overspeed). No reader in either bank (sweep of both banks). Set in this calibration (0x2e06). */
     uint16_t water_in_fuel_enable : 1;  /* bit 2: e2m Water_In_Fuel_Enable (WFAGEN). cm848_j1939SendSafetyStatusMessage (lhz at 0x26ea0: the PGN 65279 byte stays 0xff while clear) and cm848_monitorWaterInFuel (lhz at 0x5103b8: clears fault 56 bit 0x100 while clear). Code agrees with the e2m label. Set in this calibration (0x2e06). */
-    uint16_t air_fuel_control_override_enable : 1;  /* bit 3: e2m AFC_Override_Enable (AFENMAN). cm848_fuelDemandBlendCalculator (lhz 24(r26) at 0xdcf4): while clear it computes the limit from air_fuel_control_fuel_limit_grid, so set overrides it. Code agrees. Clear in this calibration (0x2e06). */
-    uint16_t electronic_smart_power_enable : 1;  /* bit 4: e2m ESP_Enable (SPAGEN; ESP = Electronic Smart Power per e2m Group_ESP_8). hpcr_calculateFuelTrimOutput (lhz at 0xe71c) and cm848_calculateFuelDemandWithTrim (lhz at 0x1f290): while set the thermal_fuel_limit_factor is zeroed around cm848_processActiveFaultList. A reader exists but its behaviour is not tied to the e2m label. Clear in this calibration (0x2e06). */
+    uint16_t air_fuel_control_override_enable : 1;  /* bit 3: e2m AFC_Override_Enable (AFENMAN). cm848_calculateAirFuelControlFuelLimit (lhz 24(r26) at 0xdcf4): while clear it computes the limit from air_fuel_control_fuel_limit_grid, so set overrides it. Code agrees. Clear in this calibration (0x2e06). */
+    uint16_t electronic_smart_power_enable : 1;  /* bit 4: e2m ESP_Enable (SPAGEN; ESP = Electronic Smart Power per e2m Group_ESP_8). hpcr_calculateFuelTrimOutput (lhz at 0xe71c) and cm848_calculateThrottle100Fuelings (lhz at 0x1f290): while set the four_dimensional_fueling_interpolation_factor is zeroed around cm848_calculateMaximumFuelCurve. A reader exists but its behaviour is not tied to the e2m label. Clear in this calibration (0x2e06). */
     uint16_t reserved_bit_5 : 1;  /* bit 5: e2m Reverse_ESP_Enable (SPRVEN, Electronic Smart Power launch application). No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). */
     uint16_t low_speed_governor_droop_enable : 1;  /* bit 6: e2m LSG_Droop_Enable (LSDPEN). cm848_updateProtectionParameters (lhz at 0x20b90) and governor_calculateIntegratorRpmOutput (lhz at 0x507a70): while set the governor integrator output is reduced by governor_integrator_correction_term times ROM 0x5c352 divided by 167 (a droop). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t accelerator_interlock_enable : 1;  /* bit 7: e2m Accelerator_Interlock_Enable (ANEN). cm848_checkDiagnosticFuelOverride (lhz at 0x403e8: with switch 26 set it forces the fuel demand override to its minimum) and cm848_j1939BuildEngineControlByte (lhz 24(r5) at 0x25788). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_signal_loss_enable : 1;  /* bit 8: e2m VSS_Moving_Enable (VSMVEN): the sensor drops to 0 while the filtered speed is still above 10 mph. Named after the detector it gates. cm848_detectVehicleSpeedSensorSignalLoss (lhz at 0x526950, P0500 path 1) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526be8). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_zero_under_load_enable : 1;  /* bit 9: e2m VSS_Stopped_Enable (VSSTEN): the sensor reads stopped (0) while the engine is under load. Named after the detector it gates. cm848_detectVehicleSpeedSensorZeroUnderLoad (lhz at 0x5269fc, P0500 path 2) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526bd8). Code agrees: the sensor reads 0 while the engine is under load. Set in this calibration (0x2e06). */
     uint16_t obd_fault_handler_enable : 1;  /* bit 10: e2m OBD_Fault_Handler_Enable (DGOBFUHN). 11 fault framework functions test it (cm848_registerFaultInActiveList at 0x1cf1c, cm848_clearDiagnosticState, cm848_processFaultScanGroup, diagnosticMainStateProcessor, cm848_updateFaultEntryCounters, cm848_resetFaultStatus, hpcr_setFaultActiveStatus, cm848_advanceDiagnosticActionState, cm848_j1939HandlePgn65228Dm3ClearDiag, cm848_completeBoostPressureMonitorReport, cm848_monitorEgrOrificeTemperatureSensorRationality); the names agree, the bodies were not read. Set in this calibration (0x2e06). */
-    uint16_t power_take_off_brake_override_enable : 1;  /* bit 11: e2m PTO_Brake_Override_Enable (PTBRODEN). cm848_processProtectionControlStateMachine (lhz 24(r31) at 0x2b214) pairs it with protection_control_state_flags 0x10000, which that function sets from switch 11 (brake), to leave power take off control. Code agrees. Set in this calibration (0x2e06). */
-    uint16_t power_take_off_clutch_override_enable : 1;  /* bit 12: e2m PTO_Clutch_Override_Enable (PTCHODEN). The same function pairs it with protection_control_state_flags 0x4000, set from switch 15 (clutch). Code agrees. Clear in this calibration (0x2e06). */
+    uint16_t power_take_off_brake_override_enable : 1;  /* bit 11: e2m PTO_Brake_Override_Enable (PTBRODEN). cm848_runPowerTakeOffGovernorStateMachine (lhz 24(r31) at 0x2b214) pairs it with power_take_off_governor_switch_state_bits 0x10000, which that function sets from switch 11 (brake), to leave power take off control. Code agrees. Set in this calibration (0x2e06). */
+    uint16_t power_take_off_clutch_override_enable : 1;  /* bit 12: e2m PTO_Clutch_Override_Enable (PTCHODEN). The same function pairs it with power_take_off_governor_switch_state_bits 0x4000, set from switch 15 (clutch). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t oil_change_monitor_enable : 1;  /* bit 13: e2m OCM_Enable (OCEA). cm848_updateOilChangeMonitor (lhz at 0x51a89c), together with j1939_governor_feature_byte mask 4. Code agrees. Set in this calibration (0x2e06). */
     uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). */
     uint16_t reserved_bit_15 : 1;  /* bit 15: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). */
@@ -2605,13 +2682,13 @@ struct algorithm_enable_flags_18_t {
     uint16_t high_speed_governor_gain_scheduling_enable : 1;  /* bit 0: e2m HSG_Gain_Scheduling_Enable (HSGNSDEN). selectHighSpeedGovernorGainSet (lhz at 0x1fa24, clrlwi 31). Code agrees. Clear in this calibration (0x0008). */
     uint16_t reserved_bit_1 : 1;  /* bit 1: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t reserved_bit_2 : 1;  /* bit 2: e2m DR_Enable (DREN, driver reward). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
-    uint16_t reserved_bit_3 : 1;  /* bit 3: guess (not proven, so reserved): duty cycle monitor enable - e2m DC_Mon_Enable (DCMNEN, duty cycle monitor). cm848_outputs2_periodic (lhz at 0x5063a0, mask 8); the reader name agrees, the body was not read. Set in this calibration (0x0008). */
+    uint16_t reserved_bit_3 : 1;  /* bit 3: guess (not proven, so reserved): duty cycle monitor enable - e2m DC_Mon_Enable (DCMNEN, duty cycle monitor). cm848_updateDutyCycleMonitorLoadHistogram (lhz at 0x5063a0, mask 8); the reader name agrees, the body was not read. Set in this calibration (0x0008). */
     uint16_t reserved_bit_4 : 1;  /* bit 4: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t reserved_bit_5 : 1;  /* bit 5: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t reserved_bit_6 : 1;  /* bit 6: e2m AC_Smart_Enable (ACEN, smart air compressor). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t executive_timing_enable : 1;  /* bit 7: e2m Executive_Timing_Enable (SSECTMEA, executive timing data gatherer). main_loop (lhz 36(r29) at 0xc0c0, 0xc140, 0xc7b8); the reader agrees by name. Clear in this calibration (0x0008). */
     uint16_t high_speed_governor_gear_ratio_gain_enable : 1;  /* bit 8: e2m HSG_Gear_Ratio_Gain_Enable (HSGRGSEN). cm848_loadHighSpeedGovernorWorkingGainSet (lhz at 0x4248c); the reader agrees by name. Clear in this calibration (0x0008). */
-    uint16_t programmable_power_enable : 1;  /* bit 9: e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateDualAxisFuelLimit (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateFuelDemandWithTrim (0x1f194), cm848_initProtectionDelayDefaults (0x212e0), cm848_updateProtectionDiagnostics (0x21d1c), governor_cruise_speedReference_update (0x524bdc), protectionRampRateControl (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
+    uint16_t programmable_power_enable : 1;  /* bit 9: e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateDualAxisFuelLimit (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateThrottle100Fuelings (0x1f194), cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212e0), cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21d1c), governor_cruise_speedReference_update (0x524bdc), protectionRampRateControl (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
     uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t reserved_bit_11 : 1;  /* bit 11: e2m Cruise_Control_AR_Enable (AREN, cruise control auto resume). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t remote_throttle_enable : 1;  /* bit 12: e2m Remote_Throttle_Enable (CTRMTHEN). cm848_j1939BuildEngineControlByte (0x256ac), cm848_buildPgn61443ElectronicEngineController2Message (0x25cbc), cm848_periodicControlLoopFaultHandling (0x50e62c), cm848_clearEngineProtectionFaultsConditional (0x50e784); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
@@ -2632,9 +2709,26 @@ struct algorithm_enable_flags_41_t {
     uint16_t fuel_temperature_in_range_monitor_enable : 1;  /* bit 8: e2m Fuel_Temp_Monitor_Enable. cm848_checkFuelTemperatureSensorAfterColdSoak (lhz at 0x530468); with the bit clear that check never starts. Code agrees (wave 10). Clear in this calibration (0x7ca6). */
     uint16_t intake_air_heater_monitor_enable : 1;  /* bit 9: e2m IAH_Monitor_Enable. cm848_monitorIntakeAirHeaterPerformance (lhz at 0x53248c), cm848_computeIntakeAirHeaterPreheatDuration (0x517048), cm848_countDownIntakeAirHeaterPreheat (0x5171b4, 0x51726c). Code agrees. Clear in this calibration (0x7ca6). */
     uint16_t turbocharger_monitor_enable : 1;  /* bit 10: e2m Turbo_Monitor_Enable. cm848_monitorOverboostAndHighLoadBoostBand (lhz at 0x5372d0). Code agrees. Set in this calibration (0x7ca6). */
-    uint16_t reserved_bit_11 : 1;  /* bit 11: guess (not proven, so reserved): torque normalization enable - e2m Torque_Normalization_Enable. cm848_calculateProtectionActivationDelay (lhz at 0x20504) and cm848_updateProtectionDiagnostics (lhz 82(r29) at 0x21db4); the reader names do not tie to the e2m text, so the name is e2m only. Set in this calibration (0x7ca6). */
-    uint16_t reserved_bit_12 : 1;  /* bit 12: guess (not proven, so reserved): full throttle cold fuel increment enable - e2m Throttle_100_Cold_Increment_Enable. cm848_calculateFuelDemandWithTrim (lhz 82(r29) at 0x1f1a4); the name agrees, the body was not read. Set in this calibration (0x7ca6). */
-    uint16_t reserved_bit_13 : 1;  /* bit 13: guess (not proven, so reserved): air fuel control cold fuel increment enable - e2m AFC_Cold_Increment_Enable. cm848_fuelDemandBlendCalculator (lhz 82(r26) at 0xe064), which also reads the air fuel control override bit of algorithm_enable_flags_12_cal; the name agrees, the body was not read. Set in this calibration (0x7ca6). */
+    uint16_t reserved_bit_11 : 1;  /* bit 11: guess (not proven, so reserved): torque normalization enable - e2m Torque_Normalization_Enable. cm848_calculateJ1939ReferenceEngineFueling (lhz at 0x20504) and cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (lhz 82(r29) at 0x21db4); the reader names do not tie to the e2m text, so the name is e2m only. Set in this calibration (0x7ca6). */
+    uint16_t reserved_bit_12 : 1;  /* bit 12: guess (not proven, so reserved): full throttle cold fuel increment enable - e2m Throttle_100_Cold_Increment_Enable. cm848_calculateThrottle100Fuelings (lhz 82(r29) at 0x1f1a4); the name agrees, the body was not read. Set in this calibration (0x7ca6). */
+    uint16_t reserved_bit_13 : 1;  /* bit 13: guess (not proven, so reserved): air fuel control cold fuel increment enable - e2m AFC_Cold_Increment_Enable. cm848_calculateAirFuelControlFuelLimit (lhz 82(r26) at 0xe064), which also reads the air fuel control override bit of algorithm_enable_flags_12_cal; the name agrees, the body was not read. Set in this calibration (0x7ca6). */
     uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m name. No reader in either bank (sweep of both banks). Set in this calibration (0x7ca6). */
     uint16_t misfire_monitor_enable : 1;  /* bit 15: e2m Misfire_Monitor_Enable. cm848_initializeMisfireMonitor (lhz at 0x532bd8). Code agrees (wave 10). Clear in this calibration (0x7ca6). */
+};
+
+struct piecewise_linear_gain_t {
+    uint32_t small_signal_gain;  /* Gain while the input is inside the window (Q16: output = gain x input >> 16; units per instance) */
+    uint32_t positive_large_signal_gain;  /* Gain above positive_window_width: the proportional step applies it to the part above; the integral step uses it for the whole error */
+    uint32_t negative_large_signal_gain;  /* Gain below negative_window_width (the same way as the positive one) */
+    int16_t positive_window_width;  /* Upper breakpoint of the window (>= 0; in the input's units) */
+    int16_t negative_window_width;  /* Lower breakpoint of the window (<= 0) */
+};
+
+struct derivative_gain_t {
+    uint16_t filter_coefficient;  /* Weight of the previous state in 1/65536 (e2m Derivative_Gain_Constant): the state moves toward gain x input by 1 - coefficient / 65536 per call */
+    uint32_t small_signal_gain;  /* Gain while the input is inside the window */
+    uint32_t positive_large_signal_gain;  /* Gain while the input is above positive_window_width */
+    uint32_t negative_large_signal_gain;  /* Gain while the input is below negative_window_width */
+    int16_t positive_window_width;  /* Upper breakpoint of the window (>= 0) */
+    int16_t negative_window_width;  /* Lower breakpoint of the window */
 };

@@ -1,0 +1,137 @@
+function_address,function_name,old_name,new_name,type,comment
+# Format: old_name is the decompiler's generated name (e.g., puVar1)
+# Run ./analyze.sh localvars to apply, then ./analyze.sh export to see changes
+#
+# sendJ1939Message @ 0x000539fc - Dispatches to single-frame or transport protocol by payload size
+0x000539fc,sendJ1939Message,uVar1,message_data_length,ushort,CAN payload byte count; routes single-frame (<9) vs transport protocol (>=9)
+# cm848_lookupJ1939SourceAddressIndex @ 0x00053a4c - Returns 1-3 if SA matches a calibrated address, 4 if unknown
+0x00053a4c,cm848_lookupJ1939SourceAddressIndex,wVar1,address_index,word,Return value: 1=primary(auth) 2=secondary 3=tertiary(auth) 4=unknown
+# copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
+0x00000340,cm848_copyBootKernelToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)
+0x00000340,cm848_copyBootKernelToRam,puVar2,dest_ptr,undefined4 *,Destination pointer (RAM working copy)
+# cm848_j1939ProcessPgn61442Etc1 @ 0x00022d60 - Handle ETC1 (Electronic Transmission Controller 1) PGN 61442 messages
+0x00022d60,torqueControlModeHandler,bVar3,control_mode,byte,ETC1 byte1 bits1-2 SPN560 driveline engaged state (0=undef 1=disengaged 2=engaged 3=NA)
+0x00022d60,torqueControlModeHandler,bVar4,priority_bits,byte,ETC1 byte5 SPN607 progressive shift disable bits
+0x00022d60,torqueControlModeHandler,cVar1,source_address,char,J1939 source address of ETC1 sender (SPN 1482)
+0x00022d60,torqueControlModeHandler,sVar2,result,short,Function call return value
+# mpc555_generateSerialChallenge @ 0x000032dc - Generate serial handshake challenge and queue response
+# cm848_validateWriteAuth @ 0x00007370 - Validate scrambled auth token for calibration writes
+0x00007370,cm848_validateWriteAuth,param_1,scrambled_token,undefined4,Pointer to 10-byte scrambled auth data from tool
+0x00007370,cm848_validateWriteAuth,bVar2,attempt_count,byte,Current value of write_auth_attempt_counter
+0x00007370,cm848_validateWriteAuth,dVar2,current_runtime,dword,Snapshot of ecm_runtime_accumulator for timestamp check
+0x00007370,cm848_validateWriteAuth,bVar1,key_matches,byte,Whether all 6 descrambled key bytes match EEPROM header
+0x00007370,cm848_validateWriteAuth,cVar8,compare_index,char,Loop counter for 6-byte key comparison
+0x00007370,cm848_validateWriteAuth,bVar7,copy_count,byte,Loop counter for 3-byte timestamp extraction
+0x00007370,cm848_validateWriteAuth,uVar6,result,undefined4,Return value: 0=authorized 1=denied
+0x00007370,cm848_validateWriteAuth,pbVar4,timestamp_src,byte *,Source pointer for timestamp byte copy
+0x00007370,cm848_validateWriteAuth,pbVar5,timestamp_dest,byte *,Destination pointer for timestamp byte copy
+# mpc555_tickTransferTimeoutAndRuntimeCounter @ 0x00007608 - Watchdog prescaler and runtime accumulator tick
+0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,bVar3,prescaler_count,byte,Current prescaler value (0-39)
+0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,dVar1,runtime_value,dword,Runtime snapshot before increment
+0x00007608,mpc555_tickTransferTimeoutAndRuntimeCounter,wVar2,counter_value,word,Reused for timeout countdown and keyon counter
+# mpc555_keyOnStateMachine @ 0x00000184 - Key-on/key-off state machine with runtime EEPROM save
+0x00000184,mpc555_keyOnStateMachine,iVar2,keyon_phase,int,State machine phase: 0=waiting for key-on 1=running
+0x00000184,mpc555_keyOnStateMachine,wVar3,signal_value,word,Reused for MIOS key-off signal and keyon counter
+0x00000184,mpc555_keyOnStateMachine,uVar1,power_flags,uint,Copy of ecu_power_state_flags for bit manipulation
+0x000032dc,mpc555_generateSerialChallenge,seed_value,challenge_value,dword,Copy of serial_challenge_value for byte extraction
+0x000032dc,mpc555_generateSerialChallenge,seed_high_byte,challenge_high_byte,byte,Upper byte of 16-bit challenge (bits 15-8)
+0x000032dc,mpc555_generateSerialChallenge,uVar3,write_pos,uint,Current write position in diag_serial_buffer
+# cm848_activateDiagnosticSession / cm848_forceActivateDiagnosticSession response codes
+0x00021624,cm848_activateDiagnosticSession,uVar1,diag_ack_result,DIAG_RESPONSE,DIAG_RESPONSE: ACK(0) if standby→active transition succeeded NACK_NOT_READY(4) if not in standby
+0x00021694,cm848_forceActivateDiagnosticSession,uVar1,diag_ack_result,DIAG_RESPONSE,DIAG_RESPONSE: ACK(0) if activated NACK_PROTECTED(7) if protection mode blocked
+# cm848_j1939DispatchPgnHandler @ 0x000231cc - linear search through j1939_pgn_dispatch_table
+0x000231cc,cm848_j1939DispatchPgnHandler,bVar1,search_idx,byte,Index of current entry being tested; equals j1939_pgn_handler_count on exit if no handler matched
+0x000231cc,cm848_j1939DispatchPgnHandler,pjVar2,entry,j1939_pgn_handler_entry_t *,Pointer to current dispatch table entry under test
+0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,uVar2,fuel_temp_trim_uncapped,uint,Shaft-speed-derived fuel-temp estimate before capping - named _uncapped not _working to avoid collision with global fuel_temp_trim_working at 0x003fb4d8
+0x005267f4,cm848_fuelTrimFromOutputShaftSpeed,uVar1,fuel_temp_trim_result,uint,Final capped result stored to fuel_temp_trim_raw - the lesser of the uncapped estimate and fuel_temp_cap_from_shaft_speed
+# mpc555_processDiagnosticAndEepromRequests @ 0x00001fa4 - Main diagnostic/EEPROM request dispatcher
+0x00001fa4,mpc555_processDiagnosticAndEepromRequests,sVar1,eeprom_init_result,short,Return value from mpc555_initEepromTransfer - 0=success
+0x00001fa4,mpc555_processDiagnosticAndEepromRequests,bVar2,diag_response_code,byte,Diagnostic response code to send (0x11=invalid service 0x12=invalid state)
+# governor_cruise_engage_check @ 0x00512e70 - cruise-engage gate (reviewed via review-function-readability)
+0x00512e70,governor_cruise_engage_check,uVar1,cruise_switch_adc_value,ushort,Live or overridden cruise-switch ADC reading compared against the valid window (ushort emits a benign Unable-to-use-type warning, same as message_data_length on main)
+0x00512e70,governor_cruise_engage_check,uVar2,qadc_dispatch_index,uint,Clamped index into qadc_channel_dispatch_table for cruise-switch channel 0x2f
+0x00512e70,governor_cruise_engage_check,uVar3,engage_allowed,undefined4,Return flag - 1 when cruise may engage this cycle
+# sensorChannelTypeB_configInit @ 0x005012dc - per-channel sensor read/validate/debounce (reviewed via review-function-readability)
+# sensorChannelTypeB_update @ 0x00501b4c - boot-time twin of configInit (same shape, fewer temps)
+0x0002f5a4,cm848_evaluateVariableGeometryTurbochargerPositionAdjustments,uVar1,engineLoadProtection,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
+0x00038ac8,cm848_checkPciMessageTimeouts,bVar2,all_transmits_overdue,byte,True until any timed TX entry is still within interval + grace; when it stays true link_event_code = 7
+0x00038ac8,cm848_checkPciMessageTimeouts,uVar4,message_index,uint,Entry index into pci_transmit_message_table then pci_receive_message_table (masked to 8 bits)
+0x00038ac8,cm848_checkPciMessageTimeouts,puVar3,transmit_timer,ushort *,Cached pci_transmit_message_table[message_index].timer
+0x00038ac8,cm848_checkPciMessageTimeouts,uVar1,receive_interval,word,Cached pci_receive_message_table[message_index].interval (receive timeout)
+0x0003adcc,cm848_schedulePciTransmit,pbVar1,payload_length,byte *,data_length pointer of the overdue TX entry
+0x0003adcc,cm848_schedulePciTransmit,pbVar2,payload,byte *,data_buffer pointer of the overdue TX entry
+0x0003adcc,cm848_schedulePciTransmit,uVar3,transmit_index,uint,pci_transmit_message_table entry being checked
+0x0003adcc,cm848_schedulePciTransmit,uVar4,payload_index,uint,Byte index into payload
+0x0003adcc,cm848_schedulePciTransmit,uVar5,frame_index,uint,Next write position in pci_transmit_frame_buffer (header then payload) - becomes pci_transmit_frame_length
+0x0003a290,cm848_handlePciLinkEvent,bVar1,action_mask,byte,pci_link_event_action_mask_cal entry for the current link_event_code
+0x00039f54,cm848_onPciControllerReceiveWord,wVar1,saved_receive_word,word,pci_receive_word before its high byte is split out
+0x00039f54,cm848_onPciControllerReceiveWord,bVar2,is_end_of_frame,byte,1 when pci_receive_status is 0xa0 / 0xc0 / 0xe0 (end of frame)
+0x00039e30,cm848_servicePciTransmit,bVar1,queue_priority,byte,QSPI queue priority for the next controller command
+0x00039e30,cm848_servicePciTransmit,cVar2,resend_requested,char,Return of cm848_handlePciLinkEvent (1 = send the 0xaf8 controller command)
+# cm848_busyWaitDelay @ 0x00002384 - software delay: pass_count passes of 2222 spins each
+0x00002384,cm848_busyWaitDelay,uVar1,completed_passes,undefined4,Outer counter - delay passes finished so far (16-bit: clrlwi r4 r12 16); undefined4 keeps the inferred uint
+0x00002384,cm848_busyWaitDelay,uVar2,spin_count,ushort,Inner counter - spins in the current pass up to SPINS_PER_DELAY_PASS (16-bit: clrlwi r5 r12 16)
+# mpc555_areBootModeStrapPinsHigh @ 0x000023b8 - samples four QADC port pins (all four must read 1)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar1,qadc_b_pqb0_sample,ushort,QADC-B port word (PORTQA:PORTQB) read for its bit 0 = PQB0
+0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar2,qadc_b_pqa4_sample,ushort,QADC-B port word read for its bit 12 = PQA4
+0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar3,qadc_a_pqa2_sample,ushort,QADC-A port word read for its bit 10 = PQA2 (the fourth sample - bit 11 = PQA3 - is read straight from qadc_a_port in the return)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,wVar4,direction_register_value,word,DDRQA value read and written straight back (no bits change). wVar4 is one r11 temp for both the QADC-B (0x23d0) and QADC-A (0x2430) read-backs; the committed name lands on the QADC-A one and the decompiler splits the QADC-B one off as wVar1 - this CSV is applied once per build against the original names so that half cannot be named here
+0x000023b8,mpc555_areBootModeStrapPinsHigh,uVar5,port_output_zero,ushort,Register holding the 0 written to the port data registers
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar6,qadc_b_port,word *,Register-held address of QADC64B_MCR.PORTQA_B (0x304c06)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar7,qadc_a_port,word *,Register-held address of QADC64A_MCR.PORTQA_B (0x304806)
+0x000023b8,mpc555_areBootModeStrapPinsHigh,pwVar8,qadc_b_direction,word *,Register-held address of QADC64B_MCR.DDRQA_B (0x304c08)
+# cm848_waitForStableIgnitionKeyOn @ 0x000024a0 - waits for 5 consecutive key-on samples of the MDA30 pin
+0x000024a0,cm848_waitForStableIgnitionKeyOn,uVar2,key_on_sample_count,undefined4,Consecutive samples that read the key line as on (byte counter: clrlwi r7 r12 24) - any key-off sample resets it to 0; undefined4 keeps the inferred uint
+0x000024a0,cm848_waitForStableIgnitionKeyOn,pwVar1,key_line_status_register,word *,Register-held address of mios_mdasm30.SCRD (0x3060f6) - bit 15 is the MDA30 pin = the ignition key line
+# MIOS output drivers (todo 033, PR #48)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,wVar1,modulus_start_value,word,MMCSM22 modulus latch read for the edge offset (ML & 0x7fff)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,wVar2,modulus_period_value,word,MMCSM22 modulus latch read for the period length (0xffff - ML)
+0x00054ec4,mpc555_miosSetChannelPwmDuty,local_8,compare_register_pair,undefined4,AR (high half) : BR (low half) written as one word
+0x00054f48,mpc555_miosSetChannelPwmPeriod,wVar1,modulus_latch_value,word,Value written to the MMCSM22 modulus latch
+0x00054f8c,mpc555_miosSetPwmSubmoduleDuty,uVar1,pulse_width,ushort,Value written to PULR
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,wVar1,period_register_value,word,Value written to PERR
+0x00054fb8,mpc555_miosSetPwmSubmodulePeriodMicroseconds,uVar2,period_divisor,uint,16 with prescaler byte 0xff / 2048 with 0x80
+0x00054e10,mpc555_miosCheckChannelFeedback,wVar1,feedback_result,word,0 agree / 1 reads high or toggling / 2 reads low or toggling
+# cm848_updateOutputReadBackFaultBits @ 0x0053a110 - read-back verdict of each output channel assignment table entry into output_read_back_fault_bits
+0x0053a110,cm848_updateOutputReadBackFaultBits,sVar1,read_back_verdict,word,The record's read-feedback result: 0 agree / 1 or 2 fault / 0xffff no verdict (clrlwi + cmplwi 65535 = an unsigned 16-bit compare)
+0x0053a110,cm848_updateOutputReadBackFaultBits,bVar2,check_this_pass,byte,0 on the passes where entry 1 (cooling fan) is skipped by cooling_fan_read_back_check_divider - 1 otherwise
+0x0053a110,cm848_updateOutputReadBackFaultBits,iVar3,fault_word_index,undefined4,output_index / 16 = the word of output_read_back_fault_bits that holds the entry's bit
+0x0053a110,cm848_updateOutputReadBackFaultBits,pwVar4,output_channel_entry,word *,Walks the output channel assignment table (starts one word before it - lhzu pre-increments)
+0x0053a110,cm848_updateOutputReadBackFaultBits,uVar5,output_index,undefined4,Table entry number 0-47 = the output function = the bit number in output_read_back_fault_bits
+0x0004f2ec,cm848_readDiscreteInputLine,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 or SIU_SGPIODT2 read whole (lwz) - the byte holding the requested line group goes to the input-line image
+0x0004f6f0,mpc555_driveOutputLineHigh,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 or SIU_SGPIODT2: read whole (lwz) / one byte ORed with the line bit (lbz-stb) / written back whole (stw)
+0x00051038,mpc555_driveOutputLineLow,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 or SIU_SGPIODT2: read whole (lwz) / one byte ANDed with the inverted line bit (lbz-stb) / written back whole (stw)
+0x000529b8,cm848_refreshOutputPortsAndReadback,local_2c,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 then SIU_SGPIODT2: snapshotted byte by byte then rebuilt from the output_lines_*_state shadows and written back whole
+0x000533e0,cm848_refreshInputLineImage,local_4,gpio_register_copy,siu_gpio_data_register_t,Stack copy of SIU_SGPIODT1 then SIU_SGPIODT2 - its four bytes are copied to input_line_image.lines_24_to_31 .. lines_80_to_87
+0x000533e0,cm848_refreshInputLineImage,local_8,mios_port_copy,mios_port_data_register_t,Stack copy of mios_mpiosm32.data - byte_1 (bits 7-0) = input lines 8-15 / byte_0 (bits 15-8) = lines 16-23
+0x0004f2ec,cm848_readDiscreteInputLine,local_8,input_port_copy,mios_port_data_register_t,Stack halfword the MIOS port data (lines 8-23) is copied through - its byte_1 also carries the supervisor lines 144-151 byte on the shared store tail
+0x000529b8,cm848_refreshOutputPortsAndReadback,local_30,mios_port_copy,mios_port_data_register_t,Stack copy of mios_mpiosm32.data - read back into output_line_read_back then rebuilt from output_line_state (byte_1 = lines 8-15 / byte_0 = lines 16-23)
+0x00042918,cm848_resetEngineOperatingMode,iVar1,previous_engine_operating_mode,int32_t,Mode read before it is cleared; passed to the three selectors that compare the previous mode
+0x000160ac,cm848_selectChiAndAlpha,local_1a,chi_source_code,COMBUSTION_CHI_SOURCE,Chi source code of this pass
+0x00015f34,cm848_determineBaseChi,local_1a,chi_source_code,COMBUSTION_CHI_SOURCE,Base chi source code (1 or 3)
+0x00015f34,cm848_determineBaseChi,CVar1,selected_chi_source_code,COMBUSTION_CHI_SOURCE,Return value of cm848_selectChiSourceCode (compared with 1 and 3)
+0x005012dc,sensorChannelTypeB_configInit,iVar9,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x005012dc,sensorChannelTypeB_configInit,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
+0x005012dc,sensorChannelTypeB_configInit,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
+0x005012dc,sensorChannelTypeB_configInit,sVar5,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x005012dc,sensorChannelTypeB_configInit,uVar10,sensor_value,uint,Reading compared against the thresholds and stored as lookup_input (the register is also reused for the channel bit mask and the dispatch index)
+0x005012dc,sensorChannelTypeB_configInit,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
+0x005012dc,sensorChannelTypeB_configInit,wVar6,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
+0x005012dc,sensorChannelTypeB_configInit,dVar4,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x005012dc,sensorChannelTypeB_configInit,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
+0x005012dc,sensorChannelTypeB_configInit,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy
+0x005012dc,sensorChannelTypeB_configInit,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0 settled / 1 still counting / 2 limit reached
+0x00501b4c,sensorChannelTypeB_update,iVar7,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x00501b4c,sensorChannelTypeB_update,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
+0x00501b4c,sensorChannelTypeB_update,iVar6,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
+0x00501b4c,sensorChannelTypeB_update,sVar3,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x00501b4c,sensorChannelTypeB_update,uVar9,sensor_value,uint,Lookup input before it is stored in lookup_input (the register is also reused for the channel bit mask and the dispatch index)
+0x00501b4c,sensorChannelTypeB_update,uVar5,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
+0x00501b4c,sensorChannelTypeB_update,wVar4,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
+0x00501b4c,sensorChannelTypeB_update,dVar2,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x00501b4c,sensorChannelTypeB_update,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
+0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,dVar1,filtered_engine_load,dword,exponentialMovingAverage output of engine_load_percent - also stored to vehicle_speed_zero_under_load_engine_load_filtered
+0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,cVar2,limits_reached_count,byte,How many of the two P0500 limits (accelerator off-idle entries / events) are reached - 2 sets fault 29
+0x00047bd0,cm848_calculateFuelMeteringCommand,local_64,working_proportional_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_proportional_gains (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is 0) passed to cm848_applyPiecewiseLinearGain
+0x00047bd0,cm848_calculateFuelMeteringCommand,local_54,working_integral_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_integral_gains (scaled the same way) passed to cm848_integrateWithZoneGain
+0x00047bd0,cm848_calculateFuelMeteringCommand,local_44,working_derivative_gains,derivative_gain_t,Stack copy of fuel_pressure_governor_derivative_gains (scaled the same way; the 4-byte gains are copied as halfwords because they are not 4-aligned) passed to cm848_calculateFilteredDerivative

@@ -160,6 +160,10 @@ typedef uint16_t  ushort;
 typedef uint32_t  uint;
 typedef uint16_t  word;
 typedef uint32_t  dword;
+typedef int8_t    sbyte;
+typedef int16_t   sword;
+typedef int32_t   sdword;
+typedef int64_t   sqword;
 typedef int32_t   bool32;
 
 // Ghidra CONCATxy macros — concatenate x bytes of a with y bytes of b

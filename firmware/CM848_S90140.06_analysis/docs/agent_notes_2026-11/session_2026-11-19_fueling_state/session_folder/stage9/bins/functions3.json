@@ -1,0 +1,490 @@
+{
+ "functions": [
+  {
+   "address": "0x0004272c",
+   "current": "cm848_applyProtectionControlLimit",
+   "proposals": [
+    {
+     "name": "cm848_selectRearAxleRatioInUse",
+     "reason": "| 0x0004272c / 0x00042770 / 0x005268e8 | `cm848_applyProtectionControlLimit` / `cm848_setProtectionControlValue` / `cm848_computeProtectionTrimDivisors` -> `cm848_selectRearAxleRatioInUse` / `cm848_selectRearAxleRatioHigh` / `cm848_calculateRearAxleTrimDivisors` | Axle ratio selection and its trim divisors. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    },
+    {
+     "name": "cm848_selectTwoSpeedRearAxleRatio",
+     "reason": "| 0x0004272c | `cm848_applyProtectionControlLimit` | `cm848_selectTwoSpeedRearAxleRatio` | selects `rear_axle_ratio` |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 16,
+   "callers": [
+    "cm848_periodicTaskSet_auxiliaryControl"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00042770",
+   "current": "cm848_setProtectionControlValue",
+   "proposals": [
+    {
+     "name": "cm848_selectRearAxleRatioHigh",
+     "reason": "| 0x0004272c / 0x00042770 / 0x005268e8 | `cm848_applyProtectionControlLimit` / `cm848_setProtectionControlValue` / `cm848_computeProtectionTrimDivisors` -> `cm848_selectRearAxleRatioInUse` / `cm848_selectRearAxleRatioHigh` / `cm848_calculateRearAxleTrimDivisors` | Axle ratio selection and its trim divisors. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    },
+    {
+     "name": "cm848_selectSingleSpeedRearAxleRatio",
+     "reason": "| 0x00042770 | `cm848_setProtectionControlValue` | `cm848_selectSingleSpeedRearAxleRatio` | loads `rear_axle_ratio` from the EEPROM word |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 13,
+   "callers": [
+    "cm848_applicationMain"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x005268e8",
+   "current": "cm848_computeProtectionTrimDivisors",
+   "proposals": [
+    {
+     "name": "cm848_calculateRearAxleTrimDivisors",
+     "reason": "| 0x0004272c / 0x00042770 / 0x005268e8 | `cm848_applyProtectionControlLimit` / `cm848_setProtectionControlValue` / `cm848_computeProtectionTrimDivisors` -> `cm848_selectRearAxleRatioInUse` / `cm848_selectRearAxleRatioHigh` / `cm848_calculateRearAxleTrimDivisors` | Axle ratio selection and its trim divisors. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 15,
+   "callers": [
+    "cm848_applicationMain"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00525e54",
+   "current": "protectionTimeoutControl",
+   "proposals": [
+    {
+     "name": "cm848_updateDrivetrainRatio",
+     "reason": "- 0x525e54 `protectionTimeoutControl` -> `cm848_updateDrivetrainRatio`. It computes and filters the drivetrain ratio and its out-of-gear and settle timers.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    },
+    {
+     "name": "cm848_estimateDrivetrainRatio",
+     "reason": "| 0x00525e54 | `protectionTimeoutControl` | `cm848_estimateDrivetrainRatio` | it is the drivetrain ratio estimator |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 156,
+   "callers": [
+    "cm848_periodicTaskSet_outputs"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0003e210",
+   "current": "cm848_setFuelDemandActiveFlag",
+   "proposals": [
+    {
+     "name": "cm848_requestPowerDownDelayWhileMoving",
+     "reason": "| 0x0003e210 | `cm848_setFuelDemandActiveFlag` | `cm848_requestPowerDownDelayWhileMoving` | sets the power-down delay flag |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 15,
+   "callers": [
+    "cm848_periodicTaskSet_sensorProcessing"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0051ba1c",
+   "current": "cm848_pidIntegrator_accumulate",
+   "proposals": [
+    {
+     "name": "cm848_accumulateConverterClutchRatioDeltaSum",
+     "reason": "| 0x51ba1c | `cm848_pidIntegrator_accumulate` | `cm848_accumulateConverterClutchRatioDeltaSum` | Sums those deltas. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 29,
+   "callers": [
+    "cm848_monitorConverterClutchAndOverdrivePerformance"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0051ba6c",
+   "current": "cm848_pidError_calc",
+   "proposals": [
+    {
+     "name": "cm848_calculateConverterClutchRatioDelta",
+     "reason": "| 0x51ba6c | `cm848_pidError_calc` | `cm848_calculateConverterClutchRatioDelta` | Previous ratio minus ratio, not a PID error. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 28,
+   "callers": [
+    "cm848_monitorConverterClutchAndOverdrivePerformance"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x000457d0",
+   "current": "mpc555_updateEngineCrankState",
+   "proposals": [
+    {
+     "name": "mpc555_handleCamSignalInterrupt",
+     "reason": "| 0x457d0 | `mpc555_updateEngineCrankState` | `mpc555_handleCamSignalInterrupt` | Weaker lead: it is the TPU-A channel 1 handler, and e2m PMA_Edge_Type (channel 1) says cam signal. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "TPU-A channel 1 interrupt handler - reached via tpu_a_channel_interrupt_handler_table (mpc555_tpuAInterruptDispatcher 0x55de4) - no direct caller in the decompile - crank tooth-period capture into crank_period_capture_array + the crank_state pattern machine from tpu_a_ch1_param2",
+   "body_lines": 222,
+   "callers": [],
+   "callees": [
+    "cm848_engineRunState4Conditional",
+    "cm848_engineRunState4Handler2",
+    "cm848_enterSpeedLimpHome",
+    "cm848_setEngineCrankState1",
+    "cm848_setEngineRunState3",
+    "engine_injectionTiming_crankSyncDispatch"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00049004",
+   "current": "cm848_resetEngineSyncState",
+   "proposals": [
+    {
+     "name": "cm848_resetFuelPressureGovernorState",
+     "reason": "| 0x49004 | `cm848_resetEngineSyncState` | `cm848_resetFuelPressureGovernorState` | its own plate comment says it resets the fuel pressure governor |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "Resets the fuel pressure governor / fuel metering state (cm848_calculateFuelMeteringCommand): command, demand, governor mode 1, counters, the table interpolation states and filters. Of the four Q16.16 PID states it clears fuel_pressure_governor_integrator, fuel_metering_feedback_trim_integrator (twice) and fuel_pressure_governor_derivative_filter; fuel_metering_base_command_derivative_filter (0x3fb676) is never cleared because the fourth store pair repeats 0x3fb66e",
+   "body_lines": 76,
+   "callers": [
+    "cm848_applicationMain"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00042cfc",
+   "current": "hpcr_processLoadThrottle",
+   "proposals": [
+    {
+     "name": "hpcr_filterCylinderBalanceFueling",
+     "reason": "- 0x42cfc `hpcr_processLoadThrottle` -> `hpcr_filterCylinderBalanceFueling`. It filters final_fueling for the cylinder balance code.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 31,
+   "callers": [
+    "cm848_periodicTaskSet_controlLoop"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00529ea4",
+   "current": "cm848_sensor_diagnostic_flag_update",
+   "proposals": [
+    {
+     "name": "cm848_initializeInjectionAngleScheduler",
+     "reason": "| 0x00529ea4 | `cm848_sensor_diagnostic_flag_update` | `cm848_initializeInjectionAngleScheduler` | sets state 1, TPU address 2, channel 6 and the tooth separation |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 30,
+   "callers": [
+    "cm848_applicationMain",
+    "cm848_updateEngineSpeedFromCrankSignal"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00029f54",
+   "current": "cm848_checkSensorDeviationFlags",
+   "proposals": [
+    {
+     "name": "cm848_checkPressureSensorAgreement",
+     "reason": "| 0x29f54 | `cm848_checkSensorDeviationFlags` | `cm848_checkPressureSensorAgreement` | Compares barometric pressure with two other pressure readings using the three tolerances. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 65,
+   "callers": [
+    "cm848_processSensorDeviationOnKeyoff"
+   ],
+   "callees": [
+    "cm848_absoluteValue16"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0002bf44",
+   "current": "cm848_updateFaultOnKeyoff",
+   "proposals": [
+    {
+     "name": "cm848_updateNotSafeToProgramFlag",
+     "reason": "- 0x2bf44 `cm848_updateFaultOnKeyoff` -> `cm848_updateNotSafeToProgramFlag`. It runs every pass and only stores engine_state != STOPPED.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 13,
+   "callers": [
+    "cm848_periodicTaskSet_auxiliaryControl"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050ddb4",
+   "current": "diag_suppress_stateMachine",
+   "proposals": [
+    {
+     "name": "cm848_controlEndOfLineTestMilRequest",
+     "reason": "- 0x50ddb4 `diag_suppress_stateMachine` -> `cm848_controlEndOfLineTestMilRequest`. It sets diagnostic_suppress_flag, which forces the MIL on.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    },
+    {
+     "name": "cm848_setEndOfLineTestMalfunctionIndicatorLampOverride",
+     "reason": "| 0x50ddb4 | `diag_suppress_stateMachine` | `cm848_setEndOfLineTestMalfunctionIndicatorLampOverride` | It is the in-plant end-of-line test's lamp override states 0-3. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 34,
+   "callers": [
+    "cm848_initialization_group21_state_cont",
+    "cm848_runEndOfLineMisfireTestStep",
+    "cm848_runEndOfLineTestSequence",
+    "diag_camSync_deviation_check",
+    "engine_coldStart_batteryVoltage_monitor",
+    "engine_coldStart_protection_stateMachine",
+    "engine_protection_timerBitCheck_dispatch"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x005341a8",
+   "current": "engine_coolantTemp_overheat_monitor",
+   "proposals": [
+    {
+     "name": "cm848_monitorWarmUpCycle",
+     "reason": "| 0x5341a8 | `engine_coolantTemp_overheat_monitor` | `cm848_monitorWarmUpCycle` | Sets the OBD warm-up bits: rise over 40 F and above 140 F. At 3 it counts a cycle and auto-clears the fault ring. No overheat check. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 31,
+   "callers": [
+    "cm848_mainLoopServiceMonitor"
+   ],
+   "callees": [
+    "fault_ring_buffer_auto_clear_emission"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00533b18",
+   "current": "diag_protection_history_increment",
+   "proposals": [
+    {
+     "name": "cm848_incrementEngineStartCountsSinceFaultLogged",
+     "reason": "review_e2m_names_wave_13_bin_3.md: - 0x533b18 / 0x533b5c / 0x533b94 `diag_protection_history_increment / _shiftIn / _shift` -> `cm848_incrementEngineStartCountsSinceFaultLogged` / `cm848_shiftInEngineStartCountsSinceFaultLogged` / `cm848_shiftEngineStartCountsSinceFaultLogged`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "note": null,
+   "current_plate": "",
+   "body_lines": 22,
+   "callers": [
+    "cm848_auxiliaryControlTask"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00533b5c",
+   "current": "diag_protection_history_shiftIn",
+   "proposals": [
+    {
+     "name": "cm848_shiftInEngineStartCountsSinceFaultLogged",
+     "reason": "review_e2m_names_wave_13_bin_3.md",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "note": null,
+   "current_plate": "",
+   "body_lines": 19,
+   "callers": [
+    "fault_clearFromRing"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00533b94",
+   "current": "diag_protection_history_shift",
+   "proposals": [
+    {
+     "name": "cm848_shiftEngineStartCountsSinceFaultLogged",
+     "reason": "review_e2m_names_wave_13_bin_3.md",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "note": null,
+   "current_plate": "",
+   "body_lines": 19,
+   "callers": [
+    "cm848_latchNewlyActiveFault"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050638c",
+   "current": "cm848_outputs2_periodic",
+   "proposals": [
+    {
+     "name": "cm848_updateDutyCycleMonitor",
+     "reason": "| 0x0050638c | `cm848_outputs2_periodic` | `cm848_updateDutyCycleMonitor` | the duty cycle monitor load histogram |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    },
+    {
+     "name": "cm848_updateLoadHistogram",
+     "reason": "| 0x50638c | `cm848_outputs2_periodic` | `cm848_updateLoadHistogram` | It is the duty cycle monitor histogram, every 0.1 s. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 136,
+   "callers": [
+    "cm848_periodicTaskSet_outputs2"
+   ],
+   "callees": [
+    "cm848_lookupChiMaximumFuelAtSpeed"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00021624",
+   "current": "cm848_activateDiagnosticSession",
+   "proposals": [],
+   "note": "no name proposed yet: review_e2m_names_wave_13_bin_2.md",
+   "current_plate": "jlaustill reviewed - hopefully accurate",
+   "body_lines": 23,
+   "callers": [
+    "cm848_registerJ1939DiagnosticHandlers"
+   ],
+   "callees": [],
+   "shared_with_cm550": false,
+   "user_review_note": "jlaustill reviewed - hopefully accurate"
+  },
+  {
+   "address": "0x00021668",
+   "current": "cm848_resetDiagnosticSession",
+   "proposals": [],
+   "note": "no name proposed yet: review_e2m_names_wave_13_bin_2.md",
+   "current_plate": "jlaustill review 2026-05-25 - hopefully accurate",
+   "body_lines": 17,
+   "callers": [
+    "cm848_processPciDiagnosticRequest",
+    "cm848_registerJ1939DiagnosticHandlers"
+   ],
+   "callees": [],
+   "shared_with_cm550": false,
+   "user_review_note": "jlaustill review 2026-05-25 - hopefully accurate"
+  },
+  {
+   "address": "0x00021694",
+   "current": "cm848_forceActivateDiagnosticSession",
+   "proposals": [],
+   "note": "no name proposed yet: review_e2m_names_wave_13_bin_2.md",
+   "current_plate": "jlaustill reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums",
+   "body_lines": 25,
+   "callers": [
+    "cm848_registerJ1939DiagnosticHandlers"
+   ],
+   "callees": [],
+   "shared_with_cm550": false,
+   "user_review_note": "jlaustill reviewed 2026-05-25 - frustrated about != 1 and == 0xea/0xee not working as enums"
+  },
+  {
+   "address": "0x005389c4",
+   "current": "uds_session_state_init",
+   "proposals": [
+    {
+     "name": "cm848_initializeRamRefresh",
+     "reason": "| 0x00538a84 / 0x005389c4 | `cm848_initProtectionModule` / `uds_session_state_init` -> `cm848_refreshRamCalibration` / `cm848_initializeRamRefresh` | The RAM refresh loop and its setup. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 28,
+   "callers": [
+    "cm848_initProtectionModule"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00538a84",
+   "current": "cm848_initProtectionModule",
+   "proposals": [
+    {
+     "name": "cm848_refreshRamCalibration",
+     "reason": "| 0x00538a84 / 0x005389c4 | `cm848_initProtectionModule` / `uds_session_state_init` -> `cm848_refreshRamCalibration` / `cm848_initializeRamRefresh` | The RAM refresh loop and its setup. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 60,
+   "callers": [
+    "cm848_applicationMain",
+    "cm848_restartApplicationWithoutReset"
+   ],
+   "callees": [
+    "uds_session_state_init"
+   ],
+   "shared_with_cm550": false
+  }
+ ],
+ "held_enum_rows": [
+  {
+   "address": "0x0040c04a",
+   "current": "diagnostic_session_state",
+   "kind": "global (enum-typed)",
+   "wave13_proposal": "ram_refresh_enable",
+   "wave13_evidence": "review_e2m_names_wave_13_bin_2.md: - `ram_refresh_enable` and `development_mode` (see judgment calls) / review_e2m_names_wave_13_bin_2.md: - **0x40c04a `diagnostic_session_state` -> `ram_refresh_enable`, and 0x40aa9a `j1939_standby_flag` -> `development_mode`.** The evidence is strong: / review_e2m_names_wave_13_bin_2.md: | 0x00021624 / 0x00021668 / 0x00021694 | `cm848_activate` / `reset` / `forceActivateDiagnosticSession` | They set or clear `ram_refresh_enable` and `development_mode`; reset enters development mode. Review the names. |"
+  },
+  {
+   "address": "0x0040aa9a",
+   "current": "j1939_standby_flag",
+   "kind": "global (enum-typed)",
+   "wave13_proposal": "development_mode",
+   "wave13_evidence": "review_e2m_names_wave_13_bin_2.md: - `ram_refresh_enable` and `development_mode` (see judgment calls) / review_e2m_names_wave_13_bin_2.md: - **0x40c04a `diagnostic_session_state` -> `ram_refresh_enable`, and 0x40aa9a `j1939_standby_flag` -> `development_mode`.** The evidence is strong: / review_e2m_names_wave_13_bin_2.md: - The reset service sets `development_mode` and clears the refresh enable together. / review_e2m_names_wave_13_bin_2.md: | 0x00021624 / 0x00021668 / 0x00021694 | `cm848_activate` / `reset` / `forceActivateDiagnosticSession` | They set or clear `ram_refresh_enable` and `development_mode`; reset enters development mode. Review the names. |"
+  }
+ ]
+}

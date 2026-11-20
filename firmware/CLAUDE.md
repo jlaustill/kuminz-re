@@ -111,13 +111,13 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
 - **Runtime counter = `ecu_power_state_flags.runtime_counter` (RAM 0x302012):** loaded from EEPROM 0x1000030 at boot (`mpc555_loadRuntimeCounterFromEepromShadow`), +1 every 41 PIT ticks in `mpc555_tickTransferTimeoutAndRuntimeCounter` (~0.205 s/count if the PIT runs at 1 MHz), saved back at key-off by `mpc555_keyOnStateMachine`; also the auth-token freshness clock. This is the boot ROM's copy.
   - **The application keeps two hour meters (2026-11-15, PR #48):** `cm848_advanceHourMeters` runs once per 40-phase main-loop cycle, i.e. 40 PIT ticks of 5 ms = **0.200 s per count**.
     - `key_on_hour_meter` (RAM 0x40a64c, EEPROM 0x30): +1 every cycle.
-    - `engine_hour_meter` (RAM 0x40a794, EEPROM 0x42): +1 unless `cold_start_phase` is 1, which makes it **engine-running hours**. During the HP Tuners flash sessions (key on, engine off) it did not move while the key-on meter did.
+    - `engine_hour_meter` (RAM 0x40a794, EEPROM 0x42): +1 unless `engine_state` is 1, which makes it **engine-running hours**. During the HP Tuners flash sessions (key on, engine off) it did not move while the key-on meter did.
     - Neither is wiped by HP Tuners. EEPROM 0x42 / 18000 = engine hours (9,819.5 h in the last dump). `tools/read_engine_hours.sh` reads both; see `docs/engine_hours_and_odometer.md`.
 - **Reset path (2026-11-13, PR #48):** `mpc555_reset_vector` (and its copies `mpc555_initSystemRegisters` / `cm848_initClockAndTimers`) writes MDASM mode 3 to `mios_mdasm30.SCRD`, then `cm848_waitForStableIgnitionKeyOn` (0x24a0) waits for 5 consecutive key-on samples of its bit 15 (the ignition key line). `mpc555_hardwareInitialization` then calls `mpc555_areBootModeStrapPinsHigh` (0x23b8; QADC-B PQB0 / PQA4 and QADC-A PQA2 / PQA3): all four high (or EEPROM magic != 0x600d) → the boot service loop `mpc555_systemInitialization` (never returns) instead of the application, and the kernel's watchdog init leaves the supervisor watchdog unarmed (0x1400). Boot delays use `cm848_busyWaitDelay` (passes of 2222 spins, at least 0.22 ms each at 40 MHz). `qadc_b_mcr` (0x304800) is now `QADC64A_MCR`.
 - **MIOS1 register map (2026-11-13, PR #48):** submodule n sits at 0x306000 + 8n, proved by the firmware's own drivers — MPWMSM0-3 (0x306000-0x30601f) and MPWMSM16-19 (0x306080-0x30609f, were mislabeled MDASM0-3) share the PWM helpers `mpc555_miosEnablePwmSubmodule` / `mpc555_miosSetPwmSubmoduleDuty` / `mpc555_miosSetPwmSubmodulePeriodMicroseconds`; MDASM11-15 and MDASM27-31 (0x3060d8-0x3060ff) share the `cm848_miosChannel{N}*` wrappers over the generic MDASM driver; MMCSM6 = `mios_mmcsm_cnt` (0x306030, the boot time base) and MMCSM22 = `mios_mmcsm22` (0x3060b0, its ML is the shared PWM period); the MIOS1 interrupt registers are at 0x306c00 (`mios1_isr`, read by the MIOS interrupt dispatcher). By the same layout MPIOSM (submodule 32, the 16-bit parallel port) is `mios_mpiosm32` (0x306100: `.data` / `.data_direction`; was `mios1_ext_ctrl.ctrl_a` / `.ctrl_b`), and the reset code's 0x8000 (prescaler enable) write to 0x306816 fits MCPSMSCR there. **One type per submodule kind (2026-11-15, todo 035):** every MDASM is a `mios_mdasm_t` instance (`AR_BR` dword - nothing reads AR or BR apart, the drivers move the pair with one 32-bit access - / `XR` / `SCRD`) and every PWM submodule a `mios_mpwmsm_t` (`PERR` / `PULR` / `CNTR` / `SCR`), named `mios_mdasmN` / `mios_mpwmsmN` (the per-channel copies `mios_mpwmsm1_t` ... / `mios_mdasm12_t` ... and the `MIOS_MDASM11_AR`-style instance names are gone); the eight `mpc555_mios*` drivers take `mios_mdasm_t *` / `mios_mpwmsm_t *`, so they read `channel_registers->SCRD` / `pwm_registers->PULR` instead of raw `+ 6` / `[1]`. The register label rows inside each instance (`MIOS_MDASM11_BR` ...) must stay: without a label, the register-CSV stage (`ApplyMPC555Registers`) creates u16 data there and splits the struct. Renamed: `MIOS_MCPSMSCR` → `mios_mdasm30`, `MIOS_MIOS1RPR` → `mios_mdasm31`, `MIOS_MIOS1TPCR` / `MIOS_MPWMSM4_*` → `mios_mdasm28`, `MIOS_MPWMSM5_*` → `mios_mdasm29`, `MIOS_MDASM0-3_AR` → `MIOS_MPWMSM16-19_PERR`, `MIOS_MDASM6_BR` → `mios_mmcsm22.ML`. Discrete input lines 124-128 = the pin bits (SCRD bit 15) of MDASM15 / 27 / 28 / 29 / 30. 
 - **MIOS output drivers (2026-11-13, PR #48, todo 033):** a flash2 **output channel driver table** (16-byte records: enable / read feedback — a shared stub at 0x53a108 that returns 0 unless the channel has a read-back / set period / set duty; MIOS records start at 0x53ae56) is the only path to most wrappers — the decompile shows no direct caller for them (only the PWM 16-19 wrappers are also called directly, from `cm848_tpuMiosOutput_loadCalibration` / `cm848_tpu_interrupt_flag_init`). MDASM11-15 / 27-31 go through `cm848_miosChannel{N}EnablePwm` / `SetPwmPeriod` / `SetPwmDuty` → `mpc555_miosEnableChannelPwm` (SCRD mode 9) / `mpc555_miosSetChannelPwmPeriod` (ignores the channel: one MMCSM22 period for every MDASM output) / `mpc555_miosSetChannelPwmDuty` (AR:BR edges; duty 1/256 % per count, 25600 = 100 %). PWM submodules 0-3 / 16-19 go through `cm848_miosPwm{N}Enable` / `SetPeriodMicroseconds` / `SetDuty` → `mpc555_miosEnablePwmSubmodule` / `mpc555_miosSetPwmSubmodulePeriodMicroseconds` (both prescaler branches are microseconds on a 2.5 MHz MIOS clock; PWM 16-19 run at 50 us = 20 kHz in the RAM dump) / `mpc555_miosSetPwmSubmoduleDuty`. MDASM11 / 12 / 13 / 14 look like read-back inputs for TPU outputs 4 / 7 / 6 / 10 (each is put in input mode by the read-back enable `cm848_tpuBReadBackChannel4 / 7 / 6 / 10EnablePwm` before it starts that TPU-B channel): `mpc555_miosSetChannelInputMode` (SCRD mode 1) + `mpc555_miosCheckChannelFeedback` (0 agree / 1 reads high or toggling / 2 reads low or toggling). 
 - **Output channel driver table (2026-11-13, PR #48, todo 034):** flash2 0x53ac46-0x53af75, **51 records** — record 0 = no output (`blr` / return-0 stubs), TPU-B channels 0-15 = 1-16 (`cm848_tpuBChannel{N}EnablePwm` / `SetPwmPeriodMicroseconds` / `SetPwmDuty`; channels 4 / 6 / 7 / 10 / 11 use the `cm848_tpuBReadBackChannel{N}*` records, whose read-feedback slot checks an MDASM pin), TPU-A channels 0-15 = 17-32 (`cm848_tpuAChannel{N}*`), the generic drivers being `mpc555_tpu{A,B}EnablePwmChannel` / `SetPwmPeriodMicroseconds` / `SetPwmDuty` (todo 035: identical code per module; TPU-A ticks at 0.4 us and TPU-B at 3.2 us - TPUMCR 0x4460 / 0x4430 differ in bits 0x40 and 0x10, and reading 0x40 as PSCK (system clock / 4 instead of / 32, per the MPC555 manual) gives that factor of 8), MDASM11-15 / 27-31 = 33-42, PWM submodules 0-3 / 16-19 = 43-50. The slot labels at the base are `output_channel_driver_table_enable` / `_read_feedback` / `_set_period` / `_set_duty` (were `j1939_pgn_handler_table*`), so consumers render `(&output_channel_driver_table_set_duty + channel * 0x10)`. 19 consumer functions pick the record with an EEPROM output channel word (EEPROM 0x814-0x868, were `j1939_pgn_handler_index*`) after checking 0 < channel < 51; most set-period arguments are 1000000 / frequency = microseconds (the e / g paths pass a calibration word directly). This calibration: `governor_pressure_solenoid_output_channel_cal` = 5 (TPU-B 4 with MDASM11 read-back), `alternator_field_output_channel_cal` = 11 (TPU-B 10 / MDASM14; the ECM's C1-7 K20 Generator Field Control pin, driven by the PI loop on `charging_voltage_error` (was `battery_voltage_delta`; the target is `charging_voltage_target` from `cm848_calculateChargingVoltageTarget`) in `cm848_calculateAlternatorFieldDutyByPid`), `fuel_metering_output_channel_cal` = 12 (TPU-B 11 / MDASM29), `wastegate_solenoid_output_channel_cal` = 8 (TPU-B 7 / MDASM12) and `cooling_fan_output_channel_cal` = 7 (TPU-B 6 / MDASM13) - these three were actuators a / b / h, identified 2026-11-14 by their read-back DTCs (next bullet) - `actuator_output_channel_d_cal` = 16 (identity open), `_c/_e/_g` = 0 (unassigned). `cm848_updateOutputReadBackFaultBits` polls the read-feedback slots. Record 0's stubs are `cm848_outputChannelNone{Enable,SetPeriod,SetDuty}` and `cm848_outputChannelReadFeedbackNone` (the return-0 read-feedback stub of all 46 records without a read-back); record 12's read-feedback function `cm848_tpuBReadBackChannel11ReadFeedback` (0x4dfd4) had never been made a function. Still open (todo 035): the per-channel last-command caches (`j1939_calib_handler_*`) and actuators c / d / e / g. (`hpcr_injectorPulseWidthCalc` at 0x533e0 was the discrete input snapshot: `cm848_refreshInputLineImage`, see the discrete line images below.)
-- **Output read-back faults (2026-11-14, PR #48, todo 035):** the nine EEPROM output channel words are entries of one 48-word **output channel assignment table** (0x3fdc94-0x3fdcf3 = EEPROM 0x812-0x871; entry N = the driver-table record for output function N - 1 cooling fan / 10 governor pressure solenoid / 11 wastegate solenoid / 20 fuel metering / 25-26 actuators c-d / 27 alternator field / 39 g / 43 e). `cm848_updateOutputReadBackFaultBits` (0x53a110, was `hpcr_protectionTimerMonitor`) calls each assigned record's read-feedback slot and keeps bit N of `output_read_back_fault_bits` (0x40c258, 3 words). That is the first bitfield struct in the CM848 CSVs: consumers render `output_read_back_fault_bits.wastegate_solenoid == 0`, while the monitor's indexed write renders `*(ushort *)(&output_read_back_fault_bits.field_0x0 + (fault_word_index + ...) * 2)`. `cm848_debounceOutputReadBackFaults` (0x50e0a0, was `main_loop_resetGovernorDiagnosticFlags`) turns entries 27 / 1 / 20 / 10 / 11 into P0622 / P0480 / P0251 / P0748 / P0243 (faults 396 / 121 / 333 / 351 / 403 via the 0x5985a slot table) and sets the output's retest flag. The output's own control function then drives 0 % for `*_retest_off_passes` and 100 % for 2 x `*_retest_fault_confirm_passes`, and clears the flag. The governor pressure solenoid has no retest (its latch is never cleared). So the consumers are the real output stages: `cm848_applyCoolingFanDuty` (was `fuel_coldStart_demandFinal_apply`), `cm848_applyWastegateSolenoidDuty` (was `cm848_processFuelRateConfig`) and `cm848_applyAlternatorFieldDuty` (was `cm848_applyProtectionOutputDemand`), with their clamp / invert / frequency / hold settings renamed; `cm848_calculateFuelMeteringCommand` (was `cm848_calculateEngineTimingOffset`) computes the fuel metering command (`engine_sync_state_t_0040b87f.fuel_metering_command`, 0x40b882, 0-4095; it was `speed_raw`, and docs/service_0x4a_protocol.md listed it as engine RPM). `cm848_setFuelMeteringPwm` (was `mpc555_calculateTpuTimingPeriod`) writes it straight into TPU-B 11's on-time / period, so fuel metering bypasses the driver table's set-duty slot. The read-back check skips commands below `fuel_metering_read_back_minimum_command` (245) and returns `fuel_metering_read_back_last_verdict`. The command controller is the fuel (rail) pressure governor. Flash2 SCI table 253 (0x53a5ec: one byte address per DRB FD index, FD n -> entry n - 1) names the words, using the DRB labels from mydb `v_transaction`: FD-21-22 FUEL PRESS REG OUTPUT = 0x40b882, FD-23-24 FUEL PRESSURE SENSOR = `fuel_pressure_sensor` (0x40b8b0, was `cam_sync_position`), FD-27-28 FUEL PRESS SETPOINT = `fuel_pressure_setpoint` (0x40b8b6, was `cam_timing_measured`), FD-29-2A FUEL PRESSURE VOLTS = `fuel_pressure_sensor_volts` (0x40b8ae), FD-80-81 RAD FAN SPEED = `radiator_fan_speed` (0x40b2f4, x 0.125 rpm). The `cam_sync_*` / `engine_position*` / `camTiming` names around them are fuel pressure names still to re-domain. The full table walk (34 labelled FD reads) also gave the cylinder contribution test: `cm848_runCylinderContributionTest` (was `hpcr_processTimingCalibration`), whose `cylinder_N_contribution_percent` bytes are in firing-order slots 1-5-3-6-2-4. It also gave the EEPROM load histogram `percent_time_at_load_cal`[10] (0x3fdf98). DRB labels can disagree with the users (FD-99 ECM LRN STAT points at an SCI scratch byte), so check the users before renaming. The upstream controllers keep their old names: the `fuel_coldStart_*` family is the fan controller. Its source code 8 runs the fan speed PID `cm848_runCoolingFanSpeedPid` (was `governor_fuel_demand_calc`) on `cooling_fan_speed_target` (was `governor_speed_reference`) - `radiator_fan_speed`. The fan speed is measured from the sensor on TPU-B channel 9: `cm848_measureRadiatorFanSpeed` / `cm848_radiatorFanSpeedInterruptHandler` / `cm848_configureRadiatorFanSpeedInput` (were `tpu_rpm_*` / `mpc555_tpuBChannel9InterruptHandler`). P0483 (fault 407) is `cm848_checkRadiatorFanSpeedRationality` (was `cm848_calibration_group13_load`). At the governor setpoint, a fan speed outside 75-4000 rpm for `radiator_fan_speed_out_of_range_limit` passes sets it; the truck's dump has it active. The fan speed target is `cm848_selectCoolingFanSpeedTarget` (was `engine_egrFuel_stateMachine_update`; this ECM has no EGR, the `egr_*` names were wrong). It is the largest of the base / coolant (ramp + PI) / A/C / intake air / transmission temperature requests, then a high-engine-rpm ramp, the engine-driven cap, the ceiling, the thermostat-monitor hold and an override (`cooling_fan_speed_target_source`). The duty source selector is `cm848_selectCoolingFanDutySource` (was `fuel_coldStart_modeCode_select`); `cooling_fan_fixed_duty_enable` is 0 in the RAM dump, so the PID / engage-boost / idle sources are live (an earlier note read the neighbouring byte and called it 99). `cooling_fan_engine_idle_flag` (was `cold_start_mode_active_flag`) is an idle condition, not a cold-start flag. The `fuel_coldStart_*` helpers at 0x5139b8-0x513ba4 and `governor_fuel_limit_*` are unidentified (nothing ties them to the fan yet), the PI loop in `cm848_calculateAlternatorFieldDutyByPid` is the charging-voltage regulator, and `wastegate_duty_controller_state.request_half_duty_counts` x 2 is the wastegate duty request. The last-command caches follow the table entry: duty words at 0x40c138 + 2 x entry (`<output>_duty_command`) and period dwords at 0x40c198 + 4 x entry (`<output>_period_microseconds` / `_period_command`), ending at `output_read_back_fault_bits`.
+- **Output read-back faults (2026-11-14, PR #48, todo 035):** the nine EEPROM output channel words are entries of one 48-word **output channel assignment table** (0x3fdc94-0x3fdcf3 = EEPROM 0x812-0x871; entry N = the driver-table record for output function N - 1 cooling fan / 10 governor pressure solenoid / 11 wastegate solenoid / 20 fuel metering / 25-26 actuators c-d / 27 alternator field / 39 g / 43 e). `cm848_updateOutputReadBackFaultBits` (0x53a110, was `hpcr_protectionTimerMonitor`) calls each assigned record's read-feedback slot and keeps bit N of `output_read_back_fault_bits` (0x40c258, 3 words). That is the first bitfield struct in the CM848 CSVs: consumers render `output_read_back_fault_bits.wastegate_solenoid == 0`, while the monitor's indexed write renders `*(ushort *)(&output_read_back_fault_bits.field_0x0 + (fault_word_index + ...) * 2)`. `cm848_debounceOutputReadBackFaults` (0x50e0a0, was `main_loop_resetGovernorDiagnosticFlags`) turns entries 27 / 1 / 20 / 10 / 11 into P0622 / P0480 / P0251 / P0748 / P0243 (faults 396 / 121 / 333 / 351 / 403 via the 0x5985a slot table) and sets the output's retest flag. The output's own control function then drives 0 % for `*_retest_off_passes` and 100 % for 2 x `*_retest_fault_confirm_passes`, and clears the flag. The governor pressure solenoid has no retest (its latch is never cleared). So the consumers are the real output stages: `cm848_applyCoolingFanDuty` (was `fuel_coldStart_demandFinal_apply`), `cm848_applyWastegateSolenoidDuty` (was `cm848_processFuelRateConfig`) and `cm848_applyAlternatorFieldDuty` (was `cm848_applyProtectionOutputDemand`), with their clamp / invert / frequency / hold settings renamed; `cm848_calculateFuelMeteringCommand` (was `cm848_calculateEngineTimingOffset`) computes the fuel metering command (`fuel_pressure_governor_state.fuel_metering_command`, 0x40b882, 0-4095; it was `speed_raw`, and docs/service_0x4a_protocol.md listed it as engine RPM). `cm848_setFuelMeteringPwm` (was `mpc555_calculateTpuTimingPeriod`) writes it straight into TPU-B 11's on-time / period, so fuel metering bypasses the driver table's set-duty slot. The read-back check skips commands below `fuel_metering_read_back_minimum_command` (245) and returns `fuel_metering_read_back_last_verdict`. The command controller is the fuel (rail) pressure governor. Flash2 SCI table 253 (0x53a5ec: one byte address per DRB FD index, FD n -> entry n - 1) names the words, using the DRB labels from mydb `v_transaction`: FD-21-22 FUEL PRESS REG OUTPUT = 0x40b882, FD-23-24 FUEL PRESSURE SENSOR = `fuel_pressure_sensor` (0x40b8b0, was `cam_sync_position`), FD-27-28 FUEL PRESS SETPOINT = `fuel_pressure_setpoint` (0x40b8b6, was `cam_timing_measured`), FD-29-2A FUEL PRESSURE VOLTS = `fuel_pressure_sensor_volts` (0x40b8ae), FD-80-81 RAD FAN SPEED = `radiator_fan_speed` (0x40b2f4, x 0.125 rpm). The `cam_sync_*` / `engine_position*` / `camTiming` names around them are fuel pressure names still to re-domain. The full table walk (34 labelled FD reads) also gave the cylinder contribution test: `cm848_runCylinderContributionTest` (was `hpcr_processTimingCalibration`), whose `cylinder_N_contribution_percent` bytes are in firing-order slots 1-5-3-6-2-4. It also gave the EEPROM load histogram `percent_time_at_load_cal`[10] (0x3fdf98). DRB labels can disagree with the users (FD-99 ECM LRN STAT points at an SCI scratch byte), so check the users before renaming. The upstream controllers keep their old names: the `fuel_coldStart_*` family is the fan controller. Its source code 8 runs the fan speed PID `cm848_runCoolingFanSpeedPid` (was `governor_fuel_demand_calc`) on `cooling_fan_speed_target` (was `governor_speed_reference`) - `radiator_fan_speed`. The fan speed is measured from the sensor on TPU-B channel 9: `cm848_measureRadiatorFanSpeed` / `cm848_radiatorFanSpeedInterruptHandler` / `cm848_configureRadiatorFanSpeedInput` (were `tpu_rpm_*` / `mpc555_tpuBChannel9InterruptHandler`). P0483 (fault 407) is `cm848_checkRadiatorFanSpeedRationality` (was `cm848_calibration_group13_load`). At the governor setpoint, a fan speed outside 75-4000 rpm for `radiator_fan_speed_out_of_range_limit` passes sets it; the truck's dump has it active. The fan speed target is `cm848_selectCoolingFanSpeedTarget` (was `engine_egrFuel_stateMachine_update`; this ECM has no EGR, the `egr_*` names were wrong). It is the largest of the base / coolant (ramp + PI) / A/C / intake air / transmission temperature requests, then a high-engine-rpm ramp, the engine-driven cap, the ceiling, the thermostat-monitor hold and an override (`cooling_fan_speed_target_source`). The duty source selector is `cm848_selectCoolingFanDutySource` (was `fuel_coldStart_modeCode_select`); `cooling_fan_fixed_duty_enable` is 0 in the RAM dump, so the PID / engage-boost / idle sources are live (an earlier note read the neighbouring byte and called it 99). `cooling_fan_engine_idle_flag` (was `cold_start_mode_active_flag`) is an idle condition, not a cold-start flag. The `fuel_coldStart_*` helpers at 0x5139b8-0x513ba4 and `governor_fuel_limit_*` are unidentified (nothing ties them to the fan yet), the PI loop in `cm848_calculateAlternatorFieldDutyByPid` is the charging-voltage regulator, and `wastegate_duty_controller_state.request_half_duty_counts` x 2 is the wastegate duty request. The last-command caches follow the table entry: duty words at 0x40c138 + 2 x entry (`<output>_duty_command`) and period dwords at 0x40c198 + 4 x entry (`<output>_period_microseconds` / `_period_command`), ending at `output_read_back_fault_bits`.
 - **Fuel pressure governor (2026-11-15, PR #48, todo 038):** `cm848_calculateFuelMeteringCommand` is a cascade of two loops.
   - **The rail pressure sensor (re-domained 2026-11-15; were `engine_position*` / `cam_sync_*` / `engine_sync_*` names):**
     - `cm848_processFuelPressureSensor` reads QADC slot 34: `fuel_pressure_sensor_volts` = raw × 4.
@@ -135,13 +135,13 @@ Bank 2 contains utility functions called from Bank 1 (sensor processing, math ro
   - **Loop 1, pressure PID:** error = `fuel_pressure_setpoint` - `fuel_pressure_feedback_filtered`. Its outputs:
     - `fuel_pressure_governor_proportional_term` / `_integral_term` / `_derivative_term`
     - `fuel_pressure_governor_accelerator_feed_forward`
-    - their sum, `engine_sync_state_t_0040b87f.fuel_pressure_governor_demand` (was `reference_count`). It is clamped to a lower limit and an rpm table, and the integrator is put back while the demand is outside them.
+    - their sum, `fuel_pressure_governor_state.fuel_pressure_governor_demand` (was `reference_count`). It is clamped to a lower limit and an rpm table, and the integrator is put back while the demand is outside them.
   - **Loop 2, feedback trim:** a table turns the clamped demand into a target for `fuel_metering_feedback_input` (QADC index slot 63 x 4; the physical signal is not identified). The command is base + PI trim x base / 4096.
   - **Shared helpers:** `cm848_applyPiecewiseLinearGain`, `cm848_integrateWithZoneGain` and `cm848_calculateFilteredDerivative`.
   - **Stale-register quirk (confirmed 2026-11-16):** only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while engine_rpm_measured is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and mode 1 recomputes the preset before a start.
-  - **State:** four Q16.16 states, typed as `q16_fixed_point_t` globals (`.integer_part` / `.fractional_part`), at 0x3fb66a / 66e / 672 / 676. A struct-typed global made the raw `0x3fb672`-style call arguments render as `&name`. `cm848_resetEngineSyncState` never clears 0x3fb676: its fourth store pair repeats 0x3fb66e.
+  - **State:** four Q16.16 states, typed as `q16_fixed_point_t` globals (`.integer_part` / `.fractional_part`), at 0x3fb66a / 66e / 672 / 676. A struct-typed global made the raw `0x3fb672`-style call arguments render as `&name`. `cm848_initializeFuelPressureGovernorState` never clears 0x3fb676: its fourth store pair repeats 0x3fb66e.
 - **Serial reflash hand-off (2026-11-15, PR #48, todo 038):** a serial (SCI) reflash goes through the boot ROM; the application only hands the session over.
-  - **SCI command 49 (0x31, `cm848_sciCommand49Callback`):** needs byte 1, `sci_security_state` 1 (unlocked) and `cold_start_phase` 1 (or `end_of_line_test_settings_cal.field_mode_register` 5100). It writes `serial_reflash_unlock_request_cal` = 1 (EEPROM 0x56) and the boot-kernel magic 0x1d0a (EEPROM 0x00) with `cm848_writeEepromBytes` (was `cm848_memoryBlock_checksum_validate`), then calls `cm848_restartThroughBootRomAfterSciRequest`.
+  - **SCI command 49 (0x31, `cm848_sciCommand49Callback`):** needs byte 1, `sci_security_state` 1 (unlocked) and `engine_state` 1 (or `end_of_line_test_settings_cal.field_mode_register` 5100). It writes `serial_reflash_unlock_request_cal` = 1 (EEPROM 0x56) and the boot-kernel magic 0x1d0a (EEPROM 0x00) with `cm848_writeEepromBytes` (was `cm848_memoryBlock_checksum_validate`), then calls `cm848_restartThroughBootRomAfterSciRequest`.
   - **`cm848_restartThroughBootRom` (0x216fc, was `mpc555_processJ1939RxQueue`):** saves two EEPROM dwords, acknowledges on SCI or J1939, sets chip-select 0, then jumps through the ROM 0x104 vector to `mpc555_hardwareInitialization`. J1939 PGN 61184 diagnostic service 11 (`cm848_handleJ1939RestartService`) uses it too.
   - **The boot ROM side:** it loads EEPROM 0x56 into `eeprom_shadow_header.serial_reflash_unlock_request`. `mpc555_initDiagnosticSession` then clears it and starts its SCI session at high speed (SCC1R0 0x14) with `boot_sci_security_state` (0x3fecc4) = 1, unlocked, so the seed is 0.
   - **Otherwise** the boot SCI security is locked (0). `cm848_bootSciCheckSecurityKey` answers 0 unlocked / 1 wrong key / 2 retry delay (`boot_sci_key_retry_delay` 1000) / 3 locked out (`boot_sci_failed_key_count` 3 → state 2).
@@ -173,6 +173,28 @@ Key RAM-executed functions called from `mainLoopIteration`:
 | ROM 0x010C | 100902 | Build date |
 
 **Note:** E2M file S90140.12 is V11.20.13.16 - different from ECU's V11.46.06. Use live dumps for analysis.
+
+### e2m records to addresses: the ECU's parameter ID table (found 2026-11-19)
+
+The ECU carries its own map from e2m records to addresses, so e2m names no longer need offset matching.
+- **Where it is.** `cm848_lookupParameterIdAddress` (0x539768) searches a table in flash2 at 0x53be38-0x53ea6c: 6-byte
+  records [block id u16][address u32], big-endian.
+  - It is a hash lookup: bucket = id mod 1889, through an index at 0x53af76.
+  - The code itself bounds the table at 0x53ea6c and 0x75e = 1886 records.
+  - Callers: the PCI diagnostic request handler, `j1939_writeDiagMemoryByParameterId` and
+    `cm848_evaluateCalibratedMonitorDisableConditions`.
+- **How to resolve a record.** The block id is column 3 of an e2m record (`Crank_Exit_Speed,RPM,105E,0012,...`), so
+  the record's address is table[block] + column 4.
+- **EEPROM records.** The table gives EEPROM addresses as 0x01000000 + offset; the application reads them from the
+  mirror at 0x3fd482 + offset (`_cal`).
+- **The tool.** `python3 firmware/scripts/e2m_block_addresses.py 105E 1997 ...` lists each record with its address and
+  the current CSV name; `--address 0x40a5b4` goes the other way. Tests: `test_e2m_block_addresses.py`.
+- **Limits.**
+  - `originals/cm848_flash2_live.bin` holds 1441 of the 1886 records; the rest lie past the end of the dump.
+  - The labelled e2m is CHR_CC_11.45.01.07 and the truck runs 11.46.06, so keep checking each name against the code
+    and the dump.
+- **Validation.** It reproduces every block base proved before by offsets (105E, 1068, 10AA, 19A1-19B3, 1254 ...).
+  Stage 6b of PR #52 named the emission manager and the power take-off settings with it.
 
 ### CM848 External Datalinks (per 2004 Dodge FSM)
 
@@ -443,7 +465,7 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
 ### Rolling 2-bit Edge Detector
 - `(flags & 0x55555) * 2` shifts current-state even bits to previous-state odd positions, creating a "previous state" snapshot in one instruction
 - Downstream `(flags & 0xc0) == 0x80` checks are falling-edge detectors (was 1, now 0)
-- `protection_control_state_flags` (0x003fafd4) uses this for 10 channels; look for `& 0x55555` in other status registers
+- `power_take_off_governor_switch_state_bits` (0x003fafd4) uses this for 10 channels; look for `& 0x55555` in other status registers
 
 ### Sensor Channel Architecture
 - Sensor channels use paired wrappers: `sensorChannelN_init()` calls the periodic pass, `sensorChannelN_process()` the boot pass (the suffixes are inverted - see the memory note in PR #39).
@@ -454,7 +476,7 @@ Use Python CSV module to batch-categorize and clean (see session history for scr
   - `sensor_channel_config_t`: `filter_coefficient` (was `config_word0`) / `default_value` / `high_threshold` / `low_threshold` / `debounce_step` / `recovery_decrement` / `debounce_limit` / `debounce_clear_threshold`.
   - `sensor_channel_state_t`: `raw_adc_counts` / `value` (the lookup result) / `debounce_count` / `held_value` (output while the channel's `sensor_channel_held_value_enable_bits_cal` bit is set; for the accelerator pedal channel 13 the J1939 input layer writes `sensor_channel13_ram.held_value` there and its source priority in `spare`) / `spare` / `lookup_input` (ratiometric reading, capped at 0x3ff).
   - `ema_filter_state_t` (`exponentialMovingAverage`'s state, 45 callers): `coefficient` points at a `filter_coefficient`, and `accumulator` is Q16.16. Each pass moves the value (65536 - coefficient) / 65536 of the way, and 0 means no filtering.
-- **Outputs (renamed 2026-11-16):** `value_output_ptr` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_ptr` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `map_fuel_correction_factor` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
+- **Outputs (renamed 2026-11-16):** `value_output_ptr` receives `sensor_channel_filtered_output[channel]`, the filtered engineering value, into the `<channel>_value` globals (were `*_raw`: `sensor_channelN_value`, `boost_pressure_sensor_value` 0x40bd8e = channel 1 intake manifold pressure, `fuel_timing_sensor_value`). `default_value_output_ptr` receives the config default into the `<channel>_default_value` globals (were `*_filtered`; e.g. `charge_pressure` falls back to `boost_pressure_sensor_default_value`). Verified in the disassembly: the last stores are `lhzx` of the filtered output and `lhz 2(config)`. The status is 0 in range / 1 debouncing (value held) / 2 fault confirmed (default used) / 0x100 channel not enabled.
 - **Blocks with named fields (typed 2026-11-16):** 24 blocks used to keep a named row inside, and those rows are now struct fields:
   - the barometric channel's default `barometric_pressure_sensor_config.default_value` (was `boost_pressure_fixed_reference`), which `cm848_calculateBoostPressure` subtracts when it uses no barometer;
   - the cruise switch validity window `cruise_switch_sensor_config.high_threshold` / `.low_threshold` (were `cruise_engage_adc_valid_upper` / `_lower`);
@@ -644,7 +666,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - P0461: `cm848_monitorFuelLevelLowDistance`.
   - P0602: `cm848_verifyCalibrationAndCodeCrc`.
   - P0300-P0306: `cm848_runMisfireMonitor`.
-  - P0219: inside `mpc555_processColdStartMainLoop`.
+  - P0219: inside `cm848_updateEngineState`.
   - P0106: `cm848_detectBarometricPressureSensorAboveMaximum`.
   - P0236 / P0299 / P0069: `cm848_monitorBoostPressureSensorAndUnderboost`.
   - Faults 774-777: `cm848_checkEgrDeltaPressureSensorPerformance`.
@@ -697,6 +719,177 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - **One expected boot-ROM render:** `mpc555_cmfEraseBlocks` stores the erase interlock word to flash block 0x58000.
     That address is inside `qadc_channel_dispatch_table`, so the store renders as
     `qadc_channel_dispatch_table._558_4_`.
+- **Fueling state enum (2026-11-19, PR #52, todo 045).** `ENGINE_OPERATING_MODE` is now `FUELING_STATE` (members
+  `FUELING_STATE_*`). It is one numbering for every fueling stage. The Cummins e2m lists number them the same way:
+  FSDSFLST user fueling state 1-8 / 38, FSGVFLST governed state 1-12, FSLMFLST limited state 13-41, FSFNFLST final
+  state 1-41. An e2m state parameter's description ends with its value range (`~1-12`).
+  - **The value labels (stage 4):** the labelled Chrysler calibration `e2m-analysis/CHR/CHR_CC_11.45.01.07.e2m` (the
+    truck runs V11.46.06) lists Cummins' label for every code. The keys are hexadecimal, for example `29=ATDERAT` is
+    0x29 = 41, the anti-theft derate.
+    - Fueling codes 00-3D are in `Fueling_Control_State` / `User_Fueling_State`; each `FUELING_STATE` member comment
+      quotes its label.
+    - The engine state 1-8 is in `Engine_State`.
+    - The power take-off governor state is the `[PTST]` description.
+
+    They confirm the code-derived members (4 PTO, 10 RSG, 16 AFCDERAT, 19 MAXTHROT, 45 TORQMGMT, 46 CTDERAT, 52 / 53 /
+    55 / 58 / 61 ...) and named the rest. Only 32 / 37 / 38 / 49 / 50 stay `FUELING_STATE_UNIDENTIFIED_<n>`.
+  - **The chain:** `engine_operating_mode` → `operating_mode_governor_output.mode_code` (adds 4, the power take-off
+    governor) → `governor_fuel_demand_working_mode` (0x40b67c, was `governor_pid_integral_snapshot`; adds 9, cruise
+    control) → `adjusted_user_fueling_state` (0x40a154; adds 10 vehicle speed limit, 11 low speed governor, 12 high
+    speed governor).
+  - **The arbitration:** `cm848_arbitrateGovernedFueling` sets `adjusted_user_fueling_state` to the smallest of the
+    user demand, the high speed governor fuel and the vehicle speed limit fuel. Then the low speed governor wins as a
+    max select at or below its speed.
+  - **One numbering, proved in the code:** `cm848_arbitrateRequestedFueling` writes either `adjusted_user_fueling_state`
+    or `torque_derate_fuel_source_code` (13, 20, ...) into `requested_fueling_state`, as CM550 does into FSLMDSST.
+  - **The later stages (stage 2):** the derate chain `torque_derate_fuel_source_code` (FSLMFLST), then
+    `fuel_demand_arbitrated_state` (with `fuel_demand_minimum_tracked_state`), then the combustion stage
+    `injection_quantity_combustion_gross_source_code` / `_reference_source_code` (52-58), then `final_fueling_state`
+    (was `governor_mode_code`; FSFNFLST) with the engine-state overrides 22-41. The RAM dump (key on, engine stopped)
+    reads governed 11 → derate 62 → final 26. CM848 stores codes up to 62; the label list ends at 0x3D = 61.
+  - **e2m blocks that line up by offset:**
+    - block 1045 FSGVFL / FSGVFLST / LSLOFG = 0x40a152 / 0x40a154 / 0x40a156;
+    - block 1265 PTTHDQRP / PTTHOV / PTSLFL / PTSLFLST = 0x40af56 / 0x40af58 / 0x40af5a / 0x40af5c;
+    - block 1051 FSFNFL / FSFNFLST = 0x40a2ce / 0x40a2d0;
+    - block 105D FSLMFL / FSLMFLST / FSAPLMFL = 0x40afac / 0x40afae / 0x40afb0.
+  - **Every value a carrier holds needs a member (Ghidra 12.1).** A value with no exact member renders as an OR of
+    members: 15 printed as `FUELING_STATE_HIGH_SPEED_GOVERNOR | FUELING_STATE_TSC1_SPEED_CONTROL |
+    FUELING_STATE_TSC1_TORQUE_CONTROL`. So the codes not proved yet (stored or only compared) are
+    `FUELING_STATE_UNIDENTIFIED_<n>`, with the setter in the comment. A value-normalizing diff (the session's
+    `check_enum_proof.py`) finds any OR render after an enum change.
+  - The dword at 0x3fb526 was two words: `governor_fuel_demand_working_mode_prev` (`sth` @ 0x40474) and
+    `cruise_resume_active_flag_previous` (`lhz` @ 0x4064c / `sth` @ 0x406b8).
+  - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
+  - **The arbitration functions (stage 3, renamed from `*Protection*` names):**
+    - user fueling: `cm848_selectPowerTakeOffOrUserFueling`, then `cm848_calculateCruiseControlFueling` /
+      `cm848_selectCruiseOrUserFueling`;
+    - limiting governors: `cm848_calculateVehicleSpeedLimitFueling` (on `vehicle_speed_rise_limited`),
+      `cm848_runLowSpeedGovernor` / `cm848_limitLowSpeedGovernorFueling`, and `cm848_arbitrateGovernedFueling`;
+    - derate chain: `cm848_initializeFuelLimitChains`,
+      `cm848_calculateMaximumFuelCurve` (was `cm848_processActiveFaultList`), `cm848_applyTsc1TorqueLimit`, `cm848_applyFaultDerateFuelLimit` and
+      `cm848_applyFuelPressureGovernorFaultBlend`, then `cm848_arbitrateRequestedFueling`;
+    - final: `cm848_selectFinalFueling`.
+
+    The old names and the evidence are in each plate comment and in task 045.
+  - **Stage 4, the engine state:** `engine_state` (0x40a7c0, was `cold_start_phase`) is the Cummins engine state
+    FSEGST, typed `ENGINE_STATE` (was `COLD_START_PHASE`).
+    - Values: 1 STOPPED / 2 CRANKING / 3 RUNNING / 4 ENGINE_BRAKE / 5 OVERSPEED / 6 JUMP_START / 7 REENTRY / 8 SHUTDOWN.
+      The old names and comments disagreed for 1 / 4 / 5 / 8.
+    - `cm848_updateEngineState` (was `mpc555_processColdStartMainLoop`) sets it.
+    - e2m block 1068 lines up 7/7: `power_down_start_flag` / `ecm_power_down_timer` / `engine_state_crank_time` /
+      `_run_time` / `engine_is_active_flag` / `engine_is_starting_flag`.
+  - **Stage 4, the power take-off governor (code-proven):** the 0x2a2d0-0x2bed4 cluster was `*Protection*`-named.
+    - J1939 CCVS1 sends `power_take_off_governor_j1939_state` (SPN 976 PTO governor state), and OBD-II PID 0x1E reports
+      `power_take_off_governor_active_flag` with switch 3.
+    - The state machine `cm848_runPowerTakeOffGovernorStateMachine` uses `POWER_TAKE_OFF_GOVERNOR_STATE` (e2m PTST:
+      remote count / remote run / wait / normal). The PID is `cm848_runPowerTakeOffGovernorPid`.
+    - Entry needs `j1939_governor_feature_byte` (EEPROM 0x480) bit 0 (cab) or bit 1 (remote). That byte is 0 on this
+      truck, so the governor never engages; the RAM dump reads state 2, WAIT.
+  - **Stage 4, the limiters:**
+    - 15, the altitude derate: `cm848_calculateAltitudeDerateFuelLimit`, engine speed x barometric pressure, cool / hot
+      ambient grids, an air handling fault grid;
+    - 16, the air fuel control derate: `cm848_calculateAirFuelControlFuelLimit`, the boost smoke limit;
+    - 42, `cm848_calculateFuelLimitByRpmAndDemand`, only in the variable speed governor;
+    - 46, the coolant overheat derate: the 0x5139b8-0x513f5c family `cm848_runCoolantOverheatFuelDerate`. These were
+      the "unidentified `fuel_coldStart_*` helpers";
+    - 59, the net torque limit: `cm848_calculateNetTorqueFuelLimit`.
+  - **Stage 5, the power take-off governor's words.** They are named from e2m blocks that line up by offset, with
+    matching units and dump values:
+    - 10AB: the governor terms, from `power_take_off_governor_proportional_term` to `_no_load_fuel`, plus the QD / QI / QP
+      gain adjustments. The old `_d_gain_factor_b` is the integral adjustment.
+    - 109E: `power_take_off_requested_engine_speed`.
+    - 11B4, EEPROM: the remote speeds 1400-2000 rpm, set / resume 1100 rpm and the 2 mph road speed limit.
+    - 109D: the 300-1200 rpm engage window.
+    - 10AA: the gains. The +-1000 rpm speed-error clamps had their names swapped.
+  - **Stage 5, the crank routine (e2m 105E / 105F / 1032).** The `cold_start_*` / `fuel_timing_*` / `governor_*` words at
+    0x40a798-0x40a7be and the ROM settings at 0x406852-0x40687c are Cummins' crank routine:
+    - `crank_exit_speed`: CRANKING ends at it;
+    - `crank_fuel`: the CRANKING fuel (the old name called it an rpm);
+    - `crank_reentry_speed`, `engine_stopped_speed` (was `engine_rpm_trigger_cal`), `ecm_power_down_timer_threshold` /
+      `_delay`.
+
+    The wrong `_cal` on the ROM words is gone.
+  - **Two flags that read backwards:**
+    - `engine_starting` is now `engine_shutdown_command_flag` (e2m 10B1 +12 Shutdown): it forces SHUTDOWN and zeroes the
+      injection.
+    - `engine_shutdown_active_flag` is now `key_off_shutdown_inhibit_flag`: 1 stops a key-off shutdown, and only J1939
+      service 24 sets it.
+  - **Also in stage 5:**
+    - the e2m EMO auxiliary emission control device (AECD) words. They follow wave 9's `condensation_protection_*`:
+      `engine_start_warmup_protection_*` (19B2 / 19B3), `extended_idle_protection_*` (19B0 / 19B1: the timer runs only
+      while the low speed or power take-off governor has the fueling) and `extreme_ambient_overheat_protection_*`
+      (19A1-19A4: a 217 / 222 °F coolant hysteresis, not a cold start boost override).
+      - Each `_active_flag` puts its `_emission_level_cap` into the max-select of
+        `cm848_calculateEmissionLevelCapCommand`. EL = emission level: the condensation cap is the "NOx cap value".
+      - Stage 5 first named the flags `*_emission_control_active_flag`, which reads backwards (an AECD relaxes NOx
+        control); stage 5b fixed it.
+      - The enable bits 0x1000 / 0x800 / 0x200 of `algorithm_enable_flags_20_cal` are clear on this truck (0x0100).
+    - stage 5b also fixed the comments that still used the old cold-start-phase state words: "at the governor
+      setpoint" is RUNNING, "fuel mode switch" is ENGINE_BRAKE. `fuel_cold_start_phase3_compensation_enable_flag` is
+      now `condensation_count_enable_flag`. `emission_manager_engine_protection_state` bit 0x02 is "engine stopped"; the dump's 0x402
+      only shows that the engine was off.
+    - code 32 = `FUELING_STATE_MASTER_SLAVE_OVERRIDE` (e2m MSOVRIDE / [MSODEN]);
+    - the stale `CSP_*` state names in 32 comments.
+  - **Stage 6a: the `cm848_signedFirstOrderFilter` records are `ema_filter_state_t`.** The signed twin of
+    `exponentialMovingAverage` reads the same {`word*` coefficient, Q16.16 accumulator} record.
+    - The 33 global records are named `<what it filters>_filter`, with their coefficients typed `word`.
+    - The prototype returns `sword`: a 32-bit return put a temp and a cast at all 39 calls.
+    - There are 39 calls; a one-line grep finds only 15, because many calls wrap their arguments.
+  - **Stage 6b: the emission manager (EMO / EMM), named through the ECU's parameter ID table (above).**
+    - `emission_level_cap_command` (was `fuel_demand_min_threshold`) is the rate-limited maximum of the AECD caps. It is
+      a lower bound on the combustion chi, not a fuel demand floor.
+    - `emission_manager_engine_protection_state` (was `combustion_status_flags`) is e2m EMM_Protection_State.
+    - The air handling system protection AECD (`algorithm_enable_flags_20_cal` bit 0x100) is the only AECD enabled on
+      this truck.
+    - The power take-off helpers and settings are named too (see task 045).
+  - **Stage 7: the whole-CSV e2m audit and rename wave 12.**
+    - `firmware/scripts/e2m_name_audit.py` lists every table-resolved e2m record against the row at its address.
+    - Wave 12 named the 383 unnamed addresses the code uses, after six agents checked each record's code use and width.
+    - Layout drift between the 11.45 e2m and the truck's 11.46.06 exists: the 10E3 tail is block 1228, 8A2B +24 is 8A37,
+      and 8A14 / 1930 / 1902 / 1253 drift partway. Check a record's code use before trusting its offset.
+    - The fueling chain took its e2m names: `adjusted_user_fueling_state` (was `governor_fuel_demand_mode`, [FSGVFLST]),
+      `final_fueling`, `requested_fueling`, `torque_derate_torque_limit`.
+  - **Stage 8: rename wave 13, the misname review.** Six agents checked the 381 named rows whose name shares no word with
+    their table-resolved e2m record. Results: 218 renames, 143 keeps (each keep got an `| e2m:` cross-reference), 17 drift.
+    - Families now named from the code and the record:
+      - `data_collector_*` (was `diag_dm1_*`; the Cummins data collector, not J1939 DM1);
+      - the PGN 65251 engine configuration / torque curve words (e2m 1102, were `protection_*`);
+      - `alpha_*` (104A) and `all_speed_governor_*` (107C);
+      - `converter_clutch_*` and `governor_pressure_*` (the 48RE monitors 8C33 / 8C34 / 8C58, were `protection_*`);
+      - `cylinder_balance_*` (81AE-81B0);
+      - the fuel metering coil (8019) and the TPU-A channel 1 `backup_*` cam signal words (8194 / 819B).
+    - More drift: 8D14 from +2, 1B2D from +4, 1966 from +94, 1649 from +10. The 8C58 tail overlaps 8C4E. The last
+      "ratio" record of 8C34 / 8C56 / 8C5B / 1632 has no storage of its own in 11.46.
+    - Leads for the next waves are in task 045: about 70 misnamed functions, the out-of-bin siblings, splits and types.
+  - **Stage 8b: the HPCR gain records are structs.**
+    - `cm848_applyPiecewiseLinearGain` / `cm848_integrateWithZoneGain` take a `piecewise_linear_gain_t` (16 bytes: three
+      dword gains, then the signed positive / negative window widths). `cm848_calculateFilteredDerivative` takes a
+      `derivative_gain_t` (a word filter coefficient first, 18 bytes).
+    - Seven instances, from e2m 8014-8018 / 80EF / 80F2: the fuel pressure governor's P / I / D gains, and the fuel
+      metering current compensation and uncompensated duty cycle gains.
+    - A prototype that takes the struct pointer lets Ghidra type the caller's stack copies by itself. A local whose last
+      store runs past the struct renders a raw stack or register name for that store.
+  - **Stage 8c: review fixes.**
+    - A label-only proof cannot see a right name on a wrong-width row. After a rename wave, compare each renamed row's
+      width with its e2m record (`width_mismatches_W13.py` in the session archive).
+    - The gain scheduling curves are `fuel_pressure_governor_*_gain_scaling_axis` / `_values` (e2m 8005-8010 /
+      80E7-80EE / 80F0-80F1), selected by `fuel_pressure_governor_gain_mode` (HPCR_Governor_Mode, 0 = scheduled).
+    - The 80B9 injector bits run in firing order (bits 0-5 = cylinders 1 / 5 / 3 / 6 / 2 / 4).
+  - **Stage 9: rename wave 14.** 75 function renames and 231 global renames, plus the splits and three enums by hand.
+    - Function families: alpha; the EGR mass flow / charge flow / intake manifold temperature models; the J1939
+      percent peak torque and PGN 65251 torque curve; J1939 control sessions; the data collector; engine protection
+      shutdown.
+    - `ram_refresh_enable` (RAM_REFRESH_STATE), `development_mode` (DEVELOPMENT_MODE_STATE) and `run_location`
+      (RUN_LOCATION: 0xee normal / 0xea development, e2m 0010 RUN_LOC); `cm848_exitDevelopmentMode` /
+      `cm848_enterDevelopmentMode` / `cm848_forceExitDevelopmentMode` (stage 9b).
+    - Stage 9b: nine twins share one unprefixed name with CM550 (`calculateAlpha`, `calculateAlphaBase`, the
+      five `calculateAlpha*Result`, `buildPgn65251EngineConfiguration1Payload`,
+      `sendPgn61444ElectronicEngineController1Message`). `charge_flow_estimate_terms_t` and the 7-byte
+      `fuel_pressure_governor_state_t` replace two guessed structs.
+  - **The RAM dump has a gap (found in wave 14):** `cm848_ram.bin` misses the 0x80 bytes at 0x40c200-0x40c27f.
+    - Read 0x40c280 and up at address - 0x80; there is no data for 0x40c200-0x40c27f.
+    - The proof: the collector end pointer 0x40c28a, then 0 and the table address 0x3fddc4, sit at dump 0x40c200, and
+      the file is exactly 0x80 short of 0x440000.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

@@ -1,0 +1,10 @@
+cm848: stage 9 review - dump-gap comments, the cross-firmware and stale-name checks recorded
+
+- 0x40c274 / 0x40c27c no longer quote a dump value: the RAM dump has no data for 0x40c200-0x40c27f.
+- Task 045: the review after the wave-14 apply. Five overridden function names read in code;
+  PGN 65232 confirmed from its transmit descriptor; the cross-firmware check by address (no
+  shared name broken; CM550's diagnostic_session_state is a lead); the all-CSV stale-name sweep;
+  the caveat on wave 13's quoted dump values above 0x40c200; and the .cpp checkout slip and its
+  recovery.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

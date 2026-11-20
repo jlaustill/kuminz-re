@@ -1,0 +1,7 @@
+docs: session archive for stage 8 (wave 13 bins / brief / results / gate, six agents' reports and scratch)
+
+The wave-13 bins, brief, results, apply and fix scripts, the six handback reports and prompts
+(agent_prompts_and_reports.md), and bins 4-6's scratch scripts. Large files (.cpp snapshots,
+build logs) are in session_folder_large_files.tar.xz; it restores byte-identically.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

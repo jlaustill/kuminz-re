@@ -1,0 +1,7 @@
+docs: session archive for stage 8c (width check, injector fault codes, gain scheduling map, gate inputs)
+
+width_mismatches_W13.py, injector_fault_codes.py, gain_scaling_tables.py, all_diff_functions.py,
+apply_stage8c.py with its map and gate inputs (gate8c_out/ holds the pre-8c CSVs the gate ran
+against), and the 10-rename direction sample. The tar.xz restores byte-identically.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

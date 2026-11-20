@@ -1,0 +1,8 @@
+docs: session archive for stage 9 (wave 14 worklists, bins, brief, results, holds, seven agents' reports and scratch)
+
+The wave-14 worklist builders, the bins and brief, the result files, apply_W14.py with its holds
+(held_W14.json) and gate inputs, the hand scripts, the proof tools (real_code_diffs.py), the
+seven agents' prompts / reports (agent_prompts_and_reports.md) and their scratch. The tar.xz
+restores byte-identically.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,42 @@
+cm848: the ECU's parameter ID table, the emission manager and the power take-off helpers (stage 6b)
+
+cm848_lookupParameterIdAddress (0x539768) searches a flash2 table at
+0x53be38: 6-byte records [e2m block id][address]. An e2m record's address is
+table[block] + its offset (EEPROM entries map to the mirror at 0x3fd482).
+The table reproduces every block base proved earlier by offsets (105E 1068
+10AA 19A1-19B3 1254 ...). firmware/scripts/e2m_block_addresses.py resolves
+blocks or an address with the current CSV names (tested). A read-only
+agent found it; an independent parser confirmed it.
+
+- the emission manager (EMO / EMM), every e2m identity resolved with the
+  table: emission_level_cap_command (was fuel_demand_min_threshold) is the
+  rate-limited maximum of the AECD caps (cm848_calculateEmissionLevelCapCommand)
+  and a lower bound on the combustion chi, not a fuel demand floor; its rate
+  limits, override value and EEPROM user overrides; the reference (altitude
+  x ambient temperature cap table times a speed x torque ratio table) and the
+  not-to-exceed zone; emission_manager_engine_protection_state (was
+  combustion_status_flags) and the AECD state pack; the air handling system
+  protection AECD (e2m 1990-1997, the only AECD enabled on this truck:
+  algorithm_enable_flags_20_cal bit 0x100), white smoke and misfire
+  protection (was injection_timing_temperature_component_check_flags) and
+  general engine protection (was fuel_demand_sensor_validation_*); 15 functions
+- the power take-off helpers (a second read-only agent): six functions
+  (initialization, reference filter, preset, throttle override, the PGN 65264
+  power take-off information message and buffer), the working words (gain
+  adjustment multiplier and its e2m 13B2 / 13B3 tables, the PID integrator,
+  switch state bits, engagement ramp, target, remote switch counts),
+  power_take_off_remote_speed_by_press_count (word[6], read indexed), the
+  e2m 0008 EEPROM settings, and the PGN 65264 / 65270 / 65249 priority words
+  (were _source_address_bits)
+- stale comments fixed: the reference step limit is a minimum step, the speed
+  error starts from the smoothed reference, the ramp writes the requested
+  speed, the droop-compensated error has no writer; algorithm_enable_flags_20_cal
+  bits listed; three cruise switch comments
+
+Proof: all 123 names render, no _ variant; build warnings unchanged. Six
+functions differ after reversing the names, all explained: the word[6]
+array in the two power take-off state functions, (word) casts from two new
+word rows, and two local declaration orders. Headers compile; lookup_tables.py
+clean; tests pass (with test_e2m_block_addresses).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

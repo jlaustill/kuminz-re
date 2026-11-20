@@ -1,0 +1,34 @@
+cm848: fueling arbitration renames (FUELING_STATE stage 3)
+
+16 functions and 10 words of the fueling arbitration that stages 1 and 2
+proved, renamed from legacy *Protection* / governor_* guesses. Each plate
+comment / comment gives the evidence and the old name:
+
+- cm848_arbitrateGovernedFueling (was cm848_processProtectionRampControl),
+  cm848_arbitrateRequestedFueling (was cm848_processProtectionSelection),
+  cm848_selectFinalFueling (was cm848_selectFuelDemandSource)
+- the user fueling: cm848_selectPowerTakeOffOrUserFueling,
+  cm848_calculateCruiseControlFueling, cm848_selectCruiseOrUserFueling
+- the limiting governors: cm848_calculateVehicleSpeedLimitFueling (on
+  vehicle_speed_rise_limited), cm848_runLowSpeedGovernor /
+  cm848_limitLowSpeedGovernorFueling, cm848_snapshotHighSpeedGovernorFueling
+- the derate chain: cm848_initializeFuelLimitChains,
+  cm848_calculateMaximumFuelCurve (was cm848_processActiveFaultList - no
+  fault list in it), cm848_applyTsc1TorqueLimit,
+  cm848_applyFaultDerateFuelLimit, cm848_applyFuelPressureGovernorFaultBlend
+  (faults P1221 / P1222 / P1223)
+- words: vehicle_speed_limit_fueling, cruise_control_fueling,
+  high_speed_governor_fueling_snapshot, low_speed_governor_fueling (+
+  _working), low_speed_governor_active_flag (e2m LSLOFG),
+  vehicle_speed_rise_limited (+ _prev), power_take_off_throttle_override_
+  engine_speed_limit / _flag (e2m PTTHDQRP / PTTHOV)
+
+References refreshed in every CSV comment column and firmware/CLAUDE.md.
+The editing-firmware-csvs enum reference now warns that Ghidra 12.1 prints
+a value with no member as an OR of members.
+
+Proof: reverse_names.py EQUIVALENT (26 names rendered, no _ variant);
+./analyze.sh verify deterministic; build warnings unchanged; headers
+regenerated (0 errors); lookup_tables.py clean; tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

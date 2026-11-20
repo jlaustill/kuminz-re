@@ -1,0 +1,14 @@
+0x4094c4 fuel_pressure_governor_derivative_gain_small_signal [word] dump [1] quoted [65537] | e2m 80EF +2 HPCR_Derivative_Gain_Small_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component small signal gain' (addres
+0x4094c8 fuel_pressure_governor_derivative_gain_positive_large_signal [word] dump [4] quoted [262147] | e2m 80EF +6 HPCR_Derivative_Gain_Positive_Large_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component positive large si
+0x4094cc fuel_pressure_governor_derivative_gain_negative_large_signal [word] dump [4] quoted [262147] | e2m 80EF +A HPCR_Derivative_Gain_Negative_Large_Signal [%/MPa/SEC] 'Fuel pressure governor D-Component negative large si
+0x40adae j1939_torque_curve_speed_at_point_2 [word] dump [25600] quoted [3200] | e2m 1102 +24 Jcomm_RPM_At_Point_2 '[JCTQRPP2] Torque curve speed at breakpoint 2 (HSG Breakpoint).' (RPM, 0.125 per coun
+0x40adb2 j1939_torque_curve_speed_at_point_4 [word] dump [20800] quoted [2600] | e2m 1102 +28 Jcomm_RPM_At_Point_4 '[JCTQRPP4] Torque curve speed at breakpoint 4.' (RPM, 0.125 per count; 20800 in the d
+0x40adb4 j1939_torque_curve_speed_at_point_5 [word] dump [22400] quoted [2800] | e2m 1102 +2A Jcomm_RPM_At_Point_5 '[JCTQRPP5] Torque curve speed at breakpoint 5.' (RPM, 0.125 per count; 22400 in the d
+0x3fd52e rear_axle_ratio_low_cal [word] dump [453] quoted [3] | EEPROM 0xac - e2m 1180 +6 Rear_Axle_Ratio_Low '[VSRRAXRL] Ratio of trans. to axle revs (hi gear/low numeric ratio if 2 s
+0x3fd534 rear_axle_ratio_high_cal [word] dump [453] quoted [3] | EEPROM 0xb2 - e2m 1180 +C Rear_Axle_Ratio_High '[VSRRAXRH] ratio of trans. to axle revs. (lo gear/hi numeric ratio if tw
+0x40a458 intake_manifold_temperature_after_lead [word] dump [2602] quoted [40] | e2m 18D9 +0 TPE_IMT_After_Lead 'Estimated IMT after sensor compensation but before limits' (DEG_F, signed, 1/64 deg F; 2
+0x40b8cc injector_diagnostic_bits_fast_decay [byte] dump [0] quoted [65535] | e2m 80B9 +0 HPCR_Fast_Decay 'LSB is injector 1 - fast decay error' (HEX; bit n = injector n + 1). Set from a separate fl
+0x3feb8e j1939_link_fault_timeout_count_cal [word] dump [0] quoted [100] | e2m 11C1 +2 [JC39TMCU] J1939_Link_Fault_Timeout_Count (CNTS, 0-1000): 'Current number of J1939 time-outs since powerdown
+0x407186 barometric_pressure_sensor_tolerance [word] dump [0] quoted [32799] | e2m 165C +0 Ambient_Air_Sensor_Tolerence (IN_HG, 0.0159 per count = 1/18.56 kPa, 0-20): 'Error Tolerence of Ambient Air 
+0x408f68 primary_period_rpm_conversion_factor [dword] dump [400000000] quoted [0] | e2m 8194 +12 [ESCUCF01] Engine_Speed_Constant_1 (UNITLESS, x 0.125, 4 bytes): 'Engine_Speed_Constant_1: Conversion facto
+92 rows quote a dump value; 13 without a match

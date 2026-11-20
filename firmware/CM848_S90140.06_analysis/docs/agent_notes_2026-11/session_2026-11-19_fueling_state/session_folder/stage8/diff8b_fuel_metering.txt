@@ -1,0 +1,525 @@
+1c1
+< === cm848_calculateFuelMeteringCommand (lines 46722-47375, 647 non-blank)
+---
+> === cm848_calculateFuelMeteringCommand (lines 46735-47412, 671 non-blank)
+36c36
+<   short sVar6;
+---
+>   sword sVar6;
+39c39
+<   short sVar9;
+---
+>   sword sVar9;
+40a41
+>   short sVar10;
+42c43
+<   int iVar10;
+---
+>   int iVar11;
+45,49c46,50
+<   int iVar11;
+<   byte *pbVar12;
+<   int iVar13;
+<   word wVar14;
+<   uint uVar15;
+---
+>   int iVar12;
+>   byte *pbVar13;
+>   int iVar14;
+>   word wVar15;
+>   uint uVar16;
+51,67c52,54
+<   dword local_64;
+<   dword local_60;
+<   dword local_5c;
+<   dword local_58;
+<   dword local_54;
+<   dword local_50;
+<   dword local_4c;
+<   dword local_48;
+<   word local_44;
+<   ushort uStack_42;
+<   word wStack_40;
+<   ushort local_3e;
+<   word wStack_3c;
+<   ushort local_3a;
+<   word wStack_38;
+<   word local_36;
+<   uint local_34;
+---
+>   piecewise_linear_gain_t local_64;
+>   piecewise_linear_gain_t local_54;
+>   undefined1 local_44 [20];
+109c96
+<     wVar14 = fuel_pressure_governor_integrator.integer_part;
+---
+>     wVar15 = fuel_pressure_governor_integrator.integer_part;
+128c115
+<              (wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+---
+>              (wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+140c127
+<            wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+---
+>            wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand,
+148c135
+<           wVar14 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
+---
+>           wVar15 = engine_sync_state_t_0040b87f.fuel_pressure_governor_demand -
+201c188
+<     wVar14 = unaff_r23;
+---
+>     wVar15 = unaff_r23;
+232,234c219,222
+<         local_64 = (int)((ulonglong)fuel_pressure_governor_proportional_gain_small_signal *
+<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+<                    fuel_pressure_governor_proportional_gain_small_signal * wVar5 >> 0xc;
+---
+>         local_64.small_signal_gain =
+>              (int)((ulonglong)fuel_pressure_governor_proportional_gains.small_signal_gain *
+>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+>              fuel_pressure_governor_proportional_gains.small_signal_gain * wVar5 >> 0xc;
+238,240c226,229
+<         local_60 = (int)((ulonglong)fuel_pressure_governor_proportional_gain_positive_large_signal *
+<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+<                    fuel_pressure_governor_proportional_gain_positive_large_signal * wVar5 >> 0xc;
+---
+>         local_64.positive_large_signal_gain =
+>              (int)((ulonglong)fuel_pressure_governor_proportional_gains.positive_large_signal_gain *
+>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+>              fuel_pressure_governor_proportional_gains.positive_large_signal_gain * wVar5 >> 0xc;
+244,247c233,240
+<         local_5c = (int)((ulonglong)fuel_pressure_governor_proportional_gain_negative_large_signal *
+<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+<                    fuel_pressure_governor_proportional_gain_negative_large_signal * wVar5 >> 0xc;
+<         local_58 = engine_sync_prot_scale_a_cal;
+---
+>         local_64.negative_large_signal_gain =
+>              (int)((ulonglong)fuel_pressure_governor_proportional_gains.negative_large_signal_gain *
+>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+>              fuel_pressure_governor_proportional_gains.negative_large_signal_gain * wVar5 >> 0xc;
+>         local_64.positive_window_width =
+>              fuel_pressure_governor_proportional_gains.positive_window_width;
+>         local_64.negative_window_width =
+>              fuel_pressure_governor_proportional_gains.negative_window_width;
+251,253c244,247
+<         local_54 = (int)((ulonglong)fuel_pressure_governor_integral_gain_small_signal *
+<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+<                    fuel_pressure_governor_integral_gain_small_signal * wVar5 >> 0xc;
+---
+>         local_54.small_signal_gain =
+>              (int)((ulonglong)fuel_pressure_governor_integral_gains.small_signal_gain *
+>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+>              fuel_pressure_governor_integral_gains.small_signal_gain * wVar5 >> 0xc;
+257,259c251,254
+<         local_50 = (int)((ulonglong)fuel_pressure_governor_integral_gain_positive_large_signal *
+<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+<                    fuel_pressure_governor_integral_gain_positive_large_signal * wVar5 >> 0xc;
+---
+>         local_54.positive_large_signal_gain =
+>              (int)((ulonglong)fuel_pressure_governor_integral_gains.positive_large_signal_gain *
+>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+>              fuel_pressure_governor_integral_gains.positive_large_signal_gain * wVar5 >> 0xc;
+263,266c258,265
+<         local_4c = (int)((ulonglong)fuel_pressure_governor_integral_gain_negative_large_signal *
+<                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+<                    fuel_pressure_governor_integral_gain_negative_large_signal * wVar5 >> 0xc;
+<         local_48 = engine_sync_prot_scale_b_cal;
+---
+>         local_54.negative_large_signal_gain =
+>              (int)((ulonglong)fuel_pressure_governor_integral_gains.negative_large_signal_gain *
+>                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14 |
+>              fuel_pressure_governor_integral_gains.negative_large_signal_gain * wVar5 >> 0xc;
+>         local_54.positive_window_width = fuel_pressure_governor_integral_gains.positive_window_width
+>         ;
+>         local_54.negative_window_width = fuel_pressure_governor_integral_gains.negative_window_width
+>         ;
+270c269,272
+<         local_44 = (word)((uint)engine_sync_prot_gain_cal * (uint)wVar5 >> 0x10);
+---
+>         local_44._0_2_ =
+>              (undefined2)
+>              ((uint)fuel_pressure_governor_derivative_gains.filter_coefficient * (uint)wVar5 >> 0x10
+>              );
+274,282c276,286
+<         uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_small_signal,
+<                           injection_timing_scale_cyl4_lo_cal) * (uint)wVar5;
+<         uStack_42 = (ushort)((uint)((int)((ulonglong)
+<                                           CONCAT22(
+<                                                   fuel_pressure_governor_derivative_gain_small_signal
+<                                                   ,injection_timing_scale_cyl4_lo_cal) *
+<                                           (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+<                     (ushort)(uVar15 >> 0x1c);
+<         wStack_40 = (word)(uVar15 >> 0xc);
+---
+>         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.small_signal_gain._0_2_,
+>                           fuel_pressure_governor_derivative_gains.small_signal_gain._2_2_) *
+>                  (uint)wVar5;
+>         local_44._2_2_ =
+>              (ushort)((uint)((int)((ulonglong)
+>                                    CONCAT22(fuel_pressure_governor_derivative_gains.
+>                                             small_signal_gain._0_2_,
+>                                             fuel_pressure_governor_derivative_gains.
+>                                             small_signal_gain._2_2_) * (ulonglong)(uint)wVar5 >>
+>                                   0x20) << 0x14) >> 0x10) | (ushort)(uVar16 >> 0x1c);
+>         local_44._4_2_ = (undefined2)(uVar16 >> 0xc);
+286,293c290,301
+<         uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_positive_large_signal,
+<                           injection_timing_scale_cyl5_lo_cal) * (uint)wVar5;
+<         local_3e = (ushort)((uint)((int)((ulonglong)
+<                                          CONCAT22(fuel_pressure_governor_derivative_gain_positive_large_signal
+<                                                   ,injection_timing_scale_cyl5_lo_cal) *
+<                                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+<                    (ushort)(uVar15 >> 0x1c);
+<         wStack_3c = (word)(uVar15 >> 0xc);
+---
+>         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.positive_large_signal_gain._0_2_,
+>                           fuel_pressure_governor_derivative_gains.positive_large_signal_gain._2_2_)
+>                  * (uint)wVar5;
+>         local_44._6_2_ =
+>              (ushort)((uint)((int)((ulonglong)
+>                                    CONCAT22(fuel_pressure_governor_derivative_gains.
+>                                             positive_large_signal_gain._0_2_,
+>                                             fuel_pressure_governor_derivative_gains.
+>                                             positive_large_signal_gain._2_2_) *
+>                                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+>              (ushort)(uVar16 >> 0x1c);
+>         local_44._8_2_ = (undefined2)(uVar16 >> 0xc);
+297,306c305,318
+<         uVar15 = CONCAT22(fuel_pressure_governor_derivative_gain_negative_large_signal,
+<                           injection_timing_scale_cyl6_lo_cal) * (uint)wVar5;
+<         local_3a = (ushort)((uint)((int)((ulonglong)
+<                                          CONCAT22(fuel_pressure_governor_derivative_gain_negative_large_signal
+<                                                   ,injection_timing_scale_cyl6_lo_cal) *
+<                                          (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+<                    (ushort)(uVar15 >> 0x1c);
+<         wStack_38 = (word)(uVar15 >> 0xc);
+<         local_36 = engine_sync_prot_limit_cal;
+<         local_34 = CONCAT22(engine_sync_prot_gain_b_cal,local_34._2_2_);
+---
+>         uVar16 = CONCAT22(fuel_pressure_governor_derivative_gains.negative_large_signal_gain._0_2_,
+>                           fuel_pressure_governor_derivative_gains.negative_large_signal_gain._2_2_)
+>                  * (uint)wVar5;
+>         local_44._10_2_ =
+>              (ushort)((uint)((int)((ulonglong)
+>                                    CONCAT22(fuel_pressure_governor_derivative_gains.
+>                                             negative_large_signal_gain._0_2_,
+>                                             fuel_pressure_governor_derivative_gains.
+>                                             negative_large_signal_gain._2_2_) *
+>                                    (ulonglong)(uint)wVar5 >> 0x20) << 0x14) >> 0x10) |
+>              (ushort)(uVar16 >> 0x1c);
+>         local_44._12_2_ = (undefined2)(uVar16 >> 0xc);
+>         local_44._14_2_ = fuel_pressure_governor_derivative_gains.positive_window_width;
+>         local_44._16_2_ = fuel_pressure_governor_derivative_gains.negative_window_width;
+313,329c325,351
+<         local_64 = fuel_pressure_governor_proportional_gain_small_signal;
+<         local_60 = fuel_pressure_governor_proportional_gain_positive_large_signal;
+<         local_5c = fuel_pressure_governor_proportional_gain_negative_large_signal;
+<         local_58 = engine_sync_prot_scale_a_cal;
+<         local_54 = fuel_pressure_governor_integral_gain_small_signal;
+<         local_50 = fuel_pressure_governor_integral_gain_positive_large_signal;
+<         local_4c = fuel_pressure_governor_integral_gain_negative_large_signal;
+<         local_48 = engine_sync_prot_scale_b_cal;
+<         local_44 = engine_sync_prot_gain_cal;
+<         uStack_42 = fuel_pressure_governor_derivative_gain_small_signal;
+<         wStack_40 = injection_timing_scale_cyl4_lo_cal;
+<         local_3e = fuel_pressure_governor_derivative_gain_positive_large_signal;
+<         wStack_3c = injection_timing_scale_cyl5_lo_cal;
+<         local_3a = fuel_pressure_governor_derivative_gain_negative_large_signal;
+<         wStack_38 = injection_timing_scale_cyl6_lo_cal;
+<         local_36 = engine_sync_prot_limit_cal;
+<         local_34 = _engine_sync_prot_gain_b_cal & 0xffff0000;
+---
+>         local_64.small_signal_gain = fuel_pressure_governor_proportional_gains.small_signal_gain;
+>         local_64.positive_large_signal_gain =
+>              fuel_pressure_governor_proportional_gains.positive_large_signal_gain;
+>         local_64.negative_large_signal_gain =
+>              fuel_pressure_governor_proportional_gains.negative_large_signal_gain;
+>         local_64.positive_window_width =
+>              fuel_pressure_governor_proportional_gains.positive_window_width;
+>         local_64.negative_window_width =
+>              fuel_pressure_governor_proportional_gains.negative_window_width;
+>         local_54.small_signal_gain = fuel_pressure_governor_integral_gains.small_signal_gain;
+>         local_54.positive_large_signal_gain =
+>              fuel_pressure_governor_integral_gains.positive_large_signal_gain;
+>         local_54.negative_large_signal_gain =
+>              fuel_pressure_governor_integral_gains.negative_large_signal_gain;
+>         local_54.positive_window_width = fuel_pressure_governor_integral_gains.positive_window_width
+>         ;
+>         local_54.negative_window_width = fuel_pressure_governor_integral_gains.negative_window_width
+>         ;
+>         local_44._0_2_ = fuel_pressure_governor_derivative_gains.filter_coefficient;
+>         local_44._2_2_ = fuel_pressure_governor_derivative_gains.small_signal_gain._0_2_;
+>         local_44._4_2_ = fuel_pressure_governor_derivative_gains.small_signal_gain._2_2_;
+>         local_44._6_2_ = fuel_pressure_governor_derivative_gains.positive_large_signal_gain._0_2_;
+>         local_44._8_2_ = fuel_pressure_governor_derivative_gains.positive_large_signal_gain._2_2_;
+>         local_44._10_2_ = fuel_pressure_governor_derivative_gains.negative_large_signal_gain._0_2_;
+>         local_44._12_2_ = fuel_pressure_governor_derivative_gains.negative_large_signal_gain._2_2_;
+>         local_44._14_2_ = fuel_pressure_governor_derivative_gains.positive_window_width;
+>         local_44._16_4_ = ram0x004094d2 & 0xffff0000;
+332c354
+<       iVar13 = (int)(short)((int)((uint)cam_sync_fuel_scale_gain_cal *
+---
+>       iVar14 = (int)(short)((int)((uint)cam_sync_fuel_scale_gain_cal *
+335,338c357,360
+<       iVar11 = (int)(short)cam_sync_fuel_scale_lower_limit_cal;
+<       if ((iVar11 <= iVar13) &&
+<          (iVar11 = iVar13, (short)cam_sync_fuel_scale_upper_limit_cal < iVar13)) {
+<         iVar11 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
+---
+>       iVar12 = (int)(short)cam_sync_fuel_scale_lower_limit_cal;
+>       if ((iVar12 <= iVar14) &&
+>          (iVar12 = iVar14, (short)cam_sync_fuel_scale_upper_limit_cal < iVar14)) {
+>         iVar12 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;
+342c364
+<                      (iVar11,&fuel_pressure_governor_accelerator_feed_forward_filter);
+---
+>                      (iVar12,&fuel_pressure_governor_accelerator_feed_forward_filter);
+345c367
+<       sVar6 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
+---
+>       sVar10 = fuel_pressure_setpoint - fuel_pressure_feedback_filtered;
+348c370
+<       sVar7 = cm848_signedFirstOrderFilter
+---
+>       sVar6 = cm848_signedFirstOrderFilter
+351c373
+<            cm848_applyPiecewiseLinearGain(&local_64,(int)sVar6);
+---
+>            cm848_applyPiecewiseLinearGain(&local_64,(int)sVar10);
+354c376
+<                      (&local_54,&fuel_pressure_governor_integrator,(int)sVar6,10000);
+---
+>                      (&local_54,&fuel_pressure_governor_integrator,(int)sVar10,10000);
+362,367c384,389
+<         iVar11 = (int)(short)fuel_metering_coil_temperature;
+<         iVar13 = (int)(short)cam_sync_speed_interp_lower_cal;
+<         wVar14 = wVar4;
+<         if ((iVar13 < iVar11) && (wVar14 = wVar3, iVar11 < (short)engine_sync_timing_max_cal)) {
+<           wVar14 = wVar4 + (short)(((iVar11 - iVar13) * ((int)(short)wVar3 - (int)(short)wVar4)) /
+<                                   ((short)engine_sync_timing_max_cal - iVar13));
+---
+>         iVar12 = (int)(short)fuel_metering_coil_temperature;
+>         iVar14 = (int)(short)cam_sync_speed_interp_lower_cal;
+>         wVar15 = wVar4;
+>         if ((iVar14 < iVar12) && (wVar15 = wVar3, iVar12 < (short)engine_sync_timing_max_cal)) {
+>           wVar15 = wVar4 + (short)(((iVar12 - iVar14) * ((int)(short)wVar3 - (int)(short)wVar4)) /
+>                                   ((short)engine_sync_timing_max_cal - iVar14));
+374c396
+<           wVar14 = wVar14 - fuel_pressure_governor_feed_forward;
+---
+>           wVar15 = wVar15 - fuel_pressure_governor_feed_forward;
+376,378c398,400
+<         if ((short)wVar14 < 0x1000) {
+<           fuel_pressure_governor_integral_term = wVar14;
+<           if ((short)wVar14 < -0xfff) {
+---
+>         if ((short)wVar15 < 0x1000) {
+>           fuel_pressure_governor_integral_term = wVar15;
+>           if ((short)wVar15 < -0xfff) {
+388c410
+<         wVar14 = fuel_pressure_governor_integral_term;
+---
+>         wVar15 = fuel_pressure_governor_integral_term;
+392,393c414,415
+<                      (&local_44,&fuel_pressure_governor_derivative_filter,
+<                       (int)(short)(wVar5 - sVar7));
+---
+>                      ((derivative_gain_t *)local_44,&fuel_pressure_governor_derivative_filter,
+>                       (int)(short)(wVar5 - sVar6));
+414c436
+<     iVar11 = 0xe;
+---
+>     iVar12 = 0xe;
+416c438
+<     iVar11 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar11);
+---
+>     iVar12 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar12);
+419c441
+<     iVar11 = 4;
+---
+>     iVar12 = 4;
+421c443
+<     iVar11 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar11);
+---
+>     iVar12 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar12);
+424c446
+<     iVar11 = (int)(short)intake_manifold_temperature_sensor_filtered;
+---
+>     iVar12 = (int)(short)intake_manifold_temperature_sensor_filtered;
+428c450
+<       iVar11 = 0x8a;
+---
+>       iVar12 = 0x8a;
+432c454
+<       iVar11 = 0x28;
+---
+>       iVar12 = 0x28;
+436c458
+<       iVar11 = (int)(short)fuel_metering_coil_temperature;
+---
+>       iVar12 = (int)(short)fuel_metering_coil_temperature;
+439,441c461,463
+<       iVar11 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
+<       if ((short)intake_manifold_temperature_sensor_filtered < iVar11) {
+<         iVar11 = (int)(short)intake_manifold_temperature_sensor_filtered;
+---
+>       iVar12 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
+>       if ((short)intake_manifold_temperature_sensor_filtered < iVar12) {
+>         iVar12 = (int)(short)intake_manifold_temperature_sensor_filtered;
+443,444c465,466
+<       if ((short)battery_temperature_sensor_filtered < iVar11) {
+<         iVar11 = (int)(short)battery_temperature_sensor_filtered;
+---
+>       if ((short)battery_temperature_sensor_filtered < iVar12) {
+>         iVar12 = (int)(short)battery_temperature_sensor_filtered;
+449c471
+<     iVar13 = 0xe;
+---
+>     iVar14 = 0xe;
+451c473
+<     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar13);
+---
+>     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar14);
+454c476
+<     iVar13 = 4;
+---
+>     iVar14 = 4;
+456c478
+<     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar13);
+---
+>     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar14);
+462c484
+<         iVar13 = 0x8a;
+---
+>         iVar14 = 0x8a;
+466c488
+<         iVar13 = 0x28;
+---
+>         iVar14 = 0x28;
+482c504
+<   iVar13 = (int)(short)cam_sync_speed_interp_lower_cal;
+---
+>   iVar14 = (int)(short)cam_sync_speed_interp_lower_cal;
+484,488c506,510
+<   if (((iVar13 < iVar11) &&
+<       (iVar10 = (int)(short)engine_sync_timing_max_cal, wVar5 = wVar3, iVar11 < iVar10)) &&
+<      (wVar5 = wVar4, iVar13 != iVar10)) {
+<     wVar5 = wVar4 + (short)(((iVar11 - iVar13) * ((int)(short)wVar3 - (int)(short)wVar4)) /
+<                            (iVar10 - iVar13));
+---
+>   if (((iVar14 < iVar12) &&
+>       (iVar11 = (int)(short)engine_sync_timing_max_cal, wVar5 = wVar3, iVar12 < iVar11)) &&
+>      (wVar5 = wVar4, iVar14 != iVar11)) {
+>     wVar5 = wVar4 + (short)(((iVar12 - iVar14) * ((int)(short)wVar3 - (int)(short)wVar4)) /
+>                            (iVar11 - iVar14));
+502c524
+<     fuel_pressure_governor_integrator.integer_part = wVar14;
+---
+>     fuel_pressure_governor_integrator.integer_part = wVar15;
+511c533,534
+<   sVar6 = cm848_applyPiecewiseLinearGain(&cam_sync_ref_prot_state_cal,(int)(short)wVar5);
+---
+>   sVar6 = cm848_applyPiecewiseLinearGain
+>                     (&fuel_metering_uncompensated_duty_cycle_proportional_gains,(int)(short)wVar5);
+514,518c537,541
+<                  (&cam_sync_ref_prot_handler_state_cal,&fuel_metering_base_command_derivative_filter
+<                   ,(int)sVar6);
+<   wVar14 = sVar6 + fuel_metering_base_command_derivative_term;
+<   sVar7 = cm848_signedFirstOrderFilter((int)(short)wVar5,&fuel_metering_reference_filter);
+<   sVar8 = cm848_signedFirstOrderFilter
+---
+>                  (&fuel_metering_current_compensation_derivative_gains,
+>                   &fuel_metering_base_command_derivative_filter,(int)sVar6);
+>   wVar15 = sVar6 + fuel_metering_base_command_derivative_term;
+>   sVar6 = cm848_signedFirstOrderFilter((int)(short)wVar5,&fuel_metering_reference_filter);
+>   sVar7 = cm848_signedFirstOrderFilter
+520c543
+<   fuel_metering_feedback_error = sVar7 - sVar8;
+---
+>   fuel_metering_feedback_error = sVar6 - sVar7;
+522,524c545,547
+<     sVar6 = cm848_applyPiecewiseLinearGain
+<                       (&cam_sync_speed_error_prot_state_cal,(int)(short)fuel_metering_feedback_error
+<                       );
+---
+>     sVar8 = cm848_applyPiecewiseLinearGain
+>                       (&fuel_metering_current_compensation_proportional_gains,
+>                        (int)(short)fuel_metering_feedback_error);
+526c549,550
+<                       (&cam_sync_speed_error_prot_mode_cal,&fuel_metering_feedback_trim_integrator,
+---
+>                       (&fuel_metering_current_compensation_integral_gains,
+>                        &fuel_metering_feedback_trim_integrator,
+528c552
+<     if ((sVar7 == 0) && (engine_rpm_measured == 0)) {
+---
+>     if ((sVar6 == 0) && (engine_rpm_measured == 0)) {
+544,545c568,569
+<     iVar11 = (int)(short)(sVar6 + sVar9);
+<     if ((short)fuel_metering_feedback_trim_maximum_scaling_factor < iVar11) {
+---
+>     iVar12 = (int)(short)(sVar8 + sVar9);
+>     if ((short)fuel_metering_feedback_trim_maximum_scaling_factor < iVar12) {
+547,548c571,572
+<            fuel_metering_feedback_trim_maximum_scaling_factor - sVar6;
+<       iVar11 = (int)(short)fuel_metering_feedback_trim_maximum_scaling_factor;
+---
+>            fuel_metering_feedback_trim_maximum_scaling_factor - sVar8;
+>       iVar12 = (int)(short)fuel_metering_feedback_trim_maximum_scaling_factor;
+550c574
+<     else if (iVar11 < (short)fuel_metering_feedback_trim_minimum_scaling_factor) {
+---
+>     else if (iVar12 < (short)fuel_metering_feedback_trim_minimum_scaling_factor) {
+552,553c576,577
+<            fuel_metering_feedback_trim_minimum_scaling_factor - sVar6;
+<       iVar11 = (int)(short)fuel_metering_feedback_trim_minimum_scaling_factor;
+---
+>            fuel_metering_feedback_trim_minimum_scaling_factor - sVar8;
+>       iVar12 = (int)(short)fuel_metering_feedback_trim_minimum_scaling_factor;
+556c580
+<          (short)(iVar11 * (short)wVar14 >> 0xc) + wVar14;
+---
+>          (short)(iVar12 * (short)wVar15 >> 0xc) + wVar15;
+568c592
+<     engine_sync_state_t_0040b87f.fuel_metering_command = wVar14;
+---
+>     engine_sync_state_t_0040b87f.fuel_metering_command = wVar15;
+572c596
+<     pbVar12 = (byte *)&sensor_channel_config_t_00059336;
+---
+>     pbVar13 = (byte *)&sensor_channel_config_t_00059336;
+575c599
+<     pbVar12 = &cam_sync_speed_filter_state_cal;
+---
+>     pbVar13 = &cam_sync_speed_filter_state_cal;
+577,602c601,602
+<   cam_sync_speed_filter_state.coefficient = (word *)pbVar12;
+<   wVar5 = lookupTableInterpolation
+<                     (&engine_sync_init_state_j,ram0x0040b884,cam_sync_speed_output_scale_axis_cal,
+<                      cam_sync_speed_output_scale_values_cal,0);
+<   engine_sync_state_t_0040b87f.fuel_metering_command =
+<        (word)((int)((int)(short)engine_sync_state_t_0040b87f.fuel_metering_command * (uint)wVar5) >>
+<              0xc);
+<   wVar5 = engine_sync_speed_upper_limit_cal;
+<   if (((short)engine_sync_speed_upper_limit_cal <
+<        (short)engine_sync_state_t_0040b87f.fuel_metering_command) ||
+<      (wVar5 = engine_sync_speed_lower_limit_cal,
+<      (short)engine_sync_state_t_0040b87f.fuel_metering_command <
+<      (short)engine_sync_speed_lower_limit_cal)) {
+<     engine_sync_state_t_0040b87f.fuel_metering_command = wVar5;
+<   }
+<   if (fuel_metering_read_back_retest_active_flag != 0) {
+<     fuel_metering_retest_pass_count = fuel_metering_retest_pass_count + 1;
+<     if ((uint)fuel_metering_retest_pass_count < (uint)fuel_metering_retest_off_passes) {
+<       engine_sync_state_t_0040b87f.fuel_metering_command = 0;
+<     }
+<     else if ((uint)fuel_metering_retest_pass_count <
+<              (uint)fuel_metering_retest_off_passes +
+<              (uint)fuel_metering_retest_fault_confirm_passes * 2) {
+<       engine_sync_state_t_0040b87f.fuel_metering_command = 0xfff;
+<     }
+< ... 47 more lines
+---
+>   cam_sync_speed_filter_state.coefficient = (word *)pbVar13;
+> ... 71 more lines

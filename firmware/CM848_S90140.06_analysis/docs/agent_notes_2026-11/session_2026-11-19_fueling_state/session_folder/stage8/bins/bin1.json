@@ -1,0 +1,5792 @@
+[
+ {
+  "address": "0x0040a64c",
+  "block": "0004",
+  "offset": "0000",
+  "record": "ECM_Run_Time",
+  "unit": "SEC",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.2",
+  "min": "0",
+  "max": "536870912",
+  "description": "Time key switch is on and ECM is running boot or application code",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "key_on_hour_meter",
+  "references": 39,
+  "dump_raw": "177314954",
+  "access_widths": "{'lwz': 24, 'stw': 1} -> 4 byte",
+  "code": [
+   "cm848_updateEngineState: bytes in the EEPROM mirror: key_on_hour_meter at the start, speed when detected, duration); below",
+   "cm848_updateEngineState: engine_overspeed_log_cal[uVar3].start_key_on_hour_meter = key_on_hour_meter;",
+   "cm848_updateEngineState: (short)key_on_hour_meter -",
+   "cm848_faultTimeoutHandler: key_on_hour_meter - fault_state_records_cal[param_1].timestamp)) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "ECM_Run_Time",
+    "key_on_hour_meter",
+    "0.00"
+   ],
+   [
+    "0000",
+    "RUN_TIME",
+    "key_on_hour_meter",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [
+   "RUN_TIME",
+   "Hour_Meter",
+   "Software_HOUR_MTR"
+  ],
+  "current_comment": "ECM key-on (powered) time in 0.2 s counts (hours = counts / 18000): +1 every 40-phase main-loop cycle (cm848_advanceHourMeters - 40 PIT ticks of 5 ms). Loaded from key_on_hour_meter_cal (EEPROM 0x30) at start and saved there at power-down and before a reflash restart. Also the fault timestamp clock (fault_state_records_cal[].timestamp / fault_entry_t.key_on_hour_meter) and the PCI / SCI security seed source. Was fault_timing_snapshot"
+ },
+ {
+  "address": "0x003fdd38",
+  "block": "0008",
+  "offset": "0044",
+  "record": "HSG_Droop_Type_Select",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "1",
+  "max": "3",
+  "description": "[HSDPTY] indicator of what type switch is connected",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "torque_source_count",
+  "references": 3,
+  "dump_raw": "1",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_applySwitchSelectedEngineSpeedLimit: (switch_input_state_bits[3] bit 0x80) is on, torque_source_count is above 1 and",
+   "cm848_applySwitchSelectedEngineSpeedLimit: torque_source_count is 1 in the dump, so only the first limit is ever used. (was",
+   "cm848_applySwitchSelectedEngineSpeedLimit: if (((1 < (short)torque_source_count) && (engine_speed_limit_droop_cap_alternate_disable == 0)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "LSG_Breakpoint_Speed",
+    "governor_speed_limit_output",
+    "0.50"
+   ],
+   [
+    "0004",
+    "HSG_Breakpoint_Speed",
+    "engine_speed_limit_reference_default_cal",
+    "0.25"
+   ],
+   [
+    "000A",
+    "PTO_Remote_Speed",
+    "power_take_off_remote_speed_1_cal",
+    "1.00"
+   ],
+   [
+    "000C",
+    "PTO_Maximum_Reference_Speed",
+    "power_take_off_maximum_reference_engine_speed_cal",
+    "1.00"
+   ],
+   [
+    "0010",
+    "PTO_Droop_Slope",
+    "power_take_off_droop_slope_cal",
+    "1.00"
+   ],
+   [
+    "0012",
+    "PTO_Gain_Adjust_Offset",
+    "power_take_off_gain_adjustment_offset_cal",
+    "0.83"
+   ],
+   [
+    "0014",
+    "PTO_Gain_Adjust_Slope",
+    "power_take_off_gain_adjustment_slope_cal",
+    "0.83"
+   ],
+   [
+    "0020",
+    "ASG_Minimum",
+    "governor_speed_error_high_working",
+    "0.50"
+   ],
+   [
+    "0022",
+    "ASG_Maximum",
+    "governor_speed_error_low_working",
+    "0.50"
+   ],
+   [
+    "002E",
+    "ASG_Minimum_2",
+    "governor_speed_error_high_b",
+    "0.40"
+   ],
+   [
+    "0030",
+    "ASG_Maximum_2",
+    "governor_speed_error_low_b",
+    "0.40"
+   ],
+   [
+    "0044",
+    "HSG_Droop_Type_Select",
+    "torque_source_count",
+    "0.00"
+   ],
+   [
+    "004E",
+    "User_Selected_Throttle_Control",
+    "variable_speed_governor_default_cal",
+    "0.00"
+   ],
+   [
+    "005C",
+    "PTO_Resume_Speed",
+    "power_take_off_resume_speed_cal",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fdd42",
+  "block": "0008",
+  "offset": "004E",
+  "record": "User_Selected_Throttle_Control",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1",
+  "description": "[FSTHGVOP] User indicator for enabling automotive governing through throttle (ASG throttle",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "variable_speed_governor_default_cal",
+  "references": 8,
+  "dump_raw": "1",
+  "access_widths": "{'lhz': 2, 'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_initFuelDemandVariables: variable_speed_governor_selected_flag = variable_speed_governor_default_cal;",
+   "cm848_calculateDriverDemandPercentTorque: variable_speed_governor_default_cal is 1, otherwise governor_proportional_gain_calc; the cruise",
+   "cm848_calculateDriverDemandPercentTorque: if (variable_speed_governor_default_cal == 1) {",
+   "cm848_updateVariableSpeedGovernorSelection: here) + switch 31 invert variable_speed_governor_default_cal / else use it (was"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "LSG_Breakpoint_Speed",
+    "governor_speed_limit_output",
+    "0.50"
+   ],
+   [
+    "0004",
+    "HSG_Breakpoint_Speed",
+    "engine_speed_limit_reference_default_cal",
+    "0.25"
+   ],
+   [
+    "000A",
+    "PTO_Remote_Speed",
+    "power_take_off_remote_speed_1_cal",
+    "1.00"
+   ],
+   [
+    "000C",
+    "PTO_Maximum_Reference_Speed",
+    "power_take_off_maximum_reference_engine_speed_cal",
+    "1.00"
+   ],
+   [
+    "0010",
+    "PTO_Droop_Slope",
+    "power_take_off_droop_slope_cal",
+    "1.00"
+   ],
+   [
+    "0012",
+    "PTO_Gain_Adjust_Offset",
+    "power_take_off_gain_adjustment_offset_cal",
+    "0.83"
+   ],
+   [
+    "0014",
+    "PTO_Gain_Adjust_Slope",
+    "power_take_off_gain_adjustment_slope_cal",
+    "0.83"
+   ],
+   [
+    "0020",
+    "ASG_Minimum",
+    "governor_speed_error_high_working",
+    "0.50"
+   ],
+   [
+    "0022",
+    "ASG_Maximum",
+    "governor_speed_error_low_working",
+    "0.50"
+   ],
+   [
+    "002E",
+    "ASG_Minimum_2",
+    "governor_speed_error_high_b",
+    "0.40"
+   ],
+   [
+    "0030",
+    "ASG_Maximum_2",
+    "governor_speed_error_low_b",
+    "0.40"
+   ],
+   [
+    "0044",
+    "HSG_Droop_Type_Select",
+    "torque_source_count",
+    "0.00"
+   ],
+   [
+    "004E",
+    "User_Selected_Throttle_Control",
+    "variable_speed_governor_default_cal",
+    "0.00"
+   ],
+   [
+    "005C",
+    "PTO_Resume_Speed",
+    "power_take_off_resume_speed_cal",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "EEPROM-backed (EEPROM 0x8c0 = 1 here): calibrated governor type copied into variable_speed_governor_selected_flag - 1 = engine_operating_mode 7 (accelerator = speed request) / 0 = mode 8; also picks the cm848_calculateDriverDemandPercentTorque fuel source (was governor_protection_mode_flag) (Medium confidence)"
+ },
+ {
+  "address": "0x0040c27c",
+  "block": "0034",
+  "offset": "000C",
+  "record": "Collector_Center_Address",
+  "unit": "HEX",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "4294967295",
+  "description": "Logical address canter value stored to the data collector buffer",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "pointer",
+  "label_in_cpp": "diag_dm1_buffer_phase2_start_ptr",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_phase2_start_ptr = diag_dm1_buffer_write_ptr + 1;",
+   "cm848_phase_groupB_calculation: if (diag_dm1_buffer_end_ptr < diag_dm1_buffer_phase2_start_ptr) {",
+   "cm848_phase_groupB_calculation: diag_dm1_buffer_phase2_start_ptr = diag_dm1_buffer_start_ptr;"
+  ],
+  "block_named_rows": [
+   [
+    "000C",
+    "Collector_Center_Address",
+    "diag_dm1_buffer_phase2_start_ptr",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "DM1 buffer phase-2 fill start pointer"
+ },
+ {
+  "address": "0x003fddaa",
+  "block": "101A",
+  "offset": "0000",
+  "record": "Auto_Zero",
+  "unit": "%THROTTLE",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.25",
+  "min": "6",
+  "max": "33",
+  "description": "[CTZR] dynamic point in %Sampled_Throttle that = 0% Commanded_Throttle",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_cal_index",
+  "references": 11,
+  "dump_raw": "36",
+  "access_widths": "{'lhz': 2, 'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandBaseCalculation: uVar1 = (uint)fuel_demand_cal_index;",
+   "cm848_evaluateIdleValidationSwitches: throttle_fuel_demand_upper_bound = (fuel_demand_cal_index - fuel_demand_cal_offset) + DAT_0005c28e",
+   "cm848_evaluateIdleValidationSwitches: throttle_fuel_demand_lower_bound = (fuel_demand_cal_index - fuel_demand_cal_offset) + DAT_0005c290",
+   "cm848_evaluateIdleValidationSwitches: if (fuel_demand_cal_index <= accelerator_pedal_sensor_counts) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Auto_Zero",
+    "fuel_demand_cal_index",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fe99e",
+  "block": "1036",
+  "offset": "002A",
+  "record": "System_Error_Status_21",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSERSS21] 32 word bit mapped system error status - word 21",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_336_to_351",
+  "references": 62,
+  "dump_raw": "11264",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_processProtectionFaultSeverity: if ((fault_detected_bits_336_to_351 & 0x8000) == 0) {",
+   "cm848_selectSensorValuesInUse: if ((fault_detected_bits_336_to_351 & 0x1000) != 0) {",
+   "cm848_updateAcceleratorPedalSensorFaultFlags: if (((((fault_detected_bits_336_to_351 & 0x1000) == 0) &&",
+   "cm848_updateAcceleratorPedalSensorFaultFlags: ((fault_detected_bits_336_to_351 & 0x800) == 0)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Word 21 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0169 water-in-fuel b1 P0642 b2 P0643 b3 P0071 b4 P0106 b5 P0521 b8 P0630 b10 P0633 immobilizer b11 P2122 b12 P2123 b13 P2127 b14 P2128 b15 P0748 (was j1939_receive_status_flags)"
+ },
+ {
+  "address": "0x003fe9a0",
+  "block": "1036",
+  "offset": "002C",
+  "record": "System_Error_Status_22",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSERSS22] 32 word bit mapped system error status - word 22",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_352_to_367",
+  "references": 69,
+  "dump_raw": "16",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculatePressureSensorFiltered: if (((((fault_detected_bits_352_to_367 & 0x40) == 0) ||",
+   "cm848_calculatePressureSensorFiltered: ((((fault_detected_bits_352_to_367 & 4) == 0 ||",
+   "cm848_diagnoseClusterLampStatusMessage: fault_detected_bits_352_to_367 = fault_detected_bits_352_to_367 & 0xfff7;",
+   "cm848_diagnoseClusterLampStatusMessage: fault_detected_bits_352_to_367 = fault_detected_bits_352_to_367 & 0xfff7;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Word 22 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b1/b7 P0514 battery-temp b2/b6 P0111 b3 P1652 b5 P0602 b8 P0071 b9-b14 P0301-P0306 cyl 1-6 misfire b15 P0300 (was injection_fault_shadow_flags)"
+ },
+ {
+  "address": "0x003fe9a2",
+  "block": "1036",
+  "offset": "002E",
+  "record": "System_Error_Status_23",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSERSS23] 32 word bit mapped system error status - word 23",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_368_to_383",
+  "references": 87,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 6} -> 2 byte",
+  "code": [
+   "cm848_calculateAlternatorFieldDutyByRegulatorState: if ((fault_detected_bits_368_to_383 & 1) == 0) {",
+   "cm848_monitorChargingSystemVoltageHighAndLow: fault_detected_bits_368_to_383 = fault_detected_bits_368_to_383 | 2;",
+   "cm848_monitorChargingSystemVoltageHighAndLow: fault_detected_bits_368_to_383 = fault_detected_bits_368_to_383 | 2;",
+   "cm848_monitorChargingSystemVoltageHighAndLow: fault_detected_bits_368_to_383 = fault_detected_bits_368_to_383 | 4;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Word 23 of the fault-detected bit array at 0x3fe974 (fault n = word n/16 bit n%16 - slot table 0x5985a then obd_dtc_code_table): bits 0-15 = P2502 P2504 P2503 P0647 P0646 P0581 P0580 P0338 P0337 P0653 P0652 P0517 P0516 P0463 P0462 P1652 (was power_state_status_flags)"
+ },
+ {
+  "address": "0x003fe9a4",
+  "block": "1036",
+  "offset": "0030",
+  "record": "System_Error_Status_24",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSERSS24] 32 word bit mapped system error status - word 24",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_384_to_399",
+  "references": 92,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_selectFinalFueling: ((fault_detected_bits_384_to_399 & 0x10) != 0)) && (governor_diag_entry_latch_flag == 0)) {",
+   "cm848_buildPciTransmitMessage4EngineLoadAndStatus: condition_monitor 0x2000 - bit 2 fault_detected_bits_384_to_399 0x2000) (was",
+   "cm848_buildPciTransmitMessage4EngineLoadAndStatus: if ((fault_detected_bits_384_to_399 & 0x2000) == 0) {",
+   "cm848_buildPciTransmitMessage17FaultBits: || ((fault_detected_bits_384_to_399 & 0x1000) != 0)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Word 24 of the fault-detected bit array at 0x3fe974: bits 0-15 = P0533 P0532 P0629 P0628 P0606 P0217 P0217 P1757 P1756 P0524 P0573 P0572 P0622 (bit 13 = fuel level no-change pending - no DTC) P0461 P0607 (was engine_diag_shadow_flags)"
+ },
+ {
+  "address": "0x003fe9a6",
+  "block": "1036",
+  "offset": "0032",
+  "record": "System_Error_Status_25",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSERSS25] 32 word bit mapped system error status - word 25",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_400_to_415",
+  "references": 84,
+  "dump_raw": "128",
+  "access_widths": "{'lhz': 4} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelDemandOffsetTrim: ((fault_detected_bits_400_to_415 & 2) == 0)) {",
+   "cm848_processPciRemoteFaultStatus: uVar1 = fault_detected_bits_400_to_415 & 0xffdf;",
+   "cm848_processPciRemoteFaultStatus: fault_detected_bits_400_to_415 = fault_detected_bits_400_to_415 & 0xffcf;",
+   "cm848_processPciRemoteFaultStatus: fault_detected_bits_400_to_415 = fault_detected_bits_400_to_415 & 0xffcf;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Word 25 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0128 b1 P0116 coolant b3 P0243 wastegate b6 P0837 b7 P0483 fan b8/b9 P0148 b11 P2609 heater b12 P0839 b13 P0838 b14 P0191 b15 P0234 (was protection_monitor_shadow)"
+ },
+ {
+  "address": "0x003fe9b2",
+  "block": "1036",
+  "offset": "003E",
+  "record": "System_Error_Status_31",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSERSS31] 32 word bit mapped system error status - word 31",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_496_to_511",
+  "references": 10,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_updateMonitorEnablingConditionInputs: (0x64308-0x6430a, 8.0-16.5 V), and sets fault_detected_bits_496_to_511 bits 0x4000 (below 10.5 V)",
+   "cm848_updateMonitorEnablingConditionInputs: fault_detected_bits_496_to_511 = fault_detected_bits_496_to_511 | 0x4000;",
+   "cm848_updateMonitorEnablingConditionInputs: fault_detected_bits_496_to_511 = fault_detected_bits_496_to_511 | 0x4000;",
+   "cm848_updateMonitorEnablingConditionInputs: fault_detected_bits_496_to_511 = fault_detected_bits_496_to_511 & 0xbfff;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Word 31 of the fault-detected array 0x3fe974 (0x3fe974 + 2 x 31): 0x4000 = fault 510 OBD low battery voltage error (battery_voltage below ROM 0x64304 = 10.5 V), 0x2000 = fault 509 general diagnostic low battery voltage error (below ROM 0x64308 = 8.0 V); both fault numbers map to slot 170 (no DTC). e2m System_Error_Status_31 (0x0110363E) with OBD_Low_Battery_Voltage_Error 0x4000 and ... (was hpcr_battery_voltage_flags) | earlier note: HPCR battery-voltage protection status bits (system_status_flags+0x3e)"
+ },
+ {
+  "address": "0x003fe9b4",
+  "block": "1036",
+  "offset": "0040",
+  "record": "System_Error_Status_32",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 32",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_512_to_527",
+  "references": 27,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_processBoostControlState: fault_detected_bits_512_to_527 = fault_detected_bits_512_to_527 & 0x7fff;",
+   "cm848_processBoostControlState: fault_detected_bits_512_to_527 = fault_detected_bits_512_to_527 & 0x7fff;",
+   "cm848_processBoostControlState: fault_detected_bits_512_to_527 = fault_detected_bits_512_to_527 | 0x8000;",
+   "cm848_processBoostControlState: fault_detected_bits_512_to_527 = fault_detected_bits_512_to_527 | 0x8000;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "0x3fe9b4 = 0x3fe974 + 2 x 32 is word 32 of the fault-detected array (its registered twin is fault_registered_bits_512_to_527 at 0x3fea18 = 0x3fe9d8 + 2 x 32: every clear of one clears the other with the same mask); the monitor tests masks 4 / 8 (bits 2 / 3) = faults 514 / 515. MEDIUM: five other functions use it (cm848_processBoostControlState, cm848_processBoostProtectionConditions ... (was engine_sync_validation_flags)"
+ },
+ {
+  "address": "0x003fe9be",
+  "block": "1036",
+  "offset": "004A",
+  "record": "System_Error_Status_37",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 37",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "iat_sensor_deviation_flags",
+  "references": 14,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_checkSensorDeviationFlags: iat_sensor_deviation_flags = iat_sensor_deviation_flags | 4;",
+   "cm848_checkSensorDeviationFlags: iat_sensor_deviation_flags = iat_sensor_deviation_flags | 4;",
+   "cm848_checkSensorDeviationFlags: iat_sensor_deviation_flags = iat_sensor_deviation_flags & 0xfffb;",
+   "cm848_checkSensorDeviationFlags: iat_sensor_deviation_flags = iat_sensor_deviation_flags & 0xfffb;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fe9c0",
+  "block": "1036",
+  "offset": "004C",
+  "record": "System_Error_Status_38",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 38",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_608_to_623",
+  "references": 29,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_updateTurbochargerSpeedInRangeState: and bit 0x20 when the rate-of-change fault 618 (bit 10 of fault_detected_bits_608_to_623) is set.",
+   "cm848_updateTurbochargerSpeedInRangeState: if ((fault_detected_bits_608_to_623 & 0x400) == 0) {",
+   "cm848_diagnoseTurbochargerSpeedSensorFrequency: 613, P2580) of fault_detected_bits_608_to_623 and takes the global default as the speed target,",
+   "cm848_diagnoseTurbochargerSpeedSensorFrequency: fault_detected_bits_608_to_623 = fault_detected_bits_608_to_623 | 0x20;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Word 38 of fault-detected array 0x3fe974 ((0x3fe9c0 - 0x3fe974) / 2; fault bit = word x 16 + bit via ROM 0x5985a -> obd_dtc_code_table): b3 P2581 (turbocharger speed sensor frequency high, fault 611), b5 P2580 (low, fault 613), b10 P2579 (rate of change / in range, fault 618); b11 / b12 (faults 619 / 620) map to slot 78 = B1934 (raw 0x9934: the letter comes from the top two bits, checked against ... (was egr_smoke_limit_status_flags) | earlier note: EGR overpressure/upper-range/transient bits"
+ },
+ {
+  "address": "0x003fe9c4",
+  "block": "1036",
+  "offset": "0050",
+  "record": "System_Error_Status_40",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 40",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_640_to_655",
+  "references": 8,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_checkEgrDeltaPressureSensorPerformance: if ((((fault_detected_bits_640_to_655 & 4) == 0) &&",
+   "cm848_checkEgrDeltaPressureSensorPerformance: ((((fault_detected_bits_640_to_655 & 8) == 0 && ((fault_detected_bits_512_to_527 & 4) == 0))",
+   "cm848_checkEgrDeltaPressureSensorPerformance: if (((((((fault_detected_bits_640_to_655 & 4) == 0) && ((fault_detected_bits_640_to_655 & 8) == 0)",
+   "cm848_checkEgrDeltaPressureSensorPerformance: if (((((((fault_detected_bits_640_to_655 & 4) == 0) && ((fault_detected_bits_640_to_655 & 8) == 0)"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "0x3fe9c4 = 0x3fe974 + 2 x 40 is word 40 of the fault-detected array (like the existing fault_detected_bits_656_to_671); the monitor tests masks 4 / 8 (bits 2 / 3) = faults 642 / 643, the circuit faults of sensor channel 75 (EGR valve position, call args 0x282 / 0x283). Name has no _cal: runtime state. (was boost_corr_diag_status_flags) | earlier note: boost-correction diagnostic status bits"
+ },
+ {
+  "address": "0x003fe9c6",
+  "block": "1036",
+  "offset": "0052",
+  "record": "System_Error_Status_41",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 41",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_656_to_671",
+  "references": 22,
+  "dump_raw": "16384",
+  "access_widths": "{'lhz': 4} -> 2 byte",
+  "code": [
+   "cm848_calculateVariableGeometryTurbochargerPositionCommand: fault_detected_bits_656_to_671) is set, limits it to the range from",
+   "cm848_calculateVariableGeometryTurbochargerPositionCommand: if (((fault_detected_bits_656_to_671 & 0x4000) == 0) ||",
+   "cm848_sequenceVariableGeometryTurbochargerPositionAdjustment: fault_detected_bits_656_to_671 & 0x8000;",
+   "cm848_sequenceVariableGeometryTurbochargerPositionAdjustment: uVar2 = fault_detected_bits_656_to_671 & 0x4000;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: word 41 of the fault-detected array 0x3fe974 (0x3fe9c6 - 0x3fe974 = 82 = 41 words); its mask 16384 / 32768 are faults 670 / 671, the closed / span adjustment errors set and cleared by the adjustment stages and read by the actuator E setpoint clamp and the position-source check; the old engine-load comment is wrong. e2m: 0x01103652 holds VGT_Closed_Adjustment_Error / VGT_Span_Adjustment_Error ... (was governor_status_flags) | earlier note: engine-load (fuel-demand-derived) protection confirm bits (trip = load-EMA deviation): 0x4000=confirm-A (fuel-low-armed steady stage - clamps EMA/load) 0x8000=confirm-B (throttle-rate/overspeed-armed live stage - drives the speed derate); only these 2"
+ },
+ {
+  "address": "0x003fe9c8",
+  "block": "1036",
+  "offset": "0054",
+  "record": "System_Error_Status_42",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 42",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_672_to_687",
+  "references": 3,
+  "dump_raw": "2",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_updateVariableGeometryTurbochargerPosition: set: copies the sensor high / low faults 682 / 683 of fault_detected_bits_672_to_687 to faults",
+   "cm848_updateVariableGeometryTurbochargerPosition: if ((fault_detected_bits_672_to_687 & 0x400) == 0) {",
+   "cm848_updateVariableGeometryTurbochargerPosition: if ((fault_detected_bits_672_to_687 & 0x800) == 0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: word 42 of the fault-detected array; the position sensor passes fault 682 (mask 1024) and 683 (mask 2048) as high_fault_bit / low_fault_bit (index >> 4 = 42, bit & 15 = 10 / 11); never written directly, read by cm848_updateVariableGeometryTurbochargerPosition. e2m: none needed. (was governor_diag_status_bits_b)"
+ },
+ {
+  "address": "0x003fe9ca",
+  "block": "1036",
+  "offset": "0056",
+  "record": "System_Error_Status_43",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 43",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_688_to_703",
+  "references": 6,
+  "dump_raw": "8",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_checkEgrDeltaPressureSensorPerformance: (((((fault_detected_bits_512_to_527 & 8) == 0 && ((fault_detected_bits_688_to_703 & 8) == 0))",
+   "cm848_checkEgrDeltaPressureSensorPerformance: && ((fault_detected_bits_688_to_703 & 4) == 0)) &&",
+   "cm848_checkEgrDeltaPressureSensorPerformance: ))) && ((fault_detected_bits_688_to_703 & 8) == 0)) &&",
+   "cm848_checkEgrDeltaPressureSensorPerformance: ((((fault_detected_bits_688_to_703 & 4) == 0 && (engine_state != ENGINE_STATE_STOPPED)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "0x3fe9ca = 0x3fe974 + 2 x 43 is word 43 of the fault-detected array; the monitor tests masks 4 / 8 (bits 2 / 3) = faults 690 / 691, the circuit faults of sensor channel 105 (EGR delta pressure, call args 0x2b2 / 0x2b3). Only the detector reads it. (was boost_corr_diag_status_flags_b) | earlier note: boost-correction diagnostic status bits (second word)"
+ },
+ {
+  "address": "0x003fe9cc",
+  "block": "1036",
+  "offset": "0058",
+  "record": "System_Error_Status_44",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 44",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_704_to_719",
+  "references": 28,
+  "dump_raw": "16384",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_updateEgrDeltaPressureAutozero: fault_detected_bits_704_to_719, e2m EGR_Delta_P_Autozero_Error) follows the filter error status;",
+   "cm848_updateEgrDeltaPressureAutozero: fault_detected_bits_704_to_719 = fault_detected_bits_704_to_719 & 0x7fff;",
+   "cm848_updateEgrDeltaPressureAutozero: fault_detected_bits_704_to_719 = fault_detected_bits_704_to_719 & 0x7fff;",
+   "cm848_updateEgrDeltaPressureAutozero: fault_detected_bits_704_to_719 = fault_detected_bits_704_to_719 | 0x8000;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: word 44 of the fault-detected array (0x3fe9cc - 0x3fe974 = 88); masks 32 / 64 (faults 709 / 710) are set from sensor faults 682 / 683 by cm848_updateVariableGeometryTurbochargerPosition and cleared when the module is disabled. e2m: 0x01103658 VGT_Position_PP_High_Error / PP_Low_Error at masks 32 / 64. (was diagnostic_status_bits_b)"
+ },
+ {
+  "address": "0x003fe9ce",
+  "block": "1036",
+  "offset": "005A",
+  "record": "System_Error_Status_45",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 45",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_720_to_735",
+  "references": 79,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_processBoostProtectionConditions: ((((fault_detected_bits_720_to_735 & 0x200) == 0 ||",
+   "cm848_updateEgrValveDriverOverCurrentFault: 0x80 of fault_detected_bits_720_to_735) is set while the over-current is flagged and the clear",
+   "cm848_updateEgrValveDriverOverCurrentFault: fault_detected_bits_720_to_735 = fault_detected_bits_720_to_735 | 0x80;",
+   "cm848_updateEgrValveDriverOverCurrentFault: fault_detected_bits_720_to_735 = fault_detected_bits_720_to_735 | 0x80;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: word 45 of the 50-word fault-detected array that starts at 0x3fe974 ((0x3fe9ce - 0x3fe974) / 2 = 45, faults 720-735, e2m word 0x0110365A); the EGR valve module sets and clears masks 0x01-0x100 (faults 720-728, 725 = position control error), the boost code shares the word (fault 729 mask 0x200 = P0299, e2m Boost_In_Range_Low_Error); neutral name like fault_detected_bits_704_to_719 and ... (was diagnostic_status_bits)"
+ },
+ {
+  "address": "0x003fe9d0",
+  "block": "1036",
+  "offset": "005C",
+  "record": "System_Error_Status_46",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "48 word bit mapped system error status - word 46",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_736_to_751",
+  "references": 58,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_estimateEgrValveMotorCurrent: fault_detected_bits_736_to_751, the variable geometry turbocharger electrical fault - not this",
+   "cm848_estimateEgrValveMotorCurrent: ((fault_detected_bits_736_to_751 & 0x100) == 0)) {",
+   "cm848_processVariableGeometryTurbochargerHBridgeFaults: fault_detected_bits_736_to_751, and writes",
+   "cm848_processVariableGeometryTurbochargerHBridgeFaults: fault_detected_bits_736_to_751 = fault_detected_bits_736_to_751 | 0x40;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: word 46 of the fault-detected array (92 bytes from 0x3fe974); written by the bridge fault handler (masks 4 to 64 and 256), the position control monitor (128), the driver over-current check (512) and the temperature estimate (1024), read by 15 functions. e2m: 0x0110365C holds VGA_Fault_HB0A.. / VGA_Control_Error / VGA_Electrical_Fault / VGA_Driver_Over_Current / VGA_Over_Temperature at ... (was diagnostic_status_flags)"
+ },
+ {
+  "address": "0x003fe9d4",
+  "block": "1036",
+  "offset": "0060",
+  "record": "System_Error_Status_48",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "49 word bit mapped system error status",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_768_to_783",
+  "references": 37,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_selectBarometricPressure: ((((fault_detected_bits_768_to_783 & 0x400) == 0 ||",
+   "cm848_calculateAltitudeDerateFuelLimit: ((fault_detected_bits_768_to_783 & 0x400) != 0)) &&",
+   "cm848_calculateAltitudeDerateFuelLimit: ((fault_detected_bits_768_to_783 & 0x400) != 0)) &&",
+   "cm848_completeBoostPressureMonitorReport: of fault_detected_bits_768_to_783) are unchanged against their previous-pass copies it sets bit 0"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Word 48 of fault-detected array 0x3fe974 ((0x3fe9d4 - 0x3fe974) / 2 = 48; fault bit = word x 16 + bit via ROM 0x5985a -> obd_dtc_code_table): only mask 0x400 (fault 778) has a DTC, P0069 (MAP / barometric pressure correlation); masks 0x40 / 0x80 / 0x100 / 0x200 (faults 774-777) have no DTC slot (slot 170): internal bits, 0x240 are set by the EGR delta pressure plausibility check ... (was diagnostic_status_flags_working) | earlier note: fault status bits incl 0x400 sensor mismatch"
+ },
+ {
+  "address": "0x003fe9d6",
+  "block": "1036",
+  "offset": "0062",
+  "record": "System_Error_Status_49",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "50 word bit mapped system error status",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fault_detected_bits_784_to_799",
+  "references": 14,
+  "dump_raw": "8192",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_updateEgrValveOverTemperatureFault: 0x800 (fault 795) of fault_detected_bits_784_to_799. A test (fault_detected_bits_720_to_735 &",
+   "cm848_updateEgrValveOverTemperatureFault: fault_detected_bits_784_to_799 = fault_detected_bits_784_to_799 | 0x800;",
+   "cm848_updateEgrValveOverTemperatureFault: fault_detected_bits_784_to_799 = fault_detected_bits_784_to_799 | 0x800;",
+   "cm848_updateEgrValveOverTemperatureFault: fault_detected_bits_784_to_799 = fault_detected_bits_784_to_799 & 0xf7ff;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Error_Status_00",
+    "system_status_flags_t_003fe974",
+    "0.50"
+   ],
+   [
+    "0002",
+    "System_Error_Status_01",
+    "system_status_flags_t_003fe974.fault_detected_bits_16_to_31",
+    "0.50"
+   ],
+   [
+    "0004",
+    "System_Error_Status_02",
+    "system_status_flags_t_003fe974.fault_detected_bits_32_to_47",
+    "0.50"
+   ],
+   [
+    "0006",
+    "System_Error_Status_03",
+    "system_status_flags_t_003fe974.fault_detected_bits_48_to_63",
+    "0.50"
+   ],
+   [
+    "0008",
+    "System_Error_Status_04",
+    "system_status_flags_t_003fe974.fault_detected_bits_64_to_79",
+    "0.50"
+   ],
+   [
+    "000A",
+    "System_Error_Status_05",
+    "system_status_flags_t_003fe974.fault_detected_bits_80_to_95",
+    "0.50"
+   ],
+   [
+    "000C",
+    "System_Error_Status_06",
+    "system_status_flags_t_003fe974.fault_detected_bits_96_to_111",
+    "0.50"
+   ],
+   [
+    "000E",
+    "System_Error_Status_07",
+    "system_status_flags_t_003fe974.fault_detected_bits_112_to_127",
+    "0.50"
+   ],
+   [
+    "0010",
+    "System_Error_Status_08",
+    "system_status_flags_t_003fe974.fault_detected_bits_128_to_143",
+    "0.50"
+   ],
+   [
+    "0012",
+    "System_Error_Status_09",
+    "system_status_flags_t_003fe974.fault_detected_bits_144_to_159",
+    "0.50"
+   ],
+   [
+    "0014",
+    "System_Error_Status_10",
+    "system_status_flags_t_003fe974.fault_detected_bits_160_to_175",
+    "0.50"
+   ],
+   [
+    "0016",
+    "System_Error_Status_11",
+    "system_status_flags_t_003fe974.reserved_16",
+    "0.50"
+   ],
+   [
+    "0018",
+    "System_Error_Status_12",
+    "system_status_flags_t_003fe974.fault_detected_bits_192_to_207",
+    "0.50"
+   ],
+   [
+    "001A",
+    "System_Error_Status_13",
+    "system_status_flags_t_003fe974.fault_detected_bits_208_to_223",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: word 49 of the 50-word fault-detected array that starts at 0x3fe974 ((0x3fe9d6 - 0x3fe974) / 2 = 49, faults 784-799); mask 0x400 (fault 794) is set by cm848_updateVariableGeometryTurbochargerValveOverTemperatureFault, other users cm848_updateEgrValveOverTemperatureFault and cm848_monitorEgrOrificeTemperatureSensorRationality (8 reads / 4 writes in all); named like the other array words (wave 5). Not a valve word, (was diagnostic_status_flags_b)"
+ },
+ {
+  "address": "0x0040a897",
+  "block": "105A",
+  "offset": "0000",
+  "record": "Throttle_100_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[FSMXTHFL] Fueling value at 100% throttle.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_fuel_limit_cal_active",
+  "references": 15,
+  "dump_raw": "2390",
+  "access_widths": "{'lhz': 3, 'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateMaximumFuelCurve: param_2 = 400 for protection_fuel_limit_cal_active (FUELING_STATE_MAXIMUM_THROTTLE) and",
+   "cm848_calculateFuelDemandWithTrim: protection_fuel_limit_cal_active = sVar1 + wVar3;",
+   "cm848_calculateFuelDemandWithTrim: if ((uint)protection_fuel_limit_cal_active < (uint)timing_limit_upper) {",
+   "cm848_calculateFuelDemandWithTrim: protection_fuel_limit_cal_active = timing_limit_upper;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Throttle_100_Fueling",
+    "protection_fuel_limit_cal_active",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Tau_0_Throttle_100_Fueling",
+    "injection_timing_demand_output",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Throttle_100_Fuel_At_HSG_Bef_Droop_Speed",
+    "engine_speed_limit_ramped_maximum_fuel_quantity",
+    "0.22"
+   ],
+   [
+    "0006",
+    "Throttle_100_Fuel_At_HSG_Bkpt_Speed",
+    "engine_speed_limit_reference_maximum_fuel_quantity",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Throttle_100_Fueling_No_PP",
+    "active_fault_fuel_correction",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a899",
+  "block": "105A",
+  "offset": "0002",
+  "record": "Tau_0_Throttle_100_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.06793478200",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[FST0MXFL] Fueling provided if engine were using low hp curve",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_demand_output",
+  "references": 6,
+  "dump_raw": "2390",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelDemandWithTrim: injection_timing_demand_output = wVar2 + wVar3;",
+   "cm848_calculateFuelDemandWithTrim: cm848_clampFuelDemandToValidRange(&injection_timing_demand_output);",
+   "cm848_calculateFuelDemandWithTrim: if ((int)(short)injection_timing_demand_output < (int)(uint)timing_limit_upper) {",
+   "cm848_calculateFuelDemandWithTrim: injection_timing_demand_output = timing_limit_upper;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Throttle_100_Fueling",
+    "protection_fuel_limit_cal_active",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Tau_0_Throttle_100_Fueling",
+    "injection_timing_demand_output",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Throttle_100_Fuel_At_HSG_Bef_Droop_Speed",
+    "engine_speed_limit_ramped_maximum_fuel_quantity",
+    "0.22"
+   ],
+   [
+    "0006",
+    "Throttle_100_Fuel_At_HSG_Bkpt_Speed",
+    "engine_speed_limit_reference_maximum_fuel_quantity",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Throttle_100_Fueling_No_PP",
+    "active_fault_fuel_correction",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a89f",
+  "block": "105A",
+  "offset": "0008",
+  "record": "Throttle_100_Fueling_No_PP",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[FSMTFLNP] Max fueling without Programmable Power for ESP Tau 0",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "active_fault_fuel_correction",
+  "references": 6,
+  "dump_raw": "2134",
+  "access_widths": "{'lhz': 3, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateProtectionRateLimited: iVar1 = (uint)active_fault_fuel_correction - (uint)fuel_demand_base_offset;",
+   "cm848_calculateMaximumFuelCurve: active_fault_fuel_correction. Nothing in it reads a fault list (was cm848_processActiveFaultList)",
+   "cm848_calculateFuelDemandWithTrim: active_fault_fuel_correction =",
+   "cm848_calculateFuelDemandWithTrim: active_fault_fuel_correction ="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Throttle_100_Fueling",
+    "protection_fuel_limit_cal_active",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Tau_0_Throttle_100_Fueling",
+    "injection_timing_demand_output",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Throttle_100_Fuel_At_HSG_Bef_Droop_Speed",
+    "engine_speed_limit_ramped_maximum_fuel_quantity",
+    "0.22"
+   ],
+   [
+    "0006",
+    "Throttle_100_Fuel_At_HSG_Bkpt_Speed",
+    "engine_speed_limit_reference_maximum_fuel_quantity",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Throttle_100_Fueling_No_PP",
+    "active_fault_fuel_correction",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040ae58",
+  "block": "1080",
+  "offset": "0002",
+  "record": "DL_to_Fault_Handler_Command",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "6",
+  "description": "[DGJCFUCC] 00=NO_CLEAR_ACTION 01=CLEAR_INACTIVE 02=CLEAR_ACTIVE 03=CLEAR_ALL_FAULTS",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "diagnostic_clear_request_state",
+  "references": 23,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_clearDiagnosticState: if ((((diagnostic_clear_request_state & 7) != 0) ||",
+   "cm848_clearDiagnosticState: if ((diagnostic_clear_request_state & 2) == 0) {",
+   "cm848_clearDiagnosticState: diagnostic_clear_request_state = 0;",
+   "diagnosticMainStateProcessor: if ((diagnostic_clear_request_state & 1) != 0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Software_FLT2ERAS",
+    "emission_fault_overflow_flag",
+    "0.00"
+   ],
+   [
+    "0002",
+    "DL_to_Fault_Handler_Command",
+    "diagnostic_clear_request_state",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c356",
+  "block": "1104",
+  "offset": "000E",
+  "record": "Jcomm_Derated_Fueling_at_Point_4",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[JCDQFLP4] Jcomm fueling value at pt. 4 in engine config. message when torque derate",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_output_select_cal",
+  "references": 4,
+  "dump_raw": "736",
+  "access_widths": "{'lhz': 4} -> 2 byte",
+  "code": [
+   "cm848_updateProtectionStateMachine: cm848_processJ1939RxMessage((j1939_rx_msg_t *)(uint)protection_output_select_cal);",
+   "cm848_updateProtectionStateMachine: protection_output_cal_working = protection_output_select_cal;",
+   "cm848_updateProtectionStateMachine: cm848_processJ1939RxMessage((j1939_rx_msg_t *)(uint)protection_output_select_cal);",
+   "cm848_updateProtectionStateMachine: protection_output_cal_working = protection_output_select_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Peak_Fueling",
+    "j1939_peak_fueling",
+    "1.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Reference_Engine_Torque",
+    "j1939_reference_engine_torque",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Engine_Speed_at_Point_3",
+    "j1939_engine_speed_at_point_3",
+    "1.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Engine_Speed_at_Point_4",
+    "protection_threshold_scale_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Engine_Speed_at_Point_5",
+    "protection_threshold_base_cal",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Derated_Fueling_at_Idle",
+    "j1939_derated_fueling_at_idle",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Derated_Fueling_at_Point_3",
+    "j1939_derated_fueling_at_point_3",
+    "1.00"
+   ],
+   [
+    "000E",
+    "Jcomm_Derated_Fueling_at_Point_4",
+    "protection_output_select_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Derated_Fueling_at_Point_5",
+    "protection_integrator_cal",
+    "0.00"
+   ],
+   [
+    "001E",
+    "LSG_Reference_Speed_Delta",
+    "low_speed_governor_reference_speed_delta",
+    "1.00"
+   ],
+   [
+    "0020",
+    "Jcomm_ASG_Droop_Limit",
+    "j1939_all_speed_governor_droop_minimum_limit",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005c358",
+  "block": "1104",
+  "offset": "0010",
+  "record": "Jcomm_Derated_Fueling_at_Point_5",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[JCDQFLP5] Jcomm fueling value at pt. 5 in engine config. message when torque derate",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_integrator_cal",
+  "references": 3,
+  "dump_raw": "736",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "cm848_updateProtectionStateMachine: cm848_processJ1939RxMessage((j1939_rx_msg_t *)(uint)protection_integrator_cal);",
+   "cm848_updateProtectionStateMachine: protection_derate_numerator_working = protection_integrator_cal;",
+   "cm848_updateProtectionStateMachine: cm848_processJ1939RxMessage((j1939_rx_msg_t *)(uint)protection_integrator_cal);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_Peak_Fueling",
+    "j1939_peak_fueling",
+    "1.00"
+   ],
+   [
+    "0002",
+    "Jcomm_Reference_Engine_Torque",
+    "j1939_reference_engine_torque",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Engine_Speed_at_Point_3",
+    "j1939_engine_speed_at_point_3",
+    "1.00"
+   ],
+   [
+    "0006",
+    "Jcomm_Engine_Speed_at_Point_4",
+    "protection_threshold_scale_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_Engine_Speed_at_Point_5",
+    "protection_threshold_base_cal",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Jcomm_Derated_Fueling_at_Idle",
+    "j1939_derated_fueling_at_idle",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Jcomm_Derated_Fueling_at_Point_3",
+    "j1939_derated_fueling_at_point_3",
+    "1.00"
+   ],
+   [
+    "000E",
+    "Jcomm_Derated_Fueling_at_Point_4",
+    "protection_output_select_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Jcomm_Derated_Fueling_at_Point_5",
+    "protection_integrator_cal",
+    "0.00"
+   ],
+   [
+    "001E",
+    "LSG_Reference_Speed_Delta",
+    "low_speed_governor_reference_speed_delta",
+    "1.00"
+   ],
+   [
+    "0020",
+    "Jcomm_ASG_Droop_Limit",
+    "j1939_all_speed_governor_droop_minimum_limit",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a74c",
+  "block": "1152",
+  "offset": "0018",
+  "record": "Fuel_Temperature_Precrank_Error",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "1",
+  "description": "[EPFTPKER] Fuel temperature system error detected before cranking in restart",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_faultDerate_ch0_threshold_exceeded",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "governor_coldStart_faultDerate_trigger: (&governor_faultDerate_ch0_threshold_exceeded)[iVar5 * 0x1f] = 1;",
+   "governor_coldStart_faultDerate_trigger: (&governor_faultDerate_ch0_threshold_exceeded)[iVar5 * 0x1f] = 1;",
+   "cm848_initSensorChannelDataStructures: governor_faultDerate_ch0_threshold_exceeded = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Fuel_Temperature_Input_Source",
+    "fuel_temperature_derate_input_pointer",
+    "0.75"
+   ],
+   [
+    "0018",
+    "Fuel_Temperature_Precrank_Error",
+    "governor_faultDerate_ch0_threshold_exceeded",
+    "0.00"
+   ],
+   [
+    "001A",
+    "Fuel_Temperature_Fuel_Shutdown_Time_Count",
+    "fuel_temperature_derate_fuel_shutdown_time_count",
+    "1.00"
+   ],
+   [
+    "001C",
+    "Fuel_Temperature_RPM_Shutdown_Time_Count",
+    "fuel_temperature_derate_rpm_shutdown_time_count",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "channel-0 fault-derate threshold-exceeded flag"
+ },
+ {
+  "address": "0x0040b6b2",
+  "block": "1187",
+  "offset": "001C",
+  "record": "RSG_BDG",
+  "unit": "MPH/MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00005615225",
+  "min": "0.000000",
+  "max": "0.087500",
+  "description": "SLOPE OF THE BOTTOM DROOP LINE PASSED TO THE DESIRED_RS FUELING PROCEDURE.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_speed_reference_c",
+  "references": 5,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateVehicleSpeedLimitFueling: through cruise_speed_reference_c / _d (5888 = no limit while j1939_governor_feature_cal bit 0x80",
+   "cm848_calculateVehicleSpeedLimitFueling: if (cruise_speed_reference_c != 0) {",
+   "cm848_calculateVehicleSpeedLimitFueling: cruise_speed_reference_active = cruise_speed_reference_c;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_c = cruise_ramp_rate_c_working;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Allow_Droops",
+    "cruise_deadband_active_flag",
+    "0.33"
+   ],
+   [
+    "0002",
+    "Cruise_BDG",
+    "cruise_speed_reference_a",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_BDO",
+    "cruise_governor_fuel_demand_lower_ramp_start",
+    "0.50"
+   ],
+   [
+    "0006",
+    "Cruise_Bottom_Droop_Gain",
+    "cruise_ramp_rate_a_working",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Calculate_Bumpless",
+    "cruise_zone_transition_flag",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Derivative_Gain",
+    "cruise_pid_kd_working",
+    "0.25"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Error_Delta",
+    "cruise_speed_setpoint_active",
+    "0.25"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Gain_Adj",
+    "cruise_pid_rate_gain_working",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Integral_Gain",
+    "cruise_pid_ki_working",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Integral_Acc_Gain",
+    "cruise_pid_rate_integral_gain_working",
+    "0.60"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Proportional_Gain",
+    "cruise_pid_kp_working",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Cruise_TDG",
+    "cruise_speed_reference_b",
+    "0.50"
+   ],
+   [
+    "0018",
+    "Cruise_TDO",
+    "cruise_speed_offset_b",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_Top_Droop_Gain",
+    "cruise_ramp_rate_b_working",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b6b6",
+  "block": "1187",
+  "offset": "0020",
+  "record": "RSG_Bottom_Droop_Gain",
+  "unit": "MPH/MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00005615225",
+  "min": "0.000000",
+  "max": "0.087500",
+  "description": "SLOPE OF THE BOTTOM DROOP LINE COMPUTED IN THE CC/RSG DROOP ALGORITHM.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_ramp_rate_c_working",
+  "references": 5,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2, 'sth': 1} -> 2 byte",
+  "code": [
+   "governor_cruise_setpoint_calc: wVar6 = cruise_ramp_rate_c_working;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_c = cruise_ramp_rate_c_working;",
+   "governorCruiseStateMachine: cruise_ramp_rate_c_working =",
+   "governorCruiseStateMachine: cruise_ramp_rate_c_working = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Allow_Droops",
+    "cruise_deadband_active_flag",
+    "0.33"
+   ],
+   [
+    "0002",
+    "Cruise_BDG",
+    "cruise_speed_reference_a",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_BDO",
+    "cruise_governor_fuel_demand_lower_ramp_start",
+    "0.50"
+   ],
+   [
+    "0006",
+    "Cruise_Bottom_Droop_Gain",
+    "cruise_ramp_rate_a_working",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Calculate_Bumpless",
+    "cruise_zone_transition_flag",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Derivative_Gain",
+    "cruise_pid_kd_working",
+    "0.25"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Error_Delta",
+    "cruise_speed_setpoint_active",
+    "0.25"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Gain_Adj",
+    "cruise_pid_rate_gain_working",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Integral_Gain",
+    "cruise_pid_ki_working",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Integral_Acc_Gain",
+    "cruise_pid_rate_integral_gain_working",
+    "0.60"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Proportional_Gain",
+    "cruise_pid_kp_working",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Cruise_TDG",
+    "cruise_speed_reference_b",
+    "0.50"
+   ],
+   [
+    "0018",
+    "Cruise_TDO",
+    "cruise_speed_offset_b",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_Top_Droop_Gain",
+    "cruise_ramp_rate_b_working",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "cruise ramp rate C (from rampScale_calc)"
+ },
+ {
+  "address": "0x0040b6b8",
+  "block": "1187",
+  "offset": "0022",
+  "record": "RSG_TDG",
+  "unit": "MPH/MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00005615225",
+  "min": "0.000000",
+  "max": "0.087500",
+  "description": "SLOPE OF THE TOP DROOP LINE PASSED TO THE DESIRED_RS FUELING PROCEDURE.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_speed_reference_d",
+  "references": 4,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateVehicleSpeedLimitFueling: if (cruise_speed_reference_d != 0) {",
+   "cm848_calculateVehicleSpeedLimitFueling: cruise_speed_reference_active = cruise_speed_reference_d;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_d = cruise_ramp_rate_d_working;",
+   "governorCruiseStateMachine: cruise_speed_reference_d = cruise_ramp_rate_d_working;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Allow_Droops",
+    "cruise_deadband_active_flag",
+    "0.33"
+   ],
+   [
+    "0002",
+    "Cruise_BDG",
+    "cruise_speed_reference_a",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_BDO",
+    "cruise_governor_fuel_demand_lower_ramp_start",
+    "0.50"
+   ],
+   [
+    "0006",
+    "Cruise_Bottom_Droop_Gain",
+    "cruise_ramp_rate_a_working",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Calculate_Bumpless",
+    "cruise_zone_transition_flag",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Derivative_Gain",
+    "cruise_pid_kd_working",
+    "0.25"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Error_Delta",
+    "cruise_speed_setpoint_active",
+    "0.25"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Gain_Adj",
+    "cruise_pid_rate_gain_working",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Integral_Gain",
+    "cruise_pid_ki_working",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Integral_Acc_Gain",
+    "cruise_pid_rate_integral_gain_working",
+    "0.60"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Proportional_Gain",
+    "cruise_pid_kp_working",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Cruise_TDG",
+    "cruise_speed_reference_b",
+    "0.50"
+   ],
+   [
+    "0018",
+    "Cruise_TDO",
+    "cruise_speed_offset_b",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_Top_Droop_Gain",
+    "cruise_ramp_rate_b_working",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b6ba",
+  "block": "1187",
+  "offset": "0024",
+  "record": "RSG_TDO",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "RSG TOP DROOP OFFSET PASSED TO THE DESIRED_RS FUELING PROCEDURE.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_speed_offset_c",
+  "references": 9,
+  "dump_raw": "2208",
+  "access_widths": "{'lhz': 1, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateVehicleSpeedLimitFueling: cruise_speed_deviation = uVar1 + cruise_speed_offset_c;",
+   "governor_cruise_speedReference_update: cruise_speed_offset_c = cruise_speed_offset_default;",
+   "governor_cruise_speedReference_update: (cruise_speed_offset_c = cruise_top_droop_offset_intermediate_tau,",
+   "governor_cruise_speedReference_update: (cruise_speed_offset_c = cruise_top_droop_offset_tau_1, cruise_speed_offset_mode != 2)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Allow_Droops",
+    "cruise_deadband_active_flag",
+    "0.33"
+   ],
+   [
+    "0002",
+    "Cruise_BDG",
+    "cruise_speed_reference_a",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_BDO",
+    "cruise_governor_fuel_demand_lower_ramp_start",
+    "0.50"
+   ],
+   [
+    "0006",
+    "Cruise_Bottom_Droop_Gain",
+    "cruise_ramp_rate_a_working",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Calculate_Bumpless",
+    "cruise_zone_transition_flag",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Derivative_Gain",
+    "cruise_pid_kd_working",
+    "0.25"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Error_Delta",
+    "cruise_speed_setpoint_active",
+    "0.25"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Gain_Adj",
+    "cruise_pid_rate_gain_working",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Integral_Gain",
+    "cruise_pid_ki_working",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Integral_Acc_Gain",
+    "cruise_pid_rate_integral_gain_working",
+    "0.60"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Proportional_Gain",
+    "cruise_pid_kp_working",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Cruise_TDG",
+    "cruise_speed_reference_b",
+    "0.50"
+   ],
+   [
+    "0018",
+    "Cruise_TDO",
+    "cruise_speed_offset_b",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_Top_Droop_Gain",
+    "cruise_ramp_rate_b_working",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b6bc",
+  "block": "1187",
+  "offset": "0026",
+  "record": "RSG_Top_Droop_Gain",
+  "unit": "MPH/MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00005615225",
+  "min": "0.000000",
+  "max": "0.087500",
+  "description": "SLOPE OF THE TOP DROOP LINE COMPUTED IN THE CC/RSG DROOP ALGORITHM.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_ramp_rate_d_working",
+  "references": 7,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_cruise_setpoint_calc: uVar2 = cruise_ramp_rate_d_working;",
+   "governor_cruise_speedReference_update: cruise_ramp_rate_d_working = cruise_ramp_rate_d_computed;",
+   "governor_cruise_speedReference_update: cruise_ramp_rate_d_working = DAT_003fcff6;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_d = cruise_ramp_rate_d_working;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Allow_Droops",
+    "cruise_deadband_active_flag",
+    "0.33"
+   ],
+   [
+    "0002",
+    "Cruise_BDG",
+    "cruise_speed_reference_a",
+    "0.50"
+   ],
+   [
+    "0004",
+    "Cruise_BDO",
+    "cruise_governor_fuel_demand_lower_ramp_start",
+    "0.50"
+   ],
+   [
+    "0006",
+    "Cruise_Bottom_Droop_Gain",
+    "cruise_ramp_rate_a_working",
+    "0.25"
+   ],
+   [
+    "0008",
+    "Cruise_RSG_Calculate_Bumpless",
+    "cruise_zone_transition_flag",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Cruise_RSG_Derivative_Gain",
+    "cruise_pid_kd_working",
+    "0.25"
+   ],
+   [
+    "000C",
+    "Cruise_RSG_Error_Delta",
+    "cruise_speed_setpoint_active",
+    "0.25"
+   ],
+   [
+    "000E",
+    "Cruise_RSG_Gain_Adj",
+    "cruise_pid_rate_gain_working",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Integral_Gain",
+    "cruise_pid_ki_working",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Integral_Acc_Gain",
+    "cruise_pid_rate_integral_gain_working",
+    "0.60"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Proportional_Gain",
+    "cruise_pid_kp_working",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Cruise_TDG",
+    "cruise_speed_reference_b",
+    "0.50"
+   ],
+   [
+    "0018",
+    "Cruise_TDO",
+    "cruise_speed_offset_b",
+    "0.50"
+   ],
+   [
+    "001A",
+    "Cruise_Top_Droop_Gain",
+    "cruise_ramp_rate_b_working",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "cruise ramp rate D (normal/protection select)"
+ },
+ {
+  "address": "0x0040b672",
+  "block": "11A4",
+  "offset": "0000",
+  "record": "Desired_HS_Fuel",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "PREDICTED FUELING VALUE FOR USE IN STATE TRANSITION LOGIC",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "high_speed_governor_fueling_snapshot",
+  "references": 8,
+  "dump_raw": "2179",
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_arbitrateGovernedFueling: governor_fuel_demand_working_mode), high_speed_governor_fueling_snapshot (12) and",
+   "cm848_arbitrateGovernedFueling: if ((high_speed_governor_fueling_snapshot <= governor_fuel_demand_working) ||",
+   "cm848_arbitrateGovernedFueling: (governor_fuel_demand_working < high_speed_governor_fueling_snapshot)) {",
+   "cm848_arbitrateGovernedFueling: if ((governor_fuel_demand_working < high_speed_governor_fueling_snapshot) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Desired_HS_Fuel",
+    "high_speed_governor_fueling_snapshot",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Desired_RS_Fuel",
+    "vehicle_speed_limit_fueling",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Desired_CC_Fuel",
+    "cruise_control_fueling",
+    "0.33"
+   ],
+   [
+    "0006",
+    "Desired_User_Fuel",
+    "governor_fuel_demand_working",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Desired_LS_Fuel",
+    "low_speed_governor_fueling",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Desired_User_Fueling_State",
+    "governor_fuel_demand_working_mode",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "high_speed_governor_fueling copied at the start of cm848_arbitrateGovernedFueling (cm848_snapshotHighSpeedGovernorFueling); FUELING_STATE_HIGH_SPEED_GOVERNOR when it is the smallest demand (was governor_fuel_demand_low_threshold)"
+ },
+ {
+  "address": "0x0040b67a",
+  "block": "11A4",
+  "offset": "0008",
+  "record": "Desired_LS_Fuel",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "PREDICTED FUELING VALUE FOR USE IN STATE TRANSITION",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "low_speed_governor_fueling",
+  "references": 7,
+  "dump_raw": "1441",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_arbitrateGovernedFueling: its speed (low_speed_governor_fueling); starts protectionRampRateControl on the first pass of 9 /",
+   "cm848_arbitrateGovernedFueling: ((governor_fuel_demand_working < low_speed_governor_fueling ||",
+   "cm848_arbitrateGovernedFueling: (j1939_tsc1_override_state.etc1_mode3_torque_limit < low_speed_governor_fueling)))))) ||",
+   "cm848_limitLowSpeedGovernorFueling: low_speed_governor_fueling = low_speed_governor_fueling_working;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Desired_HS_Fuel",
+    "high_speed_governor_fueling_snapshot",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Desired_RS_Fuel",
+    "vehicle_speed_limit_fueling",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Desired_CC_Fuel",
+    "cruise_control_fueling",
+    "0.33"
+   ],
+   [
+    "0006",
+    "Desired_User_Fuel",
+    "governor_fuel_demand_working",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Desired_LS_Fuel",
+    "low_speed_governor_fueling",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Desired_User_Fueling_State",
+    "governor_fuel_demand_working_mode",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "The low speed governor fuel (cm848_limitLowSpeedGovernorFueling, capped at 5888); the arbitration selects FUELING_STATE_LOW_SPEED_GOVERNOR when the user fueling is below it at or below the governor speed (was governor_fuel_demand_upper)"
+ },
+ {
+  "address": "0x0040b67c",
+  "block": "11A4",
+  "offset": "000A",
+  "record": "Desired_User_Fueling_State",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "1",
+  "max": "12",
+  "description": "Desired_User_Fueling_State - selection between Selected_User_Fueling and Cruise",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "FUELING_STATE",
+  "label_in_cpp": "governor_fuel_demand_working_mode",
+  "references": 8,
+  "dump_raw": "7",
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_arbitrateGovernedFueling: governor_fuel_demand_working_mode), high_speed_governor_fueling_snapshot (12) and",
+   "cm848_arbitrateGovernedFueling: governor_fuel_demand_working_mode_prev = governor_fuel_demand_working_mode;",
+   "cm848_arbitrateGovernedFueling: (FVar1 = governor_fuel_demand_working_mode,",
+   "cm848_arbitrateGovernedFueling: (FVar1 = governor_fuel_demand_working_mode,"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Desired_HS_Fuel",
+    "high_speed_governor_fueling_snapshot",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Desired_RS_Fuel",
+    "vehicle_speed_limit_fueling",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Desired_CC_Fuel",
+    "cruise_control_fueling",
+    "0.33"
+   ],
+   [
+    "0006",
+    "Desired_User_Fuel",
+    "governor_fuel_demand_working",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Desired_LS_Fuel",
+    "low_speed_governor_fueling",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Desired_User_Fueling_State",
+    "governor_fuel_demand_working_mode",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "State of governor_fuel_demand_working: cm848_selectCruiseOrUserFueling sets it to operating_mode_governor_output.mode_code or 9 (cruise control); cm848_arbitrateGovernedFueling passes it on to adjusted_user_fueling_state when the user demand is the smallest (lha @ 0x404c0 / 0x40500). RAM dump: 7 (was governor_pid_integral_snapshot - it never holds a PID integral)"
+ },
+ {
+  "address": "0x0040a732",
+  "block": "12BB",
+  "offset": "0000",
+  "record": "Active_Speed_Points_State",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "65535",
+  "description": "[EPAERPST] State flag to use EPF's RPM breakpoints for J1939.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_mode_request_flags",
+  "references": 11,
+  "dump_raw": "128",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "cm848_getHighestPriorityBit: uVar3 = protection_mode_request_flags & uVar1;",
+   "cm848_updateProtectionThresholdsIfLow: if (((uint)protection_mode_request_flags & ~uVar1) <= uVar1) {",
+   "cm848_updateProtectionDiagnostics: protection_mode_request_flags = protection_mode_request_flags | protection_mode_request_bit;",
+   "cm848_updateProtectionDiagnostics: protection_mode_request_flags = protection_mode_request_flags | protection_mode_request_bit;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Active_Speed_Points_State",
+    "protection_mode_request_flags",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0006456c",
+  "block": "162E",
+  "offset": "000A",
+  "record": "Turbo_Minimum_High_Boost_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "60",
+  "description": "minimum time at a high boost condition before setting the error",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "overboost_debounce_count_limit",
+  "references": 5,
+  "dump_raw": "25",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "cm848_monitorOverboostAndHighLoadBoostBand: if ((overboost_debounce_count < overboost_debounce_count_limit) &&",
+   "cm848_monitorOverboostAndHighLoadBoostBand: overboost_debounce_count = wVar2, wVar1 == overboost_debounce_count_limit)) {",
+   "cm848_monitorOverboostAndHighLoadBoostBand: if ((high_load_boost_band_debounce_count < overboost_debounce_count_limit) &&",
+   "cm848_monitorOverboostAndHighLoadBoostBand: high_load_boost_band_debounce_count = wVar2, wVar1 == overboost_debounce_count_limit)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Turbo_Minimum_Engine_Speed",
+    "overboost_minimum_engine_speed",
+    "0.75"
+   ],
+   [
+    "0002",
+    "Turbo_Maximum_High_Boost_Pressure",
+    "high_load_boost_band_maximum_boost_pressure",
+    "0.80"
+   ],
+   [
+    "0004",
+    "Turbo_Minimum_High_Boost_Pressure",
+    "overboost_minimum_boost_pressure",
+    "0.60"
+   ],
+   [
+    "0006",
+    "Turbo_Maximum_Low_Boost_Pressure",
+    "high_load_boost_band_minimum_boost_pressure",
+    "0.40"
+   ],
+   [
+    "0008",
+    "Turbo_High_Load_Threshold",
+    "high_load_boost_band_minimum_engine_load",
+    "0.50"
+   ],
+   [
+    "000A",
+    "Turbo_Minimum_High_Boost_Time",
+    "overboost_debounce_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "e2m 162E +A Turbo_Minimum_High_Boost_Time 'minimum time at a high boost condition before setting the error' (address from the ECU's parameter ID table) (0.1 s per count; 25 = 2.5 s here): debounce limit of cm848_monitorOverboostAndHighLoadBoostBand: overboost_debounce_count counting up to it sets fault 415 (P0234); the high load boost band reuses it as the ... (new row 2026-11-19, wave 12)"
+ },
+ {
+  "address": "0x0040a3be",
+  "block": "16A2",
+  "offset": "0000",
+  "record": "TGC_Feedforward_Term",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "100",
+  "description": "FF portion of Turbocharger position command to actuator controller",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "throttle_rate_integrator_cal_snapshot",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateWastegateDutyRequest: throttle_rate_integrator_cal_snapshot = throttle_rate_integrator_cal;",
+   "cm848_calculateWastegateDutyRequest: iVar7 = (int)(short)throttle_rate_integrator_cal_snapshot;",
+   "cm848_calculateWastegateDutyRequest: iVar7 = (int)(short)(throttle_rate_integrator_cal_snapshot + throttle_rate_integrator_prev);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TGC_Feedforward_Term",
+    "throttle_rate_integrator_cal_snapshot",
+    "0.00"
+   ],
+   [
+    "0002",
+    "TGC_Integral_Term",
+    "wastegate_duty_integrator_whole_counts",
+    "0.00"
+   ],
+   [
+    "0004",
+    "TGC_Proportional_Term",
+    "throttle_rate_integrator_prev",
+    "0.00"
+   ],
+   [
+    "0006",
+    "TGC_Adjusted_I_Gain",
+    "wastegate_duty_integral_gain",
+    "0.25"
+   ],
+   [
+    "000C",
+    "TGC_VT_Cmd",
+    "wastegate_duty_controller_state",
+    "0.00"
+   ],
+   [
+    "000E",
+    "TGC_Error",
+    "wastegate_duty_controller_state.selected_control_term",
+    "0.00"
+   ],
+   [
+    "0010",
+    "TGC_Turbo_Spd_Drt_Error",
+    "wastegate_duty_controller_state.first_error_proportional_derivative_term",
+    "0.20"
+   ],
+   [
+    "0012",
+    "TGC_Turbo_Drt_SET_Gain",
+    "wastegate_duty_controller_state.first_error_gain",
+    "0.20"
+   ],
+   [
+    "0014",
+    "TGC_Final_LLim",
+    "wastegate_duty_controller_state.floor_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "0016",
+    "TGC_LLim_Altitude_Offset",
+    "wastegate_duty_controller_state.floor_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TGC_Max_Closing",
+    "wastegate_duty_controller_state.ceiling_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001A",
+    "TGC_Min_Closing",
+    "wastegate_duty_controller_state.floor_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001C",
+    "TGC_Final_ULim",
+    "wastegate_duty_controller_state.ceiling_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001E",
+    "TGC_ULim_Altitude_Offset",
+    "wastegate_duty_controller_state.ceiling_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a3c0",
+  "block": "16A2",
+  "offset": "0002",
+  "record": "TGC_Integral_Term",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0078125",
+  "min": "-200",
+  "max": "200",
+  "description": "I portion of Turbocharger position command to actuator controller",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "wastegate_duty_integrator_whole_counts",
+  "references": 4,
+  "dump_raw": "10240",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateWastegateDutyRequest: wastegate_duty_integrator_whole_counts = (word)(wastegate_duty_integrator_q16 >> 0x10);",
+   "cm848_calculateWastegateDutyRequest: if (iVar7 + (short)wastegate_duty_integrator_whole_counts < 0x8000) {",
+   "cm848_calculateWastegateDutyRequest: if (iVar7 + (short)wastegate_duty_integrator_whole_counts < -0x8000) {",
+   "cm848_calculateWastegateDutyRequest: iVar7 = (int)(short)((short)iVar7 + wastegate_duty_integrator_whole_counts);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TGC_Feedforward_Term",
+    "throttle_rate_integrator_cal_snapshot",
+    "0.00"
+   ],
+   [
+    "0002",
+    "TGC_Integral_Term",
+    "wastegate_duty_integrator_whole_counts",
+    "0.00"
+   ],
+   [
+    "0004",
+    "TGC_Proportional_Term",
+    "throttle_rate_integrator_prev",
+    "0.00"
+   ],
+   [
+    "0006",
+    "TGC_Adjusted_I_Gain",
+    "wastegate_duty_integral_gain",
+    "0.25"
+   ],
+   [
+    "000C",
+    "TGC_VT_Cmd",
+    "wastegate_duty_controller_state",
+    "0.00"
+   ],
+   [
+    "000E",
+    "TGC_Error",
+    "wastegate_duty_controller_state.selected_control_term",
+    "0.00"
+   ],
+   [
+    "0010",
+    "TGC_Turbo_Spd_Drt_Error",
+    "wastegate_duty_controller_state.first_error_proportional_derivative_term",
+    "0.20"
+   ],
+   [
+    "0012",
+    "TGC_Turbo_Drt_SET_Gain",
+    "wastegate_duty_controller_state.first_error_gain",
+    "0.20"
+   ],
+   [
+    "0014",
+    "TGC_Final_LLim",
+    "wastegate_duty_controller_state.floor_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "0016",
+    "TGC_LLim_Altitude_Offset",
+    "wastegate_duty_controller_state.floor_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TGC_Max_Closing",
+    "wastegate_duty_controller_state.ceiling_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001A",
+    "TGC_Min_Closing",
+    "wastegate_duty_controller_state.floor_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001C",
+    "TGC_Final_ULim",
+    "wastegate_duty_controller_state.ceiling_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001E",
+    "TGC_ULim_Altitude_Offset",
+    "wastegate_duty_controller_state.ceiling_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "integrator >> 16 in cm848_calculateWastegateDutyRequest, the integrator contribution (half-duty counts) added to the base and rate-limited terms before the floor / ceiling clamp; no other user. (was throttle_rate_integrator_hi)"
+ },
+ {
+  "address": "0x0040a3c2",
+  "block": "16A2",
+  "offset": "0004",
+  "record": "TGC_Proportional_Term",
+  "unit": "%",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "100",
+  "description": "P portion of Turbocharger position command to actuator controller",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "throttle_rate_integrator_prev",
+  "references": 4,
+  "dump_raw": "880",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateWastegateDutyRequest: throttle_rate_integrator_prev = wStack_26;",
+   "cm848_calculateWastegateDutyRequest: wastegate_duty_integrator_q16 = (short)throttle_rate_integrator_prev * -0x10000;",
+   "cm848_calculateWastegateDutyRequest: if (iVar7 + (short)throttle_rate_integrator_prev < -0x8000) {",
+   "cm848_calculateWastegateDutyRequest: iVar7 = (int)(short)(throttle_rate_integrator_cal_snapshot + throttle_rate_integrator_prev);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TGC_Feedforward_Term",
+    "throttle_rate_integrator_cal_snapshot",
+    "0.00"
+   ],
+   [
+    "0002",
+    "TGC_Integral_Term",
+    "wastegate_duty_integrator_whole_counts",
+    "0.00"
+   ],
+   [
+    "0004",
+    "TGC_Proportional_Term",
+    "throttle_rate_integrator_prev",
+    "0.00"
+   ],
+   [
+    "0006",
+    "TGC_Adjusted_I_Gain",
+    "wastegate_duty_integral_gain",
+    "0.25"
+   ],
+   [
+    "000C",
+    "TGC_VT_Cmd",
+    "wastegate_duty_controller_state",
+    "0.00"
+   ],
+   [
+    "000E",
+    "TGC_Error",
+    "wastegate_duty_controller_state.selected_control_term",
+    "0.00"
+   ],
+   [
+    "0010",
+    "TGC_Turbo_Spd_Drt_Error",
+    "wastegate_duty_controller_state.first_error_proportional_derivative_term",
+    "0.20"
+   ],
+   [
+    "0012",
+    "TGC_Turbo_Drt_SET_Gain",
+    "wastegate_duty_controller_state.first_error_gain",
+    "0.20"
+   ],
+   [
+    "0014",
+    "TGC_Final_LLim",
+    "wastegate_duty_controller_state.floor_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "0016",
+    "TGC_LLim_Altitude_Offset",
+    "wastegate_duty_controller_state.floor_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TGC_Max_Closing",
+    "wastegate_duty_controller_state.ceiling_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001A",
+    "TGC_Min_Closing",
+    "wastegate_duty_controller_state.floor_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001C",
+    "TGC_Final_ULim",
+    "wastegate_duty_controller_state.ceiling_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001E",
+    "TGC_ULim_Altitude_Offset",
+    "wastegate_duty_controller_state.ceiling_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a3e6",
+  "block": "16A2",
+  "offset": "0028",
+  "record": "TGC_COT_Drt_Error",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.03125",
+  "min": "-800",
+  "max": "800",
+  "description": "COT error (COT limit - compressor outlet temperature)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_rpm_state_output",
+  "references": 3,
+  "dump_raw": "1259",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateWastegateDutyRequest: governor_rpm_state_output = (word)iVar7;",
+   "cm848_calculateWastegateDutyRequest: (wVar4 = governor_rpm_state_output,",
+   "cm848_calculateWastegateDutyRequest: (short)wastegate_duty_controller_state.selected_control_term < (short)governor_rpm_state_output"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TGC_Feedforward_Term",
+    "throttle_rate_integrator_cal_snapshot",
+    "0.00"
+   ],
+   [
+    "0002",
+    "TGC_Integral_Term",
+    "wastegate_duty_integrator_whole_counts",
+    "0.00"
+   ],
+   [
+    "0004",
+    "TGC_Proportional_Term",
+    "throttle_rate_integrator_prev",
+    "0.00"
+   ],
+   [
+    "0006",
+    "TGC_Adjusted_I_Gain",
+    "wastegate_duty_integral_gain",
+    "0.25"
+   ],
+   [
+    "000C",
+    "TGC_VT_Cmd",
+    "wastegate_duty_controller_state",
+    "0.00"
+   ],
+   [
+    "000E",
+    "TGC_Error",
+    "wastegate_duty_controller_state.selected_control_term",
+    "0.00"
+   ],
+   [
+    "0010",
+    "TGC_Turbo_Spd_Drt_Error",
+    "wastegate_duty_controller_state.first_error_proportional_derivative_term",
+    "0.20"
+   ],
+   [
+    "0012",
+    "TGC_Turbo_Drt_SET_Gain",
+    "wastegate_duty_controller_state.first_error_gain",
+    "0.20"
+   ],
+   [
+    "0014",
+    "TGC_Final_LLim",
+    "wastegate_duty_controller_state.floor_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "0016",
+    "TGC_LLim_Altitude_Offset",
+    "wastegate_duty_controller_state.floor_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TGC_Max_Closing",
+    "wastegate_duty_controller_state.ceiling_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001A",
+    "TGC_Min_Closing",
+    "wastegate_duty_controller_state.floor_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001C",
+    "TGC_Final_ULim",
+    "wastegate_duty_controller_state.ceiling_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001E",
+    "TGC_ULim_Altitude_Offset",
+    "wastegate_duty_controller_state.ceiling_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x00405ffc",
+  "block": "174F",
+  "offset": "0000",
+  "record": "C_CHP_Number_Of_Cylinders",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "4",
+  "max": "20",
+  "description": "Number of cylinders in the engine",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_cylinder_count",
+  "references": 3,
+  "dump_raw": "6",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateTemperatureHeadroomFuelCap: uVar1 = (0xcb9ca4 / (uVar1 * engine_cylinder_count) & 0xffff) * (uVar3 & 0xffff) >> 4;",
+   "cm848_calculateCylinderOxygenMasses: engine_cylinder_count) >> 8, capped at 0xe600) and builds the in-cylinder oxygen balance:",
+   "cm848_calculateCylinderOxygenMasses: uVar3 = 0x65ce525 / (uVar1 * engine_cylinder_count) & 0xffff;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_CHP_Number_Of_Cylinders",
+    "engine_cylinder_count",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_CBP_Stoic_AF_Ratio",
+    "stoichiometric_air_fuel_ratio",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "e2m 174F +0 C_CHP_Number_Of_Cylinders 'Number of cylinders in the engine' (address from the ECU's parameter ID table): engine speed x this is the divisor that converts the charge / EGR mass flows (cm848_calculateCylinderOxygenMasses) and the temperature headroom fuel flow (cm848_calculateTemperatureHeadroomFuelCap) to per-stroke quantities (6 here) - ROM ... (new row 2026-11-19, wave 12)"
+ },
+ {
+  "address": "0x004002e4",
+  "block": "177E",
+  "offset": "0002",
+  "record": "C_CHP_EGR_Flow_Max",
+  "unit": "LB/MIN",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0078125",
+  "min": "-250",
+  "max": "250",
+  "description": "Max limit on EGR flow estimation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "throttle_fuel_trim_lower_cal",
+  "references": 4,
+  "dump_raw": "2560",
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_selectFuelTrimMode: (short)throttle_fuel_trim_lower_cal < (short)throttle_fuel_trim_t_0040a3ea.rpm_based_trim)",
+   "cm848_selectFuelTrimMode: throttle_fuel_trim_t_0040a3ea.final_trim = throttle_fuel_trim_lower_cal;",
+   "cm848_selectFuelTrimMode: (short)throttle_fuel_trim_lower_cal <",
+   "cm848_selectFuelTrimMode: throttle_fuel_trim_t_0040a3ea.final_trim = throttle_fuel_trim_lower_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_CHP_EGR_Flow_Fil_Cnst",
+    "egr_mass_flow_delayed_filter_coefficient",
+    "0.40"
+   ],
+   [
+    "0002",
+    "C_CHP_EGR_Flow_Max",
+    "throttle_fuel_trim_lower_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "C_CHP_EGR_Flow_Min",
+    "throttle_fuel_trim_upper_cal",
+    "0.00"
+   ],
+   [
+    "0006",
+    "C_CHP_Volume_Fraction",
+    "throttle_conversion_scale_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_CHP_Downstream_Delta_P_Active",
+    "egr_flow_cold_side_algorithm_select",
+    "0.00"
+   ],
+   [
+    "000A",
+    "C_CHP_Venturi_Vrt_Sensor_Active",
+    "rpm_fuel_trim_select_cal",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_CHP_EGR_Flow_Delay_Fraction",
+    "throttle_load_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "C_CHP_EGR_Pos_Delay_Fil_Cnst",
+    "egr_valve_position_filter_coefficient",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004002e6",
+  "block": "177E",
+  "offset": "0004",
+  "record": "C_CHP_EGR_Flow_Min",
+  "unit": "LB/MIN",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0078125",
+  "min": "-250",
+  "max": "250",
+  "description": "Min limit on EGR flow estimation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "throttle_fuel_trim_upper_cal",
+  "references": 4,
+  "dump_raw": "0",
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_selectFuelTrimMode: throttle_fuel_trim_t_0040a3ea.final_trim = throttle_fuel_trim_upper_cal;",
+   "cm848_selectFuelTrimMode: if (((short)throttle_fuel_trim_upper_cal <= (short)throttle_fuel_trim_t_0040a3ea.rpm_based_trim)",
+   "cm848_selectFuelTrimMode: throttle_fuel_trim_t_0040a3ea.final_trim = throttle_fuel_trim_upper_cal;",
+   "cm848_selectFuelTrimMode: if (((short)throttle_fuel_trim_upper_cal <= (short)throttle_fuel_trim_t_0040a3ea.load_based_trim"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_CHP_EGR_Flow_Fil_Cnst",
+    "egr_mass_flow_delayed_filter_coefficient",
+    "0.40"
+   ],
+   [
+    "0002",
+    "C_CHP_EGR_Flow_Max",
+    "throttle_fuel_trim_lower_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "C_CHP_EGR_Flow_Min",
+    "throttle_fuel_trim_upper_cal",
+    "0.00"
+   ],
+   [
+    "0006",
+    "C_CHP_Volume_Fraction",
+    "throttle_conversion_scale_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_CHP_Downstream_Delta_P_Active",
+    "egr_flow_cold_side_algorithm_select",
+    "0.00"
+   ],
+   [
+    "000A",
+    "C_CHP_Venturi_Vrt_Sensor_Active",
+    "rpm_fuel_trim_select_cal",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_CHP_EGR_Flow_Delay_Fraction",
+    "throttle_load_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "C_CHP_EGR_Pos_Delay_Fil_Cnst",
+    "egr_valve_position_filter_coefficient",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004002ea",
+  "block": "177E",
+  "offset": "0008",
+  "record": "C_CHP_Downstream_Delta_P_Active",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1",
+  "description": "Select hot side (0) or cold side (1) EGR flow algorithm",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "egr_flow_cold_side_algorithm_select",
+  "references": 9,
+  "dump_raw": "1",
+  "access_widths": "{'lhz': 6} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelFlowWithMode: if (egr_flow_cold_side_algorithm_select == 0) {",
+   "cm848_updateEgrDeltaPressureAutozeroConditions: egr_flow_cold_side_algorithm_select = 0, the valve not closed and turbocharger_speed at or below",
+   "cm848_updateEgrDeltaPressureAutozeroConditions: if (egr_flow_cold_side_algorithm_select == 0) {",
+   "cm848_updateEgrValvePositionCommandAndControlState: egr_flow_cold_side_algorithm_select is non-zero; it is capped at"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_CHP_EGR_Flow_Fil_Cnst",
+    "egr_mass_flow_delayed_filter_coefficient",
+    "0.40"
+   ],
+   [
+    "0002",
+    "C_CHP_EGR_Flow_Max",
+    "throttle_fuel_trim_lower_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "C_CHP_EGR_Flow_Min",
+    "throttle_fuel_trim_upper_cal",
+    "0.00"
+   ],
+   [
+    "0006",
+    "C_CHP_Volume_Fraction",
+    "throttle_conversion_scale_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_CHP_Downstream_Delta_P_Active",
+    "egr_flow_cold_side_algorithm_select",
+    "0.00"
+   ],
+   [
+    "000A",
+    "C_CHP_Venturi_Vrt_Sensor_Active",
+    "rpm_fuel_trim_select_cal",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_CHP_EGR_Flow_Delay_Fraction",
+    "throttle_load_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "C_CHP_EGR_Pos_Delay_Fil_Cnst",
+    "egr_valve_position_filter_coefficient",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: selector read by six functions (xref_addr.py 6 reads / 0 writes, all lhz): 0 = the EGR delta pressure is the delta pressure sensor output, non-zero (dump 1) = it is computed from two other pressures ((boost_pressure_current_raw - boost_pressure_baseline_cal) - map_fuel_correction_factor); the EGR valve autozero command is 12800 for 0 and 0 for non-zero; the cooler fouling monitor needs ... (was boost_correction_alt_mode_cal)"
+ },
+ {
+  "address": "0x00406004",
+  "block": "1791",
+  "offset": "0004",
+  "record": "C_CBP_Stoic_OF_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0.02",
+  "max": "200",
+  "description": "Oxygen/Fuel ratio for stoichiometric combustion",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_period_cal",
+  "references": 6,
+  "dump_raw": "438",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "cm848_calculateOffNominalOxygenFractionAdjustment: uVar1 = ((uint)egr_fraction_combustion_reference * (injection_timing_period_cal + 0x1d & 0xffff))",
+   "cm848_calculateAirFuelRatioAndIntakeOxygenFraction: (throttle_fuel_trim_t.egr_fraction_actual) x (injection_timing_period_cal + 29) / (air_fuel_ratio",
+   "cm848_calculateAirFuelRatioAndIntakeOxygenFraction: DAT_003fba00 = injection_timing_period_cal + 0x1d;",
+   "cm848_calculateAirFuelRatioAndIntakeOxygenFraction: (uint)(ushort)(injection_timing_period_cal + 0x1d)) / (ulonglong)(uVar3 + 0x80 & 0xffff);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_OFC_Fuel_Limit_Override_Value",
+    "injection_quantity_oxygen_limit_override_value",
+    "0.60"
+   ],
+   [
+    "0002",
+    "C_OFC_Equiv_Ratio_Value",
+    "oxygen_limit_equivalence_ratio_override_value",
+    "0.50"
+   ],
+   [
+    "0004",
+    "C_CBP_Stoic_OF_Ratio",
+    "injection_timing_period_cal",
+    "0.00"
+   ],
+   [
+    "0006",
+    "C_OFC_Gain_Adjustment",
+    "injection_quantity_oxygen_limit_gain_adjustment",
+    "0.67"
+   ],
+   [
+    "0008",
+    "C_OFC_Fuel_Limit_ULim",
+    "injection_quantity_oxygen_limit_maximum",
+    "0.25"
+   ],
+   [
+    "000A",
+    "C_OFC_Fuel_Limit_LLim",
+    "injection_quantity_oxygen_limit_minimum",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a6d6",
+  "block": "17AC",
+  "offset": "0014",
+  "record": "EGA_Governor_PWM",
+  "unit": "%DUTY_CYCLE",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0078125",
+  "min": "-256",
+  "max": "256",
+  "description": "EGA PWM duty cycle from PID controller",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "egr_valve_pid_duty",
+  "references": 5,
+  "dump_raw": "0",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateEgrValvePidDuty: steady-state error band and not wound up) into egr_valve_pid_duty (limited to +-32767; 12800 =",
+   "cm848_calculateEgrValvePidDuty: if (0 < (short)egr_valve_pid_duty) goto LAB_00019d08;",
+   "cm848_calculateEgrValvePidDuty: if (egr_valve_pid_duty != 0) {",
+   "cm848_calculateEgrValvePidDuty: egr_valve_pid_duty = (word)iVar4;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGA_PWM_Limited",
+    "egr_valve_drive_duty_limited",
+    "0.33"
+   ],
+   [
+    "0002",
+    "EGA_Position_Error",
+    "egr_valve_position_error",
+    "0.67"
+   ],
+   [
+    "0004",
+    "EGA_Position_Cmd_Final",
+    "egr_valve_position_command_final",
+    "0.75"
+   ],
+   [
+    "000A",
+    "EGA_D_Gain",
+    "egr_valve_derivative_gain",
+    "0.33"
+   ],
+   [
+    "000C",
+    "EGA_D_Term",
+    "egr_valve_derivative_term",
+    "0.33"
+   ],
+   [
+    "000E",
+    "EGA_Error_Derivative",
+    "egr_valve_position_error_derivative",
+    "0.67"
+   ],
+   [
+    "0010",
+    "EGA_Error_I_Term_Input",
+    "egr_valve_integral_error_input",
+    "0.40"
+   ],
+   [
+    "0012",
+    "EGA_FF_Term",
+    "egr_valve_feedforward_term",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EGA_Governor_PWM",
+    "egr_valve_pid_duty",
+    "0.00"
+   ],
+   [
+    "0016",
+    "EGA_I_Gain",
+    "egr_valve_integral_gain",
+    "0.33"
+   ],
+   [
+    "0018",
+    "EGA_I_Term",
+    "egr_valve_integral_term",
+    "0.33"
+   ],
+   [
+    "001A",
+    "EGA_I_Term_LLim",
+    "egr_valve_integral_term_lower_limit",
+    "0.40"
+   ],
+   [
+    "001C",
+    "EGA_P_Gain",
+    "egr_valve_proportional_gain",
+    "0.33"
+   ],
+   [
+    "001E",
+    "EGA_P_Term",
+    "egr_valve_proportional_term",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: users: cm848_calculateEgrValvePidDuty, cm848_selectEgrValveDutyByControlState. PID result, +-32767, 12800 = 100 percent. e2m: EGA_Governor_PWM (0x0117ac14) is +0x14 of the block that anchors 0x40a6c2. (was governor_speed_derivative_value)"
+ },
+ {
+  "address": "0x0040a6e8",
+  "block": "17AC",
+  "offset": "0026",
+  "record": "EGA_Prefilter_Cnst",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.52588E-05",
+  "min": "0",
+  "max": "1",
+  "description": "EGA prefilter cnst after gain scheduling",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "egr_valve_position_reference_filter_coefficient",
+  "references": 4,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_selectEgrValveGainSet: egr_valve_position_reference_filter_coefficient =",
+   "cm848_selectEgrValveGainSet: egr_valve_position_reference_filter_coefficient =",
+   "cm848_calculateEgrValvePidDuty: &egr_valve_position_reference_filter_coefficient;",
+   "cm848_initializeEgrValvePositionControlLoop: &egr_valve_position_reference_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGA_PWM_Limited",
+    "egr_valve_drive_duty_limited",
+    "0.33"
+   ],
+   [
+    "0002",
+    "EGA_Position_Error",
+    "egr_valve_position_error",
+    "0.67"
+   ],
+   [
+    "0004",
+    "EGA_Position_Cmd_Final",
+    "egr_valve_position_command_final",
+    "0.75"
+   ],
+   [
+    "000A",
+    "EGA_D_Gain",
+    "egr_valve_derivative_gain",
+    "0.33"
+   ],
+   [
+    "000C",
+    "EGA_D_Term",
+    "egr_valve_derivative_term",
+    "0.33"
+   ],
+   [
+    "000E",
+    "EGA_Error_Derivative",
+    "egr_valve_position_error_derivative",
+    "0.67"
+   ],
+   [
+    "0010",
+    "EGA_Error_I_Term_Input",
+    "egr_valve_integral_error_input",
+    "0.40"
+   ],
+   [
+    "0012",
+    "EGA_FF_Term",
+    "egr_valve_feedforward_term",
+    "0.33"
+   ],
+   [
+    "0014",
+    "EGA_Governor_PWM",
+    "egr_valve_pid_duty",
+    "0.00"
+   ],
+   [
+    "0016",
+    "EGA_I_Gain",
+    "egr_valve_integral_gain",
+    "0.33"
+   ],
+   [
+    "0018",
+    "EGA_I_Term",
+    "egr_valve_integral_term",
+    "0.33"
+   ],
+   [
+    "001A",
+    "EGA_I_Term_LLim",
+    "egr_valve_integral_term_lower_limit",
+    "0.40"
+   ],
+   [
+    "001C",
+    "EGA_P_Gain",
+    "egr_valve_proportional_gain",
+    "0.33"
+   ],
+   [
+    "001E",
+    "EGA_P_Term",
+    "egr_valve_proportional_term",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: users: cm848_calculateEgrValvePidDuty, cm848_initializeEgrValvePositionControlLoop, cm848_selectEgrValveGainSet. reference filter coefficient of the active set. e2m: EGA_Prefilter_Cnst (0x0117ac26) is +0x26 of the block that anchors 0x40a6c2. (was governor_speed_integral_limit_working)"
+ },
+ {
+  "address": "0x003feebc",
+  "block": "1930",
+  "offset": "0016",
+  "record": "BTR_Numerator",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Increments when BTR monitor either passes or fails.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_b_fault_active_flag",
+  "references": 4,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_clearDiagnosticState: protection_b_fault_active_flag = 0;",
+   "cm848_sciBuildStatusFlagsByte: if (protection_b_fault_active_flag != 0) {",
+   "cm848_mainLoopMonitor: protection_b_fault_active_flag = 1;",
+   "cm848_mainLoopMonitor: if (protection_b_fault_active_flag != 0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Battery_Temperature_Cycle_Counter",
+    "battery_temperature_stuck_check_failed_warm_up_cycle_count_cal",
+    "0.75"
+   ],
+   [
+    "0001",
+    "Intake_Manifold_Temperature_Cycle_Counter",
+    "intake_manifold_temperature_stuck_check_failed_warm_up_cycle_count_cal",
+    "0.80"
+   ],
+   [
+    "0002",
+    "Battery_Temperature_Fail_Previous",
+    "battery_temperature_stuck_check_failed_previous_flag_cal",
+    "0.75"
+   ],
+   [
+    "0003",
+    "Intake_Manifold_Temperature_Fail_Previous",
+    "intake_manifold_temperature_stuck_check_failed_previous_flag_cal",
+    "0.80"
+   ],
+   [
+    "0004",
+    "Battery_Temperature_Previous_Cycle",
+    "battery_temperature_stuck_check_last_failed_warm_up_cycle_cal",
+    "0.75"
+   ],
+   [
+    "0005",
+    "Intake_Manifold_Temperature_Previous_Cycle",
+    "intake_manifold_temperature_stuck_check_last_failed_warm_up_cycle_cal",
+    "0.80"
+   ],
+   [
+    "0006",
+    "Ambient_Air_Temperature_Cycle_Counter",
+    "ambient_air_temperature_stuck_check_failed_warm_up_cycle_count_cal",
+    "0.80"
+   ],
+   [
+    "0007",
+    "Ambient_Air_Temperature_Fail_Previous",
+    "ambient_air_temperature_stuck_check_failed_previous_flag_cal",
+    "0.80"
+   ],
+   [
+    "0008",
+    "Ambient_Air_Temperature_Previous_Cycle",
+    "ambient_air_temperature_stuck_check_last_failed_warm_up_cycle_cal",
+    "0.80"
+   ],
+   [
+    "000A",
+    "Battery_Temperature_Accum_Miles",
+    "battery_temperature_stuck_check_accumulated_miles_cal",
+    "0.75"
+   ],
+   [
+    "000C",
+    "Intake_Manifold_Temperature_Accum_Miles",
+    "intake_manifold_temperature_stuck_check_accumulated_miles_cal",
+    "0.80"
+   ],
+   [
+    "000E",
+    "Ambient_Air_Temperature_Accum_Miles",
+    "ambient_air_temperature_stuck_check_accumulated_miles_cal",
+    "0.80"
+   ],
+   [
+    "0010",
+    "P_Coolant_Temperature_Previous",
+    "temperature_rationality_coolant_soak_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "AATR_Numerator",
+    "water_in_fuel_distance",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040952c",
+  "block": "801A",
+  "offset": "0016",
+  "record": "HPCR_Current_Fault_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": ".01",
+  "min": "0",
+  "max": "30",
+  "description": "Time of high or low current to set fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_metering_feedback_circuit_debounce_limit",
+  "references": 4,
+  "dump_raw": "200",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit: fuel_metering_feedback_circuit_debounce_limit) {",
+   "cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit: fuel_metering_feedback_circuit_debounce_limit) {",
+   "cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit: fuel_metering_feedback_circuit_debounce_limit) {",
+   "cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit: fuel_metering_feedback_circuit_debounce_limit) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Fuelpr_Monitor_Max",
+    "fuel_pressure_sensor_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Current_Max",
+    "fuel_metering_feedback_circuit_high_threshold",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Def_Debounce_Time",
+    "fuel_pressure_diagnostic_set_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0006",
+    "HPCR_OK_Debounce_Time",
+    "fuel_pressure_diagnostic_clear_debounce_limit",
+    "0.25"
+   ],
+   [
+    "0008",
+    "HPCR_Fuelpr_Max_Limit",
+    "fuel_pressure_sensor_second_too_high_threshold",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Low_Pressure_Plausibility",
+    "fuel_pressure_minimum_expected_check_floor",
+    "0.25"
+   ],
+   [
+    "000C",
+    "HPCR_Lowidle_Dutycycle",
+    "fuel_pressure_governor_demand_limit_at_governed_speed",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Lowidle_Window",
+    "governor_integrator_hysteresis_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Min_Coolant_Temperature",
+    "fuel_pressure_governor_demand_check_minimum_coolant_temperature",
+    "0.75"
+   ],
+   [
+    "0012",
+    "HPCR_Fuelpr_OK_Test_Samples",
+    "fuel_pressure_too_high_recovery_limit",
+    "0.00"
+   ],
+   [
+    "0014",
+    "HPCR_Current_Min",
+    "fuel_metering_feedback_circuit_low_threshold",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_Current_Fault_Time",
+    "fuel_metering_feedback_circuit_debounce_limit",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_Low_Current_Fuel_Limit",
+    "fuel_metering_fault_fuel_limit",
+    "0.40"
+   ],
+   [
+    "001A",
+    "HPCR_Fuelpr_Test_Samples",
+    "fuel_pressure_too_high_count_limit",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM copy, value 200; limit of both counters. (was engine_sync_event_target)"
+ },
+ {
+  "address": "0x004090a0",
+  "block": "8041",
+  "offset": "0000",
+  "record": "HPCR_Pullin_Duration",
+  "unit": "uSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.4",
+  "min": "0",
+  "max": "26214",
+  "description": "Duration of pullin current",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "tpu_ch3_param_period_ref",
+  "references": 4,
+  "dump_raw": "1125",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_tpuMiosOutput_loadCalibration: DAT_00304138 = tpu_ch3_param_period_ref;",
+   "cm848_tpuMiosOutput_loadCalibration: DAT_0030413a = tpu_ch3_param_period_ref;",
+   "cm848_tpuMiosOutput_loadCalibration: DAT_0030413c = tpu_ch3_param_period_ref;",
+   "cm848_tpuMiosOutput_loadCalibration: DAT_0030413e = tpu_ch3_param_period_ref;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Pullin_Duration",
+    "tpu_ch3_param_period_ref",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Decay_Duration",
+    "injector_driver_decay_duration",
+    "0.67"
+   ],
+   [
+    "0004",
+    "HPCR_Delay_Duration",
+    "tpu_output_ch_param7_ref",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Recharge_Duration",
+    "injector_driver_recharge_duration",
+    "0.67"
+   ],
+   [
+    "000A",
+    "HPCR_UCBOOS_Period",
+    "mios_pwm16_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "000C",
+    "HPCR_UCBOOS_Voltage",
+    "mios_pwm16_duty_ref",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_URCHG_Period",
+    "mios_pwm17_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_URCHG_Voltage",
+    "mios_pwm17_duty_ref",
+    "0.00"
+   ],
+   [
+    "0012",
+    "HPCR_IRCHG_Period",
+    "tpu_ch14_period_base",
+    "0.33"
+   ],
+   [
+    "0014",
+    "HPCR_ISOLLH_Current",
+    "mios_pwm18_duty_ref",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_ISOLLA_Current",
+    "mios_pwm19_duty_ref",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_ISOLLH_Period",
+    "mios_pwm18_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HPCR_ISOLLA_Period",
+    "mios_pwm19_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0020",
+    "HPCR_Bank_Cutoff_Recharge_Interval",
+    "injector_driver_bank_cutoff_recharge_interval",
+    "0.80"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM; TPUA CH3 PARAM4-7 period reference"
+ },
+ {
+  "address": "0x004090a4",
+  "block": "8041",
+  "offset": "0004",
+  "record": "HPCR_Delay_Duration",
+  "unit": "uSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.4",
+  "min": "0",
+  "max": "26214",
+  "description": "Duration of delay between end of fat decay and next cylinder select",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "tpu_output_ch_param7_ref",
+  "references": 3,
+  "dump_raw": "100",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_tpuMiosOutput_loadCalibration: DAT_0030414e = tpu_output_ch_param7_ref;",
+   "cm848_tpuMiosOutput_loadCalibration: DAT_0030412e = tpu_output_ch_param7_ref;",
+   "cm848_tpuMiosOutput_loadCalibration: DAT_0030417e = tpu_output_ch_param7_ref;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Pullin_Duration",
+    "tpu_ch3_param_period_ref",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Decay_Duration",
+    "injector_driver_decay_duration",
+    "0.67"
+   ],
+   [
+    "0004",
+    "HPCR_Delay_Duration",
+    "tpu_output_ch_param7_ref",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Recharge_Duration",
+    "injector_driver_recharge_duration",
+    "0.67"
+   ],
+   [
+    "000A",
+    "HPCR_UCBOOS_Period",
+    "mios_pwm16_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "000C",
+    "HPCR_UCBOOS_Voltage",
+    "mios_pwm16_duty_ref",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_URCHG_Period",
+    "mios_pwm17_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0010",
+    "HPCR_URCHG_Voltage",
+    "mios_pwm17_duty_ref",
+    "0.00"
+   ],
+   [
+    "0012",
+    "HPCR_IRCHG_Period",
+    "tpu_ch14_period_base",
+    "0.33"
+   ],
+   [
+    "0014",
+    "HPCR_ISOLLH_Current",
+    "mios_pwm18_duty_ref",
+    "0.00"
+   ],
+   [
+    "0016",
+    "HPCR_ISOLLA_Current",
+    "mios_pwm19_duty_ref",
+    "0.00"
+   ],
+   [
+    "0018",
+    "HPCR_ISOLLH_Period",
+    "mios_pwm18_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "001A",
+    "HPCR_ISOLLA_Period",
+    "mios_pwm19_period_microseconds_ref",
+    "0.33"
+   ],
+   [
+    "0020",
+    "HPCR_Bank_Cutoff_Recharge_Interval",
+    "injector_driver_bank_cutoff_recharge_interval",
+    "0.80"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM; shared PARAM7 ref for TPUA CH2/4/7"
+ },
+ {
+  "address": "0x004094c4",
+  "block": "80EF",
+  "offset": "0002",
+  "record": "HPCR_Derivative_Gain_Small_Signal",
+  "unit": "%/MPa/SEC",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "7.6293E-8",
+  "min": "0",
+  "max": "327.6759",
+  "description": "Fuel pressure governor D-Component small signal gain",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_scale_cyl4_hi_cal",
+  "references": 3,
+  "dump_raw": "65537",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: uVar15 = CONCAT22(injection_timing_scale_cyl4_hi_cal,injection_timing_scale_cyl4_lo_cal) *",
+   "cm848_calculateFuelMeteringCommand: CONCAT22(injection_timing_scale_cyl4_hi_cal,",
+   "cm848_calculateFuelMeteringCommand: uStack_42 = injection_timing_scale_cyl4_hi_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Derivative_Gain_Constant",
+    "engine_sync_prot_gain_cal",
+    "0.25"
+   ],
+   [
+    "0002",
+    "HPCR_Derivative_Gain_Small_Signal",
+    "injection_timing_scale_cyl4_hi_cal",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Derivative_Gain_Positive_Large_Signal",
+    "injection_timing_scale_cyl5_hi_cal",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Derivative_Gain_Negative_Large_Signal",
+    "injection_timing_scale_cyl6_hi_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Derivative_Gain_Positive_Window_Width",
+    "engine_sync_prot_limit_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Derivative_Gain_Negative_Window_Width",
+    "engine_sync_prot_gain_b_cal",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004094c8",
+  "block": "80EF",
+  "offset": "0006",
+  "record": "HPCR_Derivative_Gain_Positive_Large_Signal",
+  "unit": "%/MPa/SEC",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "7.6293E-8",
+  "min": "0",
+  "max": "327.6759",
+  "description": "Fuel pressure governor D-Component positive large signal gain",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_scale_cyl5_hi_cal",
+  "references": 3,
+  "dump_raw": "262147",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: uVar15 = CONCAT22(injection_timing_scale_cyl5_hi_cal,injection_timing_scale_cyl5_lo_cal) *",
+   "cm848_calculateFuelMeteringCommand: CONCAT22(injection_timing_scale_cyl5_hi_cal,",
+   "cm848_calculateFuelMeteringCommand: local_3e = injection_timing_scale_cyl5_hi_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Derivative_Gain_Constant",
+    "engine_sync_prot_gain_cal",
+    "0.25"
+   ],
+   [
+    "0002",
+    "HPCR_Derivative_Gain_Small_Signal",
+    "injection_timing_scale_cyl4_hi_cal",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Derivative_Gain_Positive_Large_Signal",
+    "injection_timing_scale_cyl5_hi_cal",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Derivative_Gain_Negative_Large_Signal",
+    "injection_timing_scale_cyl6_hi_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Derivative_Gain_Positive_Window_Width",
+    "engine_sync_prot_limit_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Derivative_Gain_Negative_Window_Width",
+    "engine_sync_prot_gain_b_cal",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004094cc",
+  "block": "80EF",
+  "offset": "000A",
+  "record": "HPCR_Derivative_Gain_Negative_Large_Signal",
+  "unit": "%/MPa/SEC",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "7.6293E-8",
+  "min": "0",
+  "max": "327.6759",
+  "description": "Fuel pressure governor D-Component negative large signal gain",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_scale_cyl6_hi_cal",
+  "references": 3,
+  "dump_raw": "262147",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: uVar15 = CONCAT22(injection_timing_scale_cyl6_hi_cal,injection_timing_scale_cyl6_lo_cal) *",
+   "cm848_calculateFuelMeteringCommand: CONCAT22(injection_timing_scale_cyl6_hi_cal,",
+   "cm848_calculateFuelMeteringCommand: local_3a = injection_timing_scale_cyl6_hi_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Derivative_Gain_Constant",
+    "engine_sync_prot_gain_cal",
+    "0.25"
+   ],
+   [
+    "0002",
+    "HPCR_Derivative_Gain_Small_Signal",
+    "injection_timing_scale_cyl4_hi_cal",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Derivative_Gain_Positive_Large_Signal",
+    "injection_timing_scale_cyl5_hi_cal",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Derivative_Gain_Negative_Large_Signal",
+    "injection_timing_scale_cyl6_hi_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Derivative_Gain_Positive_Window_Width",
+    "engine_sync_prot_limit_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "HPCR_Derivative_Gain_Negative_Window_Width",
+    "engine_sync_prot_gain_b_cal",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b570",
+  "block": "8C4E",
+  "offset": "0006",
+  "record": "OSS_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.000122070",
+  "min": "0",
+  "max": "7.99527",
+  "description": "The in-use performance ratio for the Transmission OSS rationality",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "park_neutral_switch_monitor_state",
+  "references": 10,
+  "dump_raw": "1",
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_monitorParkNeutralSwitch: (driving check); result in park_neutral_switch_monitor_state / reserved_12 bit 4 (was",
+   "cm848_monitorParkNeutralSwitch: (park_neutral_switch_monitor_state != 4)))))) {",
+   "cm848_monitorParkNeutralSwitch: park_neutral_switch_monitor_state = 1;",
+   "cm848_monitorParkNeutralSwitch: park_neutral_switch_monitor_state = 3;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "OSS_Fault_Timer",
+    "output_speed_sensor_check_fault_set_timer",
+    "0.67"
+   ],
+   [
+    "0002",
+    "OSS_Passed_Timer",
+    "output_speed_sensor_check_fault_heal_timer",
+    "0.33"
+   ],
+   [
+    "0004",
+    "OSS_Rationality_Monitor_State",
+    "output_speed_sensor_check_state",
+    "0.25"
+   ],
+   [
+    "0006",
+    "OSS_Ratio",
+    "park_neutral_switch_monitor_state",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [
+   "Gov_Press_Control_Ratio",
+   "RE_PN_Rationality_Status"
+  ],
+  "current_comment": "P0850 park/neutral switch monitor: 0 reset / 1 start check running / 2 passed / 3 failed (sets reserved_12 bit 4 = P0850) / 4 aborted until the next power-up by a P0500 vehicle speed / P1762 governor pressure / P0868 P0869 / P0606 fault (was fuel_temp_derate_state)"
+ },
+ {
+  "address": "0x0040b0ac",
+  "block": "8D14",
+  "offset": "0000",
+  "record": "RE_Cruise_Resume_Downshift_Timer",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "10.0",
+  "min": "0",
+  "max": "320000",
+  "description": "Time used to delay a 4-3 downshift in cruise resume mode",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_overtemp_dwell_counter",
+  "references": 4,
+  "dump_raw": "150",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_processOverdriveSwitchAndShift: (protection_overtemp_dwell_counter == 0)))))) &&",
+   "cm848_processOverdriveSwitchAndShift: if (protection_overtemp_dwell_counter == 0) {",
+   "cm848_processOverdriveSwitchAndShift: wVar1 = protection_overtemp_dwell_counter - 1;",
+   "cm848_processOverdriveSwitchAndShift: protection_overtemp_dwell_counter = wVar1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "RE_Cruise_Resume_Downshift_Timer",
+    "protection_overtemp_dwell_counter",
+    "0.00"
+   ],
+   [
+    "0002",
+    "RE_Brake_Delay_4_3_Timer",
+    "protection_scaled_limit_b",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Transmission_Tow_Mode_Lamp",
+    "protection_load_rate_divisor",
+    "0.00"
+   ],
+   [
+    "000A",
+    "RE_EB_4_3_Cmd_Timer",
+    "protection_rate_integrator_snapshot",
+    "0.00"
+   ],
+   [
+    "000C",
+    "RE_EB_Delay_4_3_Timer",
+    "protection_load_upper_bound",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_TCC_Lock_State",
+    "protection_load_delta_filtered",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "overtemp protection dwell countdown (derate level 4)"
+ },
+ {
+  "address": "0x0040b0ae",
+  "block": "8D14",
+  "offset": "0002",
+  "record": "RE_Brake_Delay_4_3_Timer",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "10.0",
+  "min": "0",
+  "max": "320000",
+  "description": "Brake Switch and timer = 0, allow 4-3 downshift",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_scaled_limit_b",
+  "references": 4,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_protectionRateOfChangeCalculation: protection_scaled_limit_b =",
+   "cm848_protectionRateOfChangeCalculation: protection_load_delta_filtered = protection_scaled_limit_b - protection_rate_integrator_quotient",
+   "cm848_calculateProtectionFuelDemandThreshold: protection_scaled_limit_b =",
+   "cm848_calculateProtectionFuelDemandThreshold: protection_scaled_limit_delta = protection_scaled_limit_current - protection_scaled_limit_b;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "RE_Cruise_Resume_Downshift_Timer",
+    "protection_overtemp_dwell_counter",
+    "0.00"
+   ],
+   [
+    "0002",
+    "RE_Brake_Delay_4_3_Timer",
+    "protection_scaled_limit_b",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Transmission_Tow_Mode_Lamp",
+    "protection_load_rate_divisor",
+    "0.00"
+   ],
+   [
+    "000A",
+    "RE_EB_4_3_Cmd_Timer",
+    "protection_rate_integrator_snapshot",
+    "0.00"
+   ],
+   [
+    "000C",
+    "RE_EB_Delay_4_3_Timer",
+    "protection_load_upper_bound",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_TCC_Lock_State",
+    "protection_load_delta_filtered",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b0b0",
+  "block": "8D14",
+  "offset": "0004",
+  "record": "Transmission_Tow_Mode_Lamp",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "1",
+  "description": "Tow Mode lamp state command to the dash",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_load_rate_divisor",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_protectionRateOfChangeCalculation: uVar3 = (uint)protection_load_rate_divisor;",
+   "cm848_calculateProtectionFuelDemandThreshold: protection_load_rate_divisor = protection_load_rate_b;",
+   "mpc555_initProtectionFilterVariables: protection_load_rate_divisor = DAT_0040781c;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "RE_Cruise_Resume_Downshift_Timer",
+    "protection_overtemp_dwell_counter",
+    "0.00"
+   ],
+   [
+    "0002",
+    "RE_Brake_Delay_4_3_Timer",
+    "protection_scaled_limit_b",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Transmission_Tow_Mode_Lamp",
+    "protection_load_rate_divisor",
+    "0.00"
+   ],
+   [
+    "000A",
+    "RE_EB_4_3_Cmd_Timer",
+    "protection_rate_integrator_snapshot",
+    "0.00"
+   ],
+   [
+    "000C",
+    "RE_EB_Delay_4_3_Timer",
+    "protection_load_upper_bound",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_TCC_Lock_State",
+    "protection_load_delta_filtered",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b0b8",
+  "block": "8D14",
+  "offset": "000C",
+  "record": "RE_EB_Delay_4_3_Timer",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "10.0",
+  "min": "0",
+  "max": "320000",
+  "description": "Timer used to delay 4-3 shift for ebrake",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_load_upper_bound",
+  "references": 7,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 2, 'lha': 3} -> 2 byte",
+  "code": [
+   "cm848_protectionRateOfChangeCalculation: protection_load_upper_bound = 0x7fff;",
+   "cm848_protectionRateOfChangeCalculation: protection_load_upper_bound = wStack_16;",
+   "cm848_protectionRateOfChangeCalculation: protection_load_upper_bound = 0;",
+   "cm848_processProtectionStateFlags: ((short)protection_scaled_limit_output < (short)protection_load_upper_bound)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "RE_Cruise_Resume_Downshift_Timer",
+    "protection_overtemp_dwell_counter",
+    "0.00"
+   ],
+   [
+    "0002",
+    "RE_Brake_Delay_4_3_Timer",
+    "protection_scaled_limit_b",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Transmission_Tow_Mode_Lamp",
+    "protection_load_rate_divisor",
+    "0.00"
+   ],
+   [
+    "000A",
+    "RE_EB_4_3_Cmd_Timer",
+    "protection_rate_integrator_snapshot",
+    "0.00"
+   ],
+   [
+    "000C",
+    "RE_EB_Delay_4_3_Timer",
+    "protection_load_upper_bound",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_TCC_Lock_State",
+    "protection_load_delta_filtered",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b0ba",
+  "block": "8D14",
+  "offset": "000E",
+  "record": "RE_TCC_Lock_State",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Indicates the logic controlling the torque converter driver",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_load_delta_filtered",
+  "references": 6,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_protectionRateOfChangeCalculation: protection_load_delta_filtered = protection_scaled_limit_b - protection_rate_integrator_quotient",
+   "cm848_protectionRateOfChangeCalculation: if ((short)protection_load_delta_filtered < -5000) {",
+   "cm848_protectionRateOfChangeCalculation: protection_load_delta_filtered = 0xec78;",
+   "cm848_protectionRateOfChangeCalculation: else if (5000 < (short)protection_load_delta_filtered) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "RE_Cruise_Resume_Downshift_Timer",
+    "protection_overtemp_dwell_counter",
+    "0.00"
+   ],
+   [
+    "0002",
+    "RE_Brake_Delay_4_3_Timer",
+    "protection_scaled_limit_b",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Transmission_Tow_Mode_Lamp",
+    "protection_load_rate_divisor",
+    "0.00"
+   ],
+   [
+    "000A",
+    "RE_EB_4_3_Cmd_Timer",
+    "protection_rate_integrator_snapshot",
+    "0.00"
+   ],
+   [
+    "000C",
+    "RE_EB_Delay_4_3_Timer",
+    "protection_load_upper_bound",
+    "0.00"
+   ],
+   [
+    "000E",
+    "RE_TCC_Lock_State",
+    "protection_load_delta_filtered",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ }
+]

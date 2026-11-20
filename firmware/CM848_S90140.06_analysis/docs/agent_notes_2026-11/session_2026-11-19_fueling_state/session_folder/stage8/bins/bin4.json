@@ -1,0 +1,5221 @@
+[
+ {
+  "address": "0x0040bb0a",
+  "block": "001B",
+  "offset": "0000",
+  "record": "Percent_Throttle",
+  "unit": "%THROTTLE",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.25",
+  "min": "0",
+  "max": "100",
+  "description": "VALIDATED PERCENT THROTTLE COMMANDED BY DRIVER",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "accelerator_pedal_sensor_filtered",
+  "references": 4,
+  "dump_raw": "27",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_fuelDemandBaseCalculation: uVar2 = (uint)accelerator_pedal_sensor_filtered;",
+   "cm848_fuelDemandBaseCalculation: accelerator_pedal_sensor_counts = accelerator_pedal_sensor_filtered;",
+   "cm848_fuelDemandFinalCalculation: fuel_demand_control_t_0040a57a.calculated = accelerator_pedal_sensor_filtered;",
+   "cm848_fuelDemandFinalCalculation: pwVar1 = &accelerator_pedal_sensor_filtered;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Percent_Throttle",
+    "accelerator_pedal_sensor_filtered",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "sensor_channel_filtered_output[13]: filtered accelerator pedal sensor counts (channel 13 = the pedal sensor); read by cm848_fuelDemandBaseCalculation and cm848_fuelDemandFinalCalculation (was throttle_fuel_demand_adjusted - same name as 0x3fa6ee)"
+ },
+ {
+  "address": "0x003fddb8",
+  "block": "0039",
+  "offset": "0002",
+  "record": "Collector_Trigger",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "1",
+  "min": "0",
+  "max": "1",
+  "description": "activates/deactivates collection of data",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "diag_dm1_protection_warning_active",
+  "references": 7,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 3, 'lha': 3} -> 2 byte",
+  "code": [
+   "diag_dm1Buffer_circularFill: diag_dm1_protection_warning_active = 1;",
+   "diag_dm1Buffer_circularFill: diag_dm1_protection_warning_active = 1;",
+   "hpcr_exception_process: diag_dm1_protection_warning_active = 0;",
+   "cm848_phase_groupB_calculation: diag_dm1_protection_warning_active = 1;"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Collector_Trigger",
+    "diag_dm1_protection_warning_active",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "set when protection warning active; selects DM1 fill mode"
+ },
+ {
+  "address": "0x0040afb2",
+  "block": "105D",
+  "offset": "0006",
+  "record": "Torque_Derate_Fueling_2",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[FLLMAHFL] Smallest derate fueling value among group 2 (AH) derate algorithms",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_minimum_tracked",
+  "references": 15,
+  "dump_raw": "1299",
+  "access_widths": "{'lhz': 4, 'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_applyAirFuelControlFuelLimit: if (air_fuel_control_fuel_limit < fuel_demand_minimum_tracked) {",
+   "cm848_applyAirFuelControlFuelLimit: fuel_demand_minimum_tracked = air_fuel_control_fuel_limit;",
+   "cm848_arbitrateRequestedFueling: smaller of that and fuel_demand_minimum_tracked into fuel_demand_arbitrated /",
+   "cm848_arbitrateRequestedFueling: if (fuel_demand_arbitrated_a < fuel_demand_minimum_tracked) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Torque_Derate_Fueling",
+    "torque_derate_fuel_quantity",
+    "0.67"
+   ],
+   [
+    "0002",
+    "Torque_Derate_Fueling_State",
+    "torque_derate_fuel_source_code",
+    "0.50"
+   ],
+   [
+    "0004",
+    "FSS_Fueling_Derate",
+    "fuel_pressure_fault_fuel_limit_working",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Torque_Derate_Fueling_2",
+    "fuel_demand_minimum_tracked",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Torque_Derate_Fueling_State_2",
+    "fuel_demand_minimum_tracked_state",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a813",
+  "block": "1092",
+  "offset": "0000",
+  "record": "System_Switch_Status",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSSWSS01] bit mapped system switch status",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "diagnostic_fault_flags_a",
+  "references": 8,
+  "dump_raw": "96",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "diagnosticMainStateProcessor: uVar1 = diagnostic_fault_flags_a & 0xfffb;",
+   "diagnosticMainStateProcessor: uVar1 = diagnostic_fault_flags_a | 4;",
+   "diagnosticMainStateProcessor: diagnostic_fault_flags_a = uVar1 & 0xbfff;",
+   "diagnosticMainStateProcessor: diagnostic_fault_flags_a = uVar1 | 0x4000;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Switch_Status",
+    "diagnostic_fault_flags_a",
+    "0.00"
+   ],
+   [
+    "0002",
+    "System_Switch_Status_2",
+    "diagnostic_fault_flags_b",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a815",
+  "block": "1092",
+  "offset": "0002",
+  "record": "System_Switch_Status_2",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSSWSS02] bit mapped system switch status",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "diagnostic_fault_flags_b",
+  "references": 8,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "diagnosticMainStateProcessor: uVar1 = diagnostic_fault_flags_b & 0xfffe;",
+   "diagnosticMainStateProcessor: uVar1 = diagnostic_fault_flags_b | 1;",
+   "diagnosticMainStateProcessor: diagnostic_fault_flags_b = uVar1 & 0xefff;",
+   "diagnosticMainStateProcessor: diagnostic_fault_flags_b = uVar1 | 0x1000;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "System_Switch_Status",
+    "diagnostic_fault_flags_a",
+    "0.00"
+   ],
+   [
+    "0002",
+    "System_Switch_Status_2",
+    "diagnostic_fault_flags_b",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005a470",
+  "block": "10E3",
+  "offset": "0004",
+  "record": "Jcomm_Trans_Source_Address",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "255",
+  "description": "[JCTRSA] Jcomm Transmission Source Address 1939 source address for transmission ECM",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_tsc1_auth_primary_sa",
+  "references": 12,
+  "dump_raw": "3",
+  "access_widths": "{'lhz': 8} -> 2 byte",
+  "code": [
+   "cm848_j1939ProcessPgn61442Etc1: if ((rx_msg->source_address != j1939_tsc1_auth_primary_sa) && (j1939_tsc1_auth_primary_sa != 0xff)",
+   "cm848_j1939ProcessPgn61442Etc1: if ((rx_msg->source_address != j1939_tsc1_auth_primary_sa) && (j1939_tsc1_auth_primary_sa != 0xff)",
+   "cm848_j1939ProcessPgn61445Etc2: j1939_tsc1_auth_primary_sa (any when 0xff) - byte 1 (SPN 524 selected gear) into",
+   "cm848_j1939ProcessPgn61445Etc2: if (((*(byte *)(param_1 + 3) == j1939_tsc1_auth_primary_sa) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1939_Default_Engine_Source_Address",
+    "j1939_default_engine_source_address",
+    "1.00"
+   ],
+   [
+    "0002",
+    "J1939_Default_Retarder_Source_Address",
+    "j1939_default_retarder_source_address",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0022",
+    "Jcomm_DD_CC_I_Gain",
+    "j1939_diagnostic_vehicle_speed_in_freeze_frame_flag",
+    "0.00"
+   ],
+   [
+    "0024",
+    "Jcomm_DD_PTO_I_Gain",
+    "obd_compliance_code",
+    "0.00"
+   ],
+   [
+    "0026",
+    "DDT_TSC_ASG_Filter_Constant",
+    "supported_continuous_monitors_bits",
+    "0.00"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005a472",
+  "block": "10E3",
+  "offset": "0006",
+  "record": "Jcomm_ABS_Source_Address",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "255",
+  "description": "[JCABSA] Jcomm ABS Source Address source address for anti-lock brake device",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_tsc1_secondary_sa",
+  "references": 3,
+  "dump_raw": "11",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_lookupJ1939SourceAddressIndex: else if ((j1939_tsc1_secondary_sa & 0xff) == source_address) {",
+   "cm848_updateParkNeutralFlagAndTsc1Activity: cm848_removeEngineTsc1IgnoredRequestEntry(1,j1939_tsc1_secondary_sa & 0xff);",
+   "cm848_updateParkNeutralFlagAndTsc1Activity: cm848_addEngineTsc1IgnoredRequestEntry(1,j1939_tsc1_secondary_sa & 0xff,bVar3);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1939_Default_Engine_Source_Address",
+    "j1939_default_engine_source_address",
+    "1.00"
+   ],
+   [
+    "0002",
+    "J1939_Default_Retarder_Source_Address",
+    "j1939_default_retarder_source_address",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0022",
+    "Jcomm_DD_CC_I_Gain",
+    "j1939_diagnostic_vehicle_speed_in_freeze_frame_flag",
+    "0.00"
+   ],
+   [
+    "0024",
+    "Jcomm_DD_PTO_I_Gain",
+    "obd_compliance_code",
+    "0.00"
+   ],
+   [
+    "0026",
+    "DDT_TSC_ASG_Filter_Constant",
+    "supported_continuous_monitors_bits",
+    "0.00"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005a474",
+  "block": "10E3",
+  "offset": "0008",
+  "record": "Jcomm_ASR_Source_Address",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "255",
+  "description": "[JCARSA] Jcomm ASR Source Address source address for anti-slip regulation device",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_tsc1_auth_tertiary_sa",
+  "references": 3,
+  "dump_raw": "33",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_lookupJ1939SourceAddressIndex: else if ((j1939_tsc1_auth_tertiary_sa & 0xff) == source_address) {",
+   "cm848_updateParkNeutralFlagAndTsc1Activity: cm848_removeEngineTsc1IgnoredRequestEntry(1,j1939_tsc1_auth_tertiary_sa & 0xff);",
+   "cm848_updateParkNeutralFlagAndTsc1Activity: cm848_addEngineTsc1IgnoredRequestEntry(1,j1939_tsc1_auth_tertiary_sa & 0xff,bVar3);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1939_Default_Engine_Source_Address",
+    "j1939_default_engine_source_address",
+    "1.00"
+   ],
+   [
+    "0002",
+    "J1939_Default_Retarder_Source_Address",
+    "j1939_default_retarder_source_address",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0022",
+    "Jcomm_DD_CC_I_Gain",
+    "j1939_diagnostic_vehicle_speed_in_freeze_frame_flag",
+    "0.00"
+   ],
+   [
+    "0024",
+    "Jcomm_DD_PTO_I_Gain",
+    "obd_compliance_code",
+    "0.00"
+   ],
+   [
+    "0026",
+    "DDT_TSC_ASG_Filter_Constant",
+    "supported_continuous_monitors_bits",
+    "0.00"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0005a494",
+  "block": "10E3",
+  "offset": "0028",
+  "record": "DDT_TSC_ASG_Filter_Slew_Rate",
+  "unit": "1/SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "30.517578E-6",
+  "min": "0.000",
+  "max": "1.000",
+  "description": "Calibrated transition slew rate for driver demand msg. ASG throttle speed ref.",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_feature_config_word",
+  "references": 6,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_j1939HandlePgn58112Dm7: if ((j1939_dm1_request_mode_byte == 0) && ((j1939_feature_config_word & 0x100) != 0)) {",
+   "cm848_j1939HandlePgn58112Dm7: else if ((j1939_dm1_request_mode_byte == 1) && ((j1939_feature_config_word & 0x200) != 0)) {",
+   "cm848_j1939HandlePgn65234Dm10: j1939_dm11_feature_config_word = j1939_reverseByteOrder16(&j1939_feature_config_word);",
+   "cm848_j1939HandlePgn65230Dm5Readiness: j1939_feature_config_tx_word = j1939_reverseByteOrder16(&j1939_feature_config_word);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "J1939_Default_Engine_Source_Address",
+    "j1939_default_engine_source_address",
+    "1.00"
+   ],
+   [
+    "0002",
+    "J1939_Default_Retarder_Source_Address",
+    "j1939_default_retarder_source_address",
+    "1.00"
+   ],
+   [
+    "0004",
+    "Jcomm_Trans_Source_Address",
+    "j1939_tsc1_auth_primary_sa",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Jcomm_ABS_Source_Address",
+    "j1939_tsc1_secondary_sa",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Jcomm_ASR_Source_Address",
+    "j1939_tsc1_auth_tertiary_sa",
+    "0.00"
+   ],
+   [
+    "001E",
+    "Final_Timing_Offset",
+    "injection_timing_top_dead_center_offset",
+    "0.67"
+   ],
+   [
+    "0022",
+    "Jcomm_DD_CC_I_Gain",
+    "j1939_diagnostic_vehicle_speed_in_freeze_frame_flag",
+    "0.00"
+   ],
+   [
+    "0024",
+    "Jcomm_DD_PTO_I_Gain",
+    "obd_compliance_code",
+    "0.00"
+   ],
+   [
+    "0026",
+    "DDT_TSC_ASG_Filter_Constant",
+    "supported_continuous_monitors_bits",
+    "0.00"
+   ],
+   [
+    "0028",
+    "DDT_TSC_ASG_Filter_Slew_Rate",
+    "j1939_feature_config_word",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [
+   "Supported_Non_Continuous_Monitors"
+  ],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a64b",
+  "block": "111F",
+  "offset": "0003",
+  "record": "DC_Mon_Map_Reset",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "1",
+  "description": "Set to TRUE to reset the duty cycle monitor map",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "fuel_demand_cmd20_pending_flag",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'stb': 1} -> 1 byte",
+  "code": [
+   "cm848_sciCommand35Callback: fuel_demand_cmd20_pending_flag = 1;",
+   "cm848_outputs2_periodic: if (fuel_demand_cmd20_pending_flag != 0) {",
+   "cm848_outputs2_periodic: fuel_demand_cmd20_pending_flag = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "DC_Mon_Load_Factor",
+    "duty_cycle_monitor_load_factor",
+    "0.50"
+   ],
+   [
+    "0003",
+    "DC_Mon_Map_Reset",
+    "fuel_demand_cmd20_pending_flag",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a26c",
+  "block": "117D",
+  "offset": "0004",
+  "record": "E_Brake_Status",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[EBSS] Status of whether operating conditions indicate desire for brake activation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_retarder_active_flag",
+  "references": 15,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 6, 'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_selectChargeManagerMassChargeFlowCommand: engine_retarder_active_flag is 1 and mass_charge_flow_combustion_command otherwise;",
+   "cm848_selectChargeManagerMassChargeFlowCommand: if (engine_retarder_active_flag != 1) {",
+   "cm848_calculateWastegateDutyRequest: if (engine_retarder_active_flag == 0) {",
+   "cm848_updateEngineState: SHUTDOWN) from the engine speed, the governor setpoint, engine_retarder_active_flag and the"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_Status",
+    "cruise_control_engaged_flag",
+    "0.67"
+   ],
+   [
+    "0002",
+    "Cruise_Control_Reference_Speed",
+    "cruise_speed_command",
+    "0.50"
+   ],
+   [
+    "0004",
+    "E_Brake_Status",
+    "engine_retarder_active_flag",
+    "0.00"
+   ],
+   [
+    "0006",
+    "EB_Switch_Status",
+    "engine_retarder_selection_percent_fault_masked",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Road_Speed",
+    "vehicle_speed",
+    "0.50"
+   ],
+   [
+    "000C",
+    "Filtered_Gear_Ratio",
+    "drivetrain_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Out_Of_Gear",
+    "drivetrain_ratio_unsettled_flag",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Zero_Vss_Derate_RPM",
+    "engine_speed_limit_source_2",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Vss_Tamper_Derate_RPM",
+    "engine_speed_limit_source_4",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Max_Road_Speed",
+    "j1939_cruise_speed_setpoint",
+    "0.33"
+   ],
+   [
+    "0018",
+    "PP_Active_Selection",
+    "torque_limit_init_flag",
+    "0.00"
+   ],
+   [
+    "0026",
+    "VSS_Valid_Flag",
+    "vehicle_speed_sensor_ok_flag",
+    "0.33"
+   ],
+   [
+    "0028",
+    "EB_Switch_Level",
+    "engine_retarder_selection_percent",
+    "0.25"
+   ],
+   [
+    "0030",
+    "Rear_Axle_Ratio",
+    "protection_temp_scale_factor",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Set 1 / 0 by cm848_updateEngineRetarderActiveState from the arbitrated request (held during a shift); read by cm848_selectChargeManagerMassChargeFlowCommand, cm848_calculateWastegateDutyRequest, cm848_determineCurrentGearAndLockupInhibit, cm848_processOverdriveSwitchAndShift and cm848_updateEngineState. (was fuel_mode_switch_state)"
+ },
+ {
+  "address": "0x0040a276",
+  "block": "117D",
+  "offset": "000E",
+  "record": "Out_Of_Gear",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[GROGSS] Indicator set when an out of gear condition is detected",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "drivetrain_ratio_unsettled_flag",
+  "references": 10,
+  "dump_raw": "1",
+  "access_widths": "{'lhz': 2, 'sth': 3} -> 2 byte",
+  "code": [
+   "cm848_runOperatingModeSpeedGovernor: ((drivetrain_ratio_unsettled_flag == 0 || (transmission_type_cal != 0)))))) &&",
+   "cm848_calculateHighSpeedGovernorCompensatedEngineSpeed: (drivetrain_ratio_unsettled_flag == 0)) ||",
+   "cm848_initializeVehicleSpeedAndCruiseState: drivetrain_ratio, drivetrain_ratio_unsettled_flag and j1939_prop_status_tx_state are 0 and",
+   "cm848_initializeVehicleSpeedAndCruiseState: drivetrain_ratio_unsettled_flag = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_Status",
+    "cruise_control_engaged_flag",
+    "0.67"
+   ],
+   [
+    "0002",
+    "Cruise_Control_Reference_Speed",
+    "cruise_speed_command",
+    "0.50"
+   ],
+   [
+    "0004",
+    "E_Brake_Status",
+    "engine_retarder_active_flag",
+    "0.00"
+   ],
+   [
+    "0006",
+    "EB_Switch_Status",
+    "engine_retarder_selection_percent_fault_masked",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Road_Speed",
+    "vehicle_speed",
+    "0.50"
+   ],
+   [
+    "000C",
+    "Filtered_Gear_Ratio",
+    "drivetrain_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Out_Of_Gear",
+    "drivetrain_ratio_unsettled_flag",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Zero_Vss_Derate_RPM",
+    "engine_speed_limit_source_2",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Vss_Tamper_Derate_RPM",
+    "engine_speed_limit_source_4",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Max_Road_Speed",
+    "j1939_cruise_speed_setpoint",
+    "0.33"
+   ],
+   [
+    "0018",
+    "PP_Active_Selection",
+    "torque_limit_init_flag",
+    "0.00"
+   ],
+   [
+    "0026",
+    "VSS_Valid_Flag",
+    "vehicle_speed_sensor_ok_flag",
+    "0.33"
+   ],
+   [
+    "0028",
+    "EB_Switch_Level",
+    "engine_retarder_selection_percent",
+    "0.25"
+   ],
+   [
+    "0030",
+    "Rear_Axle_Ratio",
+    "protection_temp_scale_factor",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: protectionTimeoutControl (the drivetrain ratio estimator) sets it to 1 when vehicle_speed is below vehicle_speed_minimum or during cranking, while the ratio settle counters / release timer run or etc1_disable_control is 1, and clears it only when all of them are 0; etcTransmissionModeControl copies etc1_disable_control into it on the J1939 automatic drivetrains. Read by ... (was fuel_trim_speed_override_flag)"
+ },
+ {
+  "address": "0x0040a298",
+  "block": "117D",
+  "offset": "0030",
+  "record": "Rear_Axle_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "1.0",
+  "max": "20.0",
+  "description": "[VSRRAXRA] RATIO OF TRANS TO AXLE REVS - (can vary for 2 spd apps)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_temp_scale_factor",
+  "references": 7,
+  "dump_raw": "453",
+  "access_widths": "{'lhz': 3, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateRiseLimitedVehicleSpeed: uVar1 = ((uint)protection_timing_period_cal * (uint)protection_temp_scale_factor) / 0x3c & 0x7fff;",
+   "cm848_processGovernorSpeedSetpoint: uVar1 = (uint)drivetrain_ratio * (uint)protection_temp_scale_factor >> 0xb;",
+   "cm848_applyProtectionControlLimit: (protection_temp_scale_factor = protection_temp_scale_cal,",
+   "cm848_applyProtectionControlLimit: protection_temp_scale_factor = protection_temp_scale_factor_working;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_Status",
+    "cruise_control_engaged_flag",
+    "0.67"
+   ],
+   [
+    "0002",
+    "Cruise_Control_Reference_Speed",
+    "cruise_speed_command",
+    "0.50"
+   ],
+   [
+    "0004",
+    "E_Brake_Status",
+    "engine_retarder_active_flag",
+    "0.00"
+   ],
+   [
+    "0006",
+    "EB_Switch_Status",
+    "engine_retarder_selection_percent_fault_masked",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Road_Speed",
+    "vehicle_speed",
+    "0.50"
+   ],
+   [
+    "000C",
+    "Filtered_Gear_Ratio",
+    "drivetrain_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Out_Of_Gear",
+    "drivetrain_ratio_unsettled_flag",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Zero_Vss_Derate_RPM",
+    "engine_speed_limit_source_2",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Vss_Tamper_Derate_RPM",
+    "engine_speed_limit_source_4",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Max_Road_Speed",
+    "j1939_cruise_speed_setpoint",
+    "0.33"
+   ],
+   [
+    "0018",
+    "PP_Active_Selection",
+    "torque_limit_init_flag",
+    "0.00"
+   ],
+   [
+    "0026",
+    "VSS_Valid_Flag",
+    "vehicle_speed_sensor_ok_flag",
+    "0.33"
+   ],
+   [
+    "0028",
+    "EB_Switch_Level",
+    "engine_retarder_selection_percent",
+    "0.25"
+   ],
+   [
+    "0030",
+    "Rear_Axle_Ratio",
+    "protection_temp_scale_factor",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a2b4",
+  "block": "117D",
+  "offset": "004C",
+  "record": "Powerdown_Delay_Request",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SDDYFG] The ECM will not powerdown until this is inactive",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "governor_speed_engage_reset_flag",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_updateEngineState: (((ecm_power_down_timer != 0 && (governor_speed_engage_reset_flag._0_2_ == 0)) &&",
+   "cm848_updateEngineState: governor_speed_engage_reset_flag._0_2_ = 0;",
+   "cm848_setFuelDemandActiveFlag: governor_speed_engage_reset_flag._0_2_ = 1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_Status",
+    "cruise_control_engaged_flag",
+    "0.67"
+   ],
+   [
+    "0002",
+    "Cruise_Control_Reference_Speed",
+    "cruise_speed_command",
+    "0.50"
+   ],
+   [
+    "0004",
+    "E_Brake_Status",
+    "engine_retarder_active_flag",
+    "0.00"
+   ],
+   [
+    "0006",
+    "EB_Switch_Status",
+    "engine_retarder_selection_percent_fault_masked",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Road_Speed",
+    "vehicle_speed",
+    "0.50"
+   ],
+   [
+    "000C",
+    "Filtered_Gear_Ratio",
+    "drivetrain_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Out_Of_Gear",
+    "drivetrain_ratio_unsettled_flag",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Zero_Vss_Derate_RPM",
+    "engine_speed_limit_source_2",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Vss_Tamper_Derate_RPM",
+    "engine_speed_limit_source_4",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Max_Road_Speed",
+    "j1939_cruise_speed_setpoint",
+    "0.33"
+   ],
+   [
+    "0018",
+    "PP_Active_Selection",
+    "torque_limit_init_flag",
+    "0.00"
+   ],
+   [
+    "0026",
+    "VSS_Valid_Flag",
+    "vehicle_speed_sensor_ok_flag",
+    "0.33"
+   ],
+   [
+    "0028",
+    "EB_Switch_Level",
+    "engine_retarder_selection_percent",
+    "0.25"
+   ],
+   [
+    "0030",
+    "Rear_Axle_Ratio",
+    "protection_temp_scale_factor",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040a2c6",
+  "block": "117D",
+  "offset": "005E",
+  "record": "ESP_Tau_State",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "65535",
+  "description": "[SPTUST] Indicates the source of the current ESP_Tau value.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_speed_offset_mode",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "governor_cruise_speedReference_update: if (((cruise_speed_offset_mode != 0) &&",
+   "governor_cruise_speedReference_update: cruise_speed_offset_mode != 1)) &&",
+   "governor_cruise_speedReference_update: (cruise_speed_offset_c = cruise_top_droop_offset_tau_1, cruise_speed_offset_mode != 2)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_Status",
+    "cruise_control_engaged_flag",
+    "0.67"
+   ],
+   [
+    "0002",
+    "Cruise_Control_Reference_Speed",
+    "cruise_speed_command",
+    "0.50"
+   ],
+   [
+    "0004",
+    "E_Brake_Status",
+    "engine_retarder_active_flag",
+    "0.00"
+   ],
+   [
+    "0006",
+    "EB_Switch_Status",
+    "engine_retarder_selection_percent_fault_masked",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Road_Speed",
+    "vehicle_speed",
+    "0.50"
+   ],
+   [
+    "000C",
+    "Filtered_Gear_Ratio",
+    "drivetrain_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Out_Of_Gear",
+    "drivetrain_ratio_unsettled_flag",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Zero_Vss_Derate_RPM",
+    "engine_speed_limit_source_2",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Vss_Tamper_Derate_RPM",
+    "engine_speed_limit_source_4",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Max_Road_Speed",
+    "j1939_cruise_speed_setpoint",
+    "0.33"
+   ],
+   [
+    "0018",
+    "PP_Active_Selection",
+    "torque_limit_init_flag",
+    "0.00"
+   ],
+   [
+    "0026",
+    "VSS_Valid_Flag",
+    "vehicle_speed_sensor_ok_flag",
+    "0.33"
+   ],
+   [
+    "0028",
+    "EB_Switch_Level",
+    "engine_retarder_selection_percent",
+    "0.25"
+   ],
+   [
+    "0030",
+    "Rear_Axle_Ratio",
+    "protection_temp_scale_factor",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "cruise speed offset mode selector 0/1/2"
+ },
+ {
+  "address": "0x0040a2c8",
+  "block": "117D",
+  "offset": "0060",
+  "record": "Cruise_Resume_Status",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Status of the Cruise Control Resume",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_enable_sync_flag",
+  "references": 7,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 3, 'sth': 3} -> 2 byte",
+  "code": [
+   "cm848_arbitrateGovernedFueling: fuel_demand_enable_sync_flag_shadow = fuel_demand_enable_sync_flag;",
+   "cm848_cruiseSpeedCommandStateMachine: fuel_demand_enable_sync_flag = 0;",
+   "cm848_cruiseSpeedCommandStateMachine: fuel_demand_enable_sync_flag = 1;",
+   "cm848_cruiseSpeedCommandStateMachine: fuel_demand_enable_sync_flag = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_Control_Status",
+    "cruise_control_engaged_flag",
+    "0.67"
+   ],
+   [
+    "0002",
+    "Cruise_Control_Reference_Speed",
+    "cruise_speed_command",
+    "0.50"
+   ],
+   [
+    "0004",
+    "E_Brake_Status",
+    "engine_retarder_active_flag",
+    "0.00"
+   ],
+   [
+    "0006",
+    "EB_Switch_Status",
+    "engine_retarder_selection_percent_fault_masked",
+    "0.25"
+   ],
+   [
+    "000A",
+    "Road_Speed",
+    "vehicle_speed",
+    "0.50"
+   ],
+   [
+    "000C",
+    "Filtered_Gear_Ratio",
+    "drivetrain_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "Out_Of_Gear",
+    "drivetrain_ratio_unsettled_flag",
+    "0.00"
+   ],
+   [
+    "0010",
+    "Zero_Vss_Derate_RPM",
+    "engine_speed_limit_source_2",
+    "0.25"
+   ],
+   [
+    "0012",
+    "Vss_Tamper_Derate_RPM",
+    "engine_speed_limit_source_4",
+    "0.25"
+   ],
+   [
+    "0016",
+    "Max_Road_Speed",
+    "j1939_cruise_speed_setpoint",
+    "0.33"
+   ],
+   [
+    "0018",
+    "PP_Active_Selection",
+    "torque_limit_init_flag",
+    "0.00"
+   ],
+   [
+    "0026",
+    "VSS_Valid_Flag",
+    "vehicle_speed_sensor_ok_flag",
+    "0.33"
+   ],
+   [
+    "0028",
+    "EB_Switch_Level",
+    "engine_retarder_selection_percent",
+    "0.25"
+   ],
+   [
+    "0030",
+    "Rear_Axle_Ratio",
+    "protection_temp_scale_factor",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd930",
+  "block": "1195",
+  "offset": "0002",
+  "record": "GR_Constant",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00048828125",
+  "min": "0.0039",
+  "max": "1.3334",
+  "description": "GEAR RATIO CONSTANT",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "drivetrain_ratio_period_scale_cal",
+  "references": 4,
+  "dump_raw": "283",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "protectionTimeoutControl: (ulonglong)drivetrain_ratio_period_scale_cal * 0x10 >> 0x20),",
+   "protectionTimeoutControl: vehicle_speed_sensor_period * (uint)drivetrain_ratio_period_scale_cal * 0x10)",
+   "protectionTimeoutControl: (ulonglong)drivetrain_ratio_period_scale_cal * 0x10 >> 0x20),",
+   "protectionTimeoutControl: (uint)drivetrain_ratio_period_scale_cal * 0x10) /"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "GR_Constant",
+    "drivetrain_ratio_period_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "EEPROM 0x4ae: 283 - protectionTimeoutControl sets drivetrain_ratio_raw = vehicle_speed_sensor_period x this x 16 / drivetrain_ratio_engine_period_average (the crank period averaged between speed pulses) for the drivetrain types without J1939 speed (was fuel_temp_correction_scale_factor)"
+ },
+ {
+  "address": "0x0040b99c",
+  "block": "13F7",
+  "offset": "0000",
+  "record": "Hybrid_Governor_Fueling",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "Partial Throttle ASG Fueling Limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_limit_by_rpm_and_demand",
+  "references": 6,
+  "dump_raw": "2339",
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateFuelLimitByRpmAndDemand: (cm848_interpolateAlphaChiValue) into fuel_limit_by_rpm_and_demand (e2m label of its code 42:",
+   "cm848_calculateFuelLimitByRpmAndDemand: fuel_limit_by_rpm_and_demand =",
+   "cm848_calculateFuelLimitByRpmAndDemand: fuel_limit_by_rpm_and_demand = fuel_limit_by_rpm_and_demand + fuel_demand_offset_correction;",
+   "cm848_calculateFuelLimitByRpmAndDemand: fuel_limit_by_rpm_and_demand = fuel_limit_by_rpm_and_demand + fuel_demand_offset_correction;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Hybrid_Governor_Fueling",
+    "fuel_limit_by_rpm_and_demand",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "The variable speed governor's engine speed x accelerator demand fuel limit (cm848_calculateFuelLimitByRpmAndDemand) (was protection_fuel_limit_working)"
+ },
+ {
+  "address": "0x0040b9d8",
+  "block": "1627",
+  "offset": "0000",
+  "record": "HPCR_Cusum_Pos",
+  "unit": "MPa",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.0488",
+  "min": "0",
+  "max": "65535",
+  "description": "accumulated positive HPCR rail pressure deviation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "fuel_pressure_shortfall_accumulator",
+  "references": 8,
+  "dump_raw": "0",
+  "access_widths": "{'stw': 1} -> 4 byte",
+  "code": [
+   "cm848_resetFuelPressureTrackingErrorAccumulators: fuel_pressure_shortfall_accumulator = 0;",
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_shortfall_accumulator and, negated, fuel_pressure_excess_accumulator (both clamped",
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_shortfall_accumulator =",
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_shortfall_accumulator + (int)(short)fuel_pressure_tracking_error_per_pass;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Cusum_Pos",
+    "fuel_pressure_shortfall_accumulator",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Cusum_Neg",
+    "fuel_pressure_excess_accumulator",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Cusum_Delta",
+    "fuel_pressure_tracking_error_per_pass",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Cusum_System_Monitor_State",
+    "fuel_pressure_tracking_error_monitor_state",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "dword, only used by the tracking error monitor and its counters reset: += (fuel_pressure_setpoint - fuel_pressure_feedback_previous) / divisor each pass, clamped at 0; above 245902 it sets fault 408 (rail pressure below its setpoint). (was cam_timing_advance_accumulator) | earlier note: accumulates positive cam-timing delta vs threshold"
+ },
+ {
+  "address": "0x0040b9dc",
+  "block": "1627",
+  "offset": "0004",
+  "record": "HPCR_Cusum_Neg",
+  "unit": "MPa",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.0488",
+  "min": "0",
+  "max": "65535",
+  "description": "accumulated negative HPCR rail pressure deviation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "fuel_pressure_excess_accumulator",
+  "references": 8,
+  "dump_raw": "0",
+  "access_widths": "{'stw': 1} -> 4 byte",
+  "code": [
+   "cm848_resetFuelPressureTrackingErrorAccumulators: fuel_pressure_excess_accumulator = 0;",
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_shortfall_accumulator and, negated, fuel_pressure_excess_accumulator (both clamped",
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_excess_accumulator =",
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_excess_accumulator - (int)(short)fuel_pressure_tracking_error_per_pass;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Cusum_Pos",
+    "fuel_pressure_shortfall_accumulator",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Cusum_Neg",
+    "fuel_pressure_excess_accumulator",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Cusum_Delta",
+    "fuel_pressure_tracking_error_per_pass",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Cusum_System_Monitor_State",
+    "fuel_pressure_tracking_error_monitor_state",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "dword, same users: the negated error, clamped at 0; above 204918 it sets fault 409 (rail pressure above its setpoint). (was cam_timing_retard_accumulator) | earlier note: accumulates negative cam-timing delta vs threshold"
+ },
+ {
+  "address": "0x0040b9e0",
+  "block": "1627",
+  "offset": "0008",
+  "record": "HPCR_Cusum_Delta",
+  "unit": "MIN",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0488",
+  "min": "-1599",
+  "max": "1599",
+  "description": "HPCR rail pressure deviation from setpoint",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_pressure_tracking_error_per_pass",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_tracking_error_per_pass =",
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_shortfall_accumulator + (int)(short)fuel_pressure_tracking_error_per_pass;",
+   "cm848_monitorFuelPressureTrackingError: fuel_pressure_excess_accumulator - (int)(short)fuel_pressure_tracking_error_per_pass;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Cusum_Pos",
+    "fuel_pressure_shortfall_accumulator",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Cusum_Neg",
+    "fuel_pressure_excess_accumulator",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Cusum_Delta",
+    "fuel_pressure_tracking_error_per_pass",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Cusum_System_Monitor_State",
+    "fuel_pressure_tracking_error_monitor_state",
+    "0.40"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "word, one store in the monitor: (fuel_pressure_setpoint - fuel_pressure_feedback_previous) / ROM divisor; added to the accumulators. (was cam_timing_delta_per_cycle) | earlier note: per-cycle cam timing delta (advance/retard accum)"
+ },
+ {
+  "address": "0x0040ba6a",
+  "block": "162F",
+  "offset": "0000",
+  "record": "Turbo_Pass_Counter",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1000",
+  "description": "Gives how many times the wastegate monitor passes during the monitoring trip.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "high_load_boost_band_event_count",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_initOverboostMonitor: high_load_boost_band_event_count = 0;",
+   "cm848_monitorOverboostAndHighLoadBoostBand: high_load_boost_band_event_count = high_load_boost_band_event_count + 1;",
+   "cm848_monitorOverboostAndHighLoadBoostBand: high_load_boost_band_event_count = high_load_boost_band_event_count + 1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Turbo_Pass_Counter",
+    "high_load_boost_band_event_count",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Turbo_Total_Pass_Time",
+    "high_load_boost_band_duration_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Counts each time boost holds between 48 and 53 inHg (ROM 0x64568 / 0x64564 - absolute MAP when boost_is_gauge_pressure_flag is 0) with engine_load_at_current_speed_percent above 80 and RPM above 2200 for 25 passes (2.5 s at a 5 ms PIT tick); zeroed at boot (was hpcr_oil_pressure_fault_trigger_count)"
+ },
+ {
+  "address": "0x0040ba6c",
+  "block": "162F",
+  "offset": "0002",
+  "record": "Turbo_Total_Pass_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "1000",
+  "description": "Total time when the wastegate monitor passes during the monitoring trip.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "high_load_boost_band_duration_count",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_initOverboostMonitor: high_load_boost_band_duration_count = 0;",
+   "cm848_monitorOverboostAndHighLoadBoostBand: high_load_boost_band_duration_count = high_load_boost_band_duration_count + 1;",
+   "cm848_monitorOverboostAndHighLoadBoostBand: high_load_boost_band_duration_count = high_load_boost_band_duration_count + 1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Turbo_Pass_Counter",
+    "high_load_boost_band_event_count",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Turbo_Total_Pass_Time",
+    "high_load_boost_band_duration_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Passes (100 ms each at a 5 ms PIT tick) spent with the high-load boost band condition confirmed - added every pass while the 0x3fd26a debounce sits at its limit; companion of high_load_boost_band_event_count; zeroed at boot (was hpcr_oil_pressure_debounce_saturate_count)"
+ },
+ {
+  "address": "0x0040a482",
+  "block": "16A5",
+  "offset": "0002",
+  "record": "CBR_FCLR_Ref",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00012207",
+  "min": "0",
+  "max": "7.999",
+  "description": "CBR_Gross_Torque_Fuel divided by OFC_Fuel_Limit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_quantity_combustion_gross_to_limit_ratio",
+  "references": 3,
+  "dump_raw": "2866",
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateCombustionFuelReference: injection_quantity_combustion_gross_to_limit_ratio = (word)uVar1;",
+   "cm848_runOffNominalCompensation: fuel_limit_ratio_compensated_reference = injection_quantity_combustion_gross_to_limit_ratio;",
+   "cm848_calculateOxygenFuelLimit: injection_quantity_combustion_gross_to_limit_ratio. (was fuel_demandLimit_rpmLoad_calc) */"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CBR_Gross_Fuel",
+    "injection_quantity_combustion_gross",
+    "0.50"
+   ],
+   [
+    "0002",
+    "CBR_FCLR_Ref",
+    "injection_quantity_combustion_gross_to_limit_ratio",
+    "0.00"
+   ],
+   [
+    "0004",
+    "CBR_Fuel_Ref",
+    "injection_quantity_combustion_reference",
+    "0.50"
+   ],
+   [
+    "0006",
+    "CBR_Base_Chi_SOI_Cmd",
+    "injection_timing_combustion_reference_at_base_chi",
+    "0.75"
+   ],
+   [
+    "0008",
+    "CBR_SOI_Ref",
+    "injection_timing_combustion_reference",
+    "1.00"
+   ],
+   [
+    "000A",
+    "CBR_MCF_Ref",
+    "mass_charge_flow_combustion_reference",
+    "1.00"
+   ],
+   [
+    "000C",
+    "CBR_EGR_Frac_Ref",
+    "egr_fraction_combustion_reference",
+    "1.00"
+   ],
+   [
+    "000E",
+    "CBR_Charge_Tmptr_Ref",
+    "charge_temperature_combustion_reference",
+    "1.00"
+   ],
+   [
+    "0010",
+    "CBR_NOx_Target_Ref",
+    "nitrogen_oxides_target_combustion_reference",
+    "0.50"
+   ],
+   [
+    "0012",
+    "OFC_Fuel_Limit",
+    "injection_quantity_oxygen_limit",
+    "0.33"
+   ],
+   [
+    "0014",
+    "CBR_Alpha",
+    "combustion_reference_state",
+    "0.00"
+   ],
+   [
+    "0018",
+    "CBR_SOI_Adj_Fuel_Active",
+    "combustion_reference_state.reserved_04",
+    "0.00"
+   ],
+   [
+    "001A",
+    "CBR_OFC_Limit_SOI_Alpha0",
+    "combustion_reference_state.reserved_06",
+    "0.00"
+   ],
+   [
+    "001C",
+    "CBR_Gross_Fuel_Before_Adj",
+    "combustion_reference_state.reserved_08",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: (gross fuel << 13) / max(injection_quantity_oxygen_limit, 5), capped at 65535 (Q13), written once in cm848_calculateCombustionFuelReference and compared with the on / off thresholds 17203 / 9830 (hysteresis) to set injection_quantity_combustion_limited_flag; copied to fuel_limit_ratio_compensated_reference. Dump 2866 = 1030 / 2944 x 8192, exact. e2m: CBR_FCLR_Ref (+02) gross fuel divided by the fuel limit, 1/ (was fuel_blend_load_ratio)"
+ },
+ {
+  "address": "0x0040093a",
+  "block": "177C",
+  "offset": "0008",
+  "record": "C_CHP_Engine_Displacement",
+  "unit": "IN3",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.03125",
+  "min": "0",
+  "max": "1800",
+  "description": "Engine displacement in cu. in. (61.02 times displacement in liters)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "map_fuel_correction_multiplier_cal",
+  "references": 3,
+  "dump_raw": "11493",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_loadBasedFuelAdjustment: (uint)map_fuel_correction_multiplier_cal) >> 0x20),",
+   "cm848_loadBasedFuelAdjustment: (uint)map_fuel_correction_multiplier_cal) /",
+   "cm848_calculateBoostPressureOffset: (int)(short)(((uint)map_fuel_correction_multiplier_cal * 0x52e) / 100000);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_CHP_Charge_Flow_Fil_Cnst",
+    "boost_modifier_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_CHP_Charge_Flow_Max",
+    "fuel_quantity_ema_upper_limit_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "C_CHP_Charge_Flow_Min",
+    "boost_load_lower_limit_cal",
+    "0.00"
+   ],
+   [
+    "0006",
+    "C_CHP_Veff_Stroke",
+    "boost_rpm_scale_factor_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "C_CHP_Engine_Displacement",
+    "map_fuel_correction_multiplier_cal",
+    "0.00"
+   ],
+   [
+    "000A",
+    "C_CHP_Veff_Bore",
+    "boost_pressure_factor_cal",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_CHP_Veff_Valve_Diameter",
+    "boost_pressure_divisor_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "C_CHP_Veff_Max",
+    "fuel_demand_rpm_factor_upper_cal",
+    "0.00"
+   ],
+   [
+    "0010",
+    "C_CHP_Veff_Min",
+    "fuel_demand_rpm_factor_base_cal",
+    "0.00"
+   ],
+   [
+    "0012",
+    "C_CHP_Veff_Parameter_A",
+    "boost_map_correction_factor_cal",
+    "0.00"
+   ],
+   [
+    "0014",
+    "C_CHP_Veff_Parameter_B",
+    "boost_pressure_offset_cal",
+    "0.00"
+   ],
+   [
+    "0016",
+    "C_CHP_Veff_Parameter_C",
+    "boost_pressure_upper_limit_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b05c",
+  "block": "1839",
+  "offset": "000C",
+  "record": "VGA_Electrical_Error",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1",
+  "description": "Any of a combination of ASIC detected Hw faults without persistance",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "variable_geometry_turbocharger_driver_fault_pending_flag",
+  "references": 5,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_processVariableGeometryTurbochargerHBridgeFaults: variable_geometry_turbocharger_driver_fault_pending_flag (1 when either retry-active flag is 0).",
+   "cm848_processVariableGeometryTurbochargerHBridgeFaults: variable_geometry_turbocharger_driver_fault_pending_flag._0_2_ = 1;",
+   "cm848_processVariableGeometryTurbochargerHBridgeFaults: variable_geometry_turbocharger_driver_fault_pending_flag._0_2_ = 0;",
+   "cm848_sequenceVariableGeometryTurbochargerPositionAdjustment: sVar3 = variable_geometry_turbocharger_driver_fault_pending_flag._0_2_;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "VGA_HB0_Fault_Clear",
+    "variable_geometry_turbocharger_h_bridge_fault_clear_flag",
+    "0.40"
+   ],
+   [
+    "0002",
+    "VGA_Fault_HB0_Retry",
+    "variable_geometry_turbocharger_h_bridge_fault_retry_trigger_flag",
+    "0.40"
+   ],
+   [
+    "0004",
+    "VGA_Fault_HB0_Inrush_Retry",
+    "variable_geometry_turbocharger_h_bridge_inrush_retry_trigger_flag",
+    "0.33"
+   ],
+   [
+    "0006",
+    "VGA_HB0_Inrush_Fault_Clear",
+    "variable_geometry_turbocharger_h_bridge_inrush_fault_clear_flag",
+    "0.50"
+   ],
+   [
+    "000A",
+    "VGA_HB0_Fault_Set",
+    "variable_geometry_turbocharger_h_bridge_fault_set_flag",
+    "0.40"
+   ],
+   [
+    "000C",
+    "VGA_Electrical_Error",
+    "variable_geometry_turbocharger_driver_fault_pending_flag",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "code: dword read as its first word; written at the end of cm848_processVariableGeometryTurbochargerHBridgeFaults: 1 when either H-bridge fault retry flag (variable_geometry_turbocharger_h_bridge_fault_retry_active_flag / _b_active) is 0; its set state drops the logical output 72 request and the motor-ok flag. Typing is a note. (was protection_fault_pending_flag)"
+ },
+ {
+  "address": "0x0040a692",
+  "block": "19CA",
+  "offset": "0006",
+  "record": "INM_EGRT_After_Lead",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.015625",
+  "min": "0",
+  "max": "600",
+  "description": "Estimated EGR orifice temp after sensor compensation but",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "throttle_trim_predictor_output",
+  "references": 3,
+  "dump_raw": "4608",
+  "access_widths": "{'sth': 1, 'lhz': 2} -> 2 byte",
+  "code": [
+   "sensor_channel108_filter: throttle_trim_predictor_output = (word)uVar1;",
+   "sensor_throttleTrim_ema_faultProcess: wVar3 = throttle_trim_predictor_output;",
+   "sensor_throttleTrim_ema_faultProcess: ((uint)throttle_trim_predictor_output,&ema_filter_state_t_003fbd00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_Orifice_Tmptr",
+    "egr_orifice_temperature",
+    "1.00"
+   ],
+   [
+    "0006",
+    "INM_EGRT_After_Lead",
+    "throttle_trim_predictor_output",
+    "0.00"
+   ],
+   [
+    "0008",
+    "INM_EGRT_Lead_Term",
+    "egr_orifice_temperature_lead_term",
+    "0.50"
+   ],
+   [
+    "000A",
+    "INM_EGRT_Lead_Time_Constant",
+    "throttle_trim_predictor_gain",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "predictor-corrected throttle trim raw"
+ },
+ {
+  "address": "0x0040a696",
+  "block": "19CA",
+  "offset": "000A",
+  "record": "INM_EGRT_Lead_Time_Constant",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.01",
+  "min": "0",
+  "max": "100",
+  "description": "Current active EGR orifice temperature lead time constant",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "throttle_trim_predictor_gain",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "code": [
+   "sensor_channel108_filter: iVar3 = (uint)throttle_trim_predictor_gain * ((uint)sensor_channel108_value - (uint)DAT_003fbcfa);",
+   "sensor_throttleTrim_ema_faultProcess: (throttle_trim_predictor_gain = throttle_trim_predictor_gain_lookup,",
+   "sensor_throttleTrim_ema_faultProcess: throttle_trim_predictor_gain = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_Orifice_Tmptr",
+    "egr_orifice_temperature",
+    "1.00"
+   ],
+   [
+    "0006",
+    "INM_EGRT_After_Lead",
+    "throttle_trim_predictor_output",
+    "0.00"
+   ],
+   [
+    "0008",
+    "INM_EGRT_Lead_Term",
+    "egr_orifice_temperature_lead_term",
+    "0.50"
+   ],
+   [
+    "000A",
+    "INM_EGRT_Lead_Time_Constant",
+    "throttle_trim_predictor_gain",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "gain coefficient for throttle trim predictor"
+ },
+ {
+  "address": "0x0040a624",
+  "block": "1A19",
+  "offset": "0000",
+  "record": "EGR_Orifice_Delta_Press",
+  "unit": "IN_HG",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.0159064138077",
+  "min": "-100",
+  "max": "100",
+  "description": "Pressure drop across EGR Delta Press Disturbance",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_fuel_correction_prev",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'lha': 1, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateLoadBasedFuelTrim: iVar3 = (int)(short)boost_fuel_correction_prev;",
+   "cm848_calculateFuelFlowWithMode: boost_fuel_correction_prev = 0;",
+   "cm848_calculateFuelFlowWithMode: boost_fuel_correction_prev = egr_delta_pressure_sensor_output;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EGR_Orifice_Delta_Press",
+    "boost_fuel_correction_prev",
+    "0.00"
+   ],
+   [
+    "0004",
+    "EGR_Valve_Delta_Press",
+    "egr_delta_pressure",
+    "0.75"
+   ],
+   [
+    "0008",
+    "Engine_Delta_Press",
+    "egr_delta_pressure_negated",
+    "0.67"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004094a2",
+  "block": "8014",
+  "offset": "0000",
+  "record": "HPCR_Propgain_Small_Signal",
+  "unit": "%/MPa",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.0000076293",
+  "min": "0",
+  "max": "16383.999",
+  "description": "Fuel pressure governor P-Component small signal gain",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "injection_timing_scale_cyl1_a_cal",
+  "references": 3,
+  "dump_raw": "65537",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: local_64 = (int)((ulonglong)injection_timing_scale_cyl1_a_cal * (ulonglong)(uint)wVar5 >>",
+   "cm848_calculateFuelMeteringCommand: 0x20) << 0x14 | injection_timing_scale_cyl1_a_cal * wVar5 >> 0xc;",
+   "cm848_calculateFuelMeteringCommand: local_64 = injection_timing_scale_cyl1_a_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Propgain_Small_Signal",
+    "injection_timing_scale_cyl1_a_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Propgain_Positive_Large_Signal",
+    "injection_timing_scale_cyl2_a_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Propgain_Negative_Large_Signal",
+    "injection_timing_scale_cyl3_a_cal",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Propgain_Positive_Window_Width",
+    "engine_sync_prot_scale_a_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Propgain_Negative_Window_Width",
+    "engine_sync_prot_scale_a_cal+2",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004094a6",
+  "block": "8014",
+  "offset": "0004",
+  "record": "HPCR_Propgain_Positive_Large_Signal",
+  "unit": "%/MPa",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.0000076293",
+  "min": "0",
+  "max": "16383.999",
+  "description": "Fuel pressure governor P-Component positive large signal gain",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "injection_timing_scale_cyl2_a_cal",
+  "references": 3,
+  "dump_raw": "13107",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: local_60 = (int)((ulonglong)injection_timing_scale_cyl2_a_cal * (ulonglong)(uint)wVar5 >>",
+   "cm848_calculateFuelMeteringCommand: 0x20) << 0x14 | injection_timing_scale_cyl2_a_cal * wVar5 >> 0xc;",
+   "cm848_calculateFuelMeteringCommand: local_60 = injection_timing_scale_cyl2_a_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Propgain_Small_Signal",
+    "injection_timing_scale_cyl1_a_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Propgain_Positive_Large_Signal",
+    "injection_timing_scale_cyl2_a_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Propgain_Negative_Large_Signal",
+    "injection_timing_scale_cyl3_a_cal",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Propgain_Positive_Window_Width",
+    "engine_sync_prot_scale_a_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Propgain_Negative_Window_Width",
+    "engine_sync_prot_scale_a_cal+2",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004094aa",
+  "block": "8014",
+  "offset": "0008",
+  "record": "HPCR_Propgain_Negative_Large_Signal",
+  "unit": "%/MPa",
+  "size_bytes": "4",
+  "signed": "U",
+  "scale": "0.0000076293",
+  "min": "0",
+  "max": "16383.999",
+  "description": "Fuel pressure governor P-Component negative large signal gain",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "dword",
+  "label_in_cpp": "injection_timing_scale_cyl3_a_cal",
+  "references": 3,
+  "dump_raw": "78644",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: local_5c = (int)((ulonglong)injection_timing_scale_cyl3_a_cal * (ulonglong)(uint)wVar5 >>",
+   "cm848_calculateFuelMeteringCommand: 0x20) << 0x14 | injection_timing_scale_cyl3_a_cal * wVar5 >> 0xc;",
+   "cm848_calculateFuelMeteringCommand: local_5c = injection_timing_scale_cyl3_a_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Propgain_Small_Signal",
+    "injection_timing_scale_cyl1_a_cal",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Propgain_Positive_Large_Signal",
+    "injection_timing_scale_cyl2_a_cal",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_Propgain_Negative_Large_Signal",
+    "injection_timing_scale_cyl3_a_cal",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Propgain_Positive_Window_Width",
+    "engine_sync_prot_scale_a_cal",
+    "0.00"
+   ],
+   [
+    "000E",
+    "HPCR_Propgain_Negative_Window_Width",
+    "engine_sync_prot_scale_a_cal+2",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004090e8",
+  "block": "805C",
+  "offset": "0000",
+  "record": "HPCR_Total_Increments",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "120",
+  "description": "Total number of increments",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_timing_tooth_count",
+  "references": 13,
+  "dump_raw": "120",
+  "access_widths": "{'lbz': 11} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_tpuUpdate: uVar6 = (int)(uint)injection_timing_tooth_count /",
+   "engine_injectionAngle_tpuUpdate: uVar6 = (int)(uint)injection_timing_tooth_count /",
+   "engine_injectionAngle_writeTpuEvent: uVar2 = (int)(uint)injection_timing_tooth_count /",
+   "engine_injectionAngle_writeTpuEvent: uVar2 = (int)(uint)injection_timing_tooth_count /"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Total_Increments",
+    "injection_timing_tooth_count",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_TPU_Latency_Min_Engine_Speed",
+    "injection_wakeup_duration_speed_breakpoint",
+    "0.17"
+   ],
+   [
+    "0003",
+    "HPCR_TPU_Latency_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_below_breakpoint",
+    "0.33"
+   ],
+   [
+    "0005",
+    "HPCR_Regular_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_above_breakpoint",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_TPU_Minimum_Ratio",
+    "injection_timing_tooth_phase_threshold",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_1st_Wakeup_Increment_Cyl0",
+    "injection_timing_tooth_base_offset_mode2",
+    "0.00"
+   ],
+   [
+    "0009",
+    "HPCR_TPU_RPM_To_Skip_Cylinder",
+    "injection_timing_sequence_speed_threshold",
+    "0.20"
+   ],
+   [
+    "000B",
+    "HPCR_Location_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_angle_threshold",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Count_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_tooth_base_index",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Aux_SOI_End_Of_Main_Adjust",
+    "injection_timing_auxiliary_relative_to_main_end_flag",
+    "0.60"
+   ],
+   [
+    "0010",
+    "EOI_Aux_Separation_Limit",
+    "auxiliary_injection_end_limit_separation",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "total tooth count for injection timing modulo-wrap (read-only)"
+ },
+ {
+  "address": "0x004090ef",
+  "block": "805C",
+  "offset": "0007",
+  "record": "HPCR_TPU_Minimum_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Minimum value of ratio for TPU",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_timing_tooth_phase_threshold",
+  "references": 4,
+  "dump_raw": "11",
+  "access_widths": "{'lbz': 4} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_tpuUpdate: if (((uVar6 < injection_timing_tooth_phase_threshold) && (uVar3 != 0)) && (uVar3 != 0x3c)) {",
+   "engine_injectionAngle_writeTpuEvent: if (((uVar2 < injection_timing_tooth_phase_threshold) && (uVar5 != 0)) && (uVar5 != 0x3c)) {",
+   "engine_injectionAngle_computeLoadCh6: if (((uVar3 < injection_timing_tooth_phase_threshold) && (uVar6 >> 8 != 0)) &&",
+   "cm848_scheduleInjectionAnglesOnPrimarySpeedInput: if (((injection_timing_tooth_phase_threshold != 0) && (injection_timing_tooth != 0)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Total_Increments",
+    "injection_timing_tooth_count",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_TPU_Latency_Min_Engine_Speed",
+    "injection_wakeup_duration_speed_breakpoint",
+    "0.17"
+   ],
+   [
+    "0003",
+    "HPCR_TPU_Latency_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_below_breakpoint",
+    "0.33"
+   ],
+   [
+    "0005",
+    "HPCR_Regular_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_above_breakpoint",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_TPU_Minimum_Ratio",
+    "injection_timing_tooth_phase_threshold",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_1st_Wakeup_Increment_Cyl0",
+    "injection_timing_tooth_base_offset_mode2",
+    "0.00"
+   ],
+   [
+    "0009",
+    "HPCR_TPU_RPM_To_Skip_Cylinder",
+    "injection_timing_sequence_speed_threshold",
+    "0.20"
+   ],
+   [
+    "000B",
+    "HPCR_Location_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_angle_threshold",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Count_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_tooth_base_index",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Aux_SOI_End_Of_Main_Adjust",
+    "injection_timing_auxiliary_relative_to_main_end_flag",
+    "0.60"
+   ],
+   [
+    "0010",
+    "EOI_Aux_Separation_Limit",
+    "auxiliary_injection_end_limit_separation",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM; sub-tooth phase boundary for tooth step"
+ },
+ {
+  "address": "0x004090f0",
+  "block": "805C",
+  "offset": "0008",
+  "record": "HPCR_1st_Wakeup_Increment_Cyl0",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "120",
+  "description": "Increment number for wakeup on Cyl0",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_timing_tooth_base_offset_mode2",
+  "references": 3,
+  "dump_raw": "35",
+  "access_widths": "{'lbz': 3} -> 1 byte",
+  "code": [
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: uVar6 = (uint)injection_timing_tooth_base_offset_mode2 + cam_sync_position_high_byte * uVar5;",
+   "cm848_scheduleInjectionAnglesOnPrimarySpeedInput: uVar2 = (ushort)injection_timing_tooth_base_offset_mode2 +",
+   "cm848_calculatePilotInjectionTiming: DAT_0005fbb2 / 5 - (short)(((uint)injection_timing_tooth_base_offset_mode2 * 0x600) / 0x1e);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Total_Increments",
+    "injection_timing_tooth_count",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_TPU_Latency_Min_Engine_Speed",
+    "injection_wakeup_duration_speed_breakpoint",
+    "0.17"
+   ],
+   [
+    "0003",
+    "HPCR_TPU_Latency_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_below_breakpoint",
+    "0.33"
+   ],
+   [
+    "0005",
+    "HPCR_Regular_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_above_breakpoint",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_TPU_Minimum_Ratio",
+    "injection_timing_tooth_phase_threshold",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_1st_Wakeup_Increment_Cyl0",
+    "injection_timing_tooth_base_offset_mode2",
+    "0.00"
+   ],
+   [
+    "0009",
+    "HPCR_TPU_RPM_To_Skip_Cylinder",
+    "injection_timing_sequence_speed_threshold",
+    "0.20"
+   ],
+   [
+    "000B",
+    "HPCR_Location_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_angle_threshold",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Count_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_tooth_base_index",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Aux_SOI_End_Of_Main_Adjust",
+    "injection_timing_auxiliary_relative_to_main_end_flag",
+    "0.60"
+   ],
+   [
+    "0010",
+    "EOI_Aux_Separation_Limit",
+    "auxiliary_injection_end_limit_separation",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM; base tooth offset for mode-2 cam-sync timing"
+ },
+ {
+  "address": "0x004090f3",
+  "block": "805C",
+  "offset": "000B",
+  "record": "HPCR_Location_Of_1st_Cam_Pulse_After_Gap",
+  "unit": "CRANK_DEG",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0234",
+  "min": "0",
+  "max": "180",
+  "description": "Location of 1st cam pulse after crank gap in crank degrees",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_angle_threshold",
+  "references": 5,
+  "dump_raw": "1122",
+  "access_widths": "{'lhz': 5} -> 2 byte",
+  "code": [
+   "engine_injectionAngle_tpuUpdate: uVar3 = (uint)injection_timing_angle_threshold;",
+   "engine_injectionAngle_writeTpuEvent: uVar5 = (uint)injection_timing_angle_threshold;",
+   "engine_injectionAngle_computeLoadCh6: uVar3 = (uint)injection_timing_angle_threshold;",
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: uVar1 = (uint)injection_timing_angle_threshold;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Total_Increments",
+    "injection_timing_tooth_count",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_TPU_Latency_Min_Engine_Speed",
+    "injection_wakeup_duration_speed_breakpoint",
+    "0.17"
+   ],
+   [
+    "0003",
+    "HPCR_TPU_Latency_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_below_breakpoint",
+    "0.33"
+   ],
+   [
+    "0005",
+    "HPCR_Regular_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_above_breakpoint",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_TPU_Minimum_Ratio",
+    "injection_timing_tooth_phase_threshold",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_1st_Wakeup_Increment_Cyl0",
+    "injection_timing_tooth_base_offset_mode2",
+    "0.00"
+   ],
+   [
+    "0009",
+    "HPCR_TPU_RPM_To_Skip_Cylinder",
+    "injection_timing_sequence_speed_threshold",
+    "0.20"
+   ],
+   [
+    "000B",
+    "HPCR_Location_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_angle_threshold",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Count_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_tooth_base_index",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Aux_SOI_End_Of_Main_Adjust",
+    "injection_timing_auxiliary_relative_to_main_end_flag",
+    "0.60"
+   ],
+   [
+    "0010",
+    "EOI_Aux_Separation_Limit",
+    "auxiliary_injection_end_limit_separation",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "lower angular-tick boundary for tooth conversion (read-only)"
+ },
+ {
+  "address": "0x004090f5",
+  "block": "805C",
+  "offset": "000D",
+  "record": "HPCR_Count_Of_1st_Cam_Pulse_After_Gap",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "12",
+  "description": "Count of 1st cam pulse after crank gap",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_timing_tooth_base_index",
+  "references": 10,
+  "dump_raw": "5",
+  "access_widths": "{'lbz': 10} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_tpuUpdate: uVar5 = ((int)(uVar5 - uVar3) >> 8) / (int)uVar6 + (uint)injection_timing_tooth_base_index;",
+   "engine_injectionAngle_tpuUpdate: uVar5 = injection_timing_tooth_base_index + 0xff;",
+   "engine_injectionAngle_writeTpuEvent: uVar1 = ((int)(uVar1 - uVar5) >> 8) / (int)uVar2 + (uint)injection_timing_tooth_base_index;",
+   "engine_injectionAngle_writeTpuEvent: uVar1 = injection_timing_tooth_base_index + 0xff;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Total_Increments",
+    "injection_timing_tooth_count",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_TPU_Latency_Min_Engine_Speed",
+    "injection_wakeup_duration_speed_breakpoint",
+    "0.17"
+   ],
+   [
+    "0003",
+    "HPCR_TPU_Latency_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_below_breakpoint",
+    "0.33"
+   ],
+   [
+    "0005",
+    "HPCR_Regular_Dynamic_Wakeup_Duration",
+    "injection_wakeup_duration_above_breakpoint",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_TPU_Minimum_Ratio",
+    "injection_timing_tooth_phase_threshold",
+    "0.00"
+   ],
+   [
+    "0008",
+    "HPCR_1st_Wakeup_Increment_Cyl0",
+    "injection_timing_tooth_base_offset_mode2",
+    "0.00"
+   ],
+   [
+    "0009",
+    "HPCR_TPU_RPM_To_Skip_Cylinder",
+    "injection_timing_sequence_speed_threshold",
+    "0.20"
+   ],
+   [
+    "000B",
+    "HPCR_Location_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_angle_threshold",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Count_Of_1st_Cam_Pulse_After_Gap",
+    "injection_timing_tooth_base_index",
+    "0.00"
+   ],
+   [
+    "000E",
+    "Aux_SOI_End_Of_Main_Adjust",
+    "injection_timing_auxiliary_relative_to_main_end_flag",
+    "0.60"
+   ],
+   [
+    "0010",
+    "EOI_Aux_Separation_Limit",
+    "auxiliary_injection_end_limit_separation",
+    "0.50"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "base tooth index at injection window start (read-only)"
+ },
+ {
+  "address": "0x0040b86c",
+  "block": "805E",
+  "offset": "0000",
+  "record": "HPCR_Wakeup_Processing_Status_N",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Status of wakeup processing",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_angle_sequence_state",
+  "references": 31,
+  "dump_raw": "1",
+  "access_widths": "{'stb': 1} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_tpuChannel10CylinderEventHandler: injection_angle_sequence_state_prev = injection_angle_sequence_state;",
+   "engine_injectionAngle_tpuChannel10CylinderEventHandler: injection_angle_sequence_state = 4;",
+   "engine_injectionAngle_tpuChannel10CylinderEventHandler: injection_angle_sequence_state_prev = injection_angle_sequence_state;",
+   "engine_injectionAngle_tpuChannel10CylinderEventHandler: injection_angle_sequence_state = 1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Wakeup_Processing_Status_N",
+    "injection_angle_sequence_state",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_Previous_Wakeup_N",
+    "injection_angle_sequence_state_prev",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_1st_Wakeup_Increment",
+    "injection_timing_tooth",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_1st_Wakeup_Ratio",
+    "injection_timing_tooth_phase",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Stored_Cylinder_Number",
+    "injection_schedule_cylinder_event_index",
+    "0.25"
+   ],
+   [
+    "0005",
+    "HPCR_Stored_Main_Begin_Angle",
+    "main_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_Stored_Pilot_Begin_Angle",
+    "pilot_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0009",
+    "HPCR_Dynamic_Wakeup_Angle",
+    "injection_timing_tooth_b",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Dynamic_Wakeup_Ratio",
+    "injection_timing_tooth_b_phase",
+    "0.00"
+   ],
+   [
+    "000B",
+    "HPCR_Period_Address",
+    "injection_tpu_timing_mode",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Wakeup_Seperation_In_Increments",
+    "cam_sync_position_high_byte",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_At_Static",
+    "fuel_pressure_at_other_angle_events",
+    "0.60"
+   ],
+   [
+    "000F",
+    "HPCR_Fuel_Pressure_At_Dynamic",
+    "fuel_pressure_at_injection_scheduling",
+    "0.60"
+   ],
+   [
+    "0011",
+    "HPCR_Stored_Aux_Begin_Angle",
+    "auxiliary_injection_start_angle",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "injection-angle TPU-ch6 scheduler sequence state (values 1/2/4/8) driving cm848_scheduleInjectionAnglesInSpeedLimpHome; each transition saves prev into injection_angle_sequence_state_prev"
+ },
+ {
+  "address": "0x0040b86d",
+  "block": "805E",
+  "offset": "0001",
+  "record": "HPCR_Previous_Wakeup_N",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Status of previous wakeup",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_angle_sequence_state_prev",
+  "references": 11,
+  "dump_raw": "0",
+  "access_widths": "{'stb': 9} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_tpuChannel10CylinderEventHandler: injection_angle_sequence_state_prev = injection_angle_sequence_state;",
+   "engine_injectionAngle_tpuChannel10CylinderEventHandler: injection_angle_sequence_state_prev = injection_angle_sequence_state;",
+   "engine_injectionAngle_computeLoadCh6: injection_angle_sequence_state_prev = injection_angle_sequence_state;",
+   "engine_injectionAngle_tpuChannel6EventHandler: if (injection_angle_sequence_state_prev == 2) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Wakeup_Processing_Status_N",
+    "injection_angle_sequence_state",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_Previous_Wakeup_N",
+    "injection_angle_sequence_state_prev",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_1st_Wakeup_Increment",
+    "injection_timing_tooth",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_1st_Wakeup_Ratio",
+    "injection_timing_tooth_phase",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Stored_Cylinder_Number",
+    "injection_schedule_cylinder_event_index",
+    "0.25"
+   ],
+   [
+    "0005",
+    "HPCR_Stored_Main_Begin_Angle",
+    "main_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_Stored_Pilot_Begin_Angle",
+    "pilot_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0009",
+    "HPCR_Dynamic_Wakeup_Angle",
+    "injection_timing_tooth_b",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Dynamic_Wakeup_Ratio",
+    "injection_timing_tooth_b_phase",
+    "0.00"
+   ],
+   [
+    "000B",
+    "HPCR_Period_Address",
+    "injection_tpu_timing_mode",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Wakeup_Seperation_In_Increments",
+    "cam_sync_position_high_byte",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_At_Static",
+    "fuel_pressure_at_other_angle_events",
+    "0.60"
+   ],
+   [
+    "000F",
+    "HPCR_Fuel_Pressure_At_Dynamic",
+    "fuel_pressure_at_injection_scheduling",
+    "0.60"
+   ],
+   [
+    "0011",
+    "HPCR_Stored_Aux_Begin_Angle",
+    "auxiliary_injection_start_angle",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "previous-value snapshot of injection_angle_sequence_state (DAT_0040b86d = DAT_0040b86c before each transition)"
+ },
+ {
+  "address": "0x0040b86e",
+  "block": "805E",
+  "offset": "0002",
+  "record": "HPCR_1st_Wakeup_Increment",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "120",
+  "description": "Wakeup increment number for 1st static wakeup",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_timing_tooth",
+  "references": 33,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: injection_timing_tooth = (byte)uVar6;",
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: injection_timing_tooth = injection_timing_tooth - injection_timing_tooth_count;",
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: injection_timing_tooth = injection_timing_tooth - injection_timing_tooth_count;",
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: uVar1 = (uint)injection_timing_tooth * 0x100;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Wakeup_Processing_Status_N",
+    "injection_angle_sequence_state",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_Previous_Wakeup_N",
+    "injection_angle_sequence_state_prev",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_1st_Wakeup_Increment",
+    "injection_timing_tooth",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_1st_Wakeup_Ratio",
+    "injection_timing_tooth_phase",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Stored_Cylinder_Number",
+    "injection_schedule_cylinder_event_index",
+    "0.25"
+   ],
+   [
+    "0005",
+    "HPCR_Stored_Main_Begin_Angle",
+    "main_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_Stored_Pilot_Begin_Angle",
+    "pilot_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0009",
+    "HPCR_Dynamic_Wakeup_Angle",
+    "injection_timing_tooth_b",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Dynamic_Wakeup_Ratio",
+    "injection_timing_tooth_b_phase",
+    "0.00"
+   ],
+   [
+    "000B",
+    "HPCR_Period_Address",
+    "injection_tpu_timing_mode",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Wakeup_Seperation_In_Increments",
+    "cam_sync_position_high_byte",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_At_Static",
+    "fuel_pressure_at_other_angle_events",
+    "0.60"
+   ],
+   [
+    "000F",
+    "HPCR_Fuel_Pressure_At_Dynamic",
+    "fuel_pressure_at_injection_scheduling",
+    "0.60"
+   ],
+   [
+    "0011",
+    "HPCR_Stored_Aux_Begin_Angle",
+    "auxiliary_injection_start_angle",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "integer tooth/angle (0-119 over 720 deg, wraps at 60/119) for the TPU-A ch6 injection-timing event; written with phase byte DAT_0040b86f to TPU param 0x304162 via CONCAT11; computed per cylinder_event_index from cam-sync position"
+ },
+ {
+  "address": "0x0040b86f",
+  "block": "805E",
+  "offset": "0003",
+  "record": "HPCR_1st_Wakeup_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Ratio value for 1st static wakeup",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_timing_tooth_phase",
+  "references": 12,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: injection_timing_tooth_phase =",
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: injection_timing_tooth_phase = (char)((int)uVar5 >> 1) + ((int)uVar5 < 0 && (uVar5 & 1) != 0);",
+   "cm848_scheduleInjectionAnglesInSpeedLimpHome: DAT_00304162 = CONCAT11(injection_timing_tooth,injection_timing_tooth_phase);",
+   "cm848_scheduleInjectionAnglesOnPrimarySpeedInput: injection_timing_tooth_phase = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Wakeup_Processing_Status_N",
+    "injection_angle_sequence_state",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_Previous_Wakeup_N",
+    "injection_angle_sequence_state_prev",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_1st_Wakeup_Increment",
+    "injection_timing_tooth",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_1st_Wakeup_Ratio",
+    "injection_timing_tooth_phase",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Stored_Cylinder_Number",
+    "injection_schedule_cylinder_event_index",
+    "0.25"
+   ],
+   [
+    "0005",
+    "HPCR_Stored_Main_Begin_Angle",
+    "main_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_Stored_Pilot_Begin_Angle",
+    "pilot_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0009",
+    "HPCR_Dynamic_Wakeup_Angle",
+    "injection_timing_tooth_b",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Dynamic_Wakeup_Ratio",
+    "injection_timing_tooth_b_phase",
+    "0.00"
+   ],
+   [
+    "000B",
+    "HPCR_Period_Address",
+    "injection_tpu_timing_mode",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Wakeup_Seperation_In_Increments",
+    "cam_sync_position_high_byte",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_At_Static",
+    "fuel_pressure_at_other_angle_events",
+    "0.60"
+   ],
+   [
+    "000F",
+    "HPCR_Fuel_Pressure_At_Dynamic",
+    "fuel_pressure_at_injection_scheduling",
+    "0.60"
+   ],
+   [
+    "0011",
+    "HPCR_Stored_Aux_Begin_Angle",
+    "auxiliary_injection_start_angle",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "sub-tooth phase/low-byte paired with injection_timing_tooth into the TPU-A ch6 param at 0x304162 (CONCAT11); values 0/0x80/0xff"
+ },
+ {
+  "address": "0x0040b875",
+  "block": "805E",
+  "offset": "0009",
+  "record": "HPCR_Dynamic_Wakeup_Angle",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Wakeup increment number for dynamic wakeup",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_timing_tooth_b",
+  "references": 24,
+  "dump_raw": "0",
+  "access_widths": "{'stb': 2, 'lbz': 1} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_computeLoadCh6: injection_timing_tooth_b = (byte)uVar6;",
+   "engine_injectionAngle_computeLoadCh6: injection_timing_tooth_b =",
+   "engine_injectionAngle_computeLoadCh6: injection_timing_tooth_b - ((char)crank_sync_tooth_count_cal + -1);",
+   "engine_injectionAngle_computeLoadCh6: injection_timing_tooth_b = injection_timing_tooth_base_index - 1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Wakeup_Processing_Status_N",
+    "injection_angle_sequence_state",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_Previous_Wakeup_N",
+    "injection_angle_sequence_state_prev",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_1st_Wakeup_Increment",
+    "injection_timing_tooth",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_1st_Wakeup_Ratio",
+    "injection_timing_tooth_phase",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Stored_Cylinder_Number",
+    "injection_schedule_cylinder_event_index",
+    "0.25"
+   ],
+   [
+    "0005",
+    "HPCR_Stored_Main_Begin_Angle",
+    "main_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_Stored_Pilot_Begin_Angle",
+    "pilot_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0009",
+    "HPCR_Dynamic_Wakeup_Angle",
+    "injection_timing_tooth_b",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Dynamic_Wakeup_Ratio",
+    "injection_timing_tooth_b_phase",
+    "0.00"
+   ],
+   [
+    "000B",
+    "HPCR_Period_Address",
+    "injection_tpu_timing_mode",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Wakeup_Seperation_In_Increments",
+    "cam_sync_position_high_byte",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_At_Static",
+    "fuel_pressure_at_other_angle_events",
+    "0.60"
+   ],
+   [
+    "000F",
+    "HPCR_Fuel_Pressure_At_Dynamic",
+    "fuel_pressure_at_injection_scheduling",
+    "0.60"
+   ],
+   [
+    "0011",
+    "HPCR_Stored_Aux_Begin_Angle",
+    "auxiliary_injection_start_angle",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "second TPU-A ch6 injection-timing tooth (same wrap logic as injection_timing_tooth) computed in FUN_00529284 + cm848_protection_condition_eval_set1; paired with phase byte DAT_0040b876 into TPU param 0x304162"
+ },
+ {
+  "address": "0x0040b876",
+  "block": "805E",
+  "offset": "000A",
+  "record": "HPCR_Dynamic_Wakeup_Ratio",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Wakeup ratio for dynamic wakeup",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_timing_tooth_b_phase",
+  "references": 13,
+  "dump_raw": "0",
+  "access_widths": "{'stb': 2, 'lbz': 1} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_computeLoadCh6: injection_timing_tooth_b_phase =",
+   "engine_injectionAngle_computeLoadCh6: injection_timing_tooth_b_phase =",
+   "engine_injectionAngle_computeLoadCh6: injection_timing_tooth_b_phase = (byte)uVar3;",
+   "engine_injectionAngle_computeLoadCh6: injection_timing_tooth_b_phase = injection_timing_tooth_b_phase + 0x80;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Wakeup_Processing_Status_N",
+    "injection_angle_sequence_state",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_Previous_Wakeup_N",
+    "injection_angle_sequence_state_prev",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_1st_Wakeup_Increment",
+    "injection_timing_tooth",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_1st_Wakeup_Ratio",
+    "injection_timing_tooth_phase",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Stored_Cylinder_Number",
+    "injection_schedule_cylinder_event_index",
+    "0.25"
+   ],
+   [
+    "0005",
+    "HPCR_Stored_Main_Begin_Angle",
+    "main_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_Stored_Pilot_Begin_Angle",
+    "pilot_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0009",
+    "HPCR_Dynamic_Wakeup_Angle",
+    "injection_timing_tooth_b",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Dynamic_Wakeup_Ratio",
+    "injection_timing_tooth_b_phase",
+    "0.00"
+   ],
+   [
+    "000B",
+    "HPCR_Period_Address",
+    "injection_tpu_timing_mode",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Wakeup_Seperation_In_Increments",
+    "cam_sync_position_high_byte",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_At_Static",
+    "fuel_pressure_at_other_angle_events",
+    "0.60"
+   ],
+   [
+    "000F",
+    "HPCR_Fuel_Pressure_At_Dynamic",
+    "fuel_pressure_at_injection_scheduling",
+    "0.60"
+   ],
+   [
+    "0011",
+    "HPCR_Stored_Aux_Begin_Angle",
+    "auxiliary_injection_start_angle",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "sub-tooth phase/low-byte paired with injection_timing_tooth_b into the TPU-A ch6 param at 0x304162 (CONCAT11)"
+ },
+ {
+  "address": "0x0040b877",
+  "block": "805E",
+  "offset": "000B",
+  "record": "HPCR_Period_Address",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Address of the period parameter in TPU",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "injection_tpu_timing_mode",
+  "references": 17,
+  "dump_raw": "2",
+  "access_widths": "{'lbz': 7, 'stb': 2} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_tpuUpdate: if (injection_tpu_timing_mode != 2) {",
+   "engine_injectionAngle_tpuUpdate: TPUA_CH10_PARAM0 = uVar2 << 0xc | (ushort)injection_tpu_timing_mode;",
+   "engine_injectionAngle_tpuChannel10CylinderEventHandler: schedule_crankValid when injection_tpu_timing_mode is 0x12 / else state 1 +",
+   "engine_injectionAngle_tpuChannel10CylinderEventHandler: if (injection_tpu_timing_mode == 0x12) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Wakeup_Processing_Status_N",
+    "injection_angle_sequence_state",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_Previous_Wakeup_N",
+    "injection_angle_sequence_state_prev",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_1st_Wakeup_Increment",
+    "injection_timing_tooth",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_1st_Wakeup_Ratio",
+    "injection_timing_tooth_phase",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Stored_Cylinder_Number",
+    "injection_schedule_cylinder_event_index",
+    "0.25"
+   ],
+   [
+    "0005",
+    "HPCR_Stored_Main_Begin_Angle",
+    "main_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_Stored_Pilot_Begin_Angle",
+    "pilot_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0009",
+    "HPCR_Dynamic_Wakeup_Angle",
+    "injection_timing_tooth_b",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Dynamic_Wakeup_Ratio",
+    "injection_timing_tooth_b_phase",
+    "0.00"
+   ],
+   [
+    "000B",
+    "HPCR_Period_Address",
+    "injection_tpu_timing_mode",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Wakeup_Seperation_In_Increments",
+    "cam_sync_position_high_byte",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_At_Static",
+    "fuel_pressure_at_other_angle_events",
+    "0.60"
+   ],
+   [
+    "000F",
+    "HPCR_Fuel_Pressure_At_Dynamic",
+    "fuel_pressure_at_injection_scheduling",
+    "0.60"
+   ],
+   [
+    "0011",
+    "HPCR_Stored_Aux_Begin_Angle",
+    "auxiliary_injection_start_angle",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "TPU timing mode code ORed into injector channel params (2/0x12)"
+ },
+ {
+  "address": "0x0040b878",
+  "block": "805E",
+  "offset": "000C",
+  "record": "HPCR_Wakeup_Seperation_In_Increments",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "120",
+  "description": "Seperation in increments between static wakeups",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "cam_sync_position_high_byte",
+  "references": 8,
+  "dump_raw": "20",
+  "access_widths": "{'lbz': 7, 'stb': 1} -> 1 byte",
+  "code": [
+   "cm848_calculatePilotInjectionPulseWidth: ((ulonglong)cam_sync_position_high_byte << 8));",
+   "cm848_calculateAuxiliaryInjectionPulseWidth: ((ulonglong)cam_sync_position_high_byte << 8));",
+   "engine_injectionAngle_computeLoadCh6: uVar6 = ((uint)uVar1 * (uint)cam_sync_position_high_byte * 0x100) / crank_period_accumulator &",
+   "engine_injectionAngle_tpuChannel6EventHandler: (uint)cam_sync_position_high_byte * 0x100) / crank_period_accumulator);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Wakeup_Processing_Status_N",
+    "injection_angle_sequence_state",
+    "0.00"
+   ],
+   [
+    "0001",
+    "HPCR_Previous_Wakeup_N",
+    "injection_angle_sequence_state_prev",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_1st_Wakeup_Increment",
+    "injection_timing_tooth",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_1st_Wakeup_Ratio",
+    "injection_timing_tooth_phase",
+    "0.00"
+   ],
+   [
+    "0004",
+    "HPCR_Stored_Cylinder_Number",
+    "injection_schedule_cylinder_event_index",
+    "0.25"
+   ],
+   [
+    "0005",
+    "HPCR_Stored_Main_Begin_Angle",
+    "main_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0007",
+    "HPCR_Stored_Pilot_Begin_Angle",
+    "pilot_injection_start_angle",
+    "0.40"
+   ],
+   [
+    "0009",
+    "HPCR_Dynamic_Wakeup_Angle",
+    "injection_timing_tooth_b",
+    "0.00"
+   ],
+   [
+    "000A",
+    "HPCR_Dynamic_Wakeup_Ratio",
+    "injection_timing_tooth_b_phase",
+    "0.00"
+   ],
+   [
+    "000B",
+    "HPCR_Period_Address",
+    "injection_tpu_timing_mode",
+    "0.00"
+   ],
+   [
+    "000C",
+    "HPCR_Wakeup_Seperation_In_Increments",
+    "cam_sync_position_high_byte",
+    "0.00"
+   ],
+   [
+    "000D",
+    "HPCR_Fuel_Pressure_At_Static",
+    "fuel_pressure_at_other_angle_events",
+    "0.60"
+   ],
+   [
+    "000F",
+    "HPCR_Fuel_Pressure_At_Dynamic",
+    "fuel_pressure_at_injection_scheduling",
+    "0.60"
+   ],
+   [
+    "0011",
+    "HPCR_Stored_Aux_Begin_Angle",
+    "auxiliary_injection_start_angle",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x0040b8aa",
+  "block": "812F",
+  "offset": "0000",
+  "record": "CP3_Driver_Inhibit_Timer",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.01",
+  "min": "0",
+  "max": "0",
+  "description": "Timer value of CP3 Off cycle time when short or open circuit",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_metering_retest_pass_count",
+  "references": 6,
+  "dump_raw": "0",
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_calculateFuelMeteringCommand: fuel_metering_retest_pass_count = fuel_metering_retest_pass_count + 1;",
+   "cm848_calculateFuelMeteringCommand: fuel_metering_retest_pass_count = fuel_metering_retest_pass_count + 1;",
+   "cm848_calculateFuelMeteringCommand: if ((uint)fuel_metering_retest_pass_count < (uint)fuel_metering_retest_off_passes) {",
+   "cm848_calculateFuelMeteringCommand: else if ((uint)fuel_metering_retest_pass_count <"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CP3_Driver_Inhibit_Timer",
+    "fuel_metering_retest_pass_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Fuel metering retest pass counter (cm848_calculateFuelMeteringCommand): command 0 below fuel_metering_retest_off_passes / 4095 for the next 2 x fuel_metering_retest_fault_confirm_passes / then 0 and the retest flag clears (was engine_sync_cycle_counter)"
+ },
+ {
+  "address": "0x00408f46",
+  "block": "81C9",
+  "offset": "0000",
+  "record": "HPCR_Bank_Retest_Count",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "300",
+  "description": "Number of cam revs injector bank is disabled after fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cylinder_cutout_duration_event_factor",
+  "references": 3,
+  "dump_raw": "100",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "engine_injectionAngle_updateCutoutAndTimingDemand: cylinder_cutout_duration_event_factor * cylinder_event_count_max;",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: cylinder_cutout_duration_event_factor * cylinder_event_count_max;",
+   "cm848_resetCylinderCutoutState: cylinder_cutout_duration_event_factor * cylinder_event_count_max;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Bank_Retest_Count",
+    "cylinder_cutout_duration_event_factor",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Bank_Shutdown_Threshold",
+    "cylinder_cutout_expiry_limit",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Bank_Diagnostic_Count",
+    "cylinder_cutout_debounce_event_factor",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Bank_Shutdown_Enables",
+    "cylinder_cutout_diagnostic_class_enable_mask",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Speed_Limp_Derate_Slew_Rate",
+    "speed_limp_home_derate_slew_rate",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Speed_Limp_Home_Aggressive_Fuel_Limit",
+    "speed_limp_home_aggressive_fuel_limit",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Speed_Limp_Home_High_Fuel_Derate",
+    "speed_limp_home_high_fuel_derate",
+    "1.00"
+   ],
+   [
+    "000E",
+    "Speed_Limp_Home_Low_Fuel_Derate",
+    "speed_limp_home_low_fuel_derate",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: engine_injectionAngle_updateCutoutAndTimingDemand (read in full this wave) and cm848_resetCylinderCutoutState. ROM word: times cylinder_event_count_max gives the load value of cylinder_cutout_duration_countdown (3 uses). (was protection_cylinder_event_factor) | earlier note: ROM x cylinder_event_count_max -> protection countdown"
+ },
+ {
+  "address": "0x00408f48",
+  "block": "81C9",
+  "offset": "0002",
+  "record": "HPCR_Bank_Shutdown_Threshold",
+  "unit": "UNITLESS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "255",
+  "description": "Number of bank shutdowns before permanent disable",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "cylinder_cutout_expiry_limit",
+  "references": 4,
+  "dump_raw": "6",
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "code": [
+   "engine_injectionAngle_updateCutoutAndTimingDemand: if (cylinder_cutout_expiry_count <= cylinder_cutout_expiry_limit) {",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: if ((cylinder_cutout_expiry_limit == 0) ||",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: (cylinder_cutout_expiry_count < cylinder_cutout_expiry_limit)) {",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: if (cylinder_cutout_expiry_limit != 0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Bank_Retest_Count",
+    "cylinder_cutout_duration_event_factor",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Bank_Shutdown_Threshold",
+    "cylinder_cutout_expiry_limit",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Bank_Diagnostic_Count",
+    "cylinder_cutout_debounce_event_factor",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Bank_Shutdown_Enables",
+    "cylinder_cutout_diagnostic_class_enable_mask",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Speed_Limp_Derate_Slew_Rate",
+    "speed_limp_home_derate_slew_rate",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Speed_Limp_Home_Aggressive_Fuel_Limit",
+    "speed_limp_home_aggressive_fuel_limit",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Speed_Limp_Home_High_Fuel_Derate",
+    "speed_limp_home_high_fuel_derate",
+    "1.00"
+   ],
+   [
+    "000E",
+    "Speed_Limp_Home_Low_Fuel_Derate",
+    "speed_limp_home_low_fuel_derate",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: engine_injectionAngle_updateCutoutAndTimingDemand (read in full this wave) and cm848_resetCylinderCutoutState. ROM byte: 0 = never shut the injector channel off (cutout released after every expiry); else the cutout is released while the expiry count is below it and the TPU-A channel 4 enable bit (0x8000 of TPUA_CH4_PARAM0) is cleared once it is reached. Also gates the whole block (count <= ... (was protection_shutdown_cycle_limit) | earlier note: ROM cap on protection shutdown cycle count"
+ },
+ {
+  "address": "0x00408f49",
+  "block": "81C9",
+  "offset": "0003",
+  "record": "HPCR_Bank_Diagnostic_Count",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "30",
+  "description": "Number of cam rev. counts for delay of bank shutdown so faults can be detected.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cylinder_cutout_debounce_event_factor",
+  "references": 3,
+  "dump_raw": "2",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "engine_injectionAngle_updateCutoutAndTimingDemand: (uint)cylinder_cutout_debounce_event_factor * (uint)cylinder_event_count_max)) {",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: cylinder_cutout_debounce_event_factor * cylinder_event_count_max;",
+   "cm848_resetCylinderCutoutState: cylinder_cutout_debounce_event_factor * cylinder_event_count_max;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Bank_Retest_Count",
+    "cylinder_cutout_duration_event_factor",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Bank_Shutdown_Threshold",
+    "cylinder_cutout_expiry_limit",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Bank_Diagnostic_Count",
+    "cylinder_cutout_debounce_event_factor",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Bank_Shutdown_Enables",
+    "cylinder_cutout_diagnostic_class_enable_mask",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Speed_Limp_Derate_Slew_Rate",
+    "speed_limp_home_derate_slew_rate",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Speed_Limp_Home_Aggressive_Fuel_Limit",
+    "speed_limp_home_aggressive_fuel_limit",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Speed_Limp_Home_High_Fuel_Derate",
+    "speed_limp_home_high_fuel_derate",
+    "1.00"
+   ],
+   [
+    "000E",
+    "Speed_Limp_Home_Low_Fuel_Derate",
+    "speed_limp_home_low_fuel_derate",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: engine_injectionAngle_updateCutoutAndTimingDemand (read in full this wave) and cm848_resetCylinderCutoutState. ROM word (read at an odd address because of the packed ROM block, no change): times cylinder_event_count_max gives the full value of cylinder_cutout_debounce_counter (3 uses). (was protection_debounce_event_factor) | earlier note: ROM x cylinder_event_count_max -> protection debounce"
+ },
+ {
+  "address": "0x00408f4c",
+  "block": "81C9",
+  "offset": "0006",
+  "record": "HPCR_Bank_Shutdown_Enables",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "16",
+  "description": "Bank shutdown enable (1=shutdown);bit0=STG,1=STB,2=fast dec,3=low boost",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cylinder_cutout_diagnostic_class_enable_mask",
+  "references": 8,
+  "dump_raw": "11",
+  "access_widths": "{'lhz': 8} -> 2 byte",
+  "code": [
+   "engine_injectionAngle_updateCutoutAndTimingDemand: ((cylinder_cutout_diagnostic_class_enable_mask & 1) != 0)) ||",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: ((cylinder_cutout_diagnostic_class_enable_mask & 2) != 0)))) ||",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: ((cylinder_cutout_diagnostic_class_enable_mask & 4) != 0)))) ||",
+   "engine_injectionAngle_updateCutoutAndTimingDemand: ((injection_check_flags == 1 && ((cylinder_cutout_diagnostic_class_enable_mask & 8) != 0))))"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "HPCR_Bank_Retest_Count",
+    "cylinder_cutout_duration_event_factor",
+    "0.00"
+   ],
+   [
+    "0002",
+    "HPCR_Bank_Shutdown_Threshold",
+    "cylinder_cutout_expiry_limit",
+    "0.00"
+   ],
+   [
+    "0003",
+    "HPCR_Bank_Diagnostic_Count",
+    "cylinder_cutout_debounce_event_factor",
+    "0.00"
+   ],
+   [
+    "0006",
+    "HPCR_Bank_Shutdown_Enables",
+    "cylinder_cutout_diagnostic_class_enable_mask",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Speed_Limp_Derate_Slew_Rate",
+    "speed_limp_home_derate_slew_rate",
+    "1.00"
+   ],
+   [
+    "000A",
+    "Speed_Limp_Home_Aggressive_Fuel_Limit",
+    "speed_limp_home_aggressive_fuel_limit",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Speed_Limp_Home_High_Fuel_Derate",
+    "speed_limp_home_high_fuel_derate",
+    "1.00"
+   ],
+   [
+    "000E",
+    "Speed_Limp_Home_Low_Fuel_Derate",
+    "speed_limp_home_low_fuel_derate",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Code: engine_injectionAngle_updateCutoutAndTimingDemand (read in full this wave) and cm848_resetCylinderCutoutState. Bit 0 / 1 / 2 allow injector_diagnostic_bits_b / _c / _d (tested against the alternating event groups 0x55 / 0xaa) and bit 3 allows injection_check_flags = 1 / 2 to trigger the cylinder cutout; the only reader. ROM word, not a protection of anything general. (was protection_fault_category_enable_mask) | earlier note: read-only ROM; 4 bits enable fault categories"
+ },
+ {
+  "address": "0x0040b3de",
+  "block": "8A12",
+  "offset": "0009",
+  "record": "J50_Act68",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "J1850 Message $68 ECM Rx activity for J1979 OBD support of tool request",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "pci_receive_message_0_timer",
+  "references": 4,
+  "dump_raw": "65335",
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_initPciMessageTimers: pci_receive_message_0_timer = 0xff37;",
+   "cm848_initPciMessagePayloads: puVar3 = (undefined1 *)((int)&pci_receive_message_0_timer + 1);",
+   "cm848_processPciObdRequest: wVar4 = pci_receive_message_0_timer;",
+   "cm848_processPciObdRequest: (obd_dtc_scan_more_flag == 0)) && (obd_last_request_timer <= pci_receive_message_0_timer)) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "J50_Err68",
+    "pci_receive_message_0_status",
+    "0.00"
+   ],
+   [
+    "0009",
+    "J50_Act68",
+    "pci_receive_message_0_timer",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Chry_Err24",
+    "pci_receive_message_1_status",
+    "0.00"
+   ],
+   [
+    "0013",
+    "Chry_Act24",
+    "pci_receive_message_1_timer",
+    "0.00"
+   ],
+   [
+    "0017",
+    "Chry_Err0E",
+    "pci_receive_message_2_status",
+    "0.00"
+   ],
+   [
+    "0018",
+    "Chry_Act0E",
+    "pci_receive_message_2_timer",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Chry_Err2D",
+    "pci_receive_message_4_status",
+    "0.00"
+   ],
+   [
+    "001D",
+    "Chry_Act2D",
+    "pci_receive_message_4_timer",
+    "0.00"
+   ],
+   [
+    "0021",
+    "Chry_Err37",
+    "pci_receive_message_5_status",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Chry_Act37",
+    "pci_receive_message_5_timer",
+    "0.00"
+   ],
+   [
+    "0025",
+    "Chry_Err3A",
+    "pci_transmit_message_6_status",
+    "0.00"
+   ],
+   [
+    "0026",
+    "Chry_Act3A",
+    "pci_transmit_message_6_timer",
+    "0.00"
+   ],
+   [
+    "002C",
+    "Chry_Err4FC0",
+    "pci_receive_message_6_status",
+    "0.00"
+   ],
+   [
+    "002D",
+    "Chry_Act4FC0",
+    "pci_receive_message_6_timer",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "PCI RX[0] header 68 6A age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception"
+ },
+ {
+  "address": "0x0040b3e7",
+  "block": "8A12",
+  "offset": "0012",
+  "record": "Chry_Err24",
+  "unit": "HEX",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Chrysler Specific ECM Rx error for J2190 diagnosic support of tool request",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "pci_receive_message_1_status",
+  "references": 5,
+  "dump_raw": "128",
+  "access_widths": "{'stb': 1, 'lbz': 4} -> 1 byte",
+  "code": [
+   "hpcr_initJ1939BufferValues: pci_receive_message_1_status = 0x80;",
+   "cm848_processPciDiagnosticRequest: if ((pci_receive_message_1_status & 4) == 0) {",
+   "cm848_processPciDiagnosticRequest: if ((pci_receive_message_1_status & 4) == 0) {",
+   "cm848_processPciDiagnosticRequest: if ((pci_security_unlocked_flag == 1) && ((pci_receive_message_1_status & 4) == 0)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "J50_Err68",
+    "pci_receive_message_0_status",
+    "0.00"
+   ],
+   [
+    "0009",
+    "J50_Act68",
+    "pci_receive_message_0_timer",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Chry_Err24",
+    "pci_receive_message_1_status",
+    "0.00"
+   ],
+   [
+    "0013",
+    "Chry_Act24",
+    "pci_receive_message_1_timer",
+    "0.00"
+   ],
+   [
+    "0017",
+    "Chry_Err0E",
+    "pci_receive_message_2_status",
+    "0.00"
+   ],
+   [
+    "0018",
+    "Chry_Act0E",
+    "pci_receive_message_2_timer",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Chry_Err2D",
+    "pci_receive_message_4_status",
+    "0.00"
+   ],
+   [
+    "001D",
+    "Chry_Act2D",
+    "pci_receive_message_4_timer",
+    "0.00"
+   ],
+   [
+    "0021",
+    "Chry_Err37",
+    "pci_receive_message_5_status",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Chry_Act37",
+    "pci_receive_message_5_timer",
+    "0.00"
+   ],
+   [
+    "0025",
+    "Chry_Err3A",
+    "pci_transmit_message_6_status",
+    "0.00"
+   ],
+   [
+    "0026",
+    "Chry_Act3A",
+    "pci_transmit_message_6_timer",
+    "0.00"
+   ],
+   [
+    "002C",
+    "Chry_Err4FC0",
+    "pci_receive_message_6_status",
+    "0.00"
+   ],
+   [
+    "002D",
+    "Chry_Act4FC0",
+    "pci_receive_message_6_timer",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "PCI RX[1] header 24 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed"
+ },
+ {
+  "address": "0x0040b3e8",
+  "block": "8A12",
+  "offset": "0013",
+  "record": "Chry_Act24",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Chrysler Specific ECM Rx activity for J2190 diagnosic support of tool request",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "pci_receive_message_1_timer",
+  "references": 24,
+  "dump_raw": "65335",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "hpcr_initPciMessageTimers: pci_receive_message_1_timer = 0xff37;",
+   "cm848_initPciMessagePayloads: puVar3 = (undefined1 *)((int)&pci_receive_message_1_timer + 1);",
+   "cm848_processPciDiagnosticRequest: if (pci_receive_message_1_timer_previous <= pci_receive_message_1_timer) {",
+   "cm848_processPciDiagnosticRequest: pci_receive_message_1_timer_previous = pci_receive_message_1_timer;"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "J50_Err68",
+    "pci_receive_message_0_status",
+    "0.00"
+   ],
+   [
+    "0009",
+    "J50_Act68",
+    "pci_receive_message_0_timer",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Chry_Err24",
+    "pci_receive_message_1_status",
+    "0.00"
+   ],
+   [
+    "0013",
+    "Chry_Act24",
+    "pci_receive_message_1_timer",
+    "0.00"
+   ],
+   [
+    "0017",
+    "Chry_Err0E",
+    "pci_receive_message_2_status",
+    "0.00"
+   ],
+   [
+    "0018",
+    "Chry_Act0E",
+    "pci_receive_message_2_timer",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Chry_Err2D",
+    "pci_receive_message_4_status",
+    "0.00"
+   ],
+   [
+    "001D",
+    "Chry_Act2D",
+    "pci_receive_message_4_timer",
+    "0.00"
+   ],
+   [
+    "0021",
+    "Chry_Err37",
+    "pci_receive_message_5_status",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Chry_Act37",
+    "pci_receive_message_5_timer",
+    "0.00"
+   ],
+   [
+    "0025",
+    "Chry_Err3A",
+    "pci_transmit_message_6_status",
+    "0.00"
+   ],
+   [
+    "0026",
+    "Chry_Act3A",
+    "pci_transmit_message_6_timer",
+    "0.00"
+   ],
+   [
+    "002C",
+    "Chry_Err4FC0",
+    "pci_receive_message_6_status",
+    "0.00"
+   ],
+   [
+    "002D",
+    "Chry_Act4FC0",
+    "pci_receive_message_6_timer",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "PCI RX[1] header 24 age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception"
+ },
+ {
+  "address": "0x0040b402",
+  "block": "8A12",
+  "offset": "002D",
+  "record": "Chry_Act4FC0",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Chrysler DR Message $4FC0 activity for VTA SKIM request seed/key, ECM Rx mess",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "pci_receive_message_6_timer",
+  "references": 4,
+  "dump_raw": "65280",
+  "access_widths": "{'sth': 1, 'lhz': 2} -> 2 byte",
+  "code": [
+   "hpcr_initPciMessageTimers: pci_receive_message_6_timer = 0xff37;",
+   "cm848_initPciMessagePayloads: puVar3 = (undefined1 *)((int)&pci_receive_message_6_timer + 1);",
+   "cm848_processImmobilizerSeedAndKey: if (pci_receive_message_6_timer < 0x65) {",
+   "cm848_runImmobilizerTask: if ((pci_receive_message_6_timer < 0x65) && ((pci_receive_message_6_status & 0x2f) == 0)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "J50_Err68",
+    "pci_receive_message_0_status",
+    "0.00"
+   ],
+   [
+    "0009",
+    "J50_Act68",
+    "pci_receive_message_0_timer",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Chry_Err24",
+    "pci_receive_message_1_status",
+    "0.00"
+   ],
+   [
+    "0013",
+    "Chry_Act24",
+    "pci_receive_message_1_timer",
+    "0.00"
+   ],
+   [
+    "0017",
+    "Chry_Err0E",
+    "pci_receive_message_2_status",
+    "0.00"
+   ],
+   [
+    "0018",
+    "Chry_Act0E",
+    "pci_receive_message_2_timer",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Chry_Err2D",
+    "pci_receive_message_4_status",
+    "0.00"
+   ],
+   [
+    "001D",
+    "Chry_Act2D",
+    "pci_receive_message_4_timer",
+    "0.00"
+   ],
+   [
+    "0021",
+    "Chry_Err37",
+    "pci_receive_message_5_status",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Chry_Act37",
+    "pci_receive_message_5_timer",
+    "0.00"
+   ],
+   [
+    "0025",
+    "Chry_Err3A",
+    "pci_transmit_message_6_status",
+    "0.00"
+   ],
+   [
+    "0026",
+    "Chry_Act3A",
+    "pci_transmit_message_6_timer",
+    "0.00"
+   ],
+   [
+    "002C",
+    "Chry_Err4FC0",
+    "pci_receive_message_6_status",
+    "0.00"
+   ],
+   [
+    "002D",
+    "Chry_Act4FC0",
+    "pci_receive_message_6_timer",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "PCI RX[6] header 4F C0 age timer (event-driven (armed by writing 1)); 0xff37 = never received; reset to 0 on reception"
+ },
+ {
+  "address": "0x0040b40d",
+  "block": "8A12",
+  "offset": "0038",
+  "record": "Chry_Act98",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Chrysler DR Message $98 activity for General Trans. Status, ECM Rx",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "pci_transmit_message_12_timer",
+  "references": 4,
+  "dump_raw": "900",
+  "access_widths": "{'sth': 4} -> 2 byte",
+  "code": [
+   "hpcr_initPciMessageTimers: pci_transmit_message_12_timer = 500;",
+   "cm848_initPciMessagePayloads: puVar3 = (undefined1 *)((int)&pci_transmit_message_12_timer + 1);",
+   "cm848_buildPciTransmitMessage12StatusBits: pci_transmit_message_12_timer = 0xb04;",
+   "cm848_buildPciTransmitMessage12StatusBits: pci_transmit_message_12_timer = 0xb04;"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "J50_Err68",
+    "pci_receive_message_0_status",
+    "0.00"
+   ],
+   [
+    "0009",
+    "J50_Act68",
+    "pci_receive_message_0_timer",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Chry_Err24",
+    "pci_receive_message_1_status",
+    "0.00"
+   ],
+   [
+    "0013",
+    "Chry_Act24",
+    "pci_receive_message_1_timer",
+    "0.00"
+   ],
+   [
+    "0017",
+    "Chry_Err0E",
+    "pci_receive_message_2_status",
+    "0.00"
+   ],
+   [
+    "0018",
+    "Chry_Act0E",
+    "pci_receive_message_2_timer",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Chry_Err2D",
+    "pci_receive_message_4_status",
+    "0.00"
+   ],
+   [
+    "001D",
+    "Chry_Act2D",
+    "pci_receive_message_4_timer",
+    "0.00"
+   ],
+   [
+    "0021",
+    "Chry_Err37",
+    "pci_receive_message_5_status",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Chry_Act37",
+    "pci_receive_message_5_timer",
+    "0.00"
+   ],
+   [
+    "0025",
+    "Chry_Err3A",
+    "pci_transmit_message_6_status",
+    "0.00"
+   ],
+   [
+    "0026",
+    "Chry_Act3A",
+    "pci_transmit_message_6_timer",
+    "0.00"
+   ],
+   [
+    "002C",
+    "Chry_Err4FC0",
+    "pci_receive_message_6_status",
+    "0.00"
+   ],
+   [
+    "002D",
+    "Chry_Act4FC0",
+    "pci_receive_message_6_timer",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "PCI TX[12] header 98 age timer (send interval 2816); other modules write interval+10 to force an immediate send"
+ },
+ {
+  "address": "0x0040b436",
+  "block": "8A12",
+  "offset": "0061",
+  "record": "Chry_ActB1",
+  "unit": "MSEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Chrysler DR Message $B1 activity for SKIM Status, ECM Rx message",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "pci_receive_message_12_timer",
+  "references": 4,
+  "dump_raw": "80",
+  "access_widths": "{'sth': 1, 'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_initPciMessageTimers: pci_receive_message_12_timer = 0xff37;",
+   "cm848_initPciMessagePayloads: puVar3 = (undefined1 *)((int)&pci_receive_message_12_timer + 1);",
+   "cm848_runImmobilizerTask: wVar2 = pci_receive_message_12_timer;",
+   "cm848_runImmobilizerTask: if (pci_receive_message_12_timer < pci_receive_message_12_timer_previous) {"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "J50_Err68",
+    "pci_receive_message_0_status",
+    "0.00"
+   ],
+   [
+    "0009",
+    "J50_Act68",
+    "pci_receive_message_0_timer",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Chry_Err24",
+    "pci_receive_message_1_status",
+    "0.00"
+   ],
+   [
+    "0013",
+    "Chry_Act24",
+    "pci_receive_message_1_timer",
+    "0.00"
+   ],
+   [
+    "0017",
+    "Chry_Err0E",
+    "pci_receive_message_2_status",
+    "0.00"
+   ],
+   [
+    "0018",
+    "Chry_Act0E",
+    "pci_receive_message_2_timer",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Chry_Err2D",
+    "pci_receive_message_4_status",
+    "0.00"
+   ],
+   [
+    "001D",
+    "Chry_Act2D",
+    "pci_receive_message_4_timer",
+    "0.00"
+   ],
+   [
+    "0021",
+    "Chry_Err37",
+    "pci_receive_message_5_status",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Chry_Act37",
+    "pci_receive_message_5_timer",
+    "0.00"
+   ],
+   [
+    "0025",
+    "Chry_Err3A",
+    "pci_transmit_message_6_status",
+    "0.00"
+   ],
+   [
+    "0026",
+    "Chry_Act3A",
+    "pci_transmit_message_6_timer",
+    "0.00"
+   ],
+   [
+    "002C",
+    "Chry_Err4FC0",
+    "pci_receive_message_6_status",
+    "0.00"
+   ],
+   [
+    "002D",
+    "Chry_Act4FC0",
+    "pci_receive_message_6_timer",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "PCI RX[12] header B1 age timer (receive timeout 500); 0xff37 = never received; reset to 0 on reception"
+ },
+ {
+  "address": "0x0040b43a",
+  "block": "8A12",
+  "offset": "0065",
+  "record": "Chry_Err42",
+  "unit": "HEX",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Chrysler DR Message $42 error for Last Ign Off Duration, ECM Rx message",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "pci_receive_message_14_status",
+  "references": 6,
+  "dump_raw": "0",
+  "access_widths": "{'stb': 1, 'lbz': 5} -> 1 byte",
+  "code": [
+   "hpcr_initJ1939BufferValues: pci_receive_message_14_status = 0x10;",
+   "cm848_latchAndCheckEngineOffTime: if ((engine_off_time_latched_flag == 0) && ((pci_receive_message_14_status & 0x3f) == 0)) {",
+   "cm848_checkTransmissionTemperatureSensorPerformance: (((pci_receive_message_14_status & 0x3f) == 0 &&",
+   "cm848_checkCoolantTemperatureSensorPerformance: (((pci_receive_message_14_status & 0x3f) == 0 &&"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "J50_Err68",
+    "pci_receive_message_0_status",
+    "0.00"
+   ],
+   [
+    "0009",
+    "J50_Act68",
+    "pci_receive_message_0_timer",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Chry_Err24",
+    "pci_receive_message_1_status",
+    "0.00"
+   ],
+   [
+    "0013",
+    "Chry_Act24",
+    "pci_receive_message_1_timer",
+    "0.00"
+   ],
+   [
+    "0017",
+    "Chry_Err0E",
+    "pci_receive_message_2_status",
+    "0.00"
+   ],
+   [
+    "0018",
+    "Chry_Act0E",
+    "pci_receive_message_2_timer",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Chry_Err2D",
+    "pci_receive_message_4_status",
+    "0.00"
+   ],
+   [
+    "001D",
+    "Chry_Act2D",
+    "pci_receive_message_4_timer",
+    "0.00"
+   ],
+   [
+    "0021",
+    "Chry_Err37",
+    "pci_receive_message_5_status",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Chry_Act37",
+    "pci_receive_message_5_timer",
+    "0.00"
+   ],
+   [
+    "0025",
+    "Chry_Err3A",
+    "pci_transmit_message_6_status",
+    "0.00"
+   ],
+   [
+    "0026",
+    "Chry_Act3A",
+    "pci_transmit_message_6_timer",
+    "0.00"
+   ],
+   [
+    "002C",
+    "Chry_Err4FC0",
+    "pci_receive_message_6_status",
+    "0.00"
+   ],
+   [
+    "002D",
+    "Chry_Act4FC0",
+    "pci_receive_message_6_timer",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "PCI RX[14] header 42 status: 0x10 timed out / 0x08 in-frame response error / 0x20 payload length mismatch / 0x01 0x02 0x04 0x40 completion error bits / 0x80 unconfirmed"
+ },
+ {
+  "address": "0x0040b43e",
+  "block": "8A12",
+  "offset": "0069",
+  "record": "Chry_Dat42_Acknowledge",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Chrysler DR Message $42 data for Last Ign Off Duration, ECM Rx message",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_off_time_at_key_on",
+  "references": 5,
+  "dump_raw": "0",
+  "access_widths": "{'lhz': 3} -> 2 byte",
+  "code": [
+   "cm848_latchAndCheckEngineOffTime: engine_off_time_at_key_on / counts key cycles within 2 of the previous value (EEPROM mirror",
+   "cm848_latchAndCheckEngineOffTime: engine_off_time_at_key_on = pci_receive_message_14_engine_off_time;",
+   "cm848_checkTransmissionTemperatureSensorPerformance: (engine_off_time_at_key_on < transmission_temperature_check_minimum_engine_off_time)) &&",
+   "cm848_checkCoolantTemperatureSensorPerformance: (engine_off_time_at_key_on < coolant_temperature_check_minimum_engine_off_time)) &&"
+  ],
+  "block_named_rows": [
+   [
+    "0008",
+    "J50_Err68",
+    "pci_receive_message_0_status",
+    "0.00"
+   ],
+   [
+    "0009",
+    "J50_Act68",
+    "pci_receive_message_0_timer",
+    "0.00"
+   ],
+   [
+    "0012",
+    "Chry_Err24",
+    "pci_receive_message_1_status",
+    "0.00"
+   ],
+   [
+    "0013",
+    "Chry_Act24",
+    "pci_receive_message_1_timer",
+    "0.00"
+   ],
+   [
+    "0017",
+    "Chry_Err0E",
+    "pci_receive_message_2_status",
+    "0.00"
+   ],
+   [
+    "0018",
+    "Chry_Act0E",
+    "pci_receive_message_2_timer",
+    "0.00"
+   ],
+   [
+    "001C",
+    "Chry_Err2D",
+    "pci_receive_message_4_status",
+    "0.00"
+   ],
+   [
+    "001D",
+    "Chry_Act2D",
+    "pci_receive_message_4_timer",
+    "0.00"
+   ],
+   [
+    "0021",
+    "Chry_Err37",
+    "pci_receive_message_5_status",
+    "0.00"
+   ],
+   [
+    "0022",
+    "Chry_Act37",
+    "pci_receive_message_5_timer",
+    "0.00"
+   ],
+   [
+    "0025",
+    "Chry_Err3A",
+    "pci_transmit_message_6_status",
+    "0.00"
+   ],
+   [
+    "0026",
+    "Chry_Act3A",
+    "pci_transmit_message_6_timer",
+    "0.00"
+   ],
+   [
+    "002C",
+    "Chry_Err4FC0",
+    "pci_receive_message_6_status",
+    "0.00"
+   ],
+   [
+    "002D",
+    "Chry_Act4FC0",
+    "pci_receive_message_6_timer",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "First PCI 0x42 engine-off time received this power-up (minutes inferred); gates the coolant (480) / transmission temperature (200) / temperature cross-check (480) cold-start sensor checks (was j1939_msg_slot_n_eeprom_data) (Medium confidence)"
+ },
+ {
+  "address": "0x0040b33c",
+  "block": "8A35",
+  "offset": "0002",
+  "record": "IAH_Phase",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "4",
+  "description": "IAH Control Phase (0=key_on/1=setup/2=preheat/3=crank/4=postheat/5=off)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "intake_air_heater_control_state",
+  "references": 32,
+  "dump_raw": "2",
+  "access_widths": "{'lha': 3, 'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_monitorChargingSystemVoltageHighAndLow: ((intake_air_heater_control_state == 5 && (protection_voltage_active_flag == 0)))) {",
+   "cm848_testAlternatorOutputByCuttingField: if (((((alternator_field_regulator_state == 2) && (intake_air_heater_control_state == 5)) &&",
+   "cm848_initIntakeAirHeaterControl: intake_air_heater_control_state = 0;",
+   "cm848_shutdownIntakeAirHeater: intake_air_heater_control_state = 5;"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "IAH_Phase",
+    "intake_air_heater_control_state",
+    "0.00"
+   ],
+   [
+    "0004",
+    "IAH_Postheat_Schedule",
+    "intake_air_heater_schedule_level",
+    "0.33"
+   ],
+   [
+    "0006",
+    "IAH_Relay_Driver_Select",
+    "intake_air_heater_relay_phase",
+    "0.25"
+   ],
+   [
+    "0008",
+    "IAH_Override",
+    "intake_air_heater_relay_action_code",
+    "0.00"
+   ],
+   [
+    "000A",
+    "IAH_Error_Status",
+    "intake_air_heater_shutdown_reason",
+    "0.00"
+   ],
+   [
+    "000C",
+    "IAH_Postheat_Temp_Flag",
+    "intake_air_heater_postheat_temperature_source_flag",
+    "0.75"
+   ],
+   [
+    "000E",
+    "IAH_Preheat_Status",
+    "intake_air_heater_preheat_depleted_flag",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "grid heater control state 0-5 - 1 compute preheat / 2 preheat countdown / 3 run-up / 4 postheat cycling / 5 shutdown - advanced from engine_state (was battery_voltage_protection_state)"
+ },
+ {
+  "address": "0x0040b342",
+  "block": "8A35",
+  "offset": "0008",
+  "record": "IAH_Override",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "4",
+  "description": "Value:IAH Relay1/ Relay2(0:ignore override,1:ON/OFF,2:OFF/ON,3:ON/ON,4:OFF/OFF)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "intake_air_heater_relay_action_code",
+  "references": 9,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_initIntakeAirHeaterControl: intake_air_heater_relay_action_code = 0;",
+   "cm848_updateIntakeAirHeaterControl: if (intake_air_heater_relay_action_code == 1) {",
+   "cm848_updateIntakeAirHeaterControl: if (intake_air_heater_relay_action_code == 2) {",
+   "cm848_updateIntakeAirHeaterControl: if (intake_air_heater_relay_action_code != 3) {"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "IAH_Phase",
+    "intake_air_heater_control_state",
+    "0.00"
+   ],
+   [
+    "0004",
+    "IAH_Postheat_Schedule",
+    "intake_air_heater_schedule_level",
+    "0.33"
+   ],
+   [
+    "0006",
+    "IAH_Relay_Driver_Select",
+    "intake_air_heater_relay_phase",
+    "0.25"
+   ],
+   [
+    "0008",
+    "IAH_Override",
+    "intake_air_heater_relay_action_code",
+    "0.00"
+   ],
+   [
+    "000A",
+    "IAH_Error_Status",
+    "intake_air_heater_shutdown_reason",
+    "0.00"
+   ],
+   [
+    "000C",
+    "IAH_Postheat_Temp_Flag",
+    "intake_air_heater_postheat_temperature_source_flag",
+    "0.75"
+   ],
+   [
+    "000E",
+    "IAH_Preheat_Status",
+    "intake_air_heater_preheat_depleted_flag",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "grid heater relay command code - the tail of cm848_updateIntakeAirHeaterControl would set or clear relays 43 and 44 by code 1-4 but a whole-binary scan finds no non-zero writer so it stays 0 (was iat_protection_fault_action_code) (Medium confidence)"
+ },
+ {
+  "address": "0x0040b344",
+  "block": "8A35",
+  "offset": "000A",
+  "record": "IAH_Error_Status",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "8",
+  "description": "0=Inprocess/1=complete/2=VS/3=BT/4=longcrank/5=2hot/6=posthigh/7=Inhbit/8=Fuel",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "intake_air_heater_shutdown_reason",
+  "references": 10,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 7} -> 2 byte",
+  "code": [
+   "cm848_initIntakeAirHeaterControl: intake_air_heater_shutdown_reason = 0;",
+   "cm848_shutdownIntakeAirHeater: if (intake_air_heater_shutdown_reason == 0) {",
+   "cm848_shutdownIntakeAirHeater: intake_air_heater_shutdown_reason = 1;",
+   "cm848_updateIntakeAirHeaterPostheat: intake_air_heater_shutdown_reason = 7;"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "IAH_Phase",
+    "intake_air_heater_control_state",
+    "0.00"
+   ],
+   [
+    "0004",
+    "IAH_Postheat_Schedule",
+    "intake_air_heater_schedule_level",
+    "0.33"
+   ],
+   [
+    "0006",
+    "IAH_Relay_Driver_Select",
+    "intake_air_heater_relay_phase",
+    "0.25"
+   ],
+   [
+    "0008",
+    "IAH_Override",
+    "intake_air_heater_relay_action_code",
+    "0.00"
+   ],
+   [
+    "000A",
+    "IAH_Error_Status",
+    "intake_air_heater_shutdown_reason",
+    "0.00"
+   ],
+   [
+    "000C",
+    "IAH_Postheat_Temp_Flag",
+    "intake_air_heater_postheat_temperature_source_flag",
+    "0.75"
+   ],
+   [
+    "000E",
+    "IAH_Preheat_Status",
+    "intake_air_heater_preheat_depleted_flag",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "grid heater shutdown reason - 1 default / 2 over 19 mph / 3 battery over 30 V (never on 12 V) / 4 run-up holdoff expired / 5 schedule level 6 / 6 both warm (cal makes unreachable) / 7 EEPROM postheat-skip counter nonzero / 8 loaded-cycle overflow (was iat_protection_shutdown_reason)"
+ },
+ {
+  "address": "0x0040b542",
+  "block": "8C60",
+  "offset": "0002",
+  "record": "Tcase_NV_Instantaneous",
+  "unit": "RPM/MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "2000",
+  "description": "Instantaneous value (ENGRPM/Vehicle_Speed), N/V Low Range Indication",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_to_vehicle_speed_ratio_raw",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorEngineToVehicleSpeedRatio: engine_to_vehicle_speed_ratio_raw = (word)uVar2;",
+   "cm848_monitorEngineToVehicleSpeedRatio: uVar2 = (uint)engine_to_vehicle_speed_ratio_raw;",
+   "cm848_monitorEngineToVehicleSpeedRatio: engine_to_vehicle_speed_ratio_raw = 0;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Tcase_NV_Inst_Percent_Change",
+    "engine_to_vehicle_speed_ratio_deviation_filtered",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Tcase_NV_Instantaneous",
+    "engine_to_vehicle_speed_ratio_raw",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Tcase_NV_Average",
+    "engine_to_vehicle_speed_ratio_filtered",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Tcase_Low_Range_Flag",
+    "engine_to_vehicle_speed_ratio_high_flag",
+    "0.25"
+   ],
+   [
+    "0007",
+    "Tcase_Launch_Flag",
+    "engine_to_vehicle_speed_ratio_invalid_flag",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Tcase_Road_Speed",
+    "vehicle_speed_filtered_for_engine_speed_ratio",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Engine speed over vehicle speed: current_rpm (1/8 rpm) x 256 / vehicle_speed_filtered_for_engine_speed_ratio (1/256 mph) = 8 counts per rpm per mph (2400 = 300 rpm per mph); only computed above 2.2 mph (563) - else 0 (was fuel_temp_trim_rpm_ratio_raw)"
+ },
+ {
+  "address": "0x0040b544",
+  "block": "8C60",
+  "offset": "0004",
+  "record": "Tcase_NV_Average",
+  "unit": "RPM/MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "2000",
+  "description": "Filtered Instantaneous value (ENGRPM/Vehicle_Speed), N/V Low Range Indication",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "engine_to_vehicle_speed_ratio_filtered",
+  "references": 3,
+  "dump_raw": "0",
+  "access_widths": "{'sth': 2, 'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorEngineToVehicleSpeedRatio: engine_to_vehicle_speed_ratio_filtered = (word)dVar1;",
+   "cm848_monitorEngineToVehicleSpeedRatio: engine_to_vehicle_speed_ratio_filtered = 0;",
+   "cm848_monitorEngineToVehicleSpeedRatio: (engine_to_vehicle_speed_ratio_high_threshold < engine_to_vehicle_speed_ratio_filtered)))))"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Tcase_NV_Inst_Percent_Change",
+    "engine_to_vehicle_speed_ratio_deviation_filtered",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Tcase_NV_Instantaneous",
+    "engine_to_vehicle_speed_ratio_raw",
+    "0.00"
+   ],
+   [
+    "0004",
+    "Tcase_NV_Average",
+    "engine_to_vehicle_speed_ratio_filtered",
+    "0.00"
+   ],
+   [
+    "0006",
+    "Tcase_Low_Range_Flag",
+    "engine_to_vehicle_speed_ratio_high_flag",
+    "0.25"
+   ],
+   [
+    "0007",
+    "Tcase_Launch_Flag",
+    "engine_to_vehicle_speed_ratio_invalid_flag",
+    "0.33"
+   ],
+   [
+    "0008",
+    "Tcase_Road_Speed",
+    "vehicle_speed_filtered_for_engine_speed_ratio",
+    "0.33"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "EMA (old weight 0.925) of engine_to_vehicle_speed_ratio_raw (8 counts per rpm per mph); above 2400 (300 rpm per mph) below 44 mph with a stable ratio and fuel demand over 8 it sets engine_to_vehicle_speed_ratio_high_flag (was fuel_temp_trim_rpm_ratio_ema)"
+ }
+]

@@ -23,6 +23,18 @@ to the `enum_name`.
 
 Enum names render for whole-value compares only: `if (state == CSP_CRANKING)`.
 
+**The enum name renders WRONG when a value has no member (Ghidra 12.1).** A code-like enum whose values share bits
+(1, 2, 4, 5, 12 ...) gets printed as an OR of members for any value without an exact member. Example (CM848
+`FUELING_STATE`, 2026-11-19): 15 rendered as `FUELING_STATE_HIGH_SPEED_GOVERNOR | FUELING_STATE_TSC1_SPEED_CONTROL |
+FUELING_STATE_TSC1_TORQUE_CONTROL`, which reads as a flag set.
+- Give every value the enum's carriers store or compare a member. Unproven values get a placeholder,
+  `<ENUM>_UNIDENTIFIED_<n>`, with the setter in its comment.
+- Adding members can make new ORs possible. With 16 and 32 as members, the compared-only 37 = 32 | 5 and 49 = 32 | 16 | 1
+  become representable, so the compared-only values need members too.
+- After any enum change, diff the build with members and numbers normalized to their values (the 2026-11-19 session's
+  `check_enum_proof.py` in `docs/agent_notes_2026-11/session_2026-11-19_fueling_state/session_folder/`), and grep for
+  `<ENUM>_\w+ | `.
+
 ## Struct bitfields (`structure_definitions.csv`)
 
 Columns: `struct_name,address,field_name,type,size,comment,dependency,Status`
@@ -57,6 +69,17 @@ Listing fields at two addresses instead creates one oversize type applied only a
 **Commas in comments must be quoted** — this file uses a quote-aware parser, unlike
 `global_variables.csv`/`function_renames.csv` which absorb commas into the last column.
 
+**Struct type only, instances in `global_variables.csv`:** a struct whose instances have their own names can be
+defined once with an empty address (`ema_filter_state_t`, `piecewise_linear_gain_t`). Each instance is then a
+`global_variables.csv` row typed with the struct name. Edit the instance's first row in place and delete the rows
+inside it, including `<name>+2` label rows.
+
+**Records passed by pointer (stage 8b, 2026-11-19):** type the consumer's parameter as `<struct> *` with a full
+prototype. Ghidra then often types the caller's stack copies of the record by itself. If it does not, a
+`local_variables.csv` row can give a stack local a struct type. When the code's last store into the copy runs past the
+struct's end, that one store renders as a raw stack or register name; say so in the plate. Unaligned dword fields
+that the code copies as two halfwords render as `._0_2_` / `._2_2_` pieces; that is correct, not a width error.
+
 ## Function prototypes (`function_definitions.csv`)
 
 Columns: `function_address,function_name,param_index,name,type,comment`
@@ -71,7 +94,10 @@ call site. To undo a bad prototype, fix/remove the row and rebuild.
 
 **Type keywords (`function_definitions.csv` and `local_variables.csv`):**
 - `int` / `uint` / `dword` / `uint32_t` → unsigned `dword`. For a signed 32-bit value use **`int32_t`** (signed `int`, added 2026-11-14). The `int` mapping was left alone so existing rows do not re-render.
-- `short` / `ushort` / `word` / `uint16_t` → unsigned `word`. There is no signed 16-bit keyword for prototypes or locals yet.
+- `short` / `ushort` / `word` / `uint16_t` → unsigned `word`. There is no signed 16-bit keyword, but **`sword`** works: unknown names fall through to a by-name lookup, and `sword` is Ghidra's signed word (the program has it once any global is `i16`). It was found 2026-11-19 on `cm848_signedFirstOrderFilter`, which returns a sign-extended 16-bit value.
+  - `int32_t` there put `iVar = f(...); x = (word)iVar;` at all 39 call sites: a locked 32-bit return is kept whole.
+  - `sword` gave back the direct `x = f(...)`.
+  - The headers need `typedef int16_t sword;`; `generate_headers.py` has carried `sbyte` / `sword` / `sdword` / `sqword` since then.
 - The other CSVs use different mappers: `structure_definitions.csv` (ApplyStructures) maps `int` / `short` to **signed** types, and `global_variables.csv` (ImportAnalysis) has its own signed keywords `i8` / `i16` / `i32` and no `int` case (an `int` there goes to a named-type lookup). ApplyGlobalVariableTypes is a further copy, but only the unused `cmd_vartypes` reaches it.
 - `undefined4` locks only the **name**; the decompiler keeps inferring the type. Use it for a 4-byte parameter whose inferred type is already right.
 - A 2-byte parameter committed as `undefined4` renders as `x._2_2_` sub-pieces — give it `ushort`.

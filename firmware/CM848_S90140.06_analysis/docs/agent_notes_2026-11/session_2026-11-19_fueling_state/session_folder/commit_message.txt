@@ -1,0 +1,24 @@
+cm848: FUELING_STATE enum - governor_fuel_demand_mode is the governed fueling state
+
+governor_fuel_demand_mode (0x40a154) is the Cummins FSGVFLST governed fueling
+state. Its 35 accesses are all 16-bit whole-value compares or copies, and only
+the arbitration in cm848_processProtectionRampControl writes it. Its codes
+come from one numbering that every fueling stage shares (e2m FSDSFLST 1-8 /
+FSGVFLST 1-12 / FSLMFLST 13-41), so the enum is shared:
+
+- ENGINE_OPERATING_MODE -> FUELING_STATE (members renamed), plus 4 power
+  take-off (e2m-derived) / 9 cruise control / 10 vehicle speed limit /
+  11 low speed governor / 12 high speed governor
+- typed FUELING_STATE: engine_operating_mode,
+  engine_operating_mode_previous_pass, operating_mode_governor_output_t
+  .mode_code, 0x40b67c, 0x3fb526, governor_fuel_demand_mode,
+  governor_fuel_demand_mode_prev, cruise_fuel_demand_mode_prev
+- 0x40b67c governor_pid_integral_snapshot -> governor_fuel_demand_working_mode
+- the 0x3fb526 dword split into governor_fuel_demand_working_mode_prev and
+  fuel_demand_enable_sync_flag_shadow (word)
+
+Proof: label-only once enum substitution is normalized. One function keeps
+a split local (cm848_processProtectionRampControl). Headers regenerated
+(CM550 unchanged). Task 045 + session notes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

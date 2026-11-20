@@ -1,0 +1,96 @@
+function_address,function_name,old_ghidra_name,new_variable_name,type,comment
+# =============================================================================
+# J90350.00 Local Variable Definitions
+# Created: 2024-12-18
+# Updated: 2024-12-25 - Fixed format: column 2 = old Ghidra name for script matching
+# Format: function_address,function_name,old_ghidra_name,new_variable_name,type,comment
+#
+# The ApplyLocalVariables.java script searches for variables by old_ghidra_name
+# (column 2), NOT by address. Use the exact variable name from decompilation.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Security Authentication Functions (FIXED - have old Ghidra names)
+# -----------------------------------------------------------------------------
+
+# bitPackingAlgorithm @ 0x2fbd8 - Core bit manipulation for security auth
+# Algorithm: Mask table separates bits into forward/backward streams, XOR phase, reorder phase
+0x0002fbd8,bitPackingAlgorithm,local_10,working_buffer,byte[10],Intermediate buffer for bit manipulation
+0x0002fbd8,bitPackingAlgorithm,local_6,input_byte_index,char,Current input byte being processed 0-9
+0x0002fbd8,bitPackingAlgorithm,current_mask,current_mask,byte,Current mask byte from MASK_TABLE (already named)
+0x0002fbd8,bitPackingAlgorithm,cVar2,loop_counter,char,Generic loop counter for buffer operations
+0x0002fbd8,bitPackingAlgorithm,cVar6,backward_byte_index,char,Backward write byte position 9->0
+0x0002fbd8,bitPackingAlgorithm,forward_byte_index,forward_byte_index,char,Forward write byte position 0->9 (already named)
+0x0002fbd8,bitPackingAlgorithm,bVar5,bit_position,byte,Current bit position within byte 0-7
+0x0002fbd8,bitPackingAlgorithm,bVar4,backward_bit_counter,byte,Backward bit position 0-7 resets each byte
+0x0002fbd8,bitPackingAlgorithm,bVar3,input_bit_value,byte,Extracted input bit shifted to MSB position
+0x0002fbd8,bitPackingAlgorithm,pcVar7,mask_table_ptr,char*,Pointer to MASK_TABLE lookup
+0x0002fbd8,bitPackingAlgorithm,pbVar8,forward_write_ptr,byte*,Pointer for forward direction writes
+0x0002fbd8,bitPackingAlgorithm,pbVar9,backward_write_ptr,byte*,Pointer for backward direction writes
+0x0002fbd8,bitPackingAlgorithm,iVar1,cached_input_offset,int,Cached input_buffer + input_byte_index
+
+# hourMeterSecurityValidator @ 0x2fcdc - Validates auth payload against security key + hour meter
+# Returns 0 on success, 1 on failure. Lockout after 17 (0x11) failed attempts.
+0x0002fcdc,hourMeterSecurityValidator,bVar1,all_keys_match,bool,True if all 6 key bytes match stored key
+0x0002fcdc,hourMeterSecurityValidator,uVar2,validation_result,byte,Return value 0=success 1=failure
+0x0002fcdc,hourMeterSecurityValidator,key_matches,copy_counter,bool,Reused as byte copy loop counter 0-4
+0x0002fcdc,hourMeterSecurityValidator,cVar3,key_byte_index,char,Loop counter 0-5 for key comparison
+0x0002fcdc,hourMeterSecurityValidator,puVar4,hour_meter_dest_ptr,uint*,Destination for hour meter copy
+0x0002fcdc,hourMeterSecurityValidator,pbVar5,key_compare_ptr,byte*,Pointer walking through extracted_key
+0x0002fcdc,hourMeterSecurityValidator,puVar6,hour_meter_src_ptr,byte*,Source for hour meter copy
+0x0002fcdc,hourMeterSecurityValidator,extracted_hour_meter,extracted_hour_meter,uint,Hour meter from auth (already named)
+0x0002fcdc,hourMeterSecurityValidator,abStack_e,extracted_key,byte[6],6-byte key from auth payload
+0x0002fcdc,hourMeterSecurityValidator,auStack_8,hour_meter_bytes,byte[4],4-byte hour meter from auth payload
+
+# diagnosticServiceSecurityValidator @ 0x21982 - Checks if service requires auth
+# Returns 0xFF on success, 0x02 for length error, 0x03 for auth failure
+0x00021982,diagnosticServiceSecurityValidator,bVar2,service_id,byte,Diagnostic service ID from message
+0x00021982,diagnosticServiceSecurityValidator,uVar1,msg_length,short,Message length from param_1+4 (Ghidra 12.2 auto-name before renames; was sVar1 on the 12.0 DEV build)
+0x00021982,diagnosticServiceSecurityValidator,iVar4,required_param_len,int32_t,Required param length 1/3/5 by service (Ghidra 12.2 auto-name before renames - the 4th local; was uVar4 ushort on the 12.0 DEV build - 12.2 infers int and a ushort type splits the variable)
+0x00021982,diagnosticServiceSecurityValidator,cVar3,auth_result,char,Result from hourMeterSecurityValidator
+
+# j1708DiagnosticCommandDispatcher @ 0x15f8e - J1708 diagnostic command processor
+0x00015f8e,j1708DiagnosticCommandDispatcher,wVar3,currentTimerCount,word,Timer count at function entry for timeout calculation
+0x00015f8e,j1708DiagnosticCommandDispatcher,wVar4,elapsedTimerCount,word,Timer count for elapsed time comparison
+
+# memoryOperationDispatcher @ 0x2148a - Routes memory read/write operations
+# Service 0x4B handler - processes memory write requests with authentication
+# Returns: 0=success, 2=invalid_length, 3=auth_failed, 7=logging_error, 10=write_denied, 0x1a=auth_missing
+0x0002148a,memoryOperationDispatcher,uVar1,calculated_msg_length,ushort,Calculated message length = operation_flags + addr_offset
+0x0002148a,memoryOperationDispatcher,bVar2,has_auth_payload,bool,True if 10-byte auth payload is included in message
+0x0002148a,memoryOperationDispatcher,dVar3,region_type_copy,dword,Copy of region type for switch statement
+0x0002148a,memoryOperationDispatcher,cVar5,auth_validation_result,char,Result from hourMeterSecurityValidator (0=pass)
+0x0002148a,memoryOperationDispatcher,uVar4,memcpy_return,uint,Return value from memcpy operation
+
+# addressRangeValidator @ 0x3460e - Validates memory address against range table
+# Returns region type: 0=direct, 3=secured, 4=denied, 5=logging, 9=invalid
+0x0003460e,addressRangeValidator,uVar1,high_bytes_result,undefined3,High 3 bytes of return value (unused)
+0x0003460e,addressRangeValidator,bVar2,table_index,byte,Current entry index in address_range_validator_table (0-4)
+0x0003460e,addressRangeValidator,uVar3,end_address,uint,Calculated end address = start + length - 1
+0x0003460e,addressRangeValidator,puVar4,table_entry_ptr,uint*,Pointer to current 10-byte table entry
+
+# memoryOperationFromMessageExtended @ 0x217de - Wrapper that extracts params from J1939 message
+# Extracts address (4 bytes) and flags from message then calls memoryOperationDispatcher
+0x000217de,memoryOperationFromMessageExtended,local_c,operation_flags,uint,Extracted operation flags from message byte 5
+0x000217de,memoryOperationFromMessageExtended,local_8,address_buffer,byte[2],Buffer for address extraction
+0x000217de,memoryOperationFromMessageExtended,wStack_6,operation_size,word,Operation size extracted from message
+
+# memoryOperationFromMessage8Byte @ 0x21826 - 8-byte variant of message handler
+0x00021826,memoryOperationFromMessage8Byte,local_c,operation_flags,dword,Extracted 4-byte operation flags
+0x00021826,memoryOperationFromMessage8Byte,local_8,address_buffer,byte[2],Buffer for address extraction
+0x00021826,memoryOperationFromMessage8Byte,wStack_6,operation_size,word,Operation size for dispatcher
+
+# -----------------------------------------------------------------------------
+# OTHER FUNCTIONS (need old Ghidra names discovered via decompilation)
+# These entries have addresses as placeholders - will not apply until fixed
+# TODO: Run decompile on each function to get actual old Ghidra names
+# -----------------------------------------------------------------------------
+
+# CAN Message Response Functions
+# 0x000222b4,canDiagnosticResponseSender,TODO,can_msg_id,uint,CAN message identifier
+
+# Diagnostic Memory Read Functions
+# 0x0002238e,diagMemoryReadResponseBuilder,TODO,first_byte,char,First byte of data pointer
+
+# ... (other functions need old names discovered)
+

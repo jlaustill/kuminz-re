@@ -1,0 +1,563 @@
+{
+ "functions": [
+  {
+   "address": "0x00018070",
+   "current": "cm848_throttlePositionProcessing",
+   "proposals": [
+    {
+     "name": "cm848_calculatePercentPeakTorqueAtSpeed",
+     "reason": "- 0x18070 `cm848_throttlePositionProcessing` -> `cm848_calculatePercentPeakTorqueAtSpeed`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 24,
+   "callers": [
+    "cm848_clampFuelDemandToValidRange",
+    "cm848_processThrottlePositionLookups"
+   ],
+   "callees": [
+    "cm848_clampFuelDemandToValidRange"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0001811c",
+   "current": "cm848_faultSeverityEvaluation",
+   "proposals": [
+    {
+     "name": "cm848_calculateFrictionFuelingAtBreakpoints",
+     "reason": "- 0x1811c `cm848_faultSeverityEvaluation` -> `cm848_calculateFrictionFuelingAtBreakpoints`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 33,
+   "callers": [
+    "cm848_initFaultSeverityTables",
+    "cm848_processThrottlePositionLookups"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0001820c",
+   "current": "cm848_processThrottlePositionLookups",
+   "proposals": [
+    {
+     "name": "cm848_calculateJ1939PercentPeakTorquePoints",
+     "reason": "- 0x1820c `cm848_processThrottlePositionLookups` -> `cm848_calculateJ1939PercentPeakTorquePoints`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 34,
+   "callers": [],
+   "callees": [
+    "cm848_faultSeverityEvaluation",
+    "cm848_throttlePositionProcessing"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x000182e8",
+   "current": "cm848_calculateThrottleProtectionLimit",
+   "proposals": [
+    {
+     "name": "cm848_calculateJ1939PercentPeakTorque",
+     "reason": "- 0x182e8 `cm848_calculateThrottleProtectionLimit` -> `cm848_calculateJ1939PercentPeakTorque`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 22,
+   "callers": [],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0001b3a0",
+   "current": "faultTimerHandler",
+   "proposals": [
+    {
+     "name": "cm848_buildPgn65251EngineConfigurationMessage",
+     "reason": "| 0x0001b3a0 | `faultTimerHandler` -> `cm848_buildPgn65251EngineConfigurationMessage` | Fills the 28-byte PGN 65251 payload from the torque curve snapshots. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 90,
+   "callers": [
+    "cm848_processFaultMessageTiming",
+    "cm848_sendFaultTimerMessage"
+   ],
+   "callees": [
+    "cm848_updateProtectionStateMachine",
+    "governor_calculateIntegratorRpmOutput"
+   ],
+   "shared_with_cm550": true
+  },
+  {
+   "address": "0x00020500",
+   "current": "cm848_calculateProtectionActivationDelay",
+   "proposals": [
+    {
+     "name": "cm848_calculateReferenceEngineFueling",
+     "reason": "| 0x00020500 | `cm848_calculateProtectionActivationDelay` -> `cm848_calculateReferenceEngineFueling` | Computes the Jcomm peak fueling. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 18,
+   "callers": [
+    "cm848_periodicTaskSet_sensorProcessing"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x000209e8",
+   "current": "cm848_calculateLoadRateOfChange",
+   "proposals": [
+    {
+     "name": "cm848_calculateActualEnginePercentTorque",
+     "reason": "| 0x000209e8 | `cm848_calculateLoadRateOfChange` -> `cm848_calculateActualEnginePercentTorque` | Computes the EEC1 actual percent torque x 256. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 22,
+   "callers": [
+    "cm848_runEmissionManager",
+    "j1939GetEngineStateCode"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00020a58",
+   "current": "cm848_calculateLoadToFuelRatio",
+   "proposals": [
+    {
+     "name": "cm848_calculateEnginePercentLoadAtCurrentSpeed",
+     "reason": "| 0x00020a58 | `cm848_calculateLoadToFuelRatio` -> `cm848_calculateEnginePercentLoadAtCurrentSpeed` | Computes the EEC2 percent load. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 27,
+   "callers": [
+    "cm848_buildPgn61443ElectronicEngineController2Message"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00020c64",
+   "current": "cm848_processJ1939RxMessage",
+   "proposals": [
+    {
+     "name": "cm848_setTorqueCurvePoints2And5AtDroopLineFueling",
+     "reason": "| 0x00020c64 | `cm848_processJ1939RxMessage` | `cm848_setTorqueCurvePoints2And5AtDroopLineFueling` | takes a fueling in param_1 and sets curve points 2 and 5; handles no message |",
+     "source": "review_e2m_names_wave_13_bin_1.md"
+    },
+    {
+     "name": "cm848_calculateJ1939TorqueCurveDroopBreakpoint",
+     "reason": "| 0x00020c64 | `cm848_processJ1939RxMessage` -> `cm848_calculateJ1939TorqueCurveDroopBreakpoint` | Tail helper of the above, not a receive handler. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 34,
+   "callers": [
+    "cm848_updateProtectionStateMachine"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00020d10",
+   "current": "cm848_updateProtectionStateMachine",
+   "proposals": [
+    {
+     "name": "cm848_updateJ1939EngineConfigurationTorqueCurve",
+     "reason": "| 0x00020d10 | `cm848_updateProtectionStateMachine` | `cm848_updateJ1939EngineConfigurationTorqueCurve` | fills the e2m 1102 Jcomm speed / fueling / torque points of PGN 65251 |",
+     "source": "review_e2m_names_wave_13_bin_1.md"
+    },
+    {
+     "name": "cm848_updateJ1939TorqueCurve",
+     "reason": "| 0x00020d10 | `cm848_updateProtectionStateMachine` -> `cm848_updateJ1939TorqueCurve` | Builds the speeds, fuelings and percent torques at points 1-5; no protection state. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 162,
+   "callers": [
+    "faultTimerHandler"
+   ],
+   "callees": [
+    "cm848_processJ1939RxMessage",
+    "cm848_updateProtectionInputs",
+    "cm848_updateProtectionParameters"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x000212dc",
+   "current": "cm848_initProtectionDelayDefaults",
+   "proposals": [
+    {
+     "name": "cm848_initializeJ1939ReferenceEngineFuelingAndTorque",
+     "reason": "| 0x000212dc | `cm848_initProtectionDelayDefaults` -> `cm848_initializeJ1939ReferenceEngineFuelingAndTorque` | Loads the ROM peak fueling and reference torque. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 16,
+   "callers": [
+    "initFaultTimerMessage"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00021ac0",
+   "current": "cm848_initUdsServiceHandlers",
+   "proposals": [
+    {
+     "name": "cm848_lookupJ1939FuelTableAtEngineSpeed",
+     "reason": "| 0x00021ac0 | `cm848_initUdsServiceHandlers` | `cm848_lookupJ1939FuelTableAtEngineSpeed` | returns the chi/alpha-interpolated `j1939_fuel_table` value at the engine speed passed; no UDS |",
+     "source": "review_e2m_names_wave_13_bin_1.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 46,
+   "callers": [
+    "cm848_updateProtectionDiagnostics"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00021cd4",
+   "current": "cm848_updateProtectionDiagnostics",
+   "proposals": [
+    {
+     "name": "cm848_updateJ1939TorqueCurveReferenceFuelings",
+     "reason": "| 0x00021cd4 | `cm848_updateProtectionDiagnostics` -> `cm848_updateJ1939TorqueCurveReferenceFuelings` | Skimmed only: it sets the five per-point reference fuelings. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 101,
+   "callers": [
+    "cm848_periodicTaskSet_diagnostics2"
+   ],
+   "callees": [
+    "cm848_getHighestPriorityBit",
+    "cm848_initUdsServiceHandlers",
+    "cm848_lookupChiMaximumFuelAtSpeed",
+    "cm848_updateProtectionThresholdsIfLow"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0002588c",
+   "current": "j1939GetEngineStateCode",
+   "proposals": [
+    {
+     "name": "cm848_buildPgn61444ElectronicEngineController1Message",
+     "reason": "| 0x0002588c | `j1939GetEngineStateCode` -> `cm848_buildPgn61444ElectronicEngineController1Message` | Builds and sends EEC1. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 141,
+   "callers": [
+    "cm848_calculateDriverDemandPercentTorque",
+    "cm848_j1939_system_init"
+   ],
+   "callees": [
+    "cm848_calculateDriverDemandPercentTorque",
+    "cm848_calculateLoadRateOfChange",
+    "sendJ1939Message"
+   ],
+   "shared_with_cm550": true
+  },
+  {
+   "address": "0x000255c0",
+   "current": "cm848_j1939SendDm1ResponseMessage",
+   "proposals": [
+    {
+     "name": "cm848_j1939SendDm8TestResultMessage",
+     "reason": "| 0x255c0 | `cm848_j1939SendDm1ResponseMessage` | `cm848_j1939SendDm8TestResultMessage` | sends PGN 65232 with test id and value |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 19,
+   "callers": [
+    "cm848_j1939HandlePgn58112Dm7"
+   ],
+   "callees": [
+    "j1939_reverseByteOrder16",
+    "sendJ1939Message"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00026f80",
+   "current": "cm848_j1939FormatDm1Message",
+   "proposals": [],
+   "note": "no name proposed yet: wave 12 (task 045): it is the TSC1 lost management",
+   "current_plate": "",
+   "body_lines": 57,
+   "callers": [
+    "cm848_processGovernorModeTransition"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050be6c",
+   "current": "governor_calibSnapshot_rollingBuffer_update",
+   "proposals": [
+    {
+     "name": "cm848_storeJ1939ControlSessionInHistoryTable",
+     "reason": "| 0x50be6c | `governor_calibSnapshot_rollingBuffer_update` | `cm848_storeJ1939ControlSessionInHistoryTable` | 5 x 24-byte history ring |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 38,
+   "callers": [
+    "phase_group_a_setupETC1Controller"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050beec",
+   "current": "governor_sourceData_init",
+   "proposals": [
+    {
+     "name": "cm848_startJ1939ControlSession",
+     "reason": "| 0x50beec | `governor_sourceData_init` | `cm848_startJ1939ControlSession` | opens an engine or retarder control session |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 44,
+   "callers": [
+    "phase_group_a_setupETC1Controller"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050bff4",
+   "current": "phase_group_a_setupETC1Controller",
+   "proposals": [
+    {
+     "name": "cm848_trackJ1939ControlSessions",
+     "reason": "| 0x50bff4 | `phase_group_a_setupETC1Controller` | `cm848_trackJ1939ControlSessions` | opens, closes and files control sessions |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 119,
+   "callers": [
+    "cm848_phase_group_a_processing"
+   ],
+   "callees": [
+    "governor_calibSnapshot_rollingBuffer_update",
+    "governor_sourceData_init"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00505c20",
+   "current": "diag_dm1Buffer_circularFill",
+   "proposals": [
+    {
+     "name": "cm848_fillDataCollectorBuffer",
+     "reason": "| 0x00505c20 | `diag_dm1Buffer_circularFill` -> `cm848_fillDataCollectorBuffer` | It is the data collector. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    },
+    {
+     "name": "cm848_fillDataCollectorRingBuffer",
+     "reason": "| 0x00505c20 | `diag_dm1Buffer_circularFill` | `cm848_fillDataCollectorRingBuffer` | fills the data collector ring buffer, not DM1 |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 71,
+   "callers": [
+    "cm848_phase_groupB_calculation"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00505d94",
+   "current": "hpcr_exception_process",
+   "proposals": [
+    {
+     "name": "cm848_resetDataCollector",
+     "reason": "| 0x00505d94 | `hpcr_exception_process` | `cm848_resetDataCollector` | resets the collector, called at start-up by `cm848_applicationMain` |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    },
+    {
+     "name": "cm848_initializeDataCollector",
+     "reason": "| 0x505d94 | `hpcr_exception_process` | `cm848_initializeDataCollector` | sets the collector pointers |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 20,
+   "callers": [
+    "cm848_applicationMain",
+    "j1939_dm1_diagnosticMessage_send"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00505df0",
+   "current": "j1939_dm1_diagnosticMessage_send",
+   "proposals": [
+    {
+     "name": "cm848_sendDataCollectorBuffer",
+     "reason": "| 0x00505df0 | `j1939_dm1_diagnosticMessage_send` | `cm848_sendDataCollectorBuffer` | sends the collector buffer by transport protocol in stop mode 3 |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 77,
+   "callers": [
+    "cm848_phase_groupB_calculation"
+   ],
+   "callees": [
+    "hpcr_exception_process",
+    "initiateJ1939TransportProtocol",
+    "j1939_selectResponseBuffer",
+    "j1939_transport_singleFrame_send"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00505f98",
+   "current": "cm848_phase_groupB_calculation",
+   "proposals": [
+    {
+     "name": "cm848_runDataCollector",
+     "reason": "| 0x00505f98 | `cm848_phase_groupB_calculation` | `cm848_runDataCollector` | the collector pass |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 137,
+   "callers": [
+    "cm848_phase_group_b_processing",
+    "hpcr_processEngineSyncPulses"
+   ],
+   "callees": [
+    "cm848_readDiscreteInputLine",
+    "diag_dm1Buffer_circularFill",
+    "j1939_dm1_diagnosticMessage_send"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00027bc4",
+   "current": "cm848_governorDroopCalculation",
+   "proposals": [],
+   "note": "no name proposed yet: wave 12 (task 045): it is a number-to-text helper",
+   "current_plate": "",
+   "body_lines": 54,
+   "callers": [
+    "cm848_initPgn65242SoftwareIdHandler",
+    "cm848_j1939HandlePgn65259ComponentId"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00508130",
+   "current": "governor_coldStart_faultDerate_trigger",
+   "proposals": [
+    {
+     "name": "cm848_examineEngineProtectionBeforeCranking",
+     "reason": "- 0x508130 `governor_coldStart_faultDerate_trigger` -> `cm848_examineEngineProtectionBeforeCranking`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 50,
+   "callers": [
+    "cm848_runFaultDerateScheduler"
+   ],
+   "callees": [
+    "protection_threshold_check"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00508898",
+   "current": "governor_faultDerate_mainLoop_update",
+   "proposals": [
+    {
+     "name": "cm848_updateEngineProtectionShutdown",
+     "reason": "- 0x508898 `governor_faultDerate_mainLoop_update` -> `cm848_updateEngineProtectionShutdown`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 167,
+   "callers": [
+    "cm848_runFaultDerateScheduler"
+   ],
+   "callees": [
+    "protection_event_timestamp",
+    "protection_threshold_check"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00508e78",
+   "current": "cm848_updateJ1939ReceptionControlFlag",
+   "proposals": [
+    {
+     "name": "cm848_detectEngineProtectionShutdownOverrideRequest",
+     "reason": "- 0x508e78 `cm848_updateJ1939ReceptionControlFlag` -> `cm848_detectEngineProtectionShutdownOverrideRequest`. It edge-detects the override switch, not J1939 reception.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 19,
+   "callers": [
+    "cm848_periodicTaskSet_auxiliaryControl"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00508ee0",
+   "current": "governor_derateTrigger_latch_clear",
+   "proposals": [
+    {
+     "name": "cm848_latchEngineProtectionShutdownOverride",
+     "reason": "- 0x508ee0 `governor_derateTrigger_latch_clear` -> `cm848_latchEngineProtectionShutdownOverride`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 16,
+   "callers": [
+    "cm848_runFaultDerateScheduler"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  }
+ ]
+}

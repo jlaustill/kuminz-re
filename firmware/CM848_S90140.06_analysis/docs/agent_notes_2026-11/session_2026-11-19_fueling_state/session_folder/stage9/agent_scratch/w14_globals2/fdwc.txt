@@ -1,0 +1,246 @@
+=== cm848_calculateFuelDemandWithConditions (lines 45592-45842, 245 non-blank)
+45592: // Function: cm848_calculateFuelDemandWithConditions @ 0x00045ecc
+45593: //
+45595: void cm848_calculateFuelDemandWithConditions(void)
+45597: {
+45598:   bool bVar1;
+45599:   word wVar2;
+45600:   word wVar3;
+45601:   word wVar4;
+45602:   int iVar5;
+45603:   int iVar6;
+45604:   dword dVar7;
+45605:   uint uVar8;
+45606:   uint uVar9;
+45607:   uint uVar10;
+45608:   int iVar11;
+45609:   int iVar12;
+45611:   if ((governor_fuel_feature_flags & 4) == 0) {
+45612:     fuel_demand_governor_output = fuel_demand_control_t_0040a57a.calculated;
+45613:     return;
+45614:   }
+45615:   bVar1 = false;
+45616:   if ((((adjusted_user_fueling_state == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) &&
+45617:        ((((fuel_feature_control_flags & 0x10) != 0 || (fuel_demand_pilot_active_flag._0_2_ != 1)) ||
+45618:         (all_speed_governor_delta == 0)))) ||
+45619:       ((((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR ||
+45620:          (adjusted_user_fueling_state == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
+45621:         (adjusted_user_fueling_state == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
+45622:        (final_fueling_state == FUELING_STATE_TSC1_TORQUE_LIMIT)))) ||
+45623:      ((((adjusted_user_fueling_state == FUELING_STATE_HIGH_SPEED_GOVERNOR &&
+45624:         (operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) &&
+45625:        (adjusted_user_fueling < operating_mode_governor_output.fuel_demand)) ||
+45626:       (0x80 < governor_tuning_set_blend_weight)))) {
+45627:     if ((fuel_feature_control_flags & 0x10) == 0) {
+45628:       uVar8 = (uint)fuel_demand_control_t_0040a57a.calculated;
+45629:     }
+45630:     else {
+45631:       bVar1 = true;
+45632:       if (equivalent_throttle_vacuum_all_speed_governor_offset <
+45633:           fuel_demand_control_t_0040a57a.calculated) {
+45634:         uVar8 = (uint)(ushort)(fuel_demand_control_t_0040a57a.calculated -
+45635:                               equivalent_throttle_vacuum_all_speed_governor_offset);
+45636:       }
+45637:       else {
+45638:         uVar8 = 0;
+45639:       }
+45640:     }
+45641:     governor_speed_error_input = speed_request_base;
+45642:     governor_speed_error_prescaled = (uint)speed_request_base << 3;
+45643:   }
+45644:   else {
+45645:     wVar2 = lookupTableInterpolation
+45646:                       (&governor_pid_init_state_e,governor_speed_error_input,
+45647:                        all_speed_governor_droop_blend_128_axis,
+45648:                        all_speed_governor_droop_blend_128_values,0);
+45649:     wVar3 = lookupTableInterpolation
+45650:                       (&governor_pid_init_state_d,governor_speed_error_input,
+45651:                        all_speed_governor_droop_blend_0_axis,all_speed_governor_droop_blend_0_values
+45652:                        ,0);
+45653:     uVar8 = ((uint)governor_tuning_set_blend_weight * (uint)wVar2 >> 7) +
+45654:             ((0x80 - (uint)governor_tuning_set_blend_weight) * (uint)wVar3 >> 7) & 0xffff;
+45655:     if (governor_fuel_timing_correction_threshold_cal < uVar8) {
+45656:       wVar2 = lookupTableInterpolation
+45657:                         (&governor_pid_init_state_a,governor_speed_error_input,
+45658:                          all_speed_governor_friction_fuel_blend_128_axis,
+45659:                          all_speed_governor_friction_fuel_blend_128_values,0);
+45660:       wVar3 = lookupTableInterpolation
+45661:                         (&governor_pid_init_state_b,governor_speed_error_input,
+45662:                          all_speed_governor_friction_fuel_blend_0_axis,
+45663:                          all_speed_governor_friction_fuel_blend_0_values,0);
+45664:       coolant_temp_b_snapshot = sensor_readings_t_0040baf2.coolant_temp;
+45665:       uVar9 = (uint)governor_tuning_set_blend_weight;
+45666:       wVar4 = lookupTableInterpolation
+45667:                         (&governor_pid_init_state_c,sensor_readings_t_0040baf2.coolant_temp,
+45668:                          all_speed_governor_coolant_fuel_adjustment_axis,
+45669:                          all_speed_governor_coolant_fuel_adjustment_values,1);
+45670:       uVar9 = (uVar9 * wVar2 >> 7 & 0xffff) + ((0x80 - uVar9) * (uint)wVar3 >> 7 & 0xffff) +
+45671:               (uint)wVar4;
+45672:       uVar8 = (int)(((uint)governor_speed_error_input - (uint)engine_rpm_measured) * 0x4ca) /
+45673:               (int)uVar8;
+45674:       if (0x1700 < (int)uVar8) {
+45675:         uVar8 = 0x1700;
+45676:       }
+45677:       if ((int)uVar8 < 0) {
+45678:         uVar10 = uVar8;
+45679:         if ((int)uVar8 < 0) {
+45680:           uVar10 = -uVar8;
+45681:         }
+45682:         if (uVar10 <= uVar9) goto LAB_00046214;
+45683:         uVar9 = 0;
+45684:       }
+45685:       else {
+45686: LAB_00046214:
+45687:         uVar9 = uVar9 + uVar8;
+45688:       }
+45689:       if (0x1700 < uVar9) {
+45690:         uVar9 = 0x1700;
+45691:       }
+45692:       iVar12 = (uint)final_fueling - (uVar9 & 0xffff);
+45693:       uVar8 = iVar12 * (uint)governor_speed_proportional_gain_cal;
+45694:       iVar11 = ((int)uVar8 >> 0xc) + (uint)((int)uVar8 < 0 && (uVar8 & 0xfff) != 0);
+45695:       uVar8 = iVar12 * (uint)governor_speed_integral_gain_cal;
+45696:       governor_speed_error_prescaled =
+45697:            governor_speed_error_prescaled +
+45698:            ((int)uVar8 >> 0xc) + (uint)((int)uVar8 < 0 && (uVar8 & 0xfff) != 0);
+45699:       uVar8 = governor_speed_error_prescaled + iVar11;
+45700:       if ((int)uVar8 < (int)((uint)governor_speed_error_high * 8)) {
+45701:         governor_speed_error_input = governor_speed_error_high;
+45702:         governor_speed_error_prescaled = (uint)governor_speed_error_high * 8 - iVar11;
+45703:       }
+45704:       else if ((int)((uint)governor_speed_error_low * 8) < (int)uVar8) {
+45705:         governor_speed_error_input = governor_speed_error_low;
+45706:         governor_speed_error_prescaled = (uint)governor_speed_error_low * 8 - iVar11;
+45707:       }
+45708:       else {
+45709:         governor_speed_error_input =
+45710:              (short)((int)uVar8 >> 3) + (ushort)((int)uVar8 < 0 && (uVar8 & 7) != 0);
+45711:       }
+45712:     }
+45713:     else {
+45714:       uVar8 = (uint)engine_rpm_measured;
+45715:       if (uVar8 < governor_speed_error_high) {
+45716:         governor_speed_error_input = governor_speed_error_high;
+45717:         governor_speed_error_prescaled = (uint)governor_speed_error_high << 3;
+45718:       }
+45719:       else if (governor_speed_error_low < uVar8) {
+45720:         governor_speed_error_input = governor_speed_error_low;
+45721:         governor_speed_error_prescaled = (uint)governor_speed_error_low << 3;
+45722:       }
+45723:       else {
+45724:         governor_speed_error_input = engine_rpm_measured;
+45725:         governor_speed_error_prescaled = uVar8 << 3;
+45726:       }
+45727:     }
+45728:     uVar8 = (((uint)governor_speed_error_input - (uint)governor_speed_error_high) * 400) /
+45729:             ((uint)governor_speed_error_low - (uint)governor_speed_error_high) & 0xffff;
+45730:   }
+45731:   if ((cruise_control_engaged_flag == 0) && (power_take_off_governor_active_flag == 0)) {
+45732:     governor_fuel_integral_accumulator = 0;
+45733:     governor_rpm_integral = 0;
+45734:     goto LAB_0004662c;
+45735:   }
+45736:   if (cruise_control_engaged_flag == 0) {
+45737:     if (((((uint)adjusted_user_fueling <= (uint)final_fueling) &&
+45738:          ((int)(uint)adjusted_user_fueling <
+45739:           (int)((uint)throttle_100_fueling_without_programmable_power -
+45740:                (uint)fuel_correction_hysteresis_cal))) &&
+45741:         ((uint)governor_integral_fuel_min_cal <= (uint)final_fueling)) || (bVar1)) {
+45742:       iVar11 = (int)(short)governor_fuel_integral_error_clamp_cal;
+45743:       iVar12 = -iVar11;
+45744:     }
+45745:     else {
+45746:       iVar11 = (int)(short)power_take_off_governor_droop_compensated_speed_error;
+45747:       iVar12 = iVar11;
+45748:     }
+45749:     iVar12 = iVar12 * (short)governor_fuel_integral_gain_cal;
+45750:     iVar6 = -0x1fffffff;
+45751:     iVar5 = iVar6;
+45752:     if ((-0x20000000 < iVar12) && (iVar5 = iVar12, 0x1fffffff < iVar12)) {
+45753:       iVar5 = 0x1fffffff;
+45754:     }
+45755:     iVar5 = iVar5 << 2;
+45756:     iVar11 = iVar11 * (short)governor_fuel_integral_gain_cal;
+45757:     if ((-0x20000000 < iVar11) && (iVar6 = iVar11, 0x1fffffff < iVar11)) {
+45758:       iVar6 = 0x1fffffff;
+45759:     }
+45760:     iVar6 = iVar6 << 2;
+45761:   }
+45762:   else {
+45763:     if (((((uint)adjusted_user_fueling <= (uint)final_fueling) &&
+45764:          ((int)(uint)adjusted_user_fueling <
+45765:           (int)((uint)throttle_100_fueling_without_programmable_power -
+45766:                (uint)fuel_correction_hysteresis_cal))) &&
+45767:         ((uint)governor_integral_fuel_min_cal <= (uint)final_fueling)) || (bVar1)) {
+45768:       uVar9 = (uint)(governor_override_integral_error_cal >> 1);
+45769:       uVar10 = -uVar9;
+45770:     }
+45771:     else {
+45772:       uVar9 = ((uint)cruise_governor_reference_speed - (int)(short)cruise_speed_setpoint_active) -
+45773:               (uint)vehicle_speed_rise_limited;
+45774:       uVar9 = ((int)uVar9 >> 1) + (uint)((int)uVar9 < 0 && (uVar9 & 1) != 0);
+45775:       uVar10 = uVar9;
+45776:     }
+45777:     uVar10 = uVar10 * (int)(short)governor_override_integral_gain_cal;
+45778:     iVar5 = ((int)uVar10 >> 2) + (uint)((int)uVar10 < 0 && (uVar10 & 3) != 0);
+45779:     uVar9 = uVar9 * (int)(short)governor_override_integral_gain_cal;
+45780:     iVar6 = ((int)uVar9 >> 2) + (uint)((int)uVar9 < 0 && (uVar9 & 3) != 0);
+45781:   }
+45782:   if ((uVar8 + governor_fuel_integral_high_word < 0x191) ||
+45783:      (governor_fuel_integral_accumulator = uVar8 * -0x10000 + 0x1900000, iVar5 < 0)) {
+45784:     governor_fuel_integral_accumulator = governor_fuel_integral_accumulator + iVar5;
+45785:   }
+45786:   if ((int)governor_fuel_integral_accumulator < 0) {
+45787:     governor_fuel_integral_accumulator = 0;
+45788:   }
+45789:   else if (0x1900000 < (int)governor_fuel_integral_accumulator) {
+45790:     governor_fuel_integral_accumulator = 0x1900000;
+45791:   }
+45792:   governor_fuel_integral_high_word = (word)(governor_fuel_integral_accumulator >> 0x10);
+45793:   if (governor_rpm_integral_enable_cal == 0) {
+45794:     governor_rpm_integral_term_working = 0;
+45795:   }
+45796:   else {
+45797:     governor_rpm_integral = governor_rpm_integral + iVar6;
+45798:     if ((int)governor_rpm_integral < 1) {
+45799:       dVar7 = uVar8 * -0x10000;
+45800:       if ((int)governor_rpm_integral < (int)dVar7) goto LAB_0004659c;
+45801:     }
+45802:     else {
+45803:       dVar7 = 0;
+45804: LAB_0004659c:
+45805:       governor_rpm_integral = dVar7;
+45806:     }
+45807:     governor_rpm_integral_term_working = (word)(governor_rpm_integral >> 0x10);
+45808:   }
+45809:   uVar8 = uVar8 + (governor_fuel_integral_accumulator >> 0x10) +
+45810:           (int)(short)governor_rpm_integral_term_working;
+45811:   if ((int)uVar8 < 0) {
+45812:     uVar8 = 0;
+45813:   }
+45814:   uVar8 = uVar8 & 0xffff;
+45815:   if ((fuel_feature_control_flags & 0x10) == 0) {
+45816:     if (uVar8 < fuel_demand_control_t_0040a57a.calculated) {
+45817:       uVar8 = (uint)fuel_demand_control_t_0040a57a.calculated;
+45818:     }
+45819:   }
+45820:   else {
+45821:     uVar10 = (uint)fuel_demand_control_t_0040a57a.calculated;
+45822:     uVar9 = (uint)equivalent_throttle_vacuum_all_speed_governor_offset;
+45823:     if (uVar8 + uVar9 < uVar10) {
+45824:       if (uVar9 < uVar10) {
+45825:         uVar8 = uVar10 - uVar9 & 0xffff;
+45826:       }
+45827:       else {
+45828:         uVar8 = 0;
+45829:       }
+45830:     }
+45831:   }
+45832: LAB_0004662c:
+45833:   fuel_demand_governor_output = (word)uVar8;
+45834:   if (400 < uVar8) {
+45835:     fuel_demand_governor_output = 400;
+45836:   }
+45837:   return;
+45838: }
+45842: //

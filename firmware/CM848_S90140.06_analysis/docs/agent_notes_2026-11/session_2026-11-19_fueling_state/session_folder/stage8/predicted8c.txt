@@ -1,0 +1,8 @@
+cm848_arbitrateRequestedFueling
+cm848_selectFinalFueling
+cm848_setFuelDemandActiveFlag
+cm848_updateEngineSpeedFromCrankSignal
+cm848_updateEngineState
+hpcr_calculateFuelTrimOutput
+hpcr_processEngineSyncPulses
+mpc555_updateEngineCrankState

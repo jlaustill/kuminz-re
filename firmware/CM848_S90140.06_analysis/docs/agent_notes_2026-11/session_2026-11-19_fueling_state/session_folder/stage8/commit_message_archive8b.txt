@@ -1,0 +1,7 @@
+docs: session archive for stage 8b (gain record scripts, the quoted dump value check, the build snapshots)
+
+read_gain_blocks.py, apply_stage8b_gain_records.py / apply_stage8b_locals.py, check_stage8b.py, the
+wave-13 quoted dump value check with its negative test, and the stage-8b .cpp snapshots (in the
+tar.xz, which restores byte-identically).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

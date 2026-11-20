@@ -18,7 +18,7 @@ source_address,source_name,target_address,confidence,status
 0x00b0ce,diagnosticTimingIncrementController,0x00c2be,86,matched
 0x00b0fe,fuelAdjustmentWithFlagUpdate,N/A,0,not_found
 0x00b2ee,fuelSourceOilPressureConditionChecker,0x00fbe4,70,similar
-0x00b3ae,timingProtectionFlagsOrchestrator,0x00c582,78,similar
+0x00b3ae,calculateAlphaBase,0x00c582,78,similar
 0x00b05c,timingParameterPointerSetup,0x00c246,77,similar
 0x00b18c,fuelTimingModeArbitrationSlowCycle40Coordinator,0x00c326,75,similar
 0x00b27e,fuelTableBlendResultHandler,N/A,0,not_found
@@ -764,7 +764,7 @@ source_address,source_name,target_address,confidence,status
 0x033b8c,vp44CanMessage200ResponseBuilder,N/A,0,not_found
 0x033bf2,vp44CanMessage300Parser,N/A,0,not_found
 0x0350ae,vp44Message300FaultFlagProcessor,0x032c7a,70,similar
-0x035488,vp44RpmBasedFaultDetector,0x00c326,64,similar
+0x035488,calculateAlpha,0x00c326,64,similar
 0x035548,vp44FaultBit5Reset,N/A,0,not_found
 0x00eaf0,diagnosticMemoryAddressResolver,0x010e16,81,matched
 0x01913e,canFrameDataCopy,0x01e0bc,88,matched

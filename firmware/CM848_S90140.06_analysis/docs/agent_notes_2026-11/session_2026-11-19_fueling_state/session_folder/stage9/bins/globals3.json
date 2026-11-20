@@ -1,0 +1,2686 @@
+[
+ {
+  "address": "0x00406a46",
+  "current_name": "fuel_mode_ema_axis_cal",
+  "current_type": "word[6]",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_calculateFuelDemandChangeRate: (&fuel_mode_ema_state,input,fuel_mode_ema_axis_cal,fuel_mode_ema_output_cal,0);"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **1053:** 0x40a889 `thermal_fuel_limit_factor` is the 4-D interpolation factor. 0x40a891 `fuel_limit_mode_flags` holds the throttle transient/decrease flags. The `fuel_mode_ema_*` rows at 0x3fa880-0x3fa884, 0x406a46 and 0x406a52 are the same throttle filter."
+  ],
+  "block": "",
+  "row_width_bytes": 12,
+  "covered_records": []
+ },
+ {
+  "address": "0x00406a52",
+  "current_name": "fuel_mode_ema_output_cal",
+  "current_type": "word[6]",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [],
+  "dump_raw": "",
+  "references": 0,
+  "code": [
+   "cm848_calculateFuelDemandChangeRate: (&fuel_mode_ema_state,input,fuel_mode_ema_axis_cal,fuel_mode_ema_output_cal,0);"
+  ],
+  "block_named_rows": [],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **1053:** 0x40a889 `thermal_fuel_limit_factor` is the 4-D interpolation factor. 0x40a891 `fuel_limit_mode_flags` holds the throttle transient/decrease flags. The `fuel_mode_ema_*` rows at 0x3fa880-0x3fa884, 0x406a46 and 0x406a52 are the same throttle filter."
+  ],
+  "block": "",
+  "row_width_bytes": 12,
+  "covered_records": []
+ },
+ {
+  "address": "0x0040c270",
+  "current_name": "diag_dm1_buffer_start_ptr",
+  "current_type": "pointer",
+  "current_comment": "DM1 diagnostic ring buffer start pointer",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lwz': 8, 'stw': 1} -> 4 byte",
+  "e2m_records_here": [
+   "0031 +0000 Buffer_Start [HEX, 4 B, U, scale 1, 0..4294967295]: Actual starting RAM address of the data collector buffer"
+  ],
+  "dump_raw": "0",
+  "references": 14,
+  "code": [
+   "diag_dm1Buffer_circularFill: data_collector_end_address = diag_dm1_buffer_start_ptr;",
+   "diag_dm1Buffer_circularFill: if (diag_dm1_buffer_start_ptr <= data_collector_end_address + -1) {",
+   "diag_dm1Buffer_circularFill: data_collector_start_address = diag_dm1_buffer_start_ptr;",
+   "hpcr_exception_process: diag_dm1_buffer_start_ptr = &DAT_0040c28a;",
+   "j1939_dm1_diagnosticMessage_send: (-(int)data_collector_start_address - (int)diag_dm1_buffer_start_ptr) + 2;",
+   "j1939_dm1_diagnosticMessage_send: puVar6 = diag_dm1_buffer_start_ptr;"
+  ],
+  "block_named_rows": [
+   "+0000 Buffer_Start -> diag_dm1_buffer_start_ptr"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - **Data collector:** 0x40c270..84 `diag_dm1_buffer_*`, 0x3fddba and 0x3fddb8. Mechanical names would be `data_collector_buffer_start_address` and so on.",
+   "review_e2m_names_wave_13_bin_4.md: - Remaining `diag_dm1_*` collector rows: 0x40c270-0x40c284, 0x3fbca6-0x3fbcb8, 0x3fddba (Collector_Stop_Mode), 0x3fddc4 (Collector_Table).",
+   "review_e2m_names_wave_13_bin_6.md: - the remaining `diag_dm1_buffer_*` physical start and end pointers (0x40c270 / 0x40c274), fill and slot words, and `diag_dm1_fault_source_table`"
+  ],
+  "block": "0031",
+  "row_width_bytes": 4,
+  "covered_records": [
+   "0x0040c270 0031 +0000 Buffer_Start (4 B)"
+  ]
+ },
+ {
+  "address": "0x0005be66",
+  "current_name": "cold_start_intake_temperature_filter_coefficient",
+  "current_type": "word",
+  "current_comment": "EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - cold_start_intake_temperature_filter_state.coefficient points here",
+  "region": "flash / ROM constant (no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "104B +000C Alpha_Fuel_Rate_Filter_Constant [UNITLESS, 2 B, U, scale 1.52588E-5, 0..1]: [APFLFTTC] Time constant of LB/HR filter used in the alpha fuel rate calculations"
+  ],
+  "dump_raw": "65514",
+  "references": 1,
+  "code": [
+   "cm848_initFuelPressureVariables: &cold_start_intake_temperature_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   "+0000 Alpha_Ramp_Rate_1 -> alpha_ramp_rate_below_threshold",
+   "+0002 Alpha_Ramp_Rate_2 -> alpha_ramp_rate_at_or_above_threshold",
+   "+0004 Alpha_Ramp_Threshold -> alpha_ramp_threshold",
+   "+0006 AFC_Alpha_Timeout -> air_fuel_control_alpha_timeout",
+   "+0008 Altitude_Derate_Alpha -> altitude_derate_alpha",
+   "+000A Altitude_Derate_Alpha_Timeout -> altitude_derate_alpha_timeout",
+   "+000C Alpha_Fuel_Rate_Filter_Constant -> cold_start_intake_temperature_filter_coefficient",
+   "+000E Alpha_Lock_Off_Air_Pressure -> alpha_lock_off_barometric_pressure",
+   "+0010 Alpha_Lock_On_Air_Pressure -> alpha_lock_on_barometric_pressure",
+   "+0012 Engine_Protection_Alpha -> engine_protection_alpha",
+   "+0014 LSG_Alpha_Timeout -> low_speed_governor_alpha_timeout",
+   "+0018 C_Alpha_Reset_Rate -> alpha_reset_fuel_rate",
+   "+001A C_Alpha_Threshold_Rate -> alpha_threshold_fuel_rate"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 0x3fa0d2 `cold_start_intake_temperature_filter_state`, 0x5be66 `cold_start_intake_temperature_filter_coefficient`"
+  ],
+  "block": "104B",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0005be66 104B +000C Alpha_Fuel_Rate_Filter_Constant (2 B)"
+  ]
+ },
+ {
+  "address": "0x004070e0",
+  "current_name": "governor_speed_filter_input_scale_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1064 +002A LSG_EVR_Gain [UNITLESS, 2 B, U, scale 0.0010615, 0..20]: Slope for EVR duty cycle to fuel conversion (mm3s/%)"
+  ],
+  "dump_raw": "38",
+  "references": 1,
+  "code": [
+   "cm848_runLowSpeedGovernor: ((int)(short)((int)((uint)governor_speed_filter_input_scale_cal *"
+  ],
+  "block_named_rows": [
+   "+0000 LSG_Fueling_Clamp_Max_Offset -> governor_speed_setpoint_integrated_init_cal",
+   "+0002 LSG_Fueling_Clamp_Min -> governor_cold_start_fuel_step_cal",
+   "+0004 LSG_Integrator_Preset_Max_Offset -> governor_speed_reference_init_cal",
+   "+0006 LSG_Integrator_Preset_Min -> governor_fuel_correction_lower_cal",
+   "+0008 LSG_Integrator_Clamp_Max_Offset -> governor_speed_pid_output_init_cal",
+   "+000A LSG_Integrator_Clamp_Min -> governor_fuel_correction_threshold_cal",
+   "+000C LSG_Integrator_Reset -> governor_fuel_correction_init_cal",
+   "+000E LSG_Reset_RPM -> governor_integrator_offset_cal",
+   "+0010 LSG_Reset_Fueling -> governor_fuel_demand_reset_threshold_cal",
+   "+0012 LSG_Derivative_Filter_Coefficient -> governor_speed_weight_b_scale_cal",
+   "+0014 LSG_Jerk_Deadband -> governor_derivative_deadband_cal",
+   "+0016 LSG_Jerk_Filter_Coefficient -> governor_speed_derivative_scale_cal",
+   "+0018 LSG_Jerk_Term_Limit -> governor_derivative_clamp_cal",
+   "+001A LSG_Proportional_Filter_Coefficient -> governor_speed_weight_a_scale_cal",
+   "+001C LSG_Reset_Delay_Time -> governor_speed_debounce_limit_cal",
+   "+001E LSG_Derivative_Max -> governor_integral_clamp_cal",
+   "+0020 LSG_No_Load_Fuel_Enable -> governor_integrator_include_enable_cal",
+   "+0022 LSG_Integrator_Preset_Min_Drive -> governor_fuel_correction_lower_b_cal",
+   "+0024 LSG_Integrator_Preset_Use_Previous -> cold_start_fuel_demand_correction_enable_cal",
+   "+0026 LSG_Integrator_Preset_Accel_Limit -> cold_start_governor_speed_clamp_threshold_cal",
+   "+0028 LSG_Integrator_Preset_VSS_Limit -> governor_fuel_demand_correction_maximum_vehicle_speed",
+   "+002A LSG_EVR_Gain -> governor_speed_filter_input_scale_cal",
+   "+002C LSG_EVR_Offset -> governor_speed_filter_fuel_offset_cal",
+   "+002E Alternator_Load_Filter_Coefficient -> governor_speed_filter_coefficient"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x4070e0 `governor_speed_filter_input_scale_cal`, e2m 1064 +2A LSG_EVR_Gain"
+  ],
+  "block": "1064",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x004070e0 1064 +002A LSG_EVR_Gain (2 B)"
+  ]
+ },
+ {
+  "address": "0x004070e2",
+  "current_name": "governor_speed_filter_fuel_offset_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1064 +002C LSG_EVR_Offset [%, 2 B, U, scale 0.00390625, 0..50]: Offset for EVR duty cycle to fuel conversion"
+  ],
+  "dump_raw": "7680",
+  "references": 1,
+  "code": [
+   "cm848_runLowSpeedGovernor: (uint)governor_speed_filter_fuel_offset_cal)) >> 0xe),"
+  ],
+  "block_named_rows": [
+   "+0000 LSG_Fueling_Clamp_Max_Offset -> governor_speed_setpoint_integrated_init_cal",
+   "+0002 LSG_Fueling_Clamp_Min -> governor_cold_start_fuel_step_cal",
+   "+0004 LSG_Integrator_Preset_Max_Offset -> governor_speed_reference_init_cal",
+   "+0006 LSG_Integrator_Preset_Min -> governor_fuel_correction_lower_cal",
+   "+0008 LSG_Integrator_Clamp_Max_Offset -> governor_speed_pid_output_init_cal",
+   "+000A LSG_Integrator_Clamp_Min -> governor_fuel_correction_threshold_cal",
+   "+000C LSG_Integrator_Reset -> governor_fuel_correction_init_cal",
+   "+000E LSG_Reset_RPM -> governor_integrator_offset_cal",
+   "+0010 LSG_Reset_Fueling -> governor_fuel_demand_reset_threshold_cal",
+   "+0012 LSG_Derivative_Filter_Coefficient -> governor_speed_weight_b_scale_cal",
+   "+0014 LSG_Jerk_Deadband -> governor_derivative_deadband_cal",
+   "+0016 LSG_Jerk_Filter_Coefficient -> governor_speed_derivative_scale_cal",
+   "+0018 LSG_Jerk_Term_Limit -> governor_derivative_clamp_cal",
+   "+001A LSG_Proportional_Filter_Coefficient -> governor_speed_weight_a_scale_cal",
+   "+001C LSG_Reset_Delay_Time -> governor_speed_debounce_limit_cal",
+   "+001E LSG_Derivative_Max -> governor_integral_clamp_cal",
+   "+0020 LSG_No_Load_Fuel_Enable -> governor_integrator_include_enable_cal",
+   "+0022 LSG_Integrator_Preset_Min_Drive -> governor_fuel_correction_lower_b_cal",
+   "+0024 LSG_Integrator_Preset_Use_Previous -> cold_start_fuel_demand_correction_enable_cal",
+   "+0026 LSG_Integrator_Preset_Accel_Limit -> cold_start_governor_speed_clamp_threshold_cal",
+   "+0028 LSG_Integrator_Preset_VSS_Limit -> governor_fuel_demand_correction_maximum_vehicle_speed",
+   "+002A LSG_EVR_Gain -> governor_speed_filter_input_scale_cal",
+   "+002C LSG_EVR_Offset -> governor_speed_filter_fuel_offset_cal",
+   "+002E Alternator_Load_Filter_Coefficient -> governor_speed_filter_coefficient"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x4070e2 `governor_speed_filter_fuel_offset_cal`, +2C LSG_EVR_Offset"
+  ],
+  "block": "1064",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x004070e2 1064 +002C LSG_EVR_Offset (2 B)"
+  ]
+ },
+ {
+  "address": "0x004070e4",
+  "current_name": "governor_speed_filter_coefficient",
+  "current_type": "word",
+  "current_comment": "Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (32706 = 0.499 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was governor_speed_filter_state_cal, typed byte)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "1064 +002E Alternator_Load_Filter_Coefficient [UNITLESS, 2 B, U, scale 1.528789E-5, 0..1]: Filters calculated alternator load for LSG compensation"
+  ],
+  "dump_raw": "32706",
+  "references": 1,
+  "code": [
+   "cm848_initSpeedProtectionParameters: governor_speed_filter.coefficient = &governor_speed_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   "+0000 LSG_Fueling_Clamp_Max_Offset -> governor_speed_setpoint_integrated_init_cal",
+   "+0002 LSG_Fueling_Clamp_Min -> governor_cold_start_fuel_step_cal",
+   "+0004 LSG_Integrator_Preset_Max_Offset -> governor_speed_reference_init_cal",
+   "+0006 LSG_Integrator_Preset_Min -> governor_fuel_correction_lower_cal",
+   "+0008 LSG_Integrator_Clamp_Max_Offset -> governor_speed_pid_output_init_cal",
+   "+000A LSG_Integrator_Clamp_Min -> governor_fuel_correction_threshold_cal",
+   "+000C LSG_Integrator_Reset -> governor_fuel_correction_init_cal",
+   "+000E LSG_Reset_RPM -> governor_integrator_offset_cal",
+   "+0010 LSG_Reset_Fueling -> governor_fuel_demand_reset_threshold_cal",
+   "+0012 LSG_Derivative_Filter_Coefficient -> governor_speed_weight_b_scale_cal",
+   "+0014 LSG_Jerk_Deadband -> governor_derivative_deadband_cal",
+   "+0016 LSG_Jerk_Filter_Coefficient -> governor_speed_derivative_scale_cal",
+   "+0018 LSG_Jerk_Term_Limit -> governor_derivative_clamp_cal",
+   "+001A LSG_Proportional_Filter_Coefficient -> governor_speed_weight_a_scale_cal",
+   "+001C LSG_Reset_Delay_Time -> governor_speed_debounce_limit_cal",
+   "+001E LSG_Derivative_Max -> governor_integral_clamp_cal",
+   "+0020 LSG_No_Load_Fuel_Enable -> governor_integrator_include_enable_cal",
+   "+0022 LSG_Integrator_Preset_Min_Drive -> governor_fuel_correction_lower_b_cal",
+   "+0024 LSG_Integrator_Preset_Use_Previous -> cold_start_fuel_demand_correction_enable_cal",
+   "+0026 LSG_Integrator_Preset_Accel_Limit -> cold_start_governor_speed_clamp_threshold_cal",
+   "+0028 LSG_Integrator_Preset_VSS_Limit -> governor_fuel_demand_correction_maximum_vehicle_speed",
+   "+002A LSG_EVR_Gain -> governor_speed_filter_input_scale_cal",
+   "+002C LSG_EVR_Offset -> governor_speed_filter_fuel_offset_cal",
+   "+002E Alternator_Load_Filter_Coefficient -> governor_speed_filter_coefficient"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 0x4070e4 `governor_speed_filter_coefficient`, +2E Alternator_Load_Filter_Coefficient"
+  ],
+  "block": "1064",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x004070e4 1064 +002E Alternator_Load_Filter_Coefficient (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a630",
+  "current_name": "fuel_demand_base_offset_snapshot",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "10E2 +0000 Jcomm_No_Load_Torque [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: [JCFCLDTQ] Jcomm No Load Torque estimated frictional no load fueling value"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_calculateThrottleProtectionLimit: fuel_demand_base_offset_snapshot = fuel_demand_base_offset;",
+   "cm848_calculateThrottleProtectionLimit: (((int)(short)final_fueling - (int)(short)fuel_demand_base_offset_snapshot) *"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **10E2:** 0x40a630-0x40a646."
+  ],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a630 10E2 +0000 Jcomm_No_Load_Torque (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a632",
+  "current_name": "throttle_protection_load_ratio",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +0002 Jcomm_Percent_Peak_Torque [%, 2 B, S, scale 0.00390625, -128..127]: [JCPCPKTQ] Jcomm Percent Peak Torque based on current engine speed and temperature"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_calculateThrottleProtectionLimit: throttle_protection_load_ratio ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - Percent peak torque rows: `throttle_protection_load_ratio`, `throttle_position_b6` / `b8` / `ba` / `b4`, `throttle_position_from_integrator`."
+  ],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a632 10E2 +0002 Jcomm_Percent_Peak_Torque (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a634",
+  "current_name": "throttle_position_b6",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 [%, 2 B, S, scale 0.00390625, -128..127]: [JCPCTQ03] Jcomm Percent Peak Torque at Breakpoint 3 percent peak torque avail at brkpt 3"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_processThrottlePositionLookups: throttle_position_b6 ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - Percent peak torque rows: `throttle_protection_load_ratio`, `throttle_position_b6` / `b8` / `ba` / `b4`, `throttle_position_from_integrator`."
+  ],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a634 10E2 +0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a636",
+  "current_name": "throttle_position_b8",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 [%, 2 B, S, scale 0.00390625, -128..127]: [JCPCTQ04] Jcomm Percent Peak Torque at Breakpoint 4 percent peak torque avail at brkpt 4"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_processThrottlePositionLookups: throttle_position_b8 ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a636 10E2 +0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a638",
+  "current_name": "throttle_position_ba",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 [%, 2 B, S, scale 0.00390625, -128..127]: [JCPCTQ05] Jcomm Percent Peak Torque at Breakpoint 5 percent peak torque avail at brkpt 5"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_processThrottlePositionLookups: throttle_position_ba ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a638 10E2 +0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a63a",
+  "current_name": "throttle_position_from_integrator",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +000A Jcomm_Prc_Pk_Trq_at_Idle [%, 2 B, S, scale 0.00390625, -128..127]: [JCLSPCTQ] Jcomm Percent Peak Torque at Idle speed percent peak torque avail at idle rpm"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_processThrottlePositionLookups: throttle_position_from_integrator ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - Percent peak torque rows: `throttle_protection_load_ratio`, `throttle_position_b6` / `b8` / `ba` / `b4`, `throttle_position_from_integrator`."
+  ],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a63a 10E2 +000A Jcomm_Prc_Pk_Trq_at_Idle (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a63c",
+  "current_name": "throttle_position_b4",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +000C Jcomm_Prc_Pk_Trq_at_Rated_RPM [%, 2 B, S, scale 0.00390625, -128..127]: [JCRTPCTQ] Jcomm Percent Peak Torque at rated speed percent peak torque avail at rated rpm"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_processThrottlePositionLookups: throttle_position_b4 ="
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a63c 10E2 +000C Jcomm_Prc_Pk_Trq_at_Rated_RPM (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a63e",
+  "current_name": "throttle_torque_integrator_lookup",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1, 'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +000E Jcomm_Frict_Load_at_Low_Idle [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: [JCFCLDIS] Frictional Load interpolated from the no load curve at LSG ref spd"
+  ],
+  "dump_raw": "397",
+  "references": 2,
+  "code": [
+   "cm848_faultSeverityEvaluation: throttle_torque_integrator_lookup =",
+   "cm848_processThrottlePositionLookups: (int)(short)throttle_torque_integrator_lookup);"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - Friction rows: `throttle_torque_integrator_lookup`, `throttle_cal_b4_lookup`, `throttle_cal_b6_lookup`, `throttle_cal_ba_lookup`."
+  ],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a63e 10E2 +000E Jcomm_Frict_Load_at_Low_Idle (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a640",
+  "current_name": "throttle_cal_b4_lookup",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1, 'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +0010 Jcomm_Frict_Load_at_Rated_RPM [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: [JCFCBKRR] Frictional load torque (in fueling) at rated engine RPM"
+  ],
+  "dump_raw": "340",
+  "references": 2,
+  "code": [
+   "cm848_faultSeverityEvaluation: throttle_cal_b4_lookup =",
+   "cm848_processThrottlePositionLookups: cm848_throttlePositionProcessing(j1939_rated_speed_tau_0,(int)(short)throttle_cal_b4_lookup);"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - Friction rows: `throttle_torque_integrator_lookup`, `throttle_cal_b4_lookup`, `throttle_cal_b6_lookup`, `throttle_cal_ba_lookup`."
+  ],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a640 10E2 +0010 Jcomm_Frict_Load_at_Rated_RPM (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a642",
+  "current_name": "throttle_cal_b6_lookup",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1, 'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +0012 Jcomm_Frict_Load_at_Brkpt_3 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: [JCFCBK03] Frictional load torque (in fueling) at breakpoint 3 engine RPM"
+  ],
+  "dump_raw": "97",
+  "references": 2,
+  "code": [
+   "cm848_faultSeverityEvaluation: throttle_cal_b6_lookup =",
+   "cm848_processThrottlePositionLookups: (j1939_speed_breakpoint_3_tau_0,(int)(short)throttle_cal_b6_lookup);"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - Friction rows: `throttle_torque_integrator_lookup`, `throttle_cal_b4_lookup`, `throttle_cal_b6_lookup`, `throttle_cal_ba_lookup`."
+  ],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a642 10E2 +0012 Jcomm_Frict_Load_at_Brkpt_3 (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040a646",
+  "current_name": "throttle_cal_ba_lookup",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1, 'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "10E2 +0016 Jcomm_Frict_Load_at_Brkpt_5 [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: [JCFCBK05] Frictional load torque (in fueling) at breakpoint 5 engine RPM"
+  ],
+  "dump_raw": "311",
+  "references": 2,
+  "code": [
+   "cm848_faultSeverityEvaluation: throttle_cal_ba_lookup =",
+   "cm848_processThrottlePositionLookups: (j1939_speed_breakpoint_5_tau_0,(int)(short)throttle_cal_ba_lookup);"
+  ],
+  "block_named_rows": [
+   "+0000 Jcomm_No_Load_Torque -> fuel_demand_base_offset_snapshot",
+   "+0002 Jcomm_Percent_Peak_Torque -> throttle_protection_load_ratio",
+   "+0004 Jcomm_Prc_Pk_Trq_at_Brkpt_3 -> throttle_position_b6",
+   "+0006 Jcomm_Prc_Pk_Trq_at_Brkpt_4 -> throttle_position_b8",
+   "+0008 Jcomm_Prc_Pk_Trq_at_Brkpt_5 -> throttle_position_ba",
+   "+000A Jcomm_Prc_Pk_Trq_at_Idle -> throttle_position_from_integrator",
+   "+000C Jcomm_Prc_Pk_Trq_at_Rated_RPM -> throttle_position_b4",
+   "+000E Jcomm_Frict_Load_at_Low_Idle -> throttle_torque_integrator_lookup",
+   "+0010 Jcomm_Frict_Load_at_Rated_RPM -> throttle_cal_b4_lookup",
+   "+0012 Jcomm_Frict_Load_at_Brkpt_3 -> throttle_cal_b6_lookup",
+   "+0014 Jcomm_Frict_Load_at_Brkpt_4 -> j1939_friction_load_fueling_at_breakpoint_4",
+   "+0016 Jcomm_Frict_Load_at_Brkpt_5 -> throttle_cal_ba_lookup"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **10E2:** 0x40a630-0x40a646.",
+   "review_e2m_names_wave_13_bin_3.md: - Friction rows: `throttle_torque_integrator_lookup`, `throttle_cal_b4_lookup`, `throttle_cal_b6_lookup`, `throttle_cal_ba_lookup`."
+  ],
+  "block": "10E2",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a646 10E2 +0016 Jcomm_Frict_Load_at_Brkpt_5 (2 B)"
+  ],
+  "added_by": "range 0x40a630-0x40a646 in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040b698",
+  "current_name": "cruise_speed_reference_a",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1187 +0002 Cruise_BDG [MPH/MM3S, 2 B, U, scale 0.00005615225, 0.000000..0.087500]: SLOPE OF THE BOTTOM DROOP LINE PASSED TO THE DESIRED_CC FUELING PROCEDURE."
+  ],
+  "dump_raw": "0",
+  "references": 6,
+  "code": [
+   "cm848_calculateCruiseControlFueling: cruise_speed_command and vehicle_speed_rise_limited through cruise_speed_reference_a / _b, else",
+   "cm848_calculateCruiseControlFueling: if (cruise_speed_reference_a != 0) {",
+   "cm848_calculateCruiseControlFueling: cruise_speed_reference_active = cruise_speed_reference_a;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_a = cruise_ramp_rate_a_working;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_a = 0;",
+   "governorCruiseStateMachine: cruise_speed_reference_a = 0;"
+  ],
+  "block_named_rows": [
+   "+0000 Cruise_Allow_Droops -> cruise_deadband_active_flag",
+   "+0002 Cruise_BDG -> cruise_speed_reference_a",
+   "+0004 Cruise_BDO -> cruise_governor_fuel_demand_lower_ramp_start",
+   "+0006 Cruise_Bottom_Droop_Gain -> cruise_ramp_rate_a_working",
+   "+0008 Cruise_RSG_Calculate_Bumpless -> cruise_zone_transition_flag",
+   "+000A Cruise_RSG_Derivative_Gain -> cruise_pid_kd_working",
+   "+000C Cruise_RSG_Error_Delta -> cruise_speed_setpoint_active",
+   "+000E Cruise_RSG_Gain_Adj -> cruise_pid_rate_gain_working",
+   "+0010 Cruise_RSG_Integral_Gain -> cruise_pid_ki_working",
+   "+0012 Cruise_RSG_Integral_Acc_Gain -> cruise_pid_rate_integral_gain_working",
+   "+0014 Cruise_RSG_Proportional_Gain -> cruise_pid_kp_working",
+   "+0016 Cruise_TDG -> cruise_speed_reference_b",
+   "+0018 Cruise_TDO -> cruise_speed_offset_b",
+   "+001A Cruise_Top_Droop_Gain -> cruise_ramp_rate_b_working",
+   "+001C RSG_BDG -> vehicle_speed_limit_fueling_bottom_droop_gain",
+   "+001E RSG_BDO -> cruise_speed_setpoint_c",
+   "+0020 RSG_Bottom_Droop_Gain -> road_speed_governor_bottom_droop_gain",
+   "+0022 RSG_TDG -> vehicle_speed_limit_fueling_top_droop_gain",
+   "+0024 RSG_TDO -> vehicle_speed_limit_fueling_top_droop_offset",
+   "+0026 RSG_Top_Droop_Gain -> road_speed_governor_top_droop_gain",
+   "+0028 Cruise_RSG_Top_Droop_Offset -> cruise_speed_offset_latched"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - 0x40b698 `cruise_speed_reference_a` \u2192 `cruise_control_fueling_bottom_droop_gain`"
+  ],
+  "block": "1187",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b698 1187 +0002 Cruise_BDG (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b69a",
+  "current_name": "cruise_governor_fuel_demand_lower_ramp_start",
+  "current_type": "word",
+  "current_comment": "Written once, by governorCruiseStateMachine (store at 0x525070), from governor_cruise_fuel_demand_setpoint (together with cruise_speed_setpoint_c), and read once, in cm848_calculateCruiseControlFueling: when cruise_speed_command < vehicle_speed_rise_limited the output is cruise_speed_setpoint_b minus (difference x 1024 / cruise_speed_reference_a), clamped to 0..5888 (the cruise_control_fueling ... (was cruise_speed_setpoint_b)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "1187 +0004 Cruise_BDO [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: CRUISE BOTTOM DROOP OFFSET PASSED TO THE DESIRED_CC FUELING PROCEDURE."
+  ],
+  "dump_raw": "353",
+  "references": 2,
+  "code": [
+   "cm848_calculateCruiseControlFueling: cruise_speed_deviation = cruise_governor_fuel_demand_lower_ramp_start - uVar1;",
+   "governorCruiseStateMachine: cruise_governor_fuel_demand_lower_ramp_start = wVar1;"
+  ],
+  "block_named_rows": [
+   "+0000 Cruise_Allow_Droops -> cruise_deadband_active_flag",
+   "+0002 Cruise_BDG -> cruise_speed_reference_a",
+   "+0004 Cruise_BDO -> cruise_governor_fuel_demand_lower_ramp_start",
+   "+0006 Cruise_Bottom_Droop_Gain -> cruise_ramp_rate_a_working",
+   "+0008 Cruise_RSG_Calculate_Bumpless -> cruise_zone_transition_flag",
+   "+000A Cruise_RSG_Derivative_Gain -> cruise_pid_kd_working",
+   "+000C Cruise_RSG_Error_Delta -> cruise_speed_setpoint_active",
+   "+000E Cruise_RSG_Gain_Adj -> cruise_pid_rate_gain_working",
+   "+0010 Cruise_RSG_Integral_Gain -> cruise_pid_ki_working",
+   "+0012 Cruise_RSG_Integral_Acc_Gain -> cruise_pid_rate_integral_gain_working",
+   "+0014 Cruise_RSG_Proportional_Gain -> cruise_pid_kp_working",
+   "+0016 Cruise_TDG -> cruise_speed_reference_b",
+   "+0018 Cruise_TDO -> cruise_speed_offset_b",
+   "+001A Cruise_Top_Droop_Gain -> cruise_ramp_rate_b_working",
+   "+001C RSG_BDG -> vehicle_speed_limit_fueling_bottom_droop_gain",
+   "+001E RSG_BDO -> cruise_speed_setpoint_c",
+   "+0020 RSG_Bottom_Droop_Gain -> road_speed_governor_bottom_droop_gain",
+   "+0022 RSG_TDG -> vehicle_speed_limit_fueling_top_droop_gain",
+   "+0024 RSG_TDO -> vehicle_speed_limit_fueling_top_droop_offset",
+   "+0026 RSG_Top_Droop_Gain -> road_speed_governor_top_droop_gain",
+   "+0028 Cruise_RSG_Top_Droop_Offset -> cruise_speed_offset_latched"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - 0x40b69a `cruise_governor_fuel_demand_lower_ramp_start` \u2192 `cruise_control_fueling_bottom_droop_offset`"
+  ],
+  "block": "1187",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b69a 1187 +0004 Cruise_BDO (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b69c",
+  "current_name": "cruise_ramp_rate_a_working",
+  "current_type": "word",
+  "current_comment": "cruise ramp rate A (rampScale_calc output)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1187 +0006 Cruise_Bottom_Droop_Gain [MPH/MM3S, 2 B, U, scale 0.00005615225, 0.000000..0.087500]: SLOPE OF THE BOTTOM DROOP LINE CALCULATED IN CC/RSG DROOP"
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "governor_cruise_setpoint_calc: wVar6 = cruise_ramp_rate_a_working;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_a = cruise_ramp_rate_a_working;",
+   "governorCruiseStateMachine: cruise_ramp_rate_a_working = 0;"
+  ],
+  "block_named_rows": [
+   "+0000 Cruise_Allow_Droops -> cruise_deadband_active_flag",
+   "+0002 Cruise_BDG -> cruise_speed_reference_a",
+   "+0004 Cruise_BDO -> cruise_governor_fuel_demand_lower_ramp_start",
+   "+0006 Cruise_Bottom_Droop_Gain -> cruise_ramp_rate_a_working",
+   "+0008 Cruise_RSG_Calculate_Bumpless -> cruise_zone_transition_flag",
+   "+000A Cruise_RSG_Derivative_Gain -> cruise_pid_kd_working",
+   "+000C Cruise_RSG_Error_Delta -> cruise_speed_setpoint_active",
+   "+000E Cruise_RSG_Gain_Adj -> cruise_pid_rate_gain_working",
+   "+0010 Cruise_RSG_Integral_Gain -> cruise_pid_ki_working",
+   "+0012 Cruise_RSG_Integral_Acc_Gain -> cruise_pid_rate_integral_gain_working",
+   "+0014 Cruise_RSG_Proportional_Gain -> cruise_pid_kp_working",
+   "+0016 Cruise_TDG -> cruise_speed_reference_b",
+   "+0018 Cruise_TDO -> cruise_speed_offset_b",
+   "+001A Cruise_Top_Droop_Gain -> cruise_ramp_rate_b_working",
+   "+001C RSG_BDG -> vehicle_speed_limit_fueling_bottom_droop_gain",
+   "+001E RSG_BDO -> cruise_speed_setpoint_c",
+   "+0020 RSG_Bottom_Droop_Gain -> road_speed_governor_bottom_droop_gain",
+   "+0022 RSG_TDG -> vehicle_speed_limit_fueling_top_droop_gain",
+   "+0024 RSG_TDO -> vehicle_speed_limit_fueling_top_droop_offset",
+   "+0026 RSG_Top_Droop_Gain -> road_speed_governor_top_droop_gain",
+   "+0028 Cruise_RSG_Top_Droop_Offset -> cruise_speed_offset_latched"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - 0x40b69c / 0x40b6b0 `cruise_ramp_rate_a_working` / `_b_working` \u2192 `cruise_bottom_droop_gain` / `cruise_top_droop_gain`"
+  ],
+  "block": "1187",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b69c 1187 +0006 Cruise_Bottom_Droop_Gain (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b6ac",
+  "current_name": "cruise_speed_reference_b",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1, 'sth': 3} -> 2 byte",
+  "e2m_records_here": [
+   "1187 +0016 Cruise_TDG [MPH/MM3S, 2 B, U, scale 0.00005615225, 0.000000..0.087500]: SLOPE OF THE TOP DROOP LINE PASSED TO THE DESIRED_CC FUELING PROCEDURE."
+  ],
+  "dump_raw": "0",
+  "references": 5,
+  "code": [
+   "cm848_calculateCruiseControlFueling: if (cruise_speed_reference_b != 0) {",
+   "cm848_calculateCruiseControlFueling: cruise_speed_reference_active = cruise_speed_reference_b;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_b = cruise_ramp_rate_b_working;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_b = 0;",
+   "governorCruiseStateMachine: cruise_speed_reference_b = 0;"
+  ],
+  "block_named_rows": [
+   "+0000 Cruise_Allow_Droops -> cruise_deadband_active_flag",
+   "+0002 Cruise_BDG -> cruise_speed_reference_a",
+   "+0004 Cruise_BDO -> cruise_governor_fuel_demand_lower_ramp_start",
+   "+0006 Cruise_Bottom_Droop_Gain -> cruise_ramp_rate_a_working",
+   "+0008 Cruise_RSG_Calculate_Bumpless -> cruise_zone_transition_flag",
+   "+000A Cruise_RSG_Derivative_Gain -> cruise_pid_kd_working",
+   "+000C Cruise_RSG_Error_Delta -> cruise_speed_setpoint_active",
+   "+000E Cruise_RSG_Gain_Adj -> cruise_pid_rate_gain_working",
+   "+0010 Cruise_RSG_Integral_Gain -> cruise_pid_ki_working",
+   "+0012 Cruise_RSG_Integral_Acc_Gain -> cruise_pid_rate_integral_gain_working",
+   "+0014 Cruise_RSG_Proportional_Gain -> cruise_pid_kp_working",
+   "+0016 Cruise_TDG -> cruise_speed_reference_b",
+   "+0018 Cruise_TDO -> cruise_speed_offset_b",
+   "+001A Cruise_Top_Droop_Gain -> cruise_ramp_rate_b_working",
+   "+001C RSG_BDG -> vehicle_speed_limit_fueling_bottom_droop_gain",
+   "+001E RSG_BDO -> cruise_speed_setpoint_c",
+   "+0020 RSG_Bottom_Droop_Gain -> road_speed_governor_bottom_droop_gain",
+   "+0022 RSG_TDG -> vehicle_speed_limit_fueling_top_droop_gain",
+   "+0024 RSG_TDO -> vehicle_speed_limit_fueling_top_droop_offset",
+   "+0026 RSG_Top_Droop_Gain -> road_speed_governor_top_droop_gain",
+   "+0028 Cruise_RSG_Top_Droop_Offset -> cruise_speed_offset_latched"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - 0x40b6ac `cruise_speed_reference_b` \u2192 `cruise_control_fueling_top_droop_gain`"
+  ],
+  "block": "1187",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b6ac 1187 +0016 Cruise_TDG (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b6ae",
+  "current_name": "cruise_speed_offset_b",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1187 +0018 Cruise_TDO [MM3S, 2 B, U, scale 0.06793478400, 0.000000..400.000000]: CRUISE TOP DROOP OFFSET PASSED TO THE DESIRED_CC FUELING PROCEDURE."
+  ],
+  "dump_raw": "2208",
+  "references": 4,
+  "code": [
+   "cm848_calculateCruiseControlFueling: cruise_speed_deviation = uVar1 + cruise_speed_offset_b;",
+   "governor_cruise_speedReference_update: cruise_speed_offset_b = cruise_speed_offset_latched;",
+   "governor_cruise_speedReference_update: cruise_speed_offset_b = vehicle_speed_limit_fueling_top_droop_offset;",
+   "governorCruiseStateMachine: cruise_speed_offset_b = cruise_speed_offset_default;"
+  ],
+  "block_named_rows": [
+   "+0000 Cruise_Allow_Droops -> cruise_deadband_active_flag",
+   "+0002 Cruise_BDG -> cruise_speed_reference_a",
+   "+0004 Cruise_BDO -> cruise_governor_fuel_demand_lower_ramp_start",
+   "+0006 Cruise_Bottom_Droop_Gain -> cruise_ramp_rate_a_working",
+   "+0008 Cruise_RSG_Calculate_Bumpless -> cruise_zone_transition_flag",
+   "+000A Cruise_RSG_Derivative_Gain -> cruise_pid_kd_working",
+   "+000C Cruise_RSG_Error_Delta -> cruise_speed_setpoint_active",
+   "+000E Cruise_RSG_Gain_Adj -> cruise_pid_rate_gain_working",
+   "+0010 Cruise_RSG_Integral_Gain -> cruise_pid_ki_working",
+   "+0012 Cruise_RSG_Integral_Acc_Gain -> cruise_pid_rate_integral_gain_working",
+   "+0014 Cruise_RSG_Proportional_Gain -> cruise_pid_kp_working",
+   "+0016 Cruise_TDG -> cruise_speed_reference_b",
+   "+0018 Cruise_TDO -> cruise_speed_offset_b",
+   "+001A Cruise_Top_Droop_Gain -> cruise_ramp_rate_b_working",
+   "+001C RSG_BDG -> vehicle_speed_limit_fueling_bottom_droop_gain",
+   "+001E RSG_BDO -> cruise_speed_setpoint_c",
+   "+0020 RSG_Bottom_Droop_Gain -> road_speed_governor_bottom_droop_gain",
+   "+0022 RSG_TDG -> vehicle_speed_limit_fueling_top_droop_gain",
+   "+0024 RSG_TDO -> vehicle_speed_limit_fueling_top_droop_offset",
+   "+0026 RSG_Top_Droop_Gain -> road_speed_governor_top_droop_gain",
+   "+0028 Cruise_RSG_Top_Droop_Offset -> cruise_speed_offset_latched"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - 0x40b6ae `cruise_speed_offset_b` \u2192 `cruise_control_fueling_top_droop_offset`"
+  ],
+  "block": "1187",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b6ae 1187 +0018 Cruise_TDO (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b6b0",
+  "current_name": "cruise_ramp_rate_b_working",
+  "current_type": "word",
+  "current_comment": "cruise ramp rate B (normal/protection select)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2, 'sth': 2} -> 2 byte",
+  "e2m_records_here": [
+   "1187 +001A Cruise_Top_Droop_Gain [MPH/MM3S, 2 B, U, scale 0.00005615225, 0.000000..0.087500]: SLOPE OF THE TOP DROOP LINE COMPUTED IN CC/RSG DROOP ALGORITHM."
+  ],
+  "dump_raw": "0",
+  "references": 6,
+  "code": [
+   "governor_cruise_setpoint_calc: uVar2 = cruise_ramp_rate_b_working;",
+   "governor_cruise_speedReference_update: cruise_ramp_rate_b_working = cruise_ramp_rate_b_computed;",
+   "governor_cruise_speedReference_update: cruise_ramp_rate_b_working = DAT_003fcff2;",
+   "governor_cruise_speedReference_update: cruise_speed_reference_b = cruise_ramp_rate_b_working;",
+   "governorCruiseStateMachine: cruise_ramp_rate_b_working = cruise_ramp_rate_b_computed;",
+   "governorCruiseStateMachine: cruise_ramp_rate_b_working = cruise_ramp_rate_b_computed;"
+  ],
+  "block_named_rows": [
+   "+0000 Cruise_Allow_Droops -> cruise_deadband_active_flag",
+   "+0002 Cruise_BDG -> cruise_speed_reference_a",
+   "+0004 Cruise_BDO -> cruise_governor_fuel_demand_lower_ramp_start",
+   "+0006 Cruise_Bottom_Droop_Gain -> cruise_ramp_rate_a_working",
+   "+0008 Cruise_RSG_Calculate_Bumpless -> cruise_zone_transition_flag",
+   "+000A Cruise_RSG_Derivative_Gain -> cruise_pid_kd_working",
+   "+000C Cruise_RSG_Error_Delta -> cruise_speed_setpoint_active",
+   "+000E Cruise_RSG_Gain_Adj -> cruise_pid_rate_gain_working",
+   "+0010 Cruise_RSG_Integral_Gain -> cruise_pid_ki_working",
+   "+0012 Cruise_RSG_Integral_Acc_Gain -> cruise_pid_rate_integral_gain_working",
+   "+0014 Cruise_RSG_Proportional_Gain -> cruise_pid_kp_working",
+   "+0016 Cruise_TDG -> cruise_speed_reference_b",
+   "+0018 Cruise_TDO -> cruise_speed_offset_b",
+   "+001A Cruise_Top_Droop_Gain -> cruise_ramp_rate_b_working",
+   "+001C RSG_BDG -> vehicle_speed_limit_fueling_bottom_droop_gain",
+   "+001E RSG_BDO -> cruise_speed_setpoint_c",
+   "+0020 RSG_Bottom_Droop_Gain -> road_speed_governor_bottom_droop_gain",
+   "+0022 RSG_TDG -> vehicle_speed_limit_fueling_top_droop_gain",
+   "+0024 RSG_TDO -> vehicle_speed_limit_fueling_top_droop_offset",
+   "+0026 RSG_Top_Droop_Gain -> road_speed_governor_top_droop_gain",
+   "+0028 Cruise_RSG_Top_Droop_Offset -> cruise_speed_offset_latched"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - 0x40b69c / 0x40b6b0 `cruise_ramp_rate_a_working` / `_b_working` \u2192 `cruise_bottom_droop_gain` / `cruise_top_droop_gain`"
+  ],
+  "block": "1187",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b6b0 1187 +001A Cruise_Top_Droop_Gain (2 B)"
+  ]
+ },
+ {
+  "address": "0x003ff00a",
+  "current_name": "fuel_ramp_decrease_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "11D5 +0018 AFC_Low_Boost_Time_Delay [SEC, 2 B, U, scale 0.02, 0..1310]: Time allowed before AFC Low Boost Error is set"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_calculateAirFuelControlFuelLimit: if (air_fuel_control_low_boost_timer < fuel_ramp_decrease_limit_cal) {"
+  ],
+  "block_named_rows": [
+   "+0000 AFC_Fueling_Override_Value -> fuel_demand_load_base_cal",
+   "+0002 Ambient_Air_Pressure_Sensor_Present -> boost_uses_barometric_pressure_flag",
+   "+0004 Absolute_Boost_Pressure_Sensor_Present -> boost_is_gauge_pressure_flag",
+   "+0006 AFC_Fueling_Threshold_1 -> fuel_demand_load_threshold_c",
+   "+0008 AFC_Fueling_Threshold_2 -> fuel_demand_load_threshold_b",
+   "+000A AFC_Fueling_Threshold_3 -> fuel_demand_load_threshold_a",
+   "+000C AFC_Fueling_Slew_Rate_1 -> fuel_demand_load_threshold_d",
+   "+0010 AFC_Fueling_Slew_Rate_2 -> fuel_demand_load_result_working",
+   "+0014 AFC_Fueling_Slew_Rate_3 -> fuel_demand_load_select_working",
+   "+0018 AFC_Low_Boost_Time_Delay -> fuel_ramp_decrease_limit_cal",
+   "+001A AFC_Pos_Select_Slew_Rate -> fuel_ramp_increase_step_cal",
+   "+001C AFC_Neg_Select_Slew_Rate -> fuel_ramp_decrease_step_cal",
+   "+001E AFC_Normal_Boost_Time_Delay -> fuel_ramp_increase_limit_cal",
+   "+0020 AFC_Neg_Fueling_Slew_Rate -> boost_fuel_limit_maximum_decrease_step"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_2.md: - **11D5:** 0x3ff00a..10 `fuel_ramp_*_cal` carry a `_cal` outside the mirror. They are the AFC time delay and select slew records."
+  ],
+  "block": "11D5",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x003ff00a 11D5 +0018 AFC_Low_Boost_Time_Delay (2 B)"
+  ]
+ },
+ {
+  "address": "0x003ff00c",
+  "current_name": "fuel_ramp_increase_step_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "11D5 +001A AFC_Pos_Select_Slew_Rate [UNITLESS, 2 B, U, scale 0.000015625, 0..1]: increment AFC_Select by this value"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_calculateAirFuelControlFuelLimit: if ((uint)air_fuel_control_low_boost_blend_fraction + (uint)fuel_ramp_increase_step_cal <",
+   "cm848_calculateAirFuelControlFuelLimit: air_fuel_control_low_boost_blend_fraction + fuel_ramp_increase_step_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 AFC_Fueling_Override_Value -> fuel_demand_load_base_cal",
+   "+0002 Ambient_Air_Pressure_Sensor_Present -> boost_uses_barometric_pressure_flag",
+   "+0004 Absolute_Boost_Pressure_Sensor_Present -> boost_is_gauge_pressure_flag",
+   "+0006 AFC_Fueling_Threshold_1 -> fuel_demand_load_threshold_c",
+   "+0008 AFC_Fueling_Threshold_2 -> fuel_demand_load_threshold_b",
+   "+000A AFC_Fueling_Threshold_3 -> fuel_demand_load_threshold_a",
+   "+000C AFC_Fueling_Slew_Rate_1 -> fuel_demand_load_threshold_d",
+   "+0010 AFC_Fueling_Slew_Rate_2 -> fuel_demand_load_result_working",
+   "+0014 AFC_Fueling_Slew_Rate_3 -> fuel_demand_load_select_working",
+   "+0018 AFC_Low_Boost_Time_Delay -> fuel_ramp_decrease_limit_cal",
+   "+001A AFC_Pos_Select_Slew_Rate -> fuel_ramp_increase_step_cal",
+   "+001C AFC_Neg_Select_Slew_Rate -> fuel_ramp_decrease_step_cal",
+   "+001E AFC_Normal_Boost_Time_Delay -> fuel_ramp_increase_limit_cal",
+   "+0020 AFC_Neg_Fueling_Slew_Rate -> boost_fuel_limit_maximum_decrease_step"
+  ],
+  "report_leads": [],
+  "block": "11D5",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x003ff00c 11D5 +001A AFC_Pos_Select_Slew_Rate (2 B)"
+  ],
+  "added_by": "range 0x3ff00a..10 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x003ff00e",
+  "current_name": "fuel_ramp_decrease_step_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "11D5 +001C AFC_Neg_Select_Slew_Rate [UNITLESS, 2 B, U, scale 0.000015625, 0..1]: decrement AFC_Select by this value"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_calculateAirFuelControlFuelLimit: if (fuel_ramp_decrease_step_cal < air_fuel_control_low_boost_blend_fraction) {",
+   "cm848_calculateAirFuelControlFuelLimit: air_fuel_control_low_boost_blend_fraction - fuel_ramp_decrease_step_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 AFC_Fueling_Override_Value -> fuel_demand_load_base_cal",
+   "+0002 Ambient_Air_Pressure_Sensor_Present -> boost_uses_barometric_pressure_flag",
+   "+0004 Absolute_Boost_Pressure_Sensor_Present -> boost_is_gauge_pressure_flag",
+   "+0006 AFC_Fueling_Threshold_1 -> fuel_demand_load_threshold_c",
+   "+0008 AFC_Fueling_Threshold_2 -> fuel_demand_load_threshold_b",
+   "+000A AFC_Fueling_Threshold_3 -> fuel_demand_load_threshold_a",
+   "+000C AFC_Fueling_Slew_Rate_1 -> fuel_demand_load_threshold_d",
+   "+0010 AFC_Fueling_Slew_Rate_2 -> fuel_demand_load_result_working",
+   "+0014 AFC_Fueling_Slew_Rate_3 -> fuel_demand_load_select_working",
+   "+0018 AFC_Low_Boost_Time_Delay -> fuel_ramp_decrease_limit_cal",
+   "+001A AFC_Pos_Select_Slew_Rate -> fuel_ramp_increase_step_cal",
+   "+001C AFC_Neg_Select_Slew_Rate -> fuel_ramp_decrease_step_cal",
+   "+001E AFC_Normal_Boost_Time_Delay -> fuel_ramp_increase_limit_cal",
+   "+0020 AFC_Neg_Fueling_Slew_Rate -> boost_fuel_limit_maximum_decrease_step"
+  ],
+  "report_leads": [],
+  "block": "11D5",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x003ff00e 11D5 +001C AFC_Neg_Select_Slew_Rate (2 B)"
+  ],
+  "added_by": "range 0x3ff00a..10 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x003ff010",
+  "current_name": "fuel_ramp_increase_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "11D5 +001E AFC_Normal_Boost_Time_Delay [SEC, 2 B, U, scale 0.02, 0..1310]: Time allowed before AFC Low Boost Error is Cleared"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_calculateAirFuelControlFuelLimit: if (air_fuel_control_normal_boost_timer < fuel_ramp_increase_limit_cal) {"
+  ],
+  "block_named_rows": [
+   "+0000 AFC_Fueling_Override_Value -> fuel_demand_load_base_cal",
+   "+0002 Ambient_Air_Pressure_Sensor_Present -> boost_uses_barometric_pressure_flag",
+   "+0004 Absolute_Boost_Pressure_Sensor_Present -> boost_is_gauge_pressure_flag",
+   "+0006 AFC_Fueling_Threshold_1 -> fuel_demand_load_threshold_c",
+   "+0008 AFC_Fueling_Threshold_2 -> fuel_demand_load_threshold_b",
+   "+000A AFC_Fueling_Threshold_3 -> fuel_demand_load_threshold_a",
+   "+000C AFC_Fueling_Slew_Rate_1 -> fuel_demand_load_threshold_d",
+   "+0010 AFC_Fueling_Slew_Rate_2 -> fuel_demand_load_result_working",
+   "+0014 AFC_Fueling_Slew_Rate_3 -> fuel_demand_load_select_working",
+   "+0018 AFC_Low_Boost_Time_Delay -> fuel_ramp_decrease_limit_cal",
+   "+001A AFC_Pos_Select_Slew_Rate -> fuel_ramp_increase_step_cal",
+   "+001C AFC_Neg_Select_Slew_Rate -> fuel_ramp_decrease_step_cal",
+   "+001E AFC_Normal_Boost_Time_Delay -> fuel_ramp_increase_limit_cal",
+   "+0020 AFC_Neg_Fueling_Slew_Rate -> boost_fuel_limit_maximum_decrease_step"
+  ],
+  "report_leads": [],
+  "block": "11D5",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x003ff010 11D5 +001E AFC_Normal_Boost_Time_Delay (2 B)"
+  ],
+  "added_by": "range 0x3ff00a..10 in review_e2m_names_wave_13_bin_2.md"
+ },
+ {
+  "address": "0x003fed98",
+  "current_name": "fault_pending_flags_b",
+  "current_type": "dword",
+  "current_comment": "32-bit fault-pending bitmap init 0xffffffff lockstep with monitor_readiness_code_cal",
+  "region": "EEPROM mirror (name ends _cal)",
+  "access_widths": "{'lwz': 2, 'stw': 2} -> 4 byte",
+  "e2m_records_here": [
+   "1211 +0008 Pending_Readiness_Code [HEX, 4 B, U, scale 1.0, 0..4294967295]: [DGPDRDCD] Indicates Pending status for Readiness_Code."
+  ],
+  "dump_raw": "4294967295",
+  "references": 59,
+  "code": [
+   "cm848_monitorGovernorPressureSensorOffset: if ((fault_pending_flags_b & 0x1000) != 0) {",
+   "cm848_monitorGovernorPressureSensorOffset: fault_pending_flags_b = fault_pending_flags_b & 0xffffefff;",
+   "cm848_monitorGovernorPressureSensorOffset: fault_pending_flags_b = fault_pending_flags_b & 0xffffefff;",
+   "cm848_monitorGovernorPressureTracking: if ((fault_pending_flags_b & 0x10000000) == 0) {",
+   "cm848_monitorGovernorPressureTracking: fault_pending_flags_b = fault_pending_flags_b & 0xefffffff;",
+   "cm848_monitorGovernorPressureTracking: fault_pending_flags_b = fault_pending_flags_b & 0xefffffff;"
+  ],
+  "block_named_rows": [
+   "+0000 Number_Of_Drive_Cycles -> fault_aging_drive_cycle_counter_cal",
+   "+0001 Number_Of_Warm_Up_Cycles -> fault_auto_clear_warm_up_cycle_count_cal",
+   "+0002 Number_Of_OBD_Snapshots -> fault_entry_pointer_queue_count_cal",
+   "+0004 Readiness_Code -> monitor_readiness_code_cal",
+   "+0008 Pending_Readiness_Code -> fault_pending_flags_b"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **0x3fed98 `fault_pending_flags_b`:** Pending_Readiness_Code, so `monitor_pending_readiness_code_cal`."
+  ],
+  "block": "1211",
+  "row_width_bytes": 4,
+  "covered_records": [
+   "0x003fed98 1211 +0008 Pending_Readiness_Code (4 B)"
+  ]
+ },
+ {
+  "address": "0x003ffca6",
+  "current_name": "throttle_rate_integrator_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "16A1 +000E C_TGC_Override_Value [%, 2 B, U, scale 0.0078125, 0..100]: Override value for turbocharger position demand"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_calculateWastegateDutyRequest: wastegate_duty_feedforward_term = throttle_rate_integrator_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 C_TGC_I_Gain -> throttle_rate_scale_factor_cal",
+   "+0002 C_TGC_Int_LLim -> wastegate_duty_integrator_lower_limit",
+   "+0004 C_TGC_Int_ULim -> wastegate_duty_integrator_upper_limit",
+   "+0006 C_TGC_LLim -> wastegate_duty_floor_fixed",
+   "+0008 C_TGC_P_Gain -> governor_rpm_band_rate_current_cal",
+   "+000A C_TGC_P_Gain_Rate_Lim -> governor_rpm_error_gain_cal",
+   "+000C C_TGC_ULim -> wastegate_duty_ceiling_fixed",
+   "+000E C_TGC_Override_Value -> throttle_rate_integrator_cal",
+   "+0012 C_TGC_Turbo_Drt_Scale_Gain -> throttle_rate_pid_gain_cal",
+   "+0014 C_TGC_E_Brake_LLim -> throttle_rate_pid_gain_cal+2",
+   "+0016 C_TGC_Turbo_Drt_Deriv_Gain -> fuel_demand_delta_scale_cal",
+   "+0018 C_TGC_COT_Drt_Deriv_Gain -> fuel_flow_rate_divisor_cal",
+   "+001A C_TGC_COT_Drt_Scale_Gain -> fuel_flow_rate_gain_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_1.md: - The feedforward calibration source 0x3ffca6 `throttle_rate_integrator_cal`, and its `throttle_rate_*` cal siblings, also belong to the wastegate controller."
+  ],
+  "block": "16A1",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x003ffca6 16A1 +000E C_TGC_Override_Value (2 B)"
+  ]
+ },
+ {
+  "address": "0x00400932",
+  "current_name": "boost_modifier_filter_coefficient",
+  "current_type": "word",
+  "current_comment": "EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - boost_modifier_filter_state.coefficient points here (was boost_modifier_table_cal)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "177C +0000 C_CHP_Charge_Flow_Fil_Cnst [UNITLESS, 2 B, U, scale 1.52588E-05, 0..1]: Filter constant for estimating charge flow"
+  ],
+  "dump_raw": "13107",
+  "references": 1,
+  "code": [
+   "cm848_initFilterTablePointers: boost_modifier_filter_state.coefficient = &boost_modifier_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - 177C charge flow: the rest of 0x400932-0x400948 (C_CHP_* words) carry `boost_*` / `fuel_*` names, several with a wrong `_cal`."
+  ],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400932 177C +0000 C_CHP_Charge_Flow_Fil_Cnst (2 B)"
+  ],
+  "added_by": "range 0x400932-0x400948 in review_e2m_names_wave_13_bin_4.md"
+ },
+ {
+  "address": "0x00400934",
+  "current_name": "fuel_quantity_ema_upper_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +0002 C_CHP_Charge_Flow_Max [LB/MIN, 2 B, U, scale 0.0078125, 0..400]: Max limit on charge flow estimation"
+  ],
+  "dump_raw": "7680",
+  "references": 2,
+  "code": [
+   "cm848_loadBasedFuelAdjustment: if ((uVar3 <= uVar1) && (uVar3 = uVar1, fuel_quantity_ema_upper_limit_cal < uVar1)) {",
+   "cm848_loadBasedFuelAdjustment: uVar3 = (uint)fuel_quantity_ema_upper_limit_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400934 177C +0002 C_CHP_Charge_Flow_Max (2 B)"
+  ]
+ },
+ {
+  "address": "0x00400936",
+  "current_name": "boost_load_lower_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +0004 C_CHP_Charge_Flow_Min [LB/MIN, 2 B, U, scale 0.0078125, 0..400]: Min limit on charge flow estimation"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_loadBasedFuelAdjustment: uVar3 = (uint)boost_load_lower_limit_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400936 177C +0004 C_CHP_Charge_Flow_Min (2 B)"
+  ]
+ },
+ {
+  "address": "0x00400938",
+  "current_name": "boost_rpm_scale_factor_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +0006 C_CHP_Veff_Stroke [IN, 2 B, U, scale 0.0001220703125, 4..7.9998]: Engine stroke"
+  ],
+  "dump_raw": "38702",
+  "references": 1,
+  "code": [
+   "cm848_boostBasedFuelModifier: (uint)boost_rpm_scale_factor_cal >> 0x10),boost_rpm_scale_axis_cal,"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400938 177C +0006 C_CHP_Veff_Stroke (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040093c",
+  "current_name": "boost_pressure_factor_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +000A C_CHP_Veff_Bore [IN, 2 B, U, scale 0.0001220703125, 4..7.9999]: Engine bore"
+  ],
+  "dump_raw": "32897",
+  "references": 2,
+  "code": [
+   "cm848_boostBasedFuelModifier: uVar2 = (uint)boost_pressure_factor_cal * (uint)boost_pressure_factor_cal;",
+   "cm848_boostBasedFuelModifier: uVar2 = (uint)boost_pressure_factor_cal * (uint)boost_pressure_factor_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040093c 177C +000A C_CHP_Veff_Bore (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040093e",
+  "current_name": "boost_pressure_divisor_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +000C C_CHP_Veff_Valve_Diameter [IN, 2 B, U, scale 0.0001220703125, 0..4]: valve diameter"
+  ],
+  "dump_raw": "8869",
+  "references": 1,
+  "code": [
+   "cm848_boostBasedFuelModifier: uVar1 = (uint)boost_pressure_divisor_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040093e 177C +000C C_CHP_Veff_Valve_Diameter (2 B)"
+  ]
+ },
+ {
+  "address": "0x00400940",
+  "current_name": "fuel_demand_rpm_factor_upper_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +000E C_CHP_Veff_Max [UNITLESS, 2 B, U, scale 0.00012207, 0.5..1.2]: Max limit to volumetric efficiency"
+  ],
+  "dump_raw": "8192",
+  "references": 2,
+  "code": [
+   "cm848_boostBasedFuelModifier: (uint)fuel_demand_rpm_factor_upper_cal < (uVar3 & 0xffff))) {",
+   "cm848_boostBasedFuelModifier: engine_volumetric_efficiency = fuel_demand_rpm_factor_upper_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **165C / 177D:** 0x40718c `cold_start_sensor_deviation_delay_cal` has a wrong `_cal`, and `iat_sensor_deviation_flags` (0x3fe9be) says iat for pressure flags. `governor_integrator_bound_a` / `_b` (0x40bb8a / 0x40bb3c) are sensor channels 77 and 38. 0x400940 / 0x400942 `fuel_demand_rpm_factor_upper_cal` / `_base_cal` are the volumetric efficiency clamps (1.0 / 0.8) with a wrong `_cal` in RAM."
+  ],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400940 177C +000E C_CHP_Veff_Max (2 B)"
+  ]
+ },
+ {
+  "address": "0x00400942",
+  "current_name": "fuel_demand_rpm_factor_base_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +0010 C_CHP_Veff_Min [UNITLESS, 2 B, U, scale 0.00012207, 0.5..1.2]: Min limit to volumetric efficiency"
+  ],
+  "dump_raw": "6554",
+  "references": 2,
+  "code": [
+   "cm848_boostBasedFuelModifier: engine_volumetric_efficiency = fuel_demand_rpm_factor_base_cal;",
+   "cm848_boostBasedFuelModifier: if (((uint)fuel_demand_rpm_factor_base_cal <= (uVar3 & 0xffff)) &&"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **165C / 177D:** 0x40718c `cold_start_sensor_deviation_delay_cal` has a wrong `_cal`, and `iat_sensor_deviation_flags` (0x3fe9be) says iat for pressure flags. `governor_integrator_bound_a` / `_b` (0x40bb8a / 0x40bb3c) are sensor channels 77 and 38. 0x400940 / 0x400942 `fuel_demand_rpm_factor_upper_cal` / `_base_cal` are the volumetric efficiency clamps (1.0 / 0.8) with a wrong `_cal` in RAM."
+  ],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400942 177C +0010 C_CHP_Veff_Min (2 B)"
+  ]
+ },
+ {
+  "address": "0x00400944",
+  "current_name": "boost_map_correction_factor_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +0012 C_CHP_Veff_Parameter_A [UNITLESS, 2 B, S, scale 0.0009765625, -8..0]: Charge flow estimate parameter A"
+  ],
+  "dump_raw": "-2577",
+  "references": 1,
+  "code": [
+   "cm848_boostBasedFuelModifier: (-(int)(short)boost_map_correction_factor_cal & 0xffffU);"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400944 177C +0012 C_CHP_Veff_Parameter_A (2 B)"
+  ]
+ },
+ {
+  "address": "0x00400946",
+  "current_name": "boost_pressure_offset_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +0014 C_CHP_Veff_Parameter_B [UNITLESS, 2 B, U, scale 0.0009765625, 0..64]: Charge flow estimate parameter B"
+  ],
+  "dump_raw": "2502",
+  "references": 1,
+  "code": [
+   "cm848_boostBasedFuelModifier: uVar1 = (uVar2 + boost_pressure_offset_cal & 0xffff) *"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400946 177C +0014 C_CHP_Veff_Parameter_B (2 B)"
+  ]
+ },
+ {
+  "address": "0x00400948",
+  "current_name": "boost_pressure_upper_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "177C +0016 C_CHP_Veff_Parameter_C [UNITLESS, 2 B, U, scale 0.0001220703125, 0..4]: Charge flow estimate parameter C"
+  ],
+  "dump_raw": "10917",
+  "references": 1,
+  "code": [
+   "cm848_boostBasedFuelModifier: uVar3 = (uint)boost_pressure_upper_limit_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 C_CHP_Charge_Flow_Fil_Cnst -> boost_modifier_filter_coefficient",
+   "+0002 C_CHP_Charge_Flow_Max -> fuel_quantity_ema_upper_limit_cal",
+   "+0004 C_CHP_Charge_Flow_Min -> boost_load_lower_limit_cal",
+   "+0006 C_CHP_Veff_Stroke -> boost_rpm_scale_factor_cal",
+   "+0008 C_CHP_Engine_Displacement -> engine_displacement_cubic_inches",
+   "+000A C_CHP_Veff_Bore -> boost_pressure_factor_cal",
+   "+000C C_CHP_Veff_Valve_Diameter -> boost_pressure_divisor_cal",
+   "+000E C_CHP_Veff_Max -> fuel_demand_rpm_factor_upper_cal",
+   "+0010 C_CHP_Veff_Min -> fuel_demand_rpm_factor_base_cal",
+   "+0012 C_CHP_Veff_Parameter_A -> boost_map_correction_factor_cal",
+   "+0014 C_CHP_Veff_Parameter_B -> boost_pressure_offset_cal",
+   "+0016 C_CHP_Veff_Parameter_C -> boost_pressure_upper_limit_cal"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_4.md: - 177C charge flow: the rest of 0x400932-0x400948 (C_CHP_* words) carry `boost_*` / `fuel_*` names, several with a wrong `_cal`."
+  ],
+  "block": "177C",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00400948 177C +0016 C_CHP_Veff_Parameter_C (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040a682",
+  "current_name": "boost_target_load_rpm_output",
+  "current_type": "word",
+  "current_comment": "boost target from load/rpm/map calc",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "17A1 +0004 TPE_Energy_Fraction [DEG_F, 2 B, U, scale 1, 15000..53000]: TPE energy fraction"
+  ],
+  "dump_raw": "0",
+  "references": 3,
+  "code": [
+   "cm848_calculateTemperatureHeadroomFuelCap: temperature rise model value (boost_target_load_rpm_output) gives a fuel flow limit",
+   "cm848_calculateTemperatureHeadroomFuelCap: uVar1 = (uint)boost_target_load_rpm_output;",
+   "cm848_calculateCombustionTemperatureRise: boost_target_load_rpm_output = (word)uVar1;"
+  ],
+  "block_named_rows": [
+   "+0000 Temperature_Delta -> exhaust_temperature_model_delta",
+   "+0002 TPE_Delta_Exhaust_Tmptr -> exhaust_temperature_rise_over_intake_manifold_temperature",
+   "+0004 TPE_Energy_Fraction -> boost_target_load_rpm_output",
+   "+0006 TPE_Invalid_Model -> exhaust_temperature_model_invalid_flag",
+   "+0008 Exhaust_Tmptr -> exhaust_temperature",
+   "+000C Exhaust_Metal_Tmptr -> exhaust_metal_temperature"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - 0x40a682 `boost_target_load_rpm_output` \u2192 `exhaust_temperature_model_energy_fraction`"
+  ],
+  "block": "17A1",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040a682 17A1 +0004 TPE_Energy_Fraction (2 B)"
+  ]
+ },
+ {
+  "address": "0x00409110",
+  "current_name": "engine_sync_timing_upper_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +0016 HPCR_Min_Dutycycle_Start [%, 2 B, S, scale 0.0244, 0..100]: Minimum duty cycle during start"
+  ],
+  "dump_raw": "-122",
+  "references": 1,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: wVar5 = engine_sync_timing_upper_limit_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - the rest of block 8000 (0x409110-0x409138): `engine_sync_*_cal`, `cam_sync_*_cal` and `engine_speed_override_*_cal` are HPCR governor settings and carry a wrong `_cal` in that RAM region"
+  ],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409110 8000 +0016 HPCR_Min_Dutycycle_Start (2 B)"
+  ]
+ },
+ {
+  "address": "0x00409112",
+  "current_name": "engine_sync_timing_coldstart_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +0018 HPCR_Min_Dutycycle_Normal [%, 2 B, S, scale 0.0244, 0..100]: Minimum duty cycle during normal operation"
+  ],
+  "dump_raw": "-122",
+  "references": 1,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: wVar5 = engine_sync_timing_coldstart_limit_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409112 8000 +0018 HPCR_Min_Dutycycle_Normal (2 B)"
+  ]
+ },
+ {
+  "address": "0x00409114",
+  "current_name": "fuel_pressure_governor_low_pressure_threshold",
+  "current_type": "word",
+  "current_comment": "FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED needs fuel_pressure_feedback_filtered below this (0 here - the mode never starts). Was cam_sync_timing_upper_threshold_cal",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +001A HPCR_Min_Pressure_Deflate_Start [MPa, 2 B, S, scale 0.0488, 0..200]: Minimum pressure to start deflation"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: (short)fuel_pressure_governor_low_pressure_threshold) &&",
+   "cm848_calculateFuelMeteringCommand: ((short)fuel_pressure_governor_low_pressure_threshold <="
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409114 8000 +001A HPCR_Min_Pressure_Deflate_Start (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x00409116",
+  "current_name": "fuel_pressure_governor_low_pressure_minimum_rpm",
+  "current_type": "word",
+  "current_comment": "Lower end of the low-pressure mode's rpm window (engine_rpm_measured counts (1/8 rpm); 4800 here - above the maximum). Was cam_sync_speed_phase_min_cal",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +001C HPCR_Min_RPM_Deflate_Start [RPM, 2 B, U, scale 0.125, 0..8190]: Minimum engine speed to start deflation"
+  ],
+  "dump_raw": "4800",
+  "references": 2,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: (fuel_pressure_governor_low_pressure_minimum_rpm < engine_rpm_measured)) &&",
+   "cm848_calculateFuelMeteringCommand: (engine_rpm_measured <= fuel_pressure_governor_low_pressure_minimum_rpm)) {"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409116 8000 +001C HPCR_Min_RPM_Deflate_Start (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x00409118",
+  "current_name": "fuel_pressure_governor_low_pressure_maximum_rpm",
+  "current_type": "word",
+  "current_comment": "Upper end of the low-pressure mode's rpm window (engine_rpm_measured counts (1/8 rpm); 1200 here). Was cam_sync_speed_phase_max_cal",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +001E HPCR_Max_RPM_Deflate_Start [RPM, 2 B, U, scale 0.125, 0..8190]: Maximum engine speed to start deflation"
+  ],
+  "dump_raw": "1200",
+  "references": 2,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: (engine_rpm_measured < fuel_pressure_governor_low_pressure_maximum_rpm)) &&",
+   "cm848_calculateFuelMeteringCommand: (fuel_pressure_governor_low_pressure_maximum_rpm <= engine_rpm_measured)) ||"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409118 8000 +001E HPCR_Max_RPM_Deflate_Start (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x0040911e",
+  "current_name": "fuel_pressure_governor_disabled_command",
+  "current_type": "word",
+  "current_comment": "Demand in FUEL_PRESSURE_GOVERNOR_DISABLED (0). Was cam_sync_ref_count_state20_cal",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +0024 HPCR_Dutycycle_Repl_Testbench [%, 2 B, S, scale 0.0244, 0..100]: Replacement value used in test bench mode"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: ) && (wVar5 = fuel_pressure_governor_disabled_command,"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040911e 8000 +0024 HPCR_Dutycycle_Repl_Testbench (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x00409120",
+  "current_name": "engine_speed_override_enable_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lbz': 3} -> 1 byte",
+  "e2m_records_here": [
+   "8000 +0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N [UNITLESS, 1 B, U, scale 1, 0..1]: Override switch for duty cycle output to fuel pressure regulator"
+  ],
+  "dump_raw": "0",
+  "references": 4,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: (engine_speed_override_enable_cal) and a cranking value return early; otherwise the governor mode",
+   "cm848_calculateFuelMeteringCommand: if (engine_speed_override_enable_cal != 0) {",
+   "cm848_monitorFuelPressureTrackingError: (engine_speed_override_enable_cal == 0)) &&",
+   "cm848_monitorFuelPressureSetpointNotReached: ((engine_speed_override_enable_cal == 0 &&"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x00409120 8000 +0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N (1 B)"
+  ]
+ },
+ {
+  "address": "0x00409121",
+  "current_name": "engine_speed_override_value_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +0027 HPCR_Fuelpr_Dutycycle_Override_Value [%, 2 B, S, scale 0.0244, 0..100]: Override value for duty cycle output to fuel pressure regulator"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: engine_sync_state_t_0040b87f.fuel_metering_command = engine_speed_override_value_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409121 8000 +0027 HPCR_Fuelpr_Dutycycle_Override_Value (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x00409123",
+  "current_name": "fuel_pressure_governor_low_pressure_command",
+  "current_type": "word",
+  "current_comment": "Demand in FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED (328). Was cam_sync_ref_count_state8_cal",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +0029 HPCR_Dutycycle_Deflate [%, 2 B, S, scale 0.0244, 0..100]: Duty cycle during deflate"
+  ],
+  "dump_raw": "328",
+  "references": 1,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: wVar5 = fuel_pressure_governor_low_pressure_command;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409123 8000 +0029 HPCR_Dutycycle_Deflate (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x00409126",
+  "current_name": "fuel_metering_feedback_filter_coefficient",
+  "current_type": "word",
+  "current_comment": "Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (59297 = 0.905 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was cam_sync_speed_error_filter_state_cal, typed byte)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "8000 +002C HPCR_Measured_Current_Filter_Constant [UNITLESS, 2 B, U, scale 1.52588E-5, 0..1]: Time constant for the filter used on the measured current"
+  ],
+  "dump_raw": "59297",
+  "references": 1,
+  "code": [
+   "cm848_resetEngineSyncState: fuel_metering_feedback_filter.coefficient = &fuel_metering_feedback_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409126 8000 +002C HPCR_Measured_Current_Filter_Constant (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x00409128",
+  "current_name": "fuel_metering_reference_filter_coefficient",
+  "current_type": "word",
+  "current_comment": "Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (0 = 0.000 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was cam_sync_fault_filter_state_cal, typed byte)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "8000 +002E HPCR_Duty_To_Current_Filter_Constant [UNITLESS, 2 B, U, scale 1.52588E-5, 0..1]: Time constant for the filter used on the converted dutycycle to current"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_resetEngineSyncState: fuel_metering_reference_filter.coefficient = &fuel_metering_reference_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409128 8000 +002E HPCR_Duty_To_Current_Filter_Constant (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x0040912a",
+  "current_name": "cam_sync_speed_filter_state_cal",
+  "current_type": "byte",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "8000 +0030 HPCR_Battery_Voltage_Filter_Constant [UNITLESS, 2 B, U, scale 1.52588E-5, 0..1]: Time constant for the battery voltage filter for fuel pressure control"
+  ],
+  "dump_raw": "0",
+  "references": 1,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: pbVar13 = &cam_sync_speed_filter_state_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 1,
+  "covered_records": [
+   "0x0040912a 8000 +0030 HPCR_Battery_Voltage_Filter_Constant (2 B)"
+  ],
+  "width_problem": "the row width differs from its record(s): name each covered record in 'split'"
+ },
+ {
+  "address": "0x0040912e",
+  "current_name": "fuel_pressure_governor_accelerator_feed_forward_filter_coefficient",
+  "current_type": "word",
+  "current_comment": "Coefficient of a cm848_signedFirstOrderFilter record, read through its coefficient pointer as a 16-bit word: the weight of the previous value in 1/65536 (58982 = 0.900 in the RAM dump; 0 = no filtering) - ROM copy, no _cal (was cam_sync_fuel_filter_state_cal, typed byte)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{} -> none byte",
+  "e2m_records_here": [
+   "8000 +0034 HPCR_Throttle_FF_Filter_Constant [UNITLESS, 2 B, U, scale 1.52588E-5, 0..1]: Time constant for Throttle Derivative Component"
+  ],
+  "dump_raw": "58982",
+  "references": 1,
+  "code": [
+   "cm848_resetEngineSyncState: &fuel_pressure_governor_accelerator_feed_forward_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040912e 8000 +0034 HPCR_Throttle_FF_Filter_Constant (2 B)"
+  ],
+  "added_by": "range 0x409110-0x409138 in review_e2m_names_wave_13_bin_6.md"
+ },
+ {
+  "address": "0x00409130",
+  "current_name": "cam_sync_fuel_scale_gain_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +0036 HPCR_Throttle_FF_Deriv_Gain [%, 2 B, U, scale 0.0000953125, 0..1]: Gain for Throttle Derivative Component"
+  ],
+  "dump_raw": "65535",
+  "references": 1,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: iVar14 = (int)(short)((int)((uint)cam_sync_fuel_scale_gain_cal *"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409130 8000 +0036 HPCR_Throttle_FF_Deriv_Gain (2 B)"
+  ]
+ },
+ {
+  "address": "0x00409132",
+  "current_name": "cam_sync_fuel_scale_lower_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +0038 HPCR_Min_Throttle_Deriv [%, 2 B, S, scale 0.0244, 0..799]: Minimum value for Throttle Derivative Component"
+  ],
+  "dump_raw": "-820",
+  "references": 1,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: iVar12 = (int)(short)cam_sync_fuel_scale_lower_limit_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409132 8000 +0038 HPCR_Min_Throttle_Deriv (2 B)"
+  ]
+ },
+ {
+  "address": "0x00409134",
+  "current_name": "cam_sync_fuel_scale_upper_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +003A HPCR_Max_Throttle_Deriv [%, 2 B, S, scale 0.0244, 0..799]: Maximum value for Throttle Derivative Component"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: (iVar12 = iVar14, (short)cam_sync_fuel_scale_upper_limit_cal < iVar14)) {",
+   "cm848_calculateFuelMeteringCommand: iVar12 = (int)(short)cam_sync_fuel_scale_upper_limit_cal;"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409134 8000 +003A HPCR_Max_Throttle_Deriv (2 B)"
+  ]
+ },
+ {
+  "address": "0x00409136",
+  "current_name": "engine_sync_speed_upper_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +003C HPCR_Dutycycle_Output_Max [%, 2 B, S, scale 0.0244, 0..100]: Maximum value for HPCR_Dutycycle_Output"
+  ],
+  "dump_raw": "4016",
+  "references": 2,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: wVar5 = engine_sync_speed_upper_limit_cal;",
+   "cm848_calculateFuelMeteringCommand: if (((short)engine_sync_speed_upper_limit_cal <"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409136 8000 +003C HPCR_Dutycycle_Output_Max (2 B)"
+  ]
+ },
+ {
+  "address": "0x00409138",
+  "current_name": "engine_sync_speed_lower_limit_cal",
+  "current_type": "word",
+  "current_comment": "",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8000 +003E HPCR_Dutycycle_Output_Min [%, 2 B, S, scale 0.0244, 0..100]: Minimum value for HPCR_Dutycycle_Output"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_calculateFuelMeteringCommand: (wVar5 = engine_sync_speed_lower_limit_cal,",
+   "cm848_calculateFuelMeteringCommand: (short)engine_sync_speed_lower_limit_cal)) {"
+  ],
+  "block_named_rows": [
+   "+0000 HPCR_Governor_Mode -> fuel_pressure_governor_gain_mode",
+   "+0001 HPCR_Precontrol -> fuel_pressure_governor_feed_forward_enable",
+   "+0003 HPCR_Testbench -> fuel_pressure_governor_disable",
+   "+0004 HPCR_Wait_Time_Deflate -> fuel_pressure_governor_low_pressure_entry_count",
+   "+0006 HPCR_Min_Time_Deflate -> fuel_pressure_governor_low_pressure_fixed_limit",
+   "+0008 HPCR_Count_Rev -> fuel_pressure_governor_start_revolution_limit",
+   "+000A HPCR_Min_Pressure_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_pressure",
+   "+000C HPCR_Min_RPM_Switch_Closedloop -> fuel_pressure_governor_closed_loop_entry_rpm",
+   "+000E HPCR_Min_Pressure_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_pressure",
+   "+0010 HPCR_Min_RPM_Stay_Closedloop -> fuel_pressure_governor_closed_loop_exit_rpm",
+   "+0014 HPCR_Dutycycle_Shutoff -> fuel_pressure_governor_key_off_command",
+   "+0016 HPCR_Min_Dutycycle_Start -> engine_sync_timing_upper_limit_cal",
+   "+0018 HPCR_Min_Dutycycle_Normal -> engine_sync_timing_coldstart_limit_cal",
+   "+001A HPCR_Min_Pressure_Deflate_Start -> fuel_pressure_governor_low_pressure_threshold",
+   "+001C HPCR_Min_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_minimum_rpm",
+   "+001E HPCR_Max_RPM_Deflate_Start -> fuel_pressure_governor_low_pressure_maximum_rpm",
+   "+0020 HPCR_Max_Scaling_Current_Compensation -> fuel_metering_feedback_trim_maximum_scaling_factor",
+   "+0022 HPCR_Min_Scaling_Current_Compensation -> fuel_metering_feedback_trim_minimum_scaling_factor",
+   "+0024 HPCR_Dutycycle_Repl_Testbench -> fuel_pressure_governor_disabled_command",
+   "+0026 HPCR_Fuelpr_Dutycycle_Override_Switch_N -> engine_speed_override_enable_cal",
+   "+0027 HPCR_Fuelpr_Dutycycle_Override_Value -> engine_speed_override_value_cal",
+   "+0029 HPCR_Dutycycle_Deflate -> fuel_pressure_governor_low_pressure_command",
+   "+002C HPCR_Measured_Current_Filter_Constant -> fuel_metering_feedback_filter_coefficient",
+   "+002E HPCR_Duty_To_Current_Filter_Constant -> fuel_metering_reference_filter_coefficient"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_6.md: - the rest of block 8000 (0x409110-0x409138): `engine_sync_*_cal`, `cam_sync_*_cal` and `engine_speed_override_*_cal` are HPCR governor settings and carry a wrong `_cal` in that RAM region"
+  ],
+  "block": "8000",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x00409138 8000 +003E HPCR_Dutycycle_Output_Min (2 B)"
+  ]
+ },
+ {
+  "address": "0x0040b57d",
+  "current_name": "protection_pid_error_term",
+  "current_type": "word",
+  "current_comment": "protection PID error term (delta setpoint)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lha': 1, 'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8C34 +0003 TCC_Rationality_Ratio_Delta [UNITLESS, 2 B, S, scale 0.00390625, -128..127]: Change in RPM/OSS delta since previous cycle"
+  ],
+  "dump_raw": "0",
+  "references": 2,
+  "code": [
+   "cm848_pidIntegrator_accumulate: (int)(short)protection_pid_error_term;",
+   "cm848_pidError_calc: protection_pid_error_term = uStack_6;"
+  ],
+  "block_named_rows": [
+   "+0000 TCC_Engagement_Since_Low_Speed -> converter_clutch_engaged_since_low_speed_flag",
+   "+0002 TCC_Rationality_Fail_Count_This_Trip -> converter_clutch_rationality_fail_count",
+   "+0003 TCC_Rationality_Ratio_Delta -> protection_pid_error_term",
+   "+0007 TCC_Rationality_Ratio -> converter_clutch_rationality_ratio",
+   "+0009 TCC_Rationality_Sum_Ratio_Delta -> converter_clutch_rationality_ratio_delta_sum",
+   "+000B TCC_Rationality_Timer -> converter_clutch_rationality_timer",
+   "+000C TCC_Steady_Throttle_Counts -> converter_clutch_steady_throttle_count",
+   "+000E TCC_OD_Gear_Ratio -> converter_clutch_lockup_gear_ratio",
+   "+0010 TCC_Rationality_Pass_Count_This_Trip -> converter_clutch_rationality_pass_count",
+   "+0012 TCC_Function_Timer -> protection_throttle_velocity_term",
+   "+0014 OD_Function_Timer -> governor_pressure_error"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - **8C33 / 8C34 leftovers:** 0x408ad2, 0x408ad3, 0x408ade, 0x40b57d, 0x40b57f, 0x40b58b and the monitor's snapshot words still read `protection_*`. In the same order they are fail count limit, minimum ratio delta sum, overdrive rationality time, ratio delta, monitor state, third lockup flag."
+  ],
+  "block": "8C34",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b57d 8C34 +0003 TCC_Rationality_Ratio_Delta (2 B)"
+  ],
+  "added_by": "range 0x40b57a-0x40b58e in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040b58c",
+  "current_name": "protection_throttle_velocity_term",
+  "current_type": "word",
+  "current_comment": "velocity (D) contribution to throttle output",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "e2m_records_here": [
+   "8C34 +0012 TCC_Function_Timer [SEC, 2 B, U, scale 0.5, 0..60]: Count of how long the TCC driver has been on this drive cycle"
+  ],
+  "dump_raw": "1",
+  "references": 2,
+  "code": [
+   "cm848_throttleGain_velocityBased_calc: protection_throttle_velocity_term = (word)iVar1;",
+   "cm848_throttleGain_velocityBased_calc: (uint)governor_pressure_controller_output + (int)(short)protection_throttle_velocity_term;"
+  ],
+  "block_named_rows": [
+   "+0000 TCC_Engagement_Since_Low_Speed -> converter_clutch_engaged_since_low_speed_flag",
+   "+0002 TCC_Rationality_Fail_Count_This_Trip -> converter_clutch_rationality_fail_count",
+   "+0003 TCC_Rationality_Ratio_Delta -> protection_pid_error_term",
+   "+0007 TCC_Rationality_Ratio -> converter_clutch_rationality_ratio",
+   "+0009 TCC_Rationality_Sum_Ratio_Delta -> converter_clutch_rationality_ratio_delta_sum",
+   "+000B TCC_Rationality_Timer -> converter_clutch_rationality_timer",
+   "+000C TCC_Steady_Throttle_Counts -> converter_clutch_steady_throttle_count",
+   "+000E TCC_OD_Gear_Ratio -> converter_clutch_lockup_gear_ratio",
+   "+0010 TCC_Rationality_Pass_Count_This_Trip -> converter_clutch_rationality_pass_count",
+   "+0012 TCC_Function_Timer -> protection_throttle_velocity_term",
+   "+0014 OD_Function_Timer -> governor_pressure_error"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_5.md: - 8C34 +12 / +14 (0x40b58c `protection_throttle_velocity_term`, 0x40b58e `governor_pressure_error`) probably drift too: the governor pressure solenoid loop uses them, not TCC / OD timers."
+  ],
+  "block": "8C34",
+  "row_width_bytes": 2,
+  "covered_records": [
+   "0x0040b58c 8C34 +0012 TCC_Function_Timer (2 B)"
+  ],
+  "added_by": "range 0x40b57a-0x40b58e in review_e2m_names_wave_13_bin_3.md"
+ },
+ {
+  "address": "0x0040b58e",
+  "current_name": "governor_pressure_error",
+  "current_type": "dword",
+  "current_comment": "governor_pressure_target - governor_pressure (signed); feeds the governor pressure solenoid PID gain helpers cm848_throttleGain_loadBased_calc / velocityBased / timedAccumulate (was protection_throttle_error)",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "access_widths": "{'lwz': 2, 'stw': 1} -> 4 byte",
+  "e2m_records_here": [
+   "8C34 +0014 OD_Function_Timer [SEC, 2 B, U, scale 0.5, 0..60]: Count of how long the OD driver has been on this drive cycle"
+  ],
+  "dump_raw": "65535",
+  "references": 29,
+  "code": [
+   "cm848_throttleGain_loadBased_calc: uVar1 = governor_pressure_error;",
+   "cm848_throttleGain_loadBased_calc: if ((int)governor_pressure_error < 0) {",
+   "cm848_throttleGain_loadBased_calc: uVar1 = -governor_pressure_error;",
+   "cm848_throttleGain_loadBased_calc: ((longlong)(int)governor_pressure_error *",
+   "cm848_throttleGain_loadBased_calc: governor_pressure_error * (uint)DAT_00408b18 * 0x100) /",
+   "cm848_throttleGain_loadBased_calc: uVar1 = governor_pressure_error;"
+  ],
+  "block_named_rows": [
+   "+0000 TCC_Engagement_Since_Low_Speed -> converter_clutch_engaged_since_low_speed_flag",
+   "+0002 TCC_Rationality_Fail_Count_This_Trip -> converter_clutch_rationality_fail_count",
+   "+0003 TCC_Rationality_Ratio_Delta -> protection_pid_error_term",
+   "+0007 TCC_Rationality_Ratio -> converter_clutch_rationality_ratio",
+   "+0009 TCC_Rationality_Sum_Ratio_Delta -> converter_clutch_rationality_ratio_delta_sum",
+   "+000B TCC_Rationality_Timer -> converter_clutch_rationality_timer",
+   "+000C TCC_Steady_Throttle_Counts -> converter_clutch_steady_throttle_count",
+   "+000E TCC_OD_Gear_Ratio -> converter_clutch_lockup_gear_ratio",
+   "+0010 TCC_Rationality_Pass_Count_This_Trip -> converter_clutch_rationality_pass_count",
+   "+0012 TCC_Function_Timer -> protection_throttle_velocity_term",
+   "+0014 OD_Function_Timer -> governor_pressure_error"
+  ],
+  "report_leads": [
+   "review_e2m_names_wave_13_bin_3.md: - **8C33 / 8C34:** the P1740 `protection_*` rows at 0x408ad2, 0x408ad3, 0x408ade and 0x40b57a-0x40b58e. That includes `protection_pid_step_counter` (TCC_Rationality_Timer), `protection_output_stability_counter`, and `governor_pressure_error` (OD_Function_Timer).",
+   "review_e2m_names_wave_13_bin_5.md: - 8C34 +12 / +14 (0x40b58c `protection_throttle_velocity_term`, 0x40b58e `governor_pressure_error`) probably drift too: the governor pressure solenoid loop uses them, not TCC / OD timers.",
+   "review_e2m_names_wave_13_bin_5.md: - **Pattern:** every in-use \"ratio\" record I hit is the last record of its block and has no storage of its own here. BIR_Ratio, Gov_Press_Rat_Ratio and PN_Ratio (8C5B +A, which resolves to 0x40b57a, a bin5 row; I documented the TCC record there) land on another variable's address. TCC_Ratio (8C34 +16, 0x40b590) lands inside the dword `governor_pressure_error`. Gov_Press_Control_Ratio (8C58 +12) lands on the next block's first word, `park_neutral_switch_monitor_state`."
+  ],
+  "block": "8C34",
+  "row_width_bytes": 4,
+  "covered_records": [
+   "0x0040b58e 8C34 +0014 OD_Function_Timer (2 B)",
+   "0x0040b590 8C34 +0016 TCC_Ratio (2 B)"
+  ],
+  "width_problem": "the row width differs from its record(s): name each covered record in 'split'"
+ }
+]

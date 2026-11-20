@@ -1,0 +1,40 @@
+cm848: FUELING_STATE stage 5 - power take-off words, crank routine, two backwards flags
+
+Every name comes from an e2m block of CHR_CC_11.45.01.07 that lines up by
+offset, with matching units, code that agrees and RAM-dump values that fit.
+
+- the power take-off governor's words: e2m 10AB (the PID terms, the QD / QI
+  / QP gain adjustments, no-load fuel), 109E (requested engine speed), 11B4
+  (EEPROM: remote speeds 1400-2000 rpm, set / resume 1100 rpm, 2 mph road
+  speed limit), 109D (the 300-1200 rpm engage window), 10AA (gains and
+  clamps). The +-1000 rpm speed-error clamps had their names swapped; the
+  filter coefficient is a word (0.8), not a byte
+- the crank routine: e2m 105E (0x40a798-0x40a7be: crank_exit_speed ends
+  CRANKING, crank_fuel is the CRANKING fuel, not an rpm, crank_reentry_speed),
+  105F (the ROM settings 0x406852-0x40687c, a wrong _cal removed), 1032
+  (engine_stopped_speed, ecm_power_down_timer_threshold / _delay), the crank
+  tables, crank_exit_speed_switch_cal, engine_brake_driveline_brake_type_cal
+  (1 = retarder, so ENGINE_BRAKE is never entered on this truck)
+- two flags that read backwards: engine_starting = engine_shutdown_command_flag
+  (e2m 10B1 +12 Shutdown: forces SHUTDOWN, zeroes the injection);
+  engine_shutdown_active_flag = key_off_shutdown_inhibit_flag (only J1939
+  diagnostic service 24 sets it); their setters cm848_commandEngineShutdown /
+  cm848_inhibitKeyOffShutdown
+- the engine start / extended idle / extreme ambient AECD words (e2m
+  EMO_*_AECD_Active / _Cap_EL)
+- code 32 = FUELING_STATE_MASTER_SLAVE_OVERRIDE (e2m MSOVRIDE / [MSODEN])
+- the stale CSP_* state names in 32 comments now use ENGINE_STATE_*
+
+A read-only agent mapped the crank routine. Its e2m offsets, code anchors
+and dump values were checked before anything was applied. The low-confidence
+words and the i16 retypes are left for later.
+
+Proof: all 104 names render (no _ variant), no OR render. With the names
+reversed, one line still differs: an (undefined *) cast where the power
+take-off filter record takes the coefficient's address, from the byte ->
+word fix (cm848_signedFirstOrderFilter reads it as *(short *)). Build
+warnings match stage 4's once function_definitions.csv has the two new
+function names (the verify builds check it); headers regenerated (0 errors);
+lookup_tables.py clean; tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

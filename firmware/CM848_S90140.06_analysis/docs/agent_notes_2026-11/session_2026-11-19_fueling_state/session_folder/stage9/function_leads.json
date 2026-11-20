@@ -1,0 +1,866 @@
+[
+ {
+  "address": "0x0000e0f4",
+  "current": "cm848_checkPressureFuelState",
+  "proposals": [
+   {
+    "name": "cm848_calculateAlphaAltitudeDerateLatch",
+    "reason": "| 0xe0f4 | `cm848_checkPressureFuelState` | `cm848_calculateAlphaAltitudeDerateLatch` | altitude derate alpha timer |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0000e164",
+  "current": "cm848_calculateSensorEma",
+  "proposals": [
+   {
+    "name": "cm848_calculateAlphaFuelRate",
+    "reason": "| 0xe164 | `cm848_calculateSensorEma` | `cm848_calculateAlphaFuelRate` | fuel rate hysteresis on `fuel_mass_flow_raw` |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0000e218",
+  "current": "cm848_checkFuelRateCondition",
+  "proposals": [
+   {
+    "name": "cm848_calculateAlphaGovernor",
+    "reason": "| 0xe218 | `cm848_checkFuelRateCondition` | `cm848_calculateAlphaGovernor` | on-governor condition |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0000e248",
+  "current": "cm848_checkPressureFuelDelayA",
+  "proposals": [
+   {
+    "name": "cm848_calculateAlphaLowSpeedGovernor",
+    "reason": "| 0xe248 | `cm848_checkPressureFuelDelayA` | `cm848_calculateAlphaLowSpeedGovernor` | low speed governor alpha latch |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0000e2cc",
+  "current": "cm848_checkPressureFuelDelayB",
+  "proposals": [
+   {
+    "name": "cm848_calculateAlphaAirFuelControl",
+    "reason": "| 0xe2cc | `cm848_checkPressureFuelDelayB` | `cm848_calculateAlphaAirFuelControl` | air fuel control alpha latch |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0000e360",
+  "current": "cm848_checkPressureHysteresis",
+  "proposals": [
+   {
+    "name": "cm848_calculateAlphaLowAmbientAirPressure",
+    "reason": "| 0xe360 | `cm848_checkPressureHysteresis` | `cm848_calculateAlphaLowAmbientAirPressure` | barometric hysteresis of alpha |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0000e3a4",
+  "current": "timingProtectionFlagsOrchestrator",
+  "proposals": [
+   {
+    "name": "cm848_calculateAlphaBase",
+    "reason": "| 0xe3a4 | `timingProtectionFlagsOrchestrator` | `cm848_calculateAlphaBase` | the alpha ramp |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0000e518",
+  "current": "hpcr_calculateFuelTrimOutput",
+  "proposals": [
+   {
+    "name": "cm848_calculateAlpha",
+    "reason": "| 0xe518 | `hpcr_calculateFuelTrimOutput` | `cm848_calculateAlpha` | selects the alpha source and outputs `combustion_alpha_input` |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0000e748",
+  "current": "cm848_initFuelPressureVariables",
+  "proposals": [
+   {
+    "name": "cm848_initializeAlpha",
+    "reason": "| 0xe748 | `cm848_initFuelPressureVariables` | `cm848_initializeAlpha` | clears the alpha latches, timers and filter |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0001242c",
+  "current": "cm848_calculateLoadBasedFuelTrim",
+  "proposals": [
+   {
+    "name": "cm848_calculateEgrMassFlowDownstreamModel",
+    "reason": "| 0x0001242c | `cm848_calculateLoadBasedFuelTrim` | `cm848_calculateEgrMassFlowDownstreamModel` | feeds that EGR estimate; selected by `rpm_fuel_trim_select_cal` != 0 |",
+    "source": "review_e2m_names_wave_13_bin_1.md"
+   },
+   {
+    "name": "cm848_calculateEgrOrificeFlowTerms",
+    "reason": "| 0x0001242c | `cm848_calculateLoadBasedFuelTrim` | `cm848_calculateEgrOrificeFlowTerms` | medium confidence; its inputs are the EGR orifice delta pressure ratio, valve position and orifice temperature |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000125f4",
+  "current": "cm848_calculateRpmBasedFuelTrim",
+  "proposals": [
+   {
+    "name": "cm848_calculateEgrMassFlowUpstreamModel",
+    "reason": "| 0x000125f4 | `cm848_calculateRpmBasedFuelTrim` | `cm848_calculateEgrMassFlowUpstreamModel` | feeds that EGR estimate; selected by `rpm_fuel_trim_select_cal` = 0 |",
+    "source": "review_e2m_names_wave_13_bin_1.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000127bc",
+  "current": "cm848_selectFuelTrimMode",
+  "proposals": [
+   {
+    "name": "cm848_selectEgrMassFlowModel",
+    "reason": "| 0x000127bc | `cm848_selectFuelTrimMode` | `cm848_selectEgrMassFlowModel` | clamps the EGR mass flow estimate (`throttle_fuel_trim_t.final_trim`) |",
+    "source": "review_e2m_names_wave_13_bin_1.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00012ad4",
+  "current": "cm848_boostBasedFuelModifier",
+  "proposals": [
+   {
+    "name": "cm848_calculateVolumetricEfficiency",
+    "reason": "| 0x12ad4 | `cm848_boostBasedFuelModifier` | `cm848_calculateVolumetricEfficiency` | It computes the clamped volumetric efficiency and the pressure-ratio terms, not a fuel modifier. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00012cf4",
+  "current": "cm848_loadBasedFuelAdjustment",
+  "proposals": [
+   {
+    "name": "cm848_calculateChargeMassFlow",
+    "reason": "| 0x00012cf4 | `cm848_loadBasedFuelAdjustment` | `cm848_calculateChargeMassFlow` | speed-density charge flow |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000130dc",
+  "current": "cm848_calculateBoostPressureOffset",
+  "proposals": [
+   {
+    "name": "cm848_calculatePumpingTorque",
+    "reason": "| 0x130dc | `cm848_calculateBoostPressureOffset` | `cm848_calculatePumpingTorque` | e2m 1781 CHP pumping torque |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0001359c",
+  "current": "cm848_processBoostControlState",
+  "proposals": [
+   {
+    "name": "cm848_updateChargePressureInRangeFaultCount",
+    "reason": "| 0x1359c | `cm848_processBoostControlState` | `cm848_updateChargePressureInRangeFaultCount` | It is the up/down fault counter that sets and clears fault 527. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00013d14",
+  "current": "cm848_calculatePressureSensorDerivative",
+  "proposals": [
+   {
+    "name": "cm848_calculateIntakeManifoldTemperatureLeadTerm",
+    "reason": "| 0x00013d14 / 0x00013dc8 | `cm848_calculatePressureSensorDerivative` / `...Filtered` -> `cm848_calculateIntakeManifoldTemperatureLeadTerm` / `cm848_filterIntakeManifoldTemperature` | Channel 9 is the intake manifold temperature. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000173a8",
+  "current": "cm848_fuelDemandOverrideHandler",
+  "proposals": [
+   {
+    "name": "cm848_learnAcceleratorPedalAutozero",
+    "reason": "| 0x000173a8 | `cm848_fuelDemandOverrideHandler` | `cm848_learnAcceleratorPedalAutozero` | tracks the lowest pedal reading with the idle switch on and writes the EEPROM autozero |",
+    "source": "review_e2m_names_wave_13_bin_1.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00017f50",
+  "current": "cm848_calculateFuelFlowWithMode",
+  "proposals": [
+   {
+    "name": "cm848_calculateEgrDeltaPressures",
+    "reason": "| 0x00017f50 | `cm848_calculateFuelFlowWithMode` | `cm848_calculateEgrDeltaPressures` | writes the orifice / valve / engine delta pressures |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00018070",
+  "current": "cm848_throttlePositionProcessing",
+  "proposals": [
+   {
+    "name": "cm848_calculatePercentPeakTorqueAtSpeed",
+    "reason": "- 0x18070 `cm848_throttlePositionProcessing` -> `cm848_calculatePercentPeakTorqueAtSpeed`.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0001811c",
+  "current": "cm848_faultSeverityEvaluation",
+  "proposals": [
+   {
+    "name": "cm848_calculateFrictionFuelingAtBreakpoints",
+    "reason": "- 0x1811c `cm848_faultSeverityEvaluation` -> `cm848_calculateFrictionFuelingAtBreakpoints`.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0001820c",
+  "current": "cm848_processThrottlePositionLookups",
+  "proposals": [
+   {
+    "name": "cm848_calculateJ1939PercentPeakTorquePoints",
+    "reason": "- 0x1820c `cm848_processThrottlePositionLookups` -> `cm848_calculateJ1939PercentPeakTorquePoints`.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000182e8",
+  "current": "cm848_calculateThrottleProtectionLimit",
+  "proposals": [
+   {
+    "name": "cm848_calculateJ1939PercentPeakTorque",
+    "reason": "- 0x182e8 `cm848_calculateThrottleProtectionLimit` -> `cm848_calculateJ1939PercentPeakTorque`.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0001b3a0",
+  "current": "faultTimerHandler",
+  "proposals": [
+   {
+    "name": "cm848_buildPgn65251EngineConfigurationMessage",
+    "reason": "| 0x0001b3a0 | `faultTimerHandler` -> `cm848_buildPgn65251EngineConfigurationMessage` | Fills the 28-byte PGN 65251 payload from the torque curve snapshots. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0001e830",
+  "current": "cm848_updateEngineTimingCompensation",
+  "proposals": [
+   {
+    "name": "cm848_updateFourDimensionalFueling",
+    "reason": "- 0x1e830 `cm848_updateEngineTimingCompensation` -> `cm848_updateFourDimensionalFueling`. It stores the 4-D fueling; nothing about timing.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0001eae8",
+  "current": "cm848_calculateFuelDemandChangeRate",
+  "proposals": [
+   {
+    "name": "cm848_filterCommandedThrottle",
+    "reason": "- 0x1eae8 `cm848_calculateFuelDemandChangeRate` -> `cm848_filterCommandedThrottle`.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0001f17c",
+  "current": "cm848_calculateFuelDemandWithTrim",
+  "proposals": [
+   {
+    "name": "cm848_calculateThrottle100Fueling",
+    "reason": "| 0x0001f17c | `cm848_calculateFuelDemandWithTrim` | `cm848_calculateThrottle100Fueling` | stores the five e2m 105A Throttle_100 fueling values |",
+    "source": "review_e2m_names_wave_13_bin_1.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00020500",
+  "current": "cm848_calculateProtectionActivationDelay",
+  "proposals": [
+   {
+    "name": "cm848_calculateReferenceEngineFueling",
+    "reason": "| 0x00020500 | `cm848_calculateProtectionActivationDelay` -> `cm848_calculateReferenceEngineFueling` | Computes the Jcomm peak fueling. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000209e8",
+  "current": "cm848_calculateLoadRateOfChange",
+  "proposals": [
+   {
+    "name": "cm848_calculateActualEnginePercentTorque",
+    "reason": "| 0x000209e8 | `cm848_calculateLoadRateOfChange` -> `cm848_calculateActualEnginePercentTorque` | Computes the EEC1 actual percent torque x 256. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00020a58",
+  "current": "cm848_calculateLoadToFuelRatio",
+  "proposals": [
+   {
+    "name": "cm848_calculateEnginePercentLoadAtCurrentSpeed",
+    "reason": "| 0x00020a58 | `cm848_calculateLoadToFuelRatio` -> `cm848_calculateEnginePercentLoadAtCurrentSpeed` | Computes the EEC2 percent load. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00020c64",
+  "current": "cm848_processJ1939RxMessage",
+  "proposals": [
+   {
+    "name": "cm848_setTorqueCurvePoints2And5AtDroopLineFueling",
+    "reason": "| 0x00020c64 | `cm848_processJ1939RxMessage` | `cm848_setTorqueCurvePoints2And5AtDroopLineFueling` | takes a fueling in param_1 and sets curve points 2 and 5; handles no message |",
+    "source": "review_e2m_names_wave_13_bin_1.md"
+   },
+   {
+    "name": "cm848_calculateJ1939TorqueCurveDroopBreakpoint",
+    "reason": "| 0x00020c64 | `cm848_processJ1939RxMessage` -> `cm848_calculateJ1939TorqueCurveDroopBreakpoint` | Tail helper of the above, not a receive handler. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00020d10",
+  "current": "cm848_updateProtectionStateMachine",
+  "proposals": [
+   {
+    "name": "cm848_updateJ1939EngineConfigurationTorqueCurve",
+    "reason": "| 0x00020d10 | `cm848_updateProtectionStateMachine` | `cm848_updateJ1939EngineConfigurationTorqueCurve` | fills the e2m 1102 Jcomm speed / fueling / torque points of PGN 65251 |",
+    "source": "review_e2m_names_wave_13_bin_1.md"
+   },
+   {
+    "name": "cm848_updateJ1939TorqueCurve",
+    "reason": "| 0x00020d10 | `cm848_updateProtectionStateMachine` -> `cm848_updateJ1939TorqueCurve` | Builds the speeds, fuelings and percent torques at points 1-5; no protection state. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000212dc",
+  "current": "cm848_initProtectionDelayDefaults",
+  "proposals": [
+   {
+    "name": "cm848_initializeJ1939ReferenceEngineFuelingAndTorque",
+    "reason": "| 0x000212dc | `cm848_initProtectionDelayDefaults` -> `cm848_initializeJ1939ReferenceEngineFuelingAndTorque` | Loads the ROM peak fueling and reference torque. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00021ac0",
+  "current": "cm848_initUdsServiceHandlers",
+  "proposals": [
+   {
+    "name": "cm848_lookupJ1939FuelTableAtEngineSpeed",
+    "reason": "| 0x00021ac0 | `cm848_initUdsServiceHandlers` | `cm848_lookupJ1939FuelTableAtEngineSpeed` | returns the chi/alpha-interpolated `j1939_fuel_table` value at the engine speed passed; no UDS |",
+    "source": "review_e2m_names_wave_13_bin_1.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00021cd4",
+  "current": "cm848_updateProtectionDiagnostics",
+  "proposals": [
+   {
+    "name": "cm848_updateJ1939TorqueCurveReferenceFuelings",
+    "reason": "| 0x00021cd4 | `cm848_updateProtectionDiagnostics` -> `cm848_updateJ1939TorqueCurveReferenceFuelings` | Skimmed only: it sets the five per-point reference fuelings. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000255c0",
+  "current": "cm848_j1939SendDm1ResponseMessage",
+  "proposals": [
+   {
+    "name": "cm848_j1939SendDm8TestResultMessage",
+    "reason": "| 0x255c0 | `cm848_j1939SendDm1ResponseMessage` | `cm848_j1939SendDm8TestResultMessage` | sends PGN 65232 with test id and value |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0002588c",
+  "current": "j1939GetEngineStateCode",
+  "proposals": [
+   {
+    "name": "cm848_buildPgn61444ElectronicEngineController1Message",
+    "reason": "| 0x0002588c | `j1939GetEngineStateCode` -> `cm848_buildPgn61444ElectronicEngineController1Message` | Builds and sends EEC1. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00029f54",
+  "current": "cm848_checkSensorDeviationFlags",
+  "proposals": [
+   {
+    "name": "cm848_checkPressureSensorAgreement",
+    "reason": "| 0x29f54 | `cm848_checkSensorDeviationFlags` | `cm848_checkPressureSensorAgreement` | Compares barometric pressure with two other pressure readings using the three tolerances. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0002bf44",
+  "current": "cm848_updateFaultOnKeyoff",
+  "proposals": [
+   {
+    "name": "cm848_updateNotSafeToProgramFlag",
+    "reason": "- 0x2bf44 `cm848_updateFaultOnKeyoff` -> `cm848_updateNotSafeToProgramFlag`. It runs every pass and only stores engine_state != STOPPED.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0003e210",
+  "current": "cm848_setFuelDemandActiveFlag",
+  "proposals": [
+   {
+    "name": "cm848_requestPowerDownDelayWhileMoving",
+    "reason": "| 0x0003e210 | `cm848_setFuelDemandActiveFlag` | `cm848_requestPowerDownDelayWhileMoving` | sets the power-down delay flag |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0004272c",
+  "current": "cm848_applyProtectionControlLimit",
+  "proposals": [
+   {
+    "name": "cm848_selectRearAxleRatioInUse",
+    "reason": "| 0x0004272c / 0x00042770 / 0x005268e8 | `cm848_applyProtectionControlLimit` / `cm848_setProtectionControlValue` / `cm848_computeProtectionTrimDivisors` -> `cm848_selectRearAxleRatioInUse` / `cm848_selectRearAxleRatioHigh` / `cm848_calculateRearAxleTrimDivisors` | Axle ratio selection and its trim divisors. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   },
+   {
+    "name": "cm848_selectTwoSpeedRearAxleRatio",
+    "reason": "| 0x0004272c | `cm848_applyProtectionControlLimit` | `cm848_selectTwoSpeedRearAxleRatio` | selects `rear_axle_ratio` |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00042770",
+  "current": "cm848_setProtectionControlValue",
+  "proposals": [
+   {
+    "name": "cm848_selectRearAxleRatioHigh",
+    "reason": "| 0x0004272c / 0x00042770 / 0x005268e8 | `cm848_applyProtectionControlLimit` / `cm848_setProtectionControlValue` / `cm848_computeProtectionTrimDivisors` -> `cm848_selectRearAxleRatioInUse` / `cm848_selectRearAxleRatioHigh` / `cm848_calculateRearAxleTrimDivisors` | Axle ratio selection and its trim divisors. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   },
+   {
+    "name": "cm848_selectSingleSpeedRearAxleRatio",
+    "reason": "| 0x00042770 | `cm848_setProtectionControlValue` | `cm848_selectSingleSpeedRearAxleRatio` | loads `rear_axle_ratio` from the EEPROM word |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00042cfc",
+  "current": "hpcr_processLoadThrottle",
+  "proposals": [
+   {
+    "name": "hpcr_filterCylinderBalanceFueling",
+    "reason": "- 0x42cfc `hpcr_processLoadThrottle` -> `hpcr_filterCylinderBalanceFueling`. It filters final_fueling for the cylinder balance code.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x000457d0",
+  "current": "mpc555_updateEngineCrankState",
+  "proposals": [
+   {
+    "name": "mpc555_handleCamSignalInterrupt",
+    "reason": "| 0x457d0 | `mpc555_updateEngineCrankState` | `mpc555_handleCamSignalInterrupt` | Weaker lead: it is the TPU-A channel 1 handler, and e2m PMA_Edge_Type (channel 1) says cam signal. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00049004",
+  "current": "cm848_resetEngineSyncState",
+  "proposals": [
+   {
+    "name": "cm848_resetFuelPressureGovernorState",
+    "reason": "| 0x49004 | `cm848_resetEngineSyncState` | `cm848_resetFuelPressureGovernorState` | its own plate comment says it resets the fuel pressure governor |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00502b6c",
+  "current": "hpcr_fuelFinal_exponentialAverage",
+  "proposals": [
+   {
+    "name": "cm848_calculateAmbientConditions",
+    "reason": "| 0x502b6c | `hpcr_fuelFinal_exponentialAverage` | `cm848_calculateAmbientConditions` | e2m 1921 ambient and compressor inlet conditions |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00505c20",
+  "current": "diag_dm1Buffer_circularFill",
+  "proposals": [
+   {
+    "name": "cm848_fillDataCollectorBuffer",
+    "reason": "| 0x00505c20 | `diag_dm1Buffer_circularFill` -> `cm848_fillDataCollectorBuffer` | It is the data collector. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   },
+   {
+    "name": "cm848_fillDataCollectorRingBuffer",
+    "reason": "| 0x00505c20 | `diag_dm1Buffer_circularFill` | `cm848_fillDataCollectorRingBuffer` | fills the data collector ring buffer, not DM1 |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00505d94",
+  "current": "hpcr_exception_process",
+  "proposals": [
+   {
+    "name": "cm848_resetDataCollector",
+    "reason": "| 0x00505d94 | `hpcr_exception_process` | `cm848_resetDataCollector` | resets the collector, called at start-up by `cm848_applicationMain` |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   },
+   {
+    "name": "cm848_initializeDataCollector",
+    "reason": "| 0x505d94 | `hpcr_exception_process` | `cm848_initializeDataCollector` | sets the collector pointers |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00505df0",
+  "current": "j1939_dm1_diagnosticMessage_send",
+  "proposals": [
+   {
+    "name": "cm848_sendDataCollectorBuffer",
+    "reason": "| 0x00505df0 | `j1939_dm1_diagnosticMessage_send` | `cm848_sendDataCollectorBuffer` | sends the collector buffer by transport protocol in stop mode 3 |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00505f98",
+  "current": "cm848_phase_groupB_calculation",
+  "proposals": [
+   {
+    "name": "cm848_runDataCollector",
+    "reason": "| 0x00505f98 | `cm848_phase_groupB_calculation` | `cm848_runDataCollector` | the collector pass |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050638c",
+  "current": "cm848_outputs2_periodic",
+  "proposals": [
+   {
+    "name": "cm848_updateDutyCycleMonitor",
+    "reason": "| 0x0050638c | `cm848_outputs2_periodic` | `cm848_updateDutyCycleMonitor` | the duty cycle monitor load histogram |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   },
+   {
+    "name": "cm848_updateLoadHistogram",
+    "reason": "| 0x50638c | `cm848_outputs2_periodic` | `cm848_updateLoadHistogram` | It is the duty cycle monitor histogram, every 0.1 s. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00506e28",
+  "current": "cm848_auxiliaryControl_exponentialAverage",
+  "proposals": [
+   {
+    "name": "cm848_calculateExhaustTemperatureEstimate",
+    "reason": "| 0x506e28 | `cm848_auxiliaryControl_exponentialAverage` | `cm848_calculateExhaustTemperatureEstimate` | exhaust virtual temperature and metal temperature |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00506f88",
+  "current": "sensor_channel108_filter",
+  "proposals": [
+   {
+    "name": "cm848_applyEgrOrificeTemperatureLeadCompensation",
+    "reason": "| 0x00506f88 | `sensor_channel108_filter` | `cm848_applyEgrOrificeTemperatureLeadCompensation` | channel 108 is the EGR orifice temperature sensor |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00507028",
+  "current": "sensor_throttleTrim_ema_faultProcess",
+  "proposals": [
+   {
+    "name": "cm848_filterEgrOrificeTemperature",
+    "reason": "| 0x00507028 | `sensor_throttleTrim_ema_faultProcess` | `cm848_filterEgrOrificeTemperature` | same |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050716c",
+  "current": "sensor_throttleTrim_inputSelect",
+  "proposals": [
+   {
+    "name": "cm848_selectEgrOrificeTemperature",
+    "reason": "| 0x0050716c | `sensor_throttleTrim_inputSelect` | `cm848_selectEgrOrificeTemperature` | same |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00508130",
+  "current": "governor_coldStart_faultDerate_trigger",
+  "proposals": [
+   {
+    "name": "cm848_examineEngineProtectionBeforeCranking",
+    "reason": "- 0x508130 `governor_coldStart_faultDerate_trigger` -> `cm848_examineEngineProtectionBeforeCranking`.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00508898",
+  "current": "governor_faultDerate_mainLoop_update",
+  "proposals": [
+   {
+    "name": "cm848_updateEngineProtectionShutdown",
+    "reason": "- 0x508898 `governor_faultDerate_mainLoop_update` -> `cm848_updateEngineProtectionShutdown`.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00508e78",
+  "current": "cm848_updateJ1939ReceptionControlFlag",
+  "proposals": [
+   {
+    "name": "cm848_detectEngineProtectionShutdownOverrideRequest",
+    "reason": "- 0x508e78 `cm848_updateJ1939ReceptionControlFlag` -> `cm848_detectEngineProtectionShutdownOverrideRequest`. It edge-detects the override switch, not J1939 reception.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00508ee0",
+  "current": "governor_derateTrigger_latch_clear",
+  "proposals": [
+   {
+    "name": "cm848_latchEngineProtectionShutdownOverride",
+    "reason": "- 0x508ee0 `governor_derateTrigger_latch_clear` -> `cm848_latchEngineProtectionShutdownOverride`.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050be6c",
+  "current": "governor_calibSnapshot_rollingBuffer_update",
+  "proposals": [
+   {
+    "name": "cm848_storeJ1939ControlSessionInHistoryTable",
+    "reason": "| 0x50be6c | `governor_calibSnapshot_rollingBuffer_update` | `cm848_storeJ1939ControlSessionInHistoryTable` | 5 x 24-byte history ring |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050beec",
+  "current": "governor_sourceData_init",
+  "proposals": [
+   {
+    "name": "cm848_startJ1939ControlSession",
+    "reason": "| 0x50beec | `governor_sourceData_init` | `cm848_startJ1939ControlSession` | opens an engine or retarder control session |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050bff4",
+  "current": "phase_group_a_setupETC1Controller",
+  "proposals": [
+   {
+    "name": "cm848_trackJ1939ControlSessions",
+    "reason": "| 0x50bff4 | `phase_group_a_setupETC1Controller` | `cm848_trackJ1939ControlSessions` | opens, closes and files control sessions |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050dba8",
+  "current": "governor_computeSpeedTargetWithThermalCorrection",
+  "proposals": [
+   {
+    "name": "cm848_calculateNoLoadFuel",
+    "reason": "| 0x0050dba8 | `governor_computeSpeedTargetWithThermalCorrection` -> `cm848_calculateNoLoadFuel` | Sums friction fuel plus the coolant, A/C and fan adjustments. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050ddb4",
+  "current": "diag_suppress_stateMachine",
+  "proposals": [
+   {
+    "name": "cm848_controlEndOfLineTestMilRequest",
+    "reason": "- 0x50ddb4 `diag_suppress_stateMachine` -> `cm848_controlEndOfLineTestMilRequest`. It sets diagnostic_suppress_flag, which forces the MIL on.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   },
+   {
+    "name": "cm848_setEndOfLineTestMalfunctionIndicatorLampOverride",
+    "reason": "| 0x50ddb4 | `diag_suppress_stateMachine` | `cm848_setEndOfLineTestMalfunctionIndicatorLampOverride` | It is the in-plant end-of-line test's lamp override states 0-3. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050e7f4",
+  "current": "cm848_blendBoostAndThrottleFuelDemand",
+  "proposals": [
+   {
+    "name": "cm848_calculateWaterVaporFractions",
+    "reason": "| 0x50e7f4 | `cm848_blendBoostAndThrottleFuelDemand` | `cm848_calculateWaterVaporFractions` | humidity, vapor pressure and dew point model |",
+    "source": "review_e2m_names_wave_13_bin_6.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0050eaa8",
+  "current": "cm848_applyProtectionRpmCorrectionFilter",
+  "proposals": [
+   {
+    "name": "cm848_calculateEngineFrictionAndNetMachineTorque",
+    "reason": "| 0x0050eaa8 | `cm848_applyProtectionRpmCorrectionFilter` -> `cm848_calculateEngineFrictionAndNetMachineTorque` | Computes the 175C friction, no-load and net machine torques. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0051ba1c",
+  "current": "cm848_pidIntegrator_accumulate",
+  "proposals": [
+   {
+    "name": "cm848_accumulateConverterClutchRatioDeltaSum",
+    "reason": "| 0x51ba1c | `cm848_pidIntegrator_accumulate` | `cm848_accumulateConverterClutchRatioDeltaSum` | Sums those deltas. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x0051ba6c",
+  "current": "cm848_pidError_calc",
+  "proposals": [
+   {
+    "name": "cm848_calculateConverterClutchRatioDelta",
+    "reason": "| 0x51ba6c | `cm848_pidError_calc` | `cm848_calculateConverterClutchRatioDelta` | Previous ratio minus ratio, not a PID error. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00525e54",
+  "current": "protectionTimeoutControl",
+  "proposals": [
+   {
+    "name": "cm848_updateDrivetrainRatio",
+    "reason": "- 0x525e54 `protectionTimeoutControl` -> `cm848_updateDrivetrainRatio`. It computes and filters the drivetrain ratio and its out-of-gear and settle timers.",
+    "source": "review_e2m_names_wave_13_bin_3.md"
+   },
+   {
+    "name": "cm848_estimateDrivetrainRatio",
+    "reason": "| 0x00525e54 | `protectionTimeoutControl` | `cm848_estimateDrivetrainRatio` | it is the drivetrain ratio estimator |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x005268e8",
+  "current": "cm848_computeProtectionTrimDivisors",
+  "proposals": [
+   {
+    "name": "cm848_calculateRearAxleTrimDivisors",
+    "reason": "| 0x0004272c / 0x00042770 / 0x005268e8 | `cm848_applyProtectionControlLimit` / `cm848_setProtectionControlValue` / `cm848_computeProtectionTrimDivisors` -> `cm848_selectRearAxleRatioInUse` / `cm848_selectRearAxleRatioHigh` / `cm848_calculateRearAxleTrimDivisors` | Axle ratio selection and its trim divisors. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00529ea4",
+  "current": "cm848_sensor_diagnostic_flag_update",
+  "proposals": [
+   {
+    "name": "cm848_initializeInjectionAngleScheduler",
+    "reason": "| 0x00529ea4 | `cm848_sensor_diagnostic_flag_update` | `cm848_initializeInjectionAngleScheduler` | sets state 1, TPU address 2, channel 6 and the tooth separation |",
+    "source": "review_e2m_names_wave_13_bin_4.md"
+   }
+  ]
+ },
+ {
+  "address": "0x005341a8",
+  "current": "engine_coolantTemp_overheat_monitor",
+  "proposals": [
+   {
+    "name": "cm848_monitorWarmUpCycle",
+    "reason": "| 0x5341a8 | `engine_coolantTemp_overheat_monitor` | `cm848_monitorWarmUpCycle` | Sets the OBD warm-up bits: rise over 40 F and above 140 F. At 3 it counts a cycle and auto-clears the fault ring. No overheat check. |",
+    "source": "review_e2m_names_wave_13_bin_5.md"
+   }
+  ]
+ },
+ {
+  "address": "0x005389c4",
+  "current": "uds_session_state_init",
+  "proposals": [
+   {
+    "name": "cm848_initializeRamRefresh",
+    "reason": "| 0x00538a84 / 0x005389c4 | `cm848_initProtectionModule` / `uds_session_state_init` -> `cm848_refreshRamCalibration` / `cm848_initializeRamRefresh` | The RAM refresh loop and its setup. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ },
+ {
+  "address": "0x00538a84",
+  "current": "cm848_initProtectionModule",
+  "proposals": [
+   {
+    "name": "cm848_refreshRamCalibration",
+    "reason": "| 0x00538a84 / 0x005389c4 | `cm848_initProtectionModule` / `uds_session_state_init` -> `cm848_refreshRamCalibration` / `cm848_initializeRamRefresh` | The RAM refresh loop and its setup. |",
+    "source": "review_e2m_names_wave_13_bin_2.md"
+   }
+  ]
+ }
+]

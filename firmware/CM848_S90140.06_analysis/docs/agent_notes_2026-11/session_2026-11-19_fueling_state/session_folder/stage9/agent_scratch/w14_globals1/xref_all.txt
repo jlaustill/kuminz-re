@@ -1,0 +1,663 @@
+======== 0x003fb528 fuel_demand_enable_sync_flag_shadow
+# xref 0x003fb528  (fuel_demand_enable_sync_flag_shadow)  — 1 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): word
+
+cm848_arbitrateGovernedFueling: 1r/1w
+  [load ] word   4064c:	a1 9f 00 00 	lhz     r12,0(r31)
+  [store] word   406b8:	b1 9f 00 00 	sth     r12,0(r31)
+
+======== 0x003fb5a4 cylinder_diag_low_threshold_snapshot
+# xref 0x003fb5a4  (cylinder_diag_low_threshold_snapshot)  — 1 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): word
+
+cm848_runCylinderContributionTest: 1r/1w
+  [store] word   43bdc:	b1 4b b5 a4 	sth     r10,-19036(r11)
+  [load ] word   43cfc:	a9 6b b5 a4 	lha     r11,-19036(r11)
+
+======== 0x003fb5a6 cylinder_diag_high_threshold_snapshot
+# xref 0x003fb5a6  (cylinder_diag_high_threshold_snapshot)  — 1 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): word
+
+cm848_runCylinderContributionTest: 1r/1w
+  [store] word   43bfc:	b1 4b b5 a6 	sth     r10,-19034(r11)
+  [load ] word   43d0c:	a9 29 b5 a6 	lha     r9,-19034(r9)
+
+======== 0x003fbca6 diag_dm1_buffer_fill_end_ptr
+# xref 0x003fbca6  (diag_dm1_buffer_fill_end_ptr)  — 2 referencing function(s)
+# total: 1 read(s), 6 write(s)   width(s): dword
+
+cm848_phase_groupB_calculation: 0r/6w
+  [store] dword  506184:	91 46 00 00 	stw     r10,0(r6)
+  [store] dword  5061dc:	91 66 00 00 	stw     r11,0(r6)
+  [store] dword  5061f0:	90 a6 00 00 	stw     r5,0(r6)
+  [store] dword  506290:	93 df 00 00 	stw     r30,0(r31)
+  [store] dword  5062a8:	91 9f 00 00 	stw     r12,0(r31)
+  [store] dword  5062c8:	91 4b bc a6 	stw     r10,-17242(r11)
+
+diag_dm1Buffer_circularFill: 1r/0w
+  [load ] dword  505c40:	80 63 bc a6 	lwz     r3,-17242(r3)
+
+======== 0x003fbcaa diag_dm1_buffer_fill_phase
+# xref 0x003fbcaa  (diag_dm1_buffer_fill_phase)  — 3 referencing function(s)
+# total: 1 read(s), 8 write(s)   width(s): dword
+
+cm848_phase_groupB_calculation: 1r/5w
+  [load ] dword  50609c:	81 63 00 00 	lwz     r11,0(r3)
+  [store] dword  50619c:	91 83 00 00 	stw     r12,0(r3)
+  [store] dword  5061c8:	91 83 00 00 	stw     r12,0(r3)
+  [store] dword  5061ec:	91 83 00 00 	stw     r12,0(r3)
+  [store] dword  506234:	91 83 00 00 	stw     r12,0(r3)
+  [store] dword  506370:	91 6c bc aa 	stw     r11,-17238(r12)
+
+diag_dm1Buffer_circularFill: 0r/2w
+  [store] dword  505d10:	91 6c bc aa 	stw     r11,-17238(r12)
+  [store] dword  505d84:	91 6c bc aa 	stw     r11,-17238(r12)
+
+hpcr_exception_process: 0r/1w
+  [store] dword  505de0:	91 4b bc aa 	stw     r10,-17238(r11)
+
+======== 0x003fbcae diag_dm1_buffer_slot_started_flag
+# xref 0x003fbcae  (diag_dm1_buffer_slot_started_flag)  — 3 referencing function(s)
+# total: 1 read(s), 4 write(s)   width(s): word
+
+diag_dm1Buffer_circularFill: 1r/1w
+  [load ] word   505c90:	a1 89 00 00 	lhz     r12,0(r9)
+  [store] word   505ca4:	b1 09 00 00 	sth     r8,0(r9)
+
+cm848_phase_groupB_calculation: 0r/2w
+  [store] word   506174:	b1 89 bc ae 	sth     r12,-17234(r9)
+  [store] word   5062ec:	b1 2a bc ae 	sth     r9,-17234(r10)
+
+j1939_dm1_diagnosticMessage_send: 0r/1w
+  [store] word   505f04:	b1 6c bc ae 	sth     r11,-17234(r12)
+
+======== 0x003fbcb0 diag_dm1_protection_repeat_countdown
+# xref 0x003fbcb0  (diag_dm1_protection_repeat_countdown)  — 1 referencing function(s)
+# total: 1 read(s), 2 write(s)   width(s): word
+
+cm848_phase_groupB_calculation: 1r/2w
+  [load ] word   505ff0:	a0 c3 00 00 	lhz     r6,0(r3)
+  [store] word   506008:	b1 83 00 00 	sth     r12,0(r3)
+  [store] word   506034:	b1 83 00 00 	sth     r12,0(r3)
+
+======== 0x003fbcb2 diag_dm1_active_fault_entry_count
+# xref 0x003fbcb2  (diag_dm1_active_fault_entry_count)  — 4 referencing function(s)
+# total: 5 read(s), 3 write(s)   width(s): word
+
+cm848_phase_groupB_calculation: 3r/2w
+  [load ] word   5060ec:	a3 ff bc b2 	lhz     r31,-17230(r31)
+  [store] word   50610c:	b3 ec bc b2 	sth     r31,-17230(r12)
+  [load ] word   50611c:	a0 c6 bc b2 	lhz     r6,-17230(r6)
+  [load ] word   506278:	a1 6b bc b2 	lhz     r11,-17230(r11)
+  [store] word   50635c:	b1 6c bc b2 	sth     r11,-17230(r12)
+
+diag_dm1Buffer_circularFill: 1r/0w
+  [load ] word   505c60:	a1 4a bc b2 	lhz     r10,-17230(r10)
+
+hpcr_exception_process: 0r/1w
+  [store] word   505de8:	b0 69 bc b2 	sth     r3,-17230(r9)
+
+j1939_dm1_diagnosticMessage_send: 1r/0w
+  [load ] word   505e74:	a3 ff bc b2 	lhz     r31,-17230(r31)
+
+======== 0x003fbcb6 diag_dm1_bytes_per_fault_slot
+# xref 0x003fbcb6  (diag_dm1_bytes_per_fault_slot)  — 1 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): word
+
+cm848_phase_groupB_calculation: 1r/1w
+  [store] word   50614c:	b0 8a bc b6 	sth     r4,-17226(r10)
+  [load ] word   506280:	a1 4a bc b6 	lhz     r10,-17226(r10)
+
+======== 0x003fbcb8 diag_dm1_protection_warning_latch
+# xref 0x003fbcb8  (diag_dm1_protection_warning_latch)  — 1 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): word
+
+cm848_phase_groupB_calculation: 1r/1w
+  [load ] word   506060:	a1 4a bc b8 	lhz     r10,-17224(r10)
+  [store] word   506090:	b0 6c bc b8 	sth     r3,-17224(r12)
+
+======== 0x003fbcf8 throttle_trim_predictor_gain_lookup
+# xref 0x003fbcf8  (throttle_trim_predictor_gain_lookup)  — 2 referencing function(s)
+# total: 0 read(s), 1 write(s)   width(s): word
+
+sensor_throttleTrim_ema_faultProcess: 0r/1w
+  [store] word   507094:	b0 8a bc f8 	sth     r4,-17160(r10)
+
+cm848_initialization_step_14: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+======== 0x003fd062 protection_trim_divisor_working
+# xref 0x003fd062  (protection_trim_divisor_working)  — 2 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): dword
+
+cm848_calculateVehicleSpeedFromOutputShaft: 1r/0w
+  [load ] dword  5268a0:	81 6b d0 62 	lwz     r11,-12190(r11)
+
+cm848_computeProtectionTrimDivisors: 0r/1w
+  [store] dword  526904:	91 4b d0 62 	stw     r10,-12190(r11)
+
+======== 0x003fd066 protection_trim_divisor_cal
+# xref 0x003fd066  (protection_trim_divisor_cal)  — 2 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): dword
+
+cm848_calculateVehicleSpeedFromOutputShaft: 1r/0w
+  [load ] dword  526860:	81 6b d0 66 	lwz     r11,-12186(r11)
+
+cm848_computeProtectionTrimDivisors: 0r/1w
+  [store] dword  52691c:	91 6c d0 66 	stw     r11,-12186(r12)
+
+======== 0x003fd18a cssc_coolant_temp_min
+# xref 0x003fd18a  (cssc_coolant_temp_min)  — 1 referencing function(s)
+# total: 1 read(s), 2 write(s)   width(s): word
+
+cm848_checkCoolantTemperatureSensorPerformance: 1r/2w
+  [store] word   52e084:	b3 cb d1 8a 	sth     r30,-11894(r11)
+  [load ] word   52e11c:	a8 86 00 00 	lha     r4,0(r6)
+  [store] word   52e138:	b0 66 00 00 	sth     r3,0(r6)
+
+======== 0x003fd18c cssc_coolant_temp_max
+# xref 0x003fd18c  (cssc_coolant_temp_max)  — 1 referencing function(s)
+# total: 1 read(s), 2 write(s)   width(s): word
+
+cm848_checkCoolantTemperatureSensorPerformance: 1r/2w
+  [store] word   52e07c:	b3 cc d1 8c 	sth     r30,-11892(r12)
+  [load ] word   52e144:	a8 66 00 00 	lha     r3,0(r6)
+  [store] word   52e158:	b0 a6 00 00 	sth     r5,0(r6)
+
+======== 0x003fd18e cssc_coolant_snapshot_taken_flag
+# xref 0x003fd18e  (cssc_coolant_snapshot_taken_flag)  — 2 referencing function(s)
+# total: 1 read(s), 2 write(s)   width(s): byte
+
+cm848_checkCoolantTemperatureSensorPerformance: 1r/1w
+  [load ] byte   52dec4:	89 66 00 00 	lbz     r11,0(r6)
+  [store] byte   52ded4:	99 86 00 00 	stb     r12,0(r6)
+
+cm848_initialization_group22_state: 0r/1w
+  [store] byte   52dd5c:	98 69 d1 8e 	stb     r3,-11890(r9)
+
+======== 0x003fd18f protection_group29_conditions_met_flag
+# xref 0x003fd18f  (protection_group29_conditions_met_flag)  — 2 referencing function(s)
+# total: 1 read(s), 2 write(s)   width(s): byte
+
+cm848_checkCoolantTemperatureSensorPerformance: 1r/1w
+  [store] byte   52e010:	99 6c d1 8f 	stb     r11,-11889(r12)
+  [load ] byte   52e1e4:	89 8c d1 8f 	lbz     r12,-11889(r12)
+
+cm848_initialization_group22_state: 0r/1w
+  [store] byte   52dd54:	98 6a d1 8f 	stb     r3,-11889(r10)
+
+======== 0x003fd190 cssc_coolant_precheck_dwell_count
+# xref 0x003fd190  (cssc_coolant_precheck_dwell_count)  — 2 referencing function(s)
+# total: 1 read(s), 2 write(s)   width(s): word
+
+cm848_checkCoolantTemperatureSensorPerformance: 1r/1w
+  [load ] word   52df40:	a0 66 00 00 	lhz     r3,0(r6)
+  [store] word   52df58:	b1 86 00 00 	sth     r12,0(r6)
+
+cm848_initialization_group22_state: 0r/1w
+  [store] word   52dd48:	b0 6c d1 90 	sth     r3,-11888(r12)
+
+======== 0x003fddc4 diag_dm1_fault_source_table
+# xref 0x003fddc4  (diag_dm1_fault_source_table)  — 3 referencing function(s)
+# total: 4 read(s), 0 write(s)   width(s): dword
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+diag_dm1Buffer_circularFill: 2r/0w
+  [load ] dword  505c44:	81 9f 00 00 	lwz     r12,0(r31)
+  [load ] dword  505c74:	81 5f 00 00 	lwz     r10,0(r31)
+
+cm848_phase_groupB_calculation: 2r/0w
+  [load ] dword  505fdc:	81 9f 00 00 	lwz     r12,0(r31)
+  [load ] dword  5060d0:	81 5f 00 00 	lwz     r10,0(r31)
+
+hpcr_exception_process: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+======== 0x0040c085 protection_enable_byte_35
+# xref 0x0040c085  (protection_enable_byte_35)  — 3 referencing function(s)
+# total: 4 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_mainLoopMonitor: 2r/0w
+  [load ] byte   5382e8:	89 7e 00 05 	lbz     r11,5(r30)
+  [load ] byte   53830c:	89 9e 00 05 	lbz     r12,5(r30)
+
+diagnosticMainStateProcessor: 1r/0w
+  [load ] byte   1dc08:	88 87 00 05 	lbz     r4,5(r7)
+
+cm848_updateIntakeAirHeaterRunupPhase: 1r/0w
+  [load ] byte   517448:	88 8c c0 85 	lbz     r4,-16251(r12)
+
+======== 0x0040c274 diag_dm1_buffer_end_ptr
+# xref 0x0040c274  (diag_dm1_buffer_end_ptr)  — 3 referencing function(s)
+# total: 5 read(s), 1 write(s)   width(s): dword
+
+cm848_phase_groupB_calculation: 2r/1w
+  [store] dword  506144:	90 ab c2 74 	stw     r5,-15756(r11)
+  [load ] dword  506254:	80 63 c2 74 	lwz     r3,-15756(r3)
+  [load ] dword  5062c4:	81 4a c2 74 	lwz     r10,-15756(r10)
+
+j1939_dm1_diagnosticMessage_send: 2r/0w
+  [load ] dword  505e54:	81 6b c2 74 	lwz     r11,-15756(r11)
+  [load ] dword  505f14:	81 8c c2 74 	lwz     r12,-15756(r12)
+
+diag_dm1Buffer_circularFill: 1r/0w
+  [load ] dword  505cc8:	80 c6 c2 74 	lwz     r6,-15756(r6)
+
+======== 0x0040a16c governor_startup_state
+# xref 0x0040a16c  (governor_startup_state)  — 1 referencing function(s)
+# total: 0 read(s), 6 write(s)   width(s): word
+
+hpcr_calculateFuelTrimOutput: 0r/6w
+  [store] word   e5d4:	b1 6c a1 6c 	sth     r11,-24212(r12)
+  [store] word   e610:	b1 6c a1 6c 	sth     r11,-24212(r12)
+  [store] word   e638:	b1 6c a1 6c 	sth     r11,-24212(r12)
+  [store] word   e660:	b1 6c a1 6c 	sth     r11,-24212(r12)
+  [store] word   e6d8:	b1 6c a1 6c 	sth     r11,-24212(r12)
+  [store] word   e6f0:	b1 6c a1 6c 	sth     r11,-24212(r12)
+
+======== 0x0040a17a pressure_hysteresis_state
+# xref 0x0040a17a  (pressure_hysteresis_state)  — 2 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): word
+
+cm848_checkPressureHysteresis: 1r/0w
+  [load ] word   e39c:	a8 63 a1 7a 	lha     r3,-24198(r3)
+
+timingProtectionFlagsOrchestrator: 0r/1w
+  [store] word   e464:	b3 cc a1 7a 	sth     r30,-24198(r12)
+
+======== 0x0040a17e cold_start_timer_a
+# xref 0x0040a17e  (cold_start_timer_a)  — 2 referencing function(s)
+# total: 1 read(s), 3 write(s)   width(s): word
+
+cm848_checkPressureFuelDelayA: 1r/2w
+  [store] word   e264:	b1 6c a1 7e 	sth     r11,-24194(r12)
+  [load ] word   e298:	a0 a3 00 00 	lhz     r5,0(r3)
+  [store] word   e2b0:	b1 83 00 00 	sth     r12,0(r3)
+
+hpcr_calculateFuelTrimOutput: 0r/1w
+  [store] word   e55c:	b1 2a a1 7e 	sth     r9,-24194(r10)
+
+======== 0x0040a180 cold_start_timer_b
+# xref 0x0040a180  (cold_start_timer_b)  — 2 referencing function(s)
+# total: 1 read(s), 3 write(s)   width(s): word
+
+cm848_checkPressureFuelDelayB: 1r/2w
+  [store] word   e2f8:	b1 6c a1 80 	sth     r11,-24192(r12)
+  [load ] word   e32c:	a0 a3 00 00 	lhz     r5,0(r3)
+  [store] word   e344:	b1 83 00 00 	sth     r12,0(r3)
+
+hpcr_calculateFuelTrimOutput: 0r/1w
+  [store] word   e574:	b1 4b a1 80 	sth     r10,-24192(r11)
+
+======== 0x003fd912 cruise_ramp_zone_b_fuel_demand_threshold
+# xref 0x003fd912  (cruise_ramp_zone_b_fuel_demand_threshold)  — 1 referencing function(s)
+# total: 4 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+governorCruiseStateMachine: 4r/0w
+  [load ] word   524e5c:	a1 98 00 00 	lhz     r12,0(r24)
+  [load ] word   524e94:	a0 78 00 00 	lhz     r3,0(r24)
+  [load ] word   524f4c:	a1 58 00 00 	lhz     r10,0(r24)
+  [load ] word   524f64:	a0 78 00 00 	lhz     r3,0(r24)
+
+======== 0x003feb8c etc1_state_timeout_counter
+# xref 0x003feb8c  (etc1_state_timeout_counter)  — 1 referencing function(s)
+# total: 2 read(s), 3 write(s)   width(s): word
+
+cm848_processGovernorModeTransition: 2r/3w
+  [load ] word   27a10:	a1 7a 00 00 	lhz     r11,0(r26)
+  [load ] word   27a28:	a1 9a 00 00 	lhz     r12,0(r26)
+  [store] word   27a30:	b1 9a 00 00 	sth     r12,0(r26)
+  [store] word   27a58:	b1 5a 00 00 	sth     r10,0(r26)
+  [store] word   27ad4:	b1 2c eb 8c 	sth     r9,-5236(r12)
+
+======== 0x0040718c cold_start_sensor_deviation_delay_cal
+# xref 0x0040718c  (cold_start_sensor_deviation_delay_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_processSensorDeviationOnKeyoff: 1r/0w
+  [load ] word   2a278:	a1 8c 71 8c 	lhz     r12,29068(r12)
+
+======== 0x0040a3ca wastegate_duty_controller_state
+# xref 0x0040a3ca  (wastegate_duty_controller_state)  — 5 referencing function(s)
+# total: 3 read(s), 2 write(s)   width(s): word
+
+cm848_updateWastegateDutyIntegratorEnable: 1r/0w
+  [load ] word   11a50:	a0 63 a3 ca 	lhz     r3,-23606(r3)
+
+cm848_calculateWastegateDutyRequest: 0r/1w
+  [store] word   12304:	b3 ac a3 ca 	sth     r29,-23606(r12)
+
+cm848_initializeWastegateDutyController: 0r/1w
+  [store] word   12358:	b0 6c a3 ca 	sth     r3,-23606(r12)
+
+cm848_calculateVariableGeometryTurbochargerPositionCommand: 1r/0w
+  [load ] word   2ca38:	a0 84 a3 ca 	lhz     r4,-23606(r4)
+
+cm848_applyWastegateSolenoidDuty: 1r/0w
+  [load ] word   400fc:	a1 8c a3 ca 	lhz     r12,-23606(r12)
+
+======== 0x0040a3e4 governor_rpm_correction_term
+# xref 0x0040a3e4  (governor_rpm_correction_term)  — 1 referencing function(s)
+# total: 1 read(s), 1 write(s)   width(s): word
+
+cm848_calculateWastegateDutyRequest: 1r/1w
+  [store] word   11d44:	b3 7d 00 00 	sth     r27,0(r29)
+  [load ] word   11d90:	a9 9d 00 00 	lha     r12,0(r29)
+
+======== 0x0040be14 barometric_pressure_sensor_fault_status
+# xref 0x0040be14  (barometric_pressure_sensor_fault_status)  — 4 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_selectBarometricPressure: 1r/0w
+  [load ] word   502320:	a0 84 be 14 	lhz     r4,-16876(r4)
+
+cm848_initializeBarometricPressureSelection: 1r/0w
+  [load ] word   502420:	a8 63 be 14 	lha     r3,-16876(r3)
+
+cm848_sensorChannel0_init: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+cm848_sensorChannel0_process: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+======== 0x00408f5a crank_sync_timeout_limit_cal
+# xref 0x00408f5a  (crank_sync_timeout_limit_cal)  — 2 referencing function(s)
+# total: 3 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 2r/0w
+  [load ] word   445fc:	a1 3e 00 00 	lhz     r9,0(r30)
+  [load ] word   44624:	a1 5e 00 00 	lhz     r10,0(r30)
+
+mpc555_updateEngineCrankState: 1r/0w
+  [load ] word   45cbc:	a1 8c 8f 5a 	lhz     r12,-28838(r12)
+
+======== 0x00408f5c engine_start_counter_min_cal
+# xref 0x00408f5c  (engine_start_counter_min_cal)  — 1 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 2r/0w
+  [load ] word   4457c:	a1 3e 00 00 	lhz     r9,0(r30)
+  [load ] word   445a4:	a1 5e 00 00 	lhz     r10,0(r30)
+
+======== 0x00408f60 crank_tooth_position_target_cal
+# xref 0x00408f60  (crank_tooth_position_target_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+hpcr_processEngineSyncPulses: 1r/0w
+  [load ] word   451dc:	a1 8c 8f 60 	lhz     r12,-28832(r12)
+
+======== 0x00408f62 cranking_flag_threshold_cal
+# xref 0x00408f62  (cranking_flag_threshold_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_updateEngineCrankState: 1r/0w
+  [load ] word   45e58:	a1 6b 8f 62 	lhz     r11,-28830(r11)
+
+======== 0x00408f64 engine_cranking_flag_min_cal
+# xref 0x00408f64  (engine_cranking_flag_min_cal)  — 1 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 2r/0w
+  [load ] word   444fc:	a1 3e 00 00 	lhz     r9,0(r30)
+  [load ] word   44524:	a1 5e 00 00 	lhz     r10,0(r30)
+
+======== 0x00408f6c crank_tooth_rpm_divisor_cal
+# xref 0x00408f6c  (crank_tooth_rpm_divisor_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): dword
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] dword  446c4:	81 6b 8f 6c 	lwz     r11,-28820(r11)
+
+======== 0x00408f74 crank_period_tooth_count_threshold_cal
+# xref 0x00408f74  (crank_period_tooth_count_threshold_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): dword
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+hpcr_processEngineSyncPulses: 1r/0w
+  [load ] dword  453e0:	81 6b 8f 74 	lwz     r11,-28812(r11)
+
+======== 0x00408f80 crank_sync_period_confirm_count_cal
+# xref 0x00408f80  (crank_sync_period_confirm_count_cal)  — 1 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 2r/0w
+  [load ] word   443d8:	a1 5d 00 00 	lhz     r10,0(r29)
+  [load ] word   44400:	a1 5d 00 00 	lhz     r10,0(r29)
+
+======== 0x00408f82 crank_period_raw
+# xref 0x00408f82  (crank_period_raw)  — 2 referencing function(s)
+# total: 4 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 3r/0w
+  [load ] word   447e0:	a1 6b 8f 82 	lhz     r11,-28798(r11)
+  [load ] word   44814:	a1 6b 8f 82 	lhz     r11,-28798(r11)
+  [load ] word   4483c:	a1 6b 8f 82 	lhz     r11,-28798(r11)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] word   43e00:	a1 8c 8f 82 	lhz     r12,-28798(r12)
+
+======== 0x00408f86 crank_sync_period_captured_threshold_cal
+# xref 0x00408f86  (crank_sync_period_captured_threshold_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+hpcr_processEngineSyncPulses: 1r/0w
+  [load ] word   453cc:	a1 8c 8f 86 	lhz     r12,-28794(r12)
+
+======== 0x00408f88 crank_sync_period_counter_threshold_cal
+# xref 0x00408f88  (crank_sync_period_counter_threshold_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_updateEngineRunState: 1r/0w
+  [load ] word   457a4:	a1 6b 8f 88 	lhz     r11,-28792(r11)
+
+======== 0x00408f8c crank_period_capture_index_max_cal
+# xref 0x00408f8c  (crank_period_capture_index_max_cal)  — 2 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_updateEngineCrankState: 1r/0w
+  [load ] byte   45860:	8b bd 8f 8c 	lbz     r29,-28788(r29)
+
+mpc555_resetEngineTimingAccumulators: 0r/0w
+  (referenced in .cpp but no direct access in window — pointer-passed &sym, or built into a register we lost track of)
+
+======== 0x00408f8e crank_tooth_pattern_size_cal
+# xref 0x00408f8e  (crank_tooth_pattern_size_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_updateEngineCrankState: 1r/0w
+  [load ] word   459e0:	a0 a5 8f 8e 	lhz     r5,-28786(r5)
+
+======== 0x00408f90 crank_mios_period_byte_cal
+# xref 0x00408f90  (crank_mios_period_byte_cal)  — 2 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] byte   440b0:	89 8c 8f 90 	lbz     r12,-28784(r12)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] byte   44904:	89 6b 8f 90 	lbz     r11,-28784(r11)
+
+======== 0x00408f91 mios_timing_byte_b_cal
+# xref 0x00408f91  (mios_timing_byte_b_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] byte   440d8:	89 29 8f 91 	lbz     r9,-28783(r9)
+
+======== 0x00408f92 mios_timing_byte_a_cal
+# xref 0x00408f92  (mios_timing_byte_a_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] byte   449d8:	89 6b 8f 92 	lbz     r11,-28782(r11)
+
+======== 0x00408f93 mios_config_byte_a_cal
+# xref 0x00408f93  (mios_config_byte_a_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] byte   44980:	89 6b 8f 93 	lbz     r11,-28781(r11)
+
+======== 0x00408f94 mios_config_byte_b_cal
+# xref 0x00408f94  (mios_config_byte_b_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] byte   449ac:	89 6b 8f 94 	lbz     r11,-28780(r11)
+
+======== 0x00408f95 crank_mios_config_e_cal
+# xref 0x00408f95  (crank_mios_config_e_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] byte   4498c:	89 4a 8f 95 	lbz     r10,-28779(r10)
+
+======== 0x00408f96 crank_mios_compare_a_high_cal
+# xref 0x00408f96  (crank_mios_compare_a_high_cal)  — 2 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] byte   43fcc:	89 8c 8f 96 	lbz     r12,-28778(r12)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] byte   448ac:	89 6b 8f 96 	lbz     r11,-28778(r11)
+
+======== 0x00408f97 crank_mios_compare_b_low_cal
+# xref 0x00408f97  (crank_mios_compare_b_low_cal)  — 2 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] byte   43ff8:	89 8c 8f 97 	lbz     r12,-28777(r12)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] byte   448d8:	89 6b 8f 97 	lbz     r11,-28777(r11)
+
+======== 0x00408f98 crank_mios_compare_a_low_cal
+# xref 0x00408f98  (crank_mios_compare_a_low_cal)  — 2 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] byte   43fd8:	89 6b 8f 98 	lbz     r11,-28776(r11)
+
+cm848_updateEngineSpeedFromCrankSignal: 1r/0w
+  [load ] byte   448b8:	89 4a 8f 98 	lbz     r10,-28776(r10)
+
+======== 0x00408f99 crank_mios_compare_b_high_cal
+# xref 0x00408f99  (crank_mios_compare_b_high_cal)  — 2 referencing function(s)
+# total: 2 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] byte   43fec:	89 29 8f 99 	lbz     r9,-28775(r9)
+
+hpcr_processEngineSyncPulses: 1r/0w
+  [load ] byte   45214:	89 8c 8f 99 	lbz     r12,-28775(r12)
+
+======== 0x00408f9a crank_tooth_count_b_min_cal
+# xref 0x00408f9a  (crank_tooth_count_b_min_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_updateEngineRunState: 1r/0w
+  [load ] word   456e8:	a1 4a 8f 9a 	lhz     r10,-28774(r10)
+
+======== 0x00408f9e crank_sync_attempt_limit_cal
+# xref 0x00408f9e  (crank_sync_attempt_limit_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_updateEngineRunState: 1r/0w
+  [load ] word   45684:	a1 4a 8f 9e 	lhz     r10,-28770(r10)
+
+======== 0x00408fa3 crank_sync_period_limit_state1_cal
+# xref 0x00408fa3  (crank_sync_period_limit_state1_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_updateEngineCrankState: 1r/0w
+  [load ] byte   45ab8:	89 8c 8f a3 	lbz     r12,-28765(r12)
+
+======== 0x00408fa5 crank_tooth_timer_max_cal
+# xref 0x00408fa5  (crank_tooth_timer_max_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+hpcr_processEngineSyncPulses: 1r/0w
+  [load ] byte   4523c:	89 4a 8f a5 	lbz     r10,-28763(r10)
+
+======== 0x00408fac crank_mios_channel1_config_cal
+# xref 0x00408fac  (crank_mios_channel1_config_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] byte   4409c:	89 6b 8f ac 	lbz     r11,-28756(r11)
+
+======== 0x00408fad crank_mios_channel0_config_cal
+# xref 0x00408fad  (crank_mios_channel0_config_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): byte
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+mpc555_resetEngineTimingAccumulators: 1r/0w
+  [load ] byte   43fb8:	89 6b 8f ad 	lbz     r11,-28755(r11)
+
+======== 0x0040b7cc crank_period_capture_index
+# xref 0x0040b7cc  (crank_period_capture_index)  — 2 referencing function(s)
+# total: 1 read(s), 3 write(s)   width(s): dword
+
+mpc555_updateEngineCrankState: 1r/2w
+  [load ] dword  45848:	83 a8 00 00 	lwz     r29,0(r8)
+  [store] dword  45858:	90 c8 00 00 	stw     r6,0(r8)
+  [store] dword  45870:	91 88 00 00 	stw     r12,0(r8)
+
+mpc555_resetEngineTimingAccumulators: 0r/1w
+  [store] dword  43f44:	91 6c b7 cc 	stw     r11,-18484(r12)
+
+======== 0x00408f2c cylinder_diag_low_threshold_cal
+# xref 0x00408f2c  (cylinder_diag_low_threshold_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_runCylinderContributionTest: 1r/0w
+  [load ] word   43be4:	a9 29 8f 2c 	lha     r9,-28884(r9)
+
+======== 0x00408f2e cylinder_diag_high_threshold_cal
+# xref 0x00408f2e  (cylinder_diag_high_threshold_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_runCylinderContributionTest: 1r/0w
+  [load ] word   43c04:	a9 29 8f 2e 	lha     r9,-28882(r9)
+
+======== 0x00408f30 cylinder_diag_scale_factor_cal
+# xref 0x00408f30  (cylinder_diag_scale_factor_cal)  — 1 referencing function(s)
+# total: 1 read(s), 0 write(s)   width(s): word
+# >> NEVER WRITTEN in any referencing function -> ROM/EEPROM-loaded constant (or reached only via a pointer)
+
+cm848_runCylinderContributionTest: 1r/0w
+  [load ] word   43c20:	a0 c6 8f 30 	lhz     r6,-28880(r6)

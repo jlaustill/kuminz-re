@@ -1,0 +1,198 @@
+function_address,function_name,param_index,name,type,comment
+# =============================================================================
+# J90350.00 Function Parameter Definitions
+# Created: 2024-12-18
+# Defines parameter names and types for improved decompilation readability
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# CAN/J1939 Message Functions
+# -----------------------------------------------------------------------------
+0x000104e8,sendCanMessage,0,msg_header,j1939_header_t*,Pointer to J1939 message header structure
+0x00022e5e,vp44CanMessageDispatcher,0,rx_msg,can_std_rx_desc_t*,Pointer to received CAN message descriptor
+0x00022b50,vp44FuelTempHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to VP44 fuel temp CAN message
+0x00022956,diagnosticParamRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic parameter request message
+0x00022d8e,diagnosticStatusRequestHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic status request message
+0x00022de2,diagnosticErrorHandler,0,rx_msg,can_std_rx_desc_t*,Pointer to diagnostic error message
+0x00032b38,diagnosticByteResponseSender,0,response_code,ushort,Diagnostic response code to send
+0x0002ef4a,diagnosticByteResponseDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure
+0x00032244,diagnosticDM11PGN_65234_Builder,0,dtc_count,ushort,Number of DTCs to include in message
+
+# -----------------------------------------------------------------------------
+# Huffman Compression Functions
+# -----------------------------------------------------------------------------
+0x0002c834,huffmanTreeBuilder,0,tree_buffer,int,Pointer to huffman tree node buffer (3KB)
+0x00003792,huffmanDecompress,0,tree_buffer,int,Pointer to huffman tree node buffer
+0x00003792,huffmanDecompress,1,start_node,ushort,Starting node index for decompression
+
+# -----------------------------------------------------------------------------
+# Table Interpolation Functions
+# -----------------------------------------------------------------------------
+0x00034f8a,coreTableInterpolation,0,table_descriptor,void*,Pointer to table descriptor structure
+0x00034f8a,coreTableInterpolation,1,input_value,ushort,Input value for table interpolation lookup
+0x00034f8a,coreTableInterpolation,2,scaling_factor,ushort,Optional scaling factor for interpolation
+0x00034de0,lookupTableInterpolation,0,args,table_interp_args_t*,Pointer to table interpolation arguments structure
+0x00035088,twoDimensionalTableInterpolation,0,table_args,short*,Pointer to 2D table arguments structure
+0x00035064,unsignedMultiplyDivide,0,multiplicand,uint,First value to multiply
+0x00035064,unsignedMultiplyDivide,1,multiplier,uint,Second value to multiply
+0x00035064,unsignedMultiplyDivide,2,divisor,uint,Value to divide the product by
+0x00035076,signedMultiplyDivide64,0,multiplicand,int,First signed value to multiply
+0x00035076,signedMultiplyDivide64,1,multiplier,int,Second signed value to multiply
+0x00035076,signedMultiplyDivide64,2,divisor,int,Signed value to divide the product by
+0x00034e9a,exponentialMovingAverage,0,current_avg,ushort,Current moving average value
+0x00034e9a,exponentialMovingAverage,1,new_sample,ushort,New sample to incorporate
+0x00034e9a,exponentialMovingAverage,2,smoothing_factor,ushort,Exponential smoothing factor
+0x00034f00,unsignedLinearInterpolation,0,x_low,ushort,Lower X-axis breakpoint
+0x00034f00,unsignedLinearInterpolation,1,x_high,ushort,Upper X-axis breakpoint
+0x00034f00,unsignedLinearInterpolation,2,y_low,ushort,Lower Y-axis value
+0x00034f00,unsignedLinearInterpolation,3,y_high,ushort,Upper Y-axis value
+0x00034f00,unsignedLinearInterpolation,4,x_input,ushort,Input X value to interpolate
+
+# -----------------------------------------------------------------------------
+# Division/Clamping Functions
+# -----------------------------------------------------------------------------
+0x0001645e,safeDivideWithClamp,0,dividend,dword,Dividend value for division
+0x0001645e,safeDivideWithClamp,1,divisor,division_operand_t,Divisor with value and limit fields
+0x0001651e,clampedDivisionCalculator,0,dividend,dword,Dividend value for division
+0x0001651e,clampedDivisionCalculator,1,divisor,division_operand_t,Divisor with value and limit fields
+0x0001651e,clampedDivisionCalculator,2,max_result,division_operand_t,Maximum result clamp value
+
+# -----------------------------------------------------------------------------
+# Circular Buffer Functions
+# -----------------------------------------------------------------------------
+0x0001c016,circularBufferInit,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
+0x0001c016,circularBufferInit,1,base_address,uint,Base memory address for buffer data
+0x0001c016,circularBufferInit,2,buffer_size,uint,Size of buffer in bytes (high word)
+0x0001bfa2,circularBufferPush,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
+0x0001bfa2,circularBufferPush,1,data_byte,byte,Byte value to push onto buffer
+0x0001bfde,circularBufferPop,0,buffer_ctrl,uint*,Pointer to circular buffer control structure
+0x0001bfde,circularBufferPop,1,data_out,byte*,Pointer to store popped byte value
+0x00016c3c,parameterCircularBufferWrite,0,dest_address,int,Destination EEPROM/RAM address
+0x00016c3c,parameterCircularBufferWrite,1,source_ptr,byte*,Pointer to source data
+0x00016c3c,parameterCircularBufferWrite,2,byte_count,ushort,Number of bytes to write
+
+# -----------------------------------------------------------------------------
+# Flash Programming Functions
+# -----------------------------------------------------------------------------
+0x0001c484,flashEraseRamExecutor,0,start_address,uint,Flash start address to erase
+0x0001c484,flashEraseRamExecutor,1,end_address,uint,Flash end address to erase
+0x0001c5e8,flashProgramFromRam,0,dest_address,int,Flash destination address
+0x0001c5e8,flashProgramFromRam,1,source_ptr,uint,Source data pointer
+0x0001c5e8,flashProgramFromRam,2,byte_count,uint,Number of bytes to program
+
+# -----------------------------------------------------------------------------
+# Diagnostic Code Functions
+# -----------------------------------------------------------------------------
+0x000144bc,diagnosticCodeDebounceHandler,0,code_index,byte,Diagnostic trouble code table index
+0x00014720,diagnosticCodeRegistrar,0,code_index,byte,Diagnostic code to register in active list
+0x00010e16,diagnosticMemoryAddressResolver,0,param_id,ushort,Parameter ID to resolve address for
+0x0000b6e8,diagnosticMessageQueueWrite,0,response_type,byte,Type of diagnostic response (0/1)
+0x0001ec3c,diagnosticMemoryWriteHandler,0,service_id,byte,Diagnostic service identifier
+0x0001edae,diagnosticMemoryReadHandler,0,service_id,byte,Diagnostic service identifier
+0x0002238e,diagMemoryReadResponseBuilder,0,request_ptr,byte*,Pointer to read request structure
+0x0002238e,diagMemoryReadResponseBuilder,1,start_address,uint,Memory start address to read
+0x0002238e,diagMemoryReadResponseBuilder,2,read_length,uint,Number of bytes to read
+0x0002f4be,diagnosticCommandTableDispatcher,0,cmd_index,byte,Diagnostic command table index
+
+# -----------------------------------------------------------------------------
+# Protection System Functions
+# -----------------------------------------------------------------------------
+0x00018f86,protectionStateUpdater,0,source_ptr,int,Pointer to source protection state data
+0x00018f86,protectionStateUpdater,1,dest_ptr,int,Pointer to destination statistics structure
+0x00018f86,protectionStateUpdater,2,condition_flag,ushort,Protection condition flag (0=normal 1=fault)
+0x00018968,protectionConditionEvaluator,0,threshold_ptr,ushort*,Pointer to threshold configuration
+0x00018968,protectionConditionEvaluator,1,state_ptr,uint*,Pointer to protection state data
+0x00018968,protectionConditionEvaluator,2,sensor_value,ushort,Current sensor value to evaluate
+0x00018c1c,diagnosticProtectionProcessor,0,config_ptr,ushort*,Pointer to protection configuration
+0x00018c1c,diagnosticProtectionProcessor,1,state_offset,int,Offset into protection state table
+0x00018c1c,diagnosticProtectionProcessor,2,threshold_value,int,Threshold value for comparison
+
+# -----------------------------------------------------------------------------
+# Fueling Control Functions
+# -----------------------------------------------------------------------------
+0x0001e02a,fuelingValueClamp,0,fuel_value_ptr,short*,Pointer to fueling value to clamp (0-5888)
+0x0001cb76,rpmBasedFuelingLookup,0,rpm_index,ushort,RPM index for fueling lookup table
+0x0000faa6,torqueCurveBreakpointCalculator,0,torque_index,byte,Torque curve breakpoint index
+
+# -----------------------------------------------------------------------------
+# Memory Operations (Service 0x4B Write Path)
+# -----------------------------------------------------------------------------
+# memoryOperationDispatcher @ 0x2148a - Core memory write handler
+# Returns: MEMORY_OP_RESULT enum (0=success, 2=invalid_length, 3=auth_failed, etc.)
+0x0002148a,memoryOperationDispatcher,0,request_ptr,int,Pointer to memory operation request (message data)
+0x0002148a,memoryOperationDispatcher,1,operation_size,short,Size of memory operation (data bytes to write)
+0x0002148a,memoryOperationDispatcher,2,operation_flags,uint,Operation control flags from message byte 5
+
+# memoryOperationFromMessageExtended @ 0x217de - Service 0x4B entry point
+# Extracts address/flags from J1939 message and calls memoryOperationDispatcher
+0x000217de,memoryOperationFromMessageExtended,0,msg_ptr,int,Pointer to J1939 diagnostic message structure
+
+# memoryOperationFromMessage8Byte @ 0x21826 - 8-byte message variant
+# Similar to Extended but for shorter messages
+0x00021826,memoryOperationFromMessage8Byte,0,msg_ptr,int,Pointer to 8-byte J1939 diagnostic message
+
+# addressRangeValidator @ 0x3460e - Validates memory address against 5-entry range table
+# Returns: MEMORY_ACCESS_FLAG (0=direct, 3=secured, 4=denied, 5=logging, 9=invalid)
+0x0003460e,addressRangeValidator,0,target_address,uint,Memory address to validate (start of operation)
+0x0003460e,addressRangeValidator,1,operation_length,uint,Length of memory operation in bytes
+0x00010520,arrayRangeSum,0,start_ptr,short*,Pointer to start of array
+0x00010520,arrayRangeSum,1,end_ptr,short*,Pointer to end of array
+
+# -----------------------------------------------------------------------------
+# Timing and Delay Functions
+# -----------------------------------------------------------------------------
+0x0002ca64,busyWaitDelayLoop,0,loop_count,ushort,Number of delay loop iterations
+0x00034bf8,hardwareTimerDelayLoop,0,timer_ticks,ushort,Number of hardware timer ticks to wait
+
+# -----------------------------------------------------------------------------
+# Serial/UART Functions
+# -----------------------------------------------------------------------------
+0x0001e056,serialNodeAddressChecker,0,node_address,byte,Serial node address to check
+0x0001e086,serialNodeAddressForwarder,0,node_address,byte,Serial node address to forward to
+
+# -----------------------------------------------------------------------------
+# TPU (Timer Processing Unit) Functions
+# -----------------------------------------------------------------------------
+0x0001e266,tpuTimerChannelEnable,0,channel_mask,ushort,TPU channel enable bitmask
+0x0001e5f0,tpuChannelConfigurator,0,channel_config,uint,TPU channel configuration value
+
+# -----------------------------------------------------------------------------
+# Math Utility Functions (limitedDivisionCalculator only - others in Division/Clamping section)
+# -----------------------------------------------------------------------------
+0x00016628,limitedDivisionCalculator,0,dividend,uint,Value to be divided
+0x00016628,limitedDivisionCalculator,1,divisor,uint,Value to divide by
+0x00016628,limitedDivisionCalculator,2,limit_value,uint,Division result limit
+
+# -----------------------------------------------------------------------------
+# Switch/Input Processing
+# -----------------------------------------------------------------------------
+0x000206a8,ptpSwitchedInputDebouncer,0,input_state,uint,Current raw input state
+0x000206a8,ptpSwitchedInputDebouncer,1,debounce_mask,uint,Debounce configuration mask
+0x00020890,indexedSwitchedInputHandler,0,input_index,byte,Switched input channel index
+
+# -----------------------------------------------------------------------------
+# CAN Bus Configuration
+# -----------------------------------------------------------------------------
+0x000142a8,canBusConfigTypeSelector,0,config_type,byte,CAN bus configuration type selector
+0x000142d4,parameterCalculationWithDivide,0,calc_mode,byte,Calculation mode selector
+
+# -----------------------------------------------------------------------------
+# Security Authentication Functions
+# -----------------------------------------------------------------------------
+# bitPackingAlgorithm @ 0x2fbd8 - Core security key derivation
+# Takes 10-byte input and produces 10-byte output via bit manipulation
+# Uses mask table, XOR table, and reorder table from ROM
+0x0002fbd8,bitPackingAlgorithm,0,input_buffer,byte*,Pointer to 10-byte authentication input payload
+0x0002fbd8,bitPackingAlgorithm,1,output_buffer,byte*,Pointer to 10-byte output (security_key[6] + hour_meter[4])
+
+# hourMeterSecurityValidator @ 0x2fcdc - Validates auth payload against security key and hour meter
+# Returns 0 on success, 1 on failure
+# Increments retry counter on failure, locks out at 17 (0x11) attempts
+0x0002fcdc,hourMeterSecurityValidator,0,auth_payload_ptr,byte*,Pointer to 10-byte authentication payload from request
+
+# diagnosticServiceSecurityValidator @ 0x21982 - Checks if service requires auth and validates
+# Returns 0xFF on success (auth passed or not needed), error code on failure
+0x00021982,diagnosticServiceSecurityValidator,0,msg_ptr,int,Pointer to diagnostic message structure with service request
+
+# diagnosticServiceDispatcher @ 0x2eea2 - Routes diagnostic services via dispatch table @ 0x801c7a
+0x0002eea2,diagnosticServiceDispatcher,0,msg_ptr,int,Pointer to diagnostic message structure

@@ -1,0 +1,153 @@
+cm848_validateWriteAuth: {'OTHER': 2}
+mpc555_tickTransferTimeoutAndRuntimeCounter: {'OTHER': 2}
+timingProtectionFlagsOrchestrator: {'OTHER': 1, 'decompiler temporary renamed': 3}
+cm848_initializeEgrDeltaPressureAutozero: {'cast added / removed': 1}
+cm848_faultTimeoutHandler: {'OTHER': 15, 'decompiler temporary renamed': 3}
+j1939_receivePgn56576Handler: {'cast / declaration type': 3}
+cm848_j1939ProcessPgn61442Etc1: {'OTHER': 2}
+cm848_buildPgn65247ElectronicEngineController3Message: {'cast added / removed': 1}
+cm848_buildPgn65249RetarderConfigurationMessage: {'cast added / removed': 1}
+cm848_getGovernorOverrideSource: {'cast added / removed': 1}
+governor_speedRatio_etcFuelCorrection_calc: {'cast / declaration type': 2}
+hpcr_exception_process: {'cast added / removed': 1}
+cm848_updateEgrValvePositionAutozero: {'OTHER': 1}
+cm848_initializeEgrValvePosition: {'OTHER': 1, 'cast added / removed': 1}
+cm848_auxiliaryControl_exponentialAverage: {'cast / declaration type': 1, 'cast added / removed': 1}
+sensor_channel108_filter: {'cast / declaration type': 1, 'cast added / removed': 1}
+hpcr_initFuelTemperatureSensorChannel: {'OTHER': 3, 'cast added / removed': 1}
+governor_fault_eventCounter_update: {'cast / declaration type': 1, 'decompiler temporary renamed': 8}
+cm848_calculateFaultDerateEngineSpeedLimit: {'cast / declaration type': 1, 'decompiler temporary renamed': 7}
+governor_faultDerate_mainLoop_update: {'cast / declaration type': 1, 'decompiler temporary renamed': 14}
+cm848_calculateFaultDerateFuelLimit: {'cast / declaration type': 1, 'decompiler temporary renamed': 9}
+cm848_validateFuelDemandRelativeToTiming: {'cast / declaration type': 1}
+cm848_blendBoostAndThrottleFuelDemand: {'cast / declaration type': 1}
+cm848_updateIntakeAirHeaterPostheat: {'cast / declaration type': 1}
+cm848_captureIntakeAirHeaterStartTemperature: {'cast / declaration type': 1, 'decompiler temporary renamed': 4, 'cast added / removed': 1}
+cm848_sciCommand42Callback: {'OTHER': 3}
+protectionOutputActuatorControl: {'OTHER': 2, 'cast added / removed': 4}
+initCruiseConfirmFlags: {'OTHER': 4, 'cast added / removed': 4}
+protectionTimeoutControl: {'OTHER': 2, 'decompiler temporary renamed': 10}
+cm848_tpuMiosOutput_loadCalibration: {'OTHER': 1, 'decompiler temporary renamed': 3}
+cm848_monitorOverboostAndHighLoadBoostBand: {'OTHER': 1, 'decompiler temporary renamed': 4}
+cm848_j1939_system_init: {'OTHER': 3, 'decompiler temporary renamed': 86}
+TOTAL: {'OTHER': 43, 'decompiler temporary renamed': 151, 'cast added / removed': 18, 'cast / declaration type': 15}
+OTHER cm848_validateWriteAuth
+   - [ 7 ] ; byte key_matches
+   + [ 7 ] ; dword current_runtime ; byte key_matches
+OTHER cm848_validateWriteAuth
+   - ] ; byte key_matches ; dword current_runtime ; if
+   + current_runtime ; byte key_matches ; if
+OTHER mpc555_tickTransferTimeoutAndRuntimeCounter
+   - { word wVar1 ; dword runtime_value ; word counter_value
+   + { word wVar1 ; word counter_value
+OTHER mpc555_tickTransferTimeoutAndRuntimeCounter
+   - counter_value ; byte prescaler_count ; prescaler_count
+   + counter_value ; byte prescaler_count ; dword runtime_value ; prescaler_count
+OTHER timingProtectionFlagsOrchestrator
+   - ( void ) { short sVar1 ; ushort
+   + ( void ) { word wVar1 ; ushort
+OTHER cm848_faultTimeoutHandler
+   - byte param_1 ) { int iVar1 ; uint uVar2
+   + byte param_1 ) { uint uVar1
+OTHER cm848_faultTimeoutHandler
+   - = 0 ) { if (
+   + = 0 ) { uVar1 = fault_definition_table [ param_1 ] . aging_flags & 3 ; if (
+OTHER cm848_faultTimeoutHandler
+   - 0 ) ) { iVar1 = ( fault_definition_table [ param_1 ] . aging_flags & 3 ) * 8 ; if (
+   + 0 ) ) { if (
+OTHER cm848_faultTimeoutHandler
+   - ) & & ( * ( uint * ) ( &
+   + ) & & ( ( &
+OTHER cm848_faultTimeoutHandler
+   - ) ( & DAT_0005983a + iVar1 ) <
+   + ( ( & DAT_0005983a ) [
+OTHER cm848_faultTimeoutHandler
+   - DAT_0005983a + iVar1 ) < key_on_hour_meter
+   + ( & DAT_0005983a ) [ uVar1 * 2 ] < key_on_hour_meter
+OTHER cm848_faultTimeoutHandler
+   - 0 & & ( * ( uint * ) ( &
+   + 0 & & ( ( &
+OTHER cm848_faultTimeoutHandler
+   - ) ( & DAT_0005983e + iVar1 ) <
+   + ( ( & DAT_0005983e ) [
+OTHER cm848_faultTimeoutHandler
+   - DAT_0005983e + iVar1 ) < (
+   + ( & DAT_0005983e ) [ uVar1 * 2 ] < (
+OTHER cm848_faultTimeoutHandler
+   - . timestamp ) - * ( uint * ) ( &
+   + . timestamp ) - ( &
+OTHER cm848_faultTimeoutHandler
+   - ) ( & DAT_0005983a + iVar1 ) )
+   + - ( & DAT_0005983a ) [
+OTHER cm848_faultTimeoutHandler
+   - DAT_0005983a + iVar1 ) ) -
+   + ( & DAT_0005983a ) [ uVar1 * 2 ] ) -
+OTHER cm848_faultTimeoutHandler
+   - iVar1 ) ) - * ( uint * ) ( &
+   + 2 ] ) - ( &
+OTHER cm848_faultTimeoutHandler
+   - ) ( & DAT_0005983e + iVar1 ) *
+   + - ( & DAT_0005983e ) [
+OTHER cm848_faultTimeoutHandler
+   - DAT_0005983e + iVar1 ) * (
+   + ( & DAT_0005983e ) [ uVar1 * 2 ] * (
+OTHER cm848_j1939ProcessPgn61442Etc1
+   - etc1_message_timeout = DAT_0005c38a + 1U ; return
+   + etc1_message_timeout = DAT_0005c38a + 1 ; return
+OTHER cm848_j1939ProcessPgn61442Etc1
+   - etc1_message_timeout = DAT_0005c38a + 1U ; return
+   + etc1_message_timeout = DAT_0005c38a + 1 ; return
+OTHER cm848_updateEgrValvePositionAutozero
+   - undefined * ) & PTR_DAT_003fbcbe ; cm848_updateAutozeroOffset
+   + undefined * ) & PTR_DAT_00406752_003fbcbe ; cm848_updateAutozeroOffset
+OTHER cm848_initializeEgrValvePosition
+   - < < 0x10 ; PTR_DAT_003fbcbe = &
+   + < < 0x10 ; PTR_DAT_00406752_003fbcbe = (
+OTHER hpcr_initFuelTemperatureSensorChannel
+   - ) & fuel_temperature_sensor_filtered ; PTR_DAT_0040a73e = (
+   + ) & fuel_temperature_sensor_filtered ; PTR_DAT_000597bc_0040a73e = (
+OTHER hpcr_initFuelTemperatureSensorChannel
+   - ) & DAT_000597bc ; PTR_DAT_0040a742 = (
+   + ) & DAT_000597bc ; PTR_DAT_000597be_0040a742 = (
+OTHER hpcr_initFuelTemperatureSensorChannel
+   - ) & DAT_000597be ; PTR_DAT_0040a746 = &
+   + ) & DAT_000597be ; PTR_DAT_000597c0_0040a746 = (
+OTHER cm848_sciCommand42Callback
+   - [ sci_transmit_byte_count ] = DAT_0000b74c ; }
+   + [ sci_transmit_byte_count ] = DAT_0000b74a . _2_1_ ; }
+OTHER cm848_sciCommand42Callback
+   - [ sci_transmit_byte_count ] = DAT_0000b74d ; }
+   + [ sci_transmit_byte_count ] = ( byte ) DAT_0000b74a ; }
+OTHER cm848_sciCommand42Callback
+   - [ sci_transmit_byte_count ] = DAT_0000b74b ; }
+   + [ sci_transmit_byte_count ] = DAT_0000b74a . _1_1_ ; }
+OTHER protectionOutputActuatorControl
+   - ( vehicle_speed_rise_limited , & PTR_DAT_003fd022 ) ;
+   + ( vehicle_speed_rise_limited , & PTR_DAT_00408e50_003fd022 ) ;
+OTHER protectionOutputActuatorControl
+   - ) sVar3 , & PTR_DAT_003fd012 ) ;
+   + ) sVar3 , & PTR_DAT_00408e58_003fd012 ) ;
+OTHER initCruiseConfirmFlags
+   - cruise_confirm_flag_a = 0 ; PTR_DAT_003fd012 = &
+   + cruise_confirm_flag_a = 0 ; PTR_DAT_00408e58_003fd012 = (
+OTHER initCruiseConfirmFlags
+   - = & DAT_00408e58 ; PTR_DAT_003fd016 = &
+   + ) & DAT_00408e58 ; PTR_DAT_00408e5a_003fd016 = (
+OTHER initCruiseConfirmFlags
+   - = & DAT_00408e5a ; PTR_DAT_003fd022 = &
+   + ) & DAT_00408e5a ; PTR_DAT_00408e50_003fd022 = (
+OTHER initCruiseConfirmFlags
+   - = & DAT_00408e50 ; PTR_DAT_003fd026 = &
+   + ) & DAT_00408e50 ; PTR_DAT_00408e52_003fd026 = (
+OTHER protectionTimeoutControl
+   - ( void ) { word wVar1 ; dword
+   + ( void ) { ushort uVar1 ; dword
+OTHER protectionTimeoutControl
+   - ; uint uVar4 ; ushort uVar5 ; uint
+   + ; uint uVar4 ; word wVar5 ; uint
+OTHER cm848_tpuMiosOutput_loadCalibration
+   - { word wVar2 ; undefined4 uVar1 ; DAT_00304138
+   + { word wVar2 ; dword dVar1 ; DAT_00304138
+OTHER cm848_monitorOverboostAndHighLoadBoostBand
+   - ( void ) { ushort uVar1 ; word
+   + ( void ) { word wVar1 ; word

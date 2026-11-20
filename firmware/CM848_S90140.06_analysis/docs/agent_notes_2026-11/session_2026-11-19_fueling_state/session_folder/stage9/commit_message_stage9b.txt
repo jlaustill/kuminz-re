@@ -1,0 +1,27 @@
+cm848 / cm550: the wave-14 holds applied - nine shared twin names, the development mode functions, two structs (stage 9b)
+
+Nothing was actually waiting on a decision (the owner, 2026-11-20), so the holds are applied:
+
+- Nine twins now share one unprefixed name in both firmwares (the convergence convention); each
+  CM550 body was checked against its CM848 twin:
+  - calculateAlpha (CM848 0xe518 / CM550 0xc326, was hpcr_calculateFuelTrimOutput /
+    vp44RpmBasedFaultDetector) and calculateAlphaBase (0xe3a4 / 0xc582, was
+    timingProtectionFlagsOrchestrator): the same five alpha condition results under the same
+    enable bits, the same ramp to 0x4000;
+  - the five conditions, paired one to one by those bits: calculateAlphaLowSpeedGovernorResult,
+    ...AirFuelControlResult, ...FuelRateResult, ...OnGovernorResult, ...LowAmbientAirPressureResult;
+  - buildPgn65251EngineConfiguration1Payload (0x1b3a0 / 0x3320e, was faultTimerHandler);
+  - sendPgn61444ElectronicEngineController1Message (0x2588c / 0x32c76, was j1939GetEngineStateCode).
+- cm848_exitDevelopmentMode / cm848_enterDevelopmentMode / cm848_forceExitDevelopmentMode (were
+  cm848_activateDiagnosticSession / cm848_resetDiagnosticSession / cm848_forceActivateDiagnosticSession);
+  the owner's 2026-05-25 review notes stay verbatim in the plates.
+- boost_pressure_state_t -> charge_flow_estimate_terms_t, fields named from e2m 177D +2..+C and
+  177B +0 / +2; engine_sync_state_t -> fuel_pressure_governor_state_t, 7 bytes (8019 +5
+  HPCR_Filtered_Battery_Voltage is a word; it rendered as ram0x0040b884 outside the struct).
+
+Proof: CM550 label-only EQUIVALENT; CM848 differs only where the voltage word now renders as
+fuel_pressure_governor_state.filtered_battery_voltage (two functions), the rest label-only.
+Both firmwares verify deterministic; both header sets compile; the script tests pass; the comment
+sweep is clean.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

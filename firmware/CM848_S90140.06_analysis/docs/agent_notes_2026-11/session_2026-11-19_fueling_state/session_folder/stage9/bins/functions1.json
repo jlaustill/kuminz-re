@@ -1,0 +1,606 @@
+{
+ "functions": [
+  {
+   "address": "0x0000e0f4",
+   "current": "cm848_checkPressureFuelState",
+   "proposals": [
+    {
+     "name": "cm848_calculateAlphaAltitudeDerateLatch",
+     "reason": "| 0xe0f4 | `cm848_checkPressureFuelState` | `cm848_calculateAlphaAltitudeDerateLatch` | altitude derate alpha timer |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 29,
+   "callers": [
+    "hpcr_calculateFuelTrimOutput"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0000e164",
+   "current": "cm848_calculateSensorEma",
+   "proposals": [
+    {
+     "name": "cm848_calculateAlphaFuelRate",
+     "reason": "| 0xe164 | `cm848_calculateSensorEma` | `cm848_calculateAlphaFuelRate` | fuel rate hysteresis on `fuel_mass_flow_raw` |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 33,
+   "callers": [
+    "timingProtectionFlagsOrchestrator"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0000e218",
+   "current": "cm848_checkFuelRateCondition",
+   "proposals": [
+    {
+     "name": "cm848_calculateAlphaGovernor",
+     "reason": "| 0xe218 | `cm848_checkFuelRateCondition` | `cm848_calculateAlphaGovernor` | on-governor condition |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 21,
+   "callers": [
+    "timingProtectionFlagsOrchestrator"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0000e248",
+   "current": "cm848_checkPressureFuelDelayA",
+   "proposals": [
+    {
+     "name": "cm848_calculateAlphaLowSpeedGovernor",
+     "reason": "| 0xe248 | `cm848_checkPressureFuelDelayA` | `cm848_calculateAlphaLowSpeedGovernor` | low speed governor alpha latch |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 27,
+   "callers": [
+    "timingProtectionFlagsOrchestrator"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0000e2cc",
+   "current": "cm848_checkPressureFuelDelayB",
+   "proposals": [
+    {
+     "name": "cm848_calculateAlphaAirFuelControl",
+     "reason": "| 0xe2cc | `cm848_checkPressureFuelDelayB` | `cm848_calculateAlphaAirFuelControl` | air fuel control alpha latch |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 28,
+   "callers": [
+    "timingProtectionFlagsOrchestrator"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0000e360",
+   "current": "cm848_checkPressureHysteresis",
+   "proposals": [
+    {
+     "name": "cm848_calculateAlphaLowAmbientAirPressure",
+     "reason": "| 0xe360 | `cm848_checkPressureHysteresis` | `cm848_calculateAlphaLowAmbientAirPressure` | barometric hysteresis of alpha |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 23,
+   "callers": [
+    "timingProtectionFlagsOrchestrator"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0000e3a4",
+   "current": "timingProtectionFlagsOrchestrator",
+   "proposals": [
+    {
+     "name": "cm848_calculateAlphaBase",
+     "reason": "| 0xe3a4 | `timingProtectionFlagsOrchestrator` | `cm848_calculateAlphaBase` | the alpha ramp |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 52,
+   "callers": [
+    "hpcr_calculateFuelTrimOutput"
+   ],
+   "callees": [
+    "cm848_calculateSensorEma",
+    "cm848_checkFuelRateCondition",
+    "cm848_checkPressureFuelDelayA",
+    "cm848_checkPressureFuelDelayB",
+    "cm848_checkPressureHysteresis"
+   ],
+   "shared_with_cm550": true
+  },
+  {
+   "address": "0x0000e518",
+   "current": "hpcr_calculateFuelTrimOutput",
+   "proposals": [
+    {
+     "name": "cm848_calculateAlpha",
+     "reason": "| 0xe518 | `hpcr_calculateFuelTrimOutput` | `cm848_calculateAlpha` | selects the alpha source and outputs `combustion_alpha_input` |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 74,
+   "callers": [
+    "main_loop"
+   ],
+   "callees": [
+    "cm848_checkPressureFuelState",
+    "timingProtectionFlagsOrchestrator"
+   ],
+   "shared_with_cm550": true
+  },
+  {
+   "address": "0x0000e748",
+   "current": "cm848_initFuelPressureVariables",
+   "proposals": [
+    {
+     "name": "cm848_initializeAlpha",
+     "reason": "| 0xe748 | `cm848_initFuelPressureVariables` | `cm848_initializeAlpha` | clears the alpha latches, timers and filter |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 19,
+   "callers": [
+    "cm848_applicationMain"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0001242c",
+   "current": "cm848_calculateLoadBasedFuelTrim",
+   "proposals": [
+    {
+     "name": "cm848_calculateEgrMassFlowDownstreamModel",
+     "reason": "| 0x0001242c | `cm848_calculateLoadBasedFuelTrim` | `cm848_calculateEgrMassFlowDownstreamModel` | feeds that EGR estimate; selected by `rpm_fuel_trim_select_cal` != 0 |",
+     "source": "review_e2m_names_wave_13_bin_1.md"
+    },
+    {
+     "name": "cm848_calculateEgrOrificeFlowTerms",
+     "reason": "| 0x0001242c | `cm848_calculateLoadBasedFuelTrim` | `cm848_calculateEgrOrificeFlowTerms` | medium confidence; its inputs are the EGR orifice delta pressure ratio, valve position and orifice temperature |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 79,
+   "callers": [
+    "cm848_selectFuelTrimMode"
+   ],
+   "callees": [
+    "cm848_signedFirstOrderFilter"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x000125f4",
+   "current": "cm848_calculateRpmBasedFuelTrim",
+   "proposals": [
+    {
+     "name": "cm848_calculateEgrMassFlowUpstreamModel",
+     "reason": "| 0x000125f4 | `cm848_calculateRpmBasedFuelTrim` | `cm848_calculateEgrMassFlowUpstreamModel` | feeds that EGR estimate; selected by `rpm_fuel_trim_select_cal` = 0 |",
+     "source": "review_e2m_names_wave_13_bin_1.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 52,
+   "callers": [
+    "cm848_selectFuelTrimMode"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x000127bc",
+   "current": "cm848_selectFuelTrimMode",
+   "proposals": [
+    {
+     "name": "cm848_selectEgrMassFlowModel",
+     "reason": "| 0x000127bc | `cm848_selectFuelTrimMode` | `cm848_selectEgrMassFlowModel` | clamps the EGR mass flow estimate (`throttle_fuel_trim_t.final_trim`) |",
+     "source": "review_e2m_names_wave_13_bin_1.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 39,
+   "callers": [
+    "cm848_throttleBasedFuelCalculation"
+   ],
+   "callees": [
+    "cm848_calculateLoadBasedFuelTrim",
+    "cm848_calculateRpmBasedFuelTrim",
+    "cm848_checkEngineFaultConditions",
+    "cm848_checkFuelSystemFaultFlags"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00012ad4",
+   "current": "cm848_boostBasedFuelModifier",
+   "proposals": [
+    {
+     "name": "cm848_calculateVolumetricEfficiency",
+     "reason": "| 0x12ad4 | `cm848_boostBasedFuelModifier` | `cm848_calculateVolumetricEfficiency` | It computes the clamped volumetric efficiency and the pressure-ratio terms, not a fuel modifier. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 64,
+   "callers": [
+    "cm848_fuelDemandWithLoadCompensation"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00012cf4",
+   "current": "cm848_loadBasedFuelAdjustment",
+   "proposals": [
+    {
+     "name": "cm848_calculateChargeMassFlow",
+     "reason": "| 0x00012cf4 | `cm848_loadBasedFuelAdjustment` | `cm848_calculateChargeMassFlow` | speed-density charge flow |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 34,
+   "callers": [
+    "cm848_fuelDemandWithLoadCompensation"
+   ],
+   "callees": [
+    "exponentialMovingAverage"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x000130dc",
+   "current": "cm848_calculateBoostPressureOffset",
+   "proposals": [
+    {
+     "name": "cm848_calculatePumpingTorque",
+     "reason": "| 0x130dc | `cm848_calculateBoostPressureOffset` | `cm848_calculatePumpingTorque` | e2m 1781 CHP pumping torque |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 61,
+   "callers": [
+    "cm848_periodicTaskSet_controlLoop"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0001359c",
+   "current": "cm848_processBoostControlState",
+   "proposals": [
+    {
+     "name": "cm848_updateChargePressureInRangeFaultCount",
+     "reason": "| 0x1359c | `cm848_processBoostControlState` | `cm848_updateChargePressureInRangeFaultCount` | It is the up/down fault counter that sets and clears fault 527. |",
+     "source": "review_e2m_names_wave_13_bin_5.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 81,
+   "callers": [
+    "cm848_processBoostProtectionConditions"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00013d14",
+   "current": "cm848_calculatePressureSensorDerivative",
+   "proposals": [
+    {
+     "name": "cm848_calculateIntakeManifoldTemperatureLeadTerm",
+     "reason": "| 0x00013d14 / 0x00013dc8 | `cm848_calculatePressureSensorDerivative` / `...Filtered` -> `cm848_calculateIntakeManifoldTemperatureLeadTerm` / `cm848_filterIntakeManifoldTemperature` | Channel 9 is the intake manifold temperature. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 39,
+   "callers": [
+    "cm848_calculatePressureSensorFiltered"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00013dc8",
+   "current": "cm848_calculatePressureSensorFiltered",
+   "proposals": [
+    {
+     "name": "cm848_filterIntakeManifoldTemperature",
+     "reason": "review_e2m_names_wave_13_bin_2.md",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "note": null,
+   "current_plate": "",
+   "body_lines": 73,
+   "callers": [
+    "cm848_phase_group_b_processing"
+   ],
+   "callees": [
+    "cm848_calculatePressureSensorDerivative"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00017f50",
+   "current": "cm848_calculateFuelFlowWithMode",
+   "proposals": [
+    {
+     "name": "cm848_calculateEgrDeltaPressures",
+     "reason": "| 0x00017f50 | `cm848_calculateFuelFlowWithMode` | `cm848_calculateEgrDeltaPressures` | writes the orifice / valve / engine delta pressures |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 36,
+   "callers": [
+    "cm848_phase_group_a_processing"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00506f88",
+   "current": "sensor_channel108_filter",
+   "proposals": [
+    {
+     "name": "cm848_applyEgrOrificeTemperatureLeadCompensation",
+     "reason": "| 0x00506f88 | `sensor_channel108_filter` | `cm848_applyEgrOrificeTemperatureLeadCompensation` | channel 108 is the EGR orifice temperature sensor |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 35,
+   "callers": [
+    "sensor_throttleTrim_ema_faultProcess"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00507028",
+   "current": "sensor_throttleTrim_ema_faultProcess",
+   "proposals": [
+    {
+     "name": "cm848_filterEgrOrificeTemperature",
+     "reason": "| 0x00507028 | `sensor_throttleTrim_ema_faultProcess` | `cm848_filterEgrOrificeTemperature` | same |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 42,
+   "callers": [
+    "cm848_phase_groupB_calculation_2"
+   ],
+   "callees": [
+    "exponentialMovingAverage",
+    "sensor_channel108_filter"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050716c",
+   "current": "sensor_throttleTrim_inputSelect",
+   "proposals": [
+    {
+     "name": "cm848_selectEgrOrificeTemperature",
+     "reason": "| 0x0050716c | `sensor_throttleTrim_inputSelect` | `cm848_selectEgrOrificeTemperature` | same |",
+     "source": "review_e2m_names_wave_13_bin_4.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 20,
+   "callers": [
+    "cm848_phase_groupB_calculation_2"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x000173a8",
+   "current": "cm848_fuelDemandOverrideHandler",
+   "proposals": [
+    {
+     "name": "cm848_learnAcceleratorPedalAutozero",
+     "reason": "| 0x000173a8 | `cm848_fuelDemandOverrideHandler` | `cm848_learnAcceleratorPedalAutozero` | tracks the lowest pedal reading with the idle switch on and writes the EEPROM autozero |",
+     "source": "review_e2m_names_wave_13_bin_1.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 51,
+   "callers": [
+    "cm848_fuelDemandCoordinator"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0001e830",
+   "current": "cm848_updateEngineTimingCompensation",
+   "proposals": [
+    {
+     "name": "cm848_updateFourDimensionalFueling",
+     "reason": "- 0x1e830 `cm848_updateEngineTimingCompensation` -> `cm848_updateFourDimensionalFueling`. It stores the 4-D fueling; nothing about timing.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 16,
+   "callers": [
+    "cm848_periodicTaskSet_sensorProcessing"
+   ],
+   "callees": [
+    "cm848_calculateDualAxisFuelLimit"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0001eae8",
+   "current": "cm848_calculateFuelDemandChangeRate",
+   "proposals": [
+    {
+     "name": "cm848_filterCommandedThrottle",
+     "reason": "- 0x1eae8 `cm848_calculateFuelDemandChangeRate` -> `cm848_filterCommandedThrottle`.",
+     "source": "review_e2m_names_wave_13_bin_3.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 55,
+   "callers": [
+    "hpcr_periodicTaskSet_fuelFinal"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0001f17c",
+   "current": "cm848_calculateFuelDemandWithTrim",
+   "proposals": [
+    {
+     "name": "cm848_calculateThrottle100Fueling",
+     "reason": "| 0x0001f17c | `cm848_calculateFuelDemandWithTrim` | `cm848_calculateThrottle100Fueling` | stores the five e2m 105A Throttle_100 fueling values |",
+     "source": "review_e2m_names_wave_13_bin_1.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 51,
+   "callers": [
+    "cm848_initializeFuelDemandAndLimitInterpolationStates",
+    "cm848_periodicTaskSet_controlLoop"
+   ],
+   "callees": [
+    "cm848_calculateMaximumFuelCurve",
+    "cm848_clampFuelDemandToValidRange",
+    "cm848_lookupChiMaximumFuelAtSpeed"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050dba8",
+   "current": "governor_computeSpeedTargetWithThermalCorrection",
+   "proposals": [
+    {
+     "name": "cm848_calculateNoLoadFuel",
+     "reason": "| 0x0050dba8 | `governor_computeSpeedTargetWithThermalCorrection` -> `cm848_calculateNoLoadFuel` | Sums friction fuel plus the coolant, A/C and fan adjustments. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 44,
+   "callers": [
+    "cm848_periodicTaskGroup31_calibration13"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050eaa8",
+   "current": "cm848_applyProtectionRpmCorrectionFilter",
+   "proposals": [
+    {
+     "name": "cm848_calculateEngineFrictionAndNetMachineTorque",
+     "reason": "| 0x0050eaa8 | `cm848_applyProtectionRpmCorrectionFilter` -> `cm848_calculateEngineFrictionAndNetMachineTorque` | Computes the 175C friction, no-load and net machine torques. |",
+     "source": "review_e2m_names_wave_13_bin_2.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 42,
+   "callers": [
+    "cm848_calculateNetCombustionTorque",
+    "cm848_periodicTaskSet_sensorProcessing"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00502b6c",
+   "current": "hpcr_fuelFinal_exponentialAverage",
+   "proposals": [
+    {
+     "name": "cm848_calculateAmbientConditions",
+     "reason": "| 0x502b6c | `hpcr_fuelFinal_exponentialAverage` | `cm848_calculateAmbientConditions` | e2m 1921 ambient and compressor inlet conditions |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 102,
+   "callers": [
+    "hpcr_periodicTaskSet_fuelFinal"
+   ],
+   "callees": [
+    "lookupTableInterpolation"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x00506e28",
+   "current": "cm848_auxiliaryControl_exponentialAverage",
+   "proposals": [
+    {
+     "name": "cm848_calculateExhaustTemperatureEstimate",
+     "reason": "| 0x506e28 | `cm848_auxiliaryControl_exponentialAverage` | `cm848_calculateExhaustTemperatureEstimate` | exhaust virtual temperature and metal temperature |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 50,
+   "callers": [
+    "cm848_calculateCombustionTemperatureRise",
+    "cm848_calculateResidualGasMass",
+    "cm848_periodicTaskSet_auxiliaryControl"
+   ],
+   "callees": [
+    "cm848_calculateCombustionTemperatureRise",
+    "exponentialMovingAverage"
+   ],
+   "shared_with_cm550": false
+  },
+  {
+   "address": "0x0050e7f4",
+   "current": "cm848_blendBoostAndThrottleFuelDemand",
+   "proposals": [
+    {
+     "name": "cm848_calculateWaterVaporFractions",
+     "reason": "| 0x50e7f4 | `cm848_blendBoostAndThrottleFuelDemand` | `cm848_calculateWaterVaporFractions` | humidity, vapor pressure and dew point model |",
+     "source": "review_e2m_names_wave_13_bin_6.md"
+    }
+   ],
+   "current_plate": "",
+   "body_lines": 72,
+   "callers": [
+    "main_loop"
+   ],
+   "callees": [],
+   "shared_with_cm550": false
+  }
+ ]
+}

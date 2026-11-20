@@ -1,0 +1,257 @@
+=== cm848_monitorConverterClutchAndOverdrivePerformance (lines 76531-76793, 256 non-blank)
+76531: // Function: cm848_monitorConverterClutchAndOverdrivePerformance @ 0x0051babc
+76532: //
+76534: /* P1740 converter clutch / overdrive solenoid performance: with output 18 on at steady fuel demand
+76535:    checks the engine / output ratio (186-266 in third / at most 186 with overdrive) and sets status
+76536:    word 0x3fe99a bit 15 after repeated misses (was protectionOutputAssembly) |
+76537:    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+76538:     */
+76540: void cm848_monitorConverterClutchAndOverdrivePerformance(void)
+76542: {
+76543:   byte bVar1;
+76544:   byte bVar2;
+76545:   byte bVar3;
+76546:   byte bVar4;
+76547:   byte bVar5;
+76548:   byte bVar6;
+76549:   word wVar7;
+76550:   ushort uVar8;
+76551:   ushort uVar9;
+76553:   wVar7 = protection_fuel_demand_tick_snapshot;
+76554:   if ((algorithm_enable_flags_6_cal & 4) == 0) {
+76555:     return;
+76556:   }
+76557:   if ((ushort)(protection_output_rate_counter + 1) < 5) {
+76558:     protection_output_rate_counter = protection_output_rate_counter + 1;
+76559:     return;
+76560:   }
+76561:   protection_output_rate_counter = 0;
+76562:   if ((diagnostic_monitor_complete_bits & 0x40000000) != 0) {
+76563:     protection_output_rate_counter = 0;
+76564:     return;
+76565:   }
+76566:   if ((((protection_output_controller_phase == 4) ||
+76567:        ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0x100) != 0)) ||
+76568:       ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0x400) != 0)) ||
+76569:      (((((((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x20) != 0 ||
+76570:           ((system_status_flags_t_003fe974.fault_detected_bits_112_to_127 & 0x1000) != 0)) ||
+76571:          (((fault_detected_bits_352_to_367 & 0x200) != 0 ||
+76572:           (((fault_detected_bits_352_to_367 & 0x400) != 0 ||
+76573:            ((fault_detected_bits_352_to_367 & 0x800) != 0)))))) ||
+76574:         ((fault_detected_bits_352_to_367 & 0x1000) != 0)) ||
+76575:        ((((((((fault_detected_bits_352_to_367 & 0x2000) != 0 ||
+76576:              ((fault_detected_bits_352_to_367 & 0x4000) != 0)) ||
+76577:             ((fault_detected_bits_368_to_383 & 0x80) != 0)) ||
+76578:            (((fault_detected_bits_368_to_383 & 0x100) != 0 ||
+76579:             ((system_status_flags_t_003fe974.fault_detected_bits_80_to_95 & 0x800) != 0)))) ||
+76580:           ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 1) != 0)) ||
+76581:          (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0 ||
+76582:           ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x400) != 0)))) ||
+76583:         (((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x800) != 0 ||
+76584:          ((((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x8000) != 0 ||
+76585:            ((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x4000) != 0)) ||
+76586:           ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x400) != 0)))))))) ||
+76587:       (((((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x800) != 0 ||
+76588:          ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x1000) != 0)) ||
+76589:         ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x2000) != 0)) ||
+76590:        ((((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x10) != 0 ||
+76591:          ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x100) != 0)) ||
+76592:         (((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x200) != 0 ||
+76593:          ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 1) != 0)))))))))) {
+76594:     protection_output_rate_counter = 0;
+76595:     protection_output_controller_phase = 4;
+76596:     return;
+76597:   }
+76598:   protection_fuel_demand_prev = protection_fuel_demand_tick_snapshot;
+76599:   protection_fuel_demand_tick_snapshot = fuel_demand_control_t_0040a57a.calculated;
+76600:   bVar1 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
+76601:   bVar3 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
+76602:   bVar4 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
+76603:   uVar9 = (byte)logical_output_request_bits_16_to_23 & 2;
+76604:   if (wVar7 == 0xffff) {
+76605:     protection_fuel_demand_prev = wVar7;
+76606:     protection_output_rate_counter = 0;
+76607:     return;
+76608:   }
+76609:   uVar8 = wVar7 - fuel_demand_control_t_0040a57a.calculated;
+76610:   if ((short)uVar8 < 0) {
+76611:     uVar8 = -uVar8;
+76612:   }
+76613:   if (uVar8 < converter_clutch_maximum_throttle_delta) {
+76614:     if (protection_output_stability_counter < protection_output_stability_threshold) {
+76615:       protection_output_stability_counter = protection_output_stability_counter + 1;
+76616:     }
+76617:   }
+76618:   else {
+76619:     protection_output_stability_counter = 0;
+76620:   }
+76621:   bVar2 = logical_output_request_bits_16_to_23.converter_clutch_solenoid_request;
+76622:   if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
+76623:      (vehicle_speed < converter_clutch_engagement_low_speed)) {
+76624:     protection_output_hold_flag = 0;
+76625:     protection_fuel_derate_active_flag = 0;
+76626:   }
+76627:   if (((system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 0x8000) ==
+76628:        (DAT_003fea62 & 0x8000)) &&
+76629:      ((protection_output_controller_phase == 2 || (protection_output_controller_phase == 3)))) {
+76630:     diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x40000000;
+76631:   }
+76632:   if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
+76633:      (protection_fuel_derate_active_flag == 0)) {
+76634:     protection_output_phase_entry_flag = 0;
+76635:     protection_action_mode_b2_snapshot = uVar9;
+76636:     protection_pid_rpm_setpoint_prev = cm848_calculateEngineToOutputSpeedRatio();
+76637:     protection_pid_integrator = 0;
+76638:     return;
+76639:   }
+76640:   if (fuel_demand_control_t_0040a57a.calculated <= converter_clutch_minimum_throttle) {
+76641:     protection_fuel_demand_prev = wVar7;
+76642:     protection_output_rate_counter = 0;
+76643:     return;
+76644:   }
+76645:   if (logical_output_request_bits_16_to_23.reserved_bit_0 == 0) {
+76646:     protection_fuel_demand_prev = wVar7;
+76647:     protection_output_rate_counter = 0;
+76648:     return;
+76649:   }
+76650:   if (protection_output_hold_flag != 0) {
+76651:     protection_fuel_demand_prev = wVar7;
+76652:     protection_output_rate_counter = 0;
+76653:     return;
+76654:   }
+76655:   if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) != 0) {
+76656:     protection_fuel_demand_prev = wVar7;
+76657:     protection_output_rate_counter = 0;
+76658:     return;
+76659:   }
+76660:   if ((switch_input_state_bits[2] & 0x10) != 0) {
+76661:     protection_fuel_demand_prev = wVar7;
+76662:     protection_output_rate_counter = 0;
+76663:     return;
+76664:   }
+76665:   if (monitor_enabling_conditions_met.converter_clutch_and_overdrive_performance == 0) {
+76666:     protection_fuel_demand_prev = wVar7;
+76667:     protection_output_rate_counter = 0;
+76668:     return;
+76669:   }
+76670:   if (hot_mode_flag != 0) {
+76671:     protection_fuel_demand_prev = wVar7;
+76672:     protection_output_rate_counter = 0;
+76673:     return;
+76674:   }
+76675:   if (((protection_output_phase_entry_flag == 0) &&
+76676:       (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) &&
+76677:      (protection_fuel_derate_active_flag == 0)) {
+76678:     if (protection_output_stability_counter < protection_output_stability_threshold) {
+76679:       protection_output_phase_entry_flag = 1;
+76680:       protection_fuel_demand_prev = wVar7;
+76681:       protection_output_rate_counter = 0;
+76682:       protection_output_hold_flag = 1;
+76683:       return;
+76684:     }
+76685:     if (protection_action_mode_b2_snapshot != uVar9) {
+76686:       protection_output_phase_entry_flag = 1;
+76687:       protection_fuel_demand_prev = wVar7;
+76688:       protection_output_rate_counter = 0;
+76689:       protection_output_hold_flag = 1;
+76690:       return;
+76691:     }
+76692:     protection_output_controller_phase = 1;
+76693:     wVar7 = cm848_calculateEngineToOutputSpeedRatio();
+76694:     protection_pid_rpm_setpoint = wVar7;
+76695:     cm848_pidError_calc();
+76696:     cm848_pidIntegrator_accumulate();
+76697:     protection_output_phase_entry_flag = 1;
+76698:     protection_pid_step_counter = 0;
+76699:     protection_pid_rpm_setpoint_prev = wVar7;
+76700:   }
+76701:   bVar5 = protection_pid_step_count_threshold;
+76702:   if ((protection_pid_step_counter < protection_pid_step_count_threshold) ||
+76703:      (protection_pid_step_counter < protection_pid_step_count_threshold_b)) {
+76704:     protection_pid_step_counter = protection_pid_step_counter + 1;
+76705:   }
+76706:   bVar6 = protection_pid_step_counter;
+76707:   if ((protection_pid_step_counter < protection_pid_step_count_threshold) &&
+76708:      (protection_fuel_derate_active_flag == 0)) {
+76709:     if (protection_output_stability_counter < protection_output_stability_threshold) {
+76710:       protection_output_phase_entry_flag = 1;
+76711:       protection_output_hold_flag = 1;
+76712:       return;
+76713:     }
+76714:     if (protection_action_mode_b2_snapshot != uVar9) {
+76715:       protection_output_phase_entry_flag = 1;
+76716:       protection_output_hold_flag = 1;
+76717:       return;
+76718:     }
+76719:     protection_pid_rpm_setpoint = cm848_calculateEngineToOutputSpeedRatio();
+76720:     wVar7 = protection_pid_rpm_setpoint;
+76721:     cm848_pidError_calc();
+76722:     cm848_pidIntegrator_accumulate();
+76723:     protection_pid_rpm_setpoint_prev = wVar7;
+76724:   }
+76725:   if (((protection_output_stability_counter < protection_output_stability_threshold) ||
+76726:       (protection_action_mode_b2_snapshot != uVar9)) && (protection_fuel_derate_active_flag == 0)) {
+76727:     protection_output_hold_flag = 1;
+76728:     protection_output_phase_entry_flag = 1;
+76729:     return;
+76730:   }
+76731:   if ((bVar5 <= bVar6) &&
+76732:      ((short)protection_pid_integrator < (short)protection_pid_integrator_threshold)) {
+76733:     protection_output_hold_flag = 1;
+76734:     protection_fuel_derate_increment_counter = protection_fuel_derate_increment_counter + 1;
+76735:     protection_derate_recovery_counter = 0;
+76736:   }
+76737:   if (((protection_fuel_derate_active_flag != 0) && (bVar1 == 0)) || (bVar2 == 0)) {
+76738:     protection_pid_step_counter = 0;
+76739:   }
+76740:   if (((short)protection_pid_integrator < (short)protection_pid_integrator_threshold) ||
+76741:      ((protection_pid_step_counter < protection_pid_step_count_threshold_b &&
+76742:       (((bVar3 != 0 || (protection_pid_step_counter < bVar5)) ||
+76743:        (protection_fuel_derate_active_flag != 0)))))) goto LAB_0051c1d8;
+76744:   protection_rpm_sample = cm848_calculateEngineToOutputSpeedRatio();
+76745:   if (bVar4 == 0) {
+76746:     if (((protection_rpm_sample < converter_clutch_lockup_third_gear_minimum_ratio) ||
+76747:         (converter_clutch_lockup_third_gear_maximum_ratio < protection_rpm_sample)) &&
+76748:        (2 < transmission_current_gear)) goto LAB_0051c168;
+76749:     if ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0) {
+76750:       protection_fuel_derate_active_flag = 1;
+76751:       protection_pid_step_counter = 0;
+76752:       goto LAB_0051c1d8;
+76753:     }
+76754: LAB_0051c19c:
+76755:     protection_derate_recovery_counter = protection_derate_recovery_counter + 1;
+76756:     protection_fuel_derate_increment_counter = 0;
+76757:   }
+76758:   else {
+76759:     if (protection_rpm_sample <= converter_clutch_lockup_fourth_gear_ratio_limit) goto LAB_0051c19c;
+76760: LAB_0051c168:
+76761:     protection_fuel_derate_increment_counter = protection_fuel_derate_increment_counter + 1;
+76762:     protection_derate_recovery_counter = 0;
+76763:   }
+76764:   protection_output_hold_flag = 1;
+76765: LAB_0051c1d8:
+76766:   if (protection_fuel_derate_increment_counter_max <= protection_fuel_derate_increment_counter) {
+76767:     protection_fuel_derate_increment_counter = protection_fuel_derate_increment_counter_max;
+76768:     system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
+76769:          system_status_flags_t_003fe974.fault_detected_bits_304_to_319 | 0x8000;
+76770:     protection_output_controller_phase = 3;
+76771:     if ((fault_pending_flags & 0x40000000) != 0) {
+76772:       if ((fault_pending_flags_b & 0x40000000) == 0) {
+76773:         fault_pending_flags = fault_pending_flags & 0xbfffffff;
+76774:       }
+76775:       else {
+76776:         fault_pending_flags_b = fault_pending_flags_b & 0xbfffffff;
+76777:       }
+76778:     }
+76779:   }
+76780:   if (converter_clutch_rationality_pass_count_limit <= protection_derate_recovery_counter) {
+76781:     system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
+76782:          system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 0x7fff;
+76783:     fault_registered_bits_304_to_319 = fault_registered_bits_304_to_319 & 0x7fff;
+76784:     fault_pending_flags = fault_pending_flags & 0xbfffffff;
+76785:     protection_output_controller_phase = 2;
+76786:     return;
+76787:   }
+76788:   return;
+76789: }
+76793: //
