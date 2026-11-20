@@ -1111,7 +1111,7 @@ extern word diag_state_group5_a_state;  // 0x003fa1ae
 extern word diag_state_group5_b_state;  // 0x003fa1b0
 extern word diag_state_group5_c_state;  // 0x003fa1b2
 extern word diag_state_group5_d_state;  // 0x003fa1b4
-extern ema_filter_state_t throttle_filter_state;  // 0x003fa5ba
+extern ema_filter_state_t egr_oxygen_fraction_filter;  // 0x003fa5ba
 extern ema_filter_state_t egr_mass_flow_delayed_filter;  // 0x003fa5c2
 extern ema_filter_state_t egr_valve_position_filter;  // 0x003fa5ca
 extern word diag_state_group6_a_state;  // 0x003fa5d2
@@ -4198,8 +4198,8 @@ extern word governor_trim_lookup_result;  // 0x0040a3e2
 extern word wastegate_duty_compressor_outlet_temperature_derate_derivative_term;  // 0x0040a3e4
 extern word wastegate_duty_compressor_outlet_temperature_derate_error_term;  // 0x0040a3e6
 extern word battery_voltage_gain_lookup;  // 0x0040a3e8
-extern throttle_fuel_trim_t throttle_fuel_trim_t_0040a3ea;  // 0x0040a3ea
-extern word engine_fuel_fault_status;  // 0x0040a402
+extern egr_flow_estimate_terms_t egr_flow_estimate_terms;  // 0x0040a3ea
+extern word egr_flow_source;  // 0x0040a402
 extern word engine_volumetric_efficiency;  // 0x0040a404
 extern charge_flow_estimate_terms_t charge_flow_estimate_terms;  // 0x0040a406
 extern word predicted_intake_manifold_temperature;  // 0x0040a416

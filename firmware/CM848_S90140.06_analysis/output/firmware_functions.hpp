@@ -301,14 +301,14 @@ void cm848_updateWastegateDutyIntegratorEnable(void);  // @ 0x00011a4c
 void cm848_calculateWastegateDutyRequest(void);  // @ 0x00011ab4
 void cm848_runWastegateDutyController(void);  // @ 0x0001231c
 void cm848_initializeWastegateDutyController(void);  // @ 0x0001233c
-undefined2 cm848_circularBufferWriteUnsigned(int param_1,undefined2 param_2,int param_3);  // @ 0x000123dc
-int cm848_circularBufferWriteSigned(int param_1,undefined2 param_2,int param_3);  // @ 0x00012404
+undefined2 cm848_delayUnsignedSample(int param_1,undefined2 param_2,int param_3);  // @ 0x000123dc
+int cm848_delaySignedSample(int param_1,undefined2 param_2,int param_3);  // @ 0x00012404
 void cm848_calculateDownstreamEgrMassFlow(void);  // @ 0x0001242c
 void cm848_calculateUpstreamEgrMassFlow(void);  // @ 0x000125f4
 undefined4 cm848_checkFuelSystemFaultFlags(void);  // @ 0x00012724
 undefined4 cm848_checkEngineFaultConditions(void);  // @ 0x00012778
 void cm848_calculateEgrMassFlowBeforeDelay(void);  // @ 0x000127bc
-void cm848_throttleBasedFuelCalculation(void);  // @ 0x000128a0
+void cm848_calculateDelayedEgrFlowAndFraction(void);  // @ 0x000128a0
 void cm848_initFilterCoefficients(void);  // @ 0x00012a58
 void cm848_calculateVolumetricEfficiency(word boost_denominator,word base_fueling);  // @ 0x00012ad4
 void cm848_calculateChargeMassFlow(void);  // @ 0x00012cf4

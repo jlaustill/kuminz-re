@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 04:12:21 MST 2026
+// Generated: Fri Nov 20 07:23:26 MST 2026
 
 
 //
@@ -10694,7 +10694,7 @@ void cm848_calculateChargeSystemErrors(void)
   charge_system_mass_charge_flow_error =
        (short)((int)uVar1 >> 1) + (ushort)((int)uVar1 < 0 && (uVar1 & 1) != 0);
   charge_system_egr_fraction_error =
-       egr_fraction_limited_command - throttle_fuel_trim_t_0040a3ea.egr_fraction_actual;
+       egr_fraction_limited_command - egr_flow_estimate_terms.egr_fraction_actual;
   charge_system_egr_fraction_error_adjusted = charge_system_egr_fraction_error;
   if (egr_fraction_limited_command <= egr_fraction_off_threshold) {
     charge_system_egr_fraction_error_adjusted = 0;
@@ -11479,10 +11479,16 @@ void cm848_initializeWastegateDutyController(void)
 
 
 //
-// Function: cm848_circularBufferWriteUnsigned @ 0x000123dc
+// Function: cm848_delayUnsignedSample @ 0x000123dc
 //
 
-undefined2 cm848_circularBufferWriteUnsigned(int param_1,undefined2 param_2,int param_3)
+/* Delay line write and delayed read, unsigned: stores the sample at the line's write index (the
+   byte at +0x200, after a ring of 256 words), advances the index and returns the word written
+   delay_samples calls earlier (position (index - delay_samples) mod 256; 0 returns the sample just
+   written; lhzx, zero-extended). Only caller cm848_calculateDelayedEgrFlowAndFraction (the residual
+   oxygen fraction, delay line at 0x3fa1b6). (was cm848_circularBufferWriteUnsigned) */
+
+undefined2 cm848_delayUnsignedSample(int param_1,undefined2 param_2,int param_3)
 
 {
   byte bVar1;
@@ -11496,10 +11502,14 @@ undefined2 cm848_circularBufferWriteUnsigned(int param_1,undefined2 param_2,int 
 
 
 //
-// Function: cm848_circularBufferWriteSigned @ 0x00012404
+// Function: cm848_delaySignedSample @ 0x00012404
 //
 
-int cm848_circularBufferWriteSigned(int param_1,undefined2 param_2,int param_3)
+/* Signed twin of cm848_delayUnsignedSample: the same 256-word delay line write and delayed read,
+   with the result sign-extended (lhax). Only caller cm848_calculateDelayedEgrFlowAndFraction (the
+   EGR mass flow before delay, delay line at 0x3fa3b8). (was cm848_circularBufferWriteSigned) */
+
+int cm848_delaySignedSample(int param_1,undefined2 param_2,int param_3)
 
 {
   byte bVar1;
@@ -11519,15 +11529,16 @@ int cm848_circularBufferWriteSigned(int param_1,undefined2 param_2,int param_3)
 /* Downstream EGR mass flow model (e2m 177F +8 CHP_Downstream_EGR_Flow, 'model of incompressible
    flow across fixed orifice', lb/min x 128; chosen when egr_flow_downstream_model_select = e2m 177E
    +A C_CHP_Venturi_Vrt_Sensor_Active is nonzero: 1 = downstream model). Writes the e2m 177F words
-   of throttle_fuel_trim_t_0040a3ea: rpm_conversion = +E CHP_Downstream_Pratio
+   of egr_flow_estimate_terms: downstream_egr_pressure_ratio = +E CHP_Downstream_Pratio
    (egr_orifice_delta_pressure x 32767 / charge_pressure, the charge pressure e2m 1A2D +0
    Charge_Press; limited to +-32440 = +-0.99 in Q15, +0x7eb8 when the charge pressure is 0 and the
-   delta pressure positive); reserved_0c = +C CHP_Downstream_Corrected_Flow (3-D table of the
-   egr_valve_position filtered by egr_valve_position_filter and that ratio, e2m 193D / 193E / 193F);
-   reserved_16 = +16 CHP_Sqrt_Torifice_R (table of egr_orifice_temperature, e2m 1946 / 1940);
-   load_based_trim = +8 CHP_Downstream_EGR_Flow = corrected flow x charge pressure / sqrt(orifice
-   temperature), saturated at +-25600 (+-200 lb/min). Only caller
-   cm848_calculateEgrMassFlowBeforeDelay. (was cm848_calculateLoadBasedFuelTrim) */
+   delta pressure positive); downstream_egr_corrected_flow = +C CHP_Downstream_Corrected_Flow (3-D
+   table of the egr_valve_position filtered by egr_valve_position_filter and that ratio, e2m 193D /
+   193E / 193F); egr_orifice_temperature_rankine_square_root = +16 CHP_Sqrt_Torifice_R (table of
+   egr_orifice_temperature, e2m 1946 / 1940); downstream_egr_mass_flow = +8 CHP_Downstream_EGR_Flow
+   = corrected flow x charge pressure / sqrt(orifice temperature), saturated at +-25600 (+-200
+   lb/min). Only caller cm848_calculateEgrMassFlowBeforeDelay. (was
+   cm848_calculateLoadBasedFuelTrim) */
 
 void cm848_calculateDownstreamEgrMassFlow(void)
 
@@ -11541,62 +11552,65 @@ void cm848_calculateDownstreamEgrMassFlow(void)
   iVar3 = (int)(short)egr_orifice_delta_pressure;
   iVar2 = iVar3 * 0x7fff;
   if ((int)(uVar1 * 0x7eb8) <= iVar2) {
-    throttle_fuel_trim_t_0040a3ea.rpm_conversion = 0x7eb8;
+    egr_flow_estimate_terms.downstream_egr_pressure_ratio = 0x7eb8;
     goto LAB_000124ac;
   }
   if ((int)(uVar1 * -0x7eb8) < iVar2) {
     if (uVar1 != 0) {
-      throttle_fuel_trim_t_0040a3ea.rpm_conversion = (word)(iVar2 / (int)(short)charge_pressure);
+      egr_flow_estimate_terms.downstream_egr_pressure_ratio =
+           (word)(iVar2 / (int)(short)charge_pressure);
       goto LAB_000124ac;
     }
     if (0 < iVar3) {
-      throttle_fuel_trim_t_0040a3ea.rpm_conversion = 0x7eb8;
+      egr_flow_estimate_terms.downstream_egr_pressure_ratio = 0x7eb8;
       goto LAB_000124ac;
     }
     if (-1 < iVar3) {
-      throttle_fuel_trim_t_0040a3ea.rpm_conversion = 0;
+      egr_flow_estimate_terms.downstream_egr_pressure_ratio = 0;
       goto LAB_000124ac;
     }
   }
-  throttle_fuel_trim_t_0040a3ea.rpm_conversion = 0x8148;
+  egr_flow_estimate_terms.downstream_egr_pressure_ratio = 0x8148;
 LAB_000124ac:
   x_input = cm848_signedFirstOrderFilter((int)(short)egr_valve_position,&egr_valve_position_filter);
-  throttle_fuel_trim_t_0040a3ea.reserved_0c =
+  egr_flow_estimate_terms.downstream_egr_corrected_flow =
        cm848_dualAxisTableInterpolation
                  (&diag_state_group5_c_state,x_input,throttle_rpm_axis_cal,
-                  throttle_fuel_trim_t_0040a3ea.rpm_conversion,throttle_rpm_ystart_cal,
+                  egr_flow_estimate_terms.downstream_egr_pressure_ratio,throttle_rpm_ystart_cal,
                   throttle_rpm_yend_cal,7);
-  throttle_fuel_trim_t_0040a3ea.reserved_16 =
+  egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root =
        lookupTableInterpolation
                  (&diag_state_group6_b_state,egr_orifice_temperature,throttle_trim_axis_cal,
                   throttle_trim_output_cal,0);
   uVar1 = (uint)charge_pressure;
-  iVar2 = (int)(short)throttle_fuel_trim_t_0040a3ea.reserved_0c;
-  if ((int)(iVar2 * uVar1) < (int)((uint)throttle_fuel_trim_t_0040a3ea.reserved_16 * 0x6400)) {
-    if ((int)((uint)throttle_fuel_trim_t_0040a3ea.reserved_16 * -0x6400) < (int)(iVar2 * uVar1)) {
-      if (throttle_fuel_trim_t_0040a3ea.reserved_16 == 0) {
+  iVar2 = (int)(short)egr_flow_estimate_terms.downstream_egr_corrected_flow;
+  if ((int)(iVar2 * uVar1) <
+      (int)((uint)egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root * 0x6400)) {
+    if ((int)((uint)egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root * -0x6400) <
+        (int)(iVar2 * uVar1)) {
+      if (egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root == 0) {
         if ((iVar2 == 0) || (uVar1 == 0)) {
-          throttle_fuel_trim_t_0040a3ea.load_based_trim = 0;
+          egr_flow_estimate_terms.downstream_egr_mass_flow = 0;
         }
         else if ((iVar2 < 1) || (uVar1 == 0)) {
-          throttle_fuel_trim_t_0040a3ea.load_based_trim = 0x9c00;
+          egr_flow_estimate_terms.downstream_egr_mass_flow = 0x9c00;
         }
         else {
-          throttle_fuel_trim_t_0040a3ea.load_based_trim = 0x6400;
+          egr_flow_estimate_terms.downstream_egr_mass_flow = 0x6400;
         }
       }
       else {
-        throttle_fuel_trim_t_0040a3ea.load_based_trim =
+        egr_flow_estimate_terms.downstream_egr_mass_flow =
              (word)((iVar2 * (short)charge_pressure) /
-                   (int)(short)throttle_fuel_trim_t_0040a3ea.reserved_16);
+                   (int)(short)egr_flow_estimate_terms.egr_orifice_temperature_rankine_square_root);
       }
     }
     else {
-      throttle_fuel_trim_t_0040a3ea.load_based_trim = 0x9c00;
+      egr_flow_estimate_terms.downstream_egr_mass_flow = 0x9c00;
     }
   }
   else {
-    throttle_fuel_trim_t_0040a3ea.load_based_trim = 0x6400;
+    egr_flow_estimate_terms.downstream_egr_mass_flow = 0x6400;
   }
   return;
 }
@@ -11610,12 +11624,13 @@ LAB_000124ac:
 /* Upstream EGR mass flow model (e2m 177F +A CHP_Upstream_EGR_Flow, 'empirical model relating lift
    and hot side dP to flow', lb/min x 128; chosen when egr_flow_downstream_model_select = e2m 177E
    +A C_CHP_Venturi_Vrt_Sensor_Active is 0: 0 = upstream model). Writes the e2m 177F words of
-   throttle_fuel_trim_t_0040a3ea: reserved_12 = +12 CHP_Upstream_Corrected_Flow (3-D table of
-   egr_valve_position and the exhaust to charge pressure ratio
+   egr_flow_estimate_terms: upstream_egr_corrected_flow = +12 CHP_Upstream_Corrected_Flow (3-D table
+   of egr_valve_position and the exhaust to charge pressure ratio
    charge_flow_estimate_terms.pressure_ratio = e2m 177D +A CHP_Pratio; tables e2m 18E3 / 18E4 /
-   18E5); reserved_10 = +10 CHP_Sqrt_Texhaust_R (table of exhaust_temperature, e2m 1974 / 1975);
-   rpm_based_trim = +A CHP_Upstream_EGR_Flow = corrected flow x boost_pressure_current_raw (e2m 1A5D
-   +0 Exhaust_Press) / sqrt(exhaust temperature), saturated at +-25600 (+-200 lb/min). Only caller
+   18E5); exhaust_temperature_rankine_square_root = +10 CHP_Sqrt_Texhaust_R (table of
+   exhaust_temperature, e2m 1974 / 1975); upstream_egr_mass_flow = +A CHP_Upstream_EGR_Flow =
+   corrected flow x boost_pressure_current_raw (e2m 1A5D +0 Exhaust_Press) / sqrt(exhaust
+   temperature), saturated at +-25600 (+-200 lb/min). Only caller
    cm848_calculateEgrMassFlowBeforeDelay. (was cm848_calculateRpmBasedFuelTrim) */
 
 void cm848_calculateUpstreamEgrMassFlow(void)
@@ -11624,42 +11639,44 @@ void cm848_calculateUpstreamEgrMassFlow(void)
   int iVar1;
   int iVar2;
   
-  throttle_fuel_trim_t_0040a3ea.reserved_12 =
+  egr_flow_estimate_terms.upstream_egr_corrected_flow =
        cm848_dualAxisTableInterpolation
                  (&diag_state_group5_a_state,egr_valve_position,boost_fuel_trim_pressure_axis_cal,
                   charge_flow_estimate_terms.pressure_ratio,boost_fuel_trim_ystart_cal,
                   boost_fuel_trim_yend_cal,5);
-  throttle_fuel_trim_t_0040a3ea.reserved_10 =
+  egr_flow_estimate_terms.exhaust_temperature_rankine_square_root =
        lookupTableInterpolation
                  (&diag_state_group6_a_state,exhaust_temperature,boost_fuel_input_axis_cal,
                   boost_fuel_input_output_cal,0);
-  iVar2 = (int)(short)throttle_fuel_trim_t_0040a3ea.reserved_12;
+  iVar2 = (int)(short)egr_flow_estimate_terms.upstream_egr_corrected_flow;
   iVar1 = iVar2 * (uint)boost_pressure_current_raw;
-  if (iVar1 < (int)((uint)throttle_fuel_trim_t_0040a3ea.reserved_10 * 0x6400)) {
-    if ((int)((uint)throttle_fuel_trim_t_0040a3ea.reserved_10 * -0x6400) < iVar1) {
-      if (throttle_fuel_trim_t_0040a3ea.reserved_10 == 0) {
+  if (iVar1 < (int)((uint)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root * 0x6400))
+  {
+    if ((int)((uint)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root * -0x6400) <
+        iVar1) {
+      if (egr_flow_estimate_terms.exhaust_temperature_rankine_square_root == 0) {
         if ((iVar2 == 0) || (boost_pressure_current_raw == 0)) {
-          throttle_fuel_trim_t_0040a3ea.rpm_based_trim = 0;
+          egr_flow_estimate_terms.upstream_egr_mass_flow = 0;
         }
         else if (iVar2 < 1) {
-          throttle_fuel_trim_t_0040a3ea.rpm_based_trim = 0x9c00;
+          egr_flow_estimate_terms.upstream_egr_mass_flow = 0x9c00;
         }
         else {
-          throttle_fuel_trim_t_0040a3ea.rpm_based_trim = 0x6400;
+          egr_flow_estimate_terms.upstream_egr_mass_flow = 0x6400;
         }
       }
       else {
-        throttle_fuel_trim_t_0040a3ea.rpm_based_trim =
+        egr_flow_estimate_terms.upstream_egr_mass_flow =
              (word)((iVar2 * (short)boost_pressure_current_raw) /
-                   (int)(short)throttle_fuel_trim_t_0040a3ea.reserved_10);
+                   (int)(short)egr_flow_estimate_terms.exhaust_temperature_rankine_square_root);
       }
     }
     else {
-      throttle_fuel_trim_t_0040a3ea.rpm_based_trim = 0x9c00;
+      egr_flow_estimate_terms.upstream_egr_mass_flow = 0x9c00;
     }
   }
   else {
-    throttle_fuel_trim_t_0040a3ea.rpm_based_trim = 0x6400;
+    egr_flow_estimate_terms.upstream_egr_mass_flow = 0x6400;
   }
   return;
 }
@@ -11713,16 +11730,16 @@ undefined4 cm848_checkEngineFaultConditions(void)
 //
 
 /* EGR mass flow estimate before the delay (e2m 177F +4 CHP_EGR_Flow_Before_Delay, 'EGR flow before
-   delay is imposed', lb/min x 128; throttle_fuel_trim_t_0040a3ea.final_trim). Runs the model that
-   egr_flow_downstream_model_select chooses (e2m 177E +A C_CHP_Venturi_Vrt_Sensor_Active, 'select
-   Upstream (0) or Downstream (1) EGR Flow Model'): 0 -> cm848_calculateUpstreamEgrMassFlow
-   (upstream, rpm_based_trim) and engine_fuel_fault_status from cm848_checkEngineFaultConditions;
-   nonzero -> cm848_calculateDownstreamEgrMassFlow (downstream, load_based_trim) and
-   engine_fuel_fault_status from cm848_checkFuelSystemFaultFlags. The flow is limited to
+   delay is imposed', lb/min x 128; egr_flow_estimate_terms.egr_mass_flow_before_delay). Runs the
+   model that egr_flow_downstream_model_select chooses (e2m 177E +A C_CHP_Venturi_Vrt_Sensor_Active,
+   'select Upstream (0) or Downstream (1) EGR Flow Model'): 0 -> cm848_calculateUpstreamEgrMassFlow
+   (upstream, upstream_egr_mass_flow) and egr_flow_source from cm848_checkEngineFaultConditions;
+   nonzero -> cm848_calculateDownstreamEgrMassFlow (downstream, downstream_egr_mass_flow) and
+   egr_flow_source from cm848_checkFuelSystemFaultFlags. The flow is limited to
    egr_mass_flow_estimate_minimum .. egr_mass_flow_estimate_maximum (e2m 177E +4 C_CHP_EGR_Flow_Min
-   / +2 C_CHP_EGR_Flow_Max) and forced to 0 while egr_valve_closed_flag is set.
-   engine_fuel_fault_status is e2m 177F +18 EGR_Flow_Source (0 primary, 1 backup). Only caller
-   cm848_throttleBasedFuelCalculation, which delays and filters the estimate into
+   / +2 C_CHP_EGR_Flow_Max) and forced to 0 while egr_valve_closed_flag is set. egr_flow_source is
+   e2m 177F +18 EGR_Flow_Source (0 primary, 1 backup). Only caller
+   cm848_calculateDelayedEgrFlowAndFraction, which delays and filters the estimate into
    egr_mass_flow_delayed_filtered and divides it by the charge flow. (was cm848_selectFuelTrimMode)
     */
 
@@ -11731,30 +11748,32 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
 {
   if (egr_flow_downstream_model_select == 0) {
     cm848_calculateUpstreamEgrMassFlow();
-    throttle_fuel_trim_t_0040a3ea.final_trim = egr_mass_flow_estimate_minimum;
+    egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_minimum;
     if (((short)egr_mass_flow_estimate_minimum <=
-         (short)throttle_fuel_trim_t_0040a3ea.rpm_based_trim) &&
-       (throttle_fuel_trim_t_0040a3ea.final_trim = throttle_fuel_trim_t_0040a3ea.rpm_based_trim,
-       (short)egr_mass_flow_estimate_maximum < (short)throttle_fuel_trim_t_0040a3ea.rpm_based_trim))
-    {
-      throttle_fuel_trim_t_0040a3ea.final_trim = egr_mass_flow_estimate_maximum;
+         (short)egr_flow_estimate_terms.upstream_egr_mass_flow) &&
+       (egr_flow_estimate_terms.egr_mass_flow_before_delay =
+             egr_flow_estimate_terms.upstream_egr_mass_flow,
+       (short)egr_mass_flow_estimate_maximum < (short)egr_flow_estimate_terms.upstream_egr_mass_flow
+       )) {
+      egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_maximum;
     }
-    engine_fuel_fault_status = cm848_checkEngineFaultConditions();
+    egr_flow_source = cm848_checkEngineFaultConditions();
   }
   else {
     cm848_calculateDownstreamEgrMassFlow();
-    throttle_fuel_trim_t_0040a3ea.final_trim = egr_mass_flow_estimate_minimum;
+    egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_minimum;
     if (((short)egr_mass_flow_estimate_minimum <=
-         (short)throttle_fuel_trim_t_0040a3ea.load_based_trim) &&
-       (throttle_fuel_trim_t_0040a3ea.final_trim = throttle_fuel_trim_t_0040a3ea.load_based_trim,
-       (short)egr_mass_flow_estimate_maximum < (short)throttle_fuel_trim_t_0040a3ea.load_based_trim)
-       ) {
-      throttle_fuel_trim_t_0040a3ea.final_trim = egr_mass_flow_estimate_maximum;
+         (short)egr_flow_estimate_terms.downstream_egr_mass_flow) &&
+       (egr_flow_estimate_terms.egr_mass_flow_before_delay =
+             egr_flow_estimate_terms.downstream_egr_mass_flow,
+       (short)egr_mass_flow_estimate_maximum <
+       (short)egr_flow_estimate_terms.downstream_egr_mass_flow)) {
+      egr_flow_estimate_terms.egr_mass_flow_before_delay = egr_mass_flow_estimate_maximum;
     }
-    engine_fuel_fault_status = cm848_checkFuelSystemFaultFlags();
+    egr_flow_source = cm848_checkFuelSystemFaultFlags();
   }
   if (egr_valve_closed_flag != 0) {
-    throttle_fuel_trim_t_0040a3ea.final_trim = 0;
+    egr_flow_estimate_terms.egr_mass_flow_before_delay = 0;
   }
   return;
 }
@@ -11762,12 +11781,41 @@ void cm848_calculateEgrMassFlowBeforeDelay(void)
 
 
 //
-// Function: cm848_throttleBasedFuelCalculation @ 0x000128a0
+// Function: cm848_calculateDelayedEgrFlowAndFraction @ 0x000128a0
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
+/* EGR transport delay stage of the charge properties model (e2m 177F, resolved by the ECU's
+   parameter ID table): it carries the EGR mass flow and the exhaust oxygen fraction from where they
+   are computed to the intake valve, then forms the EGR fraction. Runs every 10 ms (called by
+   cm848_fuelControlMainCalculation, which cm848_phase_group_a_processing runs in the 20 even phases
+   of the 40-phase main loop). (1) cm848_calculateEgrMassFlowBeforeDelay sets
+   egr_flow_estimate_terms.egr_mass_flow_before_delay (+4 CHP_EGR_Flow_Before_Delay). (2)
+   oxygen_flow_delay_milliseconds (+14 CHP_O2_Flow_Delay, 0.001 s per count) =
+   oxygen_flow_delay_volume_fraction (e2m 177E +6 C_CHP_Volume_Fraction) x 120 x 1000 /
+   (engine_volumetric_efficiency x engine speed): the time the engine takes to draw in that fraction
+   of its displacement (one displacement per two revolutions). Volumetric efficiency x speed is
+   limited to 1600 (200 rpm at 1.0) .. 0xffff counts, and a fraction above 8192 (1.0) is replaced by
+   0xffff. (3) residual_oxygen_fraction_before_delay goes into the 256-sample delay line at 0x3fa1b6
+   (cm848_delayUnsignedSample); the sample from delay / 10 passes back is filtered by
+   exponentialMovingAverage (egr_oxygen_fraction_filter, coefficient
+   egr_mass_flow_delayed_filter_coefficient = e2m 177E +0 C_CHP_EGR_Flow_Fil_Cnst) into
+   egr_oxygen_fraction (+0 CHP_O2_Frac_EGR). (4) egr_flow_delay_milliseconds (+6 CHP_EGR_Flow_Delay)
+   = the oxygen delay x egr_flow_delay_fraction (e2m 177E +C; 0 in the dump) / 32767. (5)
+   egr_mass_flow_before_delay goes into the delay line at 0x3fa3b8 (cm848_delaySignedSample); the
+   sample from delay / 10 passes back is filtered by cm848_signedFirstOrderFilter
+   (egr_mass_flow_delayed_filter) into egr_mass_flow_delayed_filtered. (6) egr_fraction_actual (+2
+   EGR_Fraction) = egr_mass_flow_delayed_filtered x 8192 / charge_mass_flow_filtered, capped at 8192
+   (1.0); 0 while the charge flow is 64 counts (0.5 lb/min) or less. The read-back position wraps
+   modulo 256 samples. Readers: egr_fraction_actual in cm848_calculateChargeSystemErrors /
+   cm848_calculateAirFuelRatioAndIntakeOxygenFraction /
+   cm848_calculateWaterVaporAndSaturationTemperatures; egr_oxygen_fraction in
+   cm848_calculateCylinderOxygenMasses; egr_mass_flow_delayed_filtered in
+   cm848_fuelDemandErrorCalculation (fresh air flow = charge - EGR) and the cylinder masses. (was
+   cm848_throttleBasedFuelCalculation) | review-function-readability reviewed 2026-11-20 -
+   Readability Medium Accuracy Confidence High */
 
-void cm848_throttleBasedFuelCalculation(void)
+void cm848_calculateDelayedEgrFlowAndFraction(void)
 
 {
   uint uVar1;
@@ -11790,16 +11838,16 @@ void cm848_throttleBasedFuelCalculation(void)
     uVar1 = 0xffff;
   }
   uVar4 = (uVar1 * 1000) / (uVar4 & 0xffff);
-  throttle_fuel_trim_t_0040a3ea.throttle_conversion = (word)uVar4;
-  uVar4 = cm848_circularBufferWriteUnsigned
+  egr_flow_estimate_terms.oxygen_flow_delay_milliseconds = (word)uVar4;
+  uVar4 = cm848_delayUnsignedSample
                     (&DAT_003fa1b6,residual_oxygen_fraction_before_delay,(uVar4 & 0xffff) / 10);
-  dVar2 = exponentialMovingAverage(uVar4 & 0xffff,&throttle_filter_state);
-  throttle_fuel_trim_t_0040a3ea.residual_oxygen_fraction_delayed_filtered = (word)dVar2;
-  uVar4 = ((uint)throttle_fuel_trim_t_0040a3ea.throttle_conversion * (uint)egr_flow_delay_fraction)
-          / 0x7fff;
-  throttle_fuel_trim_t_0040a3ea.load_adjusted = (word)uVar4;
-  sVar3 = cm848_circularBufferWriteSigned
-                    (&DAT_003fa3b8,(int)(short)throttle_fuel_trim_t_0040a3ea.final_trim,
+  dVar2 = exponentialMovingAverage(uVar4 & 0xffff,&egr_oxygen_fraction_filter);
+  egr_flow_estimate_terms.egr_oxygen_fraction = (word)dVar2;
+  uVar4 = ((uint)egr_flow_estimate_terms.oxygen_flow_delay_milliseconds *
+          (uint)egr_flow_delay_fraction) / 0x7fff;
+  egr_flow_estimate_terms.egr_flow_delay_milliseconds = (word)uVar4;
+  sVar3 = cm848_delaySignedSample
+                    (&DAT_003fa3b8,(int)(short)egr_flow_estimate_terms.egr_mass_flow_before_delay,
                      (uVar4 & 0xffff) / 10);
   egr_mass_flow_delayed_filtered =
        cm848_signedFirstOrderFilter((int)sVar3,&egr_mass_flow_delayed_filter);
@@ -11813,7 +11861,7 @@ void cm848_throttleBasedFuelCalculation(void)
       uVar4 = 0x2000;
     }
   }
-  throttle_fuel_trim_t_0040a3ea.egr_fraction_actual = (word)uVar4;
+  egr_flow_estimate_terms.egr_fraction_actual = (word)uVar4;
   return;
 }
 
@@ -11832,8 +11880,8 @@ void cm848_initFilterCoefficients(void)
   diag_state_group5_d_state = 2;
   diag_state_group6_a_state = 2;
   diag_state_group6_b_state = 2;
-  throttle_filter_state.accumulator = 0;
-  throttle_filter_state.coefficient = &egr_mass_flow_delayed_filter_coefficient;
+  egr_oxygen_fraction_filter.accumulator = 0;
+  egr_oxygen_fraction_filter.coefficient = &egr_mass_flow_delayed_filter_coefficient;
   egr_mass_flow_delayed_filter.accumulator = 0;
   egr_mass_flow_delayed_filter.coefficient = &egr_mass_flow_delayed_filter_coefficient;
   egr_valve_position_filter.accumulator = 0;
@@ -11938,7 +11986,7 @@ void cm848_calculateVolumetricEfficiency(word boost_denominator,word base_fuelin
    C_CHP_Charge_Flow_Min / +2 C_CHP_Charge_Flow_Max) and filtered by exponentialMovingAverage (state
    boost_modifier_filter_state, coefficient charge_mass_flow_filter_coefficient = e2m 177C +0
    C_CHP_Charge_Flow_Fil_Cnst) into charge_mass_flow_filtered, the divisor of the EGR fraction in
-   cm848_throttleBasedFuelCalculation. Caller cm848_fuelDemandWithLoadCompensation. (was
+   cm848_calculateDelayedEgrFlowAndFraction. Caller cm848_fuelDemandWithLoadCompensation. (was
    cm848_loadBasedFuelAdjustment) */
 
 void cm848_calculateChargeMassFlow(void)
@@ -12016,7 +12064,7 @@ void cm848_fuelControlMainCalculation(void)
 
 {
   cm848_fuelDemandWithLoadCompensation();
-  cm848_throttleBasedFuelCalculation();
+  cm848_calculateDelayedEgrFlowAndFraction();
   cm848_fuelDemandErrorCalculation();
   return;
 }
@@ -12057,7 +12105,7 @@ void cm848_fuelDemandErrorCalculation(void)
   }
   dVar1 = exponentialMovingAverage((uint)uVar2,&fuel_blend_rpm_base_filter_state);
   charge_flow_estimate_terms.fresh_air_mass_flow_filtered = (word)dVar1;
-  if ((charge_flow_estimate_terms.charge_flow_source == 0) && (engine_fuel_fault_status == 0)) {
+  if ((charge_flow_estimate_terms.charge_flow_source == 0) && (egr_flow_source == 0)) {
     charge_flow_estimate_terms.fresh_air_flow_source = 0;
   }
   else {
@@ -61158,7 +61206,7 @@ void cm848_calculateEgrCoolerEfficiency(void)
   iVar3 = (int)(short)coolant_temperature_selected;
   if ((((egr_flow_cold_side_algorithm_select == 0) || (coolant_temperature_source != 0)) ||
       (exhaust_temperature_source != 0)) ||
-     (((egr_orifice_temperature_source != 0 || (engine_fuel_fault_status != 0)) ||
+     (((egr_orifice_temperature_source != 0 || (egr_flow_source != 0)) ||
       ((uVar2 < egr_cooler_fouling_flow_threshold ||
        (iVar3 < (int)(uint)egr_cooler_fouling_coolant_temperature_threshold)))))) {
     egr_cooler_fouling_precondition_flag = 0;
@@ -61301,7 +61349,7 @@ void cm848_fuelDemand_periodic(void)
    into charge_fuel_ratio and air_fuel_ratio (Q7, 128 = 1), then derives fuel_air_equivalence_ratio
    = stoichiometric_air_fuel_ratio (stoichiometric ratio, 1893 = 14.79 x 128) x 8192 /
    air_fuel_ratio and intake_charge_oxygen_fraction = 1899 (23.18 percent of 8192) - EGR fraction
-   (throttle_fuel_trim_t.egr_fraction_actual) x (stoichiometric_oxygen_fuel_ratio + 29) /
+   (egr_flow_estimate_terms_t.egr_fraction_actual) x (stoichiometric_oxygen_fuel_ratio + 29) /
    (air_fuel_ratio + 128). The reference-side twin is
    cm848_calculateOffNominalOxygenFractionAdjustment. (was fuel_loadCorrection_rpmNormalized_calc)
     */
@@ -61349,7 +61397,7 @@ void cm848_calculateAirFuelRatioAndIntakeOxygenFraction(void)
   DAT_003fba00 = stoichiometric_oxygen_fuel_ratio + 0x1d;
   DAT_003fba02 = (short)(uVar3 + 0x80);
   uVar1 = (ulonglong)
-          ((uint)throttle_fuel_trim_t_0040a3ea.egr_fraction_actual *
+          ((uint)egr_flow_estimate_terms.egr_fraction_actual *
           (uint)(ushort)(stoichiometric_oxygen_fuel_ratio + 0x1d)) /
           (ulonglong)(uVar3 + 0x80 & 0xffff);
   DAT_003fba04 = (int)uVar1;
@@ -61601,8 +61649,7 @@ void cm848_calculateCylinderOxygenMasses(void)
   cylinder_air_mass = (word)uVar1;
   uVar1 = ((uVar1 & 0xffff) << 0xb) / 0x227f;
   cylinder_oxygen_mass_in_air = (word)uVar1;
-  uVar3 = (uint)throttle_fuel_trim_t_0040a3ea.residual_oxygen_fraction_delayed_filtered *
-          (uVar3 & 0xffff);
+  uVar3 = (uint)egr_flow_estimate_terms.egr_oxygen_fraction * (uVar3 & 0xffff);
   residual_oxygen_fraction = residual_oxygen_fraction_before_delay;
   uVar2 = (uint)cylinder_residual_gas_mass * (uint)residual_oxygen_fraction_before_delay;
   uVar3 = ((int)uVar3 >> 0xd) + (uint)((int)uVar3 < 0 && (uVar3 & 0x1fff) != 0) +
@@ -61637,11 +61684,10 @@ void cm848_calculateCylinderOxygenMasses(void)
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* residual_oxygen_fraction_before_delay = (cylinder_total_oxygen_mass - cylinder_oxygen_mass_burnt)
    x 8192 / cylinder_charge_plus_fuel_mass (divisor at least 1), capped at 8192 = 1.0: the oxygen
-   fraction left in the burnt gas. cm848_throttleBasedFuelCalculation writes it into a
+   fraction left in the burnt gas. cm848_calculateDelayedEgrFlowAndFraction writes it into a
    circular-buffer delay line (the delayed, filtered value is
-   throttle_fuel_trim_t.residual_oxygen_fraction_delayed_filtered) and
-   cm848_calculateCylinderOxygenMasses reads the previous pass's value. (was
-   governor_circular_buffer_update) */
+   egr_flow_estimate_terms_t.egr_oxygen_fraction) and cm848_calculateCylinderOxygenMasses reads the
+   previous pass's value. (was governor_circular_buffer_update) */
 
 void cm848_calculateResidualOxygenFraction(void)
 
@@ -69899,8 +69945,8 @@ void cm848_calculateWaterVaporAndSaturationTemperatures(void)
   
   uVar2 = (uint)egr_fraction_combustion_reference_at_base_chi;
   if ((uint)egr_fraction_combustion_reference_at_base_chi <
-      (uint)throttle_fuel_trim_t_0040a3ea.egr_fraction_actual) {
-    uVar2 = (uint)throttle_fuel_trim_t_0040a3ea.egr_fraction_actual;
+      (uint)egr_flow_estimate_terms.egr_fraction_actual) {
+    uVar2 = (uint)egr_flow_estimate_terms.egr_fraction_actual;
   }
   uVar1 = ((uint)fuel_air_equivalence_ratio * 0x793b) / 100000;
   input = ambient_air_temperature_reference;
