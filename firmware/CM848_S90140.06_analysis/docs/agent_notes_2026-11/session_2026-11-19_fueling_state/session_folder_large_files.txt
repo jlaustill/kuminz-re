@@ -81,6 +81,7 @@ stage8/reversed8.cpp
 stage8/reversed8c.cpp
 stage8/reversed8c_final.cpp
 stage8/stage8.diff
+stage9/archive9.diff
 stage9/audit_after9.csv
 stage9/pre9.cpp
 stage9/pre9_canon.cpp
