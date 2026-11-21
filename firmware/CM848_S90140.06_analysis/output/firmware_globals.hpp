@@ -306,6 +306,7 @@ extern word j1939_pgn61442_driveline_disengaged_timeout;  // 0x0005c38e
 extern word j1939_pgn61442_progressive_shift_disable_timeout;  // 0x0005c390
 extern word j1939_pgn61443_accelerator_pedal_kickdown_threshold;  // 0x0005c392
 extern word fuel_demand_norm_zero_cal;  // 0x0005c398
+extern word j1939_high_idle_override_speed;  // 0x0005c39a
 extern word j1939_link_fault_timeout_count_limit;  // 0x0005c39c
 extern word etc2_timeout_reload_count;  // 0x0005c39e
 extern word j1939_pgn61442_out_of_gear_timeout;  // 0x0005c3a0
@@ -317,7 +318,7 @@ extern word tsc1_lost_management_minimum_accelerator_pedal;  // 0x0005c3aa
 extern word tsc1_lost_reset_torque_limit;  // 0x0005c3ae
 extern word tsc1_lost_speed_ramp_rate;  // 0x0005c3b0
 extern word tsc1_lost_torque_ramp_rate;  // 0x0005c3b2
-extern tsc1_source_configuration_t tsc1_source_configuration_table;  // 0x0005c3b4
+extern tsc1_source_configuration_t tsc1_source_configuration_table[10];  // 0x0005c3b4
 extern word engine_retarder_output_driver_count;  // 0x0005c47c
 extern word engine_retarder_stage_1_weight;  // 0x0005c47e
 extern word engine_retarder_stage_2_weight;  // 0x0005c480
@@ -1425,10 +1426,10 @@ extern word j1939_pgn65271_voltage_tx_word;  // 0x003faef2
 extern word j1939_pgn65271_field2_init_word;  // 0x003faef4
 extern j1939_tx_msg_t j1939_pgn65260_tx_message;  // 0x003faef8
 extern j1939_tx_msg_t j1939_pgn65279_tx_message;  // 0x003faf24
-extern word tsc1_override_control_mode_previous;  // 0x003faf34
-extern word tsc1_controlling_data_link_previous;  // 0x003faf36
+extern TSC1_OVERRIDE_MODE tsc1_override_control_mode_previous;  // 0x003faf34
+extern CONTROL_NETWORK tsc1_controlling_data_link_previous;  // 0x003faf36
 extern word high_idle_override_active_flag_previous;  // 0x003faf39
-extern word engine_retarder_override_control_mode_previous;  // 0x003faf3b
+extern TSC1_OVERRIDE_MODE engine_retarder_override_control_mode_previous;  // 0x003faf3b
 extern word etc1_progressive_shift_disable_previous;  // 0x003faf3e
 extern word etc1_out_of_gear_flag_previous;  // 0x003faf40
 extern byte j1939_link_fault_clear_request_flag;  // 0x003faf42
@@ -4533,8 +4534,8 @@ extern byte can_transmit_queue_full_flag;  // 0x0040ad34
 extern byte can_receive_queue_full_flag;  // 0x0040ad35
 extern void * can_transmit_mailbox_pointer;  // 0x0040ad38
 extern byte j1939_dm1_active_flag;  // 0x0040ad53
-extern word engine_retarder_override_control_mode;  // 0x0040ad5a
-extern word engine_retarder_control_device_indicator;  // 0x0040ad5c
+extern TSC1_OVERRIDE_MODE engine_retarder_override_control_mode;  // 0x0040ad5a
+extern J1939_CONTROL_DEVICE engine_retarder_control_device_indicator;  // 0x0040ad5c
 extern word engine_retarder_controlling_source_address;  // 0x0040ad5e
 extern word engine_retarder_controlling_tsc1_control_byte;  // 0x0040ad60
 extern word engine_retarder_torque_limit_percent;  // 0x0040ad62
@@ -4590,8 +4591,8 @@ extern word j1939_dm13_hold_timer;  // 0x0040add8
 extern word j1939_dm13_fault_log_inhibit_flag;  // 0x0040adda
 extern j1939_dm13_requester_slot_t j1939_dm13_requester_slots[3];  // 0x0040addc
 extern word datalink_broadcast_enable_flags;  // 0x0040adee
-extern undefined tsc1_accepted_control_byte;  // 0x0040adf4
-extern undefined engine_control_device_indicator;  // 0x0040adf6
+extern word tsc1_accepted_control_byte;  // 0x0040adf4
+extern J1939_CONTROL_DEVICE engine_control_device_indicator;  // 0x0040adf6
 extern j1939_powertrain_control_state_t j1939_powertrain_control_state;  // 0x0040adf8
 extern undefined j1939_tsc1_speed_override_active_flag;  // 0x0040adfa
 extern undefined j1939_etc1_torque_limit_flag;  // 0x0040adfc
@@ -6102,7 +6103,7 @@ extern word governor_speed_stability_sample_counter;  // 0x003fbd18
 extern dword j1939_input_data_error_bitmap;  // 0x003fbd5a
 extern dword j1939_input_timeout_bitmap;  // 0x003fbd5e
 extern dword j1939_pedal_input_timeout_bitmap;  // 0x003fbd62
-extern word etc1_active_state_transition_snapshot;  // 0x003fbd70
+extern CONTROL_NETWORK j1939_monitor_engine_control_data_link_previous;  // 0x003fbd70
 extern word etc1_governor_mode_history_write_index;  // 0x003feb54
 extern word governor_mode_history_write_index;  // 0x003feb6e
 extern dword j1939_multiframe_rx_rts_can_header;  // 0x003fbdf7
@@ -6499,9 +6500,9 @@ extern word governor_faultDerate_prev_rpm;  // 0x003fbd36
 extern word governor_faultDerate_latch;  // 0x003fbd38
 extern word governor_faultDerate_engine_start_flag;  // 0x003fbd3c
 extern word engine_protection_shutdown_total_cal;  // 0x003fdfbc
-extern word etc1_governor_mode_transition_snapshot;  // 0x003fbd6c
+extern TSC1_OVERRIDE_MODE j1939_monitor_engine_override_control_mode_previous;  // 0x003fbd6c
 extern word governor_mode_state_transition_snapshot;  // 0x003fbd6e
-extern byte etc1_source_address_transition_snapshot;  // 0x003fbd72
+extern byte j1939_monitor_engine_controlling_source_address_previous;  // 0x003fbd72
 extern byte governor_transition_state_snapshot;  // 0x003fbd73
 extern dword etc1_governor_calib_session_start_time;  // 0x003feb60
 extern dword governor_mode_calib_session_start_time;  // 0x003feb7a

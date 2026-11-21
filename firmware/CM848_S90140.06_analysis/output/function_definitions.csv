@@ -267,8 +267,8 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 0x000539fc,sendJ1939Message,0,msg,j1939_tx_msg_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
 
-0x00053a4c,cm848_lookupJ1939ControlDevice,return,,ushort,SA table index: 1=primary(auth) 2=secondary 3=tertiary(auth) 4=unknown
-0x00053a4c,cm848_lookupJ1939ControlDevice,0,source_address,uint,J1939 source address byte to look up in the 3-entry SA calibration table
+0x00053a4c,cm848_lookupJ1939ControlDevice,return,,J1939_CONTROL_DEVICE,the control device of the source address (1 transmission / 2 ABS / 3 ASR / 4 other)
+0x00053a4c,cm848_lookupJ1939ControlDevice,0,source_address,uint,the J1939 source address to classify
 
 # -----------------------------------------------------------------------------
 # Math Division Runtime Helpers - 64-bit dividend (hi:lo) / 64-bit divisor (hi:lo)

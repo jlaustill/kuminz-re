@@ -981,6 +981,18 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     throttle override claimers (`fuel_demand_control_t.override_priority`), the injection hardware
     initialization and the fuel system hardware shutdown monitor.
   - **A scale fix:** the compressor outlet temperature is 1/32 °F.
+- **Round 6 (2026-11-21, PR #53): the TSC1 / ETC1 / Jcomm vocabulary.**
+  - **e2m names it:** block 10E8 ("Jcomm", 0x40adf4-0x40ae1f) and 10E6 (0x40ad5a) are Cummins' own layout of
+    `j1939_powertrain_control_state` (was `j1939_tsc1_override_state` / `etc1_governor_state_t`), and 10E7 holds
+    the Jcomm timeouts. Check a TSC1 / ETC1 name against them first.
+  - **The handlers:** PGN 0 is routed by destination address (`cm848_dispatchTsc1ByDestinationAddress`). The
+    engine's TSC1 goes to `processEngineTsc1Request` (was `torqueControlModeHandler`, shared with CM550 0x2f128), the
+    retarder's to `cm848_processEngineRetarderTsc1Request`. The SA whitelist is `tsc1_source_configuration_table`
+    (0x5c3b4, 10 entries: data link, source address, per-mode request timeouts / time limits).
+  - **Enums:** `TSC1_OVERRIDE_MODE` (SPN 695), `J1939_CONTROL_DEVICE` (none / transmission / ABS / ASR / unknown)
+    and `CONTROL_NETWORK` (J1922 / J1939).
+  - **Ghidra:** a piece name such as `_10_2_` counts in decimal (offset 10 = +0xa). A multi-bit mask on a
+    bitfield renders as a raw piece (`_32_2_ & 3`), so masked flag words stay words.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

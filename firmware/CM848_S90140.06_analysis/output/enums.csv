@@ -811,10 +811,19 @@ CAL_WRITE_MODE,0xee,CAL_PERSISTENT,Writes go through to EEPROM; survive power cy
 # TSC1 Override Control Mode (J1939 SPN 695) - bits 0-1 of TSC1 byte 1
 # Used as local 'control_mode' in processEngineTsc1Request and stored in
 #   j1939_powertrain_control_state.tsc1_override_control_mode
-TSC1_OVERRIDE_MODE,0,TSC1_OVERRIDE_OFF,Override disabled; normal engine governor operation,1
-TSC1_OVERRIDE_MODE,1,TSC1_SPEED_CONTROL,Speed control; ECU governs to TSC1 requested_speed,1
-TSC1_OVERRIDE_MODE,2,TSC1_TORQUE_CONTROL,Torque control; active during transmission shift-in-progress,1
-TSC1_OVERRIDE_MODE,3,TSC1_SPEED_TORQUE_LIMIT,Speed and torque limit; ECU caps both simultaneously,1
+TSC1_OVERRIDE_MODE,0,TSC1_OVERRIDE_OFF,SPN 695 00 = override disabled (e2m Jcomm_Engine_Control_Mode / Jcomm_Retarder_Control_Mode 0 = disable),2
+TSC1_OVERRIDE_MODE,1,TSC1_SPEED_CONTROL,SPN 695 01 = speed control: the engine governs to the requested speed (e2m 1 = speed),2
+TSC1_OVERRIDE_MODE,2,TSC1_TORQUE_CONTROL,SPN 695 10 = torque control (e2m 2 = torque),2
+TSC1_OVERRIDE_MODE,3,TSC1_SPEED_TORQUE_LIMIT,SPN 695 11 = speed and torque limit control (e2m 3 = limit),2
+# J1939 control device (e2m 10E8 +2 Jcomm_Engine_Control_Device_Indicator / 10E6 +2 the retarder's): cm848_lookupJ1939ControlDevice
+J1939_CONTROL_DEVICE,0,J1939_CONTROL_DEVICE_NONE,e2m Jcomm_Engine_Control_Device_Indicator 0 = NONE,2
+J1939_CONTROL_DEVICE,1,J1939_CONTROL_DEVICE_TRANSMISSION,1 = TRANS: the sender is j1939_transmission_source_address,2
+J1939_CONTROL_DEVICE,2,J1939_CONTROL_DEVICE_ANTI_LOCK_BRAKES,2 = ABS: j1939_anti_lock_brake_source_address,2
+J1939_CONTROL_DEVICE,3,J1939_CONTROL_DEVICE_ANTI_SLIP_REGULATION,3 = ASR: j1939_anti_slip_regulation_source_address,2
+J1939_CONTROL_DEVICE,4,J1939_CONTROL_DEVICE_UNKNOWN,4 = UNKNOWN: any other source address,2
+# Control network (e2m 10E8 +1A Jcomm_Engine_Control_Network_Type / +1C Jcomm_Out_of_Gear_Network_Type)
+CONTROL_NETWORK,0,CONTROL_NETWORK_J1922,e2m Jcomm_Engine_Control_Network_Type 0 = J1922 (on the J1708 link),2
+CONTROL_NETWORK,1,CONTROL_NETWORK_J1939,1 = J1939,2
 
 # Engine State (Cummins FSEGST Engine_State; e2m block 1068 +0 - its labels in CHR_CC_11.45.01.07.e2m: 1 STOP 2 CRANK 3 RUN 4 ENGBRAKE 5 OVERSPED 6 JUMPSTRT 7 REENTRY 8 SHUTDOWN): engine_state (0x40a7c0) set by cm848_updateEngineState. Block 1068 lines up 7/7 (+2 Start_Power_Down = power_down_start_flag / +4 ECM_Powerdown_Timer = ecm_power_down_timer / +6 / +A crank / run time / +E / +F Engine_Is_Active / _Starting). Renamed 2026-11-19 from ENGINE_STATE / engine_state: the old names and comments disagreed for 1 / 4 / 5 / 8
 ENGINE_STATE,0,ENGINE_STATE_UNINITIALIZED,Zeroed RAM: cm848_updateEngineState turns 0 (or anything above 8) into STOPPED,2

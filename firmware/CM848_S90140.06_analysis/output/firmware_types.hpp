@@ -914,11 +914,24 @@ typedef enum {
 } CAL_WRITE_MODE;
 
 typedef enum {
-    TSC1_OVERRIDE_OFF = 0,  /* Override disabled; normal engine governor operation */
-    TSC1_SPEED_CONTROL = 1,  /* Speed control; ECU governs to TSC1 requested_speed */
-    TSC1_TORQUE_CONTROL = 2,  /* Torque control; active during transmission shift-in-progress */
-    TSC1_SPEED_TORQUE_LIMIT = 3  /* Speed and torque limit; ECU caps both simultaneously */
+    TSC1_OVERRIDE_OFF = 0,  /* SPN 695 00 = override disabled (e2m Jcomm_Engine_Control_Mode / Jcomm_Retarder_Control_Mode 0 = disable) */
+    TSC1_SPEED_CONTROL = 1,  /* SPN 695 01 = speed control: the engine governs to the requested speed (e2m 1 = speed) */
+    TSC1_TORQUE_CONTROL = 2,  /* SPN 695 10 = torque control (e2m 2 = torque) */
+    TSC1_SPEED_TORQUE_LIMIT = 3  /* SPN 695 11 = speed and torque limit control (e2m 3 = limit) */
 } TSC1_OVERRIDE_MODE;
+
+typedef enum {
+    J1939_CONTROL_DEVICE_NONE = 0,  /* e2m Jcomm_Engine_Control_Device_Indicator 0 = NONE */
+    J1939_CONTROL_DEVICE_TRANSMISSION = 1,  /* 1 = TRANS: the sender is j1939_transmission_source_address */
+    J1939_CONTROL_DEVICE_ANTI_LOCK_BRAKES = 2,  /* 2 = ABS: j1939_anti_lock_brake_source_address */
+    J1939_CONTROL_DEVICE_ANTI_SLIP_REGULATION = 3,  /* 3 = ASR: j1939_anti_slip_regulation_source_address */
+    J1939_CONTROL_DEVICE_UNKNOWN = 4  /* 4 = UNKNOWN: any other source address */
+} J1939_CONTROL_DEVICE;
+
+typedef enum {
+    CONTROL_NETWORK_J1922 = 0,  /* e2m Jcomm_Engine_Control_Network_Type 0 = J1922 (on the J1708 link) */
+    CONTROL_NETWORK_J1939 = 1  /* 1 = J1939 */
+} CONTROL_NETWORK;
 
 typedef enum {
     ENGINE_STATE_UNINITIALIZED = 0,  /* Zeroed RAM: cm848_updateEngineState turns 0 (or anything above 8) into STOPPED */
@@ -1881,8 +1894,10 @@ struct j1939_powertrain_messages_received_t {
     uint8_t etc1_spn522_percent_clutch_slip;  /* ETC1 byte 4: the percent clutch slip (SPN 522); no access found in the decompile (was spn522_clutch_slip) */
     uint8_t etc1_status_byte_5;  /* ETC1 byte 5: bits 1-2 engine momentary overspeed enable (SPN 606), 3-4 progressive shift disable (SPN 607) (was byte5_control) */
     uint8_t reserved_07[3];  /* Gap/reserved bytes */
-    uint8_t auxiliary_state;  /* ETC1 auxiliary state byte */
-    uint8_t reserved_0b[9];  /* Gap/reserved bytes to offset 0x14 */
+    uint16_t etc2_actual_gear_ratio_previous;  /* etc2_actual_gear_ratio before the latest valid ETC2 (sth @ 0x22cf0; cm848_initEtc2Handler zeroes it, sth @ 0x22d2c); no reader in the decompile (was auxiliary_state, a byte: the word store rendered as the _10_2_ piece) */
+    uint8_t reserved_0c;  /* no access found */
+    uint16_t etc2_spn526_actual_gear_ratio;  /* ETC2 bytes 2-3 (SPN 526 transmission actual gear ratio, 0.001 per bit) as received: cm848_j1939ProcessPgn61445Etc2 stores byte 3 at +0xd and byte 2 at +0xe and reads the word (lhz @ 0x22cc4); below 0xfb00 it becomes etc2_actual_gear_ratio (was bytes 2-3 of reserved_0b) */
+    uint8_t reserved_0f[5];  /* no access found */
     uint8_t tsc1_control_byte;  /* TSC1 byte 1: bits 1-2 override control mode (SPN 695), 3-4 requested speed control conditions (SPN 696), 5-6 override control mode priority (SPN 897) (was control_word) */
     uint16_t tsc1_requested_speed;  /* TSC1 bytes 2-3: the requested speed / speed limit (SPN 898, 0.125 rpm) (was requested_speed) */
     uint8_t tsc1_requested_torque;  /* TSC1 byte 4: the requested torque / torque limit (SPN 518, percent + 125) (was requested_torque) */
@@ -2022,26 +2037,26 @@ struct mios_port_data_register_t {
 };
 
 struct j1939_powertrain_control_state_t {
-    uint16_t tsc1_override_control_mode;  /* e2m 10E8 +4 Jcomm_Engine_Control_Mode (UNITLESS): 'JCOMM CONTROL MODE 0 = DISABLE 1 = SPEED 2 = TORQUE 3 = LIMIT'. the accepted engine TSC1 request's override control mode (J1939 SPN 695: 0 override disabled / 1 speed control / 2 torque control / 3 speed and torque limit control); processEngineTsc1Request sets it from byte 1 bits 1-2 and cm848_runTsc1LostManagement sets 3 / 0 (was governor_mode) */
+    TSC1_OVERRIDE_MODE tsc1_override_control_mode;  /* e2m 10E8 +4 Jcomm_Engine_Control_Mode (UNITLESS): 'JCOMM CONTROL MODE 0 = DISABLE 1 = SPEED 2 = TORQUE 3 = LIMIT'. the accepted engine TSC1 request's override control mode (J1939 SPN 695: 0 override disabled / 1 speed control / 2 torque control / 3 speed and torque limit control); processEngineTsc1Request sets it from byte 1 bits 1-2 and cm848_runTsc1LostManagement sets 3 / 0 (was governor_mode) */
     uint16_t high_idle_override_active_flag;  /* e2m 10E8 +6 Jcomm_High_Idle_Override (UNITLESS): 'Jcomm High Idle Override 0 = FALSE; no override 1 = TRUE; override'. 1 = the high idle override is granted: ETC1 byte 5 bits 1-2 (SPN 606 engine momentary overspeed enable) = 01 while the engine TSC1 speed control (mode 1) comes from source index 1; selectEngineSpeedLimit then applies the e2m Jcomm_High_Idle_Override_Speed (0x5c39a) (was torque_limit_mode_select) */
     uint16_t etc1_out_of_gear_flag;  /* e2m 10E8 +8 Jcomm_Out_of_Gear (UNITLESS): 'Jcomm Out of Gear 0 = FALSE; in gear 1 = TRUE; out of gear'. e2m Jcomm_Out_of_Gear: 1 when ETC1 byte 1 reports the driveline disengaged (SPN 560 = 00) and no shift in process (SPN 574 = 00); cleared when etc1_out_of_gear_timer runs out (was etc1_disable_control) */
     uint16_t etc1_spn607_progressive_shift_disable;  /* e2m 10E8 +A Jcomm_Progressive_Shift_Disable (UNITLESS): 'Jcomm Progressive Shift Disable 1=TRUE;disable prog shift 0=FALSE;allow prog s'. 1=ETC1 torque limit active (was etc1_limit_state._0_2_) */
     uint16_t tsc1_speed_limit;  /* e2m 10E8 +C Jcomm_Engine_Speed_Limit_RPM (RPM): 'Jcomm Engine Speed Limit RPM maximum allowed engine speed as per link user'. the TSC1 speed limit of mode 3 (the requested speed); cm848_runTsc1LostManagement ramps it up by tsc1_lost_speed_ramp_rate or resets it to the engine speed; read by selectEngineSpeedLimit (was etc1_torque_limit_value) */
-    uint16_t tsc1_requested_percent_torque_times_256;  /* e2m 10E8 +E Jcomm_Engine_Torque_Command (%): 'Torque command to engine as received over datalink'. mode 2 (torque control): the requested torque in percent x 256 (byte 4 x 256 - 32000 = (raw - 125) x 256) (was etc1_speed_setpoint) */
+    int16_t tsc1_requested_percent_torque_times_256;  /* e2m 10E8 +E Jcomm_Engine_Torque_Command (%): 'Torque command to engine as received over datalink'. mode 2 (torque control): the requested torque in percent x 256 (byte 4 x 256 - 32000 = (raw - 125) x 256) (was etc1_speed_setpoint) */
     uint16_t tsc1_requested_speed_capped;  /* e2m 10E8 +10 Jcomm_Reference_RPM (RPM): 'Jcomm Reference RPM engine speed to be output by engine as per link user'. mode 1 (speed control): the requested speed capped at 24000 (3000 rpm); read by cm848_selectTsc1SpeedControlMode (was etc1_capped_speed_target) */
     uint16_t tsc1_speed_control_flag;  /* e2m 10E8 +12 Jcomm_Speed_Control_Status (UNITLESS): 'Jcomm Speed Control Status 1 = speed control mode 0 = not in speed control mo'. 1 while the accepted request is speed control (mode 1), else 0; no reader in the decompile (was etc1_control_flags) */
     uint16_t tsc1_torque_limit_fueling;  /* e2m 10E8 +14 Jcomm_Torque_Derate_Fueling (MM3S): 'Jcomm Torque Derate Fueling maximum allowed fuel as per link user'. mode 3: the requested torque limit as fueling ((j1939_reference_engine_fueling - fuel_demand_norm_zero_cal) x percent / 100 + the zero fueling, at least 0); cm848_runTsc1LostManagement ramps it through tsc1_torque_limit_ramp_integrator; read by cm848_applyTsc1TorqueLimit and cm848_arbitrateGovernedFueling (was etc1_mode3_torque_limit) */
     uint16_t tsc1_torque_control_fueling;  /* e2m 10E8 +16 Jcomm_Fueling_Command (MM3S): 'Jcomm Fueling Command Fuel commanded to engine as dictated by link user'. mode 2 (torque control): the requested torque as fueling (the conversion of tsc1_torque_limit_fueling); read by cm848_setEngineOperatingMode1 (was etc1_torque_limit_calc) */
     uint16_t tsc1_requested_speed_control_condition;  /* e2m 10E8 +18 Jcomm_Speed_Governor_Mode (UNITLESS): 'Jcomm Speed Governor Mode indicator of which speed mode characteristic ASG is i'. TSC1 byte 1 bits 3-4 (J1939 SPN 696 Engine Requested Speed Control Conditions) of a speed control request: the index into j1939_tsc1_speed_control_condition_gain_sets (was etc1_speed_control_mode) */
-    uint16_t tsc1_controlling_data_link;  /* e2m 10E8 +1A Jcomm_Engine_Control_Network_Type (UNITLESS): 'network type in control of engine 0 = J1922; 1 = J1939'. the data link of the accepted control request: 1 = J1939 (processEngineTsc1Request); a timeout counts as a J1939 link fault when it is 1, else as a J1708 (J1922) one. The first argument of the ignored request and source configuration lookups (was etc1_active_state) */
-    uint16_t out_of_gear_network_type;  /* e2m 10E8 +1C Jcomm_Out_of_Gear_Network_Type (UNITLESS): 'Indicator of which network set Jcomm_Out_of_Gear: 0 = 1922; 1 = 1939'. the network that set the out of gear flag (e2m: 0 = J1922, 1 = J1939); the ETC1 handler sets 1 with etc1_out_of_gear_flag (was etc1_out_of_gear_latch, before that etc1_speed_disable_latch) */
+    CONTROL_NETWORK tsc1_controlling_data_link;  /* e2m 10E8 +1A Jcomm_Engine_Control_Network_Type (UNITLESS): 'network type in control of engine 0 = J1922; 1 = J1939'. the data link of the accepted control request: 1 = J1939 (processEngineTsc1Request); a timeout counts as a J1939 link fault when it is 1, else as a J1708 (J1922) one. The first argument of the ignored request and source configuration lookups (was etc1_active_state) */
+    CONTROL_NETWORK out_of_gear_network_type;  /* e2m 10E8 +1C Jcomm_Out_of_Gear_Network_Type (UNITLESS): 'Indicator of which network set Jcomm_Out_of_Gear: 0 = 1922; 1 = 1939'. the network that set the out of gear flag (e2m: 0 = J1922, 1 = J1939); the ETC1 handler sets 1 with etc1_out_of_gear_flag (was etc1_out_of_gear_latch, before that etc1_speed_disable_latch) */
     uint16_t etc1_out_of_gear_data_valid_flag;  /* e2m 10E8 +1E Jcomm_OOG_Valid_Flag (UNITLESS): 'Indicates valid jcomm oog; 0=FALSE; 1=TRUE'. 1 while ETC1 gives a valid driveline / shift status with a J1939 vehicle speed source (vehicle_speed_sensor_type_cal 4 / 5); cleared when etc1_out_of_gear_data_timer or the ETC1 message timeout runs out; read by cm848_updateDrivetrainRatio and etcTransmissionModeControl (was etc1_control_active) */
     uint16_t etc1_spn573_torque_converter_lockup_disengaged_flag;  /* e2m 10E8 +20 Jcomm_Torque_Converter_Lockup_Disengaged (HEX): 'Indicates when Torque Converter is locked up 0=engaged; 1=disengaged'. ETC1 byte 1 bits 3-4 (SPN 573): 1 when the torque converter lockup is disengaged (00), 0 when engaged (01); set to 0 when etc1_torque_converter_lockup_timer runs out; read by cm848_updateEngineRetarderEnableState (was etc1_spn573_tc_lockup_disengage) */
     uint16_t etc1_output_shaft_speed_fault_hold_off_flag;  /* e2m 10E8 +22 J1939_Powerup_Faults_Inhibit (UNITLESS): 'flag indicating VSS lost fault is prohibited.'. 1 holds off the J1939 output shaft speed fault: while switch input bit 0 is 0, or while the engine has run for fewer passes than j1939_pgn61442_output_shaft_speed_fault_run_state_delay (e2m J1939_Powerup_Runtime_Fault_Delay) (was etc1_handler_initialized) */
-    uint16_t j1939_blocked_message_bits;  /* e2m 10E8 +24 J1939_Block_Message (HEX): 'Bit 0 TSC1 destination engine; Bit 1 TSC1 Destination retarder; Bit 2 ETC1'. the J1939 messages blocked after a time limit: bit 0 = TSC1 to the engine (the sender went into the ignored request list), bit 1 = TSC1 to the engine retarder, bit 2 = the ETC1 high idle override (in recovery: e2m Jcomm_Recovery_Time). processEngineTsc1Request clears bit 0 on override disabled; ETC1 SPN 606 = 00 and the high idle timeout clear bit 2 (was time_limited_node_status_bits, before that speed_control_target) */
+    uint16_t j1939_blocked_message_bits;  /* e2m 10E8 +24 J1939_Block_Message (HEX): 'Bit 0 TSC1 destination engine; Bit 1 TSC1 Destination retarder; Bit 2 ETC1'. The J1939 messages blocked after a time limit: bit 0 = TSC1 to the engine (the sender went into the ignored request list), bit 1 = TSC1 to the engine retarder, bit 2 = the ETC1 high idle override (in recovery: e2m Jcomm_Recovery_Time). processEngineTsc1Request clears bit 0 on override disabled; ETC1 SPN 606 = 00 and the high idle timeout clear bit 2. A word, not a bitfield: the code clears and sets the bits with masks, which Ghidra renders as a raw piece on a bitfield (was time_limited_node_status_bits, before that speed_control_target) */
     uint8_t etc1_spn574_shift_in_process;  /* e2m 10E8 +26 Jcomm_Shift_In_Process (UNITLESS): 'J1939 ETC1 Shift in process status bits state. 0=F;1=T'. 1=coast/brake mode from ETC1 byte0 bits 0x30==0x10 */
     uint8_t etc2_transmission_selected_gear;  /* e2m 10E8 +27 J1939_Selected_Gear (UNITLESS): 'J1939 ETC2 Selected Gear'. J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when etc2_selected_gear_timeout (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter) */
-    uint16_t engine_net_output_torque;  /* e2m 10E8 +28 Jcomm_Engine_Output_Net_Torque (FT*LB): 'Jcomm Net ouput torque = Actual - friction'. the engine's net output torque in ft lb (e2m: actual - friction, signed); read by cm848_j1939HandlePgn65504ProprietaryB, cm848_checkAirHandlingSystemProtectionHighLoad and governor_speedRatio_etcFuelCorrection_calc (was proprietary_offset_value) */
+    int16_t engine_net_output_torque;  /* e2m 10E8 +28 Jcomm_Engine_Output_Net_Torque (FT*LB): 'Jcomm Net ouput torque = Actual - friction'. the engine's net output torque in ft lb (e2m: actual - friction, signed); read by cm848_j1939HandlePgn65504ProprietaryB, cm848_checkAirHandlingSystemProtectionHighLoad and governor_speedRatio_etcFuelCorrection_calc (was proprietary_offset_value) */
     uint16_t tsc1_request_timed_out_flag;  /* e2m 10E8 +2A TSC_Lost_Flag (UNITLESS): 'Flag indicated J1939 TSC1 message has timed out used as signal for PTP mode.'. 1 when tsc1_request_timeout_count is below 2 (the accepted engine TSC1 request timed out); cm848_runTsc1LostManagement then ramps the limits (was etc1_speed_error_timeout_flag) */
     uint16_t tsc1_request_time_limit_timer;  /* the time limit of a speed / torque control request: the sender's tsc1_source_configuration_t speed_control_time_limit / torque_control_time_limit + 1 when the request starts or changes; at 1 the sender goes into the ignored request list (bit 0 of j1939_blocked_message_bits) and cm848_runTsc1LostManagement runs (was etc1_activation_confirm_timer) */
     uint16_t tsc1_request_timeout_count;  /* the accepted engine TSC1 request's message timeout: the sender's request timeout for the mode (+4 / +8 / +0xc of its configuration entry) + 1 on each accepted message, counted down each pass (was etc1_speed_error_timeout) */
@@ -2059,15 +2074,15 @@ struct j1939_powertrain_control_state_t {
     uint16_t etc1_output_shaft_speed_run_state_count;  /* counts the passes the engine runs (RUNNING / ENGINE_BRAKE / OVERSPEED) with the J1939 speed source with gear ratio, for etc1_output_shaft_speed_fault_hold_off_flag (was governor_mode_transition_counter) */
     uint8_t _pad;  /* Alignment padding */
     uint8_t tsc1_controlling_source_address;  /* the source address of the accepted engine TSC1 request (the sender in control). Not SPN 1482, which is ETC1's source address of the device controlling the transmission (was etc1_spn1482_source_address) */
-    void * tsc1_matched_source_configuration_ptr;  /* the tsc1_source_configuration_table entry cm848_findTsc1SourceConfiguration matched for the last sender (was etc1_config_entry_ptr) */
+    tsc1_source_configuration_t* tsc1_matched_source_configuration_ptr;  /* the tsc1_source_configuration_table entry cm848_findTsc1SourceConfiguration matched for the last sender (was etc1_config_entry_ptr) */
     tsc1_source_configuration_t* tsc1_source_configuration_ptr;  /* the configuration entry of the accepted engine TSC1 sender (its request timeouts and time limits); a new sender takes over only with an entry at the same or an earlier position (was etc1_active_config_ptr) */
-    void * retarder_tsc1_source_configuration_ptr;  /* the configuration entry of the accepted engine retarder TSC1 sender (+0xe / +0x10 / +0x12 read) (was etc1_secondary_config_ptr) */
+    tsc1_source_configuration_t* retarder_tsc1_source_configuration_ptr;  /* the configuration entry of the accepted engine retarder TSC1 sender (+0xe / +0x10 / +0x12 read) (was etc1_secondary_config_ptr) */
     uint16_t high_idle_override_recovery_flag;  /* 1 after the high idle override hit its time limit: the transmission must stop asking for it for j1939_time_limited_node_recovery_time (e2m Jcomm_Recovery_Time) before it is granted again; cleared by ETC1 SPN 606 = 00 or when high_idle_override_timeout_timer runs out (was etc1_torque_limit_active) */
     uint16_t etc1_message_timeout;  /* Countdown: fires if no ETC1 message received within window */
 };
 
 struct tsc1_source_configuration_t {
-    uint16_t data_link;  /* the data link the entry is for (1 = J1939; the 0xff source address wildcard counts only on 1) (was match_key) */
+    CONTROL_NETWORK data_link;  /* the data link the entry is for (1 = J1939; the 0xff source address wildcard counts only on 1) (was match_key) */
     uint16_t source_address_filter;  /* Low byte = J1939 SA to match (0xFF=wildcard); high byte = priority filter */
     uint16_t speed_control_request_timeout;  /* the request timeout of a speed control request (mode 1): tsc1_request_timeout_count reload (was speed_error_timeout_mode1) */
     uint16_t speed_control_time_limit;  /* the time limit of a speed control request: tsc1_request_time_limit_timer reload (was activation_confirm_timeout_mode1) */

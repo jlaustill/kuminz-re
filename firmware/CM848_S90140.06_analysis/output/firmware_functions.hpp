@@ -1235,7 +1235,7 @@ void mpc555_processJ1939TxBufferSend(void);  // @ 0x000535e8
 void mpc555_queueCanReceiveMessage(int param_1);  // @ 0x00053720
 void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined1 *param_4);  // @ 0x00053858
 void sendJ1939Message(j1939_tx_msg_t *msg);  // @ 0x000539fc
-word cm848_lookupJ1939ControlDevice(dword source_address);  // @ 0x00053a4c
+J1939_CONTROL_DEVICE cm848_lookupJ1939ControlDevice(dword source_address);  // @ 0x00053a4c
 void cm848_handleCanMailboxTransmitComplete(uint param_1);  // @ 0x00053aa8
 void cm848_handleCanMailboxTransmitRange(int param_1);  // @ 0x00053ae0
 void cm848_writeCanControllerTxMailbox(int param_1,int param_2,int param_3);  // @ 0x00053b28

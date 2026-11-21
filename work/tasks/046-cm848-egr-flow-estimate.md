@@ -279,6 +279,33 @@ source lookup and the TSC1 dispatcher (scripts in `session_folder/round6/`).
     +0xe / +0x10 / +0x12 retarder).
   - CM550's `cm550_diagnosticMessageValidator` / `cm550_diagnosticSessionValidator` sit where CM848's ignored
     request and source lookups sit (a name lead for CM550).
+- **Stage B1 (2f5eec4): e2m 10E8 / 10E6 are the Jcomm control state.**
+  - **The blocks:** Cummins' own layout of the struct (10E8 +4 = struct +0) and the retarder words.
+  - **They confirm** the stage A names, e.g. Jcomm_Engine_Control_Network_Type 0 = J1922 / 1 = J1939 and
+    TSC_Lost_Flag. Every covered field cites its record.
+  - **They correct:**
+    - `out_of_gear_network_type`, `j1939_blocked_message_bits` (J1939_Block_Message) and `engine_net_output_torque`;
+    - the two device indicators (0 none / 1 transmission / 2 ABS / 3 ASR / 4 unknown);
+    - `cm848_lookupJ1939ControlDevice`, which returns exactly those codes.
+- **Stage B2: types.**
+  - **Enums:** `TSC1_OVERRIDE_MODE` (resized to a word), `J1939_CONTROL_DEVICE` and `CONTROL_NETWORK`.
+  - **short:** on the two e2m S fields.
+  - **The source table:** its pointers are typed and the table is an array of 10.
+  - **The ETC2 receive words,** settled from the stores:
+    - the previous ratio is a word at +0xa (the old byte `auxiliary_state`; Ghidra's `_10_2_` counts in decimal);
+    - the SPN 526 ratio is a word at +0xd.
+  - **Also:** 0x5c39a `j1939_high_idle_override_speed`, the J1939 monitor's three copies of the engine control
+    state, and two stale local rows.
+  - **Reverted:** the bitfield. Masked writes render as a raw piece, so the field stays a word.
+- **Round 6 leads:**
+  - The J1939 monitor's session record: e2m 10FE J1939_Active_Engine (0x3feb4e), 10FF J1939_Active_Retarder and 1100
+    J1939_*_Control_Status. Still unnamed or etc1-named: `etc1_governor_calib_session_start_time`,
+    `etc1_governor_mode_history_write_index`, DAT_003feb56-5e (the mode history), DAT_003feb64 (the duration),
+    `governor_transition_state_snapshot`. The "see j1939mon specification" text says it is one structure.
+  - The other `cm848_*Governor*` functions of the TSC1 path: `cm848_resetGovernorState`, `governor_reset`,
+    `governor_resetModeStateOnCondition`, `cm848_initGovernorStateVariables` and `initGovernorJ1939Bypass` reset the
+    Jcomm state.
+  - `retarder_tsc1_mode_transition_timer` / `retarder_tsc1_speed_mode_flag`: read the retarder handler in full.
 
 ## Leads (not in this PR)
 
