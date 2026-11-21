@@ -602,13 +602,14 @@ ETC1_SPN607_PROGRESSIVE_SHIFT,1,PROGRESSIVE_SHIFT_DISABLE,Progressive shift disa
 ETC1_SPN607_PROGRESSIVE_SHIFT,2,PROGRESSIVE_SHIFT_RESERVED,Reserved,1
 ETC1_SPN607_PROGRESSIVE_SHIFT,3,PROGRESSIVE_SHIFT_NA,Progressive shift state not available,1
 
-# Drivetrain Interface Type (drivetrain_type @ 0x003fdda6)
+# Vehicle speed sensor type (vehicle_speed_sensor_type_cal @ 0x003fdda6 = e2m 117F +3A RSC_Sensor_Type [VSRSSNTY]; was drivetrain_type / DRIVETRAIN_TYPE - round 5)
 # Calibration constant set at build time; controls J1939/VSS/TPU interface mode
-DRIVETRAIN_TYPE,0,DRIVETRAIN_STANDALONE,No transmission interface - standalone engine,2
-DRIVETRAIN_TYPE,1,DRIVETRAIN_MANUAL_VSS,Manual transmission with vehicle speed sensor (VSS),2
-DRIVETRAIN_TYPE,3,DRIVETRAIN_MANUAL_TPU,Manual transmission with direct TPU hardware throttle/PTO,2
-DRIVETRAIN_TYPE,4,DRIVETRAIN_AUTO_J1939_FULL,Automatic trans - J1939 ETC1(PGN 61442) + cruise/vehicle speed,2
-DRIVETRAIN_TYPE,5,DRIVETRAIN_AUTO_J1939_ETC1,Automatic trans - J1939 ETC1(PGN 61442) shift defuel only,2
+VEHICLE_SPEED_SENSOR_TYPE,0,VEHICLE_SPEED_SENSOR_NONE,e2m VSRSSNTY 0 = none: no vehicle speed sensor (the CCVS1 builder sends no speed; the HSG compensator runs) (was DRIVETRAIN_STANDALONE),2
+VEHICLE_SPEED_SENSOR_TYPE,1,VEHICLE_SPEED_SENSOR_INDUCTIVE,1 = inductive (the magnetic vehicle speed sensor on TPU-B channel 2; this truck's EEPROM holds 1) (was DRIVETRAIN_MANUAL_VSS),2
+VEHICLE_SPEED_SENSOR_TYPE,2,VEHICLE_SPEED_SENSOR_MINIGEN,2 = minigen (a mini generator speed sensor); no code compares with it,2
+VEHICLE_SPEED_SENSOR_TYPE,3,VEHICLE_SPEED_SENSOR_TACHOGRAPH,3 = tach: the speed comes from a tachograph signal; cm848_initVehicleSpeedSensorChannel and the sensor interrupt handle the TPU-B channel 2 input differently (was DRIVETRAIN_MANUAL_TPU),2
+VEHICLE_SPEED_SENSOR_TYPE,4,VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO,4 = dlw/GR&OOG: data link with gear ratio and out-of-gear - the vehicle speed from the J1939 ETC1 output shaft speed (cm848_calculateVehicleSpeedFromOutputShaft) and the ETC2 gear ratio (was DRIVETRAIN_AUTO_J1939_FULL),2
+VEHICLE_SPEED_SENSOR_TYPE,5,VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO,5 = dlw/o GR&OOG: data link without gear ratio and out-of-gear - ETC1 only (was DRIVETRAIN_AUTO_J1939_ETC1),2
 
 # Governor Mode States
 # Internal governor state machine values

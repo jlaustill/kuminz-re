@@ -220,8 +220,8 @@ would otherwise misname.
     check the twin first.
   - The A/C working words (`protection_event26_*`), the converter clutch monitor's `protection_*` words, the wastegate
     controller's working words.
-  - The 117F rows `lifetime_distance_pulses` (Total_Distance, MI) and 0x3fdda6 `drivetrain_type`, whose e2m record is
-    RSC_Sensor_Type, the road speed sensor type. That one needs care: the cruise fix rests on it.
+  - The 117F row `lifetime_distance_pulses` (Total_Distance, MI): the name gives the raw unit (8000 pulses per
+    mile), which fits the code; keep. (0x3fdda6 is resolved in round 5: `vehicle_speed_sensor_type_cal`.)
   - The stale `target_rpm` wording in four cruise rows; the 48RE governor pressure functions 0x3257c / 0x3241c.
   - The compressor outlet temperature scale: bin 5 reads 1/32 °F, the comments say 1/64.
   - CM550's 0x80a9e0, the unnamed twin of 0x40a280.

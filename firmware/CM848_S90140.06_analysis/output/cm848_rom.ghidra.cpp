@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 01:46:32 MST 2026
+// Generated: Sat Nov 21 01:51:59 MST 2026
 
 
 //
@@ -23344,15 +23344,15 @@ LAB_00022900:
   }
   j1939_tsc1_override_state.etc1_spn574_shift_in_process =
        (j1939_tsc1_received.byte1_status & 0x30) == 0x10;
-  if ((((drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) ||
-       (drivetrain_type == DRIVETRAIN_AUTO_J1939_ETC1)) &&
+  if ((((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) ||
+       (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) &&
       ((j1939_tsc1_received.byte1_status & 3) < 2)) &&
      ((j1939_tsc1_received.byte1_status & 0x30) < 0x11)) {
     j1939_tsc1_override_state.etc1_mode_timeout = j1939_pgn61442_out_of_gear_timeout + 1;
     j1939_tsc1_override_state.etc1_control_active = 1;
   }
-  if (((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL) &&
-      (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)) ||
+  if (((vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) &&
+      (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) ||
      (j1939_tsc1_override_state.etc1_control_active == 1)) {
     if (((j1939_tsc1_received.byte1_status & 0x30) == 0) &&
        ((j1939_tsc1_received.byte1_status & 3) == 0)) {
@@ -23367,7 +23367,7 @@ LAB_00022900:
     }
   }
 LAB_00022a00:
-  if ((drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) &&
+  if ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) &&
      (j1939_tsc1_received.spn191_output_shaft_speed =
            CONCAT11(rx_msg->data_pointer[2],rx_msg->data_pointer[1]),
      j1939_tsc1_received.spn191_output_shaft_speed < 0xfb00)) {
@@ -23430,7 +23430,7 @@ void cm848_initJ1939Pgn61442Etc1Handler(void)
   j1939_tsc1_override_state.etc1_speed_cmd_timeout =
        j1939_pgn61442_output_shaft_speed_power_up_timeout;
   j1939_tsc1_override_state.etc1_handler_initialized = 1;
-  if (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) {
+  if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) {
     system_status_flags_t_003fe974.fault_detected_bits_16_to_31 =
          system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0xdfff;
     fault_registered_bits_16_to_31 = fault_registered_bits_16_to_31 & 0xdfff;
@@ -24430,7 +24430,7 @@ void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
   else {
     j1939_ccvs1_two_speed_axle_byte = 0xfd;
   }
-  if ((short)drivetrain_type < 1) {
+  if ((short)vehicle_speed_sensor_type_cal < 1) {
     j1939_ccvs1_wheel_based_vehicle_speed = 0xffff;
   }
   else {
@@ -26779,8 +26779,8 @@ void cm848_processGovernorModeTransition(void)
     j1939_tsc1_override_state.etc1_spn573_tc_lockup_disengage = 0;
     j1939_tsc1_override_state.etc1_override_timeout = 0;
   }
-  if ((drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) ||
-     (drivetrain_type == DRIVETRAIN_AUTO_J1939_ETC1)) {
+  if ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) ||
+     (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) {
     if (j1939_tsc1_override_state.etc1_mode_timeout != 0) {
       j1939_tsc1_override_state.etc1_mode_timeout = j1939_tsc1_override_state.etc1_mode_timeout - 1;
     }
@@ -26795,7 +26795,7 @@ void cm848_processGovernorModeTransition(void)
       bVar4 = true;
     }
   }
-  if (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) {
+  if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) {
     if (((engine_state == ENGINE_STATE_RUNNING) || (engine_state == ENGINE_STATE_ENGINE_BRAKE)) ||
        (engine_state == ENGINE_STATE_OVERSPEED)) {
       j1939_tsc1_override_state.governor_mode_transition_counter =
@@ -44382,7 +44382,7 @@ void cm848_calculateHighSpeedGovernorCompensatedEngineSpeed(void)
        (drivetrain_ratio_unsettled_flag == 0)) ||
       ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
      (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x4000) != 0 ||
-      (drivetrain_type == DRIVETRAIN_STANDALONE)))) {
+      (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_NONE)))) {
     high_speed_governor_compensator_working_filter_coefficient_1 =
          high_speed_governor_compensator_filter_coefficient_1;
     high_speed_governor_compensator_working_filter_coefficient_2 =
@@ -84620,7 +84620,8 @@ LAB_005249d4:
 void governor_cruise_speedReference_update(void)
 
 {
-  if ((drivetrain_type == DRIVETRAIN_MANUAL_VSS) && (two_speed_axle_enable_cal == 1)) {
+  if ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_INDUCTIVE) &&
+     (two_speed_axle_enable_cal == 1)) {
     if ((switch_input_state_bits[3] & 0x80) == 0) {
       cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_low;
       road_speed_governor_top_droop_gain =
@@ -84791,7 +84792,7 @@ void governorCruiseStateMachine(void)
                  (road_speed_governor_top_droop_width_cal,&local_30,uVar2,
                   governor_fuel_table_xaxis_cal,400,governor_fuel_table_ystart_cal,
                   governor_fuel_table_yend_cal,4);
-  if (drivetrain_type == DRIVETRAIN_MANUAL_VSS) {
+  if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_INDUCTIVE) {
     cruise_top_droop_gain = cruise_top_droop_gain_for_rear_axle_ratio_low;
     road_speed_governor_top_droop_gain = road_speed_governor_top_droop_gain_for_rear_axle_ratio_low;
   }
@@ -85360,19 +85361,20 @@ void initCruiseConfirmFlags(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* Drivetrain ratio update, one pass of cm848_periodicTaskSet_outputs (skipped while drivetrain_type
-   is DRIVETRAIN_STANDALONE). The ratio is engine speed over vehicle (or output shaft) speed x 2048.
-   While vehicle_speed is below vehicle_speed_minimum or the engine is stopped it reseeds
-   drivetrain_ratio_raw, drivetrain_ratio, drivetrain_ratio_user_filtered,
-   drivetrain_ratio_when_loaded and the filter accumulator with drivetrain_ratio_default and sets
-   drivetrain_ratio_unsettled_flag. Otherwise, on the drivetrain types without a J1939 speed, it
-   computes drivetrain_ratio_raw = vehicle_speed_sensor_period x drivetrain_ratio_period_scale_cal
-   (e2m 1195 +2 GR_Constant) x 16 / drivetrain_ratio_engine_period_average (0x7ffd = not
-   computable); the J1939 types get it elsewhere. It low-pass filters drivetrain_ratio_raw into
-   drivetrain_ratio (the settled or the out-of-gear filter coefficient), checks it against the
-   minimum / maximum limits and tolerances (in window: drivetrain_ratio_user_filtered =
-   drivetrain_ratio; outside: drivetrain_ratio_out_of_gear_cruise_disable_flag = 1, the raw ratio is
-   clamped and drivetrain_ratio_change_settle_counter is reloaded) and runs the out-of-gear timers
+/* Drivetrain ratio update, one pass of cm848_periodicTaskSet_outputs (skipped while
+   vehicle_speed_sensor_type_cal is VEHICLE_SPEED_SENSOR_NONE). The ratio is engine speed over
+   vehicle (or output shaft) speed x 2048. While vehicle_speed is below vehicle_speed_minimum or the
+   engine is stopped it reseeds drivetrain_ratio_raw, drivetrain_ratio,
+   drivetrain_ratio_user_filtered, drivetrain_ratio_when_loaded and the filter accumulator with
+   drivetrain_ratio_default and sets drivetrain_ratio_unsettled_flag. Otherwise, on the drivetrain
+   types without a J1939 speed, it computes drivetrain_ratio_raw = vehicle_speed_sensor_period x
+   drivetrain_ratio_period_scale_cal (e2m 1195 +2 GR_Constant) x 16 /
+   drivetrain_ratio_engine_period_average (0x7ffd = not computable); the J1939 types get it
+   elsewhere. It low-pass filters drivetrain_ratio_raw into drivetrain_ratio (the settled or the
+   out-of-gear filter coefficient), checks it against the minimum / maximum limits and tolerances
+   (in window: drivetrain_ratio_user_filtered = drivetrain_ratio; outside:
+   drivetrain_ratio_out_of_gear_cruise_disable_flag = 1, the raw ratio is clamped and
+   drivetrain_ratio_change_settle_counter is reloaded) and runs the out-of-gear timers
    (drivetrain_ratio_decoupled_hold_counter, drivetrain_ratio_unsettled_release_timer; e2m 106C +6 /
    +8) that clear drivetrain_ratio_unsettled_flag (e2m 117D +E Out_Of_Gear) only when all are 0. It
    also publishes governor_bypass_threshold_low / _high (from top_gear_ratio_cal, e2m 1185 +A), sets
@@ -85391,7 +85393,7 @@ void cm848_updateDrivetrainRatio(void)
   uint uVar6;
   word local_30 [2];
   
-  if (drivetrain_type != DRIVETRAIN_STANDALONE) {
+  if (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_NONE) {
     if ((vehicle_speed < vehicle_speed_minimum) || (engine_state == ENGINE_STATE_STOPPED)) {
       drivetrain_ratio_raw = drivetrain_ratio_default;
       drivetrain_ratio = drivetrain_ratio_default;
@@ -85411,9 +85413,9 @@ void cm848_updateDrivetrainRatio(void)
         local_30[0] = drivetrain_ratio_filter_coefficient;
         uVar1 = DAT_0005c92e;
       }
-      if (((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL) &&
-          (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)) && (protection_timeout_enable_flag == 1))
-      {
+      if (((vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) &&
+          (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) &&
+         (protection_timeout_enable_flag == 1)) {
         if ((drivetrain_ratio_engine_period_average == 0) ||
            (&DAT_00007ffd <
             (undefined *)
@@ -85438,8 +85440,8 @@ void cm848_updateDrivetrainRatio(void)
                         ((uint)drivetrain_ratio_raw,&engine_temperature_protection_filter_state);
       drivetrain_ratio = (word)dVar2;
       if ((j1939_tsc1_override_state.etc1_control_active != 1) ||
-         ((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL &&
-          (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)))) {
+         ((vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO &&
+          (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)))) {
         uVar4 = (uint)drivetrain_ratio_raw;
         if ((dVar2 & 0xffff) < uVar4) {
           uVar3 = uVar4 - dVar2;
@@ -85469,8 +85471,8 @@ void cm848_updateDrivetrainRatio(void)
         }
       }
       if ((j1939_tsc1_override_state.etc1_control_active != 1) ||
-         ((drivetrain_type != DRIVETRAIN_AUTO_J1939_FULL &&
-          (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1)))) {
+         ((vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO &&
+          (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)))) {
         if (((8000 < engine_speed_state.filtered_engine_speed) ||
             (wVar5 = drivetrain_ratio_out_of_gear_speed_mismatch_delay,
             vehicle_speed <= drivetrain_ratio_out_of_gear_vehicle_speed_threshold)) &&
@@ -85568,8 +85570,8 @@ void cm848_calculateDrivetrainRatioFromGearRatio(void)
   
   if ((((vehicle_speed_minimum <= vehicle_speed) && (engine_state != ENGINE_STATE_STOPPED)) &&
       (etc2_gear_ratio_valid_flag == 1)) &&
-     ((drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL ||
-      (drivetrain_type == DRIVETRAIN_AUTO_J1939_ETC1)))) {
+     ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO ||
+      (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)))) {
     puVar1 = (undefined *)(((ulonglong)etc2_actual_gear_ratio << 0xb) / 1000);
     if (&DAT_00007ffd < puVar1) {
       puVar1 = &DAT_00007ffd;
@@ -85590,8 +85592,8 @@ void etcTransmissionModeControl(void)
 {
   if ((((vehicle_speed_minimum <= vehicle_speed) && (engine_state != ENGINE_STATE_STOPPED)) &&
       (j1939_tsc1_override_state.etc1_control_active == 1)) &&
-     ((drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL ||
-      (drivetrain_type == DRIVETRAIN_AUTO_J1939_ETC1)))) {
+     ((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO ||
+      (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)))) {
     drivetrain_ratio_unsettled_flag = j1939_tsc1_override_state.etc1_disable_control;
     if (j1939_tsc1_override_state.etc1_disable_control != 0) {
       drivetrain_ratio_user_filtered = drivetrain_ratio;
@@ -85609,9 +85611,9 @@ void etcTransmissionModeControl(void)
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* DRIVETRAIN_AUTO_J1939_ETC1 above vehicle_speed_minimum: drivetrain_ratio_raw = engine speed
-   (engine_speed_state.engine_speed) over the speed-sensor speed with the axle divisor picked by
-   two_speed_axle_enable_cal and switch 31; 0x7ffd when it cannot be computed (was
+/* VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO above vehicle_speed_minimum: drivetrain_ratio_raw =
+   engine speed (engine_speed_state.engine_speed) over the speed-sensor speed with the axle divisor
+   picked by two_speed_axle_enable_cal and switch 31; 0x7ffd when it cannot be computed (was
    cm848_fuel_temperature_trim_calculation) | review-function-readability reviewed 2026-11-12 -
    Readability Medium Accuracy Confidence Medium */
 
@@ -85632,7 +85634,7 @@ void cm848_calculateDrivetrainRatioFromVehicleSpeed(void)
   if (etc2_gear_ratio_valid_flag != 0) {
     return;
   }
-  if (drivetrain_type != DRIVETRAIN_AUTO_J1939_ETC1) {
+  if (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO) {
     return;
   }
   uVar3 = (uint)vehicle_speed_unfiltered;
@@ -85666,8 +85668,8 @@ LAB_005266e0:
 //
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* DRIVETRAIN_AUTO_J1939_FULL above vehicle_speed_minimum: drivetrain_ratio_raw = engine speed x
-   2048 / average output shaft speed (0x7ffd when the shaft speed is 0) (was
+/* VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO above vehicle_speed_minimum: drivetrain_ratio_raw =
+   engine speed x 2048 / average output shaft speed (0x7ffd when the shaft speed is 0) (was
    cm848_transmission_phase_group_a_calc) | review-function-readability reviewed 2026-11-12 -
    Readability Medium Accuracy Confidence Medium */
 
@@ -85678,7 +85680,8 @@ void cm848_calculateTransmissionRatioFromOutputShaft(void)
   undefined *puVar2;
   
   if ((((vehicle_speed_minimum <= vehicle_speed) && (engine_state != ENGINE_STATE_STOPPED)) &&
-      (etc2_gear_ratio_valid_flag == 0)) && (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL)) {
+      (etc2_gear_ratio_valid_flag == 0)) &&
+     (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO)) {
     uVar1 = (uint)output_shaft_speed_saved + (uint)output_shaft_speed_current >> 1;
     output_shaft_speed_avg = (word)uVar1;
     puVar2 = (undefined *)(((ulonglong)engine_speed_state.engine_speed << 0xb) / (ulonglong)uVar1);
@@ -85714,9 +85717,10 @@ void cm848_output_shaft_speed_save(void)
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* jlaustill reviewed 2026-6-2 - reads better than before, but very low confidence | J1939 automatic
-   drivetrain (DRIVETRAIN_AUTO_J1939_FULL): vehicle_speed_unfiltered = output_shaft_speed_current x
-   0x3c000 / axle divisor - output_shaft_to_vehicle_speed_divisor_high_axle_ratio (the second axle
-   ratio) when two_speed_axle_enable_cal and switch 31 are set else
+   drivetrain (VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO): vehicle_speed_unfiltered =
+   output_shaft_speed_current x 0x3c000 / axle divisor -
+   output_shaft_to_vehicle_speed_divisor_high_axle_ratio (the second axle ratio) when
+   two_speed_axle_enable_cal and switch 31 are set else
    output_shaft_to_vehicle_speed_divisor_low_axle_ratio - capped at
    vehicle_speed_maximum_from_output_shaft (150 mph) (was cm848_fuelTrimFromOutputShaftSpeed) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence Medium
@@ -85728,7 +85732,7 @@ void cm848_calculateVehicleSpeedFromOutputShaft(void)
   dword fuel_temp_trim_result;
   dword fuel_temp_trim_uncapped;
   
-  if (drivetrain_type == DRIVETRAIN_AUTO_J1939_FULL) {
+  if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) {
     if ((two_speed_axle_enable_cal == 0) || ((switch_input_state_bits[3] & 0x80) == 0)) {
       fuel_temp_trim_uncapped =
            (dword)(CONCAT44((int)((ulonglong)(uint)output_shaft_speed_current * 0x3c000 >> 0x20),
@@ -85989,9 +85993,9 @@ void cm848_initializeVehicleSpeedSensorZeroUnderLoadMonitor(void)
 /* TPU-B channel 2 (vehicle speed sensor) interrupt - shared with MIOS flag 13: reloads
    vehicle_speed_pulse_timeout from vehicle_speed_pulse_timeout_reload / copies the measured period
    (PARAM4:PARAM5) into vehicle_speed_sensor_period / adds the pulse count to
-   vehicle_speed_sensor_pulse_total (the DRIVETRAIN_MANUAL_TPU build re-arms the channel instead);
-   then averages the crank period accumulators into drivetrain_ratio_engine_period_average (was
-   mpc555_tpuBChannel2AndMiosFlag13InterruptHandler - restored from deleted_functions.csv) |
+   vehicle_speed_sensor_pulse_total (the VEHICLE_SPEED_SENSOR_TACHOGRAPH build re-arms the channel
+   instead); then averages the crank period accumulators into drivetrain_ratio_engine_period_average
+   (was mpc555_tpuBChannel2AndMiosFlag13InterruptHandler - restored from deleted_functions.csv) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High |
    Shared ISR - tpu_b_channel_interrupt_handler_table[2] (mpc555_tpuBInterruptDispatcher 0x55d2c)
    AND mios_interrupt_handler_table[13] (mpc555_miosInterruptDispatcher 0x54100) - no direct caller
@@ -86007,7 +86011,7 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
   uint uVar5;
   
   vehicle_speed_pulse_timeout = vehicle_speed_pulse_timeout_reload;
-  if (((drivetrain_type == DRIVETRAIN_MANUAL_TPU) &&
+  if (((vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) &&
       (vehicle_speed_sensor_tachograph_pulse_width_valid_flag == 0)) &&
      (vehicle_speed_sensor_tachograph_pulse_width == 0)) {
     DAT_003fd078 = DAT_003fd078 + 1;
@@ -86044,7 +86048,7 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
       tpu_b_mcr.CIER = wVar1 | (ushort)(1 << (vehicle_speed_sensor_tpu_channel & 0x3f));
     }
   }
-  else if (drivetrain_type == DRIVETRAIN_MANUAL_TPU) {
+  else if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) {
     vehicle_speed_sensor_period._0_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM4
     ;
     vehicle_speed_sensor_period._2_2_ = (&tpu_b_ch0_param0)[vehicle_speed_sensor_tpu_channel].PARAM5
@@ -86100,7 +86104,7 @@ void cm848_initVehicleSpeedSensorChannel(void)
   undefined2 uVar2;
   
   vehicle_speed_sensor_period = 0x5e7fb044;
-  if (drivetrain_type == DRIVETRAIN_MANUAL_TPU) {
+  if (vehicle_speed_sensor_type_cal == VEHICLE_SPEED_SENSOR_TACHOGRAPH) {
     DAT_003fd078 = 0;
     vehicle_speed_sensor_tachograph_pulse_width = 0;
     vehicle_speed_sensor_tachograph_pulse_width_valid_flag = 0;

@@ -672,12 +672,13 @@ typedef enum {
 } ETC1_SPN607_PROGRESSIVE_SHIFT;
 
 typedef enum {
-    DRIVETRAIN_STANDALONE = 0,  /* No transmission interface - standalone engine */
-    DRIVETRAIN_MANUAL_VSS = 1,  /* Manual transmission with vehicle speed sensor (VSS) */
-    DRIVETRAIN_MANUAL_TPU = 3,  /* Manual transmission with direct TPU hardware throttle/PTO */
-    DRIVETRAIN_AUTO_J1939_FULL = 4,  /* Automatic trans - J1939 ETC1(PGN 61442) + cruise/vehicle speed */
-    DRIVETRAIN_AUTO_J1939_ETC1 = 5  /* Automatic trans - J1939 ETC1(PGN 61442) shift defuel only */
-} DRIVETRAIN_TYPE;
+    VEHICLE_SPEED_SENSOR_NONE = 0,  /* e2m VSRSSNTY 0 = none: no vehicle speed sensor (the CCVS1 builder sends no speed; the HSG compensator runs) (was DRIVETRAIN_STANDALONE) */
+    VEHICLE_SPEED_SENSOR_INDUCTIVE = 1,  /* 1 = inductive (the magnetic vehicle speed sensor on TPU-B channel 2; this truck's EEPROM holds 1) (was DRIVETRAIN_MANUAL_VSS) */
+    VEHICLE_SPEED_SENSOR_MINIGEN = 2,  /* 2 = minigen (a mini generator speed sensor); no code compares with it */
+    VEHICLE_SPEED_SENSOR_TACHOGRAPH = 3,  /* 3 = tach: the speed comes from a tachograph signal; cm848_initVehicleSpeedSensorChannel and the sensor interrupt handle the TPU-B channel 2 input differently (was DRIVETRAIN_MANUAL_TPU) */
+    VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO = 4,  /* 4 = dlw/GR&OOG: data link with gear ratio and out-of-gear - the vehicle speed from the J1939 ETC1 output shaft speed (cm848_calculateVehicleSpeedFromOutputShaft) and the ETC2 gear ratio (was DRIVETRAIN_AUTO_J1939_FULL) */
+    VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO = 5  /* 5 = dlw/o GR&OOG: data link without gear ratio and out-of-gear - ETC1 only (was DRIVETRAIN_AUTO_J1939_ETC1) */
+} VEHICLE_SPEED_SENSOR_TYPE;
 
 typedef enum {
     GOV_DISABLED = 0,  /* Governor control disabled - pedal/throttle control */

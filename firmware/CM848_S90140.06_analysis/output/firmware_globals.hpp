@@ -2205,7 +2205,7 @@ extern word j1939_anti_theft_password_valid_cal;  // 0x003fdd8c
 extern word j1939_anti_theft_send_status_report_cal;  // 0x003fdd8e
 extern word j1939_anti_theft_status_of_request_cal;  // 0x003fdd90
 extern word new_tires_installed_flag_cal;  // 0x003fdd92
-extern DRIVETRAIN_TYPE drivetrain_type;  // 0x003fdda6
+extern VEHICLE_SPEED_SENSOR_TYPE vehicle_speed_sensor_type_cal;  // 0x003fdda6
 extern word ignition_key_off_count;  // 0x003fdda8
 extern word accelerator_pedal_autozero_cal;  // 0x003fddaa
 extern word idle_validation_switch_state_at_throttle_validation_error_cal;  // 0x003fddac
