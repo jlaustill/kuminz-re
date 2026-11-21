@@ -249,6 +249,12 @@ ratio module.**
   - the timer tick, the initialization and the governor pressure sensor offset calibration.
 - **Stage C:** the gear ratio table is typed `word[6]`, and the inertia default and the shift logic initializer are
   named.
+- **Stage E (label-only):**
+  - the converter clutch engagement monitor (`cm848_monitorConverterClutchEngagement`). After each clutch command
+    the speed ratio must enter the gear's locked window (2nd 43-50 / 3rd 28-35 / 4th 19-25 around the gear ratios)
+    within 3 s, or lockup is inhibited;
+  - the high gear mode (`cm848_selectGovernorPressureHighGear`, pressure state 0x10);
+  - the WOT anti-hang timer and upshift engine speeds, and the cruise decel delay timers.
 
 ## Test plan
 
@@ -306,7 +312,7 @@ ratio module.**
   - the session functions' `int32_t` parameter was found because the first 7a build rendered `int` as
     `dword`.
 - [x] Round 8:
-  - stages A and B are EQUIVALENT (0 functions differ);
+  - stages A, B and E are EQUIVALENT (0 functions differ);
   - stage C was read diff by diff;
   - each aligned e2m record was checked against its row's users (`align_block.py`), and each block stops
     where it drifts.

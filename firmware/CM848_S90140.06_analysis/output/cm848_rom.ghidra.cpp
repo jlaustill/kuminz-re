@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 09:41:29 MST 2026
+// Generated: Sat Nov 21 10:00:11 MST 2026
 
 
 //
@@ -33551,13 +33551,14 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
                                   (uint)transmission_predicted_1_2_shift_delay) * 1000 >> 0x20),
                             (uint)transmission_engine_acceleration *
                             (uint)transmission_predicted_1_2_shift_delay * 1000) / 100);
-    if (uVar5 < protection_rpm_threshold) {
-      uVar5 = (uint)protection_rpm_threshold - (uVar5 & 0xffff);
+    if (uVar5 < governor_pressure_wide_open_throttle_upshift_target_engine_speed) {
+      uVar5 = (uint)governor_pressure_wide_open_throttle_upshift_target_engine_speed -
+              (uVar5 & 0xffff);
     }
     else {
       uVar5 = 0;
     }
-    protection_rpm_margin = (word)uVar5;
+    governor_pressure_wide_open_throttle_upshift_command_engine_speed = (word)uVar5;
     if ((uVar5 & 0xffff) < uVar4) {
       protection_status_flags_t_0040b0f2.status_flags = bVar3 | 0x40;
       governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
@@ -33574,7 +33575,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     bVar2 = protection_status_flags_t_0040b0f2.status_flags & 0x10;
     protection_status_flags_t_0040b0f2.status_flags = bVar3;
     if (bVar2 != 0) {
-      if (protection_init_timer != 0) {
+      if (governor_pressure_wide_open_throttle_anti_hang_timer != 0) {
         transmission_pressure_state.pressure_state = 7;
         governor_pressure_target = governor_pressure_wide_open_throttle_1_2_hold_pressure;
         return;
@@ -33623,7 +33624,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
                      transmission_predicted_2_3_shift_delay;
               }
             }
-            protection_init_timer = 0;
+            governor_pressure_wide_open_throttle_anti_hang_timer = 0;
             transmission_2nd_gear_maximum_engine_speed = 0;
             bVar3 = protection_status_flags_t_0040b0f2.status_flags & 0x97;
           }
@@ -33672,7 +33673,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
                transmission_predicted_1_2_shift_delay;
         }
       }
-      protection_init_timer = 0;
+      governor_pressure_wide_open_throttle_anti_hang_timer = 0;
       protection_status_flags_t_0040b0f2.status_flags =
            protection_status_flags_t_0040b0f2.status_flags & 0xb7;
       transmission_1st_gear_maximum_engine_speed = 0;
@@ -33710,13 +33711,14 @@ LAB_00031c38:
                                   (uint)transmission_predicted_2_3_shift_delay) * 1000 >> 0x20),
                             (uint)transmission_engine_acceleration *
                             (uint)transmission_predicted_2_3_shift_delay * 1000) / 100);
-    if (uVar5 < protection_rpm_threshold) {
-      uVar5 = (uint)protection_rpm_threshold - (uVar5 & 0xffff);
+    if (uVar5 < governor_pressure_wide_open_throttle_upshift_target_engine_speed) {
+      uVar5 = (uint)governor_pressure_wide_open_throttle_upshift_target_engine_speed -
+              (uVar5 & 0xffff);
     }
     else {
       uVar5 = 0;
     }
-    protection_rpm_margin = (word)uVar5;
+    governor_pressure_wide_open_throttle_upshift_command_engine_speed = (word)uVar5;
     if ((uVar5 & 0xffff) < uVar4) {
       protection_status_flags_t_0040b0f2.status_flags =
            protection_status_flags_t_0040b0f2.status_flags & 0xef | 0x20;
@@ -33730,7 +33732,7 @@ LAB_00031c38:
       return;
     }
     if ((protection_status_flags_t_0040b0f2.status_flags & 0x10) != 0) {
-      if (protection_init_timer != 0) {
+      if (governor_pressure_wide_open_throttle_anti_hang_timer != 0) {
         transmission_pressure_state.pressure_state = 9;
         governor_pressure_target = governor_pressure_wide_open_throttle_2_3_hold_pressure;
         return;
@@ -33745,7 +33747,8 @@ LAB_00031ba8:
       return;
     }
   }
-  protection_init_timer = governor_pressure_wide_open_throttle_anti_hang_time;
+  governor_pressure_wide_open_throttle_anti_hang_timer =
+       governor_pressure_wide_open_throttle_anti_hang_time;
   bVar2 = 0xf7;
   protection_status_flags_t_0040b0f2.status_flags =
        protection_status_flags_t_0040b0f2.status_flags | 0x10;
@@ -33824,7 +33827,7 @@ LAB_00031f94:
   if ((((transmission_current_gear == 4) &&
        (fuel_demand_control_t_0040a57a.calculated < transmission_cruise_downshift_maximum_throttle))
       && (uVar5 < uVar6)) && (0 < transmission_output_shaft_acceleration)) {
-    if ((protection_load_check_timer_a == 0) &&
+    if ((transmission_cruise_downshift_delay_timer == 0) &&
        (transmission_output_speed_in_use < overdrive_downshift_maximum_output_speed)) {
       protection_condition_flags_t_0040b0e8.condition_eval =
            protection_condition_flags_t_0040b0e8.condition_eval | 2;
@@ -33833,19 +33836,19 @@ LAB_00031f94:
     }
   }
   else {
-    protection_load_check_timer_a = transmission_cruise_downshift_delay_time;
+    transmission_cruise_downshift_delay_timer = transmission_cruise_downshift_delay_time;
   }
   if ((((protection_condition_flags_t_0040b0e8.condition_flags_1 & 1) != 0) &&
       (transmission_current_gear == 3)) &&
      ((transmission_cruise_downshift_maximum_throttle < fuel_demand_control_t_0040a57a.calculated &&
-      ((uVar6 < uVar5 && (protection_load_check_timer_b == 0)))))) {
+      ((uVar6 < uVar5 && (transmission_cruise_upshift_delay_timer == 0)))))) {
     protection_condition_flags_t_0040b0e8.condition_eval =
          protection_condition_flags_t_0040b0e8.condition_eval | 4;
     protection_condition_flags_t_0040b0e8.condition_flags_1 =
          protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xfe;
   }
   if ((uVar5 < uVar6) && ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 1) != 0)) {
-    protection_load_check_timer_b = transmission_cruise_upshift_delay_time;
+    transmission_cruise_upshift_delay_timer = transmission_cruise_upshift_delay_time;
   }
   return;
 }
@@ -34666,8 +34669,9 @@ void cm848_decrementTransmissionTimers(void)
   if (converter_clutch_apply_delay_countdown != 0) {
     converter_clutch_apply_delay_countdown = converter_clutch_apply_delay_countdown - 1;
   }
-  if (protection_init_timer != 0) {
-    protection_init_timer = protection_init_timer - 1;
+  if (governor_pressure_wide_open_throttle_anti_hang_timer != 0) {
+    governor_pressure_wide_open_throttle_anti_hang_timer =
+         governor_pressure_wide_open_throttle_anti_hang_timer - 1;
   }
   if (governor_pressure_wide_open_throttle_boost_timer != 0) {
     governor_pressure_wide_open_throttle_boost_timer =
@@ -34706,14 +34710,14 @@ void cm848_decrementTransmissionTimers(void)
     transmission_lockup_timers.low_range_hold_timer =
          transmission_lockup_timers.low_range_hold_timer - 1;
   }
-  if (protection_load_check_timer_a != 0) {
-    protection_load_check_timer_a = protection_load_check_timer_a - 1;
+  if (transmission_cruise_downshift_delay_timer != 0) {
+    transmission_cruise_downshift_delay_timer = transmission_cruise_downshift_delay_timer - 1;
   }
-  if (protection_load_check_timer_b != 0) {
-    protection_load_check_timer_b = protection_load_check_timer_b - 1;
+  if (transmission_cruise_upshift_delay_timer != 0) {
+    transmission_cruise_upshift_delay_timer = transmission_cruise_upshift_delay_timer - 1;
   }
-  if (protection_monitor_countdown != 0) {
-    protection_monitor_countdown = protection_monitor_countdown - 1;
+  if (converter_clutch_engagement_timer != 0) {
+    converter_clutch_engagement_timer = converter_clutch_engagement_timer - 1;
   }
   return;
 }
@@ -35321,11 +35325,11 @@ void cm848_initializeTransmissionControl(void)
   converter_clutch_apply_delay_countdown = 0;
   overdrive_upshift_timer = 0;
   transmission_overdrive_upshift_inhibit_timer = 0;
-  protection_init_timer = 0;
+  governor_pressure_wide_open_throttle_anti_hang_timer = 0;
   governor_pressure_wide_open_throttle_boost_timer = 0;
-  protection_load_check_timer_a = 0;
-  protection_load_check_timer_b = 0;
-  protection_monitor_countdown = 0;
+  transmission_cruise_downshift_delay_timer = 0;
+  transmission_cruise_upshift_delay_timer = 0;
+  converter_clutch_engagement_timer = 0;
   if ((j1939_governor_feature_byte & 8) == 0) {
     protection_condition_flags_t_0040b0e8.overdrive_control_flags =
          protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x9d | 8;
@@ -35430,23 +35434,33 @@ void cm848_processProtectionFaultSeverity(void)
 
 
 //
-// Function: cm848_processProtectionRateLimitFlags @ 0x00034f4c
+// Function: cm848_monitorConverterClutchEngagement @ 0x00034f4c
 //
 
 /* WARNING: Type propagation algorithm not settling */
+/* Confirms each converter clutch engagement. The rising edge of the converter clutch solenoid
+   request (logical output 18) sets bit 0 of converter_clutch_transition_state (engagement pending),
+   and converter_clutch_engagement_timer counts down from converter_clutch_engagement_time_limit (3
+   s). While the request is on and transmission_speed_ratio is inside the gear's locked window
+   (transmission_2nd / 3rd / 4th_gear_locked_speed_ratio_minimum / _maximum, around the gear ratios:
+   no converter slip), bits 0 and 2 clear: the engagement is confirmed. In 1st they clear too. If
+   the timer runs out first, it sets the lockup inhibit (condition_eval bit 6) and bit 2 (engagement
+   timed out), and bit 2 clears again when the inhibit clears (was
+   cm848_processProtectionRateLimitFlags) */
 
-void cm848_processProtectionRateLimitFlags(void)
+void cm848_monitorConverterClutchEngagement(void)
 
 {
   ushort uVar1;
   ushort uVar2;
   
   if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) ||
-     (protection_action_mode_snapshot != 0)) {
+     (converter_clutch_solenoid_request_previous != 0)) {
     if (((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
-        ((protection_action_mode_snapshot != 0 &&
-         (protection_condition_state_bit0_flag == ((converter_clutch_transition_state & 1) != 0)))))
-       || ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) != 0)) {
+        ((converter_clutch_solenoid_request_previous != 0 &&
+         (converter_clutch_engagement_pending_previous ==
+          ((converter_clutch_transition_state & 1) != 0))))) ||
+       ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) != 0)) {
       converter_clutch_transition_state = converter_clutch_transition_state & 0xfe;
     }
   }
@@ -35457,26 +35471,28 @@ void cm848_processProtectionRateLimitFlags(void)
      ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) {
     converter_clutch_transition_state = converter_clutch_transition_state & 0xfb;
   }
-  protection_action_mode_snapshot = (byte)logical_output_request_bits_16_to_23 & 4;
-  protection_condition_state_bit0_flag = (ushort)((converter_clutch_transition_state & 1) != 0);
+  converter_clutch_solenoid_request_previous = (byte)logical_output_request_bits_16_to_23 & 4;
+  converter_clutch_engagement_pending_previous =
+       (ushort)((converter_clutch_transition_state & 1) != 0);
   if (((converter_clutch_transition_state & 1) == 0) ||
      ((converter_clutch_transition_state & 4) != 0)) {
-    protection_monitor_countdown = protection_monitor_countdown_cal;
+    converter_clutch_engagement_timer = converter_clutch_engagement_time_limit;
   }
-  else if (protection_monitor_countdown == 0) {
+  else if (converter_clutch_engagement_timer == 0) {
     protection_condition_flags_t_0040b0e8.condition_eval =
          protection_condition_flags_t_0040b0e8.condition_eval | 0x40;
     converter_clutch_transition_state = converter_clutch_transition_state | 4;
   }
   else {
     if (((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0) &&
-        (((uVar1 = protection_derate_l4_measurement_upper_cal,
-          uVar2 = protection_derate_l4_measurement_lower_cal, transmission_current_gear == 4 ||
-          (uVar1 = protection_derate_l3_measurement_upper_cal,
-          uVar2 = protection_derate_l3_measurement_lower_cal, transmission_current_gear == 3)) ||
-         (uVar1 = protection_derate_l2_measurement_upper_cal,
-         uVar2 = protection_derate_l2_measurement_lower_cal, transmission_current_gear == 2)))) &&
-       ((uVar2 < transmission_speed_ratio && (transmission_speed_ratio < uVar1)))) {
+        (((uVar1 = transmission_4th_gear_locked_speed_ratio_maximum,
+          uVar2 = transmission_4th_gear_locked_speed_ratio_minimum, transmission_current_gear == 4
+          || (uVar1 = transmission_3rd_gear_locked_speed_ratio_maximum,
+             uVar2 = transmission_3rd_gear_locked_speed_ratio_minimum,
+             transmission_current_gear == 3)) ||
+         (uVar1 = transmission_2nd_gear_locked_speed_ratio_maximum,
+         uVar2 = transmission_2nd_gear_locked_speed_ratio_minimum, transmission_current_gear == 2)))
+        ) && ((uVar2 < transmission_speed_ratio && (transmission_speed_ratio < uVar1)))) {
       converter_clutch_transition_state = converter_clutch_transition_state & 0xfa;
     }
     if (transmission_current_gear == 1) {
@@ -35489,10 +35505,20 @@ void cm848_processProtectionRateLimitFlags(void)
 
 
 //
-// Function: cm848_calculateProtectionThresholdLimit @ 0x00035154
+// Function: cm848_selectGovernorPressureHighGear @ 0x00035154
 //
 
-void cm848_calculateProtectionThresholdLimit(void)
+/* The 48RE high gear governor pressure mode (pressure state 0x10): in 3rd / 4th outside
+   transfer-case low range, with the lever not in 1 / 2 (transmission_selected_gear 0x7e / 0x7f),
+   lockup not inhibited (condition_eval bit 6), transmission_overheat_protection_active_flag clear
+   and switch 12 off, while the throttle is below the output-speed curve (or the second curve once
+   in the mode, held by load_condition_flags bit 2), the target is
+   governor_pressure_high_gear_target. With the lever in 1 / 2 and the output speed below
+   protection_derate_ramp_exit_threshold_cal it requests the 4-3 downshift (condition_eval bit 1,
+   clearing the 3-4 bit 2) unless overdrive_control_flags bit 3 is set (was
+   cm848_calculateProtectionThresholdLimit) */
+
+void cm848_selectGovernorPressureHighGear(void)
 
 {
   word wVar1;
@@ -35532,7 +35558,7 @@ void cm848_calculateProtectionThresholdLimit(void)
     governor_pressure_target = protection_override_rpm_limit_cal;
     transmission_pressure_state.pressure_state = 0x17;
   }
-  cm848_processProtectionRateLimitFlags();
+  cm848_monitorConverterClutchEngagement();
   return;
 }
 
@@ -35547,7 +35573,7 @@ void cm848_processProtectionStateMachine(void)
 {
   if (((algorithm_enable_flags_6_cal & 4) != 0) && (protection_mode_changed_flag != 0)) {
     cm848_runTransmissionControl();
-    cm848_calculateProtectionThresholdLimit();
+    cm848_selectGovernorPressureHighGear();
   }
   return;
 }

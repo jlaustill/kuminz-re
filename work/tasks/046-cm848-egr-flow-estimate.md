@@ -391,7 +391,7 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
 - **Method:** the Chrysler e2m `RE_*` records, aligned by relative offset. None of the RE blocks are in the parameter
   ID table, but their bases are proved word by word:
   - **8C53 +0** `RE_Trans_Pressure_State` resolves to 0x40b100 in the table.
-  - **8C17 (RAM) at 0x40b102**, aligned +0..+48 (it drifts from +4C). The anti-hunt timers start it.
+  - **8C17 (RAM) at 0x40b102**, aligned +0..+48 (it drifts from +4A, see stage E). The anti-hunt timers start it.
     `RE_OSS_Accel` (+28) lands on the existing output shaft acceleration, and seven names that were already right
     match (`RE_Governor_Set` = `governor_pressure_target`, `Transmission_OD_Lamp` = `overdrive_off_flag`, ...).
   - **8BBC (ROM cals) at 0x40780c**, aligned +0..+5C (it drifts from +5E). The anti-hunt timer limits and the
@@ -413,6 +413,20 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
     initialization, the output shaft acceleration and the governor pressure sensor offset calibration.
 - **Stage C (types):** the gear ratio table as `word[6]`, `transmission_vehicle_inertia_default`, and
   `cm848_initializeTransmissionShiftLogic`.
+- **Stage E (label-only, after the closing commit f349dd2):** what the timer tick still counted under
+  `protection_*` names.
+  - `cm848_monitorConverterClutchEngagement` (was `cm848_processProtectionRateLimitFlags`). After each converter clutch
+    command the speed ratio (engine / output speed x 32) must enter the gear's locked window within 3 s
+    (`converter_clutch_engagement_time_limit`, 300). The windows are 2nd 43-50, 3rd 28-35 and 4th 19-25, around the
+    gear ratios 46 / 32 / 20. If it does not, the lockup inhibit (`condition_eval` bit 6) is set. This proves
+    `converter_clutch_transition_state` bits 0 (engagement pending) and 2 (engagement timed out).
+  - `cm848_selectGovernorPressureHighGear` (was `cm848_calculateProtectionThresholdLimit`): pressure state 0x10 in
+    3rd / 4th below a throttle curve, plus the manual 1 / 2 lever's 4-3 request.
+  - The WOT anti-hang timer and the WOT upshift target / command engine speeds (3075 rpm, the target minus engine
+    acceleration x the predicted shift delay).
+  - The cruise decel downshift / upshift delay timers.
+  - The 8C17 record at +4A (`RE_E_Brake_Inhibit_Timer`) does not fit the code there (the engagement timer), so 8C17
+    drifts from +4A.
 - **Thin evidence:**
   - `transmission_output_speed_fault_debounce_timer` (8C17 +8): only the timer tick and the initialization use it.
   - The turbine torque tables have other sizes than in the 11.45 e2m (17 / 9 / 17 x 9 here, 8 / 8 / 5 x 5 there).
@@ -420,11 +434,12 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
 - **Round 8 leads:**
   - The pressure state codes 1-0x18: an enum needs every mode handler's curves. Named so far: 1 base, 0x12 / 0x13
     anti-hunt boost, 0x14 / 0x15 anti-hunt hold, 0xb-0xf low range, 0x10 high gear, 0x11 2nd gear locked,
-    0x16 manual low, 0x17 override.
+    0x16 manual low, 0x17 override, 7 / 9 WOT 1-2 / 2-3 hold, 8 / 10 WOT 1-2 / 2-3 boost.
   - The still `protection_*`-named 48RE functions and tables:
-    - `cm848_protectionStateTransitionCheck`: the 3-4 / 4-3 shift lines and manual low (e2m `RE_Normal_3_4` /
-      `4_3`, `RE_Cruise_*`);
-    - `cm848_calculateProtectionThresholdLimit`;
+    - `cm848_protectionStateTransitionCheck` (0x31d98): the 3-4 / 4-3 shift lines, manual low and the cruise decel
+      requests (e2m `RE_Normal_3_4` / `4_3`, `RE_Cruise_*`). Its gate (`condition_flags_1` bit 4), pressure state
+      3 and switch 12 are not identified yet. Switch 12 picks the alternate `_c` shift lines, perhaps the exhaust
+      brake schedule;
     - `cm848_protectionCleanupHandler` (the 3rd gear lockup);
     - the `protection_condition_flags_t` / `protection_status_flags_t` bits;
     - the remaining tables (`RE_Cold_Curve`, `RE_Cruise_Curve`, `RE_Fuel_Economy_Curve`, `RE_WOT_*_Curve`,

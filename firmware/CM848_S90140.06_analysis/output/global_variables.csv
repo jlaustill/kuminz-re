@@ -1761,8 +1761,8 @@ address,name,type,comment
 0x003fb18e,protection_filter_stage_10_state,word,
 0x003fb190,protection_monitor_scan_counter,word,
 0x003fb1c8,protection_load_history_index,word,
-0x003fb1ca,protection_action_mode_snapshot,word,
-0x003fb1cc,protection_condition_state_bit0_flag,word,
+0x003fb1ca,converter_clutch_solenoid_request_previous,word,Last pass's converter clutch solenoid request (logical_output_request_bits_16_to_23 byte & 4 = logical output 18); cm848_monitorConverterClutchEngagement detects the request's edges with it (was protection_action_mode_snapshot)
+0x003fb1cc,converter_clutch_engagement_pending_previous,word,Last pass's converter_clutch_transition_state bit 0 (engagement pending) as 0 / 1; cm848_monitorConverterClutchEngagement clears the pending bit at the request's falling edge only when it has not changed since (was protection_condition_state_bit0_flag)
 0x003fb1ce,transmission_output_speed_change_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_calculateOutputShaftAcceleration: produces transmission_output_shaft_acceleration from transmission_output_shaft_acceleration_unfiltered (was protection_load_filter_state_b_ptr + the accumulator row at +4 protection_load_filter_accum_b, dword)
 0x003fb1d6,protection_load_scaled_input_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_updateTransmissionConditionFlags: produces transmission_engine_acceleration_filtered from half of engine_acceleration_unfiltered (was protection_load_scaled_filter_state_ptr + the accumulator row at +4 protection_load_scaled_filter_accum, dword)
 0x003fb1de,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
@@ -3532,11 +3532,11 @@ address,name,type,comment
 0x004082fc,protection_load_scaled_clamp_a_cal,word,
 0x004082fe,protection_load_scaled_clamp_b_cal,word,
 0x00408300,protection_load_scaled_min_threshold_cal,word,
-0x00408302,protection_rpm_threshold,word,
+0x00408302,governor_pressure_wide_open_throttle_upshift_target_engine_speed,word,Engine speed the WOT 1-2 / 2-3 upshifts aim to finish at: 24600 = 3075 rpm (x 8). cm848_selectGovernorPressureWideOpenThrottle commands the upshift this far ahead of it: engine acceleration x the predicted shift delay (was protection_rpm_threshold)
 0x00408304,protection_rpm_peak_low_threshold_cal,word,
 0x00408306,protection_rpm_peak_threshold,word,
 0x00408308,governor_pressure_learned_gain_step,word,Step size (1) added or subtracted each adaptation of the gear 1 and gear 2 governor pressure learned gains (was protection_status_step_delta) (Medium confidence)
-0x0040830a,governor_pressure_high_gear_target,word,48RE governor pressure target in 1/18.56 kPa (16256 = about 127 psi) - commanded in gear 3 and up (status 0x10) and on the fault / shutdown path - read by cm848_runTransmissionControl and cm848_calculateProtectionThresholdLimit (was protection_derate_rpm_limit_e) (Medium confidence)
+0x0040830a,governor_pressure_high_gear_target,word,48RE governor pressure target in 1/18.56 kPa (16256 = about 127 psi) - commanded in gear 3 and up (status 0x10) and on the fault / shutdown path - read by cm848_runTransmissionControl and cm848_selectGovernorPressureHighGear (was protection_derate_rpm_limit_e) (Medium confidence)
 0x0040830c,protection_sensor_fault_cal,word,
 0x0040830e,protection_thermal_lockout_cal,word,
 0x00408310,protection_load_lockout_cal,word,
@@ -3591,14 +3591,14 @@ address,name,type,comment
 0x00408376,protection_override_rpm_limit_cal,word,
 0x00408378,protection_fuel_check_bypass_flag,word,
 0x0040837a,protection_ramp_position_fault_threshold_cal,word,
-0x0040837c,protection_derate_l2_measurement_lower_cal,word,
-0x0040837e,protection_derate_l2_measurement_upper_cal,word,
-0x00408380,protection_derate_l3_measurement_lower_cal,word,
-0x00408382,protection_derate_l3_measurement_upper_cal,word,
-0x00408384,protection_derate_l4_measurement_lower_cal,word,
-0x00408386,protection_derate_l4_measurement_upper_cal,word,
+0x0040837c,transmission_2nd_gear_locked_speed_ratio_minimum,word,Lower edge of the 2nd gear locked-converter window of transmission_speed_ratio (x 32): 43 = 1.34; the 2nd gear ratio is 46 = 1.44 (transmission_gear_ratio_table[2]) (was protection_derate_l2_measurement_lower_cal)
+0x0040837e,transmission_2nd_gear_locked_speed_ratio_maximum,word,Upper edge of the 2nd gear locked-converter window: 50 = 1.56 (was protection_derate_l2_measurement_upper_cal)
+0x00408380,transmission_3rd_gear_locked_speed_ratio_minimum,word,Lower edge of the 3rd gear locked-converter window: 28 = 0.88; the 3rd gear ratio is 32 = 1.00 (was protection_derate_l3_measurement_lower_cal)
+0x00408382,transmission_3rd_gear_locked_speed_ratio_maximum,word,Upper edge of the 3rd gear locked-converter window: 35 = 1.09 (was protection_derate_l3_measurement_upper_cal)
+0x00408384,transmission_4th_gear_locked_speed_ratio_minimum,word,Lower edge of the 4th gear locked-converter window: 19 = 0.59; the 4th gear ratio is 20 = 0.63 (was protection_derate_l4_measurement_lower_cal)
+0x00408386,transmission_4th_gear_locked_speed_ratio_maximum,word,Upper edge of the 4th gear locked-converter window: 25 = 0.78 (was protection_derate_l4_measurement_upper_cal)
 0x00408388,protection_condition_flags1_3_enable_cal,word,
-0x0040838a,protection_monitor_countdown_cal,word,
+0x0040838a,converter_clutch_engagement_time_limit,word,Time a converter clutch engagement has to show lock (transmission_speed_ratio inside the gear's locked window) before the lockup inhibit is set: 300 = 3 s (10 ms passes) (was protection_monitor_countdown_cal)
 0x0040838c,protection_overshoot_threshold_cal,word,
 0x0040838e,protection_rpm_peak_axis_cal,word[10],
 0x004083a2,protection_rpm_peak_output_cal,word[10],
@@ -5247,7 +5247,7 @@ address,name,type,comment
 0x0040b0b8,transmission_predicted_post_shift_acceleration,word,e2m 8D14 +C RE_EB_Delay_4_3_Timer 'Timer used to delay 4-3 shift for ebrake' (MSEC): cm848_predictPostShiftAcceleration: transmission_next_gear_available_torque x 64 / transmission_vehicle_inertia (at most 0x7fff); the anti-hunt governor pressure mode (cm848_selectGovernorPressureAntiHunt) forces the upshift once it is above transmission_post_shift_acceleration_minimum (was protection_load_upper_bound)
 0x0040b0ba,transmission_road_load_torque,word,e2m 8D14 +E RE_TCC_Lock_State 'Indicates the logic controlling the torque converter driver' (UNITLESS): transmission_output_torque_current_gear - transmission_inertia_torque (clamped +-5000) (was protection_load_delta_filtered)
 0x0040b0bc,transmission_turbine_speed_in_gear,word,transmission_output_speed_in_use x the gear's transmission_gear_ratio_table value >> 5 (at most 0xffff) (was protection_scaled_load)
-0x0040b0be,protection_rpm_margin,word,
+0x0040b0be,governor_pressure_wide_open_throttle_upshift_command_engine_speed,word,Engine speed at which the WOT upshift is commanded: governor_pressure_wide_open_throttle_upshift_target_engine_speed - transmission_engine_acceleration x transmission_predicted_1_2_shift_delay (or _2_3_) x 1000 / 100, floored at 0; above it the boost pressure forces the upshift (pressure states 8 / 10). Stored for the record only: the compare uses the register (was protection_rpm_margin)
 0x0040b0c0,transmission_post_shift_acceleration_minimum,word,the e2m RE_PSA_Max_1_2 / _2_3 / _3_4 value at the current throttle ('Min acceptable post-shift accel vs TPS to allow ... upshift') (was protection_scaled_limit_output)
 0x0040b0c2,transmission_inertia_torque,word,transmission_output_shaft_acceleration x transmission_vehicle_inertia / 64 (clamped +-10000): the torque that accelerates the vehicle now (was protection_rate_integrator_quotient)
 0x0040b0c4,transmission_next_gear_available_torque,word,transmission_output_torque_next_gear - transmission_road_load_torque (0-5000; 0 below transmission_available_torque_minimum): the torque left to accelerate after the upshift (was protection_load_delta)
@@ -5262,12 +5262,12 @@ address,name,type,comment
 0x0040b0d6,protection_fuel_limit_b,word,
 0x0040b0d8,protection_load_rate_a,word,
 0x0040b0da,transmission_vehicle_inertia_measurement,word,transmission_shift_torque_change x 64 / transmission_shift_acceleration_change across the last forced upshift (cm848_learnVehicleInertia, 0-0xffff); stored as transmission_vehicle_inertia when inside the limits and the acceleration change is large enough (was protection_load_rate_b)
-0x0040b0dc,protection_load_check_timer_a,word,
-0x0040b0de,protection_load_check_timer_b,word,
+0x0040b0dc,transmission_cruise_downshift_delay_timer,word,Cruise decel 4-3 downshift delay (cm848_protectionStateTransitionCheck): reloaded from transmission_cruise_downshift_delay_time (e2m 8BBC +4E RE_Cruise_Downshift_Timer_Max) until, in 4th below transmission_cruise_downshift_maximum_throttle, the vehicle speed is above the cruise command + cruise_set_speed_overspeed_margin and the output shaft accelerates; at 0 (and the output speed below overdrive_downshift_maximum_output_speed) the 4-3 request (condition_eval bit 1) is set (was protection_load_check_timer_a)
+0x0040b0de,transmission_cruise_upshift_delay_timer,word,Cruise decel 3-4 upshift delay: reloaded from transmission_cruise_upshift_delay_time (e2m 8BBC +50 RE_Cruise_Upshift_Timer_Max) while the vehicle speed stays above the cruise command + margin after a cruise decel downshift; at 0, in 3rd above transmission_cruise_downshift_maximum_throttle, the 3-4 request (condition_eval bit 2) is set (was protection_load_check_timer_b)
 0x0040b0e0,transmission_selected_gear_previous,byte,transmission_selected_gear from the previous pass of cm848_applyConverterUnlockConditions - a change from 0x7F (lever 2) to 0x80 or 0x81 (drive) triggers event 0x12 and loads protection_thermal_lockout_cal (was protection_ramp_position_working)
 0x0040b0e2,fourth_gear_tcc_lockup_boost_input,word,Boost latched for the four fourth gear TCC lockup tables (their only reader): intake manifold pressure minus barometric (or minus barometric_pressure_sensor_config.default_value) clamped at 0 - absolute MAP when boost_is_gauge_pressure_flag is 0; 1/18.56 kPa (was protection_oil_pressure_input)
 0x0040b0e4,protection_limit_active_flag,word,
-0x0040b0e6,protection_init_timer,word,
+0x0040b0e6,governor_pressure_wide_open_throttle_anti_hang_timer,word,WOT anti-hang timer (cm848_selectGovernorPressureWideOpenThrottle): loaded from governor_pressure_wide_open_throttle_anti_hang_time (e2m 8BBC +5A RE_WOT_Anti_Hang_Timer_Max, 700 = 7 s) when the engine speed first sits above governor_pressure_wide_open_throttle_anti_hang_engine_speed (3000 rpm) but below governor_pressure_wide_open_throttle_upshift_command_engine_speed (status_flags bit 4 arms it). While it runs the WOT hold pressure stays (pressure states 7 / 9); at 0 the boost pressure forces the upshift (states 8 / 10), e2m: 'Used to allow WOT upshift at lowered RPM target'. Counted down by cm848_decrementTransmissionTimers (was protection_init_timer)
 0x0040b0e8,protection_condition_flags_t_0040b0e8,protection_condition_flags_t,
 0x0040b0e9,protection_condition_flags_t_0040b0e8.condition_flags_1,,
 0x0040b0ea,protection_condition_flags_t_0040b0e8.load_condition_flags,,
@@ -5286,7 +5286,7 @@ address,name,type,comment
 0x0040b0fb,protection_status_flags_b,byte,
 0x0040b0fc,transmission_temperature_sensor_fault_flag,byte,Set while pending_faults bit 10 / 13 / 14 (P0711 / P0713 / P0712 transmission fluid temperature) is set; selects the coolant model or the 180 deg F substitutes for transmission_temperature_in_use (was torque_limit_output_active_flag)
 0x0040b0fd,park_neutral_exit_engine_speed_limit_state_bits,byte,Family rename with the park/neutral exit window function: the words of this family are used only by cm848_updateParkNeutralExitEngineSpeedLimitWindow, cm848_calculateParkNeutralExitEngineSpeedLimit and cm848_initializeParkNeutralExitEngineSpeedLimit (grep over the whole decompilation), and the window only gates the engine speed limit source 15 (held at 6800 = 850 rpm, normally 30000 = 3750 rpm), not any torque. (was park_neutral_exit_torque_limit_state_bits) | earlier note: State of the park/neutral exit torque limit monitor (0x51193c): bit 0 limit countdown running / bit 1 startup inhibit / bit 2 armed in park or neutral (pedal 5 to 100 percent) / bit 3 countdown finished / bit 4 one-pass flag when the limit is released (was fuel_temp_protection_state_flags) (Medium confidence)
-0x0040b0fe,converter_clutch_transition_state,byte,Converter clutch transition flags byte (23 accesses - all lbz / stb): bit 0 transition / bit 1 retarder forced gear 2 / bit 2 transition timeout are the wave-11 agent's medium-confidence readings, so no bitfield yet (was protection_condition_state, a word) (was protection_condition_state)
+0x0040b0fe,converter_clutch_transition_state,byte,"Converter clutch transition flags byte (23 accesses - all lbz / stb). Bit 0 = engagement pending: set at the rising edge of the converter clutch solenoid request, cleared when transmission_speed_ratio shows lock for the gear, in 1st, at the request's falling edge or under the lockup inhibit. Bit 2 = engagement timed out: set with the lockup inhibit (condition_eval bit 6) when converter_clutch_engagement_timer runs out, cleared when the inhibit clears (both proved in cm848_monitorConverterClutchEngagement, round 8). Bit 1 = retarder forced gear 2 is still the wave-11 agent's medium-confidence reading, and the byte is updated with | / & masks, so no bitfield (was protection_condition_state, a word)", so no bitfield yet (was protection_condition_state, a word) (was protection_condition_state)
 0x0040b100,transmission_pressure_state,transmission_pressure_state_t,e2m 8C53 +0 RE_Trans_Pressure_State 'Indicate the RE transmission pressure state' (UNITLESS): the RE transmission pressure state block: e2m 8C53 +0 RE_Trans_Pressure_State (table-resolved to this address) followed by the e2m 8C17 anti-hunt timers (transmission_pressure_state_t) (was protection_timer_state_t_0040b100)
 0x0040b102,transmission_pressure_state.anti_hunt_boost_limit_timer,,
 0x0040b104,transmission_pressure_state.anti_hunt_delay_timer,,
@@ -5326,7 +5326,7 @@ address,name,type,comment
 0x0040b146,transmission_vehicle_speed_filtered,word,EMA of vehicle_speed_unfiltered (1/256 mph) through transmission_vehicle_speed_filter_state; divisor of the low range ratio (needs above 512 = 2 mph); at or below 512 cm848_runTransmissionControl calls cm848_selectGovernorPressureBaseCurve (was fuel_temp_trim_ema)
 0x0040b148,transmission_speed_ratio,word,Engine speed over transmission output speed x 32 (32 = 1.00 / capped 8160): the 48RE ratios 2.45 / 1.45 / 1.00 / 0.69 read about 78 / 46 / 32 / 22 before converter slip (was protection_derate_measurement)
 0x0040b14a,transmission_output_shaft_acceleration_unfiltered,word,e2m 8C17 +48 RE_OSS_Accel_Unfiltered ('Unfiltered tailshaft acceleration'); cm848_calculateOutputShaftAcceleration (was protection_load_rate_delta)
-0x0040b14c,protection_monitor_countdown,word,
+0x0040b14c,converter_clutch_engagement_timer,word,Converter clutch engagement timeout (cm848_monitorConverterClutchEngagement): reloaded from converter_clutch_engagement_time_limit while no engagement is pending; at 0 it sets the lockup inhibit (condition_eval bit 6). 300 in the RAM dump (no engagement pending). The e2m 8C17 record at this offset (+4A RE_E_Brake_Inhibit_Timer) does not fit the code, so 8C17 drifts from +4A in 11.46 (was protection_monitor_countdown)
 0x0040b14e,intake_manifold_pressure_in_use,word,Intake manifold pressure the engine protection uses (cm848_selectSensorValuesInUse - a substitute on its fault bits); PCI 0x10 byte 5 in kPa / OBD-II intake manifold pressure / freeze frame (was protection_fuel_low_snapshot)
 0x0040b150,accelerator_pedal_position_in_use,word,fuel_demand_control_t.calculated as protection and the freeze frame use it (a substitute on its fault bits - cm848_selectSensorValuesInUse); OBD-II PID 0x11 throttle position = this x 51 / 80 so about 0.25 percent per count (was protection_fuel_demand_snapshot)
 0x0040b152,coolant_temperature_in_use,word,Coolant temperature (1/64 deg F) the engine protection uses (cm848_selectSensorValuesInUse - a substitute on its fault bits); filtered for PCI 0xC0 byte 3 / freeze frame (was protection_coolant_temp_active)
