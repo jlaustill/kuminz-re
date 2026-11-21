@@ -995,6 +995,14 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     and `CONTROL_NETWORK` (J1922 / J1939).
   - **Ghidra:** a piece name such as `_10_2_` counts in decimal (offset 10 = +0xa). A multi-bit mask on a
     bitfield renders as a raw piece (`_32_2_ & 3`), so masked flag words stay words.
+- **Round 7 (2026-11-21, PR #53):** the J1939 monitor (j1939mon) and the drivetrain ratio module.
+  - **`j1939_control_session_t`** is the 24-byte session record (e2m 10FD history table `[5]` at 0x3fead6,
+    10FE / 10FF active engine / retarder records at 0x3feb50 / 0x3feb6a, each behind a length word).
+  - **The drivetrain module:** `drivetrain_gear_range` / `DRIVETRAIN_GEAR_RANGE` is the gear-down protection
+    range (top gear / one gear down / lower; `top_gear_ratio_cal` 0.8, `gear_down_gear_ratio_cal` 1.0). The
+    cals come from e2m 106D.
+  - **The importer:** a `function_definitions` / `local_variables` type `int` becomes `dword`; use
+    `int32_t` for a signed int.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

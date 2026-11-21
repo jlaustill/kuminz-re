@@ -140,3 +140,8 @@ function_address,function_name,old_name,new_name,type,comment
 0x00047bd0,cm848_calculateFuelMeteringCommand,local_64,working_proportional_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_proportional_gains (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is 0) passed to cm848_applyPiecewiseLinearGain
 0x00047bd0,cm848_calculateFuelMeteringCommand,local_54,working_integral_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_integral_gains (scaled the same way) passed to cm848_integrateWithZoneGain
 0x00047bd0,cm848_calculateFuelMeteringCommand,local_44,working_derivative_gains,derivative_gain_t,Stack copy of fuel_pressure_governor_derivative_gains (scaled the same way; the 4-byte gains are copied as halfwords because they are not 4-aligned) passed to cm848_calculateFilteredDerivative
+0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,pjVar1,session_record,j1939_control_session_t *,the open session record (engine or retarder); the copy starts one word before it (session_record[-1].duration + 2)
+0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,uVar3,history_entry,uint,j1939_control_session_history_next_entry_cal before the increment
+0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,pwVar2,source_word,word *,the record word cursor (starts one word before the record)
+0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,pwVar4,history_word,word *,the history entry word cursor (j1939_input_signal_timeouts + entry x 12 + 24 words: the table behind that array)
+0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,bVar5,copied_word_count,byte,12 words per record

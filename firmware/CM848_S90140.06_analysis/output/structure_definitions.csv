@@ -1667,3 +1667,13 @@ all_speed_governor_gain_set_t,,derivative_gain_2,short,2,"+0xa: e2m ASG_Derivati
 all_speed_governor_gain_set_t,,compensation_filter_coefficient_1,short,2,"+0xc: e2m ASG_Compensation_Filter_Coefficient_1 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5)",,verified
 all_speed_governor_gain_set_t,,compensation_filter_coefficient_2,short,2,"+0xe: e2m ASG_Compensation_Filter_Coefficient_2 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5)",,verified
 all_speed_governor_gain_set_t,,compensation_filter_coefficient_3,short,2,"+0x10: e2m ASG_Compensation_Filter_Coefficient_3 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5)",,verified
+
+# J1939 monitor control session record (j1939mon): e2m 10FD J1939_History_Table (5 at 0x3fead6) and 10FE / 10FF
+#   J1939_Active_Engine / J1939_Active_Retarder (0x3feb50 / 0x3feb6a); 24 bytes, each behind a length word
+j1939_control_session_t,,session_kind,byte,1,"0 = an engine control (TSC1) session, 1 = a retarder control session; 0xFE (with the source address 0xFE) in an empty record",,verified
+j1939_control_session_t,,controlling_source_address,byte,1,the J1939 source address of the controlling device,,verified
+j1939_control_session_t,,control_device,J1939_CONTROL_DEVICE,2,engine_control_device_indicator / engine_retarder_control_device_indicator at the start,,verified
+j1939_control_session_t,,override_control_mode_count,word,2,"how many override_control_modes are filled: 1 at the start, + 1 per mode change, at most 5 (then the history shifts)",,verified
+j1939_control_session_t,,override_control_modes,TSC1_OVERRIDE_MODE,10,the session's override control modes in order (the last five when there were more),,verified
+j1939_control_session_t,,start_time,dword,4,key_on_hour_meter at the start (0.2 s counts),,verified
+j1939_control_session_t,,duration,dword,4,"key_on_hour_meter - start_time, stored when the session ends (0.2 s counts)",,verified

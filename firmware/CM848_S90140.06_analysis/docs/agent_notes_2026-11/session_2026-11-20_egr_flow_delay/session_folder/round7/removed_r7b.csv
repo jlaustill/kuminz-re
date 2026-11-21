@@ -1,0 +1,4 @@
+0x003feb54,etc1_governor_mode_history_write_index,word,write index for ETC1 governor-mode history ring
+0x003feb6e,governor_mode_history_write_index,word,write index for governor-mode-state history ring
+0x003feb60,etc1_governor_calib_session_start_time,dword,ETC1 calib snapshot session start time
+0x003feb7a,governor_mode_calib_session_start_time,dword,governor-mode calib snapshot session start time

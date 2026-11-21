@@ -208,6 +208,27 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
     task 022's TSC1 work.
   - **Reverted:** a bitfield. Ghidra rendered its masked writes as a raw piece.
 
+**Round 7 (another "keep going"): the J1939 monitor's session record, the retarder TSC1 words, the drivetrain
+ratio module.**
+- **Stage A (9d2ebdf, label-only):**
+  - the J1939 monitor's e2m 1100 words and the tracker's retarder-half copies;
+  - the engine retarder TSC1 handler read in full: the received bytes, a zero torque request timer, and a speed
+    control flag that is always 0 because the handler rejects speed control;
+  - `cm848_resetEngineRetarderTsc1Request` and `cm848_endRetarderShiftAssistAboveFuelDemandLimit`.
+- **Stage C (9fd5621, label-only):** the drivetrain ratio module.
+  - **Two misnamed words:** `drivetrain_ratio_filter_state` was `engine_temperature_protection_filter_state`, and
+    `drivetrain_ratio_engine_period_valid_flag` was `protection_timeout_enable_flag`.
+  - **Gear down:** `governor_j1939_bypass_flag` is the gear-down protection range (`drivetrain_gear_range`: top gear
+    / one gear down / lower). With the feature on, only top gear keeps the road speed governor's droops.
+- **Stage B (types):**
+  - **`j1939_control_session_t`,** the j1939mon record (e2m 10FD / 10FE / 10FF), on the history `[5]` and the two
+    active records. Its layout comes from the code and the EEPROM image's length words, and it replaces four member
+    rows.
+  - **The drivetrain cals** from e2m 106D, plus `gear_down_gear_ratio_cal`.
+  - **`DRIVETRAIN_GEAR_RANGE`.**
+- **Found:** the history table's length word is also `j1939_input_signal_timeouts[24]`. The supervision tick would
+  count it down, but the tick is off in this calibration.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -258,6 +279,11 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
 - [x] Round 6 closing: the arbitration prose is fixed by branch, and "Bank 2" for 0x5c38c / 0x5c3b4 is
   corrected to ROM. The two unused enums that contradicted e2m are deleted, proved a no-op (comments only,
   0 functions).
+- [x] Round 7:
+  - stages A and C are EQUIVALENT;
+  - stage B was read diff by diff: the struct field renders, the enum renders and declaration order;
+  - the session functions' `int32_t` parameter was found because the first 7a build rendered `int` as
+    `dword`.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -271,7 +297,7 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
 - **Open after round 5:**
-  - the J1939 monitor's session record (e2m 10FE / 10FF / 1100: still etc1_governor-named words);
+  - the transmission gear functions 0x3241c / 0x3257c (inherited `protection_*` names);
   - the engine speed module's run-state machine (no e2m value list, so it needs a read);
   - the 48RE governor pressure functions 0x3257c / 0x3241c (their block 8D14 drifts);
   - the fault derate scheduler words and the 11D5 air fuel control rows;

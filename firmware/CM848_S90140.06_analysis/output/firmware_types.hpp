@@ -1071,6 +1071,12 @@ typedef enum {
     INTAKE_AIR_HEATER_PHASE_OFF = 5  /* e2m IAH_Phase 5 = off */
 } INTAKE_AIR_HEATER_PHASE;
 
+typedef enum {
+    DRIVETRAIN_GEAR_RANGE_TOP_GEAR = 1,  /* drivetrain_ratio below top_gear_ratio_threshold */
+    DRIVETRAIN_GEAR_RANGE_ONE_GEAR_DOWN = 2,  /* below gear_down_ratio_threshold but not top gear */
+    DRIVETRAIN_GEAR_RANGE_LOWER = 3  /* at or above gear_down_ratio_threshold */
+} DRIVETRAIN_GEAR_RANGE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -1220,6 +1226,7 @@ typedef struct piecewise_linear_gain_t piecewise_linear_gain_t;
 typedef struct derivative_gain_t derivative_gain_t;
 typedef struct low_speed_governor_gain_set_t low_speed_governor_gain_set_t;
 typedef struct all_speed_governor_gain_set_t all_speed_governor_gain_set_t;
+typedef struct j1939_control_session_t j1939_control_session_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2725,4 +2732,14 @@ struct all_speed_governor_gain_set_t {
     int16_t compensation_filter_coefficient_1;  /* +0xc: e2m ASG_Compensation_Filter_Coefficient_1 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
     int16_t compensation_filter_coefficient_2;  /* +0xe: e2m ASG_Compensation_Filter_Coefficient_2 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
     int16_t compensation_filter_coefficient_3;  /* +0x10: e2m ASG_Compensation_Filter_Coefficient_3 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+};
+
+struct j1939_control_session_t {
+    uint8_t session_kind;  /* 0 = an engine control (TSC1) session, 1 = a retarder control session; 0xFE (with the source address 0xFE) in an empty record */
+    uint8_t controlling_source_address;  /* the J1939 source address of the controlling device */
+    J1939_CONTROL_DEVICE control_device;  /* engine_control_device_indicator / engine_retarder_control_device_indicator at the start */
+    uint16_t override_control_mode_count;  /* how many override_control_modes are filled: 1 at the start, + 1 per mode change, at most 5 (then the history shifts) */
+    TSC1_OVERRIDE_MODE override_control_modes;  /* the session's override control modes in order (the last five when there were more) */
+    uint32_t start_time;  /* key_on_hour_meter at the start (0.2 s counts) */
+    uint32_t duration;  /* key_on_hour_meter - start_time, stored when the session ends (0.2 s counts) */
 };

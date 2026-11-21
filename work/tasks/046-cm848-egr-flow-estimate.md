@@ -329,6 +329,53 @@ source lookup and the TSC1 dispatcher (scripts in `session_folder/round6/`).
     Jcomm state.
   - `retarder_tsc1_mode_transition_timer` / `retarder_tsc1_speed_mode_flag`: read the retarder handler in full.
 
+## Done, round 7 (2026-11-21, same PR; the user's next "keep going")
+
+Hand work on the round 6 leads (scripts in `session_folder/round7/`).
+- **Stage A (9d2ebdf, label-only):**
+  - **The J1939 monitor's working words** take their e2m 1100 names: `j1939_engine_control_source_cal` /
+    `j1939_retarder_control_source_cal` and `j1939_control_session_history_next_entry_cal`.
+  - **The tracker's retarder-half copies** are named like the engine half.
+  - **The session functions' parameter** is `session_kind`, typed `int32_t` (the importer maps `int` to `dword`).
+  - **The engine retarder TSC1 handler,** read in full:
+    - `engine_retarder_received_tsc1_control_byte` / `_torque_byte`;
+    - `retarder_tsc1_zero_torque_request_timer`: armed while the requested torque or limit is 0; why that is timed
+      is open;
+    - `retarder_tsc1_speed_control_flag`: always 0, because speed control is rejected;
+    - `cm848_resetEngineRetarderTsc1Request` and `cm848_endRetarderShiftAssistAboveFuelDemandLimit`.
+- **Stage C (9fd5621, label-only): the drivetrain ratio module.**
+  - **Misnamed words:** `drivetrain_ratio_filter_state` (was `engine_temperature_protection_filter_state`) and
+    `drivetrain_ratio_engine_period_valid_flag` (was `protection_timeout_enable_flag`, set by the VSS interrupt's
+    period average).
+  - **Gear down:** `drivetrain_gear_range` (was `governor_j1939_bypass_flag`) is the gear-down protection range,
+    with `top_gear_ratio_threshold` / `gear_down_ratio_threshold`.
+  - **Functions:** `cm848_initializeDrivetrainRatio`, `cm848_applyJ1939OutOfGearToDrivetrainRatio` and
+    `cm848_saveOutputShaftSpeed`.
+- **Stage B (types):**
+  - **`j1939_control_session_t`,** the 24-byte j1939mon session record. Its layout comes from the three monitor
+    functions and the EEPROM image's length words (0x78 / 0x18 / 0x18).
+    - **Instances:** the history `[5]`, the active engine and the active retarder records.
+    - **Replaced rows:** the four member rows. The control source words are `J1939_CONTROL_DEVICE`.
+  - **The drivetrain cals** from e2m 106D, and `gear_down_gear_ratio_cal` (0x3fd900, e2m 8B8B).
+  - **`DRIVETRAIN_GEAR_RANGE`.**
+  - **The history store's locals** are named. The record local keeps the struct pointer type: its copy start reads
+    `&session_record[-1].duration + 2` (the word before the record). A `word *` or `byte *` local made Ghidra spell
+    it out longer.
+- **Found:** the history table's length word (0x3fead4) is also `j1939_input_signal_timeouts[24]`.
+  - The supervision tick's loop covers 25 words (`addi r3 = r4 + 48` / `bge` @ 0x50bd9c-0x50bdc4), so it would count
+    the length word down.
+  - The tick is off in this calibration (`j1939_input_processing_enable_cal` = 0). Documented on the array.
+- **Thin evidence:**
+  - `gear_down_gear_ratio_cal`'s address comes from the code. Block 8B8B is not in the parameter ID table.
+  - Range codes 2 and 3 are never tested apart; the readers only test 1 against everything else.
+  - The tolerance percent at 0x408b78 has no writer and no e2m record, so it is unnamed.
+- **Round 7 leads:**
+  - The transmission gear functions `cm848_calculateProtectionFuelDemandThreshold` (0x3241c) and
+    `cm848_processProtectionStateFlags` (0x3257c): `transmission_current_gear` / output speed logic under inherited
+    `protection_*` names (e2m 8D14 drifts).
+  - The engine run-state machine (819B).
+  - `cm848_initGovernorStateVariables`, a mixed governor initialization.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

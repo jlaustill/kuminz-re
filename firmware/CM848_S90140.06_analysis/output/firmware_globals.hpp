@@ -405,14 +405,18 @@ extern word fuel_accumulation_weight_by_coolant_and_rpm_y_axis[11];  // 0x0005c8
 extern word fuel_accumulation_weight_by_coolant_and_rpm_grid[100];  // 0x0005c83a
 extern word engine_power_accumulator_increment_axis[11];  // 0x0005c902
 extern word engine_power_accumulator_increment_values[11];  // 0x0005c918
+extern word drivetrain_ratio_tolerance;  // 0x0005c92e
 extern word drivetrain_ratio_minimum_limit;  // 0x0005c930
+extern word drivetrain_ratio_maximum_limit;  // 0x0005c932
 extern word drivetrain_ratio_filter_coefficient;  // 0x0005c934
 extern word drivetrain_ratio_default;  // 0x0005c936
 extern word drivetrain_ratio_out_of_gear_ratio_change_delay;  // 0x0005c938
 extern word drivetrain_ratio_out_of_gear_speed_mismatch_delay;  // 0x0005c93a
 extern word drivetrain_ratio_out_of_gear_vehicle_speed_threshold;  // 0x0005c93c
+extern word drivetrain_ratio_when_loaded_minimum_fueling;  // 0x0005c93e
 extern word drivetrain_ratio_out_of_gear_settling_delay;  // 0x0005c940
 extern word drivetrain_ratio_out_of_gear_filter_coefficient;  // 0x0005c942
+extern word drivetrain_ratio_out_of_gear_tolerance;  // 0x0005c944
 extern word drivetrain_ratio_fraction_tolerance;  // 0x0005c946
 extern word high_speed_governor_compensator_filter_coefficient_1;  // 0x0005c948
 extern word high_speed_governor_compensator_filter_coefficient_2;  // 0x0005c94a
@@ -2102,6 +2106,7 @@ extern dword vehicle_speed_sensor_pulses_per_mile_cal;  // 0x003fd8f0
 extern word vehicle_speed_sensor_period_scale_cal;  // 0x003fd8f4
 extern dword vehicle_speed_sensor_max_scaled_period_cal;  // 0x003fd8f6
 extern dword vehicle_speed_sensor_min_scaled_period_cal;  // 0x003fd8fa
+extern word gear_down_gear_ratio_cal;  // 0x003fd900
 extern byte j1939_governor_feature_byte;  // 0x003fd902
 extern word cruise_feedback_uses_road_speed_flag_cal;  // 0x003fd920
 extern word engine_retarder_exit_engine_speed_warm_oil_cal;  // 0x003fd924
@@ -2270,6 +2275,11 @@ extern word fault_previous_pass_array;  // 0x003fea3c
 extern word fault_previous_pass_bits_720_to_735;  // 0x003fea96
 extern word governor_mode_code_diag_snapshot;  // 0x003feaa0
 extern word total_fueling_before_shutdown_or_excess_injection_fault_cal;  // 0x003feaa2
+extern j1939_control_session_t j1939_control_session_history_cal[5];  // 0x003fead6
+extern word j1939_active_engine_control_session_length_cal;  // 0x003feb4e
+extern j1939_control_session_t j1939_active_engine_control_session_cal;  // 0x003feb50
+extern word j1939_active_retarder_control_session_length_cal;  // 0x003feb68
+extern j1939_control_session_t j1939_active_retarder_control_session_cal;  // 0x003feb6a
 extern word j1708_link_fault_timeout_count_cal;  // 0x003feb8c
 extern word j1939_link_fault_timeout_count_cal;  // 0x003feb8e
 extern word tsc1_lost_management_maximum_accelerator_pedal_cal;  // 0x003feb90
@@ -5140,7 +5150,7 @@ extern ema_filter_state_t vehicle_speed_filter_state;  // 0x0040b5b2
 extern word park_neutral_exit_engine_speed_limit_phase;  // 0x0040b5ba
 extern word cruise_speed_limit_working;  // 0x0040b5bc
 extern word cruise_speed_limit_prev;  // 0x0040b5be
-extern word drivetrain_gear_range;  // 0x0040b5c2
+extern DRIVETRAIN_GEAR_RANGE drivetrain_gear_range;  // 0x0040b5c2
 extern word fault_vehicle_speed_limit;  // 0x0040b5c4
 extern void * sci_next_byte_handler;  // 0x0040b5c6
 extern dword sci_transfer_direction;  // 0x0040b5ca
@@ -6104,8 +6114,6 @@ extern dword j1939_input_data_error_bitmap;  // 0x003fbd5a
 extern dword j1939_input_timeout_bitmap;  // 0x003fbd5e
 extern dword j1939_pedal_input_timeout_bitmap;  // 0x003fbd62
 extern CONTROL_NETWORK j1939_monitor_engine_control_data_link_previous;  // 0x003fbd70
-extern word etc1_governor_mode_history_write_index;  // 0x003feb54
-extern word governor_mode_history_write_index;  // 0x003feb6e
 extern dword j1939_multiframe_rx_rts_can_header;  // 0x003fbdf7
 extern word j1939_multiframe_rx_total_bytes;  // 0x003fbdfb
 extern word pedal_fault_mode_fuel_demand_limit_previous;  // 0x003fcbe6
@@ -6501,15 +6509,13 @@ extern word governor_faultDerate_latch;  // 0x003fbd38
 extern word governor_faultDerate_engine_start_flag;  // 0x003fbd3c
 extern word engine_protection_shutdown_total_cal;  // 0x003fdfbc
 extern TSC1_OVERRIDE_MODE j1939_monitor_engine_override_control_mode_previous;  // 0x003fbd6c
-extern word j1939_monitor_retarder_override_control_mode_previous;  // 0x003fbd6e
+extern TSC1_OVERRIDE_MODE j1939_monitor_retarder_override_control_mode_previous;  // 0x003fbd6e
 extern byte j1939_monitor_engine_controlling_source_address_previous;  // 0x003fbd72
 extern byte j1939_monitor_retarder_controlling_source_address_previous;  // 0x003fbd73
-extern dword etc1_governor_calib_session_start_time;  // 0x003feb60
-extern dword governor_mode_calib_session_start_time;  // 0x003feb7a
 extern word j1939_engine_control_active_flag_cal;  // 0x003feb82
 extern word j1939_retarder_control_active_flag_cal;  // 0x003feb84
-extern word j1939_engine_control_source_cal;  // 0x003feb86
-extern word j1939_retarder_control_source_cal;  // 0x003feb88
+extern J1939_CONTROL_DEVICE j1939_engine_control_source_cal;  // 0x003feb86
+extern J1939_CONTROL_DEVICE j1939_retarder_control_source_cal;  // 0x003feb88
 extern byte j1939_tp_rx_session_active;  // 0x003fbd74
 extern byte j1939_multiframe_tx_destination_address;  // 0x003fbdc6
 extern word j1939_multiframe_tx_dest_addr_word;  // 0x003fbdc7

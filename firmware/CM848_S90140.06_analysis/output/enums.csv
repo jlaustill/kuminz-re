@@ -943,3 +943,8 @@ INTAKE_AIR_HEATER_PHASE,2,INTAKE_AIR_HEATER_PHASE_PREHEAT,e2m IAH_Phase 2 = preh
 INTAKE_AIR_HEATER_PHASE,3,INTAKE_AIR_HEATER_PHASE_CRANK,e2m IAH_Phase 3 = crank,2
 INTAKE_AIR_HEATER_PHASE,4,INTAKE_AIR_HEATER_PHASE_POSTHEAT,e2m IAH_Phase 4 = postheat,2
 INTAKE_AIR_HEATER_PHASE,5,INTAKE_AIR_HEATER_PHASE_OFF,e2m IAH_Phase 5 = off,2
+
+# Drivetrain gear range (drivetrain_gear_range; cm848_updateDrivetrainRatio): the gear-down protection ranges
+DRIVETRAIN_GEAR_RANGE,1,DRIVETRAIN_GEAR_RANGE_TOP_GEAR,drivetrain_ratio below top_gear_ratio_threshold,2
+DRIVETRAIN_GEAR_RANGE,2,DRIVETRAIN_GEAR_RANGE_ONE_GEAR_DOWN,below gear_down_ratio_threshold but not top gear,2
+DRIVETRAIN_GEAR_RANGE,3,DRIVETRAIN_GEAR_RANGE_LOWER,at or above gear_down_ratio_threshold,2

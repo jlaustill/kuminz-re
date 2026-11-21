@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 08:35:23 MST 2026
+// Generated: Sat Nov 21 08:49:55 MST 2026
 
 
 //
@@ -5939,8 +5939,8 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
   byte local_2a [5];
   byte bStack_25;
   uint local_24 [7];
-  dword current_runtime;
   byte key_matches;
+  dword current_runtime;
   
   if (eeprom_shadow_header.version_marker == 0xff) {
     result = 0;
@@ -41859,7 +41859,7 @@ void cm848_initializeFaultCruiseSpeedLimit(void)
 
 {
   cruise_speed_limit_working = cruise_speed_setpoint_default;
-  drivetrain_gear_range = 1;
+  drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_TOP_GEAR;
   j1939_cruise_speed_setpoint = cruise_speed_setpoint_default;
   cruise_maximum_road_speed_cal = cruise_speed_high_limit_default;
   DAT_0040b5c0 = cruise_speed_setpoint_default;
@@ -43757,7 +43757,8 @@ void cm848_calculateVehicleSpeedLimitFueling(void)
     vehicle_speed_limit_fueling = 0x1700;
     return;
   }
-  if (((j1939_governor_feature_cal & 0x100) == 0) || (drivetrain_gear_range == 1)) {
+  if (((j1939_governor_feature_cal & 0x100) == 0) ||
+     (drivetrain_gear_range == DRIVETRAIN_GEAR_RANGE_TOP_GEAR)) {
     uVar1 = (uint)vehicle_speed_rise_limited;
     uVar2 = (uint)cruise_speed_limit_working;
     if (uVar2 < uVar1) {
@@ -68411,32 +68412,32 @@ void j1939_pgn_handler_init_batch(void)
 void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
 
 {
-  undefined1 *puVar1;
-  word *pwVar2;
-  uint uVar3;
-  word *pwVar4;
-  byte bVar5;
+  j1939_control_session_t *session_record;
+  word *source_word;
+  dword history_entry;
+  word *history_word;
+  byte copied_word_count;
   
-  uVar3 = (uint)j1939_control_session_history_next_entry_cal;
+  history_entry = (dword)j1939_control_session_history_next_entry_cal;
   j1939_control_session_history_next_entry_cal = j1939_control_session_history_next_entry_cal + 1;
   if (4 < j1939_control_session_history_next_entry_cal) {
     j1939_control_session_history_next_entry_cal = 0;
   }
   if (session_kind == 0) {
-    puVar1 = &DAT_003feb50;
+    session_record = &j1939_active_engine_control_session_cal;
   }
   else {
-    puVar1 = &DAT_003feb6a;
+    session_record = &j1939_active_retarder_control_session_cal;
   }
-  bVar5 = 0;
-  pwVar2 = (word *)(puVar1 + -2);
-  pwVar4 = j1939_input_signal_timeouts + uVar3 * 0xc + 0x18;
+  copied_word_count = 0;
+  source_word = (word *)((int)&session_record[-1].duration + 2);
+  history_word = j1939_input_signal_timeouts + history_entry * 0xc + 0x18;
   do {
-    pwVar2 = pwVar2 + 1;
-    pwVar4 = pwVar4 + 1;
-    *pwVar4 = *pwVar2;
-    bVar5 = bVar5 + 1;
-  } while (bVar5 < 0xc);
+    source_word = source_word + 1;
+    history_word = history_word + 1;
+    *history_word = *source_word;
+    copied_word_count = copied_word_count + 1;
+  } while (copied_word_count < 0xc);
   return;
 }
 
@@ -68454,12 +68455,12 @@ void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
    j1939_powertrain_control_state.tsc1_controlling_source_address, the source index, a mode history
    whose write index is 1 with j1939_powertrain_control_state.tsc1_override_control_mode as first
    entry and four cleared entries, and the start time key_on_hour_meter in
-   etc1_governor_calib_session_start_time. Any other param_1 does the same for the retarder control
-   session (record at 0x3feb6a, e2m 10FF J1939_Active_Retarder, kind 1;
-   engine_retarder_controlling_source_address, engine_retarder_control_device_indicator,
-   engine_retarder_override_control_mode, j1939_retarder_control_active_flag_cal,
-   j1939_retarder_control_source_cal). Called by cm848_trackJ1939ControlSessions (0x50bff4). (was
-   governor_sourceData_init) */
+   j1939_active_engine_control_session_cal.start_time (the record is j1939_control_session_t). Any
+   other param_1 does the same for the retarder control session (record at 0x3feb6a, e2m 10FF
+   J1939_Active_Retarder, kind 1; engine_retarder_controlling_source_address,
+   engine_retarder_control_device_indicator, engine_retarder_override_control_mode,
+   j1939_retarder_control_active_flag_cal, j1939_retarder_control_source_cal). Called by
+   cm848_trackJ1939ControlSessions (0x50bff4). (was governor_sourceData_init) */
 
 void cm848_startJ1939ControlSession(int session_kind)
 
@@ -68467,32 +68468,37 @@ void cm848_startJ1939ControlSession(int session_kind)
   if (session_kind == 0) {
     j1939_engine_control_active_flag_cal = 1;
     j1939_engine_control_source_cal = engine_control_device_indicator;
-    DAT_003feb50 = 0;
-    DAT_003feb51 = j1939_powertrain_control_state.tsc1_controlling_source_address;
-    DAT_003feb52 = engine_control_device_indicator;
-    etc1_governor_mode_history_write_index = 1;
-    DAT_003feb56 = j1939_powertrain_control_state.tsc1_override_control_mode;
-    DAT_003feb5e = 0;
-    DAT_003feb5c = 0;
-    DAT_003feb5a = 0;
-    DAT_003feb58 = 0;
-    etc1_governor_calib_session_start_time = key_on_hour_meter;
-    DAT_003feb64 = 0;
+    j1939_active_engine_control_session_cal.session_kind = 0;
+    j1939_active_engine_control_session_cal.controlling_source_address =
+         j1939_powertrain_control_state.tsc1_controlling_source_address;
+    j1939_active_engine_control_session_cal.control_device = engine_control_device_indicator;
+    j1939_active_engine_control_session_cal.override_control_mode_count = 1;
+    j1939_active_engine_control_session_cal.override_control_modes[0] =
+         j1939_powertrain_control_state.tsc1_override_control_mode;
+    j1939_active_engine_control_session_cal.override_control_modes[4] = TSC1_OVERRIDE_OFF;
+    j1939_active_engine_control_session_cal.override_control_modes[3] = TSC1_OVERRIDE_OFF;
+    j1939_active_engine_control_session_cal.override_control_modes[2] = TSC1_OVERRIDE_OFF;
+    j1939_active_engine_control_session_cal.override_control_modes[1] = TSC1_OVERRIDE_OFF;
+    j1939_active_engine_control_session_cal.start_time = key_on_hour_meter;
+    j1939_active_engine_control_session_cal.duration = 0;
   }
   else {
     j1939_retarder_control_active_flag_cal = 1;
     j1939_retarder_control_source_cal = engine_retarder_control_device_indicator;
-    DAT_003feb6a = 1;
-    DAT_003feb6b = (undefined1)engine_retarder_controlling_source_address;
-    DAT_003feb6c = engine_retarder_control_device_indicator;
-    governor_mode_history_write_index = 1;
-    DAT_003feb70 = engine_retarder_override_control_mode;
-    DAT_003feb78 = 0;
-    DAT_003feb76 = 0;
-    DAT_003feb74 = 0;
-    DAT_003feb72 = 0;
-    governor_mode_calib_session_start_time = key_on_hour_meter;
-    DAT_003feb7e = 0;
+    j1939_active_retarder_control_session_cal.session_kind = 1;
+    j1939_active_retarder_control_session_cal.controlling_source_address =
+         (byte)engine_retarder_controlling_source_address;
+    j1939_active_retarder_control_session_cal.control_device =
+         engine_retarder_control_device_indicator;
+    j1939_active_retarder_control_session_cal.override_control_mode_count = 1;
+    j1939_active_retarder_control_session_cal.override_control_modes[0] =
+         engine_retarder_override_control_mode;
+    j1939_active_retarder_control_session_cal.override_control_modes[4] = TSC1_OVERRIDE_OFF;
+    j1939_active_retarder_control_session_cal.override_control_modes[3] = TSC1_OVERRIDE_OFF;
+    j1939_active_retarder_control_session_cal.override_control_modes[2] = TSC1_OVERRIDE_OFF;
+    j1939_active_retarder_control_session_cal.override_control_modes[1] = TSC1_OVERRIDE_OFF;
+    j1939_active_retarder_control_session_cal.start_time = key_on_hour_meter;
+    j1939_active_retarder_control_session_cal.duration = 0;
   }
   return;
 }
@@ -68527,14 +68533,13 @@ void cm848_trackJ1939ControlSessions(void)
   TSC1_OVERRIDE_MODE *pTVar2;
   word *pwVar3;
   CONTROL_NETWORK *pCVar4;
-  word *pwVar5;
-  byte bVar7;
-  byte *pbVar6;
-  byte *pbVar8;
-  word *pwVar9;
-  undefined2 *puVar10;
+  byte bVar6;
+  byte *pbVar5;
+  byte *pbVar7;
+  word *pwVar8;
+  TSC1_OVERRIDE_MODE *pTVar9;
   
-  bVar7 = j1939_powertrain_control_state.tsc1_controlling_source_address;
+  bVar6 = j1939_powertrain_control_state.tsc1_controlling_source_address;
   if ((governor_feature_config_word & 0x800) == 0) {
     return;
   }
@@ -68551,7 +68556,8 @@ void cm848_trackJ1939ControlSessions(void)
     if (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_OVERRIDE_OFF) {
       if ((j1939_monitor_engine_override_control_mode_previous != TSC1_OVERRIDE_OFF) &&
          (j1939_monitor_engine_control_data_link_previous == CONTROL_NETWORK_J1939)) {
-        DAT_003feb64 = key_on_hour_meter - etc1_governor_calib_session_start_time;
+        j1939_active_engine_control_session_cal.duration =
+             key_on_hour_meter - j1939_active_engine_control_session_cal.start_time;
 LAB_0050c1a0:
         j1939_engine_control_active_flag_cal = 0;
         cm848_storeJ1939ControlSessionInHistoryTable(0);
@@ -68562,22 +68568,26 @@ LAB_0050c1a0:
       if (j1939_engine_control_active_flag_cal == 1) {
         if (j1939_monitor_engine_controlling_source_address_previous ==
             j1939_powertrain_control_state.tsc1_controlling_source_address) {
-          if (etc1_governor_mode_history_write_index < 5) {
-            (&DAT_003feb56)[etc1_governor_mode_history_write_index] =
+          if (j1939_active_engine_control_session_cal.override_control_mode_count < 5) {
+            j1939_active_engine_control_session_cal.override_control_modes
+            [j1939_active_engine_control_session_cal.override_control_mode_count] =
                  j1939_powertrain_control_state.tsc1_override_control_mode;
-            etc1_governor_mode_history_write_index = etc1_governor_mode_history_write_index + 1;
+            j1939_active_engine_control_session_cal.override_control_mode_count =
+                 j1939_active_engine_control_session_cal.override_control_mode_count + 1;
           }
           else {
-            puVar10 = &DAT_003feb56;
+            pTVar9 = j1939_active_engine_control_session_cal.override_control_modes;
             do {
-              *puVar10 = puVar10[1];
-              puVar10 = puVar10 + 1;
-            } while (puVar10 < &DAT_003feb5e);
-            DAT_003feb5e = j1939_powertrain_control_state.tsc1_override_control_mode;
+              *pTVar9 = pTVar9[1];
+              pTVar9 = pTVar9 + 1;
+            } while (pTVar9 < j1939_active_engine_control_session_cal.override_control_modes + 4);
+            j1939_active_engine_control_session_cal.override_control_modes[4] =
+                 j1939_powertrain_control_state.tsc1_override_control_mode;
           }
           goto LAB_0050c1a8;
         }
-        DAT_003feb64 = key_on_hour_meter - etc1_governor_calib_session_start_time;
+        j1939_active_engine_control_session_cal.duration =
+             key_on_hour_meter - j1939_active_engine_control_session_cal.start_time;
         cm848_storeJ1939ControlSessionInHistoryTable(0);
       }
       cm848_startJ1939ControlSession(0);
@@ -68589,56 +68599,61 @@ LAB_0050c1a0:
 LAB_0050c1a8:
   *pTVar2 = j1939_powertrain_control_state.tsc1_override_control_mode;
   *pCVar4 = j1939_powertrain_control_state.tsc1_controlling_data_link;
-  pwVar5 = &j1939_monitor_retarder_override_control_mode_previous;
-  pwVar9 = &engine_retarder_controlling_source_address;
-  pbVar8 = &j1939_monitor_retarder_controlling_source_address_previous;
-  j1939_monitor_engine_controlling_source_address_previous = bVar7;
+  pTVar2 = &j1939_monitor_retarder_override_control_mode_previous;
+  pwVar8 = &engine_retarder_controlling_source_address;
+  pbVar7 = &j1939_monitor_retarder_controlling_source_address_previous;
+  j1939_monitor_engine_controlling_source_address_previous = bVar6;
   if ((engine_retarder_override_control_mode !=
        j1939_monitor_retarder_override_control_mode_previous) ||
-     (pwVar3 = pwVar9, pbVar6 = pbVar8,
+     (pwVar3 = pwVar8, pbVar5 = pbVar7,
      engine_retarder_controlling_source_address !=
      j1939_monitor_retarder_controlling_source_address_previous)) {
     pwVar3 = &engine_retarder_controlling_source_address;
-    pbVar6 = &j1939_monitor_retarder_controlling_source_address_previous;
+    pbVar5 = &j1939_monitor_retarder_controlling_source_address_previous;
     if (engine_retarder_override_control_mode == TSC1_OVERRIDE_OFF) {
-      if (j1939_monitor_retarder_override_control_mode_previous != 0) {
+      if (j1939_monitor_retarder_override_control_mode_previous != TSC1_OVERRIDE_OFF) {
         j1939_retarder_control_active_flag_cal = 0;
-        DAT_003feb7e = key_on_hour_meter - governor_mode_calib_session_start_time;
+        j1939_active_retarder_control_session_cal.duration =
+             key_on_hour_meter - j1939_active_retarder_control_session_cal.start_time;
         cm848_storeJ1939ControlSessionInHistoryTable(1);
-        pwVar3 = pwVar9;
-        pbVar6 = pbVar8;
+        pwVar3 = pwVar8;
+        pbVar5 = pbVar7;
       }
     }
     else {
       if (j1939_retarder_control_active_flag_cal == 1) {
         if (engine_retarder_controlling_source_address ==
             j1939_monitor_retarder_controlling_source_address_previous) {
-          if (governor_mode_history_write_index < 5) {
-            (&DAT_003feb70)[governor_mode_history_write_index] =
+          if (j1939_active_retarder_control_session_cal.override_control_mode_count < 5) {
+            j1939_active_retarder_control_session_cal.override_control_modes
+            [j1939_active_retarder_control_session_cal.override_control_mode_count] =
                  engine_retarder_override_control_mode;
-            governor_mode_history_write_index = governor_mode_history_write_index + 1;
+            j1939_active_retarder_control_session_cal.override_control_mode_count =
+                 j1939_active_retarder_control_session_cal.override_control_mode_count + 1;
           }
           else {
-            puVar10 = &DAT_003feb70;
+            pTVar9 = j1939_active_retarder_control_session_cal.override_control_modes;
             do {
-              *puVar10 = puVar10[1];
-              puVar10 = puVar10 + 1;
-            } while (puVar10 < &DAT_003feb78);
-            DAT_003feb78 = engine_retarder_override_control_mode;
+              *pTVar9 = pTVar9[1];
+              pTVar9 = pTVar9 + 1;
+            } while (pTVar9 < j1939_active_retarder_control_session_cal.override_control_modes + 4);
+            j1939_active_retarder_control_session_cal.override_control_modes[4] =
+                 engine_retarder_override_control_mode;
           }
           goto LAB_0050c2f4;
         }
-        DAT_003feb7e = key_on_hour_meter - governor_mode_calib_session_start_time;
+        j1939_active_retarder_control_session_cal.duration =
+             key_on_hour_meter - j1939_active_retarder_control_session_cal.start_time;
         cm848_storeJ1939ControlSessionInHistoryTable(1);
       }
       cm848_startJ1939ControlSession(1);
-      pwVar3 = pwVar9;
-      pbVar6 = pbVar8;
+      pwVar3 = pwVar8;
+      pbVar5 = pbVar7;
     }
   }
 LAB_0050c2f4:
-  *pwVar5 = engine_retarder_override_control_mode;
-  *pbVar6 = (byte)*pwVar3;
+  *pTVar2 = engine_retarder_override_control_mode;
+  *pbVar5 = (byte)*pwVar3;
   return;
 }
 
@@ -84658,7 +84673,8 @@ void cm848_selectCruiseControlGainZone(int param_1)
   if (((cruise_deadband_active_flag == 0) &&
       (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL)) ||
      ((adjusted_user_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT &&
-      (((j1939_governor_feature_cal & 0x100) != 0 && (drivetrain_gear_range != 1)))))) {
+      (((j1939_governor_feature_cal & 0x100) != 0 &&
+       (drivetrain_gear_range != DRIVETRAIN_GEAR_RANGE_TOP_GEAR)))))) {
 LAB_00524934:
     cruise_droop_speed_error_delta = 0;
   }
@@ -85543,11 +85559,11 @@ void cm848_updateDrivetrainRatio(void)
     else {
       if (drivetrain_ratio_unsettled_flag == 1) {
         local_30[0] = drivetrain_ratio_out_of_gear_filter_coefficient;
-        uVar1 = DAT_0005c944;
+        uVar1 = drivetrain_ratio_out_of_gear_tolerance;
       }
       else {
         local_30[0] = drivetrain_ratio_filter_coefficient;
-        uVar1 = DAT_0005c92e;
+        uVar1 = drivetrain_ratio_tolerance;
       }
       if (((vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) &&
           (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) &&
@@ -85584,8 +85600,8 @@ void cm848_updateDrivetrainRatio(void)
         else {
           uVar3 = dVar2 - uVar4;
         }
-        if ((((drivetrain_ratio_minimum_limit < uVar4) && (uVar4 < DAT_0005c932)) &&
-            ((uVar3 & 0xffff) <= (uint)uVar1)) &&
+        if ((((drivetrain_ratio_minimum_limit < uVar4) && (uVar4 < drivetrain_ratio_maximum_limit))
+            && ((uVar3 & 0xffff) <= (uint)uVar1)) &&
            ((((uVar3 & 0xffff) << 0xb) / (dVar2 & 0xffff) & 0xffff) <=
             (uint)drivetrain_ratio_fraction_tolerance)) {
           drivetrain_ratio_out_of_gear_cruise_disable_flag = 0;
@@ -85599,7 +85615,7 @@ void cm848_updateDrivetrainRatio(void)
           drivetrain_ratio_change_settle_counter = drivetrain_ratio_out_of_gear_ratio_change_delay;
           wVar5 = drivetrain_ratio_minimum_limit;
           if ((uVar4 < drivetrain_ratio_minimum_limit) ||
-             (wVar5 = DAT_0005c932, DAT_0005c932 < uVar4)) {
+             (wVar5 = drivetrain_ratio_maximum_limit, drivetrain_ratio_maximum_limit < uVar4)) {
             drivetrain_ratio_raw = wVar5;
           }
           drivetrain_ratio = drivetrain_ratio_raw;
@@ -85634,28 +85650,29 @@ void cm848_updateDrivetrainRatio(void)
         }
       }
       uVar4 = ((DAT_00408b78 + 0x6400) * (uint)top_gear_ratio_cal) / 0x6400;
-      uVar3 = (uint)DAT_0005c932;
+      uVar3 = (uint)drivetrain_ratio_maximum_limit;
       if (uVar3 < uVar4) {
         uVar4 = uVar3;
       }
       top_gear_ratio_threshold = (word)uVar4;
-      uVar6 = ((DAT_00408b78 + 0x6400) * (uint)DAT_003fd900) / 0x6400;
+      uVar6 = ((DAT_00408b78 + 0x6400) * (uint)gear_down_gear_ratio_cal) / 0x6400;
       if (uVar3 < uVar6) {
         uVar6 = uVar3;
       }
       gear_down_ratio_threshold = (word)uVar6;
       if ((uint)drivetrain_ratio < (uVar4 & 0xffff)) {
-        drivetrain_gear_range = 1;
+        drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_TOP_GEAR;
       }
       else if ((uint)drivetrain_ratio < (uVar6 & 0xffff)) {
-        drivetrain_gear_range = 2;
+        drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_ONE_GEAR_DOWN;
       }
       else {
-        drivetrain_gear_range = 3;
+        drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_LOWER;
       }
       if (((drivetrain_ratio_user_filtered_previous == drivetrain_ratio_user_filtered) &&
           (drivetrain_ratio_unsettled_flag == 0)) &&
-         ((drivetrain_ratio_save_pending_flag == 1 && (DAT_0005c93e < final_fueling)))) {
+         ((drivetrain_ratio_save_pending_flag == 1 &&
+          (drivetrain_ratio_when_loaded_minimum_fueling < final_fueling)))) {
         drivetrain_ratio_when_loaded = drivetrain_ratio_user_filtered;
         drivetrain_ratio_save_pending_flag = 0;
       }
@@ -85681,7 +85698,7 @@ void cm848_initializeDrivetrainRatio(void)
 
 {
   j1939_powertrain_control_state.etc1_out_of_gear_flag = 0;
-  drivetrain_gear_range = 1;
+  drivetrain_gear_range = DRIVETRAIN_GEAR_RANGE_TOP_GEAR;
   drivetrain_ratio_raw = drivetrain_ratio_default;
   drivetrain_ratio = drivetrain_ratio_default;
   drivetrain_ratio_user_filtered = drivetrain_ratio_default;
