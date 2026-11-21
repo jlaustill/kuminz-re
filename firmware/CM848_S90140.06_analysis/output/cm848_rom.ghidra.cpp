@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 12:48:05 MST 2026
+// Generated: Sat Nov 21 13:32:47 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
-  word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
+  word qadc_b_pqa4_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -32593,11 +32593,13 @@ void cm848_requestOverdriveShiftsLowRange(void)
   byte bVar3;
   
   wVar1 = lookupTableInterpolation
-                    (&DAT_003fb146,transmission_output_speed_in_use,
+                    (&transmission_low_range_4_3_downshift_minimum_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_low_range_4_3_downshift_minimum_throttle_axis,
                      transmission_low_range_4_3_downshift_minimum_throttle_values,0);
   wVar2 = lookupTableInterpolation
-                    (&DAT_003fb148,transmission_output_speed_in_use,
+                    (&transmission_low_range_3_4_upshift_maximum_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_low_range_3_4_upshift_maximum_throttle_axis,
                      transmission_low_range_3_4_upshift_maximum_throttle_values,0);
   if (wVar1 < fuel_demand_control_t_0040a57a.calculated) {
@@ -32646,7 +32648,8 @@ void cm848_selectGovernorPressureLowRange(void)
           engine_speed_state.filtered_engine_speed) {
         transmission_control_flags.low_range_boost_flags = bVar3;
         wVar1 = lookupTableInterpolation
-                          (&DAT_003fb144,fuel_demand_control_t_0040a57a.calculated,
+                          (&transmission_low_range_upshift_target_engine_speed_interp_state,
+                           fuel_demand_control_t_0040a57a.calculated,
                            transmission_low_range_upshift_target_engine_speed_axis,
                            transmission_low_range_upshift_target_engine_speed_values,0);
         uVar2 = (uint)(CONCAT44((int)((ulonglong)
@@ -32664,14 +32667,16 @@ void cm848_selectGovernorPressureLowRange(void)
       else {
         transmission_control_flags.low_range_boost_flags = bVar3;
         wVar1 = lookupTableInterpolation
-                          (&DAT_003fb144,fuel_demand_control_t_0040a57a.calculated,
+                          (&transmission_low_range_upshift_target_engine_speed_interp_state,
+                           fuel_demand_control_t_0040a57a.calculated,
                            transmission_low_range_upshift_target_engine_speed_axis,
                            transmission_low_range_upshift_target_engine_speed_values,0);
         uVar2 = (uint)wVar1;
       }
       governor_pressure_target =
            lookupTableInterpolation
-                     (&DAT_003fb0e0,fuel_demand_control_t_0040a57a.calculated,
+                     (&transmission_low_range_1_2_hold_pressure_interp_state,
+                      fuel_demand_control_t_0040a57a.calculated,
                       transmission_low_range_1_2_hold_pressure_axis,
                       transmission_low_range_1_2_hold_pressure_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_HOLD;
@@ -32681,7 +32686,7 @@ void cm848_selectGovernorPressureLowRange(void)
         transmission_lockup_timers.low_range_shift_timer = transmission_low_range_1_2_boost_time;
         governor_pressure_target =
              lookupTableInterpolation
-                       (&protection_rpm_limit_table_derate1_active_state,
+                       (&transmission_low_range_1_2_boost_pressure_interp_state,
                         fuel_demand_control_t_0040a57a.calculated,
                         transmission_low_range_1_2_boost_pressure_axis,
                         transmission_low_range_1_2_boost_pressure_values,0);
@@ -32693,7 +32698,7 @@ void cm848_selectGovernorPressureLowRange(void)
       transmission_control_flags.low_range_boost_flags = bVar3;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&protection_rpm_limit_table_derate1_active_state,
+                     (&transmission_low_range_1_2_boost_pressure_interp_state,
                       fuel_demand_control_t_0040a57a.calculated,
                       transmission_low_range_1_2_boost_pressure_axis,
                       transmission_low_range_1_2_boost_pressure_values,0);
@@ -32709,7 +32714,8 @@ void cm848_selectGovernorPressureLowRange(void)
         if (transmission_lockup_timers.low_range_hold_timer == 0) {
           if ((transmission_control_flags.low_range_boost_flags & 2) == 0) {
             wVar1 = lookupTableInterpolation
-                              (&DAT_003fb144,fuel_demand_control_t_0040a57a.calculated,
+                              (&transmission_low_range_upshift_target_engine_speed_interp_state,
+                               fuel_demand_control_t_0040a57a.calculated,
                                transmission_low_range_upshift_target_engine_speed_axis,
                                transmission_low_range_upshift_target_engine_speed_values,0);
             uVar2 = (uint)(CONCAT44((int)((ulonglong)
@@ -32726,7 +32732,8 @@ void cm848_selectGovernorPressureLowRange(void)
             }
             governor_pressure_target =
                  lookupTableInterpolation
-                           (&DAT_003fb0e2,fuel_demand_control_t_0040a57a.calculated,
+                           (&transmission_low_range_2_3_hold_pressure_interp_state,
+                            fuel_demand_control_t_0040a57a.calculated,
                             transmission_low_range_2_3_hold_pressure_axis,
                             transmission_low_range_2_3_hold_pressure_values,0);
             transmission_pressure_state.pressure_state =
@@ -32743,7 +32750,8 @@ void cm848_selectGovernorPressureLowRange(void)
           }
           governor_pressure_target =
                lookupTableInterpolation
-                         (&DAT_003fb0e6,fuel_demand_control_t_0040a57a.calculated,
+                         (&transmission_low_range_2_3_boost_pressure_interp_state,
+                          fuel_demand_control_t_0040a57a.calculated,
                           transmission_low_range_2_3_boost_pressure_axis,
                           transmission_low_range_2_3_boost_pressure_values,0);
           transmission_pressure_state.pressure_state =
@@ -32779,8 +32787,8 @@ void cm848_selectGovernorPressureLowRange(void)
       }
       governor_pressure_target =
            lookupTableInterpolation
-                     (&protection_rpm_limit_table_overload_state,transmission_output_speed_in_use,
-                      governor_pressure_low_range_curve_axis,
+                     (&governor_pressure_low_range_curve_interp_state,
+                      transmission_output_speed_in_use,governor_pressure_low_range_curve_axis,
                       governor_pressure_low_range_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
     }
@@ -32789,9 +32797,9 @@ void cm848_selectGovernorPressureLowRange(void)
     cm848_requestOverdriveShiftsLowRange();
     governor_pressure_target =
          lookupTableInterpolation
-                   (&protection_rpm_limit_table_overload_state,transmission_output_speed_in_use,
-                    governor_pressure_low_range_curve_axis,governor_pressure_low_range_curve_values,
-                    0);
+                   (&governor_pressure_low_range_curve_interp_state,transmission_output_speed_in_use
+                    ,governor_pressure_low_range_curve_axis,governor_pressure_low_range_curve_values
+                    ,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
   }
   return;
@@ -32827,11 +32835,12 @@ void cm848_applyConverterLockupScheduleLowRange(void)
       return;
     }
     wVar1 = lookupTableInterpolation
-                      (&DAT_003fb0fe,transmission_output_speed_in_use,
+                      (&transmission_3rd_gear_low_range_lockup_maximum_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_3rd_gear_low_range_lockup_maximum_throttle_axis,
                        transmission_3rd_gear_low_range_lockup_maximum_throttle_values,0);
     wVar2 = lookupTableInterpolation
-                      (&protection_fuel_demand_exit_derate3_interp_state,
+                      (&transmission_3rd_gear_low_range_unlock_maximum_throttle_interp_state,
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_low_range_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_low_range_unlock_maximum_throttle_values,0);
@@ -32851,11 +32860,12 @@ void cm848_applyConverterLockupScheduleLowRange(void)
       return;
     }
     wVar1 = lookupTableInterpolation
-                      (&DAT_003fb100,transmission_output_speed_in_use,
+                      (&transmission_4th_gear_low_range_lockup_maximum_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_4th_gear_low_range_lockup_maximum_throttle_axis,
                        transmission_4th_gear_low_range_lockup_maximum_throttle_values,0);
     wVar2 = lookupTableInterpolation
-                      (&protection_fuel_demand_exit_derate4_interp_state,
+                      (&transmission_4th_gear_low_range_unlock_maximum_throttle_interp_state,
                        transmission_output_speed_in_use,
                        transmission_4th_gear_low_range_unlock_maximum_throttle_axis,
                        transmission_4th_gear_low_range_unlock_maximum_throttle_values,0);
@@ -32887,14 +32897,14 @@ void cm848_applyConverterUnlockConditionsLowRange(void)
   if (((transmission_control_flags.request_flags & 0x40) == 0) && (2 < transmission_current_gear)) {
     if (transmission_current_gear == 3) {
       uVar1 = lookupTableInterpolation
-                        (&protection_fuel_demand_exit_derate3_interp_state,
+                        (&transmission_3rd_gear_low_range_unlock_maximum_throttle_interp_state,
                          transmission_output_speed_in_use,
                          transmission_3rd_gear_low_range_unlock_maximum_throttle_axis,
                          transmission_3rd_gear_low_range_unlock_maximum_throttle_values,0);
     }
     else {
       uVar1 = lookupTableInterpolation
-                        (&protection_fuel_demand_exit_derate4_interp_state,
+                        (&transmission_4th_gear_low_range_unlock_maximum_throttle_interp_state,
                          transmission_output_speed_in_use,
                          transmission_4th_gear_low_range_unlock_maximum_throttle_axis,
                          transmission_4th_gear_low_range_unlock_maximum_throttle_values,0);
@@ -32955,21 +32965,23 @@ void cm848_applyConverterLockupSchedule(void)
   }
   if (transmission_current_gear == 2) {
     wVar1 = lookupTableInterpolation
-                      (&DAT_003fb102,transmission_output_speed_in_use,
+                      (&transmission_2nd_gear_overheat_lockup_maximum_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_2nd_gear_overheat_lockup_maximum_throttle_axis,
                        transmission_2nd_gear_overheat_lockup_maximum_throttle_values,0);
     wVar2 = lookupTableInterpolation
-                      (&DAT_003fb108,transmission_output_speed_in_use,
+                      (&transmission_2nd_gear_lockup_maximum_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_2nd_gear_lockup_maximum_throttle_axis,
                        transmission_2nd_gear_lockup_maximum_throttle_values,0);
     wVar3 = lookupTableInterpolation
-                      (&protection_fuel_demand_threshold_derate2_interp_state,
+                      (&transmission_2nd_gear_unlock_maximum_throttle_interp_state,
                        transmission_output_speed_in_use,
                        transmission_2nd_gear_unlock_maximum_throttle_axis,
                        transmission_2nd_gear_unlock_maximum_throttle_values,0);
     fuel_demand_limit_working =
          lookupTableInterpolation
-                   (&protection_fuel_demand_limit_derate2_interp_state,
+                   (&transmission_2nd_gear_overheat_unlock_maximum_throttle_interp_state,
                     transmission_output_speed_in_use,
                     transmission_2nd_gear_overheat_unlock_maximum_throttle_axis,
                     transmission_2nd_gear_overheat_unlock_maximum_throttle_values,0);
@@ -32997,34 +33009,39 @@ void cm848_applyConverterLockupSchedule(void)
   }
   if ((transmission_current_gear == 3) && ((transmission_control_flags.overdrive_flags & 8) != 0)) {
     wVar3 = lookupTableInterpolation
-                      (&DAT_003fb15c,sensor_readings_t_0040baf2.coolant_temp,
+                      (&transmission_3rd_gear_lockup_minimum_output_speed_interp_state,
+                       sensor_readings_t_0040baf2.coolant_temp,
                        transmission_3rd_gear_lockup_minimum_output_speed_axis,
                        transmission_3rd_gear_lockup_minimum_output_speed_values,1);
     wVar2 = lookupTableInterpolation
-                      (&DAT_003fb104,transmission_output_speed_in_use,
+                      (&transmission_3rd_gear_overheat_lockup_maximum_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_3rd_gear_overheat_lockup_maximum_throttle_axis,
                        transmission_3rd_gear_overheat_lockup_maximum_throttle_values,0);
     wVar1 = lookupTableInterpolation
-                      (&DAT_003fb0fc,transmission_output_speed_in_use,
+                      (&transmission_3rd_gear_lockup_maximum_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_3rd_gear_lockup_maximum_throttle_axis,
                        transmission_3rd_gear_lockup_maximum_throttle_values,0);
     wVar4 = lookupTableInterpolation
-                      (&DAT_003fb112,transmission_output_speed_in_use,
+                      (&transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_axis,
                        transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_values,0);
     fuel_demand_limit_working =
          lookupTableInterpolation
-                   (&protection_fuel_demand_limit_derate3_interp_state,
+                   (&transmission_3rd_gear_overheat_unlock_maximum_throttle_interp_state,
                     transmission_output_speed_in_use,
                     transmission_3rd_gear_overheat_unlock_maximum_throttle_axis,
                     transmission_3rd_gear_overheat_unlock_maximum_throttle_values,0);
     wVar5 = lookupTableInterpolation
-                      (&protection_fuel_demand_threshold_derate3_interp_state,
+                      (&transmission_3rd_gear_unlock_maximum_throttle_interp_state,
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_unlock_maximum_throttle_values,0);
     uVar6 = lookupTableInterpolation
-                      (&DAT_003fb114,transmission_output_speed_in_use,
+                      (&transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_values,0);
     if ((((transmission_control_flags.state_flags & 0x20) == 0) ||
@@ -33072,59 +33089,67 @@ LAB_000306ac:
     transmission_4th_gear_lockup_boost_pressure = 0;
   }
   wVar4 = lookupTableInterpolation
-                    (&DAT_003fb15e,sensor_readings_t_0040baf2.coolant_temp,
+                    (&transmission_4th_gear_lockup_minimum_output_speed_interp_state,
+                     sensor_readings_t_0040baf2.coolant_temp,
                      transmission_4th_gear_lockup_minimum_output_speed_axis,
                      transmission_4th_gear_lockup_minimum_output_speed_values,1);
   wVar2 = lookupTableInterpolation
-                    (&DAT_003fb106,transmission_output_speed_in_use,
+                    (&transmission_4th_gear_overheat_lockup_maximum_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_4th_gear_overheat_lockup_maximum_throttle_axis,
                      transmission_4th_gear_overheat_lockup_maximum_throttle_values,0);
   wVar5 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fb168,transmission_output_speed_in_use,
+                    (&transmission_4th_gear_lockup_maximum_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_4th_gear_lockup_maximum_throttle_x_axis,
                      transmission_4th_gear_lockup_boost_pressure,
                      transmission_4th_gear_lockup_maximum_throttle_y_axis,
                      transmission_4th_gear_lockup_maximum_throttle_grid,0);
   fuel_demand_limit_working =
        lookupTableInterpolation
-                 (&protection_fuel_demand_limit_derate4_interp_state,
+                 (&transmission_4th_gear_overheat_unlock_maximum_throttle_interp_state,
                   transmission_output_speed_in_use,
                   transmission_4th_gear_overheat_unlock_maximum_throttle_axis,
                   transmission_4th_gear_overheat_unlock_maximum_throttle_values,0);
   wVar7 = lookupTableInterpolation
-                    (&protection_fuel_demand_threshold_derate4_interp_state,
+                    (&transmission_4th_gear_unlock_maximum_throttle_interp_state,
                      transmission_output_speed_in_use,
                      transmission_4th_gear_unlock_maximum_throttle_axis,
                      transmission_4th_gear_unlock_maximum_throttle_values,0);
   wVar8 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fb16c,transmission_output_speed_in_use,
+                    (&transmission_cruise_lockup_maximum_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_cruise_lockup_maximum_throttle_x_axis,
                      transmission_4th_gear_lockup_boost_pressure,
                      transmission_cruise_lockup_maximum_throttle_y_axis,
                      transmission_cruise_lockup_maximum_throttle_grid,0);
   wVar9 = lookupTableInterpolation
-                    (&protection_fuel_demand_threshold_derate4_secondary_interp_state,
+                    (&transmission_cruise_unlock_maximum_throttle_interp_state,
                      transmission_output_speed_in_use,
                      transmission_cruise_unlock_maximum_throttle_axis,
                      transmission_cruise_unlock_maximum_throttle_values,0);
   wVar10 = cm848_dualAxisTableInterpolation
-                     (&DAT_003fb10e,transmission_output_speed_in_use,
+                     (&transmission_cruise_exhaust_brake_lockup_maximum_throttle_interp_state,
+                      transmission_output_speed_in_use,
                       transmission_cruise_exhaust_brake_lockup_maximum_throttle_x_axis,
                       transmission_4th_gear_lockup_boost_pressure,
                       transmission_cruise_exhaust_brake_lockup_maximum_throttle_y_axis,
                       transmission_cruise_exhaust_brake_lockup_maximum_throttle_grid,0);
   wVar11 = lookupTableInterpolation
-                     (&DAT_003fb142,transmission_output_speed_in_use,
+                     (&transmission_cruise_exhaust_brake_unlock_maximum_throttle_interp_state,
+                      transmission_output_speed_in_use,
                       transmission_cruise_exhaust_brake_unlock_maximum_throttle_axis,
                       transmission_cruise_exhaust_brake_unlock_maximum_throttle_values,0);
   wVar1 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fb10a,transmission_output_speed_in_use,
+                    (&transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_x_axis,
                      transmission_4th_gear_lockup_boost_pressure,
                      transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_y_axis,
                      transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_grid,0);
   wVar3 = lookupTableInterpolation
-                    (&DAT_003fb140,transmission_output_speed_in_use,
+                    (&transmission_exhaust_brake_unlock_maximum_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_axis,
                      transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_values,0);
   if (((transmission_control_flags.state_flags & 0x20) != 0) &&
@@ -33199,13 +33224,13 @@ void cm848_applyConverterUnlockConditions(void)
     if (((transmission_current_gear == 2) && ((algorithm_enable_flags_6_cal & 8) != 0)) &&
        (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) {
       wVar1 = lookupTableInterpolation
-                        (&protection_fuel_demand_threshold_derate2_interp_state,
+                        (&transmission_2nd_gear_unlock_maximum_throttle_interp_state,
                          transmission_output_speed_in_use,
                          transmission_2nd_gear_unlock_maximum_throttle_axis,
                          transmission_2nd_gear_unlock_maximum_throttle_values,0);
       fuel_demand_limit_working =
            lookupTableInterpolation
-                     (&protection_fuel_demand_limit_derate2_interp_state,
+                     (&transmission_2nd_gear_overheat_unlock_maximum_throttle_interp_state,
                       transmission_output_speed_in_use,
                       transmission_2nd_gear_overheat_unlock_maximum_throttle_axis,
                       transmission_2nd_gear_overheat_unlock_maximum_throttle_values,0);
@@ -33225,17 +33250,18 @@ LAB_00030f98:
       if ((transmission_current_gear == 3) &&
          (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) {
         wVar1 = lookupTableInterpolation
-                          (&protection_fuel_demand_threshold_derate3_interp_state,
+                          (&transmission_3rd_gear_unlock_maximum_throttle_interp_state,
                            transmission_output_speed_in_use,
                            transmission_3rd_gear_unlock_maximum_throttle_axis,
                            transmission_3rd_gear_unlock_maximum_throttle_values,0);
         wVar2 = lookupTableInterpolation
-                          (&DAT_003fb140,transmission_output_speed_in_use,
+                          (&transmission_exhaust_brake_unlock_maximum_throttle_interp_state,
+                           transmission_output_speed_in_use,
                            transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_axis,
                            transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_values,0);
         fuel_demand_limit_working =
              lookupTableInterpolation
-                       (&protection_fuel_demand_limit_derate3_interp_state,
+                       (&transmission_3rd_gear_overheat_unlock_maximum_throttle_interp_state,
                         transmission_output_speed_in_use,
                         transmission_3rd_gear_overheat_unlock_maximum_throttle_axis,
                         transmission_3rd_gear_overheat_unlock_maximum_throttle_values,0);
@@ -33261,27 +33287,29 @@ LAB_00030f98:
          (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0))
       goto LAB_00030fdc;
       wVar2 = lookupTableInterpolation
-                        (&protection_fuel_demand_threshold_derate4_secondary_interp_state,
+                        (&transmission_cruise_unlock_maximum_throttle_interp_state,
                          transmission_output_speed_in_use,
                          transmission_cruise_unlock_maximum_throttle_axis,
                          transmission_cruise_unlock_maximum_throttle_values,0);
       wVar3 = lookupTableInterpolation
-                        (&protection_fuel_demand_threshold_derate4_interp_state,
+                        (&transmission_4th_gear_unlock_maximum_throttle_interp_state,
                          transmission_output_speed_in_use,
                          transmission_4th_gear_unlock_maximum_throttle_axis,
                          transmission_4th_gear_unlock_maximum_throttle_values,0);
       fuel_demand_limit_working =
            lookupTableInterpolation
-                     (&protection_fuel_demand_limit_derate4_interp_state,
+                     (&transmission_4th_gear_overheat_unlock_maximum_throttle_interp_state,
                       transmission_output_speed_in_use,
                       transmission_4th_gear_overheat_unlock_maximum_throttle_axis,
                       transmission_4th_gear_overheat_unlock_maximum_throttle_values,0);
       wVar4 = lookupTableInterpolation
-                        (&DAT_003fb142,transmission_output_speed_in_use,
+                        (&transmission_cruise_exhaust_brake_unlock_maximum_throttle_interp_state,
+                         transmission_output_speed_in_use,
                          transmission_cruise_exhaust_brake_unlock_maximum_throttle_axis,
                          transmission_cruise_exhaust_brake_unlock_maximum_throttle_values,0);
       wVar1 = lookupTableInterpolation
-                        (&DAT_003fb140,transmission_output_speed_in_use,
+                        (&transmission_exhaust_brake_unlock_maximum_throttle_interp_state,
+                         transmission_output_speed_in_use,
                          transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_axis,
                          transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_values,0);
       if (transmission_overheat_protection_active_flag != 0) goto LAB_00030f98;
@@ -33411,19 +33439,22 @@ void cm848_requestOverdriveShiftsNormal(void)
   byte bVar5;
   
   wVar1 = lookupTableInterpolation
-                    (&DAT_003fb14a,transmission_output_speed_in_use,
+                    (&transmission_normal_4_3_downshift_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_normal_4_3_downshift_throttle_axis,
                      transmission_normal_4_3_downshift_throttle_values,0);
   wVar2 = lookupTableInterpolation
-                    (&DAT_003fb14e,transmission_output_speed_in_use,
+                    (&transmission_normal_exhaust_brake_4_3_downshift_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_normal_exhaust_brake_4_3_downshift_throttle_axis,
                      transmission_normal_exhaust_brake_4_3_downshift_throttle_values,0);
   wVar3 = lookupTableInterpolation
-                    (&DAT_003fb14c,transmission_output_speed_in_use,
-                     transmission_normal_3_4_upshift_throttle_axis,
+                    (&transmission_normal_3_4_upshift_throttle_interp_state,
+                     transmission_output_speed_in_use,transmission_normal_3_4_upshift_throttle_axis,
                      transmission_normal_3_4_upshift_throttle_values,0);
   wVar4 = lookupTableInterpolation
-                    (&DAT_003fb150,transmission_output_speed_in_use,
+                    (&transmission_normal_exhaust_brake_3_4_upshift_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_normal_exhaust_brake_3_4_upshift_throttle_axis,
                      transmission_normal_exhaust_brake_3_4_upshift_throttle_values,0);
   if ((exhaust_brake_transmission_features_inhibit == 0) &&
@@ -33468,22 +33499,23 @@ void cm848_selectGovernorPressureCold(void)
   if ((transmission_selected_gear == 0x7e) || (transmission_selected_gear == 0x7f)) {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
-                    governor_pressure_manual_2nd_curve_axis,
+                   (&governor_pressure_manual_2nd_curve_interp_state,
+                    transmission_output_speed_in_use,governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
   }
   else if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) == 0) {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&DAT_003fb0f4,transmission_output_speed_in_use,governor_pressure_cold_curve_axis
-                    ,governor_pressure_cold_curve_values,0);
+                   (&governor_pressure_cold_curve_interp_state,transmission_output_speed_in_use,
+                    governor_pressure_cold_curve_axis,governor_pressure_cold_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_COLD_CURVE;
   }
   else {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&DAT_003fb0de,transmission_output_speed_in_use,
+                   (&governor_pressure_wide_open_throttle_cold_curve_interp_state,
+                    transmission_output_speed_in_use,
                     governor_pressure_wide_open_throttle_cold_curve_axis,
                     governor_pressure_wide_open_throttle_cold_curve_values,0);
     transmission_pressure_state.pressure_state =
@@ -33511,8 +33543,8 @@ void cm848_selectGovernorPressureBaseCurve(void)
   if ((transmission_selected_gear == 0x7e) || (transmission_selected_gear == 0x7f)) {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
-                    governor_pressure_manual_2nd_curve_axis,
+                   (&governor_pressure_manual_2nd_curve_interp_state,
+                    transmission_output_speed_in_use,governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
   }
@@ -33521,16 +33553,16 @@ void cm848_selectGovernorPressureBaseCurve(void)
     if ((switch_input_state_bits[1] & 0x10) == 0) {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&DAT_003fb0e8,transmission_output_speed_in_use,
-                      governor_pressure_fuel_economy_curve_axis,
+                     (&governor_pressure_fuel_economy_curve_interp_state,
+                      transmission_output_speed_in_use,governor_pressure_fuel_economy_curve_axis,
                       governor_pressure_fuel_economy_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_FUEL_ECONOMY_CURVE;
     }
     else {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&DAT_003fb0ea,transmission_output_speed_in_use,
-                      governor_pressure_exhaust_brake_curve_axis,
+                     (&governor_pressure_exhaust_brake_curve_interp_state,
+                      transmission_output_speed_in_use,governor_pressure_exhaust_brake_curve_axis,
                       governor_pressure_exhaust_brake_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE;
     }
@@ -33575,7 +33607,8 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
   transmission_predicted_2_3_shift_delay =
        *(word *)(&eeprom_calibration_pending_flag + (uint)transmission_temperature_range * 2);
   wVar1 = lookupTableInterpolation
-                    (&DAT_003fb15a,transmission_output_speed_in_use,
+                    (&governor_pressure_wide_open_throttle_curve_interp_state_2,
+                     transmission_output_speed_in_use,
                      governor_pressure_wide_open_throttle_curve_axis,
                      governor_pressure_wide_open_throttle_curve_values,0);
   if (transmission_current_gear == 1) {
@@ -33873,32 +33906,35 @@ void cm848_selectGovernorPressureCruise(void)
   if ((transmission_selected_gear == 0x7e) || (transmission_selected_gear == 0x7f)) {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
-                    governor_pressure_manual_2nd_curve_axis,
+                   (&governor_pressure_manual_2nd_curve_interp_state,
+                    transmission_output_speed_in_use,governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
   }
   else {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&DAT_003fb0fa,transmission_output_speed_in_use,
+                   (&governor_pressure_cruise_curve_interp_state,transmission_output_speed_in_use,
                     governor_pressure_cruise_curve_axis,governor_pressure_cruise_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_CRUISE_CURVE;
   }
   wVar1 = lookupTableInterpolation
-                    (&DAT_003fb152,transmission_output_speed_in_use,
+                    (&transmission_cruise_4_3_downshift_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_cruise_4_3_downshift_throttle_axis,
                      transmission_cruise_4_3_downshift_throttle_values,0);
   wVar2 = lookupTableInterpolation
-                    (&DAT_003fb154,transmission_output_speed_in_use,
-                     transmission_cruise_3_4_upshift_throttle_axis,
+                    (&transmission_cruise_3_4_upshift_throttle_interp_state,
+                     transmission_output_speed_in_use,transmission_cruise_3_4_upshift_throttle_axis,
                      transmission_cruise_3_4_upshift_throttle_values,0);
   wVar3 = lookupTableInterpolation
-                    (&DAT_003fb156,transmission_output_speed_in_use,
+                    (&transmission_cruise_exhaust_brake_4_3_downshift_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_cruise_exhaust_brake_4_3_downshift_throttle_axis,
                      transmission_cruise_exhaust_brake_4_3_downshift_throttle_values,0);
   wVar4 = lookupTableInterpolation
-                    (&DAT_003fb158,transmission_output_speed_in_use,
+                    (&transmission_cruise_exhaust_brake_3_4_upshift_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_cruise_exhaust_brake_3_4_upshift_throttle_axis,
                      transmission_cruise_exhaust_brake_3_4_upshift_throttle_values,0);
   if ((exhaust_brake_transmission_features_inhibit == 0) &&
@@ -33974,18 +34010,19 @@ uint cm848_calculateTransmissionOutputTorqueInGear(int param_1)
   }
   transmission_turbine_speed_prescaled =
        lookupTableInterpolation
-                 (&DAT_003fb160,transmission_turbine_speed_in_gear,
-                  transmission_turbine_speed_prescale_axis,
+                 (&transmission_turbine_speed_prescale_interp_state,
+                  transmission_turbine_speed_in_gear,transmission_turbine_speed_prescale_axis,
                   transmission_turbine_speed_prescale_values,0);
   transmission_throttle_prescaled =
        lookupTableInterpolation
-                 (&DAT_003fb162,fuel_demand_control_t_0040a57a.calculated,
-                  transmission_throttle_prescale_axis,transmission_throttle_prescale_values,0);
+                 (&transmission_throttle_prescale_interp_state,
+                  fuel_demand_control_t_0040a57a.calculated,transmission_throttle_prescale_axis,
+                  transmission_throttle_prescale_values,0);
   transmission_turbine_torque =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fb164,transmission_throttle_prescaled,transmission_turbine_torque_x_axis,
-                  transmission_turbine_speed_prescaled,transmission_turbine_torque_y_axis,
-                  transmission_turbine_torque_grid,0);
+                 (&transmission_turbine_torque_interp_state,transmission_throttle_prescaled,
+                  transmission_turbine_torque_x_axis,transmission_turbine_speed_prescaled,
+                  transmission_turbine_torque_y_axis,transmission_turbine_torque_grid,0);
   uVar1 = (uint)transmission_turbine_torque * (uint)transmission_gear_ratio_table[param_1] >> 5;
   if (uVar1 < 0x10000) {
     uVar1 = uVar1 & 0xffff;
@@ -34190,7 +34227,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
     cm848_predictPostShiftAcceleration();
     transmission_post_shift_acceleration_minimum =
          lookupTableInterpolation
-                   (&DAT_003fb126,fuel_demand_control_t_0040a57a.calculated,
+                   (&transmission_1_2_upshift_minimum_post_shift_acceleration_interp_state,
+                    fuel_demand_control_t_0040a57a.calculated,
                     transmission_1_2_upshift_minimum_post_shift_acceleration_axis,
                     transmission_1_2_upshift_minimum_post_shift_acceleration_values,2);
     if ((transmission_pressure_state.anti_hunt_delay_timer == 0) &&
@@ -34215,7 +34253,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
     }
     governor_pressure_target =
          lookupTableInterpolation
-                   (&DAT_003fb0f6,fuel_demand_control_t_0040a57a.calculated,
+                   (&transmission_anti_hunt_1_2_hold_pressure_interp_state,
+                    fuel_demand_control_t_0040a57a.calculated,
                     transmission_anti_hunt_1_2_hold_pressure_axis,
                     transmission_anti_hunt_1_2_hold_pressure_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_HOLD;
@@ -34265,7 +34304,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
     cm848_predictPostShiftAcceleration();
     transmission_post_shift_acceleration_minimum =
          lookupTableInterpolation
-                   (&DAT_003fb128,fuel_demand_control_t_0040a57a.calculated,
+                   (&transmission_2_3_upshift_minimum_post_shift_acceleration_interp_state,
+                    fuel_demand_control_t_0040a57a.calculated,
                     transmission_2_3_upshift_minimum_post_shift_acceleration_axis,
                     transmission_2_3_upshift_minimum_post_shift_acceleration_values,2);
     if ((transmission_pressure_state.anti_hunt_delay_timer != 0) ||
@@ -34273,7 +34313,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
         (short)transmission_post_shift_acceleration_minimum)) {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&DAT_003fb0f8,fuel_demand_control_t_0040a57a.calculated,
+                     (&transmission_anti_hunt_2_3_hold_pressure_interp_state,
+                      fuel_demand_control_t_0040a57a.calculated,
                       transmission_anti_hunt_2_3_hold_pressure_axis,
                       transmission_anti_hunt_2_3_hold_pressure_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_HOLD;
@@ -34306,7 +34347,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
       cm848_predictPostShiftAcceleration();
       transmission_post_shift_acceleration_minimum =
            lookupTableInterpolation
-                     (&DAT_003fb12a,fuel_demand_control_t_0040a57a.calculated,
+                     (&transmission_3_4_upshift_minimum_post_shift_acceleration_interp_state,
+                      fuel_demand_control_t_0040a57a.calculated,
                       transmission_3_4_upshift_minimum_post_shift_acceleration_axis,
                       transmission_3_4_upshift_minimum_post_shift_acceleration_values,2);
       if (transmission_pressure_state.anti_hunt_delay_timer != 0) {
@@ -34347,24 +34389,28 @@ void cm848_selectGovernorPressureNormal(void)
   if (transmission_current_gear == 1) {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb116,transmission_output_speed_in_use,
+                   (&transmission_anti_hunt_1_2_minimum_throttle_interp_state,
+                    transmission_output_speed_in_use,
                     transmission_anti_hunt_1_2_minimum_throttle_axis,
                     transmission_anti_hunt_1_2_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb118,transmission_output_speed_in_use,
+                   (&transmission_anti_hunt_1_2_maximum_throttle_interp_state,
+                    transmission_output_speed_in_use,
                     transmission_anti_hunt_1_2_maximum_throttle_axis,
                     transmission_anti_hunt_1_2_maximum_throttle_values,0);
   }
   else if (transmission_current_gear == 2) {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb11a,transmission_output_speed_in_use,
+                   (&transmission_anti_hunt_2_3_minimum_throttle_interp_state,
+                    transmission_output_speed_in_use,
                     transmission_anti_hunt_2_3_minimum_throttle_axis,
                     transmission_anti_hunt_2_3_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb11c,transmission_output_speed_in_use,
+                   (&transmission_anti_hunt_2_3_maximum_throttle_interp_state,
+                    transmission_output_speed_in_use,
                     transmission_anti_hunt_2_3_maximum_throttle_axis,
                     transmission_anti_hunt_2_3_maximum_throttle_values,0);
   }
@@ -34372,24 +34418,28 @@ void cm848_selectGovernorPressureNormal(void)
           ((switch_input_state_bits[1] & 0x10) != 0)) {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb122,transmission_output_speed_in_use,
+                   (&transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_interp_state,
+                    transmission_output_speed_in_use,
                     transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_axis,
                     transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb124,transmission_output_speed_in_use,
+                   (&transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_interp_state,
+                    transmission_output_speed_in_use,
                     transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_axis,
                     transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_values,0);
   }
   else {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb11e,transmission_output_speed_in_use,
+                   (&transmission_anti_hunt_3_4_minimum_throttle_interp_state,
+                    transmission_output_speed_in_use,
                     transmission_anti_hunt_3_4_minimum_throttle_axis,
                     transmission_anti_hunt_3_4_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb120,transmission_output_speed_in_use,
+                   (&transmission_anti_hunt_3_4_maximum_throttle_interp_state,
+                    transmission_output_speed_in_use,
                     transmission_anti_hunt_3_4_maximum_throttle_axis,
                     transmission_anti_hunt_3_4_maximum_throttle_values,0);
   }
@@ -34441,7 +34491,8 @@ LAB_00032e40:
     if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) != 0) {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&protection_rpm_limit_table_preentry_state,transmission_output_speed_in_use,
+                     (&governor_pressure_wide_open_throttle_curve_interp_state,
+                      transmission_output_speed_in_use,
                       governor_pressure_wide_open_throttle_curve_axis,
                       governor_pressure_wide_open_throttle_curve_values,0);
       transmission_pressure_state.pressure_state =
@@ -34526,7 +34577,8 @@ void cm848_runTransmissionControl(void)
     else {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&protection_rpm_limit_table_preentry_state,transmission_output_speed_in_use,
+                     (&governor_pressure_wide_open_throttle_curve_interp_state,
+                      transmission_output_speed_in_use,
                       governor_pressure_wide_open_throttle_curve_axis,
                       governor_pressure_wide_open_throttle_curve_values,0);
       transmission_pressure_state.pressure_state =
@@ -34548,8 +34600,8 @@ void cm848_runTransmissionControl(void)
            transmission_control_flags.low_range_boost_flags & 0xfc;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&protection_rpm_limit_table_overload_state,transmission_output_speed_in_use,
-                      governor_pressure_low_range_curve_axis,
+                     (&governor_pressure_low_range_curve_interp_state,
+                      transmission_output_speed_in_use,governor_pressure_low_range_curve_axis,
                       governor_pressure_low_range_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
       cm848_requestOverdriveShiftsLowRange();
@@ -34587,79 +34639,79 @@ void cm848_initializeTransmissionShiftLogic(void)
   transmission_control_flags.low_range_boost_flags =
        transmission_control_flags.low_range_boost_flags & 0xfc;
   transmission_4th_gear_lockup_boost_pressure = sensor_readings_t_0040baf2.intake_manifold_pressure;
-  protection_rpm_limit_table_overload_state = 2;
-  protection_rpm_limit_table_preentry_state = 2;
-  DAT_003fb0de = 2;
-  DAT_003fb0e0 = 2;
-  DAT_003fb0e2 = 2;
-  protection_rpm_limit_table_derate1_active_state = 2;
-  DAT_003fb0e6 = 2;
-  DAT_003fb0e8 = 2;
-  DAT_003fb0ea = 2;
-  protection_rpm_limit_table_ramp_state = 2;
+  governor_pressure_low_range_curve_interp_state = 2;
+  governor_pressure_wide_open_throttle_curve_interp_state = 2;
+  governor_pressure_wide_open_throttle_cold_curve_interp_state = 2;
+  transmission_low_range_1_2_hold_pressure_interp_state = 2;
+  transmission_low_range_2_3_hold_pressure_interp_state = 2;
+  transmission_low_range_1_2_boost_pressure_interp_state = 2;
+  transmission_low_range_2_3_boost_pressure_interp_state = 2;
+  governor_pressure_fuel_economy_curve_interp_state = 2;
+  governor_pressure_exhaust_brake_curve_interp_state = 2;
+  governor_pressure_manual_2nd_curve_interp_state = 2;
   governor_pressure_normal_curve_interp_state = 2;
   transmission_anti_hunt_1_2_boost_pressure_interp_state = 2;
   transmission_anti_hunt_2_3_boost_pressure_interp_state = 2;
-  DAT_003fb0f4 = 2;
-  DAT_003fb0f6 = 2;
-  DAT_003fb0f8 = 2;
-  DAT_003fb0fa = 2;
-  DAT_003fb0fc = 2;
-  DAT_003fb0fe = 2;
-  DAT_003fb100 = 2;
-  DAT_003fb102 = 2;
-  DAT_003fb104 = 2;
-  DAT_003fb106 = 2;
-  DAT_003fb108 = 2;
-  DAT_003fb10a = 2;
+  governor_pressure_cold_curve_interp_state = 2;
+  transmission_anti_hunt_1_2_hold_pressure_interp_state = 2;
+  transmission_anti_hunt_2_3_hold_pressure_interp_state = 2;
+  governor_pressure_cruise_curve_interp_state = 2;
+  transmission_3rd_gear_lockup_maximum_throttle_interp_state = 2;
+  transmission_3rd_gear_low_range_lockup_maximum_throttle_interp_state = 2;
+  transmission_4th_gear_low_range_lockup_maximum_throttle_interp_state = 2;
+  transmission_2nd_gear_overheat_lockup_maximum_throttle_interp_state = 2;
+  transmission_3rd_gear_overheat_lockup_maximum_throttle_interp_state = 2;
+  transmission_4th_gear_overheat_lockup_maximum_throttle_interp_state = 2;
+  transmission_2nd_gear_lockup_maximum_throttle_interp_state = 2;
+  transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_interp_state = 2;
   DAT_003fb10c = 2;
-  DAT_003fb10e = 2;
+  transmission_cruise_exhaust_brake_lockup_maximum_throttle_interp_state = 2;
   DAT_003fb110 = 2;
-  DAT_003fb112 = 2;
-  DAT_003fb114 = 2;
-  DAT_003fb116 = 2;
-  DAT_003fb118 = 2;
-  DAT_003fb11a = 2;
-  DAT_003fb11c = 2;
-  DAT_003fb11e = 2;
-  DAT_003fb120 = 2;
-  DAT_003fb122 = 2;
-  DAT_003fb124 = 2;
-  DAT_003fb126 = 2;
-  DAT_003fb128 = 2;
-  DAT_003fb12a = 2;
-  protection_fuel_demand_threshold_derate4_secondary_interp_state = 2;
-  protection_fuel_demand_threshold_derate2_interp_state = 2;
-  protection_fuel_demand_threshold_derate3_interp_state = 2;
-  protection_fuel_demand_threshold_derate4_interp_state = 2;
-  protection_fuel_demand_exit_derate3_interp_state = 2;
-  protection_fuel_demand_exit_derate4_interp_state = 2;
-  protection_fuel_demand_limit_derate2_interp_state = 2;
-  protection_fuel_demand_limit_derate3_interp_state = 2;
-  protection_fuel_demand_limit_derate4_interp_state = 2;
-  DAT_003fb140 = 2;
-  DAT_003fb142 = 2;
-  DAT_003fb144 = 2;
-  DAT_003fb146 = 2;
-  DAT_003fb148 = 2;
-  DAT_003fb14a = 2;
-  DAT_003fb14c = 2;
-  DAT_003fb14e = 2;
-  DAT_003fb150 = 2;
-  DAT_003fb152 = 2;
-  DAT_003fb154 = 2;
-  DAT_003fb156 = 2;
-  DAT_003fb158 = 2;
-  DAT_003fb15a = 2;
-  DAT_003fb15c = 2;
-  DAT_003fb15e = 2;
-  DAT_003fb160 = 2;
-  DAT_003fb162 = 2;
-  DAT_003fb164 = 2;
+  transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_interp_state = 2;
+  transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_interp_state = 2;
+  transmission_anti_hunt_1_2_minimum_throttle_interp_state = 2;
+  transmission_anti_hunt_1_2_maximum_throttle_interp_state = 2;
+  transmission_anti_hunt_2_3_minimum_throttle_interp_state = 2;
+  transmission_anti_hunt_2_3_maximum_throttle_interp_state = 2;
+  transmission_anti_hunt_3_4_minimum_throttle_interp_state = 2;
+  transmission_anti_hunt_3_4_maximum_throttle_interp_state = 2;
+  transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_interp_state = 2;
+  transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_interp_state = 2;
+  transmission_1_2_upshift_minimum_post_shift_acceleration_interp_state = 2;
+  transmission_2_3_upshift_minimum_post_shift_acceleration_interp_state = 2;
+  transmission_3_4_upshift_minimum_post_shift_acceleration_interp_state = 2;
+  transmission_cruise_unlock_maximum_throttle_interp_state = 2;
+  transmission_2nd_gear_unlock_maximum_throttle_interp_state = 2;
+  transmission_3rd_gear_unlock_maximum_throttle_interp_state = 2;
+  transmission_4th_gear_unlock_maximum_throttle_interp_state = 2;
+  transmission_3rd_gear_low_range_unlock_maximum_throttle_interp_state = 2;
+  transmission_4th_gear_low_range_unlock_maximum_throttle_interp_state = 2;
+  transmission_2nd_gear_overheat_unlock_maximum_throttle_interp_state = 2;
+  transmission_3rd_gear_overheat_unlock_maximum_throttle_interp_state = 2;
+  transmission_4th_gear_overheat_unlock_maximum_throttle_interp_state = 2;
+  transmission_exhaust_brake_unlock_maximum_throttle_interp_state = 2;
+  transmission_cruise_exhaust_brake_unlock_maximum_throttle_interp_state = 2;
+  transmission_low_range_upshift_target_engine_speed_interp_state = 2;
+  transmission_low_range_4_3_downshift_minimum_throttle_interp_state = 2;
+  transmission_low_range_3_4_upshift_maximum_throttle_interp_state = 2;
+  transmission_normal_4_3_downshift_throttle_interp_state = 2;
+  transmission_normal_3_4_upshift_throttle_interp_state = 2;
+  transmission_normal_exhaust_brake_4_3_downshift_throttle_interp_state = 2;
+  transmission_normal_exhaust_brake_3_4_upshift_throttle_interp_state = 2;
+  transmission_cruise_4_3_downshift_throttle_interp_state = 2;
+  transmission_cruise_3_4_upshift_throttle_interp_state = 2;
+  transmission_cruise_exhaust_brake_4_3_downshift_throttle_interp_state = 2;
+  transmission_cruise_exhaust_brake_3_4_upshift_throttle_interp_state = 2;
+  governor_pressure_wide_open_throttle_curve_interp_state_2 = 2;
+  transmission_3rd_gear_lockup_minimum_output_speed_interp_state = 2;
+  transmission_4th_gear_lockup_minimum_output_speed_interp_state = 2;
+  transmission_turbine_speed_prescale_interp_state = 2;
+  transmission_throttle_prescale_interp_state = 2;
+  transmission_turbine_torque_interp_state = 2;
   DAT_003fb166 = 2;
-  DAT_003fb168 = 2;
+  transmission_4th_gear_lockup_maximum_throttle_interp_state = 2;
   DAT_003fb16a = 2;
-  DAT_003fb16c = 2;
+  transmission_cruise_lockup_maximum_throttle_interp_state = 2;
   DAT_003fb16e = 2;
   return;
 }
@@ -34967,29 +35019,38 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
   }
   if ((transmission_control_flags.request_flags & 0x40) == 0) {
     wVar4 = lookupTableInterpolation
-                      (&protection_filter_stage_4_state,transmission_output_speed_in_use,
+                      (&transmission_3rd_gear_closed_throttle_unlock_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_3rd_gear_closed_throttle_unlock_throttle_axis,
                        transmission_3rd_gear_closed_throttle_unlock_throttle_values,0);
     wVar3 = lookupTableInterpolation
-                      (&protection_filter_stage_5_state,transmission_output_speed_in_use,
+                      (&transmission_4th_gear_closed_throttle_unlock_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_4th_gear_closed_throttle_unlock_throttle_axis,
                        transmission_4th_gear_closed_throttle_unlock_throttle_values,0);
     wVar9 = lookupTableInterpolation
-                      (&protection_filter_stage_3_state,transmission_output_speed_in_use,
+                      (&transmission_2nd_gear_closed_throttle_unlock_throttle_interp_state,
+                       transmission_output_speed_in_use,
                        transmission_2nd_gear_closed_throttle_unlock_throttle_axis,
                        transmission_2nd_gear_closed_throttle_unlock_throttle_values,0);
     wVar7 = lookupTableInterpolation
-                      (&protection_filter_stage_6_state,transmission_output_speed_in_use,
+                      (&
+                       transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                       ,transmission_output_speed_in_use,
                        transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
                        transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
     ;
     wVar5 = lookupTableInterpolation
-                      (&protection_filter_stage_7_state,transmission_output_speed_in_use,
+                      (&
+                       transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                       ,transmission_output_speed_in_use,
                        transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
                        transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
     ;
     wVar6 = lookupTableInterpolation
-                      (&protection_filter_stage_8_state,transmission_output_speed_in_use,
+                      (&
+                       transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                       ,transmission_output_speed_in_use,
                        transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
                        transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
     ;
@@ -35027,29 +35088,35 @@ joined_r0x000341e0:
     wVar9 = 0;
   }
   wVar3 = lookupTableInterpolation
-                    (&protection_filter_stage_1_state,transmission_output_speed_in_use,
+                    (&transmission_3rd_gear_closed_throttle_relock_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_3rd_gear_closed_throttle_relock_throttle_axis,
                      transmission_3rd_gear_closed_throttle_relock_throttle_values,0);
   wVar4 = lookupTableInterpolation
-                    (&protection_filter_stage_7_state,wVar9,
-                     transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
-                     transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
+                    (&
+                     transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                     ,wVar9,transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis
+                     ,transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   wVar5 = lookupTableInterpolation
-                    (&protection_filter_stage_2_state,transmission_output_speed_in_use,
+                    (&transmission_4th_gear_closed_throttle_relock_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_4th_gear_closed_throttle_relock_throttle_axis,
                      transmission_4th_gear_closed_throttle_relock_throttle_values,0);
   wVar6 = lookupTableInterpolation
-                    (&protection_filter_stage_8_state,wVar9,
-                     transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
-                     transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
+                    (&
+                     transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                     ,wVar9,transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_axis
+                     ,transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   wVar7 = lookupTableInterpolation
-                    (&protection_filter_stage_0_state,transmission_output_speed_in_use,
+                    (&transmission_2nd_gear_closed_throttle_relock_throttle_interp_state,
+                     transmission_output_speed_in_use,
                      transmission_2nd_gear_closed_throttle_relock_throttle_axis,
                      transmission_2nd_gear_closed_throttle_relock_throttle_values,0);
   wVar9 = lookupTableInterpolation
-                    (&protection_filter_stage_6_state,wVar9,
-                     transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
-                     transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
+                    (&
+                     transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                     ,wVar9,transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis
+                     ,transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   if ((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) &&
       (transmission_current_gear == 2)) && ((algorithm_enable_flags_6_cal & 8) != 0)) {
     wVar4 = wVar9;
@@ -35451,17 +35518,17 @@ void cm848_initializeTransmissionControl(void)
     transmission_control_flags.overdrive_flags =
          transmission_control_flags.overdrive_flags & 0x9f | 10;
   }
-  protection_filter_stage_0_state = 2;
-  protection_filter_stage_1_state = 2;
-  protection_filter_stage_2_state = 2;
-  protection_filter_stage_3_state = 2;
-  protection_filter_stage_4_state = 2;
-  protection_filter_stage_5_state = 2;
-  protection_filter_stage_6_state = 2;
-  protection_filter_stage_7_state = 2;
-  protection_filter_stage_8_state = 2;
-  protection_filter_stage_9_state = 2;
-  protection_filter_stage_10_state = 2;
+  transmission_2nd_gear_closed_throttle_relock_throttle_interp_state = 2;
+  transmission_3rd_gear_closed_throttle_relock_throttle_interp_state = 2;
+  transmission_4th_gear_closed_throttle_relock_throttle_interp_state = 2;
+  transmission_2nd_gear_closed_throttle_unlock_throttle_interp_state = 2;
+  transmission_3rd_gear_closed_throttle_unlock_throttle_interp_state = 2;
+  transmission_4th_gear_closed_throttle_unlock_throttle_interp_state = 2;
+  transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state = 2;
+  transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state = 2;
+  transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state = 2;
+  transmission_3rd_gear_lockup_maximum_throttle_interp_state_2 = 2;
+  transmission_3rd_gear_unlock_maximum_throttle_interp_state_2 = 2;
   transmission_output_shaft_acceleration_filter.accumulator = 0;
   transmission_output_shaft_acceleration_filter.coefficient =
        &transmission_output_shaft_acceleration_filter_coefficient;
@@ -35641,11 +35708,13 @@ void cm848_selectGovernorPressureLockupBoost(void)
   word wVar2;
   
   wVar1 = lookupTableInterpolation
-                    (&protection_filter_stage_9_state,transmission_output_speed_in_use,
+                    (&transmission_3rd_gear_lockup_maximum_throttle_interp_state_2,
+                     transmission_output_speed_in_use,
                      transmission_3rd_gear_lockup_maximum_throttle_axis,
                      transmission_3rd_gear_lockup_maximum_throttle_values,0);
   wVar2 = lookupTableInterpolation
-                    (&protection_filter_stage_10_state,transmission_output_speed_in_use,
+                    (&transmission_3rd_gear_unlock_maximum_throttle_interp_state_2,
+                     transmission_output_speed_in_use,
                      transmission_3rd_gear_unlock_maximum_throttle_axis,
                      transmission_3rd_gear_unlock_maximum_throttle_values,0);
   if ((((((transmission_control_flags.mode_flags & 4) == 0) && (transmission_selected_gear != 0x7e))
@@ -79337,7 +79406,8 @@ void cm848_controlGovernorPressureSolenoid(void)
       }
       else {
         wVar2 = lookupTableInterpolation
-                          (&DAT_003fcf0a,transmission_temperature_in_use,
+                          (&governor_pressure_temperature_gain_percent_interp_state,
+                           transmission_temperature_in_use,
                            governor_pressure_temperature_gain_percent_axis,
                            governor_pressure_temperature_gain_percent_values,1);
         uVar1 = (uint)wVar2;
@@ -79412,7 +79482,7 @@ void cm848_initializeGovernorPressureControl(void)
 
 {
   DAT_003fcf08 = 2;
-  DAT_003fcf0a = 2;
+  governor_pressure_temperature_gain_percent_interp_state = 2;
   if ((governor_pressure_solenoid_output_channel_cal != 0) &&
      (governor_pressure_solenoid_output_channel_cal < 0x33)) {
     (**(code **)(&output_channel_driver_table_enable +

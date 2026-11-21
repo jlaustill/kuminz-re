@@ -1,0 +1,17 @@
+cm848: round 10 stage A - the 78 RE table lookup caches named after their tables (label-only)
+
+Every lookup cache word of an RE table now carries its table's name. A cache word is the first argument of
+lookupTableInterpolation / cm848_dualAxisTableInterpolation and keeps the last axis segment offset. There were 54 DAT_
+words (no row: inserted label-only) and 24 protection_* names (protection_filter_stage_N_state,
+protection_rpm_limit_table_*_state, protection_fuel_demand_*_interp_state).
+- **The names:** each is `<table base>_interp_state`, e.g. transmission_3rd_gear_closed_throttle_relock_throttle_interp_state
+  (was protection_filter_stage_1_state) and governor_pressure_cruise_curve_interp_state (was DAT_003fb0fa).
+- **Tables with a second cache, in another function, get _interp_state_2:** the 3rd gear lockup and unlock curves (the
+  lockup boost's copies) and the WOT curve.
+- **The one cache shared by the 3rd and 4th gear exhaust brake unlock lookups** is
+  transmission_exhaust_brake_unlock_maximum_throttle_interp_state.
+- **The generator:** gen_r10a.py builds the list from the code (list_caches.py shows none left).
+- **Proof:** reverse_names.py EQUIVALENT (label-only; one function differs only in one local declaration's position,
+  as usual after inserted rows).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
