@@ -5140,7 +5140,7 @@ extern ema_filter_state_t vehicle_speed_filter_state;  // 0x0040b5b2
 extern word park_neutral_exit_engine_speed_limit_phase;  // 0x0040b5ba
 extern word cruise_speed_limit_working;  // 0x0040b5bc
 extern word cruise_speed_limit_prev;  // 0x0040b5be
-extern word governor_j1939_bypass_flag;  // 0x0040b5c2
+extern word drivetrain_gear_range;  // 0x0040b5c2
 extern word fault_vehicle_speed_limit;  // 0x0040b5c4
 extern void * sci_next_byte_handler;  // 0x0040b5c6
 extern dword sci_transfer_direction;  // 0x0040b5ca
@@ -5207,9 +5207,9 @@ extern word vehicle_speed_rise_limited;  // 0x0040b6e0
 extern word engine_speed_to_vss_ratio;  // 0x0040b6e2
 extern word cruise_speed_target_working;  // 0x0040b6e4
 extern word cruise_set_speed_valid_flag;  // 0x0040b6e6
-extern ema_filter_state_t engine_temperature_protection_filter_state;  // 0x0040b6e8
-extern word governor_bypass_threshold_low;  // 0x0040b6f0
-extern word governor_bypass_threshold_high;  // 0x0040b6f2
+extern ema_filter_state_t drivetrain_ratio_filter_state;  // 0x0040b6e8
+extern word top_gear_ratio_threshold;  // 0x0040b6f0
+extern word gear_down_ratio_threshold;  // 0x0040b6f2
 extern word drivetrain_ratio_raw;  // 0x0040b6f4
 extern word drivetrain_ratio_user_filtered;  // 0x0040b6f6
 extern word drivetrain_ratio_out_of_gear_cruise_disable_flag;  // 0x0040b6f8
@@ -5217,7 +5217,7 @@ extern word drivetrain_ratio_decoupled_hold_counter;  // 0x0040b6fa
 extern word drivetrain_ratio_change_settle_counter;  // 0x0040b6fc
 extern word drivetrain_ratio_when_loaded;  // 0x0040b6fe
 extern word drivetrain_ratio_unsettled_release_timer;  // 0x0040b700
-extern word protection_timeout_enable_flag;  // 0x0040b702
+extern word drivetrain_ratio_engine_period_valid_flag;  // 0x0040b702
 extern word high_speed_governor_compensator_output_previous;  // 0x0040b704
 extern word high_speed_governor_compensated_engine_speed;  // 0x0040b706
 extern word high_speed_governor_compensation_active_flag;  // 0x0040b708

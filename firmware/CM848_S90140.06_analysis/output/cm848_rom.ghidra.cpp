@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 08:31:36 MST 2026
+// Generated: Sat Nov 21 08:35:23 MST 2026
 
 
 //
@@ -7166,7 +7166,7 @@ void cm848_periodicTaskGroup32_calibration14(void)
 {
   cm848_runPowerTakeOffGovernorStateMachine();
   cm848_calculateDrivetrainRatioFromGearRatio();
-  etcTransmissionModeControl();
+  cm848_applyJ1939OutOfGearToDrivetrainRatio();
   cm848_monitorEngineToVehicleSpeedRatio();
   return;
 }
@@ -41852,14 +41852,14 @@ void cm848_calculateFaultCruiseSpeedLimit(void)
 
 /* Resets the fault cruise speed limit: cruise_speed_limit_working, j1939_cruise_speed_setpoint and
    the 0x40b5c0 copy to cruise_speed_setpoint_default, cruise_maximum_road_speed_cal to its default,
-   governor_j1939_bypass_flag to 1 and the previous fault reaction request to 0. (was
+   drivetrain_gear_range to 1 and the previous fault reaction request to 0. (was
    cm848_initTorqueCurveState) */
 
 void cm848_initializeFaultCruiseSpeedLimit(void)
 
 {
   cruise_speed_limit_working = cruise_speed_setpoint_default;
-  governor_j1939_bypass_flag = 1;
+  drivetrain_gear_range = 1;
   j1939_cruise_speed_setpoint = cruise_speed_setpoint_default;
   cruise_maximum_road_speed_cal = cruise_speed_high_limit_default;
   DAT_0040b5c0 = cruise_speed_setpoint_default;
@@ -43757,7 +43757,7 @@ void cm848_calculateVehicleSpeedLimitFueling(void)
     vehicle_speed_limit_fueling = 0x1700;
     return;
   }
-  if (((j1939_governor_feature_cal & 0x100) == 0) || (governor_j1939_bypass_flag == 1)) {
+  if (((j1939_governor_feature_cal & 0x100) == 0) || (drivetrain_gear_range == 1)) {
     uVar1 = (uint)vehicle_speed_rise_limited;
     uVar2 = (uint)cruise_speed_limit_working;
     if (uVar2 < uVar1) {
@@ -57393,8 +57393,8 @@ void cm848_applicationMain(void)
   cm848_initializeCruiseControlDroopGains();
   cm848_validateFuelRateTarget();
   cm848_initializeEngineRetarderRequestState();
-  initGovernorJ1939Bypass();
-  cm848_output_shaft_speed_save();
+  cm848_initializeDrivetrainRatio();
+  cm848_saveOutputShaftSpeed();
   cm848_inhibitLowSpeedGovernorAggressiveGains();
   cm848_initializeRearAxleRatio();
   cm848_calculateOutputShaftToVehicleSpeedDivisors();
@@ -84658,7 +84658,7 @@ void cm848_selectCruiseControlGainZone(int param_1)
   if (((cruise_deadband_active_flag == 0) &&
       (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL)) ||
      ((adjusted_user_fueling_state == FUELING_STATE_VEHICLE_SPEED_LIMIT &&
-      (((j1939_governor_feature_cal & 0x100) != 0 && (governor_j1939_bypass_flag != 1)))))) {
+      (((j1939_governor_feature_cal & 0x100) != 0 && (drivetrain_gear_range != 1)))))) {
 LAB_00524934:
     cruise_droop_speed_error_delta = 0;
   }
@@ -85514,9 +85514,9 @@ void initCruiseConfirmFlags(void)
    drivetrain_ratio_change_settle_counter is reloaded) and runs the out-of-gear timers
    (drivetrain_ratio_decoupled_hold_counter, drivetrain_ratio_unsettled_release_timer; e2m 106C +6 /
    +8) that clear drivetrain_ratio_unsettled_flag (e2m 117D +E Out_Of_Gear) only when all are 0. It
-   also publishes governor_bypass_threshold_low / _high (from top_gear_ratio_cal, e2m 1185 +A), sets
-   governor_j1939_bypass_flag to 1 / 2 / 3 as drivetrain_ratio is below the low / below the high /
-   above the high threshold, and commits drivetrain_ratio_when_loaded once the divisor is stable and
+   also publishes top_gear_ratio_threshold / _high (from top_gear_ratio_cal, e2m 1185 +A), sets
+   drivetrain_gear_range to 1 / 2 / 3 as drivetrain_ratio is below the low / below the high / above
+   the high threshold, and commits drivetrain_ratio_when_loaded once the divisor is stable and
    final_fueling is above its threshold. (was protectionTimeoutControl) */
 
 void cm848_updateDrivetrainRatio(void)
@@ -85537,8 +85537,7 @@ void cm848_updateDrivetrainRatio(void)
       drivetrain_ratio_user_filtered = drivetrain_ratio_default;
       drivetrain_ratio_when_loaded = drivetrain_ratio_default;
       drivetrain_ratio_unsettled_flag = 1;
-      engine_temperature_protection_filter_state.accumulator =
-           (uint)drivetrain_ratio_default << 0x10;
+      drivetrain_ratio_filter_state.accumulator = (uint)drivetrain_ratio_default << 0x10;
       drivetrain_ratio_engine_period_average = 0;
     }
     else {
@@ -85552,7 +85551,7 @@ void cm848_updateDrivetrainRatio(void)
       }
       if (((vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO) &&
           (vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO)) &&
-         (protection_timeout_enable_flag == 1)) {
+         (drivetrain_ratio_engine_period_valid_flag == 1)) {
         if ((drivetrain_ratio_engine_period_average == 0) ||
            (&DAT_00007ffd <
             (undefined *)
@@ -85571,10 +85570,9 @@ void cm848_updateDrivetrainRatio(void)
                      (ulonglong)drivetrain_ratio_engine_period_average);
         }
       }
-      engine_temperature_protection_filter_state.accumulator = (uint)drivetrain_ratio << 0x10;
-      engine_temperature_protection_filter_state.coefficient = local_30;
-      dVar2 = exponentialMovingAverage
-                        ((uint)drivetrain_ratio_raw,&engine_temperature_protection_filter_state);
+      drivetrain_ratio_filter_state.accumulator = (uint)drivetrain_ratio << 0x10;
+      drivetrain_ratio_filter_state.coefficient = local_30;
+      dVar2 = exponentialMovingAverage((uint)drivetrain_ratio_raw,&drivetrain_ratio_filter_state);
       drivetrain_ratio = (word)dVar2;
       if ((j1939_powertrain_control_state.etc1_out_of_gear_data_valid_flag != 1) ||
          ((vehicle_speed_sensor_type_cal != VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO &&
@@ -85640,20 +85638,20 @@ void cm848_updateDrivetrainRatio(void)
       if (uVar3 < uVar4) {
         uVar4 = uVar3;
       }
-      governor_bypass_threshold_low = (word)uVar4;
+      top_gear_ratio_threshold = (word)uVar4;
       uVar6 = ((DAT_00408b78 + 0x6400) * (uint)DAT_003fd900) / 0x6400;
       if (uVar3 < uVar6) {
         uVar6 = uVar3;
       }
-      governor_bypass_threshold_high = (word)uVar6;
+      gear_down_ratio_threshold = (word)uVar6;
       if ((uint)drivetrain_ratio < (uVar4 & 0xffff)) {
-        governor_j1939_bypass_flag = 1;
+        drivetrain_gear_range = 1;
       }
       else if ((uint)drivetrain_ratio < (uVar6 & 0xffff)) {
-        governor_j1939_bypass_flag = 2;
+        drivetrain_gear_range = 2;
       }
       else {
-        governor_j1939_bypass_flag = 3;
+        drivetrain_gear_range = 3;
       }
       if (((drivetrain_ratio_user_filtered_previous == drivetrain_ratio_user_filtered) &&
           (drivetrain_ratio_unsettled_flag == 0)) &&
@@ -85670,21 +85668,27 @@ void cm848_updateDrivetrainRatio(void)
 
 
 //
-// Function: initGovernorJ1939Bypass @ 0x005263a8
+// Function: cm848_initializeDrivetrainRatio @ 0x005263a8
 //
 
-void initGovernorJ1939Bypass(void)
+/* Initializes the drivetrain ratio: clears the ETC1 out of gear flag, drivetrain_gear_range = 1
+   (top gear), drivetrain_ratio_raw / drivetrain_ratio / drivetrain_ratio_user_filtered (and its
+   previous copy) = drivetrain_ratio_default, the filter state seeded with it and pointed at
+   drivetrain_ratio_filter_coefficient, and drivetrain_ratio_engine_period_valid_flag = 1 (was
+   initGovernorJ1939Bypass) */
+
+void cm848_initializeDrivetrainRatio(void)
 
 {
   j1939_powertrain_control_state.etc1_out_of_gear_flag = 0;
-  governor_j1939_bypass_flag = 1;
+  drivetrain_gear_range = 1;
   drivetrain_ratio_raw = drivetrain_ratio_default;
   drivetrain_ratio = drivetrain_ratio_default;
   drivetrain_ratio_user_filtered = drivetrain_ratio_default;
-  engine_temperature_protection_filter_state.accumulator = (uint)drivetrain_ratio_default << 0x10;
-  engine_temperature_protection_filter_state.coefficient = &drivetrain_ratio_filter_coefficient;
+  drivetrain_ratio_filter_state.accumulator = (uint)drivetrain_ratio_default << 0x10;
+  drivetrain_ratio_filter_state.coefficient = &drivetrain_ratio_filter_coefficient;
   drivetrain_ratio_user_filtered_previous = drivetrain_ratio_default;
-  protection_timeout_enable_flag = 1;
+  drivetrain_ratio_engine_period_valid_flag = 1;
   return;
 }
 
@@ -85721,10 +85725,16 @@ void cm848_calculateDrivetrainRatioFromGearRatio(void)
 
 
 //
-// Function: etcTransmissionModeControl @ 0x005264d4
+// Function: cm848_applyJ1939OutOfGearToDrivetrainRatio @ 0x005264d4
 //
 
-void etcTransmissionModeControl(void)
+/* With a J1939 vehicle speed source (vehicle_speed_sensor_type_cal 4 / 5), the vehicle at or above
+   vehicle_speed_minimum, the engine not stopped and valid ETC1 out of gear data, it copies the ETC1
+   out of gear flag into drivetrain_ratio_unsettled_flag and
+   drivetrain_ratio_out_of_gear_cruise_disable_flag, and while out of gear holds
+   drivetrain_ratio_user_filtered at drivetrain_ratio (was etcTransmissionModeControl) */
+
+void cm848_applyJ1939OutOfGearToDrivetrainRatio(void)
 
 {
   if ((((vehicle_speed_minimum <= vehicle_speed) && (engine_state != ENGINE_STATE_STOPPED)) &&
@@ -85834,12 +85844,13 @@ void cm848_calculateTransmissionRatioFromOutputShaft(void)
 
 
 //
-// Function: cm848_output_shaft_speed_save @ 0x005267e0
+// Function: cm848_saveOutputShaftSpeed @ 0x005267e0
 //
 
-/* jlaustill reviewed 2026-6-4 - naming makes since, hopefully accurate */
+/* output_shaft_speed_saved = output_shaft_speed_current (was cm848_output_shaft_speed_save) |
+   earlier note: jlaustill reviewed 2026-6-4 - naming makes since, hopefully accurate */
 
-void cm848_output_shaft_speed_save(void)
+void cm848_saveOutputShaftSpeed(void)
 
 {
   output_shaft_speed_saved = output_shaft_speed_current;
@@ -86206,7 +86217,7 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
          engine_speed_state.main_speed_pulse_count_between_vss_pulses;
     engine_speed_state.main_speed_period_sum_between_vss_pulses = 0;
     engine_speed_state.main_speed_pulse_count_between_vss_pulses = 0;
-    protection_timeout_enable_flag = 1;
+    drivetrain_ratio_engine_period_valid_flag = 1;
   }
   else if ((engine_speed_from_backup_sensor_flag == 1) &&
           (engine_speed_state.backup_speed_pulse_count_between_vss_pulses != 0)) {
@@ -86215,10 +86226,10 @@ void cm848_vehicleSpeedSensorInterruptHandler(void)
          engine_speed_state.backup_speed_pulse_count_between_vss_pulses;
     engine_speed_state.backup_speed_period_sum_between_vss_pulses = 0;
     engine_speed_state.backup_speed_pulse_count_between_vss_pulses = 0;
-    protection_timeout_enable_flag = 1;
+    drivetrain_ratio_engine_period_valid_flag = 1;
   }
   else {
-    protection_timeout_enable_flag = 0;
+    drivetrain_ratio_engine_period_valid_flag = 0;
   }
   return;
 }

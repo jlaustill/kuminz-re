@@ -1795,12 +1795,12 @@ void cm848_presetCruiseAndVehicleSpeedLimitGovernor(void);  // @ 0x005251e4
 void cm848_runCruiseAndVehicleSpeedLimitGovernor(void);  // @ 0x00525504
 void initCruiseConfirmFlags(void);  // @ 0x00525de4
 void cm848_updateDrivetrainRatio(void);  // @ 0x00525e54
-void initGovernorJ1939Bypass(void);  // @ 0x005263a8
+void cm848_initializeDrivetrainRatio(void);  // @ 0x005263a8
 void cm848_calculateDrivetrainRatioFromGearRatio(void);  // @ 0x00526414
-void etcTransmissionModeControl(void);  // @ 0x005264d4
+void cm848_applyJ1939OutOfGearToDrivetrainRatio(void);  // @ 0x005264d4
 void cm848_calculateDrivetrainRatioFromVehicleSpeed(void);  // @ 0x00526560
 void cm848_calculateTransmissionRatioFromOutputShaft(void);  // @ 0x005266fc
-void cm848_output_shaft_speed_save(void);  // @ 0x005267e0
+void cm848_saveOutputShaftSpeed(void);  // @ 0x005267e0
 void cm848_calculateVehicleSpeedFromOutputShaft(void);  // @ 0x005267f4
 void cm848_calculateOutputShaftToVehicleSpeedDivisors(void);  // @ 0x005268e8
 void cm848_detectVehicleSpeedSensorSignalLoss(void);  // @ 0x00526924
