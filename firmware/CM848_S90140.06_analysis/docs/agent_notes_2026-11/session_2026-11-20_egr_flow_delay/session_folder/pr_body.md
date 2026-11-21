@@ -142,6 +142,36 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   statuses, the DM10 payload word (was `j1939_dm11_*`), the PGN 56320 header address bytes (were
   `j1939_prop_status_*`), three unused `j1939_pgn56360_alt_*` labels. Also five doubled e2m prefixes in comments.
 
+**Round 5 (your second "keep going"): hand fixes on the wave 15 leads, each verified in the code.**
+- **J1939 builders vs their PGNs (c1ebdc4).** A script lists the PGN that every header builder encodes.
+  - **Four builders named the wrong message:** 65232 is DM8, 61441 is EBC1 (not ETC1), 65279 is the water in fuel
+    indicator (was "SafetyStatus"), and 65251 is EC1.
+  - **CM550:** `initFaultTimerMessage` is renamed there too. It builds the same header, so it is a true twin and the
+    shared name stays shared.
+  - **EC1 send-on-change:** the old "fault timer / fault counter" family is the EC1 payload, its previous copy and the
+    J1939 rule "resend on a 10 % change" (`cm848_hasWordChangedByTenPercent` / `...Byte...`).
+- **`all_speed_governor_gain_set_t` (0dea32e):** on the throttle-mode set, the application set and a ROM table of four
+  (one per TSC1 requested speed control condition). The TSC1 selector now reads
+  `j1939_tsc1_speed_control_condition_gain_sets[mode].integral_gain_1` (was `*(word *)(&DAT_0005c1da + iVar1)`).
+- **`drivetrain_type` is the vehicle speed sensor type (705f055).**
+  - **The record:** e2m RSC_Sensor_Type: 0 none, 1 inductive, 2 minigen, 3 tachograph, 4 / 5 J1939 with / without gear
+    ratio. All 31 uses agree with it.
+  - **The names:** `vehicle_speed_sensor_type_cal` (EEPROM mirror) and `VEHICLE_SPEED_SENSOR_TYPE`. The truck holds 1
+    (inductive). The cruise fix is unchanged; its mode 4 is `VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO`.
+- **e13e2a2:**
+  - `INTAKE_AIR_HEATER_PHASE` (e2m 8A35 +2), with the "run-up" phase renamed crank;
+  - `fuel_demand_control_t.override_priority` (was `override_active`) and the two throttle override claimers;
+  - the cruise maximum / minimum engine speeds;
+  - the compressor outlet temperature is 1/32 °F, so a "220 °F" limit is really 440 °F.
+- **06a42fe / 1d5e537:**
+  - the cruise / vehicle speed limit governor's Bank 2 functions (were `protection*`);
+  - the A/C clutch working words (were `protection_event26_*`);
+  - the injection hardware initialization, the fuel system hardware shutdown monitor and the LSG gain selection
+    initialization.
+- **Proof:** every round 5 stage is label-only (EQUIVALENT, and the comment-stripped diff finds 0 changed functions),
+  except the two type stages. There the struct stage changed five functions, each only by the intended render, and
+  the enum stage changed seven, each only by the enum render.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -169,10 +199,17 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   - no stale references remain (`stale_refs_W15.py`, the comment-name sweep). A repo-wide grep of the old names
     leaves only history, CM550's unrelated `governor_integral_accumulator` and the stale generated snapshots; the
     lead lists of tasks 025 / 027 / 029 / 042 / 045 each got a "resolved by PR #53 round 4" section.
+- [x] Round 5:
+  - the label-only stages are EQUIVALENT, and the comment-stripped diff finds 0 changed functions;
+  - the shared EC1 rename was built and proved on CM550 too;
+  - the two type stages were read diff by diff: 5 functions with the intended render plus 3 changed only in local
+    declaration order, and 7 functions with the enum render;
+  - three facts were checked against their sources: the TSC1 index is SPN 696 (the J1939 database and the receive
+    handler), the EC1 point offsets match the payload builder, and the struct's signedness matches the e2m S records and 8 of the 10 integral gain loads (`lha`). The compensator's two `lhz` loads (0xffec / 0xfff0) render as `(ushort)` casts, so 0dea32e's "lha" note is wrong for those two.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
-- [x] The headers are regenerated (CM550's are unchanged), and `g++ -fsyntax-only` is clean.
+- [x] The headers are regenerated (CM550's change only in round 5, for the shared EC1 function), and `g++ -fsyntax-only` is clean for both firmwares.
 
 ## Still open (task 046)
 
@@ -180,10 +217,12 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
 - **The engine speed module's functions** have mixed prefixes: `hpcr_processEngineSyncPulses`,
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
-- **Wave 15 leads not applied:** the 9-word ASG gain set struct, the fault derate scheduler words, the cruise / RSG
-  PID functions (`protectionOutputActuatorControl` ...), the TPU injection channel bytes, the 11D5 air fuel control
-  rows, and 0x3fdda6 `drivetrain_type`, whose e2m record is RSC_Sensor_Type (the cruise fix rests on it). The full
-  list is in task 046.
+- **Open after round 5:**
+  - the engine speed module's run-state machine (no e2m value list, so it needs a read);
+  - the 48RE governor pressure functions 0x3257c / 0x3241c (their block 8D14 drifts);
+  - the fault derate scheduler words and the 11D5 air fuel control rows;
+  - the TPU injection bytes and the A/C class-B coolant flags.
+  The full list is in task 046.
 - **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

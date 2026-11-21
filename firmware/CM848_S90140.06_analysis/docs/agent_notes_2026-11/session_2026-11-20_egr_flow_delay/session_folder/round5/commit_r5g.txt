@@ -1,0 +1,26 @@
+cm848: round 5 - stage g and the closing checks (SPN 696, EC1 offsets, the gain loads)
+
+- protection_event26_condition_code_b -> air_conditioning_condition_code_2. It is written beside
+  air_conditioning_condition_code in every branch of the DR truck A/C clutch control and has no reader in the
+  decompile.
+- cruise_ramp_rate_control_called_flag -> cruise_governor_preset_this_pass_flag. The preset sets it, and the
+  governor presets again on a zone transition only while it is 0, then clears it.
+- The closing checks on round 5's 86-row map:
+  - The repo-wide old-name grep. The live references are fixed in cross_firmware_variable_matches.csv,
+    engine_hours_and_odometer.md and one global_variables.csv comment, and tasks 022 / 025 / 027 / 042 / 045 get
+    resolved-name sections.
+  - The comment sweep finds no new unknown names.
+  - The width check against e2m flags only the two struct instances, and each one starts at its 2-byte S field as
+    intended.
+- Facts checked against their sources:
+  - The TSC1 gain set index is J1939 SPN 696 (Engine Requested Speed Control Conditions, TSC1 byte 1 bits 3-4).
+    torqueControlModeHandler takes it as control_word & 0xc, so the comment at 0x5c1d6 now says 696, not 695.
+  - The EC1 builder stores points 1-5 at payload +0 / +3 / +6 / +9 / +12, little endian, each followed by its
+    torque byte (+125). That is the J1939-71 layout.
+- Correction to 0dea32e's message: the short fields match the e2m S records and 8 of the 10 integral gain loads
+  (lha), but cm848_calculateGovernorCompensatorCoefficients loads the two integral gains with lhz (0xffec /
+  0xfff0). Its two (ushort) casts are therefore faithful.
+- Docs: task 046 (stage g, round 5 thin evidence, the TSC1 / ETC1 vocabulary lead), the session README (round 5).
+Label-only: reverse_names.py EQUIVALENT, 0 functions differ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

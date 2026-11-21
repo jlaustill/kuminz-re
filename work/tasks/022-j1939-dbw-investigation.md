@@ -231,3 +231,9 @@ SA 0x03 matches the already-planned CAN ID `0x0C000003` in Phase 5 — no change
 - Oct already has working auth via `cm848InverseCipher` + timer CLIP read
 - PGN 65261/65265 handlers confirmed; ECU transmits capability status
 - **Next step**: read `0x003fd5a2` live on truck via oct serial command
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cm848_engineMode_reset` → `cm848_selectTsc1SpeedControlMode`
+- `governor_cruise_deniedStatus_update` → `cm848_updateCruiseControlDeniedStatus`

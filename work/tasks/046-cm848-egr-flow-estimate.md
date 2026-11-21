@@ -231,10 +231,31 @@ Hand work on the wave 15 leads, each verified in the code (the scripts are in `s
   initialization.
 - **Stage f:** `cm848_initializeInjectionHardware`, `cm848_monitorFuelSystemHardwareShutdown` and
   `cm848_initializeLowSpeedGovernorGainSelection`.
+- **Stage g:** `air_conditioning_condition_code_2` and `cruise_governor_preset_this_pass_flag`.
+- **Round 5 thin evidence:**
+  - Profiled with `writes_of.py` (what a function writes and calls), not read in full:
+    `cm848_runCruiseAndVehicleSpeedLimitGovernor`, `cm848_monitorFuelSystemHardwareShutdown`,
+    `cm848_initializeInjectionHardware` (its plate already described it).
+  - `air_conditioning_condition_code_2` has no reader in the decompile.
+  - The TSC1 gain set table has no e2m record (block 10B6 lists only +0..+4). Its size comes from the code:
+    a 2-bit SPN 696 index, 18-byte sets, and the next row at 0x5c21e.
+  - The struct's `short` fields follow the e2m S records and 8 of the 10 integral gain loads: `lha` at +4 / +6 in
+    0xea00, 0xfb28, 0x10110 and 0x503074.
+  - The compensator 0xff04 loads the two integral gains with `lhz` (0xffec / 0xfff0) and the three coefficients
+    with `lha` (0xffdc / 0xffe0 / 0x1001c). Its two `(ushort)` casts are therefore faithful.
+  - 0dea32e's message says the consumer loads every field with `lha`. That is wrong for those two loads.
 
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
+  - **The TSC1 / ETC1 vocabulary:**
+    - `etc1_message_t` (instance `j1939_tsc1_received`) mixes ETC1 fields (SPN 191 output shaft speed, SPN 522
+      clutch slip) with TSC1 fields (the control word, requested speed / torque, priority).
+    - `etc1_state_t` and the `etc1_*` fields of `j1939_tsc1_override_state` hold the TSC1 override modes.
+    - The SPN 696 index is `etc1_speed_control_mode`.
+    - Next step: read the receive handlers, then split or rename by PGN. e2m has no ETC1 / TSC1 records.
+  - The `governor_cruise_*` working words of the cruise governor (and its `governor_cruise_zone_table_ptr`):
+    rename them to the `cruise_governor_*` words with the functions.
   - The engine speed module's run-state machine (`mpc555_updateEngineRunState`, the `cm848_engineRunState*` handlers).
     Block 819B has no value list, so naming the states needs a read.
   - The 48RE governor pressure functions 0x3257c / 0x3241c and their words. Block 8D14 drifts from +2, so its

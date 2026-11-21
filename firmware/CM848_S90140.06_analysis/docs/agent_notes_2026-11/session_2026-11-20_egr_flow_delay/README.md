@@ -135,3 +135,25 @@ The user gave the go-ahead for an agent wave over the e2m audit's low-overlap ro
 - **Regenerating `all.dis`** (6.7 MB, not archived): `powerpc-linux-gnu-objdump -D -b binary -m powerpc -EB
   --adjust-vma=0x0 --start-address=0x0 --stop-address=0x70000 originals/cm848_rom.bin` followed by the same for
   `originals/cm848_flash2_live.bin` with `--adjust-vma=0x500000 --start-address=0x500000 --stop-address=0x53e000`.
+
+## Round 5: hand fixes on the wave 15 leads (`session_folder/round5/`)
+
+The user's second "keep going". No agents.
+- **`j1939_header_pgns.py`:** every J1939 header builder with the PGN its constant encodes. PDU1 PS bytes are
+  destinations, not part of the PGN.
+- **`writes_of.py`:** a function's profile (the globals it writes, the functions it calls, the fueling states it
+  names), used to name long functions.
+- **Worklists `worklist_r5_j1939.py`, `worklist_r5b_functions.py`, `worklist_r5d.py`, `worklist_r5e.py`, `worklist_r5f.py`
+  and `worklist_r5g.py`:** applied with `wave15/apply_hand_worklist.py`. The maps are `map_r5a.csv`-`map_r5g.csv`
+  (`map_r5a_cm550.csv` for the shared EC1 rename) and `map_r5_all.csv`.
+- **Type stages:**
+  - `apply_r5b_asg_gain_set.py` (`all_speed_governor_gain_set_t`; `removed_r5b.csv` lists the member rows that went,
+    and `replace_member_refs.py` replaced them in comments);
+  - `apply_r5c_vehicle_speed_sensor_type.py` (`VEHICLE_SPEED_SENSOR_TYPE`);
+  - the `INTAKE_AIR_HEATER_PHASE` enum.
+- **Checks:**
+  - `wave15/changed_functions_W15.py`, which compares function bodies with comments stripped on both sides. Pass it a
+    `--write-reversed` file written without `--canonical-code-labels`, or every `LAB_` differs.
+  - The piece census, `grep_old_names.py` over `map_r5_all.csv`, and `append_resolved_r5.py` for the task files.
+- **Commit messages:** `commit_r5*.txt`.
+- **Logs:** the round 5 build logs (`build_r5*.log`, with the CM550 build `build_r5a_cm550.log`) and `verify_round5.log` are in `session_folder_large_files.tar.xz` (added by `round5/update_large_tar_r5.sh`).

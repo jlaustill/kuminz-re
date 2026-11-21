@@ -5566,7 +5566,7 @@ extern word serial_reflash_unlock_request_cal;  // 0x01000056
 extern byte eeprom_serial_number;  // 0x0100008e
 extern word radiator_fan_speed;  // 0x0040b2f4
 extern byte air_conditioning_condition_code;  // 0x0040b1e7
-extern byte protection_event26_condition_code_b;  // 0x0040b1e6
+extern byte air_conditioning_condition_code_2;  // 0x0040b1e6
 extern word radiator_fan_pulses_per_measurement_type_5100;  // 0x004088de
 extern word radiator_fan_speed_out_of_range_count;  // 0x0040b9b4
 extern byte radiator_fan_speed_prescaler;  // 0x004088d9
@@ -6611,7 +6611,7 @@ extern word cruise_ramp_target_prev;  // 0x003fd000
 extern word cruise_setpoint_interp_prev;  // 0x003fd006
 extern word cruise_fuel_demand_ema;  // 0x003fd008
 extern CRUISE_CONTROL_STATE cruise_control_state_prev;  // 0x003fd036
-extern word cruise_ramp_rate_control_called_flag;  // 0x003fd051
+extern word cruise_governor_preset_this_pass_flag;  // 0x003fd051
 extern word cruise_rate_correction_trigger_flag;  // 0x003fd055
 extern word drivetrain_ratio_period_scale_cal;  // 0x003fd930
 extern word drivetrain_ratio_save_pending_flag;  // 0x003fd05a

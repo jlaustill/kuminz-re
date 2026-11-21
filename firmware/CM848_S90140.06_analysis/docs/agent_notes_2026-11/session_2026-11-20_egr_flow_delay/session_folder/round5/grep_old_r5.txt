@@ -1,0 +1,30 @@
+firmware/cross_firmware_variable_matches.csv:2: ...source_address,0x0040ad74,j1939_source_address,23,initFaultTimerMessage+initPgn65261CruiseControlSetu
+firmware/CM848_S90140.06_analysis/docs/engine_hours_and_odometer.md:205: ...est walks the 32-entry table, falls through, and `cm848_sendJ1939NegativeAck`
+firmware/CM848_S90140.06_analysis/output/enums.csv:605: ...RSC_Sensor_Type [VSRSSNTY]; was drivetrain_type / DRIVETRAIN_TYPE - round 5)
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:1913: ... was neither of them and this word is 0, it calls protectionRampRateControl. The dword at 0x3fb526 is two
+firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp:36976: ...   initFaultTimerMessage) */
+work/tasks/046-cm848-egr-flow-estimate.md:214: ...    (was "SafetyStatus"), and 65251 = EC1. `initFaultTimerMessage` is renamed in CM550 too: it 
+work/tasks/025-cm848-naming-wave-followups.md:58: ...are renamed: comments of cruise_speed_low_limit / cruise_target_rpm_max / cruise_target_rpm_min / cru
+work/tasks/025-cm848-naming-wave-followups.md:58: ... cruise_speed_low_limit / cruise_target_rpm_max / cruise_target_rpm_min / cruise_speed_error_integral
+work/tasks/025-cm848-naming-wave-followups.md:97: ...0-1300 (clears above 1999 / 1300 while cranking); cm848_j1939SendSafetyStatusMessage turns the same bit into the P
+work/tasks/025-cm848-naming-wave-followups.md:98: ...afety_check (0x5103ac) -> cm848_checkWaterInFuel; j1939_pgn65279_safety_status_byte (0x3faf1c) comment says propr
+work/tasks/025-cm848-naming-wave-followups.md:380: ...ngineOperatingMode1) / 0x02 = TSC1 speed control (cm848_engineMode_reset) / 0x1e = restored saved gove
+work/tasks/025-cm848-naming-wave-followups.md:425: ...the re-arm cap, owned by part 2) and the function protection_exception_event_26_init.
+work/tasks/025-cm848-naming-wave-followups.md:435: ...& 0x40): the other 19 protection_event26_* rows / protection_exception_event_26_init / engine_protection_condition
+work/tasks/025-cm848-naming-wave-followups.md:446: ...6_* globals / DAT_004086ba (50 = cutout length) / protection_exception_event_26_init / engine_protection_condition
+work/tasks/025-cm848-naming-wave-followups.md:594: ...- drivetrain_type (0x3fdda6) reads 1 (DRIVETRAI
+work/tasks/025-cm848-naming-wave-followups.md:594: ...- drivetrain_type (0x3fdda6) reads 1 (DRIVETRAIN_MANUAL_VSS) on this automatic truck whil
+work/tasks/025-cm848-naming-wave-followups.md:594: ...e the proposed transmission_type_cal reads 3. The DRIVETRAIN_TYPE enum meanings need a re-check
+work/tasks/025-cm848-naming-wave-followups.md:688: ...ef8 / fuel_demandRateLimit_outputCheck 0x50e598 / cm848_periodicControlLoopFaultHandling 0x50e710. Do not give switch 
+work/tasks/025-cm848-naming-wave-followups.md:705: ...elf-compare) / fuel_demandRateLimit_outputCheck / cm848_periodicControlLoopFaultHandling read switch 31 as a held inpu
+work/tasks/042-table-campaign-rename-leads.md:397: ...d window, xref: governorOverrideSpeedControl 1r + governorCruiseStateMachine 1r, no boot users) is the spe
+work/tasks/042-table-campaign-rename-leads.md:402: ...- [W4 governor] Mode 7 owner: cm848_initEngineOperatingMode (0x10110) holds the one liter
+work/tasks/042-table-campaign-rename-leads.md:508: ...eed_command in both users, but the second user is governorCruiseStateMachine (.cpp ~80393), which passes i
+work/tasks/042-table-campaign-rename-leads.md:593: ... code: MODE_RUN 7 is the variable speed governor (cm848_initEngineOperatingMode, variable_speed_governor_sele
+work/tasks/042-table-campaign-rename-leads.md:708: ...orCompensation, cm848_throttlePositionProcessing, governorCruiseStateMachine): fuel_demand_rp
+work/tasks/042-table-campaign-rename-leads.md:730: ...: 30 cm848_restoreEngineOperatingMode (0xfb50), 7 cm848_initEngineOperatingMode (0x10154), 8 cm848_initEngine
+work/tasks/027-cm848-naming-wave-2-followups.md:94: ...lRateStep/Ramp cm848_calculateProtectionFuelLimit protectionRampRateControl protectionOutputActuatorContr
+work/tasks/027-cm848-naming-wave-2-followups.md:94: ...lateProtectionFuelLimit protectionRampRateControl protectionOutputActuatorControl and protection_fuel_rate_*_pa
+work/tasks/045-cm848-fueling-state-enum.md:37: ...e limited) against `cruise_speed_limit_working`; `protectionRampRateControl` runs the limit-minus-speed e
+work/tasks/022-j1939-dbw-investigation.md:103: ...#### Mode Transition: `cm848_engineMode_reset` @ Bank2:0x00503074 (bank2:58
+work/tasks/022-j1939-dbw-investigation.md:192: ... `governor_cruise_fuelCorrection_inhibitCheck` = `governor_cruise_deniedStatus_update` (writes `cruise_control_deni

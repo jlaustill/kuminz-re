@@ -727,3 +727,17 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `protection_system_init_flag` → `cruise_discrete_switch_inputs_used_cal`
 - `fuel_demand_speed_deadband_cal` → `all_speed_governor_switch_droop_fueling_offset`
 - `protection_timing_period_cal` → `tire_revolutions_per_mile_cal`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cruise_target_rpm_max` → `cruise_maximum_engine_speed`
+- `cruise_target_rpm_min` → `cruise_minimum_engine_speed`
+- `cm848_j1939SendSafetyStatusMessage` → `cm848_sendPgn65279WaterInFuelIndicatorMessage`
+- `j1939_pgn65279_safety_status_byte` → `j1939_pgn65279_water_in_fuel_indicator_byte`
+- `cm848_engineMode_reset` → `cm848_selectTsc1SpeedControlMode`
+- `protection_exception_event_26_init` → `cm848_initializeAirConditioningClutchControl`
+- `drivetrain_type` → `vehicle_speed_sensor_type_cal`
+- `DRIVETRAIN_MANUAL_VSS` → `VEHICLE_SPEED_SENSOR_INDUCTIVE`
+- `DRIVETRAIN_TYPE` → `VEHICLE_SPEED_SENSOR_TYPE`
+- `cm848_periodicControlLoopFaultHandling` → `cm848_claimRemoteThrottleOverride`

@@ -225,3 +225,9 @@ Grid (intake air) heater control - the real job of the iat_ / solenoid_ / batter
 
 The old names this file cites were renamed in PR #53 (the leads above keep their wording):
 - `protection_transition_block_flag` → `power_take_off_disable_flag`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`
+- `protectionOutputActuatorControl` → `cm848_runCruiseAndVehicleSpeedLimitGovernor`

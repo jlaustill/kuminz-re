@@ -842,3 +842,8 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `cruise_speed_default_cal` → `high_speed_governor_compensator_transition_coefficient`
 - `ambient_air_temperature_selected` → `compressor_inlet_temperature`
 - `cruise_speed_blend_working` → `current_horsepower_peak_fueling_cal`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`

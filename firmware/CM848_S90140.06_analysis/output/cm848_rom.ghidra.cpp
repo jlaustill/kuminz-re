@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 02:06:01 MST 2026
+// Generated: Sat Nov 21 02:16:50 MST 2026
 
 
 //
@@ -71992,7 +71992,7 @@ void cm848_initializeAirConditioningClutchControl(void)
   cm848_clearLogicalOutputRequest(0x26,0);
   air_conditioning_shift_hold_off_count = 0;
   air_conditioning_condition_code = 5;
-  protection_event26_condition_code_b = 5;
+  air_conditioning_condition_code_2 = 5;
   air_conditioning_high_fuel_demand_cutout_done_flag = 1;
   air_conditioning_high_fuel_demand_cutout_rearm_timer =
        air_conditioning_high_fuel_demand_cutout_rearm_count_limit;
@@ -72147,7 +72147,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   if ((engine_feature_enable_flags_cal & 8) == 0) {
     air_conditioning_condition_code = 1;
     if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-      protection_event26_condition_code_b = 1;
+      air_conditioning_condition_code_2 = 1;
     }
     bVar3 = false;
     bVar5 = true;
@@ -72159,7 +72159,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
     if (diag_clear_flags_t_003fedfc._0_2_ == 0) {
       air_conditioning_condition_code = 0xf;
       if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-        protection_event26_condition_code_b = 0xf;
+        air_conditioning_condition_code_2 = 0xf;
       }
       bVar3 = false;
       bVar5 = true;
@@ -72174,7 +72174,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
       else {
         air_conditioning_condition_code = 2;
         if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-          protection_event26_condition_code_b = 2;
+          air_conditioning_condition_code_2 = 2;
         }
         bVar3 = false;
         bVar5 = true;
@@ -72186,7 +72186,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
         else {
           air_conditioning_condition_code = 3;
           if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-            protection_event26_condition_code_b = 3;
+            air_conditioning_condition_code_2 = 3;
           }
           bVar3 = false;
           bVar2 = true;
@@ -72195,7 +72195,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
           if (air_conditioning_high_pressure_ok_flag == 0) {
             air_conditioning_condition_code = 4;
             if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-              protection_event26_condition_code_b = 4;
+              air_conditioning_condition_code_2 = 4;
             }
             bVar3 = false;
             bVar2 = true;
@@ -72207,7 +72207,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
             if (air_conditioning_low_pressure_ok_flag == 0) {
               air_conditioning_condition_code = 5;
               if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-                protection_event26_condition_code_b = 5;
+                air_conditioning_condition_code_2 = 5;
               }
               bVar3 = false;
               bVar2 = true;
@@ -72219,7 +72219,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
               if (air_conditioning_high_engine_speed_ok_flag == 0) {
                 air_conditioning_condition_code = 6;
                 if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-                  protection_event26_condition_code_b = 6;
+                  air_conditioning_condition_code_2 = 6;
                 }
                 bVar3 = false;
                 bVar2 = true;
@@ -72231,7 +72231,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
                 if (air_conditioning_low_engine_speed_ok_flag == 0) {
                   air_conditioning_condition_code = 7;
                   if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-                    protection_event26_condition_code_b = 7;
+                    air_conditioning_condition_code_2 = 7;
                   }
                   bVar3 = false;
                   bVar2 = true;
@@ -72243,7 +72243,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
                   if (air_conditioning_coolant_temperature_ok_flag == 0) {
                     air_conditioning_condition_code = 8;
                     if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-                      protection_event26_condition_code_b = 8;
+                      air_conditioning_condition_code_2 = 8;
                     }
                     bVar3 = false;
                     bVar2 = true;
@@ -72254,7 +72254,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
                   if ((!bVar2) && (air_conditioning_high_fuel_demand_cutout_done_flag == 0)) {
                     air_conditioning_condition_code = 9;
                     if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
-                      protection_event26_condition_code_b = 9;
+                      air_conditioning_condition_code_2 = 9;
                     }
                     bVar3 = false;
                   }
@@ -84963,7 +84963,7 @@ void cm848_presetCruiseAndVehicleSpeedLimitGovernor(void)
   ushort uVar8;
   undefined4 local_10;
   
-  cruise_ramp_rate_control_called_flag = 1;
+  cruise_governor_preset_this_pass_flag = 1;
   cm848_selectCruiseControlGainZone(cruise_fuel_demand_ema);
   wVar5 = vehicle_speed_rise_limited;
   iVar4 = (int)(short)adjusted_user_fueling_state;
@@ -85315,7 +85315,7 @@ LAB_00525c60:
     _cruise_pid_integrator_q16 = (uint)*pwVar6 << 0x10;
   }
   cruise_pid_integral_fuel = cruise_pid_integrator_q16;
-  if ((cruise_zone_transition_flag != 0) && (cruise_ramp_rate_control_called_flag == 0)) {
+  if ((cruise_zone_transition_flag != 0) && (cruise_governor_preset_this_pass_flag == 0)) {
     iVar9 = (((uint)cruise_fuel_demand_hold - iVar12) - (int)(short)cruise_pid_integrator_q16) +
             iVar7;
     if (iVar9 < 0xb80) {
@@ -85374,7 +85374,7 @@ LAB_00525db0:
   cruise_fuel_demand_mode_prev = adjusted_user_fueling_state;
   governor_cruise_speedReference_update();
   cruise_control_state_prev = cruise_control_state;
-  cruise_ramp_rate_control_called_flag = 0;
+  cruise_governor_preset_this_pass_flag = 0;
   return;
 }
 
