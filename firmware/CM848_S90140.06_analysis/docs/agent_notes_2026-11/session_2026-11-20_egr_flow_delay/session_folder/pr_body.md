@@ -163,11 +163,12 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   - `fuel_demand_control_t.override_priority` (was `override_active`) and the two throttle override claimers;
   - the cruise maximum / minimum engine speeds;
   - the compressor outlet temperature is 1/32 °F, so a "220 °F" limit is really 440 °F.
-- **06a42fe / 1d5e537:**
+- **06a42fe / 1d5e537 / a6d3367:**
   - the cruise / vehicle speed limit governor's Bank 2 functions (were `protection*`);
-  - the A/C clutch working words (were `protection_event26_*`);
+  - the A/C clutch working words (were `protection_event26_*`), with its second condition code;
   - the injection hardware initialization, the fuel system hardware shutdown monitor and the LSG gain selection
-    initialization.
+    initialization;
+  - the cruise governor's preset-this-pass flag.
 - **Proof:** every round 5 stage is label-only (EQUIVALENT, and the comment-stripped diff finds 0 changed functions),
   except the two type stages. There the struct stage changed five functions, each only by the intended render, and
   the enum stage changed seven, each only by the enum render.
@@ -204,12 +205,18 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   - the shared EC1 rename was built and proved on CM550 too;
   - the two type stages were read diff by diff: 5 functions with the intended render plus 3 changed only in local
     declaration order, and 7 functions with the enum render;
-  - three facts were checked against their sources: the TSC1 index is SPN 696 (the J1939 database and the receive
-    handler), the EC1 point offsets match the payload builder, and the struct's signedness matches the e2m S records and 8 of the 10 integral gain loads (`lha`). The compensator's two `lhz` loads (0xffec / 0xfff0) render as `(ushort)` casts, so 0dea32e's "lha" note is wrong for those two.
+  - three facts were checked against their sources:
+    - the TSC1 index is SPN 696 (the J1939 database and the receive handler), not 695 as a comment said;
+    - the EC1 builder stores points 1-5 at payload +0 / +3 / +6 / +9 / +12, as J1939-71 lays them out;
+    - the struct's `short` fields match the e2m S records and 8 of the 10 integral gain loads (`lha`). The compensator's
+      two `lhz` loads (0xffec / 0xfff0) render as `(ushort)` casts, so 0dea32e's "lha" note is wrong for those two;
+  - the closing checks on the 86-row round 5 map: the repo-wide old-name grep (live references fixed, resolved-name
+    sections in tasks 022 / 025 / 027 / 042 / 045), the comment sweep and the e2m width check.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
-- [x] The headers are regenerated (CM550's change only in round 5, for the shared EC1 function), and `g++ -fsyntax-only` is clean for both firmwares.
+- [x] The headers are regenerated (CM550's change only in round 5, for the shared EC1 function), and
+  `g++ -fsyntax-only` is clean for both firmwares.
 
 ## Still open (task 046)
 
@@ -218,6 +225,8 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
 - **Open after round 5:**
+  - the TSC1 / ETC1 vocabulary: `etc1_message_t` (instance `j1939_tsc1_received`) mixes ETC1 fields with TSC1 ones,
+    and the TSC1 override state uses `etc1_*` names;
   - the engine speed module's run-state machine (no e2m value list, so it needs a read);
   - the 48RE governor pressure functions 0x3257c / 0x3241c (their block 8D14 drifts);
   - the fault derate scheduler words and the 11D5 air fuel control rows;
