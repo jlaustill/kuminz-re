@@ -1086,10 +1086,10 @@ address,name
 0x0002f6a0,cm848_updateVariableGeometryTurbochargerPosition,Per-pass entry of the position processing, run when variable_geometry_turbocharger_enable_flag is set: copies the sensor high / low faults 682 / 683 of fault_detected_bits_672_to_687 to faults 709 / 710 of fault_detected_bits_704_to_719 (and clears the registered copies), then runs cm848_evaluateVariableGeometryTurbochargerPositionAdjustments and cm848_selectVariableGeometryTurbochargerPositionSource. (was cm848_updateLoadProtectionStatusAndDerate)
 0x0002f784,cm848_initializeVariableGeometryTurbochargerAdjustmentFilters,Boot init: sets variable_geometry_turbocharger_span_key_on_decrement_pending_flag, starts the span filter from variable_geometry_turbocharger_saved_span_cal and the closed-position filter from variable_geometry_turbocharger_saved_closed_position_cal, points both filters at variable_geometry_turbocharger_adjustment_filter_coefficient, clears the two closed-adjustment latch flags and, when variable_geometry_turbocharger_enable_flag is 0, clears the position error faults 709 / 710. (was cm848_initFaultStatusFilterState)
 0x0002f860,cm848_protectionNormalHandler
-0x0002f920,cm848_protectionOverloadHandler
+0x0002f920,cm848_selectGovernorPressureLowRange,The 48RE low range (transfer case in low) governor pressure strategy: cm848_runTransmissionControl runs it in low range above transmission_low_range_minimum_throttle. Every cal it reads is an e2m RE_Low_Range_* record: the boost times after the 1-2 / 2-3 shift, the engine acceleration limits that stop the boost, the minimum hold times, the 1-2 shift detection speed; it predicts the shift engine speed from transmission_engine_acceleration and transmission_predicted_1_2_shift_delay. Pressure states 0xb-0xf (was cm848_protectionOverloadHandler)
 0x0002fe48,cm848_protectionCleanupHandler
 0x0003004c,cm848_protectionShutdownHandler
-0x00030194,cm848_applyConverterLockupSchedule,Converter clutch engage: above 52 deg F and out of park/neutral it sets logical output 18 when fuel demand is below the per-gear (2 / 3 / 4) table for the output speed - hot-mode tables while hot_mode_flag (was cm848_protectionOutputController) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
+0x00030194,cm848_applyConverterLockupSchedule,Converter clutch engage: above 52 deg F and out of park/neutral it sets logical output 18 when fuel demand is below the per-gear (2 / 3 / 4) table for the output speed - hot-mode tables while transmission_overheat_protection_active_flag (was cm848_protectionOutputController) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00030ad4,cm848_applyConverterUnlockConditions,Converter clutch release (clears logical output 18): fuel demand above the per-gear table / park or neutral / lever moved from 2 to drive / engine below output x 1.45 in second or below output speed during the 3-4 upshift (was cm848_protectionFinalizeState) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
 0x00031320,cm848_protectionFuelDemandCheck
 0x0003148c,cm848_selectGovernorPressureCold,48RE cold governor pressure curve - runs when transmission_temperature_in_use is below 32 deg F - picks governor_pressure_target from the selector 1st/2nd ramp table or two cold tables by flags bit 0x10 then runs the fuel demand check (was cm848_protectionTimeoutHandler) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
@@ -1104,13 +1104,13 @@ address,name
 0x00032efc,cm848_runTransmissionControl,Transmission control step: below 32 deg F the cold curve / transfer-case low range / standstill / normal / wide open throttle handlers set governor_pressure_target and status_code and the 3-4 / 4-3 requests - then converter clutch engage and release (was cm848_protectionStateMachine) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x000331cc,mpc555_initProtectionFilterVariables
 0x00033488,cm848_evaluateProtectionModeFlags
-0x000335e4,cm848_decrementProtectionTimers
+0x000335e4,cm848_decrementTransmissionTimers,Counts down the 48RE controller's timers each pass (the anti-hunt, lockup delay, low range, WOT boost and overdrive inhibit timers of e2m 8C17) (was cm848_decrementProtectionTimers)
 0x00033948,cm848_determineCurrentGearAndLockupInhibit,Computes transmission_speed_ratio and transmission_current_gear 1-4 from the ratio thresholds and the overdrive solenoid; sets the fuel-demand lockup inhibit and relock delays; brake (switch 11) or switch 2 lockup release only when 0x408388 is 0 (1 here) (was cm848_calculateProtectionConditions) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High
-0x000343ac,cm848_updateTransmissionConditionFlags,Transmission flags: transfer-case low range (output / vehicle speed) / transmission_temperature_range / hot_mode_flag / overheat / overdrive heat lockout and cold bits / high fuel demand flags and the learned values per temperature range (was processProtectionFlagConditions) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
-0x0003491c,cm848_filterProtectionLoadValue
+0x000343ac,cm848_updateTransmissionConditionFlags,Transmission flags: transfer-case low range (output / vehicle speed) / transmission_temperature_range / transmission_overheat_protection_active_flag / overheat / overdrive heat lockout and cold bits / high fuel demand flags and the learned values per temperature range (was processProtectionFlagConditions) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+0x0003491c,cm848_calculateOutputShaftAcceleration,Every scan period: the output shaft speed change into transmission_output_shaft_acceleration_unfiltered (e2m RE_OSS_Accel_Unfiltered) and its filtered value transmission_output_shaft_acceleration (RE_OSS_Accel) (was cm848_filterProtectionLoadValue)
 0x00034a30,cm848_evaluateProtectionFaultCondition
 0x00034abc,cm848_processCalibrationTablesMain
-0x00034b14,cm848_initProtectionSystem
+0x00034b14,cm848_initializeTransmissionControl,Initializes the 48RE controller: transmission_current_gear = 1, the maximum engine speeds and previous values cleared, the overdrive off flag cleared, and the other e2m 8C17 working words (was cm848_initProtectionSystem)
 0x00034dd4,cm848_processProtectionFaultSeverity
 0x00034f4c,cm848_processProtectionRateLimitFlags
 0x00035154,cm848_calculateProtectionThresholdLimit
@@ -2036,7 +2036,7 @@ address,name
 0x0051babc,cm848_monitorConverterClutchAndOverdrivePerformance,P1740 converter clutch / overdrive solenoid performance: with output 18 on at steady fuel demand checks the engine / output ratio (186-266 in third / at most 186 with overdrive) and sets status word 0x3fe99a bit 15 after repeated misses (was protectionOutputAssembly) | review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
 0x0051c2d0,initProtectionOutputFlags
 0x0051c2e4,cm848_throttlePosition_clamp_update
-0x0051c3d8,protectionPhaseGroupA_Init
+0x0051c3d8,cm848_calibrateGovernorPressureSensorOffset,The governor pressure sensor offset calibration (e2m 8C17 RE_Init_Cal_Delay / RE_Cal_Timer / RE_Between_Cal_Timer: 'Timer used in trans gov press offset calibration'): under algorithm_enable_flags_6_cal bit 2 it sets governor_pressure_sensor_zero_offset (was protectionPhaseGroupA_Init)
 0x0051c68c,cm848_throttleSetpoint_limit
 0x0051c6c8,cm848_throttleGain_loadBased_calc
 0x0051c948,cm848_throttleGain_velocityBased_calc

@@ -723,7 +723,7 @@ void cm848_selectVariableGeometryTurbochargerPositionSource(void);  // @ 0x0002f
 void cm848_updateVariableGeometryTurbochargerPosition(void);  // @ 0x0002f6a0
 void cm848_initializeVariableGeometryTurbochargerAdjustmentFilters(void);  // @ 0x0002f784
 void cm848_protectionNormalHandler(void);  // @ 0x0002f860
-void cm848_protectionOverloadHandler(void);  // @ 0x0002f920
+void cm848_selectGovernorPressureLowRange(void);  // @ 0x0002f920
 void cm848_protectionCleanupHandler(void);  // @ 0x0002fe48
 void cm848_protectionShutdownHandler(void);  // @ 0x0003004c
 void cm848_applyConverterLockupSchedule(void);  // @ 0x00030194
@@ -741,13 +741,13 @@ void cm848_selectGovernorPressureNormal(void);  // @ 0x00032b00
 void cm848_runTransmissionControl(void);  // @ 0x00032efc
 void mpc555_initProtectionFilterVariables(void);  // @ 0x000331cc
 void cm848_evaluateProtectionModeFlags(void);  // @ 0x00033488
-void cm848_decrementProtectionTimers(void);  // @ 0x000335e4
+void cm848_decrementTransmissionTimers(void);  // @ 0x000335e4
 void cm848_determineCurrentGearAndLockupInhibit(void);  // @ 0x00033948
 void cm848_updateTransmissionConditionFlags(void);  // @ 0x000343ac
-void cm848_filterProtectionLoadValue(void);  // @ 0x0003491c
+void cm848_calculateOutputShaftAcceleration(void);  // @ 0x0003491c
 void cm848_evaluateProtectionFaultCondition(void);  // @ 0x00034a30
 void cm848_processCalibrationTablesMain(void);  // @ 0x00034abc
-void cm848_initProtectionSystem(void);  // @ 0x00034b14
+void cm848_initializeTransmissionControl(void);  // @ 0x00034b14
 void cm848_processProtectionFaultSeverity(void);  // @ 0x00034dd4
 void cm848_processProtectionRateLimitFlags(void);  // @ 0x00034f4c
 void cm848_calculateProtectionThresholdLimit(void);  // @ 0x00035154
@@ -1673,7 +1673,7 @@ void cm848_calculateConverterClutchRatioDelta(void);  // @ 0x0051ba6c
 void cm848_monitorConverterClutchAndOverdrivePerformance(void);  // @ 0x0051babc
 void initProtectionOutputFlags(void);  // @ 0x0051c2d0
 void cm848_throttlePosition_clamp_update(void);  // @ 0x0051c2e4
-void protectionPhaseGroupA_Init(void);  // @ 0x0051c3d8
+void cm848_calibrateGovernorPressureSensorOffset(void);  // @ 0x0051c3d8
 void cm848_throttleSetpoint_limit(uint param_1);  // @ 0x0051c68c
 void cm848_throttleGain_loadBased_calc(void);  // @ 0x0051c6c8
 void cm848_throttleGain_velocityBased_calc(void);  // @ 0x0051c948

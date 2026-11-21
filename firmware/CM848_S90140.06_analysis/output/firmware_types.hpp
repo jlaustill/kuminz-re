@@ -1104,7 +1104,7 @@ typedef struct combustion_reference_state_t combustion_reference_state_t;
 typedef struct charge_flow_estimate_terms_t charge_flow_estimate_terms_t;
 typedef struct engine_speed_limit_arbitration_t engine_speed_limit_arbitration_t;
 typedef struct operating_mode_governor_output_t operating_mode_governor_output_t;
-typedef struct protection_lockout_t protection_lockout_t;
+typedef struct transmission_lockup_timers_t transmission_lockup_timers_t;
 typedef struct j1939_msg_hdr_t j1939_msg_hdr_t;
 typedef struct parameter_response_t parameter_response_t;
 typedef struct calterm_protocol_t calterm_protocol_t;
@@ -1287,7 +1287,7 @@ struct protection_condition_flags_t {
 };
 
 struct protection_status_flags_t {
-    uint8_t status_flags;  /* Governor pressure / wide open throttle status byte, updated with | / & masks (so a byte, not a bitfield). Bits 0x10 / 0x08 are unproven guesses. Bits: 0x80 wide open throttle flag: mask 0x80: set by cm848_updateTransmissionConditionFlags when fuel_demand_control_t.calculated exceeds protection_fuel_demand_status80_set_threshold_cal, cleared (& 0x1f, which also clears bits 5 and 6, and & 0x7f in cm848_initProtectionSystem) when it falls below protection_fuel_demand_status80_clear_threshold_cal; cm848_runTransmissionControl calls cm848_selectGovernorPressureWideOpenThrottle only while it is set and the base / normal curve handlers otherwise (decompile line 32865). | 0x40 gear 1 pressure elevated flag: mask 0x40: set (| 0x40) with governor_pressure_gear1_elevated_target (status code 8) in gear 1; cleared (& 0xbf) when the pressure returns to the curve; read in the gear 2 branch to run the gear 1 learned gain update and cleared there by & 0xb7. | 0x20 gear 2 pressure elevated flag: mask 0x20: set (flags & 0xef | 0x20 / | 0x20) when governor_pressure_gear2_elevated_target is commanded (status code 10) in gear 2; cleared (& 0xdf) when the pressure returns to the curve; read in the gear 3 branch, where protection_recovery_timer == 0 triggers the gear 2 learned gain update and & 0x97 clears the elevation bits; also cleared in gear 1 (bVar3 = flags & 0xdf). | 0x10 unnamed: guess (not proven, so reserved): an elevation delay timer armed flag - mask 0x10: set (| 0x10) together with protection_init_timer = protection_init_timer_cal when engine speed sits between protection_rpm_lower_bound_cal and the margin; tested to wait for protection_init_timer to reach 0 before the elevation; cleared (& 0xef) by the elevation. Medium confidence. | 0x08 unnamed: guess (not proven, so reserved): a pressure elevation by timer flag - mask 8, cm848_selectGovernorPressureWideOpenThrottle: set (flags & 0xef | 8, lines 32266-32267 / LAB_00031ba8) when the elevated target is applied after the delay timer ran out; cleared (& 0xf7) when the delay timer is armed; while it is set the gain learning of the gear 1 / gear 2 learned gain is skipped ((flags & 8) == 0 guards both learning blocks). Medium confidence. | 0x01 unnamed: no mask uses bit 0 in any of the 43 uses (0x97 / 0xb7 / 0xef / 0x1f / 0xdf / 0xbf / 0x7f only preserve it) */
+    uint8_t status_flags;  /* Governor pressure / wide open throttle status byte, updated with | / & masks (so a byte, not a bitfield). Bits 0x10 / 0x08 are unproven guesses. Bits: 0x80 wide open throttle flag: mask 0x80: set by cm848_updateTransmissionConditionFlags when fuel_demand_control_t.calculated exceeds protection_fuel_demand_status80_set_threshold_cal, cleared (& 0x1f, which also clears bits 5 and 6, and & 0x7f in cm848_initializeTransmissionControl) when it falls below protection_fuel_demand_status80_clear_threshold_cal; cm848_runTransmissionControl calls cm848_selectGovernorPressureWideOpenThrottle only while it is set and the base / normal curve handlers otherwise (decompile line 32865). | 0x40 gear 1 pressure elevated flag: mask 0x40: set (| 0x40) with governor_pressure_wide_open_throttle_1_2_boost_pressure (status code 8) in gear 1; cleared (& 0xbf) when the pressure returns to the curve; read in the gear 2 branch to run the gear 1 learned gain update and cleared there by & 0xb7. | 0x20 gear 2 pressure elevated flag: mask 0x20: set (flags & 0xef | 0x20 / | 0x20) when governor_pressure_wide_open_throttle_2_3_boost_pressure is commanded (status code 10) in gear 2; cleared (& 0xdf) when the pressure returns to the curve; read in the gear 3 branch, where governor_pressure_wide_open_throttle_boost_timer == 0 triggers the gear 2 learned gain update and & 0x97 clears the elevation bits; also cleared in gear 1 (bVar3 = flags & 0xdf). | 0x10 unnamed: guess (not proven, so reserved): an elevation delay timer armed flag - mask 0x10: set (| 0x10) together with protection_init_timer = governor_pressure_wide_open_throttle_anti_hang_time when engine speed sits between governor_pressure_wide_open_throttle_anti_hang_engine_speed and the margin; tested to wait for protection_init_timer to reach 0 before the elevation; cleared (& 0xef) by the elevation. Medium confidence. | 0x08 unnamed: guess (not proven, so reserved): a pressure elevation by timer flag - mask 8, cm848_selectGovernorPressureWideOpenThrottle: set (flags & 0xef | 8, lines 32266-32267 / LAB_00031ba8) when the elevated target is applied after the delay timer ran out; cleared (& 0xf7) when the delay timer is armed; while it is set the gain learning of the gear 1 / gear 2 learned gain is skipped ((flags & 8) == 0 guards both learning blocks). Medium confidence. | 0x01 unnamed: no mask uses bit 0 in any of the 43 uses (0x97 / 0xb7 / 0xef / 0x1f / 0xdf / 0xbf / 0x7f only preserve it) */
     uint8_t reserved_01;  /* Pad byte of the old status_flags word (no access) */
     uint8_t flags[3];  /* Flags (3 bytes as before) */
     uint8_t output_flags;  /* Output flags */
@@ -1476,13 +1476,13 @@ struct operating_mode_governor_output_t {
     FUELING_STATE mode_code;  /* The user fueling state after the power take-off selection (Cummins PTSLFLST per e2m block 1265 +6 - 1-8): engine_operating_mode (1 2 5 6 7 8 30 37 38) or FUELING_STATE_POWER_TAKE_OFF when cm848_selectPowerTakeOffOrUserFueling lets power_take_off_governor_fuel_demand replace the fuel (was integral_term) */
 };
 
-struct protection_lockout_t {
-    uint16_t thermal_lockout;  /* Thermal protection lockout flag */
-    uint16_t load_lockout;  /* Load protection lockout flag */
-    uint16_t rpm_lockout;  /* RPM protection lockout flag */
-    uint16_t sensor_fault_active;  /* Sensor fault lockout flag */
-    uint16_t reserved_08;  /* Gap (0xb124-0xb125) */
-    uint16_t timer_expired;  /* Lockout timer expired flag */
+struct transmission_lockup_timers_t {
+    uint16_t lockup_delay_2_3_timer;  /* e2m 8C17 +1A RE_Lockup_Delay_2_3 ('Timer used to delay lockup') after the 2-3 shift (was thermal_lockout) */
+    uint16_t lockup_delay_3_4_timer;  /* e2m 8C17 +1C RE_Lockup_Delay_3_4 ('Timer used to delay lockup') after the 3-4 shift (was load_lockout) */
+    uint16_t lockup_delay_4_3_timer;  /* e2m 8C17 +1E RE_Lockup_Delay_4_3 ('Timer used to delay lockup') after the 4-3 shift (was rpm_lockout) */
+    uint16_t lockup_off_timer;  /* e2m 8C17 +20 RE_Lockup_Off_Timer ('Timer used to anticipate unlock delay') (was sensor_fault_active) */
+    uint16_t low_range_hold_timer;  /* e2m 8C17 +22 RE_Low_Range_Hold_Timer ('Timer used to delay low range hold pressure') (was reserved_08) */
+    uint16_t low_range_shift_timer;  /* e2m 8C17 +24 RE_Low_Range_Shift_Timer ('Timer used to delay low range shifts'): reloaded from transmission_low_range_1_2_boost_time / _2_3_ (was timer_expired) */
 };
 
 struct j1939_msg_hdr_t {

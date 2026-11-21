@@ -1,0 +1,38 @@
+cm848: round 8 stage B - the rest of the aligned 48RE blocks: low range, lockup, WOT, cruise decel (label-only)
+
+The two e2m blocks stage A anchored are named on through their aligned ranges. Each row's only users are the
+subsystem its record describes.
+- **8BBC (ROM, base 0x40780c), +16..+5C:**
+  - the lockup / unlock service output speeds and the 2nd / 3rd gear lockup minimum throttles;
+  - the low range boost times, engine acceleration limits, hold times and 1-2 shift detection speed;
+  - the anti-hunt and low range minimum throttles;
+  - the fuel economy curve throttle limit;
+  - the WOT 1-2 / 2-3 boost and hold pressures, boost time and anti-hang speed / time (were
+    governor_pressure_gear1_elevated_target / _base_limit ...);
+  - the cruise decel downshift throttle / downshift and upshift delays, the manual 1st / 2nd unlock speeds and the
+    manual low lockup off time.
+  Three rows already carried their e2m meaning: lockup_minimum_transmission_temperature,
+  overdrive_off_set_transmission_temperature and governor_pressure_cold_mode_temperature_threshold.
+  From +5E the 11.45 layout drifts: the code reads 0x40786a as the gear ratio table.
+- **8C17 (RAM, base 0x40b102), +8..+48.** Seven already-right names confirm it: governor_pressure_target =
+  RE_Governor_Set, overdrive_off_flag = Transmission_OD_Lamp, transmission_overheat_flag = Transmission_Over_Temp_Light,
+  transmission_speed_ratio = RE_Current_Ratio, and three more. Renamed:
+  - the governor pressure offset calibration timers;
+  - transmission_engine_acceleration / _filtered (were protection_engine_load_scaled / protection_load_scaled_input);
+  - the 1st / 2nd gear maximum engine speeds;
+  - transmission_predicted_1_2_shift_delay / _2_3_ (were governor_pressure_learned_gain_gear1 / 2: RE_One_Two_Delay,
+    'Predicted 1-2 shift delay', from the adaptive table indexed by transmission_temperature_range);
+  - the lockup delay timers;
+  - transmission_overheat_protection_active_flag (was hot_mode_flag; RE_Ovr_Heat_Prot_On);
+  - the unfiltered output shaft acceleration.
+  protection_lockout_t is transmission_lockup_timers_t (8C17 +1A..+24): the lockup delay 2-3 / 3-4 / 4-3, lockup off,
+  low range hold and low range shift timers. The old field names were thermal_lockout / load_lockout / rpm_lockout /
+  sensor_fault_active ...
+- **Functions:**
+  - cm848_selectGovernorPressureLowRange (was cm848_protectionOverloadHandler): every cal it reads is RE_Low_Range_*,
+    and cm848_runTransmissionControl runs it in transfer-case low range above RE_TPS_Min_Low_Range;
+  - cm848_decrementTransmissionTimers and cm848_initializeTransmissionControl (were *ProtectionTimers / *ProtectionSystem);
+  - cm848_calculateOutputShaftAcceleration and cm848_calibrateGovernorPressureSensorOffset.
+Label-only: reverse_names.py EQUIVALENT.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
