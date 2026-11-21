@@ -2852,7 +2852,7 @@ struct logical_output_request_bits_48_to_55_t {
     uint8_t reserved_bit_3 : 1;  /* bit 3: output 51 (mask 0x08): e2m 1577 +6 Starter_Interlocks_Source; no direct read or write found */
     uint8_t reserved_bit_4 : 1;  /* bit 4: output 52 (mask 0x10): e2m 1577 +6 Alternator_Field_Driver; no direct read or write found */
     uint8_t lift_pump_request : 1;  /* bit 5: output 53 (mask 0x20): e2m 1577 +6 Lift_Pump_Driver. output 53 (DRB test 13-33 FUEL PUMP RELAY / TRANSFER PUMP): cm848_controlLiftPump */
-    uint8_t injector_driver_asic_shutoff_request : 1;  /* bit 6: output 54 (mask 0x40): e2m 1577 +6 ASIC_FS_Shutoff_Driver. output 54: read by the injector and fuel pressure diagnostics (cm848_evaluateInjectorDiagnostics, cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit) */
+    uint8_t fuel_shutoff_request : 1;  /* bit 6: output 54 (mask 0x40): e2m 1577 +6 ASIC_FS_Shutoff_Driver. The fuel pressure fault reactions request it (cm848_updateFuelPressureFaultReactionRequests, cm848_applyFuelLimitsForFuelPressureFaults, fuel_quantity_demand_monitor; fuel_quantity_demand_initialize clears it), and the injector and fuel pressure diagnostics read it (cm848_evaluateInjectorDiagnostics, cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit) (was injector_driver_asic_shutoff_request) */
     uint8_t reserved_bit_7 : 1;  /* bit 7: output 55 (mask 0x80): e2m 1577 +6 Protocol_Select; no direct read or write found */
 };
 
