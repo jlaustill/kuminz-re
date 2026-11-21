@@ -2019,7 +2019,10 @@ extern byte obd_vin_frame_index;  // 0x003fce9a
 extern byte obd_calibration_id_frame_index;  // 0x003fce9b
 extern byte obd_dtc_scan_more_flag;  // 0x003fce9c
 extern byte obd_dtc_copy_index;  // 0x003fce9d
+extern undefined park_neutral_switch_start_check_failed_flag;  // 0x003fcef6
+extern undefined governor_pressure_unused_cached_axis_offset;  // 0x003fcf08
 extern word governor_pressure_temperature_gain_percent_cached_axis_offset;  // 0x003fcf0a
+extern undefined governor_pressure_error_previous;  // 0x003fcf0e
 extern dword governor_pressure_controller_output_unclamped;  // 0x003fcf12
 extern dword rom_crc_descriptor_table_ptr;  // 0x003fcfe0
 extern word output_shaft_speed_avg;  // 0x003fd05e
@@ -5445,7 +5448,7 @@ extern int16_t fuel_pressure_governor_integral_term;  // 0x0040b888
 extern word fuel_pressure_governor_derivative_term;  // 0x0040b88a
 extern int16_t fuel_pressure_governor_accelerator_feed_forward;  // 0x0040b88c
 extern int16_t fuel_metering_feedback_error;  // 0x0040b88e
-extern byte engine_sync_cold_start_flag;  // 0x0040b890
+extern byte fuel_control_actuator_test_active_flag;  // 0x0040b890
 extern word fuel_pressure_feedback_previous;  // 0x0040b891
 extern word fuel_metering_command_filtered;  // 0x0040b893
 extern word fuel_metering_coil_resistance_filtered;  // 0x0040b895
@@ -5697,7 +5700,7 @@ extern word cooling_fan_engine_idle_flag;  // 0x0040b29c
 extern word cooling_fan_duty_source_code;  // 0x0040b2a8
 extern word cooling_fan_integral_term;  // 0x0040b2bc
 extern word cooling_fan_duty_request;  // 0x0040b2c0
-extern word cold_start_injection_protection_flag;  // 0x0040b2c2
+extern word cooling_fan_actuator_test_active_flag;  // 0x0040b2c2
 extern word cooling_fan_base_speed;  // 0x00408862
 extern word cooling_fan_high_engine_rpm_ramp_up_target;  // 0x00408868
 extern byte fault_aging_triggered_flag;  // 0x0040af06
@@ -6005,10 +6008,10 @@ extern dword data_collector_fill_stop_address;  // 0x003fbca6
 extern dword data_collector_fill_phase;  // 0x003fbcaa
 extern word data_collector_buffer_has_data_flag;  // 0x003fbcae
 extern word data_collector_table_entry_count;  // 0x003fbcb2
-extern word protection_output_phase_entry_flag;  // 0x003fcefc
-extern word protection_fuel_demand_prev;  // 0x003fcf00
-extern word protection_output_rate_counter;  // 0x003fcf02
-extern byte cold_start_protection_active_count;  // 0x003fcf3c
+extern word converter_clutch_rationality_lockup_started_flag;  // 0x003fcefc
+extern word converter_clutch_rationality_previous_throttle;  // 0x003fcf00
+extern word converter_clutch_rationality_cycle_divider;  // 0x003fcf02
+extern byte sci_output_test_active_count;  // 0x003fcf3c
 extern word cold_start_sync_protection_countdown;  // 0x003fcf4c
 extern word cold_start_injection_protection_countdown;  // 0x003fcf4e
 extern int16_t data_collector_trigger_active_cal;  // 0x003fddb8
@@ -6676,9 +6679,9 @@ extern byte governor_pressure_zero_check_window_tested_flag;  // 0x003fcef2
 extern byte governor_pressure_mid_range_check_window_tested_flag;  // 0x003fcef3
 extern word park_neutral_switch_start_check_complete_flag;  // 0x003fcef4
 extern word park_neutral_switch_driving_check_failed_flag;  // 0x003fcefa
-extern word protection_pid_rpm_setpoint_prev;  // 0x003fcefe
-extern word protection_fuel_demand_tick_snapshot;  // 0x003fcf04
-extern word protection_action_mode_b2_snapshot;  // 0x003fcf06
+extern word converter_clutch_rationality_previous_ratio;  // 0x003fcefe
+extern word converter_clutch_rationality_last_throttle;  // 0x003fcf04
+extern word converter_clutch_rationality_overdrive_request_snapshot;  // 0x003fcf06
 extern word fault_registered_bits_144_to_159;  // 0x003fe9ea
 extern word fault_previous_bits_144_to_159;  // 0x003fea4e
 extern word fault_previous_bits_384_to_399;  // 0x003fea6c
@@ -6686,8 +6689,8 @@ extern byte sci_high_speed_last_table;  // 0x003fcf1b
 extern byte sci_high_speed_last_offset;  // 0x003fcf1c
 extern dword sci_high_speed_last_address;  // 0x003fcf1e
 extern word sci_high_speed_cached_word;  // 0x003fcf22
-extern byte cold_start_protection_phase_toggle;  // 0x003fcf3d
-extern word cold_start_protection_crank_period_counter;  // 0x003fcf3e
+extern byte sci_output_test_drive_phase_flag;  // 0x003fcf3d
+extern word sci_output_test_phase_countdown;  // 0x003fcf3e
 extern word protection_throttle_output_timeout_count;  // 0x003fcf7c
 extern word protection_load_derate_output_timeout_count;  // 0x003fcf7e
 extern word protection_engine_protection_output_timeout_count;  // 0x003fcf80

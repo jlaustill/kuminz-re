@@ -3,8 +3,6 @@ structure_definitions.csv are quote-aware (comments with commas go in double quo
 - DIAGNOSTIC_MONITOR_STATE (size 2) from the e2m value list the 48RE monitor states share (TCC_Rationality_Monitor_State,
   TTSR_Monitor_State, TVA_AZ_Monitor_Status: 0000=NORUN 0001=RUN 0002=CMPPS 0003=CMPFL 0004=ABORT), on the six monitor
   state words that store exactly those values with that meaning.
-- Widths: 0x3fceee word -> dword (lwz / stw only; the row rendered as _protection_coldStart_..., the one overlap WARNING);
-  the stage E rows 0x3fcef6 word, 0x3fcf08 word, 0x3fcf0e dword.
 - The four limp-home bytes keep byte fields (wave 11 reverted a bitfield on limp_home_flags_4: Ghidra 12.1 prints the
   | / & updates as ._N_1_ pieces); their comments get the e2m 8C19 bit map with each bit's setter.
 usage: apply_r10d_types.py <repo>"""
@@ -30,8 +28,7 @@ STATES = {
     "0x0040b570": "park_neutral_switch_monitor_state",
     "0x0040b57f": "converter_clutch_rationality_monitor_state",
 }
-WIDTHS = {"0x003fceee": ("word", "dword"), "0x003fcef6": ("", "word"), "0x003fcf08": ("", "word"),
-          "0x003fcf0e": ("", "dword")}
+WIDTHS = {}  # moved to stage F (apply_r10f_types.py) so each proof covers one kind of change
 gv = os.path.join(out, "global_variables.csv")
 lines = open(gv).read().split("\n")
 done = 0
@@ -48,7 +45,7 @@ for i, l in enumerate(lines):
             typ = WIDTHS[a][1]
         lines[i] = ",".join([addr, name, typ, comment])
         done += 1
-assert done == 10, done
+assert done == 6, done
 open(gv, "w").write("\n".join(lines))
 en = os.path.join(out, "enums.csv")
 text = open(en).read()
@@ -88,6 +85,9 @@ for field, bits in BITS.items():
     head = re.match(r"e2m 8C19 \+\d RE_Limp_Flags\d", old).group(0)
     rest = old[len(head):].strip()
     rest = re.sub(r"^\([^)]*\)\s*", "", rest)  # the old record-name list, now in the bit map
+    # present-tense mentions of the functions renamed in stage C
+    rest = (rest.replace("cm848_processProtectionFaultSeverity", "cm848_updateTransmissionLimpHomeFlags")
+                .replace("cm848_evaluateProtectionFaultCondition", "cm848_updateTransmissionRelayRequest"))
     new = f"{head} 'Contains transmission control limp-home mode flags'. Bits: {bits}"
     if rest:
         new += " " + rest if rest.startswith("|") else f" | earlier note: {rest.lstrip(':').strip()}"

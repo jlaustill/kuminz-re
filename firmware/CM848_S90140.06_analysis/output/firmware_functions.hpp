@@ -1671,7 +1671,7 @@ uint cm848_calculateEngineToOutputSpeedRatio(void);  // @ 0x0051b9a0
 void cm848_accumulateConverterClutchRatioDeltaSum(void);  // @ 0x0051ba1c
 void cm848_calculateConverterClutchRatioDelta(void);  // @ 0x0051ba6c
 void cm848_monitorConverterClutchAndOverdrivePerformance(void);  // @ 0x0051babc
-void initProtectionOutputFlags(void);  // @ 0x0051c2d0
+void cm848_initializeConverterClutchRationalityMonitor(void);  // @ 0x0051c2d0
 void cm848_learnGovernorPressureSensorOffset(void);  // @ 0x0051c2e4
 void cm848_calibrateGovernorPressureSensorOffset(void);  // @ 0x0051c3d8
 void cm848_limitGovernorPressureSolenoidDuty(uint param_1);  // @ 0x0051c68c
@@ -1711,10 +1711,10 @@ void cm848_sciHighSpeedReadTable251Callback(void);  // @ 0x0051e3dc
 void cm848_sciHighSpeedReadTable252Callback(void);  // @ 0x0051e408
 void cm848_sciHighSpeedReadTable253Callback(void);  // @ 0x0051e434
 void cm848_sciCommand19StartOutputTest(void);  // @ 0x0051e460
-void diag_protection_event_clear(short *param_1,int param_2);  // @ 0x0051e490
-void diag_protection_fault_init_all(void);  // @ 0x0051e514
-void diag_protection_countdown_trigger(short *param_1,int param_2);  // @ 0x0051e624
-void engine_coldStart_protectionSequence_update(void);  // @ 0x0051e6e0
+void cm848_stopSciOutputTest(short *param_1,int param_2);  // @ 0x0051e490
+void cm848_stopAllSciOutputTests(void);  // @ 0x0051e514
+void cm848_stepSciOutputTest(short *param_1,int param_2);  // @ 0x0051e624
+void cm848_updateSciOutputTests(void);  // @ 0x0051e6e0
 void cm848_sciStartTimedOutputTest(short *param_1,undefined4 param_2,short param_3);  // @ 0x0051e894
 void cm848_sciCommand19OutputTestCallback(void);  // @ 0x0051e914
 void cm848_sciCommand20Handler(void);  // @ 0x0051eef0

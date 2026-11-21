@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 14:06:33 MST 2026
+// Generated: Sat Nov 21 14:15:20 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6092,9 +6092,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -48390,7 +48390,7 @@ void cm848_calculateFuelMeteringCommand(void)
     fuel_pressure_governor_state.fuel_metering_command = fuel_metering_command_override_value;
     return;
   }
-  if ((engine_sync_cold_start_flag != 0) &&
+  if ((fuel_control_actuator_test_active_flag != 0) &&
      ((engine_state == ENGINE_STATE_STOPPED || (engine_sync_cold_start_enable2_cal == 1)))) {
     fuel_pressure_governor_state.fuel_metering_command = engine_sync_cold_start_speed_cal;
     return;
@@ -57904,7 +57904,7 @@ void cm848_applicationMain(void)
   cm848_initializeEgrDeltaPressureSensorPerformanceCheck();
   cm848_sensorChannel8_exhaustPressureProcess();
   cm848_initializeTransmissionOutputSpeedSensorMonitor();
-  initProtectionOutputFlags();
+  cm848_initializeConverterClutchRationalityMonitor();
   cm848_initializeGovernorPressureControl();
   cm848_resetTransmissionTemperatureValidation();
   cm848_initializeTransmissionShiftLogic();
@@ -75207,7 +75207,7 @@ void cm848_selectCoolingFanDutySource(void)
   if (cooling_fan_fixed_duty_enable == 0) {
     if (((engine_state == ENGINE_STATE_STOPPED) ||
         (cooling_fan_injection_protection_duty_always_flag == 1)) &&
-       (cold_start_injection_protection_flag != 0)) {
+       (cooling_fan_actuator_test_active_flag != 0)) {
       cooling_fan_duty_request = cooling_fan_injection_protection_duty;
       cooling_fan_duty_source_code = 9;
     }
@@ -78593,9 +78593,10 @@ void cm848_monitorParkNeutralSwitch(void)
         }
         else if ((uint)park_neutral_switch_start_sample_count <
                  (uint)park_neutral_switch_start_check_sample_count_limit) {
-          DAT_003fcef6 = (ushort)((int)(uint)park_neutral_switch_start_check_in_gear_sample_limit <
-                                 (int)((uint)park_neutral_switch_start_sample_count -
-                                      (uint)park_neutral_switch_start_neutral_count));
+          park_neutral_switch_start_check_failed_flag =
+               (ushort)((int)(uint)park_neutral_switch_start_check_in_gear_sample_limit <
+                       (int)((uint)park_neutral_switch_start_sample_count -
+                            (uint)park_neutral_switch_start_neutral_count));
           park_neutral_switch_start_check_complete_flag = 1;
         }
       }
@@ -78631,7 +78632,8 @@ void cm848_monitorParkNeutralSwitch(void)
     }
     if ((park_neutral_switch_start_check_complete_flag == 1) ||
        (park_neutral_switch_driving_check_complete_flag == 1)) {
-      if ((DAT_003fcef6 == 1) || (park_neutral_switch_driving_check_failed_flag == 1)) {
+      if ((park_neutral_switch_start_check_failed_flag == 1) ||
+         (park_neutral_switch_driving_check_failed_flag == 1)) {
         park_neutral_switch_monitor_state = 3;
         system_status_flags_t_003fe974.fault_detected_bits_144_to_159 =
              system_status_flags_t_003fe974.fault_detected_bits_144_to_159 | 0x10;
@@ -78761,13 +78763,13 @@ void cm848_accumulateConverterClutchRatioDeltaSum(void)
 //
 
 /* Calculates the converter clutch rationality ratio delta: converter_clutch_rationality_ratio_delta
-   = saturate16(protection_pid_rpm_setpoint_prev - converter_clutch_rationality_ratio), i.e. the
-   previous sample of the engine speed to transmission output speed ratio minus the new sample
-   (converter_clutch_rationality_ratio, e2m 8C34 +7 TCC_Rationality_Ratio, 1/256), clamped to
+   = saturate16(converter_clutch_rationality_previous_ratio - converter_clutch_rationality_ratio),
+   i.e. the previous sample of the engine speed to transmission output speed ratio minus the new
+   sample (converter_clutch_rationality_ratio, e2m 8C34 +7 TCC_Rationality_Ratio, 1/256), clamped to
    -32768..32767. Called by cm848_monitorConverterClutchAndOverdrivePerformance (the P1740 monitor)
    after each new ratio sample and followed by the sum update 0x51ba1c; the monitor then stores the
-   new sample into protection_pid_rpm_setpoint_prev. Not a PID error: no setpoint or gain is
-   involved. 0 in the dump. (was cm848_pidError_calc) */
+   new sample into converter_clutch_rationality_previous_ratio. Not a PID error: no setpoint or gain
+   is involved. 0 in the dump. (was cm848_pidError_calc) */
 
 void cm848_calculateConverterClutchRatioDelta(void)
 
@@ -78775,7 +78777,8 @@ void cm848_calculateConverterClutchRatioDelta(void)
   int iVar1;
   undefined2 uStack_6;
   
-  iVar1 = (uint)protection_pid_rpm_setpoint_prev - (uint)converter_clutch_rationality_ratio;
+  iVar1 = (uint)converter_clutch_rationality_previous_ratio -
+          (uint)converter_clutch_rationality_ratio;
   if (iVar1 < 0x8000) {
     if (iVar1 < -0x8000) {
       uStack_6 = -0x8000;
@@ -78816,17 +78819,17 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
   ushort uVar8;
   ushort uVar9;
   
-  wVar7 = protection_fuel_demand_tick_snapshot;
+  wVar7 = converter_clutch_rationality_last_throttle;
   if ((algorithm_enable_flags_6_cal & 4) == 0) {
     return;
   }
-  if ((ushort)(protection_output_rate_counter + 1) < 5) {
-    protection_output_rate_counter = protection_output_rate_counter + 1;
+  if ((ushort)(converter_clutch_rationality_cycle_divider + 1) < 5) {
+    converter_clutch_rationality_cycle_divider = converter_clutch_rationality_cycle_divider + 1;
     return;
   }
-  protection_output_rate_counter = 0;
+  converter_clutch_rationality_cycle_divider = 0;
   if ((diagnostic_monitor_complete_bits & 0x40000000) != 0) {
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
   if ((((converter_clutch_rationality_monitor_state == 4) ||
@@ -78857,19 +78860,19 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
          ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x100) != 0)) ||
         (((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x200) != 0 ||
          ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 1) != 0)))))))))) {
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_cycle_divider = 0;
     converter_clutch_rationality_monitor_state = 4;
     return;
   }
-  protection_fuel_demand_prev = protection_fuel_demand_tick_snapshot;
-  protection_fuel_demand_tick_snapshot = fuel_demand_control_t_0040a57a.calculated;
+  converter_clutch_rationality_previous_throttle = converter_clutch_rationality_last_throttle;
+  converter_clutch_rationality_last_throttle = fuel_demand_control_t_0040a57a.calculated;
   bVar1 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
   bVar3 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
   bVar4 = logical_output_request_bits_16_to_23.overdrive_solenoid_request;
   uVar9 = (byte)logical_output_request_bits_16_to_23 & 2;
   if (wVar7 == 0xffff) {
-    protection_fuel_demand_prev = wVar7;
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_previous_throttle = wVar7;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
   uVar8 = wVar7 - fuel_demand_control_t_0040a57a.calculated;
@@ -78898,61 +78901,61 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
   }
   if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
      (converter_clutch_first_lockup_in_third_gear_flag == 0)) {
-    protection_output_phase_entry_flag = 0;
-    protection_action_mode_b2_snapshot = uVar9;
-    protection_pid_rpm_setpoint_prev = cm848_calculateEngineToOutputSpeedRatio();
+    converter_clutch_rationality_lockup_started_flag = 0;
+    converter_clutch_rationality_overdrive_request_snapshot = uVar9;
+    converter_clutch_rationality_previous_ratio = cm848_calculateEngineToOutputSpeedRatio();
     converter_clutch_rationality_ratio_delta_sum = 0;
     return;
   }
   if (fuel_demand_control_t_0040a57a.calculated <= converter_clutch_minimum_throttle) {
-    protection_fuel_demand_prev = wVar7;
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_previous_throttle = wVar7;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
   if (logical_output_request_bits_16_to_23.transmission_relay_request == 0) {
-    protection_fuel_demand_prev = wVar7;
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_previous_throttle = wVar7;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
   if (converter_clutch_engaged_since_low_speed_flag != 0) {
-    protection_fuel_demand_prev = wVar7;
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_previous_throttle = wVar7;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
   if ((transmission_control_flags.mode_flags & 4) != 0) {
-    protection_fuel_demand_prev = wVar7;
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_previous_throttle = wVar7;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
   if ((switch_input_state_bits[2] & 0x10) != 0) {
-    protection_fuel_demand_prev = wVar7;
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_previous_throttle = wVar7;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
   if (monitor_enabling_conditions_met.converter_clutch_and_overdrive_performance == 0) {
-    protection_fuel_demand_prev = wVar7;
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_previous_throttle = wVar7;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
   if (transmission_overheat_protection_active_flag != 0) {
-    protection_fuel_demand_prev = wVar7;
-    protection_output_rate_counter = 0;
+    converter_clutch_rationality_previous_throttle = wVar7;
+    converter_clutch_rationality_cycle_divider = 0;
     return;
   }
-  if (((protection_output_phase_entry_flag == 0) &&
+  if (((converter_clutch_rationality_lockup_started_flag == 0) &&
       (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) &&
      (converter_clutch_first_lockup_in_third_gear_flag == 0)) {
     if (converter_clutch_steady_throttle_count < converter_clutch_steady_throttle_count_limit) {
-      protection_output_phase_entry_flag = 1;
-      protection_fuel_demand_prev = wVar7;
-      protection_output_rate_counter = 0;
+      converter_clutch_rationality_lockup_started_flag = 1;
+      converter_clutch_rationality_previous_throttle = wVar7;
+      converter_clutch_rationality_cycle_divider = 0;
       converter_clutch_engaged_since_low_speed_flag = 1;
       return;
     }
-    if (protection_action_mode_b2_snapshot != uVar9) {
-      protection_output_phase_entry_flag = 1;
-      protection_fuel_demand_prev = wVar7;
-      protection_output_rate_counter = 0;
+    if (converter_clutch_rationality_overdrive_request_snapshot != uVar9) {
+      converter_clutch_rationality_lockup_started_flag = 1;
+      converter_clutch_rationality_previous_throttle = wVar7;
+      converter_clutch_rationality_cycle_divider = 0;
       converter_clutch_engaged_since_low_speed_flag = 1;
       return;
     }
@@ -78961,9 +78964,9 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     converter_clutch_rationality_ratio = wVar7;
     cm848_calculateConverterClutchRatioDelta();
     cm848_accumulateConverterClutchRatioDeltaSum();
-    protection_output_phase_entry_flag = 1;
+    converter_clutch_rationality_lockup_started_flag = 1;
     converter_clutch_rationality_timer = 0;
-    protection_pid_rpm_setpoint_prev = wVar7;
+    converter_clutch_rationality_previous_ratio = wVar7;
   }
   bVar5 = converter_clutch_rationality_maximum_engagement_time;
   if ((converter_clutch_rationality_timer < converter_clutch_rationality_maximum_engagement_time) ||
@@ -78974,12 +78977,12 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
   if ((converter_clutch_rationality_timer < converter_clutch_rationality_maximum_engagement_time) &&
      (converter_clutch_first_lockup_in_third_gear_flag == 0)) {
     if (converter_clutch_steady_throttle_count < converter_clutch_steady_throttle_count_limit) {
-      protection_output_phase_entry_flag = 1;
+      converter_clutch_rationality_lockup_started_flag = 1;
       converter_clutch_engaged_since_low_speed_flag = 1;
       return;
     }
-    if (protection_action_mode_b2_snapshot != uVar9) {
-      protection_output_phase_entry_flag = 1;
+    if (converter_clutch_rationality_overdrive_request_snapshot != uVar9) {
+      converter_clutch_rationality_lockup_started_flag = 1;
       converter_clutch_engaged_since_low_speed_flag = 1;
       return;
     }
@@ -78987,13 +78990,13 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     wVar7 = converter_clutch_rationality_ratio;
     cm848_calculateConverterClutchRatioDelta();
     cm848_accumulateConverterClutchRatioDeltaSum();
-    protection_pid_rpm_setpoint_prev = wVar7;
+    converter_clutch_rationality_previous_ratio = wVar7;
   }
   if (((converter_clutch_steady_throttle_count < converter_clutch_steady_throttle_count_limit) ||
-      (protection_action_mode_b2_snapshot != uVar9)) &&
+      (converter_clutch_rationality_overdrive_request_snapshot != uVar9)) &&
      (converter_clutch_first_lockup_in_third_gear_flag == 0)) {
     converter_clutch_engaged_since_low_speed_flag = 1;
-    protection_output_phase_entry_flag = 1;
+    converter_clutch_rationality_lockup_started_flag = 1;
     return;
   }
   if ((bVar5 <= bVar6) &&
@@ -79062,13 +79065,17 @@ LAB_0051c1d8:
 
 
 //
-// Function: initProtectionOutputFlags @ 0x0051c2d0
+// Function: cm848_initializeConverterClutchRationalityMonitor @ 0x0051c2d0
 //
 
-void initProtectionOutputFlags(void)
+/* Initializes the P1740 converter clutch / overdrive rationality monitor:
+   converter_clutch_rationality_last_throttle = 0xffff (no throttle sample yet) (was
+   initProtectionOutputFlags) */
+
+void cm848_initializeConverterClutchRationalityMonitor(void)
 
 {
-  protection_fuel_demand_tick_snapshot = 0xffff;
+  converter_clutch_rationality_last_throttle = 0xffff;
   return;
 }
 
@@ -79489,9 +79496,9 @@ void cm848_controlGovernorPressureSolenoid(void)
         }
       }
       else {
-        governor_pressure_error_slope = governor_pressure_error - DAT_003fcf0e;
+        governor_pressure_error_slope = governor_pressure_error - governor_pressure_error_previous;
         governor_pressure_error_sum = governor_pressure_error_sum + governor_pressure_error;
-        DAT_003fcf0e = governor_pressure_error;
+        governor_pressure_error_previous = governor_pressure_error;
         cm848_calculateGovernorPressureProportionalTerm();
         cm848_calculateGovernorPressureDerivativeTerm();
         cm848_applyGovernorPressureIntegralTerm();
@@ -79535,7 +79542,7 @@ void cm848_controlGovernorPressureSolenoid(void)
 void cm848_initializeGovernorPressureControl(void)
 
 {
-  DAT_003fcf08 = 2;
+  governor_pressure_unused_cached_axis_offset = 2;
   governor_pressure_temperature_gain_percent_cached_axis_offset = 2;
   if ((governor_pressure_solenoid_output_channel_cal != 0) &&
      (governor_pressure_solenoid_output_channel_cal < 0x33)) {
@@ -80222,7 +80229,7 @@ void cm848_sciInitCommandCallback(void)
 void phaseGroupB_ControlDispatchers(void)
 
 {
-  engine_coldStart_protectionSequence_update();
+  cm848_updateSciOutputTests();
   cm848_countdown_timer_update();
   governor_speedLimitFloor_decrement();
   cm848_sciDecrementKeyRetryDelay();
@@ -80914,14 +80921,18 @@ void cm848_sciCommand19StartOutputTest(void)
 
 
 //
-// Function: diag_protection_event_clear @ 0x0051e490
+// Function: cm848_stopSciOutputTest @ 0x0051e490
 //
 
-void diag_protection_event_clear(short *param_1,int param_2)
+/* Stops one running SCI actuator test (timer pointer, logical output): sci_output_test_active_count
+   - 1, clears the output request at priority 5, releases the priority and zeroes the timer (was
+   diag_protection_event_clear) */
+
+void cm848_stopSciOutputTest(short *param_1,int param_2)
 
 {
   if (*param_1 != 0) {
-    cold_start_protection_active_count = cold_start_protection_active_count - 1;
+    sci_output_test_active_count = sci_output_test_active_count - 1;
     cm848_clearLogicalOutputRequest(param_2,5);
     if (logical_output_request_priority[param_2] == 5) {
       logical_output_request_priority[param_2] = 0;
@@ -80934,32 +80945,36 @@ void diag_protection_event_clear(short *param_1,int param_2)
 
 
 //
-// Function: diag_protection_fault_init_all @ 0x0051e514
+// Function: cm848_stopAllSciOutputTests @ 0x0051e514
 //
 
-void diag_protection_fault_init_all(void)
+/* Stops every SCI actuator test: cm848_stopSciOutputTest for the 12 output tests, then the 13-5E
+   fuel control and 13-5F radiator fan tests (their flags and countdowns) (was
+   diag_protection_fault_init_all) */
+
+void cm848_stopAllSciOutputTests(void)
 
 {
-  diag_protection_event_clear(&DAT_003fcf40,0x26);
-  diag_protection_event_clear(&DAT_003fcf42,0x2b);
-  diag_protection_event_clear(&DAT_003fcf44,0x2c);
-  diag_protection_event_clear(&DAT_003fcf46,0x35);
-  diag_protection_event_clear(&DAT_003fcf48,4);
-  diag_protection_event_clear(&DAT_003fcf4a,0xb);
-  diag_protection_event_clear(&DAT_003fcf50,0x12);
-  diag_protection_event_clear(&DAT_003fcf52,0x11);
-  diag_protection_event_clear(&DAT_003fcf54,0x13);
-  diag_protection_event_clear(&DAT_003fcf56,0x14);
-  diag_protection_event_clear(&DAT_003fcf58,0x15);
-  diag_protection_event_clear(&DAT_003fcf5a,0x10);
+  cm848_stopSciOutputTest(&DAT_003fcf40,0x26);
+  cm848_stopSciOutputTest(&DAT_003fcf42,0x2b);
+  cm848_stopSciOutputTest(&DAT_003fcf44,0x2c);
+  cm848_stopSciOutputTest(&DAT_003fcf46,0x35);
+  cm848_stopSciOutputTest(&DAT_003fcf48,4);
+  cm848_stopSciOutputTest(&DAT_003fcf4a,0xb);
+  cm848_stopSciOutputTest(&DAT_003fcf50,0x12);
+  cm848_stopSciOutputTest(&DAT_003fcf52,0x11);
+  cm848_stopSciOutputTest(&DAT_003fcf54,0x13);
+  cm848_stopSciOutputTest(&DAT_003fcf56,0x14);
+  cm848_stopSciOutputTest(&DAT_003fcf58,0x15);
+  cm848_stopSciOutputTest(&DAT_003fcf5a,0x10);
   if (cold_start_sync_protection_countdown != 0) {
-    cold_start_protection_active_count = cold_start_protection_active_count - 1;
-    engine_sync_cold_start_flag = 0;
+    sci_output_test_active_count = sci_output_test_active_count - 1;
+    fuel_control_actuator_test_active_flag = 0;
     cold_start_sync_protection_countdown = 0;
   }
   if (cold_start_injection_protection_countdown != 0) {
-    cold_start_protection_active_count = cold_start_protection_active_count - 1;
-    cold_start_injection_protection_flag = 0;
+    sci_output_test_active_count = sci_output_test_active_count - 1;
+    cooling_fan_actuator_test_active_flag = 0;
     cold_start_injection_protection_countdown = 0;
   }
   return;
@@ -80968,10 +80983,15 @@ void diag_protection_fault_init_all(void)
 
 
 //
-// Function: diag_protection_countdown_trigger @ 0x0051e624
+// Function: cm848_stepSciOutputTest @ 0x0051e624
 //
 
-void diag_protection_countdown_trigger(short *param_1,int param_2)
+/* One phase step of one SCI actuator test (timer pointer, logical output): decrements the timer; at
+   0 the test ends (sci_output_test_active_count - 1, the output request at priority 5 is cleared
+   and the priority released), otherwise the output is driven on or off by
+   sci_output_test_drive_phase_flag (was diag_protection_countdown_trigger) */
+
+void cm848_stepSciOutputTest(short *param_1,int param_2)
 
 {
   short sVar1;
@@ -80980,13 +81000,13 @@ void diag_protection_countdown_trigger(short *param_1,int param_2)
     sVar1 = *param_1 + -1;
     *param_1 = sVar1;
     if (sVar1 == 0) {
-      cold_start_protection_active_count = cold_start_protection_active_count - 1;
+      sci_output_test_active_count = sci_output_test_active_count - 1;
       cm848_clearLogicalOutputRequest(param_2,5);
       if (logical_output_request_priority[param_2] == 5) {
         logical_output_request_priority[param_2] = 0;
       }
     }
-    else if (cold_start_protection_phase_toggle == 0) {
+    else if (sci_output_test_drive_phase_flag == 0) {
       cm848_clearLogicalOutputRequest(param_2,5);
     }
     else {
@@ -80999,52 +81019,63 @@ void diag_protection_countdown_trigger(short *param_1,int param_2)
 
 
 //
-// Function: engine_coldStart_protectionSequence_update @ 0x0051e6e0
+// Function: cm848_updateSciOutputTests @ 0x0051e6e0
 //
 
-void engine_coldStart_protectionSequence_update(void)
+/* Runs the SCI actuator tests while any is active: The SCI command 0x13 actuator tests (DRB
+   'actuator test' codes, names from the DRB database mydb: 13-09 A/C clutch relay, 13-0C cruise
+   vacuum + vent, 13-0F torque converter clutch, 13-16 overdrive solenoid, 13-1A / 13-1B cruise vent
+   / vacuum, 13-28 / 13-29 intake heater 1 / 2, 13-2C cruise 12 volt feed, 13-33 fuel transfer pump,
+   13-43 transmission relay, 13-49 wait to start lamp, 13-5D exhaust brake, 13-5E fuel control,
+   13-5F PWM radiator fan). With the engine stopped, every 141 passes it flips
+   sci_output_test_drive_phase_flag and steps each test timer (cm848_stepSciOutputTest) and the
+   13-5E / 13-5F countdowns; once the engine runs it stops every test (cm848_stopAllSciOutputTests).
+   When none is left it clears the transmission actuator test flag (actuator_test_flags bit 0) (was
+   engine_coldStart_protectionSequence_update) */
+
+void cm848_updateSciOutputTests(void)
 
 {
-  if (cold_start_protection_active_count == 0) {
+  if (sci_output_test_active_count == 0) {
     return;
   }
   if (engine_state == ENGINE_STATE_STOPPED) {
-    if (cold_start_protection_crank_period_counter != 0) {
-      cold_start_protection_crank_period_counter = cold_start_protection_crank_period_counter - 1;
+    if (sci_output_test_phase_countdown != 0) {
+      sci_output_test_phase_countdown = sci_output_test_phase_countdown - 1;
       return;
     }
-    cold_start_protection_crank_period_counter = 0x8c;
-    cold_start_protection_phase_toggle = cold_start_protection_phase_toggle ^ 1;
-    diag_protection_countdown_trigger(&DAT_003fcf40,0x26);
-    diag_protection_countdown_trigger(&DAT_003fcf42,0x2b);
-    diag_protection_countdown_trigger(&DAT_003fcf44,0x2c);
-    diag_protection_countdown_trigger(&DAT_003fcf46,0x35);
-    diag_protection_countdown_trigger(&DAT_003fcf48,4);
-    diag_protection_countdown_trigger(&DAT_003fcf4a,0xb);
-    diag_protection_countdown_trigger(&DAT_003fcf50,0x12);
-    diag_protection_countdown_trigger(&DAT_003fcf52,0x11);
-    diag_protection_countdown_trigger(&DAT_003fcf54,0x13);
-    diag_protection_countdown_trigger(&DAT_003fcf56,0x14);
-    diag_protection_countdown_trigger(&DAT_003fcf58,0x15);
-    diag_protection_countdown_trigger(&DAT_003fcf5a,0x10);
+    sci_output_test_phase_countdown = 0x8c;
+    sci_output_test_drive_phase_flag = sci_output_test_drive_phase_flag ^ 1;
+    cm848_stepSciOutputTest(&DAT_003fcf40,0x26);
+    cm848_stepSciOutputTest(&DAT_003fcf42,0x2b);
+    cm848_stepSciOutputTest(&DAT_003fcf44,0x2c);
+    cm848_stepSciOutputTest(&DAT_003fcf46,0x35);
+    cm848_stepSciOutputTest(&DAT_003fcf48,4);
+    cm848_stepSciOutputTest(&DAT_003fcf4a,0xb);
+    cm848_stepSciOutputTest(&DAT_003fcf50,0x12);
+    cm848_stepSciOutputTest(&DAT_003fcf52,0x11);
+    cm848_stepSciOutputTest(&DAT_003fcf54,0x13);
+    cm848_stepSciOutputTest(&DAT_003fcf56,0x14);
+    cm848_stepSciOutputTest(&DAT_003fcf58,0x15);
+    cm848_stepSciOutputTest(&DAT_003fcf5a,0x10);
     if ((cold_start_sync_protection_countdown != 0) &&
        (cold_start_sync_protection_countdown = cold_start_sync_protection_countdown - 1,
        cold_start_sync_protection_countdown == 0)) {
-      cold_start_protection_active_count = cold_start_protection_active_count - 1;
-      engine_sync_cold_start_flag = 0;
+      sci_output_test_active_count = sci_output_test_active_count - 1;
+      fuel_control_actuator_test_active_flag = 0;
     }
     if ((cold_start_injection_protection_countdown != 0) &&
        (cold_start_injection_protection_countdown = cold_start_injection_protection_countdown - 1,
        cold_start_injection_protection_countdown == 0)) {
-      cold_start_protection_active_count = cold_start_protection_active_count - 1;
-      cold_start_injection_protection_flag = 0;
+      sci_output_test_active_count = sci_output_test_active_count - 1;
+      cooling_fan_actuator_test_active_flag = 0;
     }
-    if (cold_start_protection_active_count != 0) {
+    if (sci_output_test_active_count != 0) {
       return;
     }
   }
   else {
-    diag_protection_fault_init_all();
+    cm848_stopAllSciOutputTests();
   }
   transmission_shift_strategy_flags.actuator_test_flags =
        transmission_shift_strategy_flags.actuator_test_flags & 0xfe;
@@ -81057,18 +81088,21 @@ void engine_coldStart_protectionSequence_update(void)
 // Function: cm848_sciStartTimedOutputTest @ 0x0051e894
 //
 
-/* SCI diagnostic link (the fuelDemand* family on QSMCM SCI1): SCI 0x13 output test (only while
-   cranking): arms a protection event at priority 5 for a duration so its output line
-   (protection_event_output_line_cal) is driven; code 0 stops all tests |
-   review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence Medium
-    */
+/* Starts one SCI 0x13 actuator test (timer pointer, logical output, duration in phases: 300 or 11):
+   if the test was not running it adds one to sci_output_test_active_count and drives the output
+   request at priority 5 on or off by sci_output_test_drive_phase_flag; then sets the timer.
+   cm848_updateSciOutputTests steps the timers | earlier note: SCI diagnostic link (the fuelDemand*
+   family on QSMCM SCI1): SCI 0x13 output test (only while cranking): arms a protection event at
+   priority 5 for a duration so its output line (protection_event_output_line_cal) is driven; code 0
+   stops all tests | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
+   Confidence Medium */
 
 void cm848_sciStartTimedOutputTest(short *param_1,undefined4 param_2,short param_3)
 
 {
   if (*param_1 == 0) {
-    cold_start_protection_active_count = cold_start_protection_active_count + 1;
-    if (cold_start_protection_phase_toggle == 0) {
+    sci_output_test_active_count = sci_output_test_active_count + 1;
+    if (sci_output_test_drive_phase_flag == 0) {
       cm848_clearLogicalOutputRequest(param_2,5);
     }
     else {
@@ -81085,21 +81119,28 @@ void cm848_sciStartTimedOutputTest(short *param_1,undefined4 param_2,short param
 // Function: cm848_sciCommand19OutputTestCallback @ 0x0051e914
 //
 
-/* SCI diagnostic link next-byte callback: command 19 output test (only while cranking; code 0 stops
-   all tests) | review-function-readability reviewed 2026-11-12 - Readability Low Accuracy
-   Confidence Medium */
+/* SCI diagnostic link next-byte callback: command 19 (0x13) actuator tests, only while the engine
+   is stopped (a running engine or code 0 stops all tests). Codes (DRB names): 0x09 A/C clutch relay
+   (output 38), 0x0c cruise vacuum + vent (19 + 20), 0x0f torque converter clutch (18), 0x16
+   overdrive solenoid (17), 0x1a / 0x1b cruise vent / vacuum (19 / 20), 0x28 / 0x29 intake heater 1
+   / 2 (43 / 44), 0x2c cruise 12 volt feed (21), 0x33 fuel transfer pump (53), 0x43 transmission
+   relay (16), 0x49 wait to start lamp (4), 0x5d exhaust brake (11), 0x5e fuel control and 0x5f PWM
+   radiator fan (flags with 11-phase countdowns); while a test runs it sets actuator_test_flags bit
+   0 | earlier note: SCI diagnostic link next-byte callback: command 19 output test (only while
+   cranking; code 0 stops all tests) | review-function-readability reviewed 2026-11-12 - Readability
+   Low Accuracy Confidence Medium */
 
 void cm848_sciCommand19OutputTestCallback(void)
 
 {
-  if (cold_start_protection_active_count == 0) {
-    cold_start_protection_crank_period_counter = 0;
-    cold_start_protection_phase_toggle = 0;
+  if (sci_output_test_active_count == 0) {
+    sci_output_test_phase_countdown = 0;
+    sci_output_test_drive_phase_flag = 0;
   }
   if ((engine_state != ENGINE_STATE_STOPPED) || (*(char *)sci_buffer_cursor == '\0')) {
     transmission_shift_strategy_flags.actuator_test_flags =
          transmission_shift_strategy_flags.actuator_test_flags & 0xfe;
-    diag_protection_fault_init_all();
+    cm848_stopAllSciOutputTests();
     sci_buffer[sci_transmit_byte_count] = 0;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051eec0;
@@ -81317,8 +81358,8 @@ void cm848_sciCommand19OutputTestCallback(void)
     goto LAB_0051ee98;
   case '^':
     if (cold_start_sync_protection_countdown == 0) {
-      cold_start_protection_active_count = cold_start_protection_active_count + 1;
-      engine_sync_cold_start_flag = 1;
+      sci_output_test_active_count = sci_output_test_active_count + 1;
+      fuel_control_actuator_test_active_flag = 1;
     }
     cold_start_sync_protection_countdown = 0xb;
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
@@ -81326,8 +81367,8 @@ void cm848_sciCommand19OutputTestCallback(void)
     goto LAB_0051ee98;
   case '_':
     if (cold_start_injection_protection_countdown == 0) {
-      cold_start_protection_active_count = cold_start_protection_active_count + 1;
-      cold_start_injection_protection_flag = 1;
+      sci_output_test_active_count = sci_output_test_active_count + 1;
+      cooling_fan_actuator_test_active_flag = 1;
     }
     cold_start_injection_protection_countdown = 0xb;
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
@@ -81337,7 +81378,7 @@ void cm848_sciCommand19OutputTestCallback(void)
   sci_buffer[sci_transmit_byte_count] = 0;
   sci_transmit_byte_count = sci_transmit_byte_count + 1;
 LAB_0051ee98:
-  if (cold_start_protection_active_count != 0) {
+  if (sci_output_test_active_count != 0) {
     transmission_shift_strategy_flags.actuator_test_flags =
          transmission_shift_strategy_flags.actuator_test_flags | 1;
   }
@@ -91689,8 +91730,8 @@ undefined2 engine_coldStart_protection_stateMachine(void)
     fault_event_queue_clear_active(0x26);
     fault_event_queue_clear_active(0x2b);
     fault_event_queue_clear_active(0x2c);
-    engine_sync_cold_start_flag = 0;
-    cold_start_injection_protection_flag = 0;
+    fuel_control_actuator_test_active_flag = 0;
+    cooling_fan_actuator_test_active_flag = 0;
     protection_voltage_active_flag = 0;
     cold_start_protection_state = 8;
     if (engine_state != ENGINE_STATE_STOPPED) {
@@ -91708,13 +91749,13 @@ undefined2 engine_coldStart_protection_stateMachine(void)
     break;
   case 1:
     if ((end_of_line_test_enable_flags & 0x40) != 0) {
-      engine_sync_cold_start_flag = 1;
+      fuel_control_actuator_test_active_flag = 1;
     }
     if ((end_of_line_test_enable_flags & 0x20) != 0) {
       protection_voltage_active_flag = 1;
     }
     if ((end_of_line_test_enable_flags & 0x80) != 0) {
-      cold_start_injection_protection_flag = 1;
+      cooling_fan_actuator_test_active_flag = 1;
     }
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(1);
     cold_start_protection_state = 2;
@@ -91772,8 +91813,8 @@ undefined2 engine_coldStart_protection_stateMachine(void)
         cold_start_protection_state = 4;
         cold_start_protection_timer_countdown = end_of_line_test_relay_off_time;
         protection_voltage_active_flag = 0;
-        cold_start_injection_protection_flag = 0;
-        engine_sync_cold_start_flag = 0;
+        cooling_fan_actuator_test_active_flag = 0;
+        fuel_control_actuator_test_active_flag = 0;
         return 1;
       }
       cold_start_protection_cycle_counter = 2;
