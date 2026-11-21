@@ -2019,11 +2019,12 @@ extern byte obd_vin_frame_index;  // 0x003fce9a
 extern byte obd_calibration_id_frame_index;  // 0x003fce9b
 extern byte obd_dtc_scan_more_flag;  // 0x003fce9c
 extern byte obd_dtc_copy_index;  // 0x003fce9d
-extern undefined park_neutral_switch_start_check_failed_flag;  // 0x003fcef6
-extern undefined governor_pressure_unused_cached_axis_offset;  // 0x003fcf08
+extern word park_neutral_switch_start_check_failed_flag;  // 0x003fcef6
+extern word governor_pressure_unused_cached_axis_offset;  // 0x003fcf08
 extern word governor_pressure_temperature_gain_percent_cached_axis_offset;  // 0x003fcf0a
-extern undefined governor_pressure_error_previous;  // 0x003fcf0e
+extern dword governor_pressure_error_previous;  // 0x003fcf0e
 extern dword governor_pressure_controller_output_unclamped;  // 0x003fcf12
+extern sci_output_test_timers_t sci_output_test_timers;  // 0x003fcf40
 extern dword rom_crc_descriptor_table_ptr;  // 0x003fcfe0
 extern word output_shaft_speed_avg;  // 0x003fd05e
 extern word output_shaft_speed_saved;  // 0x003fd060
@@ -6012,8 +6013,6 @@ extern word converter_clutch_rationality_lockup_started_flag;  // 0x003fcefc
 extern word converter_clutch_rationality_previous_throttle;  // 0x003fcf00
 extern word converter_clutch_rationality_cycle_divider;  // 0x003fcf02
 extern byte sci_output_test_active_count;  // 0x003fcf3c
-extern word cold_start_sync_protection_countdown;  // 0x003fcf4c
-extern word cold_start_injection_protection_countdown;  // 0x003fcf4e
 extern int16_t data_collector_trigger_active_cal;  // 0x003fddb8
 extern int16_t data_collector_stop_mode_cal;  // 0x003fddba
 extern word data_collector_multiple_cal;  // 0x003fddbc
@@ -6674,7 +6673,7 @@ extern byte intake_air_heater_level_update_pending_flag;  // 0x003fce63
 extern dword oil_change_monitor_injected_fuel_snapshot;  // 0x003fcede
 extern dword oil_change_monitor_weighted_fuel_accumulator;  // 0x003fcee2
 extern word governor_pressure_rationality_tested_in_park_neutral_flag;  // 0x003fcee6
-extern word governor_pressure_mid_range_check_fault_reported_flag;  // 0x003fceee
+extern dword governor_pressure_mid_range_check_fault_reported_flag;  // 0x003fceee
 extern byte governor_pressure_zero_check_window_tested_flag;  // 0x003fcef2
 extern byte governor_pressure_mid_range_check_window_tested_flag;  // 0x003fcef3
 extern word park_neutral_switch_start_check_complete_flag;  // 0x003fcef4

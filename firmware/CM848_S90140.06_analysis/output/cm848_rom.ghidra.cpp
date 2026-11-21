@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 14:20:15 MST 2026
+// Generated: Sat Nov 21 14:49:50 MST 2026
 
 
 //
@@ -6092,9 +6092,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  byte prescaler_count;
   dword runtime_value;
   word counter_value;
-  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -78387,7 +78387,6 @@ LAB_0051ae7c:
 // Function: cm848_initializeGovernorPressureTrackingMonitor @ 0x0051aecc
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Initializes the P1756 / P1757 governor pressure tracking monitor
    (cm848_monitorGovernorPressureTracking): both check states (e2m 8C58 +2 / +8) to not run, the
    mid-range fault reported flag and the rate divider to 0 (was initHpcr_FaultCounters) */
@@ -78397,7 +78396,7 @@ void cm848_initializeGovernorPressureTrackingMonitor(void)
 {
   governor_pressure_zero_check_state = DIAGNOSTIC_MONITOR_STATE_NOT_RUN;
   governor_pressure_mid_range_check_state = DIAGNOSTIC_MONITOR_STATE_NOT_RUN;
-  _governor_pressure_mid_range_check_fault_reported_flag = 0;
+  governor_pressure_mid_range_check_fault_reported_flag = 0;
   governor_pressure_tracking_cycle_divider = 0;
   return;
 }
@@ -78408,7 +78407,6 @@ void cm848_initializeGovernorPressureTrackingMonitor(void)
 // Function: cm848_monitorGovernorPressureTracking @ 0x0051aef8
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* P1757 / P1756 governor pressure monitors (in gear at light throttle and 133-220 deg F): above 3
    psi (384) with a 0 target at 0 mph / outside 29-44 psi (3712-5632) with a 33-40 psi target
    (4224-5120); sets 0x3fe9a4 bits 7 / 8 (was protectionColdStartControl) |
@@ -78531,7 +78529,7 @@ void cm848_monitorGovernorPressureTracking(void)
               else {
                 fault_detected_bits_384_to_399 = fault_detected_bits_384_to_399 | 0x100;
                 governor_pressure_mid_range_check_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
-                if ((_governor_pressure_mid_range_check_fault_reported_flag == 0) &&
+                if ((governor_pressure_mid_range_check_fault_reported_flag == 0) &&
                    ((fault_previous_bits_384_to_399 & 0x100) == 0x100)) {
                   diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x10000000;
                   if ((monitor_pending_readiness_code_cal & 0x10000000) == 0) {
@@ -78541,7 +78539,7 @@ void cm848_monitorGovernorPressureTracking(void)
                     monitor_pending_readiness_code_cal =
                          monitor_pending_readiness_code_cal & 0xefffffff;
                   }
-                  _governor_pressure_mid_range_check_fault_reported_flag = 1;
+                  governor_pressure_mid_range_check_fault_reported_flag = 1;
                 }
               }
             }
@@ -78612,9 +78610,9 @@ void cm848_monitorParkNeutralSwitch(void)
         else if ((uint)park_neutral_switch_start_sample_count <
                  (uint)park_neutral_switch_start_check_sample_count_limit) {
           park_neutral_switch_start_check_failed_flag =
-               (ushort)((int)(uint)park_neutral_switch_start_check_in_gear_sample_limit <
-                       (int)((uint)park_neutral_switch_start_sample_count -
-                            (uint)park_neutral_switch_start_neutral_count));
+               (word)((int)(uint)park_neutral_switch_start_check_in_gear_sample_limit <
+                     (int)((uint)park_neutral_switch_start_sample_count -
+                          (uint)park_neutral_switch_start_neutral_count));
           park_neutral_switch_start_check_complete_flag = 1;
         }
       }
@@ -80946,16 +80944,16 @@ void cm848_sciCommand19StartOutputTest(void)
    - 1, clears the output request at priority 5, releases the priority and zeroes the timer (was
    diag_protection_event_clear) */
 
-void cm848_stopSciOutputTest(short *param_1,int param_2)
+void cm848_stopSciOutputTest(word *timer,dword logical_output)
 
 {
-  if (*param_1 != 0) {
+  if (*timer != 0) {
     sci_output_test_active_count = sci_output_test_active_count - 1;
-    cm848_clearLogicalOutputRequest(param_2,5);
-    if (logical_output_request_priority[param_2] == 5) {
-      logical_output_request_priority[param_2] = 0;
+    cm848_clearLogicalOutputRequest(logical_output,5);
+    if (logical_output_request_priority[logical_output] == 5) {
+      logical_output_request_priority[logical_output] = 0;
     }
-    *param_1 = 0;
+    *timer = 0;
   }
   return;
 }
@@ -80973,27 +80971,27 @@ void cm848_stopSciOutputTest(short *param_1,int param_2)
 void cm848_stopAllSciOutputTests(void)
 
 {
-  cm848_stopSciOutputTest(&DAT_003fcf40,0x26);
-  cm848_stopSciOutputTest(&DAT_003fcf42,0x2b);
-  cm848_stopSciOutputTest(&DAT_003fcf44,0x2c);
-  cm848_stopSciOutputTest(&DAT_003fcf46,0x35);
-  cm848_stopSciOutputTest(&DAT_003fcf48,4);
-  cm848_stopSciOutputTest(&DAT_003fcf4a,0xb);
-  cm848_stopSciOutputTest(&DAT_003fcf50,0x12);
-  cm848_stopSciOutputTest(&DAT_003fcf52,0x11);
-  cm848_stopSciOutputTest(&DAT_003fcf54,0x13);
-  cm848_stopSciOutputTest(&DAT_003fcf56,0x14);
-  cm848_stopSciOutputTest(&DAT_003fcf58,0x15);
-  cm848_stopSciOutputTest(&DAT_003fcf5a,0x10);
-  if (cold_start_sync_protection_countdown != 0) {
+  cm848_stopSciOutputTest(&sci_output_test_timers.air_conditioning_clutch_relay,0x26);
+  cm848_stopSciOutputTest(&sci_output_test_timers.intake_heater_1,0x2b);
+  cm848_stopSciOutputTest(&sci_output_test_timers.intake_heater_2,0x2c);
+  cm848_stopSciOutputTest(&sci_output_test_timers.fuel_transfer_pump,0x35);
+  cm848_stopSciOutputTest(&sci_output_test_timers.wait_to_start_lamp,4);
+  cm848_stopSciOutputTest(&sci_output_test_timers.exhaust_brake,0xb);
+  cm848_stopSciOutputTest(&sci_output_test_timers.converter_clutch_solenoid,0x12);
+  cm848_stopSciOutputTest(&sci_output_test_timers.overdrive_solenoid,0x11);
+  cm848_stopSciOutputTest(&sci_output_test_timers.cruise_vent_solenoid,0x13);
+  cm848_stopSciOutputTest(&sci_output_test_timers.cruise_vacuum_solenoid,0x14);
+  cm848_stopSciOutputTest(&sci_output_test_timers.cruise_servo_supply,0x15);
+  cm848_stopSciOutputTest(&sci_output_test_timers.transmission_relay,0x10);
+  if (sci_output_test_timers.fuel_control != 0) {
     sci_output_test_active_count = sci_output_test_active_count - 1;
     fuel_control_actuator_test_active_flag = 0;
-    cold_start_sync_protection_countdown = 0;
+    sci_output_test_timers.fuel_control = 0;
   }
-  if (cold_start_injection_protection_countdown != 0) {
+  if (sci_output_test_timers.cooling_fan != 0) {
     sci_output_test_active_count = sci_output_test_active_count - 1;
     cooling_fan_actuator_test_active_flag = 0;
-    cold_start_injection_protection_countdown = 0;
+    sci_output_test_timers.cooling_fan = 0;
   }
   return;
 }
@@ -81009,26 +81007,26 @@ void cm848_stopAllSciOutputTests(void)
    and the priority released), otherwise the output is driven on or off by
    sci_output_test_drive_phase_flag (was diag_protection_countdown_trigger) */
 
-void cm848_stepSciOutputTest(short *param_1,int param_2)
+void cm848_stepSciOutputTest(word *timer,dword logical_output)
 
 {
-  short sVar1;
+  word wVar1;
   
-  if (*param_1 != 0) {
-    sVar1 = *param_1 + -1;
-    *param_1 = sVar1;
-    if (sVar1 == 0) {
+  if (*timer != 0) {
+    wVar1 = *timer - 1;
+    *timer = wVar1;
+    if (wVar1 == 0) {
       sci_output_test_active_count = sci_output_test_active_count - 1;
-      cm848_clearLogicalOutputRequest(param_2,5);
-      if (logical_output_request_priority[param_2] == 5) {
-        logical_output_request_priority[param_2] = 0;
+      cm848_clearLogicalOutputRequest(logical_output,5);
+      if (logical_output_request_priority[logical_output] == 5) {
+        logical_output_request_priority[logical_output] = 0;
       }
     }
     else if (sci_output_test_drive_phase_flag == 0) {
-      cm848_clearLogicalOutputRequest(param_2,5);
+      cm848_clearLogicalOutputRequest(logical_output,5);
     }
     else {
-      cm848_setLogicalOutputRequest(param_2,5);
+      cm848_setLogicalOutputRequest(logical_output,5);
     }
   }
   return;
@@ -81064,27 +81062,27 @@ void cm848_updateSciOutputTests(void)
     }
     sci_output_test_phase_countdown = 0x8c;
     sci_output_test_drive_phase_flag = sci_output_test_drive_phase_flag ^ 1;
-    cm848_stepSciOutputTest(&DAT_003fcf40,0x26);
-    cm848_stepSciOutputTest(&DAT_003fcf42,0x2b);
-    cm848_stepSciOutputTest(&DAT_003fcf44,0x2c);
-    cm848_stepSciOutputTest(&DAT_003fcf46,0x35);
-    cm848_stepSciOutputTest(&DAT_003fcf48,4);
-    cm848_stepSciOutputTest(&DAT_003fcf4a,0xb);
-    cm848_stepSciOutputTest(&DAT_003fcf50,0x12);
-    cm848_stepSciOutputTest(&DAT_003fcf52,0x11);
-    cm848_stepSciOutputTest(&DAT_003fcf54,0x13);
-    cm848_stepSciOutputTest(&DAT_003fcf56,0x14);
-    cm848_stepSciOutputTest(&DAT_003fcf58,0x15);
-    cm848_stepSciOutputTest(&DAT_003fcf5a,0x10);
-    if ((cold_start_sync_protection_countdown != 0) &&
-       (cold_start_sync_protection_countdown = cold_start_sync_protection_countdown - 1,
-       cold_start_sync_protection_countdown == 0)) {
+    cm848_stepSciOutputTest(&sci_output_test_timers.air_conditioning_clutch_relay,0x26);
+    cm848_stepSciOutputTest(&sci_output_test_timers.intake_heater_1,0x2b);
+    cm848_stepSciOutputTest(&sci_output_test_timers.intake_heater_2,0x2c);
+    cm848_stepSciOutputTest(&sci_output_test_timers.fuel_transfer_pump,0x35);
+    cm848_stepSciOutputTest(&sci_output_test_timers.wait_to_start_lamp,4);
+    cm848_stepSciOutputTest(&sci_output_test_timers.exhaust_brake,0xb);
+    cm848_stepSciOutputTest(&sci_output_test_timers.converter_clutch_solenoid,0x12);
+    cm848_stepSciOutputTest(&sci_output_test_timers.overdrive_solenoid,0x11);
+    cm848_stepSciOutputTest(&sci_output_test_timers.cruise_vent_solenoid,0x13);
+    cm848_stepSciOutputTest(&sci_output_test_timers.cruise_vacuum_solenoid,0x14);
+    cm848_stepSciOutputTest(&sci_output_test_timers.cruise_servo_supply,0x15);
+    cm848_stepSciOutputTest(&sci_output_test_timers.transmission_relay,0x10);
+    if ((sci_output_test_timers.fuel_control != 0) &&
+       (sci_output_test_timers.fuel_control = sci_output_test_timers.fuel_control - 1,
+       sci_output_test_timers.fuel_control == 0)) {
       sci_output_test_active_count = sci_output_test_active_count - 1;
       fuel_control_actuator_test_active_flag = 0;
     }
-    if ((cold_start_injection_protection_countdown != 0) &&
-       (cold_start_injection_protection_countdown = cold_start_injection_protection_countdown - 1,
-       cold_start_injection_protection_countdown == 0)) {
+    if ((sci_output_test_timers.cooling_fan != 0) &&
+       (sci_output_test_timers.cooling_fan = sci_output_test_timers.cooling_fan - 1,
+       sci_output_test_timers.cooling_fan == 0)) {
       sci_output_test_active_count = sci_output_test_active_count - 1;
       cooling_fan_actuator_test_active_flag = 0;
     }
@@ -81115,19 +81113,19 @@ void cm848_updateSciOutputTests(void)
    stops all tests | review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy
    Confidence Medium */
 
-void cm848_sciStartTimedOutputTest(short *param_1,undefined4 param_2,short param_3)
+void cm848_sciStartTimedOutputTest(word *timer,dword logical_output,word duration)
 
 {
-  if (*param_1 == 0) {
+  if (*timer == 0) {
     sci_output_test_active_count = sci_output_test_active_count + 1;
     if (sci_output_test_drive_phase_flag == 0) {
-      cm848_clearLogicalOutputRequest(param_2,5);
+      cm848_clearLogicalOutputRequest(logical_output,5);
     }
     else {
-      cm848_setLogicalOutputRequest(param_2,5);
+      cm848_setLogicalOutputRequest(logical_output,5);
     }
   }
-  *param_1 = param_3;
+  *timer = duration;
   return;
 }
 
@@ -81165,7 +81163,7 @@ void cm848_sciCommand19OutputTestCallback(void)
   }
   switch(*(char *)sci_buffer_cursor) {
   case '\t':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf40,0x26,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.air_conditioning_clutch_relay,0x26,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81174,8 +81172,8 @@ void cm848_sciCommand19OutputTestCallback(void)
   case '\v':
     break;
   case '\f':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf54,0x13,300);
-    cm848_sciStartTimedOutputTest(&DAT_003fcf56,0x14,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.cruise_vent_solenoid,0x13,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.cruise_vacuum_solenoid,0x14,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81184,7 +81182,7 @@ void cm848_sciCommand19OutputTestCallback(void)
   case '\x0e':
     break;
   case '\x0f':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf50,0x12,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.converter_clutch_solenoid,0x12,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81201,7 +81199,7 @@ void cm848_sciCommand19OutputTestCallback(void)
   case '\x15':
     break;
   case '\x16':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf52,0x11,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.overdrive_solenoid,0x11,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81212,12 +81210,12 @@ void cm848_sciCommand19OutputTestCallback(void)
   case '\x19':
     break;
   case '\x1a':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf54,0x13,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.cruise_vent_solenoid,0x13,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
   case '\x1b':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf56,0x14,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.cruise_vacuum_solenoid,0x14,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81246,12 +81244,12 @@ void cm848_sciCommand19OutputTestCallback(void)
   case '\'':
     break;
   case '(':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf42,0x2b,0xb);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.intake_heater_1,0x2b,0xb);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
   case ')':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf44,0x2c,0xb);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.intake_heater_2,0x2c,0xb);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81260,7 +81258,7 @@ void cm848_sciCommand19OutputTestCallback(void)
   case '+':
     break;
   case ',':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf58,0x15,0xb);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.cruise_servo_supply,0x15,0xb);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81277,7 +81275,7 @@ void cm848_sciCommand19OutputTestCallback(void)
   case '2':
     break;
   case '3':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf46,0x35,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.fuel_transfer_pump,0x35,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81312,7 +81310,7 @@ void cm848_sciCommand19OutputTestCallback(void)
   case 'B':
     break;
   case 'C':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf5a,0x10,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.transmission_relay,0x10,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81327,7 +81325,7 @@ void cm848_sciCommand19OutputTestCallback(void)
   case 'H':
     break;
   case 'I':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf48,4,300);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.wait_to_start_lamp,4,300);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
@@ -81370,25 +81368,25 @@ void cm848_sciCommand19OutputTestCallback(void)
   case '\\':
     break;
   case ']':
-    cm848_sciStartTimedOutputTest(&DAT_003fcf4a,0xb,0xb);
+    cm848_sciStartTimedOutputTest(&sci_output_test_timers.exhaust_brake,0xb,0xb);
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
   case '^':
-    if (cold_start_sync_protection_countdown == 0) {
+    if (sci_output_test_timers.fuel_control == 0) {
       sci_output_test_active_count = sci_output_test_active_count + 1;
       fuel_control_actuator_test_active_flag = 1;
     }
-    cold_start_sync_protection_countdown = 0xb;
+    sci_output_test_timers.fuel_control = 0xb;
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;
   case '_':
-    if (cold_start_injection_protection_countdown == 0) {
+    if (sci_output_test_timers.cooling_fan == 0) {
       sci_output_test_active_count = sci_output_test_active_count + 1;
       cooling_fan_actuator_test_active_flag = 1;
     }
-    cold_start_injection_protection_countdown = 0xb;
+    sci_output_test_timers.cooling_fan = 0xb;
     sci_buffer[sci_transmit_byte_count] = *(byte *)sci_buffer_cursor;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
     goto LAB_0051ee98;

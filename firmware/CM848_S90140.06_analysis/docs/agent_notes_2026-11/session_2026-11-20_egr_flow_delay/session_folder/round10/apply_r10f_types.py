@@ -1,6 +1,6 @@
 """Round 10 stage F (types): widths and the SCI actuator test timer struct.
 - Widths: 0x3fceee governor_pressure_mid_range_check_fault_reported_flag word -> dword (lwz / stw only; it rendered
-  with a '_' prefix, the one overlap WARNING); the stage E rows 0x3fcef6 word (sth / lhz), 0x3fcf08 word (sth),
+  with a '_' prefix and put the overlap WARNING on its two functions); the stage E rows 0x3fcef6 word (sth / lhz), 0x3fcf08 word (sth),
   0x3fcf0e dword (lwz / stw).
 - sci_output_test_timers_t at 0x3fcf40 (14 words, 0x3fcf40-0x3fcf5b): one timer per SCI 0x13 actuator test, in phases
   of 141 passes. The two named rows inside it (0x3fcf4c / 0x3fcf4e, the 13-5E / 13-5F countdowns) are deleted; their

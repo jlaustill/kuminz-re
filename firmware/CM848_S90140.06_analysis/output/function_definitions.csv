@@ -447,3 +447,13 @@ function_address,function_name,param_index,name,type,comment
 0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,0,session_kind,int32_t,"0 = the engine control session record, else the retarder's"
 0x0050beec,cm848_startJ1939ControlSession,return,,void,returns nothing
 0x0050beec,cm848_startJ1939ControlSession,0,session_kind,int32_t,"0 = open the engine control session record, else the retarder's"
+0x0051e624,cm848_stepSciOutputTest,return,,void,No result
+0x0051e624,cm848_stepSciOutputTest,0,timer,word *,The test's timer in sci_output_test_timers (phases left; lhz: unsigned)
+0x0051e624,cm848_stepSciOutputTest,1,logical_output,dword,The logical output the test drives (priority 5)
+0x0051e490,cm848_stopSciOutputTest,return,,void,No result
+0x0051e490,cm848_stopSciOutputTest,0,timer,word *,The test's timer in sci_output_test_timers; zeroed
+0x0051e490,cm848_stopSciOutputTest,1,logical_output,dword,The logical output the test drove; its priority 5 request is cleared
+0x0051e894,cm848_sciStartTimedOutputTest,return,,void,No result
+0x0051e894,cm848_sciStartTimedOutputTest,0,timer,word *,The test's timer in sci_output_test_timers
+0x0051e894,cm848_sciStartTimedOutputTest,1,logical_output,dword,The logical output to drive at priority 5
+0x0051e894,cm848_sciStartTimedOutputTest,2,duration,word,Phases of 141 passes to run (300 or 11)

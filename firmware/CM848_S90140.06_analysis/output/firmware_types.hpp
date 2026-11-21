@@ -1262,6 +1262,7 @@ typedef struct derivative_gain_t derivative_gain_t;
 typedef struct low_speed_governor_gain_set_t low_speed_governor_gain_set_t;
 typedef struct all_speed_governor_gain_set_t all_speed_governor_gain_set_t;
 typedef struct j1939_control_session_t j1939_control_session_t;
+typedef struct sci_output_test_timers_t sci_output_test_timers_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2779,4 +2780,21 @@ struct j1939_control_session_t {
     TSC1_OVERRIDE_MODE override_control_modes;  /* the session's override control modes in order (the last five when there were more) */
     uint32_t start_time;  /* key_on_hour_meter at the start (0.2 s counts) */
     uint32_t duration;  /* key_on_hour_meter - start_time, stored when the session ends (0.2 s counts) */
+};
+
+struct sci_output_test_timers_t {
+    uint16_t air_conditioning_clutch_relay;  /* +0x00: timer of the DRB actuator test 13-09 A/C CLUTCH RELAY (logical output 38; started with 300 phases) */
+    uint16_t intake_heater_1;  /* +0x02: timer of the DRB actuator test 13-28 INTAKE HEATER #1 (logical output 43; started with 11 phases) */
+    uint16_t intake_heater_2;  /* +0x04: timer of the DRB actuator test 13-29 INTAKE HEATER #2 (logical output 44; started with 11 phases) */
+    uint16_t fuel_transfer_pump;  /* +0x06: timer of the DRB actuator test 13-33 FUEL PUMP RELAY / TRANSFER PUMP (logical output 53; started with 300 phases) */
+    uint16_t wait_to_start_lamp;  /* +0x08: timer of the DRB actuator test 13-49 WAIT TO START LAMP (logical output 4; started with 300 phases) */
+    uint16_t exhaust_brake;  /* +0x0a: timer of the DRB actuator test 13-5D EXHAUST BRAKE (logical output 11; started with 11 phases) */
+    uint16_t fuel_control;  /* +0x0c: timer of the DRB actuator test 13-5E FUEL CONTROL (fuel_control_actuator_test_active_flag; started with 11 phases) (was cold_start_sync_protection_countdown) | earlier note: per-crank countdown for engine_sync cold-start protection */
+    uint16_t cooling_fan;  /* +0x0e: timer of the DRB actuator test 13-5F PWM RAD FAN (cooling_fan_actuator_test_active_flag; started with 11 phases) (was cold_start_injection_protection_countdown) | earlier note: per-crank countdown for cold-start injection protection */
+    uint16_t converter_clutch_solenoid;  /* +0x10: timer of the DRB actuator test 13-0F TORQUE CONV CLUTCH (logical output 18; started with 300 phases) */
+    uint16_t overdrive_solenoid;  /* +0x12: timer of the DRB actuator test 13-16 OVERDRIVE SOLENOID (logical output 17; started with 300 phases) */
+    uint16_t cruise_vent_solenoid;  /* +0x14: timer of the DRB actuator test 13-1A S/C VENT SOLENOID (and 13-0C with the vacuum solenoid) (logical output 19; started with 300 phases) */
+    uint16_t cruise_vacuum_solenoid;  /* +0x16: timer of the DRB actuator test 13-1B S/C VAC SOLENOID (and 13-0C) (logical output 20; started with 300 phases) */
+    uint16_t cruise_servo_supply;  /* +0x18: timer of the DRB actuator test 13-2C S/C 12 VOLT FEED (logical output 21; started with 11 phases) */
+    uint16_t transmission_relay;  /* +0x1a: timer of the DRB actuator test 13-43 TRANS 12V RELAY (logical output 16; started with 300 phases) */
 };

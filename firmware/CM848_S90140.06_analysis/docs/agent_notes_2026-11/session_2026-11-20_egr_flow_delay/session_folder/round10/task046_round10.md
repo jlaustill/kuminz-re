@@ -44,13 +44,13 @@ Scripts are in `session_folder/round10/`.
   - **SCI names:** `cm848_updateSciOutputTests` / `cm848_stepSciOutputTest` / `cm848_stopSciOutputTest` /
     `cm848_stopAllSciOutputTests`, `sci_output_test_*`, `fuel_control_actuator_test_active_flag` and
     `cooling_fan_actuator_test_active_flag` (were the `cold_start_protection_*` / `diag_protection_*` family).
-- **Stage D (types + renames):**
+- **Stage D (ee328b7, types + renames):**
   - **`DIAGNOSTIC_MONITOR_STATE`** (the e2m NORUN / RUN / CMPPS / CMPFL / ABORT list) on six monitor states.
   - **The limp-home bit map:** each 8C19 bit with its setter. The bytes stay byte fields (the wave 11 rule).
   - **23 more caches** named after their tables.
 - **Stage F (types):**
   - `sci_output_test_timers_t` (0x3fcf40, one word per test).
-  - The widths: 0x3fceee as a `dword` removes the last overlap WARNING; the new rows get their types.
+  - The widths: 0x3fceee as a `dword` removes the overlap WARNING from the two P1756 / P1757 functions (27 -> 25 in the .cpp); the new rows get their types.
 - **Round 10 leads:**
   - **The `cam_sync_*_cal` tables** of `cm848_calculateFuelMeteringCommand` are fuel metering tables (by battery
     voltage, by engine speed). Give them an e2m pass, then name their caches (`engine_sync_init_state_a` / `b` /

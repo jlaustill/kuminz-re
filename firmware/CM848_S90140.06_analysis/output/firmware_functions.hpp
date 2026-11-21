@@ -1711,11 +1711,11 @@ void cm848_sciHighSpeedReadTable251Callback(void);  // @ 0x0051e3dc
 void cm848_sciHighSpeedReadTable252Callback(void);  // @ 0x0051e408
 void cm848_sciHighSpeedReadTable253Callback(void);  // @ 0x0051e434
 void cm848_sciCommand19StartOutputTest(void);  // @ 0x0051e460
-void cm848_stopSciOutputTest(short *param_1,int param_2);  // @ 0x0051e490
+void cm848_stopSciOutputTest(word *timer,dword logical_output);  // @ 0x0051e490
 void cm848_stopAllSciOutputTests(void);  // @ 0x0051e514
-void cm848_stepSciOutputTest(short *param_1,int param_2);  // @ 0x0051e624
+void cm848_stepSciOutputTest(word *timer,dword logical_output);  // @ 0x0051e624
 void cm848_updateSciOutputTests(void);  // @ 0x0051e6e0
-void cm848_sciStartTimedOutputTest(short *param_1,undefined4 param_2,short param_3);  // @ 0x0051e894
+void cm848_sciStartTimedOutputTest(word *timer,dword logical_output,word duration);  // @ 0x0051e894
 void cm848_sciCommand19OutputTestCallback(void);  // @ 0x0051e914
 void cm848_sciCommand20Handler(void);  // @ 0x0051eef0
 int cm848_encodeCruiseControlStatusByte(void);  // @ 0x0051ef20

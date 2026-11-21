@@ -1,6 +1,6 @@
 """Round 10 stage C (label-only), part 3: the rows apply_hand_worklist.py cannot take.
 - 0x3fceee renders as _protection_coldStart_channelB_fault_reported_flag (its word row is narrower than the dword
-  accesses; stage D widens it), so the quote picker finds no use: renamed here, with map rows for both spellings.
+  accesses; stage F widens it), so the quote picker finds no use: renamed here, with map rows for both spellings.
 - logical_output_request_bits_16_to_23_t.reserved_bit_0 (output 16) -> transmission_relay_request (a field row; map
   kind 'field', so the proof replaces it only after '.').
 usage: apply_r10c_extra.py <repo> <map.csv>"""

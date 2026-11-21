@@ -1679,3 +1679,17 @@ j1939_control_session_t,,override_control_mode_count,word,2,"how many override_c
 j1939_control_session_t,,override_control_modes,TSC1_OVERRIDE_MODE,10,the session's override control modes in order (the last five when there were more),,verified
 j1939_control_session_t,,start_time,dword,4,key_on_hour_meter at the start (0.2 s counts),,verified
 j1939_control_session_t,,duration,dword,4,"key_on_hour_meter - start_time, stored when the session ends (0.2 s counts)",,verified
+sci_output_test_timers_t,0x003fcf40,air_conditioning_clutch_relay,word,2,"+0x00: timer of the DRB actuator test 13-09 A/C CLUTCH RELAY (logical output 38; started with 300 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,intake_heater_1,word,2,"+0x02: timer of the DRB actuator test 13-28 INTAKE HEATER #1 (logical output 43; started with 11 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,intake_heater_2,word,2,"+0x04: timer of the DRB actuator test 13-29 INTAKE HEATER #2 (logical output 44; started with 11 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,fuel_transfer_pump,word,2,"+0x06: timer of the DRB actuator test 13-33 FUEL PUMP RELAY / TRANSFER PUMP (logical output 53; started with 300 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,wait_to_start_lamp,word,2,"+0x08: timer of the DRB actuator test 13-49 WAIT TO START LAMP (logical output 4; started with 300 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,exhaust_brake,word,2,"+0x0a: timer of the DRB actuator test 13-5D EXHAUST BRAKE (logical output 11; started with 11 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,fuel_control,word,2,"+0x0c: timer of the DRB actuator test 13-5E FUEL CONTROL (fuel_control_actuator_test_active_flag; started with 11 phases) (was cold_start_sync_protection_countdown) | earlier note: per-crank countdown for engine_sync cold-start protection",,verified
+sci_output_test_timers_t,0x003fcf40,cooling_fan,word,2,"+0x0e: timer of the DRB actuator test 13-5F PWM RAD FAN (cooling_fan_actuator_test_active_flag; started with 11 phases) (was cold_start_injection_protection_countdown) | earlier note: per-crank countdown for cold-start injection protection",,verified
+sci_output_test_timers_t,0x003fcf40,converter_clutch_solenoid,word,2,"+0x10: timer of the DRB actuator test 13-0F TORQUE CONV CLUTCH (logical output 18; started with 300 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,overdrive_solenoid,word,2,"+0x12: timer of the DRB actuator test 13-16 OVERDRIVE SOLENOID (logical output 17; started with 300 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,cruise_vent_solenoid,word,2,"+0x14: timer of the DRB actuator test 13-1A S/C VENT SOLENOID (and 13-0C with the vacuum solenoid) (logical output 19; started with 300 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,cruise_vacuum_solenoid,word,2,"+0x16: timer of the DRB actuator test 13-1B S/C VAC SOLENOID (and 13-0C) (logical output 20; started with 300 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,cruise_servo_supply,word,2,"+0x18: timer of the DRB actuator test 13-2C S/C 12 VOLT FEED (logical output 21; started with 11 phases)",,verified
+sci_output_test_timers_t,0x003fcf40,transmission_relay,word,2,"+0x1a: timer of the DRB actuator test 13-43 TRANS 12V RELAY (logical output 16; started with 300 phases)",,verified
