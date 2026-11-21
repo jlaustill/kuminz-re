@@ -391,11 +391,13 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
 - **Method:** the Chrysler e2m `RE_*` records, aligned by relative offset. None of the RE blocks are in the parameter
   ID table, but their bases are proved word by word:
   - **8C53 +0** `RE_Trans_Pressure_State` resolves to 0x40b100 in the table.
-  - **8C17 (RAM) at 0x40b102**, aligned +0..+48 (it drifts from +4A, see stage E). The anti-hunt timers start it.
+  - **8C17 (RAM) at 0x40b102**, aligned +0..+4A (it drifts from +4C, see stage F). The anti-hunt timers start it.
     `RE_OSS_Accel` (+28) lands on the existing output shaft acceleration, and seven names that were already right
     match (`RE_Governor_Set` = `governor_pressure_target`, `Transmission_OD_Lamp` = `overdrive_off_flag`, ...).
   - **8BBC (ROM cals) at 0x40780c**, aligned +0..+5C (it drifts from +5E). The anti-hunt timer limits and the
-    inertia limits start it, and +10 `RE_Inertia_Default` = 53 is the learned inertia in the RAM dump.
+    inertia limits start it. +10 `RE_Inertia_Default` is the word `cm848_initializeTransmissionShiftLogic` copies
+    into the learned inertia (`lhz @ 0x331d4`). Both read 53 in the engine-off RAM dump, which is the unlearned
+    default, not independent evidence.
     `align_block.py` prints a block against the rows with each row's users.
 - **Stage A (e848623, label-only): the anti-hunt mode and its post-shift acceleration model.**
   - `cm848_selectGovernorPressureAntiHunt` uses the hold curve (prevent the upshift) and the boost curve (force it),
@@ -415,36 +417,85 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
   `cm848_initializeTransmissionShiftLogic`.
 - **Stage E (label-only, after the closing commit f349dd2):** what the timer tick still counted under
   `protection_*` names.
-  - `cm848_monitorConverterClutchEngagement` (was `cm848_processProtectionRateLimitFlags`). After each converter clutch
-    command the speed ratio (engine / output speed x 32) must enter the gear's locked window within 3 s
-    (`converter_clutch_engagement_time_limit`, 300). The windows are 2nd 43-50, 3rd 28-35 and 4th 19-25, around the
-    gear ratios 46 / 32 / 20. If it does not, the lockup inhibit (`condition_eval` bit 6) is set. This proves
-    `converter_clutch_transition_state` bits 0 (engagement pending) and 2 (engagement timed out).
+  - `cm848_monitorConverterClutchEngagement` (was `cm848_processProtectionRateLimitFlags`): read as a converter clutch
+    engagement monitor (3 s for the speed ratio to enter the gear's window, else the lockup inhibit). Stage F
+    corrects it: the e2m names it the exhaust brake lockup aid (`cm848_updateExhaustBrakeLockupInhibit`).
   - `cm848_selectGovernorPressureHighGear` (was `cm848_calculateProtectionThresholdLimit`): pressure state 0x10 in
-    3rd / 4th below a throttle curve, plus the manual 1 / 2 lever's 4-3 request.
+    3rd / 4th below a throttle curve, plus the manual 1 / 2 lever's 4-3 request. Stage F renames it
+    `cm848_selectGovernorPressureLockupBoost` (e2m `RE_Lockup_Boost`).
   - The WOT anti-hang timer and the WOT upshift target / command engine speeds (3075 rpm, the target minus engine
     acceleration x the predicted shift delay).
   - The cruise decel downshift / upshift delay timers.
-  - The 8C17 record at +4A (`RE_E_Brake_Inhibit_Timer`) does not fit the code there (the engagement timer), so 8C17
-    drifts from +4A.
+  - Stage E read the 8C17 record at +4A (`RE_E_Brake_Inhibit_Timer`) as not fitting the code. It does fit (stage F),
+    so 8C17 drifts from +4C.
+- **Stage F (label-only, after the review): e2m 8C18 and the exhaust brake lockup aid.**
+  - **8C18 (ROM cals) aligns at 0x4082f4, +00..+98.** From +9A the rows are a table axis. Rows named before from
+    their code use confirm it:
+    - +0E `RE_ERPM_WOT_Target` = stage E's WOT upshift target;
+    - +16 `RE_Lockup_Boost` = the pressure state 0x10 target;
+    - +1E `RE_Low_Range_Max`;
+    - +20..+24 the gear identification ratios;
+    - +26..+54 the overdrive and over temperature light temperatures;
+    - +70 `RE_OSS_Accel_Method` = the method switch of `cm848_calculateOutputShaftAcceleration`.
+  - **The renames:** 71 globals in all. Among them: the engine acceleration defaults / limits, the WOT shift lag band,
+    the lockup and overheat lockup delays, the detent / WOT throttle thresholds, the predicted shift delay limits
+    (were `governor_pressure_learned_gain_gear1 / 2_maximum / _minimum`), the overheat protection temperatures (were
+    `hot_mode_*`) and the governor pressure override.
+  - **The exhaust brake lockup aid** (stage E's "converter clutch engagement monitor"). The e2m names:
+    - 8C17 +4A `RE_E_Brake_Inhibit_Timer`: 'Used to time ebrake TCC inhibit timeout limit';
+    - 8C18 +88..+92 `RE_EB_Lockup_Range_*` and +96 `RE_E_Brake_Inhibit_Timeout`;
+    - 8C19 +16 `RE_E_Brake_Inhibit_LU`: 'Flag set to inhibit Exhaust Brake to allow TCC lockup'.
+
+    In the code, `cm848_updateEngineRetarderEnableState` reads bit 0 of 0x40b0fe as its torque converter lockup
+    disengaged input. The exhaust brake sets that bit entering 2nd gear and after a 4-3 downshift. So the exhaust
+    brake waits for converter lock: `cm848_updateExhaustBrakeLockupInhibit`, `exhaust_brake_lockup_flags`,
+    `exhaust_brake_lockup_inhibit_timer` / `_timeout`, `exhaust_brake_lockup_speed_ratio_*`. 8C17 drifts from +4C,
+    not +4A.
+  - **The lockup boost:** `cm848_selectGovernorPressureLockupBoost` (was stage E's `cm848_selectGovernorPressureHighGear`).
+    Pressure state 0x10 is `RE_Lockup_Boost`, 'Gov pressure target during lockup, to prevent downshift'
+    (`governor_pressure_lockup_boost`, was `governor_pressure_high_gear_target`).
+  - **Switch 12 is the exhaust brake switch.** With `exhaust_brake_transmission_features_inhibit` (`RE_Ebrake_Inhibit`,
+    0) clear and switch 12 on, `cm848_protectionStateTransitionCheck` uses the alternate `_c` 3-4 / 4-3 lines.
+  - **Review fixes:**
+    - the `cm848_calculateOutputShaftAcceleration` plate gives its two methods;
+    - the ordinals are 1st / 2nd / 3rd everywhere;
+    - three `global_variables.csv` comments that earlier scripts wrote with Python's `csv` module are unquoted (the
+      importer splits that file with `split(",", 4)`, so commas need no quotes);
+    - the stage C comment fix on the gear ratio table lands.
+  - **Width check** (`width_check_r8.py`, the stage 8c rule): every 8BBC / 8C17 / 8C18 / 8C53 record in the aligned
+    ranges has a row of its size. The exceptions are two words nothing reads: 0x407856 `RE_Lockup_Delay_2_3_Max_2nd`
+    and 0x408372 `RE_Cruise_Unlock_Inhibit`.
 - **Thin evidence:**
   - `transmission_output_speed_fault_debounce_timer` (8C17 +8): only the timer tick and the initialization use it.
   - The turbine torque tables have other sizes than in the 11.45 e2m (17 / 9 / 17 x 9 here, 8 / 8 / 5 x 5 there).
   - The gear ratio table's indexes 0 / 1 (10 / 512) are unexplained.
 - **Round 8 leads:**
   - The pressure state codes 1-0x18: an enum needs every mode handler's curves. Named so far: 1 base, 0x12 / 0x13
-    anti-hunt boost, 0x14 / 0x15 anti-hunt hold, 0xb-0xf low range, 0x10 high gear, 0x11 2nd gear locked,
+    anti-hunt boost, 0x14 / 0x15 anti-hunt hold, 0xb-0xf low range, 0x10 lockup boost, 0x11 2nd gear lockup boost,
     0x16 manual low, 0x17 override, 7 / 9 WOT 1-2 / 2-3 hold, 8 / 10 WOT 1-2 / 2-3 boost.
   - The still `protection_*`-named 48RE functions and tables:
     - `cm848_protectionStateTransitionCheck` (0x31d98): the 3-4 / 4-3 shift lines, manual low and the cruise decel
-      requests (e2m `RE_Normal_3_4` / `4_3`, `RE_Cruise_*`). Its gate (`condition_flags_1` bit 4), pressure state
-      3 and switch 12 are not identified yet. Switch 12 picks the alternate `_c` shift lines, perhaps the exhaust
-      brake schedule;
+      requests (e2m `RE_Normal_3_4` / `4_3`, `RE_Cruise_*`). Its gate (`condition_flags_1` bit 4) and pressure
+      state 3 are not identified yet. Switch 12, the exhaust brake switch (stage F), picks the alternate `_c` shift
+      lines;
     - `cm848_protectionCleanupHandler` (the 3rd gear lockup);
-    - the `protection_condition_flags_t` / `protection_status_flags_t` bits;
+    - the `protection_condition_flags_t` / `protection_status_flags_t` bits. e2m 8C19 aligns at 0x40b0e8:
+      - +0 `RE_Trans_Flag1` = `condition_eval`, with `RE_Request_3_4` / `RE_Request_4_3` at bits 2 / 1;
+      - +1 `RE_Trans_Flag2`, with `RE_Low_Range` at bit 2 and `RE_Decel_Mode_Active` at bit 0;
+      - +2 `RE_Trans_Flag3`, with `RE_Forced_2nd_Gear_ID` at bit 1 and `RE_High_Pressure` at bit 2;
+      - +3 `RE_OD_Flags`, +5..+8 the limp flags, +16 the exhaust brake flags.
+
+      The e2m gives no bit positions, so each bit still needs its code use;
     - the remaining tables (`RE_Cold_Curve`, `RE_Cruise_Curve`, `RE_Fuel_Economy_Curve`, `RE_WOT_*_Curve`,
       `RE_Lockup_*`, `RE_Unlock_*`).
-  - Blocks 8BB5 / 8BBB / 8BBD / 8C18 / 8C19 (more RE cals and flags), to align the same way.
+  - Blocks 8BB5 / 8BBB / 8BBD (more RE cals), to align the same way. 8BBB may sit at 0x4077cc: its +34
+    `RE_EB_Lockup_Delay_4_3_Max` would then be 0x407800, the 4-3 lockup delay `cm848_processOverdriveSwitchAndShift`
+    loads with `overdrive_control_flags` bit 5.
+  - Signedness: the anti-hunt compare casts `transmission_predicted_post_shift_acceleration` and
+    `transmission_post_shift_acceleration_minimum` to `short`. Run the round 3 `i16` rule over round 8's rows; the RE
+    records give the sign (column 10).
+  - Method 1's 27-word output speed ring at 0x3fb192 (between `transmission_output_shaft_acceleration_sample_counter`
+    and `transmission_output_speed_history_index`) as a `word[27]` `transmission_output_speed_history`.
 
 ## Leads (not in this PR)
 

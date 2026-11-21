@@ -1008,19 +1008,27 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     align them by relative offset and prove the base by the code use of several words (`round8/align_block.py`).
   - **The alignments:**
     - 8C53 +0 `RE_Trans_Pressure_State` = 0x40b100 (`transmission_pressure_state`);
-    - 8C17 (RAM) at 0x40b102, +0..+48;
-    - 8BBC (ROM cals) at 0x40780c, +0..+5C.
+    - 8C17 (RAM) at 0x40b102, +0..+4A;
+    - 8BBC (ROM cals) at 0x40780c, +0..+5C;
+    - 8C18 (ROM cals) at 0x4082f4, +00..+98;
+    - 8C19 (the RE flag bytes) at 0x40b0e8, the `protection_condition_flags_t` struct (bits not named yet).
   - **The modes:** the governor pressure modes are `cm848_selectGovernorPressure*`, now with `AntiHunt` (hold /
     boost curves gated by a predicted post-shift acceleration from a learned vehicle inertia), `LowRange` and
-    `HighGear`.
-  - **Converter clutch engagement:** `cm848_monitorConverterClutchEngagement` gives each clutch command 3 s to show
-    lock. The speed ratio (engine / output speed x 32) must enter the gear's window around the gear ratio
-    (`transmission_<gear>_gear_locked_speed_ratio_minimum` / `_maximum`), or the lockup inhibit is set.
+    `LockupBoost` (e2m `RE_Lockup_Boost`, pressure state 0x10).
+  - **The exhaust brake lockup aid:** `cm848_updateExhaustBrakeLockupInhibit` holds the exhaust brake off after each
+    converter clutch command until the speed ratio (engine / output speed x 32) enters the gear's window around the
+    gear ratio (`exhaust_brake_lockup_speed_ratio_<gear>_minimum` / `_maximum`), for at most 3 s
+    (`exhaust_brake_lockup_inhibit_timeout`). `cm848_updateEngineRetarderEnableState` reads bit 0 of
+    `exhaust_brake_lockup_flags` as lockup disengaged. Switch 12 is the exhaust brake switch.
+  - **A CSV trap:** the importer splits `global_variables.csv` (and `function_renames.csv`) with `split(",", 4)` /
+    `split(",", 3)`, so the comment column takes commas unquoted. Python's `csv` module quotes such a comment when
+    it writes the row, and splits it when it reads one. Edit those rows with `line.split(",", 3)`. (Round 8
+    unquoted three comments that earlier scripts had written that way.)
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.
 - **The three fault bitmaps are named by fault-bit range** (fault n = word n/16 bit n%16 → slot via ROM 0x5985a → `obd_dtc_code_table`): `system_status_flags_t` @0x3fe974 fields and the loose words after it are `fault_detected_bits_<first>_to_<last>`; the parallel array @0x3fe9d8 is `fault_registered_bits_*` (processed/registered copy); the snapshot array @0x3fea3c is `fault_previous_*`. So the old `*_shadow_flags` / `safety_bits_*` / `power_state_status_flags` guesses are gone - to find what a fault bit is, `peek.py` ROM 0x5985a[bit] → slot → `obd_dtc_code_table` P-code.
-- **Governor-pressure mode handlers (48RE):** `cm848_selectGovernorPressureCold` (0x3148c) / `cm848_selectGovernorPressureBaseCurve` (0x31584) / `cm848_selectGovernorPressureNormal` (0x32b00) / `cm848_selectGovernorPressureWideOpenThrottle` (0x316cc) pick the target; `governor_pressure_gear{1,2}_*_target` / `governor_pressure_learned_gain_*` tables (were `protection_derate_rpm_limit_*` / `protection_status_*`).
+- **Governor-pressure mode handlers (48RE):** `cm848_selectGovernorPressureCold` (0x3148c) / `cm848_selectGovernorPressureBaseCurve` (0x31584) / `cm848_selectGovernorPressureNormal` (0x32b00) / `cm848_selectGovernorPressureWideOpenThrottle` (0x316cc) pick the target; the WOT boost / hold pressures and the predicted shift delays (were `protection_derate_rpm_limit_*` / `protection_status_*`, then `governor_pressure_gear{1,2}_*_target` / `governor_pressure_learned_gain_*` until PR #53 round 8).
 - **Logical output-request system + the cruise servo drivers (the open hardware lead - resolved):** `cm848_setLogicalOutputRequest` / `cm848_clearLogicalOutputRequest` / `cm848_applyLogicalOutputRequests` (0x4f190) drive the 80-bit `logical_output_request_bits` (0x40c080) to physical lines; requests 19/20/21 = cruise vent / vacuum / servo-supply (P0588 / P0584 / P0596). `cm848_controlCruiseVacuumServo` (0x3fc24) with `cruise_servo_vent_duty` (0x40b65e) / `cruise_servo_vacuum_duty` (0x40b65c) is the servo PWM control (was `cm848_processEngineLoadCalculation` / `engine_load_*`). Physical line → MIOS MDASM channel is still a bench task.
 - **Cruise-switch state machine named:** `cruise_switch_request` (0x3fcda2, was governor_speed_request_state_b) / `cruise_switch_button_code` (0x40bb4e, the resistor-ladder code, previously an unattributable indexed write) / `cm848_encodeCruiseControlStatusByte` (0x51ef20). ETC2 timeouts: `etc2_selected_gear_timeout` (0x40ae50) / `etc2_gear_ratio_timeout` (0x40a266).
 - **Fault healing:** `cm848_removeHealedFaults` (0x534994, was initUdsServer) / `cm848_clearMilForHealedFaults` (0x53473c, was initJ1939Stack) / `cm848_latchNewlyActiveFault` (0x534b68) / the `cm848_complete*MonitorReport` family (per-monitor OBD readiness).

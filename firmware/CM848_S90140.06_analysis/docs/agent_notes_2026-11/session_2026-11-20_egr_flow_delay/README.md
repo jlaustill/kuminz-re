@@ -203,6 +203,7 @@ Hand work on the round 7 lead.
   `make_r8b_struct.py`).
 - **Stage C, the types:** `worklist_r8c.py` and `apply_r8c_types.py`.
 - **Stage E, label-only:** `worklist_r8e.py` and `apply_r8e_comment.py` (the converter clutch transition state comment); `worktree_refresh_audit.py` is `refresh_audit.py` for an uncommitted tree.
+- **Stage F, label-only:** `worklist_r8f.py` and `apply_r8f_fix.py`: the stage E rows' notes, the two-method plate, the new 0x408370 row, three unquoted comments. Also `width_check_r8.py` (e2m size against the declared width, block by block), `keyed_refresh_audit.py` (the comment-refresh audit keyed by address) and `quote_counts.py` (quoted CSV lines on two revisions).
 - **References:** `refresh_struct_comments.py` refreshes the comment columns of `structure_definitions.csv` /
   `enums.csv`, which `refresh_references.py` skips.
 - **Commit messages:** `commit_r8*.txt`.

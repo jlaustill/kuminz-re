@@ -232,9 +232,10 @@ ratio module.**
 **Round 8 (another "keep going"): the 48RE transmission controller, named `protection_*` until now.**
 - **The method:** the Chrysler e2m `RE_*` records, aligned by relative offset and proved word by word by code use.
   - 8C53 resolves through the parameter ID table to `transmission_pressure_state`.
-  - 8C17 (RAM, 0x40b102) aligns +0..+48. Its `RE_OSS_Accel` and seven names that were already right confirm it.
-  - 8BBC (ROM cals, 0x40780c) aligns +0..+5C. Its `RE_Inertia_Default` = 53 equals the learned inertia in the RAM
-    dump.
+  - 8C17 (RAM, 0x40b102) aligns +0..+4A. Its `RE_OSS_Accel` and seven names that were already right confirm it.
+  - 8BBC (ROM cals, 0x40780c) aligns +0..+5C. Its `RE_Inertia_Default` is the word the shift logic initializer copies
+    into the learned inertia (`lhz @ 0x331d4`).
+  - 8C18 (ROM cals, 0x4082f4) aligns +00..+98, and 8C19 (the flag bytes) sits at 0x40b0e8 (stage F).
 - **Stage A (e848623, label-only): the anti-hunt mode.**
   - `cm848_selectGovernorPressureAntiHunt` holds the governor pressure on a hold curve, which prevents the upshift,
     then forces it with a boost curve once the predicted post-shift acceleration clears the minimum for the throttle.
@@ -253,11 +254,22 @@ ratio module.**
   sentence that the stage B reference refresh had rewritten (`round8/refresh_audit.py` now lists every comment-only
   refresh).
 - **Stage E (94773eb, label-only):**
-  - the converter clutch engagement monitor (`cm848_monitorConverterClutchEngagement`). After each clutch command
-    the speed ratio must enter the gear's locked window (2nd 43-50 / 3rd 28-35 / 4th 19-25 around the gear ratios)
-    within 3 s, or lockup is inhibited;
-  - the high gear mode (`cm848_selectGovernorPressureHighGear`, pressure state 0x10);
+  - a "converter clutch engagement monitor" and a "high gear mode" (stage F corrects both, below);
   - the WOT anti-hang timer and upshift engine speeds, and the cruise decel delay timers.
+
+- **Stage F (label-only, after a review): e2m 8C18 (0x4082f4, +00..+98) and the exhaust brake lockup aid.**
+  - 71 ROM cals named from 8C18, each checked against its row's users. Among them: the engine acceleration limits,
+    the WOT shift lag band, the lockup and overheat lockup delays, the throttle detent / WOT thresholds, the
+    predicted shift delay limits and the overheat protection temperatures (were `hot_mode_*`).
+  - The e2m corrects stage E. 8C17 +4A is `RE_E_Brake_Inhibit_Timer` ('Used to time ebrake TCC inhibit timeout
+    limit'), the per-gear windows are `RE_EB_Lockup_Range_*` and the flag is 8C19 +16 `RE_E_Brake_Inhibit_LU`. The
+    code agrees: `cm848_updateEngineRetarderEnableState` reads its bit 0 as lockup disengaged. So the function holds
+    the exhaust brake off until the converter locks: `cm848_updateExhaustBrakeLockupInhibit`,
+    `exhaust_brake_lockup_*`.
+  - Pressure state 0x10 is `RE_Lockup_Boost`, so its mode is `cm848_selectGovernorPressureLockupBoost`. Switch 12 is
+    the exhaust brake switch.
+  - Review fixes: the output shaft acceleration plate (two methods), ordinals, and three `global_variables.csv`
+    comments that an earlier script had quoted (that file takes commas unquoted).
 
 ## Test plan
 
@@ -315,7 +327,9 @@ ratio module.**
   - the session functions' `int32_t` parameter was found because the first 7a build rendered `int` as
     `dword`.
 - [x] Round 8:
-  - stages A, B and E are EQUIVALENT (0 functions differ);
+  - stages A, B, E and F are EQUIVALENT (0 functions differ);
+  - the width check: every aligned 8BBC / 8C17 / 8C18 / 8C53 record has a row of its size (two unused words have
+    none);
   - stage C was read diff by diff;
   - each aligned e2m record was checked against its row's users (`align_block.py`), and each block stops
     where it drifts.
@@ -332,7 +346,8 @@ ratio module.**
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
 - **Open after round 5:**
-  - the rest of the 48RE controller (the pressure state enum, the 3-4 / 4-3 shift lines, lockup, more RE blocks);
+  - the rest of the 48RE controller (the pressure state enum, the 8C19 flag bits, the 3-4 / 4-3 shift lines, blocks
+    8BB5 / 8BBB / 8BBD);
   - the engine speed module's run-state machine (no e2m value list, so it needs a read);
   - the 48RE governor pressure functions 0x3257c / 0x3241c (their block 8D14 drifts);
   - the fault derate scheduler words and the 11D5 air fuel control rows;
