@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 02:02:18 MST 2026
+// Generated: Sat Nov 21 02:06:01 MST 2026
 
 
 //
@@ -7335,7 +7335,7 @@ void hpcr_periodicTaskSet_protection4(void)
 {
   cm848_updateSwitch31FromAcceleratorPedal();
   cm848_calculateEngineRetarderCruisePermissionPercent();
-  cm848_protection_timer_init();
+  cm848_monitorFuelSystemHardwareShutdown();
   return;
 }
 
@@ -27460,7 +27460,7 @@ void cm848_resetSpeedControlTracking(void)
 void cm848_initializeLowSpeedGovernorParameters(void)
 
 {
-  cm848_initGovernorLoadStateWrapper();
+  cm848_initializeLowSpeedGovernorGainSelection();
   low_speed_governor_derivative_gain_adjustment = 0x80;
   low_speed_governor_integral_gain_adjustment = 0x80;
   low_speed_governor_proportional_gain_adjustment = 0x80;
@@ -27683,10 +27683,14 @@ void cm848_initGovernorTimerCountersWrapper(void)
 
 
 //
-// Function: cm848_initGovernorLoadStateWrapper @ 0x00028adc
+// Function: cm848_initializeLowSpeedGovernorGainSelection @ 0x00028adc
 //
 
-void cm848_initGovernorLoadStateWrapper(void)
+/* Resets the aggressive gain logic and the user gain state (0) and copies
+   low_speed_governor_default_gain_set into low_speed_governor_override_gain_set (was
+   cm848_initGovernorLoadStateWrapper) */
+
+void cm848_initializeLowSpeedGovernorGainSelection(void)
 
 {
   cm848_resetLowSpeedGovernorAggressiveGainLogic();
@@ -57320,7 +57324,7 @@ void cm848_applicationMain(void)
   cm848_initializeRearAxleRatio();
   cm848_calculateOutputShaftToVehicleSpeedDivisors();
   cm848_tpu_configuration_setup();
-  cm848_tpu_interrupt_flag_init();
+  cm848_initializeInjectionHardware();
   cm848_clearTimingAccumulators();
   cm848_initializeInjectionAngleScheduler();
   cm848_initializeFuelPressureGovernorState();
@@ -87138,20 +87142,26 @@ void cm848_loadInjectorDriverCalibration(void)
 
 
 //
-// Function: cm848_tpu_interrupt_flag_init @ 0x00528b90
+// Function: cm848_initializeInjectionHardware @ 0x00528b90
 //
 
-/* (Re)initializes the TPU-A channel set used for injection (function select, priority and
+/* (Re)initializes the injection hardware: the TPU-A injection channel set (function select /
+   priority / host sequence of channels 2 4 5 7 and 14, interrupt enables) and the injector driver
+   PWMs 16-19 (cm848_loadInjectorDriverCalibration); clears logical output lines 47 / 48, sets the
+   TPU enable and restart flags and counts the restart in
+   fuel_system_hardware_shutdown_error_count_cal (was cm848_tpu_interrupt_flag_init) | earlier note:
+   (Re)initializes the TPU-A channel set used for injection (function select, priority and
    host-sequence setup of channels 2, 4, 5, 7 and 14, interrupt enables) and the MIOS PWM 16-19
    outputs, clears logical output lines 47 / 48, sets tpu_protection_enable_flag and
    tpu_init_restart_pending_flag, and counts the restart in
    fuel_system_hardware_shutdown_error_count_cal (cap 255); once the count already exceeds the ROM
    limit fuel_system_hardware_shutdown_fail_count_threshold (0xffff = never) it sets fault 399
-   (P0607, control module performance). cm848_protection_timer_init clears the count when its
-   engine-standby check of QADC slots 54 / 55 against fuel_system_hardware_shutdown_error_threshold
-   passes. Name kept: the fault is the retry-limit tail of the initializer. */
+   (P0607, control module performance). cm848_monitorFuelSystemHardwareShutdown clears the count
+   when its engine-standby check of QADC slots 54 / 55 against
+   fuel_system_hardware_shutdown_error_threshold passes. Name kept: the fault is the retry-limit
+   tail of the initializer. */
 
-void cm848_tpu_interrupt_flag_init(void)
+void cm848_initializeInjectionHardware(void)
 
 {
   word wVar1;
@@ -87307,10 +87317,15 @@ void cm848_initialization_calibration_state(void)
 
 
 //
-// Function: cm848_protection_timer_init @ 0x00529068
+// Function: cm848_monitorFuelSystemHardwareShutdown @ 0x00529068
 //
 
-void cm848_protection_timer_init(void)
+/* The fuel system hardware shutdown check (e2m 8041 +28 / +2A FS_HW_Shutdown thresholds, 8C61 +0
+   error count): gates TPU-A channels 4 and 9 by the engine state and the standby QADC sensors,
+   counts the events and requests the injection hardware restart (was cm848_protection_timer_init)
+    */
+
+void cm848_monitorFuelSystemHardwareShutdown(void)
 
 {
   ushort uVar1;

@@ -205,28 +205,63 @@ would otherwise misname.
 - **Tooling found broken:** `apply_hand_worklist.py` looked the e2m records up from the wrong directory with a
   relative repo path. Follow-up 2 added the missing leading records to 90 comments.
 
+## Done, round 5 (2026-11-21, same PR; the user: "keep going, nothing is out of scope")
+
+Hand work on the wave 15 leads, each verified in the code (the scripts are in `session_folder/round5/`):
+- **J1939 builders vs their PGNs (c1ebdc4):**
+  - `j1939_header_pgns.py` lists the PGN every header builder encodes.
+  - **Wrong names:** 65232 = DM8 (was "EngineControl"), 61441 = EBC1 (was "Etc1"), 65279 = the water in fuel indicator
+    (was "SafetyStatus"), and 65251 = EC1. `initFaultTimerMessage` is renamed in CM550 too: it is a true twin, so the
+    shared name stays shared.
+  - **The EC1 "fault timer / fault counter" family** is the EC1 send-on-change test (J1939-71: resend on a 10 %
+    change). The helpers are `cm848_hasWordChangedByTenPercent` / `cm848_hasByteChangedByTenPercent`, alongside the
+    payload and its previous copy.
+- **`all_speed_governor_gain_set_t` (0dea32e):** on the throttle-mode set (107B), the application set (1170) and the
+  TSC1 table of four at 0x5c1d6 (one per requested speed control condition). The pointer is typed. Also
+  `cm848_selectVariableSpeedGovernorMode` / `cm848_selectTsc1SpeedControlMode`.
+- **`vehicle_speed_sensor_type_cal` (705f055):** 0x3fdda6 is e2m RSC_Sensor_Type, the vehicle speed sensor type
+  (was `drivetrain_type`). `VEHICLE_SPEED_SENSOR_TYPE` runs NONE / INDUCTIVE / MINIGEN / TACHOGRAPH /
+  J1939_WITH_GEAR_RATIO / J1939_WITHOUT_GEAR_RATIO, and the truck's EEPROM holds 1.
+- **e13e2a2:**
+  - `INTAKE_AIR_HEATER_PHASE` (e2m 8A35 +2), with the crank phase (was "run-up");
+  - `fuel_demand_control_t.override_priority` and the two throttle override claimers;
+  - the cruise maximum / minimum engine speeds;
+  - the compressor outlet temperature is 1/32 °F.
+- **06a42fe:** the cruise / vehicle speed limit governor's Bank 2 functions, the A/C clutch working words and the A/C
+  initialization.
+- **Stage f:** `cm848_initializeInjectionHardware`, `cm848_monitorFuelSystemHardwareShutdown` and
+  `cm848_initializeLowSpeedGovernorGainSelection`.
+
 ## Leads (not in this PR)
 
-- **Wave 15 leads not applied** (each is in the agents' reports, `wave15/agent_prompts_and_reports_W15.md`):
-  - The 1170-style ASG gain sets as a 9-word struct (`all_speed_governor_gain_set_pointer` reads +0..+0x10).
-  - The fault derate scheduler words (`governor_faultDerate_*` without e2m records) and `engine_protection_*` /
-    `protection_*` functions.
+- **Round 5 leads:**
+  - The engine speed module's run-state machine (`mpc555_updateEngineRunState`, the `cm848_engineRunState*` handlers).
+    Block 819B has no value list, so naming the states needs a read.
+  - The 48RE governor pressure functions 0x3257c / 0x3241c and their words. Block 8D14 drifts from +2, so its
+    shift-timer records do not describe them.
+  - The TPU bytes 0x3fd0b8-0x3fd0bb, the A/C class-B coolant flag pair (read by the warning lamps), and the second
+    A/C condition code 0x40b1e6.
+- **Wave 15 leads still open** (each is in the agents' reports, `wave15/agent_prompts_and_reports_W15.md`):
+  - The fault derate scheduler words (`governor_faultDerate_*` without e2m records) and the remaining
+    `engine_protection_*` / `protection_*` functions.
   - The 11D5 air fuel control thresholds and slew rates; the agents report the slew rates as dwords typed `word`.
-  - The TPU injection channel bytes 0x3fd0b8-0x3fd0bb and `cm848_tpu_interrupt_flag_init`.
-  - `cm848_protection_timer_init` (the fuel system hardware shutdown check).
-  - The cruise / RSG PID functions `protectionOutputActuatorControl` / `protectionRampRateControl` /
-    `governorCruiseStateMachine`.
-  - The PGN 65232 / 65251 / 61441 / 65279 buffer functions. `initFaultTimerMessage` shares its name with CM550, so
-    check the twin first.
-  - The A/C working words (`protection_event26_*`), the converter clutch monitor's `protection_*` words, the wastegate
-    controller's working words.
-  - The 117F row `lifetime_distance_pulses` (Total_Distance, MI): the name gives the raw unit (8000 pulses per
-    mile), which fits the code; keep. (0x3fdda6 is resolved in round 5: `vehicle_speed_sensor_type_cal`.)
-  - The stale `target_rpm` wording in four cruise rows; the 48RE governor pressure functions 0x3257c / 0x3241c.
-  - Resolved in round 5: the compressor outlet temperature is 1/32 °F (e2m 175F +8 / 169A +4 / 1760 +2 scale 0.03125), as bin 5 read; the two comments that said 1/64 (and 14080 = 220 °F, really 440 °F) are fixed.
+  - The TPU bytes 0x3fd0b8-0x3fd0bb, which belong to `cm848_initializeInjectionHardware` and
+    `cm848_monitorFuelSystemHardwareShutdown`.
+  - The converter clutch monitor's `protection_*` words and the wastegate controller's working words.
   - CM550's 0x80a9e0, the unnamed twin of 0x40a280.
   - `sensor_channel9_ram` (0x40a0e6) is the state of the `cm848_sensorChannel9_*` wrappers. Check which
     `channel_index` they pass before naming it: the wrapper number is not the channel.
+  - Kept: `lifetime_distance_pulses` (117F Total_Distance, MI). The name gives the raw unit (8000 pulses per mile),
+    which fits the code.
+- **Resolved in round 5:**
+  - the 9-word ASG gain set struct;
+  - the cruise / RSG PID functions;
+  - the PGN 65232 / 65251 / 61441 / 65279 functions (the CM550 twin renamed too);
+  - the A/C working words;
+  - the stale `target_rpm` rows;
+  - the TPU injection / shutdown functions;
+  - 0x3fdda6;
+  - the compressor outlet temperature scale (1/32 °F).
 - **The pool left:** the e2m audit's unreviewed rows above 0.2 overlap (123 at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5).
 - **The engine speed module's functions** have mixed, partly wrong prefixes: `hpcr_processEngineSyncPulses` (the main
   speed interrupt), `mpc555_handleCamSignalInterrupt` (the backup speed interrupt), `mpc555_updateEngineRunState` (the

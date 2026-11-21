@@ -631,7 +631,7 @@ void cm848_resetLowSpeedGovernorAggressiveGainLogic(void);  // @ 0x000289ac
 undefined4 cm848_selectLowSpeedGovernorOverrideGainSet(int param_1);  // @ 0x000289d0
 void cm848_loadLowSpeedGovernorGainSet(void);  // @ 0x00028a14
 void cm848_initGovernorTimerCountersWrapper(void);  // @ 0x00028abc
-void cm848_initGovernorLoadStateWrapper(void);  // @ 0x00028adc
+void cm848_initializeLowSpeedGovernorGainSelection(void);  // @ 0x00028adc
 undefined4 cm848_selectLowSpeedGovernorTsc1GainSet(void);  // @ 0x00028b38
 void cm848_clearGovernorFilterAccumulators(void);  // @ 0x00028b8c
 void cm848_calculateSpeedRateLimiting(void);  // @ 0x00028ba4
@@ -1825,9 +1825,9 @@ void engine_injectionAngle_writeTpuEvent(int param_1,int param_2,undefined2 para
 void engine_injectionAngle_selectCylinderInjector(int param_1);  // @ 0x0052877c
 void engine_injectionAngle_lookupTimingTableOffset(void);  // @ 0x00528978
 void cm848_loadInjectorDriverCalibration(void);  // @ 0x005289d4
-void cm848_tpu_interrupt_flag_init(void);  // @ 0x00528b90
+void cm848_initializeInjectionHardware(void);  // @ 0x00528b90
 void cm848_initialization_calibration_state(void);  // @ 0x0052903c
-void cm848_protection_timer_init(void);  // @ 0x00529068
+void cm848_monitorFuelSystemHardwareShutdown(void);  // @ 0x00529068
 void engine_injectionAngle_computeLoadCh6(void);  // @ 0x00529284
 void engine_injectionAngle_tpuChannel6EventHandler(void);  // @ 0x00529640
 void cm848_scheduleInjectionAnglesInSpeedLimpHome(void);  // @ 0x00529994
