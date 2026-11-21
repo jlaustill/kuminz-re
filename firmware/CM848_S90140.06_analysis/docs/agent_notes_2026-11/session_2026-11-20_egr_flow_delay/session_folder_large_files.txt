@@ -52,6 +52,13 @@
   200816 build_r9c.log
   200822 build_r9d.log
   200819 build_r9f.log
+  200832 build_r10a.log
+  200839 build_r10b.log
+  200855 build_r10c.log
+  200842 build_r10d.log
+  200840 build_r10e.log
+  200853 build_r10f.log
+  200867 build_r10f_attempt1.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -69,3 +76,4 @@
   401848 verify_round8_stage_g.log
   401953 verify_round9.log
   401952 verify_round9_stage_f.log
+  401993 verify_round10.log

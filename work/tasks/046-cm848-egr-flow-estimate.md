@@ -663,6 +663,16 @@ Scripts are in `session_folder/round10/`.
   - **e2m 8C80** (the TVA auto zero monitor, `TVA_*`) and 8C2D (TTSR) have no row or block address yet.
   - **0x3fcf16-0x3fcf2e:** the SCI high-speed table words, and `DAT_003fcf5c` / `5d` (`cm848_countdown_timer_update`).
   - 8BB1 / 8BB3 / 8BB9 / 8BBA and 8BBB's tail are still not located.
+  - **The lift pump control (output 53)** still has `protection_*` names: `protection_ambient_qualification`
+    (0x519cc4) turns it on at key-on and while cranking / running, and off after a per-state timeout
+    (`DAT_00408978` / `7a` / `7c`, with override cals `DAT_00408976` / `7e`); also `protection_exception_event_35_init`
+    (0x519c84) and the `protection_event35_*` words. The firmware requesters of the five DRB-only test outputs
+    (4 / 38 / 43 / 44 / 53) agree with their DRB names; firmware/CLAUDE.md's table lists them.
+  - The comment of `lookupTableInterpolation`'s cache parameter (`function_definitions.csv` row 14) still says
+    `*_interp_state`: fix it with the `cam_sync_*` cache pass.
+  - The stem check (`round10/stem_check_r10.py`): 90 of the 101 caches round 10 named after their tables appear in
+    lookup calls, each with its table's stem. The one exception is the shared exhaust brake unlock cache; the other
+    11 are `_y` words.
 
 ## Leads (not in this PR)
 

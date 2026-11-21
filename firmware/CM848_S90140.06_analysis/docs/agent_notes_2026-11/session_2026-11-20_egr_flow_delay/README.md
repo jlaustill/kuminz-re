@@ -245,4 +245,10 @@ Hand work on the round 7 lead.
   - `cache_tables.py`: the tables each cache serves;
   - `final_names.py`: old to final name through the round's maps;
   - `resolved_r10.py`: the task file sections.
+- **The closing checks (after the advisor review):**
+  - `output_requesters.py`: the firmware requesters of each tested output;
+  - `docs_requesters_r10.py`: adds them to the firmware/CLAUDE.md table;
+  - `stem_check.py` / `stem_check_r10.py`: each cache's stem against its lookup's table.
+- **Logs:** the round 10 build logs (`build_r10*.log`, with 10F's first attempt `build_r10f_attempt1.log`) and
+  `verify_round10.log` are in `session_folder_large_files.tar.xz` (`round10/update_large_tar_r10.sh`).
 - **Commit messages:** `commit_r10*.txt`.

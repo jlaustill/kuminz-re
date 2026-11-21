@@ -1055,20 +1055,20 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - output 18: P2770 / P2769, the converter clutch.
   - **The DRB database names the SCI 0x13 actuator tests:** `mydb` `v_transaction`, protocol `SAE J2610 SCI`,
     request `13-xx`. Codes and outputs:
-    | Code | Test | Output |
-    |---|---|---|
-    | 13-09 | A/C clutch relay | 38 |
-    | 13-0F | torque converter clutch | 18 |
-    | 13-16 | overdrive solenoid | 17 |
-    | 13-1A / 13-1B | cruise vent / vacuum | 19 / 20 |
-    | 13-28 / 13-29 | intake heaters | 43 / 44 |
-    | 13-2C | cruise 12 volt feed | 21 |
-    | 13-33 | fuel transfer pump | 53 |
-    | 13-43 | transmission relay | 16 |
-    | 13-49 | wait to start lamp | 4 |
-    | 13-5D | exhaust brake | 11 |
-    | 13-5E | fuel control | `fuel_control_actuator_test_active_flag` |
-    | 13-5F | PWM radiator fan | `cooling_fan_actuator_test_active_flag` |
+    | Code | Test | Output | Firmware requester |
+    |---|---|---|---|
+    | 13-09 | A/C clutch relay | 38 | `cm848_controlAirConditioningClutchForBrTruck` / `...ForDrTruck` |
+    | 13-0F | torque converter clutch | 18 | `cm848_applyConverterLockupSchedule` |
+    | 13-16 | overdrive solenoid | 17 | `cm848_processOverdriveSwitchAndShift` |
+    | 13-1A / 13-1B | cruise vent / vacuum | 19 / 20 | `cm848_controlCruiseVacuumServo` |
+    | 13-28 / 13-29 | intake heaters | 43 / 44 | the intake air heater preheat / post-heat functions |
+    | 13-2C | cruise 12 volt feed | 21 | `cm848_controlCruiseVacuumServo` |
+    | 13-33 | fuel transfer pump | 53 | `protection_ambient_qualification` (misnamed): on at key-on, while cranking and running, off after a timeout |
+    | 13-43 | transmission relay | 16 | `cm848_updateTransmissionRelayRequest` |
+    | 13-49 | wait to start lamp | 4 | the intake air heater preheat (the lamp is on while preheating) |
+    | 13-5D | exhaust brake | 11 | `cm848_driveEngineRetarderOutput` |
+    | 13-5E | fuel control | `fuel_control_actuator_test_active_flag` | read by `cm848_calculateFuelMeteringCommand` |
+    | 13-5F | PWM radiator fan | `cooling_fan_actuator_test_active_flag` | read by `cm848_selectCoolingFanDutySource` |
 
     `sci_output_test_timers_t` (0x3fcf40) holds one timer per test. The tests run only while the engine is stopped.
   - **`DIAGNOSTIC_MONITOR_STATE`:** the e2m value list NORUN / RUN / CMPPS / CMPFL / ABORT (0-4). Several RE monitor

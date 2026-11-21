@@ -1,0 +1,20 @@
+cm848: round 10 closing - docs (task 046, firmware/CLAUDE.md, resolved-name notes, todo, session README)
+
+- **work/tasks/046:** the round 10 section (stages A-F) and its leads:
+  - the cam_sync_*_cal fuel metering tables and their caches;
+  - the end-of-line test sequencer;
+  - bitfields for the DRB-named logical outputs;
+  - e2m 8C80 / 8C2D;
+  - the SCI high-speed table words.
+- **firmware/CLAUDE.md, the round 10 rules:**
+  - the _cached_axis_offset cache names;
+  - signed RE calibrations;
+  - output check fault pairs name outputs;
+  - the DRB database names the SCI 0x13 actuator tests (with the code -> output table);
+  - DIAGNOSTIC_MONITOR_STATE;
+  - the limp-home byte rule;
+  - a pointer parameter must match the struct field type.
+- **work/tasks/025 / 027 / 042:** 'Resolved by PR #53 round 10' sections for the old names they cite.
+- **work/todo.md** (046) and the session README (the round 10 scripts).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

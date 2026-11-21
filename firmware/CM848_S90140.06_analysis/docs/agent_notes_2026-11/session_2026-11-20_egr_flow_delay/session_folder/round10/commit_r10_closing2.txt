@@ -1,0 +1,22 @@
+cm848: round 10 closing (2) - the review's checks, the requester table, the logs, verify
+
+The advisor review asked for four checks before the round closes.
+- **The five DRB-only test outputs agree with their firmware requesters.** The DRB lists several names per code
+  (13-33 has three), so each output's own requesters were checked:
+  - output 4 is set during the intake air heater preheat: the wait to start lamp;
+  - 38 is the A/C clutch control (cm848_controlAirConditioningClutchForBrTruck / ...ForDrTruck);
+  - 43 / 44 are the intake air heater functions;
+  - 53 is the lift pump control (protection_ambient_qualification: on at key-on and while cranking / running, off
+    after a timeout; still misnamed, now a lead).
+  firmware/CLAUDE.md's test table gains a 'Firmware requester' column. No CSV change.
+- **The cache names match their tables.** stem_check_r10.py: 90 of the 101 caches round 10 named after their tables
+  appear in lookup calls, each with its table's stem. The exception is the shared 3rd / 4th gear exhaust brake unlock
+  cache; the other 11 are _y words.
+- **Tests:** lookup_tables.py (0 sizing problems), test_lookup_tables.py, test_disasm_tools.py,
+  test_e2m_block_addresses.py and test_rename_waves.py all pass on the final tree.
+- **./analyze.sh verify:** the two builds are byte-identical, and the .cpp matches the committed one (the int ->
+  dword text in the three prototype rows renders the same).
+- **Archive:** task 046 gets the new leads (the lift pump control, row 14's comment). The round10/ folder and the
+  PR body are re-synced. The large-files tarball adds the round 10 build / verify logs (79 entries).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

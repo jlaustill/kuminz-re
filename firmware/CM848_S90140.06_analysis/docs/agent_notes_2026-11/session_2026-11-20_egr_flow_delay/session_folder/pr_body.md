@@ -307,6 +307,40 @@ state enum, the flag bytes.**
   - The P0720 monitor's bit is `limp_home_flags_4` bit 5 = `RE_OSS_Limp`.
   - `governor_pressure_normal_curve`.
 
+**Round 10 (another "keep going"): types, the 48RE monitors, the transmission relay, the SCI actuator tests.**
+- **Stage A (3be5a5e, label-only):** the 78 RE lookup caches (54 `DAT_` words and 24 `protection_*` names) take
+  their table's name.
+- **Stage B (b9df152, types):**
+  - 26 RE calibrations are `i16`: their e2m record is signed, and every load is `lha`.
+  - The 98 label-only rows of rounds 9 / 10 get types.
+  - The learned 1-2 shift lag table `transmission_1_2_shift_lag_cal` (EEPROM, e2m `RE_One_Two_Lag`).
+- **Stage C (c9e793d, label-only):**
+  - **The cache suffix:** every lookup cache ends in `_cached_axis_offset` (127 `_interp_state` /
+    `_interpolation_state` rows; "interp" is a short form, and the lookup's own parameter already had the name).
+  - **Output 16 is the transmission relay:** its output check pairs P0883 / P0882 'TCM power input', and fault 137
+    sets the e2m bit `RE_Trans_Relay_Circuit_Open`.
+  - **The transmission controller's functions:** the relay request, the limp-home flag update, the input step,
+    and the two phase-group-B phases (they were `protection_*` / `processCalibrationTablesMain`).
+  - **The monitor words:** the P1762 / P1756 / P1757 monitor words, which had `j1939_*` / `protection_coldStart_*`
+    names.
+- **Stage E (4ff8174, label-only):**
+  - **The P1740 converter clutch monitor's working words.**
+  - **The SCI 0x13 actuator tests.** The DRB database names every test code the callback handles: A/C clutch
+    relay, the intake heaters, fuel transfer pump, transmission relay (13-43, on output 16), wait to start lamp,
+    exhaust brake, the cruise solenoids, fuel control and PWM radiator fan. The old `cold_start_protection_*` /
+    `diag_protection_*` names were a cold-start guess.
+- **Stage D (ee328b7):**
+  - **`DIAGNOSTIC_MONITOR_STATE`:** the e2m NORUN / RUN / CMPPS / CMPFL / ABORT list, on six 48RE monitor states,
+    checked by `check_enum_proof2.py`.
+  - **The limp-home bit map:** each byte's comment maps the e2m 8C19 bit records, with each bit's fault / DTC
+    setter.
+  - **23 more lookup caches** named after their tables.
+- **Stage F (84033f0, types):**
+  - `sci_output_test_timers_t`: one timer per actuator test. The calls read
+    `cm848_stopSciOutputTest(&sci_output_test_timers.intake_heater_1,0x2b)`, thanks to `word *timer` prototypes
+    (with Ghidra's `short *` guess the field addresses printed as raw constants).
+  - The widths: 0x3fceee as a `dword` drops the overlap WARNING from the two P1756 / P1757 functions.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -376,6 +410,14 @@ state enum, the flag bytes.**
   - stage C passes `check_enum_proof2.py`, and its one other change is the ring array;
   - the table walk matches 118 existing rows by size and address (88 + 30), and each table's users agree with its
     record.
+- [x] Round 10:
+  - stages A, C and E are label-only (EQUIVALENT);
+  - stage B passes `cast_normalized_diff.py` (each remaining difference is the lag table index, a grid cache's
+    `[0] / [1]` or a byte literal);
+  - stage D passes `check_enum_proof2.py`;
+  - stage F passes `relabel_struct.py` + `cast_normalized_diff.py` (the `_` prefix, three signatures, one cast);
+  - the SCI test names come from the DRB database, and output 16 is proved twice (its fault pair and DRB test
+    13-43).
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -389,13 +431,22 @@ state enum, the flag bytes.**
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
 - **Open after round 5:**
-  - the rest of the 48RE controller (the single flag bits, the lookup caches, the EEPROM shift lag tables, blocks
-    8C33 / 8C34 / 8C55 / 8C49);
+  - the rest of the 48RE controller: blocks 8C55 / 8C49, the 2-3 shift lag table under the boot kernel's rows, and
+    8BBB's tail. Round 10 resolved the flag bits, the lookup caches, the 1-2 shift lag table and the 8C34 / 8C56
+    monitor words;
   - the engine speed module's run-state machine (no e2m value list, so it needs a read);
   - the 48RE governor pressure functions 0x3257c / 0x3241c (their block 8D14 drifts);
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
+- **Open after round 10:**
+  - the `cam_sync_*_cal` fuel metering tables of `cm848_calculateFuelMeteringCommand` and their caches;
+  - the end-of-line test sequencer;
+  - bitfields for logical outputs 4 / 38 / 43 / 44 / 53, which now have DRB names;
+  - e2m 8C80 (TVA) / 8C2D;
+  - the SCI high-speed table words;
+  - the lift pump control (output 53: `protection_ambient_qualification`, `protection_exception_event_35_init`, the
+    `protection_event35_*` words), which still has `protection_*` names.
 - **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
