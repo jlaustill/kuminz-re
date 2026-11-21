@@ -265,11 +265,11 @@ void cm848_initTemperatureTrimTableSizes(void);  // @ 0x0000e8ac
 void cm848_initTemperatureTrimCoeff(void);  // @ 0x0000e8cc
 void cm848_calculateGovernorReferenceSpeedBlend(void);  // @ 0x0000e8dc
 void cm848_runOperatingModeSpeedGovernor(void);  // @ 0x0000ea00
-void cm848_initFuelDemandVariables(void);  // @ 0x0000fabc
+void cm848_initializeAllSpeedGovernorVariables(void);  // @ 0x0000fabc
 void cm848_selectAllSpeedGovernorApplicationMode(void);  // @ 0x0000fb28
 void cm848_calculateAllSpeedGovernorNoLoadFuel(void);  // @ 0x0000fcd0
 void cm848_initFuelTimingTableSizes(void);  // @ 0x0000fe3c
-void cm848_calculateFuelTimingTarget(void);  // @ 0x0000fe5c
+void cm848_calculateAllSpeedGovernorThrottleReference(void);  // @ 0x0000fe5c
 void cm848_calculateGovernorCompensatorCoefficients(void);  // @ 0x0000ff04
 void cm848_initEngineOperatingMode(int previous_engine_operating_mode);  // @ 0x00010110
 void cm848_initLookupTableParams(void);  // @ 0x00010248
@@ -329,8 +329,8 @@ void cm848_updateChargePressureInRangeFaultCount(void);  // @ 0x0001359c
 void cm848_monitorChargePressureInRange(void);  // @ 0x00013774
 void cm848_selectLoadNormalizer (word selector,word raw_boost,word computed_boost,word filtered_boost);  // @ 0x0001392c
 void cm848_processLoadNormalizerSelection (undefined4 param_1,undefined4 param_2,word param_3,word param_4);  // @ 0x00013a80
-void cm848_processBoostProtectionMode(undefined4 param_1,int param_2);  // @ 0x00013aec
-void cm848_initBoostProtectionState(void);  // @ 0x00013ca4
+void cm848_estimateChargeTemperature(undefined4 param_1,int param_2);  // @ 0x00013aec
+void cm848_initializeChargeTemperatureEstimate(void);  // @ 0x00013ca4
 void cm848_calculateIntakeManifoldTemperatureLeadCompensation(void);  // @ 0x00013d14
 void cm848_filterAndSelectIntakeManifoldTemperature(void);  // @ 0x00013dc8
 void cm848_initializeIntakeTemperatureFilterStates(void);  // @ 0x00014080
@@ -621,18 +621,18 @@ void cm848_processGovernorModeTransition(void);  // @ 0x0002715c
 void cm848_formatNumberAsDecimalText(uint *param_1,int param_2,int param_3);  // @ 0x00027bc4
 undefined4 cm848_governorSpeedControl(int param_1,uint param_2);  // @ 0x00027cc4
 void cm848_processSpeedSensorCompensation(void);  // @ 0x00027d38
-void cm848_updateSpeedProtectionLimits(int param_1);  // @ 0x00027e4c
+void cm848_presetLowSpeedGovernorIntegrator(int param_1);  // @ 0x00027e4c
 void cm848_runLowSpeedGovernor(void);  // @ 0x00027ff8
 void cm848_resetSpeedControlTracking(void);  // @ 0x000285e4
-void cm848_initSpeedProtectionParameters(void);  // @ 0x00028618
-void cm848_processGovernorLoadCondition(void);  // @ 0x00028670
+void cm848_initializeLowSpeedGovernorParameters(void);  // @ 0x00028618
+void cm848_updateLowSpeedGovernorAggressiveGainLogic(void);  // @ 0x00028670
 void cm848_clearGovernorTimerCounters(void);  // @ 0x00028994
-void cm848_resetGovernorLoadState(void);  // @ 0x000289ac
-undefined4 cm848_selectGovernorSetpointSource(int param_1);  // @ 0x000289d0
-void cm848_updateGovernorSetpointParameters(void);  // @ 0x00028a14
+void cm848_resetLowSpeedGovernorAggressiveGainLogic(void);  // @ 0x000289ac
+undefined4 cm848_selectLowSpeedGovernorOverrideGainSet(int param_1);  // @ 0x000289d0
+void cm848_loadLowSpeedGovernorGainSet(void);  // @ 0x00028a14
 void cm848_initGovernorTimerCountersWrapper(void);  // @ 0x00028abc
 void cm848_initGovernorLoadStateWrapper(void);  // @ 0x00028adc
-undefined4 cm848_getGovernorOverrideSource(void);  // @ 0x00028b38
+undefined4 cm848_selectLowSpeedGovernorTsc1GainSet(void);  // @ 0x00028b38
 void cm848_clearGovernorFilterAccumulators(void);  // @ 0x00028b8c
 void cm848_calculateSpeedRateLimiting(void);  // @ 0x00028ba4
 void cm848_setGovernorFilterPointer(void);  // @ 0x00028d30
@@ -949,8 +949,8 @@ void cm848_initializeEngineRetarderRequestState(void);  // @ 0x000421c8
 void cm848_calculateHighSpeedGovernorCompensatedEngineSpeed(void);  // @ 0x000422c0
 void cm848_initializeHighSpeedGovernorCompensatedEngineSpeed(void);  // @ 0x00042438
 void cm848_loadHighSpeedGovernorWorkingGainSet(void);  // @ 0x00042488
-void cm848_processGovernorSpeedSetpoint(void);  // @ 0x0004256c
-void cm848_enableProtectionRateLimit(void);  // @ 0x0004271c
+void cm848_selectLowSpeedGovernorGearGainSet(void);  // @ 0x0004256c
+void cm848_inhibitLowSpeedGovernorAggressiveGains(void);  // @ 0x0004271c
 void cm848_selectTwoSpeedRearAxleRatio(void);  // @ 0x0004272c
 void cm848_initializeRearAxleRatio(void);  // @ 0x00042770
 void cm848_copyMainInjectionTiming(void);  // @ 0x00042784
@@ -988,7 +988,7 @@ void cm848_engineRunState3HandlerWithTimebaseCapture(void);  // @ 0x00044f0c
 void hpcr_processEngineSyncPulses(void);  // @ 0x00044fa8
 void mpc555_updateEngineRunState(void);  // @ 0x00045478
 void mpc555_handleCamSignalInterrupt(void);  // @ 0x000457d0
-void cm848_calculateFuelDemandWithConditions(void);  // @ 0x00045ecc
+void cm848_calculateAllSpeedGovernorEquivalentThrottle(void);  // @ 0x00045ecc
 void cm848_initRpmSetpointFilters(void);  // @ 0x0004665c
 void cm848_calculateAuxiliaryInjectionQuantityLimit(void);  // @ 0x000466a8
 void cm848_initializeAuxiliaryInjectionQuantityState(void);  // @ 0x00046cf8
@@ -1366,9 +1366,9 @@ void cm848_updateExtendedIdleProtection(void);  // @ 0x00505600
 void cm848_updateExtremeAmbientOverheatProtection(void);  // @ 0x005056f8
 void cm848_initialization_step_9(void);  // @ 0x005057dc
 void cm848_updateWhiteSmokeAndMisfireProtection(void);  // @ 0x005057ec
-void cm848_calculateAmbientAirDensity(void);  // @ 0x005058a8
-void cm848_selectAmbientAirTemperatureInput(void);  // @ 0x005059ec
-void cm848_initializeAmbientAirTemperatureInput(void);  // @ 0x00505b3c
+void cm848_calculateCompressorInletDensity(void);  // @ 0x005058a8
+void cm848_selectCompressorInletTemperature(void);  // @ 0x005059ec
+void cm848_initializeCompressorInletTemperature(void);  // @ 0x00505b3c
 void cm848_selectCoolantTemperature(void);  // @ 0x00505b84
 void cm848_initializeCoolantTemperatureSource(void);  // @ 0x00505bd8
 void cm848_fillDataCollectorRingBuffer(void);  // @ 0x00505c20

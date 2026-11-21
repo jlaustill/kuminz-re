@@ -606,7 +606,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   P 2062 + I 117 + D 0 = 2179); the engine speed limit chain (`selectEngineSpeedLimit`, the park / neutral exit
   limit, the fault derate limit) and a cruise vehicle speed limit (`cm848_calculateFaultCruiseSpeedLimit`); the
   combustion maps (20 `word[304]` grids reached through pointer words), the mass flows (`fuel_mass_flow`,
-  `charge_mass_flow_filtered`, `egr_mass_flow_delayed_filtered`), `ambient_air_density`, `injection_quantity_oxygen_limit`.
+  `charge_mass_flow_filtered`, `egr_mass_flow_delayed_filtered`), `compressor_inlet_density`, `injection_quantity_oxygen_limit`.
 - **Wave 7:** the VGT loop's twin is the EGR valve position servo (`egr_valve_*`): feedback = sensor channel 75 (the
   unidentified 0.5-4.5 V channel) through a learned zero offset (fault 718), direction on logical output 68 + PWM on
   output channel entry 39, enable on output 67, setpoint = the EGR fraction PI command - compiled in and running, but not
