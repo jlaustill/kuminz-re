@@ -201,8 +201,8 @@ public class ApplyStructures extends GhidraScript {
 
         try {
             // Pass 1: create empty shells for every struct type so that forward
-            // references (e.g. etc1_governor_state_t has a field typed etc1_config_entry_t*
-            // but etc1_config_entry_t hasn't been processed yet) resolve correctly in Pass 2.
+            // references (e.g. j1939_powertrain_control_state_t has a field typed tsc1_source_configuration_t*
+            // but tsc1_source_configuration_t hasn't been processed yet) resolve correctly in Pass 2.
             for (Map.Entry<String, List<FieldDef>> entry : structDefs.entrySet()) {
                 String structName = entry.getKey();
                 List<FieldDef> fields = entry.getValue();

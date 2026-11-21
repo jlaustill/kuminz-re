@@ -202,7 +202,7 @@ Four checks, all negative:
    call site (greppable list in `cm848_rom.ghidra.cpp` — only 0xCA, 0xCB,
    0xCC, 0xCD, 0xCE, 0xD2, 0xDA, 0xE0, 0xEB, 0xEC, 0xED, 0xEE, 0xEF, 0xF0,
    0xF1, 0xF5, 0xF6, 0xF7, and 0x03 are registered). A `18EAFF00#E5FE00`
-   request walks the 32-entry table, falls through, and `cm848_sendJ1939NegativeAck`
+   request walks the 32-entry table, falls through, and `cm848_sendJ1939NegativeAcknowledgement`
    fires.
 4. **Calibration byte:** `e2m_parameters.csv` lists
    `Jcomm_Engine_Hours_Message_Default_Priority (JCEGTMPZ)` at `0x0112543A`

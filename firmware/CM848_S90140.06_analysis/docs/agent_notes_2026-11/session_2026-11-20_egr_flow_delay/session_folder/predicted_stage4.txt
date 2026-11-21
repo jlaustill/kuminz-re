@@ -1,0 +1,14 @@
+# Stage 4 predicted changed functions (written before the build). Code changes expected:
+cm848_initializeEgrFlowEstimate            # the 2-D caches become array elements
+cm848_calculateUpstreamEgrMassFlow         # &diag_state_group5_a_state -> upstream_egr_corrected_flow_cached_axis_offsets
+cm848_calculateDownstreamEgrMassFlow       # &diag_state_group5_c_state -> downstream_egr_corrected_flow_cached_axis_offsets
+cm848_initializePumpingTorqueLookupCache   # group7 a/b -> array elements
+cm848_calculatePumpingTorqueAdjustment     # cache, void prototype, i16 casts
+cm848_calculateVolumetricEfficiency        # void prototype
+cm848_calculateChargeFlowEstimate          # void prototype (no pass-through params)
+cm848_calculateDownstreamEgrFlowSource     # word return
+cm848_calculateUpstreamEgrFlowSource       # word return
+cm848_periodicTaskSet_controlLoop          # the call to 0x130dc loses its two stale arguments
+cm848_calculateFrictionNoLoadAndNetMachineTorque  # pumping_torque_adjustment i16
+cm848_calculateNetCombustionTorque         # pumping_torque_adjustment i16
+# possible: cm848_calculateEgrMassFlowBeforeDelay (the source checks' return type), declaration-order-only changes

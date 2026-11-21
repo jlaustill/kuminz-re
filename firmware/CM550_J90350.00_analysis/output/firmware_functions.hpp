@@ -640,7 +640,7 @@ void cm550_FUN_0002ef4a(dword msg_ptr);  // @ 0x0002ef4a
 void cm550_systemControlFunction2(void);  // @ 0x0002efbc
 ushort cm550_diagnosticServiceDispatcherByPgn(int param_1);  // @ 0x0002efd0
 void cm550_systemControlFunction3(void);  // @ 0x0002f114
-void torqueControlModeHandler(int param_1);  // @ 0x0002f128
+void processEngineTsc1Request(int param_1);  // @ 0x0002f128
 void cm550_FUN_0002f4be(byte cmd_index);  // @ 0x0002f4be
 void cm550_diagnosticDataDump(void);  // @ 0x0002f538
 uint cm550_FUN_0002f606(undefined4 param_1);  // @ 0x0002f606
@@ -722,7 +722,7 @@ uint cm550_FUN_000333d6(uint param_1);  // @ 0x000333d6
 uint cm550_FUN_00033460(uint param_1);  // @ 0x00033460
 void cm550_FUN_000334ec(void);  // @ 0x000334ec
 byte cm550_FUN_0003366a(void);  // @ 0x0003366a
-void initFaultTimerMessage(void);  // @ 0x00033692
+void initializePgn65251EngineConfiguration1Buffer(void);  // @ 0x00033692
 void cm550_FUN_00033716(void);  // @ 0x00033716
 void cm550_FUN_00033754(void);  // @ 0x00033754
 void cm550_FUN_000337c4(void);  // @ 0x000337c4

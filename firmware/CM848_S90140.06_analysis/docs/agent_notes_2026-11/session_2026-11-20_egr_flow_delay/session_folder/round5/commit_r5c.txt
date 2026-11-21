@@ -1,0 +1,16 @@
+cm848: round 5 - drivetrain_type is the vehicle speed sensor type (e2m RSC_Sensor_Type), with _cal
+
+0x3fdda6 is e2m 117F +3A RSC_Sensor_Type [VSRSSNTY] '0=none, 1=inductive, 2=minigen, 3=tach, 4=dlw/GR&OOG,
+5=dlw/o GR&OOG' - the source of the vehicle speed, not a drivetrain. The 31 uses agree: 0 sends no CCVS1
+speed and lets the HSG compensator run; 3 (tachograph) changes how the TPU-B channel 2 sensor is set up and
+read; 4 (J1939 with gear ratio and out-of-gear) takes the speed from the ETC1 output shaft speed and uses the
+ETC2 gear ratio; 5 uses ETC1 only. It sits in the EEPROM mirror (EEPROM 0x924), so _cal; this truck's EEPROM
+holds 1 (inductive) - task 025 had flagged "1 = MANUAL_VSS on an automatic truck" for a re-check.
+- drivetrain_type -> vehicle_speed_sensor_type_cal; DRIVETRAIN_TYPE -> VEHICLE_SPEED_SENSOR_TYPE:
+  STANDALONE -> NONE, MANUAL_VSS -> INDUCTIVE, MANUAL_TPU -> TACHOGRAPH, AUTO_J1939_FULL ->
+  J1939_WITH_GEAR_RATIO, AUTO_J1939_ETC1 -> J1939_WITHOUT_GEAR_RATIO, and 2 = MINIGEN added.
+- The cruise fix (the OCT forwarding the Allison's J1939) is unchanged; firmware/CLAUDE.md, the
+  editing-firmware-csvs skill's naming example and tasks 025 / 046 follow the new names.
+Label-only: reverse_names.py EQUIVALENT, 0 functions differ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

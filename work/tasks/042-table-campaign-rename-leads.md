@@ -720,6 +720,7 @@ Three agents worked the wave-8 leftovers, applied in two stages.
 - [W9 charge_turbo] EXHAUST TEMPERATURE / EGR ORIFICE TEMPERATURE CHAIN (settles the cooler monitor): the EGR cooler effectiveness (cm848_calculateEgrCoolerEfficiency) = (exhaust_temperature x 32 - egr_orifice_temperature) x 10000 / (exhaust_temperature x 32 - coolant temperature): the hot side is the ESTIMATED exhaust temperature (intake manifold temperature + combustion tempe
 - [W9 charge_turbo] MONITOR COMPLETION DECODE (lead 4), all from the ROM slot table 0x5985a and obd_dtc_code_table 0x5b57c: fault 64 (bit 0 of fault_detected_bits_64_to_79) = slot 48 = P0236; fault 729 (mask 0x200 of fault_detected_bits_720_to_735) = slot 160 = P0299; fault 778 (mask 0x400 of fault_detected_bits_768_to_783) = slot 149 = P0069; faults 774-777 (0x40 / 0x80 / 0x10
 - [W9 charge_turbo] OTHER LEFT-OVERS (not renamed, with the reason): (a) boost_pressure_current_raw 0x40a7d0 / boost_pressure_baseline_cal 0x40675a / map_fuel_correction_factor 0x40a42e: map_fuel_correction_factor is the boost (charge) pressure (its change is the boost lead term of the turbocharger speed estimate and its ratio to boost_fuel_scale_divisor 0x40a19e, the ambient p
+  - 2026-11-20 (task 046): `boost_pressure_current_raw` (0x40a7d0) is e2m 1A5D +0 Exhaust_Press, now `exhaust_pressure` (written by `cm848_calculateExhaustPressure`, was `phase_group_a_validateEngineSync`).
 - [W9 charge_turbo] RENDER / APPLY NOTES: every global above in 0x3F9800-0x3FDB30 (0x3fcbfe-0x3fcc1e, 0x3fd7f0, 0x3fd8ac-0x3fd8b2, 0x3fa150-0x3fa15e, 0x3fae3c-0x3fae42) was scanned in the boot ROM 0x0-0x7F5F: no user. The only type changes are 0x3fae3c byte -> word (one sth, no other access), 0x40a688 / 0x40a68e dword -> i16 and the new row 0x40a690 i16 (sth stores, lha loads, 
 - [W9 charge_turbo] EXACT ROW CHANGES FOR THE APPLIER, global_variables.csv (address,name,type); the comment of every row is the evidence / comment text of its row above with (was <old>) appended where the row had a name; rows of kind new_global are unnamed addresses with no row today, except 0x40a68a and 0x40a690 which replace the label rows deleted first (see the DELETE notes
 - [W9 charge_turbo] EXACT ROW CHANGES FOR THE APPLIER, function_renames.csv (address,name; the plate comment is plate_comment of the function row above): 0x00011170,cm848_transformChargeSystemErrors | 0x0050f4c0,cm848_updateTurbochargerSpeedSensor | 0x0050eeb0,cm848_diagnoseTurbochargerSpeedSensorFrequency | 0x0050f110,cm848_selectTurbochargerSpeedSensorSignalMode | 0x0050f178,
@@ -734,3 +735,29 @@ Three agents worked the wave-8 leftovers, applied in two stages.
 - [W9 governor] '+2' LABEL ROW (lead 6): global_variables.csv line 1291 0x003fa892,timing_compensation_accumulator+2,, must follow the rename of 0x3fa890: EXACT ROW 0x003fa892,high_speed_governor_integrator+2,, (a label-only sub-row like 0x40a206 fuel_demand_integrator_b+2; no type, no comment). align_results.py drops '+N' rows from the results, so it has to be edited by ha
 - [W9 governor] ROW-75 LIST (lead 6), item by item. (1) governor_speed_* / channel 75 deviation words near 0x507214: DONE by wave 8 - 0x507214 is cm848_evaluateEgrValvePositionControlDiagnosticConditions (was cm848_calculateSensorChannel75DeviationDiagnosticConditions) and its body now uses only egr_valve_* words; the 'PID output' it pairs with the channel 75 feedback is eg
 - [W9 governor] DROOP GAIN PROSE (lead 2): after the renames the comments of 0x40a254 / 0x40a256 and the plates of 0xff04 / 0xea00 still call the pair the integral / proportional gains. EXACT ROWS: 0x0040a254,all_speed_governor_throttle_droop_gain_1,word,CODE: write-only (0 reads, both banks) copy of all_speed_governor_droop_gain_1: cm848_calculateGovernorCompensatorCoeffic
+
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `sensor_channel9_pressure_value` → `intake_manifold_temperature_sensor_value`
+- `governor_setpoint_table_ptr` → `low_speed_governor_gain_set_pointer`
+- `governor_speed_error_delta` → `low_speed_governor_filtered_speed_error`
+- `cm848_calculateAmbientAirDensity` → `cm848_calculateCompressorInletDensity`
+- `engine_load_ramp_rate_upper` → `compressor_inlet_density_positive_rate_limit`
+- `ambient_air_density` → `compressor_inlet_density`
+- `fuel_demand_integrator_gain_a_cal` → `rpm_deceleration_limit_integral_gain`
+- `engine_operating_mode_restore_speed_error_previous` → `all_speed_governor_application_reset_state_speed_error_previous`
+- `cm848_restoreEngineOperatingMode` → `cm848_selectAllSpeedGovernorApplicationMode`
+- `torque_limit_init_flag` → `programmable_power_active_selection`
+- `cm848_setEngineOperatingMode5` → `cm848_selectUserCommandedFueling`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `governorCruiseStateMachine` → `cm848_initializeCruiseControlDroopGains`
+- `cm848_initEngineOperatingMode` → `cm848_selectVariableSpeedGovernorMode`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `torqueControlModeHandler` → `processEngineTsc1Request`

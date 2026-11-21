@@ -1,0 +1,16 @@
+cm848: review fixes for round 3 - the 1A0C source name follows its sibling, a stale field reference
+
+- compressor_inlet_temperature_source -> ambient_air_temperature_selected_source
+  (e2m 1A0C +2): its +0 is ambient_air_temperature_selected, and 1A11
+  +2 already follows that pattern (barometric_pressure_selected_source).
+  Label-only (reverse_names.py EQUIVALENT).
+- engine_speed_interrupts_per_cylinder's comment cited the old field
+  crank_tooth_period_sum; it now names
+  engine_speed_state.backup_speed_period_sum_between_vss_pulses.
+- Task 046 and the session archive: the advisor's final checks
+  (unsigned_uses.py - the 10 new (ushort) / (uint) casts on retyped words
+  all sit on lha loads whose value the code shifts logically; round 3's
+  names shadow nothing, CM550 and the cross-firmware maps cite none of
+  the old names, the widths match the e2m records) and the PR text.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

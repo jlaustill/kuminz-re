@@ -1,0 +1,6 @@
+work/tasks/046-cm848-egr-flow-estimate.md:254: ...  `j1939_governor_source_index` and the cached control byte 
+work/tasks/046-cm848-egr-flow-estimate.md:295: ...e previous ratio is a word at +0xa (the old byte `auxiliary_state`; Ghidra's `_10_2_` counts in
+work/tasks/025-cm848-naming-wave-followups.md:284: ...ls are misnamed too: 0x3fa98c j1939_tsc1_received.auxiliary_state (previous ratio) / 0x40a266 g
+work/tasks/025-cm848-naming-wave-followups.md:517: ...e 1 (selected gear). 0x3fa98c j1939_tsc1_received.auxiliary_state is the previous ETC2 gear rat
+work/tasks/025-cm848-naming-wave-followups.md:523: ...- 0x003fa98c j1939_tsc1_received.auxiliary_state (struct field) - previous etc
+work/tasks/045-cm848-fueling-state-enum.md:785: ...e limits, medium); the `j1939_tsc1_override_state.proprietary_offset_value`

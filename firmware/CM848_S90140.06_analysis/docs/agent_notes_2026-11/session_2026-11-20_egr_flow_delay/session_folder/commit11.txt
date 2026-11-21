@@ -1,0 +1,34 @@
+cm848: the engine speed block e2m 819B named - engine_speed_state.filtered_engine_speed, the main / backup speeds, the sync counters and times
+
+Label-only (reverse_names.py EQUIVALENT; 0 functions differ). The ECU's
+parameter ID table resolves every row to an 819B record, and each
+record's code use fits its description, usually through a limit named
+in an earlier wave (cam_crank_mismatch_count_limit,
+cylinder_firing_acceleration_threshold, crank_sync_attempt_limit,
+primary / backup_period_rpm_conversion_factor ...).
+
+- engine_rpm_state_t / engine_rpm_state_t_0040b7ac ->
+  engine_speed_state_t / engine_speed_state (819B +1E .. +2D):
+  current_rpm = filtered_engine_speed (Filtered_Engine_Speed, the speed
+  the whole firmware reads: 356 lines), filtered_rpm = engine_speed
+  (Engine_Speed), the four EPS sums / counts between vehicle speed
+  sensor pulses (main / backup_speed_period_sum_between_vss_pulses,
+  main / backup_speed_pulse_count_between_vss_pulses)
+- engine_rpm_measured = average_engine_speed (Average_Engine_Speed),
+  crank_derived_rpm / crank_tooth_rpm = main_engine_speed /
+  backup_engine_speed (Main_RPM / Backup_RPM), crank_period_accumulator
+  / crank_tooth_period_raw = average_pulse_period / _backup,
+  engine_speed_from_tooth_period_flag = engine_speed_from_backup_sensor_flag
+  (Speed_Sensor_Select)
+- the cam / crank sync words: cam_to_crank_tooth_number,
+  cam_crank_mismatch_count, cam_crank_plausibility_count_1 / _2,
+  crank_accumulated_period, crank_speed_count, cylinder_acceleration,
+  firing_detection_count, crank_teeth_per_cylinder, start_sync_count,
+  pulse_period_table_backup, crank_resync_count and the four start times
+  (first_cylinder_fire_time_ticks, crank_preliminary_sync_time_ticks,
+  cam_have_sync_time_ticks, crank_have_sync_time_ticks)
+
+Comments that cited the old names (bare current_rpm included) are
+refreshed; headers regenerated (g++ clean), lookup_tables.py clean.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

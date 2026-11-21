@@ -738,6 +738,9 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
   - the `diag_dm1_*` words around 0x3fddb6 / 0x40c278 are the e2m data collector (blocks 0030-003B), not DM1;
   - `sensor_channel109_*` is the exhaust pressure sensor. `boost_pressure_synthetic_ema` / `boost_synthetic_ema_*` /
     `boost_correction_mode_flags` are the exhaust pressure estimate (1772);
+    - Partly done in task 046 (2026-11-20): `boost_pressure_synthetic_ema` / `boost_correction_mode_flags` are now
+      `exhaust_pressure_estimate` / `_estimate_state`. Still open: `sensor_channel109_*` and the 198C
+      `boost_synthetic_ema_*_coef` constants of the TPE estimator.
   - `boost_target_*` is the exhaust temperature estimate;
   - `engine_to_vehicle_speed_ratio_*` is the transfer case low-range detection (8C60);
   - `engine_temperature_protection_filter_state` is the exponentialMovingAverage record of `drivetrain_ratio` (it
@@ -830,3 +833,24 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - `firmware/CM848_S90140.06_analysis/output/global_variables.csv`, `structure_definitions.csv`
 - `e2m-analysis/exports/common_parameters.json` (the FS*ST / PT* records)
 - `firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp` (`runHighSpeedGovernorPid` @ 0x1ce7c)
+
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `pressure_correction_first_filter` → `intake_manifold_temperature_lag_first_filter`
+- `cruise_speed_offset` → `high_speed_governor_compensator_working_filter_coefficient_3`
+- `cruise_speed_default_cal` → `high_speed_governor_compensator_transition_coefficient`
+- `ambient_air_temperature_selected` → `compressor_inlet_temperature`
+- `cruise_speed_blend_working` → `current_horsepower_peak_fueling_cal`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `etc1_torque_mode_timeout_cal` → `j1939_time_limited_node_recovery_time`
+- `j1939_tsc1_override_state` → `j1939_powertrain_control_state`
+- `j1939_tsc1_override_state.proprietary_offset_value` → `j1939_powertrain_control_state.engine_net_output_torque` (e2m 10E8 +28 Jcomm_Engine_Output_Net_Torque, ft lb, signed; stage B1 / B2)

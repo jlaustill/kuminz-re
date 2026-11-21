@@ -1,5 +1,7 @@
 # CM848 Thermal Protection Trigger — what engages the `fuel_temp_trim_raw` protection loop
 
+> **Renamed since (2026-11-20, PR #53):** `cm848_fuelDemandSmoothingController` is `cm848_monitorAcceleratorPedalIdleValidationFaults` (the accelerator pedal idle validation faults P2121 / P2127 / P2128), and 0x5c2a4 / 0x5c29a are `accelerator_pedal_fault_delay_at_idle` / `accelerator_pedal_fault_delay` (e2m 1048 +16 / +C).
+>
 > **SUPERSEDED (2026-11-13, PR #46) — there is no thermal protection loop here.** `fuel_temp_trim_raw` /
 > `fuel_temperature_trim` are the vehicle speed chain (`vehicle_speed`, 1/256 mph), and the gate threshold
 > `0x0005c2a0` is `idle_validation_fault_minimum_vehicle_speed` (10 mph — the idle validation fault debounce

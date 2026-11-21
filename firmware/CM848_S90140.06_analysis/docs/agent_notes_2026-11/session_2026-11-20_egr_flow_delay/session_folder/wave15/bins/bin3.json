@@ -1,0 +1,5574 @@
+[
+ {
+  "address": "0x0040b6fe",
+  "block": "106C",
+  "offset": "000A",
+  "record": "Gear_Ratio_When_Loaded",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.000488281",
+  "min": "0",
+  "max": "17",
+  "description": "Gear Ratio determined when in gear and at high load",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_flow_rpm_divisor_saved",
+  "references": 4,
+  "dump_raw": "32768",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 2} -> 2 byte",
+  "code": [
+   "cm848_updateDrivetrainRatio: fuel_flow_rpm_divisor_saved and the filter accumulator with drivetrain_ratio_default and sets",
+   "cm848_updateDrivetrainRatio: above the high threshold, and commits fuel_flow_rpm_divisor_saved once the divisor is stable and",
+   "cm848_updateDrivetrainRatio: fuel_flow_rpm_divisor_saved = drivetrain_ratio_default;",
+   "cm848_updateDrivetrainRatio: fuel_flow_rpm_divisor_saved = drivetrain_ratio_user_filtered;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Gear_Ratio",
+    "drivetrain_ratio_raw",
+    "0.50"
+   ],
+   [
+    "0002",
+    "User_Filtered_Gear_Ratio",
+    "drivetrain_ratio_user_filtered",
+    "0.75"
+   ],
+   [
+    "0004",
+    "Out_Of_Gear_Cruise_Disable_Flag",
+    "drivetrain_ratio_out_of_gear_cruise_disable_flag",
+    "1.00"
+   ],
+   [
+    "0006",
+    "Out_Of_Gear_Spd_Timer",
+    "drivetrain_ratio_decoupled_hold_counter",
+    "0.00"
+   ],
+   [
+    "0008",
+    "Out_Of_Gear_GR_Timer",
+    "drivetrain_ratio_change_settle_counter",
+    "0.00"
+   ],
+   [
+    "000A",
+    "Gear_Ratio_When_Loaded",
+    "fuel_flow_rpm_divisor_saved",
+    "0.00"
+   ],
+   [
+    "000C",
+    "Out_Of_Gear_Settling_Timer",
+    "drivetrain_ratio_unsettled_release_timer",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "saved snapshot of drivetrain_ratio_user_filtered (committed when stable and final_fueling high); seeded to default drivetrain_ratio_default in the bypass path",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"106C\", \"offset\": \"000A\", \"record\": \"Gear_Ratio_When_Loaded\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.000488281\", \"min\": \"0\", \"max\": \"17\", \"address\": \"0x0040b6fe\", \"statu"
+  ]
+ },
+ {
+  "address": "0x00408ed2",
+  "block": "10EA",
+  "offset": "000C",
+  "record": "LSG_High_Gear_Proportional_Gain",
+  "unit": "MM3S/RPM",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.00048828120",
+  "min": "0.000000",
+  "max": "1.739200",
+  "description": "Low speed governor proportional gain when in high gears",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "governor_setpoint_table_mode3_cal",
+  "references": 1,
+  "dump_raw": "61",
+  "token_overlap": 0.14,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_processGovernorSpeedSetpoint: governor_setpoint_table_requested_ptr = &governor_setpoint_table_mode3_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "LSG_Gear_Breakpoint1",
+    "governor_speed_mode_rpm_upper_cal",
+    "0.33"
+   ],
+   [
+    "0002",
+    "LSG_Gear_Breakpoint2",
+    "governor_speed_mode_rpm_upper_b_cal",
+    "0.33"
+   ],
+   [
+    "0004",
+    "LSG_Error_Gear_Max",
+    "governor_speed_error_exit_upper_cal",
+    "0.50"
+   ],
+   [
+    "0006",
+    "LSG_Error_Gear_Min",
+    "governor_speed_error_exit_lower_cal",
+    "0.50"
+   ],
+   [
+    "0008",
+    "LSG_Gear_Gain_Transition_Time",
+    "governor_speed_mode_count_max_cal",
+    "0.29"
+   ],
+   [
+    "000A",
+    "LSG_Gear_Hysteresis",
+    "governor_speed_mode_hysteresis_cal",
+    "0.60"
+   ],
+   [
+    "000C",
+    "LSG_High_Gear_Proportional_Gain",
+    "governor_setpoint_table_mode3_cal",
+    "0.14"
+   ],
+   [
+    "0014",
+    "LSG_Mid_Gear_Proportional_Gain",
+    "governor_setpoint_table_mode2_cal",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x00408eda",
+  "block": "10EA",
+  "offset": "0014",
+  "record": "LSG_Mid_Gear_Proportional_Gain",
+  "unit": "MM3S/RPM",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.00048828120",
+  "min": "0.000000",
+  "max": "1.739200",
+  "description": "Low speed governor proportional gain used when in middle gears for in gear stab",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "governor_setpoint_table_mode2_cal",
+  "references": 1,
+  "dump_raw": "61",
+  "token_overlap": 0.14,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_processGovernorSpeedSetpoint: governor_setpoint_table_requested_ptr = &governor_setpoint_table_mode2_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "LSG_Gear_Breakpoint1",
+    "governor_speed_mode_rpm_upper_cal",
+    "0.33"
+   ],
+   [
+    "0002",
+    "LSG_Gear_Breakpoint2",
+    "governor_speed_mode_rpm_upper_b_cal",
+    "0.33"
+   ],
+   [
+    "0004",
+    "LSG_Error_Gear_Max",
+    "governor_speed_error_exit_upper_cal",
+    "0.50"
+   ],
+   [
+    "0006",
+    "LSG_Error_Gear_Min",
+    "governor_speed_error_exit_lower_cal",
+    "0.50"
+   ],
+   [
+    "0008",
+    "LSG_Gear_Gain_Transition_Time",
+    "governor_speed_mode_count_max_cal",
+    "0.29"
+   ],
+   [
+    "000A",
+    "LSG_Gear_Hysteresis",
+    "governor_speed_mode_hysteresis_cal",
+    "0.60"
+   ],
+   [
+    "000C",
+    "LSG_High_Gear_Proportional_Gain",
+    "governor_setpoint_table_mode3_cal",
+    "0.14"
+   ],
+   [
+    "0014",
+    "LSG_Mid_Gear_Proportional_Gain",
+    "governor_setpoint_table_mode2_cal",
+    "0.14"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004071de",
+  "block": "1171",
+  "offset": "0000",
+  "record": "Remote_Throttle_Calibrated_Priority",
+  "unit": "HEX",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "255",
+  "description": "Remote Throttle priority in the alternate throttle selection logic.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_override_active_min",
+  "references": 2,
+  "dump_raw": "5",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_periodicControlLoopFaultHandling: if (fuel_demand_control_t_0040a57a.override_active < fuel_demand_override_active_min) {",
+   "cm848_periodicControlLoopFaultHandling: fuel_demand_control_t_0040a57a.override_active = fuel_demand_override_active_min;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Remote_Throttle_Calibrated_Priority",
+    "fuel_demand_override_active_min",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM minimum override trigger count"
+ },
+ {
+  "address": "0x00408dfc",
+  "block": "1186",
+  "offset": "0000",
+  "record": "Cruise_RSG_Bottom_Droop_Offset",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "CRUISE/RSG BOTTOM DROOP OFFSET.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_cruise_fuel_demand_setpoint",
+  "references": 8,
+  "dump_raw": "353",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 4} -> 2 byte",
+  "code": [
+   "governor_cruise_setpoint_calc: ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1)) {",
+   "governor_cruise_setpoint_calc: if ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1) goto LAB_00524934;",
+   "governor_cruise_setpoint_calc: wStack_e = (word)(((int)(short)param_1 - (int)(short)governor_cruise_fuel_demand_setpoint) *",
+   "governor_cruise_setpoint_calc: uVar5 = (uint)governor_cruise_fuel_demand_setpoint + (uint)cruise_zone_fuel_demand_hysteresis;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_RSG_Bottom_Droop_Offset",
+    "governor_cruise_fuel_demand_setpoint",
+    "0.20"
+   ],
+   [
+    "0002",
+    "Cruise_RSG_Top_Droop_OffsetX",
+    "cruise_top_droop_offset_intermediate_tau",
+    "0.80"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Iso_Speed_Tol",
+    "cruise_deadband_vehicle_speed_tolerance",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Proportional_Gain_Cal",
+    "cruise_zone_1_proportional_gain",
+    "0.60"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Top_Droop_Offset0",
+    "cruise_speed_offset_default",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Top_Droop_Offset1",
+    "cruise_top_droop_offset_tau_1",
+    "0.83"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Peak_Fueling_Percent",
+    "cruise_top_droop_offset_peak_fueling_percent_times_256",
+    "0.80"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Droop_Reference_Speed",
+    "cruise_fuel_demand_ramp_ceiling",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Error_Delta_HL",
+    "cruise_speed_setpoint_active_max",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Error_Delta_LL",
+    "cruise_speed_setpoint_active_min",
+    "0.20"
+   ],
+   [
+    "001C",
+    "Cruise_RSG_Proportional_Gain_Cal2",
+    "cruise_zone_2_proportional_gain",
+    "0.67"
+   ],
+   [
+    "0024",
+    "Cruise_RSG_Gain_Thres",
+    "cruise_zone_speed_error_abs_limit",
+    "0.25"
+   ],
+   [
+    "0026",
+    "Cruise_RSG_Gain_Hyster",
+    "cruise_zone_boundary_hysteresis",
+    "0.25"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Gain_Hyster2",
+    "cruise_zone_fuel_demand_hysteresis",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "cruise fuel-demand deadband center (read-only working RAM)"
+ },
+ {
+  "address": "0x00408e12",
+  "block": "1186",
+  "offset": "0016",
+  "record": "Cruise_RSG_Droop_Reference_Speed",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "255",
+  "description": "Reference speed used when calculating CC and RSG upper droops on power-up",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_fuel_demand_ramp_ceiling",
+  "references": 4,
+  "dump_raw": "21760",
+  "token_overlap": 0.2,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "governorCruiseStateMachine: (cruise_fuel_demand_ramp_ceiling - cruise_top_droop_width_cal,",
+   "governorCruiseStateMachine: (cruise_fuel_demand_ramp_ceiling - road_speed_governor_top_droop_width_cal,",
+   "governorCruiseStateMachine: (cruise_fuel_demand_ramp_ceiling - cruise_top_droop_width_cal,",
+   "governorCruiseStateMachine: (cruise_fuel_demand_ramp_ceiling - road_speed_governor_top_droop_width_cal,"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_RSG_Bottom_Droop_Offset",
+    "governor_cruise_fuel_demand_setpoint",
+    "0.20"
+   ],
+   [
+    "0002",
+    "Cruise_RSG_Top_Droop_OffsetX",
+    "cruise_top_droop_offset_intermediate_tau",
+    "0.80"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Iso_Speed_Tol",
+    "cruise_deadband_vehicle_speed_tolerance",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Proportional_Gain_Cal",
+    "cruise_zone_1_proportional_gain",
+    "0.60"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Top_Droop_Offset0",
+    "cruise_speed_offset_default",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Top_Droop_Offset1",
+    "cruise_top_droop_offset_tau_1",
+    "0.83"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Peak_Fueling_Percent",
+    "cruise_top_droop_offset_peak_fueling_percent_times_256",
+    "0.80"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Droop_Reference_Speed",
+    "cruise_fuel_demand_ramp_ceiling",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Error_Delta_HL",
+    "cruise_speed_setpoint_active_max",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Error_Delta_LL",
+    "cruise_speed_setpoint_active_min",
+    "0.20"
+   ],
+   [
+    "001C",
+    "Cruise_RSG_Proportional_Gain_Cal2",
+    "cruise_zone_2_proportional_gain",
+    "0.67"
+   ],
+   [
+    "0024",
+    "Cruise_RSG_Gain_Thres",
+    "cruise_zone_speed_error_abs_limit",
+    "0.25"
+   ],
+   [
+    "0026",
+    "Cruise_RSG_Gain_Hyster",
+    "cruise_zone_boundary_hysteresis",
+    "0.25"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Gain_Hyster2",
+    "cruise_zone_fuel_demand_hysteresis",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "read-only ROM cruise fuel-demand ceiling (ramp base)"
+ },
+ {
+  "address": "0x00408e14",
+  "block": "1186",
+  "offset": "0018",
+  "record": "Cruise_RSG_Error_Delta_HL",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "255",
+  "description": "High limit for Cruise_RSG_Error_Delta",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_speed_setpoint_active_max",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_cruise_setpoint_calc: cruise_speed_setpoint_active = cruise_speed_setpoint_active_max;",
+   "governor_cruise_setpoint_calc: if ((int)(short)wStack_e <= (int)(uint)cruise_speed_setpoint_active_max) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_RSG_Bottom_Droop_Offset",
+    "governor_cruise_fuel_demand_setpoint",
+    "0.20"
+   ],
+   [
+    "0002",
+    "Cruise_RSG_Top_Droop_OffsetX",
+    "cruise_top_droop_offset_intermediate_tau",
+    "0.80"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Iso_Speed_Tol",
+    "cruise_deadband_vehicle_speed_tolerance",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Proportional_Gain_Cal",
+    "cruise_zone_1_proportional_gain",
+    "0.60"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Top_Droop_Offset0",
+    "cruise_speed_offset_default",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Top_Droop_Offset1",
+    "cruise_top_droop_offset_tau_1",
+    "0.83"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Peak_Fueling_Percent",
+    "cruise_top_droop_offset_peak_fueling_percent_times_256",
+    "0.80"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Droop_Reference_Speed",
+    "cruise_fuel_demand_ramp_ceiling",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Error_Delta_HL",
+    "cruise_speed_setpoint_active_max",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Error_Delta_LL",
+    "cruise_speed_setpoint_active_min",
+    "0.20"
+   ],
+   [
+    "001C",
+    "Cruise_RSG_Proportional_Gain_Cal2",
+    "cruise_zone_2_proportional_gain",
+    "0.67"
+   ],
+   [
+    "0024",
+    "Cruise_RSG_Gain_Thres",
+    "cruise_zone_speed_error_abs_limit",
+    "0.25"
+   ],
+   [
+    "0026",
+    "Cruise_RSG_Gain_Hyster",
+    "cruise_zone_boundary_hysteresis",
+    "0.25"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Gain_Hyster2",
+    "cruise_zone_fuel_demand_hysteresis",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM ceiling for cruise_speed_setpoint_active"
+ },
+ {
+  "address": "0x00408e16",
+  "block": "1186",
+  "offset": "001A",
+  "record": "Cruise_RSG_Error_Delta_LL",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.00390625",
+  "min": "-127.996",
+  "max": "0",
+  "description": "Low limit for Cruise_RSG_Error_Delta",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "cruise_speed_setpoint_active_min",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "governor_cruise_setpoint_calc: cruise_speed_setpoint_active = cruise_speed_setpoint_active_min;",
+   "governor_cruise_setpoint_calc: if (cruise_speed_setpoint_active_min <= (short)wStack_e) goto LAB_0052492c;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_RSG_Bottom_Droop_Offset",
+    "governor_cruise_fuel_demand_setpoint",
+    "0.20"
+   ],
+   [
+    "0002",
+    "Cruise_RSG_Top_Droop_OffsetX",
+    "cruise_top_droop_offset_intermediate_tau",
+    "0.80"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Iso_Speed_Tol",
+    "cruise_deadband_vehicle_speed_tolerance",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Proportional_Gain_Cal",
+    "cruise_zone_1_proportional_gain",
+    "0.60"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Top_Droop_Offset0",
+    "cruise_speed_offset_default",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Top_Droop_Offset1",
+    "cruise_top_droop_offset_tau_1",
+    "0.83"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Peak_Fueling_Percent",
+    "cruise_top_droop_offset_peak_fueling_percent_times_256",
+    "0.80"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Droop_Reference_Speed",
+    "cruise_fuel_demand_ramp_ceiling",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Error_Delta_HL",
+    "cruise_speed_setpoint_active_max",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Error_Delta_LL",
+    "cruise_speed_setpoint_active_min",
+    "0.20"
+   ],
+   [
+    "001C",
+    "Cruise_RSG_Proportional_Gain_Cal2",
+    "cruise_zone_2_proportional_gain",
+    "0.67"
+   ],
+   [
+    "0024",
+    "Cruise_RSG_Gain_Thres",
+    "cruise_zone_speed_error_abs_limit",
+    "0.25"
+   ],
+   [
+    "0026",
+    "Cruise_RSG_Gain_Hyster",
+    "cruise_zone_boundary_hysteresis",
+    "0.25"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Gain_Hyster2",
+    "cruise_zone_fuel_demand_hysteresis",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM floor for cruise_speed_setpoint_active | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00408e2e",
+  "block": "1186",
+  "offset": "0032",
+  "record": "Cruise_RSG_Gain_Thres2",
+  "unit": "MPH",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "10",
+  "description": "Switch to Cruise/RSG gain set 3 when tracking error is < this calibration",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_zone_speed_error_neg_limit",
+  "references": 2,
+  "dump_raw": "1280",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "governor_cruise_setpoint_calc: (int)((uint)cruise_zone_speed_error_neg_limit + (uint)cruise_zone_boundary_hysteresis))",
+   "governor_cruise_setpoint_calc: (int)((uint)cruise_zone_speed_error_neg_limit - (uint)cruise_zone_boundary_hysteresis))) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Cruise_RSG_Bottom_Droop_Offset",
+    "governor_cruise_fuel_demand_setpoint",
+    "0.20"
+   ],
+   [
+    "0002",
+    "Cruise_RSG_Top_Droop_OffsetX",
+    "cruise_top_droop_offset_intermediate_tau",
+    "0.80"
+   ],
+   [
+    "0004",
+    "Cruise_RSG_Iso_Speed_Tol",
+    "cruise_deadband_vehicle_speed_tolerance",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Cruise_RSG_Proportional_Gain_Cal",
+    "cruise_zone_1_proportional_gain",
+    "0.60"
+   ],
+   [
+    "0010",
+    "Cruise_RSG_Top_Droop_Offset0",
+    "cruise_speed_offset_default",
+    "0.33"
+   ],
+   [
+    "0012",
+    "Cruise_RSG_Top_Droop_Offset1",
+    "cruise_top_droop_offset_tau_1",
+    "0.83"
+   ],
+   [
+    "0014",
+    "Cruise_RSG_Peak_Fueling_Percent",
+    "cruise_top_droop_offset_peak_fueling_percent_times_256",
+    "0.80"
+   ],
+   [
+    "0016",
+    "Cruise_RSG_Droop_Reference_Speed",
+    "cruise_fuel_demand_ramp_ceiling",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Cruise_RSG_Error_Delta_HL",
+    "cruise_speed_setpoint_active_max",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Cruise_RSG_Error_Delta_LL",
+    "cruise_speed_setpoint_active_min",
+    "0.20"
+   ],
+   [
+    "001C",
+    "Cruise_RSG_Proportional_Gain_Cal2",
+    "cruise_zone_2_proportional_gain",
+    "0.67"
+   ],
+   [
+    "0024",
+    "Cruise_RSG_Gain_Thres",
+    "cruise_zone_speed_error_abs_limit",
+    "0.25"
+   ],
+   [
+    "0026",
+    "Cruise_RSG_Gain_Hyster",
+    "cruise_zone_boundary_hysteresis",
+    "0.25"
+   ],
+   [
+    "0028",
+    "Cruise_RSG_Gain_Hyster2",
+    "cruise_zone_fuel_demand_hysteresis",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM signed speed-error threshold for cruise zone 2/3"
+ },
+ {
+  "address": "0x0040adf2",
+  "block": "1199",
+  "offset": "0000",
+  "record": "CAN_Last_Msg_Object_Used",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "15",
+  "description": "[SSCNLTOB] CAN's last message object used",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "can_j1939_tx_mailbox_alloc_index",
+  "references": 3,
+  "dump_raw": "15",
+  "token_overlap": 0.2,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_j1939_system_init: uVar3 = (uint)can_j1939_tx_mailbox_alloc_index;",
+   "cm848_j1939_system_init: can_tx_mailbox_end_index = can_j1939_tx_mailbox_alloc_index + 0xf;",
+   "cm848_j1939_system_init: can_j1939_tx_mailbox_alloc_index = can_tx_mailbox_end_index;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CAN_Last_Msg_Object_Used",
+    "can_j1939_tx_mailbox_alloc_index",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "running CAN TX mailbox slot allocation index"
+ },
+ {
+  "address": "0x003feff2",
+  "block": "11D5",
+  "offset": "0000",
+  "record": "AFC_Fueling_Override_Value",
+  "unit": "MM3S",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.06793478400",
+  "min": "0.000000",
+  "max": "400.000000",
+  "description": "[AFFLMAN] AFC fueling derate value when AFC override is enabled",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_load_base_cal",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateAirFuelControlFuelLimit: air_fuel_control_fuel_limit = fuel_demand_load_base_cal;",
+   "cm848_calculateAirFuelControlFuelLimit: governor_demand_accumulator = (uint)fuel_demand_load_base_cal * 0x32;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "AFC_Fueling_Override_Value",
+    "fuel_demand_load_base_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Ambient_Air_Pressure_Sensor_Present",
+    "boost_uses_barometric_pressure_flag",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Absolute_Boost_Pressure_Sensor_Present",
+    "boost_is_gauge_pressure_flag",
+    "0.40"
+   ],
+   [
+    "0006",
+    "AFC_Fueling_Threshold_1",
+    "fuel_demand_load_threshold_c",
+    "0.25"
+   ],
+   [
+    "0008",
+    "AFC_Fueling_Threshold_2",
+    "fuel_demand_load_threshold_b",
+    "0.25"
+   ],
+   [
+    "000A",
+    "AFC_Fueling_Threshold_3",
+    "fuel_demand_load_threshold_a",
+    "0.25"
+   ],
+   [
+    "000C",
+    "AFC_Fueling_Slew_Rate_1",
+    "fuel_demand_load_threshold_d",
+    "0.00"
+   ],
+   [
+    "0010",
+    "AFC_Fueling_Slew_Rate_2",
+    "fuel_demand_load_result_working",
+    "0.00"
+   ],
+   [
+    "0014",
+    "AFC_Fueling_Slew_Rate_3",
+    "fuel_demand_load_select_working",
+    "0.00"
+   ],
+   [
+    "0018",
+    "AFC_Low_Boost_Time_Delay",
+    "air_fuel_control_low_boost_time_delay",
+    "0.80"
+   ],
+   [
+    "001A",
+    "AFC_Pos_Select_Slew_Rate",
+    "air_fuel_control_low_boost_blend_fraction_increase_step",
+    "0.00"
+   ],
+   [
+    "001C",
+    "AFC_Neg_Select_Slew_Rate",
+    "air_fuel_control_low_boost_blend_fraction_decrease_step",
+    "0.00"
+   ],
+   [
+    "001E",
+    "AFC_Normal_Boost_Time_Delay",
+    "air_fuel_control_normal_boost_time_delay",
+    "0.80"
+   ],
+   [
+    "0020",
+    "AFC_Neg_Fueling_Slew_Rate",
+    "boost_fuel_limit_maximum_decrease_step",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003feff4",
+  "block": "11D5",
+  "offset": "0002",
+  "record": "Ambient_Air_Pressure_Sensor_Present",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[AAPRSNST] enable flag that indicates presence of an ambient air pressure sensor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "boost_uses_barometric_pressure_flag",
+  "references": 3,
+  "dump_raw": "1",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_calculateBoostPressure: barometric channel's default - when boost_uses_barometric_pressure_flag is 0) clamped at 0 -",
+   "cm848_calculateBoostPressure: if (boost_uses_barometric_pressure_flag == 0) {",
+   "cm848_evaluateProtectionModeFlags: if (boost_uses_barometric_pressure_flag == 0) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "AFC_Fueling_Override_Value",
+    "fuel_demand_load_base_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Ambient_Air_Pressure_Sensor_Present",
+    "boost_uses_barometric_pressure_flag",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Absolute_Boost_Pressure_Sensor_Present",
+    "boost_is_gauge_pressure_flag",
+    "0.40"
+   ],
+   [
+    "0006",
+    "AFC_Fueling_Threshold_1",
+    "fuel_demand_load_threshold_c",
+    "0.25"
+   ],
+   [
+    "0008",
+    "AFC_Fueling_Threshold_2",
+    "fuel_demand_load_threshold_b",
+    "0.25"
+   ],
+   [
+    "000A",
+    "AFC_Fueling_Threshold_3",
+    "fuel_demand_load_threshold_a",
+    "0.25"
+   ],
+   [
+    "000C",
+    "AFC_Fueling_Slew_Rate_1",
+    "fuel_demand_load_threshold_d",
+    "0.00"
+   ],
+   [
+    "0010",
+    "AFC_Fueling_Slew_Rate_2",
+    "fuel_demand_load_result_working",
+    "0.00"
+   ],
+   [
+    "0014",
+    "AFC_Fueling_Slew_Rate_3",
+    "fuel_demand_load_select_working",
+    "0.00"
+   ],
+   [
+    "0018",
+    "AFC_Low_Boost_Time_Delay",
+    "air_fuel_control_low_boost_time_delay",
+    "0.80"
+   ],
+   [
+    "001A",
+    "AFC_Pos_Select_Slew_Rate",
+    "air_fuel_control_low_boost_blend_fraction_increase_step",
+    "0.00"
+   ],
+   [
+    "001C",
+    "AFC_Neg_Select_Slew_Rate",
+    "air_fuel_control_low_boost_blend_fraction_decrease_step",
+    "0.00"
+   ],
+   [
+    "001E",
+    "AFC_Normal_Boost_Time_Delay",
+    "air_fuel_control_normal_boost_time_delay",
+    "0.80"
+   ],
+   [
+    "0020",
+    "AFC_Neg_Fueling_Slew_Rate",
+    "boost_fuel_limit_maximum_decrease_step",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Nonzero: boost = intake manifold pressure minus barometric pressure / 0: minus barometric_pressure_sensor_config.default_value (cm848_calculateBoostPressure / cm848_evaluateProtectionModeFlags); no direct writer - 1 in the RAM dump (was oil_pressure_sensor_init_flag)"
+ },
+ {
+  "address": "0x000645ba",
+  "block": "122A",
+  "offset": "0000",
+  "record": "Powerdown_Data_Lost_Error_Limit",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "1",
+  "max": "255",
+  "description": "[SDDLERLM] Number of consecutive occurances of powerdown data lost to set system error",
+  "region": "flash / ROM constant (no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "consecutive_incomplete_power_down_limit",
+  "references": 1,
+  "dump_raw": "3",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_applicationMain: if (consecutive_incomplete_power_down_limit < consecutive_incomplete_power_down_count_cal) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Powerdown_Data_Lost_Error_Limit",
+    "consecutive_incomplete_power_down_limit",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM constant 3: cm848_applicationMain sets fault 89 (P2509) when consecutive_incomplete_power_down_count_cal is above it"
+ },
+ {
+  "address": "0x003fd83c",
+  "block": "1254",
+  "offset": "0002",
+  "record": "Jcomm_Amb_Cond_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCAAPZ] default network priority for Ambient Conditions message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65269_priority",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initJ1939AmbientConditionsBuffer: CONCAT13(((byte)j1939_pgn65269_priority & 7) << 2,0xfef500);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd840",
+  "block": "1254",
+  "offset": "0006",
+  "record": "Jcomm_Component_ID_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCIDPZ] default network priority for Component Identification message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65259_priority",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn65259ComponentIdHandler: CONCAT13(((byte)j1939_pgn65259_priority & 7) << 2,0xfeeb00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd846",
+  "block": "1254",
+  "offset": "000C",
+  "record": "Jcomm_DM4_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCDG04PZ] Default priority for Diagnostic Message 4",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65229_priority",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn65229Dm4Handler: CONCAT13(((byte)j1939_pgn65229_priority & 7) << 2,0xfecd00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd848",
+  "block": "1254",
+  "offset": "000E",
+  "record": "Jcomm_DM5_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCDG05PZ] Default priority for Diagnostic Message 5",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65230_priority",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn65230Dm5Handler: CONCAT13(((byte)j1939_pgn65230_priority & 7) << 2,0xfece00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd84a",
+  "block": "1254",
+  "offset": "0010",
+  "record": "Jcomm_DM8_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCDG08PZ] Default priority for Diagnostic Message 8",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65232_priority",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initJ1939EngineControlBuffer: CONCAT13(((byte)j1939_pgn65232_priority & 7) << 2,0xfed000);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd84e",
+  "block": "1254",
+  "offset": "0014",
+  "record": "Jcomm_EEC1_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCEG01PZ] default network priority for EEC1 message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn61444_priority",
+  "references": 1,
+  "dump_raw": "3",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initEec1TxDescriptor: CONCAT13(((byte)j1939_pgn61444_priority & 7) << 2,0xf00400);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd850",
+  "block": "1254",
+  "offset": "0016",
+  "record": "Jcomm_EEC2_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCEG02PZ] default network priority for EEC2 message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn61443_priority",
+  "references": 1,
+  "dump_raw": "3",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn61443Eec2Handler: CONCAT13(((byte)j1939_pgn61443_priority & 7) << 2,0xf00300);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd852",
+  "block": "1254",
+  "offset": "0018",
+  "record": "Jcomm_EEC3_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCEG03PZ] default network priority for EEC3 message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65247_priority",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn65247ElectronicEngineController3Buffer: CONCAT13(((byte)j1939_pgn65247_priority & 7) << 2,0xfedf00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd854",
+  "block": "1254",
+  "offset": "001A",
+  "record": "Jcomm_Engine_Config_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCEGCGPZ] default network priority for Engine Configuration message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65251_priority",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "initFaultTimerMessage: CONCAT13(((byte)j1939_pgn65251_priority & 7) << 2,0xfee300);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd856",
+  "block": "1254",
+  "offset": "001C",
+  "record": "Jcomm_Engine_Fluid_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCEGFDPZ] default network priority for Engine Fluid message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65263_priority",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initJ1939FluidLevelPressureBuffer: CONCAT13(((byte)j1939_pgn65263_priority & 7) << 2,0xfeef00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd858",
+  "block": "1254",
+  "offset": "001E",
+  "record": "Jcomm_ERC1_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCRD01PZ] default network priority for ERC1 message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn61440_priority",
+  "references": 2,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initializePgn61440ElectronicRetarderController1Buffer: priority word j1939_pgn61440_priority, 0xF000 and the engine retarder source address",
+   "cm848_initializePgn61440ElectronicRetarderController1Buffer: CONCAT13(((byte)j1939_pgn61440_priority & 7) << 2,0xf00000);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd85a",
+  "block": "1254",
+  "offset": "0020",
+  "record": "Jcomm_Engine_Temp_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCEGTPPZ] default network priority for Engine Temperature message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65262_source_address_bits",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn65262EngineTempHandler: CONCAT13(((byte)j1939_pgn65262_source_address_bits & 7) << 2,0xfeee00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd86a",
+  "block": "1254",
+  "offset": "0030",
+  "record": "Jcomm_Vehicle_Dist_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCVHDSPZ] default network priority for Vehicle Distance message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65248_source_address_bits",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn65248VehicleDistanceHandler: CONCAT13(((byte)j1939_pgn65248_source_address_bits & 7) << 2,0xfee000);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd86c",
+  "block": "1254",
+  "offset": "0032",
+  "record": "Jcomm_Vehicle_Elect_Power_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCVHPXPZ] default network priority for Vehicle Electrical Power message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65271_source_address_bits",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initJ1939VehicleElectricalBuffer: CONCAT13(((byte)j1939_pgn65271_source_address_bits & 7) << 2,0xfef700);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd876",
+  "block": "1254",
+  "offset": "003C",
+  "record": "Jcomm_Vehicle_ID_Number_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "7",
+  "description": "[JCVHIDPZ] Default network priority for Vehicle Identification Message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65260_source_address_bits",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initPgn65260VehicleIdHandler: CONCAT13(((byte)j1939_pgn65260_source_address_bits & 7) << 2,0xfeec00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd878",
+  "block": "1254",
+  "offset": "003E",
+  "record": "Jcomm_EBC1_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCEBDFPZ] Default network priority for Engine Brake Controller #1 message.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn61441_source_address_bits",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initJ1939Etc1ControlBuffer: CONCAT13(((byte)j1939_pgn61441_source_address_bits & 7) << 2,0xf00100);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd87a",
+  "block": "1254",
+  "offset": "0040",
+  "record": "Jcomm_Fan_Drive_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCFMDFPZ] Default network priority for Fan Drive Message.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65213_priority_cal",
+  "references": 2,
+  "dump_raw": "6",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initializePgn65213FanDrive1Buffer: word j1939_pgn65213_priority_cal, 0xFEBD and the engine source address j1939_source_address, data",
+   "cm848_initializePgn65213FanDrive1Buffer: CONCAT13(((byte)j1939_pgn65213_priority_cal & 7) << 2,0xfebd00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "cm848_initializePgn65213FanDrive1Buffer uses (value & 7) << 2 as the top byte of the 29-bit CAN id, i.e. the 3-bit priority (same pattern as j1939_pgn61440_priority), not source address bits. Address 0x3fd87a is inside the EEPROM mirror (0x3fd482-0x3feec1), so the _cal suffix applies. Same issue for j1939_pgn61440_priority (0x3fd858) and j1939_pgn65269_priority (0x3fd83c): EEPROM-backed names without _ (was j1939_pgn65213_source_address_bits)"
+ },
+ {
+  "address": "0x003fd87c",
+  "block": "1254",
+  "offset": "0042",
+  "record": "Jcomm_WIFI_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "[JCWFDFPZ] Default network priority for Water In Fuel Indicator Message.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn65279_source_address_bits",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initJ1939SafetyStatusBuffer: CONCAT13(((byte)j1939_pgn65279_source_address_bits & 7) << 2,0xfeff00);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd87e",
+  "block": "1254",
+  "offset": "0044",
+  "record": "Jcomm_EPA_Info_Message_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "default network priority for TTS Message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn57344_source_address_bits",
+  "references": 1,
+  "dump_raw": "6",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initJ1939ProprietaryPgn65504Buffer: CONCAT13(((byte)j1939_pgn57344_source_address_bits & 7) << 2,0xffe000);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003fd880",
+  "block": "1254",
+  "offset": "0046",
+  "record": "Jcomm_Anti_Theft_Status_Msg_Default_Priority",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "7",
+  "description": "default network priority for anti-theft status message",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "j1939_pgn56360_source_address_bits",
+  "references": 1,
+  "dump_raw": "7",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_initJ1939ProprietaryStatusBuffer: CONCAT13(((byte)j1939_pgn56360_source_address_bits & 7) << 2,0xdc2800);"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Jcomm_ACK_Message_Default_Priority",
+    "j1939_ackm_priority",
+    "0.25"
+   ],
+   [
+    "0002",
+    "Jcomm_Amb_Cond_Message_Default_Priority",
+    "j1939_pgn65269_priority",
+    "0.20"
+   ],
+   [
+    "0004",
+    "Jcomm_CC_VSS_Message_Default_Priority",
+    "j1939_cruise_ctrl_priority",
+    "0.40"
+   ],
+   [
+    "0006",
+    "Jcomm_Component_ID_Message_Default_Priority",
+    "j1939_pgn65259_priority",
+    "0.20"
+   ],
+   [
+    "0008",
+    "Jcomm_DM1_Message_Default_Priority",
+    "j1939_dm1_priority",
+    "0.60"
+   ],
+   [
+    "000A",
+    "Jcomm_DM2_Message_Default_Priority",
+    "j1939_dm2_priority",
+    "0.60"
+   ],
+   [
+    "000C",
+    "Jcomm_DM4_Message_Default_Priority",
+    "j1939_pgn65229_priority",
+    "0.20"
+   ],
+   [
+    "000E",
+    "Jcomm_DM5_Message_Default_Priority",
+    "j1939_pgn65230_priority",
+    "0.20"
+   ],
+   [
+    "0010",
+    "Jcomm_DM8_Message_Default_Priority",
+    "j1939_pgn65232_priority",
+    "0.20"
+   ],
+   [
+    "0012",
+    "Jcomm_DM10_Message_Default_Priority",
+    "j1939_dm11_priority",
+    "0.40"
+   ],
+   [
+    "0014",
+    "Jcomm_EEC1_Message_Default_Priority",
+    "j1939_pgn61444_priority",
+    "0.20"
+   ],
+   [
+    "0016",
+    "Jcomm_EEC2_Message_Default_Priority",
+    "j1939_pgn61443_priority",
+    "0.20"
+   ],
+   [
+    "0018",
+    "Jcomm_EEC3_Message_Default_Priority",
+    "j1939_pgn65247_priority",
+    "0.20"
+   ],
+   [
+    "001A",
+    "Jcomm_Engine_Config_Message_Default_Priority",
+    "j1939_pgn65251_priority",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x003feebe",
+  "block": "12A6",
+  "offset": "0000",
+  "record": "Executive_Timing_Overflows",
+  "unit": "DEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "[SSECTMOV] Number of times which frame overflow has occured in executive.",
+  "region": "EEPROM mirror (name ends _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "scheduler_overrun_count",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "main_loop: scheduler_overrun_count = scheduler_overrun_count + 1;",
+   "main_loop: scheduler_overrun_count = scheduler_overrun_count + 1;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Executive_Timing_Overflows",
+    "scheduler_overrun_count",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [
+   "BTR_Denominator"
+  ],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"1930\", \"offset\": \"0018\", \"record\": \"BTR_Denominator\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"1\", \"min\": \"0\", \"max\": \"65535\", \"address\": \"0x003feebe\", \"status\": \"named\", \""
+  ]
+ },
+ {
+  "address": "0x0040a3e0",
+  "block": "16A2",
+  "offset": "0022",
+  "record": "TGC_Turbo_Deriv_Term",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.03125",
+  "min": "-800",
+  "max": "800",
+  "description": "Turbo speed limiter derivative term",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_pid_adjustment_output",
+  "references": 2,
+  "dump_raw": "-25",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateWastegateDutyRequest: governor_pid_adjustment_output = (word)iVar8;",
+   "cm848_calculateWastegateDutyRequest: (int)(short)governor_pid_adjustment_output;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TGC_Feedforward_Term",
+    "wastegate_duty_feedforward_term",
+    "0.67"
+   ],
+   [
+    "0002",
+    "TGC_Integral_Term",
+    "wastegate_duty_integrator_whole_counts",
+    "0.00"
+   ],
+   [
+    "0004",
+    "TGC_Proportional_Term",
+    "wastegate_duty_proportional_term",
+    "0.67"
+   ],
+   [
+    "0006",
+    "TGC_Adjusted_I_Gain",
+    "wastegate_duty_integral_gain",
+    "0.25"
+   ],
+   [
+    "000C",
+    "TGC_VT_Cmd",
+    "wastegate_duty_controller_state",
+    "0.00"
+   ],
+   [
+    "000E",
+    "TGC_Error",
+    "wastegate_duty_controller_state.selected_control_term",
+    "0.00"
+   ],
+   [
+    "0010",
+    "TGC_Turbo_Spd_Drt_Error",
+    "wastegate_duty_controller_state.first_error_proportional_derivative_term",
+    "0.20"
+   ],
+   [
+    "0012",
+    "TGC_Turbo_Drt_SET_Gain",
+    "wastegate_duty_controller_state.first_error_gain",
+    "0.20"
+   ],
+   [
+    "0014",
+    "TGC_Final_LLim",
+    "wastegate_duty_controller_state.floor_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "0016",
+    "TGC_LLim_Altitude_Offset",
+    "wastegate_duty_controller_state.floor_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TGC_Max_Closing",
+    "wastegate_duty_controller_state.ceiling_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001A",
+    "TGC_Min_Closing",
+    "wastegate_duty_controller_state.floor_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001C",
+    "TGC_Final_ULim",
+    "wastegate_duty_controller_state.ceiling_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001E",
+    "TGC_ULim_Altitude_Offset",
+    "wastegate_duty_controller_state.ceiling_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"16A2\", \"offset\": \"0022\", \"record\": \"TGC_Turbo_Deriv_Term\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"S\", \"scale\": \"0.03125\", \"min\": \"-800\", \"max\": \"800\", \"address\": \"0x0040a3e0\", \"status\""
+  ]
+ },
+ {
+  "address": "0x0040a3e2",
+  "block": "16A2",
+  "offset": "0024",
+  "record": "TGC_COT_Drt_SET_Gain",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.015625",
+  "min": "0",
+  "max": "400",
+  "description": "COT limiter error-based gain",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "governor_trim_lookup_result",
+  "references": 2,
+  "dump_raw": "64",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_calculateWastegateDutyRequest: governor_trim_lookup_result =",
+   "cm848_calculateWastegateDutyRequest: uVar6 = iVar7 * (uint)governor_trim_lookup_result;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TGC_Feedforward_Term",
+    "wastegate_duty_feedforward_term",
+    "0.67"
+   ],
+   [
+    "0002",
+    "TGC_Integral_Term",
+    "wastegate_duty_integrator_whole_counts",
+    "0.00"
+   ],
+   [
+    "0004",
+    "TGC_Proportional_Term",
+    "wastegate_duty_proportional_term",
+    "0.67"
+   ],
+   [
+    "0006",
+    "TGC_Adjusted_I_Gain",
+    "wastegate_duty_integral_gain",
+    "0.25"
+   ],
+   [
+    "000C",
+    "TGC_VT_Cmd",
+    "wastegate_duty_controller_state",
+    "0.00"
+   ],
+   [
+    "000E",
+    "TGC_Error",
+    "wastegate_duty_controller_state.selected_control_term",
+    "0.00"
+   ],
+   [
+    "0010",
+    "TGC_Turbo_Spd_Drt_Error",
+    "wastegate_duty_controller_state.first_error_proportional_derivative_term",
+    "0.20"
+   ],
+   [
+    "0012",
+    "TGC_Turbo_Drt_SET_Gain",
+    "wastegate_duty_controller_state.first_error_gain",
+    "0.20"
+   ],
+   [
+    "0014",
+    "TGC_Final_LLim",
+    "wastegate_duty_controller_state.floor_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "0016",
+    "TGC_LLim_Altitude_Offset",
+    "wastegate_duty_controller_state.floor_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ],
+   [
+    "0018",
+    "TGC_Max_Closing",
+    "wastegate_duty_controller_state.ceiling_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001A",
+    "TGC_Min_Closing",
+    "wastegate_duty_controller_state.floor_grid_lookup_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001C",
+    "TGC_Final_ULim",
+    "wastegate_duty_controller_state.ceiling_half_duty_counts",
+    "0.00"
+   ],
+   [
+    "001E",
+    "TGC_ULim_Altitude_Offset",
+    "wastegate_duty_controller_state.ceiling_altitude_adjustment_half_duty_counts",
+    "0.20"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"16A2\", \"offset\": \"0024\", \"record\": \"TGC_COT_Drt_SET_Gain\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.015625\", \"min\": \"0\", \"max\": \"400\", \"address\": \"0x0040a3e2\", \"status\": "
+  ]
+ },
+ {
+  "address": "0x00409fa4",
+  "block": "1901",
+  "offset": "0030",
+  "record": "C_BT_Max_Counts",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "100",
+  "description": "Debounce counter limit for BT key-on fault",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "battery_temperature_rationality_mismatch_count_threshold",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "cm848_crossCheckTemperatureSensorsBeforeStart: if (battery_temperature_rationality_mismatch_count_threshold <",
+   "cm848_checkBatteryTemperatureKeyOnRationality: uVar4 = (uint)battery_temperature_rationality_mismatch_count_threshold;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Battery_Temperature_Mileage",
+    "battery_temperature_stuck_check_distance_threshold",
+    "0.67"
+   ],
+   [
+    "0004",
+    "Battery_Temperature_Temp_Delta",
+    "battery_temperature_stuck_check_temperature_delta",
+    "1.00"
+   ],
+   [
+    "0006",
+    "Intake_Manifold_Temperature_Mileage",
+    "intake_manifold_temperature_stuck_check_distance_threshold",
+    "0.75"
+   ],
+   [
+    "000A",
+    "Intake_Manifold_Temperature_Temp_Delta",
+    "intake_manifold_temperature_stuck_check_temperature_delta",
+    "1.00"
+   ],
+   [
+    "000C",
+    "Battery_Temperature_Cycle_Limit",
+    "battery_temperature_stuck_check_failed_cycle_limit",
+    "1.00"
+   ],
+   [
+    "000E",
+    "Intake_Manifold_Temperature_Cycle_Limit",
+    "intake_manifold_temperature_stuck_check_failed_cycle_limit",
+    "1.00"
+   ],
+   [
+    "0010",
+    "Ambient_Air_Temperature_Temp_Delta",
+    "ambient_air_temperature_stuck_check_temperature_delta",
+    "1.00"
+   ],
+   [
+    "0012",
+    "Ambient_Air_Temperature_Mileage",
+    "ambient_air_temperature_stuck_check_distance_threshold",
+    "0.75"
+   ],
+   [
+    "0016",
+    "Ambient_Air_Temperature_Cycle_Limit",
+    "ambient_air_temperature_stuck_check_failed_cycle_limit",
+    "1.00"
+   ],
+   [
+    "0018",
+    "Battery_Temperature_Accum_Miles_Limit",
+    "battery_temperature_stuck_check_accumulated_distance_limit",
+    "0.60"
+   ],
+   [
+    "001A",
+    "Intake_Manifold_Temperature_Accum_Miles_Limit",
+    "intake_manifold_temperature_stuck_check_accumulated_distance_limit",
+    "0.67"
+   ],
+   [
+    "001C",
+    "Ambient_Air_Temperature_Accum_Miles_Limit",
+    "ambient_air_temperature_stuck_check_accumulated_distance_limit",
+    "0.67"
+   ],
+   [
+    "001E",
+    "Rationality_Startup_Time_Delay",
+    "temperature_rationality_cranking_start_delay",
+    "0.50"
+   ],
+   [
+    "0020",
+    "Rationality_Min_Off_Time",
+    "temperature_cross_check_minimum_engine_off_time",
+    "0.75"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Mismatch count above which the battery temp path is flagged (P0514) - 0 so the first mismatch triggers - shared by the cranking cross-check and the moving re-check (was DAT_00409fa4)"
+ },
+ {
+  "address": "0x004051f6",
+  "block": "1A1A",
+  "offset": "0000",
+  "record": "C_TPE_CIT_Ref_Alpha0",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "Alpha0 CIT reference",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "injection_timing_filter_coeff_cal",
+  "references": 1,
+  "dump_raw": "4928",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: (unaff_r31,param_2,(int)injection_timing_filter_coeff_cal,"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_TPE_CIT_Ref_Alpha0",
+    "injection_timing_filter_coeff_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_TPE_CIT_Ref_Alpha1",
+    "injection_timing_offset_boost1_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "C_TPE_CIT_Ref_Chi2",
+    "injection_timing_offset_boost2_cal",
+    "0.20"
+   ],
+   [
+    "0006",
+    "C_TPE_CIT_Ref_Chi3",
+    "injection_timing_offset_boost3_cal",
+    "0.20"
+   ],
+   [
+    "0008",
+    "C_TPE_CIT_Ref_Chi4",
+    "injection_timing_offset_boost4_cal",
+    "0.20"
+   ],
+   [
+    "000A",
+    "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+    "fuel_demand_boost_offset_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_TPE_Charge_Tmptr_Est_Offset",
+    "fuel_demand_timing_offset_cal",
+    "0.20"
+   ],
+   [
+    "000E",
+    "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+    "fuel_demand_timing_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x004051f8",
+  "block": "1A1A",
+  "offset": "0002",
+  "record": "C_TPE_CIT_Ref_Alpha1",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "Alpha1 CIT reference",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "injection_timing_offset_boost1_cal",
+  "references": 2,
+  "dump_raw": "4928",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: unaff_r31 = (int)injection_timing_offset_boost1_cal;",
+   "cm848_processBoostProtectionMode: param_2 = (int)injection_timing_offset_boost1_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_TPE_CIT_Ref_Alpha0",
+    "injection_timing_filter_coeff_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_TPE_CIT_Ref_Alpha1",
+    "injection_timing_offset_boost1_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "C_TPE_CIT_Ref_Chi2",
+    "injection_timing_offset_boost2_cal",
+    "0.20"
+   ],
+   [
+    "0006",
+    "C_TPE_CIT_Ref_Chi3",
+    "injection_timing_offset_boost3_cal",
+    "0.20"
+   ],
+   [
+    "0008",
+    "C_TPE_CIT_Ref_Chi4",
+    "injection_timing_offset_boost4_cal",
+    "0.20"
+   ],
+   [
+    "000A",
+    "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+    "fuel_demand_boost_offset_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_TPE_Charge_Tmptr_Est_Offset",
+    "fuel_demand_timing_offset_cal",
+    "0.20"
+   ],
+   [
+    "000E",
+    "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+    "fuel_demand_timing_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x004051fa",
+  "block": "1A1A",
+  "offset": "0004",
+  "record": "C_TPE_CIT_Ref_Chi2",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "Chi2 CIT Reference",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "injection_timing_offset_boost2_cal",
+  "references": 2,
+  "dump_raw": "4928",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: unaff_r31 = (int)injection_timing_offset_boost2_cal;",
+   "cm848_processBoostProtectionMode: param_2 = (int)injection_timing_offset_boost2_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_TPE_CIT_Ref_Alpha0",
+    "injection_timing_filter_coeff_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_TPE_CIT_Ref_Alpha1",
+    "injection_timing_offset_boost1_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "C_TPE_CIT_Ref_Chi2",
+    "injection_timing_offset_boost2_cal",
+    "0.20"
+   ],
+   [
+    "0006",
+    "C_TPE_CIT_Ref_Chi3",
+    "injection_timing_offset_boost3_cal",
+    "0.20"
+   ],
+   [
+    "0008",
+    "C_TPE_CIT_Ref_Chi4",
+    "injection_timing_offset_boost4_cal",
+    "0.20"
+   ],
+   [
+    "000A",
+    "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+    "fuel_demand_boost_offset_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_TPE_Charge_Tmptr_Est_Offset",
+    "fuel_demand_timing_offset_cal",
+    "0.20"
+   ],
+   [
+    "000E",
+    "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+    "fuel_demand_timing_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x004051fc",
+  "block": "1A1A",
+  "offset": "0006",
+  "record": "C_TPE_CIT_Ref_Chi3",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "Chi3 CIT Reference",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "injection_timing_offset_boost3_cal",
+  "references": 2,
+  "dump_raw": "4928",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: unaff_r31 = (int)injection_timing_offset_boost3_cal;",
+   "cm848_processBoostProtectionMode: param_2 = (int)injection_timing_offset_boost3_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_TPE_CIT_Ref_Alpha0",
+    "injection_timing_filter_coeff_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_TPE_CIT_Ref_Alpha1",
+    "injection_timing_offset_boost1_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "C_TPE_CIT_Ref_Chi2",
+    "injection_timing_offset_boost2_cal",
+    "0.20"
+   ],
+   [
+    "0006",
+    "C_TPE_CIT_Ref_Chi3",
+    "injection_timing_offset_boost3_cal",
+    "0.20"
+   ],
+   [
+    "0008",
+    "C_TPE_CIT_Ref_Chi4",
+    "injection_timing_offset_boost4_cal",
+    "0.20"
+   ],
+   [
+    "000A",
+    "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+    "fuel_demand_boost_offset_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_TPE_Charge_Tmptr_Est_Offset",
+    "fuel_demand_timing_offset_cal",
+    "0.20"
+   ],
+   [
+    "000E",
+    "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+    "fuel_demand_timing_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x004051fe",
+  "block": "1A1A",
+  "offset": "0008",
+  "record": "C_TPE_CIT_Ref_Chi4",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "Chi4 CIT Reference",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "injection_timing_offset_boost4_cal",
+  "references": 2,
+  "dump_raw": "4928",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: unaff_r31 = (int)injection_timing_offset_boost4_cal;",
+   "cm848_processBoostProtectionMode: param_2 = (int)injection_timing_offset_boost4_cal;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_TPE_CIT_Ref_Alpha0",
+    "injection_timing_filter_coeff_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_TPE_CIT_Ref_Alpha1",
+    "injection_timing_offset_boost1_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "C_TPE_CIT_Ref_Chi2",
+    "injection_timing_offset_boost2_cal",
+    "0.20"
+   ],
+   [
+    "0006",
+    "C_TPE_CIT_Ref_Chi3",
+    "injection_timing_offset_boost3_cal",
+    "0.20"
+   ],
+   [
+    "0008",
+    "C_TPE_CIT_Ref_Chi4",
+    "injection_timing_offset_boost4_cal",
+    "0.20"
+   ],
+   [
+    "000A",
+    "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+    "fuel_demand_boost_offset_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_TPE_Charge_Tmptr_Est_Offset",
+    "fuel_demand_timing_offset_cal",
+    "0.20"
+   ],
+   [
+    "000E",
+    "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+    "fuel_demand_timing_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00405200",
+  "block": "1A1A",
+  "offset": "000A",
+  "record": "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.000015259",
+  "min": "0",
+  "max": "1",
+  "description": "Filter constant for charge temperature",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "fuel_demand_boost_offset_filter_coefficient",
+  "references": 1,
+  "dump_raw": "65404",
+  "token_overlap": 0.0,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_initBoostProtectionState: fuel_demand_boost_offset_filter.coefficient = &fuel_demand_boost_offset_filter_coefficient;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_TPE_CIT_Ref_Alpha0",
+    "injection_timing_filter_coeff_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_TPE_CIT_Ref_Alpha1",
+    "injection_timing_offset_boost1_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "C_TPE_CIT_Ref_Chi2",
+    "injection_timing_offset_boost2_cal",
+    "0.20"
+   ],
+   [
+    "0006",
+    "C_TPE_CIT_Ref_Chi3",
+    "injection_timing_offset_boost3_cal",
+    "0.20"
+   ],
+   [
+    "0008",
+    "C_TPE_CIT_Ref_Chi4",
+    "injection_timing_offset_boost4_cal",
+    "0.20"
+   ],
+   [
+    "000A",
+    "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+    "fuel_demand_boost_offset_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_TPE_Charge_Tmptr_Est_Offset",
+    "fuel_demand_timing_offset_cal",
+    "0.20"
+   ],
+   [
+    "000E",
+    "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+    "fuel_demand_timing_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Coefficient of a cm848_signedFirstOrderFilter record (read through its coefficient pointer as a 16-bit word): the weight of the previous value in 1/65536 - 65404 = 0.998 in the RAM dump; 0 = no filtering (new row 2026-11-19)"
+ },
+ {
+  "address": "0x00405202",
+  "block": "1A1A",
+  "offset": "000C",
+  "record": "C_TPE_Charge_Tmptr_Est_Offset",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "50",
+  "description": "Offset used for Charge Temperature Estimation",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_demand_timing_offset_cal",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: (int)fuel_demand_timing_scale_cal >> 0xb) + (int)fuel_demand_timing_offset_cal +"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_TPE_CIT_Ref_Alpha0",
+    "injection_timing_filter_coeff_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_TPE_CIT_Ref_Alpha1",
+    "injection_timing_offset_boost1_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "C_TPE_CIT_Ref_Chi2",
+    "injection_timing_offset_boost2_cal",
+    "0.20"
+   ],
+   [
+    "0006",
+    "C_TPE_CIT_Ref_Chi3",
+    "injection_timing_offset_boost3_cal",
+    "0.20"
+   ],
+   [
+    "0008",
+    "C_TPE_CIT_Ref_Chi4",
+    "injection_timing_offset_boost4_cal",
+    "0.20"
+   ],
+   [
+    "000A",
+    "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+    "fuel_demand_boost_offset_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_TPE_Charge_Tmptr_Est_Offset",
+    "fuel_demand_timing_offset_cal",
+    "0.20"
+   ],
+   [
+    "000E",
+    "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+    "fuel_demand_timing_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00405204",
+  "block": "1A1A",
+  "offset": "000E",
+  "record": "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.00048828125",
+  "min": "0",
+  "max": "10",
+  "description": "Charge temperature estimate multiplier",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_demand_timing_scale_cal",
+  "references": 1,
+  "dump_raw": "2048",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: (int)fuel_demand_timing_scale_cal >> 0xb) + (int)fuel_demand_timing_offset_cal +"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "C_TPE_CIT_Ref_Alpha0",
+    "injection_timing_filter_coeff_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "C_TPE_CIT_Ref_Alpha1",
+    "injection_timing_offset_boost1_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "C_TPE_CIT_Ref_Chi2",
+    "injection_timing_offset_boost2_cal",
+    "0.20"
+   ],
+   [
+    "0006",
+    "C_TPE_CIT_Ref_Chi3",
+    "injection_timing_offset_boost3_cal",
+    "0.20"
+   ],
+   [
+    "0008",
+    "C_TPE_CIT_Ref_Chi4",
+    "injection_timing_offset_boost4_cal",
+    "0.20"
+   ],
+   [
+    "000A",
+    "C_TPE_Charge_Tmptr_Est_Fil_Cnst",
+    "fuel_demand_boost_offset_filter_coefficient",
+    "0.00"
+   ],
+   [
+    "000C",
+    "C_TPE_Charge_Tmptr_Est_Offset",
+    "fuel_demand_timing_offset_cal",
+    "0.20"
+   ],
+   [
+    "000E",
+    "C_TPE_Charge_Tmptr_Est_CIT_Gain",
+    "fuel_demand_timing_scale_cal",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x0040a452",
+  "block": "1A1B",
+  "offset": "0000",
+  "record": "Charge_Tmptr_Est",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "Estimated Charge Tmptr",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "fuel_demand_boost_offset_filtered",
+  "references": 3,
+  "dump_raw": "4692",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1, 'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: fuel_demand_boost_offset_filtered =",
+   "cm848_filterAndSelectIntakeManifoldTemperature: value, 1 backup = fuel_demand_boost_offset_filtered (e2m 1A1B +0 Charge_Tmptr_Est), 2 default =",
+   "cm848_filterAndSelectIntakeManifoldTemperature: intake_manifold_temperature_filtered = fuel_demand_boost_offset_filtered;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Charge_Tmptr_Est",
+    "fuel_demand_boost_offset_filtered",
+    "0.00"
+   ],
+   [
+    "0002",
+    "TPE_CIT_Ref",
+    "injection_timing_offset_filtered",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x0040a454",
+  "block": "1A1B",
+  "offset": "0002",
+  "record": "TPE_CIT_Ref",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "350",
+  "description": "Offset for Charge Pressure Estimate",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_offset_filtered",
+  "references": 2,
+  "dump_raw": "4928",
+  "token_overlap": 0.0,
+  "access_widths": "{'sth': 1} -> 2 byte",
+  "code": [
+   "cm848_processBoostProtectionMode: injection_timing_offset_filtered =",
+   "cm848_processBoostProtectionMode: iVar1 = ((int)(short)(ambient_air_temperature_selected - injection_timing_offset_filtered) *"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "Charge_Tmptr_Est",
+    "fuel_demand_boost_offset_filtered",
+    "0.00"
+   ],
+   [
+    "0002",
+    "TPE_CIT_Ref",
+    "injection_timing_offset_filtered",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x004090cc",
+  "block": "804A",
+  "offset": "0000",
+  "record": "EOI_Limit_Threshold",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "65535",
+  "description": "Threshold where EOI limit counter causes error.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "injection_timing_count_a_max_cal",
+  "references": 1,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_updateEngineStatusTimers: if (injection_timing_count_a_max_cal <= injection_timing_count_a) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "EOI_Limit_Threshold",
+    "injection_timing_count_a_max_cal",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Injection_Command_Overlap_Threshold",
+    "injection_timing_count_b_max_cal",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": ""
+ },
+ {
+  "address": "0x00408728",
+  "block": "8A0E",
+  "offset": "000A",
+  "record": "Cruise_N_V_Ratio_Int_Tolerance",
+  "unit": "RPM/SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.125",
+  "min": "0",
+  "max": "100",
+  "description": "Level at which N_V Ratio integrator will cause a kick out",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "cruise_speed_error_integral_limit",
+  "references": 1,
+  "dump_raw": "11",
+  "token_overlap": 0.17,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "governor_cruise_deniedStatus_update: if ((uint)cruise_speed_error_integral_limit <= (uVar2 & 0xffff)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CC_Switch_Debounce",
+    "cruise_switch_request_debounce_count_maximum",
+    "1.00"
+   ],
+   [
+    "0002",
+    "Coast_Accel_Timer",
+    "cruise_coast_accelerate_hold_time",
+    "0.33"
+   ],
+   [
+    "0004",
+    "Cruise_Max_RPM",
+    "cruise_target_rpm_max",
+    "1.00"
+   ],
+   [
+    "0006",
+    "Cruise_N_V_Ratio_Int_Clear_Count",
+    "cruise_steady_debounce_count",
+    "0.29"
+   ],
+   [
+    "0008",
+    "Cruise_N_V_Ratio_Int_Clear_Level",
+    "cruise_ratio_steady_threshold",
+    "0.29"
+   ],
+   [
+    "000A",
+    "Cruise_N_V_Ratio_Int_Tolerance",
+    "cruise_speed_error_integral_limit",
+    "0.17"
+   ],
+   [
+    "000E",
+    "Cruise_N_V_Max",
+    "cruise_rpm_ratio_max",
+    "0.50"
+   ],
+   [
+    "0010",
+    "Cruise_N_V_Min",
+    "cruise_rpm_ratio_min",
+    "0.50"
+   ],
+   [
+    "0012",
+    "Cruise_Min_RPM",
+    "cruise_target_rpm_min",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "magnitude limit for cruise_speed_error_integral; |integral| >= this -> cruise_control_denied_status=0xb inhibit. ROM-initialized cal so no _cal",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8A0E\", \"offset\": \"000A\", \"record\": \"Cruise_N_V_Ratio_Int_Tolerance\", \"unit\": \"RPM/SEC\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.125\", \"min\": \"0\", \"max\": \"100\", \"address\": \"0x00408728\", \"sta"
+  ]
+ },
+ {
+  "address": "0x0040869e",
+  "block": "8A14",
+  "offset": "0004",
+  "record": "AC_Control_Configuration",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1.0",
+  "min": "0",
+  "max": "2",
+  "description": "Defines which AC control algorithm runs; 0=BR truck, 1=DR truck",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "hpcr_protection_eval_mode",
+  "references": 2,
+  "dump_raw": "1",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "hpcr_fuel_mode_state_transition: if (hpcr_protection_eval_mode == 0) {",
+   "hpcr_fuel_mode_state_transition: else if (hpcr_protection_eval_mode == 1) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "AC_WOT_Off",
+    "air_conditioning_high_fuel_demand_cutout_throttle_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "shift_in_process_hold_off_time_limit",
+    "0.67"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000A",
+    "AC_High_Coolant_Off",
+    "air_conditioning_high_coolant_temperature_off_threshold",
+    "0.75"
+   ],
+   [
+    "000C",
+    "AC_High_Coolant_On",
+    "air_conditioning_high_coolant_temperature_on_threshold",
+    "0.67"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "0010",
+    "AC_High_Pressure_On",
+    "air_conditioning_high_pressure_on_threshold",
+    "0.67"
+   ],
+   [
+    "0012",
+    "AC_High_RPM_Off",
+    "air_conditioning_high_rpm_off_threshold",
+    "0.75"
+   ],
+   [
+    "0014",
+    "AC_High_RPM_On",
+    "air_conditioning_high_rpm_on_threshold",
+    "0.67"
+   ],
+   [
+    "0016",
+    "AC_Low_Pressure_Off",
+    "air_conditioning_low_pressure_off_threshold",
+    "0.75"
+   ],
+   [
+    "0018",
+    "AC_Low_Pressure_On",
+    "air_conditioning_low_pressure_on_threshold",
+    "0.67"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM selector for protection eval path 0/1",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8A14\", \"offset\": \"0004\", \"record\": \"AC_Control_Configuration\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"1.0\", \"min\": \"0\", \"max\": \"2\", \"address\": \"0x0040869e\", \"status\": \"na"
+  ]
+ },
+ {
+  "address": "0x004086a0",
+  "block": "8A14",
+  "offset": "0006",
+  "record": "AC_Cycle_Off_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "255",
+  "description": "Minimum amount of time ac driver will be in off state",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_event26_holdoff_limit_b",
+  "references": 2,
+  "dump_raw": "0",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (protection_event26_post_fault_holdoff_count_b < protection_event26_holdoff_limit_b) {",
+   "engine_protection_conditionCode_evaluate: (protection_event26_post_fault_holdoff_count_b < protection_event26_holdoff_limit_b)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "AC_WOT_Off",
+    "air_conditioning_high_fuel_demand_cutout_throttle_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "shift_in_process_hold_off_time_limit",
+    "0.67"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000A",
+    "AC_High_Coolant_Off",
+    "air_conditioning_high_coolant_temperature_off_threshold",
+    "0.75"
+   ],
+   [
+    "000C",
+    "AC_High_Coolant_On",
+    "air_conditioning_high_coolant_temperature_on_threshold",
+    "0.67"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "0010",
+    "AC_High_Pressure_On",
+    "air_conditioning_high_pressure_on_threshold",
+    "0.67"
+   ],
+   [
+    "0012",
+    "AC_High_RPM_Off",
+    "air_conditioning_high_rpm_off_threshold",
+    "0.75"
+   ],
+   [
+    "0014",
+    "AC_High_RPM_On",
+    "air_conditioning_high_rpm_on_threshold",
+    "0.67"
+   ],
+   [
+    "0016",
+    "AC_Low_Pressure_Off",
+    "air_conditioning_low_pressure_off_threshold",
+    "0.75"
+   ],
+   [
+    "0018",
+    "AC_Low_Pressure_On",
+    "air_conditioning_low_pressure_on_threshold",
+    "0.67"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM limit for event-26 holdoff counter B",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8A14\", \"offset\": \"0006\", \"record\": \"AC_Cycle_Off_Time\", \"unit\": \"SEC\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.1\", \"min\": \"0\", \"max\": \"255\", \"address\": \"0x004086a0\", \"status\": \"named\", \"row"
+  ]
+ },
+ {
+  "address": "0x004086a2",
+  "block": "8A14",
+  "offset": "0008",
+  "record": "AC_Cycle_On_Time",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.1",
+  "min": "0",
+  "max": "255",
+  "description": "AC driver can be turned on once every AC_Cycle_On_Time seconds",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_event26_holdoff_limit_a",
+  "references": 2,
+  "dump_raw": "70",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "engine_protection_conditionCode_evaluate: if (protection_event26_post_fault_holdoff_count_a < protection_event26_holdoff_limit_a) {",
+   "engine_protection_conditionCode_evaluate: (protection_event26_post_fault_holdoff_count_a < protection_event26_holdoff_limit_a)) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "AC_WOT_Off",
+    "air_conditioning_high_fuel_demand_cutout_throttle_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "shift_in_process_hold_off_time_limit",
+    "0.67"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000A",
+    "AC_High_Coolant_Off",
+    "air_conditioning_high_coolant_temperature_off_threshold",
+    "0.75"
+   ],
+   [
+    "000C",
+    "AC_High_Coolant_On",
+    "air_conditioning_high_coolant_temperature_on_threshold",
+    "0.67"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "0010",
+    "AC_High_Pressure_On",
+    "air_conditioning_high_pressure_on_threshold",
+    "0.67"
+   ],
+   [
+    "0012",
+    "AC_High_RPM_Off",
+    "air_conditioning_high_rpm_off_threshold",
+    "0.75"
+   ],
+   [
+    "0014",
+    "AC_High_RPM_On",
+    "air_conditioning_high_rpm_on_threshold",
+    "0.67"
+   ],
+   [
+    "0016",
+    "AC_Low_Pressure_Off",
+    "air_conditioning_low_pressure_off_threshold",
+    "0.75"
+   ],
+   [
+    "0018",
+    "AC_Low_Pressure_On",
+    "air_conditioning_low_pressure_on_threshold",
+    "0.67"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM limit for event-26 holdoff counter A",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8A14\", \"offset\": \"0008\", \"record\": \"AC_Cycle_On_Time\", \"unit\": \"SEC\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.1\", \"min\": \"0\", \"max\": \"255\", \"address\": \"0x004086a2\", \"status\": \"named\", \"row_"
+  ]
+ },
+ {
+  "address": "0x004086a8",
+  "block": "8A14",
+  "offset": "000E",
+  "record": "AC_High_Pressure_Off",
+  "unit": "PSI",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.0078125",
+  "min": "0",
+  "max": "500",
+  "description": "If AC_Pressure greater than this value, ac driver will be turned off",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "protection_event26_fuel_qty_gate_upper",
+  "references": 2,
+  "dump_raw": "60928",
+  "token_overlap": 0.0,
+  "access_widths": "{'lhz': 2} -> 2 byte",
+  "code": [
+   "engine_protection_fuelMass_rpmCheck: (air_conditioning_pressure_sensor_filtered < protection_event26_fuel_qty_gate_upper)) {",
+   "engine_protection_conditionCode_evaluate: if (protection_event26_fuel_qty_gate_upper < air_conditioning_pressure_sensor_filtered) {"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "AC_WOT_Off",
+    "air_conditioning_high_fuel_demand_cutout_throttle_threshold",
+    "0.00"
+   ],
+   [
+    "0002",
+    "Shift_In_Process_TL",
+    "shift_in_process_hold_off_time_limit",
+    "0.67"
+   ],
+   [
+    "0004",
+    "AC_Control_Configuration",
+    "hpcr_protection_eval_mode",
+    "0.00"
+   ],
+   [
+    "0006",
+    "AC_Cycle_Off_Time",
+    "protection_event26_holdoff_limit_b",
+    "0.00"
+   ],
+   [
+    "0008",
+    "AC_Cycle_On_Time",
+    "protection_event26_holdoff_limit_a",
+    "0.00"
+   ],
+   [
+    "000A",
+    "AC_High_Coolant_Off",
+    "air_conditioning_high_coolant_temperature_off_threshold",
+    "0.75"
+   ],
+   [
+    "000C",
+    "AC_High_Coolant_On",
+    "air_conditioning_high_coolant_temperature_on_threshold",
+    "0.67"
+   ],
+   [
+    "000E",
+    "AC_High_Pressure_Off",
+    "protection_event26_fuel_qty_gate_upper",
+    "0.00"
+   ],
+   [
+    "0010",
+    "AC_High_Pressure_On",
+    "air_conditioning_high_pressure_on_threshold",
+    "0.67"
+   ],
+   [
+    "0012",
+    "AC_High_RPM_Off",
+    "air_conditioning_high_rpm_off_threshold",
+    "0.75"
+   ],
+   [
+    "0014",
+    "AC_High_RPM_On",
+    "air_conditioning_high_rpm_on_threshold",
+    "0.67"
+   ],
+   [
+    "0016",
+    "AC_Low_Pressure_Off",
+    "air_conditioning_low_pressure_off_threshold",
+    "0.75"
+   ],
+   [
+    "0018",
+    "AC_Low_Pressure_On",
+    "air_conditioning_low_pressure_on_threshold",
+    "0.67"
+   ],
+   [
+    "001A",
+    "AC_Low_RPM_Off",
+    "protection_event26_rpm_high_gate_lower",
+    "0.25"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM upper bound for event-26 fuel-qty gate",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8A14\", \"offset\": \"000E\", \"record\": \"AC_High_Pressure_Off\", \"unit\": \"PSI\", \"size\": \"2\", \"signed\": \"U\", \"scale\": \"0.0078125\", \"min\": \"0\", \"max\": \"500\", \"address\": \"0x004086a8\", \"status\": \"nam"
+  ]
+ },
+ {
+  "address": "0x00408ad2",
+  "block": "8C33",
+  "offset": "0006",
+  "record": "TCC_Rationality_Fail_Count_Limit",
+  "unit": "CNTS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Count limit when TCC rationality error will be set",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "protection_fuel_derate_increment_counter_max",
+  "references": 2,
+  "dump_raw": "3",
+  "token_overlap": 0.0,
+  "access_widths": "{'lbz': 1} -> 1 byte",
+  "code": [
+   "cm848_monitorConverterClutchAndOverdrivePerformance: if (protection_fuel_derate_increment_counter_max <= converter_clutch_rationality_fail_count) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: converter_clutch_rationality_fail_count = protection_fuel_derate_increment_counter_max;"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TCC_Engagement_Low_Speed",
+    "converter_clutch_engagement_low_speed",
+    "0.75"
+   ],
+   [
+    "0002",
+    "TCC_Max_Delta_Throttle",
+    "converter_clutch_maximum_throttle_delta",
+    "0.75"
+   ],
+   [
+    "0004",
+    "TCC_Min_Throttle",
+    "converter_clutch_minimum_throttle",
+    "0.67"
+   ],
+   [
+    "0006",
+    "TCC_Rationality_Fail_Count_Limit",
+    "protection_fuel_derate_increment_counter_max",
+    "0.00"
+   ],
+   [
+    "0007",
+    "TCC_Rationality_Min_Ratio_Delta",
+    "protection_pid_integrator_threshold",
+    "0.00"
+   ],
+   [
+    "0009",
+    "TCC_Rationality_Max_Time",
+    "converter_clutch_rationality_maximum_engagement_time",
+    "0.75"
+   ],
+   [
+    "000A",
+    "TCC_Steady_Throttle_Count_Limit",
+    "converter_clutch_steady_throttle_count_limit",
+    "0.80"
+   ],
+   [
+    "000C",
+    "TCC_OD_Max_3rd_Ratio",
+    "converter_clutch_lockup_third_gear_maximum_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "TCC_OD_Min_3rd_Ratio",
+    "converter_clutch_lockup_third_gear_minimum_ratio",
+    "0.33"
+   ],
+   [
+    "0010",
+    "TCC_OD_Min_4th_Ratio",
+    "converter_clutch_lockup_fourth_gear_ratio_limit",
+    "0.17"
+   ],
+   [
+    "0012",
+    "TCC_OD_Rationality_Time",
+    "protection_pid_step_count_threshold_b",
+    "0.00"
+   ],
+   [
+    "0013",
+    "TCC_Rationality_Pass_Count_Limit",
+    "converter_clutch_rationality_pass_count_limit",
+    "0.80"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM cap for fuel derate increment counter",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8C33\", \"offset\": \"0006\", \"record\": \"TCC_Rationality_Fail_Count_Limit\", \"unit\": \"CNTS\", \"size\": \"1\", \"signed\": \"U\", \"scale\": \"1\", \"min\": \"0\", \"max\": \"255\", \"address\": \"0x00408ad2\", \"status\":"
+  ]
+ },
+ {
+  "address": "0x00408ad3",
+  "block": "8C33",
+  "offset": "0007",
+  "record": "TCC_Rationality_Min_Ratio_Delta",
+  "unit": "UNITLESS",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.00390625",
+  "min": "0",
+  "max": "127.996",
+  "description": "Min RPM/OSS ratio sum to pass TCC rationality Monitor",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "protection_pid_integrator_threshold",
+  "references": 3,
+  "dump_raw": "13",
+  "token_overlap": 0.0,
+  "access_widths": "{'lha': 2} -> 2 byte",
+  "code": [
+   "cm848_accumulateConverterClutchRatioDeltaSum: protection_pid_integrator_threshold (e2m 8C33 +7 TCC_Rationality_Min_Ratio_Delta) when the",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: (converter_clutch_rationality_ratio_delta_sum < protection_pid_integrator_threshold)) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: if ((converter_clutch_rationality_ratio_delta_sum < protection_pid_integrator_threshold) ||"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TCC_Engagement_Low_Speed",
+    "converter_clutch_engagement_low_speed",
+    "0.75"
+   ],
+   [
+    "0002",
+    "TCC_Max_Delta_Throttle",
+    "converter_clutch_maximum_throttle_delta",
+    "0.75"
+   ],
+   [
+    "0004",
+    "TCC_Min_Throttle",
+    "converter_clutch_minimum_throttle",
+    "0.67"
+   ],
+   [
+    "0006",
+    "TCC_Rationality_Fail_Count_Limit",
+    "protection_fuel_derate_increment_counter_max",
+    "0.00"
+   ],
+   [
+    "0007",
+    "TCC_Rationality_Min_Ratio_Delta",
+    "protection_pid_integrator_threshold",
+    "0.00"
+   ],
+   [
+    "0009",
+    "TCC_Rationality_Max_Time",
+    "converter_clutch_rationality_maximum_engagement_time",
+    "0.75"
+   ],
+   [
+    "000A",
+    "TCC_Steady_Throttle_Count_Limit",
+    "converter_clutch_steady_throttle_count_limit",
+    "0.80"
+   ],
+   [
+    "000C",
+    "TCC_OD_Max_3rd_Ratio",
+    "converter_clutch_lockup_third_gear_maximum_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "TCC_OD_Min_3rd_Ratio",
+    "converter_clutch_lockup_third_gear_minimum_ratio",
+    "0.33"
+   ],
+   [
+    "0010",
+    "TCC_OD_Min_4th_Ratio",
+    "converter_clutch_lockup_fourth_gear_ratio_limit",
+    "0.17"
+   ],
+   [
+    "0012",
+    "TCC_OD_Rationality_Time",
+    "protection_pid_step_count_threshold_b",
+    "0.00"
+   ],
+   [
+    "0013",
+    "TCC_Rationality_Pass_Count_Limit",
+    "converter_clutch_rationality_pass_count_limit",
+    "0.80"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM signed threshold on protection PID integrator | retyped word -> i16 2026-11-20 (e2m signed, every load lha)",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8C33\", \"offset\": \"0007\", \"record\": \"TCC_Rationality_Min_Ratio_Delta\", \"unit\": \"UNITLESS\", \"size\": \"2\", \"signed\": \"S\", \"scale\": \"0.00390625\", \"min\": \"0\", \"max\": \"127.996\", \"address\": \"0x0040"
+  ]
+ },
+ {
+  "address": "0x00408ade",
+  "block": "8C33",
+  "offset": "0012",
+  "record": "TCC_OD_Rationality_Time",
+  "unit": "CNTS",
+  "size_bytes": "1",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "255",
+  "description": "Time after lockup to perform OD rationality check",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "byte",
+  "label_in_cpp": "protection_pid_step_count_threshold_b",
+  "references": 2,
+  "dump_raw": "23",
+  "token_overlap": 0.0,
+  "access_widths": "{'lbz': 2} -> 1 byte",
+  "code": [
+   "cm848_monitorConverterClutchAndOverdrivePerformance: (converter_clutch_rationality_timer < protection_pid_step_count_threshold_b)) {",
+   "cm848_monitorConverterClutchAndOverdrivePerformance: ((converter_clutch_rationality_timer < protection_pid_step_count_threshold_b &&"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "TCC_Engagement_Low_Speed",
+    "converter_clutch_engagement_low_speed",
+    "0.75"
+   ],
+   [
+    "0002",
+    "TCC_Max_Delta_Throttle",
+    "converter_clutch_maximum_throttle_delta",
+    "0.75"
+   ],
+   [
+    "0004",
+    "TCC_Min_Throttle",
+    "converter_clutch_minimum_throttle",
+    "0.67"
+   ],
+   [
+    "0006",
+    "TCC_Rationality_Fail_Count_Limit",
+    "protection_fuel_derate_increment_counter_max",
+    "0.00"
+   ],
+   [
+    "0007",
+    "TCC_Rationality_Min_Ratio_Delta",
+    "protection_pid_integrator_threshold",
+    "0.00"
+   ],
+   [
+    "0009",
+    "TCC_Rationality_Max_Time",
+    "converter_clutch_rationality_maximum_engagement_time",
+    "0.75"
+   ],
+   [
+    "000A",
+    "TCC_Steady_Throttle_Count_Limit",
+    "converter_clutch_steady_throttle_count_limit",
+    "0.80"
+   ],
+   [
+    "000C",
+    "TCC_OD_Max_3rd_Ratio",
+    "converter_clutch_lockup_third_gear_maximum_ratio",
+    "0.33"
+   ],
+   [
+    "000E",
+    "TCC_OD_Min_3rd_Ratio",
+    "converter_clutch_lockup_third_gear_minimum_ratio",
+    "0.33"
+   ],
+   [
+    "0010",
+    "TCC_OD_Min_4th_Ratio",
+    "converter_clutch_lockup_fourth_gear_ratio_limit",
+    "0.17"
+   ],
+   [
+    "0012",
+    "TCC_OD_Rationality_Time",
+    "protection_pid_step_count_threshold_b",
+    "0.00"
+   ],
+   [
+    "0013",
+    "TCC_Rationality_Pass_Count_Limit",
+    "converter_clutch_rationality_pass_count_limit",
+    "0.80"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "ROM secondary step-count gate for protection PID",
+  "earlier_verdict": [
+   "global_worklist_later.json: {\"block\": \"8C33\", \"offset\": \"0012\", \"record\": \"TCC_OD_Rationality_Time\", \"unit\": \"CNTS\", \"size\": \"1\", \"signed\": \"U\", \"scale\": \"1\", \"min\": \"0\", \"max\": \"255\", \"address\": \"0x00408ade\", \"status\": \"named\","
+  ]
+ },
+ {
+  "address": "0x0040b576",
+  "block": "8C5B",
+  "offset": "0006",
+  "record": "RE_PN_Crank_Park_Timer",
+  "unit": "CNTS",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "1",
+  "min": "0",
+  "max": "1024",
+  "description": "Crank in Park timer for PN diagnostics",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "park_neutral_switch_start_neutral_count",
+  "references": 3,
+  "dump_raw": "0",
+  "token_overlap": 0.2,
+  "access_widths": "{'lhz': 1} -> 2 byte",
+  "code": [
+   "cm848_monitorParkNeutralSwitch: park_neutral_switch_start_neutral_count = park_neutral_switch_start_neutral_count + 1;",
+   "cm848_monitorParkNeutralSwitch: park_neutral_switch_start_neutral_count = park_neutral_switch_start_neutral_count + 1;",
+   "cm848_monitorParkNeutralSwitch: (uint)park_neutral_switch_start_neutral_count));"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "RE_PN_Rationality_Status",
+    "park_neutral_switch_monitor_state",
+    "0.00"
+   ],
+   [
+    "0002",
+    "RE_PN_Rationality_Timer",
+    "park_neutral_switch_driving_neutral_count",
+    "0.00"
+   ],
+   [
+    "0004",
+    "RE_PN_Crank_Timer",
+    "park_neutral_switch_start_sample_count",
+    "0.00"
+   ],
+   [
+    "0006",
+    "RE_PN_Crank_Park_Timer",
+    "park_neutral_switch_start_neutral_count",
+    "0.20"
+   ],
+   [
+    "0008",
+    "RE_PN_Engine_Run_Timer",
+    "park_neutral_switch_start_check_delay_count",
+    "0.00"
+   ],
+   [
+    "000A",
+    "PN_Ratio",
+    "converter_clutch_engaged_since_low_speed_flag",
+    "0.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Run-up samples in which switch 20 read park/neutral; more than 9 run-up samples without it fail the start check (0x3fcef6 - the engine started while the switch read in gear) (was fuel_temp_derate_cycles_protected)"
+ },
+ {
+  "address": "0x00408f28",
+  "block": "8C73",
+  "offset": "0000",
+  "record": "CBD_Service_Max_Coolant_Temp",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "300",
+  "description": "Cylinder performance test disabled above this coolant temp",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "engine_sync_coolant_upper_threshold_cal",
+  "references": 1,
+  "dump_raw": "16000",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_runCylinderContributionTest: (engine_sync_coolant_upper_threshold_cal <="
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CBD_Service_Max_Coolant_Temp",
+    "engine_sync_coolant_upper_threshold_cal",
+    "0.20"
+   ],
+   [
+    "0002",
+    "CBD_Service_Min_Coolant_Temp",
+    "engine_sync_coolant_lower_threshold_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "CBD_Service_Trim_Maximum",
+    "cylinder_balance_service_fueling_trim_maximum",
+    "0.75"
+   ],
+   [
+    "0006",
+    "CBD_Service_Trim_Minimum",
+    "cylinder_balance_service_fueling_trim_minimum",
+    "0.75"
+   ],
+   [
+    "0008",
+    "Cylinder_Contribution_Gain",
+    "cylinder_contribution_test_gain",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x00408f2a",
+  "block": "8C73",
+  "offset": "0002",
+  "record": "CBD_Service_Min_Coolant_Temp",
+  "unit": "DEG_F",
+  "size_bytes": "2",
+  "signed": "S",
+  "scale": "0.015625",
+  "min": "-50",
+  "max": "300",
+  "description": "Cylinder performance test disabled below this coolant temp",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "i16",
+  "label_in_cpp": "engine_sync_coolant_lower_threshold_cal",
+  "references": 1,
+  "dump_raw": "5120",
+  "token_overlap": 0.2,
+  "access_widths": "{'lha': 1} -> 2 byte",
+  "code": [
+   "cm848_runCylinderContributionTest: engine_sync_coolant_lower_threshold_cal ||"
+  ],
+  "block_named_rows": [
+   [
+    "0000",
+    "CBD_Service_Max_Coolant_Temp",
+    "engine_sync_coolant_upper_threshold_cal",
+    "0.20"
+   ],
+   [
+    "0002",
+    "CBD_Service_Min_Coolant_Temp",
+    "engine_sync_coolant_lower_threshold_cal",
+    "0.20"
+   ],
+   [
+    "0004",
+    "CBD_Service_Trim_Maximum",
+    "cylinder_balance_service_fueling_trim_maximum",
+    "0.75"
+   ],
+   [
+    "0006",
+    "CBD_Service_Trim_Minimum",
+    "cylinder_balance_service_fueling_trim_minimum",
+    "0.75"
+   ],
+   [
+    "0008",
+    "Cylinder_Contribution_Gain",
+    "cylinder_contribution_test_gain",
+    "1.00"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": " | retyped word -> i16 2026-11-20 (e2m signed, every load lha)"
+ },
+ {
+  "address": "0x0040b66a",
+  "block": "8C75",
+  "offset": "0002",
+  "record": "Wastegate_Pressure_Control_Driver_Inhibit_Timer",
+  "unit": "SEC",
+  "size_bytes": "2",
+  "signed": "U",
+  "scale": "0.02",
+  "min": "0",
+  "max": "0",
+  "description": "Timer value of Wastegate Off cycle time when short or open circuit.",
+  "region": "RAM (working value or ROM-copied constant; no _cal)",
+  "current_row": "named",
+  "current_row_type": "word",
+  "label_in_cpp": "wastegate_solenoid_retest_pass_count",
+  "references": 6,
+  "dump_raw": "0",
+  "token_overlap": 0.17,
+  "access_widths": "{} -> none byte",
+  "code": [
+   "cm848_applyWastegateSolenoidDuty: wastegate_solenoid_retest_pass_count = wastegate_solenoid_retest_pass_count + 1;",
+   "cm848_applyWastegateSolenoidDuty: wastegate_solenoid_retest_pass_count = wastegate_solenoid_retest_pass_count + 1;",
+   "cm848_applyWastegateSolenoidDuty: if ((uint)wastegate_solenoid_retest_pass_count < (uint)wastegate_solenoid_retest_off_passes) {",
+   "cm848_applyWastegateSolenoidDuty: else if ((uint)wastegate_solenoid_retest_pass_count <"
+  ],
+  "block_named_rows": [
+   [
+    "0002",
+    "Wastegate_Pressure_Control_Driver_Inhibit_Timer",
+    "wastegate_solenoid_retest_pass_count",
+    "0.17"
+   ]
+  ],
+  "other_records_at_this_address": [],
+  "current_comment": "Wastegate solenoid retest pass counter (cm848_processFuelRateConfig): 0 % duty below wastegate_solenoid_retest_off_passes / 100 % for the next 2 x wastegate_solenoid_retest_fault_confirm_passes / then 0 and the retest flag clears (was fuel_demand_phase_counter)"
+ }
+]

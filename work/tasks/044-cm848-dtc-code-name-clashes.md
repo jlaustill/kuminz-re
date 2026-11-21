@@ -138,3 +138,8 @@ prints such updates as pieces. See the note in `firmware/CLAUDE.md`.
   - no boot-ROM function changed beyond field renames;
   - the underscore warnings stayed at 43 and the importer stats did not change;
   - `piece_census.py` found the pieces added by the two RMW bitfields, which were reverted.
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainControlTimeouts`

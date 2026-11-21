@@ -1,0 +1,3 @@
+address,name,old_label,kind
+0x0040b1e6,air_conditioning_condition_code_2,protection_event26_condition_code_b,global
+0x003fd051,cruise_governor_preset_this_pass_flag,cruise_ramp_rate_control_called_flag,global

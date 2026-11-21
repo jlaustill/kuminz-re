@@ -221,3 +221,19 @@ Grid (intake air) heater control - the real job of the iat_ / solenoid_ / batter
 - Soft spot across several comments: the 'seconds' values (30 s / 15 s) assume a 0.1 s tick but the caller cm848_periodicTaskGroup22_calibration period was not confirmed. The 'ticks' naming is safe; only the second-conversions are unverified.
 - The 48RE/battery-load subsystem interlocks with this unit: the grid heater status_flags are read by engine_protection_batteryLoad_check / hpcr_injectPressureTuning / cm848_crossCheckTemperatureSensorsBeforeStart and control_state==5 is read by cm848_...
 
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protection_transition_block_flag` → `power_take_off_disable_flag`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`
+- `protectionOutputActuatorControl` → `cm848_runCruiseAndVehicleSpeedLimitGovernor`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainControlTimeouts`
+- `governor_mode_transition_counter` → `etc1_output_shaft_speed_run_state_count`

@@ -591,7 +591,7 @@ The 0x2f860-0x35328 protection_* cluster plus Bank-2 0x510520 / 0x511b64 / 0x51a
 - Names left for a follow-up batch to stay within 45: the governor curve handlers - cm848_protectionTimeoutHandler (cold below 32 F) / WarmupHandler (standstill below 2 mph) / ThresholdMonitor (normal) / StatusFlagHandler (wide open throttle with learned values per transmission_temperature_range) / Overload / Normal / Cleanup / ShutdownHandler (transfer-case low). Also: the PROTECTION_STATUS_CODE enum = governor curve mode; protection_lockout_t thermal_lockout / load_lockout / rpm_lockout / sensor_fault_active and protection_derate_countdown / protection_entry_countdown = per-gear converter relock delays; cm848_initProtectionSystem / cm848_decrementProtectionTimers = transmission init / timer tick; protection_ramp_position_working (0x40b0e0) = previous selected gear; fuel_temp_trim_ema (0x40b146) = vehicle speed EMA for low range and standstill.
 - The output speed sensor chain still carries fuel_* names: fuel_flow_rate_divisor = period in us (mpc555_calculateTimerFrequencyConversion from TPUB_CH14); fuel_consumption_accumulator = 60e6 x a / b numerator (5217391 = 60e6 x 2 / 23); fuel_injection_delay_timer = pulse timeout; fuel_flow_rate_temp_scale_cal 5376 = 42 output rpm per mph. Also unnamed: the TFT substitute drive timer fuel_flow_rate_working, the raw-repeat check torque_limit_setpoint_active / fuel_flow_rate_counter, torque_limit_setpoint_working = sensor_channel_diag_override[103] and torque_limit_control_flags = diag_feature_flags word 6, and the cruise 4-3 constants DAT_00407804 (10 mph) / DAT_00407806 (2 mph) / DAT_00407808 (1900 rpm) / DAT_0040780a (3000 rpm) / DAT_004077fa (400) / DAT_004077fc (25).
 - Which J1939 field feeds j1939_tsc1_override_state.etc1_address_filter (0x40ae1b)? The park/neutral logic treats it as a gear byte (0xfb park / 0x7d neutral / 0xff none), but no absolute store from a receive handler is visible - probably the ETC2 (PGN 61445) handler through a struct pointer. Is it SPN 524 selected gear or SPN 523 current gear?
-- drivetrain_type (0x3fdda6) reads 1 (DRIVETRAIN_MANUAL_VSS) on this automatic truck while the proposed transmission_type_cal reads 3. The DRIVETRAIN_TYPE enum meanings need a re-check.
+- drivetrain_type (0x3fdda6) reads 1 (DRIVETRAIN_MANUAL_VSS) on this automatic truck while the proposed transmission_type_cal reads 3. The DRIVETRAIN_TYPE enum meanings need a re-check. **Resolved (PR #53 round 5, 2026-11-21):** 0x3fdda6 is e2m 117F +3A RSC_Sensor_Type [VSRSSNTY] (0 none / 1 inductive / 2 minigen / 3 tachograph / 4 / 5 J1939 with / without gear ratio), now `vehicle_speed_sensor_type_cal` / `VEHICLE_SPEED_SENSOR_TYPE`: 1 is the inductive sensor setting, not a manual transmission.
 - With overdrive_control_flags bit 1 configured (j1939_governor_feature_byte bit 3), the overdrive cold test also uses protection_oilTemp_proxy (slot 69), whose identity is still open. The governor pressure unit (1/256 psi) rests on how well the P1756 15-20 psi window fits, not on a datasheet.
 
 **Missed (skeptics)**
@@ -704,3 +704,49 @@ PGN 57088 is the J1939 DM13 stop/start broadcast implementation (Cummins DM13 pa
 - 5 ms main-loop phase is now confirmed: PITC 4999 / diag_record_queue_add_entry (0x538c8c - really the J1939 periodic transmit registration) stores interval / 10 ticks that cm848_phaseAProcessing advances once per group-A pass (every 2 phases) with CCVS1 100 / EEC1 20 / and THCYTMLM 0.1 s = 50 -> 5 s; firmware/CLAUDE.md still says unconfirmed
 - No edge-detecting consumer of the 100 ms test-switch pulse was found: protection_threshold_check (degenerate self-compare) / fuel_demandRateLimit_outputCheck / cm848_periodicControlLoopFaultHandling read switch 31 as a held input (alternate throttle under system_feature_config_flags bits 12-13); only cm848_updateJ1939ReceptionControlFlag edge-detects it (bit 9 + derate) - a fault flash-out user (if any) is still unidentified
 
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `engine_protection_conditionCode_evaluate` → `cm848_controlAirConditioningClutchForDrTruck`
+- `engine_protection_fuelMass_rpmCheck` → `cm848_controlAirConditioningClutchForBrTruck`
+- `fuel_demand_governor_output` → `all_speed_governor_equivalent_throttle`
+- `cruise_speed_error_integral_limit` → `cruise_rpm_ratio_integral_limit`
+- `protection_event26_fuel_qty_gate_upper` → `air_conditioning_high_pressure_off_threshold`
+- `hpcr_initJ1939BufferValues` → `cm848_initializePciMessageStatusBytes`
+- `j1939_msg_slot_hh_control` → `pci_spare_transmit_message_status`
+- `hpcr_protection_eval_mode` → `air_conditioning_control_configuration`
+- `hpcr_fuel_mode_state_transition` → `cm848_controlAirConditioningClutch`
+- `cm848_restoreEngineOperatingMode` → `cm848_selectAllSpeedGovernorApplicationMode`
+- `cold_start_delay_counter` → `low_speed_governor_stopped_vehicle_settled_count`
+- `governor_speed_error_delta` → `low_speed_governor_filtered_speed_error`
+- `governor_enabled_flag` → `low_speed_governor_aggressive_gain_inhibit_flag`
+- `cruise_speed_high_limit` → `cruise_maximum_road_speed_cal`
+- `cm848_j1939HandleProprietaryCommand` → `cm848_j1939HandlePgn56832Reset`
+- `cm848_calculateFuelTimingTarget` → `cm848_calculateAllSpeedGovernorThrottleReference`
+- `cm848_calculateFuelDemandWithConditions` → `cm848_calculateAllSpeedGovernorEquivalentThrottle`
+- `protection_system_init_flag` → `cruise_discrete_switch_inputs_used_cal`
+- `fuel_demand_speed_deadband_cal` → `all_speed_governor_switch_droop_fueling_offset`
+- `protection_timing_period_cal` → `tire_revolutions_per_mile_cal`
+
+## Resolved by PR #53 round 5 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cruise_target_rpm_max` → `cruise_maximum_engine_speed`
+- `cruise_target_rpm_min` → `cruise_minimum_engine_speed`
+- `cm848_j1939SendSafetyStatusMessage` → `cm848_sendPgn65279WaterInFuelIndicatorMessage`
+- `j1939_pgn65279_safety_status_byte` → `j1939_pgn65279_water_in_fuel_indicator_byte`
+- `cm848_engineMode_reset` → `cm848_selectTsc1SpeedControlMode`
+- `protection_exception_event_26_init` → `cm848_initializeAirConditioningClutchControl`
+- `drivetrain_type` → `vehicle_speed_sensor_type_cal`
+- `DRIVETRAIN_MANUAL_VSS` → `VEHICLE_SPEED_SENSOR_INDUCTIVE`
+- `DRIVETRAIN_TYPE` → `VEHICLE_SPEED_SENSOR_TYPE`
+- `cm848_periodicControlLoopFaultHandling` → `cm848_claimRemoteThrottleOverride`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `j1939_tsc1_override_state` → `j1939_powertrain_control_state`
+- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainControlTimeouts`
+- `j1939_tsc1_received` → `j1939_powertrain_messages_received`
+- `etc1_governor_state_t` → `j1939_powertrain_control_state_t`
+- `j1939_tsc1_received.auxiliary_state` (0x3fa98c) → `j1939_powertrain_messages_received.etc2_actual_gear_ratio_previous`: a word (the ETC2 handler stores the previous ratio there, sth @ 0x22cf0), as this file suspected (stage B2)

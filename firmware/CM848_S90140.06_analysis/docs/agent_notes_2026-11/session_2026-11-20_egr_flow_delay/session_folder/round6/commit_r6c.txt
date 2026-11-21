@@ -1,0 +1,18 @@
+cm848: round 6 closing - stale comment references, resolved-name notes, docs, verify
+
+- **Comments:** the last stale references, in a plate, the ETC2 init note and a local_variables header. The .cpp
+  diff is comments only: 0 functions change.
+- **Tasks:** task 025 / 045 resolved-name lines for the stage B names. Task 025 had already flagged 0x3fa98c as the
+  previous ETC2 gear ratio.
+- **Docs:**
+  - task 046: the round 6 section (stages 0 / A / B1 / B2, thin evidence, the leads);
+  - firmware/CLAUDE.md: round 6 (the e2m 10E8 / 10E6 / 10E7 Jcomm blocks, the handler pair, the three enums, and
+    two Ghidra rules: piece names count in decimal, and masked bitfield writes render as raw pieces);
+  - the session README's round 6 section, and the round 6 scripts / maps / commit messages in
+    session_folder/round6. The logs went into the large-files tarball.
+- **Correction to 47d462a's message:** 14 of the 16 _j1939_governor_source_index hits it counted were code renders;
+  two were plate-comment text, fixed with the next stage.
+- **Checks:** ./analyze.sh verify (two builds byte-identical); the test suites pass; lookup_tables.py reports 0
+  sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

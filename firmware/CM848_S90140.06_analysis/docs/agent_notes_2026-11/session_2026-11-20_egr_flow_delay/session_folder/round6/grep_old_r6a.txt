@@ -1,0 +1,59 @@
+firmware/cross_firmware_variable_matches.csv:8: ...mmand_source_id,0x0040ae3d,tsc1_source_address,17,torqueControlModeHandler,review
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:657: ...#   j1939_tsc1_received): the ETC1 bytes (cm848_j1939
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:847: ...#   j1939_tsc1_override_state): the engine TSC1 override, t
+firmware/CM848_S90140.06_analysis/output/constants.csv:11: ...# TSC1 speed cap in torqueControlModeHandler (cmplwi r11, 0x5DC0)
+firmware/scripts/ApplyStructures.java:204: ...            // references (e.g. etc1_governor_state_t has a field typed etc1_config
+firmware/scripts/ApplyStructures.java:204: ...ces (e.g. etc1_governor_state_t has a field typed etc1_config_entry_t*
+firmware/scripts/ApplyStructures.java:205: ...            // but etc1_config_entry_t hasn't been processed yet) re
+firmware/CM550_J90350.00_analysis/output/context_tier1/merged_01.txt:696: ...    torqueControlModeHandler(param_1);
+firmware/CM550_J90350.00_analysis/output/context_tier1/batch_11.txt:1877: ...void torqueControlModeHandler(int param_1)
+firmware/CM550_J90350.00_analysis/output/context_tier1/batch_24.txt:539: ...    torqueControlModeHandler(param_1);
+firmware/CM550_J90350.00_analysis/output/context_tier2/batch_02.txt:1435: ...void torqueControlModeHandler(int param_1)
+firmware/CM550_J90350.00_analysis/output/context_tier2/merged_03.txt:407: ...void torqueControlModeHandler(int param_1)
+firmware/CM550_J90350.00_analysis/output/context_tier2/batch_33.txt:1585: ...    torqueControlModeHandler(param_1);
+firmware/CM550_J90350.00_analysis/output/context_tier2/batch_45.txt:10: ...void torqueControlModeHandler(int param_1)
+firmware/CM550_J90350.00_analysis/output/context_tier2/results/all_results.csv:158: ...h,"First byte of 8-byte torque control message in torqueControlModeHandler; bits 0-1=control mode, bits 
+firmware/CM550_J90350.00_analysis/output/context_tier2/results/all_results.csv:159: ...6-32000) for torque derate fueling calculation in torqueControlModeHandler"
+firmware/CM550_J90350.00_analysis/output/context_tier2/results/tier2_apply.csv:111: ...h,"First byte of 8-byte torque control message in torqueControlModeHandler; bits 0-1=control mode, bits 
+firmware/CM550_J90350.00_analysis/output/context_tier2/results/tier2_apply.csv:112: ...6-32000) for torque derate fueling calculation in torqueControlModeHandler"
+firmware/CM550_J90350.00_analysis/output/context_tier2/results/apply.csv:143: ...h,"First byte of 8-byte torque control message in torqueControlModeHandler; bits 0-1=control mode, bits 
+firmware/CM550_J90350.00_analysis/output/context_tier2/results/apply.csv:144: ...6-32000) for torque derate fueling calculation in torqueControlModeHandler"
+work/tasks/046-cm848-egr-flow-estimate.md:252: ...    - `etc1_message_t` (instance `j1939_tsc1_receiv
+work/tasks/046-cm848-egr-flow-estimate.md:252: ...    - `etc1_message_t` (instance `j1939_tsc1_received`) mixes ETC1 fields (SPN 191 
+work/tasks/046-cm848-egr-flow-estimate.md:254: ...    - `etc1_state_t` and the `etc1_*` fields of `j1939_tsc1_override_state` hold the TSC1 override modes
+work/tasks/046-cm848-egr-flow-estimate.md:255: ...    - The SPN 696 index is `etc1_speed_control_mode`.
+work/tasks/025-cm848-naming-wave-followups.md:35: ...t stores ETC2 byte 1 (SPN 524 selected gear) into j1939_tsc1_override_state.etc1_address_filter (0x40ae1b
+work/tasks/025-cm848-naming-wave-followups.md:59: ...ontrol_rpm_upper_limit_cal / TSC1_SPEED_CONTROL / j1939_tsc1_override_state.speed_control_target) mean RP
+work/tasks/025-cm848-naming-wave-followups.md:278: ..._filter=0xff'). The global_variables row 0x40ae1b j1939_tsc1_override_state.etc1_address_filter, which mu
+work/tasks/025-cm848-naming-wave-followups.md:284: ...countdown (0x40ae50) is the ETC2 receive timeout (cm848_processGovernorModeTransition 0x27418-0x27450 forces the ET
+work/tasks/025-cm848-naming-wave-followups.md:284: ...TC2 gear ratio globals are misnamed too: 0x3fa98c j1939_tsc1_received.auxiliary_state (previous rat
+work/tasks/025-cm848-naming-wave-followups.md:517: ...d_timer_b is the ETC2 timeout countdown. 0x40ae1b j1939_tsc1_override_state.etc1_address_filter is ETC2 b
+work/tasks/025-cm848-naming-wave-followups.md:517: ...s_filter is ETC2 byte 1 (selected gear). 0x3fa98c j1939_tsc1_received.auxiliary_state is the previo
+work/tasks/025-cm848-naming-wave-followups.md:521: ... 0x5c39e + 1 (51) at 0x22cdc on every valid ETC2; cm848_processGovernorModeTransition counts it down and at 1 clear
+work/tasks/025-cm848-naming-wave-followups.md:522: ...- 0x0040ae1b j1939_tsc1_override_state.etc1_address_filter (struct f
+work/tasks/025-cm848-naming-wave-followups.md:523: ...- 0x003fa98c j1939_tsc1_received.auxiliary_state (struct field
+work/tasks/025-cm848-naming-wave-followups.md:593: ...- Which J1939 field feeds j1939_tsc1_override_state.etc1_address_filter (0x40ae1b
+work/tasks/025-cm848-naming-wave-followups.md:598: ...imary_sa = 3 with DLC 8. It stores data byte 1 in etc1_governor_state_t.etc1_address_filter (0x40ae1b
+work/tasks/025-cm848-naming-wave-followups.md:612: ...- 0x40ae1b etc1_governor_state_t.etc1_address_filter (struct f
+work/tasks/044-cm848-dtc-code-name-clashes.md:30: ...not renamed because the function does much more: `cm848_processGovernorModeTransition`
+work/tasks/042-table-campaign-rename-leads.md:399: ...e TSC1 requests the ECM ignores. A = engine TSC1 (torqueControlModeHandler: cm848_removeCoolantCalEntryB
+work/tasks/027-cm848-naming-wave-2-followups.md:87: ...TC2 handler (PGN 61445) reloads two timeouts that cm848_processGovernorModeTransition counts down: one invalidates 
+work/tasks/027-cm848-naming-wave-2-followups.md:104: ... DAT_0005c3a8 (=100) are unnamed ROM constants in cm848_processGovernorModeTransition (ETC fault debounce depth / g
+work/tasks/027-cm848-naming-wave-2-followups.md:104: ...overnorModeTransition (ETC fault debounce depth / governor_mode_transition_counter threshold) - adjacent to the 
+work/tasks/027-cm848-naming-wave-2-followups.md:109: ...is the shared ETC timeout fault-debounce LIMIT in cm848_processGovernorModeTransition (bVar6 counts etc1_state_time
+work/tasks/045-cm848-fueling-state-enum.md:761: ...  - wrong `_cal` on ROM cells: `etc1_torque_mode_timeout_cal`, `fuel_demand_norm_zero_cal`
+work/tasks/045-cm848-fueling-state-enum.md:785: ...l 1 / 2 ambient temperature limits, medium); the `j1939_tsc1_override_state.proprietary_offset_value`
+work/tasks/022-j1939-dbw-investigation.md:81: ...`j1939_handlerInitializer(0, cm848_j1939DispatchAddressHandler)` @ cm848_rom:21333
+work/tasks/022-j1939-dbw-investigation.md:82: ...→ `torqueControlModeHandler(msg)` if `dest_address == j19
+work/tasks/022-j1939-dbw-investigation.md:87: ...#### `torqueControlModeHandler` @ ROM:0x00022d60 (cm848_rom:
+work/tasks/022-j1939-dbw-investigation.md:94: ...SA whitelist check: `cm848_governorSpeedControl(1, SA)` searches ROM table `e
+work/tasks/022-j1939-dbw-investigation.md:94: ..._governorSpeedControl(1, SA)` searches ROM table `etc1_config_entry_t_0005c3b4`
+work/tasks/022-j1939-dbw-investigation.md:98: ...- Sets `j1939_tsc1_override_state.governor_mode = 1`
+work/tasks/022-j1939-dbw-investigation.md:99: ...- Sets `etc1_capped_speed_target = min(requested_speed, 24000)
+work/tasks/022-j1939-dbw-investigation.md:100: ...- Sets `etc1_speed_control_mode = (byte[0] & 0x0c) >> 2`
+work/tasks/022-j1939-dbw-investigation.md:101: ...- Sets `etc1_active_state = 1`
+work/tasks/022-j1939-dbw-investigation.md:105: ...- `speed_request_filtered = etc1_capped_speed_target`
+work/tasks/022-j1939-dbw-investigation.md:129: ...| SA whitelist | `cm848_governorSpeedControl`, ROM `0x0005c3b4` | TSC1 par
+work/tasks/022-j1939-dbw-investigation.md:202: ...PGN 0 registered via `j1939_handlerInitializer(0, cm848_j1939DispatchAddressHandler)`.
+work/tasks/022-j1939-dbw-investigation.md:203: ...Two sub-paths based on dest SA: primary SA → `torqueControlModeHandler`, secondary SA → `cm848_j1939
+work/tasks/022-j1939-dbw-investigation.md:206: ...**Speed parse**: `torqueControlModeHandler` reads SPN 898 from bytes[1-2

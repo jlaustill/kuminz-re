@@ -2,6 +2,14 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # Table Interpolation Functions - Ported from CM550 (same pattern across ECU families)
 # -----------------------------------------------------------------------------
+0x000123dc,cm848_delayUnsignedSample,return,,word,The sample written delay_samples calls earlier (lhzx r3: zero-extended)
+0x000123dc,cm848_delayUnsignedSample,0,delay_line,delay_line_t *,The delay line (r3)
+0x000123dc,cm848_delayUnsignedSample,1,sample,word,The new sample (r4) - stored with sthx
+0x000123dc,cm848_delayUnsignedSample,2,delay_samples,uint,The delay in calls (r5): the read position is (write_index - delay_samples) mod 256
+0x00012404,cm848_delaySignedSample,return,,sword,The sample written delay_samples calls earlier (lhax r3: sign-extended)
+0x00012404,cm848_delaySignedSample,0,delay_line,delay_line_t *,The delay line (r3)
+0x00012404,cm848_delaySignedSample,1,sample,sword,The new sample (r4) - stored with sthx
+0x00012404,cm848_delaySignedSample,2,delay_samples,uint,The delay in calls (r5): the read position is (write_index - delay_samples) mod 256
 0x00055ef4,lookupTableInterpolation,return,,word,Y value at the input: linear between the two breakpoints around it (or the step value with flags bit 3) and the end value outside the axis
 0x00055ef4,lookupTableInterpolation,0,cached_axis_offset,word *,Byte offset (2 x index) of the axis segment found last time - the search starts there and the new one is written back; the globals passed here are the *_interp_state / *_interp_index / engine_sync_init_state_* words
 0x00055ef4,lookupTableInterpolation,1,input,ushort,Value looked up on the x axis (r4)
@@ -80,8 +88,8 @@ function_address,function_name,param_index,name,type,comment
 0x00006180,mpc555_handleJ1939TransportEndOfMessageAcknowledge,0,rx_msg,j1939_rx_msg_t*,Pointer to abort request message
 
 # TSC1 (Torque/Speed Control) Message Handlers - PGN 0 (TSC1)
-0x00022d60,torqueControlModeHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message
-0x00023b38,cm848_j1939DispatchAddressHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message for address filtering
+0x00022d60,processEngineTsc1Request,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message
+0x00023b38,cm848_dispatchTsc1ByDestinationAddress,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message for address filtering
 0x00022870,cm848_j1939ProcessPgn61442Etc1,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message (secondary handler)
 
 # -----------------------------------------------------------------------------
@@ -119,13 +127,13 @@ function_address,function_name,param_index,name,type,comment
 0x00023188,cm848_j1939RegisterPgnHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
 0x00023188,cm848_j1939RegisterPgnHandler,1,handler_func,void*,Function pointer called when PGN matches incoming message
 
-0x00022d60,torqueControlModeHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
+0x00022d60,processEngineTsc1Request,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
 
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_msg,j1939_rx_msg_t*,Original request to acknowledge
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
-0x00023dbc,cm848_sendJ1939NegativeAck,0,msg,j1939_rx_msg_t*,Received message to NACK (accesses dest_address at +2 and data_ptr at +6)
-0x00023dbc,cm848_sendJ1939NegativeAck,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
+0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,0,msg,j1939_rx_msg_t*,Received message to NACK (accesses dest_address at +2 and data_ptr at +6)
+0x00023dbc,cm848_sendJ1939NegativeAcknowledgement,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
 
 0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,0,dest_address,byte,Destination address for response
 0x00005d8c,mpc555_sendJ1939TransportEndOfMessageAcknowledge,1,data_ptr,byte*,Pointer to diagnostic response data
@@ -199,14 +207,8 @@ function_address,function_name,param_index,name,type,comment
 0x0001392c,cm848_selectLoadNormalizer,2,computed_boost,ushort,Computed boost value
 0x0001392c,cm848_selectLoadNormalizer,3,filtered_boost,ushort,Filtered boost pressure
 
-0x000130dc,cm848_calculatePumpingTorqueAdjustment,0,manifold_pressure,ushort,Filtered manifold pressure input
-0x000130dc,cm848_calculatePumpingTorqueAdjustment,1,rpm,ushort,Engine RPM for table lookup
 
-0x00013294,cm848_calculateBoostTorqueOffset,0,boost_input,ushort,Boost pressure input
-0x00013294,cm848_calculateBoostTorqueOffset,1,rpm,ushort,Engine RPM for calculation
 
-0x00012ad4,cm848_calculateVolumetricEfficiency,0,boost_denominator,ushort,Boost denominator (min 128) for fuel calc
-0x00012ad4,cm848_calculateVolumetricEfficiency,1,base_fueling,ushort,Base fueling command to modify
 
 # -----------------------------------------------------------------------------
 # Parameter-by-ID Lookup System - CM848 diagnostic parameter resolution
@@ -255,18 +257,18 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # J1939 RX Message Handlers - all receive j1939_rx_msg_t* as first param
 # -----------------------------------------------------------------------------
-0x00022d60,torqueControlModeHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x00022d60,processEngineTsc1Request,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x000236f0,cm848_processEngineRetarderTsc1Request,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x000231cc,cm848_j1939DispatchPgnHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
-0x00023b38,cm848_j1939DispatchAddressHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x00023b38,cm848_dispatchTsc1ByDestinationAddress,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 
 # -----------------------------------------------------------------------------
 # J1939 Send Dispatcher
 # -----------------------------------------------------------------------------
 0x000539fc,sendJ1939Message,0,msg,j1939_tx_msg_t*,TX message descriptor; dispatches to single-frame (<9 bytes) or multi-frame transport protocol
 
-0x00053a4c,cm848_lookupJ1939SourceAddressIndex,return,,ushort,SA table index: 1=primary(auth) 2=secondary 3=tertiary(auth) 4=unknown
-0x00053a4c,cm848_lookupJ1939SourceAddressIndex,0,source_address,uint,J1939 source address byte to look up in the 3-entry SA calibration table
+0x00053a4c,cm848_lookupJ1939ControlDevice,return,,J1939_CONTROL_DEVICE,the control device of the source address (1 transmission / 2 ABS / 3 ASR / 4 other)
+0x00053a4c,cm848_lookupJ1939ControlDevice,0,source_address,uint,the J1939 source address to classify
 
 # -----------------------------------------------------------------------------
 # Math Division Runtime Helpers - 64-bit dividend (hi:lo) / 64-bit divisor (hi:lo)
@@ -414,10 +416,10 @@ function_address,function_name,param_index,name,type,comment
 0x000185cc,cm848_conditionalFirstOrderFilter,0,value,int32_t,New sample (r3)
 0x000185cc,cm848_conditionalFirstOrderFilter,1,update_enable,int32_t,0 = only read the filter output (r4)
 0x000185cc,cm848_conditionalFirstOrderFilter,2,filter_state,ema_filter_state_t *,Filter state (r5) passed to cm848_signedFirstOrderFilter
-0x00010110,cm848_initEngineOperatingMode,return,,void,
-0x00010110,cm848_initEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
-0x00503074,cm848_engineMode_reset,return,,void,
-0x00503074,cm848_engineMode_reset,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 2
+0x00010110,cm848_selectVariableSpeedGovernorMode,return,,void,
+0x00010110,cm848_selectVariableSpeedGovernorMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
+0x00503074,cm848_selectTsc1SpeedControlMode,return,,void,
+0x00503074,cm848_selectTsc1SpeedControlMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 2
 0x0050daac,cm848_transitionEngineOperatingMode,return,,void,
 0x0050daac,cm848_transitionEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the pedal fault snapshot is saved when it is not 6
 0x00014508,cm848_selectChiSourceCode,return,,COMBUSTION_CHI_SOURCE,1 when the air density chi is not smaller than the coolant temperature chi - else 3
@@ -435,3 +437,9 @@ function_address,function_name,param_index,name,type,comment
 0x00047a88,cm848_calculateFilteredDerivative,0,gain,derivative_gain_t *,Derivative gain record (r3)
 0x00047a88,cm848_calculateFilteredDerivative,1,filter_state,q16_fixed_point_t *,Q16.16 filter state (r4) - updated in place
 0x00047a88,cm848_calculateFilteredDerivative,2,input,int32_t,Signed input (r5)
+0x00012ad4,cm848_calculateVolumetricEfficiency,return,,void,Takes no parameters: r3 and r4 are written before any read (lis r3 @ 0x12b04, clrlwi r4 @ 0x12b0c); the old boost_denominator / base_fueling rows were stale
+0x00012dc4,cm848_calculateChargeFlowEstimate,return,,void,Takes no parameters: it never reads r3 / r4 (its caller cm848_calculateChargeFlows passes none); the decompiler only showed two because cm848_calculateVolumetricEfficiency declared them
+0x000130dc,cm848_calculatePumpingTorqueAdjustment,return,,void,Takes no parameters: r3 and r4 are written before any read (lis r3 @ 0x130fc, lis r4 @ 0x13104); the old manifold_pressure / rpm rows were stale
+0x00012724,cm848_calculateDownstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16 @ 0x12770)
+0x00012778,cm848_calculateUpstreamEgrFlowSource,return,,word,0 PRIMARY / 1 BACKUP (clrlwi r3,r4,16)
+0x00013294,cm848_estimateChargePressure,return,,void,Takes no parameters: r4 and r3 are written before any read (lhz r4 @ 0x132b4, lis r3 @ 0x132b8); the old boost_input / rpm rows were stale

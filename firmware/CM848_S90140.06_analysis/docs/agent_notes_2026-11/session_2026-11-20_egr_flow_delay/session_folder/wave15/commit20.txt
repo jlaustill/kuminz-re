@@ -1,0 +1,22 @@
+cm848: wave 15 review fixes - the half-renamed neighbours, doubled e2m prefixes, resolved leads, docs
+
+The final review's checks and what they found:
+- Stage 10c's complete changed-function list (comments stripped on both sides): twelve functions, eleven
+  by the intended rendering, one by its local declaration order; pieces 508 -> 494. reverse_names.py's
+  own report had listed six (it hides _N_M_ piece changes after canonicalizing).
+- Half-renamed neighbours (label-only, EQUIVALENT; 0 functions differ either way): the channel 20 / 9
+  fault statuses (e2m 1963 +2 Compressor_Inlet_Tmptr_Status / +6 Charge_Tmptr_Status), the DM10 payload
+  word (was j1939_dm11_feature_config_word), the PGN 56320 header address bytes (were
+  j1939_prop_status_byte2 / 3: the sender puts them in the PS and source address bytes), three unused
+  j1939_pgn56360_alt_* labels.
+- Five injector driver period comments carried their e2m record twice; deduplicated.
+- The hand stages' dump values, read at their declared widths: 0x40a040 = 4200 rpm, 0x40a042 / 43 = 60 /
+  10, the injector driver levels 8003 / 19923 / 6284 / 8611 = 32.2 V / 80.2 V / 13.5 A / 18.5 A, the PWM
+  periods 50 us and the recharge current period 125 us.
+- The repo-wide old-name grep: history, CM550's unrelated governor_integral_accumulator and the stale
+  generated snapshots remain; tasks 025 / 027 / 029 / 042 / 045 get a "resolved by PR #53 round 4"
+  section; tpu_mios_channel_map.md (TPU-A CH2 / CH14 rows), thermal_protection_trigger.md (renamed-since
+  note) and task 046 (thin evidence, the channel 9 state lead) updated.
+- Read in full now: 0x17560 and 0x5127d8, where two bins proposed different names.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
