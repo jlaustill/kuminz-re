@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 16:11:16 MST 2026
+// Generated: Sat Nov 21 16:20:17 MST 2026
 
 
 //
@@ -36418,7 +36418,7 @@ void cm848_processFaultScanLookup(void)
        (((uint)(&system_status_flags_t_003fe974.fault_detected_bits_0_to_15)
                [(int)(uint)*(ushort *)(&DAT_0005769c + iVar4) >> 4] &
         1 << (*(ushort *)(&DAT_0005769c + iVar4) & 0xf)) == 0)))) &&
-     ((logical_output_request_bits_48_to_55.fuel_shutoff_request == 0 &&
+     ((logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0 &&
       ((0x3a < final_fueling && (supervisor_register_36_bit_1_low_held_flag == 0)))))) {
     if (*(ushort *)(&PTR_sensor_channel_config_t_0005b55c_high_threshold_0005762e)[uVar6 * 0xd] <
         **(ushort **)(&BYTE_0005763e + iVar7)) {
@@ -36522,7 +36522,7 @@ void cm848_processFaultScanLookup(void)
   if (engine_state != ENGINE_STATE_RUNNING) {
     return;
   }
-  if (logical_output_request_bits_48_to_55.fuel_shutoff_request != 0) {
+  if (logical_output_request_bits_48_to_55.driver_asic_shutoff_request != 0) {
     return;
   }
   if (supervisor_register_36_bit_1_low_held_flag != 0) {
@@ -49479,7 +49479,7 @@ void cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit(void)
                   fuel_metering_feedback_linearization_values,3);
   if ((((fuel_metering_feedback_circuit_high_threshold < fuel_metering_feedback_input) &&
        (engine_state == ENGINE_STATE_RUNNING)) &&
-      (logical_output_request_bits_48_to_55.fuel_shutoff_request == 0)) &&
+      (logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0)) &&
      ((supervisor_register_36_bit_1_low_held_flag == 0 &&
       ((short)fuel_pressure_governor_state.fuel_metering_command <
        fuel_metering_feedback_circuit_high_check_command_limit)))) {
@@ -49510,7 +49510,7 @@ void cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit(void)
   }
   if ((((fuel_metering_feedback_input < fuel_metering_feedback_circuit_low_threshold) &&
        (engine_state == ENGINE_STATE_RUNNING)) &&
-      (logical_output_request_bits_48_to_55.fuel_shutoff_request == 0)) &&
+      (logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0)) &&
      ((supervisor_register_36_bit_1_low_held_flag == 0 &&
       (fuel_metering_feedback_circuit_low_check_command_limit <
        (short)fuel_pressure_governor_state.fuel_metering_command)))) {
@@ -50158,8 +50158,9 @@ void cm848_evaluateInjectorDiagnostics(void)
   ushort uVar4;
   
   wVar1 = mios_mdasm30.SCRD;
-  if ((((wVar1 & 0x8000) != 0) && (logical_output_request_bits_48_to_55.fuel_shutoff_request == 0))
-     && (supervisor_register_36_bit_1_low_held_flag == 0)) {
+  if ((((wVar1 & 0x8000) != 0) &&
+      (logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0)) &&
+     (supervisor_register_36_bit_1_low_held_flag == 0)) {
     dVar2 = cm848_readInjectorDiagnosticWord();
     uVar3 = 1;
     uVar4 = (ushort)cylinder_event_count_max;
@@ -70644,7 +70645,7 @@ void cm848_validateFuelDemandRelativeToTiming(void)
 void cm848_debounceOutputReadBackFaults(void)
 
 {
-  if ((logical_output_request_bits_48_to_55.fuel_shutoff_request == 0) &&
+  if ((logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0) &&
      (supervisor_register_36_bit_1_low_held_flag == 0)) {
     if (alternator_field_read_back_retest_active_flag == 0) {
       if (output_read_back_fault_bits.alternator_field == 0) {
@@ -80730,7 +80731,7 @@ void cm848_sciPackOutputStatusWord(void)
   else {
     uVar3 = 0x20;
   }
-  if (logical_output_request_bits_48_to_55.fuel_shutoff_request == 0) {
+  if (logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0) {
     uVar2 = 0;
   }
   else {
@@ -96915,7 +96916,7 @@ void cm848_mainLoopMonitor(void)
     fault_match_scan_cycle_count = fault_match_scan_cycle_count + 1;
     if (((4 < fault_match_scan_cycle_count) &&
         (fault_match_scan_cycle_count = 0, (switch_input_sample_bits[0] & 1) != 0)) &&
-       (logical_output_request_bits_48_to_55.fuel_shutoff_request == 0)) {
+       (logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0)) {
       if (diag_clear_flags_t_003fedfc._0_2_ != 0) {
         diag_faultMatch_outputCheck_update
                   (0x26,6,0x173,0x174,&DAT_003fd27f,&DAT_003fd280,&DAT_003fd281,&DAT_003fd282,

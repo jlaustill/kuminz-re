@@ -717,15 +717,31 @@ Scripts are in `session_folder/round11/`.
   - **Left to the user:** the pilot failed the no-pieces gate and the firmware/CLAUDE.md rule. Taking the full
     struct means swapping in the pilot's rows (`apply_r11c_switch_struct.py`) and amending the rule.
   - **The proof:** `switch_normalize2.py` + `cast_normalized_diff.py`.
-- **Stage D (label-only):** output 54 is `fuel_shutoff_request` (was stage B's `injector_driver_asic_shutoff_request`).
-  Its requesters are the fuel pressure fault reactions (`output_requesters.py 0x36`); the injector diagnostics only
-  read it.
+- **Stage D (a12ff3b, label-only):** output 54 was renamed `fuel_shutoff_request` (it had been stage B's
+  `injector_driver_asic_shutoff_request`), from its requesters, the fuel pressure fault reactions
+  (`output_requesters.py 0x36`).
+- **Stage E (label-only, after the review): output 54 is `driver_asic_shutoff_request`.**
+  - `fuel_shutoff_request` blurred it with output 30 (1577 +3 0x40 `FSO_Command`, which
+    `cm848_processProtectionFaultsAndTiming` requests every pass).
+  - Every reader of output 54 pairs it with `supervisor_register_36_bit_1_low_held_flag == 0`. The output read-back
+    debounce, the injector and fuel metering feedback diagnostics and the fault scan stand down while either is set.
+  - So it shuts off the output driver ASIC (e2m `ASIC_FS_Shutoff_Driver`). It is the software path next to the
+    supervisor's shutdown line, requested by the fuel system fault reactions (reaction mask bit 3, fuel pressure
+    too high, fault 388 excess fuel demand).
 - **Round 11 leads:**
   - **The switch bytes 0 / 1 / 3 as bitfields:** the user's call (the numbers above).
   - **`fuel_pressure_setpoint_map_cached_axis_offsets`** is a `word` row with a plural name: type it `word[16]`.
   - **`cruise_setpoint_interp_prev`** (0x3fd006) is a value looked up by vehicle speed (its change per pass is
     clamped to +-0x66), not a setpoint: name it with the cruise governor.
   - **The input priority array** at 0x40c058 (e2m 12A8) has no code reference by name yet.
+  - **Outputs 68 / 71** (`egr_valve_motor_opening_direction_request`,
+    `variable_geometry_turbocharger_motor_closing_direction_request`) have no constant-index requester: their setter
+    is unknown.
+  - **`j1939_switch_input_default_state_bits`**, which `hpcr_initProtectionAndOutputCycle` copies into the switches:
+    check whether it is e2m 1571 `Discrete_Inputs_Global_Default`.
+  - **Comments and plates** still describe the switches and output bits in the old `[2] & 0x10` syntax.
+  - **Output 30** `FSO_Command` (with 28 `CAN_Reset`) is requested on every pass by
+    `cm848_processProtectionFaultsAndTiming`; byte 3 of the request array has no row.
   - The cam_sync tables, the end-of-line test sequencer, 8C80 / 8C2D and the SCI high-speed words stay open from
     round 10.
 

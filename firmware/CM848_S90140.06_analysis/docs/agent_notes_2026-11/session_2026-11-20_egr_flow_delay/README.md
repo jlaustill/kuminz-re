@@ -265,6 +265,6 @@ Hand work on the round 7 lead.
   - `apply_r11c_switch_narrow.py` is the committed shape.
   - `switch_bit_reads.py` lists the tested switches and their setters; `switch_normalize.py` / `switch_normalize2.py`
     are the proof helpers.
-- **Stage D:** `apply_r11d_field.py` (output 54).
+- **Stages D / E:** `apply_r11d_field.py` and `apply_r11e_field.py` (output 54; stage E after the review).
 - **Logs:** the round 11 build logs (with the pilot's `build_r11c_attempt1.log`) are in the large-files tarball.
 - **Commit messages:** `commit_r11*.txt`.
