@@ -3127,8 +3127,8 @@ extern word transmission_normal_3_4_upshift_throttle_axis[9];  // 0x00407c4e
 extern word transmission_normal_3_4_upshift_throttle_values[9];  // 0x00407c60
 extern word transmission_normal_4_3_downshift_throttle_axis[9];  // 0x00407c72
 extern word transmission_normal_4_3_downshift_throttle_values[9];  // 0x00407c84
-extern word governor_pressure_base_curve_axis[14];  // 0x00407c96
-extern word governor_pressure_base_curve_values[14];  // 0x00407cb2
+extern word governor_pressure_normal_curve_axis[14];  // 0x00407c96
+extern word governor_pressure_normal_curve_values[14];  // 0x00407cb2
 extern word transmission_1_2_upshift_minimum_post_shift_acceleration_axis[7];  // 0x00407cce
 extern word transmission_1_2_upshift_minimum_post_shift_acceleration_values[7];  // 0x00407cdc
 extern word transmission_2_3_upshift_minimum_post_shift_acceleration_axis[7];  // 0x00407cea
@@ -5189,6 +5189,7 @@ extern word output_speed_sensor_check_state;  // 0x0040b56e
 extern dword governor_pressure_error;  // 0x0040b58e
 extern word governor_pressure;  // 0x0040b592
 extern undefined governor_pressure_integral_term;  // 0x0040b594
+extern undefined governor_pressure_proportional_term;  // 0x0040b59e
 extern word vehicle_speed_unfiltered;  // 0x0040b5a8
 extern dword vehicle_speed_conversion_numerator;  // 0x0040b5aa
 extern dword vehicle_speed_sensor_scaled_period;  // 0x0040b5ae
@@ -6150,7 +6151,7 @@ extern word cssc_oiltemp_cooling_rate_fraction;  // 0x003fd262
 extern dword water_in_fuel_distance_remainder;  // 0x003fd27a
 extern byte eeprom_config_write_triggered_flag;  // 0x003fee2e
 extern word sensor_channel16_interp_state;  // 0x003fa0ba
-extern word governor_pressure_base_curve_interp_state;  // 0x003fb0ee
+extern word governor_pressure_normal_curve_interp_state;  // 0x003fb0ee
 extern word transmission_anti_hunt_1_2_boost_pressure_interp_state;  // 0x003fb0f0
 extern word supervisor_register_36_bit_1_release_delay_counter;  // 0x003fb341
 extern byte pci_transmit_message_11_pass_count;  // 0x003fb40c
@@ -6435,7 +6436,7 @@ extern word park_neutral_switch_driving_neutral_count;  // 0x0040b572
 extern word park_neutral_switch_start_sample_count;  // 0x0040b574
 extern word park_neutral_switch_start_neutral_count;  // 0x0040b576
 extern word park_neutral_switch_start_check_delay_count;  // 0x0040b578
-extern dword governor_pressure_error_change;  // 0x0040b596
+extern dword governor_pressure_error_slope;  // 0x0040b596
 extern word governor_pressure_sensor_filtered;  // 0x0040bbbc
 extern word governor_pressure_solenoid_duty_command;  // 0x0040c14c
 extern dword governor_pressure_solenoid_period_microseconds;  // 0x0040c1c0
@@ -6583,7 +6584,7 @@ extern dword variable_geometry_turbocharger_motor_applied_voltage;  // 0x003fcd0
 extern dword variable_geometry_turbocharger_motor_current_working;  // 0x003fcd10
 extern word variable_geometry_turbocharger_position_sensor_value_previous;  // 0x003fcd14
 extern word variable_geometry_turbocharger_direction_request_previous_flag;  // 0x003fcd16
-extern word protection_overtemp_entry_debounce_count;  // 0x003fcd2a
+extern word overdrive_switch_power_on_delay_counter;  // 0x003fcd2a
 extern word air_conditioning_clutch_request_bit_6_previous;  // 0x003fcd66
 extern word air_conditioning_high_fuel_demand_cutout_count;  // 0x003fcd6a
 extern word air_conditioning_high_pressure_ok_flag;  // 0x003fcd70
@@ -7005,7 +7006,7 @@ extern word governor_pressure_solenoid_frequency;  // 0x00408b2a
 extern word governor_pressure_temperature_gain_percent_axis[9];  // 0x00408b36
 extern word governor_pressure_temperature_gain_percent_values[9];  // 0x00408b48
 extern word governor_pressure_derivative_gain_numerator;  // 0x00408af0
-extern word governor_pressure_controller_error_delta_term;  // 0x0040b58c
+extern word governor_pressure_derivative_term;  // 0x0040b58c
 extern word cooling_fan_integral_term_initial;  // 0x00408816
 extern word cooling_fan_air_conditioning_off_speed;  // 0x00408828
 extern word cooling_fan_air_conditioning_base_speed;  // 0x0040882e

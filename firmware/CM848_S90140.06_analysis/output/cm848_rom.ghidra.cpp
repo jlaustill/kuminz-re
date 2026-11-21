@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 12:29:08 MST 2026
+// Generated: Sat Nov 21 12:48:05 MST 2026
 
 
 //
@@ -32582,7 +32582,7 @@ void cm848_initializeVariableGeometryTurbochargerAdjustmentFilters(void)
 // Function: cm848_requestOverdriveShiftsLowRange @ 0x0002f860
 //
 
-/* The low range 3-4 / 4-3 requests (condition_eval bits 2 / 1) from e2m RE_Low_Range_3_4 /
+/* The low range 3-4 / 4-3 requests (request_flags bits 2 / 1) from e2m RE_Low_Range_3_4 /
    RE_Low_Range_4_3 (was cm848_protectionNormalHandler) */
 
 void cm848_requestOverdriveShiftsLowRange(void)
@@ -33397,7 +33397,7 @@ LAB_00030fdc:
 // Function: cm848_requestOverdriveShiftsNormal @ 0x00031320
 //
 
-/* The normal (not cruise) 3-4 / 4-3 requests (condition_eval bits 2 / 1) from e2m RE_Normal_3_4 /
+/* The normal (not cruise) 3-4 / 4-3 requests (request_flags bits 2 / 1) from e2m RE_Normal_3_4 /
    RE_Normal_4_3, or their exhaust brake copies with switch 12 on (was
    cm848_protectionFuelDemandCheck) */
 
@@ -33538,8 +33538,8 @@ void cm848_selectGovernorPressureBaseCurve(void)
   else {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
-                    governor_pressure_base_curve_axis,governor_pressure_base_curve_values,0);
+                   (&governor_pressure_normal_curve_interp_state,transmission_output_speed_in_use,
+                    governor_pressure_normal_curve_axis,governor_pressure_normal_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
   }
   cm848_requestOverdriveShiftsNormal();
@@ -33852,11 +33852,11 @@ LAB_00031b70:
 // Function: cm848_selectGovernorPressureCruise @ 0x00031d98
 //
 
-/* The 48RE cruise governor pressure mode, run while condition_flags_1 bit 4 (e2m RE_Cruise_Active)
-   follows cruise_control_engaged_flag: the target is RE_Cruise_Curve (pressure state 3), or the
-   manual low curve (0x16) with the lever in 1 / 2. The 3-4 / 4-3 requests come from the
-   RE_Cruise_3_4 / RE_Cruise_4_3 lines, or their exhaust brake copies with switch 12 on; then the
-   cruise decel 4-3 / 3-4 requests (transmission_cruise_downshift_delay_timer / _upshift_) (was
+/* The 48RE cruise governor pressure mode, run while mode_flags bit 4 (e2m RE_Cruise_Active) follows
+   cruise_control_engaged_flag: the target is RE_Cruise_Curve (pressure state 3), or the manual low
+   curve (0x16) with the lever in 1 / 2. The 3-4 / 4-3 requests come from the RE_Cruise_3_4 /
+   RE_Cruise_4_3 lines, or their exhaust brake copies with switch 12 on; then the cruise decel 4-3 /
+   3-4 requests (transmission_cruise_downshift_delay_timer / _upshift_) (was
    cm848_protectionStateTransitionCheck) */
 
 void cm848_selectGovernorPressureCruise(void)
@@ -34181,8 +34181,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
            transmission_shift_strategy_flags.anti_hunt_flags & 0x1f;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
-                      governor_pressure_base_curve_axis,governor_pressure_base_curve_values,0);
+                     (&governor_pressure_normal_curve_interp_state,transmission_output_speed_in_use,
+                      governor_pressure_normal_curve_axis,governor_pressure_normal_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       return;
     }
@@ -34254,8 +34254,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
            transmission_shift_strategy_flags.anti_hunt_flags & 0x5f;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
-                      governor_pressure_base_curve_axis,governor_pressure_base_curve_values,0);
+                     (&governor_pressure_normal_curve_interp_state,transmission_output_speed_in_use,
+                      governor_pressure_normal_curve_axis,governor_pressure_normal_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       cm848_learnVehicleInertia();
       transmission_pressure_state.anti_hunt_delay_timer = transmission_anti_hunt_delay_time;
@@ -34300,8 +34300,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
-                      governor_pressure_base_curve_axis,governor_pressure_base_curve_values,0);
+                     (&governor_pressure_normal_curve_interp_state,transmission_output_speed_in_use,
+                      governor_pressure_normal_curve_axis,governor_pressure_normal_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       cm848_predictPostShiftAcceleration();
       transmission_post_shift_acceleration_minimum =
@@ -34597,7 +34597,7 @@ void cm848_initializeTransmissionShiftLogic(void)
   DAT_003fb0e8 = 2;
   DAT_003fb0ea = 2;
   protection_rpm_limit_table_ramp_state = 2;
-  governor_pressure_base_curve_interp_state = 2;
+  governor_pressure_normal_curve_interp_state = 2;
   transmission_anti_hunt_1_2_boost_pressure_interp_state = 2;
   transmission_anti_hunt_2_3_boost_pressure_interp_state = 2;
   DAT_003fb0f4 = 2;
@@ -35558,7 +35558,7 @@ void cm848_processProtectionFaultSeverity(void)
    While the request is on and transmission_speed_ratio is inside the gear's window
    (exhaust_brake_lockup_speed_ratio_2nd / 3rd / 4th_gear_minimum / _maximum, around the gear
    ratios), bits 0 and 2 clear: lock confirmed, the exhaust brake may apply. In 1st they clear too.
-   If the timer runs out first, it sets condition_eval bit 6 (the converter lockup inhibit / unlock
+   If the timer runs out first, it sets request_flags bit 6 (the converter lockup inhibit / unlock
    request) and bit 2 (RE_Ebrake_Inhibit_Timeout_Flag). Called at the end of
    cm848_selectGovernorPressureLockupBoost (was cm848_updateExhaustBrakeLockupInhibit in stage F,
    cm848_monitorConverterClutchEngagement in stage E, before that
@@ -35623,17 +35623,16 @@ void cm848_updateExhaustBrakeInhibitForLockup(void)
 
 /* The 48RE lockup boost governor pressure mode (pressure state 0x10, e2m RE_Lockup_Boost 'Gov
    pressure target during lockup, to prevent downshift'): in 3rd / 4th outside transfer-case low
-   range, with the lever not in 1 / 2 (transmission_selected_gear 0x7e / 0x7f), condition_eval bit 6
+   range, with the lever not in 1 / 2 (transmission_selected_gear 0x7e / 0x7f), request_flags bit 6
    clear, transmission_overheat_protection_active_flag clear and switch 12 (the exhaust brake
    switch) off, while the throttle is below the lockup curve (the tables it shares with
-   cm848_applyConverterLockupSchedule; once in the mode the second curve, held by
-   load_condition_flags bit 2 = RE_High_Pressure), the target is governor_pressure_lockup_boost. The
-   user override (governor_pressure_override_enable / _value, state 0x17) follows. With the lever in
-   1 / 2 and the output speed below transmission_manual_2nd_4_3_downshift_maximum_output_speed it
-   requests the 4-3 downshift (condition_eval bit 1, clearing the 3-4 bit 2) unless
-   overdrive_control_flags bit 3 is set. Ends with cm848_updateExhaustBrakeInhibitForLockup (was
-   cm848_selectGovernorPressureHighGear in stage E; originally
-   cm848_calculateProtectionThresholdLimit) */
+   cm848_applyConverterLockupSchedule; once in the mode the second curve, held by state_flags bit 2
+   = RE_High_Pressure), the target is governor_pressure_lockup_boost. The user override
+   (governor_pressure_override_enable / _value, state 0x17) follows. With the lever in 1 / 2 and the
+   output speed below transmission_manual_2nd_4_3_downshift_maximum_output_speed it requests the 4-3
+   downshift (request_flags bit 1, clearing the 3-4 bit 2) unless overdrive_flags bit 3 is set. Ends
+   with cm848_updateExhaustBrakeInhibitForLockup (was cm848_selectGovernorPressureHighGear in stage
+   E; originally cm848_calculateProtectionThresholdLimit) */
 
 void cm848_selectGovernorPressureLockupBoost(void)
 
@@ -40385,9 +40384,9 @@ void cm848_decodePciReceiveMessage13State(void)
 
 /* Builds the PCI (J1850) TX[12] header 0x98 status byte: bit 0 = overdrive_off_flag (O/D OFF lamp)
    / bit 1 = transmission_overheat_flag (284 deg F) or torque_converter_slip_warning_flag (converter
-   slip - likely the TRANS TEMP lamp) / bit 4 = 1 in high range - cleared while condition_flags_1
-   bit 2 (transfer case low range) or engine_to_vehicle_speed_ratio_high_flag is set; a change of
-   bits 0 or 4 sends at once (timer pushed past its 2816 interval) (was
+   slip - likely the TRANS TEMP lamp) / bit 4 = 1 in high range - cleared while mode_flags bit 2
+   (transfer case low range) or engine_to_vehicle_speed_ratio_high_flag is set; a change of bits 0
+   or 4 sends at once (timer pushed past its 2816 interval) (was
    cm848_updateProtectionOverrideFlags) | review-function-readability reviewed 2026-11-13 -
    Readability Medium Accuracy Confidence Medium */
 
@@ -41775,10 +41774,11 @@ void cm848_initializeTransmissionOutputSpeedSensorMonitor(void)
    cm848_phase_group_a_processing while bit 28 of monitor_enabling_conditions_met is set. Out of
    park / neutral (switch 20), at the governor setpoint, with vehicle_speed_copy above 3840 (15
    mph): 300 passes with transmission_output_speed_sensor_filtered below 480 (60 rpm) set P0720 and
-   bit 5 (0x20) of transmission_control_flags_t.threshold_current (the output speed is then taken
-   from the vehicle speed), 300 passes at or above it clear both. output_speed_sensor_check_state is
-   0 not testing / 1 testing / 2 healed / 3 failed / 4 disabled while P0500, P0850 or an ECM fault
-   (0 / 91 / 328 / 330) is set (was cm848_processEngineConditionFlags). */
+   bit 5 (0x20) of transmission_control_flags_t.limp_home_flags_4 (e2m RE_OSS_Limp) (the output
+   speed is then taken from the vehicle speed), 300 passes at or above it clear both.
+   output_speed_sensor_check_state is 0 not testing / 1 testing / 2 healed / 3 failed / 4 disabled
+   while P0500, P0850 or an ECM fault (0 / 91 / 328 / 330) is set (was
+   cm848_processEngineConditionFlags). */
 
 void cm848_monitorTransmissionOutputSpeedSensor(void)
 
@@ -42964,8 +42964,9 @@ LAB_0003f598:
 //
 
 /* Boot reset of the transmission temperature stability check: clears the unchanged-reading latch
-   (rate_limit_flags bit 2), the previous raw reading and the unchanged-reading counter, and sets
-   transmission_temperature_early_substitute_countdown to 10. (was cm848_resetEngineLoadTracker) */
+   (limp_home_and_temperature_flags bit 2), the previous raw reading and the unchanged-reading
+   counter, and sets transmission_temperature_early_substitute_countdown to 10. (was
+   cm848_resetEngineLoadTracker) */
 
 void cm848_resetTransmissionTemperatureValidation(void)
 
@@ -72043,9 +72044,9 @@ void cm848_processOverdriveSwitchAndShift(void)
   
   if ((algorithm_enable_flags_6_cal & 4) != 0) {
     if (((transmission_control_flags.overdrive_flags & 0x40) == 0) &&
-       (protection_overtemp_entry_debounce_count = protection_overtemp_entry_debounce_count + 1,
-       overdrive_switch_power_on_delay_time < protection_overtemp_entry_debounce_count)) {
-      protection_overtemp_entry_debounce_count = overdrive_switch_power_on_delay_time;
+       (overdrive_switch_power_on_delay_counter = overdrive_switch_power_on_delay_counter + 1,
+       overdrive_switch_power_on_delay_time < overdrive_switch_power_on_delay_counter)) {
+      overdrive_switch_power_on_delay_counter = overdrive_switch_power_on_delay_time;
       if ((switch_input_state_bits[2] & 0x20) == 0) {
         transmission_control_flags.overdrive_flags = transmission_control_flags.overdrive_flags | 4;
       }
@@ -79219,9 +79220,9 @@ void cm848_calculateGovernorPressureProportionalTerm(void)
   else {
     iVar2 = 0x6400;
   }
-  DAT_0040b59e = (short)iVar2;
+  governor_pressure_proportional_term = (short)iVar2;
   governor_pressure_controller_output_unclamped =
-       (uint)governor_pressure_controller_output + (int)DAT_0040b59e;
+       (uint)governor_pressure_controller_output + (int)governor_pressure_proportional_term;
   cm848_limitGovernorPressureSolenoidDuty(governor_pressure_controller_output_unclamped);
   return;
 }
@@ -79233,9 +79234,9 @@ void cm848_calculateGovernorPressureProportionalTerm(void)
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
-/* The governor pressure controller's derivative term: governor_pressure_error_change x RE_K_D_Num /
-   RE_K_D_Den, clamped to +-0x6400, into governor_pressure_controller_error_delta_term and added to
-   the output (was cm848_throttleGain_velocityBased_calc) */
+/* The governor pressure controller's derivative term: governor_pressure_error_slope x RE_K_D_Num /
+   RE_K_D_Den, clamped to +-0x6400, into governor_pressure_derivative_term and added to the output
+   (was cm848_throttleGain_velocityBased_calc) */
 
 void cm848_calculateGovernorPressureDerivativeTerm(void)
 
@@ -79243,11 +79244,11 @@ void cm848_calculateGovernorPressureDerivativeTerm(void)
   int iVar1;
   
   iVar1 = (int)(CONCAT44((int)((ulonglong)
-                               ((longlong)(int)governor_pressure_error_change *
+                               ((longlong)(int)governor_pressure_error_slope *
                                (longlong)
                                (int)((uint)governor_pressure_derivative_gain_numerator * 0x100)) >>
                               0x20),
-                         governor_pressure_error_change *
+                         governor_pressure_error_slope *
                          (uint)governor_pressure_derivative_gain_numerator * 0x100) /
                (longlong)((ulonglong)governor_pressure_derivative_gain_denominator << 7));
   if (iVar1 < 0x6401) {
@@ -79258,10 +79259,9 @@ void cm848_calculateGovernorPressureDerivativeTerm(void)
   else {
     iVar1 = 0x6400;
   }
-  governor_pressure_controller_error_delta_term = (word)iVar1;
+  governor_pressure_derivative_term = (word)iVar1;
   governor_pressure_controller_output_unclamped =
-       (uint)governor_pressure_controller_output +
-       (int)(short)governor_pressure_controller_error_delta_term;
+       (uint)governor_pressure_controller_output + (int)(short)governor_pressure_derivative_term;
   cm848_limitGovernorPressureSolenoidDuty(governor_pressure_controller_output_unclamped);
   return;
 }
@@ -79365,7 +79365,7 @@ void cm848_controlGovernorPressureSolenoid(void)
         }
       }
       else {
-        governor_pressure_error_change = governor_pressure_error - DAT_003fcf0e;
+        governor_pressure_error_slope = governor_pressure_error - DAT_003fcf0e;
         governor_pressure_error_sum = governor_pressure_error_sum + governor_pressure_error;
         DAT_003fcf0e = governor_pressure_error;
         cm848_calculateGovernorPressureProportionalTerm();

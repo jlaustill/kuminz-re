@@ -1,0 +1,24 @@
+cm848: round 9 stage F - review fixes: e2m 8BB6 controller RAM, stage D's leftover field names, governor_pressure_normal_curve (label-only)
+
+A review of round 9 found these points:
+- **e2m 8BB6** (the governor pressure controller's RAM) aligns at 0x40b58c: +00 RE_Deriv_Term, +02 RE_Governor_Delta,
+  +06 RE_Governor_Pressure, +08 RE_Int_Term, +0A RE_PID_Error_Slope, +0E RE_PID_Error_Sum, +12 RE_Prop_Term,
+  +14 RE_Trans_Press_Offset, +16 RE_VFS_PWM_On_Time and +18 the VFS driver inhibit.
+  - This confirms stage A's code names. The rows get their records.
+  - governor_pressure_derivative_term (was governor_pressure_controller_error_delta_term) and
+    governor_pressure_error_slope (was governor_pressure_error_change) take the record names.
+  - The proportional term at 0x40b59e is a new label-only row.
+  - The 0x40b58c row's old e2m 8C34 +12 TCC_Function_Timer note was wrong and is removed.
+- **Stage D's bare old field names:** "condition_eval bit 6", "condition_flags_1 bit 4" and the like stayed in 48RE
+  comments and plates above code that reads request_flags / mode_flags. They are replaced in 25 row comments and 8
+  plates (history mentions after "was" are kept).
+  - The P0720 monitor's plate named a stale field (threshold_current). The code sets bit 5 of limp_home_flags_4,
+    which is RE_OSS_Limp; this also confirms the 8C19 +8 alignment.
+  - state_flags bit 5 (service lockup) is now worded as an inference from its readers.
+- **governor_pressure_normal_curve** (axis / values / lookup cache, was governor_pressure_base_curve) matches
+  RE_Normal_Curve and the enum's NORMAL_CURVE.
+- **overdrive_switch_power_on_delay_counter** (was protection_overtemp_entry_debounce_count). The 8BBB cruise resume
+  words and RE_OD_Delay are checked by their uses in cm848_processOverdriveSwitchAndShift.
+- **Proof:** reverse_names.py EQUIVALENT (0 functions differ).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
