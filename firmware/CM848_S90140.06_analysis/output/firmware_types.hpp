@@ -107,11 +107,11 @@ typedef enum {
 typedef enum {
     FUELING_STATE_NOT_SELECTED = 0,  /* Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) - e2m label NOT_SET (CHR_CC_11.45.01.07 0x00) */
     FUELING_STATE_TSC1_TORQUE_CONTROL = 1,  /* cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is etc1_torque_limit_calc - e2m label JCOMTORQ (CHR_CC_11.45.01.07 0x01) */
-    FUELING_STATE_TSC1_SPEED_CONTROL = 2,  /* cm848_engineMode_reset: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record - e2m label JCOMSPED (CHR_CC_11.45.01.07 0x02) */
+    FUELING_STATE_TSC1_SPEED_CONTROL = 2,  /* cm848_selectTsc1SpeedControlMode: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record - e2m label JCOMSPED (CHR_CC_11.45.01.07 0x02) */
     FUELING_STATE_POWER_TAKE_OFF = 4,  /* operating_mode_governor_output.mode_code only (cm848_selectPowerTakeOffOrUserFueling): power_take_off_governor_fuel_demand replaces the user fueling while power_take_off_governor_active_flag is 1 and j1939_governor_feature_cal bit 0x10 is set (modes 5 / 6 always; 7 / 8 / 30 unless the user fuel is larger and governor_feature_config_word bit 0x2000 lets the throttle override). Code-proven: the governor's state goes out as J1939 SPN 976 (CCVS1) and OBD-II PID 0x1E - e2m label PTO (CHR_CC_11.45.01.07 0x04) */
     FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_selectUserCommandedFueling: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified - e2m label USERCOMD (CHR_CC_11.45.01.07 0x05) */
     FUELING_STATE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06) */
-    FUELING_STATE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_initEngineOperatingMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) - e2m label ASGTHROT (CHR_CC_11.45.01.07 0x07) */
+    FUELING_STATE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_selectVariableSpeedGovernorMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) - e2m label ASGTHROT (CHR_CC_11.45.01.07 0x07) */
     FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) - e2m label FOUR_D (CHR_CC_11.45.01.07 0x08) */
     FUELING_STATE_CRUISE_CONTROL = 9,  /* governor_fuel_demand_working_mode only (cm848_selectCruiseOrUserFueling): cruise control is engaged and the cruise PID fuel cruise_control_fueling replaces the user fueling; governor_cruise_setpoint_calc and protectionRampRateControl run their cruise branches (cruise_control_state set / resume / accelerate / decelerate) in 9 - e2m label CRUISE (CHR_CC_11.45.01.07 0x09) */
     FUELING_STATE_VEHICLE_SPEED_LIMIT = 10,  /* adjusted_user_fueling_state (cm848_arbitrateGovernedFueling): the vehicle speed limit fuel vehicle_speed_limit_fueling (cm848_calculateVehicleSpeedLimitFueling: vehicle_speed_rise_limited - the vehicle speed - against cruise_speed_limit_working; no limit while j1939_governor_feature_cal bit 0x80 is clear) is the smallest demand; protectionRampRateControl runs the limit-minus-speed error in 10 - e2m label RSG (CHR_CC_11.45.01.07 0x0A) */
@@ -1212,6 +1212,7 @@ typedef struct algorithm_enable_flags_41_t algorithm_enable_flags_41_t;
 typedef struct piecewise_linear_gain_t piecewise_linear_gain_t;
 typedef struct derivative_gain_t derivative_gain_t;
 typedef struct low_speed_governor_gain_set_t low_speed_governor_gain_set_t;
+typedef struct all_speed_governor_gain_set_t all_speed_governor_gain_set_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2746,4 +2747,16 @@ struct low_speed_governor_gain_set_t {
     int16_t integral_gain;  /* +2: e2m *_Integral_Gain (MM3S/RPM/SEC); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_integral_gain (stage 10c) */
     int16_t derivative_gain;  /* +4: e2m *_Derivative_Gain (MM3S*SEC/RPM); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_derivative_gain (stage 10c) */
     int16_t jerk_gain;  /* +6: e2m *_Jerk_Gain (MM3S*SEC/RPM); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_jerk_gain (stage 10c) */
+};
+
+struct all_speed_governor_gain_set_t {
+    int16_t proportional_gain_1;  /* +0x0: e2m ASG_Proportional_Gain_1 (MM3S/RPM); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+    int16_t proportional_gain_2;  /* +0x2: e2m ASG_Proportional_Gain_2 (MM3S/RPM); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+    int16_t integral_gain_1;  /* +0x4: e2m ASG_Integral_Gain_1 (MM3S/RPM/SEC); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+    int16_t integral_gain_2;  /* +0x6: e2m ASG_Integral_Gain_2 (MM3S/RPM/SEC); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+    int16_t derivative_gain_1;  /* +0x8: e2m ASG_Derivative_Gain_1 (MM3S*SEC/RPM); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+    int16_t derivative_gain_2;  /* +0xa: e2m ASG_Derivative_Gain_2 (MM3S*SEC/RPM); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+    int16_t compensation_filter_coefficient_1;  /* +0xc: e2m ASG_Compensation_Filter_Coefficient_1 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+    int16_t compensation_filter_coefficient_2;  /* +0xe: e2m ASG_Compensation_Filter_Coefficient_2 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
+    int16_t compensation_filter_coefficient_3;  /* +0x10: e2m ASG_Compensation_Filter_Coefficient_3 (UNITLESS); cm848_runOperatingModeSpeedGovernor reads it through all_speed_governor_gain_set_pointer (round 5) */
 };

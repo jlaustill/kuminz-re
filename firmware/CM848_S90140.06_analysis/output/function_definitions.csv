@@ -416,10 +416,10 @@ function_address,function_name,param_index,name,type,comment
 0x000185cc,cm848_conditionalFirstOrderFilter,0,value,int32_t,New sample (r3)
 0x000185cc,cm848_conditionalFirstOrderFilter,1,update_enable,int32_t,0 = only read the filter output (r4)
 0x000185cc,cm848_conditionalFirstOrderFilter,2,filter_state,ema_filter_state_t *,Filter state (r5) passed to cm848_signedFirstOrderFilter
-0x00010110,cm848_initEngineOperatingMode,return,,void,
-0x00010110,cm848_initEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
-0x00503074,cm848_engineMode_reset,return,,void,
-0x00503074,cm848_engineMode_reset,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 2
+0x00010110,cm848_selectVariableSpeedGovernorMode,return,,void,
+0x00010110,cm848_selectVariableSpeedGovernorMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 7
+0x00503074,cm848_selectTsc1SpeedControlMode,return,,void,
+0x00503074,cm848_selectTsc1SpeedControlMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the tuning set is reloaded when it is not 2
 0x0050daac,cm848_transitionEngineOperatingMode,return,,void,
 0x0050daac,cm848_transitionEngineOperatingMode,0,previous_engine_operating_mode,int32_t,Mode of the previous pass; the pedal fault snapshot is saved when it is not 6
 0x00014508,cm848_selectChiSourceCode,return,,COMBUSTION_CHI_SOURCE,1 when the air density chi is not smaller than the coolant temperature chi - else 3

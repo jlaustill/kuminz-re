@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 01:40:32 MST 2026
+// Generated: Sat Nov 21 01:46:32 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6092,9 +6092,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -9227,8 +9227,8 @@ void cm848_runOperatingModeSpeedGovernor(void)
   }
   else {
     iVar15 = (uint)all_speed_governor_droop_gain_2 *
-             ((int)*(short *)(all_speed_governor_gain_set_pointer + 4) +
-             (int)*(short *)(all_speed_governor_gain_set_pointer + 6));
+             ((int)all_speed_governor_gain_set_pointer->integral_gain_1 +
+             (int)all_speed_governor_gain_set_pointer->integral_gain_2);
     uVar17 = (uint)governor_rpm_actual;
     if (iVar15 != 0) {
       iVar15 = (int)((0x400 - (uint)all_speed_governor_droop_gain_1) *
@@ -9362,8 +9362,8 @@ LAB_0000efb0:
           ((final_fueling_state != FUELING_STATE_MAXIMUM_THROTTLE &&
            (final_fueling_state != FUELING_STATE_TSC1_SPEED_CONTROL)))) &&
          (final_fueling_state != FUELING_STATE_UNIDENTIFIED_49)))))) {
-      iVar9 = (int)*(short *)(all_speed_governor_gain_set_pointer + 0xc);
-      iVar13 = (int)*(short *)(all_speed_governor_gain_set_pointer + 0xe);
+      iVar9 = (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_1;
+      iVar13 = (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_2;
       if (iVar9 == iVar13) {
         uVar11 = 0;
       }
@@ -9373,7 +9373,7 @@ LAB_0000efb0:
         uVar16 = (uint)all_speed_governor_no_load_fuel;
         if (uVar16 + uVar5 < uVar17) {
           iVar8 = (uVar17 - uVar16) - uVar5;
-          iVar6 = 0x100 - *(short *)(all_speed_governor_gain_set_pointer + 0x10);
+          iVar6 = 0x100 - all_speed_governor_gain_set_pointer->compensation_filter_coefficient_3;
           iVar13 = (int)(CONCAT44((int)((ulonglong)((longlong)iVar8 * (longlong)iVar6) >> 0x20),
                                   iVar8 * iVar6) / (longlong)(iVar9 - iVar13));
           if (0x1700 < iVar13) {
@@ -9383,7 +9383,7 @@ LAB_0000efb0:
         }
         else {
           iVar8 = (uVar16 - uVar17) + uVar5;
-          iVar6 = 0x100 - *(short *)(all_speed_governor_gain_set_pointer + 0x10);
+          iVar6 = 0x100 - all_speed_governor_gain_set_pointer->compensation_filter_coefficient_3;
           iVar13 = (int)(CONCAT44((int)((ulonglong)((longlong)iVar8 * (longlong)iVar6) >> 0x20),
                                   iVar8 * iVar6) / (longlong)(iVar9 - iVar13));
           if (0x1700 < iVar13) {
@@ -9456,12 +9456,12 @@ LAB_0000f0b0:
   all_speed_governor_error_difference = (word)iVar9;
   dVar4 = all_speed_governor_integral_adjustment +
           (((int)(short)all_speed_governor_error_difference *
-            ((int)*(short *)all_speed_governor_gain_set_pointer +
-            (int)*(short *)(all_speed_governor_gain_set_pointer + 4)) +
-           iVar15 * ((int)*(short *)(all_speed_governor_gain_set_pointer + 4) +
-                    (int)*(short *)(all_speed_governor_gain_set_pointer + 6))) -
+            ((int)all_speed_governor_gain_set_pointer->proportional_gain_1 +
+            (int)all_speed_governor_gain_set_pointer->integral_gain_1) +
+           iVar15 * ((int)all_speed_governor_gain_set_pointer->integral_gain_1 +
+                    (int)all_speed_governor_gain_set_pointer->integral_gain_2)) -
           (int)(short)all_speed_governor_feedback_difference *
-          (int)*(short *)(all_speed_governor_gain_set_pointer + 2)) +
+          (int)all_speed_governor_gain_set_pointer->proportional_gain_2) +
           all_speed_governor_proportional_adjustment >> 9;
   all_speed_governor_pid_accumulator = 0xe6000;
   if (((int)dVar4 < 0xe6000) && (all_speed_governor_pid_accumulator = dVar4, (int)dVar4 < -0xe5fff))
@@ -9472,18 +9472,18 @@ LAB_0000f0b0:
                 ((int)(CONCAT44((int)((ulonglong)
                                       ((longlong)(int)(short)all_speed_governor_error_difference *
                                       (longlong)
-                                      (int)*(short *)(all_speed_governor_gain_set_pointer + 8)) >>
-                                     0x20),
+                                      (int)all_speed_governor_gain_set_pointer->derivative_gain_1)
+                                     >> 0x20),
                                 (int)(short)all_speed_governor_error_difference *
-                                (int)*(short *)(all_speed_governor_gain_set_pointer + 8)) / 4) -
+                                (int)all_speed_governor_gain_set_pointer->derivative_gain_1) / 4) -
                 (int)(CONCAT44((int)((ulonglong)
                                      ((longlong)(int)(short)all_speed_governor_feedback_difference *
                                      (longlong)
-                                     (int)*(short *)(all_speed_governor_gain_set_pointer + 10)) >>
+                                     (int)all_speed_governor_gain_set_pointer->derivative_gain_2) >>
                                     0x20),
                                (int)(short)all_speed_governor_feedback_difference *
-                               (int)*(short *)(all_speed_governor_gain_set_pointer + 10)) / 4))) >>
-           0xb;
+                               (int)all_speed_governor_gain_set_pointer->derivative_gain_2) / 4)))
+           >> 0xb;
   wStack_2e = (word)iVar15;
   if (iVar15 < 0x7fff) {
     if (iVar15 < -0x7fff) {
@@ -9546,10 +9546,11 @@ LAB_0000f2f8:
     all_speed_governor_state_pid_integral_clamped = 0x1700;
   }
   iVar13 = ((int)all_speed_governor_state_pid_integral_clamped *
-            (int)*(short *)(all_speed_governor_gain_set_pointer + 0xc) -
-           (int)(short)uVar11 * (int)*(short *)(all_speed_governor_gain_set_pointer + 0xe)) +
+            (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_1 -
+           (int)(short)uVar11 *
+           (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_2) +
            (int)all_speed_governor_state_fuel_demand_correction *
-           (int)*(short *)(all_speed_governor_gain_set_pointer + 0x10);
+           (int)all_speed_governor_gain_set_pointer->compensation_filter_coefficient_3;
   iVar15 = iVar13 >> 8;
   if (iVar15 < -0x16ff) {
     all_speed_governor_state_fuel_demand_correction = -0x1700;
@@ -9814,24 +9815,25 @@ void cm848_selectAllSpeedGovernorApplicationMode(void)
     speed_request_unfiltered = all_speed_governor_application_reference_speed;
     all_speed_governor_droop_gain_1 = all_speed_governor_application_droop_gain_1;
     all_speed_governor_droop_gain_2 = all_speed_governor_application_droop_gain_2;
-    all_speed_governor_gain_set_pointer = (dword)&all_speed_governor_application_proportional_gain_1
-    ;
-    all_speed_governor_integral_gain_1_selected = all_speed_governor_application_integral_gain_1;
-    all_speed_governor_integral_gain_2_selected = all_speed_governor_application_integral_gain_2;
+    all_speed_governor_gain_set_pointer = &all_speed_governor_application_gain_set;
+    all_speed_governor_integral_gain_1_selected =
+         all_speed_governor_application_gain_set.integral_gain_1;
+    all_speed_governor_integral_gain_2_selected =
+         all_speed_governor_application_gain_set.integral_gain_2;
     all_speed_governor_proportional_gain_1_selected =
-         all_speed_governor_application_proportional_gain_1;
+         all_speed_governor_application_gain_set.proportional_gain_1;
     all_speed_governor_proportional_gain_2_selected =
-         all_speed_governor_application_proportional_gain_2;
-    all_speed_governor_derivative_gain_1_selected = all_speed_governor_application_derivative_gain_1
-    ;
-    all_speed_governor_derivative_gain_2_selected = all_speed_governor_application_derivative_gain_2
-    ;
+         all_speed_governor_application_gain_set.proportional_gain_2;
+    all_speed_governor_derivative_gain_1_selected =
+         all_speed_governor_application_gain_set.derivative_gain_1;
+    all_speed_governor_derivative_gain_2_selected =
+         all_speed_governor_application_gain_set.derivative_gain_2;
     all_speed_governor_compensation_filter_coefficient_1_selected =
-         all_speed_governor_application_compensation_filter_coefficient_1;
+         all_speed_governor_application_gain_set.compensation_filter_coefficient_1;
     all_speed_governor_compensation_filter_coefficient_2_selected =
-         all_speed_governor_application_compensation_filter_coefficient_2;
+         all_speed_governor_application_gain_set.compensation_filter_coefficient_2;
     all_speed_governor_compensation_filter_coefficient_3_selected =
-         all_speed_governor_application_compensation_filter_coefficient_3;
+         all_speed_governor_application_gain_set.compensation_filter_coefficient_3;
     all_speed_governor_reference_filter_coefficient_selected =
          all_speed_governor_application_reference_filter_coefficient;
     governor_rpm_actual = all_speed_governor_application_feedback_speed;
@@ -9970,14 +9972,15 @@ void cm848_calculateAllSpeedGovernorThrottleReference(void)
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* Calculates the all-speed governor's two droop gains (Q10, 1024 = 1.0 = no droop; e2m
    ASG_Droop_Gain_1 / _2) from the throttle mode coefficient calibrations
-   (all_speed_governor_throttle_mode_integral_gain_1 / _2 and ..._compensation_filter_coefficient_1
-   / 2 / 3) and the droop all_speed_governor_droop, which is the blend (weighted by the gear-ratio
-   blend weight 0..128) of the all_speed_governor_droop_blend_0 and _128 tables at
-   speed_request_base. Droop gain 1 = 1024 x (K - u) / (K + u) with K = 40196217 and u = droop x
-   (integral gain 1 + integral gain 2) x (coefficient 1 - coefficient 2) / (256 - coefficient 3);
-   droop gain 2 = (droop gain 1 + 1024) / 2; both are 1024 when the droop is 0 or the coefficients
-   disable the adjustment. Stored to all_speed_governor_droop_gain_1 / _2 and their throttle copies.
-   Called by cm848_initEngineOperatingMode when the speed governor starts;
+   (all_speed_governor_throttle_mode_gain_set.integral_gain_1 / _2 and
+   ..._compensation_filter_coefficient_1 / 2 / 3) and the droop all_speed_governor_droop, which is
+   the blend (weighted by the gear-ratio blend weight 0..128) of the
+   all_speed_governor_droop_blend_0 and _128 tables at speed_request_base. Droop gain 1 = 1024 x (K
+   - u) / (K + u) with K = 40196217 and u = droop x (integral gain 1 + integral gain 2) x
+   (coefficient 1 - coefficient 2) / (256 - coefficient 3); droop gain 2 = (droop gain 1 + 1024) /
+   2; both are 1024 when the droop is 0 or the coefficients disable the adjustment. Stored to
+   all_speed_governor_droop_gain_1 / _2 and their throttle copies. Called by
+   cm848_selectVariableSpeedGovernorMode when the speed governor starts;
    cm848_runOperatingModeSpeedGovernor reads them (was cm848_calculateFuelTrimValues). */
 
 void cm848_calculateGovernorCompensatorCoefficients(void)
@@ -10010,16 +10013,17 @@ void cm848_calculateGovernorCompensatorCoefficients(void)
     }
   }
   all_speed_governor_droop = wVar1;
-  if ((int)all_speed_governor_throttle_mode_compensation_filter_coefficient_2 <
-      (int)all_speed_governor_throttle_mode_compensation_filter_coefficient_1) {
-    uVar3 = (uint)all_speed_governor_throttle_mode_integral_gain_1 +
-            (uint)all_speed_governor_throttle_mode_integral_gain_2 & 0xffff;
+  if ((int)all_speed_governor_throttle_mode_gain_set.compensation_filter_coefficient_2 <
+      (int)all_speed_governor_throttle_mode_gain_set.compensation_filter_coefficient_1) {
+    uVar3 = (uint)(ushort)all_speed_governor_throttle_mode_gain_set.integral_gain_1 +
+            (uint)(ushort)all_speed_governor_throttle_mode_gain_set.integral_gain_2 & 0xffff;
     if ((all_speed_governor_droop != 0) && (uVar3 != 0)) {
-      if (all_speed_governor_throttle_mode_compensation_filter_coefficient_3 != 0x100) {
+      if (all_speed_governor_throttle_mode_gain_set.compensation_filter_coefficient_3 != 0x100) {
         uVar3 = all_speed_governor_droop * uVar3;
-        uVar4 = (int)all_speed_governor_throttle_mode_compensation_filter_coefficient_1 -
-                (int)all_speed_governor_throttle_mode_compensation_filter_coefficient_2;
-        uVar2 = 0x100 - (int)all_speed_governor_throttle_mode_compensation_filter_coefficient_3;
+        uVar4 = (int)all_speed_governor_throttle_mode_gain_set.compensation_filter_coefficient_1 -
+                (int)all_speed_governor_throttle_mode_gain_set.compensation_filter_coefficient_2;
+        uVar2 = 0x100 - (int)all_speed_governor_throttle_mode_gain_set.
+                             compensation_filter_coefficient_3;
         if ((uVar3 >> 2 <
              (uint)(CONCAT44((int)((ulonglong)uVar2 * 0x2655879 >> 0x20),uVar2 * 0x2655879) /
                    (ulonglong)(uVar4 * 4))) &&
@@ -10046,10 +10050,17 @@ LAB_000100d0:
 
 
 //
-// Function: cm848_initEngineOperatingMode @ 0x00010110
+// Function: cm848_selectVariableSpeedGovernorMode @ 0x00010110
 //
 
-void cm848_initEngineOperatingMode(int previous_engine_operating_mode)
+/* If no fueling state is selected and the variable speed governor is
+   (variable_speed_governor_selected_flag): blends the governor tuning sets, selects
+   FUELING_STATE_VARIABLE_SPEED_GOVERNOR (7), computes the ASG throttle reference and the
+   compensator coefficients, and when it comes from another state loads
+   all_speed_governor_throttle_mode_gain_set (e2m 107B) and its limits into the working governor
+   selection (was cm848_initEngineOperatingMode) */
+
+void cm848_selectVariableSpeedGovernorMode(int previous_engine_operating_mode)
 
 {
   if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
@@ -10060,26 +10071,25 @@ void cm848_initEngineOperatingMode(int previous_engine_operating_mode)
     cm848_emptyStubFunction6();
     cm848_calculateGovernorCompensatorCoefficients();
     if (previous_engine_operating_mode != 7) {
-      all_speed_governor_gain_set_pointer =
-           (dword)&all_speed_governor_throttle_mode_proportional_gain_1;
-      all_speed_governor_integral_gain_1_selected = all_speed_governor_throttle_mode_integral_gain_1
-      ;
-      all_speed_governor_integral_gain_2_selected = all_speed_governor_throttle_mode_integral_gain_2
-      ;
+      all_speed_governor_gain_set_pointer = &all_speed_governor_throttle_mode_gain_set;
+      all_speed_governor_integral_gain_1_selected =
+           all_speed_governor_throttle_mode_gain_set.integral_gain_1;
+      all_speed_governor_integral_gain_2_selected =
+           all_speed_governor_throttle_mode_gain_set.integral_gain_2;
       all_speed_governor_proportional_gain_1_selected =
-           all_speed_governor_throttle_mode_proportional_gain_1;
+           all_speed_governor_throttle_mode_gain_set.proportional_gain_1;
       all_speed_governor_proportional_gain_2_selected =
-           all_speed_governor_throttle_mode_proportional_gain_2;
+           all_speed_governor_throttle_mode_gain_set.proportional_gain_2;
       all_speed_governor_derivative_gain_1_selected =
-           all_speed_governor_throttle_mode_derivative_gain_1;
+           all_speed_governor_throttle_mode_gain_set.derivative_gain_1;
       all_speed_governor_derivative_gain_2_selected =
-           all_speed_governor_throttle_mode_derivative_gain_2;
+           all_speed_governor_throttle_mode_gain_set.derivative_gain_2;
       all_speed_governor_compensation_filter_coefficient_1_selected =
-           all_speed_governor_throttle_mode_compensation_filter_coefficient_1;
+           all_speed_governor_throttle_mode_gain_set.compensation_filter_coefficient_1;
       all_speed_governor_compensation_filter_coefficient_2_selected =
-           all_speed_governor_throttle_mode_compensation_filter_coefficient_2;
+           all_speed_governor_throttle_mode_gain_set.compensation_filter_coefficient_2;
       all_speed_governor_compensation_filter_coefficient_3_selected =
-           all_speed_governor_throttle_mode_compensation_filter_coefficient_3;
+           all_speed_governor_throttle_mode_gain_set.compensation_filter_coefficient_3;
       all_speed_governor_reference_filter_coefficient_selected =
            all_speed_governor_throttle_mode_reference_filter_coefficient;
       all_speed_governor_external_reset_flag = 0;
@@ -44795,10 +44805,10 @@ void cm848_resetEngineOperatingMode(void)
   engine_operating_mode = FUELING_STATE_NOT_SELECTED;
   cm848_selectAllSpeedGovernorApplicationMode();
   cm848_setEngineOperatingMode1();
-  cm848_engineMode_reset(previous_engine_operating_mode);
+  cm848_selectTsc1SpeedControlMode(previous_engine_operating_mode);
   cm848_selectUserCommandedFueling();
   cm848_transitionEngineOperatingMode(previous_engine_operating_mode);
-  cm848_initEngineOperatingMode(previous_engine_operating_mode);
+  cm848_selectVariableSpeedGovernorMode(previous_engine_operating_mode);
   cm848_initEngineOperatingState();
   return;
 }
@@ -60369,8 +60379,8 @@ void sensorChannelTypeB_configInit
   dword debounce_transition_state;
   dword sensor_value;
   uint uVar3;
-  word scratch16;
   ushort recovery_decrement;
+  word scratch16;
   
   channel_word_index = (int)channel_index >> 4;
   sensor_value = 1 << (channel_index +
@@ -61386,32 +61396,44 @@ void cm848_initialization_step_3(void)
 
 
 //
-// Function: cm848_engineMode_reset @ 0x00503074
+// Function: cm848_selectTsc1SpeedControlMode @ 0x00503074
 //
 
-void cm848_engineMode_reset(int previous_engine_operating_mode)
+/* If no fueling state is selected and TSC1 requests speed control
+   (j1939_tsc1_override_state.governor_mode 1): selects FUELING_STATE_TSC1_SPEED_CONTROL with the
+   TSC1 capped speed target and loads the gain set of the requested speed control condition
+   (j1939_tsc1_speed_control_condition_gain_sets) and the J1939 limits and reference filter (was
+   cm848_engineMode_reset) */
+
+void cm848_selectTsc1SpeedControlMode(int previous_engine_operating_mode)
 
 {
-  int iVar1;
+  uint uVar1;
   
   if ((engine_operating_mode == FUELING_STATE_NOT_SELECTED) &&
      (j1939_tsc1_override_state.governor_mode == 1)) {
     engine_operating_mode = FUELING_STATE_TSC1_SPEED_CONTROL;
     speed_request_unfiltered = j1939_tsc1_override_state.etc1_capped_speed_target;
-    iVar1 = (uint)j1939_tsc1_override_state.etc1_speed_control_mode * 0x12;
-    all_speed_governor_gain_set_pointer = (dword)(&DAT_0005c1d6 + iVar1);
-    all_speed_governor_integral_gain_1_selected = *(word *)(&DAT_0005c1da + iVar1);
-    all_speed_governor_integral_gain_2_selected = *(word *)(&DAT_0005c1dc + iVar1);
-    all_speed_governor_proportional_gain_1_selected = *(word *)all_speed_governor_gain_set_pointer;
-    all_speed_governor_proportional_gain_2_selected = *(word *)(&DAT_0005c1d8 + iVar1);
-    all_speed_governor_derivative_gain_1_selected = *(word *)(&DAT_0005c1de + iVar1);
-    all_speed_governor_derivative_gain_2_selected = *(word *)(&DAT_0005c1e0 + iVar1);
-    all_speed_governor_compensation_filter_coefficient_1_selected = *(word *)(&DAT_0005c1e2 + iVar1)
-    ;
-    all_speed_governor_compensation_filter_coefficient_2_selected = *(word *)(&DAT_0005c1e4 + iVar1)
-    ;
-    all_speed_governor_compensation_filter_coefficient_3_selected = *(word *)(&DAT_0005c1e6 + iVar1)
-    ;
+    uVar1 = (uint)j1939_tsc1_override_state.etc1_speed_control_mode;
+    all_speed_governor_gain_set_pointer = j1939_tsc1_speed_control_condition_gain_sets + uVar1;
+    all_speed_governor_integral_gain_1_selected =
+         j1939_tsc1_speed_control_condition_gain_sets[uVar1].integral_gain_1;
+    all_speed_governor_integral_gain_2_selected =
+         j1939_tsc1_speed_control_condition_gain_sets[uVar1].integral_gain_2;
+    all_speed_governor_proportional_gain_1_selected =
+         all_speed_governor_gain_set_pointer->proportional_gain_1;
+    all_speed_governor_proportional_gain_2_selected =
+         j1939_tsc1_speed_control_condition_gain_sets[uVar1].proportional_gain_2;
+    all_speed_governor_derivative_gain_1_selected =
+         j1939_tsc1_speed_control_condition_gain_sets[uVar1].derivative_gain_1;
+    all_speed_governor_derivative_gain_2_selected =
+         j1939_tsc1_speed_control_condition_gain_sets[uVar1].derivative_gain_2;
+    all_speed_governor_compensation_filter_coefficient_1_selected =
+         j1939_tsc1_speed_control_condition_gain_sets[uVar1].compensation_filter_coefficient_1;
+    all_speed_governor_compensation_filter_coefficient_2_selected =
+         j1939_tsc1_speed_control_condition_gain_sets[uVar1].compensation_filter_coefficient_2;
+    all_speed_governor_compensation_filter_coefficient_3_selected =
+         j1939_tsc1_speed_control_condition_gain_sets[uVar1].compensation_filter_coefficient_3;
     governor_rpm_actual = engine_speed_state.filtered_engine_speed;
     if (previous_engine_operating_mode != 2) {
       all_speed_governor_external_reset_flag = 0;

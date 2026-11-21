@@ -271,7 +271,7 @@ void cm848_calculateAllSpeedGovernorNoLoadFuel(void);  // @ 0x0000fcd0
 void cm848_initFuelTimingTableSizes(void);  // @ 0x0000fe3c
 void cm848_calculateAllSpeedGovernorThrottleReference(void);  // @ 0x0000fe5c
 void cm848_calculateGovernorCompensatorCoefficients(void);  // @ 0x0000ff04
-void cm848_initEngineOperatingMode(int previous_engine_operating_mode);  // @ 0x00010110
+void cm848_selectVariableSpeedGovernorMode(int previous_engine_operating_mode);  // @ 0x00010110
 void cm848_initLookupTableParams(void);  // @ 0x00010248
 void cm848_stubFunction3(void);  // @ 0x00010270
 undefined8 mpc555_timerInterruptHandler(undefined4 param_1,undefined4 param_2);  // @ 0x00010274
@@ -1323,7 +1323,7 @@ void cm848_initialization_step_2(void);  // @ 0x00502b24
 void cm848_initializeBarometricFuelLimitInterpolationStates(void);  // @ 0x00502b34
 void cm848_calculateAmbientAndCompressorInletConditions(void);  // @ 0x00502b6c
 void cm848_initialization_step_3(void);  // @ 0x00502eb8
-void cm848_engineMode_reset(int previous_engine_operating_mode);  // @ 0x00503074
+void cm848_selectTsc1SpeedControlMode(int previous_engine_operating_mode);  // @ 0x00503074
 void cm848_initializeVehicleSpeedAndCruiseState(void);  // @ 0x005031b4
 void cm848_updateEgrCoolerFoulingFaultCounter(void);  // @ 0x005031fc
 void cm848_calculateEgrCoolerEfficiency(void);  // @ 0x005033a0

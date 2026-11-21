@@ -228,6 +228,7 @@ extern word fuel_limit_barometric_temperature_band_grid[12];  // 0x0005c1b8
 extern word all_speed_governor_j1939_reference_filter_coefficient;  // 0x0005c1d0
 extern word governor_fuel_demand_tracking_limit_j1939;  // 0x0005c1d2
 extern word governor_fuel_demand_tracking_floor_j1939;  // 0x0005c1d4
+extern all_speed_governor_gain_set_t j1939_tsc1_speed_control_condition_gain_sets[4];  // 0x0005c1d6
 extern word all_speed_governor_friction_fuel_blend_128_axis[9];  // 0x0005c21e
 extern word all_speed_governor_friction_fuel_blend_128_values[9];  // 0x0005c230
 extern word all_speed_governor_coolant_fuel_adjustment_axis[12];  // 0x0005c242
@@ -2399,15 +2400,7 @@ extern word governor_fuel_demand_tracking_limit_throttle_mode;  // 0x003ff6d2
 extern word governor_fuel_demand_tracking_floor_throttle_mode;  // 0x003ff6d4
 extern word governor_speed_lower_limit_enable_flag;  // 0x003ff6d6
 extern word governor_speed_lower_limit_offset_cal;  // 0x003ff6d8
-extern int16_t all_speed_governor_throttle_mode_proportional_gain_1;  // 0x003ff6da
-extern int16_t all_speed_governor_throttle_mode_proportional_gain_2;  // 0x003ff6dc
-extern word all_speed_governor_throttle_mode_integral_gain_1;  // 0x003ff6de
-extern word all_speed_governor_throttle_mode_integral_gain_2;  // 0x003ff6e0
-extern int16_t all_speed_governor_throttle_mode_derivative_gain_1;  // 0x003ff6e2
-extern int16_t all_speed_governor_throttle_mode_derivative_gain_2;  // 0x003ff6e4
-extern int16_t all_speed_governor_throttle_mode_compensation_filter_coefficient_1;  // 0x003ff6e6
-extern int16_t all_speed_governor_throttle_mode_compensation_filter_coefficient_2;  // 0x003ff6e8
-extern int16_t all_speed_governor_throttle_mode_compensation_filter_coefficient_3;  // 0x003ff6ea
+extern all_speed_governor_gain_set_t all_speed_governor_throttle_mode_gain_set;  // 0x003ff6da
 extern int16_t charge_flow_compressor_outlet_temperature_derate_gain;  // 0x003ff71e
 extern word charge_flow_compressor_outlet_temperature_derate_limit;  // 0x003ff720
 extern word charge_flow_compressor_outlet_temperature_derate_ratio;  // 0x003ff722
@@ -4014,7 +4007,7 @@ extern word all_speed_governor_proportional_gain_2_selected;  // 0x0040a1ee
 extern word all_speed_governor_reference_non_linear_filter_output;  // 0x0040a1f0
 extern word all_speed_governor_reference_negative_slew_active_flag;  // 0x0040a1f2
 extern ema_filter_state_t fuel_trim_speed_filter_state;  // 0x0040a1f4
-extern dword all_speed_governor_gain_set_pointer;  // 0x0040a1fc
+extern all_speed_governor_gain_set_t * all_speed_governor_gain_set_pointer;  // 0x0040a1fc
 extern word all_speed_governor_delta;  // 0x0040a200
 extern word engine_rpm_delta;  // 0x0040a202
 extern int16_t rpm_deceleration_limit_integral_term;  // 0x0040a204
@@ -4040,15 +4033,7 @@ extern word all_speed_governor_application_reset_state_engine_speed_previous;  /
 extern int16_t all_speed_governor_application_reset_state_pid_clamp_value;  // 0x0040a22c
 extern int16_t all_speed_governor_application_reset_state_pid_integral_clamped;  // 0x0040a22e
 extern int16_t all_speed_governor_application_reset_state_fuel_demand_correction;  // 0x0040a230
-extern int16_t all_speed_governor_application_proportional_gain_1;  // 0x0040a232
-extern int16_t all_speed_governor_application_proportional_gain_2;  // 0x0040a234
-extern int16_t all_speed_governor_application_integral_gain_1;  // 0x0040a236
-extern int16_t all_speed_governor_application_integral_gain_2;  // 0x0040a238
-extern int16_t all_speed_governor_application_derivative_gain_1;  // 0x0040a23a
-extern int16_t all_speed_governor_application_derivative_gain_2;  // 0x0040a23c
-extern int16_t all_speed_governor_application_compensation_filter_coefficient_1;  // 0x0040a23e
-extern int16_t all_speed_governor_application_compensation_filter_coefficient_2;  // 0x0040a240
-extern int16_t all_speed_governor_application_compensation_filter_coefficient_3;  // 0x0040a242
+extern all_speed_governor_gain_set_t all_speed_governor_application_gain_set;  // 0x0040a232
 extern word all_speed_governor_application_feedback_speed;  // 0x0040a244
 extern word all_speed_governor_application_no_load_speed;  // 0x0040a246
 extern word all_speed_governor_no_load_fuel_reference_speed;  // 0x0040a248
