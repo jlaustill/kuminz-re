@@ -175,3 +175,18 @@ The round 5 lead, as hand work.
 - **Closing:** `fix_comments_r6c.py`, `append_resolved_r6.py` and `memory_edits_r6.py`, which updates the private
   memory notes.
 - **Commit messages:** `commit_r6*.txt`. The logs go into the large-files tarball.
+
+## Round 7: the J1939 monitor, the retarder TSC1 words, the drivetrain ratio module (`session_folder/round7/`)
+
+Hand work on the round 6 leads.
+- **Stage A, label-only:** `worklist_r7a.py` plus `apply_r7a_fields.py`, covering two retarder fields and the session
+  functions' `int32_t` parameter. The first build rendered `int` as `dword`, which is how the importer maps `int`.
+- **Stage C, label-only:** `worklist_r7c.py`, the drivetrain ratio module.
+- **Stage B, the types:**
+  - `apply_r7b_session_struct.py`: `j1939_control_session_t` and its instances, the length words, the four member rows
+    (`removed_r7b.csv`) and the array note.
+  - `apply_r7b_drivetrain.py`: the e2m 106D cals, `gear_down_gear_ratio_cal` and `DRIVETRAIN_GEAR_RANGE`.
+  - The history store's local rows took three builds. A `word *` local and then a `byte *` local both rendered the
+    copy start longer than the struct pointer did.
+- **Closing:** `docs_r7.py`, `fix_leads_r7.py`, `append_resolved_r7.py` and `memory_round7.py`. The commit messages are
+  `commit_r7*.txt`.

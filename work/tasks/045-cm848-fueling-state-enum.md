@@ -854,3 +854,8 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `etc1_torque_mode_timeout_cal` → `j1939_time_limited_node_recovery_time`
 - `j1939_tsc1_override_state` → `j1939_powertrain_control_state`
 - `j1939_tsc1_override_state.proprietary_offset_value` → `j1939_powertrain_control_state.engine_net_output_torque` (e2m 10E8 +28 Jcomm_Engine_Output_Net_Torque, ft lb, signed; stage B1 / B2)
+
+## Resolved by PR #53 round 7 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `engine_temperature_protection_filter_state` → `drivetrain_ratio_filter_state`

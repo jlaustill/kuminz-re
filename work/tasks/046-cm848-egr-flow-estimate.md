@@ -274,7 +274,8 @@ source lookup and the TSC1 dispatcher (scripts in `session_folder/round6/`).
     `*_snapshot` / `*_prev` copies are the previous values of the fields they copy.
 - **Thin evidence:**
   - `retarder_tsc1_mode_transition_timer` and `retarder_tsc1_speed_mode_flag` kept their old roles under a retarder
-    prefix; the retarder handler was only skimmed.
+    prefix; the retarder handler was only skimmed. (Round 7 read it in full: they became
+    `retarder_tsc1_zero_torque_request_timer` and `retarder_tsc1_speed_control_flag`.)
   - The source table has no e2m record; its field names come from the loads (+4 / +6 / +8 / +0xa / +0xc engine,
     +0xe / +0x10 / +0x12 retarder).
   - CM550's `cm550_diagnosticMessageValidator` / `cm550_diagnosticSessionValidator` sit where CM848's ignored
@@ -319,7 +320,7 @@ source lookup and the TSC1 dispatcher (scripts in `session_folder/round6/`).
   - 0x5c38c and the table are in ROM (the main flash), not Bank 2. The `_cal` verdict (none) stands.
   - 4ae5f79 quotes `lha` only for `engine_net_output_torque` (0x40ae1c). The torque command's `short` rests on its e2m
     S record and on the render (the `(short)` casts it removed).
-- **Round 6 leads:**
+- **Round 6 leads** (the first three are resolved in round 7, below):
   - The J1939 monitor's session record: e2m 10FE J1939_Active_Engine (0x3feb4e), 10FF J1939_Active_Retarder and 1100
     J1939_*_Control_Status. Still unnamed or etc1-named: `etc1_governor_calib_session_start_time`,
     `etc1_governor_mode_history_write_index`, DAT_003feb56-5e (the mode history), DAT_003feb64 (the duration),

@@ -265,3 +265,8 @@ limits, in 10 ms counts:
 So a TSC1 drive-by-wire that holds speed control longer than 6 s must send from 0x03, or drop to override disabled
 and back within the limit. The names: `processEngineTsc1Request`, `j1939_powertrain_control_state` (e2m 10E8
 "Jcomm") and `TSC1_OVERRIDE_MODE`.
+
+## Resolved by PR #53 round 7 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `governor_j1939_bypass_flag` → `drivetrain_gear_range`

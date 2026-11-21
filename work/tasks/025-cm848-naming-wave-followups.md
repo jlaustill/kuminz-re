@@ -750,3 +750,8 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `j1939_tsc1_received` → `j1939_powertrain_messages_received`
 - `etc1_governor_state_t` → `j1939_powertrain_control_state_t`
 - `j1939_tsc1_received.auxiliary_state` (0x3fa98c) → `j1939_powertrain_messages_received.etc2_actual_gear_ratio_previous`: a word (the ETC2 handler stores the previous ratio there, sth @ 0x22cf0), as this file suspected (stage B2)
+
+## Resolved by PR #53 round 7 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protection_timeout_enable_flag` → `drivetrain_ratio_engine_period_valid_flag`

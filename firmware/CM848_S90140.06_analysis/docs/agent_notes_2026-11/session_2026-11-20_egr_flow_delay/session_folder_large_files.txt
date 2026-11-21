@@ -34,6 +34,13 @@
   200711 build_r6b2b.log
   200799 build_r6_0.log
   200794 build_r6_0b.log
+  200730 build_r7a.log
+  200729 build_r7a2.log
+  200745 build_r7b.log
+  200750 build_r7b2.log
+  200755 build_r7b3.log
+  200754 build_r7b4.log
+  200755 build_r7c.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -43,3 +50,4 @@
   401915 verify_round5.log
   401736 verify_round6.log
   401743 verify_round6_closing.log
+  401815 verify_round7.log
