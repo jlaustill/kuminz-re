@@ -776,3 +776,16 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `cm848_processProtectionRateLimitFlags` → `cm848_updateExhaustBrakeInhibitForLockup`
 - `protection_fuel_check_bypass_flag` → `exhaust_brake_transmission_features_inhibit`
 - `protection_derate_rpm_limit_floor_cal` → `governor_pressure_detent_2_3_shift_pressure`
+
+## Resolved by PR #53 round 9 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 round 9 (the text above keeps its wording):
+- `protection_condition_flags_t` → `transmission_control_flags_t`
+- `fourth_gear_tcc_lockup_boost_axis` → `transmission_4th_gear_lockup_maximum_throttle_y_axis`
+- `fourth_gear_tcc_lockup_fuel_demand_thresholds` → `transmission_4th_gear_lockup_maximum_throttle_grid`
+- `protection_limit_active_flag` → `transmission_3_4_shift_after_3rd_gear_lockup_flag`
+- `cm848_protectionStateTransitionCheck` → `cm848_selectGovernorPressureCruise`
+- `cm848_throttlePosition_clamp_update` → `cm848_learnGovernorPressureSensorOffset`
+- `protection_throttle_position_clamp_low` → `governor_pressure_sensor_offset_maximum`
+- `protection_throttle_hpcr_frequency` → `governor_pressure_solenoid_frequency`
+- `protection_throttle_invert_flag` → `governor_pressure_solenoid_duty_inversion`

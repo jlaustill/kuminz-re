@@ -251,3 +251,11 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `protection_rpm_peak_threshold` → `governor_pressure_wide_open_throttle_upshift_target_engine_speed_high`
 - `protection_fuel_demand_status80_set_threshold_cal` → `transmission_wide_open_throttle_set_threshold`
 - `protection_fuel_demand_status10_set_threshold_cal` → `transmission_throttle_detent_set_threshold`
+
+## Resolved by PR #53 round 9 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 round 9 (the text above keeps its wording):
+- `protection_condition_flags_t` → `transmission_control_flags_t`
+- `protection_condition_flags_t_0040b0e8` → `transmission_control_flags`
+- `protection_status_flags_t` → `transmission_shift_strategy_flags_t`
+- `cm848_protectionFuelDemandCheck` → `cm848_requestOverdriveShiftsNormal`

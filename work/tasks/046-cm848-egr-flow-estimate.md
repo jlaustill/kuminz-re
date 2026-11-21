@@ -488,7 +488,9 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
   - `transmission_output_speed_fault_debounce_timer` (8C17 +8): only the timer tick and the initialization use it.
   - The turbine torque tables have other sizes than in the 11.45 e2m (17 / 9 / 17 x 9 here, 8 / 8 / 5 x 5 there).
   - The gear ratio table's indexes 0 / 1 (10 / 512) are unexplained.
-- **Round 8 leads:**
+- **Round 8 leads** (round 9 resolved all of them except signedness: the enum, the cruise function, the low range
+  lockup, the 8C19 bytes, the tables, 8BB5 / 8BBB / 8BBD and the ring. 8BBB sits at 0x4077f6, not 0x4077cc;
+  0x407800 is its +0A, the OD-off 4-3 lockup delay):
   - The pressure state codes 1-0x18: an enum needs every mode handler's curves. Named so far: 1 base, 0x12 / 0x13
     anti-hunt boost, 0x14 / 0x15 anti-hunt hold, 0xb-0xf low range, 0x10 lockup boost, 0x11 2nd gear lockup boost,
     0x16 manual low, 0x17 override, 7 / 9 WOT 1-2 / 2-3 hold, 8 / 10 WOT 1-2 / 2-3 boost.
@@ -515,6 +517,58 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
     records give the sign (column 10).
   - Method 1's 27-word output speed ring at 0x3fb192 (between `transmission_output_shaft_acceleration_sample_counter`
     and `transmission_output_speed_history_index`) as a `word[27]` `transmission_output_speed_history`.
+
+## Done, round 9 (2026-11-21, same PR; the user's next "keep going"): the 48RE tables in memory order
+
+Scripts are in `session_folder/round9/`.
+- **Method: e2m column 5 is the ROM layout.** Every ROM calibration block carries a sequential number in column 5,
+  and RAM blocks have 0000. The blocks sit in memory in that order.
+  - `walk_tables.py` walks a run of table blocks from a known address. It sizes each table from its byte-length word in
+    the RAM dump: an X axis or Y curve is a length word plus data, a Z grid is nx x ny words with no header. It prints
+    the CSV row at each address.
+  - From round 8's anchor 0x407876 (0B43) every table through 0B98 lands on an existing `word[N]` row of exactly the
+    walked size: 58 tables. After 8C18, 0B9E..0BA9 and 0BB5..0BC6 match the same way: 30 more.
+  - Each table's users in the code are the mode its record names.
+  - Where 11.46 differs from the 11.45 e2m:
+    - grid boost axes sit inline before the grid;
+    - the T tables (`RE_Gear_Ratio`, the shift lags) are elsewhere;
+    - 8BBB stops at +14 (its tow / brake / exhaust brake 4-3 tail is not before 8BBC);
+    - the manual 2nd curve sits after `RE_WOT_Curve`.
+- **Stage A (0f4daf6, label-only):**
+  - about 70 tables named;
+  - 8BB5 at 0x408ae0, the governor pressure control calibration (38 words);
+  - 8BBB at 0x4077f6 (+00..+14) and 8BBD at 0x40b0ae (+00..+38, which confirms round 8's code names);
+  - the governor pressure solenoid controller, which was the `cm848_throttle*` family. Its offset limits had
+    backwards names;
+  - `cm848_selectGovernorPressureCruise` and the low range / normal lockup, unlock and shift functions.
+- **Stage B (84be9af, label-only):**
+  - the 30 tables after 8C18;
+  - the exhaust brake tables: e2m 8CA6..8CC6, column 5 1010..1030, in that order at 0x4080b0..0x4082bf and 0x408606.
+    Stage A had called them 11.46 tables;
+  - `RE_Manual_2nd_Curve`;
+  - `governor_pressure_exhaust_brake_curve`, the one table here with no 11.45 record.
+- **Stage C (3301eb9): `TRANSMISSION_PRESSURE_STATE`.**
+  - 24 members, every value proved by its store; the code compares only with 0x11 and 0x18. `check_enum_proof2.py`
+    shows only enum substitutions.
+  - Also the 27-word output speed ring and the `dword` fix that removes `_throttle_setpoint_limit_arg`.
+- **Stage D (f63a28b, label-only plus a field split): the 8C19 flag bytes.**
+  - `transmission_control_flags_t` (0x40b0e8, +0..+9): `request_flags` (the 4-3 / 3-4 requests, the unlock request),
+    `mode_flags` (cruise active, decel, low range), `state_flags`, `overdrive_flags`, `axle_ratio_learning_flags`,
+    `limp_home_flags_1`..`4` and `low_range_boost_flags`.
+  - `transmission_shift_strategy_flags_t` (0x40b0f2, +A..+11): `wide_open_throttle_flags`, `run_fuel_mode_flags`,
+    `anti_hunt_flags` / `output_shaft_speed_flags` / `actuator_test_flags` (split from the 3-byte `flags`),
+    `service_test_request_flags` and `limp_home_and_temperature_flags`.
+- **Round 9 leads:**
+  - Name the single bits of the limp-home and overdrive flag bytes. The e2m lists each byte's bit records, but not
+    their positions.
+  - The table lookup caches still named `protection_filter_stage_*_state` / `protection_rpm_limit_table_*_state` /
+    `DAT_003fb1xx`: name each after its table.
+  - The 11.45 T tables (`RE_One_Two_Lag` / `RE_Two_Three_Lag`) are the EEPROM adaptive shift lag tables (0x3fede2):
+    name them.
+  - 8BBB's tail (tow mode, brake 4-3, exhaust brake 4-3 command) is not in front of 8BBC in 11.46. Find it or show
+    it is absent.
+  - The other RE blocks: 8C33 / 8C34 (the converter clutch monitors), 8C55 (governor pressure rationality), 8C29 and
+    8C49 (rock cycle torque management).
 
 ## Leads (not in this PR)
 

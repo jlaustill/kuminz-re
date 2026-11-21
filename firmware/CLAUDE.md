@@ -1026,6 +1026,17 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     `split(",", 3)`, so the comment column takes commas unquoted. Python's `csv` module quotes such a comment when
     it writes the row, and splits it when it reads one. Edit those rows with `line.split(",", 3)`. (Round 8
     unquoted three comments that earlier scripts had written that way.)
+- **Round 9 (2026-11-21, PR #53): e2m column 5 is the ROM calibration layout.** The ROM blocks are numbered in
+  memory order; RAM blocks have 0000. So a run of table blocks can be walked from one known address, sizing each
+  table from its byte-length word in the dump (`round9/walk_tables.py`; a Z grid is nx x ny words with no header).
+  - The walk proved about 100 48RE tables: each lands on an existing `word[N]` row of exactly its size.
+  - It also places the scalar blocks 8BB5 (0x408ae0, the governor pressure controller), 8BBB (0x4077f6) and 8BBD
+    (0x40b0ae), and the exhaust brake tables (e2m 8CA6..8CC6, column 5 1010..1030).
+  - **Where 11.46 differs:** a grid's boost axis can sit inline before the grid, and some blocks moved or are
+    absent. Where the walk stops matching, stop, and check the code users.
+  - **The governor pressure modes** have one enum, `TRANSMISSION_PRESSURE_STATE` (24 members).
+  - **8C19** (0x40b0e8) is the RE flag block: `transmission_control_flags_t` and
+    `transmission_shift_strategy_flags_t`.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

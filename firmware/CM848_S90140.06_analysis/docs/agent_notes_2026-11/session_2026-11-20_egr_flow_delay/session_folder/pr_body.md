@@ -278,6 +278,28 @@ ratio module.**
   - Switch 12 is proved to be the exhaust brake switch (it drives `engine_retarder_switch_percent_2`).
   - 8C19 is checked at +0..+3, +9, +A, +C and +16.
 
+**Round 9 (another "keep going"): the 48RE tables in memory order, the governor pressure controller, the pressure
+state enum, the flag bytes.**
+- **The method:** e2m column 5 numbers every ROM calibration block in memory order (RAM blocks have 0000).
+  `walk_tables.py` walks the tables from round 8's anchor, sizing each from its length word in the dump. About 100
+  tables land on an existing `word[N]` row of exactly the walked size, and each one's users are the mode its record
+  names.
+- **Stage A (0f4daf6, label-only):**
+  - the walked tables and the scalar blocks 8BB5 (the governor pressure controller's calibration), 8BBB and 8BBD;
+  - the `cm848_throttle*` family, which is the governor pressure solenoid PID (its offset limits had backwards
+    names);
+  - `cm848_selectGovernorPressureCruise` and the low range / normal lockup, unlock and shift functions.
+- **Stage B (84be9af, label-only):**
+  - the tables after 8C18;
+  - the exhaust brake tables, which are e2m 8CA6..8CC6 in their own column-5 range;
+  - the manual 2nd curve.
+- **Stage C (3301eb9):**
+  - `TRANSMISSION_PRESSURE_STATE`, with 24 members, every value proved by its store and checked by
+    `check_enum_proof2.py`;
+  - the 27-word output speed ring;
+  - a `dword` fix.
+- **Stage D (f63a28b):** the 8C19 flag bytes as `transmission_control_flags_t` / `transmission_shift_strategy_flags_t`.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -341,6 +363,10 @@ ratio module.**
   - stage C was read diff by diff;
   - each aligned e2m record's description was read against its row's users (`align_block.py`), and each block
     stops where it drifts.
+- [x] Round 9:
+  - stages A, B and D are label-only (EQUIVALENT; D's 3-byte array split was read by hand);
+  - stage C passes `check_enum_proof2.py`, and its one other change is the ring array;
+  - the table walk matches about 100 existing rows by size and address.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -354,8 +380,8 @@ ratio module.**
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
 - **Open after round 5:**
-  - the rest of the 48RE controller (the pressure state enum, the 8C19 flag bits, the 3-4 / 4-3 shift lines, blocks
-    8BB5 / 8BBB / 8BBD);
+  - the rest of the 48RE controller (the single flag bits, the lookup caches, the EEPROM shift lag tables, blocks
+    8C33 / 8C34 / 8C55 / 8C49);
   - the engine speed module's run-state machine (no e2m value list, so it needs a read);
   - the 48RE governor pressure functions 0x3257c / 0x3241c (their block 8D14 drifts);
   - the fault derate scheduler words and the 11D5 air fuel control rows;
