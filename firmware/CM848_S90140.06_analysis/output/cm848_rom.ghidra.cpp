@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 16:39:24 MST 2026
+// Generated: Sat Nov 21 16:46:20 MST 2026
 
 
 //
@@ -48365,11 +48365,12 @@ LAB_00047b98:
    fuel_metering_command = base + trim x base / 4096 (no trim while
    fuel_metering_feedback_fault_code is set). The command (0-4095) then goes through the read-back
    retest (0 / 4095), and cm848_setFuelMeteringPwm turns it into TPU-B 11's on-time. The remaining
-   engine_sync_* / cam_sync_* / injection_timing_* names are older guesses still to re-domain. Gain
-   records (stage 8b): the P / I / D terms use fuel_pressure_governor_proportional_gains /
-   fuel_pressure_governor_integral_gains / fuel_pressure_governor_derivative_gains through working
-   copies on the stack (each gain scaled by its lookup table while fuel_pressure_governor_gain_mode
-   is 0); the base command uses fuel_metering_uncompensated_duty_cycle_proportional_gains and
+   its engine_sync_* / cam_sync_* guesses were re-domained in round 12 from the e2m HPCR_* records
+   (the CP3 M-PROP fuel metering vocabulary). Gain records (stage 8b): the P / I / D terms use
+   fuel_pressure_governor_proportional_gains / fuel_pressure_governor_integral_gains /
+   fuel_pressure_governor_derivative_gains through working copies on the stack (each gain scaled by
+   its lookup table while fuel_pressure_governor_gain_mode is 0); the base command uses
+   fuel_metering_uncompensated_duty_cycle_proportional_gains and
    fuel_metering_current_compensation_derivative_gains; the trim uses
    fuel_metering_current_compensation_proportional_gains and
    fuel_metering_current_compensation_integral_gains. The copy of the derivative record's negative

@@ -11,7 +11,7 @@ Scripts are in `session_folder/round12/`.
     tables. Stage 11A's comment was wrong.
   - **Not done:** `switch_input_hardware_line_cal`'s "32 words" overlap the boot kernel's time-shared words.
   - **The proof:** `array_normalize.py` + `cast_normalized_diff.py`.
-- **Stage B (label-only): the CP3 M-PROP fuel metering names of `cm848_calculateFuelMeteringCommand`, from the e2m
+- **Stage B (3588241, label-only): the CP3 M-PROP fuel metering names of `cm848_calculateFuelMeteringCommand`, from the e2m
   `HPCR_*` records.** The function's own plate called its `cam_sync_*` / `engine_sync_*` names older guesses.
   - **e2m 8B3C** aligns at 0x40913a: all 18 records land on rows, and the coil temperature estimate (gain x filtered
     resistance / 0x138 + offset, once the sample count reaches its minimum) matches three of them. It gives the
@@ -29,3 +29,4 @@ Scripts are in `session_folder/round12/`.
     (time-shared RAM).
   - **`HPCR_Current_Integrator_Preset_*`** (8B49 / 8B4A) and the other `HPCR_*` tables (the leak response, the
     monitor duty curves) have no row yet.
+- **Closing:** the function's plate no longer calls its names older guesses.

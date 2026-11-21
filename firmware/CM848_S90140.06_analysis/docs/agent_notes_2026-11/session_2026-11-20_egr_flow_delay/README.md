@@ -268,3 +268,14 @@ Hand work on the round 7 lead.
 - **Stages D / E:** `apply_r11d_field.py` and `apply_r11e_field.py` (output 54; stage E after the review).
 - **Logs:** the round 11 build logs (with the pilot's `build_r11c_attempt1.log`) are in the large-files tarball.
 - **Commit messages:** `commit_r11*.txt`.
+
+## Round 12: arrays and the CP3 fuel metering vocabulary (`session_folder/round12/`)
+
+- **Stage A:**
+  - `array_candidates.py` checks each candidate's range for other rows and for the `DAT_` words inside it.
+  - `apply_r12a_arrays.py` and `apply_r12a_fix.py` (the eight setpoint caches) write the types.
+  - `array_normalize.py` is the proof helper (it maps each array back to its old labels).
+- **Stage B:** `worklist_r12b.py`, the 43 `HPCR_*` names. `apply_r12_plate.py` updates the function's plate in the
+  closing.
+- **Logs:** the round 12 build logs (with 12A's first attempt) are in the large-files tarball.
+- **Commit messages:** `commit_r12*.txt`.

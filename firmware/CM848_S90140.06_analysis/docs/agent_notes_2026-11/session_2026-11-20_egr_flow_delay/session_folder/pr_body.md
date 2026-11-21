@@ -370,6 +370,20 @@ state enum, the flag bytes.**
   supervisor's shutdown line, and the read-back and injector diagnostics stand down while it is set. It is not
   output 30 `FSO_Command`. Stage D's `fuel_shutoff_request` was replaced after the review.
 
+**Round 12 (the relayed "keep going"): arrays and the CP3 fuel metering vocabulary.**
+- **Stage A (9448e53, types): nine scalar rows typed as the arrays their comments describe.**
+  - The arrays: the switch debounce history, the fuel demand timing ring, the J1939 source-address whitelist, the
+    misfire per-slot counts and flags, and others.
+  - The 16 words at 0x3fd0ca are eight 2-D lookup caches, one per fuel pressure setpoint table. They are split into
+    eight named `word[2]` rows, where a `word[16]` attempt rendered `x + 8`.
+- **Stage B (3588241, label-only): `cm848_calculateFuelMeteringCommand`'s `cam_sync_*` / `engine_sync_*` guesses**
+  are re-domained from the e2m `HPCR_*` records (43 rows).
+  - **e2m 8B3C** aligns at 0x40913a, and the code confirms its records (the coil temperature = gain x resistance /
+    0x138 + offset).
+  - **The pump tables:** duty to current, the start / hot start duty presets, the duty pre-control map (the
+    feed-forward), the maximum duty, and the battery correction.
+  - **Also:** their caches and the coil temperature flags. The ROM tables lose `_cal`.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -452,6 +466,10 @@ state enum, the flag bytes.**
   - stage B passes `bitfield_normalize.py` + `cast_normalized_diff.py` (two differences, both the same values);
   - stage C passes `switch_normalize2.py` + `cast_normalized_diff.py` (one: the same address);
   - the `._N_1_` piece count is unchanged (183).
+- [x] Round 12:
+  - stage A passes `array_normalize.py` + `cast_normalized_diff.py` (two differences, the same addresses);
+  - stage B is label-only (EQUIVALENT);
+  - `lookup_tables.py` reports 0 sizing problems.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -473,14 +491,13 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 11:**
-  - the `cam_sync_*_cal` fuel metering tables of `cm848_calculateFuelMeteringCommand` and their caches;
+- **Open after round 12:**
+  - the fault status records (a packed record array, but the range is time-shared RAM);
   - the end-of-line test sequencer;
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;
   - the switch bytes 0 / 1 / 3 as bitfields (the user's call; see round 11);
-  - `fuel_pressure_setpoint_map_cached_axis_offsets` as `word[16]`.
-  Round 11 resolved the output bitfields and the lift pump control.
+  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches.
 - **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
