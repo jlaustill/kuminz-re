@@ -5633,6 +5633,7 @@ extern word sensor_diag_default_e;  // 0x0040be68
 extern scheduler_task_stat_t scheduler_task_stat_t_0040be6a;  // 0x0040be6a
 extern RAM_REFRESH_STATE ram_refresh_enable;  // 0x0040c04a
 extern word power_down_refresh_enable;  // 0x0040c04c
+extern switch_input_state_t switch_input_state_bits;  // 0x0040c050
 extern byte logical_output_request_bits;  // 0x0040c080
 extern logical_output_request_bits_8_to_15_t logical_output_request_bits_8_to_15;  // 0x0040c081
 extern logical_output_request_bits_16_to_23_t logical_output_request_bits_16_to_23;  // 0x0040c082
