@@ -341,6 +341,35 @@ state enum, the flag bytes.**
     (with Ghidra's `short *` guess the field addresses printed as raw constants).
   - The widths: 0x3fceee as a `dword` drops the overlap WARNING from the two P1756 / P1757 functions.
 
+**Round 11 (a "keep going" relayed from another session): the e2m discrete I/O maps.**
+- **The e2m tables of the discrete I/O:**
+  - 1577 names the 80 logical output requests (output N = byte N/8, mask 1 << N%8) and 1612 the 32 switches; 12A7 /
+    12A8 are their override priorities.
+  - They confirm round 10's DRB names. Output 16 is Transmission_VFS_Battery_Driver, the relay's battery feed to
+    the solenoids.
+  - They also confirm the switch findings: 20 = park / neutral, 12 = the exhaust brake select.
+- **Stage A (3c1f706, label-only):**
+  - **The lift pump control:** `cm848_controlLiftPump` / `cm848_initializeLiftPumpControl`, its run reason and
+    stopped timer, and the e2m 8A6F calibrations: override state, the run times after cranking 20 s / key-on 35 s /
+    running 0 s, override enable. This calibration has a fixed key-on word, so 11.45's records after +2 sit one word
+    later.
+  - **The SCI output status word** (`cm848_sciPackOutputStatusWord`, was `FUN_0051dfdc`).
+  - **Two cache names**, and the 1612 switch map.
+- **Stage B (9e292a9, types):**
+  - Bitfield structs for six request bytes, from 1577: the engine brake drivers 1-5, the A/C clutch, the intake air
+    heaters, the lift pump, the EGR valve and VGT drives.
+  - `LIFT_PUMP_RUN_REASON`.
+  - No new `._N_1_` pieces.
+- **Stage C (2da9b14, types): `switch_input_state_t`.** Byte 2 (park / neutral, the O/D OFF button, the relay and
+  solenoid feedbacks) is a bitfield unit; bytes 0 / 1 / 3 are byte fields with their bit maps.
+  - Their bits have read-modify-write setters, which the firmware/CLAUDE.md wave 11 rule keeps as bytes.
+  - The all-bitfield pilot measured 216 named reads against 10 piece lines in 3 setters plus a `field_0x0` in the
+    scanner. It is not shipped; it is left to the user.
+- **Stages D (a12ff3b) / E (e3f493c, label-only): output 54 is `driver_asic_shutoff_request`** (e2m
+  `ASIC_FS_Shutoff_Driver`). The fuel system fault reactions request it. Every reader pairs it with the
+  supervisor's shutdown line, and the read-back and injector diagnostics stand down while it is set. It is not
+  output 30 `FSO_Command`. Stage D's `fuel_shutoff_request` was replaced after the review.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -418,6 +447,11 @@ state enum, the flag bytes.**
   - stage F passes `relabel_struct.py` + `cast_normalized_diff.py` (the `_` prefix, three signatures, one cast);
   - the SCI test names come from the DRB database, and output 16 is proved twice (its fault pair and DRB test
     13-43).
+- [x] Round 11:
+  - stages A and D are label-only (EQUIVALENT);
+  - stage B passes `bitfield_normalize.py` + `cast_normalized_diff.py` (two differences, both the same values);
+  - stage C passes `switch_normalize2.py` + `cast_normalized_diff.py` (one: the same address);
+  - the `._N_1_` piece count is unchanged (183).
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -439,14 +473,14 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 10:**
+- **Open after round 11:**
   - the `cam_sync_*_cal` fuel metering tables of `cm848_calculateFuelMeteringCommand` and their caches;
   - the end-of-line test sequencer;
-  - bitfields for logical outputs 4 / 38 / 43 / 44 / 53, which now have DRB names;
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;
-  - the lift pump control (output 53: `protection_ambient_qualification`, `protection_exception_event_35_init`, the
-    `protection_event35_*` words), which still has `protection_*` names.
+  - the switch bytes 0 / 1 / 3 as bitfields (the user's call; see round 11);
+  - `fuel_pressure_setpoint_map_cached_axis_offsets` as `word[16]`.
+  Round 11 resolved the output bitfields and the lift pump control.
 - **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

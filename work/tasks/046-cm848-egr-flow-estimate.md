@@ -720,7 +720,7 @@ Scripts are in `session_folder/round11/`.
 - **Stage D (a12ff3b, label-only):** output 54 was renamed `fuel_shutoff_request` (it had been stage B's
   `injector_driver_asic_shutoff_request`), from its requesters, the fuel pressure fault reactions
   (`output_requesters.py 0x36`).
-- **Stage E (label-only, after the review): output 54 is `driver_asic_shutoff_request`.**
+- **Stage E (e3f493c, label-only, after the review): output 54 is `driver_asic_shutoff_request`.**
   - `fuel_shutoff_request` blurred it with output 30 (1577 +3 0x40 `FSO_Command`, which
     `cm848_processProtectionFaultsAndTiming` requests every pass).
   - Every reader of output 54 pairs it with `supervisor_register_36_bit_1_low_held_flag == 0`. The output read-back
