@@ -342,7 +342,8 @@ Hand work on the round 6 leads (scripts in `session_folder/round7/`).
     - `engine_retarder_received_tsc1_control_byte` / `_torque_byte`;
     - `retarder_tsc1_zero_torque_request_timer`: armed while the requested torque or limit is 0; why that is timed
       is open;
-    - `retarder_tsc1_speed_control_flag`: always 0, because speed control is rejected;
+    - `retarder_tsc1_speed_control_flag`: always 0, because speed control is rejected. Its role as the retarder
+      twin of `tsc1_speed_control_flag` is inferred, since no e2m record covers 0x40ae20-0x40ae4c;
     - `cm848_resetEngineRetarderTsc1Request` and `cm848_endRetarderShiftAssistAboveFuelDemandLimit`.
 - **Stage C (9fd5621, label-only): the drivetrain ratio module.**
   - **Misnamed words:** `drivetrain_ratio_filter_state` (was `engine_temperature_protection_filter_state`) and
@@ -369,6 +370,11 @@ Hand work on the round 6 leads (scripts in `session_folder/round7/`).
 - **Thin evidence:**
   - `gear_down_gear_ratio_cal`'s address comes from the code. Block 8B8B is not in the parameter ID table.
   - Range codes 2 and 3 are never tested apart; the readers only test 1 against everything else.
+  - e2m 1185 +A calls Top_Gear_Ratio the ratio above which the transmission is in top gear, but the code sets top
+    gear below the threshold. The period formula makes the ratio engine speed / vehicle speed, lowest in top gear,
+    so the code holds. The 0.8 / 1.0 ratios are not checked against the truck's gearing.
+  - The session record length words have no direct load or store in the disassembly; e2m gives these type T
+    records no size.
   - The tolerance percent at 0x408b78 has no writer and no e2m record, so it is unnamed.
 - **Round 7 leads:**
   - The transmission gear functions `cm848_calculateProtectionFuelDemandThreshold` (0x3241c) and

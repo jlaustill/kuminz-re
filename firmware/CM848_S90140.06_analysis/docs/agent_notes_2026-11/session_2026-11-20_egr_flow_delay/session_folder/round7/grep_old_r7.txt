@@ -1,0 +1,15 @@
+work/tasks/046-cm848-egr-flow-estimate.md:276: ...  - `retarder_tsc1_mode_transition_timer` and `retarder_tsc1_speed_mod
+work/tasks/046-cm848-egr-flow-estimate.md:276: ...  - `retarder_tsc1_mode_transition_timer` and `retarder_tsc1_speed_mode_flag` kept their old roles under a
+work/tasks/046-cm848-egr-flow-estimate.md:324: ...9_*_Control_Status. Still unnamed or etc1-named: `etc1_governor_calib_session_start_time`,
+work/tasks/046-cm848-egr-flow-estimate.md:325: ...    `etc1_governor_mode_history_write_index`, DAT_003feb56-5e (the mode h
+work/tasks/046-cm848-egr-flow-estimate.md:326: ...    `governor_transition_state_snapshot`. The "see j1939mon specifica
+work/tasks/046-cm848-egr-flow-estimate.md:327: ...r `cm848_*Governor*` functions of the TSC1 path: `cm848_resetGovernorState`, `governor_reset`,
+work/tasks/046-cm848-egr-flow-estimate.md:328: ...    `governor_resetModeStateOnCondition`, `cm848_initGovernorStateVar
+work/tasks/046-cm848-egr-flow-estimate.md:328: ...ndition`, `cm848_initGovernorStateVariables` and `initGovernorJ1939Bypass` reset the
+work/tasks/046-cm848-egr-flow-estimate.md:330: ...  - `retarder_tsc1_mode_transition_timer` / `retarder_tsc1_speed_mode_
+work/tasks/046-cm848-egr-flow-estimate.md:330: ...  - `retarder_tsc1_mode_transition_timer` / `retarder_tsc1_speed_mode_flag`: read the retarder handler i
+work/tasks/025-cm848-naming-wave-followups.md:505: ...te action masks (cm848_protectionInputValidator). protection_timeout_enable_flag means a new engine period ave
+work/tasks/025-cm848-naming-wave-followups.md:517: ...previous ETC2 gear ratio. The comment on 0x40b702 protection_timeout_enable_flag is wrong: the speed-sensor in
+work/tasks/045-cm848-fueling-state-enum.md:746: ...  - `engine_temperature_protection_filter_state` is the exponentialMovingAver
+work/tasks/022-j1939-dbw-investigation.md:51: ...  `governor_j1939_bypass_flag`
+work/tasks/022-j1939-dbw-investigation.md:55: ...- `governor_j1939_bypass_flag` — when set, bypasses 0x100 m

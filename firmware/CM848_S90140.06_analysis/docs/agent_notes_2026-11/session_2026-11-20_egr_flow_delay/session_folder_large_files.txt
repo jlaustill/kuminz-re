@@ -51,3 +51,4 @@
   401736 verify_round6.log
   401743 verify_round6_closing.log
   401815 verify_round7.log
+  401814 verify_round7_closing.log

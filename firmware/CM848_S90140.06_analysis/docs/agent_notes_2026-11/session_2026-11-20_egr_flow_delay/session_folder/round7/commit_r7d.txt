@@ -1,0 +1,10 @@
+cm848: round 7 closing - resolved-name notes, the session README, the round 7 logs, verify
+
+- Task 046 marks its round 6 leads resolved: the j1939mon record and the TSC1-path reset functions, and the two
+  retarder fields now read in full. Tasks 022 / 025 / 045 get round 7 resolved-name sections.
+- The session README has a round 7 section. The round 7 build / verify logs went into the large-files tarball
+  (53 logs).
+- Checks: ./analyze.sh verify is byte-identical; the test suites pass; lookup_tables.py reports 0 sizing problems; the
+  repo-wide old-name grep (skills and memory included) finds only history and task files.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

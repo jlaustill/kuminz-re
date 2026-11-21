@@ -220,7 +220,7 @@ ratio module.**
     `drivetrain_ratio_engine_period_valid_flag` was `protection_timeout_enable_flag`.
   - **Gear down:** `governor_j1939_bypass_flag` is the gear-down protection range (`drivetrain_gear_range`: top gear
     / one gear down / lower). With the feature on, only top gear keeps the road speed governor's droops.
-- **Stage B (types):**
+- **Stage B (8b1c0f3, types):**
   - **`j1939_control_session_t`,** the j1939mon record (e2m 10FD / 10FE / 10FF), on the history `[5]` and the two
     active records. Its layout comes from the code and the EEPROM image's length words, and it replaces four member
     rows.

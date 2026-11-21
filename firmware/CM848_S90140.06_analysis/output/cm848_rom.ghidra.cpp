@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 08:49:55 MST 2026
+// Generated: Sat Nov 21 09:09:12 MST 2026
 
 
 //
@@ -68399,15 +68399,16 @@ void j1939_pgn_handler_init_batch(void)
 //
 
 /* Files a finished J1939 control session in the J1939 history table (e2m 10FD J1939_History_Table:
-   a length word 0x78 at 0x3fead4, then 5 entries of 24 bytes from 0x3fead6). param_1 selects the
-   session record: 0 is the engine control (TSC1) record at 0x3feb50 (e2m 10FE J1939_Active_Engine),
-   any other value the retarder control record at 0x3feb6a (10FF J1939_Active_Retarder). Its 12
-   words are copied into the history entry number j1939_control_session_history_next_entry_cal (e2m
-   1100 +8 J1939_History_Table_Next_Entry), and that index is incremented and wraps from 4 to 0. The
-   destination is written as j1939_input_signal_timeouts + index x 12 + 24 words, which is the table
-   at 0x3fead4 behind that 25 word array. Called by cm848_trackJ1939ControlSessions (0x50bff4) when
-   a control session ends or its source changes. (was governor_calibSnapshot_rollingBuffer_update)
-    */
+   a length word 0x78 at 0x3fead4, then 5 entries of 24 bytes from 0x3fead6). session_kind selects
+   the session record: 0 is the engine control (TSC1) record at 0x3feb50 (e2m 10FE
+   J1939_Active_Engine), any other value the retarder control record at 0x3feb6a (10FF
+   J1939_Active_Retarder). Its 12 words are copied into the history entry number
+   j1939_control_session_history_next_entry_cal (e2m 1100 +8 J1939_History_Table_Next_Entry), and
+   that index is incremented and wraps from 4 to 0. The destination is written as
+   j1939_input_signal_timeouts + index x 12 + 24 words: word 24 of that 25-word array is the history
+   table's length word at 0x3fead4, and the first store lands one word later at the entry. Called by
+   cm848_trackJ1939ControlSessions (0x50bff4) when a control session ends or its source changes.
+   (was governor_calibSnapshot_rollingBuffer_update) */
 
 void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
 
@@ -68447,7 +68448,7 @@ void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
 // Function: cm848_startJ1939ControlSession @ 0x0050beec
 //
 
-/* Opens a J1939 control session record. param_1 = 0 starts an engine control (TSC1) session:
+/* Opens a J1939 control session record. session_kind = 0 starts an engine control (TSC1) session:
    j1939_engine_control_active_flag_cal = 1 (e2m 1100 +0 J1939_Engine_Control_Status),
    j1939_engine_control_source_cal (+4 J1939_Engine_Control_Source; 1 = transmission, 2 = ABS, 3 =
    ASR, 4 = unknown) takes engine_control_device_indicator, and the active record at 0x3feb50 (e2m
@@ -68456,7 +68457,7 @@ void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind)
    whose write index is 1 with j1939_powertrain_control_state.tsc1_override_control_mode as first
    entry and four cleared entries, and the start time key_on_hour_meter in
    j1939_active_engine_control_session_cal.start_time (the record is j1939_control_session_t). Any
-   other param_1 does the same for the retarder control session (record at 0x3feb6a, e2m 10FF
+   other session_kind does the same for the retarder control session (record at 0x3feb6a, e2m 10FF
    J1939_Active_Retarder, kind 1; engine_retarder_controlling_source_address,
    engine_retarder_control_device_indicator, engine_retarder_override_control_mode,
    j1939_retarder_control_active_flag_cal, j1939_retarder_control_source_cal). Called by
