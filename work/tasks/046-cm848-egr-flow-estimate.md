@@ -151,8 +151,67 @@ would otherwise misname.
   - **Also in stage 8:** `pulse_period_table_backup` is `dword[4]`, and `cylinder_acceleration` / `fuel_pressure_start_undershoot`
     are `i16`.
 
+## Done, round 4: rename wave 15 (stages 10-10c, 2026-11-20, same PR; the user's go-ahead for the agent wave)
+
+- **The wave (stage 10, 5f0f9d9):**
+  - 378 rows: named rows that share at most 20 % of their words with the e2m record the ECU's own parameter table
+    resolves to them, used in the code, dump in range, never reviewed. Six Sonnet agents, ~3.3M tokens.
+  - Verdicts: 185 rename, 187 keep (each gets a `| e2m:` note), 5 drift, 1 uncertain.
+  - The main session read every rename against its quoted line and changed a few by hand: the PGN 65249 point 5
+    torque, Cruise_RSG_* stays `cruise_*`, the four LSG gain sets named as sets.
+  - Plus the whole e2m 1170 "ASG application specific" record (25 rows), `cm848_selectAllSpeedGovernorApplicationMode`
+    and `FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION`.
+- **Follow-up 1 (8bdd341):**
+  - The low speed governor family. The working P / I / D / jerk gains had crossed names. Also the 1064 / 1065 / 10EA /
+    10EE / 10EF rows and nine functions.
+  - The HSG compensator (were `cruise_speed_*`), the ASG 107D leftovers, the net torque fuel limit (8C68-8C6C).
+  - **The compressor inlet vocabulary:**
+    - The ECU's table names the channel 20 sensor Compressor_Inlet_Tmptr_Sensor, its selected value
+      Compressor_Inlet_Tmptr and the density Compressor_Inlet_Density.
+    - The ambient air temperature (1921 +6) is that temperature minus the inlet temperature rise.
+    - So `ambient_air_temperature_selected` → `compressor_inlet_temperature`, `ambient_air_density` →
+      `compressor_inlet_density`, `ambient_air_temperature_reference` → `ambient_air_temperature`.
+- **Follow-up 2 (ea8a913):**
+  - J1939: 0xfed200 is PGN 65234 = DM10 (DM11 is 65235), so the `dm11` names were wrong. The anti-theft status is PGN
+    56320 (PDU1: 0xdc28 counted the destination). 56832 is Reset.
+  - The A/C clutch control: 8A14 +4 says 0 = BR truck, 1 = DR truck, and this truck holds 1.
+  - The injector driver: PWM 16-19 periods and levels, the booster capacitor channels 54 / 55.
+  - The accelerator pedal faults, the engine protection shutdown counters.
+  - The booster capacitor wrappers are named by when they run: the `_init` pair runs every pass, the `_process`
+    pair once at boot (the known suffix inversion).
+- **Stage 10c (types):**
+  - `low_speed_governor_gain_set_t` (four i16) on the default / aggressive / middle gear / high gear / override /
+    TSC1 sets, with the two gain set pointers typed.
+  - The 0x3ffcaa and 0x3ff69c dwords split by their e2m records.
+  - Byte rows for the supervisor chip pair and 0x409530, dword encryption seeds, i32 ASG QI / QP adjustments.
+- **Thin evidence:**
+  - 0x40a1cc / 0x40a1d4 (QI vs QP) rest on block alignment only.
+  - 0x40a280 `programmable_power_active_selection` has only a zero store.
+  - 0x40ae56 `diagnostic_fault_to_erase` (1080 +0) has only a zero store.
+- **Tooling found broken:** `apply_hand_worklist.py` looked the e2m records up from the wrong directory with a
+  relative repo path. Follow-up 2 added the missing leading records to 90 comments.
+
 ## Leads (not in this PR)
 
+- **Wave 15 leads not applied** (each is in the agents' reports, `wave15/agent_prompts_and_reports_W15.md`):
+  - The 1170-style ASG gain sets as a 9-word struct (`all_speed_governor_gain_set_pointer` reads +0..+0x10).
+  - The fault derate scheduler words (`governor_faultDerate_*` without e2m records) and `engine_protection_*` /
+    `protection_*` functions.
+  - The 11D5 air fuel control thresholds and slew rates; the agents report the slew rates as dwords typed `word`.
+  - The TPU injection channel bytes 0x3fd0b8-0x3fd0bb and `cm848_tpu_interrupt_flag_init`.
+  - `cm848_protection_timer_init` (the fuel system hardware shutdown check).
+  - The cruise / RSG PID functions `protectionOutputActuatorControl` / `protectionRampRateControl` /
+    `governorCruiseStateMachine`.
+  - The PGN 65232 / 65251 / 61441 / 65279 buffer functions. `initFaultTimerMessage` shares its name with CM550, so
+    check the twin first.
+  - The A/C working words (`protection_event26_*`), the converter clutch monitor's `protection_*` words, the wastegate
+    controller's working words.
+  - The 117F rows `lifetime_distance_pulses` (Total_Distance, MI) and 0x3fdda6 `drivetrain_type`, whose e2m record is
+    RSC_Sensor_Type, the road speed sensor type. That one needs care: the cruise fix rests on it.
+  - The stale `target_rpm` wording in four cruise rows; the 48RE governor pressure functions 0x3257c / 0x3241c.
+  - The compressor outlet temperature scale: bin 5 reads 1/32 °F, the comments say 1/64.
+  - CM550's 0x80a9e0, the unnamed twin of 0x40a280.
+- **The pool left:** the e2m audit's unreviewed rows above 0.2 overlap (123 at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5).
 - **The engine speed module's functions** have mixed, partly wrong prefixes: `hpcr_processEngineSyncPulses` (the main
   speed interrupt), `mpc555_handleCamSignalInterrupt` (the backup speed interrupt), `mpc555_updateEngineRunState` (the
   crank sync state machine), `mpc555_resetEngineTimingAccumulators`, and `cm848_engineRunState3Handler` and its
@@ -160,7 +219,6 @@ would otherwise misname.
 - **The signedness sweep's remainder:**
   - The 35 `has-lhz` rows need a per-row look: zero-extending loads usually mean the code treats the value as unsigned.
   - The 104 `no-load` rows are stored or pointer-passed only.
-- **The rest of the e2m audit's low-overlap rows** (task 045 counted ~1300). A wave of agents would suit it.
 
 - **Unused unnamed e2m rows:** 1772 +2 Engine_Delta_Pressure, +4 EGR_Valve_Delta_Pressure and +6
   EGR_Orifice_Delta_Pressure (0x40a674-0x40a678), and 198C +A C_TPE_EMP_VT_Cmd_Cnst (0x406764). No code in the

@@ -613,7 +613,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   fitted on this truck (no output assigned; its faults have no DTC slot). `battery_voltage_selected` /
   `battery_voltage_nominal` / `coolant_temperature_selected` (the fault-substituted channel values); the pedal fault
   engine operating mode (mode 6); the driver demand percent torque for EEC1 (SPN 512); the charge flow command chain
-  (`mass_charge_flow_*_command`); the all-speed governor restore record (`engine_operating_mode_restore_*`).
+  (`mass_charge_flow_*_command`); the all-speed governor record at 0x40a216 (then `engine_operating_mode_restore_*`;
+  wave 15 renamed it `all_speed_governor_application_*`: e2m 1170 is "ASG application specific", nothing restores it).
 - **Wave 8:** the engine speed limit droop block (e2m HSG: `engine_speed_limit_droop_*`; the 6-byte
   `engine_speed_limit_arbitration_t` is split from the `main_injection_timing_source_code` word, and the old
   `torque_limit_error_integrator` dword is the `i16` droop slope + `engine_speed_limit_ramped`); the auxiliary injection
@@ -622,7 +623,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   fault 719), the EGR cooler fouling monitor (off in this calibration) and condensation model, the charge manager
   (limiters, charge system errors, EGR / assist controller); the all-speed governor override record (e2m ASG); enums:
   `ENGINE_OPERATING_MODE` corrected from every store of 0x40b000 (0 not selected / 1 TSC1 torque / 2 TSC1 speed / 5 / 6
-  pedal fault / 7 variable speed governor / 8 dual-axis fuel table / 30 restore - the old MODE_CRANK / MODE_RUN /
+  pedal fault / 7 variable speed governor / 8 dual-axis fuel table / 30 ASG application (wave 15; read as restore here) - the old MODE_CRANK / MODE_RUN /
   MODE_SHUTDOWN contradicted the code), `EGR_VALVE_CONTROL_STATE`, `COMBUSTION_CHI_SOURCE`; `selectHighSpeedGovernorGainSet`
   is shared with CM550 0x1d392 (the same function).
 - **Wave 9:** torque management (e2m `Torque_Mgmt_*`, off in this calibration - was read as a gear-down / thermal
@@ -934,6 +935,36 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     loads it with `lhz`.
   - Prove a type-only change with a cast-normalized diff (`cast_normalized_diff.py`). The sweep removed 617 `(short)`
     casts.
+- **Rename wave 15 (2026-11-20, PR #53, todo 046): the low-overlap misname review.** Six agents reviewed the 378 named
+  rows that share at most 20 % of their words with their table-resolved e2m record. Results: 185 renames, 187 keeps
+  (`| e2m:` notes), 5 drift. Two follow-ups apply the agents' siblings and function leads by hand, through the same
+  gate; stage 10c does the types.
+  - **The low speed governor:** the working gains are `low_speed_governor_proportional_gain` / `_integral_gain` /
+    `_derivative_gain` / `_jerk_gain` (the old names crossed the roles).
+    - The selected set is a `low_speed_governor_gain_set_t`, picked by the gain state: default / aggressive / middle
+      gear / high gear / TSC1 / override.
+    - `cm848_updateLowSpeedGovernorAggressiveGainLogic` (10EE / 10EF) and `cm848_selectLowSpeedGovernorGearGainSet`
+      (10EA) pick it; `cm848_loadLowSpeedGovernorGainSet` loads it.
+  - **One sensor, two vocabularies:**
+    - The e2m names channel 20 Compressor_Inlet_Tmptr_Sensor (1966 +10), its selected value Compressor_Inlet_Tmptr
+      (1A0C +0) and the density Compressor_Inlet_Density (18E8 +0). These are now `compressor_inlet_temperature_*` /
+      `compressor_inlet_density`.
+    - The ambient air temperature (1921 +6, `ambient_air_temperature`) is the compressor inlet temperature minus
+      `compressor_inlet_temperature_rise`.
+    - The J1939 broadcast (SPN 171), the sensor diagnostics (1901 / 1902) and the overrides (1977 / 197E) call the same
+      sensor ambient, so `ambient_air_temperature_sensor_filtered` and those rows keep the ambient words.
+  - **J1939 PGNs:** 0xfed200 is PGN 65234 = DM10 (DM11 is 65235), so the `dm11` names were wrong. A PDU1 PGN excludes the
+    destination byte: 0xdc2800 is PGN 56320 Anti-theft Status, not 56360. PGN 56832 is Reset. Each 1254 priority word is
+    `j1939_pgn<N>_priority_cal`, named after the header it builds.
+  - **The A/C clutch control:** `cm848_controlAirConditioningClutch` dispatches on e2m 8A14 +4 (0 = BR truck, 1 = DR
+    truck). The dump holds 1, so `cm848_controlAirConditioningClutchForDrTruck` runs. Both were `engine_protection_*`.
+  - **The injector driver:** PWM 16-19 are its voltage / current reference levels (see `docs/tpu_mios_channel_map.md`).
+    Booster capacitor channels 54 / 55: their wrappers are named by when they run, `cm848_update...Channel` (every pass)
+    and `cm848_initialize...Channel` (once at boot), because the `_init` / `_process` suffixes are inverted.
+  - **Also:** the HSG lead / lag compensator, the ASG 107D / 107C words, the net torque fuel limit, the PGN 65249 points
+    in J1939 order, the engine protection shutdown counters (10B3), the e2m 1170 ASG application record
+    (`cm848_selectAllSpeedGovernorApplicationMode`, `FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION`).
+  - **Leads:** task 046.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

@@ -1211,6 +1211,7 @@ typedef struct algorithm_enable_flags_18_t algorithm_enable_flags_18_t;
 typedef struct algorithm_enable_flags_41_t algorithm_enable_flags_41_t;
 typedef struct piecewise_linear_gain_t piecewise_linear_gain_t;
 typedef struct derivative_gain_t derivative_gain_t;
+typedef struct low_speed_governor_gain_set_t low_speed_governor_gain_set_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2738,4 +2739,11 @@ struct derivative_gain_t {
     uint32_t negative_large_signal_gain;  /* Gain while the input is below negative_window_width */
     int16_t positive_window_width;  /* Upper breakpoint of the window (>= 0) */
     int16_t negative_window_width;  /* Lower breakpoint of the window */
+};
+
+struct low_speed_governor_gain_set_t {
+    int16_t proportional_gain;  /* +0: e2m *_Proportional_Gain (MM3S/RPM); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_proportional_gain (stage 10c) */
+    int16_t integral_gain;  /* +2: e2m *_Integral_Gain (MM3S/RPM/SEC); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_integral_gain (stage 10c) */
+    int16_t derivative_gain;  /* +4: e2m *_Derivative_Gain (MM3S*SEC/RPM); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_derivative_gain (stage 10c) */
+    int16_t jerk_gain;  /* +6: e2m *_Jerk_Gain (MM3S*SEC/RPM); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_jerk_gain (stage 10c) */
 };

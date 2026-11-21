@@ -337,7 +337,7 @@ extern word pedal_fault_mode_speed_derate_engine_speed_limit;  // 0x0005c49e
 extern word pedal_fault_mode_brake_on_engine_speed_limit;  // 0x0005c4a0
 extern word pedal_fault_mode_speed_derate_road_speed_threshold;  // 0x0005c4a2
 extern word pedal_fault_mode_brake_on_fuel_demand_limit_minimum;  // 0x0005c4a4
-extern word j1939_low_speed_governor_proportional_gain;  // 0x0005c4a6
+extern low_speed_governor_gain_set_t j1939_low_speed_governor_gain_set;  // 0x0005c4a6
 extern word governor_speed_error_delta_filter_coefficient;  // 0x0005c4ae
 extern word governor_speed_limit_by_coolant_temperature_axis[9];  // 0x0005c4b6
 extern word governor_speed_limit_by_coolant_temperature_values[9];  // 0x0005c4c8
@@ -1349,7 +1349,7 @@ extern word engine_retarder_torque_stage_2_cached_axis_offset;  // 0x003faa7c
 extern word engine_retarder_torque_stage_3_cached_axis_offset;  // 0x003faa7e
 extern word engine_retarder_torque_stage_4_cached_axis_offset;  // 0x003faa80
 extern word engine_retarder_torque_stage_5_cached_axis_offset;  // 0x003faa82
-extern word j1939_pgn56320_encryption_seed;  // 0x003faa88
+extern dword j1939_pgn56320_encryption_seed;  // 0x003faa88
 extern j1939_tx_msg_t j1939_pgn56320_tx_message;  // 0x003faa8c
 extern j1939_tx_msg_t j1939_ackm_msg;  // 0x003faa9c
 extern undefined j1939_dm1_cmd_word_b;  // 0x003faa9e
@@ -2198,7 +2198,7 @@ extern word j1939_anti_theft_command_state_cal;  // 0x003fdd7e
 extern word j1939_anti_theft_component_status_cal;  // 0x003fdd80
 extern word j1939_anti_theft_desired_exit_mode_cal;  // 0x003fdd82
 extern word j1939_anti_theft_encryption_indicator_cal;  // 0x003fdd84
-extern word j1939_anti_theft_encryption_seed_cal;  // 0x003fdd86
+extern dword j1939_anti_theft_encryption_seed_cal;  // 0x003fdd86
 extern word j1939_anti_theft_encryption_seed_present_cal;  // 0x003fdd8a
 extern word j1939_anti_theft_password_valid_cal;  // 0x003fdd8c
 extern word j1939_anti_theft_send_status_report_cal;  // 0x003fdd8e
@@ -2370,7 +2370,8 @@ extern word all_speed_governor_reference_negative_slew_rate_below_threshold;  //
 extern word all_speed_governor_reference_slew_rate_threshold;  // 0x003ff696
 extern word all_speed_governor_reference_slew_vehicle_speed_threshold;  // 0x003ff698
 extern word all_speed_governor_reference_slew_brake_inhibit_flag;  // 0x003ff69a
-extern dword fuel_demand_pilot_active_flag;  // 0x003ff69c
+extern word all_speed_governor_deadband_compensation_flag;  // 0x003ff69c
+extern word all_speed_governor_deadband_delta_decrement_rate;  // 0x003ff69e
 extern word all_speed_governor_delta_offset;  // 0x003ff6a0
 extern word fuel_demand_decaying_peak_decrease_step_above_pressure_error_threshold;  // 0x003ff6a2
 extern word fuel_demand_decaying_peak_decrease_step_below_pressure_error_threshold;  // 0x003ff6a4
@@ -2474,7 +2475,8 @@ extern word wastegate_duty_proportional_base_gain;  // 0x003ffca0
 extern word governor_rpm_error_gain_cal;  // 0x003ffca2
 extern word wastegate_duty_ceiling_fixed;  // 0x003ffca4
 extern word wastegate_duty_override_value;  // 0x003ffca6
-extern dword wastegate_duty_turbocharger_speed_derate_scale_gain;  // 0x003ffcaa
+extern int16_t wastegate_duty_turbocharger_speed_derate_scale_gain;  // 0x003ffcaa
+extern int16_t wastegate_duty_engine_brake_lower_limit;  // 0x003ffcac
 extern word wastegate_duty_turbocharger_speed_derate_derivative_gain;  // 0x003ffcae
 extern word wastegate_duty_compressor_outlet_temperature_derate_derivative_gain;  // 0x003ffcb0
 extern word wastegate_duty_compressor_outlet_temperature_derate_scale_gain;  // 0x003ffcb2
@@ -2842,7 +2844,7 @@ extern int16_t low_speed_governor_aggressive_gain_speed_offset_1;  // 0x004070a2
 extern int16_t low_speed_governor_aggressive_gain_speed_offset_2;  // 0x004070a4
 extern int16_t low_speed_governor_aggressive_gain_speed_offset_3;  // 0x004070a6
 extern int16_t low_speed_governor_aggressive_gain_speed_hysteresis;  // 0x004070a8
-extern byte low_speed_governor_aggressive_gain_set;  // 0x004070aa
+extern low_speed_governor_gain_set_t low_speed_governor_aggressive_gain_set;  // 0x004070aa
 extern word low_speed_governor_aggressive_gain_minimum_run_time;  // 0x004070b2
 extern int16_t low_speed_governor_aggressive_gain_minimum_coolant_temperature;  // 0x004070b4
 extern int16_t low_speed_governor_fueling_clamp_maximum_offset;  // 0x004070b6
@@ -2869,10 +2871,7 @@ extern word low_speed_governor_integrator_preset_vehicle_speed_limit;  // 0x0040
 extern word low_speed_governor_alternator_load_fuel_gain;  // 0x004070e0
 extern word low_speed_governor_alternator_load_duty_offset;  // 0x004070e2
 extern word low_speed_governor_alternator_load_filter_coefficient;  // 0x004070e4
-extern int16_t low_speed_governor_default_gain_set;  // 0x004070e6
-extern int16_t governor_j1939_d_gain_default_cal;  // 0x004070e8
-extern int16_t governor_j1939_p_gain_default_cal;  // 0x004070ea
-extern int16_t governor_j1939_i_gain_default_cal;  // 0x004070ec
+extern low_speed_governor_gain_set_t low_speed_governor_default_gain_set;  // 0x004070e6
 extern word governor_disengage_timer_threshold_cal;  // 0x004070ee
 extern word governor_speed_disengage_timer_limit;  // 0x004070f0
 extern word governor_speed_limit_threshold_cal;  // 0x004070f2
@@ -3626,8 +3625,8 @@ extern int16_t low_speed_governor_gear_gain_speed_error_maximum;  // 0x00408eca
 extern int16_t low_speed_governor_gear_gain_speed_error_minimum;  // 0x00408ecc
 extern word low_speed_governor_gear_gain_transition_time;  // 0x00408ece
 extern int16_t low_speed_governor_gear_hysteresis;  // 0x00408ed0
-extern byte low_speed_governor_high_gear_gain_set;  // 0x00408ed2
-extern byte low_speed_governor_middle_gear_gain_set;  // 0x00408eda
+extern low_speed_governor_gain_set_t low_speed_governor_high_gear_gain_set;  // 0x00408ed2
+extern low_speed_governor_gain_set_t low_speed_governor_middle_gear_gain_set;  // 0x00408eda
 extern word cylinder_balance_fueling_filter_coefficient;  // 0x00408ee2
 extern word cylinder_sync_rpm_delta_threshold_cal;  // 0x00408ee4
 extern word fuel_demand_zero_rpm_upper_cal;  // 0x00408ee6
@@ -3867,7 +3866,7 @@ extern word fuel_pressure_too_high_recovery_limit;  // 0x00409528
 extern int16_t fuel_metering_feedback_circuit_low_threshold;  // 0x0040952a
 extern word fuel_metering_feedback_circuit_debounce_limit;  // 0x0040952c
 extern word fuel_metering_fault_fuel_limit;  // 0x0040952e
-extern word fuel_pressure_too_high_count_limit;  // 0x00409530
+extern byte fuel_pressure_too_high_count_limit;  // 0x00409530
 extern word fuel_pressure_sensor_fault_fuel_limit;  // 0x00409532
 extern word fuel_pressure_sensor_fault_engine_speed_limit;  // 0x00409534
 extern word fuel_metering_fault_engine_speed_limit;  // 0x00409536
@@ -3930,8 +3929,8 @@ extern word overspeed_warning_recovery_threshold;  // 0x0040a03a
 extern word overspeed_protection_threshold;  // 0x0040a03c
 extern word overspeed_protection_recovery_threshold;  // 0x0040a03e
 extern word supervisor_chip_overspeed_limit;  // 0x0040a040
-extern word supervisor_chip_engine_speed_targets_per_revolution;  // 0x0040a042
-extern undefined j1939_timer_config_byte_c;  // 0x0040a043
+extern byte supervisor_chip_engine_speed_targets_per_revolution;  // 0x0040a042
+extern byte supervisor_chip_overspeed_consecutive_occurrence_count;  // 0x0040a043
 extern byte supervisor_chip_overspeed_non_latching_flag;  // 0x0040a044
 extern byte sensor_channel_ram_start;  // 0x0040a046
 extern int16_t injection_timing_compensated_reference_previous;  // 0x0040a05e
@@ -4000,8 +3999,8 @@ extern int16_t all_speed_governor_state_pid_integral_clamped;  // 0x0040a1bc
 extern int16_t all_speed_governor_state_fuel_demand_correction;  // 0x0040a1be
 extern word variable_speed_governor_selected_flag;  // 0x0040a1c0
 extern dword all_speed_governor_derivative_adjustment;  // 0x0040a1c4
-extern dword all_speed_governor_integral_adjustment;  // 0x0040a1cc
-extern dword all_speed_governor_proportional_adjustment;  // 0x0040a1d4
+extern int32_t all_speed_governor_integral_adjustment;  // 0x0040a1cc
+extern int32_t all_speed_governor_proportional_adjustment;  // 0x0040a1d4
 extern word all_speed_governor_compensation_filter_coefficient_1_selected;  // 0x0040a1dc
 extern word all_speed_governor_compensation_filter_coefficient_2_selected;  // 0x0040a1de
 extern word all_speed_governor_compensation_filter_coefficient_3_selected;  // 0x0040a1e0
@@ -4630,13 +4629,10 @@ extern int16_t low_speed_governor_derivative_gain;  // 0x0040ae7a
 extern word low_speed_governor_user_gain_state;  // 0x0040ae7c
 extern word low_speed_governor_final_gain_state;  // 0x0040ae7e
 extern word low_speed_governor_override_gain_state;  // 0x0040ae80
-extern word governor_j1939_speed_target;  // 0x0040ae82
-extern word governor_j1939_d_gain_stored;  // 0x0040ae84
-extern word governor_j1939_p_gain_stored;  // 0x0040ae86
-extern word governor_j1939_i_gain_stored;  // 0x0040ae88
+extern low_speed_governor_gain_set_t low_speed_governor_override_gain_set;  // 0x0040ae82
 extern int16_t low_speed_governor_jerk_gain;  // 0x0040ae8a
-extern void * low_speed_governor_requested_gain_set_pointer;  // 0x0040ae8c
-extern void * low_speed_governor_gain_set_pointer;  // 0x0040ae90
+extern low_speed_governor_gain_set_t * low_speed_governor_requested_gain_set_pointer;  // 0x0040ae8c
+extern low_speed_governor_gain_set_t * low_speed_governor_gain_set_pointer;  // 0x0040ae90
 extern word low_speed_governor_fueling_working;  // 0x0040ae94
 extern int16_t low_speed_governor_proportional_term;  // 0x0040ae96
 extern int16_t low_speed_governor_derivative_term;  // 0x0040ae98

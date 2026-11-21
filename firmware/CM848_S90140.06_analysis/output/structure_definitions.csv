@@ -1692,3 +1692,7 @@ derivative_gain_t,,positive_large_signal_gain,dword,4,"Gain while the input is a
 derivative_gain_t,,negative_large_signal_gain,dword,4,"Gain while the input is below negative_window_width",,verified
 derivative_gain_t,,positive_window_width,short,2,"Upper breakpoint of the window (>= 0)",,verified
 derivative_gain_t,,negative_window_width,short,2,"Lower breakpoint of the window",,verified
+low_speed_governor_gain_set_t,,proportional_gain,short,2,"+0: e2m *_Proportional_Gain (MM3S/RPM); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_proportional_gain (stage 10c)",,verified
+low_speed_governor_gain_set_t,,integral_gain,short,2,"+2: e2m *_Integral_Gain (MM3S/RPM/SEC); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_integral_gain (stage 10c)",,verified
+low_speed_governor_gain_set_t,,derivative_gain,short,2,"+4: e2m *_Derivative_Gain (MM3S*SEC/RPM); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_derivative_gain (stage 10c)",,verified
+low_speed_governor_gain_set_t,,jerk_gain,short,2,"+6: e2m *_Jerk_Gain (MM3S*SEC/RPM); cm848_loadLowSpeedGovernorGainSet copies it into the working low_speed_governor_jerk_gain (stage 10c)",,verified

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 19:18:39 MST 2026
+// Generated: Fri Nov 20 19:26:49 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -9351,7 +9351,7 @@ LAB_0000efb0:
   else {
     if (((governor_fuel_demand_tracking != final_fueling) ||
         (engine_operating_mode != engine_operating_mode_previous_pass)) &&
-       ((fuel_demand_pilot_active_flag._0_2_ != 1 ||
+       ((all_speed_governor_deadband_compensation_flag != 1 ||
         (((((final_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR &&
             (final_fueling_state != FUELING_STATE_HIGH_SPEED_GOVERNOR)) &&
            (final_fueling_state != FUELING_STATE_AIR_FUEL_CONTROL_DERATE)) &&
@@ -9399,8 +9399,8 @@ LAB_0000efb0:
     all_speed_governor_reset_flag = 0;
     uVar11 = all_speed_governor_state_pid_integral_clamped;
   }
-  if ((fuel_demand_control_t_0040a57a.calculated == 0) && (fuel_demand_pilot_active_flag._0_2_ == 1)
-     ) {
+  if ((fuel_demand_control_t_0040a57a.calculated == 0) &&
+     (all_speed_governor_deadband_compensation_flag == 1)) {
     if (final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) {
       iVar9 = (((uint)final_fueling - (uint)all_speed_governor_fueling) +
               (uint)all_speed_governor_delta) - (uint)all_speed_governor_delta_offset;
@@ -9418,8 +9418,10 @@ LAB_0000f0b0:
     }
     else if (governor_output_t_0040aec2.idle_reference_speed <=
              engine_speed_state.filtered_engine_speed) {
-      if (all_speed_governor_delta <= fuel_demand_pilot_active_flag._2_2_) goto LAB_0000f0b0;
-      all_speed_governor_delta = all_speed_governor_delta - fuel_demand_pilot_active_flag._2_2_;
+      if (all_speed_governor_delta <= all_speed_governor_deadband_delta_decrement_rate)
+      goto LAB_0000f0b0;
+      all_speed_governor_delta =
+           all_speed_governor_delta - all_speed_governor_deadband_delta_decrement_rate;
     }
     if (all_speed_governor_delta_upper_limit < all_speed_governor_delta) {
       all_speed_governor_delta = all_speed_governor_delta_upper_limit;
@@ -9448,15 +9450,15 @@ LAB_0000f0b0:
     iVar9 = 32000;
   }
   all_speed_governor_error_difference = (word)iVar9;
-  dVar4 = (int)(all_speed_governor_integral_adjustment +
-                (((int)(short)all_speed_governor_error_difference *
-                  ((int)*(short *)all_speed_governor_gain_set_pointer +
-                  (int)*(short *)(all_speed_governor_gain_set_pointer + 4)) +
-                 iVar15 * ((int)*(short *)(all_speed_governor_gain_set_pointer + 4) +
-                          (int)*(short *)(all_speed_governor_gain_set_pointer + 6))) -
-                (int)(short)all_speed_governor_feedback_difference *
-                (int)*(short *)(all_speed_governor_gain_set_pointer + 2)) +
-               all_speed_governor_proportional_adjustment) >> 9;
+  dVar4 = all_speed_governor_integral_adjustment +
+          (((int)(short)all_speed_governor_error_difference *
+            ((int)*(short *)all_speed_governor_gain_set_pointer +
+            (int)*(short *)(all_speed_governor_gain_set_pointer + 4)) +
+           iVar15 * ((int)*(short *)(all_speed_governor_gain_set_pointer + 4) +
+                    (int)*(short *)(all_speed_governor_gain_set_pointer + 6))) -
+          (int)(short)all_speed_governor_feedback_difference *
+          (int)*(short *)(all_speed_governor_gain_set_pointer + 2)) +
+          all_speed_governor_proportional_adjustment >> 9;
   all_speed_governor_pid_accumulator = 0xe6000;
   if (((int)dVar4 < 0xe6000) && (all_speed_governor_pid_accumulator = dVar4, (int)dVar4 < -0xe5fff))
   {
@@ -9565,7 +9567,7 @@ LAB_0000f2f8:
   }
   governor_fuel_demand_tracking =
        all_speed_governor_state_fuel_demand_correction + governor_fuel_demand_prev_ref;
-  if (fuel_demand_pilot_active_flag._0_2_ == 1) {
+  if (all_speed_governor_deadband_compensation_flag == 1) {
     governor_fuel_demand_tracking = governor_fuel_demand_tracking + all_speed_governor_delta;
     if (((final_fueling_state == FUELING_STATE_AIR_FUEL_CONTROL_DERATE) ||
         (final_fueling_state == FUELING_STATE_MAXIMUM_THROTTLE)) ||
@@ -9598,8 +9600,8 @@ LAB_0000f2f8:
       }
     }
     if (((switch_input_state_bits[1] & 8) != 0) || ((switch_input_state_bits[0] & 4) != 0)) {
-      if ((int)(uint)fuel_demand_pilot_active_flag._2_2_ < iVar15) {
-        iVar15 = (int)(short)((short)iVar15 - fuel_demand_pilot_active_flag._2_2_);
+      if ((int)(uint)all_speed_governor_deadband_delta_decrement_rate < iVar15) {
+        iVar15 = (int)(short)((short)iVar15 - all_speed_governor_deadband_delta_decrement_rate);
       }
       else {
         iVar15 = 0;
@@ -11218,11 +11220,10 @@ void cm848_calculateWastegateDutyRequest(void)
   iVar7 = (int)(CONCAT44((int)((ulonglong)
                                ((longlong)
                                 (iVar7 * (short)wastegate_duty_controller_state.first_error_gain) *
-                               (longlong)
-                               (int)wastegate_duty_turbocharger_speed_derate_scale_gain._0_2_) >>
-                              0x20),
+                               (longlong)(int)wastegate_duty_turbocharger_speed_derate_scale_gain)
+                              >> 0x20),
                          iVar7 * (short)wastegate_duty_controller_state.first_error_gain *
-                         (int)wastegate_duty_turbocharger_speed_derate_scale_gain._0_2_) / 64000) -
+                         (int)wastegate_duty_turbocharger_speed_derate_scale_gain) / 64000) -
           (int)(short)wastegate_duty_turbocharger_speed_derate_derivative_term;
   if (iVar7 < -0x6400) {
     iVar7 = -0x6400;
@@ -11364,7 +11365,7 @@ void cm848_calculateWastegateDutyRequest(void)
     }
   }
   else {
-    uVar6 = (uint)wastegate_duty_turbocharger_speed_derate_scale_gain._2_2_;
+    uVar6 = (uint)wastegate_duty_engine_brake_lower_limit;
     wastegate_duty_controller_state.ceiling_half_duty_counts =
          wastegate_duty_controller_state.engine_speed_ceiling_half_duty_counts;
   }
@@ -21574,7 +21575,7 @@ uint cm848_calculateEffectiveFuelLimit(void)
       uVar3 = (int)(CONCAT44(((int)uVar2 >> 0x1f) * 0x2655 +
                              (int)((ulonglong)uVar2 * 0x2655 >> 0x20),uVar2 * 0x2655) /
                    (longlong)(int)(uVar5 << 3)) + (uint)all_speed_governor_no_load_fuel;
-      if (fuel_demand_pilot_active_flag._0_2_ == 1) {
+      if (all_speed_governor_deadband_compensation_flag == 1) {
         uVar3 = uVar3 + all_speed_governor_delta;
       }
     }
@@ -24101,7 +24102,6 @@ void cm848_initJ1939AddressDispatcher(void)
 // Function: cm848_sendPgn56320AntiTheftStatus @ 0x00023be0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Sends the J1939 anti-theft status (PGN 56320) while j1939_anti_theft_send_status_report_cal is
    set and the transmit state is 2: the status byte from the status of request / component status /
    password valid / seed present bits and the encryption seed (was cm848_sendJ1939ProprietaryStatus)
@@ -24118,7 +24118,7 @@ void cm848_sendPgn56320AntiTheftStatus(void)
                    (byte)((int)(short)j1939_anti_theft_component_status_cal << 4) |
                    (char)j1939_anti_theft_password_valid_cal << 2 |
                    (byte)j1939_anti_theft_encryption_seed_present_cal;
-    _j1939_pgn56320_encryption_seed = _j1939_anti_theft_encryption_seed_cal;
+    j1939_pgn56320_encryption_seed = j1939_anti_theft_encryption_seed_cal;
     j1939_pgn56320_tx_message.header.can_id._3_1_ = j1939_prop_status_byte3;
     j1939_pgn56320_tx_message.header.can_id._2_1_ = j1939_prop_status_byte2;
     sendJ1939Message(&j1939_pgn56320_tx_message);
@@ -27578,7 +27578,7 @@ undefined4 cm848_selectLowSpeedGovernorOverrideGainSet(int param_1)
       return 0;
     }
     low_speed_governor_final_gain_state = low_speed_governor_override_gain_state;
-    low_speed_governor_gain_set_pointer = (undefined *)&governor_j1939_speed_target;
+    low_speed_governor_gain_set_pointer = &low_speed_governor_override_gain_set;
   }
   return 1;
 }
@@ -27604,12 +27604,12 @@ void cm848_loadLowSpeedGovernorGainSet(void)
      (low_speed_governor_final_gain_state = low_speed_governor_user_gain_state,
      low_speed_governor_gain_set_pointer = low_speed_governor_requested_gain_set_pointer,
      low_speed_governor_user_gain_state == 0)) {
-    low_speed_governor_gain_set_pointer = (undefined *)&low_speed_governor_default_gain_set;
+    low_speed_governor_gain_set_pointer = &low_speed_governor_default_gain_set;
   }
-  low_speed_governor_proportional_gain = *(sword *)low_speed_governor_gain_set_pointer;
-  low_speed_governor_integral_gain = *(sword *)(low_speed_governor_gain_set_pointer + 2);
-  low_speed_governor_derivative_gain = *(sword *)(low_speed_governor_gain_set_pointer + 4);
-  low_speed_governor_jerk_gain = *(sword *)(low_speed_governor_gain_set_pointer + 6);
+  low_speed_governor_proportional_gain = low_speed_governor_gain_set_pointer->proportional_gain;
+  low_speed_governor_integral_gain = low_speed_governor_gain_set_pointer->integral_gain;
+  low_speed_governor_derivative_gain = low_speed_governor_gain_set_pointer->derivative_gain;
+  low_speed_governor_jerk_gain = low_speed_governor_gain_set_pointer->jerk_gain;
   return;
 }
 
@@ -27637,10 +27637,13 @@ void cm848_initGovernorLoadStateWrapper(void)
 {
   cm848_resetLowSpeedGovernorAggressiveGainLogic();
   low_speed_governor_user_gain_state = 0;
-  governor_j1939_speed_target = low_speed_governor_default_gain_set;
-  governor_j1939_d_gain_stored = governor_j1939_d_gain_default_cal;
-  governor_j1939_p_gain_stored = governor_j1939_p_gain_default_cal;
-  governor_j1939_i_gain_stored = governor_j1939_i_gain_default_cal;
+  low_speed_governor_override_gain_set.proportional_gain =
+       low_speed_governor_default_gain_set.proportional_gain;
+  low_speed_governor_override_gain_set.integral_gain =
+       low_speed_governor_default_gain_set.integral_gain;
+  low_speed_governor_override_gain_set.derivative_gain =
+       low_speed_governor_default_gain_set.derivative_gain;
+  low_speed_governor_override_gain_set.jerk_gain = low_speed_governor_default_gain_set.jerk_gain;
   return;
 }
 
@@ -27664,7 +27667,7 @@ undefined4 cm848_selectLowSpeedGovernorTsc1GainSet(void)
   }
   else {
     low_speed_governor_final_gain_state = 4;
-    low_speed_governor_gain_set_pointer = (undefined *)&j1939_low_speed_governor_proportional_gain;
+    low_speed_governor_gain_set_pointer = &j1939_low_speed_governor_gain_set;
     uVar1 = 1;
   }
   return uVar1;
@@ -36480,11 +36483,11 @@ void cm848_configureSupervisorChip(void)
   j1939_can_frame_word_b = supervisor_chip_driver_feedback_delay_microseconds & 0xff | 0xdc00;
   uVar2 = 30000000 /
           ((uint)supervisor_chip_overspeed_limit *
-          (uint)supervisor_chip_engine_speed_targets_per_revolution._0_1_);
+          (uint)supervisor_chip_engine_speed_targets_per_revolution);
   j1939_can_frame_word_c = (ushort)uVar2 & 0xff | 0xd000;
   j1939_can_frame_word_d =
        (ushort)(uVar2 >> 8) & 0xf |
-       ((byte)supervisor_chip_engine_speed_targets_per_revolution & 7) << 4 |
+       (supervisor_chip_overspeed_consecutive_occurrence_count & 7) << 4 |
        (supervisor_chip_overspeed_non_latching_flag & 1) << 7 | 0xd600;
   local_28.word_count = 4;
   local_28.completion_callback = (undefined *)0x0;
@@ -46697,12 +46700,12 @@ void cm848_calculateAllSpeedGovernorEquivalentThrottle(void)
   }
   bVar1 = false;
   if ((((adjusted_user_fueling_state == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) &&
-       ((((fuel_feature_control_flags & 0x10) != 0 || (fuel_demand_pilot_active_flag._0_2_ != 1)) ||
-        (all_speed_governor_delta == 0)))) ||
-      ((((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR ||
-         (adjusted_user_fueling_state == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
-        (adjusted_user_fueling_state == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
-       (final_fueling_state == FUELING_STATE_TSC1_TORQUE_LIMIT)))) ||
+       ((((fuel_feature_control_flags & 0x10) != 0 ||
+         (all_speed_governor_deadband_compensation_flag != 1)) || (all_speed_governor_delta == 0))))
+      || ((((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR ||
+            (adjusted_user_fueling_state == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
+           (adjusted_user_fueling_state == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
+          (final_fueling_state == FUELING_STATE_TSC1_TORQUE_LIMIT)))) ||
      ((((adjusted_user_fueling_state == FUELING_STATE_HIGH_SPEED_GOVERNOR &&
         (operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) &&
        (adjusted_user_fueling < operating_mode_governor_output.fuel_demand)) ||
@@ -48703,7 +48706,7 @@ LAB_00049380:
       fuel_pressure_too_high_count = 0;
     }
     else if (fuel_pressure_sensor_too_high_threshold < (short)fuel_pressure_sensor) {
-      if (fuel_pressure_too_high_count < fuel_pressure_too_high_count_limit._0_1_) {
+      if (fuel_pressure_too_high_count < fuel_pressure_too_high_count_limit) {
         fuel_pressure_too_high_count = fuel_pressure_too_high_count + 1;
       }
       else {
