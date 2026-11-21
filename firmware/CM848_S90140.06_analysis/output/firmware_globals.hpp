@@ -4534,7 +4534,7 @@ extern byte can_receive_queue_full_flag;  // 0x0040ad35
 extern void * can_transmit_mailbox_pointer;  // 0x0040ad38
 extern byte j1939_dm1_active_flag;  // 0x0040ad53
 extern word engine_retarder_override_control_mode;  // 0x0040ad5a
-extern word engine_retarder_controlling_source_index;  // 0x0040ad5c
+extern word engine_retarder_control_device_indicator;  // 0x0040ad5c
 extern word engine_retarder_controlling_source_address;  // 0x0040ad5e
 extern word engine_retarder_controlling_tsc1_control_byte;  // 0x0040ad60
 extern word engine_retarder_torque_limit_percent;  // 0x0040ad62
@@ -4591,7 +4591,7 @@ extern word j1939_dm13_fault_log_inhibit_flag;  // 0x0040adda
 extern j1939_dm13_requester_slot_t j1939_dm13_requester_slots[3];  // 0x0040addc
 extern word datalink_broadcast_enable_flags;  // 0x0040adee
 extern undefined tsc1_accepted_control_byte;  // 0x0040adf4
-extern undefined j1939_governor_source_index;  // 0x0040adf6
+extern undefined engine_control_device_indicator;  // 0x0040adf6
 extern j1939_powertrain_control_state_t j1939_powertrain_control_state;  // 0x0040adf8
 extern undefined j1939_tsc1_speed_override_active_flag;  // 0x0040adfa
 extern undefined j1939_etc1_torque_limit_flag;  // 0x0040adfc

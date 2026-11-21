@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 02:51:04 MST 2026
+// Generated: Sat Nov 21 03:01:40 MST 2026
 
 
 //
@@ -23362,7 +23362,7 @@ LAB_00022900:
       j1939_powertrain_control_state.etc1_out_of_gear_flag = 1;
       j1939_powertrain_control_state.etc1_out_of_gear_timer =
            j1939_pgn61442_driveline_disengaged_timeout + 1;
-      j1939_powertrain_control_state.etc1_out_of_gear_latch = 1;
+      j1939_powertrain_control_state.out_of_gear_network_type = 1;
     }
     else {
       j1939_powertrain_control_state.etc1_out_of_gear_flag = 0;
@@ -23391,7 +23391,7 @@ LAB_00022a00:
              j1939_pgn61442_engine_overspeed_enable_time_limit + 1;
       }
       if ((j1939_powertrain_control_state.tsc1_override_control_mode == 1) &&
-         (j1939_governor_source_index == 1)) {
+         (engine_control_device_indicator == 1)) {
         j1939_powertrain_control_state.high_idle_override_active_flag = 1;
       }
       j1939_powertrain_control_state.high_idle_override_timeout_timer =
@@ -23404,8 +23404,8 @@ LAB_00022a00:
   }
   else if ((j1939_powertrain_messages_received.etc1_status_byte_5 & 3) == 0) {
     j1939_powertrain_control_state.high_idle_override_recovery_flag = 0;
-    j1939_powertrain_control_state.time_limited_node_status_bits =
-         j1939_powertrain_control_state.time_limited_node_status_bits & 3;
+    j1939_powertrain_control_state.j1939_blocked_message_bits =
+         j1939_powertrain_control_state.j1939_blocked_message_bits & 3;
     j1939_powertrain_control_state.high_idle_override_active_flag = 0;
     j1939_powertrain_control_state.high_idle_override_time_limit_timer = 0;
     j1939_powertrain_control_state.high_idle_override_timeout_timer = 0;
@@ -23544,8 +23544,8 @@ void processEngineTsc1Request(j1939_rx_msg_t *msg)
   bVar1 = msg->source_address;
   if (control_mode == 0) {
     cm848_removeEngineTsc1IgnoredRequestEntry(1,bVar1);
-    j1939_powertrain_control_state.time_limited_node_status_bits =
-         j1939_powertrain_control_state.time_limited_node_status_bits & 6;
+    j1939_powertrain_control_state.j1939_blocked_message_bits =
+         j1939_powertrain_control_state.j1939_blocked_message_bits & 6;
   }
   else {
     sVar2 = cm848_refreshEngineTsc1IgnoredRequestEntry(1,bVar1,control_mode);
@@ -23611,7 +23611,7 @@ accept_tsc1_command:
   if (control_mode == 0) {
     j1939_powertrain_control_state.tsc1_request_timeout_count = 0;
     j1939_powertrain_control_state.tsc1_override_control_mode = 0;
-    j1939_governor_source_index = 0;
+    engine_control_device_indicator = 0;
     j1939_powertrain_control_state.tsc1_speed_control_flag = 0;
   }
   else if (control_mode == 1) {
@@ -23619,7 +23619,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_ptr)->
          speed_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = 1;
-    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+    engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 1;
     j1939_powertrain_messages_received.tsc1_accepted_requested_speed =
          j1939_powertrain_messages_received.tsc1_requested_speed;
@@ -23637,7 +23637,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_ptr)->
          torque_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = 2;
-    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+    engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 0;
     j1939_powertrain_messages_received.tsc1_accepted_requested_torque =
          j1939_powertrain_messages_received.tsc1_requested_torque;
@@ -23657,7 +23657,7 @@ accept_tsc1_command:
          (j1939_powertrain_control_state.tsc1_source_configuration_ptr)->
          speed_torque_limit_control_request_timeout + 1;
     j1939_powertrain_control_state.tsc1_override_control_mode = 3;
-    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+    engine_control_device_indicator = cm848_lookupJ1939ControlDevice((uint)msg->source_address);
     j1939_powertrain_control_state.tsc1_speed_control_flag = 0;
     j1939_powertrain_messages_received.tsc1_accepted_requested_speed =
          j1939_powertrain_messages_received.tsc1_requested_speed;
@@ -23674,7 +23674,7 @@ accept_tsc1_command:
       j1939_powertrain_control_state.tsc1_torque_limit_fueling = 0;
     }
   }
-  if (j1939_governor_source_index != 1) {
+  if (engine_control_device_indicator != 1) {
     j1939_powertrain_control_state.high_idle_override_active_flag = 0;
   }
   return;
@@ -23956,7 +23956,7 @@ LAB_000235d0:
    ignores them when engine_retarder_output_driver_count is 0, for a data length other than 8 and
    for speed control requests (SPN 695 = 1), applies the per-sender request list and the override
    priority bits (byte 1 mask 0x30) and records the winning sender in
-   engine_retarder_controlling_source_address / engine_retarder_controlling_source_index. For torque
+   engine_retarder_controlling_source_address / engine_retarder_control_device_indicator. For torque
    control (SPN 695 = 2) and torque limit control (3) it decodes the requested torque with
    cm848_decodeRetarderTorqueRequestPercent, quantizes it with
    cm848_selectEngineRetarderStagePercent and stores it as the torque request
@@ -23994,8 +23994,8 @@ void cm848_processEngineRetarderTsc1Request(j1939_rx_msg_t *msg)
   }
   if (bVar2 == 0) {
     cm848_removeRetarderTsc1IgnoredRequestEntry(bVar1);
-    j1939_powertrain_control_state.time_limited_node_status_bits =
-         j1939_powertrain_control_state.time_limited_node_status_bits & 5;
+    j1939_powertrain_control_state.j1939_blocked_message_bits =
+         j1939_powertrain_control_state.j1939_blocked_message_bits & 5;
   }
   else {
     sVar3 = cm848_refreshRetarderTsc1IgnoredRequestEntry(bVar1,bVar2);
@@ -24039,7 +24039,7 @@ LAB_00023878:
   if (bVar2 == 0) {
     engine_retarder_controlling_override_priority_bits = bVar5;
     engine_retarder_override_control_mode = 0;
-    engine_retarder_controlling_source_index = 0;
+    engine_retarder_control_device_indicator = 0;
     engine_retarder_torque_limit_percent = 0x7d;
     j1939_powertrain_control_state.retarder_tsc1_request_timeout_count = 0;
     return;
@@ -24052,20 +24052,20 @@ LAB_00023878:
     engine_retarder_torque_request_percent = engine_retarder_stage_percent;
     if ((((bVar1 == j1939_transmission_source_address) &&
          (j1939_powertrain_control_state.tsc1_override_control_mode == 1)) &&
-        (j1939_governor_source_index == 1)) &&
+        (engine_control_device_indicator == 1)) &&
        ((engine_retarder_shift_assist_fuel_demand_limit <= engine_operating_mode_fuel_demand &&
         (wVar4 != 0)))) {
       j1939_powertrain_control_state.retarder_tsc1_request_timeout_count = 0;
       engine_retarder_override_control_mode = 0;
-      engine_retarder_controlling_source_index = 0;
+      engine_retarder_control_device_indicator = 0;
     }
     else {
       j1939_powertrain_control_state.retarder_tsc1_request_timeout_count =
            *(short *)(j1939_powertrain_control_state.retarder_tsc1_source_configuration_ptr + 0xe) +
            1;
       engine_retarder_override_control_mode = 2;
-      engine_retarder_controlling_source_index =
-           cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+      engine_retarder_control_device_indicator =
+           cm848_lookupJ1939ControlDevice((uint)msg->source_address);
       if (engine_retarder_torque_request_percent == 0) {
         engine_retarder_torque_limit_percent = 0x7d;
         j1939_powertrain_control_state.retarder_tsc1_mode_transition_timer =
@@ -24082,8 +24082,8 @@ LAB_00023878:
   }
   if (bVar2 == 3) {
     engine_retarder_override_control_mode = 3;
-    engine_retarder_controlling_source_index =
-         cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+    engine_retarder_control_device_indicator =
+         cm848_lookupJ1939ControlDevice((uint)msg->source_address);
     engine_retarder_requested_torque_percent =
          cm848_decodeRetarderTorqueRequestPercent(tsc1_rx_byte_3);
     j1939_powertrain_control_state.retarder_tsc1_request_timeout_count =
@@ -24113,7 +24113,7 @@ void cm848_initGovernorProtectionState(void)
 {
   engine_retarder_torque_limit_percent = 100;
   engine_retarder_override_control_mode = 0;
-  engine_retarder_controlling_source_index = 0;
+  engine_retarder_control_device_indicator = 0;
   engine_retarder_stage_count =
        engine_retarder_stage_1_weight + engine_retarder_stage_2_weight +
        engine_retarder_stage_3_weight + engine_retarder_stage_4_weight +
@@ -25472,15 +25472,15 @@ void sendPgn61444ElectronicEngineController1Message(void)
     if (((final_fueling_state == FUELING_STATE_TSC1_SPEED_CONTROL) ||
         (final_fueling_state == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
        (final_fueling_state == FUELING_STATE_TSC1_TORQUE_LIMIT)) {
-      if (j1939_governor_source_index == 1) {
+      if (engine_control_device_indicator == 1) {
         j1939_engine_status_byte = 0xf6;
         goto LAB_00025a28;
       }
-      if (j1939_governor_source_index == 2) {
+      if (engine_control_device_indicator == 2) {
         j1939_engine_status_byte = 0xf7;
         goto LAB_00025a28;
       }
-      if (j1939_governor_source_index == 3) {
+      if (engine_control_device_indicator == 3) {
         j1939_engine_status_byte = 0xf5;
         goto LAB_00025a28;
       }
@@ -26346,9 +26346,9 @@ void cm848_j1939HandlePgn65504ProprietaryB(void)
     local_18 = (undefined1)(engine_speed_state.filtered_engine_speed >> 8);
     j1939_rpm_tx_word = CONCAT11((char)engine_speed_state.filtered_engine_speed,local_18);
     local_12 = (undefined1)
-               ((ushort)(j1939_powertrain_control_state.proprietary_offset_value + 0x7d7f) >> 8);
+               ((ushort)(j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f) >> 8);
     j1939_etc1_speed_offset_tx_word =
-         CONCAT11((char)(j1939_powertrain_control_state.proprietary_offset_value + 0x7d7f),local_12)
+         CONCAT11((char)(j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f),local_12)
     ;
     uVar1 = TBLr;
     uVar2 = uVar1 >> 7 & 0xffff;
@@ -26623,7 +26623,7 @@ void cm848_emptyStubFunction5(void)
    speed limit j1939_powertrain_control_state.tsc1_speed_limit, and sets governor mode 3. Outside
    those throttle limits it resets: tsc1_torque_limit_fueling = tsc1_lost_reset_torque_limit
    (TSC_Lost_Reset_Torque; 0xffff, no limit, at or above the maximum throttle), governor mode 0,
-   j1939_governor_source_index 0, the integrator = limit << 6 and the speed limit = the current
+   engine_control_device_indicator 0, the integrator = limit << 6 and the speed limit = the current
    engine speed. It always clears tsc1_speed_control_flag, tsc1_request_timeout_count and
    tsc1_request_time_limit_timer. The e2m TSC_Lost_Reset_Speed (10E7 +2A, ROM 0x5c3ac) is not read:
    no load of that word was found in the disassembly. It formats no DM1 message. (was
@@ -26671,7 +26671,7 @@ void cm848_runTsc1LostManagement(void)
       j1939_powertrain_control_state.tsc1_torque_limit_fueling = 0xffff;
     }
     j1939_powertrain_control_state.tsc1_override_control_mode = 0;
-    j1939_governor_source_index = 0;
+    engine_control_device_indicator = 0;
     tsc1_torque_limit_ramp_integrator =
          (uint)j1939_powertrain_control_state.tsc1_torque_limit_fueling << 6;
     j1939_powertrain_control_state.tsc1_speed_limit = engine_speed_state.filtered_engine_speed;
@@ -26692,7 +26692,7 @@ void cm848_resetGovernorState(void)
 
 {
   engine_retarder_override_control_mode = 0;
-  engine_retarder_controlling_source_index = 0;
+  engine_retarder_control_device_indicator = 0;
   engine_retarder_torque_limit_percent = 0x7d;
   j1939_powertrain_control_state.retarder_tsc1_request_timeout_count = 0;
   j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer = 0;
@@ -26747,8 +26747,8 @@ void cm848_runJ1939PowertrainControlTimeouts(void)
   if (bVar1) {
     j1939_powertrain_control_state.high_idle_override_active_flag = 0;
     j1939_powertrain_control_state.high_idle_override_recovery_flag = 0;
-    j1939_powertrain_control_state.time_limited_node_status_bits =
-         j1939_powertrain_control_state.time_limited_node_status_bits & 3;
+    j1939_powertrain_control_state.j1939_blocked_message_bits =
+         j1939_powertrain_control_state.j1939_blocked_message_bits & 3;
     j1939_powertrain_control_state.high_idle_override_timeout_timer = 0;
     j1939_powertrain_control_state.high_idle_override_time_limit_timer = 0;
   }
@@ -26759,8 +26759,8 @@ void cm848_runJ1939PowertrainControlTimeouts(void)
   if (j1939_powertrain_control_state.high_idle_override_time_limit_timer == 1) {
     j1939_powertrain_control_state.high_idle_override_active_flag = 0;
     j1939_powertrain_control_state.high_idle_override_recovery_flag = 1;
-    j1939_powertrain_control_state.time_limited_node_status_bits =
-         j1939_powertrain_control_state.time_limited_node_status_bits | 4;
+    j1939_powertrain_control_state.j1939_blocked_message_bits =
+         j1939_powertrain_control_state.j1939_blocked_message_bits | 4;
     j1939_powertrain_control_state.high_idle_override_timeout_timer =
          j1939_time_limited_node_recovery_time + 1;
   }
@@ -26904,8 +26904,8 @@ LAB_00027800:
             cm848_addEngineTsc1IgnoredRequestEntry
                       ((int)(short)j1939_powertrain_control_state.tsc1_controlling_data_link,
                        j1939_powertrain_control_state.tsc1_controlling_source_address,uVar9);
-            j1939_powertrain_control_state.time_limited_node_status_bits =
-                 j1939_powertrain_control_state.time_limited_node_status_bits | 1;
+            j1939_powertrain_control_state.j1939_blocked_message_bits =
+                 j1939_powertrain_control_state.j1939_blocked_message_bits | 1;
             cm848_runTsc1LostManagement();
           }
           goto LAB_00027848;
@@ -26994,8 +26994,8 @@ LAB_000279e8:
       else if (j1939_powertrain_control_state.retarder_tsc1_request_time_limit_timer == 1) {
         cm848_addRetarderTsc1IgnoredRequestEntry
                   (engine_retarder_controlling_source_address & 0xff,2);
-        j1939_powertrain_control_state.time_limited_node_status_bits =
-             j1939_powertrain_control_state.time_limited_node_status_bits | 2;
+        j1939_powertrain_control_state.j1939_blocked_message_bits =
+             j1939_powertrain_control_state.j1939_blocked_message_bits | 2;
         cm848_resetGovernorState();
       }
     }
@@ -44110,13 +44110,13 @@ void cm848_applyEngineRetarderTsc1Request(void)
           (engine_retarder_internal_override_control_mode == 2)) {
     engine_retarder_tsc1_request_percent = engine_retarder_torque_request_percent;
     engine_retarder_tsc1_request_source_code = 1;
-    engine_retarder_request_source_index = engine_retarder_controlling_source_index;
+    engine_retarder_request_source_index = engine_retarder_control_device_indicator;
   }
   else if (((engine_retarder_override_control_mode == 3) ||
            (engine_retarder_internal_override_control_mode == 3)) &&
           (engine_retarder_torque_limit_percent < engine_retarder_limit_percent)) {
     engine_retarder_tsc1_request_source_code = 6;
-    engine_retarder_request_source_index = engine_retarder_controlling_source_index;
+    engine_retarder_request_source_index = engine_retarder_control_device_indicator;
     engine_retarder_limit_percent = engine_retarder_torque_limit_percent;
     engine_retarder_limit_source_code = 4;
   }
@@ -56575,10 +56575,16 @@ void sendJ1939Message(j1939_tx_msg_t *msg)
 
 
 //
-// Function: cm848_lookupJ1939SourceAddressIndex @ 0x00053a4c
+// Function: cm848_lookupJ1939ControlDevice @ 0x00053a4c
 //
 
-word cm848_lookupJ1939SourceAddressIndex(dword source_address)
+/* Returns the J1939 control device of a source address, the e2m
+   Jcomm_Engine_Control_Device_Indicator / Jcomm_Retarder_Control_Device_Indicator code: 1 when it
+   is j1939_transmission_source_address, 2 for j1939_anti_lock_brake_source_address, 3 for
+   j1939_anti_slip_regulation_source_address, else 4 (0 = none is the reset value) (was
+   cm848_lookupJ1939SourceAddressIndex) */
+
+word cm848_lookupJ1939ControlDevice(dword source_address)
 
 {
   word address_index;
@@ -56876,8 +56882,8 @@ void cm848_addRetarderTsc1IgnoredRequestEntry(byte param_1,undefined2 param_2)
    entries that reach 0 (the last entry moves into the gap); an expiring engine list entry of type
    1, mode 1 and the primary authorized source address clears
    j1939_powertrain_control_state.high_idle_override_active_flag and bit 0 of
-   time_limited_node_status_bits, an expiring retarder list entry of mode 2 from that source clears
-   bit 1 (was cm848_processCoolantCalEntries). */
+   j1939_blocked_message_bits, an expiring retarder list entry of mode 2 from that source clears bit
+   1 (was cm848_processCoolantCalEntries). */
 
 void cm848_processTsc1IgnoredRequestTimeouts(void)
 
@@ -56903,8 +56909,8 @@ void cm848_processTsc1IgnoredRequestTimeouts(void)
         if (((*pwVar6 == 1) && (*(byte *)(pwVar3 + -3) == j1939_transmission_source_address)) &&
            (pwVar3[-2] == 1)) {
           j1939_powertrain_control_state.high_idle_override_active_flag = 0;
-          j1939_powertrain_control_state.time_limited_node_status_bits =
-               j1939_powertrain_control_state.time_limited_node_status_bits & 6;
+          j1939_powertrain_control_state.j1939_blocked_message_bits =
+               j1939_powertrain_control_state.j1939_blocked_message_bits & 6;
         }
         if (engine_tsc1_ignored_request_count == uVar5) {
           engine_tsc1_ignored_request_count = engine_tsc1_ignored_request_count - 1;
@@ -56931,8 +56937,8 @@ void cm848_processTsc1IgnoredRequestTimeouts(void)
       *(short *)(pbVar4 + -2) = sVar2 + -1;
       if ((short)(sVar2 + -1) == 0) {
         if ((*pbVar7 == j1939_transmission_source_address) && (*(short *)(pbVar4 + -4) == 2)) {
-          j1939_powertrain_control_state.time_limited_node_status_bits =
-               j1939_powertrain_control_state.time_limited_node_status_bits & 5;
+          j1939_powertrain_control_state.j1939_blocked_message_bits =
+               j1939_powertrain_control_state.j1939_blocked_message_bits & 5;
         }
         if (retarder_tsc1_ignored_request_count == uVar5) {
           retarder_tsc1_ignored_request_count = retarder_tsc1_ignored_request_count - 1;
@@ -62321,7 +62327,7 @@ void cm848_checkAirHandlingSystemProtectionHighLoad(void)
                      air_handling_system_protection_high_load_torque_values,2);
   air_handling_system_protection_high_load_flag =
        (ushort)((int)(short)wVar1 <
-               (short)j1939_powertrain_control_state.proprietary_offset_value * 2);
+               (short)j1939_powertrain_control_state.engine_net_output_torque * 2);
   return;
 }
 
@@ -62529,7 +62535,7 @@ void governor_speedRatio_etcFuelCorrection_calc(void)
     }
   }
   environmental_protection_agency_indicated_friction_torque_percent_times_256 = (word)uVar2;
-  j1939_powertrain_control_state.proprietary_offset_value =
+  j1939_powertrain_control_state.engine_net_output_torque =
        (short)(((int)(short)(actual_engine_percent_torque_times_256 - (word)uVar2) *
                (int)(short)reference_engine_torque_working) / 0x43ca) >> 1;
   return;
@@ -67657,9 +67663,9 @@ void governor_resetModeStateOnCondition(void)
 {
   if (((((governor_feature_config_word & 0x1000) != 0) &&
        (engine_retarder_override_control_mode == 2)) &&
-      (engine_retarder_controlling_source_index == 1)) &&
+      (engine_retarder_control_device_indicator == 1)) &&
      (((j1939_powertrain_control_state.tsc1_override_control_mode == 1 &&
-       (j1939_governor_source_index == 1)) &&
+       (engine_control_device_indicator == 1)) &&
       (engine_retarder_shift_assist_fuel_demand_limit <= engine_operating_mode_fuel_demand)))) {
     engine_retarder_override_control_mode = 0;
     engine_retarder_torque_limit_percent = 0x7d;
@@ -68430,14 +68436,14 @@ void cm848_storeJ1939ControlSessionInHistoryTable(int param_1)
 /* Opens a J1939 control session record. param_1 = 0 starts an engine control (TSC1) session:
    j1939_engine_control_active_flag_cal = 1 (e2m 1100 +0 J1939_Engine_Control_Status),
    j1939_engine_control_source_index_cal (+4 J1939_Engine_Control_Source; 1 = transmission, 2 = ABS,
-   3 = ASR, 4 = unknown) takes j1939_governor_source_index, and the active record at 0x3feb50 (e2m
-   10FE J1939_Active_Engine) gets kind 0, the controlling source address
+   3 = ASR, 4 = unknown) takes engine_control_device_indicator, and the active record at 0x3feb50
+   (e2m 10FE J1939_Active_Engine) gets kind 0, the controlling source address
    j1939_powertrain_control_state.tsc1_controlling_source_address, the source index, a mode history
    whose write index is 1 with j1939_powertrain_control_state.tsc1_override_control_mode as first
    entry and four cleared entries, and the start time key_on_hour_meter in
    etc1_governor_calib_session_start_time. Any other param_1 does the same for the retarder control
    session (record at 0x3feb6a, e2m 10FF J1939_Active_Retarder, kind 1;
-   engine_retarder_controlling_source_address, engine_retarder_controlling_source_index,
+   engine_retarder_controlling_source_address, engine_retarder_control_device_indicator,
    engine_retarder_override_control_mode, j1939_retarder_control_active_flag_cal,
    j1939_retarder_control_source_index_cal). Called by cm848_trackJ1939ControlSessions (0x50bff4).
    (was governor_sourceData_init) */
@@ -68447,10 +68453,10 @@ void cm848_startJ1939ControlSession(int param_1)
 {
   if (param_1 == 0) {
     j1939_engine_control_active_flag_cal = 1;
-    j1939_engine_control_source_index_cal = j1939_governor_source_index;
+    j1939_engine_control_source_index_cal = engine_control_device_indicator;
     DAT_003feb50 = 0;
     DAT_003feb51 = j1939_powertrain_control_state.tsc1_controlling_source_address;
-    DAT_003feb52 = j1939_governor_source_index;
+    DAT_003feb52 = engine_control_device_indicator;
     etc1_governor_mode_history_write_index = 1;
     DAT_003feb56 = j1939_powertrain_control_state.tsc1_override_control_mode;
     DAT_003feb5e = 0;
@@ -68462,10 +68468,10 @@ void cm848_startJ1939ControlSession(int param_1)
   }
   else {
     j1939_retarder_control_active_flag_cal = 1;
-    j1939_retarder_control_source_index_cal = engine_retarder_controlling_source_index;
+    j1939_retarder_control_source_index_cal = engine_retarder_control_device_indicator;
     DAT_003feb6a = 1;
     DAT_003feb6b = (undefined1)engine_retarder_controlling_source_address;
-    DAT_003feb6c = engine_retarder_controlling_source_index;
+    DAT_003feb6c = engine_retarder_control_device_indicator;
     governor_mode_history_write_index = 1;
     DAT_003feb70 = engine_retarder_override_control_mode;
     DAT_003feb78 = 0;
