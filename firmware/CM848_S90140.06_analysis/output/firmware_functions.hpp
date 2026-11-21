@@ -722,17 +722,17 @@ void cm848_evaluateVariableGeometryTurbochargerPositionAdjustments(void);  // @ 
 void cm848_selectVariableGeometryTurbochargerPositionSource(void);  // @ 0x0002f604
 void cm848_updateVariableGeometryTurbochargerPosition(void);  // @ 0x0002f6a0
 void cm848_initializeVariableGeometryTurbochargerAdjustmentFilters(void);  // @ 0x0002f784
-void cm848_protectionNormalHandler(void);  // @ 0x0002f860
+void cm848_requestOverdriveShiftsLowRange(void);  // @ 0x0002f860
 void cm848_selectGovernorPressureLowRange(void);  // @ 0x0002f920
-void cm848_protectionCleanupHandler(void);  // @ 0x0002fe48
-void cm848_protectionShutdownHandler(void);  // @ 0x0003004c
+void cm848_applyConverterLockupScheduleLowRange(void);  // @ 0x0002fe48
+void cm848_applyConverterUnlockConditionsLowRange(void);  // @ 0x0003004c
 void cm848_applyConverterLockupSchedule(void);  // @ 0x00030194
 void cm848_applyConverterUnlockConditions(void);  // @ 0x00030ad4
-void cm848_protectionFuelDemandCheck(void);  // @ 0x00031320
+void cm848_requestOverdriveShiftsNormal(void);  // @ 0x00031320
 void cm848_selectGovernorPressureCold(void);  // @ 0x0003148c
 void cm848_selectGovernorPressureBaseCurve(void);  // @ 0x00031584
 void cm848_selectGovernorPressureWideOpenThrottle(void);  // @ 0x000316cc
-void cm848_protectionStateTransitionCheck(void);  // @ 0x00031d98
+void cm848_selectGovernorPressureCruise(void);  // @ 0x00031d98
 uint cm848_calculateTransmissionOutputTorqueInGear(int param_1);  // @ 0x000320e0
 void cm848_predictPostShiftAcceleration(void);  // @ 0x00032250
 void cm848_learnVehicleInertia(void);  // @ 0x0003241c
@@ -1672,14 +1672,14 @@ void cm848_accumulateConverterClutchRatioDeltaSum(void);  // @ 0x0051ba1c
 void cm848_calculateConverterClutchRatioDelta(void);  // @ 0x0051ba6c
 void cm848_monitorConverterClutchAndOverdrivePerformance(void);  // @ 0x0051babc
 void initProtectionOutputFlags(void);  // @ 0x0051c2d0
-void cm848_throttlePosition_clamp_update(void);  // @ 0x0051c2e4
+void cm848_learnGovernorPressureSensorOffset(void);  // @ 0x0051c2e4
 void cm848_calibrateGovernorPressureSensorOffset(void);  // @ 0x0051c3d8
-void cm848_throttleSetpoint_limit(uint param_1);  // @ 0x0051c68c
-void cm848_throttleGain_loadBased_calc(void);  // @ 0x0051c6c8
-void cm848_throttleGain_velocityBased_calc(void);  // @ 0x0051c948
-void cm848_throttleGain_timedAccumulate_update(void);  // @ 0x0051c9f0
+void cm848_limitGovernorPressureSolenoidDuty(uint param_1);  // @ 0x0051c68c
+void cm848_calculateGovernorPressureProportionalTerm(void);  // @ 0x0051c6c8
+void cm848_calculateGovernorPressureDerivativeTerm(void);  // @ 0x0051c948
+void cm848_applyGovernorPressureIntegralTerm(void);  // @ 0x0051c9f0
 void cm848_controlGovernorPressureSolenoid(void);  // @ 0x0051cad4
-void initHpcr_HandlerRoutines(void);  // @ 0x0051cd88
+void cm848_initializeGovernorPressureControl(void);  // @ 0x0051cd88
 undefined * cm848_sciLookupTable250Or252Address(int param_1,int param_2);  // @ 0x0051ce14
 byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2);  // @ 0x0051cf74
 void cm848_sciLookupEepromSettingAddressForRead(void);  // @ 0x0051d5bc

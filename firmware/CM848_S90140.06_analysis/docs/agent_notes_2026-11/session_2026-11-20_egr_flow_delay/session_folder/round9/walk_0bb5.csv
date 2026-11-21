@@ -1,0 +1,19 @@
+col5,block,type,e2m_name,address,words,row_name,row_type,description
+0BB5,8C37,X,RE_CT_Relock_2nd_OSS_Axis,0x408476,10,protection_load_derate_l3_axis_cal,word[10],X-axis for 2nd gear relock table
+0BB6,8C38,Y,RE_CT_Relock_2nd_Tbl,0x40848a,10,protection_load_derate_l3_output_cal,word[10],2nd gear relock throttle threshold table
+0BB7,8C39,X,RE_Lockup_Curve_2_OSS_Axis,0x40849e,10,protection_threshold_l7_axis_cal,word[10],X-axis for 2nd gear lockup table
+0BB8,8C3A,Y,RE_Lockup_Curve_2,0x4084b2,10,protection_threshold_l7_output_cal,word[10],2nd gear lockup throttle threshold table
+0BB9,8C3B,X,RE_Ovr_Heat_Lockup_2_OSS_Axis,0x4084c6,10,protection_threshold_l8_axis_cal,word[10],X-axis for 2nd-gear lockup throttle threshold when hot
+0BBA,8C3C,Y,RE_Ovr_Heat_Lockup_2,0x4084da,10,protection_threshold_l8_output_cal,word[10],Table for 2nd-gear lockup throttle threshold when hot
+0BBB,8C3D,X,RE_Ovr_Heat_Lockup_3_OSS_Axis,0x4084ee,10,protection_threshold_l9_axis_cal,word[10],X-axis for 3rd gear lockup throttle threshold when hot
+0BBC,8C3E,Y,RE_Ovr_Heat_Lockup_3,0x408502,10,protection_threshold_l9_output_cal,word[10],Table for 3rd gear lockup throttle threshold when hot
+0BBD,8C3F,X,RE_Ovr_Heat_Lockup_4_OSS_Axis,0x408516,10,protection_threshold_l10_axis_cal,word[10],X-axis for 4th gear lockup throttle threshold when hot
+0BBE,8C40,Y,RE_Ovr_Heat_Lockup_4,0x40852a,10,protection_threshold_l10_output_cal,word[10],Table for 4th gear lockup throttle threshold when hot
+0BBF,8C41,X,RE_Ovr_Heat_Unlock_2_OSS_Axis,0x40853e,10,protection_fuel_limit_l2_values_axis_cal,word[10],X-axis for 2nd gear unlock throttle threshold when hot
+0BC0,8C42,Y,RE_Ovr_Heat_Unlock_2,0x408552,10,protection_fuel_limit_l2_values_cal,word[10],Table for 2nd gear unlock throttle threshold when hot
+0BC1,8C43,X,RE_Ovr_Heat_Unlock_3_OSS_Axis,0x408566,10,protection_fuel_limit_l3_values_axis_cal,word[10],X-axis for 3rd gear unlock throttle threshold when hot
+0BC2,8C44,Y,RE_Ovr_Heat_Unlock_3,0x40857a,10,protection_fuel_limit_l3_values_cal,word[10],Table for 3rd gear unlock throttle threshold when hot
+0BC3,8C45,X,RE_Ovr_Heat_Unlock_4_OSS_Axis,0x40858e,10,protection_fuel_limit_l4_values_axis_cal,word[10],X-axis for 4th gear unlock throttle threshold when hot
+0BC4,8C46,Y,RE_Ovr_Heat_Unlock_4,0x4085a2,10,protection_fuel_limit_l4_values_cal,word[10],Table for 4th gear unlock throttle threshold when hot
+0BC5,8C47,X,RE_Unlock_Curve_2_OSS_Axis,0x4085b6,10,protection_fuel_limit_l2_alt_axis_cal,word[10],X-axis for 2nd-gear unlock throttle threshold
+0BC6,8C48,Y,RE_Unlock_Curve_2,0x4085ca,10,protection_fuel_limit_l2_alt_values_cal,word[10],Table for 2nd-gear unlock throttle threshold

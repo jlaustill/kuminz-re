@@ -1,0 +1,52 @@
+cm848: round 9 stage A - the RE tables in memory order, 8BB5 / 8BBB / 8BBD, the governor pressure controller (label-only)
+
+**e2m column 5 is the ROM calibration layout.** Every ROM block carries a sequential number there (RAM blocks have
+0000), and the blocks sit in memory in that order.
+- **The walk:** walk_tables.py walks the RE tables from round 8's anchor 0x407876 (0B43 = 8BBE
+  RE_AH_Boost_Curve_1_2_OSS_Axis). It sizes each table from its byte-length word in the RAM dump: an X axis or Y curve
+  is a length word plus data, a Z grid is nx x ny words with no header.
+- **The result:** every table through 0B98 (RE_WOT_Curve at 0x407f0c) lands on an existing word[N] row of exactly that
+  size, 58 tables in a row. Each table's users in the code are the mode its record names (walk_0b43.csv).
+- **Grids:** two 2-D grids keep their boost axis in another block in 11.45 (8CA3, 8D07); in 11.46 it sits inline
+  before the grid.
+- **11.46 additions:** the manual low governor pressure curve (0x407f22; pressure state 0x16, lever in 1 / 2), and
+  exhaust brake (switch 12) copies of the cruise / normal 3-4 / 4-3 lines and of the 4th gear / cruise lockup grids.
+  The code proves these by their users.
+- **Names:** about 70 tables named or renamed from protection_* / fuel_demand_ctrl_* / fourth_gear_tcc_* to the e2m
+  vocabulary. Examples: governor_pressure_cold / cruise / fuel_economy / low_range / wide_open_throttle(_cold)_curve,
+  the cruise / normal / low range 3-4 / 4-3 throttle lines, the 2nd-4th gear lockup / unlock maximum throttle curves,
+  the low range boost / hold pressures, the anti-hunt throttle envelopes, transmission_4th_gear_lockup_maximum_throttle
+  and transmission_cruise_lockup_maximum_throttle (x axis / y axis / grid).
+
+**Scalar blocks:**
+- **8BB5 (0x408ae0):** the governor pressure control calibration, all 38 words. Each word's user is the function its
+  record names: the offset calibration limits, the PID error breakpoints and warm / cold gains, the derivative and
+  integral gains, the relaxation, and the VFS solenoid duty limits / frequency / inversion.
+  - governor_pressure_sensor_offset_maximum / _minimum were protection_throttle_position_clamp_low / _high. The old
+    names had the two limits backwards.
+- **8BBB (0x4077f6, +00..+14):** the 4-3 lockup delays, the 3-4 transition and overdrive upshift inhibit times, the
+  overdrive switch power-on delay and the cruise resume shift limits. From +16 it would overlap 8BBC, so this
+  calibration lacks 8BBB's tow / brake / exhaust brake 4-3 tail.
+- **8BBD (0x40b0ae, +00..+38):** this confirms round 8 stage A's code names and names the interpolated anti-hunt
+  throttles, transmission_4th_gear_lockup_boost_pressure and the 3-4-after-3rd-gear-lockup flag. 8C17 +30 is now
+  transmission_3_4_transition_timer.
+
+**Functions:**
+- The cm848_throttle* family is the governor pressure solenoid controller:
+  cm848_calculateGovernorPressureProportionalTerm / _DerivativeTerm, cm848_applyGovernorPressureIntegralTerm,
+  cm848_limitGovernorPressureSolenoidDuty, cm848_learnGovernorPressureSensorOffset and
+  cm848_initializeGovernorPressureControl. Its RAM words are governor_pressure_error_change / _error_sum /
+  _integral_term / _integral_period_counter / _sensor_calibration_flags (8C19 +12).
+- cm848_selectGovernorPressureCruise (was cm848_protectionStateTransitionCheck): the cruise lines and curve, and the
+  gate bit condition_flags_1 bit 4 = RE_Cruise_Active follows cruise_control_engaged_flag.
+- cm848_applyConverterLockupScheduleLowRange / cm848_applyConverterUnlockConditionsLowRange /
+  cm848_requestOverdriveShiftsLowRange / cm848_requestOverdriveShiftsNormal (were cm848_protectionCleanupHandler /
+  ShutdownHandler / NormalHandler / FuelDemandCheck).
+
+**Repair:** the reference refresh rewrote two history sentences (0x40853e / 0x408566, "renamed from a second
+protection_fuel_limit_l2 / l3_axis_cal"). They are restored, with the axis's current name added.
+
+**Proofs:** reverse_names.py EQUIVALENT (label-only; the two functions it lists differ only in one local
+declaration's position, as in round 8 stage F); the 43 new labels render; lookup_tables.py reports 0 sizing problems.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

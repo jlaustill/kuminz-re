@@ -1,0 +1,39 @@
+=== cm848_protectionShutdownHandler (lines 32857-32900, 38 non-blank)
+32857: // Function: cm848_protectionShutdownHandler @ 0x0003004c
+32858: //
+32860: void cm848_protectionShutdownHandler(void)
+32862: {
+32863:   ushort uVar1;
+32865:   if (((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0) &&
+32866:      (2 < transmission_current_gear)) {
+32867:     if (transmission_current_gear == 3) {
+32868:       uVar1 = lookupTableInterpolation
+32869:                         (&protection_fuel_demand_exit_derate3_interp_state,
+32870:                          transmission_output_speed_in_use,protection_fuel_threshold_l3_axis_cal,
+32871:                          protection_fuel_threshold_l3_values_cal,0);
+32872:     }
+32873:     else {
+32874:       uVar1 = lookupTableInterpolation
+32875:                         (&protection_fuel_demand_exit_derate4_interp_state,
+32876:                          transmission_output_speed_in_use,protection_fuel_threshold_l4_axis_cal,
+32877:                          protection_fuel_threshold_l4_values_cal,0);
+32878:     }
+32879:     if (fuel_demand_control_t_0040a57a.calculated <= uVar1) goto LAB_00030150;
+32880:   }
+32881:   else {
+32882:     converter_clutch_apply_delay_countdown = converter_clutch_apply_delay_time;
+32883:     if (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0)
+32884:     goto LAB_00030150;
+32885:   }
+32886:   transmission_lockup_timers.lockup_off_timer = transmission_lockup_off_time;
+32887:   converter_clutch_apply_delay_countdown = converter_clutch_apply_delay_time;
+32888:   cm848_clearLogicalOutputRequest(0x12,0);
+32889: LAB_00030150:
+32890:   if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
+32891:      ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) {
+32892:     protection_condition_flags_t_0040b0e8.condition_flags_1 =
+32893:          protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+32894:   }
+32895:   return;
+32896: }
+32900: //
