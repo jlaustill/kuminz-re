@@ -41,6 +41,9 @@
   200755 build_r7b3.log
   200754 build_r7b4.log
   200755 build_r7c.log
+  200750 build_r8a.log
+  200772 build_r8b.log
+  200764 build_r8c.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -52,3 +55,4 @@
   401743 verify_round6_closing.log
   401815 verify_round7.log
   401814 verify_round7_closing.log
+  401855 verify_round8.log

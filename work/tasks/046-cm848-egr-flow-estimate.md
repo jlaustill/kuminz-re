@@ -376,10 +376,11 @@ Hand work on the round 6 leads (scripts in `session_folder/round7/`).
   - The session record length words have no direct load or store in the disassembly; e2m gives these type T
     records no size.
   - The tolerance percent at 0x408b78 has no writer and no e2m record, so it is unnamed.
-- **Round 7 leads:**
+- **Round 7 leads** (the first is resolved in round 8, below):
   - The transmission gear functions `cm848_calculateProtectionFuelDemandThreshold` (0x3241c) and
     `cm848_processProtectionStateFlags` (0x3257c): `transmission_current_gear` / output speed logic under inherited
-    `protection_*` names (e2m 8D14 drifts).
+    `protection_*` names (e2m 8D14 drifts). (Round 8: they are `cm848_learnVehicleInertia` and
+    `cm848_selectGovernorPressureAntiHunt` of the 48RE controller; the e2m vocabulary is the `RE_*` blocks.)
   - The engine run-state machine (819B).
   - `cm848_initGovernorStateVariables`, a mixed governor initialization.
 

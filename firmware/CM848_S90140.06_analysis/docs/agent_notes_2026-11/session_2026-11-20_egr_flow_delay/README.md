@@ -205,3 +205,4 @@ Hand work on the round 7 lead.
 - **References:** `refresh_struct_comments.py` refreshes the comment columns of `structure_definitions.csv` /
   `enums.csv`, which `refresh_references.py` skips.
 - **Commit messages:** `commit_r8*.txt`.
+- **Closing:** `old_names_r8.py` writes the old names for `grep_old_names.py` (results `grep_old_r8.txt` / `grep_old_r8_after.txt`); `close_r8.py` marks the round 7 lead resolved and writes `append_resolved_r8.py` (tasks 025 / 027); `refresh_audit.py` lists every comment-only change a commit made to a CSV, to catch a reference refresh that rewrote a history mention (it caught one in firmware/CLAUDE.md); `memory_round8.py` and `update_large_tar_r8.sh` (the round 8 build / verify logs).

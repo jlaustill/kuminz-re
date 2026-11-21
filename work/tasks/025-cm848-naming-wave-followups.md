@@ -755,3 +755,21 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 
 The old names this file cites were renamed in PR #53 (the leads above keep their wording):
 - `protection_timeout_enable_flag` → `drivetrain_ratio_engine_period_valid_flag`
+
+## Resolved by PR #53 round 8 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protection_load_scale_table_cal` → `transmission_gear_ratio_table`
+- `cm848_protectionScaledLimitCalculation` → `cm848_calculateTransmissionOutputTorqueInGear`
+- `hot_mode_flag` → `transmission_overheat_protection_active_flag`
+- `protection_lockout_t` → `transmission_lockup_timers_t`
+- `protection_derate_countdown` → `transmission_lockup_delay_1_2_timer`
+- `protection_entry_countdown` → `transmission_lockup_delay_3_2_timer`
+- `cm848_initProtectionSystem` → `cm848_initializeTransmissionControl`
+- `cm848_decrementProtectionTimers` → `cm848_decrementTransmissionTimers`
+- `protectionPhaseGroupA_Init` → `cm848_calibrateGovernorPressureSensorOffset`
+- `protection_timer_state_t` → `transmission_pressure_state_t`
+- `protection_rpm_peak_a` → `transmission_1st_gear_maximum_engine_speed`
+- `protection_derate_level_trial` → `transmission_output_torque_gear_index`
+- `cm848_protectionRateOfChangeCalculation` → `cm848_predictPostShiftAcceleration`
+- `cm848_processProtectionStateFlags` → `cm848_selectGovernorPressureAntiHunt`

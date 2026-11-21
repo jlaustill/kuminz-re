@@ -1,0 +1,864 @@
+firmware/classification.csv:1451: ...002f920,protectionOverloadHandler,unknown,cm848_,,cm848_protectionOverloadHandler
+firmware/classification.csv:1461: ...,protectionScaledLimitCalculation,unknown,cm848_,,cm848_protectionScaledLimitCalculation
+firmware/classification.csv:1462: ...protectionRateOfChangeCalculation,unknown,cm848_,,cm848_protectionRateOfChangeCalculation
+firmware/classification.csv:1463: ...lateProtectionFuelDemandThreshold,unknown,cm848_,,cm848_calculateProtectionFuelDemandThreshold
+firmware/classification.csv:1464: ...3257c,processProtectionStateFlags,unknown,cm848_,,cm848_processProtectionStateFlags
+firmware/classification.csv:1467: ...tProtectionFilterVariables,mpc555,mpc555_,ram003f,mpc555_initProtectionFilterVariables
+firmware/classification.csv:1469: ...00335e4,decrementProtectionTimers,unknown,cm848_,,cm848_decrementProtectionTimers
+firmware/classification.csv:1471: ...003491c,filterProtectionLoadValue,unknown,cm848_,,cm848_filterProtectionLoadValue
+firmware/classification.csv:1474: ...8,0x00034b14,initProtectionSystem,unknown,cm848_,,cm848_initProtectionSystem
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:194855: ...194848 [function] cm848_protectionOverloadHandler
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:205031: ...205024 [function] cm848_protectionScaledLimitCalculation
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:205399: ...205392 [function] cm848_protectionRateOfChangeCalculation
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:205859: ...205852 [function] cm848_calculateProtectionFuelDemandThreshold
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:206211: ...206204 [function] cm848_processProtectionStateFlags
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:209363: ...209356 [function] mpc555_initProtectionFilterVariables
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:210411: ...210404 [function] cm848_decrementProtectionTimers
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:215331: ...215324 [function] cm848_filterProtectionLoadValue
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:215835: ...215828 [function] cm848_initProtectionSystem
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/ram.txt:55321: ...55314 protection_state1_timer_cal (word)
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/ram.txt:55323: ...55316 protection_state2_timer_cal (word)
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/ram.txt:69813: ...69806 protection_scaled_limit_current (word)
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/ram.txt:69895: ...69888 protection_status_code (protection_timer_state_t)
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/ram.txt:69923: ...69916 protection_thermal_lockout (protection_lockout_t)
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/ram.txt:69957: ...69950 protection_recovery_timer (byte)
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9353: ...            (protection_overtemp_fuel_check_enable_cal == 0)))) {
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9395: ...             ((protection_timer_d == 0 &&
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9406: ...          protection_timer_d = wRam004077fc;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9415: ...        protection_lockout_t_0040b11c.rpm_lockout = wRam00408370;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9417: ...           (protection_lockout_t_0040b11c.rpm_lockout = wRam004077f6,
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9419: ...          protection_lockout_t_0040b11c.rpm_lockout = wRam00407800;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9421: ...        protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15711: ...// Function: protectionPhaseGroupA_Init @ 0x0051c3d8
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15717: ...void protectionPhaseGroupA_Init(void)
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15736: ...            protection_timer_e = wRam00408aea;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15738: ...          else if ((protection_timer_e == 0) &&
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15748: ...              if (protection_timer_b == 0) {
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15751: ...                protection_timer_c = wRam00408ae6;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15752: ...                protection_timer_b = wRam00408ae0;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15756: ...              protection_timer_b = 0;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:15762: ...        else if ((((protection_timer_c == 0) &&
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:27898: ...  awStack_10[0] = protection_timer_a + 1;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:27899: ...  cm848_updateProtectionTimers(&protection_timer_a,awStack_10,2);
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:27901: ...  if (protection_timer_a != awStack_10[0]) {
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:27906: ...    } while (protection_timer_a != awStack_10[0]);
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:27908: ...  awStack_10[0] = protection_timer_a + protection_timer_b;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:27908: ...  awStack_10[0] = protection_timer_a + protection_timer_b;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:28202: ...  pwVar4 = &protection_timer_a;
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:32625: ...   cm848_protectionOverloadHandler) */
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:33992: ...   cm848_calculateProtectionFuelDemandThreshold) */
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:78850: ...   protectionPhaseGroupA_Init) */
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:23: ...void cm848_protectionOverloadHandler(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:36: ...      if (protection_derate_l1_rpm_threshold_cal < engine_rpm_state_t_0040b7ac
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:40: ...                                      ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:42: ...                                (uint)protection_engine_load_scaled * (uint)protection_status_byt
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:56: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xc;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:60: ...        protection_lockout_t_0040b11c.timer_expired = protection_de
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:60: ...    protection_lockout_t_0040b11c.timer_expired = protection_derate_l1_timer_expired_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:63: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:69: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:73: ...    if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:73: ...  if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scaled) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:74: ...        (protection_lockout_t_0040b11c.timer_expired == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:77: ...        if (protection_lockout_t_0040b11c.reserved_08 == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:81: ...                                          ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:83: ...                                    (uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:93: ...            protection_timer_state_t_0040b100.status_code._0_2_ = 0xe;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:95: ...              protection_timer_state_t_0040b100.status_code._0_2_ = 0xe;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:100: ...            protection_lockout_t_0040b11c.timer_expired = protection_de
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:100: ...    protection_lockout_t_0040b11c.timer_expired = protection_derate_l2_timer_expired_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:104: ...          protection_timer_state_t_0040b100.status_code._0_2_ = 0xf;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:110: ...        protection_lockout_t_0040b11c.reserved_08 = protection_dera
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:110: ...      protection_lockout_t_0040b11c.reserved_08 = protection_derate_l2_lockout_timeout_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:115: ...    if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:115: ...  if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scaled) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:116: ...        (protection_lockout_t_0040b11c.timer_expired == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:121: ...        if (protection_lockout_t_0040b11c.reserved_08 != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:129: ...        protection_lockout_t_0040b11c.reserved_08 = protection_dera
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:129: ...      protection_lockout_t_0040b11c.reserved_08 = protection_derate_l3_lockout_timeout_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:132: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:138: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:164: ...    if (protection_lockout_t_0040b11c.thermal_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:167: ...    if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:181: ...    if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:226: ...  protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:278: ...         (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:280: ...       ((protection_derate_countdown == 0 && (protection_entry_cou
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:280: ...       ((protection_derate_countdown == 0 && (protection_entry_countdown == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:281: ...      if ((protection_derate_fuel_exit_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:307: ...        (protection_load_upper_threshold_b_cal < engine_load_filtered)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:309: ...         (protection_lockout_t_0040b11c.thermal_lockout == 0)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:310: ...        (protection_lockout_t_0040b11c.rpm_lockout == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:322: ...                     protection_fault_fuel_bypass_threshold_cal ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:323: ...                    (protection_overtemp_fuel_check_enable_cal == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:361: ...     (engine_load_filtered <= protection_load_active_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:364: ...  if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:433: ...            (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:454: ...              (protection_load_fuel_check_threshold_a_cal <= engine_load_filtered))))
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:460: ...        protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:487: ...          (protection_load_fuel_check_threshold_b_cal <= engine_load_filtered)))) g
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:496: ...  protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:500: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:503: ...      protection_derate_countdown = protection_derate_countdown
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:506: ...      protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:509: ...      protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:519: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:521: ...    protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:538: ...           ((int)(uint)protection_thermal_lockout_rpm_delta_cal <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:541: ...          protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:546: ...            ((int)(uint)protection_load_rpm_delta_trigger_cal <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:549: ...      protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:551: ...        protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:559: ...     (engine_load_filtered < protection_derate_l2_load_exit_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:560: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:560: ...otection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_active_code_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:566: ...       (engine_load_filtered < protection_load_fault_threshold_cal)))))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:567: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:567: ...otection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_active_code_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:585: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x16;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:589: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:593: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 6;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:611: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x16;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:613: ...e if (fuel_demand_control_t_0040a57a.calculated < protection_fuel_demand_l_threshold_cal) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:616: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:620: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x18;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:625: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:626: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:654: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x16;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:658: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 3;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:689: ...     (fuel_demand_control_t_0040a57a.calculated < protection_fuel_demand_l4_threshold_cal)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:700: ...    protection_load_check_timer_a = protection_load_check_timer_a_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:704: ...     ((protection_fuel_demand_l4_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:712: ...    protection_load_check_timer_b = protection_load_check_timer_b_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:720: ...// Function: cm848_protectionScaledLimitCalculation @ 0x000320e0
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:724: ...void cm848_processProtectionStateFlags(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:732: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:736: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:737: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:738: ...      protection_timer_state_t_0040b100.status_code._2_2_ = protectio
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:738: ...ection_timer_state_t_0040b100.status_code._2_2_ = protection_timer_status_code_b_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:739: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:739: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:746: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:747: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:751: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:752: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:753: ...    if ((protection_timer_state_t_0040b100.timeout_counter == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:754: ...       ((short)protection_scaled_limit_output < (short)protection_load_uppe
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:754: ...  ((short)protection_scaled_limit_output < (short)protection_load_upper_bound)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:757: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:757: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:760: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:761: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:762: ...      protection_rate_integrator_snapshot = protection_rate_integrator.
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:763: ...      protection_derate_level_trial = protection_derate_level;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:764: ...      protection_scaled_limit_current =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:765: ...           cm848_protectionScaledLimitCalculation(protection_derate_level + 1);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:769: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x14;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:773: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:774: ...      if (protection_timer_state_t_0040b100.status_code._2_2_ == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:781: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:782: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:785: ...    if (protection_timer_state_t_0040b100.state2_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:788: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:789: ...      protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:789: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:796: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:797: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:798: ...      cm848_calculateProtectionFuelDemandThreshold();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:799: ...      protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:799: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:803: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:804: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:805: ...    if ((protection_timer_state_t_0040b100.timeout_counter != 0) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:806: ...       ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:806: ...    ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:808: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x15;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:811: ...    protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:811: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:824: ...    if (protection_timer_state_t_0040b100.state2_timer == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:826: ...        protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:826: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:831: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:832: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:833: ...      cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:834: ...      protection_scaled_limit_output =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:836: ...      if (protection_timer_state_t_0040b100.timeout_counter != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:839: ...      if ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:839: ... if ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:849: ...  protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:882: ...  if ((protection_fuel_demand_entry_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:891: ...   ((fuel_demand_control_t_0040a57a.calculated <= protection_fuel_demand_entry_threshold_cal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:900: ...    protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:900: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:902: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:903: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:909: ...    protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:909: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:911: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:914: ...    protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:914: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:917: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:931: ...  cm848_processProtectionStateFlags();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:953: ...        if (protection_lockout_t_0040b11c.sensor_fault_active == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:977: ...              protection_timer_state_t_0040b100.status_code._0_2_ = 0x11;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:982: ...            protection_timer_state_t_0040b100.status_code._0_2_ = 0x10;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:990: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1000: ...    if (protection_overload_fuel_demand_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1001: ...      cm848_protectionOverloadHandler();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1007: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1014: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x10;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1023: ...// Function: mpc555_initProtectionFilterVariables @ 0x000331cc
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1027: ...void mpc555_initProtectionFilterVariables(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1030: ...  protection_load_rate_divisor = DAT_0040781c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1031: ...  protection_load_upper_bound = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1046: ...  protection_rpm_limit_table_idle_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_22.txt:1047: ...  protection_rpm_limit_table_derate1_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_121.txt:19: ...  pwVar4 = &protection_timer_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:10: ...void cm848_protectionOverloadHandler(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:23: ...      if (protection_derate_l1_rpm_threshold_cal < engine_rpm_state_t_0040b7ac
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:27: ...                                      ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:29: ...                                (uint)protection_engine_load_scaled * (uint)protection_status_byt
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:43: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xc;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:47: ...        protection_lockout_t_0040b11c.timer_expired = protection_de
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:47: ...    protection_lockout_t_0040b11c.timer_expired = protection_derate_l1_timer_expired_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:50: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:56: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:60: ...    if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:60: ...  if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scaled) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:61: ...        (protection_lockout_t_0040b11c.timer_expired == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:64: ...        if (protection_lockout_t_0040b11c.reserved_08 == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:68: ...                                          ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:70: ...                                    (uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:80: ...            protection_timer_state_t_0040b100.status_code._0_2_ = 0xe;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:82: ...              protection_timer_state_t_0040b100.status_code._0_2_ = 0xe;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:87: ...            protection_lockout_t_0040b11c.timer_expired = protection_de
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:87: ...    protection_lockout_t_0040b11c.timer_expired = protection_derate_l2_timer_expired_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:91: ...          protection_timer_state_t_0040b100.status_code._0_2_ = 0xf;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:97: ...        protection_lockout_t_0040b11c.reserved_08 = protection_dera
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:97: ...      protection_lockout_t_0040b11c.reserved_08 = protection_derate_l2_lockout_timeout_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:102: ...    if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:102: ...  if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scaled) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:103: ...        (protection_lockout_t_0040b11c.timer_expired == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:108: ...        if (protection_lockout_t_0040b11c.reserved_08 != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:116: ...        protection_lockout_t_0040b11c.reserved_08 = protection_dera
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:116: ...      protection_lockout_t_0040b11c.reserved_08 = protection_derate_l3_lockout_timeout_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:119: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:125: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:168: ...         (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:170: ...       ((protection_derate_countdown == 0 && (protection_entry_cou
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:170: ...       ((protection_derate_countdown == 0 && (protection_entry_countdown == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:171: ...      if ((protection_derate_fuel_exit_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:197: ...        (protection_load_upper_threshold_b_cal < engine_load_filtered)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:199: ...         (protection_lockout_t_0040b11c.thermal_lockout == 0)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:200: ...        (protection_lockout_t_0040b11c.rpm_lockout == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:212: ...                     protection_fault_fuel_bypass_threshold_cal ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:213: ...                    (protection_overtemp_fuel_check_enable_cal == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:251: ...     (engine_load_filtered <= protection_load_active_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:254: ...  if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:323: ...            (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:344: ...              (protection_load_fuel_check_threshold_a_cal <= engine_load_filtered))))
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:350: ...        protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:377: ...          (protection_load_fuel_check_threshold_b_cal <= engine_load_filtered)))) g
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:386: ...  protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:390: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:393: ...      protection_derate_countdown = protection_derate_countdown
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:396: ...      protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:399: ...      protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:409: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:411: ...    protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:428: ...           ((int)(uint)protection_thermal_lockout_rpm_delta_cal <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:431: ...          protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:436: ...            ((int)(uint)protection_load_rpm_delta_trigger_cal <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:439: ...      protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:441: ...        protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:449: ...     (engine_load_filtered < protection_derate_l2_load_exit_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:450: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:450: ...otection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_active_code_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:456: ...       (engine_load_filtered < protection_load_fault_threshold_cal)))))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:457: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:457: ...otection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_active_code_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:470: ...void mpc555_initProtectionFilterVariables(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:473: ...  protection_load_rate_divisor = DAT_0040781c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:474: ...  protection_load_upper_bound = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:489: ...  protection_rpm_limit_table_idle_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_23.txt:490: ...  protection_rpm_limit_table_derate1_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave1.csv:19: ...0x003fb0f2,protection_rpm_limit_table_derate2_state,word,interp state for RPM lim
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_60.txt:35: ...            (protection_overtemp_fuel_check_enable_cal == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_60.txt:78: ...             ((protection_timer_d == 0 &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_60.txt:89: ...          protection_timer_d = DAT_004077fc;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_60.txt:98: ...        protection_lockout_t_0040b11c.rpm_lockout = DAT_00408370;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_60.txt:100: ...           (protection_lockout_t_0040b11c.rpm_lockout = DAT_004077f6,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_60.txt:102: ...          protection_lockout_t_0040b11c.rpm_lockout = DAT_00407800;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_60.txt:104: ...        protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:38: ...// Function: protectionPhaseGroupA_Init @ 0x0051c3d8
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:44: ...void protectionPhaseGroupA_Init(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:62: ...            protection_timer_e = DAT_00408aea;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:64: ...          else if ((protection_timer_e == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:74: ...              if (protection_timer_b == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:77: ...                protection_timer_c = DAT_00408ae6;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:78: ...                protection_timer_b = DAT_00408ae0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:82: ...              protection_timer_b = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_33.txt:88: ...        else if ((((protection_timer_c == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:93: ...0x003fb0ee,protection_rpm_limit_table_idle_state,word,interp state for protect
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:94: ...0x003fb0f0,protection_rpm_limit_table_derate1_state,word,interp state for protect
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:15: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x16;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:17: ...e if (fuel_demand_control_t_0040a57a.calculated < protection_fuel_demand_l_threshold_cal) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:20: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:24: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x18;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:29: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:44: ...void cm848_processProtectionStateFlags(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:52: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:55: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:56: ...      protection_timer_state_t_0040b100.status_code._2_2_ = protectio
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:56: ...ection_timer_state_t_0040b100.status_code._2_2_ = protection_timer_status_code_b_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:57: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:57: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:64: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:68: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:69: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:70: ...    if ((protection_timer_state_t_0040b100.timeout_counter == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:71: ...       ((short)protection_scaled_limit_output < (short)protection_load_uppe
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:71: ...  ((short)protection_scaled_limit_output < (short)protection_load_upper_bound)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:74: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:74: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:76: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:77: ...      protection_rate_integrator_snapshot = protection_rate_integrator.
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:78: ...      protection_derate_level_trial = protection_derate_level;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:79: ...      protection_scaled_limit_current =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:80: ...           cm848_protectionScaledLimitCalculation(protection_derate_level + 1);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:84: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x14;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:88: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:89: ...      if (protection_timer_state_t_0040b100.status_code._2_2_ == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:95: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:98: ...    if (protection_timer_state_t_0040b100.state2_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:101: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:102: ...      protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:102: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:109: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:110: ...      cm848_calculateProtectionFuelDemandThreshold();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:111: ...      protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:111: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:115: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:116: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:117: ...    if ((protection_timer_state_t_0040b100.timeout_counter != 0) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:118: ...       ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:118: ...    ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:120: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x15;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:123: ...    protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:123: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:136: ...    if (protection_timer_state_t_0040b100.state2_timer == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:138: ...        protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:138: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:143: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:144: ...      cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:145: ...      protection_scaled_limit_output =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:147: ...      if (protection_timer_state_t_0040b100.timeout_counter != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:150: ...      if ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:150: ... if ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:160: ...  protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:193: ...  if ((protection_fuel_demand_entry_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:202: ...   ((fuel_demand_control_t_0040a57a.calculated <= protection_fuel_demand_entry_threshold_cal
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:211: ...    protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:211: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:213: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:219: ...    protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:219: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:221: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:224: ...    protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:224: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:227: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:241: ...  cm848_processProtectionStateFlags();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:252: ...void mpc555_initProtectionFilterVariables(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:255: ...  protection_load_rate_divisor = DAT_0040781c;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_02.txt:256: ...  protection_load_upper_bound = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_101.txt:126: ...  pwVar4 = &protection_timer_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:38: ...// Function: protectionPhaseGroupA_Init @ 0x0051c3d8
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:44: ...void protectionPhaseGroupA_Init(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:62: ...            protection_timer_e = DAT_00408aea;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:64: ...          else if ((protection_timer_e == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:74: ...              if (protection_timer_b == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:77: ...                protection_timer_c = DAT_00408ae6;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:78: ...                protection_timer_b = DAT_00408ae0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:82: ...              protection_timer_b = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_59.txt:88: ...        else if ((((protection_timer_c == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_64.txt:9: ...void cm848_filterProtectionLoadValue(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_64.txt:41: ...    protection_load_rate_delta = wVar1 - (&DAT_003fb192)[uVa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_64.txt:45: ...                   ((int)(short)protection_load_rate_delta,&protection_load_filter_state
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:51: ...         (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:53: ...       ((protection_derate_countdown == 0 && (protection_entry_cou
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:53: ...       ((protection_derate_countdown == 0 && (protection_entry_countdown == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:54: ...      if ((protection_derate_fuel_exit_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:84: ...        (protection_load_upper_threshold_b_cal < engine_load_filtered)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:86: ...         (protection_lockout_t_0040b11c.thermal_lockout == 0)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:87: ...        (protection_lockout_t_0040b11c.rpm_lockout == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:99: ...                     protection_fault_fuel_bypass_threshold_cal ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:100: ...                    (protection_overtemp_fuel_check_enable_cal == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:143: ...     (engine_load_filtered <= protection_load_active_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:146: ...  if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:213: ...    if (protection_rpm_peak_a < uVar4) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:214: ...      protection_rpm_peak_a = engine_rpm_state_t_0040b7ac
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:219: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 8;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:221: ...        protection_recovery_timer = protection_recovery_timer_i
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:221: ...        protection_recovery_timer = protection_recovery_timer_init_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:224: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:232: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:237: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 7;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:239: ...                                  ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:241: ...                            (uint)protection_engine_load_scaled * (uint)protection_status_byt
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:253: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 8;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:257: ...    if (uVar4 <= protection_rpm_lower_bound_cal) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:259: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 7;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:267: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 7;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:273: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 8;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:280: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:284: ...          if (protection_recovery_timer == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:286: ...              if (protection_rpm_peak_threshold < protection_rpm_peak_b) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:294: ...              else if (protection_rpm_peak_b < protection_rpm_peak_low_thr
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:309: ...            protection_rpm_peak_b = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:314: ...            protection_timer_state_t_0040b100.status_code._0_2_ = 10;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:324: ...      if (protection_recovery_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:325: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 8;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:330: ...        if (protection_rpm_peak_threshold < protection_rpm_peak_a) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:338: ...        else if (protection_rpm_peak_a < protection_rpm_peak_low_thr
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:354: ...      protection_rpm_peak_a = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:358: ...    if (protection_rpm_peak_b < uVar4) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:359: ...      protection_rpm_peak_b = engine_rpm_state_t_0040b7ac
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:363: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 10;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:365: ...        protection_recovery_timer = protection_recovery_timer_i
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:365: ...        protection_recovery_timer = protection_recovery_timer_init_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:368: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:377: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:382: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 9;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:384: ...                                  ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:386: ...                            (uint)protection_engine_load_scaled * (uint)protection_status_ent
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:398: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 10;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:402: ...    if (uVar4 <= protection_rpm_lower_bound_cal) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:403: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 9;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:409: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 9;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:416: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 10;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:423: ...  protection_init_timer = protection_init_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:440: ...uint cm848_protectionScaledLimitCalculation(int param_1)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:447: ...          (uint)*(ushort *)(&protection_load_scale_table_cal + param_1 * 2) >> 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:454: ...  protection_scaled_load = wStack_e;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:455: ...  protection_rpm_correction = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:456: ...  protection_fuel_demand_correction = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:458: ...  protection_dual_axis_correction =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:459: ...   cm848_dualAxisTableInterpolation(&DAT_003fb164,protection_fuel_demand_correction,0x7f46);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:460: ...  uVar1 = (uint)protection_dual_axis_correction *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:461: ...          (uint)*(ushort *)(&protection_load_scale_table_cal + param_1 * 2) >> 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:468: ...  protection_scaled_output = (word)uVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:475: ...// Function: cm848_protectionRateOfChangeCalculation @ 0x00032250
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:481: ...void mpc555_initProtectionFilterVariables(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:484: ...  protection_load_rate_divisor = DAT_0040781c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:485: ...  protection_load_upper_bound = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:500: ...  protection_rpm_limit_table_idle_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:501: ...  protection_rpm_limit_table_derate1_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_63.txt:502: ...  protection_rpm_limit_table_derate2_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:49: ...// Function: cm848_protectionOverloadHandler @ 0x0002f920
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:55: ...void cm848_protectionOverloadHandler(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:68: ...      if (protection_derate_l1_rpm_threshold_cal < engine_rpm_state_t_0040b7ac
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:72: ...                                      ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:74: ...                                (uint)protection_engine_load_scaled * (uint)protection_status_byt
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:88: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xc;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:92: ...        protection_lockout_t_0040b11c.timer_expired = protection_de
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:92: ...    protection_lockout_t_0040b11c.timer_expired = protection_derate_l1_timer_expired_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:96: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:104: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:108: ...    if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:108: ...  if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scaled) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:109: ...        (protection_lockout_t_0040b11c.timer_expired == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:112: ...        if (protection_lockout_t_0040b11c.reserved_08 == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:116: ...                                          ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:118: ...                                    (uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:128: ...            protection_timer_state_t_0040b100.status_code._0_2_ = 0xe;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:130: ...              protection_timer_state_t_0040b100.status_code._0_2_ = 0xe;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:135: ...            protection_lockout_t_0040b11c.timer_expired = protection_de
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:135: ...    protection_lockout_t_0040b11c.timer_expired = protection_derate_l2_timer_expired_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:139: ...          protection_timer_state_t_0040b100.status_code._0_2_ = 0xf;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:145: ...        protection_lockout_t_0040b11c.reserved_08 = protection_dera
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:145: ...      protection_lockout_t_0040b11c.reserved_08 = protection_derate_l2_lockout_timeout_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:150: ...    if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:150: ...  if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scaled) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:151: ...        (protection_lockout_t_0040b11c.timer_expired == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:156: ...        if (protection_lockout_t_0040b11c.reserved_08 != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:164: ...        protection_lockout_t_0040b11c.reserved_08 = protection_dera
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:164: ...      protection_lockout_t_0040b11c.reserved_08 = protection_derate_l3_lockout_timeout_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:169: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:177: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:224: ...         (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:226: ...       ((protection_derate_countdown == 0 && (protection_entry_cou
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:226: ...       ((protection_derate_countdown == 0 && (protection_entry_countdown == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:227: ...      if ((protection_derate_fuel_exit_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:257: ...        (protection_load_upper_threshold_b_cal < engine_load_filtered)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:259: ...         (protection_lockout_t_0040b11c.thermal_lockout == 0)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:260: ...        (protection_lockout_t_0040b11c.rpm_lockout == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:272: ...                     protection_fault_fuel_bypass_threshold_cal ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:273: ...                    (protection_overtemp_fuel_check_enable_cal == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:316: ...     (engine_load_filtered <= protection_load_active_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:319: ...  if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:392: ...            (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:417: ...              (protection_load_fuel_check_threshold_a_cal <= engine_load_filtered))))
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:423: ...        protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:456: ...          (protection_load_fuel_check_threshold_b_cal <= engine_load_filtered)))) g
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:465: ...  protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:469: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:472: ...      protection_derate_countdown = protection_derate_countdown
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:475: ...      protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:478: ...      protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:488: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:490: ...    protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:507: ...           ((int)(uint)protection_thermal_lockout_rpm_delta_cal <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:510: ...          protection_lockout_t_0040b11c.thermal_lockout = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:515: ...            ((int)(uint)protection_load_rpm_delta_trigger_cal <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:518: ...      protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:520: ...        protection_lockout_t_0040b11c.load_lockout = protection_loa
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:528: ...     (engine_load_filtered < protection_derate_l2_load_exit_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:529: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:529: ...otection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_active_code_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:535: ...       (engine_load_filtered < protection_load_fault_threshold_cal)))))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:536: ...    protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:536: ...otection_lockout_t_0040b11c.sensor_fault_active = protection_sensor_fault_active_code_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:609: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x16;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:613: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 3;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:644: ...     (fuel_demand_control_t_0040a57a.calculated < protection_fuel_demand_l4_threshold_cal)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:655: ...    protection_load_check_timer_a = protection_load_check_timer_a_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:659: ...     ((protection_fuel_demand_l4_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:667: ...    protection_load_check_timer_b = protection_load_check_timer_b_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:675: ...// Function: cm848_protectionScaledLimitCalculation @ 0x000320e0
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:679: ...void cm848_processProtectionStateFlags(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:687: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:691: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:692: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:693: ...      protection_timer_state_t_0040b100.status_code._2_2_ = protectio
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:693: ...ection_timer_state_t_0040b100.status_code._2_2_ = protection_timer_status_code_b_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:694: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:694: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:701: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:702: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:706: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:707: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:708: ...    if ((protection_timer_state_t_0040b100.timeout_counter == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:709: ...       ((short)protection_scaled_limit_output < (short)protection_load_uppe
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:709: ...  ((short)protection_scaled_limit_output < (short)protection_load_upper_bound)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:712: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:712: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:715: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:716: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:717: ...      protection_rate_integrator_snapshot = protection_rate_integrator.
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:718: ...      protection_derate_level_trial = protection_derate_level;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:719: ...      protection_scaled_limit_current =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:720: ...           cm848_protectionScaledLimitCalculation(protection_derate_level + 1);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:724: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x14;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:728: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:729: ...      if (protection_timer_state_t_0040b100.status_code._2_2_ == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:736: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:737: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:740: ...    if (protection_timer_state_t_0040b100.state2_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:744: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate2_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:745: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:746: ...      protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:746: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:753: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:754: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:755: ...      cm848_calculateProtectionFuelDemandThreshold();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:756: ...      protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:756: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:760: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:761: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:762: ...    if ((protection_timer_state_t_0040b100.timeout_counter != 0) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:763: ...       ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:763: ...    ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:765: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x15;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:768: ...    protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:768: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:781: ...    if (protection_timer_state_t_0040b100.state2_timer == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:783: ...        protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:783: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:788: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:789: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:790: ...      cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:791: ...      protection_scaled_limit_output =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:793: ...      if (protection_timer_state_t_0040b100.timeout_counter != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:796: ...      if ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:796: ... if ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:806: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_derate2_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:807: ...  protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:818: ...void mpc555_initProtectionFilterVariables(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:821: ...  protection_load_rate_divisor = DAT_0040781c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:822: ...  protection_load_upper_bound = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:837: ...  protection_rpm_limit_table_idle_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:838: ...  protection_rpm_limit_table_derate1_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_62.txt:839: ...  protection_rpm_limit_table_derate2_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:23: ...void cm848_protectionOverloadHandler(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:36: ...      if (protection_derate_l1_rpm_threshold_cal < engine_rpm_state_t_0040b7ac
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:40: ...                                      ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:42: ...                                (uint)protection_engine_load_scaled * (uint)protection_status_byt
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:56: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xc;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:60: ...        protection_lockout_t_0040b11c.timer_expired = protection_de
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:60: ...    protection_lockout_t_0040b11c.timer_expired = protection_derate_l1_timer_expired_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:64: ...        protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:72: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xd;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:76: ...    if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:76: ...  if (((protection_derate_l2_load_threshold_cal < protection_engine_load_scaled) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:77: ...        (protection_lockout_t_0040b11c.timer_expired == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:80: ...        if (protection_lockout_t_0040b11c.reserved_08 == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:84: ...                                          ((uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:86: ...                                    (uint)protection_engine_load_scaled *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:96: ...            protection_timer_state_t_0040b100.status_code._0_2_ = 0xe;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:98: ...              protection_timer_state_t_0040b100.status_code._0_2_ = 0xe;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:103: ...            protection_lockout_t_0040b11c.timer_expired = protection_de
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:103: ...    protection_lockout_t_0040b11c.timer_expired = protection_derate_l2_timer_expired_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:107: ...          protection_timer_state_t_0040b100.status_code._0_2_ = 0xf;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:113: ...        protection_lockout_t_0040b11c.reserved_08 = protection_dera
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:113: ...      protection_lockout_t_0040b11c.reserved_08 = protection_derate_l2_lockout_timeout_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:118: ...    if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:118: ...  if (((protection_derate_l3_load_threshold_cal < protection_engine_load_scaled) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:119: ...        (protection_lockout_t_0040b11c.timer_expired == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:124: ...        if (protection_lockout_t_0040b11c.reserved_08 != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:132: ...        protection_lockout_t_0040b11c.reserved_08 = protection_dera
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:132: ...      protection_lockout_t_0040b11c.reserved_08 = protection_derate_l3_lockout_timeout_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:137: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:145: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0xb;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:171: ...    if (protection_lockout_t_0040b11c.thermal_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:174: ...    if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:189: ...    if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:251: ...         (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:253: ...       ((protection_derate_countdown == 0 && (protection_entry_cou
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:253: ...       ((protection_derate_countdown == 0 && (protection_entry_countdown == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:254: ...      if ((protection_derate_fuel_exit_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:284: ...        (protection_load_upper_threshold_b_cal < engine_load_filtered)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:286: ...         (protection_lockout_t_0040b11c.thermal_lockout == 0)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:287: ...        (protection_lockout_t_0040b11c.rpm_lockout == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:299: ...                     protection_fault_fuel_bypass_threshold_cal ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:300: ...                    (protection_overtemp_fuel_check_enable_cal == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:343: ...     (engine_load_filtered <= protection_load_active_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:346: ...  if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:402: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x16;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:406: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 4;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:410: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 6;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:429: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x16;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:431: ...e if (fuel_demand_control_t_0040a57a.calculated < protection_fuel_demand_l_threshold_cal) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:434: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:438: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x18;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:443: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:444: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:473: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x16;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:477: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 3;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:508: ...     (fuel_demand_control_t_0040a57a.calculated < protection_fuel_demand_l4_threshold_cal)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:519: ...    protection_load_check_timer_a = protection_load_check_timer_a_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:523: ...     ((protection_fuel_demand_l4_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:531: ...    protection_load_check_timer_b = protection_load_check_timer_b_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:539: ...// Function: cm848_protectionScaledLimitCalculation @ 0x000320e0
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:543: ...void cm848_processProtectionStateFlags(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:551: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:555: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:556: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:557: ...      protection_timer_state_t_0040b100.status_code._2_2_ = protectio
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:557: ...ection_timer_state_t_0040b100.status_code._2_2_ = protection_timer_status_code_b_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:558: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:558: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:565: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:566: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:570: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:571: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:572: ...    if ((protection_timer_state_t_0040b100.timeout_counter == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:573: ...       ((short)protection_scaled_limit_output < (short)protection_load_uppe
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:573: ...  ((short)protection_scaled_limit_output < (short)protection_load_upper_bound)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:576: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:576: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:579: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:580: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:581: ...      protection_rate_integrator_snapshot = protection_rate_integrator.
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:582: ...      protection_derate_level_trial = protection_derate_level;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:583: ...      protection_scaled_limit_current =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:584: ...           cm848_protectionScaledLimitCalculation(protection_derate_level + 1);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:588: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x14;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:592: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:593: ...      if (protection_timer_state_t_0040b100.status_code._2_2_ == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:600: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:601: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:604: ...    if (protection_timer_state_t_0040b100.state2_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:608: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate2_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:609: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:610: ...      protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:610: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:617: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:618: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:619: ...      cm848_calculateProtectionFuelDemandThreshold();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:620: ...      protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:620: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:624: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:625: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:626: ...    if ((protection_timer_state_t_0040b100.timeout_counter != 0) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:627: ...       ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:627: ...    ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:629: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x15;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:632: ...    protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:632: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:645: ...    if (protection_timer_state_t_0040b100.state2_timer == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:647: ...        protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:647: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:652: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:653: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:654: ...      cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:655: ...      protection_scaled_limit_output =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:657: ...      if (protection_timer_state_t_0040b100.timeout_counter != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:660: ...      if ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:660: ... if ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:670: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_derate2_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:671: ...  protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:682: ...void mpc555_initProtectionFilterVariables(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:685: ...  protection_load_rate_divisor = DAT_0040781c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:686: ...  protection_load_upper_bound = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:701: ...  protection_rpm_limit_table_idle_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:702: ...  protection_rpm_limit_table_derate1_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_60.txt:703: ...  protection_rpm_limit_table_derate2_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:58: ...         (protection_timer_state_t_0040b100.status_code._0_2_ == 0x18)) &
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:60: ...       ((protection_derate_countdown == 0 && (protection_entry_cou
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:60: ...       ((protection_derate_countdown == 0 && (protection_entry_countdown == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:61: ...      if ((protection_derate_fuel_exit_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:91: ...        (protection_load_upper_threshold_b_cal < engine_load_filtered)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:93: ...         (protection_lockout_t_0040b11c.thermal_lockout == 0)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:94: ...        (protection_lockout_t_0040b11c.rpm_lockout == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:106: ...                     protection_fault_fuel_bypass_threshold_cal ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:107: ...                    (protection_overtemp_fuel_check_enable_cal == 0)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:150: ...     (engine_load_filtered <= protection_load_active_threshold_cal)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:153: ...  if (protection_lockout_t_0040b11c.load_lockout != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:203: ...void cm848_processProtectionStateFlags(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:211: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:215: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:216: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:217: ...      protection_timer_state_t_0040b100.status_code._2_2_ = protectio
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:217: ...ection_timer_state_t_0040b100.status_code._2_2_ = protection_timer_status_code_b_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:218: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:218: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:225: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:226: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:230: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:231: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:232: ...    if ((protection_timer_state_t_0040b100.timeout_counter == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:233: ...       ((short)protection_scaled_limit_output < (short)protection_load_uppe
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:233: ...  ((short)protection_scaled_limit_output < (short)protection_load_upper_bound)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:236: ...      protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:236: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:239: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:240: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:241: ...      protection_rate_integrator_snapshot = protection_rate_integrator.
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:242: ...      protection_derate_level_trial = protection_derate_level;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:243: ...      protection_scaled_limit_current =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:244: ...           cm848_protectionScaledLimitCalculation(protection_derate_level + 1);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:248: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x14;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:252: ...    if (protection_timer_state_t_0040b100.state1_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:253: ...      if (protection_timer_state_t_0040b100.status_code._2_2_ == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:260: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:261: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:264: ...    if (protection_timer_state_t_0040b100.state2_timer != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:268: ...                     ((table_interp_args_t *)&protection_rpm_limit_table_derate2_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:269: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:270: ...      protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:270: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:277: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:278: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:279: ...      cm848_calculateProtectionFuelDemandThreshold();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:280: ...      protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:280: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:284: ...    cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:285: ...    protection_scaled_limit_output = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:286: ...    if ((protection_timer_state_t_0040b100.timeout_counter != 0) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:287: ...       ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:287: ...    ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:289: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 0x15;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:292: ...    protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:292: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:305: ...    if (protection_timer_state_t_0040b100.state2_timer == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:307: ...        protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:307: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:312: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_idle_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:313: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:314: ...      cm848_protectionRateOfChangeCalculation();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:315: ...      protection_scaled_limit_output =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:317: ...      if (protection_timer_state_t_0040b100.timeout_counter != 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:320: ...      if ((short)protection_load_upper_bound <= (short)protection_scaled_l
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:320: ... if ((short)protection_load_upper_bound <= (short)protection_scaled_limit_output) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:330: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_derate2_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:331: ...  protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:364: ...  if ((protection_fuel_demand_entry_threshold_cal < fuel_demand_control_t_0040a
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:373: ...   ((fuel_demand_control_t_0040a57a.calculated <= protection_fuel_demand_entry_threshold_cal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:382: ...    protection_timer_state_t_0040b100.state1_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:382: ... protection_timer_state_t_0040b100.state1_timer = protection_state1_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:384: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_derate1_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:385: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:391: ...    protection_timer_state_t_0040b100.state2_timer = protection_sta
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:391: ... protection_timer_state_t_0040b100.state2_timer = protection_state2_timer_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:393: ... lookupTableInterpolation((table_interp_args_t *)&protection_rpm_limit_table_derate2_state);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:394: ...    protection_timer_state_t_0040b100.status_code._0_2_ = 0x13;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:397: ...    protection_timer_state_t_0040b100.timeout_counter = protection_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:397: ...otection_timer_state_t_0040b100.timeout_counter = protection_timeout_counter_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:402: ...      protection_timer_state_t_0040b100.status_code._0_2_ = 5;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:416: ...  cm848_processProtectionStateFlags();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:427: ...void mpc555_initProtectionFilterVariables(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:430: ...  protection_load_rate_divisor = DAT_0040781c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:431: ...  protection_load_upper_bound = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:446: ...  protection_rpm_limit_table_idle_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:447: ...  protection_rpm_limit_table_derate1_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_61.txt:448: ...  protection_rpm_limit_table_derate2_state = 2;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:42: ...// Function: protectionPhaseGroupA_Init @ 0x0051c3d8
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:48: ...void protectionPhaseGroupA_Init(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:66: ...            protection_timer_e = DAT_00408aea;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:68: ...          else if ((protection_timer_e == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:78: ...              if (protection_timer_b == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:81: ...                protection_timer_c = DAT_00408ae6;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:82: ...                protection_timer_b = DAT_00408ae0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:86: ...              protection_timer_b = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_42.txt:92: ...        else if ((((protection_timer_c == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_21.txt:36: ...            (protection_overtemp_fuel_check_enable_cal == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_21.txt:79: ...             ((protection_timer_d == 0 &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_21.txt:90: ...          protection_timer_d = DAT_004077fc;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_21.txt:99: ...        protection_lockout_t_0040b11c.rpm_lockout = DAT_00408370;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_21.txt:101: ...           (protection_lockout_t_0040b11c.rpm_lockout = DAT_004077f6,
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_21.txt:103: ...          protection_lockout_t_0040b11c.rpm_lockout = DAT_00407800;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_21.txt:105: ...        protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_58.txt:35: ...            (protection_overtemp_fuel_check_enable_cal == 0)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_58.txt:77: ...             ((protection_timer_d == 0 &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_58.txt:88: ...          protection_timer_d = DAT_004077fc;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_58.txt:97: ...        protection_lockout_t_0040b11c.rpm_lockout = DAT_00408370;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_58.txt:99: ...           (protection_lockout_t_0040b11c.rpm_lockout = DAT_004077f6,
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_58.txt:101: ...          protection_lockout_t_0040b11c.rpm_lockout = DAT_00407800;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_58.txt:103: ...        protection_lockout_t_0040b11c.sensor_fault_active = protect
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:41: ...// Function: protectionPhaseGroupA_Init @ 0x0051c3d8
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:47: ...void protectionPhaseGroupA_Init(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:65: ...            protection_timer_e = DAT_00408aea;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:67: ...          else if ((protection_timer_e == 0) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:77: ...              if (protection_timer_b == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:80: ...                protection_timer_c = DAT_00408ae6;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:81: ...                protection_timer_b = DAT_00408ae0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:85: ...              protection_timer_b = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_70.txt:91: ...        else if ((((protection_timer_c == 0) &&
+work/tasks/046-cm848-egr-flow-estimate.md:380: ...  - The transmission gear functions `cm848_calculateProtectionFuelDemandThreshold` (0x3241c) and
+work/tasks/046-cm848-egr-flow-estimate.md:381: ...    `cm848_processProtectionStateFlags` (0x3257c): `transmission_cur
+work/tasks/025-cm848-naming-wave-followups.md:400: ...0x40b148 = current_rpm x 32 / output shaft speed; protection_load_scale_table_cal 0x40786a = gear ratio x 32 pe
+work/tasks/025-cm848-naming-wave-followups.md:401: ...tio and the multiplicand of the gear ratio table (cm848_protectionScaledLimitCalculation).
+work/tasks/025-cm848-naming-wave-followups.md:411: ...DAT_003fb140) / 0x40821c (D - DAT_003fb142). With hot_mode_flag set none of the four 2-D tabl
+work/tasks/025-cm848-naming-wave-followups.md:591: ...ROTECTION_STATUS_CODE enum = governor curve mode; protection_lockout_t thermal_lockout / load_lockou
+work/tasks/025-cm848-naming-wave-followups.md:591: ...d_lockout / rpm_lockout / sensor_fault_active and protection_derate_countdown / protection_entry_countdown 
+work/tasks/025-cm848-naming-wave-followups.md:591: ...or_fault_active and protection_derate_countdown / protection_entry_countdown = per-gear converter relock d
+work/tasks/025-cm848-naming-wave-followups.md:591: ...try_countdown = per-gear converter relock delays; cm848_initProtectionSystem / cm848_decrementProtectionTi
+work/tasks/025-cm848-naming-wave-followups.md:591: ...erter relock delays; cm848_initProtectionSystem / cm848_decrementProtectionTimers = transmission init / timer t
+work/tasks/025-cm848-naming-wave-followups.md:600: ... Governor pressure solenoid chain still misnamed: protectionPhaseGroupA_Init 0x51c3d8 is the governor pres
+work/tasks/025-cm848-naming-wave-followups.md:605: ...- Governor target constants and curves: protection_timer_state_t.status_code is the governor p
+work/tasks/025-cm848-naming-wave-followups.md:608: ...- WOT shift adaptives: protection_rpm_peak_a / _b (0x40b112 / 0x40b114) ar
+work/tasks/025-cm848-naming-wave-followups.md:610: ...- Minor: protection_derate_level_trial 0x40b0ca is a gear index (cur
+work/tasks/025-cm848-naming-wave-followups.md:610: ...r / +1 / +2) used by the per-gear calculations in cm848_protectionRateOfChangeCalculation. 0x3fb3fe and 0x40b0e0 (last 
+work/tasks/025-cm848-naming-wave-followups.md:623: ...dMonitor + cm848_protectionStateTransitionCheck + cm848_processProtectionStateFlags (normal schedule: 3-4 and 4-3
+work/tasks/027-cm848-naming-wave-2-followups.md:65: ...- protection_status_flags_t @0x40b0f2 and protection_timer_state_t.status_code (PROTECTION_STATU
+work/tasks/027-cm848-naming-wave-2-followups.md:66: ...gger chain (protection_rpm_threshold = 3075 rpm / protection_rpm_peak_a / protection_rpm_peak_b / pro
+work/tasks/027-cm848-naming-wave-2-followups.md:66: ...pm_threshold = 3075 rpm / protection_rpm_peak_a / protection_rpm_peak_b / protection_engine_load_scal
+work/tasks/027-cm848-naming-wave-2-followups.md:66: .../ protection_rpm_peak_a / protection_rpm_peak_b / protection_engine_load_scaled / protection_rpm_peak_thresho
+work/tasks/027-cm848-naming-wave-2-followups.md:67: ...- cm848_protectionOverloadHandler @0x2e... shares the same per-
+work/tasks/027-cm848-naming-wave-2-followups.md:72: ..._* names and also write governor_pressure_target: cm848_protectionOverloadHandler / protectionNormalHandler / p
+work/tasks/027-cm848-naming-wave-2-followups.md:73: ...- protection_rpm_peak_a / protection_rpm_peak_b = gea
+work/tasks/027-cm848-naming-wave-2-followups.md:73: ...- protection_rpm_peak_a / protection_rpm_peak_b = gear1 / gear2 shift peak RP
+work/tasks/027-cm848-naming-wave-2-followups.md:81: ...- protection_rpm_peak_a and protection_rpm_peak_b are
+work/tasks/027-cm848-naming-wave-2-followups.md:81: ...- protection_rpm_peak_a and protection_rpm_peak_b are the gear1 / gear2 peak-RP
+work/tasks/027-cm848-naming-wave-2-followups.md:82: ...- The governor-pressure MODE code written to protection_timer_state_t_0040b100.status_code (values 1 2 4 5 6

@@ -237,3 +237,13 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 The old names this file cites were renamed in PR #53 (the leads above keep their wording):
 - `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainControlTimeouts`
 - `governor_mode_transition_counter` → `etc1_output_shaft_speed_run_state_count`
+
+## Resolved by PR #53 round 8 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `protection_timer_state_t` → `transmission_pressure_state_t`
+- `protection_rpm_peak_a` → `transmission_1st_gear_maximum_engine_speed`
+- `protection_rpm_peak_b` → `transmission_2nd_gear_maximum_engine_speed`
+- `protection_engine_load_scaled` → `transmission_engine_acceleration`
+- `cm848_protectionOverloadHandler` → `cm848_selectGovernorPressureLowRange`
+- `protection_timer_state_t_0040b100` → `transmission_pressure_state`
