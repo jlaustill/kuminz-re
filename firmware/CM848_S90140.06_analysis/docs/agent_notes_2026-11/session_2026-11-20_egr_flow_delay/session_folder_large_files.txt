@@ -42,3 +42,4 @@
   401750 verify5.log
   401915 verify_round5.log
   401736 verify_round6.log
+  401743 verify_round6_closing.log

@@ -988,7 +988,9 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - **The handlers:** PGN 0 is routed by destination address (`cm848_dispatchTsc1ByDestinationAddress`). The
     engine's TSC1 goes to `processEngineTsc1Request` (was `torqueControlModeHandler`, shared with CM550 0x2f128), the
     retarder's to `cm848_processEngineRetarderTsc1Request`. The SA whitelist is `tsc1_source_configuration_table`
-    (0x5c3b4, 10 entries: data link, source address, per-mode request timeouts / time limits).
+    (0x5c3b4 in ROM, 10 entries: data link, source address, per-mode request timeouts / time limits). Read
+    from the ROM image: 0x03 / 0x0B / 0x21 / 0x4A / 0x4F (entries 5-9 unused); 50 ms timeouts; speed control
+    unlimited only for 0x03, 6 s for the others (task 022).
   - **Enums:** `TSC1_OVERRIDE_MODE` (SPN 695), `J1939_CONTROL_DEVICE` (none / transmission / ABS / ASR / unknown)
     and `CONTROL_NETWORK` (J1922 / J1939).
   - **Ghidra:** a piece name such as `_10_2_` counts in decimal (offset 10 = +0xa). A multi-bit mask on a

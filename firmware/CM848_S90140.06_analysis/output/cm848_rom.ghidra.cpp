@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 03:18:07 MST 2026
+// Generated: Sat Nov 21 03:31:51 MST 2026
 
 
 //
@@ -23515,12 +23515,15 @@ void cm848_initEtc2Handler(void)
    bits 1-2 are the override control mode (SPN 695), bits 3-4 the requested speed control conditions
    (SPN 696) and bits 5-6 the override control mode priority (SPN 897); bytes 2-3 are the requested
    speed (SPN 898) and byte 4 the requested torque (SPN 518). It rejects a sender that is in the
-   ignored request list or has no tsc1_source_configuration_table entry. A sender takes over an
-   active request only with an entry at the same or an earlier position and an equal or higher
-   priority (in mode 3 at the same priority: a lower torque or speed). On accept: mode 1 = speed
-   control (the requested speed capped at 24000 = 3000 rpm), mode 2 = torque control (the requested
-   percent torque as fueling), mode 3 = speed / torque limit control; each loads its request timeout
-   from the sender's entry. CM550's 0x2f128 is the same handler (was torqueControlModeHandler) */
+   ignored request list or has no tsc1_source_configuration_table entry. With no override active any
+   sender with an entry is accepted. While a J1939 request is active the controlling sender is
+   always accepted; another sender needs a higher priority (a lower value), or at the same priority
+   an active mode 3 request and either a request that is not mode 3 or a lower torque limit (the
+   same torque with a lower speed limit). While a J1922 request is active a J1939 sender needs an
+   entry at the same or an earlier position. On accept: mode 1 = speed control (the requested speed
+   capped at 24000 = 3000 rpm), mode 2 = torque control (the requested percent torque as fueling),
+   mode 3 = speed / torque limit control; each loads its request timeout from the sender's entry.
+   CM550's 0x2f128 is the same handler (was torqueControlModeHandler) */
 
 void processEngineTsc1Request(j1939_rx_msg_t *msg)
 

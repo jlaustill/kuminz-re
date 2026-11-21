@@ -249,3 +249,19 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `etc1_capped_speed_target` → `tsc1_requested_speed_capped`
 - `etc1_speed_control_mode` → `tsc1_requested_speed_control_condition`
 - `etc1_active_state` → `tsc1_controlling_data_link`
+
+## TSC1 time limits (PR #53 round 6, 2026-11-21)
+
+`tsc1_source_configuration_table` (0x5c3b4, read from the ROM image) is the SA whitelist: 0x03 / 0x0B / 0x21 / 0x4A /
+0x4F on J1939, with entries 5-9 unused (0xFE, no wildcard). Each entry also gives the TSC1 request timeouts and time
+limits, in 10 ms counts:
+- **The message timeout** is 50 ms in every mode (J1939-71). The transmission's mode 3 is 80 ms.
+- **Speed control (mode 1) time limit:** none for SA 0x03 (0xFFFF), 6 s for 0x0B / 0x21 / 0x4A / 0x4F. At the limit
+  the sender goes into the ignored request list and stays there until it sends override disabled (mode 0); then
+  `cm848_runTsc1LostManagement` takes over.
+- **Torque control (mode 2):** 6 s for all five.
+- **Speed / torque limit control (mode 3):** no time limit.
+
+So a TSC1 drive-by-wire that holds speed control longer than 6 s must send from 0x03, or drop to override disabled
+and back within the limit. The names: `processEngineTsc1Request`, `j1939_powertrain_control_state` (e2m 10E8
+"Jcomm") and `TSC1_OVERRIDE_MODE`.

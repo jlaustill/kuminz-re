@@ -611,12 +611,6 @@ VEHICLE_SPEED_SENSOR_TYPE,3,VEHICLE_SPEED_SENSOR_TACHOGRAPH,3 = tach: the speed 
 VEHICLE_SPEED_SENSOR_TYPE,4,VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO,4 = dlw/GR&OOG: data link with gear ratio and out-of-gear - the vehicle speed from the J1939 ETC1 output shaft speed (cm848_calculateVehicleSpeedFromOutputShaft) and the ETC2 gear ratio (was DRIVETRAIN_AUTO_J1939_FULL),2
 VEHICLE_SPEED_SENSOR_TYPE,5,VEHICLE_SPEED_SENSOR_J1939_WITHOUT_GEAR_RATIO,5 = dlw/o GR&OOG: data link without gear ratio and out-of-gear - ETC1 only (was DRIVETRAIN_AUTO_J1939_ETC1),2
 
-# Governor Mode States
-# Internal governor state machine values
-GOVERNOR_MODE,0,GOV_DISABLED,Governor control disabled - pedal/throttle control,1
-GOVERNOR_MODE,1,GOV_DRIVELINE_DISENGAGED,Speed control mode - maintain target RPM,1
-GOVERNOR_MODE,2,GOV_DRIVELINE_ENGAGED,Torque control mode - limit engine torque,1
-GOVERNOR_MODE,3,GOV_SPEED_TORQUE,Combined speed and torque control mode,1
 
 # J1939 Diagnostic Protocol Modes
 J1939_DIAGNOSTIC_PROTOCOL,1,CALTERM_COMMUNICATION,CalTerm parameter read/write via J1939,1
@@ -732,11 +726,6 @@ SHUTDOWN_SELECTOR_SOURCE,28,SHUTDOWN_MINIMUM_INIT,Shutdown minimum init value,2
 SHUTDOWN_SELECTOR_SOURCE,29,PROTECTION_SHUTDOWN_LIMIT,Protection shutdown fuel limit,2
 SHUTDOWN_SELECTOR_SOURCE,34,OIL_PRESSURE_PROTECTION,Oil pressure protection limit,2
 
-# Retarder Mode State Machine
-RETARDER_MODE_STATE,0,RETARDER_DISABLED,Retarder control disabled,1
-RETARDER_MODE_STATE,1,RETARDER_SPEED_SYNC,Speed synchronization mode,1
-RETARDER_MODE_STATE,2,RETARDER_LOAD_BASED,Load-based retard mode,1
-RETARDER_MODE_STATE,3,RETARDER_PROPORTIONAL,Proportional control mode,1
 
 # I/O Control State
 IO_CONTROL_STATE,0,OFF_INACTIVE,Output off/inactive - waiting for condition,1

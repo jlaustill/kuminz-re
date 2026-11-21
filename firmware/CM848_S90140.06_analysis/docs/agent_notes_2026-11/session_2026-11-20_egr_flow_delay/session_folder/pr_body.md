@@ -202,6 +202,10 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   - **The ETC2 receive words** are settled from the stores: a word at +0xa (the CSV had a byte, hence `_10_2_`) and
     the SPN 526 ratio at +0xd.
   - **Also:** 0x5c39a is the high idle override speed.
+  - **The TSC1 source table, read from the ROM image:** the whitelist is 0x03 / 0x0B / 0x21 / 0x4A / 0x4F,
+    with 50 ms request timeouts. Speed control is unlimited only from 0x03 (0xFFFF wraps to 0) and lasts 6 s
+    from the other four, after which the sender is ignored until it sends override disabled. That matters for
+    task 022's TSC1 work.
   - **Reverted:** a bitfield. Ghidra rendered its masked writes as a raw piece.
 
 ## Test plan
@@ -251,6 +255,9 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
     ETC2 words, and declaration order in three);
   - the facts were quoted from the instructions (`lha` / `lhz` / `sth` with addresses) and from e2m 10E6 / 10E7 /
     10E8.
+- [x] Round 6 closing: the arbitration prose is fixed by branch, and "Bank 2" for 0x5c38c / 0x5c3b4 is
+  corrected to ROM. The two unused enums that contradicted e2m are deleted, proved a no-op (comments only,
+  0 functions).
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.

@@ -681,13 +681,6 @@ typedef enum {
 } VEHICLE_SPEED_SENSOR_TYPE;
 
 typedef enum {
-    GOV_DISABLED = 0,  /* Governor control disabled - pedal/throttle control */
-    GOV_DRIVELINE_DISENGAGED = 1,  /* Speed control mode - maintain target RPM */
-    GOV_DRIVELINE_ENGAGED = 2,  /* Torque control mode - limit engine torque */
-    GOV_SPEED_TORQUE = 3  /* Combined speed and torque control mode */
-} GOVERNOR_MODE;
-
-typedef enum {
     CALTERM_COMMUNICATION = 1,  /* CalTerm parameter read/write via J1939 */
     INSITE_COMMUNICATION = 2,  /* Insite live data monitoring via J1939 */
     DIAG_MESSAGE_DISPATCHER = 3,  /* Routes diagnostic requests by message type */
@@ -818,13 +811,6 @@ typedef enum {
     PROTECTION_SHUTDOWN_LIMIT = 29,  /* Protection shutdown fuel limit */
     OIL_PRESSURE_PROTECTION = 34  /* Oil pressure protection limit */
 } SHUTDOWN_SELECTOR_SOURCE;
-
-typedef enum {
-    RETARDER_DISABLED = 0,  /* Retarder control disabled */
-    RETARDER_SPEED_SYNC = 1,  /* Speed synchronization mode */
-    RETARDER_LOAD_BASED = 2,  /* Load-based retard mode */
-    RETARDER_PROPORTIONAL = 3  /* Proportional control mode */
-} RETARDER_MODE_STATE;
 
 typedef enum {
     OFF_INACTIVE = 0,  /* Output off/inactive - waiting for condition */
@@ -1902,7 +1888,7 @@ struct j1939_powertrain_messages_received_t {
     uint16_t tsc1_requested_speed;  /* TSC1 bytes 2-3: the requested speed / speed limit (SPN 898, 0.125 rpm) (was requested_speed) */
     uint8_t tsc1_requested_torque;  /* TSC1 byte 4: the requested torque / torque limit (SPN 518, percent + 125) (was requested_torque) */
     uint8_t reserved_18[4];  /* Gap/reserved bytes */
-    uint8_t tsc1_accepted_priority;  /* the priority bits (byte 1 & 0x30) of the accepted request; a new sender needs an equal or higher priority (a value not above this) (was priority_byte) */
+    uint8_t tsc1_accepted_priority;  /* the priority bits (byte 1 & 0x30) of the accepted request; while a J1939 request is active another sender needs a higher priority (a lower value); at the same priority only an active mode 3 request can be taken over (was priority_byte) */
     uint16_t tsc1_accepted_requested_speed;  /* the requested speed of the accepted speed control / limit request (modes 1 and 3); a mode 3 takeover at the same priority needs a lower torque or speed (was speed_stored, described as an SPN 191 copy) */
     uint8_t tsc1_accepted_requested_torque;  /* the requested torque of the accepted torque control / limit request (modes 2 and 3) (was torque_stored, described as an SPN 522 copy) */
 };
@@ -2075,7 +2061,7 @@ struct j1939_powertrain_control_state_t {
     uint8_t _pad;  /* Alignment padding */
     uint8_t tsc1_controlling_source_address;  /* the source address of the accepted engine TSC1 request (the sender in control). Not SPN 1482, which is ETC1's source address of the device controlling the transmission (was etc1_spn1482_source_address) */
     tsc1_source_configuration_t* tsc1_matched_source_configuration_ptr;  /* the tsc1_source_configuration_table entry cm848_findTsc1SourceConfiguration matched for the last sender (was etc1_config_entry_ptr) */
-    tsc1_source_configuration_t* tsc1_source_configuration_ptr;  /* the configuration entry of the accepted engine TSC1 sender (its request timeouts and time limits); a new sender takes over only with an entry at the same or an earlier position (was etc1_active_config_ptr) */
+    tsc1_source_configuration_t* tsc1_source_configuration_ptr;  /* the configuration entry of the accepted engine TSC1 sender (its request timeouts and time limits); while a J1922 request is active a J1939 sender takes over only with an entry at the same or an earlier position (was etc1_active_config_ptr) */
     tsc1_source_configuration_t* retarder_tsc1_source_configuration_ptr;  /* the configuration entry of the accepted engine retarder TSC1 sender (+0xe / +0x10 / +0x12 read) (was etc1_secondary_config_ptr) */
     uint16_t high_idle_override_recovery_flag;  /* 1 after the high idle override hit its time limit: the transmission must stop asking for it for j1939_time_limited_node_recovery_time (e2m Jcomm_Recovery_Time) before it is granted again; cleared by ETC1 SPN 606 = 00 or when high_idle_override_timeout_timer runs out (was etc1_torque_limit_active) */
     uint16_t etc1_message_timeout;  /* Countdown: fires if no ETC1 message received within window */
@@ -2083,7 +2069,7 @@ struct j1939_powertrain_control_state_t {
 
 struct tsc1_source_configuration_t {
     CONTROL_NETWORK data_link;  /* the data link the entry is for (1 = J1939; the 0xff source address wildcard counts only on 1) (was match_key) */
-    uint16_t source_address_filter;  /* Low byte = J1939 SA to match (0xFF=wildcard); high byte = priority filter */
+    uint16_t source_address_filter;  /* Low byte = the J1939 source address (0xff would match any J1939 sender; the ROM image lists 0x03 / 0x0B / 0x21 / 0x4A / 0x4F and 0xFE = the null address in the five unused entries); the high byte is 0 in every entry (a priority filter role is not verified) */
     uint16_t speed_control_request_timeout;  /* the request timeout of a speed control request (mode 1): tsc1_request_timeout_count reload (was speed_error_timeout_mode1) */
     uint16_t speed_control_time_limit;  /* the time limit of a speed control request: tsc1_request_time_limit_timer reload (was activation_confirm_timeout_mode1) */
     uint16_t torque_control_request_timeout;  /* the request timeout of a torque control request (mode 2) (was speed_error_timeout_mode2) */

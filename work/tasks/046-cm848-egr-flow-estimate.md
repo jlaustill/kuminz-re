@@ -297,6 +297,28 @@ source lookup and the TSC1 dispatcher (scripts in `session_folder/round6/`).
   - **Also:** 0x5c39a `j1939_high_idle_override_speed`, the J1939 monitor's three copies of the engine control
     state, and two stale local rows.
   - **Reverted:** the bitfield. Masked writes render as a raw piece, so the field stays a word.
+- **The TSC1 source table, read from the ROM image** (`originals/cm848_rom.bin` at 0x5c3b4, at word width):
+  - **Senders:** entries 0-4 are J1939 (data link 1) with the source addresses 0x03 (the transmission), 0x0B, 0x21, 0x4A
+    and 0x4F, which is task 022's whitelist. Entries 5-9 hold 0xFE (the J1939 null address) and are unused, so no
+    wildcard is configured.
+  - **Request timeouts:** 5 counts. The 10E7 MSEC cals count 10 ms, so that is 50 ms, J1939-71's TSC1 timeout. The
+    transmission's mode 3 is 80 ms and the retarder's 250 ms.
+  - **Time limits:** speed control is 0xFFFF for 0x03; the `+ 1` wraps it to 0, so the timer never fires and there is
+    no limit. It is 600 = 6 s for the other four. Torque control is 6 s for all five, and the retarder has none.
+  - **For task 022:** a TSC1 speed control request from 0x0B / 0x21 / 0x4A / 0x4F ends after 6 s, and the sender is
+    then ignored until it sends override disabled. Only the transmission's address holds speed control indefinitely.
+- **The arbitration, by branch (the plate is fixed):**
+  - With no override active, any sender with an entry is accepted.
+  - While a J1939 request is active, the controlling sender is always accepted. Another sender needs a higher
+    priority, or at the same priority an active mode 3 request and a request that is not mode 3 or has a lower torque
+    limit.
+  - While a J1922 request is active, a J1939 sender needs an entry at the same or an earlier position.
+- **The unused enums `GOVERNOR_MODE` / `RETARDER_MODE_STATE`** contradicted e2m 10E8 / 10E6 and are deleted. They were
+  never applied, and the closing build proves a no-op.
+- **Corrections:**
+  - 0x5c38c and the table are in ROM (the main flash), not Bank 2. The `_cal` verdict (none) stands.
+  - 4ae5f79 quotes `lha` only for `engine_net_output_torque` (0x40ae1c). The torque command's `short` rests on its e2m
+    S record and on the render (the `(short)` casts it removed).
 - **Round 6 leads:**
   - The J1939 monitor's session record: e2m 10FE J1939_Active_Engine (0x3feb4e), 10FF J1939_Active_Retarder and 1100
     J1939_*_Control_Status. Still unnamed or etc1-named: `etc1_governor_calib_session_start_time`,
