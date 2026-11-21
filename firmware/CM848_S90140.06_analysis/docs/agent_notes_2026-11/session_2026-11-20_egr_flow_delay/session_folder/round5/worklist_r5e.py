@@ -1,7 +1,38 @@
 """Round 5 stage e: the cruise / vehicle speed limit governor functions in Bank 2 (wave 15 bins 3 and 6; profiled with
 writes_of.py and read in the main session). None is shared with CM550."""
-GLOBALS = []
+A = "cm848_controlAirConditioningClutchForDrTruck"
+GLOBALS = [
+    ("0x003fcd60", "air_conditioning_pressure_learn_count",
+     f"{A}: counts passes with the raw A/C pressure inside the learn window (air_conditioning_pressure_learn_raw_minimum "
+     "/ _maximum) up to air_conditioning_pressure_learn_time"),
+    ("0x003fcd70", "air_conditioning_high_pressure_ok_flag",
+     f"{A}: 1 below air_conditioning_high_pressure_on_threshold, 0 above the off threshold (hysteresis)"),
+    ("0x003fcd72", "air_conditioning_low_pressure_ok_flag",
+     f"{A}: 1 above air_conditioning_low_pressure_on_threshold, 0 below the off threshold"),
+    ("0x003fcd74", "air_conditioning_high_engine_speed_ok_flag",
+     f"{A}: 1 below air_conditioning_high_rpm_on_threshold, 0 above the off threshold"),
+    ("0x003fcd68", "air_conditioning_low_engine_speed_on_count",
+     f"{A}: counts passes above air_conditioning_low_rpm_on_threshold up to air_conditioning_low_rpm_on_time"),
+    ("0x003fcd76", "air_conditioning_low_engine_speed_ok_flag",
+     f"{A}: 1 after the low rpm on time above the low rpm on threshold, 0 below the low rpm off threshold"),
+    ("0x003fcd78", "air_conditioning_coolant_temperature_ok_flag",
+     f"{A}: 1 below air_conditioning_high_coolant_temperature_on_threshold, 0 above the off threshold"),
+    ("0x003fcd6c", "air_conditioning_cycle_on_count",
+     f"{A}: compared with air_conditioning_cycle_on_time (the A/C driver can turn on once every that long)"),
+    ("0x003fcd6e", "air_conditioning_cycle_off_count",
+     f"{A}: compared with air_conditioning_cycle_off_time (the minimum A/C driver off time)"),
+    ("0x003fcd5e", "air_conditioning_shift_hold_off_count",
+     "cm848_controlAirConditioningClutchForBrTruck: counts up to shift_in_process_hold_off_time_limit while a "
+     "transmission shift is in process"),
+    ("0x0040b1e7", "air_conditioning_condition_code",
+     f"{A}: the reason code 1-15 of the A/C clutch decision (the e2m condition codes); 5 at initialization"),
+    ("0x003fcd66", "air_conditioning_clutch_request_bit_6_previous",
+     f"{A}: bit 0x40 of air_conditioning_clutch_request_byte on the previous pass (edge detection)"),
+]
 FUNCTIONS = [
+    ("0x00510f34", "cm848_initializeAirConditioningClutchControl",
+     "Initializes the A/C clutch control: releases logical output 0x26 (the A/C clutch request), resets the counts "
+     "and the high fuel demand cutout, condition codes 5"),
     ("0x00525504", "cm848_runCruiseAndVehicleSpeedLimitGovernor",
      "The cruise control / vehicle speed limit (road speed governor) PID, run every pass from "
      "cm848_periodicTaskSet_outputs: the reference and ramp target speeds, the speed error and its rate term, the "

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 01:57:15 MST 2026
+// Generated: Sat Nov 21 02:02:18 MST 2026
 
 
 //
@@ -6898,7 +6898,7 @@ void cm848_periodicTaskSet_outputs(void)
 
 {
   cm848_updateDrivetrainRatio();
-  protectionOutputActuatorControl();
+  cm848_runCruiseAndVehicleSpeedLimitGovernor();
   cm848_updateInjectorDriverBoosterCapacitor1VoltageChannel();
   return;
 }
@@ -37303,9 +37303,10 @@ void cm848_applyAlternatorFieldDuty(void)
    = measured voltage more than 1 V above the target) for
    charging_system_voltage_high_confirm_passes passes (150) and a timer then counts
    charging_system_voltage_high_fault_count_limit passes (6); sets mask 4 (P2503, voltage low) after
-   charging_system_voltage_low_confirm_passes passes (80) in regulator state 2 with the grid heater
-   control in state 5 (shutdown) and battery voltage below charging_system_voltage_low_threshold
-   (184 = 11.5 V); clears mask 4 after charging_system_voltage_low_clear_passes passes (50) above
+   charging_system_voltage_low_confirm_passes passes (80) in regulator state 2 with the intake air
+   heater in phase 5 (INTAKE_AIR_HEATER_PHASE_OFF) and battery voltage below
+   charging_system_voltage_low_threshold (184 = 11.5 V); clears mask 4 after
+   charging_system_voltage_low_clear_passes passes (50) above
    charging_system_voltage_low_clear_threshold (192 = 12.0 V). (was
    cm848_checkProtectionOutputConditions) */
 
@@ -37373,8 +37374,9 @@ void cm848_monitorChargingSystemVoltageHighAndLow(void)
 // Function: cm848_testAlternatorOutputByCuttingField @ 0x00038120
 //
 
-/* Alternator output test: in regulator state 2 with the grid heater in state 5 (shutdown), engine
-   speed above alternator_field_cut_test_engine_speed_threshold, no charging fault set and
+/* Alternator output test: in regulator state 2 with the intake air heater in phase 5
+   (INTAKE_AIR_HEATER_PHASE_OFF), engine speed above
+   alternator_field_cut_test_engine_speed_threshold, no charging fault set and
    charging_voltage_error_slow_average above alternator_field_cut_test_error_threshold it counts
    passes; once the count reaches alternator_field_cut_test_condition_passes a second counter starts
    and, when it equals alternator_field_cut_test_cut_start_passes, the battery voltage is
@@ -43167,8 +43169,9 @@ void cm848_claimAcceleratorInterlockThrottleOverride(void)
    governed fueling state): the smallest of the user fueling governor_fuel_demand_working (state
    governor_fuel_demand_working_mode), high_speed_governor_fueling_snapshot (12) and
    vehicle_speed_limit_fueling (10), then the low speed governor (11) as a max select at or below
-   its speed (low_speed_governor_fueling); starts protectionRampRateControl on the first pass of 9 /
-   10 and latches low_speed_governor_active_flag in 11 (was cm848_processProtectionRampControl) */
+   its speed (low_speed_governor_fueling); starts cm848_presetCruiseAndVehicleSpeedLimitGovernor on
+   the first pass of 9 / 10 and latches low_speed_governor_active_flag in 11 (was
+   cm848_processProtectionRampControl) */
 
 void cm848_arbitrateGovernedFueling(void)
 
@@ -43231,7 +43234,7 @@ LAB_00040548:
     if ((governor_fuel_demand_mode_prev != FUELING_STATE_CRUISE_CONTROL) &&
        ((governor_fuel_demand_mode_prev != FUELING_STATE_VEHICLE_SPEED_LIMIT &&
         (cruise_resume_active_flag_previous == 0)))) {
-      protectionRampRateControl();
+      cm848_presetCruiseAndVehicleSpeedLimitGovernor();
     }
     goto LAB_000406b0;
   }
@@ -57308,7 +57311,7 @@ void cm848_applicationMain(void)
   cm848_resetDataCollector();
   cm848_emptyStubFunction();
   cm848_initializeEngineRetarderCruisePermissionFilter();
-  governorCruiseStateMachine();
+  cm848_initializeCruiseControlDroopGains();
   cm848_validateFuelRateTarget();
   cm848_initializeEngineRetarderRequestState();
   initGovernorJ1939Bypass();
@@ -57338,7 +57341,7 @@ void cm848_applicationMain(void)
   governor_fuel_mode_initialization();
   hpcr_cbdInitFilterState();
   hpcr_initFuelTemperatureSensorChannel();
-  protection_exception_event_26_init();
+  cm848_initializeAirConditioningClutchControl();
   cm848_initCruiseSwitchChannel();
   cm848_initFuelLevelFilter();
   cm848_initJ1939CommunicationSystem();
@@ -71972,20 +71975,24 @@ void sensorChannelTypeA_update_axis5(void)
 
 
 //
-// Function: protection_exception_event_26_init @ 0x00510f34
+// Function: cm848_initializeAirConditioningClutchControl @ 0x00510f34
 //
 
-void protection_exception_event_26_init(void)
+/* Initializes the A/C clutch control: releases logical output 0x26 (the A/C clutch request), resets
+   the counts and the high fuel demand cutout, condition codes 5 (was
+   protection_exception_event_26_init) */
+
+void cm848_initializeAirConditioningClutchControl(void)
 
 {
   cm848_clearLogicalOutputRequest(0x26,0);
-  protection_event26_tsc1_shift_debounce_count = 0;
-  protection_event26_condition_code = 5;
+  air_conditioning_shift_hold_off_count = 0;
+  air_conditioning_condition_code = 5;
   protection_event26_condition_code_b = 5;
   air_conditioning_high_fuel_demand_cutout_done_flag = 1;
   air_conditioning_high_fuel_demand_cutout_rearm_timer =
        air_conditioning_high_fuel_demand_cutout_rearm_count_limit;
-  protection_event26_sensor_threshold_count = 0;
+  air_conditioning_pressure_learn_count = 0;
   return;
 }
 
@@ -72004,11 +72011,10 @@ void cm848_controlAirConditioningClutchForBrTruck(void)
   if (((engine_feature_enable_flags_cal & 8) != 0) &&
      (air_conditioning_low_rpm_off_threshold < engine_speed_state.filtered_engine_speed)) {
     if (j1939_tsc1_override_state.etc1_spn574_shift_in_process == 0) {
-      protection_event26_tsc1_shift_debounce_count = 0;
+      air_conditioning_shift_hold_off_count = 0;
     }
-    else if (protection_event26_tsc1_shift_debounce_count < shift_in_process_hold_off_time_limit) {
-      protection_event26_tsc1_shift_debounce_count =
-           protection_event26_tsc1_shift_debounce_count + 1;
+    else if (air_conditioning_shift_hold_off_count < shift_in_process_hold_off_time_limit) {
+      air_conditioning_shift_hold_off_count = air_conditioning_shift_hold_off_count + 1;
       return;
     }
     if (((switch_input_state_bits[1] & 0x20) != 0) ||
@@ -72054,12 +72060,12 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   if (((diag_clear_flags_t_003fedfc._0_2_ == 0) &&
       (air_conditioning_pressure_learn_raw_minimum < uVar1)) &&
      (uVar1 < air_conditioning_pressure_learn_raw_maximum)) {
-    protection_event26_sensor_threshold_count = protection_event26_sensor_threshold_count + 1;
+    air_conditioning_pressure_learn_count = air_conditioning_pressure_learn_count + 1;
   }
   else {
-    protection_event26_sensor_threshold_count = 0;
+    air_conditioning_pressure_learn_count = 0;
   }
-  if (air_conditioning_pressure_learn_time <= protection_event26_sensor_threshold_count) {
+  if (air_conditioning_pressure_learn_time <= air_conditioning_pressure_learn_count) {
     diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
     diag_clear_flags_t_003fedfc.diag_eeprom_work_byte = 1;
   }
@@ -72071,42 +72077,42 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
     bVar2 = false;
   }
   if (air_conditioning_pressure_sensor_filtered < air_conditioning_high_pressure_on_threshold) {
-    protection_event26_fuel_qty_gate_flag = 1;
+    air_conditioning_high_pressure_ok_flag = 1;
   }
   if (air_conditioning_high_pressure_off_threshold < air_conditioning_pressure_sensor_filtered) {
-    protection_event26_fuel_qty_gate_flag = 0;
+    air_conditioning_high_pressure_ok_flag = 0;
   }
   if (air_conditioning_low_pressure_on_threshold < air_conditioning_pressure_sensor_filtered) {
-    protection_event26_fuel_qty_high_gate_flag = 1;
+    air_conditioning_low_pressure_ok_flag = 1;
   }
   if (air_conditioning_pressure_sensor_filtered < air_conditioning_low_pressure_off_threshold) {
-    protection_event26_fuel_qty_high_gate_flag = 0;
+    air_conditioning_low_pressure_ok_flag = 0;
   }
   if (engine_speed_state.filtered_engine_speed < air_conditioning_high_rpm_on_threshold) {
-    protection_event26_rpm_low_gate_flag = 1;
+    air_conditioning_high_engine_speed_ok_flag = 1;
   }
   if (air_conditioning_high_rpm_off_threshold < engine_speed_state.filtered_engine_speed) {
-    protection_event26_rpm_low_gate_flag = 0;
+    air_conditioning_high_engine_speed_ok_flag = 0;
   }
   if (air_conditioning_low_rpm_on_threshold < engine_speed_state.filtered_engine_speed) {
-    protection_event26_rpm_high_debounce_count = protection_event26_rpm_high_debounce_count + 1;
+    air_conditioning_low_engine_speed_on_count = air_conditioning_low_engine_speed_on_count + 1;
   }
-  if (air_conditioning_low_rpm_on_time <= protection_event26_rpm_high_debounce_count) {
-    protection_event26_rpm_high_gate_flag = 1;
-    protection_event26_rpm_high_debounce_count = air_conditioning_low_rpm_on_time;
+  if (air_conditioning_low_rpm_on_time <= air_conditioning_low_engine_speed_on_count) {
+    air_conditioning_low_engine_speed_ok_flag = 1;
+    air_conditioning_low_engine_speed_on_count = air_conditioning_low_rpm_on_time;
   }
   if (engine_speed_state.filtered_engine_speed < air_conditioning_low_rpm_off_threshold) {
-    protection_event26_rpm_high_gate_flag = 0;
-    protection_event26_rpm_high_debounce_count = 0;
+    air_conditioning_low_engine_speed_ok_flag = 0;
+    air_conditioning_low_engine_speed_on_count = 0;
   }
   if ((short)sensor_readings_t_0040baf2.coolant_temp <
       air_conditioning_high_coolant_temperature_on_threshold) {
-    protection_event26_coolant_gate_flag = 1;
+    air_conditioning_coolant_temperature_ok_flag = 1;
     protection_coolant_classb_active_flag = 0;
   }
   if (air_conditioning_high_coolant_temperature_off_threshold <
       (short)sensor_readings_t_0040baf2.coolant_temp) {
-    protection_event26_coolant_gate_flag = 0;
+    air_conditioning_coolant_temperature_ok_flag = 0;
   }
   if (((air_conditioning_high_fuel_demand_cutout_throttle_threshold <
         fuel_demand_control_t_0040a57a.calculated) &&
@@ -72133,9 +72139,9 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
          air_conditioning_high_fuel_demand_cutout_rearm_count_limit;
   }
   bVar3 = true;
-  protection_event26_condition_code = 0xe;
+  air_conditioning_condition_code = 0xe;
   if ((engine_feature_enable_flags_cal & 8) == 0) {
-    protection_event26_condition_code = 1;
+    air_conditioning_condition_code = 1;
     if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
       protection_event26_condition_code_b = 1;
     }
@@ -72147,7 +72153,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   }
   if (!bVar5) {
     if (diag_clear_flags_t_003fedfc._0_2_ == 0) {
-      protection_event26_condition_code = 0xf;
+      air_conditioning_condition_code = 0xf;
       if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
         protection_event26_condition_code_b = 0xf;
       }
@@ -72162,7 +72168,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
         bVar5 = false;
       }
       else {
-        protection_event26_condition_code = 2;
+        air_conditioning_condition_code = 2;
         if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
           protection_event26_condition_code_b = 2;
         }
@@ -72174,7 +72180,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
           bVar2 = false;
         }
         else {
-          protection_event26_condition_code = 3;
+          air_conditioning_condition_code = 3;
           if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
             protection_event26_condition_code_b = 3;
           }
@@ -72182,8 +72188,8 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
           bVar2 = true;
         }
         if (!bVar2) {
-          if (protection_event26_fuel_qty_gate_flag == 0) {
-            protection_event26_condition_code = 4;
+          if (air_conditioning_high_pressure_ok_flag == 0) {
+            air_conditioning_condition_code = 4;
             if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
               protection_event26_condition_code_b = 4;
             }
@@ -72194,8 +72200,8 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
             bVar2 = false;
           }
           if (!bVar2) {
-            if (protection_event26_fuel_qty_high_gate_flag == 0) {
-              protection_event26_condition_code = 5;
+            if (air_conditioning_low_pressure_ok_flag == 0) {
+              air_conditioning_condition_code = 5;
               if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
                 protection_event26_condition_code_b = 5;
               }
@@ -72206,8 +72212,8 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
               bVar2 = false;
             }
             if (!bVar2) {
-              if (protection_event26_rpm_low_gate_flag == 0) {
-                protection_event26_condition_code = 6;
+              if (air_conditioning_high_engine_speed_ok_flag == 0) {
+                air_conditioning_condition_code = 6;
                 if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
                   protection_event26_condition_code_b = 6;
                 }
@@ -72218,8 +72224,8 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
                 bVar2 = false;
               }
               if (!bVar2) {
-                if (protection_event26_rpm_high_gate_flag == 0) {
-                  protection_event26_condition_code = 7;
+                if (air_conditioning_low_engine_speed_ok_flag == 0) {
+                  air_conditioning_condition_code = 7;
                   if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
                     protection_event26_condition_code_b = 7;
                   }
@@ -72230,8 +72236,8 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
                   bVar2 = false;
                 }
                 if (!bVar2) {
-                  if (protection_event26_coolant_gate_flag == 0) {
-                    protection_event26_condition_code = 8;
+                  if (air_conditioning_coolant_temperature_ok_flag == 0) {
+                    air_conditioning_condition_code = 8;
                     if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
                       protection_event26_condition_code_b = 8;
                     }
@@ -72242,7 +72248,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
                     bVar2 = false;
                   }
                   if ((!bVar2) && (air_conditioning_high_fuel_demand_cutout_done_flag == 0)) {
-                    protection_event26_condition_code = 9;
+                    air_conditioning_condition_code = 9;
                     if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
                       protection_event26_condition_code_b = 9;
                     }
@@ -72256,47 +72262,44 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
       }
     }
   }
-  if ((protection_event26_coolant_gate_flag == 0) &&
+  if ((air_conditioning_coolant_temperature_ok_flag == 0) &&
      ((air_conditioning_clutch_request_byte & 0x40) != 0)) {
     protection_coolant_classb_active_flag = 1;
   }
   if (j1939_tsc1_override_state.etc1_spn574_shift_in_process == 0) {
-    protection_event26_tsc1_shift_debounce_count = 0;
+    air_conditioning_shift_hold_off_count = 0;
   }
   else {
-    if (protection_event26_tsc1_shift_debounce_count != 0xffff) {
-      protection_event26_tsc1_shift_debounce_count =
-           protection_event26_tsc1_shift_debounce_count + 1;
+    if (air_conditioning_shift_hold_off_count != 0xffff) {
+      air_conditioning_shift_hold_off_count = air_conditioning_shift_hold_off_count + 1;
     }
-    if (((protection_event26_tsc1_shift_debounce_count < shift_in_process_hold_off_time_limit) &&
-        (bVar3)) && ((air_conditioning_clutch_request_byte & 0x40) == 0)) {
+    if (((air_conditioning_shift_hold_off_count < shift_in_process_hold_off_time_limit) && (bVar3))
+       && ((air_conditioning_clutch_request_byte & 0x40) == 0)) {
       bVar3 = false;
-      protection_event26_condition_code = 10;
+      air_conditioning_condition_code = 10;
     }
-    else if (((protection_event26_tsc1_shift_debounce_count < shift_in_process_hold_off_time_limit)
-             && ((!bVar4 || (air_conditioning_high_fuel_demand_cutout_done_flag == 0)))) &&
+    else if (((air_conditioning_shift_hold_off_count < shift_in_process_hold_off_time_limit) &&
+             ((!bVar4 || (air_conditioning_high_fuel_demand_cutout_done_flag == 0)))) &&
             ((air_conditioning_clutch_request_byte & 0x40) != 0)) {
       bVar3 = true;
-      protection_event26_condition_code = 0xb;
+      air_conditioning_condition_code = 0xb;
     }
   }
-  if (protection_event26_post_fault_holdoff_count_a < air_conditioning_cycle_on_time) {
-    protection_event26_post_fault_holdoff_count_a =
-         protection_event26_post_fault_holdoff_count_a + 1;
+  if (air_conditioning_cycle_on_count < air_conditioning_cycle_on_time) {
+    air_conditioning_cycle_on_count = air_conditioning_cycle_on_count + 1;
   }
   if ((((air_conditioning_clutch_request_byte & 0x40) == 0) && (bVar3)) &&
-     (protection_event26_post_fault_holdoff_count_a < air_conditioning_cycle_on_time)) {
+     (air_conditioning_cycle_on_count < air_conditioning_cycle_on_time)) {
     bVar3 = false;
-    protection_event26_condition_code = 0xc;
+    air_conditioning_condition_code = 0xc;
   }
-  if (protection_event26_post_fault_holdoff_count_b < air_conditioning_cycle_off_time) {
-    protection_event26_post_fault_holdoff_count_b =
-         protection_event26_post_fault_holdoff_count_b + 1;
+  if (air_conditioning_cycle_off_count < air_conditioning_cycle_off_time) {
+    air_conditioning_cycle_off_count = air_conditioning_cycle_off_count + 1;
   }
   if ((((air_conditioning_clutch_request_byte & 0x40) == 0) && (bVar3)) &&
-     (protection_event26_post_fault_holdoff_count_b < air_conditioning_cycle_off_time)) {
+     (air_conditioning_cycle_off_count < air_conditioning_cycle_off_time)) {
     bVar3 = false;
-    protection_event26_condition_code = 0xd;
+    air_conditioning_condition_code = 0xd;
   }
   if (bVar3) {
     cm848_setLogicalOutputRequest(0x26,0);
@@ -72304,15 +72307,15 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   else {
     cm848_clearLogicalOutputRequest(0x26,0);
   }
-  if ((protection_event26_classb_enable_prev == 0) &&
+  if ((air_conditioning_clutch_request_bit_6_previous == 0) &&
      ((air_conditioning_clutch_request_byte & 0x40) != 0)) {
-    protection_event26_post_fault_holdoff_count_a = 0;
+    air_conditioning_cycle_on_count = 0;
   }
-  if ((protection_event26_classb_enable_prev != 0) &&
+  if ((air_conditioning_clutch_request_bit_6_previous != 0) &&
      ((air_conditioning_clutch_request_byte & 0x40) == 0)) {
-    protection_event26_post_fault_holdoff_count_b = 0;
+    air_conditioning_cycle_off_count = 0;
   }
-  protection_event26_classb_enable_prev = air_conditioning_clutch_request_byte & 0x40;
+  air_conditioning_clutch_request_bit_6_previous = air_conditioning_clutch_request_byte & 0x40;
   return;
 }
 
@@ -76224,9 +76227,10 @@ LAB_00517e34:
 //
 
 /* grid heater control top level gated by governor_fuel_feature_flags bit 0 - advances control state
-   from engine_state then dispatches the preheat / run-up / postheat / shutdown handlers (they drive
-   relays 43/44) - its own relay tail is dead code (was battery_voltage_protection_control) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   from engine_state then dispatches the preheat / crank / postheat / off phase handlers (e2m 8A35
+   +2 IAH_Phase) (they drive relays 43/44) - its own relay tail is dead code (was
+   battery_voltage_protection_control) | review-function-readability reviewed 2026-11-13 -
+   Readability Medium Accuracy Confidence High */
 
 void cm848_updateIntakeAirHeaterControl(void)
 
@@ -84508,10 +84512,14 @@ void cm848_initializeEngineRetarderCruisePermissionFilter(void)
 
 
 //
-// Function: governor_cruise_setpoint_calc @ 0x0052470c
+// Function: cm848_selectCruiseControlGainZone @ 0x0052470c
 //
 
-void governor_cruise_setpoint_calc(int param_1)
+/* Computes the cruise droop speed error delta and picks the cruise gain zone
+   (cruise_speed_zone_code, with hysteresis on the zone thresholds) and its PID gains into
+   cruise_pid_kp / ki / kd / rate gain working (was governor_cruise_setpoint_calc) */
+
+void cm848_selectCruiseControlGainZone(int param_1)
 
 {
   uint uVar1;
@@ -84776,10 +84784,14 @@ uint governor_cruise_rampScale_calc(int param_1,uint param_2,uint param_3)
 
 
 //
-// Function: governorCruiseStateMachine @ 0x00524df4
+// Function: cm848_initializeCruiseControlDroopGains @ 0x00524df4
 //
 
-void governorCruiseStateMachine(void)
+/* Boot pass (cm848_applicationMain): the power-up cruise and road speed governor droop gains and
+   offsets (e2m 1187), the zone code and the deadband / zone transition flags (was
+   governorCruiseStateMachine) */
+
+void cm848_initializeCruiseControlDroopGains(void)
 
 {
   word wVar1;
@@ -84866,9 +84878,9 @@ void governorCruiseStateMachine(void)
    100 >> 7) x cruise_pid_rate_gain_scale_multiplier >> 10, capped at
    cruise_pid_rate_gain_scale_upper_limit (4900). governor_cruise_speedError_torqueAdj multiplies
    the cruise speed error x cruise_pid_rate_gain_working / 1000 by it (>> 7, clamped to +-10000) and
-   protectionOutputActuatorControl does the same to its rate term. Called from
-   protectionRampRateControl and protectionOutputActuatorControl. (was
-   governor_cruise_torqueLimit_calc) */
+   cm848_runCruiseAndVehicleSpeedLimitGovernor does the same to its rate term. Called from
+   cm848_presetCruiseAndVehicleSpeedLimitGovernor and cm848_runCruiseAndVehicleSpeedLimitGovernor.
+   (was governor_cruise_torqueLimit_calc) */
 
 void cm848_calculateCruisePidRateGainScale(void)
 
@@ -84924,12 +84936,17 @@ int governor_cruise_speedError_torqueAdj(void)
 
 
 //
-// Function: protectionRampRateControl @ 0x005251e4
+// Function: cm848_presetCruiseAndVehicleSpeedLimitGovernor @ 0x005251e4
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The bumpless start of the cruise / vehicle speed limit governor (also from
+   cm848_arbitrateGovernedFueling): selects the gain zone (cm848_selectCruiseControlGainZone), sets
+   the ramp target and reference speed (the vehicle speed limit in state 10, else the cruise command
+   or the vehicle speed plus the droop error delta), the clamped speed error, and presets the
+   integrator from the present fueling (was protectionRampRateControl) */
 
-void protectionRampRateControl(void)
+void cm848_presetCruiseAndVehicleSpeedLimitGovernor(void)
 
 {
   word wVar1;
@@ -84943,7 +84960,7 @@ void protectionRampRateControl(void)
   undefined4 local_10;
   
   cruise_ramp_rate_control_called_flag = 1;
-  governor_cruise_setpoint_calc(cruise_fuel_demand_ema);
+  cm848_selectCruiseControlGainZone(cruise_fuel_demand_ema);
   wVar5 = vehicle_speed_rise_limited;
   iVar4 = (int)(short)adjusted_user_fueling_state;
   iVar7 = (int)(short)vehicle_speed_rise_limited;
@@ -85042,12 +85059,18 @@ LAB_005254b0:
 
 
 //
-// Function: protectionOutputActuatorControl @ 0x00525504
+// Function: cm848_runCruiseAndVehicleSpeedLimitGovernor @ 0x00525504
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The cruise control / vehicle speed limit (road speed governor) PID, run every pass from
+   cm848_periodicTaskSet_outputs: the reference and ramp target speeds, the speed error and its rate
+   term, the proportional and integral (Q16) terms, the fuel demand delta into
+   adjusted_user_fueling, the stable-speed and rate-correction timers; it presets the governor
+   (cm848_presetCruiseAndVehicleSpeedLimitGovernor) when needed (was
+   protectionOutputActuatorControl) */
 
-void protectionOutputActuatorControl(void)
+void cm848_runCruiseAndVehicleSpeedLimitGovernor(void)
 
 {
   FUELING_STATE FVar1;
@@ -85122,7 +85145,7 @@ LAB_00525668:
   if ((adjusted_user_fueling_state != FUELING_STATE_CRUISE_CONTROL) &&
      (adjusted_user_fueling_state != FUELING_STATE_VEHICLE_SPEED_LIMIT)) goto LAB_00525db0;
   if (cruise_confirm_flag_a == 1) {
-    protectionRampRateControl();
+    cm848_presetCruiseAndVehicleSpeedLimitGovernor();
     goto LAB_00525db0;
   }
   cm848_calculateCruisePidRateGainScale();
@@ -85146,7 +85169,7 @@ LAB_005257a0:
         (cruise_control_state != CRUISE_ACCELERATE)) ||
        ((cruise_control_state_prev == CRUISE_DECELERATE &&
         (cruise_control_state != CRUISE_DECELERATE)))) {
-      protectionRampRateControl();
+      cm848_presetCruiseAndVehicleSpeedLimitGovernor();
     }
   }
   else {
@@ -85160,7 +85183,7 @@ LAB_005257a0:
      governor_cruise_speed_error_working < cruise_speed_error_clamp_min)) {
     governor_cruise_speed_error_working = sVar13;
   }
-  governor_cruise_setpoint_calc(cruise_fuel_demand_ema);
+  cm848_selectCruiseControlGainZone(cruise_fuel_demand_ema);
   if ((int)governor_cruise_speed_error_working < (short)cruise_droop_speed_error_delta + 0xa00) {
     if ((short)cruise_droop_speed_error_delta + -0xa00 < (int)governor_cruise_speed_error_working) {
       governor_cruise_speed_error_net =

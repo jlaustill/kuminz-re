@@ -1568,7 +1568,7 @@ void sensorChannelTypeB_configInit_axis4(void);  // @ 0x00510d04
 void sensorChannelTypeB_update_axis4(void);  // @ 0x00510d90
 void sensorChannelTypeA_configInit_axis5(void);  // @ 0x00510e1c
 void sensorChannelTypeA_update_axis5(void);  // @ 0x00510ea8
-void protection_exception_event_26_init(void);  // @ 0x00510f34
+void cm848_initializeAirConditioningClutchControl(void);  // @ 0x00510f34
 void cm848_controlAirConditioningClutchForBrTruck(void);  // @ 0x00510fa0
 void cm848_controlAirConditioningClutchForDrTruck(void);  // @ 0x00511078
 void cm848_controlAirConditioningClutch(void);  // @ 0x005118f8
@@ -1783,16 +1783,16 @@ void cm848_verifyCalibrationAndCodeCrc(void);  // @ 0x00524360
 void cm848_calculateEngineRetarderCruisePermissionPercent(void);  // @ 0x00524594
 void cm848_limitEngineRetarderPercentToCruisePermission(void);  // @ 0x005246b0
 void cm848_initializeEngineRetarderCruisePermissionFilter(void);  // @ 0x005246e0
-void governor_cruise_setpoint_calc(int param_1);  // @ 0x0052470c
+void cm848_selectCruiseControlGainZone(int param_1);  // @ 0x0052470c
 void governor_cruise_speedReference_update(void);  // @ 0x00524aec
 undefined2 governor_cruise_rampRate_calc(int param_1,int param_2);  // @ 0x00524c6c
 uint governor_cruise_tableLimit_calc (int param_1,word *param_2,word param_3,word *param_4,word param_5,word *param_6, word *param_7,dword param_8);  // @ 0x00524d34
 uint governor_cruise_rampScale_calc(int param_1,uint param_2,uint param_3);  // @ 0x00524dd0
-void governorCruiseStateMachine(void);  // @ 0x00524df4
+void cm848_initializeCruiseControlDroopGains(void);  // @ 0x00524df4
 void cm848_calculateCruisePidRateGainScale(void);  // @ 0x005250c0
 int governor_cruise_speedError_torqueAdj(void);  // @ 0x00525134
-void protectionRampRateControl(void);  // @ 0x005251e4
-void protectionOutputActuatorControl(void);  // @ 0x00525504
+void cm848_presetCruiseAndVehicleSpeedLimitGovernor(void);  // @ 0x005251e4
+void cm848_runCruiseAndVehicleSpeedLimitGovernor(void);  // @ 0x00525504
 void initCruiseConfirmFlags(void);  // @ 0x00525de4
 void cm848_updateDrivetrainRatio(void);  // @ 0x00525e54
 void initGovernorJ1939Bypass(void);  // @ 0x005263a8

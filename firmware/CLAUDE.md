@@ -763,7 +763,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     `check_enum_proof.py`) finds any OR render after an enum change.
   - The dword at 0x3fb526 was two words: `governor_fuel_demand_working_mode_prev` (`sth` @ 0x40474) and
     `cruise_resume_active_flag_previous` (`lhz` @ 0x4064c / `sth` @ 0x406b8).
-  - The `(int)(short)` temporary compare in `protectionRampRateControl` still renders as a number.
+  - The `(int)(short)` temporary compare in `cm848_presetCruiseAndVehicleSpeedLimitGovernor` still renders as a number.
   - **The arbitration functions (stage 3, renamed from `*Protection*` names):**
     - user fueling: `cm848_selectPowerTakeOffOrUserFueling`, then `cm848_calculateCruiseControlFueling` /
       `cm848_selectCruiseOrUserFueling`;
