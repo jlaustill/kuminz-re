@@ -9,7 +9,7 @@ function_address,function_name,old_name,new_name,type,comment
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,sVar4,delayed_egr_mass_flow,sword,The EGR mass flow before delay from egr_flow_delay_milliseconds / 10 passes back (cm848_delaySignedSample)
 0x000128a0,cm848_calculateDelayedEgrFlowAndFraction,uVar5,volumetric_efficiency_speed_product,uint,engine_volumetric_efficiency x engine speed >> 13 limited to 1600 .. 0xffff: the divisor of the oxygen delay. Committing this name splits the reused register: its later values (the two delays and the EGR fraction) render as a new uVar1 that no row can name (rows match the auto-names before the commit and uVar1 is the delay_volume_term row)
 0x000539fc,sendJ1939Message,uVar1,message_data_length,ushort,CAN payload byte count; routes single-frame (<9) vs transport protocol (>=9)
-# cm848_lookupJ1939SourceAddressIndex @ 0x00053a4c - Returns 1-3 if SA matches a calibrated address, 4 if unknown
+# cm848_lookupJ1939ControlDevice @ 0x00053a4c - Returns 1-3 if SA matches a calibrated address, 4 if unknown
 0x00053a4c,cm848_lookupJ1939ControlDevice,JVar1,control_device,J1939_CONTROL_DEVICE,the control device the source address maps to (was address_index on wVar1)
 # copyCalibrationToRam @ 0x00000340 - Copies ROM calibration defaults to RAM
 0x00000340,cm848_copyBootKernelToRam,puVar1,src_ptr,undefined4 *,Source pointer (ROM calibration data)

@@ -173,6 +173,37 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   except the two type stages. There the struct stage changed five functions, each only by the intended render, and
   the enum stage changed seven, each only by the enum render.
 
+**Round 6 (the TSC1 / ETC1 lead): the J1939 powertrain control state, from e2m's own Jcomm blocks.**
+- **Stage 0 (47d462a):** deletes two orphan struct definitions over the live TSC1 state. One still laid symbols over
+  two globals, and removing it drops 15 underscore renders (14 + 1; two more were comment text) and 7 overlap
+  warnings.
+- **Stage A (247bebf, label-only, CM550 twin included):**
+  - **The handler pair:** the TSC1 dispatcher routes PGN 0 by destination address. The engine's TSC1 goes to
+    `processEngineTsc1Request` (was `torqueControlModeHandler`, also CM550's 0x2f128), the retarder's to its sibling.
+  - **The three structs:** `j1939_powertrain_control_state` (was `j1939_tsc1_override_state`),
+    `j1939_powertrain_messages_received` (ETC1 + ETC2 + TSC1 bytes; was `j1939_tsc1_received`) and
+    `tsc1_source_configuration_table` (the SA whitelist: 10 entries of data link, source address and per-mode
+    request timeouts / time limits).
+  - **Fields that held something else:** `governor_mode` = the override control mode (SPN 695),
+    `etc1_speed_setpoint` = the requested percent torque, `etc1_torque_limit_value` = the mode 3 speed limit, and
+    `torque_limit_mode_select` = the ETC1 high idle override (SPN 606).
+  - **The ETC1 timers** are named for the e2m 10E7 cals they load.
+- **Stage B1 (2f5eec4): e2m 10E8 is Cummins' "Jcomm" layout of the struct.** It confirms the stage A names (e.g.
+  Jcomm_Engine_Control_Network_Type 0 = J1922 / 1 = J1939) and corrects five: the out of gear network type, the
+  J1939 blocked message bits, the net output torque and the two control device indicators. Every covered field now
+  cites its record.
+- **Stage B2 (4ae5f79): types.**
+  - **Enums:** `TSC1_OVERRIDE_MODE` (SPN 695, now a word), `J1939_CONTROL_DEVICE` (none / transmission / ABS / ASR /
+    unknown) and `CONTROL_NETWORK` (J1922 / J1939), e.g. `engine_control_device_indicator ==
+    J1939_CONTROL_DEVICE_TRANSMISSION`.
+  - **The e2m S fields** are now `short`.
+  - **The source table** is a typed array, so `->retarder_torque_control_request_timeout` replaces
+    `*(short *)(ptr + 0xe)`.
+  - **The ETC2 receive words** are settled from the stores: a word at +0xa (the CSV had a byte, hence `_10_2_`) and
+    the SPN 526 ratio at +0xd.
+  - **Also:** 0x5c39a is the high idle override speed.
+  - **Reverted:** a bitfield. Ghidra rendered its masked writes as a raw piece.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -212,6 +243,14 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
       two `lhz` loads (0xffec / 0xfff0) render as `(ushort)` casts, so 0dea32e's "lha" note is wrong for those two;
   - the closing checks on the 86-row round 5 map: the repo-wide old-name grep (live references fixed, resolved-name
     sections in tasks 022 / 025 / 027 / 042 / 045), the comment sweep and the e2m width check.
+- [x] Round 6:
+  - stage 0's diff is only the underscore renders (0 lines after normalizing the two names);
+  - stages A and B1 are EQUIVALENT on both firmwares (stage A maps one auto-named local, `peVar1` -> `ptVar1`, that
+    follows the type rename);
+  - every B2 change was read diff by diff (31 functions: the enum renders, the dropped casts, the typed table and
+    ETC2 words, and declaration order in three);
+  - the facts were quoted from the instructions (`lha` / `lhz` / `sth` with addresses) and from e2m 10E6 / 10E7 /
+    10E8.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -225,8 +264,7 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
 - **Open after round 5:**
-  - the TSC1 / ETC1 vocabulary: `etc1_message_t` (instance `j1939_tsc1_received`) mixes ETC1 fields with TSC1 ones,
-    and the TSC1 override state uses `etc1_*` names;
+  - the J1939 monitor's session record (e2m 10FE / 10FF / 1100: still etc1_governor-named words);
   - the engine speed module's run-state machine (no e2m value list, so it needs a read);
   - the 48RE governor pressure functions 0x3257c / 0x3241c (their block 8D14 drifts);
   - the fault derate scheduler words and the 11D5 air fuel control rows;

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 03:10:32 MST 2026
+// Generated: Sat Nov 21 03:18:07 MST 2026
 
 
 //
@@ -23491,10 +23491,10 @@ void cm848_j1939ProcessPgn61445Etc2(int param_1)
 
 /* Registers the J1939 ETC2 (PGN 61445 / 0xf005) receive callback cm848_j1939ProcessPgn61445Etc2 and
    primes the ETC2 receive state (clears the previous gear ratio word
-   j1939_powertrain_messages_received.auxiliary_state at 0x3fa98c / sets the ETC2 selected gear to
-   0xff = none). NOT vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler was wrong; ETC2
-   carries gear / gear ratio (was cm848_initJ1939VehicleSpeedHandler) | review-function-readability
-   reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+   j1939_powertrain_messages_received.etc2_actual_gear_ratio_previous at 0x3fa98c / sets the ETC2
+   selected gear to 0xff = none). NOT vehicle speed - prior name cm848_initJ1939VehicleSpeedHandler
+   was wrong; ETC2 carries gear / gear ratio (was cm848_initJ1939VehicleSpeedHandler) |
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
 void cm848_initEtc2Handler(void)
 
@@ -68494,7 +68494,7 @@ void cm848_startJ1939ControlSession(int param_1)
    engine control (TSC1) state j1939_powertrain_control_state.tsc1_override_control_mode /
    tsc1_controlling_data_link / tsc1_controlling_source_address and the retarder control state
    engine_retarder_override_control_mode / engine_retarder_controlling_source_address with the
-   values kept in the *_transition_snapshot words
+   values kept in the j1939_monitor_engine_*_previous words
    (j1939_monitor_engine_override_control_mode_previous and so on). When a control starts it opens a
    session record (cm848_startJ1939ControlSession at 0x50beec; e2m 10FE J1939_Active_Engine at
    0x3feb50 and 10FF J1939_Active_Retarder at 0x3feb6a). While the same source keeps controlling it

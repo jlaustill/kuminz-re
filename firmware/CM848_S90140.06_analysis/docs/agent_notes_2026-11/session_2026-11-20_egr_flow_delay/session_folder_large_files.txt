@@ -27,6 +27,13 @@
   200779 build_r5e.log
   200800 build_r5f.log
   200802 build_r5g.log
+  200800 build_r6a.log
+  104465 build_r6a_cm550.log
+  200793 build_r6b1.log
+  200801 build_r6b2.log
+  200711 build_r6b2b.log
+  200799 build_r6_0.log
+  200794 build_r6_0b.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -34,3 +41,4 @@
   401745 verify4.log
   401750 verify5.log
   401915 verify_round5.log
+  401736 verify_round6.log

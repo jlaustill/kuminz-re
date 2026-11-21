@@ -157,3 +157,21 @@ The user's second "keep going". No agents.
   - The piece census, `grep_old_names.py` over `map_r5_all.csv`, and `append_resolved_r5.py` for the task files.
 - **Commit messages:** `commit_r5*.txt`.
 - **Logs:** the round 5 build logs (`build_r5*.log`, with the CM550 build `build_r5a_cm550.log`) and `verify_round5.log` are in `session_folder_large_files.tar.xz` (added by `round5/update_large_tar_r5.sh`).
+
+## Round 6: the TSC1 / ETC1 / Jcomm vocabulary (`session_folder/round6/`)
+
+The round 5 lead, as hand work.
+- **Stage 0:** the two orphan struct definitions were deleted, proved with `diff_underscore_fix.py`.
+- **Stage A, label-only on both firmwares:** `worklist_r6a.py` for the globals and functions,
+  `gate_r6a_shared_cm848.jsonl` / `gate_r6a_shared_cm550.jsonl` for the shared handler (`apply_renames.py` directly:
+  the worklist gate wants a prefix, and CM550 has no arrays.csv), then `apply_r6a_structs.py` for the types, fields,
+  label and comment refresh. `rename_alias_rows_r6a.py` and `fix_headers_r6a.py` cover the dotted per-field alias
+  rows and the `#` headers. The maps are `map_r6a.csv`, `map_r6a_cm550.csv` and `map_r6a_proof.csv`, which adds the
+  auto-named local `ptVar1` and shows 0 changed functions.
+- **Stage B1, label-only:** `worklist_r6b1.py` plus `apply_r6b1_fields.py`, from e2m blocks 10E8 / 10E6.
+- **Stage B2, the types:** `apply_r6b2_types.py`, with every fact quoted in its docstring, then `apply_r6b2_fixes.py`
+  after the first build: the bitfield revert, the lookup's local and the monitor copies. Each changed function was
+  read with `fn_code_diff.py`.
+- **Closing:** `fix_comments_r6c.py`, `append_resolved_r6.py` and `memory_edits_r6.py`, which updates the private
+  memory notes.
+- **Commit messages:** `commit_r6*.txt`. The logs go into the large-files tarball.

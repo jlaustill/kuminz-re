@@ -251,7 +251,7 @@ The round 5 lead. Read in full: the TSC1 handler, the ETC1 handler, cm848_runTsc
 source lookup and the TSC1 dispatcher (scripts in `session_folder/round6/`).
 - **Stage 0 (47d462a): two orphan struct definitions deleted.** `etc1_state_t` (0x40ae00) and `governor_control_t`
   (0x40adf4) both overlapped the live instance at 0x40adf8. `governor_control_t` still laid symbols over
-  `j1939_governor_source_index` and the cached control byte (16 + 1 underscore renders, 7 overlap warnings); deleting
+  `j1939_governor_source_index` and the cached control byte (14 + 1 underscore renders in code, 7 overlap warnings); deleting
   it fixed them and nothing else changed.
 - **Stage A: label-only, CM550 twin included.**
   - **The handler pair:** the dispatcher (now `cm848_dispatchTsc1ByDestinationAddress`) routes PGN 0 by destination
