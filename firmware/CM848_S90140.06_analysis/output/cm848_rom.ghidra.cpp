@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 14:15:20 MST 2026
+// Generated: Sat Nov 21 14:20:15 MST 2026
 
 
 //
@@ -20363,9 +20363,9 @@ void cm848_initFaultSeverityTables(void)
 
 {
   fuel_demand_threshold_cached_axis_offset = 2;
-  fuel_demand_threshold_interp_state_y = 2;
+  fuel_demand_threshold_cached_axis_offset_y = 2;
   governor_fuel_demand_cached_axis_offset = 2;
-  governor_fuel_demand_interp_state_y = 2;
+  governor_fuel_demand_cached_axis_offset_y = 2;
   friction_fuel_by_engine_speed_cached_axis_offset = 2;
   coolant_temperature_cached_axis_offsets[0] = 2;
   cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints();
@@ -27910,7 +27910,8 @@ void cm848_updateSpeedLimitFromCoolant(void)
   if (governor_speed_limit_hysteresis_cal == 0) {
     governor_speed_limit_cal =
          lookupTableInterpolation
-                   (&governor_interp_table_state_a,sensor_readings_t_0040baf2.coolant_temp,
+                   (&governor_speed_limit_by_coolant_temperature_cached_axis_offset,
+                    sensor_readings_t_0040baf2.coolant_temp,
                     governor_speed_limit_by_coolant_temperature_axis,
                     governor_speed_limit_by_coolant_temperature_values,1);
   }
@@ -28044,8 +28045,9 @@ void cm848_calculateProtectionSpeedLimits(void)
   }
   if (governor_iat_correction_enable_cal == 0) {
     uVar2 = lookupTableInterpolation
-                      (&governor_interp_table_state_c,sensor_readings_t_0040baf2.barometric_pressure
-                       ,governor_idle_speed_by_barometric_pressure_axis,
+                      (&governor_idle_speed_by_barometric_pressure_cached_axis_offset,
+                       sensor_readings_t_0040baf2.barometric_pressure,
+                       governor_idle_speed_by_barometric_pressure_axis,
                        governor_idle_speed_by_barometric_pressure_values,0);
   }
   else {
@@ -28123,7 +28125,7 @@ void cm848_calculateProtectionSpeedLimits(void)
   if (((switch_input_state_bits[1] & 8) == 0) && ((switch_input_state_bits[0] & 4) == 0)) {
     governor_speed_limit_dynamic =
          lookupTableInterpolation
-                   (&governor_interp_table_state_d,vehicle_speed,
+                   (&governor_minimum_speed_by_vehicle_speed_cached_axis_offset,vehicle_speed,
                     governor_minimum_speed_by_vehicle_speed_axis,
                     governor_minimum_speed_by_vehicle_speed_table,0);
   }
@@ -28337,9 +28339,9 @@ void cm848_calculateGovernorCompensation(void)
 void cm848_initGovernorStateVariables(void)
 
 {
-  governor_interp_table_state_a = 2;
-  governor_interp_table_state_c = 2;
-  governor_interp_table_state_d = 2;
+  governor_speed_limit_by_coolant_temperature_cached_axis_offset = 2;
+  governor_idle_speed_by_barometric_pressure_cached_axis_offset = 2;
+  governor_minimum_speed_by_vehicle_speed_cached_axis_offset = 2;
   governor_speed_disengage_timer = 0;
   governor_speed_limit_count = 0;
   governor_speed_engage_timer = 0;
@@ -28441,8 +28443,8 @@ void cm848_initFuelDemandFilterDimensions(void)
 void cm848_initProtectionFilterAccumulators(void)
 
 {
-  injection_timing_interp_state_a = 2;
-  injection_timing_interp_state_b = 2;
+  injection_timing_demand_floor_cached_axis_offset_y = 2;
+  injection_timing_demand_floor_cached_axis_offset = 2;
   injection_timing_pid_init_flag = 0;
   injection_timing_demand_floor = 0;
   return;
@@ -28463,9 +28465,9 @@ void cm848_processEngineConfigSpeedControl(void)
     x_input = cm848_calculateBoostPressure();
     injection_timing_demand_floor =
          cm848_dualAxisTableInterpolation
-                   (&injection_timing_interp_state_b,x_input,injection_timing_demand_floor_x_axis,
-                    engine_speed_state.filtered_engine_speed,injection_timing_demand_floor_y_axis,
-                    injection_timing_demand_floor_grid,4);
+                   (&injection_timing_demand_floor_cached_axis_offset,x_input,
+                    injection_timing_demand_floor_x_axis,engine_speed_state.filtered_engine_speed,
+                    injection_timing_demand_floor_y_axis,injection_timing_demand_floor_grid,4);
   }
   return;
 }
@@ -35600,7 +35602,7 @@ void cm848_updateTransmissionLimpHomeFlags(void)
   
   if ((((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x800) == 0) &&
       ((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x1000) == 0)) &&
-     (governor_pressure_rationality_monitor_state != 3)) {
+     (governor_pressure_rationality_monitor_state != DIAGNOSTIC_MONITOR_STATE_FAILED)) {
     transmission_control_flags.limp_home_flags_3 =
          transmission_control_flags.limp_home_flags_3 & 0xfe;
   }
@@ -41876,7 +41878,7 @@ void mpc555_initQsmcmQspiModule(void)
 void cm848_initializeTransmissionOutputSpeedSensorMonitor(void)
 
 {
-  output_speed_sensor_check_state = 0;
+  output_speed_sensor_check_state = DIAGNOSTIC_MONITOR_STATE_NOT_RUN;
   return;
 }
 
@@ -41912,11 +41914,12 @@ void cm848_monitorTransmissionOutputSpeedSensor(void)
         (vehicle_speed_copy <= output_speed_sensor_check_minimum_vehicle_speed)))) {
       output_speed_sensor_check_fault_set_timer = output_speed_sensor_check_fault_set_passes;
       output_speed_sensor_check_fault_heal_timer = output_speed_sensor_check_fault_heal_passes;
-      output_speed_sensor_check_state = 0;
+      output_speed_sensor_check_state = DIAGNOSTIC_MONITOR_STATE_NOT_RUN;
     }
     else {
-      if ((output_speed_sensor_check_state != 3) && (output_speed_sensor_check_state != 2)) {
-        output_speed_sensor_check_state = 1;
+      if ((output_speed_sensor_check_state != DIAGNOSTIC_MONITOR_STATE_FAILED) &&
+         (output_speed_sensor_check_state != DIAGNOSTIC_MONITOR_STATE_PASSED)) {
+        output_speed_sensor_check_state = DIAGNOSTIC_MONITOR_STATE_RUNNING;
       }
       if (transmission_output_speed_sensor_filtered < output_speed_sensor_check_minimum_output_speed
          ) {
@@ -41926,7 +41929,7 @@ void cm848_monitorTransmissionOutputSpeedSensor(void)
                system_status_flags_t_003fe974.fault_detected_bits_320_to_335 | 1;
           transmission_control_flags.limp_home_flags_4 =
                transmission_control_flags.limp_home_flags_4 | 0x20;
-          output_speed_sensor_check_state = 3;
+          output_speed_sensor_check_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
         }
         else {
           output_speed_sensor_check_fault_set_timer = output_speed_sensor_check_fault_set_timer - 1;
@@ -41940,7 +41943,7 @@ void cm848_monitorTransmissionOutputSpeedSensor(void)
           fault_registered_bits_320_to_335 = fault_registered_bits_320_to_335 & 0xfffe;
           transmission_control_flags.limp_home_flags_4 =
                transmission_control_flags.limp_home_flags_4 & 0xdf;
-          output_speed_sensor_check_state = 2;
+          output_speed_sensor_check_state = DIAGNOSTIC_MONITOR_STATE_PASSED;
         }
         else {
           output_speed_sensor_check_fault_heal_timer =
@@ -41950,7 +41953,7 @@ void cm848_monitorTransmissionOutputSpeedSensor(void)
     }
   }
   else {
-    output_speed_sensor_check_state = 4;
+    output_speed_sensor_check_state = DIAGNOSTIC_MONITOR_STATE_ABORTED;
   }
   return;
 }
@@ -42962,7 +42965,7 @@ void cm848_initializeTorqueManagement(void)
   torque_management_fuel_limit_previous = 0x1700;
   torque_management_fuel_demand_previous = 0x1700;
   torque_management_fuel_table_cached_axis_offset = 2;
-  torque_management_fuel_table_interpolation_state_y = 2;
+  torque_management_fuel_table_cached_axis_offset_y = 2;
   torque_management_exit_ramp_flag = 0;
   torque_management_entry_ramp_flag = 0;
   torque_management_gear_ratio_stage = 3;
@@ -48547,7 +48550,9 @@ LAB_0004800c:
        FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP)) {
       if (fuel_pressure_governor_gain_mode == 0) {
         wVar6 = lookupTableInterpolation
-                          (&engine_sync_init_state_c,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_proportional_small_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_proportional_small_signal_gain_scaling_axis,
                            fuel_pressure_governor_proportional_small_signal_gain_scaling_values,0);
         working_proportional_gains.small_signal_gain =
@@ -48555,7 +48560,9 @@ LAB_0004800c:
                    (ulonglong)(uint)wVar6 >> 0x20) << 0x14 |
              fuel_pressure_governor_proportional_gains.small_signal_gain * wVar6 >> 0xc;
         wVar6 = lookupTableInterpolation
-                          (&engine_sync_init_state_d,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_axis
                            ,
                            fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_values
@@ -48565,7 +48572,9 @@ LAB_0004800c:
                    (ulonglong)(uint)wVar6 >> 0x20) << 0x14 |
              fuel_pressure_governor_proportional_gains.positive_large_signal_gain * wVar6 >> 0xc;
         wVar6 = lookupTableInterpolation
-                          (&engine_sync_init_state_e,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_axis
                            ,
                            fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_values
@@ -48579,7 +48588,9 @@ LAB_0004800c:
         working_proportional_gains.negative_window_width =
              fuel_pressure_governor_proportional_gains.negative_window_width;
         wVar6 = lookupTableInterpolation
-                          (&engine_sync_init_state_f,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_integral_small_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_integral_small_signal_gain_scaling_axis,
                            fuel_pressure_governor_integral_small_signal_gain_scaling_values,0);
         working_integral_gains.small_signal_gain =
@@ -48587,7 +48598,9 @@ LAB_0004800c:
                    (ulonglong)(uint)wVar6 >> 0x20) << 0x14 |
              fuel_pressure_governor_integral_gains.small_signal_gain * wVar6 >> 0xc;
         wVar6 = lookupTableInterpolation
-                          (&engine_sync_init_state_g,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_integral_positive_large_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_integral_positive_large_signal_gain_scaling_axis,
                            fuel_pressure_governor_integral_positive_large_signal_gain_scaling_values
                            ,0);
@@ -48596,7 +48609,9 @@ LAB_0004800c:
                    (ulonglong)(uint)wVar6 >> 0x20) << 0x14 |
              fuel_pressure_governor_integral_gains.positive_large_signal_gain * wVar6 >> 0xc;
         wVar6 = lookupTableInterpolation
-                          (&engine_sync_init_state_h,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_integral_negative_large_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_integral_negative_large_signal_gain_scaling_axis,
                            fuel_pressure_governor_integral_negative_large_signal_gain_scaling_values
                            ,0);
@@ -48609,7 +48624,9 @@ LAB_0004800c:
         working_integral_gains.negative_window_width =
              fuel_pressure_governor_integral_gains.negative_window_width;
         wVar6 = lookupTableInterpolation
-                          (&engine_sync_init_state_i,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_derivative_filter_coefficient_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_derivative_filter_coefficient_scaling_axis,
                            fuel_pressure_governor_derivative_filter_coefficient_scaling_values,0);
         working_derivative_gains.filter_coefficient =
@@ -48671,9 +48688,9 @@ LAB_0004800c:
         stack0xffffffcc =
              CONCAT22(fuel_pressure_governor_derivative_gains.negative_window_width,uStack_32);
         wVar6 = lookupTableInterpolation
-                          (&engine_sync_init_state_m,average_engine_speed,
-                           fuel_pressure_sensor_filter_coefficient_scaling_axis,
-                           fuel_pressure_sensor_filter_coefficient_scaling_values,0);
+                          (&fuel_pressure_sensor_filter_coefficient_scaling_cached_axis_offset,
+                           average_engine_speed,fuel_pressure_sensor_filter_coefficient_scaling_axis
+                           ,fuel_pressure_sensor_filter_coefficient_scaling_values,0);
         awStack_68[0] = (word)((uint)fuel_pressure_sensor_filter_coefficient * (uint)wVar6 >> 0x10);
       }
       else {
@@ -49112,17 +49129,17 @@ void cm848_initializeFuelPressureGovernorState(void)
   fuel_metering_feedback_trim_integrator.fractional_part = 0;
   engine_sync_init_state_a = 2;
   engine_sync_init_state_b = 2;
-  engine_sync_init_state_c = 2;
-  engine_sync_init_state_d = 2;
-  engine_sync_init_state_e = 2;
-  engine_sync_init_state_f = 2;
-  engine_sync_init_state_g = 2;
-  engine_sync_init_state_h = 2;
+  fuel_pressure_governor_proportional_small_signal_gain_scaling_cached_axis_offset = 2;
+  fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_cached_axis_offset = 2;
+  fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_cached_axis_offset = 2;
+  fuel_pressure_governor_integral_small_signal_gain_scaling_cached_axis_offset = 2;
+  fuel_pressure_governor_integral_positive_large_signal_gain_scaling_cached_axis_offset = 2;
+  fuel_pressure_governor_integral_negative_large_signal_gain_scaling_cached_axis_offset = 2;
   engine_sync_init_state_j = 2;
   engine_sync_init_state_k = 2;
   engine_sync_init_state_l = 2;
-  engine_sync_init_state_i = 2;
-  engine_sync_init_state_m = 2;
+  fuel_pressure_governor_derivative_filter_coefficient_scaling_cached_axis_offset = 2;
+  fuel_pressure_sensor_filter_coefficient_scaling_cached_axis_offset = 2;
   engine_sync_init_state_n = 2;
   engine_sync_init_state_o = 2;
   engine_sync_init_state_p = 2;
@@ -50163,21 +50180,21 @@ void cm848_initTimingFilterStates(void)
 
 {
   injection_timing_main_cold_start_cached_axis_offset = 2;
-  injection_timing_main_cold_start_interpolation_state_y = 2;
+  injection_timing_main_cold_start_cached_axis_offset_y = 2;
   injection_timing_main_coolant_factor_cached_axis_offset = 2;
-  injection_timing_main_coolant_factor_interpolation_state_y = 2;
+  injection_timing_main_coolant_factor_cached_axis_offset_y = 2;
   injection_timing_main_intake_temperature_factor_cached_axis_offset = 2;
   injection_timing_main_barometric_pressure_factor_cached_axis_offset = 2;
   injection_timing_main_coolant_angle_cached_axis_offset = 2;
-  injection_timing_main_coolant_angle_interpolation_state_y = 2;
+  injection_timing_main_coolant_angle_cached_axis_offset_y = 2;
   injection_timing_main_intake_temperature_angle_cached_axis_offset = 2;
-  injection_timing_main_intake_temperature_angle_interpolation_state_y = 2;
+  injection_timing_main_intake_temperature_angle_cached_axis_offset_y = 2;
   injection_timing_main_barometric_pressure_angle_cached_axis_offset = 2;
-  injection_timing_main_barometric_pressure_angle_interpolation_state_y = 2;
+  injection_timing_main_barometric_pressure_angle_cached_axis_offset_y = 2;
   injection_timing_main_boost_angle_cached_axis_offset = 2;
-  injection_timing_main_boost_angle_interpolation_state_y = 2;
+  injection_timing_main_boost_angle_cached_axis_offset_y = 2;
   injection_timing_main_boost_factor_cached_axis_offset = 2;
-  injection_timing_main_boost_factor_interpolation_state_y = 2;
+  injection_timing_main_boost_factor_cached_axis_offset_y = 2;
   main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_INITIAL;
   return;
 }
@@ -78299,9 +78316,9 @@ void cm848_monitorGovernorPressureSensorOffset(void)
      ((((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 1) != 0 ||
        (((fault_detected_bits_384_to_399 & 0x80) != 0 ||
         ((fault_detected_bits_384_to_399 & 0x100) != 0)))) ||
-      (governor_pressure_rationality_monitor_state == 4)))) {
+      (governor_pressure_rationality_monitor_state == DIAGNOSTIC_MONITOR_STATE_ABORTED)))) {
     governor_pressure_rationality_cycle_divider = 0;
-    governor_pressure_rationality_monitor_state = 4;
+    governor_pressure_rationality_monitor_state = DIAGNOSTIC_MONITOR_STATE_ABORTED;
     return;
   }
   if ((diagnostic_monitor_complete_bits & 0x1000) != 0) {
@@ -78324,7 +78341,7 @@ void cm848_monitorGovernorPressureSensorOffset(void)
               ((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x8000) == 0))))))))
           && ((governor_pressure_rationality_tested_in_park_neutral_flag == 0 &&
               (monitor_enabling_conditions_met.governor_pressure_sensor_offset != 0)))) {
-    governor_pressure_rationality_monitor_state = 1;
+    governor_pressure_rationality_monitor_state = DIAGNOSTIC_MONITOR_STATE_RUNNING;
     governor_pressure_rationality_timer = governor_pressure_rationality_timer + 1;
     if ((governor_pressure < governor_pressure_rationality_maximum_pressure) &&
        (governor_pressure_rationality_minimum_pressure <= governor_pressure)) {
@@ -78332,7 +78349,7 @@ void cm848_monitorGovernorPressureSensorOffset(void)
            system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0xffdf;
       fault_registered_bits_144_to_159 = fault_registered_bits_144_to_159 & 0xffdf;
       governor_pressure_rationality_fail_count = 0;
-      governor_pressure_rationality_monitor_state = 2;
+      governor_pressure_rationality_monitor_state = DIAGNOSTIC_MONITOR_STATE_PASSED;
     }
     else {
       if (governor_pressure_rationality_timer <= governor_pressure_rationality_maximum_time)
@@ -78343,7 +78360,7 @@ void cm848_monitorGovernorPressureSensorOffset(void)
          ) goto LAB_0051ae7c;
       system_status_flags_t_003fe974.fault_detected_bits_144_to_159 =
            system_status_flags_t_003fe974.fault_detected_bits_144_to_159 | 0x20;
-      governor_pressure_rationality_monitor_state = 3;
+      governor_pressure_rationality_monitor_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
       if ((monitor_pending_readiness_code_cal & 0x1000) != 0) {
         monitor_pending_readiness_code_cal = monitor_pending_readiness_code_cal & 0xffffefff;
         goto LAB_0051ae7c;
@@ -78357,8 +78374,8 @@ void cm848_monitorGovernorPressureSensorOffset(void)
 LAB_0051ae7c:
   if (((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x20) ==
        (fault_previous_bits_144_to_159 & 0x20)) &&
-     ((governor_pressure_rationality_monitor_state == 2 ||
-      (governor_pressure_rationality_monitor_state == 3)))) {
+     ((governor_pressure_rationality_monitor_state == DIAGNOSTIC_MONITOR_STATE_PASSED ||
+      (governor_pressure_rationality_monitor_state == DIAGNOSTIC_MONITOR_STATE_FAILED)))) {
     diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x1000;
   }
   return;
@@ -78378,8 +78395,8 @@ LAB_0051ae7c:
 void cm848_initializeGovernorPressureTrackingMonitor(void)
 
 {
-  governor_pressure_zero_check_state = 0;
-  governor_pressure_mid_range_check_state = 0;
+  governor_pressure_zero_check_state = DIAGNOSTIC_MONITOR_STATE_NOT_RUN;
+  governor_pressure_mid_range_check_state = DIAGNOSTIC_MONITOR_STATE_NOT_RUN;
   _governor_pressure_mid_range_check_fault_reported_flag = 0;
   governor_pressure_tracking_cycle_divider = 0;
   return;
@@ -78432,8 +78449,8 @@ void cm848_monitorGovernorPressureTracking(void)
          ((((system_status_flags_t_003fe974.fault_detected_bits_80_to_95 & 0x800) != 0 ||
            ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 1) != 0)) ||
           ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)))) {
-        governor_pressure_zero_check_state = 4;
-        governor_pressure_mid_range_check_state = 4;
+        governor_pressure_zero_check_state = DIAGNOSTIC_MONITOR_STATE_ABORTED;
+        governor_pressure_mid_range_check_state = DIAGNOSTIC_MONITOR_STATE_ABORTED;
       }
       if ((vehicle_speed != 0) ||
          (governor_pressure_zero_check_target_high_limit < governor_pressure_target)) {
@@ -78442,9 +78459,10 @@ void cm848_monitorGovernorPressureTracking(void)
       if ((((vehicle_speed == 0) &&
            (governor_pressure_target <= governor_pressure_zero_check_target_high_limit)) &&
           (governor_pressure_zero_check_window_tested_flag == 0)) &&
-         (((governor_pressure_zero_check_state == 0 || (governor_pressure_zero_check_state == 1)) ||
-          (governor_pressure_zero_check_state == 3)))) {
-        governor_pressure_zero_check_state = 1;
+         (((governor_pressure_zero_check_state == DIAGNOSTIC_MONITOR_STATE_NOT_RUN ||
+           (governor_pressure_zero_check_state == DIAGNOSTIC_MONITOR_STATE_RUNNING)) ||
+          (governor_pressure_zero_check_state == DIAGNOSTIC_MONITOR_STATE_FAILED)))) {
+        governor_pressure_zero_check_state = DIAGNOSTIC_MONITOR_STATE_RUNNING;
         if ((fault_detected_bits_384_to_399 & 0x100) == 0) {
           if (governor_pressure_zero_check_high_limit < governor_pressure) {
             governor_pressure_zero_check_debounce_count =
@@ -78460,7 +78478,7 @@ void cm848_monitorGovernorPressureTracking(void)
               }
               else {
                 fault_detected_bits_384_to_399 = fault_detected_bits_384_to_399 | 0x80;
-                governor_pressure_zero_check_state = 3;
+                governor_pressure_zero_check_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
                 if ((fault_previous_bits_384_to_399 & 0x80) == 0x80) {
                   diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x10000000;
                   if ((monitor_pending_readiness_code_cal & 0x10000000) == 0) {
@@ -78478,11 +78496,11 @@ void cm848_monitorGovernorPressureTracking(void)
             governor_pressure_zero_check_window_tested_flag = 1;
             fault_detected_bits_384_to_399 = fault_detected_bits_384_to_399 & 0xff7f;
             fault_registered_bits_384_to_399 = fault_registered_bits_384_to_399 & 0xff7f;
-            governor_pressure_zero_check_state = 2;
+            governor_pressure_zero_check_state = DIAGNOSTIC_MONITOR_STATE_PASSED;
           }
         }
         else {
-          governor_pressure_zero_check_state = 4;
+          governor_pressure_zero_check_state = DIAGNOSTIC_MONITOR_STATE_ABORTED;
         }
       }
       if ((governor_pressure_mid_range_check_target_high_limit < governor_pressure_target) ||
@@ -78492,10 +78510,10 @@ void cm848_monitorGovernorPressureTracking(void)
       if ((((governor_pressure_target <= governor_pressure_mid_range_check_target_high_limit) &&
            (governor_pressure_mid_range_check_target_low_limit <= governor_pressure_target)) &&
           (governor_pressure_mid_range_check_window_tested_flag == 0)) &&
-         (((governor_pressure_mid_range_check_state == 0 ||
-           (governor_pressure_mid_range_check_state == 1)) ||
-          (governor_pressure_mid_range_check_state == 3)))) {
-        governor_pressure_mid_range_check_state = 1;
+         (((governor_pressure_mid_range_check_state == DIAGNOSTIC_MONITOR_STATE_NOT_RUN ||
+           (governor_pressure_mid_range_check_state == DIAGNOSTIC_MONITOR_STATE_RUNNING)) ||
+          (governor_pressure_mid_range_check_state == DIAGNOSTIC_MONITOR_STATE_FAILED)))) {
+        governor_pressure_mid_range_check_state = DIAGNOSTIC_MONITOR_STATE_RUNNING;
         if ((fault_detected_bits_384_to_399 & 0x80) == 0) {
           if ((governor_pressure_mid_range_check_high_limit < governor_pressure) ||
              (governor_pressure < governor_pressure_mid_range_check_low_limit)) {
@@ -78512,7 +78530,7 @@ void cm848_monitorGovernorPressureTracking(void)
               }
               else {
                 fault_detected_bits_384_to_399 = fault_detected_bits_384_to_399 | 0x100;
-                governor_pressure_mid_range_check_state = 3;
+                governor_pressure_mid_range_check_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
                 if ((_governor_pressure_mid_range_check_fault_reported_flag == 0) &&
                    ((fault_previous_bits_384_to_399 & 0x100) == 0x100)) {
                   diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x10000000;
@@ -78531,7 +78549,7 @@ void cm848_monitorGovernorPressureTracking(void)
           else {
             fault_detected_bits_384_to_399 = fault_detected_bits_384_to_399 & 0xfeff;
             fault_registered_bits_384_to_399 = fault_registered_bits_384_to_399 & 0xfeff;
-            governor_pressure_mid_range_check_state = 2;
+            governor_pressure_mid_range_check_state = DIAGNOSTIC_MONITOR_STATE_PASSED;
             if ((fault_previous_bits_384_to_399 & 0x100) == 0) {
               monitor_readiness_code_cal = monitor_readiness_code_cal & 0xefffffff;
               diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x10000000;
@@ -78540,7 +78558,7 @@ void cm848_monitorGovernorPressureTracking(void)
           }
         }
         else {
-          governor_pressure_mid_range_check_state = 4;
+          governor_pressure_mid_range_check_state = DIAGNOSTIC_MONITOR_STATE_ABORTED;
         }
       }
     }
@@ -78575,10 +78593,10 @@ void cm848_monitorParkNeutralSwitch(void)
        ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0x100) == 0)))) &&
      (((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0x400) == 0 &&
       (((system_status_flags_t_003fe974.fault_detected_bits_80_to_95 & 0x800) == 0 &&
-       (park_neutral_switch_monitor_state != 4)))))) {
+       (park_neutral_switch_monitor_state != DIAGNOSTIC_MONITOR_STATE_ABORTED)))))) {
     if ((park_neutral_switch_start_check_complete_flag == 0) &&
        (monitor_enabling_conditions_met.park_neutral_switch != 0)) {
-      park_neutral_switch_monitor_state = 1;
+      park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_RUNNING;
       if ((engine_state == ENGINE_STATE_CRANKING) &&
          ((vehicle_speed < park_neutral_switch_start_check_maximum_vehicle_speed &&
           (park_neutral_switch_start_sample_count = park_neutral_switch_start_sample_count + 1,
@@ -78634,27 +78652,27 @@ void cm848_monitorParkNeutralSwitch(void)
        (park_neutral_switch_driving_check_complete_flag == 1)) {
       if ((park_neutral_switch_start_check_failed_flag == 1) ||
          (park_neutral_switch_driving_check_failed_flag == 1)) {
-        park_neutral_switch_monitor_state = 3;
+        park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
         system_status_flags_t_003fe974.fault_detected_bits_144_to_159 =
              system_status_flags_t_003fe974.fault_detected_bits_144_to_159 | 0x10;
         if ((fault_previous_bits_144_to_159 & 0x10) != 0x10) {
-          park_neutral_switch_monitor_state = 3;
+          park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
           return;
         }
         if ((monitor_pending_readiness_code_cal & 0x2000) != 0) {
           monitor_pending_readiness_code_cal = monitor_pending_readiness_code_cal & 0xffffdfff;
           diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x2000;
-          park_neutral_switch_monitor_state = 3;
+          park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
           return;
         }
       }
       else {
-        park_neutral_switch_monitor_state = 2;
+        park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_PASSED;
         system_status_flags_t_003fe974.fault_detected_bits_144_to_159 =
              system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0xffef;
         fault_registered_bits_144_to_159 = fault_registered_bits_144_to_159 & 0xffef;
         if ((fault_previous_bits_144_to_159 & 0x10) != 0) {
-          park_neutral_switch_monitor_state = 2;
+          park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_PASSED;
           return;
         }
       }
@@ -78663,7 +78681,7 @@ void cm848_monitorParkNeutralSwitch(void)
     }
   }
   else {
-    park_neutral_switch_monitor_state = 4;
+    park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_ABORTED;
   }
   return;
 }
@@ -78681,7 +78699,7 @@ void cm848_monitorParkNeutralSwitch(void)
 void cm848_initParkNeutralSwitchMonitor(void)
 
 {
-  park_neutral_switch_monitor_state = 0;
+  park_neutral_switch_monitor_state = DIAGNOSTIC_MONITOR_STATE_NOT_RUN;
   park_neutral_switch_start_check_complete_flag = 0;
   park_neutral_switch_driving_check_complete_flag = 0;
   park_neutral_switch_start_check_delay_count = 0;
@@ -78832,7 +78850,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     converter_clutch_rationality_cycle_divider = 0;
     return;
   }
-  if ((((converter_clutch_rationality_monitor_state == 4) ||
+  if ((((converter_clutch_rationality_monitor_state == DIAGNOSTIC_MONITOR_STATE_ABORTED) ||
        ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0x100) != 0)) ||
       ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0x400) != 0)) ||
      (((((((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x20) != 0 ||
@@ -78861,7 +78879,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
         (((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x200) != 0 ||
          ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 1) != 0)))))))))) {
     converter_clutch_rationality_cycle_divider = 0;
-    converter_clutch_rationality_monitor_state = 4;
+    converter_clutch_rationality_monitor_state = DIAGNOSTIC_MONITOR_STATE_ABORTED;
     return;
   }
   converter_clutch_rationality_previous_throttle = converter_clutch_rationality_last_throttle;
@@ -78895,8 +78913,8 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
   }
   if (((system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 0x8000) ==
        (DAT_003fea62 & 0x8000)) &&
-     ((converter_clutch_rationality_monitor_state == 2 ||
-      (converter_clutch_rationality_monitor_state == 3)))) {
+     ((converter_clutch_rationality_monitor_state == DIAGNOSTIC_MONITOR_STATE_PASSED ||
+      (converter_clutch_rationality_monitor_state == DIAGNOSTIC_MONITOR_STATE_FAILED)))) {
     diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x40000000;
   }
   if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
@@ -78959,7 +78977,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
       converter_clutch_engaged_since_low_speed_flag = 1;
       return;
     }
-    converter_clutch_rationality_monitor_state = 1;
+    converter_clutch_rationality_monitor_state = DIAGNOSTIC_MONITOR_STATE_RUNNING;
     wVar7 = cm848_calculateEngineToOutputSpeedRatio();
     converter_clutch_rationality_ratio = wVar7;
     cm848_calculateConverterClutchRatioDelta();
@@ -79041,7 +79059,7 @@ LAB_0051c1d8:
     converter_clutch_rationality_fail_count = converter_clutch_rationality_fail_count_limit;
     system_status_flags_t_003fe974.fault_detected_bits_304_to_319 =
          system_status_flags_t_003fe974.fault_detected_bits_304_to_319 | 0x8000;
-    converter_clutch_rationality_monitor_state = 3;
+    converter_clutch_rationality_monitor_state = DIAGNOSTIC_MONITOR_STATE_FAILED;
     if ((monitor_readiness_code_cal & 0x40000000) != 0) {
       if ((monitor_pending_readiness_code_cal & 0x40000000) == 0) {
         monitor_readiness_code_cal = monitor_readiness_code_cal & 0xbfffffff;
@@ -79056,7 +79074,7 @@ LAB_0051c1d8:
          system_status_flags_t_003fe974.fault_detected_bits_304_to_319 & 0x7fff;
     fault_registered_bits_304_to_319 = fault_registered_bits_304_to_319 & 0x7fff;
     monitor_readiness_code_cal = monitor_readiness_code_cal & 0xbfffffff;
-    converter_clutch_rationality_monitor_state = 2;
+    converter_clutch_rationality_monitor_state = DIAGNOSTIC_MONITOR_STATE_PASSED;
     return;
   }
   return;

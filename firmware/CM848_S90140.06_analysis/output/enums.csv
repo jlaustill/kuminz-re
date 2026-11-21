@@ -973,3 +973,8 @@ TRANSMISSION_PRESSURE_STATE,21,TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_HOLD,tr
 TRANSMISSION_PRESSURE_STATE,22,TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE,governor_pressure_manual_2nd_curve (RE_Manual_2nd_Curve) with the lever in 1 or 2,2
 TRANSMISSION_PRESSURE_STATE,23,TRANSMISSION_PRESSURE_STATE_OVERRIDE,governor_pressure_override_value (RE_Governor_Set_Override_Value) while governor_pressure_override_enable is set: cm848_selectGovernorPressureLockupBoost,2
 TRANSMISSION_PRESSURE_STATE,24,TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE,"governor_pressure_exhaust_brake_curve with the exhaust brake switch (12) on at light throttle (cm848_selectGovernorPressureBaseCurve); cm848_applyConverterLockupSchedule, cm848_applyConverterUnlockConditions and cm848_determineCurrentGearAndLockupInhibit compare with it",2
+DIAGNOSTIC_MONITOR_STATE,0,DIAGNOSTIC_MONITOR_STATE_NOT_RUN,"e2m NORUN: the monitor has not run (initializers store 0)",2
+DIAGNOSTIC_MONITOR_STATE,1,DIAGNOSTIC_MONITOR_STATE_RUNNING,"e2m RUN: the enable conditions hold and the test is running",2
+DIAGNOSTIC_MONITOR_STATE,2,DIAGNOSTIC_MONITOR_STATE_PASSED,"e2m CMPPS (complete, passed): the monitor cleared its fault",2
+DIAGNOSTIC_MONITOR_STATE,3,DIAGNOSTIC_MONITOR_STATE_FAILED,"e2m CMPFL (complete, failed): the monitor set its fault",2
+DIAGNOSTIC_MONITOR_STATE,4,DIAGNOSTIC_MONITOR_STATE_ABORTED,"e2m ABORT: a related fault or condition stopped the monitor",2
