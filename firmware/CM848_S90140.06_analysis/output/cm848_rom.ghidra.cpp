@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 14:49:50 MST 2026
+// Generated: Sat Nov 21 15:51:51 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_b_pqb0_sample;
-  word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
+  word qadc_b_pqb0_sample;
+  word qadc_b_pqa4_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -7116,7 +7116,7 @@ void cm848_periodicTaskGroup28_calibration10(void)
 void cm848_periodicTaskGroup29_calibration11(void)
 
 {
-  protection_ambient_qualification();
+  cm848_controlLiftPump();
   cm848_checkCoolantTemperatureSensorPerformance();
   cm848_runEgrValvePositionControlDiagnostic();
   cm848_monitorGovernorPressureTracking();
@@ -36011,10 +36011,10 @@ void cm848_processCruiseSwitchChannel(void)
 
 {
   sensorChannelTypeB_configInit
-            (&cruise_switch_sensor_config,&cruise_switch_channel_state,&cruise_switch_interp_index,
-             cruise_switch_adc_band_table_x,cruise_switch_button_code_table_y,0,
-             &cruise_switch_filter_state,0x2f,0x175,0x176,&cruise_switch_value,
-             &cruise_switch_default_value,&cruise_switch_fault_status);
+            (&cruise_switch_sensor_config,&cruise_switch_channel_state,
+             &cruise_switch_ladder_cached_axis_offset,cruise_switch_adc_band_table_x,
+             cruise_switch_button_code_table_y,0,&cruise_switch_filter_state,0x2f,0x175,0x176,
+             &cruise_switch_value,&cruise_switch_default_value,&cruise_switch_fault_status);
   return;
 }
 
@@ -36031,10 +36031,10 @@ void cm848_initCruiseSwitchChannel(void)
 
 {
   sensorChannelTypeB_update
-            (&cruise_switch_sensor_config,&cruise_switch_channel_state,&cruise_switch_interp_index,
-             cruise_switch_adc_band_table_x,cruise_switch_button_code_table_y,0,
-             &cruise_switch_filter_state,0x2f,0x175,0x176,&cruise_switch_value,
-             &cruise_switch_default_value,&cruise_switch_fault_status);
+            (&cruise_switch_sensor_config,&cruise_switch_channel_state,
+             &cruise_switch_ladder_cached_axis_offset,cruise_switch_adc_band_table_x,
+             cruise_switch_button_code_table_y,0,&cruise_switch_filter_state,0x2f,0x175,0x176,
+             &cruise_switch_value,&cruise_switch_default_value,&cruise_switch_fault_status);
   return;
 }
 
@@ -40748,7 +40748,7 @@ void cm848_buildPciTransmitMessage2CruiseControlAndStatusBits(void)
                 pci_transmit_message_2_status_bits._0_1_ & 0xfe,
                 cVar4 << 1 |
                 ((switch_input_state_bits[1] & 8) != 0) << 2 |
-                ((air_conditioning_clutch_request_byte & 0x40) == 0) << 3 |
+                ((logical_output_request_bits_32_to_39 & 0x40) == 0) << 3 |
                 (transmission_park_or_neutral_flag != 1) << 6 |
                 ((short)transmission_type_cal < 1) << 7 |
                 bVar3 | (byte)pci_transmit_message_2_status_bits & 0x30);
@@ -57817,7 +57817,7 @@ void cm848_applicationMain(void)
   cm848_initGovernorStateVariables();
   cm848_initGovernorLookupDimensions();
   cm848_initializeTorqueManagement();
-  protection_exception_event_35_init();
+  cm848_initializeLiftPumpControl();
   cm848_initializeAlternatorFieldControl();
   cm848_resetCylinderCutoutState();
   cm848_initializePilotInjectionQuantityState();
@@ -70327,7 +70327,7 @@ void cm848_initDroopModeStateVariables(void)
    friction_fuel_adjustment_for_coolant_temperature (+4 Coolant_Fuel_Adjustment, table of the
    coolant temperature), friction_fuel_adjustment_for_air_conditioning_clutch (+8
    AC_Fuel_Adjustment, table of engine speed; 0 unless bit 0x40 of
-   air_conditioning_clutch_request_byte is set and the A/C fault bits fault_detected_bits_368_to_383
+   logical_output_request_bits_32_to_39 is set and the A/C fault bits fault_detected_bits_368_to_383
    0x8 / 0x10 are clear), friction_fuel_adjustment_for_radiator_fan (+A Fan_Fuel_Adjustment, grid of
    radiator_fan_speed and engine speed) and friction_fueling (+6 Friction_Fueling, table of engine
    speed). fuel_demand_base_offset is the sum of the four. Caller
@@ -70342,7 +70342,7 @@ void cm848_calculateNoLoadFuel(void)
                  (coolant_temperature_cached_axis_offsets,sensor_readings_t_0040baf2.coolant_temp,
                   friction_fuel_correction_by_coolant_temperature_axis,
                   friction_fuel_correction_by_coolant_temperature_values,1);
-  if ((((air_conditioning_clutch_request_byte & 0x40) == 0) ||
+  if ((((logical_output_request_bits_32_to_39 & 0x40) == 0) ||
       ((fault_detected_bits_368_to_383 & 8) != 0)) || ((fault_detected_bits_368_to_383 & 0x10) != 0)
      ) {
     friction_fuel_adjustment_for_air_conditioning_clutch = 0;
@@ -72634,7 +72634,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   air_conditioning_condition_code = 0xe;
   if ((engine_feature_enable_flags_cal & 8) == 0) {
     air_conditioning_condition_code = 1;
-    if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+    if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
       air_conditioning_condition_code_2 = 1;
     }
     bVar3 = false;
@@ -72646,7 +72646,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   if (!bVar5) {
     if (diag_clear_flags_t_003fedfc._0_2_ == 0) {
       air_conditioning_condition_code = 0xf;
-      if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+      if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
         air_conditioning_condition_code_2 = 0xf;
       }
       bVar3 = false;
@@ -72661,7 +72661,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
       }
       else {
         air_conditioning_condition_code = 2;
-        if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+        if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
           air_conditioning_condition_code_2 = 2;
         }
         bVar3 = false;
@@ -72673,7 +72673,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
         }
         else {
           air_conditioning_condition_code = 3;
-          if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+          if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
             air_conditioning_condition_code_2 = 3;
           }
           bVar3 = false;
@@ -72682,7 +72682,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
         if (!bVar2) {
           if (air_conditioning_high_pressure_ok_flag == 0) {
             air_conditioning_condition_code = 4;
-            if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+            if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
               air_conditioning_condition_code_2 = 4;
             }
             bVar3 = false;
@@ -72694,7 +72694,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
           if (!bVar2) {
             if (air_conditioning_low_pressure_ok_flag == 0) {
               air_conditioning_condition_code = 5;
-              if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+              if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
                 air_conditioning_condition_code_2 = 5;
               }
               bVar3 = false;
@@ -72706,7 +72706,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
             if (!bVar2) {
               if (air_conditioning_high_engine_speed_ok_flag == 0) {
                 air_conditioning_condition_code = 6;
-                if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+                if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
                   air_conditioning_condition_code_2 = 6;
                 }
                 bVar3 = false;
@@ -72718,7 +72718,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
               if (!bVar2) {
                 if (air_conditioning_low_engine_speed_ok_flag == 0) {
                   air_conditioning_condition_code = 7;
-                  if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+                  if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
                     air_conditioning_condition_code_2 = 7;
                   }
                   bVar3 = false;
@@ -72730,7 +72730,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
                 if (!bVar2) {
                   if (air_conditioning_coolant_temperature_ok_flag == 0) {
                     air_conditioning_condition_code = 8;
-                    if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+                    if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
                       air_conditioning_condition_code_2 = 8;
                     }
                     bVar3 = false;
@@ -72741,7 +72741,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
                   }
                   if ((!bVar2) && (air_conditioning_high_fuel_demand_cutout_done_flag == 0)) {
                     air_conditioning_condition_code = 9;
-                    if ((air_conditioning_clutch_request_byte & 0x40) != 0) {
+                    if ((logical_output_request_bits_32_to_39 & 0x40) != 0) {
                       air_conditioning_condition_code_2 = 9;
                     }
                     bVar3 = false;
@@ -72755,7 +72755,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
     }
   }
   if ((air_conditioning_coolant_temperature_ok_flag == 0) &&
-     ((air_conditioning_clutch_request_byte & 0x40) != 0)) {
+     ((logical_output_request_bits_32_to_39 & 0x40) != 0)) {
     protection_coolant_classb_active_flag = 1;
   }
   if (j1939_powertrain_control_state.etc1_spn574_shift_in_process == 0) {
@@ -72766,13 +72766,13 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
       air_conditioning_shift_hold_off_count = air_conditioning_shift_hold_off_count + 1;
     }
     if (((air_conditioning_shift_hold_off_count < shift_in_process_hold_off_time_limit) && (bVar3))
-       && ((air_conditioning_clutch_request_byte & 0x40) == 0)) {
+       && ((logical_output_request_bits_32_to_39 & 0x40) == 0)) {
       bVar3 = false;
       air_conditioning_condition_code = 10;
     }
     else if (((air_conditioning_shift_hold_off_count < shift_in_process_hold_off_time_limit) &&
              ((!bVar4 || (air_conditioning_high_fuel_demand_cutout_done_flag == 0)))) &&
-            ((air_conditioning_clutch_request_byte & 0x40) != 0)) {
+            ((logical_output_request_bits_32_to_39 & 0x40) != 0)) {
       bVar3 = true;
       air_conditioning_condition_code = 0xb;
     }
@@ -72780,7 +72780,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   if (air_conditioning_cycle_on_count < air_conditioning_cycle_on_time) {
     air_conditioning_cycle_on_count = air_conditioning_cycle_on_count + 1;
   }
-  if ((((air_conditioning_clutch_request_byte & 0x40) == 0) && (bVar3)) &&
+  if ((((logical_output_request_bits_32_to_39 & 0x40) == 0) && (bVar3)) &&
      (air_conditioning_cycle_on_count < air_conditioning_cycle_on_time)) {
     bVar3 = false;
     air_conditioning_condition_code = 0xc;
@@ -72788,7 +72788,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   if (air_conditioning_cycle_off_count < air_conditioning_cycle_off_time) {
     air_conditioning_cycle_off_count = air_conditioning_cycle_off_count + 1;
   }
-  if ((((air_conditioning_clutch_request_byte & 0x40) == 0) && (bVar3)) &&
+  if ((((logical_output_request_bits_32_to_39 & 0x40) == 0) && (bVar3)) &&
      (air_conditioning_cycle_off_count < air_conditioning_cycle_off_time)) {
     bVar3 = false;
     air_conditioning_condition_code = 0xd;
@@ -72800,14 +72800,14 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
     cm848_clearLogicalOutputRequest(0x26,0);
   }
   if ((air_conditioning_clutch_request_bit_6_previous == 0) &&
-     ((air_conditioning_clutch_request_byte & 0x40) != 0)) {
+     ((logical_output_request_bits_32_to_39 & 0x40) != 0)) {
     air_conditioning_cycle_on_count = 0;
   }
   if ((air_conditioning_clutch_request_bit_6_previous != 0) &&
-     ((air_conditioning_clutch_request_byte & 0x40) == 0)) {
+     ((logical_output_request_bits_32_to_39 & 0x40) == 0)) {
     air_conditioning_cycle_off_count = 0;
   }
-  air_conditioning_clutch_request_bit_6_previous = air_conditioning_clutch_request_byte & 0x40;
+  air_conditioning_clutch_request_bit_6_previous = logical_output_request_bits_32_to_39 & 0x40;
   return;
 }
 
@@ -77788,14 +77788,18 @@ void cm848_initPciTransmitMessage3State(void)
 
 
 //
-// Function: protection_exception_event_35_init @ 0x00519c84
+// Function: cm848_initializeLiftPumpControl @ 0x00519c84
 //
 
-void protection_exception_event_35_init(void)
+/* Key-on start of the lift pump control: lift_pump_run_reason = 1 (key on),
+   lift_pump_engine_stopped_time = 0 and the lift pump requested (logical output 53), so the pump
+   primes for lift_pump_run_time_after_key_on (was protection_exception_event_35_init) */
+
+void cm848_initializeLiftPumpControl(void)
 
 {
-  protection_event35_crank_cycle_count = 0;
-  protection_event35_qualification_state = 1;
+  lift_pump_engine_stopped_time = 0;
+  lift_pump_run_reason = 1;
   cm848_setLogicalOutputRequest(0x35,0);
   return;
 }
@@ -77803,15 +77807,22 @@ void protection_exception_event_35_init(void)
 
 
 //
-// Function: protection_ambient_qualification @ 0x00519cc4
+// Function: cm848_controlLiftPump @ 0x00519cc4
 //
 
-void protection_ambient_qualification(void)
+/* The lift pump (logical output 53, e2m Lift_Pump_Driver; DRB test 13-33 'FUEL PUMP RELAY /
+   TRANSFER PUMP'). With lift_pump_override_enable set it drives lift_pump_override_state. Otherwise
+   it requests the pump while the engine runs (lift_pump_run_reason 2) or cranks (3), and with the
+   engine stopped it counts lift_pump_engine_stopped_time (0.1 s) and drops the pump after the
+   reason's run time: after key-on (35 s here), after cranking (20 s) or after running (0 s) (was
+   protection_ambient_qualification) */
+
+void cm848_controlLiftPump(void)
 
 {
   word wVar1;
   
-  if (DAT_0040897e == 0) {
+  if (lift_pump_override_enable == 0) {
     if ((engine_state == ENGINE_STATE_RUNNING) || (engine_state == ENGINE_STATE_ENGINE_BRAKE)) {
       wVar1 = 2;
     }
@@ -77819,18 +77830,17 @@ void protection_ambient_qualification(void)
       if (((engine_state != ENGINE_STATE_CRANKING) && (engine_state != ENGINE_STATE_REENTRY)) &&
          (engine_state != ENGINE_STATE_JUMP_START)) {
         if ((engine_state != ENGINE_STATE_SHUTDOWN) && (engine_state != ENGINE_STATE_OVERSPEED)) {
-          if ((engine_state == ENGINE_STATE_STOPPED) &&
-             (protection_event35_crank_cycle_count != 0xffff)) {
-            protection_event35_crank_cycle_count = protection_event35_crank_cycle_count + 1;
+          if ((engine_state == ENGINE_STATE_STOPPED) && (lift_pump_engine_stopped_time != 0xffff)) {
+            lift_pump_engine_stopped_time = lift_pump_engine_stopped_time + 1;
           }
-          if (((protection_event35_qualification_state != 1) ||
-              (protection_event35_crank_cycle_count <= DAT_0040897a)) &&
-             ((protection_event35_qualification_state != 3 ||
-              (protection_event35_crank_cycle_count <= DAT_00408978)))) {
-            if (protection_event35_qualification_state != 2) {
+          if (((lift_pump_run_reason != 1) ||
+              (lift_pump_engine_stopped_time <= lift_pump_run_time_after_key_on)) &&
+             ((lift_pump_run_reason != 3 ||
+              (lift_pump_engine_stopped_time <= lift_pump_run_time_after_cranking)))) {
+            if (lift_pump_run_reason != 2) {
               return;
             }
-            if (protection_event35_crank_cycle_count <= DAT_0040897c) {
+            if (lift_pump_engine_stopped_time <= lift_pump_run_time_after_running) {
               return;
             }
           }
@@ -77840,11 +77850,11 @@ void protection_ambient_qualification(void)
       wVar1 = 3;
     }
     cm848_setLogicalOutputRequest(0x35,0);
-    protection_event35_crank_cycle_count = 0;
-    protection_event35_qualification_state = wVar1;
+    lift_pump_engine_stopped_time = 0;
+    lift_pump_run_reason = wVar1;
   }
   else {
-    if (DAT_00408976 != 0) {
+    if (lift_pump_override_state != 0) {
       cm848_setLogicalOutputRequest(0x35,0);
       return;
     }
@@ -80664,10 +80674,15 @@ void cm848_sciHighSpeedClearWordLatch(void)
 
 
 //
-// Function: FUN_0051dfdc @ 0x0051dfdc
+// Function: cm848_sciPackOutputStatusWord @ 0x0051dfdc
 //
 
-void FUN_0051dfdc(void)
+/* Packs the SCI output status word (sci_output_status_word) from three logical output requests: bit
+   12 = output 4 (wait to start lamp), bit 5 = output 53 (lift pump), bit 6 = output 54
+   (ASIC_FS_Shutoff_Driver). cm848_sciHighSpeedReadTableByte calls it, with
+   cm848_sciPackEventHistoryWords, before each table read */
+
+void cm848_sciPackOutputStatusWord(void)
 
 {
   ushort uVar1;
@@ -80692,7 +80707,7 @@ void FUN_0051dfdc(void)
   else {
     uVar2 = 0x40;
   }
-  DAT_003fcf26 = uVar1 | uVar3 | uVar2;
+  sci_output_status_word = uVar1 | uVar3 | uVar2;
   return;
 }
 
@@ -80746,7 +80761,7 @@ void cm848_sciHighSpeedReadTableByte(uint param_1,uint param_2)
     cm848_sciHighSpeedClearWordLatch();
     return;
   }
-  FUN_0051dfdc();
+  cm848_sciPackOutputStatusWord();
   cm848_sciPackEventHistoryWords();
   if (param_1 != 0xfb) {
     pwVar4 = (word *)cm848_sciHighSpeedLookupTableAddress(param_1,param_2);
@@ -88553,49 +88568,49 @@ void cm848_calculateFuelPressureSetpoint(void)
                      fuel_pressure_setpoint_base_map_grid,4);
   if (combustion_chi_lower_map_number == 1) {
     unaff_r26 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_interpolation_states,average_engine_speed,
+                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_1_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_1_y_axis,fuel_pressure_setpoint_map_1_grid,4);
   }
   else if (combustion_chi_lower_map_number == 2) {
     unaff_r26 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_interpolation_states,average_engine_speed,
+                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_2_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_2_y_axis,fuel_pressure_setpoint_map_2_grid,4);
   }
   else if (combustion_chi_lower_map_number == 3) {
     unaff_r26 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_interpolation_states,average_engine_speed,
+                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_3_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_3_y_axis,fuel_pressure_setpoint_map_3_grid,4);
   }
   else if (combustion_chi_lower_map_number == 4) {
     unaff_r26 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_interpolation_states,average_engine_speed,
+                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_4_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_4_y_axis,fuel_pressure_setpoint_map_4_grid,4);
   }
   if (combustion_chi_upper_map_number == 1) {
     unaff_r21 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_interpolation_states,average_engine_speed,
+                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_1_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_1_y_axis,fuel_pressure_setpoint_map_1_grid,4);
   }
   else if (combustion_chi_upper_map_number == 2) {
     unaff_r21 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_interpolation_states,average_engine_speed,
+                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_2_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_2_y_axis,fuel_pressure_setpoint_map_2_grid,4);
   }
   else if (combustion_chi_upper_map_number == 3) {
     unaff_r21 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_interpolation_states,average_engine_speed,
+                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_3_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_3_y_axis,fuel_pressure_setpoint_map_3_grid,4);
   }
   else if (combustion_chi_upper_map_number == 4) {
     unaff_r21 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_interpolation_states,average_engine_speed,
+                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_4_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_4_y_axis,fuel_pressure_setpoint_map_4_grid,4);
   }
@@ -88829,7 +88844,7 @@ void cm848_initializeFuelPressureSetpointState(void)
 {
   fuel_pressure_setpoint_transition_state = 1;
   fuel_pressure_setpoint_winning_term_code = 1;
-  fuel_pressure_setpoint_interpolation_states = 2;
+  fuel_pressure_setpoint_map_cached_axis_offsets = 2;
   DAT_003fd0cc = 2;
   DAT_003fd0ce = 2;
   DAT_003fd0d0 = 2;
@@ -92503,7 +92518,7 @@ LAB_00530f24:
     fuel_pressure_sensor_plausibility_fuel_addend = 0;
   }
   if (uVar4 < uVar6) goto LAB_00531098;
-  if (((air_conditioning_clutch_request_byte & 0x40) == 0) &&
+  if (((logical_output_request_bits_32_to_39 & 0x40) == 0) &&
      (alternator_field_duty_target <=
       fuel_pressure_sensor_plausibility_alternator_field_duty_threshold)) {
     if (uVar6 == 0) {
@@ -92522,13 +92537,13 @@ LAB_00531084:
          cm848_calculateExpectedFuelDemandAverage(uVar5);
   }
   else {
-    if (((air_conditioning_clutch_request_byte & 0x40) == 0) ||
+    if (((logical_output_request_bits_32_to_39 & 0x40) == 0) ||
        (fuel_pressure_sensor_plausibility_alternator_field_duty_threshold <
         alternator_field_duty_target)) {
-      if (((air_conditioning_clutch_request_byte & 0x40) != 0) ||
+      if (((logical_output_request_bits_32_to_39 & 0x40) != 0) ||
          (alternator_field_duty_target <
           fuel_pressure_sensor_plausibility_alternator_field_duty_threshold)) {
-        if (((air_conditioning_clutch_request_byte & 0x40) == 0) ||
+        if (((logical_output_request_bits_32_to_39 & 0x40) == 0) ||
            (alternator_field_duty_target <
             fuel_pressure_sensor_plausibility_alternator_field_duty_threshold)) goto LAB_00531098;
         if (uVar6 == 0) {

@@ -1,0 +1,14 @@
+[
+ ["0x00408976", "lift_pump_override_state",
+  "e2m 8A6F +0 Lift_Pump_Override_State 'Desired state of lift pump driver in override mode' (0 in the dump): cm848_controlLiftPump drives the lift pump to it while lift_pump_override_enable is set"],
+ ["0x00408978", "lift_pump_run_time_after_cranking",
+  "e2m 8A6F +2 Lift_Pump_Time_Cranking 'Lift pump run time after cranking' (0.1 s; 200 = 20 s in the dump): the stop limit of lift_pump_engine_stopped_time when lift_pump_run_reason is 3"],
+ ["0x0040897a", "lift_pump_run_time_after_key_on",
+  "The key-on prime time (0.1 s; 350 = 35 s in the dump): the stop limit when lift_pump_run_reason is 1. 11.45 computes it (8D2E Lift_Pump_Time_Key_On, RAM, from the 8D2C / 8D2D temperature table); this calibration has a fixed word here, so the 11.45 8A6F records after +2 sit one word later"],
+ ["0x0040897c", "lift_pump_run_time_after_running",
+  "Lift_Pump_Time_Running 'Lift pump run time w/engine stopped after running' (e2m 8A6F +4 in 11.45, +6 here; 0.1 s; 0 in the dump): the stop limit when lift_pump_run_reason is 2"],
+ ["0x0040897e", "lift_pump_override_enable",
+  "Lift_Pump_Override_Enable 'Overrides lift pump driver to Lift_Pump_Override_State' (e2m 8A6F +6 in 11.45, +8 here; 0 in the dump): cm848_controlLiftPump drives lift_pump_override_state while it is non-zero. The 11.45 Lift_Pump_Temp_Source (+8) has no word here: 0x408980 belongs to the next block"],
+ ["0x003fcf26", "sci_output_status_word",
+  "The SCI output status word cm848_sciPackOutputStatusWord packs before each SCI high-speed table read: bit 12 = logical output 4 (wait to start lamp), bit 5 = output 53 (lift pump), bit 6 = output 54 (ASIC_FS_Shutoff_Driver)"]
+]

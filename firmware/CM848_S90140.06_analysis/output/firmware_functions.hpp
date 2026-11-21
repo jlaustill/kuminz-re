@@ -1652,8 +1652,8 @@ void j1939_fault_processor_initialize(void);  // @ 0x005196f0
 void hpcr_periodicTaskGroup20_empty_stub(void);  // @ 0x0051972c
 void cm848_buildPciTransmitMessage3MilAndDtcDisplay(void);  // @ 0x00519730
 void cm848_initPciTransmitMessage3State(void);  // @ 0x00519c64
-void protection_exception_event_35_init(void);  // @ 0x00519c84
-void protection_ambient_qualification(void);  // @ 0x00519cc4
+void cm848_initializeLiftPumpControl(void);  // @ 0x00519c84
+void cm848_controlLiftPump(void);  // @ 0x00519cc4
 void cm848_limitFuelQuantityOnRailPressureShortfall(void);  // @ 0x00519e2c
 void protection_speed_limit_initialize(void);  // @ 0x00519ffc
 void initDiagnosticShadowFlags(void);  // @ 0x0051a018
@@ -1702,7 +1702,7 @@ void cm848_sciHighSpeedTableSelectCallback(void);  // @ 0x0051dc1c
 undefined4 cm848_sciHighSpeedHandleTableSelect(void);  // @ 0x0051dd6c
 void cm848_sciHighSpeedTable248And249Callback(void);  // @ 0x0051dea8
 void cm848_sciHighSpeedClearWordLatch(void);  // @ 0x0051dfac
-void FUN_0051dfdc(void);  // @ 0x0051dfdc
+void cm848_sciPackOutputStatusWord(void);  // @ 0x0051dfdc
 void cm848_sciPackEventHistoryWords(void);  // @ 0x0051e048
 void cm848_sciHighSpeedReadTableByte(uint param_1,uint param_2);  // @ 0x0051e0c4
 void cm848_sciHighSpeedReadTable245Callback(void);  // @ 0x0051e384

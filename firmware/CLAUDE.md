@@ -1063,7 +1063,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     | 13-1A / 13-1B | cruise vent / vacuum | 19 / 20 | `cm848_controlCruiseVacuumServo` |
     | 13-28 / 13-29 | intake heaters | 43 / 44 | the intake air heater preheat / post-heat functions |
     | 13-2C | cruise 12 volt feed | 21 | `cm848_controlCruiseVacuumServo` |
-    | 13-33 | fuel transfer pump | 53 | `protection_ambient_qualification` (misnamed): on at key-on, while cranking and running, off after a timeout |
+    | 13-33 | fuel transfer pump | 53 | `cm848_controlLiftPump` (round 11; was `protection_ambient_qualification`): on at key-on, while cranking and running, off after a timeout |
     | 13-43 | transmission relay | 16 | `cm848_updateTransmissionRelayRequest` |
     | 13-49 | wait to start lamp | 4 | the intake air heater preheat (the lamp is on while preheating) |
     | 13-5D | exhaust brake | 11 | `cm848_driveEngineRetarderOutput` |

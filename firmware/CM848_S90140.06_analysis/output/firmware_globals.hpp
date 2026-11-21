@@ -1655,7 +1655,7 @@ extern word converter_clutch_solenoid_request_previous;  // 0x003fb1ca
 extern word exhaust_brake_inhibit_previous;  // 0x003fb1cc
 extern ema_filter_state_t transmission_output_shaft_acceleration_filter;  // 0x003fb1ce
 extern ema_filter_state_t transmission_engine_acceleration_filter;  // 0x003fb1d6
-extern word cruise_switch_interp_index;  // 0x003fb1f2
+extern word cruise_switch_ladder_cached_axis_offset;  // 0x003fb1f2
 extern ema_filter_state_t cruise_switch_filter_state;  // 0x003fb1f4
 extern word protection_iat_scale_pending_flag;  // 0x003fb224
 extern word intake_manifold_pressure_snapshot;  // 0x003fb226
@@ -2024,6 +2024,7 @@ extern word governor_pressure_unused_cached_axis_offset;  // 0x003fcf08
 extern word governor_pressure_temperature_gain_percent_cached_axis_offset;  // 0x003fcf0a
 extern dword governor_pressure_error_previous;  // 0x003fcf0e
 extern dword governor_pressure_controller_output_unclamped;  // 0x003fcf12
+extern undefined sci_output_status_word;  // 0x003fcf26
 extern sci_output_test_timers_t sci_output_test_timers;  // 0x003fcf40
 extern dword rom_crc_descriptor_table_ptr;  // 0x003fcfe0
 extern word output_shaft_speed_avg;  // 0x003fd05e
@@ -3533,6 +3534,11 @@ extern word battery_voltage_default_cal;  // 0x00408962
 extern word ok_to_lock_doors_accelerator_threshold;  // 0x0040896e
 extern word ok_to_lock_doors_vehicle_speed_threshold;  // 0x00408970
 extern word fuel_demand_scale_factor;  // 0x00408974
+extern undefined lift_pump_override_state;  // 0x00408976
+extern undefined lift_pump_run_time_after_cranking;  // 0x00408978
+extern undefined lift_pump_run_time_after_key_on;  // 0x0040897a
+extern undefined lift_pump_run_time_after_running;  // 0x0040897c
+extern undefined lift_pump_override_enable;  // 0x0040897e
 extern word net_torque_fuel_limit_override_enable;  // 0x00408994
 extern word net_torque_fuel_limit_override_value;  // 0x00408996
 extern word net_torque_fuel_limit_negative_slew_rate;  // 0x00408998
@@ -5630,7 +5636,7 @@ extern word power_down_refresh_enable;  // 0x0040c04c
 extern byte logical_output_request_bits;  // 0x0040c080
 extern byte logical_output_request_bits_8_to_15;  // 0x0040c081
 extern logical_output_request_bits_16_to_23_t logical_output_request_bits_16_to_23;  // 0x0040c082
-extern byte air_conditioning_clutch_request_byte;  // 0x0040c084
+extern byte logical_output_request_bits_32_to_39;  // 0x0040c084
 extern byte logical_output_request_bits_40_to_47;  // 0x0040c085
 extern byte logical_output_request_bits_48_to_55;  // 0x0040c086
 extern byte logical_output_request_bits_64_to_71;  // 0x0040c088
@@ -5963,7 +5969,7 @@ extern dword trip_time_at_governed_speed;  // 0x003fee70
 extern dword trip_engine_run_time;  // 0x003fee74
 extern dword fuel_pressure_setpoint_offset_slewed;  // 0x003fd0c6
 extern word fuel_pressure_setpoint_deadband_filtered;  // 0x003fd0c4
-extern word fuel_pressure_setpoint_interpolation_states;  // 0x003fd0ca
+extern word fuel_pressure_setpoint_map_cached_axis_offsets;  // 0x003fd0ca
 extern dword misfire_monitor_phase_code;  // 0x003fd21e
 extern dword misfire_monitor_step_code;  // 0x003fd222
 extern word misfire_monitor_idle_reference_speed_previous;  // 0x003fd213
@@ -6140,8 +6146,8 @@ extern word coolant_overheat_fuel_derate_prev;  // 0x003fcdbc
 extern word coolant_temperature_bucket_cycle_count;  // 0x003fcdc6
 extern word coolant_overheat_fuel_limit;  // 0x003fcdd8
 extern dword cold_start_fuel_demand_integral_q8_scaled;  // 0x003fcddc
-extern word protection_event35_crank_cycle_count;  // 0x003fcea4
-extern word protection_event35_qualification_state;  // 0x003fcea6
+extern word lift_pump_engine_stopped_time;  // 0x003fcea4
+extern word lift_pump_run_reason;  // 0x003fcea6
 extern word boost_pressure_sensor_high_reading_dwell_count;  // 0x003fd172
 extern word boost_pressure_sensor_high_reading_debounce_count;  // 0x003fd174
 extern byte boost_pressure_sensor_high_reading_result_bits;  // 0x003fd178
