@@ -749,7 +749,7 @@ void cm848_evaluateProtectionFaultCondition(void);  // @ 0x00034a30
 void cm848_processCalibrationTablesMain(void);  // @ 0x00034abc
 void cm848_initializeTransmissionControl(void);  // @ 0x00034b14
 void cm848_processProtectionFaultSeverity(void);  // @ 0x00034dd4
-void cm848_updateExhaustBrakeLockupInhibit(void);  // @ 0x00034f4c
+void cm848_updateExhaustBrakeInhibitForLockup(void);  // @ 0x00034f4c
 void cm848_selectGovernorPressureLockupBoost(void);  // @ 0x00035154
 void cm848_processProtectionStateMachine(void);  // @ 0x00035328
 void cm848_selectSensorValuesInUse(void);  // @ 0x00035370

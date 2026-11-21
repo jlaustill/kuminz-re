@@ -1598,7 +1598,7 @@ extern word protection_filter_stage_10_state;  // 0x003fb18e
 extern word transmission_output_shaft_acceleration_sample_counter;  // 0x003fb190
 extern word transmission_output_speed_history_index;  // 0x003fb1c8
 extern word converter_clutch_solenoid_request_previous;  // 0x003fb1ca
-extern word exhaust_brake_lockup_inhibit_previous;  // 0x003fb1cc
+extern word exhaust_brake_inhibit_previous;  // 0x003fb1cc
 extern ema_filter_state_t transmission_output_shaft_acceleration_filter;  // 0x003fb1ce
 extern ema_filter_state_t transmission_engine_acceleration_filter;  // 0x003fb1d6
 extern word cruise_switch_interp_index;  // 0x003fb1f2
@@ -3260,7 +3260,7 @@ extern word exhaust_brake_lockup_speed_ratio_3rd_gear_maximum;  // 0x00408382
 extern word exhaust_brake_lockup_speed_ratio_4th_gear_minimum;  // 0x00408384
 extern word exhaust_brake_lockup_speed_ratio_4th_gear_maximum;  // 0x00408386
 extern word converter_clutch_closed_throttle_lockup_enable;  // 0x00408388
-extern word exhaust_brake_lockup_inhibit_timeout;  // 0x0040838a
+extern word exhaust_brake_inhibit_timeout;  // 0x0040838a
 extern word converter_clutch_closed_throttle_relock_exhaust_brake_hysteresis;  // 0x0040838c
 extern word protection_rpm_peak_axis_cal[10];  // 0x0040838e
 extern word protection_rpm_peak_output_cal[10];  // 0x004083a2
@@ -4835,7 +4835,7 @@ extern protection_status_flags_t protection_status_flags_t_0040b0f2;  // 0x0040b
 extern byte protection_status_flags_b;  // 0x0040b0fb
 extern byte transmission_temperature_sensor_fault_flag;  // 0x0040b0fc
 extern byte park_neutral_exit_engine_speed_limit_state_bits;  // 0x0040b0fd
-extern byte exhaust_brake_lockup_flags;  // 0x0040b0fe
+extern byte transmission_exhaust_brake_flags;  // 0x0040b0fe
 extern transmission_pressure_state_t transmission_pressure_state;  // 0x0040b100
 extern word transmission_output_speed_fault_debounce_timer;  // 0x0040b10a
 extern word governor_pressure_offset_calibration_interval_timer;  // 0x0040b10c
@@ -4866,7 +4866,7 @@ extern word transmission_overheat_protection_active_flag;  // 0x0040b144
 extern word transmission_vehicle_speed_filtered;  // 0x0040b146
 extern word transmission_speed_ratio;  // 0x0040b148
 extern word transmission_output_shaft_acceleration_unfiltered;  // 0x0040b14a
-extern word exhaust_brake_lockup_inhibit_timer;  // 0x0040b14c
+extern word exhaust_brake_inhibit_timer;  // 0x0040b14c
 extern word intake_manifold_pressure_in_use;  // 0x0040b14e
 extern word accelerator_pedal_position_in_use;  // 0x0040b150
 extern word coolant_temperature_in_use;  // 0x0040b152

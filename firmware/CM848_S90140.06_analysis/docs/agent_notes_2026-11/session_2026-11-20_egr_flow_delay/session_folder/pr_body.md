@@ -257,19 +257,26 @@ ratio module.**
   - a "converter clutch engagement monitor" and a "high gear mode" (stage F corrects both, below);
   - the WOT anti-hang timer and upshift engine speeds, and the cruise decel delay timers.
 
-- **Stage F (label-only, after a review): e2m 8C18 (0x4082f4, +00..+98) and the exhaust brake lockup aid.**
+- **Stage F (0b685f3, label-only, after a review): e2m 8C18 (0x4082f4, +00..+98) and the exhaust brake lockup aid.**
   - 71 ROM cals named from 8C18, each checked against its row's users. Among them: the engine acceleration limits,
     the WOT shift lag band, the lockup and overheat lockup delays, the throttle detent / WOT thresholds, the
     predicted shift delay limits and the overheat protection temperatures (were `hot_mode_*`).
   - The e2m corrects stage E. 8C17 +4A is `RE_E_Brake_Inhibit_Timer` ('Used to time ebrake TCC inhibit timeout
     limit'), the per-gear windows are `RE_EB_Lockup_Range_*` and the flag is 8C19 +16 `RE_E_Brake_Inhibit_LU`. The
     code agrees: `cm848_updateEngineRetarderEnableState` reads its bit 0 as lockup disengaged. So the function holds
-    the exhaust brake off until the converter locks: `cm848_updateExhaustBrakeLockupInhibit`,
-    `exhaust_brake_lockup_*`.
+    the exhaust brake off until the converter locks: now `cm848_updateExhaustBrakeInhibitForLockup`,
+    `exhaust_brake_inhibit_*` and `transmission_exhaust_brake_flags` (stage G).
   - Pressure state 0x10 is `RE_Lockup_Boost`, so its mode is `cm848_selectGovernorPressureLockupBoost`. Switch 12 is
     the exhaust brake switch.
   - Review fixes: the output shaft acceleration plate (two methods), ordinals, and three `global_variables.csv`
     comments that an earlier script had quoted (that file takes commas unquoted).
+- **Stage G (label-only, after a second review):**
+  - The exhaust brake inhibit names follow their records' word order (`RE_E_Brake_Inhibit_LU`: the exhaust
+    brake is inhibited): `cm848_updateExhaustBrakeInhibitForLockup`, `exhaust_brake_inhibit_*` and
+    `transmission_exhaust_brake_flags` (`RE_Trans_EBrake`).
+  - The flag byte's bit 2 is `RE_Ebrake_Inhibit_Timeout_Flag`.
+  - Switch 12 is proved to be the exhaust brake switch (it drives `engine_retarder_switch_percent_2`).
+  - 8C19 is checked at +0..+3, +9, +A, +C and +16.
 
 ## Test plan
 
@@ -327,8 +334,8 @@ ratio module.**
   - the session functions' `int32_t` parameter was found because the first 7a build rendered `int` as
     `dword`.
 - [x] Round 8:
-  - stages A, B, E and F are EQUIVALENT: no function differs, except two in stage F, each of which declares one local
-    in another place;
+  - stages A, B, E, F and G are EQUIVALENT: no function differs, except two in stage F, each of which declares one
+    local in another place;
   - the width check: every aligned 8BBC / 8C17 / 8C18 / 8C53 record has a row of its size (two unused words have
     none);
   - stage C was read diff by diff;

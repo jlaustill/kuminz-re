@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 10:28:07 MST 2026
+// Generated: Sat Nov 21 10:53:23 MST 2026
 
 
 //
@@ -34731,8 +34731,8 @@ void cm848_decrementTransmissionTimers(void)
   if (transmission_cruise_upshift_delay_timer != 0) {
     transmission_cruise_upshift_delay_timer = transmission_cruise_upshift_delay_timer - 1;
   }
-  if (exhaust_brake_lockup_inhibit_timer != 0) {
-    exhaust_brake_lockup_inhibit_timer = exhaust_brake_lockup_inhibit_timer - 1;
+  if (exhaust_brake_inhibit_timer != 0) {
+    exhaust_brake_inhibit_timer = exhaust_brake_inhibit_timer - 1;
   }
   return;
 }
@@ -34812,7 +34812,7 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
           }
           protection_condition_flags_t_0040b0e8.load_condition_flags =
                protection_condition_flags_t_0040b0e8.load_condition_flags & 0xfd;
-          exhaust_brake_lockup_flags = exhaust_brake_lockup_flags & 0xfd;
+          transmission_exhaust_brake_flags = transmission_exhaust_brake_flags & 0xfd;
         }
       }
       else {
@@ -34824,8 +34824,8 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
         transmission_current_gear = 2;
         protection_condition_flags_t_0040b0e8.load_condition_flags =
              protection_condition_flags_t_0040b0e8.load_condition_flags | 2;
-        if ((engine_retarder_active_flag != 0) && ((exhaust_brake_lockup_flags & 2) == 0)) {
-          exhaust_brake_lockup_flags = exhaust_brake_lockup_flags | 3;
+        if ((engine_retarder_active_flag != 0) && ((transmission_exhaust_brake_flags & 2) == 0)) {
+          transmission_exhaust_brake_flags = transmission_exhaust_brake_flags | 3;
         }
       }
       if ((protection_condition_flags_t_0040b0e8.load_condition_flags & 2) == 0) {
@@ -34955,12 +34955,12 @@ joined_r0x000341e0:
     wVar4 = wVar9;
     if ((switch_input_state_bits[1] & 0x10) == 0) goto joined_r0x00033fe4;
 joined_r0x00033fb8:
-    if ((exhaust_brake_lockup_flags & 4) != 0) goto joined_r0x00033fe4;
+    if ((transmission_exhaust_brake_flags & 4) != 0) goto joined_r0x00033fe4;
 joined_r0x00033fcc:
     if (fuel_demand_control_t_0040a57a.calculated < wVar4) goto LAB_00034278;
   }
   else {
-    if ((transmission_current_gear == 3) && ((exhaust_brake_lockup_flags & 4) == 0)) {
+    if ((transmission_current_gear == 3) && ((transmission_exhaust_brake_flags & 4) == 0)) {
       wVar7 = wVar3;
       if ((switch_input_state_bits[1] & 0x10) != 0) goto joined_r0x00033fcc;
     }
@@ -35356,7 +35356,7 @@ void cm848_initializeTransmissionControl(void)
   governor_pressure_wide_open_throttle_boost_timer = 0;
   transmission_cruise_downshift_delay_timer = 0;
   transmission_cruise_upshift_delay_timer = 0;
-  exhaust_brake_lockup_inhibit_timer = 0;
+  exhaust_brake_inhibit_timer = 0;
   if ((j1939_governor_feature_byte & 8) == 0) {
     protection_condition_flags_t_0040b0e8.overdrive_control_flags =
          protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x9d | 8;
@@ -35461,24 +35461,25 @@ void cm848_processProtectionFaultSeverity(void)
 
 
 //
-// Function: cm848_updateExhaustBrakeLockupInhibit @ 0x00034f4c
+// Function: cm848_updateExhaustBrakeInhibitForLockup @ 0x00034f4c
 //
 
 /* WARNING: Type propagation algorithm not settling */
 /* The exhaust brake lockup aid (e2m RE_E_Brake_Inhibit_LU / RE_EB_Lockup_Range_* /
-   RE_E_Brake_Inhibit_Timeout). The rising edge of the converter clutch solenoid request (logical
-   output 18) sets bit 0 of exhaust_brake_lockup_flags, which holds the exhaust brake off
-   (cm848_updateEngineRetarderEnableState reads it as lockup disengaged) until the converter locks.
-   exhaust_brake_lockup_inhibit_timer counts down from exhaust_brake_lockup_inhibit_timeout (3 s).
+   RE_E_Brake_Inhibit_Timeout): the exhaust brake is held off until the converter locks. The rising
+   edge of the converter clutch solenoid request (logical output 18) sets bit 0 of
+   transmission_exhaust_brake_flags (cm848_updateEngineRetarderEnableState reads it as lockup
+   disengaged). exhaust_brake_inhibit_timer counts down from exhaust_brake_inhibit_timeout (3 s).
    While the request is on and transmission_speed_ratio is inside the gear's window
    (exhaust_brake_lockup_speed_ratio_2nd / 3rd / 4th_gear_minimum / _maximum, around the gear
    ratios), bits 0 and 2 clear: lock confirmed, the exhaust brake may apply. In 1st they clear too.
-   If the timer runs out first, it sets condition_eval bit 6 (the lockup inhibit / converter unlock
-   request) and bit 2. Called at the end of cm848_selectGovernorPressureLockupBoost (was
-   cm848_monitorConverterClutchEngagement, stage E's misreading; originally
+   If the timer runs out first, it sets condition_eval bit 6 (the converter lockup inhibit / unlock
+   request) and bit 2 (RE_Ebrake_Inhibit_Timeout_Flag). Called at the end of
+   cm848_selectGovernorPressureLockupBoost (was cm848_updateExhaustBrakeLockupInhibit in stage F,
+   cm848_monitorConverterClutchEngagement in stage E, before that
    cm848_processProtectionRateLimitFlags) */
 
-void cm848_updateExhaustBrakeLockupInhibit(void)
+void cm848_updateExhaustBrakeInhibitForLockup(void)
 
 {
   ushort uVar1;
@@ -35488,27 +35489,28 @@ void cm848_updateExhaustBrakeLockupInhibit(void)
      (converter_clutch_solenoid_request_previous != 0)) {
     if (((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
         ((converter_clutch_solenoid_request_previous != 0 &&
-         (exhaust_brake_lockup_inhibit_previous == ((exhaust_brake_lockup_flags & 1) != 0))))) ||
+         (exhaust_brake_inhibit_previous == ((transmission_exhaust_brake_flags & 1) != 0))))) ||
        ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) != 0)) {
-      exhaust_brake_lockup_flags = exhaust_brake_lockup_flags & 0xfe;
+      transmission_exhaust_brake_flags = transmission_exhaust_brake_flags & 0xfe;
     }
   }
   else {
-    exhaust_brake_lockup_flags = exhaust_brake_lockup_flags | 1;
+    transmission_exhaust_brake_flags = transmission_exhaust_brake_flags | 1;
   }
-  if (((exhaust_brake_lockup_flags & 4) != 0) &&
+  if (((transmission_exhaust_brake_flags & 4) != 0) &&
      ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) {
-    exhaust_brake_lockup_flags = exhaust_brake_lockup_flags & 0xfb;
+    transmission_exhaust_brake_flags = transmission_exhaust_brake_flags & 0xfb;
   }
   converter_clutch_solenoid_request_previous = (byte)logical_output_request_bits_16_to_23 & 4;
-  exhaust_brake_lockup_inhibit_previous = (ushort)((exhaust_brake_lockup_flags & 1) != 0);
-  if (((exhaust_brake_lockup_flags & 1) == 0) || ((exhaust_brake_lockup_flags & 4) != 0)) {
-    exhaust_brake_lockup_inhibit_timer = exhaust_brake_lockup_inhibit_timeout;
+  exhaust_brake_inhibit_previous = (ushort)((transmission_exhaust_brake_flags & 1) != 0);
+  if (((transmission_exhaust_brake_flags & 1) == 0) || ((transmission_exhaust_brake_flags & 4) != 0)
+     ) {
+    exhaust_brake_inhibit_timer = exhaust_brake_inhibit_timeout;
   }
-  else if (exhaust_brake_lockup_inhibit_timer == 0) {
+  else if (exhaust_brake_inhibit_timer == 0) {
     protection_condition_flags_t_0040b0e8.condition_eval =
          protection_condition_flags_t_0040b0e8.condition_eval | 0x40;
-    exhaust_brake_lockup_flags = exhaust_brake_lockup_flags | 4;
+    transmission_exhaust_brake_flags = transmission_exhaust_brake_flags | 4;
   }
   else {
     if (((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0) &&
@@ -35520,10 +35522,10 @@ void cm848_updateExhaustBrakeLockupInhibit(void)
          (uVar1 = exhaust_brake_lockup_speed_ratio_2nd_gear_maximum,
          uVar2 = exhaust_brake_lockup_speed_ratio_2nd_gear_minimum, transmission_current_gear == 2))
         )) && ((uVar2 < transmission_speed_ratio && (transmission_speed_ratio < uVar1)))) {
-      exhaust_brake_lockup_flags = exhaust_brake_lockup_flags & 0xfa;
+      transmission_exhaust_brake_flags = transmission_exhaust_brake_flags & 0xfa;
     }
     if (transmission_current_gear == 1) {
-      exhaust_brake_lockup_flags = exhaust_brake_lockup_flags & 0xfa;
+      transmission_exhaust_brake_flags = transmission_exhaust_brake_flags & 0xfa;
     }
   }
   return;
@@ -35545,7 +35547,7 @@ void cm848_updateExhaustBrakeLockupInhibit(void)
    user override (governor_pressure_override_enable / _value, state 0x17) follows. With the lever in
    1 / 2 and the output speed below transmission_manual_2nd_4_3_downshift_maximum_output_speed it
    requests the 4-3 downshift (condition_eval bit 1, clearing the 3-4 bit 2) unless
-   overdrive_control_flags bit 3 is set. Ends with cm848_updateExhaustBrakeLockupInhibit (was
+   overdrive_control_flags bit 3 is set. Ends with cm848_updateExhaustBrakeInhibitForLockup (was
    cm848_selectGovernorPressureHighGear in stage E; originally
    cm848_calculateProtectionThresholdLimit) */
 
@@ -35590,7 +35592,7 @@ void cm848_selectGovernorPressureLockupBoost(void)
     governor_pressure_target = governor_pressure_override_value;
     transmission_pressure_state.pressure_state = 0x17;
   }
-  cm848_updateExhaustBrakeLockupInhibit();
+  cm848_updateExhaustBrakeInhibitForLockup();
   return;
 }
 
@@ -44073,7 +44075,7 @@ void cm848_updateEngineRetarderEnableState(void)
   tc_lockup_disengage_state =
        j1939_powertrain_control_state.etc1_spn573_torque_converter_lockup_disengaged_flag;
   if ((algorithm_enable_flags_6_cal & 4) != 0) {
-    tc_lockup_disengage_state = (ushort)((exhaust_brake_lockup_flags & 1) != 0);
+    tc_lockup_disengage_state = (ushort)((transmission_exhaust_brake_flags & 1) != 0);
   }
   if ((((((short)oil_temperature_sensor_filtered < engine_retarder_oil_temperature_threshold) &&
         (engine_retarder_enter_minimum_engine_speed_cold_oil <
@@ -72037,7 +72039,7 @@ void cm848_processOverdriveSwitchAndShift(void)
         cm848_clearLogicalOutputRequest(0x12,0);
         cm848_clearLogicalOutputRequest(0x11,0);
         if (engine_retarder_active_flag != 0) {
-          exhaust_brake_lockup_flags = exhaust_brake_lockup_flags | 1;
+          transmission_exhaust_brake_flags = transmission_exhaust_brake_flags | 1;
         }
         transmission_lockup_timers.lockup_delay_4_3_timer =
              transmission_overheat_lockup_delay_4_3_time;

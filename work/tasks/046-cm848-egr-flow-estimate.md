@@ -419,7 +419,7 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
   `protection_*` names.
   - `cm848_monitorConverterClutchEngagement` (was `cm848_processProtectionRateLimitFlags`): read as a converter clutch
     engagement monitor (3 s for the speed ratio to enter the gear's window, else the lockup inhibit). Stage F
-    corrects it: the e2m names it the exhaust brake lockup aid (`cm848_updateExhaustBrakeLockupInhibit`).
+    corrects it: the e2m names it the exhaust brake lockup aid (now `cm848_updateExhaustBrakeInhibitForLockup`).
   - `cm848_selectGovernorPressureHighGear` (was `cm848_calculateProtectionThresholdLimit`): pressure state 0x10 in
     3rd / 4th below a throttle curve, plus the manual 1 / 2 lever's 4-3 request. Stage F renames it
     `cm848_selectGovernorPressureLockupBoost` (e2m `RE_Lockup_Boost`).
@@ -449,7 +449,8 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
     In the code, `cm848_updateEngineRetarderEnableState` reads bit 0 of 0x40b0fe as its torque converter lockup
     disengaged input. The exhaust brake sets that bit entering 2nd gear and after a 4-3 downshift. So the exhaust
     brake waits for converter lock: `cm848_updateExhaustBrakeLockupInhibit`, `exhaust_brake_lockup_flags`,
-    `exhaust_brake_lockup_inhibit_timer` / `_timeout`, `exhaust_brake_lockup_speed_ratio_*`. 8C17 drifts from +4C,
+    `exhaust_brake_lockup_inhibit_timer` / `_timeout`, `exhaust_brake_lockup_speed_ratio_*` (stage G reorders the
+    inhibit names). 8C17 drifts from +4C,
     not +4A.
   - **The lockup boost:** `cm848_selectGovernorPressureLockupBoost` (was stage E's `cm848_selectGovernorPressureHighGear`).
     Pressure state 0x10 is `RE_Lockup_Boost`, 'Gov pressure target during lockup, to prevent downshift'
@@ -465,6 +466,24 @@ The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was
   - **Width check** (`width_check_r8.py`, the stage 8c rule): every 8BBC / 8C17 / 8C18 / 8C53 record in the aligned
     ranges has a row of its size. The exceptions are two words nothing reads: 0x407856 `RE_Lockup_Delay_2_3_Max_2nd`
     and 0x408372 `RE_Cruise_Unlock_Inhibit`.
+- **Stage G (label-only, after a second review):**
+  - **Word order:** the exhaust brake inhibit words take the word order of their records. `RE_E_Brake_Inhibit_LU`
+    means the exhaust brake is inhibited (so the converter can lock). Stage F's `exhaust_brake_lockup_inhibit_*` read
+    as a lockup inhibited by the exhaust brake, and the same function also sets a real lockup inhibit (`condition_eval`
+    bit 6). The new names:
+    - `cm848_updateExhaustBrakeInhibitForLockup`;
+    - `exhaust_brake_inhibit_timer` / `_timeout` / `_previous`;
+    - `transmission_exhaust_brake_flags`, the byte's record `RE_Trans_EBrake` ('Contains engine brake flags').
+  - **Bit 2** of that byte is `RE_Ebrake_Inhibit_Timeout_Flag` ('E-Brake inhibit timeout flag'): the code sets it
+    exactly when the inhibit timer runs out.
+  - **8C19 at 0x40b0e8** is checked by code use at +0..+3, +9 (the low range boosts), +A (`status_flags`: the WOT
+    anti-hang and boost flags), +C (`flags[0]`: the anti-hunt boosts, the detent) and +16.
+  - **Switch 12** is the exhaust brake switch, proved by code: `cm848_driveEngineRetarderOutput` sets
+    `engine_retarder_switch_percent_2` to 100 while it is on.
+  - **The polarity of `converter_clutch_closed_throttle_lockup_enable`:** 1 here skips the block that unlocks the
+    converter on the brake (switch 11) or switch 2, so its name has the right sense. The comment now says so.
+  - **The csv-module audit:** `csv_tail_check2.py` and the scripts that wrote these files found no other damage than
+    the three quoted rows, the 0x40b0fe tail and the lost stage C edit.
 - **Thin evidence:**
   - `transmission_output_speed_fault_debounce_timer` (8C17 +8): only the timer tick and the initialization use it.
   - The turbine torque tables have other sizes than in the 11.45 e2m (17 / 9 / 17 x 9 here, 8 / 8 / 5 x 5 there).

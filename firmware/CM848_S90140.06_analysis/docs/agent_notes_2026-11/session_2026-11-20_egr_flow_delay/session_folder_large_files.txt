@@ -46,6 +46,7 @@
   200764 build_r8c.log
   200771 build_r8e.log
   200765 build_r8f.log
+  200766 build_r8g.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -60,3 +61,4 @@
   401855 verify_round8.log
   401850 verify_round8_stage_e.log
   401844 verify_round8_stage_f.log
+  401848 verify_round8_stage_g.log
