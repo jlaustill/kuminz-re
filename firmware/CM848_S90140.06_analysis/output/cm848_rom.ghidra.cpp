@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 16:46:20 MST 2026
+// Generated: Sat Nov 21 16:56:03 MST 2026
 
 
 //
@@ -5939,8 +5939,8 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
   byte local_2a [5];
   byte bStack_25;
   uint local_24 [7];
-  dword current_runtime;
   byte key_matches;
+  dword current_runtime;
   
   if (eeprom_shadow_header.version_marker == 0xff) {
     result = 0;
@@ -48350,8 +48350,9 @@ LAB_00047b98:
    entry 20 - P0251 fuel metering - this calibration: TPU-B 11 with MDASM29 read-back). It is the
    fuel (rail) pressure governor (the DRB SCI table labels its output FUEL PRESS REG OUTPUT and its
    inputs FUEL PRESS SETPOINT / FUEL PRESSURE SENSOR), a cascade of two loops: (1) an override
-   (fuel_metering_command_override_enable) and a cranking value return early; otherwise the governor
-   mode in fuel_pressure_governor_state.fuel_pressure_governor_mode picks
+   (fuel_metering_command_override_enable) and the service tool's fuel control test
+   (fuel_control_actuator_test_active_flag: fuel_metering_tool_override_command) return early;
+   otherwise the governor mode in fuel_pressure_governor_state.fuel_pressure_governor_mode picks
    fuel_pressure_governor_demand - modes 2 / 4 sum the PID terms on fuel_pressure_setpoint -
    fuel_pressure_feedback_filtered (fuel_pressure_governor_proportional_term / _integral_term /
    _derivative_term) plus fuel_pressure_governor_accelerator_feed_forward and an rpm table; modes 8
@@ -48657,7 +48658,9 @@ LAB_0004800c:
              (word)((uint)fuel_pressure_governor_derivative_gains.filter_coefficient * (uint)wVar6
                    >> 0x10);
         wVar6 = lookupTableInterpolation
-                          (&WORD_003fb652,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_derivative_small_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_derivative_small_signal_gain_scaling_axis,
                            fuel_pressure_governor_derivative_small_signal_gain_scaling_values,0);
         uVar15 = CONCAT22(fuel_pressure_governor_derivative_gains.small_signal_gain._0_2_,
@@ -48672,7 +48675,9 @@ LAB_0004800c:
                                   0x20) << 0x14) >> 0x10) | (ushort)(uVar15 >> 0x1c);
         working_derivative_gains.small_signal_gain._2_2_ = (undefined2)(uVar15 >> 0xc);
         wVar6 = lookupTableInterpolation
-                          (&WORD_003fb654,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_axis
                            ,
                            fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_values
@@ -48690,7 +48695,9 @@ LAB_0004800c:
              (ushort)(uVar15 >> 0x1c);
         working_derivative_gains.positive_large_signal_gain._2_2_ = (undefined2)(uVar15 >> 0xc);
         wVar6 = lookupTableInterpolation
-                          (&WORD_003fb656,average_engine_speed,
+                          (&
+                           fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_cached_axis_offset
+                           ,average_engine_speed,
                            fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_axis
                            ,
                            fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_values
@@ -48971,15 +48978,18 @@ LAB_000489d0:
     if ((sVar7 == 0) && (average_engine_speed == 0)) {
       fuel_metering_feedback_trim_integrator.integer_part =
            lookupTableInterpolation
-                     (&WORD_003fb660,unaff_r29,engine_sync_speed_scale_axis_cal,
-                      engine_sync_speed_scale_values_cal,3);
+                     (&fuel_metering_current_integrator_preset_cached_axis_offset,unaff_r29,
+                      fuel_metering_current_integrator_preset_temperature_axis,
+                      fuel_metering_current_integrator_preset_values,3);
     }
     else if ((fuel_metering_inner_loop_coil_temperature_ready_flag == 1) &&
             (fuel_metering_inner_loop_preset_temperature_source == 5)) {
       fuel_metering_feedback_trim_integrator.integer_part =
            lookupTableInterpolation
-                     (&WORD_003fb660,fuel_metering_coil_temperature,engine_sync_speed_scale_axis_cal
-                      ,engine_sync_speed_scale_values_cal,3);
+                     (&fuel_metering_current_integrator_preset_cached_axis_offset,
+                      fuel_metering_coil_temperature,
+                      fuel_metering_current_integrator_preset_temperature_axis,
+                      fuel_metering_current_integrator_preset_values,3);
     }
     if (fuel_metering_inner_loop_coil_temperature_ready_flag == 1) {
       fuel_metering_inner_loop_coil_temperature_ready_flag = 0;
@@ -49076,7 +49086,7 @@ LAB_000489d0:
       }
       uVar15 = ((int)(short)fuel_metering_command_filtered *
                 (uint)sensor_readings_t_0040baf2.battery_voltage * 5) / (uint)(sVar8 * 2);
-      engine_sync_rpm_raw_working = (word)uVar15;
+      fuel_metering_coil_resistance_raw = (word)uVar15;
       dVar2 = exponentialMovingAverage(uVar15 & 0xffff,&fuel_metering_coil_resistance_filter);
       fuel_metering_coil_resistance_filtered = (word)dVar2;
     }

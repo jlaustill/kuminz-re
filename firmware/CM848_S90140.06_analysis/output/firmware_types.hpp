@@ -982,7 +982,7 @@ typedef enum {
 } DIAGNOSTIC_SERVICE;
 
 typedef enum {
-    FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START = 1,  /* Open-loop start command (two tables blended by the input engine_sync_state_a picks); the mode the others fall back to */
+    FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START = 1,  /* Open-loop start command (two tables blended by the input fuel_metering_outer_loop_preset_temperature_source picks); the mode the others fall back to */
     FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP_AFTER_START = 2,  /* PID on fuel_pressure_setpoint - fuel_pressure_feedback_filtered for the first 1000 revolutions (fuel_pressure_governor_start_revolutions) */
     FUEL_PRESSURE_GOVERNOR_CLOSED_LOOP = 4,  /* PID after the start revolutions */
     FUEL_PRESSURE_GOVERNOR_LOW_PRESSURE_FIXED = 8,  /* Timed fixed command when the pressure is low inside an rpm window (impossible in this calibration: threshold 0 and an empty rpm window) */

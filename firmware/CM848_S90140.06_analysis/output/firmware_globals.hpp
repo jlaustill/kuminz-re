@@ -1866,10 +1866,14 @@ extern word fuel_pressure_governor_integral_small_signal_gain_scaling_cached_axi
 extern word fuel_pressure_governor_integral_positive_large_signal_gain_scaling_cached_axis_offset;  // 0x003fb64c
 extern word fuel_pressure_governor_integral_negative_large_signal_gain_scaling_cached_axis_offset;  // 0x003fb64e
 extern word fuel_pressure_governor_derivative_filter_coefficient_scaling_cached_axis_offset;  // 0x003fb650
+extern word fuel_pressure_governor_derivative_small_signal_gain_scaling_cached_axis_offset;  // 0x003fb652
+extern word fuel_pressure_governor_derivative_positive_large_signal_gain_scaling_cached_axis_offset;  // 0x003fb654
+extern word fuel_pressure_governor_derivative_negative_large_signal_gain_scaling_cached_axis_offset;  // 0x003fb656
 extern word fuel_metering_battery_correction_cached_axis_offset;  // 0x003fb658
 extern word fuel_metering_start_duty_cycle_cached_axis_offset;  // 0x003fb65a
 extern word fuel_metering_hot_start_duty_cycle_cached_axis_offset;  // 0x003fb65c
 extern word fuel_pressure_sensor_filter_coefficient_scaling_cached_axis_offset;  // 0x003fb65e
+extern word fuel_metering_current_integrator_preset_cached_axis_offset;  // 0x003fb660
 extern word fuel_pressure_governor_feed_forward_cached_axis_offset;  // 0x003fb662
 extern word fuel_pressure_governor_feed_forward_cached_axis_offset_y;  // 0x003fb664
 extern word fuel_metering_unused_cached_axis_offset_1;  // 0x003fb666
@@ -1897,7 +1901,7 @@ extern word fuel_metering_base_command_derivative_term;  // 0x003fb6bf
 extern word governor_zero_speed_count;  // 0x003fb6c1
 extern word fuel_metering_coil_resistance_sample_count;  // 0x003fb6c3
 extern byte fuel_metering_inner_loop_coil_temperature_ready_flag;  // 0x003fb6c6
-extern word engine_sync_rpm_raw_working;  // 0x003fb6c7
+extern word fuel_metering_coil_resistance_raw;  // 0x003fb6c7
 extern word fuel_metering_retest_fault_count;  // 0x003fb6c9
 extern word fuel_pressure_diagnostic_cached_axis_offset_0;  // 0x003fb6ce
 extern word fuel_pressure_diagnostic_cached_axis_offset_1;  // 0x003fb6d0
@@ -3965,8 +3969,8 @@ extern word fuel_metering_hot_start_duty_cycle_engine_speed_axis[9];  // 0x00409
 extern word fuel_metering_hot_start_duty_cycle_values[9];  // 0x00409460
 extern word fuel_metering_battery_correction_voltage_axis[6];  // 0x00409472
 extern word fuel_metering_battery_correction_factor_values[6];  // 0x0040947e
-extern word engine_sync_speed_scale_axis_cal[6];  // 0x0040948a
-extern word engine_sync_speed_scale_values_cal[6];  // 0x00409496
+extern word fuel_metering_current_integrator_preset_temperature_axis[6];  // 0x0040948a
+extern word fuel_metering_current_integrator_preset_values[6];  // 0x00409496
 extern piecewise_linear_gain_t fuel_pressure_governor_proportional_gains;  // 0x004094a2
 extern piecewise_linear_gain_t fuel_pressure_governor_integral_gains;  // 0x004094b2
 extern derivative_gain_t fuel_pressure_governor_derivative_gains;  // 0x004094c2

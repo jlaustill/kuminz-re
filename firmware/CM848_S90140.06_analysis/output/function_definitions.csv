@@ -11,7 +11,7 @@ function_address,function_name,param_index,name,type,comment
 0x00012404,cm848_delaySignedSample,1,sample,sword,The new sample (r4) - stored with sthx
 0x00012404,cm848_delaySignedSample,2,delay_samples,uint,The delay in calls (r5): the read position is (write_index - delay_samples) mod 256
 0x00055ef4,lookupTableInterpolation,return,,word,Y value at the input: linear between the two breakpoints around it (or the step value with flags bit 3) and the end value outside the axis
-0x00055ef4,lookupTableInterpolation,0,cached_axis_offset,word *,Byte offset (2 x index) of the axis segment found last time - the search starts there and the new one is written back; the globals passed here are the *_interp_state / *_interp_index / engine_sync_init_state_* words
+0x00055ef4,lookupTableInterpolation,0,cached_axis_offset,word *,Byte offset (2 x index) of the axis segment found last time - the search starts there and the new one is written back; the globals passed here are the *_cached_axis_offset words (named after their tables in PR #53 rounds 10-12)
 0x00055ef4,lookupTableInterpolation,1,input,ushort,Value looked up on the x axis (r4)
 0x00055ef4,lookupTableInterpolation,2,x_axis,word *,X axis (r5): first word = byte length of the breakpoints that follow
 0x00055ef4,lookupTableInterpolation,3,y_data,word *,Y data (r6): first word = byte length of the values that follow (one per breakpoint)

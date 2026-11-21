@@ -655,7 +655,8 @@ Scripts are in `session_folder/round10/`.
   - **The `cam_sync_*_cal` tables** of `cm848_calculateFuelMeteringCommand` are fuel metering tables (by battery
     voltage, by engine speed). Give them an e2m pass, then name their caches (`engine_sync_init_state_a` / `b` /
     `j` / `k` / `l` / `n`). The same applies to `fuel_demand_interp_state_a`..`f` (`j1939_fuel_table_*_cal`),
-    `governor_interp_table_state_b` and `cruise_switch_interp_index`.
+    `governor_interp_table_state_b` and `cruise_switch_interp_index`. (Round 11 renamed the cruise switch cache;
+    round 12 re-domained the cam_sync tables and their caches from the e2m HPCR_* records.)
   - **The end-of-line test sequencer** `engine_coldStart_protection_stateMachine` (0x52fa34) and its
     `cold_start_protection_*` words, `fault_event_queue_clear_active` and `protection_voltage_active_flag`.
   - **The logical outputs** 4 / 11 / 38 / 43 / 44 / 53 have DRB names now. Bitfield structs for their bytes of
@@ -731,6 +732,7 @@ Scripts are in `session_folder/round11/`.
 - **Round 11 leads:**
   - **The switch bytes 0 / 1 / 3 as bitfields:** the user's call (the numbers above).
   - **`fuel_pressure_setpoint_map_cached_axis_offsets`** is a `word` row with a plural name: type it `word[16]`.
+    (Resolved in round 12: the block is eight 2-word caches, so `word[2]` plus seven new rows.)
   - **`cruise_setpoint_interp_prev`** (0x3fd006) is a value looked up by vehicle speed (its change per pass is
     clamped to +-0x66), not a setpoint: name it with the cruise governor.
   - **The input priority array** at 0x40c058 (e2m 12A8) has no code reference by name yet.
@@ -742,8 +744,8 @@ Scripts are in `session_folder/round11/`.
   - **Comments and plates** still describe the switches and output bits in the old `[2] & 0x10` syntax.
   - **Output 30** `FSO_Command` (with 28 `CAN_Reset`) is requested on every pass by
     `cm848_processProtectionFaultsAndTiming`; byte 3 of the request array has no row.
-  - The cam_sync tables, the end-of-line test sequencer, 8C80 / 8C2D and the SCI high-speed words stay open from
-    round 10.
+  - The end-of-line test sequencer, 8C80 / 8C2D and the SCI high-speed words stay open from round 10 (round 12
+    resolved the cam_sync tables).
 
 ## Done, round 12 (2026-11-21, same PR; the relayed "keep going"): arrays and the CP3 fuel metering vocabulary
 
