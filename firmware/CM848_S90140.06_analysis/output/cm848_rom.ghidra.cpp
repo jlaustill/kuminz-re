@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 12:07:53 MST 2026
+// Generated: Sat Nov 21 12:17:22 MST 2026
 
 
 //
@@ -32958,19 +32958,23 @@ void cm848_applyConverterLockupSchedule(void)
   if (transmission_current_gear == 2) {
     wVar1 = lookupTableInterpolation
                       (&DAT_003fb102,transmission_output_speed_in_use,
-                       protection_threshold_l8_axis_cal,protection_threshold_l8_output_cal,0);
+                       transmission_2nd_gear_overheat_lockup_maximum_throttle_axis,
+                       transmission_2nd_gear_overheat_lockup_maximum_throttle_values,0);
     wVar2 = lookupTableInterpolation
                       (&DAT_003fb108,transmission_output_speed_in_use,
-                       protection_threshold_l7_axis_cal,protection_threshold_l7_output_cal,0);
+                       transmission_2nd_gear_lockup_maximum_throttle_axis,
+                       transmission_2nd_gear_lockup_maximum_throttle_values,0);
     wVar3 = lookupTableInterpolation
                       (&protection_fuel_demand_threshold_derate2_interp_state,
-                       transmission_output_speed_in_use,protection_fuel_limit_l2_alt_axis_cal,
-                       protection_fuel_limit_l2_alt_values_cal,0);
+                       transmission_output_speed_in_use,
+                       transmission_2nd_gear_unlock_maximum_throttle_axis,
+                       transmission_2nd_gear_unlock_maximum_throttle_values,0);
     fuel_demand_limit_working =
          lookupTableInterpolation
                    (&protection_fuel_demand_limit_derate2_interp_state,
-                    transmission_output_speed_in_use,protection_fuel_limit_l2_values_axis_cal,
-                    protection_fuel_limit_l2_values_cal,0);
+                    transmission_output_speed_in_use,
+                    transmission_2nd_gear_overheat_unlock_maximum_throttle_axis,
+                    transmission_2nd_gear_overheat_unlock_maximum_throttle_values,0);
     if ((((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) ||
           (transmission_overheat_protection_active_flag != 0)) ||
          (transmission_pressure_state.pressure_state == 0x18)) &&
@@ -33001,26 +33005,31 @@ void cm848_applyConverterLockupSchedule(void)
                        transmission_3rd_gear_lockup_minimum_output_speed_values,1);
     wVar2 = lookupTableInterpolation
                       (&DAT_003fb104,transmission_output_speed_in_use,
-                       protection_threshold_l9_axis_cal,protection_threshold_l9_output_cal,0);
+                       transmission_3rd_gear_overheat_lockup_maximum_throttle_axis,
+                       transmission_3rd_gear_overheat_lockup_maximum_throttle_values,0);
     wVar1 = lookupTableInterpolation
-                      (&DAT_003fb0fc,transmission_output_speed_in_use,protection_threshold_axis_cal,
-                       protection_threshold_values_cal,0);
+                      (&DAT_003fb0fc,transmission_output_speed_in_use,
+                       transmission_3rd_gear_lockup_maximum_throttle_axis,
+                       transmission_3rd_gear_lockup_maximum_throttle_values,0);
     wVar4 = lookupTableInterpolation
                       (&DAT_003fb112,transmission_output_speed_in_use,
-                       protection_fuel_limit_l2_axis_b_cal,protection_fuel_limit_l2_output_b_cal,0);
+                       transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_axis,
+                       transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_values,0);
     fuel_demand_limit_working =
          lookupTableInterpolation
                    (&protection_fuel_demand_limit_derate3_interp_state,
-                    transmission_output_speed_in_use,protection_fuel_limit_l3_values_axis_cal,
-                    protection_fuel_limit_l3_values_cal,0);
+                    transmission_output_speed_in_use,
+                    transmission_3rd_gear_overheat_unlock_maximum_throttle_axis,
+                    transmission_3rd_gear_overheat_unlock_maximum_throttle_values,0);
     wVar5 = lookupTableInterpolation
                       (&protection_fuel_demand_threshold_derate3_interp_state,
-                       transmission_output_speed_in_use,protection_load_axis_e_cal,
-                       protection_load_values_e_cal,0);
+                       transmission_output_speed_in_use,
+                       transmission_3rd_gear_unlock_maximum_throttle_axis,
+                       transmission_3rd_gear_unlock_maximum_throttle_values,0);
     uVar6 = lookupTableInterpolation
                       (&DAT_003fb114,transmission_output_speed_in_use,
-                       protection_fuel_threshold_h_axis_cal,protection_fuel_threshold_h_values_cal,0
-                      );
+                       transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_axis,
+                       transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_values,0);
     if ((((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x20) == 0) ||
         (transmission_lockup_service_minimum_output_speed_3rd < transmission_output_speed_in_use))
        && ((((wVar3 < transmission_output_speed_in_use &&
@@ -33072,7 +33081,8 @@ LAB_000306ac:
                      transmission_4th_gear_lockup_minimum_output_speed_values,1);
   wVar2 = lookupTableInterpolation
                     (&DAT_003fb106,transmission_output_speed_in_use,
-                     protection_threshold_l10_axis_cal,protection_threshold_l10_output_cal,0);
+                     transmission_4th_gear_overheat_lockup_maximum_throttle_axis,
+                     transmission_4th_gear_overheat_lockup_maximum_throttle_values,0);
   wVar5 = cm848_dualAxisTableInterpolation
                     (&DAT_003fb168,transmission_output_speed_in_use,
                      transmission_4th_gear_lockup_maximum_throttle_x_axis,
@@ -33082,8 +33092,9 @@ LAB_000306ac:
   fuel_demand_limit_working =
        lookupTableInterpolation
                  (&protection_fuel_demand_limit_derate4_interp_state,
-                  transmission_output_speed_in_use,protection_fuel_limit_l4_values_axis_cal,
-                  protection_fuel_limit_l4_values_cal,0);
+                  transmission_output_speed_in_use,
+                  transmission_4th_gear_overheat_unlock_maximum_throttle_axis,
+                  transmission_4th_gear_overheat_unlock_maximum_throttle_values,0);
   wVar7 = lookupTableInterpolation
                     (&protection_fuel_demand_threshold_derate4_interp_state,
                      transmission_output_speed_in_use,
@@ -33108,8 +33119,8 @@ LAB_000306ac:
                       transmission_cruise_exhaust_brake_lockup_maximum_throttle_grid,0);
   wVar11 = lookupTableInterpolation
                      (&DAT_003fb142,transmission_output_speed_in_use,
-                      protection_fuel_threshold_g_axis_cal,protection_fuel_threshold_g_values_cal,0)
-  ;
+                      transmission_cruise_exhaust_brake_unlock_maximum_throttle_axis,
+                      transmission_cruise_exhaust_brake_unlock_maximum_throttle_values,0);
   wVar1 = cm848_dualAxisTableInterpolation
                     (&DAT_003fb10a,transmission_output_speed_in_use,
                      transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_x_axis,
@@ -33118,7 +33129,8 @@ LAB_000306ac:
                      transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_grid,0);
   wVar3 = lookupTableInterpolation
                     (&DAT_003fb140,transmission_output_speed_in_use,
-                     protection_fuel_threshold_f_axis_cal,protection_fuel_threshold_f_values_cal,0);
+                     transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_axis,
+                     transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_values,0);
   if (((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x20) != 0) &&
      (transmission_output_speed_in_use <= transmission_lockup_service_minimum_output_speed_4th)) {
     return;
@@ -33193,13 +33205,15 @@ void cm848_applyConverterUnlockConditions(void)
        (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) {
       wVar1 = lookupTableInterpolation
                         (&protection_fuel_demand_threshold_derate2_interp_state,
-                         transmission_output_speed_in_use,protection_fuel_limit_l2_alt_axis_cal,
-                         protection_fuel_limit_l2_alt_values_cal,0);
+                         transmission_output_speed_in_use,
+                         transmission_2nd_gear_unlock_maximum_throttle_axis,
+                         transmission_2nd_gear_unlock_maximum_throttle_values,0);
       fuel_demand_limit_working =
            lookupTableInterpolation
                      (&protection_fuel_demand_limit_derate2_interp_state,
-                      transmission_output_speed_in_use,protection_fuel_limit_l2_values_axis_cal,
-                      protection_fuel_limit_l2_values_cal,0);
+                      transmission_output_speed_in_use,
+                      transmission_2nd_gear_overheat_unlock_maximum_throttle_axis,
+                      transmission_2nd_gear_overheat_unlock_maximum_throttle_values,0);
       if (transmission_overheat_protection_active_flag == 0) {
         if ((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) ||
             (transmission_pressure_state.pressure_state == 0x18)) &&
@@ -33216,17 +33230,19 @@ LAB_00030f98:
          (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) {
         wVar1 = lookupTableInterpolation
                           (&protection_fuel_demand_threshold_derate3_interp_state,
-                           transmission_output_speed_in_use,protection_load_axis_e_cal,
-                           protection_load_values_e_cal,0);
+                           transmission_output_speed_in_use,
+                           transmission_3rd_gear_unlock_maximum_throttle_axis,
+                           transmission_3rd_gear_unlock_maximum_throttle_values,0);
         wVar2 = lookupTableInterpolation
                           (&DAT_003fb140,transmission_output_speed_in_use,
-                           protection_fuel_threshold_h_axis_cal,
-                           protection_fuel_threshold_h_values_cal,0);
+                           transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_axis,
+                           transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_values,0);
         fuel_demand_limit_working =
              lookupTableInterpolation
                        (&protection_fuel_demand_limit_derate3_interp_state,
-                        transmission_output_speed_in_use,protection_fuel_limit_l3_values_axis_cal,
-                        protection_fuel_limit_l3_values_cal,0);
+                        transmission_output_speed_in_use,
+                        transmission_3rd_gear_overheat_unlock_maximum_throttle_axis,
+                        transmission_3rd_gear_overheat_unlock_maximum_throttle_values,0);
         if (transmission_overheat_protection_active_flag == 0) {
           if ((exhaust_brake_transmission_features_inhibit == 0) &&
              ((switch_input_state_bits[1] & 0x10) != 0)) {
@@ -33261,16 +33277,17 @@ LAB_00030f98:
       fuel_demand_limit_working =
            lookupTableInterpolation
                      (&protection_fuel_demand_limit_derate4_interp_state,
-                      transmission_output_speed_in_use,protection_fuel_limit_l4_values_axis_cal,
-                      protection_fuel_limit_l4_values_cal,0);
+                      transmission_output_speed_in_use,
+                      transmission_4th_gear_overheat_unlock_maximum_throttle_axis,
+                      transmission_4th_gear_overheat_unlock_maximum_throttle_values,0);
       wVar4 = lookupTableInterpolation
                         (&DAT_003fb142,transmission_output_speed_in_use,
-                         protection_fuel_threshold_g_axis_cal,protection_fuel_threshold_g_values_cal
-                         ,0);
+                         transmission_cruise_exhaust_brake_unlock_maximum_throttle_axis,
+                         transmission_cruise_exhaust_brake_unlock_maximum_throttle_values,0);
       wVar1 = lookupTableInterpolation
                         (&DAT_003fb140,transmission_output_speed_in_use,
-                         protection_fuel_threshold_f_axis_cal,protection_fuel_threshold_f_values_cal
-                         ,0);
+                         transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_axis,
+                         transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_values,0);
       if (transmission_overheat_protection_active_flag != 0) goto LAB_00030f98;
       if ((exhaust_brake_transmission_features_inhibit == 0) &&
          ((switch_input_state_bits[1] & 0x10) != 0)) {
@@ -33459,8 +33476,8 @@ void cm848_selectGovernorPressureCold(void)
     governor_pressure_target =
          lookupTableInterpolation
                    (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
-                    governor_pressure_manual_low_curve_axis,
-                    governor_pressure_manual_low_curve_values,0);
+                    governor_pressure_manual_2nd_curve_axis,
+                    governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = 0x16;
   }
   else if ((protection_status_flags_t_0040b0f2.flags[0] & 0x10) == 0) {
@@ -33501,8 +33518,8 @@ void cm848_selectGovernorPressureBaseCurve(void)
     governor_pressure_target =
          lookupTableInterpolation
                    (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
-                    governor_pressure_manual_low_curve_axis,
-                    governor_pressure_manual_low_curve_values,0);
+                    governor_pressure_manual_2nd_curve_axis,
+                    governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = 0x16;
   }
   else if (fuel_demand_control_t_0040a57a.calculated <
@@ -33519,7 +33536,8 @@ void cm848_selectGovernorPressureBaseCurve(void)
       governor_pressure_target =
            lookupTableInterpolation
                      (&DAT_003fb0ea,transmission_output_speed_in_use,
-                      protection_derate_l4_rpm_axis_b_cal,protection_derate_l4_rpm_output_b_cal,0);
+                      governor_pressure_exhaust_brake_curve_axis,
+                      governor_pressure_exhaust_brake_curve_values,0);
       transmission_pressure_state.pressure_state = 0x18;
     }
   }
@@ -33842,8 +33860,8 @@ void cm848_selectGovernorPressureCruise(void)
     governor_pressure_target =
          lookupTableInterpolation
                    (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
-                    governor_pressure_manual_low_curve_axis,
-                    governor_pressure_manual_low_curve_values,0);
+                    governor_pressure_manual_2nd_curve_axis,
+                    governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = 0x16;
   }
   else {
@@ -34347,12 +34365,14 @@ void cm848_selectGovernorPressureNormal(void)
           ((switch_input_state_bits[1] & 0x10) != 0)) {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb122,transmission_output_speed_in_use,protection_fuel_limit_l4_axis_cal
-                    ,protection_fuel_limit_l4_output_b_cal,0);
+                   (&DAT_003fb122,transmission_output_speed_in_use,
+                    transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_axis,
+                    transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&DAT_003fb124,transmission_output_speed_in_use,protection_load_rate_l4_axis_cal,
-                    protection_load_rate_l4_output_cal,0);
+                   (&DAT_003fb124,transmission_output_speed_in_use,
+                    transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_axis,
+                    transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_values,0);
   }
   else {
     transmission_anti_hunt_minimum_throttle_interpolated =
@@ -34950,22 +34970,31 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
   if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0) {
     wVar4 = lookupTableInterpolation
                       (&protection_filter_stage_4_state,transmission_output_speed_in_use,
-                       protection_rpm_peak_axis_b_cal,protection_rpm_peak_output_b_cal,0);
+                       transmission_3rd_gear_closed_throttle_unlock_throttle_axis,
+                       transmission_3rd_gear_closed_throttle_unlock_throttle_values,0);
     wVar3 = lookupTableInterpolation
                       (&protection_filter_stage_5_state,transmission_output_speed_in_use,
-                       protection_load_derate_l2_axis_cal,protection_load_derate_l2_output_cal,0);
+                       transmission_4th_gear_closed_throttle_unlock_throttle_axis,
+                       transmission_4th_gear_closed_throttle_unlock_throttle_values,0);
     wVar9 = lookupTableInterpolation
                       (&protection_filter_stage_3_state,transmission_output_speed_in_use,
-                       protection_load_derate_l4_axis_cal,protection_load_derate_l4_output_cal,0);
+                       transmission_2nd_gear_closed_throttle_unlock_throttle_axis,
+                       transmission_2nd_gear_closed_throttle_unlock_throttle_values,0);
     wVar7 = lookupTableInterpolation
                       (&protection_filter_stage_6_state,transmission_output_speed_in_use,
-                       protection_fuel_derate2_axis_cal,protection_fuel_derate2_values_cal,0);
+                       transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
+                       transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
+    ;
     wVar5 = lookupTableInterpolation
                       (&protection_filter_stage_7_state,transmission_output_speed_in_use,
-                       protection_fuel_derate3_axis_cal,protection_fuel_derate3_values_cal,0);
+                       transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
+                       transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
+    ;
     wVar6 = lookupTableInterpolation
                       (&protection_filter_stage_8_state,transmission_output_speed_in_use,
-                       protection_fuel_derate4_axis_cal,protection_fuel_derate4_values_cal,0);
+                       transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
+                       transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
+    ;
     if ((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) &&
         (transmission_current_gear == 2)) && ((algorithm_enable_flags_6_cal & 8) != 0)) {
       if ((exhaust_brake_transmission_features_inhibit != 0) ||
@@ -35002,22 +35031,28 @@ joined_r0x000341e0:
   }
   wVar3 = lookupTableInterpolation
                     (&protection_filter_stage_1_state,transmission_output_speed_in_use,
-                     protection_rpm_peak_axis_cal,protection_rpm_peak_output_cal,0);
+                     transmission_3rd_gear_closed_throttle_relock_throttle_axis,
+                     transmission_3rd_gear_closed_throttle_relock_throttle_values,0);
   wVar4 = lookupTableInterpolation
-                    (&protection_filter_stage_7_state,wVar9,protection_fuel_derate3_axis_cal,
-                     protection_fuel_derate3_values_cal,0);
+                    (&protection_filter_stage_7_state,wVar9,
+                     transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
+                     transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   wVar5 = lookupTableInterpolation
                     (&protection_filter_stage_2_state,transmission_output_speed_in_use,
-                     protection_load_derate_l1_axis_cal,protection_load_derate_l1_output_cal,0);
+                     transmission_4th_gear_closed_throttle_relock_throttle_axis,
+                     transmission_4th_gear_closed_throttle_relock_throttle_values,0);
   wVar6 = lookupTableInterpolation
-                    (&protection_filter_stage_8_state,wVar9,protection_fuel_derate4_axis_cal,
-                     protection_fuel_derate4_values_cal,0);
+                    (&protection_filter_stage_8_state,wVar9,
+                     transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
+                     transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   wVar7 = lookupTableInterpolation
                     (&protection_filter_stage_0_state,transmission_output_speed_in_use,
-                     protection_load_derate_l3_axis_cal,protection_load_derate_l3_output_cal,0);
+                     transmission_2nd_gear_closed_throttle_relock_throttle_axis,
+                     transmission_2nd_gear_closed_throttle_relock_throttle_values,0);
   wVar9 = lookupTableInterpolation
-                    (&protection_filter_stage_6_state,wVar9,protection_fuel_derate2_axis_cal,
-                     protection_fuel_derate2_values_cal,0);
+                    (&protection_filter_stage_6_state,wVar9,
+                     transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
+                     transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   if ((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) &&
       (transmission_current_gear == 2)) && ((algorithm_enable_flags_6_cal & 8) != 0)) {
     wVar4 = wVar9;
@@ -35627,10 +35662,12 @@ void cm848_selectGovernorPressureLockupBoost(void)
   
   wVar1 = lookupTableInterpolation
                     (&protection_filter_stage_9_state,transmission_output_speed_in_use,
-                     protection_threshold_axis_cal,protection_threshold_values_cal,0);
+                     transmission_3rd_gear_lockup_maximum_throttle_axis,
+                     transmission_3rd_gear_lockup_maximum_throttle_values,0);
   wVar2 = lookupTableInterpolation
                     (&protection_filter_stage_10_state,transmission_output_speed_in_use,
-                     protection_load_axis_e_cal,protection_load_values_e_cal,0);
+                     transmission_3rd_gear_unlock_maximum_throttle_axis,
+                     transmission_3rd_gear_unlock_maximum_throttle_values,0);
   if ((((((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0) &&
         (transmission_selected_gear != 0x7e)) && (transmission_selected_gear != 0x7f)) &&
       (((2 < transmission_current_gear &&
