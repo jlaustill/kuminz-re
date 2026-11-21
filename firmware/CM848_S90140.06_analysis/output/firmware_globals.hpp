@@ -2034,6 +2034,13 @@ extern dword output_shaft_to_vehicle_speed_divisor_high_axle_ratio;  // 0x003fd0
 extern word vehicle_speed_zero_under_load_engine_load_filtered;  // 0x003fd06a
 extern word vehicle_speed_zero_under_load_accelerator_off_idle_previous;  // 0x003fd06c
 extern ema_filter_state_t vehicle_speed_zero_under_load_engine_load_filter_state;  // 0x003fd070
+extern word fuel_pressure_setpoint_cold_start_cached_axis_offsets[2];  // 0x003fd0ce
+extern word fuel_pressure_setpoint_ambient_factor_cached_axis_offsets[2];  // 0x003fd0d2
+extern word fuel_pressure_setpoint_ambient_limit_cached_axis_offsets[2];  // 0x003fd0d6
+extern word fuel_pressure_setpoint_base_map_cached_axis_offsets[2];  // 0x003fd0da
+extern word fuel_pressure_setpoint_coolant_limit_cached_axis_offsets[2];  // 0x003fd0de
+extern word fuel_pressure_setpoint_coolant_factor_cached_axis_offsets[2];  // 0x003fd0e2
+extern word fuel_pressure_setpoint_offset_cached_axis_offsets[2];  // 0x003fd0e6
 extern byte BYTE_003fd1ac;  // 0x003fd1ac
 extern word fuel_pressure_sensor_pre_start_high_sample_count;  // 0x003fd1d8
 extern byte BYTE_003fd284;  // 0x003fd284
@@ -5882,7 +5889,7 @@ extern int16_t injection_quantity_pilot_cold_correction;  // 0x0040b95a
 extern dword fuel_pressure_shortfall_accumulator;  // 0x0040b9d8
 extern dword fuel_pressure_excess_accumulator;  // 0x0040b9dc
 extern word fuel_pressure_tracking_error_monitor_state;  // 0x0040b9e2
-extern word misfire_monitor_cylinder_attempt_counts;  // 0x0040b9ee
+extern word misfire_monitor_cylinder_attempt_counts[6];  // 0x0040b9ee
 extern word misfire_monitor_warm_up_pass_count;  // 0x0040ba10
 extern byte misfire_monitor_test_cylinder_number;  // 0x0040ba13
 extern word misfire_monitor_total_attempt_count;  // 0x0040ba14
@@ -5970,7 +5977,7 @@ extern dword trip_time_at_governed_speed;  // 0x003fee70
 extern dword trip_engine_run_time;  // 0x003fee74
 extern dword fuel_pressure_setpoint_offset_slewed;  // 0x003fd0c6
 extern word fuel_pressure_setpoint_deadband_filtered;  // 0x003fd0c4
-extern word fuel_pressure_setpoint_map_cached_axis_offsets;  // 0x003fd0ca
+extern word fuel_pressure_setpoint_map_cached_axis_offsets[2];  // 0x003fd0ca
 extern dword misfire_monitor_phase_code;  // 0x003fd21e
 extern dword misfire_monitor_step_code;  // 0x003fd222
 extern word misfire_monitor_idle_reference_speed_previous;  // 0x003fd213
@@ -6010,7 +6017,7 @@ extern word intake_air_heater_pulse_countdown;  // 0x003fce49
 extern word intake_air_heater_pwm_period_ticks;  // 0x003fce4b
 extern word intake_air_heater_pwm_on_ticks_remaining;  // 0x003fce4d
 extern word intake_air_heater_level6_grace_count;  // 0x003fce51
-extern word intake_air_heater_level_duration_table;  // 0x003fce55
+extern word intake_air_heater_level_duration_table[4];  // 0x003fce55
 extern word intake_air_heater_preheat_total_ticks;  // 0x003fce5f
 extern dword data_collector_fill_stop_address;  // 0x003fbca6
 extern dword data_collector_fill_phase;  // 0x003fbcaa
@@ -6430,7 +6437,7 @@ extern word injection_timing_rpm_snap_active_flag;  // 0x0040b988
 extern word fuel_pressure_sensor_plausibility_alternator_field_duty_threshold;  // 0x00409ed6
 extern word fuel_pressure_sensor_plausibility_average_fuel_demand;  // 0x0040b9ba
 extern word fuel_pressure_sensor_plausibility_fuel_addend;  // 0x0040b9be
-extern word fuel_pressure_sensor_plausibility_expected_fuel_demand_table;  // 0x00409ee2
+extern word fuel_pressure_sensor_plausibility_expected_fuel_demand_table[5];  // 0x00409ee2
 extern word battery_temperature_rationality_deviation_threshold;  // 0x00409f9e
 extern word battery_temperature_cranking_mismatch_count;  // 0x0040ba36
 extern word intake_manifold_temperature_cranking_mismatch_count;  // 0x0040ba38
@@ -6762,7 +6769,7 @@ extern word power_take_off_disengaged_pass_count;  // 0x003fd1e2
 extern word fuel_pressure_tracking_error_monitor_pass_count;  // 0x003fd1e4
 extern byte fuel_pressure_tracking_error_monitor_inhibited_flag;  // 0x003fd1e7
 extern word intake_air_heater_performance_test_recovered_battery_voltage_adc;  // 0x003fd1f4
-extern byte misfire_monitor_cylinder_misfire_flags;  // 0x003fd1ff
+extern byte misfire_monitor_cylinder_misfire_flags[6];  // 0x003fd1ff
 extern word fuel_level_low_distance_check_armed_flag_cal;  // 0x003fee9c
 extern dword fuel_level_low_distance_accumulator_cal;  // 0x003fee9e
 extern byte battery_temperature_stuck_check_failed_warm_up_cycle_count_cal;  // 0x003feea6
@@ -6851,11 +6858,11 @@ extern word auxiliary_injection_pulse_width_cached_axis_offset;  // 0x003fb62c
 extern byte sensor_scan_count_a_limit;  // 0x003fb8f3
 extern byte sensor_scan_count_b_limit;  // 0x003fb8f4
 extern byte sensor_scan_count_c_limit;  // 0x003fb8f5
-extern byte switch_input_debounce_history;  // 0x003fb900
+extern byte switch_input_debounce_history[16];  // 0x003fb900
 extern word switch_input_hardware_line_cal;  // 0x003fdb8e
 extern word emission_level_cap_rate_limited;  // 0x003fba2a
 extern word emission_level_cap_rate_limited_previous;  // 0x003fba2c
-extern word fuel_demand_timing_demand_ring_buf;  // 0x003fba38
+extern word fuel_demand_timing_demand_ring_buf[150];  // 0x003fba38
 extern word extreme_ambient_coolant_temperature_high_flag;  // 0x003fbca2
 extern word egr_valve_autozero_active_flag;  // 0x003fbccc
 extern word egr_orifice_temperature_lead_time_constant_lookup;  // 0x003fbcf8
@@ -7031,7 +7038,7 @@ extern word engine_warning_alert_duration_fault_latch;  // 0x0040873c
 extern word cold_start_coolant_bucket_overheat_setpoint;  // 0x00408750
 extern word cold_start_coolant_bucket_recovery_temp_threshold;  // 0x00408752
 extern word cold_start_coolant_bucket_recovery_count_limit;  // 0x00408754
-extern word cold_start_coolant_bucket_thresholds;  // 0x0040877e
+extern word cold_start_coolant_bucket_thresholds[5];  // 0x0040877e
 extern word coolant_overheat_recovery_count_limit;  // 0x00408758
 extern word coolant_overheat_debounce_count_limit;  // 0x0040875e
 extern word coolant_overheat_temp_threshold;  // 0x0040876c
@@ -7190,7 +7197,7 @@ extern word altitude_derate_ambient_temperature_band_upper;  // 0x0040a190
 extern int16_t air_handling_system_protection_compressor_outlet_temperature_limit;  // 0x0040a5a4
 extern word air_handling_system_protection_high_load_flag;  // 0x0040a5ac
 extern word engine_speed_limit_fault_derate_span;  // 0x0040a788
-extern byte j1939_receive_source_address_whitelist;  // 0x0040ad56
+extern byte j1939_receive_source_address_whitelist[4];  // 0x0040ad56
 extern word turbocharger_speed_in_range_state;  // 0x0040afe2
 extern word turbocharger_speed_default_value;  // 0x0040bdc6
 extern word sensor_channel28_value;  // 0x0040bdc0

@@ -1,0 +1,11 @@
+cm848: round 11 closing (2) - stage E in the docs, the logs, verify
+
+- **Stage E's hash** (e3f493c) in task 046 and the PR body; the PR body copy is re-synced.
+- **The round11/ folder** is re-synced, and the large-files tarball adds the round 11 build logs (with the switch
+  pilot's) and verify_round11.log (86 entries).
+- **Checks on the final tree:**
+  - lookup_tables.py (0 sizing problems);
+  - test_lookup_tables.py / test_disasm_tools.py / test_e2m_block_addresses.py / test_rename_waves.py pass;
+  - ./analyze.sh verify: two byte-identical builds, and the .cpp matches the committed one except its timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

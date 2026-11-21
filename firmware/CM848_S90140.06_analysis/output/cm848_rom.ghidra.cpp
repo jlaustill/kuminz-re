@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 16:20:17 MST 2026
+// Generated: Sat Nov 21 16:35:07 MST 2026
 
 
 //
@@ -1777,10 +1777,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word qadc_a_pqa2_sample;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
+  word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -54471,12 +54471,13 @@ void cm848_scanAndDebounceSwitchInputs(void)
   uVar6 = 0;
   uVar5 = (uint)switch_input_debounce_sample_index;
   do {
-    (&switch_input_debounce_history)[uVar6 + uVar5 * 4] = switch_input_sample_bits[uVar6];
+    switch_input_debounce_history[uVar6 + uVar5 * 4] = switch_input_sample_bits[uVar6];
     (&switch_input_state_bits.switches_0_to_7)[uVar6] =
-         (&switch_input_debounce_history)[uVar6] & (&DAT_003fb904)[uVar6] & (&DAT_003fb908)[uVar6] &
-         (&DAT_003fb90c)[uVar6] |
-         ((&switch_input_debounce_history)[uVar6] | (&DAT_003fb904)[uVar6] | (&DAT_003fb908)[uVar6]
-         | (&DAT_003fb90c)[uVar6]) & (&switch_input_state_bits.switches_0_to_7)[uVar6];
+         switch_input_debounce_history[uVar6] & switch_input_debounce_history[uVar6 + 4] &
+         switch_input_debounce_history[uVar6 + 8] & switch_input_debounce_history[uVar6 + 0xc] |
+         (switch_input_debounce_history[uVar6] | switch_input_debounce_history[uVar6 + 4] |
+          switch_input_debounce_history[uVar6 + 8] | switch_input_debounce_history[uVar6 + 0xc]) &
+         (&switch_input_state_bits.switches_0_to_7)[uVar6];
     uVar6 = uVar6 + 1 & 0xffff;
   } while (uVar6 < 4);
   switch_input_debounce_sample_index = switch_input_debounce_sample_index + 1;
@@ -63565,13 +63566,13 @@ void cm848_updateNotToExceedAverages(void)
     if (fuel_demand_timing_rolling_avg_full_flag == 0) {
       fuel_demand_timing_demand_window_sum =
            fuel_demand_timing_demand_window_sum + emission_level_cap_command;
-      (&fuel_demand_timing_demand_ring_buf)[uVar3] = emission_level_cap_command;
+      fuel_demand_timing_demand_ring_buf[uVar3] = emission_level_cap_command;
     }
     else {
       fuel_demand_timing_demand_window_sum =
-           (fuel_demand_timing_demand_window_sum - (&fuel_demand_timing_demand_ring_buf)[uVar3]) +
+           (fuel_demand_timing_demand_window_sum - fuel_demand_timing_demand_ring_buf[uVar3]) +
            (uint)emission_level_cap_command;
-      (&fuel_demand_timing_demand_ring_buf)[uVar3] = emission_level_cap_command;
+      fuel_demand_timing_demand_ring_buf[uVar3] = emission_level_cap_command;
       fuel_demand_timing_correction_window_sum =
            fuel_demand_timing_correction_window_sum - (ushort)(&DAT_003fbb64)[uVar3];
     }
@@ -74126,7 +74127,7 @@ void cm848_monitorCoolantTemperatureBucketOverheat(void)
   
   iVar3 = 1;
   pdVar1 = cold_start_coolant_bucket_counters;
-  pwVar2 = &cold_start_coolant_bucket_thresholds;
+  pwVar2 = cold_start_coolant_bucket_thresholds;
   do {
     pdVar1 = pdVar1 + 1;
     pwVar2 = pwVar2 + 1;
@@ -74163,7 +74164,7 @@ void cm848_monitorCoolantTemperatureBucketOverheat(void)
     sensor_overheat_recovery_count = 0;
   }
   if (((fault_detected_bits_384_to_399 & 0x20) != 0) &&
-     ((DAT_00408786 < cold_start_coolant_bucket_counters[4] ||
+     ((cold_start_coolant_bucket_thresholds[4] < cold_start_coolant_bucket_counters[4] ||
       ((DAT_0040874e < cold_start_coolant_overheat_event_count &&
        ((short)cold_start_coolant_bucket_overheat_setpoint <
         (short)sensor_readings_t_0040baf2.coolant_temp)))))) {
@@ -74279,7 +74280,7 @@ void cm848_calculateCoolantOverheatPiFuelLimit(void)
 void cm848_selectCoolantOverheatFuelLimit(void)
 
 {
-  if ((cold_start_coolant_bucket_thresholds < cold_start_coolant_bucket_counters[0]) &&
+  if ((cold_start_coolant_bucket_thresholds[0] < cold_start_coolant_bucket_counters[0]) &&
      ((int)(uint)DAT_00408772 < (int)(short)sensor_readings_t_0040baf2.coolant_temp)) {
     coolant_overheat_engine_speed_fuel_limit =
          lookupTableInterpolation
@@ -76433,7 +76434,8 @@ void cm848_selectIntakeAirHeaterLevelByRpm(void)
               (uint)intake_air_heater_postheat_stage_engine_speed_hysteresis) {
             return;
           }
-          if ((int)(short)intake_air_heater_level_duration_table + (int)DAT_003fce57 <=
+          if ((int)(short)intake_air_heater_level_duration_table[0] +
+              (int)(short)intake_air_heater_level_duration_table[1] <=
               (int)(short)intake_air_heater_postheat_elapsed_cycles) {
             intake_air_heater_target_level = 3;
             return;
@@ -76496,7 +76498,7 @@ void cm848_pulseIntakeAirHeaterRelays(void)
   else {
     if ((((intake_air_heater_schedule_level == 0) || (intake_air_heater_schedule_level == 1)) ||
         (intake_air_heater_schedule_level == 2)) || (iVar1 == 0)) {
-      intake_air_heater_pulse_duration_ticks = (&intake_air_heater_level_duration_table)[iVar1];
+      intake_air_heater_pulse_duration_ticks = intake_air_heater_level_duration_table[iVar1];
     }
     else if (((intake_air_heater_schedule_level == 3) || (intake_air_heater_schedule_level == 4)) ||
             (intake_air_heater_schedule_level == 5)) {
@@ -76507,7 +76509,9 @@ void cm848_pulseIntakeAirHeaterRelays(void)
         if (iVar1 != 2) {
           if (iVar1 == 3) {
             intake_air_heater_pulse_duration_ticks =
-                 (intake_air_heater_level_duration_table + DAT_003fce57 + DAT_003fce5b) -
+                 (intake_air_heater_level_duration_table[0] +
+                  intake_air_heater_level_duration_table[1] +
+                 intake_air_heater_level_duration_table[3]) -
                  intake_air_heater_postheat_elapsed_cycles;
           }
           goto LAB_0051782c;
@@ -76515,8 +76519,8 @@ void cm848_pulseIntakeAirHeaterRelays(void)
         iVar1 = 4;
       }
       intake_air_heater_pulse_duration_ticks =
-           (intake_air_heater_level_duration_table +
-           *(short *)((int)&intake_air_heater_level_duration_table + iVar1)) -
+           (intake_air_heater_level_duration_table[0] +
+           *(short *)((int)intake_air_heater_level_duration_table + iVar1)) -
            intake_air_heater_postheat_elapsed_cycles;
     }
 LAB_0051782c:
@@ -76715,13 +76719,13 @@ LAB_00517e34:
                            intake_air_heater_postheat_pulse_duration_x_axis,(ushort)bVar3,
                            intake_air_heater_postheat_pulse_duration_y_axis,
                            intake_air_heater_postheat_pulse_duration_grid,0);
-        (&intake_air_heater_level_duration_table)[bVar3] = wVar2;
+        intake_air_heater_level_duration_table[bVar3] = wVar2;
         if ((intake_air_heater_crank_heat_subtraction_enable_flag == 1) && (bVar3 == 0)) {
-          intake_air_heater_level_duration_table =
-               intake_air_heater_level_duration_table - intake_air_heater_crank_elapsed_ticks;
+          intake_air_heater_level_duration_table[0] =
+               intake_air_heater_level_duration_table[0] - intake_air_heater_crank_elapsed_ticks;
         }
-        if ((short)(&intake_air_heater_level_duration_table)[bVar3] < 0) {
-          (&intake_air_heater_level_duration_table)[bVar3] = 0;
+        if ((short)intake_air_heater_level_duration_table[bVar3] < 0) {
+          intake_air_heater_level_duration_table[bVar3] = 0;
         }
         bVar3 = bVar3 + 1;
       } while (bVar3 < 4);
@@ -88596,54 +88600,54 @@ void cm848_calculateFuelPressureSetpoint(void)
   }
   iVar10 = (int)(short)(fuel_pressure_setpoint_rise_limit + fuel_pressure_setpoint);
   wVar3 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd0da,average_engine_speed,fuel_pressure_setpoint_base_map_x_axis,
-                     final_fueling,fuel_pressure_setpoint_base_map_y_axis,
-                     fuel_pressure_setpoint_base_map_grid,4);
+                    (fuel_pressure_setpoint_base_map_cached_axis_offsets,average_engine_speed,
+                     fuel_pressure_setpoint_base_map_x_axis,final_fueling,
+                     fuel_pressure_setpoint_base_map_y_axis,fuel_pressure_setpoint_base_map_grid,4);
   if (combustion_chi_lower_map_number == 1) {
     unaff_r26 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
+                          (fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_1_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_1_y_axis,fuel_pressure_setpoint_map_1_grid,4);
   }
   else if (combustion_chi_lower_map_number == 2) {
     unaff_r26 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
+                          (fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_2_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_2_y_axis,fuel_pressure_setpoint_map_2_grid,4);
   }
   else if (combustion_chi_lower_map_number == 3) {
     unaff_r26 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
+                          (fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_3_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_3_y_axis,fuel_pressure_setpoint_map_3_grid,4);
   }
   else if (combustion_chi_lower_map_number == 4) {
     unaff_r26 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
+                          (fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_4_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_4_y_axis,fuel_pressure_setpoint_map_4_grid,4);
   }
   if (combustion_chi_upper_map_number == 1) {
     unaff_r21 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
+                          (fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_1_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_1_y_axis,fuel_pressure_setpoint_map_1_grid,4);
   }
   else if (combustion_chi_upper_map_number == 2) {
     unaff_r21 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
+                          (fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_2_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_2_y_axis,fuel_pressure_setpoint_map_2_grid,4);
   }
   else if (combustion_chi_upper_map_number == 3) {
     unaff_r21 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
+                          (fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_3_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_3_y_axis,fuel_pressure_setpoint_map_3_grid,4);
   }
   else if (combustion_chi_upper_map_number == 4) {
     unaff_r21 = cm848_dualAxisTableInterpolation
-                          (&fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
+                          (fuel_pressure_setpoint_map_cached_axis_offsets,average_engine_speed,
                            fuel_pressure_setpoint_map_4_x_axis,final_fueling,
                            fuel_pressure_setpoint_map_4_y_axis,fuel_pressure_setpoint_map_4_grid,4);
   }
@@ -88655,30 +88659,34 @@ void cm848_calculateFuelPressureSetpoint(void)
   iVar14 = (int)sVar4;
   fuel_pressure_setpoint_map_blended = sVar4;
   wVar3 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd0de,average_engine_speed,fuel_pressure_setpoint_coolant_limit_x_axis,
-                     final_fueling,fuel_pressure_setpoint_coolant_limit_y_axis,
+                    (fuel_pressure_setpoint_coolant_limit_cached_axis_offsets,average_engine_speed,
+                     fuel_pressure_setpoint_coolant_limit_x_axis,final_fueling,
+                     fuel_pressure_setpoint_coolant_limit_y_axis,
                      fuel_pressure_setpoint_coolant_limit_grid,4);
   wVar5 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd0e2,wVar13,fuel_pressure_setpoint_coolant_factor_x_axis,y_input,
+                    (fuel_pressure_setpoint_coolant_factor_cached_axis_offsets,wVar13,
+                     fuel_pressure_setpoint_coolant_factor_x_axis,y_input,
                      fuel_pressure_setpoint_coolant_factor_y_axis,
                      fuel_pressure_setpoint_coolant_factor_grid,7);
   uVar7 = (int)(short)wVar3 * (int)(short)wVar5;
   sVar8 = (short)((int)uVar7 >> 0xc) + (ushort)((int)uVar7 < 0 && (uVar7 & 0xfff) != 0);
   iVar11 = (int)sVar8;
   wVar3 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd0d6,average_engine_speed,fuel_pressure_setpoint_ambient_limit_x_axis,
-                     final_fueling,fuel_pressure_setpoint_ambient_limit_y_axis,
+                    (fuel_pressure_setpoint_ambient_limit_cached_axis_offsets,average_engine_speed,
+                     fuel_pressure_setpoint_ambient_limit_x_axis,final_fueling,
+                     fuel_pressure_setpoint_ambient_limit_y_axis,
                      fuel_pressure_setpoint_ambient_limit_grid,4);
   wVar6 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd0d2,y_input,fuel_pressure_setpoint_ambient_factor_x_axis,wVar6,
+                    (fuel_pressure_setpoint_ambient_factor_cached_axis_offsets,y_input,
+                     fuel_pressure_setpoint_ambient_factor_x_axis,wVar6,
                      fuel_pressure_setpoint_ambient_factor_y_axis,
                      fuel_pressure_setpoint_ambient_factor_grid,5);
   uVar7 = (int)(short)wVar3 * (int)(short)wVar6;
   sVar9 = (short)((int)uVar7 >> 0xc) + (ushort)((int)uVar7 < 0 && (uVar7 & 0xfff) != 0);
   wVar6 = cm848_dualAxisTableInterpolation
-                    (&DAT_003fd0e6,average_engine_speed,fuel_pressure_setpoint_offset_x_axis,
-                     final_fueling,fuel_pressure_setpoint_offset_y_axis,
-                     fuel_pressure_setpoint_offset_grid,4);
+                    (fuel_pressure_setpoint_offset_cached_axis_offsets,average_engine_speed,
+                     fuel_pressure_setpoint_offset_x_axis,final_fueling,
+                     fuel_pressure_setpoint_offset_y_axis,fuel_pressure_setpoint_offset_grid,4);
   fuel_pressure_setpoint_offset_target = (short)wVar6 * 100;
   sVar12 = (short)((int)fuel_pressure_setpoint_offset_slewed / 100);
   if (fuel_pressure_setpoint_term_combination_mode == 0) {
@@ -88780,9 +88788,10 @@ LAB_0052a5b0:
   fuel_pressure_setpoint_running_value = (sword)unaff_r28;
   fuel_pressure_setpoint_cold_start_value =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fd0ce,average_engine_speed,fuel_pressure_setpoint_cold_start_x_axis,wVar13
-                  ,fuel_pressure_setpoint_cold_start_y_axis,fuel_pressure_setpoint_cold_start_grid,6
-                 );
+                 (fuel_pressure_setpoint_cold_start_cached_axis_offsets,average_engine_speed,
+                  fuel_pressure_setpoint_cold_start_x_axis,wVar13,
+                  fuel_pressure_setpoint_cold_start_y_axis,fuel_pressure_setpoint_cold_start_grid,6)
+  ;
   iVar10 = (int)(short)fuel_pressure_setpoint_cold_start_value;
   if ((protection_feature_flags & 4) == 0) goto LAB_0052a7e4;
   if ((((engine_state == ENGINE_STATE_STOPPED) || (engine_state == ENGINE_STATE_CRANKING)) ||
@@ -88877,22 +88886,22 @@ void cm848_initializeFuelPressureSetpointState(void)
 {
   fuel_pressure_setpoint_transition_state = 1;
   fuel_pressure_setpoint_winning_term_code = 1;
-  fuel_pressure_setpoint_map_cached_axis_offsets = 2;
-  DAT_003fd0cc = 2;
-  DAT_003fd0ce = 2;
-  DAT_003fd0d0 = 2;
-  DAT_003fd0d2 = 2;
-  DAT_003fd0d4 = 2;
-  DAT_003fd0d6 = 2;
-  DAT_003fd0d8 = 2;
-  DAT_003fd0da = 2;
-  DAT_003fd0dc = 2;
-  DAT_003fd0de = 2;
-  DAT_003fd0e0 = 2;
-  DAT_003fd0e2 = 2;
-  DAT_003fd0e4 = 2;
-  DAT_003fd0e6 = 2;
-  DAT_003fd0e8 = 2;
+  fuel_pressure_setpoint_map_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_map_cached_axis_offsets[1] = 2;
+  fuel_pressure_setpoint_cold_start_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_cold_start_cached_axis_offsets[1] = 2;
+  fuel_pressure_setpoint_ambient_factor_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_ambient_factor_cached_axis_offsets[1] = 2;
+  fuel_pressure_setpoint_ambient_limit_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_ambient_limit_cached_axis_offsets[1] = 2;
+  fuel_pressure_setpoint_base_map_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_base_map_cached_axis_offsets[1] = 2;
+  fuel_pressure_setpoint_coolant_limit_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_coolant_limit_cached_axis_offsets[1] = 2;
+  fuel_pressure_setpoint_coolant_factor_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_coolant_factor_cached_axis_offsets[1] = 2;
+  fuel_pressure_setpoint_offset_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_offset_cached_axis_offsets[1] = 2;
   return;
 }
 
@@ -92453,7 +92462,7 @@ uint cm848_calculateExpectedFuelDemandAverage(int param_1)
   
   uVar1 = ((uint)fuel_pressure_sensor_plausibility_expected_fuel_demand *
           (uint)fuel_pressure_sensor_plausibility_step_count) / 10 +
-          (uint)(&fuel_pressure_sensor_plausibility_expected_fuel_demand_table)[param_1] +
+          (uint)fuel_pressure_sensor_plausibility_expected_fuel_demand_table[param_1] +
           (uint)fuel_pressure_sensor_plausibility_fuel_addend;
   uVar1 = (uint)(CONCAT44((int)((ulonglong)uVar1 * 10 >> 0x20),uVar1 * 10) /
                 (ulonglong)(fuel_pressure_sensor_plausibility_step_count + 10));
@@ -92558,8 +92567,7 @@ LAB_00530f24:
     if (uVar6 == 0) {
       iVar3 = 2;
 LAB_00531064:
-      sVar1 = *(short *)((int)&fuel_pressure_sensor_plausibility_expected_fuel_demand_table + iVar3)
-      ;
+      sVar1 = *(short *)((int)fuel_pressure_sensor_plausibility_expected_fuel_demand_table + iVar3);
 LAB_00531070:
       fuel_pressure_sensor_plausibility_expected_fuel_demand =
            sVar1 + fuel_pressure_sensor_plausibility_fuel_addend;
@@ -92597,8 +92605,8 @@ LAB_00531084:
       if (uVar6 == 0) {
         iVar3 = 4;
 LAB_00531014:
-        sVar1 = *(short *)((int)&fuel_pressure_sensor_plausibility_expected_fuel_demand_table +
-                          iVar3);
+        sVar1 = *(short *)((int)fuel_pressure_sensor_plausibility_expected_fuel_demand_table + iVar3
+                          );
         goto LAB_00531070;
       }
       uVar5 = 2;
@@ -93633,8 +93641,8 @@ void cm848_resetMisfireMonitorTest(void)
   uVar1 = (uint)cylinder_event_count_max;
   if (uVar1 != 0) {
     do {
-      (&misfire_monitor_cylinder_attempt_counts)[uVar2] = 0;
-      (&misfire_monitor_cylinder_misfire_flags)[uVar2] = 1;
+      misfire_monitor_cylinder_attempt_counts[uVar2] = 0;
+      misfire_monitor_cylinder_misfire_flags[uVar2] = 1;
       uVar2 = uVar2 + 1 & 0xff;
     } while (uVar2 < uVar1);
   }
@@ -93761,7 +93769,7 @@ void cm848_countFlaggedMisfireCylinders(void)
   uVar1 = 0;
   if (cylinder_event_count_max != 0) {
     do {
-      if ((&misfire_monitor_cylinder_misfire_flags)[uVar1] != 0) {
+      if (misfire_monitor_cylinder_misfire_flags[uVar1] != 0) {
         misfire_monitor_flagged_cylinder_count = misfire_monitor_flagged_cylinder_count + 1;
       }
       uVar1 = uVar1 + 1 & 0xff;
@@ -93804,9 +93812,9 @@ void cm848_evaluateMisfireMonitorCylinderResponse(void)
           [misfire_monitor_cylinder_response_index_map[uVar2]];
   misfire_monitor_cylinder_response_values[uVar2] = wVar1;
   if ((short)misfire_monitor_response_limit < (short)wVar1) {
-    if ((&misfire_monitor_cylinder_attempt_counts)[uVar2] < (ushort)misfire_monitor_attempt_limit) {
-      (&misfire_monitor_cylinder_attempt_counts)[uVar2] =
-           (&misfire_monitor_cylinder_attempt_counts)[uVar2] + 1;
+    if (misfire_monitor_cylinder_attempt_counts[uVar2] < (ushort)misfire_monitor_attempt_limit) {
+      misfire_monitor_cylinder_attempt_counts[uVar2] =
+           misfire_monitor_cylinder_attempt_counts[uVar2] + 1;
       misfire_monitor_step_code = 2;
       goto LAB_00532f3c;
     }
@@ -93815,7 +93823,7 @@ void cm848_evaluateMisfireMonitorCylinderResponse(void)
   else {
     bVar3 = 0;
   }
-  (&misfire_monitor_cylinder_misfire_flags)[uVar2] = bVar3;
+  misfire_monitor_cylinder_misfire_flags[uVar2] = bVar3;
   misfire_monitor_step_code = 1;
   misfire_monitor_test_cylinder_number = misfire_monitor_test_cylinder_number + 1;
 LAB_00532f3c:
@@ -94051,7 +94059,7 @@ void cm848_runMisfireMonitor(void)
     misfire_monitor_fuel_multiplier_percent =
          misfire_monitor_initial_fuel_multiplier_percent +
          misfire_monitor_fuel_multiplier_step_percent *
-         (&misfire_monitor_cylinder_attempt_counts)[uVar1];
+         misfire_monitor_cylinder_attempt_counts[uVar1];
     *(sword *)(&cylinder_fueling_offset + uVar1 * 2) =
          (&cylinder_balance_fueling_trim_cal)[uVar1] +
          (short)((((int)(short)total_injection_quantity +
@@ -94105,9 +94113,8 @@ LAB_00533650:
     if (cylinder_event_count_max != 0) {
       do {
         misfire_monitor_total_attempt_count =
-             misfire_monitor_total_attempt_count + (&misfire_monitor_cylinder_attempt_counts)[uVar1]
-        ;
-        if ((&misfire_monitor_cylinder_misfire_flags)[uVar1] == 1) {
+             misfire_monitor_total_attempt_count + misfire_monitor_cylinder_attempt_counts[uVar1];
+        if (misfire_monitor_cylinder_misfire_flags[uVar1] == 1) {
           (&system_status_flags_t_003fe974.fault_detected_bits_0_to_15)
           [misfire_monitor_cylinder_fault_numbers[uVar1] >> 4] =
                (&system_status_flags_t_003fe974.fault_detected_bits_0_to_15)
@@ -94142,8 +94149,7 @@ LAB_00533650:
     if (cylinder_event_count_max != 0) {
       do {
         misfire_monitor_total_attempt_count =
-             misfire_monitor_total_attempt_count + (&misfire_monitor_cylinder_attempt_counts)[uVar1]
-        ;
+             misfire_monitor_total_attempt_count + misfire_monitor_cylinder_attempt_counts[uVar1];
         (&system_status_flags_t_003fe974.fault_detected_bits_0_to_15)
         [misfire_monitor_cylinder_fault_numbers[uVar1] >> 4] =
              (&system_status_flags_t_003fe974.fault_detected_bits_0_to_15)
@@ -97368,10 +97374,11 @@ LAB_0053900c:
       }
 LAB_00539014:
       j1939_received_source_address = can_receive_queue_read_pointer[3];
-      pbVar8 = &j1939_receive_source_address_whitelist;
+      pbVar8 = j1939_receive_source_address_whitelist;
       bVar2 = false;
       do {
-        if ((*pbVar8 == 0xfe) || ((byte *)0x40ad59 < pbVar8)) goto LAB_00539060;
+        if ((*pbVar8 == 0xfe) || (j1939_receive_source_address_whitelist + 3 < pbVar8))
+        goto LAB_00539060;
         bVar9 = *pbVar8;
         pbVar8 = pbVar8 + 1;
       } while (bVar9 != j1939_received_source_address);
@@ -97438,7 +97445,7 @@ void cm848_j1939_system_init(void)
   DAT_0040ad54 = 4;
   uVar6 = 0;
   do {
-    (&j1939_receive_source_address_whitelist)[uVar6] = 0xfe;
+    j1939_receive_source_address_whitelist[uVar6] = 0xfe;
     uVar6 = uVar6 + 1 & 0xff;
   } while (uVar6 < 4);
   can_transmit_completed_flag = 0;
