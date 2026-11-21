@@ -47,8 +47,8 @@ MEMBERS = [
     (23, "OVERRIDE", "governor_pressure_override_value (RE_Governor_Set_Override_Value) while "
                      "governor_pressure_override_enable is set: cm848_selectGovernorPressureLockupBoost"),
     (24, "EXHAUST_BRAKE_CURVE", "governor_pressure_exhaust_brake_curve with the exhaust brake switch (12) on at light "
-                                "throttle (cm848_selectGovernorPressureBaseCurve); the lockup schedule and "
-                                "cm848_determineCurrentGearAndLockupInhibit compare with it"),
+                                "throttle (cm848_selectGovernorPressureBaseCurve); cm848_applyConverterLockupSchedule, "
+                                "cm848_applyConverterUnlockConditions and cm848_determineCurrentGearAndLockupInhibit compare with it"),
 ]
 
 

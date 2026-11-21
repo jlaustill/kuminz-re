@@ -1077,6 +1077,33 @@ typedef enum {
     DRIVETRAIN_GEAR_RANGE_LOWER = 3  /* at or above gear_down_ratio_threshold */
 } DRIVETRAIN_GEAR_RANGE;
 
+typedef enum {
+    TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE = 1,  /* governor_pressure_base_curve (e2m RE_Normal_Curve 'Gov press vs OSS for normal operating conditions'): cm848_selectGovernorPressureBaseCurve; cm848_selectGovernorPressureAntiHunt after a shift */
+    TRANSMISSION_PRESSURE_STATE_FUEL_ECONOMY_CURVE = 2,  /* governor_pressure_fuel_economy_curve (RE_Fuel_Economy_Curve) below governor_pressure_fuel_economy_maximum_throttle: cm848_selectGovernorPressureBaseCurve */
+    TRANSMISSION_PRESSURE_STATE_CRUISE_CURVE = 3,  /* governor_pressure_cruise_curve (RE_Cruise_Curve): cm848_selectGovernorPressureCruise */
+    TRANSMISSION_PRESSURE_STATE_COLD_CURVE = 4,  /* governor_pressure_cold_curve (RE_Cold_Curve): cm848_selectGovernorPressureCold */
+    TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE = 5,  /* governor_pressure_wide_open_throttle_curve (RE_WOT_Curve): the WOT / detent mode (cm848_selectGovernorPressureWideOpenThrottle / _Normal, cm848_runTransmissionControl) */
+    TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_COLD_CURVE = 6,  /* governor_pressure_wide_open_throttle_cold_curve (RE_WOT_Cold_Curve): cm848_selectGovernorPressureCold */
+    TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_HOLD = 7,  /* governor_pressure_wide_open_throttle_1_2_hold_pressure (RE_WOT_Hold_Pressure_1_2): holds 1st until the upshift point (or while the anti-hang timer runs) */
+    TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST = 8,  /* governor_pressure_wide_open_throttle_1_2_boost_pressure (RE_WOT_Boost_Pressure_1_2): forces the 1-2 upshift */
+    TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_HOLD = 9,  /* governor_pressure_wide_open_throttle_2_3_hold_pressure (RE_WOT_Hold_Pressure_2_3) */
+    TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST = 10,  /* governor_pressure_wide_open_throttle_2_3_boost_pressure (RE_WOT_Boost_Pressure_2_3) */
+    TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE = 11,  /* governor_pressure_low_range_curve (RE_Low_Range_Curve): cm848_selectGovernorPressureLowRange, cm848_runTransmissionControl */
+    TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_HOLD = 12,  /* transmission_low_range_1_2_hold_pressure (RE_Low_Range_Hold_Pressure_1_2) */
+    TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_BOOST = 13,  /* transmission_low_range_1_2_boost_pressure (RE_Low_Range_Boost_Pressure_1_2) */
+    TRANSMISSION_PRESSURE_STATE_LOW_RANGE_2_3_HOLD = 14,  /* transmission_low_range_2_3_hold_pressure (RE_Low_Range_Hold_Pressure_2_3) */
+    TRANSMISSION_PRESSURE_STATE_LOW_RANGE_2_3_BOOST = 15,  /* transmission_low_range_2_3_boost_pressure (RE_Low_Range_Boost_Pressure_2_3) */
+    TRANSMISSION_PRESSURE_STATE_LOCKUP_BOOST = 16,  /* governor_pressure_lockup_boost (RE_Lockup_Boost 'Gov pressure target during lockup, to prevent downshift'): cm848_selectGovernorPressureLockupBoost, cm848_runTransmissionControl */
+    TRANSMISSION_PRESSURE_STATE_2ND_GEAR_LOCKUP_BOOST = 17,  /* governor_pressure_2nd_gear_lockup_boost (RE_Lockup_Boost_2nd): cm848_runTransmissionControl; cm848_determineCurrentGearAndLockupInhibit compares with it */
+    TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_BOOST = 18,  /* transmission_anti_hunt_1_2_boost_pressure (RE_AH_Boost_Curve_1_2): forces the 1-2 upshift (cm848_selectGovernorPressureAntiHunt / _Normal) */
+    TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_BOOST = 19,  /* transmission_anti_hunt_2_3_boost_pressure (RE_AH_Boost_Curve_2_3) */
+    TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_HOLD = 20,  /* transmission_anti_hunt_1_2_hold_pressure (RE_Hold_Curve_1): prevents the 1-2 upshift */
+    TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_HOLD = 21,  /* transmission_anti_hunt_2_3_hold_pressure (RE_Hold_Curve_2) */
+    TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE = 22,  /* governor_pressure_manual_2nd_curve (RE_Manual_2nd_Curve) with the lever in 1 or 2 */
+    TRANSMISSION_PRESSURE_STATE_OVERRIDE = 23,  /* governor_pressure_override_value (RE_Governor_Set_Override_Value) while governor_pressure_override_enable is set: cm848_selectGovernorPressureLockupBoost */
+    TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE = 24  /* governor_pressure_exhaust_brake_curve with the exhaust brake switch (12) on at light throttle (cm848_selectGovernorPressureBaseCurve); cm848_applyConverterLockupSchedule, cm848_applyConverterUnlockConditions and cm848_determineCurrentGearAndLockupInhibit compare with it */
+} TRANSMISSION_PRESSURE_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -1296,7 +1323,7 @@ struct protection_status_flags_t {
 };
 
 struct transmission_pressure_state_t {
-    uint16_t pressure_state;  /* e2m 8C53 +0 RE_Trans_Pressure_State ('Indicate the RE transmission pressure state'; table-resolved): which governor pressure curve sets governor_pressure_target, 1-0x18, written by every governor pressure mode (the anti-hunt mode: 1 base / 0x12 / 0x13 boost / 0x14 / 0x15 hold); 2 in the RAM dump (was status_code) */
+    TRANSMISSION_PRESSURE_STATE pressure_state;  /* e2m 8C53 +0 RE_Trans_Pressure_State ('Indicate the RE transmission pressure state'; table-resolved): which governor pressure curve sets governor_pressure_target, 1-0x18, written by every governor pressure mode (the anti-hunt mode: 1 base / 0x12 / 0x13 boost / 0x14 / 0x15 hold); 2 in the RAM dump (was status_code) Typed TRANSMISSION_PRESSURE_STATE (round 9). */
     uint16_t anti_hunt_boost_limit_timer;  /* e2m 8C17 +0 RE_AH_Boost_Limit_Timer ('Used to limit time trans gov pressure can be boosted for upshift'): reloaded from transmission_anti_hunt_boost_limit_time; at 0 the 1-2 boost stops (was status_code_hold_timer) */
     uint16_t anti_hunt_delay_timer;  /* e2m 8C17 +2 RE_AH_Delay_Timer ('Used to delay start of gov pressure boost for AH upshifts'): reloaded from transmission_anti_hunt_delay_time when a forced upshift completes; no new boost until it is 0 (was timeout_counter) */
     uint16_t anti_hunt_1_2_boost_timer;  /* e2m 8C17 +4 RE_AH_Timer_1_2 ('Controls duration of boost press for AH 1-2 upshift'): reloaded from transmission_anti_hunt_1_2_boost_time (was state1_timer) */

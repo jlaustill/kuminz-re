@@ -1596,6 +1596,7 @@ extern word protection_filter_stage_8_state;  // 0x003fb18a
 extern word protection_filter_stage_9_state;  // 0x003fb18c
 extern word protection_filter_stage_10_state;  // 0x003fb18e
 extern word transmission_output_shaft_acceleration_sample_counter;  // 0x003fb190
+extern word transmission_output_speed_history[27];  // 0x003fb192
 extern word transmission_output_speed_history_index;  // 0x003fb1c8
 extern word converter_clutch_solenoid_request_previous;  // 0x003fb1ca
 extern word exhaust_brake_inhibit_previous;  // 0x003fb1cc
@@ -1965,7 +1966,7 @@ extern byte obd_vin_frame_index;  // 0x003fce9a
 extern byte obd_calibration_id_frame_index;  // 0x003fce9b
 extern byte obd_dtc_scan_more_flag;  // 0x003fce9c
 extern byte obd_dtc_copy_index;  // 0x003fce9d
-extern word throttle_setpoint_limit_arg;  // 0x003fcf12
+extern dword governor_pressure_controller_output_unclamped;  // 0x003fcf12
 extern dword rom_crc_descriptor_table_ptr;  // 0x003fcfe0
 extern word output_shaft_speed_avg;  // 0x003fd05e
 extern word output_shaft_speed_saved;  // 0x003fd060

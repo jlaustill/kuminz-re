@@ -1760,6 +1760,7 @@ address,name,type,comment
 0x003fb18c,protection_filter_stage_9_state,word,
 0x003fb18e,protection_filter_stage_10_state,word,
 0x003fb190,transmission_output_shaft_acceleration_sample_counter,word,Pass counter of method 0 of cm848_calculateOutputShaftAcceleration: at transmission_output_shaft_acceleration_sample_period it resets and the output speed change since the last sample becomes the acceleration (was protection_monitor_scan_counter)
+0x003fb192,transmission_output_speed_history,word[27],Method 1's ring of the last 27 output speeds (cm848_calculateOutputShaftAcceleration): written at transmission_output_speed_history_index (mod 27); the acceleration is the speed now minus the one 27 passes ago. The ring length is fixed in the code (27), not taken from transmission_output_shaft_acceleration_sample_period
 0x003fb1c8,transmission_output_speed_history_index,word,Write index of method 1's 27-word output speed ring at 0x3fb192 (cm848_calculateOutputShaftAcceleration, mod 27) (was protection_load_history_index)
 0x003fb1ca,converter_clutch_solenoid_request_previous,word,Last pass's converter clutch solenoid request (logical_output_request_bits_16_to_23 byte & 4 = logical output 18); cm848_updateExhaustBrakeInhibitForLockup detects the request's edges with it (was protection_action_mode_snapshot)
 0x003fb1cc,exhaust_brake_inhibit_previous,word,Last pass's transmission_exhaust_brake_flags bit 0 (RE_E_Brake_Inhibit_LU) as 0 / 1; cm848_updateExhaustBrakeInhibitForLockup clears the inhibit at the converter clutch request's falling edge only when it has not changed since (was exhaust_brake_lockup_inhibit_previous in stage F, converter_clutch_engagement_pending_previous in stage E, before that protection_condition_state_bit0_flag)
@@ -2197,7 +2198,7 @@ address,name,type,comment
 0x003fcebe,,ema_filter_state_t,EMA filter state - used by cm848_monitorEngineToVehicleSpeedRatio (was PTR_DAT_003fcebe)
 0x003fcec6,,ema_filter_state_t,EMA filter state - used by cm848_monitorEngineToVehicleSpeedRatio (was PTR_DAT_003fcec6)
 0x003fcece,,ema_filter_state_t,EMA filter state - used by cm848_monitorEngineToVehicleSpeedRatio (was PTR_DAT_003fcece)
-0x003fcf12,throttle_setpoint_limit_arg,word,computed ptr arg to cm848_limitGovernorPressureSolenoidDuty (was PTR_DAT)
+0x003fcf12,governor_pressure_controller_output_unclamped,dword,governor_pressure_controller_output + a P / I / D term (signed), before cm848_limitGovernorPressureSolenoidDuty clamps it: a dword, its one access is a 32-bit store (stw @ 0x51c9d0), so the word row rendered _throttle_setpoint_limit_arg (was throttle_setpoint_limit_arg) | earlier note: computed ptr arg to cm848_limitGovernorPressureSolenoidDuty (was PTR_DAT)
 0x003fcfe0,rom_crc_descriptor_table_ptr,dword,ptr to current CRC descriptor entry (was PTR_DAT)
 0x003fd00a,,ema_filter_state_t,EMA filter state - used by cm848_runCruiseAndVehicleSpeedLimitGovernor (was PTR_DAT_003fd00a)
 0x003fd012,,pointer,

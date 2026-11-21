@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 12:17:22 MST 2026
+// Generated: Sat Nov 21 12:22:14 MST 2026
 
 
 //
@@ -32675,7 +32675,7 @@ void cm848_selectGovernorPressureLowRange(void)
                      (&DAT_003fb0e0,fuel_demand_control_t_0040a57a.calculated,
                       transmission_low_range_1_2_hold_pressure_axis,
                       transmission_low_range_1_2_hold_pressure_values,0);
-      transmission_pressure_state.pressure_state = 0xc;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_HOLD;
       if ((uVar2 & 0xffff) < (uint)engine_speed_state.filtered_engine_speed) {
         protection_condition_flags_t_0040b0e8.action_flags =
              protection_condition_flags_t_0040b0e8.action_flags | 1;
@@ -32686,7 +32686,8 @@ void cm848_selectGovernorPressureLowRange(void)
                         fuel_demand_control_t_0040a57a.calculated,
                         transmission_low_range_1_2_boost_pressure_axis,
                         transmission_low_range_1_2_boost_pressure_values,0);
-        transmission_pressure_state.pressure_state = 0xd;
+        transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_BOOST
+        ;
       }
     }
     else {
@@ -32697,7 +32698,7 @@ void cm848_selectGovernorPressureLowRange(void)
                       fuel_demand_control_t_0040a57a.calculated,
                       transmission_low_range_1_2_boost_pressure_axis,
                       transmission_low_range_1_2_boost_pressure_values,0);
-      transmission_pressure_state.pressure_state = 0xd;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_BOOST;
     }
   }
   else if (transmission_current_gear == 2) {
@@ -32729,9 +32730,11 @@ void cm848_selectGovernorPressureLowRange(void)
                            (&DAT_003fb0e2,fuel_demand_control_t_0040a57a.calculated,
                             transmission_low_range_2_3_hold_pressure_axis,
                             transmission_low_range_2_3_hold_pressure_values,0);
-            transmission_pressure_state.pressure_state = 0xe;
+            transmission_pressure_state.pressure_state =
+                 TRANSMISSION_PRESSURE_STATE_LOW_RANGE_2_3_HOLD;
             if ((uint)engine_speed_state.filtered_engine_speed <= (uVar2 & 0xffff)) {
-              transmission_pressure_state.pressure_state = 0xe;
+              transmission_pressure_state.pressure_state =
+                   TRANSMISSION_PRESSURE_STATE_LOW_RANGE_2_3_HOLD;
               return;
             }
             protection_condition_flags_t_0040b0e8.action_flags =
@@ -32744,7 +32747,8 @@ void cm848_selectGovernorPressureLowRange(void)
                          (&DAT_003fb0e6,fuel_demand_control_t_0040a57a.calculated,
                           transmission_low_range_2_3_boost_pressure_axis,
                           transmission_low_range_2_3_boost_pressure_values,0);
-          transmission_pressure_state.pressure_state = 0xf;
+          transmission_pressure_state.pressure_state =
+               TRANSMISSION_PRESSURE_STATE_LOW_RANGE_2_3_BOOST;
         }
       }
       else {
@@ -32779,7 +32783,7 @@ void cm848_selectGovernorPressureLowRange(void)
                      (&protection_rpm_limit_table_overload_state,transmission_output_speed_in_use,
                       governor_pressure_low_range_curve_axis,
                       governor_pressure_low_range_curve_values,0);
-      transmission_pressure_state.pressure_state = 0xb;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
     }
   }
   else if (transmission_current_gear == 4) {
@@ -32789,7 +32793,7 @@ void cm848_selectGovernorPressureLowRange(void)
                    (&protection_rpm_limit_table_overload_state,transmission_output_speed_in_use,
                     governor_pressure_low_range_curve_axis,governor_pressure_low_range_curve_values,
                     0);
-    transmission_pressure_state.pressure_state = 0xb;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
   }
   return;
 }
@@ -32977,7 +32981,8 @@ void cm848_applyConverterLockupSchedule(void)
                     transmission_2nd_gear_overheat_unlock_maximum_throttle_values,0);
     if ((((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) ||
           (transmission_overheat_protection_active_flag != 0)) ||
-         (transmission_pressure_state.pressure_state == 0x18)) &&
+         (transmission_pressure_state.pressure_state ==
+          TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE)) &&
         (((algorithm_enable_flags_6_cal & 8) != 0 && (converter_clutch_apply_delay_countdown == 0)))
         ) && ((transmission_lockup_delay_1_2_timer == 0 &&
               (transmission_lockup_delay_3_2_timer == 0)))) {
@@ -33216,7 +33221,8 @@ void cm848_applyConverterUnlockConditions(void)
                       transmission_2nd_gear_overheat_unlock_maximum_throttle_values,0);
       if (transmission_overheat_protection_active_flag == 0) {
         if ((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) ||
-            (transmission_pressure_state.pressure_state == 0x18)) &&
+            (transmission_pressure_state.pressure_state ==
+             TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE)) &&
            (fuel_demand_control_t_0040a57a.calculated <= wVar1)) goto LAB_00030fdc;
       }
       else {
@@ -33478,14 +33484,14 @@ void cm848_selectGovernorPressureCold(void)
                    (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
                     governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
-    transmission_pressure_state.pressure_state = 0x16;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
   }
   else if ((protection_status_flags_t_0040b0f2.flags[0] & 0x10) == 0) {
     governor_pressure_target =
          lookupTableInterpolation
                    (&DAT_003fb0f4,transmission_output_speed_in_use,governor_pressure_cold_curve_axis
                     ,governor_pressure_cold_curve_values,0);
-    transmission_pressure_state.pressure_state = 4;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_COLD_CURVE;
   }
   else {
     governor_pressure_target =
@@ -33493,7 +33499,8 @@ void cm848_selectGovernorPressureCold(void)
                    (&DAT_003fb0de,transmission_output_speed_in_use,
                     governor_pressure_wide_open_throttle_cold_curve_axis,
                     governor_pressure_wide_open_throttle_cold_curve_values,0);
-    transmission_pressure_state.pressure_state = 6;
+    transmission_pressure_state.pressure_state =
+         TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_COLD_CURVE;
   }
   cm848_requestOverdriveShiftsNormal();
   return;
@@ -33520,7 +33527,7 @@ void cm848_selectGovernorPressureBaseCurve(void)
                    (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
                     governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
-    transmission_pressure_state.pressure_state = 0x16;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
   }
   else if (fuel_demand_control_t_0040a57a.calculated <
            governor_pressure_fuel_economy_maximum_throttle) {
@@ -33530,7 +33537,7 @@ void cm848_selectGovernorPressureBaseCurve(void)
                      (&DAT_003fb0e8,transmission_output_speed_in_use,
                       governor_pressure_fuel_economy_curve_axis,
                       governor_pressure_fuel_economy_curve_values,0);
-      transmission_pressure_state.pressure_state = 2;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_FUEL_ECONOMY_CURVE;
     }
     else {
       governor_pressure_target =
@@ -33538,7 +33545,7 @@ void cm848_selectGovernorPressureBaseCurve(void)
                      (&DAT_003fb0ea,transmission_output_speed_in_use,
                       governor_pressure_exhaust_brake_curve_axis,
                       governor_pressure_exhaust_brake_curve_values,0);
-      transmission_pressure_state.pressure_state = 0x18;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE;
     }
   }
   else {
@@ -33546,7 +33553,7 @@ void cm848_selectGovernorPressureBaseCurve(void)
          lookupTableInterpolation
                    (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
                     governor_pressure_base_curve_axis,governor_pressure_base_curve_values,0);
-    transmission_pressure_state.pressure_state = 1;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
   }
   cm848_requestOverdriveShiftsNormal();
   return;
@@ -33592,13 +33599,15 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     if ((protection_status_flags_t_0040b0f2.status_flags & 0x40) != 0) {
       if (governor_pressure_wide_open_throttle_1_2_hold_pressure <= wVar1) {
         protection_status_flags_t_0040b0f2.status_flags = bVar3;
-        transmission_pressure_state.pressure_state = 8;
+        transmission_pressure_state.pressure_state =
+             TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST;
         governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
         governor_pressure_wide_open_throttle_boost_timer =
              governor_pressure_wide_open_throttle_boost_time;
         return;
       }
-      transmission_pressure_state.pressure_state = 5;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
       bVar2 = 0xbf;
       protection_status_flags_t_0040b0f2.status_flags = bVar3;
       governor_pressure_target = wVar1;
@@ -33606,12 +33615,14 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     }
     if (wVar1 <= governor_pressure_wide_open_throttle_1_2_hold_pressure) {
       protection_status_flags_t_0040b0f2.status_flags = bVar3;
-      transmission_pressure_state.pressure_state = 5;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
       governor_pressure_target = wVar1;
       return;
     }
     governor_pressure_target = governor_pressure_wide_open_throttle_1_2_hold_pressure;
-    transmission_pressure_state.pressure_state = 7;
+    transmission_pressure_state.pressure_state =
+         TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_HOLD;
     uVar5 = (uint)(CONCAT44((int)((ulonglong)
                                   ((uint)transmission_engine_acceleration *
                                   (uint)transmission_predicted_1_2_shift_delay) * 1000 >> 0x20),
@@ -33628,13 +33639,15 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     if ((uVar5 & 0xffff) < uVar4) {
       protection_status_flags_t_0040b0f2.status_flags = bVar3 | 0x40;
       governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
-      transmission_pressure_state.pressure_state = 8;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST;
       bVar3 = 0xef;
       goto LAB_00031c38;
     }
     if (uVar4 <= governor_pressure_wide_open_throttle_anti_hang_engine_speed) {
       protection_status_flags_t_0040b0f2.status_flags = bVar3;
-      transmission_pressure_state.pressure_state = 7;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_HOLD;
       governor_pressure_target = governor_pressure_wide_open_throttle_1_2_hold_pressure;
       return;
     }
@@ -33642,20 +33655,23 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     protection_status_flags_t_0040b0f2.status_flags = bVar3;
     if (bVar2 != 0) {
       if (governor_pressure_wide_open_throttle_anti_hang_timer != 0) {
-        transmission_pressure_state.pressure_state = 7;
+        transmission_pressure_state.pressure_state =
+             TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_HOLD;
         governor_pressure_target = governor_pressure_wide_open_throttle_1_2_hold_pressure;
         return;
       }
       protection_status_flags_t_0040b0f2.status_flags = bVar3 | 0x40;
       governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
-      transmission_pressure_state.pressure_state = 8;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST;
       goto LAB_00031ba8;
     }
   }
   else {
     if (transmission_current_gear != 2) {
       if (transmission_current_gear == 3) {
-        transmission_pressure_state.pressure_state = 5;
+        transmission_pressure_state.pressure_state =
+             TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
         bVar3 = protection_status_flags_t_0040b0f2.status_flags & 0xbf;
         governor_pressure_target = wVar1;
         if ((protection_status_flags_t_0040b0f2.status_flags & 0x20) != 0) {
@@ -33700,7 +33716,8 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
           }
           else {
             governor_pressure_target = governor_pressure_wide_open_throttle_2_3_boost_pressure;
-            transmission_pressure_state.pressure_state = 10;
+            transmission_pressure_state.pressure_state =
+                 TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST;
           }
         }
         protection_status_flags_t_0040b0f2.status_flags = bVar3;
@@ -33711,7 +33728,8 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     }
     if ((protection_status_flags_t_0040b0f2.status_flags & 0x40) != 0) {
       if (governor_pressure_wide_open_throttle_boost_timer != 0) {
-        transmission_pressure_state.pressure_state = 8;
+        transmission_pressure_state.pressure_state =
+             TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST;
         governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
         return;
       }
@@ -33759,13 +33777,15 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     }
     if ((protection_status_flags_t_0040b0f2.status_flags & 0x20) != 0) {
       if (governor_pressure_wide_open_throttle_2_3_hold_pressure <= wVar1) {
-        transmission_pressure_state.pressure_state = 10;
+        transmission_pressure_state.pressure_state =
+             TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST;
         governor_pressure_target = governor_pressure_wide_open_throttle_2_3_boost_pressure;
         governor_pressure_wide_open_throttle_boost_timer =
              governor_pressure_wide_open_throttle_boost_time;
         return;
       }
-      transmission_pressure_state.pressure_state = 5;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
       bVar3 = 0xdf;
       governor_pressure_target = wVar1;
 LAB_00031c38:
@@ -33774,12 +33794,14 @@ LAB_00031c38:
       return;
     }
     if (wVar1 <= governor_pressure_wide_open_throttle_2_3_hold_pressure) {
-      transmission_pressure_state.pressure_state = 5;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
       governor_pressure_target = wVar1;
       return;
     }
     governor_pressure_target = governor_pressure_wide_open_throttle_2_3_hold_pressure;
-    transmission_pressure_state.pressure_state = 9;
+    transmission_pressure_state.pressure_state =
+         TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_HOLD;
     uVar5 = (uint)(CONCAT44((int)((ulonglong)
                                   ((uint)transmission_engine_acceleration *
                                   (uint)transmission_predicted_2_3_shift_delay) * 1000 >> 0x20),
@@ -33796,25 +33818,29 @@ LAB_00031c38:
     if ((uVar5 & 0xffff) < uVar4) {
       protection_status_flags_t_0040b0f2.status_flags =
            protection_status_flags_t_0040b0f2.status_flags & 0xef | 0x20;
-      transmission_pressure_state.pressure_state = 10;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST;
       governor_pressure_target = governor_pressure_wide_open_throttle_2_3_boost_pressure;
       return;
     }
     if (uVar4 <= governor_pressure_wide_open_throttle_anti_hang_engine_speed) {
-      transmission_pressure_state.pressure_state = 9;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_HOLD;
       governor_pressure_target = governor_pressure_wide_open_throttle_2_3_hold_pressure;
       return;
     }
     if ((protection_status_flags_t_0040b0f2.status_flags & 0x10) != 0) {
       if (governor_pressure_wide_open_throttle_anti_hang_timer != 0) {
-        transmission_pressure_state.pressure_state = 9;
+        transmission_pressure_state.pressure_state =
+             TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_HOLD;
         governor_pressure_target = governor_pressure_wide_open_throttle_2_3_hold_pressure;
         return;
       }
       protection_status_flags_t_0040b0f2.status_flags =
            protection_status_flags_t_0040b0f2.status_flags | 0x20;
       governor_pressure_target = governor_pressure_wide_open_throttle_2_3_boost_pressure;
-      transmission_pressure_state.pressure_state = 10;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST;
 LAB_00031ba8:
       protection_status_flags_t_0040b0f2.status_flags =
            protection_status_flags_t_0040b0f2.status_flags & 0xef | 8;
@@ -33862,14 +33888,14 @@ void cm848_selectGovernorPressureCruise(void)
                    (&protection_rpm_limit_table_ramp_state,transmission_output_speed_in_use,
                     governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
-    transmission_pressure_state.pressure_state = 0x16;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
   }
   else {
     governor_pressure_target =
          lookupTableInterpolation
                    (&DAT_003fb0fa,transmission_output_speed_in_use,
                     governor_pressure_cruise_curve_axis,governor_pressure_cruise_curve_values,0);
-    transmission_pressure_state.pressure_state = 3;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_CRUISE_CURVE;
   }
   wVar1 = lookupTableInterpolation
                     (&DAT_003fb152,transmission_output_speed_in_use,
@@ -34162,7 +34188,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
                       transmission_output_speed_in_use,
                       transmission_anti_hunt_1_2_boost_pressure_axis,
                       transmission_anti_hunt_1_2_boost_pressure_values,0);
-      transmission_pressure_state.pressure_state = 0x12;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_BOOST;
       transmission_pressure_state.anti_hunt_boost_limit_timer =
            transmission_anti_hunt_boost_limit_time;
       transmission_pressure_state.anti_hunt_1_2_boost_timer = transmission_anti_hunt_1_2_boost_time;
@@ -34175,7 +34201,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
            lookupTableInterpolation
                      (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
                       governor_pressure_base_curve_axis,governor_pressure_base_curve_values,0);
-      transmission_pressure_state.pressure_state = 1;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       return;
     }
     protection_status_flags_t_0040b0f2.flags[0] = bVar1;
@@ -34197,7 +34223,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
                       transmission_output_speed_in_use,
                       transmission_anti_hunt_1_2_boost_pressure_axis,
                       transmission_anti_hunt_1_2_boost_pressure_values,0);
-      transmission_pressure_state.pressure_state = 0x12;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_BOOST;
       transmission_output_shaft_acceleration_at_shift_command =
            transmission_output_shaft_acceleration;
       transmission_output_torque_gear_index = transmission_current_gear;
@@ -34210,7 +34236,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
                    (&DAT_003fb0f6,fuel_demand_control_t_0040a57a.calculated,
                     transmission_anti_hunt_1_2_hold_pressure_axis,
                     transmission_anti_hunt_1_2_hold_pressure_values,0);
-    transmission_pressure_state.pressure_state = 0x14;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_HOLD;
     return;
   }
   if (transmission_current_gear == 2) {
@@ -34226,7 +34252,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
                       transmission_output_speed_in_use,
                       transmission_anti_hunt_1_2_boost_pressure_axis,
                       transmission_anti_hunt_1_2_boost_pressure_values,0);
-      transmission_pressure_state.pressure_state = 0x12;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_BOOST;
       return;
     }
     if (transmission_pressure_state.anti_hunt_2_3_boost_timer != 0) {
@@ -34237,7 +34263,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
                       transmission_output_speed_in_use,
                       transmission_anti_hunt_2_3_boost_pressure_axis,
                       transmission_anti_hunt_2_3_boost_pressure_values,0);
-      transmission_pressure_state.pressure_state = 0x13;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_BOOST;
       transmission_pressure_state.anti_hunt_2_3_boost_timer = transmission_anti_hunt_2_3_boost_time;
       return;
     }
@@ -34248,7 +34274,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
            lookupTableInterpolation
                      (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
                       governor_pressure_base_curve_axis,governor_pressure_base_curve_values,0);
-      transmission_pressure_state.pressure_state = 1;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       cm848_learnVehicleInertia();
       transmission_pressure_state.anti_hunt_delay_timer = transmission_anti_hunt_delay_time;
       return;
@@ -34268,7 +34294,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
                      (&DAT_003fb0f8,fuel_demand_control_t_0040a57a.calculated,
                       transmission_anti_hunt_2_3_hold_pressure_axis,
                       transmission_anti_hunt_2_3_hold_pressure_values,0);
-      transmission_pressure_state.pressure_state = 0x15;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_HOLD;
       return;
     }
     transmission_pressure_state.anti_hunt_2_3_boost_timer = transmission_anti_hunt_2_3_boost_time;
@@ -34294,7 +34320,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
            lookupTableInterpolation
                      (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
                       governor_pressure_base_curve_axis,governor_pressure_base_curve_values,0);
-      transmission_pressure_state.pressure_state = 1;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       cm848_predictPostShiftAcceleration();
       transmission_post_shift_acceleration_minimum =
            lookupTableInterpolation
@@ -34319,7 +34345,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
                  (&transmission_anti_hunt_2_3_boost_pressure_interp_state,
                   transmission_output_speed_in_use,transmission_anti_hunt_2_3_boost_pressure_axis,
                   transmission_anti_hunt_2_3_boost_pressure_values,0);
-  transmission_pressure_state.pressure_state = 0x13;
+  transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_BOOST;
   return;
 }
 
@@ -34415,7 +34441,7 @@ LAB_00032e40:
                    (&transmission_anti_hunt_1_2_boost_pressure_interp_state,
                     transmission_output_speed_in_use,transmission_anti_hunt_1_2_boost_pressure_axis,
                     transmission_anti_hunt_1_2_boost_pressure_values,0);
-    transmission_pressure_state.pressure_state = 0x12;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_BOOST;
   }
   else {
     if (transmission_current_gear != 2) goto LAB_00032e40;
@@ -34427,7 +34453,7 @@ LAB_00032e40:
                    (&transmission_anti_hunt_2_3_boost_pressure_interp_state,
                     transmission_output_speed_in_use,transmission_anti_hunt_2_3_boost_pressure_axis,
                     transmission_anti_hunt_2_3_boost_pressure_values,0);
-    transmission_pressure_state.pressure_state = 0x13;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_BOOST;
   }
   if ((protection_status_flags_t_0040b0f2.flags[0] & 0x20) == 0) {
     transmission_pressure_state.anti_hunt_delay_timer = transmission_anti_hunt_delay_time;
@@ -34437,7 +34463,8 @@ LAB_00032e40:
                      (&protection_rpm_limit_table_preentry_state,transmission_output_speed_in_use,
                       governor_pressure_wide_open_throttle_curve_axis,
                       governor_pressure_wide_open_throttle_curve_values,0);
-      transmission_pressure_state.pressure_state = 5;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
       cm848_requestOverdriveShiftsNormal();
       return;
     }
@@ -34504,12 +34531,13 @@ void cm848_runTransmissionControl(void)
             if (((transmission_current_gear == 2) && ((algorithm_enable_flags_6_cal & 8) != 0)) &&
                ((transmission_selected_gear == 0x7f || (transmission_selected_gear == 0x7e)))) {
               governor_pressure_target = governor_pressure_2nd_gear_lockup_boost;
-              transmission_pressure_state.pressure_state = 0x11;
+              transmission_pressure_state.pressure_state =
+                   TRANSMISSION_PRESSURE_STATE_2ND_GEAR_LOCKUP_BOOST;
             }
           }
           else {
             governor_pressure_target = governor_pressure_lockup_boost;
-            transmission_pressure_state.pressure_state = 0x10;
+            transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOCKUP_BOOST;
           }
         }
       }
@@ -34521,7 +34549,8 @@ void cm848_runTransmissionControl(void)
                      (&protection_rpm_limit_table_preentry_state,transmission_output_speed_in_use,
                       governor_pressure_wide_open_throttle_curve_axis,
                       governor_pressure_wide_open_throttle_curve_values,0);
-      transmission_pressure_state.pressure_state = 5;
+      transmission_pressure_state.pressure_state =
+           TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
       if (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0) {
         cm848_clearLogicalOutputRequest(0x12,0);
       }
@@ -34542,14 +34571,14 @@ void cm848_runTransmissionControl(void)
                      (&protection_rpm_limit_table_overload_state,transmission_output_speed_in_use,
                       governor_pressure_low_range_curve_axis,
                       governor_pressure_low_range_curve_values,0);
-      transmission_pressure_state.pressure_state = 0xb;
+      transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
       cm848_requestOverdriveShiftsLowRange();
     }
     cm848_applyConverterLockupScheduleLowRange();
   }
   else {
     governor_pressure_target = governor_pressure_lockup_boost;
-    transmission_pressure_state.pressure_state = 0x10;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOCKUP_BOOST;
     cm848_applyConverterUnlockConditionsLowRange();
   }
   return;
@@ -34888,10 +34917,12 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
         (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0)))) {
       if ((((algorithm_enable_flags_6_cal & 8) == 0) ||
           (((transmission_selected_gear != 0x7f && (transmission_selected_gear != 0x7e)) &&
-           (transmission_pressure_state.pressure_state != 0x18)))) ||
+           (transmission_pressure_state.pressure_state !=
+            TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE)))) ||
          ((transmission_manual_2nd_unlock_maximum_output_speed <= uVar8 ||
           ((governor_pressure_manual_2nd_in_2nd_gear_maximum <= governor_pressure &&
-           (transmission_pressure_state.pressure_state != 0x11)))))) {
+           (transmission_pressure_state.pressure_state !=
+            TRANSMISSION_PRESSURE_STATE_2ND_GEAR_LOCKUP_BOOST)))))) {
         if (transmission_current_gear == 2) {
           transmission_lockup_timers.lockup_delay_2_3_timer = transmission_lockup_delay_2_3_time;
           if (transmission_overheat_protection_active_flag != 0) {
@@ -35347,9 +35378,11 @@ void cm848_calculateOutputShaftAcceleration(void)
     }
   }
   else {
-    (&DAT_003fb192)[transmission_output_speed_history_index] = transmission_output_speed_in_use;
+    transmission_output_speed_history[transmission_output_speed_history_index] =
+         transmission_output_speed_in_use;
     uVar3 = (transmission_output_speed_history_index + 1) % 0x1b;
-    transmission_output_shaft_acceleration_unfiltered = wVar1 - (&DAT_003fb192)[uVar3];
+    transmission_output_shaft_acceleration_unfiltered =
+         wVar1 - transmission_output_speed_history[uVar3];
     transmission_output_speed_history_index = (word)uVar3;
     transmission_output_shaft_acceleration =
          cm848_signedFirstOrderFilter
@@ -35680,7 +35713,7 @@ void cm848_selectGovernorPressureLockupBoost(void)
     protection_condition_flags_t_0040b0e8.load_condition_flags =
          protection_condition_flags_t_0040b0e8.load_condition_flags | 4;
     governor_pressure_target = governor_pressure_lockup_boost;
-    transmission_pressure_state.pressure_state = 0x10;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOCKUP_BOOST;
   }
   else {
     protection_condition_flags_t_0040b0e8.load_condition_flags =
@@ -35695,7 +35728,7 @@ void cm848_selectGovernorPressureLockupBoost(void)
   }
   if (governor_pressure_override_enable != 0) {
     governor_pressure_target = governor_pressure_override_value;
-    transmission_pressure_state.pressure_state = 0x17;
+    transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_OVERRIDE;
   }
   cm848_updateExhaustBrakeInhibitForLockup();
   return;
@@ -79142,7 +79175,6 @@ void cm848_limitGovernorPressureSolenoidDuty(uint param_1)
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The governor pressure controller's proportional term: the error x a numerator / denominator gain
    stepped by error breakpoints (e2m 8BB5 RE_PID_Error_Brkpt_0..2 above RE_PID_Switch_Temperature,
    3..5 below it), added to governor_pressure_controller_output through
@@ -79252,8 +79284,9 @@ void cm848_calculateGovernorPressureProportionalTerm(void)
     iVar2 = 0x6400;
   }
   DAT_0040b59e = (short)iVar2;
-  _throttle_setpoint_limit_arg = (uint)governor_pressure_controller_output + (int)DAT_0040b59e;
-  cm848_limitGovernorPressureSolenoidDuty(_throttle_setpoint_limit_arg);
+  governor_pressure_controller_output_unclamped =
+       (uint)governor_pressure_controller_output + (int)DAT_0040b59e;
+  cm848_limitGovernorPressureSolenoidDuty(governor_pressure_controller_output_unclamped);
   return;
 }
 
@@ -79264,7 +79297,6 @@ void cm848_calculateGovernorPressureProportionalTerm(void)
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The governor pressure controller's derivative term: governor_pressure_error_change x RE_K_D_Num /
    RE_K_D_Den, clamped to +-0x6400, into governor_pressure_controller_error_delta_term and added to
    the output (was cm848_throttleGain_velocityBased_calc) */
@@ -79291,10 +79323,10 @@ void cm848_calculateGovernorPressureDerivativeTerm(void)
     iVar1 = 0x6400;
   }
   governor_pressure_controller_error_delta_term = (word)iVar1;
-  _throttle_setpoint_limit_arg =
+  governor_pressure_controller_output_unclamped =
        (uint)governor_pressure_controller_output +
        (int)(short)governor_pressure_controller_error_delta_term;
-  cm848_limitGovernorPressureSolenoidDuty(_throttle_setpoint_limit_arg);
+  cm848_limitGovernorPressureSolenoidDuty(governor_pressure_controller_output_unclamped);
   return;
 }
 
@@ -79305,7 +79337,6 @@ void cm848_calculateGovernorPressureDerivativeTerm(void)
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The governor pressure controller's integral term: every governor_pressure_integral_period passes
    (RE_PID_Loop_Limit) the error sum / RE_PID_Error_Sum_Den, clamped to +-0x6400, becomes
    governor_pressure_integral_term and is added to the output; the sum is cleared (was
@@ -79331,9 +79362,9 @@ void cm848_applyGovernorPressureIntegralTerm(void)
       iVar1 = 0x6400;
     }
     governor_pressure_integral_term = (short)iVar1;
-    _throttle_setpoint_limit_arg =
+    governor_pressure_controller_output_unclamped =
          (uint)governor_pressure_controller_output + (int)governor_pressure_integral_term;
-    cm848_limitGovernorPressureSolenoidDuty(_throttle_setpoint_limit_arg);
+    cm848_limitGovernorPressureSolenoidDuty(governor_pressure_controller_output_unclamped);
     governor_pressure_error_sum = 0;
     governor_pressure_integral_period_counter = governor_pressure_integral_period;
   }
@@ -79348,7 +79379,6 @@ void cm848_applyGovernorPressureIntegralTerm(void)
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Governor pressure closed loop: governor_pressure from the sensor minus its zero / error to
    governor_pressure_target through the PID gain helpers / writes the solenoid duty and its 671 Hz
    period through the output driver table (was protectionPhaseGroupA_Control) |
@@ -79392,10 +79422,10 @@ void cm848_controlGovernorPressureSolenoid(void)
          (governor_pressure_target == 0)) {
         if (governor_pressure_solenoid_relaxed_minimum_duty <
             governor_pressure_solenoid_duty_command) {
-          _throttle_setpoint_limit_arg =
+          governor_pressure_controller_output_unclamped =
                (uint)governor_pressure_controller_output +
                (uint)governor_pressure_solenoid_relax_factor;
-          cm848_limitGovernorPressureSolenoidDuty(_throttle_setpoint_limit_arg);
+          cm848_limitGovernorPressureSolenoidDuty(governor_pressure_controller_output_unclamped);
         }
       }
       else {
