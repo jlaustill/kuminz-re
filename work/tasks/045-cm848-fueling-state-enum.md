@@ -847,3 +847,9 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 
 The old names this file cites were renamed in PR #53 (the leads above keep their wording):
 - `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `etc1_torque_mode_timeout_cal` → `j1939_time_limited_node_recovery_time`
+- `j1939_tsc1_override_state` → `j1939_powertrain_control_state`

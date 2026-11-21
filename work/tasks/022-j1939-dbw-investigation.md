@@ -237,3 +237,15 @@ SA 0x03 matches the already-planned CAN ID `0x0C000003` in Phase 5 — no change
 The old names this file cites were renamed in PR #53 (the leads above keep their wording):
 - `cm848_engineMode_reset` → `cm848_selectTsc1SpeedControlMode`
 - `governor_cruise_deniedStatus_update` → `cm848_updateCruiseControlDeniedStatus`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cm848_j1939DispatchAddressHandler` → `cm848_dispatchTsc1ByDestinationAddress`
+- `torqueControlModeHandler` → `processEngineTsc1Request`
+- `cm848_governorSpeedControl` → `cm848_findTsc1SourceConfiguration`
+- `etc1_config_entry_t_0005c3b4` → `tsc1_source_configuration_table`
+- `j1939_tsc1_override_state` → `j1939_powertrain_control_state`
+- `etc1_capped_speed_target` → `tsc1_requested_speed_capped`
+- `etc1_speed_control_mode` → `tsc1_requested_speed_control_condition`
+- `etc1_active_state` → `tsc1_controlling_data_link`

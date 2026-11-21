@@ -245,15 +245,45 @@ Hand work on the wave 15 leads, each verified in the code (the scripts are in `s
     with `lha` (0xffdc / 0xffe0 / 0x1001c). Its two `(ushort)` casts are therefore faithful.
   - 0dea32e's message says the consumer loads every field with `lha`. That is wrong for those two loads.
 
+## Done, round 6 (2026-11-21, same PR): the TSC1 / ETC1 vocabulary
+
+The round 5 lead. Read in full: the TSC1 handler, the ETC1 handler, cm848_runTsc1LostManagement, the timer function, the
+source lookup and the TSC1 dispatcher (scripts in `session_folder/round6/`).
+- **Stage 0 (47d462a): two orphan struct definitions deleted.** `etc1_state_t` (0x40ae00) and `governor_control_t`
+  (0x40adf4) both overlapped the live instance at 0x40adf8. `governor_control_t` still laid symbols over
+  `j1939_governor_source_index` and the cached control byte (16 + 1 underscore renders, 7 overlap warnings); deleting
+  it fixed them and nothing else changed.
+- **Stage A: label-only, CM550 twin included.**
+  - **The handler pair:** the dispatcher (now `cm848_dispatchTsc1ByDestinationAddress`) routes PGN 0 by destination
+    address. `processEngineTsc1Request` (was `torqueControlModeHandler`, also CM550's 0x2f128) takes TSC1 for the
+    engine, `cm848_processEngineRetarderTsc1Request` for the engine retarder.
+  - **The structs:** `j1939_powertrain_control_state` (was `j1939_tsc1_override_state`, type
+    `etc1_governor_state_t`), `j1939_powertrain_messages_received` (was `j1939_tsc1_received`: ETC1 + ETC2 + TSC1
+    bytes) and `tsc1_source_configuration_table` (was `etc1_config_entry_t_0005c3b4`: 10 entries of data link,
+    source address and the per-mode request timeouts / time limits, for the engine and the retarder).
+  - **Fields that held something else:** `governor_mode` is the TSC1 override control mode (SPN 695);
+    `etc1_speed_setpoint` the requested percent torque x 256; `etc1_torque_limit_value` the mode 3 speed limit;
+    `etc1_active_state` the controlling data link (1 = J1939, else a timeout counts as a J1708 link fault);
+    `torque_limit_mode_select` the high idle override (ETC1 SPN 606 with e2m Jcomm_High_Idle_Override_Speed);
+    `etc1_spn1482_source_address` the TSC1 sender's address.
+  - **The ETC1 timers** are named for the e2m 10E7 ("Jcomm") cals they load: out of gear, out of gear data,
+    torque converter lockup, output shaft speed, progressive shift disable, and the high idle override time limit /
+    timeout / recovery (`j1939_time_limited_node_recovery_time` = Jcomm_Recovery_Time, "time that time limited node
+    must be silent before messages ...").
+  - **Globals:** `cold_start_state_flag_a` / `_b` are the J1939 / J1708 link fault clear requests, and the
+    `*_snapshot` / `*_prev` copies are the previous values of the fields they copy.
+- **Thin evidence:**
+  - `retarder_tsc1_mode_transition_timer` and `retarder_tsc1_speed_mode_flag` kept their old roles under a retarder
+    prefix; the retarder handler was only skimmed.
+  - The source table has no e2m record; its field names come from the loads (+4 / +6 / +8 / +0xa / +0xc engine,
+    +0xe / +0x10 / +0x12 retarder).
+  - CM550's `cm550_diagnosticMessageValidator` / `cm550_diagnosticSessionValidator` sit where CM848's ignored
+    request and source lookups sit (a name lead for CM550).
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
-  - **The TSC1 / ETC1 vocabulary:**
-    - `etc1_message_t` (instance `j1939_tsc1_received`) mixes ETC1 fields (SPN 191 output shaft speed, SPN 522
-      clutch slip) with TSC1 fields (the control word, requested speed / torque, priority).
-    - `etc1_state_t` and the `etc1_*` fields of `j1939_tsc1_override_state` hold the TSC1 override modes.
-    - The SPN 696 index is `etc1_speed_control_mode`.
-    - Next step: read the receive handlers, then split or rename by PGN. e2m has no ETC1 / TSC1 records.
+  - The TSC1 / ETC1 vocabulary: resolved in round 6 (below).
   - The `governor_cruise_*` working words of the cruise governor (and its `governor_cruise_zone_table_ptr`):
     rename them to the `cruise_governor_*` words with the functions.
   - The engine speed module's run-state machine (`mpc555_updateEngineRunState`, the `cm848_engineRunState*` handlers).

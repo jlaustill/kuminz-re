@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Sat Nov 21 01:42:15 MST 2026
+// Generated: Sat Nov 21 02:52:43 MST 2026
 
 
 //
@@ -33241,12 +33241,17 @@ void cm550_systemControlFunction3(void)
 
 
 //
-// Function: torqueControlModeHandler @ 0x0002f128
+// Function: processEngineTsc1Request @ 0x0002f128
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Processes a TSC1 (PGN 0) for the engine: the twin of CM848's processEngineTsc1Request (0x22d60).
+   Byte 1 & 3 is the override control mode (SPN 695) and & 0x30 the priority (SPN 897); bytes 2-3
+   are the requested speed and byte 4 the requested torque. Rejects senders through
+   cm550_diagnosticMessageValidator / cm550_diagnosticSessionValidator (the twins of CM848's ignored
+   request and source configuration lookups) (was torqueControlModeHandler) */
 
-void torqueControlModeHandler(int param_1)
+void processEngineTsc1Request(int param_1)
 
 {
   char cVar1;
@@ -33804,7 +33809,7 @@ void cm550_torqueControlAddressDispatcher(int param_1)
   
   cVar1 = *(char *)(param_1 + 2);
   if ((cVar1 == j1939_engine_node_source_address) || (cVar1 == -1)) {
-    torqueControlModeHandler(param_1);
+    processEngineTsc1Request(param_1);
   }
   if ((cVar1 == j1939_retarder_node_source_address) || (cVar1 == -1)) {
     cm550_retarderControlModeHandler(param_1);

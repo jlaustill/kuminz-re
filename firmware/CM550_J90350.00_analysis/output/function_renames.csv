@@ -650,7 +650,7 @@ address,name
 0x0002efbc,cm550_systemControlFunction2
 0x0002efd0,cm550_diagnosticServiceDispatcherByPgn
 0x0002f114,cm550_systemControlFunction3
-0x0002f128,torqueControlModeHandler
+0x0002f128,processEngineTsc1Request,Processes a TSC1 (PGN 0) for the engine: the twin of CM848's processEngineTsc1Request (0x22d60). Byte 1 & 3 is the override control mode (SPN 695) and & 0x30 the priority (SPN 897); bytes 2-3 are the requested speed and byte 4 the requested torque. Rejects senders through cm550_diagnosticMessageValidator / cm550_diagnosticSessionValidator (the twins of CM848's ignored request and source configuration lookups) (was torqueControlModeHandler)
 0x0002f4be,cm550_FUN_0002f4be
 0x0002f538,cm550_diagnosticDataDump
 0x0002f606,cm550_FUN_0002f606

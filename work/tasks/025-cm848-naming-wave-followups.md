@@ -741,3 +741,11 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `DRIVETRAIN_MANUAL_VSS` → `VEHICLE_SPEED_SENSOR_INDUCTIVE`
 - `DRIVETRAIN_TYPE` → `VEHICLE_SPEED_SENSOR_TYPE`
 - `cm848_periodicControlLoopFaultHandling` → `cm848_claimRemoteThrottleOverride`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `j1939_tsc1_override_state` → `j1939_powertrain_control_state`
+- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainControlTimeouts`
+- `j1939_tsc1_received` → `j1939_powertrain_messages_received`
+- `etc1_governor_state_t` → `j1939_powertrain_control_state_t`

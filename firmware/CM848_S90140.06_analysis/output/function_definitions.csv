@@ -88,8 +88,8 @@ function_address,function_name,param_index,name,type,comment
 0x00006180,mpc555_handleJ1939TransportEndOfMessageAcknowledge,0,rx_msg,j1939_rx_msg_t*,Pointer to abort request message
 
 # TSC1 (Torque/Speed Control) Message Handlers - PGN 0 (TSC1)
-0x00022d60,torqueControlModeHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message
-0x00023b38,cm848_j1939DispatchAddressHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message for address filtering
+0x00022d60,processEngineTsc1Request,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message
+0x00023b38,cm848_dispatchTsc1ByDestinationAddress,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message for address filtering
 0x00022870,cm848_j1939ProcessPgn61442Etc1,0,rx_msg,j1939_rx_msg_t*,Pointer to received TSC1 message (secondary handler)
 
 # -----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ function_address,function_name,param_index,name,type,comment
 0x00023188,cm848_j1939RegisterPgnHandler,0,pgn,uint,Packed 16-bit PGN: low byte=pgn_byte_0 high byte=pgn_byte_1 stored in dispatch table
 0x00023188,cm848_j1939RegisterPgnHandler,1,handler_func,void*,Function pointer called when PGN matches incoming message
 
-0x00022d60,torqueControlModeHandler,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
+0x00022d60,processEngineTsc1Request,0,rx_msg,j1939_rx_msg_t*,Pointer to received J1939 message
 
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,0,request_msg,j1939_rx_msg_t*,Original request to acknowledge
 0x00023d3c,cm848_sendJ1939AcknowledgeMessage,1,ack_type,J1939_ACK_TYPE,J1939-21 ACKM control byte value
@@ -257,10 +257,10 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # J1939 RX Message Handlers - all receive j1939_rx_msg_t* as first param
 # -----------------------------------------------------------------------------
-0x00022d60,torqueControlModeHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x00022d60,processEngineTsc1Request,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x000236f0,cm848_processEngineRetarderTsc1Request,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 0x000231cc,cm848_j1939DispatchPgnHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
-0x00023b38,cm848_j1939DispatchAddressHandler,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
+0x00023b38,cm848_dispatchTsc1ByDestinationAddress,0,msg,j1939_rx_msg_t*,Incoming J1939 RX message descriptor from CAN ring buffer
 
 # -----------------------------------------------------------------------------
 # J1939 Send Dispatcher

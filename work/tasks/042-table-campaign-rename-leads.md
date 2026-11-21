@@ -756,3 +756,8 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 The old names this file cites were renamed in PR #53 (the leads above keep their wording):
 - `governorCruiseStateMachine` → `cm848_initializeCruiseControlDroopGains`
 - `cm848_initEngineOperatingMode` → `cm848_selectVariableSpeedGovernorMode`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `torqueControlModeHandler` → `processEngineTsc1Request`

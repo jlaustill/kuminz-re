@@ -538,7 +538,7 @@ void cm848_j1939ProcessPgn61442Etc1(j1939_rx_msg_t *rx_msg);  // @ 0x00022870
 void cm848_initJ1939Pgn61442Etc1Handler(void);  // @ 0x00022bc4
 void cm848_j1939ProcessPgn61445Etc2(int param_1);  // @ 0x00022c5c
 void cm848_initEtc2Handler(void);  // @ 0x00022d18
-void torqueControlModeHandler(j1939_rx_msg_t *msg);  // @ 0x00022d60
+void processEngineTsc1Request(j1939_rx_msg_t *msg);  // @ 0x00022d60
 bool cm848_j1939RegisterPgnHandler(dword pgn,void *handler_func);  // @ 0x00023188
 void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg);  // @ 0x000231cc
 void cm848_initJ1939ProtocolHandlers(void);  // @ 0x000232b4
@@ -548,7 +548,7 @@ short cm848_decodeRetarderTorqueRequestPercent(byte param_1);  // @ 0x0002346c
 void cm848_selectEngineRetarderStagePercent(void);  // @ 0x000234a4
 void cm848_processEngineRetarderTsc1Request(j1939_rx_msg_t *msg);  // @ 0x000236f0
 void cm848_initGovernorProtectionState(void);  // @ 0x00023a9c
-void cm848_j1939DispatchAddressHandler(j1939_rx_msg_t *msg);  // @ 0x00023b38
+void cm848_dispatchTsc1ByDestinationAddress(j1939_rx_msg_t *msg);  // @ 0x00023b38
 void cm848_initJ1939AddressDispatcher(void);  // @ 0x00023bb4
 void cm848_sendPgn56320AntiTheftStatus(void);  // @ 0x00023be0
 void cm848_initializePgn56320AntiTheftStatusBuffer(void);  // @ 0x00023cd4
@@ -617,9 +617,9 @@ void emptyStubFunction4(void);  // @ 0x00026f78
 void cm848_emptyStubFunction5(void);  // @ 0x00026f7c
 void cm848_runTsc1LostManagement(void);  // @ 0x00026f80
 void cm848_resetGovernorState(void);  // @ 0x00027118
-void cm848_processGovernorModeTransition(void);  // @ 0x0002715c
+void cm848_runJ1939PowertrainControlTimeouts(void);  // @ 0x0002715c
 void cm848_formatNumberAsDecimalText(uint *param_1,int param_2,int param_3);  // @ 0x00027bc4
-undefined4 cm848_governorSpeedControl(int param_1,uint param_2);  // @ 0x00027cc4
+undefined4 cm848_findTsc1SourceConfiguration(int param_1,uint param_2);  // @ 0x00027cc4
 void cm848_processSpeedSensorCompensation(void);  // @ 0x00027d38
 void cm848_presetLowSpeedGovernorIntegrator(int param_1);  // @ 0x00027e4c
 void cm848_runLowSpeedGovernor(void);  // @ 0x00027ff8

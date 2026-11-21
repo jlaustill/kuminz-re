@@ -231,3 +231,9 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 The old names this file cites were renamed in PR #53 (the leads above keep their wording):
 - `protectionRampRateControl` → `cm848_presetCruiseAndVehicleSpeedLimitGovernor`
 - `protectionOutputActuatorControl` → `cm848_runCruiseAndVehicleSpeedLimitGovernor`
+
+## Resolved by PR #53 round 6 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `cm848_processGovernorModeTransition` → `cm848_runJ1939PowertrainControlTimeouts`
+- `governor_mode_transition_counter` → `etc1_output_shaft_speed_run_state_count`
