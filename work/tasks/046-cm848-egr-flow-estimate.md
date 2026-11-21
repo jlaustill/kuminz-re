@@ -527,7 +527,12 @@ Scripts are in `session_folder/round9/`.
     the RAM dump: an X axis or Y curve is a length word plus data, a Z grid is nx x ny words with no header. It prints
     the CSV row at each address.
   - From round 8's anchor 0x407876 (0B43) every table through 0B98 lands on an existing `word[N]` row of exactly the
-    walked size: 58 tables. After 8C18, 0B9E..0BA9 and 0BB5..0BC6 match the same way: 30 more.
+    walked size: 88 tables (86 blocks and 2 inline axes). After 8C18, 0B9E..0BA9 and 0BB5..0BC6 match the same
+    way: 30 more blocks.
+  - Two more groups sit by the walk's order and the code: the 2nd gear closed-throttle unlock pair, and the exhaust
+    brake tables. The exhaust brake tables are 32 (blocks 8CA6..8CC6 with two boost axes).
+  - A size match alone is not proof. 0B99 / 0B9A matched by size, but in 11.46 they are the manual 2nd pair, so
+    the code users decide.
   - Each table's users in the code are the mode its record names.
   - Where 11.46 differs from the 11.45 e2m:
     - grid boost axes sit inline before the grid;
@@ -558,7 +563,24 @@ Scripts are in `session_folder/round9/`.
   - `transmission_shift_strategy_flags_t` (0x40b0f2, +A..+11): `wide_open_throttle_flags`, `run_fuel_mode_flags`,
     `anti_hunt_flags` / `output_shaft_speed_flags` / `actuator_test_flags` (split from the 3-byte `flags`),
     `service_test_request_flags` and `limp_home_and_temperature_flags`.
+- **Stage F (fb2426c, label-only, after a review):** the review fixes.
+  - **e2m 8BB6** aligns at 0x40b58c, the controller's RAM block (`RE_Deriv_Term` ... `RE_VFS_PWM_On_Time`). It
+    confirms stage A's controller names. `governor_pressure_derivative_term` and `governor_pressure_error_slope` get
+    their record names, and the proportional term at 0x40b59e is new. The old 8C34 `TCC_Function_Timer` note on
+    0x40b58c was wrong.
+  - **Old field names:** stage D's bare old field names in 48RE comments and plates (25 rows, 8 plates) now use the
+    new names. The P0720 monitor's plate names `limp_home_flags_4`: its bit 5 is `RE_OSS_Limp`, which confirms the
+    +8 alignment. `state_flags` bit 5 (service lockup) is an inference from its readers.
+  - **Other renames:** `governor_pressure_normal_curve` (was `_base_curve`, matching `RE_Normal_Curve` and the
+    enum's `NORMAL_CURVE`) and `overdrive_switch_power_on_delay_counter`.
+  - **Checked by code use:** the cruise resume words and the O/D switch power-on delay of 8BBB.
 - **Round 9 leads:**
+  - The 43 new label-only rows (8BB5 / 8BBB) have no type yet. Typing them is a cast-normalized stage.
+  - 8BB1-8BB4 (`RE_Axle_Ratio_Factor_*`, the axle ratio learning) and 8BB9 / 8BBA (`RE_Governor_Comp`, the
+    governor pressure compensation table before 8BBB).
+  - The limp-home bits: read each one from its fault setter, then the DTC, then the e2m record (as the P0720 bit
+    did).
+  - Signedness: the RE records carry the sign (column 10); deferred since round 8.
   - Name the single bits of the limp-home and overdrive flag bytes. The e2m lists each byte's bit records, but not
     their positions.
   - The table lookup caches still named `protection_filter_stage_*_state` / `protection_rpm_limit_table_*_state` /

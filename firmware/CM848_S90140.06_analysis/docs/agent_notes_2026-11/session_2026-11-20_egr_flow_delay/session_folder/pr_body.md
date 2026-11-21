@@ -281,9 +281,10 @@ ratio module.**
 **Round 9 (another "keep going"): the 48RE tables in memory order, the governor pressure controller, the pressure
 state enum, the flag bytes.**
 - **The method:** e2m column 5 numbers every ROM calibration block in memory order (RAM blocks have 0000).
-  `walk_tables.py` walks the tables from round 8's anchor, sizing each from its length word in the dump. About 100
+  `walk_tables.py` walks the tables from round 8's anchor, sizing each from its length word in the dump. 118
   tables land on an existing `word[N]` row of exactly the walked size, and each one's users are the mode its record
-  names.
+  names. That is 88 + 30 walked, plus the exhaust brake set and a few placed by order and code, about 156 in all.
+  A size match alone is not proof: the code users decide.
 - **Stage A (0f4daf6, label-only):**
   - the walked tables and the scalar blocks 8BB5 (the governor pressure controller's calibration), 8BBB and 8BBD;
   - the `cm848_throttle*` family, which is the governor pressure solenoid PID (its offset limits had backwards
@@ -299,6 +300,12 @@ state enum, the flag bytes.**
   - the 27-word output speed ring;
   - a `dword` fix.
 - **Stage D (f63a28b):** the 8C19 flag bytes as `transmission_control_flags_t` / `transmission_shift_strategy_flags_t`.
+- **Stage F (fb2426c, label-only, after a review):**
+  - e2m 8BB6 confirms the controller's RAM names; the derivative term, error slope and proportional term get their
+    record names.
+  - Stage D's bare old field names in 48RE comments and plates are replaced.
+  - The P0720 monitor's bit is `limp_home_flags_4` bit 5 = `RE_OSS_Limp`.
+  - `governor_pressure_normal_curve`.
 
 ## Test plan
 
@@ -364,9 +371,11 @@ state enum, the flag bytes.**
   - each aligned e2m record's description was read against its row's users (`align_block.py`), and each block
     stops where it drifts.
 - [x] Round 9:
-  - stages A, B and D are label-only (EQUIVALENT; D's 3-byte array split was read by hand);
+  - stages A, B, D and F are label-only (EQUIVALENT; for D, the 3-byte array split normalized back to
+    `flags[0..2]` gives 0 differences);
   - stage C passes `check_enum_proof2.py`, and its one other change is the ring array;
-  - the table walk matches about 100 existing rows by size and address.
+  - the table walk matches 118 existing rows by size and address (88 + 30), and each table's users agree with its
+    record.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.

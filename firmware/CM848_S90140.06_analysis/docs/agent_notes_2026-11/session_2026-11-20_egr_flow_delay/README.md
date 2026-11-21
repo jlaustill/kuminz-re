@@ -220,4 +220,5 @@ Hand work on the round 7 lead.
 - **Stage C:** `apply_r9c_enum.py` and `apply_r9c_types.py`.
 - **Stage D:** `apply_r9d_structs.py` (two structs, the field split), `worklist_r9d.py` and
   `refresh_qualified_r9d.py` (it refreshes `instance.field` mentions, which the generic refresh cannot do safely).
+- **Stage F (the review fixes):** `worklist_r9f.py` and `apply_r9f_fix.py` (the 8BB6 records, the proportional term row, the bare old field names in 48RE comments and plates). `csv_tail_check*.py` audits the CSVs for the csv-module bug; `close_r9.py` writes the resolved notes.
 - **Commit messages:** `commit_r9*.txt`.
