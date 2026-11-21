@@ -103,3 +103,35 @@ What the build logs show:
   - 0x3fa5a0, `mpc555_cmfEraseBlocks`, under `egr_mass_flow_delay_line`.
 - **Warnings:** the warning and error lines are the same in every build up to stage 3. Stage 4 removes two of them,
   the stale-prototype warnings ("defines 2 param row(s) but Ghidra recovered 0") for 0x12ad4 and 0x130dc.
+
+## Round 4: rename wave 15 (`session_folder/wave15/`)
+
+The user gave the go-ahead for an agent wave over the e2m audit's low-overlap rows.
+- **The pool (`funnel_W15.py`, `overlap_pool_W15.py`, `build_context_W15.py`):** named scalar / array / enum rows,
+  used in the code, dump in range, never reviewed (no `| e2m:` note, the comment does not cite the record), whose
+  name shares at most 20 % of the words of the e2m record the ECU's table resolves to the address. An address whose
+  name fits another record there better is out. `earlier_verdicts_W15.py` attached waves 12-14's notes and dropped
+  wave 13's 15 drift rows: 378 rows in 6 bins.
+- **The agents:** `brief_W15.md` (every rename needs a quoted `.cpp` line), six Sonnet agents, ~3.3M tokens. Their
+  results are in `results/`, their scripts in `agent_scratch/`, and their prompts and reports in
+  `agent_prompts_and_reports_W15.md` (extracted with `extract_reports_W15.py`).
+- **The apply (`apply_W15.py`):** bin coverage, old = current, name free (global / function / struct field /
+  parameter / local / any `.cpp` identifier), `_cal` = EEPROM mirror, banned abbreviations, CM550 sharing, the
+  quoted line, and the repo gate. `patch_apply_hand.py` adds the main session's decisions (`RENAMED_BY_HAND`,
+  `NOT_TWINS`, the PGN 56320 comment fix, drift markers). `apply_stage10_extras.py` adds the 1170 family.
+- **The hand follow-ups:** `apply_hand_worklist.py` applies a worklist (`worklist_10b_*.py`) through the same checks.
+  `evidence_W15.py` prints each row's e2m record and code lines for the review. `finish_10b5.py` finished one run
+  that the repo gate stopped at the function step. `add_e2m_prefix_W15.py` repaired the 90 comments that a
+  relative-path bug left without their e2m record.
+- **The types:** `apply_stage10c_types.py`.
+- **Checks:**
+  - `check_quoted_dump_values_W15.py` and `dump_mismatch_context_W15.py` (the 17 flags were regex hits on scaled
+    values);
+  - `stale_refs_W15.py`;
+  - the comment-name sweeps `sweep10*.txt`;
+  - the width checks `map10*_width.csv`.
+- **Maps:** `map_stage10.csv` (the wave and the 1170 extras), `map_stage10b.csv` / `map_stage10c.csv` (the
+  follow-ups), `map_stage10d.csv` (the 10c labels). Commit messages: `commit15-18.txt`.
+- **Regenerating `all.dis`** (6.7 MB, not archived): `powerpc-linux-gnu-objdump -D -b binary -m powerpc -EB
+  --adjust-vma=0x0 --start-address=0x0 --stop-address=0x70000 originals/cm848_rom.bin` followed by the same for
+  `originals/cm848_flash2_live.bin` with `--adjust-vma=0x500000 --start-address=0x500000 --stop-address=0x53e000`.

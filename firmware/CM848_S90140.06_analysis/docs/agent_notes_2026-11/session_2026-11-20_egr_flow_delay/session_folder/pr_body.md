@@ -90,6 +90,54 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   - **Proof:** a cast-normalized diff. 133 functions changed, and the 6 that still differ are cosmetic.
   - **Effect:** 617 fewer `(short)` casts.
 
+**Round 4: rename wave 15 (the agent wave you gave the go-ahead for).**
+- **Stage 10, the wave (5f0f9d9).** Label-only, EQUIVALENT.
+  - **Scope:** six read-only Sonnet agents (~3.3M tokens) reviewed 378 named rows. Each shares at most 20 % of its
+    words with the e2m record the ECU's parameter table resolves to its address, is used in the code, has its dump
+    value in range, and was never reviewed. Wave 13's 15 drift rows were left out.
+  - **Verdicts:** 185 renames, 187 keeps (each gets an `| e2m:` note), 5 drift, 1 uncertain. Every rename carries a
+    quoted `.cpp` line that the gate checks, and I read all 185 against their quotes.
+  - **Hand decisions:**
+    - 0x5c380 is PGN 65249 byte 19, the peak torque percent.
+    - Cruise_RSG_* calibrations stay `cruise_*`.
+    - The four LSG gain sets are named as sets.
+    - CM550's `governor_integral_accumulator` is an unrelated pointer, so 0x40b53e is renamed on CM848 alone.
+  - **Plus the whole e2m 1170 "ASG application specific" record:** 25 rows (were `engine_operating_mode_restore_*`),
+    `cm848_selectAllSpeedGovernorApplicationMode` and `FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION`. Nothing restores
+    anything, and nothing writes the record.
+- **Follow-up 1 (8bdd341), label-only, EQUIVALENT: 107 globals, 17 functions.** The agents' siblings and function
+  leads, verified by hand and run through the same gate.
+  - **The low speed governor:** the working P / I / D / jerk gains had crossed names. Also the terms, clamps and
+    adjustments, the 1064 constants (ten with a wrong `_cal`), the aggressive (10EE / 10EF) and gear (10EA) gain
+    logic, and nine functions.
+  - **The rest:** the HSG compensator (were `cruise_speed_*`), the ASG 107D leftovers, the net torque fuel limit.
+  - **The compressor inlet vocabulary:**
+    - The ECU's table names the channel 20 sensor Compressor_Inlet_Tmptr_Sensor, its selected value
+      Compressor_Inlet_Tmptr and the density Compressor_Inlet_Density.
+    - The ambient air temperature (1921 +6) is computed from them.
+    - So `ambient_air_temperature_selected` → `compressor_inlet_temperature` (this reverses round 3's rename of its
+      source word), `ambient_air_density` → `compressor_inlet_density`, `ambient_air_temperature_reference` →
+      `ambient_air_temperature`.
+- **Follow-up 2 (ea8a913), label-only, EQUIVALENT: 50 globals, 17 functions.**
+  - **J1939:**
+    - 0xfed200 is PGN 65234 = DM10 (the J1939 database; DM11 is 65235), so the `dm11` names were wrong.
+    - The anti-theft status is PGN 56320, not 56360: a PDU1 PGN excludes the destination byte.
+    - 56832 is Reset.
+    - The 1254 priorities get `_cal`, and the 117F anti-theft words are named.
+  - **The A/C clutch control:** 8A14 +4 says 0 = BR truck, 1 = DR truck, and this truck holds 1. The dispatcher and
+    both algorithms were `engine_protection_*`.
+  - **The injector driver:** PWM 16-19 are its reference levels and periods. The booster capacitor channels 54 / 55
+    get wrappers named by when they run.
+  - **Also:** the accelerator pedal faults, the engine protection shutdown counters, cruise rows, the tire size.
+- **Stage 10c, shape (158c318):**
+  - `low_speed_governor_gain_set_t` (four `short`) on the six gain sets, with the two pointers typed. The loader now
+    reads `low_speed_governor_gain_set_pointer->proportional_gain` with no cast.
+  - Two dwords split by their e2m records.
+  - Byte rows for the supervisor chip pair: the old word render read the overspeed count as
+    `(byte)targets_per_revolution`. 0x409530 is a byte too.
+  - dword encryption seeds (no more `_` prefix) and i32 ASG adjustments.
+  - **Proof:** after reversing the labels, six functions differ, each only by the intended rendering.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -105,6 +153,14 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   - every renamed row's width matches its e2m record (the only hits are struct instances).
 - [x] Stage 8: every new `(ushort)` / `(uint)` cast on a retyped word was checked against its instruction. All 10 sit
   on `lha` loads whose value the code then shifts logically, so none needed a revert.
+- [x] Round 4:
+  - stages 10 / 10 follow-ups 1 / 2 are label-only (EQUIVALENT);
+  - stage 10c's six changed functions were read diff by diff;
+  - the apply gate checked bin coverage, old = current, name free as a global / function / field / parameter /
+    local / enum / `.cpp` identifier, `_cal` = EEPROM mirror, banned abbreviations, CM550 sharing and the quoted line;
+  - the quoted dump values match: 17 flags, all regex hits on scaled values, against 92 for the negative control;
+  - the widths match the e2m records after 10c;
+  - no stale references remain (`stale_refs_W15.py`, the comment-name sweep).
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -117,6 +173,10 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
 - **The engine speed module's functions** have mixed prefixes: `hpcr_processEngineSyncPulses`,
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
-- **The rest of the e2m audit's low-overlap rows,** which would suit a wave of agents.
+- **Wave 15 leads not applied:** the 9-word ASG gain set struct, the fault derate scheduler words, the cruise / RSG
+  PID functions (`protectionOutputActuatorControl` ...), the TPU injection channel bytes, the 11D5 air fuel control
+  rows, and 0x3fdda6 `drivetrain_type`, whose e2m record is RSC_Sensor_Type (the cruise fix rests on it). The full
+  list is in task 046.
+- **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

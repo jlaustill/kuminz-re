@@ -1,18 +1,25 @@
-200802 build1.log
-201161 build2.log
-201266 build3.log
-201288 build4.log
-201289 build5.log
-201286 build6.log
-200889 build7.log
-201079 build8.log
-200888 build9.log
-200692 build10.log
-200695 build11.log
-200695 build12.log
-200691 build13.log
-200696 build14.log
-402904 verify.log
-402089 verify2.log
-401704 verify3.log
+ 200802 build1.log
+ 201161 build2.log
+ 201266 build3.log
+ 201288 build4.log
+ 201289 build5.log
+ 201286 build6.log
+ 200889 build7.log
+ 201079 build8.log
+ 200888 build9.log
+ 200692 build10.log
+ 200695 build11.log
+ 200695 build12.log
+ 200691 build13.log
+ 200696 build14.log
+ 200693 build15.log
+ 200692 build16.log
+ 200698 build17.log
+ 200712 build18.log
+ 200714 build19.log
+ 200713 build20.log
 3544401 stage2.cpp
+ 402904 verify.log
+ 402089 verify2.log
+ 401704 verify3.log
+ 401745 verify4.log
