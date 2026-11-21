@@ -229,6 +229,27 @@ ratio module.**
 - **Found:** the history table's length word is also `j1939_input_signal_timeouts[24]`. The supervision tick would
   count it down, but the tick is off in this calibration.
 
+**Round 8 (another "keep going"): the 48RE transmission controller, named `protection_*` until now.**
+- **The method:** the Chrysler e2m `RE_*` records, aligned by relative offset and proved word by word by code use.
+  - 8C53 resolves through the parameter ID table to `transmission_pressure_state`.
+  - 8C17 (RAM, 0x40b102) aligns +0..+48. Its `RE_OSS_Accel` and seven names that were already right confirm it.
+  - 8BBC (ROM cals, 0x40780c) aligns +0..+5C. Its `RE_Inertia_Default` = 53 equals the learned inertia in the RAM
+    dump.
+- **Stage A (e848623, label-only): the anti-hunt mode.**
+  - `cm848_selectGovernorPressureAntiHunt` holds the governor pressure on a hold curve, which prevents the upshift,
+    then forces it with a boost curve once the predicted post-shift acceleration clears the minimum for the throttle.
+  - The prediction: the road load from a turbine torque estimate x the gear ratio, the next gear's torque, ÷ a
+    vehicle inertia learned across each forced 1-2 shift.
+- **Stage B (1766051, label-only):** the rest of both blocks.
+  - the low range strategy (`cm848_selectGovernorPressureLowRange`, was `cm848_protectionOverloadHandler`);
+  - the lockup / unlock, WOT and cruise decel cals;
+  - the predicted shift delays (were `governor_pressure_learned_gain_gear1` / `2`);
+  - `hot_mode_flag` = `transmission_overheat_protection_active_flag`;
+  - `transmission_lockup_timers_t`;
+  - the timer tick, the initialization and the governor pressure sensor offset calibration.
+- **Stage C:** the gear ratio table is typed `word[6]`, and the inertia default and the shift logic initializer are
+  named.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -284,6 +305,11 @@ ratio module.**
   - stage B was read diff by diff: the struct field renders, the enum renders and declaration order;
   - the session functions' `int32_t` parameter was found because the first 7a build rendered `int` as
     `dword`.
+- [x] Round 8:
+  - stages A and B are EQUIVALENT (0 functions differ);
+  - stage C was read diff by diff;
+  - each aligned e2m record was checked against its row's users (`align_block.py`), and each block stops
+    where it drifts.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -297,7 +323,7 @@ ratio module.**
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.
 - **Open after round 5:**
-  - the transmission gear functions 0x3241c / 0x3257c (inherited `protection_*` names);
+  - the rest of the 48RE controller (the pressure state enum, the 3-4 / 4-3 shift lines, lockup, more RE blocks);
   - the engine speed module's run-state machine (no e2m value list, so it needs a read);
   - the 48RE governor pressure functions 0x3257c / 0x3241c (their block 8D14 drifts);
   - the fault derate scheduler words and the 11D5 air fuel control rows;

@@ -3026,6 +3026,7 @@ extern word transmission_anti_hunt_2_3_boost_time;  // 0x00407814
 extern word transmission_available_torque_minimum;  // 0x00407816
 extern word transmission_3_4_unlock_engine_speed_drop;  // 0x00407818
 extern word transmission_vehicle_inertia_learning_minimum_throttle;  // 0x0040781a
+extern word transmission_vehicle_inertia_default;  // 0x0040781c
 extern word transmission_vehicle_inertia_maximum;  // 0x0040781e
 extern word transmission_vehicle_inertia_minimum;  // 0x00407820
 extern word transmission_lockup_service_minimum_output_speed_3rd;  // 0x00407822
@@ -3063,7 +3064,7 @@ extern word transmission_manual_second_unlock_maximum_output_speed;  // 0x004078
 extern word governor_pressure_wide_open_throttle_anti_hang_engine_speed;  // 0x00407864
 extern word governor_pressure_wide_open_throttle_anti_hang_time;  // 0x00407866
 extern word transmission_manual_low_lockup_off_time;  // 0x00407868
-extern byte transmission_gear_ratio_table;  // 0x0040786a
+extern word transmission_gear_ratio_table[6];  // 0x0040786a
 extern word transmission_anti_hunt_1_2_boost_pressure_axis[8];  // 0x00407876
 extern word transmission_anti_hunt_1_2_boost_pressure_values[8];  // 0x00407886
 extern word transmission_anti_hunt_2_3_boost_pressure_axis[8];  // 0x00407896

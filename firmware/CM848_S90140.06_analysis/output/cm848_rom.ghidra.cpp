@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 09:37:41 MST 2026
+// Generated: Sat Nov 21 09:41:29 MST 2026
 
 
 //
@@ -5939,8 +5939,8 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
   byte local_2a [5];
   byte bStack_25;
   uint local_24 [7];
-  byte key_matches;
   dword current_runtime;
+  byte key_matches;
   
   if (eeprom_shadow_header.version_marker == 0xff) {
     result = 0;
@@ -33866,8 +33866,8 @@ uint cm848_calculateTransmissionOutputTorqueInGear(int param_1)
 {
   uint uVar1;
   
-  uVar1 = (uint)transmission_output_speed_in_use *
-          (uint)*(ushort *)(&transmission_gear_ratio_table + param_1 * 2) >> 5;
+  uVar1 = (uint)transmission_output_speed_in_use * (uint)transmission_gear_ratio_table[param_1] >> 5
+  ;
   if (uVar1 < 0x10000) {
     transmission_turbine_speed_in_gear = (word)uVar1;
   }
@@ -33888,8 +33888,7 @@ uint cm848_calculateTransmissionOutputTorqueInGear(int param_1)
                  (&DAT_003fb164,transmission_throttle_prescaled,transmission_turbine_torque_x_axis,
                   transmission_turbine_speed_prescaled,transmission_turbine_torque_y_axis,
                   transmission_turbine_torque_grid,0);
-  uVar1 = (uint)transmission_turbine_torque *
-          (uint)*(ushort *)(&transmission_gear_ratio_table + param_1 * 2) >> 5;
+  uVar1 = (uint)transmission_turbine_torque * (uint)transmission_gear_ratio_table[param_1] >> 5;
   if (uVar1 < 0x10000) {
     uVar1 = uVar1 & 0xffff;
   }
@@ -34454,13 +34453,20 @@ void cm848_runTransmissionControl(void)
 
 
 //
-// Function: mpc555_initProtectionFilterVariables @ 0x000331cc
+// Function: cm848_initializeTransmissionShiftLogic @ 0x000331cc
 //
 
-void mpc555_initProtectionFilterVariables(void)
+/* Initializes the 48RE shift logic: transmission_vehicle_inertia =
+   transmission_vehicle_inertia_default (e2m RE_Inertia_Default), the predicted post-shift
+   acceleration 0, the anti-hunt and low range shift flags cleared,
+   fourth_gear_tcc_lockup_boost_input = the intake manifold pressure, and every governor pressure /
+   shift table lookup cache set to 2 (the first segment) (was mpc555_initProtectionFilterVariables)
+    */
+
+void cm848_initializeTransmissionShiftLogic(void)
 
 {
-  transmission_vehicle_inertia = DAT_0040781c;
+  transmission_vehicle_inertia = transmission_vehicle_inertia_default;
   transmission_predicted_post_shift_acceleration = 0;
   protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0x1f;
   protection_condition_flags_t_0040b0e8.action_flags =
@@ -57641,7 +57647,7 @@ void cm848_applicationMain(void)
   initProtectionOutputFlags();
   initHpcr_HandlerRoutines();
   cm848_resetTransmissionTemperatureValidation();
-  mpc555_initProtectionFilterVariables();
+  cm848_initializeTransmissionShiftLogic();
   cm848_initializeTransmissionControl();
   protection_event_11_reset();
   cm848_initializeTransmissionTemperatureSensorPerformanceMonitor();

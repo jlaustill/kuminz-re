@@ -1003,6 +1003,15 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     cals come from e2m 106D.
   - **The importer:** the two session functions' `session_kind` needed `int32_t` (see the "Prototype / local type
     keywords" rule above).
+- **Round 8 (2026-11-21, PR #53): the 48RE transmission controller was named `protection_*`.**
+  - **The vocabulary:** the Chrysler e2m `RE_*` records. None of the RE blocks are in the parameter ID table, so
+    align them by relative offset and prove the base by the code use of several words (`round8/align_block.py`).
+  - **The alignments:**
+    - 8C53 +0 `RE_Trans_Pressure_State` = 0x40b100 (`transmission_pressure_state`);
+    - 8C17 (RAM) at 0x40b102, +0..+48;
+    - 8BBC (ROM cals) at 0x40780c, +0..+5C.
+  - **The modes:** the governor pressure modes are `cm848_selectGovernorPressure*`, now with `AntiHunt` (hold /
+    boost curves gated by a predicted post-shift acceleration from a learned vehicle inertia) and `LowRange`.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

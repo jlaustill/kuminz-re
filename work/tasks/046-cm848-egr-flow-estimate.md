@@ -383,6 +383,53 @@ Hand work on the round 6 leads (scripts in `session_folder/round7/`).
   - The engine run-state machine (819B).
   - `cm848_initGovernorStateVariables`, a mixed governor initialization.
 
+## Done, round 8 (2026-11-21, same PR; the user's next "keep going"): the 48RE transmission controller
+
+The round 7 lead (0x3241c / 0x3257c) opened the whole 48RE controller, which was named `protection_*`. Scripts are in
+`session_folder/round8/`.
+- **Method:** the Chrysler e2m `RE_*` records, aligned by relative offset. None of the RE blocks are in the parameter
+  ID table, but their bases are proved word by word:
+  - **8C53 +0** `RE_Trans_Pressure_State` resolves to 0x40b100 in the table.
+  - **8C17 (RAM) at 0x40b102**, aligned +0..+48 (it drifts from +4C). The anti-hunt timers start it.
+    `RE_OSS_Accel` (+28) lands on the existing output shaft acceleration, and seven names that were already right
+    match (`RE_Governor_Set` = `governor_pressure_target`, `Transmission_OD_Lamp` = `overdrive_off_flag`, ...).
+  - **8BBC (ROM cals) at 0x40780c**, aligned +0..+5C (it drifts from +5E). The anti-hunt timer limits and the
+    inertia limits start it, and +10 `RE_Inertia_Default` = 53 is the learned inertia in the RAM dump.
+    `align_block.py` prints a block against the rows with each row's users.
+- **Stage A (e848623, label-only): the anti-hunt mode and its post-shift acceleration model.**
+  - `cm848_selectGovernorPressureAntiHunt` uses the hold curve (prevent the upshift) and the boost curve (force it),
+    once the predicted post-shift acceleration clears `RE_PSA_Max_*`.
+  - `cm848_predictPostShiftAcceleration`, `cm848_calculateTransmissionOutputTorqueInGear` (the turbine torque
+    estimate x the gear ratio) and `cm848_learnVehicleInertia`.
+  - `transmission_pressure_state_t` (the pressure state, then the anti-hunt timers), the gear ratio table and 25
+    tables.
+- **Stage B (1766051, label-only): the rest of both aligned ranges.**
+  - The low range, lockup / unlock service, WOT boost / hold / anti-hang and cruise decel cals.
+  - The 8C17 working words, including the predicted shift delays (were `governor_pressure_learned_gain_gear1` / `2`)
+    and `transmission_overheat_protection_active_flag` (was `hot_mode_flag`).
+  - `transmission_lockup_timers_t` (was `protection_lockout_t`).
+  - `cm848_selectGovernorPressureLowRange` (was `cm848_protectionOverloadHandler`), the timer tick, the
+    initialization, the output shaft acceleration and the governor pressure sensor offset calibration.
+- **Stage C (types):** the gear ratio table as `word[6]`, `transmission_vehicle_inertia_default`, and
+  `cm848_initializeTransmissionShiftLogic`.
+- **Thin evidence:**
+  - `transmission_output_speed_fault_debounce_timer` (8C17 +8): only the timer tick and the initialization use it.
+  - The turbine torque tables have other sizes than in the 11.45 e2m (17 / 9 / 17 x 9 here, 8 / 8 / 5 x 5 there).
+  - The gear ratio table's indexes 0 / 1 (10 / 512) are unexplained.
+- **Round 8 leads:**
+  - The pressure state codes 1-0x18: an enum needs every mode handler's curves. Named so far: 1 base, 0x12 / 0x13
+    anti-hunt boost, 0x14 / 0x15 anti-hunt hold, 0xb-0xf low range, 0x10 high gear, 0x11 2nd gear locked,
+    0x16 manual low, 0x17 override.
+  - The still `protection_*`-named 48RE functions and tables:
+    - `cm848_protectionStateTransitionCheck`: the 3-4 / 4-3 shift lines and manual low (e2m `RE_Normal_3_4` /
+      `4_3`, `RE_Cruise_*`);
+    - `cm848_calculateProtectionThresholdLimit`;
+    - `cm848_protectionCleanupHandler` (the 3rd gear lockup);
+    - the `protection_condition_flags_t` / `protection_status_flags_t` bits;
+    - the remaining tables (`RE_Cold_Curve`, `RE_Cruise_Curve`, `RE_Fuel_Economy_Curve`, `RE_WOT_*_Curve`,
+      `RE_Lockup_*`, `RE_Unlock_*`).
+  - Blocks 8BB5 / 8BBB / 8BBD / 8C18 / 8C19 (more RE cals and flags), to align the same way.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -739,7 +739,7 @@ void cm848_learnVehicleInertia(void);  // @ 0x0003241c
 void cm848_selectGovernorPressureAntiHunt(void);  // @ 0x0003257c
 void cm848_selectGovernorPressureNormal(void);  // @ 0x00032b00
 void cm848_runTransmissionControl(void);  // @ 0x00032efc
-void mpc555_initProtectionFilterVariables(void);  // @ 0x000331cc
+void cm848_initializeTransmissionShiftLogic(void);  // @ 0x000331cc
 void cm848_evaluateProtectionModeFlags(void);  // @ 0x00033488
 void cm848_decrementTransmissionTimers(void);  // @ 0x000335e4
 void cm848_determineCurrentGearAndLockupInhibit(void);  // @ 0x00033948
