@@ -247,9 +247,12 @@ ratio module.**
   - `hot_mode_flag` = `transmission_overheat_protection_active_flag`;
   - `transmission_lockup_timers_t`;
   - the timer tick, the initialization and the governor pressure sensor offset calibration.
-- **Stage C:** the gear ratio table is typed `word[6]`, and the inertia default and the shift logic initializer are
-  named.
-- **Stage E (label-only):**
+- **Stage C (d542b7d):** the gear ratio table is typed `word[6]`, and the inertia default and the shift logic
+  initializer are named.
+- **Closing (f349dd2):** the old-name sweep and the resolved-name notes. It also fixes a firmware/CLAUDE.md history
+  sentence that the stage B reference refresh had rewritten (`round8/refresh_audit.py` now lists every comment-only
+  refresh).
+- **Stage E (94773eb, label-only):**
   - the converter clutch engagement monitor (`cm848_monitorConverterClutchEngagement`). After each clutch command
     the speed ratio must enter the gear's locked window (2nd 43-50 / 3rd 28-35 / 4th 19-25 around the gear ratios)
     within 3 s, or lockup is inhibited;

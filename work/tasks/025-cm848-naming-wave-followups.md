@@ -773,3 +773,4 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `protection_derate_level_trial` → `transmission_output_torque_gear_index`
 - `cm848_protectionRateOfChangeCalculation` → `cm848_predictPostShiftAcceleration`
 - `cm848_processProtectionStateFlags` → `cm848_selectGovernorPressureAntiHunt`
+- `cm848_processProtectionRateLimitFlags` → `cm848_monitorConverterClutchEngagement`

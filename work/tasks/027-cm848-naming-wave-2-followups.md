@@ -247,3 +247,4 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 - `protection_engine_load_scaled` → `transmission_engine_acceleration`
 - `cm848_protectionOverloadHandler` → `cm848_selectGovernorPressureLowRange`
 - `protection_timer_state_t_0040b100` → `transmission_pressure_state`
+- `protection_rpm_threshold` → `governor_pressure_wide_open_throttle_upshift_target_engine_speed`
