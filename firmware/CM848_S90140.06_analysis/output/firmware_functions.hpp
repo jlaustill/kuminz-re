@@ -616,7 +616,7 @@ void cm848_initializePgn65279WaterInFuelIndicatorBuffer(void);  // @ 0x00026efc
 void emptyStubFunction4(void);  // @ 0x00026f78
 void cm848_emptyStubFunction5(void);  // @ 0x00026f7c
 void cm848_runTsc1LostManagement(void);  // @ 0x00026f80
-void cm848_resetGovernorState(void);  // @ 0x00027118
+void cm848_resetEngineRetarderTsc1Request(void);  // @ 0x00027118
 void cm848_runJ1939PowertrainControlTimeouts(void);  // @ 0x0002715c
 void cm848_formatNumberAsDecimalText(uint *param_1,int param_2,int param_3);  // @ 0x00027bc4
 undefined4 cm848_findTsc1SourceConfiguration(int param_1,uint param_2);  // @ 0x00027cc4
@@ -1462,7 +1462,7 @@ void cm848_processJ1939AcceleratorIdleSwitchPair(void);  // @ 0x0050a9d4
 void cm848_processJ1939SwitchAndRequestInputs(void);  // @ 0x0050aba8
 void cm848_processJ1939AcceleratorInputs(void);  // @ 0x0050ad1c
 void cm848_initJ1939InputProcessing(void);  // @ 0x0050ae5c
-void governor_resetModeStateOnCondition(void);  // @ 0x0050aec0
+void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void);  // @ 0x0050aec0
 char j1939_writeDiagMemory(int param_1,byte *param_2,uint param_3);  // @ 0x0050af58
 undefined1 j1939_writeDiagMemoryByParameterId (undefined4 param_1,undefined4 param_2,int param_3,undefined4 param_4);  // @ 0x0050b1b8
 undefined1 j1939_diagService68_memoryWriteByParameterId(int param_1);  // @ 0x0050b228
@@ -1485,8 +1485,8 @@ void j1939_receivePgn65264Handler(int param_1);  // @ 0x0050b9d8
 void j1939_receivePgn65265Handler(int param_1);  // @ 0x0050bacc
 void cm848_tickJ1939InputSupervision(void);  // @ 0x0050bca0
 void j1939_pgn_handler_init_batch(void);  // @ 0x0050bdcc
-void cm848_storeJ1939ControlSessionInHistoryTable(int param_1);  // @ 0x0050be6c
-void cm848_startJ1939ControlSession(int param_1);  // @ 0x0050beec
+void cm848_storeJ1939ControlSessionInHistoryTable(int session_kind);  // @ 0x0050be6c
+void cm848_startJ1939ControlSession(int session_kind);  // @ 0x0050beec
 void cm848_trackJ1939ControlSessions(void);  // @ 0x0050bff4
 undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1);  // @ 0x0050c318
 void j1939_diag_request_41_handler(void);  // @ 0x0050c400
