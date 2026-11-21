@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 16:35:07 MST 2026
+// Generated: Sat Nov 21 16:39:24 MST 2026
 
 
 //
@@ -48376,10 +48376,10 @@ LAB_00047b98:
    window is one 4-byte store at offset 16 that runs 2 bytes past the 18-byte record - so Ghidra
    prints a raw stack or register name for its destination. Was cm848_calculateEngineTimingOffset
    Quirk (disassembly): only governor mode 1 (OPEN_LOOP_START) sets r29 - the start temperature
-   chosen by engine_sync_state_b; modes 2 / 4 and the fixed-command modes 8 / 16 / 32 / 64 jump past
-   it, so the integrator-preset lookup at 0x48ba8 (taken while average_engine_speed is 0) reads the
-   caller's r29 (the unaff_r29 argument). Likely harmless: it only runs with the engine stopped and
-   mode 1 recomputes the preset before a start. */
+   chosen by fuel_metering_inner_loop_preset_temperature_source; modes 2 / 4 and the fixed-command
+   modes 8 / 16 / 32 / 64 jump past it, so the integrator-preset lookup at 0x48ba8 (taken while
+   average_engine_speed is 0) reads the caller's r29 (the unaff_r29 argument). Likely harmless: it
+   only runs with the engine stopped and mode 1 recomputes the preset before a start. */
 
 void cm848_calculateFuelMeteringCommand(void)
 
@@ -48413,8 +48413,9 @@ void cm848_calculateFuelMeteringCommand(void)
     return;
   }
   if ((fuel_control_actuator_test_active_flag != 0) &&
-     ((engine_state == ENGINE_STATE_STOPPED || (engine_sync_cold_start_enable2_cal == 1)))) {
-    fuel_pressure_governor_state.fuel_metering_command = engine_sync_cold_start_speed_cal;
+     ((engine_state == ENGINE_STATE_STOPPED ||
+      (fuel_metering_tool_override_while_running_enable == 1)))) {
+    fuel_pressure_governor_state.fuel_metering_command = fuel_metering_tool_override_command;
     return;
   }
   wVar6 = fuel_pressure_governor_integrator.integer_part;
@@ -48485,8 +48486,10 @@ void cm848_calculateFuelMeteringCommand(void)
            fuel_pressure_governor_feed_forward_enable != 0)) {
           fuel_pressure_governor_feed_forward =
                cm848_dualAxisTableInterpolation
-                         (&engine_sync_init_state_n,average_engine_speed,cam_sync_speed_axis_cal,
-                          total_injection_quantity,cam_sync_timing_axis_cal,cam_sync_values_cal,4);
+                         (&fuel_pressure_governor_feed_forward_cached_axis_offset,
+                          average_engine_speed,fuel_pressure_governor_feed_forward_engine_speed_axis
+                          ,total_injection_quantity,fuel_pressure_governor_feed_forward_fuel_axis,
+                          fuel_pressure_governor_feed_forward_grid,4);
 LAB_00047f84:
           wVar4 = fuel_pressure_governor_state.fuel_pressure_governor_demand -
                   fuel_pressure_governor_feed_forward;
@@ -48776,25 +48779,31 @@ LAB_0004800c:
       fuel_pressure_governor_integral_term =
            cm848_integrateWithZoneGain
                      (&working_integral_gains,&fuel_pressure_governor_integrator,(int)sVar11,10000);
-      if ((engine_sync_rpm_phase_acquired_flag == 1) && (engine_sync_state_a == 5)) {
+      if ((fuel_metering_outer_loop_coil_temperature_ready_flag == 1) &&
+         (fuel_metering_outer_loop_preset_temperature_source == 5)) {
         wVar4 = lookupTableInterpolation
-                          (&engine_sync_init_state_k,average_engine_speed,cam_sync_output_a_axis_cal
-                           ,cam_sync_output_a_values_cal,2);
+                          (&fuel_metering_start_duty_cycle_cached_axis_offset,average_engine_speed,
+                           fuel_metering_start_duty_cycle_engine_speed_axis,
+                           fuel_metering_start_duty_cycle_values,2);
         wVar5 = lookupTableInterpolation
-                          (&engine_sync_init_state_l,average_engine_speed,cam_sync_output_b_axis_cal
-                           ,cam_sync_output_b_values_cal,2);
+                          (&fuel_metering_hot_start_duty_cycle_cached_axis_offset,
+                           average_engine_speed,fuel_metering_hot_start_duty_cycle_engine_speed_axis
+                           ,fuel_metering_hot_start_duty_cycle_values,2);
         iVar13 = (int)(short)fuel_metering_coil_temperature;
-        iVar14 = (int)(short)cam_sync_speed_interp_lower_cal;
+        iVar14 = (int)(short)fuel_metering_cold_start_temperature;
         wVar6 = wVar4;
-        if ((iVar14 < iVar13) && (wVar6 = wVar5, iVar13 < (short)engine_sync_timing_max_cal)) {
+        if ((iVar14 < iVar13) &&
+           (wVar6 = wVar5, iVar13 < (short)fuel_metering_hot_start_temperature)) {
           wVar6 = wVar4 + (short)(((iVar13 - iVar14) * ((int)(short)wVar5 - (int)(short)wVar4)) /
-                                 ((short)engine_sync_timing_max_cal - iVar14));
+                                 ((short)fuel_metering_hot_start_temperature - iVar14));
         }
         if (fuel_pressure_governor_feed_forward_enable == 1) {
           fuel_pressure_governor_feed_forward =
                cm848_dualAxisTableInterpolation
-                         (&engine_sync_init_state_n,average_engine_speed,cam_sync_speed_axis_cal,
-                          total_injection_quantity,cam_sync_timing_axis_cal,cam_sync_values_cal,4);
+                         (&fuel_pressure_governor_feed_forward_cached_axis_offset,
+                          average_engine_speed,fuel_pressure_governor_feed_forward_engine_speed_axis
+                          ,total_injection_quantity,fuel_pressure_governor_feed_forward_fuel_axis,
+                          fuel_pressure_governor_feed_forward_grid,4);
           wVar6 = wVar6 - fuel_pressure_governor_feed_forward;
         }
         if ((short)wVar6 < 0x1000) {
@@ -48807,8 +48816,8 @@ LAB_0004800c:
           fuel_pressure_governor_integral_term = 0xfff;
         }
         fuel_pressure_governor_integrator.integer_part = fuel_pressure_governor_integral_term;
-        engine_sync_signal_flag = 1;
-        engine_sync_rpm_phase_acquired_flag = 0;
+        fuel_metering_integrator_preset_done_flag = 1;
+        fuel_metering_outer_loop_coil_temperature_ready_flag = 0;
         wVar4 = fuel_pressure_governor_integral_term;
       }
       fuel_pressure_governor_derivative_term =
@@ -48821,42 +48830,46 @@ LAB_0004800c:
       if (fuel_pressure_governor_feed_forward_enable != 0) {
         fuel_pressure_governor_feed_forward =
              cm848_dualAxisTableInterpolation
-                       (&engine_sync_init_state_n,average_engine_speed,cam_sync_speed_axis_cal,
-                        total_injection_quantity,cam_sync_timing_axis_cal,cam_sync_values_cal,4);
+                       (&fuel_pressure_governor_feed_forward_cached_axis_offset,average_engine_speed
+                        ,fuel_pressure_governor_feed_forward_engine_speed_axis,
+                        total_injection_quantity,fuel_pressure_governor_feed_forward_fuel_axis,
+                        fuel_pressure_governor_feed_forward_grid,4);
         wVar6 = wVar6 + fuel_pressure_governor_feed_forward;
       }
     }
     goto LAB_000489d0;
   }
   wVar5 = lookupTableInterpolation
-                    (&engine_sync_init_state_k,average_engine_speed,cam_sync_output_a_axis_cal,
-                     cam_sync_output_a_values_cal,2);
+                    (&fuel_metering_start_duty_cycle_cached_axis_offset,average_engine_speed,
+                     fuel_metering_start_duty_cycle_engine_speed_axis,
+                     fuel_metering_start_duty_cycle_values,2);
   wVar3 = lookupTableInterpolation
-                    (&engine_sync_init_state_l,average_engine_speed,cam_sync_output_b_axis_cal,
-                     cam_sync_output_b_values_cal,2);
-  if (engine_sync_state_a == 0) {
+                    (&fuel_metering_hot_start_duty_cycle_cached_axis_offset,average_engine_speed,
+                     fuel_metering_hot_start_duty_cycle_engine_speed_axis,
+                     fuel_metering_hot_start_duty_cycle_values,2);
+  if (fuel_metering_outer_loop_preset_temperature_source == 0) {
     iVar13 = 0xe;
 LAB_00048130:
     iVar13 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar13);
   }
-  else if (engine_sync_state_a == 1) {
+  else if (fuel_metering_outer_loop_preset_temperature_source == 1) {
     iVar13 = 4;
 LAB_00048114:
     iVar13 = (int)*(short *)((int)&sensor_channel_filtered_output + iVar13);
   }
-  else if (engine_sync_state_a == 2) {
+  else if (fuel_metering_outer_loop_preset_temperature_source == 2) {
     iVar13 = (int)(short)intake_manifold_temperature_sensor_filtered;
   }
   else {
-    if (engine_sync_state_a == 3) {
+    if (fuel_metering_outer_loop_preset_temperature_source == 3) {
       iVar13 = 0x8a;
       goto LAB_00048114;
     }
-    if (engine_sync_state_a == 4) {
+    if (fuel_metering_outer_loop_preset_temperature_source == 4) {
       iVar13 = 0x28;
       goto LAB_00048130;
     }
-    if (engine_sync_state_a == 5) {
+    if (fuel_metering_outer_loop_preset_temperature_source == 5) {
       iVar13 = (int)(short)fuel_metering_coil_temperature;
     }
     else {
@@ -48869,29 +48882,29 @@ LAB_00048114:
       }
     }
   }
-  if (engine_sync_state_b == 0) {
+  if (fuel_metering_inner_loop_preset_temperature_source == 0) {
     iVar14 = 0xe;
 LAB_000481e4:
     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar14);
   }
-  else if (engine_sync_state_b == 1) {
+  else if (fuel_metering_inner_loop_preset_temperature_source == 1) {
     iVar14 = 4;
 LAB_000481c8:
     unaff_r29 = *(word *)((int)&sensor_channel_filtered_output + iVar14);
   }
   else {
     unaff_r29 = intake_manifold_temperature_sensor_filtered;
-    if (engine_sync_state_b != 2) {
-      if (engine_sync_state_b == 3) {
+    if (fuel_metering_inner_loop_preset_temperature_source != 2) {
+      if (fuel_metering_inner_loop_preset_temperature_source == 3) {
         iVar14 = 0x8a;
         goto LAB_000481c8;
       }
-      if (engine_sync_state_b == 4) {
+      if (fuel_metering_inner_loop_preset_temperature_source == 4) {
         iVar14 = 0x28;
         goto LAB_000481e4;
       }
       unaff_r29 = fuel_metering_coil_temperature;
-      if (engine_sync_state_b != 5) {
+      if (fuel_metering_inner_loop_preset_temperature_source != 5) {
         unaff_r29 = sensor_readings_t_0040baf2.coolant_temp;
         if ((short)intake_manifold_temperature_sensor_filtered <
             (short)sensor_readings_t_0040baf2.coolant_temp) {
@@ -48903,10 +48916,10 @@ LAB_000481c8:
       }
     }
   }
-  iVar14 = (int)(short)cam_sync_speed_interp_lower_cal;
+  iVar14 = (int)(short)fuel_metering_cold_start_temperature;
   wVar6 = wVar5;
   if (((iVar14 < iVar13) &&
-      (iVar12 = (int)(short)engine_sync_timing_max_cal, wVar6 = wVar3, iVar13 < iVar12)) &&
+      (iVar12 = (int)(short)fuel_metering_hot_start_temperature, wVar6 = wVar3, iVar13 < iVar12)) &&
      (wVar6 = wVar5, iVar14 != iVar12)) {
     wVar6 = wVar5 + (short)(((iVar13 - iVar14) * ((int)(short)wVar3 - (int)(short)wVar5)) /
                            (iVar12 - iVar14));
@@ -48914,8 +48927,10 @@ LAB_000481c8:
 LAB_000489d0:
   fuel_pressure_governor_state.fuel_pressure_governor_demand = wVar6;
   wVar5 = lookupTableInterpolation
-                    (&engine_sync_init_state_b,average_engine_speed,
-                     cam_sync_speed_ref_limit_axis_cal,cam_sync_speed_ref_limit_values_cal,2);
+                    (&fuel_pressure_governor_maximum_duty_cycle_cached_axis_offset,
+                     average_engine_speed,
+                     fuel_pressure_governor_maximum_duty_cycle_engine_speed_axis,
+                     fuel_pressure_governor_maximum_duty_cycle_values,2);
   wVar6 = fuel_pressure_governor_demand_minimum_when_not_running;
   if (engine_state == ENGINE_STATE_RUNNING) {
     wVar6 = fuel_pressure_governor_demand_minimum_when_running;
@@ -48930,8 +48945,9 @@ LAB_000489d0:
     total_injection_quantity = 0;
   }
   wVar6 = lookupTableInterpolation
-                    (&engine_sync_init_state_a,wVar3,cam_sync_ref_output_axis_cal,
-                     cam_sync_ref_output_values_cal,3);
+                    (&fuel_metering_current_by_duty_cycle_cached_axis_offset,wVar3,
+                     fuel_metering_current_by_duty_cycle_axis,
+                     fuel_metering_current_by_duty_cycle_values,3);
   sVar7 = cm848_applyPiecewiseLinearGain
                     (&fuel_metering_uncompensated_duty_cycle_proportional_gains,(int)(short)wVar6);
   fuel_metering_base_command_derivative_term =
@@ -48957,15 +48973,16 @@ LAB_000489d0:
                      (&WORD_003fb660,unaff_r29,engine_sync_speed_scale_axis_cal,
                       engine_sync_speed_scale_values_cal,3);
     }
-    else if ((engine_sync_confirmed_flag == 1) && (engine_sync_state_b == 5)) {
+    else if ((fuel_metering_inner_loop_coil_temperature_ready_flag == 1) &&
+            (fuel_metering_inner_loop_preset_temperature_source == 5)) {
       fuel_metering_feedback_trim_integrator.integer_part =
            lookupTableInterpolation
                      (&WORD_003fb660,fuel_metering_coil_temperature,engine_sync_speed_scale_axis_cal
                       ,engine_sync_speed_scale_values_cal,3);
     }
-    if (engine_sync_confirmed_flag == 1) {
-      engine_sync_confirmed_flag = 0;
-      engine_sync_signal_flag = 1;
+    if (fuel_metering_inner_loop_coil_temperature_ready_flag == 1) {
+      fuel_metering_inner_loop_coil_temperature_ready_flag = 0;
+      fuel_metering_integrator_preset_done_flag = 1;
     }
     iVar13 = (int)(short)(sVar9 + sVar10);
     if (fuel_metering_feedback_trim_maximum_scaling_factor < iVar13) {
@@ -48980,14 +48997,14 @@ LAB_000489d0:
     }
     fuel_pressure_governor_state.fuel_metering_command =
          (short)(iVar13 * (short)wVar4 >> 0xc) + wVar4;
-    if ((average_engine_speed == 0) && (governor_zero_speed_count < governor_zero_speed_count_cal))
-    {
-      fuel_pressure_governor_state.fuel_metering_command = engine_sync_zero_speed_output_cal;
+    if ((average_engine_speed == 0) &&
+       (governor_zero_speed_count < fuel_metering_startup_pulse_time)) {
+      fuel_pressure_governor_state.fuel_metering_command = fuel_metering_startup_pulse_duty_cycle;
     }
     uVar1 = governor_zero_speed_count + 1;
     governor_zero_speed_count = governor_zero_speed_count + 1;
-    if (governor_zero_speed_count_cal < uVar1) {
-      governor_zero_speed_count = governor_zero_speed_count_cal;
+    if (fuel_metering_startup_pulse_time < uVar1) {
+      governor_zero_speed_count = fuel_metering_startup_pulse_time;
     }
   }
   else {
@@ -48996,15 +49013,18 @@ LAB_000489d0:
   }
   if (fuel_pressure_governor_state.fuel_pressure_governor_mode ==
       FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START) {
-    cam_sync_speed_filter_state.coefficient = &sensor_channel_config_t_00059336.filter_coefficient;
+    fuel_metering_battery_voltage_filter.coefficient =
+         &sensor_channel_config_t_00059336.filter_coefficient;
   }
   else {
-    cam_sync_speed_filter_state.coefficient = &fuel_metering_battery_voltage_filter_coefficient;
+    fuel_metering_battery_voltage_filter.coefficient =
+         &fuel_metering_battery_voltage_filter_coefficient;
   }
   wVar6 = lookupTableInterpolation
-                    (&engine_sync_init_state_j,fuel_pressure_governor_state.filtered_battery_voltage
-                     ,cam_sync_speed_output_scale_axis_cal,cam_sync_speed_output_scale_values_cal,0)
-  ;
+                    (&fuel_metering_battery_correction_cached_axis_offset,
+                     fuel_pressure_governor_state.filtered_battery_voltage,
+                     fuel_metering_battery_correction_voltage_axis,
+                     fuel_metering_battery_correction_factor_values,0);
   fuel_pressure_governor_state.fuel_metering_command =
        (word)((int)((int)(short)fuel_pressure_governor_state.fuel_metering_command * (uint)wVar6) >>
              0xc);
@@ -49045,27 +49065,31 @@ LAB_000489d0:
          cm848_signedFirstOrderFilter
                    ((int)(short)fuel_pressure_governor_state.fuel_metering_command,
                     &fuel_metering_command_filter);
-    if (((int)(uint)cam_sync_error_rate_threshold_cal < (int)sVar8) &&
-       ((int)(uint)cam_speed_rate_threshold_cal < (int)(short)fuel_metering_command_filtered)) {
-      engine_sync_phase_counter = engine_sync_phase_counter + 1;
-      if (engine_sync_phase_counter_max_cal < engine_sync_phase_counter) {
-        engine_sync_phase_counter = engine_sync_phase_counter_max_cal;
+    if (((int)(uint)fuel_metering_resistance_minimum_current < (int)sVar8) &&
+       ((int)(uint)fuel_metering_resistance_minimum_duty_cycle <
+        (int)(short)fuel_metering_command_filtered)) {
+      fuel_metering_coil_resistance_sample_count = fuel_metering_coil_resistance_sample_count + 1;
+      if (fuel_metering_coil_resistance_minimum_samples < fuel_metering_coil_resistance_sample_count
+         ) {
+        fuel_metering_coil_resistance_sample_count = fuel_metering_coil_resistance_minimum_samples;
       }
       uVar15 = ((int)(short)fuel_metering_command_filtered *
                 (uint)sensor_readings_t_0040baf2.battery_voltage * 5) / (uint)(sVar8 * 2);
       engine_sync_rpm_raw_working = (word)uVar15;
-      dVar2 = exponentialMovingAverage(uVar15 & 0xffff,&cam_sync_rpm_filter_state);
+      dVar2 = exponentialMovingAverage(uVar15 & 0xffff,&fuel_metering_coil_resistance_filter);
       fuel_metering_coil_resistance_filtered = (word)dVar2;
     }
     else {
-      engine_sync_phase_counter = 0;
+      fuel_metering_coil_resistance_sample_count = 0;
     }
-    if ((engine_sync_phase_counter_max_cal <= engine_sync_phase_counter) &&
-       (fuel_metering_coil_temperature =
-             (short)(((uint)engine_sync_rpm_scale_cal * (uint)fuel_metering_coil_resistance_filtered
-                     ) / 0x138) + engine_sync_rpm_offset_cal, engine_sync_signal_flag == 0)) {
-      engine_sync_rpm_phase_acquired_flag = 1;
-      engine_sync_confirmed_flag = 1;
+    if ((fuel_metering_coil_resistance_minimum_samples <= fuel_metering_coil_resistance_sample_count
+        ) && (fuel_metering_coil_temperature =
+                   (short)(((uint)fuel_metering_coil_temperature_gain *
+                           (uint)fuel_metering_coil_resistance_filtered) / 0x138) +
+                   fuel_metering_coil_temperature_offset,
+             fuel_metering_integrator_preset_done_flag == 0)) {
+      fuel_metering_outer_loop_coil_temperature_ready_flag = 1;
+      fuel_metering_inner_loop_coil_temperature_ready_flag = 1;
     }
   }
   return;
@@ -49113,13 +49137,14 @@ void cm848_countFuelPressureGovernorStartRevolutions(void)
    is never cleared because the fourth store pair repeats 0x3fb66e. In detail: fuel_metering_command
    and fuel_pressure_governor_demand = 0, fuel_pressure_governor_mode and its saved copy =
    FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START, the start revolution / low pressure counters and the feed
-   forward = 0, the 17 table lookup cache words engine_sync_init_state_a..q = 2, the EMA filter
-   records of the fuel metering feedback / reference / command, the fuel pressure sensor, the
-   accelerator feed forward and the two cam_sync_* speed filters = accumulator 0 with their
-   coefficient pointers set, fuel_metering_command_filtered = 0, the coil resistance estimate (e2m
-   8019) preset from engine_sync_rpm_filter_initial_cal and the coolant temperature, and the
-   engine_sync_* flags and governor_zero_speed_count = 0. Called once from the boot list of
-   cm848_applicationMain, before the fuel pressure diagnostic and setpoint state initializers. (was
+   forward = 0, the 17 table lookup cache words
+   fuel_metering_current_by_duty_cycle_cached_axis_offset..q = 2, the EMA filter records of the fuel
+   metering feedback / reference / command, the fuel pressure sensor, the accelerator feed forward
+   and the two cam_sync_* speed filters = accumulator 0 with their coefficient pointers set,
+   fuel_metering_command_filtered = 0, the coil resistance estimate (e2m 8019) preset from
+   fuel_metering_coil_initial_resistance and the coolant temperature, and the engine_sync_* flags
+   and governor_zero_speed_count = 0. Called once from the boot list of cm848_applicationMain,
+   before the fuel pressure diagnostic and setpoint state initializers. (was
    cm848_resetEngineSyncState) | earlier note: Resets the fuel pressure governor / fuel metering
    state (cm848_calculateFuelMeteringCommand): command, demand, governor mode 1, counters, the table
    interpolation states and filters. Of the four Q16.16 PID states it clears
@@ -49147,29 +49172,30 @@ void cm848_initializeFuelPressureGovernorState(void)
   fuel_pressure_governor_derivative_filter.fractional_part = 0;
   fuel_metering_feedback_trim_integrator.integer_part = 0;
   fuel_metering_feedback_trim_integrator.fractional_part = 0;
-  engine_sync_init_state_a = 2;
-  engine_sync_init_state_b = 2;
+  fuel_metering_current_by_duty_cycle_cached_axis_offset = 2;
+  fuel_pressure_governor_maximum_duty_cycle_cached_axis_offset = 2;
   fuel_pressure_governor_proportional_small_signal_gain_scaling_cached_axis_offset = 2;
   fuel_pressure_governor_proportional_positive_large_signal_gain_scaling_cached_axis_offset = 2;
   fuel_pressure_governor_proportional_negative_large_signal_gain_scaling_cached_axis_offset = 2;
   fuel_pressure_governor_integral_small_signal_gain_scaling_cached_axis_offset = 2;
   fuel_pressure_governor_integral_positive_large_signal_gain_scaling_cached_axis_offset = 2;
   fuel_pressure_governor_integral_negative_large_signal_gain_scaling_cached_axis_offset = 2;
-  engine_sync_init_state_j = 2;
-  engine_sync_init_state_k = 2;
-  engine_sync_init_state_l = 2;
+  fuel_metering_battery_correction_cached_axis_offset = 2;
+  fuel_metering_start_duty_cycle_cached_axis_offset = 2;
+  fuel_metering_hot_start_duty_cycle_cached_axis_offset = 2;
   fuel_pressure_governor_derivative_filter_coefficient_scaling_cached_axis_offset = 2;
   fuel_pressure_sensor_filter_coefficient_scaling_cached_axis_offset = 2;
-  engine_sync_init_state_n = 2;
-  engine_sync_init_state_o = 2;
-  engine_sync_init_state_p = 2;
-  engine_sync_init_state_q = 2;
+  fuel_pressure_governor_feed_forward_cached_axis_offset = 2;
+  fuel_pressure_governor_feed_forward_cached_axis_offset_y = 2;
+  fuel_metering_unused_cached_axis_offset_1 = 2;
+  fuel_metering_unused_cached_axis_offset_2 = 2;
   fuel_metering_feedback_filter.accumulator = 0;
   fuel_metering_feedback_filter.coefficient = &fuel_metering_feedback_filter_coefficient;
   fuel_metering_reference_filter.accumulator = 0;
   fuel_metering_reference_filter.coefficient = &fuel_metering_reference_filter_coefficient;
-  cam_sync_speed_filter_state.accumulator = 0;
-  cam_sync_speed_filter_state.coefficient = &sensor_channel_config_t_00059336.filter_coefficient;
+  fuel_metering_battery_voltage_filter.accumulator = 0;
+  fuel_metering_battery_voltage_filter.coefficient =
+       &sensor_channel_config_t_00059336.filter_coefficient;
   fuel_pressure_sensor_filter.accumulator = 0;
   fuel_pressure_sensor_filter.coefficient = &fuel_pressure_sensor_filter_coefficient;
   fuel_pressure_governor_accelerator_feed_forward_filter.accumulator = 0;
@@ -49177,15 +49203,16 @@ void cm848_initializeFuelPressureGovernorState(void)
        &fuel_pressure_governor_accelerator_feed_forward_filter_coefficient;
   fuel_metering_command_filter.accumulator = 0;
   fuel_metering_command_filter.coefficient = &fuel_metering_command_filter_coefficient;
-  cam_sync_rpm_filter_state.accumulator = 0;
-  cam_sync_rpm_filter_state.coefficient = &cam_sync_rpm_filter_coefficient;
+  fuel_metering_coil_resistance_filter.accumulator = 0;
+  fuel_metering_coil_resistance_filter.coefficient =
+       &fuel_metering_coil_resistance_filter_coefficient;
   fuel_metering_command_filtered = 0;
-  fuel_metering_coil_resistance_filtered = engine_sync_rpm_filter_initial_cal;
+  fuel_metering_coil_resistance_filtered = fuel_metering_coil_initial_resistance;
   fuel_metering_coil_temperature = sensor_readings_t_0040baf2.coolant_temp;
-  engine_sync_signal_flag = 0;
-  engine_sync_phase_counter = 0;
-  engine_sync_rpm_phase_acquired_flag = 0;
-  engine_sync_confirmed_flag = 0;
+  fuel_metering_integrator_preset_done_flag = 0;
+  fuel_metering_coil_resistance_sample_count = 0;
+  fuel_metering_outer_loop_coil_temperature_ready_flag = 0;
+  fuel_metering_inner_loop_coil_temperature_ready_flag = 0;
   governor_zero_speed_count = 0;
   return;
 }
@@ -49201,7 +49228,8 @@ void cm848_filterEngineSensorValue(void)
 {
   dword dVar1;
   
-  dVar1 = exponentialMovingAverage((uint)sensor_channel2_ram.value,&cam_sync_speed_filter_state);
+  dVar1 = exponentialMovingAverage
+                    ((uint)sensor_channel2_ram.value,&fuel_metering_battery_voltage_filter);
   fuel_pressure_governor_state.filtered_battery_voltage = (word)dVar1;
   return;
 }
