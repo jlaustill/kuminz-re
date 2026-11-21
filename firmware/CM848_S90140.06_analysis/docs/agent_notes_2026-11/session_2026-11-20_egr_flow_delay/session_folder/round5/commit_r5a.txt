@@ -1,0 +1,24 @@
+cm848 + cm550: round 5 - the J1939 builders checked against their PGNs; EC1 send-on-change named
+
+j1939_header_pgns.py lists every function that builds a J1939 header with the PGN its constant encodes
+(PDU1: the PS byte is a destination, not part of the PGN). Four names named the wrong message:
+- 0xfed000 is PGN 65232 = DM8 (cm848_initJ1939EngineControlBuffer -> cm848_initializePgn65232Dm8Buffer);
+- 0xf00100 is PGN 61441 = EBC1, not ETC1 (61442) -> cm848_initializePgn61441ElectronicBrakeController1Buffer;
+- 0xfeff00, PGN 65279, carries the water in fuel indicator (0xfc no water / 0xfd fault bit 56 / 0xff
+  disabled): cm848_initJ1939SafetyStatusBuffer / cm848_j1939SendSafetyStatusMessage ->
+  cm848_initializePgn65279WaterInFuelIndicatorBuffer / cm848_sendPgn65279WaterInFuelIndicatorMessage, and its
+  byte j1939_pgn65279_water_in_fuel_indicator_byte;
+- 0xfee300 is PGN 65251 = EC1: initFaultTimerMessage -> initializePgn65251EngineConfiguration1Buffer in BOTH
+  firmwares (CM550 0x33692 builds the same header: a true twin, so the shared unprefixed name stays shared).
+The EC1 "fault timer / fault counter" family is EC1's send-on-change logic (J1939-71: resend when a curve
+point changes by 10 %): cm848_processFaultMessageTiming -> cm848_sendPgn65251EngineConfiguration1OnChange,
+cm848_faultCounterDecrement / Increment -> cm848_hasWordChangedByTenPercent / cm848_hasByteChangedByTenPercent
+(|new - old| x 10 / old >= 1), cm848_sendFaultTimerMessage -> cm848_sendPgn65251EngineConfiguration1Message,
+and the 28-byte payload and its previous copy (fault_timer_state_base / fault_counter_slot*_target / _shadow /
+fault_slot_data_*): exact J1939 field names where a row matches one field, byte-range names where the
+compiler's chunked copy crosses fields. cm848_sendJ1939NegativeAck -> cm848_sendJ1939NegativeAcknowledgement.
+
+Label-only: reverse_names.py EQUIVALENT on both firmwares, and the comment-stripped function diff finds 0
+changed functions; warnings unchanged; both header sets compile.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

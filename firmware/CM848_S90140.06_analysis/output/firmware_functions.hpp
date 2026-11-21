@@ -431,11 +431,11 @@ void cm848_updateEgrValveEnableAndDiagnosticConditions(void);  // @ 0x0001b120
 void cm848_initializeEgrValveAutozeroConditions(void);  // @ 0x0001b35c
 void cm848_runEgrValveFaultAndPositionControl(void);  // @ 0x0001b37c
 void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1);  // @ 0x0001b3a0
-undefined4 cm848_faultCounterDecrement(ushort param_1,int param_2);  // @ 0x0001b624
-undefined4 cm848_faultCounterIncrement(byte param_1,byte param_2);  // @ 0x0001b69c
-void cm848_sendFaultTimerMessage(void);  // @ 0x0001b730
-void cm848_processFaultMessageTiming(void);  // @ 0x0001b778
-void initFaultTimerMessage(void);  // @ 0x0001b900
+undefined4 cm848_hasWordChangedByTenPercent(ushort param_1,int param_2);  // @ 0x0001b624
+undefined4 cm848_hasByteChangedByTenPercent(byte param_1,byte param_2);  // @ 0x0001b69c
+void cm848_sendPgn65251EngineConfiguration1Message(void);  // @ 0x0001b730
+void cm848_sendPgn65251EngineConfiguration1OnChange(void);  // @ 0x0001b778
+void initializePgn65251EngineConfiguration1Buffer(void);  // @ 0x0001b900
 void cm848_calculateColdStartFuelAdjust(void);  // @ 0x0001b99c
 void cm848_initColdStartLimits(void);  // @ 0x0001bb30
 void cm848_calculateColdStartRpmAdjust(void);  // @ 0x0001bb48
@@ -553,7 +553,7 @@ void cm848_initJ1939AddressDispatcher(void);  // @ 0x00023bb4
 void cm848_sendPgn56320AntiTheftStatus(void);  // @ 0x00023be0
 void cm848_initializePgn56320AntiTheftStatusBuffer(void);  // @ 0x00023cd4
 void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYPE ack_type);  // @ 0x00023d3c
-void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type);  // @ 0x00023dbc
+void cm848_sendJ1939NegativeAcknowledgement(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type);  // @ 0x00023dbc
 void cm848_initJ1939AckBuffer(void);  // @ 0x00023e40
 void cm848_buildPgn65269AmbientConditionsMessage(void);  // @ 0x00023e8c
 void cm848_initJ1939AmbientConditionsBuffer(void);  // @ 0x00023fb8
@@ -580,9 +580,9 @@ void cm848_j1939HandlePgn65229Dm4FreezeFrame(void);  // @ 0x00025390
 void cm848_j1939HandlePgn65230Dm5Readiness(void);  // @ 0x00025458
 void cm848_initPgn65230Dm5Handler(void);  // @ 0x0002553c
 void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte dest_address,byte fault_count);  // @ 0x000255c0
-void cm848_initJ1939EngineControlBuffer(void);  // @ 0x0002560c
+void cm848_initializePgn65232Dm8Buffer(void);  // @ 0x0002560c
 void cm848_j1939BuildEngineControlByte(void);  // @ 0x0002567c
-void cm848_initJ1939Etc1ControlBuffer(void);  // @ 0x00025824
+void cm848_initializePgn61441ElectronicBrakeController1Buffer(void);  // @ 0x00025824
 void sendPgn61444ElectronicEngineController1Message(void);  // @ 0x0002588c
 void cm848_initEec1TxDescriptor(void);  // @ 0x00025ab8
 void cm848_buildPgn61443ElectronicEngineController2Message(void);  // @ 0x00025b10
@@ -611,8 +611,8 @@ void cm848_j1939HandlePgn65271VehicleElectrical(void);  // @ 0x00026cf0
 void cm848_initJ1939VehicleElectricalBuffer(void);  // @ 0x00026d40
 void cm848_j1939HandlePgn65260VehicleId(void);  // @ 0x00026db4
 void cm848_initPgn65260VehicleIdHandler(void);  // @ 0x00026ddc
-void cm848_j1939SendSafetyStatusMessage(void);  // @ 0x00026e90
-void cm848_initJ1939SafetyStatusBuffer(void);  // @ 0x00026efc
+void cm848_sendPgn65279WaterInFuelIndicatorMessage(void);  // @ 0x00026e90
+void cm848_initializePgn65279WaterInFuelIndicatorBuffer(void);  // @ 0x00026efc
 void emptyStubFunction4(void);  // @ 0x00026f78
 void cm848_emptyStubFunction5(void);  // @ 0x00026f7c
 void cm848_runTsc1LostManagement(void);  // @ 0x00026f80

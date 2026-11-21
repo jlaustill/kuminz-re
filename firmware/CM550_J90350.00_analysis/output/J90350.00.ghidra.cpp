@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - J90350.00 Firmware
-// Generated: Fri Nov 20 04:14:45 MST 2026
+// Generated: Sat Nov 21 01:42:15 MST 2026
 
 
 //
@@ -30670,7 +30670,7 @@ void initDiagnosticBufferPointers(void)
   vp44Command0x100Builder();
   vp44_cumminsProprietaryDM_983_Builder();
   vp44_secondaryParamPGN_65247_Builder();
-  initFaultTimerMessage();
+  initializePgn65251EngineConfiguration1Buffer();
   cm550_cumminsProprietaryTSC_PGN_15728640_Builder();
   cm550_FUN_00033a1e();
   cm550_fuelEconomyPGN_65266_Builder();
@@ -36967,12 +36967,15 @@ byte cm550_FUN_0003366a(void)
 
 
 //
-// Function: initFaultTimerMessage @ 0x00033692
+// Function: initializePgn65251EngineConfiguration1Buffer @ 0x00033692
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Builds the transmit descriptor of EC1 (header 0xfee300: PGN 65251 Engine Configuration 1; 0x1c =
+   28 data bytes) and seeds its not-available bytes; shared with CM848 0x1b900 (the same code). (was
+   initFaultTimerMessage) */
 
-void initFaultTimerMessage(void)
+void initializePgn65251EngineConfiguration1Buffer(void)
 
 {
   _DAT_0080352a = CONCAT13((char)((_DAT_00803f68 & 7) << 2),0xfee300);

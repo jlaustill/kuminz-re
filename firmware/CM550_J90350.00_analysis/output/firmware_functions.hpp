@@ -722,7 +722,7 @@ uint cm550_FUN_000333d6(uint param_1);  // @ 0x000333d6
 uint cm550_FUN_00033460(uint param_1);  // @ 0x00033460
 void cm550_FUN_000334ec(void);  // @ 0x000334ec
 byte cm550_FUN_0003366a(void);  // @ 0x0003366a
-void initFaultTimerMessage(void);  // @ 0x00033692
+void initializePgn65251EngineConfiguration1Buffer(void);  // @ 0x00033692
 void cm550_FUN_00033716(void);  // @ 0x00033716
 void cm550_FUN_00033754(void);  // @ 0x00033754
 void cm550_FUN_000337c4(void);  // @ 0x000337c4

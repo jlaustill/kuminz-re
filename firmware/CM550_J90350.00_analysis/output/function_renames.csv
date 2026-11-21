@@ -732,7 +732,7 @@ address,name
 0x00033460,cm550_FUN_00033460
 0x000334ec,cm550_FUN_000334ec
 0x0003366a,cm550_FUN_0003366a
-0x00033692,initFaultTimerMessage
+0x00033692,initializePgn65251EngineConfiguration1Buffer,Builds the transmit descriptor of EC1 (header 0xfee300: PGN 65251 Engine Configuration 1; 0x1c = 28 data bytes) and seeds its not-available bytes; shared with CM848 0x1b900 (the same code). (was initFaultTimerMessage)
 0x00033716,cm550_FUN_00033716
 0x00033754,cm550_FUN_00033754
 0x000337c4,cm550_FUN_000337c4

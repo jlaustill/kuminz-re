@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 19:46:01 MST 2026
+// Generated: Sat Nov 21 01:40:32 MST 2026
 
 
 //
@@ -18191,10 +18191,10 @@ void cm848_runEgrValveFaultAndPositionControl(void)
 //
 
 /* Fills the 28-byte payload of the J1939 engine configuration message, PGN 65251 (Engine
-   Configuration 1), into the buffer param_1 (fault_timer_state_base; the transmit descriptor
+   Configuration 1), into the buffer param_1 (j1939_pgn65251_payload; the transmit descriptor
    j1939_pgn65251_tx_message has its can_id built from 0xfee300 and length 28, set by
-   initFaultTimerMessage at 0x1b900). First it refreshes the torque curve with
-   governor_calculateIntegratorRpmOutput (0x507a20, the fault derate speed points) and
+   initializePgn65251EngineConfiguration1Buffer at 0x1b900). First it refreshes the torque curve
+   with governor_calculateIntegratorRpmOutput (0x507a20, the fault derate speed points) and
    cm848_updateJ1939EngineConfigurationTorqueCurve (0x20d10). Then, byte swapped to J1939 little
    endian, it stores: the speeds and percent torques of curve points 1-5 (e2m 1102
    Jcomm_Determined_RPM_Point_1-5 at +16 / +12 / +18 / +1A / +14, SPN 188 / 528 / 529 / 530 / 531;
@@ -18206,10 +18206,10 @@ void cm848_runEgrValveFaultAndPositionControl(void)
    j1939_pgn61442_engine_overspeed_enable_time_limit / 10 (SPN 534), the speed control range limits
    governor_rpm_limit_cal / 80 and engine_speed_limit_maximum / 80 (10 rpm per bit, SPN 535 / 536)
    and the torque control range, 0 percent and the largest point torque (SPN 537 / 538). It sends
-   nothing: cm848_sendFaultTimerMessage (0x1b730, registered for PGN 65251 in the periodic transmit
-   queue) and cm848_processFaultMessageTiming (0x1b778, which resends when a value changed) call it
-   and send the descriptor. Shared name with CM550 0x3320e (the same function). (was
-   faultTimerHandler) */
+   nothing: cm848_sendPgn65251EngineConfiguration1Message (0x1b730, registered for PGN 65251 in the
+   periodic transmit queue) and cm848_sendPgn65251EngineConfiguration1OnChange (0x1b778, which
+   resends when a value changed) call it and send the descriptor. Shared name with CM550 0x3320e
+   (the same function). (was faultTimerHandler) */
 
 void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1)
 
@@ -18298,10 +18298,13 @@ void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1)
 
 
 //
-// Function: cm848_faultCounterDecrement @ 0x0001b624
+// Function: cm848_hasWordChangedByTenPercent @ 0x0001b624
 //
 
-undefined4 cm848_faultCounterDecrement(ushort param_1,int param_2)
+/* Returns 1 when a 16-bit value changed by 10 % or more of its previous value (or from 0 to
+   non-zero): |new - old| x 10 / old >= 1 (was cm848_faultCounterDecrement) */
+
+undefined4 cm848_hasWordChangedByTenPercent(ushort param_1,int param_2)
 
 {
   uint uVar1;
@@ -18329,10 +18332,13 @@ undefined4 cm848_faultCounterDecrement(ushort param_1,int param_2)
 
 
 //
-// Function: cm848_faultCounterIncrement @ 0x0001b69c
+// Function: cm848_hasByteChangedByTenPercent @ 0x0001b69c
 //
 
-undefined4 cm848_faultCounterIncrement(byte param_1,byte param_2)
+/* Returns 1 when an 8-bit value changed by 10 % or more of its previous value (or from 0 to
+   non-zero) (was cm848_faultCounterIncrement) */
+
+undefined4 cm848_hasByteChangedByTenPercent(byte param_1,byte param_2)
 
 {
   uint uVar1;
@@ -18362,14 +18368,17 @@ undefined4 cm848_faultCounterIncrement(byte param_1,byte param_2)
 
 
 //
-// Function: cm848_sendFaultTimerMessage @ 0x0001b730
+// Function: cm848_sendPgn65251EngineConfiguration1Message @ 0x0001b730
 //
 
-void cm848_sendFaultTimerMessage(void)
+/* Builds the EC1 payload (buildPgn65251EngineConfiguration1Payload) and sends PGN 65251 when the
+   transmit slot is free (was cm848_sendFaultTimerMessage) */
+
+void cm848_sendPgn65251EngineConfiguration1Message(void)
 
 {
   if ((DAT_003fa83e & 0xf0) == 0) {
-    buildPgn65251EngineConfiguration1Payload(&fault_timer_state_base);
+    buildPgn65251EngineConfiguration1Payload(&j1939_pgn65251_payload);
     sendJ1939Message(&j1939_pgn65251_tx_message);
   }
   return;
@@ -18378,78 +18387,89 @@ void cm848_sendFaultTimerMessage(void)
 
 
 //
-// Function: cm848_processFaultMessageTiming @ 0x0001b778
+// Function: cm848_sendPgn65251EngineConfiguration1OnChange @ 0x0001b778
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* The EC1 send-on-change test (J1939-71): copies the payload to j1939_pgn65251_payload_previous,
+   rebuilds it and compares each speed (cm848_hasWordChangedByTenPercent) and percent torque
+   (cm848_hasByteChangedByTenPercent) with its previous value; a change of 10 % or more sends the
+   message (was cm848_processFaultMessageTiming) */
 
-void cm848_processFaultMessageTiming(void)
+void cm848_sendPgn65251EngineConfiguration1OnChange(void)
 
 {
   char cVar1;
   
-  fault_timer_state_prev_snapshot = fault_timer_state_base._0_2_;
-  DAT_003fa816 = fault_timer_state_base._2_1_;
-  DAT_003fa817._0_1_ = (undefined1)fault_timer_state_base;
+  j1939_pgn65251_payload_previous = j1939_pgn65251_payload._0_2_;
+  DAT_003fa816 = j1939_pgn65251_payload._2_1_;
+  DAT_003fa817._0_1_ = (undefined1)j1939_pgn65251_payload;
   DAT_003fa817._1_1_ = DAT_003fa7fc;
   DAT_003fa819 = DAT_003fa7fd;
-  fault_counter_slot2_shadow = fault_counter_slot2_target;
-  _fault_counter_slot3_shadow = _fault_counter_slot3_target;
-  fault_counter_slot4_shadow = fault_counter_slot4_target;
+  j1939_pgn65251_engine_speed_point_3_previous = j1939_pgn65251_engine_speed_point_3;
+  _j1939_pgn65251_payload_bytes_9_10_previous = _j1939_pgn65251_payload_bytes_9_10;
+  j1939_pgn65251_engine_speed_point_5_previous = j1939_pgn65251_engine_speed_point_5;
   DAT_003fa822 = DAT_003fa806;
   DAT_003fa823 = DAT_003fa807;
-  _fault_slot_data_shadow_a = _fault_slot_data_copy_a;
-  _fault_slot_data_shadow_b = _fault_slot_data_copy_b;
-  fault_counter_slot7_shadow = fault_counter_slot7_target;
-  buildPgn65251EngineConfiguration1Payload(&fault_timer_state_base);
-  cVar1 = cm848_faultCounterDecrement(fault_timer_state_prev_snapshot,fault_timer_state_base._0_2_);
+  _j1939_pgn65251_payload_bytes_17_18_previous = _j1939_pgn65251_payload_bytes_17_18;
+  _j1939_pgn65251_payload_bytes_21_22_previous = _j1939_pgn65251_payload_bytes_21_22;
+  j1939_pgn65251_control_range_limits_previous = j1939_pgn65251_control_range_limits;
+  buildPgn65251EngineConfiguration1Payload(&j1939_pgn65251_payload);
+  cVar1 = cm848_hasWordChangedByTenPercent
+                    (j1939_pgn65251_payload_previous,j1939_pgn65251_payload._0_2_);
   if ((((cVar1 != '\x01') &&
-       (cVar1 = cm848_faultCounterIncrement(DAT_003fa816,fault_timer_state_base._2_1_),
+       (cVar1 = cm848_hasByteChangedByTenPercent(DAT_003fa816,j1939_pgn65251_payload._2_1_),
        cVar1 != '\x01')) &&
-      (cVar1 = cm848_faultCounterDecrement
+      (cVar1 = cm848_hasWordChangedByTenPercent
                          (CONCAT11(DAT_003fa817._0_1_,(undefined1)DAT_003fa817),
-                          CONCAT11((undefined1)fault_timer_state_base,DAT_003fa7fc)),
+                          CONCAT11((undefined1)j1939_pgn65251_payload,DAT_003fa7fc)),
       cVar1 != '\x01')) &&
-     ((cVar1 = cm848_faultCounterIncrement(DAT_003fa819,DAT_003fa7fd), cVar1 != '\x01' &&
-      (cVar1 = cm848_faultCounterDecrement(fault_counter_slot2_shadow,fault_counter_slot2_target),
-      cVar1 != '\x01')))) {
-    cVar1 = cm848_faultCounterIncrement
-                      (fault_counter_slot3_shadow._0_1_,fault_counter_slot3_target._0_1_);
+     ((cVar1 = cm848_hasByteChangedByTenPercent(DAT_003fa819,DAT_003fa7fd), cVar1 != '\x01' &&
+      (cVar1 = cm848_hasWordChangedByTenPercent
+                         (j1939_pgn65251_engine_speed_point_3_previous,
+                          j1939_pgn65251_engine_speed_point_3), cVar1 != '\x01')))) {
+    cVar1 = cm848_hasByteChangedByTenPercent
+                      (j1939_pgn65251_payload_bytes_9_10_previous._0_1_,
+                       j1939_pgn65251_payload_bytes_9_10._0_1_);
     if (cVar1 != '\x01') {
-      cVar1 = cm848_faultCounterDecrement(ram0x003fa81d,ram0x003fa801);
+      cVar1 = cm848_hasWordChangedByTenPercent(ram0x003fa81d,ram0x003fa801);
       if (((cVar1 != '\x01') &&
-          (cVar1 = cm848_faultCounterIncrement
-                             (_fault_counter_slot3_shadow & 0xff,_fault_counter_slot3_target & 0xff)
-          , cVar1 != '\x01')) &&
-         ((cVar1 = cm848_faultCounterDecrement
-                             (fault_counter_slot4_shadow,fault_counter_slot4_target),
-          cVar1 != '\x01' &&
-          (cVar1 = cm848_faultCounterIncrement(DAT_003fa822,DAT_003fa806), cVar1 != '\x01')))) {
-        cVar1 = cm848_faultCounterDecrement
-                          (CONCAT11(DAT_003fa823,fault_slot_data_shadow_a._0_1_),
-                           CONCAT11(DAT_003fa807,fault_slot_data_copy_a._0_1_));
+          (cVar1 = cm848_hasByteChangedByTenPercent
+                             (_j1939_pgn65251_payload_bytes_9_10_previous & 0xff,
+                              _j1939_pgn65251_payload_bytes_9_10 & 0xff), cVar1 != '\x01')) &&
+         ((cVar1 = cm848_hasWordChangedByTenPercent
+                             (j1939_pgn65251_engine_speed_point_5_previous,
+                              j1939_pgn65251_engine_speed_point_5), cVar1 != '\x01' &&
+          (cVar1 = cm848_hasByteChangedByTenPercent(DAT_003fa822,DAT_003fa806), cVar1 != '\x01'))))
+      {
+        cVar1 = cm848_hasWordChangedByTenPercent
+                          (CONCAT11(DAT_003fa823,j1939_pgn65251_payload_bytes_17_18_previous._0_1_),
+                           CONCAT11(DAT_003fa807,j1939_pgn65251_payload_bytes_17_18._0_1_));
         if ((cVar1 != '\x01') &&
-           (cVar1 = cm848_faultCounterIncrement
-                              (fault_counter_slot7_shadow & 0xff,fault_counter_slot7_target & 0xff),
-           cVar1 != '\x01')) {
+           (cVar1 = cm848_hasByteChangedByTenPercent
+                              (j1939_pgn65251_control_range_limits_previous & 0xff,
+                               j1939_pgn65251_control_range_limits & 0xff), cVar1 != '\x01')) {
           return;
         }
       }
     }
   }
-  cm848_sendFaultTimerMessage();
+  cm848_sendPgn65251EngineConfiguration1Message();
   return;
 }
 
 
 
 //
-// Function: initFaultTimerMessage @ 0x0001b900
+// Function: initializePgn65251EngineConfiguration1Buffer @ 0x0001b900
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Builds the transmit descriptor of EC1 (header 0xfee300: PGN 65251 Engine Configuration 1; 28 data
+   bytes = j1939_pgn65251_payload) and seeds its not-available bytes; shared with CM550 0x33692 (the
+   same code). (was initFaultTimerMessage) */
 
-void initFaultTimerMessage(void)
+void initializePgn65251EngineConfiguration1Buffer(void)
 
 {
   j1939_pgn65251_tx_message.header.can_id =
@@ -18457,12 +18477,12 @@ void initFaultTimerMessage(void)
   j1939_pgn65251_tx_message.header.can_id =
        CONCAT31(j1939_pgn65251_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn65251_tx_message.header.data_length = 0x1c;
-  j1939_pgn65251_tx_message.data_pointer = (undefined *)&fault_timer_state_base;
+  j1939_pgn65251_tx_message.data_pointer = (undefined *)&j1939_pgn65251_payload;
   j1939_pgn65251_tx_message.data_end_pointer = &DAT_003fa83e;
   ram0x003fa809 = 0xffff;
   ram0x003fa825 = 0xffff;
-  fault_counter_slot7_target._2_1_ = 0x7d;
-  fault_counter_slot7_shadow._2_1_ = 0x7d;
+  j1939_pgn65251_control_range_limits._2_1_ = 0x7d;
+  j1939_pgn65251_control_range_limits_previous._2_1_ = 0x7d;
   fault_initBitwiseTimerMask();
   cm848_initializeJ1939ReferenceEngineFuelingAndTorque();
   return;
@@ -22082,9 +22102,10 @@ LAB_000210c8:
    the peak fueling j1939_peak_fueling (e2m 1104 +0 Jcomm_Peak_Fueling, 1501 in the ROM = 102.0 mm3)
    into j1939_reference_engine_fueling (e2m 1102 +1C) and the reference engine torque
    j1939_reference_engine_torque (1104 +2 Jcomm_Reference_Engine_Torque, 850 N*m) into
-   reference_engine_torque_working (1102 +1E). Called by initFaultTimerMessage (0x1b900), the PGN
-   65251 initialization; cm848_calculateJ1939ReferenceEngineFueling (0x20500) recomputes the fueling
-   afterwards when torque normalization is on. (was cm848_initProtectionDelayDefaults) */
+   reference_engine_torque_working (1102 +1E). Called by
+   initializePgn65251EngineConfiguration1Buffer (0x1b900), the PGN 65251 initialization;
+   cm848_calculateJ1939ReferenceEngineFueling (0x20500) recomputes the fueling afterwards when
+   torque normalization is on. (was cm848_initProtectionDelayDefaults) */
 
 void cm848_initializeJ1939ReferenceEngineFuelingAndTorque(void)
 
@@ -23215,7 +23236,7 @@ LAB_0002275c:
     }
     JVar1 = J1939_NACK;
   }
-  cm848_sendJ1939NegativeAck(param_1,JVar1);
+  cm848_sendJ1939NegativeAcknowledgement(param_1,JVar1);
   j1939_dm1_active_flag = 0;
   return;
 }
@@ -23670,7 +23691,7 @@ void cm848_j1939DispatchPgnHandler(j1939_rx_msg_t *msg)
       } while (search_idx < j1939_pgn_handler_count);
     }
     if ((j1939_pgn_handler_count == search_idx) && (msg->dest_address != 0xff)) {
-      cm848_sendJ1939NegativeAck(msg,J1939_NACK);
+      cm848_sendJ1939NegativeAcknowledgement(msg,J1939_NACK);
     }
   }
   return;
@@ -24179,10 +24200,13 @@ void cm848_sendJ1939AcknowledgeMessage(j1939_rx_msg_t *request_msg,J1939_ACK_TYP
 
 
 //
-// Function: cm848_sendJ1939NegativeAck @ 0x00023dbc
+// Function: cm848_sendJ1939NegativeAcknowledgement @ 0x00023dbc
 //
 
-void cm848_sendJ1939NegativeAck(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
+/* Sends the J1939 acknowledgement (PGN 59392, header 0xe8ff00) with the negative acknowledgement
+   control byte (was cm848_sendJ1939NegativeAck) */
+
+void cm848_sendJ1939NegativeAcknowledgement(j1939_rx_msg_t *msg,J1939_ACK_TYPE ack_type)
 
 {
   byte *pbVar1;
@@ -25233,7 +25257,7 @@ void cm848_initPgn65230Dm5Handler(void)
 
 /* Sends one test result of the non-continuously monitored systems, PGN 65232 (Test Results for
    Non-continuously Monitored Systems; transmit descriptor j1939_pgn65232_tx_message, 8 bytes, set
-   by cm848_initJ1939EngineControlBuffer at 0x2560c). param_1 is the test identifier (SPN 1224, byte
+   by cm848_initializePgn65232Dm8Buffer at 0x2560c). param_1 is the test identifier (SPN 1224, byte
    1: 0 = the intake air heater monitor, 1 = the misfire monitor) and param_2 the 16-bit test value
    (SPN 1226, byte swapped with j1939_reverseByteOrder16 into bytes 3-4). The test type byte and the
    limit words keep their 0xff / 0xffff initial values (not available). The only caller is
@@ -25257,10 +25281,13 @@ void cm848_sendPgn65232NonContinuousMonitorTestResultMessage(byte dest_address,b
 
 
 //
-// Function: cm848_initJ1939EngineControlBuffer @ 0x0002560c
+// Function: cm848_initializePgn65232Dm8Buffer @ 0x0002560c
 //
 
-void cm848_initJ1939EngineControlBuffer(void)
+/* Builds the transmit descriptor of DM8 (header 0xfed000: PGN 65232 Test Results for
+   Non-continuously Monitored Systems) (was cm848_initJ1939EngineControlBuffer) */
+
+void cm848_initializePgn65232Dm8Buffer(void)
 
 {
   j1939_pgn65232_tx_message.header.can_id =
@@ -25345,10 +25372,13 @@ LAB_000257c4:
 
 
 //
-// Function: cm848_initJ1939Etc1ControlBuffer @ 0x00025824
+// Function: cm848_initializePgn61441ElectronicBrakeController1Buffer @ 0x00025824
 //
 
-void cm848_initJ1939Etc1ControlBuffer(void)
+/* Builds the transmit descriptor of EBC1 (header 0xf00100: PGN 61441 Electronic Brake Controller 1;
+   ETC1 is 61442) (was cm848_initJ1939Etc1ControlBuffer) */
+
+void cm848_initializePgn61441ElectronicBrakeController1Buffer(void)
 
 {
   j1939_pgn61441_tx_message.header.can_id =
@@ -26449,20 +26479,24 @@ void cm848_initPgn65260VehicleIdHandler(void)
 
 
 //
-// Function: cm848_j1939SendSafetyStatusMessage @ 0x00026e90
+// Function: cm848_sendPgn65279WaterInFuelIndicatorMessage @ 0x00026e90
 //
 
-void cm848_j1939SendSafetyStatusMessage(void)
+/* Sends PGN 65279, the water in fuel indicator: 0xff when the water in fuel algorithm is disabled,
+   else 0xfd with fault bit 56 (water in fuel) set or 0xfc (was cm848_j1939SendSafetyStatusMessage)
+    */
+
+void cm848_sendPgn65279WaterInFuelIndicatorMessage(void)
 
 {
   if (algorithm_enable_flags_12_cal.water_in_fuel_enable == 0) {
-    j1939_pgn65279_safety_status_byte = 0xff;
+    j1939_pgn65279_water_in_fuel_indicator_byte = 0xff;
   }
   else if ((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x100) == 0) {
-    j1939_pgn65279_safety_status_byte = 0xfc;
+    j1939_pgn65279_water_in_fuel_indicator_byte = 0xfc;
   }
   else {
-    j1939_pgn65279_safety_status_byte = 0xfd;
+    j1939_pgn65279_water_in_fuel_indicator_byte = 0xfd;
   }
   sendJ1939Message(&j1939_pgn65279_tx_message);
   return;
@@ -26471,10 +26505,13 @@ void cm848_j1939SendSafetyStatusMessage(void)
 
 
 //
-// Function: cm848_initJ1939SafetyStatusBuffer @ 0x00026efc
+// Function: cm848_initializePgn65279WaterInFuelIndicatorBuffer @ 0x00026efc
 //
 
-void cm848_initJ1939SafetyStatusBuffer(void)
+/* Builds the transmit descriptor of PGN 65279 (header 0xfeff00), the water in fuel indicator (was
+   cm848_initJ1939SafetyStatusBuffer) */
+
+void cm848_initializePgn65279WaterInFuelIndicatorBuffer(void)
 
 {
   j1939_pgn65279_tx_message.header.can_id =
@@ -26482,7 +26519,7 @@ void cm848_initJ1939SafetyStatusBuffer(void)
   j1939_pgn65279_tx_message.header.can_id =
        CONCAT31(j1939_pgn65279_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn65279_tx_message.header.data_length = 1;
-  j1939_pgn65279_tx_message.data_pointer = &j1939_pgn65279_safety_status_byte;
+  j1939_pgn65279_tx_message.data_pointer = &j1939_pgn65279_water_in_fuel_indicator_byte;
   j1939_pgn65279_tx_message.data_end_pointer = &DAT_003faf32;
   DAT_003faf1d = 0xff;
   DAT_003faf1e = 0xff;
@@ -96663,11 +96700,11 @@ void cm848_j1939_system_init(void)
   fault_registered_bits_96_to_111 = fault_registered_bits_96_to_111 & 0x7fff;
   cm848_initJ1939AckBuffer();
   cm848_initPgn65265CruiseSpeedHandler();
-  cm848_initJ1939Etc1ControlBuffer();
+  cm848_initializePgn61441ElectronicBrakeController1Buffer();
   cm848_initEec1TxDescriptor();
   cm848_initPgn61443Eec2Handler();
   cm848_initPgn65247ElectronicEngineController3Buffer();
-  initFaultTimerMessage();
+  initializePgn65251EngineConfiguration1Buffer();
   cm848_initializePgn61440ElectronicRetarderController1Buffer();
   cm848_initializePgn65213FanDrive1Buffer();
   cm848_initializePgn65241AuxiliaryInputOutputStatus1Buffer();
@@ -96679,10 +96716,10 @@ void cm848_j1939_system_init(void)
   cm848_initJ1939InletExhaustConditionsBuffer();
   cm848_initializePgn65264PowerTakeOffInformationBuffer();
   cm848_initJ1939VehicleElectricalBuffer();
-  cm848_initJ1939SafetyStatusBuffer();
+  cm848_initializePgn65279WaterInFuelIndicatorBuffer();
   cm848_initJ1939ProprietaryPgn65504Buffer();
   cm848_initPgn65226Dm1Handler();
-  cm848_initJ1939EngineControlBuffer();
+  cm848_initializePgn65232Dm8Buffer();
   diag_record_queue_add_entry(0,0xfef1,100,0x46,cm848_buildPgn65265CruiseControlVehicleSpeedMessage)
   ;
   diag_record_queue_add_entry(0,0xf004,0x14,0,sendPgn61444ElectronicEngineController1Message);
@@ -96690,7 +96727,7 @@ void cm848_j1939_system_init(void)
             (0,0xf003,0x14,10,cm848_buildPgn61443ElectronicEngineController2Message);
   diag_record_queue_add_entry
             (0,0xfedf,0x32,0x1e,cm848_buildPgn65247ElectronicEngineController3Message);
-  diag_record_queue_add_entry(0,0xfee3,5000,0x6e,cm848_sendFaultTimerMessage);
+  diag_record_queue_add_entry(0,0xfee3,5000,0x6e,cm848_sendPgn65251EngineConfiguration1Message);
   diag_record_queue_add_entry
             (1,0xf000,100,0x32,cm848_buildPgn61440ElectronicRetarderController1Message);
   diag_record_queue_add_entry(1,0xfee1,5000,0x12d,cm848_buildPgn65249RetarderConfigurationMessage);
@@ -96707,7 +96744,7 @@ void cm848_j1939_system_init(void)
   diag_record_queue_add_entry(0,0xfeca,1000,500,cm848_processDm1FaultBroadcast);
   diag_record_queue_add_entry(0,0xfebd,1000,0x32,cm848_buildPgn65213FanDrive1Message);
   diag_record_queue_add_entry(0,0xf001,100,0x14,cm848_j1939BuildEngineControlByte);
-  diag_record_queue_add_entry(0,0xfeff,10000,0x28,cm848_j1939SendSafetyStatusMessage);
+  diag_record_queue_add_entry(0,0xfeff,10000,0x28,cm848_sendPgn65279WaterInFuelIndicatorMessage);
   cm848_initJ1939DiagnosticServiceHandler();
   cm848_initJ1939AddressDispatcher();
   cm848_initJ1939Pgn61442Etc1Handler();
