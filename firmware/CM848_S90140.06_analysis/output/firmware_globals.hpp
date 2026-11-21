@@ -1353,9 +1353,9 @@ extern dword j1939_pgn56320_encryption_seed;  // 0x003faa88
 extern j1939_tx_msg_t j1939_pgn56320_tx_message;  // 0x003faa8c
 extern j1939_tx_msg_t j1939_ackm_msg;  // 0x003faa9c
 extern undefined j1939_dm1_cmd_word_b;  // 0x003faa9e
-extern undefined j1939_pgn56360_alt_tx_length;  // 0x003faaa0
-extern undefined j1939_pgn56360_alt_data_ptr;  // 0x003faaa2
-extern undefined j1939_pgn56360_alt_end_ptr;  // 0x003faaa6
+extern undefined j1939_pgn56320_alternate_data_length;  // 0x003faaa0
+extern undefined j1939_pgn56320_alternate_data_pointer;  // 0x003faaa2
+extern undefined j1939_pgn56320_alternate_data_end_pointer;  // 0x003faaa6
 extern j1939_acknowledgement_payload_t j1939_ack_payload;  // 0x003faaaa
 extern j1939_tx_msg_t j1939_pgn65269_tx_message;  // 0x003faab4
 extern word j1939_pgn65269_field1_init;  // 0x003faac3
@@ -1374,7 +1374,7 @@ extern j1939_tx_msg_t j1939_pgn65261_tx_message;  // 0x003faafc
 extern j1939_tx_msg_t j1939_pgn65259_tx_message;  // 0x003fab14
 extern word j1939_response_param_working;  // 0x003fab50
 extern j1939_tx_msg_t j1939_dm10_tx_message;  // 0x003fab52
-extern word j1939_dm11_feature_config_word;  // 0x003fab60
+extern word j1939_dm10_payload;  // 0x003fab60
 extern j1939_tx_msg_t j1939_dm1_tx_message;  // 0x003fab6a
 extern byte j1939_dm1_lamp_status;  // 0x003fab78
 extern byte j1939_dm1_flash_lamp_status;  // 0x003fab79
@@ -4065,8 +4065,8 @@ extern int16_t governor_fuel_demand_tracking_floor;  // 0x0040a25c
 extern word all_speed_governor_external_reset_flag;  // 0x0040a25e
 extern word governor_rpm_actual;  // 0x0040a260
 extern word governor_speed_lower_limit;  // 0x0040a262
-extern byte j1939_prop_status_byte3;  // 0x0040a264
-extern byte j1939_prop_status_byte2;  // 0x0040a265
+extern byte j1939_pgn56320_source_address;  // 0x0040a264
+extern byte j1939_pgn56320_destination_address;  // 0x0040a265
 extern word etc2_gear_ratio_timeout;  // 0x0040a266
 extern word cruise_control_engaged_flag;  // 0x0040a268
 extern word cruise_speed_command;  // 0x0040a26a
@@ -5490,9 +5490,9 @@ extern word sensor_channel97_default_value;  // 0x0040be0e
 extern word sensor_channel98_value;  // 0x0040be10
 extern word sensor_channel98_default_value;  // 0x0040be12
 extern word barometric_pressure_sensor_fault_status;  // 0x0040be14
-extern word sensor_channel20_fault_status;  // 0x0040be16
+extern word compressor_inlet_temperature_sensor_fault_status;  // 0x0040be16
 extern word egr_valve_position_sensor_fault_status;  // 0x0040be18
-extern word sensor_channel9_fault_status;  // 0x0040be1a
+extern word intake_manifold_temperature_sensor_fault_status;  // 0x0040be1a
 extern word sensor_channel4_fault_status;  // 0x0040be1c
 extern word map_sensor_fault_status;  // 0x0040be20
 extern word sensor_channel105_fault_status;  // 0x0040be22

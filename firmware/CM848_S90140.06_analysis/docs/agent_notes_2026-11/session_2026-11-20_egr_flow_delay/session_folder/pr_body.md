@@ -136,7 +136,11 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   - Byte rows for the supervisor chip pair: the old word render read the overspeed count as
     `(byte)targets_per_revolution`. 0x409530 is a byte too.
   - dword encryption seeds (no more `_` prefix) and i32 ASG adjustments.
-  - **Proof:** after reversing the labels, six functions differ, each only by the intended rendering.
+  - **Proof:** after reversing the labels, twelve functions differ, eleven only by the intended rendering and one only
+    by its local declaration order; the decompiler's piece accesses fall from 508 to 494 (none added).
+- **Leftovers (stage 10e), label-only:** the half-renamed neighbours the final review found: the channel 20 / 9 fault
+  statuses, the DM10 payload word (was `j1939_dm11_*`), the PGN 56320 header address bytes (were
+  `j1939_prop_status_*`), three unused `j1939_pgn56360_alt_*` labels. Also five doubled e2m prefixes in comments.
 
 ## Test plan
 
@@ -155,12 +159,16 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
   on `lha` loads whose value the code then shifts logically, so none needed a revert.
 - [x] Round 4:
   - stages 10 / 10 follow-ups 1 / 2 are label-only (EQUIVALENT);
-  - stage 10c's six changed functions were read diff by diff;
+  - stage 10c's twelve changed functions were read diff by diff (the proof tool's own list missed the piece-only ones);
   - the apply gate checked bin coverage, old = current, name free as a global / function / field / parameter /
     local / enum / `.cpp` identifier, `_cal` = EEPROM mirror, banned abbreviations, CM550 sharing and the quoted line;
-  - the quoted dump values match: 17 flags, all regex hits on scaled values, against 92 for the negative control;
+  - the quoted dump values match: 17 flags, all regex hits on scaled values, against 92 for the negative control; the
+    hand stages' values (0x40a040 = 4200 rpm, the four injector driver levels 32.2 V / 80.2 V / 13.5 A / 18.5 A) were
+    read from the dump at their declared widths;
   - the widths match the e2m records after 10c;
-  - no stale references remain (`stale_refs_W15.py`, the comment-name sweep).
+  - no stale references remain (`stale_refs_W15.py`, the comment-name sweep). A repo-wide grep of the old names
+    leaves only history, CM550's unrelated `governor_integral_accumulator` and the stale generated snapshots; the
+    lead lists of tasks 025 / 027 / 029 / 042 / 045 each got a "resolved by PR #53 round 4" section.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -168,8 +176,7 @@ void cm848_calculateChargeFlows(void)          // was cm848_fuelControlMainCalcu
 
 ## Still open (task 046)
 
-- **What 0x128a0 still shows:** it rates Readability Medium. One `uVar1` (the reused register's later values) and the
-  default-labelled `engine_rpm_state_t_0040b7ac` remain.
+- **What 0x128a0 still shows:** it rates Readability Medium. One `uVar1` (the reused register's later values) remains.
 - **The engine speed module's functions** have mixed prefixes: `hpcr_processEngineSyncPulses`,
   `mpc555_handleCamSignalInterrupt`, `mpc555_updateEngineRunState` and the run state handlers.
 - **The signedness sweep's remainder:** 35 rows with an `lhz` load and 104 with no load.

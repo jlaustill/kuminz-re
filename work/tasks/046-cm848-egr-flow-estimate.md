@@ -120,7 +120,7 @@ would otherwise misname.
     (1966 +A): `exhaust_pressure_sensor_*`, plus a new row for slot 109 of `sensor_channel_filtered_output`.
   - **EGR delta pressures (1A19):** `egr_valve_delta_pressure` / `engine_delta_pressure` (were `egr_delta_pressure` /
     `egr_delta_pressure_negated`). `exhaust_pressure_offset` is 198C +0.
-  - **Two source words:** `ambient_air_temperature_selected_source` (1A0C +2, beside +0 `ambient_air_temperature_selected`) and `barometric_pressure_selected_source`
+  - **Two source words:** `ambient_air_temperature_selected_source` (1A0C +2, beside +0 `ambient_air_temperature_selected`; round 4 renamed both `compressor_inlet_temperature_source` / `compressor_inlet_temperature`) and `barometric_pressure_selected_source`
     (1A11 +2).
   - **The rest:** the predicted IMT initializer, and the monitor bit `charge_pressure_estimate_enable`.
   - **A naming lesson:** a field named like a global (the first try was `charge_pressure_estimate`) breaks the
@@ -188,6 +188,20 @@ would otherwise misname.
   - 0x40a1cc / 0x40a1d4 (QI vs QP) rest on block alignment only.
   - 0x40a280 `programmable_power_active_selection` has only a zero store.
   - 0x40ae56 `diagnostic_fault_to_erase` (1080 +0) has only a zero store.
+  - 0x3fdd7a `current_horsepower_peak_fueling_cal` rests on 117F's alignment and one multiply in the PTO governor
+    PID.
+  - `j1939_pgn56320_source_address` / `_destination_address` are named for the header bytes they fill. Which request
+    bytes they come from (`param_1 + 2` / `+ 3`) is not traced.
+  - **Function renames taken from the agents' reading, without a full read in the main session:**
+    - `cm848_presetLowSpeedGovernorIntegrator` (0x27e4c; two bins agree);
+    - `cm848_estimateChargeTemperature` / `cm848_initializeChargeTemperatureEstimate`;
+    - `cm848_controlAirConditioningClutchForBrTruck` / `...ForDrTruck` (the dispatcher was read);
+    - `cm848_initializePciMessageStatusBytes`, `cm848_monitorInjectionLimitViolationCounters`,
+      `cm848_selectUserCommandedFueling`, `cm848_j1939HandlePgn56832Reset`;
+    - `cm848_calculateAllSpeedGovernorEquivalentThrottle` (partly read).
+
+    Read in full: the LSG functions, the ASG application selector, 0x17560, 0x5127d8, the A/C dispatcher, the wrapper
+    callers.
 - **Tooling found broken:** `apply_hand_worklist.py` looked the e2m records up from the wrong directory with a
   relative repo path. Follow-up 2 added the missing leading records to 90 comments.
 
@@ -211,6 +225,8 @@ would otherwise misname.
   - The stale `target_rpm` wording in four cruise rows; the 48RE governor pressure functions 0x3257c / 0x3241c.
   - The compressor outlet temperature scale: bin 5 reads 1/32 °F, the comments say 1/64.
   - CM550's 0x80a9e0, the unnamed twin of 0x40a280.
+  - `sensor_channel9_ram` (0x40a0e6) is the state of the `cm848_sensorChannel9_*` wrappers. Check which
+    `channel_index` they pass before naming it: the wrapper number is not the channel.
 - **The pool left:** the e2m audit's unreviewed rows above 0.2 overlap (123 at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5).
 - **The engine speed module's functions** have mixed, partly wrong prefixes: `hpcr_processEngineSyncPulses` (the main
   speed interrupt), `mpc555_handleCamSignalInterrupt` (the backup speed interrupt), `mpc555_updateEngineRunState` (the

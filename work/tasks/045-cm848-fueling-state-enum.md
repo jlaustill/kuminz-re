@@ -833,3 +833,12 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - `firmware/CM848_S90140.06_analysis/output/global_variables.csv`, `structure_definitions.csv`
 - `e2m-analysis/exports/common_parameters.json` (the FS*ST / PT* records)
 - `firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp` (`runHighSpeedGovernorPid` @ 0x1ce7c)
+
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `pressure_correction_first_filter` → `intake_manifold_temperature_lag_first_filter`
+- `cruise_speed_offset` → `high_speed_governor_compensator_working_filter_coefficient_3`
+- `cruise_speed_default_cal` → `high_speed_governor_compensator_transition_coefficient`
+- `ambient_air_temperature_selected` → `compressor_inlet_temperature`
+- `cruise_speed_blend_working` → `current_horsepower_peak_fueling_cal`

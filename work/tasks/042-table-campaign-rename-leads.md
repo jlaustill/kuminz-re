@@ -735,3 +735,18 @@ Three agents worked the wave-8 leftovers, applied in two stages.
 - [W9 governor] '+2' LABEL ROW (lead 6): global_variables.csv line 1291 0x003fa892,timing_compensation_accumulator+2,, must follow the rename of 0x3fa890: EXACT ROW 0x003fa892,high_speed_governor_integrator+2,, (a label-only sub-row like 0x40a206 fuel_demand_integrator_b+2; no type, no comment). align_results.py drops '+N' rows from the results, so it has to be edited by ha
 - [W9 governor] ROW-75 LIST (lead 6), item by item. (1) governor_speed_* / channel 75 deviation words near 0x507214: DONE by wave 8 - 0x507214 is cm848_evaluateEgrValvePositionControlDiagnosticConditions (was cm848_calculateSensorChannel75DeviationDiagnosticConditions) and its body now uses only egr_valve_* words; the 'PID output' it pairs with the channel 75 feedback is eg
 - [W9 governor] DROOP GAIN PROSE (lead 2): after the renames the comments of 0x40a254 / 0x40a256 and the plates of 0xff04 / 0xea00 still call the pair the integral / proportional gains. EXACT ROWS: 0x0040a254,all_speed_governor_throttle_droop_gain_1,word,CODE: write-only (0 reads, both banks) copy of all_speed_governor_droop_gain_1: cm848_calculateGovernorCompensatorCoeffic
+
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `sensor_channel9_pressure_value` → `intake_manifold_temperature_sensor_value`
+- `governor_setpoint_table_ptr` → `low_speed_governor_gain_set_pointer`
+- `governor_speed_error_delta` → `low_speed_governor_filtered_speed_error`
+- `cm848_calculateAmbientAirDensity` → `cm848_calculateCompressorInletDensity`
+- `engine_load_ramp_rate_upper` → `compressor_inlet_density_positive_rate_limit`
+- `ambient_air_density` → `compressor_inlet_density`
+- `fuel_demand_integrator_gain_a_cal` → `rpm_deceleration_limit_integral_gain`
+- `engine_operating_mode_restore_speed_error_previous` → `all_speed_governor_application_reset_state_speed_error_previous`
+- `cm848_restoreEngineOperatingMode` → `cm848_selectAllSpeedGovernorApplicationMode`
+- `torque_limit_init_flag` → `programmable_power_active_selection`
+- `cm848_setEngineOperatingMode5` → `cm848_selectUserCommandedFueling`

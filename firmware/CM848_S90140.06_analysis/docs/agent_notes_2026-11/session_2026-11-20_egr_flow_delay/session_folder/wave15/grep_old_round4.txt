@@ -1,0 +1,1009 @@
+firmware/CM848_S90140.06_analysis/docs/tpu_mios_channel_map.md:21: ...| 2  | 7 | — | engine status timing — `cm848_updateEngineStatusTimers`, `mpc555_updateEngineStatusW
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:5: ...nel_index 20; wrapper cm848_sensorChannel1_init),"sensor_channel20_value (0x40bd90); slot 20 = ambient
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:6: ...nel_index 20; wrapper cm848_sensorChannel1_init),"sensor_channel20_value (0x40bd90); slot 20 = ambient
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:19: ...8_sensorChannel10_intakeManifoldTemperatureInit),"sensor_channel9_pressure_value (0x40bd86) = intake manifold 
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:20: ...8_sensorChannel10_intakeManifoldTemperatureInit),"sensor_channel9_pressure_value (0x40bd86) = intake manifold 
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:149: ...m this table; the speed request itself comes from cm848_calculateFuelTimingTarget (pedal 0..400 interpolating b
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:150: ...m this table; the speed request itself comes from cm848_calculateFuelTimingTarget (pedal 0..400 interpolating b
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:242: ...t, 192 = 12.0 V)","TPUA_CH14_PARAM0 upper half = (tpu_ch14_period_base x table) / 0xfff, lower half 
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:242: ...u_ch14_period_base x table) / 0xfff, lower half = tpu_ch14_period_base (cm848_tpuMiosOutput_loadCali
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:242: ...able) / 0xfff, lower half = tpu_ch14_period_base (cm848_tpuMiosOutput_loadCalibration); CH14 runs the HPC","Both en
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:242: ...ry voltage; TPU-A channel 14 parameter built from tpu_ch14_period_base); physical actuator of channe
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:243: ...t, 192 = 12.0 V)","TPUA_CH14_PARAM0 upper half = (tpu_ch14_period_base x table) / 0xfff, lower half 
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:243: ...u_ch14_period_base x table) / 0xfff, lower half = tpu_ch14_period_base (cm848_tpuMiosOutput_loadCali
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:243: ...able) / 0xfff, lower half = tpu_ch14_period_base (cm848_tpuMiosOutput_loadCalibration); CH14 runs the HPC","Both en
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:243: ...ry voltage; TPU-A channel 14 parameter built from tpu_ch14_period_base); physical actuator of channe
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:244: ...x 0x10 + 0xc) = (DAT_004090a6 x table) / 0xfff in cm848_tpuMiosOutput_loadCalibration; CH4 is a cold-sta,Channel as
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:245: ...x 0x10 + 0xc) = (DAT_004090a6 x table) / 0xfff in cm848_tpuMiosOutput_loadCalibration; CH4 is a cold-sta,Channel as
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:428: ...dium,"ADC channel 54 (0x36) raw counts, 0..1023","sensor_channel54_value (= sensor_channel_filtered_ou
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:428: ..._filtered_output[54] at 0x40bb5c), default 640 in sensor_channel54_default_value; no named reader of the value
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:429: ...dium,"ADC channel 54 (0x36) raw counts, 0..1023","sensor_channel54_value (= sensor_channel_filtered_ou
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:429: ..._filtered_output[54] at 0x40bb5c), default 640 in sensor_channel54_default_value; no named reader of the value
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:430: ...dium,"ADC channel 55 (0x37) raw counts, 0..1023","sensor_channel55_value (= sensor_channel_filtered_ou
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:430: ..._filtered_output[55] at 0x40bb5e), default 640 in sensor_channel55_default_value; no named reader of the value
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:431: ...dium,"ADC channel 55 (0x37) raw counts, 0..1023","sensor_channel55_value (= sensor_channel_filtered_ou
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:431: ..._filtered_output[55] at 0x40bb5e), default 640 in sensor_channel55_default_value; no named reader of the value
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:477: ...error,wVar4 -> governor_adjustment_gain = wVar4 x throttle_rate_scale_factor_cal (3072 = 0.75 in Q12) >> 12; g
+firmware/CM848_S90140.06_analysis/docs/table_naming_campaign_2026-11-16.csv:478: ...error,wVar4 -> governor_adjustment_gain = wVar4 x throttle_rate_scale_factor_cal (3072 = 0.75 in Q12) >> 12; g
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:33045: ...33038 systemStartupInit_ptr (pointer)
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:64195: ...64188 [function] cm848_initFuelDemandVariables
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:64303: ...64296 [function] cm848_restoreEngineOperatingMode
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:65123: ...65116 [function] cm848_calculateFuelTimingTarget
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:80627: ...80620 [function] cm848_processBoostProtectionMode
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:81067: ...81060 [function] cm848_initBoostProtectionState
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:95591: ...95584 [function] cm848_fuelDemandSmoothingController
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:144295: ...144288 [function] cm848_j1939HandleProprietaryCommand
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:146407: ...146400 [function] cm848_sendJ1939ProprietaryStatus
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:150379: ...150372 [function] cm848_initPgn65234Dm11Handler
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:163411: ...163404 [function] cm848_updateSpeedProtectionLimits
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:165407: ...165400 [function] cm848_initSpeedProtectionParameters
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:165495: ...165488 [function] cm848_processGovernorLoadCondition
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:166323: ...166316 [function] cm848_resetGovernorLoadState
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:166359: ...166352 [function] cm848_selectGovernorSetpointSource
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:166427: ...166420 [function] cm848_updateGovernorSetpointParameters
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:166719: ...166712 [function] cm848_getGovernorOverrideSource
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:240043: ...240036 [function] hpcr_initJ1939BufferValues
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:271731: ...271724 [function] cm848_processGovernorSpeedSetpoint
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:272163: ...272156 [function] cm848_enableProtectionRateLimit
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:272603: ...272596 [function] cm848_setEngineOperatingMode5
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:272807: ...272800 [function] cm848_initProtectionParameter1
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:272947: ...272940 [function] cm848_processProtectionParameter1
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:273087: ...273080 [function] cm848_initProtectionParameter2
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:273227: ...273220 [function] cm848_processProtectionParameter2
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/bank1.txt:286419: ...286412 [function] cm848_calculateFuelDemandWithConditions
+firmware/CM848_S90140.06_analysis/docs/memory-mappings/ram.txt:71647: ...71640 governor_active_flag (word)
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:1543: ...  j1939_prop_status_tx_state = 0;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9629: ...// Function: engine_protection_fuelMass_rpmCheck @ 0x00510fa0
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9633: ...void engine_protection_fuelMass_rpmCheck(void)
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9658: ...// Function: engine_protection_conditionCode_evaluate @ 0x00511078
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9664: ...void engine_protection_conditionCode_evaluate(void)
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9930: ...// Function: hpcr_fuel_mode_state_transition @ 0x005118f8
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9934: ...void hpcr_fuel_mode_state_transition(void)
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9938: ...    engine_protection_fuelMass_rpmCheck();
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:9941: ...    engine_protection_conditionCode_evaluate();
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:10461: ...// Function: governor_cruise_speedError_integrate @ 0x005127d8
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:10465: ...void governor_cruise_speedError_integrate(void)
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:10808: ...  governor_cruise_speedError_integrate();
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:17904: ...    cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:17912: ...    cruise_speed_setpoint_active = uRam00408e14;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:17915: ...      cruise_speed_setpoint_active = uStack_e;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:17925: ...    cruise_speed_setpoint_active = uRam00408e16;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18133: ...  cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18173: ...  cruise_speed_setpoint_c = uVar1;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18284: ...    wRam003fd004 = wRam003fd004 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18286: ...    wVar2 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18290: ...  if ((int)(short)wRam0040b6c8 < (short)cruise_speed_setpoint_active + 0xa00) {
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18291: ...    if ((short)cruise_speed_setpoint_active + -0xa00 < (int)(short)wRam00
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18292: ...      sRam0040b6ca = wRam0040b6c8 - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18426: ...  uRam003fd000 = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18465: ...  if ((int)sRam0040b6c8 < (short)cruise_speed_setpoint_active + 0xa00) {
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18466: ...    if ((short)cruise_speed_setpoint_active + -0xa00 < (int)sRam0040b6c8)
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:18467: ...      sRam0040b6ca = sRam0040b6c8 - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:23362: ...     ((uRam00409eda < fuel_demand_governor_output || ((engine_diag_shadow_flags
+firmware/CM848_S90140.06_analysis/output/bank2_functions.cpp:27681: ...  cm848_initJ1939ProprietaryStatusBuffer();
+firmware/CM848_S90140.06_analysis/output/thermal_protection_trigger.md:35: ...   ▼ cm848_fuelDemandSmoothingController  (the trigger)
+firmware/CM848_S90140.06_analysis/output/thermal_protection_trigger.md:41: ...   │   limit = fuel_demand_rate_limit_debounce_cal (0x0005c2a4), or
+firmware/CM848_S90140.06_analysis/output/thermal_protection_trigger.md:42: ...   │           fuel_demand_rate_limit_debounce_low_cal (0x0005c29a) when
+firmware/CM848_S90140.06_analysis/output/thermal_protection_trigger.md:68: ...| `safety_bits_2 & 0x10` | `cm848_fuelDemandSmoothingController` (mode 4) | ✅ the fuel-temp p
+firmware/CM848_S90140.06_analysis/output/thermal_protection_trigger.md:69: ...| `safety_bits_1 & 0x4000` | `cm848_fuelDemandSmoothingController` (mode 5/6) | ✅ |
+firmware/CM848_S90140.06_analysis/output/thermal_protection_trigger.md:70: ...| `safety_bits_1 & 0x8000` | `cm848_fuelDemandSmoothingController` (mode 2/3) | ✅ |
+firmware/CM848_S90140.06_analysis/output/thermal_protection_trigger.md:88: ...| `0x0005c2a4` | `fuel_demand_rate_limit_debounce_cal` | default debounce count |
+firmware/CM848_S90140.06_analysis/output/thermal_protection_trigger.md:89: ...| `0x0005c29a` | `fuel_demand_rate_limit_debounce_low_cal` | debounce count when demand
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_30.txt:488: ...// Function: cm848_calculateFuelDemandWithConditions @ 0x00045ecc
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_10.txt:246: ...  j1939_pgn65229_tx_header = CONCAT13(((byte)j1939_pgn65229_priority & 7) << 2,0xfecd00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_64.txt:30: ...  cruise_speed_error_integral = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_64.txt:92: ...// Function: governor_cruise_speedError_integrate @ 0x005127d8
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_64.txt:96: ...void governor_cruise_speedError_integrate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_64.txt:109: ...      cruise_speed_error_integral = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_64.txt:113: ...    cruise_speed_error_integral =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_64.txt:114: ...         cruise_speed_error_integral + (DAT_003fcda6 - cruise_rpm_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_64.txt:174: ...  governor_cruise_speedError_integrate();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:33: ...  uStack_10 = (undefined1)(sensor_channel_index_working >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:35: ...  uStack_f = (undefined1)sensor_channel_index_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:38: ...  uStack_10 = (undefined1)(j1939_pgn_priority_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:40: ...  uStack_f = (undefined1)j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:83: ...  uStack00000008 = (undefined1)(sensor_channel_index_working >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:85: ...  uStack00000009 = (undefined1)sensor_channel_index_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:88: ...  _uStack00000008 = j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:90: ...  uStack00000008 = (undefined1)(j1939_pgn_priority_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_18.txt:92: ...  uStack00000009 = (undefined1)j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_08.txt:48: ...  j1939_pgn65269_tx_header = CONCAT13(((byte)j1939_pgn65269_priority & 7) << 2,0xfef500);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_06.txt:9: ...void cm848_j1939HandleProprietaryCommand(j1939_rx_msg_t *param_1)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_06.txt:21: ...      ascii_zero_detect_flag = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:17: ...  cold_start_pressure_scale_working = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:21: ...     (pressure_correction_scale = cold_start_pressure_scale_working,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:29: ...    pressure_correction_filter1_working =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:32: ...                      ((int)(short)pressure_correction_filter1_working,&PTR_DAT_003fa62c);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:34: ...  condition_monitor_status_working = wVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:36: ...     || ((uVar4 = injection_enable_mode_byte,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:39: ...    uVar4 = sensor_channel9_fault_status | injection_enable_mode_byte;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:51: ...  fuel_demand_phase_status_flags = uVar4 | uVar3;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_134.txt:59: ...      fuel_demand_boost_offset = fuel_demand_boost_offset_filtered;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_09.txt:91: ...  j1939_dm1_tx_header = CONCAT13(((byte)j1939_dm1_priority & 7) << 2,0xfeca00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_109.txt:46: ...     ((DAT_00409eda < fuel_demand_governor_output || ((engine_diag_shadow_flags
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:47: ...    cruise_ramp_target_speed = wVar1 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:49: ...    wVar1 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:53: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:55: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:58: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:105: ...    _cruise_speed_upper_limit_ptr = &cruise_speed_blend_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:195: ...  DAT_003fd000 = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:237: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:239: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_98.txt:242: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_13.txt:135: ...  j1939_pgn65262_tx_header = CONCAT13(((byte)j1939_pgn65262_source_address_bits & 7) << 2,0xfeee00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_12.txt:19: ...    if (DAT_0005c392 < fuel_demand_governor_output) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_12.txt:48: ...      DAT_003fada9 = (char)((int)(uint)fuel_demand_governor_output >> 1) +
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_12.txt:49: ...                     (char)((int)(uint)fuel_demand_governor_output >> 3);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_99.txt:27: ...      fuel_flow_rpm_divisor_saved = DAT_0005c936;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_99.txt:140: ...        fuel_flow_rpm_divisor_saved = fuel_flow_rpm_divisor;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:40: ...      cruise_speed_offset_b = cruise_speed_offset_latched;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:41: ...      cruise_speed_offset_c = cruise_speed_offset_latched;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:46: ...    cruise_speed_offset_c = (word)(((uint)cruise_speed_blend_working * (uint)DAT_00408e10) / 0x640
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:49: ...  cruise_speed_offset_latched = cruise_speed_offset_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:74: ...  cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:80: ...                    (cruise_fuel_demand_ramp_ceiling - DAT_003fd912,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:86: ...                    (cruise_fuel_demand_ramp_ceiling - DAT_003fd916,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:96: ...                    (cruise_fuel_demand_ramp_ceiling - DAT_003fd912,protection_tem
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:101: ...                    (cruise_fuel_demand_ramp_ceiling - DAT_003fd916,protection_tem
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:105: ...  wVar1 = governor_cruise_fuel_demand_setpoint;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:106: ...if ((uint)governor_cruise_fuel_demand_min < (uint)governor_cruise_fuel_demand_setpoint) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:107: ...    uVar4 = (uint)governor_cruise_fuel_demand_setpoint - (uint)governor_cruise_fuel_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_97.txt:120: ...  cruise_speed_setpoint_c = wVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_133.txt:115: ...// Function: cm848_processBoostProtectionMode @ 0x00013aec
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:16: ...  cm848_tpuMiosOutput_loadCalibration();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:115: ...  TPUA_CH14_PARAM0._0_4_ = (uint)tpu_ch14_period_base;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:136: ...  if ((DAT_004090c8 < tpu_init_retry_count) && (DAT_004090c8 != 0xffff))
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:139: ...  if (tpu_init_retry_count < 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:140: ...    tpu_init_retry_count = tpu_init_retry_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:140: ...    tpu_init_retry_count = tpu_init_retry_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:213: ...        tpu_init_retry_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:220: ...        if (tpu_init_retry_count == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:224: ...        tpu_init_retry_count = tpu_init_retry_count - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_101.txt:224: ...        tpu_init_retry_count = tpu_init_retry_count - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave1.csv:54: ...0x003fdfbc,governor_faultDerate_total_event_count,word,total fault-derate event
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:43: ...    uStack_7 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:45: ...    uStack_8 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:48: ...    uStack_7 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:50: ...    uStack_8 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:52: ...    DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:53: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:55: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:57: ...    DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:58: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:60: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:62: ...    DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:63: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:65: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:67: ...    uStack_7 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:69: ...    uStack_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:71: ...    DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:106: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:108: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:111: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:113: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:115: ...  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:116: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:118: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:120: ...  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:121: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:123: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:125: ...  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:126: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:128: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:130: ...  _uStack00000008 = j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:132: ...  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:134: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:136: ...  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:172: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:174: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:177: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:179: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:181: ...  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:182: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:184: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:186: ...  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:187: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:189: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:191: ...  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:192: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:194: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:196: ...  _uStack00000008 = j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:198: ...  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:200: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_17.txt:202: ...  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_29.txt:39: ...         (fuel_demand_computed <= fuel_demand_computed_min_cal)) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_29.txt:41: ...         (((uint)fuel_demand_computed <= (uint)fuel_demand_computed_min_cal ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_29.txt:74: ...       ((fuel_demand_computed_min_cal < governor_fuel_demand_value 
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_29.txt:81: ...         ((uint)fuel_demand_computed_min_cal < (uint)fuel_demand_computed)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_19.txt:35: ...  j1939_pgn65279_tx_header = CONCAT13(((byte)j1939_pgn65279_source_address_bits & 7) << 2,0xfeff00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:89: ...        if ((((int)(short)governor_faultDerate_active_channel == uVar7) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:92: ...          governor_faultDerate_active_channel = 0xff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:93: ...          governor_faultDerate_consecutive_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:125: ...            governor_faultDerate_active_channel = (word)uVar7;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:154: ...          governor_faultDerate_active_channel = (word)uVar7;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:173: ...      if (governor_faultDerate_active_channel == DAT_003fbd3a) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:174: ...        if (governor_faultDerate_consecutive_count != 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:175: ...          governor_faultDerate_consecutive_count = governor_faultDerate_consec
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:175: ...         governor_faultDerate_consecutive_count = governor_faultDerate_consecutive_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:179: ...        governor_faultDerate_consecutive_count = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_47.txt:212: ...  DAT_003fbd3a = governor_faultDerate_active_channel;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_61.txt:15: ...void engine_protection_conditionCode_evaluate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_61.txt:290: ...// Function: hpcr_fuel_mode_state_transition @ 0x005118f8
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:55: ...    uStack_7 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:57: ...    uStack_8 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:60: ...    uStack_7 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:62: ...    uStack_8 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:64: ...    DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:65: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:67: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:69: ...    DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:70: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:72: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:74: ...    DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:75: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:77: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:79: ...    uStack_7 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:81: ...    uStack_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:83: ...    DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:118: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:120: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:123: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:125: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:127: ...  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:128: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:130: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:132: ...  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:133: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:135: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:137: ...  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:138: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:140: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:142: ...  _uStack00000008 = j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:144: ...  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:146: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:148: ...  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:184: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:186: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:189: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:191: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:193: ...  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:194: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:196: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:198: ...  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:199: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:201: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:203: ...  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:204: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:206: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:208: ...  _uStack00000008 = j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:210: ...  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:212: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/batch_16.txt:214: ...  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_tail/proposed_names_wave2.csv:90: ...0x003fd05c,fuel_flow_rpm_divisor_prev,word,prev fuel_flow_rpm_divis
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_69.txt:129: ...     ((DAT_00409eda < fuel_demand_governor_output || ((engine_diag_shadow_flags
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_06.txt:297: ...// Function: cm848_tpuMiosOutput_loadCalibration @ 0x005289d4
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_06.txt:311: ...  cm848_tpuMiosOutput_loadCalibration();
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_36.txt:26: ...// Function: engine_protection_fuelMass_rpmCheck @ 0x00510fa0
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_36.txt:30: ...void engine_protection_conditionCode_evaluate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_36.txt:298: ...// Function: hpcr_fuel_mode_state_transition @ 0x005118f8
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_01.txt:71: ...void engine_protection_conditionCode_evaluate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_01.txt:339: ...// Function: hpcr_fuel_mode_state_transition @ 0x005118f8
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:61: ...    cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:69: ...    cruise_speed_setpoint_active = DAT_00408e14;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:72: ...      cruise_speed_setpoint_active = uStack_e;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:82: ...    cruise_speed_setpoint_active = DAT_00408e16;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:166: ...    cruise_speed_offset_c = (word)(((uint)cruise_speed_blend_working * (uint)DAT_00408e10) / 0x640
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:224: ...  cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:266: ...  cruise_speed_setpoint_c = uVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:352: ...    DAT_003fd004 = wVar2 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:354: ...    wVar2 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:358: ...  if ((int)(short)DAT_0040b6c8 < (short)cruise_speed_setpoint_active + 0xa00) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:359: ...    if ((short)cruise_speed_setpoint_active + -0xa00 < (int)(short)DAT_00
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:360: ...      DAT_0040b6ca = DAT_0040b6c8 - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:405: ...    DAT_003fd038 = &cruise_speed_blend_working;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:492: ...  DAT_003fd000 = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:531: ...  if ((int)DAT_0040b6c8 < (short)cruise_speed_setpoint_active + 0xa00) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:532: ...    if ((short)cruise_speed_setpoint_active + -0xa00 < (int)DAT_0040b6c8)
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/batch_04.txt:533: ...      DAT_0040b6ca = DAT_0040b6c8 - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/proposed_names_wave1.csv:39: ...0x0040b6be,cruise_speed_offset_latched,word,high,04
+firmware/CM848_S90140.06_analysis/output/worklist_0040xxxx/proposed_names_wave1.csv:44: ...0x00408dfc,governor_cruise_fuel_demand_setpoint,word,medium,04
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_69.txt:49: ...    cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_69.txt:57: ...    cruise_speed_setpoint_active = DAT_00408e14;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_69.txt:60: ...      cruise_speed_setpoint_active = uStack_e;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_69.txt:70: ...    cruise_speed_setpoint_active = DAT_00408e16;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_69.txt:134: ...  cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_69.txt:176: ...  cruise_speed_setpoint_c = uVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:19: ...    if (fuel_demand_calc_bypass_flag_cal == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:20: ...      fuel_demand_rate_lookup_a =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:23: ...      fuel_demand_rate_lookup_b =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:26: ...      fuel_demand_rate_lookup_c =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:29: ...      governor_integral_accumulator =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:31: ...                     (fuel_demand_rate_lookup_b,fuel_demand_rate_lookup_c,fue
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:31: ...                     (fuel_demand_rate_lookup_b,fuel_demand_rate_lookup_c,fuel_demand_rate_lookup_a,
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:31: ...el_demand_rate_lookup_b,fuel_demand_rate_lookup_c,fuel_demand_rate_lookup_a,
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:35: ...      uVar2 = (uint)governor_integral_accumulator + (uint)governor_integral_com
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:48: ...      uVar2 = (uint)fuel_demand_bypass_value_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:51: ...    uVar1 = (uint)fuel_demand_rate_limiter_state;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:54: ...      if ((int)(uint)fuel_demand_rate_step_up < (int)(uVar2 - uVar1)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:55: ...        fuel_demand_rate_output = fuel_demand_rate_limiter_state + fuel_demand_rate_step_up;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:55: ...nd_rate_output = fuel_demand_rate_limiter_state + fuel_demand_rate_step_up;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:58: ...    else if ((uVar2 < uVar1) && ((int)(uint)fuel_demand_rate_step_down < (int)(uVar1 - uVar2))) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:59: ...      fuel_demand_rate_output = fuel_demand_rate_limiter_state - fuel_demand_rate_step_down;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:59: ...nd_rate_output = fuel_demand_rate_limiter_state - fuel_demand_rate_step_down;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:62: ...  fuel_demand_rate_limiter_state = fuel_demand_rate_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:86: ...    if (fuel_demand_calc_bypass_flag_cal == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:87: ...      fuel_demand_rate_lookup_a =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:90: ...      fuel_demand_rate_lookup_b =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:93: ...      fuel_demand_rate_lookup_c =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:96: ...      governor_integral_accumulator =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:98: ...                     (fuel_demand_rate_lookup_b,fuel_demand_rate_lookup_c,fue
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:98: ...                     (fuel_demand_rate_lookup_b,fuel_demand_rate_lookup_c,fuel_demand_rate_lookup_a,
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:98: ...el_demand_rate_lookup_b,fuel_demand_rate_lookup_c,fuel_demand_rate_lookup_a,
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:102: ...      uVar3 = (uint)governor_integral_accumulator + (uint)governor_integral_com
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:115: ...      uVar3 = (uint)fuel_demand_bypass_value_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:118: ...    uVar1 = (uint)fuel_demand_rate_limiter_state;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:121: ...      if ((int)(uVar3 - uVar1) <= (int)(uint)fuel_demand_rate_step_up) goto LAB_0003cee0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:122: ...      wVar2 = fuel_demand_rate_limiter_state + fuel_demand_rate_step_up;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:122: ...      wVar2 = fuel_demand_rate_limiter_state + fuel_demand_rate_step_up;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:125: ... <= uVar3) || ((int)(uVar1 - uVar3) <= (int)(uint)fuel_demand_rate_step_down))
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:127: ...      wVar2 = fuel_demand_rate_limiter_state - fuel_demand_rate_step_down;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:127: ...      wVar2 = fuel_demand_rate_limiter_state - fuel_demand_rate_step_down;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:132: ...  fuel_demand_rate_limiter_state = *unaff_r19;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:146: ...  fuel_demand_rate_limiter_state = fuel_demand_table_xaxis_cal
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_05.txt:146: ...  fuel_demand_rate_limiter_state = fuel_demand_table_xaxis_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:124: ...// Function: cm848_processBoostProtectionMode @ 0x00013aec
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:136: ...  cold_start_pressure_scale_working = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:140: ...     (pressure_correction_scale = cold_start_pressure_scale_working,
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:148: ...    pressure_correction_filter1_working =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:151: ...                      ((int)(short)pressure_correction_filter1_working,&PTR_DAT_003fa62c);
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:153: ...  condition_monitor_status_working = wVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:155: ...     || ((uVar4 = injection_enable_mode_byte,
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:158: ...    uVar4 = sensor_channel9_fault_status | injection_enable_mode_byte;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:169: ...  fuel_demand_phase_status_flags = uVar4 | uVar3;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_10.txt:177: ...      fuel_demand_boost_offset = fuel_demand_boost_offset_filtered;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveB.csv:28: ...0x003fdfb8,governor_faultDerate_active_channel,word,active fault-derate chan
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveB.csv:29: ...0x003fdfba,governor_faultDerate_consecutive_count,word,consecutive same-channel
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveB.csv:53: ...0x003fee98,tpu_init_retry_count,word,TPU init retry count; ga
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/proposed_names_waveC.csv:41: ...0x003fb41c,fuel_demand_rate_table_dims,word,dualAxis table dims base
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_74.txt:16: ...  cm848_tpuMiosOutput_loadCalibration();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_33.txt:31: ...// Function: engine_protection_fuelMass_rpmCheck @ 0x00510fa0
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_33.txt:35: ...void engine_protection_fuelMass_rpmCheck(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_33.txt:60: ...// Function: engine_protection_conditionCode_evaluate @ 0x00511078
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_33.txt:64: ...void engine_protection_conditionCode_evaluate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_33.txt:332: ...// Function: hpcr_fuel_mode_state_transition @ 0x005118f8
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:47: ...    DAT_003fd004 = wVar2 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:49: ...    wVar2 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:53: ...  if ((int)(short)DAT_0040b6c8 < (short)cruise_speed_setpoint_active + 0xa00) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:54: ...    if ((short)cruise_speed_setpoint_active + -0xa00 < (int)(short)DAT_00
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:55: ...      DAT_0040b6ca = DAT_0040b6c8 - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:100: ...    DAT_003fd038 = &cruise_speed_blend_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:187: ...  DAT_003fd000 = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:226: ...  if ((int)DAT_0040b6c8 < (short)cruise_speed_setpoint_active + 0xa00) {
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:227: ...    if ((short)cruise_speed_setpoint_active + -0xa00 < (int)DAT_0040b6c8)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_70.txt:228: ...      DAT_0040b6ca = DAT_0040b6c8 - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_07.txt:190: ...// Function: cm848_updateEngineStatusTimers @ 0x00046d90
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_37.txt:28: ...  cruise_speed_error_integral = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_37.txt:101: ...void governor_cruise_speedError_integrate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_37.txt:114: ...      cruise_speed_error_integral = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_37.txt:118: ...    cruise_speed_error_integral =
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_37.txt:119: ...         cruise_speed_error_integral + (DAT_003fcda6 - cruise_rpm_
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_37.txt:277: ...  governor_cruise_speedError_integrate();
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_38.txt:26: ...  cruise_speed_error_integral = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003fxxxx/batch_86.txt:46: ...     ((DAT_00409eda < fuel_demand_governor_output || ((engine_diag_shadow_flags
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:22: ...// Function: cm848_tpuMiosOutput_loadCalibration @ 0x005289d4
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:30: ...void cm848_tpuMiosOutput_loadCalibration(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:61: ...       ((uint)tpu_ch14_period_base * (uVar1 & 0xffff)) / 0xfff <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:61: ..._base * (uVar1 & 0xffff)) / 0xfff << 0x10 | (uint)tpu_ch14_period_base;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:78: ...  cm848_tpuMiosOutput_loadCalibration();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:177: ...  TPUA_CH14_PARAM0._0_4_ = (uint)tpu_ch14_period_base;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:198: ...  if ((DAT_004090c8 < tpu_init_retry_count) && (DAT_004090c8 != 0xffff))
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:201: ...  if (tpu_init_retry_count < 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:202: ...    tpu_init_retry_count = tpu_init_retry_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_172.txt:202: ...    tpu_init_retry_count = tpu_init_retry_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_43.txt:12: ...  j1939_pgn61441_tx_header = CONCAT13(((byte)j1939_pgn61441_source_address_bits & 7) << 2,0xf00100);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_42.txt:32: ...  j1939_pgn65232_tx_header = CONCAT13(((byte)j1939_pgn65232_priority & 7) << 2,0xfed000);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_167.txt:78: ...mp_target_prev = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_167.txt:120: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_167.txt:122: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_167.txt:125: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_168.txt:43: ...    cruise_ramp_target_speed = wVar1 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_168.txt:45: ...    wVar1 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_168.txt:49: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_168.txt:51: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_168.txt:54: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_168.txt:101: ...    _cruise_speed_upper_limit_ptr = &cruise_speed_blend_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_41.txt:44: ...  j1939_pgn65230_tx_header = CONCAT13(((byte)j1939_pgn65230_priority & 7) << 2,0xfece00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_105.txt:28: ...    pwVar4 = &engine_load_ramp_rate_upper;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_105.txt:29: ...    if (((int)(uint)engine_load_ramp_rate_upper < iVar1) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_105.txt:30: ...       (pwVar4 = &engine_load_ramp_rate_lower, iVar1 < (short)engine_load_r
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_105.txt:30: ...r4 = &engine_load_ramp_rate_lower, iVar1 < (short)engine_load_ramp_rate_lower)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:34: ...  uStack_10 = (undefined1)(sensor_channel_index_working >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:36: ...  uStack_f = (undefined1)sensor_channel_index_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:39: ...  uStack_10 = (undefined1)(j1939_pgn_priority_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:41: ...  uStack_f = (undefined1)j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:84: ...  uStack00000008 = (undefined1)(sensor_channel_index_working >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:86: ...  uStack00000009 = (undefined1)sensor_channel_index_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:89: ...  _uStack00000008 = j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:91: ...  uStack00000008 = (undefined1)(j1939_pgn_priority_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_192.txt:93: ...  uStack00000009 = (undefined1)j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_40.txt:13: ...  j1939_pgn65229_tx_header = CONCAT13(((byte)j1939_pgn65229_priority & 7) << 2,0xfecd00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_87.txt:488: ...// Function: cm848_calculateFuelDemandWithConditions @ 0x00045ecc
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_193.txt:150: ...  cm848_initJ1939ProprietaryStatusBuffer();
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_193.txt:195: ...  uVar4 = (uint)can_j1939_tx_mailbox_alloc_index;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_193.txt:198: ...  can_tx_mailbox_end_index = can_j1939_tx_mailbox_alloc_index + 0xf;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_193.txt:204: ...  can_j1939_tx_mailbox_alloc_index = can_tx_mailbox_end_index;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_195.txt:16: ...  uVar2 = (((uint)protection_timing_period_cal * (uint)DAT_003fd918) / 0x3c 
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_195.txt:62: ...      fuel_flow_rpm_divisor_saved = DAT_0005c936;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_195.txt:175: ...      if (((fuel_flow_rpm_divisor_prev == fuel_flow_rpm_divisor) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_195.txt:178: ...        fuel_flow_rpm_divisor_saved = fuel_flow_rpm_divisor;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_195.txt:181: ...      fuel_flow_rpm_divisor_prev = fuel_flow_rpm_divisor;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:54: ...        if ((((int)(short)governor_faultDerate_active_channel == uVar7) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:57: ...          governor_faultDerate_active_channel = 0xff;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:58: ...          governor_faultDerate_consecutive_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:90: ...            governor_faultDerate_active_channel = (word)uVar7;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:119: ...          governor_faultDerate_active_channel = (word)uVar7;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:128: ...    if ((governor_faultDerate_channel_active_latch != 0) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:132: ...    if ((governor_faultDerate_engine_sync_trigger != 0) ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:137: ...      if (governor_faultDerate_total_event_count != 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:138: ...        governor_faultDerate_total_event_count = governor_faultDerate_total_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:138: ...        governor_faultDerate_total_event_count = governor_faultDerate_total_event_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:140: ...      if (governor_faultDerate_active_channel == DAT_003fbd3a) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:141: ...        if (governor_faultDerate_consecutive_count != 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:142: ...          governor_faultDerate_consecutive_count = governor_faultDerate_consec
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:142: ...         governor_faultDerate_consecutive_count = governor_faultDerate_consecutive_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:146: ...        governor_faultDerate_consecutive_count = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_116.txt:179: ...  DAT_003fbd3a = governor_faultDerate_active_channel;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_178.txt:15: ...  if (cam_sync_validation_dwell_counter <= cam_sync_validation_dwell_limit) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_178.txt:58: ...  else if (cam_sync_validation_crank_tick_count < cam_sync_validation_crank_tick_min) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_178.txt:62: ...  if (cam_sync_validation_crank_tick_count < cam_sync_validation_crank_tick_min) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_178.txt:66: ...  if (cam_sync_validation_dwell_counter <= cam_sync_validation_dwell_limit) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:36: ...((uVar2 < DAT_00408e00) && (param_1 <= (int)(uint)cruise_speed_offset_latched)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:37: ...         ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:49: ...    cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:51: ...  else if ((int)(uint)cruise_speed_offset_latched < param_1) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:56: ...    wStack_e = (word)((param_1 - (uint)cruise_speed_offset_latched) * (uint)uVar2 >> 10);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:57: ...    cruise_speed_setpoint_active = cruise_speed_setpoint_activ
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:57: ...    cruise_speed_setpoint_active = cruise_speed_setpoint_active_max;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:58: ...    if ((int)(short)wStack_e <= (int)(uint)cruise_speed_setpoint_active_max) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:60: ...      cruise_speed_setpoint_active = wStack_e;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:64: ...    if ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1) goto LAB_00524934
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:69: ...ack_e = (word)(((int)(short)param_1 - (int)(short)governor_cruise_fuel_demand_setpoint) *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:71: ...    cruise_speed_setpoint_active = cruise_speed_setpoint_activ
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:71: ...    cruise_speed_setpoint_active = cruise_speed_setpoint_active_min;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:72: ...    if ((short)cruise_speed_setpoint_active_min <= (short)wStack_e) goto LAB_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:80: ...  uVar5 = (uint)governor_cruise_fuel_demand_setpoint + (uint)DAT_00408e24;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:83: ...        (int)((uint)cruise_zone_speed_error_neg_limit + (uint)cruise_zone_boundary_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:87: ...           (uint)cruise_zone_speed_error_abs_limit + (uint)cruise_zone_boundary_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:93: ...      (int)((uint)cruise_zone_speed_error_abs_limit - (uint)cruise_zone_boundary_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:96: ...  if ((uVar1 <= governor_cruise_fuel_demand_setpoint) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_166.txt:98: ...      (int)((uint)cruise_zone_speed_error_neg_limit - (uint)cruise_zone_boundary_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_139.txt:26: ...  cruise_speed_error_integral = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_139.txt:57: ...// Function: governor_cruise_speedError_integrate @ 0x005127d8
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:55: ...    uStack_7 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:57: ...    uStack_8 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:60: ...    uStack_7 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:62: ...    uStack_8 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:64: ...    DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:65: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:67: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:69: ...    DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:70: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:72: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:74: ...    DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:75: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:77: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:79: ...    uStack_7 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:81: ...    uStack_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:83: ...    DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:118: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:120: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:123: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:125: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:127: ...  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:128: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:130: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:132: ...  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:133: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:135: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:137: ...  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:138: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:140: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:142: ...  _uStack00000008 = j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:144: ...  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:146: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:148: ...  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:184: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:186: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:189: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:191: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:193: ...  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:194: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:196: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:198: ...  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:199: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:201: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:203: ...  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:204: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:206: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:208: ...  _uStack00000008 = j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:210: ...  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:212: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_52.txt:214: ...  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_57.txt:14: ...  j1939_pgn65260_tx_header = CONCAT13(((byte)j1939_pgn65260_source_address_bits & 7) << 2,0xfeec00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:76: ...((uVar2 < DAT_00408e00) && (param_1 <= (int)(uint)cruise_speed_offset_latched)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:77: ...         ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:89: ...    cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:91: ...  else if ((int)(uint)cruise_speed_offset_latched < param_1) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:96: ...    wStack_e = (word)((param_1 - (uint)cruise_speed_offset_latched) * (uint)uVar2 >> 10);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:97: ...    cruise_speed_setpoint_active = cruise_speed_setpoint_activ
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:97: ...    cruise_speed_setpoint_active = cruise_speed_setpoint_active_max;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:98: ...    if ((int)(short)wStack_e <= (int)(uint)cruise_speed_setpoint_active_max) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:100: ...      cruise_speed_setpoint_active = wStack_e;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:104: ...    if ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1) goto LAB_00524934
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:109: ...ack_e = (word)(((int)(short)param_1 - (int)(short)governor_cruise_fuel_demand_setpoint) *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:111: ...    cruise_speed_setpoint_active = cruise_speed_setpoint_activ
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:111: ...    cruise_speed_setpoint_active = cruise_speed_setpoint_active_min;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:112: ...    if ((short)cruise_speed_setpoint_active_min <= (short)wStack_e) goto LAB_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:120: ...  uVar5 = (uint)governor_cruise_fuel_demand_setpoint + (uint)DAT_00408e24;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:123: ...        (int)((uint)cruise_zone_speed_error_neg_limit + (uint)cruise_zone_boundary_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:127: ...           (uint)cruise_zone_speed_error_abs_limit + (uint)cruise_zone_boundary_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:133: ...      (int)((uint)cruise_zone_speed_error_abs_limit - (uint)cruise_zone_boundary_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:136: ...  if ((uVar1 <= governor_cruise_fuel_demand_setpoint) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:138: ...      (int)((uint)cruise_zone_speed_error_neg_limit - (uint)cruise_zone_boundary_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:197: ...      cruise_speed_offset_b = cruise_speed_offset_latched;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:198: ...      cruise_speed_offset_c = cruise_speed_offset_latched;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:203: ...    cruise_speed_offset_c = (word)(((uint)cruise_speed_blend_working * (uint)DAT_00408e10) / 0x640
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:206: ...  cruise_speed_offset_latched = cruise_speed_offset_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:231: ...  cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:237: ...                    (cruise_fuel_demand_ramp_ceiling - cruise_ramp_zone_b_fuel_dem
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:245: ...                    (cruise_fuel_demand_ramp_ceiling - cruise_ramp_zone_d_fuel_dem
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:257: ...                    (cruise_fuel_demand_ramp_ceiling - cruise_ramp_zone_b_fuel_dem
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:264: ...                    (cruise_fuel_demand_ramp_ceiling - cruise_ramp_zone_d_fuel_dem
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:270: ...  wVar1 = governor_cruise_fuel_demand_setpoint;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:271: ...if ((uint)governor_cruise_fuel_demand_min < (uint)governor_cruise_fuel_demand_setpoint) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:272: ...    uVar4 = (uint)governor_cruise_fuel_demand_setpoint - (uint)governor_cruise_fuel_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_165.txt:285: ...  cruise_speed_setpoint_c = wVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_88.txt:204: ...// Function: cm848_updateEngineStatusTimers @ 0x00046d90
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_33.txt:31: ...  j1939_pgn65251_tx_header = CONCAT13(((byte)j1939_pgn65251_priority & 7) << 2,0xfee300);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:10: ...void cm848_sendJ1939ProprietaryStatus(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:13: ...((governor_system_config_flags & 0x800) != 0) && (governor_prop_status_pending_flag != 0)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:14: ...     (j1939_prop_status_tx_state == 2)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:15: ...    governor_prop_status_pending_flag = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:16: ...    DAT_003faa84 = (byte)((int)(short)governor_prop_status_bits_3 << 6) |
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:17: ...                   (byte)((int)(short)governor_prop_status_bits_1 << 4) |
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:18: ...                   (char)governor_prop_status_bits_2 << 2 | (byte)governor_prop_st
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:18: ...   (char)governor_prop_status_bits_2 << 2 | (byte)governor_prop_status_bits_0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:23: ...    j1939_prop_status_tx_state = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:31: ...// Function: cm848_initJ1939ProprietaryStatusBuffer @ 0x00023cd4
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:35: ...void cm848_initJ1939ProprietaryStatusBuffer(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_37.txt:38: ...  j1939_pgn56360_tx_header = CONCAT13(((byte)j1939_pgn56360_source_address_bits & 7) << 2,0xdc2800);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_82.txt:10: ...void cm848_initProtectionParameter1(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_82.txt:14: ...            (&DAT_0005b55c,&protection_param_1_channel_state,&DAT_003fb564,&DAT_0006429c,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_82.txt:16: ...             &sensor_channel54_filtered,&sensor_channel54_fault_status);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_82.txt:23: ...// Function: cm848_processProtectionParameter1 @ 0x00042a2c
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_82.txt:27: ...void cm848_processProtectionParameter1(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_82.txt:31: ...            (&DAT_0005b55c,&protection_param_1_channel_state,&DAT_003fb564,&DAT_0006429c,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_82.txt:33: ...             &sensor_channel54_filtered,&sensor_channel54_fault_status);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_82.txt:40: ...// Function: cm848_initProtectionParameter2 @ 0x00042ab8
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:9: ...void engine_protection_conditionCode_evaluate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:50: ...  if (protection_event26_fuel_qty_gate_upper < fuel_quantity_stroke_raw) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:68: ...  if (protection_event26_rpm_high_debounce_limit <= protection_event26_rpm_hig
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:70: ...    protection_event26_rpm_high_debounce_count = protection_event26_rpm_high_debounce_limit;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:72: ...  if (engine_rpm_state_t_0040b7ac.current_rpm < protection_event26_rpm_high_gate_lower) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:247: ... (protection_event26_post_fault_holdoff_count_a < protection_event26_holdoff_limit_a) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:252: ... (protection_event26_post_fault_holdoff_count_a < protection_event26_holdoff_limit_a)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:256: ... (protection_event26_post_fault_holdoff_count_b < protection_event26_holdoff_limit_b) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:261: ... (protection_event26_post_fault_holdoff_count_b < protection_event26_holdoff_limit_b)) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_197.txt:284: ...// Function: hpcr_fuel_mode_state_transition @ 0x005118f8
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_38.txt:48: ...  j1939_pgn65259_tx_header = CONCAT13(((byte)j1939_pgn65259_priority & 7) << 2,0xfeeb00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:19: ...  cold_start_pressure_scale_working = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:23: ...     (pressure_correction_scale = cold_start_pressure_scale_working,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:31: ...    pressure_correction_filter1_working =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:34: ...                      ((int)(short)pressure_correction_filter1_working,&PTR_DAT_003fa62c);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:36: ...  condition_monitor_status_working = wVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:39: ...     ((uVar4 = injection_enable_mode_byte,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:42: ...    uVar4 = sensor_channel9_fault_status | injection_enable_mode_byte;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:55: ...  fuel_demand_phase_status_flags = uVar4 | uVar3;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:63: ...      fuel_demand_boost_offset = fuel_demand_boost_offset_filtered;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_25.txt:83: ...  sensor_channel9_pressure_snapshot = sensor_channel9_pressure_ra
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:46: ...                           ((longlong)(int)((uint)fuel_demand_delta_scale_cal * 0x20) *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:48: ...                         (uint)fuel_demand_delta_scale_cal * 0x20 * fuel_demand_delta_wo
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:56: ...  governor_pid_adjustment_output = (word)iVar6;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:59: ...                               * (longlong)(int)throttle_rate_pid_gain_cal._0_2_) >> 0x20),
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:61: ...                         (int)throttle_rate_pid_gain_cal._0_2_) / 64000) -
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:62: ...          (int)(short)governor_pid_adjustment_output;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:85: ...  governor_trim_lookup_result = lookupTableInterpolation((t
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:92: ...    uVar3 = (uint)fuel_flow_rate_divisor_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:107: ...  uVar4 = iVar5 * (uint)governor_trim_lookup_result;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:108: ...  uVar3 = (uint)fuel_flow_rate_gain_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:177: ...    uVar4 = (uint)throttle_rate_pid_gain_cal._2_2_;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:192: ...                    (governor_rpm_band_rate_current_cal,governor_rpm_band_rate_workin
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:200: ...  if ((int)((uVar3 & 0xffff) * (uint)throttle_rate_scale_factor_cal) < 0x10000001) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_21.txt:201: ...    uVar3 = (uVar3 & 0xffff) * (uint)throttle_rate_scale_factor_cal >> 0xc;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_45.txt:18: ...    if (DAT_0005c392 < fuel_demand_governor_output) {
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_45.txt:48: ...           (char)((int)(uint)fuel_demand_governor_output >> 1) +
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_45.txt:49: ...           (char)((int)(uint)fuel_demand_governor_output >> 3);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_29.txt:28: ...  boost_pressure_normalized = (word)uVar2;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_29.txt:35: ...  fuel_timing_boost_scale_lookup =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_29.txt:36: ...   cm848_dualAxisTableInterpolation(&DAT_003fa706,boost_pressure_normalized,0x66b8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_29.txt:37: ...  uVar2 = (uint)fuel_timing_boost_scale_lookup * (fuel_demand_timing_input +
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_86.txt:27: ...             (short)engine_sync_coolant_lower_threshold_cal ||
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_86.txt:28: ...            ((short)engine_sync_coolant_upper_threshold_cal <=
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_46.txt:36: ...  j1939_pgn65247_tx_header = CONCAT13(((byte)j1939_pgn65247_priority & 7) << 2,0xfedf00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_85.txt:284: ...sensor_readings_t_0040baf2.coolant_temp <= (short)crank_sync_coolant_threshold_cal
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_39.txt:68: ...  j1939_dm2_tx_header = CONCAT13(((byte)j1939_dm2_priority & 7) << 2,0xfecb00);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:43: ...    uStack_7 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:45: ...    uStack_8 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:48: ...    uStack_7 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:50: ...    uStack_8 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:52: ...    DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:53: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:55: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:57: ...    DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:58: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:60: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:62: ...    DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:63: ...    uStack_7 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:65: ...    uStack_8 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:67: ...    uStack_7 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:69: ...    uStack_8 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:71: ...    DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:106: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:108: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:111: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:113: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:115: ...  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:116: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:118: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:120: ...  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:121: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:123: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:125: ...  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:126: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:128: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:130: ...  _uStack00000008 = j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:132: ...  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:134: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:136: ...  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:172: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_a;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:174: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:177: ...  uStack00000009 = (undefined1)j1939_pgn65249_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:179: ...  uStack00000008 = (undefined1)(j1939_pgn65249_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:181: ...  DAT_003fae57 = '}' - (char)(j1939_dtc_spn_cal_a >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:182: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_c;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:184: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:186: ...  DAT_003fae5a = '}' - (char)(j1939_dtc_spn_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:187: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_d;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:189: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:191: ...  DAT_003fae5d = '}' - (char)(j1939_dtc_spn_cal_c >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:192: ...  uStack00000009 = (undefined1)j1939_protocol_mode_fuel_cal_b;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:194: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_fuel_cal_b >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:196: ...  _uStack00000008 = j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:198: ...  uStack00000009 = (undefined1)j1939_protocol_mode_speed_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:200: ...  uStack00000008 = (undefined1)(j1939_protocol_mode_speed_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_53.txt:202: ...  DAT_003fae62 = '}' - (char)(j1939_dtc_spn_cal_d >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_83.txt:10: ...void cm848_initProtectionParameter2(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_83.txt:14: ...            (&DAT_0005b56c,&protection_param_2_channel_state,&DAT_003fb56e,&DAT_000642a8,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_83.txt:16: ...             &sensor_channel55_filtered,&sensor_channel55_fault_status);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_83.txt:23: ...// Function: cm848_processProtectionParameter2 @ 0x00042b44
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_83.txt:27: ...void cm848_processProtectionParameter2(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_83.txt:31: ...            (&DAT_0005b56c,&protection_param_2_channel_state,&DAT_003fb56e,&DAT_000642a8,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_83.txt:33: ...             &sensor_channel55_filtered,&sensor_channel55_fault_status);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:9: ...void cm848_processBoostProtectionMode(undefined4 param_1,int param_
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:16: ...    injection_enable_mode_byte = 0x80;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:19: ...    injection_enable_mode_byte = 0x40;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:22: ...    injection_enable_mode_byte = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:25: ...    unaff_r31 = (int)(short)injection_timing_offset_boost1_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:28: ...    unaff_r31 = (int)(short)injection_timing_offset_boost2_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:31: ...    unaff_r31 = (int)(short)injection_timing_offset_boost3_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:34: ...    unaff_r31 = (int)(short)injection_timing_offset_boost4_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:37: ...    param_2 = (int)(short)injection_timing_offset_boost1_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:40: ...    param_2 = (int)(short)injection_timing_offset_boost2_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:43: ...    param_2 = (int)(short)injection_timing_offset_boost3_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:46: ...    param_2 = (int)(short)injection_timing_offset_boost4_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:48: ...  injection_timing_offset_filtered =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:50: ...                 (unaff_r31,param_2,(int)(short)injection_timing_filter_coeff_cal,
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:53: ... iVar1 = ((int)(short)(fuel_demand_timing_input - injection_timing_offset_filtered) *
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:54: ...           (int)(short)fuel_demand_timing_scale_cal >> 0xb) +
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:55: ...          (int)(short)fuel_demand_timing_offset_cal + (int)(short)fuel_demand_mod
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:62: ...  fuel_demand_boost_offset_filtered =
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:70: ...// Function: cm848_initBoostProtectionState @ 0x00013ca4
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:74: ...void cm848_initBoostProtectionState(void)
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:80: ...    injection_enable_mode_byte = 0x80;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:83: ...    injection_enable_mode_byte = 0x40;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_24.txt:86: ...    injection_enable_mode_byte = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_56.txt:12: ...  j1939_pgn65271_tx_header = CONCAT13(((byte)j1939_pgn65271_source_address_bits & 7) << 2,0xfef700);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:47: ...  uStack_10 = (undefined1)(sensor_channel_index_working >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:49: ...  uStack_f = (undefined1)sensor_channel_index_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:52: ...  uStack_10 = (undefined1)(j1939_pgn_priority_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:54: ...  uStack_f = (undefined1)j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:97: ...  uStack00000008 = (undefined1)(sensor_channel_index_working >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:99: ...  uStack00000009 = (undefined1)sensor_channel_index_working;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:102: ...  _uStack00000008 = j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:104: ...  uStack00000008 = (undefined1)(j1939_pgn_priority_cal >> 8);
+firmware/CM848_S90140.06_analysis/output/worklist_003f_2ref/batch_54.txt:106: ...  uStack00000009 = (undefined1)j1939_pgn_priority_cal;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_22.txt:9: ...void hpcr_fuel_mode_state_transition(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_22.txt:13: ...    engine_protection_fuelMass_rpmCheck();
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_22.txt:16: ...    engine_protection_conditionCode_evaluate();
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave3.csv:35: ...0x00408e14,cruise_speed_setpoint_active_max,word,ROM ceiling for cruise_s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave3.csv:35: ...se_speed_setpoint_active_max,word,ROM ceiling for cruise_speed_setpoint_active
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave3.csv:36: ...0x00408e16,cruise_speed_setpoint_active_min,word,ROM floor for cruise_spe
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave3.csv:36: ...uise_speed_setpoint_active_min,word,ROM floor for cruise_speed_setpoint_active
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave3.csv:37: ...0x00408e20,cruise_zone_speed_error_abs_limit,word,ROM abs speed-error thre
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave3.csv:38: ...0x00408e2e,cruise_zone_speed_error_neg_limit,word,ROM signed speed-error t
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_71.txt:24: ...     ((DAT_00409eda < fuel_demand_governor_output || ((engine_diag_shadow_flags
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:19: ...  if (((param_1 == 4) && (DAT_0005c2f4 <= governor_faultDerate_consecutive_count)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:85: ...        if ((((int)(short)governor_faultDerate_active_channel == uVar7) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:88: ...          governor_faultDerate_active_channel = 0xff;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:89: ...          governor_faultDerate_consecutive_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:121: ...            governor_faultDerate_active_channel = (word)uVar7;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:150: ...          governor_faultDerate_active_channel = (word)uVar7;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:166: ...      if (governor_faultDerate_total_event_count != 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:167: ...        governor_faultDerate_total_event_count = governor_faultDerate_total_
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:167: ...        governor_faultDerate_total_event_count = governor_faultDerate_total_event_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:169: ...      if (governor_faultDerate_active_channel == DAT_003fbd3a) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:170: ...        if (governor_faultDerate_consecutive_count != 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:171: ...          governor_faultDerate_consecutive_count = governor_faultDerate_consec
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:171: ...         governor_faultDerate_consecutive_count = governor_faultDerate_consecutive_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:175: ...        governor_faultDerate_consecutive_count = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_89.txt:208: ...  DAT_003fbd3a = governor_faultDerate_active_channel;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_93.txt:143: ...  cm848_initJ1939ProprietaryStatusBuffer();
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_93.txt:188: ...  uVar4 = (uint)can_j1939_tx_mailbox_alloc_index;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_93.txt:191: ...  can_tx_mailbox_end_index = can_j1939_tx_mailbox_alloc_index + 0xf;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_93.txt:197: ...  can_j1939_tx_mailbox_alloc_index = can_tx_mailbox_end_index;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_58.txt:70: ...        tpu_init_retry_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_58.txt:77: ...        if (tpu_init_retry_count == 0) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_58.txt:81: ...        tpu_init_retry_count = tpu_init_retry_count - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_58.txt:81: ...        tpu_init_retry_count = tpu_init_retry_count - 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_01.txt:12: ...  sensor_channel9_pressure_snapshot = sensor_channel9_pressure_ra
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:43: ...((uVar2 < DAT_00408e00) && (param_1 <= (int)(uint)cruise_speed_offset_latched)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:44: ...         ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1)) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:56: ...    cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:58: ...  else if ((int)(uint)cruise_speed_offset_latched < param_1) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:63: ...    uStack_e = (ushort)((param_1 - (uint)cruise_speed_offset_latched) * (uint)uVar2 >> 10);
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:64: ...    cruise_speed_setpoint_active = DAT_00408e14;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:67: ...      cruise_speed_setpoint_active = uStack_e;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:71: ...    if ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1) goto LAB_00524934
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:76: ...k_e = (ushort)(((int)(short)param_1 - (int)(short)governor_cruise_fuel_demand_setpoint) *
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:78: ...    cruise_speed_setpoint_active = DAT_00408e16;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:87: ...  uVar5 = (uint)governor_cruise_fuel_demand_setpoint + (uint)DAT_00408e24;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:100: ...  if ((uVar1 <= governor_cruise_fuel_demand_setpoint) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:165: ...    cruise_ramp_target_speed = wVar1 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:167: ...    wVar1 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:171: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:173: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:176: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:223: ...    _cruise_speed_upper_limit_ptr = &cruise_speed_blend_working;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:315: ...mp_target_prev = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:357: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:359: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_52.txt:362: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_23.txt:13: ...void engine_protection_fuelMass_rpmCheck(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_23.txt:39: ...// Function: engine_protection_conditionCode_evaluate @ 0x00511078
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_23.txt:43: ...void engine_protection_conditionCode_evaluate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_23.txt:318: ...// Function: hpcr_fuel_mode_state_transition @ 0x005118f8
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:4: ...0x0040a772,governor_faultDerate_engine_sync_trigger,word,fault-derate engine-sync
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:5: ...0x0040a774,governor_faultDerate_channel_active_latch,word,fault-derate channel-act
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:15: ...0x004065be,engine_load_ramp_rate_lower,word,ROM negative rate limit 
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:16: ...0x004065c0,engine_load_ramp_rate_upper,word,ROM positive rate limit 
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:37: ...0x004062d2,boost_pressure_ratio_upper_limit,word,ROM ceiling for boost_pr
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:56: ...0x004071de,fuel_demand_override_active_min,word,ROM minimum override tri
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:64: ...0x0040869e,hpcr_protection_eval_mode,word,ROM selector for protect
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:65: ...0x004086a0,protection_event26_holdoff_limit_b,word,ROM limit for event-26 h
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:66: ...0x004086a2,protection_event26_holdoff_limit_a,word,ROM limit for event-26 h
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:67: ...0x004086a8,protection_event26_fuel_qty_gate_upper,word,ROM upper bound for even
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:68: ...0x004086b4,protection_event26_rpm_high_gate_lower,word,ROM lower bound for even
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave1.csv:69: ...0x004086b8,protection_event26_rpm_high_debounce_limit,word,ROM cap for event-26 rpm
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_51.txt:69: ...              uVar2 = (uint)(short)cruise_speed_error_integral;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_51.txt:73: ...              if ((uint)cruise_speed_error_integral_limit <= (uVar2 & 0xffff)) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_47.txt:25: ...      fuel_flow_rpm_divisor_saved = DAT_0005c936;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_47.txt:138: ...      if (((fuel_flow_rpm_divisor_prev == fuel_flow_rpm_divisor) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_47.txt:141: ...        fuel_flow_rpm_divisor_saved = fuel_flow_rpm_divisor;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_47.txt:144: ...      fuel_flow_rpm_divisor_prev = fuel_flow_rpm_divisor;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:48: ...    cruise_ramp_target_speed = wVar1 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:50: ...    wVar1 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:54: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:56: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:59: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:106: ...    _cruise_speed_upper_limit_ptr = &cruise_speed_blend_working;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:198: ...mp_target_prev = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:240: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:242: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_53.txt:245: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:17: ...void cm848_tpuMiosOutput_loadCalibration(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:48: ...       ((uint)tpu_ch14_period_base * (uVar1 & 0xffff)) / 0xfff <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:48: ..._base * (uVar1 & 0xffff)) / 0xfff << 0x10 | (uint)tpu_ch14_period_base;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:65: ...  cm848_tpuMiosOutput_loadCalibration();
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:164: ...  TPUA_CH14_PARAM0._0_4_ = (uint)tpu_ch14_period_base;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:185: ...  if ((DAT_004090c8 < tpu_init_retry_count) && (DAT_004090c8 != 0xffff))
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:188: ...  if (tpu_init_retry_count < 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:189: ...    tpu_init_retry_count = tpu_init_retry_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_56.txt:189: ...    tpu_init_retry_count = tpu_init_retry_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/batch_54.txt:14: ...  uVar1 = ((((uint)protection_timing_period_cal * (uint)protection_temp_scale
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave2.csv:28: ...0x00408ad2,protection_fuel_derate_increment_counter_max,byte,ROM cap for fuel derate 
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave2.csv:29: ...0x00408ad3,protection_pid_integrator_threshold,word,ROM signed threshold on 
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave2.csv:30: ...0x00408ade,protection_pid_step_count_threshold_b,byte,ROM secondary step-count
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave4.csv:35: ...0x00409ef4,cam_sync_validation_crank_tick_min,word,ROM min crank ticks for 
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave4.csv:36: ...0x00409ef8,cam_sync_validation_dwell_limit,word,ROM dwell cap for cam-sy
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave4.csv:42: ...0x0040a02c,fault_match_debounce_threshold_std,word,ROM fault-match debounce
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave4.csv:43: ...0x0040a02e,fault_active_recovery_threshold_std,word,ROM fault-active recover
+firmware/CM848_S90140.06_analysis/output/worklist_0040_2ref/proposed_names_wave4.csv:44: ...0x0040a036,fault_active_recovery_threshold_ch19_20,word,ROM fault-active recover
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_35.txt:36: ...      cruise_speed_offset_b = cruise_speed_offset_latched;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_35.txt:37: ...      cruise_speed_offset_c = cruise_speed_offset_latched;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_35.txt:42: ...    cruise_speed_offset_c = (word)(((uint)cruise_speed_blend_working * (uint)DAT_00408e10) / 0x640
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_35.txt:45: ...  cruise_speed_offset_latched = cruise_speed_offset_c;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_30.txt:73: ...     ((DAT_00409eda < fuel_demand_governor_output || ((engine_diag_shadow_flags
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:36: ...((uVar2 < DAT_00408e00) && (param_1 <= (int)(uint)cruise_speed_offset_latched)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:37: ...         ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1)) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:49: ...    cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:51: ...  else if ((int)(uint)cruise_speed_offset_latched < param_1) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:56: ...    uStack_e = (ushort)((param_1 - (uint)cruise_speed_offset_latched) * (uint)uVar2 >> 10);
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:57: ...    cruise_speed_setpoint_active = DAT_00408e14;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:60: ...      cruise_speed_setpoint_active = uStack_e;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:64: ...    if ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1) goto LAB_00524934
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:69: ...k_e = (ushort)(((int)(short)param_1 - (int)(short)governor_cruise_fuel_demand_setpoint) *
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:71: ...    cruise_speed_setpoint_active = DAT_00408e16;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:80: ...  uVar5 = (uint)governor_cruise_fuel_demand_setpoint + (uint)DAT_00408e24;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_20.txt:91: ...  if ((uVar1 <= governor_cruise_fuel_demand_setpoint) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/proposed_names_waveB.csv:15: ...0x004090b2,tpu_ch14_period_base,word,ROM; TPUA CH14 PARAM0 ba
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/proposed_names_waveA.csv:70: ...0x00408e12,cruise_fuel_demand_ramp_ceiling,word,read-only ROM cruise fue
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_06.txt:25: ...// Function: engine_protection_fuelMass_rpmCheck @ 0x00510fa0
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_06.txt:29: ...void engine_protection_conditionCode_evaluate(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_06.txt:304: ...// Function: hpcr_fuel_mode_state_transition @ 0x005118f8
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/proposed_names_waveC.csv:62: ...0x0040adf2,can_j1939_tx_mailbox_alloc_index,word,running CAN TX mailbox s
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_50.txt:48: ...  cm848_initJ1939ProprietaryStatusBuffer();
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_23.txt:11: ...void cm848_tpuMiosOutput_loadCalibration(void)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_23.txt:59: ...  cm848_tpuMiosOutput_loadCalibration();
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_23.txt:179: ...  if ((DAT_004090c8 < tpu_init_retry_count) && (DAT_004090c8 != 0xffff))
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_23.txt:182: ...  if (tpu_init_retry_count < 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_23.txt:183: ...    tpu_init_retry_count = tpu_init_retry_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_23.txt:183: ...    tpu_init_retry_count = tpu_init_retry_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_77.txt:25: ...      fuel_flow_rpm_divisor_saved = DAT_0005c936;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_77.txt:137: ...        fuel_flow_rpm_divisor_saved = fuel_flow_rpm_divisor;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:43: ...    cruise_ramp_target_speed = wVar2 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:45: ...    wVar2 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:49: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:51: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:54: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:101: ...    _cruise_speed_upper_limit_ptr = &cruise_speed_blend_working;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:191: ...  DAT_003fd000 = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:232: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:234: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_21.txt:237: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_45.txt:23: ... (((governor_feature_config_word & 0x20) != 0 && (governor_faultDerate_active_channel != 0xff))
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_45.txt:24: ...      )) && ((governor_faultDerate_active_channel != 4 &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_45.txt:25: ...             (DAT_0005c2f4 <= governor_faultDerate_consecutive_count)))) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_45.txt:26: ...    puVar8 = &DAT_000597b2 + (short)governor_faultDerate_active_channel * 0x12;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_45.txt:27: ...    iVar5 = (int)(short)governor_faultDerate_active_channel;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_45.txt:29: ...    uVar2 = (uint)governor_faultDerate_active_channel * 4 + 0x80 & 0xffff;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:27: ...  governor_cruise_speedError_integrate();
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:144: ...((uVar2 < DAT_00408e00) && (param_1 <= (int)(uint)cruise_speed_offset_latched)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:145: ...         ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1)) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:157: ...    cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:159: ...  else if ((int)(uint)cruise_speed_offset_latched < param_1) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:164: ...    uStack_e = (ushort)((param_1 - (uint)cruise_speed_offset_latched) * (uint)uVar2 >> 10);
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:165: ...    cruise_speed_setpoint_active = DAT_00408e14;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:168: ...      cruise_speed_setpoint_active = uStack_e;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:172: ...    if ((int)(uint)governor_cruise_fuel_demand_setpoint <= param_1) goto LAB_00524934
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:177: ...k_e = (ushort)(((int)(short)param_1 - (int)(short)governor_cruise_fuel_demand_setpoint) *
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:179: ...    cruise_speed_setpoint_active = DAT_00408e16;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:188: ...  uVar5 = (uint)governor_cruise_fuel_demand_setpoint + (uint)DAT_00408e24;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:199: ...  if ((uVar1 <= governor_cruise_fuel_demand_setpoint) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:258: ...      cruise_speed_offset_b = cruise_speed_offset_latched;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:259: ...      cruise_speed_offset_c = cruise_speed_offset_latched;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:264: ...    cruise_speed_offset_c = (word)(((uint)cruise_speed_blend_working * (uint)DAT_00408e10) / 0x640
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:267: ...  cruise_speed_offset_latched = cruise_speed_offset_c;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:292: ...  cruise_speed_setpoint_active = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:319: ...  wVar1 = governor_cruise_fuel_demand_setpoint;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:320: ...if ((uint)governor_cruise_fuel_demand_min < (uint)governor_cruise_fuel_demand_setpoint) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:321: ...    uVar4 = (uint)governor_cruise_fuel_demand_setpoint - (uint)governor_cruise_fuel_
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:334: ...  cruise_speed_setpoint_c = wVar1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:357: ...  uVar1 = ((((uint)protection_timing_period_cal * (uint)protection_temp_scale
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:445: ...    cruise_ramp_target_speed = wVar2 + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:447: ...    wVar2 = cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:451: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:453: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:456: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:503: ...    _cruise_speed_upper_limit_ptr = &cruise_speed_blend_working;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:593: ...  DAT_003fd000 = cruise_speed_setpoint_adjusted + cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:634: ...hort)governor_cruise_speed_error_working < (short)cruise_speed_setpoint_active + 0xa00)
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:636: ...    if ((short)cruise_speed_setpoint_active + -0xa00 <
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_19.txt:639: ...           governor_cruise_speed_error_working - cruise_speed_setpoint_active;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:15: ...  if (((param_1 == 4) && (DAT_0005c2f4 <= governor_faultDerate_consecutive_count)) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:81: ...        if ((((int)(short)governor_faultDerate_active_channel == uVar7) &&
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:84: ...          governor_faultDerate_active_channel = 0xff;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:85: ...          governor_faultDerate_consecutive_count = 0;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:117: ...            governor_faultDerate_active_channel = (word)uVar7;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:146: ...          governor_faultDerate_active_channel = (word)uVar7;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:165: ...      if (governor_faultDerate_active_channel == DAT_003fbd3a) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:166: ...        if (governor_faultDerate_consecutive_count != 0xff) {
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:167: ...          governor_faultDerate_consecutive_count = governor_faultDerate_consec
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:167: ...         governor_faultDerate_consecutive_count = governor_faultDerate_consecutive_count + 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:171: ...        governor_faultDerate_consecutive_count = 1;
+firmware/CM848_S90140.06_analysis/output/worklist_0040_tail/batch_46.txt:204: ...  DAT_003fbd3a = governor_faultDerate_active_channel;
+firmware/CM550_J90350.00_analysis/output/J90350.00.ghidra.cpp:1231: ...  pcVar10 = &governor_integral_accumulator;
+firmware/CM550_J90350.00_analysis/output/firmware_globals.hpp:50: ...extern undefined governor_integral_accumulator;  // 0x00800090
+firmware/CM550_J90350.00_analysis/output/global_variables.csv:116: ...0x00800090,governor_integral_accumulator,undefined,
+firmware/CM550_J90350.00_analysis/output/context_tier1/batch_02.txt:266: ...  pcVar10 = &governor_integral_accumulator;
+firmware/CM550_J90350.00_analysis/output/context_tier1/batch_07.txt:308: ...  pcVar10 = &governor_integral_accumulator;
+firmware/CM550_J90350.00_analysis/output/context_tier1/batch_04.txt:310: ...  pcVar10 = &governor_integral_accumulator;
+firmware/CM550_J90350.00_analysis/output/context_tier2/batch_73.txt:28: ...  pcVar10 = &governor_integral_accumulator;
+firmware/CM550_J90350.00_analysis/output/context_tier2/merged_05.txt:1833: ...  pcVar10 = &governor_integral_accumulator;
+work/todo.md:43: ...AM - now engine_load_ema_filter_pointer). part 2: governor_fuel_demand_correction_accumulator (0x3faf48) / boost_pressure_t
+work/todo.md:43: ...8) / boost_pressure_target_unclamped (0x3fa606) / governor_operational_mode_request (0x40ae7c, now word) - CM848 
+work/tasks/046-cm848-egr-flow-estimate.md:123: ...  - **Two source words:** `ambient_air_temperature_selected_source` (1A0C +2, beside +0 `ambient
+work/tasks/046-cm848-egr-flow-estimate.md:123: ...temperature_selected_source` (1A0C +2, beside +0 `ambient_air_temperature_selected`) and `barometric_pressure_se
+work/tasks/046-cm848-egr-flow-estimate.md:172: ...    - So `ambient_air_temperature_selected` → `compressor_inlet_temperat
+work/tasks/046-cm848-egr-flow-estimate.md:172: ...ture_selected` → `compressor_inlet_temperature`, `ambient_air_density` →
+work/tasks/046-cm848-egr-flow-estimate.md:173: ...      `compressor_inlet_density`, `ambient_air_temperature_reference` → `ambient_air_temperature`.
+work/tasks/025-cm848-naming-wave-followups.md:33: ...tConversion. The protection_event26_* globals and engine_protection_conditionCode_evaluate / engine_protection_fuelMass_
+work/tasks/025-cm848-naming-wave-followups.md:33: ...ls and engine_protection_conditionCode_evaluate / engine_protection_fuelMass_rpmCheck are the A/C clutch control.
+work/tasks/025-cm848-naming-wave-followups.md:54: ..._processEngineLoadCalculation 0x3fc24 is a PID on fuel_demand_governor_output (while engaged and governor_m
+work/tasks/025-cm848-naming-wave-followups.md:58: .../ cruise_target_rpm_max / cruise_target_rpm_min / cruise_speed_error_integral_limit / cruise_rpm_ratio_max / crui
+work/tasks/025-cm848-naming-wave-followups.md:118: ...coolant pressure, used by the PGN 65263 builder). engine_protection_conditionCode_evaluate / engine_protection_fuelMass_
+work/tasks/025-cm848-naming-wave-followups.md:118: ...lder). engine_protection_conditionCode_evaluate / engine_protection_fuelMass_rpmCheck and the protection_event26_* 
+work/tasks/025-cm848-naming-wave-followups.md:130: ...ers of the A/C pressure keep fuel-quantity names: engine_protection_conditionCode_evaluate / engine_protection_fuelMass_
+work/tasks/025-cm848-naming-wave-followups.md:130: ...names: engine_protection_conditionCode_evaluate / engine_protection_fuelMass_rpmCheck / engine_egrFuel_stateMachine
+work/tasks/025-cm848-naming-wave-followups.md:136: ...e_flags_cal (0x3fd5ec) comment lacks bit 3 (gates engine_protection_conditionCode_evaluate and engine_protection_fuelMas
+work/tasks/025-cm848-naming-wave-followups.md:136: ...ates engine_protection_conditionCode_evaluate and engine_protection_fuelMass_rpmCheck) and bit 5 (fuel level filter
+work/tasks/025-cm848-naming-wave-followups.md:137: ...ssor clutch enable = protection event 0x26 / 38): engine_protection_conditionCode_evaluate (0x511078) and engine_protect
+work/tasks/025-cm848-naming-wave-followups.md:137: ..._protection_conditionCode_evaluate (0x511078) and engine_protection_fuelMass_rpmCheck (0x510fa0) gate on air_condit
+work/tasks/025-cm848-naming-wave-followups.md:137: ...04086b0/DAT_004086b2 = 16/32 psi and DAT_004086aa/protection_event26_fuel_qty_gate_upper (0x4086a8) = 426/476 psi plus
+work/tasks/025-cm848-naming-wave-followups.md:196: ..._cal bit 0x40 like cm848_schedulePciTransmit. (2) hpcr_initJ1939BufferValues (0x3a9a4) sets every PCI stat
+work/tasks/025-cm848-naming-wave-followups.md:196: ...x3a9a4) sets every PCI status byte plus 0x40b4f8 (j1939_msg_slot_hh_control), which is not a descriptor s
+work/tasks/025-cm848-naming-wave-followups.md:201: ...geTimers (0x3a100) -> cm848_initPciMessageTimers; hpcr_initJ1939BufferValues (0x3a9a4) sets every PCI RX /
+work/tasks/025-cm848-naming-wave-followups.md:202: ...40b4f7 (zeroed by the payload init) plus 0x40b4f8 j1939_msg_slot_hh_control (set to 0x80 at power-up like
+work/tasks/025-cm848-naming-wave-followups.md:207: ...- 0x0003a9a4 hpcr_initJ1939BufferValues: the status-byte sibling of t
+work/tasks/025-cm848-naming-wave-followups.md:208: ...- 0x0040b4f5-0x0040b4f7 + 0x0040b4f8 (j1939_msg_slot_hh_control): right after TX[24] the payl
+work/tasks/025-cm848-naming-wave-followups.md:208: ...payload init zeroes 3 bytes (0x3a4dc-0x3a4f4) and hpcr_initJ1939BufferValues sets 0x40b4f8 = 0x80 like a T
+work/tasks/025-cm848-naming-wave-followups.md:251: ...b49b, which is the TX[10] descriptor status byte (hpcr_initJ1939BufferValues writes 0x80 there and cm848_c
+work/tasks/025-cm848-naming-wave-followups.md:333: ...38) looks like the A/C clutch relay: active mode (hpcr_protection_eval_mode = 1) needs switch 13 / exclud
+work/tasks/025-cm848-naming-wave-followups.md:338: ... Switch 13 feeds the A/C compressor clutch logic: hpcr_fuel_mode_state_transition runs engine_protection_condit
+work/tasks/025-cm848-naming-wave-followups.md:338: ...lutch logic: hpcr_fuel_mode_state_transition runs engine_protection_conditionCode_evaluate (hpcr_protection_eval_mode = 
+work/tasks/025-cm848-naming-wave-followups.md:338: ...on runs engine_protection_conditionCode_evaluate (hpcr_protection_eval_mode = 1 here) or engine_protectio
+work/tasks/025-cm848-naming-wave-followups.md:338: ..._evaluate (hpcr_protection_eval_mode = 1 here) or engine_protection_fuelMass_rpmCheck (mode 0); bit 38 of protectio
+work/tasks/025-cm848-naming-wave-followups.md:380: ...de_reset) / 0x1e = restored saved governor state (cm848_restoreEngineOperatingMode) - not TRANSITION / CRANK
+work/tasks/025-cm848-naming-wave-followups.md:427: ...es below 2 mph with switch 20 off > 9'). 0x3faf64 cold_start_delay_counter = governor_stopped_settled_co
+work/tasks/025-cm848-naming-wave-followups.md:434: ...- 0x003faf64 cold_start_delay_counter is misnamed: it counts passes
+work/tasks/025-cm848-naming-wave-followups.md:434: ...delay_counter is misnamed: it counts passes with |governor_speed_error_delta| <= 4000 (500 rpm) while vehi
+work/tasks/025-cm848-naming-wave-followups.md:434: ...e vehicle_speed < 4 mph (cap 75) and at 75 clears governor_enabled_flag - suggest governor_speed_erro
+work/tasks/025-cm848-naming-wave-followups.md:435: ...t26_* rows / protection_exception_event_26_init / engine_protection_conditionCode_evaluate need air_conditioning names -
+work/tasks/025-cm848-naming-wave-followups.md:440: ...- governor_speed_error_delta names two addresses: 0x40aede
+work/tasks/025-cm848-naming-wave-followups.md:446: ...ut length) / protection_exception_event_26_init / engine_protection_conditionCode_evaluate / fuel_quantity_stroke_raw / 
+work/tasks/025-cm848-naming-wave-followups.md:447: ...- 0x003faf64 cold_start_delay_counter is misnamed: it counts passes
+work/tasks/025-cm848-naming-wave-followups.md:447: ...delay_counter is misnamed: it counts passes with |governor_speed_error_delta| at most 4000 (500 rpm) while
+work/tasks/025-cm848-naming-wave-followups.md:447: ...speed is under 4 mph (cap 75) and at 75 can clear governor_enabled_flag - e.g. governor_speed_error_s
+work/tasks/025-cm848-naming-wave-followups.md:448: ...- governor_speed_error_delta names two addresses (0x40aede
+work/tasks/025-cm848-naming-wave-followups.md:505: ...he road speed limit (cruise_speed_limit_working / cruise_speed_high_limit). cold_start_qualifier_flag (
+work/tasks/025-cm848-naming-wave-followups.md:639: ...6 SRCRSTEN (both gate the PGN 56832 reset handler cm848_j1939HandleProprietaryCommand - itself misnamed) / bit 7 TW
+work/tasks/025-cm848-naming-wave-followups.md:680: ... 7 recomputes a pedal-to-speed request each pass (cm848_calculateFuelTimingTarget), and cm848_calculateFuelDema
+work/tasks/025-cm848-naming-wave-followups.md:680: ... each pass (cm848_calculateFuelTimingTarget), and cm848_calculateFuelDemandWithConditions feeds it to the governor spee
+work/tasks/025-cm848-naming-wave-followups.md:681: ...ction_temp_scale_factor_working 453 / unnamed 0 / protection_system_init_flag 0 / protection_temp_scale_cal
+work/tasks/025-cm848-naming-wave-followups.md:684: ...ch-31 governor toggle with bit 3 and has no _cal. fuel_demand_speed_deadband_cal (0x3ff68e) lies outside the E
+work/tasks/025-cm848-naming-wave-followups.md:690: ...e-ratio select) / 0x3fd062 and 0x3fd066 = ratio x protection_timing_period_cal output-shaft divisors (0x3fd0
+work/tasks/025-cm848-naming-wave-followups.md:690: ...t in EEPROM, so its _cal is wrong). Also 0x3fd532 protection_system_init_flag (EEPROM 0xb0 = 0) gates one s
+work/tasks/025-cm848-naming-wave-followups.md:700: ...- 0x3fd532 protection_system_init_flag = EEPROM 0xb0 (0) whose only 
+work/tasks/025-cm848-naming-wave-followups.md:702: ...- fuel_demand_speed_deadband_cal (0x3ff68e = 736) is outside t
+work/tasks/029-registration-table-sweep-held.md:46: ...0 is registered for PGN 58112 = DM7 (not DM1) and cm848_j1939HandleProprietaryCommand 0x233a0 for PGN 56832 = Reset
+work/tasks/029-registration-table-sweep-held.md:65: ... cm848_initJ1939CommunicationSystem (0x3ad04) and hpcr_initJ1939BufferValues (0x3a9a4) do PCI payload init
+work/tasks/042-table-campaign-rename-leads.md:49: ...- `sensor_channel9_pressure_value` / `_default_value` = intake 
+work/tasks/042-table-campaign-rename-leads.md:204: ...l_demand_rate_output`, `fuel_demand_rpm_factor`, `governor_setpoint_table_ptr`, `governor_speed_error_delta
+work/tasks/042-table-campaign-rename-leads.md:204: ...mand_rpm_factor`, `governor_setpoint_table_ptr`, `governor_speed_error_delta`,
+work/tasks/042-table-campaign-rename-leads.md:453: ...a604) is the ambient AIR DENSITY (written only by cm848_calculateAmbientAirDensity: barometric pressure over abs
+work/tasks/042-table-campaign-rename-leads.md:453: ...sure over absolute ambient temperature, slewed by engine_load_ramp_rate_upper / _lower): recommend ambient_
+work/tasks/042-table-campaign-rename-leads.md:453: ... engine_load_ramp_rate_upper / _lower): recommend ambient_air_density, with the two ramp cals follo
+work/tasks/042-table-campaign-rename-leads.md:493: ...f fuel_demand_integrator_b really accumulates (+= fuel_demand_integrator_gain_a_cal x error >> 8, clamped 0..fuel
+work/tasks/042-table-campaign-rename-leads.md:561: ...` (0x0040a226): UNCERTAIN, no new name; candidate engine_operating_mode_restore_speed_error_previous (dataflow is proven, the role
+work/tasks/042-table-campaign-rename-leads.md:592: ...): (1) The block is read exactly once per word by cm848_restoreEngineOperatingMode (0xfb28, called only from cm8
+work/tasks/042-table-campaign-rename-leads.md:627: ...- [W8 torque_limit] `torque_limit_init_flag` (0x0040a280): Dword, WRITE-O
+work/tasks/042-table-campaign-rename-leads.md:663: ...s of cm848_periodicTaskSet_sensorProcessing; 30 = cm848_restoreEngineOperatingMode (sth 0xfb50); 1 = cm848_setEn
+work/tasks/042-table-campaign-rename-leads.md:698: ...- [W9 gear_down] `torque_limit_init_flag` (0x0040a280): Still uncertai
+work/tasks/042-table-campaign-rename-leads.md:730: ... banks finds exactly eight stores of 0x40b000: 30 cm848_restoreEngineOperatingMode (0xfb50), 7 cm848_initEngineO
+work/tasks/042-table-campaign-rename-leads.md:730: ...28), 1 cm848_setEngineOperatingMode1 (0x428bc), 5 cm848_setEngineOperatingMode5 (0x42900), 
+work/tasks/027-cm848-naming-wave-2-followups.md:95: ...esume report) - not renamed pending confirmation; protection_transition_block_flag (0x40a2b0) role in processPro
+work/tasks/045-cm848-fueling-state-enum.md:323: ...  - `pressure_correction_first_filter` / `_second_filter` (two casc
+work/tasks/045-cm848-fueling-state-enum.md:748: ...  - `cruise_speed_factor_*` / `cruise_speed_offset*` are the high speed governor
+work/tasks/045-cm848-fueling-state-enum.md:761: ..._mode_timeout_cal`, `fuel_demand_norm_zero_cal`, `cruise_speed_default_cal`,
+work/tasks/045-cm848-fueling-state-enum.md:777: ...    0x40a608 `ambient_air_temperature_selected` is e2m 1A0C +0 Compressor_In
+work/tasks/045-cm848-fueling-state-enum.md:797: ...    readers; the PID's fuel maximum is `cruise_speed_blend_working`);

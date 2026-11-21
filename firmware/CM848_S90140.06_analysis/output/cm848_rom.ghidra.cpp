@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Fri Nov 20 19:26:49 MST 2026
+// Generated: Fri Nov 20 19:46:01 MST 2026
 
 
 //
@@ -7867,7 +7867,8 @@ void cm848_sensorChannel1_init(void)
              ambient_air_temperature_linearization_axis,ambient_air_temperature_linearization_values
              ,2,&sensor_channel1_filter_state,0x14,0x96,0x97,
              &compressor_inlet_temperature_sensor_value,
-             &compressor_inlet_temperature_sensor_default_value,&sensor_channel20_fault_status);
+             &compressor_inlet_temperature_sensor_default_value,
+             &compressor_inlet_temperature_sensor_fault_status);
   return;
 }
 
@@ -7885,7 +7886,8 @@ void cm848_sensorChannel1_process(void)
              ambient_air_temperature_linearization_axis,ambient_air_temperature_linearization_values
              ,2,&sensor_channel1_filter_state,0x14,0x96,0x97,
              &compressor_inlet_temperature_sensor_value,
-             &compressor_inlet_temperature_sensor_default_value,&sensor_channel20_fault_status);
+             &compressor_inlet_temperature_sensor_default_value,
+             &compressor_inlet_temperature_sensor_fault_status);
   return;
 }
 
@@ -8192,7 +8194,8 @@ void cm848_sensorChannel10_intakeManifoldTemperatureInit(void)
              intake_manifold_temperature_linearization_axis,
              intake_manifold_temperature_linearization_values,2,&ema_filter_state_t_003fa080,9,0x13,
              0x14,&intake_manifold_temperature_sensor_value,
-             &intake_manifold_temperature_sensor_default_value,&sensor_channel9_fault_status);
+             &intake_manifold_temperature_sensor_default_value,
+             &intake_manifold_temperature_sensor_fault_status);
   return;
 }
 
@@ -8215,7 +8218,8 @@ void cm848_sensorChannel10_intakeManifoldTemperatureProcess(void)
              intake_manifold_temperature_linearization_axis,
              intake_manifold_temperature_linearization_values,2,&ema_filter_state_t_003fa080,9,0x13,
              0x14,&intake_manifold_temperature_sensor_value,
-             &intake_manifold_temperature_sensor_default_value,&sensor_channel9_fault_status);
+             &intake_manifold_temperature_sensor_default_value,
+             &intake_manifold_temperature_sensor_fault_status);
   return;
 }
 
@@ -12946,7 +12950,7 @@ LAB_00013db8:
    (intake_manifold_temperature_lead_time_constant_table_output from
    intake_manifold_temperature_lead_charge_flow_axis /
    intake_manifold_temperature_lead_time_constant_values = e2m 18D7 C_TPE_IMT_Lead_Mass_Flow_Axis /
-   18D8 C_TPE_IMT_Lead_Time_Cnst_Table; 0 when sensor_channel9_fault_status or
+   18D8 C_TPE_IMT_Lead_Time_Cnst_Table; 0 when intake_manifold_temperature_sensor_fault_status or
    air_handling_compensation_and_diagnostic_bypass_cal is nonzero or bit 0x4000 of
    algorithm_enable_flags_20_cal is clear), runs
    cm848_calculateIntakeManifoldTemperatureLeadCompensation (the lead compensation) and filters
@@ -12981,7 +12985,7 @@ void cm848_filterAndSelectIntakeManifoldTemperature(void)
                  (&DAT_003fa618,charge_mass_flow_filtered,
                   intake_manifold_temperature_lead_charge_flow_axis,
                   intake_manifold_temperature_lead_time_constant_values,0);
-  iVar2 = (int)(short)sensor_channel9_fault_status;
+  iVar2 = (int)(short)intake_manifold_temperature_sensor_fault_status;
   if (((iVar2 != 0) || (air_handling_compensation_and_diagnostic_bypass_cal != 0)) ||
      (intake_manifold_temperature_lead_time_constant =
            intake_manifold_temperature_lead_time_constant_table_output,
@@ -13006,7 +13010,7 @@ void cm848_filterAndSelectIntakeManifoldTemperature(void)
      ((uVar4 = charge_temperature_estimate_status,
       (system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x10) != 0 &&
       ((fuel_pressure_phase_fault_gate_enable >> 1 & 1) != 0)))) {
-    uVar4 = sensor_channel9_fault_status | charge_temperature_estimate_status;
+    uVar4 = intake_manifold_temperature_sensor_fault_status | charge_temperature_estimate_status;
   }
   if (((((fault_detected_bits_352_to_367 & 0x40) == 0) ||
        (((&fault_status_array)[DAT_00059b26 * 3] & 0x10) == 0)) ||
@@ -13064,10 +13068,11 @@ void cm848_initializeIntakeTemperatureFilterStates(void)
        (int)(short)intake_manifold_temperature_sensor_value << 0x10;
   intake_manifold_temperature_lag_second_filter.coefficient =
        &intake_manifold_temperature_lag_filter_coefficient;
-  if ((sensor_channel9_fault_status == 0) || (sensor_channel9_fault_status == 1)) {
+  if ((intake_manifold_temperature_sensor_fault_status == 0) ||
+     (intake_manifold_temperature_sensor_fault_status == 1)) {
     intake_manifold_temperature_filtered_source = 0;
   }
-  else if (sensor_channel9_fault_status == 2) {
+  else if (intake_manifold_temperature_sensor_fault_status == 2) {
     intake_manifold_temperature_filtered_source = 2;
   }
   return;
@@ -22807,8 +22812,8 @@ void j1939_receivePgn56576Handler(int param_1)
   int iVar4;
   
   if (*(short *)(param_1 + 4) == 8) {
-    j1939_prop_status_byte3 = *(byte *)(param_1 + 2);
-    j1939_prop_status_byte2 = *(byte *)(param_1 + 3);
+    j1939_pgn56320_source_address = *(byte *)(param_1 + 2);
+    j1939_pgn56320_destination_address = *(byte *)(param_1 + 3);
     if (((governor_system_config_flags & 0x800) != 0) &&
        (j1939_anti_theft_status_transmit_state == 0)) {
       j1939_anti_theft_status_transmit_state = 2;
@@ -24119,8 +24124,8 @@ void cm848_sendPgn56320AntiTheftStatus(void)
                    (char)j1939_anti_theft_password_valid_cal << 2 |
                    (byte)j1939_anti_theft_encryption_seed_present_cal;
     j1939_pgn56320_encryption_seed = j1939_anti_theft_encryption_seed_cal;
-    j1939_pgn56320_tx_message.header.can_id._3_1_ = j1939_prop_status_byte3;
-    j1939_pgn56320_tx_message.header.can_id._2_1_ = j1939_prop_status_byte2;
+    j1939_pgn56320_tx_message.header.can_id._3_1_ = j1939_pgn56320_source_address;
+    j1939_pgn56320_tx_message.header.can_id._2_1_ = j1939_pgn56320_destination_address;
     sendJ1939Message(&j1939_pgn56320_tx_message);
     j1939_anti_theft_status_transmit_state = 0;
   }
@@ -24804,8 +24809,7 @@ void cm848_sendJ1939ExtendedResponse(undefined4 param_1,word param_2)
 void cm848_j1939HandlePgn65234Dm10(void)
 
 {
-  j1939_dm11_feature_config_word = j1939_reverseByteOrder16(&supported_non_continuous_monitors_bits)
-  ;
+  j1939_dm10_payload = j1939_reverseByteOrder16(&supported_non_continuous_monitors_bits);
   sendJ1939Message(&j1939_dm10_tx_message);
   return;
 }
@@ -24825,7 +24829,7 @@ void cm848_initializePgn65234Dm10Handler(void)
   j1939_dm10_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65234_priority_cal & 7) << 2,0xfed200);
   j1939_dm10_tx_message.header.data_length = 2;
-  j1939_dm10_tx_message.data_pointer = (undefined *)&j1939_dm11_feature_config_word;
+  j1939_dm10_tx_message.data_pointer = (undefined *)&j1939_dm10_payload;
   j1939_dm10_tx_message.data_end_pointer = &DAT_003fab68;
   j1939_dm10_tx_message.header.can_id =
        CONCAT31(j1939_dm10_tx_message.header.can_id._0_3_,(char)j1939_source_address);
@@ -63328,7 +63332,7 @@ void cm848_selectCompressorInletTemperature(void)
   ushort uVar1;
   ushort uVar2;
   
-  uVar2 = sensor_channel20_fault_status;
+  uVar2 = compressor_inlet_temperature_sensor_fault_status;
   if ((((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x40) == 0) ||
       ((fuel_timing_demand_fault_gate_enable & 1) == 0)) &&
      (((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x80) == 0 ||
@@ -63367,16 +63371,18 @@ void cm848_selectCompressorInletTemperature(void)
 /* Boot pass of the compressor inlet temperature input: the source from the channel 20 fault status
    and the first value (was cm848_initializeAmbientAirTemperatureInput) | earlier note: Boot pass of
    the ambient air temperature input: compressor_inlet_temperature_source from
-   sensor_channel20_fault_status (0 or 1 -> 0, 2 -> 2) and compressor_inlet_temperature =
-   compressor_inlet_temperature_sensor_value. (was cm848_initialization_step_10) */
+   compressor_inlet_temperature_sensor_fault_status (0 or 1 -> 0, 2 -> 2) and
+   compressor_inlet_temperature = compressor_inlet_temperature_sensor_value. (was
+   cm848_initialization_step_10) */
 
 void cm848_initializeCompressorInletTemperature(void)
 
 {
-  if ((sensor_channel20_fault_status == 0) || (sensor_channel20_fault_status == 1)) {
+  if ((compressor_inlet_temperature_sensor_fault_status == 0) ||
+     (compressor_inlet_temperature_sensor_fault_status == 1)) {
     compressor_inlet_temperature_source = 0;
   }
-  else if (sensor_channel20_fault_status == 2) {
+  else if (compressor_inlet_temperature_sensor_fault_status == 2) {
     compressor_inlet_temperature_source = 2;
   }
   compressor_inlet_temperature = compressor_inlet_temperature_sensor_value;

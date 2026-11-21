@@ -18,7 +18,7 @@ determinable from the binary alone — see "Still blocked" below.
 |----|---------|-----------|-------------------------|------------|
 | 0  | (capture) | input | **Crank position sensor** — `engine_injectionTiming_crankSyncDispatch` reads PARAM4 (captured tooth); `mpc555_updateEngineCrankState`, `injectorTimingCalculation`, hpcr sync. 42 refs. | confirmed input |
 | 1  | (capture) | input | **Cam / secondary position sensor** input capture — same crank-sync readers | confirmed input |
-| 2  | 7 | — | engine status timing — `cm848_updateEngineStatusTimers`, `mpc555_updateEngineStatusWord` | inferred |
+| 2  | 7 | — | its flag counts end-of-injection-limit violations: `cm848_monitorInjectionLimitViolationCounters` (was `cm848_updateEngineStatusTimers`; e2m 804A / 804B, fault 325) | inferred |
 | 3  | (capture) | input | sync-pulse input — `hpcr_processEngineSyncPulses`, `mpc555_updateEngineCrankState` | inferred |
 | 4  | 0xa | output | cold-start-gated output — `cm848_protection_timer_init` enables/disables CH4 **and CH9** (`TPUA_CH4_PARAM0 |/& 0x8000`) by `cold_start_phase` + a standby QADC sensor check | output, device unknown |
 | 5  | 0xa | output | output — `FUN_00528508` | unknown |
@@ -30,7 +30,7 @@ determinable from the binary alone — see "Still blocked" below.
 | 11 | 0xb | — | HPCR engine sync/timing — `hpcr_processEngineSyncPulses`, `mpc555_resetEngineTimingAccumulators` | inferred |
 | 12 | 0xc | — | HPCR engine timing accumulate — same hpcr/reset owners | inferred |
 | 13 | 0xc | — | HPCR engine timing | inferred |
-| 14 | 0xb | output | configured from calibration by `cm848_protection_threshold_calib_check` (writes CH14 PARAM + MIOS PWM); also hpcr sync, `mpc555_updateEngineRunState` | output, device unknown |
+| 14 | 0xb | output | the injector driver recharge current control: `cm848_loadInjectorDriverCalibration` (was `cm848_protection_threshold_calib_check`) writes its period, e2m 8041 +12 HPCR_IRCHG_Period (`injector_driver_recharge_current_period_microseconds`); also hpcr sync, `mpc555_updateEngineRunState` | injector driver (2026-11-20) |
 | 15 | 0xa | output | output (CFSR-assigned only) | unknown |
 
 **Function-number groups:** 7/8 = status timers (CH2,7); **9 = injection** (CH6 confirmed, CH9/10);

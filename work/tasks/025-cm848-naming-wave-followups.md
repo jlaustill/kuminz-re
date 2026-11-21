@@ -704,3 +704,26 @@ PGN 57088 is the J1939 DM13 stop/start broadcast implementation (Cummins DM13 pa
 - 5 ms main-loop phase is now confirmed: PITC 4999 / diag_record_queue_add_entry (0x538c8c - really the J1939 periodic transmit registration) stores interval / 10 ticks that cm848_phaseAProcessing advances once per group-A pass (every 2 phases) with CCVS1 100 / EEC1 20 / and THCYTMLM 0.1 s = 50 -> 5 s; firmware/CLAUDE.md still says unconfirmed
 - No edge-detecting consumer of the 100 ms test-switch pulse was found: protection_threshold_check (degenerate self-compare) / fuel_demandRateLimit_outputCheck / cm848_periodicControlLoopFaultHandling read switch 31 as a held input (alternate throttle under system_feature_config_flags bits 12-13); only cm848_updateJ1939ReceptionControlFlag edge-detects it (bit 9 + derate) - a fault flash-out user (if any) is still unidentified
 
+## Resolved by PR #53 round 4 (rename wave 15, 2026-11-20)
+
+The old names this file cites were renamed in PR #53 (the leads above keep their wording):
+- `engine_protection_conditionCode_evaluate` → `cm848_controlAirConditioningClutchForDrTruck`
+- `engine_protection_fuelMass_rpmCheck` → `cm848_controlAirConditioningClutchForBrTruck`
+- `fuel_demand_governor_output` → `all_speed_governor_equivalent_throttle`
+- `cruise_speed_error_integral_limit` → `cruise_rpm_ratio_integral_limit`
+- `protection_event26_fuel_qty_gate_upper` → `air_conditioning_high_pressure_off_threshold`
+- `hpcr_initJ1939BufferValues` → `cm848_initializePciMessageStatusBytes`
+- `j1939_msg_slot_hh_control` → `pci_spare_transmit_message_status`
+- `hpcr_protection_eval_mode` → `air_conditioning_control_configuration`
+- `hpcr_fuel_mode_state_transition` → `cm848_controlAirConditioningClutch`
+- `cm848_restoreEngineOperatingMode` → `cm848_selectAllSpeedGovernorApplicationMode`
+- `cold_start_delay_counter` → `low_speed_governor_stopped_vehicle_settled_count`
+- `governor_speed_error_delta` → `low_speed_governor_filtered_speed_error`
+- `governor_enabled_flag` → `low_speed_governor_aggressive_gain_inhibit_flag`
+- `cruise_speed_high_limit` → `cruise_maximum_road_speed_cal`
+- `cm848_j1939HandleProprietaryCommand` → `cm848_j1939HandlePgn56832Reset`
+- `cm848_calculateFuelTimingTarget` → `cm848_calculateAllSpeedGovernorThrottleReference`
+- `cm848_calculateFuelDemandWithConditions` → `cm848_calculateAllSpeedGovernorEquivalentThrottle`
+- `protection_system_init_flag` → `cruise_discrete_switch_inputs_used_cal`
+- `fuel_demand_speed_deadband_cal` → `all_speed_governor_switch_droop_fueling_offset`
+- `protection_timing_period_cal` → `tire_revolutions_per_mile_cal`
