@@ -327,12 +327,13 @@ ratio module.**
   - the session functions' `int32_t` parameter was found because the first 7a build rendered `int` as
     `dword`.
 - [x] Round 8:
-  - stages A, B, E and F are EQUIVALENT (0 functions differ);
+  - stages A, B, E and F are EQUIVALENT: no function differs, except two in stage F, each of which declares one local
+    in another place;
   - the width check: every aligned 8BBC / 8C17 / 8C18 / 8C53 record has a row of its size (two unused words have
     none);
   - stage C was read diff by diff;
-  - each aligned e2m record was checked against its row's users (`align_block.py`), and each block stops
-    where it drifts.
+  - each aligned e2m record's description was read against its row's users (`align_block.py`), and each block
+    stops where it drifts.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.

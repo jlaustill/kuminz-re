@@ -1,0 +1,12 @@
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:35478: ...   cm848_monitorConverterClutchEngagement, stage E's misreading; origin
+firmware/CM848_S90140.06_analysis/output/cm848_rom.ghidra.cpp:35549: ...   cm848_selectGovernorPressureHighGear in stage E; originally
+work/tasks/046-cm848-egr-flow-estimate.md:420: ...  - `cm848_monitorConverterClutchEngagement` (was `cm848_processProtectio
+work/tasks/046-cm848-egr-flow-estimate.md:423: ...  - `cm848_selectGovernorPressureHighGear` (was `cm848_calculateProtect
+work/tasks/025-cm848-naming-wave-followups.md:355: ..._4_boost_table_c_* (used when switch 12 is on and protection_fuel_check_bypass_flag is 0) / 0x408154 0x408166 0x4
+work/tasks/025-cm848-naming-wave-followups.md:605: ... while locked in second with the lever in 1 or 2. protection_derate_rpm_limit_floor_cal 0x408360 is also a pressure. 
+work/tasks/025-cm848-naming-wave-followups.md:776: ...- `cm848_processProtectionRateLimitFlags` → `cm848_monitorConverterClutchEngagement`
+work/tasks/027-cm848-naming-wave-2-followups.md:66: ...tion_rpm_peak_b / protection_engine_load_scaled / protection_rpm_peak_threshold = 3125 rpm) is genuinely engi
+work/tasks/027-cm848-naming-wave-2-followups.md:73: ...at drive the learned-gain adaptation (compared to protection_rpm_peak_threshold / low_threshold).
+work/tasks/027-cm848-naming-wave-2-followups.md:74: ...- protection_fuel_demand_status80_set_threshold_cal (0x40832a = 382) and _clear_t
+work/tasks/027-cm848-naming-wave-2-followups.md:80: ...- protection_fuel_demand_status80_set_threshold_cal (0x40832a=382) and _clear_thr
+work/tasks/027-cm848-naming-wave-2-followups.md:80: ...and thresholds gating proposal 4; status10 set is protection_fuel_demand_status10_set_threshold_cal (0x4083...
