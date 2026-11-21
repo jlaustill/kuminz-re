@@ -252,3 +252,19 @@ Hand work on the round 7 lead.
 - **Logs:** the round 10 build logs (`build_r10*.log`, with 10F's first attempt `build_r10f_attempt1.log`) and
   `verify_round10.log` are in `session_folder_large_files.tar.xz` (`round10/update_large_tar_r10.sh`).
 - **Commit messages:** `commit_r10*.txt`.
+
+## Round 11: the e2m output and switch maps (`session_folder/round11/`)
+
+- **Stage A:** `worklist_r11a.py`, `new_r11a.json` (rows through `../round10/apply_r10a_new.py`) and
+  `apply_r11a_extra.py` (the `FUN_0051dfdc` function row and the arrays.csv switch map).
+- **Stage B:** `apply_r11b_types.py` (the six request-byte bitfield structs from e2m 1577), `apply_r11b_lift_pump.py`
+  (types, `LIFT_PUMP_RUN_REASON`) and `apply_r11b_docs.py` (the byte 0 map, the 16-23 record names).
+  `bitfield_normalize.py` is the proof helper. `output_bit_reads.py` lists the tested bits with their records.
+- **Stage C:**
+  - `apply_r11c_switch_struct.py` is the all-bitfield pilot; its numbers are in `pilot_r11c_numbers.txt`.
+  - `apply_r11c_switch_narrow.py` is the committed shape.
+  - `switch_bit_reads.py` lists the tested switches and their setters; `switch_normalize.py` / `switch_normalize2.py`
+    are the proof helpers.
+- **Stage D:** `apply_r11d_field.py` (output 54).
+- **Logs:** the round 11 build logs (with the pilot's `build_r11c_attempt1.log`) are in the large-files tarball.
+- **Commit messages:** `commit_r11*.txt`.
