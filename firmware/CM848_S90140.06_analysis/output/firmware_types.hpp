@@ -1085,7 +1085,7 @@ typedef struct pci_diagnostic_response_t pci_diagnostic_response_t;
 typedef struct fuel_demand_control_t fuel_demand_control_t;
 typedef struct protection_condition_flags_t protection_condition_flags_t;
 typedef struct protection_status_flags_t protection_status_flags_t;
-typedef struct protection_timer_state_t protection_timer_state_t;
+typedef struct transmission_pressure_state_t transmission_pressure_state_t;
 typedef struct engine_crank_state_t engine_crank_state_t;
 typedef struct fuel_pressure_governor_state_t fuel_pressure_governor_state_t;
 typedef struct engine_speed_state_t engine_speed_state_t;
@@ -1295,12 +1295,12 @@ struct protection_status_flags_t {
     uint8_t rate_limit_flags;  /* Rate limit flags */
 };
 
-struct protection_timer_state_t {
-    uint16_t status_code;  /* Status code 1-0x18 (sth / lha / lhz) - the high word of the old status_code dword */
-    uint16_t status_code_hold_timer;  /* Countdown loaded from protection_timer_status_code_b_cal and decremented in cm848_decrementProtectionTimers */
-    uint16_t timeout_counter;  /* Timeout counter */
-    uint16_t state1_timer;  /* State 1 timer */
-    uint16_t state2_timer;  /* State 2 timer */
+struct transmission_pressure_state_t {
+    uint16_t pressure_state;  /* e2m 8C53 +0 RE_Trans_Pressure_State ('Indicate the RE transmission pressure state'; table-resolved): which governor pressure curve sets governor_pressure_target, 1-0x18, written by every governor pressure mode (the anti-hunt mode: 1 base / 0x12 / 0x13 boost / 0x14 / 0x15 hold); 2 in the RAM dump (was status_code) */
+    uint16_t anti_hunt_boost_limit_timer;  /* e2m 8C17 +0 RE_AH_Boost_Limit_Timer ('Used to limit time trans gov pressure can be boosted for upshift'): reloaded from transmission_anti_hunt_boost_limit_time; at 0 the 1-2 boost stops (was status_code_hold_timer) */
+    uint16_t anti_hunt_delay_timer;  /* e2m 8C17 +2 RE_AH_Delay_Timer ('Used to delay start of gov pressure boost for AH upshifts'): reloaded from transmission_anti_hunt_delay_time when a forced upshift completes; no new boost until it is 0 (was timeout_counter) */
+    uint16_t anti_hunt_1_2_boost_timer;  /* e2m 8C17 +4 RE_AH_Timer_1_2 ('Controls duration of boost press for AH 1-2 upshift'): reloaded from transmission_anti_hunt_1_2_boost_time (was state1_timer) */
+    uint16_t anti_hunt_2_3_boost_timer;  /* e2m 8C17 +6 RE_AH_Timer_2_3 ('Controls duration of boost press for AH 2-3 upshift'): reloaded from transmission_anti_hunt_2_3_boost_time (was state2_timer) */
 };
 
 struct engine_crank_state_t {

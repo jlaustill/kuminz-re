@@ -1763,7 +1763,7 @@ address,name,type,comment
 0x003fb1c8,protection_load_history_index,word,
 0x003fb1ca,protection_action_mode_snapshot,word,
 0x003fb1cc,protection_condition_state_bit0_flag,word,
-0x003fb1ce,transmission_output_speed_change_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_filterProtectionLoadValue: produces transmission_output_speed_change from protection_load_rate_delta (was protection_load_filter_state_b_ptr + the accumulator row at +4 protection_load_filter_accum_b, dword)
+0x003fb1ce,transmission_output_speed_change_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_filterProtectionLoadValue: produces transmission_output_shaft_acceleration from protection_load_rate_delta (was protection_load_filter_state_b_ptr + the accumulator row at +4 protection_load_filter_accum_b, dword)
 0x003fb1d6,protection_load_scaled_input_filter,ema_filter_state_t,cm848_signedFirstOrderFilter record (ema_filter_state_t: coefficient pointer + Q16.16 accumulator) - cm848_updateTransmissionConditionFlags: produces protection_load_scaled_input from half of engine_acceleration_unfiltered (was protection_load_scaled_filter_state_ptr + the accumulator row at +4 protection_load_scaled_filter_accum, dword)
 0x003fb1de,,word,Lookup cache: the last axis segment offset (2 x index) kept by sensorChannelTypeB_configInit sensorChannelTypeB_update
 0x003fb1e0,,ema_filter_state_t,EMA filter state - used by cm848_initSensorLookupTable5 / cm848_processSensorLookupTable5 (was PTR_DAT_003fb1e0)
@@ -3357,16 +3357,16 @@ address,name,type,comment
 0x004077ec,variable_geometry_turbocharger_adjustment_fault_time,word,code: limit of both adjustment error counters (up while out of tolerance, down while inside); reaching it latches the error; dump 200. e2m: C_VGT_Pos_Adjustment_Fault_Time (0x011A390E) is +0x0E. (was load_protection_confirm_hysteresis_limit) | earlier note: Stage 2 limit used by both instances (1 read each in function A and B). ROM address 0x4077ec, so no _cal. (was protection_confirm_limit_b_cal)
 0x004077ee,variable_geometry_turbocharger_adjustment_filter_coefficient,word,code: coefficient word pointed to by both the closed-position filter state and the span filter state (init sets both pointers to it); dump 55784. e2m: C_VGT_Pos_Adjustment_Fil_Cnst (0x011A3910) is +0x10. (was load_protection_filter_coefficient) | earlier note: EMA filter coefficient: the weight of the previous value in 1/65536 (0 = no filtering) - variable_geometry_turbocharger_span_filter_state.coefficient points here (was fault_status_filter_coeff_cal)
 0x004077f8,overdrive_downshift_maximum_output_speed,word,A 4-3 downshift (overdrive solenoid off) and the cruise downshift request happen only below this output speed (24800 = 3100 rpm - about 74 mph) (was protection_load_check_lower_threshold_cal) (Medium confidence)
-0x0040780c,protection_overtemp_fuel_check_enable_cal,word,
-0x0040780e,protection_timer_status_code_b_cal,word,
-0x00407810,protection_timeout_counter_cal,word,
-0x00407812,protection_state1_timer_cal,word,
-0x00407814,protection_state2_timer_cal,word,
-0x00407816,protection_load_delta_min_cal,word,
-0x00407818,protection_load_rpm_delta_trigger_cal,word,
-0x0040781a,protection_derate_fuel_demand_threshold_cal,word,
-0x0040781e,protection_load_rate_b_upper_cal,word,
-0x00407820,protection_load_rate_b_lower_cal,word,
+0x0040780c,transmission_third_gear_lockup_enable,word,e2m 8BBC +0 RE_3rd_Gear_Lockup ('Indicates if lockup should be allowed in 3rd gear'; 1 in the RAM dump); tested by cm848_applyConverterLockupSchedule and cm848_processOverdriveSwitchAndShift. Block 8BBC is not in the parameter ID table: its base is proved by the anti-hunt words that follow (was protection_overtemp_fuel_check_enable_cal)
+0x0040780e,transmission_anti_hunt_boost_limit_time,word,e2m 8BBC +2 RE_AH_Boost_Limit_Timer_Max ('Anti-hunt timer boost limit'; 10 ms counts, 11 = 110 ms): reloads transmission_pressure_state.anti_hunt_boost_limit_timer in the anti-hunt governor pressure mode (cm848_selectGovernorPressureAntiHunt) (was protection_timer_status_code_b_cal)
+0x00407810,transmission_anti_hunt_delay_time,word,e2m 8BBC +4 RE_AH_Delay_Timer_Max ('1-2 AH upshift delay to allow time for OSS accel calc'; 60 = 600 ms): reloads transmission_pressure_state.anti_hunt_delay_timer after a forced upshift completes (was protection_timeout_counter_cal)
+0x00407812,transmission_anti_hunt_1_2_boost_time,word,e2m 8BBC +6 RE_AH_Timer_1_2_Max ('Time boost press held after 2nd gear is identified'; 100 = 1 s) (was protection_state1_timer_cal)
+0x00407814,transmission_anti_hunt_2_3_boost_time,word,e2m 8BBC +8 RE_AH_Timer_2_3_Max ('Time boost press held after 3rd gear is identified'; 200 = 2 s) (was protection_state2_timer_cal)
+0x00407816,transmission_available_torque_minimum,word,e2m 8BBC +A RE_Available_Torque_Min ('Minimum calculated available torque for post_shift accel calc'; 0): a smaller transmission_next_gear_available_torque counts as 0 (was protection_load_delta_min_cal)
+0x00407818,transmission_3_4_unlock_engine_speed_drop,word,e2m 8BBC +C RE_Delta_RPM_To_Unlock ('Engine speed drop from 3rd gear to unlock for 3-4 shift'; 368 = 46 rpm); compared in cm848_applyConverterUnlockConditions (was protection_load_rpm_delta_trigger_cal)
+0x0040781a,transmission_vehicle_inertia_learning_minimum_throttle,word,e2m 8BBC +E RE_Inertia_Calc_Min ('Minimum throttle opening to allow vehicle inertia calc'; 120 = 30 %): cm848_learnVehicleInertia runs only above it (was protection_derate_fuel_demand_threshold_cal)
+0x0040781e,transmission_vehicle_inertia_maximum,word,e2m 8BBC +12 RE_Inertia_Max (x 0.32164 slug ft2; 221 = 71): the largest measurement cm848_learnVehicleInertia accepts (was protection_load_rate_b_upper_cal)
+0x00407820,transmission_vehicle_inertia_minimum,word,e2m 8BBC +14 RE_Inertia_Min: the smallest measurement cm848_learnVehicleInertia accepts (was protection_load_rate_b_lower_cal)
 0x00407822,protection_load_upper_threshold_b_cal,word,
 0x00407824,protection_load_active_threshold_cal,word,
 0x00407826,protection_derate_l1_timer_expired_cal,word,
@@ -3390,7 +3390,7 @@ address,name,type,comment
 0x0040784a,protection_recovery_timer_init_cal,word,
 0x0040784c,governor_pressure_gear1_base_limit,word,48RE governor pressure ceiling in 1/18.56 kPa (2880 = 22.5 psi) - clamps the gear 1 base-state interpolated governor_pressure_target until engine RPM forces escalation to the elevated value (was protection_derate_rpm_limit_c)
 0x0040784e,governor_pressure_gear2_base_limit,word,48RE governor pressure ceiling in 1/18.56 kPa (7168 = 56 psi) - clamps the gear 2 base-state interpolated governor_pressure_target until engine RPM forces escalation to the elevated value (was protection_derate_rpm_limit_d)
-0x00407850,protection_load_rate_b_delta_threshold_cal,word,
+0x00407850,transmission_vehicle_inertia_learning_minimum_acceleration_change,word,e2m 8BBC +44 RE_Min_Accel_Inertia_Calc ('Min absolute OSS accel to allow inertia update'; 0 in the RAM dump): cm848_learnVehicleInertia keeps a measurement only when the acceleration change is larger (was protection_load_rate_b_delta_threshold_cal)
 0x00407852,protection_derate_fuel_exit_threshold_cal,word,
 0x00407854,protection_thermal_lockout_rpm_delta_cal,word,
 0x00407858,protection_fuel_demand_l4_threshold_cal,word,
@@ -3402,11 +3402,11 @@ address,name,type,comment
 0x00407864,protection_rpm_lower_bound_cal,word,
 0x00407866,protection_init_timer_cal,word,
 0x00407868,protection_sensor_fault_active_code_cal,word,
-0x0040786a,protection_load_scale_table_cal,byte,
-0x00407876,protection_load_xaxis_cal_b,word[8],
-0x00407886,protection_load_table_cal_b,word[8],
-0x00407896,protection_load_timer_axis_cal,word[8],
-0x004078a6,protection_load_timer_values_cal,word[8],
+0x0040786a,transmission_gear_ratio_table,byte,the gear ratios x 32, indexed gear + 1: [2] 78 = 2.44 (1st), [3] 46 = 1.44, [4] 32 = 1.00, [5] 20 = 0.63 (4th), [6] 14 unused; [0] 10 and [1] 512 unexplained (RAM dump). Typed byte, read as words (was protection_load_scale_table_cal)
+0x00407876,transmission_anti_hunt_1_2_boost_pressure_axis,word[8],e2m RE_AH_Boost_Curve_1_2_OSS_Axis: the output shaft speed axis (1/8 rpm) (was protection_load_xaxis_cal_b)
+0x00407886,transmission_anti_hunt_1_2_boost_pressure_values,word[8],e2m RE_AH_Boost_Curve_1_2 ('Governor press vs oss to force 1-2 shift under anti-hunt conditions'; 1/128 psi): pressure state 0x12 (was protection_load_table_cal_b)
+0x00407896,transmission_anti_hunt_2_3_boost_pressure_axis,word[8],e2m RE_AH_Boost_Curve_2_3_OSS_Axis: the output shaft speed axis (was protection_load_timer_axis_cal)
+0x004078a6,transmission_anti_hunt_2_3_boost_pressure_values,word[8],e2m RE_AH_Boost_Curve_2_3 ('... to force 2-3 shift under anti-hunt conditions'): pressure state 0x13 (was protection_load_timer_values_cal)
 0x004078b6,protection_derate_l4_rpm_axis_cal,word[13],
 0x004078d0,protection_derate_l4_rpm_output_cal,word[13],
 0x004078ea,protection_threshold_l2_axis_cal,word[9],
@@ -3419,10 +3419,10 @@ address,name,type,comment
 0x00407980,fuel_demand_ctrl_values_cal,word[9],
 0x00407992,protection_derate_l2_rpm_axis_a_cal,word[13],
 0x004079ac,protection_derate_l2_rpm_output_a_cal,word[13],
-0x004079c6,protection_derate_l1_fuel_axis_cal,word[9],
-0x004079d8,protection_derate_l1_fuel_output_cal,word[9],
-0x004079ea,protection_derate_l2_fuel_axis_cal,word[9],
-0x004079fc,protection_derate_l2_fuel_output_cal,word[9],
+0x004079c6,transmission_anti_hunt_1_2_hold_pressure_axis,word[9],e2m RE_Hold_Curve_1_Throttle_Axis: the accelerator axis (400 = 100 %) (was protection_derate_l1_fuel_axis_cal)
+0x004079d8,transmission_anti_hunt_1_2_hold_pressure_values,word[9],e2m RE_Hold_Curve_1 ('Governor Press vs TPS to prevent 1-2 upshift in anti-hunt conditions'): pressure state 0x14 (was protection_derate_l1_fuel_output_cal)
+0x004079ea,transmission_anti_hunt_2_3_hold_pressure_axis,word[9],e2m RE_Hold_Curve_2_Throttle_Axis (was protection_derate_l2_fuel_axis_cal)
+0x004079fc,transmission_anti_hunt_2_3_hold_pressure_values,word[9],e2m RE_Hold_Curve_2 ('... to prevent 2-3 upshift in anti-hunt conditions'): pressure state 0x15 (was protection_derate_l2_fuel_output_cal)
 0x00407a0e,protection_overtemp_l3_coolant_axis_cal,word[9],
 0x00407a20,protection_overtemp_l3_coolant_output_cal,word[9],
 0x00407a32,protection_overtemp_coolant_axis_b_cal,word[9],
@@ -3455,14 +3455,14 @@ address,name,type,comment
 0x00407c60,protection_threshold_l3_output_b_cal,word[9],
 0x00407c72,protection_threshold_l4_axis_b_cal,word[9],
 0x00407c84,protection_threshold_l4_output_b_cal,word[9],
-0x00407c96,protection_load_xaxis_cal_a,word[14],
-0x00407cb2,protection_load_table_cal_a,word[14],
-0x00407cce,protection_scaled_limit_fuel_axis_a_cal,word[7],
-0x00407cdc,protection_scaled_limit_fuel_output_a_cal,word[7],
-0x00407cea,protection_scaled_limit_fuel_axis_b_cal,word[7],
-0x00407cf8,protection_scaled_limit_fuel_output_b_cal,word[7],
-0x00407d06,protection_scaled_limit_fuel_axis_c_cal,word[7],
-0x00407d14,protection_scaled_limit_fuel_output_c_cal,word[7],
+0x00407c96,governor_pressure_base_curve_axis,word[14],the output shaft speed axis of the base governor pressure curve (pressure state 1; also in cm848_selectGovernorPressureBaseCurve) (was protection_load_xaxis_cal_a)
+0x00407cb2,governor_pressure_base_curve_values,word[14],the base governor pressure curve (pressure state 1) (was protection_load_table_cal_a)
+0x00407cce,transmission_1_2_upshift_minimum_post_shift_acceleration_axis,word[7],e2m RE_PSA_Max_1_2_Throttle_Axis: the accelerator axis (was protection_scaled_limit_fuel_axis_a_cal)
+0x00407cdc,transmission_1_2_upshift_minimum_post_shift_acceleration_values,word[7],e2m RE_PSA_Max_1_2 ('Min acceptable post-shift accel vs TPS to allow 1-2 upshift'; signed) (was protection_scaled_limit_fuel_output_a_cal)
+0x00407cea,transmission_2_3_upshift_minimum_post_shift_acceleration_axis,word[7],e2m RE_PSA_Max_2_3_Throttle_Axis (was protection_scaled_limit_fuel_axis_b_cal)
+0x00407cf8,transmission_2_3_upshift_minimum_post_shift_acceleration_values,word[7],e2m RE_PSA_Max_2_3 (was protection_scaled_limit_fuel_output_b_cal)
+0x00407d06,transmission_3_4_upshift_minimum_post_shift_acceleration_axis,word[7],e2m RE_PSA_Max_3_4_Throttle_Axis (was protection_scaled_limit_fuel_axis_c_cal)
+0x00407d14,transmission_3_4_upshift_minimum_post_shift_acceleration_values,word[7],e2m RE_PSA_Max_3_4; in 3rd gear a predicted acceleration above it sets bit 2 of protection_condition_flags_t_0040b0e8.condition_eval (was protection_scaled_limit_fuel_output_c_cal)
 0x00407d22,protection_load_rate_l1_axis_cal,word[7],
 0x00407d30,protection_load_rate_l1_output_cal,word[7],
 0x00407d3e,protection_load_rate_l2_axis_cal,word[7],
@@ -3475,10 +3475,10 @@ address,name,type,comment
 0x00407da0,protection_fuel_limit_l2_output_cal,word[7],
 0x00407dae,protection_fuel_limit_l3_axis_cal,word[7],
 0x00407dbc,protection_fuel_limit_l3_output_cal,word[7],
-0x00407dca,protection_fuel_demand_corr_axis_cal,word[18],
-0x00407dee,protection_fuel_demand_corr_output_cal,word[18],
-0x00407e12,protection_rpm_corr_rpm_axis_cal,word[10],
-0x00407e26,protection_rpm_corr_rpm_output_cal,word[10],
+0x00407dca,transmission_throttle_prescale_axis,word[18],e2m RE_TPS_3DSCL_Throttle_Axis (17 points here, 8 in the 11.45 e2m) (was protection_fuel_demand_corr_axis_cal)
+0x00407dee,transmission_throttle_prescale_values,word[18],e2m RE_TPS_3DSCL (was protection_fuel_demand_corr_output_cal)
+0x00407e12,transmission_turbine_speed_prescale_axis,word[10],e2m RE_Turbine_3DSCL_Speed_Axis (9 points here, 8 in the 11.45 e2m) (was protection_rpm_corr_rpm_axis_cal)
+0x00407e26,transmission_turbine_speed_prescale_values,word[10],e2m RE_Turbine_3DSCL (was protection_rpm_corr_rpm_output_cal)
 0x00407e3a,protection_fuel_threshold_l3_axis_cal,word[9],
 0x00407e4c,protection_fuel_threshold_l3_values_cal,word[9],
 0x00407e5e,protection_fuel_load_rate_a_axis_cal,word[9],
@@ -3493,9 +3493,9 @@ address,name,type,comment
 0x00407f0c,protection_load_values_c_cal,word[11],
 0x00407f22,protection_load_axis_d_cal,word[9],
 0x00407f34,protection_load_values_d_cal,word[9],
-0x00407f46,protection_dual_axis_corr_axis1_cal,word[18],
-0x00407f6a,protection_dual_axis_corr_ystart_cal,word[10],
-0x00407f7e,protection_dual_axis_corr_yend_cal,word[153],
+0x00407f46,transmission_turbine_torque_x_axis,word[18],e2m RE_Torque_Input_TPS_Axis: the prescaled throttle (17) (was protection_dual_axis_corr_axis1_cal)
+0x00407f6a,transmission_turbine_torque_y_axis,word[10],e2m RE_Torque_Input_Turbine_Axis: the prescaled turbine speed (9) (was protection_dual_axis_corr_ystart_cal)
+0x00407f7e,transmission_turbine_torque_grid,word[153],e2m RE_Torque_Input ('Table to estimate trans turbine torque vs scaled TPS and turbine spd'; ft lb): 17 x 9 here, 5 x 5 in the 11.45 e2m (was protection_dual_axis_corr_yend_cal)
 0x004080b0,protection_threshold_l4_axis_c_cal,word[9],
 0x004080c2,protection_threshold_l4_output_c_cal,word[9],
 0x004080d4,protection_threshold_l3_axis_c_cal,word[9],
@@ -5238,29 +5238,29 @@ address,name,type,comment
 0x0040b0a0,variable_geometry_turbocharger_position_status,word,code: sensor fault status | 8 (span or closed adjustment error) | 32 (position control error), built by cm848_selectVariableGeometryTurbochargerPositionSource (dump 8). e2m: VGT_Position_Status (0x0119631A). (was protection_diagnostic_status)
 0x0040b0a2,variable_geometry_turbocharger_closed_position,i16,code: filtered closed position, forced to 12800 while fault 670 is set, replaced by the override value when the override flag is set (dump 12800). e2m: VGT_Closed_Position (0x0119D20E). (was protection_ema_output) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)
 0x0040b0a4,variable_geometry_turbocharger_closed_position_filtered,i16,code: output of the closed-position filter before the fault-670 and override substitutions (dump 10895, not explained by the hold logic). e2m: VGT_Filtered_Closed_Position (0x0119D210). (was protection_ema_output_prev) | retyped word -> i16 2026-11-20 (e2m signed, every load lha)
-0x0040b0ae,protection_scaled_limit_b,word,
-0x0040b0b0,protection_load_rate_divisor,word,
-0x0040b0b2,protection_scaled_limit_current,word,
-0x0040b0b4,protection_scaled_limit_next,word,
-0x0040b0b6,protection_rate_integrator_snapshot,word,e2m: e2m 8D14 +000A RE_EB_4_3_Cmd_Timer resolves here but does not match the code (layout drift, rename wave 15)
-0x0040b0b8,protection_load_upper_bound,word,
-0x0040b0ba,protection_load_delta_filtered,word,
-0x0040b0bc,protection_scaled_load,word,
+0x0040b0ae,transmission_output_torque_current_gear,word,e2m 8D14 +2 RE_Brake_Delay_4_3_Timer 'Brake Switch and timer = 0, allow 4-3 downshift' (MSEC): cm848_calculateTransmissionOutputTorqueInGear for the current gear (index gear + 1) (was protection_scaled_limit_b)
+0x0040b0b0,transmission_vehicle_inertia,word,e2m 8D14 +4 Transmission_Tow_Mode_Lamp 'Tow Mode lamp state command to the dash' (UNITLESS): the learned vehicle inertia (e2m RE_Inertia, x 0.32164 slug ft2; 53 = RE_Inertia_Default in the RAM dump): cm848_learnVehicleInertia stores a measurement within the minimum / maximum, cm848_predictPostShiftAcceleration divides by it (was protection_load_rate_divisor)
+0x0040b0b2,transmission_output_torque_at_shift_command,word,e2m 8D14 +6 RE_EB_4_3_Cmd_Active 'ON indicates the 4_3_Command feature is active' (UNITLESS): the current gear's output torque when the anti-hunt governor pressure mode (cm848_selectGovernorPressureAntiHunt) forced the 1-2 upshift; cm848_learnVehicleInertia subtracts the new gear's torque (was protection_scaled_limit_current)
+0x0040b0b4,transmission_output_torque_next_gear,word,e2m 8D14 +8 RE_EB_4_3_Cmd_Flag 'ON indicates the 4_3_Command feature has been triggered' (UNITLESS): cm848_calculateTransmissionOutputTorqueInGear for the next gear (index gear + 2; in 4th gear the current gear again) (was protection_scaled_limit_next)
+0x0040b0b6,transmission_output_shaft_acceleration_at_shift_command,word,e2m 8D14 +A RE_EB_4_3_Cmd_Timer 'Timer used to trigger 4_3_command feature' (MSEC): transmission_output_shaft_acceleration when the 1-2 upshift was forced (was protection_rate_integrator_snapshot) | earlier note: e2m: e2m 8D14 +000A RE_EB_4_3_Cmd_Timer resolves here but does not match the code (layout drift, rename wave 15)
+0x0040b0b8,transmission_predicted_post_shift_acceleration,word,e2m 8D14 +C RE_EB_Delay_4_3_Timer 'Timer used to delay 4-3 shift for ebrake' (MSEC): cm848_predictPostShiftAcceleration: transmission_next_gear_available_torque x 64 / transmission_vehicle_inertia (at most 0x7fff); the anti-hunt governor pressure mode (cm848_selectGovernorPressureAntiHunt) forces the upshift once it is above transmission_post_shift_acceleration_minimum (was protection_load_upper_bound)
+0x0040b0ba,transmission_road_load_torque,word,e2m 8D14 +E RE_TCC_Lock_State 'Indicates the logic controlling the torque converter driver' (UNITLESS): transmission_output_torque_current_gear - transmission_inertia_torque (clamped +-5000) (was protection_load_delta_filtered)
+0x0040b0bc,transmission_turbine_speed_in_gear,word,transmission_output_speed_in_use x the gear's transmission_gear_ratio_table value >> 5 (at most 0xffff) (was protection_scaled_load)
 0x0040b0be,protection_rpm_margin,word,
-0x0040b0c0,protection_scaled_limit_output,word,
-0x0040b0c2,protection_rate_integrator_quotient,word,
-0x0040b0c4,protection_load_delta,word,
-0x0040b0c6,protection_rate_integrator_delta,word,
-0x0040b0c8,protection_scaled_limit_delta,word,
-0x0040b0ca,protection_derate_level_trial,word,
-0x0040b0cc,protection_rpm_correction,word,
-0x0040b0ce,protection_fuel_demand_correction,word,
-0x0040b0d0,protection_scaled_output,word,
+0x0040b0c0,transmission_post_shift_acceleration_minimum,word,the e2m RE_PSA_Max_1_2 / _2_3 / _3_4 value at the current throttle ('Min acceptable post-shift accel vs TPS to allow ... upshift') (was protection_scaled_limit_output)
+0x0040b0c2,transmission_inertia_torque,word,transmission_output_shaft_acceleration x transmission_vehicle_inertia / 64 (clamped +-10000): the torque that accelerates the vehicle now (was protection_rate_integrator_quotient)
+0x0040b0c4,transmission_next_gear_available_torque,word,transmission_output_torque_next_gear - transmission_road_load_torque (0-5000; 0 below transmission_available_torque_minimum): the torque left to accelerate after the upshift (was protection_load_delta)
+0x0040b0c6,transmission_shift_acceleration_change,word,the output shaft acceleration change across the forced upshift (e2m RE_OSS_Accel_Change_1_2) (was protection_rate_integrator_delta)
+0x0040b0c8,transmission_shift_torque_change,word,the output torque change across the forced upshift (e2m RE_Torque_Change_1_2) (was protection_scaled_limit_delta)
+0x0040b0ca,transmission_output_torque_gear_index,word,the gear index last passed to cm848_calculateTransmissionOutputTorqueInGear (gear + 1 = the current gear) (was protection_derate_level_trial)
+0x0040b0cc,transmission_turbine_speed_prescaled,word,the turbine speed through transmission_turbine_speed_prescale_values (e2m RE_Turbine_3DSCL: 'pre-scale turbine spd for use in trans turbine torque calc') (was protection_rpm_correction)
+0x0040b0ce,transmission_throttle_prescaled,word,the accelerator (fuel_demand_control_t.calculated, 400 = 100 %) through transmission_throttle_prescale_values (e2m RE_TPS_3DSCL) (was protection_fuel_demand_correction)
+0x0040b0d0,transmission_output_torque_in_gear,word,transmission_turbine_torque x the gear's ratio >> 5: what cm848_calculateTransmissionOutputTorqueInGear returns (was protection_scaled_output)
 0x0040b0d2,transmission_output_speed_in_use_previous,word,transmission_output_speed_in_use sampled every protection_monitor_scan_period_cal (27) calls of cm848_filterProtectionLoadValue - the difference is the output shaft acceleration; only used when protection_monitor_enable_cal is 0 (ROM 1 here) (was engine_load_filtered_prev)
-0x0040b0d4,protection_dual_axis_correction,word,
+0x0040b0d4,transmission_turbine_torque,word,transmission_turbine_torque_grid at the two prescaled inputs (e2m RE_Torque_Input: 'estimate trans turbine torque vs scaled TPS and turbine spd'; ft lb) (was protection_dual_axis_correction)
 0x0040b0d6,protection_fuel_limit_b,word,
 0x0040b0d8,protection_load_rate_a,word,
-0x0040b0da,protection_load_rate_b,word,
+0x0040b0da,transmission_vehicle_inertia_measurement,word,transmission_shift_torque_change x 64 / transmission_shift_acceleration_change across the last forced upshift (cm848_learnVehicleInertia, 0-0xffff); stored as transmission_vehicle_inertia when inside the limits and the acceleration change is large enough (was protection_load_rate_b)
 0x0040b0dc,protection_load_check_timer_a,word,
 0x0040b0de,protection_load_check_timer_b,word,
 0x0040b0e0,transmission_selected_gear_previous,byte,transmission_selected_gear from the previous pass of cm848_applyConverterUnlockConditions - a change from 0x7F (lever 2) to 0x80 or 0x81 (drive) triggers event 0x12 and loads protection_thermal_lockout_cal (was protection_ramp_position_working)
@@ -5286,11 +5286,11 @@ address,name,type,comment
 0x0040b0fc,transmission_temperature_sensor_fault_flag,byte,Set while pending_faults bit 10 / 13 / 14 (P0711 / P0713 / P0712 transmission fluid temperature) is set; selects the coolant model or the 180 deg F substitutes for transmission_temperature_in_use (was torque_limit_output_active_flag)
 0x0040b0fd,park_neutral_exit_engine_speed_limit_state_bits,byte,Family rename with the park/neutral exit window function: the words of this family are used only by cm848_updateParkNeutralExitEngineSpeedLimitWindow, cm848_calculateParkNeutralExitEngineSpeedLimit and cm848_initializeParkNeutralExitEngineSpeedLimit (grep over the whole decompilation), and the window only gates the engine speed limit source 15 (held at 6800 = 850 rpm, normally 30000 = 3750 rpm), not any torque. (was park_neutral_exit_torque_limit_state_bits) | earlier note: State of the park/neutral exit torque limit monitor (0x51193c): bit 0 limit countdown running / bit 1 startup inhibit / bit 2 armed in park or neutral (pedal 5 to 100 percent) / bit 3 countdown finished / bit 4 one-pass flag when the limit is released (was fuel_temp_protection_state_flags) (Medium confidence)
 0x0040b0fe,converter_clutch_transition_state,byte,Converter clutch transition flags byte (23 accesses - all lbz / stb): bit 0 transition / bit 1 retarder forced gear 2 / bit 2 transition timeout are the wave-11 agent's medium-confidence readings, so no bitfield yet (was protection_condition_state, a word) (was protection_condition_state)
-0x0040b100,protection_timer_state_t_0040b100,protection_timer_state_t,
-0x0040b102,protection_timer_state_t_0040b100.status_code_hold_timer,,
-0x0040b104,protection_timer_state_t_0040b100.timeout_counter,,
-0x0040b106,protection_timer_state_t_0040b100.state1_timer,,
-0x0040b108,protection_timer_state_t_0040b100.state2_timer,,
+0x0040b100,transmission_pressure_state,transmission_pressure_state_t,e2m 8C53 +0 RE_Trans_Pressure_State 'Indicate the RE transmission pressure state' (UNITLESS): the RE transmission pressure state block: e2m 8C53 +0 RE_Trans_Pressure_State (table-resolved to this address) followed by the e2m 8C17 anti-hunt timers (transmission_pressure_state_t) (was protection_timer_state_t_0040b100)
+0x0040b102,transmission_pressure_state.anti_hunt_boost_limit_timer,,
+0x0040b104,transmission_pressure_state.anti_hunt_delay_timer,,
+0x0040b106,transmission_pressure_state.anti_hunt_1_2_boost_timer,,
+0x0040b108,transmission_pressure_state.anti_hunt_2_3_boost_timer,,
 0x0040b10a,protection_timer_a,word,
 0x0040b10c,protection_timer_b,word,
 0x0040b10e,protection_timer_c,word,
@@ -5307,7 +5307,7 @@ address,name,type,comment
 0x0040b124,protection_lockout_t_0040b11c.reserved_08,,
 0x0040b126,protection_lockout_t_0040b11c.timer_expired,,
 0x0040b128,governor_pressure_learned_gain_gear1,word,Gear 1 per-temperature learned lead factor (0-33) multiplying engine load to set the RPM escalation point for governor pressure - working copy of the EEPROM-mirror table base 0x3fede2 indexed by transmission_temperature_range (was protection_status_byte) (Medium confidence)
-0x0040b12a,transmission_output_speed_change,i16,The dword is an i16 plus a word (all 7 accesses of 0x40b12a are halfword: 5 lha loads and 2 sth stores; no lwz / stw). +0 is signed: lha r12,-20182(r12) @ 0x31fec (cm848_protectionStateTransitionCheck tests 0 < it), lha r11,0(r29) @ 0x32268 (cm848_protectionRateOfChangeCalculation, scales it by 0x40 factors), lha r10,-20182(r10) @ 0x3245c, sth r6,-20182(r12) @ 0x349ac ... (was protection_rate_integrator) | retyped dword -> i16 2026-11-18
+0x0040b12a,transmission_output_shaft_acceleration,i16,e2m 8C17 +28 RE_OSS_Accel ('Transmission output shaft acceleration'). Block 8C17 is not in the parameter ID table; its base 0x40b102 is proved by +0..+6 = the anti-hunt timers of transmission_pressure_state and by this word (was transmission_output_speed_change) | earlier note: The dword is an i16 plus a word (all 7 accesses of 0x40b12a are halfword: 5 lha loads and 2 sth stores; no lwz / stw). +0 is signed: lha r12,-20182(r12) @ 0x31fec (cm848_protectionStateTransitionCheck tests 0 < it), lha r11,0(r29) @ 0x32268 (cm848_predictPostShiftAcceleration, scales it by 0x40 factors), lha r10,-20182(r10) @ 0x3245c, sth r6,-20182(r12) @ 0x349ac ... (was protection_rate_integrator) | retyped dword -> i16 2026-11-18
 0x0040b12c,converter_clutch_apply_delay_countdown,word,+2 word (17 decompiled uses ._2_2_; the old typeless label row converter_clutch_apply_delay_countdown names it): reloaded from protection_countdown_cal (sth r11,-20180(r12) @ 0x30b74 in cm848_applyConverterUnlockConditions, 0x33d90 in cm848_determineCurrentGearAndLockupInhibit, 0x3009c in cm848_protectionShutdownHandler, and from protection_rate_integrator_trigger_cal) each time the converter clutch is ... (was protection_countdown_timer) | retyped  -> word 2026-11-18
 0x0040b12e,protection_state_counter_b,word,
 0x0040b130,fuel_demand_rate_abs,word,
@@ -6653,8 +6653,8 @@ address,name,type,comment
 0x003fd27a,water_in_fuel_distance_remainder,dword,Sum of vehicle_speed (1/256 mph) per pass while P2269 water in fuel (fault_detected_bits_48_to_63 bit 8) is active - each 36000 moves one count into water_in_fuel_distance_cal (1/256 mile if the task runs every 100 ms) (was hpcr_oil_pressure_crank_angle_fraction)
 0x003fee2e,eeprom_config_write_triggered_flag,byte,one-shot guard against duplicate EEPROM config write
 0x003fa0ba,sensor_channel16_interp_state,word,interp current_index for sensor channel 16 config lookup
-0x003fb0ee,protection_rpm_limit_table_idle_state,word,interp state for protection RPM limit table (idle path)
-0x003fb0f0,protection_rpm_limit_table_derate1_state,word,interp state for protection RPM limit table (derate 1)
+0x003fb0ee,governor_pressure_base_curve_interp_state,word,lookup cache of governor_pressure_base_curve_* (was protection_rpm_limit_table_idle_state) | earlier note: interp state for protection RPM limit table (idle path)
+0x003fb0f0,transmission_anti_hunt_1_2_boost_pressure_interp_state,word,lookup cache of transmission_anti_hunt_1_2_boost_pressure_* (was protection_rpm_limit_table_derate1_state) | earlier note: interp state for protection RPM limit table (derate 1)
 0x003fb341,supervisor_register_36_bit_1_release_delay_counter,word,Release countdown for supervisor_register_36_bit_1_low_held_flag: reloaded from the 30-read delay at 0x408744 while the bit is low and decremented per register 0x24 read after it returns (was governor_inhibit_delay_counter)
 0x003fb40c,pci_transmit_message_11_pass_count,byte,Builder passes since the last PCI 0x5D send - the elapsed-time factor of its fuel totals (was injection_timing_cycle_counter)
 0x003fb4e8,engine_speed_limit_converter_slip_interpolation_state,word,cm848_monitorConverterSlipAndEngineSpeedLimit (cpp 39927+): passed as the cached axis offsets state of the converter slip table lookup (cm848_dualAxisTableInterpolation first argument); xref_addr.py: 0 reads / 1 write (cm848_initializeConverterSlipEngineSpeedLimit, the init). Time-shared window: immediate scan for 0xb4e8 / 0xb4ea: 0 hits. Label only. (was torque_limit_fuel_table_dims) | earlier note: dualAxis table dims base (torque limit fuel)
@@ -7021,7 +7021,7 @@ address,name,type,comment
 0x003fb0dc,protection_rpm_limit_table_preentry_state,word,interp state for RPM limit table (pre-entry)
 0x003fb0e4,protection_rpm_limit_table_derate1_active_state,word,interp state for RPM limit table (derate1 active)
 0x003fb0ec,protection_rpm_limit_table_ramp_state,word,interp state for RPM limit table (ramp transition)
-0x003fb0f2,protection_rpm_limit_table_derate2_state,word,interp state for RPM limit table (derate2)
+0x003fb0f2,transmission_anti_hunt_2_3_boost_pressure_interp_state,word,lookup cache of transmission_anti_hunt_2_3_boost_pressure_* (was protection_rpm_limit_table_derate2_state) | earlier note: interp state for RPM limit table (derate2)
 0x003fb12c,protection_fuel_demand_threshold_derate4_secondary_interp_state,word,fuel-demand threshold interp (derate4 secondary)
 0x003fb12e,protection_fuel_demand_threshold_derate2_interp_state,word,fuel-demand threshold interp (derate2)
 0x003fb130,protection_fuel_demand_threshold_derate3_interp_state,word,fuel-demand threshold interp (derate3)

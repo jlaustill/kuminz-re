@@ -733,10 +733,10 @@ void cm848_selectGovernorPressureCold(void);  // @ 0x0003148c
 void cm848_selectGovernorPressureBaseCurve(void);  // @ 0x00031584
 void cm848_selectGovernorPressureWideOpenThrottle(void);  // @ 0x000316cc
 void cm848_protectionStateTransitionCheck(void);  // @ 0x00031d98
-uint cm848_protectionScaledLimitCalculation(int param_1);  // @ 0x000320e0
-void cm848_protectionRateOfChangeCalculation(void);  // @ 0x00032250
-void cm848_calculateProtectionFuelDemandThreshold(void);  // @ 0x0003241c
-void cm848_processProtectionStateFlags(void);  // @ 0x0003257c
+uint cm848_calculateTransmissionOutputTorqueInGear(int param_1);  // @ 0x000320e0
+void cm848_predictPostShiftAcceleration(void);  // @ 0x00032250
+void cm848_learnVehicleInertia(void);  // @ 0x0003241c
+void cm848_selectGovernorPressureAntiHunt(void);  // @ 0x0003257c
 void cm848_selectGovernorPressureNormal(void);  // @ 0x00032b00
 void cm848_runTransmissionControl(void);  // @ 0x00032efc
 void mpc555_initProtectionFilterVariables(void);  // @ 0x000331cc
