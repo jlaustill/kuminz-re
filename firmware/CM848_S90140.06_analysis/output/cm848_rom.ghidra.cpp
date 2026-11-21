@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 01:51:59 MST 2026
+// Generated: Sat Nov 21 01:57:15 MST 2026
 
 
 //
@@ -6752,7 +6752,7 @@ void cm848_periodicTaskSet_sensorProcessing(void)
 void cm848_periodicTaskSet_controlLoop(void)
 
 {
-  cm848_checkDiagnosticFuelOverride();
+  cm848_claimAcceleratorInterlockThrottleOverride();
   cm848_processVariableGeometryTurbochargerHBridgeFaults();
   cm848_estimateChargePressure();
   cm848_calculateEngineOutputTorque();
@@ -6775,7 +6775,7 @@ void cm848_periodicTaskSet_controlLoop(void)
   hpcr_filterCylinderBalanceFueling();
   cm848_calculateFuelLimitByRpmAndDemand();
   cm848_calculateFuelDemandOffsetTrim();
-  cm848_periodicControlLoopFaultHandling();
+  cm848_claimRemoteThrottleOverride();
   cm848_calculatePumpingTorqueAdjustment();
   cm848_runCombustionReference();
   cm848_runOffNominalCompensation();
@@ -15470,15 +15470,15 @@ void cm848_fuelDemandFinalCalculation(void)
   }
   fuel_demand_control_t_0040a57a.rate_limited = *pwVar1;
 LAB_000178d0:
-  if (fuel_demand_control_t_0040a57a.override_active == 0) {
+  if (fuel_demand_control_t_0040a57a.override_priority == 0) {
     fuel_demand_control_t_0040a57a.override_countdown = 0;
     fuel_demand_control_t_0040a57a.calculated = fuel_demand_control_t_0040a57a.rate_limited;
   }
   else {
     fuel_demand_control_t_0040a57a.calculated = fuel_demand_control_t_0040a57a.override_value;
     fuel_demand_control_t_0040a57a.override_countdown =
-         fuel_demand_control_t_0040a57a.override_active;
-    fuel_demand_control_t_0040a57a.override_active = 0;
+         fuel_demand_control_t_0040a57a.override_priority;
+    fuel_demand_control_t_0040a57a.override_priority = 0;
   }
   fuel_demand_control_t_0040a57a.delta =
        fuel_demand_control_t_0040a57a.calculated - throttle_fuel_enable_flag._2_2_;
@@ -18552,10 +18552,13 @@ void cm848_calculateColdStartFuelAdjust(void)
 
 
 //
-// Function: cm848_initColdStartLimits @ 0x0001bb30
+// Function: cm848_initializeCrankTimingOutputs @ 0x0001bb30
 //
 
-void cm848_initColdStartLimits(void)
+/* Seeds crank_four_dimensional_timing and crank_exit_advance with -1024 (0xfc00) (was
+   cm848_initColdStartLimits) */
+
+void cm848_initializeCrankTimingOutputs(void)
 
 {
   crank_four_dimensional_timing = 0xfc00;
@@ -18580,7 +18583,7 @@ void cm848_calculateColdStartRpmAdjust(void)
   
   if (((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) ||
      (engine_state == ENGINE_STATE_REENTRY)) {
-    cm848_initColdStartLimits();
+    cm848_initializeCrankTimingOutputs();
     uVar1 = (uint)engine_speed_state.filtered_engine_speed;
     uVar2 = (uint)crank_initial_advance_break_speed;
     if (uVar1 < uVar2) {
@@ -37333,7 +37336,8 @@ void cm848_monitorChargingSystemVoltageHighAndLow(void)
   }
   if (((alternator_field_regulator_state == 2) &&
       (sensor_readings_t_0040baf2.battery_voltage < charging_system_voltage_low_threshold)) &&
-     ((intake_air_heater_control_state == 5 && (protection_voltage_active_flag == 0)))) {
+     ((intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_OFF &&
+      (protection_voltage_active_flag == 0)))) {
     charging_system_voltage_low_condition_elapsed_passes =
          charging_system_voltage_low_condition_elapsed_passes + 1;
   }
@@ -37385,7 +37389,8 @@ void cm848_monitorChargingSystemVoltageHighAndLow(void)
 void cm848_testAlternatorOutputByCuttingField(void)
 
 {
-  if (((((alternator_field_regulator_state == 2) && (intake_air_heater_control_state == 5)) &&
+  if (((((alternator_field_regulator_state == 2) &&
+        (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_OFF)) &&
        (alternator_field_cut_test_engine_speed_threshold < engine_speed_state.filtered_engine_speed)
        ) && (((fault_detected_bits_368_to_383 & 1) == 0 &&
              ((fault_detected_bits_368_to_383 & 4) == 0)))) &&
@@ -37670,8 +37675,8 @@ void cm848_processEngineRpmDerivative(void)
   int iVar1;
   
   engine_acceleration_unfiltered =
-       engine_speed_state.engine_speed - engine_acceleration_target_rpm_previous;
-  engine_acceleration_target_rpm_previous = engine_speed_state.engine_speed;
+       engine_speed_state.engine_speed - engine_acceleration_engine_speed_previous;
+  engine_acceleration_engine_speed_previous = engine_speed_state.engine_speed;
   engine_acceleration_first_stage_filtered =
        cm848_signedFirstOrderFilter
                  ((int)engine_acceleration_unfiltered,&engine_acceleration_first_stage_filter_state)
@@ -37709,7 +37714,7 @@ void cm848_initEngineRpmFilterPointers(void)
   engine_acceleration_second_stage_filter_state.accumulator = 0;
   engine_acceleration_second_stage_filter_state.coefficient =
        &engine_acceleration_second_stage_filter_coefficient;
-  engine_acceleration_target_rpm_previous = 0;
+  engine_acceleration_engine_speed_previous = 0;
   return;
 }
 
@@ -43133,16 +43138,20 @@ void cm848_dispatchCalibrationBlockHandlers(void)
 
 
 //
-// Function: cm848_checkDiagnosticFuelOverride @ 0x000403e4
+// Function: cm848_claimAcceleratorInterlockThrottleOverride @ 0x000403e4
 //
 
-void cm848_checkDiagnosticFuelOverride(void)
+/* With the accelerator interlock enabled and switch 26 on: claims the throttle override with
+   accelerator_interlock_throttle_priority (when it beats the current one) and value 0 (was
+   cm848_checkDiagnosticFuelOverride) */
+
+void cm848_claimAcceleratorInterlockThrottleOverride(void)
 
 {
   if (((algorithm_enable_flags_12_cal.accelerator_interlock_enable != 0) &&
       ((switch_input_state_bits[3] & 4) != 0)) &&
-     (fuel_demand_control_t_0040a57a.override_active < accelerator_interlock_throttle_priority)) {
-    fuel_demand_control_t_0040a57a.override_active = accelerator_interlock_throttle_priority;
+     (fuel_demand_control_t_0040a57a.override_priority < accelerator_interlock_throttle_priority)) {
+    fuel_demand_control_t_0040a57a.override_priority = accelerator_interlock_throttle_priority;
     fuel_demand_control_t_0040a57a.override_value = 0;
   }
   return;
@@ -45051,7 +45060,7 @@ LAB_00042e48:
     cylinder_balance_stop_compensation_flag = true;
   }
   else {
-    uVar16 = (uint)target_rpm_snapshot;
+    uVar16 = (uint)cylinder_balance_engine_speed_previous;
     uVar17 = (uint)engine_speed_state.engine_speed;
     if (uVar16 < uVar17) {
       iVar4 = uVar17 - uVar16;
@@ -45064,7 +45073,7 @@ LAB_00042e48:
     cylinder_balance_stop_compensation_flag = false;
   }
   uVar16 = (uint)engine_speed_state.engine_speed;
-  target_rpm_snapshot = engine_speed_state.engine_speed;
+  cylinder_balance_engine_speed_previous = engine_speed_state.engine_speed;
   uVar17 = (uint)cylinder_event_count_max;
   if ((cylinder_event_seq_counter != uVar17) || (wVar1 == 0)) goto LAB_00043994;
   uVar11 = (uint)cylinder_balance_fourier_filter_coefficient;
@@ -70283,10 +70292,15 @@ LAB_0050e58c:
 
 
 //
-// Function: cm848_periodicControlLoopFaultHandling @ 0x0050e610
+// Function: cm848_claimRemoteThrottleOverride @ 0x0050e610
 //
 
-void cm848_periodicControlLoopFaultHandling(void)
+/* With the remote throttle enabled: mirrors its two fault bits (64-79 0x4000 / 0x2000 -> 160-175
+   0x800 / 0x1000) and - with switch 31 on or the rate limit check active - claims the throttle
+   override with remote_throttle_priority and the remote throttle value (was
+   cm848_periodicControlLoopFaultHandling) */
+
+void cm848_claimRemoteThrottleOverride(void)
 
 {
   if (algorithm_enable_flags_18_cal.remote_throttle_enable != 0) {
@@ -70319,8 +70333,8 @@ void cm848_periodicControlLoopFaultHandling(void)
         return;
       }
     }
-    if (fuel_demand_control_t_0040a57a.override_active < remote_throttle_priority) {
-      fuel_demand_control_t_0040a57a.override_active = remote_throttle_priority;
+    if (fuel_demand_control_t_0040a57a.override_priority < remote_throttle_priority) {
+      fuel_demand_control_t_0040a57a.override_priority = remote_throttle_priority;
       fuel_demand_control_t_0040a57a.override_value = governor_torque_output;
     }
   }
@@ -72979,7 +72993,7 @@ int governor_cruise_resumeButton_handler(void)
 /* Cruise switch-request state 3 (SET/COAST button) -> CRUISE_CONTROL_STATE: rising edge (state_b==3
    && prev!=3) with vehicle_speed_rise_limited>=cruise_speed_min_cal returns CRUISE_SET(1) to LATCH
    the setpoint; held returns CRUISE_DECELERATE(3). Was governor_cruiseOverride_state3_handler. NOTE
-   the SET capture only runs when governor_cruise_deniedStatus_update()==0. */
+   the SET capture only runs when cm848_updateCruiseControlDeniedStatus()==0. */
 
 int governor_cruise_setButton_handler(void)
 
@@ -73048,15 +73062,13 @@ int cm848_debounceCruiseSwitchRequest(void)
 
 
 //
-// Function: governor_cruise_deniedStatus_update @ 0x00512a60
+// Function: cm848_updateCruiseControlDeniedStatus @ 0x00512a60
 //
 
 /* Returns 1 when cruise is denied and stores the reason code 1-12 in cruise_control_denied_status
-   (and in cruise_control_last_cutout_reason while engaged) - codes in the DRB S/C DENIED STATUS
-   order (was governor_cruise_fuelCorrection_inhibitCheck) | review-function-readability reviewed
-   2026-11-13 - Readability Medium Accuracy Confidence High */
+   (and the cutout reason while engaged) (was governor_cruise_deniedStatus_update) */
 
-undefined4 governor_cruise_deniedStatus_update(void)
+undefined4 cm848_updateCruiseControlDeniedStatus(void)
 
 {
   undefined4 uVar1;
@@ -73099,8 +73111,8 @@ undefined4 governor_cruise_deniedStatus_update(void)
             }
             uVar1 = 1;
           }
-          else if ((engine_speed_state.engine_speed < cruise_target_rpm_min) ||
-                  (cruise_target_rpm_max < engine_speed_state.engine_speed)) {
+          else if ((engine_speed_state.engine_speed < cruise_minimum_engine_speed) ||
+                  (cruise_maximum_engine_speed < engine_speed_state.engine_speed)) {
             cruise_control_denied_status = 9;
             if (cruise_control_engaged_flag != 0) {
               cruise_control_last_cutout_reason = 9;
@@ -73287,7 +73299,7 @@ void cm848_cruiseControlPeriodicUpdate(void)
   wVar4 = cruise_control_on_toggle_state;
   CVar2 = governor_cruise_baseState_get();
   *pCVar6 = CVar2;
-  sVar3 = governor_cruise_deniedStatus_update();
+  sVar3 = cm848_updateCruiseControlDeniedStatus();
   if (sVar3 == 0) {
     if (cruise_control_engaged_flag == 0) {
       cruise_control_denied_status = 0;
@@ -75640,7 +75652,7 @@ void fuel_quantity_demand_initialize(void)
 void cm848_initIntakeAirHeaterControl(void)
 
 {
-  intake_air_heater_control_state = 0;
+  intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_KEY_ON;
   cm848_clearLogicalOutputRequest(0x2b,0);
   if ((governor_fuel_feature_flags & 0x10) == 0) {
     cm848_clearLogicalOutputRequest(0x2c,0);
@@ -75649,7 +75661,7 @@ void cm848_initIntakeAirHeaterControl(void)
   intake_air_heater_relay_action_code = 0;
   intake_air_heater_shutdown_reason = 0;
   intake_air_heater_relay_action_code_previous = 0;
-  intake_air_heater_control_state_previous = 0;
+  intake_air_heater_control_state_previous = INTAKE_AIR_HEATER_PHASE_KEY_ON;
   DAT_003fce68 = 10;
   intake_air_heater_postheat_active_flag = 0;
   DAT_003fce6c = 2;
@@ -75658,8 +75670,8 @@ void cm848_initIntakeAirHeaterControl(void)
   DAT_003fce72 = 2;
   DAT_003fce74 = 2;
   DAT_003fce76 = 2;
-  intake_air_heater_runup_elapsed_ticks = 0;
-  intake_air_heater_runup_rpm_below_count = 0;
+  intake_air_heater_crank_elapsed_ticks = 0;
+  intake_air_heater_crank_low_engine_speed_count = 0;
   return;
 }
 
@@ -75773,7 +75785,7 @@ void cm848_countDownIntakeAirHeaterPreheat(void)
       eeprom_shadow_header.eeprom_status_flags = 1;
     }
   }
-  intake_air_heater_runup_holdoff_countdown = intake_air_heater_crank_time_limit;
+  intake_air_heater_crank_time_countdown = intake_air_heater_crank_time_limit;
   intake_air_heater_level6_grace_count = 100;
   return;
 }
@@ -75781,49 +75793,53 @@ void cm848_countDownIntakeAirHeaterPreheat(void)
 
 
 //
-// Function: cm848_updateIntakeAirHeaterRunupPhase @ 0x0051736c
+// Function: cm848_updateIntakeAirHeaterCrankPhase @ 0x0051736c
 //
 
-/* state 3 run-up - clears relays 43/44 on first entry then holds off (or below-count > 20 / elapsed
-   >= 100) - the 4200 rpm branch (above redline - unreachable) drives relays on - zeroes remaining
-   preheat - sets status bit4 - runs only if start temp <= 66 F (was
-   diag_iat_protection_rpmDerate_update) | review-function-readability reviewed 2026-11-13 -
-   Readability Medium Accuracy Confidence Medium */
+/* The intake air heater crank phase (e2m 8A35 +2 IAH_Phase 3 = crank): clears relays 43 / 44 on
+   entry, then by the start temperature heats until the low engine speed count or the crank heat
+   time runs out (was cm848_updateIntakeAirHeaterRunupPhase) | earlier note: state 3 run-up - clears
+   relays 43/44 on first entry then holds off (or below-count > 20 / elapsed >= 100) - the 4200 rpm
+   branch (above redline - unreachable) drives relays on - zeroes remaining preheat - sets status
+   bit4 - runs only if start temp <= 66 F (was diag_iat_protection_rpmDerate_update) |
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+    */
 
-void cm848_updateIntakeAirHeaterRunupPhase(void)
+void cm848_updateIntakeAirHeaterCrankPhase(void)
 
 {
-  if (intake_air_heater_control_state_previous != 3) {
+  if (intake_air_heater_control_state_previous != INTAKE_AIR_HEATER_PHASE_CRANK) {
     cm848_clearLogicalOutputRequest(0x2b,0);
     cm848_clearLogicalOutputRequest(0x2c,0);
     eeprom_shadow_header.eeprom_status_flags = 0;
   }
   if ((short)intake_air_heater_start_temperature <= intake_air_heater_crank_temperature_threshold) {
     if (engine_speed_state.filtered_engine_speed < DAT_0005c7a8) {
-      intake_air_heater_runup_rpm_below_count = intake_air_heater_runup_rpm_below_count + 1;
+      intake_air_heater_crank_low_engine_speed_count =
+           intake_air_heater_crank_low_engine_speed_count + 1;
     }
     else {
-      intake_air_heater_runup_rpm_below_count = 0;
+      intake_air_heater_crank_low_engine_speed_count = 0;
     }
     if ((intake_air_heater_crank_low_engine_speed_time_limit <
-         intake_air_heater_runup_rpm_below_count) ||
-       (intake_air_heater_crank_heat_time_limit <= intake_air_heater_runup_elapsed_ticks)) {
+         intake_air_heater_crank_low_engine_speed_count) ||
+       (intake_air_heater_crank_heat_time_limit <= intake_air_heater_crank_elapsed_ticks)) {
       cm848_clearLogicalOutputRequest(0x2b,0);
       cm848_clearLogicalOutputRequest(0x2c,0);
     }
     if (((logical_output_request_bits_40_to_47 & 8) != 0) &&
        ((logical_output_request_bits_40_to_47 & 0x10) != 0)) {
-      intake_air_heater_runup_elapsed_ticks = intake_air_heater_runup_elapsed_ticks + 1;
+      intake_air_heater_crank_elapsed_ticks = intake_air_heater_crank_elapsed_ticks + 1;
     }
     if ((DAT_0005c7aa < engine_speed_state.filtered_engine_speed) &&
-       (intake_air_heater_runup_elapsed_ticks < intake_air_heater_crank_heat_time_limit)) {
+       (intake_air_heater_crank_elapsed_ticks < intake_air_heater_crank_heat_time_limit)) {
       cm848_setLogicalOutputRequest(0x2b,0);
       cm848_setLogicalOutputRequest(0x2c,0);
     }
   }
   cm848_clearLogicalOutputRequest(4,2);
-  if (intake_air_heater_runup_holdoff_countdown != 0) {
-    intake_air_heater_runup_holdoff_countdown = intake_air_heater_runup_holdoff_countdown - 1;
+  if (intake_air_heater_crank_time_countdown != 0) {
+    intake_air_heater_crank_time_countdown = intake_air_heater_crank_time_countdown - 1;
   }
   if ((intake_air_heater_status_flags >> 1 & 1) != 0) {
     intake_air_heater_status_flags = intake_air_heater_status_flags & 0xf9 | 4;
@@ -76060,7 +76076,7 @@ LAB_00517a0c:
 void cm848_shutdownIntakeAirHeater(void)
 
 {
-  intake_air_heater_control_state = 5;
+  intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_OFF;
   cm848_clearLogicalOutputRequest(0x2b,0);
   if ((governor_fuel_feature_flags & 0x10) == 0) {
     cm848_clearLogicalOutputRequest(0x2c,0);
@@ -76099,7 +76115,7 @@ void cm848_updateIntakeAirHeaterPostheat(void)
   word wVar2;
   byte bVar3;
   
-  if ((intake_air_heater_control_state_previous != 4) &&
+  if ((intake_air_heater_control_state_previous != INTAKE_AIR_HEATER_PHASE_POSTHEAT) &&
      (cm848_clearLogicalOutputRequest(4,2), eeprom_shadow_header.calibration_block1._4_2_ != 0)) {
     intake_air_heater_shutdown_reason = 7;
     eeprom_shadow_header.calibration_block1._4_2_ =
@@ -76179,7 +76195,7 @@ LAB_00517e34:
         (&intake_air_heater_level_duration_table)[bVar3] = wVar2;
         if ((intake_air_heater_crank_heat_subtraction_enable_flag == 1) && (bVar3 == 0)) {
           intake_air_heater_level_duration_table =
-               intake_air_heater_level_duration_table - intake_air_heater_runup_elapsed_ticks;
+               intake_air_heater_level_duration_table - intake_air_heater_crank_elapsed_ticks;
         }
         if ((short)(&intake_air_heater_level_duration_table)[bVar3] < 0) {
           (&intake_air_heater_level_duration_table)[bVar3] = 0;
@@ -76219,26 +76235,28 @@ void cm848_updateIntakeAirHeaterControl(void)
     return;
   }
   if ((intake_air_heater_vehicle_speed_threshold < vehicle_speed) &&
-     (intake_air_heater_control_state == 4)) {
+     (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_POSTHEAT)) {
     intake_air_heater_shutdown_reason = 2;
-    intake_air_heater_control_state = 5;
+    intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_OFF;
   }
   else {
     if ((((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 4) == 0) &&
         ((((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 8) == 0 &&
           (intake_air_heater_overvoltage_limit < sensor_readings_t_0040baf2.battery_voltage)) &&
-         (intake_air_heater_control_state != 0)))) && (intake_air_heater_control_state != 3)) {
+         (intake_air_heater_control_state != INTAKE_AIR_HEATER_PHASE_KEY_ON)))) &&
+       (intake_air_heater_control_state != INTAKE_AIR_HEATER_PHASE_CRANK)) {
       intake_air_heater_shutdown_reason = 3;
-      intake_air_heater_control_state = 5;
+      intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_OFF;
     }
-    if ((intake_air_heater_runup_holdoff_countdown == 0) && (intake_air_heater_control_state == 3))
-    {
+    if ((intake_air_heater_crank_time_countdown == 0) &&
+       (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_CRANK)) {
       intake_air_heater_shutdown_reason = 4;
-      intake_air_heater_control_state = 5;
+      intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_OFF;
     }
     else {
       if (((engine_state == ENGINE_STATE_SHUTDOWN) || (engine_state == ENGINE_STATE_STOPPED)) &&
-         ((intake_air_heater_control_state == 4 || (intake_air_heater_control_state == 3)))) {
+         ((intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_POSTHEAT ||
+          (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_CRANK)))) {
         intake_air_heater_crank_standby_cycle_count =
              intake_air_heater_crank_standby_cycle_count + 1;
       }
@@ -76246,42 +76264,44 @@ void cm848_updateIntakeAirHeaterControl(void)
         intake_air_heater_crank_standby_cycle_count = 0;
       }
       if ((DAT_003fce68 <= intake_air_heater_crank_standby_cycle_count) &&
-         ((intake_air_heater_control_state == 3 || (intake_air_heater_control_state == 4)))) {
-        intake_air_heater_control_state = 2;
+         ((intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_CRANK ||
+          (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_POSTHEAT)))) {
+        intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_PREHEAT;
       }
     }
-    if (intake_air_heater_control_state == 0) {
-      intake_air_heater_control_state = 1;
+    if (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_KEY_ON) {
+      intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_SETUP;
     }
-    else if (intake_air_heater_control_state == 1) {
-      intake_air_heater_control_state = 2;
+    else if (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_SETUP) {
+      intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_PREHEAT;
     }
     else if (((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START))
-            && (intake_air_heater_control_state == 2)) {
-      intake_air_heater_control_state = 3;
+            && (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_PREHEAT)) {
+      intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_CRANK;
     }
     else if ((((engine_state == ENGINE_STATE_RUNNING) || (engine_state == ENGINE_STATE_ENGINE_BRAKE)
               ) || ((engine_state == ENGINE_STATE_REENTRY ||
                     (engine_state == ENGINE_STATE_OVERSPEED)))) &&
-            ((intake_air_heater_control_state == 2 || (intake_air_heater_control_state == 3)))) {
-      intake_air_heater_control_state = 4;
+            ((intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_PREHEAT ||
+             (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_CRANK)))) {
+      intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_POSTHEAT;
     }
   }
   if ((short)intake_air_heater_control_state < 4) {
-    if (intake_air_heater_control_state == 3) {
-      cm848_updateIntakeAirHeaterRunupPhase();
+    if (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_CRANK) {
+      cm848_updateIntakeAirHeaterCrankPhase();
     }
-    else if (intake_air_heater_control_state == 1) {
+    else if (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_SETUP) {
       cm848_computeIntakeAirHeaterPreheatDuration();
     }
-    else if (intake_air_heater_control_state == 2) {
+    else if (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_PREHEAT) {
       cm848_countDownIntakeAirHeaterPreheat();
     }
   }
-  else if (intake_air_heater_control_state == 4) {
+  else if (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_POSTHEAT) {
     cm848_updateIntakeAirHeaterPostheat();
   }
-  else if (intake_air_heater_control_state == 5) {
+  else if (intake_air_heater_control_state == INTAKE_AIR_HEATER_PHASE_OFF) {
     cm848_shutdownIntakeAirHeater();
   }
   if (intake_air_heater_relay_action_code == 1) {

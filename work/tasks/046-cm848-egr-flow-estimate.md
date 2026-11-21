@@ -223,7 +223,7 @@ would otherwise misname.
   - The 117F row `lifetime_distance_pulses` (Total_Distance, MI): the name gives the raw unit (8000 pulses per
     mile), which fits the code; keep. (0x3fdda6 is resolved in round 5: `vehicle_speed_sensor_type_cal`.)
   - The stale `target_rpm` wording in four cruise rows; the 48RE governor pressure functions 0x3257c / 0x3241c.
-  - The compressor outlet temperature scale: bin 5 reads 1/32 °F, the comments say 1/64.
+  - Resolved in round 5: the compressor outlet temperature is 1/32 °F (e2m 175F +8 / 169A +4 / 1760 +2 scale 0.03125), as bin 5 read; the two comments that said 1/64 (and 14080 = 220 °F, really 440 °F) are fixed.
   - CM550's 0x80a9e0, the unnamed twin of 0x40a280.
   - `sensor_channel9_ram` (0x40a0e6) is the state of the `cm848_sensorChannel9_*` wrappers. Check which
     `channel_index` they pass before naming it: the wrapper number is not the channel.

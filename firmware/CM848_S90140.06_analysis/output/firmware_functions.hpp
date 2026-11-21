@@ -437,7 +437,7 @@ void cm848_sendPgn65251EngineConfiguration1Message(void);  // @ 0x0001b730
 void cm848_sendPgn65251EngineConfiguration1OnChange(void);  // @ 0x0001b778
 void initializePgn65251EngineConfiguration1Buffer(void);  // @ 0x0001b900
 void cm848_calculateColdStartFuelAdjust(void);  // @ 0x0001b99c
-void cm848_initColdStartLimits(void);  // @ 0x0001bb30
+void cm848_initializeCrankTimingOutputs(void);  // @ 0x0001bb30
 void cm848_calculateColdStartRpmAdjust(void);  // @ 0x0001bb48
 void cm848_calculateColdStartTempTable(void);  // @ 0x0001bc30
 void cm848_selectColdStartRpmLimit(void);  // @ 0x0001bd44
@@ -922,7 +922,7 @@ void cm848_initCruiseServoControl(void);  // @ 0x0003fba4
 void cm848_controlCruiseVacuumServo(void);  // @ 0x0003fc24
 void cm848_applyWastegateSolenoidDuty(void);  // @ 0x000400b8
 void cm848_dispatchCalibrationBlockHandlers(void);  // @ 0x000402d4
-void cm848_checkDiagnosticFuelOverride(void);  // @ 0x000403e4
+void cm848_claimAcceleratorInterlockThrottleOverride(void);  // @ 0x000403e4
 void cm848_arbitrateGovernedFueling(void);  // @ 0x0004043c
 void cm848_initFuelFilterCoefficients(void);  // @ 0x00040828
 void cm848_calculateRiseLimitedVehicleSpeed(void);  // @ 0x00040844
@@ -1528,7 +1528,7 @@ void cm848_validateFuelDemandRelativeToTiming(void);  // @ 0x0050e000
 void cm848_debounceOutputReadBackFaults(void);  // @ 0x0050e0a0
 void cm848_synchronizeProtectionEnableShadowFlags(void);  // @ 0x0050e4c4
 void fuel_demandRateLimit_outputCheck(void);  // @ 0x0050e534
-void cm848_periodicControlLoopFaultHandling(void);  // @ 0x0050e610
+void cm848_claimRemoteThrottleOverride(void);  // @ 0x0050e610
 void cm848_clearEngineProtectionFaultsConditional(void);  // @ 0x0050e768
 void cm848_calculateWaterVaporAndSaturationTemperatures(void);  // @ 0x0050e7f4
 void cm848_initBoostControlInterpolationState(void);  // @ 0x0050ea88
@@ -1586,7 +1586,7 @@ void cm848_integrateCruiseRpmRatioChange(void);  // @ 0x005127d8
 int governor_cruise_resumeButton_handler(void);  // @ 0x00512878
 int governor_cruise_setButton_handler(void);  // @ 0x0051291c
 int cm848_debounceCruiseSwitchRequest(void);  // @ 0x005129b0
-undefined4 governor_cruise_deniedStatus_update(void);  // @ 0x00512a60
+undefined4 cm848_updateCruiseControlDeniedStatus(void);  // @ 0x00512a60
 undefined4 governor_cruise_engage_check(void);  // @ 0x00512e70
 undefined4 governor_cruise_standbyState_get(void);  // @ 0x00512f18
 void cm848_cruiseControlPeriodicUpdate(void);  // @ 0x00512ff4
@@ -1636,7 +1636,7 @@ void fuel_quantity_demand_initialize(void);  // @ 0x00516df8
 void cm848_initIntakeAirHeaterControl(void);  // @ 0x00516e5c
 void cm848_computeIntakeAirHeaterPreheatDuration(void);  // @ 0x00516f9c
 void cm848_countDownIntakeAirHeaterPreheat(void);  // @ 0x00517120
-void cm848_updateIntakeAirHeaterRunupPhase(void);  // @ 0x0051736c
+void cm848_updateIntakeAirHeaterCrankPhase(void);  // @ 0x0051736c
 void cm848_advanceIntakeAirHeaterLevel(void);  // @ 0x00517560
 void cm848_selectIntakeAirHeaterLevelByRpm(void);  // @ 0x005175c8
 void cm848_pulseIntakeAirHeaterRelays(void);  // @ 0x00517720

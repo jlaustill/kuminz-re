@@ -1652,7 +1652,7 @@ extern dword alternator_field_duty_pid_integral_rate_working;  // 0x003fb3a4
 extern word alternator_field_duty_pid_derivative_rate_working;  // 0x003fb3a8
 extern word charging_voltage_error_previous;  // 0x003fb3aa
 extern word alternator_field_retest_fault_count;  // 0x003fb3ac
-extern word engine_acceleration_target_rpm_previous;  // 0x003fb3ae
+extern word engine_acceleration_engine_speed_previous;  // 0x003fb3ae
 extern ema_filter_state_t engine_acceleration_first_stage_filter_state;  // 0x003fb3b0
 extern ema_filter_state_t engine_acceleration_second_stage_filter_state;  // 0x003fb3b8
 extern word safety_condition_prev_flag;  // 0x003fb3c0
@@ -1758,7 +1758,7 @@ extern word low_speed_governor_gear_gain_transition_timer;  // 0x003fb562
 extern dword cylinder_timing_tpu_capture_snapshot;  // 0x003fb578
 extern byte cylinder_event_seq_counter;  // 0x003fb57d
 extern word crank_state_debounce_timer;  // 0x003fb57e
-extern word target_rpm_snapshot;  // 0x003fb590
+extern word cylinder_balance_engine_speed_previous;  // 0x003fb590
 extern word cylinder_event_init_state_a;  // 0x003fb592
 extern word cylinder_event_init_state_b;  // 0x003fb594
 extern word cylinder_balance_fueling_trim_maximum_snapshot;  // 0x003fb5a4
@@ -3305,13 +3305,13 @@ extern word output_speed_to_vehicle_speed_ratio_learn_minimum_vehicle_speed;  //
 extern word output_speed_to_vehicle_speed_ratio_learn_minimum_output_speed;  // 0x0040870e
 extern word per_cylinder_timing_max_cal;  // 0x00408710
 extern word per_cylinder_timing_max_alt_cal;  // 0x00408712
-extern word cruise_target_rpm_max;  // 0x00408722
+extern word cruise_maximum_engine_speed;  // 0x00408722
 extern word cruise_steady_debounce_count;  // 0x00408724
 extern word cruise_ratio_steady_threshold;  // 0x00408726
 extern word cruise_rpm_ratio_integral_limit;  // 0x00408728
 extern word cruise_rpm_ratio_max;  // 0x0040872c
 extern word cruise_rpm_ratio_min;  // 0x0040872e
-extern word cruise_target_rpm_min;  // 0x00408730
+extern word cruise_minimum_engine_speed;  // 0x00408730
 extern word can_fuel_qty_scale_cal;  // 0x00408740
 extern word j1939_tx_periodic_rate_cal;  // 0x00408742
 extern byte j1939_status_flag_a_cal;  // 0x00408746
@@ -4941,7 +4941,7 @@ extern word safety_condition_active_flag;  // 0x0040b326
 extern word fuel_level_first_sample_flag;  // 0x0040b328
 extern word fuel_level_ready_flag;  // 0x0040b338
 extern byte intake_air_heater_status_flags;  // 0x0040b33b
-extern word intake_air_heater_control_state;  // 0x0040b33c
+extern INTAKE_AIR_HEATER_PHASE intake_air_heater_control_state;  // 0x0040b33c
 extern pci_link_state_t pci_link_state;  // 0x0040b34e
 extern byte pci_controller_qspi_slot;  // 0x0040b356
 extern byte pci_qspi_queue_priority;  // 0x0040b383
@@ -5879,8 +5879,8 @@ extern word intake_air_heater_performance_test_loaded_battery_voltage_adc;  // 0
 extern byte intake_air_heater_pulse_active_flag;  // 0x003fce34
 extern word intake_air_heater_target_level;  // 0x003fce35
 extern word intake_air_heater_committed_level;  // 0x003fce37
-extern word intake_air_heater_runup_elapsed_ticks;  // 0x003fce41
-extern word intake_air_heater_runup_rpm_below_count;  // 0x003fce43
+extern word intake_air_heater_crank_elapsed_ticks;  // 0x003fce41
+extern word intake_air_heater_crank_low_engine_speed_count;  // 0x003fce43
 extern word intake_air_heater_postheat_elapsed_cycles;  // 0x003fce45
 extern word intake_air_heater_pulse_countdown;  // 0x003fce49
 extern word intake_air_heater_pwm_period_ticks;  // 0x003fce4b
@@ -6113,7 +6113,7 @@ extern word coolant_overheat_debounce_count;  // 0x003fcdc8
 extern word coolant_overheat_recovery_count;  // 0x003fcdca
 extern dword cooling_fan_integral_accumulator;  // 0x003fce0c
 extern word intake_air_heater_relay_action_code_previous;  // 0x003fce39
-extern word intake_air_heater_runup_holdoff_countdown;  // 0x003fce3f
+extern word intake_air_heater_crank_time_countdown;  // 0x003fce3f
 extern dword protection_coldStart_eval_cycle_count;  // 0x003fceea
 extern word park_neutral_switch_driving_check_complete_flag;  // 0x003fcef8
 extern word immobilizer_authorization_window_counter;  // 0x003fcfc8
@@ -6549,7 +6549,7 @@ extern byte radiator_fan_input_configured_for_type_5100_flag;  // 0x003fce1e
 extern byte radiator_fan_input_was_type_5100_flag;  // 0x003fce1f
 extern word radiator_fan_speed_pulse_timeout_count;  // 0x003fce20
 extern word fuel_quantity_demand_excess_fault_count;  // 0x003fce2c
-extern word intake_air_heater_control_state_previous;  // 0x003fce3b
+extern INTAKE_AIR_HEATER_PHASE intake_air_heater_control_state_previous;  // 0x003fce3b
 extern word intake_air_heater_loaded_cycle_count;  // 0x003fce3d
 extern word intake_air_heater_relay_onset_countdown;  // 0x003fce47
 extern word intake_air_heater_crank_standby_cycle_count;  // 0x003fce4f

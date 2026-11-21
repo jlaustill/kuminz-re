@@ -1,0 +1,21 @@
+cm848: round 5 - INTAKE_AIR_HEATER_PHASE, the throttle override claimers, cruise speed limits, COT scale
+
+- INTAKE_AIR_HEATER_PHASE (e2m 8A35 +2 IAH_Phase: 0 key on / 1 setup / 2 preheat / 3 crank / 4 postheat
+  / 5 off) on intake_air_heater_control_state and its previous value: the heater functions now read
+  "== INTAKE_AIR_HEATER_PHASE_POSTHEAT" (7 functions change, only by that rendering). The "run-up" phase is
+  the crank phase: cm848_updateIntakeAirHeaterRunupPhase -> cm848_updateIntakeAirHeaterCrankPhase and its
+  intake_air_heater_runup_* words -> intake_air_heater_crank_*.
+- fuel_demand_control_t.override_active -> override_priority: each claimer takes the throttle override when its
+  priority is higher (not a 1 / 0 flag); cm848_checkDiagnosticFuelOverride ->
+  cm848_claimAcceleratorInterlockThrottleOverride, cm848_periodicControlLoopFaultHandling ->
+  cm848_claimRemoteThrottleOverride.
+- The stale target_rpm wording: cruise_target_rpm_max / _min -> cruise_maximum_engine_speed /
+  cruise_minimum_engine_speed (e2m 8A0E +4 / +12), engine_acceleration_target_rpm_previous /
+  target_rpm_snapshot -> ..._engine_speed_previous.
+- cm848_initColdStartLimits -> cm848_initializeCrankTimingOutputs, governor_cruise_deniedStatus_update ->
+  cm848_updateCruiseControlDeniedStatus.
+- The compressor outlet temperature is 1/32 degree F (e2m 175F +8 / 169A +4 / 1760 +2 scale 0.03125): two
+  comments said 1/64, and the derate limit's 14080 is 440 degrees F, not 220.
+Proof: the label part is EQUIVALENT; the comment-stripped diff finds only the 7 enum renders.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

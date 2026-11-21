@@ -1063,6 +1063,15 @@ typedef enum {
     POWER_TAKE_OFF_GOVERNOR_J1939_STATE_NOT_AVAILABLE = 31  /* SPN 976 value 31 - sent as 0x1F while the power take-off feature is off */
 } POWER_TAKE_OFF_GOVERNOR_J1939_STATE;
 
+typedef enum {
+    INTAKE_AIR_HEATER_PHASE_KEY_ON = 0,  /* e2m IAH_Phase 0 = key on */
+    INTAKE_AIR_HEATER_PHASE_SETUP = 1,  /* e2m IAH_Phase 1 = setup */
+    INTAKE_AIR_HEATER_PHASE_PREHEAT = 2,  /* e2m IAH_Phase 2 = preheat */
+    INTAKE_AIR_HEATER_PHASE_CRANK = 3,  /* e2m IAH_Phase 3 = crank */
+    INTAKE_AIR_HEATER_PHASE_POSTHEAT = 4,  /* e2m IAH_Phase 4 = postheat */
+    INTAKE_AIR_HEATER_PHASE_OFF = 5  /* e2m IAH_Phase 5 = off */
+} INTAKE_AIR_HEATER_PHASE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -1251,7 +1260,7 @@ struct fuel_demand_control_t {
     uint16_t rate_delta;  /* Fuel demand rate of change delta */
     uint16_t throttle_based;  /* Throttle-based fuel demand component */
     uint16_t override_value;  /* Diagnostic override fuel demand value */
-    uint16_t override_active;  /* Override mode active flag (1=override) */
+    uint16_t override_priority;  /* The priority of the throttle override that holds it: each claimer (cm848_claimAcceleratorInterlockThrottleOverride / cm848_claimRemoteThrottleOverride) takes the override when its priority is higher and writes override_value; 0 = no override (was override_active - not a 1 / 0 flag; round 5) */
     uint16_t rate_limited;  /* Rate-limited fuel demand output */
     uint16_t override_countdown;  /* Override timeout countdown (offset 0x12) */
     uint16_t reserved_14;  /* Gap/reserved (0x58e-0x590) */
@@ -2677,7 +2686,7 @@ struct algorithm_enable_flags_12_t {
     uint16_t electronic_smart_power_enable : 1;  /* bit 4: e2m ESP_Enable (SPAGEN; ESP = Electronic Smart Power per e2m Group_ESP_8). hpcr_calculateFuelTrimOutput (lhz at 0xe71c) and cm848_calculateThrottle100Fuelings (lhz at 0x1f290): while set the four_dimensional_fueling_interpolation_factor is zeroed around cm848_calculateMaximumFuelCurve. A reader exists but its behaviour is not tied to the e2m label. Clear in this calibration (0x2e06). */
     uint16_t reserved_bit_5 : 1;  /* bit 5: e2m Reverse_ESP_Enable (SPRVEN, Electronic Smart Power launch application). No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). */
     uint16_t low_speed_governor_droop_enable : 1;  /* bit 6: e2m LSG_Droop_Enable (LSDPEN). cm848_updateProtectionParameters (lhz at 0x20b90) and governor_calculateIntegratorRpmOutput (lhz at 0x507a70): while set the governor integrator output is reduced by governor_integrator_correction_term times ROM 0x5c352 divided by 167 (a droop). Code agrees. Clear in this calibration (0x2e06). */
-    uint16_t accelerator_interlock_enable : 1;  /* bit 7: e2m Accelerator_Interlock_Enable (ANEN). cm848_checkDiagnosticFuelOverride (lhz at 0x403e8: with switch 26 set it forces the fuel demand override to its minimum) and cm848_j1939BuildEngineControlByte (lhz 24(r5) at 0x25788). Code agrees. Clear in this calibration (0x2e06). */
+    uint16_t accelerator_interlock_enable : 1;  /* bit 7: e2m Accelerator_Interlock_Enable (ANEN). cm848_claimAcceleratorInterlockThrottleOverride (lhz at 0x403e8: with switch 26 set it forces the fuel demand override to its minimum) and cm848_j1939BuildEngineControlByte (lhz 24(r5) at 0x25788). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_signal_loss_enable : 1;  /* bit 8: e2m VSS_Moving_Enable (VSMVEN): the sensor drops to 0 while the filtered speed is still above 10 mph. Named after the detector it gates. cm848_detectVehicleSpeedSensorSignalLoss (lhz at 0x526950, P0500 path 1) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526be8). Code agrees. Clear in this calibration (0x2e06). */
     uint16_t vehicle_speed_sensor_zero_under_load_enable : 1;  /* bit 9: e2m VSS_Stopped_Enable (VSSTEN): the sensor reads stopped (0) while the engine is under load. Named after the detector it gates. cm848_detectVehicleSpeedSensorZeroUnderLoad (lhz at 0x5269fc, P0500 path 2) and cm848_clearHealedVehicleSpeedSensorFault (lhz at 0x526bd8). Code agrees: the sensor reads 0 while the engine is under load. Set in this calibration (0x2e06). */
     uint16_t obd_fault_handler_enable : 1;  /* bit 10: e2m OBD_Fault_Handler_Enable (DGOBFUHN). 11 fault framework functions test it (cm848_registerFaultInActiveList at 0x1cf1c, cm848_clearDiagnosticState, cm848_processFaultScanGroup, diagnosticMainStateProcessor, cm848_updateFaultEntryCounters, cm848_resetFaultStatus, hpcr_setFaultActiveStatus, cm848_advanceDiagnosticActionState, cm848_j1939HandlePgn65228Dm3ClearDiag, cm848_completeBoostPressureMonitorReport, cm848_monitorEgrOrificeTemperatureSensorRationality); the names agree, the bodies were not read. Set in this calibration (0x2e06). */
@@ -2701,8 +2710,8 @@ struct algorithm_enable_flags_18_t {
     uint16_t programmable_power_enable : 1;  /* bit 9: e2m Programmable_Power_Enable (PPEN). 6 fuel limit, protection and cruise functions: cm848_calculateDualAxisFuelLimit (0x1ec88, 0x1ed88, 0x1ee74), cm848_calculateThrottle100Fuelings (0x1f194), cm848_initializeJ1939ReferenceEngineFuelingAndTorque (0x212e0), cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings (0x21d1c), governor_cruise_speedReference_update (0x524bdc), protectionRampRateControl (0x52544c); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
     uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
     uint16_t reserved_bit_11 : 1;  /* bit 11: e2m Cruise_Control_AR_Enable (AREN, cruise control auto resume). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
-    uint16_t remote_throttle_enable : 1;  /* bit 12: e2m Remote_Throttle_Enable (CTRMTHEN). cm848_j1939BuildEngineControlByte (0x256ac), cm848_buildPgn61443ElectronicEngineController2Message (0x25cbc), cm848_periodicControlLoopFaultHandling (0x50e62c), cm848_clearEngineProtectionFaultsConditional (0x50e784); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
-    uint16_t reserved_bit_13 : 1;  /* bit 13: guess (not proven, so reserved): remote throttle transition verification enable - e2m Remote_Throttle_Transition_Verification_Enable (CTRTTZEN). cm848_periodicControlLoopFaultHandling (lhz at 0x50e6e4); the name agrees, the body was not read. Clear in this calibration (0x0008). */
+    uint16_t remote_throttle_enable : 1;  /* bit 12: e2m Remote_Throttle_Enable (CTRMTHEN). cm848_j1939BuildEngineControlByte (0x256ac), cm848_buildPgn61443ElectronicEngineController2Message (0x25cbc), cm848_claimRemoteThrottleOverride (0x50e62c), cm848_clearEngineProtectionFaultsConditional (0x50e784); the names agree, the bodies were not read. Clear in this calibration (0x0008). */
+    uint16_t reserved_bit_13 : 1;  /* bit 13: guess (not proven, so reserved): remote throttle transition verification enable - e2m Remote_Throttle_Transition_Verification_Enable (CTRTTZEN). cm848_claimRemoteThrottleOverride (lhz at 0x50e6e4); the name agrees, the body was not read. Clear in this calibration (0x0008). */
     uint16_t reserved_bit_14 : 1;  /* bit 14: guess (not proven, so reserved): engine retarder service brake activate enable - e2m EB_Service_Brake_Activate_Enable (EBBREN, EB = engine brake). cm848_updateEngineRetarderEnableState (lhz at 0x41610); the name agrees, the body was not read. Clear in this calibration (0x0008). */
     uint16_t reserved_bit_15 : 1;  /* bit 15: e2m EB_Rate_Limit_Enable (EBRTLMEA, engine brake level rate limit). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
 };
