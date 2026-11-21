@@ -1141,8 +1141,6 @@ typedef struct engine_operating_mode_t engine_operating_mode_t;
 typedef struct rpm_fuel_protection_t rpm_fuel_protection_t;
 typedef struct timing_mode_control_t timing_mode_control_t;
 typedef struct etc1_message_t etc1_message_t;
-typedef struct etc1_state_t etc1_state_t;
-typedef struct governor_control_t governor_control_t;
 typedef struct param_id_entry_t param_id_entry_t;
 typedef struct ef00_dispatch_entry_t ef00_dispatch_entry_t;
 typedef struct diag_dispatch_entry_t diag_dispatch_entry_t;
@@ -1892,49 +1890,6 @@ struct etc1_message_t {
     uint8_t priority_byte;  /* ETC1 byte 5 control stored (SPN606+SPN607) */
     uint16_t speed_stored;  /* SPN191 Output Shaft Speed stored for comparison */
     uint8_t torque_stored;  /* SPN522 Percent Clutch Slip stored for comparison */
-};
-
-struct etc1_state_t {
-    uint16_t mode3_speed_target;  /* ETC1 mode 3 requested speed target */
-    uint16_t speed_setpoint;  /* ETC1 speed setpoint for torque calculation */
-    uint16_t capped_speed_target;  /* ETC1 mode 1 speed target capped at 24000 (3000 RPM) */
-    uint16_t control_flags;  /* ETC1 control flags */
-    uint16_t mode3_torque_limit;  /* ETC1 mode 3 calculated torque limit */
-    uint16_t torque_limit_calc;  /* Calculated torque limit from ETC1 request (signed) */
-    uint16_t speed_control_mode;  /* Speed control mode bits extracted from ETC1 byte 1 (SPN560 driveline state) */
-    uint16_t active_state;  /* ETC1 active state (1=control active) */
-    uint16_t reserved_10;  /* Reserved/gap at offset 0x10 */
-    uint16_t control_active;  /* ETC1 control active flag (1=ETC1 handler processing shifts) */
-    uint16_t spn573_tc_lockup_disengage;  /* SPN573 TC lockup disengaged: 1=disable override when TC not locked */
-    uint16_t handler_initialized;  /* ETC1 handler initialized flag */
-    uint16_t speed_control_target;  /* Speed control target setpoint (0.125 RPM/bit) */
-    uint8_t spn574_shift_in_process;  /* SPN574 Shift In Process: 1=transmission shift active (ETC1 byte 1 bits 5-6 = 01) */
-    uint8_t address_filter;  /* ETC1 source address filter value (0xFF=any) */
-    uint8_t reserved_1c[10];  /* Gap to timer region */
-    uint16_t torque_mode_timer;  /* ETC1 torque mode timeout counter */
-    uint16_t torque_active_timer;  /* ETC1 torque active timeout counter */
-    uint16_t speed_override_timer;  /* ETC1 speed override timeout counter */
-    uint16_t torque_limit_timer;  /* ETC1 torque limit timeout counter */
-    uint16_t speed_mode_flag;  /* ETC1 speed mode flag */
-    uint16_t mode_timeout;  /* ETC1 mode timeout counter */
-    uint16_t speed_cmd_timeout;  /* ETC1 speed command timeout counter */
-    uint16_t override_timeout;  /* ETC1 override timeout counter */
-    uint8_t reserved_36[3];  /* Gap to source address */
-    uint8_t source_address;  /* ETC1 source address of current command */
-    uint32_t config_entry_ptr;  /* Pointer to ETC1 configuration table entry */
-    uint32_t active_config_ptr;  /* Pointer to active ETC1 configuration */
-    uint32_t secondary_config_ptr;  /* Pointer to secondary ETC1 configuration */
-    uint16_t torque_limit_active;  /* ETC1 torque limit mode active flag */
-    uint16_t message_timeout;  /* ETC1 message timeout counter (lost message detection) */
-};
-
-struct governor_control_t {
-    uint16_t etc1_control_word;  /* ETC1 control word stored from message */
-    uint16_t mode_request;  /* Governor mode request (GOVERNOR_MODE enum) */
-    uint16_t mode;  /* Current governor mode (GOVERNOR_MODE enum) */
-    uint16_t torque_limit_select;  /* Torque limit mode selection (0=off 1=active) */
-    uint16_t disable_control;  /* ETC1 disable control flag */
-    uint32_t limit_state;  /* ETC1 limit state (low=torque_limit high=speed_limit) */
 };
 
 struct param_id_entry_t {

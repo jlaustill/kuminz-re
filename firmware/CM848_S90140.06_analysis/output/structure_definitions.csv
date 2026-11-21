@@ -671,50 +671,6 @@ etc1_message_t,0x003fa982,reserved_18,byte,4,Gap/reserved bytes,,needs_review
 etc1_message_t,0x003fa982,priority_byte,byte,1,ETC1 byte 5 control stored (SPN606+SPN607),,verified
 etc1_message_t,0x003fa982,speed_stored,word,2,SPN191 Output Shaft Speed stored for comparison,,verified
 etc1_message_t,0x003fa982,torque_stored,byte,1,SPN522 Percent Clutch Slip stored for comparison,,verified
-# ETC1 State Machine - ETC1 control state variables for governor
-# Used by processEtc1Command, j1939ProcessTorqueSpeedControl, selectTorqueLimitMode, governorSpeedControl
-# Total size: 78 bytes (0x0040ae00-0x0040ae4d)
-# Note: Uses word-sized fields to avoid overlapping symbol issues
-etc1_state_t,0x0040ae00,mode3_speed_target,word,2,ETC1 mode 3 requested speed target,,verified
-etc1_state_t,0x0040ae00,speed_setpoint,word,2,ETC1 speed setpoint for torque calculation,,verified
-etc1_state_t,0x0040ae00,capped_speed_target,word,2,ETC1 mode 1 speed target capped at 24000 (3000 RPM),,verified
-etc1_state_t,0x0040ae00,control_flags,word,2,ETC1 control flags,,verified
-etc1_state_t,0x0040ae00,mode3_torque_limit,word,2,ETC1 mode 3 calculated torque limit,,verified
-etc1_state_t,0x0040ae00,torque_limit_calc,word,2,Calculated torque limit from ETC1 request (signed),,verified
-etc1_state_t,0x0040ae00,speed_control_mode,word,2,Speed control mode bits extracted from ETC1 byte 1 (SPN560 driveline state),,verified
-etc1_state_t,0x0040ae00,active_state,word,2,ETC1 active state (1=control active),,verified
-etc1_state_t,0x0040ae00,reserved_10,word,2,Reserved/gap at offset 0x10,,needs_review
-etc1_state_t,0x0040ae00,control_active,word,2,ETC1 control active flag (1=ETC1 handler processing shifts),,verified
-etc1_state_t,0x0040ae00,spn573_tc_lockup_disengage,word,2,SPN573 TC lockup disengaged: 1=disable override when TC not locked,,verified
-etc1_state_t,0x0040ae00,handler_initialized,word,2,ETC1 handler initialized flag,,verified
-etc1_state_t,0x0040ae00,speed_control_target,word,2,Speed control target setpoint (0.125 RPM/bit),,verified
-etc1_state_t,0x0040ae00,spn574_shift_in_process,byte,1,SPN574 Shift In Process: 1=transmission shift active (ETC1 byte 1 bits 5-6 = 01),,verified
-etc1_state_t,0x0040ae00,address_filter,byte,1,ETC1 source address filter value (0xFF=any),,verified
-etc1_state_t,0x0040ae00,reserved_1c,byte,10,Gap to timer region,,needs_review
-etc1_state_t,0x0040ae00,torque_mode_timer,word,2,ETC1 torque mode timeout counter,,verified
-etc1_state_t,0x0040ae00,torque_active_timer,word,2,ETC1 torque active timeout counter,,verified
-etc1_state_t,0x0040ae00,speed_override_timer,word,2,ETC1 speed override timeout counter,,verified
-etc1_state_t,0x0040ae00,torque_limit_timer,word,2,ETC1 torque limit timeout counter,,verified
-etc1_state_t,0x0040ae00,speed_mode_flag,word,2,ETC1 speed mode flag,,verified
-etc1_state_t,0x0040ae00,mode_timeout,word,2,ETC1 mode timeout counter,,verified
-etc1_state_t,0x0040ae00,speed_cmd_timeout,word,2,ETC1 speed command timeout counter,,verified
-etc1_state_t,0x0040ae00,override_timeout,word,2,ETC1 override timeout counter,,verified
-etc1_state_t,0x0040ae00,reserved_36,byte,3,Gap to source address,,needs_review
-etc1_state_t,0x0040ae00,source_address,byte,1,ETC1 source address of current command,,verified
-etc1_state_t,0x0040ae00,config_entry_ptr,dword,4,Pointer to ETC1 configuration table entry,,verified
-etc1_state_t,0x0040ae00,active_config_ptr,dword,4,Pointer to active ETC1 configuration,,verified
-etc1_state_t,0x0040ae00,secondary_config_ptr,dword,4,Pointer to secondary ETC1 configuration,,verified
-etc1_state_t,0x0040ae00,torque_limit_active,word,2,ETC1 torque limit mode active flag,,verified
-etc1_state_t,0x0040ae00,message_timeout,word,2,ETC1 message timeout counter (lost message detection),,verified
-# Governor Control State - speed/torque governor state machine
-# Used by governorSpeedControl, processGovernorModeTransition
-# Total size: 12 bytes (0x0040adf4-0x0040adff)
-governor_control_t,0x0040adf4,etc1_control_word,word,2,ETC1 control word stored from message,,verified
-governor_control_t,0x0040adf4,mode_request,word,2,Governor mode request (GOVERNOR_MODE enum),,verified
-governor_control_t,0x0040adf4,mode,word,2,Current governor mode (GOVERNOR_MODE enum),,verified
-governor_control_t,0x0040adf4,torque_limit_select,word,2,Torque limit mode selection (0=off 1=active),,verified
-governor_control_t,0x0040adf4,disable_control,word,2,ETC1 disable control flag,,verified
-governor_control_t,0x0040adf4,limit_state,dword,4,ETC1 limit state (low=torque_limit high=speed_limit),,verified
 
 # Parameter ID Lookup Entry - firmware parameter lookup table entry
 # Located at ROM 0x3CDC (copied to RAM 0x3F98AC at boot)

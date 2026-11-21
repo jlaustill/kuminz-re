@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 02:16:50 MST 2026
+// Generated: Sat Nov 21 02:39:24 MST 2026
 
 
 //
@@ -23317,7 +23317,6 @@ void cm848_initJ1939Dm1RequestHandler(void)
 // Function: cm848_j1939ProcessPgn61442Etc1 @ 0x00022870
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* receives J1939 PGN 61442 ETC1 via the Bank-2 receive table 0x3fd414
    (cm848_dispatchJ1939ReceivedMessages) - registered by cm848_initJ1939Pgn61442Etc1Handler - greps
    as 1 call but reached only through the table */
@@ -23389,7 +23388,7 @@ LAB_00022a00:
         j1939_tsc1_override_state.etc1_torque_active_timer =
              j1939_pgn61442_engine_overspeed_enable_time_limit + 1;
       }
-      if ((j1939_tsc1_override_state.governor_mode == 1) && (_j1939_governor_source_index == 1)) {
+      if ((j1939_tsc1_override_state.governor_mode == 1) && (j1939_governor_source_index == 1)) {
         j1939_tsc1_override_state.torque_limit_mode_select = 1;
       }
       j1939_tsc1_override_state.etc1_torque_mode_timer =
@@ -23509,8 +23508,6 @@ void cm848_initEtc2Handler(void)
 // Function: torqueControlModeHandler @ 0x00022d60
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void torqueControlModeHandler(j1939_rx_msg_t *msg)
 
 {
@@ -23586,21 +23583,21 @@ void torqueControlModeHandler(j1939_rx_msg_t *msg)
   j1939_tsc1_override_state.etc1_active_config_ptr =
        (etc1_config_entry_t *)j1939_tsc1_override_state.etc1_config_entry_ptr;
 accept_etc1_command:
-  _etc1_control_word_cached = (ushort)j1939_tsc1_received.control_word;
+  etc1_control_word_cached = (ushort)j1939_tsc1_received.control_word;
   j1939_tsc1_override_state.etc1_active_state = 1;
   j1939_tsc1_received.priority_byte = priority_bits;
   j1939_tsc1_override_state.etc1_spn1482_source_address = bVar1;
   if (control_mode == 0) {
     j1939_tsc1_override_state.etc1_speed_error_timeout = 0;
     j1939_tsc1_override_state.governor_mode = 0;
-    _j1939_governor_source_index = 0;
+    j1939_governor_source_index = 0;
     j1939_tsc1_override_state.etc1_control_flags = 0;
   }
   else if (control_mode == 1) {
     j1939_tsc1_override_state.etc1_speed_error_timeout =
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode1 + 1;
     j1939_tsc1_override_state.governor_mode = 1;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 1;
     j1939_tsc1_received.speed_stored = j1939_tsc1_received.requested_speed;
     j1939_tsc1_override_state.etc1_capped_speed_target = j1939_tsc1_received.requested_speed;
@@ -23615,7 +23612,7 @@ accept_etc1_command:
     j1939_tsc1_override_state.etc1_speed_error_timeout =
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode2 + 1;
     j1939_tsc1_override_state.governor_mode = 2;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 0;
     j1939_tsc1_received.torque_stored = j1939_tsc1_received.requested_torque;
     j1939_tsc1_override_state.etc1_speed_setpoint =
@@ -23633,7 +23630,7 @@ accept_etc1_command:
     j1939_tsc1_override_state.etc1_speed_error_timeout =
          (j1939_tsc1_override_state.etc1_active_config_ptr)->speed_error_timeout_mode3 + 1;
     j1939_tsc1_override_state.governor_mode = 3;
-    _j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
+    j1939_governor_source_index = cm848_lookupJ1939SourceAddressIndex((uint)msg->source_address);
     j1939_tsc1_override_state.etc1_control_flags = 0;
     j1939_tsc1_received.speed_stored = j1939_tsc1_received.requested_speed;
     j1939_tsc1_override_state.etc1_torque_limit_value = j1939_tsc1_received.requested_speed;
@@ -23647,7 +23644,7 @@ accept_etc1_command:
       j1939_tsc1_override_state.etc1_mode3_torque_limit = 0;
     }
   }
-  if (_j1939_governor_source_index != 1) {
+  if (j1939_governor_source_index != 1) {
     j1939_tsc1_override_state.torque_limit_mode_select = 0;
   }
   return;
@@ -23924,7 +23921,6 @@ LAB_000235d0:
 // Function: cm848_processEngineRetarderTsc1Request @ 0x000236f0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Handles TSC1 (PGN 0) frames addressed to the engine retarder source address
    j1939_engine_retarder_source_address (routed by cm848_j1939DispatchAddressHandler); it ignores
    them when engine_retarder_output_driver_count is 0, for a data length other than 8 and for speed
@@ -24025,7 +24021,7 @@ LAB_00023878:
     cm848_selectEngineRetarderStagePercent();
     engine_retarder_torque_request_percent = engine_retarder_stage_percent;
     if ((((bVar1 == j1939_transmission_source_address) &&
-         (j1939_tsc1_override_state.governor_mode == 1)) && (_j1939_governor_source_index == 1)) &&
+         (j1939_tsc1_override_state.governor_mode == 1)) && (j1939_governor_source_index == 1)) &&
        ((engine_retarder_shift_assist_fuel_demand_limit <= engine_operating_mode_fuel_demand &&
         (wVar4 != 0)))) {
       j1939_tsc1_override_state.etc1_multiframe_timeout = 0;
@@ -25413,7 +25409,6 @@ void cm848_initializePgn61441ElectronicBrakeController1Buffer(void)
 // Function: sendPgn61444ElectronicEngineController1Message @ 0x0002588c
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Builds and sends the ECM's own EEC1 broadcast, PGN 61444: the transmit descriptor
    j1939_pgn61444_tx_message (can_id built from 0xf00400, 5 bytes, set by cm848_initEec1TxDescriptor
    at 0x25ab8) is registered in the periodic transmit queue with diag_record_queue_add_entry. Byte 1
@@ -25440,15 +25435,15 @@ void sendPgn61444ElectronicEngineController1Message(void)
     if (((final_fueling_state == FUELING_STATE_TSC1_SPEED_CONTROL) ||
         (final_fueling_state == FUELING_STATE_TSC1_TORQUE_CONTROL)) ||
        (final_fueling_state == FUELING_STATE_TSC1_TORQUE_LIMIT)) {
-      if (_j1939_governor_source_index == 1) {
+      if (j1939_governor_source_index == 1) {
         j1939_engine_status_byte = 0xf6;
         goto LAB_00025a28;
       }
-      if (_j1939_governor_source_index == 2) {
+      if (j1939_governor_source_index == 2) {
         j1939_engine_status_byte = 0xf7;
         goto LAB_00025a28;
       }
-      if (_j1939_governor_source_index == 3) {
+      if (j1939_governor_source_index == 3) {
         j1939_engine_status_byte = 0xf5;
         goto LAB_00025a28;
       }
@@ -26574,7 +26569,6 @@ void cm848_emptyStubFunction5(void)
 // Function: cm848_runTsc1LostManagement @ 0x00026f80
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Runs the J1939 TSC1 lost management (the e2m TSC_Lost_* records, 10E7 +28 .. +30 and 11C1 +4): it
    hands the engine back to the accelerator pedal when a TSC1 control request has timed out. Called
    in three places of cm848_processGovernorModeTransition (0x2715c): with no override active
@@ -26638,7 +26632,7 @@ void cm848_runTsc1LostManagement(void)
       j1939_tsc1_override_state.etc1_mode3_torque_limit = 0xffff;
     }
     j1939_tsc1_override_state.governor_mode = 0;
-    _j1939_governor_source_index = 0;
+    j1939_governor_source_index = 0;
     etc1_torque_limit_integrator = (uint)j1939_tsc1_override_state.etc1_mode3_torque_limit << 6;
     j1939_tsc1_override_state.etc1_torque_limit_value = engine_speed_state.filtered_engine_speed;
   }
@@ -67590,15 +67584,13 @@ void cm848_initJ1939InputProcessing(void)
 // Function: governor_resetModeStateOnCondition @ 0x0050aec0
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
 void governor_resetModeStateOnCondition(void)
 
 {
   if (((((governor_feature_config_word & 0x1000) != 0) &&
        (engine_retarder_override_control_mode == 2)) &&
       (engine_retarder_controlling_source_index == 1)) &&
-     (((j1939_tsc1_override_state.governor_mode == 1 && (_j1939_governor_source_index == 1)) &&
+     (((j1939_tsc1_override_state.governor_mode == 1 && (j1939_governor_source_index == 1)) &&
       (engine_retarder_shift_assist_fuel_demand_limit <= engine_operating_mode_fuel_demand)))) {
     engine_retarder_override_control_mode = 0;
     engine_retarder_torque_limit_percent = 0x7d;
@@ -68366,7 +68358,6 @@ void cm848_storeJ1939ControlSessionInHistoryTable(int param_1)
 // Function: cm848_startJ1939ControlSession @ 0x0050beec
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Opens a J1939 control session record. param_1 = 0 starts an engine control (TSC1) session:
    j1939_engine_control_active_flag_cal = 1 (e2m 1100 +0 J1939_Engine_Control_Status),
    j1939_engine_control_source_index_cal (+4 J1939_Engine_Control_Source; 1 = transmission, 2 = ABS,
@@ -68386,10 +68377,10 @@ void cm848_startJ1939ControlSession(int param_1)
 {
   if (param_1 == 0) {
     j1939_engine_control_active_flag_cal = 1;
-    j1939_engine_control_source_index_cal = _j1939_governor_source_index;
+    j1939_engine_control_source_index_cal = j1939_governor_source_index;
     DAT_003feb50 = 0;
     DAT_003feb51 = j1939_tsc1_override_state.etc1_spn1482_source_address;
-    DAT_003feb52 = _j1939_governor_source_index;
+    DAT_003feb52 = j1939_governor_source_index;
     etc1_governor_mode_history_write_index = 1;
     DAT_003feb56 = j1939_tsc1_override_state.governor_mode;
     DAT_003feb5e = 0;
