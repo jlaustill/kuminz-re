@@ -9,6 +9,8 @@ mkdir -p "$W/largetar"
 tar -xJf "$D/session_folder_large_files.tar.xz" -C "$W/largetar"
 cp "$E/build15.log" "$W"/build1[6-9].log "$W/build20.log" "$W/largetar/"
 cp "$W/verify15.log" "$W/largetar/verify4.log"
+cp "$W/build21.log" "$W/largetar/"
+cp "$W/verify16.log" "$W/largetar/verify5.log"
 cd "$W/largetar"
 ls | sort -V > ../large_order.txt
 tar --sort=name -cJf ../large_new.tar.xz -T ../large_order.txt
