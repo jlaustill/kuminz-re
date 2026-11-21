@@ -266,7 +266,7 @@ void cm848_initTemperatureTrimCoeff(void);  // @ 0x0000e8cc
 void cm848_calculateGovernorReferenceSpeedBlend(void);  // @ 0x0000e8dc
 void cm848_runOperatingModeSpeedGovernor(void);  // @ 0x0000ea00
 void cm848_initFuelDemandVariables(void);  // @ 0x0000fabc
-void cm848_restoreEngineOperatingMode(void);  // @ 0x0000fb28
+void cm848_selectAllSpeedGovernorApplicationMode(void);  // @ 0x0000fb28
 void cm848_calculateAllSpeedGovernorNoLoadFuel(void);  // @ 0x0000fcd0
 void cm848_initFuelTimingTableSizes(void);  // @ 0x0000fe3c
 void cm848_calculateFuelTimingTarget(void);  // @ 0x0000fe5c

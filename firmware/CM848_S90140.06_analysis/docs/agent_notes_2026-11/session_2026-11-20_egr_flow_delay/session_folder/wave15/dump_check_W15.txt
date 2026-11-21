@@ -1,0 +1,18 @@
+0x40b6e2 engine_speed_to_vss_ratio [word] dump [1895] quoted [8] | e2m 118D +2 Engine_VSS_Ratio 'ratio of engine speed to transmission' (UNITLESS, 0.0078125 per count = 1/128, 1
+0x405206 intake_manifold_temperature_lag_filter_coefficient [word] dump [-2570, 62966] quoted [961] | e2m 18D6 +0 C_TPE_IMT_Lag_Filter_Constant 'Filter constant used for filtering noise and quantization effects (
+0x4065be compressor_inlet_density_negative_rate_limit [word] dump [-164, 65372] quoted [5] | e2m 1976 +0 C_TPE_Inlet_Density_Down_Rate 'Compressor_Inlet_Density negative rate decrement value' (LBM/FT3, 0
+0x4065c0 compressor_inlet_density_positive_rate_limit [word] dump [164] quoted [5] | e2m 1976 +2 C_TPE_Inlet_Density_Up_Rate 'Compressor_Inlet_Density positive rate increment value' (LBM/FT3, 0.0
+0x40ae9a low_speed_governor_integral_term [i16] dump [54] quoted [3] | e2m 1065 +6 LSG_Integral_Term '[LSITFL] LSG PID integrator fueling contribution' (MM3S, 0.0679 mm3 per count, 
+0x40aea4 low_speed_governor_derivative_gain_adjustment [word] dump [128] quoted [0] | e2m 1065 +10 LSG_QD_Adjustment '[LSQDAJ] LSG derivative gain adjustment coefficient' (UNITLESS, 1/128 per coun
+0x40aea6 low_speed_governor_integral_gain_adjustment [word] dump [128] quoted [0] | e2m 1065 +12 LSG_QI_Adjustment '[LSQIAJ] LSG integral gain adjustment coefficient' (UNITLESS, 1/128 per count,
+0x4070e6 low_speed_governor_default_gain_set [i16] dump [164] quoted [80] | e2m 10EC +0 LSG_Default_Proportional_Gain '[LSDFPPGN] Low speed governor default proportional gain.' (MM3S/RPM
+0x40a042 supervisor_chip_engine_speed_targets_per_revolution [word] dump [15370] quoted [10, 60] | e2m 11AE +A ASIC_Engine_Speed_Targets_Per_Rev '[ESASRVTT] Number of engine speed targets per crankshaft revolu
+0x40b53e net_torque_fuel_limit_table_output [word] dump [1672] quoted [3] | e2m 8C69 +2 Net_Torque_Fueling_Table_Limit 'Net Torque fueling limit output from the Net Torque Fueling Limit 
+0x408dfc cruise_bottom_droop_offset [word] dump [353] quoted [3] | e2m 1186 +0 Cruise_RSG_Bottom_Droop_Offset 'CRUISE/RSG BOTTOM DROOP OFFSET.' (MM3S 0.0679 mm3 per count; 353 =
+0x405200 charge_temperature_estimate_filter_coefficient [word] dump [-132, 65404] quoted [998] | e2m 1A1A +A C_TPE_Charge_Tmptr_Est_Fil_Cnst 'Filter constant for charge temperature' (UNITLESS 1/65536 per cou
+0x408ea8 engine_retarder_fuel_demand_threshold [word] dump [59] quoted [3] | e2m 1071 +E EB_Max_Fuel_Threshold 'Fueling threshold above which engine brakes may not be enabled' (address fr
+0x4062d2 cylinder_residual_gas_mass_upper_limit [word] dump [1104] quoted [3] | e2m 1735 +0 C_CBP_Residual_Mass_Max 'Max limit on residual mass estimation' (address from the ECU's parameter 
+0x40a612 compressor_outlet_temperature_to_inlet_temperature_ratio [word] dump [2117] quoted [34] | e2m 175F +4 TPE_COT_To_Inlet_Tmptr_Ratio 'Compressor map output in corporate units' (address from the ECU's pa
+0x4070aa low_speed_governor_aggressive_gain_set [byte] dump [0] quoted [164] | e2m 10EE +12 LSG_Aggressive_Proportional_Gain '[LSAGPPGN] Low speed governor aggressive proportional gain.' (M
+0x3ffcaa wastegate_duty_turbocharger_speed_derate_scale_gain [dword] dump [8389888] quoted [128] | e2m 16A1 +12 C_TGC_Turbo_Drt_Scale_Gain 'Turbo speed control scale gain' (UNITLESS, signed, 1/256 per count, 0
+151 rows quote a dump value; 17 without a match; 0 inside the dump gap skipped
