@@ -4873,8 +4873,8 @@ extern byte transmission_selected_gear_previous;  // 0x0040b0e0
 extern word transmission_4th_gear_lockup_boost_pressure;  // 0x0040b0e2
 extern word transmission_3_4_shift_after_3rd_gear_lockup_flag;  // 0x0040b0e4
 extern word governor_pressure_wide_open_throttle_anti_hang_timer;  // 0x0040b0e6
-extern protection_condition_flags_t protection_condition_flags_t_0040b0e8;  // 0x0040b0e8
-extern protection_status_flags_t protection_status_flags_t_0040b0f2;  // 0x0040b0f2
+extern transmission_control_flags_t transmission_control_flags;  // 0x0040b0e8
+extern transmission_shift_strategy_flags_t transmission_shift_strategy_flags;  // 0x0040b0f2
 extern byte protection_status_flags_b;  // 0x0040b0fb
 extern byte transmission_temperature_sensor_fault_flag;  // 0x0040b0fc
 extern byte park_neutral_exit_engine_speed_limit_state_bits;  // 0x0040b0fd

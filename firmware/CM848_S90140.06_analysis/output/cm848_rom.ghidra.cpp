@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 12:22:14 MST 2026
+// Generated: Sat Nov 21 12:29:08 MST 2026
 
 
 //
@@ -32609,8 +32609,7 @@ void cm848_requestOverdriveShiftsLowRange(void)
     }
     bVar3 = 4;
   }
-  protection_condition_flags_t_0040b0e8.condition_eval =
-       protection_condition_flags_t_0040b0e8.condition_eval | bVar3;
+  transmission_control_flags.request_flags = transmission_control_flags.request_flags | bVar3;
   return;
 }
 
@@ -32641,11 +32640,11 @@ void cm848_selectGovernorPressureLowRange(void)
   transmission_predicted_2_3_shift_delay =
        *(word *)(&eeprom_calibration_pending_flag + (uint)transmission_temperature_range * 2);
   if (transmission_current_gear == 1) {
-    bVar3 = protection_condition_flags_t_0040b0e8.action_flags & 0xfd;
-    if ((protection_condition_flags_t_0040b0e8.action_flags & 1) == 0) {
+    bVar3 = transmission_control_flags.low_range_boost_flags & 0xfd;
+    if ((transmission_control_flags.low_range_boost_flags & 1) == 0) {
       if (transmission_low_range_1_2_shift_detection_minimum_engine_speed <
           engine_speed_state.filtered_engine_speed) {
-        protection_condition_flags_t_0040b0e8.action_flags = bVar3;
+        transmission_control_flags.low_range_boost_flags = bVar3;
         wVar1 = lookupTableInterpolation
                           (&DAT_003fb144,fuel_demand_control_t_0040a57a.calculated,
                            transmission_low_range_upshift_target_engine_speed_axis,
@@ -32663,7 +32662,7 @@ void cm848_selectGovernorPressureLowRange(void)
         }
       }
       else {
-        protection_condition_flags_t_0040b0e8.action_flags = bVar3;
+        transmission_control_flags.low_range_boost_flags = bVar3;
         wVar1 = lookupTableInterpolation
                           (&DAT_003fb144,fuel_demand_control_t_0040a57a.calculated,
                            transmission_low_range_upshift_target_engine_speed_axis,
@@ -32677,8 +32676,8 @@ void cm848_selectGovernorPressureLowRange(void)
                       transmission_low_range_1_2_hold_pressure_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_1_2_HOLD;
       if ((uVar2 & 0xffff) < (uint)engine_speed_state.filtered_engine_speed) {
-        protection_condition_flags_t_0040b0e8.action_flags =
-             protection_condition_flags_t_0040b0e8.action_flags | 1;
+        transmission_control_flags.low_range_boost_flags =
+             transmission_control_flags.low_range_boost_flags | 1;
         transmission_lockup_timers.low_range_shift_timer = transmission_low_range_1_2_boost_time;
         governor_pressure_target =
              lookupTableInterpolation
@@ -32691,7 +32690,7 @@ void cm848_selectGovernorPressureLowRange(void)
       }
     }
     else {
-      protection_condition_flags_t_0040b0e8.action_flags = bVar3;
+      transmission_control_flags.low_range_boost_flags = bVar3;
       governor_pressure_target =
            lookupTableInterpolation
                      (&protection_rpm_limit_table_derate1_active_state,
@@ -32705,10 +32704,10 @@ void cm848_selectGovernorPressureLowRange(void)
     if (((transmission_low_range_2nd_gear_boost_maximum_engine_acceleration <
           transmission_engine_acceleration) ||
         (transmission_lockup_timers.low_range_shift_timer == 0)) ||
-       ((protection_condition_flags_t_0040b0e8.action_flags & 1) == 0)) {
-      if ((protection_condition_flags_t_0040b0e8.action_flags & 1) == 0) {
+       ((transmission_control_flags.low_range_boost_flags & 1) == 0)) {
+      if ((transmission_control_flags.low_range_boost_flags & 1) == 0) {
         if (transmission_lockup_timers.low_range_hold_timer == 0) {
-          if ((protection_condition_flags_t_0040b0e8.action_flags & 2) == 0) {
+          if ((transmission_control_flags.low_range_boost_flags & 2) == 0) {
             wVar1 = lookupTableInterpolation
                               (&DAT_003fb144,fuel_demand_control_t_0040a57a.calculated,
                                transmission_low_range_upshift_target_engine_speed_axis,
@@ -32737,8 +32736,8 @@ void cm848_selectGovernorPressureLowRange(void)
                    TRANSMISSION_PRESSURE_STATE_LOW_RANGE_2_3_HOLD;
               return;
             }
-            protection_condition_flags_t_0040b0e8.action_flags =
-                 protection_condition_flags_t_0040b0e8.action_flags | 2;
+            transmission_control_flags.low_range_boost_flags =
+                 transmission_control_flags.low_range_boost_flags | 2;
             transmission_lockup_timers.low_range_shift_timer = transmission_low_range_2_3_boost_time
             ;
           }
@@ -32752,8 +32751,8 @@ void cm848_selectGovernorPressureLowRange(void)
         }
       }
       else {
-        protection_condition_flags_t_0040b0e8.action_flags =
-             protection_condition_flags_t_0040b0e8.action_flags & 0xfe;
+        transmission_control_flags.low_range_boost_flags =
+             transmission_control_flags.low_range_boost_flags & 0xfe;
         transmission_lockup_timers.low_range_hold_timer =
              transmission_low_range_2nd_gear_minimum_hold_time;
       }
@@ -32763,18 +32762,18 @@ void cm848_selectGovernorPressureLowRange(void)
     if (((transmission_low_range_3rd_gear_boost_maximum_engine_acceleration <
           transmission_engine_acceleration) ||
         (transmission_lockup_timers.low_range_shift_timer == 0)) ||
-       (((protection_condition_flags_t_0040b0e8.action_flags & 2) == 0 &&
-        ((protection_condition_flags_t_0040b0e8.action_flags & 1) == 0)))) {
-      if (((protection_condition_flags_t_0040b0e8.action_flags & 2) == 0) &&
-         ((protection_condition_flags_t_0040b0e8.action_flags & 1) == 0)) {
+       (((transmission_control_flags.low_range_boost_flags & 2) == 0 &&
+        ((transmission_control_flags.low_range_boost_flags & 1) == 0)))) {
+      if (((transmission_control_flags.low_range_boost_flags & 2) == 0) &&
+         ((transmission_control_flags.low_range_boost_flags & 1) == 0)) {
         if (transmission_lockup_timers.low_range_hold_timer != 0) {
           return;
         }
         cm848_requestOverdriveShiftsLowRange();
       }
       else {
-        protection_condition_flags_t_0040b0e8.action_flags =
-             protection_condition_flags_t_0040b0e8.action_flags & 0xfc;
+        transmission_control_flags.low_range_boost_flags =
+             transmission_control_flags.low_range_boost_flags & 0xfc;
         transmission_lockup_timers.low_range_hold_timer =
              transmission_low_range_3rd_gear_minimum_hold_time;
       }
@@ -32817,8 +32816,7 @@ void cm848_applyConverterLockupScheduleLowRange(void)
   if ((short)transmission_temperature_in_use <= (short)lockup_minimum_transmission_temperature) {
     return;
   }
-  if ((transmission_current_gear == 3) &&
-     ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 8) != 0)) {
+  if ((transmission_current_gear == 3) && ((transmission_control_flags.overdrive_flags & 8) != 0)) {
     if (converter_clutch_apply_delay_countdown != 0) {
       return;
     }
@@ -32838,10 +32836,9 @@ void cm848_applyConverterLockupScheduleLowRange(void)
                        transmission_3rd_gear_low_range_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_low_range_unlock_maximum_throttle_values,0);
     if (((wVar1 <= fuel_demand_control_t_0040a57a.calculated) &&
-        (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) == 0 ||
+        (((transmission_control_flags.mode_flags & 0x20) == 0 ||
          (wVar2 <= fuel_demand_control_t_0040a57a.calculated)))) ||
-       ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0))
-    goto LAB_00030024;
+       ((transmission_control_flags.overdrive_flags & 0x20) == 0)) goto LAB_00030024;
   }
   else {
     if (transmission_current_gear != 4) {
@@ -32863,13 +32860,12 @@ void cm848_applyConverterLockupScheduleLowRange(void)
                        transmission_4th_gear_low_range_unlock_maximum_throttle_axis,
                        transmission_4th_gear_low_range_unlock_maximum_throttle_values,0);
     if ((wVar1 <= fuel_demand_control_t_0040a57a.calculated) &&
-       (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) == 0 ||
+       (((transmission_control_flags.mode_flags & 0x20) == 0 ||
         (wVar2 <= fuel_demand_control_t_0040a57a.calculated)))) goto LAB_00030024;
   }
   cm848_setLogicalOutputRequest(0x12,0);
 LAB_00030024:
-  protection_condition_flags_t_0040b0e8.condition_flags_1 =
-       protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+  transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
   return;
 }
 
@@ -32888,8 +32884,7 @@ void cm848_applyConverterUnlockConditionsLowRange(void)
 {
   ushort uVar1;
   
-  if (((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0) &&
-     (2 < transmission_current_gear)) {
+  if (((transmission_control_flags.request_flags & 0x40) == 0) && (2 < transmission_current_gear)) {
     if (transmission_current_gear == 3) {
       uVar1 = lookupTableInterpolation
                         (&protection_fuel_demand_exit_derate3_interp_state,
@@ -32916,9 +32911,8 @@ void cm848_applyConverterUnlockConditionsLowRange(void)
   cm848_clearLogicalOutputRequest(0x12,0);
 LAB_00030150:
   if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
-     ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) {
-    protection_condition_flags_t_0040b0e8.condition_flags_1 =
-         protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+     ((transmission_control_flags.request_flags & 0x40) == 0)) {
+    transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
   }
   return;
 }
@@ -32953,7 +32947,7 @@ void cm848_applyConverterLockupSchedule(void)
   if ((short)transmission_temperature_in_use <= (short)lockup_minimum_transmission_temperature) {
     return;
   }
-  if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) != 0) {
+  if ((transmission_control_flags.request_flags & 0x40) != 0) {
     return;
   }
   if (transmission_park_or_neutral_flag != 0) {
@@ -32987,23 +32981,21 @@ void cm848_applyConverterLockupSchedule(void)
         ) && ((transmission_lockup_delay_1_2_timer == 0 &&
               (transmission_lockup_delay_3_2_timer == 0)))) {
       if ((transmission_2nd_gear_lockup_minimum_throttle < fuel_demand_control_t_0040a57a.calculated
-          ) || ((protection_condition_flags_t_0040b0e8.load_condition_flags & 2) != 0)) {
+          ) || ((transmission_control_flags.state_flags & 2) != 0)) {
         if (transmission_overheat_protection_active_flag != 0) {
           wVar3 = fuel_demand_limit_working;
           wVar2 = wVar1;
         }
         if ((fuel_demand_control_t_0040a57a.calculated < wVar2) ||
-           (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) != 0 &&
+           (((transmission_control_flags.mode_flags & 0x20) != 0 &&
             (fuel_demand_control_t_0040a57a.calculated < wVar3)))) {
           cm848_setLogicalOutputRequest(0x12,0);
         }
       }
-      protection_condition_flags_t_0040b0e8.condition_flags_1 =
-           protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+      transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
     }
   }
-  if ((transmission_current_gear == 3) &&
-     ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 8) != 0)) {
+  if ((transmission_current_gear == 3) && ((transmission_control_flags.overdrive_flags & 8) != 0)) {
     wVar3 = lookupTableInterpolation
                       (&DAT_003fb15c,sensor_readings_t_0040baf2.coolant_temp,
                        transmission_3rd_gear_lockup_minimum_output_speed_axis,
@@ -33035,7 +33027,7 @@ void cm848_applyConverterLockupSchedule(void)
                       (&DAT_003fb114,transmission_output_speed_in_use,
                        transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_values,0);
-    if ((((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x20) == 0) ||
+    if ((((transmission_control_flags.state_flags & 0x20) == 0) ||
         (transmission_lockup_service_minimum_output_speed_3rd < transmission_output_speed_in_use))
        && ((((wVar3 < transmission_output_speed_in_use &&
              (converter_clutch_apply_delay_countdown == 0)) &&
@@ -33047,10 +33039,10 @@ void cm848_applyConverterLockupSchedule(void)
           if (wVar4 <= fuel_demand_control_t_0040a57a.calculated) goto joined_r0x00030600;
         }
         else if (((wVar1 <= fuel_demand_control_t_0040a57a.calculated) &&
-                 (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) == 0 ||
+                 (((transmission_control_flags.mode_flags & 0x20) == 0 ||
                   (wVar5 <= fuel_demand_control_t_0040a57a.calculated)))) ||
-                (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0 &&
-                 (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x40) == 0 &&
+                (((transmission_control_flags.overdrive_flags & 0x20) == 0 &&
+                 (((transmission_control_flags.overdrive_flags & 0x40) == 0 &&
                   (((fuel_demand_control_t_0040a57a.calculated <=
                      transmission_3rd_gear_lockup_minimum_throttle ||
                     (transmission_3rd_gear_lockup_enable == 0)) ||
@@ -33065,19 +33057,18 @@ LAB_00030694:
         uVar6 = fuel_demand_limit_working;
         if (fuel_demand_control_t_0040a57a.calculated < wVar2) goto LAB_00030694;
 joined_r0x00030600:
-        if (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) != 0) &&
+        if (((transmission_control_flags.mode_flags & 0x20) != 0) &&
            (fuel_demand_control_t_0040a57a.calculated < uVar6)) goto LAB_00030694;
       }
 LAB_000306ac:
-      protection_condition_flags_t_0040b0e8.condition_flags_1 =
-           protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+      transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
     }
   }
   if (transmission_current_gear != 4) {
     return;
   }
   if ((transmission_3_4_shift_after_3rd_gear_lockup_flag != 0) ||
-     ((protection_status_flags_t_0040b0f2.flags[0] & 8) != 0)) {
+     ((transmission_shift_strategy_flags.anti_hunt_flags & 8) != 0)) {
     transmission_4th_gear_lockup_boost_pressure = 0;
   }
   wVar4 = lookupTableInterpolation
@@ -33136,7 +33127,7 @@ LAB_000306ac:
                     (&DAT_003fb140,transmission_output_speed_in_use,
                      transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_axis,
                      transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_values,0);
-  if (((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x20) != 0) &&
+  if (((transmission_control_flags.state_flags & 0x20) != 0) &&
      (transmission_output_speed_in_use <= transmission_lockup_service_minimum_output_speed_4th)) {
     return;
   }
@@ -33151,7 +33142,7 @@ LAB_000306ac:
   }
   wVar4 = fuel_demand_limit_working;
   if (transmission_overheat_protection_active_flag == 0) {
-    if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) == 0) {
+    if ((transmission_control_flags.mode_flags & 0x10) == 0) {
       wVar4 = wVar7;
       wVar2 = wVar5;
       if ((exhaust_brake_transmission_features_inhibit == 0) &&
@@ -33171,13 +33162,12 @@ LAB_000306ac:
   wVar1 = wVar2;
 joined_r0x00030a54:
   if ((fuel_demand_control_t_0040a57a.calculated < wVar1) ||
-     (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x20) != 0 &&
+     (((transmission_control_flags.mode_flags & 0x20) != 0 &&
       (fuel_demand_control_t_0040a57a.calculated < wVar3)))) {
     cm848_setLogicalOutputRequest(0x12,0);
     transmission_3_4_shift_after_3rd_gear_lockup_flag = 0;
   }
-  protection_condition_flags_t_0040b0e8.condition_flags_1 =
-       protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+  transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
   return;
 }
 
@@ -33202,7 +33192,7 @@ void cm848_applyConverterUnlockConditions(void)
   word wVar4;
   uint uVar5;
   
-  if ((((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0) &&
+  if ((((transmission_control_flags.request_flags & 0x40) == 0) &&
       (((algorithm_enable_flags_6_cal & 8) != 0 || (2 < transmission_current_gear)))) &&
      (((algorithm_enable_flags_6_cal & 8) == 0 || (transmission_current_gear != 1)))) {
     if (transmission_current_gear == 1) goto LAB_00030b88;
@@ -33255,7 +33245,7 @@ LAB_00030f98:
             wVar1 = wVar2;
           }
           if ((fuel_demand_control_t_0040a57a.calculated <= wVar1) &&
-             (((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x20) == 0 ||
+             (((transmission_control_flags.state_flags & 0x20) == 0 ||
               (transmission_unlock_service_minimum_output_speed_3rd <=
                transmission_output_speed_in_use)))) goto LAB_00030fdc;
         }
@@ -33297,18 +33287,18 @@ LAB_00030f98:
       if (transmission_overheat_protection_active_flag != 0) goto LAB_00030f98;
       if ((exhaust_brake_transmission_features_inhibit == 0) &&
          ((switch_input_state_bits[1] & 0x10) != 0)) {
-        if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0) {
+        if ((transmission_control_flags.mode_flags & 0x10) != 0) {
           wVar1 = wVar4;
         }
       }
       else {
         wVar1 = wVar3;
-        if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0) {
+        if ((transmission_control_flags.mode_flags & 0x10) != 0) {
           wVar1 = wVar2;
         }
       }
       if ((fuel_demand_control_t_0040a57a.calculated <= wVar1) &&
-         (((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x20) == 0 ||
+         (((transmission_control_flags.state_flags & 0x20) == 0 ||
           (transmission_unlock_service_minimum_output_speed_4th <= transmission_output_speed_in_use)
           ))) goto LAB_00030fdc;
     }
@@ -33338,9 +33328,8 @@ LAB_00030fdc:
     }
   }
   if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
-     ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) {
-    protection_condition_flags_t_0040b0e8.condition_flags_1 =
-         protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+     ((transmission_control_flags.request_flags & 0x40) == 0)) {
+    transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
   }
   if (((transmission_selected_gear == 0x80) || (transmission_selected_gear == 0x81)) &&
      (transmission_selected_gear_previous == 0x7f)) {
@@ -33350,11 +33339,11 @@ LAB_00030fdc:
   }
   transmission_selected_gear_previous = transmission_selected_gear;
   if (transmission_current_gear != 4) {
-    if ((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x80) == 0) {
+    if ((transmission_control_flags.state_flags & 0x80) == 0) {
       if ((transmission_current_gear == 2) &&
-         ((((protection_status_flags_t_0040b0f2.flags[0] & 0x40) != 0 ||
-           ((protection_status_flags_t_0040b0f2.status_flags & 0x20) != 0)) ||
-          ((protection_status_flags_t_0040b0f2.flags[0] & 1) != 0)))) {
+         ((((transmission_shift_strategy_flags.anti_hunt_flags & 0x40) != 0 ||
+           ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x20) != 0)) ||
+          ((transmission_shift_strategy_flags.anti_hunt_flags & 1) != 0)))) {
         uVar5 = ((uint)transmission_output_speed_in_use * 0x91) / 100;
         if (uVar5 < 0x10000) {
           uVar5 = uVar5 & 0xffff;
@@ -33382,8 +33371,7 @@ LAB_00030fdc:
         transmission_lockup_timers.lockup_delay_3_4_timer =
              transmission_overheat_lockup_delay_3_4_time;
       }
-      protection_condition_flags_t_0040b0e8.load_condition_flags =
-           protection_condition_flags_t_0040b0e8.load_condition_flags & 0x7f | 0x40;
+      transmission_control_flags.state_flags = transmission_control_flags.state_flags & 0x7f | 0x40;
     }
   }
   if ((((transmission_selected_gear == 0x7e) && (transmission_current_gear == 2)) &&
@@ -33459,8 +33447,7 @@ void cm848_requestOverdriveShiftsNormal(void)
   else {
     bVar5 = 2;
   }
-  protection_condition_flags_t_0040b0e8.condition_eval =
-       protection_condition_flags_t_0040b0e8.condition_eval | bVar5;
+  transmission_control_flags.request_flags = transmission_control_flags.request_flags | bVar5;
   return;
 }
 
@@ -33486,7 +33473,7 @@ void cm848_selectGovernorPressureCold(void)
                     governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
   }
-  else if ((protection_status_flags_t_0040b0f2.flags[0] & 0x10) == 0) {
+  else if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) == 0) {
     governor_pressure_target =
          lookupTableInterpolation
                    (&DAT_003fb0f4,transmission_output_speed_in_use,governor_pressure_cold_curve_axis
@@ -33581,7 +33568,8 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
   uint uVar4;
   uint uVar5;
   
-  protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0x1f;
+  transmission_shift_strategy_flags.anti_hunt_flags =
+       transmission_shift_strategy_flags.anti_hunt_flags & 0x1f;
   transmission_predicted_1_2_shift_delay =
        *(word *)((uint)transmission_temperature_range * 2 + 0x3fede2);
   transmission_predicted_2_3_shift_delay =
@@ -33591,14 +33579,14 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
                      governor_pressure_wide_open_throttle_curve_axis,
                      governor_pressure_wide_open_throttle_curve_values,0);
   if (transmission_current_gear == 1) {
-    bVar3 = protection_status_flags_t_0040b0f2.status_flags & 0xdf;
+    bVar3 = transmission_shift_strategy_flags.wide_open_throttle_flags & 0xdf;
     uVar4 = (uint)engine_speed_state.filtered_engine_speed;
     if (transmission_1st_gear_maximum_engine_speed < uVar4) {
       transmission_1st_gear_maximum_engine_speed = engine_speed_state.filtered_engine_speed;
     }
-    if ((protection_status_flags_t_0040b0f2.status_flags & 0x40) != 0) {
+    if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x40) != 0) {
       if (governor_pressure_wide_open_throttle_1_2_hold_pressure <= wVar1) {
-        protection_status_flags_t_0040b0f2.status_flags = bVar3;
+        transmission_shift_strategy_flags.wide_open_throttle_flags = bVar3;
         transmission_pressure_state.pressure_state =
              TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST;
         governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
@@ -33609,12 +33597,12 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
       transmission_pressure_state.pressure_state =
            TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
       bVar2 = 0xbf;
-      protection_status_flags_t_0040b0f2.status_flags = bVar3;
+      transmission_shift_strategy_flags.wide_open_throttle_flags = bVar3;
       governor_pressure_target = wVar1;
       goto LAB_00031b70;
     }
     if (wVar1 <= governor_pressure_wide_open_throttle_1_2_hold_pressure) {
-      protection_status_flags_t_0040b0f2.status_flags = bVar3;
+      transmission_shift_strategy_flags.wide_open_throttle_flags = bVar3;
       transmission_pressure_state.pressure_state =
            TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
       governor_pressure_target = wVar1;
@@ -33637,7 +33625,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     }
     governor_pressure_wide_open_throttle_upshift_command_engine_speed = (word)uVar5;
     if ((uVar5 & 0xffff) < uVar4) {
-      protection_status_flags_t_0040b0f2.status_flags = bVar3 | 0x40;
+      transmission_shift_strategy_flags.wide_open_throttle_flags = bVar3 | 0x40;
       governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
       transmission_pressure_state.pressure_state =
            TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST;
@@ -33645,14 +33633,14 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
       goto LAB_00031c38;
     }
     if (uVar4 <= governor_pressure_wide_open_throttle_anti_hang_engine_speed) {
-      protection_status_flags_t_0040b0f2.status_flags = bVar3;
+      transmission_shift_strategy_flags.wide_open_throttle_flags = bVar3;
       transmission_pressure_state.pressure_state =
            TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_HOLD;
       governor_pressure_target = governor_pressure_wide_open_throttle_1_2_hold_pressure;
       return;
     }
-    bVar2 = protection_status_flags_t_0040b0f2.status_flags & 0x10;
-    protection_status_flags_t_0040b0f2.status_flags = bVar3;
+    bVar2 = transmission_shift_strategy_flags.wide_open_throttle_flags & 0x10;
+    transmission_shift_strategy_flags.wide_open_throttle_flags = bVar3;
     if (bVar2 != 0) {
       if (governor_pressure_wide_open_throttle_anti_hang_timer != 0) {
         transmission_pressure_state.pressure_state =
@@ -33660,7 +33648,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
         governor_pressure_target = governor_pressure_wide_open_throttle_1_2_hold_pressure;
         return;
       }
-      protection_status_flags_t_0040b0f2.status_flags = bVar3 | 0x40;
+      transmission_shift_strategy_flags.wide_open_throttle_flags = bVar3 | 0x40;
       governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
       transmission_pressure_state.pressure_state =
            TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST;
@@ -33672,11 +33660,11 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
       if (transmission_current_gear == 3) {
         transmission_pressure_state.pressure_state =
              TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_CURVE;
-        bVar3 = protection_status_flags_t_0040b0f2.status_flags & 0xbf;
+        bVar3 = transmission_shift_strategy_flags.wide_open_throttle_flags & 0xbf;
         governor_pressure_target = wVar1;
-        if ((protection_status_flags_t_0040b0f2.status_flags & 0x20) != 0) {
+        if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x20) != 0) {
           if (governor_pressure_wide_open_throttle_boost_timer == 0) {
-            if ((protection_status_flags_t_0040b0f2.status_flags & 8) == 0) {
+            if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 8) == 0) {
               if (governor_pressure_wide_open_throttle_upshift_target_engine_speed_high <
                   transmission_2nd_gear_maximum_engine_speed) {
                 if ((uint)transmission_predicted_2_3_shift_delay +
@@ -33712,7 +33700,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
             }
             governor_pressure_wide_open_throttle_anti_hang_timer = 0;
             transmission_2nd_gear_maximum_engine_speed = 0;
-            bVar3 = protection_status_flags_t_0040b0f2.status_flags & 0x97;
+            bVar3 = transmission_shift_strategy_flags.wide_open_throttle_flags & 0x97;
           }
           else {
             governor_pressure_target = governor_pressure_wide_open_throttle_2_3_boost_pressure;
@@ -33720,20 +33708,20 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
                  TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST;
           }
         }
-        protection_status_flags_t_0040b0f2.status_flags = bVar3;
+        transmission_shift_strategy_flags.wide_open_throttle_flags = bVar3;
         cm848_requestOverdriveShiftsNormal();
         return;
       }
       return;
     }
-    if ((protection_status_flags_t_0040b0f2.status_flags & 0x40) != 0) {
+    if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x40) != 0) {
       if (governor_pressure_wide_open_throttle_boost_timer != 0) {
         transmission_pressure_state.pressure_state =
              TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_1_2_BOOST;
         governor_pressure_target = governor_pressure_wide_open_throttle_1_2_boost_pressure;
         return;
       }
-      if ((protection_status_flags_t_0040b0f2.status_flags & 8) == 0) {
+      if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 8) == 0) {
         if (governor_pressure_wide_open_throttle_upshift_target_engine_speed_high <
             transmission_1st_gear_maximum_engine_speed) {
           if ((uint)transmission_predicted_1_2_shift_delay +
@@ -33766,8 +33754,8 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
         }
       }
       governor_pressure_wide_open_throttle_anti_hang_timer = 0;
-      protection_status_flags_t_0040b0f2.status_flags =
-           protection_status_flags_t_0040b0f2.status_flags & 0xb7;
+      transmission_shift_strategy_flags.wide_open_throttle_flags =
+           transmission_shift_strategy_flags.wide_open_throttle_flags & 0xb7;
       transmission_1st_gear_maximum_engine_speed = 0;
       return;
     }
@@ -33775,7 +33763,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
     if (transmission_2nd_gear_maximum_engine_speed < uVar4) {
       transmission_2nd_gear_maximum_engine_speed = engine_speed_state.filtered_engine_speed;
     }
-    if ((protection_status_flags_t_0040b0f2.status_flags & 0x20) != 0) {
+    if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x20) != 0) {
       if (governor_pressure_wide_open_throttle_2_3_hold_pressure <= wVar1) {
         transmission_pressure_state.pressure_state =
              TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST;
@@ -33789,8 +33777,8 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
       bVar3 = 0xdf;
       governor_pressure_target = wVar1;
 LAB_00031c38:
-      protection_status_flags_t_0040b0f2.status_flags =
-           protection_status_flags_t_0040b0f2.status_flags & bVar3;
+      transmission_shift_strategy_flags.wide_open_throttle_flags =
+           transmission_shift_strategy_flags.wide_open_throttle_flags & bVar3;
       return;
     }
     if (wVar1 <= governor_pressure_wide_open_throttle_2_3_hold_pressure) {
@@ -33816,8 +33804,8 @@ LAB_00031c38:
     }
     governor_pressure_wide_open_throttle_upshift_command_engine_speed = (word)uVar5;
     if ((uVar5 & 0xffff) < uVar4) {
-      protection_status_flags_t_0040b0f2.status_flags =
-           protection_status_flags_t_0040b0f2.status_flags & 0xef | 0x20;
+      transmission_shift_strategy_flags.wide_open_throttle_flags =
+           transmission_shift_strategy_flags.wide_open_throttle_flags & 0xef | 0x20;
       transmission_pressure_state.pressure_state =
            TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST;
       governor_pressure_target = governor_pressure_wide_open_throttle_2_3_boost_pressure;
@@ -33829,32 +33817,32 @@ LAB_00031c38:
       governor_pressure_target = governor_pressure_wide_open_throttle_2_3_hold_pressure;
       return;
     }
-    if ((protection_status_flags_t_0040b0f2.status_flags & 0x10) != 0) {
+    if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x10) != 0) {
       if (governor_pressure_wide_open_throttle_anti_hang_timer != 0) {
         transmission_pressure_state.pressure_state =
              TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_HOLD;
         governor_pressure_target = governor_pressure_wide_open_throttle_2_3_hold_pressure;
         return;
       }
-      protection_status_flags_t_0040b0f2.status_flags =
-           protection_status_flags_t_0040b0f2.status_flags | 0x20;
+      transmission_shift_strategy_flags.wide_open_throttle_flags =
+           transmission_shift_strategy_flags.wide_open_throttle_flags | 0x20;
       governor_pressure_target = governor_pressure_wide_open_throttle_2_3_boost_pressure;
       transmission_pressure_state.pressure_state =
            TRANSMISSION_PRESSURE_STATE_WIDE_OPEN_THROTTLE_2_3_BOOST;
 LAB_00031ba8:
-      protection_status_flags_t_0040b0f2.status_flags =
-           protection_status_flags_t_0040b0f2.status_flags & 0xef | 8;
+      transmission_shift_strategy_flags.wide_open_throttle_flags =
+           transmission_shift_strategy_flags.wide_open_throttle_flags & 0xef | 8;
       return;
     }
   }
   governor_pressure_wide_open_throttle_anti_hang_timer =
        governor_pressure_wide_open_throttle_anti_hang_time;
   bVar2 = 0xf7;
-  protection_status_flags_t_0040b0f2.status_flags =
-       protection_status_flags_t_0040b0f2.status_flags | 0x10;
+  transmission_shift_strategy_flags.wide_open_throttle_flags =
+       transmission_shift_strategy_flags.wide_open_throttle_flags | 0x10;
 LAB_00031b70:
-  protection_status_flags_t_0040b0f2.status_flags =
-       protection_status_flags_t_0040b0f2.status_flags & bVar2;
+  transmission_shift_strategy_flags.wide_open_throttle_flags =
+       transmission_shift_strategy_flags.wide_open_throttle_flags & bVar2;
   return;
 }
 
@@ -33917,7 +33905,7 @@ void cm848_selectGovernorPressureCruise(void)
      ((switch_input_state_bits[1] & 0x10) != 0)) {
     if (fuel_demand_control_t_0040a57a.calculated < wVar3) {
       if ((wVar4 <= fuel_demand_control_t_0040a57a.calculated) ||
-         ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 1) != 0)) goto LAB_00031f94;
+         ((transmission_control_flags.mode_flags & 1) != 0)) goto LAB_00031f94;
       bVar7 = 4;
     }
     else {
@@ -33926,14 +33914,13 @@ void cm848_selectGovernorPressureCruise(void)
   }
   else if (fuel_demand_control_t_0040a57a.calculated < wVar1) {
     if ((wVar2 <= fuel_demand_control_t_0040a57a.calculated) ||
-       ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 1) != 0)) goto LAB_00031f94;
+       ((transmission_control_flags.mode_flags & 1) != 0)) goto LAB_00031f94;
     bVar7 = 4;
   }
   else {
     bVar7 = 2;
   }
-  protection_condition_flags_t_0040b0e8.condition_eval =
-       protection_condition_flags_t_0040b0e8.condition_eval | bVar7;
+  transmission_control_flags.request_flags = transmission_control_flags.request_flags | bVar7;
 LAB_00031f94:
   uVar6 = (uint)vehicle_speed;
   uVar5 = (uint)cruise_speed_command + (uint)cruise_set_speed_overspeed_margin;
@@ -33942,25 +33929,20 @@ LAB_00031f94:
       && (uVar5 < uVar6)) && (0 < transmission_output_shaft_acceleration)) {
     if ((transmission_cruise_downshift_delay_timer == 0) &&
        (transmission_output_speed_in_use < overdrive_downshift_maximum_output_speed)) {
-      protection_condition_flags_t_0040b0e8.condition_eval =
-           protection_condition_flags_t_0040b0e8.condition_eval | 2;
-      protection_condition_flags_t_0040b0e8.condition_flags_1 =
-           protection_condition_flags_t_0040b0e8.condition_flags_1 | 1;
+      transmission_control_flags.request_flags = transmission_control_flags.request_flags | 2;
+      transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 1;
     }
   }
   else {
     transmission_cruise_downshift_delay_timer = transmission_cruise_downshift_delay_time;
   }
-  if ((((protection_condition_flags_t_0040b0e8.condition_flags_1 & 1) != 0) &&
-      (transmission_current_gear == 3)) &&
+  if ((((transmission_control_flags.mode_flags & 1) != 0) && (transmission_current_gear == 3)) &&
      ((transmission_cruise_downshift_maximum_throttle < fuel_demand_control_t_0040a57a.calculated &&
       ((uVar6 < uVar5 && (transmission_cruise_upshift_delay_timer == 0)))))) {
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval | 4;
-    protection_condition_flags_t_0040b0e8.condition_flags_1 =
-         protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xfe;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags | 4;
+    transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xfe;
   }
-  if ((uVar5 < uVar6) && ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 1) != 0)) {
+  if ((uVar5 < uVar6) && ((transmission_control_flags.mode_flags & 1) != 0)) {
     transmission_cruise_upshift_delay_timer = transmission_cruise_upshift_delay_time;
   }
   return;
@@ -34169,19 +34151,19 @@ void cm848_learnVehicleInertia(void)
    out, it forces the upshift with the boost curve against the output shaft speed (0x12 / 0x13) and
    keeps it for the boost time after the new gear is identified. After a forced 1-2 upshift it
    learns the vehicle inertia (cm848_learnVehicleInertia). In 3rd gear a high enough prediction sets
-   bit 2 of protection_condition_flags_t_0040b0e8.condition_eval (the 3-4 upshift is the overdrive
-   solenoid's) (was cm848_processProtectionStateFlags) */
+   bit 2 of transmission_control_flags.request_flags (the 3-4 upshift is the overdrive solenoid's)
+   (was cm848_processProtectionStateFlags) */
 
 void cm848_selectGovernorPressureAntiHunt(void)
 
 {
   byte bVar1;
   
-  bVar1 = protection_status_flags_t_0040b0f2.flags[0] | 0x20;
+  bVar1 = transmission_shift_strategy_flags.anti_hunt_flags | 0x20;
   if (transmission_current_gear == 1) {
-    bVar1 = protection_status_flags_t_0040b0f2.flags[0] & 0xbf | 0x20;
+    bVar1 = transmission_shift_strategy_flags.anti_hunt_flags & 0xbf | 0x20;
     if (transmission_pressure_state.anti_hunt_1_2_boost_timer != 0) {
-      protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+      transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
                      (&transmission_anti_hunt_1_2_boost_pressure_interp_state,
@@ -34194,9 +34176,9 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_pressure_state.anti_hunt_1_2_boost_timer = transmission_anti_hunt_1_2_boost_time;
       return;
     }
-    if ((protection_status_flags_t_0040b0f2.flags[0] & 0x80) != 0) {
-      protection_status_flags_t_0040b0f2.flags[0] =
-           protection_status_flags_t_0040b0f2.flags[0] & 0x1f;
+    if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x80) != 0) {
+      transmission_shift_strategy_flags.anti_hunt_flags =
+           transmission_shift_strategy_flags.anti_hunt_flags & 0x1f;
       governor_pressure_target =
            lookupTableInterpolation
                      (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
@@ -34204,7 +34186,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       return;
     }
-    protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+    transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
     cm848_predictPostShiftAcceleration();
     transmission_post_shift_acceleration_minimum =
          lookupTableInterpolation
@@ -34214,8 +34196,8 @@ void cm848_selectGovernorPressureAntiHunt(void)
     if ((transmission_pressure_state.anti_hunt_delay_timer == 0) &&
        ((short)transmission_post_shift_acceleration_minimum <
         (short)transmission_predicted_post_shift_acceleration)) {
-      protection_status_flags_t_0040b0f2.flags[0] =
-           protection_status_flags_t_0040b0f2.flags[0] | 0x80;
+      transmission_shift_strategy_flags.anti_hunt_flags =
+           transmission_shift_strategy_flags.anti_hunt_flags | 0x80;
       transmission_pressure_state.anti_hunt_1_2_boost_timer = transmission_anti_hunt_1_2_boost_time;
       governor_pressure_target =
            lookupTableInterpolation
@@ -34242,10 +34224,10 @@ void cm848_selectGovernorPressureAntiHunt(void)
   if (transmission_current_gear == 2) {
     if (transmission_pressure_state.anti_hunt_1_2_boost_timer != 0) {
       if (transmission_pressure_state.anti_hunt_boost_limit_timer == 0) {
-        protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+        transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
         return;
       }
-      protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+      transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
                      (&transmission_anti_hunt_1_2_boost_pressure_interp_state,
@@ -34256,7 +34238,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       return;
     }
     if (transmission_pressure_state.anti_hunt_2_3_boost_timer != 0) {
-      protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+      transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
                      (&transmission_anti_hunt_2_3_boost_pressure_interp_state,
@@ -34267,9 +34249,9 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_pressure_state.anti_hunt_2_3_boost_timer = transmission_anti_hunt_2_3_boost_time;
       return;
     }
-    if ((protection_status_flags_t_0040b0f2.flags[0] & 0x80) != 0) {
-      protection_status_flags_t_0040b0f2.flags[0] =
-           protection_status_flags_t_0040b0f2.flags[0] & 0x5f;
+    if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x80) != 0) {
+      transmission_shift_strategy_flags.anti_hunt_flags =
+           transmission_shift_strategy_flags.anti_hunt_flags & 0x5f;
       governor_pressure_target =
            lookupTableInterpolation
                      (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
@@ -34279,7 +34261,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_pressure_state.anti_hunt_delay_timer = transmission_anti_hunt_delay_time;
       return;
     }
-    protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+    transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
     cm848_predictPostShiftAcceleration();
     transmission_post_shift_acceleration_minimum =
          lookupTableInterpolation
@@ -34298,24 +34280,24 @@ void cm848_selectGovernorPressureAntiHunt(void)
       return;
     }
     transmission_pressure_state.anti_hunt_2_3_boost_timer = transmission_anti_hunt_2_3_boost_time;
-    bVar1 = protection_status_flags_t_0040b0f2.flags[0] | 0x40;
+    bVar1 = transmission_shift_strategy_flags.anti_hunt_flags | 0x40;
   }
   else {
     if (transmission_current_gear != 3) {
       if (transmission_current_gear != 4) {
-        protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+        transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
         return;
       }
-      protection_status_flags_t_0040b0f2.flags[0] =
-           protection_status_flags_t_0040b0f2.flags[0] & 0x1f;
+      transmission_shift_strategy_flags.anti_hunt_flags =
+           transmission_shift_strategy_flags.anti_hunt_flags & 0x1f;
       return;
     }
     if (transmission_pressure_state.anti_hunt_2_3_boost_timer == 0) {
-      if ((protection_status_flags_t_0040b0f2.flags[0] & 0x40) != 0) {
+      if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x40) != 0) {
         transmission_pressure_state.anti_hunt_delay_timer = transmission_anti_hunt_delay_time;
-        bVar1 = protection_status_flags_t_0040b0f2.flags[0] & 0x9f;
+        bVar1 = transmission_shift_strategy_flags.anti_hunt_flags & 0x9f;
       }
-      protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+      transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
                      (&governor_pressure_base_curve_interp_state,transmission_output_speed_in_use,
@@ -34334,12 +34316,11 @@ void cm848_selectGovernorPressureAntiHunt(void)
           (short)transmission_post_shift_acceleration_minimum) {
         return;
       }
-      protection_condition_flags_t_0040b0e8.condition_eval =
-           protection_condition_flags_t_0040b0e8.condition_eval | 4;
+      transmission_control_flags.request_flags = transmission_control_flags.request_flags | 4;
       return;
     }
   }
-  protection_status_flags_t_0040b0f2.flags[0] = bVar1;
+  transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
   governor_pressure_target =
        lookupTableInterpolation
                  (&transmission_anti_hunt_2_3_boost_pressure_interp_state,
@@ -34412,29 +34393,29 @@ void cm848_selectGovernorPressureNormal(void)
                     transmission_anti_hunt_3_4_maximum_throttle_axis,
                     transmission_anti_hunt_3_4_maximum_throttle_values,0);
   }
-  if (((protection_status_flags_t_0040b0f2.flags[0] & 0x80) != 0) ||
-     ((protection_status_flags_t_0040b0f2.flags[0] & 0x40) != 0)) goto LAB_00032ee0;
+  if (((transmission_shift_strategy_flags.anti_hunt_flags & 0x80) != 0) ||
+     ((transmission_shift_strategy_flags.anti_hunt_flags & 0x40) != 0)) goto LAB_00032ee0;
   if ((transmission_anti_hunt_minimum_throttle < fuel_demand_control_t_0040a57a.calculated) &&
      ((((fuel_demand_control_t_0040a57a.calculated <
          transmission_anti_hunt_minimum_throttle_interpolated &&
         (transmission_anti_hunt_maximum_throttle_interpolated <
          fuel_demand_control_t_0040a57a.calculated)) &&
-       ((protection_status_flags_t_0040b0f2.flags[0] & 8) == 0)) &&
+       ((transmission_shift_strategy_flags.anti_hunt_flags & 8) == 0)) &&
       ((transmission_selected_gear != 0x7e && (transmission_selected_gear != 0x7f)))))) {
-    protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] | 0x20
-    ;
+    transmission_shift_strategy_flags.anti_hunt_flags =
+         transmission_shift_strategy_flags.anti_hunt_flags | 0x20;
   }
-  else if (((protection_status_flags_t_0040b0f2.flags[0] & 0x20) == 0) ||
+  else if (((transmission_shift_strategy_flags.anti_hunt_flags & 0x20) == 0) ||
           ((fuel_demand_control_t_0040a57a.calculated <= transmission_anti_hunt_minimum_throttle ||
            (transmission_anti_hunt_maximum_throttle_interpolated <
             fuel_demand_control_t_0040a57a.calculated)))) {
 LAB_00032e40:
-    protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0xdf
-    ;
+    transmission_shift_strategy_flags.anti_hunt_flags =
+         transmission_shift_strategy_flags.anti_hunt_flags & 0xdf;
   }
   else if (transmission_current_gear == 1) {
-    protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] | 0x80
-    ;
+    transmission_shift_strategy_flags.anti_hunt_flags =
+         transmission_shift_strategy_flags.anti_hunt_flags | 0x80;
     transmission_pressure_state.anti_hunt_1_2_boost_timer = transmission_anti_hunt_1_2_boost_time;
     governor_pressure_target =
          lookupTableInterpolation
@@ -34445,8 +34426,8 @@ LAB_00032e40:
   }
   else {
     if (transmission_current_gear != 2) goto LAB_00032e40;
-    protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] | 0x40
-    ;
+    transmission_shift_strategy_flags.anti_hunt_flags =
+         transmission_shift_strategy_flags.anti_hunt_flags | 0x40;
     transmission_pressure_state.anti_hunt_2_3_boost_timer = transmission_anti_hunt_2_3_boost_time;
     governor_pressure_target =
          lookupTableInterpolation
@@ -34455,9 +34436,9 @@ LAB_00032e40:
                     transmission_anti_hunt_2_3_boost_pressure_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_BOOST;
   }
-  if ((protection_status_flags_t_0040b0f2.flags[0] & 0x20) == 0) {
+  if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x20) == 0) {
     transmission_pressure_state.anti_hunt_delay_timer = transmission_anti_hunt_delay_time;
-    if ((protection_status_flags_t_0040b0f2.flags[0] & 0x10) != 0) {
+    if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) != 0) {
       governor_pressure_target =
            lookupTableInterpolation
                      (&protection_rpm_limit_table_preentry_state,transmission_output_speed_in_use,
@@ -34468,12 +34449,11 @@ LAB_00032e40:
       cm848_requestOverdriveShiftsNormal();
       return;
     }
-    if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0) {
+    if ((transmission_control_flags.mode_flags & 0x10) != 0) {
       cm848_selectGovernorPressureCruise();
       return;
     }
-    protection_condition_flags_t_0040b0e8.condition_flags_1 =
-         protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xfe;
+    transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xfe;
     cm848_selectGovernorPressureBaseCurve();
     return;
   }
@@ -34501,14 +34481,14 @@ void cm848_runTransmissionControl(void)
       (short)governor_pressure_cold_mode_temperature_threshold) {
     cm848_selectGovernorPressureCold();
   }
-  else if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0) {
-    if (((protection_condition_flags_t_0040b0e8.condition_flags_2 & 4) == 0) &&
-       ((protection_condition_flags_t_0040b0e8.condition_flags_3 & 2) == 0)) {
+  else if ((transmission_control_flags.mode_flags & 4) == 0) {
+    if (((transmission_control_flags.limp_home_flags_2 & 4) == 0) &&
+       ((transmission_control_flags.limp_home_flags_1 & 2) == 0)) {
       if ((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) ||
          ((transmission_overheat_protection_active_flag != 0 && (transmission_current_gear == 2))))
       {
         if (transmission_lockup_timers.lockup_off_timer == 0) {
-          if ((protection_status_flags_t_0040b0f2.status_flags & 0x80) == 0) {
+          if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x80) == 0) {
             if (transmission_vehicle_speed_filtered < 0x201) {
               cm848_selectGovernorPressureBaseCurve();
             }
@@ -34519,14 +34499,14 @@ void cm848_runTransmissionControl(void)
           else {
             cm848_selectGovernorPressureWideOpenThrottle();
           }
-          if ((protection_status_flags_t_0040b0f2.output_flags & 2) == 0) {
+          if ((transmission_shift_strategy_flags.service_test_request_flags & 2) == 0) {
             cm848_applyConverterLockupSchedule();
           }
         }
       }
       else {
         cm848_selectGovernorPressureNormal();
-        if ((protection_status_flags_t_0040b0f2.output_flags & 2) == 0) {
+        if ((transmission_shift_strategy_flags.service_test_request_flags & 2) == 0) {
           if (transmission_current_gear < 3) {
             if (((transmission_current_gear == 2) && ((algorithm_enable_flags_6_cal & 8) != 0)) &&
                ((transmission_selected_gear == 0x7f || (transmission_selected_gear == 0x7e)))) {
@@ -34564,8 +34544,8 @@ void cm848_runTransmissionControl(void)
       cm848_selectGovernorPressureLowRange();
     }
     else {
-      protection_condition_flags_t_0040b0e8.action_flags =
-           protection_condition_flags_t_0040b0e8.action_flags & 0xfc;
+      transmission_control_flags.low_range_boost_flags =
+           transmission_control_flags.low_range_boost_flags & 0xfc;
       governor_pressure_target =
            lookupTableInterpolation
                      (&protection_rpm_limit_table_overload_state,transmission_output_speed_in_use,
@@ -34602,9 +34582,10 @@ void cm848_initializeTransmissionShiftLogic(void)
 {
   transmission_vehicle_inertia = transmission_vehicle_inertia_default;
   transmission_predicted_post_shift_acceleration = 0;
-  protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0x1f;
-  protection_condition_flags_t_0040b0e8.action_flags =
-       protection_condition_flags_t_0040b0e8.action_flags & 0xfc;
+  transmission_shift_strategy_flags.anti_hunt_flags =
+       transmission_shift_strategy_flags.anti_hunt_flags & 0x1f;
+  transmission_control_flags.low_range_boost_flags =
+       transmission_control_flags.low_range_boost_flags & 0xfc;
   transmission_4th_gear_lockup_boost_pressure = sensor_readings_t_0040baf2.intake_manifold_pressure;
   protection_rpm_limit_table_overload_state = 2;
   protection_rpm_limit_table_preentry_state = 2;
@@ -34693,33 +34674,27 @@ void cm848_evaluateProtectionModeFlags(void)
 
 {
   if (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) {
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval | 0x20;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags | 0x20;
   }
   else {
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval & 0xdf;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xdf;
   }
   if (logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0) {
-    protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-         protection_condition_flags_t_0040b0e8.overdrive_control_flags | 8;
+    transmission_control_flags.overdrive_flags = transmission_control_flags.overdrive_flags | 8;
   }
   else {
-    protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-         protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0xf7;
+    transmission_control_flags.overdrive_flags = transmission_control_flags.overdrive_flags & 0xf7;
   }
-  if (((((protection_status_flags_t_0040b0f2.flags[2] & 1) == 0) &&
-       ((protection_status_flags_t_0040b0f2.output_flags & 1) == 0)) &&
-      ((protection_status_flags_t_0040b0f2.output_flags & 2) == 0)) &&
-     ((protection_status_flags_t_0040b0f2.output_flags & 4) == 0)) {
+  if (((((transmission_shift_strategy_flags.actuator_test_flags & 1) == 0) &&
+       ((transmission_shift_strategy_flags.service_test_request_flags & 1) == 0)) &&
+      ((transmission_shift_strategy_flags.service_test_request_flags & 2) == 0)) &&
+     ((transmission_shift_strategy_flags.service_test_request_flags & 4) == 0)) {
     protection_mode_changed_flag = 1;
     if (cruise_control_engaged_flag == 1) {
-      protection_condition_flags_t_0040b0e8.condition_flags_1 =
-           protection_condition_flags_t_0040b0e8.condition_flags_1 | 0x10;
+      transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 0x10;
     }
     else {
-      protection_condition_flags_t_0040b0e8.condition_flags_1 =
-           protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xef;
+      transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xef;
     }
     if (boost_is_gauge_pressure_flag == 0) {
       transmission_4th_gear_lockup_boost_pressure =
@@ -34898,13 +34873,12 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
   }
   transmission_speed_ratio = (word)uVar11;
   if (logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0) {
-    protection_condition_flags_t_0040b0e8.load_condition_flags =
-         protection_condition_flags_t_0040b0e8.load_condition_flags & 0xbf;
+    transmission_control_flags.state_flags = transmission_control_flags.state_flags & 0xbf;
   }
   uVar11 = uVar11 & 0xffff;
   if ((logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0) ||
      (((transmission_3_4_transition_timer != 0 &&
-       ((protection_condition_flags_t_0040b0e8.load_condition_flags & 0x40) == 0)) &&
+       ((transmission_control_flags.state_flags & 0x40) == 0)) &&
       (transmission_4th_gear_maximum_speed_ratio <= uVar11)))) {
     bVar2 = true;
   }
@@ -34929,8 +34903,7 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
             transmission_lockup_timers.lockup_delay_2_3_timer =
                  transmission_overheat_lockup_delay_2_3_time;
           }
-          protection_condition_flags_t_0040b0e8.load_condition_flags =
-               protection_condition_flags_t_0040b0e8.load_condition_flags & 0xfd;
+          transmission_control_flags.state_flags = transmission_control_flags.state_flags & 0xfd;
           transmission_exhaust_brake_flags = transmission_exhaust_brake_flags & 0xfd;
         }
       }
@@ -34941,25 +34914,21 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
           transmission_lockup_delay_3_2_timer = transmission_overheat_lockup_delay_3_2_time;
         }
         transmission_current_gear = 2;
-        protection_condition_flags_t_0040b0e8.load_condition_flags =
-             protection_condition_flags_t_0040b0e8.load_condition_flags | 2;
+        transmission_control_flags.state_flags = transmission_control_flags.state_flags | 2;
         if ((engine_retarder_active_flag != 0) && ((transmission_exhaust_brake_flags & 2) == 0)) {
           transmission_exhaust_brake_flags = transmission_exhaust_brake_flags | 3;
         }
       }
-      if ((protection_condition_flags_t_0040b0e8.load_condition_flags & 2) == 0) {
+      if ((transmission_control_flags.state_flags & 2) == 0) {
         transmission_current_gear = 3;
       }
     }
     else {
       if ((algorithm_enable_flags_6_cal & 8) == 0) {
-        protection_condition_flags_t_0040b0e8.condition_flags_1 =
-             protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+        transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
       }
-      protection_condition_flags_t_0040b0e8.condition_eval =
-           protection_condition_flags_t_0040b0e8.condition_eval | 2;
-      protection_condition_flags_t_0040b0e8.load_condition_flags =
-           protection_condition_flags_t_0040b0e8.load_condition_flags & 0x7d;
+      transmission_control_flags.request_flags = transmission_control_flags.request_flags | 2;
+      transmission_control_flags.state_flags = transmission_control_flags.state_flags & 0x7d;
       uVar1 = transmission_2nd_gear_maximum_speed_ratio;
       if (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0) {
         uVar1 = transmission_2nd_gear_maximum_speed_ratio_locked;
@@ -34981,8 +34950,7 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
         transmission_current_gear = 2;
       }
       else {
-        protection_condition_flags_t_0040b0e8.condition_flags_1 =
-             protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xdf;
+        transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xdf;
         transmission_current_gear = 1;
       }
     }
@@ -34995,10 +34963,9 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
            transmission_overheat_lockup_delay_3_4_time;
     }
     transmission_current_gear = 4;
-    protection_condition_flags_t_0040b0e8.load_condition_flags =
-         protection_condition_flags_t_0040b0e8.load_condition_flags & 0x7f;
+    transmission_control_flags.state_flags = transmission_control_flags.state_flags & 0x7f;
   }
-  if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0) {
+  if ((transmission_control_flags.request_flags & 0x40) == 0) {
     wVar4 = lookupTableInterpolation
                       (&protection_filter_stage_4_state,transmission_output_speed_in_use,
                        transmission_3rd_gear_closed_throttle_unlock_throttle_axis,
@@ -35042,14 +35009,13 @@ joined_r0x000341b8:
       }
       if ((exhaust_brake_transmission_features_inhibit == 0) &&
          ((switch_input_state_bits[1] & 0x10) != 0)) goto joined_r0x000341b8;
-      if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0) goto LAB_00034278;
+      if ((transmission_control_flags.mode_flags & 0x10) != 0) goto LAB_00034278;
 joined_r0x000341e0:
       if ((wVar9 <= fuel_demand_control_t_0040a57a.calculated) &&
          (fuel_demand_rate_abs < converter_clutch_relock_maximum_throttle_rate)) goto LAB_00034278;
     }
     converter_clutch_apply_delay_countdown = converter_clutch_apply_delay_time;
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval | 0x40;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags | 0x40;
     goto LAB_00034278;
   }
   converter_clutch_apply_delay_countdown = converter_clutch_apply_delay_time;
@@ -35106,39 +35072,33 @@ joined_r0x00033fcc:
 joined_r0x00033fe4:
     if (fuel_demand_control_t_0040a57a.calculated <= wVar7) goto LAB_00034278;
   }
-  protection_condition_flags_t_0040b0e8.condition_eval =
-       protection_condition_flags_t_0040b0e8.condition_eval & 0xbf;
+  transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xbf;
 LAB_00034278:
-  if (((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) != 0) &&
+  if (((transmission_control_flags.request_flags & 0x40) != 0) &&
      (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) {
-    protection_condition_flags_t_0040b0e8.condition_flags_1 =
-         protection_condition_flags_t_0040b0e8.condition_flags_1 | 0x20;
+    transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 0x20;
   }
   if (converter_clutch_closed_throttle_lockup_enable == 0) {
     if (((switch_input_state_bits[1] & 8) == 0) && ((switch_input_state_bits[0] & 4) == 0)) {
-      protection_condition_flags_t_0040b0e8.condition_flags_1 =
-           protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xf7;
+      transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xf7;
     }
-    else if (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 8) == 0) &&
-            ((protection_status_flags_t_0040b0f2.output_flags & 2) == 0)) {
+    else if (((transmission_control_flags.mode_flags & 8) == 0) &&
+            ((transmission_shift_strategy_flags.service_test_request_flags & 2) == 0)) {
       if (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0) {
         transmission_lockup_timers.lockup_off_timer = transmission_lockup_off_time;
-        protection_condition_flags_t_0040b0e8.condition_flags_1 =
-             protection_condition_flags_t_0040b0e8.condition_flags_1 | 0x20;
-        protection_condition_flags_t_0040b0e8.condition_eval =
-             protection_condition_flags_t_0040b0e8.condition_eval | 0x40;
+        transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 0x20;
+        transmission_control_flags.request_flags = transmission_control_flags.request_flags | 0x40;
       }
       cm848_clearLogicalOutputRequest(0x12,0);
       converter_clutch_apply_delay_countdown = converter_clutch_brake_release_relock_delay_time;
-      protection_condition_flags_t_0040b0e8.condition_flags_1 =
-           protection_condition_flags_t_0040b0e8.condition_flags_1 | 8;
+      transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 8;
     }
   }
-  if ((((protection_condition_flags_t_0040b0e8.reserved_07 & 1) != 0) ||
-      ((protection_condition_flags_t_0040b0e8.fault_state_flags & 1) != 0)) ||
-     ((protection_condition_flags_t_0040b0e8.fault_state_flags & 4) != 0)) {
-    protection_status_flags_t_0040b0f2.rate_limit_flags =
-         protection_status_flags_t_0040b0f2.rate_limit_flags | 1;
+  if ((((transmission_control_flags.limp_home_flags_3 & 1) != 0) ||
+      ((transmission_control_flags.limp_home_flags_4 & 1) != 0)) ||
+     ((transmission_control_flags.limp_home_flags_4 & 4) != 0)) {
+    transmission_shift_strategy_flags.limp_home_and_temperature_flags =
+         transmission_shift_strategy_flags.limp_home_and_temperature_flags | 1;
   }
   return;
 }
@@ -35173,13 +35133,11 @@ void cm848_updateTransmissionConditionFlags(void)
   if ((((dVar3 & 0xffff) < 0x201) ||
       ((uint)(((ulonglong)transmission_output_speed_in_use << 8) / (ulonglong)(dVar3 & 0xffff)) <=
        (uint)transfer_case_low_range_ratio_threshold)) ||
-     ((protection_condition_flags_t_0040b0e8.fault_state_flags & 0x20) != 0)) {
-    protection_condition_flags_t_0040b0e8.condition_flags_1 =
-         protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xfb;
+     ((transmission_control_flags.limp_home_flags_4 & 0x20) != 0)) {
+    transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xfb;
   }
   else {
-    protection_condition_flags_t_0040b0e8.condition_flags_1 =
-         protection_condition_flags_t_0040b0e8.condition_flags_1 | 4;
+    transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 4;
   }
   if ((short)transmission_temperature_range_5_threshold < (short)transmission_temperature_in_use) {
     iVar6 = 5;
@@ -35220,47 +35178,41 @@ void cm848_updateTransmissionConditionFlags(void)
   }
   if ((short)overdrive_off_set_transmission_temperature < (short)transmission_temperature_in_use) {
     overdrive_off_flag = 1;
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval & 0xfb | 2;
-    protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-         protection_condition_flags_t_0040b0e8.overdrive_control_flags | 0x40;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xfb | 2;
+    transmission_control_flags.overdrive_flags = transmission_control_flags.overdrive_flags | 0x40;
   }
   else if (((short)transmission_temperature_in_use <
             (short)overdrive_off_clear_transmission_temperature) &&
-          (bVar4 = protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0xbf,
-          bVar1 = protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20,
-          protection_condition_flags_t_0040b0e8.overdrive_control_flags = bVar4, bVar1 == 0)) {
+          (bVar4 = transmission_control_flags.overdrive_flags & 0xbf,
+          bVar1 = transmission_control_flags.overdrive_flags & 0x20,
+          transmission_control_flags.overdrive_flags = bVar4, bVar1 == 0)) {
     overdrive_off_flag = 0;
   }
   if (((short)transmission_cold_clear_temperature < (short)transmission_temperature_in_use) &&
      (((short)transmission_cold_clear_battery_temperature <
        (short)battery_temperature_sensor_filtered ||
-      ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 2) == 0)))) {
-    protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-         protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x7f;
+      ((transmission_control_flags.overdrive_flags & 2) == 0)))) {
+    transmission_control_flags.overdrive_flags = transmission_control_flags.overdrive_flags & 0x7f;
   }
   else if (((short)transmission_temperature_in_use < (short)transmission_cold_set_temperature) ||
-          (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 2) != 0 &&
+          (((transmission_control_flags.overdrive_flags & 2) != 0 &&
            ((short)battery_temperature_sensor_filtered <
             (short)transmission_cold_set_battery_temperature)))) {
-    protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-         protection_condition_flags_t_0040b0e8.overdrive_control_flags | 0x80;
+    transmission_control_flags.overdrive_flags = transmission_control_flags.overdrive_flags | 0x80;
   }
   if (((short)governor_pressure_offset_calibration_minimum_transmission_temperature <
        (short)transmission_temperature_in_use) &&
      ((short)transmission_temperature_in_use <
       (short)governor_pressure_offset_calibration_maximum_transmission_temperature)) {
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval | 8;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags | 8;
   }
   else {
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval & 0xf7;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xf7;
   }
-  if ((protection_status_flags_t_0040b0f2.status_flags & 0x80) == 0) {
+  if ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x80) == 0) {
     if (transmission_wide_open_throttle_set_threshold < fuel_demand_control_t_0040a57a.calculated) {
-      protection_status_flags_t_0040b0f2.status_flags =
-           protection_status_flags_t_0040b0f2.status_flags | 0x80;
+      transmission_shift_strategy_flags.wide_open_throttle_flags =
+           transmission_shift_strategy_flags.wide_open_throttle_flags | 0x80;
     }
   }
   else if (fuel_demand_control_t_0040a57a.calculated <
@@ -35281,8 +35233,8 @@ void cm848_updateTransmissionConditionFlags(void)
         *(ushort *)(&eeprom_calibration_pending_flag + iVar6 * 2) = uVar5;
       }
     }
-    protection_status_flags_t_0040b0f2.status_flags =
-         protection_status_flags_t_0040b0f2.status_flags & 0x1f;
+    transmission_shift_strategy_flags.wide_open_throttle_flags =
+         transmission_shift_strategy_flags.wide_open_throttle_flags & 0x1f;
     transmission_1st_gear_maximum_engine_speed = 0;
     transmission_2nd_gear_maximum_engine_speed = 0;
   }
@@ -35297,7 +35249,7 @@ void cm848_updateTransmissionConditionFlags(void)
   else {
     transmission_engine_acceleration = transmission_engine_acceleration_default_low_range;
     uVar5 = transmission_engine_acceleration_maximum_low_range;
-    if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0) {
+    if ((transmission_control_flags.mode_flags & 4) == 0) {
       transmission_engine_acceleration = transmission_engine_acceleration_default;
       uVar5 = transmission_engine_acceleration_maximum;
     }
@@ -35305,26 +35257,27 @@ void cm848_updateTransmissionConditionFlags(void)
       transmission_engine_acceleration = transmission_engine_acceleration_filtered;
     }
   }
-  if ((protection_status_flags_t_0040b0f2.flags[0] & 0x10) == 0) {
+  if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) == 0) {
     if (transmission_throttle_detent_set_threshold < fuel_demand_control_t_0040a57a.calculated) {
-      protection_status_flags_t_0040b0f2.flags[0] =
-           protection_status_flags_t_0040b0f2.flags[0] | 0x10;
+      transmission_shift_strategy_flags.anti_hunt_flags =
+           transmission_shift_strategy_flags.anti_hunt_flags | 0x10;
     }
   }
   else if (fuel_demand_control_t_0040a57a.calculated < transmission_throttle_detent_clear_threshold)
   {
-    protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0xef
-    ;
+    transmission_shift_strategy_flags.anti_hunt_flags =
+         transmission_shift_strategy_flags.anti_hunt_flags & 0xef;
   }
-  if (((((protection_status_flags_t_0040b0f2.flags[0] & 0x10) == 0) ||
-       ((protection_status_flags_t_0040b0f2.flags[0] & 0x20) != 0)) ||
-      ((protection_status_flags_t_0040b0f2.status_flags & 0x80) != 0)) ||
+  if (((((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) == 0) ||
+       ((transmission_shift_strategy_flags.anti_hunt_flags & 0x20) != 0)) ||
+      ((transmission_shift_strategy_flags.wide_open_throttle_flags & 0x80) != 0)) ||
      (governor_pressure_target < governor_pressure_detent_2_3_shift_pressure)) {
-    protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0xfe
-    ;
+    transmission_shift_strategy_flags.anti_hunt_flags =
+         transmission_shift_strategy_flags.anti_hunt_flags & 0xfe;
   }
   else {
-    protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] | 1;
+    transmission_shift_strategy_flags.anti_hunt_flags =
+         transmission_shift_strategy_flags.anti_hunt_flags | 1;
   }
   return;
 }
@@ -35401,10 +35354,10 @@ void cm848_calculateOutputShaftAcceleration(void)
 void cm848_evaluateProtectionFaultCondition(void)
 
 {
-  if (((((protection_condition_flags_t_0040b0e8.condition_flags_2 & 1) == 0) &&
-       ((protection_condition_flags_t_0040b0e8.condition_flags_2 & 2) == 0)) &&
-      ((protection_condition_flags_t_0040b0e8.fault_state_flags & 0x10) == 0)) &&
-     (((protection_condition_flags_t_0040b0e8.condition_flags_3 & 1) == 0 &&
+  if (((((transmission_control_flags.limp_home_flags_2 & 1) == 0) &&
+       ((transmission_control_flags.limp_home_flags_2 & 2) == 0)) &&
+      ((transmission_control_flags.limp_home_flags_4 & 0x10) == 0)) &&
+     (((transmission_control_flags.limp_home_flags_1 & 1) == 0 &&
       (engine_state != ENGINE_STATE_STOPPED)))) {
     cm848_setLogicalOutputRequest(0x10,0);
   }
@@ -35455,23 +35408,20 @@ void cm848_initializeTransmissionControl(void)
   transmission_2nd_gear_maximum_engine_speed = 0;
   transmission_engine_speed_previous = 0;
   transmission_throttle_previous = 0;
-  protection_condition_flags_t_0040b0e8.condition_flags_1 =
-       protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xf7;
+  transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xf7;
   overdrive_off_flag = 0;
   transmission_overheat_flag = 0;
   cm848_clearLogicalOutputRequest(0x12,0);
   cm848_clearLogicalOutputRequest(0x10,0);
-  protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] & 0xef;
-  protection_status_flags_t_0040b0f2.rate_limit_flags =
-       protection_status_flags_t_0040b0f2.rate_limit_flags & 0xfe;
-  protection_condition_flags_t_0040b0e8.load_condition_flags =
-       protection_condition_flags_t_0040b0e8.load_condition_flags & 0xbb;
-  protection_condition_flags_t_0040b0e8.condition_eval =
-       protection_condition_flags_t_0040b0e8.condition_eval & 0xb9;
-  protection_status_flags_t_0040b0f2.status_flags =
-       protection_status_flags_t_0040b0f2.status_flags & 0x7f;
-  protection_condition_flags_t_0040b0e8.condition_flags_1 =
-       protection_condition_flags_t_0040b0e8.condition_flags_1 & 0xde;
+  transmission_shift_strategy_flags.anti_hunt_flags =
+       transmission_shift_strategy_flags.anti_hunt_flags & 0xef;
+  transmission_shift_strategy_flags.limp_home_and_temperature_flags =
+       transmission_shift_strategy_flags.limp_home_and_temperature_flags & 0xfe;
+  transmission_control_flags.state_flags = transmission_control_flags.state_flags & 0xbb;
+  transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xb9;
+  transmission_shift_strategy_flags.wide_open_throttle_flags =
+       transmission_shift_strategy_flags.wide_open_throttle_flags & 0x7f;
+  transmission_control_flags.mode_flags = transmission_control_flags.mode_flags & 0xde;
   transmission_pressure_state.anti_hunt_boost_limit_timer = 0;
   transmission_pressure_state.anti_hunt_delay_timer = 0;
   transmission_pressure_state.anti_hunt_1_2_boost_timer = 0;
@@ -35494,12 +35444,12 @@ void cm848_initializeTransmissionControl(void)
   transmission_cruise_upshift_delay_timer = 0;
   exhaust_brake_inhibit_timer = 0;
   if ((j1939_governor_feature_byte & 8) == 0) {
-    protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-         protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x9d | 8;
+    transmission_control_flags.overdrive_flags =
+         transmission_control_flags.overdrive_flags & 0x9d | 8;
   }
   else {
-    protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-         protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x9f | 10;
+    transmission_control_flags.overdrive_flags =
+         transmission_control_flags.overdrive_flags & 0x9f | 10;
   }
   protection_filter_stage_0_state = 2;
   protection_filter_stage_1_state = 2;
@@ -35547,38 +35497,37 @@ void cm848_processProtectionFaultSeverity(void)
   if ((((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x800) == 0) &&
       ((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x1000) == 0)) &&
      (j1939_fault_state != 3)) {
-    protection_condition_flags_t_0040b0e8.reserved_07 =
-         protection_condition_flags_t_0040b0e8.reserved_07 & 0xfe;
+    transmission_control_flags.limp_home_flags_3 =
+         transmission_control_flags.limp_home_flags_3 & 0xfe;
   }
   else {
-    protection_condition_flags_t_0040b0e8.reserved_07 =
-         protection_condition_flags_t_0040b0e8.reserved_07 | 1;
+    transmission_control_flags.limp_home_flags_3 = transmission_control_flags.limp_home_flags_3 | 1;
   }
   if ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x200) == 0) {
-    bVar2 = protection_condition_flags_t_0040b0e8.condition_flags_3 & 0xfe;
+    bVar2 = transmission_control_flags.limp_home_flags_1 & 0xfe;
   }
   else {
-    bVar2 = protection_condition_flags_t_0040b0e8.condition_flags_3 | 1;
+    bVar2 = transmission_control_flags.limp_home_flags_1 | 1;
   }
   if ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x800) == 0) {
-    bVar1 = protection_condition_flags_t_0040b0e8.condition_flags_2 & 0xfd;
+    bVar1 = transmission_control_flags.limp_home_flags_2 & 0xfd;
   }
   else {
-    bVar1 = protection_condition_flags_t_0040b0e8.condition_flags_2 | 2;
+    bVar1 = transmission_control_flags.limp_home_flags_2 | 2;
   }
   if ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x2000) == 0) {
-    protection_condition_flags_t_0040b0e8.fault_state_flags =
-         protection_condition_flags_t_0040b0e8.fault_state_flags & 0xef;
+    transmission_control_flags.limp_home_flags_4 =
+         transmission_control_flags.limp_home_flags_4 & 0xef;
   }
   else {
-    protection_condition_flags_t_0040b0e8.fault_state_flags =
-         protection_condition_flags_t_0040b0e8.fault_state_flags | 0x10;
+    transmission_control_flags.limp_home_flags_4 =
+         transmission_control_flags.limp_home_flags_4 | 0x10;
   }
   if ((fault_detected_bits_336_to_351 & 0x8000) == 0) {
-    protection_condition_flags_t_0040b0e8.condition_flags_2 = bVar1 & 0xfe;
+    transmission_control_flags.limp_home_flags_2 = bVar1 & 0xfe;
   }
   else {
-    protection_condition_flags_t_0040b0e8.condition_flags_2 = bVar1 | 1;
+    transmission_control_flags.limp_home_flags_2 = bVar1 | 1;
   }
   if (((((system_status_flags_t_003fe974.fault_detected_bits_192_to_207 & 0x20) == 0) &&
        ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x400) == 0)) &&
@@ -35586,10 +35535,10 @@ void cm848_processProtectionFaultSeverity(void)
        (((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x8000) == 0 &&
         ((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 0x10) == 0)))))) &&
      ((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x4000) == 0)) {
-    protection_condition_flags_t_0040b0e8.condition_flags_3 = bVar2 & 0xfd;
+    transmission_control_flags.limp_home_flags_1 = bVar2 & 0xfd;
   }
   else {
-    protection_condition_flags_t_0040b0e8.condition_flags_3 = bVar2 | 2;
+    transmission_control_flags.limp_home_flags_1 = bVar2 | 2;
   }
   return;
 }
@@ -35626,7 +35575,7 @@ void cm848_updateExhaustBrakeInhibitForLockup(void)
     if (((logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) &&
         ((converter_clutch_solenoid_request_previous != 0 &&
          (exhaust_brake_inhibit_previous == ((transmission_exhaust_brake_flags & 1) != 0))))) ||
-       ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) != 0)) {
+       ((transmission_control_flags.request_flags & 0x40) != 0)) {
       transmission_exhaust_brake_flags = transmission_exhaust_brake_flags & 0xfe;
     }
   }
@@ -35634,7 +35583,7 @@ void cm848_updateExhaustBrakeInhibitForLockup(void)
     transmission_exhaust_brake_flags = transmission_exhaust_brake_flags | 1;
   }
   if (((transmission_exhaust_brake_flags & 4) != 0) &&
-     ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) {
+     ((transmission_control_flags.request_flags & 0x40) == 0)) {
     transmission_exhaust_brake_flags = transmission_exhaust_brake_flags & 0xfb;
   }
   converter_clutch_solenoid_request_previous = (byte)logical_output_request_bits_16_to_23 & 4;
@@ -35644,8 +35593,7 @@ void cm848_updateExhaustBrakeInhibitForLockup(void)
     exhaust_brake_inhibit_timer = exhaust_brake_inhibit_timeout;
   }
   else if (exhaust_brake_inhibit_timer == 0) {
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval | 0x40;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags | 0x40;
     transmission_exhaust_brake_flags = transmission_exhaust_brake_flags | 4;
   }
   else {
@@ -35701,30 +35649,26 @@ void cm848_selectGovernorPressureLockupBoost(void)
                     (&protection_filter_stage_10_state,transmission_output_speed_in_use,
                      transmission_3rd_gear_unlock_maximum_throttle_axis,
                      transmission_3rd_gear_unlock_maximum_throttle_values,0);
-  if ((((((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0) &&
-        (transmission_selected_gear != 0x7e)) && (transmission_selected_gear != 0x7f)) &&
-      (((2 < transmission_current_gear &&
-        ((protection_condition_flags_t_0040b0e8.condition_eval & 0x40) == 0)) &&
-       ((transmission_overheat_protection_active_flag == 0 &&
-        ((switch_input_state_bits[1] & 0x10) == 0)))))) &&
+  if ((((((transmission_control_flags.mode_flags & 4) == 0) && (transmission_selected_gear != 0x7e))
+       && (transmission_selected_gear != 0x7f)) &&
+      (((2 < transmission_current_gear && ((transmission_control_flags.request_flags & 0x40) == 0))
+       && ((transmission_overheat_protection_active_flag == 0 &&
+           ((switch_input_state_bits[1] & 0x10) == 0)))))) &&
      ((fuel_demand_control_t_0040a57a.calculated < wVar1 ||
-      (((protection_condition_flags_t_0040b0e8.load_condition_flags & 4) != 0 &&
+      (((transmission_control_flags.state_flags & 4) != 0 &&
        (fuel_demand_control_t_0040a57a.calculated < wVar2)))))) {
-    protection_condition_flags_t_0040b0e8.load_condition_flags =
-         protection_condition_flags_t_0040b0e8.load_condition_flags | 4;
+    transmission_control_flags.state_flags = transmission_control_flags.state_flags | 4;
     governor_pressure_target = governor_pressure_lockup_boost;
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOCKUP_BOOST;
   }
   else {
-    protection_condition_flags_t_0040b0e8.load_condition_flags =
-         protection_condition_flags_t_0040b0e8.load_condition_flags & 0xfb;
+    transmission_control_flags.state_flags = transmission_control_flags.state_flags & 0xfb;
   }
   if ((((transmission_selected_gear == 0x7e) || (transmission_selected_gear == 0x7f)) &&
-      ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 8) == 0)) &&
+      ((transmission_control_flags.overdrive_flags & 8) == 0)) &&
      (transmission_output_speed_in_use < transmission_manual_2nd_4_3_downshift_maximum_output_speed)
      ) {
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval & 0xfb | 2;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xfb | 2;
   }
   if (governor_pressure_override_enable != 0) {
     governor_pressure_target = governor_pressure_override_value;
@@ -36194,20 +36138,20 @@ void cm848_learnOutputSpeedToVehicleSpeedRatio(void)
   uVar1 = 0;
   if ((algorithm_enable_flags_6_cal & 4) != 0) {
     if (output_speed_to_vehicle_speed_ratio_learn_minimum_vehicle_speed < vehicle_speed) {
-      if ((protection_condition_flags_t_0040b0e8.reserved_04 & 1) == 0) {
+      if ((transmission_control_flags.axle_ratio_learning_flags & 1) == 0) {
         sensor_filter_update_counter = sensor_filter_update_counter + 1;
-        protection_condition_flags_t_0040b0e8.reserved_04 =
-             protection_condition_flags_t_0040b0e8.reserved_04 | 1;
+        transmission_control_flags.axle_ratio_learning_flags =
+             transmission_control_flags.axle_ratio_learning_flags | 1;
       }
     }
     else {
-      protection_condition_flags_t_0040b0e8.reserved_04 =
-           protection_condition_flags_t_0040b0e8.reserved_04 & 0xfe;
+      transmission_control_flags.axle_ratio_learning_flags =
+           transmission_control_flags.axle_ratio_learning_flags & 0xfe;
     }
     if ((((protection_sensor_filter_counter_threshold_cal < sensor_filter_update_counter) &&
-         ((protection_condition_flags_t_0040b0e8.reserved_04 & 0x20) == 0)) &&
-        ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0)) &&
-       ((((protection_condition_flags_t_0040b0e8.fault_state_flags & 0x20) == 0 &&
+         ((transmission_control_flags.axle_ratio_learning_flags & 0x20) == 0)) &&
+        ((transmission_control_flags.mode_flags & 4) == 0)) &&
+       ((((transmission_control_flags.limp_home_flags_4 & 0x20) == 0 &&
          (output_speed_to_vehicle_speed_ratio_learn_minimum_output_speed <
           transmission_output_speed_in_use)) &&
         (output_speed_to_vehicle_speed_ratio_learn_minimum_vehicle_speed < vehicle_speed)))) {
@@ -36222,8 +36166,8 @@ void cm848_learnOutputSpeedToVehicleSpeedRatio(void)
         uVar1 = (uint)output_speed_to_vehicle_speed_ratio_learn_minimum;
       }
       diag_clear_flags_t_003fedfc.learned_output_speed_to_vehicle_speed_ratio = (word)uVar1;
-      protection_condition_flags_t_0040b0e8.reserved_04 =
-           protection_condition_flags_t_0040b0e8.reserved_04 | 0x20;
+      transmission_control_flags.axle_ratio_learning_flags =
+           transmission_control_flags.axle_ratio_learning_flags | 0x20;
       output_speed_to_vehicle_speed_ratio_learned_flag_cal =
            output_speed_to_vehicle_speed_ratio_learned_flag_cal | 1;
     }
@@ -40466,7 +40410,7 @@ LAB_0003c0a8:
   else {
     pci_transmit_message_12_status_bits = pci_transmit_message_12_status_bits | 2;
   }
-  if (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0) &&
+  if (((transmission_control_flags.mode_flags & 4) == 0) &&
      (engine_to_vehicle_speed_ratio_high_flag == 0)) {
     if ((pci_transmit_message_12_status_bits & 0x10) != 0) {
       return;
@@ -41831,7 +41775,7 @@ void cm848_initializeTransmissionOutputSpeedSensorMonitor(void)
    cm848_phase_group_a_processing while bit 28 of monitor_enabling_conditions_met is set. Out of
    park / neutral (switch 20), at the governor setpoint, with vehicle_speed_copy above 3840 (15
    mph): 300 passes with transmission_output_speed_sensor_filtered below 480 (60 rpm) set P0720 and
-   bit 5 (0x20) of protection_condition_flags_t.threshold_current (the output speed is then taken
+   bit 5 (0x20) of transmission_control_flags_t.threshold_current (the output speed is then taken
    from the vehicle speed), 300 passes at or above it clear both. output_speed_sensor_check_state is
    0 not testing / 1 testing / 2 healed / 3 failed / 4 disabled while P0500, P0850 or an ECM fault
    (0 / 91 / 328 / 330) is set (was cm848_processEngineConditionFlags). */
@@ -41863,8 +41807,8 @@ void cm848_monitorTransmissionOutputSpeedSensor(void)
         if (output_speed_sensor_check_fault_set_timer == 0) {
           system_status_flags_t_003fe974.fault_detected_bits_320_to_335 =
                system_status_flags_t_003fe974.fault_detected_bits_320_to_335 | 1;
-          protection_condition_flags_t_0040b0e8.fault_state_flags =
-               protection_condition_flags_t_0040b0e8.fault_state_flags | 0x20;
+          transmission_control_flags.limp_home_flags_4 =
+               transmission_control_flags.limp_home_flags_4 | 0x20;
           output_speed_sensor_check_state = 3;
         }
         else {
@@ -41877,8 +41821,8 @@ void cm848_monitorTransmissionOutputSpeedSensor(void)
           system_status_flags_t_003fe974.fault_detected_bits_320_to_335 =
                system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0xfffe;
           fault_registered_bits_320_to_335 = fault_registered_bits_320_to_335 & 0xfffe;
-          protection_condition_flags_t_0040b0e8.fault_state_flags =
-               protection_condition_flags_t_0040b0e8.fault_state_flags & 0xdf;
+          transmission_control_flags.limp_home_flags_4 =
+               transmission_control_flags.limp_home_flags_4 & 0xdf;
           output_speed_sensor_check_state = 2;
         }
         else {
@@ -42971,7 +42915,7 @@ void cm848_selectTransmissionTemperatureInUse(void)
   }
   transmission_temperature_in_use = *pwVar3;
 LAB_0003f598:
-  if (((protection_status_flags_t_0040b0f2.rate_limit_flags & 2) == 0) &&
+  if (((transmission_shift_strategy_flags.limp_home_and_temperature_flags & 2) == 0) &&
      (engine_state == ENGINE_STATE_RUNNING)) {
     wVar1 = transmission_temperature_adc_forced_reading;
     if ((adc_forced_reading_enable_bits_cal[6] & 0x80) == 0) {
@@ -42989,8 +42933,8 @@ LAB_0003f598:
       if (transmission_temperature_adc_unchanged_reading_limit <=
           transmission_temperature_adc_unchanged_reading_counter) {
         transmission_temperature_adc_unchanged_reading_counter = 0;
-        protection_status_flags_t_0040b0f2.rate_limit_flags =
-             protection_status_flags_t_0040b0f2.rate_limit_flags | 2;
+        transmission_shift_strategy_flags.limp_home_and_temperature_flags =
+             transmission_shift_strategy_flags.limp_home_and_temperature_flags | 2;
       }
     }
     else {
@@ -43026,8 +42970,8 @@ LAB_0003f598:
 void cm848_resetTransmissionTemperatureValidation(void)
 
 {
-  protection_status_flags_t_0040b0f2.rate_limit_flags =
-       protection_status_flags_t_0040b0f2.rate_limit_flags & 0xfd;
+  transmission_shift_strategy_flags.limp_home_and_temperature_flags =
+       transmission_shift_strategy_flags.limp_home_and_temperature_flags & 0xfd;
   transmission_temperature_adc_previous_reading = 0;
   transmission_temperature_adc_unchanged_reading_counter = 0;
   transmission_temperature_early_substitute_countdown = 10;
@@ -43055,7 +42999,7 @@ void cm848_calculateTransmissionOutputSpeed(void)
   if ((algorithm_enable_flags_6_cal & 4) == 0) {
     return;
   }
-  if ((protection_condition_flags_t_0040b0e8.fault_state_flags & 0x20) != 0) {
+  if ((transmission_control_flags.limp_home_flags_4 & 0x20) != 0) {
     if (vehicle_speed == 0) {
       uVar2 = 8;
     }
@@ -72098,32 +72042,30 @@ void cm848_processOverdriveSwitchAndShift(void)
   byte bVar2;
   
   if ((algorithm_enable_flags_6_cal & 4) != 0) {
-    if (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x40) == 0) &&
+    if (((transmission_control_flags.overdrive_flags & 0x40) == 0) &&
        (protection_overtemp_entry_debounce_count = protection_overtemp_entry_debounce_count + 1,
        overdrive_switch_power_on_delay_time < protection_overtemp_entry_debounce_count)) {
       protection_overtemp_entry_debounce_count = overdrive_switch_power_on_delay_time;
       if ((switch_input_state_bits[2] & 0x20) == 0) {
-        protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-             protection_condition_flags_t_0040b0e8.overdrive_control_flags | 4;
+        transmission_control_flags.overdrive_flags = transmission_control_flags.overdrive_flags | 4;
       }
-      else if ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 4) != 0) {
-        if ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0) {
-          bVar2 = protection_condition_flags_t_0040b0e8.overdrive_control_flags | 0x20;
+      else if ((transmission_control_flags.overdrive_flags & 4) != 0) {
+        if ((transmission_control_flags.overdrive_flags & 0x20) == 0) {
+          bVar2 = transmission_control_flags.overdrive_flags | 0x20;
         }
         else {
-          bVar2 = protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0xdf;
+          bVar2 = transmission_control_flags.overdrive_flags & 0xdf;
         }
         overdrive_off_flag = overdrive_off_flag == 0;
-        protection_condition_flags_t_0040b0e8.overdrive_control_flags = bVar2 & 0xfb;
-        if (((protection_status_flags_t_0040b0f2.output_flags & 2) == 0) &&
-           (((transmission_current_gear != 3 ||
-             ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) != 0)) ||
-            (transmission_3rd_gear_lockup_enable == 0)))) {
+        transmission_control_flags.overdrive_flags = bVar2 & 0xfb;
+        if (((transmission_shift_strategy_flags.service_test_request_flags & 2) == 0) &&
+           (((transmission_current_gear != 3 || ((transmission_control_flags.mode_flags & 4) != 0))
+            || (transmission_3rd_gear_lockup_enable == 0)))) {
           cm848_clearLogicalOutputRequest(0x12,0);
         }
       }
     }
-    if ((protection_status_flags_t_0040b0f2.output_flags & 4) == 0) {
+    if ((transmission_shift_strategy_flags.service_test_request_flags & 4) == 0) {
       if ((((cruise_resume_active_flag != 0) && (transmission_current_gear == 4)) &&
           (((int)(uint)vehicle_speed_copy <
             (int)((uint)cruise_speed_command -
@@ -72132,10 +72074,8 @@ void cm848_processOverdriveSwitchAndShift(void)
             (cruise_resume_downshift_delay_timer == 0)))))) &&
          (engine_speed_state.filtered_engine_speed <
           transmission_cruise_resume_downshift_engine_speed)) {
-        protection_condition_flags_t_0040b0e8.condition_eval =
-             protection_condition_flags_t_0040b0e8.condition_eval | 2;
-        protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-             protection_condition_flags_t_0040b0e8.overdrive_control_flags | 1;
+        transmission_control_flags.request_flags = transmission_control_flags.request_flags | 2;
+        transmission_control_flags.overdrive_flags = transmission_control_flags.overdrive_flags | 1;
       }
       if ((((transmission_current_gear == 3) &&
            ((int)((uint)cruise_speed_command -
@@ -72143,14 +72083,14 @@ void cm848_processOverdriveSwitchAndShift(void)
             (int)(uint)vehicle_speed_copy)) ||
           (transmission_cruise_resume_upshift_engine_speed <
            engine_speed_state.filtered_engine_speed)) ||
-         (((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) == 0 ||
-          (transmission_current_gear == 2)))) {
-        protection_condition_flags_t_0040b0e8.overdrive_control_flags =
-             protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0xfe;
+         (((transmission_control_flags.mode_flags & 0x10) == 0 || (transmission_current_gear == 2)))
+         ) {
+        transmission_control_flags.overdrive_flags =
+             transmission_control_flags.overdrive_flags & 0xfe;
       }
       wVar1 = transmission_cruise_resume_downshift_delay_time;
-      if ((transmission_current_gear == 4) &&
-         ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x10) != 0)) {
+      if ((transmission_current_gear == 4) && ((transmission_control_flags.mode_flags & 0x10) != 0))
+      {
         if (cruise_resume_downshift_delay_timer == 0) {
           wVar1 = 0;
         }
@@ -72159,21 +72099,20 @@ void cm848_processOverdriveSwitchAndShift(void)
         }
       }
       cruise_resume_downshift_delay_timer = wVar1;
-      if (((((protection_condition_flags_t_0040b0e8.condition_eval & 2) == 0) &&
-           ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0)) ||
+      if (((((transmission_control_flags.request_flags & 2) == 0) &&
+           ((transmission_control_flags.overdrive_flags & 0x20) == 0)) ||
           (overdrive_downshift_maximum_output_speed <= transmission_output_speed_in_use)) ||
          (logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0)) {
-        if ((((((protection_condition_flags_t_0040b0e8.condition_eval & 4) != 0) &&
-              ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0)) &&
+        if ((((((transmission_control_flags.request_flags & 4) != 0) &&
+              ((transmission_control_flags.overdrive_flags & 0x20) == 0)) &&
              ((transmission_overdrive_upshift_inhibit_timer == 0 &&
-              (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x40) == 0 &&
-               ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x80) == 0)))))) &&
-            (((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 1) == 0 &&
+              (((transmission_control_flags.overdrive_flags & 0x40) == 0 &&
+               ((transmission_control_flags.overdrive_flags & 0x80) == 0)))))) &&
+            (((transmission_control_flags.overdrive_flags & 1) == 0 &&
              (((2 < transmission_current_gear && (transmission_selected_gear != 0x7e)) &&
               (transmission_selected_gear != 0x7f)))))) &&
            (logical_output_request_bits_16_to_23.overdrive_solenoid_request == 0)) {
-          protection_condition_flags_t_0040b0e8.load_condition_flags =
-               protection_condition_flags_t_0040b0e8.load_condition_flags | 0x80;
+          transmission_control_flags.state_flags = transmission_control_flags.state_flags | 0x80;
           cm848_setLogicalOutputRequest(0x11,0);
           transmission_3_4_transition_timer = transmission_3_4_transition_time;
           transmission_overdrive_upshift_inhibit_timer = transmission_overdrive_upshift_inhibit_time
@@ -72190,15 +72129,14 @@ void cm848_processOverdriveSwitchAndShift(void)
              transmission_overheat_lockup_delay_4_3_time;
         if ((transmission_overheat_protection_active_flag == 0) &&
            (transmission_lockup_timers.lockup_delay_4_3_timer = transmission_lockup_delay_4_3_time,
-           (protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) != 0)) {
+           (transmission_control_flags.overdrive_flags & 0x20) != 0)) {
           transmission_lockup_timers.lockup_delay_4_3_timer =
                transmission_lockup_delay_4_3_overdrive_off_time;
         }
         transmission_lockup_timers.lockup_off_timer = transmission_lockup_off_time;
       }
     }
-    protection_condition_flags_t_0040b0e8.condition_eval =
-         protection_condition_flags_t_0040b0e8.condition_eval & 0xf9;
+    transmission_control_flags.request_flags = transmission_control_flags.request_flags & 0xf9;
   }
   return;
 }
@@ -72213,8 +72151,8 @@ void protection_event_11_reset(void)
 
 {
   cm848_clearLogicalOutputRequest(0x11,0);
-  protection_status_flags_t_0040b0f2.output_flags =
-       protection_status_flags_t_0040b0f2.output_flags & 0xf9;
+  transmission_shift_strategy_flags.service_test_request_flags =
+       transmission_shift_strategy_flags.service_test_request_flags & 0xf9;
   return;
 }
 
@@ -78355,8 +78293,8 @@ void cm848_monitorGovernorPressureTracking(void)
           (((logical_output_request_bits_16_to_23.reserved_bit_0 != 0 &&
             (monitor_enabling_conditions_met.governor_pressure_tracking != 0)) &&
            ((diagnostic_monitor_complete_bits & 0x10000000) == 0)))))) &&
-        ((engine_state == ENGINE_STATE_RUNNING &&
-         ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) == 0)))))) {
+        ((engine_state == ENGINE_STATE_RUNNING && ((transmission_control_flags.mode_flags & 4) == 0)
+         ))))) {
       if (((((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x800) != 0) ||
            ((((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x1000) != 0 ||
              ((system_status_flags_t_003fe974.fault_detected_bits_128_to_143 & 0x100) != 0)) ||
@@ -78857,7 +78795,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     protection_output_rate_counter = 0;
     return;
   }
-  if ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 4) != 0) {
+  if ((transmission_control_flags.mode_flags & 4) != 0) {
     protection_fuel_demand_prev = wVar7;
     protection_output_rate_counter = 0;
     return;
@@ -78954,7 +78892,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     if (((converter_clutch_lockup_gear_ratio < converter_clutch_lockup_third_gear_minimum_ratio) ||
         (converter_clutch_lockup_third_gear_maximum_ratio < converter_clutch_lockup_gear_ratio)) &&
        (2 < transmission_current_gear)) goto LAB_0051c168;
-    if ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 0x20) == 0) {
+    if ((transmission_control_flags.overdrive_flags & 0x20) == 0) {
       converter_clutch_first_lockup_in_third_gear_flag = 1;
       converter_clutch_rationality_timer = 0;
       goto LAB_0051c1d8;
@@ -79070,36 +79008,34 @@ void cm848_calibrateGovernorPressureSensorOffset(void)
   byte bVar2;
   
   if (((algorithm_enable_flags_6_cal & 4) != 0) &&
-     ((protection_status_flags_t_0040b0f2.output_flags & 1) == 0)) {
-    if ((protection_status_flags_t_0040b0f2.rate_limit_flags & 1) == 0) {
+     ((transmission_shift_strategy_flags.service_test_request_flags & 1) == 0)) {
+    if ((transmission_shift_strategy_flags.limp_home_and_temperature_flags & 1) == 0) {
       if (governor_pressure_offset_calibration_method == '\x01') {
         governor_pressure_sensor_zero_offset = sensor_readings_t_0040baf2.barometric_pressure;
         governor_pressure_sensor_calibration_flags = governor_pressure_sensor_calibration_flags | 1;
       }
       else {
         if (engine_state != ENGINE_STATE_RUNNING) {
-          if ((protection_condition_flags_t_0040b0e8.condition_eval & 1) == 0) {
-            protection_condition_flags_t_0040b0e8.condition_eval =
-                 protection_condition_flags_t_0040b0e8.condition_eval | 1;
+          if ((transmission_control_flags.request_flags & 1) == 0) {
+            transmission_control_flags.request_flags = transmission_control_flags.request_flags | 1;
             governor_pressure_offset_calibration_initial_delay_timer =
                  governor_pressure_offset_calibration_initial_delay_time;
           }
           else if ((governor_pressure_offset_calibration_initial_delay_timer == 0) &&
-                  ((protection_condition_flags_t_0040b0e8.condition_flags_1 & 0x40) == 0)) {
-            protection_condition_flags_t_0040b0e8.condition_flags_1 =
-                 protection_condition_flags_t_0040b0e8.condition_flags_1 | 0x40;
+                  ((transmission_control_flags.mode_flags & 0x40) == 0)) {
+            transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 0x40;
             cm848_learnGovernorPressureSensorOffset();
           }
         }
-        if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x10) == 0) {
+        if ((transmission_control_flags.request_flags & 0x10) == 0) {
           if (fuel_demand_control_t_0040a57a.calculated <
               governor_pressure_offset_calibration_maximum_throttle) {
             if ((transmission_output_speed_in_use <
                  governor_pressure_offset_calibration_maximum_output_speed) &&
                (vehicle_speed < governor_pressure_offset_calibration_maximum_vehicle_speed)) {
               if (governor_pressure_offset_calibration_interval_timer == 0) {
-                protection_condition_flags_t_0040b0e8.condition_eval =
-                     protection_condition_flags_t_0040b0e8.condition_eval | 0x10;
+                transmission_control_flags.request_flags =
+                     transmission_control_flags.request_flags | 0x10;
                 governor_pressure_offset_calibration_timer =
                      governor_pressure_offset_calibration_time;
                 governor_pressure_offset_calibration_interval_timer =
@@ -79108,15 +79044,15 @@ void cm848_calibrateGovernorPressureSensorOffset(void)
             }
             else {
               governor_pressure_offset_calibration_interval_timer = 0;
-              protection_condition_flags_t_0040b0e8.condition_eval =
-                   protection_condition_flags_t_0040b0e8.condition_eval & 0xef;
+              transmission_control_flags.request_flags =
+                   transmission_control_flags.request_flags & 0xef;
             }
           }
         }
         else if ((((governor_pressure_offset_calibration_timer == 0) &&
-                  (bVar2 = protection_condition_flags_t_0040b0e8.condition_eval & 0xef,
-                  bVar1 = protection_condition_flags_t_0040b0e8.condition_eval & 8,
-                  protection_condition_flags_t_0040b0e8.condition_eval = bVar2, bVar1 != 0)) &&
+                  (bVar2 = transmission_control_flags.request_flags & 0xef,
+                  bVar1 = transmission_control_flags.request_flags & 8,
+                  transmission_control_flags.request_flags = bVar2, bVar1 != 0)) &&
                  (governor_pressure_offset_calibration_minimum_engine_speed <
                   engine_speed_state.filtered_engine_speed)) &&
                 (logical_output_request_bits_16_to_23.reserved_bit_0 != 0)) {
@@ -79392,9 +79328,9 @@ void cm848_controlGovernorPressureSolenoid(void)
   uint uVar3;
   
   if ((((algorithm_enable_flags_6_cal & 4) != 0) &&
-      ((protection_status_flags_t_0040b0f2.output_flags & 1) == 0)) &&
-     ((protection_status_flags_t_0040b0f2.rate_limit_flags & 1) == 0)) {
-    if ((protection_condition_flags_t_0040b0e8.condition_eval & 0x10) == 0) {
+      ((transmission_shift_strategy_flags.service_test_request_flags & 1) == 0)) &&
+     ((transmission_shift_strategy_flags.limp_home_and_temperature_flags & 1) == 0)) {
+    if ((transmission_control_flags.request_flags & 0x10) == 0) {
       uVar3 = (uint)governor_pressure_sensor_filtered - (uint)governor_pressure_sensor_zero_offset;
       if ((int)uVar3 < 1) {
         uVar3 = 0;
@@ -79594,7 +79530,7 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
   if (param_1 != 0) {
     if (param_1 == 1) {
       if ((param_2 & 0xff) == 0xd6) {
-        if ((protection_condition_flags_t_0040b0e8.overdrive_control_flags & 2) == 0) {
+        if ((transmission_control_flags.overdrive_flags & 2) == 0) {
           DAT_003fcf18 = 0;
         }
         else {
@@ -80986,7 +80922,8 @@ void engine_coldStart_protectionSequence_update(void)
   else {
     diag_protection_fault_init_all();
   }
-  protection_status_flags_t_0040b0f2.flags[2] = protection_status_flags_t_0040b0f2.flags[2] & 0xfe;
+  transmission_shift_strategy_flags.actuator_test_flags =
+       transmission_shift_strategy_flags.actuator_test_flags & 0xfe;
   return;
 }
 
@@ -81036,8 +80973,8 @@ void cm848_sciCommand19OutputTestCallback(void)
     cold_start_protection_phase_toggle = 0;
   }
   if ((engine_state != ENGINE_STATE_STOPPED) || (*(char *)sci_buffer_cursor == '\0')) {
-    protection_status_flags_t_0040b0f2.flags[2] = protection_status_flags_t_0040b0f2.flags[2] & 0xfe
-    ;
+    transmission_shift_strategy_flags.actuator_test_flags =
+         transmission_shift_strategy_flags.actuator_test_flags & 0xfe;
     diag_protection_fault_init_all();
     sci_buffer[sci_transmit_byte_count] = 0;
     sci_transmit_byte_count = sci_transmit_byte_count + 1;
@@ -81277,7 +81214,8 @@ void cm848_sciCommand19OutputTestCallback(void)
   sci_transmit_byte_count = sci_transmit_byte_count + 1;
 LAB_0051ee98:
   if (cold_start_protection_active_count != 0) {
-    protection_status_flags_t_0040b0f2.flags[2] = protection_status_flags_t_0040b0f2.flags[2] | 1;
+    transmission_shift_strategy_flags.actuator_test_flags =
+         transmission_shift_strategy_flags.actuator_test_flags | 1;
   }
 LAB_0051eec0:
   sci_next_byte_handler = cm848_dispatchSciCommand;
@@ -82496,8 +82434,8 @@ void cm848_sciCommand37Callback(void)
     if (DAT_003fcf62 == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_status_flags_t_0040b0f2.output_flags =
-           protection_status_flags_t_0040b0f2.output_flags | 1;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 1;
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
         governor_pressure_solenoid_duty_command = DAT_00408ba0;
@@ -82507,15 +82445,15 @@ void cm848_sciCommand37Callback(void)
     }
     else {
       if (DAT_003fcf62 != 2) {
-        protection_status_flags_t_0040b0f2.output_flags =
-             protection_status_flags_t_0040b0f2.output_flags & 0xfe;
+        transmission_shift_strategy_flags.service_test_request_flags =
+             transmission_shift_strategy_flags.service_test_request_flags & 0xfe;
         protection_throttle_output_timeout_count = 0;
         goto LAB_005212a0;
       }
       sci_buffer[sci_transmit_byte_count] = 2;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_status_flags_t_0040b0f2.output_flags =
-           protection_status_flags_t_0040b0f2.output_flags | 1;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 1;
       if ((governor_pressure_solenoid_output_channel_cal != 0) &&
          (governor_pressure_solenoid_output_channel_cal < 0x33)) {
         governor_pressure_solenoid_duty_command = governor_pressure_solenoid_duty_minimum;
@@ -82530,14 +82468,14 @@ void cm848_sciCommand37Callback(void)
     if (DAT_003fcf62 == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_status_flags_t_0040b0f2.output_flags =
-           protection_status_flags_t_0040b0f2.output_flags | 3;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 3;
       cm848_setLogicalOutputRequest(0x12,5);
     }
     else {
       if (DAT_003fcf62 != 2) {
-        protection_status_flags_t_0040b0f2.output_flags =
-             protection_status_flags_t_0040b0f2.output_flags & 0xfc;
+        transmission_shift_strategy_flags.service_test_request_flags =
+             transmission_shift_strategy_flags.service_test_request_flags & 0xfc;
         if (logical_output_request_priority[0x12] == 5) {
           logical_output_request_priority[0x12] = 0;
         }
@@ -82546,8 +82484,8 @@ void cm848_sciCommand37Callback(void)
       }
       sci_buffer[sci_transmit_byte_count] = 2;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_status_flags_t_0040b0f2.output_flags =
-           protection_status_flags_t_0040b0f2.output_flags | 3;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 3;
       cm848_clearLogicalOutputRequest(0x12,5);
     }
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
@@ -82564,14 +82502,14 @@ void cm848_sciCommand37Callback(void)
     if (DAT_003fcf62 == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_status_flags_t_0040b0f2.output_flags =
-           protection_status_flags_t_0040b0f2.output_flags | 5;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 5;
       cm848_setLogicalOutputRequest(0x11,5);
     }
     else {
       if (DAT_003fcf62 != 2) {
-        protection_status_flags_t_0040b0f2.output_flags =
-             protection_status_flags_t_0040b0f2.output_flags & 0xfa;
+        transmission_shift_strategy_flags.service_test_request_flags =
+             transmission_shift_strategy_flags.service_test_request_flags & 0xfa;
         if (logical_output_request_priority[0x11] == 5) {
           logical_output_request_priority[0x11] = 0;
         }
@@ -82580,8 +82518,8 @@ void cm848_sciCommand37Callback(void)
       }
       sci_buffer[sci_transmit_byte_count] = 2;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_status_flags_t_0040b0f2.output_flags =
-           protection_status_flags_t_0040b0f2.output_flags | 5;
+      transmission_shift_strategy_flags.service_test_request_flags =
+           transmission_shift_strategy_flags.service_test_request_flags | 5;
       cm848_clearLogicalOutputRequest(0x11,5);
     }
     if ((governor_pressure_solenoid_output_channel_cal != 0) &&
@@ -82597,7 +82535,8 @@ void cm848_sciCommand37Callback(void)
     if (DAT_003fcf62 == 1) {
       sci_buffer[sci_transmit_byte_count] = 1;
       sci_transmit_byte_count = sci_transmit_byte_count + 1;
-      protection_status_flags_t_0040b0f2.flags[0] = protection_status_flags_t_0040b0f2.flags[0] | 8;
+      transmission_shift_strategy_flags.anti_hunt_flags =
+           transmission_shift_strategy_flags.anti_hunt_flags | 8;
     }
   }
   else if (DAT_003fcf61 == 0x24) {
@@ -82734,14 +82673,14 @@ void protectionVoltageTimeoutControl(void)
   if ((protection_throttle_output_timeout_count != 0) &&
      (protection_throttle_output_timeout_count = protection_throttle_output_timeout_count - 1,
      protection_throttle_output_timeout_count == 0)) {
-    protection_status_flags_t_0040b0f2.output_flags =
-         protection_status_flags_t_0040b0f2.output_flags & 0xfe;
+    transmission_shift_strategy_flags.service_test_request_flags =
+         transmission_shift_strategy_flags.service_test_request_flags & 0xfe;
   }
   if ((protection_load_derate_output_timeout_count != 0) &&
      (protection_load_derate_output_timeout_count = protection_load_derate_output_timeout_count - 1,
      protection_load_derate_output_timeout_count == 0)) {
-    protection_status_flags_t_0040b0f2.output_flags =
-         protection_status_flags_t_0040b0f2.output_flags & 0xfc;
+    transmission_shift_strategy_flags.service_test_request_flags =
+         transmission_shift_strategy_flags.service_test_request_flags & 0xfc;
     if (logical_output_request_priority[0x12] == 5) {
       logical_output_request_priority[0x12] = 0;
     }
@@ -82750,8 +82689,8 @@ void protectionVoltageTimeoutControl(void)
      (protection_engine_protection_output_timeout_count =
            protection_engine_protection_output_timeout_count - 1,
      protection_engine_protection_output_timeout_count == 0)) {
-    protection_status_flags_t_0040b0f2.output_flags =
-         protection_status_flags_t_0040b0f2.output_flags & 0xfa;
+    transmission_shift_strategy_flags.service_test_request_flags =
+         transmission_shift_strategy_flags.service_test_request_flags & 0xfa;
     if (logical_output_request_priority[0x11] == 5) {
       logical_output_request_priority[0x11] = 0;
     }

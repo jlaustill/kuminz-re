@@ -700,7 +700,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - **Use a bitfield only for a word that the code tests.** If the code updates the byte with `|` / `&` masks, keep
       it a byte field and put the bit meanings in its comment. Ghidra 12.1 does not fold those read-modify-writes
       into bitfield stores, so it prints them as `._8_1_` pieces of the struct. Wave 11 reverted two bitfields for
-      this reason: `protection_status_flags_t.status_flags` and `protection_condition_flags_t.fault_state_flags`.
+      this reason: `transmission_shift_strategy_flags_t.wide_open_throttle_flags` and `transmission_control_flags_t.limp_home_flags_4`
+      (then `protection_status_flags_t.status_flags` / `protection_condition_flags_t.fault_state_flags`).
       The two bitfields had given 18 named tests but 31 pieces.
     - Check a shape change with `piece_census.py` (in the session folder), which lists each symbol whose piece count
       went up.
@@ -1011,7 +1012,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - 8C17 (RAM) at 0x40b102, +0..+4A;
     - 8BBC (ROM cals) at 0x40780c, +0..+5C;
     - 8C18 (ROM cals) at 0x4082f4, +00..+98;
-    - 8C19 (the RE flag bytes) at 0x40b0e8, the `protection_condition_flags_t` struct, checked at +0..+3, +9, +A,
+    - 8C19 (the RE flag bytes) at 0x40b0e8, the `transmission_control_flags_t` struct, checked at +0..+3, +9, +A,
       +C and +16 (bits not named yet).
   - **The modes:** the governor pressure modes are `cm848_selectGovernorPressure*`, now with `AntiHunt` (hold /
     boost curves gated by a predicted post-shift acceleration from a learned vehicle inertia), `LowRange` and
