@@ -1112,6 +1112,12 @@ typedef enum {
     DIAGNOSTIC_MONITOR_STATE_ABORTED = 4  /* e2m ABORT: a related fault or condition stopped the monitor */
 } DIAGNOSTIC_MONITOR_STATE;
 
+typedef enum {
+    LIFT_PUMP_RUN_REASON_KEY_ON = 1,  /* Key on without starting (cm848_initializeLiftPumpControl): the pump stops after lift_pump_run_time_after_key_on */
+    LIFT_PUMP_RUN_REASON_ENGINE_RUNNING = 2,  /* The engine ran (RUNNING or ENGINE_BRAKE): after it stops the pump runs lift_pump_run_time_after_running */
+    LIFT_PUMP_RUN_REASON_ENGINE_CRANKING = 3  /* The engine cranked (CRANKING / REENTRY / JUMP_START): after it stops the pump runs lift_pump_run_time_after_cranking */
+} LIFT_PUMP_RUN_REASON;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -1263,6 +1269,12 @@ typedef struct low_speed_governor_gain_set_t low_speed_governor_gain_set_t;
 typedef struct all_speed_governor_gain_set_t all_speed_governor_gain_set_t;
 typedef struct j1939_control_session_t j1939_control_session_t;
 typedef struct sci_output_test_timers_t sci_output_test_timers_t;
+typedef struct logical_output_request_bits_8_to_15_t logical_output_request_bits_8_to_15_t;
+typedef struct logical_output_request_bits_32_to_39_t logical_output_request_bits_32_to_39_t;
+typedef struct logical_output_request_bits_40_to_47_t logical_output_request_bits_40_to_47_t;
+typedef struct logical_output_request_bits_48_to_55_t logical_output_request_bits_48_to_55_t;
+typedef struct logical_output_request_bits_64_to_71_t logical_output_request_bits_64_to_71_t;
+typedef struct logical_output_request_bits_72_to_79_t logical_output_request_bits_72_to_79_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -2604,14 +2616,14 @@ struct monitor_condition_bits_t {
 };
 
 struct logical_output_request_bits_16_to_23_t {
-    uint8_t transmission_relay_request : 1;  /* bit 0: output 16 = the transmission control relay (mask 1). cm848_mainLoopMonitor checks output 16 with diag_faultMatch_outputCheck_update(0x10,0x16,0x88,0x89,...): faults 136 / 137 = P0883 / P0882 'TCM power input signal high / low' (the relay output voltage), and fault 137 sets the e2m 8C19 bit RE_Trans_Relay_Circuit_Open ('transmission power relay is open-circuit'). cm848_updateTransmissionRelayRequest requests it (cm848_setLogicalOutputRequest(0x10,0)) only while the engine is not stopped and none of the relay / solenoid circuit limp bits is set. The solenoid diagnostics (the governor pressure solenoid read-back debounce in cm848_debounceOutputReadBackFaults, the output checks of outputs 17 / 18) and the governor pressure monitors run only while it is set (was reserved_bit_0) | earlier note: guess (not proven, so reserved): a transmission solenoid enable request; the old note said transmission relay */
-    uint8_t overdrive_solenoid_request : 1;  /* bit 1: output 17 (mask 2). cm848_processOverdriveSwitchAndShift sets it with cm848_setLogicalOutputRequest(0x11,0) together with transmission_3_4_transition_timer and clears it on the overdrive release; read with mask 2 in cm848_monitorConverterClutchAndOverdrivePerformance and cm848_determineCurrentGearAndLockupInhibit. */
-    uint8_t converter_clutch_solenoid_request : 1;  /* bit 2: output 18 (mask 4, about 30 uses). cm848_applyConverterLockupSchedule sets it (cm848_setLogicalOutputRequest(0x12,0)); cm848_applyConverterUnlockConditions, cm848_applyConverterUnlockConditionsLowRange and cm848_processOverdriveSwitchAndShift clear it (cm848_clearLogicalOutputRequest(0x12,0)). */
-    uint8_t cruise_vent_solenoid_request : 1;  /* bit 3: output 19 (mask 8): cm848_setLogicalOutputRequest(0x13,...) in cm848_controlCruiseVacuumServo (decompile line 41596); wave 2 identified requests 19 / 20 / 21 as cruise vent / vacuum / servo supply. No direct read of this mask. */
-    uint8_t cruise_vacuum_solenoid_request : 1;  /* bit 4: output 20 (mask 0x10): cm848_setLogicalOutputRequest(0x14,...) in cm848_controlCruiseVacuumServo (decompile line 41602). No direct read of this mask. */
-    uint8_t cruise_servo_supply_request : 1;  /* bit 5: output 21 (mask 0x20): cm848_setLogicalOutputRequest(0x15,...) in cm848_controlCruiseVacuumServo (decompile line 41584); mask 0x20 is read by cm848_deriveSecondBrakeSwitchSignal and diag_faultMatch_outputCheck_update (the supply runs through the brake switch). */
-    uint8_t reserved_bit_6 : 1;  /* bit 6: output 22: no direct read or write found */
-    uint8_t reserved_bit_7 : 1;  /* bit 7: output 23: no direct read or write found */
+    uint8_t transmission_relay_request : 1;  /* bit 0: e2m 1577 +2 0x01 Transmission_VFS_Battery_Driver (12A7 +0x10 Transmission_VFS_Battery_Driver_Priority): the battery feed of the transmission solenoids. output 16 = the transmission control relay (mask 1). cm848_mainLoopMonitor checks output 16 with diag_faultMatch_outputCheck_update(0x10,0x16,0x88,0x89,...): faults 136 / 137 = P0883 / P0882 'TCM power input signal high / low' (the relay output voltage), and fault 137 sets the e2m 8C19 bit RE_Trans_Relay_Circuit_Open ('transmission power relay is open-circuit'). cm848_updateTransmissionRelayRequest requests it (cm848_setLogicalOutputRequest(0x10,0)) only while the engine is not stopped and none of the relay / solenoid circuit limp bits is set. The solenoid diagnostics (the governor pressure solenoid read-back debounce in cm848_debounceOutputReadBackFaults, the output checks of outputs 17 / 18) and the governor pressure monitors run only while it is set (was reserved_bit_0) | earlier note: guess (not proven, so reserved): a transmission solenoid enable request; the old note said transmission relay */
+    uint8_t overdrive_solenoid_request : 1;  /* bit 1: e2m 1577 +2 0x02 Transmission_Overdrive_Driver. output 17 (mask 2). cm848_processOverdriveSwitchAndShift sets it with cm848_setLogicalOutputRequest(0x11,0) together with transmission_3_4_transition_timer and clears it on the overdrive release; read with mask 2 in cm848_monitorConverterClutchAndOverdrivePerformance and cm848_determineCurrentGearAndLockupInhibit. */
+    uint8_t converter_clutch_solenoid_request : 1;  /* bit 2: e2m 1577 +2 0x04 Transmission_TCC_Driver. output 18 (mask 4, about 30 uses). cm848_applyConverterLockupSchedule sets it (cm848_setLogicalOutputRequest(0x12,0)); cm848_applyConverterUnlockConditions, cm848_applyConverterUnlockConditionsLowRange and cm848_processOverdriveSwitchAndShift clear it (cm848_clearLogicalOutputRequest(0x12,0)). */
+    uint8_t cruise_vent_solenoid_request : 1;  /* bit 3: e2m 1577 +2 0x08 Cruise_Vent_Driver. output 19 (mask 8): cm848_setLogicalOutputRequest(0x13,...) in cm848_controlCruiseVacuumServo (decompile line 41596); wave 2 identified requests 19 / 20 / 21 as cruise vent / vacuum / servo supply. No direct read of this mask. */
+    uint8_t cruise_vacuum_solenoid_request : 1;  /* bit 4: e2m 1577 +2 0x10 Cruise_Vacuum_Driver. output 20 (mask 0x10): cm848_setLogicalOutputRequest(0x14,...) in cm848_controlCruiseVacuumServo (decompile line 41602). No direct read of this mask. */
+    uint8_t cruise_servo_supply_request : 1;  /* bit 5: e2m 1577 +2 0x20 Cruise_SC_Source_Driver. output 21 (mask 0x20): cm848_setLogicalOutputRequest(0x15,...) in cm848_controlCruiseVacuumServo (decompile line 41584); mask 0x20 is read by cm848_deriveSecondBrakeSwitchSignal and diag_faultMatch_outputCheck_update (the supply runs through the brake switch). */
+    uint8_t reserved_bit_6 : 1;  /* bit 6: output 22 (mask 0x40): e2m 1577 +2 CORS_Makeup_Valve_Driver; no direct read or write found */
+    uint8_t reserved_bit_7 : 1;  /* bit 7: output 23 (mask 0x80): e2m 1577 +2 Fan_Clutch_Control_Driver1; no direct read or write found */
 };
 
 struct qadc_channel_dispatch_entry_t {
@@ -2797,4 +2809,70 @@ struct sci_output_test_timers_t {
     uint16_t cruise_vacuum_solenoid;  /* +0x16: timer of the DRB actuator test 13-1B S/C VAC SOLENOID (and 13-0C) (logical output 20; started with 300 phases) */
     uint16_t cruise_servo_supply;  /* +0x18: timer of the DRB actuator test 13-2C S/C 12 VOLT FEED (logical output 21; started with 11 phases) */
     uint16_t transmission_relay;  /* +0x1a: timer of the DRB actuator test 13-43 TRANS 12V RELAY (logical output 16; started with 300 phases) */
+};
+
+struct logical_output_request_bits_8_to_15_t {
+    uint8_t reserved_bit_0 : 1;  /* bit 0: output 8 (mask 0x01): e2m 1577 +1 T2_Low_Gear_Driver; no direct read or write found */
+    uint8_t reserved_bit_1 : 1;  /* bit 1: output 9 (mask 0x02): e2m 1577 +1 T2_Neutral_Driver; no direct read or write found */
+    uint8_t reserved_bit_2 : 1;  /* bit 2: output 10 (mask 0x04): e2m 1577 +1 Engine_Alarm_Driver; no direct read or write found */
+    uint8_t engine_brake_driver_1_request : 1;  /* bit 3: output 11 (mask 0x08): e2m 1577 +1 Engine_Brake_Driver_1. output 11 (DRB test 13-5D EXHAUST BRAKE): cm848_driveEngineRetarderOutput sets it; cm848_updateEngineRetarderActiveState and cm848_calculateEngineRetarderTorque read it */
+    uint8_t engine_brake_driver_2_request : 1;  /* bit 4: output 12 (mask 0x10): e2m 1577 +1 Engine_Brake_Driver_2. output 12: cm848_calculateEngineRetarderTorque counts it as a stage */
+    uint8_t engine_brake_driver_3_request : 1;  /* bit 5: output 13 (mask 0x20): e2m 1577 +1 Engine_Brake_Driver_3. output 13: cm848_calculateEngineRetarderTorque counts it as a stage */
+    uint8_t engine_brake_driver_4_request : 1;  /* bit 6: output 14 (mask 0x40): e2m 1577 +1 Engine_Brake_Driver_4. output 14: cm848_calculateEngineRetarderTorque counts it as a stage */
+    uint8_t engine_brake_driver_5_request : 1;  /* bit 7: output 15 (mask 0x80): e2m 1577 +1 Engine_Brake_Driver_5. output 15: cm848_calculateEngineRetarderTorque counts it as a stage */
+};
+
+struct logical_output_request_bits_32_to_39_t {
+    uint8_t reserved_bit_0 : 1;  /* bit 0: output 32 (mask 0x01): e2m 1577 +4 TU_WG_Driver_2; no direct read or write found */
+    uint8_t reserved_bit_1 : 1;  /* bit 1: output 33 (mask 0x02): e2m 1577 +4 VR_Hall_Select; no direct read or write found */
+    uint8_t reserved_bit_2 : 1;  /* bit 2: output 34 (mask 0x04): e2m 1577 +4 EPS_Select; no direct read or write found */
+    uint8_t reserved_bit_3 : 1;  /* bit 3: output 35 (mask 0x08): e2m 1577 +4 Malfunction_Lamp_Driver; no direct read or write found */
+    uint8_t reserved_bit_4 : 1;  /* bit 4: output 36 (mask 0x10): e2m 1577 +4 T2_Lockout_Driver; no direct read or write found */
+    uint8_t reserved_bit_5 : 1;  /* bit 5: output 37 (mask 0x20): e2m 1577 +4 T2_Shift_Driver; no direct read or write found */
+    uint8_t air_conditioning_clutch_request : 1;  /* bit 6: output 38 (mask 0x40): e2m 1577 +4 AC_Discrete_Output. output 38 (DRB test 13-09 A/C CLUTCH RELAY): the A/C clutch control (cm848_controlAirConditioningClutchForBrTruck / ...ForDrTruck) requests it */
+    uint8_t reserved_bit_7 : 1;  /* bit 7: output 39 (mask 0x80): e2m 1577 +4 Unassigned_Discrete_Output_39; no direct read or write found */
+};
+
+struct logical_output_request_bits_40_to_47_t {
+    uint8_t reserved_bit_0 : 1;  /* bit 0: output 40 (mask 0x01): e2m 1577 +5 Solenoid_A_Command; no direct read or write found */
+    uint8_t reserved_bit_1 : 1;  /* bit 1: output 41 (mask 0x02): e2m 1577 +5 Solenoid_B_Command; no direct read or write found */
+    uint8_t reserved_bit_2 : 1;  /* bit 2: output 42 (mask 0x04): e2m 1577 +5 Ether_Solenoid_Command; no direct read or write found */
+    uint8_t intake_air_heater_1_request : 1;  /* bit 3: output 43 (mask 0x08): e2m 1577 +5 Cold_Start_Aid_1_Driver. output 43 (DRB test 13-28 INTAKE HEATER #1): the intake air heater preheat / post-heat functions request it */
+    uint8_t intake_air_heater_2_request : 1;  /* bit 4: output 44 (mask 0x10): e2m 1577 +5 Cold_Start_Aid_2_Driver. output 44 (DRB test 13-29 INTAKE HEATER #2): the intake air heater preheat / post-heat functions request it */
+    uint8_t reserved_bit_5 : 1;  /* bit 5: output 45 (mask 0x20): e2m 1577 +5 Fuel_Heater_Driver; no direct read or write found */
+    uint8_t reserved_bit_6 : 1;  /* bit 6: output 46 (mask 0x40): e2m 1577 +5 Electherm_Driver; no direct read or write found */
+    uint8_t reserved_bit_7 : 1;  /* bit 7: output 47 (mask 0x80): e2m 1577 +5 CY220_Off1; no direct read or write found */
+};
+
+struct logical_output_request_bits_48_to_55_t {
+    uint8_t reserved_bit_0 : 1;  /* bit 0: output 48 (mask 0x01): e2m 1577 +6 CY220_Off2; no direct read or write found */
+    uint8_t reserved_bit_1 : 1;  /* bit 1: output 49 (mask 0x02): e2m 1577 +6 Fan_Clutch_Control_Driver3; no direct read or write found */
+    uint8_t reserved_bit_2 : 1;  /* bit 2: output 50 (mask 0x04): e2m 1577 +6 Starter_Interlocks_Sink; no direct read or write found */
+    uint8_t reserved_bit_3 : 1;  /* bit 3: output 51 (mask 0x08): e2m 1577 +6 Starter_Interlocks_Source; no direct read or write found */
+    uint8_t reserved_bit_4 : 1;  /* bit 4: output 52 (mask 0x10): e2m 1577 +6 Alternator_Field_Driver; no direct read or write found */
+    uint8_t lift_pump_request : 1;  /* bit 5: output 53 (mask 0x20): e2m 1577 +6 Lift_Pump_Driver. output 53 (DRB test 13-33 FUEL PUMP RELAY / TRANSFER PUMP): cm848_controlLiftPump */
+    uint8_t injector_driver_asic_shutoff_request : 1;  /* bit 6: output 54 (mask 0x40): e2m 1577 +6 ASIC_FS_Shutoff_Driver. output 54: read by the injector and fuel pressure diagnostics (cm848_evaluateInjectorDiagnostics, cm848_updateFuelPressureDiagnosticCountersAndCheckFeedbackCircuit) */
+    uint8_t reserved_bit_7 : 1;  /* bit 7: output 55 (mask 0x80): e2m 1577 +6 Protocol_Select; no direct read or write found */
+};
+
+struct logical_output_request_bits_64_to_71_t {
+    uint8_t reserved_bit_0 : 1;  /* bit 0: output 64 (mask 0x01): e2m 1577 +8 OBD_Lamp; no direct read or write found */
+    uint8_t reserved_bit_1 : 1;  /* bit 1: output 65 (mask 0x02): e2m 1577 +8 VR_Tachograph_Mode_Sel_1; no direct read or write found */
+    uint8_t reserved_bit_2 : 1;  /* bit 2: output 66 (mask 0x04): e2m 1577 +8 VR_Tachograph_Mode_Sel_2; no direct read or write found */
+    uint8_t egr_valve_pwm_enable_request : 1;  /* bit 3: output 67 (mask 0x08): e2m 1577 +8 EGA_PWM_Enable. output 67: read by the EGR valve control (cm848_selectEgrValveControlState, cm848_estimateEgrValveMotorCurrent) */
+    uint8_t egr_valve_motor_opening_direction_request : 1;  /* bit 4: output 68 (mask 0x10): e2m 1577 +8 EGA_Motor_Cmd_Opening_Direction. output 68: read by cm848_estimateEgrValveMotorCurrent */
+    uint8_t reserved_bit_5 : 1;  /* bit 5: output 69 (mask 0x20): e2m 1577 +8 IMA_Current_Lowside_Driver; no direct read or write found */
+    uint8_t reserved_bit_6 : 1;  /* bit 6: output 70 (mask 0x40): e2m 1577 +8 APR_Current_Lowside_Driver; no direct read or write found */
+    uint8_t variable_geometry_turbocharger_motor_closing_direction_request : 1;  /* bit 7: output 71 (mask 0x80): e2m 1577 +8 VGA_Motor_Cmd_Closing_Direction. output 71: read by cm848_estimateVariableGeometryTurbochargerMotorCurrent */
+};
+
+struct logical_output_request_bits_72_to_79_t {
+    uint8_t variable_geometry_turbocharger_pwm_enable_request : 1;  /* bit 0: output 72 (mask 0x01): e2m 1577 +9 VGA_PWM_Enable. output 72: read by the VGT control (cm848_selectVariableGeometryTurbochargerControlState) */
+    uint8_t reserved_bit_1 : 1;  /* bit 1: output 73 (mask 0x02): e2m 1577 +9 TVA_Motor_Cmd_Increase_Direction; no direct read or write found */
+    uint8_t reserved_bit_2 : 1;  /* bit 2: output 74 (mask 0x04): e2m 1577 +9 TVA_PWM_Enable; no direct read or write found */
+    uint8_t reserved_bit_3 : 1;  /* bit 3: output 75 (mask 0x08): e2m 1577 +9 Unassigned_Discrete_Output_75; no direct read or write found */
+    uint8_t reserved_bit_4 : 1;  /* bit 4: output 76 (mask 0x10): e2m 1577 +9 Unassigned_Discrete_Output_76; no direct read or write found */
+    uint8_t reserved_bit_5 : 1;  /* bit 5: output 77 (mask 0x20): e2m 1577 +9 Unassigned_Discrete_Output_77; no direct read or write found */
+    uint8_t reserved_bit_6 : 1;  /* bit 6: output 78 (mask 0x40): e2m 1577 +9 Unassigned_Discrete_Output_78; no direct read or write found */
+    uint8_t reserved_bit_7 : 1;  /* bit 7: output 79 (mask 0x80): e2m 1577 +9 Unassigned_Discrete_Output_79; no direct read or write found */
 };

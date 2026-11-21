@@ -1,0 +1,28 @@
+{
+ "logical_output_request_bits_8_to_15": {
+  "engine_brake_driver_1_request": 8,
+  "engine_brake_driver_2_request": 16,
+  "engine_brake_driver_3_request": 32,
+  "engine_brake_driver_4_request": 64,
+  "engine_brake_driver_5_request": 128
+ },
+ "logical_output_request_bits_32_to_39": {
+  "air_conditioning_clutch_request": 64
+ },
+ "logical_output_request_bits_40_to_47": {
+  "intake_air_heater_1_request": 8,
+  "intake_air_heater_2_request": 16
+ },
+ "logical_output_request_bits_48_to_55": {
+  "lift_pump_request": 32,
+  "injector_driver_asic_shutoff_request": 64
+ },
+ "logical_output_request_bits_64_to_71": {
+  "egr_valve_pwm_enable_request": 8,
+  "egr_valve_motor_opening_direction_request": 16,
+  "variable_geometry_turbocharger_motor_closing_direction_request": 128
+ },
+ "logical_output_request_bits_72_to_79": {
+  "variable_geometry_turbocharger_pwm_enable_request": 1
+ }
+}

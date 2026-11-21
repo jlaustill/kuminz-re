@@ -978,3 +978,6 @@ DIAGNOSTIC_MONITOR_STATE,1,DIAGNOSTIC_MONITOR_STATE_RUNNING,"e2m RUN: the enable
 DIAGNOSTIC_MONITOR_STATE,2,DIAGNOSTIC_MONITOR_STATE_PASSED,"e2m CMPPS (complete, passed): the monitor cleared its fault",2
 DIAGNOSTIC_MONITOR_STATE,3,DIAGNOSTIC_MONITOR_STATE_FAILED,"e2m CMPFL (complete, failed): the monitor set its fault",2
 DIAGNOSTIC_MONITOR_STATE,4,DIAGNOSTIC_MONITOR_STATE_ABORTED,"e2m ABORT: a related fault or condition stopped the monitor",2
+LIFT_PUMP_RUN_REASON,1,LIFT_PUMP_RUN_REASON_KEY_ON,"Key on without starting (cm848_initializeLiftPumpControl): the pump stops after lift_pump_run_time_after_key_on",2
+LIFT_PUMP_RUN_REASON,2,LIFT_PUMP_RUN_REASON_ENGINE_RUNNING,"The engine ran (RUNNING or ENGINE_BRAKE): after it stops the pump runs lift_pump_run_time_after_running",2
+LIFT_PUMP_RUN_REASON,3,LIFT_PUMP_RUN_REASON_ENGINE_CRANKING,"The engine cranked (CRANKING / REENTRY / JUMP_START): after it stops the pump runs lift_pump_run_time_after_cranking",2
