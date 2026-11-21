@@ -1040,6 +1040,53 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - **The governor pressure modes** have one enum, `TRANSMISSION_PRESSURE_STATE` (24 members).
   - **8C19** (0x40b0e8) is the RE flag block: `transmission_control_flags_t` and
     `transmission_shift_strategy_flags_t`.
+- **Round 10 (2026-11-21, PR #53): lookup caches, the 48RE monitors, the transmission relay, the SCI actuator tests.**
+  - **Lookup cache names:** a lookup's first argument (the word that keeps the last axis segment offset) is
+    `<table base>_cached_axis_offset`. The second word of a 2-D lookup is `..._cached_axis_offset_y`, and a `word[2]`
+    grid cache is `..._cached_axis_offsets`. A second cache of the same table takes `_2`. Never `_interp_state`:
+    "interp" is a short form (127 rows were renamed).
+  - **Signed RE calibrations:** an RE record with column 10 `S` whose loads are all `lha` is `i16`
+    (`round10/re_audit.py` builds the audit `classify_signed_loads.py` reads).
+  - **Output check fault pairs name outputs:** `cm848_mainLoopMonitor` checks a logical output with
+    `diag_faultMatch_outputCheck_update(output, ?, high fault, low fault, ...)`. The two fault bits' DTCs name the
+    part:
+    - output 16: P0883 / P0882 'TCM power input', so `transmission_relay_request`;
+    - output 17: P0974 / P0973 shift solenoid A, the overdrive solenoid;
+    - output 18: P2770 / P2769, the converter clutch.
+  - **The DRB database names the SCI 0x13 actuator tests:** `mydb` `v_transaction`, protocol `SAE J2610 SCI`,
+    request `13-xx`. Codes and outputs:
+    | Code | Test | Output |
+    |---|---|---|
+    | 13-09 | A/C clutch relay | 38 |
+    | 13-0F | torque converter clutch | 18 |
+    | 13-16 | overdrive solenoid | 17 |
+    | 13-1A / 13-1B | cruise vent / vacuum | 19 / 20 |
+    | 13-28 / 13-29 | intake heaters | 43 / 44 |
+    | 13-2C | cruise 12 volt feed | 21 |
+    | 13-33 | fuel transfer pump | 53 |
+    | 13-43 | transmission relay | 16 |
+    | 13-49 | wait to start lamp | 4 |
+    | 13-5D | exhaust brake | 11 |
+    | 13-5E | fuel control | `fuel_control_actuator_test_active_flag` |
+    | 13-5F | PWM radiator fan | `cooling_fan_actuator_test_active_flag` |
+
+    `sci_output_test_timers_t` (0x3fcf40) holds one timer per test. The tests run only while the engine is stopped.
+  - **`DIAGNOSTIC_MONITOR_STATE`:** the e2m value list NORUN / RUN / CMPPS / CMPFL / ABORT (0-4). Several RE monitor
+    records list it. It types the six monitor state words that store these values:
+    - P1762 (e2m 8C56 +2)
+    - P1756 / P1757 (8C58 +2 / +8)
+    - P0720 (8C4E +4)
+    - P0850 (8C5B +0)
+    - P1740 (8C34 +5)
+
+    A monitor with more states (P0711, 0-6) keeps `word`.
+  - **The limp-home bytes** (`limp_home_flags_1`..`4`, e2m 8C19 +5..+8): the e2m names each bit, and each byte's
+    comment maps bit, record and setter. They stay byte fields, because their writers are read-modify-writes.
+  - **A struct over words passed by pointer:** the callee's pointer parameter must match the field type. With
+    Ghidra's `short *` guess and `word` fields, the decompiler printed the field addresses as raw constants
+    (`cm848_stopSciOutputTest(0x3fcf42,0x2b)`). A `word *` prototype gives
+    `&sci_output_test_timers.intake_heater_1`. Prove a new struct with `round10/relabel_struct.py` (it maps
+    `instance.field` back to the old labels) and then `cast_normalized_diff.py`.
 
 ### Naming wave 2 (2026-11-13, PR #47)
 - **48RE output-speed sensor chain re-domained** (was the `fuel_flow_*` family): `transmission_output_speed_period_microseconds` (0x40b62c, the TPU-B ch14 period) / `transmission_output_speed_numerator` (0x40b632 = 5217391 = 2 x 60e6 / 23) / `transmission_output_speed_sensor_filtered` (0x40b636, the raw-only EMA the P0720 detector watches, trips below 60 rpm) / `transmission_output_speed_sensor_unfiltered` (0x3fb508 word; the old dword was mis-sized - 0x3fb50a is a separate pointer); clamps `transmission_output_speed_maximum` 40000 (5000 rpm) / `_floor` 320 (40 rpm); `output_speed_sensor_pulses_per_revolution` = 23.

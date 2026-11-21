@@ -259,3 +259,8 @@ The old names this file cites were renamed in PR #53 round 9 (the text above kee
 - `protection_condition_flags_t_0040b0e8` → `transmission_control_flags`
 - `protection_status_flags_t` → `transmission_shift_strategy_flags_t`
 - `cm848_protectionFuelDemandCheck` → `cm848_requestOverdriveShiftsNormal`
+
+## Resolved by PR #53 round 10 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 round 10 (the text above keeps its wording):
+- `protection_rpm_limit_table_ramp_state` → `governor_pressure_manual_2nd_curve_cached_axis_offset` (the lookup cache of the manual 2nd curve)

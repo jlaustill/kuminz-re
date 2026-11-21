@@ -761,3 +761,8 @@ The old names this file cites were renamed in PR #53 (the leads above keep their
 
 The old names this file cites were renamed in PR #53 (the leads above keep their wording):
 - `torqueControlModeHandler` → `processEngineTsc1Request`
+
+## Resolved by PR #53 round 10 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 round 10 (the text above keeps its wording):
+- `cm848_initProtectionFilterValues` → `cm848_initializeAlternatorFieldControl`

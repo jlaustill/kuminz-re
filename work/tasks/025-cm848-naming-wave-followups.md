@@ -789,3 +789,13 @@ The old names this file cites were renamed in PR #53 round 9 (the text above kee
 - `protection_throttle_position_clamp_low` → `governor_pressure_sensor_offset_maximum`
 - `protection_throttle_hpcr_frequency` → `governor_pressure_solenoid_frequency`
 - `protection_throttle_invert_flag` → `governor_pressure_solenoid_duty_inversion`
+
+## Resolved by PR #53 round 10 (2026-11-21)
+
+The old names this file cites were renamed in PR #53 round 10 (the text above keeps its wording):
+- `j1939_fault_state` → `governor_pressure_rationality_monitor_state` (e2m 8C56 +2, typed DIAGNOSTIC_MONITOR_STATE)
+- `j1939_fault_state_cycle_divider` → `governor_pressure_rationality_cycle_divider`
+- `j1939_load_protection_fault_reported_flag` → `governor_pressure_rationality_tested_in_park_neutral_flag`
+- `cm848_evaluateProtectionFaultCondition` → `cm848_updateTransmissionRelayRequest` (output 16 is the transmission relay: P0883 / P0882 'TCM power input', DRB test 13-43)
+- `cm848_processCalibrationTablesMain` → `cm848_updateTransmissionControlState`
+- `cm848_processProtectionStateMachine` → `cm848_runTransmissionControlWhenEnabled`
