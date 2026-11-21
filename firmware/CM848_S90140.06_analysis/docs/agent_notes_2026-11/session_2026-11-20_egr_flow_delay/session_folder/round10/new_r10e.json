@@ -1,0 +1,8 @@
+[
+ ["0x003fcef6", "park_neutral_switch_start_check_failed_flag",
+  "P0850 park/neutral switch monitor (cm848_monitorParkNeutralSwitch): the start check's verdict, 1 when more than park_neutral_switch_start_check_in_gear_sample_limit of the start samples saw the switch in gear (sample count - neutral count), stored with park_neutral_switch_start_check_complete_flag = 1; the monitor fails (fault 148 P0850) when it or park_neutral_switch_driving_check_failed_flag is 1. Word (sth @ 0x51b718, lhz @ 0x51b858)"],
+ ["0x003fcf08", "governor_pressure_unused_cached_axis_offset",
+  "Word: cm848_initializeGovernorPressureControl sets it to 2 (the lookup cache start value, sth @ 0x51cd9c) next to governor_pressure_temperature_gain_percent_cached_axis_offset, and no lookup or other code reads it in this build"],
+ ["0x003fcf0e", "governor_pressure_error_previous",
+  "The previous pass's governor_pressure_error: cm848_controlGovernorPressureSolenoid computes governor_pressure_error_slope = governor_pressure_error - it, then stores the new error (lwz @ 0x51cc64, stw @ 0x51cc84: a dword)"]
+]

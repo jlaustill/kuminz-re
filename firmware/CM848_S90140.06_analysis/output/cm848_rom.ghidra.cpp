@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 13:43:53 MST 2026
+// Generated: Sat Nov 21 14:06:33 MST 2026
 
 
 //
@@ -6651,8 +6651,8 @@ void cm848_phase_group_b_processing(void)
   cm848_runDataCollector(0);
   phaseGroupB_ControlDispatchers();
   cm848_selectTransmissionTemperatureInUse();
-  cm848_processCalibrationTablesMain();
-  cm848_processProtectionStateMachine();
+  cm848_updateTransmissionControlState();
+  cm848_runTransmissionControlWhenEnabled();
   cm848_controlCruiseVacuumServo();
   cm848_filterAndSelectIntakeManifoldTemperature();
   cm848_phase_groupB_calculation_2();
@@ -7055,7 +7055,7 @@ void hpcr_periodicTaskGroup25_calibration7(void)
   cm848_controlAirConditioningClutch();
   cm848_updateMonitorEnablingConditionInputs();
   cm848_runEndOfLineTestSequence();
-  cm848_processProtectionFaultSeverity();
+  cm848_updateTransmissionLimpHomeFlags();
   return;
 }
 
@@ -7828,7 +7828,7 @@ void cm848_sensorChannel0_init(void)
 {
   sensorChannelTypeB_configInit
             (&barometric_pressure_sensor_config,&barometric_pressure_sensor_state,
-             &sensor_channel0_interp_state,barometric_pressure_linearization_axis,
+             &sensor_channel0_cached_axis_offset,barometric_pressure_linearization_axis,
              barometric_pressure_linearization_values,0,&sensor_channel0_filter_state,3,0x19,0x1a,
              &barometric_pressure_sensor_value,&barometric_pressure_sensor_default_value,
              &barometric_pressure_sensor_fault_status);
@@ -7846,7 +7846,7 @@ void cm848_sensorChannel0_process(void)
 {
   sensorChannelTypeB_update
             (&barometric_pressure_sensor_config,&barometric_pressure_sensor_state,
-             &sensor_channel0_interp_state,barometric_pressure_linearization_axis,
+             &sensor_channel0_cached_axis_offset,barometric_pressure_linearization_axis,
              barometric_pressure_linearization_values,0,&sensor_channel0_filter_state,3,0x19,0x1a,
              &barometric_pressure_sensor_value,&barometric_pressure_sensor_default_value,
              &barometric_pressure_sensor_fault_status);
@@ -7863,10 +7863,10 @@ void cm848_sensorChannel1_init(void)
 
 {
   sensorChannelConfigInit
-            (&sensor_channel_config_t_000592d6,&sensor_channel1_ram,&sensor_channel1_interp_state,
-             ambient_air_temperature_linearization_axis,ambient_air_temperature_linearization_values
-             ,2,&sensor_channel1_filter_state,0x14,0x96,0x97,
-             &compressor_inlet_temperature_sensor_value,
+            (&sensor_channel_config_t_000592d6,&sensor_channel1_ram,
+             &sensor_channel1_cached_axis_offset,ambient_air_temperature_linearization_axis,
+             ambient_air_temperature_linearization_values,2,&sensor_channel1_filter_state,0x14,0x96,
+             0x97,&compressor_inlet_temperature_sensor_value,
              &compressor_inlet_temperature_sensor_default_value,
              &compressor_inlet_temperature_sensor_fault_status);
   return;
@@ -7882,10 +7882,10 @@ void cm848_sensorChannel1_process(void)
 
 {
   updateSensorChannelWithConfig
-            (&sensor_channel_config_t_000592d6,&sensor_channel1_ram,&sensor_channel1_interp_state,
-             ambient_air_temperature_linearization_axis,ambient_air_temperature_linearization_values
-             ,2,&sensor_channel1_filter_state,0x14,0x96,0x97,
-             &compressor_inlet_temperature_sensor_value,
+            (&sensor_channel_config_t_000592d6,&sensor_channel1_ram,
+             &sensor_channel1_cached_axis_offset,ambient_air_temperature_linearization_axis,
+             ambient_air_temperature_linearization_values,2,&sensor_channel1_filter_state,0x14,0x96,
+             0x97,&compressor_inlet_temperature_sensor_value,
              &compressor_inlet_temperature_sensor_default_value,
              &compressor_inlet_temperature_sensor_fault_status);
   return;
@@ -8411,7 +8411,8 @@ void cm848_sensorChannel16_init(void)
   if ((j1939_governor_feature_byte & 0x10) == 0) {
     sensorChannelTypeB_configInit
               (&sensor_channel_config_t_003fefca,&fuel_demand_table_xaxis_base,
-               &sensor_channel16_interp_state,sensor_channel15_linearization_feature_bit_4_off_axis,
+               &sensor_channel16_cached_axis_offset,
+               sensor_channel15_linearization_feature_bit_4_off_axis,
                sensor_channel15_linearization_feature_bit_4_off_values,0,
                &sensor_channel16_filter_state,0xf,0x36,0x37,&sensor_channel15_value,
                &sensor_channel15_default_value,&sensor_channel15_fault_status);
@@ -8419,7 +8420,8 @@ void cm848_sensorChannel16_init(void)
   else {
     sensorChannelTypeB_configInit
               (&sensor_channel_config_t_003fefda,&fuel_demand_table_xaxis_base,
-               &sensor_channel16_interp_state,sensor_channel15_linearization_feature_bit_4_on_axis,
+               &sensor_channel16_cached_axis_offset,
+               sensor_channel15_linearization_feature_bit_4_on_axis,
                sensor_channel15_linearization_feature_bit_4_on_values,0,
                &sensor_channel16_filter_state,0xf,0x36,0x37,&sensor_channel15_value,
                &sensor_channel15_default_value,&sensor_channel15_fault_status);
@@ -8439,7 +8441,8 @@ void cm848_sensorChannel16_process(void)
   if ((j1939_governor_feature_byte & 0x10) == 0) {
     sensorChannelTypeB_update
               (&sensor_channel_config_t_003fefca,&fuel_demand_table_xaxis_base,
-               &sensor_channel16_interp_state,sensor_channel15_linearization_feature_bit_4_off_axis,
+               &sensor_channel16_cached_axis_offset,
+               sensor_channel15_linearization_feature_bit_4_off_axis,
                sensor_channel15_linearization_feature_bit_4_off_values,0,
                &sensor_channel16_filter_state,0xf,0x36,0x37,&sensor_channel15_value,
                &sensor_channel15_default_value,&sensor_channel15_fault_status);
@@ -8447,7 +8450,8 @@ void cm848_sensorChannel16_process(void)
   else {
     sensorChannelTypeB_update
               (&sensor_channel_config_t_003fefda,&fuel_demand_table_xaxis_base,
-               &sensor_channel16_interp_state,sensor_channel15_linearization_feature_bit_4_on_axis,
+               &sensor_channel16_cached_axis_offset,
+               sensor_channel15_linearization_feature_bit_4_on_axis,
                sensor_channel15_linearization_feature_bit_4_on_values,0,
                &sensor_channel16_filter_state,0xf,0x36,0x37,&sensor_channel15_value,
                &sensor_channel15_default_value,&sensor_channel15_fault_status);
@@ -10700,11 +10704,11 @@ void cm848_transformChargeSystemErrors(void)
   charge_system_transform_complementary_angle = 0xb400 - charge_system_transform_angle;
   charge_system_transform_cosine =
        lookupTableInterpolation
-                 (&charge_system_transform_cosine_interpolation_state,charge_system_transform_angle,
+                 (&charge_system_transform_cosine_cached_axis_offset,charge_system_transform_angle,
                   charge_system_transform_cosine_axis,charge_system_transform_cosine_values,0);
   charge_system_transform_sine =
        lookupTableInterpolation
-                 (&charge_system_transform_cosine_interpolation_state,
+                 (&charge_system_transform_cosine_cached_axis_offset,
                   charge_system_transform_complementary_angle,charge_system_transform_cosine_axis,
                   charge_system_transform_cosine_values,0);
   uVar1 = (uint)charge_system_transform_cosine * (int)charge_system_mass_charge_flow_error_adjusted;
@@ -10769,7 +10773,7 @@ void cm848_calculateChargeSystemErrors(void)
 void cm848_initializeChargeSystemErrorTables(void)
 
 {
-  charge_system_transform_cosine_interpolation_state = 2;
+  charge_system_transform_cosine_cached_axis_offset = 2;
   DAT_003fa152 = 2;
   DAT_003fa154 = 2;
   DAT_003fa156 = 2;
@@ -13431,7 +13435,7 @@ void cm848_calculateNitrogenOxidesTargetReference(void)
   if (combustion_chi_lower_map_number == 1) {
     nitrogen_oxides_target_combustion_map_1_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode1_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode1_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_1_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_1_fuel_quantity_y_axis,
                     (word *)nitrogen_oxides_target_combustion_map_1_pointer,0);
@@ -13440,7 +13444,7 @@ void cm848_calculateNitrogenOxidesTargetReference(void)
   else if (combustion_chi_lower_map_number == 2) {
     nitrogen_oxides_target_combustion_map_2_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode1_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode1_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_2_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_2_fuel_quantity_y_axis,
                     (word *)nitrogen_oxides_target_combustion_map_2_pointer,0);
@@ -13449,7 +13453,7 @@ void cm848_calculateNitrogenOxidesTargetReference(void)
   else if (combustion_chi_lower_map_number == 3) {
     nitrogen_oxides_target_combustion_map_3_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode1_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode1_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_3_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_3_fuel_quantity_y_axis,
                     (word *)nitrogen_oxides_target_combustion_map_3_pointer,0);
@@ -13458,7 +13462,7 @@ void cm848_calculateNitrogenOxidesTargetReference(void)
   else if (combustion_chi_lower_map_number == 4) {
     nitrogen_oxides_target_combustion_map_4_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode1_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode1_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_4_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_4_fuel_quantity_y_axis,
                     (word *)nitrogen_oxides_target_combustion_map_4_pointer,0);
@@ -13467,7 +13471,7 @@ void cm848_calculateNitrogenOxidesTargetReference(void)
   if (combustion_chi_upper_map_number == 1) {
     nitrogen_oxides_target_combustion_map_1_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode1_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode1_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_1_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_1_fuel_quantity_y_axis,
                     (word *)nitrogen_oxides_target_combustion_map_1_pointer,0);
@@ -13476,7 +13480,7 @@ void cm848_calculateNitrogenOxidesTargetReference(void)
   else if (combustion_chi_upper_map_number == 2) {
     nitrogen_oxides_target_combustion_map_2_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode1_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode1_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_2_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_2_fuel_quantity_y_axis,
                     (word *)nitrogen_oxides_target_combustion_map_2_pointer,0);
@@ -13485,7 +13489,7 @@ void cm848_calculateNitrogenOxidesTargetReference(void)
   else if (combustion_chi_upper_map_number == 3) {
     nitrogen_oxides_target_combustion_map_3_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode1_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode1_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_3_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_3_fuel_quantity_y_axis,
                     (word *)nitrogen_oxides_target_combustion_map_3_pointer,0);
@@ -13494,7 +13498,7 @@ void cm848_calculateNitrogenOxidesTargetReference(void)
   else if (combustion_chi_upper_map_number == 4) {
     nitrogen_oxides_target_combustion_map_4_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode1_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode1_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_4_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_4_fuel_quantity_y_axis,
                     (word *)nitrogen_oxides_target_combustion_map_4_pointer,0);
@@ -13536,7 +13540,7 @@ void cm848_calculateChargeTemperatureReference(void)
   if (combustion_chi_lower_map_number == 1) {
     charge_temperature_combustion_map_1_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode2_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode2_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_1_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_1_fuel_quantity_y_axis,
                     (word *)charge_temperature_combustion_map_1_pointer,4);
@@ -13545,7 +13549,7 @@ void cm848_calculateChargeTemperatureReference(void)
   else if (combustion_chi_lower_map_number == 2) {
     charge_temperature_combustion_map_2_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode2_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode2_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_2_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_2_fuel_quantity_y_axis,
                     (word *)charge_temperature_combustion_map_2_pointer,4);
@@ -13554,7 +13558,7 @@ void cm848_calculateChargeTemperatureReference(void)
   else if (combustion_chi_lower_map_number == 3) {
     charge_temperature_combustion_map_3_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode2_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode2_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_3_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_3_fuel_quantity_y_axis,
                     (word *)charge_temperature_combustion_map_3_pointer,4);
@@ -13563,7 +13567,7 @@ void cm848_calculateChargeTemperatureReference(void)
   else if (combustion_chi_lower_map_number == 4) {
     charge_temperature_combustion_map_4_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode2_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode2_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_4_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_4_fuel_quantity_y_axis,
                     (word *)charge_temperature_combustion_map_4_pointer,4);
@@ -13572,7 +13576,7 @@ void cm848_calculateChargeTemperatureReference(void)
   if (combustion_chi_upper_map_number == 1) {
     charge_temperature_combustion_map_1_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode2_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode2_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_1_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_1_fuel_quantity_y_axis,
                     (word *)charge_temperature_combustion_map_1_pointer,4);
@@ -13581,7 +13585,7 @@ void cm848_calculateChargeTemperatureReference(void)
   else if (combustion_chi_upper_map_number == 2) {
     charge_temperature_combustion_map_2_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode2_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode2_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_2_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_2_fuel_quantity_y_axis,
                     (word *)charge_temperature_combustion_map_2_pointer,4);
@@ -13590,7 +13594,7 @@ void cm848_calculateChargeTemperatureReference(void)
   else if (combustion_chi_upper_map_number == 3) {
     charge_temperature_combustion_map_3_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode2_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode2_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_3_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_3_fuel_quantity_y_axis,
                     (word *)charge_temperature_combustion_map_3_pointer,4);
@@ -13599,7 +13603,7 @@ void cm848_calculateChargeTemperatureReference(void)
   else if (combustion_chi_upper_map_number == 4) {
     charge_temperature_combustion_map_4_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode2_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode2_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_4_engine_speed_x_axis,injection_quantity_combustion_reference,
                     combustion_map_4_fuel_quantity_y_axis,
                     (word *)charge_temperature_combustion_map_4_pointer,4);
@@ -13649,27 +13653,27 @@ void cm848_calculateCombustionTimingReference(void)
   
   injection_timing_combustion_map_1_output =
        cm848_dualAxisTableInterpolation
-                 (&fuel_demand_timing_offset_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_map_1_engine_speed_x_axis,injection_quantity_combustion_reference,
-                  combustion_map_1_fuel_quantity_y_axis,
+                 (&fuel_demand_timing_offset_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_map_1_engine_speed_x_axis,
+                  injection_quantity_combustion_reference,combustion_map_1_fuel_quantity_y_axis,
                   (word *)injection_timing_combustion_map_1_pointer,4);
   injection_timing_combustion_map_2_output =
        cm848_dualAxisTableInterpolation
-                 (&fuel_demand_timing_offset_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_map_2_engine_speed_x_axis,injection_quantity_combustion_reference,
-                  combustion_map_2_fuel_quantity_y_axis,
+                 (&fuel_demand_timing_offset_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_map_2_engine_speed_x_axis,
+                  injection_quantity_combustion_reference,combustion_map_2_fuel_quantity_y_axis,
                   (word *)injection_timing_combustion_map_2_pointer,4);
   injection_timing_combustion_map_3_output =
        cm848_dualAxisTableInterpolation
-                 (&fuel_demand_timing_offset_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_map_3_engine_speed_x_axis,injection_quantity_combustion_reference,
-                  combustion_map_3_fuel_quantity_y_axis,
+                 (&fuel_demand_timing_offset_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_map_3_engine_speed_x_axis,
+                  injection_quantity_combustion_reference,combustion_map_3_fuel_quantity_y_axis,
                   (word *)injection_timing_combustion_map_3_pointer,4);
   injection_timing_combustion_map_4_output =
        cm848_dualAxisTableInterpolation
-                 (&fuel_demand_timing_offset_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_map_4_engine_speed_x_axis,injection_quantity_combustion_reference,
-                  combustion_map_4_fuel_quantity_y_axis,
+                 (&fuel_demand_timing_offset_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_map_4_engine_speed_x_axis,
+                  injection_quantity_combustion_reference,combustion_map_4_fuel_quantity_y_axis,
                   (word *)injection_timing_combustion_map_4_pointer,4);
   iVar5 = (int)(short)injection_timing_combustion_map_4_output;
   if (combustion_chi_lower_map_number == 1) {
@@ -13785,7 +13789,7 @@ void cm848_calculateMassChargeFlowReference(void)
   if (combustion_chi_lower_map_number == 1) {
     mass_charge_flow_combustion_map_1_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode3_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode3_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_1_engine_speed_x_axis,injection_quantity_combustion_gross,
                     combustion_map_1_fuel_quantity_y_axis,
                     (word *)mass_charge_flow_combustion_map_1_pointer,0);
@@ -13794,7 +13798,7 @@ void cm848_calculateMassChargeFlowReference(void)
   else if (combustion_chi_lower_map_number == 2) {
     mass_charge_flow_combustion_map_2_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode3_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode3_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_2_engine_speed_x_axis,injection_quantity_combustion_gross,
                     combustion_map_2_fuel_quantity_y_axis,
                     (word *)mass_charge_flow_combustion_map_2_pointer,0);
@@ -13803,7 +13807,7 @@ void cm848_calculateMassChargeFlowReference(void)
   else if (combustion_chi_lower_map_number == 3) {
     mass_charge_flow_combustion_map_3_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode3_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode3_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_3_engine_speed_x_axis,injection_quantity_combustion_gross,
                     combustion_map_3_fuel_quantity_y_axis,
                     (word *)mass_charge_flow_combustion_map_3_pointer,0);
@@ -13812,7 +13816,7 @@ void cm848_calculateMassChargeFlowReference(void)
   else if (combustion_chi_lower_map_number == 4) {
     mass_charge_flow_combustion_map_4_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode3_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode3_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_4_engine_speed_x_axis,injection_quantity_combustion_gross,
                     combustion_map_4_fuel_quantity_y_axis,
                     (word *)mass_charge_flow_combustion_map_4_pointer,0);
@@ -13821,7 +13825,7 @@ void cm848_calculateMassChargeFlowReference(void)
   if (combustion_chi_upper_map_number == 1) {
     mass_charge_flow_combustion_map_1_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode3_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode3_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_1_engine_speed_x_axis,injection_quantity_combustion_gross,
                     combustion_map_1_fuel_quantity_y_axis,
                     (word *)mass_charge_flow_combustion_map_1_pointer,0);
@@ -13830,7 +13834,7 @@ void cm848_calculateMassChargeFlowReference(void)
   else if (combustion_chi_upper_map_number == 2) {
     mass_charge_flow_combustion_map_2_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode3_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode3_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_2_engine_speed_x_axis,injection_quantity_combustion_gross,
                     combustion_map_2_fuel_quantity_y_axis,
                     (word *)mass_charge_flow_combustion_map_2_pointer,0);
@@ -13839,7 +13843,7 @@ void cm848_calculateMassChargeFlowReference(void)
   else if (combustion_chi_upper_map_number == 3) {
     mass_charge_flow_combustion_map_3_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode3_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode3_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_3_engine_speed_x_axis,injection_quantity_combustion_gross,
                     combustion_map_3_fuel_quantity_y_axis,
                     (word *)mass_charge_flow_combustion_map_3_pointer,0);
@@ -13848,7 +13852,7 @@ void cm848_calculateMassChargeFlowReference(void)
   else if (combustion_chi_upper_map_number == 4) {
     mass_charge_flow_combustion_map_4_output =
          cm848_dualAxisTableInterpolation
-                   (&fuel_demand_mode3_interp_state,engine_speed_state.filtered_engine_speed,
+                   (&fuel_demand_mode3_cached_axis_offset,engine_speed_state.filtered_engine_speed,
                     combustion_map_4_engine_speed_x_axis,injection_quantity_combustion_gross,
                     combustion_map_4_fuel_quantity_y_axis,
                     (word *)mass_charge_flow_combustion_map_4_pointer,0);
@@ -13895,27 +13899,27 @@ void cm848_calculateEgrFractionReference(void)
   
   egr_fraction_combustion_map_1_output =
        cm848_dualAxisTableInterpolation
-                 (&fuel_demand_blend_tables_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_map_1_engine_speed_x_axis,injection_quantity_combustion_gross,
-                  combustion_map_1_fuel_quantity_y_axis,
+                 (&fuel_demand_blend_tables_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_map_1_engine_speed_x_axis,
+                  injection_quantity_combustion_gross,combustion_map_1_fuel_quantity_y_axis,
                   (word *)egr_fraction_combustion_map_1_pointer,0);
   egr_fraction_combustion_map_2_output =
        cm848_dualAxisTableInterpolation
-                 (&fuel_demand_blend_tables_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_map_2_engine_speed_x_axis,injection_quantity_combustion_gross,
-                  combustion_map_2_fuel_quantity_y_axis,
+                 (&fuel_demand_blend_tables_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_map_2_engine_speed_x_axis,
+                  injection_quantity_combustion_gross,combustion_map_2_fuel_quantity_y_axis,
                   (word *)egr_fraction_combustion_map_2_pointer,0);
   egr_fraction_combustion_map_3_output =
        cm848_dualAxisTableInterpolation
-                 (&fuel_demand_blend_tables_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_map_3_engine_speed_x_axis,injection_quantity_combustion_gross,
-                  combustion_map_3_fuel_quantity_y_axis,
+                 (&fuel_demand_blend_tables_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_map_3_engine_speed_x_axis,
+                  injection_quantity_combustion_gross,combustion_map_3_fuel_quantity_y_axis,
                   (word *)egr_fraction_combustion_map_3_pointer,0);
   egr_fraction_combustion_map_4_output =
        cm848_dualAxisTableInterpolation
-                 (&fuel_demand_blend_tables_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_map_4_engine_speed_x_axis,injection_quantity_combustion_gross,
-                  combustion_map_4_fuel_quantity_y_axis,
+                 (&fuel_demand_blend_tables_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_map_4_engine_speed_x_axis,
+                  injection_quantity_combustion_gross,combustion_map_4_fuel_quantity_y_axis,
                   (word *)egr_fraction_combustion_map_4_pointer,0);
   uVar2 = (uint)egr_fraction_combustion_map_4_output;
   if (combustion_chi_lower_map_number == 1) {
@@ -14019,7 +14023,7 @@ void cm848_calculateCombustionChiMaximumFuel(void)
   if (combustion_chi_lower_map_number == 1) {
     injection_quantity_combustion_maximum_curve_1_output =
          lookupTableInterpolation
-                   (fuel_map_interpolation_state,engine_speed_state.filtered_engine_speed,
+                   (fuel_map_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                     injection_quantity_combustion_maximum_curve_axis,
                     injection_quantity_combustion_maximum_curve_1_values,0);
     unaff_r31 = (uint)injection_quantity_combustion_maximum_curve_1_output;
@@ -14027,7 +14031,7 @@ void cm848_calculateCombustionChiMaximumFuel(void)
   else if (combustion_chi_lower_map_number == 2) {
     injection_quantity_combustion_maximum_curve_2_output =
          lookupTableInterpolation
-                   (fuel_map_interpolation_state,engine_speed_state.filtered_engine_speed,
+                   (fuel_map_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                     injection_quantity_combustion_maximum_curve_axis,
                     injection_quantity_combustion_maximum_curve_2_values,0);
     unaff_r31 = (uint)injection_quantity_combustion_maximum_curve_2_output;
@@ -14035,7 +14039,7 @@ void cm848_calculateCombustionChiMaximumFuel(void)
   else if (combustion_chi_lower_map_number == 3) {
     injection_quantity_combustion_maximum_curve_3_output =
          lookupTableInterpolation
-                   (fuel_map_interpolation_state,engine_speed_state.filtered_engine_speed,
+                   (fuel_map_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                     injection_quantity_combustion_maximum_curve_axis,
                     injection_quantity_combustion_maximum_curve_3_values,0);
     unaff_r31 = (uint)injection_quantity_combustion_maximum_curve_3_output;
@@ -14043,7 +14047,7 @@ void cm848_calculateCombustionChiMaximumFuel(void)
   else if (combustion_chi_lower_map_number == 4) {
     injection_quantity_combustion_maximum_curve_4_output =
          lookupTableInterpolation
-                   (fuel_map_interpolation_state,engine_speed_state.filtered_engine_speed,
+                   (fuel_map_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                     injection_quantity_combustion_maximum_curve_axis,
                     injection_quantity_combustion_maximum_curve_4_values,0);
     unaff_r31 = (uint)injection_quantity_combustion_maximum_curve_4_output;
@@ -14051,7 +14055,7 @@ void cm848_calculateCombustionChiMaximumFuel(void)
   if (combustion_chi_upper_map_number == 1) {
     injection_quantity_combustion_maximum_curve_1_output =
          lookupTableInterpolation
-                   (fuel_map_interpolation_state,engine_speed_state.filtered_engine_speed,
+                   (fuel_map_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                     injection_quantity_combustion_maximum_curve_axis,
                     injection_quantity_combustion_maximum_curve_1_values,0);
     unaff_r30 = (uint)injection_quantity_combustion_maximum_curve_1_output;
@@ -14059,7 +14063,7 @@ void cm848_calculateCombustionChiMaximumFuel(void)
   else if (combustion_chi_upper_map_number == 2) {
     injection_quantity_combustion_maximum_curve_2_output =
          lookupTableInterpolation
-                   (fuel_map_interpolation_state,engine_speed_state.filtered_engine_speed,
+                   (fuel_map_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                     injection_quantity_combustion_maximum_curve_axis,
                     injection_quantity_combustion_maximum_curve_2_values,0);
     unaff_r30 = (uint)injection_quantity_combustion_maximum_curve_2_output;
@@ -14067,7 +14071,7 @@ void cm848_calculateCombustionChiMaximumFuel(void)
   else if (combustion_chi_upper_map_number == 3) {
     injection_quantity_combustion_maximum_curve_3_output =
          lookupTableInterpolation
-                   (fuel_map_interpolation_state,engine_speed_state.filtered_engine_speed,
+                   (fuel_map_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                     injection_quantity_combustion_maximum_curve_axis,
                     injection_quantity_combustion_maximum_curve_3_values,0);
     unaff_r30 = (uint)injection_quantity_combustion_maximum_curve_3_output;
@@ -14075,14 +14079,15 @@ void cm848_calculateCombustionChiMaximumFuel(void)
   else if (combustion_chi_upper_map_number == 4) {
     injection_quantity_combustion_maximum_curve_4_output =
          lookupTableInterpolation
-                   (fuel_map_interpolation_state,engine_speed_state.filtered_engine_speed,
+                   (fuel_map_cached_axis_offsets,engine_speed_state.filtered_engine_speed,
                     injection_quantity_combustion_maximum_curve_axis,
                     injection_quantity_combustion_maximum_curve_4_values,0);
     unaff_r30 = (uint)injection_quantity_combustion_maximum_curve_4_output;
   }
   injection_quantity_combustion_maximum_base_curve_output =
        lookupTableInterpolation
-                 (&fuel_demand_load_axis_base_interp_state,engine_speed_state.filtered_engine_speed,
+                 (&fuel_demand_load_axis_base_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,
                   injection_quantity_combustion_maximum_curve_axis,
                   injection_quantity_combustion_maximum_base_curve_values,0);
   injection_quantity_combustion_chi_maximum =
@@ -14307,7 +14312,7 @@ void cm848_lookupProtectiveChi
   undefined4 local_20;
   
   wVar1 = lookupTableInterpolation
-                    (fuel_map_interpolation_state + 1,input,x_axis,y_data,(uint)(lookup_signed != 0)
+                    (fuel_map_cached_axis_offsets + 1,input,x_axis,y_data,(uint)(lookup_signed != 0)
                     );
   wVar2 = cm848_interpolateTableWithoutCache((uint)wVar1,second_axis,second_data);
   if (wVar2 < (ushort)(emission_level_cap_command * 2)) {
@@ -14603,54 +14608,54 @@ undefined2 cm848_lookupChiMaximumFuelAtSpeed(word param_1)
   
   if (combustion_chi_lower_map_number == 1) {
     unaff_r30 = lookupTableInterpolation
-                          (fuel_map_interpolation_state,param_1,
+                          (fuel_map_cached_axis_offsets,param_1,
                            injection_quantity_combustion_maximum_curve_axis,
                            injection_quantity_combustion_maximum_curve_1_values,0);
   }
   else if (combustion_chi_lower_map_number == 2) {
     unaff_r30 = lookupTableInterpolation
-                          (fuel_map_interpolation_state,param_1,
+                          (fuel_map_cached_axis_offsets,param_1,
                            injection_quantity_combustion_maximum_curve_axis,
                            injection_quantity_combustion_maximum_curve_2_values,0);
   }
   else if (combustion_chi_lower_map_number == 3) {
     unaff_r30 = lookupTableInterpolation
-                          (fuel_map_interpolation_state,param_1,
+                          (fuel_map_cached_axis_offsets,param_1,
                            injection_quantity_combustion_maximum_curve_axis,
                            injection_quantity_combustion_maximum_curve_3_values,0);
   }
   else if (combustion_chi_lower_map_number == 4) {
     unaff_r30 = lookupTableInterpolation
-                          (fuel_map_interpolation_state,param_1,
+                          (fuel_map_cached_axis_offsets,param_1,
                            injection_quantity_combustion_maximum_curve_axis,
                            injection_quantity_combustion_maximum_curve_4_values,0);
   }
   if (combustion_chi_upper_map_number == 1) {
     unaff_r29 = lookupTableInterpolation
-                          (fuel_map_interpolation_state,param_1,
+                          (fuel_map_cached_axis_offsets,param_1,
                            injection_quantity_combustion_maximum_curve_axis,
                            injection_quantity_combustion_maximum_curve_1_values,0);
   }
   else if (combustion_chi_upper_map_number == 2) {
     unaff_r29 = lookupTableInterpolation
-                          (fuel_map_interpolation_state,param_1,
+                          (fuel_map_cached_axis_offsets,param_1,
                            injection_quantity_combustion_maximum_curve_axis,
                            injection_quantity_combustion_maximum_curve_2_values,0);
   }
   else if (combustion_chi_upper_map_number == 3) {
     unaff_r29 = lookupTableInterpolation
-                          (fuel_map_interpolation_state,param_1,
+                          (fuel_map_cached_axis_offsets,param_1,
                            injection_quantity_combustion_maximum_curve_axis,
                            injection_quantity_combustion_maximum_curve_3_values,0);
   }
   else if (combustion_chi_upper_map_number == 4) {
     unaff_r29 = lookupTableInterpolation
-                          (fuel_map_interpolation_state,param_1,
+                          (fuel_map_cached_axis_offsets,param_1,
                            injection_quantity_combustion_maximum_curve_axis,
                            injection_quantity_combustion_maximum_curve_4_values,0);
   }
   wVar1 = lookupTableInterpolation
-                    (&fuel_demand_load_axis_base_interp_state,param_1,
+                    (&fuel_demand_load_axis_base_cached_axis_offset,param_1,
                      injection_quantity_combustion_maximum_curve_axis,
                      injection_quantity_combustion_maximum_base_curve_values,0);
   uVar2 = cm848_interpolateAlphaChiValue
@@ -14772,25 +14777,25 @@ void cm848_initializeCombustionReferenceMapPointers(void)
        (dword)nitrogen_oxides_target_combustion_map_3_grid;
   nitrogen_oxides_target_combustion_map_4_pointer =
        (dword)nitrogen_oxides_target_combustion_map_4_grid;
-  fuel_demand_blend_tables_interp_state = 2;
+  fuel_demand_blend_tables_cached_axis_offset = 2;
   DAT_003fa698 = 2;
   DAT_003fa69a = 2;
   DAT_003fa69c = 2;
-  fuel_demand_mode3_interp_state = 2;
+  fuel_demand_mode3_cached_axis_offset = 2;
   DAT_003fa6a0 = 2;
   DAT_003fa6a2 = 2;
   DAT_003fa6a4 = 2;
-  fuel_demand_timing_offset_interp_state = 2;
+  fuel_demand_timing_offset_cached_axis_offset = 2;
   DAT_003fa6a8 = 2;
   DAT_003fa6aa = 2;
   DAT_003fa6ac = 2;
   DAT_003fa6ae = 2;
   DAT_003fa6b0 = 2;
-  fuel_demand_mode2_interp_state = 2;
+  fuel_demand_mode2_cached_axis_offset = 2;
   DAT_003fa6b4 = 2;
   DAT_003fa6b6 = 2;
   DAT_003fa6b8 = 2;
-  fuel_demand_mode1_interp_state = 2;
+  fuel_demand_mode1_cached_axis_offset = 2;
   DAT_003fa6bc = 2;
   DAT_003fa6be = 2;
   DAT_003fa6c0 = 2;
@@ -14798,9 +14803,9 @@ void cm848_initializeCombustionReferenceMapPointers(void)
   DAT_003fa6c4 = 2;
   DAT_003fa6c6 = 2;
   DAT_003fa6c8 = 2;
-  fuel_demand_load_axis_base_interp_state = 2;
-  fuel_map_interpolation_state[0] = 2;
-  fuel_map_interpolation_state[1] = 2;
+  fuel_demand_load_axis_base_cached_axis_offset = 2;
+  fuel_map_cached_axis_offsets[0] = 2;
+  fuel_map_cached_axis_offsets[1] = 2;
   return;
 }
 
@@ -14848,12 +14853,13 @@ void cm848_calculateOffNominalOxygenFractionAdjustment(void)
   intake_charge_oxygen_fraction_reference = 0x76b - (short)uVar1;
   fuel_specific_nitrogen_oxide_ratio_reference =
        lookupTableInterpolation
-                 (&fuel_load_correction_timing_interp_state,intake_charge_oxygen_fraction_reference,
+                 (&fuel_load_correction_timing_cached_axis_offset,
+                  intake_charge_oxygen_fraction_reference,
                   fuel_specific_nitrogen_oxide_ratio_by_intake_oxygen_fraction_axis,
                   fuel_specific_nitrogen_oxide_ratio_by_intake_oxygen_fraction_values,0);
   fuel_specific_nitrogen_oxide_ratio_actual =
        lookupTableInterpolation
-                 (&fuel_load_correction_timing_interp_state,intake_charge_oxygen_fraction,
+                 (&fuel_load_correction_timing_cached_axis_offset,intake_charge_oxygen_fraction,
                   fuel_specific_nitrogen_oxide_ratio_by_intake_oxygen_fraction_axis,
                   fuel_specific_nitrogen_oxide_ratio_by_intake_oxygen_fraction_values,0);
   uVar1 = (uint)fuel_specific_nitrogen_oxide_ratio_reference;
@@ -15083,7 +15089,7 @@ void cm848_initializeOffNominalCompensationLookupCaches(void)
 {
   DAT_003fa6d2 = 2;
   DAT_003fa6d4 = 2;
-  fuel_load_correction_timing_interp_state = 2;
+  fuel_load_correction_timing_cached_axis_offset = 2;
   DAT_003fa6d8 = 2;
   DAT_003fa6da = 2;
   return;
@@ -15809,7 +15815,7 @@ void emptyStubFunction3(void)
 /* Percent peak torque x 256 (0x6400 = 100 percent) available at one engine speed, for the J1939
    (Jcomm) engine configuration data of e2m block 10E2. param_1 is the engine speed (1/8 rpm),
    param_2 the friction fuel at that speed. It reads the fuel at 100 percent throttle (y = 400) at
-   that speed from the maximum fuel grid (fuel_demand_threshold_interp_state, x axis
+   that speed from the maximum fuel grid (fuel_demand_threshold_cached_axis_offset, x axis
    fuel_demand_rpm_threshold_cal, y axis fuel_demand_rpm_limit_low_cal, grid
    fuel_demand_rpm_limit_high_cal), clamps it with cm848_clampFuelDemandToValidRange (0x1ec48),
    subtracts param_2 plus the coolant temperature friction correction
@@ -15827,8 +15833,9 @@ int cm848_calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2)
   word local_8 [2];
   
   local_8[0] = cm848_dualAxisTableInterpolation
-                         (&fuel_demand_threshold_interp_state,param_1,fuel_demand_rpm_threshold_cal,
-                          400,fuel_demand_rpm_limit_low_cal,fuel_demand_rpm_limit_high_cal,4);
+                         (&fuel_demand_threshold_cached_axis_offset,param_1,
+                          fuel_demand_rpm_threshold_cal,400,fuel_demand_rpm_limit_low_cal,
+                          fuel_demand_rpm_limit_high_cal,4);
   cm848_clampFuelDemandToValidRange(local_8);
   sVar1 = cm848_signedDivisionWithSaturation
                     (((int)(short)local_8[0] -
@@ -15863,24 +15870,24 @@ void cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints(void)
 {
   j1939_friction_load_fueling_at_low_idle =
        lookupTableInterpolation
-                 (&friction_fuel_by_engine_speed_interpolation_state,
+                 (&friction_fuel_by_engine_speed_cached_axis_offset,
                   governor_output_t_0040aec2.idle_reference_speed,friction_fuel_by_engine_speed_axis
                   ,friction_fuel_by_engine_speed_values,0);
   j1939_friction_load_fueling_at_breakpoint_3 =
        lookupTableInterpolation
-                 (&friction_fuel_by_engine_speed_interpolation_state,j1939_speed_breakpoint_3_tau_0,
+                 (&friction_fuel_by_engine_speed_cached_axis_offset,j1939_speed_breakpoint_3_tau_0,
                   friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   j1939_friction_load_fueling_at_breakpoint_4 =
        lookupTableInterpolation
-                 (&friction_fuel_by_engine_speed_interpolation_state,j1939_speed_breakpoint_4_tau_0,
+                 (&friction_fuel_by_engine_speed_cached_axis_offset,j1939_speed_breakpoint_4_tau_0,
                   friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   j1939_friction_load_fueling_at_breakpoint_5 =
        lookupTableInterpolation
-                 (&friction_fuel_by_engine_speed_interpolation_state,j1939_speed_breakpoint_5_tau_0,
+                 (&friction_fuel_by_engine_speed_cached_axis_offset,j1939_speed_breakpoint_5_tau_0,
                   friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   j1939_friction_load_fueling_at_rated_speed =
        lookupTableInterpolation
-                 (&friction_fuel_by_engine_speed_interpolation_state,j1939_rated_speed_tau_0,
+                 (&friction_fuel_by_engine_speed_cached_axis_offset,j1939_rated_speed_tau_0,
                   friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   return;
 }
@@ -15911,7 +15918,7 @@ void cm848_calculateJ1939PercentPeakTorquePoints(void)
 {
   throttle_demand_offset_cal_working =
        lookupTableInterpolation
-                 (coolant_temp_interp_state,sensor_readings_t_0040baf2.coolant_temp,
+                 (coolant_temperature_cached_axis_offsets,sensor_readings_t_0040baf2.coolant_temp,
                   friction_fuel_correction_by_coolant_temperature_axis,
                   friction_fuel_correction_by_coolant_temperature_values,1);
   cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints();
@@ -15960,7 +15967,7 @@ void cm848_calculateJ1939PercentPeakTorque(void)
   j1939_no_load_fueling = fuel_demand_base_offset;
   j1939_friction_load_fueling_at_breakpoint_4 =
        lookupTableInterpolation
-                 (&friction_fuel_by_engine_speed_interpolation_state,j1939_speed_breakpoint_4_tau_0,
+                 (&friction_fuel_by_engine_speed_cached_axis_offset,j1939_speed_breakpoint_4_tau_0,
                   friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   j1939_percent_peak_torque_at_current_speed_times_256 =
        cm848_signedDivisionWithSaturation
@@ -20355,12 +20362,12 @@ void cm848_initProtectionTableSizes(void)
 void cm848_initFaultSeverityTables(void)
 
 {
-  fuel_demand_threshold_interp_state = 2;
+  fuel_demand_threshold_cached_axis_offset = 2;
   fuel_demand_threshold_interp_state_y = 2;
-  governor_fuel_demand_interp_state = 2;
+  governor_fuel_demand_cached_axis_offset = 2;
   governor_fuel_demand_interp_state_y = 2;
-  friction_fuel_by_engine_speed_interpolation_state = 2;
-  coolant_temp_interp_state[0] = 2;
+  friction_fuel_by_engine_speed_cached_axis_offset = 2;
+  coolant_temperature_cached_axis_offsets[0] = 2;
   cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints();
   return;
 }
@@ -20500,18 +20507,18 @@ uint cm848_calculateDualAxisFuelLimit(void)
   if (y_input != 0) {
     if (four_dimensional_fueling_interpolation_factor != 0) {
       local_30 = cm848_dualAxisTableInterpolation
-                           (&fuel_demand_threshold_interp_state,
+                           (&fuel_demand_threshold_cached_axis_offset,
                             engine_speed_state.filtered_engine_speed,fuel_demand_rpm_threshold_cal,
                             y_input,fuel_demand_rpm_limit_low_cal,fuel_demand_rpm_limit_high_cal,4);
       cm848_clampFuelDemandToValidRange(&local_30);
       unaff_r28 = (uint)(short)local_30;
       local_36 = cm848_dualAxisTableInterpolation
-                           (&fuel_demand_threshold_interp_state,
+                           (&fuel_demand_threshold_cached_axis_offset,
                             engine_speed_state.filtered_engine_speed,fuel_demand_rpm_threshold_cal,0
                             ,fuel_demand_rpm_limit_low_cal,fuel_demand_rpm_limit_high_cal,4);
       cm848_clampFuelDemandToValidRange(&local_36);
       local_38 = cm848_dualAxisTableInterpolation
-                           (&fuel_demand_threshold_interp_state,
+                           (&fuel_demand_threshold_cached_axis_offset,
                             engine_speed_state.filtered_engine_speed,fuel_demand_rpm_threshold_cal,
                             400,fuel_demand_rpm_limit_low_cal,fuel_demand_rpm_limit_high_cal,4);
       cm848_clampFuelDemandToValidRange(&local_38);
@@ -20526,19 +20533,19 @@ uint cm848_calculateDualAxisFuelLimit(void)
     }
     if (wVar1 < 0x4000) {
       local_2e[0] = cm848_dualAxisTableInterpolation
-                              (&governor_fuel_demand_interp_state,
+                              (&governor_fuel_demand_cached_axis_offset,
                                engine_speed_state.filtered_engine_speed,
                                governor_fuel_table_xaxis_cal,y_input,governor_fuel_table_ystart_cal,
                                governor_fuel_table_yend_cal,4);
       cm848_clampFuelDemandToValidRange(local_2e);
       unaff_r31 = (uint)(short)local_2e[0];
       local_32 = cm848_dualAxisTableInterpolation
-                           (&governor_fuel_demand_interp_state,
+                           (&governor_fuel_demand_cached_axis_offset,
                             engine_speed_state.filtered_engine_speed,governor_fuel_table_xaxis_cal,0
                             ,governor_fuel_table_ystart_cal,governor_fuel_table_yend_cal,4);
       cm848_clampFuelDemandToValidRange(&local_32);
       local_34 = cm848_dualAxisTableInterpolation
-                           (&governor_fuel_demand_interp_state,
+                           (&governor_fuel_demand_cached_axis_offset,
                             engine_speed_state.filtered_engine_speed,governor_fuel_table_xaxis_cal,
                             400,governor_fuel_table_ystart_cal,governor_fuel_table_yend_cal,4);
       cm848_clampFuelDemandToValidRange(&local_34);
@@ -20641,14 +20648,16 @@ uint cm848_calculateMaximumFuelCurve(word param_1,word param_2)
   
   if (four_dimensional_fueling_interpolation_factor != 0) {
     local_e = cm848_dualAxisTableInterpolation
-                        (&fuel_demand_threshold_interp_state,param_1,fuel_demand_rpm_threshold_cal,
-                         param_2,fuel_demand_rpm_limit_low_cal,fuel_demand_rpm_limit_high_cal,4);
+                        (&fuel_demand_threshold_cached_axis_offset,param_1,
+                         fuel_demand_rpm_threshold_cal,param_2,fuel_demand_rpm_limit_low_cal,
+                         fuel_demand_rpm_limit_high_cal,4);
     cm848_clampFuelDemandToValidRange(&local_e);
   }
   if (four_dimensional_fueling_interpolation_factor < 0x4000) {
     local_10 = cm848_dualAxisTableInterpolation
-                         (&governor_fuel_demand_interp_state,param_1,governor_fuel_table_xaxis_cal,
-                          param_2,governor_fuel_table_ystart_cal,governor_fuel_table_yend_cal,4);
+                         (&governor_fuel_demand_cached_axis_offset,param_1,
+                          governor_fuel_table_xaxis_cal,param_2,governor_fuel_table_ystart_cal,
+                          governor_fuel_table_yend_cal,4);
     cm848_clampFuelDemandToValidRange(&local_10);
   }
   uVar2 = (uint)four_dimensional_fueling_interpolation_factor;
@@ -21363,11 +21372,12 @@ LAB_0002012c:
     engine_speed_limit_droop_active_flag = 1;
     if (engine_speed_limit_droop_slope_bypass_flag == 0) {
       wVar1 = lookupTableInterpolation
-                        (&friction_fuel_by_engine_speed_interpolation_state,
+                        (&friction_fuel_by_engine_speed_cached_axis_offset,
                          engine_speed_limit_droop_no_load_speed,friction_fuel_by_engine_speed_axis,
                          friction_fuel_by_engine_speed_values,0);
       wVar2 = lookupTableInterpolation
-                        (coolant_temp_interp_state,sensor_readings_t_0040baf2.coolant_temp,
+                        (coolant_temperature_cached_axis_offsets,
+                         sensor_readings_t_0040baf2.coolant_temp,
                          friction_fuel_correction_by_coolant_temperature_axis,
                          friction_fuel_correction_by_coolant_temperature_values,1);
       engine_speed_limit_droop_no_load_fuel_quantity = wVar2 + wVar1;
@@ -27194,14 +27204,14 @@ void cm848_processSpeedSensorCompensation(void)
   
   if (four_dimensional_fueling_interpolation_factor != 0) {
     local_6 = cm848_dualAxisTableInterpolation
-                        (&fuel_demand_threshold_interp_state,governor_speed_demand_working,
+                        (&fuel_demand_threshold_cached_axis_offset,governor_speed_demand_working,
                          fuel_demand_rpm_threshold_cal,400,fuel_demand_rpm_limit_low_cal,
                          fuel_demand_rpm_limit_high_cal,4);
     cm848_clampFuelDemandToValidRange(&local_6);
   }
   if (four_dimensional_fueling_interpolation_factor < 0x4000) {
     local_8 = cm848_dualAxisTableInterpolation
-                        (&governor_fuel_demand_interp_state,governor_speed_demand_working,
+                        (&governor_fuel_demand_cached_axis_offset,governor_speed_demand_working,
                          governor_fuel_table_xaxis_cal,400,governor_fuel_table_ystart_cal,
                          governor_fuel_table_yend_cal,4);
     cm848_clampFuelDemandToValidRange(&local_8);
@@ -28304,9 +28314,8 @@ void cm848_calculateGovernorCompensation(void)
   word wVar2;
   
   wVar1 = lookupTableInterpolation
-                    (&friction_fuel_by_engine_speed_interpolation_state,
-                     governor_speed_error_computed,friction_fuel_by_engine_speed_axis,
-                     friction_fuel_by_engine_speed_values,0);
+                    (&friction_fuel_by_engine_speed_cached_axis_offset,governor_speed_error_computed
+                     ,friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   wVar2 = lookupTableInterpolation
                     (&governor_interp_table_state_b,fuel_demand_control_t_0040a57a.calculated,
                      governor_fuel_demand_axis_cal,governor_fuel_demand_output_cal,0);
@@ -28354,7 +28363,7 @@ void cm848_initGovernorStateVariables(void)
 void cm848_initGovernorLookupDimensions(void)
 
 {
-  friction_fuel_by_engine_speed_interpolation_state = 2;
+  friction_fuel_by_engine_speed_cached_axis_offset = 2;
   governor_interp_table_state_b = 2;
   return;
 }
@@ -28662,7 +28671,7 @@ void cm848_calculatePowerTakeOffGovernorSpeedError(void)
     power_take_off_governor_filtered_speed_error = sVar2;
   }
   wVar1 = lookupTableInterpolation
-                    (&friction_fuel_by_engine_speed_interpolation_state,
+                    (&friction_fuel_by_engine_speed_cached_axis_offset,
                      power_take_off_requested_engine_speed,friction_fuel_by_engine_speed_axis,
                      friction_fuel_by_engine_speed_values,0);
   power_take_off_governor_no_load_fuel = wVar1 + friction_fuel_adjustment_for_coolant_temperature;
@@ -32593,12 +32602,12 @@ void cm848_requestOverdriveShiftsLowRange(void)
   byte bVar3;
   
   wVar1 = lookupTableInterpolation
-                    (&transmission_low_range_4_3_downshift_minimum_throttle_interp_state,
+                    (&transmission_low_range_4_3_downshift_minimum_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_low_range_4_3_downshift_minimum_throttle_axis,
                      transmission_low_range_4_3_downshift_minimum_throttle_values,0);
   wVar2 = lookupTableInterpolation
-                    (&transmission_low_range_3_4_upshift_maximum_throttle_interp_state,
+                    (&transmission_low_range_3_4_upshift_maximum_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_low_range_3_4_upshift_maximum_throttle_axis,
                      transmission_low_range_3_4_upshift_maximum_throttle_values,0);
@@ -32648,7 +32657,7 @@ void cm848_selectGovernorPressureLowRange(void)
           engine_speed_state.filtered_engine_speed) {
         transmission_control_flags.low_range_boost_flags = bVar3;
         wVar1 = lookupTableInterpolation
-                          (&transmission_low_range_upshift_target_engine_speed_interp_state,
+                          (&transmission_low_range_upshift_target_engine_speed_cached_axis_offset,
                            fuel_demand_control_t_0040a57a.calculated,
                            transmission_low_range_upshift_target_engine_speed_axis,
                            transmission_low_range_upshift_target_engine_speed_values,0);
@@ -32667,7 +32676,7 @@ void cm848_selectGovernorPressureLowRange(void)
       else {
         transmission_control_flags.low_range_boost_flags = bVar3;
         wVar1 = lookupTableInterpolation
-                          (&transmission_low_range_upshift_target_engine_speed_interp_state,
+                          (&transmission_low_range_upshift_target_engine_speed_cached_axis_offset,
                            fuel_demand_control_t_0040a57a.calculated,
                            transmission_low_range_upshift_target_engine_speed_axis,
                            transmission_low_range_upshift_target_engine_speed_values,0);
@@ -32675,7 +32684,7 @@ void cm848_selectGovernorPressureLowRange(void)
       }
       governor_pressure_target =
            lookupTableInterpolation
-                     (&transmission_low_range_1_2_hold_pressure_interp_state,
+                     (&transmission_low_range_1_2_hold_pressure_cached_axis_offset,
                       fuel_demand_control_t_0040a57a.calculated,
                       transmission_low_range_1_2_hold_pressure_axis,
                       transmission_low_range_1_2_hold_pressure_values,0);
@@ -32686,7 +32695,7 @@ void cm848_selectGovernorPressureLowRange(void)
         transmission_lockup_timers.low_range_shift_timer = transmission_low_range_1_2_boost_time;
         governor_pressure_target =
              lookupTableInterpolation
-                       (&transmission_low_range_1_2_boost_pressure_interp_state,
+                       (&transmission_low_range_1_2_boost_pressure_cached_axis_offset,
                         fuel_demand_control_t_0040a57a.calculated,
                         transmission_low_range_1_2_boost_pressure_axis,
                         transmission_low_range_1_2_boost_pressure_values,0);
@@ -32698,7 +32707,7 @@ void cm848_selectGovernorPressureLowRange(void)
       transmission_control_flags.low_range_boost_flags = bVar3;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&transmission_low_range_1_2_boost_pressure_interp_state,
+                     (&transmission_low_range_1_2_boost_pressure_cached_axis_offset,
                       fuel_demand_control_t_0040a57a.calculated,
                       transmission_low_range_1_2_boost_pressure_axis,
                       transmission_low_range_1_2_boost_pressure_values,0);
@@ -32714,8 +32723,9 @@ void cm848_selectGovernorPressureLowRange(void)
         if (transmission_lockup_timers.low_range_hold_timer == 0) {
           if ((transmission_control_flags.low_range_boost_flags & 2) == 0) {
             wVar1 = lookupTableInterpolation
-                              (&transmission_low_range_upshift_target_engine_speed_interp_state,
-                               fuel_demand_control_t_0040a57a.calculated,
+                              (&
+                               transmission_low_range_upshift_target_engine_speed_cached_axis_offset
+                               ,fuel_demand_control_t_0040a57a.calculated,
                                transmission_low_range_upshift_target_engine_speed_axis,
                                transmission_low_range_upshift_target_engine_speed_values,0);
             uVar2 = (uint)(CONCAT44((int)((ulonglong)
@@ -32732,7 +32742,7 @@ void cm848_selectGovernorPressureLowRange(void)
             }
             governor_pressure_target =
                  lookupTableInterpolation
-                           (&transmission_low_range_2_3_hold_pressure_interp_state,
+                           (&transmission_low_range_2_3_hold_pressure_cached_axis_offset,
                             fuel_demand_control_t_0040a57a.calculated,
                             transmission_low_range_2_3_hold_pressure_axis,
                             transmission_low_range_2_3_hold_pressure_values,0);
@@ -32750,7 +32760,7 @@ void cm848_selectGovernorPressureLowRange(void)
           }
           governor_pressure_target =
                lookupTableInterpolation
-                         (&transmission_low_range_2_3_boost_pressure_interp_state,
+                         (&transmission_low_range_2_3_boost_pressure_cached_axis_offset,
                           fuel_demand_control_t_0040a57a.calculated,
                           transmission_low_range_2_3_boost_pressure_axis,
                           transmission_low_range_2_3_boost_pressure_values,0);
@@ -32787,7 +32797,7 @@ void cm848_selectGovernorPressureLowRange(void)
       }
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_low_range_curve_interp_state,
+                     (&governor_pressure_low_range_curve_cached_axis_offset,
                       transmission_output_speed_in_use,governor_pressure_low_range_curve_axis,
                       governor_pressure_low_range_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
@@ -32797,9 +32807,9 @@ void cm848_selectGovernorPressureLowRange(void)
     cm848_requestOverdriveShiftsLowRange();
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_low_range_curve_interp_state,transmission_output_speed_in_use
-                    ,governor_pressure_low_range_curve_axis,governor_pressure_low_range_curve_values
-                    ,0);
+                   (&governor_pressure_low_range_curve_cached_axis_offset,
+                    transmission_output_speed_in_use,governor_pressure_low_range_curve_axis,
+                    governor_pressure_low_range_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
   }
   return;
@@ -32835,12 +32845,12 @@ void cm848_applyConverterLockupScheduleLowRange(void)
       return;
     }
     wVar1 = lookupTableInterpolation
-                      (&transmission_3rd_gear_low_range_lockup_maximum_throttle_interp_state,
+                      (&transmission_3rd_gear_low_range_lockup_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_low_range_lockup_maximum_throttle_axis,
                        transmission_3rd_gear_low_range_lockup_maximum_throttle_values,0);
     wVar2 = lookupTableInterpolation
-                      (&transmission_3rd_gear_low_range_unlock_maximum_throttle_interp_state,
+                      (&transmission_3rd_gear_low_range_unlock_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_low_range_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_low_range_unlock_maximum_throttle_values,0);
@@ -32860,12 +32870,12 @@ void cm848_applyConverterLockupScheduleLowRange(void)
       return;
     }
     wVar1 = lookupTableInterpolation
-                      (&transmission_4th_gear_low_range_lockup_maximum_throttle_interp_state,
+                      (&transmission_4th_gear_low_range_lockup_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_4th_gear_low_range_lockup_maximum_throttle_axis,
                        transmission_4th_gear_low_range_lockup_maximum_throttle_values,0);
     wVar2 = lookupTableInterpolation
-                      (&transmission_4th_gear_low_range_unlock_maximum_throttle_interp_state,
+                      (&transmission_4th_gear_low_range_unlock_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_4th_gear_low_range_unlock_maximum_throttle_axis,
                        transmission_4th_gear_low_range_unlock_maximum_throttle_values,0);
@@ -32897,15 +32907,15 @@ void cm848_applyConverterUnlockConditionsLowRange(void)
   if (((transmission_control_flags.request_flags & 0x40) == 0) && (2 < transmission_current_gear)) {
     if (transmission_current_gear == 3) {
       uVar1 = lookupTableInterpolation
-                        (&transmission_3rd_gear_low_range_unlock_maximum_throttle_interp_state,
-                         transmission_output_speed_in_use,
+                        (&transmission_3rd_gear_low_range_unlock_maximum_throttle_cached_axis_offset
+                         ,transmission_output_speed_in_use,
                          transmission_3rd_gear_low_range_unlock_maximum_throttle_axis,
                          transmission_3rd_gear_low_range_unlock_maximum_throttle_values,0);
     }
     else {
       uVar1 = lookupTableInterpolation
-                        (&transmission_4th_gear_low_range_unlock_maximum_throttle_interp_state,
-                         transmission_output_speed_in_use,
+                        (&transmission_4th_gear_low_range_unlock_maximum_throttle_cached_axis_offset
+                         ,transmission_output_speed_in_use,
                          transmission_4th_gear_low_range_unlock_maximum_throttle_axis,
                          transmission_4th_gear_low_range_unlock_maximum_throttle_values,0);
     }
@@ -32965,23 +32975,23 @@ void cm848_applyConverterLockupSchedule(void)
   }
   if (transmission_current_gear == 2) {
     wVar1 = lookupTableInterpolation
-                      (&transmission_2nd_gear_overheat_lockup_maximum_throttle_interp_state,
+                      (&transmission_2nd_gear_overheat_lockup_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_2nd_gear_overheat_lockup_maximum_throttle_axis,
                        transmission_2nd_gear_overheat_lockup_maximum_throttle_values,0);
     wVar2 = lookupTableInterpolation
-                      (&transmission_2nd_gear_lockup_maximum_throttle_interp_state,
+                      (&transmission_2nd_gear_lockup_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_2nd_gear_lockup_maximum_throttle_axis,
                        transmission_2nd_gear_lockup_maximum_throttle_values,0);
     wVar3 = lookupTableInterpolation
-                      (&transmission_2nd_gear_unlock_maximum_throttle_interp_state,
+                      (&transmission_2nd_gear_unlock_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_2nd_gear_unlock_maximum_throttle_axis,
                        transmission_2nd_gear_unlock_maximum_throttle_values,0);
     fuel_demand_limit_working =
          lookupTableInterpolation
-                   (&transmission_2nd_gear_overheat_unlock_maximum_throttle_interp_state,
+                   (&transmission_2nd_gear_overheat_unlock_maximum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_2nd_gear_overheat_unlock_maximum_throttle_axis,
                     transmission_2nd_gear_overheat_unlock_maximum_throttle_values,0);
@@ -33009,39 +33019,41 @@ void cm848_applyConverterLockupSchedule(void)
   }
   if ((transmission_current_gear == 3) && ((transmission_control_flags.overdrive_flags & 8) != 0)) {
     wVar3 = lookupTableInterpolation
-                      (&transmission_3rd_gear_lockup_minimum_output_speed_interp_state,
+                      (&transmission_3rd_gear_lockup_minimum_output_speed_cached_axis_offset,
                        sensor_readings_t_0040baf2.coolant_temp,
                        transmission_3rd_gear_lockup_minimum_output_speed_axis,
                        transmission_3rd_gear_lockup_minimum_output_speed_values,1);
     wVar2 = lookupTableInterpolation
-                      (&transmission_3rd_gear_overheat_lockup_maximum_throttle_interp_state,
+                      (&transmission_3rd_gear_overheat_lockup_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_overheat_lockup_maximum_throttle_axis,
                        transmission_3rd_gear_overheat_lockup_maximum_throttle_values,0);
     wVar1 = lookupTableInterpolation
-                      (&transmission_3rd_gear_lockup_maximum_throttle_interp_state,
+                      (&transmission_3rd_gear_lockup_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_lockup_maximum_throttle_axis,
                        transmission_3rd_gear_lockup_maximum_throttle_values,0);
     wVar4 = lookupTableInterpolation
-                      (&transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_interp_state,
-                       transmission_output_speed_in_use,
+                      (&
+                       transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_cached_axis_offset
+                       ,transmission_output_speed_in_use,
                        transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_axis,
                        transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_values,0);
     fuel_demand_limit_working =
          lookupTableInterpolation
-                   (&transmission_3rd_gear_overheat_unlock_maximum_throttle_interp_state,
+                   (&transmission_3rd_gear_overheat_unlock_maximum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_3rd_gear_overheat_unlock_maximum_throttle_axis,
                     transmission_3rd_gear_overheat_unlock_maximum_throttle_values,0);
     wVar5 = lookupTableInterpolation
-                      (&transmission_3rd_gear_unlock_maximum_throttle_interp_state,
+                      (&transmission_3rd_gear_unlock_maximum_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_unlock_maximum_throttle_values,0);
     uVar6 = lookupTableInterpolation
-                      (&transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_interp_state,
-                       transmission_output_speed_in_use,
+                      (&
+                       transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_cached_axis_offset
+                       ,transmission_output_speed_in_use,
                        transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_axis,
                        transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_values,0);
     if ((((transmission_control_flags.state_flags & 0x20) == 0) ||
@@ -33088,17 +33100,17 @@ LAB_000306ac:
     transmission_4th_gear_lockup_boost_pressure = 0;
   }
   wVar4 = lookupTableInterpolation
-                    (&transmission_4th_gear_lockup_minimum_output_speed_interp_state,
+                    (&transmission_4th_gear_lockup_minimum_output_speed_cached_axis_offset,
                      sensor_readings_t_0040baf2.coolant_temp,
                      transmission_4th_gear_lockup_minimum_output_speed_axis,
                      transmission_4th_gear_lockup_minimum_output_speed_values,1);
   wVar2 = lookupTableInterpolation
-                    (&transmission_4th_gear_overheat_lockup_maximum_throttle_interp_state,
+                    (&transmission_4th_gear_overheat_lockup_maximum_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_4th_gear_overheat_lockup_maximum_throttle_axis,
                      transmission_4th_gear_overheat_lockup_maximum_throttle_values,0);
   wVar5 = cm848_dualAxisTableInterpolation
-                    (transmission_4th_gear_lockup_maximum_throttle_interp_state,
+                    (transmission_4th_gear_lockup_maximum_throttle_cached_axis_offsets,
                      transmission_output_speed_in_use,
                      transmission_4th_gear_lockup_maximum_throttle_x_axis,
                      transmission_4th_gear_lockup_boost_pressure,
@@ -33106,48 +33118,48 @@ LAB_000306ac:
                      transmission_4th_gear_lockup_maximum_throttle_grid,0);
   fuel_demand_limit_working =
        lookupTableInterpolation
-                 (&transmission_4th_gear_overheat_unlock_maximum_throttle_interp_state,
+                 (&transmission_4th_gear_overheat_unlock_maximum_throttle_cached_axis_offset,
                   transmission_output_speed_in_use,
                   transmission_4th_gear_overheat_unlock_maximum_throttle_axis,
                   transmission_4th_gear_overheat_unlock_maximum_throttle_values,0);
   wVar7 = lookupTableInterpolation
-                    (&transmission_4th_gear_unlock_maximum_throttle_interp_state,
+                    (&transmission_4th_gear_unlock_maximum_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_4th_gear_unlock_maximum_throttle_axis,
                      transmission_4th_gear_unlock_maximum_throttle_values,0);
   wVar8 = cm848_dualAxisTableInterpolation
-                    (transmission_cruise_lockup_maximum_throttle_interp_state,
+                    (transmission_cruise_lockup_maximum_throttle_cached_axis_offsets,
                      transmission_output_speed_in_use,
                      transmission_cruise_lockup_maximum_throttle_x_axis,
                      transmission_4th_gear_lockup_boost_pressure,
                      transmission_cruise_lockup_maximum_throttle_y_axis,
                      transmission_cruise_lockup_maximum_throttle_grid,0);
   wVar9 = lookupTableInterpolation
-                    (&transmission_cruise_unlock_maximum_throttle_interp_state,
+                    (&transmission_cruise_unlock_maximum_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_cruise_unlock_maximum_throttle_axis,
                      transmission_cruise_unlock_maximum_throttle_values,0);
   wVar10 = cm848_dualAxisTableInterpolation
-                     (transmission_cruise_exhaust_brake_lockup_maximum_throttle_interp_state,
+                     (transmission_cruise_exhaust_brake_lockup_maximum_throttle_cached_axis_offsets,
                       transmission_output_speed_in_use,
                       transmission_cruise_exhaust_brake_lockup_maximum_throttle_x_axis,
                       transmission_4th_gear_lockup_boost_pressure,
                       transmission_cruise_exhaust_brake_lockup_maximum_throttle_y_axis,
                       transmission_cruise_exhaust_brake_lockup_maximum_throttle_grid,0);
   wVar11 = lookupTableInterpolation
-                     (&transmission_cruise_exhaust_brake_unlock_maximum_throttle_interp_state,
+                     (&transmission_cruise_exhaust_brake_unlock_maximum_throttle_cached_axis_offset,
                       transmission_output_speed_in_use,
                       transmission_cruise_exhaust_brake_unlock_maximum_throttle_axis,
                       transmission_cruise_exhaust_brake_unlock_maximum_throttle_values,0);
   wVar1 = cm848_dualAxisTableInterpolation
-                    (transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_interp_state,
-                     transmission_output_speed_in_use,
+                    (transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_cached_axis_offsets
+                     ,transmission_output_speed_in_use,
                      transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_x_axis,
                      transmission_4th_gear_lockup_boost_pressure,
                      transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_y_axis,
                      transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_grid,0);
   wVar3 = lookupTableInterpolation
-                    (&transmission_exhaust_brake_unlock_maximum_throttle_interp_state,
+                    (&transmission_exhaust_brake_unlock_maximum_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_axis,
                      transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_values,0);
@@ -33223,13 +33235,13 @@ void cm848_applyConverterUnlockConditions(void)
     if (((transmission_current_gear == 2) && ((algorithm_enable_flags_6_cal & 8) != 0)) &&
        (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) {
       wVar1 = lookupTableInterpolation
-                        (&transmission_2nd_gear_unlock_maximum_throttle_interp_state,
+                        (&transmission_2nd_gear_unlock_maximum_throttle_cached_axis_offset,
                          transmission_output_speed_in_use,
                          transmission_2nd_gear_unlock_maximum_throttle_axis,
                          transmission_2nd_gear_unlock_maximum_throttle_values,0);
       fuel_demand_limit_working =
            lookupTableInterpolation
-                     (&transmission_2nd_gear_overheat_unlock_maximum_throttle_interp_state,
+                     (&transmission_2nd_gear_overheat_unlock_maximum_throttle_cached_axis_offset,
                       transmission_output_speed_in_use,
                       transmission_2nd_gear_overheat_unlock_maximum_throttle_axis,
                       transmission_2nd_gear_overheat_unlock_maximum_throttle_values,0);
@@ -33249,18 +33261,18 @@ LAB_00030f98:
       if ((transmission_current_gear == 3) &&
          (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request != 0)) {
         wVar1 = lookupTableInterpolation
-                          (&transmission_3rd_gear_unlock_maximum_throttle_interp_state,
+                          (&transmission_3rd_gear_unlock_maximum_throttle_cached_axis_offset,
                            transmission_output_speed_in_use,
                            transmission_3rd_gear_unlock_maximum_throttle_axis,
                            transmission_3rd_gear_unlock_maximum_throttle_values,0);
         wVar2 = lookupTableInterpolation
-                          (&transmission_exhaust_brake_unlock_maximum_throttle_interp_state,
+                          (&transmission_exhaust_brake_unlock_maximum_throttle_cached_axis_offset,
                            transmission_output_speed_in_use,
                            transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_axis,
                            transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_values,0);
         fuel_demand_limit_working =
              lookupTableInterpolation
-                       (&transmission_3rd_gear_overheat_unlock_maximum_throttle_interp_state,
+                       (&transmission_3rd_gear_overheat_unlock_maximum_throttle_cached_axis_offset,
                         transmission_output_speed_in_use,
                         transmission_3rd_gear_overheat_unlock_maximum_throttle_axis,
                         transmission_3rd_gear_overheat_unlock_maximum_throttle_values,0);
@@ -33286,28 +33298,29 @@ LAB_00030f98:
          (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0))
       goto LAB_00030fdc;
       wVar2 = lookupTableInterpolation
-                        (&transmission_cruise_unlock_maximum_throttle_interp_state,
+                        (&transmission_cruise_unlock_maximum_throttle_cached_axis_offset,
                          transmission_output_speed_in_use,
                          transmission_cruise_unlock_maximum_throttle_axis,
                          transmission_cruise_unlock_maximum_throttle_values,0);
       wVar3 = lookupTableInterpolation
-                        (&transmission_4th_gear_unlock_maximum_throttle_interp_state,
+                        (&transmission_4th_gear_unlock_maximum_throttle_cached_axis_offset,
                          transmission_output_speed_in_use,
                          transmission_4th_gear_unlock_maximum_throttle_axis,
                          transmission_4th_gear_unlock_maximum_throttle_values,0);
       fuel_demand_limit_working =
            lookupTableInterpolation
-                     (&transmission_4th_gear_overheat_unlock_maximum_throttle_interp_state,
+                     (&transmission_4th_gear_overheat_unlock_maximum_throttle_cached_axis_offset,
                       transmission_output_speed_in_use,
                       transmission_4th_gear_overheat_unlock_maximum_throttle_axis,
                       transmission_4th_gear_overheat_unlock_maximum_throttle_values,0);
       wVar4 = lookupTableInterpolation
-                        (&transmission_cruise_exhaust_brake_unlock_maximum_throttle_interp_state,
-                         transmission_output_speed_in_use,
+                        (&
+                         transmission_cruise_exhaust_brake_unlock_maximum_throttle_cached_axis_offset
+                         ,transmission_output_speed_in_use,
                          transmission_cruise_exhaust_brake_unlock_maximum_throttle_axis,
                          transmission_cruise_exhaust_brake_unlock_maximum_throttle_values,0);
       wVar1 = lookupTableInterpolation
-                        (&transmission_exhaust_brake_unlock_maximum_throttle_interp_state,
+                        (&transmission_exhaust_brake_unlock_maximum_throttle_cached_axis_offset,
                          transmission_output_speed_in_use,
                          transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_axis,
                          transmission_4th_gear_exhaust_brake_unlock_maximum_throttle_values,0);
@@ -33438,21 +33451,21 @@ void cm848_requestOverdriveShiftsNormal(void)
   byte bVar5;
   
   wVar1 = lookupTableInterpolation
-                    (&transmission_normal_4_3_downshift_throttle_interp_state,
+                    (&transmission_normal_4_3_downshift_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_normal_4_3_downshift_throttle_axis,
                      transmission_normal_4_3_downshift_throttle_values,0);
   wVar2 = lookupTableInterpolation
-                    (&transmission_normal_exhaust_brake_4_3_downshift_throttle_interp_state,
+                    (&transmission_normal_exhaust_brake_4_3_downshift_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_normal_exhaust_brake_4_3_downshift_throttle_axis,
                      transmission_normal_exhaust_brake_4_3_downshift_throttle_values,0);
   wVar3 = lookupTableInterpolation
-                    (&transmission_normal_3_4_upshift_throttle_interp_state,
+                    (&transmission_normal_3_4_upshift_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,transmission_normal_3_4_upshift_throttle_axis,
                      transmission_normal_3_4_upshift_throttle_values,0);
   wVar4 = lookupTableInterpolation
-                    (&transmission_normal_exhaust_brake_3_4_upshift_throttle_interp_state,
+                    (&transmission_normal_exhaust_brake_3_4_upshift_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_normal_exhaust_brake_3_4_upshift_throttle_axis,
                      transmission_normal_exhaust_brake_3_4_upshift_throttle_values,0);
@@ -33498,7 +33511,7 @@ void cm848_selectGovernorPressureCold(void)
   if ((transmission_selected_gear == 0x7e) || (transmission_selected_gear == 0x7f)) {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_manual_2nd_curve_interp_state,
+                   (&governor_pressure_manual_2nd_curve_cached_axis_offset,
                     transmission_output_speed_in_use,governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
@@ -33506,14 +33519,15 @@ void cm848_selectGovernorPressureCold(void)
   else if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) == 0) {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_cold_curve_interp_state,transmission_output_speed_in_use,
-                    governor_pressure_cold_curve_axis,governor_pressure_cold_curve_values,0);
+                   (&governor_pressure_cold_curve_cached_axis_offset,
+                    transmission_output_speed_in_use,governor_pressure_cold_curve_axis,
+                    governor_pressure_cold_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_COLD_CURVE;
   }
   else {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_wide_open_throttle_cold_curve_interp_state,
+                   (&governor_pressure_wide_open_throttle_cold_curve_cached_axis_offset,
                     transmission_output_speed_in_use,
                     governor_pressure_wide_open_throttle_cold_curve_axis,
                     governor_pressure_wide_open_throttle_cold_curve_values,0);
@@ -33542,7 +33556,7 @@ void cm848_selectGovernorPressureBaseCurve(void)
   if ((transmission_selected_gear == 0x7e) || (transmission_selected_gear == 0x7f)) {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_manual_2nd_curve_interp_state,
+                   (&governor_pressure_manual_2nd_curve_cached_axis_offset,
                     transmission_output_speed_in_use,governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
@@ -33552,7 +33566,7 @@ void cm848_selectGovernorPressureBaseCurve(void)
     if ((switch_input_state_bits[1] & 0x10) == 0) {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_fuel_economy_curve_interp_state,
+                     (&governor_pressure_fuel_economy_curve_cached_axis_offset,
                       transmission_output_speed_in_use,governor_pressure_fuel_economy_curve_axis,
                       governor_pressure_fuel_economy_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_FUEL_ECONOMY_CURVE;
@@ -33560,7 +33574,7 @@ void cm848_selectGovernorPressureBaseCurve(void)
     else {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_exhaust_brake_curve_interp_state,
+                     (&governor_pressure_exhaust_brake_curve_cached_axis_offset,
                       transmission_output_speed_in_use,governor_pressure_exhaust_brake_curve_axis,
                       governor_pressure_exhaust_brake_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_EXHAUST_BRAKE_CURVE;
@@ -33569,8 +33583,9 @@ void cm848_selectGovernorPressureBaseCurve(void)
   else {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_normal_curve_interp_state,transmission_output_speed_in_use,
-                    governor_pressure_normal_curve_axis,governor_pressure_normal_curve_values,0);
+                   (&governor_pressure_normal_curve_cached_axis_offset,
+                    transmission_output_speed_in_use,governor_pressure_normal_curve_axis,
+                    governor_pressure_normal_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
   }
   cm848_requestOverdriveShiftsNormal();
@@ -33606,7 +33621,7 @@ void cm848_selectGovernorPressureWideOpenThrottle(void)
   transmission_predicted_2_3_shift_delay =
        *(word *)(&eeprom_calibration_pending_flag + (uint)transmission_temperature_range * 2);
   wVar1 = lookupTableInterpolation
-                    (&governor_pressure_wide_open_throttle_curve_interp_state_2,
+                    (&governor_pressure_wide_open_throttle_curve_cached_axis_offset_2,
                      transmission_output_speed_in_use,
                      governor_pressure_wide_open_throttle_curve_axis,
                      governor_pressure_wide_open_throttle_curve_values,0);
@@ -33905,7 +33920,7 @@ void cm848_selectGovernorPressureCruise(void)
   if ((transmission_selected_gear == 0x7e) || (transmission_selected_gear == 0x7f)) {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_manual_2nd_curve_interp_state,
+                   (&governor_pressure_manual_2nd_curve_cached_axis_offset,
                     transmission_output_speed_in_use,governor_pressure_manual_2nd_curve_axis,
                     governor_pressure_manual_2nd_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_MANUAL_2ND_CURVE;
@@ -33913,26 +33928,27 @@ void cm848_selectGovernorPressureCruise(void)
   else {
     governor_pressure_target =
          lookupTableInterpolation
-                   (&governor_pressure_cruise_curve_interp_state,transmission_output_speed_in_use,
-                    governor_pressure_cruise_curve_axis,governor_pressure_cruise_curve_values,0);
+                   (&governor_pressure_cruise_curve_cached_axis_offset,
+                    transmission_output_speed_in_use,governor_pressure_cruise_curve_axis,
+                    governor_pressure_cruise_curve_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_CRUISE_CURVE;
   }
   wVar1 = lookupTableInterpolation
-                    (&transmission_cruise_4_3_downshift_throttle_interp_state,
+                    (&transmission_cruise_4_3_downshift_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_cruise_4_3_downshift_throttle_axis,
                      transmission_cruise_4_3_downshift_throttle_values,0);
   wVar2 = lookupTableInterpolation
-                    (&transmission_cruise_3_4_upshift_throttle_interp_state,
+                    (&transmission_cruise_3_4_upshift_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,transmission_cruise_3_4_upshift_throttle_axis,
                      transmission_cruise_3_4_upshift_throttle_values,0);
   wVar3 = lookupTableInterpolation
-                    (&transmission_cruise_exhaust_brake_4_3_downshift_throttle_interp_state,
+                    (&transmission_cruise_exhaust_brake_4_3_downshift_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_cruise_exhaust_brake_4_3_downshift_throttle_axis,
                      transmission_cruise_exhaust_brake_4_3_downshift_throttle_values,0);
   wVar4 = lookupTableInterpolation
-                    (&transmission_cruise_exhaust_brake_3_4_upshift_throttle_interp_state,
+                    (&transmission_cruise_exhaust_brake_3_4_upshift_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_cruise_exhaust_brake_3_4_upshift_throttle_axis,
                      transmission_cruise_exhaust_brake_3_4_upshift_throttle_values,0);
@@ -34009,17 +34025,17 @@ uint cm848_calculateTransmissionOutputTorqueInGear(int param_1)
   }
   transmission_turbine_speed_prescaled =
        lookupTableInterpolation
-                 (&transmission_turbine_speed_prescale_interp_state,
+                 (&transmission_turbine_speed_prescale_cached_axis_offset,
                   transmission_turbine_speed_in_gear,transmission_turbine_speed_prescale_axis,
                   transmission_turbine_speed_prescale_values,0);
   transmission_throttle_prescaled =
        lookupTableInterpolation
-                 (&transmission_throttle_prescale_interp_state,
+                 (&transmission_throttle_prescale_cached_axis_offset,
                   fuel_demand_control_t_0040a57a.calculated,transmission_throttle_prescale_axis,
                   transmission_throttle_prescale_values,0);
   transmission_turbine_torque =
        cm848_dualAxisTableInterpolation
-                 (transmission_turbine_torque_interp_state,transmission_throttle_prescaled,
+                 (transmission_turbine_torque_cached_axis_offsets,transmission_throttle_prescaled,
                   transmission_turbine_torque_x_axis,transmission_turbine_speed_prescaled,
                   transmission_turbine_torque_y_axis,transmission_turbine_torque_grid,0);
   uVar1 = (uint)transmission_turbine_torque * (uint)transmission_gear_ratio_table[param_1] >> 5;
@@ -34201,7 +34217,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&transmission_anti_hunt_1_2_boost_pressure_interp_state,
+                     (&transmission_anti_hunt_1_2_boost_pressure_cached_axis_offset,
                       transmission_output_speed_in_use,
                       transmission_anti_hunt_1_2_boost_pressure_axis,
                       transmission_anti_hunt_1_2_boost_pressure_values,0);
@@ -34216,8 +34232,9 @@ void cm848_selectGovernorPressureAntiHunt(void)
            transmission_shift_strategy_flags.anti_hunt_flags & 0x1f;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_normal_curve_interp_state,transmission_output_speed_in_use,
-                      governor_pressure_normal_curve_axis,governor_pressure_normal_curve_values,0);
+                     (&governor_pressure_normal_curve_cached_axis_offset,
+                      transmission_output_speed_in_use,governor_pressure_normal_curve_axis,
+                      governor_pressure_normal_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       return;
     }
@@ -34225,7 +34242,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
     cm848_predictPostShiftAcceleration();
     transmission_post_shift_acceleration_minimum =
          lookupTableInterpolation
-                   (&transmission_1_2_upshift_minimum_post_shift_acceleration_interp_state,
+                   (&transmission_1_2_upshift_minimum_post_shift_acceleration_cached_axis_offset,
                     fuel_demand_control_t_0040a57a.calculated,
                     transmission_1_2_upshift_minimum_post_shift_acceleration_axis,
                     transmission_1_2_upshift_minimum_post_shift_acceleration_values,2);
@@ -34237,7 +34254,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_pressure_state.anti_hunt_1_2_boost_timer = transmission_anti_hunt_1_2_boost_time;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&transmission_anti_hunt_1_2_boost_pressure_interp_state,
+                     (&transmission_anti_hunt_1_2_boost_pressure_cached_axis_offset,
                       transmission_output_speed_in_use,
                       transmission_anti_hunt_1_2_boost_pressure_axis,
                       transmission_anti_hunt_1_2_boost_pressure_values,0);
@@ -34251,7 +34268,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
     }
     governor_pressure_target =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_1_2_hold_pressure_interp_state,
+                   (&transmission_anti_hunt_1_2_hold_pressure_cached_axis_offset,
                     fuel_demand_control_t_0040a57a.calculated,
                     transmission_anti_hunt_1_2_hold_pressure_axis,
                     transmission_anti_hunt_1_2_hold_pressure_values,0);
@@ -34267,7 +34284,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&transmission_anti_hunt_1_2_boost_pressure_interp_state,
+                     (&transmission_anti_hunt_1_2_boost_pressure_cached_axis_offset,
                       transmission_output_speed_in_use,
                       transmission_anti_hunt_1_2_boost_pressure_axis,
                       transmission_anti_hunt_1_2_boost_pressure_values,0);
@@ -34278,7 +34295,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&transmission_anti_hunt_2_3_boost_pressure_interp_state,
+                     (&transmission_anti_hunt_2_3_boost_pressure_cached_axis_offset,
                       transmission_output_speed_in_use,
                       transmission_anti_hunt_2_3_boost_pressure_axis,
                       transmission_anti_hunt_2_3_boost_pressure_values,0);
@@ -34291,8 +34308,9 @@ void cm848_selectGovernorPressureAntiHunt(void)
            transmission_shift_strategy_flags.anti_hunt_flags & 0x5f;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_normal_curve_interp_state,transmission_output_speed_in_use,
-                      governor_pressure_normal_curve_axis,governor_pressure_normal_curve_values,0);
+                     (&governor_pressure_normal_curve_cached_axis_offset,
+                      transmission_output_speed_in_use,governor_pressure_normal_curve_axis,
+                      governor_pressure_normal_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       cm848_learnVehicleInertia();
       transmission_pressure_state.anti_hunt_delay_timer = transmission_anti_hunt_delay_time;
@@ -34302,7 +34320,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
     cm848_predictPostShiftAcceleration();
     transmission_post_shift_acceleration_minimum =
          lookupTableInterpolation
-                   (&transmission_2_3_upshift_minimum_post_shift_acceleration_interp_state,
+                   (&transmission_2_3_upshift_minimum_post_shift_acceleration_cached_axis_offset,
                     fuel_demand_control_t_0040a57a.calculated,
                     transmission_2_3_upshift_minimum_post_shift_acceleration_axis,
                     transmission_2_3_upshift_minimum_post_shift_acceleration_values,2);
@@ -34311,7 +34329,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
         (short)transmission_post_shift_acceleration_minimum)) {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&transmission_anti_hunt_2_3_hold_pressure_interp_state,
+                     (&transmission_anti_hunt_2_3_hold_pressure_cached_axis_offset,
                       fuel_demand_control_t_0040a57a.calculated,
                       transmission_anti_hunt_2_3_hold_pressure_axis,
                       transmission_anti_hunt_2_3_hold_pressure_values,0);
@@ -34339,13 +34357,14 @@ void cm848_selectGovernorPressureAntiHunt(void)
       transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_normal_curve_interp_state,transmission_output_speed_in_use,
-                      governor_pressure_normal_curve_axis,governor_pressure_normal_curve_values,0);
+                     (&governor_pressure_normal_curve_cached_axis_offset,
+                      transmission_output_speed_in_use,governor_pressure_normal_curve_axis,
+                      governor_pressure_normal_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_NORMAL_CURVE;
       cm848_predictPostShiftAcceleration();
       transmission_post_shift_acceleration_minimum =
            lookupTableInterpolation
-                     (&transmission_3_4_upshift_minimum_post_shift_acceleration_interp_state,
+                     (&transmission_3_4_upshift_minimum_post_shift_acceleration_cached_axis_offset,
                       fuel_demand_control_t_0040a57a.calculated,
                       transmission_3_4_upshift_minimum_post_shift_acceleration_axis,
                       transmission_3_4_upshift_minimum_post_shift_acceleration_values,2);
@@ -34363,7 +34382,7 @@ void cm848_selectGovernorPressureAntiHunt(void)
   transmission_shift_strategy_flags.anti_hunt_flags = bVar1;
   governor_pressure_target =
        lookupTableInterpolation
-                 (&transmission_anti_hunt_2_3_boost_pressure_interp_state,
+                 (&transmission_anti_hunt_2_3_boost_pressure_cached_axis_offset,
                   transmission_output_speed_in_use,transmission_anti_hunt_2_3_boost_pressure_axis,
                   transmission_anti_hunt_2_3_boost_pressure_values,0);
   transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_BOOST;
@@ -34387,13 +34406,13 @@ void cm848_selectGovernorPressureNormal(void)
   if (transmission_current_gear == 1) {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_1_2_minimum_throttle_interp_state,
+                   (&transmission_anti_hunt_1_2_minimum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_anti_hunt_1_2_minimum_throttle_axis,
                     transmission_anti_hunt_1_2_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_1_2_maximum_throttle_interp_state,
+                   (&transmission_anti_hunt_1_2_maximum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_anti_hunt_1_2_maximum_throttle_axis,
                     transmission_anti_hunt_1_2_maximum_throttle_values,0);
@@ -34401,13 +34420,13 @@ void cm848_selectGovernorPressureNormal(void)
   else if (transmission_current_gear == 2) {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_2_3_minimum_throttle_interp_state,
+                   (&transmission_anti_hunt_2_3_minimum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_anti_hunt_2_3_minimum_throttle_axis,
                     transmission_anti_hunt_2_3_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_2_3_maximum_throttle_interp_state,
+                   (&transmission_anti_hunt_2_3_maximum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_anti_hunt_2_3_maximum_throttle_axis,
                     transmission_anti_hunt_2_3_maximum_throttle_values,0);
@@ -34416,13 +34435,13 @@ void cm848_selectGovernorPressureNormal(void)
           ((switch_input_state_bits[1] & 0x10) != 0)) {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_interp_state,
+                   (&transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_axis,
                     transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_interp_state,
+                   (&transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_axis,
                     transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_values,0);
@@ -34430,13 +34449,13 @@ void cm848_selectGovernorPressureNormal(void)
   else {
     transmission_anti_hunt_minimum_throttle_interpolated =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_3_4_minimum_throttle_interp_state,
+                   (&transmission_anti_hunt_3_4_minimum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_anti_hunt_3_4_minimum_throttle_axis,
                     transmission_anti_hunt_3_4_minimum_throttle_values,0);
     transmission_anti_hunt_maximum_throttle_interpolated =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_3_4_maximum_throttle_interp_state,
+                   (&transmission_anti_hunt_3_4_maximum_throttle_cached_axis_offset,
                     transmission_output_speed_in_use,
                     transmission_anti_hunt_3_4_maximum_throttle_axis,
                     transmission_anti_hunt_3_4_maximum_throttle_values,0);
@@ -34467,7 +34486,7 @@ LAB_00032e40:
     transmission_pressure_state.anti_hunt_1_2_boost_timer = transmission_anti_hunt_1_2_boost_time;
     governor_pressure_target =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_1_2_boost_pressure_interp_state,
+                   (&transmission_anti_hunt_1_2_boost_pressure_cached_axis_offset,
                     transmission_output_speed_in_use,transmission_anti_hunt_1_2_boost_pressure_axis,
                     transmission_anti_hunt_1_2_boost_pressure_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_1_2_BOOST;
@@ -34479,7 +34498,7 @@ LAB_00032e40:
     transmission_pressure_state.anti_hunt_2_3_boost_timer = transmission_anti_hunt_2_3_boost_time;
     governor_pressure_target =
          lookupTableInterpolation
-                   (&transmission_anti_hunt_2_3_boost_pressure_interp_state,
+                   (&transmission_anti_hunt_2_3_boost_pressure_cached_axis_offset,
                     transmission_output_speed_in_use,transmission_anti_hunt_2_3_boost_pressure_axis,
                     transmission_anti_hunt_2_3_boost_pressure_values,0);
     transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_ANTI_HUNT_2_3_BOOST;
@@ -34489,7 +34508,7 @@ LAB_00032e40:
     if ((transmission_shift_strategy_flags.anti_hunt_flags & 0x10) != 0) {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_wide_open_throttle_curve_interp_state,
+                     (&governor_pressure_wide_open_throttle_curve_cached_axis_offset,
                       transmission_output_speed_in_use,
                       governor_pressure_wide_open_throttle_curve_axis,
                       governor_pressure_wide_open_throttle_curve_values,0);
@@ -34574,7 +34593,7 @@ void cm848_runTransmissionControl(void)
     else {
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_wide_open_throttle_curve_interp_state,
+                     (&governor_pressure_wide_open_throttle_curve_cached_axis_offset,
                       transmission_output_speed_in_use,
                       governor_pressure_wide_open_throttle_curve_axis,
                       governor_pressure_wide_open_throttle_curve_values,0);
@@ -34597,7 +34616,7 @@ void cm848_runTransmissionControl(void)
            transmission_control_flags.low_range_boost_flags & 0xfc;
       governor_pressure_target =
            lookupTableInterpolation
-                     (&governor_pressure_low_range_curve_interp_state,
+                     (&governor_pressure_low_range_curve_cached_axis_offset,
                       transmission_output_speed_in_use,governor_pressure_low_range_curve_axis,
                       governor_pressure_low_range_curve_values,0);
       transmission_pressure_state.pressure_state = TRANSMISSION_PRESSURE_STATE_LOW_RANGE_CURVE;
@@ -34636,90 +34655,96 @@ void cm848_initializeTransmissionShiftLogic(void)
   transmission_control_flags.low_range_boost_flags =
        transmission_control_flags.low_range_boost_flags & 0xfc;
   transmission_4th_gear_lockup_boost_pressure = sensor_readings_t_0040baf2.intake_manifold_pressure;
-  governor_pressure_low_range_curve_interp_state = 2;
-  governor_pressure_wide_open_throttle_curve_interp_state = 2;
-  governor_pressure_wide_open_throttle_cold_curve_interp_state = 2;
-  transmission_low_range_1_2_hold_pressure_interp_state = 2;
-  transmission_low_range_2_3_hold_pressure_interp_state = 2;
-  transmission_low_range_1_2_boost_pressure_interp_state = 2;
-  transmission_low_range_2_3_boost_pressure_interp_state = 2;
-  governor_pressure_fuel_economy_curve_interp_state = 2;
-  governor_pressure_exhaust_brake_curve_interp_state = 2;
-  governor_pressure_manual_2nd_curve_interp_state = 2;
-  governor_pressure_normal_curve_interp_state = 2;
-  transmission_anti_hunt_1_2_boost_pressure_interp_state = 2;
-  transmission_anti_hunt_2_3_boost_pressure_interp_state = 2;
-  governor_pressure_cold_curve_interp_state = 2;
-  transmission_anti_hunt_1_2_hold_pressure_interp_state = 2;
-  transmission_anti_hunt_2_3_hold_pressure_interp_state = 2;
-  governor_pressure_cruise_curve_interp_state = 2;
-  transmission_3rd_gear_lockup_maximum_throttle_interp_state = 2;
-  transmission_3rd_gear_low_range_lockup_maximum_throttle_interp_state = 2;
-  transmission_4th_gear_low_range_lockup_maximum_throttle_interp_state = 2;
-  transmission_2nd_gear_overheat_lockup_maximum_throttle_interp_state = 2;
-  transmission_3rd_gear_overheat_lockup_maximum_throttle_interp_state = 2;
-  transmission_4th_gear_overheat_lockup_maximum_throttle_interp_state = 2;
-  transmission_2nd_gear_lockup_maximum_throttle_interp_state = 2;
-  transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_interp_state[0] = 2;
-  transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_interp_state[1] = 2;
-  transmission_cruise_exhaust_brake_lockup_maximum_throttle_interp_state[0] = 2;
-  transmission_cruise_exhaust_brake_lockup_maximum_throttle_interp_state[1] = 2;
-  transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_interp_state = 2;
-  transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_interp_state = 2;
-  transmission_anti_hunt_1_2_minimum_throttle_interp_state = 2;
-  transmission_anti_hunt_1_2_maximum_throttle_interp_state = 2;
-  transmission_anti_hunt_2_3_minimum_throttle_interp_state = 2;
-  transmission_anti_hunt_2_3_maximum_throttle_interp_state = 2;
-  transmission_anti_hunt_3_4_minimum_throttle_interp_state = 2;
-  transmission_anti_hunt_3_4_maximum_throttle_interp_state = 2;
-  transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_interp_state = 2;
-  transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_interp_state = 2;
-  transmission_1_2_upshift_minimum_post_shift_acceleration_interp_state = 2;
-  transmission_2_3_upshift_minimum_post_shift_acceleration_interp_state = 2;
-  transmission_3_4_upshift_minimum_post_shift_acceleration_interp_state = 2;
-  transmission_cruise_unlock_maximum_throttle_interp_state = 2;
-  transmission_2nd_gear_unlock_maximum_throttle_interp_state = 2;
-  transmission_3rd_gear_unlock_maximum_throttle_interp_state = 2;
-  transmission_4th_gear_unlock_maximum_throttle_interp_state = 2;
-  transmission_3rd_gear_low_range_unlock_maximum_throttle_interp_state = 2;
-  transmission_4th_gear_low_range_unlock_maximum_throttle_interp_state = 2;
-  transmission_2nd_gear_overheat_unlock_maximum_throttle_interp_state = 2;
-  transmission_3rd_gear_overheat_unlock_maximum_throttle_interp_state = 2;
-  transmission_4th_gear_overheat_unlock_maximum_throttle_interp_state = 2;
-  transmission_exhaust_brake_unlock_maximum_throttle_interp_state = 2;
-  transmission_cruise_exhaust_brake_unlock_maximum_throttle_interp_state = 2;
-  transmission_low_range_upshift_target_engine_speed_interp_state = 2;
-  transmission_low_range_4_3_downshift_minimum_throttle_interp_state = 2;
-  transmission_low_range_3_4_upshift_maximum_throttle_interp_state = 2;
-  transmission_normal_4_3_downshift_throttle_interp_state = 2;
-  transmission_normal_3_4_upshift_throttle_interp_state = 2;
-  transmission_normal_exhaust_brake_4_3_downshift_throttle_interp_state = 2;
-  transmission_normal_exhaust_brake_3_4_upshift_throttle_interp_state = 2;
-  transmission_cruise_4_3_downshift_throttle_interp_state = 2;
-  transmission_cruise_3_4_upshift_throttle_interp_state = 2;
-  transmission_cruise_exhaust_brake_4_3_downshift_throttle_interp_state = 2;
-  transmission_cruise_exhaust_brake_3_4_upshift_throttle_interp_state = 2;
-  governor_pressure_wide_open_throttle_curve_interp_state_2 = 2;
-  transmission_3rd_gear_lockup_minimum_output_speed_interp_state = 2;
-  transmission_4th_gear_lockup_minimum_output_speed_interp_state = 2;
-  transmission_turbine_speed_prescale_interp_state = 2;
-  transmission_throttle_prescale_interp_state = 2;
-  transmission_turbine_torque_interp_state[0] = 2;
-  transmission_turbine_torque_interp_state[1] = 2;
-  transmission_4th_gear_lockup_maximum_throttle_interp_state[0] = 2;
-  transmission_4th_gear_lockup_maximum_throttle_interp_state[1] = 2;
-  transmission_cruise_lockup_maximum_throttle_interp_state[0] = 2;
-  transmission_cruise_lockup_maximum_throttle_interp_state[1] = 2;
+  governor_pressure_low_range_curve_cached_axis_offset = 2;
+  governor_pressure_wide_open_throttle_curve_cached_axis_offset = 2;
+  governor_pressure_wide_open_throttle_cold_curve_cached_axis_offset = 2;
+  transmission_low_range_1_2_hold_pressure_cached_axis_offset = 2;
+  transmission_low_range_2_3_hold_pressure_cached_axis_offset = 2;
+  transmission_low_range_1_2_boost_pressure_cached_axis_offset = 2;
+  transmission_low_range_2_3_boost_pressure_cached_axis_offset = 2;
+  governor_pressure_fuel_economy_curve_cached_axis_offset = 2;
+  governor_pressure_exhaust_brake_curve_cached_axis_offset = 2;
+  governor_pressure_manual_2nd_curve_cached_axis_offset = 2;
+  governor_pressure_normal_curve_cached_axis_offset = 2;
+  transmission_anti_hunt_1_2_boost_pressure_cached_axis_offset = 2;
+  transmission_anti_hunt_2_3_boost_pressure_cached_axis_offset = 2;
+  governor_pressure_cold_curve_cached_axis_offset = 2;
+  transmission_anti_hunt_1_2_hold_pressure_cached_axis_offset = 2;
+  transmission_anti_hunt_2_3_hold_pressure_cached_axis_offset = 2;
+  governor_pressure_cruise_curve_cached_axis_offset = 2;
+  transmission_3rd_gear_lockup_maximum_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_low_range_lockup_maximum_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_low_range_lockup_maximum_throttle_cached_axis_offset = 2;
+  transmission_2nd_gear_overheat_lockup_maximum_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_overheat_lockup_maximum_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_overheat_lockup_maximum_throttle_cached_axis_offset = 2;
+  transmission_2nd_gear_lockup_maximum_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_cached_axis_offsets[0] = 2;
+  transmission_4th_gear_exhaust_brake_lockup_maximum_throttle_cached_axis_offsets[1] = 2;
+  transmission_cruise_exhaust_brake_lockup_maximum_throttle_cached_axis_offsets[0] = 2;
+  transmission_cruise_exhaust_brake_lockup_maximum_throttle_cached_axis_offsets[1] = 2;
+  transmission_3rd_gear_exhaust_brake_lockup_maximum_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_exhaust_brake_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_anti_hunt_1_2_minimum_throttle_cached_axis_offset = 2;
+  transmission_anti_hunt_1_2_maximum_throttle_cached_axis_offset = 2;
+  transmission_anti_hunt_2_3_minimum_throttle_cached_axis_offset = 2;
+  transmission_anti_hunt_2_3_maximum_throttle_cached_axis_offset = 2;
+  transmission_anti_hunt_3_4_minimum_throttle_cached_axis_offset = 2;
+  transmission_anti_hunt_3_4_maximum_throttle_cached_axis_offset = 2;
+  transmission_anti_hunt_3_4_exhaust_brake_minimum_throttle_cached_axis_offset = 2;
+  transmission_anti_hunt_3_4_exhaust_brake_maximum_throttle_cached_axis_offset = 2;
+  transmission_1_2_upshift_minimum_post_shift_acceleration_cached_axis_offset = 2;
+  transmission_2_3_upshift_minimum_post_shift_acceleration_cached_axis_offset = 2;
+  transmission_3_4_upshift_minimum_post_shift_acceleration_cached_axis_offset = 2;
+  transmission_cruise_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_2nd_gear_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_low_range_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_low_range_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_2nd_gear_overheat_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_overheat_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_overheat_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_exhaust_brake_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_cruise_exhaust_brake_unlock_maximum_throttle_cached_axis_offset = 2;
+  transmission_low_range_upshift_target_engine_speed_cached_axis_offset = 2;
+  transmission_low_range_4_3_downshift_minimum_throttle_cached_axis_offset = 2;
+  transmission_low_range_3_4_upshift_maximum_throttle_cached_axis_offset = 2;
+  transmission_normal_4_3_downshift_throttle_cached_axis_offset = 2;
+  transmission_normal_3_4_upshift_throttle_cached_axis_offset = 2;
+  transmission_normal_exhaust_brake_4_3_downshift_throttle_cached_axis_offset = 2;
+  transmission_normal_exhaust_brake_3_4_upshift_throttle_cached_axis_offset = 2;
+  transmission_cruise_4_3_downshift_throttle_cached_axis_offset = 2;
+  transmission_cruise_3_4_upshift_throttle_cached_axis_offset = 2;
+  transmission_cruise_exhaust_brake_4_3_downshift_throttle_cached_axis_offset = 2;
+  transmission_cruise_exhaust_brake_3_4_upshift_throttle_cached_axis_offset = 2;
+  governor_pressure_wide_open_throttle_curve_cached_axis_offset_2 = 2;
+  transmission_3rd_gear_lockup_minimum_output_speed_cached_axis_offset = 2;
+  transmission_4th_gear_lockup_minimum_output_speed_cached_axis_offset = 2;
+  transmission_turbine_speed_prescale_cached_axis_offset = 2;
+  transmission_throttle_prescale_cached_axis_offset = 2;
+  transmission_turbine_torque_cached_axis_offsets[0] = 2;
+  transmission_turbine_torque_cached_axis_offsets[1] = 2;
+  transmission_4th_gear_lockup_maximum_throttle_cached_axis_offsets[0] = 2;
+  transmission_4th_gear_lockup_maximum_throttle_cached_axis_offsets[1] = 2;
+  transmission_cruise_lockup_maximum_throttle_cached_axis_offsets[0] = 2;
+  transmission_cruise_lockup_maximum_throttle_cached_axis_offsets[1] = 2;
   return;
 }
 
 
 
 //
-// Function: cm848_evaluateProtectionModeFlags @ 0x00033488
+// Function: cm848_updateTransmissionControlInputs @ 0x00033488
 //
 
-void cm848_evaluateProtectionModeFlags(void)
+/* Input step of the transmission controller: mirrors the converter clutch and overdrive solenoid
+   requests (outputs 18 / 17) into the transmission flags, and while no actuator or service test
+   runs sets transmission_normal_operation_flag, copies cruise engagement into mode_flags 0x10 and
+   computes transmission_4th_gear_lockup_boost_pressure (gauge, or absolute minus barometric
+   pressure); clears the flag while a test runs (was cm848_evaluateProtectionModeFlags) */
+
+void cm848_updateTransmissionControlInputs(void)
 
 {
   if (logical_output_request_bits_16_to_23.converter_clutch_solenoid_request == 0) {
@@ -34738,7 +34763,7 @@ void cm848_evaluateProtectionModeFlags(void)
        ((transmission_shift_strategy_flags.service_test_request_flags & 1) == 0)) &&
       ((transmission_shift_strategy_flags.service_test_request_flags & 2) == 0)) &&
      ((transmission_shift_strategy_flags.service_test_request_flags & 4) == 0)) {
-    protection_mode_changed_flag = 1;
+    transmission_normal_operation_flag = 1;
     if (cruise_control_engaged_flag == 1) {
       transmission_control_flags.mode_flags = transmission_control_flags.mode_flags | 0x10;
     }
@@ -34753,7 +34778,7 @@ void cm848_evaluateProtectionModeFlags(void)
       if (boost_uses_barometric_pressure_flag == 0) {
         if (barometric_pressure_sensor_config.default_value <
             sensor_readings_t_0040baf2.intake_manifold_pressure) {
-          protection_mode_changed_flag = 1;
+          transmission_normal_operation_flag = 1;
           transmission_4th_gear_lockup_boost_pressure =
                sensor_readings_t_0040baf2.intake_manifold_pressure -
                barometric_pressure_sensor_config.default_value;
@@ -34762,7 +34787,7 @@ void cm848_evaluateProtectionModeFlags(void)
       }
       else if (sensor_readings_t_0040baf2.barometric_pressure <
                sensor_readings_t_0040baf2.intake_manifold_pressure) {
-        protection_mode_changed_flag = 1;
+        transmission_normal_operation_flag = 1;
         transmission_4th_gear_lockup_boost_pressure =
              sensor_readings_t_0040baf2.intake_manifold_pressure -
              sensor_readings_t_0040baf2.barometric_pressure;
@@ -34772,7 +34797,7 @@ void cm848_evaluateProtectionModeFlags(void)
     }
   }
   else {
-    protection_mode_changed_flag = 0;
+    transmission_normal_operation_flag = 0;
   }
   return;
 }
@@ -35016,37 +35041,37 @@ void cm848_determineCurrentGearAndLockupInhibit(void)
   }
   if ((transmission_control_flags.request_flags & 0x40) == 0) {
     wVar4 = lookupTableInterpolation
-                      (&transmission_3rd_gear_closed_throttle_unlock_throttle_interp_state,
+                      (&transmission_3rd_gear_closed_throttle_unlock_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_3rd_gear_closed_throttle_unlock_throttle_axis,
                        transmission_3rd_gear_closed_throttle_unlock_throttle_values,0);
     wVar3 = lookupTableInterpolation
-                      (&transmission_4th_gear_closed_throttle_unlock_throttle_interp_state,
+                      (&transmission_4th_gear_closed_throttle_unlock_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_4th_gear_closed_throttle_unlock_throttle_axis,
                        transmission_4th_gear_closed_throttle_unlock_throttle_values,0);
     wVar9 = lookupTableInterpolation
-                      (&transmission_2nd_gear_closed_throttle_unlock_throttle_interp_state,
+                      (&transmission_2nd_gear_closed_throttle_unlock_throttle_cached_axis_offset,
                        transmission_output_speed_in_use,
                        transmission_2nd_gear_closed_throttle_unlock_throttle_axis,
                        transmission_2nd_gear_closed_throttle_unlock_throttle_values,0);
     wVar7 = lookupTableInterpolation
                       (&
-                       transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                       transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset
                        ,transmission_output_speed_in_use,
                        transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
                        transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
     ;
     wVar5 = lookupTableInterpolation
                       (&
-                       transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                       transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset
                        ,transmission_output_speed_in_use,
                        transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
                        transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
     ;
     wVar6 = lookupTableInterpolation
                       (&
-                       transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                       transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset
                        ,transmission_output_speed_in_use,
                        transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_axis,
                        transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0)
@@ -35085,33 +35110,33 @@ joined_r0x000341e0:
     wVar9 = 0;
   }
   wVar3 = lookupTableInterpolation
-                    (&transmission_3rd_gear_closed_throttle_relock_throttle_interp_state,
+                    (&transmission_3rd_gear_closed_throttle_relock_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_3rd_gear_closed_throttle_relock_throttle_axis,
                      transmission_3rd_gear_closed_throttle_relock_throttle_values,0);
   wVar4 = lookupTableInterpolation
                     (&
-                     transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                     transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset
                      ,wVar9,transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis
                      ,transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   wVar5 = lookupTableInterpolation
-                    (&transmission_4th_gear_closed_throttle_relock_throttle_interp_state,
+                    (&transmission_4th_gear_closed_throttle_relock_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_4th_gear_closed_throttle_relock_throttle_axis,
                      transmission_4th_gear_closed_throttle_relock_throttle_values,0);
   wVar6 = lookupTableInterpolation
                     (&
-                     transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                     transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset
                      ,wVar9,transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_axis
                      ,transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   wVar7 = lookupTableInterpolation
-                    (&transmission_2nd_gear_closed_throttle_relock_throttle_interp_state,
+                    (&transmission_2nd_gear_closed_throttle_relock_throttle_cached_axis_offset,
                      transmission_output_speed_in_use,
                      transmission_2nd_gear_closed_throttle_relock_throttle_axis,
                      transmission_2nd_gear_closed_throttle_relock_throttle_values,0);
   wVar9 = lookupTableInterpolation
                     (&
-                     transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state
+                     transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset
                      ,wVar9,transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_axis
                      ,transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_values,0);
   if ((((transmission_selected_gear == 0x7f) || (transmission_selected_gear == 0x7e)) &&
@@ -35406,10 +35431,17 @@ void cm848_calculateOutputShaftAcceleration(void)
 
 
 //
-// Function: cm848_evaluateProtectionFaultCondition @ 0x00034a30
+// Function: cm848_updateTransmissionRelayRequest @ 0x00034a30
 //
 
-void cm848_evaluateProtectionFaultCondition(void)
+/* Requests logical output 16 (the transmission control relay: its read-back faults are P0883 /
+   P0882 'TCM power input high / low') while the engine is not stopped and none of the relay /
+   solenoid circuit limp bits is set (e2m RE_Trans_Relay_Circuit_Open,
+   RE_Governor_Press_Sol_Circuit, RE_Overdrive_Solenoid_Circuit,
+   RE_Lockup_Converter_Clutch_Solenoid_Circuit); otherwise drops the relay, which puts the 48RE in
+   limp-home (was cm848_evaluateProtectionFaultCondition) */
+
+void cm848_updateTransmissionRelayRequest(void)
 
 {
   if (((((transmission_control_flags.limp_home_flags_2 & 1) == 0) &&
@@ -35428,19 +35460,25 @@ void cm848_evaluateProtectionFaultCondition(void)
 
 
 //
-// Function: cm848_processCalibrationTablesMain @ 0x00034abc
+// Function: cm848_updateTransmissionControlState @ 0x00034abc
 //
 
-void cm848_processCalibrationTablesMain(void)
+/* State phase of the transmission controller (phase group B, after
+   cm848_selectTransmissionTemperatureInUse): when the transmission control is enabled
+   (algorithm_enable_flags_6_cal bit 2) it updates the inputs, and in normal operation the timers,
+   the current gear and lockup inhibit, the condition flags, the output shaft acceleration and the
+   transmission relay request (was cm848_processCalibrationTablesMain) */
+
+void cm848_updateTransmissionControlState(void)
 
 {
   if (((algorithm_enable_flags_6_cal & 4) != 0) &&
-     (cm848_evaluateProtectionModeFlags(), protection_mode_changed_flag != 0)) {
+     (cm848_updateTransmissionControlInputs(), transmission_normal_operation_flag != 0)) {
     cm848_decrementTransmissionTimers();
     cm848_determineCurrentGearAndLockupInhibit();
     cm848_updateTransmissionConditionFlags();
     cm848_calculateOutputShaftAcceleration();
-    cm848_evaluateProtectionFaultCondition();
+    cm848_updateTransmissionRelayRequest();
   }
   return;
 }
@@ -35509,17 +35547,17 @@ void cm848_initializeTransmissionControl(void)
     transmission_control_flags.overdrive_flags =
          transmission_control_flags.overdrive_flags & 0x9f | 10;
   }
-  transmission_2nd_gear_closed_throttle_relock_throttle_interp_state = 2;
-  transmission_3rd_gear_closed_throttle_relock_throttle_interp_state = 2;
-  transmission_4th_gear_closed_throttle_relock_throttle_interp_state = 2;
-  transmission_2nd_gear_closed_throttle_unlock_throttle_interp_state = 2;
-  transmission_3rd_gear_closed_throttle_unlock_throttle_interp_state = 2;
-  transmission_4th_gear_closed_throttle_unlock_throttle_interp_state = 2;
-  transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state = 2;
-  transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state = 2;
-  transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_interp_state = 2;
-  transmission_3rd_gear_lockup_maximum_throttle_interp_state_2 = 2;
-  transmission_3rd_gear_unlock_maximum_throttle_interp_state_2 = 2;
+  transmission_2nd_gear_closed_throttle_relock_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_closed_throttle_relock_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_closed_throttle_relock_throttle_cached_axis_offset = 2;
+  transmission_2nd_gear_closed_throttle_unlock_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_closed_throttle_unlock_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_closed_throttle_unlock_throttle_cached_axis_offset = 2;
+  transmission_2nd_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset = 2;
+  transmission_4th_gear_exhaust_brake_closed_throttle_unlock_throttle_cached_axis_offset = 2;
+  transmission_3rd_gear_lockup_maximum_throttle_cached_axis_offset_2 = 2;
+  transmission_3rd_gear_unlock_maximum_throttle_cached_axis_offset_2 = 2;
   transmission_output_shaft_acceleration_filter.accumulator = 0;
   transmission_output_shaft_acceleration_filter.coefficient =
        &transmission_output_shaft_acceleration_filter_coefficient;
@@ -35543,10 +35581,18 @@ void cm848_initializeTransmissionControl(void)
 
 
 //
-// Function: cm848_processProtectionFaultSeverity @ 0x00034dd4
+// Function: cm848_updateTransmissionLimpHomeFlags @ 0x00034dd4
 //
 
-void cm848_processProtectionFaultSeverity(void)
+/* Sets the e2m 8C19 limp-home bits from the fault bits: limp_home_flags_1 0x01
+   RE_Trans_Relay_Circuit_Open (fault 137 P0882), 0x02 RE_TPS_Elect_Limp (the pedal faults P2121 /
+   P2122 / P2123 / P2127 / P2128 and P0698); limp_home_flags_2 0x01 RE_Governor_Press_Sol_Circuit
+   (351 P0748), 0x02 RE_Overdrive_Solenoid_Circuit (139 P0973); limp_home_flags_3 0x01
+   RE_Gov_Sensor_Limp_Circuit (299 / 300 P0868 / P0869, or the P1762 monitor failed);
+   limp_home_flags_4 0x10 RE_Lockup_Converter_Clutch_Solenoid_Circuit (141 P2769) (was
+   cm848_processProtectionFaultSeverity) */
+
+void cm848_updateTransmissionLimpHomeFlags(void)
 
 {
   byte bVar1;
@@ -35554,7 +35600,7 @@ void cm848_processProtectionFaultSeverity(void)
   
   if ((((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x800) == 0) &&
       ((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x1000) == 0)) &&
-     (j1939_fault_state != 3)) {
+     (governor_pressure_rationality_monitor_state != 3)) {
     transmission_control_flags.limp_home_flags_3 =
          transmission_control_flags.limp_home_flags_3 & 0xfe;
   }
@@ -35699,12 +35745,12 @@ void cm848_selectGovernorPressureLockupBoost(void)
   word wVar2;
   
   wVar1 = lookupTableInterpolation
-                    (&transmission_3rd_gear_lockup_maximum_throttle_interp_state_2,
+                    (&transmission_3rd_gear_lockup_maximum_throttle_cached_axis_offset_2,
                      transmission_output_speed_in_use,
                      transmission_3rd_gear_lockup_maximum_throttle_axis,
                      transmission_3rd_gear_lockup_maximum_throttle_values,0);
   wVar2 = lookupTableInterpolation
-                    (&transmission_3rd_gear_unlock_maximum_throttle_interp_state_2,
+                    (&transmission_3rd_gear_unlock_maximum_throttle_cached_axis_offset_2,
                      transmission_output_speed_in_use,
                      transmission_3rd_gear_unlock_maximum_throttle_axis,
                      transmission_3rd_gear_unlock_maximum_throttle_values,0);
@@ -35740,13 +35786,19 @@ void cm848_selectGovernorPressureLockupBoost(void)
 
 
 //
-// Function: cm848_processProtectionStateMachine @ 0x00035328
+// Function: cm848_runTransmissionControlWhenEnabled @ 0x00035328
 //
 
-void cm848_processProtectionStateMachine(void)
+/* Control phase of the transmission controller (called right after
+   cm848_updateTransmissionControlState): runs cm848_runTransmissionControl and
+   cm848_selectGovernorPressureLockupBoost when the transmission control is enabled
+   (algorithm_enable_flags_6_cal bit 2) and transmission_normal_operation_flag is set (was
+   cm848_processProtectionStateMachine) */
+
+void cm848_runTransmissionControlWhenEnabled(void)
 
 {
-  if (((algorithm_enable_flags_6_cal & 4) != 0) && (protection_mode_changed_flag != 0)) {
+  if (((algorithm_enable_flags_6_cal & 4) != 0) && (transmission_normal_operation_flag != 0)) {
     cm848_runTransmissionControl();
     cm848_selectGovernorPressureLockupBoost();
   }
@@ -37956,10 +38008,15 @@ undefined4 cm848_evaluateAlternatorFieldRegulatorLoadResponseState(void)
 
 
 //
-// Function: cm848_initProtectionFilterValues @ 0x000384d0
+// Function: cm848_initializeAlternatorFieldControl @ 0x000384d0
 //
 
-void cm848_initProtectionFilterValues(void)
+/* Initializes the alternator field controller: the lookup caches, the regulator state, the duty /
+   PID terms, the charging voltage condition timers, the field cut test (and its fault bits
+   368-370), then enables the field output driver from alternator_field_output_channel_cal (was
+   cm848_initProtectionFilterValues) */
+
+void cm848_initializeAlternatorFieldControl(void)
 
 {
   charging_voltage_target_cached_axis_offset = 2;
@@ -42478,7 +42535,7 @@ void cm848_monitorConverterSlipAndEngineSpeedLimit(void)
   transmission_output_speed_engine_equivalent = (word)uVar2;
   engine_speed_limit_converter_slip_table_output =
        cm848_dualAxisTableInterpolation
-                 (&engine_speed_limit_converter_slip_interpolation_state,
+                 (&engine_speed_limit_converter_slip_cached_axis_offset,
                   fuel_demand_control_t_0040a57a.calculated,engine_speed_limit_converter_slip_x_axis
                   ,transmission_output_speed_engine_equivalent,
                   engine_speed_limit_converter_slip_y_axis,engine_speed_limit_converter_slip_grid,0)
@@ -42544,14 +42601,14 @@ LAB_0003ec38:
 //
 
 /* Boot initialization of the converter slip engine speed limit: both words of its table lookup
-   cache (engine_speed_limit_converter_slip_interpolation_state and the word after it, 0x3fb4ea) are
+   cache (engine_speed_limit_converter_slip_cached_axis_offset and the word after it, 0x3fb4ea) are
    2 and engine_speed_limit_converter_slip is engine_speed_limit_default_cal. (was
    mpc555_initThermalProtectionFilters) */
 
 void cm848_initializeConverterSlipEngineSpeedLimit(void)
 
 {
-  engine_speed_limit_converter_slip_interpolation_state = 2;
+  engine_speed_limit_converter_slip_cached_axis_offset = 2;
   DAT_003fb4ea = 2;
   engine_speed_limit_converter_slip = engine_speed_limit_default_cal;
   return;
@@ -42675,14 +42732,14 @@ void cm848_calculateTorqueManagementFuelTableLimit(void)
   if (torque_management_gear_ratio_stage == 3) {
     torque_management_table_fuel_limit =
          cm848_dualAxisTableInterpolation
-                   (&torque_management_fuel_table_interpolation_state,
+                   (&torque_management_fuel_table_cached_axis_offset,
                     engine_speed_state.filtered_engine_speed,WORD_ARRAY_0005b4d6,
                     combustion_alpha_input,WORD_ARRAY_0005b502,WORD_ARRAY_0005b508,0);
   }
   else {
     if (four_dimensional_fueling_interpolation_factor != 0) {
       local_e = cm848_dualAxisTableInterpolation
-                          (&fuel_demand_threshold_interp_state,
+                          (&fuel_demand_threshold_cached_axis_offset,
                            engine_speed_state.filtered_engine_speed,fuel_demand_rpm_threshold_cal,
                            fuel_demand_rpm_limit_low_cal[torque_management_gear_ratio_stage + 1],
                            fuel_demand_rpm_limit_low_cal,fuel_demand_rpm_limit_high_cal,4);
@@ -42690,7 +42747,7 @@ void cm848_calculateTorqueManagementFuelTableLimit(void)
     }
     if (four_dimensional_fueling_interpolation_factor < 0x4000) {
       local_10 = cm848_dualAxisTableInterpolation
-                           (&governor_fuel_demand_interp_state,
+                           (&governor_fuel_demand_cached_axis_offset,
                             engine_speed_state.filtered_engine_speed,governor_fuel_table_xaxis_cal,
                             governor_fuel_table_ystart_cal[torque_management_gear_ratio_stage + 1],
                             governor_fuel_table_ystart_cal,governor_fuel_table_yend_cal,4);
@@ -42904,7 +42961,7 @@ void cm848_initializeTorqueManagement(void)
   torque_management_fuel_limit = 0x1700;
   torque_management_fuel_limit_previous = 0x1700;
   torque_management_fuel_demand_previous = 0x1700;
-  torque_management_fuel_table_interpolation_state = 2;
+  torque_management_fuel_table_cached_axis_offset = 2;
   torque_management_fuel_table_interpolation_state_y = 2;
   torque_management_exit_ramp_flag = 0;
   torque_management_entry_ramp_flag = 0;
@@ -47498,7 +47555,7 @@ void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
                      injection_quantity_auxiliary_base_map_grid,4);
   if (combustion_chi_lower_map_number == 1) {
     wVar4 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_boost_blend_interp_state,
+                      (&injection_timing_boost_blend_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
                        injection_quantity_auxiliary_map_1_x_axis,final_fueling,
                        injection_quantity_auxiliary_map_1_y_axis,
@@ -47506,7 +47563,7 @@ void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
   }
   else if (combustion_chi_lower_map_number == 2) {
     wVar4 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_boost_blend_interp_state,
+                      (&injection_timing_boost_blend_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
                        injection_quantity_auxiliary_map_2_x_axis,final_fueling,
                        injection_quantity_auxiliary_map_2_y_axis,
@@ -47514,7 +47571,7 @@ void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
   }
   else if (combustion_chi_lower_map_number == 3) {
     wVar4 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_boost_blend_interp_state,
+                      (&injection_timing_boost_blend_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
                        injection_quantity_auxiliary_map_3_x_axis,final_fueling,
                        injection_quantity_auxiliary_map_3_y_axis,
@@ -47522,7 +47579,7 @@ void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
   }
   else if (combustion_chi_lower_map_number == 4) {
     wVar4 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_boost_blend_interp_state,
+                      (&injection_timing_boost_blend_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
                        injection_quantity_auxiliary_map_4_x_axis,final_fueling,
                        injection_quantity_auxiliary_map_4_y_axis,
@@ -47530,7 +47587,7 @@ void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
   }
   if (combustion_chi_upper_map_number == 1) {
     wVar5 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_boost_blend_interp_state,
+                      (&injection_timing_boost_blend_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
                        injection_quantity_auxiliary_map_1_x_axis,final_fueling,
                        injection_quantity_auxiliary_map_1_y_axis,
@@ -47538,7 +47595,7 @@ void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
   }
   else if (combustion_chi_upper_map_number == 2) {
     wVar5 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_boost_blend_interp_state,
+                      (&injection_timing_boost_blend_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
                        injection_quantity_auxiliary_map_2_x_axis,final_fueling,
                        injection_quantity_auxiliary_map_2_y_axis,
@@ -47546,7 +47603,7 @@ void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
   }
   else if (combustion_chi_upper_map_number == 3) {
     wVar5 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_boost_blend_interp_state,
+                      (&injection_timing_boost_blend_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
                        injection_quantity_auxiliary_map_3_x_axis,final_fueling,
                        injection_quantity_auxiliary_map_3_y_axis,
@@ -47554,7 +47611,7 @@ void cm848_calculateAuxiliaryInjectionQuantityLimit(void)
   }
   else if (combustion_chi_upper_map_number == 4) {
     wVar5 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_boost_blend_interp_state,
+                      (&injection_timing_boost_blend_cached_axis_offset,
                        engine_speed_state.filtered_engine_speed,
                        injection_quantity_auxiliary_map_4_x_axis,final_fueling,
                        injection_quantity_auxiliary_map_4_y_axis,
@@ -47631,7 +47688,7 @@ void cm848_initializeAuxiliaryInjectionQuantityState(void)
   DAT_003fb5fc = 2;
   DAT_003fb5fe = 2;
   DAT_003fb600 = 2;
-  injection_timing_boost_blend_interp_state = 2;
+  injection_timing_boost_blend_cached_axis_offset = 2;
   DAT_003fb604 = 2;
   DAT_003fb606 = 2;
   DAT_003fb608 = 2;
@@ -47752,7 +47809,7 @@ void cm848_calculateMainInjectionPulseWidth(void)
   
   wVar2 = cylinder_event_index;
   wVar1 = lookupTableInterpolation
-                    (&injection_timing_min_fuel_interp_state,fuel_pressure_sensor,
+                    (&injection_timing_minimum_fuel_cached_axis_offset,fuel_pressure_sensor,
                      injection_pulse_width_minimum_axis,injection_pulse_width_minimum_values,1);
   uVar4 = main_injection_pulse_width_override_value;
   if (main_injection_pulse_width_override_switch == 0) {
@@ -47763,12 +47820,12 @@ void cm848_calculateMainInjectionPulseWidth(void)
     uVar5 = (uint)uVar4;
     if (pilot_injection_pulse_width != 0) {
       wVar2 = cm848_dualAxisTableInterpolation
-                        (&injection_timing_trim_axis1_interp_state,pilot_to_main_injection_interval,
-                         main_quantity_pilot_correction_x_axis,pilot_injection_pulse_width,
-                         main_quantity_pilot_correction_y_axis,main_quantity_pilot_correction_grid,4
-                        );
+                        (&injection_timing_trim_axis1_cached_axis_offset,
+                         pilot_to_main_injection_interval,main_quantity_pilot_correction_x_axis,
+                         pilot_injection_pulse_width,main_quantity_pilot_correction_y_axis,
+                         main_quantity_pilot_correction_grid,4);
       wVar3 = cm848_dualAxisTableInterpolation
-                        (&injection_timing_trim_axis2_interp_state,uVar4,
+                        (&injection_timing_trim_axis2_cached_axis_offset,uVar4,
                          main_quantity_pilot_correction_scale_x_axis,fuel_pressure_sensor,
                          main_quantity_pilot_correction_scale_y_axis,
                          main_quantity_pilot_correction_scale_grid,6);
@@ -47781,7 +47838,7 @@ void cm848_calculateMainInjectionPulseWidth(void)
       uVar5 = 0x1700;
     }
     uVar4 = cm848_dualAxisTableInterpolation
-                      (&injection_timing_fuel_table_interp_state,(word)uVar5,
+                      (&injection_timing_fuel_table_cached_axis_offset,(word)uVar5,
                        main_injection_pulse_width_x_axis,fuel_pressure_sensor,
                        main_injection_pulse_width_y_axis,main_injection_pulse_width_grid,2);
   }
@@ -47828,12 +47885,12 @@ void cm848_calculatePilotInjectionPulseWidth(void)
   uVar2 = cylinder_event_index & 1;
   if (pilot_injection_quantity != 0) {
     wVar3 = lookupTableInterpolation
-                      (&injection_timing_min_fuel_interp_state,fuel_pressure_sensor,
+                      (&injection_timing_minimum_fuel_cached_axis_offset,fuel_pressure_sensor,
                        injection_pulse_width_minimum_axis,injection_pulse_width_minimum_values,1);
     uVar4 = pilot_injection_pulse_width_override_value;
     if (pilot_injection_pulse_width_override_switch == 0) {
       uVar4 = cm848_dualAxisTableInterpolation
-                        (&injection_timing_cam_offset_interp_state,pilot_injection_quantity,
+                        (&injection_timing_cam_offset_cached_axis_offset,pilot_injection_quantity,
                          pilot_injection_pulse_width_x_axis,fuel_pressure_sensor,
                          pilot_injection_pulse_width_y_axis,pilot_injection_pulse_width_grid,3);
     }
@@ -47923,7 +47980,7 @@ void cm848_calculateAuxiliaryInjectionPulseWidth(int param_1)
   wVar1 = cylinder_event_index;
   if (param_1 == 0) {
     wVar2 = lookupTableInterpolation
-                      (&injection_timing_min_fuel_interp_state,fuel_pressure_sensor,
+                      (&injection_timing_minimum_fuel_cached_axis_offset,fuel_pressure_sensor,
                        injection_pulse_width_minimum_axis,injection_pulse_width_minimum_values,1);
     dVar6 = average_pulse_period_backup;
     if (engine_speed_from_backup_sensor_flag == 0) {
@@ -47953,13 +48010,13 @@ void cm848_calculateAuxiliaryInjectionPulseWidth(int param_1)
       }
       else {
         wVar3 = cm848_dualAxisTableInterpolation
-                          (&auxiliary_quantity_main_correction_scale_interpolation_state,
+                          (&auxiliary_quantity_main_correction_scale_cached_axis_offset,
                            auxiliary_injection_quantity,
                            auxiliary_quantity_main_correction_scale_x_axis,fuel_pressure_sensor,
                            auxiliary_quantity_main_correction_scale_y_axis,
                            auxiliary_quantity_main_correction_scale_grid,6);
         wVar4 = cm848_dualAxisTableInterpolation
-                          (&auxiliary_quantity_main_correction_interpolation_state,
+                          (&auxiliary_quantity_main_correction_cached_axis_offset,
                            main_to_auxiliary_injection_interval,
                            auxiliary_quantity_main_correction_x_axis,
                            main_injection_pulse_width_before_minimum_check,
@@ -47974,7 +48031,7 @@ void cm848_calculateAuxiliaryInjectionPulseWidth(int param_1)
         uVar7 = 0x1700;
       }
       wVar3 = cm848_dualAxisTableInterpolation
-                        (&auxiliary_injection_pulse_width_interpolation_state,(word)uVar7,
+                        (&auxiliary_injection_pulse_width_cached_axis_offset,(word)uVar7,
                          auxiliary_injection_pulse_width_x_axis,fuel_pressure_sensor,
                          auxiliary_injection_pulse_width_y_axis,auxiliary_injection_pulse_width_grid
                          ,2);
@@ -48078,20 +48135,20 @@ void mpc555_clearTimingDataAndFilters(void)
   main_injection_quantity_even_event = 0;
   main_injection_pulse_width_maximum = 0;
   pilot_injection_pulse_width_maximum = 0;
-  injection_timing_min_fuel_interp_state = 2;
-  injection_timing_fuel_table_interp_state = 2;
+  injection_timing_minimum_fuel_cached_axis_offset = 2;
+  injection_timing_fuel_table_cached_axis_offset = 2;
   DAT_003fb616 = 2;
-  injection_timing_cam_offset_interp_state = 2;
+  injection_timing_cam_offset_cached_axis_offset = 2;
   DAT_003fb61a = 2;
-  injection_timing_trim_axis1_interp_state = 2;
+  injection_timing_trim_axis1_cached_axis_offset = 2;
   DAT_003fb61e = 2;
-  injection_timing_trim_axis2_interp_state = 2;
+  injection_timing_trim_axis2_cached_axis_offset = 2;
   DAT_003fb622 = 2;
-  auxiliary_quantity_main_correction_interpolation_state = 2;
+  auxiliary_quantity_main_correction_cached_axis_offset = 2;
   DAT_003fb626 = 2;
-  auxiliary_quantity_main_correction_scale_interpolation_state = 2;
+  auxiliary_quantity_main_correction_scale_cached_axis_offset = 2;
   DAT_003fb62a = 2;
-  auxiliary_injection_pulse_width_interpolation_state = 2;
+  auxiliary_injection_pulse_width_cached_axis_offset = 2;
   DAT_003fb62e = 2;
   return;
 }
@@ -49165,7 +49222,7 @@ LAB_00049380:
       fuel_pressure_diagnostic_flags = 2;
     }
     wVar2 = lookupTableInterpolation
-                      (&fuel_pressure_diagnostic_interpolation_state_0,average_engine_speed,
+                      (&fuel_pressure_diagnostic_cached_axis_offset_0,average_engine_speed,
                        fuel_pressure_minimum_expected_by_rpm_axis,
                        fuel_pressure_minimum_expected_by_rpm_values,2);
     if (((short)fuel_pressure_sensor < (short)wVar2) &&
@@ -49174,11 +49231,11 @@ LAB_00049380:
     }
     bVar1 = final_fueling != 0;
     wVar2 = lookupTableInterpolation
-                      (&fuel_pressure_diagnostic_interpolation_state_1,average_engine_speed,
+                      (&fuel_pressure_diagnostic_cached_axis_offset_1,average_engine_speed,
                        fuel_pressure_above_setpoint_error_limit_by_rpm_axis,
                        fuel_pressure_above_setpoint_error_limit_by_rpm_values,2);
     wVar3 = lookupTableInterpolation
-                      (&fuel_pressure_diagnostic_interpolation_state_4,average_engine_speed,
+                      (&fuel_pressure_diagnostic_cached_axis_offset_4,average_engine_speed,
                        fuel_pressure_above_setpoint_demand_limit_by_rpm_axis,
                        fuel_pressure_above_setpoint_demand_limit_by_rpm_values,2);
     if (((sVar4 < (short)wVar2) &&
@@ -49187,11 +49244,11 @@ LAB_00049380:
       fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 8;
     }
     wVar2 = lookupTableInterpolation
-                      (&fuel_pressure_diagnostic_interpolation_state_2,average_engine_speed,
+                      (&fuel_pressure_diagnostic_cached_axis_offset_2,average_engine_speed,
                        fuel_pressure_below_setpoint_error_limit_by_rpm_axis,
                        fuel_pressure_below_setpoint_error_limit_by_rpm_values,2);
     wVar3 = lookupTableInterpolation
-                      (&fuel_pressure_diagnostic_interpolation_state_3,average_engine_speed,
+                      (&fuel_pressure_diagnostic_cached_axis_offset_3,average_engine_speed,
                        fuel_pressure_below_setpoint_demand_limit_by_rpm_axis,
                        fuel_pressure_below_setpoint_demand_limit_by_rpm_values,2);
     if (((short)wVar2 < sVar4) &&
@@ -49203,7 +49260,7 @@ LAB_00049380:
     }
     else {
       wVar2 = lookupTableInterpolation
-                        (&fuel_pressure_diagnostic_interpolation_state_5,
+                        (&fuel_pressure_diagnostic_cached_axis_offset_5,
                          fuel_pressure_expected_decay_model_previous,
                          fuel_pressure_expected_decay_by_pressure_axis,
                          fuel_pressure_expected_decay_by_pressure_values,3);
@@ -49214,7 +49271,7 @@ LAB_00049380:
     }
     fuel_pressure_expected_decay_model_previous = fuel_pressure_expected_decay_model;
     wVar2 = lookupTableInterpolation
-                      (&fuel_pressure_diagnostic_interpolation_state_6,fuel_pressure_sensor,
+                      (&fuel_pressure_diagnostic_cached_axis_offset_6,fuel_pressure_sensor,
                        fuel_pressure_governor_demand_limit_without_fuel_axis,
                        fuel_pressure_governor_demand_limit_without_fuel_values,3);
     if (((short)wVar2 < (short)fuel_pressure_governor_state.fuel_pressure_governor_demand) &&
@@ -49629,13 +49686,13 @@ void cm848_initializeFuelPressureDiagnosticState(void)
   fuel_pressure_too_high_recovery_count = 0;
   fuel_pressure_too_high_count = 0;
   fuel_metering_feedback_cached_axis_offset = 2;
-  fuel_pressure_diagnostic_interpolation_state_0 = 2;
-  fuel_pressure_diagnostic_interpolation_state_1 = 2;
-  fuel_pressure_diagnostic_interpolation_state_2 = 2;
-  fuel_pressure_diagnostic_interpolation_state_3 = 2;
-  fuel_pressure_diagnostic_interpolation_state_4 = 2;
-  fuel_pressure_diagnostic_interpolation_state_5 = 2;
-  fuel_pressure_diagnostic_interpolation_state_6 = 2;
+  fuel_pressure_diagnostic_cached_axis_offset_0 = 2;
+  fuel_pressure_diagnostic_cached_axis_offset_1 = 2;
+  fuel_pressure_diagnostic_cached_axis_offset_2 = 2;
+  fuel_pressure_diagnostic_cached_axis_offset_3 = 2;
+  fuel_pressure_diagnostic_cached_axis_offset_4 = 2;
+  fuel_pressure_diagnostic_cached_axis_offset_5 = 2;
+  fuel_pressure_diagnostic_cached_axis_offset_6 = 2;
   return;
 }
 
@@ -50105,21 +50162,21 @@ void cm848_evaluateInjectorDiagnostics(void)
 void cm848_initTimingFilterStates(void)
 
 {
-  injection_timing_main_cold_start_interpolation_state = 2;
+  injection_timing_main_cold_start_cached_axis_offset = 2;
   injection_timing_main_cold_start_interpolation_state_y = 2;
-  injection_timing_main_coolant_factor_interpolation_state = 2;
+  injection_timing_main_coolant_factor_cached_axis_offset = 2;
   injection_timing_main_coolant_factor_interpolation_state_y = 2;
-  injection_timing_main_intake_temperature_factor_interpolation_state = 2;
-  injection_timing_main_barometric_pressure_factor_interpolation_state = 2;
-  injection_timing_main_coolant_angle_interpolation_state = 2;
+  injection_timing_main_intake_temperature_factor_cached_axis_offset = 2;
+  injection_timing_main_barometric_pressure_factor_cached_axis_offset = 2;
+  injection_timing_main_coolant_angle_cached_axis_offset = 2;
   injection_timing_main_coolant_angle_interpolation_state_y = 2;
-  injection_timing_main_intake_temperature_angle_interpolation_state = 2;
+  injection_timing_main_intake_temperature_angle_cached_axis_offset = 2;
   injection_timing_main_intake_temperature_angle_interpolation_state_y = 2;
-  injection_timing_main_barometric_pressure_angle_interpolation_state = 2;
+  injection_timing_main_barometric_pressure_angle_cached_axis_offset = 2;
   injection_timing_main_barometric_pressure_angle_interpolation_state_y = 2;
-  injection_timing_main_boost_angle_interpolation_state = 2;
+  injection_timing_main_boost_angle_cached_axis_offset = 2;
   injection_timing_main_boost_angle_interpolation_state_y = 2;
-  injection_timing_main_boost_factor_interpolation_state = 2;
+  injection_timing_main_boost_factor_cached_axis_offset = 2;
   injection_timing_main_boost_factor_interpolation_state_y = 2;
   main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_INITIAL;
   return;
@@ -50161,7 +50218,7 @@ void cm848_calculateMainInjectionTiming(void)
      (engine_state == ENGINE_STATE_REENTRY)) {
     injection_timing_demand =
          cm848_dualAxisTableInterpolation
-                   (&injection_timing_main_cold_start_interpolation_state,
+                   (&injection_timing_main_cold_start_cached_axis_offset,
                     engine_speed_state.filtered_engine_speed,injection_timing_main_cold_start_x_axis
                     ,sensor_readings_t_0040baf2.coolant_temp,injection_timing_main_cold_start_y_axis
                     ,injection_timing_main_cold_start_grid,6);
@@ -50175,54 +50232,54 @@ void cm848_calculateMainInjectionTiming(void)
   fuel_temp_b_snapshot = fuel_temperature_sensor_filtered;
   injection_timing_main_coolant_angle =
        cm848_dualAxisTableInterpolation
-                 (&injection_timing_main_coolant_angle_interpolation_state,
+                 (&injection_timing_main_coolant_angle_cached_axis_offset,
                   engine_speed_state.filtered_engine_speed,
                   injection_timing_main_coolant_angle_x_axis,final_fueling,
                   injection_timing_main_coolant_angle_y_axis,
                   injection_timing_main_coolant_angle_grid,4);
   injection_timing_main_intake_temperature_angle =
        cm848_dualAxisTableInterpolation
-                 (&injection_timing_main_intake_temperature_angle_interpolation_state,
+                 (&injection_timing_main_intake_temperature_angle_cached_axis_offset,
                   engine_speed_state.filtered_engine_speed,
                   injection_timing_main_intake_temperature_angle_x_axis,final_fueling,
                   injection_timing_main_intake_temperature_angle_y_axis,
                   injection_timing_main_intake_temperature_angle_grid,4);
   injection_timing_main_barometric_pressure_angle =
        cm848_dualAxisTableInterpolation
-                 (&injection_timing_main_barometric_pressure_angle_interpolation_state,
+                 (&injection_timing_main_barometric_pressure_angle_cached_axis_offset,
                   engine_speed_state.filtered_engine_speed,
                   injection_timing_main_barometric_pressure_angle_x_axis,final_fueling,
                   injection_timing_main_barometric_pressure_angle_y_axis,
                   injection_timing_main_barometric_pressure_angle_grid,4);
   injection_timing_main_boost_angle =
        cm848_dualAxisTableInterpolation
-                 (&injection_timing_main_boost_angle_interpolation_state,
+                 (&injection_timing_main_boost_angle_cached_axis_offset,
                   engine_speed_state.filtered_engine_speed,injection_timing_main_boost_angle_x_axis,
                   final_fueling,injection_timing_main_boost_angle_y_axis,
                   injection_timing_main_boost_angle_grid,4);
   injection_timing_main_coolant_factor =
        cm848_dualAxisTableInterpolation
-                 (&injection_timing_main_coolant_factor_interpolation_state,coolant_temp_snapshot,
+                 (&injection_timing_main_coolant_factor_cached_axis_offset,coolant_temp_snapshot,
                   injection_timing_main_coolant_factor_x_axis,
                   intake_manifold_temperature_sensor_filtered,
                   injection_timing_main_coolant_factor_y_axis,
                   injection_timing_main_coolant_factor_grid,7);
   injection_timing_main_intake_temperature_factor =
        lookupTableInterpolation
-                 (&injection_timing_main_intake_temperature_factor_interpolation_state,
+                 (&injection_timing_main_intake_temperature_factor_cached_axis_offset,
                   timing_intake_manifold_temperature_snapshot,
                   injection_timing_main_intake_temperature_factor_axis,
                   injection_timing_main_intake_temperature_factor_values,3);
   injection_timing_main_barometric_pressure_factor =
        lookupTableInterpolation
-                 (&injection_timing_main_barometric_pressure_factor_interpolation_state,
+                 (&injection_timing_main_barometric_pressure_factor_cached_axis_offset,
                   timing_barometric_pressure_snapshot,
                   injection_timing_main_barometric_pressure_factor_axis,
                   injection_timing_main_barometric_pressure_factor_values,2);
   y_input = cm848_calculateBoostPressure();
   injection_timing_main_boost_factor =
        cm848_dualAxisTableInterpolation
-                 (&injection_timing_main_boost_factor_interpolation_state,
+                 (&injection_timing_main_boost_factor_cached_axis_offset,
                   engine_speed_state.filtered_engine_speed,injection_timing_main_boost_factor_x_axis
                   ,y_input,injection_timing_main_boost_factor_y_axis,
                   injection_timing_main_boost_factor_grid,4);
@@ -50438,7 +50495,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     if (combustion_chi_lower_map_number == 1) {
       fuel_limit_by_rpm_and_demand_chi_lower =
            cm848_dualAxisTableInterpolation
-                     (&fuel_limit_by_rpm_and_demand_blend_interp_state,
+                     (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
                       fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_1_grid,0);
@@ -50446,7 +50503,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     else if (combustion_chi_lower_map_number == 2) {
       fuel_limit_by_rpm_and_demand_chi_lower =
            cm848_dualAxisTableInterpolation
-                     (&fuel_limit_by_rpm_and_demand_blend_interp_state,
+                     (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
                       fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_2_grid,0);
@@ -50454,7 +50511,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     else if (combustion_chi_lower_map_number == 3) {
       fuel_limit_by_rpm_and_demand_chi_lower =
            cm848_dualAxisTableInterpolation
-                     (&fuel_limit_by_rpm_and_demand_blend_interp_state,
+                     (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
                       fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_3_grid,0);
@@ -50462,7 +50519,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     else if (combustion_chi_lower_map_number == 4) {
       fuel_limit_by_rpm_and_demand_chi_lower =
            cm848_dualAxisTableInterpolation
-                     (&fuel_limit_by_rpm_and_demand_blend_interp_state,
+                     (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
                       fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_4_grid,0);
@@ -50470,7 +50527,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     if (combustion_chi_upper_map_number == 1) {
       fuel_limit_by_rpm_and_demand_chi_upper =
            cm848_dualAxisTableInterpolation
-                     (&fuel_limit_by_rpm_and_demand_blend_interp_state,
+                     (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
                       fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_1_grid,0);
@@ -50478,7 +50535,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     else if (combustion_chi_upper_map_number == 2) {
       fuel_limit_by_rpm_and_demand_chi_upper =
            cm848_dualAxisTableInterpolation
-                     (&fuel_limit_by_rpm_and_demand_blend_interp_state,
+                     (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
                       fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_2_grid,0);
@@ -50486,7 +50543,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     else if (combustion_chi_upper_map_number == 3) {
       fuel_limit_by_rpm_and_demand_chi_upper =
            cm848_dualAxisTableInterpolation
-                     (&fuel_limit_by_rpm_and_demand_blend_interp_state,
+                     (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
                       fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_3_grid,0);
@@ -50494,7 +50551,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
     else if (combustion_chi_upper_map_number == 4) {
       fuel_limit_by_rpm_and_demand_chi_upper =
            cm848_dualAxisTableInterpolation
-                     (&fuel_limit_by_rpm_and_demand_blend_interp_state,
+                     (&fuel_limit_by_rpm_and_demand_blend_cached_axis_offset,
                       engine_speed_state.filtered_engine_speed,fuel_limit_by_rpm_and_demand_x_axis,
                       fuel_demand_control_t_0040a57a.calculated,fuel_limit_by_rpm_and_demand_y_axis,
                       fuel_limit_by_rpm_and_demand_blend_map_4_grid,0);
@@ -57744,7 +57801,7 @@ void cm848_applicationMain(void)
   cm848_initGovernorLookupDimensions();
   cm848_initializeTorqueManagement();
   protection_exception_event_35_init();
-  cm848_initProtectionFilterValues();
+  cm848_initializeAlternatorFieldControl();
   cm848_resetCylinderCutoutState();
   cm848_initializePilotInjectionQuantityState();
   cm848_initializePilotInjectionTimingState();
@@ -57882,7 +57939,7 @@ void cm848_applicationMain(void)
   cm848_clearVariableGeometryTurbochargerDriverOverCurrentState();
   cm848_initializeVariableGeometryTurbochargerMotorThermalModel();
   cm848_initializeVariableGeometryTurbochargerAdjustmentFilters();
-  initHpcr_FaultCounters();
+  cm848_initializeGovernorPressureTrackingMonitor();
   cm848_initParkNeutralSwitchMonitor();
   cm848_initialization_step_3();
   cm848_initializeExhaustPressureEstimate();
@@ -70265,7 +70322,7 @@ void cm848_calculateNoLoadFuel(void)
 {
   friction_fuel_adjustment_for_coolant_temperature =
        lookupTableInterpolation
-                 (coolant_temp_interp_state,sensor_readings_t_0040baf2.coolant_temp,
+                 (coolant_temperature_cached_axis_offsets,sensor_readings_t_0040baf2.coolant_temp,
                   friction_fuel_correction_by_coolant_temperature_axis,
                   friction_fuel_correction_by_coolant_temperature_values,1);
   if ((((air_conditioning_clutch_request_byte & 0x40) == 0) ||
@@ -70276,7 +70333,8 @@ void cm848_calculateNoLoadFuel(void)
   else {
     friction_fuel_adjustment_for_air_conditioning_clutch =
          lookupTableInterpolation
-                   (coolant_temp_interp_state + 1,engine_speed_state.filtered_engine_speed,
+                   (coolant_temperature_cached_axis_offsets + 1,
+                    engine_speed_state.filtered_engine_speed,
                     air_conditioning_load_fuel_demand_offset_axis,
                     air_conditioning_load_fuel_demand_offset_values,0);
   }
@@ -70288,7 +70346,7 @@ void cm848_calculateNoLoadFuel(void)
                   radiator_fan_load_fuel_demand_offset_grid,4);
   friction_fueling =
        lookupTableInterpolation
-                 (&friction_fuel_by_engine_speed_interpolation_state,
+                 (&friction_fuel_by_engine_speed_cached_axis_offset,
                   engine_speed_state.filtered_engine_speed,friction_fuel_by_engine_speed_axis,
                   friction_fuel_by_engine_speed_values,0);
   fuel_demand_base_offset =
@@ -70309,9 +70367,9 @@ void cm848_initInterpolationStateCounters(void)
 {
   DAT_003fcbe8 = 2;
   DAT_003fcbea = 2;
-  coolant_temp_interp_state[0] = 2;
-  friction_fuel_by_engine_speed_interpolation_state = 2;
-  coolant_temp_interp_state[1] = 2;
+  coolant_temperature_cached_axis_offsets[0] = 2;
+  friction_fuel_by_engine_speed_cached_axis_offset = 2;
+  coolant_temperature_cached_axis_offsets[1] = 2;
   return;
 }
 
@@ -70607,7 +70665,7 @@ void cm848_debounceOutputReadBackFaults(void)
       }
     }
     if ((governor_pressure_solenoid_read_back_fault_latched_flag == 0) &&
-       (logical_output_request_bits_16_to_23.reserved_bit_0 != 0)) {
+       (logical_output_request_bits_16_to_23.transmission_relay_request != 0)) {
       if (output_read_back_fault_bits.governor_pressure_solenoid == 0) {
         if ((fault_registered_bits_336_to_351 & 0x8000) != 0) {
           fault_detected_bits_336_to_351 = fault_detected_bits_336_to_351 & 0x7fff;
@@ -70907,17 +70965,17 @@ void cm848_calculateFrictionNoLoadAndNetMachineTorque(void)
   
   friction_torque_adjustment_for_coolant_temperature =
        cm848_dualAxisTableInterpolation
-                 (&protection_rpm_correction_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_torque_by_fuel_quantity_x_axis,
-                  friction_fuel_adjustment_for_coolant_temperature,
+                 (&protection_rpm_correction_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_torque_by_fuel_quantity_x_axis
+                  ,friction_fuel_adjustment_for_coolant_temperature,
                   combustion_torque_by_fuel_quantity_y_axis,combustion_torque_by_fuel_quantity_grid,
                   6);
   engine_zero_fuel_base_friction_torque =
        cm848_dualAxisTableInterpolation
-                 (&protection_rpm_correction_interp_state,engine_speed_state.filtered_engine_speed,
-                  combustion_torque_by_fuel_quantity_x_axis,friction_fueling,
-                  combustion_torque_by_fuel_quantity_y_axis,combustion_torque_by_fuel_quantity_grid,
-                  6);
+                 (&protection_rpm_correction_cached_axis_offset,
+                  engine_speed_state.filtered_engine_speed,combustion_torque_by_fuel_quantity_x_axis
+                  ,friction_fueling,combustion_torque_by_fuel_quantity_y_axis,
+                  combustion_torque_by_fuel_quantity_grid,6);
   engine_friction_torque =
        friction_torque_adjustment_for_coolant_temperature - engine_zero_fuel_base_friction_torque;
   engine_no_load_torque = engine_friction_torque + pumping_torque_adjustment;
@@ -70928,7 +70986,7 @@ void cm848_calculateFrictionNoLoadAndNetMachineTorque(void)
     wVar1 = 0;
   }
   wVar1 = cm848_dualAxisTableInterpolation
-                    (&protection_rpm_correction_interp_state,
+                    (&protection_rpm_correction_cached_axis_offset,
                      engine_speed_state.filtered_engine_speed,
                      combustion_torque_by_fuel_quantity_x_axis,wVar1,
                      combustion_torque_by_fuel_quantity_y_axis,
@@ -70946,7 +71004,7 @@ void cm848_calculateFrictionNoLoadAndNetMachineTorque(void)
 void cm848_initThrottleRateFilterState(void)
 
 {
-  protection_rpm_correction_interp_state = 2;
+  protection_rpm_correction_cached_axis_offset = 2;
   DAT_003fcbfc = 2;
   return;
 }
@@ -78228,11 +78286,11 @@ void initFuelCorrectionTableParams(void)
 void cm848_monitorGovernorPressureSensorOffset(void)
 
 {
-  if ((byte)(j1939_fault_state_cycle_divider + 1) < 5) {
-    j1939_fault_state_cycle_divider = j1939_fault_state_cycle_divider + 1;
+  if ((byte)(governor_pressure_rationality_cycle_divider + 1) < 5) {
+    governor_pressure_rationality_cycle_divider = governor_pressure_rationality_cycle_divider + 1;
     return;
   }
-  j1939_fault_state_cycle_divider = 0;
+  governor_pressure_rationality_cycle_divider = 0;
   if ((((((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x800) != 0) ||
         ((system_status_flags_t_003fe974.fault_detected_bits_288_to_303 & 0x1000) != 0)) ||
        ((system_status_flags_t_003fe974.fault_detected_bits_320_to_335 & 0x100) != 0)) ||
@@ -78240,17 +78298,18 @@ void cm848_monitorGovernorPressureSensorOffset(void)
        ((system_status_flags_t_003fe974.fault_detected_bits_80_to_95 & 0x800) != 0)))) ||
      ((((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 1) != 0 ||
        (((fault_detected_bits_384_to_399 & 0x80) != 0 ||
-        ((fault_detected_bits_384_to_399 & 0x100) != 0)))) || (j1939_fault_state == 4)))) {
-    j1939_fault_state_cycle_divider = 0;
-    j1939_fault_state = 4;
+        ((fault_detected_bits_384_to_399 & 0x100) != 0)))) ||
+      (governor_pressure_rationality_monitor_state == 4)))) {
+    governor_pressure_rationality_cycle_divider = 0;
+    governor_pressure_rationality_monitor_state = 4;
     return;
   }
   if ((diagnostic_monitor_complete_bits & 0x1000) != 0) {
-    j1939_fault_state_cycle_divider = 0;
+    governor_pressure_rationality_cycle_divider = 0;
     return;
   }
   if ((switch_input_state_bits[2] & 0x10) == 0) {
-    j1939_load_protection_fault_reported_flag = 0;
+    governor_pressure_rationality_tested_in_park_neutral_flag = 0;
   }
   else if ((((((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x10) == 0) &&
              (fuel_demand_control_t_0040a57a.calculated <
@@ -78263,9 +78322,9 @@ void cm848_monitorGovernorPressureSensorOffset(void)
             (((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x800) == 0 &&
              (((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x4000) == 0 &&
               ((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x8000) == 0))))))))
-          && ((j1939_load_protection_fault_reported_flag == 0 &&
+          && ((governor_pressure_rationality_tested_in_park_neutral_flag == 0 &&
               (monitor_enabling_conditions_met.governor_pressure_sensor_offset != 0)))) {
-    j1939_fault_state = 1;
+    governor_pressure_rationality_monitor_state = 1;
     governor_pressure_rationality_timer = governor_pressure_rationality_timer + 1;
     if ((governor_pressure < governor_pressure_rationality_maximum_pressure) &&
        (governor_pressure_rationality_minimum_pressure <= governor_pressure)) {
@@ -78273,24 +78332,24 @@ void cm848_monitorGovernorPressureSensorOffset(void)
            system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0xffdf;
       fault_registered_bits_144_to_159 = fault_registered_bits_144_to_159 & 0xffdf;
       governor_pressure_rationality_fail_count = 0;
-      j1939_fault_state = 2;
+      governor_pressure_rationality_monitor_state = 2;
     }
     else {
       if (governor_pressure_rationality_timer <= governor_pressure_rationality_maximum_time)
       goto LAB_0051ae7c;
       governor_pressure_rationality_fail_count = governor_pressure_rationality_fail_count + 1;
-      j1939_load_protection_fault_reported_flag = 1;
+      governor_pressure_rationality_tested_in_park_neutral_flag = 1;
       if (governor_pressure_rationality_fail_count <= governor_pressure_rationality_fail_count_limit
          ) goto LAB_0051ae7c;
       system_status_flags_t_003fe974.fault_detected_bits_144_to_159 =
            system_status_flags_t_003fe974.fault_detected_bits_144_to_159 | 0x20;
-      j1939_fault_state = 3;
+      governor_pressure_rationality_monitor_state = 3;
       if ((monitor_pending_readiness_code_cal & 0x1000) != 0) {
         monitor_pending_readiness_code_cal = monitor_pending_readiness_code_cal & 0xffffefff;
         goto LAB_0051ae7c;
       }
     }
-    j1939_load_protection_fault_reported_flag = 1;
+    governor_pressure_rationality_tested_in_park_neutral_flag = 1;
     monitor_readiness_code_cal = monitor_readiness_code_cal & 0xffffefff;
     goto LAB_0051ae7c;
   }
@@ -78298,7 +78357,8 @@ void cm848_monitorGovernorPressureSensorOffset(void)
 LAB_0051ae7c:
   if (((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x20) ==
        (fault_previous_bits_144_to_159 & 0x20)) &&
-     ((j1939_fault_state == 2 || (j1939_fault_state == 3)))) {
+     ((governor_pressure_rationality_monitor_state == 2 ||
+      (governor_pressure_rationality_monitor_state == 3)))) {
     diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x1000;
   }
   return;
@@ -78307,18 +78367,21 @@ LAB_0051ae7c:
 
 
 //
-// Function: initHpcr_FaultCounters @ 0x0051aecc
+// Function: cm848_initializeGovernorPressureTrackingMonitor @ 0x0051aecc
 //
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Initializes the P1756 / P1757 governor pressure tracking monitor
+   (cm848_monitorGovernorPressureTracking): both check states (e2m 8C58 +2 / +8) to not run, the
+   mid-range fault reported flag and the rate divider to 0 (was initHpcr_FaultCounters) */
 
-void initHpcr_FaultCounters(void)
+void cm848_initializeGovernorPressureTrackingMonitor(void)
 
 {
   governor_pressure_zero_check_state = 0;
   governor_pressure_mid_range_check_state = 0;
-  _protection_coldStart_channelB_fault_reported_flag = 0;
-  protection_coldStart_eval_cycle_count = 0;
+  _governor_pressure_mid_range_check_fault_reported_flag = 0;
+  governor_pressure_tracking_cycle_divider = 0;
   return;
 }
 
@@ -78337,8 +78400,8 @@ void initHpcr_FaultCounters(void)
 void cm848_monitorGovernorPressureTracking(void)
 
 {
-  if (protection_coldStart_eval_cycle_count == 4) {
-    protection_coldStart_eval_cycle_count = 0;
+  if (governor_pressure_tracking_cycle_divider == 4) {
+    governor_pressure_tracking_cycle_divider = 0;
     if (((((((switch_input_state_bits[2] & 0x10) == 0) &&
            ((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x10) == 0)) &&
           (fuel_demand_control_t_0040a57a.calculated <=
@@ -78351,7 +78414,7 @@ void cm848_monitorGovernorPressureTracking(void)
            (int)(uint)governor_pressure_check_maximum_transmission_temperature)) &&
          (((int)(uint)governor_pressure_check_minimum_transmission_temperature <=
            (int)(short)transmission_temperature_sensor_filtered &&
-          (((logical_output_request_bits_16_to_23.reserved_bit_0 != 0 &&
+          (((logical_output_request_bits_16_to_23.transmission_relay_request != 0 &&
             (monitor_enabling_conditions_met.governor_pressure_tracking != 0)) &&
            ((diagnostic_monitor_complete_bits & 0x10000000) == 0)))))) &&
         ((engine_state == ENGINE_STATE_RUNNING && ((transmission_control_flags.mode_flags & 4) == 0)
@@ -78374,11 +78437,11 @@ void cm848_monitorGovernorPressureTracking(void)
       }
       if ((vehicle_speed != 0) ||
          (governor_pressure_zero_check_target_high_limit < governor_pressure_target)) {
-        protection_coldStart_channelA_window_active_flag = 0;
+        governor_pressure_zero_check_window_tested_flag = 0;
       }
       if ((((vehicle_speed == 0) &&
            (governor_pressure_target <= governor_pressure_zero_check_target_high_limit)) &&
-          (protection_coldStart_channelA_window_active_flag == 0)) &&
+          (governor_pressure_zero_check_window_tested_flag == 0)) &&
          (((governor_pressure_zero_check_state == 0 || (governor_pressure_zero_check_state == 1)) ||
           (governor_pressure_zero_check_state == 3)))) {
         governor_pressure_zero_check_state = 1;
@@ -78389,7 +78452,7 @@ void cm848_monitorGovernorPressureTracking(void)
             if (governor_pressure_zero_check_debounce_count_limit <
                 governor_pressure_zero_check_debounce_count) {
               governor_pressure_zero_check_debounce_count = 0;
-              protection_coldStart_channelA_window_active_flag = 1;
+              governor_pressure_zero_check_window_tested_flag = 1;
               if (governor_pressure_zero_check_fail_count <
                   governor_pressure_zero_check_fail_count_limit) {
                 governor_pressure_zero_check_fail_count =
@@ -78412,7 +78475,7 @@ void cm848_monitorGovernorPressureTracking(void)
             }
           }
           else {
-            protection_coldStart_channelA_window_active_flag = 1;
+            governor_pressure_zero_check_window_tested_flag = 1;
             fault_detected_bits_384_to_399 = fault_detected_bits_384_to_399 & 0xff7f;
             fault_registered_bits_384_to_399 = fault_registered_bits_384_to_399 & 0xff7f;
             governor_pressure_zero_check_state = 2;
@@ -78424,11 +78487,11 @@ void cm848_monitorGovernorPressureTracking(void)
       }
       if ((governor_pressure_mid_range_check_target_high_limit < governor_pressure_target) ||
          (governor_pressure_target < governor_pressure_mid_range_check_target_low_limit)) {
-        protection_coldStart_channelB_window_active_flag = 0;
+        governor_pressure_mid_range_check_window_tested_flag = 0;
       }
       if ((((governor_pressure_target <= governor_pressure_mid_range_check_target_high_limit) &&
            (governor_pressure_mid_range_check_target_low_limit <= governor_pressure_target)) &&
-          (protection_coldStart_channelB_window_active_flag == 0)) &&
+          (governor_pressure_mid_range_check_window_tested_flag == 0)) &&
          (((governor_pressure_mid_range_check_state == 0 ||
            (governor_pressure_mid_range_check_state == 1)) ||
           (governor_pressure_mid_range_check_state == 3)))) {
@@ -78440,7 +78503,7 @@ void cm848_monitorGovernorPressureTracking(void)
                  governor_pressure_mid_range_check_debounce_count + 1;
             if (governor_pressure_mid_range_check_debounce_count_limit <
                 governor_pressure_mid_range_check_debounce_count) {
-              protection_coldStart_channelB_window_active_flag = 1;
+              governor_pressure_mid_range_check_window_tested_flag = 1;
               governor_pressure_mid_range_check_debounce_count = 0;
               if (governor_pressure_mid_range_check_fail_count <
                   governor_pressure_mid_range_check_fail_count_limit) {
@@ -78450,7 +78513,7 @@ void cm848_monitorGovernorPressureTracking(void)
               else {
                 fault_detected_bits_384_to_399 = fault_detected_bits_384_to_399 | 0x100;
                 governor_pressure_mid_range_check_state = 3;
-                if ((_protection_coldStart_channelB_fault_reported_flag == 0) &&
+                if ((_governor_pressure_mid_range_check_fault_reported_flag == 0) &&
                    ((fault_previous_bits_384_to_399 & 0x100) == 0x100)) {
                   diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x10000000;
                   if ((monitor_pending_readiness_code_cal & 0x10000000) == 0) {
@@ -78460,7 +78523,7 @@ void cm848_monitorGovernorPressureTracking(void)
                     monitor_pending_readiness_code_cal =
                          monitor_pending_readiness_code_cal & 0xefffffff;
                   }
-                  _protection_coldStart_channelB_fault_reported_flag = 1;
+                  _governor_pressure_mid_range_check_fault_reported_flag = 1;
                 }
               }
             }
@@ -78472,7 +78535,7 @@ void cm848_monitorGovernorPressureTracking(void)
             if ((fault_previous_bits_384_to_399 & 0x100) == 0) {
               monitor_readiness_code_cal = monitor_readiness_code_cal & 0xefffffff;
               diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x10000000;
-              protection_coldStart_channelB_window_active_flag = 1;
+              governor_pressure_mid_range_check_window_tested_flag = 1;
             }
           }
         }
@@ -78483,7 +78546,7 @@ void cm848_monitorGovernorPressureTracking(void)
     }
   }
   else {
-    protection_coldStart_eval_cycle_count = protection_coldStart_eval_cycle_count + 1;
+    governor_pressure_tracking_cycle_divider = governor_pressure_tracking_cycle_divider + 1;
   }
   return;
 }
@@ -78846,7 +78909,7 @@ void cm848_monitorConverterClutchAndOverdrivePerformance(void)
     protection_output_rate_counter = 0;
     return;
   }
-  if (logical_output_request_bits_16_to_23.reserved_bit_0 == 0) {
+  if (logical_output_request_bits_16_to_23.transmission_relay_request == 0) {
     protection_fuel_demand_prev = wVar7;
     protection_output_rate_counter = 0;
     return;
@@ -79116,7 +79179,7 @@ void cm848_calibrateGovernorPressureSensorOffset(void)
                   transmission_control_flags.request_flags = bVar2, bVar1 != 0)) &&
                  (governor_pressure_offset_calibration_minimum_engine_speed <
                   engine_speed_state.filtered_engine_speed)) &&
-                (logical_output_request_bits_16_to_23.reserved_bit_0 != 0)) {
+                (logical_output_request_bits_16_to_23.transmission_relay_request != 0)) {
           cm848_learnGovernorPressureSensorOffset();
         }
       }
@@ -79397,7 +79460,7 @@ void cm848_controlGovernorPressureSolenoid(void)
       }
       else {
         wVar2 = lookupTableInterpolation
-                          (&governor_pressure_temperature_gain_percent_interp_state,
+                          (&governor_pressure_temperature_gain_percent_cached_axis_offset,
                            transmission_temperature_in_use,
                            governor_pressure_temperature_gain_percent_axis,
                            governor_pressure_temperature_gain_percent_values,1);
@@ -79473,7 +79536,7 @@ void cm848_initializeGovernorPressureControl(void)
 
 {
   DAT_003fcf08 = 2;
-  governor_pressure_temperature_gain_percent_interp_state = 2;
+  governor_pressure_temperature_gain_percent_cached_axis_offset = 2;
   if ((governor_pressure_solenoid_output_channel_cal != 0) &&
      (governor_pressure_solenoid_output_channel_cal < 0x33)) {
     (**(code **)(&output_channel_driver_table_enable +
@@ -89377,7 +89440,7 @@ void cm848_calculatePilotInjectionQuantity(void)
                      ,4);
   if (combustion_chi_lower_map_number == 1) {
     unaff_r25 = cm848_dualAxisTableInterpolation
-                          (&timing_limit_boost_blend_interp_state,
+                          (&timing_limit_boost_blend_cached_axis_offset,
                            injection_quantity_pilot_engine_speed_with_hysteresis,
                            injection_quantity_pilot_map_1_x_axis,
                            injection_quantity_pilot_fuel_demand_with_hysteresis,
@@ -89386,7 +89449,7 @@ void cm848_calculatePilotInjectionQuantity(void)
   }
   else if (combustion_chi_lower_map_number == 2) {
     unaff_r25 = cm848_dualAxisTableInterpolation
-                          (&timing_limit_boost_blend_interp_state,
+                          (&timing_limit_boost_blend_cached_axis_offset,
                            injection_quantity_pilot_engine_speed_with_hysteresis,
                            injection_quantity_pilot_map_2_x_axis,
                            injection_quantity_pilot_fuel_demand_with_hysteresis,
@@ -89395,7 +89458,7 @@ void cm848_calculatePilotInjectionQuantity(void)
   }
   else if (combustion_chi_lower_map_number == 3) {
     unaff_r25 = cm848_dualAxisTableInterpolation
-                          (&timing_limit_boost_blend_interp_state,
+                          (&timing_limit_boost_blend_cached_axis_offset,
                            injection_quantity_pilot_engine_speed_with_hysteresis,
                            injection_quantity_pilot_map_3_x_axis,
                            injection_quantity_pilot_fuel_demand_with_hysteresis,
@@ -89404,7 +89467,7 @@ void cm848_calculatePilotInjectionQuantity(void)
   }
   else if (combustion_chi_lower_map_number == 4) {
     unaff_r25 = cm848_dualAxisTableInterpolation
-                          (&timing_limit_boost_blend_interp_state,
+                          (&timing_limit_boost_blend_cached_axis_offset,
                            injection_quantity_pilot_engine_speed_with_hysteresis,
                            injection_quantity_pilot_map_4_x_axis,
                            injection_quantity_pilot_fuel_demand_with_hysteresis,
@@ -89413,7 +89476,7 @@ void cm848_calculatePilotInjectionQuantity(void)
   }
   if (combustion_chi_upper_map_number == 1) {
     unaff_r23 = cm848_dualAxisTableInterpolation
-                          (&timing_limit_boost_blend_interp_state,
+                          (&timing_limit_boost_blend_cached_axis_offset,
                            injection_quantity_pilot_engine_speed_with_hysteresis,
                            injection_quantity_pilot_map_1_x_axis,
                            injection_quantity_pilot_fuel_demand_with_hysteresis,
@@ -89422,7 +89485,7 @@ void cm848_calculatePilotInjectionQuantity(void)
   }
   else if (combustion_chi_upper_map_number == 2) {
     unaff_r23 = cm848_dualAxisTableInterpolation
-                          (&timing_limit_boost_blend_interp_state,
+                          (&timing_limit_boost_blend_cached_axis_offset,
                            injection_quantity_pilot_engine_speed_with_hysteresis,
                            injection_quantity_pilot_map_2_x_axis,
                            injection_quantity_pilot_fuel_demand_with_hysteresis,
@@ -89431,7 +89494,7 @@ void cm848_calculatePilotInjectionQuantity(void)
   }
   else if (combustion_chi_upper_map_number == 3) {
     unaff_r23 = cm848_dualAxisTableInterpolation
-                          (&timing_limit_boost_blend_interp_state,
+                          (&timing_limit_boost_blend_cached_axis_offset,
                            injection_quantity_pilot_engine_speed_with_hysteresis,
                            injection_quantity_pilot_map_3_x_axis,
                            injection_quantity_pilot_fuel_demand_with_hysteresis,
@@ -89440,7 +89503,7 @@ void cm848_calculatePilotInjectionQuantity(void)
   }
   else if (combustion_chi_upper_map_number == 4) {
     unaff_r23 = cm848_dualAxisTableInterpolation
-                          (&timing_limit_boost_blend_interp_state,
+                          (&timing_limit_boost_blend_cached_axis_offset,
                            injection_quantity_pilot_engine_speed_with_hysteresis,
                            injection_quantity_pilot_map_4_x_axis,
                            injection_quantity_pilot_fuel_demand_with_hysteresis,
@@ -89716,7 +89779,7 @@ void cm848_initializePilotInjectionQuantityState(void)
   DAT_003fd12e = 2;
   DAT_003fd130 = 2;
   DAT_003fd132 = 2;
-  timing_limit_boost_blend_interp_state = 2;
+  timing_limit_boost_blend_cached_axis_offset = 2;
   DAT_003fd136 = 2;
   DAT_003fd138 = 2;
   DAT_003fd13a = 2;
@@ -96771,12 +96834,12 @@ void cm848_mainLoopMonitor(void)
       diag_faultMatch_outputCheck_update
                 (0x10,0x16,0x88,0x89,&DAT_003fd29f,&DAT_003fd2a0,&DAT_003fd2a1,&DAT_003fd2a2,
                  &DAT_003fd2a3);
-      if (logical_output_request_bits_16_to_23.reserved_bit_0 != 0) {
+      if (logical_output_request_bits_16_to_23.transmission_relay_request != 0) {
         diag_faultMatch_outputCheck_update
                   (0x11,0x17,0x8a,0x8b,&DAT_003fd2a5,&DAT_003fd2a6,&DAT_003fd2a7,&DAT_003fd2a8,
                    &DAT_003fd2a9);
       }
-      if (logical_output_request_bits_16_to_23.reserved_bit_0 != 0) {
+      if (logical_output_request_bits_16_to_23.transmission_relay_request != 0) {
         diag_faultMatch_outputCheck_update
                   (0x12,0x18,0x8c,0x8d,&DAT_003fd2ab,&DAT_003fd2ac,&DAT_003fd2ad,&DAT_003fd2ae,
                    &DAT_003fd2af);
