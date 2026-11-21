@@ -27,7 +27,7 @@ pci_diagnostic_response_t,0x0040b492,data_1,byte,1,Reply byte 3: sub-function ec
 pci_diagnostic_response_t,0x0040b492,data_2,byte,1,Reply byte 4: the 7F reply code (0x11 / 0x12 / 0x33 / 0x35 / 0x36 / 0x37 / 0x40 / 0x42 / 0x52 / 0x90 / 0xC0) / seed high byte / 0xA4 memory byte 2 / 0x62 in the E1 reply (was error_code),,verified
 pci_diagnostic_response_t,0x0040b492,data_3,byte,1,Reply byte 5: seed low byte / 0xA4 memory byte 3 / otherwise 0 - never a length (was data_length),,verified
 pci_diagnostic_response_t,0x0040b492,data_4_to_7,byte,4,Reply bytes 6 on: element 0 = 0xA4 memory byte 4; elements 1-3 unused; element 4 (0x40b49b) is the TX[10] descriptor status byte (0x80 at init) - split into data_4_to_7 byte[4] + status (was data),DAT_0040b497-0x49b,verified
-pci_diagnostic_response_t,0x0040b492,status,byte,1,PCI TX[10] descriptor status byte (hpcr_initJ1939BufferValues writes 0x80 / cm848_completePciFrame ORs the completion bits in),,verified
+pci_diagnostic_response_t,0x0040b492,status,byte,1,PCI TX[10] descriptor status byte (cm848_initializePciMessageStatusBytes writes 0x80 / cm848_completePciFrame ORs the completion bits in),,verified
 pci_diagnostic_response_t,0x0040b492,transmit_timer,word,2,This buffer is pci_transmit_message_table[10] (header 0x26 diagnostic response) and this word is its timer (sth): writing 1 queues the response on the PCI bus (was response_pending byte),,verified
 # Fuel Demand Control State - fuel demand calculation and rate limiting
 # Used by calculateFuelDemandValue and related fuel control functions
@@ -1448,7 +1448,7 @@ dual_axis_table_dims_t,0x003fa87c,,,,governor offset table B - second instance,,
 # Populated by j1939HandlePgn65261CruiseControlSetup; values scaled to km/h via *0xa1/100>>8; 0xff = not available
 # Byte->SPN map from the j1939 PGN/SPN database (PGN 65261 spns 74/87/88)
 j1939_ccss_tx_payload_t,0x003fab0a,max_vehicle_speed_limit,byte,1,SPN 74 Maximum Vehicle Speed Limit (km/h); from j1939_cruise_speed_setpoint; gate j1939_governor_feature_cal&0x80,,verified
-j1939_ccss_tx_payload_t,0x003fab0a,cruise_high_set_limit_speed,byte,1,SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by cruise_speed_high_limit,,verified
+j1939_ccss_tx_payload_t,0x003fab0a,cruise_high_set_limit_speed,byte,1,SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by cruise_maximum_road_speed_cal,,verified
 j1939_ccss_tx_payload_t,0x003fab0a,cruise_low_set_limit_speed,byte,1,SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from DAT_0005c28a,,verified
 j1939_ccss_tx_payload_t,0x003fab0a,reserved3,byte,1,reserved - init 0xff (not available),,verified
 j1939_ccss_tx_payload_t,0x003fab0a,reserved4,byte,1,reserved - init 0xff (not available),,verified

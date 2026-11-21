@@ -20,6 +20,7 @@ import subprocess
 import sys
 
 worklist_path, repo, map_path = sys.argv[1:4]
+repo = os.path.abspath(repo)  # the e2m lookup runs with cwd=firmware: a relative repo path broke it (10b part 1)
 dry = "--dry-run" in sys.argv
 work = runpy.run_path(worklist_path)
 GLOBALS, FUNCTIONS = work.get("GLOBALS", []), work.get("FUNCTIONS", [])
@@ -129,7 +130,7 @@ for address, new, plate in FUNCTIONS:
     old_plate = fr[address][2] if len(fr[address]) > 2 else ""
     if new in taken:
         problems.append(f"{address} {new} exists")
-    if not re.match(r"^(cm848|hpcr|mpc555)_[a-z][A-Za-z0-9]*$", new):
+    if not re.match(r"^(cm848|hpcr|mpc555)_[a-z][A-Za-z0-9]*$", new) and not re.match(r"^cm848_sensorChannel[0-9]+_[a-z][A-Za-z0-9]*$", new):
         problems.append(f"{address} function name format: {new}")
     if re.search(r"(?<![A-Za-z0-9_])" + re.escape(old) + r"(?![A-Za-z0-9_])", shared_text) and address not in NOT_TWINS:
         problems.append(f"{address} old function name {old} is in CM550 / the cross-firmware maps")

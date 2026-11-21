@@ -109,7 +109,7 @@ typedef enum {
     FUELING_STATE_TSC1_TORQUE_CONTROL = 1,  /* cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is etc1_torque_limit_calc - e2m label JCOMTORQ (CHR_CC_11.45.01.07 0x01) */
     FUELING_STATE_TSC1_SPEED_CONTROL = 2,  /* cm848_engineMode_reset: J1939 TSC1 override control mode 1 (speed); the all-speed governor PID runs on etc1_capped_speed_target with the ROM coefficient record - e2m label JCOMSPED (CHR_CC_11.45.01.07 0x02) */
     FUELING_STATE_POWER_TAKE_OFF = 4,  /* operating_mode_governor_output.mode_code only (cm848_selectPowerTakeOffOrUserFueling): power_take_off_governor_fuel_demand replaces the user fueling while power_take_off_governor_active_flag is 1 and j1939_governor_feature_cal bit 0x10 is set (modes 5 / 6 always; 7 / 8 / 30 unless the user fuel is larger and governor_feature_config_word bit 0x2000 lets the throttle override). Code-proven: the governor's state goes out as J1939 SPN 976 (CCVS1) and OBD-II PID 0x1E - e2m label PTO (CHR_CC_11.45.01.07 0x04) */
-    FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_setEngineOperatingMode5: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified - e2m label USERCOMD (CHR_CC_11.45.01.07 0x05) */
+    FUELING_STATE_CALIBRATED_FIXED_FUEL_DEMAND = 5,  /* cm848_selectUserCommandedFueling: bit 0 of engine_mode_control_flags (0 in every dump) makes the governor output a calibrated fuel demand; the feature behind it is not identified - e2m label USERCOMD (CHR_CC_11.45.01.07 0x05) */
     FUELING_STATE_ACCELERATOR_PEDAL_FAULT = 6,  /* cm848_transitionEngineOperatingMode: accelerator pedal input fault conditions; cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit ramps the fuel only while the mode is 6 - e2m label LIMPHOME (CHR_CC_11.45.01.07 0x06) */
     FUELING_STATE_VARIABLE_SPEED_GOVERNOR = 7,  /* cm848_initEngineOperatingMode: variable_speed_governor_selected_flag = 1; the pedal sets a speed request and the all-speed governor PID runs (dump: 7) - e2m label ASGTHROT (CHR_CC_11.45.01.07 0x07) */
     FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE = 8,  /* cm848_initEngineOperatingState: left when no other selector claimed the pass; the governor output comes from cm848_calculateDualAxisFuelLimit (engine speed x tracked fuel demand tables) - e2m label FOUR_D (CHR_CC_11.45.01.07 0x08) */
@@ -1236,7 +1236,7 @@ struct pci_diagnostic_response_t {
     uint8_t data_2;  /* Reply byte 4: the 7F reply code (0x11 / 0x12 / 0x33 / 0x35 / 0x36 / 0x37 / 0x40 / 0x42 / 0x52 / 0x90 / 0xC0) / seed high byte / 0xA4 memory byte 2 / 0x62 in the E1 reply (was error_code) */
     uint8_t data_3;  /* Reply byte 5: seed low byte / 0xA4 memory byte 3 / otherwise 0 - never a length (was data_length) */
     uint8_t data_4_to_7[4];  /* Reply bytes 6 on: element 0 = 0xA4 memory byte 4; elements 1-3 unused; element 4 (0x40b49b) is the TX[10] descriptor status byte (0x80 at init) - split into data_4_to_7 byte[4] + status (was data) */
-    uint8_t status;  /* PCI TX[10] descriptor status byte (hpcr_initJ1939BufferValues writes 0x80 / cm848_completePciFrame ORs the completion bits in) */
+    uint8_t status;  /* PCI TX[10] descriptor status byte (cm848_initializePciMessageStatusBytes writes 0x80 / cm848_completePciFrame ORs the completion bits in) */
     uint16_t transmit_timer;  /* This buffer is pci_transmit_message_table[10] (header 0x26 diagnostic response) and this word is its timer (sth): writing 1 queues the response on the PCI bus (was response_pending byte) */
 };
 
@@ -2480,7 +2480,7 @@ struct dual_axis_table_dims_t {
 
 struct j1939_ccss_tx_payload_t {
     uint8_t max_vehicle_speed_limit;  /* SPN 74 Maximum Vehicle Speed Limit (km/h); from j1939_cruise_speed_setpoint; gate j1939_governor_feature_cal&0x80 */
-    uint8_t cruise_high_set_limit_speed;  /* SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by cruise_speed_high_limit */
+    uint8_t cruise_high_set_limit_speed;  /* SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by cruise_maximum_road_speed_cal */
     uint8_t cruise_low_set_limit_speed;  /* SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from DAT_0005c28a */
     uint8_t reserved3;  /* reserved - init 0xff (not available) */
     uint8_t reserved4;  /* reserved - init 0xff (not available) */

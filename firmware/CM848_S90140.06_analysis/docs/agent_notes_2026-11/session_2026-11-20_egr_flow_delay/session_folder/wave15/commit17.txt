@@ -1,0 +1,32 @@
+cm848: wave 15 follow-up 2 - J1939 priorities / DM10 / anti-theft, A/C clutch, injector driver, pedal faults
+
+More of the agents' leads, verified in the main session (evidence_W15.py: each row's e2m record and code
+lines; the function bodies named in the worklists) and applied through the same gate. Label-only
+(reverse_names.py EQUIVALENT): 50 globals, 17 functions.
+
+- J1939: the last default priorities of e2m 1254 get _cal and the PGN their header builds (ACKM 59392,
+  DM1 65226, DM2 65227, the cruise pair CCVS1 65265 / CCSS 65261); 0xfed200 is PGN 65234 = DM10 in the
+  J1939 database (DM11 is 65235), so j1939_dm11_* -> j1939_dm10_tx_message / j1939_pgn65234_priority_cal and
+  cm848_initPgn65234Dm11Handler -> cm848_initializePgn65234Dm10Handler (the e2m record already said DM10);
+  the descriptors with the wrong PGN (56360 -> 56320, 57344 -> 65504); the e2m 117F anti-theft words and
+  their sender / buffer functions; PGN 56832 is Reset (cm848_j1939HandlePgn56832Reset); 117F +E is the
+  current horsepower peak fueling, +10 the cruise maximum road speed; the retarder configuration's
+  maximum speed (PGN 65249 point 2) and the builder's plate in J1939 point order.
+- A/C clutch (8A14: 0 = BR truck, 1 = DR truck, the dump holds 1): the dispatcher and both algorithms
+  (were hpcr_fuel_mode_state_transition / engine_protection_*), the low rpm off / on time rows.
+- Injector driver (8041): the MIOS PWM 16-19 periods and the recharge current period (TPU-A channel 14),
+  cm848_loadInjectorDriverCalibration; the booster capacitor voltage channels 54 / 55 and their wrappers,
+  named by when they run (the _init ones run every pass from cm848_periodicTaskSet_outputs, the _process
+  ones once from cm848_applicationMain - the repo's known suffix inversion).
+- Accelerator pedal faults (1048) and cm848_monitorAcceleratorPedalIdleValidationFaults; the supervisor
+  chip overspeed limit; the engine protection shutdown counters (10B3); cruise droop / gain set / top droop
+  offset rows, the fuel ramp-down word, the tire size (132C) and the previous drivetrain ratio; the
+  injection limit counters (804A / 804B) and their monitor; the cylinder balance coolant threshold; the
+  fault to erase (1080 +0); cm848_integrateCruiseRpmRatioChange, cm848_initializePciMessageStatusBytes,
+  cm848_selectUserCommandedFueling.
+
+Fixes to 10b part 1's comments: the hand-worklist apply looked the e2m records up from the wrong
+directory, so 90 hand-renamed rows got their leading e2m record only now (comments do not render).
+Stale references fixed in a plate, an enum comment and two struct comments.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
