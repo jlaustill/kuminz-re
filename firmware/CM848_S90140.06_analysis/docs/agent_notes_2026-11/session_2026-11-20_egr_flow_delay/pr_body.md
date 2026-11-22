@@ -484,7 +484,9 @@ state enum, the flag bytes.**
 - **Stage B (756f2e0, types):** the fault log entry and the two EEPROM logs, the fault-log loop's current-channel
   pointers, and stage A's five `i16` fields corrected to `short`.
 - **Stage C (093c501, label-only):** the module's 11 functions and 9 working words, from the typed bodies.
-- **Stage D (cc49e74, tooling):** `ApplyStructures.java` maps `i16` / `sword` and warns on an unknown field type.
+- **Stage D (cc49e74, tooling):** `ApplyStructures.java` maps `i16` / `sword` and warns on an unknown field type
+  (a scratch positive control confirmed both).
+- **Stage E (f6cecc2, types, review):** the engine protection thresholds are `short` / `short*`: every load is `lha`.
 
 ## Test plan
 
@@ -577,7 +579,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
-- [x] Round 21: stages A and B pass a layout / containment / artifact gate (A was piloted first); stage C is EQUIVALENT; stage D builds CM550 and CM848 identical before and after.
+- [x] Round 21: stages A and B pass a layout / containment / artifact gate (A was piloted first); stage C is EQUIVALENT; stage D builds CM550 and CM848 identical before and after, and its positive control shows both new paths; stage E's gate passes (the five readers, no casts left).
 - [x] Round 20: stages A, C and E are EQUIVALENT; stages B, D and F pass the mask normalizer (the count gate: per word and mask, old masked reads = new field reads; pieces 464 -> 464).
 - [x] Round 19: stages A, C and D are EQUIVALENT; stage B's enum proof shows only the substitutions (plus the cache's two users).
 - [x] Round 18: stages B and D are EQUIVALENT; stage A's cast-normalized diff and stage C's diff show only the intended effects.

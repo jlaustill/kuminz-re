@@ -1,0 +1,18 @@
+cm848: round 21 closing - docs, the session archive, verify
+
+- task 046, the round 21 section:
+  - the module and its three record blocks, and stages A-D;
+  - the struct-importer method: no i16 in structure_definitions.csv; a struct gate needs a layout site of every field
+    type; pilot a struct with misaligned 4-byte fields;
+  - hpcr_initializeEngineProtection vs task 025's earlier note ('SensorChannel overclaims');
+  - the leads: the configuration flags word as a bitfield, DAT_0040a78c and the module's other unnamed words, the
+    10DA overspeed log.
+- PR body: the round 21 entry and test line; the open list now reads "after round 21".
+- todo line 046.
+- The session archive:
+  - session_folder/round21/ (35 files: generators, gates, worklists, the importer patch, evidence dumps);
+  - the round 21 CM848 / CM550 build and verify logs in the large-files tarball;
+  - the PR body copy and the README entry.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

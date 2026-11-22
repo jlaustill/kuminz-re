@@ -1227,7 +1227,13 @@ Scripts are in `session_folder/round21/`.
   - the working words that were `governor_faultDerate_*` / `fault_channel_*`;
   - the override lamp flag (e2m 10B1 +19).
 - **Stage D (cc49e74, tooling):** `ApplyStructures.java` maps `i16` / `sword` to short and warns when a field type is
-  unknown; such a field used to become byte without a word. CM550 and CM848 build identical before and after.
+  unknown; such a field used to become byte without a word. CM550 and CM848 build identical before and after. A
+  scratch positive control (reverted) confirmed both paths: `i16` on a field rendered unchanged, and a made-up type
+  printed the warning (twice: the importer looks types up in two passes).
+- **Stage E (f6cecc2, types, after the review):** configuration +0x0A / +0x0C / +0x10 / +0x12 are short and the three
+  threshold pointers short*. Every load is `lha`: directly in the shutdown function and the threshold test, and
+  through the pointers. The e2m's NU loses to the loads. The input pointer stays `word*`, because it is read
+  unsigned for the switch masks and signed for the compares. The (short) casts on those fields are gone.
 - **Methods:**
   - `structure_definitions.csv` field types: the importer knows byte / word / dword / short / ushort / int / uint /
     pointer, `T*`, and the struct and enum names. Until stage D an unknown name became a byte array without a word:
@@ -1248,6 +1254,11 @@ Scripts are in `session_folder/round21/`.
     (`engine_protection_derateParam_priorityApply`, `fault_initBitwiseTimerMask`,
     `governor_calculateIntegratorRpmOutput`) are still guesses.
   - e2m 10DA's engine overspeed error log (+0 / +78 / +7A).
+  - The module's init chain still has guessed names. `cm848_completeEngineStartSequence` only clears the engine
+    protection shutdown state; `cm848_initSensorChannelDataStructures` and `exception_resetProtectionModeState` are
+    part of the module too.
+  - `function_definitions.csv` `int` parameters render as `dword`. Check the prototype importer for the same kind
+    of silent type mapping as the struct importer had.
 
 ## Leads (not in this PR)
 

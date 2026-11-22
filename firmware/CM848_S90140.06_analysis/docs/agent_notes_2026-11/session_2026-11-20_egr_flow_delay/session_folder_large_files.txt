@@ -111,6 +111,8 @@
   200906 build_r21b2.log
   201031 build_r21c.log
   201029 build_r21d.log
+  201033 build_r21e.log
+  201219 build_r21_control.log
   200903 build_r21_pilot.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
@@ -145,4 +147,4 @@
   402126 verify_round18.log
   402131 verify_round19.log
   402122 verify_round20.log
-  402384 verify_round21.log
+  402377 verify_round21.log

@@ -1,0 +1,23 @@
+cm848: round 21 stage E - the engine protection thresholds are signed (types, review)
+
+The advisor's review of round 21 noticed the shutdown duration thresholds still rendered with (short) casts. The loads
+decide:
+- configuration +0x10 / +0x12, the shutdown duration thresholds: lha 16(r29) / lha 18(r29) in
+  cm848_updateEngineProtectionShutdown, and lha 18(r3) / lhax in cm848_isEngineProtectionInputPastThreshold;
+- configuration +0x0A / +0x0C, the fueling minimum / maximum thresholds: read only through the state's threshold
+  pointers, and every dereference of the three threshold pointers is lha.
+So those four fields are short and the three pointers short* (+0x0E was short already). The input pointer stays word*,
+because it is read unsigned for the switch masks (lhz) and signed for the compares. The e2m says NU for the four
+fields; the loads win.
+
+Stage D's positive control (a scratch build, reverted, not committed) put i16 back on
+engine_speed_lower_limit_threshold and a made-up 'bogus32' on another field. The i16 field rendered unchanged, so the
+alias maps it to short. The bogus type printed "WARN: unknown field type 'bogus32' - using byte" (twice: the importer
+looks types up in two passes), and only that field's uses changed.
+
+Proof (prove_r21e.py): the changed functions are exactly the five readers (hpcr_initializeEngineProtection, the
+threshold test, the restart index update, the shutdown, the fault derate fuel limit). No (short) cast is left on the
+seven fields. The counts do not grow: pieces 500 -> 500, extraout_ 13, unaff_ 275, in_r 86. Headers regenerated (0
+g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

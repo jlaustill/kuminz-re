@@ -359,7 +359,8 @@ Hand work on the round 7 lead.
 - **Stage A:** `apply_r21a.py` (the three structs and the helper prototypes; `--only state` was the packing pilot),
   `refresh_r21a_plates.py`, the gate `prove_r21a.py`. **Stage B:** `apply_r21b.py` + `prove_r21b.py`, and
   `struct_type_fallbacks.py` (the field types the importer does not know). **Stage C:** `worklist_r21c.py`,
-  `apply_r21c2.py`. **Stage D:** `patch_apply_structures.py` (mind the file's CRLF line endings). **Closing:**
-  `apply_r21_closing.py`.
+  `apply_r21c2.py`. **Stage D:** `patch_apply_structures.py` (mind the file's CRLF line endings); its positive control's log is
+  `build_r21_control.log` in the large-files tarball. **Stage E:** `apply_r21e.py` + `prove_r21e.py`. **Closing:**
+  `apply_r21_closing.py`, `apply_r21_closing2.py`.
 - **Evidence:** `blocks.txt` (e2m 112E / 1152 / 1143), the per-function bodies `body_*.txt`.
 
