@@ -1971,8 +1971,8 @@ extern byte fuel_pressure_sensor_recovery_debounce_count;  // 0x003fb6f0
 extern word fuel_pressure_feedback_filter_accumulator;  // 0x003fb6f1
 extern ema_filter_state_t fuel_pressure_feedback_filter;  // 0x003fb6f3
 extern dword injector_diagnostic_word;  // 0x003fb704
-extern word injection_timing_main_cold_start_cached_axis_offset;  // 0x003fb708
-extern word injection_timing_main_cold_start_cached_axis_offset_y;  // 0x003fb70a
+extern word injection_timing_main_cranking_cached_axis_offset;  // 0x003fb708
+extern word injection_timing_main_cranking_cached_axis_offset_y;  // 0x003fb70a
 extern word injection_timing_main_coolant_factor_cached_axis_offset;  // 0x003fb70c
 extern word injection_timing_main_coolant_factor_cached_axis_offset_y;  // 0x003fb70e
 extern word injection_timing_main_intake_temperature_factor_cached_axis_offset;  // 0x003fb710
@@ -6691,7 +6691,7 @@ extern word fuel_limit_barometric_temperature_band_cached_axis_offsets[2];  // 0
 extern word fuel_limit_barometric_air_handling_fault_cached_axis_offsets[2];  // 0x003fb9d2
 extern word boost_fuel_timing_demand_filter_output;  // 0x003fb9d6
 extern word boost_pressure_timing_ema_filtered;  // 0x003fb9d8
-extern word governor_adjustment_input_table_row_count;  // 0x003fb9da
+extern word altitude_from_barometric_pressure_cached_axis_offset;  // 0x003fb9da
 extern word boost_fuel_rpm_blend_table_row_count;  // 0x003fb9f2
 extern word emission_level_cap_before_rate_limit;  // 0x003fba28
 extern word data_collector_multiple_countdown;  // 0x003fbcb0
@@ -6888,9 +6888,9 @@ extern word ambient_air_flow_filter_coefficient;  // 0x003ff07a
 extern int16_t ambient_air_temperature_default_value;  // 0x003ff07c
 extern word altitude_from_barometric_pressure_axis[17];  // 0x003ff080
 extern word altitude_from_barometric_pressure_values[17];  // 0x003ff0a2
-extern word boost_fuel_rpm_blend_scale_x_axis[20];  // 0x003ff3dc
-extern word boost_fuel_rpm_blend_scale_y_axis[17];  // 0x003ff404
-extern word boost_fuel_rpm_blend_scale_grid[304];  // 0x003ff426
+extern word ambient_relative_humidity_x_axis[20];  // 0x003ff3dc
+extern word ambient_relative_humidity_y_axis[17];  // 0x003ff404
+extern word ambient_relative_humidity_grid[304];  // 0x003ff426
 extern word turbocharger_speed_sensor_fault_set_count;  // 0x003ff6f8
 extern word turbocharger_speed_sensor_filter_constant;  // 0x003ff6fa
 extern word charge_system_transform_cosine_cached_axis_offset;  // 0x003fa150
@@ -7472,9 +7472,9 @@ extern word injection_timing_main_intake_temperature_factor_axis[13];  // 0x0006
 extern word injection_timing_main_intake_temperature_factor_values[13];  // 0x00060dbe
 extern word injection_timing_main_barometric_pressure_factor_axis[6];  // 0x00060dd8
 extern word injection_timing_main_barometric_pressure_factor_values[6];  // 0x00060de4
-extern word injection_timing_main_cold_start_x_axis[10];  // 0x00060df0
-extern word injection_timing_main_cold_start_y_axis[10];  // 0x00060e04
-extern word injection_timing_main_cold_start_grid[81];  // 0x00060e18
+extern word injection_timing_main_cranking_x_axis[10];  // 0x00060df0
+extern word injection_timing_main_cranking_y_axis[10];  // 0x00060e04
+extern word injection_timing_main_cranking_grid[81];  // 0x00060e18
 extern word injection_timing_main_coolant_angle_x_axis[14];  // 0x00060eba
 extern word injection_timing_main_coolant_angle_y_axis[12];  // 0x00060ed6
 extern word injection_timing_main_coolant_angle_grid[143];  // 0x00060eee

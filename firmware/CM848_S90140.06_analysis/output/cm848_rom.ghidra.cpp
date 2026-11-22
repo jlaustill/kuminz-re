@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 23:26:14 MST 2026
+// Generated: Sat Nov 21 23:54:26 MST 2026
 
 
 //
@@ -50480,8 +50480,8 @@ void cm848_evaluateInjectorDiagnostics(void)
 void cm848_initTimingFilterStates(void)
 
 {
-  injection_timing_main_cold_start_cached_axis_offset = 2;
-  injection_timing_main_cold_start_cached_axis_offset_y = 2;
+  injection_timing_main_cranking_cached_axis_offset = 2;
+  injection_timing_main_cranking_cached_axis_offset_y = 2;
   injection_timing_main_coolant_factor_cached_axis_offset = 2;
   injection_timing_main_coolant_factor_cached_axis_offset_y = 2;
   injection_timing_main_intake_temperature_factor_cached_axis_offset = 2;
@@ -50538,10 +50538,10 @@ void cm848_calculateMainInjectionTiming(void)
      (engine_state == ENGINE_STATE_REENTRY)) {
     injection_timing_demand =
          cm848_dualAxisTableInterpolation
-                   (&injection_timing_main_cold_start_cached_axis_offset,
-                    engine_speed_state.filtered_engine_speed,injection_timing_main_cold_start_x_axis
-                    ,sensor_readings_t_0040baf2.coolant_temp,injection_timing_main_cold_start_y_axis
-                    ,injection_timing_main_cold_start_grid,6);
+                   (&injection_timing_main_cranking_cached_axis_offset,
+                    engine_speed_state.filtered_engine_speed,injection_timing_main_cranking_x_axis,
+                    sensor_readings_t_0040baf2.coolant_temp,injection_timing_main_cranking_y_axis,
+                    injection_timing_main_cranking_grid,6);
     if (main_injection_timing_selection ==
         MAIN_INJECTION_TIMING_SELECTION_CALCULATED_PLUS_USER_INCREMENT) {
       injection_timing_adjustment_flags = injection_timing_adjustment_flags | 8;
@@ -62144,15 +62144,15 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
   }
   barometric_altitude_feet =
        lookupTableInterpolation
-                 (&governor_adjustment_input_table_row_count,barometric_pressure_reference,
-                  altitude_from_barometric_pressure_axis,altitude_from_barometric_pressure_values,2)
-  ;
+                 (&altitude_from_barometric_pressure_cached_axis_offset,
+                  barometric_pressure_reference,altitude_from_barometric_pressure_axis,
+                  altitude_from_barometric_pressure_values,2);
   DAT_0040a1a6 = barometric_pressure_reference_source;
   ambient_relative_humidity =
        cm848_dualAxisTableInterpolation
                  (&boost_fuel_rpm_blend_table_row_count,engine_speed_state.filtered_engine_speed,
-                  boost_fuel_rpm_blend_scale_x_axis,injection_quantity_combustion_reference,
-                  boost_fuel_rpm_blend_scale_y_axis,boost_fuel_rpm_blend_scale_grid,0);
+                  ambient_relative_humidity_x_axis,injection_quantity_combustion_reference,
+                  ambient_relative_humidity_y_axis,ambient_relative_humidity_grid,0);
   return;
 }
 
@@ -62167,7 +62167,7 @@ void cm848_initialization_step_3(void)
 {
   dword dVar1;
   
-  governor_adjustment_input_table_row_count = 2;
+  altitude_from_barometric_pressure_cached_axis_offset = 2;
   DAT_003fb9dc = 2;
   boost_pressure_timing_filter_state.accumulator =
        (uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered << 0x10;
@@ -62195,13 +62195,13 @@ void cm848_initialization_step_3(void)
   ambient_relative_humidity =
        cm848_dualAxisTableInterpolation
                  (&boost_fuel_rpm_blend_table_row_count,engine_speed_state.filtered_engine_speed,
-                  boost_fuel_rpm_blend_scale_x_axis,injection_quantity_combustion_reference,
-                  boost_fuel_rpm_blend_scale_y_axis,boost_fuel_rpm_blend_scale_grid,0);
+                  ambient_relative_humidity_x_axis,injection_quantity_combustion_reference,
+                  ambient_relative_humidity_y_axis,ambient_relative_humidity_grid,0);
   barometric_altitude_feet =
        lookupTableInterpolation
-                 (&governor_adjustment_input_table_row_count,barometric_pressure_reference,
-                  altitude_from_barometric_pressure_axis,altitude_from_barometric_pressure_values,2)
-  ;
+                 (&altitude_from_barometric_pressure_cached_axis_offset,
+                  barometric_pressure_reference,altitude_from_barometric_pressure_axis,
+                  altitude_from_barometric_pressure_values,2);
   ema_filter_state_t_003fb9f6.accumulator =
        (uint)charge_flow_estimate_terms.fresh_air_mass_flow_filtered << 0x10;
   ema_filter_state_t_003fb9f6.coefficient = &WORD_003ff07e;
