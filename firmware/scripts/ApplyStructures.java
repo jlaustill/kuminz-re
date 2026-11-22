@@ -38,6 +38,10 @@ public class ApplyStructures extends GhidraScript {
         TYPE_MAP.put("word", "word");
         TYPE_MAP.put("dword", "dword");
         TYPE_MAP.put("short", "short");
+        // The signed word as global_variables.csv (i16) and function_definitions.csv (sword) write it; before
+        // these aliases a struct field typed i16 fell back to byte and became byte[2] (PR #53 round 21).
+        TYPE_MAP.put("i16", "short");
+        TYPE_MAP.put("sword", "short");
         TYPE_MAP.put("ushort", "ushort");
         TYPE_MAP.put("uint16_t", "ushort");
         TYPE_MAP.put("uint32_t", "uint");
@@ -386,6 +390,8 @@ public class ApplyStructures extends GhidraScript {
                     // the byte default, so only enum-typed fields change.
                     dt = findEnum(typeName);
                     if (dt == null) {
+                        // Say so: an unknown name used to become byte (an array of them) without a word.
+                        println("  WARN: unknown field type '" + typeName + "' - using byte");
                         dt = ByteDataType.dataType;
                     }
                 }
