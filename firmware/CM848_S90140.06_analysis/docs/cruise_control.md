@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `5e007b4` (round 39).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `63489b1` (round 40).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
@@ -53,7 +53,7 @@ The ladder bands are in ROM at 0x5ab94 / 0x5abbe [review]. The `CRUISE_SWITCH_RE
 Counts in the gaps between bands also read as no button.
 
 - **Valid window:** 92 < counts < 976. Outside it, P0580 / P0581 set, checked only after learning. On a fault the channel defaults to code 1 (CANCEL). [review]
-- **Learning:** `cm848_checkCruiseSwitchLearnCondition` (0x512e70) sets `cruise_control_switches_learned_flag` on the first ON/OFF press inside the window, and cruise stays denied until then. [round 26]
+- **Learning:** `cm848_checkCruiseSwitchLearnCondition` (0x512e70) sets `cruise_control_switches_learned_flag_cal` on the first ON/OFF press inside the window, and cruise stays denied until then. [round 26]
   - The learned latch at EEPROM 0x197e reads 0 in `originals/` and in the before-HPT dump.
   - The after-HPT dumps can't show it, because HP Tuners clears that block. [review]
 - **Pin:** `ecu_pinout.md` lists C2 pin 46, circuit V37, "S/C Switch No. 1 Signal". Nobody has tied that pin to channel 47 yet.
@@ -139,7 +139,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 
 - **Where it comes from.** Switch 2 has no wire. `cm848_deriveSecondBrakeSwitchSignal` (0x511ed4) builds it when the key is on and both of these are set:
   - `algorithm_enable_flags_6_cal.not_brake_switch_diagnostic_enable` (EEPROM 0x126 mask 0x10);
-  - `cruise_control_switches_learned_flag`.
+  - `cruise_control_switches_learned_flag_cal`.
 - **What drives it.** While logical output 21 (the servo supply request) is off, the raw sample of switch 28 drives it. While output 21 is on, the serial output driver status bits drive it.
 - **The pair monitor.** `cm848_monitorBrakeSwitchPairAgreement` (0x512130) compares switch 11 with switch 2. The 16th disagreement sets P0573 (switch 11 only) or P0572 (switch 2 only).
   - It needs `algorithm_enable_flags_41_cal.brake_switch_diagnostic_enable` (EEPROM 0x16c mask 0x2).
