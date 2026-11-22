@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 18:41:52 MST 2026
+// Generated: Sat Nov 21 19:38:39 MST 2026
 
 
 //
@@ -8003,10 +8003,12 @@ void cm848_sensorChannel5_init(void)
 
 {
   sensorChannelConfigInit
-            (&sensor_channel_config_t_003feed2,&sensor_channel5_ram,&WORD_003fa04c,
-             sensor_channel105_linearization_axis,sensor_channel105_linearization_values,2,
-             &ema_filter_state_t_003fa04e,0x69,0x2b2,0x2b3,&sensor_channel105_value,
-             &sensor_channel105_default_value,&sensor_channel105_fault_status);
+            (&egr_delta_pressure_sensor_config,&egr_delta_pressure_sensor_channel_state,
+             &egr_delta_pressure_linearization_cached_axis_offset,
+             egr_delta_pressure_linearization_axis,egr_delta_pressure_linearization_values,2,
+             &egr_delta_pressure_sensor_filter_state,0x69,0x2b2,0x2b3,
+             &egr_delta_pressure_sensor_value,&egr_delta_pressure_sensor_default_value,
+             &egr_delta_pressure_sensor_fault_status);
   return;
 }
 
@@ -8020,10 +8022,12 @@ void cm848_sensorChannel5_process(void)
 
 {
   updateSensorChannelWithConfig
-            (&sensor_channel_config_t_003feed2,&sensor_channel5_ram,&WORD_003fa04c,
-             sensor_channel105_linearization_axis,sensor_channel105_linearization_values,2,
-             &ema_filter_state_t_003fa04e,0x69,0x2b2,0x2b3,&sensor_channel105_value,
-             &sensor_channel105_default_value,&sensor_channel105_fault_status);
+            (&egr_delta_pressure_sensor_config,&egr_delta_pressure_sensor_channel_state,
+             &egr_delta_pressure_linearization_cached_axis_offset,
+             egr_delta_pressure_linearization_axis,egr_delta_pressure_linearization_values,2,
+             &egr_delta_pressure_sensor_filter_state,0x69,0x2b2,0x2b3,
+             &egr_delta_pressure_sensor_value,&egr_delta_pressure_sensor_default_value,
+             &egr_delta_pressure_sensor_fault_status);
   return;
 }
 
@@ -8037,10 +8041,12 @@ void cm848_sensorChannel6_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_003fef12,&sensor_channel6_ram,&WORD_003fa056,
-             sensor_channel108_linearization_axis,sensor_channel108_linearization_values,0,
-             &ema_filter_state_t_003fa058,0x6c,0x31c,0x31d,&sensor_channel108_value,
-             &sensor_channel108_default_value,&sensor_channel108_fault_status);
+            (&egr_orifice_temperature_sensor_config,&egr_orifice_temperature_sensor_channel_state,
+             &egr_orifice_temperature_linearization_cached_axis_offset,
+             egr_orifice_temperature_linearization_axis,egr_orifice_temperature_linearization_values
+             ,0,&egr_orifice_temperature_sensor_filter_state,0x6c,0x31c,0x31d,
+             &egr_orifice_temperature_sensor_value,&egr_orifice_temperature_sensor_default_value,
+             &egr_orifice_temperature_sensor_fault_status);
   return;
 }
 
@@ -8054,10 +8060,12 @@ void cm848_sensorChannel6_process(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_003fef12,&sensor_channel6_ram,&WORD_003fa056,
-             sensor_channel108_linearization_axis,sensor_channel108_linearization_values,0,
-             &ema_filter_state_t_003fa058,0x6c,0x31c,0x31d,&sensor_channel108_value,
-             &sensor_channel108_default_value,&sensor_channel108_fault_status);
+            (&egr_orifice_temperature_sensor_config,&egr_orifice_temperature_sensor_channel_state,
+             &egr_orifice_temperature_linearization_cached_axis_offset,
+             egr_orifice_temperature_linearization_axis,egr_orifice_temperature_linearization_values
+             ,0,&egr_orifice_temperature_sensor_filter_state,0x6c,0x31c,0x31d,
+             &egr_orifice_temperature_sensor_value,&egr_orifice_temperature_sensor_default_value,
+             &egr_orifice_temperature_sensor_fault_status);
   return;
 }
 
@@ -8150,10 +8158,11 @@ void cm848_sensorChannel9_init(void)
 
 {
   sensorChannelConfigInit
-            (&sensor_channel_config_t_000594be,&sensor_channel9_ram,&WORD_003fa074,
-             fuel_temperature_linearization_axis,fuel_temperature_linearization_values,2,
-             &ema_filter_state_t_003fa076,7,0x2f,0x30,&sensor_channel7_value,
-             &sensor_channel7_default_value,&sensor_channel7_fault_status);
+            (&fuel_temperature_sensor_config,&fuel_temperature_sensor_channel_state,
+             &fuel_temperature_linearization_cached_axis_offset,fuel_temperature_linearization_axis,
+             fuel_temperature_linearization_values,2,&fuel_temperature_sensor_filter_state,7,0x2f,
+             0x30,&fuel_temperature_sensor_value,&fuel_temperature_sensor_default_value,
+             &fuel_temperature_sensor_fault_status);
   return;
 }
 
@@ -8167,10 +8176,11 @@ void cm848_sensorChannel9_process(void)
 
 {
   updateSensorChannelWithConfig
-            (&sensor_channel_config_t_000594be,&sensor_channel9_ram,&WORD_003fa074,
-             fuel_temperature_linearization_axis,fuel_temperature_linearization_values,2,
-             &ema_filter_state_t_003fa076,7,0x2f,0x30,&sensor_channel7_value,
-             &sensor_channel7_default_value,&sensor_channel7_fault_status);
+            (&fuel_temperature_sensor_config,&fuel_temperature_sensor_channel_state,
+             &fuel_temperature_linearization_cached_axis_offset,fuel_temperature_linearization_axis,
+             fuel_temperature_linearization_values,2,&fuel_temperature_sensor_filter_state,7,0x2f,
+             0x30,&fuel_temperature_sensor_value,&fuel_temperature_sensor_default_value,
+             &fuel_temperature_sensor_fault_status);
   return;
 }
 
@@ -8233,10 +8243,11 @@ void cm848_sensorChannel11_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_00059596,&sensor_channel11_ram,&WORD_003fa088,
-             oil_pressure_linearization_axis,oil_pressure_linearization_values,0,
-             &ema_filter_state_t_003fa08a,10,0xc,0xd,&sensor_channel10_value,
-             &sensor_channel10_default_value,&sensor_channel10_fault_status);
+            (&oil_pressure_sensor_config,&oil_pressure_sensor_channel_state,
+             &oil_pressure_linearization_cached_axis_offset,oil_pressure_linearization_axis,
+             oil_pressure_linearization_values,0,&oil_pressure_sensor_filter_state,10,0xc,0xd,
+             &oil_pressure_sensor_value,&oil_pressure_sensor_default_value,
+             &oil_pressure_sensor_fault_status);
   return;
 }
 
@@ -8250,10 +8261,11 @@ void cm848_sensorChannel11_process(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_00059596,&sensor_channel11_ram,&WORD_003fa088,
-             oil_pressure_linearization_axis,oil_pressure_linearization_values,0,
-             &ema_filter_state_t_003fa08a,10,0xc,0xd,&sensor_channel10_value,
-             &sensor_channel10_default_value,&sensor_channel10_fault_status);
+            (&oil_pressure_sensor_config,&oil_pressure_sensor_channel_state,
+             &oil_pressure_linearization_cached_axis_offset,oil_pressure_linearization_axis,
+             oil_pressure_linearization_values,0,&oil_pressure_sensor_filter_state,10,0xc,0xd,
+             &oil_pressure_sensor_value,&oil_pressure_sensor_default_value,
+             &oil_pressure_sensor_fault_status);
   return;
 }
 
@@ -8267,11 +8279,13 @@ void cm848_sensorChannel12_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_000595ca,&sensor_channel12_ram,&WORD_003fa092,
+            (&remote_accelerator_pedal_sensor_config,&remote_accelerator_pedal_sensor_channel_state,
+             &remote_accelerator_pedal_linearization_cached_axis_offset,
              remote_accelerator_pedal_linearization_axis,
-             remote_accelerator_pedal_linearization_values,0,&ema_filter_state_t_003fa094,8,0x4d,
-             0x4e,&sensor_channel8_value,&sensor_channel8_default_value,
-             &sensor_channel8_fault_status);
+             remote_accelerator_pedal_linearization_values,0,
+             &remote_accelerator_pedal_sensor_filter_state,8,0x4d,0x4e,
+             &remote_accelerator_pedal_sensor_value,&remote_accelerator_pedal_sensor_default_value,
+             &remote_accelerator_pedal_sensor_fault_status);
   return;
 }
 
@@ -8285,11 +8299,13 @@ void cm848_sensorChannel12_process(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_000595ca,&sensor_channel12_ram,&WORD_003fa092,
+            (&remote_accelerator_pedal_sensor_config,&remote_accelerator_pedal_sensor_channel_state,
+             &remote_accelerator_pedal_linearization_cached_axis_offset,
              remote_accelerator_pedal_linearization_axis,
-             remote_accelerator_pedal_linearization_values,0,&ema_filter_state_t_003fa094,8,0x4d,
-             0x4e,&sensor_channel8_value,&sensor_channel8_default_value,
-             &sensor_channel8_fault_status);
+             remote_accelerator_pedal_linearization_values,0,
+             &remote_accelerator_pedal_sensor_filter_state,8,0x4d,0x4e,
+             &remote_accelerator_pedal_sensor_value,&remote_accelerator_pedal_sensor_default_value,
+             &remote_accelerator_pedal_sensor_fault_status);
   return;
 }
 
@@ -8303,10 +8319,11 @@ void cm848_sensorChannel13_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (&accelerator_pedal_sensor_config,&sensor_channel13_ram,&WORD_003fa09c,
+            (&accelerator_pedal_sensor_config,&accelerator_pedal_sensor_channel_state,
+             &accelerator_pedal_linearization_cached_axis_offset,
              accelerator_pedal_linearization_axis,accelerator_pedal_linearization_values,0,
-             &ema_filter_state_t_003fa09e,0xd,10,0xb,&sensor_channel13_value,
-             &sensor_channel13_default_value,&sensor_channel13_fault_status);
+             &accelerator_pedal_sensor_filter_state,0xd,10,0xb,&accelerator_pedal_sensor_value,
+             &accelerator_pedal_sensor_default_value,&accelerator_pedal_sensor_fault_status);
   return;
 }
 
@@ -8320,10 +8337,11 @@ void cm848_sensorChannel13_process(void)
 
 {
   sensorChannelTypeB_update
-            (&accelerator_pedal_sensor_config,&sensor_channel13_ram,&WORD_003fa09c,
+            (&accelerator_pedal_sensor_config,&accelerator_pedal_sensor_channel_state,
+             &accelerator_pedal_linearization_cached_axis_offset,
              accelerator_pedal_linearization_axis,accelerator_pedal_linearization_values,0,
-             &ema_filter_state_t_003fa09e,0xd,10,0xb,&sensor_channel13_value,
-             &sensor_channel13_default_value,&sensor_channel13_fault_status);
+             &accelerator_pedal_sensor_filter_state,0xd,10,0xb,&accelerator_pedal_sensor_value,
+             &accelerator_pedal_sensor_default_value,&accelerator_pedal_sensor_fault_status);
   return;
 }
 
@@ -8337,11 +8355,13 @@ void cm848_sensorChannel14_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_00059622,&sensor_channel14_ram,&WORD_003fa0a6,
+            (&sensor_reference_voltage_a_config,&sensor_reference_voltage_a_channel_state,
+             &sensor_reference_voltage_a_linearization_cached_axis_offset,
              sensor_reference_voltage_a_linearization_axis,
-             sensor_reference_voltage_a_linearization_values,0,&ema_filter_state_t_003fa0a8,0x2a,
-             0x152,0x151,&sensor_channel42_value,&sensor_channel42_default_value,
-             &sensor_channel42_fault_status);
+             sensor_reference_voltage_a_linearization_values,0,
+             &sensor_reference_voltage_a_filter_state,0x2a,0x152,0x151,
+             &sensor_reference_voltage_a_value,&sensor_reference_voltage_a_default_value,
+             &sensor_reference_voltage_a_fault_status);
   return;
 }
 
@@ -8355,11 +8375,13 @@ void cm848_sensorChannel14_process(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_00059622,&sensor_channel14_ram,&WORD_003fa0a6,
+            (&sensor_reference_voltage_a_config,&sensor_reference_voltage_a_channel_state,
+             &sensor_reference_voltage_a_linearization_cached_axis_offset,
              sensor_reference_voltage_a_linearization_axis,
-             sensor_reference_voltage_a_linearization_values,0,&ema_filter_state_t_003fa0a8,0x2a,
-             0x152,0x151,&sensor_channel42_value,&sensor_channel42_default_value,
-             &sensor_channel42_fault_status);
+             sensor_reference_voltage_a_linearization_values,0,
+             &sensor_reference_voltage_a_filter_state,0x2a,0x152,0x151,
+             &sensor_reference_voltage_a_value,&sensor_reference_voltage_a_default_value,
+             &sensor_reference_voltage_a_fault_status);
   return;
 }
 
@@ -8373,11 +8395,13 @@ void cm848_sensorChannel15_init(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_00059692,&sensor_channel15_ram,&WORD_003fa0b0,
+            (&sensor_reference_voltage_c_config,&sensor_reference_voltage_c_channel_state,
+             &sensor_reference_voltage_c_linearization_cached_axis_offset,
              sensor_reference_voltage_c_linearization_axis,
-             sensor_reference_voltage_c_linearization_values,0,&ema_filter_state_t_003fa0b2,0x15,
-             0xc4,0xc5,&sensor_channel21_value,&sensor_channel21_default_value,
-             &sensor_channel21_fault_status);
+             sensor_reference_voltage_c_linearization_values,0,
+             &sensor_reference_voltage_c_filter_state,0x15,0xc4,0xc5,
+             &sensor_reference_voltage_c_value,&sensor_reference_voltage_c_default_value,
+             &sensor_reference_voltage_c_fault_status);
   return;
 }
 
@@ -8391,11 +8415,13 @@ void cm848_sensorChannel15_process(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_00059692,&sensor_channel15_ram,&WORD_003fa0b0,
+            (&sensor_reference_voltage_c_config,&sensor_reference_voltage_c_channel_state,
+             &sensor_reference_voltage_c_linearization_cached_axis_offset,
              sensor_reference_voltage_c_linearization_axis,
-             sensor_reference_voltage_c_linearization_values,0,&ema_filter_state_t_003fa0b2,0x15,
-             0xc4,0xc5,&sensor_channel21_value,&sensor_channel21_default_value,
-             &sensor_channel21_fault_status);
+             sensor_reference_voltage_c_linearization_values,0,
+             &sensor_reference_voltage_c_filter_state,0x15,0xc4,0xc5,
+             &sensor_reference_voltage_c_value,&sensor_reference_voltage_c_default_value,
+             &sensor_reference_voltage_c_fault_status);
   return;
 }
 
@@ -8410,21 +8436,21 @@ void cm848_sensorChannel16_init(void)
 {
   if ((j1939_governor_feature_byte & 0x10) == 0) {
     sensorChannelTypeB_configInit
-              (&sensor_channel_config_t_003fefca,&fuel_demand_table_xaxis_base,
-               &sensor_channel16_cached_axis_offset,
-               sensor_channel15_linearization_feature_bit_4_off_axis,
-               sensor_channel15_linearization_feature_bit_4_off_values,0,
-               &sensor_channel16_filter_state,0xf,0x36,0x37,&sensor_channel15_value,
-               &sensor_channel15_default_value,&sensor_channel15_fault_status);
+              (&water_in_fuel_sensor_feature_bit_4_off_config,&water_in_fuel_sensor_channel_state,
+               &water_in_fuel_linearization_cached_axis_offset,
+               water_in_fuel_linearization_feature_bit_4_off_axis,
+               water_in_fuel_linearization_feature_bit_4_off_values,0,
+               &water_in_fuel_sensor_filter_state,0xf,0x36,0x37,&water_in_fuel_sensor_value,
+               &water_in_fuel_sensor_default_value,&water_in_fuel_sensor_fault_status);
   }
   else {
     sensorChannelTypeB_configInit
-              (&sensor_channel_config_t_003fefda,&fuel_demand_table_xaxis_base,
-               &sensor_channel16_cached_axis_offset,
-               sensor_channel15_linearization_feature_bit_4_on_axis,
-               sensor_channel15_linearization_feature_bit_4_on_values,0,
-               &sensor_channel16_filter_state,0xf,0x36,0x37,&sensor_channel15_value,
-               &sensor_channel15_default_value,&sensor_channel15_fault_status);
+              (&water_in_fuel_sensor_feature_bit_4_on_config,&water_in_fuel_sensor_channel_state,
+               &water_in_fuel_linearization_cached_axis_offset,
+               water_in_fuel_linearization_feature_bit_4_on_axis,
+               water_in_fuel_linearization_feature_bit_4_on_values,0,
+               &water_in_fuel_sensor_filter_state,0xf,0x36,0x37,&water_in_fuel_sensor_value,
+               &water_in_fuel_sensor_default_value,&water_in_fuel_sensor_fault_status);
   }
   return;
 }
@@ -8440,21 +8466,21 @@ void cm848_sensorChannel16_process(void)
 {
   if ((j1939_governor_feature_byte & 0x10) == 0) {
     sensorChannelTypeB_update
-              (&sensor_channel_config_t_003fefca,&fuel_demand_table_xaxis_base,
-               &sensor_channel16_cached_axis_offset,
-               sensor_channel15_linearization_feature_bit_4_off_axis,
-               sensor_channel15_linearization_feature_bit_4_off_values,0,
-               &sensor_channel16_filter_state,0xf,0x36,0x37,&sensor_channel15_value,
-               &sensor_channel15_default_value,&sensor_channel15_fault_status);
+              (&water_in_fuel_sensor_feature_bit_4_off_config,&water_in_fuel_sensor_channel_state,
+               &water_in_fuel_linearization_cached_axis_offset,
+               water_in_fuel_linearization_feature_bit_4_off_axis,
+               water_in_fuel_linearization_feature_bit_4_off_values,0,
+               &water_in_fuel_sensor_filter_state,0xf,0x36,0x37,&water_in_fuel_sensor_value,
+               &water_in_fuel_sensor_default_value,&water_in_fuel_sensor_fault_status);
   }
   else {
     sensorChannelTypeB_update
-              (&sensor_channel_config_t_003fefda,&fuel_demand_table_xaxis_base,
-               &sensor_channel16_cached_axis_offset,
-               sensor_channel15_linearization_feature_bit_4_on_axis,
-               sensor_channel15_linearization_feature_bit_4_on_values,0,
-               &sensor_channel16_filter_state,0xf,0x36,0x37,&sensor_channel15_value,
-               &sensor_channel15_default_value,&sensor_channel15_fault_status);
+              (&water_in_fuel_sensor_feature_bit_4_on_config,&water_in_fuel_sensor_channel_state,
+               &water_in_fuel_linearization_cached_axis_offset,
+               water_in_fuel_linearization_feature_bit_4_on_axis,
+               water_in_fuel_linearization_feature_bit_4_on_values,0,
+               &water_in_fuel_sensor_filter_state,0xf,0x36,0x37,&water_in_fuel_sensor_value,
+               &water_in_fuel_sensor_default_value,&water_in_fuel_sensor_fault_status);
   }
   return;
 }
@@ -15473,7 +15499,8 @@ void cm848_fuelDemandFinalCalculation(void)
     pwVar1 = &governor_speed_demand_limit_prev;
   }
   else {
-    if (j1939_input_source_priority < sensor_channel13_ram.held_value_source_priority) {
+    if (j1939_input_source_priority <
+        accelerator_pedal_sensor_channel_state.held_value_source_priority) {
       fuel_demand_control_t_0040a57a.calculated = accelerator_pedal_sensor_filtered;
       return;
     }
@@ -16008,7 +16035,7 @@ void cm848_updateEgrDeltaPressureAutozeroConditions(void)
   bool bVar1;
   bool bVar2;
   
-  if (((coolant_temperature_source == 0) && (sensor_channel105_fault_status == 0)) &&
+  if (((coolant_temperature_source == 0) && (egr_delta_pressure_sensor_fault_status == 0)) &&
      (egr_valve_position_source == 0)) {
     egr_delta_pressure_autozero_bypass_flag = 0;
   }
@@ -16320,7 +16347,7 @@ void cm848_updateAutozeroOffset(sword *param_1)
 void cm848_updateEgrDeltaPressureAutozero(void)
 
 {
-  egr_delta_pressure_autozero_sample = sensor_channel105_value;
+  egr_delta_pressure_autozero_sample = egr_delta_pressure_sensor_value;
   egr_delta_pressure_autozero_tolerance_working = egr_delta_pressure_autozero_tolerance;
   egr_delta_pressure_autozero_enable_working = egr_delta_pressure_autozero_enable_flag;
   egr_delta_pressure_autozero_enable_time_working = egr_delta_pressure_autozero_enable_time;
@@ -16342,9 +16369,10 @@ void cm848_updateEgrDeltaPressureAutozero(void)
   else {
     fault_detected_bits_704_to_719 = fault_detected_bits_704_to_719 | 0x8000;
   }
-  egr_delta_pressure_autozeroed = sensor_channel105_value - egr_delta_pressure_autozero_offset_cal;
+  egr_delta_pressure_autozeroed =
+       egr_delta_pressure_sensor_value - egr_delta_pressure_autozero_offset_cal;
   egr_delta_pressure_combined_status =
-       sensor_channel105_fault_status | egr_delta_pressure_autozero_error_status;
+       egr_delta_pressure_sensor_fault_status | egr_delta_pressure_autozero_error_status;
   return;
 }
 
@@ -16357,7 +16385,7 @@ void cm848_updateEgrDeltaPressureAutozero(void)
 /* Selects the EGR delta pressure sensor output: egr_delta_pressure_state takes
    egr_delta_pressure_combined_status; when neither bit 8 (autozero error, fault 719) nor bit 2
    (sensor fault status 2) is set egr_delta_pressure_sensor_output is the autozeroed value and
-   egr_delta_pressure_sensor_source is 0, otherwise sensor_channel105_default_value and 2;
+   egr_delta_pressure_sensor_source is 0, otherwise egr_delta_pressure_sensor_default_value and 2;
    egr_delta_pressure_sensor_output_snapshot is a copy. (was cm848_selectFaultProtectionValue) */
 
 void cm848_selectEgrDeltaPressure(void)
@@ -16370,7 +16398,7 @@ void cm848_selectEgrDeltaPressure(void)
     egr_delta_pressure_sensor_source = 0;
   }
   else {
-    egr_delta_pressure_sensor_output = sensor_channel105_default_value;
+    egr_delta_pressure_sensor_output = egr_delta_pressure_sensor_default_value;
     egr_delta_pressure_sensor_source = 2;
   }
   egr_delta_pressure_sensor_output_snapshot = egr_delta_pressure_sensor_output;
@@ -16427,12 +16455,13 @@ void cm848_initializeEgrDeltaPressureAutozero(void)
        (int)egr_delta_pressure_autozero_offset_cal << 0x10;
   egr_delta_pressure_autozero_offset_filter_state.coefficient =
        &egr_delta_pressure_autozero_offset_filter_coefficient;
-  egr_delta_pressure_sensor_output = sensor_channel105_value;
-  egr_delta_pressure_sensor_output_snapshot = sensor_channel105_value;
-  if ((sensor_channel105_fault_status == 0) || (sensor_channel105_fault_status == 1)) {
+  egr_delta_pressure_sensor_output = egr_delta_pressure_sensor_value;
+  egr_delta_pressure_sensor_output_snapshot = egr_delta_pressure_sensor_value;
+  if ((egr_delta_pressure_sensor_fault_status == 0) || (egr_delta_pressure_sensor_fault_status == 1)
+     ) {
     egr_delta_pressure_sensor_source = 0;
   }
-  if (sensor_channel105_fault_status == 2) {
+  if (egr_delta_pressure_sensor_fault_status == 2) {
     egr_delta_pressure_sensor_source = 2;
   }
   return;
@@ -36023,11 +36052,14 @@ void cm848_processSensorLookupTable5(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005aaf0,&sensor_channel_5_state,&WORD_003fb1de,
+            (&air_conditioning_pressure_sensor_config,
+             &air_conditioning_pressure_sensor_channel_state,
+             &air_conditioning_pressure_linearization_cached_axis_offset,
              air_conditioning_pressure_linearization_axis,
-             air_conditioning_pressure_linearization_values,0,&ema_filter_state_t_003fb1e0,0x47,
-             0x180,0x181,&sensor_channel71_value,&sensor_channel71_default_value,
-             &sensor_channel71_fault_status);
+             air_conditioning_pressure_linearization_values,0,
+             &air_conditioning_pressure_sensor_filter_state,0x47,0x180,0x181,
+             &air_conditioning_pressure_sensor_value,&air_conditioning_pressure_sensor_default_value
+             ,&air_conditioning_pressure_sensor_fault_status);
   return;
 }
 
@@ -36041,11 +36073,14 @@ void cm848_initSensorLookupTable5(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005aaf0,&sensor_channel_5_state,&WORD_003fb1de,
+            (&air_conditioning_pressure_sensor_config,
+             &air_conditioning_pressure_sensor_channel_state,
+             &air_conditioning_pressure_linearization_cached_axis_offset,
              air_conditioning_pressure_linearization_axis,
-             air_conditioning_pressure_linearization_values,0,&ema_filter_state_t_003fb1e0,0x47,
-             0x180,0x181,&sensor_channel71_value,&sensor_channel71_default_value,
-             &sensor_channel71_fault_status);
+             air_conditioning_pressure_linearization_values,0,
+             &air_conditioning_pressure_sensor_filter_state,0x47,0x180,0x181,
+             &air_conditioning_pressure_sensor_value,&air_conditioning_pressure_sensor_default_value
+             ,&air_conditioning_pressure_sensor_fault_status);
   return;
 }
 
@@ -36066,10 +36101,12 @@ void cm848_sensorChannel69_init(void)
 
 {
   sensorChannelConfigInit
-            (&sensor_channel_config_t_0005ab24,&sensor_channel_6_state,&WORD_003fb1e8,
+            (&battery_temperature_sensor_config,&battery_temperature_sensor_channel_state,
+             &battery_temperature_linearization_cached_axis_offset,
              battery_temperature_linearization_axis,battery_temperature_linearization_values,2,
-             &ema_filter_state_t_003fb1ea,0x45,0x17b,0x17c,&sensor_channel69_value,
-             &sensor_channel69_default_value,&sensor_channel69_fault_status);
+             &battery_temperature_sensor_filter_state,0x45,0x17b,0x17c,
+             &battery_temperature_sensor_value,&battery_temperature_sensor_default_value,
+             &battery_temperature_sensor_fault_status);
   return;
 }
 
@@ -36088,10 +36125,12 @@ void cm848_sensorChannel69_process(void)
 
 {
   updateSensorChannelWithConfig
-            (&sensor_channel_config_t_0005ab24,&sensor_channel_6_state,&WORD_003fb1e8,
+            (&battery_temperature_sensor_config,&battery_temperature_sensor_channel_state,
+             &battery_temperature_linearization_cached_axis_offset,
              battery_temperature_linearization_axis,battery_temperature_linearization_values,2,
-             &ema_filter_state_t_003fb1ea,0x45,0x17b,0x17c,&sensor_channel69_value,
-             &sensor_channel69_default_value,&sensor_channel69_fault_status);
+             &battery_temperature_sensor_filter_state,0x45,0x17b,0x17c,
+             &battery_temperature_sensor_value,&battery_temperature_sensor_default_value,
+             &battery_temperature_sensor_fault_status);
   return;
 }
 
@@ -36148,11 +36187,15 @@ void cm848_processSensorLookupTable3(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005acd8,&sensor_channel_8_state,&WORD_003fb1fc,
-             accelerator_pedal_channel97_linearization_axis,
-             accelerator_pedal_channel97_linearization_values,0,&ema_filter_state_t_003fb1fe,0x61,
-             0x15c,0x15b,&sensor_channel97_value,&sensor_channel97_default_value,
-             &sensor_channel97_fault_status);
+            (&accelerator_pedal_position_sensor_1_config,
+             &accelerator_pedal_position_sensor_1_channel_state,
+             &accelerator_pedal_position_sensor_1_linearization_cached_axis_offset,
+             accelerator_pedal_position_sensor_1_linearization_axis,
+             accelerator_pedal_position_sensor_1_linearization_values,0,
+             &accelerator_pedal_position_sensor_1_filter_state,0x61,0x15c,0x15b,
+             &accelerator_pedal_position_sensor_1_value,
+             &accelerator_pedal_position_sensor_1_default_value,
+             &accelerator_pedal_position_sensor_1_fault_status);
   return;
 }
 
@@ -36166,11 +36209,15 @@ void cm848_initSensorLookupTable3(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005acd8,&sensor_channel_8_state,&WORD_003fb1fc,
-             accelerator_pedal_channel97_linearization_axis,
-             accelerator_pedal_channel97_linearization_values,0,&ema_filter_state_t_003fb1fe,0x61,
-             0x15c,0x15b,&sensor_channel97_value,&sensor_channel97_default_value,
-             &sensor_channel97_fault_status);
+            (&accelerator_pedal_position_sensor_1_config,
+             &accelerator_pedal_position_sensor_1_channel_state,
+             &accelerator_pedal_position_sensor_1_linearization_cached_axis_offset,
+             accelerator_pedal_position_sensor_1_linearization_axis,
+             accelerator_pedal_position_sensor_1_linearization_values,0,
+             &accelerator_pedal_position_sensor_1_filter_state,0x61,0x15c,0x15b,
+             &accelerator_pedal_position_sensor_1_value,
+             &accelerator_pedal_position_sensor_1_default_value,
+             &accelerator_pedal_position_sensor_1_fault_status);
   return;
 }
 
@@ -36184,11 +36231,15 @@ void cm848_processSensorLookupTable2(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005ad0c,&sensor_channel_9_state,&WORD_003fb206,
-             accelerator_pedal_channel98_linearization_axis,
-             accelerator_pedal_channel98_linearization_values,0,&ema_filter_state_t_003fb208,0x62,
-             0x15e,0x15d,&sensor_channel98_value,&sensor_channel98_default_value,
-             &sensor_channel98_fault_status);
+            (&accelerator_pedal_position_sensor_2_config,
+             &accelerator_pedal_position_sensor_2_channel_state,
+             &accelerator_pedal_position_sensor_2_linearization_cached_axis_offset,
+             accelerator_pedal_position_sensor_2_linearization_axis,
+             accelerator_pedal_position_sensor_2_linearization_values,0,
+             &accelerator_pedal_position_sensor_2_filter_state,0x62,0x15e,0x15d,
+             &accelerator_pedal_position_sensor_2_value,
+             &accelerator_pedal_position_sensor_2_default_value,
+             &accelerator_pedal_position_sensor_2_fault_status);
   return;
 }
 
@@ -36202,11 +36253,15 @@ void cm848_initSensorLookupTable2(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005ad0c,&sensor_channel_9_state,&WORD_003fb206,
-             accelerator_pedal_channel98_linearization_axis,
-             accelerator_pedal_channel98_linearization_values,0,&ema_filter_state_t_003fb208,0x62,
-             0x15e,0x15d,&sensor_channel98_value,&sensor_channel98_default_value,
-             &sensor_channel98_fault_status);
+            (&accelerator_pedal_position_sensor_2_config,
+             &accelerator_pedal_position_sensor_2_channel_state,
+             &accelerator_pedal_position_sensor_2_linearization_cached_axis_offset,
+             accelerator_pedal_position_sensor_2_linearization_axis,
+             accelerator_pedal_position_sensor_2_linearization_values,0,
+             &accelerator_pedal_position_sensor_2_filter_state,0x62,0x15e,0x15d,
+             &accelerator_pedal_position_sensor_2_value,
+             &accelerator_pedal_position_sensor_2_default_value,
+             &accelerator_pedal_position_sensor_2_fault_status);
   return;
 }
 
@@ -36227,10 +36282,12 @@ void cm848_processFourWheelDriveSwitchChannel(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005ad40,&sensor_channel_10_state,&WORD_003fb210,
+            (&four_wheel_drive_switch_sensor_config,&four_wheel_drive_switch_sensor_channel_state,
+             &four_wheel_drive_switch_position_code_cached_axis_offset,
              four_wheel_drive_switch_position_code_axis,four_wheel_drive_switch_position_code_values
-             ,0,&ema_filter_state_t_003fb212,0x4c,0x19c,0x19d,&sensor_channel76_value,
-             &sensor_channel76_default_value,&sensor_channel76_fault_status);
+             ,0,&four_wheel_drive_switch_sensor_filter_state,0x4c,0x19c,0x19d,
+             &four_wheel_drive_switch_sensor_value,&four_wheel_drive_switch_sensor_default_value,
+             &four_wheel_drive_switch_sensor_fault_status);
   return;
 }
 
@@ -36248,10 +36305,12 @@ void cm848_initializeFourWheelDriveSwitchChannel(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005ad40,&sensor_channel_10_state,&WORD_003fb210,
+            (&four_wheel_drive_switch_sensor_config,&four_wheel_drive_switch_sensor_channel_state,
+             &four_wheel_drive_switch_position_code_cached_axis_offset,
              four_wheel_drive_switch_position_code_axis,four_wheel_drive_switch_position_code_values
-             ,0,&ema_filter_state_t_003fb212,0x4c,0x19c,0x19d,&sensor_channel76_value,
-             &sensor_channel76_default_value,&sensor_channel76_fault_status);
+             ,0,&four_wheel_drive_switch_sensor_filter_state,0x4c,0x19c,0x19d,
+             &four_wheel_drive_switch_sensor_value,&four_wheel_drive_switch_sensor_default_value,
+             &four_wheel_drive_switch_sensor_fault_status);
   return;
 }
 
@@ -36265,10 +36324,11 @@ void cm848_processSensorLookupTable1(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005adbc,&sensor_channel_11_state,&WORD_003fb21a,
+            (&governor_pressure_sensor_config,&governor_pressure_sensor_channel_state,
+             &governor_pressure_linearization_cached_axis_offset,
              governor_pressure_linearization_axis,governor_pressure_linearization_values,0,
-             &ema_filter_state_t_003fb21c,0x66,299,300,&sensor_channel102_value,
-             &sensor_channel102_default_value,&sensor_channel102_fault_status);
+             &governor_pressure_sensor_filter_state,0x66,299,300,&governor_pressure_sensor_value,
+             &governor_pressure_sensor_default_value,&governor_pressure_sensor_fault_status);
   return;
 }
 
@@ -36282,10 +36342,11 @@ void cm848_initSensorLookupTableInit1(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005adbc,&sensor_channel_11_state,&WORD_003fb21a,
+            (&governor_pressure_sensor_config,&governor_pressure_sensor_channel_state,
+             &governor_pressure_linearization_cached_axis_offset,
              governor_pressure_linearization_axis,governor_pressure_linearization_values,0,
-             &ema_filter_state_t_003fb21c,0x66,299,300,&sensor_channel102_value,
-             &sensor_channel102_default_value,&sensor_channel102_fault_status);
+             &governor_pressure_sensor_filter_state,0x66,299,300,&governor_pressure_sensor_value,
+             &governor_pressure_sensor_default_value,&governor_pressure_sensor_fault_status);
   return;
 }
 
@@ -60392,8 +60453,8 @@ void cm848_sensorChannel7_init_configBundle(void)
   sensorChannelConfigInit
             (&sensor_channel_config_t_00059482,&sensor_channel_state_t_0040a0da,&WORD_003fb9b6,
              sensor_channel88_linearization_axis,sensor_channel88_linearization_values,2,
-             &ema_filter_state_t_003fb9b8,0x58,0x292,0x293,&sensor_channel7_value,
-             &sensor_channel7_default_value,&sensor_channel7_fault_status);
+             &ema_filter_state_t_003fb9b8,0x58,0x292,0x293,&fuel_temperature_sensor_value,
+             &fuel_temperature_sensor_default_value,&fuel_temperature_sensor_fault_status);
   return;
 }
 
@@ -60409,8 +60470,8 @@ void cm848_sensorChannel7_update_configBundle(void)
   updateSensorChannelWithConfig
             (&sensor_channel_config_t_00059482,&sensor_channel_state_t_0040a0da,&WORD_003fb9b6,
              sensor_channel88_linearization_axis,sensor_channel88_linearization_values,2,
-             &ema_filter_state_t_003fb9b8,0x58,0x292,0x293,&sensor_channel7_value,
-             &sensor_channel7_default_value,&sensor_channel7_fault_status);
+             &ema_filter_state_t_003fb9b8,0x58,0x292,0x293,&fuel_temperature_sensor_value,
+             &fuel_temperature_sensor_default_value,&fuel_temperature_sensor_fault_status);
   return;
 }
 
@@ -65071,9 +65132,9 @@ void cm848_initialization_step_13(void)
 /* Lead compensation of the EGR orifice temperature sensor lag (sensor channel 108 = e2m 1966 +14
    EGR_Orifice_Tmptr_Sensor; e2m 19CA): egr_orifice_temperature_lead_term (+8 INM_EGRT_Lead_Term) =
    egr_orifice_temperature_lead_time_constant (+A INM_EGRT_Lead_Time_Constant) x
-   (sensor_channel108_value minus its previous value, the word at 0x3fbcfa), limited to +-32000;
-   egr_orifice_temperature_after_lead (+6 INM_EGRT_After_Lead) = the sensor value plus the lead
-   term, limited to egr_orifice_temperature_estimate_minimum_limit ..
+   (egr_orifice_temperature_sensor_value minus its previous value, the word at 0x3fbcfa), limited to
+   +-32000; egr_orifice_temperature_after_lead (+6 INM_EGRT_After_Lead) = the sensor value plus the
+   lead term, limited to egr_orifice_temperature_estimate_minimum_limit ..
    egr_orifice_temperature_estimate_maximum_limit (e2m 1A2E +4 C_INM_EGRT_Min / +2 C_INM_EGRT_Max,
    1/64 degree F per count). Then it stores the sensor value as the new previous value. Same
    algorithm as the intake manifold temperature lead function
@@ -65088,7 +65149,7 @@ void cm848_calculateEgrOrificeTemperatureLeadCompensation(void)
   int iVar3;
   
   iVar3 = (uint)egr_orifice_temperature_lead_time_constant *
-          ((uint)sensor_channel108_value - (uint)DAT_003fbcfa);
+          ((uint)egr_orifice_temperature_sensor_value - (uint)DAT_003fbcfa);
   if (iVar3 < 32000) {
     if (iVar3 < -31999) {
       iVar3 = -32000;
@@ -65098,14 +65159,14 @@ void cm848_calculateEgrOrificeTemperatureLeadCompensation(void)
     iVar3 = 32000;
   }
   egr_orifice_temperature_lead_term = (word)iVar3;
-  uVar2 = (uint)sensor_channel108_value + (int)(short)(word)iVar3;
+  uVar2 = (uint)egr_orifice_temperature_sensor_value + (int)(short)(word)iVar3;
   uVar1 = (uint)egr_orifice_temperature_estimate_maximum_limit;
   if (((int)uVar2 < (int)uVar1) &&
      (uVar1 = uVar2, (int)uVar2 <= (int)(uint)egr_orifice_temperature_estimate_minimum_limit)) {
     uVar1 = (uint)egr_orifice_temperature_estimate_minimum_limit;
   }
   egr_orifice_temperature_after_lead = (word)uVar1;
-  DAT_003fbcfa = sensor_channel108_value;
+  DAT_003fbcfa = egr_orifice_temperature_sensor_value;
   return;
 }
 
@@ -65116,13 +65177,13 @@ void cm848_calculateEgrOrificeTemperatureLeadCompensation(void)
 //
 
 /* Filters the EGR orifice temperature (e2m 19CA, sensor channel 108): sets
-   egr_orifice_temperature_state (+4 EGR_Orifice_Tmptr_State) to sensor_channel108_fault_status (e2m
-   1963 +12 EGR_Orifice_Tmptr_Status), or to 0 when egr_flow_cold_side_algorithm_select (e2m 177E
-   +8, 0 = hot side algorithm) is 0 because the orifice temperature is unused there. Looks up the
-   lead time constant from egr_mass_flow_delayed_filtered (tables e2m 1A2F
-   C_INM_EGRT_Lead_EGR_Flow_Axis / 1A30 C_INM_EGRT_Lead_Time_Cnst_Table) into
-   egr_orifice_temperature_lead_time_constant_lookup and uses it as
-   egr_orifice_temperature_lead_time_constant unless the sensor status is nonzero,
+   egr_orifice_temperature_state (+4 EGR_Orifice_Tmptr_State) to
+   egr_orifice_temperature_sensor_fault_status (e2m 1963 +12 EGR_Orifice_Tmptr_Status), or to 0 when
+   egr_flow_cold_side_algorithm_select (e2m 177E +8, 0 = hot side algorithm) is 0 because the
+   orifice temperature is unused there. Looks up the lead time constant from
+   egr_mass_flow_delayed_filtered (tables e2m 1A2F C_INM_EGRT_Lead_EGR_Flow_Axis / 1A30
+   C_INM_EGRT_Lead_Time_Cnst_Table) into egr_orifice_temperature_lead_time_constant_lookup and uses
+   it as egr_orifice_temperature_lead_time_constant unless the sensor status is nonzero,
    air_handling_compensation_and_diagnostic_bypass_cal is nonzero or bit 0x8000 of
    algorithm_enable_flags_20_cal is clear (then 0). Runs
    cm848_calculateEgrOrificeTemperatureLeadCompensation (the lead compensation), then two cascaded
@@ -65139,7 +65200,7 @@ void cm848_filterEgrOrificeTemperature(void)
   dword dVar2;
   word wVar3;
   
-  egr_orifice_temperature_state = sensor_channel108_fault_status;
+  egr_orifice_temperature_state = egr_orifice_temperature_sensor_fault_status;
   if (egr_flow_cold_side_algorithm_select == 0) {
     egr_orifice_temperature_state = 0;
   }
@@ -65147,8 +65208,8 @@ void cm848_filterEgrOrificeTemperature(void)
        lookupTableInterpolation
                  (&WORD_003fbcfe,egr_mass_flow_delayed_filtered,WORD_ARRAY_00406778,
                   WORD_ARRAY_0040678c,0);
-  wVar1 = sensor_channel108_fault_status;
-  if (((sensor_channel108_fault_status != 0) ||
+  wVar1 = egr_orifice_temperature_sensor_fault_status;
+  if (((egr_orifice_temperature_sensor_fault_status != 0) ||
       (air_handling_compensation_and_diagnostic_bypass_cal != 0)) ||
      (egr_orifice_temperature_lead_time_constant = egr_orifice_temperature_lead_time_constant_lookup
      , (algorithm_enable_flags_20_cal & 0x8000) == 0)) {
@@ -65178,8 +65239,8 @@ void cm848_filterEgrOrificeTemperature(void)
    (+2 EGR_Orifice_Tmptr_Source: 0 primary, 2 default): when mask 0x02 of
    egr_orifice_temperature_state (the sensor channel 108 fault status 2, confirmed) is clear it
    takes the filtered temperature at 0x3fbcf6 and source 0, otherwise
-   sensor_channel108_default_value (e2m 1966 +2C EGR_Orifice_Tmptr_Default) and source 2. Called
-   after cm848_filterEgrOrificeTemperature by cm848_phase_groupB_calculation_2. (was
+   egr_orifice_temperature_sensor_default_value (e2m 1966 +2C EGR_Orifice_Tmptr_Default) and source
+   2. Called after cm848_filterEgrOrificeTemperature by cm848_phase_groupB_calculation_2. (was
    sensor_throttleTrim_inputSelect) */
 
 void cm848_selectEgrOrificeTemperature(void)
@@ -65190,7 +65251,7 @@ void cm848_selectEgrOrificeTemperature(void)
     egr_orifice_temperature_source = 0;
   }
   else {
-    egr_orifice_temperature = sensor_channel108_default_value;
+    egr_orifice_temperature = egr_orifice_temperature_sensor_default_value;
     egr_orifice_temperature_source = 2;
   }
   return;
@@ -65221,7 +65282,7 @@ void cm848_initialization_step_14(void)
 {
   ema_filter_state_t_003fbd00.accumulator = 0;
   ema_filter_state_t_003fbd00.coefficient = &egr_orifice_temperature_lead_time_constant_lookup;
-  egr_orifice_temperature = sensor_channel108_value;
+  egr_orifice_temperature = egr_orifice_temperature_sensor_value;
   return;
 }
 
@@ -67887,8 +67948,8 @@ LAB_0050a6cc:
 //
 
 /* J1939 input 7: EEC2 (PGN 61443) byte 2 Accelerator Pedal Position 1 (SPN 91 - 0.4 %/bit) ->
-   sensor_channel13_ram.held_value (raw x 16 / 10 = 0.25 %/bit - the local pedal scale; was
-   j1939_accelerator_pedal_position) with its priority in .held_value_source_priority and
+   accelerator_pedal_sensor_channel_state.held_value (raw x 16 / 10 = 0.25 %/bit - the local pedal
+   scale; was j1939_accelerator_pedal_position) with its priority in .held_value_source_priority and
    fuel_demand_control_t.accelerator_off_idle; 0xFE (error) sets emission_faults bit 15 and falls
    back to the low idle switch; message lost runs cm848_updateIdleSwitchesFromLocalInputs; runs only
    when sensor_channel_held_value_enable_bits_cal bit 13 (J1939 pedal) is set and switch 7 is
@@ -67908,15 +67969,16 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
   if (((sensor_channel_held_value_enable_bits_cal[0] & 0x2000) != 0) &&
      ((switch_input_datalink_source_bits_cal[0] & 0x80) != 0)) {
     uVar2 = (uint)j1939_input_source_priority;
-    uVar1 = (uint)sensor_channel13_ram.held_value_source_priority;
+    uVar1 = (uint)accelerator_pedal_sensor_channel_state.held_value_source_priority;
     if (uVar1 <= uVar2) {
       bVar3 = (byte)j1939_input_source_priority;
       if (j1939_dm13_fault_log_inhibit_flag != 0) {
         if ((j1939_input_source_priority & 0xff) < uVar1) {
           return;
         }
-        sensor_channel13_ram.held_value = accelerator_pedal_sensor_config.default_value;
-        sensor_channel13_ram.held_value_source_priority = bVar3;
+        accelerator_pedal_sensor_channel_state.held_value =
+             accelerator_pedal_sensor_config.default_value;
+        accelerator_pedal_sensor_channel_state.held_value_source_priority = bVar3;
         return;
       }
       if (j1939_input_signal_timeouts[7] == 0) {
@@ -67925,8 +67987,9 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
           cm848_setJ1939PedalInputTimeoutBit(7);
         }
         if ((int)uVar1 <= (int)(uVar2 & 0xff)) {
-          sensor_channel13_ram.held_value_source_priority = (byte)uVar2;
-          sensor_channel13_ram.held_value = accelerator_pedal_sensor_config.default_value;
+          accelerator_pedal_sensor_channel_state.held_value_source_priority = (byte)uVar2;
+          accelerator_pedal_sensor_channel_state.held_value =
+               accelerator_pedal_sensor_config.default_value;
         }
         cm848_updateIdleSwitchesFromLocalInputs();
         return;
@@ -67936,8 +67999,8 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
       if (uVar2 < 0xfb) {
         if (j1939_accelerator_low_idle_switch_unavailable_flag == 0) {
           if (uVar1 <= (j1939_input_source_priority & 0xff)) {
-            sensor_channel13_ram.held_value = (word)((uVar2 << 4) / 10);
-            sensor_channel13_ram.held_value_source_priority = bVar3;
+            accelerator_pedal_sensor_channel_state.held_value = (word)((uVar2 << 4) / 10);
+            accelerator_pedal_sensor_channel_state.held_value_source_priority = bVar3;
           }
           fuel_demand_control_t_0040a57a.accelerator_off_idle = (word)(uVar2 != 0);
           if ((system_status_flags_t_003fe974.fault_detected_bits_112_to_127 & 0x8000) == 0) {
@@ -67957,15 +68020,17 @@ void cm848_processJ1939AcceleratorPedalPosition(void)
         }
         j1939_accelerator_position_error_fallback_flag = 0;
         if (uVar1 <= (j1939_input_source_priority & 0xff)) {
-          sensor_channel13_ram.held_value = accelerator_pedal_sensor_config.default_value;
-          sensor_channel13_ram.held_value_source_priority = bVar3;
+          accelerator_pedal_sensor_channel_state.held_value =
+               accelerator_pedal_sensor_config.default_value;
+          accelerator_pedal_sensor_channel_state.held_value_source_priority = bVar3;
         }
       }
       else {
         j1939_accelerator_position_error_fallback_flag = 0;
         if (uVar1 <= (j1939_input_source_priority & 0xff)) {
-          sensor_channel13_ram.held_value = accelerator_pedal_sensor_config.default_value;
-          sensor_channel13_ram.held_value_source_priority = bVar3;
+          accelerator_pedal_sensor_channel_state.held_value =
+               accelerator_pedal_sensor_config.default_value;
+          accelerator_pedal_sensor_channel_state.held_value_source_priority = bVar3;
         }
         if (uVar2 == 0xfe) {
           if (j1939_input_monitor_inhibit_flag == 0) {
@@ -72493,11 +72558,13 @@ void sensorChannelTypeB_configInit_axis2(void)
 
 {
   sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005ac4c,&sensor_channel_state_t_0040b186,&WORD_003fcd36,
+            (&sensor_reference_voltage_b_config,&sensor_reference_voltage_b_channel_state,
+             &sensor_reference_voltage_b_linearization_cached_axis_offset,
              sensor_reference_voltage_b_linearization_axis,
-             sensor_reference_voltage_b_linearization_values,0,&ema_filter_state_t_003fcd38,0x1c,
-             0x179,0x17a,&sensor_channel28_value,&sensor_channel28_default_value,
-             &sensor_channel28_fault_status);
+             sensor_reference_voltage_b_linearization_values,0,
+             &sensor_reference_voltage_b_filter_state,0x1c,0x179,0x17a,
+             &sensor_reference_voltage_b_value,&sensor_reference_voltage_b_default_value,
+             &sensor_reference_voltage_b_fault_status);
   return;
 }
 
@@ -72511,11 +72578,13 @@ void sensorChannelTypeB_update_axis2(void)
 
 {
   sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005ac4c,&sensor_channel_state_t_0040b186,&WORD_003fcd36,
+            (&sensor_reference_voltage_b_config,&sensor_reference_voltage_b_channel_state,
+             &sensor_reference_voltage_b_linearization_cached_axis_offset,
              sensor_reference_voltage_b_linearization_axis,
-             sensor_reference_voltage_b_linearization_values,0,&ema_filter_state_t_003fcd38,0x1c,
-             0x179,0x17a,&sensor_channel28_value,&sensor_channel28_default_value,
-             &sensor_channel28_fault_status);
+             sensor_reference_voltage_b_linearization_values,0,
+             &sensor_reference_voltage_b_filter_state,0x1c,0x179,0x17a,
+             &sensor_reference_voltage_b_value,&sensor_reference_voltage_b_default_value,
+             &sensor_reference_voltage_b_fault_status);
   return;
 }
 
@@ -80946,7 +81015,8 @@ LAB_0051e248:
       }
       else if (puVar2 == (undefined *)0x3fcf32) {
         if (accelerator_pedal_dual_channel_enable_flag == 0) {
-          pwVar4 = (word *)((int)&sensor_channel13_ram.raw_adc_counts + (uVar5 & 1));
+          pwVar4 = (word *)((int)&accelerator_pedal_sensor_channel_state.raw_adc_counts +
+                           (uVar5 & 1));
           goto LAB_0051e2bc;
         }
       }
@@ -80958,7 +81028,8 @@ LAB_0051e248:
       }
       else if (puVar2 == (undefined *)0x3fcf36) {
         if (accelerator_pedal_dual_channel_enable_flag != 0) {
-          pwVar4 = (word *)((int)&sensor_channel_8_state.raw_adc_counts + (uVar5 & 1));
+          pwVar4 = (word *)((int)&accelerator_pedal_position_sensor_1_channel_state.raw_adc_counts +
+                           (uVar5 & 1));
           goto LAB_0051e2bc;
         }
       }
@@ -80974,7 +81045,8 @@ LAB_0051e248:
           goto LAB_0051e2bc;
         }
         if (accelerator_pedal_dual_channel_enable_flag != 0) {
-          pwVar4 = (word *)((int)&sensor_channel_9_state.raw_adc_counts + (uVar5 & 1));
+          pwVar4 = (word *)((int)&accelerator_pedal_position_sensor_2_channel_state.raw_adc_counts +
+                           (uVar5 & 1));
           goto LAB_0051e2bc;
         }
       }
@@ -96952,7 +97024,7 @@ undefined4 sensorChannelConditionValidator(int param_1)
        ((system_status_flags_t_003fe974.fault_detected_bits_192_to_207 & 0x20) != 0)) {
       return 2;
     }
-    if (sensor_channel15_ram.debounce_count != 0) {
+    if (sensor_reference_voltage_c_channel_state.debounce_count != 0) {
       return 1;
     }
   }
@@ -96961,7 +97033,7 @@ undefined4 sensorChannelConditionValidator(int param_1)
        ((fault_detected_bits_368_to_383 & 0x400) != 0)) {
       return 2;
     }
-    if (sensor_channel_state_t_0040b186.debounce_count != 0) {
+    if (sensor_reference_voltage_b_channel_state.debounce_count != 0) {
       return 1;
     }
   }
@@ -96970,7 +97042,7 @@ undefined4 sensorChannelConditionValidator(int param_1)
     {
       return 2;
     }
-    if (sensor_channel14_ram.debounce_count != 0) {
+    if (sensor_reference_voltage_a_channel_state.debounce_count != 0) {
       return 1;
     }
   }
