@@ -2083,7 +2083,11 @@ extern undefined sci_command_37_requested_state;  // 0x003fcf62
 extern undefined injector_cutout_test_count;  // 0x003fcf63
 extern dword rom_crc_descriptor_table_ptr;  // 0x003fcfe0
 extern ema_filter_state_t cruise_droop_fueling_filter;  // 0x003fd00a
+extern second_order_filter_state_t cruise_pid_driveline_filter;  // 0x003fd012
+extern second_order_filter_state_t cruise_pid_derivative_filter;  // 0x003fd022
 extern ema_filter_state_t cruise_governor_preset_fueling_filter;  // 0x003fd03c
+extern word cruise_governor_preset_fueling_filtered;  // 0x003fd044
+extern word cruise_governor_preset_fueling_snapshot;  // 0x003fd046
 extern word output_shaft_speed_avg;  // 0x003fd05e
 extern word output_shaft_speed_saved;  // 0x003fd060
 extern dword output_shaft_to_vehicle_speed_divisor_low_axle_ratio;  // 0x003fd062
@@ -5796,14 +5800,14 @@ extern word cruise_top_droop_gain;  // 0x0040b6b0
 extern word road_speed_governor_bottom_droop_gain;  // 0x0040b6b6
 extern word road_speed_governor_top_droop_gain;  // 0x0040b6bc
 extern word cruise_top_droop_offset;  // 0x0040b6be
-extern void * cruise_governor_gain_set_pointer;  // 0x0040b6c0
+extern cruise_governor_gain_set_t * cruise_governor_gain_set_pointer;  // 0x0040b6c0
 extern int16_t cruise_governor_speed_error;  // 0x0040b6c8
 extern int16_t cruise_governor_speed_error_after_droop;  // 0x0040b6ca
 extern int16_t cruise_governor_sump_fuel;  // 0x0040b6de
 extern word cruise_bottom_droop_offset;  // 0x00408dfc
 extern word cruise_top_droop_offset_intermediate_tau;  // 0x00408dfe
 extern word cruise_droops_allowed_speed_tolerance;  // 0x00408e00
-extern word cruise_zone_1_proportional_gain;  // 0x00408e02
+extern cruise_governor_gain_set_t cruise_governor_gain_set_1;  // 0x00408e02
 extern word cruise_droop_fueling_filter_coefficient;  // 0x00408e0a
 extern word cruise_top_droop_offset_tau_0;  // 0x00408e0c
 extern word cruise_top_droop_offset_tau_1;  // 0x00408e0e
@@ -6058,12 +6062,13 @@ extern word misfire_monitor_event_index_advanced_flag;  // 0x003fd21b
 extern byte misfire_monitor_flagged_cylinder_count;  // 0x003fd1fe
 extern word governor_pressure_solenoid_output_channel_cal;  // 0x003fdca8
 extern word cruise_pid_integrator_q16;  // 0x003fd032
-extern word cruise_speed_upper_limit_ptr;  // 0x003fd038
+extern word * cruise_governor_fueling_maximum_pointer;  // 0x003fd038
 extern word governor_pressure_integral_period_counter;  // 0x003fcf0c
 extern FUELING_STATE cruise_governor_fueling_state_previous;  // 0x003fd048
 extern word cruise_governor_sump_trigger_fuel;  // 0x003fd053
 extern word cruise_rate_limited_reference_speed;  // 0x003fd004
 extern word cruise_governor_preset_fueling_countdown;  // 0x003fd04c
+extern byte cruise_governor_preset_fueling_learned_flag;  // 0x003fd04e
 extern word cruise_governor_sump_activation_countdown;  // 0x003fd04f
 extern word cruise_governor_pid_fueling;  // 0x003fd002
 extern word cruise_governor_sump_holdoff_countdown;  // 0x003fd04a
@@ -6207,6 +6212,9 @@ extern byte brake_switch_pair_state_previous;  // 0x003fcd8c
 extern byte second_brake_switch_trigger_active_flag;  // 0x003fcd8e
 extern byte second_brake_switch_trigger_accumulator;  // 0x003fcd8f
 extern word cruise_governor_gain_set_number;  // 0x003fcff8
+extern word cruise_governor_gain_set_number_previous;  // 0x003fcffa
+extern word cruise_governor_speed_error_after_droop_magnitude;  // 0x003fcffc
+extern word cruise_governor_gear_ratio_gain_cached_axis_offset;  // 0x003fcffe
 extern word injection_timing_auxiliary_map_blend_cached_axis_offset;  // 0x003fd0aa
 extern word injection_timing_pilot_offset_map_blend_cached_axis_offset;  // 0x003fd164
 extern word egr_orifice_temperature_rationality_stabilization_counter;  // 0x003fd1a4
@@ -6409,7 +6417,7 @@ extern word rom_crc_computed_results[2];  // 0x0040b66e
 extern word cruise_droop_reference_speed;  // 0x00408e12
 extern word cruise_governor_gain_set_speed_error_hysteresis;  // 0x00408e22
 extern word cruise_governor_gain_set_bottom_droop_offset_hysteresis;  // 0x00408e24
-extern word cruise_zone_3_proportional_gain;  // 0x00408e26
+extern cruise_governor_gain_set_t cruise_governor_gain_set_3;  // 0x00408e26
 extern word cruise_governor_fueling_minimum;  // 0x00408e5e
 extern word cruise_governor_speed_error_gain_multiplier;  // 0x00408e60
 extern int16_t cruise_pid_integral_adjustment_gain;  // 0x00408e62
@@ -6794,7 +6802,9 @@ extern word rom_crc_segment_count;  // 0x003fcfe8
 extern byte rom_crc_result_index;  // 0x003fcfea
 extern word rom_crc_iteration_count;  // 0x003fcfeb
 extern word cruise_top_droop_gain_for_rear_axle_ratio_low;  // 0x003fcff0
+extern word cruise_top_droop_gain_for_rear_axle_ratio_high;  // 0x003fcff2
 extern word road_speed_governor_top_droop_gain_for_rear_axle_ratio_low;  // 0x003fcff4
+extern word road_speed_governor_top_droop_gain_for_rear_axle_ratio_high;  // 0x003fcff6
 extern word cruise_top_droop_width_cal;  // 0x003fd912
 extern word road_speed_governor_bottom_droop_width_cal;  // 0x003fd914
 extern word road_speed_governor_top_droop_width_cal;  // 0x003fd916
@@ -6805,6 +6815,7 @@ extern word cruise_droop_fueling_filtered;  // 0x003fd008
 extern CRUISE_CONTROL_STATE cruise_control_state_prev;  // 0x003fd036
 extern word cruise_governor_preset_this_pass_flag;  // 0x003fd051
 extern word cruise_governor_sump_trigger_flag;  // 0x003fd055
+extern int16_t cruise_governor_sump_activation;  // 0x003fd057
 extern word drivetrain_ratio_period_scale_cal;  // 0x003fd930
 extern word drivetrain_ratio_save_pending_flag;  // 0x003fd05a
 extern word drivetrain_ratio_user_filtered_previous;  // 0x003fd05c
@@ -7184,7 +7195,7 @@ extern word transmission_temperature_rationality_minimum_vehicle_speed;  // 0x00
 extern word governor_cruise_cycle_inhibit_enable;  // 0x00408dc4
 extern word cruise_droop_speed_error_delta_maximum;  // 0x00408e14
 extern int16_t cruise_droop_speed_error_delta_minimum;  // 0x00408e16
-extern word cruise_zone_2_proportional_gain;  // 0x00408e18
+extern cruise_governor_gain_set_t cruise_governor_gain_set_2;  // 0x00408e18
 extern word cruise_governor_gain_set_2_speed_error_threshold;  // 0x00408e20
 extern word cruise_governor_gain_set_3_speed_error_threshold;  // 0x00408e2e
 extern word cruise_governor_gear_ratio_gain_axis[7];  // 0x00408e30
@@ -7204,6 +7215,8 @@ extern int16_t cruise_pid_integral_acceleration_gain;  // 0x0040b6a8
 extern word cruise_governor_preset_fueling_time;  // 0x00408e74
 extern int16_t cruise_governor_sump_fuel_initial_gain;  // 0x00408e76
 extern word cruise_governor_sump_prevent_time;  // 0x00408e78
+extern int16_t cruise_governor_sump_acceleration_threshold;  // 0x00408e7c
+extern int16_t cruise_governor_sump_speed_error_threshold;  // 0x00408e7e
 extern int16_t cruise_governor_sump_threshold_gain;  // 0x00408e80
 extern word cruise_governor_sump_decrement_rate;  // 0x00408e82
 extern word cruise_governor_sump_increment_rate;  // 0x00408e84

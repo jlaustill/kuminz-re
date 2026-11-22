@@ -317,6 +317,21 @@ sensor_channel_state_t,,held_value_source_priority,byte,1,Priority of the source
 sensor_channel_state_t,,spare,byte,1,Not accessed,,verified
 sensor_channel_state_t,,lookup_input,word,2,Table input: raw x sensor_channel_ratio_scale / the supply channel's filtered output (capped at 0x3ff) or the raw reading for type-0 channels,,verified
 # ema_filter_state_t: exponentialMovingAverage's state - each pass the accumulator moves (65536 - coefficient) / 65536 of the way to the new value
+# cruise_governor_gain_set_t: one PID gain set of the cruise / road speed governor (e2m 1186, PR #53 round 16):
+# three instances at 0x408e02 / 0x408e18 / 0x408e26; cm848_selectCruiseGovernorGainSet loads the selected one through
+# cruise_governor_gain_set_pointer into cruise_pid_proportional_gain / _integral_gain / _derivative_gain /
+# _integral_acceleration_gain (lha loads)
+cruise_governor_gain_set_t,,proportional_gain,short,2,"+0: e2m Cruise_RSG_Proportional_Gain_Cal* (MM3S/RPM); the working cruise_pid_proportional_gain",,verified
+cruise_governor_gain_set_t,,integral_gain,short,2,"+2: e2m Cruise_RSG_Integral_Gain_Cal* (MM3S/RPM/SEC); the working cruise_pid_integral_gain",,verified
+cruise_governor_gain_set_t,,derivative_gain,short,2,"+4: e2m Cruise_RSG_Derivative_Gain_Cal* (MM3S*SEC/RPM); the working cruise_pid_derivative_gain",,verified
+cruise_governor_gain_set_t,,integral_acceleration_gain,short,2,"+6: e2m Cruise_RSG_Integral_Acc_Gain_Cal* (MM3S/RPM) 'Integral Acceleration Gain from the differential path'; the working cruise_pid_integral_acceleration_gain",,verified
+# second_order_filter_state_t: the record of cm848_secondOrderFilter / cm848_secondOrderFilterUnsigned (PR #53 round 16):
+# output = (c1 x input << 16 - c3 x output_previous + (c3 - c1 + 0x10000) x output) >> 16; instances
+# cruise_pid_driveline_filter (0x3fd012) and cruise_pid_derivative_filter (0x3fd022)
+second_order_filter_state_t,,coefficient_1,word*,4,"+0: points at coefficient 1 (1/65536): the weight of the new input",,verified
+second_order_filter_state_t,,coefficient_3,word*,4,"+4: points at coefficient 3 (1/65536): the weight of the output before last",,verified
+second_order_filter_state_t,,output,dword,4,"+8: the filter output (Q16.16 in cm848_secondOrderFilter; its integer part is returned)",,verified
+second_order_filter_state_t,,output_previous,dword,4,"+C: the output of the previous call",,verified
 ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient (a sensor channel's config filter_coefficient): the weight of the previous value in 1/65536 - 0 = no filtering,,verified
 ema_filter_state_t,,accumulator,dword,4,Q16.16 filtered value - its integer part is the output,,verified
 # high_speed_governor_gain_set_t: one high speed governor gain set as the ROM stores it (codes 17-21: 0x5c32c / 0x5c324 / 0x5c31a / 0x5c954 / 0x5c95c) - the RAM copies use other orders and stay flat (2026-11-18)

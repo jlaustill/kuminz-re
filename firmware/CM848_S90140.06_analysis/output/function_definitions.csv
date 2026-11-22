@@ -457,3 +457,9 @@ function_address,function_name,param_index,name,type,comment
 0x0051e894,cm848_sciStartTimedOutputTest,0,timer,word *,The test's timer in sci_output_test_timers
 0x0051e894,cm848_sciStartTimedOutputTest,1,logical_output,dword,The logical output to drive at priority 5
 0x0051e894,cm848_sciStartTimedOutputTest,2,duration,word,Phases of 141 passes to run (300 or 11)
+0x000564c0,cm848_secondOrderFilter,return,,sword,The new output's integer part (r3: (output >> 16) sign-extended)
+0x000564c0,cm848_secondOrderFilter,0,input,sword,The input (r3; signed 16-bit)
+0x000564c0,cm848_secondOrderFilter,1,filter,second_order_filter_state_t *,The filter record (r4): coefficient pointers and the two outputs
+0x00056608,cm848_secondOrderFilterUnsigned,return,,word,(output >> 16) & 0xffff of an output already shifted down 16 (r3): 0 in this build
+0x00056608,cm848_secondOrderFilterUnsigned,0,input,uint,The input (r3; the caller passes a 16-bit road speed)
+0x00056608,cm848_secondOrderFilterUnsigned,1,filter,second_order_filter_state_t *,The filter record (r4)

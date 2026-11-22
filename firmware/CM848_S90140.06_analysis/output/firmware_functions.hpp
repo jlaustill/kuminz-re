@@ -1287,9 +1287,9 @@ int cm848_signedDivisionWithSaturation(uint param_1,int param_2);  // @ 0x000562
 int cm848_clampedDivisionWithBounds(uint param_1,int param_2,int param_3,int param_4);  // @ 0x000562fc
 uint cm848_saturatingDivision16(uint param_1,uint param_2);  // @ 0x000563e8
 sword cm848_signedFirstOrderFilter(int value,ema_filter_state_t *filter_state);  // @ 0x0005644c
-int cm848_secondOrderFilter(short param_1,undefined4 *param_2);  // @ 0x000564c0
+sword cm848_secondOrderFilter(sword input,second_order_filter_state_t *filter);  // @ 0x000564c0
 dword exponentialMovingAverage(dword value,ema_filter_state_t *filter_state);  // @ 0x00056594
-undefined4 cm848_secondOrderFilterUnsigned(int param_1,undefined4 *param_2);  // @ 0x00056608
+word cm848_secondOrderFilterUnsigned(dword input,second_order_filter_state_t *filter);  // @ 0x00056608
 word cm848_dualAxisTableInterpolation (word *cached_axis_offsets,word x_input,word *x_axis,word y_input,word *y_axis, word *z_data,dword flags);  // @ 0x000566cc
 undefined4 cm848_ringBufferWriteByte(int *param_1,undefined1 param_2);  // @ 0x00056c80
 void cm848_ringBufferInit(int *param_1,int param_2,int param_3);  // @ 0x00056d38

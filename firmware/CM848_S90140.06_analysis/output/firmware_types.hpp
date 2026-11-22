@@ -1197,6 +1197,8 @@ typedef struct calterm_protocol_t calterm_protocol_t;
 typedef struct insite_protocol_t insite_protocol_t;
 typedef struct sensor_channel_config_t sensor_channel_config_t;
 typedef struct sensor_channel_state_t sensor_channel_state_t;
+typedef struct cruise_governor_gain_set_t cruise_governor_gain_set_t;
+typedef struct second_order_filter_state_t second_order_filter_state_t;
 typedef struct ema_filter_state_t ema_filter_state_t;
 typedef struct high_speed_governor_gain_set_t high_speed_governor_gain_set_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
@@ -1626,6 +1628,20 @@ struct sensor_channel_state_t {
     uint8_t held_value_source_priority;  /* Priority of the source that last wrote held_value - the J1939 input layer arbitrates with it (the accelerator pedal channel 13 - cm848_processJ1939AcceleratorPedalPosition); not used by the sensor-channel functions */
     uint8_t spare;  /* Not accessed */
     uint16_t lookup_input;  /* Table input: raw x sensor_channel_ratio_scale / the supply channel's filtered output (capped at 0x3ff) or the raw reading for type-0 channels */
+};
+
+struct cruise_governor_gain_set_t {
+    int16_t proportional_gain;  /* +0: e2m Cruise_RSG_Proportional_Gain_Cal* (MM3S/RPM); the working cruise_pid_proportional_gain */
+    int16_t integral_gain;  /* +2: e2m Cruise_RSG_Integral_Gain_Cal* (MM3S/RPM/SEC); the working cruise_pid_integral_gain */
+    int16_t derivative_gain;  /* +4: e2m Cruise_RSG_Derivative_Gain_Cal* (MM3S*SEC/RPM); the working cruise_pid_derivative_gain */
+    int16_t integral_acceleration_gain;  /* +6: e2m Cruise_RSG_Integral_Acc_Gain_Cal* (MM3S/RPM) 'Integral Acceleration Gain from the differential path'; the working cruise_pid_integral_acceleration_gain */
+};
+
+struct second_order_filter_state_t {
+    word* coefficient_1;  /* +0: points at coefficient 1 (1/65536): the weight of the new input */
+    word* coefficient_3;  /* +4: points at coefficient 3 (1/65536): the weight of the output before last */
+    uint32_t output;  /* +8: the filter output (Q16.16 in cm848_secondOrderFilter; its integer part is returned) */
+    uint32_t output_previous;  /* +C: the output of the previous call */
 };
 
 struct ema_filter_state_t {
