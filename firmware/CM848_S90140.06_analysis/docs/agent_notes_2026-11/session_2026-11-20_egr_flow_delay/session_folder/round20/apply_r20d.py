@@ -16,6 +16,8 @@ import sys
 
 repo, pre_cpp = os.path.abspath(sys.argv[1]), sys.argv[2]
 dry = "--dry-run" in sys.argv
+# --only N[,N]: stage F typed word 11 alone (its reader was an unnamed DAT_ that stage C found)
+ONLY = [int(x) for x in sys.argv[sys.argv.index("--only") + 1].split(",")] if "--only" in sys.argv else None
 out = os.path.join(repo, "firmware/CM848_S90140.06_analysis/output")
 BASE = 0x3fd59a
 NAMES = {
@@ -43,6 +45,8 @@ NAMES = {
         5: "enhanced_diagnostics_enable", 10: "fan_air_conditioning_pressure_enable",
         11: "fan_air_conditioning_vehicle_speed_interaction_enable", 12: "fan_clutch_2_enable",
         13: "fan_engine_retarder_enable", 14: "fan_manual_input_enable", 15: "cruise_engine_retarder_enable"},
+    11: {0: "proprietary_communication_enable", 1: "j1587_communication_enable", 2: "j1922_communication_enable",
+         3: "j1939_communication_enable"},
     13: {0: "engine_retarder_switch_level_override", 1: "driver_demand_torque_active_during_j1939_control",
          2: "net_torque_derate_enable", 5: "fuel_pressure_idle_diagnostic_enable"},
     19: {0: "alternate_curve_configuration_enable", 1: "switched_rear_axle_anti_tamper_enable",
@@ -103,7 +107,8 @@ NAMES = {
          7: "density_cold_increment_enable", 8: "net_torque_fueling_cold_increment_enable",
          12: "wastegate_solenoid_driver_enable"},
 }
-# two records on one mask: the reader picks
+# two records on one mask: the reader picks (SAME_ENABLE: the two records are one enable under two names)
+SAME_ENABLE = {(19, 7)}
 CHOSEN = {(19, 7): "COT_Estimation_Enable", (19, 9): "T_EMO_Condensation_AECD_Enable",
           (19, 13): "T_EGR_Cooler_Fouling_Enable"}
 # notes (behaviour of no-record readers, why a read bit stays reserved, odd records)
@@ -169,6 +174,8 @@ struct_text = open(sp).read()
 existing_fields = {l.split(",")[2] for l in struct_text.split("\n") if l and not l.startswith("#") and l.count(",") > 3}
 cpp_ids = set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*", raw))
 problems, blocks, tiers = [], [], collections.Counter()
+if ONLY:
+    NAMES = {w: NAMES[w] for w in ONLY}
 for word, names in NAMES.items():
     off = 2 + 2 * word
     address = BASE + off
@@ -206,8 +213,11 @@ for word, names in NAMES.items():
             chosen = CHOSEN.get((word, bit))
             shown = [r for r in rec if r[0] == chosen] if chosen else rec
             others = [r[0] for r in rec if chosen and r[0] != chosen]
-            parts.append("; ".join(f"e2m {r[0]} (0x{mask:x}): '{r[1][:110]}'" for r in shown) +
-                         (f" (the reader rules out the other record on this bit, {', '.join(others)})" if others else ""))
+            if (word, bit) in SAME_ENABLE:
+                note = f" (the e2m also names this enable {', '.join(others)})"
+            else:
+                note = f" (the reader rules out the other record on this bit, {', '.join(others)})" if others else ""
+            parts.append("; ".join(f"e2m {r[0]} (0x{mask:x}): '{r[1][:110]}'" for r in shown) + note)
         else:
             parts.append(f"no e2m record (0x{mask:x})")
         if rd:
@@ -239,6 +249,10 @@ for word in NAMES:
     a, n, t, c = lines[k[0]].split(",", 3)
     lines[k[0]] = ",".join([a, n, f"algorithm_enable_flags_{word}_t",
                             c + f" | typed algorithm_enable_flags_{word}_t in PR #53 round 20 (was word)"])
+if ONLY:
+    open(gp, "w").write("\n".join(lines))
+    print("written (--only: no cache row)")
+    sys.exit(0)
 assert not any(l.startswith("0x003fb35c,") for l in lines)
 cache = ("0x003fb35c,cold_delta_fuel_cached_axis_offsets,word[2],2-D lookup cache of cold_delta_fuel_grid "
          "(cm848_calculateColdDeltaFuel): the X / Y axis offsets of the last lookup (PR #53 round 20)")

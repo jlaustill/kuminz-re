@@ -1128,6 +1128,10 @@ Scripts are in `session_folder/round20/`.
     (`Fuel_Temperature_Data_Noderate_Enable`).
   - `calculateAlpha` reads words 0, 1, 12 and 19 through a pointer to word 0.
   - Nothing of these reaches word 3, so stage B's "no reader" comments and round 19's ANC claim hold.
+  - Round 19's raw scanner finds only addresses built with `lis`. Word 3 has 5 such hits, but 10 functions read
+    it; the others use a base register. So the ANC claim was also checked against the `.cpp`: no named, `DAT_`
+    or region-loop reference reaches 0x40a04a-0x40a05d. (`sensor_channel_ram_start`, 0x40a046, is the exclusive
+    end of the copied calibration region.)
 - **Stage A (7117c24, label-only):** 17 words had guessed names. Word 3 was `j1939_governor_feature_cal`; the others
   were `governor_*`, `j1939_*` and `*_feature_*` guesses. Each is now `algorithm_enable_flags_<N>_cal`, with its e2m
   bits in the comment. The code agrees: word 29 0x100 is DM13, 0x20 / 0x40 the PGN 56832 resets, 0x800 the throttle
@@ -1146,14 +1150,17 @@ Scripts are in `session_folder/round20/`.
   - New rows: the length word `algorithm_enable_flags_table_length_cal` (the CRC scan starts there; it holds 70 in the
     dump, not 90) and words 7 / 8 / 11 / 26.
   - Word 11 bit 3 (`J1939_Communication_Enable`) was an unnamed `DAT_003fd5b2` that gates the J1939 transmit queues and
-    the receive dispatch. The label-only proof found it.
+    the receive dispatch. The label-only proof found it. The word is 0x000b on this truck, so J1939 communication
+    is enabled. Stage C's comment said 0x0000 without reading the dump; stage F corrected it.
 - **Stage D (797ec46, types):** 17 more bitfield structs, on words 1, 2, 5, 6, 13, 19, 20, 21, 25, 27, 28, 29, 31, 32,
-  40, 42 and 43. 117 bits are named from a matching reader, 50 from a single spelled-out record, and 105 are reserved.
+  40, 42 and 43. 117 bits are named from a matching reader, 50 from a single record, and 105 are reserved.
   Word 0 stays a word, because the loops index from it. The cold delta fuel cache is `word[2]`.
   - **Naming tiers (from the advisor):**
     - a read bit takes its record's name when the reader agrees, or its behaviour's name when there is no record;
-    - an unread bit takes its record's name only when exactly one record sits on it and the description spells the
-      words out;
+    - an unread bit takes its record's name only when exactly one record sits on it, and each abbreviation in it is
+      spelled out by that record's description, a sibling record or the repo's vocabulary: AC air conditioning
+      (except word 18's `AC_Smart_Enable`, 'Smart Air Compressor'), IMT intake manifold temperature, EB engine
+      retarder, WG wastegate, RSG road speed governor, AH air handling, CT coolant temperature;
     - the rest stay `reserved_bit_N`, with the record and the reader in the comment. 'SS', 'CSE', 'VGA', 'QPID',
       'OOG' and 'TVA' are never spelled out.
   - Where two records share a bit (word 19 0x200 / 0x2000), the reader picks.
@@ -1170,11 +1177,18 @@ Scripts are in `session_folder/round20/`.
     `transmission_control_enable` (the 48RE).
 - **Stage E (32df48c, label-only):** `cm848_initializeColdDeltaFuelLookupCache` (was
   `mpc555_initFuelDemandOffsetFilter`). Stage D's cache typing showed it only presets the lookup cache.
+- **Stage F (16f967b, types + comments, after the advisor's review):** word 11 is
+  `algorithm_enable_flags_11_t` (the proprietary / J1587 / J1922 / J1939 communication enables), the one directly
+  read flags word left untyped. Its comment now gives the dump value 0x000b, and word 19 bit 7's comment no longer
+  says the reader rules out its second record (the two are one enable under two names). That makes 19 bitfield
+  structs this round (word 3, the 17 of stage D, word 11).
 - **Methods:**
   - A "no reader" claim needs three searches:
     - the name's masked tests;
     - unnamed `DAT_` references in the range (the label-only proof found word 11's);
     - the computed and pointer reads (the engine protection loops, `calculateAlpha`).
+  - A dump value goes into a comment only after it is read at the declared width. Word 11's 0x0000 was written from
+    memory (it is 0x000b).
   - The scratch `refresh_enums_structs.py` replaced a field map row's old name (`reserved_bit_N`) in every struct. It
     now skips field rows, and a generic field name is renamed per struct.
 - **Round 20 leads:**

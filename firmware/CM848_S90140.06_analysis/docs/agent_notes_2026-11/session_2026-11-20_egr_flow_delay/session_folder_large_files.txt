@@ -102,6 +102,7 @@
   200901 build_r20c2.log
   200904 build_r20d.log
   200908 build_r20e.log
+  200908 build_r20f.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
  1072739 e2m_audit_round17a.csv
@@ -134,4 +135,4 @@
   402082 verify_round17.log
   402126 verify_round18.log
   402131 verify_round19.log
-  402130 verify_round20.log
+  402122 verify_round20.log

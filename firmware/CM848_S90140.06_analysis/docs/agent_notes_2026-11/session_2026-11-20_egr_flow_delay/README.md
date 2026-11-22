@@ -349,7 +349,7 @@ Hand work on the round 7 lead.
 - **Stage A:** `worklist_r20a.py`, `make_worklist_r20a2.py` (generates `worklist_r20a2.py`). **Stage B:** `apply_r20b.py`
   + `normalize_r20b.py`. **Stage C:** `worklist_r20c.py`, `apply_r20c2.py` (its structs-only rerun
   `apply_r20c2_structs.py`), `apply_r20c3.py`. **Stage D:** `apply_r20d.py` (the naming table and its checks) +
-  `normalize_r20d.py`. **Stage E:** `worklist_r20e.py`. **Closing:** `apply_r20_closing.py`.
+  `normalize_r20d.py`. **Stage E:** `worklist_r20e.py`. **Stage F (after the advisor's review):** `apply_r20f.py`, `patch_r20d_for_f.py` (adds the generator's `--only` / `SAME_ENABLE`), then `apply_r20d.py --only 11`. **Closing:** `apply_r20_closing.py`, `apply_r20f_closing.py`, `fix_r20_task046_order.py`.
 - **Evidence:** `flag_word_uses.py` / `bit_readers.txt` (the readers of each bit), `flag_records.txt` /
   `flag_records_typed.txt` (the e2m records with their descriptions), `bit_context.py` (the code around a bit's
   tests).

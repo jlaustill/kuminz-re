@@ -471,8 +471,12 @@ state enum, the flag bytes.**
   the misfire timing limit function, the wave 11 structs' proven guessed bits, and rows for the length word and words
   7 / 8 / 11 / 26.
 - **Stage D (797ec46, types):** 17 more flag words as bitfields: 117 bits named from a matching reader, 50 from a
-  single spelled-out record, 105 reserved. Plus the cold delta fuel cache.
+  single record (each abbreviation expanded by its description, a sibling record or the repo's vocabulary), 105
+  reserved. Plus the cold delta fuel cache.
 - **Stage E (32df48c, label-only):** the cold delta fuel cache initializer.
+- **Stage F (16f967b, after the advisor's review):** word 11 as `algorithm_enable_flags_11_t` (the J1939 / J1587 /
+  J1922 / proprietary communication enables), its dump value corrected to 0x000b (J1939 communication is enabled),
+  and word 19 bit 7's comment.
 
 ## Test plan
 
@@ -565,7 +569,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
-- [x] Round 20: stages A, C and E are EQUIVALENT; stages B and D pass the mask normalizer (D's count gate: per word and mask, old masked reads = new field reads; pieces 464 -> 464).
+- [x] Round 20: stages A, C and E are EQUIVALENT; stages B, D and F pass the mask normalizer (the count gate: per word and mask, old masked reads = new field reads; pieces 464 -> 464).
 - [x] Round 19: stages A, C and D are EQUIVALENT; stage B's enum proof shows only the substitutions (plus the cache's two users).
 - [x] Round 18: stages B and D are EQUIVALENT; stage A's cast-normalized diff and stage C's diff show only the intended effects.
 - [x] Round 17: stage A is EQUIVALENT (30 names); stage B's enum proof shows 0 functions differing beyond the substitutions; stage C's type diff is reviewed with a mask normalizer.

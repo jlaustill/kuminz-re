@@ -1,0 +1,16 @@
+cm848: round 20 closing after the review - docs, the session archive, verify
+
+- task 046, round 20 section:
+  - stage F;
+  - word 11's real value (0x000b: J1939 communication enabled);
+  - the e2m tier rule as applied (abbreviations from the record, a sibling record or the repo's vocabulary; AC is air
+    conditioning except word 18's 'Smart Air Compressor');
+  - the raw scanner's reach (it sees only lis-built addresses: word 3 has 5 hits but 10 reading functions), and the
+    ANC claim checked against the .cpp: no named, DAT_ or region-loop reference reaches 0x40a04a-0x40a05d;
+  - the dump-value rule.
+- PR body: the stage D wording, stage F, the test line (B, D and F pass the mask normalizer).
+- todo line 046: 19 bitfield structs.
+- The session archive: round 20's stage F scratch and logs, the PR body copy.
+- verify: two builds byte-identical.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
