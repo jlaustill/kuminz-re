@@ -397,3 +397,7 @@ Hand work on the round 7 lead.
 - **Stage C:** `apply_r25c.py`. **Stage D:** `apply_r25d.py`.
 - **The proofs:** `tokens_r25*.json`, checked by round 24's `prove_tokens.py`.
 - **Closing:** `apply_r25_closing.py`.
+
+## Round 26: the peer session's cruise review (`session_folder/round26/`)
+
+- **Stage A:** `worklist_r26a.py` (e2m 8C2E / 8C2F aligned by offset; each record's code use is in its comment), `map_r26a.csv`. **Closing:** `apply_r26_closing.py`.

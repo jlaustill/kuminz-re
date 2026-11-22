@@ -520,6 +520,9 @@ state enum, the flag bytes.**
 - **Stage D (170236d, types):** the boot kernel's two diagnostic response messages.
 - Open after round 25: the sensor channel blocks, TouCAN B's base, the kernel transport's message parameter,
   named fault bits (the user's call), `diag_clear_flags_t` (task 046).
+**Round 26 (the peer session's cruise review of 69d6f68).**
+- **Stage A (51ba84a, label-only):** the cruise vacuum throttle actuator named from e2m 8C2E / 8C2F (30 words, the
+  learn check, the previous-pass flag); the vehicle speed path's mode-4 behaviour recorded in task 046.
 
 ## Test plan
 
@@ -612,6 +615,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 26: stage A is EQUIVALENT.
 - [x] Round 25: stage A passes the enum proof (0 differences beyond the substitution); stages B, C and D pass the
   token gate with only the intended functions changed (B: one same-address temporary, C: `main_loop`'s typed
   pointers, D: the allocator's typed return); pieces 492 -> 480.

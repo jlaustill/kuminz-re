@@ -1491,6 +1491,46 @@ Scripts are in `session_folder/round25/`.
     check the callers first.
   - From round 24: named fault bits (the user's call) and `diag_clear_flags_t`.
 
+## Done, round 26 (2026-11-22, same PR): the peer session's cruise review of 69d6f68
+
+The peer session passed on naming corrections from a read-only cruise review, at the user's request. Every item was
+checked in the code before anything was renamed. Scripts are in `session_folder/round26/`.
+- **Stage A (51ba84a, label-only): the cruise vacuum throttle actuator (`cm848_controlCruiseVacuumServo`).**
+  - The Chrysler e2m blocks 8C2E (17 calibrations at 0x408daa-0x408dc9) and 8C2F (10 working words at
+    0x40b64e-0x40b665) line up with its words by relative offset, and every code use matches its record.
+  - So the `fuel_demand_*` / `governor_cycle_*` / `cruise_servo_*` words are `vacuum_throttle_*`: the PID gains,
+    the integral clamps and reset, the duty cycle and its clamps / override, the target position (the equivalent
+    throttle in cruise), the position error, the vacuum / vent PWM, the PWM period and counter, the deadband, and
+    the disabled latch with its threshold, time and counter.
+  - The wrong `_cal` on the ROM words went.
+  - The latch (`vacuum_throttle_actuator_disabled_flag`, was `governor_cycle_active_flag`) is set on an
+    accelerator pedal fault, or after `vacuum_throttle_maximum_error_time` of errors above the threshold with the
+    brake off. Only the boot initializer clears it. With `vacuum_throttle_cruise_actuator_disable_mode` = 1 it gives
+    cruise denied status 4.
+  - Also `cruise_control_engaged_previous_flag` (0x3fb530, was `governor_override_active_prev_flag`): its only
+    writer is the end of `cm848_calculateCruiseControlFueling`.
+  - Also `cm848_checkCruiseSwitchLearnCondition` (0x512e70, was `governor_cruise_engage_check`): a fresh ON / OFF
+    request with the switch ADC in its window, after which its caller sets `cruise_control_switches_learned_flag`.
+    The rename gate bans 'press' (the e2m's abbreviation for pressure), so the name avoids it.
+- **The vehicle speed path (the review's item 6, checked here):**
+  - `cm848_calculateVehicleSpeed` runs unconditionally from `cm848_periodicTaskSet_canTx` and never tests
+    `vehicle_speed_sensor_type_cal`. It rewrites `vehicle_speed_unfiltered` from the TPU-B sensor period (0 once the
+    pulse timeout expires) and filters that into `vehicle_speed`.
+  - `cm848_calculateVehicleSpeedFromOutputShaft` (in `cm848_periodicTaskSet_monitoring`) writes
+    `vehicle_speed_unfiltered` from the J1939 output shaft speed only in mode 4
+    (`VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO`).
+  - So the filtered `vehicle_speed` never takes the mode-4 value. Only the direct readers of
+    `vehicle_speed_unfiltered` can see it, depending on the task order: the drivetrain ratio, the speed sensor
+    monitors, the engine / vehicle speed ratio monitor, PCI OBD, the power down delay and the transmission
+    condition flags.
+  - The context from the user: the truck runs an Allison LCT1000 on J1939. Transmission type 3 (48RE) is only what
+    the ECM is calibrated for.
+- **Not done:** the review's item 5. Its claim is that firmware/CLAUDE.md's J1939 input layer notes give the right
+  outcome (no cruise code reads the CCVS switches) through the wrong mechanism: `j1939_input_signal_descriptor_table`'s
+  third field is the logical switch that `cm848_evaluateJ1939InputSignalFault` sets (brake 11, clutch 15, PTO 3,
+  remote PTO 19, interlock 26, the cruise / PTO set-resume fields 31). I did not verify it, and a CLAUDE.md edit
+  needs the user's go-ahead rather than a peer request.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
