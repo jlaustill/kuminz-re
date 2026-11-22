@@ -1560,16 +1560,22 @@ fault bitfields and the firmware/CLAUDE.md J1939 note. Scripts are in `session_f
     interlock to 26; cruise and the other inputs go to 31, the unwired switch.
   - firmware/CLAUDE.md's consumers bullet now says so: J1939 can drive the brake / clutch / PTO switches, not cruise.
 - **Stage B (2eb75f6, types): one bitfield per fault in `fault_bit_words_t` words 1-49.**
-  - 316 bits have e2m 1036 names (the uncertain expansions checked against the bits' setters); the others are
-    `fault_<n>`.
+  - 301 bits of words 1-49 have e2m 1036 names (the uncertain expansions checked against the bits' setters); the
+    others are `fault_<n>`. Word 0's 15 named bits stay in its comment.
   - Word 0 stays the plain word `faults_0_to_15`, the base of the 200 indexed accesses.
-  - The measured trade: 674 tests and 109 writes now name their fault, against 943 piece tokens. 856 of those are the
-    set / clear writes, which Ghidra 12.1 does not fold.
+  - The measured trade: 780 bit-name references (656 in tests, 108 in writes, 16 elsewhere) against 943 piece
+    tokens. 856 of those are the set / clear writes, which Ghidra 12.1 does not fold; the other 87 are tests and
+    whole-word uses.
+  - The stage B commit message (2eb75f6) says 316 named bits and 674 tests / 109 writes. The right figures are 301
+    (words 1-49) and 780 references: the proof's 674 counts both sides of a bit-to-bit compare.
   - A nested type per word was built and rejected (`ZPULL(...)` renders).
   - The mask-exact proof matches 1964 functions; the other 4 differ only structurally and were read by hand.
 - **Round 27 leads:**
-  - Word 0's seven named bits (RAM image word, fuel shutoff, turbocharger wastegate driver 1, fuel pressure idle,
-    HPCR OBD deviation) stay in its comment. The indexed accesses keep it a plain word.
+  - Word 0's 15 named bits (faults 0-4 and 6-15: the RAM image word, fuel shutoff, turbocharger wastegate driver 1,
+    air fuel control low boost, fuel pressure idle, boost / sampled throttle / oil pressure high and low, HPCR OBD
+    deviation) stay in its comment. The indexed accesses keep it a plain word.
+  - The 72 dotted documentation rows `fault_*_cal.faults_A_to_B` in global_variables.csv name the word addresses;
+    only word 0 is still a field. The importer skips them; rename or drop them with the next fault-word change.
   - The `fault_<n>` bits with unresolved e2m abbreviations: CORS (37 / 38), T2 (206-215), TAS (216 / 217), PP
     (709 / 710), Chry_Dat42 (308), the cruise SC source (146 / 147).
   - Channel 88's writes into the fuel temperature words: a calibration with channel 88 enabled would put the exhaust

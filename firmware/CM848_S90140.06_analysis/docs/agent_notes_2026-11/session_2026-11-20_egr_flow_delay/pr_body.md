@@ -530,8 +530,9 @@ state enum, the flag bytes.**
 - **Stage C (04b419e, label-only + firmware/CLAUDE.md):** the J1939 descriptor's third field is the logical switch
   (brake 11 / clutch 15 / PTO 3 / remote PTO 19 / interlock 26 / cruise and the rest 31); the CLAUDE.md mechanism text
   is corrected.
-- **Stage B (2eb75f6, types):** one bitfield per fault in `fault_bit_words_t` words 1-49 (316 e2m names, the rest
-  `fault_<n>`). 674 tests and 109 writes are named; 943 piece tokens, 856 of them on set / clear writes.
+- **Stage B (2eb75f6, types):** one bitfield per fault in `fault_bit_words_t` words 1-49 (301 e2m names, the rest
+  `fault_<n>`). 780 bit-name references (656 tests, 108 writes, 16 other); 943 piece tokens, 856 of them on
+  set / clear writes.
 
 ## Test plan
 

@@ -710,7 +710,8 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
       - **A second exception, by the user's decision (2026-11-22, PR #53 round 27): the fault words.**
         Words 1-49 of `fault_bit_words_t` hold one bitfield per fault (fault n = bit n % 16 of word n / 16). Bits
         are named from e2m 1036 where the code resolves the abbreviation; the others are `fault_<n>`.
-        - **What it gained:** 674 tests and 109 writes now name their fault (`fault_detected_cal.coolant_temperature_high_error == 0`).
+        - **What it gained:** 780 bit-name references (656 in tests, 108 in writes, 16 elsewhere), such as
+          `fault_detected_cal.coolant_temperature_high_error == 0`.
         - **What it cost:** 943 piece tokens. 856 of them are the set / clear writes that Ghidra 12.1 does not fold
           (`fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20`); the other 87 are tests and whole-word uses.
         - **Word 0 stays the plain word `faults_0_to_15`.** It is the base of the 200 indexed accesses, which print
