@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 13:16:40 MST 2026
+// Generated: Sun Nov 22 13:29:35 MST 2026
 
 
 //
@@ -1223,8 +1223,8 @@ undefined4 cm848_diagService65_handler(dword request_msg)
   int iVar1;
   undefined4 uVar2;
   undefined4 local_28;
-  undefined1 auStack_1a [2];
-  undefined1 local_18;
+  byte abStack_1a [2];
+  byte local_18;
   undefined1 local_17;
   undefined1 local_16;
   undefined1 local_15;
@@ -1255,7 +1255,7 @@ undefined4 cm848_diagService65_handler(dword request_msg)
     local_10._3_1_ = (undefined1)iVar1;
     local_12 = (undefined1)local_10;
     local_10 = iVar1;
-    mpc555_canTransmitQueuePush(local_28,7,&local_18,auStack_1a);
+    mpc555_canTransmitQueuePush(local_28,7,&local_18,abStack_1a);
     uVar2 = 0xff;
   }
   return uVar2;
@@ -1303,11 +1303,9 @@ char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
   ushort uVar3;
   char cVar4;
   char cVar5;
-  j1939_msg_hdr_t *msg_header;
+  diagnostic_response_message_t *message;
   undefined2 in_register_00000010;
   uint uVar6;
-  byte *extraout_r4;
-  byte *extraout_r4_00;
   int iVar7;
   byte bVar8;
   byte bVar9;
@@ -1331,32 +1329,29 @@ char cm848_diagMemoryReadHandler(dword address,word length,byte *response_ptr)
         }
         cVar5 = cm848_getServiceDataOffset(bVar8);
         bVar9 = cVar5 - 1;
-        msg_header = (j1939_msg_hdr_t *)
-                     cm848_allocateDiagnosticResponseBuffer
-                               ((uint)(response_ptr + bVar9 + 1) & 0xffff);
-        if (msg_header == (j1939_msg_hdr_t *)0x0) {
+        message = (diagnostic_response_message_t *)
+                  cm848_allocateDiagnosticResponseBuffer((uint)(response_ptr + bVar9 + 1) & 0xffff);
+        if (message == (diagnostic_response_message_t *)0x0) {
           cVar4 = '\x04';
         }
         else {
-          pbVar10 = (byte *)msg_header[1].can_id;
-          msg_header->can_id = 0xefff00;
-          *(byte *)&msg_header->can_id =
-               (*(byte *)address >> 2 & 7) << 2 | *(byte *)&msg_header->can_id & 0xe3;
-          *(undefined1 *)((int)&msg_header->can_id + 2) = *(undefined1 *)(address + 3);
-          *(undefined1 *)((int)&msg_header->can_id + 3) = *(undefined1 *)(address + 2);
+          pbVar10 = message->data_pointer;
+          (message->header).can_id = 0xefff00;
+          *(byte *)&(message->header).can_id =
+               (*(byte *)address >> 2 & 7) << 2 | *(byte *)&(message->header).can_id & 0xe3;
+          *(undefined1 *)((int)&(message->header).can_id + 2) = *(undefined1 *)(address + 3);
+          *(undefined1 *)((int)&(message->header).can_id + 3) = *(undefined1 *)(address + 2);
           iVar7 = *(int *)(address + 6);
           *pbVar10 = bVar8;
           pbVar10 = pbVar10 + 1;
           cm848_copyBytes(pbVar10,iVar7 + 1,bVar9);
           if (uVar6 < 0x1000000) {
             cm848_copyBytes(pbVar10 + bVar9,uVar6,uVar2);
-            pbVar10 = extraout_r4_00;
           }
           else {
             mpc555_eepromReadWords(uVar6,pbVar10 + bVar9,uVar2);
-            pbVar10 = extraout_r4;
           }
-          cm848_transmitCanMessage(msg_header,pbVar10);
+          cm848_transmitCanMessage(message);
           cVar4 = -1;
         }
       }
@@ -1778,10 +1773,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
-  word direction_register_value;
   word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
+  word direction_register_value;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -3036,56 +3031,55 @@ undefined1 cm848_getDiagnosticResponseEchoLength(int param_1)
 // Function: mpc555_canTransmitQueuePush @ 0x00003dac
 //
 
-void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined1 *param_4)
+void mpc555_canTransmitQueuePush(dword can_id,dword data_length,byte *data,byte *result)
 
 {
-  undefined1 *puVar1;
+  byte *pbVar1;
   dword dVar2;
   dword dVar3;
   word wVar4;
   uint uVar5;
-  undefined1 *puVar6;
+  byte *pbVar6;
   undefined2 *puVar7;
-  undefined1 *puVar8;
+  byte *pbVar8;
   undefined2 *puVar9;
   byte bVar10;
-  undefined1 uVar11;
   undefined2 uStack_2a;
   undefined4 local_28;
-  undefined1 local_24 [28];
+  byte local_24 [28];
   
-  if (param_2 == 0) {
-    uVar11 = 1;
+  if (data_length == 0) {
+    bVar10 = 1;
   }
   else {
     bVar10 = boot_can_ring_state.transmit_ring_full_flag;
     if (bVar10 == 1) {
-      uVar11 = 4;
+      bVar10 = 4;
     }
     else {
-      local_28 = (param_1 & 0x1ffc0000) << 3 | (param_1 & 0x3ffff) << 1 | 0x180000;
-      puVar8 = local_24;
+      local_28 = (can_id & 0x1ffc0000) << 3 | (can_id & 0x3ffff) << 1 | 0x180000;
+      pbVar8 = local_24;
       uVar5 = 0;
-      if (0 < (int)param_2) {
-        puVar6 = (undefined1 *)(param_3 + -1);
-        puVar1 = (undefined1 *)((int)&local_28 + 3);
+      if (0 < (int)data_length) {
+        pbVar6 = data + -1;
+        pbVar1 = (byte *)((int)&local_28 + 3);
         do {
-          puVar8 = puVar1;
-          puVar6 = puVar6 + 1;
-          puVar1 = puVar8 + 1;
-          *puVar1 = *puVar6;
+          pbVar8 = pbVar1;
+          pbVar6 = pbVar6 + 1;
+          pbVar1 = pbVar8 + 1;
+          *pbVar1 = *pbVar6;
           uVar5 = uVar5 + 1 & 0xff;
-        } while ((int)uVar5 < (int)param_2);
-        puVar8 = puVar8 + 2;
+        } while ((int)uVar5 < (int)data_length);
+        pbVar8 = pbVar8 + 2;
       }
-      param_2 = param_2 & 0xff;
-      if (param_2 < 8) {
-        puVar8 = puVar8 + -1;
+      uVar5 = data_length & 0xff;
+      if (uVar5 < 8) {
+        pbVar8 = pbVar8 + -1;
         do {
-          puVar8 = puVar8 + 1;
-          *puVar8 = 0xff;
-          param_2 = param_2 + 1 & 0xff;
-        } while (param_2 < 8);
+          pbVar8 = pbVar8 + 1;
+          *pbVar8 = 0xff;
+          uVar5 = uVar5 + 1 & 0xff;
+        } while (uVar5 < 8);
       }
       dVar2 = boot_can_ring_state.transmit_message_buffer_pointer;
       if ((*(byte *)(dVar2 + 1) & 0xf0) == 0xc0) {
@@ -3113,10 +3107,10 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
         wVar4 = can_mailbox_counter.slot_start;
         cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff,(word *)&local_28);
       }
-      uVar11 = 0;
+      bVar10 = 0;
     }
   }
-  *param_4 = uVar11;
+  *result = bVar10;
   return;
 }
 
@@ -3126,20 +3120,18 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
 // Function: cm848_transmitCanMessage @ 0x00003f20
 //
 
-void cm848_transmitCanMessage(j1939_msg_hdr_t *msg_header,byte *data_ptr)
+void cm848_transmitCanMessage(diagnostic_response_message_t *message)
 
 {
-  byte *data_ptr_00;
-  word in_r5;
+  uint data_length;
   
-  data_ptr_00 = (byte *)(uint)msg_header->data_length;
-  if (data_ptr_00 < (byte *)0x9) {
+  data_length = (uint)(message->header).data_length;
+  if (data_length < 9) {
     mpc555_canTransmitQueuePush
-              (msg_header->can_id,data_ptr_00,msg_header[1].can_id,
-               *(undefined4 *)&msg_header[1].data_length);
+              ((message->header).can_id,data_length,message->data_pointer,message->status_pointer);
   }
   else {
-    mpc555_sendJ1939TransportRequestToSend(msg_header,data_ptr_00,in_r5);
+    mpc555_sendJ1939TransportRequestToSend(message);
   }
   return;
 }
@@ -4469,72 +4461,73 @@ LAB_00005a58:
    TP.CM 0x10 request-to-send on PGN 60416 then switches to PGN 60160 data transfer |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-void mpc555_sendJ1939TransportRequestToSend
-               (j1939_msg_hdr_t *msg_header,byte *data_ptr,word data_length)
+void mpc555_sendJ1939TransportRequestToSend(diagnostic_response_message_t *message)
 
 {
   ushort *puVar1;
   byte bVar2;
   byte bVar3;
-  byte bVar4;
-  word wVar5;
-  byte *pbVar6;
-  dword dVar7;
+  ushort uVar4;
+  byte bVar5;
+  word wVar6;
+  byte *pbVar7;
+  dword can_id;
   byte local_1c;
   byte bStack_1b;
   
-  puVar1 = (ushort *)((int)&msg_header->can_id + 1);
+  puVar1 = (ushort *)((int)&(message->header).can_id + 1);
   bVar2 = *(byte *)puVar1;
-  bVar3 = *(byte *)((int)&msg_header->can_id + 2);
+  bVar3 = *(byte *)((int)&(message->header).can_id + 2);
   if ((bVar2 < 0xf0) && (bVar3 != 0xff)) {
-    bVar4 = boot_j1939_transport_transmit_active;
-    if (bVar4 == 0) {
+    bVar5 = boot_j1939_transport_transmit_active;
+    if (bVar5 == 0) {
       boot_j1939_transport_transmit_active = 1;
       boot_j1939_transport_transmit_destination_address = bVar3;
       boot_j1939_transport_transmit_session.transported_pgn = *puVar1 & 0xff00;
-      boot_j1939_transport_transmit_session.message_size = msg_header->data_length;
-      boot_j1939_transport_transmit_session.total_packet_count =
-           (char)((int)(msg_header->data_length - 1) / 7) + 1;
+      uVar4 = (message->header).data_length;
+      boot_j1939_transport_transmit_session.message_size = uVar4;
+      boot_j1939_transport_transmit_session.total_packet_count = (char)((int)(uVar4 - 1) / 7) + 1;
       boot_j1939_transport_transmit_session.granted_packet_count = 0;
-      boot_j1939_transport_transmit_session.message_data_pointer = (byte *)msg_header[1].can_id;
+      boot_j1939_transport_transmit_session.message_data_pointer = message->data_pointer;
       boot_j1939_transport_transmit_session.frame_can_id =
-           msg_header->can_id & 0xff00ffff | 0xec0000;
+           (message->header).can_id & 0xff00ffff | 0xec0000;
       boot_j1939_transport_transmit_session.frame_data_length = 8;
       boot_j1939_transport_transmit_session.timeout_timer = 0x37;
-      boot_j1939_transport_transmit_session.session_status_pointer =
-           *(byte **)&msg_header[1].data_length;
-      pbVar6 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
-      *pbVar6 = 0x10;
-      wVar5 = boot_j1939_transport_transmit_session.message_size;
-      bStack_1b = (byte)wVar5;
-      pbVar6[1] = bStack_1b;
-      local_1c = (byte)(wVar5 >> 8);
-      pbVar6[2] = local_1c;
+      boot_j1939_transport_transmit_session.session_status_pointer = message->status_pointer;
+      pbVar7 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
+      *pbVar7 = 0x10;
+      wVar6 = boot_j1939_transport_transmit_session.message_size;
+      bStack_1b = (byte)wVar6;
+      pbVar7[1] = bStack_1b;
+      local_1c = (byte)(wVar6 >> 8);
+      pbVar7[2] = local_1c;
       bVar3 = boot_j1939_transport_transmit_session.total_packet_count;
-      pbVar6[3] = bVar3;
-      pbVar6[4] = 0xff;
-      pbVar6[5] = 0;
-      pbVar6[6] = bVar2;
-      pbVar6[7] = 0;
-      wVar5 = boot_j1939_transport_transmit_session.frame_data_length;
-      dVar7 = boot_j1939_transport_transmit_session.frame_can_id;
-      pbVar6 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
-      mpc555_canTransmitQueuePush(dVar7,wVar5,pbVar6,0x30290a);
+      pbVar7[3] = bVar3;
+      pbVar7[4] = 0xff;
+      pbVar7[5] = 0;
+      pbVar7[6] = bVar2;
+      pbVar7[7] = 0;
+      wVar6 = boot_j1939_transport_transmit_session.frame_data_length;
+      can_id = boot_j1939_transport_transmit_session.frame_can_id;
+      pbVar7 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
+      mpc555_canTransmitQueuePush
+                (can_id,(uint)wVar6,pbVar7,&boot_j1939_transport_transmit_session.frame_queue_status
+                );
       bVar2 = boot_j1939_transport_transmit_session.frame_queue_status;
       if (bVar2 == 0) {
-        pbVar6 = boot_j1939_transport_transmit_session.session_status_pointer;
-        *pbVar6 = 0x12;
+        pbVar7 = boot_j1939_transport_transmit_session.session_status_pointer;
+        *pbVar7 = 0x12;
         boot_j1939_transport_transmit_session.frame_can_id =
-             msg_header->can_id & 0xff00ffff | 0xeb0000;
+             (message->header).can_id & 0xff00ffff | 0xeb0000;
       }
       else {
-        pbVar6 = boot_j1939_transport_transmit_session.session_status_pointer;
-        *pbVar6 = bVar2;
+        pbVar7 = boot_j1939_transport_transmit_session.session_status_pointer;
+        *pbVar7 = bVar2;
         boot_j1939_transport_transmit_active = 0;
       }
     }
     else {
-      **(undefined1 **)&msg_header[1].data_length = 8;
+      *message->status_pointer = 8;
     }
   }
   return;
@@ -4600,31 +4593,31 @@ void mpc555_sendJ1939TransportAbort(undefined1 param_1,undefined2 param_2)
 
 {
   can_rx_channel_t cVar1;
-  undefined1 *puVar2;
-  undefined1 *puVar3;
+  byte *pbVar2;
+  byte *pbVar3;
   byte bVar4;
   undefined4 local_28;
-  undefined1 auStack_1a [2];
-  undefined1 local_18;
-  undefined1 local_17 [7];
+  byte abStack_1a [2];
+  byte local_18;
+  byte local_17 [7];
   undefined2 local_10;
   
   cVar1 = can_rx_channel_filter;
   local_28 = CONCAT31(CONCAT21(0x18ec,param_1),(char)cVar1.channel_id);
   local_18 = 0xff;
   bVar4 = 0;
-  puVar2 = &local_18;
+  pbVar2 = &local_18;
   local_10 = param_2;
   do {
-    puVar3 = puVar2;
-    puVar3[1] = 0xff;
+    pbVar3 = pbVar2;
+    pbVar3[1] = 0xff;
     bVar4 = bVar4 + 1;
-    puVar2 = puVar3 + 1;
+    pbVar2 = pbVar3 + 1;
   } while (bVar4 < 4);
-  puVar3[2] = 0;
-  puVar3[3] = local_10._0_1_;
-  puVar3[4] = 0;
-  mpc555_canTransmitQueuePush(local_28,8,&local_18,auStack_1a);
+  pbVar3[2] = 0;
+  pbVar3[3] = local_10._0_1_;
+  pbVar3[4] = 0;
+  mpc555_canTransmitQueuePush(local_28,8,&local_18,abStack_1a);
   return;
 }
 
@@ -4645,8 +4638,8 @@ void mpc555_sendJ1939TransportEndOfMessageAcknowledge
   can_rx_channel_t cVar1;
   word wVar2;
   undefined4 local_28;
-  undefined1 auStack_1a [2];
-  undefined1 local_18;
+  byte abStack_1a [2];
+  byte local_18;
   undefined1 local_17;
   undefined1 local_16;
   byte local_15;
@@ -4673,7 +4666,7 @@ void mpc555_sendJ1939TransportEndOfMessageAcknowledge
   local_11 = 0;
   local_10 = (short)data_ptr;
   local_c = wVar2;
-  mpc555_canTransmitQueuePush(local_28,8,&local_18,auStack_1a);
+  mpc555_canTransmitQueuePush(local_28,8,&local_18,abStack_1a);
   return;
 }
 
@@ -4687,15 +4680,14 @@ void mpc555_sendJ1939TransportEndOfMessageAcknowledge
    25 packets per window | review-function-readability reviewed 2026-11-11 - Readability Medium
    Accuracy Confidence High */
 
-undefined1
-mpc555_sendJ1939TransportClearToSend
-          (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
+byte mpc555_sendJ1939TransportClearToSend
+               (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
 
 {
   can_rx_channel_t cVar1;
   undefined4 local_30;
-  undefined1 local_22 [2];
-  undefined1 local_20;
+  byte local_22 [2];
+  byte local_20;
   undefined1 local_1f;
   undefined1 local_1e;
   undefined1 local_1d;
@@ -5001,24 +4993,24 @@ void mpc555_sendJ1939TransportDataPackets(void *queue_entry)
   byte *pbVar1;
   byte bVar2;
   word wVar3;
-  dword dVar4;
-  byte *pbVar5;
+  dword can_id;
+  byte *pbVar4;
+  uint uVar5;
   uint uVar6;
   uint uVar7;
-  uint uVar8;
-  int iVar9;
+  int iVar8;
+  byte bVar9;
   byte bVar10;
-  byte bVar11;
-  byte *pbVar12;
+  byte *pbVar11;
   
-  bVar11 = boot_j1939_transport_transmit_session.granted_packet_count;
-  if (bVar11 == 0) {
+  bVar10 = boot_j1939_transport_transmit_session.granted_packet_count;
+  if (bVar10 == 0) {
     wVar3 = boot_j1939_transport_transmit_session.timeout_timer;
     if (wVar3 == 0) {
-      bVar11 = 6;
+      bVar10 = 6;
 LAB_00006458:
-      pbVar12 = boot_j1939_transport_transmit_session.session_status_pointer;
-      *pbVar12 = bVar11;
+      pbVar11 = boot_j1939_transport_transmit_session.session_status_pointer;
+      *pbVar11 = bVar10;
       boot_j1939_transport_transmit_active = 0;
     }
     else {
@@ -5026,60 +5018,62 @@ LAB_00006458:
     }
   }
   else {
-    bVar10 = boot_j1939_transport_transmit_session.next_packet_number;
-    uVar6 = (uint)bVar10;
-    if (bVar11 < 0x10) {
+    bVar9 = boot_j1939_transport_transmit_session.next_packet_number;
+    uVar5 = (uint)bVar9;
+    if (bVar10 < 0x10) {
       boot_j1939_transport_transmit_session.granted_packet_count = 0;
       boot_j1939_transport_transmit_session.timeout_timer = 0x70;
     }
     else {
-      boot_j1939_transport_transmit_session.next_packet_number = bVar10 + 0xf;
-      boot_j1939_transport_transmit_session.granted_packet_count = bVar11 - 0xf;
-      bVar11 = 0xf;
+      boot_j1939_transport_transmit_session.next_packet_number = bVar9 + 0xf;
+      boot_j1939_transport_transmit_session.granted_packet_count = bVar10 - 0xf;
+      bVar10 = 0xf;
     }
-    pbVar12 = boot_j1939_transport_transmit_session.message_data_pointer;
-    pbVar12 = pbVar12 + uVar6 * 7 + -7;
-    bVar10 = 0;
-    if (bVar11 != 0) {
+    pbVar11 = boot_j1939_transport_transmit_session.message_data_pointer;
+    pbVar11 = pbVar11 + uVar5 * 7 + -7;
+    bVar9 = 0;
+    if (bVar10 != 0) {
       do {
-        pbVar5 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
+        pbVar4 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
         bVar2 = boot_j1939_transport_transmit_session.total_packet_count;
-        if (bVar2 == uVar6) {
+        if (bVar2 == uVar5) {
           wVar3 = boot_j1939_transport_transmit_session.message_size;
-          uVar8 = ((uint)wVar3 - (uVar6 * 7 + 0xf9)) + 1;
-          boot_j1939_transport_transmit_session.frame_data_length = (ushort)uVar8 & 0xff;
+          uVar7 = ((uint)wVar3 - (uVar5 * 7 + 0xf9)) + 1;
+          boot_j1939_transport_transmit_session.frame_data_length = (ushort)uVar7 & 0xff;
         }
         else {
-          uVar8 = 8;
+          uVar7 = 8;
         }
-        *pbVar5 = (byte)uVar6;
-        uVar6 = uVar6 + 1 & 0xff;
-        uVar7 = 0;
-        iVar9 = (uVar8 & 0xff) - 1;
-        if (0 < iVar9) {
-          pbVar1 = pbVar12 + -1;
+        *pbVar4 = (byte)uVar5;
+        uVar5 = uVar5 + 1 & 0xff;
+        uVar6 = 0;
+        iVar8 = (uVar7 & 0xff) - 1;
+        if (0 < iVar8) {
+          pbVar1 = pbVar11 + -1;
           do {
-            pbVar12 = pbVar1;
-            pbVar1 = pbVar12 + 1;
-            pbVar5 = pbVar5 + 1;
-            *pbVar5 = *pbVar1;
-            uVar7 = uVar7 + 1 & 0xff;
-          } while ((int)uVar7 < iVar9);
-          pbVar12 = pbVar12 + 2;
+            pbVar11 = pbVar1;
+            pbVar1 = pbVar11 + 1;
+            pbVar4 = pbVar4 + 1;
+            *pbVar4 = *pbVar1;
+            uVar6 = uVar6 + 1 & 0xff;
+          } while ((int)uVar6 < iVar8);
+          pbVar11 = pbVar11 + 2;
         }
         wVar3 = boot_j1939_transport_transmit_session.frame_data_length;
-        dVar4 = boot_j1939_transport_transmit_session.frame_can_id;
-        pbVar5 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
-        mpc555_canTransmitQueuePush(dVar4,wVar3,pbVar5,0x30290a);
+        can_id = boot_j1939_transport_transmit_session.frame_can_id;
+        pbVar4 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
+        mpc555_canTransmitQueuePush
+                  (can_id,(uint)wVar3,pbVar4,
+                   &boot_j1939_transport_transmit_session.frame_queue_status);
         bVar2 = boot_j1939_transport_transmit_session.frame_queue_status;
         if (bVar2 != 0) {
-          bVar11 = 7;
+          bVar10 = 7;
           goto LAB_00006458;
         }
-        pbVar5 = boot_j1939_transport_transmit_session.session_status_pointer;
-        *pbVar5 = 0x13;
-        bVar10 = bVar10 + 1;
-      } while (bVar10 < bVar11);
+        pbVar4 = boot_j1939_transport_transmit_session.session_status_pointer;
+        *pbVar4 = 0x13;
+        bVar9 = bVar9 + 1;
+      } while (bVar9 < bVar10);
     }
   }
   return;
@@ -6004,63 +5998,62 @@ undefined4 cm848_validateWriteAuth(undefined4 scrambled_token)
 void cm848_sendDiagServiceResponse(byte *param_1,uint param_2)
 
 {
-  byte bVar1;
-  j1939_msg_hdr_t *msg_header;
-  int iVar2;
-  byte *pbVar3;
-  byte *data_ptr;
-  byte bVar4;
-  byte *pbVar5;
+  undefined1 uVar1;
+  byte bVar2;
+  diagnostic_response_message_t *message;
+  int iVar3;
+  undefined1 *puVar4;
+  byte bVar5;
+  undefined1 *puVar6;
   
-  bVar1 = cm848_getDiagnosticResponseEchoLength(**(undefined1 **)(param_1 + 6));
+  bVar2 = cm848_getDiagnosticResponseEchoLength(**(undefined1 **)(param_1 + 6));
   if (param_2 == 0) {
-    iVar2 = 1;
+    iVar3 = 1;
   }
   else {
     if (param_2 == 0xfe) {
-      iVar2 = bVar1 + 3;
+      iVar3 = bVar2 + 3;
       goto LAB_000074f8;
     }
-    iVar2 = 2;
+    iVar3 = 2;
   }
-  iVar2 = (uint)bVar1 + iVar2;
+  iVar3 = (uint)bVar2 + iVar3;
 LAB_000074f8:
-  msg_header = (j1939_msg_hdr_t *)cm848_allocateDiagnosticResponseBuffer(iVar2);
-  if (msg_header != (j1939_msg_hdr_t *)0x0) {
-    msg_header->can_id = 0xefff00;
-    *(byte *)&msg_header->can_id = (*param_1 >> 2 & 7) << 2 | *(byte *)&msg_header->can_id & 0xe3;
-    *(byte *)((int)&msg_header->can_id + 2) = param_1[3];
-    *(byte *)((int)&msg_header->can_id + 3) = param_1[2];
-    pbVar3 = (byte *)msg_header[1].can_id;
+  message = (diagnostic_response_message_t *)cm848_allocateDiagnosticResponseBuffer(iVar3);
+  if (message != (diagnostic_response_message_t *)0x0) {
+    (message->header).can_id = 0xefff00;
+    *(byte *)&(message->header).can_id =
+         (*param_1 >> 2 & 7) << 2 | *(byte *)&(message->header).can_id & 0xe3;
+    *(byte *)((int)&(message->header).can_id + 2) = param_1[3];
+    *(byte *)((int)&(message->header).can_id + 3) = param_1[2];
+    puVar4 = message->data_pointer;
     if (param_2 == 0) {
       param_2 = 0xc;
     }
     else if (param_2 == 0xfe) {
-      *pbVar3 = 0xe;
-      bVar4 = boot_state_machine.boot_param._0_1_;
-      pbVar3[1] = bVar4;
-      pbVar3 = pbVar3 + 2;
-      bVar4 = boot_state_machine.boot_param._1_1_;
-      param_2 = (uint)bVar4;
+      *puVar4 = 0xe;
+      uVar1 = boot_state_machine.boot_param._0_1_;
+      puVar4[1] = uVar1;
+      puVar4 = puVar4 + 2;
+      bVar5 = boot_state_machine.boot_param._1_1_;
+      param_2 = (uint)bVar5;
     }
     else {
-      *pbVar3 = 0xd;
-      pbVar3 = pbVar3 + 1;
+      *puVar4 = 0xd;
+      puVar4 = puVar4 + 1;
     }
-    *pbVar3 = (byte)param_2;
-    data_ptr = pbVar3 + 1;
-    bVar4 = 0;
-    if (bVar1 != 0) {
-      pbVar5 = (byte *)(*(int *)(param_1 + 6) + -1);
-      data_ptr = pbVar3;
+    *puVar4 = (char)param_2;
+    bVar5 = 0;
+    if (bVar2 != 0) {
+      puVar6 = (undefined1 *)(*(int *)(param_1 + 6) + -1);
       do {
-        pbVar5 = pbVar5 + 1;
-        data_ptr = data_ptr + 1;
-        *data_ptr = *pbVar5;
-        bVar4 = bVar4 + 1;
-      } while (bVar4 < bVar1);
+        puVar6 = puVar6 + 1;
+        puVar4 = puVar4 + 1;
+        *puVar4 = *puVar6;
+        bVar5 = bVar5 + 1;
+      } while (bVar5 < bVar2);
     }
-    cm848_transmitCanMessage(msg_header,data_ptr);
+    cm848_transmitCanMessage(message);
   }
   return;
 }
@@ -6097,9 +6090,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -22723,7 +22716,7 @@ DIAG_RESPONSE cm848_commandEngineShutdown(void)
    0xfff00030) and SIUMCR 0x402000, then jumps through the reset vector word at ROM 0x104 to
    mpc555_hardwareInitialization (0x2694). Was mpc555_processJ1939RxQueue */
 
-undefined4 cm848_restartThroughBootRom(undefined4 param_1,int param_2)
+undefined4 cm848_restartThroughBootRom(j1939_rx_msg_t *param_1,int param_2)
 
 {
   char cVar1;
@@ -23247,38 +23240,40 @@ bool cm848_j1939RegisterDiagnosticService(byte service_id,void *handler_ptr)
    0x3fa8b2 table and is also fed by transport reassembly - registered by
    cm848_initJ1939DiagnosticServiceHandler */
 
-void cm848_j1939DiagnosticServiceHandler(int param_1)
+void cm848_j1939DiagnosticServiceHandler(j1939_rx_msg_t *rx_msg)
 
 {
-  char cVar1;
-  char cVar2;
-  byte bVar3;
-  char *pcVar4;
+  byte bVar1;
+  byte bVar2;
+  byte *pbVar3;
+  uint uVar4;
   
-  pcVar4 = &DAT_003fa8b2;
-  cVar1 = **(char **)(param_1 + 6);
-  cVar2 = '\x18';
-  if ((cVar1 == '\f') || (cVar1 == '\r')) {
-    cVar2 = -1;
+  pbVar3 = &DAT_003fa8b2;
+  bVar1 = *rx_msg->data_pointer;
+  uVar4 = 0x18;
+  if ((bVar1 == 0xc) || (bVar1 == 0xd)) {
+    uVar4 = 0xff;
   }
   else {
-    bVar3 = 0;
+    bVar2 = 0;
     if (j1939_diagnostic_handler_count != 0) {
       do {
-        if (*pcVar4 == cVar1) {
-          cVar2 = j1939_diagServiceDispatch(param_1);
-          if (cVar2 == -1) {
-            cVar2 = (**(code **)(pcVar4 + 2))(param_1);
+        if (*pbVar3 == bVar1) {
+          uVar4 = j1939_diagServiceDispatch(rx_msg);
+          uVar4 = uVar4 & 0xff;
+          if (uVar4 == 0xff) {
+            uVar4 = (**(code **)(pbVar3 + 2))(rx_msg);
+            uVar4 = uVar4 & 0xff;
           }
           break;
         }
-        pcVar4 = pcVar4 + 6;
-        bVar3 = bVar3 + 1;
-      } while (bVar3 < j1939_diagnostic_handler_count);
+        pbVar3 = pbVar3 + 6;
+        bVar2 = bVar2 + 1;
+      } while (bVar2 < j1939_diagnostic_handler_count);
     }
   }
-  if (cVar2 != -1) {
-    cm848_sendJ1939ResponseFrame(param_1,cVar2);
+  if (uVar4 != 0xff) {
+    cm848_sendJ1939ResponseFrame(rx_msg,uVar4);
   }
   return;
 }
@@ -25129,22 +25124,22 @@ void cm848_initPgn65259ComponentIdHandler(void)
 // Function: cm848_sendJ1939ResponseFrame @ 0x000249c4
 //
 
-void cm848_sendJ1939ResponseFrame(byte *param_1,uint param_2)
+void cm848_sendJ1939ResponseFrame(j1939_rx_msg_t *request,dword result_code)
 
 {
   byte bVar1;
   j1939_tx_msg_t *msg;
   int iVar2;
-  undefined1 *puVar3;
+  byte *pbVar3;
   byte bVar4;
-  undefined1 *puVar5;
+  byte *pbVar5;
   
-  bVar1 = cm848_getLimitCategoryCode(**(undefined1 **)(param_1 + 6));
-  if (param_2 == 0) {
+  bVar1 = cm848_getLimitCategoryCode(*request->data_pointer);
+  if (result_code == 0) {
     iVar2 = 1;
   }
   else {
-    if (param_2 == 0xfe) {
+    if (result_code == 0xfe) {
       iVar2 = bVar1 + 3;
       goto LAB_00024a1c;
     }
@@ -25156,31 +25151,31 @@ LAB_00024a1c:
   if (msg != (j1939_tx_msg_t *)0x0) {
     (msg->header).can_id = 0xef0000;
     *(byte *)&(msg->header).can_id =
-         (*param_1 >> 2 & 7) << 2 | *(byte *)&(msg->header).can_id & 0xe3;
-    *(byte *)((int)&(msg->header).can_id + 2) = param_1[3];
-    *(byte *)((int)&(msg->header).can_id + 3) = param_1[2];
-    puVar3 = msg->data_pointer;
-    if (param_2 == 0) {
-      param_2 = 0xc;
+         (request->priority_dp_flags >> 2 & 7) << 2 | *(byte *)&(msg->header).can_id & 0xe3;
+    *(byte *)((int)&(msg->header).can_id + 2) = request->source_address;
+    *(byte *)((int)&(msg->header).can_id + 3) = request->dest_address;
+    pbVar3 = msg->data_pointer;
+    if (result_code == 0) {
+      result_code = 0xc;
     }
-    else if (param_2 == 0xfe) {
-      *puVar3 = 0xe;
-      puVar3[1] = j1939_response_param_working._0_1_;
-      puVar3 = puVar3 + 2;
-      param_2 = (uint)(byte)j1939_response_param_working;
+    else if (result_code == 0xfe) {
+      *pbVar3 = 0xe;
+      pbVar3[1] = j1939_response_param_working._0_1_;
+      pbVar3 = pbVar3 + 2;
+      result_code = (dword)(byte)j1939_response_param_working;
     }
     else {
-      *puVar3 = 0xd;
-      puVar3 = puVar3 + 1;
+      *pbVar3 = 0xd;
+      pbVar3 = pbVar3 + 1;
     }
-    *puVar3 = (char)param_2;
+    *pbVar3 = (byte)result_code;
     bVar4 = 0;
     if (bVar1 != 0) {
-      puVar5 = (undefined1 *)(*(int *)(param_1 + 6) + -1);
+      pbVar5 = request->data_pointer + -1;
       do {
-        puVar5 = puVar5 + 1;
-        puVar3 = puVar3 + 1;
-        *puVar3 = *puVar5;
+        pbVar5 = pbVar5 + 1;
+        pbVar3 = pbVar3 + 1;
+        *pbVar3 = *pbVar5;
         bVar4 = bVar4 + 1;
       } while (bVar4 < bVar1);
     }
@@ -25195,7 +25190,7 @@ LAB_00024a1c:
 // Function: cm848_sendJ1939ExtendedResponse @ 0x00024afc
 //
 
-void cm848_sendJ1939ExtendedResponse(undefined4 param_1,word param_2)
+void cm848_sendJ1939ExtendedResponse(j1939_rx_msg_t *param_1,word param_2)
 
 {
   j1939_response_param_working = param_2;
@@ -38838,8 +38833,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -69350,7 +69345,7 @@ byte j1939_getDiagServiceDataOffset(int param_1)
 // Function: j1939_diagServiceDispatch @ 0x0050b634
 //
 
-undefined4 j1939_diagServiceDispatch(int param_1)
+undefined4 j1939_diagServiceDispatch(j1939_rx_msg_t *rx_msg)
 
 {
   byte bVar1;
@@ -69358,8 +69353,8 @@ undefined4 j1939_diagServiceDispatch(int param_1)
   char cVar3;
   uint uVar4;
   
-  bVar1 = **(byte **)(param_1 + 6);
-  uVar4 = (uint)*(ushort *)(param_1 + 4);
+  bVar1 = *rx_msg->data_pointer;
+  uVar4 = (uint)rx_msg->data_length;
   if (bVar1 < 0x1a) {
     if ((bVar1 == 4) || (bVar1 == 5)) {
       iVar2 = 3;
@@ -69383,7 +69378,7 @@ undefined4 j1939_diagServiceDispatch(int param_1)
         }
         return 2;
       }
-      cVar3 = cm848_processSecurityCodeConversion(*(byte **)(param_1 + 6) + iVar2);
+      cVar3 = cm848_processSecurityCodeConversion(rx_msg->data_pointer + iVar2);
       if (cVar3 != '\0') {
         return 3;
       }
@@ -70683,7 +70678,8 @@ void j1939_transport_handleDataPacket(int param_1)
                   (cVar1,j1939_transport_receive_session.transported_pgn);
         j1939_transport_receive_session.active = 0;
         j1939_transport_receive_session.receive_buffer_pointer = &j1939_transport_receive_buffer;
-        cm848_j1939DiagnosticServiceHandler(0x3fbdf7);
+        cm848_j1939DiagnosticServiceHandler
+                  ((j1939_rx_msg_t *)&j1939_transport_receive_session.request_to_send_can_id);
         return;
       }
       if ((int)(((uint)j1939_transport_receive_session.total_packet_count -

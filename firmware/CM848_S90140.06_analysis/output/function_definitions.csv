@@ -45,12 +45,7 @@ function_address,function_name,param_index,name,type,comment
 # -----------------------------------------------------------------------------
 # CAN Message Transmission - Adapted from CM550 patterns
 # -----------------------------------------------------------------------------
-0x00003f20,cm848_transmitCanMessage,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
-0x00003f20,cm848_transmitCanMessage,1,data_ptr,byte*,Pointer to message data bytes
 
-0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,msg_header,j1939_msg_hdr_t*,Pointer to J1939 TX message header (first 6 bytes of j1939_tx_msg_t)
-0x00005adc,mpc555_sendJ1939TransportRequestToSend,1,data_ptr,byte*,Pointer to message payload data
-0x00005adc,mpc555_sendJ1939TransportRequestToSend,2,data_length,ushort,Total length of payload to transmit
 
 # -----------------------------------------------------------------------------
 # EEPROM Operations
@@ -512,3 +507,14 @@ function_address,function_name,param_index,name,type,comment
 0x00053858,mpc555_sendJ1939SingleFrame,1,data_length,ushort,the data bytes (padded to 8 with 0xff); ushort because every caller passes a 16-bit length
 0x00053858,mpc555_sendJ1939SingleFrame,2,data,byte*,the data
 0x00053858,mpc555_sendJ1939SingleFrame,3,result,byte*,where the result goes: 0 queued / 1 zero length / 4 CAN transmit queue full
+# The boot kernel's message record senders and the diagnostic service chain (PR #53 round 35): the record senders read the data / status pointers behind the header
+0x00003dac,mpc555_canTransmitQueuePush,0,can_id,dword,the 29-bit identifier
+0x00003dac,mpc555_canTransmitQueuePush,1,data_length,dword,the data bytes (dword: the body compares the whole register; ushort printed CONCAT22 with a phantom register half)
+0x00003dac,mpc555_canTransmitQueuePush,2,data,byte*,the data
+0x00003dac,mpc555_canTransmitQueuePush,3,result,byte*,where the result goes: 0 queued / 1 no data / 4 queue full
+0x00022128,cm848_j1939DiagnosticServiceHandler,0,rx_msg,j1939_rx_msg_t*,the received PGN 61184 request (a single frame / or the transport receive session's message view from its request_to_send_can_id)
+0x0050b634,j1939_diagServiceDispatch,0,rx_msg,j1939_rx_msg_t*,the received request
+0x000249c4,cm848_sendJ1939ResponseFrame,0,request,j1939_rx_msg_t*,the request being answered (its addresses swap into the reply)
+0x000249c4,cm848_sendJ1939ResponseFrame,1,result_code,dword,the service result: 0 success / 0xfe an extended response / else an error code (dword: the body reuses it as a 32-bit variable)
+0x00003f20,cm848_transmitCanMessage,0,message,diagnostic_response_message_t*,the response record from cm848_allocateDiagnosticResponseBuffer (header / data pointer / status pointer)
+0x00005adc,mpc555_sendJ1939TransportRequestToSend,0,message,diagnostic_response_message_t*,the response record of a reply longer than 8 bytes
