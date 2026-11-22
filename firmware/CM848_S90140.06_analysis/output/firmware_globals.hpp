@@ -6250,7 +6250,7 @@ extern dword fuel_demand_timing_correction_window_sum;  // 0x003fbc94
 extern word fuel_demand_timing_rolling_avg_index;  // 0x003fbc98
 extern word fuel_demand_timing_rolling_avg_full_flag;  // 0x003fbc9a
 extern word fault_derate_torque_curve_priority_bit;  // 0x003fbd28
-extern word fault_derate_torque_curve_points_cached_axis_offset;  // 0x003fbd2a
+extern word fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2;  // 0x003fbd2a
 extern dword variable_geometry_turbocharger_motor_back_electromotive_force_working;  // 0x003fcd04
 extern dword variable_geometry_turbocharger_motor_voltage_across_resistance;  // 0x003fcd08
 extern dword variable_geometry_turbocharger_circuit_resistance_working;  // 0x003fcd0c

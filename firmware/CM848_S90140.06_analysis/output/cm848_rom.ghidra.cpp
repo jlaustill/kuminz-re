@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 03:27:08 MST 2026
+// Generated: Sun Nov 22 03:41:41 MST 2026
 
 
 //
@@ -65812,11 +65812,11 @@ void hpcr_initializeTimerRegisters(void)
 // Function: cm848_applyFaultDerateToJ1939TorqueCurveFuelings @ 0x00507858
 //
 
-/* Looks the fault derate fuel limit up at the five J1939 torque curve speed points and lowers the
-   J1939 torque curve fuelings (PGN 65251) to them: always where the clamp mask
-   (fault_derate_curve_clamp_priority_mask) has the highest requester's bit, else only while
-   fault_derate_torque_curve_priority_bit is the highest request (was
-   engine_protection_derateParam_priorityApply) */
+/* Looks the fault derate fuel limit up at the five J1939 torque curve speed points. When the clamp
+   mask (fault_derate_curve_clamp_priority_mask) has the highest requester's bit, each J1939 torque
+   curve fueling (PGN 65251) is clamped to the derated value (the minimum is kept); otherwise, while
+   fault_derate_torque_curve_priority_bit is the highest request, the five fuelings are set to the
+   derated values (was engine_protection_derateParam_priorityApply) */
 
 void cm848_applyFaultDerateToJ1939TorqueCurveFuelings(void)
 
@@ -65829,27 +65829,27 @@ void cm848_applyFaultDerateToJ1939TorqueCurveFuelings(void)
   ushort uVar6;
   
   wVar1 = lookupTableInterpolation
-                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                    (&fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2,
                      j1939_torque_curve_speed_at_point_1,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   wVar2 = lookupTableInterpolation
-                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                    (&fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2,
                      j1939_torque_curve_speed_at_point_2,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   wVar3 = lookupTableInterpolation
-                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                    (&fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2,
                      j1939_torque_curve_speed_at_point_3,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   wVar4 = lookupTableInterpolation
-                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                    (&fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2,
                      j1939_torque_curve_speed_at_point_4,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   wVar5 = lookupTableInterpolation
-                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                    (&fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2,
                      j1939_torque_curve_speed_at_point_5,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
@@ -65985,15 +65985,16 @@ void cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints(void)
 //
 
 /* Sets fault_derate_torque_curve_priority_bit from fault_derate_curve_priority_bit_position (e2m
-   EPF_Torque_Curve_Priority) and presets fault_derate_torque_curve_points_cached_axis_offset to 2
-   (was fault_initBitwiseTimerMask) */
+   EPF_Torque_Curve_Priority) and presets
+   fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2 to 2 (was
+   fault_initBitwiseTimerMask) */
 
 void cm848_initializeFaultDerateJ1939TorqueCurvePriority(void)
 
 {
   fault_derate_torque_curve_priority_bit =
        (word)(1 << (fault_derate_curve_priority_bit_position & 0x3f));
-  fault_derate_torque_curve_points_cached_axis_offset = 2;
+  fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2 = 2;
   return;
 }
 
@@ -66104,10 +66105,14 @@ word cm848_rampEngineProtectionSeverityIndex
 
 
 //
-// Function: threshold_value_interpolate @ 0x00507dc0
+// Function: cm848_interpolateEngineProtectionSeverity @ 0x00507dc0
 //
 
-undefined2 threshold_value_interpolate(int param_1,int param_2,short param_3)
+/* The input's place between a minimum and a maximum threshold as a severity: (input - minimum) *
+   256 / (maximum - minimum), clamped to 0..0x100 (cm848_clampedDivisionWithBounds); 0 when the
+   input is at the minimum (was threshold_value_interpolate) */
+
+undefined2 cm848_interpolateEngineProtectionSeverity(int param_1,int param_2,short param_3)
 
 {
   undefined2 uVar1;
@@ -66435,7 +66440,7 @@ void cm848_updateEngineProtectionRestartSeverityIndexes
       wVar3 = 0;
     }
     else if ((uVar1 & 0x40) == 0) {
-      wVar3 = threshold_value_interpolate
+      wVar3 = cm848_interpolateEngineProtectionSeverity
                         ((int)(short)*state->input_pointer,(int)*state->minimum_threshold_pointer,
                          (int)*state->maximum_threshold_pointer);
     }
@@ -66986,10 +66991,14 @@ void cm848_resetEngineProtectionShutdownOverrideDetector(void)
 
 
 //
-// Function: protection_condition_eval @ 0x00508f24
+// Function: cm848_isEngineProtectionInputMoreExtreme @ 0x00508f24
 //
 
-undefined4 protection_condition_eval(int param_1,int param_2,uint param_3)
+/* 1 when the input is more extreme than the fault log's extreme value: above it with configuration
+   flag 0x4 (the maximum is tracked), below it with 0x4 clear and 0x8 set (the minimum); 0 with
+   neither (was protection_condition_eval) */
+
+undefined4 cm848_isEngineProtectionInputMoreExtreme(int param_1,int param_2,uint param_3)
 
 {
   if ((param_3 & 4) == 0) {
@@ -67058,7 +67067,7 @@ void cm848_recordEngineProtectionFaultLogEntry(int param_1)
   peVar3 = engine_protection_current_state;
   if ((engine_protection_current_configuration->configuration_flags & 0xc) != 0) {
     iVar4 = (int)(short)*engine_protection_current_state->input_pointer;
-    sVar5 = protection_condition_eval
+    sVar5 = cm848_isEngineProtectionInputMoreExtreme
                       (iVar4,(int)peVar9[uVar1].extreme_value,
                        engine_protection_current_configuration->configuration_flags);
     if (sVar5 != 0) {
@@ -67245,7 +67254,7 @@ LAB_0050946c:
       if ((uVar1 & 0xc) != 0) {
         wVar6 = *engine_protection_current_state->input_pointer;
         peVar9 = engine_protection_current_history;
-        sVar5 = protection_condition_eval
+        sVar5 = cm848_isEngineProtectionInputMoreExtreme
                           ((int)(short)wVar6,(int)engine_protection_current_history->input_extremity
                            ,uVar1);
         if (sVar5 != 0) {
@@ -67333,7 +67342,7 @@ void cm848_calculateFaultDerateFuelLimit(void)
       else {
         if ((configuration->configuration_flags & 0x40) == 0) {
           if (configuration->fueling_derate_start_duration < state->fueling_duration) {
-            uVar1 = threshold_value_interpolate
+            uVar1 = cm848_interpolateEngineProtectionSeverity
                               ((int)(short)*state->input_pointer,
                                (int)*state->minimum_threshold_pointer,
                                (int)*state->maximum_threshold_pointer);
