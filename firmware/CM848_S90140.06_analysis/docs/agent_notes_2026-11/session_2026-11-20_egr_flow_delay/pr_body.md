@@ -549,6 +549,10 @@ state enum, the flag bytes.**
 **Round 31.**
 - **Stage A (8146833, types):** the J1939 EC1 (PGN 65251) payload and its previous copy as one 28-byte struct with
   the SPN fields; the send-on-change test now reads by field.
+**Round 32.**
+- **Stage A (cad1457, labels and types):** the discrete output read-back checks. The check, its monitor and
+  initializer are named, the four counters are a struct with 11 instances, each output has a retry word, and faults
+  146 / 147 are the cruise servo supply's. These were 55 `DAT_` labels.
 
 ## Test plan
 
@@ -641,6 +645,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 32: stage A matches token for token apart from the check's parameter names (verified) and one
+  declaration reorder.
 - [x] Round 31: stage A changes only the two EC1 functions, each access checked.
 - [x] Round 30: stage A is EQUIVALENT.
 - [x] Round 29: stage A is EQUIVALENT.

@@ -428,3 +428,7 @@ Hand work on the round 7 lead.
 ## Round 31: the J1939 EC1 payload as a struct (`session_folder/round31/`)
 
 - **Stage A:** `apply_r31a.py` (the struct, the instances, the dotted rows). **Closing:** `apply_r31_closing.py`.
+
+## Round 32: the discrete output read-back checks (`session_folder/round32/`)
+
+- **Finder:** `messy_functions.py`. **Stage A:** `output_check_calls.py`, `worklist_r32a.py`, `apply_r32a.py`; the proof `make_tokens_r32a.py`, `flatten_cpp.py`, `check_two_r32a.py`. **Closing:** `apply_r32_closing.py`.

@@ -1680,6 +1680,30 @@ A peer relay started the round; the lead is round 30's. Scripts are in `session_
   - Underscore renders 31 -> 23.
 - **The proof:** only those two functions differ, and each access was checked against its old byte offset.
 
+## Done, round 32 (2026-11-22, same PR): the discrete output read-back checks
+
+A peer relay started the round. Scripts are in `session_folder/round32/`.
+- **The finder:** `messy_functions.py` ranks the functions by their unnamed data renders. `cm848_mainLoopMonitor`
+  was first, with 55 distinct `DAT_` labels.
+- **Stage A (cad1457, labels and types):**
+  - The read-back check of 11 discrete outputs: `cm848_checkDiscreteOutputReadBack` /
+    `cm848_monitorDiscreteOutputReadBack` / `cm848_initializeDiscreteOutputReadBackChecks`. Before, they were
+    `diag_faultMatch_outputCheck_update` / `cm848_mainLoopMonitor` / `cm848_initSensorCalibration`.
+  - The check's nine parameters are named.
+  - `discrete_output_read_back_counters_t` has 11 instances, and each output has a word retry count.
+  - The pass count and the key-off snapshot are named.
+  - Faults 146 / 147 are the cruise servo supply driver's (logical output 21, e2m 1577 Cruise_SC_Source_Driver).
+  - The time-shared 0x3fd284 / 0x3fd298 are covered by named data, so their boot calls are call overrides and the
+    `BYTE_` labels are gone (firmware/CLAUDE.md updated).
+- **The proof:** tokens from the map, on copies with wrapped member names joined. Every function matches except the
+  check (equal with its parameters renamed) and one local declaration reorder.
+- **Leads, the rest of the ranking:**
+  - the injection state initializers (`cm848_initializePilotInjectionQuantityState` 25 labels, `...TimingState`
+    19, `...AuxiliaryInjectionQuantityState` 17, `cm848_initializeCombustionReferenceMapPointers` 21);
+  - `cm848_buildPgn65249RetarderConfigurationMessage` (18; a payload like EC1);
+  - `cm848_initPgn65242SoftwareIdHandler` (17), `cm848_processFaultScanLookup` (12), `cm848_sciCommand20Callback`
+    (15).
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
