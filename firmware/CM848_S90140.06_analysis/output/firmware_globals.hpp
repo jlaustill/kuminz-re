@@ -1461,7 +1461,8 @@ extern word low_speed_governor_hot_idle_inhibit_timer;  // 0x003faf72
 extern word low_speed_governor_hot_idle_timer;  // 0x003faf74
 extern word low_speed_governor_shift_in_process_timer;  // 0x003faf76
 extern word low_speed_governor_extended_idle_timer;  // 0x003faf78
-extern dword governor_speed_limit_exceeded_flag;  // 0x003faf7a
+extern word low_speed_governor_extended_idle_conditions_flag;  // 0x003faf7a
+extern word low_speed_governor_base_reference_speed_boot_copy;  // 0x003faf7c
 extern word governor_interp_table_state_b;  // 0x003faf7e
 extern dword low_speed_governor_altitude_speed_target;  // 0x003faf80
 extern word low_speed_governor_altitude_speed_cached_axis_offset;  // 0x003faf84

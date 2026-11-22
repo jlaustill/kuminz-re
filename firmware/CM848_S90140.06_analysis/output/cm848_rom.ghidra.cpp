@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 18:38:33 MST 2026
+// Generated: Sat Nov 21 18:41:52 MST 2026
 
 
 //
@@ -28065,12 +28065,12 @@ void cm848_selectLowSpeedGovernorDesiredReferenceSpeed(void)
           (short)low_speed_governor_extended_idle_intake_manifold_temperature)))) &&
        (fuel_demand_control_t_0040a57a.accelerator_off_idle == 0)) &&
       (vehicle_speed <= low_speed_governor_extended_idle_road_speed)))) {
-    governor_speed_limit_exceeded_flag._0_2_ = 1;
+    low_speed_governor_extended_idle_conditions_flag = 1;
   }
   else {
-    governor_speed_limit_exceeded_flag._0_2_ = 0;
+    low_speed_governor_extended_idle_conditions_flag = 0;
   }
-  if (governor_speed_limit_exceeded_flag._0_2_ == 0) {
+  if (low_speed_governor_extended_idle_conditions_flag == 0) {
     low_speed_governor_extended_idle_timer = 0;
     low_speed_governor_extended_idle_speed_request = 0;
   }
@@ -28080,7 +28080,7 @@ void cm848_selectLowSpeedGovernorDesiredReferenceSpeed(void)
   if ((low_speed_governor_extended_idle_time <= low_speed_governor_extended_idle_timer) ||
      (((low_speed_governor_reference.reference_speed_state == LOW_SPEED_GOVERNOR_REFERENCE_COOLANT
        && (low_speed_governor_extended_idle_coolant_state_enable != 0)) &&
-      (governor_speed_limit_exceeded_flag._0_2_ != 0)))) {
+      (low_speed_governor_extended_idle_conditions_flag != 0)))) {
     low_speed_governor_extended_idle_speed_request = low_speed_governor_extended_idle_speed;
     low_speed_governor_extended_idle_timer = low_speed_governor_extended_idle_time;
   }
@@ -28247,7 +28247,8 @@ void cm848_selectLowSpeedGovernorDesiredReferenceSpeed(void)
       low_speed_governor_extra_increment_rate = low_speed_governor_moving_extra_increment_rate;
       low_speed_governor_desired_reference_speed = low_speed_governor_moving_speed_request;
     }
-    if (governor_speed_limit_exceeded_flag._2_2_ != low_speed_governor_base_reference_speed_cal) {
+    if (low_speed_governor_base_reference_speed_boot_copy !=
+        low_speed_governor_base_reference_speed_cal) {
       low_speed_governor_desired_reference_speed = low_speed_governor_base_reference_speed_cal;
       low_speed_governor_reference.reference_speed_state = LOW_SPEED_GOVERNOR_REFERENCE_BASE;
     }
@@ -28339,7 +28340,7 @@ LAB_000299e8:
   low_speed_governor_adjusted_reference_before_droop = (word)uVar2;
   if (((uVar2 == low_speed_governor_extended_idle_speed) &&
       (low_speed_governor_extended_idle_time == low_speed_governor_extended_idle_timer)) &&
-     (governor_speed_limit_exceeded_flag._0_2_ != 0)) {
+     (low_speed_governor_extended_idle_conditions_flag != 0)) {
     low_speed_governor_extended_idle_active_flag = 1;
   }
   else {
@@ -28435,7 +28436,7 @@ void cm848_initializeLowSpeedGovernorReferenceSpeed(void)
   low_speed_governor_shift_in_process_timer = 0;
   low_speed_governor_coolant_speed_first_pass_done_flag = 0;
   low_speed_governor_altitude_speed_first_pass_done_flag = 0;
-  governor_speed_limit_exceeded_flag._2_2_ = low_speed_governor_base_reference_speed_cal;
+  low_speed_governor_base_reference_speed_boot_copy = low_speed_governor_base_reference_speed_cal;
   j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_OVERRIDE_OFF;
   low_speed_governor_reference.reference_speed_state = LOW_SPEED_GOVERNOR_REFERENCE_BASE;
   low_speed_governor_reference_speed_state_previous = LOW_SPEED_GOVERNOR_REFERENCE_BASE;
