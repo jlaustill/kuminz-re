@@ -1780,6 +1780,33 @@ A peer relay started the round. Scripts are in `session_folder/round34/`.
   - The receive session `j1939_multiframe_rx_*` (0x3fbdef-0x3fbe00) as a struct.
   - Round 33's EFL/P1 `j1939_diag_response_word_b` and the stale +1 rows at 0x3faeb0-0x3faeb3.
 
+## Done, round 35 (2026-11-22, same PR): the boot kernel's J1939 transport and the receive session
+
+A peer relay started the round. Scripts are in `session_folder/round35/`.
+- **Stage A (fb9cccd, labels):** the boot kernel's transport state at 0x302903-0x302934 carried QADC names.
+  0x302903 / 0x302904 are `boot_j1939_transport_transmit_active` / `_destination_address`, the twins of the
+  application's flat bytes. Eight stale `qadc_a_*` rows inside `boot_j1939_transport_transmit_session` became dotted
+  rows.
+- **Stage B (ff9e247, types):**
+  - Both kernels' receive session: `j1939_transport_receive_session_t` (18 bytes). The two kernels' handlers access
+    it at the same offsets and widths.
+  - The boot instance replaces `j1939_tp_pause_t` (whose `_pad2` word was the next packet number and the granted
+    packet count) and flat `qadc_a_*` rows. The application instance replaces `j1939_multiframe_rx_*`.
+  - `eeprom_block_tracking._pad2` is `failed_write_authorization_count` (`cm848_validateWriteAuth`).
+  - No `_pad2` renders any more, and pieces went 1412 -> 1402.
+- **Stage C (68c58e4, prototypes):**
+  - The boot record senders take a `diagnostic_response_message_t *`. Their old rows made the callers pass a leftover
+    r4 and an unset r5.
+  - `mpc555_canTransmitQueuePush` has a prototype.
+  - The diagnostic service chain takes a `j1939_rx_msg_t *`. The application transport hands it the receive record's
+    tail from +8 as the received message.
+  - Two widths stay dword: a 16-bit / 8-bit parameter there printed `CONCAT22` / `CONCAT31` with a phantom register
+    half.
+- **Leads (round 36):**
+  - `cm848_sendDiagServiceResponse` (the boot twin of `cm848_sendJ1939ResponseFrame`) still takes its request as raw
+    bytes.
+  - Round 33's EFL/P1 `j1939_diag_response_word_b` and the stale +1 rows at 0x3faeb0-0x3faeb3.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

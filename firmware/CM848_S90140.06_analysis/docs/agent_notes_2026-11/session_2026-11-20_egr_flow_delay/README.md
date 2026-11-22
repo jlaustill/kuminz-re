@@ -440,3 +440,7 @@ Hand work on the round 7 lead.
 ## Round 34: the application J1939 transport's transmit sessions (`session_folder/round34/`)
 
 - `area_users.py` (who uses an address range). **Stage A:** `worklist_r34a.py`. **Stage B:** `apply_r34b.py`. **Stage C:** `apply_r34c.py`. The proofs reuse round 33's `diff_functions.py` / `check_reorders_r33b.py` and round 32's `flatten_cpp.py` / `make_tokens_r32a.py`. **Closing:** `apply_r34_closing.py`.
+
+## Round 35: the boot kernel's J1939 transport and the receive session (`session_folder/round35/`)
+
+- **Stage A:** `apply_r35a.py`. **Stage B:** `apply_r35b.py`. **Stage C:** `apply_r35c.py` (its first run was not idempotent: the clean-up is in the stage C commit message). **Closing:** `apply_r35_closing.py`.

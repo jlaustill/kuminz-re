@@ -1,0 +1,10 @@
+qadc_a_queue_status_1
+qadc_a_active_channel_id
+qadc_a_queue_status_2
+qadc_a_range_start
+qadc_a_queue_ptr
+qadc_a_queue_count_1
+qadc_a_queue_count_2
+qadc_a_queue_ctrl_1
+qadc_a_queue_ctrl_2
+qadc_a_queue_ctrl_3

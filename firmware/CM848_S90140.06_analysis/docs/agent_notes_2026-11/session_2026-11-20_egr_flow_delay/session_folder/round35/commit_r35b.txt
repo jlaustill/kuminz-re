@@ -1,0 +1,33 @@
+cm848: round 35 stage B - the J1939 transport receive session, boot and application twins (types)
+
+Both kernels receive PGN 61184 transport messages through one 18-byte record. Their request to send / data packet
+handlers access it through a base register at the same offsets and widths (+0 / +1 / +4 / +5 bytes, +2 / +6 / +0xc
+words, +8 / +0xe dwords).
+- j1939_transport_receive_session_t (a type-only template): active / total_packet_count / transported_pgn /
+  next_packet_number / granted_packet_count / timeout_timer / request_to_send_can_id / message_size /
+  receive_buffer_pointer.
+- The boot instance boot_j1939_transport_receive_session (0x302925) replaces qadc_a_pause_status / qadc_a_pause_ctrl,
+  the struct j1939_tp_pause_t at 0x302927 and its flat qadc_a_* rows.
+  - That struct's pause_pgn / pause_timer / pause_data / data_count / rx_buf_ptr were the PGN, the timeout, the RTS
+    identifier, the message size and the buffer pointer.
+  - Its _pad2 word was two bytes: the next packet number and the granted packet count (10 pieces
+    _pad2._0_1_ / _1_1_ fewer: 1412 -> 1402).
+- The application instance j1939_transport_receive_session (0x3fbdef) replaces the flat j1939_multiframe_rx_* rows.
+  Not shared with CM550.
+- Named first bytes of the receive buffers: boot_j1939_transport_receive_buffer (0x303075; the raw 0x303075 now
+  reads &boot_j1939_transport_receive_buffer) and j1939_transport_receive_buffer (0x3fbe09).
+  - They are not sized arrays: the application's takes up to 0x6a4 = 1700 bytes and runs over the kernel image
+    copy, including boot-called addresses. The boot's takes 0x410.
+- eeprom_block_tracking_t's other _pad2 is cm848_validateWriteAuth's failed_write_authorization_count. It is 0x11 =
+  locked, a matching token resets it, and a mismatch adds 1.
+  - No _pad2 renders any more. firmware/CLAUDE.md's _pad2 row says so (a factual refresh).
+- One argument got worse: j1939_transport_handleDataPacket passes the session's request_to_send_can_id address to
+  cm848_j1939DiagnosticServiceHandler. That parameter is an int, so it prints 0x3fbdf7 (was
+  &j1939_multiframe_rx_rts_can_header). The round's prototype stage addresses it.
+
+Proof: prove_tokens.py with the map's tokens (flattened copies) gives 1959 of 1969 functions token-equal. Two only
+reorder their declarations. The other eight were read as label-substituted diffs: every access lands on its field
+(including the old nested j1939_tp_pause_t paths and the _pad2 pieces). "1 failed (in code)" and the thunk counts
+are unchanged. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

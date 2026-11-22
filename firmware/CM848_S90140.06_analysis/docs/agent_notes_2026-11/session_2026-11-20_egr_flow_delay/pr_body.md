@@ -568,6 +568,11 @@ state enum, the flag bytes.**
   `j1939_tp_rx_session_*` / DAT_).
 - **Stage C (44f4c9e, types):** the RTS / CTS transmit session as the boot twin's type, that type's pointers as
   `byte*`, and the prototypes of `initiateJ1939TransportProtocol` / `mpc555_sendJ1939SingleFrame`.
+**Round 35.**
+- **Stage A (fb9cccd, labels):** the boot kernel's transmit session flag / destination (were QADC names).
+- **Stage B (ff9e247, types):** the J1939 transport receive session as one type with boot and application
+  instances (were `j1939_tp_pause_t` / `qadc_a_*` / `j1939_multiframe_rx_*`); both `_pad2` fields named.
+- **Stage C (68c58e4, prototypes):** the boot record senders, the boot queue push and the diagnostic service chain.
 
 ## Test plan
 
@@ -660,6 +665,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 35: stage A is EQUIVALENT; stages B / C are token-equal apart from declaration reorders and 8 / 16
+  hand-read functions.
 - [x] Round 34: stage A is EQUIVALENT; stages B / C are token-equal apart from declaration reorders and 4 / 18
   hand-read functions.
 - [x] Round 33: stage A is EQUIVALENT (with the field rename applied forward and one derived `PTR_` row);

@@ -1,0 +1,16 @@
+cm848: round 35 stage A - the boot kernel's J1939 transmit session bytes (labels)
+
+The boot reflash kernel's J1939 transport state at 0x302903-0x302934 carried QADC names, but no QADC code touches
+it.
+- 0x302903 / 0x302904 (qadc_a_queue_status_1 / qadc_a_active_channel_id) are its connection mode transmit
+  session's active flag and destination address. mpc555_sendJ1939TransportRequestToSend sets them, and the clear
+  to send / end of message acknowledge / abort handlers match against them. They are the twins of the
+  application's j1939_multiframe_tx_active / j1939_multiframe_tx_destination_address, and are now
+  boot_j1939_transport_transmit_active / boot_j1939_transport_transmit_destination_address.
+- The eight stale name-only qadc_a_* rows inside boot_j1939_transport_transmit_session (qadc_a_queue_status_2 /
+  range_start / queue_ptr / queue_count_1-2 / queue_ctrl_1-3) are now dotted documentation rows of the fields at
+  their offsets. They never rendered.
+
+Proof: reverse_names.py with the stage map is EQUIVALENT. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
