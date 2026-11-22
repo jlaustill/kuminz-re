@@ -448,3 +448,7 @@ Hand work on the round 7 lead.
 ## Round 36: two payloads and the boot diagnostic request path (`session_folder/round36/`)
 
 - **Stage A:** `apply_r36a.py`. **Stage B:** the prototype rows (in the commit). **Closing:** `apply_r36_closing.py`.
+
+## Round 37: 120 lookup cache words (`session_folder/round37/`)
+
+- `cache_users.py` (a cache range's lookups), `cache_names.py` (names every unnamed cache from its lookups), `apply_r37a.py`, the proof `prove_caches.py`. **Closing:** `apply_r37_closing.py`.

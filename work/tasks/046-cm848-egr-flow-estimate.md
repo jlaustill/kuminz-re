@@ -1826,6 +1826,27 @@ A peer relay started the round. Scripts are in `session_folder/round36/`.
     requests, and four calls now cast them.
   - The next functions on `messy_functions.py`'s ranking (round 32).
 
+## Done, round 37 (2026-11-22, same PR): 120 lookup cache words named from their own lookups
+
+A peer relay started the round. Scripts are in `session_folder/round37/`.
+- **Stage A (4775962, labels, types):** `cache_names.py` names every unnamed cache word from its interpolator calls:
+  `<table>_cached_axis_offset` (word, 1-D) / `_cached_axis_offsets` (word[2], 2-D), where `<table>` is the lookup's
+  data table.
+  - 119 caches are named that way. By hand, 0x3fd134 is the pilot blend maps' shared 2-D cache (was
+    `timing_limit_boost_blend_cached_axis_offset`, word).
+  - These were the DAT_ words of the injection state initializers that led round 32's ranking.
+  - `prove_caches.py` (a canonical form for the 2-D `&DAT_a` -> `name` change): every function matches apart from a
+    declaration reorder and one type-only `WORD_` render.
+- **Leads:**
+  - Eleven caches skipped:
+    - six of tables that another cache already names, which need a per-function word (one table is looked up from
+      five functions);
+    - three of unnamed tables (`WORD_ARRAY_00406778` / `WORD_ARRAY_0040770e` / a `PTR_` label);
+    - two whose tables keep legacy names (`injection_timing_temp_corr_axis1_cal`, `safety_fuel_limit_rpm_axis_cal`):
+      rename those tables first.
+  - Named cache rows whose names do not match their lookups (0x3fd134 was one): an audit like `cache_names.py`
+    over the named rows.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
