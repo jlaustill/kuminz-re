@@ -1587,7 +1587,7 @@ int governor_cruise_resumeButton_handler(void);  // @ 0x00512878
 int governor_cruise_setButton_handler(void);  // @ 0x0051291c
 int cm848_debounceCruiseSwitchRequest(void);  // @ 0x005129b0
 undefined4 cm848_updateCruiseControlDeniedStatus(void);  // @ 0x00512a60
-undefined4 governor_cruise_engage_check(void);  // @ 0x00512e70
+undefined4 cm848_checkCruiseSwitchLearnCondition(void);  // @ 0x00512e70
 undefined4 governor_cruise_standbyState_get(void);  // @ 0x00512f18
 void cm848_cruiseControlPeriodicUpdate(void);  // @ 0x00512ff4
 void cm848_updateEngineWarningFlags(void);  // @ 0x00513200

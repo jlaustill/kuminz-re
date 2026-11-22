@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 07:11:20 MST 2026
+// Generated: Sun Nov 22 07:30:51 MST 2026
 
 
 //
@@ -36257,9 +36257,9 @@ void cm848_sensorChannel69_process(void)
 //
 
 /* review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High -
-   QADC channel 0x2f(47); sole reader governor_cruise_engage_check; its config
+   QADC channel 0x2f(47); sole reader cm848_checkCruiseSwitchLearnCondition; its config
    cruise_switch_sensor_config (0x5ab84) high_threshold / low_threshold are the validity window
-   governor_cruise_engage_check reads (were cruise_engage_adc_valid_upper and
+   cm848_checkCruiseSwitchLearnCondition reads (were cruise_engage_adc_valid_upper and
    cruise_engage_adc_valid_lower) */
 
 void cm848_processCruiseSwitchChannel(void)
@@ -43580,15 +43580,15 @@ void mpc555_initTpuBConfiguration(void)
 void cm848_initCruiseServoControl(void)
 
 {
-  fuel_demand_feed_forward = 0;
-  fuel_demand_rate_accumulator = 0;
+  vacuum_throttle_target_position = 0;
+  vacuum_throttle_integral_term = 0;
   cm848_clearLogicalOutputRequest(0x13,0);
   cm848_clearLogicalOutputRequest(0x14,0);
   cm848_clearLogicalOutputRequest(0x15,0);
-  governor_fuel_demand_prev_snapshot = 0;
-  governor_cycle_counter = 0;
-  governor_cycle_active_flag = 0;
-  fuel_step_counter = 0;
+  vacuum_throttle_previous_position_error = 0;
+  vacuum_throttle_pwm_counter = 0;
+  vacuum_throttle_actuator_disabled_flag = 0;
+  vacuum_throttle_disabled_counter = 0;
   return;
 }
 
@@ -43600,8 +43600,8 @@ void cm848_initCruiseServoControl(void)
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
 /* Cruise/speed-control vacuum servo PID - software-PWMs vent (19) and vacuum (20) requests via
-   governor_cycle_counter - holds servo-supply (21) on unless trim = -100 percent - feed-forward =
-   all_speed_governor_equivalent_throttle - mode_b cal runs it without cruise (was
+   vacuum_throttle_pwm_counter - holds servo-supply (21) on unless trim = -100 percent -
+   feed-forward = all_speed_governor_equivalent_throttle - mode_b cal runs it without cruise (was
    cm848_processEngineLoadCalculation) | review-function-readability reviewed 2026-11-13 -
    Readability Medium Accuracy Confidence Medium */
 
@@ -43619,122 +43619,123 @@ void cm848_controlCruiseVacuumServo(void)
     cm848_clearLogicalOutputRequest(0x13,0);
     cm848_clearLogicalOutputRequest(0x14,0);
     cm848_clearLogicalOutputRequest(0x15,0);
-    fuel_demand_feed_forward = 0;
+    vacuum_throttle_target_position = 0;
     return;
   }
-  fuel_demand_feed_forward = fuel_demand_feed_forward_default_cal;
-  if ((fuel_demand_mode_b_enable_cal == 0) &&
+  vacuum_throttle_target_position = vacuum_throttle_position_override_value;
+  if ((vacuum_throttle_position_override_enable == 0) &&
      ((cruise_control_engaged_flag == 0 ||
-      (fuel_demand_feed_forward = all_speed_governor_equivalent_throttle,
+      (vacuum_throttle_target_position = all_speed_governor_equivalent_throttle,
       final_fueling_state == FUELING_STATE_ACCELERATOR_PEDAL_FAULT)))) {
-    fuel_demand_rate_accumulator = fuel_demand_rate_accumulator_init_cal;
-    fuel_demand_feed_forward = 0;
+    vacuum_throttle_integral_term = vacuum_throttle_integral_reset_value;
+    vacuum_throttle_target_position = 0;
     cm848_clearLogicalOutputRequest(0x13,0);
     cm848_clearLogicalOutputRequest(0x14,0);
     cm848_clearLogicalOutputRequest(0x15,0);
     if (final_fueling_state != FUELING_STATE_ACCELERATOR_PEDAL_FAULT) {
       return;
     }
-    governor_cycle_active_flag = 1;
+    vacuum_throttle_actuator_disabled_flag = 1;
     return;
   }
-  fuel_demand_error = fuel_demand_feed_forward - commanded_throttle_state.commanded_throttle;
-  uVar5 = (uint)(short)fuel_demand_error;
+  vacuum_throttle_position_error =
+       vacuum_throttle_target_position - commanded_throttle_state.commanded_throttle;
+  uVar5 = (uint)(short)vacuum_throttle_position_error;
   uVar3 = uVar5;
   if ((int)uVar5 < 0) {
     uVar3 = -uVar5;
   }
-  if ((((int)(uVar3 & 0xffff) < (int)(short)fuel_demand_error_deadband_cal) &&
-      (fuel_demand_feed_forward != 0)) || (uVar5 == 0)) {
-    fuel_demand_error = 0;
-    fuel_demand_rate_accumulator = 0;
-    governor_fuel_demand_prev_snapshot = 0;
+  if ((((int)(uVar3 & 0xffff) < (int)(short)vacuum_throttle_error_deadband) &&
+      (vacuum_throttle_target_position != 0)) || (uVar5 == 0)) {
+    vacuum_throttle_position_error = 0;
+    vacuum_throttle_integral_term = 0;
+    vacuum_throttle_previous_position_error = 0;
   }
-  if (governor_cycle_active_flag == 0) {
-    if (((short)fuel_demand_error_step_threshold_cal < (short)fuel_demand_error) &&
+  if (vacuum_throttle_actuator_disabled_flag == 0) {
+    if (((short)vacuum_throttle_disabled_error_threshold < (short)vacuum_throttle_position_error) &&
        (switch_input_state_bits.brake_switch == 0)) {
-      fuel_step_counter = fuel_step_counter + 1;
+      vacuum_throttle_disabled_counter = vacuum_throttle_disabled_counter + 1;
     }
     else {
-      fuel_step_counter = 0;
+      vacuum_throttle_disabled_counter = 0;
     }
-    if (fuel_step_counter_threshold_cal <= fuel_step_counter) {
-      governor_cycle_active_flag = 1;
+    if (vacuum_throttle_maximum_error_time <= vacuum_throttle_disabled_counter) {
+      vacuum_throttle_actuator_disabled_flag = 1;
     }
   }
-  if (fuel_demand_mode_a_enable_cal == 0) {
-    dVar6 = (dword)(short)fuel_demand_error;
-    uVar5 = (uint)(short)fuel_demand_error;
-    uVar3 = (uint)fuel_demand_proportional_gain_cal;
-    fuel_demand_p_term =
+  if (vacuum_throttle_duty_cycle_override_enable == 0) {
+    dVar6 = (dword)(short)vacuum_throttle_position_error;
+    uVar5 = (uint)(short)vacuum_throttle_position_error;
+    uVar3 = (uint)vacuum_throttle_proportional_gain;
+    vacuum_throttle_proportional_term =
          (dword)(CONCAT44((int)((ulonglong)uVar3 * (ulonglong)uVar5 >> 0x20) +
                           uVar3 * ((int)uVar5 >> 0x1f),uVar3 * uVar5) / 4);
-    uVar3 = (uint)fuel_demand_integral_gain_cal;
-    iVar4 = (int)(short)fuel_demand_rate_accumulator +
+    uVar3 = (uint)vacuum_throttle_integral_gain;
+    iVar4 = (int)(short)vacuum_throttle_integral_term +
             (int)(CONCAT44((int)((ulonglong)uVar3 * (ulonglong)uVar5 >> 0x20) +
                            uVar3 * ((int)uVar5 >> 0x1f),uVar3 * uVar5) / 4);
-    iVar2 = (int)(short)fuel_demand_rate_lower_clamp_cal;
-    if ((iVar2 <= iVar4) && (iVar2 = iVar4, (short)fuel_timing_output_upper_limit_cal < iVar4)) {
-      iVar2 = (int)(short)fuel_timing_output_upper_limit_cal;
+    iVar2 = (int)(short)vacuum_throttle_integral_minimum;
+    if ((iVar2 <= iVar4) && (iVar2 = iVar4, (short)vacuum_throttle_integral_maximum < iVar4)) {
+      iVar2 = (int)(short)vacuum_throttle_integral_maximum;
     }
-    uVar5 = (uint)fuel_demand_derivative_gain_cal;
-    uVar3 = dVar6 - governor_fuel_demand_prev_snapshot;
-    fuel_demand_d_term =
+    uVar5 = (uint)vacuum_throttle_derivative_gain;
+    uVar3 = dVar6 - vacuum_throttle_previous_position_error;
+    vacuum_throttle_derivative_term =
          (dword)(CONCAT44((int)((ulonglong)uVar5 * (ulonglong)uVar3 >> 0x20) +
                           uVar5 * ((int)uVar3 >> 0x1f),uVar5 * uVar3) / 4);
-    dVar1 = fuel_demand_d_term + fuel_demand_p_term + iVar2;
-    cruise_servo_control_trim = (dword)(short)fuel_demand_trim_upper_limit_cal;
-    governor_fuel_demand_prev_snapshot = dVar6;
-    if ((int)cruise_servo_control_trim < (int)dVar1) {
-      dVar1 = cruise_servo_control_trim;
+    dVar1 = vacuum_throttle_derivative_term + vacuum_throttle_proportional_term + iVar2;
+    vacuum_throttle_duty_cycle = (dword)(short)vacuum_throttle_duty_cycle_maximum;
+    vacuum_throttle_previous_position_error = dVar6;
+    if ((int)vacuum_throttle_duty_cycle < (int)dVar1) {
+      dVar1 = vacuum_throttle_duty_cycle;
       if ((int)dVar6 < 0) {
 LAB_0003ff80:
-        cruise_servo_control_trim = dVar1;
-        fuel_demand_rate_accumulator = (word)iVar2;
+        vacuum_throttle_duty_cycle = dVar1;
+        vacuum_throttle_integral_term = (word)iVar2;
       }
     }
     else {
-      cruise_servo_control_trim = (dword)(short)fuel_demand_trim_lower_limit_cal;
-      if (((int)cruise_servo_control_trim <= (int)dVar1) ||
-         (dVar1 = cruise_servo_control_trim, 0 < (int)dVar6)) goto LAB_0003ff80;
+      vacuum_throttle_duty_cycle = (dword)(short)vacuum_throttle_duty_cycle_minimum;
+      if (((int)vacuum_throttle_duty_cycle <= (int)dVar1) ||
+         (dVar1 = vacuum_throttle_duty_cycle, 0 < (int)dVar6)) goto LAB_0003ff80;
     }
   }
   else {
-    cruise_servo_control_trim = (dword)(short)fuel_demand_trim_mode_b_limit_cal;
+    vacuum_throttle_duty_cycle = (dword)(short)vacuum_throttle_duty_cycle_override_value;
   }
-  if (cruise_servo_control_trim == 0) {
-    cruise_servo_vent_duty = 0x6400;
+  if (vacuum_throttle_duty_cycle == 0) {
+    vacuum_throttle_vent_pwm = 0x6400;
   }
   else {
-    if (-1 < (int)cruise_servo_control_trim) {
-      cruise_servo_vent_duty = 0x6400;
-      dVar6 = cruise_servo_control_trim;
+    if (-1 < (int)vacuum_throttle_duty_cycle) {
+      vacuum_throttle_vent_pwm = 0x6400;
+      dVar6 = vacuum_throttle_duty_cycle;
       goto LAB_0003ffc8;
     }
-    cruise_servo_vent_duty = (short)cruise_servo_control_trim + 0x6400;
+    vacuum_throttle_vent_pwm = (short)vacuum_throttle_duty_cycle + 0x6400;
   }
   dVar6 = 0;
 LAB_0003ffc8:
-  cruise_servo_vacuum_duty = (word)dVar6;
-  if (cruise_servo_control_trim == 0xffff9c00) {
+  vacuum_throttle_vacuum_pwm = (word)dVar6;
+  if (vacuum_throttle_duty_cycle == 0xffff9c00) {
     cm848_clearLogicalOutputRequest(0x15,0);
   }
   else {
     cm848_setLogicalOutputRequest(0x15,0);
   }
-  governor_cycle_counter = governor_cycle_counter + 1;
-  uVar3 = (uint)governor_cycle_period_cal;
-  if (uVar3 < governor_cycle_counter) {
-    governor_cycle_counter = 1;
+  vacuum_throttle_pwm_counter = vacuum_throttle_pwm_counter + 1;
+  uVar3 = (uint)vacuum_throttle_pwm_period;
+  if (uVar3 < vacuum_throttle_pwm_counter) {
+    vacuum_throttle_pwm_counter = 1;
   }
-  uVar5 = (uint)cruise_servo_vacuum_duty;
-  if (((cruise_servo_vent_duty * uVar3) / 0x6400 & 0xffff) < (uint)governor_cycle_counter) {
+  uVar5 = (uint)vacuum_throttle_vacuum_pwm;
+  if (((vacuum_throttle_vent_pwm * uVar3) / 0x6400 & 0xffff) < (uint)vacuum_throttle_pwm_counter) {
     cm848_clearLogicalOutputRequest(0x13,0);
   }
   else {
     cm848_setLogicalOutputRequest(0x13,0);
   }
-  if (((uVar5 * uVar3) / 0x6400 & 0xffff) < (uint)governor_cycle_counter) {
+  if (((uVar5 * uVar3) / 0x6400 & 0xffff) < (uint)vacuum_throttle_pwm_counter) {
     cm848_clearLogicalOutputRequest(0x14,0);
   }
   else {
@@ -44341,8 +44342,8 @@ void cm848_limitLowSpeedGovernorFueling(void)
 // Function: cm848_calculateCruiseControlFueling @ 0x00040e4c
 //
 
-/* Sets cruise_control_fueling: while governor_override_active_prev_flag is 1 from the error between
-   cruise_speed_command and vehicle_speed_rise_limited through
+/* Sets cruise_control_fueling: while cruise_control_engaged_previous_flag is 1 from the error
+   between cruise_speed_command and vehicle_speed_rise_limited through
    cruise_control_fueling_bottom_droop_gain / _b, else the operating mode governor fuel
    (operating_mode_governor_output.fuel_demand) (was cm848_processGovernorFuelRate) */
 
@@ -44354,7 +44355,7 @@ void cm848_calculateCruiseControlFueling(void)
   dword dVar3;
   int iVar4;
   
-  if (governor_override_active_prev_flag != 1) {
+  if (cruise_control_engaged_previous_flag != 1) {
     cruise_control_fueling = operating_mode_governor_output.fuel_demand;
     goto LAB_00040f7c;
   }
@@ -44394,7 +44395,7 @@ LAB_00040f00:
 LAB_00040f74:
   cruise_control_fueling = (word)dVar3;
 LAB_00040f7c:
-  governor_override_active_prev_flag = (dword)cruise_control_engaged_flag;
+  cruise_control_engaged_previous_flag = (dword)cruise_control_engaged_flag;
   return;
 }
 
@@ -74145,7 +74146,8 @@ undefined4 cm848_updateCruiseControlDeniedStatus(void)
     if ((fault_detected_cal.faults_16_to_31 & 0x2000) == 0) {
       if ((((fault_detected_cal.faults_384_to_399 & 0x400) == 0) &&
           ((fault_detected_cal.faults_384_to_399 & 0x800) == 0)) &&
-         ((governor_cycle_active_flag == 0 || (governor_cruise_cycle_inhibit_enable != 1)))) {
+         ((vacuum_throttle_actuator_disabled_flag == 0 ||
+          (vacuum_throttle_cruise_actuator_disable_mode != 1)))) {
         if (cruise_control_on_toggle_state == 0) {
           cruise_control_denied_status = 5;
           if (cruise_control_engaged_flag != 0) {
@@ -74249,20 +74251,24 @@ undefined4 cm848_updateCruiseControlDeniedStatus(void)
 
 
 //
-// Function: governor_cruise_engage_check @ 0x00512e70
+// Function: cm848_checkCruiseSwitchLearnCondition @ 0x00512e70
 //
 
 /* WARNING: Unable to use type for symbol cruise_switch_adc_value */
-/* review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High -
-   returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override) inside valid
-   window AND cruise_switch_request==0 AND _prev==5; caller sets
+/* Returns 1 for a fresh cruise ON / OFF press (cruise_switch_request CRUISE_SWITCH_ON_OFF after
+   IDLE) while the cruise switch ADC (channel 47, or its forced reading) is inside
+   cruise_switch_sensor_config's window; cm848_cruiseControlPeriodicUpdate then sets
+   cruise_control_switches_learned_flag. No engage decision (was governor_cruise_engage_check) |
+   earlier note: review-function-readability reviewed 2026-06-11 - Readability High Accuracy
+   Confidence High - returns 1 when cruise may engage: cruise-switch ADC (chan 0x2f/47, or override)
+   inside valid window AND cruise_switch_request==0 AND _prev==5; caller sets
    cruise_control_switches_learned_flag */
 
-undefined4 governor_cruise_engage_check(void)
+undefined4 cm848_checkCruiseSwitchLearnCondition(void)
 
 {
   dword qadc_dispatch_index;
-  undefined4 engage_allowed;
+  undefined4 learn_condition_met;
   ushort cruise_switch_adc_value;
   
   cruise_switch_adc_value = cruise_switch_adc_override;
@@ -74279,12 +74285,12 @@ undefined4 governor_cruise_engage_check(void)
        (cruise_switch_adc_value < cruise_switch_sensor_config.high_threshold)) &&
       (cruise_switch_request == CRUISE_SWITCH_ON_OFF)) &&
      (cruise_switch_request_working_previous == CRUISE_SWITCH_IDLE)) {
-    engage_allowed = 1;
+    learn_condition_met = 1;
   }
   else {
-    engage_allowed = 0;
+    learn_condition_met = 0;
   }
-  return engage_allowed;
+  return learn_condition_met;
 }
 
 
@@ -74311,8 +74317,9 @@ undefined4 governor_cruise_standbyState_get(void)
             (((fault_detected_cal.faults_368_to_383 & 0x40) != 0 ||
              ((fault_detected_cal.faults_384_to_399 & 0x400) != 0)))))) ||
        ((fault_detected_cal.faults_384_to_399 & 0x800) != 0)))) ||
-     (((governor_cycle_active_flag != 0 && (governor_cruise_cycle_inhibit_enable == 1)) ||
-      (cruise_resume_speed_valid_flag == 0)))) {
+     (((vacuum_throttle_actuator_disabled_flag != 0 &&
+       (vacuum_throttle_cruise_actuator_disable_mode == 1)) || (cruise_resume_speed_valid_flag == 0)
+      ))) {
     uVar1 = 0;
   }
   else {
@@ -74347,7 +74354,7 @@ void cm848_cruiseControlPeriodicUpdate(void)
   cm848_integrateCruiseRpmRatioChange();
   cruise_switch_request = cm848_debounceCruiseSwitchRequest();
   CVar5 = cruise_switch_request;
-  iVar1 = governor_cruise_engage_check();
+  iVar1 = cm848_checkCruiseSwitchLearnCondition();
   if (iVar1 != 0) {
     cruise_control_switches_learned_flag = 1;
   }
@@ -97497,7 +97504,7 @@ void diag_faultMatch_outputCheck_update
         return;
       }
       if (*param_5 < cruise_driver_fault_match_debounce_threshold) {
-        if ((governor_cycle_active_flag == 0) &&
+        if ((vacuum_throttle_actuator_disabled_flag == 0) &&
            (logical_output_request_bits_16_to_23.cruise_servo_supply_request != 0)) {
           *param_5 = *param_5 + 1;
         }
@@ -97506,13 +97513,13 @@ void diag_faultMatch_outputCheck_update
         uVar2 = *param_9;
         if ((uVar2 < cruise_driver_fault_match_debounce_threshold) &&
            (logical_output_request_bits_16_to_23.cruise_servo_supply_request != 0)) {
-          if (governor_cycle_active_flag == 0) {
+          if (vacuum_throttle_actuator_disabled_flag == 0) {
             *param_9 = uVar2 + 1;
           }
           cm848_clearLogicalOutputRequest(param_1 & 0xffff,0);
           *param_5 = 0;
         }
-        else if ((governor_cycle_active_flag != 0) &&
+        else if ((vacuum_throttle_actuator_disabled_flag != 0) &&
                 (cruise_driver_fault_match_debounce_threshold <= uVar2)) {
           (&fault_detected_cal.faults_0_to_15)[iVar6] =
                (&fault_detected_cal.faults_0_to_15)[iVar6] | (ushort)(1 << (param_3 & 0xf));
@@ -97534,12 +97541,12 @@ void diag_faultMatch_outputCheck_update
     }
     bVar1 = *param_6;
     if (bVar1 < cruise_driver_fault_match_debounce_threshold) {
-      if ((governor_cycle_active_flag == 0) &&
+      if ((vacuum_throttle_actuator_disabled_flag == 0) &&
          (logical_output_request_bits_16_to_23.cruise_servo_supply_request != 0)) {
         *param_6 = bVar1 + 1;
       }
     }
-    else if ((governor_cycle_active_flag != 0) &&
+    else if ((vacuum_throttle_actuator_disabled_flag != 0) &&
             (cruise_driver_fault_match_debounce_threshold <= bVar1)) {
       (&fault_detected_cal.faults_0_to_15)[iVar5] =
            (&fault_detected_cal.faults_0_to_15)[iVar5] | (ushort)(1 << (param_4 & 0xf));
