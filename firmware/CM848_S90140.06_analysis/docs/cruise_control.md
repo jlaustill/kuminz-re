@@ -2,13 +2,13 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `626d61a` (round 27).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `2fe6d2d` (round 32).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
 - **[code]**: read in `output/cm848_rom.ghidra.cpp` or `output/bank2_functions.cpp` during the review.
 - **[round 26]**: PR #53 checked it in the code before it applied the round 26 renames.
-- **[round 27]**: PR #53 checked it in the code in round 27.
+- **[round 27]**, **[round 32]**: PR #53 checked it in the code in that round.
 - **[review]**: a review agent read it in the code. Nobody has checked it a second time.
 - **[notes]**: from `firmware/CLAUDE.md` or the PR #53 description only.
 
@@ -131,7 +131,9 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
 
 [review] for the list.
 
-**Feedback.** `cm848_mainLoopMonitor` (0x538278) compares outputs 21, 19 and 20 with raw switches 28, 25 and 27 while the brake is off. Mismatches set P0596 / P0595, P0588 / P0587 and P0584 / P0583. The vent and vacuum codes need the disabled latch first; the supply code can set alone. [review]
+**Feedback.** `cm848_monitorDiscreteOutputReadBack` (0x538278) is the read-back check for 11 discrete outputs. It compares outputs 21, 19 and 20 with raw switches 28, 25 and 27 while the brake is off. Mismatches set P0596 / P0595, P0588 / P0587 and P0584 / P0583. [review]
+- The supply output's faults are 146 and 147 (`cruise_servo_supply_driver_high_control_error`, `cruise_servo_supply_driver_low_control_error`). [round 32]
+- The vent and vacuum codes need the disabled latch first; the supply code can set alone. [review]
 
 ## Second brake signal [code]
 
