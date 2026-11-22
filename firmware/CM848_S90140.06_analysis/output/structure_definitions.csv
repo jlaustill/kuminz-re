@@ -332,6 +332,10 @@ second_order_filter_state_t,,coefficient_1,word*,4,"+0: points at coefficient 1 
 second_order_filter_state_t,,coefficient_3,word*,4,"+4: points at coefficient 3 (1/65536): the weight of the output before last",,verified
 second_order_filter_state_t,,output,dword,4,"+8: the filter output (Q16.16 in cm848_secondOrderFilter; its integer part is returned)",,verified
 second_order_filter_state_t,,output_previous,dword,4,"+C: the output of the previous call",,verified
+# engine_retarder_brake_type_t: e2m 1071 +28 EB_Brake_Type (0 NONE / 1 EXHAUST / 2 VG / 3 BOTH), which
+# cm848_driveEngineRetarderOutput reads as bits (PR #53 round 17); one instance, engine_retarder_brake_type (ROM 0x408ec2)
+engine_retarder_brake_type_t,,exhaust_brake,bitfield:1@0,2,"Bit 0 (e2m 1 = EXHAUST): drive the exhaust brake output (logical output 11); set on this truck",,verified
+engine_retarder_brake_type_t,,variable_geometry_turbocharger_brake,bitfield:1@1,0,"Bit 1 (e2m 2 = VG): brake with the VGT (variable_geometry_turbocharger_brake_active_flag); clear on this truck",,verified
 ema_filter_state_t,,coefficient,word*,4,Points at the filter coefficient (a sensor channel's config filter_coefficient): the weight of the previous value in 1/65536 - 0 = no filtering,,verified
 ema_filter_state_t,,accumulator,dword,4,Q16.16 filtered value - its integer part is the output,,verified
 # high_speed_governor_gain_set_t: one high speed governor gain set as the ROM stores it (codes 17-21: 0x5c32c / 0x5c324 / 0x5c31a / 0x5c954 / 0x5c95c) - the RAM copies use other orders and stay flat (2026-11-18)

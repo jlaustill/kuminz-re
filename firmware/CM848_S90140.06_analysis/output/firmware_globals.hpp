@@ -3805,7 +3805,7 @@ extern word engine_retarder_power_take_off_maximum_fueling;  // 0x00408eba
 extern word engine_retarder_power_take_off_maximum_reference_speed;  // 0x00408ebc
 extern int16_t engine_retarder_idle_power_take_off_maximum_coolant_temperature;  // 0x00408ebe
 extern word engine_retarder_request_on_delay_passes;  // 0x00408ec0
-extern word engine_retarder_brake_type;  // 0x00408ec2
+extern engine_retarder_brake_type_t engine_retarder_brake_type;  // 0x00408ec2
 extern word engine_retarder_dual_brake_maximum_engine_speed;  // 0x00408ec4
 extern int16_t low_speed_governor_gear_breakpoint_1;  // 0x00408ec6
 extern int16_t low_speed_governor_gear_breakpoint_2;  // 0x00408ec8
@@ -4330,7 +4330,7 @@ extern word sensor_channel4_fault_snapshot;  // 0x0040a350
 extern word engine_retarder_command_percent;  // 0x0040a352
 extern ENGINE_RETARDER_COMMAND_SOURCE engine_retarder_override_command_source;  // 0x0040a354
 extern word engine_retarder_override_command_percent;  // 0x0040a356
-extern dword engine_retarder_immediate_brake_flag;  // 0x0040a35c
+extern word engine_retarder_immediate_brake_flag;  // 0x0040a35c
 extern word service_brake_recently_applied_flag;  // 0x0040a360
 extern word engine_retarder_switch_percent;  // 0x0040a362
 extern word engine_retarder_engage_inhibit_flag;  // 0x0040a364

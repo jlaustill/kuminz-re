@@ -1215,6 +1215,7 @@ typedef struct sensor_channel_config_t sensor_channel_config_t;
 typedef struct sensor_channel_state_t sensor_channel_state_t;
 typedef struct cruise_governor_gain_set_t cruise_governor_gain_set_t;
 typedef struct second_order_filter_state_t second_order_filter_state_t;
+typedef struct engine_retarder_brake_type_t engine_retarder_brake_type_t;
 typedef struct ema_filter_state_t ema_filter_state_t;
 typedef struct high_speed_governor_gain_set_t high_speed_governor_gain_set_t;
 typedef struct q16_fixed_point_t q16_fixed_point_t;
@@ -1658,6 +1659,12 @@ struct second_order_filter_state_t {
     word* coefficient_3;  /* +4: points at coefficient 3 (1/65536): the weight of the output before last */
     uint32_t output;  /* +8: the filter output (Q16.16 in cm848_secondOrderFilter; its integer part is returned) */
     uint32_t output_previous;  /* +C: the output of the previous call */
+};
+
+struct engine_retarder_brake_type_t {
+    uint16_t exhaust_brake : 1;  /* bit 0: Bit 0 (e2m 1 = EXHAUST): drive the exhaust brake output (logical output 11); set on this truck */
+    uint16_t variable_geometry_turbocharger_brake : 1;  /* bit 1: Bit 1 (e2m 2 = VG): brake with the VGT (variable_geometry_turbocharger_brake_active_flag); clear on this truck */
+    uint16_t : 14;
 };
 
 struct ema_filter_state_t {

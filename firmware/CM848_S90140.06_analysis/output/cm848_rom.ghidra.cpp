@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 22:05:13 MST 2026
+// Generated: Sat Nov 21 22:08:40 MST 2026
 
 
 //
@@ -44615,10 +44615,10 @@ void cm848_updateEngineRetarderAllowedState(void)
   engine_retarder_non_override_command_percent = 0x65;
 LAB_000418e0:
   if ((service_brake_recently_applied_flag == 1) && ((governor_mode_config_flags & 1) != 0)) {
-    engine_retarder_immediate_brake_flag._0_2_ = 1;
+    engine_retarder_immediate_brake_flag = 1;
   }
   else {
-    engine_retarder_immediate_brake_flag._0_2_ = 0;
+    engine_retarder_immediate_brake_flag = 0;
   }
   engine_retarder_command_percent_previous_2 = engine_retarder_command_percent_previous;
   engine_retarder_command_percent_previous = engine_retarder_command_percent;
@@ -44937,10 +44937,10 @@ void cm848_driveEngineRetarderOutput(void)
   }
   engine_retarder_output_level_percent = uVar1;
   if (uVar1 < 0x32) {
-    if ((engine_retarder_brake_type & 1) != 0) {
+    if (engine_retarder_brake_type.exhaust_brake != 0) {
       cm848_clearLogicalOutputRequest(0xb,0);
     }
-    if ((engine_retarder_brake_type & 2) != 0) {
+    if (engine_retarder_brake_type.variable_geometry_turbocharger_brake != 0) {
       variable_geometry_turbocharger_brake_active_flag = 0;
     }
     engine_retarder_request_on_delay_counter = 0;
@@ -44950,9 +44950,10 @@ void cm848_driveEngineRetarderOutput(void)
   }
   if ((engine_retarder_request_on_delay_counter < engine_retarder_request_on_delay_passes) ||
      (engine_retarder_output_level_percent < 0x32)) goto LAB_00042130;
-  if (((engine_retarder_brake_type & 1) == 0) || ((engine_retarder_brake_type & 2) == 0)) {
-    if ((engine_retarder_brake_type & 1) != 0) goto LAB_00042100;
-    if ((engine_retarder_brake_type & 2) != 0) {
+  if ((engine_retarder_brake_type.exhaust_brake == 0) ||
+     (engine_retarder_brake_type.variable_geometry_turbocharger_brake == 0)) {
+    if (engine_retarder_brake_type.exhaust_brake != 0) goto LAB_00042100;
+    if (engine_retarder_brake_type.variable_geometry_turbocharger_brake != 0) {
       variable_geometry_turbocharger_brake_active_flag = 1;
     }
   }
@@ -45038,7 +45039,7 @@ void cm848_initializeEngineRetarderRequestState(void)
   engine_retarder_override_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NOT_SET;
   engine_retarder_command_source = ENGINE_RETARDER_COMMAND_SOURCE_NOT_SET;
   service_brake_recently_applied_flag = 0;
-  engine_retarder_immediate_brake_flag._0_2_ = 0;
+  engine_retarder_immediate_brake_flag = 0;
   engine_retarder_allowed_state = ENGINE_RETARDER_ALLOWED_NONE;
   engine_retarder_tool_override_control_mode = 0;
   engine_retarder_command_tool_override_flag = 0;
