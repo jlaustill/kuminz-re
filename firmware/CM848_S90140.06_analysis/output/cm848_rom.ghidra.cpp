@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 14:57:44 MST 2026
+// Generated: Sun Nov 22 15:16:26 MST 2026
 
 
 //
@@ -28778,9 +28778,10 @@ void cm848_calculateLowSpeedGovernorNoLoadFuel(void)
                      low_speed_governor_adjusted_reference_before_droop,
                      friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   wVar2 = lookupTableInterpolation
-                    (&low_speed_governor_no_load_fuel_cached_axis_offset,
+                    (&low_speed_governor_fuel_by_commanded_throttle_cached_axis_offset,
                      commanded_throttle_state.commanded_throttle,
-                     low_speed_governor_no_load_fuel_axis,low_speed_governor_no_load_fuel_values,0);
+                     low_speed_governor_fuel_by_commanded_throttle_axis,
+                     low_speed_governor_fuel_by_commanded_throttle_values,0);
   low_speed_governor_reference.no_load_fuel = no_load_fuel_quantity;
   if ((low_speed_governor_final_gain_state != 0) && (low_speed_governor_final_gain_state != 1)) {
     low_speed_governor_reference.no_load_fuel =
@@ -28830,7 +28831,7 @@ void cm848_initGovernorLookupDimensions(void)
 
 {
   friction_fuel_by_engine_speed_cached_axis_offset = 2;
-  low_speed_governor_no_load_fuel_cached_axis_offset = 2;
+  low_speed_governor_fuel_by_commanded_throttle_cached_axis_offset = 2;
   return;
 }
 
@@ -46160,9 +46161,10 @@ void hpcr_cbdCalculateCylinderTrims(void)
     return;
   }
   wVar1 = cm848_dualAxisTableInterpolation
-                    (cylinder_balance_enable_cached_axis_offsets,engine_speed_state.engine_speed,
-                     cylinder_balance_enable_x_axis,cylinder_balance_filtered_fueling,
-                     cylinder_balance_enable_y_axis,cylinder_balance_enable_grid,0);
+                    (cylinder_balance_stop_compensation_cached_axis_offsets,
+                     engine_speed_state.engine_speed,cylinder_balance_stop_compensation_x_axis,
+                     cylinder_balance_filtered_fueling,cylinder_balance_stop_compensation_y_axis,
+                     cylinder_balance_stop_compensation_grid,0);
   if (wVar1 == 0) {
     cylinder_event_seq_counter = 0xff;
   }
@@ -46563,8 +46565,8 @@ void hpcr_cbdInitFilterState(void)
   uint uVar2;
   
   cylinder_event_seq_counter = 0xff;
-  cylinder_balance_enable_cached_axis_offsets[0] = 2;
-  cylinder_balance_enable_cached_axis_offsets[1] = 2;
+  cylinder_balance_stop_compensation_cached_axis_offsets[0] = 2;
+  cylinder_balance_stop_compensation_cached_axis_offsets[1] = 2;
   uVar2 = 0;
   uVar1 = (uint)cylinder_event_count_max;
   if (uVar1 != 0) {
@@ -46756,10 +46758,10 @@ void mpc555_resetEngineTimingAccumulators(void)
   wVar1 = tpu_a_mcr.CPR1;
   tpu_a_mcr.CPR1 = wVar1 & 0xfffc | 2;
   crank_low_speed_filtering_flag = 1;
-  crank_sync_phase_counter._2_2_ = 2;
-  crank_tooth_good_window_fraction = 0;
-  cylinder_event_index_a_cached_axis_offset = 2;
-  cylinder_event_index_b_cached_axis_offset = 2;
+  cam_tooth_good_window_fraction_cached_axis_offset = 2;
+  cam_tooth_good_window_fraction = 0;
+  next_cylinder_by_crank_tooth_cached_axis_offset = 2;
+  next_cylinder_by_cam_tooth_cached_axis_offset = 2;
   crank_preliminary_sync_count_cached_axis_offset = 2;
   wVar1 = tpu_a_mcr.CPR1;
   tpu_a_mcr.CPR1 = wVar1 & 0xfff3;
@@ -46971,10 +46973,10 @@ LAB_00044774:
   }
 LAB_00044854:
   engine_speed_state.filtered_engine_speed = engine_speed_state.engine_speed;
-  crank_tooth_good_window_fraction =
+  cam_tooth_good_window_fraction =
        lookupTableInterpolation
-                 ((word *)((int)&crank_sync_phase_counter + 2),average_engine_speed,
-                  crank_tooth_good_window_fraction_axis,crank_tooth_good_window_fraction_values,0);
+                 (&cam_tooth_good_window_fraction_cached_axis_offset,average_engine_speed,
+                  cam_tooth_good_window_fraction_axis,cam_tooth_good_window_fraction_values,0);
   if (average_engine_speed < crank_speed_setpoint_threshold_cal) {
     tpu_a_ch0_param0.PARAM7 =
          CONCAT11(crank_signal_low_speed_early_window_fraction,
@@ -46985,10 +46987,9 @@ LAB_00044854:
     tpu_a_mcr.HSQR1 = wVar1 & 0xfffc | 3;
     tpu_a_ch1_param2.PARAM7 =
          (ushort)cam_signal_low_speed_special_window_fraction << 8 |
-         (crank_tooth_good_window_fraction >> 1) + 0x40 & 0xff;
+         (cam_tooth_good_window_fraction >> 1) + 0x40 & 0xff;
     wVar1 = tpu_a_ch1_param2.PARAM6;
-    tpu_a_ch1_param2.PARAM6 = wVar1 & 0xff00 | 0x40 - (crank_tooth_good_window_fraction >> 1) & 0xff
-    ;
+    tpu_a_ch1_param2.PARAM6 = wVar1 & 0xff00 | 0x40 - (cam_tooth_good_window_fraction >> 1) & 0xff;
     wVar1 = tpu_a_mcr.HSQR1;
     tpu_a_mcr.HSQR1 = wVar1 & 0xfff3 | 4;
     crank_low_speed_filtering_flag = 1;
@@ -47002,10 +47003,9 @@ LAB_00044854:
     tpu_a_mcr.HSQR1 = wVar1 & 0xfffc | 2;
     tpu_a_ch1_param2.PARAM7 =
          (ushort)cam_signal_special_window_fraction << 8 |
-         (crank_tooth_good_window_fraction >> 1) + 0x40 & 0xff;
+         (cam_tooth_good_window_fraction >> 1) + 0x40 & 0xff;
     wVar1 = tpu_a_ch1_param2.PARAM6;
-    tpu_a_ch1_param2.PARAM6 = wVar1 & 0xff00 | 0x40 - (crank_tooth_good_window_fraction >> 1) & 0xff
-    ;
+    tpu_a_ch1_param2.PARAM6 = wVar1 & 0xff00 | 0x40 - (cam_tooth_good_window_fraction >> 1) & 0xff;
     wVar1 = tpu_a_mcr.HSQR1;
     tpu_a_mcr.HSQR1 = wVar1 & 0xfff3;
     crank_low_speed_filtering_flag = 0;
@@ -47129,16 +47129,16 @@ void engine_injectionTiming_crankSyncDispatch(void)
     wVar1 = tpu_a_ch0_param0.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation
-                   (&cylinder_event_index_a_cached_axis_offset,wVar1 & 0xff,
-                    cylinder_event_index_a_axis,cylinder_event_index_a_values,0);
+                   (&next_cylinder_by_crank_tooth_cached_axis_offset,wVar1 & 0xff,
+                    next_cylinder_by_crank_tooth_axis,next_cylinder_by_crank_tooth_values,0);
     cm848_scheduleInjectionAnglesOnPrimarySpeedInput();
   }
   else if (engine_speed_limp_home_active_flag == 1) {
     wVar1 = tpu_a_ch1_param2.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation
-                   (&cylinder_event_index_b_cached_axis_offset,wVar1 & 0xff,
-                    cylinder_event_index_b_axis,cylinder_event_index_b_values,0);
+                   (&next_cylinder_by_cam_tooth_cached_axis_offset,wVar1 & 0xff,
+                    next_cylinder_by_cam_tooth_axis,next_cylinder_by_cam_tooth_values,0);
     cm848_scheduleInjectionAnglesInSpeedLimpHome();
   }
   firing_detection_count = 0;
@@ -47835,7 +47835,7 @@ LAB_00045970:
     if (cam_crank_mismatch_count != 0) {
       cam_crank_mismatch_count = cam_crank_mismatch_count - 1;
     }
-    crank_sync_phase_counter._0_2_ = 0;
+    crank_out_of_phase_count = 0;
 LAB_00045c84:
     cam_crank_plausibility_count_2 = cam_crank_plausibility_count_2 + 1;
   }
@@ -47846,7 +47846,7 @@ LAB_00045c84:
       iVar1 = TBLr;
       crank_resync_time_ticks = iVar1 - first_speed_interrupt_time_ticks;
       crank_resync_count = crank_resync_count + 1;
-      crank_sync_phase_counter._0_2_ = crank_sync_phase_counter._0_2_ + 1;
+      crank_out_of_phase_count = crank_out_of_phase_count + 1;
       goto LAB_00045c84;
     }
     cam_crank_plausibility_count_2 = 0;
@@ -47854,8 +47854,8 @@ LAB_00045c84:
       cam_crank_mismatch_count = cam_crank_mismatch_count + 1;
     }
   }
-  if (crank_sync_phase_counter_threshold_cal < crank_sync_phase_counter._0_2_) {
-    crank_sync_phase_counter._0_2_ = 0;
+  if (crank_out_of_phase_threshold < crank_out_of_phase_count) {
+    crank_out_of_phase_count = 0;
     cm848_setCrankPreliminarySyncFromCam();
   }
 LAB_00045ea0:
