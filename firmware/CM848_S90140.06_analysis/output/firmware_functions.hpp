@@ -1508,12 +1508,12 @@ void j1939_transport_handleDataPacket(int param_1);  // @ 0x0050cfa8
 void j1939_transport_handleEndOfMessageAcknowledge(int param_1);  // @ 0x0050d144
 void j1939_transport_handleAbort(int param_1);  // @ 0x0050d1ac
 void j1939_transport_dispatchConnectionManagement(int param_1);  // @ 0x0050d250
-void j1939_transport_singleFrame_send(int param_1);  // @ 0x0050d2c0
-void j1939_transport_dataFrame_bulkSend(void);  // @ 0x0050d444
+void cm848_sendJ1939BroadcastDataPacket(int param_1);  // @ 0x0050d2c0
+void cm848_sendJ1939ConnectionModeDataPackets(void);  // @ 0x0050d444
 void j1939_transport_timeout_decrement(void);  // @ 0x0050d5d8
-void phase_group_a_triggerControllerUpdates(void);  // @ 0x0050d60c
+void cm848_serviceJ1939TransportSessions(void);  // @ 0x0050d60c
 undefined * j1939_selectResponseBuffer(int param_1);  // @ 0x0050d688
-void j1939_pgn_handler_init_ec00eb00(void);  // @ 0x0050d700
+void cm848_initializeJ1939Transport(void);  // @ 0x0050d700
 undefined1 cm848_lookupApplicationMemoryRegionType(uint param_1,int param_2);  // @ 0x0050d784
 void cm848_calculatePedalFaultModeFuelDemandAndSpeedLimit(void);  // @ 0x0050d864
 void fuel_demand_periodSnapshot_save(void);  // @ 0x0050da7c

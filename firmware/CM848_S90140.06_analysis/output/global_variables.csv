@@ -6581,7 +6581,7 @@ address,name,type,comment
 0x003fef8a,exhaust_pressure_sensor_linearization_axis,word[12],Lookup table - x axis of the exhaust pressure sensor linearization (sensor channel 109, the raw ADC reading). (was sensor_channel109_linearization_axis)
 0x003fefa2,exhaust_pressure_sensor_linearization_values,word[12],Lookup table - the exhaust pressure (0.0159 inHg per count) at each axis point of exhaust_pressure_sensor_linearization_axis. (was sensor_channel109_linearization_values)
 0x003fefba,accelerator_pedal_sensor_config,sensor_channel_config_t,Calibration block of sensor channel 13 (accelerator pedal); its default_value is the J1939 pedal fallback position cm848_processJ1939AcceleratorPedalPosition loads on a timeout (was the interior label j1939_accelerator_pedal_default_position)
-0x003fbdc4,j1939_tp_bam_session_active,byte,J1939 BAM broadcast condition flag (DA=SA=0xFF)
+0x003fbdc4,j1939_broadcast_no_packet_delay_flag,byte,1 while a broadcast (BAM) transport session for PGN 65535 runs (initiateJ1939TransportProtocol sets it when the descriptor's PDU format and PDU specific bytes are both 0xff): its packets then go out with no delay instead of the 5-pass packet delay. cm848_sendJ1939BroadcastDataPacket clears it when a session ends (was j1939_tp_bam_session_active: it is not set for other broadcasts; PR #53 round 34) (was j1939_tp_bam_session_active) | earlier note: J1939 BAM broadcast condition flag (DA=SA=0xFF)
 0x003fbdc5,j1939_multiframe_tx_active,byte,bulk multi-frame TX session active
 0x003fbdc9,j1939_multiframe_tx_total_packets,byte,total packet count for bulk TX
 0x003fbdcb,j1939_multiframe_tx_packets_remaining,byte,remaining packet grant from CTS

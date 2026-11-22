@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 12:23:28 MST 2026
+// Generated: Sun Nov 22 12:48:19 MST 2026
 
 
 //
@@ -6589,7 +6589,7 @@ void cm848_phase_group_a_processing(void)
   cm848_dispatchJ1939ReceivedMessages();
   cm848_runJ1939PowertrainControlTimeouts();
   cm848_trackJ1939ControlSessions();
-  phase_group_a_triggerControllerUpdates();
+  cm848_serviceJ1939TransportSessions();
   cm848_tickJ1939InputSupervision();
   cm848_processJ1939SwitchAndRequestInputs();
   cm848_endRetarderShiftAssistAboveFuelDemandLimit();
@@ -64872,7 +64872,7 @@ void cm848_resetDataCollector(void)
    transport protocol) and copies the bytes out of the ring buffer (clearing
    data_collector_buffer_has_data_flag when the copy reaches the write pointer). Only when the
    transport session started (state 0x10, then the packets go out with
-   j1939_transport_singleFrame_send while the state is 0x11) is the read pointer
+   cm848_sendJ1939BroadcastDataPacket while the state is 0x11) is the read pointer
    data_collector_start_address moved past the sent bytes; without a started session it stays where
    it was, and a session that does not end in state 5 resets the collector with
    cm848_resetDataCollector (0x505d94). Called at the end of every cm848_runDataCollector (0x505f98)
@@ -64935,7 +64935,7 @@ void cm848_sendDataCollectorBuffer(void)
       puVar1 = data_collector_start_address;
       if (**(char **)(pbVar2 + 10) == '\x10') {
         do {
-          j1939_transport_singleFrame_send(0);
+          cm848_sendJ1939BroadcastDataPacket(0);
         } while (**(char **)(pbVar2 + 10) == '\x11');
         puVar1 = puVar6;
         if (**(char **)(pbVar2 + 10) != '\x05') {
@@ -70337,7 +70337,7 @@ void initiateJ1939TransportProtocol(uint *param_1)
     }
     else {
       if ((bVar1 == 0xff) && (bVar2 == 0xff)) {
-        j1939_tp_bam_session_active = 1;
+        j1939_broadcast_no_packet_delay_flag = 1;
       }
       *pbVar8 = 1;
       uVar3 = *(ushort *)(param_1 + 1);
@@ -70350,7 +70350,7 @@ void initiateJ1939TransportProtocol(uint *param_1)
       *(uint *)(pbVar8 + 0x12) = *param_1 & 0xff0000ff | 0xecff00;
       pbVar8[0x16] = 0;
       pbVar8[0x17] = 8;
-      if (j1939_tp_bam_session_active == 0) {
+      if (j1939_broadcast_no_packet_delay_flag == 0) {
         uVar7 = 5;
       }
       else {
@@ -70380,7 +70380,7 @@ void initiateJ1939TransportProtocol(uint *param_1)
       else {
         **(byte **)(pbVar8 + 0xc) = pbVar8[7];
         *pbVar8 = 0;
-        j1939_tp_bam_session_active = 0;
+        j1939_broadcast_no_packet_delay_flag = 0;
       }
     }
   }
@@ -70787,10 +70787,18 @@ void j1939_transport_dispatchConnectionManagement(int param_1)
 
 
 //
-// Function: j1939_transport_singleFrame_send @ 0x0050d2c0
+// Function: cm848_sendJ1939BroadcastDataPacket @ 0x0050d2c0
 //
 
-void j1939_transport_singleFrame_send(int param_1)
+/* Sends the next data packet (TP.DT) of broadcast (BAM) session record param_1 (0 =
+   j1939_source_address / 1 = j1939_engine_retarder_source_address) once its packet delay timer
+   reaches 0: the packet number plus up to 7 data bytes from the record's advancing data pointer.
+   The last packet ends the session. The message status becomes 0x11 while the session runs / 5
+   after the last packet / the send result if the frame fails. The delay is 5 service passes / 0
+   while j1939_broadcast_no_packet_delay_flag is set (was j1939_transport_singleFrame_send; PR #53
+   round 34) (was j1939_transport_singleFrame_send) */
+
+void cm848_sendJ1939BroadcastDataPacket(int param_1)
 
 {
   char cVar1;
@@ -70812,13 +70820,13 @@ void j1939_transport_singleFrame_send(int param_1)
               (uint)(ushort)(&DAT_003fbd78)[param_1 * 0x10]) + 2;
       (&DAT_003fbd8a)[param_1 * 0x10] = (ushort)uVar3 & 0xff;
       *pbVar9 = 0;
-      j1939_tp_bam_session_active = 0;
+      j1939_broadcast_no_packet_delay_flag = 0;
     }
     else {
       uVar3 = 8;
       (&DAT_003fbd8a)[param_1 * 0x10] = 8;
       (&DAT_003fbd78)[param_1 * 0x10] = (&DAT_003fbd78)[param_1 * 0x10] + 7;
-      if (j1939_tp_bam_session_active == 0) {
+      if (j1939_broadcast_no_packet_delay_flag == 0) {
         uVar8 = 5;
       }
       else {
@@ -70854,7 +70862,7 @@ void j1939_transport_singleFrame_send(int param_1)
       *(&j1939_tp_rx_session_status_ptr)[param_1 * 8] = (&DAT_003fbd7b)[iVar2];
       *pbVar9 = 0;
     }
-    j1939_tp_bam_session_active = 0;
+    j1939_broadcast_no_packet_delay_flag = 0;
   }
   else {
     (&DAT_003fbd84)[param_1 * 0x10] = (&DAT_003fbd84)[param_1 * 0x10] + -1;
@@ -70865,10 +70873,16 @@ void j1939_transport_singleFrame_send(int param_1)
 
 
 //
-// Function: j1939_transport_dataFrame_bulkSend @ 0x0050d444
+// Function: cm848_sendJ1939ConnectionModeDataPackets @ 0x0050d444
 //
 
-void j1939_transport_dataFrame_bulkSend(void)
+/* Sends the data packets (TP.DT) that the last clear to send granted the connection mode (RTS /
+   CTS) transmit session: up to 10 per call / status 0x13 after each. Then it waits up to 0x70
+   passes for the next clear to send. With no window granted it counts the timeout down and ends the
+   session with status 6 at 0 / a frame that fails to send ends it with status 7 (was
+   j1939_transport_dataFrame_bulkSend; PR #53 round 34) (was j1939_transport_dataFrame_bulkSend) */
+
+void cm848_sendJ1939ConnectionModeDataPackets(void)
 
 {
   undefined1 *puVar1;
@@ -70968,20 +70982,26 @@ void j1939_transport_timeout_decrement(void)
 
 
 //
-// Function: phase_group_a_triggerControllerUpdates @ 0x0050d60c
+// Function: cm848_serviceJ1939TransportSessions @ 0x0050d60c
 //
 
-void phase_group_a_triggerControllerUpdates(void)
+/* The application J1939 transport's periodic service: sends the next packet of each active
+   broadcast session record (cm848_sendJ1939BroadcastDataPacket 0 / 1) / runs the connection mode
+   transmit session (cm848_sendJ1939ConnectionModeDataPackets) / ages the receive session's timeout
+   (j1939_transport_timeout_decrement) (was phase_group_a_triggerControllerUpdates; PR #53 round 34)
+   (was phase_group_a_triggerControllerUpdates) */
+
+void cm848_serviceJ1939TransportSessions(void)
 
 {
   if (j1939_tp_rx_session_active == 1) {
-    j1939_transport_singleFrame_send(0);
+    cm848_sendJ1939BroadcastDataPacket(0);
   }
   if (DAT_003fbd94 == '\x01') {
-    j1939_transport_singleFrame_send(1);
+    cm848_sendJ1939BroadcastDataPacket(1);
   }
   if (j1939_multiframe_tx_active == 1) {
-    j1939_transport_dataFrame_bulkSend();
+    cm848_sendJ1939ConnectionModeDataPackets();
   }
   if (j1939_multiframe_rx_active == 1) {
     j1939_transport_timeout_decrement();
@@ -71021,10 +71041,16 @@ undefined * j1939_selectResponseBuffer(int param_1)
 
 
 //
-// Function: j1939_pgn_handler_init_ec00eb00 @ 0x0050d700
+// Function: cm848_initializeJ1939Transport @ 0x0050d700
 //
 
-void j1939_pgn_handler_init_ec00eb00(void)
+/* Points the transport's frame buffers (the two broadcast session records' at 0x3fbdb4 / 0x3fbdbc /
+   the connection mode transmit session's at 0x3fbde7 / the receive data buffer at 0x3fbe09) and
+   registers the PGN 60416 (TP.CM) and 60160 (TP.DT) receive handlers
+   j1939_transport_dispatchConnectionManagement / j1939_transport_handleDataPacket (was
+   j1939_pgn_handler_init_ec00eb00; PR #53 round 34) (was j1939_pgn_handler_init_ec00eb00) */
+
+void cm848_initializeJ1939Transport(void)
 
 {
   j1939_tp_rx_session_tx_buf_ptr = &DAT_003fbdb4;
@@ -98652,7 +98678,7 @@ void cm848_j1939_system_init(void)
   can_transmit_queue_enqueue_pointer = &can_transmit_queue_buffer;
   can_receive_queue_read_pointer = &can_receive_queue_buffer;
   can_receive_queue_write_pointer = &can_receive_queue_buffer;
-  j1939_pgn_handler_init_ec00eb00();
+  cm848_initializeJ1939Transport();
   DAT_0040ad54 = 4;
   uVar5 = 0;
   do {

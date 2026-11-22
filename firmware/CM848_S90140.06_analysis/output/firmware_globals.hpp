@@ -6116,7 +6116,7 @@ extern sensor_channel_config_t exhaust_pressure_sensor_config;  // 0x003fef7a
 extern word exhaust_pressure_sensor_linearization_axis[12];  // 0x003fef8a
 extern word exhaust_pressure_sensor_linearization_values[12];  // 0x003fefa2
 extern sensor_channel_config_t accelerator_pedal_sensor_config;  // 0x003fefba
-extern byte j1939_tp_bam_session_active;  // 0x003fbdc4
+extern byte j1939_broadcast_no_packet_delay_flag;  // 0x003fbdc4
 extern byte j1939_multiframe_tx_active;  // 0x003fbdc5
 extern byte j1939_multiframe_tx_total_packets;  // 0x003fbdc9
 extern byte j1939_multiframe_tx_packets_remaining;  // 0x003fbdcb
