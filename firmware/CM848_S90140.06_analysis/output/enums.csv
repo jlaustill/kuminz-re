@@ -981,3 +981,26 @@ DIAGNOSTIC_MONITOR_STATE,4,DIAGNOSTIC_MONITOR_STATE_ABORTED,"e2m ABORT: a relate
 LIFT_PUMP_RUN_REASON,1,LIFT_PUMP_RUN_REASON_KEY_ON,"Key on without starting (cm848_initializeLiftPumpControl): the pump stops after lift_pump_run_time_after_key_on",2
 LIFT_PUMP_RUN_REASON,2,LIFT_PUMP_RUN_REASON_ENGINE_RUNNING,"The engine ran (RUNNING or ENGINE_BRAKE): after it stops the pump runs lift_pump_run_time_after_running",2
 LIFT_PUMP_RUN_REASON,3,LIFT_PUMP_RUN_REASON_ENGINE_CRANKING,"The engine cranked (CRANKING / REENTRY / JUMP_START): after it stops the pump runs lift_pump_run_time_after_cranking",2
+# SERVICE_TOOL_TEST_STATE: e2m 8C74 +9 Cylinder_Performance_Test / 8C77 +1 HPSV_Test_Active '(0=NOT_RUN,1=RUN,2=ABORT)': the state of a SCI command 0x25 service tool test (PR #53 round 13)
+SERVICE_TOOL_TEST_STATE,0,SERVICE_TOOL_TEST_NOT_RUN,e2m NOT_RUN: no service tool request (SCI command 0x25),1
+SERVICE_TOOL_TEST_STATE,1,SERVICE_TOOL_TEST_RUNNING,e2m RUN: requested and every condition holds,1
+SERVICE_TOOL_TEST_STATE,2,SERVICE_TOOL_TEST_ABORTED,e2m ABORT: requested but a condition fails; cm848_expireSciCommand37Tests then ends the request,1
+# END_OF_LINE_TEST_STEP: the step of cm848_runEndOfLineTestSequence; each step function returns the next (PR #53 round 13)
+END_OF_LINE_TEST_STEP,0,END_OF_LINE_TEST_STEP_START,cm848_runEndOfLineTestStartStep: clears the flags of disabled tests and picks the first pending step,2
+END_OF_LINE_TEST_STEP,1,END_OF_LINE_TEST_STEP_OUTPUT_TESTS,cm848_runEndOfLineOutputTestStep: lift pump / lamp and relay / intake air heaters,2
+END_OF_LINE_TEST_STEP,2,END_OF_LINE_TEST_STEP_INTAKE_AIR_HEATER_RESULT,cm848_runEndOfLineIntakeAirHeaterResultStep: the two heater voltage drops,2
+END_OF_LINE_TEST_STEP,3,END_OF_LINE_TEST_STEP_ALTERNATOR_TEST,cm848_runEndOfLineAlternatorTestStep: cuts the field and checks the voltage falls,2
+END_OF_LINE_TEST_STEP,4,END_OF_LINE_TEST_STEP_RADIATOR_FAN_SPEED_NOISE,cm848_checkRadiatorFanSpeedSignalNoise,2
+END_OF_LINE_TEST_STEP,5,END_OF_LINE_TEST_STEP_MISFIRE_TEST,cm848_runEndOfLineMisfireTestStep,2
+END_OF_LINE_TEST_STEP,6,END_OF_LINE_TEST_STEP_FINAL_RESULT,cm848_runEndOfLineFinalResultStep: the plant tester's verdict on the MIL,2
+END_OF_LINE_TEST_STEP,7,END_OF_LINE_TEST_STEP_DONE,no step runs,2
+# END_OF_LINE_OUTPUT_TEST_STATE: the state of cm848_runEndOfLineOutputTestStep (PR #53 round 13)
+END_OF_LINE_OUTPUT_TEST_STATE,0,END_OF_LINE_OUTPUT_TEST_IDLE,a case that does nothing; no code stores 0,1
+END_OF_LINE_OUTPUT_TEST_STATE,1,END_OF_LINE_OUTPUT_TEST_START,starts the fuel control / alternator field / cooling fan actuator tests and turns the MIL on,1
+END_OF_LINE_OUTPUT_TEST_STATE,2,END_OF_LINE_OUTPUT_TEST_LIFT_PUMP,output 53 for end_of_line_test_lift_pump_on_time; passes without P0629 / P0628,1
+END_OF_LINE_OUTPUT_TEST_STATE,3,END_OF_LINE_OUTPUT_TEST_RELAYS,the wait-to-start lamp (output 4) and the A/C clutch relay (output 38) for end_of_line_test_relay_on_time,1
+END_OF_LINE_OUTPUT_TEST_STATE,4,END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_1,"end_of_line_test_relay_off_time, then heater 1 (output 43) on",1
+END_OF_LINE_OUTPUT_TEST_STATE,5,END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_1_ON,heater 1 on for end_of_line_test_relay_on_time,1
+END_OF_LINE_OUTPUT_TEST_STATE,6,END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_2,"end_of_line_test_relay_off_time, then heater 2 (output 44) on",1
+END_OF_LINE_OUTPUT_TEST_STATE,7,END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_2_ON,"heater 2 on, then the output test verdict (no DTC stored)",1
+END_OF_LINE_OUTPUT_TEST_STATE,8,END_OF_LINE_OUTPUT_TEST_DONE,"done, or left early (engine not stopped / nothing pending)",1

@@ -4789,7 +4789,7 @@ extern word governor_speed_limit_floor;  // 0x0040aece
 extern word governor_speed_limit_floor_b;  // 0x0040aed0
 extern word governor_speed_limit_dynamic;  // 0x0040aed2
 extern byte high_pressure_safety_valve_test_request_flag;  // 0x0040aed4
-extern byte high_pressure_safety_valve_test_state;  // 0x0040aed5
+extern SERVICE_TOOL_TEST_STATE high_pressure_safety_valve_test_state;  // 0x0040aed5
 extern word governor_integrator_correction_term;  // 0x0040aeda
 extern word governor_speed_error_reference;  // 0x0040aedc
 extern word low_speed_governor_filtered_speed_error;  // 0x0040aede
@@ -5398,7 +5398,7 @@ extern byte cylinder_6_contribution_percent;  // 0x0040b761
 extern byte cylinder_2_contribution_percent;  // 0x0040b762
 extern byte cylinder_4_contribution_percent;  // 0x0040b763
 extern byte cylinder_contribution_test_request_flag;  // 0x0040b764
-extern byte cylinder_contribution_test_status;  // 0x0040b765
+extern SERVICE_TOOL_TEST_STATE cylinder_contribution_test_status;  // 0x0040b765
 extern word total_injection_quantity;  // 0x0040b766
 extern byte cylinder_fueling_offset;  // 0x0040b768
 extern word cylinder_cutout_test_mask;  // 0x0040b778
@@ -5960,8 +5960,8 @@ extern dword injection_quantity_pilot_arbitrated_target;  // 0x003fd108
 extern dword injection_quantity_pilot_slewed_q16;  // 0x003fd104
 extern byte end_of_line_test_step_sub_state;  // 0x003fd1b0
 extern byte end_of_line_output_test_start_delay_count;  // 0x003fd1b1
-extern byte end_of_line_output_test_state;  // 0x003fd1b2
-extern word end_of_line_test_step;  // 0x003fd1c4
+extern END_OF_LINE_OUTPUT_TEST_STATE end_of_line_output_test_state;  // 0x003fd1b2
+extern END_OF_LINE_TEST_STEP end_of_line_test_step;  // 0x003fd1c4
 extern word timing_limit_boost_blend_cached_axis_offset;  // 0x003fd134
 extern word end_of_line_test_intake_air_heater_1_reading_delay_timer;  // 0x003fd1c0
 extern word end_of_line_test_intake_air_heater_2_reading_delay_timer;  // 0x003fd1c2

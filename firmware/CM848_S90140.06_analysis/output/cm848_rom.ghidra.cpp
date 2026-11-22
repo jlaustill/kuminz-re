@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 17:41:24 MST 2026
+// Generated: Sat Nov 21 17:47:22 MST 2026
 
 
 //
@@ -28110,12 +28110,13 @@ void cm848_calculateProtectionSpeedLimits(void)
         (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0)))) ||
       ((vehicle_speed != 0 ||
        (wVar1 = governor_speed_limit_floor_b, governor_speed_limit_floor_a != 0xe5c1)))) &&
-     (wVar1 = governor_speed_limit_floor, high_pressure_safety_valve_test_state != 1)) {
+     (wVar1 = governor_speed_limit_floor,
+     high_pressure_safety_valve_test_state != SERVICE_TOOL_TEST_RUNNING)) {
     wVar1 = 0;
   }
   governor_speed_limit_floor = wVar1;
   if (high_pressure_safety_valve_test_request_flag == 0) {
-    high_pressure_safety_valve_test_state = 0;
+    high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_NOT_RUN;
   }
   else if ((((((protection_feature_flags & 0x10) == 0) ||
              (adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR)) ||
@@ -28126,11 +28127,11 @@ void cm848_calculateProtectionSpeedLimits(void)
             ((fuel_demand_control_t_0040a57a.accelerator_off_idle != 0 || (vehicle_speed != 0)))) ||
            (high_pressure_safety_valve_test_maximum_engine_speed <
             engine_speed_state.filtered_engine_speed)))) {
-    high_pressure_safety_valve_test_state = 2;
+    high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_ABORTED;
   }
   else {
     governor_speed_limit_floor = high_pressure_safety_valve_test_engine_speed_setpoint;
-    high_pressure_safety_valve_test_state = 1;
+    high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_RUNNING;
   }
   governor_speed_setpoint_snapshot = governor_output_t_0040aec2.idle_speed_barometric_ramped;
   if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) &&
@@ -45945,14 +45946,14 @@ void cm848_runCylinderContributionTest(void)
 
 {
   byte bVar1;
-  byte bVar2;
+  SERVICE_TOOL_TEST_STATE SVar2;
   uint uVar3;
   short sVar4;
   uint uVar5;
   
   bVar1 = cylinder_contribution_test_request_flag;
   if (cylinder_contribution_test_request_flag == 0) {
-    cylinder_contribution_test_status = 0;
+    cylinder_contribution_test_status = SERVICE_TOOL_TEST_NOT_RUN;
   }
   else if (((((cylinder_balance_compensation_enable_cal == 0) ||
              (cylinder_balance_stop_compensation_flag != 0)) || (vehicle_speed != 0)) ||
@@ -45962,10 +45963,10 @@ void cm848_runCylinderContributionTest(void)
              (short)sensor_readings_t_0040baf2.coolant_temp)))) ||
           ((misfire_monitor_cylinder_balance_suspend_flag != 0 || (cylinder_cutout_test_mask != 0)))
           ) {
-    cylinder_contribution_test_status = 2;
+    cylinder_contribution_test_status = SERVICE_TOOL_TEST_ABORTED;
   }
   else {
-    cylinder_contribution_test_status = 1;
+    cylinder_contribution_test_status = SERVICE_TOOL_TEST_RUNNING;
     cylinder_balance_trim_limits_exceeded_flag = 0;
     if ((cylinder_contribution_test_request_flag != 0) && (DAT_003fb596 == '\0')) {
       ram_refresh_enable = RAM_REFRESH_DISABLED;
@@ -46002,8 +46003,9 @@ void cm848_runCylinderContributionTest(void)
          (byte)(((uint)cylinder_5_contribution_percent + (uint)cylinder_6_contribution_percent +
                 (uint)cylinder_4_contribution_percent) / 3);
   }
-  bVar2 = cylinder_contribution_test_status;
-  if ((cylinder_contribution_test_status != 1) && (DAT_003fb597 == '\x01')) {
+  SVar2 = cylinder_contribution_test_status;
+  if ((cylinder_contribution_test_status != SERVICE_TOOL_TEST_RUNNING) && (DAT_003fb597 == '\x01'))
+  {
     cylinder_balance_fueling_trim_maximum = cylinder_balance_fueling_trim_maximum_snapshot;
     cylinder_balance_fueling_trim_minimum = cylinder_balance_fueling_trim_minimum_snapshot;
     uVar5 = 0;
@@ -46014,7 +46016,7 @@ void cm848_runCylinderContributionTest(void)
     ram_refresh_enable = RAM_REFRESH_ENABLED;
   }
   DAT_003fb596 = bVar1;
-  DAT_003fb597 = bVar2;
+  DAT_003fb597 = SVar2;
   return;
 }
 
@@ -82946,7 +82948,7 @@ void cm848_expireSciCommand37Tests(void)
      ((cylinder_contribution_test_request_timeout_count =
             cylinder_contribution_test_request_timeout_count - 1,
       cylinder_contribution_test_request_timeout_count == 0 ||
-      (cylinder_contribution_test_status == 2)))) {
+      (cylinder_contribution_test_status == SERVICE_TOOL_TEST_ABORTED)))) {
     cylinder_contribution_test_request_flag = 0;
     cylinder_contribution_test_request_timeout_count = 0;
   }
@@ -82954,7 +82956,7 @@ void cm848_expireSciCommand37Tests(void)
      ((high_pressure_safety_valve_test_timeout_count =
             high_pressure_safety_valve_test_timeout_count - 1,
       high_pressure_safety_valve_test_timeout_count == 0 ||
-      (high_pressure_safety_valve_test_state == 2)))) {
+      (high_pressure_safety_valve_test_state == SERVICE_TOOL_TEST_ABORTED)))) {
     high_pressure_safety_valve_test_request_flag = 0;
   }
   if ((governor_pressure_solenoid_actuator_test_timeout_count != 0) &&
@@ -88652,7 +88654,7 @@ void cm848_calculateFuelPressureSetpoint(void)
     fuel_pressure_setpoint_winning_term_code = 5;
     return;
   }
-  if (high_pressure_safety_valve_test_state == 1) {
+  if (high_pressure_safety_valve_test_state == SERVICE_TOOL_TEST_RUNNING) {
     fuel_pressure_setpoint = fuel_pressure_setpoint_high_pressure_safety_valve_test_value;
     return;
   }
@@ -91415,8 +91417,8 @@ void cm848_initializeEndOfLineTestSequence(void)
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(3);
   }
   end_of_line_test_output_number = 0x50;
-  end_of_line_test_step = 0;
-  end_of_line_output_test_state = 1;
+  end_of_line_test_step = END_OF_LINE_TEST_STEP_START;
+  end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_START;
   end_of_line_output_test_output_on_flag = 0;
   end_of_line_output_test_start_delay_count = 0;
   end_of_line_test_step_sub_state = 0;
@@ -91956,7 +91958,7 @@ undefined2 cm848_runEndOfLineOutputTestStep(void)
     fuel_control_actuator_test_active_flag = 0;
     cooling_fan_actuator_test_active_flag = 0;
     alternator_field_actuator_test_active_flag = 0;
-    end_of_line_output_test_state = 8;
+    end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_DONE;
     if (engine_state != ENGINE_STATE_STOPPED) {
       cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(2);
     }
@@ -91968,9 +91970,9 @@ undefined2 cm848_runEndOfLineOutputTestStep(void)
   }
   end_of_line_output_test_start_delay_count = 2;
   switch(end_of_line_output_test_state) {
-  case 0:
+  case END_OF_LINE_OUTPUT_TEST_IDLE:
     break;
-  case 1:
+  case END_OF_LINE_OUTPUT_TEST_START:
     if ((end_of_line_test_enable_flags & 0x40) != 0) {
       fuel_control_actuator_test_active_flag = 1;
     }
@@ -91981,9 +91983,9 @@ undefined2 cm848_runEndOfLineOutputTestStep(void)
       cooling_fan_actuator_test_active_flag = 1;
     }
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(1);
-    end_of_line_output_test_state = 2;
+    end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_LIFT_PUMP;
     break;
-  case 2:
+  case END_OF_LINE_OUTPUT_TEST_LIFT_PUMP:
     if ((end_of_line_test_enable_flags & 8) == 0) {
       end_of_line_output_test_start_delay_count = 2;
       return 1;
@@ -91998,7 +92000,7 @@ undefined2 cm848_runEndOfLineOutputTestStep(void)
       cm848_clearEndOfLineTestOutputRequest(0x35);
       end_of_line_output_test_timer = end_of_line_test_relay_off_time;
       end_of_line_output_test_output_on_flag = 0;
-      end_of_line_output_test_state = 3;
+      end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_RELAYS;
       uVar5 = 1;
       if (((fault_detected_bits_384_to_399 & 4) == 0) && ((fault_detected_bits_384_to_399 & 8) == 0)
          ) {
@@ -92022,7 +92024,7 @@ undefined2 cm848_runEndOfLineOutputTestStep(void)
     cm848_setEndOfLineTestOutputRequest(0x35,5);
     wVar4 = end_of_line_test_lift_pump_on_time;
     goto LAB_0052fd54;
-  case 3:
+  case END_OF_LINE_OUTPUT_TEST_RELAYS:
     if (end_of_line_output_test_output_on_flag != 0) {
       wVar4 = end_of_line_output_test_timer - 1;
       if (end_of_line_output_test_timer == 0) {
@@ -92033,7 +92035,7 @@ undefined2 cm848_runEndOfLineOutputTestStep(void)
         if ((end_of_line_test_enable_flags & 0x10) != 0) {
           cm848_clearEndOfLineTestOutputRequest(0x26);
         }
-        end_of_line_output_test_state = 4;
+        end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_1;
         end_of_line_output_test_timer = end_of_line_test_relay_off_time;
         alternator_field_actuator_test_active_flag = 0;
         cooling_fan_actuator_test_active_flag = 0;
@@ -92063,7 +92065,7 @@ LAB_0052fd54:
     end_of_line_output_test_output_on_flag = 1;
     end_of_line_output_test_timer = wVar4;
     break;
-  case 4:
+  case END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_1:
     wVar4 = end_of_line_output_test_timer - 1;
     bVar1 = end_of_line_output_test_timer == 0;
     end_of_line_output_test_timer = wVar4;
@@ -92074,19 +92076,19 @@ LAB_0052fd54:
            end_of_line_test_intake_air_heater_voltage_reading_delay_time;
       cm848_setEndOfLineTestOutputRequest(0x2b,5);
       end_of_line_output_test_timer = end_of_line_test_relay_on_time;
-      end_of_line_output_test_state = 5;
+      end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_1_ON;
     }
     break;
-  case 5:
+  case END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_1_ON:
     bVar1 = end_of_line_output_test_timer == 0;
     end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
     if (bVar1) {
       end_of_line_output_test_timer = end_of_line_test_relay_off_time;
       cm848_clearEndOfLineTestOutputRequest(0x2b);
-      end_of_line_output_test_state = 6;
+      end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_2;
     }
     break;
-  case 6:
+  case END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_2:
     bVar1 = end_of_line_output_test_timer == 0;
     end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
     if (bVar1) {
@@ -92096,10 +92098,10 @@ LAB_0052fd54:
       cm848_setEndOfLineTestOutputRequest(0x2c,5);
       end_of_line_test_intake_air_heater_2_reading_delay_timer =
            end_of_line_test_intake_air_heater_voltage_reading_delay_time;
-      end_of_line_output_test_state = 7;
+      end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_2_ON;
     }
     break;
-  case 7:
+  case END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_2_ON:
     if (end_of_line_output_test_timer != 0) {
       end_of_line_output_test_start_delay_count = 2;
       end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
@@ -92108,7 +92110,7 @@ LAB_0052fd54:
     end_of_line_output_test_timer = end_of_line_output_test_timer - 1;
     cm848_clearEndOfLineTestOutputRequest(0x2c);
     bVar2 = end_of_line_test_settings_cal.test_flags_2;
-    end_of_line_output_test_state = 8;
+    end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_DONE;
     local_18[0] = end_of_line_test_settings_cal.test_flags_2;
     sVar3 = cm848_isDtcStoredOtherThanFault(0x100);
     if (sVar3 == 0) {
@@ -92129,7 +92131,7 @@ LAB_0052fd54:
 LAB_0052ffc8:
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(1);
     break;
-  case 8:
+  case END_OF_LINE_OUTPUT_TEST_DONE:
   }
   return uVar5;
 }
@@ -92179,38 +92181,38 @@ void cm848_runEndOfLineTestSequence(void)
       }
     }
     switch(end_of_line_test_step) {
-    case 0:
+    case END_OF_LINE_TEST_STEP_START:
       end_of_line_test_step = cm848_runEndOfLineTestStartStep();
       break;
-    case 1:
+    case END_OF_LINE_TEST_STEP_OUTPUT_TESTS:
       end_of_line_test_step = cm848_runEndOfLineOutputTestStep();
       break;
-    case 2:
+    case END_OF_LINE_TEST_STEP_INTAKE_AIR_HEATER_RESULT:
       end_of_line_test_step = cm848_runEndOfLineIntakeAirHeaterResultStep();
       break;
-    case 3:
+    case END_OF_LINE_TEST_STEP_ALTERNATOR_TEST:
       end_of_line_test_step = cm848_runEndOfLineAlternatorTestStep();
       break;
-    case 4:
+    case END_OF_LINE_TEST_STEP_RADIATOR_FAN_SPEED_NOISE:
       end_of_line_test_step = cm848_checkRadiatorFanSpeedSignalNoise();
       break;
-    case 5:
+    case END_OF_LINE_TEST_STEP_MISFIRE_TEST:
       end_of_line_test_step = cm848_runEndOfLineMisfireTestStep();
       break;
-    case 6:
+    case END_OF_LINE_TEST_STEP_FINAL_RESULT:
       end_of_line_test_step = cm848_runEndOfLineFinalResultStep();
       break;
-    case 7:
+    case END_OF_LINE_TEST_STEP_DONE:
     }
   }
   else {
-    end_of_line_test_step = 0;
+    end_of_line_test_step = END_OF_LINE_TEST_STEP_START;
     cm848_controlEndOfLineTestMalfunctionIndicatorLampOverride(0);
     end_of_line_test_malfunction_indicator_lamp_power_down_state_flag_cal = 0;
     end_of_line_test_seconds_since_engine_start = 0;
     end_of_line_test_second_divider_pass_count = 0;
     end_of_line_test_output_number = 0x50;
-    end_of_line_output_test_state = 1;
+    end_of_line_output_test_state = END_OF_LINE_OUTPUT_TEST_START;
     end_of_line_output_test_output_on_flag = 0;
     end_of_line_output_test_timer = 0;
     end_of_line_output_test_start_delay_count = 0;

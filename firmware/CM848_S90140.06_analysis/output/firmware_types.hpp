@@ -1118,6 +1118,35 @@ typedef enum {
     LIFT_PUMP_RUN_REASON_ENGINE_CRANKING = 3  /* The engine cranked (CRANKING / REENTRY / JUMP_START): after it stops the pump runs lift_pump_run_time_after_cranking */
 } LIFT_PUMP_RUN_REASON;
 
+typedef enum {
+    SERVICE_TOOL_TEST_NOT_RUN = 0,  /* e2m NOT_RUN: no service tool request (SCI command 0x25) */
+    SERVICE_TOOL_TEST_RUNNING = 1,  /* e2m RUN: requested and every condition holds */
+    SERVICE_TOOL_TEST_ABORTED = 2  /* e2m ABORT: requested but a condition fails; cm848_expireSciCommand37Tests then ends the request */
+} SERVICE_TOOL_TEST_STATE;
+
+typedef enum {
+    END_OF_LINE_TEST_STEP_START = 0,  /* cm848_runEndOfLineTestStartStep: clears the flags of disabled tests and picks the first pending step */
+    END_OF_LINE_TEST_STEP_OUTPUT_TESTS = 1,  /* cm848_runEndOfLineOutputTestStep: lift pump / lamp and relay / intake air heaters */
+    END_OF_LINE_TEST_STEP_INTAKE_AIR_HEATER_RESULT = 2,  /* cm848_runEndOfLineIntakeAirHeaterResultStep: the two heater voltage drops */
+    END_OF_LINE_TEST_STEP_ALTERNATOR_TEST = 3,  /* cm848_runEndOfLineAlternatorTestStep: cuts the field and checks the voltage falls */
+    END_OF_LINE_TEST_STEP_RADIATOR_FAN_SPEED_NOISE = 4,  /* cm848_checkRadiatorFanSpeedSignalNoise */
+    END_OF_LINE_TEST_STEP_MISFIRE_TEST = 5,  /* cm848_runEndOfLineMisfireTestStep */
+    END_OF_LINE_TEST_STEP_FINAL_RESULT = 6,  /* cm848_runEndOfLineFinalResultStep: the plant tester's verdict on the MIL */
+    END_OF_LINE_TEST_STEP_DONE = 7  /* no step runs */
+} END_OF_LINE_TEST_STEP;
+
+typedef enum {
+    END_OF_LINE_OUTPUT_TEST_IDLE = 0,  /* a case that does nothing; no code stores 0 */
+    END_OF_LINE_OUTPUT_TEST_START = 1,  /* starts the fuel control / alternator field / cooling fan actuator tests and turns the MIL on */
+    END_OF_LINE_OUTPUT_TEST_LIFT_PUMP = 2,  /* output 53 for end_of_line_test_lift_pump_on_time; passes without P0629 / P0628 */
+    END_OF_LINE_OUTPUT_TEST_RELAYS = 3,  /* the wait-to-start lamp (output 4) and the A/C clutch relay (output 38) for end_of_line_test_relay_on_time */
+    END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_1 = 4,  /* end_of_line_test_relay_off_time, then heater 1 (output 43) on */
+    END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_1_ON = 5,  /* heater 1 on for end_of_line_test_relay_on_time */
+    END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_2 = 6,  /* end_of_line_test_relay_off_time, then heater 2 (output 44) on */
+    END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_2_ON = 7,  /* heater 2 on, then the output test verdict (no DTC stored) */
+    END_OF_LINE_OUTPUT_TEST_DONE = 8  /* done, or left early (engine not stopped / nothing pending) */
+} END_OF_LINE_OUTPUT_TEST_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
