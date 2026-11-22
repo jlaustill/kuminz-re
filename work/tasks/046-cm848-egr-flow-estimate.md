@@ -1342,6 +1342,55 @@ Scripts are in `session_folder/round23/`.
     has a name (`stale_ghidra_labels.py`). Some are deliberate history ('it rendered as ...'), so each hit needs a
     review; the stale-name sweeps skip these labels by design.
 
+## Done, round 24 (2026-11-22, same PR; the relayed "keep going" again): the struct instances named after their Ghidra labels
+
+Scripts are in `session_folder/round24/`. `apply_struct_renames.py` renames struct types, fields and the dotted alias
+rows, with round 6's checks.
+- **Stage A (1d84f6c, comments):** round 23's lead. 73 present-tense Ghidra labels in CSV comments became the names
+  their addresses now have (`classify_labels.py`, `apply_r24a.py`). History mentions stay: 'was', 'rendered',
+  'earlier note:', '#' lines and rename arrows. The proof: the `.cpp` without its comments is identical, and every
+  changed CSV line differs in its comment column only.
+- **Stage B (8de3cf6, label-only): the commanded throttle record.**
+  - e2m 1047 lines up with the 14 words at 0x40a57a: `commanded_throttle_state_t` / `commanded_throttle_state` (was
+    `fuel_demand_control_t`). Its fields are now:
+    - `commanded_throttle` (was `calculated`);
+    - `throttle_transition_state` (was `rate_limiter_state`; there is no rate limiter);
+    - `throttle_minimum` and its confidence counter (were `throttle_based` / `rate_delta`);
+    - `calculated_commanded_throttle` (was `rate_limited`);
+    - the alternate throttle trio and the delta.
+  - The `cm848_fuelDemand*` functions at 0x1702c-0x17af4 are the throttle validation and selection
+    (`cm848_selectCommandedThrottle` ...).
+  - e2m 1048 names four ROM words, and the autozero learning's three working words are renamed.
+  - `governor_torque_output` (sensor channel 8) is the remote accelerator pedal (EEC2 SPN 974; task 042's lead), with
+    its hand-over latch `cm848_verifyRemoteThrottleTransition`. `governor_speed_demand_limit(_prev)` are the dual
+    channel pedal's demand.
+  - `cm848_lookupFaultIndexByDtcCode`: the table holds P-codes, not SPNs.
+  - 0x64428 is IAH_Grid_Off_Voltage_Check_Delay, and e2m 1966 names the fuel level and ECM internal temperature
+    outputs.
+- **Stage C (44578ee, label-only): the cam / crank sync record.**
+  - e2m 819C at 0x40b80a: `cam_crank_sync_state_t` (was `engine_crank_state_t`) with `cam_sync_error_count` /
+    `cam_sync_state` / `crank_sync_error_count` / `crank_sync_state`.
+  - The TPU-A channel 0 handler is `mpc555_updateCrankSyncState`, and its eight state setters are named by the state
+    they enter.
+  - The e2m value labels (0-3) do not match the code's 0-4, so no enum. This is task 045's and round 3's lead.
+- **Stage D (26dd083, label-only):**
+  - `j1587_fault_count_data_cal` (e2m 1097 +C0: the active / previously active fault counts);
+  - `active_dtc_cummins_fault_codes_cal` (was `fault_pending_counter_array`);
+  - `boot_sci_session_state` and `reflash_transfer_state`;
+  - `boot_j1939_transport_transmit_session`, with 12 fields named from the TP code (`_pad5` is the frame queue
+    status);
+  - `qsmcm_recram` and `system_initialization_flags`.
+
+  The two boot structs get no `_cal`, though they sit in the mirror's range: only boot / kernel code uses them
+  (`NOT_CAL` in `worklist_r24d.py`).
+- **Still to do in round 24:**
+  - E: the three fault bit arrays as one `fault_bit_words_t`;
+  - F: the shapes of `sensor_readings_t`, `diag_clear_flags_t`, `throttle_fuel_enable_flag` and the executive timing
+    records;
+  - G: the sensor channel blocks;
+  - H: the TouCAN A module registers;
+  - I: the kernel's two response messages.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

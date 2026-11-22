@@ -1,0 +1,25 @@
+cm848: round 24 stage A - Ghidra labels in comments refreshed to the names their addresses now have (comments)
+
+Round 23's lead: the CSV comments still cite 276 Ghidra labels (DAT_ / WORD_ / WORD_ARRAY_ / PTR_ / <type>_ + address)
+whose address now has a named row. A blind replace would corrupt deliberate history ('it rendered as PTR_...'), so
+each hit was classified (classify_labels.py) and the review set read by eye. The rules, in apply_r24a.py:
+- Only comment columns change. The dotted alias rows' names (instance_label.field) stay.
+- Kept as they are:
+  - '#' lines (legacy notes, some describing old guesses);
+  - an 'earlier note:' tail;
+  - a history word just before the label ('(was', 'renamed', 'render', 'label', ...);
+  - a comment that opens with the row's own former label ('DAT_003fd90c: ...');
+  - a rename arrow ('LABEL -> name');
+  - an offset target ('x+2');
+  - labels identical to their row's name.
+- Replaced: 73 present-tense references in 59 lines (58 in global_variables.csv, 11 plates, 1 struct comment, 3 enum
+  comments). Examples: 'compared with DAT_0005c316 (the transient set time)'; 'the SCI case 1 code reads
+  DAT_0040bd0a'; 'searches the SPN table DAT_0005b57c'; 'Timer channel 43 (DAT_003fcf3c)'.
+- One comment named its copy target twice ('copied to 0x40a670 and to DAT_0040a670'). The code has one copy, so it now
+  reads 'copied to egr_valve_autozero_enabled_monitor (0x40a670), its one copy'.
+
+Proof (prove_r24a.py): the .cpp with comments stripped is identical (72548 lines), and every changed CSV line differs in
+its comment column only. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites
+pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

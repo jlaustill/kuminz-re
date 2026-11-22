@@ -500,6 +500,13 @@ state enum, the flag bytes.**
   literals).
 - **Stage C (bc99794, types, review):** three more (an `i16` global and two struct fields), the scan widened to every
   type and struct field (none left), and a stale `DAT_` label refreshed.
+**Round 24 (the relayed "keep going" again): struct instances still named after their Ghidra labels.**
+- **Stage A (1d84f6c, comments):** 73 present-tense Ghidra labels in CSV comments refreshed (round 23's lead).
+- **Stage B (8de3cf6, label-only):** the commanded throttle record (e2m 1047 / 1048), the remote and dual channel
+  pedals, the DTC code lookup.
+- **Stage C (44578ee, label-only):** the cam / crank sync record (e2m 819C) and its state setters.
+- **Stage D (26dd083, label-only):** the J1587 fault counts, the boot SCI / reflash / J1939 transport sessions,
+  two more instances.
 
 ## Test plan
 
@@ -592,6 +599,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 24: stages B, C and D are EQUIVALENT; stage A (comments) leaves the code without comments identical.
 - [x] Round 23: stage A is EQUIVALENT (20 names); stages B and C pass the enum proof (C differs only in a refreshed plate).
 - [x] Round 22: stages A and B are EQUIVALENT (12 and 3 names).
 - [x] Round 21: stages A and B pass a layout / containment / artifact gate (A was piloted first); stage C is EQUIVALENT; stage D builds CM550 and CM848 identical before and after, and its positive control shows both new paths; stage E's gate passes (the five readers, no casts left).

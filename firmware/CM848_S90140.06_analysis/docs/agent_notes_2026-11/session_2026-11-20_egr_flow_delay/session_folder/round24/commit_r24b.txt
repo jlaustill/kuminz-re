@@ -1,0 +1,46 @@
+cm848: round 24 stage B - the commanded throttle record (e2m 1047 / 1048), the remote and dual channel pedals (labels)
+
+The 15 struct instances still named with their Ghidra labels (<type>_<address>, about 1580 renders) start here with
+the record at 0x40a57a. The ECU's parameter ID table maps it to e2m block 1047, whose 14 records line up with the
+struct's 14 words:
+- fuel_demand_control_t -> commanded_throttle_state_t, the instance fuel_demand_control_t_0040a57a ->
+  commanded_throttle_state. Fields, each checked against the code:
+  - calculated -> commanded_throttle (Commanded_Throttle);
+  - rate_limiter_state -> throttle_transition_state (Transition_State: pot / idle switch states 0-3, not a rate
+    limiter);
+  - rate_delta -> throttle_minimum_confidence_counter (Current_Confidence_Counter);
+  - throttle_based -> throttle_minimum (Throttle_Min, learned by cm848_learnAcceleratorPedalAutozero);
+  - override_value / override_priority -> alternate_throttle / alternate_throttle_priority;
+  - rate_limited -> calculated_commanded_throttle ((pedal - autozero) x 400 / range: nothing is rate limited);
+  - override_countdown -> selected_alternate_throttle_priority (it never counts down);
+  - reserved_14 / reserved_16 -> sampled_frequency_throttle / frequency_throttle_active_flag;
+  - delta / delta_filtered -> commanded_throttle_delta / _filtered.
+  idle_validation_state and accelerator_off_idle keep their names, with the e2m records added (Throttle_ID /
+  Throttle_Status). The dotted alias rows are refreshed by offset (the e2m tool reads them).
+- Functions: cm848_fuelDemandFinalCalculation -> cm848_selectCommandedThrottle, cm848_fuelDemandBaseCalculation ->
+  cm848_calculateCommandedThrottleFromPedal, cm848_fuelDemandCoordinator -> cm848_runThrottleValidation,
+  cm848_fuelDemandRateLimiterStateMachine -> cm848_updateThrottleTransitionState, cm848_initFuelDemandRateVariables ->
+  cm848_initializeCommandedThrottleState.
+- The Throttle_Min learning's working words: throttle_fuel_demand_tracked -> throttle_minimum_candidate,
+  fuel_demand_override_counter -> accelerator_pedal_autozero_elapsed_time, governor_speed_output_snapshot ->
+  accelerator_pedal_autozero_update_count; the idle validation bounds throttle_fuel_demand_upper / lower_bound ->
+  idle_validation_off_idle / idle_threshold; the delta filter and its coefficient.
+- e2m 1048, four unnamed ROM words (lhz in each reader): Throttle_Deadband, Throttle_Hysteresis, Throttle_Range,
+  TPS_AZ_Time_Limit.
+- The remote pedal: governor_torque_output (0x40bb00, sensor channel 8) -> remote_accelerator_pedal_sensor_filtered.
+  EEC2 byte 4 (SPN 974) sends it x 0.625, and it is the remote throttle claim's alternate throttle (task 042's lead).
+  fuel_demandRateLimit_outputCheck -> cm848_verifyRemoteThrottleTransition (a no-jump hand-over latch) with
+  fuel_demand_rate_limit_active_flag -> remote_throttle_transition_verified_flag; its boot initializer
+  cm848_clearEngineProtectionFaultsConditional -> cm848_initializeRemoteThrottle; j1939_eec2_remote_accel_pedal_byte
+  spelled out.
+- The dual channel pedal: governor_speed_demand_limit(_prev) -> accelerator_pedal_dual_channel_(validated_)demand.
+- cm848_lookupFaultSpnIndex -> cm848_lookupFaultIndexByDtcCode and its SCI command 52 callback: obd_dtc_code_table
+  holds P-codes (0x0606 = P0606), not SPNs (the command itself was renamed earlier).
+- e2m 162A +4 IAH_Grid_Off_Voltage_Check_Delay: 0x64428, the intake air heater test's grid-off delay.
+- e2m 1966: the fuel level (channel 68) and ECM internal temperature (channel 26) value / default outputs.
+- firmware/CLAUDE.md, work/todo.md and task 042: rename refreshes.
+
+Proof: reverse_names.py EQUIVALENT (1 function differs only in the order of its local declarations). Headers
+regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -376,3 +376,12 @@ Hand work on the round 7 lead.
 - **Stage A:** `worklist_r23a.py`, `apply_r23a2.py` (the unnamed and new rows). **Stage B:** `source_scan.py` (each
   `*_source` word's e2m value list against the code's literals; rerun it as `source_scan.py <firmware> <round19/source_values.py>`), `apply_r23b.py`. **Stage C:** `apply_r23c.py`, `stale_ghidra_labels.py` (dry run only), `source_scan_after.txt`. **Closing:** `apply_r23_closing.py`, `apply_r23_closing2.py`.
 
+## Round 24: the Ghidra-label struct instances (`session_folder/round24/`)
+
+- **Stage A:** `classify_labels.py`, `apply_r24a.py`, `prove_r24a.py`. The proof is comments-only: the code without comments is identical, and the CSV changes are in comment columns only.
+- **Stages B-D:**
+  - `worklist_r24b.py` / `_c` / `_d`, run through `apply_hand_worklist.py` (the snapshot here has the `NOT_CAL` exemption);
+  - `spec_r24b.py` / `_c` / `_d`, run through `apply_struct_renames.py` (struct types, fields, dotted alias rows, qualified references);
+  - `apply_r24b2.py` (new rows) and `apply_r24b_docs.py`;
+  - the checks: `instance_users.py`, `fault_bit_names.py` (the e2m 1036 fault bit names), `definition_flag_2000.py`, `byte_enum_renders.py`.
+- **Closing:** `apply_r24_interim.py` (interim, after stage D).
