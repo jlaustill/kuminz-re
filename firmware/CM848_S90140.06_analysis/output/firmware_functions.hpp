@@ -378,7 +378,7 @@ void cm848_monitorAcceleratorPedalIdleValidationFaults(void);  // @ 0x00017560
 void cm848_fuelDemandFinalCalculation(void);  // @ 0x0001782c
 void cm848_fuelDemandCoordinator(void);  // @ 0x00017980
 void cm848_initFuelDemandRateVariables(void);  // @ 0x00017af4
-void cm848_storeFuelDemandPreviousValues(void);  // @ 0x00017b54
+void cm848_passCompensatedTimingToCombustionLimits(void);  // @ 0x00017b54
 uint cm848_estimateCompressorOutletTemperature(void);  // @ 0x00017b84
 void cm848_selectCompressorOutletTemperature(void);  // @ 0x00017d54
 void mpc555_initFuelFlowRateVariables(void);  // @ 0x00017e54

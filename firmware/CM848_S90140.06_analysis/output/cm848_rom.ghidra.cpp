@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 23:57:48 MST 2026
+// Generated: Sun Nov 22 00:01:27 MST 2026
 
 
 //
@@ -6816,7 +6816,7 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
   cm848_detectEngineProtectionShutdownOverrideRequest();
   cm848_calculateTemperatureHeadroomFuelCap();
   cm848_estimateChargeTemperature();
-  cm848_storeFuelDemandPreviousValues();
+  cm848_passCompensatedTimingToCombustionLimits();
   cm848_applyWastegateSolenoidDuty();
   return;
 }
@@ -13136,7 +13136,7 @@ void cm848_initializeIntakeTemperatureFilterStates(void)
    injection_timing_combustion_maximum_limit, adds injection_timing_user_increment (when
    combustion_override_and_estimation_enable_flags_cal bit 3 (8) is set;
    injection_timing_user_increment_active_flag = it is not 0) to
-   injection_timing_compensated_reference_previous and clamps that between the two limits into
+   injection_timing_combustion_limits_input and clamps that between the two limits into
    injection_timing_main_base_before_override. injection_timing_intermediate_source_code records
    which limit applied (28 = minimum limit, 27 = maximum limit); cm848_calculateMainInjectionTiming
    turns them into source codes 30 and 29. (was cm848_calculateRpmLoadTables) */
@@ -13160,13 +13160,13 @@ void cm848_applyCombustionTimingLimits(void)
                   injection_timing_combustion_maximum_limit_grid,4);
   injection_timing_combustion_maximum_limit = injection_timing_main_base_before_override;
   if ((combustion_override_and_estimation_enable_flags_cal & 8) == 0) {
-    injection_timing_with_user_increment = injection_timing_compensated_reference_previous;
+    injection_timing_with_user_increment = injection_timing_combustion_limits_input;
     injection_timing_user_increment_active_flag = 0;
   }
   else {
     injection_timing_user_increment_active_flag = (word)(injection_timing_user_increment != 0);
     injection_timing_with_user_increment =
-         injection_timing_compensated_reference_previous + injection_timing_user_increment;
+         injection_timing_combustion_limits_input + injection_timing_user_increment;
   }
   injection_timing_source_code_before_combustion_limits = injection_timing_intermediate_source_code;
   if (injection_timing_combustion_minimum_limit < (short)injection_timing_with_user_increment) {
@@ -15600,15 +15600,22 @@ void cm848_initFuelDemandRateVariables(void)
 
 
 //
-// Function: cm848_storeFuelDemandPreviousValues @ 0x00017b54
+// Function: cm848_passCompensatedTimingToCombustionLimits @ 0x00017b54
 //
 
-void cm848_storeFuelDemandPreviousValues(void)
+/* The ANC timing stage's place (e2m 10A4; compiled out): copies the off-nominal compensated
+   reference injection_timing_compensated_reference (1711 +8 CBO_SOI_Ref) into
+   injection_timing_combustion_limits_input (10A4 +14 ANC_SOI) and its copy, and sets the
+   intermediate source to COMBUSTION_REFERENCE (25, e2m label 19 CBR_SOI). Task of
+   cm848_periodicTaskSet_auxiliaryControl (was cm848_storeFuelDemandPreviousValues) */
+
+void cm848_passCompensatedTimingToCombustionLimits(void)
 
 {
-  fuel_correction_output_b_working = injection_timing_compensated_reference;
-  fuel_correction_timer_counter = INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_REFERENCE;
-  injection_timing_compensated_reference_previous = injection_timing_compensated_reference;
+  injection_timing_combustion_limits_input_copy = injection_timing_compensated_reference;
+  injection_timing_combustion_limits_input_source =
+       INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_REFERENCE;
+  injection_timing_combustion_limits_input = injection_timing_compensated_reference;
   injection_timing_intermediate_source_code =
        INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_REFERENCE;
   return;

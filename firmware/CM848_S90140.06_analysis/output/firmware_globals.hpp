@@ -1216,8 +1216,8 @@ extern dword throttle_fuel_enable_flag;  // 0x003fa6f0
 extern ema_filter_state_t fuel_demand_delta_filter;  // 0x003fa6f4
 extern word fuel_demand_override_counter;  // 0x003fa6fc
 extern word governor_speed_output_snapshot;  // 0x003fa6fe
-extern word fuel_correction_output_b_working;  // 0x003fa700
-extern INJECTION_TIMING_INTERMEDIATE_SOURCE fuel_correction_timer_counter;  // 0x003fa702
+extern word injection_timing_combustion_limits_input_copy;  // 0x003fa700
+extern INJECTION_TIMING_INTERMEDIATE_SOURCE injection_timing_combustion_limits_input_source;  // 0x003fa702
 extern word throttle_demand_offset_cal_working;  // 0x003fa712
 extern word egr_delta_pressure_autozero_wait_counter;  // 0x003fa714
 extern ema_filter_state_t egr_delta_pressure_autozero_offset_filter_state;  // 0x003fa716
@@ -4121,7 +4121,7 @@ extern byte supervisor_chip_engine_speed_targets_per_revolution;  // 0x0040a042
 extern byte supervisor_chip_overspeed_consecutive_occurrence_count;  // 0x0040a043
 extern byte supervisor_chip_overspeed_non_latching_flag;  // 0x0040a044
 extern byte sensor_channel_ram_start;  // 0x0040a046
-extern int16_t injection_timing_compensated_reference_previous;  // 0x0040a05e
+extern int16_t injection_timing_combustion_limits_input;  // 0x0040a05e
 extern sensor_channel_state_t barometric_pressure_sensor_state;  // 0x0040a062
 extern sensor_channel_state_t sensor_channel1_ram;  // 0x0040a06e
 extern sensor_channel_state_t sensor_channel2_ram;  // 0x0040a07a
