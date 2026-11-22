@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 00:30:30 MST 2026
+// Generated: Sun Nov 22 00:58:42 MST 2026
 
 
 //
@@ -6092,9 +6092,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -6774,7 +6774,7 @@ void cm848_periodicTaskSet_controlLoop(void)
   cm848_arbitrateRequestedFueling();
   hpcr_filterCylinderBalanceFueling();
   cm848_calculateFuelLimitByRpmAndDemand();
-  cm848_calculateFuelDemandOffsetTrim();
+  cm848_calculateColdDeltaFuel();
   cm848_claimRemoteThrottleOverride();
   cm848_calculatePumpingTorqueAdjustment();
   cm848_runCombustionReference();
@@ -6796,7 +6796,7 @@ void cm848_periodicTaskSet_auxiliaryControl(void)
   cm848_estimateExhaustTemperature();
   cm848_calculateFourDimensionalInjectionTiming();
   cm848_calculateColdStartRpmAdjust();
-  cm848_processEngineConfigSpeedControl();
+  cm848_calculateInjectionTimingMainMisfireLimit();
   cm848_runCombustionLimits();
   cm848_selectFinalFueling();
   cm848_calculateFuelPressureSetpoint();
@@ -8631,8 +8631,8 @@ void cm848_calculateAirFuelControlFuelLimit(void)
     else {
       air_fuel_control_fuel_limit = (word)((governor_demand_accumulator + 0x19) / 0x32);
     }
-    if (algorithm_enable_flags_41_cal.reserved_bit_13 != 0) {
-      air_fuel_control_fuel_limit = air_fuel_control_fuel_limit + fuel_demand_offset_correction;
+    if (algorithm_enable_flags_41_cal.air_fuel_control_cold_increment_enable != 0) {
+      air_fuel_control_fuel_limit = air_fuel_control_fuel_limit + cold_delta_fuel;
     }
   }
   else {
@@ -14136,7 +14136,7 @@ void cm848_calculateCombustionChiMaximumFuel(void)
 
 /* Calculates the gross fuel and its maximum limit: looks up the density-based maximum fuel (engine
    speed x intake air density), keeps the smaller of it and the chi maximum fuel (plus
-   fuel_demand_offset_correction when algorithm_enable_flags_43_cal bits 0x80 / 0x40 are set) as
+   cold_delta_fuel when algorithm_enable_flags_43_cal bits 0x80 / 0x40 are set) as
    injection_quantity_combustion_maximum_limit (source code 52 density / 53 chi), subtracts
    injection_timing_torque_to_fuel_adjustment from the arbitrated demand when it is at or above the
    adjustment threshold, clamps it to 0..5888 (or the override calibration when
@@ -14159,13 +14159,13 @@ void cm848_calculateCombustionGrossFuel(void)
                   injection_quantity_combustion_density_maximum_grid,0);
   wVar3 = injection_quantity_combustion_density_maximum;
   if ((algorithm_enable_flags_43_cal & 0x80) != 0) {
-    wVar3 = injection_quantity_combustion_density_maximum + fuel_demand_offset_correction;
+    wVar3 = injection_quantity_combustion_density_maximum + cold_delta_fuel;
   }
   cm848_calculateCombustionChiMaximumFuel();
   injection_quantity_combustion_maximum_limit = injection_quantity_combustion_chi_maximum;
   if ((algorithm_enable_flags_43_cal & 0x40) != 0) {
     injection_quantity_combustion_maximum_limit =
-         injection_quantity_combustion_chi_maximum + fuel_demand_offset_correction;
+         injection_quantity_combustion_chi_maximum + cold_delta_fuel;
   }
   if (injection_quantity_combustion_maximum_limit < wVar3) {
     FVar4 = FUELING_STATE_COMBUSTION_CHI_MAXIMUM;
@@ -20770,9 +20770,9 @@ uint cm848_calculateMaximumFuelCurve(word param_1,word param_2)
    engine_speed_limit_ramped_maximum_fuel_quantity (+4 Throttle_100_Fuel_At_HSG_Bef_Droop_Speed) and
    engine_speed_limit_reference_maximum_fuel_quantity (+6 Throttle_100_Fuel_At_HSG_Bkpt_Speed), the
    last two from cm848_lookupChiMaximumFuelAtSpeed at engine_speed_limit_ramped /
-   engine_speed_limit_reference; each gets fuel_demand_offset_correction added when mask 0x1000 of
-   algorithm_enable_flags_41_cal (reserved_bit_12) is set, the first two are raised to at least
-   fuel_demand_minimum and the low horsepower one is limited to the valid range.
+   engine_speed_limit_reference; each gets cold_delta_fuel added when mask 0x1000 of
+   algorithm_enable_flags_41_cal (throttle_100_cold_increment_enable) is set, the first two are
+   raised to at least fuel_demand_minimum and the low horsepower one is limited to the valid range.
    throttle_100_fueling_without_programmable_power (+8 Throttle_100_Fueling_No_PP) is always
    calculated like throttle_100_fueling, with four_dimensional_fueling_interpolation_factor (the
    alpha, e2m 1053 +2 Fuel_Interp_Factor) forced to 0 while bit 0x10 of
@@ -20787,8 +20787,8 @@ void cm848_calculateThrottle100Fuelings(void)
   word wVar3;
   
   if (algorithm_enable_flags_18_cal.programmable_power_enable == 0) {
-    wVar3 = fuel_demand_offset_correction;
-    if (algorithm_enable_flags_41_cal.reserved_bit_12 == 0) {
+    wVar3 = cold_delta_fuel;
+    if (algorithm_enable_flags_41_cal.throttle_100_cold_increment_enable == 0) {
       wVar3 = 0;
     }
     sVar1 = cm848_calculateMaximumFuelCurve(engine_speed_state.filtered_engine_speed,400);
@@ -21588,7 +21588,7 @@ undefined1 cm848_getLimitCategoryCode(int param_1)
 void cm848_calculateJ1939ReferenceEngineFueling(void)
 
 {
-  if (algorithm_enable_flags_41_cal.reserved_bit_11 != 0) {
+  if (algorithm_enable_flags_41_cal.torque_normalization_enable != 0) {
     j1939_reference_engine_fueling =
          (word)((((uint)injection_quantity_combustion_chi_maximum - (uint)friction_fueling) * 10000)
                / (((uint)fuel_demand_filter_dimension * 0x34f6) /
@@ -22846,7 +22846,7 @@ void cm848_calculateJ1939TorqueCurveFuelingsAndReferenceFuelings(void)
     wVar4 = cm848_lookupChiMaximumFuelAtSpeed(j1939_torque_curve_speed_at_point_3);
     wVar5 = cm848_lookupChiMaximumFuelAtSpeed(j1939_torque_curve_speed_at_point_4);
     wVar6 = cm848_lookupChiMaximumFuelAtSpeed(j1939_torque_curve_speed_at_point_5);
-    if (algorithm_enable_flags_41_cal.reserved_bit_11 == 0) {
+    if (algorithm_enable_flags_41_cal.torque_normalization_enable == 0) {
       j1939_torque_curve_reference_fueling_at_point_1 = j1939_reference_engine_fueling;
       j1939_torque_curve_reference_fueling_at_point_2 = j1939_reference_engine_fueling;
       j1939_torque_curve_reference_fueling_at_point_3 = j1939_reference_engine_fueling;
@@ -28623,10 +28623,15 @@ void cm848_initProtectionFilterAccumulators(void)
 
 
 //
-// Function: cm848_processEngineConfigSpeedControl @ 0x00029e50
+// Function: cm848_calculateInjectionTimingMainMisfireLimit @ 0x00029e50
 //
 
-void cm848_processEngineConfigSpeedControl(void)
+/* While algorithm_enable_flags_40_cal bit 8 (e2m Misfire_Timing_Limit_Enable) is set, looks up
+   injection_timing_main_misfire_limit (e2m 8A3D Misfire_Timing_Limit) from the misfire timing table
+   (8A40 Misfire_Timing_Table) by boost pressure and filtered engine speed; it does no speed control
+   (was cm848_processEngineConfigSpeedControl) */
+
+void cm848_calculateInjectionTimingMainMisfireLimit(void)
 
 {
   word x_input;
@@ -37449,25 +37454,27 @@ void cm848_initSupervisorChip(void)
 
 
 //
-// Function: cm848_calculateFuelDemandOffsetTrim @ 0x000373b0
+// Function: cm848_calculateColdDeltaFuel @ 0x000373b0
 //
 
-void cm848_calculateFuelDemandOffsetTrim(void)
+/* Sets cold_delta_fuel (e2m 8A9F Cold_Delta_Fuel) from the e2m 8AA2 Cold_Delta_Fuel_Table by
+   coolant temperature and filtered engine speed, or 0 while fault 16, 17 or 401 is detected (was
+   cm848_calculateFuelDemandOffsetTrim) */
+
+void cm848_calculateColdDeltaFuel(void)
 
 {
   if ((((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 1) == 0) &&
       ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 2) == 0)) &&
      ((fault_detected_bits_400_to_415 & 2) == 0)) {
-    fuel_demand_offset_correction =
+    cold_delta_fuel =
          cm848_dualAxisTableInterpolation
-                   (&DAT_003fb35c,sensor_readings_t_0040baf2.coolant_temp,
-                    fuel_demand_offset_correction_by_coolant_and_rpm_x_axis,
-                    engine_speed_state.filtered_engine_speed,
-                    fuel_demand_offset_correction_by_coolant_and_rpm_y_axis,
-                    fuel_demand_offset_correction_by_coolant_and_rpm_grid,1);
+                   (&DAT_003fb35c,sensor_readings_t_0040baf2.coolant_temp,cold_delta_fuel_x_axis,
+                    engine_speed_state.filtered_engine_speed,cold_delta_fuel_y_axis,
+                    cold_delta_fuel_grid,1);
   }
   else {
-    fuel_demand_offset_correction = 0;
+    cold_delta_fuel = 0;
   }
   return;
 }
@@ -38486,8 +38493,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if ((algorithm_enable_flags_40_cal & 0x40) != 0) {
@@ -41375,7 +41382,7 @@ void cm848_calculateNetTorqueFuelLimit(void)
               (uint)friction_fuel_adjustment_for_air_conditioning_clutch +
               (int)(short)friction_fuel_adjustment_for_radiator_fan;
       if ((algorithm_enable_flags_43_cal & 0x100) != 0) {
-        uVar2 = uVar2 + fuel_demand_offset_correction;
+        uVar2 = uVar2 + cold_delta_fuel;
       }
       if ((int)uVar2 < 0) {
         uVar2 = 0;
@@ -42946,8 +42953,8 @@ void cm848_evaluateTorqueManagementRequired(void)
    combustion_alpha_input in the torque management table (ROM 0x5b508, 2944 = 200 mm3 everywhere in
    this calibration); stages 0-2 read the two 4-D fuelling table sets at throttle breakpoint (stage)
    over engine speed and blend them by four_dimensional_fueling_interpolation_factor, skipping a set
-   when the factor is 0 or 0x4000. Adds fuel_demand_offset_correction when
-   algorithm_enable_flags_42_cal bit 0x200 is set. (was cm848_calculateThermalLimitValue) */
+   when the factor is 0 or 0x4000. Adds cold_delta_fuel when algorithm_enable_flags_42_cal bit 0x200
+   is set. (was cm848_calculateThermalLimitValue) */
 
 void cm848_calculateTorqueManagementFuelTableLimit(void)
 
@@ -42998,8 +43005,7 @@ void cm848_calculateTorqueManagementFuelTableLimit(void)
     }
   }
   if ((algorithm_enable_flags_42_cal & 0x200) != 0) {
-    torque_management_table_fuel_limit =
-         torque_management_table_fuel_limit + fuel_demand_offset_correction;
+    torque_management_table_fuel_limit = torque_management_table_fuel_limit + cold_delta_fuel;
   }
   return;
 }
@@ -44556,19 +44562,18 @@ void cm848_updateEngineRetarderAllowedState(void)
               ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
                (((uint)final_fueling <= (uint)engine_retarder_maximum_fueling ||
                 (((uint)final_fueling <=
-                  (uint)engine_retarder_idle_maximum_fueling + (uint)fuel_demand_offset_correction
-                 && ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
-                     engine_retarder_idle_power_take_off_maximum_coolant_temperature + -0x140)))))))
-              ) || ((adjusted_user_fueling_state == FUELING_STATE_POWER_TAKE_OFF &&
-                    ((((uint)final_fueling <=
-                       (uint)engine_retarder_power_take_off_maximum_fueling +
-                       (uint)fuel_demand_offset_correction &&
-                      (power_take_off_governor_smoothed_reference_engine_speed <=
-                       engine_retarder_power_take_off_maximum_reference_speed)) &&
-                     ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
-                      engine_retarder_idle_power_take_off_maximum_coolant_temperature + -0x140))))))
-            && ((torque_converter_lockup_disengaged_flag == 0 ||
-                (transmission_park_or_neutral_flag != 0)))))) {
+                  (uint)engine_retarder_idle_maximum_fueling + (uint)cold_delta_fuel &&
+                 ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
+                  engine_retarder_idle_power_take_off_maximum_coolant_temperature + -0x140))))))))
+             || ((adjusted_user_fueling_state == FUELING_STATE_POWER_TAKE_OFF &&
+                 ((((uint)final_fueling <=
+                    (uint)engine_retarder_power_take_off_maximum_fueling + (uint)cold_delta_fuel &&
+                   (power_take_off_governor_smoothed_reference_engine_speed <=
+                    engine_retarder_power_take_off_maximum_reference_speed)) &&
+                  ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
+                   engine_retarder_idle_power_take_off_maximum_coolant_temperature + -0x140)))))) &&
+            ((torque_converter_lockup_disengaged_flag == 0 ||
+             (transmission_park_or_neutral_flag != 0)))))) {
     engine_retarder_enter_condition_flag = true;
   }
   else {
@@ -44595,15 +44600,14 @@ void cm848_updateEngineRetarderAllowedState(void)
                 ((engine_retarder_maximum_fueling < adjusted_user_fueling &&
                  (vehicle_speed <= engine_retarder_minimum_road_speed_cal)))))) ||
      (((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
-       (((uint)engine_retarder_idle_maximum_fueling + (uint)fuel_demand_offset_correction <
-         (uint)final_fueling ||
+       (((uint)engine_retarder_idle_maximum_fueling + (uint)cold_delta_fuel < (uint)final_fueling ||
         (((engine_retarder_idle_power_take_off_maximum_coolant_temperature <
            (short)sensor_readings_t_0040baf2.coolant_temp &&
           (vehicle_speed <= engine_retarder_minimum_road_speed_cal)) &&
          ((uint)engine_retarder_maximum_fueling < (uint)final_fueling)))))) ||
       (((adjusted_user_fueling_state == FUELING_STATE_POWER_TAKE_OFF &&
-        ((((uint)engine_retarder_power_take_off_maximum_fueling +
-           (uint)fuel_demand_offset_correction < (uint)final_fueling ||
+        ((((uint)engine_retarder_power_take_off_maximum_fueling + (uint)cold_delta_fuel <
+           (uint)final_fueling ||
           (engine_retarder_power_take_off_maximum_reference_speed <
            power_take_off_governor_smoothed_reference_engine_speed)) ||
          (engine_retarder_idle_power_take_off_maximum_coolant_temperature <
@@ -49884,9 +49888,9 @@ void cm848_updateFuelPressureFaultReactionRequests(void)
    pressure faults: P0193 / P0192 (304 / 305) use the sensor fault limits, fault 264 and P0251 (333)
    cap them at the fuel metering fault limits, fault reaction bits 0 / 1 cap them at the reaction
    limits and P0088 (303) at the too-high limits; with none of these the fuel limit is 0x1700 (the
-   maximum) and the speed limit stays at its default. It adds fuel_demand_offset_correction to the
-   fuel limit when algorithm_enable_flags_42_cal bit 3 is set and requests logical output 54 while a
-   too-high bit of fuel_pressure_diagnostic_snapshot is set and the enable word is non-zero. (was
+   maximum) and the speed limit stays at its default. It adds cold_delta_fuel to the fuel limit when
+   algorithm_enable_flags_42_cal bit 3 is set and requests logical output 54 while a too-high bit of
+   fuel_pressure_diagnostic_snapshot is set and the enable word is non-zero. (was
    cm848_protectionSensorFaultHandler) */
 
 void cm848_applyFuelLimitsForFuelPressureFaults(void)
@@ -49940,7 +49944,7 @@ LAB_0004a098:
   if ((fuel_pressure_fault_fuel_limit_working != 0x1700) &&
      ((algorithm_enable_flags_42_cal & 8) != 0)) {
     fuel_pressure_fault_fuel_limit_working =
-         fuel_pressure_fault_fuel_limit_working + fuel_demand_offset_correction;
+         fuel_pressure_fault_fuel_limit_working + cold_delta_fuel;
   }
   if ((((fuel_pressure_diagnostic_snapshot & 2) != 0) ||
       ((fuel_pressure_diagnostic_snapshot & 1) != 0)) &&
@@ -50900,7 +50904,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
                     combustion_chi_upper_map_number,combustion_reference_state.chi_hundredths,
                     combustion_reference_state.alpha_percent);
     if ((algorithm_enable_flags_42_cal & 0x100) != 0) {
-      fuel_limit_by_rpm_and_demand = fuel_limit_by_rpm_and_demand + fuel_demand_offset_correction;
+      fuel_limit_by_rpm_and_demand = fuel_limit_by_rpm_and_demand + cold_delta_fuel;
     }
   }
   return;
@@ -61972,7 +61976,7 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
                          fuel_limit_barometric_cool_ambient_air_grid,0);
     }
     if ((algorithm_enable_flags_42_cal & 0x80) != 0) {
-      wVar1 = wVar1 + fuel_demand_offset_correction;
+      wVar1 = wVar1 + cold_delta_fuel;
     }
   }
   altitude_derate_fuel_limit = wVar1;
@@ -64741,8 +64745,8 @@ void cm848_updateDutyCycleMonitorLoadHistogram(void)
   uint uVar9;
   uint uVar10;
   
-  if ((algorithm_enable_flags_18_cal.reserved_bit_3 == 0) || (engine_state == ENGINE_STATE_STOPPED))
-  {
+  if ((algorithm_enable_flags_18_cal.duty_cycle_monitor_enable == 0) ||
+     (engine_state == ENGINE_STATE_STOPPED)) {
     if (duty_cycle_monitor_map_reset_pending_flag != 0) {
       load_histogram_total_sample_count_cal = 0;
       uVar9 = 0;
@@ -71192,7 +71196,7 @@ void cm848_claimRemoteThrottleOverride(void)
       system_status_flags_t_003fe974.fault_detected_bits_160_to_175 =
            system_status_flags_t_003fe974.fault_detected_bits_160_to_175 | 0x1000;
     }
-    if (algorithm_enable_flags_18_cal.reserved_bit_13 == 0) {
+    if (algorithm_enable_flags_18_cal.remote_throttle_transition_verification_enable == 0) {
       if (switch_input_state_bits.unwired_switch == 0) {
         return;
       }
@@ -85422,7 +85426,7 @@ void cm848_verifyCalibrationAndCodeCrc(void)
   wVar1 = rom_crc_accumulator;
   if (rom_crc_calc_phase == 0) {
     rom_crc_descriptor_table_ptr = (dword)&DAT_0053ac3c;
-    rom_crc_scan_ptr = (dword)&DAT_003fd59a;
+    rom_crc_scan_ptr = (dword)&algorithm_enable_flags_table_length_cal;
     rom_crc_calc_phase = 1;
     rom_crc_segment_count = 1;
     rom_crc_result_index = 0;
@@ -97802,7 +97806,7 @@ void cm848_runJ1939PeriodicTransmitQueues(void)
   byte bVar1;
   int iVar2;
   
-  if ((DAT_003fd5b2 & 8) != 0) {
+  if ((algorithm_enable_flags_11_cal & 8) != 0) {
     if (((datalink_broadcast_enable_flags & 4) != 0) &&
        ((j1939_dm13_broadcast_enable_flags & 4) != 0)) {
       iVar2 = 0x3fd2e2;
@@ -97899,7 +97903,7 @@ void cm848_dispatchJ1939ReceivedMessages(void)
   
   uVar4 = TBLr;
   uVar4 = uVar4 >> 7 & 0xffff;
-  if ((DAT_003fd5b2 & 8) != 0) {
+  if ((algorithm_enable_flags_11_cal & 8) != 0) {
     uVar1 = TBLr;
     iVar5 = (uVar1 >> 7 & 0xffff) - uVar4;
     while ((iVar5 < 9 &&

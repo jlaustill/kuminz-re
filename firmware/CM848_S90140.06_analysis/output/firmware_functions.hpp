@@ -646,7 +646,7 @@ void cm848_initGovernorLookupDimensions(void);  // @ 0x00029c80
 void cm848_calculateFuelDemandFilter(void);  // @ 0x00029c98
 void cm848_initFuelDemandFilterDimensions(void);  // @ 0x00029de0
 void cm848_initProtectionFilterAccumulators(void);  // @ 0x00029e24
-void cm848_processEngineConfigSpeedControl(void);  // @ 0x00029e50
+void cm848_calculateInjectionTimingMainMisfireLimit(void);  // @ 0x00029e50
 uint cm848_absoluteValue16(uint param_1);  // @ 0x00029f3c
 void cm848_checkPressureSensorAgreement(void);  // @ 0x00029f54
 void cm848_processSensorDeviationOnKeyoff(void);  // @ 0x0002a214
@@ -796,7 +796,7 @@ void cm848_initSupervisorRegister46ReadJob(void);  // @ 0x00037214
 void cm848_initSupervisorRegister162ReadJob(void);  // @ 0x00037270
 void cm848_initSupervisorConfigurationWriteJob(void);  // @ 0x000372c0
 void cm848_initSupervisorChip(void);  // @ 0x00037334
-void cm848_calculateFuelDemandOffsetTrim(void);  // @ 0x000373b0
+void cm848_calculateColdDeltaFuel(void);  // @ 0x000373b0
 void mpc555_initFuelDemandOffsetFilter(void);  // @ 0x0003744c
 void cm848_onSerialOutputDriverReply(void);  // @ 0x00037464
 void cm848_initSerialOutputDriverJob(void);  // @ 0x000374b8

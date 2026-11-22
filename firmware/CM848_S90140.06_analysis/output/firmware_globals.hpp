@@ -374,9 +374,9 @@ extern word wastegate_solenoid_read_back_fault_debounce_limit;  // 0x0005c668
 extern word accelerator_pedal_press_window_limit;  // 0x0005c66a
 extern word accelerator_pedal_press_threshold;  // 0x0005c66c
 extern word accelerator_pedal_release_threshold;  // 0x0005c66e
-extern word fuel_demand_offset_correction_by_coolant_and_rpm_x_axis[10];  // 0x0005c67c
-extern word fuel_demand_offset_correction_by_coolant_and_rpm_y_axis[6];  // 0x0005c690
-extern word fuel_demand_offset_correction_by_coolant_and_rpm_grid[45];  // 0x0005c69c
+extern word cold_delta_fuel_x_axis[10];  // 0x0005c67c
+extern word cold_delta_fuel_y_axis[6];  // 0x0005c690
+extern word cold_delta_fuel_grid[45];  // 0x0005c69c
 extern word cooling_fan_feed_forward_duty_x_axis[9];  // 0x0005c6f6
 extern word cooling_fan_feed_forward_duty_y_axis[8];  // 0x0005c708
 extern word cooling_fan_feed_forward_duty_grid[56];  // 0x0005c718
@@ -5087,7 +5087,7 @@ extern byte supervisor_register_146_output_value;  // 0x0040b226
 extern byte supervisor_input_lines_130_to_135_state;  // 0x0040b227
 extern byte supervisor_input_lines_144_to_151_state;  // 0x0040b228
 extern byte supervisor_input_lines_136_to_143_state;  // 0x0040b229
-extern word fuel_demand_offset_correction;  // 0x0040b22a
+extern word cold_delta_fuel;  // 0x0040b22a
 extern word coolant_overheat_derate_minimum_injection_timing;  // 0x0040b256
 extern byte serial_output_driver_transmit_word;  // 0x0040b258
 extern byte serial_output_driver_transmit_byte;  // 0x0040b259
@@ -7909,6 +7909,11 @@ extern word obd_battery_voltage_in_range_high_limit;  // 0x00064306
 extern word general_diagnostic_battery_voltage_in_range_low_limit;  // 0x00064308
 extern word general_diagnostic_battery_voltage_in_range_high_limit;  // 0x0006430a
 extern word obd_battery_voltage_post_crank_lockout_reload;  // 0x0006430c
+extern word algorithm_enable_flags_table_length_cal;  // 0x003fd59a
+extern word algorithm_enable_flags_7_cal;  // 0x003fd5aa
+extern word algorithm_enable_flags_8_cal;  // 0x003fd5ac
+extern word algorithm_enable_flags_11_cal;  // 0x003fd5b2
+extern word algorithm_enable_flags_26_cal;  // 0x003fd5d0
 extern word barometric_pressure_selection_fault_flags;  // 0x0040a166
 extern int16_t egr_orifice_temperature_rationality_coolant_temperature_threshold;  // 0x00409eac
 extern int16_t egr_orifice_temperature_rationality_soak_temperature_difference_threshold;  // 0x00409eae
