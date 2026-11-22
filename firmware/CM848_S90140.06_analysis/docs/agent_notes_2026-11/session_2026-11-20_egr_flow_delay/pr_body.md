@@ -512,6 +512,14 @@ state enum, the flag bytes.**
 - **Stage F (9ed041a, types):** sensor channels 1-4 flat like their neighbours; the throttle dword split.
 - Open after round 24: named fault bits (the user's call), `diag_clear_flags_t`, the executive timing records,
   the sensor channel blocks, the TouCAN A register map, the kernel's response messages (task 046).
+**Round 25 (the relayed "keep going" again): an enum and three shapes from the round 24 leads.**
+- **Stage A (91a9b02, types):** `TRANSMISSION_SELECTED_GEAR` (J1939 SPN 524) on the four gear words; the junk
+  `PROTECTION_OVERRIDE` enum gone.
+- **Stage B (930aac0, types):** the TouCAN A register map at its real base (`toucan_a`, `toucan_a_message_buffers`).
+- **Stage C (438b543, types):** the executive frame timing records (e2m 12A6) and their typed walking pointers.
+- **Stage D (170236d, types):** the boot kernel's two diagnostic response messages.
+- Open after round 25: the sensor channel blocks, TouCAN B's base, the kernel transport's message parameter,
+  named fault bits (the user's call), `diag_clear_flags_t` (task 046).
 
 ## Test plan
 
@@ -604,6 +612,9 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 25: stage A passes the enum proof (0 differences beyond the substitution); stages B, C and D pass the
+  token gate with only the intended functions changed (B: one same-address temporary, C: `main_loop`'s typed
+  pointers, D: the allocator's typed return); pieces 492 -> 480.
 - [x] Round 24: stages B, C and D are EQUIVALENT; stage A (comments) leaves the code without comments identical;
   stages E and F pass an address-token normalization (0 functions differ; pieces 500 -> 500 -> 492).
 - [x] Round 23: stage A is EQUIVALENT (20 names); stages B and C pass the enum proof (C differs only in a refreshed plate).

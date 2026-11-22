@@ -1,0 +1,22 @@
+{
+ "old": {
+  "scheduler_task_stat_t_0040be6a": "EXEC_0x40be6a",
+  "scheduler_task_stat_ptr_b": "EXEC_0x3fa00c",
+  "scheduler_task_stat_ptr": "EXEC_0x3fa010",
+  "scheduler_task_stat_value_working": "EXEC_0x3fa000",
+  "timer_base_snapshot": "EXEC_0x3fa002",
+  "scheduler_feature_enabled_flag": "EXEC_0x3fa006",
+  "task_execution_time_threshold": "EXEC_0x40be64",
+  "scheduler_overrun_count_cal": "EXEC_0x3feebe"
+ },
+ "new": {
+  "executive_frame_timings": "EXEC_0x40be6a",
+  "executive_frame_timing_pointer": "EXEC_0x3fa00c",
+  "executive_frame_timing_clear_pointer": "EXEC_0x3fa010",
+  "executive_frame_ticks": "EXEC_0x3fa000",
+  "executive_frame_start_ticks": "EXEC_0x3fa002",
+  "executive_timing_enabled_previous_flag": "EXEC_0x3fa006",
+  "executive_frame_overflow_threshold_ticks": "EXEC_0x40be64",
+  "executive_timing_overflow_count_cal": "EXEC_0x3feebe"
+ }
+}

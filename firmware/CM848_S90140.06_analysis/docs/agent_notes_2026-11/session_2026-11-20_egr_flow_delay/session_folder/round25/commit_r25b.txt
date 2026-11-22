@@ -1,0 +1,28 @@
+cm848: round 25 stage B - the TouCAN A register map at its real base (types)
+
+mpc555_initCanController proves the MPC555 TouCAN A layout:
+- the module registers at 0x307080-0x3070a7: MCR 0x5000 (freeze + halt) then 0, CANICR 0x400, CANCTRL0 / 1 / 2,
+  PRESDIV, the receive masks written as dwords at +0x10 / +0x14, IMASK / IFLAG at +0x22 / +0x24;
+- the 16 message buffers at 0x307100-0x3071ff: it zeroes byte +1, CODE / LENGTH, of each.
+
+The repo had the module at 0x307000: the register CSV plus 19 byte rows, and the raw lis scan finds no code touching
+0x307000-0x30707f. It modelled 0x307080 / 90 / a0 as message buffers 0-2. So MCR rendered as
+toucan_a_mcr.CTRL, IMASK / IFLAG as toucan_a_mb2_t_003070a0.ID_HI / .ID_LO, and the control bytes and masks as
+pieces.
+- toucan_module_registers_t at 0x307080: the register CSV's own mnemonics at the right base, with the masks as
+  dwords the way the code writes them. The instance is toucan_a (was toucan_a_mcr).
+- toucan_message_buffer_t[16] at 0x307100: toucan_a_message_buffers.
+- 31 global rows go (the 19 wrong-base ones, 8 labels that only kept the old struct whole, 4 inside the module).
+  26 register CSV rows go too: a register row inside the struct would split it, and a comment explains this.
+
+Renders: toucan_a.IMASK 16 / .IFLAG 14 / .MCR 4, the others 2 each. Pieces 492 -> 480.
+
+Proof (prove_tokens.py, every register reference mapped to its register token): one function differs,
+cm848_j1939_system_init. Its message buffer base is now (int)&toucan_a_message_buffers[0].CONTROL_STATUS + offset,
+where it was &DAT_00307100 + offset. That is the same address with one temporary fewer; the function has no
+local_variables rows. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites
+pass.
+
+TouCAN B (register CSV at 0x307400) is unchanged: no code uses it, so nothing proves its base.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

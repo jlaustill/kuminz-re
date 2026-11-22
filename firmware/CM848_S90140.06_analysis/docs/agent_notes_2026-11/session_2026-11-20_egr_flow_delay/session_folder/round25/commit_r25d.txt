@@ -1,0 +1,24 @@
+cm848: round 25 stage D - the boot kernel's two diagnostic response messages (types)
+
+cm848_allocateDiagnosticResponseBuffer (boot reflash kernel, 0x6508) returns one of two 14-byte records:
+- 0x303056 for replies under 9 bytes;
+- 0x303047 for longer ones, while its status byte's high nibble is 0.
+
+Callers use the result as a message header. Each record is the header (CAN id + data length), a data pointer and a
+pointer to the status byte right after the record (0x303064 / 0x303055). The J1939 transport writes 0x12 / 6
+through that pointer, so the record is no j1939_tx_msg_t, whose last field is a data end pointer.
+diag_buf_a_ctrl_t / diag_buf_b_ctrl_t (at +4) were the records' last 10 bytes.
+- diagnostic_response_message_t (header j1939_msg_hdr_t, data_pointer, status_pointer). The instances are
+  diagnostic_single_frame_response_message (0x303056) and diagnostic_transport_response_message (0x303047), with
+  their status bytes diagnostic_single_frame_response_status (new row, 0x303064) and
+  diagnostic_transport_response_status (was diag_buffer_b_status).
+- The allocator now returns diagnostic_response_message_t * (Ghidra infers it from the returned records), and each
+  status_pointer renders as the address of its status byte.
+- A fix to stage C: executive_frame_timings' comment said main_loop's switch had 11 phases, as does stage C's commit
+  message; the count missed the hex case labels. It has 40 phases (0-39), so record n holds phase n.
+
+Proof (prove_tokens.py): only cm848_allocateDiagnosticResponseBuffer differs, in the typed return and pointer shown
+above. Pieces 480 -> 480. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites
+pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

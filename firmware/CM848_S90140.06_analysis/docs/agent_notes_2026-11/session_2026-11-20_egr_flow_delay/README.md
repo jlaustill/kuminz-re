@@ -388,3 +388,12 @@ Hand work on the round 7 lead.
   (each fault word reference mapped to an address token). **Stage F:** `apply_r24f.py`, `refresh_r24f.py`,
   `prove_tokens.py` (a general token-normalized gate for type changes).
 - **Closing:** `apply_r24_interim.py` (interim, after stage D) and `apply_r24_closing.py`.
+
+## Round 25: an enum and three shapes (`session_folder/round25/`)
+
+- **Stage A:** `apply_r25a.py`, which is checked by `check_enum_proof3.py` from round 13.
+- **Stage B:** `apply_r25b.py`. `raw_addr_scan_any.py` is round 22's scanner with the `lis` base taken from
+  the range; round 22's version only tried 0x40 / 0x41.
+- **Stage C:** `apply_r25c.py`. **Stage D:** `apply_r25d.py`.
+- **The proofs:** `tokens_r25*.json`, checked by round 24's `prove_tokens.py`.
+- **Closing:** `apply_r25_closing.py`.

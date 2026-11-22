@@ -1454,6 +1454,43 @@ rows, with round 6's checks.
   - The editing-firmware-csvs skill says byte enums do not render. They do: `END_OF_LINE_OUTPUT_TEST_STATE` renders 19
     times. The skill text is left for the user.
 
+## Done, round 25 (2026-11-22, same PR; the relayed "keep going" again): an enum and three shapes from the round 24 leads
+
+Scripts are in `session_folder/round25/`.
+- **Stage A (91a9b02, types):** `TRANSMISSION_SELECTED_GEAR`, the J1939 SPN 524 coding (one gear per bit, -125
+  offset, 251 = park).
+  - It types `transmission_selected_gear`, its `_previous` / `_last_valid` copies and
+    `j1939_powertrain_control_state.etc2_transmission_selected_gear`.
+  - Every literal they meet has a member: 54 renders, and no value renders as an OR of members.
+  - The unapplied `PROTECTION_OVERRIDE` is gone; its members were named after the ASCII glyphs of 0x7e / 0x7f.
+- **Stage B (930aac0, types): the TouCAN A register map.**
+  - `mpc555_initCanController` proves the module registers sit at 0x307080-0x3070a7 and the message buffers at
+    0x307100-0x3071ff.
+  - The repo had put the module at 0x307000 (no code touches 0x307000-0x30707f) and modelled 0x307080 / 90 / a0 as
+    message buffers 0-2.
+  - New: `toucan_a` (`toucan_module_registers_t`, the register CSV's own mnemonics at the right base) and
+    `toucan_a_message_buffers` (`toucan_message_buffer_t[16]`).
+  - 31 global rows and 26 register rows went; pieces fell 492 -> 480.
+- **Stage C (438b543, types): the executive frame timing (e2m 12A6).**
+  - `executive_frame_timings` (`executive_frame_timing_t[40]`): one record per main loop phase.
+  - Its two walking pointers are typed, so `main_loop` reads `->maximum_ticks` and so on.
+  - The helpers are named, and 0x3feec0 has its row.
+  - Stage C's commit message and first comment said 11 phases: a case count that missed the hex labels. `main_loop`
+    has 40 phases (0-39), and record n holds phase n; stage D's commit fixed the comment.
+- **Stage D (170236d, types): the boot kernel's two diagnostic response messages (0x303047 / 0x303056).**
+  - They are `diagnostic_response_message_t`: the header, the data pointer and a status pointer. The last field
+    points at the status byte after each record, so they are not `j1939_tx_msg_t`.
+  - The status bytes are named, and the allocator returns the typed pointer.
+- **Round 25 leads:**
+  - The sensor channel blocks (round 24's lead, not started).
+  - TouCAN B's base. The register CSV says 0x307400; no code uses TouCAN B, so nothing proves it.
+  - `cm848_writeCan2ControllerTxMailbox` (boot ROM) and `cm848_writeCanControllerTxMailbox` both write TouCAN A, so
+    the "Can2" looks wrong.
+  - The kernel transport reads `msg_header[1].can_id` / `*(dword *)&msg_header[1].data_length`. Typed
+    `diagnostic_response_message_t *`, its message parameter would make them `->data_pointer` / `->status_pointer`;
+    check the callers first.
+  - From round 24: named fault bits (the user's call) and `diag_clear_flags_t`.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
