@@ -11,7 +11,7 @@ address,array_name,element_type,element_count,comment
 # Loaded from EEPROM offset 0x0285 (preceded by 8 zero bytes) at startup
 # Sent by the OBD-II mode 9 InfoType 2 reply in 5 packets: [0]+[1..4]+[5..8]+[9..12]+[13..16]
 # cm848_initPciMessagePayloads copies [0] and [1..16] into the PCI F0 01 / 02 / 06 / 0A / 0E VIN payloads (pci_transmit_message_20-24_payload) at reset
-0x003fd707,vehicle_vin_string,byte,17,17-char ASCII SAE VIN loaded from EEPROM 0x0285; 3D3MU48C94G228471 at runtime
+0x003fd707,vehicle_vin_string_cal,byte,17,17-char ASCII SAE VIN loaded from EEPROM 0x0285; 3D3MU48C94G228471 at runtime
 0x003fce7c,obd_response_staging,byte,8,OBD-II response assembly buffer; copy loops index from [3] to [7] (was j1939_dm_scratch_buffer)
 0x003fecd0,diag_serial_buffer,byte,33,Diagnostic serial communication buffer (SCI UART)
 # QADC channel-index table: each word is an index into qadc_channel_dispatch_table (clamped <0x81)

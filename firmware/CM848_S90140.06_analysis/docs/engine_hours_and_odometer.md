@@ -60,7 +60,7 @@ be re-verified on the bench before being trusted — see
 >   last reset. It also survives HP Tuners.
 >
 > **Correction 2026-11-12 (PR #46, firmware + the four EEPROM dumps):** the ECM's own odometer is **not**
-> EEPROM `0xBD8`. The firmware's distance counters are `lifetime_distance_pulses` at **EEPROM 0x8ea** (u32,
+> EEPROM `0xBD8`. The firmware's distance counters are `lifetime_distance_pulses_cal` at **EEPROM 0x8ea** (u32,
 > speed-sensor pulses, 8000 per mile — the only source of PGN 0xFEE0 total distance), the trip copy at
 > **0x19a6**, and an every-8-miles record at **0x19ce** (4 × u16 = lifetime pulses / 64000, written by
 > `cm848_recordLifetimeDistanceEvery8Miles`). All three move together across the dumps and HP Tuners resets them
@@ -88,7 +88,7 @@ be re-verified on the bench before being trusted — see
 > - **The ECM already holds the dash odometer:** the cluster broadcasts it on PCI header 0x72 and the ECM stores it in
 >   RAM **0x0040B471** (`pci_receive_message_11_odometer`, u32 big-endian, 1/8000 mile — 0x8B633FCC = 292,317.2 mi in
 >   the RAM dump). `./kuminz-cli can0 --read-addr 40B471 4` should return it live (confirm against the dash). It
->   uses the same 8000-per-mile unit as `lifetime_distance_pulses`, so those 4 bytes are exactly the value to write to
+>   uses the same 8000-per-mile unit as `lifetime_distance_pulses_cal`, so those 4 bytes are exactly the value to write to
 >   EEPROM 0x8ea (and 0x19a6) for the ELD restore.
 
 ---

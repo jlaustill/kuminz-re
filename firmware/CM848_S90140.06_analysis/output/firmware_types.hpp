@@ -1042,10 +1042,10 @@ typedef enum {
 } MAIN_INJECTION_TIMING_SOURCE;
 
 typedef enum {
-    POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT = 0,  /* Counting presses of the remote switch (j1939_governor_feature_byte bit 1) - the count picks a preset speed */
+    POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT = 0,  /* Counting presses of the remote switch (feature_selection_bits_cal bit 1) - the count picks a preset speed */
     POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_RUN = 1,  /* Running at the remote preset speed until the switch opens or a cancel condition */
     POWER_TAKE_OFF_GOVERNOR_STATE_WAIT = 2,  /* Waiting: vehicle speed / engine speed window / faults / engine stopped / brake or clutch cancel. RAM dump: 2 */
-    POWER_TAKE_OFF_GOVERNOR_STATE_NORMAL = 3  /* Running under cab control from the set / resume speeds (j1939_governor_feature_byte bit 0) */
+    POWER_TAKE_OFF_GOVERNOR_STATE_NORMAL = 3  /* Running under cab control from the set / resume speeds (feature_selection_bits_cal bit 0) */
 } POWER_TAKE_OFF_GOVERNOR_STATE;
 
 typedef enum {
@@ -3583,7 +3583,7 @@ struct algorithm_enable_flags_12_t {
     uint16_t obd_fault_handler_enable : 1;  /* bit 10: e2m OBD_Fault_Handler_Enable (DGOBFUHN). 11 fault framework functions test it (cm848_registerFaultInActiveList at 0x1cf1c, cm848_clearDiagnosticState, cm848_processFaultScanGroup, diagnosticMainStateProcessor, cm848_updateFaultEntryCounters, cm848_resetFaultStatus, hpcr_setFaultActiveStatus, cm848_advanceDiagnosticActionState, cm848_j1939HandlePgn65228Dm3ClearDiag, cm848_completeBoostPressureMonitorReport, cm848_monitorEgrOrificeTemperatureSensorRationality); the names agree, the bodies were not read. Set in this calibration (0x2e06). */
     uint16_t power_take_off_brake_override_enable : 1;  /* bit 11: e2m PTO_Brake_Override_Enable (PTBRODEN). cm848_runPowerTakeOffGovernorStateMachine (lhz 24(r31) at 0x2b214) pairs it with power_take_off_governor_switch_state_bits 0x10000, which that function sets from switch 11 (brake), to leave power take off control. Code agrees. Set in this calibration (0x2e06). */
     uint16_t power_take_off_clutch_override_enable : 1;  /* bit 12: e2m PTO_Clutch_Override_Enable (PTCHODEN). The same function pairs it with power_take_off_governor_switch_state_bits 0x4000, set from switch 15 (clutch). Code agrees. Clear in this calibration (0x2e06). */
-    uint16_t oil_change_monitor_enable : 1;  /* bit 13: e2m OCM_Enable (OCEA). cm848_updateOilChangeMonitor (lhz at 0x51a89c), together with j1939_governor_feature_byte mask 4. Code agrees. Set in this calibration (0x2e06). */
+    uint16_t oil_change_monitor_enable : 1;  /* bit 13: e2m OCM_Enable (OCEA). cm848_updateOilChangeMonitor (lhz at 0x51a89c), together with feature_selection_bits_cal mask 4. Code agrees. Set in this calibration (0x2e06). */
     uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). */
     uint16_t reserved_bit_15 : 1;  /* bit 15: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x2e06). */
 };

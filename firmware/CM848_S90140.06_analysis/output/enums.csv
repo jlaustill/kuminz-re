@@ -919,10 +919,10 @@ MAIN_INJECTION_TIMING_SOURCE,30,MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MINIMUM_
 MAIN_INJECTION_TIMING_SOURCE,31,MAIN_INJECTION_TIMING_SOURCE_FUEL_PRESSURE_LIMP_HOME_COMPONENT,cm848_calculateMainInjectionTiming: injection_timing_main_fuel_pressure_limp_home_component won,2
 
 # Power take-off governor state (power_take_off_governor_state 0x40af50; e2m PTST 0=REMOTE_COUNT 1=REMOTE_RUN 2=WAIT 3=NORMAL in CHR_CC_11.45.01.07 - the transitions of cm848_runPowerTakeOffGovernorStateMachine agree)
-POWER_TAKE_OFF_GOVERNOR_STATE,0,POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT,Counting presses of the remote switch (j1939_governor_feature_byte bit 1) - the count picks a preset speed,2
+POWER_TAKE_OFF_GOVERNOR_STATE,0,POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT,Counting presses of the remote switch (feature_selection_bits_cal bit 1) - the count picks a preset speed,2
 POWER_TAKE_OFF_GOVERNOR_STATE,1,POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_RUN,Running at the remote preset speed until the switch opens or a cancel condition,2
 POWER_TAKE_OFF_GOVERNOR_STATE,2,POWER_TAKE_OFF_GOVERNOR_STATE_WAIT,Waiting: vehicle speed / engine speed window / faults / engine stopped / brake or clutch cancel. RAM dump: 2,2
-POWER_TAKE_OFF_GOVERNOR_STATE,3,POWER_TAKE_OFF_GOVERNOR_STATE_NORMAL,Running under cab control from the set / resume speeds (j1939_governor_feature_byte bit 0),2
+POWER_TAKE_OFF_GOVERNOR_STATE,3,POWER_TAKE_OFF_GOVERNOR_STATE_NORMAL,Running under cab control from the set / resume speeds (feature_selection_bits_cal bit 0),2
 
 # Power take-off governor J1939 state (power_take_off_governor_j1939_state 0x40af52): SAE J1939-71 SPN 976 PTO Governor State (CCVS1 byte 7 bits 1-5). Stored here: 0 1 2 6 8 9 10-17
 POWER_TAKE_OFF_GOVERNOR_J1939_STATE,0,POWER_TAKE_OFF_GOVERNOR_J1939_STATE_OFF_OR_DISABLED,SPN 976 value 0,2
