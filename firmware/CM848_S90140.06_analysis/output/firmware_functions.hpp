@@ -937,11 +937,11 @@ void cm848_limitLowSpeedGovernorFueling(void);  // @ 0x00040de8
 void cm848_calculateCruiseControlFueling(void);  // @ 0x00040e4c
 void cm848_calculateRoadSpeedGovernorFueling(void);  // @ 0x00040f80
 void cm848_selectCruiseOrUserFueling(void);  // @ 0x000411b0
-void cm848_updateEngineRetarderEnableState(void);  // @ 0x00041368
+void cm848_updateEngineRetarderAllowedState(void);  // @ 0x00041368
 void cm848_calculateEngineRetarderSelectionPercent(void);  // @ 0x00041938
 void cm848_limitEngineRetarderPercentToOperatorSelection(void);  // @ 0x00041a10
 void cm848_applyEngineRetarderTsc1Request(void);  // @ 0x00041a40
-void cm848_selectEngineRetarderRequest(void);  // @ 0x00041b24
+void cm848_selectEngineRetarderCommand(void);  // @ 0x00041b24
 void cm848_updateEngineRetarderActiveState(void);  // @ 0x00041be4
 void cm848_driveEngineRetarderOutput(void);  // @ 0x00041fd4
 void cm848_processEngineRetarderRequest(void);  // @ 0x0004218c

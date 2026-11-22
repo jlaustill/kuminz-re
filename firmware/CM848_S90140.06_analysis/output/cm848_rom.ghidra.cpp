@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 21:18:05 MST 2026
+// Generated: Sat Nov 21 22:01:25 MST 2026
 
 
 //
@@ -25996,8 +25996,8 @@ void cm848_initPgn65262EngineTempHandler(void)
    j1939_engine_retarder_source_address, every 100 ms on retarder queue 1 so only while
    datalink_broadcast_enable_flags bit 3 is set, 2 data bytes). Byte 1 = retarder torque mode (SPN
    900: 1 operator selection, 2 cruise control, 6 / 7 / 5 for TSC1 requester index 1 / 2 / 3 =
-   transmission / ABS / ASR, 14 other, chosen from engine_retarder_request_source_code and
-   engine_retarder_request_source_index) plus the brake assist switch bits (SPN 571, enabled while
+   transmission / ABS / ASR, 14 other, chosen from engine_retarder_command_source and
+   engine_retarder_j1939_control_device) plus the brake assist switch bits (SPN 571, enabled while
    engine_retarder_selection_percent_fault_masked is non-zero), 0xFF when the retarder broadcast
    flag is clear. Byte 2 = actual retarder percent torque (SPN 520 = 125 minus
    engine_retarder_torque_percent_times_256 / 256 from cm848_calculateEngineRetarderTorque), 0xFF
@@ -26019,16 +26019,16 @@ void cm848_buildPgn61440ElectronicRetarderController1Message(void)
   else {
     j1939_erc1_torque_mode_and_enable_byte = 0xd0;
   }
-  if (((engine_retarder_request_percent == 0) && (engine_retarder_request_source_code != 4)) &&
-     (engine_retarder_request_source_code != 1)) goto LAB_00026340;
-  if (engine_retarder_request_source_code == 1) {
+  if (((engine_retarder_output_level_percent == 0) && (engine_retarder_command_source != 4)) &&
+     (engine_retarder_command_source != 1)) goto LAB_00026340;
+  if (engine_retarder_command_source == 1) {
 LAB_000262e8:
-    if (engine_retarder_request_source_index == 1) {
+    if (engine_retarder_j1939_control_device == 1) {
       bVar1 = 6;
     }
     else {
-      if (engine_retarder_request_source_index != 3) {
-        if (engine_retarder_request_source_index == 2) {
+      if (engine_retarder_j1939_control_device != 3) {
+        if (engine_retarder_j1939_control_device == 2) {
           bVar1 = 7;
           goto LAB_00026320;
         }
@@ -26040,14 +26040,14 @@ LAB_000262e8:
     j1939_erc1_torque_mode_and_enable_byte = j1939_erc1_torque_mode_and_enable_byte | bVar1;
   }
   else {
-    if (engine_retarder_request_source_code == 2) {
+    if (engine_retarder_command_source == 2) {
       bVar1 = 2;
 LAB_00026320:
       j1939_erc1_torque_mode_and_enable_byte = j1939_erc1_torque_mode_and_enable_byte | bVar1;
       goto LAB_00026340;
     }
-    if (engine_retarder_request_source_code != 3) {
-      if (engine_retarder_request_source_code != 4) goto LAB_00026340;
+    if (engine_retarder_command_source != 3) {
+      if (engine_retarder_command_source != 4) goto LAB_00026340;
       goto LAB_000262e8;
     }
     bVar1 = 1;
@@ -35811,7 +35811,7 @@ void cm848_updateTransmissionLimpHomeFlags(void)
 /* The exhaust brake lockup aid (e2m RE_E_Brake_Inhibit_LU / RE_EB_Lockup_Range_* /
    RE_E_Brake_Inhibit_Timeout): the exhaust brake is held off until the converter locks. The rising
    edge of the converter clutch solenoid request (logical output 18) sets bit 0 of
-   transmission_exhaust_brake_flags (cm848_updateEngineRetarderEnableState reads it as lockup
+   transmission_exhaust_brake_flags (cm848_updateEngineRetarderAllowedState reads it as lockup
    disengaged). exhaust_brake_inhibit_timer counts down from exhaust_brake_inhibit_timeout (3 s).
    While the request is on and transmission_speed_ratio is inside the gear's window
    (exhaust_brake_lockup_speed_ratio_2nd / 3rd / 4th_gear_minimum / _maximum, around the gear
@@ -44470,66 +44470,72 @@ void cm848_selectCruiseOrUserFueling(void)
 
 
 //
-// Function: cm848_updateEngineRetarderEnableState @ 0x00041368
+// Function: cm848_updateEngineRetarderAllowedState @ 0x00041368
 //
 
-/* Evaluates the engine retarder (exhaust brake) enable conditions once per pass and sets
-   engine_retarder_enable_state: 0 = not wanted or exit condition, 1 = wanted but held off by the
-   pedal, clutch or service brake conditions, 2 = enabled (then engine_retarder_limit_percent
-   restarts at 101 = no limit). It uses the service brake switch with a release delay
-   (service_brake_delayed_active_flag), the torque converter lockup state
-   (tc_lockup_disengage_state), oil temperature, engine speed, boost, fuel demand and governor mode
-   thresholds; it also keeps the arbitrated request of the two previous passes (was
-   cm848_processProtectionSystemBit3). */
+/* Sets engine_retarder_allowed_state once per pass from the enter / exit conditions (oil
+   temperature, engine speed, boost, fueling by governor, the coolant at idle / PTO, the torque
+   converter lockup) and the driver conditions (pedal, clutch, service_brake_recently_applied_flag):
+   NONE, OVERRIDE_ONLY, or OVERRIDE_OR_NON_OVERRIDE (then
+   engine_retarder_non_override_command_percent restarts at 101); also
+   engine_retarder_immediate_brake_flag and the command level of the two previous passes (was
+   cm848_updateEngineRetarderEnableState) | earlier note: Evaluates the engine retarder (exhaust
+   brake) enable conditions once per pass and sets engine_retarder_allowed_state: 0 = not wanted or
+   exit condition, 1 = wanted but held off by the pedal, clutch or service brake conditions, 2 =
+   enabled (then engine_retarder_non_override_command_percent restarts at 101 = no limit). It uses
+   the service brake switch with a release delay (service_brake_recently_applied_flag), the torque
+   converter lockup state (torque_converter_lockup_disengaged_flag), oil temperature, engine speed,
+   boost, fuel demand and governor mode thresholds; it also keeps the arbitrated request of the two
+   previous passes (was cm848_processProtectionSystemBit3). */
 
-void cm848_updateEngineRetarderEnableState(void)
+void cm848_updateEngineRetarderAllowedState(void)
 
 {
   ushort uVar1;
   
   if (switch_input_state_bits.brake_switch == 0) {
     if (service_brake_release_delay_counter == 0) {
-      service_brake_delayed_active_flag = 0;
+      service_brake_recently_applied_flag = 0;
     }
     else {
       service_brake_release_delay_counter = service_brake_release_delay_counter - 1;
     }
   }
   else {
-    service_brake_delayed_active_flag = 1;
+    service_brake_recently_applied_flag = 1;
     service_brake_release_delay_counter = service_brake_release_delay_passes;
   }
-  tc_lockup_disengage_state =
+  torque_converter_lockup_disengaged_flag =
        j1939_powertrain_control_state.etc1_spn573_torque_converter_lockup_disengaged_flag;
   if ((algorithm_enable_flags_6_cal & 4) != 0) {
-    tc_lockup_disengage_state = (ushort)((transmission_exhaust_brake_flags & 1) != 0);
+    torque_converter_lockup_disengaged_flag = (ushort)((transmission_exhaust_brake_flags & 1) != 0);
   }
-  if ((((((short)oil_temperature_sensor_filtered < engine_retarder_oil_temperature_threshold) &&
+  if ((((((short)oil_temperature_sensor_filtered < engine_retarder_cold_oil_temperature) &&
         (engine_retarder_enter_minimum_engine_speed_cold_oil <
          engine_speed_state.filtered_engine_speed)) ||
-       ((engine_retarder_oil_temperature_threshold <= (short)oil_temperature_sensor_filtered &&
+       ((engine_retarder_cold_oil_temperature <= (short)oil_temperature_sensor_filtered &&
         (engine_retarder_enter_minimum_engine_speed_warm_oil <
          engine_speed_state.filtered_engine_speed)))) &&
       (uVar1 = cm848_calculateBoostPressure(), uVar1 < engine_retarder_enter_maximum_boost_pressure)
       ) && ((((((adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR &&
                 (adjusted_user_fueling_state != FUELING_STATE_POWER_TAKE_OFF)) &&
-               (final_fueling <= engine_retarder_fuel_demand_threshold)) ||
+               (final_fueling <= engine_retarder_maximum_fueling)) ||
               ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
-               (((uint)final_fueling <= (uint)engine_retarder_fuel_demand_threshold ||
+               (((uint)final_fueling <= (uint)engine_retarder_maximum_fueling ||
                 (((uint)final_fueling <=
-                  (uint)engine_retarder_fuel_demand_threshold_governor_mode_11 +
-                  (uint)fuel_demand_offset_correction &&
-                 ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
-                  engine_retarder_coolant_temperature_threshold + -0x140)))))))) ||
-             ((adjusted_user_fueling_state == FUELING_STATE_POWER_TAKE_OFF &&
-              ((((uint)final_fueling <=
-                 (uint)engine_retarder_fuel_demand_threshold_governor_mode_4 +
-                 (uint)fuel_demand_offset_correction &&
-                (power_take_off_governor_smoothed_reference_engine_speed <=
-                 engine_retarder_monitored_rpm_threshold_governor_mode_4)) &&
-               ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
-                engine_retarder_coolant_temperature_threshold + -0x140)))))) &&
-            ((tc_lockup_disengage_state == 0 || (transmission_park_or_neutral_flag != 0)))))) {
+                  (uint)engine_retarder_idle_maximum_fueling + (uint)fuel_demand_offset_correction
+                 && ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
+                     engine_retarder_idle_power_take_off_maximum_coolant_temperature + -0x140)))))))
+              ) || ((adjusted_user_fueling_state == FUELING_STATE_POWER_TAKE_OFF &&
+                    ((((uint)final_fueling <=
+                       (uint)engine_retarder_power_take_off_maximum_fueling +
+                       (uint)fuel_demand_offset_correction &&
+                      (power_take_off_governor_smoothed_reference_engine_speed <=
+                       engine_retarder_power_take_off_maximum_reference_speed)) &&
+                     ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
+                      engine_retarder_idle_power_take_off_maximum_coolant_temperature + -0x140))))))
+            && ((torque_converter_lockup_disengaged_flag == 0 ||
+                (transmission_park_or_neutral_flag != 0)))))) {
     engine_retarder_enter_condition_flag = true;
   }
   else {
@@ -44539,37 +44545,38 @@ void cm848_updateEngineRetarderEnableState(void)
        ((power_take_off_governor_active_flag == 0 ||
         ((engine_feature_enable_flags_cal & 0x8000) == 0)))) &&
       ((switch_input_state_bits.clutch_switch == 0 || ((governor_feature_config_word & 0x40) == 0)))
-      ) && (((service_brake_delayed_active_flag == 1 ||
-             (algorithm_enable_flags_18_cal.reserved_bit_14 == 0)) ||
-            (engine_retarder_limit_source_code == 2)))) {
+      ) && (((service_brake_recently_applied_flag == 1 ||
+             (algorithm_enable_flags_18_cal.engine_retarder_service_brake_activate_enable == 0)) ||
+            (engine_retarder_non_override_command_source == 2)))) {
     engine_retarder_driver_conditions_met_flag = true;
   }
   else {
     engine_retarder_driver_conditions_met_flag = false;
   }
-  if ((((((short)oil_temperature_sensor_filtered < engine_retarder_oil_temperature_threshold) &&
+  if ((((((short)oil_temperature_sensor_filtered < engine_retarder_cold_oil_temperature) &&
         (engine_speed_state.filtered_engine_speed < engine_retarder_exit_engine_speed_cold_oil)) ||
-       ((engine_retarder_oil_temperature_threshold <= (short)oil_temperature_sensor_filtered &&
+       ((engine_retarder_cold_oil_temperature <= (short)oil_temperature_sensor_filtered &&
         (engine_speed_state.filtered_engine_speed <= engine_retarder_exit_engine_speed_warm_oil_cal)
         ))) || (((adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR &&
                  (adjusted_user_fueling_state != FUELING_STATE_POWER_TAKE_OFF)) &&
-                ((engine_retarder_fuel_demand_threshold < adjusted_user_fueling &&
-                 (vehicle_speed <= engine_retarder_exit_maximum_vehicle_speed_cal)))))) ||
+                ((engine_retarder_maximum_fueling < adjusted_user_fueling &&
+                 (vehicle_speed <= engine_retarder_minimum_road_speed_cal)))))) ||
      (((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
-       (((uint)engine_retarder_fuel_demand_threshold_governor_mode_11 +
-         (uint)fuel_demand_offset_correction < (uint)final_fueling ||
-        (((engine_retarder_coolant_temperature_threshold <
+       (((uint)engine_retarder_idle_maximum_fueling + (uint)fuel_demand_offset_correction <
+         (uint)final_fueling ||
+        (((engine_retarder_idle_power_take_off_maximum_coolant_temperature <
            (short)sensor_readings_t_0040baf2.coolant_temp &&
-          (vehicle_speed <= engine_retarder_exit_maximum_vehicle_speed_cal)) &&
-         ((uint)engine_retarder_fuel_demand_threshold < (uint)final_fueling)))))) ||
+          (vehicle_speed <= engine_retarder_minimum_road_speed_cal)) &&
+         ((uint)engine_retarder_maximum_fueling < (uint)final_fueling)))))) ||
       (((adjusted_user_fueling_state == FUELING_STATE_POWER_TAKE_OFF &&
-        ((((uint)engine_retarder_fuel_demand_threshold_governor_mode_4 +
+        ((((uint)engine_retarder_power_take_off_maximum_fueling +
            (uint)fuel_demand_offset_correction < (uint)final_fueling ||
-          (engine_retarder_monitored_rpm_threshold_governor_mode_4 <
+          (engine_retarder_power_take_off_maximum_reference_speed <
            power_take_off_governor_smoothed_reference_engine_speed)) ||
-         (engine_retarder_coolant_temperature_threshold <
+         (engine_retarder_idle_power_take_off_maximum_coolant_temperature <
           (short)sensor_readings_t_0040baf2.coolant_temp)))) ||
-       ((tc_lockup_disengage_state != 0 && (transmission_park_or_neutral_flag == 0)))))))) {
+       ((torque_converter_lockup_disengaged_flag != 0 && (transmission_park_or_neutral_flag == 0))))
+      )))) {
     engine_retarder_exit_condition_flag = true;
   }
   else {
@@ -44587,35 +44594,30 @@ void cm848_updateEngineRetarderEnableState(void)
   }
   if ((low_speed_governor_extended_idle_active_flag == 0) ||
      (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
-    if (((engine_retarder_arbitrated_request_percent == 0) &&
-        (!(bool)engine_retarder_enter_condition_flag)) ||
-       ((engine_retarder_arbitrated_request_percent != 0 &&
-        ((bool)engine_retarder_exit_condition_flag)))) {
-      engine_retarder_enable_state = 0;
+    if (((engine_retarder_command_percent == 0) && (!(bool)engine_retarder_enter_condition_flag)) ||
+       ((engine_retarder_command_percent != 0 && ((bool)engine_retarder_exit_condition_flag)))) {
+      engine_retarder_allowed_state = 0;
       goto LAB_000418e0;
     }
-    if ((((engine_retarder_arbitrated_request_percent != 0) ||
-         (!(bool)engine_retarder_enter_condition_flag)) ||
-        (!(bool)engine_retarder_driver_conditions_met_flag)) &&
-       (((engine_retarder_arbitrated_request_percent == 0 ||
-         ((bool)engine_retarder_exit_condition_flag)) || ((bool)engine_retarder_driver_inhibit_flag)
-        ))) {
-      engine_retarder_enable_state = 1;
+    if ((((engine_retarder_command_percent != 0) || (!(bool)engine_retarder_enter_condition_flag))
+        || (!(bool)engine_retarder_driver_conditions_met_flag)) &&
+       (((engine_retarder_command_percent == 0 || ((bool)engine_retarder_exit_condition_flag)) ||
+        ((bool)engine_retarder_driver_inhibit_flag)))) {
+      engine_retarder_allowed_state = 1;
       goto LAB_000418e0;
     }
   }
-  engine_retarder_enable_state = 2;
-  engine_retarder_limit_percent = 0x65;
+  engine_retarder_allowed_state = 2;
+  engine_retarder_non_override_command_percent = 0x65;
 LAB_000418e0:
-  if ((service_brake_delayed_active_flag == 1) && ((governor_mode_config_flags & 1) != 0)) {
-    service_brake_active_governor_mode_config_bit_0_flag._0_2_ = 1;
+  if ((service_brake_recently_applied_flag == 1) && ((governor_mode_config_flags & 1) != 0)) {
+    engine_retarder_immediate_brake_flag._0_2_ = 1;
   }
   else {
-    service_brake_active_governor_mode_config_bit_0_flag._0_2_ = 0;
+    engine_retarder_immediate_brake_flag._0_2_ = 0;
   }
-  engine_retarder_arbitrated_request_percent_previous_2 =
-       engine_retarder_arbitrated_request_percent_previous;
-  engine_retarder_arbitrated_request_percent_previous = engine_retarder_arbitrated_request_percent;
+  engine_retarder_command_percent_previous_2 = engine_retarder_command_percent_previous;
+  engine_retarder_command_percent_previous = engine_retarder_command_percent;
   return;
 }
 
@@ -44625,14 +44627,15 @@ LAB_000418e0:
 // Function: cm848_calculateEngineRetarderSelectionPercent @ 0x00041938
 //
 
-/* Calculates the operator engine retarder selection percent engine_retarder_selection_percent: 100
-   or 0 from the wired retarder switch (switch_input_state_bits[1] mask 16), or the J1939 EBC1
-   retarder selection j1939_engine_retarder_selection_percent when fault_feature_config_flags bit 0
-   is set, and 100 while the road speed limit is active with algorithm_enable_flags_41_cal bit 0
-   set. engine_retarder_selection_percent_fault_masked is the same value forced to 0 while fault bit
-   41 or 42 (P0478 / P0477) is detected and engine_feature_enable_flags_cal bit 0x4000 is set; the
-   ERC1 builder uses it for the brake assist bits, and cm848_j1939BuildEngineControlByte sends the
-   percent as EBC1 SPN 973 (was cm848_processProtectionSystemBit4). */
+/* Calculates the operator engine retarder selection engine_retarder_selection_percent: 100 or 0
+   from the exhaust brake switch (switch 12) through engine_retarder_switch_percent, or the J1939
+   EBC1 retarder selection j1939_engine_retarder_selection_percent when fault_feature_config_flags
+   bit 0 is set; 100 while low_speed_governor_extended_idle_active_flag is set and
+   algorithm_enable_flags_41_cal bit 0 is set. engine_retarder_selection_percent_fault_masked is the
+   same value forced to 0 while fault bit 41 or 42 (P0478 / P0477) is detected and
+   engine_feature_enable_flags_cal bit 0x4000 is set; the ERC1 builder uses it for the brake assist
+   bits, and cm848_j1939BuildEngineControlByte sends the percent as EBC1 SPN 973 (was
+   cm848_processProtectionSystemBit4) */
 
 void cm848_calculateEngineRetarderSelectionPercent(void)
 
@@ -44665,17 +44668,16 @@ void cm848_calculateEngineRetarderSelectionPercent(void)
 // Function: cm848_limitEngineRetarderPercentToOperatorSelection @ 0x00041a10
 //
 
-/* Lowers the engine retarder percent limit engine_retarder_limit_percent to the operator selection
-   engine_retarder_selection_percent when that is smaller and records limit source code 3 (operator
-   selection, ERC1 retarder torque mode 1) in engine_retarder_limit_source_code. Step 3 of
-   cm848_processEngineRetarderRequest (was cm848_applyMinimumProtectionLimit). */
+/* Lowers the non-override command engine_retarder_non_override_command_percent to the operator
+   selection engine_retarder_selection_percent when that is smaller, with source 3 (switch). Step 3
+   of cm848_processEngineRetarderRequest (was cm848_applyMinimumProtectionLimit) */
 
 void cm848_limitEngineRetarderPercentToOperatorSelection(void)
 
 {
-  if (engine_retarder_selection_percent < engine_retarder_limit_percent) {
-    engine_retarder_limit_percent = engine_retarder_selection_percent;
-    engine_retarder_limit_source_code = 3;
+  if (engine_retarder_selection_percent < engine_retarder_non_override_command_percent) {
+    engine_retarder_non_override_command_percent = engine_retarder_selection_percent;
+    engine_retarder_non_override_command_source = 3;
   }
   return;
 }
@@ -44686,37 +44688,38 @@ void cm848_limitEngineRetarderPercentToOperatorSelection(void)
 // Function: cm848_applyEngineRetarderTsc1Request @ 0x00041a40
 //
 
-/* Applies the TSC1 retarder request recorded by cm848_processEngineRetarderTsc1Request: override
-   control mode 2 (torque control) sets engine_retarder_tsc1_request_percent and
-   engine_retarder_tsc1_request_source_code 1, mode 3 (torque limit) lowers
-   engine_retarder_limit_percent to engine_retarder_torque_limit_percent with limit source code 4,
-   and mode 0 (or no request) clears it; the requesting device index goes to
-   engine_retarder_request_source_index. engine_retarder_internal_override_control_mode, never set
-   in this build, can force the same three cases (was cm848_processGovernorErrorState). */
+/* Applies the TSC1 retarder request recorded by cm848_processEngineRetarderTsc1Request: torque
+   control (override control mode 2) makes the TSC1 torque request the override command (source 1,
+   J1939 override); torque limit (mode 3) lowers the non-override command to
+   engine_retarder_torque_limit_percent (source 4, J1939 limit); with no request (mode 0) the
+   override command is 0 with source 6 (no override). The requesting J1939 device goes to
+   engine_retarder_j1939_control_device. engine_retarder_tool_override_control_mode (a service tool
+   test point that this build never writes) forces the same three cases with 1 / 2 / 3 (was
+   cm848_processGovernorErrorState) */
 
 void cm848_applyEngineRetarderTsc1Request(void)
 
 {
-  engine_retarder_tsc1_request_source_code = 6;
+  engine_retarder_override_command_source = 6;
   if ((engine_retarder_override_control_mode == TSC1_OVERRIDE_OFF) ||
-     (engine_retarder_internal_override_control_mode == 1)) {
-    engine_retarder_tsc1_request_percent = 0;
-    engine_retarder_tsc1_request_source_code = 6;
-    engine_retarder_request_source_index = 0;
+     (engine_retarder_tool_override_control_mode == 1)) {
+    engine_retarder_override_command_percent = 0;
+    engine_retarder_override_command_source = 6;
+    engine_retarder_j1939_control_device = 0;
   }
   else if ((engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL) ||
-          (engine_retarder_internal_override_control_mode == 2)) {
-    engine_retarder_tsc1_request_percent = engine_retarder_torque_request_percent;
-    engine_retarder_tsc1_request_source_code = 1;
-    engine_retarder_request_source_index = engine_retarder_control_device_indicator;
+          (engine_retarder_tool_override_control_mode == 2)) {
+    engine_retarder_override_command_percent = engine_retarder_torque_request_percent;
+    engine_retarder_override_command_source = 1;
+    engine_retarder_j1939_control_device = engine_retarder_control_device_indicator;
   }
   else if (((engine_retarder_override_control_mode == TSC1_SPEED_TORQUE_LIMIT) ||
-           (engine_retarder_internal_override_control_mode == 3)) &&
-          (engine_retarder_torque_limit_percent < engine_retarder_limit_percent)) {
-    engine_retarder_tsc1_request_source_code = 6;
-    engine_retarder_request_source_index = engine_retarder_control_device_indicator;
-    engine_retarder_limit_percent = engine_retarder_torque_limit_percent;
-    engine_retarder_limit_source_code = 4;
+           (engine_retarder_tool_override_control_mode == 3)) &&
+          (engine_retarder_torque_limit_percent < engine_retarder_non_override_command_percent)) {
+    engine_retarder_override_command_source = 6;
+    engine_retarder_j1939_control_device = engine_retarder_control_device_indicator;
+    engine_retarder_non_override_command_percent = engine_retarder_torque_limit_percent;
+    engine_retarder_non_override_command_source = 4;
   }
   return;
 }
@@ -44724,39 +44727,44 @@ void cm848_applyEngineRetarderTsc1Request(void)
 
 
 //
-// Function: cm848_selectEngineRetarderRequest @ 0x00041b24
+// Function: cm848_selectEngineRetarderCommand @ 0x00041b24
 //
 
-/* Selects the final engine retarder request percent engine_retarder_arbitrated_request_percent and
-   its source code engine_retarder_request_source_code (ERC1 SPN 900 mapping): 0 when the enable
-   state is 0, or 1 with no TSC1 request; with enable state 2 and no TSC1 request the smallest limit
-   engine_retarder_limit_percent and its limit source code; with a TSC1 torque request that request
-   and its code. Skipped while engine_retarder_request_arbitration_inhibit_flag (constant 0 in this
-   build) is set (was cm848_processTemperatureCompensationMode). */
+/* Sets engine_retarder_command_percent and engine_retarder_command_source: 0 / NONE when the
+   allowed state is NONE, or OVERRIDE_ONLY without an override; the override command with an
+   override; the non-override command when the allowed state is OVERRIDE_OR_NON_OVERRIDE without
+   one. Skipped while engine_retarder_command_tool_override_flag is set (was
+   cm848_selectEngineRetarderRequest) | earlier note: Selects the final engine retarder request
+   percent engine_retarder_command_percent and its source code engine_retarder_command_source (ERC1
+   SPN 900 mapping): 0 when the enable state is 0, or 1 with no TSC1 request; with enable state 2
+   and no TSC1 request the smallest limit engine_retarder_non_override_command_percent and its limit
+   source code; with a TSC1 torque request that request and its code. Skipped while
+   engine_retarder_command_tool_override_flag (constant 0 in this build) is set (was
+   cm848_processTemperatureCompensationMode). */
 
-void cm848_selectEngineRetarderRequest(void)
+void cm848_selectEngineRetarderCommand(void)
 
 {
-  if (engine_retarder_request_arbitration_inhibit_flag == 0) {
-    if (engine_retarder_enable_state == 0) {
-      engine_retarder_arbitrated_request_percent = 0;
-      engine_retarder_request_source_code = 0;
+  if (engine_retarder_command_tool_override_flag == 0) {
+    if (engine_retarder_allowed_state == 0) {
+      engine_retarder_command_percent = 0;
+      engine_retarder_command_source = 0;
     }
-    else if ((engine_retarder_tsc1_request_source_code == 6) && (engine_retarder_enable_state == 1))
+    else if ((engine_retarder_override_command_source == 6) && (engine_retarder_allowed_state == 1))
     {
-      engine_retarder_arbitrated_request_percent = 0;
-      engine_retarder_request_source_code = 0;
+      engine_retarder_command_percent = 0;
+      engine_retarder_command_source = 0;
     }
-    else if ((engine_retarder_tsc1_request_source_code == 6) || (engine_retarder_enable_state == 0))
+    else if ((engine_retarder_override_command_source == 6) || (engine_retarder_allowed_state == 0))
     {
-      if ((engine_retarder_tsc1_request_source_code == 6) && (engine_retarder_enable_state == 2)) {
-        engine_retarder_arbitrated_request_percent = engine_retarder_limit_percent;
-        engine_retarder_request_source_code = engine_retarder_limit_source_code;
+      if ((engine_retarder_override_command_source == 6) && (engine_retarder_allowed_state == 2)) {
+        engine_retarder_command_percent = engine_retarder_non_override_command_percent;
+        engine_retarder_command_source = engine_retarder_non_override_command_source;
       }
     }
     else {
-      engine_retarder_arbitrated_request_percent = engine_retarder_tsc1_request_percent;
-      engine_retarder_request_source_code = engine_retarder_tsc1_request_source_code;
+      engine_retarder_command_percent = engine_retarder_override_command_percent;
+      engine_retarder_command_source = engine_retarder_override_command_source;
     }
   }
   return;
@@ -44768,15 +44776,16 @@ void cm848_selectEngineRetarderRequest(void)
 // Function: cm848_updateEngineRetarderActiveState @ 0x00041be4
 //
 
-/* Sets engine_retarder_active_flag (1 while an arbitrated request exists unless the road speed
-   limit is active, 0 when none), which the transmission lockup / overdrive logic, the wastegate
-   duty request and the cold start loop read. While the transmission reports shift in process (ETC1
-   SPN 574), engine_retarder_request_shift_hold_flag freezes the request percent and the active flag
-   for up to engine_retarder_shift_hold_passes passes; after the retarder output is released,
+/* Sets engine_retarder_active_flag (117D +4 E_Brake_Status): 1 while the command level is nonzero,
+   unless low_speed_governor_extended_idle_active_flag and algorithm_enable_flags_41_cal bit 0 are
+   set; 0 with no command. The transmission lockup / overdrive logic, the wastegate duty request and
+   the cold start loop read it. While the transmission reports a shift in process (ETC1 SPN 574),
+   engine_retarder_engage_inhibit_flag holds the output level and the active flag for up to
+   engine_retarder_shift_hold_passes passes; after the outputs are released,
    engine_retarder_release_pending_flag clears the active flag after engine_retarder_release_passes
-   passes. The engine speed dependent engage delay chain at the top writes the hold flag, but it is
-   cleared unconditionally before the shift block, so that chain has no effect (was
-   cm848_processTemperatureTrim). */
+   passes. The engine speed dependent engage delay at the top also writes the inhibit flag, but it
+   is cleared before the shift block, so that delay has no effect (was cm848_processTemperatureTrim)
+    */
 
 void cm848_updateEngineRetarderActiveState(void)
 
@@ -44793,8 +44802,7 @@ void cm848_updateEngineRetarderActiveState(void)
   else {
     bVar1 = true;
   }
-  if ((engine_retarder_arbitrated_request_percent == 0) ||
-     (engine_retarder_arbitrated_request_percent_previous != 0)) {
+  if ((engine_retarder_command_percent == 0) || (engine_retarder_command_percent_previous != 0)) {
     if (engine_retarder_request_age_counter != 0xffff) {
       engine_retarder_request_age_counter = engine_retarder_request_age_counter + 1;
     }
@@ -44802,85 +44810,85 @@ void cm848_updateEngineRetarderActiveState(void)
   else {
     engine_retarder_request_age_counter = 0;
   }
-  if (engine_retarder_fuel_demand_threshold < final_fueling) {
+  if (engine_retarder_maximum_fueling < final_fueling) {
     engine_retarder_fueling_below_threshold_pass_counter = 0;
   }
   else if (engine_retarder_fueling_below_threshold_pass_counter != 0xffff) {
     engine_retarder_fueling_below_threshold_pass_counter =
          engine_retarder_fueling_below_threshold_pass_counter + 1;
   }
-  if ((((governor_system_config_flags & 4) == 0) ||
-      (engine_retarder_arbitrated_request_percent == 0)) ||
-     ((engine_retarder_arbitrated_request_percent_previous != 0 || (bVar1)))) {
+  if ((((governor_system_config_flags & 4) == 0) || (engine_retarder_command_percent == 0)) ||
+     ((engine_retarder_command_percent_previous != 0 || (bVar1)))) {
     if ((((bVar1) && (engine_retarder_boost_sensor_fault_hold_passes != 0)) &&
-        (engine_retarder_arbitrated_request_percent != 0)) &&
-       (engine_retarder_arbitrated_request_percent_previous == 0)) {
-      engine_retarder_request_shift_hold_flag = 1;
+        (engine_retarder_command_percent != 0)) && (engine_retarder_command_percent_previous == 0))
+    {
+      engine_retarder_engage_inhibit_flag = 1;
     }
     else if ((((((engine_retarder_engage_delay_speed_boundary_high <
                   engine_speed_state.filtered_engine_speed) &&
-                (engine_retarder_arbitrated_request_percent != 0)) &&
+                (engine_retarder_command_percent != 0)) &&
                ((3 < engine_retarder_fueling_below_threshold_pass_counter && (!bVar1)))) ||
               (((engine_retarder_engage_delay_speed_boundary_middle <
                  engine_speed_state.filtered_engine_speed &&
                 (engine_speed_state.filtered_engine_speed <=
                  engine_retarder_engage_delay_speed_boundary_high)) &&
-               ((engine_retarder_arbitrated_request_percent != 0 &&
+               ((engine_retarder_command_percent != 0 &&
                 ((4 < engine_retarder_fueling_below_threshold_pass_counter && (!bVar1)))))))) ||
              ((engine_retarder_engage_delay_speed_boundary_low <
                engine_speed_state.filtered_engine_speed &&
               ((((engine_speed_state.filtered_engine_speed <=
                   engine_retarder_engage_delay_speed_boundary_middle &&
-                 (engine_retarder_arbitrated_request_percent != 0)) &&
+                 (engine_retarder_command_percent != 0)) &&
                 (5 < engine_retarder_fueling_below_threshold_pass_counter)) && (!bVar1)))))) ||
             (((engine_speed_state.filtered_engine_speed <=
                engine_retarder_engage_delay_speed_boundary_low &&
-              (engine_retarder_arbitrated_request_percent != 0)) &&
+              (engine_retarder_command_percent != 0)) &&
              ((10 < engine_retarder_fueling_below_threshold_pass_counter && (!bVar1)))))) {
-      engine_retarder_request_shift_hold_flag = 0;
+      engine_retarder_engage_inhibit_flag = 0;
     }
     else if ((bVar1) &&
             (engine_retarder_boost_sensor_fault_hold_passes < engine_retarder_request_age_counter))
     {
-      engine_retarder_request_shift_hold_flag = 0;
+      engine_retarder_engage_inhibit_flag = 0;
     }
   }
   else {
-    engine_retarder_request_shift_hold_flag = 1;
+    engine_retarder_engage_inhibit_flag = 1;
   }
-  if (engine_retarder_arbitrated_request_percent != 0) {
+  if (engine_retarder_command_percent != 0) {
     if ((low_speed_governor_extended_idle_active_flag == 0) ||
        (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
       engine_retarder_active_flag = 1;
     }
     else {
       engine_retarder_active_flag = 0;
-      engine_retarder_request_shift_hold_flag = 0;
+      engine_retarder_engage_inhibit_flag = 0;
     }
   }
   if (j1939_powertrain_control_state.etc1_spn574_shift_in_process == 0) {
     engine_retarder_shift_hold_counter = 0;
   }
-  if (engine_retarder_request_shift_hold_flag != 0) {
-    engine_retarder_request_shift_hold_flag = 0;
+  if (engine_retarder_engage_inhibit_flag != 0) {
+    engine_retarder_engage_inhibit_flag = 0;
   }
-  if (engine_retarder_arbitrated_request_percent == 0) {
+  if (engine_retarder_command_percent == 0) {
     engine_retarder_active_flag = 0;
   }
   if (j1939_powertrain_control_state.etc1_spn574_shift_in_process != 0) {
     if (engine_retarder_shift_hold_passes < engine_retarder_shift_hold_counter) {
-      engine_retarder_request_shift_hold_flag = 0;
+      engine_retarder_engage_inhibit_flag = 0;
     }
     else {
-      engine_retarder_request_shift_hold_flag = 1;
+      engine_retarder_engage_inhibit_flag = 1;
       engine_retarder_shift_hold_counter = engine_retarder_shift_hold_counter + 1;
       engine_retarder_active_flag = wVar2;
     }
   }
-  if ((((engine_retarder_request_percent == 0) && (engine_retarder_request_percent_previous != 0))
-      || ((logical_output_request_bits_8_to_15.engine_brake_driver_1_request == 0 &&
-          (engine_retarder_output_request_bit_previous != 0)))) &&
-     (engine_retarder_request_shift_hold_flag == 0)) {
+  if ((((engine_retarder_output_level_percent == 0) &&
+       (engine_retarder_output_level_percent_previous != 0)) ||
+      ((logical_output_request_bits_8_to_15.engine_brake_driver_1_request == 0 &&
+       (engine_retarder_output_request_bit_previous != 0)))) &&
+     (engine_retarder_engage_inhibit_flag == 0)) {
     engine_retarder_release_pending_flag = 1;
     engine_retarder_release_counter = 0;
   }
@@ -44903,32 +44911,32 @@ void cm848_updateEngineRetarderActiveState(void)
 // Function: cm848_driveEngineRetarderOutput @ 0x00041fd4
 //
 
-/* Turns the arbitrated retarder request into the retarder output: engine_retarder_request_percent
-   takes engine_retarder_arbitrated_request_percent unless the shift hold flag freezes it. Below 50
-   percent it clears the engaged flag and logical output 11 (per engine_retarder_output_mode_flags
-   bits 1 and 0); at 50 percent or more for engine_retarder_request_on_delay_passes passes it sets
-   engine_retarder_engaged_flag and logical output 11, which is cleared again above
-   engine_retarder_output_maximum_engine_speed when both mode bits are set, and while fault bit 101
-   is detected. Also saves the previous request percent and the wired switch percent copy (was
-   cm848_processFuelEfficiencyTrim). */
+/* Turns the command level into the brake outputs: engine_retarder_output_level_percent takes
+   engine_retarder_command_percent unless the engage inhibit flag holds it. Below 50 % it clears the
+   exhaust brake output (logical output 11, engine_retarder_brake_type bit 0) and the VG brake flag
+   (bit 1); at 50 % or more for engine_retarder_request_on_delay_passes passes it sets them. With
+   both brake types the exhaust brake output is cleared above
+   engine_retarder_dual_brake_maximum_engine_speed, and it is cleared while fault bit 101 is
+   detected. Also saves the previous output level and the switch percent copy (was
+   cm848_processFuelEfficiencyTrim) */
 
 void cm848_driveEngineRetarderOutput(void)
 
 {
   ushort uVar1;
   
-  engine_retarder_request_percent_previous = engine_retarder_request_percent;
-  uVar1 = engine_retarder_arbitrated_request_percent;
-  if (engine_retarder_request_shift_hold_flag != 0) {
-    uVar1 = engine_retarder_request_percent;
+  engine_retarder_output_level_percent_previous = engine_retarder_output_level_percent;
+  uVar1 = engine_retarder_command_percent;
+  if (engine_retarder_engage_inhibit_flag != 0) {
+    uVar1 = engine_retarder_output_level_percent;
   }
-  engine_retarder_request_percent = uVar1;
+  engine_retarder_output_level_percent = uVar1;
   if (uVar1 < 0x32) {
-    if ((engine_retarder_output_mode_flags & 1) != 0) {
+    if ((engine_retarder_brake_type & 1) != 0) {
       cm848_clearLogicalOutputRequest(0xb,0);
     }
-    if ((engine_retarder_output_mode_flags & 2) != 0) {
-      engine_retarder_engaged_flag = 0;
+    if ((engine_retarder_brake_type & 2) != 0) {
+      variable_geometry_turbocharger_brake_active_flag = 0;
     }
     engine_retarder_request_on_delay_counter = 0;
   }
@@ -44936,17 +44944,17 @@ void cm848_driveEngineRetarderOutput(void)
     engine_retarder_request_on_delay_counter = engine_retarder_request_on_delay_counter + 1;
   }
   if ((engine_retarder_request_on_delay_counter < engine_retarder_request_on_delay_passes) ||
-     (engine_retarder_request_percent < 0x32)) goto LAB_00042130;
-  if (((engine_retarder_output_mode_flags & 1) == 0) ||
-     ((engine_retarder_output_mode_flags & 2) == 0)) {
-    if ((engine_retarder_output_mode_flags & 1) != 0) goto LAB_00042100;
-    if ((engine_retarder_output_mode_flags & 2) != 0) {
-      engine_retarder_engaged_flag = 1;
+     (engine_retarder_output_level_percent < 0x32)) goto LAB_00042130;
+  if (((engine_retarder_brake_type & 1) == 0) || ((engine_retarder_brake_type & 2) == 0)) {
+    if ((engine_retarder_brake_type & 1) != 0) goto LAB_00042100;
+    if ((engine_retarder_brake_type & 2) != 0) {
+      variable_geometry_turbocharger_brake_active_flag = 1;
     }
   }
   else {
-    engine_retarder_engaged_flag = 1;
-    if (engine_retarder_output_maximum_engine_speed < engine_speed_state.filtered_engine_speed) {
+    variable_geometry_turbocharger_brake_active_flag = 1;
+    if (engine_retarder_dual_brake_maximum_engine_speed < engine_speed_state.filtered_engine_speed)
+    {
       cm848_clearLogicalOutputRequest(0xb,0);
     }
     else {
@@ -44975,19 +44983,19 @@ LAB_00042130:
 //
 
 /* Runs the engine retarder request chain once per pass in order:
-   cm848_updateEngineRetarderEnableState, cm848_limitEngineRetarderPercentToCruisePermission,
+   cm848_updateEngineRetarderAllowedState, cm848_limitEngineRetarderPercentToCruisePermission,
    cm848_limitEngineRetarderPercentToOperatorSelection, cm848_applyEngineRetarderTsc1Request,
-   cm848_selectEngineRetarderRequest, cm848_updateEngineRetarderActiveState and
+   cm848_selectEngineRetarderCommand, cm848_updateEngineRetarderActiveState and
    cm848_driveEngineRetarderOutput (was cm848_processTimingDispatcher). */
 
 void cm848_processEngineRetarderRequest(void)
 
 {
-  cm848_updateEngineRetarderEnableState();
+  cm848_updateEngineRetarderAllowedState();
   cm848_limitEngineRetarderPercentToCruisePermission();
   cm848_limitEngineRetarderPercentToOperatorSelection();
   cm848_applyEngineRetarderTsc1Request();
-  cm848_selectEngineRetarderRequest();
+  cm848_selectEngineRetarderCommand();
   cm848_updateEngineRetarderActiveState();
   cm848_driveEngineRetarderOutput();
   return;
@@ -44999,9 +45007,10 @@ void cm848_processEngineRetarderRequest(void)
 // Function: cm848_initializeEngineRetarderRequestState @ 0x000421c8
 //
 
-/* Start-up initialisation of the engine retarder request chain: clears logical outputs 11 to 15,
-   the request, shift hold, release, enable and delay words, and sets the request source codes to 5
-   (was cm848_initProtectionEventStates). */
+/* Power-up initialization of the engine retarder chain: clears logical outputs 11 to 15, the output
+   level, the inhibit, release, allowed state and delay words and the tool overrides, and sets the
+   override command source and the command source to 5 (not set) (was
+   cm848_initProtectionEventStates) */
 
 void cm848_initializeEngineRetarderRequestState(void)
 
@@ -45011,25 +45020,25 @@ void cm848_initializeEngineRetarderRequestState(void)
   cm848_clearLogicalOutputRequest(0xd,0);
   cm848_clearLogicalOutputRequest(0xe,0);
   cm848_clearLogicalOutputRequest(0xf,0);
-  engine_retarder_request_percent = 0;
-  engine_retarder_request_shift_hold_flag = 0;
-  engine_retarder_arbitrated_request_percent_previous = 0;
-  engine_retarder_arbitrated_request_percent_previous_2 = 0;
+  engine_retarder_output_level_percent = 0;
+  engine_retarder_engage_inhibit_flag = 0;
+  engine_retarder_command_percent_previous = 0;
+  engine_retarder_command_percent_previous_2 = 0;
   engine_retarder_request_age_counter = 0;
-  engine_retarder_request_percent_previous = 0;
+  engine_retarder_output_level_percent_previous = 0;
   engine_retarder_release_pending_flag = 0;
   engine_retarder_release_counter = 0;
   service_brake_release_delay_counter = 0;
   engine_retarder_active_flag = 0;
-  engine_retarder_tsc1_request_source_code = 5;
-  engine_retarder_request_source_code = 5;
-  service_brake_delayed_active_flag = 0;
-  service_brake_active_governor_mode_config_bit_0_flag._0_2_ = 0;
-  engine_retarder_enable_state = 0;
-  engine_retarder_internal_override_control_mode = 0;
-  engine_retarder_request_arbitration_inhibit_flag = 0;
+  engine_retarder_override_command_source = 5;
+  engine_retarder_command_source = 5;
+  service_brake_recently_applied_flag = 0;
+  engine_retarder_immediate_brake_flag._0_2_ = 0;
+  engine_retarder_allowed_state = 0;
+  engine_retarder_tool_override_control_mode = 0;
+  engine_retarder_command_tool_override_flag = 0;
   mass_charge_flow_engine_retarder_command = 0;
-  tc_lockup_disengage_state = 0;
+  torque_converter_lockup_disengaged_flag = 0;
   return;
 }
 
@@ -85442,17 +85451,16 @@ void cm848_calculateEngineRetarderCruisePermissionPercent(void)
 // Function: cm848_limitEngineRetarderPercentToCruisePermission @ 0x005246b0
 //
 
-/* Lowers the engine retarder percent limit engine_retarder_limit_percent to
-   engine_retarder_cruise_permission_percent when that is smaller and records limit source code 2
-   (cruise control) in engine_retarder_limit_source_code. Step 2 of
-   cm848_processEngineRetarderRequest (was governorLoadMinimumUpdate). */
+/* Lowers the non-override command engine_retarder_non_override_command_percent to
+   engine_retarder_cruise_permission_percent when that is smaller, with source 2 (cruise). Step 2 of
+   cm848_processEngineRetarderRequest (was governorLoadMinimumUpdate) */
 
 void cm848_limitEngineRetarderPercentToCruisePermission(void)
 
 {
-  if (engine_retarder_cruise_permission_percent < engine_retarder_limit_percent) {
-    engine_retarder_limit_percent = engine_retarder_cruise_permission_percent;
-    engine_retarder_limit_source_code = 2;
+  if (engine_retarder_cruise_permission_percent < engine_retarder_non_override_command_percent) {
+    engine_retarder_non_override_command_percent = engine_retarder_cruise_permission_percent;
+    engine_retarder_non_override_command_source = 2;
   }
   return;
 }

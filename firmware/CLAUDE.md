@@ -1025,7 +1025,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   - **The exhaust brake lockup aid:** `cm848_updateExhaustBrakeInhibitForLockup` holds the exhaust brake off after each
     converter clutch command until the speed ratio (engine / output speed x 32) enters the gear's window around the
     gear ratio (`exhaust_brake_lockup_speed_ratio_<gear>_minimum` / `_maximum`), for at most 3 s
-    (`exhaust_brake_inhibit_timeout`). `cm848_updateEngineRetarderEnableState` reads bit 0 of
+    (`exhaust_brake_inhibit_timeout`). `cm848_updateEngineRetarderAllowedState` reads bit 0 of
     `transmission_exhaust_brake_flags` as lockup disengaged. Switch 12 is the exhaust brake switch.
   - **A CSV trap:** the importer splits `global_variables.csv` (and `function_renames.csv`) with `split(",", 4)` /
     `split(",", 3)`, so the comment column takes commas unquoted. Python's `csv` module quotes such a comment when
