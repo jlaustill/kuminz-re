@@ -1665,6 +1665,21 @@ A peer relay started the round. Scripts are in `session_folder/round30/`.
     base-register accesses that `xref_addr.py` does not see, so it needs a pilot build.
   - The fault bits 22 / 23 / 179 / 180 / 101 / 410 / 524 / 110.
 
+## Done, round 31 (2026-11-22, same PR): the J1939 EC1 payload as a struct
+
+A peer relay started the round; the lead is round 30's. Scripts are in `session_folder/round31/`.
+- **Stage A (8146833, types):** `j1939_pgn65251_payload_t` is the 28-byte EC1 (PGN 65251) payload in the original
+  J1939-71 layout and J1939 byte order.
+  - Two instances: the payload and the send-on-change previous copy.
+  - The SPN names come from the automotive `j1939_spns` table. The local Mongo `j1939` entry for 65251 holds the
+    PGN 65252 Shutdown parameters.
+  - Field widths follow the code's accesses: words where it reads a halfword (one unaligned, at +9), byte pairs
+    where it joins two bytes, bytes for the torques and limits.
+  - `cm848_sendPgn65251EngineConfiguration1OnChange` and `initializePgn65251EngineConfiguration1Buffer` read by
+    field. They were `DAT_` / `ram0x` / `CONCAT11` renders. The compiler's four dword copies stay pieces.
+  - Underscore renders 31 -> 23.
+- **The proof:** only those two functions differ, and each access was checked against its old byte offset.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

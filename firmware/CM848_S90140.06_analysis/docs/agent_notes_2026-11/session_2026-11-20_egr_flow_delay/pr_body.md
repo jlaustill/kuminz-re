@@ -546,6 +546,9 @@ state enum, the flag bytes.**
 **Round 30.**
 - **Stage A (82b5069, label-only):** the watchdog fueling monitor (fault 388) and its words named from e2m 8A70 /
   8B3B / 8B3D; it was `fuel_quantity_demand_monitor` with five `DAT_` words.
+**Round 31.**
+- **Stage A (8146833, types):** the J1939 EC1 (PGN 65251) payload and its previous copy as one 28-byte struct with
+  the SPN fields; the send-on-change test now reads by field.
 
 ## Test plan
 
@@ -638,6 +641,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 31: stage A changes only the two EC1 functions, each access checked.
 - [x] Round 30: stage A is EQUIVALENT.
 - [x] Round 29: stage A is EQUIVALENT.
 - [x] Round 28: stage A is EQUIVALENT; stage B's 9 differing functions match statement by statement apart from the

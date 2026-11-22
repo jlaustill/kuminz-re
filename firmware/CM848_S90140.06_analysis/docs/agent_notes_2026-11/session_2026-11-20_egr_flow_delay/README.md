@@ -424,3 +424,7 @@ Hand work on the round 7 lead.
 
 - **Scans:** `unit_domain_scan.py`, `setter_name_scan.py`, `ec1_access_census.py` (the EC1 lead).
 - **Stage A:** `worklist_r30a.py`, `add_rows_r30a.py`. **Closing:** `apply_r30_closing.py`.
+
+## Round 31: the J1939 EC1 payload as a struct (`session_folder/round31/`)
+
+- **Stage A:** `apply_r31a.py` (the struct, the instances, the dotted rows). **Closing:** `apply_r31_closing.py`.

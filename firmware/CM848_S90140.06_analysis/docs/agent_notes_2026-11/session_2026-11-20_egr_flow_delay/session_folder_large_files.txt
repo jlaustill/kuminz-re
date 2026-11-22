@@ -140,6 +140,7 @@
   201289 build_r29a.log
   201291 build_r30a.log
   201290 build_r30a2.log
+  201289 build_r31a.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
  1072739 e2m_audit_round17a.csv
@@ -185,3 +186,4 @@
   402878 verify_round28.log
   402896 verify_round29.log
   402896 verify_round30.log
+  402883 verify_round31.log
