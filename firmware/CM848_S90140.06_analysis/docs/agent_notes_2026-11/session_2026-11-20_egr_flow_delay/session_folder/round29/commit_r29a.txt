@@ -1,0 +1,35 @@
+cm848: round 29 stage A - the transfer case low-range detector (e2m 8C5F / 8C60), 9 fault bits named from their setters (labels)
+
+An opposite-word scan (opposite_words.py: e2m min / max, high / low, enable / disable ... against the row name) found
+29 records. Their code uses showed the following.
+- The transfer case low-range detector by N/V. The parameter ID table maps e2m 8C5F (ROM) / 8C60 (RAM) to every
+  word, and each code use matches its record.
+  - The engine_to_vehicle_speed_ratio_* family is renamed transfer_case_*:
+    - transfer_case_low_range_flag (Tcase_Low_Range_Flag, was ..._high_flag);
+    - transfer_case_launch_flag (Tcase_Launch_Flag, was ..._invalid_flag);
+    - the N/V, its average and percent change (transfer_case_engine_to_vehicle_speed_ratio*);
+    - transfer_case_road_speed;
+    - the launch / low-range speed, change and throttle limits.
+  - The low-range throttle limit compares commanded_throttle (e2m TPS), so it is
+    transfer_case_low_range_minimum_commanded_throttle (was ..._minimum_accelerator_pedal).
+  - The three unnamed filter coefficients (e2m +6 / +C / +12) and their filters are named.
+  - Functions: cm848_detectTransferCaseLowRange (was cm848_monitorEngineToVehicleSpeedRatio) and
+    cm848_initializeTransferCaseLowRangeFilters (was initGovernorTempTableParams).
+  - It runs with algorithm_enable_flags_43_cal.transfer_case_low_range_enable and transmission_type_cal 0, not in this
+    calibration.
+- 9 fault_<n> bits of fault_bit_words_t are named from their setters (or their sensor channel):
+  - 57 fuel_pressure_governed_speed_check_error (P1221);
+  - 58 fuel_pressure_governor_demand_above_limit_error (P1222);
+  - 59 fuel_pressure_decay_below_model_error;
+  - 60 fuel_metering_feedback_low_error (P1223);
+  - 308 engine_off_time_stuck_error: e2m Chry_Dat42 = the engine-off time in PCI frame 0x42 staying unchanged for N key
+    cycles;
+  - 342 overspeed_protection_error / 343 overspeed_warning_error;
+  - 682 / 683 variable_geometry_turbocharger_position_sensor_high / low_error (channel 101's fault bits).
+- The other hits read correctly in the code (for example, the misfire load is an upper bound, and the pedal count's
+  "minimum" names the learned pedal minimum). e2m 8C35 names thresholds by region where the rows name them by check.
+- firmware/CLAUDE.md: the vehicle speed bullet now names the detector.
+
+Proof: reverse_names.py EQUIVALENT. Headers regenerated, lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

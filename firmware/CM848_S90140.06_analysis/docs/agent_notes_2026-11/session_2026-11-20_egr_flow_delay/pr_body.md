@@ -539,6 +539,10 @@ state enum, the flag bytes.**
   mailbox writer (the old "Can2" was not a second controller). The boot CAN ring state struct and its fields.
 - **Stage B (c65bdd0, types):** the ring's two full flags split out of `_pad16`; full prototypes for the mailbox
   writers, so two calls that hid their frame argument show it.
+**Round 29.**
+- **Stage A (f13aca5, label-only):** the transfer case low-range detector named from e2m 8C5F / 8C60 (was the
+  `engine_to_vehicle_speed_ratio_*` monitor: the low-range flag read as a "high ratio" flag, the launch flag as
+  "invalid"). Nine `fault_<n>` bits named from the code that sets them.
 
 ## Test plan
 
@@ -631,6 +635,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 29: stage A is EQUIVALENT.
 - [x] Round 28: stage A is EQUIVALENT; stage B's 9 differing functions match statement by statement apart from the
   frame argument.
 - [x] Round 27: stages A and C are EQUIVALENT; stage B passes the mask-exact proof (1964 functions identical, 4

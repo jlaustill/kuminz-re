@@ -1614,6 +1614,37 @@ A peer relay started the round; the leads come from rounds 25-27. Scripts are in
 - **Still open:** the boot kernel transport's message parameter. Typing it `diagnostic_response_message_t *` needs
   the six callers of `cm848_sendDiagServiceResponse` read for what they pass.
 
+## Done, round 29 (2026-11-22, same PR): the transfer case low-range detector, fault bits from their setters
+
+A peer relay started the round. Scripts are in `session_folder/round29/`.
+- **Stage A (f13aca5, label-only):**
+  - `opposite_words.py` scanned the e2m audit for records whose row name carries the opposite word (min / max, high /
+    low, enable / disable ...). It found 29; their code uses settled each one.
+  - **The transfer case low-range detector by N/V (e2m 8C5F / 8C60, "Tcase NV"):** the
+    `engine_to_vehicle_speed_ratio_*` family is now `transfer_case_*`.
+    - The flags: `transfer_case_low_range_flag` (was `..._high_flag`) and `transfer_case_launch_flag` (was
+      `..._invalid_flag`).
+    - The quantities: the N/V, its average and percent change, and the road speed.
+    - The limits; the throttle limit compares `commanded_throttle` (e2m TPS).
+    - The three filters and their coefficients.
+    - The functions: `cm848_detectTransferCaseLowRange` / `cm848_initializeTransferCaseLowRangeFilters` (was
+      `initGovernorTempTableParams`).
+    - It runs only with `transmission_type_cal` 0, not in this calibration.
+  - **Nine `fault_<n>` bits named from their setters or sensor channel:**
+    - 57 / 58 / 59 / 60, the fuel pressure monitors (P1221 / P1222 / - / P1223);
+    - 308 `engine_off_time_stuck_error` (e2m Chry_Dat42 = PCI frame 0x42's engine-off time unchanged for N key cycles);
+    - 342 / 343, overspeed protection / warning;
+    - 682 / 683, channel 101's VGT position sensor bits.
+  - **The other hits read correctly:**
+    - e2m 8C35 and 1631 name the thresholds by operating region, and the rows name them by check;
+    - the misfire load is an upper bound;
+    - the pedal count's "minimum" is the learned pedal minimum;
+    - the cold-soak coolant limit is a maximum in the code.
+- **Leads:**
+  - Faults 22 / 23 (they gate an ET1 field), 179 / 180 (they gate EFL/P1 fuel delivery pressure, but which is high
+    and which low is not known), 101, 410, 524 and 110 need more reading.
+  - The kernel transport's message parameter.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

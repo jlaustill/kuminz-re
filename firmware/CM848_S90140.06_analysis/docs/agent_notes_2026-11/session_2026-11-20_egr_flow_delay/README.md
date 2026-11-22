@@ -414,3 +414,8 @@ Hand work on the round 7 lead.
 - **Stage A:** `present_flags.py` (the e2m flag scan), `worklist_r28a.py`, `spec_r28a.py`, `dotted_rows_r28a.py`.
 - **Stage B:** `apply_r28b.py`, `tokens_r28b.json`, `diff_flag_users_r28b.py` (the statement check).
 - **Closing:** `apply_r28_closing.py`.
+
+## Round 29: the transfer case low-range detector, fault bits from their setters (`session_folder/round29/`)
+
+- **Stage A:** `opposite_words.py` (the scan), `worklist_r29a.py`, `labels_r29a.tsv`, `fault_n_evidence.py` / `fault_n_context.py` (each bit's setters and readers), `fault_bits_r29a.py`.
+- **Closing:** `apply_r29_closing.py`.
