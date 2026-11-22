@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 09:28:39 MST 2026
+// Generated: Sun Nov 22 09:31:50 MST 2026
 
 
 //
@@ -1123,7 +1123,7 @@ char mpc555_diagService25_executeFunction(int param_1)
 {
   dword dVar1;
   dword dVar2;
-  char cVar3;
+  byte bVar3;
   word wVar4;
   word wVar5;
   char cVar6;
@@ -1136,7 +1136,7 @@ char mpc555_diagService25_executeFunction(int param_1)
     if (cVar6 != '\t') {
       cm848_sendDiagServiceResponse(param_1,0);
       wVar4 = mios_mmcsm_cnt.CNT;
-      cVar3 = boot_can_ring_state._pad16._0_1_;
+      bVar3 = boot_can_ring_state.transmit_ring_full_flag;
       do {
         dVar1 = boot_can_ring_state.transmit_write_pointer;
         dVar2 = boot_can_ring_state.transmit_read_pointer;
@@ -1144,7 +1144,7 @@ char mpc555_diagService25_executeFunction(int param_1)
           wVar5 = mios_mmcsm_cnt.CNT;
           if (0x40c < (int)((uint)wVar5 - (uint)wVar4)) goto LAB_000018f4;
         } while (dVar1 != dVar2);
-      } while (cVar3 == '\x01');
+      } while (bVar3 == 1);
 LAB_000018f4:
       (*local_20[0])();
     }
@@ -3040,64 +3040,63 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
   undefined1 *puVar1;
   dword dVar2;
   dword dVar3;
-  char cVar4;
-  word wVar5;
-  uint uVar6;
-  undefined1 *puVar7;
-  undefined2 *puVar8;
-  undefined1 *puVar9;
-  undefined2 *puVar10;
-  byte bVar11;
-  undefined1 uVar12;
+  word wVar4;
+  uint uVar5;
+  undefined1 *puVar6;
+  undefined2 *puVar7;
+  undefined1 *puVar8;
+  undefined2 *puVar9;
+  byte bVar10;
+  undefined1 uVar11;
   undefined2 uStack_2a;
   undefined4 local_28;
   undefined1 local_24 [28];
   
   if (param_2 == 0) {
-    uVar12 = 1;
+    uVar11 = 1;
   }
   else {
-    cVar4 = boot_can_ring_state._pad16._0_1_;
-    if (cVar4 == '\x01') {
-      uVar12 = 4;
+    bVar10 = boot_can_ring_state.transmit_ring_full_flag;
+    if (bVar10 == 1) {
+      uVar11 = 4;
     }
     else {
       local_28 = (param_1 & 0x1ffc0000) << 3 | (param_1 & 0x3ffff) << 1 | 0x180000;
-      puVar9 = local_24;
-      uVar6 = 0;
+      puVar8 = local_24;
+      uVar5 = 0;
       if (0 < (int)param_2) {
-        puVar7 = (undefined1 *)(param_3 + -1);
+        puVar6 = (undefined1 *)(param_3 + -1);
         puVar1 = (undefined1 *)((int)&local_28 + 3);
         do {
-          puVar9 = puVar1;
-          puVar7 = puVar7 + 1;
-          puVar1 = puVar9 + 1;
-          *puVar1 = *puVar7;
-          uVar6 = uVar6 + 1 & 0xff;
-        } while ((int)uVar6 < (int)param_2);
-        puVar9 = puVar9 + 2;
+          puVar8 = puVar1;
+          puVar6 = puVar6 + 1;
+          puVar1 = puVar8 + 1;
+          *puVar1 = *puVar6;
+          uVar5 = uVar5 + 1 & 0xff;
+        } while ((int)uVar5 < (int)param_2);
+        puVar8 = puVar8 + 2;
       }
       param_2 = param_2 & 0xff;
       if (param_2 < 8) {
-        puVar9 = puVar9 + -1;
+        puVar8 = puVar8 + -1;
         do {
-          puVar9 = puVar9 + 1;
-          *puVar9 = 0xff;
+          puVar8 = puVar8 + 1;
+          *puVar8 = 0xff;
           param_2 = param_2 + 1 & 0xff;
         } while (param_2 < 8);
       }
       dVar2 = boot_can_ring_state.transmit_message_buffer_pointer;
       if ((*(byte *)(dVar2 + 1) & 0xf0) == 0xc0) {
         dVar2 = boot_can_ring_state.transmit_write_pointer;
-        bVar11 = 0;
-        puVar10 = &uStack_2a;
-        puVar8 = (undefined2 *)(dVar2 - 2);
+        bVar10 = 0;
+        puVar9 = &uStack_2a;
+        puVar7 = (undefined2 *)(dVar2 - 2);
         do {
-          puVar10 = puVar10 + 1;
-          puVar8 = puVar8 + 1;
-          *puVar8 = *puVar10;
-          bVar11 = bVar11 + 1;
-        } while (bVar11 < 6);
+          puVar9 = puVar9 + 1;
+          puVar7 = puVar7 + 1;
+          *puVar7 = *puVar9;
+          bVar10 = bVar10 + 1;
+        } while (bVar10 < 6);
         boot_can_ring_state.transmit_write_pointer = dVar2 + 0xc;
         if (&UNK_003024ba < (undefined *)(dVar2 + 0xc)) {
           boot_can_ring_state.transmit_write_pointer = 0x3022e6;
@@ -3105,17 +3104,17 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
         dVar2 = boot_can_ring_state.transmit_write_pointer;
         dVar3 = boot_can_ring_state.transmit_read_pointer;
         if (dVar2 == dVar3) {
-          boot_can_ring_state._pad16._0_1_ = 1;
+          boot_can_ring_state.transmit_ring_full_flag = 1;
         }
       }
       else {
-        wVar5 = can_mailbox_counter.slot_start;
-        cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar5 & 0xff,&local_28);
+        wVar4 = can_mailbox_counter.slot_start;
+        cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff,(word *)&local_28);
       }
-      uVar12 = 0;
+      uVar11 = 0;
     }
   }
-  *param_4 = uVar12;
+  *param_4 = uVar11;
   return;
 }
 
@@ -3824,24 +3823,25 @@ void cm848_can2MailboxTransmitRangeWrapper(void)
    and mpc555_manageCan1TransmitBuffer. The old 'Can2' was not a second controller (was
    cm848_writeCan2ControllerTxMailbox) */
 
-void cm848_writeBootKernelCanTxMailbox(int param_1,int param_2,int param_3)
+void cm848_writeBootKernelCanTxMailbox(int can_module,dword mailbox_number,word *frame_words)
 
 {
-  undefined2 *puVar1;
-  undefined2 *puVar2;
+  word *pwVar1;
+  word *pwVar2;
   byte bVar3;
+  int iVar4;
   
-  param_1 = param_1 + param_2 * 0x10;
+  iVar4 = can_module + mailbox_number * 0x10;
   bVar3 = 0;
-  puVar1 = (undefined2 *)(param_3 + -2);
-  puVar2 = (undefined2 *)(param_1 + 0x70);
+  pwVar1 = frame_words + -1;
+  pwVar2 = (word *)(iVar4 + 0x70);
   do {
-    puVar1 = puVar1 + 1;
-    puVar2 = puVar2 + 1;
-    *puVar2 = *puVar1;
+    pwVar1 = pwVar1 + 1;
+    pwVar2 = pwVar2 + 1;
+    *pwVar2 = *pwVar1;
     bVar3 = bVar3 + 1;
   } while (bVar3 < 6);
-  *(undefined1 *)(param_1 + 0x71) = 200;
+  *(undefined1 *)(iVar4 + 0x71) = 200;
   return;
 }
 
@@ -3906,28 +3906,30 @@ void mpc555_can2TransmitInterruptHandler(void)
 void mpc555_manageCan1TransmitBuffer(void)
 
 {
-  dword dVar1;
+  word *pwVar1;
+  word *frame_words;
   dword dVar2;
-  char cVar3;
+  byte bVar3;
   word wVar4;
   word wVar5;
   
   wVar4 = can_mailbox_counter.slot_start;
   wVar5 = toucan_a.IFLAG;
   toucan_a.IFLAG = wVar5 & ~(ushort)(1 << (wVar4 + 0xffff & 0x3f));
-  dVar2 = boot_can_ring_state.transmit_read_pointer;
-  dVar1 = boot_can_ring_state.transmit_write_pointer;
-  if ((dVar1 == dVar2) && (cVar3 = boot_can_ring_state._pad16._0_1_, cVar3 != '\x01')) {
-    dVar1 = boot_can_ring_state.transmit_message_buffer_pointer;
-    *(undefined1 *)(dVar1 + 1) = 0;
+  frame_words = (word *)boot_can_ring_state.transmit_read_pointer;
+  pwVar1 = (word *)boot_can_ring_state.transmit_write_pointer;
+  if ((pwVar1 == frame_words) && (bVar3 = boot_can_ring_state.transmit_ring_full_flag, bVar3 != 1))
+  {
+    dVar2 = boot_can_ring_state.transmit_message_buffer_pointer;
+    *(undefined1 *)(dVar2 + 1) = 0;
   }
   else {
     wVar4 = can_mailbox_counter.slot_start;
-    cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff);
-    boot_can_ring_state._pad16._0_1_ = 0;
-    dVar1 = boot_can_ring_state.transmit_read_pointer;
-    boot_can_ring_state.transmit_read_pointer = dVar1 + 0xc;
-    if (&UNK_003024ba < (undefined *)(dVar1 + 0xc)) {
+    cm848_writeBootKernelCanTxMailbox(&toucan_a,wVar4 & 0xff,frame_words);
+    boot_can_ring_state.transmit_ring_full_flag = 0;
+    dVar2 = boot_can_ring_state.transmit_read_pointer;
+    boot_can_ring_state.transmit_read_pointer = dVar2 + 0xc;
+    if (&UNK_003024ba < (undefined *)(dVar2 + 0xc)) {
       boot_can_ring_state.transmit_read_pointer = 0x3022e6;
     }
   }
@@ -3946,7 +3948,7 @@ void mpc555_processCanReceiveBuffer(int param_1)
   uint *puVar1;
   dword dVar2;
   dword dVar3;
-  char cVar4;
+  byte bVar4;
   word wVar5;
   word wVar6;
   uint uVar7;
@@ -3955,8 +3957,8 @@ void mpc555_processCanReceiveBuffer(int param_1)
   undefined1 *puVar10;
   ushort uVar11;
   
-  cVar4 = boot_can_ring_state._pad16._1_1_;
-  if (cVar4 == '\0') {
+  bVar4 = boot_can_ring_state.receive_ring_full_flag;
+  if (bVar4 == 0) {
     param_1 = param_1 * 0x10;
     puVar1 = (uint *)boot_can_ring_state.receive_write_pointer;
     *puVar1 = (*(uint *)(&DAT_003070f2 + param_1) & 0xffe00000) >> 3 |
@@ -3982,7 +3984,7 @@ void mpc555_processCanReceiveBuffer(int param_1)
   dVar2 = boot_can_ring_state.receive_write_pointer;
   dVar3 = boot_can_ring_state.receive_read_pointer;
   if (dVar2 == dVar3) {
-    boot_can_ring_state._pad16._1_1_ = 1;
+    boot_can_ring_state.receive_ring_full_flag = 1;
     wVar5 = can_mailbox_counter.slot_start;
     iVar8 = 1 << (wVar5 + 1 & 0x3f);
     uVar7 = 0;
@@ -4013,72 +4015,71 @@ void mpc555_dispatchCanMessageHandlers(void)
   byte bVar1;
   dword dVar2;
   dword dVar3;
-  char cVar4;
-  word wVar5;
-  can_rx_channel_t cVar6;
-  word wVar7;
-  int iVar8;
-  byte *pbVar9;
-  byte bVar11;
-  ushort uVar10;
+  word wVar4;
+  can_rx_channel_t cVar5;
+  word wVar6;
+  int iVar7;
+  byte *pbVar8;
+  byte bVar10;
+  ushort uVar9;
   short local_28;
   
-  wVar7 = mios_mmcsm_cnt.CNT;
-  wVar5 = mios_mmcsm_cnt.CNT;
-  iVar8 = (uint)wVar5 - (uint)wVar7;
+  wVar6 = mios_mmcsm_cnt.CNT;
+  wVar4 = mios_mmcsm_cnt.CNT;
+  iVar7 = (uint)wVar4 - (uint)wVar6;
   do {
-    if (4 < iVar8) {
+    if (4 < iVar7) {
       return;
     }
     dVar3 = boot_can_ring_state.receive_read_pointer;
     dVar2 = boot_can_ring_state.receive_write_pointer;
-    if ((dVar2 == dVar3) && (cVar4 = boot_can_ring_state._pad16._1_1_, cVar4 != '\x01')) {
+    if ((dVar2 == dVar3) && (bVar1 = boot_can_ring_state.receive_ring_full_flag, bVar1 != 1)) {
       return;
     }
     bVar1 = *(byte *)(dVar3 + 1);
     local_28 = *(short *)(dVar3 + 1);
     if ((bVar1 < 0xf0) &&
-       (cVar6 = can_rx_channel_filter, (cVar6.channel_id & 0xff) == (ushort)*(byte *)(dVar3 + 2))) {
+       (cVar5 = can_rx_channel_filter, (cVar5.channel_id & 0xff) == (ushort)*(byte *)(dVar3 + 2))) {
       local_28 = (ushort)bVar1 << 8;
     }
-    pbVar9 = &pgn_response_handler_table;
-    bVar11 = 0;
+    pbVar8 = &pgn_response_handler_table;
+    bVar10 = 0;
     bVar1 = pgn_response_handler_count;
     if (bVar1 != 0) {
       do {
-        if (*(short *)pbVar9 == local_28) {
-          (**(code **)(pbVar9 + 2))(dVar3);
+        if (*(short *)pbVar8 == local_28) {
+          (**(code **)(pbVar8 + 2))(dVar3);
           break;
         }
-        pbVar9 = pbVar9 + 6;
-        bVar11 = bVar11 + 1;
-      } while (bVar11 < bVar1);
+        pbVar8 = pbVar8 + 6;
+        bVar10 = bVar10 + 1;
+      } while (bVar10 < bVar1);
     }
     dVar2 = boot_can_ring_state.receive_read_pointer;
     boot_can_ring_state.receive_read_pointer = dVar2 + 0x12;
     if (&UNK_003022d4 < (undefined *)(dVar2 + 0x12)) {
       boot_can_ring_state.receive_read_pointer = 0x302016;
     }
-    cVar4 = boot_can_ring_state._pad16._1_1_;
-    if (cVar4 == '\x01') {
-      boot_can_ring_state._pad16._1_1_ = 0;
-      wVar5 = can_mailbox_counter.slot_start;
-      iVar8 = 1 << (wVar5 & 0x3f);
-      wVar5 = can_mailbox_counter.slot_start;
-      uVar10 = wVar5 & 0xff;
-      wVar5 = can_mailbox_counter.slot_end;
-      if (uVar10 < wVar5) {
+    bVar1 = boot_can_ring_state.receive_ring_full_flag;
+    if (bVar1 == 1) {
+      boot_can_ring_state.receive_ring_full_flag = 0;
+      wVar4 = can_mailbox_counter.slot_start;
+      iVar7 = 1 << (wVar4 & 0x3f);
+      wVar4 = can_mailbox_counter.slot_start;
+      uVar9 = wVar4 & 0xff;
+      wVar4 = can_mailbox_counter.slot_end;
+      if (uVar9 < wVar4) {
         do {
-          wVar5 = toucan_a.IMASK;
-          toucan_a.IMASK = (ushort)iVar8 | wVar5;
-          iVar8 = iVar8 * 2;
-          uVar10 = uVar10 + 1 & 0xff;
-          wVar5 = can_mailbox_counter.slot_end;
-        } while (uVar10 < wVar5);
+          wVar4 = toucan_a.IMASK;
+          toucan_a.IMASK = (ushort)iVar7 | wVar4;
+          iVar7 = iVar7 * 2;
+          uVar9 = uVar9 + 1 & 0xff;
+          wVar4 = can_mailbox_counter.slot_end;
+        } while (uVar9 < wVar4);
       }
     }
-    wVar5 = mios_mmcsm_cnt.CNT;
-    iVar8 = (uint)wVar5 - (uint)wVar7;
+    wVar4 = mios_mmcsm_cnt.CNT;
+    iVar7 = (uint)wVar4 - (uint)wVar6;
   } while( true );
 }
 
@@ -6093,9 +6094,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
+  word counter_value;
   byte prescaler_count;
   dword runtime_value;
-  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -38774,8 +38775,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -57410,7 +57411,9 @@ void mpc555_processJ1939TxBufferSend(void)
     can_transmit_mailbox_pointer[1] = 0;
   }
   else {
-    cm848_writeCanControllerTxMailbox(&toucan_a,can_tx_mailbox_start_index & 0xff);
+    cm848_writeCanControllerTxMailbox
+              (&toucan_a,can_tx_mailbox_start_index & 0xff,
+               (word *)can_transmit_queue_dequeue_pointer);
     can_transmit_queue_full_flag = 0;
     can_transmit_queue_dequeue_pointer = can_transmit_queue_dequeue_pointer + 0xc;
     if (0x40ad18 < can_transmit_queue_dequeue_pointer) {
@@ -57550,7 +57553,8 @@ void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined
       }
     }
     else {
-      cm848_writeCanControllerTxMailbox(&toucan_a,can_tx_mailbox_start_index & 0xff,&local_18);
+      cm848_writeCanControllerTxMailbox
+                (&toucan_a,can_tx_mailbox_start_index & 0xff,(word *)&local_18);
     }
     uVar8 = 0;
   }
@@ -57658,24 +57662,25 @@ void cm848_handleCanMailboxTransmitRange(int param_1)
 // Function: cm848_writeCanControllerTxMailbox @ 0x00053b28
 //
 
-void cm848_writeCanControllerTxMailbox(int param_1,int param_2,int param_3)
+void cm848_writeCanControllerTxMailbox(int can_module,dword mailbox_number,word *frame_words)
 
 {
-  undefined2 *puVar1;
-  undefined2 *puVar2;
+  word *pwVar1;
+  word *pwVar2;
   byte bVar3;
+  int iVar4;
   
-  param_1 = param_1 + param_2 * 0x10;
+  iVar4 = can_module + mailbox_number * 0x10;
   bVar3 = 0;
-  puVar1 = (undefined2 *)(param_3 + -2);
-  puVar2 = (undefined2 *)(param_1 + 0x70);
+  pwVar1 = frame_words + -1;
+  pwVar2 = (word *)(iVar4 + 0x70);
   do {
-    puVar1 = puVar1 + 1;
-    puVar2 = puVar2 + 1;
-    *puVar2 = *puVar1;
+    pwVar1 = pwVar1 + 1;
+    pwVar2 = pwVar2 + 1;
+    *pwVar2 = *pwVar1;
     bVar3 = bVar3 + 1;
   } while (bVar3 < 6);
-  *(undefined1 *)(param_1 + 0x71) = 200;
+  *(undefined1 *)(iVar4 + 0x71) = 200;
   return;
 }
 
@@ -58774,8 +58779,8 @@ void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
 
 {
   undefined4 compare_register_pair;
-  word modulus_period_value;
   word modulus_start_value;
+  word modulus_period_value;
   
   if (duty < 0x6400) {
     if (duty == 0) {

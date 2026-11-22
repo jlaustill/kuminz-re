@@ -3288,7 +3288,9 @@ struct can_ring_state_t {
     uint32_t transmit_read_pointer;  /* Transmit ring read pointer: mpc555_manageCan1TransmitBuffer sends the frame there and advances it (wrapping after 0x3024ba) (was j1939_tx_read_ptr) | earlier note: J1939 TX queue read pointer */
     uint32_t receive_write_pointer;  /* Receive ring write pointer: 18-byte records from 0x302016 (mpc555_processCanReceiveBuffer) (was can_rx_write_ptr) | earlier note: CAN RX queue write pointer (18-byte records base 0x302016) */
     uint32_t receive_read_pointer;  /* Receive ring read pointer (mpc555_dispatchCanMessageHandlers) (was can_rx_read_ptr) | earlier note: CAN RX queue read pointer */
-    uint32_t _pad16;  /* Reserved */
+    uint8_t transmit_ring_full_flag;  /* 1 = the transmit ring is full: mpc555_canTransmitQueuePush sets it when its write pointer reaches the read pointer (and returns 4 while it is set); mpc555_manageCan1TransmitBuffer clears it after sending a frame (was _pad16 byte 0; PR #53 round 28) */
+    uint8_t receive_ring_full_flag;  /* 1 = the receive ring is full: mpc555_processCanReceiveBuffer sets it when its write pointer reaches the read pointer; mpc555_dispatchCanMessageHandlers clears it (was _pad16 byte 1; PR #53 round 28) */
+    uint16_t reserved_18;  /* No users (bytes 2-3 of the old _pad16) */
     uint32_t transmit_message_buffer_pointer;  /* The transmit message buffer: mpc555_initDiagnosticSubsystem sets it to TouCAN A buffer 0x3070f0 + 16 x n; the empty-ring path of mpc555_manageCan1TransmitBuffer clears its control byte (was toucan_mb_ptr) | earlier note: Active TouCAN mailbox base pointer for diagnostic session */
 };
 

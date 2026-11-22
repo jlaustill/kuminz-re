@@ -110,7 +110,7 @@ void cm848_runFlashProgramStateMachine(void);  // @ 0x00004720
 bool mpc555_cmfEraseBlocks(uint param_1);  // @ 0x000049d0
 void cm848_can2MailboxTransmitCompleteWrapper(void);  // @ 0x00004eec
 void cm848_can2MailboxTransmitRangeWrapper(void);  // @ 0x00004f0c
-void cm848_writeBootKernelCanTxMailbox(int param_1,int param_2,int param_3);  // @ 0x00004f2c
+void cm848_writeBootKernelCanTxMailbox(int can_module,dword mailbox_number,word *frame_words);  // @ 0x00004f2c
 void mpc555_can2TransmitInterruptHandler(void);  // @ 0x00004f6c
 void mpc555_manageCan1TransmitBuffer(void);  // @ 0x00005064
 void mpc555_processCanReceiveBuffer(int param_1);  // @ 0x00005134
@@ -1238,7 +1238,7 @@ void sendJ1939Message(j1939_tx_msg_t *msg);  // @ 0x000539fc
 J1939_CONTROL_DEVICE cm848_lookupJ1939ControlDevice(dword source_address);  // @ 0x00053a4c
 void cm848_handleCanMailboxTransmitComplete(uint param_1);  // @ 0x00053aa8
 void cm848_handleCanMailboxTransmitRange(int param_1);  // @ 0x00053ae0
-void cm848_writeCanControllerTxMailbox(int param_1,int param_2,int param_3);  // @ 0x00053b28
+void cm848_writeCanControllerTxMailbox(int can_module,dword mailbox_number,word *frame_words);  // @ 0x00053b28
 void mpc555_canTransmitInterruptHandler(void);  // @ 0x00053b68
 void cm848_emptyStub3(void);  // @ 0x00053c60
 void cm848_emptyStub4(void);  // @ 0x00053c64
