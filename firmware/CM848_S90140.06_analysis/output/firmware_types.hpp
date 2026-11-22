@@ -1387,6 +1387,7 @@ typedef struct engine_protection_fault_log_entry_t engine_protection_fault_log_e
 typedef struct engine_protection_channel_configuration_t engine_protection_channel_configuration_t;
 typedef struct engine_protection_channel_state_t engine_protection_channel_state_t;
 typedef struct engine_protection_channel_history_t engine_protection_channel_history_t;
+typedef struct j1939_pgn65251_payload_t j1939_pgn65251_payload_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4233,4 +4234,28 @@ struct engine_protection_channel_history_t {
     uint16_t fueling_fault_log_index;  /* +0x18 e2m Fuel_Temperature_Fueling_Fault_Log_Index [UNITLESS] '[EPFTFLIN] Index into EPF fault log for Fuel temperature fueling' */
     uint16_t engine_speed_fault_log_flag;  /* +0x1a e2m Fuel_Temperature_RPM_Fault_Log_Flag [UNITLESS] '[EPFTRPFG] Fault log recording flag for fuel temperature RPM' */
     uint16_t engine_speed_fault_log_index;  /* +0x1c e2m Fuel_Temperature_RPM_Fault_Log_Index [UNITLESS] '[EPFTRPIN] Index into EPF fault log for fuel temperature RPM' */
+};
+
+struct j1939_pgn65251_payload_t {
+    uint16_t engine_speed_at_idle_point_1;  /* SPN 188 engine speed at idle (point 1); J1939 byte order (low byte at +0): the send-on-change test reads it as one (byte-swapped) halfword */
+    uint8_t percent_torque_at_idle_point_1;  /* SPN 539 percent torque at idle (point 1); +125 offset */
+    uint8_t engine_speed_at_point_2_low_byte;  /* SPN 528 engine speed at point 2; low byte */
+    uint8_t engine_speed_at_point_2_high_byte;  /* SPN 528; high byte (the test joins the two bytes) */
+    uint8_t percent_torque_at_point_2;  /* SPN 540; +125 offset */
+    uint16_t engine_speed_at_point_3;  /* SPN 529; J1939 byte order */
+    uint8_t percent_torque_at_point_3;  /* SPN 541; +125 offset */
+    uint16_t engine_speed_at_point_4;  /* SPN 530; J1939 byte order; at +9 (the test reads it with an unaligned halfword) */
+    uint8_t percent_torque_at_point_4;  /* SPN 542; +125 offset */
+    uint16_t engine_speed_at_point_5;  /* SPN 531; J1939 byte order */
+    uint8_t percent_torque_at_point_5;  /* SPN 543; +125 offset */
+    uint8_t engine_speed_at_high_idle_point_6_low_byte;  /* SPN 532 engine speed at high idle (point 6); low byte */
+    uint8_t engine_speed_at_high_idle_point_6_high_byte;  /* SPN 532; high byte */
+    uint16_t endspeed_governor_gain;  /* SPN 545 gain (Kp) of the endspeed governor: 0xffff (not available); initializePgn65251EngineConfiguration1Buffer writes it */
+    uint16_t reference_engine_torque;  /* SPN 544 reference engine torque; J1939 byte order */
+    uint16_t maximum_momentary_override_speed_point_7;  /* SPN 533 maximum momentary engine override speed (point 7); J1939 byte order */
+    uint8_t maximum_momentary_override_time_limit;  /* SPN 534 maximum momentary override time limit */
+    uint8_t requested_speed_control_range_lower_limit;  /* SPN 535 (10 rpm per bit) */
+    uint8_t requested_speed_control_range_upper_limit;  /* SPN 536 (10 rpm per bit) */
+    uint8_t requested_torque_control_range_lower_limit;  /* SPN 537; +125 offset (0x7d = 0 %) */
+    uint8_t requested_torque_control_range_upper_limit;  /* SPN 538; +125 offset */
 };

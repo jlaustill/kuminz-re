@@ -1361,30 +1361,22 @@ address,name,type,comment
 0x003fa7f2,fault_condition_result_working,word,
 0x003fa7f4,fault_condition_result_snapshot,word,
 0x003fa7f6,egr_valve_enable_timeout_flag,word,code: users: cm848_updateEgrValveAutozeroConditions, cm848_updateEgrValveEnableAndDiagnosticConditions. 1 while the electrical fault 726 is set or the position / control error problem is present and the over-current / over-temperature condition has not been seen; keeps the autozero from starting. Time-shared window (0x3F9800-0x3FDB30): xref_addr.py lists no access below 0x7F60 and a scan of the ... (was governor_speed_enable_timeout_timer)
-0x003fa7f8,j1939_pgn65251_payload,dword,the EC1 (PGN 65251) payload: 28 bytes (J1939-71 EC1: the torque curve points 1-5, high idle point 6, the endspeed governor gain, the reference torque, override point 7 and the control range limits); buildPgn65251EngineConfiguration1Payload fills it and the transmit descriptor points at it; typed dword here (the copies move it in chunks) (was fault_timer_state_base)
-0x003fa7fa,j1939_pgn65251_payload+2,,
-0x003fa7fb,j1939_pgn65251_payload+3,,
-0x003fa7fe,j1939_pgn65251_engine_speed_point_3,word,the EC1 (PGN 65251) payload, bytes 7-8: engine speed at point 3 (SPN 529) (was fault_counter_slot2_target)
-0x003fa800,j1939_pgn65251_payload_bytes_9_10,word,the EC1 (PGN 65251) payload, bytes 9-10: the percent torque at point 3 and the first byte of the point 4 speed (was fault_counter_slot3_target)
-0x003fa801,j1939_pgn65251_payload_bytes_9_10+1,,
-0x003fa804,j1939_pgn65251_engine_speed_point_5,word,the EC1 (PGN 65251) payload, bytes 13-14: engine speed at point 5 (SPN 531) (was fault_counter_slot4_target)
-0x003fa808,j1939_pgn65251_payload_bytes_17_18,word,the EC1 (PGN 65251) payload, bytes 17-18 (read as a dword through 20): the end of the high idle speed and the endspeed governor gain (was fault_slot_data_copy_a)
-0x003fa809,j1939_pgn65251_payload_byte_18,,
-0x003fa80c,j1939_pgn65251_payload_bytes_21_22,word,the EC1 (PGN 65251) payload, bytes 21-22 (read as a dword through 24): the end of the reference torque and the override speed (was fault_slot_data_copy_b)
-0x003fa810,j1939_pgn65251_control_range_limits,dword,the EC1 (PGN 65251) payload, bytes 25-28: the requested speed control range lower / upper and torque control range lower / upper limits (was fault_counter_slot7_target)
-0x003fa812,j1939_pgn65251_control_range_limits+2,,
-0x003fa813,j1939_pgn65251_control_range_limits+3,,
-0x003fa814,j1939_pgn65251_payload_previous,word,the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test: cm848_sendPgn65251EngineConfiguration1OnChange copies the payload here before it rebuilds it (was fault_timer_state_prev_snapshot)
-0x003fa81a,j1939_pgn65251_engine_speed_point_3_previous,word,the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 7-8 (was fault_counter_slot2_shadow)
-0x003fa81c,j1939_pgn65251_payload_bytes_9_10_previous,word,the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 9-10 (was fault_counter_slot3_shadow)
-0x003fa81d,j1939_pgn65251_payload_bytes_9_10_previous+1,,
-0x003fa820,j1939_pgn65251_engine_speed_point_5_previous,word,the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 13-14 (was fault_counter_slot4_shadow)
-0x003fa824,j1939_pgn65251_payload_bytes_17_18_previous,word,the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 17-18 (was fault_slot_data_shadow_a)
-0x003fa825,j1939_pgn65251_payload_byte_18_previous,,
-0x003fa828,j1939_pgn65251_payload_bytes_21_22_previous,word,the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 21-22 (was fault_slot_data_shadow_b)
-0x003fa82c,j1939_pgn65251_control_range_limits_previous,dword,the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 25-28 (was fault_counter_slot7_shadow)
-0x003fa82e,j1939_pgn65251_control_range_limits_previous+2,,
-0x003fa82f,j1939_pgn65251_control_range_limits_previous+3,,
+0x003fa7f8,j1939_pgn65251_payload,j1939_pgn65251_payload_t,the EC1 (PGN 65251) payload: 28 bytes (J1939-71 EC1: the torque curve points 1-5, high idle point 6, the endspeed governor gain, the reference torque, override point 7 and the control range limits); buildPgn65251EngineConfiguration1Payload fills it and the transmit descriptor points at it; typed dword here (the copies move it in chunks) (was fault_timer_state_base) (typed j1939_pgn65251_payload_t; PR #53 round 31)
+0x003fa7fe,j1939_pgn65251_payload.engine_speed_at_point_3,,(was j1939_pgn65251_engine_speed_point_3; PR #53 round 31) | earlier note: the EC1 (PGN 65251) payload, bytes 7-8: engine speed at point 3 (SPN 529) (was fault_counter_slot2_target)
+0x003fa800,j1939_pgn65251_payload.percent_torque_at_point_3,,(was j1939_pgn65251_payload_bytes_9_10; PR #53 round 31) | earlier note: the EC1 (PGN 65251) payload, bytes 9-10: the percent torque at point 3 and the first byte of the point 4 speed (was fault_counter_slot3_target)
+0x003fa804,j1939_pgn65251_payload.engine_speed_at_point_5,,(was j1939_pgn65251_engine_speed_point_5; PR #53 round 31) | earlier note: the EC1 (PGN 65251) payload, bytes 13-14: engine speed at point 5 (SPN 531) (was fault_counter_slot4_target)
+0x003fa808,j1939_pgn65251_payload.engine_speed_at_high_idle_point_6_high_byte,,(was j1939_pgn65251_payload_bytes_17_18; PR #53 round 31) | earlier note: the EC1 (PGN 65251) payload, bytes 17-18 (read as a dword through 20): the end of the high idle speed and the endspeed governor gain (was fault_slot_data_copy_a)
+0x003fa809,j1939_pgn65251_payload.endspeed_governor_gain,,(was j1939_pgn65251_payload_byte_18; PR #53 round 31)
+0x003fa80c,j1939_pgn65251_payload.reference_engine_torque,,(was j1939_pgn65251_payload_bytes_21_22; PR #53 round 31) | earlier note: the EC1 (PGN 65251) payload, bytes 21-22 (read as a dword through 24): the end of the reference torque and the override speed (was fault_slot_data_copy_b)
+0x003fa810,j1939_pgn65251_payload.requested_speed_control_range_lower_limit,,(was j1939_pgn65251_control_range_limits; PR #53 round 31) | earlier note: the EC1 (PGN 65251) payload, bytes 25-28: the requested speed control range lower / upper and torque control range lower / upper limits (was fault_counter_slot7_target)
+0x003fa814,j1939_pgn65251_payload_previous,j1939_pgn65251_payload_t,the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test: cm848_sendPgn65251EngineConfiguration1OnChange copies the payload here before it rebuilds it (was fault_timer_state_prev_snapshot) (typed j1939_pgn65251_payload_t; PR #53 round 31)
+0x003fa81a,j1939_pgn65251_payload_previous.engine_speed_at_point_3,,(was j1939_pgn65251_engine_speed_point_3_previous; PR #53 round 31) | earlier note: the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 7-8 (was fault_counter_slot2_shadow)
+0x003fa81c,j1939_pgn65251_payload_previous.percent_torque_at_point_3,,(was j1939_pgn65251_payload_bytes_9_10_previous; PR #53 round 31) | earlier note: the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 9-10 (was fault_counter_slot3_shadow)
+0x003fa820,j1939_pgn65251_payload_previous.engine_speed_at_point_5,,(was j1939_pgn65251_engine_speed_point_5_previous; PR #53 round 31) | earlier note: the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 13-14 (was fault_counter_slot4_shadow)
+0x003fa824,j1939_pgn65251_payload_previous.engine_speed_at_high_idle_point_6_high_byte,,(was j1939_pgn65251_payload_bytes_17_18_previous; PR #53 round 31) | earlier note: the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 17-18 (was fault_slot_data_shadow_a)
+0x003fa825,j1939_pgn65251_payload_previous.endspeed_governor_gain,,(was j1939_pgn65251_payload_byte_18_previous; PR #53 round 31)
+0x003fa828,j1939_pgn65251_payload_previous.reference_engine_torque,,(was j1939_pgn65251_payload_bytes_21_22_previous; PR #53 round 31) | earlier note: the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 21-22 (was fault_slot_data_shadow_b)
+0x003fa82c,j1939_pgn65251_payload_previous.requested_speed_control_range_lower_limit,,(was j1939_pgn65251_control_range_limits_previous; PR #53 round 31) | earlier note: the previous copy of the EC1 (PGN 65251) payload, kept for the send-on-change test, bytes 25-28 (was fault_counter_slot7_shadow)
 0x003fa830,j1939_pgn65251_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_pgn65251_tx_header / j1939_pgn65251_tx_length / j1939_pgn65251_data_ptr / j1939_pgn65251_end_ptr)
 0x003fa840,crank_reentry_speed_offset_applied_flag,word,1 once crank_reentry_speed has taken crank_exited_reentry_speed_offset (no e2m record) (was cold_start_rpm_threshold_updated_flag)
 0x003fa842,fault_slot_state_1,word,

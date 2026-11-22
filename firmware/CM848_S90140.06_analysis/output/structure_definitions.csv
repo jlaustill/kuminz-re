@@ -2949,3 +2949,26 @@ engine_protection_channel_history_t,,fueling_fault_log_flag,word,2,"+0x16 e2m Fu
 engine_protection_channel_history_t,,fueling_fault_log_index,word,2,"+0x18 e2m Fuel_Temperature_Fueling_Fault_Log_Index [UNITLESS] '[EPFTFLIN] Index into EPF fault log for Fuel temperature fueling'",,verified
 engine_protection_channel_history_t,,engine_speed_fault_log_flag,word,2,"+0x1a e2m Fuel_Temperature_RPM_Fault_Log_Flag [UNITLESS] '[EPFTRPFG] Fault log recording flag for fuel temperature RPM'",,verified
 engine_protection_channel_history_t,,engine_speed_fault_log_index,word,2,"+0x1c e2m Fuel_Temperature_RPM_Fault_Log_Index [UNITLESS] '[EPFTRPIN] Index into EPF fault log for fuel temperature RPM'",,verified
+# j1939_pgn65251_payload_t: the J1939 EC1 (PGN 65251) payload, 28 bytes, J1939 byte order; two instances (PR #53 round 31)
+j1939_pgn65251_payload_t,0x003fa7f8,engine_speed_at_idle_point_1,word,2,SPN 188 engine speed at idle (point 1); J1939 byte order (low byte at +0): the send-on-change test reads it as one (byte-swapped) halfword,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,percent_torque_at_idle_point_1,byte,1,SPN 539 percent torque at idle (point 1); +125 offset,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,engine_speed_at_point_2_low_byte,byte,1,SPN 528 engine speed at point 2; low byte,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,engine_speed_at_point_2_high_byte,byte,1,SPN 528; high byte (the test joins the two bytes),,verified
+j1939_pgn65251_payload_t,0x003fa7f8,percent_torque_at_point_2,byte,1,SPN 540; +125 offset,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,engine_speed_at_point_3,word,2,SPN 529; J1939 byte order,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,percent_torque_at_point_3,byte,1,SPN 541; +125 offset,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,engine_speed_at_point_4,word,2,SPN 530; J1939 byte order; at +9 (the test reads it with an unaligned halfword),,verified
+j1939_pgn65251_payload_t,0x003fa7f8,percent_torque_at_point_4,byte,1,SPN 542; +125 offset,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,engine_speed_at_point_5,word,2,SPN 531; J1939 byte order,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,percent_torque_at_point_5,byte,1,SPN 543; +125 offset,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,engine_speed_at_high_idle_point_6_low_byte,byte,1,SPN 532 engine speed at high idle (point 6); low byte,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,engine_speed_at_high_idle_point_6_high_byte,byte,1,SPN 532; high byte,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,endspeed_governor_gain,word,2,SPN 545 gain (Kp) of the endspeed governor: 0xffff (not available); initializePgn65251EngineConfiguration1Buffer writes it,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,reference_engine_torque,word,2,SPN 544 reference engine torque; J1939 byte order,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,maximum_momentary_override_speed_point_7,word,2,SPN 533 maximum momentary engine override speed (point 7); J1939 byte order,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,maximum_momentary_override_time_limit,byte,1,SPN 534 maximum momentary override time limit,,verified
+j1939_pgn65251_payload_t,0x003fa7f8,requested_speed_control_range_lower_limit,byte,1,SPN 535 (10 rpm per bit),,verified
+j1939_pgn65251_payload_t,0x003fa7f8,requested_speed_control_range_upper_limit,byte,1,SPN 536 (10 rpm per bit),,verified
+j1939_pgn65251_payload_t,0x003fa7f8,requested_torque_control_range_lower_limit,byte,1,SPN 537; +125 offset (0x7d = 0 %),,verified
+j1939_pgn65251_payload_t,0x003fa7f8,requested_torque_control_range_upper_limit,byte,1,SPN 538; +125 offset,,verified
+j1939_pgn65251_payload_t,0x003fa814,,,,second instance (j1939_pgn65251_payload_previous) - marker only,,verified

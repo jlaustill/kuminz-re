@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 10:31:51 MST 2026
+// Generated: Sun Nov 22 10:55:03 MST 2026
 
 
 //
@@ -18655,7 +18655,6 @@ void cm848_sendPgn65251EngineConfiguration1Message(void)
 // Function: cm848_sendPgn65251EngineConfiguration1OnChange @ 0x0001b778
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* The EC1 send-on-change test (J1939-71): copies the payload to j1939_pgn65251_payload_previous,
    rebuilds it and compares each speed (cm848_hasWordChangedByTenPercent) and percent torque
    (cm848_hasByteChangedByTenPercent) with its previous value; a change of 10 % or more sends the
@@ -18666,54 +18665,81 @@ void cm848_sendPgn65251EngineConfiguration1OnChange(void)
 {
   char cVar1;
   
-  j1939_pgn65251_payload_previous = j1939_pgn65251_payload._0_2_;
-  DAT_003fa816 = j1939_pgn65251_payload._2_1_;
-  DAT_003fa817._0_1_ = (undefined1)j1939_pgn65251_payload;
-  DAT_003fa817._1_1_ = DAT_003fa7fc;
-  DAT_003fa819 = DAT_003fa7fd;
-  j1939_pgn65251_engine_speed_point_3_previous = j1939_pgn65251_engine_speed_point_3;
-  _j1939_pgn65251_payload_bytes_9_10_previous = _j1939_pgn65251_payload_bytes_9_10;
-  j1939_pgn65251_engine_speed_point_5_previous = j1939_pgn65251_engine_speed_point_5;
-  DAT_003fa822 = DAT_003fa806;
-  DAT_003fa823 = DAT_003fa807;
-  _j1939_pgn65251_payload_bytes_17_18_previous = _j1939_pgn65251_payload_bytes_17_18;
-  _j1939_pgn65251_payload_bytes_21_22_previous = _j1939_pgn65251_payload_bytes_21_22;
-  j1939_pgn65251_control_range_limits_previous = j1939_pgn65251_control_range_limits;
+  j1939_pgn65251_payload_previous.engine_speed_at_idle_point_1 =
+       j1939_pgn65251_payload.engine_speed_at_idle_point_1;
+  j1939_pgn65251_payload_previous.percent_torque_at_idle_point_1 =
+       j1939_pgn65251_payload.percent_torque_at_idle_point_1;
+  j1939_pgn65251_payload_previous.engine_speed_at_point_2_low_byte =
+       j1939_pgn65251_payload.engine_speed_at_point_2_low_byte;
+  j1939_pgn65251_payload_previous.engine_speed_at_point_2_high_byte =
+       j1939_pgn65251_payload.engine_speed_at_point_2_high_byte;
+  j1939_pgn65251_payload_previous.percent_torque_at_point_2 =
+       j1939_pgn65251_payload.percent_torque_at_point_2;
+  j1939_pgn65251_payload_previous.engine_speed_at_point_3 =
+       j1939_pgn65251_payload.engine_speed_at_point_3;
+  j1939_pgn65251_payload_previous._8_4_ = j1939_pgn65251_payload._8_4_;
+  j1939_pgn65251_payload_previous.engine_speed_at_point_5 =
+       j1939_pgn65251_payload.engine_speed_at_point_5;
+  j1939_pgn65251_payload_previous.percent_torque_at_point_5 =
+       j1939_pgn65251_payload.percent_torque_at_point_5;
+  j1939_pgn65251_payload_previous.engine_speed_at_high_idle_point_6_low_byte =
+       j1939_pgn65251_payload.engine_speed_at_high_idle_point_6_low_byte;
+  j1939_pgn65251_payload_previous._16_4_ = j1939_pgn65251_payload._16_4_;
+  j1939_pgn65251_payload_previous._20_4_ = j1939_pgn65251_payload._20_4_;
+  j1939_pgn65251_payload_previous._24_4_ = j1939_pgn65251_payload._24_4_;
   buildPgn65251EngineConfiguration1Payload(&j1939_pgn65251_payload);
   cVar1 = cm848_hasWordChangedByTenPercent
-                    (j1939_pgn65251_payload_previous,j1939_pgn65251_payload._0_2_);
+                    (j1939_pgn65251_payload_previous.engine_speed_at_idle_point_1,
+                     j1939_pgn65251_payload.engine_speed_at_idle_point_1);
   if ((((cVar1 != '\x01') &&
-       (cVar1 = cm848_hasByteChangedByTenPercent(DAT_003fa816,j1939_pgn65251_payload._2_1_),
-       cVar1 != '\x01')) &&
+       (cVar1 = cm848_hasByteChangedByTenPercent
+                          (j1939_pgn65251_payload_previous.percent_torque_at_idle_point_1,
+                           j1939_pgn65251_payload.percent_torque_at_idle_point_1), cVar1 != '\x01'))
+      && (cVar1 = cm848_hasWordChangedByTenPercent
+                            (CONCAT11(j1939_pgn65251_payload_previous.
+                                      engine_speed_at_point_2_low_byte,
+                                      j1939_pgn65251_payload_previous.
+                                      engine_speed_at_point_2_high_byte),
+                             CONCAT11(j1939_pgn65251_payload.engine_speed_at_point_2_low_byte,
+                                      j1939_pgn65251_payload.engine_speed_at_point_2_high_byte)),
+         cVar1 != '\x01')) &&
+     ((cVar1 = cm848_hasByteChangedByTenPercent
+                         (j1939_pgn65251_payload_previous.percent_torque_at_point_2,
+                          j1939_pgn65251_payload.percent_torque_at_point_2), cVar1 != '\x01' &&
       (cVar1 = cm848_hasWordChangedByTenPercent
-                         (CONCAT11(DAT_003fa817._0_1_,(undefined1)DAT_003fa817),
-                          CONCAT11((undefined1)j1939_pgn65251_payload,DAT_003fa7fc)),
-      cVar1 != '\x01')) &&
-     ((cVar1 = cm848_hasByteChangedByTenPercent(DAT_003fa819,DAT_003fa7fd), cVar1 != '\x01' &&
-      (cVar1 = cm848_hasWordChangedByTenPercent
-                         (j1939_pgn65251_engine_speed_point_3_previous,
-                          j1939_pgn65251_engine_speed_point_3), cVar1 != '\x01')))) {
+                         (j1939_pgn65251_payload_previous.engine_speed_at_point_3,
+                          j1939_pgn65251_payload.engine_speed_at_point_3), cVar1 != '\x01')))) {
     cVar1 = cm848_hasByteChangedByTenPercent
-                      (j1939_pgn65251_payload_bytes_9_10_previous._0_1_,
-                       j1939_pgn65251_payload_bytes_9_10._0_1_);
+                      (j1939_pgn65251_payload_previous.percent_torque_at_point_3,
+                       j1939_pgn65251_payload.percent_torque_at_point_3);
     if (cVar1 != '\x01') {
-      cVar1 = cm848_hasWordChangedByTenPercent(ram0x003fa81d,ram0x003fa801);
+      cVar1 = cm848_hasWordChangedByTenPercent
+                        (j1939_pgn65251_payload_previous.engine_speed_at_point_4,
+                         j1939_pgn65251_payload.engine_speed_at_point_4);
       if (((cVar1 != '\x01') &&
           (cVar1 = cm848_hasByteChangedByTenPercent
-                             (_j1939_pgn65251_payload_bytes_9_10_previous & 0xff,
-                              _j1939_pgn65251_payload_bytes_9_10 & 0xff), cVar1 != '\x01')) &&
+                             (j1939_pgn65251_payload_previous._8_4_ & 0xff,
+                              j1939_pgn65251_payload._8_4_ & 0xff), cVar1 != '\x01')) &&
          ((cVar1 = cm848_hasWordChangedByTenPercent
-                             (j1939_pgn65251_engine_speed_point_5_previous,
-                              j1939_pgn65251_engine_speed_point_5), cVar1 != '\x01' &&
-          (cVar1 = cm848_hasByteChangedByTenPercent(DAT_003fa822,DAT_003fa806), cVar1 != '\x01'))))
+                             (j1939_pgn65251_payload_previous.engine_speed_at_point_5,
+                              j1939_pgn65251_payload.engine_speed_at_point_5), cVar1 != '\x01' &&
+          (cVar1 = cm848_hasByteChangedByTenPercent
+                             (j1939_pgn65251_payload_previous.percent_torque_at_point_5,
+                              j1939_pgn65251_payload.percent_torque_at_point_5), cVar1 != '\x01'))))
       {
         cVar1 = cm848_hasWordChangedByTenPercent
-                          (CONCAT11(DAT_003fa823,j1939_pgn65251_payload_bytes_17_18_previous._0_1_),
-                           CONCAT11(DAT_003fa807,j1939_pgn65251_payload_bytes_17_18._0_1_));
+                          (CONCAT11(j1939_pgn65251_payload_previous.
+                                    engine_speed_at_high_idle_point_6_low_byte,
+                                    j1939_pgn65251_payload_previous.
+                                    engine_speed_at_high_idle_point_6_high_byte),
+                           CONCAT11(j1939_pgn65251_payload.
+                                    engine_speed_at_high_idle_point_6_low_byte,
+                                    j1939_pgn65251_payload.
+                                    engine_speed_at_high_idle_point_6_high_byte));
         if ((cVar1 != '\x01') &&
            (cVar1 = cm848_hasByteChangedByTenPercent
-                              (j1939_pgn65251_control_range_limits_previous & 0xff,
-                               j1939_pgn65251_control_range_limits & 0xff), cVar1 != '\x01')) {
+                              (j1939_pgn65251_payload_previous._24_4_ & 0xff,
+                               j1939_pgn65251_payload._24_4_ & 0xff), cVar1 != '\x01')) {
           return;
         }
       }
@@ -18729,7 +18755,6 @@ void cm848_sendPgn65251EngineConfiguration1OnChange(void)
 // Function: initializePgn65251EngineConfiguration1Buffer @ 0x0001b900
 //
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Builds the transmit descriptor of EC1 (header 0xfee300: PGN 65251 Engine Configuration 1; 28 data
    bytes = j1939_pgn65251_payload) and seeds its not-available bytes; shared with CM550 0x33692 (the
    same code). (was initFaultTimerMessage) */
@@ -18744,10 +18769,10 @@ void initializePgn65251EngineConfiguration1Buffer(void)
   j1939_pgn65251_tx_message.header.data_length = 0x1c;
   j1939_pgn65251_tx_message.data_pointer = (undefined *)&j1939_pgn65251_payload;
   j1939_pgn65251_tx_message.data_end_pointer = &DAT_003fa83e;
-  ram0x003fa809 = 0xffff;
-  ram0x003fa825 = 0xffff;
-  j1939_pgn65251_control_range_limits._2_1_ = 0x7d;
-  j1939_pgn65251_control_range_limits_previous._2_1_ = 0x7d;
+  j1939_pgn65251_payload.endspeed_governor_gain = 0xffff;
+  j1939_pgn65251_payload_previous.endspeed_governor_gain = 0xffff;
+  j1939_pgn65251_payload.requested_torque_control_range_lower_limit = 0x7d;
+  j1939_pgn65251_payload_previous.requested_torque_control_range_lower_limit = 0x7d;
   cm848_initializeFaultDerateJ1939TorqueCurvePriority();
   cm848_initializeJ1939ReferenceEngineFuelingAndTorque();
   return;
@@ -38777,8 +38802,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  ushort receive_interval;
   byte all_transmits_overdue;
+  ushort receive_interval;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
