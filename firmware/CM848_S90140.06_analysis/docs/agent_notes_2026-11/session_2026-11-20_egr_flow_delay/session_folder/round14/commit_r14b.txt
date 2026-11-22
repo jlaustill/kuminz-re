@@ -1,0 +1,17 @@
+cm848: round 14 stage B - LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE from e2m 1496 +14's value labels (types)
+
+- **The labels:** e2m 1496 +14 LSG_Reference_Speed_State 'Indication of which logic is controlling LSG idle speed'
+  carries its own labels (keys hex): 0 COOLANT / 1 PARK_NEU / 2 EXTENDED / 3 AC / 4 J1850 / 5 BASE / 6 JCOMM / 7
+  MIN / 8 MAX / 9 ALTITUDE / A SIP / B TOOL / C MOVING. They are exactly the thirteen sources the code stores.
+- **Who stores what:** the desired speed selection stores 0-6 and 9-12, the slew stores 7 / 8, and the initializer
+  stores 5.
+- **The members** spell the labels out: LOW_SPEED_GOVERNOR_REFERENCE_COOLANT / _PARK_NEUTRAL / _EXTENDED_IDLE /
+  _AIR_CONDITIONING / _J1850 / _BASE / _J1939 / _MINIMUM / _MAXIMUM / _ALTITUDE / _SHIFT_IN_PROCESS / _TOOL /
+  _MOVING.
+- **Typed:** low_speed_governor_reference_t.reference_speed_state and
+  low_speed_governor_reference_speed_state_previous (both words).
+- **Checks:**
+  - check_enum_proof3.py: 0 functions differ beyond the enum substitutions (25 member renders).
+  - The headers compile.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

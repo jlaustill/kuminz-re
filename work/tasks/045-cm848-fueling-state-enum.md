@@ -317,7 +317,7 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
 - **The records.** All 33 are now `ema_filter_state_t` instances, named after what they filter: the call's output,
   or its input when the output is a local. Examples:
   - `power_take_off_speed_error_filter` (was `protection_filter_state_ptr` + `governor_integrator_working`);
-  - `governor_speed_error_delta_filter` (was `governor_bank2_cal_ptr`);
+  - `governor_speed_error_delta_filter` (was `governor_bank2_cal_ptr`; `low_speed_governor_error_filter` since PR #53 round 14);
   - `fuel_demand_delta_filter` (was `throttle_fuel_pgn_handler_pointer`);
   - the five fuel metering / fuel pressure governor records that were `cam_sync_*`;
   - `pressure_correction_first_filter` / `_second_filter` (two cascaded filters);

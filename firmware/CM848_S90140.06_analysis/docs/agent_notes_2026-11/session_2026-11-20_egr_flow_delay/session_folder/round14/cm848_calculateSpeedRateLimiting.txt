@@ -1,0 +1,54 @@
+=== cm848_calculateSpeedRateLimiting (lines 27836-27894, 53 non-blank)
+// Function: cm848_calculateSpeedRateLimiting @ 0x00028ba4
+//
+void cm848_calculateSpeedRateLimiting(void)
+{
+  word wVar1;
+  word wVar2;
+  word wVar3;
+  uint uVar4;
+  uint uVar5;
+  int iVar6;
+  short sStack_e;
+  wVar1 = low_speed_governor_filtered_speed_error;
+  uVar5 = (uint)(short)(governor_speed_error_computed - governor_speed_error_reference);
+  uVar4 = (uint)(short)governor_rpm_limit_cal;
+  if ((((int)uVar4 <= (int)uVar5) &&
+      (((governor_output_t_0040aec2.governor_output == 0xb ||
+        (uVar4 = (uint)(short)governor_output_mode_limit_cal, (int)uVar5 <= (int)uVar4)) &&
+       (uVar4 = uVar5, governor_output_t_0040aec2.governor_output == 0xb)))) &&
+     ((int)(short)governor_speed_limit_upper_cal < (int)uVar5)) {
+    uVar4 = (int)(short)governor_speed_limit_upper_cal;
+  }
+  governor_speed_demand_working = (word)uVar4;
+  iVar6 = (int)((uVar4 & 0xffff) * (int)DAT_0005c4b0 -
+               (uint)engine_speed_state.filtered_engine_speed * (int)DAT_0005c4b0) >> 9;
+  if (iVar6 < -0x8000) {
+    iVar6 = -0x8000;
+  }
+  else {
+    sStack_e = (short)iVar6;
+    iVar6 = (int)sStack_e;
+  }
+  low_speed_governor_filtered_speed_error =
+       cm848_signedFirstOrderFilter(iVar6,&governor_speed_error_delta_filter);
+  wVar2 = governor_speed_error_rate;
+  wVar3 = DAT_0005c4b2;
+  if (((short)DAT_0005c4b2 < (short)low_speed_governor_filtered_speed_error) ||
+     (wVar3 = DAT_0005c4b4, (short)low_speed_governor_filtered_speed_error < (short)DAT_0005c4b4)) {
+    governor_speed_error_delta_filter.accumulator = (int)(short)wVar3 << 0x10;
+    low_speed_governor_filtered_speed_error = wVar3;
+  }
+  governor_speed_error_rate = low_speed_governor_filtered_speed_error - wVar1;
+  if ((short)governor_speed_error_rate < 0x641) {
+    if ((short)governor_speed_error_rate < -0x640) {
+      governor_speed_error_rate = 0xf9c0;
+    }
+  }
+  else {
+    governor_speed_error_rate = 0x640;
+  }
+  governor_speed_error_rate_adjusted = governor_speed_error_rate - wVar2;
+  return;
+}
+//

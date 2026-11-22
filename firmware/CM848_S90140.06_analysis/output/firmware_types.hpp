@@ -1026,7 +1026,7 @@ typedef enum {
     MAIN_INJECTION_TIMING_SOURCE_COOLANT_COMPONENT = 20,  /* cm848_calculateMainInjectionTiming: the coolant component won */
     MAIN_INJECTION_TIMING_SOURCE_BAROMETRIC_PRESSURE_COMPONENT = 21,  /* cm848_calculateMainInjectionTiming: the barometric pressure component won */
     MAIN_INJECTION_TIMING_SOURCE_BOOST_COMPONENT = 22,  /* cm848_calculateMainInjectionTiming: the boost component won */
-    MAIN_INJECTION_TIMING_SOURCE_GOVERNOR_LIMIT_MINIMUM = 23,  /* cm848_calculateMainInjectionTiming: raised to injection_timing_main_governor_limit_minimum while governor_speed_limit_active_flag is set */
+    MAIN_INJECTION_TIMING_SOURCE_GOVERNOR_LIMIT_MINIMUM = 23,  /* cm848_calculateMainInjectionTiming: raised to injection_timing_main_governor_limit_minimum while low_speed_governor_extended_idle_active_flag is set */
     MAIN_INJECTION_TIMING_SOURCE_WORKING_MINIMUM = 24,  /* cm848_calculateMainInjectionTiming: raised to injection_timing_demand_min_working */
     MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MAXIMUM_LIMIT = 29,  /* cm848_calculateMainInjectionTiming: the base command won and the intermediate source code was 27 */
     MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MINIMUM_LIMIT = 30,  /* cm848_calculateMainInjectionTiming: the base command won and the intermediate source code was 28 */
@@ -2776,7 +2776,7 @@ struct algorithm_enable_flags_18_t {
 };
 
 struct algorithm_enable_flags_41_t {
-    uint16_t engine_retarder_speed_limit_enable : 1;  /* bit 0: no e2m name; code only. cm848_updateEngineRetarderEnableState (lhz at 0x41848), cm848_calculateEngineRetarderSelectionPercent (0x41998) and cm848_updateEngineRetarderActiveState (0x41e5c): while governor_speed_limit_active_flag is set and this bit is set the retarder selection percent is forced to 100 and engine_retarder_active_flag stays 0. Clear in this calibration (0x7ca6). */
+    uint16_t engine_retarder_speed_limit_enable : 1;  /* bit 0: no e2m name; code only. cm848_updateEngineRetarderEnableState (lhz at 0x41848), cm848_calculateEngineRetarderSelectionPercent (0x41998) and cm848_updateEngineRetarderActiveState (0x41e5c): while low_speed_governor_extended_idle_active_flag is set and this bit is set the retarder selection percent is forced to 100 and engine_retarder_active_flag stays 0. Clear in this calibration (0x7ca6). */
     uint16_t brake_switch_diagnostic_enable : 1;  /* bit 1: e2m Brake_Switch_Diag_Enable. cm848_monitorBrakeSwitchPairAgreement (lhz 82(r31) at 0x512140). Code agrees (wave 10). Set in this calibration (0x7ca6). */
     uint16_t fuel_level_rationality_diagnostic_enable : 1;  /* bit 2: e2m Fuel_Lvl_Rationality_Enable. cm848_monitorFuelLevelLowDistance (lhz at 0x5307f8). Code agrees (wave 10). Set in this calibration (0x7ca6). */
     uint16_t reserved_bit_3 : 1;  /* bit 3: no e2m name. No reader in either bank (sweep of both banks). Clear in this calibration (0x7ca6). */

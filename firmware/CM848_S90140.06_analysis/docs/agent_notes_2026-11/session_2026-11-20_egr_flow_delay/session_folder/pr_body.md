@@ -404,6 +404,17 @@ state enum, the flag bytes.**
 - **Stage D (comments, after a review):** SCI 0x25 tests 5-10 cut out firing-order slots 1-6 (cylinders 1 / 5 / 3 /
   6 / 2 / 4), not injectors 1-6. The fault cutout's bank masks 0x55 / 0xaa only fit firing order.
 
+**Round 14 (the relayed "keep going" again): the low speed governor reference speed chain.**
+- **The records:** e2m 14EE / 1496 / 14EF / 14F0, aligned by relative offset (they lie past the dumped parameter ID
+  table). Every record matches its code use and the dump values.
+- **Stage A (29de6d0, label-only):**
+  - the coolant temperature speed, the desired speed selection and the slew (were `cm848_updateSpeedLimitFromCoolant`
+    / `cm848_calculateProtectionSpeedLimits` / `cm848_applySpeedLimitConstraints`);
+  - 68 words, among them the A/C / drive / park / extended idle / tool / moving speeds and the rates;
+  - the struct `low_speed_governor_reference_t`.
+- **Stage B (d65de3e, types):** `LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE` from the record's own value labels.
+- **Stage C (3307773, types):** a dword split into its two halves.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -495,6 +506,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 14: stages A and C are EQUIVALENT (C with the split words mapped back to the old pieces); stage B
+  passes `check_enum_proof3.py`.
   - the thunk stage still makes 19 thunks and 13 call overrides.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
@@ -517,13 +530,13 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 13:**
-  - the low speed governor reference speed chain (about 75 rows; task 046 lists the three functions' roles);
+- **Open after round 14:**
+  - the LSG PID internals and the droop word at 0x40aedc (task 046);
   - the fault status records (a packed record array, but the range is time-shared RAM);
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;
   - the switch bytes 0 / 1 / 3 as bitfields (the user's call; see round 11);
-  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches; round 13 the end-of-line test sequencer.
+  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches; round 13 the end-of-line test sequencer; round 14 the low speed governor reference speed chain.
 - **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

@@ -159,7 +159,7 @@ def write_rows_edits_in_place_and_inserts_after_the_lower_neighbour():
 @check
 def dumps_size_the_hand_written_tables_the_same():
     image = L.MemoryImage()
-    # arrays.csv cruise_switch_adc_band_table_x is word[21]; governor_minimum_speed_by_vehicle_speed_axis word[10]
+    # arrays.csv cruise_switch_adc_band_table_x is word[21]; low_speed_governor_moving_speed_axis word[10]
     return L.axis_points(image.word, 0x5ab94) == 20 and L.axis_points(image.word, 0x407172) == 9
 
 

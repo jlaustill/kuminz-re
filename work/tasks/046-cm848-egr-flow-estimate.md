@@ -326,7 +326,7 @@ source lookup and the TSC1 dispatcher (scripts in `session_folder/round6/`).
     `etc1_governor_mode_history_write_index`, DAT_003feb56-5e (the mode history), DAT_003feb64 (the duration),
     `governor_transition_state_snapshot`. The "see j1939mon specification" text says it is one structure.
   - The other `cm848_*Governor*` functions of the TSC1 path: `cm848_resetGovernorState`, `governor_reset`,
-    `governor_resetModeStateOnCondition`, `cm848_initGovernorStateVariables` and `initGovernorJ1939Bypass` reset the
+    `governor_resetModeStateOnCondition`, `cm848_initGovernorStateVariables` (now `cm848_initializeLowSpeedGovernorReferenceSpeed`) and `initGovernorJ1939Bypass` reset the
     Jcomm state.
   - `retarder_tsc1_mode_transition_timer` / `retarder_tsc1_speed_mode_flag`: read the retarder handler in full.
 
@@ -382,7 +382,7 @@ Hand work on the round 6 leads (scripts in `session_folder/round7/`).
     `protection_*` names (e2m 8D14 drifts). (Round 8: they are `cm848_learnVehicleInertia` and
     `cm848_selectGovernorPressureAntiHunt` of the 48RE controller; the e2m vocabulary is the `RE_*` blocks.)
   - The engine run-state machine (819B).
-  - `cm848_initGovernorStateVariables`, a mixed governor initialization.
+  - `cm848_initGovernorStateVariables` (now `cm848_initializeLowSpeedGovernorReferenceSpeed`), a mixed governor initialization.
 
 ## Done, round 8 (2026-11-21, same PR; the user's next "keep going"): the 48RE transmission controller
 
@@ -819,7 +819,8 @@ Scripts are in `session_folder/round13/`.
     substitutions.
 - **Stage C (f951258, label-only): the record-anchored governor reference speeds.**
   - **DRB SCI 0x19 'SET RPM'** (19-7D 'SET ECM RPM 1000' = 125 x 8): `sci_set_engine_speed_request`, with its 0xe5c1
-    key and a 72-pass timeout. The LSG target selection takes it as `low_speed_governor_service_speed_floor`.
+    key and a 72-pass timeout. The LSG target selection takes it as `low_speed_governor_service_speed_floor`
+    (`low_speed_governor_tool_speed_request` since round 14: e2m 1496 +1C LSG_Tool_Speed).
   - **e2m block 0008** (checked in both dumps):
     - `LSG_Breakpoint_Speed` is `low_speed_governor_base_reference_speed_cal` (750 rpm).
     - `ASG_Minimum` / `_Maximum` for sets 1 and 2 (740 / 4650 rpm) and their blend
@@ -828,18 +829,7 @@ Scripts are in `session_folder/round13/`.
   - **Bit maps in the comments:** `end_of_line_test_enable_flags`, the in-plant flag bytes and
     `service_test_request_flags`.
 - **Round 13 leads:**
-  - **The low speed governor reference speed chain** (about 75 rows) has almost no e2m records, so it needs its own
-    round:
-    - `cm848_updateSpeedLimitFromCoolant` is the coolant idle speed (e2m 8A51 / 8A52 `LSG_Coolant_*`). Its engage /
-      disengage timers are not traced yet.
-    - `cm848_calculateProtectionSpeedLimits` is the LSG target selection. It takes the largest of: the base
-      reference speed (source 5), the coolant idle (0), the park / neutral idle (1), the cold idle-up (2: battery and
-      coolant cold), switch 13 (3), the PCI idle request (4), the barometric idle (9), the service floor (11) and the
-      moving-vehicle table (12, e2m 8C51 / 8C52). Source 10 means a shift is in process, and 6 is the TSC1 override.
-    - `cm848_applySpeedLimitConstraints` ramps `idle_reference_speed` toward the target. The `thermal_governor_*`
-      words are its up / down rates, and the minimum (source 7) and maximum (source 8) clamps follow.
-    - The source code `low_speed_governor_reference_t.governor_output` needs an enum with every value 0-12 proved; 7 and 8 are
-      stored in the ramp function.
+  - **The low speed governor reference speed chain:** resolved in round 14 (below).
   - **The injector cutout markers** at 0x3fcf64 are a `word[8]` array candidate (the cancel loop reads them with
     `lhz`). The request bytes at 0x3fcf61-62 are the callback's receive buffer (stored at 0x3fcf61 + count).
   - **The ASG leftovers:** `governor_tuning_set_blend_weight` (its default is e2m 1387 +8 ASG_Droop_Flag_Trim, a
@@ -851,6 +841,38 @@ Scripts are in `session_folder/round13/`.
   - **e2m 1981 +0 `EOL_Alternator_Test_State`** (0x3fee9a) has no access in either bank.
   - **`cm848_validateWriteAuth`'s local declaration order** flips between builds of different CSVs. The DECL pattern
     of `reverse_names.py` probably does not match its array locals.
+
+## Done, round 14 (2026-11-21, same PR; the relayed "keep going" again): the low speed governor reference speed chain
+
+Scripts are in `session_folder/round14/`.
+- **The records:** the Cummins e2m blocks lie past the end of the dumped parameter ID table, so they are aligned by
+  relative offset. Every record is checked against its code use and the dump values:
+  - 14EE (ROM settings) at 0x4070ee: all 32 records +0..+3E. 8C76 follows at 0x40712e, so 11.46 has no +40 / +42.
+  - 1496 (RAM) at 0x40aeb2: all 16 records. +14 `LSG_Reference_Speed_State` is the source code, and +1A
+    `SCI_Cmd19_Status` is round 13's 0xE5C1 key.
+  - 14EF (ROM) at 0x5c4ae (it ends where 8A51 starts) and 14F0 (RAM) at 0x40aede: the LSG error terms.
+  - The widths match the e2m sizes (14EE +28 and 1496 +16 are the 4-byte records).
+- **Stage A (29de6d0, label-only):** 68 globals, 7 functions, the struct and 3 new rows.
+  - The task `cm848_updateLowSpeedGovernorReferenceSpeed` runs the coolant temperature speed
+    (`cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed`), the desired speed selection
+    (`cm848_selectLowSpeedGovernorDesiredReferenceSpeed`, was `cm848_calculateProtectionSpeedLimits`) and the slew
+    (`cm848_slewLowSpeedGovernorReferenceSpeed`; the `thermal_governor_*` words were its rates).
+  - The struct at 0x40aec2 is `low_speed_governor_reference_t` (reference speed / no-load fuel / state / altitude
+    speed).
+  - The three `*_PN_Enable` flags read backwards (0 = park / neutral at rest only), so they are named
+    `*_outside_park_neutral_enable`.
+  - Switch 13 is e2m 1612 `AC_On_Off_Switch`.
+- **Stage B (d65de3e, types):** `LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE`, from the record's own value labels (0
+  COOLANT ... 12 MOVING), exactly the thirteen sources the code stores. `check_enum_proof3.py`: 0 functions differ.
+- **Stage C (3307773, types):** the 0x3faf7a dword is two words: the extended idle conditions flag, and the base
+  reference speed's boot copy (only the initializer writes it). EQUIVALENT with the old pieces mapped back.
+- **Round 14 leads:**
+  - **0x40aedc** is subtracted from the reference before droop, but its only store is 0 (`governor_speed_error_reference`;
+    the droop or a throttle adjustment).
+  - **The LSG PID internals** in `cm848_runLowSpeedGovernor` (`governor_speed_debounce_active_flag`,
+    `governor_speed_error_prev_snapshot`, `governor_speed_low_clamp`; e2m 1064 / 1065).
+  - **The fuel by throttle table** of `cm848_calculateLowSpeedGovernorNoLoadFuel` (`governor_fuel_demand_axis_cal` /
+    `_output_cal` at 0x40713a) has no record yet.
 
 ## Leads (not in this PR)
 

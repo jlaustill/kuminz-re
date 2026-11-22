@@ -293,3 +293,14 @@ Hand work on the round 7 lead.
   `keyed_refresh_audit_refs.py` is the same audit pinned to two commits.
 - **Logs:** the round 13 build logs and the final verify log are in the large-files tarball.
 - **Commit messages:** `commit_r13*.txt`.
+
+## Round 14: the low speed governor reference speed chain (`session_folder/round14/`)
+
+- **Stage A:** `worklist_r14a.py` (68 globals, 7 functions), `apply_r14a_struct.py` (the struct at 0x40aec2) and
+  `new_r14a.json` (the 14EF gain and clamps).
+- **Stage B:** `apply_r14b_enum.py`, proved with round 13's `check_enum_proof3.py`.
+- **Stage C:** `apply_r14c_split.py`; its proof map sends the two words back to the old `._0_2_` / `._2_2_` pieces.
+- **Closing:** `apply_r14_closing.py`.
+- **Logs and commit messages:** the round 14 build logs are in the large-files tarball; the messages are
+  `commit_r14*.txt`.
+

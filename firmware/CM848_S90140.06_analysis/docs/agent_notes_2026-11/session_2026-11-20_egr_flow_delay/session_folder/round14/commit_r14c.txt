@@ -1,0 +1,14 @@
+cm848: round 14 stage C - the 0x3faf7a dword is two words (types)
+
+governor_speed_limit_exceeded_flag was a dword whose two halves the decompile read as ._0_2_ / ._2_2_ pieces.
+Every access is a halfword (sth @ 0x291f0 / lhz @ 0x29a8c for +0; sth @ 0x29c5c / lhz @ 0x2981c for +2).
+- **+0** low_speed_governor_extended_idle_conditions_flag: 1 while the extended idle conditions hold.
+- **+2** low_speed_governor_base_reference_speed_boot_copy: the base reference speed as it was at boot. Only the
+  initializer writes it; while the EEPROM value differs, the desired speed is the base (state 5).
+  - It replaces the legacy offcut row governor_speed_limit_exceeded_flag+2.
+- **Its own build:** the range is inside the RAM copy of dispatchCanMessageHandlers.
+- **Checks:**
+  - reverse_names.py with the two words mapped back to the old pieces: EQUIVALENT.
+  - 19 thunks / 13 call overrides; the headers compile.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

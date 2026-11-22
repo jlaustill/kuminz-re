@@ -1,0 +1,5 @@
+[
+ ["0x0005c4b0", "low_speed_governor_error_filter_gain", "e2m 14EF +2 LSG_Error_Filter_Gain (512 = 1.0 here): cm848_calculateLowSpeedGovernorErrorTerms scales the speed error by it >> 9 (block aligned by offset at 0x5c4ae, ending where e2m 8A51 starts) (new row 2026-11-21, round 14)"],
+ ["0x0005c4b2", "low_speed_governor_filtered_error_maximum", "e2m 14EF +4 LSG_Filter_Clamp_Max (8000 here): the upper clamp of low_speed_governor_filtered_speed_error; at the clamp the filter accumulator is preset (new row 2026-11-21, round 14)"],
+ ["0x0005c4b4", "low_speed_governor_filtered_error_minimum", "e2m 14EF +6 LSG_Filter_Clamp_Min (-8000 here): the lower clamp (new row 2026-11-21, round 14)"]
+]

@@ -1,0 +1,3 @@
+address,name,old_label,kind
+0x003faf7a,low_speed_governor_extended_idle_conditions_flag,governor_speed_limit_exceeded_flag._0_2_,global
+0x003faf7c,low_speed_governor_base_reference_speed_boot_copy,governor_speed_limit_exceeded_flag._2_2_,global
