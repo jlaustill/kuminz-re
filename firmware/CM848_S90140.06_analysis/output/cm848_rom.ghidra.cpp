@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 14:26:28 MST 2026
+// Generated: Sun Nov 22 14:57:44 MST 2026
 
 
 //
@@ -22539,7 +22539,8 @@ void cm848_calculateEngineRetarderTorque(void)
     }
     wVar1 = lookupTableInterpolation
                       (&engine_retarder_torque_cached_axis_offset,
-                       engine_speed_state.filtered_engine_speed,governor_load_xaxis_cal,in_r6,0);
+                       engine_speed_state.filtered_engine_speed,
+                       engine_retarder_torque_engine_speed_axis,in_r6,0);
     if ((short)wVar1 < -31999) {
       engine_retarder_torque_percent_times_256 = 0x8300;
     }
@@ -22939,10 +22940,10 @@ void cm848_registerJ1939DiagnosticHandlers(void)
 /* Returns the maximum engine torque in lb-ft at the engine speed param_1 (1/8 rpm): the e2m
    MT_Max_Torque_Map (Table with max torque corresp. to MTTQMPXA values; engine speed axis 140E
    MT_RPM_Axis x alpha axis 1447 MT_Alpha_Axis, 600 lb-ft at its peak in the ROM grid). The ROM rows
-   named j1939_fuel_table_xaxis_cal / j1939_fuel_table_ystart_cal / j1939_fuel_table_yend_cal
-   (0x5c556 / 0x5c582 / 0x5c58e) are this torque map, not a fuel table. It looks the grid up with
-   fresh cache words at the alpha 0 row and at the two chi map rows combustion_chi_lower_map_number
-   / combustion_chi_upper_map_number (x 0x4000) and blends them with cm848_interpolateAlphaChiValue
+   named maximum_torque_map_x_axis / maximum_torque_map_y_axis / maximum_torque_map_grid (0x5c556 /
+   0x5c582 / 0x5c58e) are this torque map, not a fuel table. It looks the grid up with fresh cache
+   words at the alpha 0 row and at the two chi map rows combustion_chi_lower_map_number /
+   combustion_chi_upper_map_number (x 0x4000) and blends them with cm848_interpolateAlphaChiValue
    (0x14528) by the chi and alpha of combustion_reference_state, as
    cm848_lookupChiMaximumFuelAtSpeed (0x164e4) does for the maximum fuel.
    cm848_calculateFuelDemandFilter (0x29c98) does the same at the current engine speed into
@@ -22967,22 +22968,22 @@ undefined2 cm848_lookupMaximumTorqueAtEngineSpeed(word param_1)
   local_30[4] = 2;
   local_30[5] = 2;
   wVar2 = cm848_dualAxisTableInterpolation
-                    (local_30,param_1,j1939_fuel_table_xaxis_cal,0,j1939_fuel_table_ystart_cal,
-                     j1939_fuel_table_yend_cal,0);
+                    (local_30,param_1,maximum_torque_map_x_axis,0,maximum_torque_map_y_axis,
+                     maximum_torque_map_grid,0);
   uVar1 = (uint)combustion_chi_lower_map_number << 0xe;
   if (0xffff < uVar1) {
     uVar1 = 0xffff;
   }
   wVar3 = cm848_dualAxisTableInterpolation
-                    (local_30 + 2,param_1,j1939_fuel_table_xaxis_cal,(word)uVar1,
-                     j1939_fuel_table_ystart_cal,j1939_fuel_table_yend_cal,0);
+                    (local_30 + 2,param_1,maximum_torque_map_x_axis,(word)uVar1,
+                     maximum_torque_map_y_axis,maximum_torque_map_grid,0);
   uVar1 = (uint)combustion_chi_upper_map_number << 0xe;
   if (0xffff < uVar1) {
     uVar1 = 0xffff;
   }
   wVar4 = cm848_dualAxisTableInterpolation
-                    (local_30 + 4,param_1,j1939_fuel_table_xaxis_cal,(word)uVar1,
-                     j1939_fuel_table_ystart_cal,j1939_fuel_table_yend_cal,0);
+                    (local_30 + 4,param_1,maximum_torque_map_x_axis,(word)uVar1,
+                     maximum_torque_map_y_axis,maximum_torque_map_grid,0);
   uVar5 = cm848_interpolateAlphaChiValue
                     (wVar3,wVar4,wVar2,combustion_chi_lower_map_number,
                      combustion_chi_upper_map_number,combustion_reference_state.chi_hundredths,
@@ -24222,31 +24223,35 @@ void cm848_selectEngineRetarderStagePercent(void)
   engine_retarder_stage_maximum_torque =
        lookupTableInterpolation
                  (&engine_retarder_torque_stage_1_cached_axis_offset,
-                  engine_speed_state.filtered_engine_speed,governor_load_xaxis_cal,
+                  engine_speed_state.filtered_engine_speed,engine_retarder_torque_engine_speed_axis,
                   engine_retarder_torque_stage_1_values,0);
   if (engine_retarder_stage_maximum_torque < engine_retarder_requested_torque) {
     engine_retarder_stage_maximum_torque =
          lookupTableInterpolation
                    (&engine_retarder_torque_stage_2_cached_axis_offset,
-                    engine_speed_state.filtered_engine_speed,governor_load_xaxis_cal,
-                    engine_retarder_torque_stage_2_values,0);
+                    engine_speed_state.filtered_engine_speed,
+                    engine_retarder_torque_engine_speed_axis,engine_retarder_torque_stage_2_values,0
+                   );
     if (engine_retarder_stage_maximum_torque < engine_retarder_requested_torque) {
       engine_retarder_stage_maximum_torque =
            lookupTableInterpolation
                      (&engine_retarder_torque_stage_3_cached_axis_offset,
-                      engine_speed_state.filtered_engine_speed,governor_load_xaxis_cal,
-                      engine_retarder_torque_stage_3_values,0);
+                      engine_speed_state.filtered_engine_speed,
+                      engine_retarder_torque_engine_speed_axis,engine_retarder_torque_stage_3_values
+                      ,0);
       if (engine_retarder_stage_maximum_torque < engine_retarder_requested_torque) {
         engine_retarder_stage_maximum_torque =
              lookupTableInterpolation
                        (&engine_retarder_torque_stage_4_cached_axis_offset,
-                        engine_speed_state.filtered_engine_speed,governor_load_xaxis_cal,
+                        engine_speed_state.filtered_engine_speed,
+                        engine_retarder_torque_engine_speed_axis,
                         engine_retarder_torque_stage_4_values,0);
         if (engine_retarder_stage_maximum_torque < engine_retarder_requested_torque) {
           engine_retarder_stage_maximum_torque =
                lookupTableInterpolation
                          (&engine_retarder_torque_stage_5_cached_axis_offset,
-                          engine_speed_state.filtered_engine_speed,governor_load_xaxis_cal,
+                          engine_speed_state.filtered_engine_speed,
+                          engine_retarder_torque_engine_speed_axis,
                           engine_retarder_torque_stage_5_values,0);
           if (engine_retarder_stage_maximum_torque < engine_retarder_requested_torque) {
             if (engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL) {
@@ -28773,8 +28778,9 @@ void cm848_calculateLowSpeedGovernorNoLoadFuel(void)
                      low_speed_governor_adjusted_reference_before_droop,
                      friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   wVar2 = lookupTableInterpolation
-                    (&governor_interp_table_state_b,commanded_throttle_state.commanded_throttle,
-                     governor_fuel_demand_axis_cal,governor_fuel_demand_output_cal,0);
+                    (&low_speed_governor_no_load_fuel_cached_axis_offset,
+                     commanded_throttle_state.commanded_throttle,
+                     low_speed_governor_no_load_fuel_axis,low_speed_governor_no_load_fuel_values,0);
   low_speed_governor_reference.no_load_fuel = no_load_fuel_quantity;
   if ((low_speed_governor_final_gain_state != 0) && (low_speed_governor_final_gain_state != 1)) {
     low_speed_governor_reference.no_load_fuel =
@@ -28824,7 +28830,7 @@ void cm848_initGovernorLookupDimensions(void)
 
 {
   friction_fuel_by_engine_speed_cached_axis_offset = 2;
-  governor_interp_table_state_b = 2;
+  low_speed_governor_no_load_fuel_cached_axis_offset = 2;
   return;
 }
 
@@ -28843,25 +28849,25 @@ void cm848_calculateFuelDemandFilter(void)
   uint uVar4;
   
   wVar1 = cm848_dualAxisTableInterpolation
-                    (&fuel_demand_interp_state_a,engine_speed_state.filtered_engine_speed,
-                     j1939_fuel_table_xaxis_cal,0,j1939_fuel_table_ystart_cal,
-                     j1939_fuel_table_yend_cal,0);
+                    (maximum_torque_map_alpha_0_cached_axis_offsets,
+                     engine_speed_state.filtered_engine_speed,maximum_torque_map_x_axis,0,
+                     maximum_torque_map_y_axis,maximum_torque_map_grid,0);
   uVar4 = (uint)combustion_chi_lower_map_number << 0xe;
   if (0xffff < uVar4) {
     uVar4 = 0xffff;
   }
   wVar2 = cm848_dualAxisTableInterpolation
-                    (&fuel_demand_interp_state_c,engine_speed_state.filtered_engine_speed,
-                     j1939_fuel_table_xaxis_cal,(word)uVar4,j1939_fuel_table_ystart_cal,
-                     j1939_fuel_table_yend_cal,0);
+                    (maximum_torque_map_chi_lower_cached_axis_offsets,
+                     engine_speed_state.filtered_engine_speed,maximum_torque_map_x_axis,(word)uVar4,
+                     maximum_torque_map_y_axis,maximum_torque_map_grid,0);
   uVar4 = (uint)combustion_chi_upper_map_number << 0xe;
   if (0xffff < uVar4) {
     uVar4 = 0xffff;
   }
   wVar3 = cm848_dualAxisTableInterpolation
-                    (&fuel_demand_interp_state_e,engine_speed_state.filtered_engine_speed,
-                     j1939_fuel_table_xaxis_cal,(word)uVar4,j1939_fuel_table_ystart_cal,
-                     j1939_fuel_table_yend_cal,0);
+                    (maximum_torque_map_chi_upper_cached_axis_offsets,
+                     engine_speed_state.filtered_engine_speed,maximum_torque_map_x_axis,(word)uVar4,
+                     maximum_torque_map_y_axis,maximum_torque_map_grid,0);
   fuel_demand_filter_dimension =
        cm848_interpolateAlphaChiValue
                  (wVar2,wVar3,wVar1,combustion_chi_lower_map_number,combustion_chi_upper_map_number,
@@ -28883,12 +28889,12 @@ void cm848_initFuelDemandFilterDimensions(void)
 
 {
   fuel_demand_filter_dimension = 1;
-  fuel_demand_interp_state_a = 2;
-  fuel_demand_interp_state_b = 2;
-  fuel_demand_interp_state_c = 2;
-  fuel_demand_interp_state_d = 2;
-  fuel_demand_interp_state_e = 2;
-  fuel_demand_interp_state_f = 2;
+  maximum_torque_map_alpha_0_cached_axis_offsets[0] = 2;
+  maximum_torque_map_alpha_0_cached_axis_offsets[1] = 2;
+  maximum_torque_map_chi_lower_cached_axis_offsets[0] = 2;
+  maximum_torque_map_chi_lower_cached_axis_offsets[1] = 2;
+  maximum_torque_map_chi_upper_cached_axis_offsets[0] = 2;
+  maximum_torque_map_chi_upper_cached_axis_offsets[1] = 2;
   return;
 }
 
@@ -30650,9 +30656,10 @@ void cm848_estimateTurbochargerSpeed(void)
   turbocharger_speed_estimate_engine_speed_filtered = (word)dVar1;
   turbocharger_speed_estimate_corrected_speed =
        cm848_dualAxisTableInterpolation
-                 (&DAT_003fb01a,(word)uVar3,injection_timing_temp_corr_axis1_cal,
+                 (turbocharger_corrected_speed_cached_axis_offsets,(word)uVar3,
+                  turbocharger_corrected_speed_x_axis,
                   turbocharger_speed_estimate_engine_speed_filtered,
-                  injection_timing_temp_corr_ystart_cal,injection_timing_temp_corr_yend_cal,0);
+                  turbocharger_corrected_speed_y_axis,turbocharger_corrected_speed_grid,0);
   uVar3 = ((uint)compressor_inlet_temperature_square_root *
           (uint)turbocharger_speed_estimate_corrected_speed) / 0x855;
   sVar4 = (short)uVar3;
@@ -30700,8 +30707,8 @@ void cm848_initializeTurbochargerSpeedEstimate(void)
 
 {
   map_fuel_correction_prev_snapshot = 0;
-  DAT_003fb01a = 2;
-  DAT_003fb01c = 2;
+  turbocharger_corrected_speed_cached_axis_offsets[0] = 2;
+  turbocharger_corrected_speed_cached_axis_offsets[1] = 2;
   turbocharger_speed_estimate_boost_lead_term_filter.accumulator = 0;
   turbocharger_speed_estimate_boost_lead_term_filter.coefficient =
        &turbocharger_speed_estimate_boost_lead_term_filter_coefficient;
@@ -38775,9 +38782,8 @@ void cm848_setEngineRpmFromCalibration(void)
 /* While safety_system_enable_cal is set: takes injection_quantity_combustion_chi_maximum as a
    derate limit (code 62, FUELING_STATE_FUEL_PRESSURE_GOVERNOR_FAULT_BLEND) and, while fault 57 / 58
    / 60 (P1221 / P1222 / P1223, the fuel pressure governor plausibility checks) or 59 is set, blends
-   it toward the engine speed table safety_fuel_limit_rpm_output_cal at
-   safety_fuel_blend_increment_cal per pass (back at safety_fuel_blend_decrement_cal) (was
-   cm848_processSafetyConditionProtection) */
+   it toward the engine speed table safety_fuel_limit_values at safety_fuel_blend_increment_cal per
+   pass (back at safety_fuel_blend_decrement_cal) (was cm848_processSafetyConditionProtection) */
 
 void cm848_applyFuelPressureGovernorFaultBlend(void)
 
@@ -38802,8 +38808,8 @@ void cm848_applyFuelPressureGovernorFaultBlend(void)
     safety_condition_active_flag = 1;
     safety_fuel_limit_lookup =
          lookupTableInterpolation
-                   (&DAT_003fb3c2,engine_speed_state.filtered_engine_speed,
-                    safety_fuel_limit_rpm_axis_cal,safety_fuel_limit_rpm_output_cal,0);
+                   (&safety_fuel_limit_cached_axis_offset,engine_speed_state.filtered_engine_speed,
+                    safety_fuel_limit_axis,safety_fuel_limit_values,0);
     if (((safety_condition_prev_flag == 0) && (safety_condition_active_flag != 0)) &&
        (safety_fuel_limit_lookup < final_fueling)) {
       safety_blend_fuel_demand_prev = injection_quantity_combustion_chi_maximum;
@@ -38835,7 +38841,7 @@ LAB_00038a4c:
 void cm848_initProtectionFilterLimits(void)
 
 {
-  DAT_003fb3c2 = 2;
+  safety_fuel_limit_cached_axis_offset = 2;
   safety_fuel_blend_output = 0x1700;
   safety_blend_fuel_demand_prev = 0x1700;
   safety_fuel_blend_fraction = 0;
@@ -46154,9 +46160,9 @@ void hpcr_cbdCalculateCylinderTrims(void)
     return;
   }
   wVar1 = cm848_dualAxisTableInterpolation
-                    (&cylinder_event_init_state_a,engine_speed_state.engine_speed,
-                     cylinder_seq_axis1_cal,cylinder_balance_filtered_fueling,
-                     cylinder_seq_ystart_cal,cylinder_seq_yend_cal,0);
+                    (cylinder_balance_enable_cached_axis_offsets,engine_speed_state.engine_speed,
+                     cylinder_balance_enable_x_axis,cylinder_balance_filtered_fueling,
+                     cylinder_balance_enable_y_axis,cylinder_balance_enable_grid,0);
   if (wVar1 == 0) {
     cylinder_event_seq_counter = 0xff;
   }
@@ -46557,8 +46563,8 @@ void hpcr_cbdInitFilterState(void)
   uint uVar2;
   
   cylinder_event_seq_counter = 0xff;
-  cylinder_event_init_state_a = 2;
-  cylinder_event_init_state_b = 2;
+  cylinder_balance_enable_cached_axis_offsets[0] = 2;
+  cylinder_balance_enable_cached_axis_offsets[1] = 2;
   uVar2 = 0;
   uVar1 = (uint)cylinder_event_count_max;
   if (uVar1 != 0) {
@@ -46752,9 +46758,9 @@ void mpc555_resetEngineTimingAccumulators(void)
   crank_low_speed_filtering_flag = 1;
   crank_sync_phase_counter._2_2_ = 2;
   crank_tooth_good_window_fraction = 0;
-  crank_timing_init_state_a = 2;
-  crank_timing_init_state_b = 2;
-  crank_timing_init_state_c = 2;
+  cylinder_event_index_a_cached_axis_offset = 2;
+  cylinder_event_index_b_cached_axis_offset = 2;
+  crank_preliminary_sync_count_cached_axis_offset = 2;
   wVar1 = tpu_a_mcr.CPR1;
   tpu_a_mcr.CPR1 = wVar1 & 0xfff3;
   wVar1 = tpu_a_mcr.CFSR3;
@@ -46968,7 +46974,7 @@ LAB_00044854:
   crank_tooth_good_window_fraction =
        lookupTableInterpolation
                  ((word *)((int)&crank_sync_phase_counter + 2),average_engine_speed,
-                  crank_mios_timing_axis_cal,crank_mios_timing_values_cal,0);
+                  crank_tooth_good_window_fraction_axis,crank_tooth_good_window_fraction_values,0);
   if (average_engine_speed < crank_speed_setpoint_threshold_cal) {
     tpu_a_ch0_param0.PARAM7 =
          CONCAT11(crank_signal_low_speed_early_window_fraction,
@@ -47123,16 +47129,16 @@ void engine_injectionTiming_crankSyncDispatch(void)
     wVar1 = tpu_a_ch0_param0.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation
-                   (&crank_timing_init_state_a,wVar1 & 0xff,cylinder_event_axis_a_cal,
-                    cylinder_event_values_a_cal,0);
+                   (&cylinder_event_index_a_cached_axis_offset,wVar1 & 0xff,
+                    cylinder_event_index_a_axis,cylinder_event_index_a_values,0);
     cm848_scheduleInjectionAnglesOnPrimarySpeedInput();
   }
   else if (engine_speed_limp_home_active_flag == 1) {
     wVar1 = tpu_a_ch1_param2.PARAM4;
     cylinder_event_index =
          lookupTableInterpolation
-                   (&crank_timing_init_state_b,wVar1 & 0xff,cylinder_event_axis_b_cal,
-                    cylinder_event_values_b_cal,0);
+                   (&cylinder_event_index_b_cached_axis_offset,wVar1 & 0xff,
+                    cylinder_event_index_b_axis,cylinder_event_index_b_values,0);
     cm848_scheduleInjectionAnglesInSpeedLimpHome();
   }
   firing_detection_count = 0;
@@ -47452,8 +47458,8 @@ LAB_00045154:
         cm848_enterCrankPreliminarySync();
         crank_preliminary_sync_count =
              lookupTableInterpolation
-                       (&crank_timing_init_state_c,2,engine_event_countdown_axis_cal,
-                        engine_event_countdown_values_cal,1);
+                       (&crank_preliminary_sync_count_cached_axis_offset,2,
+                        crank_preliminary_sync_count_axis,crank_preliminary_sync_count_values,1);
         wVar2 = crank_speed_count;
       }
       else {
@@ -50440,7 +50446,7 @@ void cm848_initializeFuelPressureDiagnosticState(void)
 
 /* Fuel metering PWM (cm848_phase_group_b_processing, right after
    cm848_calculateFuelMeteringCommand): period = 5000000 / a table lookup (args at
-   cam_timing_filter_init_state) and on-time = period x
+   fuel_metering_pwm_frequency_cached_axis_offset) and on-time = period x
    fuel_pressure_governor_state.fuel_metering_command / 4095, written as one dword to TPU-B channel
    11 (TPUB_CH11_PARAM0 = on-time / PARAM1 = period) - the fuel metering output bypasses the output
    channel driver table's set-duty slot. Was mpc555_calculateTpuTimingPeriod */
@@ -50452,9 +50458,8 @@ void cm848_setFuelMeteringPwm(void)
   word wVar2;
   
   wVar2 = lookupTableInterpolation
-                    (&cam_timing_filter_init_state,average_engine_speed,
-                     engine_sync_speed_correction_axis_cal,engine_sync_speed_correction_values_cal,0
-                    );
+                    (&fuel_metering_pwm_frequency_cached_axis_offset,average_engine_speed,
+                     fuel_metering_pwm_frequency_axis,fuel_metering_pwm_frequency_values,0);
   uVar1 = 5000000 / wVar2 & 0xffff;
   TPUB_CH11_PARAM0._0_4_ =
        (uVar1 * (int)(short)fuel_pressure_governor_state.fuel_metering_command) / 0xfff << 0x10 |
@@ -50474,11 +50479,10 @@ void mpc555_initTpuTimingInterrupts(void)
   word wVar1;
   word wVar2;
   
-  cam_timing_filter_init_state = 2;
+  fuel_metering_pwm_frequency_cached_axis_offset = 2;
   wVar2 = lookupTableInterpolation
-                    (&cam_timing_filter_init_state,average_engine_speed,
-                     engine_sync_speed_correction_axis_cal,engine_sync_speed_correction_values_cal,0
-                    );
+                    (&fuel_metering_pwm_frequency_cached_axis_offset,average_engine_speed,
+                     fuel_metering_pwm_frequency_axis,fuel_metering_pwm_frequency_values,0);
   if ((fuel_metering_output_channel_cal != 0) && (fuel_metering_output_channel_cal < 0x33)) {
     (**(code **)(&output_channel_driver_table_enable + (uint)fuel_metering_output_channel_cal * 0x10
                 ))();
