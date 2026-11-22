@@ -1,0 +1,7 @@
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:6498: ...tion_table_dims_a word) | earlier note: in_window dual_axis_table_dims_t instance (row_count)
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:1686: ...okups in cm848_calculateAltitudeDerateFuelLimit - fuel_correction_table_dims_a (0x3fb9ca), fuel_correction_t
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:1686: ...lLimit - fuel_correction_table_dims_a (0x3fb9ca), fuel_correction_temp_band_dims_b (0x3fb9ce) and the state at 0
+work/tasks/042-table-campaign-rename-leads.md:131: ...ve if these are accepted. Not to be confused with injection_timing_offset_cal (0x3fd808, EEPROM range, corr
+work/tasks/042-table-campaign-rename-leads.md:242: ...n_timing_pilot_offset_*), so no rename is needed; injection_timing_offset_cal (0x3fd808) and the _boost1..4
+work/tasks/042-table-campaign-rename-leads.md:366: ...ds in cm848_calculatePilotInjectionTimingOffset / cm848_updateMainInjectionTimingByDeliveryMode, was cm848_updateEngineSt
+work/tasks/042-table-campaign-rename-leads.md:553: ..._rail] `governor_rpm_offset_cached` (0x0040a2f0): cm848_calculateInjectionTimingOffset (cpp 18940+): two writers: th

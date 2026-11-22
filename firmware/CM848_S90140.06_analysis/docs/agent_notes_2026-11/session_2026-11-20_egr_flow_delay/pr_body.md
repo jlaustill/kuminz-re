@@ -444,6 +444,14 @@ state enum, the flag bytes.**
   and `algorithm_enable_flags_41_t` bit 0 is `engine_retarder_extended_idle_enable` (its old "speed limit" name came
   from the extended idle flag's old name).
 
+**Round 18 (the relayed "keep going" again): types and the main injection timing selection.**
+- **Stage A (cc6189f, types):** the cruise Q16 integrator as `q16_fixed_point_t`, the AFC slew rates as dwords, and
+  the 4D fueling caches as `word[2]` (underscore warnings 24 -> 22).
+- **Stage B (3d714fe, label-only):** `main_injection_timing_selection`, the user commanded and 4D timing, the AENBLFLG
+  word 4, and the timing source members from the 103B value labels with their limit words.
+- **Stage C (99dd717, types):** the two timing enums, the `algorithm_enable_flags_4_t` bitfield, and five lookup
+  caches (the misread `dual_axis_table_dims_t` struct is gone).
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -535,6 +543,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 18: stage B is EQUIVALENT (30 names); stages A and C are type diffs reviewed line by line (only the intended effects).
 - [x] Round 17: stage A is EQUIVALENT (30 names); stage B's enum proof shows 0 functions differing beyond the substitutions; stage C's type diff is reviewed with a mask normalizer.
 - [x] Round 16: stage A is EQUIVALENT (109 names); B and C are type diffs reviewed function by function (C with a mask-normalized cast diff); every renamed row's width matches its e2m size.
 - [x] Round 15: stages A and B are EQUIVALENT; every renamed row's width matches its e2m size.
@@ -562,8 +571,8 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 17:**
-  - the cruise PID's Q16 integrator type, the droop word at 0x40aedc (task 046);
+- **Open after round 18:**
+  - the ANC timing stage (e2m 10A4), the droop word at 0x40aedc (task 046);
   - the fault status records (a packed record array, but the range is time-shared RAM);
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;

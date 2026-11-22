@@ -1,0 +1,21 @@
+cm848: round 18 stage A - the cruise Q16 integrator, the AFC slew rates and the 4D fueling caches (types)
+
+Three type leads from rounds 15 / 16:
+- cruise_pid_integrator_q16 (0x3fd032) is a q16_fixed_point_t, like the fuel pressure governor's Q16
+  states (a pilot build first). The 12 word reads / writes of the integer half are .integer_part, the
+  preset's fraction clear is .fractional_part = 0 (was DAT_003fd034), and the 6 dword integration lines
+  were _-prefixed and are now casts. There are no pieces.
+- The AFC fueling slew rates (e2m 11D5 +C / +10 / +14) are 4-byte records (0x0001cc00 each in the dump) on
+  word rows named fuel_demand_load_threshold_d / _result_working / _select_working, read as dwords by
+  cm848_calculateAirFuelControlFuelLimit. They are now the dwords air_fuel_control_fueling_slew_rate_1 /
+  _2 / _3, renamed with the type because a _-prefixed token cannot pass a label-only proof.
+- The 4D fueling lookup caches (0x40a8a1 / 0x40a8a5) are word[2] ..._cached_axis_offsets (the x / y
+  offsets, 2 / 8 in the dump). Their second words had separate rows (fuel_demand_threshold_ /
+  governor_fuel_demand_cached_axis_offset_y) that now failed inside the arrays; those rows are removed,
+  and the initializer reads [0] = 2 / [1] = 2.
+
+Underscore warnings 24 -> 22. The diff (99 lines) has only these effects plus rewraps. Headers
+regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass; the thunk
+counts are unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

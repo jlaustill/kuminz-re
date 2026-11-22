@@ -333,3 +333,9 @@ Hand work on the round 7 lead.
 - **Stage B:** `apply_r17b_enums.py`. **Stage C:** `apply_r17c.py` and the proof helper `normalize_r17c.py`.
   **Closing:** `apply_r17_closing.py`.
 
+## Round 18: types and the main injection timing selection (`session_folder/round18/`)
+
+- **Stage A:** `apply_r18a.py` (after the q16 pilot build). **Stage B:** `worklist_r18b.py` / `worklist_r18b2.py`
+  (through apply_hand_worklist.py) and `apply_r18b_enums.py`. **Stage C:** `apply_r18c.py`. **Closing:**
+  `fix_retired_prose_r18.py`, `apply_r18_closing.py`.
+

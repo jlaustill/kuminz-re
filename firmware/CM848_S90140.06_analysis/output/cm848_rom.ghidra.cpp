@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 23:10:10 MST 2026
+// Generated: Sat Nov 21 23:18:02 MST 2026
 
 
 //
@@ -45353,8 +45353,8 @@ void cm848_initializeRearAxleRatio(void)
 /* Copies main_injection_timing into main_injection_timing_copy, the base of
    cm848_computeFuelRpmCompensatedOffset. Runs after cm848_selectMainInjectionTiming and
    cm848_calculateAuxiliaryInjectionTiming in cm848_periodicTaskSet_auxiliaryControl and overwrites
-   the injection timing offset map copy stored there earlier by
-   cm848_calculateFourDimensionalInjectionTiming. (was cm848_copyProtectionAccumulator) */
+   the 4D timing copy stored there earlier by cm848_calculateFourDimensionalInjectionTiming. (was
+   cm848_copyProtectionAccumulator) */
 
 void cm848_copyMainInjectionTiming(void)
 
@@ -50510,7 +50510,7 @@ void cm848_initTimingFilterStates(void)
    highest or lowest (injection_timing_main_combination_mode 0 / 1 / other) of the coolant, intake
    temperature, barometric pressure and boost components (each an rpm x final_fueling angle map x a
    Q12 factor / 4096), injection_timing_main_base_command and a constant, then the floor,
-   governor-limit minimum and working minimum; in delivery mode 3 it adds
+   governor-limit minimum and working minimum; with main_injection_timing_selection 3 it adds
    user_commanded_injection_timing_cal and injection_timing_top_dead_center_offset (minus the top
    dead center position, 171 counts). The winning source goes to main_injection_timing_source_code,
    and the result is sent in PGN 65504 and is the angle of TPU-A channel 5 slot 8 (was
@@ -62003,9 +62003,11 @@ void cm848_initialization_step_2(void)
 
 /* Sets the three two-word interpolation states (cached axis offsets, start value 2 = first segment)
    of the barometric fuel limit lookups in cm848_calculateAltitudeDerateFuelLimit -
-   fuel_correction_table_dims_a (0x3fb9ca), fuel_correction_temp_band_dims_b (0x3fb9ce) and the
-   state at 0x3fb9d2, each with its second word - to 2. Called from
-   cm848_initializeFuelDemandAndLimitInterpolationStates. (was cm848_protection_torqueLimit) */
+   fuel_limit_barometric_ambient_air_cached_axis_offsets (0x3fb9ca),
+   fuel_limit_barometric_temperature_band_cached_axis_offsets (0x3fb9ce) and
+   fuel_limit_barometric_air_handling_fault_cached_axis_offsets (0x3fb9d2), each with its second
+   word - to 2. Called from cm848_initializeFuelDemandAndLimitInterpolationStates. (was
+   cm848_protection_torqueLimit) */
 
 void cm848_initializeBarometricFuelLimitInterpolationStates(void)
 

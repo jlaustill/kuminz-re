@@ -1,0 +1,139 @@
+2c2
+< // Generated: Sat Nov 21 23:06:34 MST 2026
+---
+> // Generated: Sat Nov 21 23:10:10 MST 2026
+20334c20334
+<   if ((algorithm_enable_flags_4_cal & 0x100) == 0) {
+---
+>   if (algorithm_enable_flags_4_cal.user_commanded_timing_enable == 0) {
+20338c20338
+<                      (&rpm_governor_offset_table_a_dims.row_count,
+---
+>                      (four_dimensional_injection_timing_map_a_cached_axis_offsets,
+20346c20346
+<                         (&rpm_governor_offset_table_b_dims.row_count,
+---
+>                         (four_dimensional_injection_timing_map_b_cached_axis_offsets,
+20356c20356
+<                         (&rpm_governor_offset_table_a_dims.row_count,
+---
+>                         (four_dimensional_injection_timing_map_a_cached_axis_offsets,
+20362c20362
+<                         (&rpm_governor_offset_table_b_dims.row_count,
+---
+>                         (four_dimensional_injection_timing_map_b_cached_axis_offsets,
+20399,20402c20399,20402
+<   rpm_governor_offset_table_a_dims.row_count = 2;
+<   rpm_governor_offset_table_a_dims.col_count = 2;
+<   rpm_governor_offset_table_b_dims.row_count = 2;
+<   rpm_governor_offset_table_b_dims.col_count = 2;
+---
+>   four_dimensional_injection_timing_map_a_cached_axis_offsets[0] = 2;
+>   four_dimensional_injection_timing_map_a_cached_axis_offsets[1] = 2;
+>   four_dimensional_injection_timing_map_b_cached_axis_offsets[0] = 2;
+>   four_dimensional_injection_timing_map_b_cached_axis_offsets[1] = 2;
+38474d38473
+<   byte all_transmits_overdue;
+38475a38475
+>   byte all_transmits_overdue;
+45491c45491
+<      ((algorithm_enable_flags_4_cal & 1) != 0)) {
+---
+>      (algorithm_enable_flags_4_cal.user_commanded_fueling_enable != 0)) {
+50541c50541,50542
+<     if (main_injection_timing_selection == 3) {
+---
+>     if (main_injection_timing_selection ==
+>         MAIN_INJECTION_TIMING_SELECTION_CALCULATED_PLUS_USER_INCREMENT) {
+50627c50628
+<   if (injection_timing_main_combination_mode == 0) {
+---
+>   if (injection_timing_main_combination_mode == INJECTION_TIMING_COMBINATION_SUM) {
+50653c50654
+<   else if (injection_timing_main_combination_mode == 1) {
+---
+>   else if (injection_timing_main_combination_mode == INJECTION_TIMING_COMBINATION_MAXIMUM) {
+50728c50729,50730
+<   if (main_injection_timing_selection == 3) {
+---
+>   if (main_injection_timing_selection ==
+>       MAIN_INJECTION_TIMING_SELECTION_CALCULATED_PLUS_USER_INCREMENT) {
+50779c50781
+<   if (main_injection_timing_selection == 2) {
+---
+>   if (main_injection_timing_selection == MAIN_INJECTION_TIMING_SELECTION_USER_OVERRIDE) {
+50783c50785,50787
+<   else if ((main_injection_timing_selection == 1) || (main_injection_timing_selection == 3)) {
+---
+>   else if ((main_injection_timing_selection == MAIN_INJECTION_TIMING_SELECTION_CALCULATED) ||
+>           (main_injection_timing_selection ==
+>            MAIN_INJECTION_TIMING_SELECTION_CALCULATED_PLUS_USER_INCREMENT)) {
+58465d58468
+<   word modulus_start_value;
+58466a58470
+>   word modulus_start_value;
+61800c61804,61805
+<                      (&DAT_003fb9d2,engine_speed_state.filtered_engine_speed,
+---
+>                      (fuel_limit_barometric_air_handling_fault_cached_axis_offsets,
+>                       engine_speed_state.filtered_engine_speed,
+61905c61910
+<                    (&fuel_correction_temp_band_dims_b,wVar1,
+---
+>                    (fuel_limit_barometric_temperature_band_cached_axis_offsets,wVar1,
+61911c61916
+<                    (&fuel_correction_temp_band_dims_b,wVar1,
+---
+>                    (fuel_limit_barometric_temperature_band_cached_axis_offsets,wVar1,
+61922c61927,61928
+<                           (&fuel_correction_table_dims_a,engine_speed_state.filtered_engine_speed,
+---
+>                           (fuel_limit_barometric_ambient_air_cached_axis_offsets,
+>                            engine_speed_state.filtered_engine_speed,
+61927c61933,61934
+<                           (&fuel_correction_table_dims_a,engine_speed_state.filtered_engine_speed,
+---
+>                           (fuel_limit_barometric_ambient_air_cached_axis_offsets,
+>                            engine_speed_state.filtered_engine_speed,
+61936c61943,61944
+<                           (&fuel_correction_table_dims_a,engine_speed_state.filtered_engine_speed,
+---
+>                           (fuel_limit_barometric_ambient_air_cached_axis_offsets,
+>                            engine_speed_state.filtered_engine_speed,
+61944c61952,61953
+<                         (&fuel_correction_table_dims_a,engine_speed_state.filtered_engine_speed,
+---
+>                         (fuel_limit_barometric_ambient_air_cached_axis_offsets,
+>                          engine_speed_state.filtered_engine_speed,
+62004,62009c62013,62018
+<   fuel_correction_table_dims_a = 2;
+<   DAT_003fb9cc = 2;
+<   fuel_correction_temp_band_dims_b = 2;
+<   DAT_003fb9d0 = 2;
+<   DAT_003fb9d2 = 2;
+<   DAT_003fb9d4 = 2;
+---
+>   fuel_limit_barometric_ambient_air_cached_axis_offsets[0] = 2;
+>   fuel_limit_barometric_ambient_air_cached_axis_offsets[1] = 2;
+>   fuel_limit_barometric_temperature_band_cached_axis_offsets[0] = 2;
+>   fuel_limit_barometric_temperature_band_cached_axis_offsets[1] = 2;
+>   fuel_limit_barometric_air_handling_fault_cached_axis_offsets[0] = 2;
+>   fuel_limit_barometric_air_handling_fault_cached_axis_offsets[1] = 2;
+74702c74711,74712
+<                     (&DAT_003fcdd2,engine_speed_state.filtered_engine_speed,
+---
+>                     (&coolant_overheat_derate_minimum_injection_timing_cached_axis_offset,
+>                      engine_speed_state.filtered_engine_speed,
+74705c74715,74716
+<   if ((DAT_003fcdc4 != 0x2e) && (final_fueling_state == FUELING_STATE_COOLANT_OVERHEAT_DERATE)) {
+---
+>   if ((coolant_overheat_derate_final_fueling_state_previous != FUELING_STATE_COOLANT_OVERHEAT_DERATE
+>       ) && (final_fueling_state == FUELING_STATE_COOLANT_OVERHEAT_DERATE)) {
+74791c74802
+<   DAT_003fcdd2 = 2;
+---
+>   coolant_overheat_derate_minimum_injection_timing_cached_axis_offset = 2;
+74833c74844
+<     DAT_003fcdc4 = final_fueling_state;
+---
+>     coolant_overheat_derate_final_fueling_state_previous = final_fueling_state;

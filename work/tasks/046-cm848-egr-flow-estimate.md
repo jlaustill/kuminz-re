@@ -906,12 +906,12 @@ Scripts are in `session_folder/round15/`.
     1-6, and `EB_Brake_Type` 0-3 (a bitmask in this code). (Done in round 17.)
   - **Types:**
     - The AFC slew rates (e2m 11D5 +C / +10 / +14) are 4-byte records on word rows: `_fuel_demand_load_threshold_d`
-      renders with an underscore.
-    - The 4D fueling caches are 4 bytes but typed `word`.
+      renders with an underscore. (Done in round 18: dwords.)
+    - The 4D fueling caches are 4 bytes but typed `word`. (Done in round 18: word[2].)
     - The 0x40a35c dword holds `EB_Immediate_Brake` and the next record.
   - **User commanded timing** (125C +2) and the 4D timing word (103B +0): one use adds the timing like an offset, so read
-    the 125C enable first.
-  - **`Main_Cold_Advance_Select`** (8085 +2: 0 add / 1 max wins / 2 min wins) is an enum candidate.
+    the 125C enable first. (Done in round 18: main_injection_timing_selection 2 / 3, and the enable is algorithm_enable_flags_4_cal bit 8.)
+  - **`Main_Cold_Advance_Select`** (8085 +2: 0 add / 1 max wins / 2 min wins) is an enum candidate. (Done in round 18: INJECTION_TIMING_COMBINATION_MODE.)
   - **The rest of the pool:** the 0.34-0.5 band, and the 27 records with code references and no name.
 
 ## Done, round 16 (2026-11-21, same PR; the relayed "keep going" again): the cruise control / road speed governor
@@ -970,7 +970,7 @@ Scripts are in `session_folder/round16/`.
 - **Round 16 leads:**
   - **The Q16 integrator at 0x3fd032** is a `word` row read as a dword (`_cruise_pid_integrator_q16`). The preset
     writes its halves apart (`DAT_003fd034` is the fraction). `q16_fixed_point_t` would print pieces for the dword
-    stores; decide by a pilot.
+    stores; decide by a pilot. (Done in round 18: the pilot printed casts, not pieces, so it is a q16_fixed_point_t.)
   - **The engine retarder family** (e2m 1070 / 1071 / 1192), still open from round 15. 1192 +4 / +6 / +8 have no
     rows. (Done in round 17; 1192 +4 / +6 / +8 have no reader.)
   - **`DAT_0040b5c0`:** only the power-up initializer writes it (the maximum road speed trim).
@@ -1033,6 +1033,38 @@ Scripts are in `session_folder/round17/`.
     inhibit flag first. It may be a 11.46 change.
   - **`algorithm_enable_flags_41_t.engine_retarder_extended_idle_enable`** has no e2m record yet (named from the
     code in stage D).
+
+## Done, round 18 (2026-11-21, same PR; the relayed "keep going" again): types and the main injection timing selection
+
+Scripts are in `session_folder/round18/`.
+- **Stage A (cc6189f, types): three type leads.**
+  - `cruise_pid_integrator_q16` as `q16_fixed_point_t`. A pilot build showed the dword integration lines as casts, not
+    pieces, so the 12 integer-half lines read `.integer_part` and the preset's fraction clear `.fractional_part`.
+  - The AFC slew rates (e2m 11D5 +C / +10 / +14) as the dwords `air_fuel_control_fueling_slew_rate_1` / `_2` / `_3`.
+  - The 4D fueling caches as `word[2]`. Their second words had rows of their own, which failed inside the arrays and
+    are removed.
+  - Underscore warnings 24 -> 22.
+- **Stage B (3d714fe, label-only): the round 15 'user commanded timing' lead.**
+  - **`main_injection_timing_selection`** (was `injection_delivery_mode`; e2m 8085 +0): 0 no change, 1 calculated, 2
+    the user commanded timing (e2m 125C +2, was `injection_timing_offset_cal`), 3 calculated plus the user timing.
+  - **The 4D timing** (103B +0 `Four_D_Timing`, was `injection_timing_offset_map_output`) and its maps a / b. The user
+    timing replaces it while `algorithm_enable_flags_4_cal` bit 8 is set. That word was `engine_mode_control_flags`;
+    it is EEPROM 0x122, AENBLFLG word 4.
+  - **The timing source members** follow the e2m value labels of 103B +8 `Final_Timing_State` (hex keys, shared with
+    +4 `SOI_State`), each checked at its store: CRANK, USER_OVERRIDE, ENGINE_STOPPED, MISFIRE_LIMIT,
+    COMBUSTION_MANAGER, EXTENDED_IDLE, COOLANT_OVERHEAT_DERATE, plus the intermediate FOUR_DIMENSIONAL_TIMING /
+    USER_COMMANDED_TIMING / COMBUSTION_REFERENCE. They also name the limit words: the misfire timing limit (8A3D),
+    the extended idle minimum (8085 +4) and the coolant overheat derate's minimum timing family.
+- **Stage C (99dd717, types):** `MAIN_INJECTION_TIMING_SELECTION` and `INJECTION_TIMING_COMBINATION_MODE`, the
+  `algorithm_enable_flags_4_t` bitfield (the user commanded fueling / timing enables), and five 2-D lookup caches as
+  `word[2]`. Two of the caches were the `dual_axis_table_dims_t` instances, whose 'row / column counts' were the
+  cached offsets, so that struct is gone.
+- **Round 18 leads:**
+  - **`cm848_storeFuelDemandPreviousValues`** copies the off-nominal compensated reference (1711 +8 `CBO_SOI_Ref`)
+    into `ANC_SOI` (10A4 +14) and two kernel-window words (0x3fa700 / 0x3fa702), with source 25 (e2m `CBR_SOI`). The
+    ANC stage (e2m 10A4) has no names yet, and the function name is wrong.
+  - **`fuel_demand_offset_correction`** is added to the altitude derate limit (`protection_feature_flags` bit 0x80)
+    and to the retarder's idle / PTO fueling limits; its source is unread.
 
 ## Leads (not in this PR)
 
