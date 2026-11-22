@@ -1161,7 +1161,7 @@ typedef struct fuel_pressure_governor_state_t fuel_pressure_governor_state_t;
 typedef struct engine_speed_state_t engine_speed_state_t;
 typedef struct sensor_readings_t sensor_readings_t;
 typedef struct eeprom_header_t eeprom_header_t;
-typedef struct governor_output_t governor_output_t;
+typedef struct low_speed_governor_reference_t low_speed_governor_reference_t;
 typedef struct pci_link_state_t pci_link_state_t;
 typedef struct fault_list_state_t fault_list_state_t;
 typedef struct data_transfer_state_t data_transfer_state_t;
@@ -1427,11 +1427,11 @@ struct eeprom_header_t {
     uint32_t serial_number;  /* ECU serial number from EEPROM */
 };
 
-struct governor_output_t {
-    uint16_t idle_reference_speed;  /* Low speed governor idle reference speed in 1/8 rpm (6000 = 750 rpm in the RAM dump) - the high word of the old integrator dword */
-    int16_t fuel_feed_forward_quantity;  /* Signed fuel feed-forward quantity (lha @ 0x28060) - the low word of the old integrator dword */
-    uint16_t governor_output;  /* Idle-speed candidate number 0-12 (name kept; see the wave-11 note) */
-    uint32_t idle_speed_barometric_ramped;  /* Barometric-ramped idle speed (lwz / stw @ 0x2931c / 0x29440) - the old word field at +6 covered only its high half */
+struct low_speed_governor_reference_t {
+    uint16_t reference_speed;  /* e2m 1496 +10 LSG_Reference_Speed '[LSRF] Current reference speed being used by the LSG feature' (1/8 rpm; 6000 = 750 rpm in the RAM dump): written by cm848_slewLowSpeedGovernorReferenceSpeed (was idle_reference_speed) | earlier note: Low speed governor idle reference speed in 1/8 rpm (6000 = 750 rpm in the RAM dump) - the high word of the old integrator dword */
+    int16_t no_load_fuel;  /* e2m 1496 +12 No_Load_Fuel_At_LSG_Ref 'No load fueling value at LSG reference speed before droop' (signed; lha @ 0x28060): cm848_calculateLowSpeedGovernorNoLoadFuel (was fuel_feed_forward_quantity) | earlier note: Signed fuel feed-forward quantity (lha @ 0x28060) - the low word of the old integrator dword */
+    uint16_t reference_speed_state;  /* e2m 1496 +14 LSG_Reference_Speed_State 'Indication of which logic is controlling LSG idle speed': 0 COOLANT / 1 PARK_NEU / 2 EXTENDED / 3 AC / 4 J1850 / 5 BASE / 6 JCOMM / 7 MIN / 8 MAX / 9 ALTITUDE / 10 SIP (shift in process) / 11 TOOL / 12 MOVING (was governor_output) | earlier note: Idle-speed candidate number 0-12 (name kept; see the wave-11 note) */
+    uint32_t altitude_speed;  /* e2m 1496 +16 LSG_Altitude_Speed (4 bytes; 1/8 rpm x 256): the altitude speed request after its slew (state 9) (was idle_speed_barometric_ramped) | earlier note: Barometric-ramped idle speed (lwz / stw @ 0x2931c / 0x29440) - the old word field at +6 covered only its high half */
 };
 
 struct pci_link_state_t {

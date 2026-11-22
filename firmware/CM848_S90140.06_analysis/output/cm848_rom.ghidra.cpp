@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 18:13:16 MST 2026
+// Generated: Sat Nov 21 18:34:40 MST 2026
 
 
 //
@@ -6727,13 +6727,13 @@ void cm848_periodicTaskSet_sensorProcessing(void)
   cm848_smoothPowerTakeOffReferenceEngineSpeed();
   cm848_runPowerTakeOffGovernor();
   cm848_selectPowerTakeOffOrUserFueling();
-  cm848_updateGovernorSpeedLimits();
-  cm848_calculateGovernorCompensation();
+  cm848_updateLowSpeedGovernorReferenceSpeed();
+  cm848_calculateLowSpeedGovernorNoLoadFuel();
   cm848_updateLowSpeedGovernorAggressiveGainLogic();
   cm848_selectLowSpeedGovernorGearGainSet();
   cm848_runLowSpeedGovernor();
   cm848_processEngineRetarderRequest();
-  cm848_calculateSpeedRateLimiting();
+  cm848_calculateLowSpeedGovernorErrorTerms();
   cm848_processEngineRpmDiagnostic();
   cm848_requestPowerDownDelayWhileVehicleMoving();
   cm848_selectSensorValuesInUse();
@@ -9425,7 +9425,7 @@ LAB_0000f0b0:
         all_speed_governor_delta = 0xffff;
       }
     }
-    else if (governor_output_t_0040aec2.idle_reference_speed <=
+    else if (low_speed_governor_reference.reference_speed <=
              engine_speed_state.filtered_engine_speed) {
       if (all_speed_governor_delta <= all_speed_governor_deadband_delta_decrement_rate)
       goto LAB_0000f0b0;
@@ -9585,10 +9585,10 @@ LAB_0000f2f8:
       wVar10 = (all_speed_governor_delta - all_speed_governor_fueling) + final_fueling;
     }
     iVar15 = (int)(short)wVar10;
-    if ((uint)governor_output_t_0040aec2.idle_reference_speed <=
+    if ((uint)low_speed_governor_reference.reference_speed <=
         (uint)engine_speed_state.filtered_engine_speed) {
       uVar17 = (uint)engine_speed_state.filtered_engine_speed -
-               (uint)governor_output_t_0040aec2.idle_reference_speed;
+               (uint)low_speed_governor_reference.reference_speed;
       uVar1 = CONCAT44(((int)uVar17 >> 0x1f) * 0xa6 + (int)((ulonglong)uVar17 * 0xa6 >> 0x20),
                        uVar17 * 0xa6) / 8;
       iVar13 = (int)uVar1;
@@ -9954,8 +9954,8 @@ void cm848_calculateAllSpeedGovernorThrottleReference(void)
   
   governor_speed_lower_limit = all_speed_governor_minimum_reference_speed;
   if (governor_speed_lower_limit_enable_flag != 0) {
-    governor_speed_lower_limit = governor_speed_limit_active - governor_speed_lower_limit_offset_cal
-    ;
+    governor_speed_lower_limit =
+         low_speed_governor_desired_reference_speed - governor_speed_lower_limit_offset_cal;
   }
   uVar1 = (uint)fuel_demand_control_t_0040a57a.calculated;
   speed_request_base = all_speed_governor_maximum_reference_speed;
@@ -15859,8 +15859,8 @@ int cm848_calculateJ1939PercentPeakTorqueAtSpeed(word param_1,short param_2)
 /* Looks up the friction (no load) fueling friction_fuel_by_engine_speed_values at five engine
    speeds for the J1939 (Jcomm) engine configuration data, e2m block 10E2 (MM3S, 0.0679 mm3 per
    count): the low speed governor idle reference speed
-   (governor_output_t_0040aec2.idle_reference_speed) into j1939_friction_load_fueling_at_low_idle
-   (+E Jcomm_Frict_Load_at_Low_Idle), the rated speed j1939_rated_speed_tau_0 into
+   (low_speed_governor_reference.reference_speed) into j1939_friction_load_fueling_at_low_idle (+E
+   Jcomm_Frict_Load_at_Low_Idle), the rated speed j1939_rated_speed_tau_0 into
    j1939_friction_load_fueling_at_rated_speed (+10 Jcomm_Frict_Load_at_Rated_RPM) and the speed
    breakpoints 3 / 4 / 5 (j1939_speed_breakpoint_3_tau_0 / _4_ / _5_, e2m 10DF +A / +C / +E) into
    j1939_friction_load_fueling_at_breakpoint_3 (+12), j1939_friction_load_fueling_at_breakpoint_4
@@ -15876,8 +15876,8 @@ void cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints(void)
   j1939_friction_load_fueling_at_low_idle =
        lookupTableInterpolation
                  (&friction_fuel_by_engine_speed_cached_axis_offset,
-                  governor_output_t_0040aec2.idle_reference_speed,friction_fuel_by_engine_speed_axis
-                  ,friction_fuel_by_engine_speed_values,0);
+                  low_speed_governor_reference.reference_speed,friction_fuel_by_engine_speed_axis,
+                  friction_fuel_by_engine_speed_values,0);
   j1939_friction_load_fueling_at_breakpoint_3 =
        lookupTableInterpolation
                  (&friction_fuel_by_engine_speed_cached_axis_offset,j1939_speed_breakpoint_3_tau_0,
@@ -15929,7 +15929,7 @@ void cm848_calculateJ1939PercentPeakTorquePoints(void)
   cm848_calculateJ1939FrictionLoadFuelingAtBreakpoints();
   j1939_percent_peak_torque_at_idle_times_256 =
        cm848_calculateJ1939PercentPeakTorqueAtSpeed
-                 (governor_output_t_0040aec2.idle_reference_speed,
+                 (low_speed_governor_reference.reference_speed,
                   (int)(short)j1939_friction_load_fueling_at_low_idle);
   j1939_percent_peak_torque_at_rated_speed_times_256 =
        cm848_calculateJ1939PercentPeakTorqueAtSpeed
@@ -18227,12 +18227,12 @@ void cm848_runEgrValveFaultAndPositionControl(void)
    reference_engine_torque_working (1102 +1E, SPN 544), the maximum momentary override speed ROM
    0x5c39a (e2m 10E7 +18 Jcomm_High_Idle_Override_Speed, SPN 533) and its time limit
    j1939_pgn61442_engine_overspeed_enable_time_limit / 10 (SPN 534), the speed control range limits
-   governor_rpm_limit_cal / 80 and engine_speed_limit_maximum / 80 (10 rpm per bit, SPN 535 / 536)
-   and the torque control range, 0 percent and the largest point torque (SPN 537 / 538). It sends
-   nothing: cm848_sendPgn65251EngineConfiguration1Message (0x1b730, registered for PGN 65251 in the
-   periodic transmit queue) and cm848_sendPgn65251EngineConfiguration1OnChange (0x1b778, which
-   resends when a value changed) call it and send the descriptor. Shared name with CM550 0x3320e
-   (the same function). (was faultTimerHandler) */
+   low_speed_governor_minimum_idle_speed / 80 and engine_speed_limit_maximum / 80 (10 rpm per bit,
+   SPN 535 / 536) and the torque control range, 0 percent and the largest point torque (SPN 537 /
+   538). It sends nothing: cm848_sendPgn65251EngineConfiguration1Message (0x1b730, registered for
+   PGN 65251 in the periodic transmit queue) and cm848_sendPgn65251EngineConfiguration1OnChange
+   (0x1b778, which resends when a value changed) call it and send the descriptor. Shared name with
+   CM550 0x3320e (the same function). (was faultTimerHandler) */
 
 void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1)
 
@@ -18299,7 +18299,7 @@ void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1)
   else {
     uVar6 = 0xfa;
   }
-  local_c = CONCAT22(CONCAT11((char)(governor_rpm_limit_cal / 0x50),uVar6),32000);
+  local_c = CONCAT22(CONCAT11((char)(low_speed_governor_minimum_idle_speed / 0x50),uVar6),32000);
   do {
     if (uVar4 < *pwVar5) {
       uVar4 = (uint)*pwVar5;
@@ -18673,7 +18673,7 @@ void cm848_calculateColdStartTempTable(void)
 void cm848_selectColdStartRpmLimit(void)
 
 {
-  crank_exit_speed = governor_output_t_0040aec2.idle_reference_speed;
+  crank_exit_speed = low_speed_governor_reference.reference_speed;
   if (crank_exit_speed_switch_cal == 1) {
     crank_exit_speed = crank_exit_rpm;
   }
@@ -21345,7 +21345,7 @@ void selectEngineSpeedLimit(void)
   }
   if ((engine_speed_limit_arbitration.limiting_source_number == 9) ||
      (engine_speed_limit_arbitration.limiting_source_number == 0x10)) {
-    uVar4 = governor_output_t_0040aec2.idle_reference_speed + low_speed_governor_reference_offset;
+    uVar4 = low_speed_governor_reference.reference_speed + low_speed_governor_reference_offset;
     if (uVar4 <= engine_speed_limit_arbitration.lowest_source_speed_limit) goto LAB_0002012c;
     if (36000 < uVar4) {
       uVar4 = 36000;
@@ -21845,11 +21845,11 @@ void cm848_calculateNominalFrictionPercentTorque(void)
 void cm848_updateProtectionParameters(void)
 
 {
-  j1939_torque_curve_speed_at_point_1 = governor_output_t_0040aec2.idle_reference_speed;
+  j1939_torque_curve_speed_at_point_1 = low_speed_governor_reference.reference_speed;
   if (((algorithm_enable_flags_12_cal.low_speed_governor_droop_enable != 0) &&
       ((short)governor_integrator_correction_term != 0)) &&
      (j1939_torque_curve_speed_at_point_1 =
-           governor_output_t_0040aec2.idle_reference_speed -
+           low_speed_governor_reference.reference_speed -
            (short)((int)((int)(short)governor_integrator_correction_term *
                         (uint)j1939_derated_fueling_at_idle) / 0xa7),
      (short)j1939_torque_curve_speed_at_point_1 < 0)) {
@@ -21939,7 +21939,7 @@ void cm848_setJ1939TorqueCurvePoints2And5AtDroopLineFueling(j1939_rx_msg_t *rx_m
 /* Builds the J1939 (Jcomm) engine configuration torque curve of PGN 65251, e2m block 1102: the
    speeds, fuelings and indicated percent torques at points 1-5. A mode index is formed from the
    situation: +4 when low_speed_governor_base_reference_speed_cal is outside the low speed governor
-   idle band (governor_output_t_0040aec2.idle_reference_speed plus or minus
+   idle band (low_speed_governor_reference.reference_speed plus or minus
    low_speed_governor_reference_speed_delta), +2 for an altitude derate or an air fuel control
    derate with a fault in bits 8 / 9 of fault_detected_bits_0_to_15
    (torque_derate_fuel_source_code), +1 when the engine speed limit source
@@ -21968,9 +21968,9 @@ void cm848_updateJ1939EngineConfigurationTorqueCurve(void)
   int iVar2;
   
   if (((int)(uint)low_speed_governor_base_reference_speed_cal <
-       (int)((uint)governor_output_t_0040aec2.idle_reference_speed -
+       (int)((uint)low_speed_governor_reference.reference_speed -
             (uint)low_speed_governor_reference_speed_delta)) ||
-     ((uint)governor_output_t_0040aec2.idle_reference_speed +
+     ((uint)low_speed_governor_reference.reference_speed +
       (uint)low_speed_governor_reference_speed_delta <
       (uint)low_speed_governor_base_reference_speed_cal)) {
     iVar2 = 4;
@@ -22707,7 +22707,7 @@ void cm848_updateProtectionThresholdsIfLow(void)
   
   uVar1 = 1 << (throttle_100_priority_bit_index & 0x3f) & 0xffff;
   if (((uint)j1939_pgn65251_speed_points_request_flags & ~uVar1) <= uVar1) {
-    iVar2 = (uint)governor_output_t_0040aec2.idle_reference_speed +
+    iVar2 = (uint)low_speed_governor_reference.reference_speed +
             (int)j1939_pgn65251_speed_at_point_1_low_speed_governor_offset;
     if (iVar2 < 0) {
       iVar2 = 0;
@@ -27213,16 +27213,16 @@ void cm848_processSpeedSensorCompensation(void)
   
   if (four_dimensional_fueling_interpolation_factor != 0) {
     local_6 = cm848_dualAxisTableInterpolation
-                        (&fuel_demand_threshold_cached_axis_offset,governor_speed_demand_working,
-                         fuel_demand_rpm_threshold_cal,400,fuel_demand_rpm_limit_low_cal,
-                         fuel_demand_rpm_limit_high_cal,4);
+                        (&fuel_demand_threshold_cached_axis_offset,
+                         low_speed_governor_adjusted_reference_speed,fuel_demand_rpm_threshold_cal,
+                         400,fuel_demand_rpm_limit_low_cal,fuel_demand_rpm_limit_high_cal,4);
     cm848_clampFuelDemandToValidRange(&local_6);
   }
   if (four_dimensional_fueling_interpolation_factor < 0x4000) {
     local_8 = cm848_dualAxisTableInterpolation
-                        (&governor_fuel_demand_cached_axis_offset,governor_speed_demand_working,
-                         governor_fuel_table_xaxis_cal,400,governor_fuel_table_ystart_cal,
-                         governor_fuel_table_yend_cal,4);
+                        (&governor_fuel_demand_cached_axis_offset,
+                         low_speed_governor_adjusted_reference_speed,governor_fuel_table_xaxis_cal,
+                         400,governor_fuel_table_ystart_cal,governor_fuel_table_yend_cal,4);
     cm848_clampFuelDemandToValidRange(&local_8);
   }
   governor_speed_correction = local_6;
@@ -27339,7 +27339,7 @@ void cm848_runLowSpeedGovernor(void)
     iVar6 = 0;
   }
   else {
-    iVar6 = (int)governor_output_t_0040aec2.fuel_feed_forward_quantity;
+    iVar6 = (int)low_speed_governor_reference.no_load_fuel;
   }
   if (final_fueling_state_prev == FUELING_STATE_LOW_SPEED_GOVERNOR) {
     low_speed_governor_reset_delay_timer = 0;
@@ -27354,7 +27354,7 @@ void cm848_runLowSpeedGovernor(void)
     cm848_presetLowSpeedGovernorIntegrator(iVar6);
     governor_speed_low_clamp = 0;
   }
-  uVar3 = (uint)(short)(governor_output_t_0040aec2.idle_reference_speed +
+  uVar3 = (uint)(short)(low_speed_governor_reference.reference_speed +
                        low_speed_governor_reset_speed_offset);
   if ((int)uVar3 < 0) {
     uVar3 = 0;
@@ -27404,11 +27404,11 @@ void cm848_runLowSpeedGovernor(void)
     uVar3 = (int)low_speed_governor_derivative_term *
             (int)low_speed_governor_derivative_filter_coefficient;
     iVar2 = (int)(CONCAT44((int)((ulonglong)
-                                 ((longlong)(int)(short)governor_speed_error_rate *
+                                 ((longlong)(int)(short)low_speed_governor_derivative_error_term *
                                  (longlong)
                                  ((int)low_speed_governor_derivative_gain *
                                  (int)(short)low_speed_governor_derivative_gain_adjustment)) >> 0x20
-                                ),(int)(short)governor_speed_error_rate *
+                                ),(int)(short)low_speed_governor_derivative_error_term *
                                   (int)low_speed_governor_derivative_gain *
                                   (int)(short)low_speed_governor_derivative_gain_adjustment) /
                  0x8b21) +
@@ -27461,7 +27461,7 @@ void cm848_runLowSpeedGovernor(void)
     }
     low_speed_governor_integral_term = low_speed_governor_integral_accumulator._0_2_;
     uVar3 = (int)low_speed_governor_jerk_term * (int)low_speed_governor_jerk_filter_coefficient;
-    sVar8 = (short)(((int)(short)governor_speed_error_rate_adjusted *
+    sVar8 = (short)(((int)(short)low_speed_governor_jerk_error_term *
                     (int)low_speed_governor_jerk_gain) / 0x116) +
             (short)((int)uVar3 >> 5) + (ushort)((int)uVar3 < 0 && (uVar3 & 0x1f) != 0);
     if ((int)low_speed_governor_jerk_deadband < (int)sVar8) {
@@ -27631,7 +27631,7 @@ void cm848_updateLowSpeedGovernorAggressiveGainLogic(void)
     }
     else if ((((low_speed_governor_stopped_vehicle_settled_count ==
                 low_speed_governor_gain_logic_transition_time) &&
-              (governor_output_t_0040aec2.governor_output != 0xb)) &&
+              (low_speed_governor_reference.reference_speed_state != 0xb)) &&
              (low_speed_governor_aggressive_gain_minimum_coolant_temperature <
               (short)sensor_readings_t_0040baf2.coolant_temp)) &&
             (low_speed_governor_aggressive_gain_minimum_run_time <=
@@ -27833,10 +27833,16 @@ void cm848_clearGovernorFilterAccumulators(void)
 
 
 //
-// Function: cm848_calculateSpeedRateLimiting @ 0x00028ba4
+// Function: cm848_calculateLowSpeedGovernorErrorTerms @ 0x00028ba4
 //
 
-void cm848_calculateSpeedRateLimiting(void)
+/* The LSG error terms (e2m 14EF / 14F0): the adjusted reference speed (the reference before droop
+   minus 0x40aedc, clamped), the speed error x low_speed_governor_error_filter_gain >> 9 through
+   low_speed_governor_error_filter and its +-8000 clamps into
+   low_speed_governor_filtered_speed_error, then its derivative and jerk terms (was
+   cm848_calculateSpeedRateLimiting) */
+
+void cm848_calculateLowSpeedGovernorErrorTerms(void)
 
 {
   word wVar1;
@@ -27848,18 +27854,20 @@ void cm848_calculateSpeedRateLimiting(void)
   short sStack_e;
   
   wVar1 = low_speed_governor_filtered_speed_error;
-  uVar5 = (uint)(short)(governor_speed_error_computed - governor_speed_error_reference);
-  uVar4 = (uint)(short)governor_rpm_limit_cal;
+  uVar5 = (uint)(short)(low_speed_governor_adjusted_reference_before_droop -
+                       governor_speed_error_reference);
+  uVar4 = (uint)(short)low_speed_governor_minimum_idle_speed;
   if ((((int)uVar4 <= (int)uVar5) &&
-      (((governor_output_t_0040aec2.governor_output == 0xb ||
-        (uVar4 = (uint)(short)governor_output_mode_limit_cal, (int)uVar5 <= (int)uVar4)) &&
-       (uVar4 = uVar5, governor_output_t_0040aec2.governor_output == 0xb)))) &&
-     ((int)(short)governor_speed_limit_upper_cal < (int)uVar5)) {
-    uVar4 = (int)(short)governor_speed_limit_upper_cal;
+      (((low_speed_governor_reference.reference_speed_state == 0xb ||
+        (uVar4 = (uint)(short)low_speed_governor_maximum_idle_speed, (int)uVar5 <= (int)uVar4)) &&
+       (uVar4 = uVar5, low_speed_governor_reference.reference_speed_state == 0xb)))) &&
+     ((int)(short)low_speed_governor_maximum_tool_idle_speed < (int)uVar5)) {
+    uVar4 = (int)(short)low_speed_governor_maximum_tool_idle_speed;
   }
-  governor_speed_demand_working = (word)uVar4;
-  iVar6 = (int)((uVar4 & 0xffff) * (int)DAT_0005c4b0 -
-               (uint)engine_speed_state.filtered_engine_speed * (int)DAT_0005c4b0) >> 9;
+  low_speed_governor_adjusted_reference_speed = (word)uVar4;
+  iVar6 = (int)((uVar4 & 0xffff) * (int)low_speed_governor_error_filter_gain -
+               (uint)engine_speed_state.filtered_engine_speed *
+               (int)low_speed_governor_error_filter_gain) >> 9;
   if (iVar6 < -0x8000) {
     iVar6 = -0x8000;
   }
@@ -27868,24 +27876,27 @@ void cm848_calculateSpeedRateLimiting(void)
     iVar6 = (int)sStack_e;
   }
   low_speed_governor_filtered_speed_error =
-       cm848_signedFirstOrderFilter(iVar6,&governor_speed_error_delta_filter);
-  wVar2 = governor_speed_error_rate;
-  wVar3 = DAT_0005c4b2;
-  if (((short)DAT_0005c4b2 < (short)low_speed_governor_filtered_speed_error) ||
-     (wVar3 = DAT_0005c4b4, (short)low_speed_governor_filtered_speed_error < (short)DAT_0005c4b4)) {
-    governor_speed_error_delta_filter.accumulator = (int)(short)wVar3 << 0x10;
+       cm848_signedFirstOrderFilter(iVar6,&low_speed_governor_error_filter);
+  wVar2 = low_speed_governor_derivative_error_term;
+  wVar3 = low_speed_governor_filtered_error_maximum;
+  if (((short)low_speed_governor_filtered_error_maximum <
+       (short)low_speed_governor_filtered_speed_error) ||
+     (wVar3 = low_speed_governor_filtered_error_minimum,
+     (short)low_speed_governor_filtered_speed_error <
+     (short)low_speed_governor_filtered_error_minimum)) {
+    low_speed_governor_error_filter.accumulator = (int)(short)wVar3 << 0x10;
     low_speed_governor_filtered_speed_error = wVar3;
   }
-  governor_speed_error_rate = low_speed_governor_filtered_speed_error - wVar1;
-  if ((short)governor_speed_error_rate < 0x641) {
-    if ((short)governor_speed_error_rate < -0x640) {
-      governor_speed_error_rate = 0xf9c0;
+  low_speed_governor_derivative_error_term = low_speed_governor_filtered_speed_error - wVar1;
+  if ((short)low_speed_governor_derivative_error_term < 0x641) {
+    if ((short)low_speed_governor_derivative_error_term < -0x640) {
+      low_speed_governor_derivative_error_term = 0xf9c0;
     }
   }
   else {
-    governor_speed_error_rate = 0x640;
+    low_speed_governor_derivative_error_term = 0x640;
   }
-  governor_speed_error_rate_adjusted = governor_speed_error_rate - wVar2;
+  low_speed_governor_jerk_error_term = low_speed_governor_derivative_error_term - wVar2;
   return;
 }
 
@@ -27898,17 +27909,23 @@ void cm848_calculateSpeedRateLimiting(void)
 void cm848_setGovernorFilterPointer(void)
 
 {
-  governor_speed_error_delta_filter.coefficient = &governor_speed_error_delta_filter_coefficient;
+  low_speed_governor_error_filter.coefficient = &low_speed_governor_error_filter_coefficient;
   return;
 }
 
 
 
 //
-// Function: cm848_updateSpeedLimitFromCoolant @ 0x00028d44
+// Function: cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed @ 0x00028d44
 //
 
-void cm848_updateSpeedLimitFromCoolant(void)
+/* low_speed_governor_coolant_temperature_speed_request from the coolant temperature table (or a
+   step lookup with hysteresis), zeroed outside park / neutral unless enabled, after
+   low_speed_governor_cold_idle_time of cold idling, during the hot idle inhibit time and after
+   low_speed_governor_hot_idle_time at that speed (e2m 14EE +0..+8) (was
+   cm848_updateSpeedLimitFromCoolant) */
+
+void cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed(void)
 
 {
   uint uVar1;
@@ -27916,82 +27933,85 @@ void cm848_updateSpeedLimitFromCoolant(void)
   int iVar3;
   
   iVar3 = (int)(short)sensor_readings_t_0040baf2.coolant_temp;
-  if (governor_speed_limit_hysteresis_cal == 0) {
-    governor_speed_limit_cal =
+  if (low_speed_governor_coolant_temperature_hysteresis == 0) {
+    low_speed_governor_coolant_temperature_speed_request =
          lookupTableInterpolation
-                   (&governor_speed_limit_by_coolant_temperature_cached_axis_offset,
+                   (&low_speed_governor_coolant_temperature_speed_cached_axis_offset,
                     sensor_readings_t_0040baf2.coolant_temp,
-                    governor_speed_limit_by_coolant_temperature_axis,
-                    governor_speed_limit_by_coolant_temperature_values,1);
+                    low_speed_governor_coolant_temperature_speed_axis,
+                    low_speed_governor_coolant_temperature_speed_values,1);
   }
   else {
     uVar1 = 1;
     do {
-      if (iVar3 <= (short)governor_speed_limit_by_coolant_temperature_axis[uVar1]) break;
+      if (iVar3 <= (short)low_speed_governor_coolant_temperature_speed_axis[uVar1]) break;
       uVar1 = uVar1 + 1 & 0xffff;
     } while (uVar1 < 9);
     if (8 < uVar1) {
       uVar1 = 8;
     }
-    if (governor_protection_phase_a_flag == 0) {
-      governor_protection_phase_a_flag = 1;
+    if (low_speed_governor_coolant_speed_first_pass_done_flag == 0) {
+      low_speed_governor_coolant_speed_first_pass_done_flag = 1;
     }
-    else if (((governor_speed_limit_cal != governor_speed_limit_by_coolant_temperature_values[uVar1]
-              ) && (uVar1 < 8)) &&
-            ((int)(short)governor_speed_limit_by_coolant_temperature_axis[uVar1] <
-             (int)(iVar3 + (uint)governor_speed_limit_hysteresis_cal))) {
+    else if (((low_speed_governor_coolant_temperature_speed_request !=
+               low_speed_governor_coolant_temperature_speed_values[uVar1]) && (uVar1 < 8)) &&
+            ((int)(short)low_speed_governor_coolant_temperature_speed_axis[uVar1] <
+             (int)(iVar3 + (uint)low_speed_governor_coolant_temperature_hysteresis))) {
       uVar1 = uVar1 + 1 & 0xffff;
     }
-    governor_speed_limit_cal = governor_speed_limit_by_coolant_temperature_values[uVar1];
+    low_speed_governor_coolant_temperature_speed_request =
+         low_speed_governor_coolant_temperature_speed_values[uVar1];
   }
-  if ((governor_speed_limit_enable_cal == 0) &&
+  if ((low_speed_governor_coolant_speed_outside_park_neutral_enable == 0) &&
      ((transmission_park_or_neutral_flag == 0 ||
-      (governor_park_neutral_maximum_vehicle_speed < vehicle_speed)))) {
-    governor_speed_limit_cal = 0;
+      (low_speed_governor_moving_road_speed < vehicle_speed)))) {
+    low_speed_governor_coolant_temperature_speed_request = 0;
   }
-  if (((governor_speed_disengage_timer_limit != 0) &&
-      (iVar3 < (short)governor_disengage_timer_threshold_cal)) &&
+  if (((low_speed_governor_cold_idle_time != 0) &&
+      (iVar3 < (short)low_speed_governor_cold_idle_coolant_temperature)) &&
      ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
       (engine_state == ENGINE_STATE_RUNNING)))) {
-    governor_speed_disengage_timer = governor_speed_disengage_timer + 1;
+    low_speed_governor_cold_idle_timer = low_speed_governor_cold_idle_timer + 1;
   }
-  if ((short)governor_disengage_timer_threshold_cal <= iVar3) {
-    governor_speed_disengage_timer = 0;
+  if ((short)low_speed_governor_cold_idle_coolant_temperature <= iVar3) {
+    low_speed_governor_cold_idle_timer = 0;
   }
-  if ((governor_speed_disengage_timer_limit != 0) &&
-     (governor_speed_disengage_timer_limit <= governor_speed_disengage_timer)) {
-    governor_speed_limit_cal = 0;
-    governor_speed_disengage_timer = governor_speed_disengage_timer_limit;
+  if ((low_speed_governor_cold_idle_time != 0) &&
+     (low_speed_governor_cold_idle_time <= low_speed_governor_cold_idle_timer)) {
+    low_speed_governor_coolant_temperature_speed_request = 0;
+    low_speed_governor_cold_idle_timer = low_speed_governor_cold_idle_time;
   }
-  iVar2 = (int)(short)governor_speed_limit_threshold_cal;
-  if (governor_speed_limit_count_cal != 0) {
+  iVar2 = (int)(short)low_speed_governor_hot_idle_coolant_temperature;
+  if (low_speed_governor_hot_idle_inhibit_time != 0) {
     if (((iVar2 <= iVar3) && (adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR)) &&
        (engine_state == ENGINE_STATE_RUNNING)) {
-      governor_speed_limit_count = governor_speed_limit_count + 1;
+      low_speed_governor_hot_idle_inhibit_timer = low_speed_governor_hot_idle_inhibit_timer + 1;
     }
-    if (iVar3 < (int)(iVar2 - (uint)governor_speed_limit_hysteresis_cal)) {
-      governor_speed_limit_count = 0;
+    if (iVar3 < (int)(iVar2 - (uint)low_speed_governor_coolant_temperature_hysteresis)) {
+      low_speed_governor_hot_idle_inhibit_timer = 0;
     }
-    if ((iVar2 <= iVar3) && (governor_speed_limit_count < governor_speed_limit_count_cal)) {
-      governor_speed_limit_cal = 0;
+    if ((iVar2 <= iVar3) &&
+       (low_speed_governor_hot_idle_inhibit_timer < low_speed_governor_hot_idle_inhibit_time)) {
+      low_speed_governor_coolant_temperature_speed_request = 0;
     }
-    if (governor_speed_limit_count_cal <= governor_speed_limit_count) {
-      governor_speed_limit_count = governor_speed_limit_count_cal;
+    if (low_speed_governor_hot_idle_inhibit_time <= low_speed_governor_hot_idle_inhibit_timer) {
+      low_speed_governor_hot_idle_inhibit_timer = low_speed_governor_hot_idle_inhibit_time;
     }
   }
-  if (((governor_speed_engage_timer_limit != 0) && (iVar2 <= iVar3)) &&
+  if (((low_speed_governor_hot_idle_time != 0) && (iVar2 <= iVar3)) &&
      ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
       ((engine_state == ENGINE_STATE_RUNNING &&
-       (governor_output_t_0040aec2.idle_reference_speed == governor_speed_limit_cal)))))) {
-    governor_speed_engage_timer = governor_speed_engage_timer + 1;
+       (low_speed_governor_reference.reference_speed ==
+        low_speed_governor_coolant_temperature_speed_request)))))) {
+    low_speed_governor_hot_idle_timer = low_speed_governor_hot_idle_timer + 1;
   }
-  if (iVar3 < (int)(iVar2 - (uint)governor_speed_limit_hysteresis_cal)) {
-    governor_speed_engage_timer = 0;
+  if (iVar3 < (int)(iVar2 - (uint)low_speed_governor_coolant_temperature_hysteresis)) {
+    low_speed_governor_hot_idle_timer = 0;
   }
-  if ((governor_speed_engage_timer_limit != 0) &&
-     (governor_speed_engage_timer_limit <= governor_speed_engage_timer)) {
-    governor_speed_limit_cal = 0;
-    governor_speed_engage_timer = governor_speed_engage_timer_limit;
+  if ((low_speed_governor_hot_idle_time != 0) &&
+     (low_speed_governor_hot_idle_time <= low_speed_governor_hot_idle_timer)) {
+    low_speed_governor_coolant_temperature_speed_request = 0;
+    low_speed_governor_hot_idle_timer = low_speed_governor_hot_idle_time;
   }
   return;
 }
@@ -27999,10 +28019,18 @@ void cm848_updateSpeedLimitFromCoolant(void)
 
 
 //
-// Function: cm848_calculateProtectionSpeedLimits @ 0x0002906c
+// Function: cm848_selectLowSpeedGovernorDesiredReferenceSpeed @ 0x0002906c
 //
 
-void cm848_calculateProtectionSpeedLimits(void)
+/* Picks low_speed_governor_desired_reference_speed as the largest of the LSG speed requests and
+   records the winner in low_speed_governor_reference.reference_speed_state (e2m 1496 +14: 5 BASE
+   low_speed_governor_base_reference_speed_cal / 0 COOLANT / 1 PARK_NEU / 2 EXTENDED / 3 AC / 4
+   J1850 / 9 ALTITUDE / 11 TOOL / 12 MOVING; 10 SIP holds the speed during a shift; 6 JCOMM = a
+   J1939 TSC1 override). It also computes the park or drive, A/C, J1850, extended idle, altitude,
+   tool and moving requests, and the high pressure safety valve test state (was
+   cm848_calculateProtectionSpeedLimits) */
+
+void cm848_selectLowSpeedGovernorDesiredReferenceSpeed(void)
 
 {
   word wVar1;
@@ -28010,97 +28038,99 @@ void cm848_calculateProtectionSpeedLimits(void)
   uint uVar3;
   
   if ((transmission_park_or_neutral_flag == 0) ||
-     (governor_speed_limit_cal_temp = governor_speed_limit_temp_fuel_mode_cal,
-     governor_park_neutral_maximum_vehicle_speed < vehicle_speed)) {
-    governor_speed_limit_cal_temp = governor_speed_limit_temp_cal;
+     (low_speed_governor_park_or_drive_speed_request = low_speed_governor_park_idle_speed,
+     low_speed_governor_moving_road_speed < vehicle_speed)) {
+    low_speed_governor_park_or_drive_speed_request = low_speed_governor_drive_idle_speed;
   }
-  governor_speed_limit_pci_request = pci_requested_idle_speed;
-  if (governor_speed_limit_droop_enable_cal != 1) {
-    governor_speed_limit_pci_request = 0;
+  low_speed_governor_j1850_speed_request = pci_requested_idle_speed;
+  if (low_speed_governor_j1850_request_enable != 1) {
+    low_speed_governor_j1850_speed_request = 0;
   }
-  governor_speed_limit_cal_b = governor_speed_limit_b_cal;
+  low_speed_governor_air_conditioning_speed_request = low_speed_governor_air_conditioning_idle_speed
+  ;
   if ((switch_input_state_bits.switches_8_to_15 & 0x20) == 0) {
-    governor_speed_limit_cal_b = 0;
+    low_speed_governor_air_conditioning_speed_request = 0;
   }
   if (((((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
         (engine_state == ENGINE_STATE_RUNNING)) && (transmission_park_or_neutral_flag != 0)) &&
       (((short)battery_temperature_sensor_filtered <
-        (short)extended_idle_battery_temperature_threshold &&
+        (short)low_speed_governor_extended_idle_battery_temperature &&
        ((short)sensor_readings_t_0040baf2.coolant_temp <
-        (short)governor_speed_limit_coolant_threshold_cal)))) &&
+        (short)low_speed_governor_extended_idle_coolant_temperature)))) &&
      (((((switch_input_state_bits.switches_8_to_15 & 8) == 0 &&
         (((switch_input_state_bits.switches_0_to_7 & 4) == 0 &&
          ((short)intake_manifold_temperature_sensor_filtered <=
-          (short)governor_speed_limit_load_threshold_cal)))) &&
+          (short)low_speed_governor_extended_idle_intake_manifold_temperature)))) &&
        (fuel_demand_control_t_0040a57a.accelerator_off_idle == 0)) &&
-      (vehicle_speed <= governor_cold_idle_up_maximum_vehicle_speed)))) {
+      (vehicle_speed <= low_speed_governor_extended_idle_road_speed)))) {
     governor_speed_limit_exceeded_flag._0_2_ = 1;
   }
   else {
     governor_speed_limit_exceeded_flag._0_2_ = 0;
   }
   if (governor_speed_limit_exceeded_flag._0_2_ == 0) {
-    governor_speed_debounce_count = 0;
-    governor_speed_limit_cal_a = 0;
+    low_speed_governor_extended_idle_timer = 0;
+    low_speed_governor_extended_idle_speed_request = 0;
   }
   else {
-    governor_speed_debounce_count = governor_speed_debounce_count + 1;
+    low_speed_governor_extended_idle_timer = low_speed_governor_extended_idle_timer + 1;
   }
-  if ((governor_speed_debounce_count_cal <= governor_speed_debounce_count) ||
-     (((governor_output_t_0040aec2.governor_output == 0 && (governor_speed_debounce_enable_cal != 0)
-       ) && (governor_speed_limit_exceeded_flag._0_2_ != 0)))) {
-    governor_speed_limit_cal_a = governor_speed_limit_value_cal;
-    governor_speed_debounce_count = governor_speed_debounce_count_cal;
+  if ((low_speed_governor_extended_idle_time <= low_speed_governor_extended_idle_timer) ||
+     (((low_speed_governor_reference.reference_speed_state == 0 &&
+       (low_speed_governor_extended_idle_coolant_state_enable != 0)) &&
+      (governor_speed_limit_exceeded_flag._0_2_ != 0)))) {
+    low_speed_governor_extended_idle_speed_request = low_speed_governor_extended_idle_speed;
+    low_speed_governor_extended_idle_timer = low_speed_governor_extended_idle_time;
   }
-  if (governor_iat_correction_enable_cal == 0) {
+  if (low_speed_governor_altitude_hysteresis == 0) {
     uVar2 = lookupTableInterpolation
-                      (&governor_idle_speed_by_barometric_pressure_cached_axis_offset,
+                      (&low_speed_governor_altitude_speed_cached_axis_offset,
                        sensor_readings_t_0040baf2.barometric_pressure,
-                       governor_idle_speed_by_barometric_pressure_axis,
-                       governor_idle_speed_by_barometric_pressure_values,0);
+                       low_speed_governor_altitude_speed_axis,
+                       low_speed_governor_altitude_speed_values,0);
   }
   else {
     uVar3 = 1;
     do {
       if ((int)(short)sensor_readings_t_0040baf2.barometric_pressure <=
-          (int)(uint)governor_idle_speed_by_barometric_pressure_axis[uVar3]) break;
+          (int)(uint)low_speed_governor_altitude_speed_axis[uVar3]) break;
       uVar3 = uVar3 + 1 & 0xffff;
     } while (uVar3 < 6);
     if (5 < uVar3) {
       uVar3 = 5;
     }
-    if (governor_protection_phase_b_flag == 0) {
-      governor_protection_phase_b_flag = 1;
+    if (low_speed_governor_altitude_speed_first_pass_done_flag == 0) {
+      low_speed_governor_altitude_speed_first_pass_done_flag = 1;
     }
-    else if (((governor_output_t_0040aec2.idle_speed_barometric_ramped >> 8 !=
-               (uint)governor_idle_speed_by_barometric_pressure_values[uVar3]) && (1 < uVar3)) &&
+    else if (((low_speed_governor_reference.altitude_speed >> 8 !=
+               (uint)low_speed_governor_altitude_speed_values[uVar3]) && (1 < uVar3)) &&
             ((int)((int)(short)sensor_readings_t_0040baf2.barometric_pressure -
-                  (uint)governor_iat_correction_enable_cal) <=
-             (int)(uint)governor_speed_limit_by_coolant_temperature_values[uVar3 + 8])) {
+                  (uint)low_speed_governor_altitude_hysteresis) <=
+             (int)(uint)low_speed_governor_coolant_temperature_speed_values[uVar3 + 8])) {
       uVar3 = uVar3 + 0xffff & 0xffff;
     }
-    uVar2 = governor_idle_speed_by_barometric_pressure_values[uVar3];
+    uVar2 = low_speed_governor_altitude_speed_values[uVar3];
   }
-  governor_cold_start_iat_correction = (uint)uVar2 * 0x100;
-  if ((governor_iat_correction_mode_enable_cal == 0) &&
+  low_speed_governor_altitude_speed_target = (uint)uVar2 * 0x100;
+  if ((low_speed_governor_altitude_speed_outside_park_neutral_enable == 0) &&
      ((transmission_park_or_neutral_flag == 0 ||
-      (governor_park_neutral_maximum_vehicle_speed < vehicle_speed)))) {
-    governor_output_t_0040aec2.idle_speed_barometric_ramped = 0;
+      (low_speed_governor_moving_road_speed < vehicle_speed)))) {
+    low_speed_governor_reference.altitude_speed = 0;
   }
   else {
-    governor_output_t_0040aec2.idle_speed_barometric_ramped = governor_cold_start_iat_correction;
-    if ((governor_cold_start_band_cal != 0) &&
-       ((((governor_output_t_0040aec2.governor_output == 9 && (engine_state == ENGINE_STATE_RUNNING)
-          ) && (governor_output_t_0040aec2.idle_speed_barometric_ramped =
-                     governor_speed_setpoint_snapshot + governor_cold_start_band_cal,
-               governor_cold_start_iat_correction <=
-               governor_speed_setpoint_snapshot + governor_cold_start_band_cal)) &&
-        (governor_output_t_0040aec2.idle_speed_barometric_ramped =
-              governor_cold_start_iat_correction,
-        governor_cold_start_iat_correction + governor_cold_start_band_cal <
-        governor_speed_setpoint_snapshot)))) {
-      governor_output_t_0040aec2.idle_speed_barometric_ramped =
-           governor_speed_setpoint_snapshot - governor_cold_start_band_cal;
+    low_speed_governor_reference.altitude_speed = low_speed_governor_altitude_speed_target;
+    if ((low_speed_governor_altitude_slew_rate != 0) &&
+       ((((low_speed_governor_reference.reference_speed_state == 9 &&
+          (engine_state == ENGINE_STATE_RUNNING)) &&
+         (low_speed_governor_reference.altitude_speed =
+               low_speed_governor_altitude_speed_previous + low_speed_governor_altitude_slew_rate,
+         low_speed_governor_altitude_speed_target <=
+         low_speed_governor_altitude_speed_previous + low_speed_governor_altitude_slew_rate)) &&
+        (low_speed_governor_reference.altitude_speed = low_speed_governor_altitude_speed_target,
+        low_speed_governor_altitude_speed_target + low_speed_governor_altitude_slew_rate <
+        low_speed_governor_altitude_speed_previous)))) {
+      low_speed_governor_reference.altitude_speed =
+           low_speed_governor_altitude_speed_previous - low_speed_governor_altitude_slew_rate;
     }
   }
   if (((((adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR) ||
@@ -28111,11 +28141,11 @@ void cm848_calculateProtectionSpeedLimits(void)
         (fuel_demand_control_t_0040a57a.accelerator_off_idle != 0)))) ||
       ((vehicle_speed != 0 ||
        (wVar1 = sci_set_engine_speed_request, sci_set_engine_speed_request_key != 0xe5c1)))) &&
-     (wVar1 = low_speed_governor_service_speed_floor,
+     (wVar1 = low_speed_governor_tool_speed_request,
      high_pressure_safety_valve_test_state != SERVICE_TOOL_TEST_RUNNING)) {
     wVar1 = 0;
   }
-  low_speed_governor_service_speed_floor = wVar1;
+  low_speed_governor_tool_speed_request = wVar1;
   if (high_pressure_safety_valve_test_request_flag == 0) {
     high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_NOT_RUN;
   }
@@ -28131,91 +28161,97 @@ void cm848_calculateProtectionSpeedLimits(void)
     high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_ABORTED;
   }
   else {
-    low_speed_governor_service_speed_floor = high_pressure_safety_valve_test_engine_speed_setpoint;
+    low_speed_governor_tool_speed_request = high_pressure_safety_valve_test_engine_speed_setpoint;
     high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_RUNNING;
   }
-  governor_speed_setpoint_snapshot = governor_output_t_0040aec2.idle_speed_barometric_ramped;
+  low_speed_governor_altitude_speed_previous = low_speed_governor_reference.altitude_speed;
   if (((switch_input_state_bits.switches_8_to_15 & 8) == 0) &&
      ((switch_input_state_bits.switches_0_to_7 & 4) == 0)) {
-    governor_speed_limit_dynamic =
+    low_speed_governor_moving_speed_request =
          lookupTableInterpolation
-                   (&governor_minimum_speed_by_vehicle_speed_cached_axis_offset,vehicle_speed,
-                    governor_minimum_speed_by_vehicle_speed_axis,
-                    governor_minimum_speed_by_vehicle_speed_table,0);
+                   (&low_speed_governor_moving_speed_cached_axis_offset,vehicle_speed,
+                    low_speed_governor_moving_speed_axis,low_speed_governor_moving_speed_values,0);
   }
   else {
-    governor_speed_limit_dynamic = 0;
+    low_speed_governor_moving_speed_request = 0;
   }
   if ((j1939_powertrain_control_state.etc1_spn574_shift_in_process == 1) &&
-     (governor_speed_debounce_timer < governor_speed_debounce_limit)) {
-    governor_output_t_0040aec2.governor_output = 10;
-    thermal_governor_cal_a = 0;
-    thermal_governor_cal_b = 0;
+     (low_speed_governor_shift_in_process_timer < low_speed_governor_shift_in_process_hold_passes))
+  {
+    low_speed_governor_reference.reference_speed_state = 10;
+    low_speed_governor_extra_decrement_rate = 0;
+    low_speed_governor_extra_increment_rate = 0;
   }
   else {
-    governor_speed_limit_active = low_speed_governor_base_reference_speed_cal;
-    governor_output_t_0040aec2.governor_output = 5;
-    if (low_speed_governor_base_reference_speed_cal < governor_speed_limit_cal) {
-      governor_speed_limit_active = governor_speed_limit_cal;
-      governor_output_t_0040aec2.governor_output = 0;
-      thermal_governor_cal_a = 0;
-      thermal_governor_cal_b = 0;
+    low_speed_governor_desired_reference_speed = low_speed_governor_base_reference_speed_cal;
+    low_speed_governor_reference.reference_speed_state = 5;
+    if (low_speed_governor_base_reference_speed_cal <
+        low_speed_governor_coolant_temperature_speed_request) {
+      low_speed_governor_desired_reference_speed =
+           low_speed_governor_coolant_temperature_speed_request;
+      low_speed_governor_reference.reference_speed_state = 0;
+      low_speed_governor_extra_decrement_rate = 0;
+      low_speed_governor_extra_increment_rate = 0;
     }
-    if (governor_speed_limit_active < governor_speed_limit_cal_temp) {
-      governor_speed_limit_active = governor_speed_limit_cal_temp;
-      governor_output_t_0040aec2.governor_output = 1;
-      thermal_governor_cal_a = 0;
-      thermal_governor_cal_b = 0;
+    if (low_speed_governor_desired_reference_speed < low_speed_governor_park_or_drive_speed_request)
+    {
+      low_speed_governor_desired_reference_speed = low_speed_governor_park_or_drive_speed_request;
+      low_speed_governor_reference.reference_speed_state = 1;
+      low_speed_governor_extra_decrement_rate = 0;
+      low_speed_governor_extra_increment_rate = 0;
     }
-    if (governor_speed_limit_active < governor_speed_limit_cal_a) {
-      governor_speed_limit_active = governor_speed_limit_cal_a;
-      governor_output_t_0040aec2.governor_output = 2;
-      thermal_governor_cal_a = 0;
-      thermal_governor_cal_b = 0;
+    if (low_speed_governor_desired_reference_speed < low_speed_governor_extended_idle_speed_request)
+    {
+      low_speed_governor_desired_reference_speed = low_speed_governor_extended_idle_speed_request;
+      low_speed_governor_reference.reference_speed_state = 2;
+      low_speed_governor_extra_decrement_rate = 0;
+      low_speed_governor_extra_increment_rate = 0;
     }
-    if (governor_speed_limit_active < governor_speed_limit_cal_b) {
-      governor_speed_limit_active = governor_speed_limit_cal_b;
-      governor_output_t_0040aec2.governor_output = 3;
-      thermal_governor_cal_a = 0;
-      thermal_governor_cal_b = 0;
+    if (low_speed_governor_desired_reference_speed <
+        low_speed_governor_air_conditioning_speed_request) {
+      low_speed_governor_desired_reference_speed = low_speed_governor_air_conditioning_speed_request
+      ;
+      low_speed_governor_reference.reference_speed_state = 3;
+      low_speed_governor_extra_decrement_rate = 0;
+      low_speed_governor_extra_increment_rate = 0;
     }
-    if (governor_speed_limit_active < governor_speed_limit_pci_request) {
-      governor_speed_limit_active = governor_speed_limit_pci_request;
-      governor_output_t_0040aec2.governor_output = 4;
-      thermal_governor_cal_a = 0;
-      thermal_governor_cal_b = 0;
+    if (low_speed_governor_desired_reference_speed < low_speed_governor_j1850_speed_request) {
+      low_speed_governor_desired_reference_speed = low_speed_governor_j1850_speed_request;
+      low_speed_governor_reference.reference_speed_state = 4;
+      low_speed_governor_extra_decrement_rate = 0;
+      low_speed_governor_extra_increment_rate = 0;
     }
-    if ((uint)governor_speed_limit_active << 8 <
-        governor_output_t_0040aec2.idle_speed_barometric_ramped) {
-      governor_speed_limit_active =
-           (word)(governor_output_t_0040aec2.idle_speed_barometric_ramped >> 8);
-      governor_output_t_0040aec2.governor_output = 9;
-      thermal_governor_cal_a = 0;
-      thermal_governor_cal_b = 0;
+    if ((uint)low_speed_governor_desired_reference_speed << 8 <
+        low_speed_governor_reference.altitude_speed) {
+      low_speed_governor_desired_reference_speed =
+           (word)(low_speed_governor_reference.altitude_speed >> 8);
+      low_speed_governor_reference.reference_speed_state = 9;
+      low_speed_governor_extra_decrement_rate = 0;
+      low_speed_governor_extra_increment_rate = 0;
     }
-    if (governor_speed_limit_active < low_speed_governor_service_speed_floor) {
-      governor_speed_limit_active = low_speed_governor_service_speed_floor;
-      governor_output_t_0040aec2.governor_output = 0xb;
-      thermal_governor_cal_a = 0;
-      thermal_governor_cal_b = 0;
+    if (low_speed_governor_desired_reference_speed < low_speed_governor_tool_speed_request) {
+      low_speed_governor_desired_reference_speed = low_speed_governor_tool_speed_request;
+      low_speed_governor_reference.reference_speed_state = 0xb;
+      low_speed_governor_extra_decrement_rate = 0;
+      low_speed_governor_extra_increment_rate = 0;
     }
-    if (governor_speed_limit_active < governor_speed_limit_dynamic) {
-      governor_output_t_0040aec2.governor_output = 0xc;
-      thermal_governor_cal_a = thermal_governor_a_cal;
-      thermal_governor_cal_b = thermal_governor_b_cal;
-      governor_speed_limit_active = governor_speed_limit_dynamic;
+    if (low_speed_governor_desired_reference_speed < low_speed_governor_moving_speed_request) {
+      low_speed_governor_reference.reference_speed_state = 0xc;
+      low_speed_governor_extra_decrement_rate = low_speed_governor_moving_extra_decrement_rate;
+      low_speed_governor_extra_increment_rate = low_speed_governor_moving_extra_increment_rate;
+      low_speed_governor_desired_reference_speed = low_speed_governor_moving_speed_request;
     }
     if (governor_speed_limit_exceeded_flag._2_2_ != low_speed_governor_base_reference_speed_cal) {
-      governor_speed_limit_active = low_speed_governor_base_reference_speed_cal;
-      governor_output_t_0040aec2.governor_output = 5;
+      low_speed_governor_desired_reference_speed = low_speed_governor_base_reference_speed_cal;
+      low_speed_governor_reference.reference_speed_state = 5;
     }
   }
-  if ((governor_etc1_override_enable_cal == 1) &&
+  if ((low_speed_governor_j1939_override_enable == 1) &&
      (j1939_powertrain_control_state.tsc1_override_control_mode != TSC1_OVERRIDE_OFF)) {
-    governor_speed_limit_active = governor_rpm_limit_cal;
-    governor_output_t_0040aec2.governor_output = 6;
-    thermal_governor_cal_a = 0;
-    thermal_governor_cal_b = 0;
+    low_speed_governor_desired_reference_speed = low_speed_governor_minimum_idle_speed;
+    low_speed_governor_reference.reference_speed_state = 6;
+    low_speed_governor_extra_decrement_rate = 0;
+    low_speed_governor_extra_increment_rate = 0;
   }
   return;
 }
@@ -28223,10 +28259,17 @@ void cm848_calculateProtectionSpeedLimits(void)
 
 
 //
-// Function: cm848_applySpeedLimitConstraints @ 0x000298a0
+// Function: cm848_slewLowSpeedGovernorReferenceSpeed @ 0x000298a0
 //
 
-void cm848_applySpeedLimitConstraints(void)
+/* Moves low_speed_governor_reference.reference_speed toward the desired speed by the increment /
+   decrement rates (only in park or neutral at rest unless enabled, and not around the tool speed),
+   then clamps it to low_speed_governor_minimum_idle_speed (state 7) and _maximum_idle_speed (state
+   8; the tool speed to low_speed_governor_maximum_tool_idle_speed). Writes the reference before
+   droop, the extended idle status and the shift in process timer (was
+   cm848_applySpeedLimitConstraints) */
+
+void cm848_slewLowSpeedGovernorReferenceSpeed(void)
 
 {
   uint uVar1;
@@ -28234,110 +28277,129 @@ void cm848_applySpeedLimitConstraints(void)
   uint uVar3;
   
   if ((((engine_state == ENGINE_STATE_RUNNING) &&
-       (governor_output_t_0040aec2.governor_output != 0xb)) && (governor_output_state_prev != 0xb))
-     && ((cold_start_governor_output_enable_cal != 0 ||
-         ((transmission_park_or_neutral_flag != 0 &&
-          (vehicle_speed <= governor_park_neutral_maximum_vehicle_speed)))))) {
-    if ((int)(short)thermal_governor_offset_cal + (int)(short)thermal_governor_cal_b < 2) {
+       (low_speed_governor_reference.reference_speed_state != 0xb)) &&
+      (low_speed_governor_reference_speed_state_previous != 0xb)) &&
+     ((low_speed_governor_slew_outside_park_neutral_enable != 0 ||
+      ((transmission_park_or_neutral_flag != 0 &&
+       (vehicle_speed <= low_speed_governor_moving_road_speed)))))) {
+    if ((int)(short)low_speed_governor_idle_increment_rate +
+        (int)(short)low_speed_governor_extra_increment_rate < 2) {
       uVar2 = 1;
     }
     else {
-      uVar2 = (int)(short)thermal_governor_offset_cal + (int)(short)thermal_governor_cal_b;
+      uVar2 = (int)(short)low_speed_governor_idle_increment_rate +
+              (int)(short)low_speed_governor_extra_increment_rate;
     }
-    if ((int)(short)thermal_governor_base_cal + (int)(short)thermal_governor_cal_a < 2) {
+    if ((int)(short)low_speed_governor_idle_decrement_rate +
+        (int)(short)low_speed_governor_extra_decrement_rate < 2) {
       uVar1 = 1;
     }
     else {
-      uVar1 = (int)(short)thermal_governor_base_cal + (int)(short)thermal_governor_cal_a;
+      uVar1 = (int)(short)low_speed_governor_idle_decrement_rate +
+              (int)(short)low_speed_governor_extra_decrement_rate;
     }
-    uVar3 = (uint)governor_output_t_0040aec2.idle_reference_speed;
-    if (uVar3 + (uVar2 & 0xffff) < (uint)governor_speed_limit_active) {
-      if (thermal_governor_offset_cal != 0) {
+    uVar3 = (uint)low_speed_governor_reference.reference_speed;
+    if (uVar3 + (uVar2 & 0xffff) < (uint)low_speed_governor_desired_reference_speed) {
+      if (low_speed_governor_idle_increment_rate != 0) {
         uVar2 = uVar3 + uVar2 & 0xffff;
         goto LAB_000299e8;
       }
     }
-    else if (((int)(uint)governor_speed_limit_active < (int)(uVar3 - (uVar1 & 0xffff))) &&
-            (thermal_governor_base_cal != 0)) {
+    else if (((int)(uint)low_speed_governor_desired_reference_speed <
+              (int)(uVar3 - (uVar1 & 0xffff))) && (low_speed_governor_idle_decrement_rate != 0)) {
       uVar2 = uVar3 - uVar1 & 0xffff;
-      if (uVar3 < thermal_governor_base_cal) {
+      if (uVar3 < low_speed_governor_idle_decrement_rate) {
         uVar2 = 0;
       }
       goto LAB_000299e8;
     }
   }
-  uVar2 = (uint)governor_speed_limit_active;
+  uVar2 = (uint)low_speed_governor_desired_reference_speed;
 LAB_000299e8:
-  if (uVar2 < governor_rpm_limit_cal) {
-    governor_output_t_0040aec2.governor_output = 7;
-    uVar2 = (uint)governor_rpm_limit_cal;
+  if (uVar2 < low_speed_governor_minimum_idle_speed) {
+    low_speed_governor_reference.reference_speed_state = 7;
+    uVar2 = (uint)low_speed_governor_minimum_idle_speed;
   }
-  if ((governor_output_t_0040aec2.governor_output != 0xb) &&
-     (governor_output_mode_limit_cal < uVar2)) {
-    governor_output_t_0040aec2.governor_output = 8;
-    uVar2 = (uint)governor_output_mode_limit_cal;
+  if ((low_speed_governor_reference.reference_speed_state != 0xb) &&
+     (low_speed_governor_maximum_idle_speed < uVar2)) {
+    low_speed_governor_reference.reference_speed_state = 8;
+    uVar2 = (uint)low_speed_governor_maximum_idle_speed;
   }
-  if ((governor_output_t_0040aec2.governor_output == 0xb) &&
-     (governor_speed_limit_upper_cal < uVar2)) {
-    uVar2 = (uint)governor_speed_limit_upper_cal;
+  if ((low_speed_governor_reference.reference_speed_state == 0xb) &&
+     (low_speed_governor_maximum_tool_idle_speed < uVar2)) {
+    uVar2 = (uint)low_speed_governor_maximum_tool_idle_speed;
   }
-  governor_output_t_0040aec2.idle_reference_speed = (word)uVar2;
-  governor_speed_error_computed = (word)uVar2;
-  if (((uVar2 == governor_speed_limit_value_cal) &&
-      (governor_speed_debounce_count_cal == governor_speed_debounce_count)) &&
+  low_speed_governor_reference.reference_speed = (word)uVar2;
+  low_speed_governor_adjusted_reference_before_droop = (word)uVar2;
+  if (((uVar2 == low_speed_governor_extended_idle_speed) &&
+      (low_speed_governor_extended_idle_time == low_speed_governor_extended_idle_timer)) &&
      (governor_speed_limit_exceeded_flag._0_2_ != 0)) {
-    governor_speed_limit_active_flag = 1;
+    low_speed_governor_extended_idle_active_flag = 1;
   }
   else {
-    governor_speed_limit_active_flag = 0;
+    low_speed_governor_extended_idle_active_flag = 0;
   }
   if (j1939_powertrain_control_state.etc1_spn574_shift_in_process == 0) {
-    governor_speed_debounce_timer = 0;
+    low_speed_governor_shift_in_process_timer = 0;
   }
-  else if (governor_speed_debounce_timer < governor_speed_debounce_limit) {
-    governor_speed_debounce_timer = governor_speed_debounce_timer + 1;
+  else if (low_speed_governor_shift_in_process_timer <
+           low_speed_governor_shift_in_process_hold_passes) {
+    low_speed_governor_shift_in_process_timer = low_speed_governor_shift_in_process_timer + 1;
   }
-  governor_output_state_prev = governor_output_t_0040aec2.governor_output;
+  low_speed_governor_reference_speed_state_previous =
+       low_speed_governor_reference.reference_speed_state;
   return;
 }
 
 
 
 //
-// Function: cm848_updateGovernorSpeedLimits @ 0x00029afc
+// Function: cm848_updateLowSpeedGovernorReferenceSpeed @ 0x00029afc
 //
 
-void cm848_updateGovernorSpeedLimits(void)
+/* The LSG reference speed task (cm848_periodicTaskSet_sensorProcessing): sets
+   low_speed_governor_shift_in_process_hold_passes, then runs
+   cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed,
+   cm848_selectLowSpeedGovernorDesiredReferenceSpeed and cm848_slewLowSpeedGovernorReferenceSpeed
+   (e2m 14EE / 1496) (was cm848_updateGovernorSpeedLimits) */
+
+void cm848_updateLowSpeedGovernorReferenceSpeed(void)
 
 {
-  governor_speed_debounce_limit = shift_in_process_hold_off_time_limit * 5;
-  cm848_updateSpeedLimitFromCoolant();
-  cm848_calculateProtectionSpeedLimits();
-  cm848_applySpeedLimitConstraints();
+  low_speed_governor_shift_in_process_hold_passes = shift_in_process_hold_off_time_limit * 5;
+  cm848_calculateLowSpeedGovernorCoolantTemperatureSpeed();
+  cm848_selectLowSpeedGovernorDesiredReferenceSpeed();
+  cm848_slewLowSpeedGovernorReferenceSpeed();
   return;
 }
 
 
 
 //
-// Function: cm848_calculateGovernorCompensation @ 0x00029b38
+// Function: cm848_calculateLowSpeedGovernorNoLoadFuel @ 0x00029b38
 //
 
-void cm848_calculateGovernorCompensation(void)
+/* low_speed_governor_reference.no_load_fuel (e2m 1496 +12 No_Load_Fuel_At_LSG_Ref):
+   fuel_demand_base_offset, or (outside low speed governor final gain states 0 / 1) the friction
+   fuel at the reference before droop + the fuel by throttle table + the coolant friction adjustment
+   + governor_speed_target_trim (was cm848_calculateGovernorCompensation) */
+
+void cm848_calculateLowSpeedGovernorNoLoadFuel(void)
 
 {
   word wVar1;
   word wVar2;
   
   wVar1 = lookupTableInterpolation
-                    (&friction_fuel_by_engine_speed_cached_axis_offset,governor_speed_error_computed
-                     ,friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
+                    (&friction_fuel_by_engine_speed_cached_axis_offset,
+                     low_speed_governor_adjusted_reference_before_droop,
+                     friction_fuel_by_engine_speed_axis,friction_fuel_by_engine_speed_values,0);
   wVar2 = lookupTableInterpolation
                     (&governor_interp_table_state_b,fuel_demand_control_t_0040a57a.calculated,
                      governor_fuel_demand_axis_cal,governor_fuel_demand_output_cal,0);
-  governor_output_t_0040aec2.fuel_feed_forward_quantity = fuel_demand_base_offset;
+  low_speed_governor_reference.no_load_fuel = fuel_demand_base_offset;
   if ((low_speed_governor_final_gain_state != 0) && (low_speed_governor_final_gain_state != 1)) {
-    governor_output_t_0040aec2.fuel_feed_forward_quantity =
+    low_speed_governor_reference.no_load_fuel =
          friction_fuel_adjustment_for_coolant_temperature + wVar1 + wVar2 +
          governor_speed_target_trim;
   }
@@ -28347,26 +28409,30 @@ void cm848_calculateGovernorCompensation(void)
 
 
 //
-// Function: cm848_initGovernorStateVariables @ 0x00029bf8
+// Function: cm848_initializeLowSpeedGovernorReferenceSpeed @ 0x00029bf8
 //
 
-void cm848_initGovernorStateVariables(void)
+/* Boot initializer (cm848_applicationMain) of the LSG reference speed chain: the lookup caches, the
+   timers and first-pass flags, the base reference copy at 0x3faf7c, the state 5 (BASE), and the
+   J1939 TSC1 override control mode (off) (was cm848_initGovernorStateVariables) */
+
+void cm848_initializeLowSpeedGovernorReferenceSpeed(void)
 
 {
-  governor_speed_limit_by_coolant_temperature_cached_axis_offset = 2;
-  governor_idle_speed_by_barometric_pressure_cached_axis_offset = 2;
-  governor_minimum_speed_by_vehicle_speed_cached_axis_offset = 2;
-  governor_speed_disengage_timer = 0;
-  governor_speed_limit_count = 0;
-  governor_speed_engage_timer = 0;
-  governor_speed_debounce_count = 0;
-  governor_speed_debounce_timer = 0;
-  governor_protection_phase_a_flag = 0;
-  governor_protection_phase_b_flag = 0;
+  low_speed_governor_coolant_temperature_speed_cached_axis_offset = 2;
+  low_speed_governor_altitude_speed_cached_axis_offset = 2;
+  low_speed_governor_moving_speed_cached_axis_offset = 2;
+  low_speed_governor_cold_idle_timer = 0;
+  low_speed_governor_hot_idle_inhibit_timer = 0;
+  low_speed_governor_hot_idle_timer = 0;
+  low_speed_governor_extended_idle_timer = 0;
+  low_speed_governor_shift_in_process_timer = 0;
+  low_speed_governor_coolant_speed_first_pass_done_flag = 0;
+  low_speed_governor_altitude_speed_first_pass_done_flag = 0;
   governor_speed_limit_exceeded_flag._2_2_ = low_speed_governor_base_reference_speed_cal;
   j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_OVERRIDE_OFF;
-  governor_output_t_0040aec2.governor_output = 5;
-  governor_output_state_prev = 5;
+  low_speed_governor_reference.reference_speed_state = 5;
+  low_speed_governor_reference_speed_state_previous = 5;
   return;
 }
 
@@ -43679,13 +43745,14 @@ LAB_00040548:
   }
   adjusted_user_fueling_state = FVar1;
   if ((((governor_fuel_demand_mode_prev == FUELING_STATE_LOW_SPEED_GOVERNOR) ||
-       (engine_speed_state.filtered_engine_speed <= governor_speed_demand_working)) &&
+       (engine_speed_state.filtered_engine_speed <= low_speed_governor_adjusted_reference_speed)) &&
       ((governor_fuel_demand_working < low_speed_governor_fueling ||
        ((j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_TORQUE_LIMIT &&
         (j1939_powertrain_control_state.tsc1_torque_limit_fueling < low_speed_governor_fueling))))))
      || (((governor_fuel_demand_mode_prev == FUELING_STATE_LOW_SPEED_GOVERNOR ||
           ((uint)engine_speed_state.filtered_engine_speed <=
-           (uint)governor_speed_demand_working + (uint)low_speed_governor_reference_offset)) &&
+           (uint)low_speed_governor_adjusted_reference_speed +
+           (uint)low_speed_governor_reference_offset)) &&
          (((fuel_demand_control_t_0040a57a.calculated == 0 && (cruise_control_engaged_flag != 1)) &&
           ((operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR ||
            (operating_mode_governor_output.mode_code == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)))
@@ -43746,7 +43813,8 @@ LAB_000406b0:
   if (adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) {
     low_speed_governor_active_flag = 1;
   }
-  else if ((int)((uint)governor_speed_demand_working + (int)low_speed_governor_reset_speed_offset) <
+  else if ((int)((uint)low_speed_governor_adjusted_reference_speed +
+                (int)low_speed_governor_reset_speed_offset) <
            (int)(uint)engine_speed_state.filtered_engine_speed) {
     low_speed_governor_active_flag = 0;
   }
@@ -44390,7 +44458,7 @@ void cm848_updateEngineRetarderEnableState(void)
   else {
     engine_retarder_driver_inhibit_flag = true;
   }
-  if ((governor_speed_limit_active_flag == 0) ||
+  if ((low_speed_governor_extended_idle_active_flag == 0) ||
      (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
     if (((engine_retarder_arbitrated_request_percent == 0) &&
         (!(bool)engine_retarder_enter_condition_flag)) ||
@@ -44451,7 +44519,7 @@ void cm848_calculateEngineRetarderSelectionPercent(void)
   engine_retarder_selection_percent = j1939_engine_retarder_selection_percent;
   if ((((fault_feature_config_flags & 1) == 0) &&
       (engine_retarder_selection_percent = engine_retarder_switch_percent,
-      governor_speed_limit_active_flag != 0)) &&
+      low_speed_governor_extended_idle_active_flag != 0)) &&
      (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable != 0)) {
     engine_retarder_selection_percent = 100;
   }
@@ -44654,7 +44722,7 @@ void cm848_updateEngineRetarderActiveState(void)
     engine_retarder_request_shift_hold_flag = 1;
   }
   if (engine_retarder_arbitrated_request_percent != 0) {
-    if ((governor_speed_limit_active_flag == 0) ||
+    if ((low_speed_governor_extended_idle_active_flag == 0) ||
        (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
       engine_retarder_active_flag = 1;
     }
@@ -49370,11 +49438,11 @@ LAB_00049380:
        (!bVar1)) {
       fuel_pressure_diagnostic_flags = fuel_pressure_diagnostic_flags | 0x20;
     }
-    if (((((((int)((uint)governor_output_t_0040aec2.idle_reference_speed -
+    if (((((((int)((uint)low_speed_governor_reference.reference_speed -
                   (uint)fuel_pressure_governor_demand_check_low_idle_speed_window) <
              (int)(uint)average_engine_speed) &&
            ((uint)average_engine_speed <
-            (uint)governor_output_t_0040aec2.idle_reference_speed +
+            (uint)low_speed_governor_reference.reference_speed +
             (uint)fuel_pressure_governor_demand_check_low_idle_speed_window)) &&
           (vehicle_speed_sensor_ok_flag == 1)) &&
          ((vehicle_speed_copy == 0 &&
@@ -50490,7 +50558,7 @@ LAB_0004b424:
     main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_DEMAND_FLOOR;
     injection_timing_adjustment_flags = 0;
   }
-  if ((governor_speed_limit_active_flag != 0) &&
+  if ((low_speed_governor_extended_idle_active_flag != 0) &&
      (injection_timing_demand < injection_timing_main_governor_limit_minimum)) {
     injection_timing_demand = injection_timing_main_governor_limit_minimum;
     main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_GOVERNOR_LIMIT_MINIMUM;
@@ -57894,7 +57962,7 @@ void cm848_applicationMain(void)
   initCruiseConfirmFlags();
   cm848_initTemperatureTrimCoeff();
   cm848_initSensorLookupTable5();
-  cm848_initGovernorStateVariables();
+  cm848_initializeLowSpeedGovernorReferenceSpeed();
   cm848_initGovernorLookupDimensions();
   cm848_initializeTorqueManagement();
   cm848_initializeLiftPumpControl();
@@ -65580,11 +65648,11 @@ void governor_calculateIntegratorRpmOutput(void)
         governor_faultDerate_channel_bit) {
       if ((algorithm_enable_flags_12_cal.low_speed_governor_droop_enable == 0) ||
          (iVar1 = (int)(short)governor_integrator_correction_term, iVar1 == 0)) {
-        puVar2 = (undefined *)(uint)governor_output_t_0040aec2.idle_reference_speed;
+        puVar2 = (undefined *)(uint)low_speed_governor_reference.reference_speed;
       }
       else {
         puVar2 = (undefined *)
-                 ((uint)governor_output_t_0040aec2.idle_reference_speed -
+                 ((uint)low_speed_governor_reference.reference_speed -
                  (int)(CONCAT44((int)((ulonglong)
                                       ((longlong)iVar1 *
                                       (longlong)
@@ -84403,8 +84471,8 @@ void cm848_updateTripAndLifetimeCounters(void)
     }
     uVar2 = (uint)engine_speed_state.filtered_engine_speed;
     if (((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) &&
-        ((int)(governor_output_t_0040aec2.idle_reference_speed - 400) <= (int)uVar2)) &&
-       (uVar2 <= governor_output_t_0040aec2.idle_reference_speed + 400)) {
+        ((int)(low_speed_governor_reference.reference_speed - 400) <= (int)uVar2)) &&
+       (uVar2 <= low_speed_governor_reference.reference_speed + 400)) {
       engine_at_governed_speed_flag = 1;
     }
     else {
@@ -90043,13 +90111,13 @@ void cm848_calculatePilotInjectionTimingOffset(void)
   }
   if (final_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR) {
     if (((int)(uint)engine_speed_state.filtered_engine_speed <=
-         (int)((uint)governor_output_t_0040aec2.idle_reference_speed -
+         (int)((uint)low_speed_governor_reference.reference_speed -
               (uint)injection_timing_rpm_snap_tolerance)) ||
-       ((uint)governor_output_t_0040aec2.idle_reference_speed +
+       ((uint)low_speed_governor_reference.reference_speed +
         (uint)injection_timing_rpm_snap_tolerance <= (uint)engine_speed_state.filtered_engine_speed)
        ) goto LAB_0052c8b0;
     injection_timing_rpm_snap_active_flag = 1;
-    injection_timing_rpm_axis = governor_output_t_0040aec2.idle_reference_speed;
+    injection_timing_rpm_axis = low_speed_governor_reference.reference_speed;
     injection_timing_adjustment_flags = injection_timing_adjustment_flags | 0x100;
   }
   else {
@@ -90381,7 +90449,7 @@ void cm848_calculatePilotInjectionTiming(void)
     pilot_injection_timing_uncapped =
          injection_timing_pilot_offset_rpm_corrected + main_injection_timing;
   }
-  if ((governor_speed_limit_active_flag != 0) &&
+  if ((low_speed_governor_extended_idle_active_flag != 0) &&
      (injection_timing_main_governor_limit_minimum == main_injection_timing)) {
     pilot_injection_timing_uncapped = injection_timing_pilot_offset_governor_limit_floor;
     if (injection_timing_pilot_absolute_switch == 0) {
@@ -90715,7 +90783,7 @@ LAB_0052d9e8:
         ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x200) != 0)) ||
        ((system_status_flags_t_003fe974.fault_detected_bits_0_to_15 & 0x100) != 0)) ||
       ((monitor_enabling_conditions_met.boost_pressure_sensor_and_underboost == 0 ||
-       ((uint)governor_output_t_0040aec2.idle_reference_speed +
+       ((uint)low_speed_governor_reference.reference_speed +
         (uint)boost_pressure_sensor_high_reading_idle_reference_speed_offset <
         (uint)engine_speed_state.engine_speed)))) ||
      (boost_pressure_sensor_high_reading_maximum_engine_load < engine_load_percent)) {
@@ -92707,9 +92775,9 @@ LAB_00530e4c:
     return;
   }
   iVar3 = (int)(short)engine_speed_state.filtered_engine_speed -
-          (int)(short)governor_output_t_0040aec2.idle_reference_speed;
+          (int)(short)low_speed_governor_reference.reference_speed;
   if (iVar3 < 0) {
-    iVar3 = (int)(short)governor_output_t_0040aec2.idle_reference_speed -
+    iVar3 = (int)(short)low_speed_governor_reference.reference_speed -
             (int)(short)engine_speed_state.filtered_engine_speed;
   }
   if (((int)(uint)fuel_pressure_sensor_plausibility_maximum_speed_error < iVar3) ||
@@ -93853,7 +93921,7 @@ void cm848_initializeMisfireMonitor(void)
 {
   misfire_monitor_warm_up_pass_count = 0;
   cm848_resetMisfireMonitorTest();
-  misfire_monitor_idle_reference_speed_previous = governor_output_t_0040aec2.idle_reference_speed;
+  misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
   if (algorithm_enable_flags_41_cal.misfire_monitor_enable == 0) {
     misfire_monitor_phase_code = 0;
   }
@@ -93878,7 +93946,7 @@ void cm848_initializeMisfireMonitor(void)
    (the list is skipped when end_of_line_test_settings_cal.field_mode_register is 5100),
    engine_state is ENGINE_STATE_RUNNING, the filtered engine speed (engine_speed_state_t.target_rpm,
    the moving average of average_engine_speed) is within misfire_monitor_idle_reference_speed_offset
-   of the idle reference (governor_output_t.integrator high word) and at most
+   of the idle reference (low_speed_governor_reference_t.integrator high word) and at most
    misfire_monitor_maximum_engine_speed, load at most misfire_monitor_maximum_engine_load,
    accelerator demand under misfire_monitor_maximum_accelerator_demand, adjusted_user_fueling_state
    11, the idle reference equal to misfire_monitor_idle_reference_speed_previous, coolant at least
@@ -93910,14 +93978,14 @@ void cm848_checkMisfireMonitorTestConditions(void)
   }
   if ((!bVar1) && (engine_state == ENGINE_STATE_RUNNING)) {
     if (((((uint)engine_speed_state.engine_speed <=
-           (uint)governor_output_t_0040aec2.idle_reference_speed +
+           (uint)low_speed_governor_reference.reference_speed +
            (uint)misfire_monitor_idle_reference_speed_offset) &&
          (((((uint)engine_speed_state.engine_speed <= (uint)misfire_monitor_maximum_engine_speed &&
             (engine_load_at_current_speed_percent <= misfire_monitor_maximum_engine_load)) &&
            (fuel_demand_control_t_0040a57a.calculated < misfire_monitor_maximum_accelerator_demand))
           && ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
               ((uint)misfire_monitor_idle_reference_speed_previous ==
-               (uint)governor_output_t_0040aec2.idle_reference_speed)))))) &&
+               (uint)low_speed_governor_reference.reference_speed)))))) &&
         ((misfire_monitor_minimum_coolant_temperature <=
           (short)sensor_readings_t_0040baf2.coolant_temp ||
          ((end_of_line_test_settings_cal.field_mode_register == 0x13ec &&
@@ -94062,30 +94130,28 @@ void cm848_runMisfireMonitor(void)
   
   if (misfire_monitor_phase_code == 1) {
     if (misfire_monitor_run_request_flag == 0) {
-      misfire_monitor_idle_reference_speed_previous =
-           governor_output_t_0040aec2.idle_reference_speed;
+      misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
       return;
     }
-    misfire_monitor_idle_reference_speed_previous = governor_output_t_0040aec2.idle_reference_speed;
+    misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
     misfire_monitor_phase_code = 4;
     misfire_monitor_step_code = 0;
     return;
   }
   if ((misfire_monitor_phase_code == 2) || (misfire_monitor_phase_code == 3)) {
     if (misfire_monitor_run_request_flag == 0) {
-      misfire_monitor_idle_reference_speed_previous =
-           governor_output_t_0040aec2.idle_reference_speed;
+      misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
       return;
     }
     misfire_monitor_phase_code = 4;
     misfire_monitor_step_code = 0;
     misfire_monitor_result = 0;
     cm848_resetMisfireMonitorTest();
-    misfire_monitor_idle_reference_speed_previous = governor_output_t_0040aec2.idle_reference_speed;
+    misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
     return;
   }
   if (misfire_monitor_phase_code != 4) {
-    misfire_monitor_idle_reference_speed_previous = governor_output_t_0040aec2.idle_reference_speed;
+    misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
     return;
   }
   switch(misfire_monitor_step_code) {
@@ -94112,7 +94178,7 @@ void cm848_runMisfireMonitor(void)
     }
     if (misfire_monitor_warm_idle_flag != 0) {
       if (((((uint)engine_speed_state.engine_speed <=
-             (uint)governor_output_t_0040aec2.idle_reference_speed +
+             (uint)low_speed_governor_reference.reference_speed +
              (uint)misfire_monitor_idle_reference_speed_offset) &&
            ((uint)engine_speed_state.engine_speed <= (uint)misfire_monitor_maximum_engine_speed)) &&
           (engine_load_at_current_speed_percent <= misfire_monitor_maximum_engine_load)) &&
@@ -94124,7 +94190,7 @@ void cm848_runMisfireMonitor(void)
           misfire_monitor_disabled_by_fault_flag = 0;
           misfire_monitor_idle_pass_count = misfire_monitor_idle_pass_count + 1;
           misfire_monitor_idle_reference_speed_previous =
-               governor_output_t_0040aec2.idle_reference_speed;
+               low_speed_governor_reference.reference_speed;
           return;
         }
         misfire_monitor_idle_pass_count = misfire_monitor_minimum_idle_pass_count - 1;
@@ -94143,12 +94209,12 @@ void cm848_runMisfireMonitor(void)
         }
         if (((misfire_monitor_maximum_vehicle_speed <= vehicle_speed) ||
             ((uint)misfire_monitor_idle_reference_speed_previous !=
-             (uint)governor_output_t_0040aec2.idle_reference_speed)) ||
+             (uint)low_speed_governor_reference.reference_speed)) ||
            ((switch_input_state_bits.remote_power_take_off_switch != 0 ||
             (misfire_monitor_disabled_by_fault_flag != 0)))) {
           cm848_resetMisfireMonitorTest();
           misfire_monitor_idle_reference_speed_previous =
-               governor_output_t_0040aec2.idle_reference_speed;
+               low_speed_governor_reference.reference_speed;
           return;
         }
         if (misfire_monitor_test_cylinder_slot != cylinder_event_index) {
@@ -94157,7 +94223,7 @@ void cm848_runMisfireMonitor(void)
         if (cylinder_event_index != misfire_monitor_test_cylinder_slot) {
           misfire_monitor_warm_idle_flag = 0;
           misfire_monitor_idle_reference_speed_previous =
-               governor_output_t_0040aec2.idle_reference_speed;
+               low_speed_governor_reference.reference_speed;
           misfire_monitor_cylinder_balance_suspend_flag = 1;
           misfire_monitor_speed_buffer_enable_flag = 1;
           return;
@@ -94165,7 +94231,7 @@ void cm848_runMisfireMonitor(void)
         if (misfire_monitor_event_index_advanced_flag == 0) {
           misfire_monitor_warm_idle_flag = 0;
           misfire_monitor_idle_reference_speed_previous =
-               governor_output_t_0040aec2.idle_reference_speed;
+               low_speed_governor_reference.reference_speed;
           misfire_monitor_cylinder_balance_suspend_flag = 1;
           misfire_monitor_speed_buffer_enable_flag = 1;
           return;
@@ -94182,7 +94248,7 @@ void cm848_runMisfireMonitor(void)
           misfire_monitor_warm_idle_flag = 0;
           misfire_monitor_cylinder_wait_pass_count = 0;
           misfire_monitor_idle_reference_speed_previous =
-               governor_output_t_0040aec2.idle_reference_speed;
+               low_speed_governor_reference.reference_speed;
           misfire_monitor_previous_cylinder_slot = cylinder_event_count_max - 1;
           misfire_monitor_fueling_event_index = misfire_monitor_test_cylinder_slot + sVar2;
           misfire_monitor_event_index_advanced_flag = 0;
@@ -94195,8 +94261,8 @@ void cm848_runMisfireMonitor(void)
         }
         misfire_monitor_warm_idle_flag = 0;
         misfire_monitor_cylinder_wait_pass_count = 0;
-        misfire_monitor_idle_reference_speed_previous =
-             governor_output_t_0040aec2.idle_reference_speed;
+        misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed
+        ;
         misfire_monitor_previous_cylinder_slot = misfire_monitor_test_cylinder_number - 2;
         misfire_monitor_fueling_event_index = misfire_monitor_test_cylinder_slot + sVar2;
         misfire_monitor_event_index_advanced_flag = 0;
@@ -94227,16 +94293,15 @@ void cm848_runMisfireMonitor(void)
     cm848_checkMisfireMonitorTestConditions();
     if (misfire_monitor_conditions_valid_flag == 0) {
       cm848_resetMisfireMonitorTest();
-      misfire_monitor_idle_reference_speed_previous =
-           governor_output_t_0040aec2.idle_reference_speed;
+      misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
       return;
     }
     if (misfire_monitor_fueling_event_index != cylinder_event_index) {
       if ((ushort)(misfire_monitor_event_wait_pass_count + 1) <
           misfire_monitor_fueling_wait_pass_limit) {
         misfire_monitor_event_wait_pass_count = misfire_monitor_event_wait_pass_count + 1;
-        misfire_monitor_idle_reference_speed_previous =
-             governor_output_t_0040aec2.idle_reference_speed;
+        misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed
+        ;
         return;
       }
       goto LAB_0053363c;
@@ -94263,8 +94328,7 @@ void cm848_runMisfireMonitor(void)
     cm848_checkMisfireMonitorTestConditions();
     if (misfire_monitor_conditions_valid_flag == 0) {
       cm848_resetMisfireMonitorTest();
-      misfire_monitor_idle_reference_speed_previous =
-           governor_output_t_0040aec2.idle_reference_speed;
+      misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
       return;
     }
     if (misfire_monitor_fueling_event_index != cylinder_event_index) {
@@ -94274,16 +94338,14 @@ void cm848_runMisfireMonitor(void)
        (misfire_monitor_event_index_advanced_flag != 0)) {
       misfire_monitor_event_wait_pass_count = 0;
       cm848_evaluateMisfireMonitorCylinderResponse();
-      misfire_monitor_idle_reference_speed_previous =
-           governor_output_t_0040aec2.idle_reference_speed;
+      misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
       misfire_monitor_event_index_advanced_flag = 0;
       return;
     }
     if ((ushort)(misfire_monitor_event_wait_pass_count + 1) <
         misfire_monitor_response_wait_pass_limit) {
       misfire_monitor_event_wait_pass_count = misfire_monitor_event_wait_pass_count + 1;
-      misfire_monitor_idle_reference_speed_previous =
-           governor_output_t_0040aec2.idle_reference_speed;
+      misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
       return;
     }
 LAB_0053363c:
@@ -94373,7 +94435,7 @@ LAB_00533650:
       }
     }
   }
-  misfire_monitor_idle_reference_speed_previous = governor_output_t_0040aec2.idle_reference_speed;
+  misfire_monitor_idle_reference_speed_previous = low_speed_governor_reference.reference_speed;
   return;
 }
 

@@ -838,7 +838,7 @@ Scripts are in `session_folder/round13/`.
       moving-vehicle table (12, e2m 8C51 / 8C52). Source 10 means a shift is in process, and 6 is the TSC1 override.
     - `cm848_applySpeedLimitConstraints` ramps `idle_reference_speed` toward the target. The `thermal_governor_*`
       words are its up / down rates, and the minimum (source 7) and maximum (source 8) clamps follow.
-    - The source code `governor_output_t.governor_output` needs an enum with every value 0-12 proved; 7 and 8 are
+    - The source code `low_speed_governor_reference_t.governor_output` needs an enum with every value 0-12 proved; 7 and 8 are
       stored in the ramp function.
   - **The injector cutout markers** at 0x3fcf64 are a `word[8]` array candidate (the cancel loop reads them with
     `lhz`). The request bytes at 0x3fcf61-62 are the callback's receive buffer (stored at 0x3fcf61 + count).

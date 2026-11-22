@@ -120,7 +120,7 @@ prints such updates as pieces. See the note in `firmware/CLAUDE.md`.
   - the overspeed log (`engine_overspeed_event_t[5]`);
   - the `i16` limits at 0x408d4a / 0x408d52;
   - the orphan pad rows;
-  - `engine_rpm_state_t.filtered_rpm` and `governor_output_t.idle_reference_speed`;
+  - `engine_rpm_state_t.filtered_rpm` and `low_speed_governor_reference_t.idle_reference_speed`;
   - the P0720 bit (0x20 of `fault_state_flags`);
   - the misnames listed in wave 10 (commit 72eb81e);
   - `sensor_validation_timeout_cal`, which is `end_of_line_test_settings_cal.maximum_miles` plus a spare byte;
