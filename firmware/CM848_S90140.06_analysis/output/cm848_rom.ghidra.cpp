@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 07:00:12 MST 2026
+// Generated: Sun Nov 22 07:05:45 MST 2026
 
 
 //
@@ -7358,28 +7358,26 @@ void main_loop(void)
 {
   int iVar1;
   uint uVar2;
-  undefined *puVar3;
-  scheduler_task_stat_t *psVar4;
-  word wVar5;
+  executive_frame_timing_t *peVar3;
+  word wVar4;
   
   if ((algorithm_enable_flags_18_cal.executive_timing_enable != 0) &&
-     (scheduler_feature_enabled_flag == 0)) {
-    psVar4 = &scheduler_task_stat_t_0040be6a;
+     (executive_timing_enabled_previous_flag == 0)) {
+    executive_frame_timing_clear_pointer = executive_frame_timings;
     do {
-      psVar4->total_ticks = 0;
-      psVar4->call_count = 0;
-      psVar4->min_time = 0xffff;
-      psVar4->max_time = 0;
-      psVar4->overrun_count = 0;
-      psVar4 = psVar4 + 1;
-      scheduler_task_stat_ptr = (undefined *)psVar4;
-    } while (psVar4 < &ram_refresh_enable);
+      executive_frame_timing_clear_pointer->total_ticks = 0;
+      executive_frame_timing_clear_pointer->frame_count = 0;
+      executive_frame_timing_clear_pointer->minimum_ticks = 0xffff;
+      executive_frame_timing_clear_pointer->maximum_ticks = 0;
+      executive_frame_timing_clear_pointer->overflow_count = 0;
+      executive_frame_timing_clear_pointer = executive_frame_timing_clear_pointer + 1;
+    } while (executive_frame_timing_clear_pointer < &ram_refresh_enable);
   }
-  timer_base_snapshot = TBLr;
-  scheduler_feature_enabled_flag =
+  executive_frame_start_ticks = TBLr;
+  executive_timing_enabled_previous_flag =
        (word)(algorithm_enable_flags_18_cal.executive_timing_enable != 0);
-  wVar5 = USIU_PISCR.PISCR;
-  USIU_PISCR.PISCR = wVar5;
+  wVar4 = USIU_PISCR.PISCR;
+  USIU_PISCR.PISCR = wVar4;
   switch(main_loop_scheduler_phase) {
   case 0:
     cm848_phase_common_processing();
@@ -7389,7 +7387,7 @@ void main_loop(void)
     cm848_periodicTaskGroup12_calibration1();
     hpcr_periodicTaskGroup25_calibration7();
     cm848_advanceHourMeters();
-    scheduler_task_stat_ptr_b = (undefined *)&scheduler_task_stat_t_0040be6a;
+    executive_frame_timing_pointer = executive_frame_timings;
     main_loop_scheduler_phase = 1;
     break;
   case 1:
@@ -7769,26 +7767,26 @@ void main_loop(void)
   default:
     main_loop_scheduler_phase = 0;
   }
-  puVar3 = scheduler_task_stat_ptr_b;
+  peVar3 = executive_frame_timing_pointer;
   if (algorithm_enable_flags_18_cal.executive_timing_enable != 0) {
     iVar1 = TBLr;
-    wVar5 = (word)(iVar1 - timer_base_snapshot);
-    uVar2 = iVar1 - timer_base_snapshot & 0xffff;
-    scheduler_task_stat_value_working = wVar5;
-    if (*(ushort *)(scheduler_task_stat_ptr_b + 8) < uVar2) {
-      *(word *)(scheduler_task_stat_ptr_b + 8) = wVar5;
+    wVar4 = (word)(iVar1 - executive_frame_start_ticks);
+    uVar2 = iVar1 - executive_frame_start_ticks & 0xffff;
+    executive_frame_ticks = wVar4;
+    if (executive_frame_timing_pointer->maximum_ticks < uVar2) {
+      executive_frame_timing_pointer->maximum_ticks = wVar4;
     }
-    if (uVar2 < *(ushort *)(puVar3 + 6)) {
-      *(word *)(puVar3 + 6) = wVar5;
+    if (uVar2 < peVar3->minimum_ticks) {
+      peVar3->minimum_ticks = wVar4;
     }
-    *(uint *)puVar3 = *(int *)puVar3 + uVar2;
-    *(short *)(puVar3 + 4) = *(short *)(puVar3 + 4) + 1;
-    if (task_execution_time_threshold < uVar2) {
-      *(short *)(puVar3 + 10) = *(short *)(puVar3 + 10) + 1;
-      scheduler_overrun_count_cal = scheduler_overrun_count_cal + 1;
+    peVar3->total_ticks = peVar3->total_ticks + uVar2;
+    peVar3->frame_count = peVar3->frame_count + 1;
+    if (executive_frame_overflow_threshold_ticks < uVar2) {
+      peVar3->overflow_count = peVar3->overflow_count + 1;
+      executive_timing_overflow_count_cal = executive_timing_overflow_count_cal + 1;
     }
   }
-  scheduler_task_stat_ptr_b = scheduler_task_stat_ptr_b + 0xc;
+  executive_frame_timing_pointer = executive_frame_timing_pointer + 1;
   return;
 }
 
@@ -7805,7 +7803,7 @@ void cm848_initSensorDefaults(void)
   sensor_diag_default_e = 0x1e2;
   sensor_diag_default_b = 5;
   sensor_diag_default_c = 200;
-  task_execution_time_threshold = 0x3095;
+  executive_frame_overflow_threshold_ticks = 0x3095;
   sensor_diag_default_d = 0x9c4;
   return;
 }
@@ -51034,8 +51032,7 @@ void cm848_evaluateCalibratedMonitorDisableConditions(void)
     if ((ushort *)0xffffff < puVar4) {
       puVar4 = puVar4 + -0x6015bf;
     }
-    if ((puVar4 < &scheduler_task_stat_value_working) || (0x43ffff < (int)puVar4 + 1U))
-    goto LAB_0004bcd0;
+    if ((puVar4 < &executive_frame_ticks) || (0x43ffff < (int)puVar4 + 1U)) goto LAB_0004bcd0;
     if (!bVar1) {
       unaff_r29 = *puVar4;
       unaff_r30 = monitor_calibrated_condition_table[uVar6].comparison_value;
@@ -97769,9 +97766,9 @@ void cm848_initSensorCalibration(void)
 // Function: cm848_clearWorkingRam @ 0x00538974
 //
 
-/* Zeroes working RAM from 0x3fa000 (scheduler_task_stat_value_working) up to 0x41428e (two words
-   per step, 256 bytes per outer pass) - the first call in cm848_applicationMain after the TPU
-   set-up. Was hpcr_exceptionHandler (a second function with the same name as the reset entry) */
+/* Zeroes working RAM from 0x3fa000 (executive_frame_ticks) up to 0x41428e (two words per step, 256
+   bytes per outer pass) - the first call in cm848_applicationMain after the TPU set-up. Was
+   hpcr_exceptionHandler (a second function with the same name as the reset entry) */
 
 void cm848_clearWorkingRam(void)
 
@@ -97779,7 +97776,7 @@ void cm848_clearWorkingRam(void)
   word *pwVar1;
   word *pwVar2;
   
-  pwVar1 = &scheduler_task_stat_value_working;
+  pwVar1 = &executive_frame_ticks;
   do {
     pwVar2 = pwVar1 + 0x80;
     if (&DAT_0041428e < pwVar1 + 0x80) {

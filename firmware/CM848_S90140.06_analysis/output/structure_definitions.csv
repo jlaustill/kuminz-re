@@ -751,11 +751,11 @@ diag_dispatch_entry_t,,handler_ptr,dword,4,Function pointer to service handler,,
 # Init loop zeros all fields with min_time set to 0xFFFF
 # Runtime: mainLoopIteration updates max/min time, accumulates ticks and call count
 # Code evidence: init at line 6882 (stride +3 as undefined4*), update at line 7285 (+0xC byte stride)
-scheduler_task_stat_t,0x0040be6a,total_ticks,dword,4,Cumulative execution time in timer ticks,,verified
-scheduler_task_stat_t,0x0040be6a,call_count,word,2,Number of times task has been executed,,verified
-scheduler_task_stat_t,0x0040be6a,min_time,word,2,Minimum execution time (initialized to 0xFFFF),,verified
-scheduler_task_stat_t,0x0040be6a,max_time,word,2,Maximum execution time observed,,verified
-scheduler_task_stat_t,0x0040be6a,overrun_count,word,2,Number of deadline overruns detected,,verified
+executive_frame_timing_t,,total_ticks,dword,4,Sum of the frame's pass times in timebase ticks (was total_ticks; PR #53 round 25),,verified
+executive_frame_timing_t,,frame_count,word,2,Passes of the frame counted (was call_count; PR #53 round 25),,verified
+executive_frame_timing_t,,minimum_ticks,word,2,Shortest pass time (0xffff after a clear) (was min_time; PR #53 round 25),,verified
+executive_frame_timing_t,,maximum_ticks,word,2,Longest pass time (was max_time; PR #53 round 25),,verified
+executive_frame_timing_t,,overflow_count,word,2,Passes longer than executive_frame_overflow_threshold_ticks (each also counts executive_timing_overflow_count_cal) (was overrun_count; PR #53 round 25),,verified
 
 # Governor Channel Array - 3-channel governor derivative control
 # 3 entries at 0x0040addc, 6 bytes each (18 bytes total)

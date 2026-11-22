@@ -1032,12 +1032,12 @@ extern word toucan_can_ext_ctrl;  // 0x00307f80
 extern undefined4 calibration_ram_start;  // 0x003f9800
 extern memory_region_t memory_region_table;  // 0x003f9830
 extern undefined2 param_id_lookup_table;  // 0x003f98ac
-extern word scheduler_task_stat_value_working;  // 0x003fa000
-extern dword timer_base_snapshot;  // 0x003fa002
-extern word scheduler_feature_enabled_flag;  // 0x003fa006
+extern word executive_frame_ticks;  // 0x003fa000
+extern dword executive_frame_start_ticks;  // 0x003fa002
+extern word executive_timing_enabled_previous_flag;  // 0x003fa006
 extern dword main_loop_scheduler_phase;  // 0x003fa008
-extern void * scheduler_task_stat_ptr_b;  // 0x003fa00c
-extern void * scheduler_task_stat_ptr;  // 0x003fa010
+extern executive_frame_timing_t * executive_frame_timing_pointer;  // 0x003fa00c
+extern executive_frame_timing_t * executive_frame_timing_clear_pointer;  // 0x003fa010
 extern word sensor_channel0_cached_axis_offset;  // 0x003fa014
 extern ema_filter_state_t sensor_channel0_filter_state;  // 0x003fa016
 extern word sensor_channel1_cached_axis_offset;  // 0x003fa01e
@@ -2416,7 +2416,8 @@ extern word cylinder_balance_compensation_enable_cal;  // 0x003fee92
 extern int16_t cylinder_balance_real_dynamic_compensation_cal;  // 0x003fee94
 extern int16_t cylinder_balance_imaginary_dynamic_compensation_cal;  // 0x003fee96
 extern word protection_b_fault_active_flag;  // 0x003feebc
-extern word scheduler_overrun_count_cal;  // 0x003feebe
+extern word executive_timing_overflow_count_cal;  // 0x003feebe
+extern word executive_frame_maximum_time_capture_cal;  // 0x003feec0
 extern word low_speed_governor_reference_offset;  // 0x003fefea
 extern word cruise_neutral_fuel_ramp_rate;  // 0x003feff0
 extern word air_fuel_control_fueling_override_value;  // 0x003feff2
@@ -5642,10 +5643,10 @@ extern word accelerator_pedal_position_sensor_2_fault_status;  // 0x0040be5c
 extern word sensor_diag_default_a;  // 0x0040be5e
 extern word sensor_diag_default_b;  // 0x0040be60
 extern word sensor_diag_default_c;  // 0x0040be62
-extern word task_execution_time_threshold;  // 0x0040be64
+extern word executive_frame_overflow_threshold_ticks;  // 0x0040be64
 extern word sensor_diag_default_d;  // 0x0040be66
 extern word sensor_diag_default_e;  // 0x0040be68
-extern scheduler_task_stat_t scheduler_task_stat_t_0040be6a;  // 0x0040be6a
+extern executive_frame_timing_t executive_frame_timings[40];  // 0x0040be6a
 extern RAM_REFRESH_STATE ram_refresh_enable;  // 0x0040c04a
 extern word power_down_refresh_enable;  // 0x0040c04c
 extern switch_input_state_t switch_input_state_bits;  // 0x0040c050

@@ -1280,7 +1280,7 @@ typedef struct j1939_powertrain_messages_received_t j1939_powertrain_messages_re
 typedef struct param_id_entry_t param_id_entry_t;
 typedef struct ef00_dispatch_entry_t ef00_dispatch_entry_t;
 typedef struct diag_dispatch_entry_t diag_dispatch_entry_t;
-typedef struct scheduler_task_stat_t scheduler_task_stat_t;
+typedef struct executive_frame_timing_t executive_frame_timing_t;
 typedef struct j1939_dm13_requester_slot_t j1939_dm13_requester_slot_t;
 typedef struct combustion_chi_maximum_fuel_points_t combustion_chi_maximum_fuel_points_t;
 typedef struct fault_entry_t fault_entry_t;
@@ -2121,12 +2121,12 @@ struct diag_dispatch_entry_t {
     uint32_t handler_ptr;  /* Function pointer to service handler */
 };
 
-struct scheduler_task_stat_t {
-    uint32_t total_ticks;  /* Cumulative execution time in timer ticks */
-    uint16_t call_count;  /* Number of times task has been executed */
-    uint16_t min_time;  /* Minimum execution time (initialized to 0xFFFF) */
-    uint16_t max_time;  /* Maximum execution time observed */
-    uint16_t overrun_count;  /* Number of deadline overruns detected */
+struct executive_frame_timing_t {
+    uint32_t total_ticks;  /* Sum of the frame's pass times in timebase ticks (was total_ticks; PR #53 round 25) */
+    uint16_t frame_count;  /* Passes of the frame counted (was call_count; PR #53 round 25) */
+    uint16_t minimum_ticks;  /* Shortest pass time (0xffff after a clear) (was min_time; PR #53 round 25) */
+    uint16_t maximum_ticks;  /* Longest pass time (was max_time; PR #53 round 25) */
+    uint16_t overflow_count;  /* Passes longer than executive_frame_overflow_threshold_ticks (each also counts executive_timing_overflow_count_cal) (was overrun_count; PR #53 round 25) */
 };
 
 struct j1939_dm13_requester_slot_t {
