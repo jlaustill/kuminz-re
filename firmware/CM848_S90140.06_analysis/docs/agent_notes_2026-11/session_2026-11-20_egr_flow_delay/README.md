@@ -374,5 +374,5 @@ Hand work on the round 7 lead.
 ## Round 23: the ambient module and the source enum (`session_folder/round23/`)
 
 - **Stage A:** `worklist_r23a.py`, `apply_r23a2.py` (the unnamed and new rows). **Stage B:** `source_scan.py` (each
-  `*_source` word's e2m value list against the code's literals), `apply_r23b.py`. **Closing:** `apply_r23_closing.py`.
+  `*_source` word's e2m value list against the code's literals; rerun it as `source_scan.py <firmware> <round19/source_values.py>`), `apply_r23b.py`. **Stage C:** `apply_r23c.py`, `stale_ghidra_labels.py` (dry run only), `source_scan_after.txt`. **Closing:** `apply_r23_closing.py`, `apply_r23_closing2.py`.
 

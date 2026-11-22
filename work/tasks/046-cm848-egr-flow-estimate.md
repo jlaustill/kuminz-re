@@ -1318,16 +1318,29 @@ Scripts are in `session_folder/round23/`.
     barometric pressure and ambient air temperature are built; the other three stay 'not available'. The ambient air
     temperature byte comes from the ambient temperature sensor, not the ambient module's estimate.
 - **Stage B (e22155d, types):** `SENSOR_VALUE_SOURCE` on ten more `*_source` words. `source_scan.py` matches each
-  word's e2m value list (via the parameter ID table) against every literal the code uses, which resolves round 19's
-  reach lead. `egr_flow_source` (PRIMARY / BACKUP only) is included; the fan and fuel metering "sources" use other
-  value sets.
-- **Dead end:** the general engine protection's other reason bits. `DAT_0040a43c` / `_43e` are read but never written
-  (two `lhz`, even in permissive mode), `DAT_003fbd50` / `_54` are only zeroed, and the e2m names only the state and
+  word's e2m value list (via the parameter ID table) against every literal the code uses. `egr_flow_source`
+  (PRIMARY / BACKUP only) is included; the fan and fuel metering "sources" use other value sets.
+- **Stage C (bc99794, types, after the review):**
+  - Stage B's scan only took `word` globals, and the ambient function still compared
+    `charge_flow_estimate_terms.fresh_air_flow_source` with a bare 2 / 1. Now `exhaust_temperature_source` (`i16`)
+    and the struct fields `charge_flow_estimate_terms_t.charge_flow_source` / `.fresh_air_flow_source` are
+    `SENSOR_VALUE_SOURCE` too.
+  - `source_scan.py` now covers every type and the struct fields, matches the value list in any order or its
+    PRIMARY / BACKUP subset, and skips the dotted alias rows. Rerun, it finds 24 words typed, 8 with other value
+    sets, and none left. This resolves round 19's reach lead.
+  - Two comments named 0x40a1a6 by its Ghidra label (`DAT_0040a1a6`, `barometric_altitude_source` since round 19)
+    and are refreshed.
+- **Dead end:** the general engine protection's other reason bits. For `DAT_0040a43c` / `_43e`, no write was found
+  in the `.cpp` or by the `lis` scan (two `lhz`, even in permissive mode; a base-register store would escape the
+  scan), `DAT_003fbd50` / `_54` are only zeroed, and the e2m names only the state and
   its cap.
 - **Round 23 leads:**
   - `algorithm_enable_flags_29_cal` bits 0 / 1 (the e2m's 'SS Ambient Advance / Derate') gate the ambient air
     temperature broadcast, a hint at what 'SS' is.
   - e2m 1977 +0 `C_AMB_Amb_Pressure_Fil_Cnst` (0x3ff074) has no row; check its users.
+  - The CSV comments hold 276 Ghidra labels (`DAT_` / `WORD_` / `PTR_` / `<type>_` + address) whose address now
+    has a name (`stale_ghidra_labels.py`). Some are deliberate history ('it rendered as ...'), so each hit needs a
+    review; the stale-name sweeps skip these labels by design.
 
 ## Leads (not in this PR)
 

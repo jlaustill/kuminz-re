@@ -498,6 +498,8 @@ state enum, the flag bytes.**
   initializer (e2m 1977 / 197A-197D / 1A0E), and the PGN 65269 payload's five fields.
 - **Stage B (e22155d, types):** `SENSOR_VALUE_SOURCE` on ten more source words (each e2m value list against the code's
   literals).
+- **Stage C (bc99794, types, review):** three more (an `i16` global and two struct fields), the scan widened to every
+  type and struct field (none left), and a stale `DAT_` label refreshed.
 
 ## Test plan
 
@@ -590,7 +592,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
-- [x] Round 23: stage A is EQUIVALENT (20 names); stage B's enum proof shows only the substitutions.
+- [x] Round 23: stage A is EQUIVALENT (20 names); stages B and C pass the enum proof (C differs only in a refreshed plate).
 - [x] Round 22: stages A and B are EQUIVALENT (12 and 3 names).
 - [x] Round 21: stages A and B pass a layout / containment / artifact gate (A was piloted first); stage C is EQUIVALENT; stage D builds CM550 and CM848 identical before and after, and its positive control shows both new paths; stage E's gate passes (the five readers, no casts left).
 - [x] Round 20: stages A, C and E are EQUIVALENT; stages B, D and F pass the mask normalizer (the count gate: per word and mask, old masked reads = new field reads; pieces 464 -> 464).
