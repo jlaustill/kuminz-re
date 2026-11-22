@@ -620,7 +620,7 @@ void cm848_resetEngineRetarderTsc1Request(void);  // @ 0x00027118
 void cm848_runJ1939PowertrainControlTimeouts(void);  // @ 0x0002715c
 void cm848_formatNumberAsDecimalText(uint *param_1,int param_2,int param_3);  // @ 0x00027bc4
 undefined4 cm848_findTsc1SourceConfiguration(int param_1,uint param_2);  // @ 0x00027cc4
-void cm848_processSpeedSensorCompensation(void);  // @ 0x00027d38
+void cm848_calculateLowSpeedGovernorReferenceMaximumFuelQuantity(void);  // @ 0x00027d38
 void cm848_presetLowSpeedGovernorIntegrator(int param_1);  // @ 0x00027e4c
 void cm848_runLowSpeedGovernor(void);  // @ 0x00027ff8
 void cm848_resetSpeedControlTracking(void);  // @ 0x000285e4
@@ -1274,8 +1274,8 @@ void mpc555_tpuASetPwmPeriodMicroseconds(int channel,uint period_microseconds); 
 void initQadcModule(void);  // @ 0x00055500
 void cm848_copyDataBuffer(int param_1,int param_2);  // @ 0x000555cc
 undefined4 cm848_processSecurityCodeConversion(undefined4 param_1);  // @ 0x0005573c
-void cm848_processEngineRpmDiagnostic(void);  // @ 0x0005586c
-void cm848_dispatchCalibrationFunctions(void);  // @ 0x00055a40
+void cm848_driveTachometerOutputs(void);  // @ 0x0005586c
+void cm848_initializeTachometerOutputs(void);  // @ 0x00055a40
 void mpc555_initTpuConfiguration(void);  // @ 0x00055c1c
 void mpc555_tpuBInterruptDispatcher(void);  // @ 0x00055d2c
 void mpc555_tpuAInterruptDispatcher(void);  // @ 0x00055de4
