@@ -507,6 +507,11 @@ state enum, the flag bytes.**
 - **Stage C (44578ee, label-only):** the cam / crank sync record (e2m 819C) and its state setters.
 - **Stage D (26dd083, label-only):** the J1587 fault counts, the boot SCI / reflash / J1939 transport sessions,
   two more instances.
+- **Stage E (a735961, types):** the three 50-word fault bit arrays (e2m 1036) as one `fault_bit_words_t` with three
+  `_cal` instances; every bit's e2m name and DTC in the field comments.
+- **Stage F (9ed041a, types):** sensor channels 1-4 flat like their neighbours; the throttle dword split.
+- Open after round 24: named fault bits (the user's call), `diag_clear_flags_t`, the executive timing records,
+  the sensor channel blocks, the TouCAN A register map, the kernel's response messages (task 046).
 
 ## Test plan
 
@@ -599,7 +604,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
-- [x] Round 24: stages B, C and D are EQUIVALENT; stage A (comments) leaves the code without comments identical.
+- [x] Round 24: stages B, C and D are EQUIVALENT; stage A (comments) leaves the code without comments identical;
+  stages E and F pass an address-token normalization (0 functions differ; pieces 500 -> 500 -> 492).
 - [x] Round 23: stage A is EQUIVALENT (20 names); stages B and C pass the enum proof (C differs only in a refreshed plate).
 - [x] Round 22: stages A and B are EQUIVALENT (12 and 3 names).
 - [x] Round 21: stages A and B pass a layout / containment / artifact gate (A was piloted first); stage C is EQUIVALENT; stage D builds CM550 and CM848 identical before and after, and its positive control shows both new paths; stage E's gate passes (the five readers, no casts left).

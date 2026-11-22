@@ -384,4 +384,7 @@ Hand work on the round 7 lead.
   - `spec_r24b.py` / `_c` / `_d`, run through `apply_struct_renames.py` (struct types, fields, dotted alias rows, qualified references);
   - `apply_r24b2.py` (new rows) and `apply_r24b_docs.py`;
   - the checks: `instance_users.py`, `fault_bit_names.py` (the e2m 1036 fault bit names), `definition_flag_2000.py`, `byte_enum_renders.py`.
-- **Closing:** `apply_r24_interim.py` (interim, after stage D).
+- **Stage E:** `fault_bit_names.py` (the e2m 1036 bit table), `apply_r24e.py`, `refresh_r24e.py`, `prove_r24e.py`
+  (each fault word reference mapped to an address token). **Stage F:** `apply_r24f.py`, `refresh_r24f.py`,
+  `prove_tokens.py` (a general token-normalized gate for type changes).
+- **Closing:** `apply_r24_interim.py` (interim, after stage D) and `apply_r24_closing.py`.

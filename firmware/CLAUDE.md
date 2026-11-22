@@ -393,7 +393,7 @@ All 3+, 2+, and 1-occurrence unnamed `_DAT_003Fxxxx` variables have been named (
 | `_oil_change_monitor_distance_pulses_cal` (was `_sensor_validation_delta`; 0x3fee3a is also time-shared with the boot ROM), `_fault_counter_slot3_target`, `_fault_counter_slot3_shadow` | gap=1 to next named var — widening would overlap neighbor |
 | `_qadc_channel_control_working` | gap=2, machine access is `lwz` (4B) — needs gap≥4 to widen |
 | `_param_id_lookup_table` | ROM-to-RAM code region (0x003F9800–0x003FDB30) — Ghidra reverts type on export |
-| `_pad2`, `_pad5`, `_pad16` | Structure padding fields — Ghidra internal, not fixable via CSV |
+| `_pad2`, `_pad16` | Struct fields whose `structure_definitions.csv` name starts with `_`: naming the field clears the warning once its use is known. `_pad5` was the boot J1939 transport session's frame queue status (`frame_queue_status`, PR #53 round 24); `j1939_can_ring_buf._pad16` byte 0 is read as the CAN transmit queue's full flag |
 
 **Remaining unnamed:** ~5 Bank-2 ROM constants (`_DAT_0005xxxx`, `_DAT_00008104`, `_DAT_00022c86`) with no RAM neighbor context — low value to name.
 

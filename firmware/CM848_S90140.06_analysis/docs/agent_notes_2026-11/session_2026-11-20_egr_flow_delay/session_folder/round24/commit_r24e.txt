@@ -1,0 +1,33 @@
+cm848: round 24 stage E - the three 50-word fault bit arrays as one struct type (types)
+
+The EEPROM mirror holds three parallel 50-word fault bit arrays. Fault n is bit n % 16 of word n / 16 in each:
+- 0x3fe974: detected, e2m 1036 System_Error_Status_00..49;
+- 0x3fe9d8: registered;
+- 0x3fea3c: previous pass.
+
+cm848_clearDiagnosticState clears 0x32 words of all three in one loop, and cm848_initEepromDriverAndLoadMirror clears
+the same bit 100 bytes apart. Before this stage they were a 21-word struct named system_status_flags_t over words 0-20
+of the detected array, plus flat rows for the rest of all three.
+- fault_bit_words_t has 50 word fields, faults_0_to_15 .. faults_784_to_799. Each field's comment lists, per bit:
+  - its e2m 1036 name (the labelled 11.45 e2m names 337 bits: the single-bit masks in column 11);
+  - its DTC (ROM 0x5985a u16 slot -> obd_dtc_code_table, with SAE letters: 0x9934 = B1934).
+  The old comment follows as an earlier note.
+- The instances fault_detected_cal / fault_registered_cal / fault_previous_pass_cal take _cal because they are in the
+  EEPROM mirror's checksummed, written-back block, and no boot or kernel code uses them.
+- The 72 flat rows and dotted alias rows inside the arrays became dotted documentation rows,
+  '<instance>.faults_A_to_B' with the old comment and the old name, so nothing is lost and the e2m tool reports them.
+- The renders: 1569 fault_detected_cal / 513 fault_registered_cal / 42 fault_previous_pass_cal field accesses. They
+  were system_status_flags_t_003fe974.fault_detected_bits_*, fault_detected_bits_*, fault_active_status_array,
+  fault_registered_bits_*, fault_previous_pass_array and fault_previous(_pass)_bits_*. Plates, comments and two
+  firmware/CLAUDE.md lines are refreshed.
+- A review fix to stage B: fault bits 306 / 307 (channel 26) have no DTC slot. The stage B comment had read the slot
+  table as bytes.
+
+Proof (prove_r24e.py): both .cpp files, with each fault word reference mapped to an address token, comments stripped,
+labels canonical and declarations sorted, are identical (1969 functions). Pieces 500 -> 500, underscore names
+31 -> 31. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Not done: named bits. Every bit has an e2m name, but the monitors set and clear these words with |= / &= masks. Ghidra
+12.1 prints such writes to bitfields as pieces, so it is the user's call (as switch_input_state_t was).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

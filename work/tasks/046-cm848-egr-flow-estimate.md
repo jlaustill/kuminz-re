@@ -1383,13 +1383,55 @@ rows, with round 6's checks.
 
   The two boot structs get no `_cal`, though they sit in the mirror's range: only boot / kernel code uses them
   (`NOT_CAL` in `worklist_r24d.py`).
-- **Still to do in round 24:**
-  - E: the three fault bit arrays as one `fault_bit_words_t`;
-  - F: the shapes of `sensor_readings_t`, `diag_clear_flags_t`, `throttle_fuel_enable_flag` and the executive timing
-    records;
-  - G: the sensor channel blocks;
-  - H: the TouCAN A module registers;
-  - I: the kernel's two response messages.
+- **Stage E (a735961, types): the three 50-word fault bit arrays.**
+  - In each array, fault n is bit n % 16 of word n / 16:
+    - 0x3fe974: detected, e2m 1036 System_Error_Status_00..49;
+    - 0x3fe9d8: registered;
+    - 0x3fea3c: previous pass.
+  - `cm848_clearDiagnosticState` clears 0x32 words of all three.
+  - They are one `fault_bit_words_t` now (`faults_0_to_15` .. `faults_784_to_799`), with three `_cal` instances:
+    `fault_detected_cal` / `fault_registered_cal` / `fault_previous_pass_cal`. They had been a 21-word struct named
+    `system_status_flags_t` plus flat rows.
+  - Each field comment names every bit from e2m 1036 (337 bits; the mask is column 11 of the labelled e2m), with its
+    DTC.
+  - The flat rows became dotted documentation rows. About 2100 renders now use one form.
+  - The proof normalizes every fault word reference to an address token: 0 functions differ, pieces 500 -> 500.
+- **Stage F (9ed041a, types):**
+  - `sensor_readings_t` (slots 1-4 of `sensor_channel_filtered_output`) became four flat `<channel>_sensor_filtered`
+    words like the other slots, and one cast went.
+  - `throttle_fuel_enable_flag` (a dword) became `throttle_sensor_fault_flag` + `commanded_throttle_previous`, so
+    pieces fell 500 -> 492.
+- **A fix to stage B:** fault bits 306 / 307 (sensor channel 26) have no DTC slot. The stage B comment had read the
+  ROM 0x5985a slot table as bytes; it holds u16 entries.
+- **Round 24 leads:**
+  - Named fault bits: e2m 1036 names 337 of the 800 bits, so `fault_bit_words_t` could hold bitfields. The monitors
+    set and clear the words with `|=` / `&=` masks, which Ghidra 12.1 prints as pieces, so this is the user's call
+    (as `switch_input_state_t` was).
+  - `diag_clear_flags_t` (0x3fedfc, EEPROM mirror) is time-shared:
+    - The application's word at +0 is the A/C pressure sensor learned flag. `cm848_controlAirConditioningClutchForDrTruck`
+      sets it to 1 after `air_conditioning_pressure_learn_time` passes of channel 71 inside the learn window, and it
+      gates channel 71's processing.
+    - The kernel's byte at +0 is the SCI receive count, and +2 is the learned output speed / vehicle speed ratio.
+    - A word typed for the application moves the pieces into the kernel's SCI code, so choose the representation
+      first.
+  - The executive timing records at 0x40be6a are an array of 12-byte `scheduler_task_stat_t`: `main_loop` clears them
+    up to `ram_refresh_enable` and walks `scheduler_task_stat_ptr_b` by 12 a pass. To do: type the array and the two
+    walking pointers, and spell out `min_time` / `max_time`.
+  - The sensor channel blocks: most channel calls still pass Ghidra labels for their config / state / cache / filter
+    / status. Channel 26 (ECM internal temperature) and 68 (fuel level) are identified.
+  - The TouCAN A map is wrong. `mpc555_initCanController` shows that 0x307080-0x3070a7 are the module registers
+    (TCNMCR 0x5000, CANCTRL0-2, PRESDIV 9, RXGMSK / RX14MSK dwords, IMASK, IFLAG), and the message buffers start at
+    0x307100. The repo models 0x307080 / 90 / a0 as message buffers.
+  - The kernel's response messages: `cm848_allocateDiagnosticResponseBuffer` returns 0x303056 / 0x303047, two 14-byte
+    message records. Their last dword points at a status byte, not a data end, so check the type before using
+    `j1939_tx_msg_t`.
+  - `j1939_can_ring_buf._pad16` byte 0 is the CAN transmit queue's full flag (`mpc555_canTransmitQueuePush` returns 4
+    on it).
+  - e2m 1036's two records at +0x64 (EGA / VGA valve over-temperature) fall on the registered array's word 0 here.
+    This is 11.45-vs-11.46 drift, or registered bits.
+  - `fault_definition_t.definition_flags` bit 0x2000 is clear in every slot, and the J1587 counts are its only test.
+  - The editing-firmware-csvs skill says byte enums do not render. They do: `END_OF_LINE_OUTPUT_TEST_STATE` renders 19
+    times. The skill text is left for the user.
 
 ## Leads (not in this PR)
 

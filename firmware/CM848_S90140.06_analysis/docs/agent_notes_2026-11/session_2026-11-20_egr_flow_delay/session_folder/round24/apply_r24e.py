@@ -23,7 +23,7 @@ import sys
 repo, names_path, map_out = os.path.abspath(sys.argv[1]), sys.argv[2], sys.argv[3]
 out = os.path.join(repo, "firmware/CM848_S90140.06_analysis/output")
 rom = open(os.path.join(repo, "firmware/CM848_S90140.06_analysis/originals/cm848_rom.bin"), "rb").read()
-slots = rom[0x5985a:0x5985a + 800]
+slots = struct.unpack(">800H", rom[0x5985a:0x5985a + 1600])   # u16 slot per fault (fault_setters.py, PR #51)
 dtc = struct.unpack(">170H", rom[0x5b57c:0x5b57c + 340])
 bit_names = {int(w): {int(b): n for b, n in v.items()} for w, v in json.load(open(names_path)).items()}
 BASES = {0x3fe974: "fault_detected_cal", 0x3fe9d8: "fault_registered_cal", 0x3fea3c: "fault_previous_pass_cal"}
@@ -100,7 +100,7 @@ for line in gv:
         raise SystemExit(f"flat row inside the old struct: {line[:80]}")
     keep = comment if comment else ""
     was = f" (was {name})" if name and "." not in name else ""
-    new_gv.append(f"{a_str},{new_name},,{keep}{was}".rstrip(","))
+    new_gv.append(f"{a_str},{new_name},,{keep}{was}")     # address,name,,comment like every dotted row
     converted += 1
 assert instance_done == set(BASES), instance_done
 open(gv_path, "w").write("\n".join(new_gv))
@@ -119,7 +119,8 @@ for w in range(WORDS):
     for b in range(16):
         n = 16 * w + b
         s = slots[n]
-        code = f"P{dtc[s]:04x}".upper().replace("P", "P", 1) if s < 170 else ""
+        v = dtc[s] if s < 170 else 0      # SAE J2012: the top two bits pick P / C / B / U (0x9934 = B1934)
+        code = f"{'PCBU'[v >> 14]}{v & 0x3fff:04X}" if v else ""
         names = "/".join(bit_names.get(w, {}).get(b, []))
         if names or code:
             parts.append(f"b{b} {names}{' ' if names and code else ''}{code}")

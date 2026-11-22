@@ -1,0 +1,10 @@
+cm848: round 24 interim closing after stage D - docs, the session archive
+
+Stages A-D are in; E-I (the fault bit arrays, four struct shapes, the sensor channel blocks, the TouCAN A registers,
+the kernel's response messages) follow.
+- task 046: the round 24 section (stages A-D, what is still to do).
+- PR body, README, the todo line.
+- The session archive: the round 24 scratch (scripts, worklists, specs, maps, the e2m fault bit table, a snapshot of
+  apply_hand_worklist.py with the NOT_CAL exemption), the build logs, the PR body copy.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
