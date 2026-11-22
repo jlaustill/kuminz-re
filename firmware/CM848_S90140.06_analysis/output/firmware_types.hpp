@@ -1210,7 +1210,6 @@ typedef struct transmission_pressure_state_t transmission_pressure_state_t;
 typedef struct cam_crank_sync_state_t cam_crank_sync_state_t;
 typedef struct fuel_pressure_governor_state_t fuel_pressure_governor_state_t;
 typedef struct engine_speed_state_t engine_speed_state_t;
-typedef struct sensor_readings_t sensor_readings_t;
 typedef struct eeprom_header_t eeprom_header_t;
 typedef struct low_speed_governor_reference_t low_speed_governor_reference_t;
 typedef struct pci_link_state_t pci_link_state_t;
@@ -1424,7 +1423,7 @@ struct commanded_throttle_state_t {
     uint16_t selected_alternate_throttle_priority;  /* e2m 1047 +12 Alternate_Throttle_Selection_State 'State of selected alternate throttle priority': the alternate_throttle_priority that set the commanded throttle this pass, 0 when none did (cm848_selectCommandedThrottle). It never counts down (was override_countdown) | earlier note: Override timeout countdown (offset 0x12) */
     uint16_t sampled_frequency_throttle;  /* e2m 1047 +14 Sampled_Frequency_Throttle 'requested throttle after being lin. and fil. via freq. thr. algorithm' (%THROTTLE); no access in the .cpp (was reserved_14) | earlier note: Gap/reserved (0x58e-0x590) */
     uint16_t frequency_throttle_active_flag;  /* e2m 1047 +16 Frequency_Throttle_Active 'indicates frequency throttle has been enabled'; no access in the .cpp (was reserved_16) | earlier note: Gap/reserved (0x590-0x592) */
-    uint16_t commanded_throttle_delta;  /* e2m 1047 +18 Delta_Throttle 'Percent Throttle change per execution': commanded_throttle minus the previous pass's, kept in the high word of throttle_fuel_enable_flag (cm848_selectCommandedThrottle) (was delta) | earlier note: Fuel demand delta for rate calculations */
+    uint16_t commanded_throttle_delta;  /* e2m 1047 +18 Delta_Throttle 'Percent Throttle change per execution': commanded_throttle minus the previous pass's, kept in commanded_throttle_previous (cm848_selectCommandedThrottle) (was delta) | earlier note: Fuel demand delta for rate calculations */
     uint16_t commanded_throttle_delta_filtered;  /* e2m 1047 +1A Filtered_Delta_Throttle 'Percent Throttle change per execution with filter applied': commanded_throttle_delta through commanded_throttle_delta_filter (e2m 1048 +1C Delta_Throttle_Filter_Constant) (was delta_filtered) | earlier note: Filtered fuel demand delta */
 };
 
@@ -1481,13 +1480,6 @@ struct engine_speed_state_t {
     uint16_t main_speed_pulse_count_between_vss_pulses;  /* e2m 819B +28 EPS_VSS_Counter '[ESCTGR] Number of main EPS interrupts between VSS interrupts' (was crank_capture_period_sample_count) */
     uint16_t backup_speed_pulse_count_between_vss_pulses;  /* e2m 819B +2A EPS_VSS_Counter_Backup '[ESCTBKGR] Number of backup EPS interrupts between VSS interrupts' (was crank_tooth_period_sample_count) */
     uint16_t filtered_engine_speed;  /* e2m 819B +2C Filtered_Engine_Speed '[ENGRPM] Variable 2^n pulse averaged and filtered engine speed' (1/8 rpm; x 0.125 verified live at 0x40b7ba 2026-01-31): the engine speed the rest of the firmware reads (was current_rpm) */
-};
-
-struct sensor_readings_t {
-    uint16_t intake_manifold_pressure;  /* Intake manifold (boost) absolute pressure - sensor_channel_filtered_output[1] - 1/18.56 kPa per count (0.0159 inHg); boost = this minus barometric_pressure (cm848_calculateBoostPressure); J1939 IC1 byte 2 / OBD-II intake manifold pressure; 1700 in the RAM dump with the engine stopped (was oil_pressure) */
-    uint16_t coolant_temp;  /* Coolant temperature - sensor_channel_filtered_output[2] - 1/64 deg F per count; J1939 ET1 byte 1 (SPN 110) */
-    uint16_t barometric_pressure;  /* Barometric pressure - sensor_channel_filtered_output[3] - 1/18.56 kPa per count; J1939 AMB byte 1 (SPN 108) / the reference subtracted for boost and oil pressure; 1647 (88.5 kPa) in the RAM dump (was intake_air_temp) */
-    uint16_t battery_voltage;  /* Battery voltage - sensor_channel_filtered_output[4] - 1/16 V per count (192 = 12.0 V in the RAM dump); PCI 0xC0 byte 1 */
 };
 
 struct eeprom_header_t {

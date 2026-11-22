@@ -548,10 +548,10 @@ broadcast as — the SPN fixes both the signal and the unit. Pressures are all *
 
 | Slot | Address | Name now | Was | Proof |
 |---|---|---|---|---|
-| 1 | 0x40baf2 | `sensor_readings_t.intake_manifold_pressure` | `.oil_pressure` | IC1 SPN 102, OBD-II MAP, PCI 0x10 byte 5 (kPa); boost = this − slot 3 |
-| 2 | 0x40baf4 | `sensor_readings_t.coolant_temp` | (right) | ET1 SPN 110 |
-| 3 | 0x40baf6 | `sensor_readings_t.barometric_pressure` | `.intake_air_temp` | AMB SPN 108 (0.5 kPa/bit math matches) |
-| 4 | 0x40baf8 | `sensor_readings_t.battery_voltage` | (right) | PCI 0xC0 byte 1, 1/16 V |
+| 1 | 0x40baf2 | `intake_manifold_pressure_sensor_filtered` | `.oil_pressure` | IC1 SPN 102, OBD-II MAP, PCI 0x10 byte 5 (kPa); boost = this − slot 3 |
+| 2 | 0x40baf4 | `coolant_temperature_sensor_filtered` | (right) | ET1 SPN 110 |
+| 3 | 0x40baf6 | `barometric_pressure_sensor_filtered` | `.intake_air_temp` | AMB SPN 108 (0.5 kPa/bit math matches) |
+| 4 | 0x40baf8 | `battery_voltage_sensor_filtered` | (right) | PCI 0xC0 byte 1, 1/16 V |
 | 6 | 0x40bafc | `fuel_delivery_pressure_sensor_filtered` | `engine_load_demand_raw` | EFL/P1 SPN 94 |
 | 7 | 0x40bafe | `fuel_temperature_sensor_filtered` | `fuel_temp_raw` | ET1 SPN 174 |
 | 9 | 0x40bb02 | `intake_manifold_temperature_sensor_filtered` | `engine_load_output_value` | IC1 SPN 105 |

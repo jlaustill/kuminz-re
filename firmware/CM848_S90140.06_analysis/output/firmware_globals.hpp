@@ -1209,7 +1209,8 @@ extern word throttle_minimum_candidate;  // 0x003fa6e8
 extern word idle_validation_idle_threshold;  // 0x003fa6ea
 extern word idle_validation_off_idle_threshold;  // 0x003fa6ec
 extern word accelerator_pedal_sensor_counts;  // 0x003fa6ee
-extern dword throttle_fuel_enable_flag;  // 0x003fa6f0
+extern word throttle_sensor_fault_flag;  // 0x003fa6f0
+extern word commanded_throttle_previous;  // 0x003fa6f2
 extern ema_filter_state_t commanded_throttle_delta_filter;  // 0x003fa6f4
 extern word accelerator_pedal_autozero_elapsed_time;  // 0x003fa6fc
 extern word accelerator_pedal_autozero_update_count;  // 0x003fa6fe
@@ -5553,7 +5554,10 @@ extern word egr_mass_flow_delayed_filtered;  // 0x0040baba
 extern word exhaust_temperature_virtual_sensor_copy;  // 0x0040babc
 extern word egr_valve_position_virtual_sensor_copy;  // 0x0040babe
 extern word sensor_channel_filtered_output;  // 0x0040baf0
-extern sensor_readings_t sensor_readings_t_0040baf2;  // 0x0040baf2
+extern word intake_manifold_pressure_sensor_filtered;  // 0x0040baf2
+extern word coolant_temperature_sensor_filtered;  // 0x0040baf4
+extern word barometric_pressure_sensor_filtered;  // 0x0040baf6
+extern word battery_voltage_sensor_filtered;  // 0x0040baf8
 extern word fuel_delivery_pressure_sensor_filtered;  // 0x0040bafc
 extern word fuel_temperature_sensor_filtered;  // 0x0040bafe
 extern word remote_accelerator_pedal_sensor_filtered;  // 0x0040bb00

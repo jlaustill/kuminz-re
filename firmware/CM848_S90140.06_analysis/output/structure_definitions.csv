@@ -44,7 +44,7 @@ commanded_throttle_state_t,0x0040a57a,calculated_commanded_throttle,word,2,"e2m 
 commanded_throttle_state_t,0x0040a57a,selected_alternate_throttle_priority,word,2,"e2m 1047 +12 Alternate_Throttle_Selection_State 'State of selected alternate throttle priority': the alternate_throttle_priority that set the commanded throttle this pass, 0 when none did (cm848_selectCommandedThrottle). It never counts down (was override_countdown) | earlier note: Override timeout countdown (offset 0x12)",,needs_review
 commanded_throttle_state_t,0x0040a57a,sampled_frequency_throttle,word,2,e2m 1047 +14 Sampled_Frequency_Throttle 'requested throttle after being lin. and fil. via freq. thr. algorithm' (%THROTTLE); no access in the .cpp (was reserved_14) | earlier note: Gap/reserved (0x58e-0x590),,needs_review
 commanded_throttle_state_t,0x0040a57a,frequency_throttle_active_flag,word,2,e2m 1047 +16 Frequency_Throttle_Active 'indicates frequency throttle has been enabled'; no access in the .cpp (was reserved_16) | earlier note: Gap/reserved (0x590-0x592),,needs_review
-commanded_throttle_state_t,0x0040a57a,commanded_throttle_delta,word,2,"e2m 1047 +18 Delta_Throttle 'Percent Throttle change per execution': commanded_throttle minus the previous pass's, kept in the high word of throttle_fuel_enable_flag (cm848_selectCommandedThrottle) (was delta) | earlier note: Fuel demand delta for rate calculations",,verified
+commanded_throttle_state_t,0x0040a57a,commanded_throttle_delta,word,2,"e2m 1047 +18 Delta_Throttle 'Percent Throttle change per execution': commanded_throttle minus the previous pass's, kept in commanded_throttle_previous (cm848_selectCommandedThrottle) (was delta) | earlier note: Fuel demand delta for rate calculations",,verified
 commanded_throttle_state_t,0x0040a57a,commanded_throttle_delta_filtered,word,2,e2m 1047 +1A Filtered_Delta_Throttle 'Percent Throttle change per execution with filter applied': commanded_throttle_delta through commanded_throttle_delta_filter (e2m 1048 +1C Delta_Throttle_Filter_Constant) (was delta_filtered) | earlier note: Filtered fuel demand delta,,verified
 # Protection Condition Flags - byte-packed protection evaluation flags
 # Used by protectionConditionMonitor and protectionFaultEvaluator
@@ -104,10 +104,6 @@ engine_speed_state_t,0x0040b7ac,filtered_engine_speed,word,2,"e2m 819B +2C Filte
 # Primary Sensor Readings - core engine sensor inputs
 # Used by sensor processing and protection monitoring
 # Total size: 8 bytes (0x0040baf2-0x0040baf9)
-sensor_readings_t,0x0040baf2,intake_manifold_pressure,word,2,Intake manifold (boost) absolute pressure - sensor_channel_filtered_output[1] - 1/18.56 kPa per count (0.0159 inHg); boost = this minus barometric_pressure (cm848_calculateBoostPressure); J1939 IC1 byte 2 / OBD-II intake manifold pressure; 1700 in the RAM dump with the engine stopped (was oil_pressure),,verified
-sensor_readings_t,0x0040baf2,coolant_temp,word,2,Coolant temperature - sensor_channel_filtered_output[2] - 1/64 deg F per count; J1939 ET1 byte 1 (SPN 110),,verified
-sensor_readings_t,0x0040baf2,barometric_pressure,word,2,Barometric pressure - sensor_channel_filtered_output[3] - 1/18.56 kPa per count; J1939 AMB byte 1 (SPN 108) / the reference subtracted for boost and oil pressure; 1647 (88.5 kPa) in the RAM dump (was intake_air_temp),,verified
-sensor_readings_t,0x0040baf2,battery_voltage,word,2,Battery voltage - sensor_channel_filtered_output[4] - 1/16 V per count (192 = 12.0 V in the RAM dump); PCI 0xC0 byte 1,,verified
 # EEPROM Header Block - calibration validation and configuration
 # Located in RAM copy of EEPROM data at 0x003fee08
 # Total size: 32 bytes (0x003fee08-0x003fee27)
