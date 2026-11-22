@@ -1,0 +1,20 @@
+=== cm848_processEngineRetarderRequest (lines 44974-44998, 19 non-blank)
+// Function: cm848_processEngineRetarderRequest @ 0x0004218c
+//
+/* Runs the engine retarder request chain once per pass in order:
+   cm848_updateEngineRetarderEnableState, cm848_limitEngineRetarderPercentToCruisePermission,
+   cm848_limitEngineRetarderPercentToOperatorSelection, cm848_applyEngineRetarderTsc1Request,
+   cm848_selectEngineRetarderRequest, cm848_updateEngineRetarderActiveState and
+   cm848_driveEngineRetarderOutput (was cm848_processTimingDispatcher). */
+void cm848_processEngineRetarderRequest(void)
+{
+  cm848_updateEngineRetarderEnableState();
+  cm848_limitEngineRetarderPercentToCruisePermission();
+  cm848_limitEngineRetarderPercentToOperatorSelection();
+  cm848_applyEngineRetarderTsc1Request();
+  cm848_selectEngineRetarderRequest();
+  cm848_updateEngineRetarderActiveState();
+  cm848_driveEngineRetarderOutput();
+  return;
+}
+//

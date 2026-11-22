@@ -903,7 +903,7 @@ Scripts are in `session_folder/round15/`.
     `governor_cruise_*` / `cm848_protectionFuelRate*` functions. The firmware calls the road speed governor "vehicle
     speed limit". (Done in round 16: `road_speed_governor_*` is the one vocabulary.)
   - **The engine retarder family** (e2m 1070 / 1071). Its records carry two value lists: `EB_Non_Override_Command_Source`
-    1-6, and `EB_Brake_Type` 0-3 (a bitmask in this code).
+    1-6, and `EB_Brake_Type` 0-3 (a bitmask in this code). (Done in round 17.)
   - **Types:**
     - The AFC slew rates (e2m 11D5 +C / +10 / +14) are 4-byte records on word rows: `_fuel_demand_load_threshold_d`
       renders with an underscore.
@@ -972,13 +972,56 @@ Scripts are in `session_folder/round16/`.
     writes its halves apart (`DAT_003fd034` is the fraction). `q16_fixed_point_t` would print pieces for the dword
     stores; decide by a pilot.
   - **The engine retarder family** (e2m 1070 / 1071 / 1192), still open from round 15. 1192 +4 / +6 / +8 have no
-    rows.
+    rows. (Done in round 17; 1192 +4 / +6 / +8 have no reader.)
   - **`DAT_0040b5c0`:** only the power-up initializer writes it (the maximum road speed trim).
   - **e2m 8A0F +C / +E / +10** (Prev_Debounced_CC_Switch_Mux / Prev_CC_Switch_Mux / Trans_Cruise_Cutoff_Request) land
     on `engine_warning_alert_flag` / `coolant_overheat_or_low_oil_pressure_flag` / `protection_fault_latch_flag`.
     It is open whether the block drifts or that family is misnamed. One reader of 0x40b214 is the PCI cruise control
     message builder, and 0x40b210 has a `_previous` twin. Read `cm848_updateEngineWarningFlags` before deciding.
   - **`governor_override_fuel_threshold_cal` (0x408e96)** is ROM, so it has a legacy `_cal`.
+
+## Done, round 17 (2026-11-21, same PR; the relayed "keep going" again): the engine retarder request chain
+
+Scripts are in `session_folder/round17/`.
+- **The records:** the parameter ID table places e2m 1070 (RAM 0x40a352), 1071 (ROM 0x408e9a), 1192 (EEPROM) and the
+  117D retarder words. Each was checked against the seven steps of `cm848_processEngineRetarderRequest`. The 20
+  renamed rows with records match their e2m sizes, apart from the 0x40a35c dword, which stage C splits.
+- **The vocabulary is the e2m's, and it fits the code exactly:**
+  - The **override command** is the TSC1 request: source 1 (J1939 override) or 6 (no override).
+  - The **non-override command** is the lowest of the cruise permission (2), the operator switch selection (3) and
+    the TSC1 limit (4). It restarts at 101 (none) each pass the allowed state is 2.
+  - The **allowed state** picks between them: 0 none, 1 override only (the driver conditions hold the rest off), 2
+    override or non-override. The **command level** and **command source** are the result, and the ERC1 builder maps
+    the source to SPN 900 by compares.
+  - The rule for the three words: `engine_retarder_*` names the brake request chain (e2m EB = engine brake) and the
+    J1939 retarder words. `exhaust_brake_*` names the 48RE lockup aid and the exhaust brake switch (switch 12), and
+    `variable_geometry_turbocharger_brake_*` names the VG brake. They describe one system at different layers, so they
+    are not mass-renamed.
+  - 'Driver' in these names is the human: the pedal / clutch / brake conditions. The e2m's hardware-driver words take
+    'output' names (`EB_Driver_Level` is `engine_retarder_output_level_percent`).
+  - e2m 1070 +10 / +20 (a 0-255 switch sum, a 1/8192 fraction) do not explain the code's 0 / 100 values, so
+    `engine_retarder_switch_percent` / `_2` keep their code-derived names.
+- **Stage A (9d4ddaf, label-only):** 28 globals, 2 functions and 1 field (EQUIVALENT, 30 names).
+  - The seven other plates of the chain are rewritten in these words. They called the extended idle condition 'the
+    road speed limit'.
+  - **`algorithm_enable_flags_18_t` bit 14 is proven:** `engine_retarder_service_brake_activate_enable` (e2m
+    EB_Service_Brake_Activate_Enable, was `reserved_bit_14`). While it is set, the driver conditions pass only after a
+    service brake tap or with a cruise non-override command.
+  - The 0x40a27c comment called the TSC1 devices primary / secondary / tertiary. They are e2m 10E6 +2's
+    `J1939_CONTROL_DEVICE` codes.
+- **Stage B (bd059da, types):** `ENGINE_RETARDER_COMMAND_SOURCE` (117D +8 value labels) on the three source words,
+  `ENGINE_RETARDER_ALLOWED_STATE` (1070 +14), and `J1939_CONTROL_DEVICE` on `engine_retarder_j1939_control_device`.
+  `check_enum_proof3.py`: 0 functions differ beyond the substitutions.
+- **Stage C (833d573, types):** `engine_retarder_brake_type_t` (bit 0 exhaust brake, bit 1 VG brake; a ROM word read only with
+  masks), and the 0x40a35c dword is now the word `engine_retarder_immediate_brake_flag` (one `sth` per store).
+- **Round 17 leads:**
+  - **The service tool test points** (1070 +1A / +1C) are never written in this build, so their 1 / 2 / 3 codes are
+    read from the code alone. They do not use the SPN 695 numbering: there 1 is speed control.
+  - **`fuel_demand_offset_correction`** is added to the idle / PTO fueling limits, and its role is unread.
+  - **The engage delay** by engine speed (1071 +C / +12 / +14) is written but has no effect: the shift block clears the
+    inhibit flag first. It may be a 11.46 change.
+  - **`algorithm_enable_flags_41_t.engine_retarder_speed_limit_enable`** forces the retarder selection to 100 during
+    extended idle, a warm-up use. The bit's name and the e2m record for it are still open.
 
 ## Leads (not in this PR)
 

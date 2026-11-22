@@ -1,0 +1,36 @@
+=== cm848_selectEngineRetarderRequest (lines 44727-44767, 35 non-blank)
+// Function: cm848_selectEngineRetarderRequest @ 0x00041b24
+//
+/* Selects the final engine retarder request percent engine_retarder_arbitrated_request_percent and
+   its source code engine_retarder_request_source_code (ERC1 SPN 900 mapping): 0 when the enable
+   state is 0, or 1 with no TSC1 request; with enable state 2 and no TSC1 request the smallest limit
+   engine_retarder_limit_percent and its limit source code; with a TSC1 torque request that request
+   and its code. Skipped while engine_retarder_request_arbitration_inhibit_flag (constant 0 in this
+   build) is set (was cm848_processTemperatureCompensationMode). */
+void cm848_selectEngineRetarderRequest(void)
+{
+  if (engine_retarder_request_arbitration_inhibit_flag == 0) {
+    if (engine_retarder_enable_state == 0) {
+      engine_retarder_arbitrated_request_percent = 0;
+      engine_retarder_request_source_code = 0;
+    }
+    else if ((engine_retarder_tsc1_request_source_code == 6) && (engine_retarder_enable_state == 1))
+    {
+      engine_retarder_arbitrated_request_percent = 0;
+      engine_retarder_request_source_code = 0;
+    }
+    else if ((engine_retarder_tsc1_request_source_code == 6) || (engine_retarder_enable_state == 0))
+    {
+      if ((engine_retarder_tsc1_request_source_code == 6) && (engine_retarder_enable_state == 2)) {
+        engine_retarder_arbitrated_request_percent = engine_retarder_limit_percent;
+        engine_retarder_request_source_code = engine_retarder_limit_source_code;
+      }
+    }
+    else {
+      engine_retarder_arbitrated_request_percent = engine_retarder_tsc1_request_percent;
+      engine_retarder_request_source_code = engine_retarder_tsc1_request_source_code;
+    }
+  }
+  return;
+}
+//

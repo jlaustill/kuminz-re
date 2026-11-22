@@ -432,6 +432,15 @@ state enum, the flag bytes.**
 - **Stage C (5945df3, types) and D (098ecfe, docs), the user's two decisions:** the switch bytes 0 / 1 / 3 as
   bitfields (180 named bit accesses for 10 piece lines), and the round 11-15 methods in firmware/CLAUDE.md.
 
+**Round 17 (the relayed "keep going" again): the engine retarder request chain.**
+- **Stage A (9d4ddaf, label-only):** the chain in the e2m's words: the override command (TSC1), the non-override
+  command (the lowest of cruise / switch / TSC1 limit), the allowed state, the command level and source. It also
+  proves the `algorithm_enable_flags_18_t` bit 14 guess: `engine_retarder_service_brake_activate_enable`. The chain's
+  plates are rewritten.
+- **Stage B (bd059da, types):** `ENGINE_RETARDER_COMMAND_SOURCE` and `ENGINE_RETARDER_ALLOWED_STATE` from their e2m
+  value lists, and `J1939_CONTROL_DEVICE` on the retarder's device word.
+- **Stage C (833d573, types):** the `EB_Brake_Type` bitfield (exhaust / VG brake), and the 0x40a35c dword split.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -523,6 +532,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 17: stage A is EQUIVALENT (30 names); stage B's enum proof shows 0 functions differing beyond the substitutions; stage C's type diff is reviewed with a mask normalizer.
 - [x] Round 16: stage A is EQUIVALENT (109 names); B and C are type diffs reviewed function by function (C with a mask-normalized cast diff); every renamed row's width matches its e2m size.
 - [x] Round 15: stages A and B are EQUIVALENT; every renamed row's width matches its e2m size.
 - [x] Round 14: stages A and C are EQUIVALENT (C with the split words mapped back to the old pieces); stage B
@@ -549,8 +559,8 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 16:**
-  - the engine retarder family, the cruise PID's Q16 integrator type, the droop word at 0x40aedc (task 046);
+- **Open after round 17:**
+  - the cruise PID's Q16 integrator type, the droop word at 0x40aedc (task 046);
   - the fault status records (a packed record array, but the range is time-shared RAM);
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;

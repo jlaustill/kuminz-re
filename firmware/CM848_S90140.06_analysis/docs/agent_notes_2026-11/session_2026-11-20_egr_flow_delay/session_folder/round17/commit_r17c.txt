@@ -1,0 +1,14 @@
+cm848: round 17 stage C - the EB_Brake_Type bitfield and the immediate brake word (types)
+
+- engine_retarder_brake_type_t: e2m 1071 +28 EB_Brake_Type (0 NONE / 1 EXHAUST / 2 VG / 3 BOTH) as a
+  word bitfield, bit 0 exhaust_brake (logical output 11) and bit 1 variable_geometry_turbocharger_brake.
+  cm848_driveEngineRetarderOutput only tests it with & 1 / & 2 (a ROM word with no read-modify-write),
+  so the six tests read engine_retarder_brake_type.exhaust_brake != 0 with no pieces. 1 on this truck.
+- engine_retarder_immediate_brake_flag (0x40a35c): dword -> word. e2m 1070 +A is 2 bytes, every store is
+  one sth, and +C (0x40a35e) has no access; the three ._0_2_ piece stores are now plain.
+
+Proof: normalize_r17c.py (each bit -> its mask; the old ._0_2_ -> the plain name) +
+cast_normalized_diff.py: 0 functions differ. Headers regenerated (0 g++ errors), lookup_tables.py 0
+sizing problems, the four test suites pass; the thunk counts are unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

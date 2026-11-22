@@ -1,0 +1,10 @@
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:1630: ...algorithm_enable_flags_12_t,,reserved_bit_14,bitfield:1@14,0,no e2m name. 
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:1664: ...algorithm_enable_flags_41_t,,reserved_bit_14,bitfield:1@14,0,no e2m name. 
+firmware/CM848_S90140.06_analysis/output/firmware_types.hpp:2794: ...    uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m name.
+firmware/CM848_S90140.06_analysis/output/firmware_types.hpp:2832: ...    uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m name.
+work/tasks/046-cm848-egr-flow-estimate.md:449: ...    In the code, `cm848_updateEngineRetarderEnableState` reads bit 0 of 0x40b0fe as i
+work/tasks/042-table-campaign-rename-leads.md:396: ...gn61440ElectronicRetarderController1Message reads engine_retarder_request_source_code and engine_retarder_request_p
+work/tasks/042-table-campaign-rename-leads.md:396: ...age reads engine_retarder_request_source_code and engine_retarder_request_percent) and logical output 11 (cm848
+work/tasks/042-table-campaign-rename-leads.md:509: ...ngine_retarder_request_on_delay_counter, 0x3fb54e tc_lockup_disengage_state) but the current .cpp still p
+work/tasks/042-table-campaign-rename-leads.md:509: ...hem crossed. Lines 41136 / 41139 / 41165 / 41204 (cm848_updateEngineRetarderEnableState, the torque converter lockup 
+work/tasks/042-table-campaign-rename-leads.md:538: ...  62b6cf1; `tc_lockup_disengage_state` renders 5 times at 62b6cf1 a

@@ -1,0 +1,146 @@
+=== cm848_updateEngineRetarderEnableState (lines 44473-44624, 145 non-blank)
+// Function: cm848_updateEngineRetarderEnableState @ 0x00041368
+//
+/* Evaluates the engine retarder (exhaust brake) enable conditions once per pass and sets
+   engine_retarder_enable_state: 0 = not wanted or exit condition, 1 = wanted but held off by the
+   pedal, clutch or service brake conditions, 2 = enabled (then engine_retarder_limit_percent
+   restarts at 101 = no limit). It uses the service brake switch with a release delay
+   (service_brake_delayed_active_flag), the torque converter lockup state
+   (tc_lockup_disengage_state), oil temperature, engine speed, boost, fuel demand and governor mode
+   thresholds; it also keeps the arbitrated request of the two previous passes (was
+   cm848_processProtectionSystemBit3). */
+void cm848_updateEngineRetarderEnableState(void)
+{
+  ushort uVar1;
+  if (switch_input_state_bits.brake_switch == 0) {
+    if (service_brake_release_delay_counter == 0) {
+      service_brake_delayed_active_flag = 0;
+    }
+    else {
+      service_brake_release_delay_counter = service_brake_release_delay_counter - 1;
+    }
+  }
+  else {
+    service_brake_delayed_active_flag = 1;
+    service_brake_release_delay_counter = service_brake_release_delay_passes;
+  }
+  tc_lockup_disengage_state =
+       j1939_powertrain_control_state.etc1_spn573_torque_converter_lockup_disengaged_flag;
+  if ((algorithm_enable_flags_6_cal & 4) != 0) {
+    tc_lockup_disengage_state = (ushort)((transmission_exhaust_brake_flags & 1) != 0);
+  }
+  if ((((((short)oil_temperature_sensor_filtered < engine_retarder_oil_temperature_threshold) &&
+        (engine_retarder_enter_minimum_engine_speed_cold_oil <
+         engine_speed_state.filtered_engine_speed)) ||
+       ((engine_retarder_oil_temperature_threshold <= (short)oil_temperature_sensor_filtered &&
+        (engine_retarder_enter_minimum_engine_speed_warm_oil <
+         engine_speed_state.filtered_engine_speed)))) &&
+      (uVar1 = cm848_calculateBoostPressure(), uVar1 < engine_retarder_enter_maximum_boost_pressure)
+      ) && ((((((adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR &&
+                (adjusted_user_fueling_state != FUELING_STATE_POWER_TAKE_OFF)) &&
+               (final_fueling <= engine_retarder_fuel_demand_threshold)) ||
+              ((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
+               (((uint)final_fueling <= (uint)engine_retarder_fuel_demand_threshold ||
+                (((uint)final_fueling <=
+                  (uint)engine_retarder_fuel_demand_threshold_governor_mode_11 +
+                  (uint)fuel_demand_offset_correction &&
+                 ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
+                  engine_retarder_coolant_temperature_threshold + -0x140)))))))) ||
+             ((adjusted_user_fueling_state == FUELING_STATE_POWER_TAKE_OFF &&
+              ((((uint)final_fueling <=
+                 (uint)engine_retarder_fuel_demand_threshold_governor_mode_4 +
+                 (uint)fuel_demand_offset_correction &&
+                (power_take_off_governor_smoothed_reference_engine_speed <=
+                 engine_retarder_monitored_rpm_threshold_governor_mode_4)) &&
+               ((int)(short)sensor_readings_t_0040baf2.coolant_temp <
+                engine_retarder_coolant_temperature_threshold + -0x140)))))) &&
+            ((tc_lockup_disengage_state == 0 || (transmission_park_or_neutral_flag != 0)))))) {
+    engine_retarder_enter_condition_flag = true;
+  }
+  else {
+    engine_retarder_enter_condition_flag = false;
+  }
+  if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
+       ((power_take_off_governor_active_flag == 0 ||
+        ((engine_feature_enable_flags_cal & 0x8000) == 0)))) &&
+      ((switch_input_state_bits.clutch_switch == 0 || ((governor_feature_config_word & 0x40) == 0)))
+      ) && (((service_brake_delayed_active_flag == 1 ||
+             (algorithm_enable_flags_18_cal.reserved_bit_14 == 0)) ||
+            (engine_retarder_limit_source_code == 2)))) {
+    engine_retarder_driver_conditions_met_flag = true;
+  }
+  else {
+    engine_retarder_driver_conditions_met_flag = false;
+  }
+  if ((((((short)oil_temperature_sensor_filtered < engine_retarder_oil_temperature_threshold) &&
+        (engine_speed_state.filtered_engine_speed < engine_retarder_exit_engine_speed_cold_oil)) ||
+       ((engine_retarder_oil_temperature_threshold <= (short)oil_temperature_sensor_filtered &&
+        (engine_speed_state.filtered_engine_speed <= engine_retarder_exit_engine_speed_warm_oil_cal)
+        ))) || (((adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR &&
+                 (adjusted_user_fueling_state != FUELING_STATE_POWER_TAKE_OFF)) &&
+                ((engine_retarder_fuel_demand_threshold < adjusted_user_fueling &&
+                 (vehicle_speed <= engine_retarder_exit_maximum_vehicle_speed_cal)))))) ||
+     (((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR &&
+       (((uint)engine_retarder_fuel_demand_threshold_governor_mode_11 +
+         (uint)fuel_demand_offset_correction < (uint)final_fueling ||
+        (((engine_retarder_coolant_temperature_threshold <
+           (short)sensor_readings_t_0040baf2.coolant_temp &&
+          (vehicle_speed <= engine_retarder_exit_maximum_vehicle_speed_cal)) &&
+         ((uint)engine_retarder_fuel_demand_threshold < (uint)final_fueling)))))) ||
+      (((adjusted_user_fueling_state == FUELING_STATE_POWER_TAKE_OFF &&
+        ((((uint)engine_retarder_fuel_demand_threshold_governor_mode_4 +
+           (uint)fuel_demand_offset_correction < (uint)final_fueling ||
+          (engine_retarder_monitored_rpm_threshold_governor_mode_4 <
+           power_take_off_governor_smoothed_reference_engine_speed)) ||
+         (engine_retarder_coolant_temperature_threshold <
+          (short)sensor_readings_t_0040baf2.coolant_temp)))) ||
+       ((tc_lockup_disengage_state != 0 && (transmission_park_or_neutral_flag == 0)))))))) {
+    engine_retarder_exit_condition_flag = true;
+  }
+  else {
+    engine_retarder_exit_condition_flag = false;
+  }
+  if (((fuel_demand_control_t_0040a57a.calculated == 0) &&
+      ((power_take_off_governor_active_flag == 0 ||
+       ((engine_feature_enable_flags_cal & 0x8000) == 0)))) &&
+     ((switch_input_state_bits.clutch_switch == 0 || ((governor_feature_config_word & 0x40) == 0))))
+  {
+    engine_retarder_driver_inhibit_flag = false;
+  }
+  else {
+    engine_retarder_driver_inhibit_flag = true;
+  }
+  if ((low_speed_governor_extended_idle_active_flag == 0) ||
+     (algorithm_enable_flags_41_cal.engine_retarder_speed_limit_enable == 0)) {
+    if (((engine_retarder_arbitrated_request_percent == 0) &&
+        (!(bool)engine_retarder_enter_condition_flag)) ||
+       ((engine_retarder_arbitrated_request_percent != 0 &&
+        ((bool)engine_retarder_exit_condition_flag)))) {
+      engine_retarder_enable_state = 0;
+      goto LAB_000418e0;
+    }
+    if ((((engine_retarder_arbitrated_request_percent != 0) ||
+         (!(bool)engine_retarder_enter_condition_flag)) ||
+        (!(bool)engine_retarder_driver_conditions_met_flag)) &&
+       (((engine_retarder_arbitrated_request_percent == 0 ||
+         ((bool)engine_retarder_exit_condition_flag)) || ((bool)engine_retarder_driver_inhibit_flag)
+        ))) {
+      engine_retarder_enable_state = 1;
+      goto LAB_000418e0;
+    }
+  }
+  engine_retarder_enable_state = 2;
+  engine_retarder_limit_percent = 0x65;
+LAB_000418e0:
+  if ((service_brake_delayed_active_flag == 1) && ((governor_mode_config_flags & 1) != 0)) {
+    service_brake_active_governor_mode_config_bit_0_flag._0_2_ = 1;
+  }
+  else {
+    service_brake_active_governor_mode_config_bit_0_flag._0_2_ = 0;
+  }
+  engine_retarder_arbitrated_request_percent_previous_2 =
+       engine_retarder_arbitrated_request_percent_previous;
+  engine_retarder_arbitrated_request_percent_previous = engine_retarder_arbitrated_request_percent;
+  return;
+}
+//

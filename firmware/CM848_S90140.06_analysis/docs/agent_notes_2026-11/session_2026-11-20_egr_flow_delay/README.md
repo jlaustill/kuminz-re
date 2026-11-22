@@ -325,3 +325,11 @@ Hand work on the round 7 lead.
   `switch_normalize_r16c.py`. **Closing:** `apply_r16_closing.py`; after the review, `retired_prose.py` (the old
   vocabulary in current comment text) and `fix_retired_prose.py`.
 
+## Round 17: the engine retarder request chain (`session_folder/round17/`)
+
+- **The records:** `blocks.txt` (e2m_block_addresses.py on 1070 / 1071 / 1192), `check*_out.txt`, `width_r17a.txt`.
+- **Stage A:** `worklist_r17a.py` (through apply_hand_worklist.py), `apply_r17a_plates.py` (the chain's plates),
+  `retired_prose_r17.py` / `fix_retired_prose_r17.py` (the old words in current comments).
+- **Stage B:** `apply_r17b_enums.py`. **Stage C:** `apply_r17c.py` and the proof helper `normalize_r17c.py`.
+  **Closing:** `apply_r17_closing.py`.
+
