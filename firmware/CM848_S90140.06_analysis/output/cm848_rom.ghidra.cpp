@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 08:17:51 MST 2026
+// Generated: Sun Nov 22 08:24:54 MST 2026
 
 
 //
@@ -68500,7 +68500,7 @@ void cm848_evaluateJ1939InputSignalFault(int param_1)
   iVar6 = (int)(char)(&j1939_input_signal_descriptor_table)[param_1].timeout_slot;
   cm848_clearJ1939InputTimeoutBit(iVar6);
   cm848_clearJ1939InputDataErrorBit(iVar6);
-  uVar7 = pjVar3->fault_bit_index;
+  uVar7 = pjVar3->logical_switch;
   iVar4 = ((int)uVar7 >> 3) + (uint)((int)uVar7 < 0 && (uVar7 & 7) != 0);
   if (((uint)switch_input_datalink_source_bits_cal[iVar4] &
       1 << (uVar7 + (((int)uVar7 >> 3) + (uint)((int)uVar7 < 0 && (uVar7 & 7) != 0)) * -8 & 0x3f))

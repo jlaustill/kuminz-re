@@ -2704,7 +2704,7 @@ struct j1939_input_signal_descriptor_t {
     byte* signal_value;  /* Received signal byte (j1939_received_*) */
     uint8_t timeout_slot;  /* Index into j1939_input_signal_timeouts (also the fault bitmap index) */
     uint8_t reserved_5;  /* Always 0 */
-    uint32_t fault_bit_index;  /* Bit index into the fault-enable bitmask and the fault confirmation arrays (0x1f for most entries) */
+    uint32_t logical_switch;  /* The logical switch (0-31) this input drives: cm848_evaluateJ1939InputSignalFault indexes switch_input_datalink_source_bits_cal / switch_input_source_priority / j1939_switch_input_default_state_bits with it and sets / clears its switch_input_datalink_state_bits bit through cm848_setDatalinkSwitchStateIfPriority / cm848_clearDatalinkSwitchStateIfPriority (received 1 sets / 0 clears; 2 / 3 or a timeout apply the default bit). Table values: brake switch 11 / clutch switch 15 / PTO on 3 / remote PTO 19 / accelerator interlock 26 / the other 12 inputs 31 (the unwired switch) (was fault_bit_index */
 };
 
 struct output_read_back_fault_bits_t {
