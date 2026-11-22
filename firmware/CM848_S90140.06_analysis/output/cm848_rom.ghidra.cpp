@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 01:07:30 MST 2026
+// Generated: Sun Nov 22 01:23:10 MST 2026
 
 
 //
@@ -97838,7 +97838,7 @@ void cm848_runJ1939PeriodicTransmitQueues(void)
   byte bVar1;
   int iVar2;
   
-  if ((algorithm_enable_flags_11_cal & 8) != 0) {
+  if (algorithm_enable_flags_11_cal.j1939_communication_enable != 0) {
     if (((datalink_broadcast_enable_flags & 4) != 0) &&
        ((j1939_dm13_broadcast_enable_flags & 4) != 0)) {
       iVar2 = 0x3fd2e2;
@@ -97935,7 +97935,7 @@ void cm848_dispatchJ1939ReceivedMessages(void)
   
   uVar4 = TBLr;
   uVar4 = uVar4 >> 7 & 0xffff;
-  if ((algorithm_enable_flags_11_cal & 8) != 0) {
+  if (algorithm_enable_flags_11_cal.j1939_communication_enable != 0) {
     uVar1 = TBLr;
     iVar5 = (uVar1 >> 7 & 0xffff) - uVar4;
     while ((iVar5 < 9 &&

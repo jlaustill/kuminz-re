@@ -7913,7 +7913,7 @@ extern word cold_delta_fuel_cached_axis_offsets[2];  // 0x003fb35c
 extern word algorithm_enable_flags_table_length_cal;  // 0x003fd59a
 extern word algorithm_enable_flags_7_cal;  // 0x003fd5aa
 extern word algorithm_enable_flags_8_cal;  // 0x003fd5ac
-extern word algorithm_enable_flags_11_cal;  // 0x003fd5b2
+extern algorithm_enable_flags_11_t algorithm_enable_flags_11_cal;  // 0x003fd5b2
 extern word algorithm_enable_flags_26_cal;  // 0x003fd5d0
 extern word barometric_pressure_selection_fault_flags;  // 0x0040a166
 extern int16_t egr_orifice_temperature_rationality_coolant_temperature_threshold;  // 0x00409eac

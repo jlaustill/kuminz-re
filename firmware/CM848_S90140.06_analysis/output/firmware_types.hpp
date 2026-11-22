@@ -1346,6 +1346,7 @@ typedef struct algorithm_enable_flags_12_t algorithm_enable_flags_12_t;
 typedef struct algorithm_enable_flags_18_t algorithm_enable_flags_18_t;
 typedef struct algorithm_enable_flags_3_t algorithm_enable_flags_3_t;
 typedef struct algorithm_enable_flags_4_t algorithm_enable_flags_4_t;
+typedef struct algorithm_enable_flags_11_t algorithm_enable_flags_11_t;
 typedef struct algorithm_enable_flags_1_t algorithm_enable_flags_1_t;
 typedef struct algorithm_enable_flags_2_t algorithm_enable_flags_2_t;
 typedef struct algorithm_enable_flags_5_t algorithm_enable_flags_5_t;
@@ -2884,6 +2885,25 @@ struct algorithm_enable_flags_4_t {
     uint16_t reserved_bit_15 : 1;  /* bit 15: no e2m name; no reader */
 };
 
+struct algorithm_enable_flags_11_t {
+    uint16_t proprietary_communication_enable : 1;  /* bit 0: e2m Proprietary_Communication_Enable (0x1): 'parameter indicating whether datalink protocols are 'turned on''; no reader in this build; set on this truck */
+    uint16_t j1587_communication_enable : 1;  /* bit 1: e2m J1587_Communication_Enable (0x2): '[JC87CZEA] bit 1 of 0-15 indicates whether J1587 communication is enabled'; no reader in this build; set on this truck */
+    uint16_t j1922_communication_enable : 1;  /* bit 2: e2m J1922_Communication_Enable (0x4): '[JC22CZEA] bit 2 of 0-15 indicates whether J1922 communication is enabled'; no reader in this build; clear on this truck */
+    uint16_t j1939_communication_enable : 1;  /* bit 3: e2m J1939_Communication_Enable (0x8): '[JC39CZEA] bit 3 of 0-15 indicates whether J1939 communication is enabled'; read by cm848_runJ1939PeriodicTransmitQueues, cm848_dispatchJ1939ReceivedMessages; set on this truck */
+    uint16_t reserved_bit_4 : 1;  /* bit 4: no e2m record (0x10); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_5 : 1;  /* bit 5: no e2m record (0x20); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_6 : 1;  /* bit 6: no e2m record (0x40); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_7 : 1;  /* bit 7: no e2m record (0x80); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_8 : 1;  /* bit 8: no e2m record (0x100); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_9 : 1;  /* bit 9: no e2m record (0x200); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_10 : 1;  /* bit 10: no e2m record (0x400); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_11 : 1;  /* bit 11: no e2m record (0x800); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_12 : 1;  /* bit 12: no e2m record (0x1000); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_13 : 1;  /* bit 13: no e2m record (0x2000); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_14 : 1;  /* bit 14: no e2m record (0x4000); no reader in this build; clear on this truck */
+    uint16_t reserved_bit_15 : 1;  /* bit 15: no e2m record (0x8000); no reader in this build; clear on this truck */
+};
+
 struct algorithm_enable_flags_1_t {
     uint16_t alpha_user_override_enable : 1;  /* bit 0: e2m Alpha_User_Override_Enable (0x1): '[APUOAPEN] Bit 0 Word 1. EEPROM indicator set by engr applications to control alpha'; read by calculateAlpha, cm848_temperatureBasedFuelTrim; calculateAlpha also reads it through its pointer to algorithm_enable_flags_0_cal; clear on this truck */
     uint16_t user_override_fueling_enable : 1;  /* bit 1: e2m User_Override_Fueling_Enable (0x2): '[FSUOFLEN] Bit 1 Word 1. Enable indicator for engineering fuel override command'; read by cm848_selectFinalFueling; clear on this truck */
@@ -2987,7 +3007,7 @@ struct algorithm_enable_flags_19_t {
     uint16_t reserved_bit_4 : 1;  /* bit 4: no e2m record (0x10); no reader in this build; clear on this truck */
     uint16_t alpha_altitude_derate_override_enable : 1;  /* bit 5: e2m Alpha_Altitude_Derate_Override_Enable (0x20): 'Bit F Word 0. Enables altitude derate override logic in the alpha feature'; read by cm848_calculateAlphaAltitudeDerateLatch; calculateAlpha also reads it through its pointer to algorithm_enable_flags_0_cal; clear on this truck */
     uint16_t egr_condensation_algorithm_enable : 1;  /* bit 6: e2m EGR_Condensation_Algorithm_Enable (0x40): 'enable flag for EGR Condesnation prediction algorithm'; no reader in this build; clear on this truck */
-    uint16_t compressor_outlet_temperature_estimate_enable : 1;  /* bit 7: e2m COT_Estimation_Enable (0x80): 'ENABLE/DISABLE compressor outlet temperature estimation.' (the reader rules out the other record on this bit, T_TPE_COT_Estimation_Enable); read by cm848_selectCompressorOutletTemperature; set on this truck */
+    uint16_t compressor_outlet_temperature_estimate_enable : 1;  /* bit 7: e2m COT_Estimation_Enable (0x80): 'ENABLE/DISABLE compressor outlet temperature estimation.' (the e2m also names this enable T_TPE_COT_Estimation_Enable); read by cm848_selectCompressorOutletTemperature; set on this truck */
     uint16_t service_brake_prevents_idle_shutdown_enable : 1;  /* bit 8: e2m IS_Brake_On_Prevent_Shutdown_Enable (0x100): 'Enables depressed serv. brake to prevent idle shutdow'; no reader in this build; clear on this truck */
     uint16_t condensation_protection_enable : 1;  /* bit 9: e2m T_EMO_Condensation_AECD_Enable (0x200): 'Condensation AECD Enable engineering trim' (the reader rules out the other record on this bit, ESP_Smart_Torque_Enable); read by cm848_updateCondensationProtection; clear on this truck */
     uint16_t reserved_bit_10 : 1;  /* bit 10: e2m T_VGA_Swingvane_Enable (0x400): 'Enable for Swingvane VG Manager'; no reader in this build; set on this truck */
