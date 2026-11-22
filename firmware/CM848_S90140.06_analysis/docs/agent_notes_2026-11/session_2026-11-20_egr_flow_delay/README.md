@@ -419,3 +419,8 @@ Hand work on the round 7 lead.
 
 - **Stage A:** `opposite_words.py` (the scan), `worklist_r29a.py`, `labels_r29a.tsv`, `fault_n_evidence.py` / `fault_n_context.py` (each bit's setters and readers), `fault_bits_r29a.py`.
 - **Closing:** `apply_r29_closing.py`.
+
+## Round 30: the watchdog fueling monitor (`session_folder/round30/`)
+
+- **Scans:** `unit_domain_scan.py`, `setter_name_scan.py`, `ec1_access_census.py` (the EC1 lead).
+- **Stage A:** `worklist_r30a.py`, `add_rows_r30a.py`. **Closing:** `apply_r30_closing.py`.

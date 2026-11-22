@@ -1645,6 +1645,26 @@ A peer relay started the round. Scripts are in `session_folder/round29/`.
     and which low is not known), 101, 410, 524 and 110 need more reading.
   - The kernel transport's message parameter.
 
+## Done, round 30 (2026-11-22, same PR): the watchdog fueling monitor
+
+A peer relay started the round. Scripts are in `session_folder/round30/`.
+- **Stage A (82b5069, label-only):**
+  - `setter_name_scan.py` flags functions whose name shares no word with the fault bits they set.
+  - It found `fuel_quantity_demand_monitor`, which sets fault 388 (e2m Watchdog_Fueling_Error). It is now
+    `cm848_monitorWatchdogFueling`, and its initializer `cm848_initializeWatchdogFueling`.
+  - The Chrysler e2m blocks name its words, aligned by offset; each word matches its code use:
+    - 8A70 at 0x40894c: the duration threshold, the error debounce, the speed threshold, the minimum duration offset;
+    - 8B3B / 8B3D: the coolant allowance table.
+  - Five of the words had no row.
+- **Scans that found nothing to change:**
+  - `unit_domain_scan.py`: rows whose name names another domain than their e2m unit. The 5 hits were e2m layout
+    drift (8A2B +24, the 8C34 tail, 8A14 from +2C) and a unit oddity.
+  - The setter-name scan's 9 other hits were generic or table-driven setters.
+- **Leads:**
+  - The EC1 (PGN 65251) payload as a struct: 28 bytes, J1939 little-endian, two instances. Its field widths need the
+    base-register accesses that `xref_addr.py` does not see, so it needs a pilot build.
+  - The fault bits 22 / 23 / 179 / 180 / 101 / 410 / 524 / 110.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -543,6 +543,9 @@ state enum, the flag bytes.**
 - **Stage A (f13aca5, label-only):** the transfer case low-range detector named from e2m 8C5F / 8C60 (was the
   `engine_to_vehicle_speed_ratio_*` monitor: the low-range flag read as a "high ratio" flag, the launch flag as
   "invalid"). Nine `fault_<n>` bits named from the code that sets them.
+**Round 30.**
+- **Stage A (82b5069, label-only):** the watchdog fueling monitor (fault 388) and its words named from e2m 8A70 /
+  8B3B / 8B3D; it was `fuel_quantity_demand_monitor` with five `DAT_` words.
 
 ## Test plan
 
@@ -635,6 +638,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 30: stage A is EQUIVALENT.
 - [x] Round 29: stage A is EQUIVALENT.
 - [x] Round 28: stage A is EQUIVALENT; stage B's 9 differing functions match statement by statement apart from the
   frame argument.
