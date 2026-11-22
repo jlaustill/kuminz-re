@@ -584,6 +584,14 @@ state enum, the flag bytes.**
 **Round 38.**
 - **Stage A (0333c10, labels, types):** the named lookup cache rows audited against their own lookups: 34
   2-D caches widened to `word[2]` (15 y halves merged) and 24 misnamed caches renamed after their tables.
+**Round 39.**
+- **Stage A (912c379, labels, types):** the 24 lookup tables named `_cal` outside the EEPROM mirror, renamed after
+  their lookups (the turbocharger corrected speed map, e2m MT_Max_Torque_Map, ...), and 11 caches.
+- **Stage B (e8faa64, labels, a type):** stage A checked against the ECU's parameter ID table: four e2m renames (CBD
+  stop compensation, crank / cam based next cylinder, the cam tooth window) and the cam window cache split from a
+  dword.
+- **Stage C (2aa86ed, labels, types):** the last 42 HARD `_cal` scalars renamed from their code (11 with e2m records);
+  the J1939-named supervisor chip block re-domained. `audit_cal_suffixes.py` HARD 63 -> 0.
 
 ## Test plan
 
@@ -676,6 +684,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 39: every function matches the canonical form or has 0 differing statements; `audit_cal_suffixes.py` HARD 63 -> 0, SOFT 4 -> 0.
 - [x] Round 38: all 1968 functions match the canonical form.
 - [x] Round 37: every function matches the canonical form apart from one declaration reorder and one
   `WORD_` render of the same cache.

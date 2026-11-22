@@ -1,0 +1,18 @@
+cm848: round 39 closing - task 046, the session archive, verify
+
+- task 046, the round 39 section: stages A / B / C, the proof, the firmware/CLAUDE.md refresh, and the leads:
+  - the fuel metering PWM unit (bench);
+  - the 3 unverified rows;
+  - the booster capacitor monitor's guessed names;
+  - the 258 MISSING;
+  - the two tables with no e2m record;
+  - the phantom lookup argument;
+  - the skill's stale "~1352 HARD".
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round39/: the audit report, the lookup plan, the HARD survey, the scripts, maps, rules and commit
+    messages. The .cpp copies and the disassembly segment are left out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

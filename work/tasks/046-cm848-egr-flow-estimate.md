@@ -1866,6 +1866,53 @@ A peer relay started the round. Scripts are in `session_folder/round38/`.
     prototype question.
   - The tables with several caches need per-function cache words (round 37's lead).
 
+## Done, round 39 (2026-11-22, same PR): the `_cal` HARD list cleared
+
+A peer relay started the round. The `auditing-cal-suffixes` skill drove it, and the scripts are in
+`session_folder/round39/`. `audit_cal_suffixes.py` HARD went from 63 to 0 and SOFT from 4 to 0, so no `_cal` name is
+left outside the EEPROM mirror.
+- **Stage A (912c379, labels, types):** the 24 lookup tables that the auditor flagged (20 HARD at 0x40xxxx, 4 SOFT in
+  Bank1 ROM), named from their own lookups in the table grammar, with 11 caches. Four caches were widened to `word[2]`
+  with their y halves merged, and DAT_003fb01a gained a `word[2]` row.
+  - Wrong-domain old names: the "injection timing temperature correction" map is the turbocharger corrected speed map,
+    and the "J1939 fuel table" is e2m MT_Max_Torque_Map.
+- **Stage B (e8faa64, labels, a type):** stage A's names checked against the ECU's parameter ID table
+  (`e2m_block_addresses.py --address`). It resolves 19 of the 24.
+  - Four renames:
+    - `cylinder_balance_stop_compensation_*` (81B1-81B3);
+    - `next_cylinder_by_crank_tooth_*` / `next_cylinder_by_cam_tooth_*` (8197 / 8198, 8195 / 8196; table b reads TPU-A
+      channel 1);
+    - `cam_tooth_good_window_fraction_*` (PMA = the cam wheel input);
+    - `low_speed_governor_fuel_by_commanded_throttle_*` (one addend of the no-load fuel).
+  - The dword `crank_sync_phase_counter` is two words: `crank_out_of_phase_count` (e2m 8194 +8) and the good window
+    cache that stage A missed.
+  - Stage A's comments were corrected: the expected firing revolutions lookup is a signed axis read at the literal 2,
+    not a step lookup, and the fuel metering PWM unit is open (see the leads).
+- **Stage C (2aa86ed, labels, types):** the last 42 HARD scalars. 39 of them sit in the 0x40xxxx block, which is a ROM copy
+  (RAM = ROM + 0x39a3e6), and the code writes none of the 42.
+  - 39 are renamed from their code use, 11 of them also from their e2m record.
+  - 3 only lose the `_cal` and are marked unverified.
+  - The supervisor chip block was J1939-named: `supervisor_register_148` / `152` / `158` / `164` settings, the word[4]
+    `supervisor_configuration_transmit_words`, `supervisor_watchdog_cycle_interval` / `_window_setting`, and the
+    schedule counters (the word `j1939_tx_periodic_counter` is two byte counters).
+  - `temperature_protection_*` is the park / neutral exit window, the `cruise_speed_*` rows are the
+    fuel_rpm_compensated_offset clamps, and the `protection_fuel_demand_snapshot_*` rows are the pedal substitutes.
+- **Proof:** every stage matches `prove_caches.py`'s canonical form for each function the type changes leave alone.
+  `statement_diff.py` shows 0 differing statements in the 3 + 5 functions those changes touch.
+- **firmware/CLAUDE.md (factual refresh):** the "~1352 HARD" sentence now says the HARD list is empty, that the
+  0x40xxxx block is a ROM copy, and that 258 MISSING remain.
+- **Leads:**
+  - The fuel metering PWM frequency: e2m 80C2 says Hz at 1.0 per count, but TPU-B's 3.2 us tick makes it
+    value / 16 Hz. Scope the output on the bench.
+  - The 3 unverified rows: `governor_override_fuel_decay`, `governor_override_fuel_threshold`, `cruise_speed_target_min`.
+  - `cm848_processFaultScanLookup` is the injector driver booster capacitor monitor; the function and its
+    `per_cylinder_timing_*` arrays still carry guessed names.
+  - The 258 MISSING (EEPROM-backed names without `_cal`); many are dotted documentation rows.
+  - `safety_fuel_limit_*` and the commanded-throttle addend resolve no e2m record (the parameter ID table dump holds
+    1441 of 1886 records).
+  - `engine_retarder_torque_cached_axis_offset`'s phantom `in_r6` data argument.
+  - The `auditing-cal-suffixes` skill still says "~1352 HARD"; the list is empty now.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

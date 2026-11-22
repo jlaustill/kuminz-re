@@ -1,0 +1,3 @@
+cm848_updateEngineSpeedFromCrankSignal
+mpc555_handleCamSignalInterrupt
+mpc555_resetEngineTimingAccumulators

@@ -1,0 +1,58 @@
+cm848: round 39 stage C - the last 42 HARD _cal rows renamed from their code, the supervisor chip block re-domained
+
+audit_cal_suffixes.py's HARD list drops from 42 to 0: no _cal name is left outside the EEPROM mirror
+(0x3fd482-0x3feec1).
+- **Why _cal goes:** 39 of the rows sit in the 0x40xxxx calibration block, which is a ROM copy: each dump word
+  equals ROM at RAM - 0x39a3e6. The code writes none of the 42.
+- **39 names now come from their code use.** 11 of them also match the e2m record that the parameter ID table
+  resolves at the address. Each record was checked against its code use, because record offsets can drift between
+  the 11.45 e2m and the truck's 11.46.06. Examples:
+  - all_speed_governor_minimum_speed_offset (107B +8 ASG_Min_RPM_Offset, was governor_speed_lower_limit_offset_cal);
+  - wastegate_duty_proportional_gain_rate_limit (16A1 +A C_TGC_P_Gain_Rate_Lim, was governor_rpm_error_gain_cal);
+  - turbocharger_speed_estimate_boost_lead_gain (18CC C_TSE_Boost_Lead_Gain);
+  - low_speed_governor_exit_fuel_hysteresis (11A3 +2 Fuel_Hysteresis);
+  - cylinder_balance_delta_speed_threshold / _upper_speed_limit / _lower_speed_limit / _motoring_fuel_threshold
+    (81AE CBD_*, were fuel_demand_zero_rpm_* / cylinder_sync_*);
+  - cam_pulse_count_with_added_tooth (8194 +2) and low_speed_filtering_threshold (8194 +28);
+  - equivalent_throttle_tracking_proportional_gain (81A9 +2, next to the named integral gain).
+- **Code-only renames:**
+  - accelerator_pedal_position_high / low_substitute: the substitute block, next to
+    intake_manifold_pressure_*_substitute. Was protection_fuel_demand_snapshot_init / default_cal.
+  - injector_driver_booster_capacitor_low_voltage_count_limit / _threshold: the booster capacitor monitor's
+    per-cylinder count. Was per_cylinder_timing_max(_alt)_cal.
+  - fuel_rpm_compensated_offset_default / _pulse_width_addend / _upper_limit / _lower_limit. Were cruise_speed_* /
+    fuel_quantity_active_addend_cal.
+  - simulated_engine_speed(_mode). Was engine_speed_sim_mode / default_cal.
+  - park_neutral_exit_minimum / maximum_commanded_throttle, _maximum_vehicle_speed, _window_duration, and the window
+    timer. Were temperature_protection_*: no temperature is involved.
+  - cluster_battery_voltage_during_intake_air_heating (PCI TX[14] byte 1).
+  - safety_fuel_blend_*.
+- **3 rows only lose the _cal**, marked unverified in their comments: governor_override_fuel_decay,
+  governor_override_fuel_threshold, cruise_speed_target_min.
+- **The supervisor chip block was J1939-named.**
+  - cm848_writeSupervisorConfiguration builds configuration registers 0x94 / 0x98 / 0x9E / 0xA4 (148 / 152 / 158 /
+    164) from the j1939_status_*_cal bytes. Those are now supervisor_register_<N>_*_setting.
+  - The four j1939_proprietary_status_byte_0-3 words are the job's transmit buffer, now one word[4]
+    supervisor_configuration_transmit_words.
+  - j1939_tx_periodic_rate_cal is supervisor_watchdog_cycle_interval, and can_fuel_qty_scale_cal is
+    supervisor_watchdog_window_setting (register 0x18).
+  - The word j1939_tx_periodic_counter is two byte counters (lbz / stb): supervisor_watchdog_cycle_counter and
+    supervisor_register_46_read_counter. The second replaces a junk row 'j1939_tx_periodic_counter+1'.
+  - Also renamed: j1939_tx_pending_flag (supervisor_watchdog_window_sent_flag), and diag_sequence_counter_a / _b (the
+    register 162 read and configuration rewrite counters).
+  - The writer's plate said "names of those cals unverified". It now names the settings.
+- **Other text:**
+  - The park / neutral exit plate said "fuel demand"; the code compares the commanded throttle.
+  - An enums.csv comment named safety_system_enable_cal.
+  - **firmware/CLAUDE.md (factual refresh):** the "~1352 CM848 HARD hits" sentence now says the list is empty and
+    that 258 MISSING remain.
+
+Proof:
+- prove_caches.py: 1963 of 1968 functions match.
+- statement_diff.py (the counter halves, the transmit array, then the 46 other renames): 0 differing statements in
+  the other five (cm848_paceSupervisorWatchdogCycle, cm848_writeSupervisorConfiguration,
+  cm848_runSupervisorChipSchedule, cm848_initSupervisorConfigurationWriteJob, cm848_initSupervisorChip).
+- No pieces remain. None of the 103 round 39 old names is in the .cpp or the headers, and CM550 uses none of them.
+- lookup_tables.py: 0 sizing problems. Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

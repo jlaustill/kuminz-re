@@ -456,3 +456,10 @@ Hand work on the round 7 lead.
 ## Round 38: the named lookup cache audit (`session_folder/round38/`)
 
 - `cache_audit.py` (named caches vs their lookups), `second_words.py` (a 2-D cache's y half), `apply_r38a.py`; the proof is round 37's `prove_caches.py`. **Closing:** `apply_r38_closing.py`.
+
+## Round 39: the `_cal` HARD list cleared (`session_folder/round39/`)
+
+- **Stage A:** `audit.txt` (the auditor's report), `plan.txt` (`lookup_tables.py --plan`), `table_calls.py`, `apply_r39a.py`.
+- **Stage B:** `apply_r39b.py`, `make_rules_r39b.py` / `rules_r39b*.json` (`statement_diff.py` rules).
+- **Stage C:** `hard_scalars.py` / `hard_scalars.tsv` (each HARD row with its e2m record, ROM-copy check and writes), `symbol_uses.py`, `use_context.py`, `apply_r39c.py`, `make_rules_r39c.py`.
+- **Closing:** `apply_r39_closing.py`, `update_large_tar_r39.sh`.

@@ -1,0 +1,62 @@
+cm848: round 39 stage B - stage A's tables checked against the parameter ID table, the cam tooth window cache split out
+
+Stage A (912c379) named the 24 tables from their code alone. The ECU's parameter ID table
+(e2m_block_addresses.py --address) resolves 19 of them to e2m records. Four of stage A's names disagree with those
+records, and three stage A comments were wrong. This commit fixes them.
+- **Renamed from the e2m records:**
+  - cylinder_balance_enable_x_axis / _y_axis / _grid (+ cache) -> cylinder_balance_stop_compensation_*: e2m
+    81B1-81B3 CBD_Stop_Compensation_Speed_Vector / _Fueling_Vector / _Table, the table behind
+    cylinder_balance_stop_compensation_flag.
+  - cylinder_event_index_a_* -> next_cylinder_by_crank_tooth_*: e2m 8197 / 8198 Crank_Based_Next_Cyl, TPU-A
+    channel 0.
+  - cylinder_event_index_b_* -> next_cylinder_by_cam_tooth_*: e2m 8195 / 8196 Cam_Based_Next_Cyl, TPU-A channel 1,
+    while engine_speed_limp_home_active_flag is 1. Stage A's comment said channel 0 for both tables.
+  - crank_tooth_good_window_fraction and its tables -> cam_tooth_good_window_fraction_*: e2m 8199 / 819A / 819B +42
+    PMA_Good_Window, "expected normal cam tooth location".
+    - Every PMA record describes the cam wheel (PMA_Special_Count = the teeth on the cam wheel, PMA_Edge_Type = the
+      cam signal capture edge), and the window is programmed into TPU-A channel 1.
+    - 0x408f94's comment already called PMA_Good_Window "the cam signal's good window".
+- **Renamed from the code:** low_speed_governor_no_load_fuel_* -> low_speed_governor_fuel_by_commanded_throttle_*.
+  The table is one addend of low_speed_governor_reference.no_load_fuel, next to friction_fuel_by_engine_speed. All
+  its values are 0 in this calibration.
+- **The cache stage A missed (a type change):** crank_sync_phase_counter (0x3fb5bb) was a dword, but the code uses it
+  as two words.
+  - Bytes 0-1 are a counter, lhz @ 0x45d0c. It is now crank_out_of_phase_count: e2m 8194 +8
+    Crank_Out_Of_Phase_Threshold's counter. mpc555_handleCamSignalInterrupt adds 1 for each cam pulse at the other
+    bank's tooth and clears it on an in-phase pulse.
+  - Bytes 2-3 (0x3fb5bd) are cam_tooth_good_window_fraction_cached_axis_offset.
+    mpc555_resetEngineTimingAccumulators stores 2 there (sth @ 0x44028). This row replaces a junk row named
+    'crank_sync_phase_counter+2'. The lookup's (word *)((int)&crank_sync_phase_counter + 2) cast is gone.
+  - Its threshold crank_sync_phase_counter_threshold_cal (0x408f5e) -> crank_out_of_phase_threshold. Its address is
+    ROM-copied, so the _cal goes too.
+- **Stage A comments corrected:**
+  - **crank_preliminary_sync_count_* (e2m 81A7 / 81A8 Expected_Firing_Revs):** the x axis is coolant temperature.
+    The lookup passes flags 1 = signed axis (li r7,1), not a step lookup. Its input is the literal 2 (li r4,2 @
+    0x452d8), so the table is always read at about 0 deg F.
+  - **fuel_metering_pwm_frequency_* (e2m 80C1 / 80C2):** the e2m gives the values in Hz at 1.0 per count (2240 /
+    1920). The code sets TPU-B channel 11's period to 5000000 / value ticks.
+    - That matches Hz only at a 0.2 us tick.
+    - Channel 11's own set-period slot converts with mpc555_tpuBSetPwmPeriodMicroseconds, which divides by 3.2 us.
+      At that tick the output would be value / 16 Hz.
+    - Stage A stated value / 16 as fact. It is now recorded as open: scope the output on the bench.
+  - Every other resolvable table now cites its e2m record:
+    - 8D18-8D1A C_TPE_3D_* (the turbocharger speed estimate table);
+    - 13D6 Jcomm_Brake_Control_RPM_Axis;
+    - 140E / 1447 MT_* (the maximum torque map).
+  - The three maximum torque map caches now name their rows.
+  - safety_fuel_limit_* and the throttle addend resolve no record: the parameter ID table dump holds 1441 of 1886
+    records.
+- **Also checked:** the 20 tables at 0x40xxxx match ROM bytes at RAM - 0x39a3e6 (e.g. 0x40713a = ROM 0x6cd54), so
+  "ROM-copied" in stage A's message holds. No _cal array row remains outside the EEPROM mirror, and CM550 uses none
+  of the 35 old names.
+
+Proof:
+- prove_caches.py: 1965 of 1968 functions match.
+- statement_diff.py (the split rules, then the 18 renames, with whitespace before ';' normalized): 0 differing
+  statements in the other three (mpc555_handleCamSignalInterrupt, mpc555_resetEngineTimingAccumulators,
+  cm848_updateEngineSpeedFromCrankSignal).
+- (word *) casts 114 -> 113. No pieces of crank_out_of_phase_count.
+- audit_cal_suffixes.py: HARD 43 -> 42. lookup_tables.py: 920 typed, 0 sizing problems.
+- Headers regenerated (0 g++ errors), tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
