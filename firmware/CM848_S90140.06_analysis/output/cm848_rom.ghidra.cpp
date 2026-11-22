@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 02:24:35 MST 2026
+// Generated: Sun Nov 22 02:47:58 MST 2026
 
 
 //
@@ -66123,7 +66123,7 @@ void hpcr_initializeEngineProtection(void)
   fuel_temperature_engine_protection_state.maximum_threshold_pointer =
        &fuel_temperature_engine_protection_configuration.fueling_maximum_threshold;
   fuel_temperature_engine_protection_state.engine_speed_lower_limit_pointer =
-       (word *)&fuel_temperature_engine_protection_configuration.engine_speed_lower_limit_threshold;
+       &fuel_temperature_engine_protection_configuration.engine_speed_lower_limit_threshold;
   fuel_temperature_engine_protection_state.engine_speed_fault_log_pointer =
        fuel_temperature_engine_protection_fueling_fault_log_cal;
   fuel_temperature_engine_protection_state.fueling_fault_log_pointer =
@@ -66160,7 +66160,7 @@ sword cm848_isEngineProtectionInputPastThreshold
 {
   ushort uVar1;
   bool bVar2;
-  word wVar3;
+  short sVar3;
   int iVar4;
   ushort uVar5;
   
@@ -66194,38 +66194,38 @@ sword cm848_isEngineProtectionInputPastThreshold
   }
   if (is_engine_speed == 0) {
     if (threshold_select == 0) {
-      wVar3 = *state->minimum_threshold_pointer;
+      sVar3 = *state->minimum_threshold_pointer;
       goto LAB_00507ff8;
     }
     if (threshold_select == 1) {
-      wVar3 = *state->maximum_threshold_pointer;
+      sVar3 = *state->maximum_threshold_pointer;
       goto LAB_00507ff8;
     }
     if (threshold_select != 2) {
-      wVar3 = configuration->fueling_shutdown_severity_threshold;
+      sVar3 = configuration->fueling_shutdown_severity_threshold;
       goto LAB_00507ff8;
     }
     iVar4 = 0x10;
   }
   else {
     if ((threshold_select == 0) || (threshold_select == 1)) {
-      wVar3 = *state->engine_speed_lower_limit_pointer;
+      sVar3 = *state->engine_speed_lower_limit_pointer;
       goto LAB_00507ff8;
     }
     if (threshold_select == 2) {
-      wVar3 = configuration->engine_speed_shutdown_duration_threshold;
+      sVar3 = configuration->engine_speed_shutdown_duration_threshold;
       goto LAB_00507ff8;
     }
     iVar4 = 0x22;
   }
-  wVar3 = *(word *)((int)&configuration->configuration_flags + iVar4);
+  sVar3 = *(short *)((int)&configuration->configuration_flags + iVar4);
 LAB_00507ff8:
   if ((uVar1 & 4) == 0) {
-    if ((short)*state->input_pointer < (short)wVar3) {
+    if ((short)*state->input_pointer < sVar3) {
       return 1;
     }
   }
-  else if ((short)wVar3 <= (short)*state->input_pointer) {
+  else if (sVar3 <= (short)*state->input_pointer) {
     return 1;
   }
   return 0;
@@ -66411,9 +66411,8 @@ void cm848_updateEngineProtectionRestartSeverityIndexes
     }
     else if ((uVar1 & 0x40) == 0) {
       wVar3 = threshold_value_interpolate
-                        ((int)(short)*state->input_pointer,
-                         (int)(short)*state->minimum_threshold_pointer,
-                         (int)(short)*state->maximum_threshold_pointer);
+                        ((int)(short)*state->input_pointer,(int)*state->minimum_threshold_pointer,
+                         (int)*state->maximum_threshold_pointer);
     }
     else {
       wVar3 = 0x100;
@@ -66754,7 +66753,7 @@ LAB_00508a90:
           }
           else {
             if ((int)(uint)state->fueling_duration <=
-                (int)(short)configuration->fueling_shutdown_duration_threshold) goto LAB_00508a90;
+                (int)configuration->fueling_shutdown_duration_threshold) goto LAB_00508a90;
 LAB_00508a7c:
             cm848_countEngineProtectionShutdownTime(configuration,state,0);
           }
@@ -66786,8 +66785,7 @@ LAB_00508b8c:
         }
         else {
           if ((int)(uint)state->engine_speed_duration <=
-              (int)(short)configuration->engine_speed_shutdown_duration_threshold)
-          goto LAB_00508b8c;
+              (int)configuration->engine_speed_shutdown_duration_threshold) goto LAB_00508b8c;
 LAB_00508b78:
           cm848_countEngineProtectionShutdownTime(configuration,state,1);
         }
@@ -67300,8 +67298,8 @@ void cm848_calculateFaultDerateFuelLimit(void)
           if (configuration->fueling_derate_start_duration < state->fueling_duration) {
             uVar1 = threshold_value_interpolate
                               ((int)(short)*state->input_pointer,
-                               (int)(short)*state->minimum_threshold_pointer,
-                               (int)(short)*state->maximum_threshold_pointer);
+                               (int)*state->minimum_threshold_pointer,
+                               (int)*state->maximum_threshold_pointer);
           }
           else {
             uVar1 = 0;
