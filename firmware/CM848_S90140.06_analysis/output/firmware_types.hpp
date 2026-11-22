@@ -2940,15 +2940,36 @@ struct logical_output_request_bits_72_to_79_t {
 };
 
 struct switch_input_state_t {
-    uint8_t switches_0_to_7;  /* Switches 0-7 (e2m 1612 +0); a byte because setters update its bits with | / &: 0x01 switch 0 Keyswitch / 0x02 switch 1 Lift_Pump_Driver_Feedback / 0x04 switch 2 Not_Brake_Switch (the second brake contact; cm848_deriveSecondBrakeSwitchSignal writes it) / 0x08 switch 3 PTO_On_Switch / 0x10 switch 4 Wait_To_Start_Lamp_Feedback / 0x20 switch 5 Engine_Brake_Driver_1_Feedback / 0x40 switch 6 AC_Discrete_Output_Feedback / 0x80 switch 7 Idle_Switch */
-    uint8_t switches_8_to_15;  /* Switches 8-15 (e2m 1612 +1); a byte because setters update its bits with | / &: 0x01 switch 8 Not_Idle_Switch / 0x02 switch 9 Cold_Start_Aid_1_Driver_Feedback / 0x04 switch 10 Cold_Start_Aid_2_Driver_Feedback / 0x08 switch 11 Brake_Switch / 0x10 switch 12 Engine_Brake_Select_1 (the exhaust brake switch on this truck (round 8)) / 0x20 switch 13 AC_On_Off_Switch (cm848_updateAirConditioningSwitchFromPci writes it from the PCI bus) / 0x40 switch 14 Low_Oil_Switch / 0x80 switch 15 Clutch_Switch */
+    uint8_t key_switch : 1;  /* bit 0: switch 0 (byte 0 mask 0x01): e2m 1612 Keyswitch; the ignition key switch (line 128 = the MDA30 pin; 1 = key on) */
+    uint8_t lift_pump_feedback : 1;  /* bit 1: switch 1 (byte 0 mask 0x02): e2m 1612 Lift_Pump_Driver_Feedback */
+    uint8_t not_brake_switch : 1;  /* bit 2: switch 2 (byte 0 mask 0x04): e2m 1612 Not_Brake_Switch; the second brake contact; cm848_deriveSecondBrakeSwitchSignal writes it */
+    uint8_t power_take_off_on_switch : 1;  /* bit 3: switch 3 (byte 0 mask 0x08): e2m 1612 PTO_On_Switch */
+    uint8_t wait_to_start_lamp_feedback : 1;  /* bit 4: switch 4 (byte 0 mask 0x10): e2m 1612 Wait_To_Start_Lamp_Feedback */
+    uint8_t engine_brake_driver_1_feedback : 1;  /* bit 5: switch 5 (byte 0 mask 0x20): e2m 1612 Engine_Brake_Driver_1_Feedback */
+    uint8_t air_conditioning_clutch_feedback : 1;  /* bit 6: switch 6 (byte 0 mask 0x40): e2m 1612 AC_Discrete_Output_Feedback */
+    uint8_t idle_switch : 1;  /* bit 7: switch 7 (byte 0 mask 0x80): e2m 1612 Idle_Switch; the accelerator at idle (the idle validation pair with switch 8) */
+    uint8_t not_idle_switch : 1;  /* bit 0: switch 8 (byte 1 mask 0x01): e2m 1612 Not_Idle_Switch; the accelerator off idle */
+    uint8_t intake_air_heater_1_feedback : 1;  /* bit 1: switch 9 (byte 1 mask 0x02): e2m 1612 Cold_Start_Aid_1_Driver_Feedback */
+    uint8_t intake_air_heater_2_feedback : 1;  /* bit 2: switch 10 (byte 1 mask 0x04): e2m 1612 Cold_Start_Aid_2_Driver_Feedback */
+    uint8_t brake_switch : 1;  /* bit 3: switch 11 (byte 1 mask 0x08): e2m 1612 Brake_Switch; the brake switch the CCVS1 broadcast reports */
+    uint8_t exhaust_brake_switch : 1;  /* bit 4: switch 12 (byte 1 mask 0x10): e2m 1612 Engine_Brake_Select_1; Engine_Brake_Select_1: the exhaust brake switch on this truck (round 8) */
+    uint8_t air_conditioning_switch : 1;  /* bit 5: switch 13 (byte 1 mask 0x20): e2m 1612 AC_On_Off_Switch; cm848_updateAirConditioningSwitchFromPci writes it from the PCI bus */
+    uint8_t low_oil_pressure_switch : 1;  /* bit 6: switch 14 (byte 1 mask 0x40): e2m 1612 Low_Oil_Switch */
+    uint8_t clutch_switch : 1;  /* bit 7: switch 15 (byte 1 mask 0x80): e2m 1612 Clutch_Switch; the clutch switch the CCVS1 broadcast reports */
     uint8_t egr_valve_driver_feedback : 1;  /* bit 0: switch 16 (byte 2 mask 0x01): e2m 1612 EGR_ASIC_Feedback */
     uint8_t variable_geometry_turbocharger_driver_feedback : 1;  /* bit 1: switch 17 (byte 2 mask 0x02): e2m 1612 VGT_ASIC_Feedback */
-    uint8_t reserved_bit_2 : 1;  /* bit 2: switch 18 (byte 2 mask 0x04): no e2m 1612 record; no named use */
+    uint8_t reserved_bit_18 : 1;  /* bit 2: switch 18 (byte 2 mask 0x04): no e2m 1612 record; no named use */
     uint8_t remote_power_take_off_switch : 1;  /* bit 3: switch 19 (byte 2 mask 0x08): e2m 1612 Remote_PTO_Switch */
     uint8_t park_neutral_switch : 1;  /* bit 4: switch 20 (byte 2 mask 0x10): e2m 1612 Transmission_Park_Neutral_Switch; the transmission park / neutral switch (line 13) */
     uint8_t overdrive_off_switch : 1;  /* bit 5: switch 21 (byte 2 mask 0x20): e2m 1612 Transmission_Overdrive_Switch; the O/D OFF button (it toggles overdrive_off_flag) */
     uint8_t transmission_relay_feedback : 1;  /* bit 6: switch 22 (byte 2 mask 0x40): e2m 1612 Transmission_VFS_Battery_Feedback; the transmission relay output (logical output 16) */
     uint8_t overdrive_solenoid_feedback : 1;  /* bit 7: switch 23 (byte 2 mask 0x80): e2m 1612 Transmission_Overdrive_Feedback */
-    uint8_t switches_24_to_31;  /* Switches 24-31 (e2m 1612 +3); a byte because setters update its bits with | / &: 0x01 switch 24 Transmission_TCC_Feedback / 0x02 switch 25 Cruise_Vent_Feedback / 0x04 switch 26 Throttle_Interlock_Switch / 0x08 switch 27 Cruise_Vacuum_Feedback / 0x10 switch 28 Cruise_SC_Source_Feedback / 0x20 switch 29 no record / 0x40 switch 30 TVA_ASIC_Feedback / 0x80 switch 31 no record (no 11.45 record and no line: every unwired switch function compiles to it; cm848_detectThreeAcceleratorPedalPresses / cm848_updateSwitch31FromAcceleratorPedal / cm848_checkSwitch31OnTimeFault set and clear it from the accelerator pedal) */
+    uint8_t converter_clutch_solenoid_feedback : 1;  /* bit 0: switch 24 (byte 3 mask 0x01): e2m 1612 Transmission_TCC_Feedback */
+    uint8_t cruise_vent_solenoid_feedback : 1;  /* bit 1: switch 25 (byte 3 mask 0x02): e2m 1612 Cruise_Vent_Feedback */
+    uint8_t throttle_interlock_switch : 1;  /* bit 2: switch 26 (byte 3 mask 0x04): e2m 1612 Throttle_Interlock_Switch */
+    uint8_t cruise_vacuum_solenoid_feedback : 1;  /* bit 3: switch 27 (byte 3 mask 0x08): e2m 1612 Cruise_Vacuum_Feedback */
+    uint8_t cruise_servo_supply_feedback : 1;  /* bit 4: switch 28 (byte 3 mask 0x10): e2m 1612 Cruise_SC_Source_Feedback */
+    uint8_t reserved_bit_29 : 1;  /* bit 5: switch 29 (byte 3 mask 0x20): no e2m 1612 record; no named use */
+    uint8_t reserved_bit_30 : 1;  /* bit 6: switch 30 (byte 3 mask 0x40): e2m 1612 TVA_ASIC_Feedback; no named use */
+    uint8_t unwired_switch : 1;  /* bit 7: switch 31 (byte 3 mask 0x80): no e2m 1612 record; no 11.45 record and no line: every unwired switch function compiles to it (the two-speed axle switch of cm848_updateCruiseAndRoadSpeedGovernorDroops among them), and cm848_updateSwitch31FromAcceleratorPedal / cm848_checkSwitch31OnTimeFault pulse or hold it from the accelerator pedal */
 };
