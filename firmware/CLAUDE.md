@@ -206,7 +206,7 @@ The ECM speaks J1939/CAN **plus CCD (C1 pins 4/5), SCI (C2 pins 16/19 → PCM + 
 - `cm848_onPciControllerReceiveWord` (0x39f54, receive-job callback) splits the word: top 3 bits `0x20/0x40/0x80` = data byte → `cm848_matchPciReceiveHeader` (0x38cf0, per-byte header match vs both tables); `0xa0/0xc0/0xe0` = end of frame → `cm848_completePciFrame` (0x39004).
 - `cm848_schedulePciTransmit` (0x3adcc) builds the first overdue TX entry into `pci_transmit_frame_buffer`; `cm848_servicePciTransmit` (0x39e30, command-job callback) feeds the controller (frame bytes / in-frame response bytes via `cm848_sendPciInFrameResponseByte` / `0xaf8` after a link event).
 - J1850 **in-frame response (IFR)** is supported per message (`in_frame_response_enabled` / `in_frame_response_bytes`); only TX 0xB0 uses it in this calibration.
-- `link_event_code` setters: 1 = controller word bit 0x800, 2 = own echo differs from what was sent, 3 = non-data status mid-frame, 4 = TX-echo frame completed with error, 5 = RX in-frame response error, 6 = RX frame completed with error, 7 = every scheduled TX overdue. `cm848_handlePciLinkEvent` (0x3a290) applies `pci_link_event_action_mask_cal`; 255 counted errors latch `fault_detected_cal.faults_368_to_383` 0x8000 (fault bit 383) + `mpc555_driveOutputLineLow(124)` (output line 124 — likely the controller's reset line; the old names `updateEngineSyncStatus` / `clearModuleSyncFlag` were the generic output-line drivers).
+- `link_event_code` setters: 1 = controller word bit 0x800, 2 = own echo differs from what was sent, 3 = non-data status mid-frame, 4 = TX-echo frame completed with error, 5 = RX in-frame response error, 6 = RX frame completed with error, 7 = every scheduled TX overdue. `cm848_handlePciLinkEvent` (0x3a290) applies `pci_link_event_action_mask_cal`; 255 counted errors latch `fault_detected_cal.j1850_system_bus_fault` (fault 383, word `faults_368_to_383` 0x8000) + `mpc555_driveOutputLineLow(124)` (output line 124 — likely the controller's reset line; the old names `updateEngineSyncStatus` / `clearModuleSyncFlag` were the generic output-line drivers).
 - **QSPI job driver (PR #45):** `cm848_registerQspiDeviceSlot` (0x3d68c, up to 4 device slots: SPI mode / kHz / delays), `cm848_queueQspiJob` (0x3da60, two 16-deep `qspi_job_queues`; queue 0 serviced first — PCI in-frame response bytes use it), `mpc555_qspiStartJob` (0x3d904), `cm848_completeQspiJob` (0x3dbc0, run by `cm848_onQspiFinished` on SPIF). Every `qspi_job_t` caller is a QSPI device driver — the `cm848_j1939Queue*` family @ 0x367xx and the `cm848_protection*` callers @ 0x4bxxx are NOT J1939/protection code and need their own review.
 - **QSMCM register map corrected:** 0x305015 = PORTQS low byte, 0x305016 = PQSPAR, 0x305017 = DDRQS, 0x305018-0x30501f = SPCR0 / SPCR1 (SPE) / SPCR2 / SPCR3 / SPSR (`qsmcm_qspi`). 0x305010-0x305013 are unused.
 
@@ -707,6 +707,18 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
         bitfields.** Its 180 named bit accesses outweigh the 10 pieces in three single-bit setters
         (`cm848_checkSwitch31OnTimeFault`, `cm848_updateAirConditioningSwitchFromPci`,
         `cm848_deriveSecondBrakeSwitchSignal`). Its indexed loops print `(&switch_input_state_bits.field_0x0)[i]`.
+      - **A second exception, by the user's decision (2026-11-22, PR #53 round 27): the fault words.**
+        Words 1-49 of `fault_bit_words_t` hold one bitfield per fault (fault n = bit n % 16 of word n / 16). Bits
+        are named from e2m 1036 where the code resolves the abbreviation; the others are `fault_<n>`.
+        - **What it gained:** 674 tests and 109 writes now name their fault (`fault_detected_cal.coolant_temperature_high_error == 0`).
+        - **What it cost:** 943 piece tokens. 856 of them are the set / clear writes that Ghidra 12.1 does not fold
+          (`fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20`); the other 87 are tests and whole-word uses.
+        - **Word 0 stays the plain word `faults_0_to_15`.** It is the base of the 200 indexed accesses, which print
+          `*(undefined2 *)(&fault_detected_cal.field_0x0 + i)` once word 0 holds bitfields.
+        - **One type per word does not work:** a nested `fault_bits_A_to_B_t` field prints
+          `ZPULL(fault_detected_cal.faults_16_to_31,3,1)` and struct casts.
+        - The mask-exact proof (`prove_fault_bitfields.py` in the session folder) rewrites each bit name back to its
+          own word and mask and compares every function.
         The rule still holds for every other struct.
     - Check a shape change with `piece_census.py` (in the session folder), which lists each symbol whose piece count
       went up.

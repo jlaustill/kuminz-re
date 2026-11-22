@@ -1543,55 +1543,790 @@ struct boot_sci_session_state_t {
 
 struct fault_bit_words_t {
     uint16_t faults_0_to_15;  /* Faults 0-15: e2m 1036 +00 System_Error_Status_00; b0 RAM_Image_Word_Error P0606; b1 FSO_Command_High_Control_Error; b2 FSO_Command_Low_Control_Error; b3 TU_WG_Driver1_High_Control_Error; b4 TU_WG_Driver1_Low_Control_Error; b5 P0341; b6 AFC_Low_Boost_Error; b7 FP_Idle_Error P0191; b8 Boost_Pressure_High_Error P0238; b9 Boost_Pressure_Low_Error P0237; b10 Sampled_Throttle_High_Error P2123; b11 Sampled_Throttle_Low_Error P2122; b12 Oil_Pressure_High_Error; b13 Oil_Pressure_Low_Error; b14 HPCR_OBD_Neg_Dev_Error; b15 HPCR_OBD_Pos_Dev_Error | earlier note: Word 0 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0606 b5 P0341 b7 P0191 b8 P0238 boost-high b9 P0237 boost-low b10 P2123 b11 P2122 (was enable_state) */
-    uint16_t faults_16_to_31;  /* Faults 16-31: e2m 1036 +02 System_Error_Status_01; b0 Coolant_Temperature_High_Error P0118; b1 Coolant_Temperature_Low_Error P0117; b3 Intake_Manifold_Temperature_High_Error P0113; b4 Intake_Manifold_Temperature_Low_Error P0112; b9 Ambient_Air_Pressure_High_Error P0108; b10 Ambient_Air_Pressure_Low_Error P0107; b11 Overspeed_Injector_Shutoff_Error P0219; b13 VSS_Signal_Lost_Error P0500; b14 VSS_Tampering_Error | earlier note: Word 1 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0118 b1 P0117 coolant b3 P0113 b4 P0112 intake-temp b9 P0108 b10 P0107 baro b11 P0219 overspeed b13 P0500 VSS (was condition_monitor) */
-    uint16_t faults_32_to_47;  /* Faults 32-47: e2m 1036 +04 System_Error_Status_02; b1 FSO_Control_Error; b3 TU_WG_Driver2_High_Control_Error; b4 TU_WG_Driver2_Low_Control_Error; b5 CORS_Makeup_Valve_Driver_High_Control_Error; b6 CORS_Makeup_Valve_Driver_Low_Control_Error; b9 Engine_Brake_Driver_1_High_Control_Error P0478; b10 Engine_Brake_Driver_1_Low_Control_Error P0477; b11 Engine_Brake_Driver_2_High_Control_Error; b12 Engine_Brake_Driver_2_Low_Control_Error; b13 Engine_Brake_Driver_3_High_Control_Error; b14 Engine_Brake_Driver_3_Low_Control_Error; b15 Fuel_Temperature_High_Error | earlier note: Word 2 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b9 P0478 b10 P0477 - not a gap (was reserved_04) (Medium confidence) */
-    uint16_t faults_48_to_63;  /* Faults 48-63: e2m 1036 +06 System_Error_Status_03; b0 Fuel_Temperature_Low_Error; b4 Frequency_Throttle_Low_Error; b5 Frequency_Throttle_High_Error; b6 Water_In_Fuel_High_Error P2267; b7 Water_In_Fuel_Low_Error P2266; b8 Water_In_Fuel_Error P2269; b9 P1221; b10 P1222; b12 P1223; b14 Throttle_Validation_Switch_Low_Error P2127; b15 Throttle_Validation_Process_Error P2121 | earlier note: Word 3 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b6 P2267 b7 P2266 b8 P2269 water-in-fuel b9 P1221 b10 P1222 b12 P1223 b14 P2127 b15 P2121 pedal - b4/b5 (0x10/0x20) no code (was safety_bits_1) */
-    uint16_t faults_64_to_79;  /* Faults 64-79: e2m 1036 +08 System_Error_Status_04; b0 Boost_In_Range_High_Error P0236; b2 Battery_Voltage_Low_Error P0562; b3 Battery_Voltage_High_Error P0563; b4 Throttle_Validation_Switch_High_Error P2128; b5 P1221; b6 P1222; b7 P1223; b9 Increment_Decrement_Switch_Error; b10 Ram_Overrun_Error; b13 Remote_Throttle_High_Error; b14 Remote_Throttle_Low_Error | earlier note: Word 4 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0236 b2 P0562 b3 P0563 system-voltage b4 P2128 b5 P1221 b6 P1222 b7 P1223 (was safety_bits_2) */
-    uint16_t faults_80_to_95;  /* Faults 80-95: e2m 1036 +0A System_Error_Status_05; b0 QSPI_Command_Error; b1 QSPI_Initialization_Error; b2 Power_Off_Without_Ignition_Off_Error P2509; b4 Flash_Failure_Error; b9 Powerdown_Data_Lost_Error P2509; b10 All_Powerdown_Data_Lost_Error P2509; b11 Poweroff_Command_Ignored_Error P0606; b12 EPS_Main_Channel_Lost_Error P0335; b13 EPS_Backup_Channel_Lost_Error P0340 | earlier note: Word 5 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b2/b9/b10 P2509 (b2 = the previous run's power-down did not complete / b9 = more than consecutive_incomplete_power_down_limit of those in a row) b4 no DTC (0x3fdc8e non-zero at start) b11 P0606 (power_down_left_ecm_powered_flag_cal set) b12 P0335 crank b13 P0340 cam (was sensor_diag) */
-    uint16_t faults_96_to_111;  /* Faults 96-111: e2m 1036 +0C System_Error_Status_06; b15 J1939_Link_Cannot_Transmit_Error | earlier note: Word 6 of fault-detected array 0x3fe974 - no OBD DTC slots (all map to 170) - internal fault bits eg b14 (0x4000) set on ETC1/cold-start timeout and cleared with its registered sibling 0x3fe9e4 - confirm b5 (0x20) role (was lamp_status) (Medium confidence) */
-    uint16_t faults_112_to_127;  /* Faults 112-127: e2m 1036 +0E System_Error_Status_07; b0 J1939_Link_Not_Fast_Enough_Error; b5 Cam_Crank_Sync_Mismatch_Error P0016; b9 Fan_Clutch_1_PWM_Control_Error P0480; b12 Crank_Sync_Error P0336; b15 J1939_Mux_APS_System_Error | earlier note: Word 7 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b5 P0016 crank-cam b9 P0480 fan b12 P0336 crank (was emission_faults) */
-    uint16_t faults_128_to_143;  /* Faults 128-143: e2m 1036 +10 System_Error_Status_08; b0 J1939_Mux_PGN_Timeout_Error; b1 J1939_Mux_Remote_Throttle_Data_Error; b2 J1939_Mux_Configuration_Error; b4 Engine_Brake_Driver_4_High_Control_Error; b5 Engine_Brake_Driver_4_Low_Control_Error; b6 Engine_Brake_Driver_5_High_Control_Error; b7 Engine_Brake_Driver_5_Low_Control_Error; b8 Transmission_VFS_Battery_Driver_High_Control_Error P0883; b9 Transmission_VFS_Battery_Driver_Low_Control_Error P0882; b10 Engine_Alarm_Driver_High_Control_Error/Transmission_Overdrive_Driver_High_Control_Error P0974; b11 Engine_Alarm_Driver_Low_Control_Error/Transmission_Overdrive_Driver_Low_Control_Error P0973; b12 Fan_Clutch_Control_Driver1_High_Control_Error/Transmission_TCC_Driver_High_Control_Error P2770; b13 Fan_Clutch_Control_Driver1_Low_Control_Error/Transmission_TCC_Driver_Low_Control_Error P2769; b14 Cruise_Vent_Driver_High_Control_Error/Fan_Clutch_Control_Driver2_High_Control_Error P0588; b15 Cruise_Vent_Driver_Low_Control_Error/Fan_Clutch_Control_Driver2_Low_Control_Error P0587 | earlier note: Word 8 of the fault-present bit array at 0x3fe974 (fault bit = word x 16 + bit): bit 0 any J1939 input timeout / bit 1 read by the J1939 pedal rate-limit check / bit 2 any J1939 input data error / bits 8-15 DTC slots 128-135 = P0883 P0882 P0974 P0973 P2770 P2769 P0588 P0587 (was reserved_10) */
-    uint16_t faults_144_to_159;  /* Faults 144-159: e2m 1036 +12 System_Error_Status_09; b0 Cruise_Vacuum_Driver_High_Control_Error/Maintenance_Lamp_Driver_High_Control_Error P0584; b1 Cruise_Vacuum_Driver_Low_Control_Error/Maintenance_Lamp_Driver_Low_Control_Error P0583; b2 Cruise_SC_Source_Driver_High_Control_Error P0596; b3 Cruise_SC_Source_Driver_Low_Control_Error P0595; b4 Transmission_Park_Neutral_Switch_Error P0850; b5 RE_Governor_Pressure_Rationality_Error P1762; b6 Ambient_Air_Temperature_High_Error P0073; b7 Ambient_Air_Temperature_Low_Error P0072; b8 Transmission_Overdrive_Driver_2_High_Control_Error; b9 Transmission_Overdrive_Driver_2_Low_Control_Error; b10 Transmission_TCC_Driver_2_High_Control_Error; b11 Transmission_TCC_Driver_2_Low_Control_Error | earlier note: Word 9 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0584 b1 P0583 vacuum b2 P0596 b3 P0595 servo-supply b4 P0850 park-neutral b5 P1762 governor b6 P0073 b7 P0072 ambient - not a gap (was reserved_12) */
-    uint16_t faults_160_to_175;  /* Faults 160-175: e2m 1036 +14 System_Error_Status_10; b5 EEPROM_Write_Error; b6 Powerdown_EEPROM_Checksum_Error; b11 RT_Low_Error; b12 RT_High_Error | earlier note: Word 10 of fault-detected array 0x3fe974 - no OBD DTC slots (all map to 170) - internal fault bits eg b5 (0x20) set on EEPROM status-poll failure - registered sibling 0x3fe9ec (was system_faults) (Medium confidence) */
-    uint16_t faults_176_to_191;  /* Faults 176-191: e2m 1036 +16 System_Error_Status_11; no named bit, no DTC slot | earlier note: Gap (0x3fe98a-0x3fe98f) */
-    uint16_t faults_192_to_207;  /* Faults 192-207: e2m 1036 +18 System_Error_Status_12; b4 Throttle_Sensor_Supply_Voltage_High_Error P0699; b5 Throttle_Sensor_Supply_Voltage_Low_Error P0698; b12 Stop_Lamp_Driver_High_Control_Error; b13 Stop_Lamp_Driver_Low_Control_Error; b14 T2_High_Gear_Driver_High_Control_Error/T2_Shift_Driver_High_Control_Error; b15 T2_High_Gear_Driver_Low_Control_Error/T2_Shift_Driver_Low_Control_Error | earlier note: Word 12 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b4 P0699 b5 P0698 sensor-reference - not a gap (was reserved_18) (Medium confidence) */
-    uint16_t faults_208_to_223;  /* Faults 208-223: e2m 1036 +1A System_Error_Status_13; b0 T2_Lamp_Driver_High_Control_Error; b1 T2_Lamp_Driver_Low_Control_Error; b2 T2_Lockout_Driver_High_Control_Error; b3 T2_Lockout_Driver_Low_Control_Error; b4 T2_Low_Gear_Driver_High_Control_Error; b5 T2_Low_Gear_Driver_Low_Control_Error; b6 T2_Neutral_Driver_High_Control_Error; b7 T2_Neutral_Driver_Low_Control_Error; b8 TAS_Lamp_Driver_High_Control_Error; b9 TAS_Lamp_Driver_Low_Control_Error; b10 Wait_To_Start_Lamp_Driver_High_Control_Error/Wait_To_Start_Lamp_High_Control_Error P0381; b11 Wait_To_Start_Lamp_Driver_Low_Control_Error/Wait_To_Start_Lamp_Low_Control_Error P0381; b12 Warning_Lamp_Driver_High_Control_Error; b13 Warning_Lamp_Driver_Low_Control_Error; b14 Water_In_Fuel_Lamp_Driver_High_Control_Error; b15 Water_In_Fuel_Lamp_Driver_Low_Control_Error | earlier note: Word 13 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b10/b11 P0381 wait-to-start lamp - not a gap (was reserved_1a) (Medium confidence) */
-    uint16_t faults_224_to_239;  /* Faults 224-239: e2m 1036 +1C System_Error_Status_14; b4 Overspeed_Pump_Shutoff_Error; b5 Warning_Lamp_Driver_Open_Control_Error; b6 Stop_Lamp_Driver_Open_Control_Error; b8 Maintenance_Lamp_Driver_Open_Control_Error | earlier note: Gap */
-    uint16_t faults_240_to_255;  /* Faults 240-255: e2m 1036 +1E System_Error_Status_15; no named bit, no DTC slot | earlier note: Fault severity flags */
-    uint16_t faults_256_to_271;  /* Faults 256-271: e2m 1036 +20 System_Error_Status_16; b6 Fuel_Temperature_RPM_Error_Active; b7 Fuel_Temperature_Fueling_Error_Active; b8 HPCR_CP3_Low_Current_Error; b9 HPCR_CP3_High_Current_Error; b12 Injector_1_Short_to_Vbatt_Error P2146; b13 Injector_1_Short_to_Ground_Error P2146; b14 Injector_1_Fast_Decay_Error; b15 Injector_5_Short_to_Vbatt_Error P2146 | earlier note: Word 16 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b12/b13/b15 P2146 injector supply voltage - not comm (was comm_faults) (Medium confidence) */
-    uint16_t faults_272_to_287;  /* Faults 272-287: e2m 1036 +22 System_Error_Status_17; b0 Injector_5_Short_to_Ground_Error P2146; b1 Injector_5_Fast_Decay_Error; b2 Injector_3_Short_to_Vbatt_Error P2146; b3 Injector_3_Short_to_Ground_Error P2146; b4 Injector_3_Fast_Decay_Error; b5 Injector_6_Short_to_Vbatt_Error P2149; b6 Injector_6_Short_to_Ground_Error P2149; b7 Injector_6_Fast_Decay_Error; b8 Injector_2_Short_to_Vbatt_Error P2149; b9 Injector_2_Short_to_Ground_Error P2149; b10 Injector_2_Fast_Decay_Error; b11 Injector_4_Short_to_Vbatt_Error P2149; b12 Injector_4_Short_to_Ground_Error P2149; b13 Injector_4_Fast_Decay_Error; b14 Injector_1_Open_Circuit_Error P0201; b15 Injector_5_Open_Circuit_Error P0202 | earlier note: Word 17 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0/b2/b3 P2146 b5/b6/b8/b9/b11/b12 P2149 injector supply b14 P0201 b15 P0202 injector 1/2 (was engine_status) */
-    uint16_t faults_288_to_303;  /* Faults 288-303: e2m 1036 +24 System_Error_Status_18; b0 Injector_3_Open_Circuit_Error P0203; b1 Injector_6_Open_Circuit_Error P0204; b3 Injector_2_Open_Circuit_Error P0205; b4 Injector_4_Open_Circuit_Error P0206; b6 Cold_Start_Aid_1_Low_Control_Error P0541; b7 Cold_Start_Aid_1_High_Control_Error P0542; b8 Cold_Start_Aid_2_Low_Control_Error P2607; b9 Cold_Start_Aid_2_High_Control_Error P2608; b10 Transmission_Oil_Temperature_Rationality_Error P0711; b11 Transmission_Governor_Pressure_High_Error P0868; b12 Transmission_Governor_Pressure_Low_Error P0869; b13 Transmission_Oil_Temperature_High_Error P0713; b14 Transmission_Oil_Temperature_Low_Error P0712; b15 HPCR_Pressure_Too_High_Error P0088 | earlier note: Word 18 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0203 b1 P0204 b3 P0205 b4 P0206 injectors b6 P0541 b7 P0542 grid-heater b8 P2607 b9 P2608 b10 P0711 b11 P0868 b12 P0869 b13 P0713 b14 P0712 b15 P0088 (was pending_faults) */
-    uint16_t faults_304_to_319;  /* Faults 304-319: e2m 1036 +26 System_Error_Status_19; b0 Fuel_Rail_Pressure_High_Error P0193; b1 Fuel_Rail_Pressure_Low_Error P0192; b2 ECM_Internal_Temperature_Low_Error; b3 ECM_Internal_Temperature_High_Error; b4 Chry_Dat42_Stuck_Error; b14 P0604; b15 TCC_Rationality_Error P1740 | earlier note: Word 19 of fault-detected array 0x3fe974 at offset 0x26 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0193 b1 P0192 rail pressure b14 P0604 b15 P1740 - not a gap and not offset 0x28 (was reserved_28) */
-    uint16_t faults_320_to_335;  /* Faults 320-335: e2m 1036 +28 System_Error_Status_20; b0 OSS_Rationality_Error P0720; b8 Booster_Cap_1_Voltage_High_Error P0606; b9 Booster_Cap_1_Voltage_Low_Error P2146; b10 Booster_Cap_2_Voltage_High_Error P0606; b11 Booster_Cap_2_Voltage_Low_Error P2149; b12 CWG_High_Boost_Error P0234; b13 CP3_Pump_Regulator_Control_Error P0251; b14 PPS_Conformance_Error P2121; b15 Speed_Limp_Home_Error P0336 | earlier note: Word 20 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0720 output speed b8/b10 P0606 b9 P2146 b11 P2149 b12 P0234 overboost b13 P0251 b14 P2121 b15 P0336 (was protection_active) */
-    uint16_t faults_336_to_351;  /* Faults 336-351: e2m 1036 +2A System_Error_Status_21; b0 WIF_Too_Long_Error P0169; b1 Sensor_Supply_1_Voltage_Low_Error P0642; b2 Sensor_Supply_1_Voltage_High_Error P0643; b3 Ambient_Air_Temperature_Rationality_Error P0071; b4 Ambient_Air_Pressure_In_Range_Error P0106; b5 Low_Oil_Switch_Error P0521; b8 VIN_E2_Not_Entered_Error P0630; b9 Odometer_E2_Not_Entered_Error; b10 VTA_Secret_Key_E2_Not_Entered_Error P0633; b11 Pedal_Position_Sensor_1_Low_Error P2122; b12 Pedal_Position_Sensor_1_High_Error P2123; b13 Pedal_Position_Sensor_2_Low_Error P2127; b14 Pedal_Position_Sensor_2_High_Error P2128; b15 Transmission_VFS_PWM_Driver_Error P0748 | earlier note: Word 21 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0169 water-in-fuel b1 P0642 b2 P0643 b3 P0071 b4 P0106 b5 P0521 b8 P0630 b10 P0633 immobilizer b11 P2122 b12 P2123 b13 P2127 b14 P2128 b15 P0748 (was j1939_receive_status_flags) | e2m: e2m 1036 +2A System_Error_Status_21 '[SSERSS21] 32 word bit mapped system error status - word 21' */
-    uint16_t faults_352_to_367;  /* Faults 352-367: e2m 1036 +2C System_Error_Status_22; b0 HPCR_Cusum_Leak_Error; b1 Battery_Temperature_Rationality_Error P0514; b2 Intake_Manifold_Temperature_Rationality_Error P0111; b3 J1850_Open_Ckt_No_Message_Error P1652; b4 Jcomm_TSC_Lost_Fault; b5 Checksum_Error P0602; b6 Intake_Manifold_Temperature_Keyon_Ration_Error P0111; b7 Battery_Temperature_Keyon_Rationality_Error P0514; b8 Ambient_Air_Temperature_Keyon_Rationality_Error P0071; b9 Cylinder_1_Misfire_Error P0301; b10 Cylinder_2_Misfire_Error P0302; b11 Cylinder_3_Misfire_Error P0303; b12 Cylinder_4_Misfire_Error P0304; b13 Cylinder_5_Misfire_Error P0305; b14 Cylinder_6_Misfire_Error P0306; b15 Multiple_Cylinders_Misfire_Error P0300 | earlier note: Word 22 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b1/b7 P0514 battery-temp b2/b6 P0111 b3 P1652 b5 P0602 b8 P0071 b9-b14 P0301-P0306 cyl 1-6 misfire b15 P0300 (was injection_fault_shadow_flags) | e2m: e2m 1036 +2C System_Error_Status_22 '[SSERSS22] 32 word bit mapped system error status - word 22' */
-    uint16_t faults_368_to_383;  /* Faults 368-383: e2m 1036 +2E System_Error_Status_23; b0 Alternator_Error P2502; b1 Charging_System_High_Error P2504; b2 Charging_System_Low_Error P2503; b3 AC_Discrete_Output_High_Control_Error P0647; b4 AC_Discrete_Output_Low_Control_Error P0646; b5 Cruise_Control_Switch_Mux_High_Error P0581; b6 Cruise_Control_Switch_Mux_Low_Error P0580; b7 Engine_Speed_Sensor_SV_High_Error P0338; b8 Engine_Speed_Sensor_SV_Low_Error P0337; b9 Engine_Conn_Sensors_SV_High_Error P0653; b10 Engine_Conn_Sensors_SV_Low_Error P0652; b11 Battery_Temperature_High_Error P0517; b12 Battery_Temperature_Low_Error P0516; b13 Fuel_Level_High_Error P0463; b14 Fuel_Level_Low_Error P0462; b15 J1850_System_Bus_Fault P1652 | earlier note: Word 23 of the fault-detected bit array at 0x3fe974 (fault n = word n/16 bit n%16 - slot table 0x5985a then obd_dtc_code_table): bits 0-15 = P2502 P2504 P2503 P0647 P0646 P0581 P0580 P0338 P0337 P0653 P0652 P0517 P0516 P0463 P0462 P1652 (was power_state_status_flags) | e2m: e2m 1036 +2E System_Error_Status_23 '[SSERSS23] 32 word bit mapped system error status - word 23' */
-    uint16_t faults_384_to_399;  /* Faults 384-399: e2m 1036 +30 System_Error_Status_24; b0 AC_Pressure_High_Error P0533; b1 AC_Pressure_Low_Error P0532; b2 Lift_Pump_Driver_High_Control_Error P0629; b3 Lift_Pump_Driver_Low_Control_Error P0628; b4 Watchdog_Fueling_Error P0606; b5 CT_Derate_Agg_Derate_Error P0217; b6 CT_Derate_Min_Derate_Error P0217; b7 RE_Governor_Pr_Zero_Rationality_Error P1757; b8 RE_Governor_Pr_Mid_Rationality_Error P1756; b9 Low_Oil_Pressure_Error P0524; b10 Brake_Switch_High_Error P0573; b11 Brake_Switch_Low_Error P0572; b12 EVR_Driver_Control_Error P0622; b13 OBD_Fuel_Level_Low_Error; b14 Fuel_Level_Rationality_Error P0461; b15 FS_Shutdown_HW_Error P0607 | earlier note: Word 24 of the fault-detected bit array at 0x3fe974: bits 0-15 = P0533 P0532 P0629 P0628 P0606 P0217 P0217 P1757 P1756 P0524 P0573 P0572 P0622 (bit 13 = fuel level no-change pending - no DTC) P0461 P0607 (was engine_diag_shadow_flags) | e2m: e2m 1036 +30 System_Error_Status_24 '[SSERSS24] 32 word bit mapped system error status - word 24' */
-    uint16_t faults_400_to_415;  /* Faults 400-415: e2m 1036 +32 System_Error_Status_25; b0 Tstat_System_Error P0128; b1 Coolant_Temperature_In_Range_Error P0116; b2 Fuel_Temperature_In_Range_Error; b3 Wastegate_Pressure_Control_Driver_Error P0243; b4 Transmission_Rx_Emissions_Fault; b5 Transmission_Rx_Message_Fault; b6 Tcase_Switch_Mux_OOR_Error P0837; b7 Fan_Speed_Error P0483; b8 HPCR_Cusum_Pos_Error P0148; b9 HPCR_Cusum_Neg_Error P0148; b11 Intake_Air_Heater_System_Error P2609; b12 Tcase_Switch_Mux_High_Error P0839; b13 Tcase_Switch_Mux_Low_Error P0838; b14 Fuel_Pressure_Keyon_Rationality_Error P0191; b15 Turbo_High_Boost_Error P0234 | earlier note: Word 25 of fault-detected array 0x3fe974 (fault bit = word*16 + bit via ROM 0x5985a -> obd_dtc_code_table): b0 P0128 b1 P0116 coolant b3 P0243 wastegate b6 P0837 b7 P0483 fan b8/b9 P0148 b11 P2609 heater b12 P0839 b13 P0838 b14 P0191 b15 P0234 (was protection_monitor_shadow) | e2m: e2m 1036 +32 System_Error_Status_25 '[SSERSS25] 32 word bit mapped system error status - word 25' */
-    uint16_t faults_416_to_431;  /* Faults 416-431: e2m 1036 +34 System_Error_Status_26; b0 Cylinder_7_Misfire_Error; b1 Cylinder_8_Misfire_Error; b2 Injector_7_Open_Circuit_Error; b3 Injector_8_Open_Circuit_Error; b4 Injector_7_Short_to_Vbatt_Error; b5 Injector_8_Short_to_Vbatt_Error; b6 Injector_7_Short_to_Ground_Error; b7 Injector_8_Short_to_Ground_Error; b8 Injector_7_Fast_Decay_Error; b9 Injector_8_Fast_Decay_Error | earlier note: e2m 1036 +34 System_Error_Status_26 '[SSERSS26] 32 word bit mapped system error status - word 26' (address from the ECU's parameter ID table): word 26 of the fault-detected array at 0x3fe974 (fault n = word n / 16, bit n % 16; faults 416-431). The e2m names bits 0x1 / 0x2 Cylinder_7_Misfire_Error / Cylinder_8_Misfire_Error (and 0x4-0x200 the injector 7 / 8 ... (new row 2026-11-19, wave 12) */
-    uint16_t faults_432_to_447;  /* Faults 432-447: e2m 1036 +36 System_Error_Status_27; b0 CAN_General_Network_Error P0653; b1 Implausible_AC_Pressure_Voltage_From_TIPM_Error; b2 Implausible_Fuel_Voltage_From_TIPM_Error; b3 Implausible_Ign_Off_Timer_From_TIPM_Error; b4 Implausible_Vehicle_Speed_From_ABS_Error; b5 Lost_Communication_With_ABS_Error; b6 Lost_Communication_With_TIPM_Error; b7 VTA_Invalid_Key_Error */
-    uint16_t faults_448_to_463;  /* Faults 448-463: e2m 1036 +38 System_Error_Status_28; no named bit, no DTC slot */
-    uint16_t faults_464_to_479;  /* Faults 464-479: e2m 1036 +3A System_Error_Status_29; no named bit, no DTC slot */
-    uint16_t faults_480_to_495;  /* Faults 480-495: e2m 1036 +3C System_Error_Status_30; no named bit, no DTC slot */
-    uint16_t faults_496_to_511;  /* Faults 496-511: e2m 1036 +3E System_Error_Status_31; b13 Gen_Diag_Low_Battery_Voltage_Error; b14 OBD_Low_Battery_Voltage_Error | earlier note: Word 31 of the fault-detected array 0x3fe974 (0x3fe974 + 2 x 31): 0x4000 = fault 510 OBD low battery voltage error (battery_voltage below ROM 0x64304 = 10.5 V), 0x2000 = fault 509 general diagnostic low battery voltage error (below ROM 0x64308 = 8.0 V); both fault numbers map to slot 170 (no DTC). e2m System_Error_Status_31 (0x0110363E) with OBD_Low_Battery_Voltage_Error 0x4000 and ... (was hpcr_battery_voltage_flags) | earlier note: HPCR battery-voltage protection status bits (system_status_flags+0x3e) */
-    uint16_t faults_512_to_527;  /* Faults 512-527: e2m 1036 +40 System_Error_Status_32; b0 EGR_Orifice_Temp_Rationality_Error; b1 EGR_Orifice_Temp_Startup_Error; b2 EGR_Valve_Rationality_Error; b3 EGR_Valve_Response_Time_Error; b6 Boost_In_Range_Error; b7 TVA_Stuck_Actuator_Error B1976; b8 TVA_Position_Rationality_Error B1972; b9 TVA_Span_Error B1975; b10 TVA_AZ_Error B1971; b13 TVA_Motor_Overcurrent_Error; b14 TVA_Electrical_Fault; b15 Charge_Press_IR_Error | earlier note: 0x3fe9b4 = 0x3fe974 + 2 x 32 is word 32 of the fault-detected array (its registered twin is fault_registered_cal.faults_512_to_527 at 0x3fea18 = 0x3fe9d8 + 2 x 32: every clear of one clears the other with the same mask); the monitor tests masks 4 / 8 (bits 2 / 3) = faults 514 / 515. MEDIUM: five other functions use it (cm848_updateChargePressureInRangeFaultCount, cm848_monitorChargePressureInRange ... (was engine_sync_validation_flags) | e2m: e2m 1036 +40 System_Error_Status_32 '48 word bit mapped system error status - word 32' */
-    uint16_t faults_528_to_543;  /* Faults 528-543: e2m 1036 +42 System_Error_Status_33; no named bit, no DTC slot */
-    uint16_t faults_544_to_559;  /* Faults 544-559: e2m 1036 +44 System_Error_Status_34; no named bit, no DTC slot */
-    uint16_t faults_560_to_575;  /* Faults 560-575: e2m 1036 +46 System_Error_Status_35; no named bit, no DTC slot */
-    uint16_t faults_576_to_591;  /* Faults 576-591: e2m 1036 +48 System_Error_Status_36; no named bit, no DTC slot */
-    uint16_t faults_592_to_607;  /* Faults 592-607: e2m 1036 +4A System_Error_Status_37; b4 Oil_Pressure_Error; b5 Oil_Pressure_High_Postprocessed_Error | earlier note: EEPROM 0x153c - e2m 1036 +4A System_Error_Status_37 [SSERSS37] '48 word bit mapped system error status - word 37' (address from the ECU's parameter ID table) (HEX; 0 here): word 37 of the fault-detected array that starts at 0x3fe974 (0x3fe974 + 2 x 37; faults 592-607, none with a DTC: slot 170 of ROM 0x5985a). Only cm848_checkPressureSensorAgreement touches it (9 reads / 9 writes): masks 4 / 8 / 0x10 (faults 594 / 595 / 596) are set when barometric_pressure / boost_pressure_absolute_sensor_filtered / sensor_channel38_filtered_output (sensor_channel_filtered_output[77] / [38]) differs from both of the other two readings by more than the margin sums barometric_pressure_sensor_tolerance / _b / _c, and cleared with the same bits of its registered twin at 0x3fea22; the check runs only while the sensor circuit faults it depends on (fault_detected_cal.faults_16_to_31 bits 9 / 10, fault_detected_cal.faults_0_to_15 bits 8 / 9 / 12 / 13) are clear. Named like the other array words: no intake air temperature is involved (was iat_sensor_deviation_flags) */
-    uint16_t faults_608_to_623;  /* Faults 608-623: e2m 1036 +4C System_Error_Status_38; b3 Turbo_Speed_High_Error P2581; b5 Turbo_Speed_Low_Error P2580; b10 Turbo_Speed_In_Range_Error P2579; b11 B1934; b12 B1934 | earlier note: Word 38 of fault-detected array 0x3fe974 ((0x3fe9c0 - 0x3fe974) / 2; fault bit = word x 16 + bit via ROM 0x5985a -> obd_dtc_code_table): b3 P2581 (turbocharger speed sensor frequency high, fault 611), b5 P2580 (low, fault 613), b10 P2579 (rate of change / in range, fault 618); b11 / b12 (faults 619 / 620) map to slot 78 = B1934 (raw 0x9934: the letter comes from the top two bits, checked against ... (was egr_smoke_limit_status_flags) | earlier note: EGR overpressure/upper-range/transient bits | e2m: e2m 1036 +4C System_Error_Status_38 '48 word bit mapped system error status - word 38' */
-    uint16_t faults_624_to_639;  /* Faults 624-639: e2m 1036 +4E System_Error_Status_39; no named bit, no DTC slot */
-    uint16_t faults_640_to_655;  /* Faults 640-655: e2m 1036 +50 System_Error_Status_40; b2 EGR_Position_Before_Autozero_High_Error; b3 EGR_Position_Before_Autozero_Low_Error; b8 Boost_Pressure_Absolute_High_Error; b9 Boost_Pressure_Absolute_Low_Error | earlier note: 0x3fe9c4 = 0x3fe974 + 2 x 40 is word 40 of the fault-detected array (like the existing fault_detected_cal.faults_656_to_671); the monitor tests masks 4 / 8 (bits 2 / 3) = faults 642 / 643, the circuit faults of sensor channel 75 (EGR valve position, call args 0x282 / 0x283). Name has no _cal: runtime state. (was boost_corr_diag_status_flags) | earlier note: boost-correction diagnostic status bits | e2m: e2m 1036 +50 System_Error_Status_40 '48 word bit mapped system error status - word 40' */
-    uint16_t faults_656_to_671;  /* Faults 656-671: e2m 1036 +52 System_Error_Status_41; b2 Exhaust_Throttle_Position_High_Error; b3 Exhaust_Throttle_Position_Low_Error; b14 VGT_Closed_Adjustment_Error; b15 VGT_Span_Adjustment_Error | earlier note: code: word 41 of the fault-detected array 0x3fe974 (0x3fe9c6 - 0x3fe974 = 82 = 41 words); its mask 16384 / 32768 are faults 670 / 671, the closed / span adjustment errors set and cleared by the adjustment stages and read by the actuator E setpoint clamp and the position-source check; the old engine-load comment is wrong. e2m: 0x01103652 holds VGT_Closed_Adjustment_Error / VGT_Span_Adjustment_Error ... (was governor_status_flags) | earlier note: engine-load (fuel-demand-derived) protection confirm bits (trip = load-EMA deviation): 0x4000=confirm-A (fuel-low-armed steady stage - clamps EMA/load) 0x8000=confirm-B (throttle-rate/overspeed-armed live stage - drives the speed derate); only these 2 bits used; shadow @0x3fea2a; the sibling variable_geometry_turbocharger_closed_adjustment_error_snapshot (0x3fb078) samples its fault 670 bit | e2m: e2m 1036 +52 System_Error_Status_41 '48 word bit mapped system error status - word 41' */
-    uint16_t faults_672_to_687;  /* Faults 672-687: e2m 1036 +54 System_Error_Status_42; b0 Exhaust_Pressure_Sensor_High_Error; b1 Exhaust_Pressure_Sensor_Low_Error | earlier note: code: word 42 of the fault-detected array; the position sensor passes fault 682 (mask 1024) and 683 (mask 2048) as high_fault_bit / low_fault_bit (index >> 4 = 42, bit & 15 = 10 / 11); never written directly, read by cm848_updateVariableGeometryTurbochargerPosition. e2m: none needed. (was governor_diag_status_bits_b) | e2m: e2m 1036 +54 System_Error_Status_42 '48 word bit mapped system error status - word 42' */
-    uint16_t faults_688_to_703;  /* Faults 688-703: e2m 1036 +56 System_Error_Status_43; b2 EGR_Delta_P_Sensor_High_Error; b3 EGR_Delta_P_Sensor_Low_Error | earlier note: 0x3fe9ca = 0x3fe974 + 2 x 43 is word 43 of the fault-detected array; the monitor tests masks 4 / 8 (bits 2 / 3) = faults 690 / 691, the circuit faults of sensor channel 105 (EGR delta pressure, call args 0x2b2 / 0x2b3). Only the detector reads it. (was boost_corr_diag_status_flags_b) | earlier note: boost-correction diagnostic status bits (second word) | e2m: e2m 1036 +56 System_Error_Status_43 '48 word bit mapped system error status - word 43' */
-    uint16_t faults_704_to_719;  /* Faults 704-719: e2m 1036 +58 System_Error_Status_44; b5 VGT_Position_PP_High_Error; b6 VGT_Position_PP_Low_Error; b14 EGR_Valve_Autozero_Error; b15 EGR_Delta_P_Autozero_Error | earlier note: code: word 44 of the fault-detected array (0x3fe9cc - 0x3fe974 = 88); masks 32 / 64 (faults 709 / 710) are set from sensor faults 682 / 683 by cm848_updateVariableGeometryTurbochargerPosition and cleared when the module is disabled. e2m: 0x01103658 VGT_Position_PP_High_Error / PP_Low_Error at masks 32 / 64. (was diagnostic_status_bits_b) | e2m: e2m 1036 +58 System_Error_Status_44 '48 word bit mapped system error status - word 44' */
-    uint16_t faults_720_to_735;  /* Faults 720-735: e2m 1036 +5A System_Error_Status_45; b0 EGA_Fault_HB1A; b1 EGA_Fault_HB1B; b2 EGA_Fault_HB1_OC_HI; b3 EGA_Fault_HB1_OC_LO; b4 EGA_Fault_HB1_Inrush; b5 EGA_Control_Error; b6 EGA_Electrical_Fault; b7 EGA_Driver_Over_Current; b8 EGA_Over_Temperature; b9 Boost_In_Range_Low_Error P0299 | earlier note: code: word 45 of the 50-word fault-detected array that starts at 0x3fe974 ((0x3fe9ce - 0x3fe974) / 2 = 45, faults 720-735, e2m word 0x0110365A); the EGR valve module sets and clears masks 0x01-0x100 (faults 720-728, 725 = position control error), the boost code shares the word (fault 729 mask 0x200 = P0299, e2m Boost_In_Range_Low_Error); neutral name like fault_detected_cal.faults_704_to_719 and ... (was diagnostic_status_bits) | e2m: e2m 1036 +5A System_Error_Status_45 '48 word bit mapped system error status - word 45' */
-    uint16_t faults_736_to_751;  /* Faults 736-751: e2m 1036 +5C System_Error_Status_46; b2 VGA_Fault_HB0A; b3 VGA_Fault_HB0B; b4 VGA_Fault_HB0_OC_HI; b5 VGA_Fault_HB0_OC_LO; b6 VGA_Fault_HB0_Inrush; b7 VGA_Control_Error; b8 VGA_Electrical_Fault B1978; b9 VGA_Driver_Over_Current; b10 VGA_Over_Temperature | earlier note: code: word 46 of the fault-detected array (92 bytes from 0x3fe974); written by the bridge fault handler (masks 4 to 64 and 256), the position control monitor (128), the driver over-current check (512) and the temperature estimate (1024), read by 15 functions. e2m: 0x0110365C holds VGA_Fault_HB0A.. / VGA_Control_Error / VGA_Electrical_Fault / VGA_Driver_Over_Current / VGA_Over_Temperature at ... (was diagnostic_status_flags) | e2m: e2m 1036 +5C System_Error_Status_46 '48 word bit mapped system error status - word 46' */
-    uint16_t faults_752_to_767;  /* Faults 752-767: e2m 1036 +5E System_Error_Status_47; no named bit, no DTC slot */
-    uint16_t faults_768_to_783;  /* Faults 768-783: e2m 1036 +60 System_Error_Status_48; b6 EGR_DP_In_Range_Error; b7 EGR_DP_In_Range_High_Error; b8 EGR_DP_In_Range_Low_Error; b9 EGR_DP_Startup_Error; b10 Boost_Ambient_Delta_Error P0069 | earlier note: Word 48 of fault-detected array 0x3fe974 ((0x3fe9d4 - 0x3fe974) / 2 = 48; fault bit = word x 16 + bit via ROM 0x5985a -> obd_dtc_code_table): only mask 0x400 (fault 778) has a DTC, P0069 (MAP / barometric pressure correlation); masks 0x40 / 0x80 / 0x100 / 0x200 (faults 774-777) have no DTC slot (slot 170): internal bits, 0x240 are set by the EGR delta pressure plausibility check ... (was diagnostic_status_flags_working) | earlier note: fault status bits incl 0x400 sensor mismatch | e2m: e2m 1036 +60 System_Error_Status_48 '49 word bit mapped system error status' */
-    uint16_t faults_784_to_799;  /* Faults 784-799: e2m 1036 +62 System_Error_Status_49; b4 TVA_Sampled_Position_High_Error B1973; b5 TVA_Sampled_Position_Low_Error B1974; b12 EGR_Orifice_Temperature_High_Error; b13 EGR_Orifice_Temperature_Low_Error | earlier note: code: word 49 of the 50-word fault-detected array that starts at 0x3fe974 ((0x3fe9d6 - 0x3fe974) / 2 = 49, faults 784-799); mask 0x400 (fault 794) is set by cm848_updateVariableGeometryTurbochargerValveOverTemperatureFault, other users cm848_updateEgrValveOverTemperatureFault and cm848_monitorEgrOrificeTemperatureSensorRationality (8 reads / 4 writes in all); named like the other array words (wave 5). Not a valve word, (was diagnostic_status_flags_b) | e2m: e2m 1036 +62 System_Error_Status_49 '50 word bit mapped system error status' */
+    uint16_t coolant_temperature_high_error : 1;  /* bit 0: word faults_16_to_31 (e2m 1036 +02 System_Error_Status_01) bit 0 = fault 16: e2m 1036 Coolant_Temperature_High_Error (P0118) */
+    uint16_t coolant_temperature_low_error : 1;  /* bit 1: fault 17: e2m 1036 Coolant_Temperature_Low_Error (P0117) */
+    uint16_t fault_18 : 1;  /* bit 2: fault 18 */
+    uint16_t intake_manifold_temperature_high_error : 1;  /* bit 3: fault 19: e2m 1036 Intake_Manifold_Temperature_High_Error (P0113) */
+    uint16_t intake_manifold_temperature_low_error : 1;  /* bit 4: fault 20: e2m 1036 Intake_Manifold_Temperature_Low_Error (P0112) */
+    uint16_t fault_21 : 1;  /* bit 5: fault 21 */
+    uint16_t fault_22 : 1;  /* bit 6: fault 22 */
+    uint16_t fault_23 : 1;  /* bit 7: fault 23 */
+    uint16_t fault_24 : 1;  /* bit 8: fault 24 */
+    uint16_t ambient_air_pressure_high_error : 1;  /* bit 9: fault 25: e2m 1036 Ambient_Air_Pressure_High_Error (P0108) */
+    uint16_t ambient_air_pressure_low_error : 1;  /* bit 10: fault 26: e2m 1036 Ambient_Air_Pressure_Low_Error (P0107) */
+    uint16_t overspeed_injector_shutoff_error : 1;  /* bit 11: fault 27: e2m 1036 Overspeed_Injector_Shutoff_Error (P0219) */
+    uint16_t fault_28 : 1;  /* bit 12: fault 28 */
+    uint16_t vss_signal_lost_error : 1;  /* bit 13: fault 29: e2m 1036 VSS_Signal_Lost_Error (P0500) */
+    uint16_t vss_tampering_error : 1;  /* bit 14: fault 30: e2m 1036 VSS_Tampering_Error */
+    uint16_t fault_31 : 1;  /* bit 15: fault 31 */
+    uint16_t fault_32 : 1;  /* bit 0: word faults_32_to_47 (e2m 1036 +04 System_Error_Status_02) bit 0 = fault 32 */
+    uint16_t fuel_shutoff_control_error : 1;  /* bit 1: fault 33: e2m 1036 FSO_Control_Error */
+    uint16_t fault_34 : 1;  /* bit 2: fault 34 */
+    uint16_t turbocharger_wastegate_driver_2_high_control_error : 1;  /* bit 3: fault 35: e2m 1036 TU_WG_Driver2_High_Control_Error */
+    uint16_t turbocharger_wastegate_driver_2_low_control_error : 1;  /* bit 4: fault 36: e2m 1036 TU_WG_Driver2_Low_Control_Error */
+    uint16_t fault_37 : 1;  /* bit 5: fault 37: e2m 1036 CORS_Makeup_Valve_Driver_High_Control_Error; e2m CORS_Makeup_Valve_Driver_High_Control_Error has an abbreviation the code does not resolve (cors) */
+    uint16_t fault_38 : 1;  /* bit 6: fault 38: e2m 1036 CORS_Makeup_Valve_Driver_Low_Control_Error; e2m CORS_Makeup_Valve_Driver_Low_Control_Error has an abbreviation the code does not resolve (cors) */
+    uint16_t fault_39 : 1;  /* bit 7: fault 39 */
+    uint16_t fault_40 : 1;  /* bit 8: fault 40 */
+    uint16_t engine_brake_driver_1_high_control_error : 1;  /* bit 9: fault 41: e2m 1036 Engine_Brake_Driver_1_High_Control_Error (P0478) */
+    uint16_t engine_brake_driver_1_low_control_error : 1;  /* bit 10: fault 42: e2m 1036 Engine_Brake_Driver_1_Low_Control_Error (P0477) */
+    uint16_t engine_brake_driver_2_high_control_error : 1;  /* bit 11: fault 43: e2m 1036 Engine_Brake_Driver_2_High_Control_Error */
+    uint16_t engine_brake_driver_2_low_control_error : 1;  /* bit 12: fault 44: e2m 1036 Engine_Brake_Driver_2_Low_Control_Error */
+    uint16_t engine_brake_driver_3_high_control_error : 1;  /* bit 13: fault 45: e2m 1036 Engine_Brake_Driver_3_High_Control_Error */
+    uint16_t engine_brake_driver_3_low_control_error : 1;  /* bit 14: fault 46: e2m 1036 Engine_Brake_Driver_3_Low_Control_Error */
+    uint16_t fuel_temperature_high_error : 1;  /* bit 15: fault 47: e2m 1036 Fuel_Temperature_High_Error */
+    uint16_t fuel_temperature_low_error : 1;  /* bit 0: word faults_48_to_63 (e2m 1036 +06 System_Error_Status_03) bit 0 = fault 48: e2m 1036 Fuel_Temperature_Low_Error */
+    uint16_t fault_49 : 1;  /* bit 1: fault 49 */
+    uint16_t fault_50 : 1;  /* bit 2: fault 50 */
+    uint16_t fault_51 : 1;  /* bit 3: fault 51 */
+    uint16_t frequency_throttle_low_error : 1;  /* bit 4: fault 52: e2m 1036 Frequency_Throttle_Low_Error */
+    uint16_t frequency_throttle_high_error : 1;  /* bit 5: fault 53: e2m 1036 Frequency_Throttle_High_Error */
+    uint16_t water_in_fuel_high_error : 1;  /* bit 6: fault 54: e2m 1036 Water_In_Fuel_High_Error (P2267) */
+    uint16_t water_in_fuel_low_error : 1;  /* bit 7: fault 55: e2m 1036 Water_In_Fuel_Low_Error (P2266) */
+    uint16_t water_in_fuel_error : 1;  /* bit 8: fault 56: e2m 1036 Water_In_Fuel_Error (P2269) */
+    uint16_t fault_57 : 1;  /* bit 9: fault 57 (P1221) */
+    uint16_t fault_58 : 1;  /* bit 10: fault 58 (P1222) */
+    uint16_t fault_59 : 1;  /* bit 11: fault 59 */
+    uint16_t fault_60 : 1;  /* bit 12: fault 60 (P1223) */
+    uint16_t fault_61 : 1;  /* bit 13: fault 61 */
+    uint16_t throttle_validation_switch_low_error : 1;  /* bit 14: fault 62: e2m 1036 Throttle_Validation_Switch_Low_Error (P2127) */
+    uint16_t throttle_validation_process_error : 1;  /* bit 15: fault 63: e2m 1036 Throttle_Validation_Process_Error (P2121) */
+    uint16_t boost_in_range_high_error : 1;  /* bit 0: word faults_64_to_79 (e2m 1036 +08 System_Error_Status_04) bit 0 = fault 64: e2m 1036 Boost_In_Range_High_Error (P0236) */
+    uint16_t fault_65 : 1;  /* bit 1: fault 65 */
+    uint16_t battery_voltage_low_error : 1;  /* bit 2: fault 66: e2m 1036 Battery_Voltage_Low_Error (P0562) */
+    uint16_t battery_voltage_high_error : 1;  /* bit 3: fault 67: e2m 1036 Battery_Voltage_High_Error (P0563) */
+    uint16_t throttle_validation_switch_high_error : 1;  /* bit 4: fault 68: e2m 1036 Throttle_Validation_Switch_High_Error (P2128) */
+    uint16_t fault_69 : 1;  /* bit 5: fault 69 (P1221) */
+    uint16_t fault_70 : 1;  /* bit 6: fault 70 (P1222) */
+    uint16_t fault_71 : 1;  /* bit 7: fault 71 (P1223) */
+    uint16_t fault_72 : 1;  /* bit 8: fault 72 */
+    uint16_t increment_decrement_switch_error : 1;  /* bit 9: fault 73: e2m 1036 Increment_Decrement_Switch_Error */
+    uint16_t ram_overrun_error : 1;  /* bit 10: fault 74: e2m 1036 Ram_Overrun_Error */
+    uint16_t fault_75 : 1;  /* bit 11: fault 75 */
+    uint16_t fault_76 : 1;  /* bit 12: fault 76 */
+    uint16_t remote_throttle_high_error : 1;  /* bit 13: fault 77: e2m 1036 Remote_Throttle_High_Error */
+    uint16_t remote_throttle_low_error : 1;  /* bit 14: fault 78: e2m 1036 Remote_Throttle_Low_Error */
+    uint16_t fault_79 : 1;  /* bit 15: fault 79 */
+    uint16_t qspi_command_error : 1;  /* bit 0: word faults_80_to_95 (e2m 1036 +0A System_Error_Status_05) bit 0 = fault 80: e2m 1036 QSPI_Command_Error */
+    uint16_t qspi_initialization_error : 1;  /* bit 1: fault 81: e2m 1036 QSPI_Initialization_Error */
+    uint16_t power_off_without_ignition_off_error : 1;  /* bit 2: fault 82: e2m 1036 Power_Off_Without_Ignition_Off_Error (P2509) */
+    uint16_t fault_83 : 1;  /* bit 3: fault 83 */
+    uint16_t flash_failure_error : 1;  /* bit 4: fault 84: e2m 1036 Flash_Failure_Error */
+    uint16_t fault_85 : 1;  /* bit 5: fault 85 */
+    uint16_t fault_86 : 1;  /* bit 6: fault 86 */
+    uint16_t fault_87 : 1;  /* bit 7: fault 87 */
+    uint16_t fault_88 : 1;  /* bit 8: fault 88 */
+    uint16_t power_down_data_lost_error : 1;  /* bit 9: fault 89: e2m 1036 Powerdown_Data_Lost_Error (P2509) */
+    uint16_t all_power_down_data_lost_error : 1;  /* bit 10: fault 90: e2m 1036 All_Powerdown_Data_Lost_Error (P2509) */
+    uint16_t power_off_command_ignored_error : 1;  /* bit 11: fault 91: e2m 1036 Poweroff_Command_Ignored_Error (P0606) */
+    uint16_t engine_position_sensor_main_channel_lost_error : 1;  /* bit 12: fault 92: e2m 1036 EPS_Main_Channel_Lost_Error (P0335); EPS: faults 92 / 93 (P0335 / P0340) are set by cm848_updateEngineSpeedFromCrankSignal (main / backup sensor) */
+    uint16_t engine_position_sensor_backup_channel_lost_error : 1;  /* bit 13: fault 93: e2m 1036 EPS_Backup_Channel_Lost_Error (P0340); EPS: faults 92 / 93 (P0335 / P0340) are set by cm848_updateEngineSpeedFromCrankSignal (main / backup sensor) */
+    uint16_t fault_94 : 1;  /* bit 14: fault 94 */
+    uint16_t fault_95 : 1;  /* bit 15: fault 95 */
+    uint16_t fault_96 : 1;  /* bit 0: word faults_96_to_111 (e2m 1036 +0C System_Error_Status_06) bit 0 = fault 96 */
+    uint16_t fault_97 : 1;  /* bit 1: fault 97 */
+    uint16_t fault_98 : 1;  /* bit 2: fault 98 */
+    uint16_t fault_99 : 1;  /* bit 3: fault 99 */
+    uint16_t fault_100 : 1;  /* bit 4: fault 100 */
+    uint16_t fault_101 : 1;  /* bit 5: fault 101 */
+    uint16_t fault_102 : 1;  /* bit 6: fault 102 */
+    uint16_t fault_103 : 1;  /* bit 7: fault 103 */
+    uint16_t fault_104 : 1;  /* bit 8: fault 104 */
+    uint16_t fault_105 : 1;  /* bit 9: fault 105 */
+    uint16_t fault_106 : 1;  /* bit 10: fault 106 */
+    uint16_t fault_107 : 1;  /* bit 11: fault 107 */
+    uint16_t fault_108 : 1;  /* bit 12: fault 108 */
+    uint16_t fault_109 : 1;  /* bit 13: fault 109 */
+    uint16_t fault_110 : 1;  /* bit 14: fault 110 */
+    uint16_t j1939_link_cannot_transmit_error : 1;  /* bit 15: fault 111: e2m 1036 J1939_Link_Cannot_Transmit_Error */
+    uint16_t j1939_link_not_fast_enough_error : 1;  /* bit 0: word faults_112_to_127 (e2m 1036 +0E System_Error_Status_07) bit 0 = fault 112: e2m 1036 J1939_Link_Not_Fast_Enough_Error */
+    uint16_t fault_113 : 1;  /* bit 1: fault 113 */
+    uint16_t fault_114 : 1;  /* bit 2: fault 114 */
+    uint16_t fault_115 : 1;  /* bit 3: fault 115 */
+    uint16_t fault_116 : 1;  /* bit 4: fault 116 */
+    uint16_t cam_crank_sync_mismatch_error : 1;  /* bit 5: fault 117: e2m 1036 Cam_Crank_Sync_Mismatch_Error (P0016) */
+    uint16_t fault_118 : 1;  /* bit 6: fault 118 */
+    uint16_t fault_119 : 1;  /* bit 7: fault 119 */
+    uint16_t fault_120 : 1;  /* bit 8: fault 120 */
+    uint16_t fan_clutch_1_pwm_control_error : 1;  /* bit 9: fault 121: e2m 1036 Fan_Clutch_1_PWM_Control_Error (P0480) */
+    uint16_t fault_122 : 1;  /* bit 10: fault 122 */
+    uint16_t fault_123 : 1;  /* bit 11: fault 123 */
+    uint16_t crank_sync_error : 1;  /* bit 12: fault 124: e2m 1036 Crank_Sync_Error (P0336) */
+    uint16_t fault_125 : 1;  /* bit 13: fault 125 */
+    uint16_t fault_126 : 1;  /* bit 14: fault 126 */
+    uint16_t j1939_multiplexed_accelerator_pedal_sensor_system_error : 1;  /* bit 15: fault 127: e2m 1036 J1939_Mux_APS_System_Error */
+    uint16_t j1939_multiplexed_pgn_timeout_error : 1;  /* bit 0: word faults_128_to_143 (e2m 1036 +10 System_Error_Status_08) bit 0 = fault 128: e2m 1036 J1939_Mux_PGN_Timeout_Error */
+    uint16_t j1939_multiplexed_remote_throttle_data_error : 1;  /* bit 1: fault 129: e2m 1036 J1939_Mux_Remote_Throttle_Data_Error */
+    uint16_t j1939_multiplexed_configuration_error : 1;  /* bit 2: fault 130: e2m 1036 J1939_Mux_Configuration_Error */
+    uint16_t fault_131 : 1;  /* bit 3: fault 131 */
+    uint16_t engine_brake_driver_4_high_control_error : 1;  /* bit 4: fault 132: e2m 1036 Engine_Brake_Driver_4_High_Control_Error */
+    uint16_t engine_brake_driver_4_low_control_error : 1;  /* bit 5: fault 133: e2m 1036 Engine_Brake_Driver_4_Low_Control_Error */
+    uint16_t engine_brake_driver_5_high_control_error : 1;  /* bit 6: fault 134: e2m 1036 Engine_Brake_Driver_5_High_Control_Error */
+    uint16_t engine_brake_driver_5_low_control_error : 1;  /* bit 7: fault 135: e2m 1036 Engine_Brake_Driver_5_Low_Control_Error */
+    uint16_t transmission_variable_force_solenoid_battery_driver_high_control_error : 1;  /* bit 8: fault 136: e2m 1036 Transmission_VFS_Battery_Driver_High_Control_Error (P0883) */
+    uint16_t transmission_variable_force_solenoid_battery_driver_low_control_error : 1;  /* bit 9: fault 137: e2m 1036 Transmission_VFS_Battery_Driver_Low_Control_Error (P0882) */
+    uint16_t transmission_overdrive_driver_high_control_error : 1;  /* bit 10: fault 138: e2m 1036 Engine_Alarm_Driver_High_Control_Error/Transmission_Overdrive_Driver_High_Control_Error (P0974); the P0974 alternative of Engine_Alarm_Driver_High_Control_Error/Transmission_Overdrive_Driver_High_Control_Error */
+    uint16_t transmission_overdrive_driver_low_control_error : 1;  /* bit 11: fault 139: e2m 1036 Engine_Alarm_Driver_Low_Control_Error/Transmission_Overdrive_Driver_Low_Control_Error (P0973); the P0973 alternative of Engine_Alarm_Driver_Low_Control_Error/Transmission_Overdrive_Driver_Low_Control_Error */
+    uint16_t transmission_torque_converter_clutch_driver_high_control_error : 1;  /* bit 12: fault 140: e2m 1036 Fan_Clutch_Control_Driver1_High_Control_Error/Transmission_TCC_Driver_High_Control_Error (P2770); the P2770 alternative of Fan_Clutch_Control_Driver1_High_Control_Error/Transmission_TCC_Driver_High_Control_Error */
+    uint16_t transmission_torque_converter_clutch_driver_low_control_error : 1;  /* bit 13: fault 141: e2m 1036 Fan_Clutch_Control_Driver1_Low_Control_Error/Transmission_TCC_Driver_Low_Control_Error (P2769); the P2769 alternative of Fan_Clutch_Control_Driver1_Low_Control_Error/Transmission_TCC_Driver_Low_Control_Error */
+    uint16_t cruise_vent_driver_high_control_error : 1;  /* bit 14: fault 142: e2m 1036 Cruise_Vent_Driver_High_Control_Error/Fan_Clutch_Control_Driver2_High_Control_Error (P0588); the P0588 alternative of Cruise_Vent_Driver_High_Control_Error/Fan_Clutch_Control_Driver2_High_Control_Error */
+    uint16_t cruise_vent_driver_low_control_error : 1;  /* bit 15: fault 143: e2m 1036 Cruise_Vent_Driver_Low_Control_Error/Fan_Clutch_Control_Driver2_Low_Control_Error (P0587); the P0587 alternative of Cruise_Vent_Driver_Low_Control_Error/Fan_Clutch_Control_Driver2_Low_Control_Error */
+    uint16_t cruise_vacuum_driver_high_control_error : 1;  /* bit 0: word faults_144_to_159 (e2m 1036 +12 System_Error_Status_09) bit 0 = fault 144: e2m 1036 Cruise_Vacuum_Driver_High_Control_Error/Maintenance_Lamp_Driver_High_Control_Error (P0584); the P0584 alternative of Cruise_Vacuum_Driver_High_Control_Error/Maintenance_Lamp_Driver_High_Control_Error */
+    uint16_t cruise_vacuum_driver_low_control_error : 1;  /* bit 1: fault 145: e2m 1036 Cruise_Vacuum_Driver_Low_Control_Error/Maintenance_Lamp_Driver_Low_Control_Error (P0583); the P0583 alternative of Cruise_Vacuum_Driver_Low_Control_Error/Maintenance_Lamp_Driver_Low_Control_Error */
+    uint16_t fault_146 : 1;  /* bit 2: fault 146: e2m 1036 Cruise_SC_Source_Driver_High_Control_Error (P0596); e2m Cruise_SC_Source_Driver_High_Control_Error has an abbreviation the code does not resolve (sc) */
+    uint16_t fault_147 : 1;  /* bit 3: fault 147: e2m 1036 Cruise_SC_Source_Driver_Low_Control_Error (P0595); e2m Cruise_SC_Source_Driver_Low_Control_Error has an abbreviation the code does not resolve (sc) */
+    uint16_t transmission_park_neutral_switch_error : 1;  /* bit 4: fault 148: e2m 1036 Transmission_Park_Neutral_Switch_Error (P0850) */
+    uint16_t transmission_governor_pressure_rationality_error : 1;  /* bit 5: fault 149: e2m 1036 RE_Governor_Pressure_Rationality_Error (P1762) */
+    uint16_t ambient_air_temperature_high_error : 1;  /* bit 6: fault 150: e2m 1036 Ambient_Air_Temperature_High_Error (P0073) */
+    uint16_t ambient_air_temperature_low_error : 1;  /* bit 7: fault 151: e2m 1036 Ambient_Air_Temperature_Low_Error (P0072) */
+    uint16_t transmission_overdrive_driver_2_high_control_error : 1;  /* bit 8: fault 152: e2m 1036 Transmission_Overdrive_Driver_2_High_Control_Error */
+    uint16_t transmission_overdrive_driver_2_low_control_error : 1;  /* bit 9: fault 153: e2m 1036 Transmission_Overdrive_Driver_2_Low_Control_Error */
+    uint16_t transmission_torque_converter_clutch_driver_2_high_control_error : 1;  /* bit 10: fault 154: e2m 1036 Transmission_TCC_Driver_2_High_Control_Error */
+    uint16_t transmission_torque_converter_clutch_driver_2_low_control_error : 1;  /* bit 11: fault 155: e2m 1036 Transmission_TCC_Driver_2_Low_Control_Error */
+    uint16_t fault_156 : 1;  /* bit 12: fault 156 */
+    uint16_t fault_157 : 1;  /* bit 13: fault 157 */
+    uint16_t fault_158 : 1;  /* bit 14: fault 158 */
+    uint16_t fault_159 : 1;  /* bit 15: fault 159 */
+    uint16_t fault_160 : 1;  /* bit 0: word faults_160_to_175 (e2m 1036 +14 System_Error_Status_10) bit 0 = fault 160 */
+    uint16_t fault_161 : 1;  /* bit 1: fault 161 */
+    uint16_t fault_162 : 1;  /* bit 2: fault 162 */
+    uint16_t fault_163 : 1;  /* bit 3: fault 163 */
+    uint16_t fault_164 : 1;  /* bit 4: fault 164 */
+    uint16_t eeprom_write_error : 1;  /* bit 5: fault 165: e2m 1036 EEPROM_Write_Error */
+    uint16_t power_down_eeprom_checksum_error : 1;  /* bit 6: fault 166: e2m 1036 Powerdown_EEPROM_Checksum_Error */
+    uint16_t fault_167 : 1;  /* bit 7: fault 167 */
+    uint16_t fault_168 : 1;  /* bit 8: fault 168 */
+    uint16_t fault_169 : 1;  /* bit 9: fault 169 */
+    uint16_t fault_170 : 1;  /* bit 10: fault 170 */
+    uint16_t remote_throttle_enabled_low_error : 1;  /* bit 11: fault 171: e2m 1036 RT_Low_Error; cm848_claimRemoteThrottleOverride copies fault 78 (Remote_Throttle_Low_Error) into it while algorithm_enable_flags_18_cal.remote_throttle_enable is set; RT = remote throttle; RT: fault 171 / 172 are set by cm848_claimRemoteThrottleOverride */
+    uint16_t remote_throttle_enabled_high_error : 1;  /* bit 12: fault 172: e2m 1036 RT_High_Error; cm848_claimRemoteThrottleOverride copies fault 77 (Remote_Throttle_High_Error) into it while the remote throttle is enabled; RT: fault 171 / 172 are set by cm848_claimRemoteThrottleOverride */
+    uint16_t fault_173 : 1;  /* bit 13: fault 173 */
+    uint16_t fault_174 : 1;  /* bit 14: fault 174 */
+    uint16_t fault_175 : 1;  /* bit 15: fault 175 */
+    uint16_t fault_176 : 1;  /* bit 0: word faults_176_to_191 (e2m 1036 +16 System_Error_Status_11) bit 0 = fault 176 */
+    uint16_t fault_177 : 1;  /* bit 1: fault 177 */
+    uint16_t fault_178 : 1;  /* bit 2: fault 178 */
+    uint16_t fault_179 : 1;  /* bit 3: fault 179 */
+    uint16_t fault_180 : 1;  /* bit 4: fault 180 */
+    uint16_t fault_181 : 1;  /* bit 5: fault 181 */
+    uint16_t fault_182 : 1;  /* bit 6: fault 182 */
+    uint16_t fault_183 : 1;  /* bit 7: fault 183 */
+    uint16_t fault_184 : 1;  /* bit 8: fault 184 */
+    uint16_t fault_185 : 1;  /* bit 9: fault 185 */
+    uint16_t fault_186 : 1;  /* bit 10: fault 186 */
+    uint16_t fault_187 : 1;  /* bit 11: fault 187 */
+    uint16_t fault_188 : 1;  /* bit 12: fault 188 */
+    uint16_t fault_189 : 1;  /* bit 13: fault 189 */
+    uint16_t fault_190 : 1;  /* bit 14: fault 190 */
+    uint16_t fault_191 : 1;  /* bit 15: fault 191 */
+    uint16_t fault_192 : 1;  /* bit 0: word faults_192_to_207 (e2m 1036 +18 System_Error_Status_12) bit 0 = fault 192 */
+    uint16_t fault_193 : 1;  /* bit 1: fault 193 */
+    uint16_t fault_194 : 1;  /* bit 2: fault 194 */
+    uint16_t fault_195 : 1;  /* bit 3: fault 195 */
+    uint16_t throttle_sensor_supply_voltage_high_error : 1;  /* bit 4: fault 196: e2m 1036 Throttle_Sensor_Supply_Voltage_High_Error (P0699) */
+    uint16_t throttle_sensor_supply_voltage_low_error : 1;  /* bit 5: fault 197: e2m 1036 Throttle_Sensor_Supply_Voltage_Low_Error (P0698) */
+    uint16_t fault_198 : 1;  /* bit 6: fault 198 */
+    uint16_t fault_199 : 1;  /* bit 7: fault 199 */
+    uint16_t fault_200 : 1;  /* bit 8: fault 200 */
+    uint16_t fault_201 : 1;  /* bit 9: fault 201 */
+    uint16_t fault_202 : 1;  /* bit 10: fault 202 */
+    uint16_t fault_203 : 1;  /* bit 11: fault 203 */
+    uint16_t stop_lamp_driver_high_control_error : 1;  /* bit 12: fault 204: e2m 1036 Stop_Lamp_Driver_High_Control_Error */
+    uint16_t stop_lamp_driver_low_control_error : 1;  /* bit 13: fault 205: e2m 1036 Stop_Lamp_Driver_Low_Control_Error */
+    uint16_t fault_206 : 1;  /* bit 14: fault 206: e2m 1036 T2_High_Gear_Driver_High_Control_Error/T2_Shift_Driver_High_Control_Error; e2m 'T2_High_Gear_Driver_High_Control_Error/T2_Shift_Driver_High_Control_Error' names two applications and no DTC decides */
+    uint16_t fault_207 : 1;  /* bit 15: fault 207: e2m 1036 T2_High_Gear_Driver_Low_Control_Error/T2_Shift_Driver_Low_Control_Error; e2m 'T2_High_Gear_Driver_Low_Control_Error/T2_Shift_Driver_Low_Control_Error' names two applications and no DTC decides */
+    uint16_t fault_208 : 1;  /* bit 0: word faults_208_to_223 (e2m 1036 +1A System_Error_Status_13) bit 0 = fault 208: e2m 1036 T2_Lamp_Driver_High_Control_Error; e2m T2_Lamp_Driver_High_Control_Error has an abbreviation the code does not resolve (t2) */
+    uint16_t fault_209 : 1;  /* bit 1: fault 209: e2m 1036 T2_Lamp_Driver_Low_Control_Error; e2m T2_Lamp_Driver_Low_Control_Error has an abbreviation the code does not resolve (t2) */
+    uint16_t fault_210 : 1;  /* bit 2: fault 210: e2m 1036 T2_Lockout_Driver_High_Control_Error; e2m T2_Lockout_Driver_High_Control_Error has an abbreviation the code does not resolve (t2) */
+    uint16_t fault_211 : 1;  /* bit 3: fault 211: e2m 1036 T2_Lockout_Driver_Low_Control_Error; e2m T2_Lockout_Driver_Low_Control_Error has an abbreviation the code does not resolve (t2) */
+    uint16_t fault_212 : 1;  /* bit 4: fault 212: e2m 1036 T2_Low_Gear_Driver_High_Control_Error; e2m T2_Low_Gear_Driver_High_Control_Error has an abbreviation the code does not resolve (t2) */
+    uint16_t fault_213 : 1;  /* bit 5: fault 213: e2m 1036 T2_Low_Gear_Driver_Low_Control_Error; e2m T2_Low_Gear_Driver_Low_Control_Error has an abbreviation the code does not resolve (t2) */
+    uint16_t fault_214 : 1;  /* bit 6: fault 214: e2m 1036 T2_Neutral_Driver_High_Control_Error; e2m T2_Neutral_Driver_High_Control_Error has an abbreviation the code does not resolve (t2) */
+    uint16_t fault_215 : 1;  /* bit 7: fault 215: e2m 1036 T2_Neutral_Driver_Low_Control_Error; e2m T2_Neutral_Driver_Low_Control_Error has an abbreviation the code does not resolve (t2) */
+    uint16_t fault_216 : 1;  /* bit 8: fault 216: e2m 1036 TAS_Lamp_Driver_High_Control_Error; e2m TAS_Lamp_Driver_High_Control_Error has an abbreviation the code does not resolve (tas) */
+    uint16_t fault_217 : 1;  /* bit 9: fault 217: e2m 1036 TAS_Lamp_Driver_Low_Control_Error; e2m TAS_Lamp_Driver_Low_Control_Error has an abbreviation the code does not resolve (tas) */
+    uint16_t wait_to_start_lamp_driver_high_control_error : 1;  /* bit 10: fault 218: e2m 1036 Wait_To_Start_Lamp_Driver_High_Control_Error/Wait_To_Start_Lamp_High_Control_Error (P0381); the P0381 alternative of Wait_To_Start_Lamp_Driver_High_Control_Error/Wait_To_Start_Lamp_High_Control_Error */
+    uint16_t wait_to_start_lamp_driver_low_control_error : 1;  /* bit 11: fault 219: e2m 1036 Wait_To_Start_Lamp_Driver_Low_Control_Error/Wait_To_Start_Lamp_Low_Control_Error (P0381); the P0381 alternative of Wait_To_Start_Lamp_Driver_Low_Control_Error/Wait_To_Start_Lamp_Low_Control_Error */
+    uint16_t warning_lamp_driver_high_control_error : 1;  /* bit 12: fault 220: e2m 1036 Warning_Lamp_Driver_High_Control_Error */
+    uint16_t warning_lamp_driver_low_control_error : 1;  /* bit 13: fault 221: e2m 1036 Warning_Lamp_Driver_Low_Control_Error */
+    uint16_t water_in_fuel_lamp_driver_high_control_error : 1;  /* bit 14: fault 222: e2m 1036 Water_In_Fuel_Lamp_Driver_High_Control_Error */
+    uint16_t water_in_fuel_lamp_driver_low_control_error : 1;  /* bit 15: fault 223: e2m 1036 Water_In_Fuel_Lamp_Driver_Low_Control_Error */
+    uint16_t fault_224 : 1;  /* bit 0: word faults_224_to_239 (e2m 1036 +1C System_Error_Status_14) bit 0 = fault 224 */
+    uint16_t fault_225 : 1;  /* bit 1: fault 225 */
+    uint16_t fault_226 : 1;  /* bit 2: fault 226 */
+    uint16_t fault_227 : 1;  /* bit 3: fault 227 */
+    uint16_t overspeed_pump_shutoff_error : 1;  /* bit 4: fault 228: e2m 1036 Overspeed_Pump_Shutoff_Error */
+    uint16_t warning_lamp_driver_open_control_error : 1;  /* bit 5: fault 229: e2m 1036 Warning_Lamp_Driver_Open_Control_Error */
+    uint16_t stop_lamp_driver_open_control_error : 1;  /* bit 6: fault 230: e2m 1036 Stop_Lamp_Driver_Open_Control_Error */
+    uint16_t fault_231 : 1;  /* bit 7: fault 231 */
+    uint16_t maintenance_lamp_driver_open_control_error : 1;  /* bit 8: fault 232: e2m 1036 Maintenance_Lamp_Driver_Open_Control_Error */
+    uint16_t fault_233 : 1;  /* bit 9: fault 233 */
+    uint16_t fault_234 : 1;  /* bit 10: fault 234 */
+    uint16_t fault_235 : 1;  /* bit 11: fault 235 */
+    uint16_t fault_236 : 1;  /* bit 12: fault 236 */
+    uint16_t fault_237 : 1;  /* bit 13: fault 237 */
+    uint16_t fault_238 : 1;  /* bit 14: fault 238 */
+    uint16_t fault_239 : 1;  /* bit 15: fault 239 */
+    uint16_t fault_240 : 1;  /* bit 0: word faults_240_to_255 (e2m 1036 +1E System_Error_Status_15) bit 0 = fault 240 */
+    uint16_t fault_241 : 1;  /* bit 1: fault 241 */
+    uint16_t fault_242 : 1;  /* bit 2: fault 242 */
+    uint16_t fault_243 : 1;  /* bit 3: fault 243 */
+    uint16_t fault_244 : 1;  /* bit 4: fault 244 */
+    uint16_t fault_245 : 1;  /* bit 5: fault 245 */
+    uint16_t fault_246 : 1;  /* bit 6: fault 246 */
+    uint16_t fault_247 : 1;  /* bit 7: fault 247 */
+    uint16_t fault_248 : 1;  /* bit 8: fault 248 */
+    uint16_t fault_249 : 1;  /* bit 9: fault 249 */
+    uint16_t fault_250 : 1;  /* bit 10: fault 250 */
+    uint16_t fault_251 : 1;  /* bit 11: fault 251 */
+    uint16_t fault_252 : 1;  /* bit 12: fault 252 */
+    uint16_t fault_253 : 1;  /* bit 13: fault 253 */
+    uint16_t fault_254 : 1;  /* bit 14: fault 254 */
+    uint16_t fault_255 : 1;  /* bit 15: fault 255 */
+    uint16_t fault_256 : 1;  /* bit 0: word faults_256_to_271 (e2m 1036 +20 System_Error_Status_16) bit 0 = fault 256 */
+    uint16_t fault_257 : 1;  /* bit 1: fault 257 */
+    uint16_t fault_258 : 1;  /* bit 2: fault 258 */
+    uint16_t fault_259 : 1;  /* bit 3: fault 259 */
+    uint16_t fault_260 : 1;  /* bit 4: fault 260 */
+    uint16_t fault_261 : 1;  /* bit 5: fault 261 */
+    uint16_t fuel_temperature_rpm_error_active : 1;  /* bit 6: fault 262: e2m 1036 Fuel_Temperature_RPM_Error_Active */
+    uint16_t fuel_temperature_fueling_error_active : 1;  /* bit 7: fault 263: e2m 1036 Fuel_Temperature_Fueling_Error_Active */
+    uint16_t high_pressure_common_rail_cp3_low_current_error : 1;  /* bit 8: fault 264: e2m 1036 HPCR_CP3_Low_Current_Error */
+    uint16_t high_pressure_common_rail_cp3_high_current_error : 1;  /* bit 9: fault 265: e2m 1036 HPCR_CP3_High_Current_Error */
+    uint16_t fault_266 : 1;  /* bit 10: fault 266 */
+    uint16_t fault_267 : 1;  /* bit 11: fault 267 */
+    uint16_t injector_1_short_to_battery_error : 1;  /* bit 12: fault 268: e2m 1036 Injector_1_Short_to_Vbatt_Error (P2146) */
+    uint16_t injector_1_short_to_ground_error : 1;  /* bit 13: fault 269: e2m 1036 Injector_1_Short_to_Ground_Error (P2146) */
+    uint16_t injector_1_fast_decay_error : 1;  /* bit 14: fault 270: e2m 1036 Injector_1_Fast_Decay_Error */
+    uint16_t injector_5_short_to_battery_error : 1;  /* bit 15: fault 271: e2m 1036 Injector_5_Short_to_Vbatt_Error (P2146) */
+    uint16_t injector_5_short_to_ground_error : 1;  /* bit 0: word faults_272_to_287 (e2m 1036 +22 System_Error_Status_17) bit 0 = fault 272: e2m 1036 Injector_5_Short_to_Ground_Error (P2146) */
+    uint16_t injector_5_fast_decay_error : 1;  /* bit 1: fault 273: e2m 1036 Injector_5_Fast_Decay_Error */
+    uint16_t injector_3_short_to_battery_error : 1;  /* bit 2: fault 274: e2m 1036 Injector_3_Short_to_Vbatt_Error (P2146) */
+    uint16_t injector_3_short_to_ground_error : 1;  /* bit 3: fault 275: e2m 1036 Injector_3_Short_to_Ground_Error (P2146) */
+    uint16_t injector_3_fast_decay_error : 1;  /* bit 4: fault 276: e2m 1036 Injector_3_Fast_Decay_Error */
+    uint16_t injector_6_short_to_battery_error : 1;  /* bit 5: fault 277: e2m 1036 Injector_6_Short_to_Vbatt_Error (P2149) */
+    uint16_t injector_6_short_to_ground_error : 1;  /* bit 6: fault 278: e2m 1036 Injector_6_Short_to_Ground_Error (P2149) */
+    uint16_t injector_6_fast_decay_error : 1;  /* bit 7: fault 279: e2m 1036 Injector_6_Fast_Decay_Error */
+    uint16_t injector_2_short_to_battery_error : 1;  /* bit 8: fault 280: e2m 1036 Injector_2_Short_to_Vbatt_Error (P2149) */
+    uint16_t injector_2_short_to_ground_error : 1;  /* bit 9: fault 281: e2m 1036 Injector_2_Short_to_Ground_Error (P2149) */
+    uint16_t injector_2_fast_decay_error : 1;  /* bit 10: fault 282: e2m 1036 Injector_2_Fast_Decay_Error */
+    uint16_t injector_4_short_to_battery_error : 1;  /* bit 11: fault 283: e2m 1036 Injector_4_Short_to_Vbatt_Error (P2149) */
+    uint16_t injector_4_short_to_ground_error : 1;  /* bit 12: fault 284: e2m 1036 Injector_4_Short_to_Ground_Error (P2149) */
+    uint16_t injector_4_fast_decay_error : 1;  /* bit 13: fault 285: e2m 1036 Injector_4_Fast_Decay_Error */
+    uint16_t injector_1_open_circuit_error : 1;  /* bit 14: fault 286: e2m 1036 Injector_1_Open_Circuit_Error (P0201) */
+    uint16_t injector_5_open_circuit_error : 1;  /* bit 15: fault 287: e2m 1036 Injector_5_Open_Circuit_Error (P0202) */
+    uint16_t injector_3_open_circuit_error : 1;  /* bit 0: word faults_288_to_303 (e2m 1036 +24 System_Error_Status_18) bit 0 = fault 288: e2m 1036 Injector_3_Open_Circuit_Error (P0203) */
+    uint16_t injector_6_open_circuit_error : 1;  /* bit 1: fault 289: e2m 1036 Injector_6_Open_Circuit_Error (P0204) */
+    uint16_t fault_290 : 1;  /* bit 2: fault 290 */
+    uint16_t injector_2_open_circuit_error : 1;  /* bit 3: fault 291: e2m 1036 Injector_2_Open_Circuit_Error (P0205) */
+    uint16_t injector_4_open_circuit_error : 1;  /* bit 4: fault 292: e2m 1036 Injector_4_Open_Circuit_Error (P0206) */
+    uint16_t fault_293 : 1;  /* bit 5: fault 293 */
+    uint16_t cold_start_aid_1_low_control_error : 1;  /* bit 6: fault 294: e2m 1036 Cold_Start_Aid_1_Low_Control_Error (P0541) */
+    uint16_t cold_start_aid_1_high_control_error : 1;  /* bit 7: fault 295: e2m 1036 Cold_Start_Aid_1_High_Control_Error (P0542) */
+    uint16_t cold_start_aid_2_low_control_error : 1;  /* bit 8: fault 296: e2m 1036 Cold_Start_Aid_2_Low_Control_Error (P2607) */
+    uint16_t cold_start_aid_2_high_control_error : 1;  /* bit 9: fault 297: e2m 1036 Cold_Start_Aid_2_High_Control_Error (P2608) */
+    uint16_t transmission_oil_temperature_rationality_error : 1;  /* bit 10: fault 298: e2m 1036 Transmission_Oil_Temperature_Rationality_Error (P0711) */
+    uint16_t transmission_governor_pressure_high_error : 1;  /* bit 11: fault 299: e2m 1036 Transmission_Governor_Pressure_High_Error (P0868) */
+    uint16_t transmission_governor_pressure_low_error : 1;  /* bit 12: fault 300: e2m 1036 Transmission_Governor_Pressure_Low_Error (P0869) */
+    uint16_t transmission_oil_temperature_high_error : 1;  /* bit 13: fault 301: e2m 1036 Transmission_Oil_Temperature_High_Error (P0713) */
+    uint16_t transmission_oil_temperature_low_error : 1;  /* bit 14: fault 302: e2m 1036 Transmission_Oil_Temperature_Low_Error (P0712) */
+    uint16_t high_pressure_common_rail_pressure_too_high_error : 1;  /* bit 15: fault 303: e2m 1036 HPCR_Pressure_Too_High_Error (P0088) */
+    uint16_t fuel_rail_pressure_high_error : 1;  /* bit 0: word faults_304_to_319 (e2m 1036 +26 System_Error_Status_19) bit 0 = fault 304: e2m 1036 Fuel_Rail_Pressure_High_Error (P0193) */
+    uint16_t fuel_rail_pressure_low_error : 1;  /* bit 1: fault 305: e2m 1036 Fuel_Rail_Pressure_Low_Error (P0192) */
+    uint16_t ecm_internal_temperature_low_error : 1;  /* bit 2: fault 306: e2m 1036 ECM_Internal_Temperature_Low_Error */
+    uint16_t ecm_internal_temperature_high_error : 1;  /* bit 3: fault 307: e2m 1036 ECM_Internal_Temperature_High_Error */
+    uint16_t fault_308 : 1;  /* bit 4: fault 308: e2m 1036 Chry_Dat42_Stuck_Error; e2m Chry_Dat42_Stuck_Error has an abbreviation the code does not resolve (chry; dat42) */
+    uint16_t fault_309 : 1;  /* bit 5: fault 309 */
+    uint16_t fault_310 : 1;  /* bit 6: fault 310 */
+    uint16_t fault_311 : 1;  /* bit 7: fault 311 */
+    uint16_t fault_312 : 1;  /* bit 8: fault 312 */
+    uint16_t fault_313 : 1;  /* bit 9: fault 313 */
+    uint16_t fault_314 : 1;  /* bit 10: fault 314 */
+    uint16_t fault_315 : 1;  /* bit 11: fault 315 */
+    uint16_t fault_316 : 1;  /* bit 12: fault 316 */
+    uint16_t fault_317 : 1;  /* bit 13: fault 317 */
+    uint16_t fault_318 : 1;  /* bit 14: fault 318 (P0604) */
+    uint16_t torque_converter_clutch_rationality_error : 1;  /* bit 15: fault 319: e2m 1036 TCC_Rationality_Error (P1740) */
+    uint16_t output_speed_sensor_rationality_error : 1;  /* bit 0: word faults_320_to_335 (e2m 1036 +28 System_Error_Status_20) bit 0 = fault 320: e2m 1036 OSS_Rationality_Error (P0720) */
+    uint16_t fault_321 : 1;  /* bit 1: fault 321 */
+    uint16_t fault_322 : 1;  /* bit 2: fault 322 */
+    uint16_t fault_323 : 1;  /* bit 3: fault 323 */
+    uint16_t fault_324 : 1;  /* bit 4: fault 324 */
+    uint16_t fault_325 : 1;  /* bit 5: fault 325 */
+    uint16_t fault_326 : 1;  /* bit 6: fault 326 */
+    uint16_t fault_327 : 1;  /* bit 7: fault 327 */
+    uint16_t booster_capacitor_1_voltage_high_error : 1;  /* bit 8: fault 328: e2m 1036 Booster_Cap_1_Voltage_High_Error (P0606) */
+    uint16_t booster_capacitor_1_voltage_low_error : 1;  /* bit 9: fault 329: e2m 1036 Booster_Cap_1_Voltage_Low_Error (P2146) */
+    uint16_t booster_capacitor_2_voltage_high_error : 1;  /* bit 10: fault 330: e2m 1036 Booster_Cap_2_Voltage_High_Error (P0606) */
+    uint16_t booster_capacitor_2_voltage_low_error : 1;  /* bit 11: fault 331: e2m 1036 Booster_Cap_2_Voltage_Low_Error (P2149) */
+    uint16_t wastegate_high_boost_error : 1;  /* bit 12: fault 332: e2m 1036 CWG_High_Boost_Error (P0234); CWG: fault 332 is set by cm848_monitorWastegateBoostPressure (P0234) */
+    uint16_t cp3_pump_regulator_control_error : 1;  /* bit 13: fault 333: e2m 1036 CP3_Pump_Regulator_Control_Error (P0251) */
+    uint16_t pedal_position_sensor_conformance_error : 1;  /* bit 14: fault 334: e2m 1036 PPS_Conformance_Error (P2121) */
+    uint16_t speed_limp_home_error : 1;  /* bit 15: fault 335: e2m 1036 Speed_Limp_Home_Error (P0336) */
+    uint16_t water_in_fuel_too_long_error : 1;  /* bit 0: word faults_336_to_351 (e2m 1036 +2A System_Error_Status_21) bit 0 = fault 336: e2m 1036 WIF_Too_Long_Error (P0169) */
+    uint16_t sensor_supply_1_voltage_low_error : 1;  /* bit 1: fault 337: e2m 1036 Sensor_Supply_1_Voltage_Low_Error (P0642) */
+    uint16_t sensor_supply_1_voltage_high_error : 1;  /* bit 2: fault 338: e2m 1036 Sensor_Supply_1_Voltage_High_Error (P0643) */
+    uint16_t ambient_air_temperature_rationality_error : 1;  /* bit 3: fault 339: e2m 1036 Ambient_Air_Temperature_Rationality_Error (P0071) */
+    uint16_t ambient_air_pressure_in_range_error : 1;  /* bit 4: fault 340: e2m 1036 Ambient_Air_Pressure_In_Range_Error (P0106) */
+    uint16_t low_oil_switch_error : 1;  /* bit 5: fault 341: e2m 1036 Low_Oil_Switch_Error (P0521) */
+    uint16_t fault_342 : 1;  /* bit 6: fault 342 */
+    uint16_t fault_343 : 1;  /* bit 7: fault 343 */
+    uint16_t vin_eeprom_not_entered_error : 1;  /* bit 8: fault 344: e2m 1036 VIN_E2_Not_Entered_Error (P0630) */
+    uint16_t odometer_eeprom_not_entered_error : 1;  /* bit 9: fault 345: e2m 1036 Odometer_E2_Not_Entered_Error */
+    uint16_t vehicle_theft_alarm_secret_key_eeprom_not_entered_error : 1;  /* bit 10: fault 346: e2m 1036 VTA_Secret_Key_E2_Not_Entered_Error (P0633) */
+    uint16_t pedal_position_sensor_1_low_error : 1;  /* bit 11: fault 347: e2m 1036 Pedal_Position_Sensor_1_Low_Error (P2122) */
+    uint16_t pedal_position_sensor_1_high_error : 1;  /* bit 12: fault 348: e2m 1036 Pedal_Position_Sensor_1_High_Error (P2123) */
+    uint16_t pedal_position_sensor_2_low_error : 1;  /* bit 13: fault 349: e2m 1036 Pedal_Position_Sensor_2_Low_Error (P2127) */
+    uint16_t pedal_position_sensor_2_high_error : 1;  /* bit 14: fault 350: e2m 1036 Pedal_Position_Sensor_2_High_Error (P2128) */
+    uint16_t transmission_variable_force_solenoid_pwm_driver_error : 1;  /* bit 15: fault 351: e2m 1036 Transmission_VFS_PWM_Driver_Error (P0748) */
+    uint16_t high_pressure_common_rail_cumulative_sum_leak_error : 1;  /* bit 0: word faults_352_to_367 (e2m 1036 +2C System_Error_Status_22) bit 0 = fault 352: e2m 1036 HPCR_Cusum_Leak_Error */
+    uint16_t battery_temperature_rationality_error : 1;  /* bit 1: fault 353: e2m 1036 Battery_Temperature_Rationality_Error (P0514) */
+    uint16_t intake_manifold_temperature_rationality_error : 1;  /* bit 2: fault 354: e2m 1036 Intake_Manifold_Temperature_Rationality_Error (P0111) */
+    uint16_t j1850_open_circuit_no_message_error : 1;  /* bit 3: fault 355: e2m 1036 J1850_Open_Ckt_No_Message_Error (P1652) */
+    uint16_t j1939_tsc1_lost_fault : 1;  /* bit 4: fault 356: e2m 1036 Jcomm_TSC_Lost_Fault; TSC: fault 356 is set by cm848_updateParkNeutralFlagAndTsc1Activity */
+    uint16_t checksum_error : 1;  /* bit 5: fault 357: e2m 1036 Checksum_Error (P0602) */
+    uint16_t intake_manifold_temperature_key_on_rationality_error : 1;  /* bit 6: fault 358: e2m 1036 Intake_Manifold_Temperature_Keyon_Ration_Error (P0111) */
+    uint16_t battery_temperature_key_on_rationality_error : 1;  /* bit 7: fault 359: e2m 1036 Battery_Temperature_Keyon_Rationality_Error (P0514) */
+    uint16_t ambient_air_temperature_key_on_rationality_error : 1;  /* bit 8: fault 360: e2m 1036 Ambient_Air_Temperature_Keyon_Rationality_Error (P0071) */
+    uint16_t cylinder_1_misfire_error : 1;  /* bit 9: fault 361: e2m 1036 Cylinder_1_Misfire_Error (P0301) */
+    uint16_t cylinder_2_misfire_error : 1;  /* bit 10: fault 362: e2m 1036 Cylinder_2_Misfire_Error (P0302) */
+    uint16_t cylinder_3_misfire_error : 1;  /* bit 11: fault 363: e2m 1036 Cylinder_3_Misfire_Error (P0303) */
+    uint16_t cylinder_4_misfire_error : 1;  /* bit 12: fault 364: e2m 1036 Cylinder_4_Misfire_Error (P0304) */
+    uint16_t cylinder_5_misfire_error : 1;  /* bit 13: fault 365: e2m 1036 Cylinder_5_Misfire_Error (P0305) */
+    uint16_t cylinder_6_misfire_error : 1;  /* bit 14: fault 366: e2m 1036 Cylinder_6_Misfire_Error (P0306) */
+    uint16_t multiple_cylinders_misfire_error : 1;  /* bit 15: fault 367: e2m 1036 Multiple_Cylinders_Misfire_Error (P0300) */
+    uint16_t alternator_error : 1;  /* bit 0: word faults_368_to_383 (e2m 1036 +2E System_Error_Status_23) bit 0 = fault 368: e2m 1036 Alternator_Error (P2502) */
+    uint16_t charging_system_high_error : 1;  /* bit 1: fault 369: e2m 1036 Charging_System_High_Error (P2504) */
+    uint16_t charging_system_low_error : 1;  /* bit 2: fault 370: e2m 1036 Charging_System_Low_Error (P2503) */
+    uint16_t air_conditioning_discrete_output_high_control_error : 1;  /* bit 3: fault 371: e2m 1036 AC_Discrete_Output_High_Control_Error (P0647) */
+    uint16_t air_conditioning_discrete_output_low_control_error : 1;  /* bit 4: fault 372: e2m 1036 AC_Discrete_Output_Low_Control_Error (P0646) */
+    uint16_t cruise_control_switch_multiplexed_high_error : 1;  /* bit 5: fault 373: e2m 1036 Cruise_Control_Switch_Mux_High_Error (P0581) */
+    uint16_t cruise_control_switch_multiplexed_low_error : 1;  /* bit 6: fault 374: e2m 1036 Cruise_Control_Switch_Mux_Low_Error (P0580) */
+    uint16_t engine_speed_sensor_supply_voltage_high_error : 1;  /* bit 7: fault 375: e2m 1036 Engine_Speed_Sensor_SV_High_Error (P0338); SV: e2m spells the throttle one both ways (Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV) */
+    uint16_t engine_speed_sensor_supply_voltage_low_error : 1;  /* bit 8: fault 376: e2m 1036 Engine_Speed_Sensor_SV_Low_Error (P0337); SV: e2m spells the throttle one both ways (Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV) */
+    uint16_t engine_connector_sensors_supply_voltage_high_error : 1;  /* bit 9: fault 377: e2m 1036 Engine_Conn_Sensors_SV_High_Error (P0653); SV: e2m spells the throttle one both ways (Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV) */
+    uint16_t engine_connector_sensors_supply_voltage_low_error : 1;  /* bit 10: fault 378: e2m 1036 Engine_Conn_Sensors_SV_Low_Error (P0652); SV: e2m spells the throttle one both ways (Throttle_Sensor_Supply_Voltage / Throttle_Position_Sensor_SV) */
+    uint16_t battery_temperature_high_error : 1;  /* bit 11: fault 379: e2m 1036 Battery_Temperature_High_Error (P0517) */
+    uint16_t battery_temperature_low_error : 1;  /* bit 12: fault 380: e2m 1036 Battery_Temperature_Low_Error (P0516) */
+    uint16_t fuel_level_high_error : 1;  /* bit 13: fault 381: e2m 1036 Fuel_Level_High_Error (P0463) */
+    uint16_t fuel_level_low_error : 1;  /* bit 14: fault 382: e2m 1036 Fuel_Level_Low_Error (P0462) */
+    uint16_t j1850_system_bus_fault : 1;  /* bit 15: fault 383: e2m 1036 J1850_System_Bus_Fault (P1652) */
+    uint16_t air_conditioning_pressure_high_error : 1;  /* bit 0: word faults_384_to_399 (e2m 1036 +30 System_Error_Status_24) bit 0 = fault 384: e2m 1036 AC_Pressure_High_Error (P0533) */
+    uint16_t air_conditioning_pressure_low_error : 1;  /* bit 1: fault 385: e2m 1036 AC_Pressure_Low_Error (P0532) */
+    uint16_t lift_pump_driver_high_control_error : 1;  /* bit 2: fault 386: e2m 1036 Lift_Pump_Driver_High_Control_Error (P0629) */
+    uint16_t lift_pump_driver_low_control_error : 1;  /* bit 3: fault 387: e2m 1036 Lift_Pump_Driver_Low_Control_Error (P0628) */
+    uint16_t watchdog_fueling_error : 1;  /* bit 4: fault 388: e2m 1036 Watchdog_Fueling_Error (P0606) */
+    uint16_t coolant_temperature_derate_aggressive_derate_error : 1;  /* bit 5: fault 389: e2m 1036 CT_Derate_Agg_Derate_Error (P0217); CT: faults 389 / 390 are set by the coolant overheat monitors (P0217) */
+    uint16_t coolant_temperature_derate_minimum_derate_error : 1;  /* bit 6: fault 390: e2m 1036 CT_Derate_Min_Derate_Error (P0217); CT: faults 389 / 390 are set by the coolant overheat monitors (P0217) */
+    uint16_t transmission_governor_pressure_zero_rationality_error : 1;  /* bit 7: fault 391: e2m 1036 RE_Governor_Pr_Zero_Rationality_Error (P1757) */
+    uint16_t transmission_governor_pressure_mid_rationality_error : 1;  /* bit 8: fault 392: e2m 1036 RE_Governor_Pr_Mid_Rationality_Error (P1756) */
+    uint16_t low_oil_pressure_error : 1;  /* bit 9: fault 393: e2m 1036 Low_Oil_Pressure_Error (P0524) */
+    uint16_t brake_switch_high_error : 1;  /* bit 10: fault 394: e2m 1036 Brake_Switch_High_Error (P0573) */
+    uint16_t brake_switch_low_error : 1;  /* bit 11: fault 395: e2m 1036 Brake_Switch_Low_Error (P0572) */
+    uint16_t alternator_field_driver_control_error : 1;  /* bit 12: fault 396: e2m 1036 EVR_Driver_Control_Error (P0622); EVR: fault 396 = output 27; the alternator field; P0622 (the output read-back debounce) */
+    uint16_t obd_fuel_level_low_error : 1;  /* bit 13: fault 397: e2m 1036 OBD_Fuel_Level_Low_Error */
+    uint16_t fuel_level_rationality_error : 1;  /* bit 14: fault 398: e2m 1036 Fuel_Level_Rationality_Error (P0461) */
+    uint16_t fuel_system_shutdown_hardware_error : 1;  /* bit 15: fault 399: e2m 1036 FS_Shutdown_HW_Error (P0607) */
+    uint16_t thermostat_system_error : 1;  /* bit 0: word faults_400_to_415 (e2m 1036 +32 System_Error_Status_25) bit 0 = fault 400: e2m 1036 Tstat_System_Error (P0128) */
+    uint16_t coolant_temperature_in_range_error : 1;  /* bit 1: fault 401: e2m 1036 Coolant_Temperature_In_Range_Error (P0116) */
+    uint16_t fuel_temperature_in_range_error : 1;  /* bit 2: fault 402: e2m 1036 Fuel_Temperature_In_Range_Error */
+    uint16_t wastegate_pressure_control_driver_error : 1;  /* bit 3: fault 403: e2m 1036 Wastegate_Pressure_Control_Driver_Error (P0243) */
+    uint16_t transmission_receive_emissions_fault : 1;  /* bit 4: fault 404: e2m 1036 Transmission_Rx_Emissions_Fault */
+    uint16_t transmission_receive_message_fault : 1;  /* bit 5: fault 405: e2m 1036 Transmission_Rx_Message_Fault */
+    uint16_t transfer_case_switch_multiplexed_out_of_range_error : 1;  /* bit 6: fault 406: e2m 1036 Tcase_Switch_Mux_OOR_Error (P0837) */
+    uint16_t fan_speed_error : 1;  /* bit 7: fault 407: e2m 1036 Fan_Speed_Error (P0483) */
+    uint16_t high_pressure_common_rail_cumulative_sum_positive_error : 1;  /* bit 8: fault 408: e2m 1036 HPCR_Cusum_Pos_Error (P0148) */
+    uint16_t high_pressure_common_rail_cumulative_sum_negative_error : 1;  /* bit 9: fault 409: e2m 1036 HPCR_Cusum_Neg_Error (P0148) */
+    uint16_t fault_410 : 1;  /* bit 10: fault 410 */
+    uint16_t intake_air_heater_system_error : 1;  /* bit 11: fault 411: e2m 1036 Intake_Air_Heater_System_Error (P2609) */
+    uint16_t transfer_case_switch_multiplexed_high_error : 1;  /* bit 12: fault 412: e2m 1036 Tcase_Switch_Mux_High_Error (P0839) */
+    uint16_t transfer_case_switch_multiplexed_low_error : 1;  /* bit 13: fault 413: e2m 1036 Tcase_Switch_Mux_Low_Error (P0838) */
+    uint16_t fuel_pressure_key_on_rationality_error : 1;  /* bit 14: fault 414: e2m 1036 Fuel_Pressure_Keyon_Rationality_Error (P0191) */
+    uint16_t turbocharger_high_boost_error : 1;  /* bit 15: fault 415: e2m 1036 Turbo_High_Boost_Error (P0234) */
+    uint16_t cylinder_7_misfire_error : 1;  /* bit 0: word faults_416_to_431 (e2m 1036 +34 System_Error_Status_26) bit 0 = fault 416: e2m 1036 Cylinder_7_Misfire_Error */
+    uint16_t cylinder_8_misfire_error : 1;  /* bit 1: fault 417: e2m 1036 Cylinder_8_Misfire_Error */
+    uint16_t injector_7_open_circuit_error : 1;  /* bit 2: fault 418: e2m 1036 Injector_7_Open_Circuit_Error */
+    uint16_t injector_8_open_circuit_error : 1;  /* bit 3: fault 419: e2m 1036 Injector_8_Open_Circuit_Error */
+    uint16_t injector_7_short_to_battery_error : 1;  /* bit 4: fault 420: e2m 1036 Injector_7_Short_to_Vbatt_Error */
+    uint16_t injector_8_short_to_battery_error : 1;  /* bit 5: fault 421: e2m 1036 Injector_8_Short_to_Vbatt_Error */
+    uint16_t injector_7_short_to_ground_error : 1;  /* bit 6: fault 422: e2m 1036 Injector_7_Short_to_Ground_Error */
+    uint16_t injector_8_short_to_ground_error : 1;  /* bit 7: fault 423: e2m 1036 Injector_8_Short_to_Ground_Error */
+    uint16_t injector_7_fast_decay_error : 1;  /* bit 8: fault 424: e2m 1036 Injector_7_Fast_Decay_Error */
+    uint16_t injector_8_fast_decay_error : 1;  /* bit 9: fault 425: e2m 1036 Injector_8_Fast_Decay_Error */
+    uint16_t fault_426 : 1;  /* bit 10: fault 426 */
+    uint16_t fault_427 : 1;  /* bit 11: fault 427 */
+    uint16_t fault_428 : 1;  /* bit 12: fault 428 */
+    uint16_t fault_429 : 1;  /* bit 13: fault 429 */
+    uint16_t fault_430 : 1;  /* bit 14: fault 430 */
+    uint16_t fault_431 : 1;  /* bit 15: fault 431 */
+    uint16_t can_general_network_error : 1;  /* bit 0: word faults_432_to_447 (e2m 1036 +36 System_Error_Status_27) bit 0 = fault 432: e2m 1036 CAN_General_Network_Error (P0653) */
+    uint16_t implausible_air_conditioning_pressure_voltage_from_totally_integrated_power_module_error : 1;  /* bit 1: fault 433: e2m 1036 Implausible_AC_Pressure_Voltage_From_TIPM_Error */
+    uint16_t implausible_fuel_voltage_from_totally_integrated_power_module_error : 1;  /* bit 2: fault 434: e2m 1036 Implausible_Fuel_Voltage_From_TIPM_Error */
+    uint16_t implausible_ignition_off_timer_from_totally_integrated_power_module_error : 1;  /* bit 3: fault 435: e2m 1036 Implausible_Ign_Off_Timer_From_TIPM_Error */
+    uint16_t implausible_vehicle_speed_from_abs_error : 1;  /* bit 4: fault 436: e2m 1036 Implausible_Vehicle_Speed_From_ABS_Error */
+    uint16_t lost_communication_with_abs_error : 1;  /* bit 5: fault 437: e2m 1036 Lost_Communication_With_ABS_Error */
+    uint16_t lost_communication_with_totally_integrated_power_module_error : 1;  /* bit 6: fault 438: e2m 1036 Lost_Communication_With_TIPM_Error */
+    uint16_t vehicle_theft_alarm_invalid_key_error : 1;  /* bit 7: fault 439: e2m 1036 VTA_Invalid_Key_Error */
+    uint16_t fault_440 : 1;  /* bit 8: fault 440 */
+    uint16_t fault_441 : 1;  /* bit 9: fault 441 */
+    uint16_t fault_442 : 1;  /* bit 10: fault 442 */
+    uint16_t fault_443 : 1;  /* bit 11: fault 443 */
+    uint16_t fault_444 : 1;  /* bit 12: fault 444 */
+    uint16_t fault_445 : 1;  /* bit 13: fault 445 */
+    uint16_t fault_446 : 1;  /* bit 14: fault 446 */
+    uint16_t fault_447 : 1;  /* bit 15: fault 447 */
+    uint16_t fault_448 : 1;  /* bit 0: word faults_448_to_463 (e2m 1036 +38 System_Error_Status_28) bit 0 = fault 448 */
+    uint16_t fault_449 : 1;  /* bit 1: fault 449 */
+    uint16_t fault_450 : 1;  /* bit 2: fault 450 */
+    uint16_t fault_451 : 1;  /* bit 3: fault 451 */
+    uint16_t fault_452 : 1;  /* bit 4: fault 452 */
+    uint16_t fault_453 : 1;  /* bit 5: fault 453 */
+    uint16_t fault_454 : 1;  /* bit 6: fault 454 */
+    uint16_t fault_455 : 1;  /* bit 7: fault 455 */
+    uint16_t fault_456 : 1;  /* bit 8: fault 456 */
+    uint16_t fault_457 : 1;  /* bit 9: fault 457 */
+    uint16_t fault_458 : 1;  /* bit 10: fault 458 */
+    uint16_t fault_459 : 1;  /* bit 11: fault 459 */
+    uint16_t fault_460 : 1;  /* bit 12: fault 460 */
+    uint16_t fault_461 : 1;  /* bit 13: fault 461 */
+    uint16_t fault_462 : 1;  /* bit 14: fault 462 */
+    uint16_t fault_463 : 1;  /* bit 15: fault 463 */
+    uint16_t fault_464 : 1;  /* bit 0: word faults_464_to_479 (e2m 1036 +3A System_Error_Status_29) bit 0 = fault 464 */
+    uint16_t fault_465 : 1;  /* bit 1: fault 465 */
+    uint16_t fault_466 : 1;  /* bit 2: fault 466 */
+    uint16_t fault_467 : 1;  /* bit 3: fault 467 */
+    uint16_t fault_468 : 1;  /* bit 4: fault 468 */
+    uint16_t fault_469 : 1;  /* bit 5: fault 469 */
+    uint16_t fault_470 : 1;  /* bit 6: fault 470 */
+    uint16_t fault_471 : 1;  /* bit 7: fault 471 */
+    uint16_t fault_472 : 1;  /* bit 8: fault 472 */
+    uint16_t fault_473 : 1;  /* bit 9: fault 473 */
+    uint16_t fault_474 : 1;  /* bit 10: fault 474 */
+    uint16_t fault_475 : 1;  /* bit 11: fault 475 */
+    uint16_t fault_476 : 1;  /* bit 12: fault 476 */
+    uint16_t fault_477 : 1;  /* bit 13: fault 477 */
+    uint16_t fault_478 : 1;  /* bit 14: fault 478 */
+    uint16_t fault_479 : 1;  /* bit 15: fault 479 */
+    uint16_t fault_480 : 1;  /* bit 0: word faults_480_to_495 (e2m 1036 +3C System_Error_Status_30) bit 0 = fault 480 */
+    uint16_t fault_481 : 1;  /* bit 1: fault 481 */
+    uint16_t fault_482 : 1;  /* bit 2: fault 482 */
+    uint16_t fault_483 : 1;  /* bit 3: fault 483 */
+    uint16_t fault_484 : 1;  /* bit 4: fault 484 */
+    uint16_t fault_485 : 1;  /* bit 5: fault 485 */
+    uint16_t fault_486 : 1;  /* bit 6: fault 486 */
+    uint16_t fault_487 : 1;  /* bit 7: fault 487 */
+    uint16_t fault_488 : 1;  /* bit 8: fault 488 */
+    uint16_t fault_489 : 1;  /* bit 9: fault 489 */
+    uint16_t fault_490 : 1;  /* bit 10: fault 490 */
+    uint16_t fault_491 : 1;  /* bit 11: fault 491 */
+    uint16_t fault_492 : 1;  /* bit 12: fault 492 */
+    uint16_t fault_493 : 1;  /* bit 13: fault 493 */
+    uint16_t fault_494 : 1;  /* bit 14: fault 494 */
+    uint16_t fault_495 : 1;  /* bit 15: fault 495 */
+    uint16_t fault_496 : 1;  /* bit 0: word faults_496_to_511 (e2m 1036 +3E System_Error_Status_31) bit 0 = fault 496 */
+    uint16_t fault_497 : 1;  /* bit 1: fault 497 */
+    uint16_t fault_498 : 1;  /* bit 2: fault 498 */
+    uint16_t fault_499 : 1;  /* bit 3: fault 499 */
+    uint16_t fault_500 : 1;  /* bit 4: fault 500 */
+    uint16_t fault_501 : 1;  /* bit 5: fault 501 */
+    uint16_t fault_502 : 1;  /* bit 6: fault 502 */
+    uint16_t fault_503 : 1;  /* bit 7: fault 503 */
+    uint16_t fault_504 : 1;  /* bit 8: fault 504 */
+    uint16_t fault_505 : 1;  /* bit 9: fault 505 */
+    uint16_t fault_506 : 1;  /* bit 10: fault 506 */
+    uint16_t fault_507 : 1;  /* bit 11: fault 507 */
+    uint16_t fault_508 : 1;  /* bit 12: fault 508 */
+    uint16_t diagnostic_low_battery_voltage_error : 1;  /* bit 13: fault 509: e2m 1036 Gen_Diag_Low_Battery_Voltage_Error */
+    uint16_t obd_low_battery_voltage_error : 1;  /* bit 14: fault 510: e2m 1036 OBD_Low_Battery_Voltage_Error */
+    uint16_t fault_511 : 1;  /* bit 15: fault 511 */
+    uint16_t egr_orifice_temperature_rationality_error : 1;  /* bit 0: word faults_512_to_527 (e2m 1036 +40 System_Error_Status_32) bit 0 = fault 512: e2m 1036 EGR_Orifice_Temp_Rationality_Error */
+    uint16_t egr_orifice_temperature_startup_error : 1;  /* bit 1: fault 513: e2m 1036 EGR_Orifice_Temp_Startup_Error */
+    uint16_t egr_valve_rationality_error : 1;  /* bit 2: fault 514: e2m 1036 EGR_Valve_Rationality_Error */
+    uint16_t egr_valve_response_time_error : 1;  /* bit 3: fault 515: e2m 1036 EGR_Valve_Response_Time_Error */
+    uint16_t fault_516 : 1;  /* bit 4: fault 516 */
+    uint16_t fault_517 : 1;  /* bit 5: fault 517 */
+    uint16_t boost_in_range_error : 1;  /* bit 6: fault 518: e2m 1036 Boost_In_Range_Error */
+    uint16_t variable_geometry_turbocharger_stuck_actuator_error : 1;  /* bit 7: fault 519: e2m 1036 TVA_Stuck_Actuator_Error (B1976); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position */
+    uint16_t variable_geometry_turbocharger_position_rationality_error : 1;  /* bit 8: fault 520: e2m 1036 TVA_Position_Rationality_Error (B1972); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position */
+    uint16_t variable_geometry_turbocharger_span_error : 1;  /* bit 9: fault 521: e2m 1036 TVA_Span_Error (B1975); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position */
+    uint16_t variable_geometry_turbocharger_autozero_error : 1;  /* bit 10: fault 522: e2m 1036 TVA_AZ_Error (B1971); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position */
+    uint16_t fault_523 : 1;  /* bit 11: fault 523 */
+    uint16_t fault_524 : 1;  /* bit 12: fault 524 */
+    uint16_t variable_geometry_turbocharger_motor_over_current_error : 1;  /* bit 13: fault 525: e2m 1036 TVA_Motor_Overcurrent_Error; TVA: e2m names channel 101's VGT position block TVA_Sampled_Position */
+    uint16_t variable_geometry_turbocharger_electrical_fault : 1;  /* bit 14: fault 526: e2m 1036 TVA_Electrical_Fault; TVA: e2m names channel 101's VGT position block TVA_Sampled_Position */
+    uint16_t charge_pressure_in_range_error : 1;  /* bit 15: fault 527: e2m 1036 Charge_Press_IR_Error; IR: fault 527 is set by cm848_updateChargePressureInRangeFaultCount */
+    uint16_t fault_528 : 1;  /* bit 0: word faults_528_to_543 (e2m 1036 +42 System_Error_Status_33) bit 0 = fault 528 */
+    uint16_t fault_529 : 1;  /* bit 1: fault 529 */
+    uint16_t fault_530 : 1;  /* bit 2: fault 530 */
+    uint16_t fault_531 : 1;  /* bit 3: fault 531 */
+    uint16_t fault_532 : 1;  /* bit 4: fault 532 */
+    uint16_t fault_533 : 1;  /* bit 5: fault 533 */
+    uint16_t fault_534 : 1;  /* bit 6: fault 534 */
+    uint16_t fault_535 : 1;  /* bit 7: fault 535 */
+    uint16_t fault_536 : 1;  /* bit 8: fault 536 */
+    uint16_t fault_537 : 1;  /* bit 9: fault 537 */
+    uint16_t fault_538 : 1;  /* bit 10: fault 538 */
+    uint16_t fault_539 : 1;  /* bit 11: fault 539 */
+    uint16_t fault_540 : 1;  /* bit 12: fault 540 */
+    uint16_t fault_541 : 1;  /* bit 13: fault 541 */
+    uint16_t fault_542 : 1;  /* bit 14: fault 542 */
+    uint16_t fault_543 : 1;  /* bit 15: fault 543 */
+    uint16_t fault_544 : 1;  /* bit 0: word faults_544_to_559 (e2m 1036 +44 System_Error_Status_34) bit 0 = fault 544 */
+    uint16_t fault_545 : 1;  /* bit 1: fault 545 */
+    uint16_t fault_546 : 1;  /* bit 2: fault 546 */
+    uint16_t fault_547 : 1;  /* bit 3: fault 547 */
+    uint16_t fault_548 : 1;  /* bit 4: fault 548 */
+    uint16_t fault_549 : 1;  /* bit 5: fault 549 */
+    uint16_t fault_550 : 1;  /* bit 6: fault 550 */
+    uint16_t fault_551 : 1;  /* bit 7: fault 551 */
+    uint16_t fault_552 : 1;  /* bit 8: fault 552 */
+    uint16_t fault_553 : 1;  /* bit 9: fault 553 */
+    uint16_t fault_554 : 1;  /* bit 10: fault 554 */
+    uint16_t fault_555 : 1;  /* bit 11: fault 555 */
+    uint16_t fault_556 : 1;  /* bit 12: fault 556 */
+    uint16_t fault_557 : 1;  /* bit 13: fault 557 */
+    uint16_t fault_558 : 1;  /* bit 14: fault 558 */
+    uint16_t fault_559 : 1;  /* bit 15: fault 559 */
+    uint16_t fault_560 : 1;  /* bit 0: word faults_560_to_575 (e2m 1036 +46 System_Error_Status_35) bit 0 = fault 560 */
+    uint16_t fault_561 : 1;  /* bit 1: fault 561 */
+    uint16_t fault_562 : 1;  /* bit 2: fault 562 */
+    uint16_t fault_563 : 1;  /* bit 3: fault 563 */
+    uint16_t fault_564 : 1;  /* bit 4: fault 564 */
+    uint16_t fault_565 : 1;  /* bit 5: fault 565 */
+    uint16_t fault_566 : 1;  /* bit 6: fault 566 */
+    uint16_t fault_567 : 1;  /* bit 7: fault 567 */
+    uint16_t fault_568 : 1;  /* bit 8: fault 568 */
+    uint16_t fault_569 : 1;  /* bit 9: fault 569 */
+    uint16_t fault_570 : 1;  /* bit 10: fault 570 */
+    uint16_t fault_571 : 1;  /* bit 11: fault 571 */
+    uint16_t fault_572 : 1;  /* bit 12: fault 572 */
+    uint16_t fault_573 : 1;  /* bit 13: fault 573 */
+    uint16_t fault_574 : 1;  /* bit 14: fault 574 */
+    uint16_t fault_575 : 1;  /* bit 15: fault 575 */
+    uint16_t fault_576 : 1;  /* bit 0: word faults_576_to_591 (e2m 1036 +48 System_Error_Status_36) bit 0 = fault 576 */
+    uint16_t fault_577 : 1;  /* bit 1: fault 577 */
+    uint16_t fault_578 : 1;  /* bit 2: fault 578 */
+    uint16_t fault_579 : 1;  /* bit 3: fault 579 */
+    uint16_t fault_580 : 1;  /* bit 4: fault 580 */
+    uint16_t fault_581 : 1;  /* bit 5: fault 581 */
+    uint16_t fault_582 : 1;  /* bit 6: fault 582 */
+    uint16_t fault_583 : 1;  /* bit 7: fault 583 */
+    uint16_t fault_584 : 1;  /* bit 8: fault 584 */
+    uint16_t fault_585 : 1;  /* bit 9: fault 585 */
+    uint16_t fault_586 : 1;  /* bit 10: fault 586 */
+    uint16_t fault_587 : 1;  /* bit 11: fault 587 */
+    uint16_t fault_588 : 1;  /* bit 12: fault 588 */
+    uint16_t fault_589 : 1;  /* bit 13: fault 589 */
+    uint16_t fault_590 : 1;  /* bit 14: fault 590 */
+    uint16_t fault_591 : 1;  /* bit 15: fault 591 */
+    uint16_t fault_592 : 1;  /* bit 0: word faults_592_to_607 (e2m 1036 +4A System_Error_Status_37) bit 0 = fault 592 */
+    uint16_t fault_593 : 1;  /* bit 1: fault 593 */
+    uint16_t fault_594 : 1;  /* bit 2: fault 594 */
+    uint16_t fault_595 : 1;  /* bit 3: fault 595 */
+    uint16_t oil_pressure_error : 1;  /* bit 4: fault 596: e2m 1036 Oil_Pressure_Error */
+    uint16_t oil_pressure_high_postprocessed_error : 1;  /* bit 5: fault 597: e2m 1036 Oil_Pressure_High_Postprocessed_Error */
+    uint16_t fault_598 : 1;  /* bit 6: fault 598 */
+    uint16_t fault_599 : 1;  /* bit 7: fault 599 */
+    uint16_t fault_600 : 1;  /* bit 8: fault 600 */
+    uint16_t fault_601 : 1;  /* bit 9: fault 601 */
+    uint16_t fault_602 : 1;  /* bit 10: fault 602 */
+    uint16_t fault_603 : 1;  /* bit 11: fault 603 */
+    uint16_t fault_604 : 1;  /* bit 12: fault 604 */
+    uint16_t fault_605 : 1;  /* bit 13: fault 605 */
+    uint16_t fault_606 : 1;  /* bit 14: fault 606 */
+    uint16_t fault_607 : 1;  /* bit 15: fault 607 */
+    uint16_t fault_608 : 1;  /* bit 0: word faults_608_to_623 (e2m 1036 +4C System_Error_Status_38) bit 0 = fault 608 */
+    uint16_t fault_609 : 1;  /* bit 1: fault 609 */
+    uint16_t fault_610 : 1;  /* bit 2: fault 610 */
+    uint16_t turbocharger_speed_high_error : 1;  /* bit 3: fault 611: e2m 1036 Turbo_Speed_High_Error (P2581) */
+    uint16_t fault_612 : 1;  /* bit 4: fault 612 */
+    uint16_t turbocharger_speed_low_error : 1;  /* bit 5: fault 613: e2m 1036 Turbo_Speed_Low_Error (P2580) */
+    uint16_t fault_614 : 1;  /* bit 6: fault 614 */
+    uint16_t fault_615 : 1;  /* bit 7: fault 615 */
+    uint16_t fault_616 : 1;  /* bit 8: fault 616 */
+    uint16_t fault_617 : 1;  /* bit 9: fault 617 */
+    uint16_t turbocharger_speed_in_range_error : 1;  /* bit 10: fault 618: e2m 1036 Turbo_Speed_In_Range_Error (P2579) */
+    uint16_t fault_619 : 1;  /* bit 11: fault 619: e2m 1036 /; e2m '/' names two applications and no DTC decides */
+    uint16_t fault_620 : 1;  /* bit 12: fault 620 (B1934) */
+    uint16_t fault_621 : 1;  /* bit 13: fault 621 */
+    uint16_t fault_622 : 1;  /* bit 14: fault 622 */
+    uint16_t fault_623 : 1;  /* bit 15: fault 623 */
+    uint16_t fault_624 : 1;  /* bit 0: word faults_624_to_639 (e2m 1036 +4E System_Error_Status_39) bit 0 = fault 624 */
+    uint16_t fault_625 : 1;  /* bit 1: fault 625 */
+    uint16_t fault_626 : 1;  /* bit 2: fault 626 */
+    uint16_t fault_627 : 1;  /* bit 3: fault 627 */
+    uint16_t fault_628 : 1;  /* bit 4: fault 628 */
+    uint16_t fault_629 : 1;  /* bit 5: fault 629 */
+    uint16_t fault_630 : 1;  /* bit 6: fault 630 */
+    uint16_t fault_631 : 1;  /* bit 7: fault 631 */
+    uint16_t fault_632 : 1;  /* bit 8: fault 632 */
+    uint16_t fault_633 : 1;  /* bit 9: fault 633 */
+    uint16_t fault_634 : 1;  /* bit 10: fault 634 */
+    uint16_t fault_635 : 1;  /* bit 11: fault 635 */
+    uint16_t fault_636 : 1;  /* bit 12: fault 636 */
+    uint16_t fault_637 : 1;  /* bit 13: fault 637 */
+    uint16_t fault_638 : 1;  /* bit 14: fault 638 */
+    uint16_t fault_639 : 1;  /* bit 15: fault 639 */
+    uint16_t fault_640 : 1;  /* bit 0: word faults_640_to_655 (e2m 1036 +50 System_Error_Status_40) bit 0 = fault 640 */
+    uint16_t fault_641 : 1;  /* bit 1: fault 641 */
+    uint16_t egr_position_before_autozero_high_error : 1;  /* bit 2: fault 642: e2m 1036 EGR_Position_Before_Autozero_High_Error */
+    uint16_t egr_position_before_autozero_low_error : 1;  /* bit 3: fault 643: e2m 1036 EGR_Position_Before_Autozero_Low_Error */
+    uint16_t fault_644 : 1;  /* bit 4: fault 644 */
+    uint16_t fault_645 : 1;  /* bit 5: fault 645 */
+    uint16_t fault_646 : 1;  /* bit 6: fault 646 */
+    uint16_t fault_647 : 1;  /* bit 7: fault 647 */
+    uint16_t boost_pressure_absolute_high_error : 1;  /* bit 8: fault 648: e2m 1036 Boost_Pressure_Absolute_High_Error */
+    uint16_t boost_pressure_absolute_low_error : 1;  /* bit 9: fault 649: e2m 1036 Boost_Pressure_Absolute_Low_Error */
+    uint16_t fault_650 : 1;  /* bit 10: fault 650 */
+    uint16_t fault_651 : 1;  /* bit 11: fault 651 */
+    uint16_t fault_652 : 1;  /* bit 12: fault 652 */
+    uint16_t fault_653 : 1;  /* bit 13: fault 653 */
+    uint16_t fault_654 : 1;  /* bit 14: fault 654 */
+    uint16_t fault_655 : 1;  /* bit 15: fault 655 */
+    uint16_t fault_656 : 1;  /* bit 0: word faults_656_to_671 (e2m 1036 +52 System_Error_Status_41) bit 0 = fault 656 */
+    uint16_t fault_657 : 1;  /* bit 1: fault 657 */
+    uint16_t exhaust_throttle_position_high_error : 1;  /* bit 2: fault 658: e2m 1036 Exhaust_Throttle_Position_High_Error */
+    uint16_t exhaust_throttle_position_low_error : 1;  /* bit 3: fault 659: e2m 1036 Exhaust_Throttle_Position_Low_Error */
+    uint16_t fault_660 : 1;  /* bit 4: fault 660 */
+    uint16_t fault_661 : 1;  /* bit 5: fault 661 */
+    uint16_t fault_662 : 1;  /* bit 6: fault 662 */
+    uint16_t fault_663 : 1;  /* bit 7: fault 663 */
+    uint16_t fault_664 : 1;  /* bit 8: fault 664 */
+    uint16_t fault_665 : 1;  /* bit 9: fault 665 */
+    uint16_t fault_666 : 1;  /* bit 10: fault 666 */
+    uint16_t fault_667 : 1;  /* bit 11: fault 667 */
+    uint16_t fault_668 : 1;  /* bit 12: fault 668 */
+    uint16_t fault_669 : 1;  /* bit 13: fault 669 */
+    uint16_t variable_geometry_turbocharger_closed_adjustment_error : 1;  /* bit 14: fault 670: e2m 1036 VGT_Closed_Adjustment_Error */
+    uint16_t variable_geometry_turbocharger_span_adjustment_error : 1;  /* bit 15: fault 671: e2m 1036 VGT_Span_Adjustment_Error */
+    uint16_t exhaust_pressure_sensor_high_error : 1;  /* bit 0: word faults_672_to_687 (e2m 1036 +54 System_Error_Status_42) bit 0 = fault 672: e2m 1036 Exhaust_Pressure_Sensor_High_Error */
+    uint16_t exhaust_pressure_sensor_low_error : 1;  /* bit 1: fault 673: e2m 1036 Exhaust_Pressure_Sensor_Low_Error */
+    uint16_t fault_674 : 1;  /* bit 2: fault 674 */
+    uint16_t fault_675 : 1;  /* bit 3: fault 675 */
+    uint16_t fault_676 : 1;  /* bit 4: fault 676 */
+    uint16_t fault_677 : 1;  /* bit 5: fault 677 */
+    uint16_t fault_678 : 1;  /* bit 6: fault 678 */
+    uint16_t fault_679 : 1;  /* bit 7: fault 679 */
+    uint16_t fault_680 : 1;  /* bit 8: fault 680 */
+    uint16_t fault_681 : 1;  /* bit 9: fault 681 */
+    uint16_t fault_682 : 1;  /* bit 10: fault 682 */
+    uint16_t fault_683 : 1;  /* bit 11: fault 683 */
+    uint16_t fault_684 : 1;  /* bit 12: fault 684 */
+    uint16_t fault_685 : 1;  /* bit 13: fault 685 */
+    uint16_t fault_686 : 1;  /* bit 14: fault 686 */
+    uint16_t fault_687 : 1;  /* bit 15: fault 687 */
+    uint16_t fault_688 : 1;  /* bit 0: word faults_688_to_703 (e2m 1036 +56 System_Error_Status_43) bit 0 = fault 688 */
+    uint16_t fault_689 : 1;  /* bit 1: fault 689 */
+    uint16_t egr_delta_pressure_sensor_high_error : 1;  /* bit 2: fault 690: e2m 1036 EGR_Delta_P_Sensor_High_Error */
+    uint16_t egr_delta_pressure_sensor_low_error : 1;  /* bit 3: fault 691: e2m 1036 EGR_Delta_P_Sensor_Low_Error */
+    uint16_t fault_692 : 1;  /* bit 4: fault 692 */
+    uint16_t fault_693 : 1;  /* bit 5: fault 693 */
+    uint16_t fault_694 : 1;  /* bit 6: fault 694 */
+    uint16_t fault_695 : 1;  /* bit 7: fault 695 */
+    uint16_t fault_696 : 1;  /* bit 8: fault 696 */
+    uint16_t fault_697 : 1;  /* bit 9: fault 697 */
+    uint16_t fault_698 : 1;  /* bit 10: fault 698 */
+    uint16_t fault_699 : 1;  /* bit 11: fault 699 */
+    uint16_t fault_700 : 1;  /* bit 12: fault 700 */
+    uint16_t fault_701 : 1;  /* bit 13: fault 701 */
+    uint16_t fault_702 : 1;  /* bit 14: fault 702 */
+    uint16_t fault_703 : 1;  /* bit 15: fault 703 */
+    uint16_t fault_704 : 1;  /* bit 0: word faults_704_to_719 (e2m 1036 +58 System_Error_Status_44) bit 0 = fault 704 */
+    uint16_t fault_705 : 1;  /* bit 1: fault 705 */
+    uint16_t fault_706 : 1;  /* bit 2: fault 706 */
+    uint16_t fault_707 : 1;  /* bit 3: fault 707 */
+    uint16_t fault_708 : 1;  /* bit 4: fault 708 */
+    uint16_t fault_709 : 1;  /* bit 5: fault 709: e2m 1036 VGT_Position_PP_High_Error; e2m VGT_Position_PP_High_Error has an abbreviation the code does not resolve (pp) */
+    uint16_t fault_710 : 1;  /* bit 6: fault 710: e2m 1036 VGT_Position_PP_Low_Error; e2m VGT_Position_PP_Low_Error has an abbreviation the code does not resolve (pp) */
+    uint16_t fault_711 : 1;  /* bit 7: fault 711 */
+    uint16_t fault_712 : 1;  /* bit 8: fault 712 */
+    uint16_t fault_713 : 1;  /* bit 9: fault 713 */
+    uint16_t fault_714 : 1;  /* bit 10: fault 714 */
+    uint16_t fault_715 : 1;  /* bit 11: fault 715 */
+    uint16_t fault_716 : 1;  /* bit 12: fault 716 */
+    uint16_t fault_717 : 1;  /* bit 13: fault 717 */
+    uint16_t egr_valve_autozero_error : 1;  /* bit 14: fault 718: e2m 1036 EGR_Valve_Autozero_Error */
+    uint16_t egr_delta_pressure_autozero_error : 1;  /* bit 15: fault 719: e2m 1036 EGR_Delta_P_Autozero_Error */
+    uint16_t egr_valve_actuator_fault_h_bridge_1_a : 1;  /* bit 0: word faults_720_to_735 (e2m 1036 +5A System_Error_Status_45) bit 0 = fault 720: e2m 1036 EGA_Fault_HB1A; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t egr_valve_actuator_fault_h_bridge_1_b : 1;  /* bit 1: fault 721: e2m 1036 EGA_Fault_HB1B; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t egr_valve_actuator_fault_h_bridge_1_over_current_high : 1;  /* bit 2: fault 722: e2m 1036 EGA_Fault_HB1_OC_HI; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t egr_valve_actuator_fault_h_bridge_1_over_current_low : 1;  /* bit 3: fault 723: e2m 1036 EGA_Fault_HB1_OC_LO; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t egr_valve_actuator_fault_h_bridge_1_inrush : 1;  /* bit 4: fault 724: e2m 1036 EGA_Fault_HB1_Inrush; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t egr_valve_actuator_control_error : 1;  /* bit 5: fault 725: e2m 1036 EGA_Control_Error; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t egr_valve_actuator_electrical_fault : 1;  /* bit 6: fault 726: e2m 1036 EGA_Electrical_Fault; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t egr_valve_actuator_driver_over_current : 1;  /* bit 7: fault 727: e2m 1036 EGA_Driver_Over_Current; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t egr_valve_actuator_over_temperature : 1;  /* bit 8: fault 728: e2m 1036 EGA_Over_Temperature; EGA: faults 720-728 are set by cm848_processEgrValveHBridgeFaults and its egr_valve family */
+    uint16_t boost_in_range_low_error : 1;  /* bit 9: fault 729: e2m 1036 Boost_In_Range_Low_Error (P0299) */
+    uint16_t fault_730 : 1;  /* bit 10: fault 730 */
+    uint16_t fault_731 : 1;  /* bit 11: fault 731 */
+    uint16_t fault_732 : 1;  /* bit 12: fault 732 */
+    uint16_t fault_733 : 1;  /* bit 13: fault 733 */
+    uint16_t fault_734 : 1;  /* bit 14: fault 734 */
+    uint16_t fault_735 : 1;  /* bit 15: fault 735 */
+    uint16_t fault_736 : 1;  /* bit 0: word faults_736_to_751 (e2m 1036 +5C System_Error_Status_46) bit 0 = fault 736 */
+    uint16_t fault_737 : 1;  /* bit 1: fault 737 */
+    uint16_t variable_geometry_turbocharger_actuator_fault_h_bridge_0_a : 1;  /* bit 2: fault 738: e2m 1036 VGA_Fault_HB0A; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t variable_geometry_turbocharger_actuator_fault_h_bridge_0_b : 1;  /* bit 3: fault 739: e2m 1036 VGA_Fault_HB0B; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t variable_geometry_turbocharger_actuator_fault_h_bridge_0_over_current_high : 1;  /* bit 4: fault 740: e2m 1036 VGA_Fault_HB0_OC_HI; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t variable_geometry_turbocharger_actuator_fault_h_bridge_0_over_current_low : 1;  /* bit 5: fault 741: e2m 1036 VGA_Fault_HB0_OC_LO; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t variable_geometry_turbocharger_actuator_fault_h_bridge_0_inrush : 1;  /* bit 6: fault 742: e2m 1036 VGA_Fault_HB0_Inrush; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t variable_geometry_turbocharger_actuator_control_error : 1;  /* bit 7: fault 743: e2m 1036 VGA_Control_Error; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t variable_geometry_turbocharger_actuator_electrical_fault : 1;  /* bit 8: fault 744: e2m 1036 VGA_Electrical_Fault (B1978); VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t variable_geometry_turbocharger_actuator_driver_over_current : 1;  /* bit 9: fault 745: e2m 1036 VGA_Driver_Over_Current; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t variable_geometry_turbocharger_actuator_over_temperature : 1;  /* bit 10: fault 746: e2m 1036 VGA_Over_Temperature; VGA: faults 738-746 are set by cm848_processVariableGeometryTurbochargerHBridgeFaults and its family */
+    uint16_t fault_747 : 1;  /* bit 11: fault 747 */
+    uint16_t fault_748 : 1;  /* bit 12: fault 748 */
+    uint16_t fault_749 : 1;  /* bit 13: fault 749 */
+    uint16_t fault_750 : 1;  /* bit 14: fault 750 */
+    uint16_t fault_751 : 1;  /* bit 15: fault 751 */
+    uint16_t fault_752 : 1;  /* bit 0: word faults_752_to_767 (e2m 1036 +5E System_Error_Status_47) bit 0 = fault 752 */
+    uint16_t fault_753 : 1;  /* bit 1: fault 753 */
+    uint16_t fault_754 : 1;  /* bit 2: fault 754 */
+    uint16_t fault_755 : 1;  /* bit 3: fault 755 */
+    uint16_t fault_756 : 1;  /* bit 4: fault 756 */
+    uint16_t fault_757 : 1;  /* bit 5: fault 757 */
+    uint16_t fault_758 : 1;  /* bit 6: fault 758 */
+    uint16_t fault_759 : 1;  /* bit 7: fault 759 */
+    uint16_t fault_760 : 1;  /* bit 8: fault 760 */
+    uint16_t fault_761 : 1;  /* bit 9: fault 761 */
+    uint16_t fault_762 : 1;  /* bit 10: fault 762 */
+    uint16_t fault_763 : 1;  /* bit 11: fault 763 */
+    uint16_t fault_764 : 1;  /* bit 12: fault 764 */
+    uint16_t fault_765 : 1;  /* bit 13: fault 765 */
+    uint16_t fault_766 : 1;  /* bit 14: fault 766 */
+    uint16_t fault_767 : 1;  /* bit 15: fault 767 */
+    uint16_t fault_768 : 1;  /* bit 0: word faults_768_to_783 (e2m 1036 +60 System_Error_Status_48) bit 0 = fault 768 */
+    uint16_t fault_769 : 1;  /* bit 1: fault 769 */
+    uint16_t fault_770 : 1;  /* bit 2: fault 770 */
+    uint16_t fault_771 : 1;  /* bit 3: fault 771 */
+    uint16_t fault_772 : 1;  /* bit 4: fault 772 */
+    uint16_t fault_773 : 1;  /* bit 5: fault 773 */
+    uint16_t egr_delta_pressure_in_range_error : 1;  /* bit 6: fault 774: e2m 1036 EGR_DP_In_Range_Error */
+    uint16_t egr_delta_pressure_in_range_high_error : 1;  /* bit 7: fault 775: e2m 1036 EGR_DP_In_Range_High_Error */
+    uint16_t egr_delta_pressure_in_range_low_error : 1;  /* bit 8: fault 776: e2m 1036 EGR_DP_In_Range_Low_Error */
+    uint16_t egr_delta_pressure_startup_error : 1;  /* bit 9: fault 777: e2m 1036 EGR_DP_Startup_Error */
+    uint16_t boost_ambient_delta_error : 1;  /* bit 10: fault 778: e2m 1036 Boost_Ambient_Delta_Error (P0069) */
+    uint16_t fault_779 : 1;  /* bit 11: fault 779 */
+    uint16_t fault_780 : 1;  /* bit 12: fault 780 */
+    uint16_t fault_781 : 1;  /* bit 13: fault 781 */
+    uint16_t fault_782 : 1;  /* bit 14: fault 782 */
+    uint16_t fault_783 : 1;  /* bit 15: fault 783 */
+    uint16_t fault_784 : 1;  /* bit 0: word faults_784_to_799 (e2m 1036 +62 System_Error_Status_49) bit 0 = fault 784 */
+    uint16_t fault_785 : 1;  /* bit 1: fault 785 */
+    uint16_t fault_786 : 1;  /* bit 2: fault 786 */
+    uint16_t fault_787 : 1;  /* bit 3: fault 787 */
+    uint16_t variable_geometry_turbocharger_sampled_position_high_error : 1;  /* bit 4: fault 788: e2m 1036 TVA_Sampled_Position_High_Error (B1973); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position */
+    uint16_t variable_geometry_turbocharger_sampled_position_low_error : 1;  /* bit 5: fault 789: e2m 1036 TVA_Sampled_Position_Low_Error (B1974); TVA: e2m names channel 101's VGT position block TVA_Sampled_Position */
+    uint16_t fault_790 : 1;  /* bit 6: fault 790 */
+    uint16_t fault_791 : 1;  /* bit 7: fault 791 */
+    uint16_t fault_792 : 1;  /* bit 8: fault 792 */
+    uint16_t fault_793 : 1;  /* bit 9: fault 793 */
+    uint16_t fault_794 : 1;  /* bit 10: fault 794 */
+    uint16_t fault_795 : 1;  /* bit 11: fault 795 */
+    uint16_t egr_orifice_temperature_high_error : 1;  /* bit 12: fault 796: e2m 1036 EGR_Orifice_Temperature_High_Error */
+    uint16_t egr_orifice_temperature_low_error : 1;  /* bit 13: fault 797: e2m 1036 EGR_Orifice_Temperature_Low_Error */
+    uint16_t fault_798 : 1;  /* bit 14: fault 798 */
+    uint16_t fault_799 : 1;  /* bit 15: fault 799 */
 };
 
 struct wastegate_duty_controller_state_t {
