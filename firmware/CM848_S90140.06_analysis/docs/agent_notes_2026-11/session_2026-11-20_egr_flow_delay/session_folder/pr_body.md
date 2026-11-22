@@ -415,6 +415,13 @@ state enum, the flag bytes.**
 - **Stage B (d65de3e, types):** `LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE` from the record's own value labels.
 - **Stage C (3307773, types):** a dword split into its two halves.
 
+**Round 15 (the relayed "keep going" again): the e2m pool above 0.2 overlap, part 1.**
+- **Stage A (123d6ae, label-only):** sixteen sensor channels named as families from e2m 1966 (124 rows). Each channel
+  is proved at its calls and by its DTCs.
+- **Stage B (359ecb7, label-only):**
+  - the tachometer outputs: e2m 1565 names the output channel map, and entries 25 / 26 are todo 035's "actuators c / d";
+  - the 4D fueling maps, the LSG leftovers and checked singles.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -506,6 +513,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 15: stages A and B are EQUIVALENT; every renamed row's width matches its e2m size.
 - [x] Round 14: stages A and C are EQUIVALENT (C with the split words mapped back to the old pieces); stage B
   passes `check_enum_proof3.py`.
   - the thunk stage still makes 19 thunks and 13 call overrides.
@@ -530,8 +538,8 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 14:**
-  - the LSG PID internals and the droop word at 0x40aedc (task 046);
+- **Open after round 15:**
+  - the cruise / road speed governor family and the engine retarder family, the droop word at 0x40aedc (task 046);
   - the fault status records (a packed record array, but the range is time-shared RAM);
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;

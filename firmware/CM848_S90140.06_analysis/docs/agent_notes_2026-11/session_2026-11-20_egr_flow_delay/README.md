@@ -304,3 +304,13 @@ Hand work on the round 7 lead.
 - **Logs and commit messages:** the round 14 build logs are in the large-files tarball; the messages are
   `commit_r14*.txt`.
 
+## Round 15: the e2m pool above 0.2 overlap, part 1 (`session_folder/round15/`)
+
+- **The pool:** `pool_r15.py` (wave 15's filter, by overlap band) and `evidence_r15.py` (code lines per candidate).
+- **Stage A:**
+  - `channel_calls_r15.py` proves each channel at its calls.
+  - `gen_channels_r15.py` and `make_worklist_r15a.py` build `worklist_r15a.py` (named rows) and `fill_r15a.json`
+    (type-only rows, via `apply_r15a_fill.py`).
+- **Stage B:** `worklist_r15b.py`. `width_check_r15.py` compares each row's width with its e2m size.
+- **Closing:** `apply_r15_closing.py`.
+

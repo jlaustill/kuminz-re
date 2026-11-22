@@ -76,6 +76,8 @@
   200829 build_r14a.log
   200849 build_r14b.log
   200849 build_r14c.log
+  200848 build_r15a.log
+  200851 build_r15b.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -98,3 +100,4 @@
   401807 verify_round12.log
   401967 verify_round13.log
   402015 verify_round14.log
+  402008 verify_round15.log

@@ -870,9 +870,49 @@ Scripts are in `session_folder/round14/`.
   - **0x40aedc** is subtracted from the reference before droop, but its only store is 0 (`governor_speed_error_reference`;
     the droop or a throttle adjustment).
   - **The LSG PID internals** in `cm848_runLowSpeedGovernor` (`governor_speed_debounce_active_flag`,
-    `governor_speed_error_prev_snapshot`, `governor_speed_low_clamp`; e2m 1064 / 1065).
+    `governor_speed_error_prev_snapshot`, `governor_speed_low_clamp`; e2m 1064 / 1065). (Resolved in round 15.)
   - **The fuel by throttle table** of `cm848_calculateLowSpeedGovernorNoLoadFuel` (`governor_fuel_demand_axis_cal` /
     `_output_cal` at 0x40713a) has no record yet.
+
+## Done, round 15 (2026-11-21, same PR; the relayed "keep going" again): the e2m pool above 0.2 overlap, part 1
+
+Scripts are in `session_folder/round15/`.
+- **The pool:** `pool_r15.py` lists the rows whose name shares 20-50 % of the words of their table-resolved e2m record.
+  It uses wave 15's filter: used in the code, dump value in range, and not reviewed before. The three bands (0.2-0.25 /
+  0.25-0.34 / 0.34-0.5) hold 108 / 103 / 169 rows. Each candidate is checked against its code use and its width before
+  it is named.
+- **Stage A (123d6ae, label-only): sixteen sensor channels, named as families.**
+  - e2m 1966 is the sensor channels' value / default outputs.
+  - Each channel number is proved by its sensor channel calls (channel_index = argument 8). The fault bits decode to
+    the sensors' DTCs: 21 / 28 / 42 are sensor reference voltages C / B / A (P0699 / P0653 / P0643), 97 / 98 are pedal
+    position sensors 1 / 2 (P2123 / P2128), 76 is the 4WD switch (P0839), and 102 is the governor pressure (P0868).
+  - Each channel's config, state, filter, cache, value, default and fault status rows are named (124 rows).
+  - The state records carried the wrapper ordinals: channel 7's was `sensor_channel9_ram`.
+- **Stage B (359ecb7, label-only):**
+  - **The tachometer outputs:** e2m 1565 / 151C / 1527 name the output channel map and its duty / period caches entry
+    by entry, and they agree with every entry proved before.
+    - Entries 25 / 26 (todo 035's actuators c / d) are the tachometer high / low side drivers.
+    - `cm848_driveTachometerOutputs` (was `cm848_processEngineRpmDiagnostic`) sets the period to
+      `tachometer_base_period` x 1e6 / engine speed at 50 % duty.
+  - **Also:** the 4D fueling maps (e2m 1054-1059), the LSG leftovers, and the 100 % throttle fueling at the LSG
+    reference.
+  - **Checked singles:** initial ambient air pressure, the AFC thresholds, the OCM reset flag, no-load fuel, zero torque
+    fueling, the VSS noise counter, the axle ratio learn delay, the flash failure flag and the engine startup inhibit.
+- **Round 15 leads:**
+  - **The cruise / road speed governor family** (e2m 117D / 1180 / 1184-118F / 1190): about 40 rows, and the
+    `governor_cruise_*` / `cm848_protectionFuelRate*` functions. The firmware calls the road speed governor "vehicle
+    speed limit".
+  - **The engine retarder family** (e2m 1070 / 1071). Its records carry two value lists: `EB_Non_Override_Command_Source`
+    1-6, and `EB_Brake_Type` 0-3 (a bitmask in this code).
+  - **Types:**
+    - The AFC slew rates (e2m 11D5 +C / +10 / +14) are 4-byte records on word rows: `_fuel_demand_load_threshold_d`
+      renders with an underscore.
+    - The 4D fueling caches are 4 bytes but typed `word`.
+    - The 0x40a35c dword holds `EB_Immediate_Brake` and the next record.
+  - **User commanded timing** (125C +2) and the 4D timing word (103B +0): one use adds the timing like an offset, so read
+    the 125C enable first.
+  - **`Main_Cold_Advance_Select`** (8085 +2: 0 add / 1 max wins / 2 min wins) is an enum candidate.
+  - **The rest of the pool:** the 0.34-0.5 band, and the 27 records with code references and no name.
 
 ## Leads (not in this PR)
 
@@ -894,7 +934,7 @@ Scripts are in `session_folder/round14/`.
     `cm848_monitorFuelSystemHardwareShutdown`.
   - The converter clutch monitor's `protection_*` words and the wastegate controller's working words.
   - CM550's 0x80a9e0, the unnamed twin of 0x40a280.
-  - `sensor_channel9_ram` (0x40a0e6) is the state of the `cm848_sensorChannel9_*` wrappers. Check which
+  - `sensor_channel9_ram` (0x40a0e6) is the state of the `cm848_sensorChannel9_*` wrappers (round 15: it is slot 7's state, `fuel_temperature_sensor_channel_state`). Check which
     `channel_index` they pass before naming it: the wrapper number is not the channel.
   - Kept: `lifetime_distance_pulses` (117F Total_Distance, MI). The name gives the raw unit (8000 pulses per mile),
     which fits the code.

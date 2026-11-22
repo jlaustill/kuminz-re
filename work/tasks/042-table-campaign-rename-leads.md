@@ -52,7 +52,7 @@ applied and proved the waves are in `firmware/scripts/rename_waves/`.
 - `battery_voltage_prev` (0x40b26e) = the charging voltage target (bin 15).
 - `fuel_timing_sensor_value` = slot 4 = battery voltage (P0563 / P0562); `governor_speed_input_value` = slot 75 (sensor unknown).
 - `cruise_state_machine_index` / `cruise_prev_state_index` / `cruise_voltage_*` = the alternator regulator state (bin 08; task 029).
-- `protection_iat_scaled`, `governor_cold_start_iat_correction` (`low_speed_governor_altitude_speed_target` since PR #53 round 14), `iat_fuel_trim_*` use barometric pressure, not intake air temperature (bins 12 / 14).
+- `protection_iat_scaled` (`initial_ambient_air_pressure` since PR #53 round 15), `governor_cold_start_iat_correction` (`low_speed_governor_altitude_speed_target` since PR #53 round 14), `iat_fuel_trim_*` use barometric pressure, not intake air temperature (bins 12 / 14).
 - `fuel_correction_upper_limit` = a maximum fuel quantity limit; `timing_limit_lower` (ROM 0x5c306 = 5888) is its no-limit value (bin 09).
 - `cold_start_*` / `fuel_coldStart_*` at 0x5139b8-0x513ddc = a coolant-overheat derate (bin 14).
 - `injection_timing_factor_cyl2/3/4_*` / `injection_timing_demand_cyl*` = the intake-temperature / coolant / boost / barometric components, not cylinders (bin 05).
@@ -60,7 +60,7 @@ applied and proved the waves are in `firmware/scripts/rename_waves/`.
 ## Duplicate names in global_variables.csv
 
 - `fuel_demand_offset_correction` at 0x0040a550 and 0x0040b22a (bin 13).
-- `sensor_channel7_fault_status` at 0x0040be18 and 0x0040be3a (bin 16).
+- `sensor_channel7_fault_status` at 0x0040be18 and 0x0040be3a (PR #53 round 15: the channel 7 one at 0x40be3a is fuel_temperature_sensor_fault_status) (bin 16).
 
 ## Vocabulary the table names follow (change them together)
 

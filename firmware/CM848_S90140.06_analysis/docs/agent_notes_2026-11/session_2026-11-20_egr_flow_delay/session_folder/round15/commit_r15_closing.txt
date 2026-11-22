@@ -1,0 +1,15 @@
+cm848: round 15 closing - docs, stale text, the session archive, verify
+
+- **Comment the refresh tool skips:** a structure_definitions.csv comment still named fuel_demand_norm_zero_cal.
+- **The odometer doc's RAM table:** sensor_channel102_value is governor_pressure_sensor_value.
+- **Task notes that described round 15's rows now carry the new names:** tasks 025, 042 and 046.
+  - Task 025's guess that 0x3fdfdc was a fault derate field is resolved: the parameter ID table places e2m 1096 +0
+    Engine_Startup_Inhibit there.
+  - Round 14's LSG PID lead is resolved.
+- **Docs:** task 046 (a round 15 section and leads), the PR body, the session README and work/todo.md.
+- **Archive:** session_folder/round15/ and the large-files tarball (the round 15 build logs and the final verify).
+- **Checks on the final tree:**
+  - ./analyze.sh verify: two byte-identical builds.
+  - lookup_tables.py reports 0 sizing problems; the four test scripts pass; the headers compile.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

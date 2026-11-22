@@ -1,0 +1,284 @@
+[
+[
+"0x000594be",
+"sensor_channel_config_t_000594be",
+"fuel_temperature_sensor_config",
+"The sensor_channel_config_t of sensor channel 7, the fuel temperature (e2m 1966 Fuel_Tmptr_Sensor; slot 7 = fuel_temperature_sensor_filtered): argument 1 of its sensor channel calls"
+],
+[
+"0x003fa074",
+"WORD_003fa074",
+"fuel_temperature_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 7's linearization table, the fuel temperature (e2m 1966 Fuel_Tmptr_Sensor; slot 7 = fuel_temperature_sensor_filtered): argument 3"
+],
+[
+"0x003fa076",
+"ema_filter_state_t_003fa076",
+"fuel_temperature_sensor_filter_state",
+"The EMA filter state of sensor channel 7, the fuel temperature (e2m 1966 Fuel_Tmptr_Sensor; slot 7 = fuel_temperature_sensor_filtered): argument 7"
+],
+[
+"0x000595ca",
+"sensor_channel_config_t_000595ca",
+"remote_accelerator_pedal_sensor_config",
+"The sensor_channel_config_t of sensor channel 8, the remote accelerator pedal (e2m 1966 Remote_Throt_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x003fa092",
+"WORD_003fa092",
+"remote_accelerator_pedal_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 8's linearization table, the remote accelerator pedal (e2m 1966 Remote_Throt_Sensor): argument 3"
+],
+[
+"0x003fa094",
+"ema_filter_state_t_003fa094",
+"remote_accelerator_pedal_sensor_filter_state",
+"The EMA filter state of sensor channel 8, the remote accelerator pedal (e2m 1966 Remote_Throt_Sensor): argument 7"
+],
+[
+"0x00059596",
+"sensor_channel_config_t_00059596",
+"oil_pressure_sensor_config",
+"The sensor_channel_config_t of sensor channel 10, the oil pressure (e2m 1966 Oil_Press_Sensor; slot 10 = oil_pressure_sensor_filtered): argument 1 of its sensor channel calls"
+],
+[
+"0x003fa088",
+"WORD_003fa088",
+"oil_pressure_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 10's linearization table, the oil pressure (e2m 1966 Oil_Press_Sensor; slot 10 = oil_pressure_sensor_filtered): argument 3"
+],
+[
+"0x003fa08a",
+"ema_filter_state_t_003fa08a",
+"oil_pressure_sensor_filter_state",
+"The EMA filter state of sensor channel 10, the oil pressure (e2m 1966 Oil_Press_Sensor; slot 10 = oil_pressure_sensor_filtered): argument 7"
+],
+[
+"0x003fa09c",
+"WORD_003fa09c",
+"accelerator_pedal_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 13's linearization table, the accelerator pedal (e2m 1966 Sampled_Throt_Sensor; P2123 / P2122): argument 3"
+],
+[
+"0x003fa09e",
+"ema_filter_state_t_003fa09e",
+"accelerator_pedal_sensor_filter_state",
+"The EMA filter state of sensor channel 13, the accelerator pedal (e2m 1966 Sampled_Throt_Sensor; P2123 / P2122): argument 7"
+],
+[
+"0x003fefca",
+"sensor_channel_config_t_003fefca",
+"water_in_fuel_sensor_feature_bit_4_off_config",
+"The sensor_channel_config_t of sensor channel 15, the water in fuel sensor (e2m 1966 WIF_Sensor; P2267 / P2266): argument 1 of its sensor channel calls (its feature bit 4 off calls)"
+],
+[
+"0x003fefda",
+"sensor_channel_config_t_003fefda",
+"water_in_fuel_sensor_feature_bit_4_on_config",
+"The sensor_channel_config_t of sensor channel 15, the water in fuel sensor (e2m 1966 WIF_Sensor; P2267 / P2266): argument 1 of its sensor channel calls (its feature bit 4 on calls)"
+],
+[
+"0x00059692",
+"sensor_channel_config_t_00059692",
+"sensor_reference_voltage_c_config",
+"The sensor_channel_config_t of sensor channel 21, sensor reference voltage C (P0699 / P0698; e2m 1966 Throt_SV_Sensor, the throttle sensor supply): argument 1 of its sensor channel calls"
+],
+[
+"0x003fa0b0",
+"WORD_003fa0b0",
+"sensor_reference_voltage_c_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 21's linearization table, sensor reference voltage C (P0699 / P0698; e2m 1966 Throt_SV_Sensor, the throttle sensor supply): argument 3"
+],
+[
+"0x003fa0b2",
+"ema_filter_state_t_003fa0b2",
+"sensor_reference_voltage_c_filter_state",
+"The EMA filter state of sensor channel 21, sensor reference voltage C (P0699 / P0698; e2m 1966 Throt_SV_Sensor, the throttle sensor supply): argument 7"
+],
+[
+"0x0005ac4c",
+"sensor_channel_config_t_0005ac4c",
+"sensor_reference_voltage_b_config",
+"The sensor_channel_config_t of sensor channel 28, sensor reference voltage B (P0653 / P0652; e2m 1966 Engine_Conn_SV_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x0040b186",
+"sensor_channel_state_t_0040b186",
+"sensor_reference_voltage_b_channel_state",
+"The sensor_channel_state_t of sensor channel 28, sensor reference voltage B (P0653 / P0652; e2m 1966 Engine_Conn_SV_Sensor): argument 2 of its sensor channel calls"
+],
+[
+"0x003fcd36",
+"WORD_003fcd36",
+"sensor_reference_voltage_b_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 28's linearization table, sensor reference voltage B (P0653 / P0652; e2m 1966 Engine_Conn_SV_Sensor): argument 3"
+],
+[
+"0x003fcd38",
+"ema_filter_state_t_003fcd38",
+"sensor_reference_voltage_b_filter_state",
+"The EMA filter state of sensor channel 28, sensor reference voltage B (P0653 / P0652; e2m 1966 Engine_Conn_SV_Sensor): argument 7"
+],
+[
+"0x00059622",
+"sensor_channel_config_t_00059622",
+"sensor_reference_voltage_a_config",
+"The sensor_channel_config_t of sensor channel 42, sensor reference voltage A (P0643 / P0642; e2m 1966 Supply_1_Volt_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x003fa0a6",
+"WORD_003fa0a6",
+"sensor_reference_voltage_a_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 42's linearization table, sensor reference voltage A (P0643 / P0642; e2m 1966 Supply_1_Volt_Sensor): argument 3"
+],
+[
+"0x003fa0a8",
+"ema_filter_state_t_003fa0a8",
+"sensor_reference_voltage_a_filter_state",
+"The EMA filter state of sensor channel 42, sensor reference voltage A (P0643 / P0642; e2m 1966 Supply_1_Volt_Sensor): argument 7"
+],
+[
+"0x0005ab24",
+"sensor_channel_config_t_0005ab24",
+"battery_temperature_sensor_config",
+"The sensor_channel_config_t of sensor channel 69, the battery temperature (P0517 / P0516; e2m 1966 Battery_Tmptr_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x003fb1e8",
+"WORD_003fb1e8",
+"battery_temperature_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 69's linearization table, the battery temperature (P0517 / P0516; e2m 1966 Battery_Tmptr_Sensor): argument 3"
+],
+[
+"0x003fb1ea",
+"ema_filter_state_t_003fb1ea",
+"battery_temperature_sensor_filter_state",
+"The EMA filter state of sensor channel 69, the battery temperature (P0517 / P0516; e2m 1966 Battery_Tmptr_Sensor): argument 7"
+],
+[
+"0x0005aaf0",
+"sensor_channel_config_t_0005aaf0",
+"air_conditioning_pressure_sensor_config",
+"The sensor_channel_config_t of sensor channel 71, the A/C refrigerant pressure (P0533 / P0532; e2m 1966 AC_Press_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x003fb1de",
+"WORD_003fb1de",
+"air_conditioning_pressure_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 71's linearization table, the A/C refrigerant pressure (P0533 / P0532; e2m 1966 AC_Press_Sensor): argument 3"
+],
+[
+"0x003fb1e0",
+"ema_filter_state_t_003fb1e0",
+"air_conditioning_pressure_sensor_filter_state",
+"The EMA filter state of sensor channel 71, the A/C refrigerant pressure (P0533 / P0532; e2m 1966 AC_Press_Sensor): argument 7"
+],
+[
+"0x0005ad40",
+"sensor_channel_config_t_0005ad40",
+"four_wheel_drive_switch_sensor_config",
+"The sensor_channel_config_t of sensor channel 76, the four wheel drive switch (P0839 / P0838; e2m 1966 Tcase_Mux_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x003fb210",
+"WORD_003fb210",
+"four_wheel_drive_switch_position_code_cached_axis_offset",
+"The lookup cache of sensor channel 76's linearization table, the four wheel drive switch (P0839 / P0838; e2m 1966 Tcase_Mux_Sensor): argument 3"
+],
+[
+"0x003fb212",
+"ema_filter_state_t_003fb212",
+"four_wheel_drive_switch_sensor_filter_state",
+"The EMA filter state of sensor channel 76, the four wheel drive switch (P0839 / P0838; e2m 1966 Tcase_Mux_Sensor): argument 7"
+],
+[
+"0x0005acd8",
+"sensor_channel_config_t_0005acd8",
+"accelerator_pedal_position_sensor_1_config",
+"The sensor_channel_config_t of sensor channel 97, accelerator pedal position sensor 1 (P2123 / P2122; e2m 1966 PPS_1_Throt_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x003fb1fc",
+"WORD_003fb1fc",
+"accelerator_pedal_position_sensor_1_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 97's linearization table, accelerator pedal position sensor 1 (P2123 / P2122; e2m 1966 PPS_1_Throt_Sensor): argument 3"
+],
+[
+"0x003fb1fe",
+"ema_filter_state_t_003fb1fe",
+"accelerator_pedal_position_sensor_1_filter_state",
+"The EMA filter state of sensor channel 97, accelerator pedal position sensor 1 (P2123 / P2122; e2m 1966 PPS_1_Throt_Sensor): argument 7"
+],
+[
+"0x0005ad0c",
+"sensor_channel_config_t_0005ad0c",
+"accelerator_pedal_position_sensor_2_config",
+"The sensor_channel_config_t of sensor channel 98, accelerator pedal position sensor 2 (P2128 / P2127; e2m 1966 PPS_2_Throt_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x003fb206",
+"WORD_003fb206",
+"accelerator_pedal_position_sensor_2_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 98's linearization table, accelerator pedal position sensor 2 (P2128 / P2127; e2m 1966 PPS_2_Throt_Sensor): argument 3"
+],
+[
+"0x003fb208",
+"ema_filter_state_t_003fb208",
+"accelerator_pedal_position_sensor_2_filter_state",
+"The EMA filter state of sensor channel 98, accelerator pedal position sensor 2 (P2128 / P2127; e2m 1966 PPS_2_Throt_Sensor): argument 7"
+],
+[
+"0x0005adbc",
+"sensor_channel_config_t_0005adbc",
+"governor_pressure_sensor_config",
+"The sensor_channel_config_t of sensor channel 102, the 48RE governor pressure (P0868 / P0869; e2m 1966 Trans_Gov_Press_Sensor): argument 1 of its sensor channel calls"
+],
+[
+"0x003fb21a",
+"WORD_003fb21a",
+"governor_pressure_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 102's linearization table, the 48RE governor pressure (P0868 / P0869; e2m 1966 Trans_Gov_Press_Sensor): argument 3"
+],
+[
+"0x003fb21c",
+"ema_filter_state_t_003fb21c",
+"governor_pressure_sensor_filter_state",
+"The EMA filter state of sensor channel 102, the 48RE governor pressure (P0868 / P0869; e2m 1966 Trans_Gov_Press_Sensor): argument 7"
+],
+[
+"0x003feed2",
+"sensor_channel_config_t_003feed2",
+"egr_delta_pressure_sensor_config",
+"The sensor_channel_config_t of sensor channel 105, the EGR delta pressure (e2m 1966 EGR_Delta_Press_Sensor; faults 690 / 691): argument 1 of its sensor channel calls"
+],
+[
+"0x003fa04c",
+"WORD_003fa04c",
+"egr_delta_pressure_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 105's linearization table, the EGR delta pressure (e2m 1966 EGR_Delta_Press_Sensor; faults 690 / 691): argument 3"
+],
+[
+"0x003fa04e",
+"ema_filter_state_t_003fa04e",
+"egr_delta_pressure_sensor_filter_state",
+"The EMA filter state of sensor channel 105, the EGR delta pressure (e2m 1966 EGR_Delta_Press_Sensor; faults 690 / 691): argument 7"
+],
+[
+"0x003fef12",
+"sensor_channel_config_t_003fef12",
+"egr_orifice_temperature_sensor_config",
+"The sensor_channel_config_t of sensor channel 108, the EGR orifice temperature (e2m 1966 EGR_Orifice_Tmptr_Sensor; faults 796 / 797): argument 1 of its sensor channel calls"
+],
+[
+"0x003fa056",
+"WORD_003fa056",
+"egr_orifice_temperature_linearization_cached_axis_offset",
+"The lookup cache of sensor channel 108's linearization table, the EGR orifice temperature (e2m 1966 EGR_Orifice_Tmptr_Sensor; faults 796 / 797): argument 3"
+],
+[
+"0x003fa058",
+"ema_filter_state_t_003fa058",
+"egr_orifice_temperature_sensor_filter_state",
+"The EMA filter state of sensor channel 108, the EGR orifice temperature (e2m 1966 EGR_Orifice_Tmptr_Sensor; faults 796 / 797): argument 7"
+]
+]
