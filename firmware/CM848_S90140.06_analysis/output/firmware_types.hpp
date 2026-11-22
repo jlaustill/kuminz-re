@@ -1147,6 +1147,22 @@ typedef enum {
     END_OF_LINE_OUTPUT_TEST_DONE = 8  /* done, or left early (engine not stopped / nothing pending) */
 } END_OF_LINE_OUTPUT_TEST_STATE;
 
+typedef enum {
+    LOW_SPEED_GOVERNOR_REFERENCE_COOLANT = 0,  /* e2m COOLANT: low_speed_governor_coolant_temperature_speed_request */
+    LOW_SPEED_GOVERNOR_REFERENCE_PARK_NEUTRAL = 1,  /* e2m PARK_NEU: low_speed_governor_park_or_drive_speed_request */
+    LOW_SPEED_GOVERNOR_REFERENCE_EXTENDED_IDLE = 2,  /* e2m EXTENDED: low_speed_governor_extended_idle_speed_request */
+    LOW_SPEED_GOVERNOR_REFERENCE_AIR_CONDITIONING = 3,  /* e2m AC: low_speed_governor_air_conditioning_speed_request (switch 13) */
+    LOW_SPEED_GOVERNOR_REFERENCE_J1850 = 4,  /* e2m J1850: low_speed_governor_j1850_speed_request (the PCI idle speed request) */
+    LOW_SPEED_GOVERNOR_REFERENCE_BASE = 5,  /* e2m BASE: low_speed_governor_base_reference_speed_cal; also whenever it differs from its boot copy */
+    LOW_SPEED_GOVERNOR_REFERENCE_J1939 = 6,  /* e2m JCOMM: a J1939 TSC1 override with low_speed_governor_j1939_override_enable (the minimum idle speed) */
+    LOW_SPEED_GOVERNOR_REFERENCE_MINIMUM = 7,  /* e2m MIN: the slew clamped the reference to low_speed_governor_minimum_idle_speed */
+    LOW_SPEED_GOVERNOR_REFERENCE_MAXIMUM = 8,  /* e2m MAX: the slew clamped the reference to low_speed_governor_maximum_idle_speed */
+    LOW_SPEED_GOVERNOR_REFERENCE_ALTITUDE = 9,  /* e2m ALTITUDE: the altitude speed (low_speed_governor_reference.altitude_speed) */
+    LOW_SPEED_GOVERNOR_REFERENCE_SHIFT_IN_PROCESS = 10,  /* e2m SIP: a shift in process holds the desired speed (low_speed_governor_shift_in_process_timer) */
+    LOW_SPEED_GOVERNOR_REFERENCE_TOOL = 11,  /* e2m TOOL: low_speed_governor_tool_speed_request (SCI SET RPM or the high pressure safety valve test) */
+    LOW_SPEED_GOVERNOR_REFERENCE_MOVING = 12  /* e2m MOVING: low_speed_governor_moving_speed_request */
+} LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE;
+
 /* ---- Structures ---- */
 
 typedef struct j1939_rx_msg_t j1939_rx_msg_t;
@@ -1430,7 +1446,7 @@ struct eeprom_header_t {
 struct low_speed_governor_reference_t {
     uint16_t reference_speed;  /* e2m 1496 +10 LSG_Reference_Speed '[LSRF] Current reference speed being used by the LSG feature' (1/8 rpm; 6000 = 750 rpm in the RAM dump): written by cm848_slewLowSpeedGovernorReferenceSpeed (was idle_reference_speed) | earlier note: Low speed governor idle reference speed in 1/8 rpm (6000 = 750 rpm in the RAM dump) - the high word of the old integrator dword */
     int16_t no_load_fuel;  /* e2m 1496 +12 No_Load_Fuel_At_LSG_Ref 'No load fueling value at LSG reference speed before droop' (signed; lha @ 0x28060): cm848_calculateLowSpeedGovernorNoLoadFuel (was fuel_feed_forward_quantity) | earlier note: Signed fuel feed-forward quantity (lha @ 0x28060) - the low word of the old integrator dword */
-    uint16_t reference_speed_state;  /* e2m 1496 +14 LSG_Reference_Speed_State 'Indication of which logic is controlling LSG idle speed': 0 COOLANT / 1 PARK_NEU / 2 EXTENDED / 3 AC / 4 J1850 / 5 BASE / 6 JCOMM / 7 MIN / 8 MAX / 9 ALTITUDE / 10 SIP (shift in process) / 11 TOOL / 12 MOVING (was governor_output) | earlier note: Idle-speed candidate number 0-12 (name kept; see the wave-11 note) */
+    LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE reference_speed_state;  /* e2m 1496 +14 LSG_Reference_Speed_State 'Indication of which logic is controlling LSG idle speed': 0 COOLANT / 1 PARK_NEU / 2 EXTENDED / 3 AC / 4 J1850 / 5 BASE / 6 JCOMM / 7 MIN / 8 MAX / 9 ALTITUDE / 10 SIP (shift in process) / 11 TOOL / 12 MOVING (was governor_output) | earlier note: Idle-speed candidate number 0-12 (name kept; see the wave-11 note) */
     uint32_t altitude_speed;  /* e2m 1496 +16 LSG_Altitude_Speed (4 bytes; 1/8 rpm x 256): the altitude speed request after its slew (state 9) (was idle_speed_barometric_ramped) | earlier note: Barometric-ramped idle speed (lwz / stw @ 0x2931c / 0x29440) - the old word field at +6 covered only its high half */
 };
 

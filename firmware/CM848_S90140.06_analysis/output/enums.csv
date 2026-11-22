@@ -1004,3 +1004,17 @@ END_OF_LINE_OUTPUT_TEST_STATE,5,END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_1_ON,h
 END_OF_LINE_OUTPUT_TEST_STATE,6,END_OF_LINE_OUTPUT_TEST_BEFORE_INTAKE_AIR_HEATER_2,"end_of_line_test_relay_off_time, then heater 2 (output 44) on",1
 END_OF_LINE_OUTPUT_TEST_STATE,7,END_OF_LINE_OUTPUT_TEST_INTAKE_AIR_HEATER_2_ON,"heater 2 on, then the output test verdict (no DTC stored)",1
 END_OF_LINE_OUTPUT_TEST_STATE,8,END_OF_LINE_OUTPUT_TEST_DONE,"done, or left early (engine not stopped / nothing pending)",1
+# LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE: e2m 1496 +14 LSG_Reference_Speed_State 'Indication of which logic is controlling LSG idle speed' (its own value labels; PR #53 round 14)
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,0,LOW_SPEED_GOVERNOR_REFERENCE_COOLANT,e2m COOLANT: low_speed_governor_coolant_temperature_speed_request,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,1,LOW_SPEED_GOVERNOR_REFERENCE_PARK_NEUTRAL,e2m PARK_NEU: low_speed_governor_park_or_drive_speed_request,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,2,LOW_SPEED_GOVERNOR_REFERENCE_EXTENDED_IDLE,e2m EXTENDED: low_speed_governor_extended_idle_speed_request,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,3,LOW_SPEED_GOVERNOR_REFERENCE_AIR_CONDITIONING,e2m AC: low_speed_governor_air_conditioning_speed_request (switch 13),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,4,LOW_SPEED_GOVERNOR_REFERENCE_J1850,e2m J1850: low_speed_governor_j1850_speed_request (the PCI idle speed request),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,5,LOW_SPEED_GOVERNOR_REFERENCE_BASE,e2m BASE: low_speed_governor_base_reference_speed_cal; also whenever it differs from its boot copy,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,6,LOW_SPEED_GOVERNOR_REFERENCE_J1939,e2m JCOMM: a J1939 TSC1 override with low_speed_governor_j1939_override_enable (the minimum idle speed),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,7,LOW_SPEED_GOVERNOR_REFERENCE_MINIMUM,e2m MIN: the slew clamped the reference to low_speed_governor_minimum_idle_speed,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,8,LOW_SPEED_GOVERNOR_REFERENCE_MAXIMUM,e2m MAX: the slew clamped the reference to low_speed_governor_maximum_idle_speed,2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,9,LOW_SPEED_GOVERNOR_REFERENCE_ALTITUDE,e2m ALTITUDE: the altitude speed (low_speed_governor_reference.altitude_speed),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,10,LOW_SPEED_GOVERNOR_REFERENCE_SHIFT_IN_PROCESS,e2m SIP: a shift in process holds the desired speed (low_speed_governor_shift_in_process_timer),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,11,LOW_SPEED_GOVERNOR_REFERENCE_TOOL,e2m TOOL: low_speed_governor_tool_speed_request (SCI SET RPM or the high pressure safety valve test),2
+LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE,12,LOW_SPEED_GOVERNOR_REFERENCE_MOVING,e2m MOVING: low_speed_governor_moving_speed_request,2

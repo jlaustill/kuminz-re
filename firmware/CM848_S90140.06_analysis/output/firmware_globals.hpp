@@ -1469,7 +1469,7 @@ extern dword low_speed_governor_altitude_speed_previous;  // 0x003faf86
 extern word low_speed_governor_shift_in_process_hold_passes;  // 0x003faf8a
 extern word low_speed_governor_coolant_speed_first_pass_done_flag;  // 0x003faf8c
 extern word low_speed_governor_altitude_speed_first_pass_done_flag;  // 0x003faf8e
-extern word low_speed_governor_reference_speed_state_previous;  // 0x003faf90
+extern LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE low_speed_governor_reference_speed_state_previous;  // 0x003faf90
 extern word low_speed_governor_moving_speed_cached_axis_offset;  // 0x003faf92
 extern word low_speed_governor_extra_decrement_rate;  // 0x003faf94
 extern word low_speed_governor_extra_increment_rate;  // 0x003faf96
