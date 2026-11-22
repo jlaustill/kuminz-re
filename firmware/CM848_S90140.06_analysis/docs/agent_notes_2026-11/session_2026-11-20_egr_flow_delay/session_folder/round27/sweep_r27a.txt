@@ -1,0 +1,92 @@
+firmware/classification.csv:940: ...48,0x0000c8bc,sensorChannel0_init,unknown,cm848_,,cm848_sensorChannel0_init
+firmware/classification.csv:941: ...0x0000c948,sensorChannel0_process,unknown,cm848_,,cm848_sensorChannel0_process
+firmware/classification.csv:942: ...48,0x0000c9d4,sensorChannel1_init,unknown,cm848_,,cm848_sensorChannel1_init
+firmware/classification.csv:943: ...0x0000ca60,sensorChannel1_process,unknown,cm848_,,cm848_sensorChannel1_process
+firmware/classification.csv:944: ...48,0x0000caec,sensorChannel2_init,unknown,cm848_,,cm848_sensorChannel2_init
+firmware/classification.csv:945: ...0x0000cb78,sensorChannel2_process,unknown,cm848_,,cm848_sensorChannel2_process
+firmware/classification.csv:946: ...,sensorChannel3_boostPressureInit,unknown,cm848_,,cm848_sensorChannel3_boostPressureInit
+firmware/classification.csv:947: ...nsorChannel3_boostPressureProcess,unknown,cm848_,,cm848_sensorChannel3_boostPressureProcess
+firmware/classification.csv:948: ...48,0x0000cd1c,sensorChannel4_init,unknown,cm848_,,cm848_sensorChannel4_init
+firmware/classification.csv:949: ...0x0000cda8,sensorChannel4_process,unknown,cm848_,,cm848_sensorChannel4_process
+firmware/classification.csv:950: ...48,0x0000ce34,sensorChannel5_init,unknown,cm848_,,cm848_sensorChannel5_init
+firmware/classification.csv:951: ...0x0000cec0,sensorChannel5_process,unknown,cm848_,,cm848_sensorChannel5_process
+firmware/classification.csv:952: ...48,0x0000cf4c,sensorChannel6_init,unknown,cm848_,,cm848_sensorChannel6_init
+firmware/classification.csv:953: ...0x0000cfd8,sensorChannel6_process,unknown,cm848_,,cm848_sensorChannel6_process
+firmware/classification.csv:954: ...48,0x0000d064,sensorChannel7_init,unknown,cm848_,,cm848_sensorChannel7_init
+firmware/classification.csv:955: ...0x0000d0f0,sensorChannel7_process,unknown,cm848_,,cm848_sensorChannel7_process
+firmware/classification.csv:958: ...48,0x0000d294,sensorChannel9_init,unknown,cm848_,,cm848_sensorChannel9_init
+firmware/classification.csv:959: ...0x0000d320,sensorChannel9_process,unknown,cm848_,,cm848_sensorChannel9_process
+firmware/classification.csv:962: ...8,0x0000d4c4,sensorChannel11_init,unknown,cm848_,,cm848_sensorChannel11_init
+firmware/classification.csv:963: ...x0000d550,sensorChannel11_process,unknown,cm848_,,cm848_sensorChannel11_process
+firmware/classification.csv:964: ...8,0x0000d5dc,sensorChannel12_init,unknown,cm848_,,cm848_sensorChannel12_init
+firmware/classification.csv:965: ...x0000d668,sensorChannel12_process,unknown,cm848_,,cm848_sensorChannel12_process
+firmware/classification.csv:966: ...8,0x0000d6f4,sensorChannel13_init,unknown,cm848_,,cm848_sensorChannel13_init
+firmware/classification.csv:967: ...x0000d780,sensorChannel13_process,unknown,cm848_,,cm848_sensorChannel13_process
+firmware/classification.csv:968: ...8,0x0000d80c,sensorChannel14_init,unknown,cm848_,,cm848_sensorChannel14_init
+firmware/classification.csv:969: ...x0000d898,sensorChannel14_process,unknown,cm848_,,cm848_sensorChannel14_process
+firmware/classification.csv:970: ...8,0x0000d924,sensorChannel15_init,unknown,cm848_,,cm848_sensorChannel15_init
+firmware/classification.csv:971: ...x0000d9b0,sensorChannel15_process,unknown,cm848_,,cm848_sensorChannel15_process
+firmware/classification.csv:972: ...8,0x0000da3c,sensorChannel16_init,unknown,cm848_,,cm848_sensorChannel16_init
+firmware/classification.csv:973: ...x0000db50,sensorChannel16_process,unknown,cm848_,,cm848_sensorChannel16_process
+firmware/classification.csv:1481: ...0035558,processSensorLookupTable5,unknown,cm848_,,cm848_processSensorLookupTable5
+firmware/classification.csv:1482: ...0x000355e4,initSensorLookupTable5,unknown,cm848_,,cm848_initSensorLookupTable5
+firmware/classification.csv:1487: ...00358a0,processSensorLookupTable3,unknown,cm848_,,cm848_processSensorLookupTable3
+firmware/classification.csv:1488: ...0x0003592c,initSensorLookupTable3,unknown,cm848_,,cm848_initSensorLookupTable3
+firmware/classification.csv:1489: ...00359b8,processSensorLookupTable2,unknown,cm848_,,cm848_processSensorLookupTable2
+firmware/classification.csv:1490: ...0x00035a44,initSensorLookupTable2,unknown,cm848_,,cm848_initSensorLookupTable2
+firmware/classification.csv:1493: ...0035be8,processSensorLookupTable1,unknown,cm848_,,cm848_processSensorLookupTable1
+firmware/classification.csv:1494: ...035c74,initSensorLookupTableInit1,unknown,cm848_,,cm848_initSensorLookupTableInit1
+firmware/classification.csv:2098: ...48,0x00500004,sensorChannel0_init,unknown,cm848_,,cm848_sensorChannel0_init
+firmware/classification.csv:2099: ...0x00500090,sensorChannel0_process,unknown,cm848_,,cm848_sensorChannel0_process
+firmware/classification.csv:2100: ...48,0x0050011c,sensorChannel1_init,unknown,cm848_,,cm848_sensorChannel1_init
+firmware/classification.csv:2101: ...0x005001a8,sensorChannel1_process,unknown,cm848_,,cm848_sensorChannel1_process
+firmware/classification.csv:2102: ...cm848,0x00500234,sensorChannelConfigInit,unknown,cm848_,,cm848_sensorC
+firmware/classification.csv:2103: ...cm848,0x00500a4c,updateSensorChannelWithConfig,unknown,cm848_,,cm848_updateS
+firmware/classification.csv:2106: ...cm848,0x005012dc,sensorChannelTypeB_configInit,unknown,cm848_,,cm848_sensorC
+firmware/CM848_S90140.06_analysis/docs/service_0x4a_protocol.md:97: ...| 0x0040A070 / 0x0040A06E | (unnamed) / `sensor_channel1_ram` | FD-A4-A5 AMBIENT AIR TEMP 
+firmware/CM848_S90140.06_analysis/docs/ecu_pinout.md:148: ...tered`, sensor slot 9 = IC1 SPN 105) and are now `cm848_sensorChannel10_intakeManifoldTemperatureInit/Process`. So the MPC555 QADC6
+firmware/CM848_S90140.06_analysis/docs/tuning_parameters.md:281: ...| `sensorChannelConfigInit` | 0x00500234 | Sensor channe
+firmware/CM848_S90140.06_analysis/docs/tuning_parameters.md:282: ...| `updateSensorChannelWithConfig` | 0x00500a4c | Sensor value 
+firmware/CM848_S90140.06_analysis/scripts/extract_flash2.py:7: ...like sensorChannelConfigInit that are called from the main
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:203: ...4 / 595 / 596) are set when barometric_pressure / boost_pressure_channel77_sensor_filtered / sensor_channel38_filtered_o
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:329: ...annel calibration config (ROM). Pointer-passed to sensorChannelTypeB_configInit/_update; field offsets verifi
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:338: ...e_t: the 12-byte RAM state of one sensor channel (sensorChannelConfigInit / updateSensorChannelWithConf
+firmware/CM848_S90140.06_analysis/output/structure_definitions.csv:338: ... of one sensor channel (sensorChannelConfigInit / updateSensorChannelWithConfig / sensorChannelTypeB_*)
+firmware/CM848_S90140.06_analysis/output/local_variables.csv:59: ...# sensorChannelTypeB_configInit @ 0x005012dc - per-channel se
+firmware/CM848_S90140.06_analysis/output/local_variables.csv:60: ...# sensorChannelTypeB_update @ 0x00501b4c - boot-time twin
+firmware/CM848_S90140.06_analysis/output/function_definitions.csv:165: ...# Mode 2: sensorChannelConfigInit + updateSensorChannelWithConf
+firmware/CM848_S90140.06_analysis/output/function_definitions.csv:165: ...# Mode 2: sensorChannelConfigInit + updateSensorChannelWithConfig (13 params)
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:35: ...# Sensor channel 0 (coolant load) - calls sensorChannelConfigInit
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:36: ...# Sensor channel 0 - calls updateSensorChannelWithConfig
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:37: ...# Sensor channel 1 (coolant sensor) - calls sensorChannelConfigInit
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:38: ...# Sensor channel 1 - calls updateSensorChannelWithConfig
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:40: ...# Sensor channel calibration - calls sensorChannelConfigInit
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:41: ...# Sensor channel calibration - calls updateSensorChannelWithConfig
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:143: ...# Calls sensorChannelTypeB_configInit for crankshaft
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:145: ...# Calls sensorChannelConfigInit for aux channel 103
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:146: ...# Calls updateSensorChannelWithConfig for aux channel 103
+work/todo.md:44: ...rd / word[2]; sensorChannelTypeB_* and the Type A sensorChannelConfigInit / updateSensorChannelWithConf
+work/todo.md:44: ...lTypeB_* and the Type A sensorChannelConfigInit / updateSensorChannelWithConfig take (cached_axis_offset, x_a
+work/tasks/025-cm848-naming-wave-followups.md:131: ...appers and outputs keep generic names: channel 68 sensorChannelTypeB_configInit_axis4 / _update_axis4 (0x510d04 / 0
+work/tasks/025-cm848-naming-wave-followups.md:131: ...db8 / DAT_0040bdba / DAT_0040be30) and channel 71 cm848_processSensorLookupTable5 / cm848_initSensorLookupTable
+work/tasks/025-cm848-naming-wave-followups.md:131: ... and channel 71 cm848_processSensorLookupTable5 / cm848_initSensorLookupTable5 with sensor_channel_5_state (
+work/tasks/025-cm848-naming-wave-followups.md:144: ...- Channel plumbing: sensorChannelTypeB_configInit_axis4 / _update_axis4 (0x510d04 / 0
+work/tasks/025-cm848-naming-wave-followups.md:144: ...uel level channel 68 periodic / boot wrappers and cm848_processSensorLookupTable5 / cm848_initSensorLookupTable
+work/tasks/025-cm848-naming-wave-followups.md:144: ...ot wrappers and cm848_processSensorLookupTable5 / cm848_initSensorLookupTable5 (0x35558 / 0x355e4) the A/C p
+work/tasks/025-cm848-naming-wave-followups.md:386: ...intake_manifold_pressure_high_substitute (P0238). sensorChannelTypeB_configInit checked and left. The rest ca
+work/tasks/025-cm848-naming-wave-followups.md:396: ...- sensorChannelTypeB_configInit (0x5012dc) is not about oil p
+work/tasks/025-cm848-naming-wave-followups.md:396: ...it is the periodic analog-channel acquisition and sensorChannelTypeB_update its boot-time twin - the conf
+work/tasks/025-cm848-naming-wave-followups.md:407: ...existing comments - not re-derived here; 0x5012dc sensorChannelTypeB_configInit is not an oil-pressure name (
+work/tasks/025-cm848-naming-wave-followups.md:546: ...ntConditionsMessage cites j1939_coolant_temp_raw; cm848_sensorChannel69_init / _process (0x35670 / 0x356fc
+work/tasks/025-cm848-naming-wave-followups.md:546: ...Channel69_init / _process (0x35670 / 0x356fc) and cm848_sensorChannel1_init / _process (0xc9d4 / 0xca60) 
+work/tasks/025-cm848-naming-wave-followups.md:546: ...Temperature / ambientAirTemperature suffixes like cm848_sensorChannel3_boostPressureInit.
+work/tasks/025-cm848-naming-wave-followups.md:565: ...ure Sense' is likely the slot 20 ambient sensor). cm848_sensorChannel1_init / _process 0xc9d4 / 0xca60 an
+work/tasks/025-cm848-naming-wave-followups.md:565: ...ensorChannel1_init / _process 0xc9d4 / 0xca60 and cm848_sensorChannel69_init / _process 0x35670 / 0x356fc 
+work/tasks/025-cm848-naming-wave-followups.md:577: ...ames: sensor_channel_6_state 0x40b162 (slot 69) / sensor_channel10_ram 0x40a0f2 (slot 9) / sensor_ch
+work/tasks/042-table-campaign-rename-leads.md:475: ...nsor_value (sensor channel 4) or its default when sensor_channel4_fault_status is 2; read by cm848_calcu
+work/tasks/042-table-campaign-rename-leads.md:641: ...set by initGovernorSpeedControl (0x523858: copies sensor_channelGeneric_ram.value into governor_speed_com
+work/tasks/042-table-campaign-rename-leads.md:688: ...*Caught:** the cut renumbered the temporaries of `sensorChannelTypeB_update` / `_configInit`, so their 20
+work/tasks/018-cm848d-bank2-naming.md:38: ...| 0x005012dc | 27 | Sensor channel Type B init | `sensorChannelTypeB_configInit` ✓ |
+work/tasks/018-cm848d-bank2-naming.md:39: ...0x00500a4c | 14 | Sensor channel config update | `updateSensorChannelWithConfig` ✓ |
+work/tasks/018-cm848d-bank2-naming.md:40: ...| 0x00500234 | 14 | Sensor channel config init | `sensorChannelConfigInit` ✓ |
+docs/plans/2026-03-30-compilable-firmware-design.md:33: ...0x00500004,cm848_sensorChannel0_init,sensors

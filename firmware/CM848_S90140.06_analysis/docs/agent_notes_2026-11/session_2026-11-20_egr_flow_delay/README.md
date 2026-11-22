@@ -401,3 +401,10 @@ Hand work on the round 7 lead.
 ## Round 26: the peer session's cruise review (`session_folder/round26/`)
 
 - **Stage A:** `worklist_r26a.py` (e2m 8C2E / 8C2F aligned by offset; each record's code use is in its comment), `map_r26a.csv`. **Closing:** `apply_r26_closing.py`.
+
+## Round 27: the sensor channel layer, the J1939 switch inputs, the fault bits (`session_folder/round27/`)
+
+- **Stage A:** `channel_calls.py` / `channel_identity.py` / `wrapper_census.py` (the census and the e2m evidence), `asm_diff.py` (Type A vs Type B), `generate_r27a.py` -> `worklist_r27a.py` + `labels_r27a.tsv`, `apply_r27a_labels.py`, `refresh_rest_r27a.py`, `derived_ptr_rows.py` (the proof's PTR_ labels).
+- **Stage C:** `spec_r27c.py`, `apply_r27c.py`.
+- **Stage B:** `fault_bit_names.py` -> `fault_field_names.py` (the names, the expansions and their evidence), `fault_setters_r27.py`, `bitfield_words.py` (flat, the layout kept) / `bitfield_words_nested.py` (rejected), `fault_render_census.py`, `piece_contexts.py`, `per_word_tradeoff.py`, `prove_fault_bitfields.py` + `diff_function_r27b.py` (the mask-exact proof).
+- **Closing:** `apply_r27_closing.py`.

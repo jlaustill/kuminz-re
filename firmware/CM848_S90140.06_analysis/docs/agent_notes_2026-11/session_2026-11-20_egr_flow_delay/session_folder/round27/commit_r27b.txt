@@ -1,0 +1,47 @@
+cm848: round 27 stage B - one bitfield per fault in fault_bit_words_t words 1-49 (types, the user's decision)
+
+The user approved named fault bits and accepted Ghidra's pieces on the set / clear writes. Each fault word 1-49 of
+fault_bit_words_t (the three instances fault_detected_cal / fault_registered_cal / fault_previous_pass_cal) is now 16
+one-bit bitfields: fault n = bit n % 16 of word n / 16, bit k = mask 1 << k.
+- Names: 316 bits take their e2m 1036 name in snake_case with the abbreviations spelled out. The others are
+  fault_<n>.
+  - The uncertain expansions were checked against the functions that set the bits:
+    - RT = remote throttle (cm848_claimRemoteThrottleOverride);
+    - EGA / VGA = the EGR valve / VGT H-bridge actuators (cm848_processEgrValveHBridgeFaults /
+      cm848_processVariableGeometryTurbochargerHBridgeFaults);
+    - CT = coolant temperature (the overheat monitors), TSC = TSC1, IR = in range, CWG = the wastegate boost monitor;
+    - EVR = the alternator field (fault 396 = P0622);
+    - TVA = the VGT (e2m's TVA_Sampled_Position is channel 101).
+  - A bit with two application names takes the one its DTC slot names: P0973 / P0974 shift solenoid A (the
+    overdrive driver), P2769 / P2770 the torque converter clutch, P0583-P0588 cruise vacuum / vent, P0381 the wait
+    to start lamp.
+  - Faults 171 / 172 copy faults 78 / 77 while the remote throttle is enabled, so they are
+    remote_throttle_enabled_low_error / _high_error.
+  - Unresolved abbreviations (CORS, T2, TAS, PP, Chry_Dat42, the cruise SC source) and DTC-only bits are fault_<n>,
+    with the e2m name / DTC in the comment.
+- Word 0 stays the plain word faults_0_to_15. It is the base of the 200 indexed accesses, and a two-word pilot
+  showed them printing *(undefined2 *)(&fault_detected_cal.field_0x0 + i) with bitfields there. Its bit names stay
+  in its comment.
+- One struct type per word (a nested fault_bits_A_to_B_t field) was built and rejected: Ghidra 12.1 prints
+  ZPULL(fault_detected_cal.faults_16_to_31,3,1) and struct casts.
+- The measured trade, words 1-49:
+  - 674 tests and 109 writes now name their fault;
+  - 943 piece tokens: 856 in the set / clear writes Ghidra 12.1 does not fold
+    (fault_detected_cal._48_2_ = fault_detected_cal._48_2_ | 0x20), and 87 in tests and whole-word uses.
+- firmware/CLAUDE.md records the decision next to the switch_input_state_t exception, and the fault 383 reference
+  uses the bit name.
+
+Proof (prove_fault_bitfields.py, mask-exact): every bit name is rewritten back to its own word and mask, every word
+piece back to the word, and runs of per-bit stores are merged. The new .cpp then matches the old in 1964 of 1968
+functions; a bit name rendered for another bit would come back with the wrong mask. The other 4 differ only
+structurally and were read by hand:
+- cm848_sequenceVariableGeometryTurbochargerPositionAdjustment: a temp holds the bit instead of the masked word,
+  used only as != 0;
+- cm848_updateParkNeutralFlagAndTsc1Activity: the fault 356 store sits in both paths, and nothing in between touches
+  the word;
+- cm848_monitorParkNeutralSwitch and cm848_checkEgrDeltaPressureSensorPerformance: the same loads, masks and stores
+  with the temps merged or reordered.
+None of the four has local_variables.csv rows. Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing
+problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

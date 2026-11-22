@@ -523,6 +523,15 @@ state enum, the flag bytes.**
 **Round 26 (the peer session's cruise review of 69d6f68).**
 - **Stage A (51ba84a, label-only):** the cruise vacuum throttle actuator named from e2m 8C2E / 8C2F (30 words, the
   learn check, the previous-pass flag); the vehicle speed path's mode-4 behaviour recorded in task 046.
+**Round 27 (the user approved the named fault bits and the CLAUDE.md J1939 note).**
+- **Stage A (084a1cc, label-only):** the sensor channel layer. The inverted periodic / boot names are fixed (four base
+  functions signed / unsigned, 63 wrappers process / initialize), and 91 blocks are named by channel from e2m. Finding:
+  disabled channel 88 (exhaust throttle) writes the fuel temperature outputs.
+- **Stage C (04b419e, label-only + firmware/CLAUDE.md):** the J1939 descriptor's third field is the logical switch
+  (brake 11 / clutch 15 / PTO 3 / remote PTO 19 / interlock 26 / cruise and the rest 31); the CLAUDE.md mechanism text
+  is corrected.
+- **Stage B (2eb75f6, types):** one bitfield per fault in `fault_bit_words_t` words 1-49 (316 e2m names, the rest
+  `fault_<n>`). 674 tests and 109 writes are named; 943 piece tokens, 856 of them on set / clear writes.
 
 ## Test plan
 
@@ -615,6 +624,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 27: stages A and C are EQUIVALENT; stage B passes the mask-exact proof (1964 functions identical, 4
+  structural differences read by hand).
 - [x] Round 26: stage A is EQUIVALENT.
 - [x] Round 25: stage A passes the enum proof (0 differences beyond the substitution); stages B, C and D pass the
   token gate with only the intended functions changed (B: one same-address temporary, C: `main_loop`'s typed
