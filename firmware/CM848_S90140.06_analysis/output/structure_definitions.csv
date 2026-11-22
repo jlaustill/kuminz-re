@@ -1388,9 +1388,9 @@ j1939_tp_pause_t,0x00302927,rx_buf_ptr,dword,4,Pointer to CAN RX data assembly b
 # end_ptr: pointer to end of buffer B data area (initialized to 0x303055)
 # Buffer B data at UNK_00303047
 # =============================================================================
-diag_buf_b_ctrl_t,0x0030304b,service_count,word,2,Service count/size parameter for buffer B,,verified
-diag_buf_b_ctrl_t,0x0030304b,data_ptr,dword,4,Pointer to start of buffer B data area (0x30293F),,verified
-diag_buf_b_ctrl_t,0x0030304b,end_ptr,dword,4,Pointer to end of buffer B data area (0x303055),,verified
+diagnostic_response_message_t,,header,j1939_msg_hdr_t,6,CAN id and data length (the reply length the allocator gets),j1939_msg_hdr_t,verified
+diagnostic_response_message_t,,data_pointer,pointer,4,The reply data,,verified
+diagnostic_response_message_t,,status_pointer,pointer,4,"Points at the status byte right after the record (the J1939 transport writes 0x12 while it sends, 6 on a timeout); not a data end pointer",,verified
 # =============================================================================
 # Diagnostic buffer A control state @ 0x30305A
 # Handles small diagnostic service requests (service count < 9)
@@ -1399,9 +1399,6 @@ diag_buf_b_ctrl_t,0x0030304b,end_ptr,dword,4,Pointer to end of buffer B data are
 # end_ptr: pointer to end of buffer A data area (initialized to 0x303064)
 # Buffer A data at UNK_00303056
 # =============================================================================
-diag_buf_a_ctrl_t,0x0030305a,service_count,word,2,Service count/size parameter for buffer A,,verified
-diag_buf_a_ctrl_t,0x0030305a,data_ptr,dword,4,Pointer to start of buffer A data area (0x303065),,verified
-diag_buf_a_ctrl_t,0x0030305a,end_ptr,dword,4,Pointer to end of buffer A data area (0x303064),,verified
 # =============================================================================
 # Boot state machine phase counter @ 0x3034A0
 # mpc555_bootStateMachine cycles phase 0->1->2->3->0 per PISCR interrupt

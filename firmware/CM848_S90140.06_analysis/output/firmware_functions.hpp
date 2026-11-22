@@ -136,7 +136,7 @@ void mpc555_dispatchJ1939TransportConnectionManagement(j1939_rx_msg_t *rx_msg,by
 void mpc555_sendJ1939TransportDataPackets(void *queue_entry);  // @ 0x000062fc
 void mpc555_ageJ1939TransportReceiveTimeout(void);  // @ 0x00006490
 void mpc555_serviceJ1939TransportSessions(byte connection_id);  // @ 0x000064c4
-undefined * cm848_allocateDiagnosticResponseBuffer(int param_1);  // @ 0x00006508
+diagnostic_response_message_t * cm848_allocateDiagnosticResponseBuffer(int param_1);  // @ 0x00006508
 void mpc555_sciSendServiceResponse(byte param_1,int param_2);  // @ 0x00006580
 void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr);  // @ 0x0000662c
 void cm848_resetSerialReceiveBuffer(void);  // @ 0x00006770

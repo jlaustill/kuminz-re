@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 07:05:45 MST 2026
+// Generated: Sun Nov 22 07:11:20 MST 2026
 
 
 //
@@ -5136,31 +5136,32 @@ void mpc555_serviceJ1939TransportSessions(byte connection_id)
    the multi-frame transport buffer when no transport is in progress / else NULL |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-undefined * cm848_allocateDiagnosticResponseBuffer(int param_1)
+diagnostic_response_message_t * cm848_allocateDiagnosticResponseBuffer(int param_1)
 
 {
   byte bVar1;
-  undefined *puVar2;
+  diagnostic_response_message_t *pdVar2;
   
   if (param_1 < 9) {
-    puVar2 = &DAT_00303056;
-    diag_buf_a_ctrl_t_0030305a.data_ptr = 0x303065;
-    diag_buf_a_ctrl_t_0030305a.service_count = (word)param_1;
-    diag_buf_a_ctrl_t_0030305a.end_ptr = 0x303064;
+    pdVar2 = &diagnostic_single_frame_response_message;
+    diagnostic_single_frame_response_message.data_pointer = &DAT_00303065;
+    diagnostic_single_frame_response_message.header.data_length = (word)param_1;
+    diagnostic_single_frame_response_message.status_pointer =
+         &diagnostic_single_frame_response_status;
   }
   else {
-    bVar1 = diag_buffer_b_status;
+    bVar1 = diagnostic_transport_response_status;
     if ((bVar1 & 0xf0) == 0) {
-      diag_buf_b_ctrl_t_0030304b.data_ptr = 0x30293f;
-      diag_buf_b_ctrl_t_0030304b.service_count = (word)param_1;
-      diag_buf_b_ctrl_t_0030304b.end_ptr = 0x303055;
-      puVar2 = &DAT_00303047;
+      diagnostic_transport_response_message.data_pointer = &DAT_0030293f;
+      diagnostic_transport_response_message.header.data_length = (word)param_1;
+      diagnostic_transport_response_message.status_pointer = &diagnostic_transport_response_status;
+      pdVar2 = &diagnostic_transport_response_message;
     }
     else {
-      puVar2 = (undefined *)0x0;
+      pdVar2 = (diagnostic_response_message_t *)0x0;
     }
   }
-  return puVar2;
+  return pdVar2;
 }
 
 

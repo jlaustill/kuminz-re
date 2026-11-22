@@ -789,9 +789,10 @@ extern undefined qadc_a_result_idx;  // 0x0030292b
 extern undefined qadc_diag_service_request_buf;  // 0x0030292d
 extern undefined qadc_a_paused_channel_id;  // 0x00302930
 extern undefined qadc_a_completion_flag;  // 0x00302931
-extern diag_buf_b_ctrl_t diag_buf_b_ctrl_t_0030304b;  // 0x0030304b
-extern byte diag_buffer_b_status;  // 0x00303055
-extern diag_buf_a_ctrl_t diag_buf_a_ctrl_t_0030305a;  // 0x0030305a
+extern diagnostic_response_message_t diagnostic_transport_response_message;  // 0x00303047
+extern byte diagnostic_transport_response_status;  // 0x00303055
+extern diagnostic_response_message_t diagnostic_single_frame_response_message;  // 0x00303056
+extern byte diagnostic_single_frame_response_status;  // 0x00303064
 extern byte pgn_response_handler_table;  // 0x00303485
 extern byte pgn_response_handler_callbacks;  // 0x00303487
 extern byte pgn_response_handler_count;  // 0x0030349d

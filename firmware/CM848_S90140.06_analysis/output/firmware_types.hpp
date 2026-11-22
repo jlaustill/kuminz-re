@@ -1323,8 +1323,7 @@ typedef struct eeprom_xfer_state_t eeprom_xfer_state_t;
 typedef struct eeprom_block_tracking_t eeprom_block_tracking_t;
 typedef struct j1939_transport_transmit_session_t j1939_transport_transmit_session_t;
 typedef struct j1939_tp_pause_t j1939_tp_pause_t;
-typedef struct diag_buf_b_ctrl_t diag_buf_b_ctrl_t;
-typedef struct diag_buf_a_ctrl_t diag_buf_a_ctrl_t;
+typedef struct diagnostic_response_message_t diagnostic_response_message_t;
 typedef struct boot_state_t boot_state_t;
 typedef struct mios_mpiosm_t mios_mpiosm_t;
 typedef struct mios1_isr_t mios1_isr_t;
@@ -2618,16 +2617,10 @@ struct j1939_tp_pause_t {
     uint32_t rx_buf_ptr;  /* Pointer to CAN RX data assembly buffer (0x303075) */
 };
 
-struct diag_buf_b_ctrl_t {
-    uint16_t service_count;  /* Service count/size parameter for buffer B */
-    uint32_t data_ptr;  /* Pointer to start of buffer B data area (0x30293F) */
-    uint32_t end_ptr;  /* Pointer to end of buffer B data area (0x303055) */
-};
-
-struct diag_buf_a_ctrl_t {
-    uint16_t service_count;  /* Service count/size parameter for buffer A */
-    uint32_t data_ptr;  /* Pointer to start of buffer A data area (0x303065) */
-    uint32_t end_ptr;  /* Pointer to end of buffer A data area (0x303064) */
+struct diagnostic_response_message_t {
+    j1939_msg_hdr_t header;  /* CAN id and data length (the reply length the allocator gets) */
+    void * data_pointer;  /* The reply data */
+    void * status_pointer;  /* Points at the status byte right after the record (the J1939 transport writes 0x12 while it sends, 6 on a timeout); not a data end pointer */
 };
 
 struct boot_state_t {
