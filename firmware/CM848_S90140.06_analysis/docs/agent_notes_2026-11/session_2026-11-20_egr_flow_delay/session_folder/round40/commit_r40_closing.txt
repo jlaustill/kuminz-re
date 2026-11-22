@@ -1,0 +1,16 @@
+cm848: round 40 closing - task 046, the session archive, verify
+
+- task 046, the round 40 section:
+  - stages A / B, the proof, the firmware/CLAUDE.md name refreshes and the one factual fix;
+  - the residual 234 MISSING by category: 123 documentation rows (auditor false positives), 77 boot-named, 10
+    dual-use, 18 with no name reference, 6 deferred;
+  - the leads: the deferred rows, two junk '+N' rows, the immobilizer key bytes under boot names, the auditor and
+    documentation rows.
+- PR body, README, the todo line.
+- The session archive:
+  - session_folder/round40/: the audits, the MISSING survey and user classification, the parameter ID table results,
+    the scripts, maps, rules and commit messages. The .cpp copies are left out.
+  - The large tarball: the build and verify logs.
+- verify: two builds byte-identical, and the committed .cpp matches them apart from the timestamp.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,30 @@
+cm848: round 40 stage B - feature_selection_bits_cal as a bitfield struct, the SCI setting lookup's pointer typed
+
+feature_selection_bits_cal (EEPROM 0x480, stage A's rename of j1939_governor_feature_byte) is now a
+feature_selection_bits_t. The application only tests it with masks; the SCI EEPROM setting path writes the whole byte
+through a pointer.
+- **The bits:**
+  - power_take_off_cab_governor_enable (0x01) and power_take_off_remote_governor_enable (0x02):
+    cm848_runPowerTakeOffGovernorStateMachine.
+  - oil_change_monitor_feature_enable (0x04): cm848_updateOilChangeMonitor.
+  - overdrive_initial_flags_option (0x08): cm848_initializeTransmissionControl's starting overdrive_flags, 0x0a or
+    0x08. The meaning of overdrive_flags bit 1 is unproven, so the bit is named for what it does.
+  - water_in_fuel_sensor_second_configuration (0x10): the *_feature_bit_4_off_* tables are used while it is clear.
+  - reserved_bit_5-7: no reader.
+- **The five tests now read by name,** e.g. feature_selection_bits_cal.water_in_fuel_sensor_second_configuration == 0.
+- **cm848_sciLookupEepromSettingAddress takes the byte's address.** That spread the struct type to the function's
+  shared pointer temp (37 casts of every other setting turned into (feature_selection_bits_t *)).
+  - A local_variables.csv row now types that temp as byte * (setting_pointer).
+  - With the typed local, the decompiler also resolves 15 raw setting addresses into fields, e.g.
+    &end_of_line_test_settings_cal.test_results_3 for (byte *)0x3fd939, and eeprom_write_buffer + 2.
+  - The return gains one (byte *) cast. Its end_of_line_test_settings_t view predates this stage.
+
+Proof:
+- prove_caches.py with no renames lists exactly the 6 functions that use the byte.
+- statement_diff.py, with every field test rewritten back to its mask: 0 differing statements in the 5 test functions.
+- In the lookup, 15 of 15 pairs resolve to the old raw address (address_pairs_check.py: the global's address + the
+  field's offset). The other changes are the return cast and balanced moves of the T1 = 0 / 1 statements.
+- lookup_tables.py: 0 sizing problems. Headers regenerated with the new type (0 g++ errors), tests pass, thunks
+  18 / 14.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

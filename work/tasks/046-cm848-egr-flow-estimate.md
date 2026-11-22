@@ -1921,6 +1921,47 @@ left outside the EEPROM mirror.
   - `audit_cal_suffixes.py` calls RAM 0x3feed0-0x40a048 WORKING_RAM; it is the ROM copy.
   - The `auditing-cal-suffixes` skill still says "~1352 HARD"; the list is empty now.
 
+## Done, round 40 (2026-11-22, same PR): the application's EEPROM mirror names
+
+Two peer relays covered the round. The scripts are in `session_folder/round40/`.
+- **Stage A (7f54db1, labels):** `audit_cal_suffixes.py` MISSING 258 -> 234.
+  - **Which rows:** `missing_users.py` sorts the rows by who uses them; only names that application code alone uses and
+    that describe the application's EEPROM value change. Every candidate went through the ECU's parameter ID table
+    first, which resolves 8.
+  - **Seven names change with the evidence:**
+    - the idle counters (e2m 117F +A Total_Idle_Fuel_Used: the "governed speed" flag is the low speed governor within
+      50 rpm of its reference), now `lifetime_idle_*_cal` / `trip_idle_*_cal` / `engine_idling_flag`;
+    - `low_speed_governor_no_load_fuel_trim_cal` (was governor_speed_target_trim: a fuel addend);
+    - `feature_selection_bits_cal` (was j1939_governor_feature_byte: a scan-tool feature bitmap);
+    - `eeprom_verify_retry_lifetime_total_cal`;
+    - `final_fueling_state_before_shutdown_or_excess_injection_fault_cal`;
+    - `exhaust_brake_switch_learned_flag_cal` (was protection_b_fault_active_flag).
+  - The other 17 rows only gain `_cal`, among them the VIN, `lifetime_distance_pulses_cal` and the
+    0x19ce-0x19f2 counters.
+  - `arrays.csv` also named the VIN; its arrays stage overrides the globals' name, so it changed too.
+  - 1967 functions match the canonical form; the VIN reader differs only by whitespace.
+- **Stage B (9c5414a, a type):** `feature_selection_bits_t`, five proven bits and three reserved.
+  - The five tests are mask-exact (0 differing statements).
+  - The SCI setting lookup's pointer temp is typed `byte *` (`local_variables.csv`), so the struct type does not spread
+    there. With it, 15 raw setting addresses render as fields (each checked against its old address).
+- **firmware/CLAUDE.md (name refreshes):**
+  - The trip / lifetime, vehicle speed, switch, sensor channel and power take-off sections use the new names
+    (`refresh_references.py`).
+  - One factual fix: "+/-400 rpm ... probably idle" is +/-400 counts = 50 rpm, idle by e2m 117F +A.
+- **The residual 234 MISSING:**
+  - 123 documentation rows (`name[n]` / `name.field`, which can never end in `_cal`: an auditor false positive);
+  - 77 boot-named rows at addresses the boot kernel uses before the application loads the mirror;
+  - 10 dual-use rows;
+  - 18 with no reference by name (not proof of unused);
+  - 6 deferred: the region labels `eeprom_mirror` / `eeprom_checksummed_block_start`; `qadc_adc_enable_flag` and
+    `fault_list_iteration_counter` without evidence; the `fault_status_array` / `_word_array` pair (needs a shape).
+- **Leads:**
+  - the 6 deferred rows;
+  - the junk rows `sensor_validation_accum+2` (inside `lifetime_distance_pulses_cal`) and
+    `sensor_validation_delta+1`;
+  - the immobilizer secret key bytes under boot-time names;
+  - `audit_cal_suffixes.py` could skip documentation rows.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

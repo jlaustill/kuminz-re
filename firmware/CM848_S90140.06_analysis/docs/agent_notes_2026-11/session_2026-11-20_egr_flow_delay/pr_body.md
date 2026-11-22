@@ -592,6 +592,11 @@ state enum, the flag bytes.**
   dword.
 - **Stage C (2aa86ed, labels, types):** the last 42 HARD `_cal` scalars renamed from their code (11 with e2m records);
   the J1939-named supervisor chip block re-domained. `audit_cal_suffixes.py` HARD 63 -> 0.
+**Round 40.**
+- **Stage A (7f54db1, labels):** 24 application-side names in the EEPROM mirror gain `_cal`; 7 renamed from their e2m
+  records and code (the idle counters, the feature bitmap, the exhaust brake switch learned flag, ...).
+- **Stage B (9c5414a, a type):** `feature_selection_bits_cal` as a bitfield struct; the SCI setting lookup's pointer
+  typed `byte *`.
 
 ## Test plan
 
@@ -684,6 +689,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 40: every function matches the canonical form or has 0 differing statements (bitfield tests rewritten to their masks); 15 / 15 resolved addresses checked; MISSING 258 -> 234.
 - [x] Round 39: every function matches the canonical form or has 0 differing statements; `audit_cal_suffixes.py` HARD 63 -> 0, SOFT 4 -> 0; e2m sizes agree; RAM 0x3feed0-0x40a048 = ROM + 0x39a3e6 (all 22717 words).
 - [x] Round 38: all 1968 functions match the canonical form.
 - [x] Round 37: every function matches the canonical form apart from one declaration reorder and one

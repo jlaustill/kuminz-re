@@ -1,0 +1,10 @@
+{"*": [
+ ["feature_selection_bits_cal\\.water_in_fuel_sensor_second_configuration == 0", "(feature_selection_bits_cal & 0x10) == 0"],
+ ["feature_selection_bits_cal\\.power_take_off_remote_governor_enable == 0", "(feature_selection_bits_cal & 2) == 0"],
+ ["feature_selection_bits_cal\\.power_take_off_cab_governor_enable != 0", "(feature_selection_bits_cal & 1) != 0"],
+ ["feature_selection_bits_cal\\.overdrive_initial_flags_option == 0", "(feature_selection_bits_cal & 8) == 0"],
+ ["feature_selection_bits_cal\\.oil_change_monitor_feature_enable != 0", "(feature_selection_bits_cal & 4) != 0"],
+ ["\\(byte \\*\\)&feature_selection_bits_cal\\b", "&feature_selection_bits_cal"],
+ ["\\bsetting_pointer\\b", "pbVar1"],
+ [" ;", ";"]
+]}

@@ -463,3 +463,9 @@ Hand work on the round 7 lead.
 - **Stage B:** `apply_r39b.py`, `make_rules_r39b.py` / `rules_r39b*.json` (`statement_diff.py` rules).
 - **Stage C:** `hard_scalars.py` / `hard_scalars.tsv` (each HARD row with its e2m record, ROM-copy check and writes), `symbol_uses.py`, `use_context.py`, `apply_r39c.py`, `make_rules_r39c.py`.
 - **Closing:** `apply_r39_closing.py`, `update_large_tar_r39.sh`.
+
+## Round 40: the application's EEPROM mirror names (`session_folder/round40/`)
+
+- **Stage A:** `audit.txt`, `missing_survey.py` / `missing.tsv`, `missing_users.py` / `missing_users.tsv` (who uses each row), `app_e2m.txt` (the parameter ID table), `apply_r40a.py`, `apply_r40a_followups.py`.
+- **Stage B:** `apply_r40b.py`, `rules_r40b*.json`, `address_pairs_check.py`.
+- **Closing:** `apply_r40_closing.py`, `update_large_tar_r40.sh`.
