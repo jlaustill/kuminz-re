@@ -1393,6 +1393,8 @@ typedef struct j1939_pgn65259_payload_t j1939_pgn65259_payload_t;
 typedef struct j1939_pgn65242_payload_t j1939_pgn65242_payload_t;
 typedef struct j1939_broadcast_transmit_session_t j1939_broadcast_transmit_session_t;
 typedef struct j1939_transport_receive_session_t j1939_transport_receive_session_t;
+typedef struct j1939_pgn65263_payload_t j1939_pgn65263_payload_t;
+typedef struct j1939_pgn65504_payload_t j1939_pgn65504_payload_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4338,4 +4340,23 @@ struct j1939_transport_receive_session_t {
     uint32_t request_to_send_can_id;  /* the request to send's CAN identifier (its source address byte is matched against the data packets and aborts) */
     uint16_t message_size;  /* the message size in bytes (TP.CM bytes 2-3; the application takes at most 0x6a4) */
     byte* receive_buffer_pointer;  /* where the next packet's data goes: reset to the receive buffer (boot 0x303075 / application 0x3fbe09) and advanced per byte */
+};
+
+struct j1939_pgn65263_payload_t {
+    uint8_t fuel_delivery_pressure;  /* SPN 94 engine fuel delivery pressure */
+    uint8_t extended_crankcase_blow_by_pressure;  /* SPN 22: 0xff (not available) from the initializer */
+    uint8_t oil_level;  /* SPN 98 engine oil level: never written in this firmware */
+    uint8_t oil_pressure;  /* SPN 100 engine oil pressure */
+    uint16_t crankcase_pressure;  /* SPN 101 engine crankcase pressure: 0xffff (not available) from the initializer */
+    uint8_t coolant_pressure;  /* SPN 109 engine coolant pressure */
+    uint8_t coolant_level;  /* SPN 111: 0xff (not available) from the initializer */
+};
+
+struct j1939_pgn65504_payload_t {
+    uint16_t engine_speed;  /* engine_speed_state.filtered_engine_speed in J1939 byte order (0 with the engine stopped) */
+    uint16_t engine_net_output_torque;  /* j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f (125 % in 1/256 % units / rounded) in J1939 byte order */
+    uint8_t scrambled_injection_timing_byte_1;  /* bits 0x52 of the scrambled timing (timing value XOR the key) shifted right once / the other bits time base noise */
+    uint8_t scrambled_injection_timing_byte_2;  /* bits 0x41 of the scrambled timing / the rest time base noise */
+    uint8_t scramble_key;  /* the key: the time base (TBLr) >> 7. The timing value is (main_injection_timing + injection_timing_top_dead_center_offset) x 120 >> 10 + 125 */
+    uint8_t scrambled_injection_timing_byte_3;  /* bits 0x1a of the scrambled timing shifted left 3 / the rest time base noise */
 };

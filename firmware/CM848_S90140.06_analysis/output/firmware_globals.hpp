@@ -1395,8 +1395,7 @@ extern j1939_tx_msg_t j1939_pgn61444_tx_message;  // 0x003fad98
 extern byte j1939_eec2_low_idle_and_kickdown_byte;  // 0x003fada8
 extern j1939_tx_msg_t j1939_pgn61443_tx_message;  // 0x003fadb0
 extern j1939_tx_msg_t j1939_pgn65247_tx_message;  // 0x003fadc8
-extern byte j1939_eflp1_fuel_delivery_pressure;  // 0x003fadd9
-extern word j1939_diag_response_word_b;  // 0x003faddd
+extern j1939_pgn65263_payload_t j1939_pgn65263_payload;  // 0x003fadd9
 extern j1939_tx_msg_t j1939_pgn65263_tx_message;  // 0x003fade1
 extern j1939_tx_msg_t j1939_pgn65262_tx_message;  // 0x003fadf0
 extern word j1939_et1_engine_oil_temperature;  // 0x003fae00
@@ -1408,8 +1407,7 @@ extern j1939_tx_msg_t j1939_pgn65270_tx_message;  // 0x003fae38
 extern j1939_pgn65249_payload_t j1939_pgn65249_payload;  // 0x003fae50
 extern j1939_tx_msg_t j1939_pgn65249_tx_message;  // 0x003fae63
 extern j1939_tx_msg_t j1939_pgn65242_tx_message;  // 0x003fae72
-extern word j1939_rpm_tx_word;  // 0x003faeb0
-extern word j1939_etc1_speed_offset_tx_word;  // 0x003faeb2
+extern j1939_pgn65504_payload_t j1939_pgn65504_payload;  // 0x003faeb0
 extern j1939_tx_msg_t j1939_pgn65504_tx_message;  // 0x003faeb8
 extern j1939_tx_msg_t j1939_pgn65248_tx_message;  // 0x003faec8
 extern dword j1939_pgn65248_field1_tx_dword;  // 0x003faed6
@@ -6842,8 +6840,6 @@ extern byte j1939_eec3_nominal_friction_percent_torque;  // 0x003fadc0
 extern byte j1939_eec3_desired_operating_speed_low_byte;  // 0x003fadc1
 extern byte j1939_eec3_desired_operating_speed_high_byte;  // 0x003fadc2
 extern byte j1939_eec3_desired_operating_speed_asymmetry;  // 0x003fadc3
-extern byte j1939_eflp1_engine_oil_pressure;  // 0x003faddc
-extern byte j1939_eflp1_coolant_pressure;  // 0x003faddf
 extern byte j1939_fan_drive_1_estimated_fan_speed_byte;  // 0x003fae20
 extern byte j1939_ic1_boost_pressure;  // 0x003fae47
 extern byte j1939_ic1_intake_manifold_temperature;  // 0x003fae48

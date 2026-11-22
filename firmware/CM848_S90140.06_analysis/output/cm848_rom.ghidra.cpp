@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 13:29:35 MST 2026
+// Generated: Sun Nov 22 13:40:15 MST 2026
 
 
 //
@@ -26134,22 +26134,22 @@ void cm848_buildPgn65263EngineFluidLevelPressure1Message(void)
 
 {
   if (algorithm_enable_flags_29_cal.fuel_delivery_pressure_broadcast_enable == 0) {
-    j1939_eflp1_fuel_delivery_pressure = 0xff;
+    j1939_pgn65263_payload.fuel_delivery_pressure = 0xff;
   }
   else if ((fault_detected_cal.fault_180 == 0) && (fault_detected_cal.fault_179 == 0)) {
-    j1939_eflp1_fuel_delivery_pressure =
+    j1939_pgn65263_payload.fuel_delivery_pressure =
          (byte)(((uint)(fuel_delivery_pressure_sensor_filtered >> 7) * 0x1afa) / 1000 >> 2);
   }
   else {
-    j1939_eflp1_fuel_delivery_pressure = 0xfe;
+    j1939_pgn65263_payload.fuel_delivery_pressure = 0xfe;
   }
-  j1939_eflp1_engine_oil_pressure =
+  j1939_pgn65263_payload.oil_pressure =
        (byte)(((uint)(oil_pressure_sensor_filtered >> 7) * 0x1afa) / 1000 >> 2);
   if ((sensor_channel_enable_bits_cal[1] & 8) == 0) {
-    j1939_eflp1_coolant_pressure = 0xff;
+    j1939_pgn65263_payload.coolant_pressure = 0xff;
   }
   else {
-    j1939_eflp1_coolant_pressure =
+    j1939_pgn65263_payload.coolant_pressure =
          (byte)(((uint)(coolant_pressure_sensor_filtered >> 7) * 0x1afa) / 1000 >> 1);
   }
   sendJ1939Message(&j1939_pgn65263_tx_message);
@@ -26168,13 +26168,13 @@ void cm848_initJ1939FluidLevelPressureBuffer(void)
   j1939_pgn65263_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65263_priority_cal & 7) << 2,0xfeef00);
   j1939_pgn65263_tx_message.header.data_length = 8;
-  j1939_pgn65263_tx_message.data_pointer = &j1939_eflp1_fuel_delivery_pressure;
+  j1939_pgn65263_tx_message.data_pointer = &j1939_pgn65263_payload.fuel_delivery_pressure;
   j1939_pgn65263_tx_message.status_pointer = &j1939_pgn65263_transmit_status;
   j1939_pgn65263_tx_message.header.can_id =
        CONCAT31(j1939_pgn65263_tx_message.header.can_id._0_3_,(char)j1939_source_address);
-  DAT_003fadda = 0xff;
-  j1939_diag_response_word_b = 0xffff;
-  DAT_003fade0 = 0xff;
+  j1939_pgn65263_payload.extended_crankcase_blow_by_pressure = 0xff;
+  j1939_pgn65263_payload.crankcase_pressure = 0xffff;
+  j1939_pgn65263_payload.coolant_level = 0xff;
   return;
 }
 
@@ -26690,32 +26690,36 @@ void cm848_j1939HandlePgn65504ProprietaryB(void)
   undefined1 local_12;
   
   if (engine_speed_state.filtered_engine_speed == 0) {
-    j1939_rpm_tx_word = 0;
-    j1939_etc1_speed_offset_tx_word = 0;
-    DAT_003faeb4 = 0;
-    DAT_003faeb5 = 0;
-    DAT_003faeb6 = 0;
-    DAT_003faeb7 = 0;
+    j1939_pgn65504_payload.engine_speed = 0;
+    j1939_pgn65504_payload.engine_net_output_torque = 0;
+    j1939_pgn65504_payload.scrambled_injection_timing_byte_1 = 0;
+    j1939_pgn65504_payload.scrambled_injection_timing_byte_2 = 0;
+    j1939_pgn65504_payload.scramble_key = 0;
+    j1939_pgn65504_payload.scrambled_injection_timing_byte_3 = 0;
   }
   else {
     local_18 = (undefined1)(engine_speed_state.filtered_engine_speed >> 8);
-    j1939_rpm_tx_word = CONCAT11((char)engine_speed_state.filtered_engine_speed,local_18);
+    j1939_pgn65504_payload.engine_speed =
+         CONCAT11((char)engine_speed_state.filtered_engine_speed,local_18);
     local_12 = (undefined1)
                ((ushort)(j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f) >> 8);
-    j1939_etc1_speed_offset_tx_word =
+    j1939_pgn65504_payload.engine_net_output_torque =
          CONCAT11((char)(j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f),local_12)
     ;
     uVar1 = TBLr;
     uVar2 = uVar1 >> 7 & 0xffff;
-    DAT_003faeb6 = (undefined1)uVar2;
+    j1939_pgn65504_payload.scramble_key = (byte)uVar2;
     uVar2 = ((uint)(((int)main_injection_timing + (int)injection_timing_top_dead_center_offset) *
                    0x78) >> 10) + 0x7d ^ uVar2;
     uVar1 = TBLr;
-    DAT_003faeb4 = (byte)(uVar2 >> 1) & 0x52 | (byte)(uVar1 >> 7) & 0xad;
+    j1939_pgn65504_payload.scrambled_injection_timing_byte_1 =
+         (byte)(uVar2 >> 1) & 0x52 | (byte)(uVar1 >> 7) & 0xad;
     uVar1 = TBLr;
-    DAT_003faeb5 = (byte)uVar2 & 0x41 | (byte)(uVar1 >> 7) & 0xbe;
+    j1939_pgn65504_payload.scrambled_injection_timing_byte_2 =
+         (byte)uVar2 & 0x41 | (byte)(uVar1 >> 7) & 0xbe;
     uVar1 = TBLr;
-    DAT_003faeb7 = (byte)((uVar2 & 0x1a) << 3) | (byte)(uVar1 >> 7) & 0x2f;
+    j1939_pgn65504_payload.scrambled_injection_timing_byte_3 =
+         (byte)((uVar2 & 0x1a) << 3) | (byte)(uVar1 >> 7) & 0x2f;
   }
   sendJ1939Message(&j1939_pgn65504_tx_message);
   return;
@@ -26735,7 +26739,7 @@ void cm848_initJ1939ProprietaryPgn65504Buffer(void)
   j1939_pgn65504_tx_message.header.can_id =
        CONCAT31(j1939_pgn65504_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   j1939_pgn65504_tx_message.header.data_length = 8;
-  j1939_pgn65504_tx_message.data_pointer = (undefined *)&j1939_rpm_tx_word;
+  j1939_pgn65504_tx_message.data_pointer = (undefined *)&j1939_pgn65504_payload;
   j1939_pgn65504_tx_message.status_pointer = &j1939_pgn65504_transmit_status;
   return;
 }

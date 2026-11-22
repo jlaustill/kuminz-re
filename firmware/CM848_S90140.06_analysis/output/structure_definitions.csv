@@ -3050,3 +3050,18 @@ j1939_transport_receive_session_t,,timeout_timer,word,2,counted down while the s
 j1939_transport_receive_session_t,,request_to_send_can_id,dword,4,the request to send's CAN identifier (its source address byte is matched against the data packets and aborts),,verified
 j1939_transport_receive_session_t,,message_size,word,2,the message size in bytes (TP.CM bytes 2-3; the application takes at most 0x6a4),,verified
 j1939_transport_receive_session_t,,receive_buffer_pointer,byte*,4,where the next packet's data goes: reset to the receive buffer (boot 0x303075 / application 0x3fbe09) and advanced per byte,,verified
+# j1939_pgn65263_payload_t: the J1939 EFL/P1 (PGN 65263) payload: 8 bytes (PR #53 round 36)
+j1939_pgn65263_payload_t,0x003fadd9,fuel_delivery_pressure,byte,1,SPN 94 engine fuel delivery pressure,,verified
+j1939_pgn65263_payload_t,0x003fadd9,extended_crankcase_blow_by_pressure,byte,1,SPN 22: 0xff (not available) from the initializer,,verified
+j1939_pgn65263_payload_t,0x003fadd9,oil_level,byte,1,SPN 98 engine oil level: never written in this firmware,,verified
+j1939_pgn65263_payload_t,0x003fadd9,oil_pressure,byte,1,SPN 100 engine oil pressure,,verified
+j1939_pgn65263_payload_t,0x003fadd9,crankcase_pressure,word,2,SPN 101 engine crankcase pressure: 0xffff (not available) from the initializer,,verified
+j1939_pgn65263_payload_t,0x003fadd9,coolant_pressure,byte,1,SPN 109 engine coolant pressure,,verified
+j1939_pgn65263_payload_t,0x003fadd9,coolant_level,byte,1,SPN 111: 0xff (not available) from the initializer,,verified
+# j1939_pgn65504_payload_t: the Proprietary B PGN 65504 payload: 8 bytes (PR #53 round 36)
+j1939_pgn65504_payload_t,0x003faeb0,engine_speed,word,2,engine_speed_state.filtered_engine_speed in J1939 byte order (0 with the engine stopped),,verified
+j1939_pgn65504_payload_t,0x003faeb0,engine_net_output_torque,word,2,j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f (125 % in 1/256 % units / rounded) in J1939 byte order,,verified
+j1939_pgn65504_payload_t,0x003faeb0,scrambled_injection_timing_byte_1,byte,1,bits 0x52 of the scrambled timing (timing value XOR the key) shifted right once / the other bits time base noise,,verified
+j1939_pgn65504_payload_t,0x003faeb0,scrambled_injection_timing_byte_2,byte,1,bits 0x41 of the scrambled timing / the rest time base noise,,verified
+j1939_pgn65504_payload_t,0x003faeb0,scramble_key,byte,1,the key: the time base (TBLr) >> 7. The timing value is (main_injection_timing + injection_timing_top_dead_center_offset) x 120 >> 10 + 125,,verified
+j1939_pgn65504_payload_t,0x003faeb0,scrambled_injection_timing_byte_3,byte,1,bits 0x1a of the scrambled timing shifted left 3 / the rest time base noise,,verified
