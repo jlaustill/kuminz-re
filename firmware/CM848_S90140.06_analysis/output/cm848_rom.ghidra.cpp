@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 00:27:02 MST 2026
+// Generated: Sun Nov 22 00:30:30 MST 2026
 
 
 //
@@ -24586,7 +24586,7 @@ void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
 LAB_000242b4:
     j1939_ccvs1_cruise_brake_clutch_byte = j1939_ccvs1_cruise_brake_clutch_byte | bVar3;
   }
-  if ((algorithm_enable_flags_3_cal & 0x40) == 0) {
+  if (algorithm_enable_flags_3_cal.cruise_control_enable == 0) {
     bVar3 = 0xf;
 LAB_0002432c:
     j1939_ccvs1_cruise_brake_clutch_byte = j1939_ccvs1_cruise_brake_clutch_byte | bVar3;
@@ -24608,7 +24608,7 @@ LAB_00024304:
       goto LAB_0002432c;
     }
   }
-  if ((algorithm_enable_flags_3_cal & 0x40) == 0) {
+  if (algorithm_enable_flags_3_cal.cruise_control_enable == 0) {
     j1939_ccvs1_cruise_set_resume_byte = 0xff;
   }
   else {
@@ -24669,7 +24669,7 @@ LAB_00024494:
     j1939_ccvs1_cruise_set_resume_byte = j1939_ccvs1_cruise_set_resume_byte | bVar3;
   }
 LAB_00024514:
-  if ((algorithm_enable_flags_3_cal & 0x40) == 0) {
+  if (algorithm_enable_flags_3_cal.cruise_control_enable == 0) {
     j1939_ccvs1_cruise_set_speed_byte = 0xff;
   }
   else {
@@ -24681,7 +24681,7 @@ LAB_00024514:
   else {
     bVar3 = 0;
   }
-  if ((algorithm_enable_flags_3_cal & 0x10) == 0) {
+  if (algorithm_enable_flags_3_cal.power_take_off_enable == 0) {
     bVar1 = 0x1f;
   }
   else {
@@ -24758,7 +24758,7 @@ void cm848_initPgn65265CruiseSpeedHandler(void)
 void j1939HandlePgn65261CruiseControlSetup(void)
 
 {
-  if (((algorithm_enable_flags_3_cal & 0x80) == 0) ||
+  if ((algorithm_enable_flags_3_cal.road_speed_governor_enable == 0) ||
      (&DAT_00009e00 < (undefined *)(uint)maximum_road_speed)) {
     j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit = 0xff;
   }
@@ -24766,7 +24766,7 @@ void j1939HandlePgn65261CruiseControlSetup(void)
     j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit =
          (byte)((uint)((int)(uint)maximum_road_speed * 0xa1) / 100 >> 8);
   }
-  if ((algorithm_enable_flags_3_cal & 0x40) == 0) {
+  if (algorithm_enable_flags_3_cal.cruise_control_enable == 0) {
     j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
   }
   else {
@@ -29437,10 +29437,11 @@ LAB_0002b0f0:
     power_take_off_governor_switch_state_bits = power_take_off_governor_switch_state_bits | 0x40000;
   }
   if (power_take_off_governor_state == POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT) {
-    if (((((algorithm_enable_flags_3_cal & 0x10) == 0) || ((j1939_governor_feature_byte & 2) == 0))
-        || ((power_take_off_remote_switch_pressed_pass_count <= power_take_off_remote_switch_timeout
-            && (power_take_off_remote_switch_press_count != power_take_off_remote_count_limit_cal)))
-        ) || (power_take_off_remote_switch_press_count == 0)) {
+    if ((((algorithm_enable_flags_3_cal.power_take_off_enable == 0) ||
+         ((j1939_governor_feature_byte & 2) == 0)) ||
+        ((power_take_off_remote_switch_pressed_pass_count <= power_take_off_remote_switch_timeout &&
+         (power_take_off_remote_switch_press_count != power_take_off_remote_count_limit_cal)))) ||
+       (power_take_off_remote_switch_press_count == 0)) {
       if (((((power_take_off_remote_switch_timeout <
               power_take_off_remote_switch_released_pass_count) &&
             (power_take_off_saved_cab_target_engine_speed == 0)) ||
@@ -29507,16 +29508,16 @@ LAB_0002b3d0:
            ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
           ((power_take_off_governor_switch_state_bits & 0x3000) != 0x1000)) ||
          (power_take_off_disable_flag != 0)))))) {
-      if (((((algorithm_enable_flags_3_cal & 0x10) != 0) && ((j1939_governor_feature_byte & 1) != 0)
-           ) && (((power_take_off_governor_switch_state_bits & 0x10) != 0 &&
-                 (((vehicle_speed <= power_take_off_maximum_vehicle_speed_cal &&
-                   (power_take_off_minimum_engage_engine_speed <=
-                    engine_speed_state.filtered_engine_speed)) &&
-                  ((engine_speed_state.filtered_engine_speed <=
-                    power_take_off_maximum_engage_engine_speed &&
-                   (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x4000) == 0 &&
-                    ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) == 0))))
-                  )))))) &&
+      if ((((algorithm_enable_flags_3_cal.power_take_off_enable != 0) &&
+           ((j1939_governor_feature_byte & 1) != 0)) &&
+          (((power_take_off_governor_switch_state_bits & 0x10) != 0 &&
+           (((vehicle_speed <= power_take_off_maximum_vehicle_speed_cal &&
+             (power_take_off_minimum_engage_engine_speed <= engine_speed_state.filtered_engine_speed
+             )) && ((engine_speed_state.filtered_engine_speed <=
+                     power_take_off_maximum_engage_engine_speed &&
+                    (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x4000) == 0 &&
+                     ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) == 0)))
+                    ))))))) &&
          (((power_take_off_switch_enable_option_cal == 0 ||
            ((power_take_off_governor_switch_state_bits & 0x1000) != 0)) &&
           ((((power_take_off_governor_switch_state_bits & 0x4000) == 0 ||
@@ -29737,7 +29738,7 @@ void cm848_selectPowerTakeOffOrUserFueling(void)
     operating_mode_governor_output.fuel_demand = engine_operating_mode_fuel_demand;
   }
   else if ((power_take_off_governor_active_flag == 1) &&
-          ((algorithm_enable_flags_3_cal & 0x10) != 0)) {
+          (algorithm_enable_flags_3_cal.power_take_off_enable != 0)) {
     if (((engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) ||
         (engine_operating_mode == FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION)) ||
        (engine_operating_mode == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)) {
@@ -29807,7 +29808,7 @@ void cm848_buildPgn65264PowerTakeOffInformationMessage(void)
 {
   byte bVar1;
   
-  if ((algorithm_enable_flags_3_cal & 0x10) == 0) {
+  if (algorithm_enable_flags_3_cal.power_take_off_enable == 0) {
     j1939_pgn65264_requested_engine_speed_tx_word = 0xffff;
     j1939_pgn65264_payload_byte_6 = 0xff;
     j1939_pgn65264_payload_byte_7 = 0xff;
@@ -44210,7 +44211,7 @@ void cm848_saveCruiseSetSpeedForPowerDown(void)
 
 {
   cruise_saved_set_speed_cal = cruise_speed_command;
-  if ((algorithm_enable_flags_3_cal & 0x8000) == 0) {
+  if (algorithm_enable_flags_3_cal.cruise_save_set_speed_at_power_down_enable == 0) {
     cruise_saved_set_speed_cal = 0;
   }
   return;
@@ -44370,14 +44371,14 @@ void cm848_calculateRoadSpeedGovernorFueling(void)
   uint uVar2;
   dword dVar3;
   
-  if (((((algorithm_enable_flags_3_cal & 0x80) == 0) ||
+  if ((((algorithm_enable_flags_3_cal.road_speed_governor_enable == 0) ||
        ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
       (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
      (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) {
     road_speed_governor_fueling = 0x1700;
     return;
   }
-  if (((algorithm_enable_flags_3_cal & 0x100) == 0) ||
+  if ((algorithm_enable_flags_3_cal.road_speed_governor_without_droops_below_top_gear == 0) ||
      (drivetrain_gear_range == DRIVETRAIN_GEAR_RANGE_TOP_GEAR)) {
     uVar1 = (uint)vehicle_speed_rise_limited;
     uVar2 = (uint)road_speed_governor_reference_speed;
@@ -73952,8 +73953,8 @@ undefined4 cm848_updateCruiseControlDeniedStatus(void)
   undefined4 uVar1;
   uint uVar2;
   
-  if ((((algorithm_enable_flags_3_cal & 0x40) == 0) || (cruise_control_switches_learned_flag == 0))
-     || (fault_reaction_request_bits != 0)) {
+  if (((algorithm_enable_flags_3_cal.cruise_control_enable == 0) ||
+      (cruise_control_switches_learned_flag == 0)) || (fault_reaction_request_bits != 0)) {
     cruise_control_denied_status = 1;
     if (cruise_control_engaged_flag != 0) {
       cruise_control_last_cutout_reason = 1;
@@ -74123,7 +74124,8 @@ undefined4 governor_cruise_standbyState_get(void)
 {
   undefined4 uVar1;
   
-  if (((((cruise_control_on_toggle_state == 0) || ((algorithm_enable_flags_3_cal & 0x40) == 0)) ||
+  if (((((cruise_control_on_toggle_state == 0) ||
+        (algorithm_enable_flags_3_cal.cruise_control_enable == 0)) ||
        (cruise_control_switches_learned_flag == 0)) ||
       ((((fault_reaction_request_bits != 0 ||
          ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
@@ -85620,7 +85622,7 @@ void cm848_selectCruiseGovernorGainSet(int param_1)
   if (((cruise_droops_allowed_flag == 0) &&
       (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL)) ||
      ((adjusted_user_fueling_state == FUELING_STATE_ROAD_SPEED_GOVERNOR &&
-      (((algorithm_enable_flags_3_cal & 0x100) != 0 &&
+      ((algorithm_enable_flags_3_cal.road_speed_governor_without_droops_below_top_gear != 0 &&
        (drivetrain_gear_range != DRIVETRAIN_GEAR_RANGE_TOP_GEAR)))))) {
 LAB_00524934:
     cruise_droop_speed_error_delta = 0;

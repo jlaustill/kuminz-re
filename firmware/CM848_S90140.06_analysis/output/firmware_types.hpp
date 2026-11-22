@@ -1344,6 +1344,7 @@ typedef struct pci_controller_command_word_t pci_controller_command_word_t;
 typedef struct end_of_line_test_settings_t end_of_line_test_settings_t;
 typedef struct algorithm_enable_flags_12_t algorithm_enable_flags_12_t;
 typedef struct algorithm_enable_flags_18_t algorithm_enable_flags_18_t;
+typedef struct algorithm_enable_flags_3_t algorithm_enable_flags_3_t;
 typedef struct algorithm_enable_flags_4_t algorithm_enable_flags_4_t;
 typedef struct algorithm_enable_flags_41_t algorithm_enable_flags_41_t;
 typedef struct piecewise_linear_gain_t piecewise_linear_gain_t;
@@ -2826,6 +2827,25 @@ struct algorithm_enable_flags_18_t {
     uint16_t reserved_bit_13 : 1;  /* bit 13: guess (not proven, so reserved): remote throttle transition verification enable - e2m Remote_Throttle_Transition_Verification_Enable (CTRTTZEN). cm848_claimRemoteThrottleOverride (lhz at 0x50e6e4); the name agrees, the body was not read. Clear in this calibration (0x0008). */
     uint16_t engine_retarder_service_brake_activate_enable : 1;  /* bit 14: e2m EB_Service_Brake_Activate_Enable (EBBREN, EB = engine brake). Proven in PR #53 round 17: its only reader, cm848_updateEngineRetarderAllowedState (lhz at 0x41610), lets the driver conditions pass while it is set only after a service brake tap (service_brake_recently_applied_flag) or with a cruise non-override command (was reserved_bit_14). Clear in this calibration (0x0008). */
     uint16_t reserved_bit_15 : 1;  /* bit 15: e2m EB_Rate_Limit_Enable (EBRTLMEA, engine brake level rate limit). No reader in either bank (sweep of both banks). Clear in this calibration (0x0008). */
+};
+
+struct algorithm_enable_flags_3_t {
+    uint16_t reserved_bit_0 : 1;  /* bit 0: no e2m record; no reader */
+    uint16_t reserved_bit_1 : 1;  /* bit 1: no e2m record; no reader */
+    uint16_t reserved_bit_2 : 1;  /* bit 2: no e2m record; no reader */
+    uint16_t idle_speed_adjust_enable : 1;  /* bit 3: e2m 106B +8 Idle_Speed_Adjust_Enable (mask 0x8); no reader in this build */
+    uint16_t power_take_off_enable : 1;  /* bit 4: e2m PTO_Enable (0x10): the power take-off governor state machine, its fueling and the PGN 65264 / 65265 broadcasts need it; set on this truck */
+    uint16_t reserved_bit_5 : 1;  /* bit 5: no e2m record; no reader */
+    uint16_t cruise_control_enable : 1;  /* bit 6: e2m Cruise_Control_Enable (0x40): cruise standby / denied status, PGN 65261 / 65265; set on this truck */
+    uint16_t road_speed_governor_enable : 1;  /* bit 7: e2m Road_Speed_Governor_Enable (0x80): cm848_calculateRoadSpeedGovernorFueling gives no limit (0x1700) while it is clear; PGN 65261; set on this truck */
+    uint16_t road_speed_governor_without_droops_below_top_gear : 1;  /* bit 8: No e2m record (0x100): while it is set and the drivetrain is not in top gear, cm848_calculateRoadSpeedGovernorFueling cuts to 0 / no limit at the reference speed and cm848_selectCruiseGovernorGainSet zeroes the droop delta; clear on this truck */
+    uint16_t reserved_bit_9 : 1;  /* bit 9: no e2m record; no reader */
+    uint16_t cruise_governor_droop_enable : 1;  /* bit 10: e2m Cruise_RSG_Droop_Enable (0x400); no reader in this build */
+    uint16_t reserved_bit_11 : 1;  /* bit 11: no e2m record; no reader */
+    uint16_t reserved_bit_12 : 1;  /* bit 12: e2m ANC_Fuel_Algorithm_Enable (0x1000); no reader (the ANC stage is compiled out) */
+    uint16_t reserved_bit_13 : 1;  /* bit 13: e2m ANC_Timing_Algorithm_Enable (0x2000); no reader (the ANC stage is compiled out) */
+    uint16_t reserved_bit_14 : 1;  /* bit 14: e2m ANC_Speed_Algorithm_Enable (0x4000); no reader (the ANC stage is compiled out) */
+    uint16_t cruise_save_set_speed_at_power_down_enable : 1;  /* bit 15: e2m Cruise_Save_Set_Speed_On_Poweroff_Enable (0x8000): cm848_saveCruiseSetSpeedForPowerDown saves 0 while it is clear; clear on this truck */
 };
 
 struct algorithm_enable_flags_4_t {

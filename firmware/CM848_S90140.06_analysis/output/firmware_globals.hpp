@@ -2134,7 +2134,7 @@ extern word engine_brake_driveline_brake_type_cal;  // 0x003fd53e
 extern word algorithm_enable_flags_0_cal;  // 0x003fd59c
 extern word algorithm_enable_flags_1_cal;  // 0x003fd59e
 extern word algorithm_enable_flags_2_cal;  // 0x003fd5a0
-extern word algorithm_enable_flags_3_cal;  // 0x003fd5a2
+extern algorithm_enable_flags_3_t algorithm_enable_flags_3_cal;  // 0x003fd5a2
 extern algorithm_enable_flags_4_t algorithm_enable_flags_4_cal;  // 0x003fd5a4
 extern word algorithm_enable_flags_5_cal;  // 0x003fd5a6
 extern word algorithm_enable_flags_6_cal;  // 0x003fd5a8
