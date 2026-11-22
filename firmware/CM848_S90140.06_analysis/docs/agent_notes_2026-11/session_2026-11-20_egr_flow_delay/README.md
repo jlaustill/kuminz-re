@@ -314,3 +314,13 @@ Hand work on the round 7 lead.
 - **Stage B:** `worklist_r15b.py`. `width_check_r15.py` compares each row's width with its e2m size.
 - **Closing:** `apply_r15_closing.py`.
 
+## Round 16: the cruise control / road speed governor (`session_folder/round16/`)
+
+- **The records:** `blocks.txt` / `blocks2.txt` (e2m_block_addresses.py on 117D-1192), `check*_out.txt` (code lines
+  per candidate), `width_r16a.txt` (the width check).
+- **Stage A:** `worklist_r16a.py` (through apply_hand_worklist.py), `fill_r16a.json` (type-only rows, via
+  round15/apply_r15a_fill.py) and `apply_r16a_enums.py`; `refresh_enums_structs.py` refreshes the two CSVs that
+  refresh_references.py skips.
+- **Stage B:** `apply_r16b.py`. **Stage C:** `apply_r16c_switch_bits.py` and the proof helper
+  `switch_normalize_r16c.py`. **Closing:** `apply_r16_closing.py`.
+

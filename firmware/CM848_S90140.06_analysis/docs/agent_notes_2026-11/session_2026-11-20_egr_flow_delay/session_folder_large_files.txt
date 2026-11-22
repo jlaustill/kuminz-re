@@ -78,6 +78,11 @@
   200849 build_r14c.log
   200848 build_r15a.log
   200851 build_r15b.log
+  200884 build_r16a.log
+  200895 build_r16b.log
+  200888 build_r16c.log
+   23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
+ 1071916 e2m_audit_round16a.csv
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -101,3 +106,4 @@
   401967 verify_round13.log
   402015 verify_round14.log
   402008 verify_round15.log
+  402093 verify_round16.log

@@ -604,7 +604,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
   thermal model and current estimate in Bank 2 - all `variable_geometry_turbocharger_*`); the `fuel_ema_coeff_*` /
   `injection_timing_compensation_*` words are the high speed governor's speed-error PID (`high_speed_governor_*`, dump:
   P 2062 + I 117 + D 0 = 2179); the engine speed limit chain (`selectEngineSpeedLimit`, the park / neutral exit
-  limit, the fault derate limit) and a cruise vehicle speed limit (`cm848_calculateMaximumRoadSpeeds`); the
+  limit, the fault derate limit) and the maximum road speeds (`cm848_calculateMaximumRoadSpeeds`); the
   combustion maps (20 `word[304]` grids reached through pointer words), the mass flows (`fuel_mass_flow`,
   `charge_mass_flow_filtered`, `egr_mass_flow_delayed_filtered`), `compressor_inlet_density`, `injection_quantity_oxygen_limit`.
 - **Wave 7:** the VGT loop's twin is the EGR valve position servo (`egr_valve_*`): feedback = sensor channel 75 (the
@@ -745,10 +745,10 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     55 / 58 / 61 ...) and named the rest. Only 32 / 37 / 38 / 49 / 50 stay `FUELING_STATE_UNIDENTIFIED_<n>`.
   - **The chain:** `engine_operating_mode` → `operating_mode_governor_output.mode_code` (adds 4, the power take-off
     governor) → `governor_fuel_demand_working_mode` (0x40b67c, was `governor_pid_integral_snapshot`; adds 9, cruise
-    control) → `adjusted_user_fueling_state` (0x40a154; adds 10 vehicle speed limit, 11 low speed governor, 12 high
+    control) → `adjusted_user_fueling_state` (0x40a154; adds 10 road speed governor, 11 low speed governor, 12 high
     speed governor).
   - **The arbitration:** `cm848_arbitrateGovernedFueling` sets `adjusted_user_fueling_state` to the smallest of the
-    user demand, the high speed governor fuel and the vehicle speed limit fuel. Then the low speed governor wins as a
+    user demand, the high speed governor fuel and the road speed governor fuel. Then the low speed governor wins as a
     max select at or below its speed.
   - **One numbering, proved in the code:** `cm848_arbitrateRequestedFueling` writes either `adjusted_user_fueling_state`
     or `torque_derate_fuel_source_code` (13, 20, ...) into `requested_fueling_state`, as CM550 does into FSLMDSST.
@@ -983,7 +983,7 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     vehicle speed sensor type (was `drivetrain_type` / DRIVETRAIN_*). The cruise fix's mode 4 is
     `VEHICLE_SPEED_SENSOR_J1939_WITH_GEAR_RATIO`.
   - **`INTAKE_AIR_HEATER_PHASE`** (e2m 8A35 +2: key on / setup / preheat / crank / postheat / off).
-  - **The rest:** the cruise / vehicle speed limit governor functions, the A/C clutch working words, the
+  - **The rest:** the cruise / road speed governor functions, the A/C clutch working words, the
     throttle override claimers (`fuel_demand_control_t.override_priority`), the injection hardware
     initialization and the fuel system hardware shutdown monitor.
   - **A scale fix:** the compressor outlet temperature is 1/32 °F.

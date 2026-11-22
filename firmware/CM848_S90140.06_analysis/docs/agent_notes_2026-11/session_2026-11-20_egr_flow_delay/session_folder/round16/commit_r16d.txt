@@ -1,0 +1,15 @@
+firmware/CLAUDE.md: the round 11-15 methods and the switch bitfield exception (the user's decisions)
+
+Both changes are the user's own decisions in this session (2026-11-21: "Yes, promote them" / "Yes, ship
+the bitfields"):
+- A "Rounds 11-15" note after round 10. It covers the e2m discrete I/O and output tables (1577 / 12A7 /
+  1578-157A / 1612 / 12A8 / 1565 / 151C / 1527 / 1966) and aligning blocks past the dumped parameter ID
+  table. It also covers the 11.45 vs 11.46 layout (the code decides), the value lists before the ';' and
+  the enum proof, arrays from comments, sensor channels named as families, and naming type-only rows as
+  a label-only change. Task 046 keeps the details and the leads.
+- The wave 11 bitfield rule gets one exception: switch_input_state_t is all bitfields (stage C), and the
+  rule still holds for every other struct.
+
+Docs only: the .cpp is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

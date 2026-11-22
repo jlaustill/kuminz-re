@@ -1,0 +1,14 @@
+=== cm848_protectionFuelRateStep (lines 44001-44019, 13 non-blank)
+// Function: cm848_protectionFuelRateStep @ 0x00040938
+//
+void cm848_protectionFuelRateStep(int param_1)
+{
+  uint uVar1;
+  if (((int)(uint)cruise_speed_command < param_1) ||
+     (uVar1 = (uint)cruise_speed_command - param_1, cruise_speed_command = (word)uVar1,
+     (uVar1 & 0xffff) < (uint)cruise_speed_command_min_cal)) {
+    cruise_speed_command = cruise_speed_command_min_cal;
+  }
+  return;
+}
+//

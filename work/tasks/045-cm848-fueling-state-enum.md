@@ -153,7 +153,7 @@ The earlier sections use the old names. Each rename's plate comment or comment g
 | 0x40af58 | `power_take_off_throttle_override_flag` (e2m PTTHOV) | `governor_idle_transition_flag` |
 
 Kept on purpose:
-- `cruise_speed_limit_working`: both the cruise control and the vehicle speed limiter use it.
+- `cruise_speed_limit_working`: both the cruise control and the vehicle speed limiter use it. (PR #53 round 16: `road_speed_governor_reference_speed`, the road speed governor's reference.)
 - The `fuel_flow_rpm_*` drivetrain ratio words.
 - The limiter functions of the unidentified codes.
 
@@ -809,7 +809,7 @@ A review after stage 5 found that 16 applied rows had not been checked: the cran
     fuel pressure governor faults.
 - [x] **Misnamed words around the arbitration** (renamed in stage 3 except `cruise_speed_limit_working`; still open: the rest of the power take-off cluster below and the 0x3fb52a row):
   - `cruise_fuel_demand_setpoint` (0x40b674) = the vehicle speed limit fuel; `cruise_speed_setpoint_adjusted` (0x40b6e0)
-    = the vehicle speed (rate limited); `cruise_speed_limit_working` = the vehicle speed limit.
+    = the vehicle speed (rate limited); `cruise_speed_limit_working` = the vehicle speed limit (`road_speed_governor_reference_speed` since PR #53 round 16).
   - `governor_fuel_demand_low_threshold` (0x40b672) = the copy of `high_speed_governor_fueling`;
     `governor_fuel_demand_upper` (0x40b67a) = the low speed governor fuel the max select compares;
     `governor_pid_fuel_output` (0x40b676) = the cruise PID fuel.

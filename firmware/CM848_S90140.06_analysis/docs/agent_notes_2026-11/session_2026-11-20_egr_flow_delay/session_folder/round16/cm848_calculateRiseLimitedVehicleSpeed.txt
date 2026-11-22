@@ -1,0 +1,34 @@
+=== cm848_calculateRiseLimitedVehicleSpeed (lines 43946-43985, 33 non-blank)
+// Function: cm848_calculateRiseLimitedVehicleSpeed @ 0x00040844
+//
+/* Sets vehicle_speed_rise_limited: vehicle_speed, or (cruise_feedback_uses_road_speed_flag_cal 0)
+   engine speed over the drivetrain ratio terms engine_speed_to_vss_ratio /
+   drivetrain_ratio_user_filtered, with each rise limited to cruise_speed_setpoint_adj_offset_cal
+   per pass; the speed the cruise control and vehicle speed limit fueling work on (was
+   cm848_calculateFuelRateFromRpm) */
+void cm848_calculateRiseLimitedVehicleSpeed(void)
+{
+  uint uVar1;
+  uVar1 = ((uint)tire_revolutions_per_mile_cal * (uint)rear_axle_ratio) / 0x3c & 0x7fff;
+  engine_speed_to_vss_ratio = (word)uVar1;
+  if (cruise_feedback_uses_road_speed_flag_cal == 0) {
+    uVar1 = ((uint)engine_speed_state.filtered_engine_speed << 0x10) /
+            (uVar1 * drivetrain_ratio_user_filtered >> 9) >> 2;
+    if (0x8000 < uVar1) {
+      uVar1 = 0x8000;
+    }
+  }
+  else {
+    uVar1 = (uint)vehicle_speed;
+  }
+  vehicle_speed_rise_limited = (word)uVar1;
+  if (((uint)vehicle_speed_rise_limited_prev < (uVar1 & 0xffff)) &&
+     ((int)(uint)cruise_speed_setpoint_adj_offset_cal <
+      (int)((uVar1 & 0xffff) - (uint)vehicle_speed_rise_limited_prev))) {
+    vehicle_speed_rise_limited =
+         vehicle_speed_rise_limited_prev + cruise_speed_setpoint_adj_offset_cal;
+  }
+  vehicle_speed_rise_limited_prev = vehicle_speed_rise_limited;
+  return;
+}
+//

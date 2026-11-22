@@ -1,0 +1,57 @@
+=== cm848_calculateCruiseControlFueling (lines 44237-44299, 56 non-blank)
+// Function: cm848_calculateCruiseControlFueling @ 0x00040e4c
+//
+/* Sets cruise_control_fueling: while governor_override_active_prev_flag is 1 from the error between
+   cruise_speed_command and vehicle_speed_rise_limited through
+   cruise_control_fueling_bottom_droop_gain / _b, else the operating mode governor fuel
+   (operating_mode_governor_output.fuel_demand) (was cm848_processGovernorFuelRate) */
+void cm848_calculateCruiseControlFueling(void)
+{
+  uint uVar1;
+  uint uVar2;
+  dword dVar3;
+  int iVar4;
+  if (governor_override_active_prev_flag != 1) {
+    cruise_control_fueling = operating_mode_governor_output.fuel_demand;
+    goto LAB_00040f7c;
+  }
+  uVar1 = (uint)vehicle_speed_rise_limited;
+  uVar2 = (uint)cruise_speed_command;
+  if (uVar2 < uVar1) {
+    if (cruise_control_fueling_bottom_droop_gain != 0) {
+      cruise_mode_transition_flag = 1;
+      cruise_speed_reference_active = cruise_control_fueling_bottom_droop_gain;
+      iVar4 = uVar1 - uVar2;
+      goto LAB_00040f00;
+    }
+LAB_00040f6c:
+    dVar3 = 0;
+  }
+  else {
+    if (cruise_control_fueling_top_droop_gain != 0) {
+      cruise_mode_transition_flag = 0;
+      cruise_speed_reference_active = cruise_control_fueling_top_droop_gain;
+      iVar4 = uVar2 - uVar1;
+LAB_00040f00:
+      uVar1 = (uint)(iVar4 * 0x400) / (uint)cruise_speed_reference_active;
+      if (cruise_mode_transition_flag == 0) {
+        cruise_speed_deviation = uVar1 + cruise_control_fueling_top_droop_offset;
+      }
+      else {
+        cruise_speed_deviation = cruise_control_fueling_bottom_droop_offset - uVar1;
+      }
+      if ((int)cruise_speed_deviation < 0x1701) {
+        dVar3 = cruise_speed_deviation;
+        if ((int)cruise_speed_deviation < 0) goto LAB_00040f6c;
+        goto LAB_00040f74;
+      }
+    }
+    dVar3 = 0x1700;
+  }
+LAB_00040f74:
+  cruise_control_fueling = (word)dVar3;
+LAB_00040f7c:
+  governor_override_active_prev_flag = (dword)cruise_control_engaged_flag;
+  return;
+}
+//

@@ -1,0 +1,5 @@
+j1939_cruise_speed_setpoint
+cruise_speed_high_limit_default
+cruise_speed_setpoint_default
+cruise_maximum_road_speed_cal
+cruise_speed_clamp_enable

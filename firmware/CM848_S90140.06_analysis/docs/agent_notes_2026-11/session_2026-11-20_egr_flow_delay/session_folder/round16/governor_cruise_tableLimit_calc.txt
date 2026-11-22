@@ -1,0 +1,27 @@
+=== governor_cruise_tableLimit_calc (lines 85679-85710, 26 non-blank)
+// Function: governor_cruise_tableLimit_calc @ 0x00524d34
+//
+uint governor_cruise_tableLimit_calc
+               (int param_1,word *param_2,word param_3,word *param_4,word param_5,word *param_6,
+               word *param_7,dword param_8)
+{
+  uint uVar1;
+  ushort local_8 [2];
+  local_8[0] = cm848_dualAxisTableInterpolation
+                         (param_2,param_3,param_4,param_5,param_6,param_7,param_8);
+  cm848_clampFuelDemandToValidRange(local_8);
+  if (cruise_speed_offset_default < local_8[0]) {
+    if ((uint)(param_1 << 10) < (uint)(ushort)(local_8[0] - cruise_speed_offset_default) * 0x22c8) {
+      uVar1 = (uint)(param_1 << 10) / (uint)(ushort)(local_8[0] - cruise_speed_offset_default);
+    }
+    else {
+      uVar1 = 0x22c8;
+    }
+    uVar1 = uVar1 & 0xffff;
+  }
+  else {
+    uVar1 = 0;
+  }
+  return uVar1;
+}
+//

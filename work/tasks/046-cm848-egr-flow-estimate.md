@@ -731,11 +731,11 @@ Scripts are in `session_folder/round11/`.
     supervisor's shutdown line, requested by the fuel system fault reactions (reaction mask bit 3, fuel pressure
     too high, fault 388 excess fuel demand).
 - **Round 11 leads:**
-  - **The switch bytes 0 / 1 / 3 as bitfields:** the user's call (the numbers above).
+  - **The switch bytes 0 / 1 / 3 as bitfields:** the user's call (the numbers above). (Done in round 16 stage C: the user approved it.)
   - **`fuel_pressure_setpoint_map_cached_axis_offsets`** is a `word` row with a plural name: type it `word[16]`.
     (Resolved in round 12: the block is eight 2-word caches, so `word[2]` plus seven new rows.)
   - **`cruise_setpoint_interp_prev`** (0x3fd006) is a value looked up by vehicle speed (its change per pass is
-    clamped to +-0x66), not a setpoint: name it with the cruise governor.
+    clamped to +-0x66), not a setpoint: name it with the cruise governor. (Round 16: `cruise_governor_filtered_road_speed`, the derivative filter output.)
   - **The input priority array** at 0x40c058 (e2m 12A8) has no code reference by name yet.
   - **Outputs 68 / 71** (`egr_valve_motor_opening_direction_request`,
     `variable_geometry_turbocharger_motor_closing_direction_request`) have no constant-index requester: their setter
@@ -901,7 +901,7 @@ Scripts are in `session_folder/round15/`.
 - **Round 15 leads:**
   - **The cruise / road speed governor family** (e2m 117D / 1180 / 1184-118F / 1190): about 40 rows, and the
     `governor_cruise_*` / `cm848_protectionFuelRate*` functions. The firmware calls the road speed governor "vehicle
-    speed limit".
+    speed limit". (Done in round 16: `road_speed_governor_*` is the one vocabulary.)
   - **The engine retarder family** (e2m 1070 / 1071). Its records carry two value lists: `EB_Non_Override_Command_Source`
     1-6, and `EB_Brake_Type` 0-3 (a bitmask in this code).
   - **Types:**
@@ -914,12 +914,76 @@ Scripts are in `session_folder/round15/`.
   - **`Main_Cold_Advance_Select`** (8085 +2: 0 add / 1 max wins / 2 min wins) is an enum candidate.
   - **The rest of the pool:** the 0.34-0.5 band, and the 27 records with code references and no name.
 
+## Done, round 16 (2026-11-21, same PR; the relayed "keep going" again): the cruise control / road speed governor
+
+Scripts are in `session_folder/round16/`.
+- **The records:** the parameter ID table places e2m 117D / 117F / 1180 / 1184-1191 and 11A4-11A6. Each record was
+  checked against its code use, and the 59 renamed rows with records match their e2m sizes (`width_r16a.txt`).
+- **Vocabulary decisions** (kept here; the user promoted only the round 11-15 methods into firmware/CLAUDE.md):
+  - **The road speed governor is `road_speed_governor_*`.** The e2m calls it RSG (`Road_Speed_Governor_Enable`), and
+    its siblings in `FUELING_STATE` are the low / high / variable / all speed governors. `vehicle_speed_limit_*` is
+    retired, and state 10 is `FUELING_STATE_ROAD_SPEED_GOVERNOR`. `fault_vehicle_speed_limit*` keeps its name: it is
+    the fault ramp, a different limit.
+  - **The shared cruise / RSG PID** keeps `cruise_pid_*` for its terms and gains (PID is an allowed abbreviation). Its
+    other words are `cruise_governor_*`: the 8 `governor_cruise_*` and 8 `cruise_zone_*` rows are gone.
+  - **Gain sets, not zones:** the e2m says 'Switch to Cruise/RSG gain set 2 when tracking error is > this'.
+  - **The sump** (e2m `Cruise_RSG_Sump_*`, explained from its uses): fuel held outside the integrator and added to
+    the PID sum. It drains toward 0 by the decrement / increment rates. A preset fills it with final_fueling minus the
+    preset fueling, a trigger fills it with `Sump_Fuel_Init_Gain` x the road speed change, and a gain set change fills
+    it with the step that keeps the output. The old `rate_correction` / `fuel_demand_delta` words were one mechanism
+    under two vocabularies.
+  - **The maximum road speeds pair with their trims:** `maximum_road_speed` (117D +16; PGN 65261 SPN 74, was
+    `j1939_cruise_speed_setpoint`) / `maximum_road_speed_trim_cal` (1180 +4), `cruise_maximum_road_speed_cal` (117F +10)
+    / `cruise_maximum_road_speed_trim_cal` (1180 +2). `road_speed_governor_reference_speed` (was
+    `cruise_speed_limit_working`) is the trim lowered by the fault ramp.
+- **Stage A (9b3450f, label-only):** 77 globals, 6 type-only rows named by their default labels, 20 functions and 6
+  enum members (EQUIVALENT, 109 names).
+  - `CRUISE_CONTROL_STATE` from the value list of e2m 1184 +2 Cruise_Command_Mode, 'off / set / resume / coast / accel
+    / bump down / bump up / hold / cancel': `CRUISE_COAST` / `CRUISE_BUMP_DOWN` / `CRUISE_BUMP_UP` / `CRUISE_HOLD` /
+    `CRUISE_CANCEL` (were DECELERATE / DECELERATE_2 / ACCELERATE_2 / ACTIVE_HOLD / STANDBY). Every case of
+    `cm848_cruiseSpeedCommandStateMachine` fits, and cancel keeps the resume speed where off clears it. The old
+    comments assumed J1939 SPN 527 states.
+  - e2m 118F: `cruise_accelerate_ramp` / `cruise_coast_ramp` / `cruise_bump_up_step` / `cruise_bump_down_step` /
+    `cruise_minimum_coast_speed` / `cruise_minimum_set_speed` (were `protection_fuel_rate_*` / `cruise_speed_*_cal`;
+    ROM, so no `_cal`). They drive `cm848_increaseCruiseSpeedCommand` / `cm848_decreaseCruiseSpeedCommand` (were
+    `cm848_protectionFuelRateRamp` / `Step`).
+  - The power-down save and power-up restore of the set speed: `cm848_saveCruiseSetSpeedForPowerDown` /
+    `cm848_restoreSavedCruiseSetSpeed` (were `cm848_initFuelRateFromCapability` / `cm848_validateFuelRateTarget`),
+    with `cruise_saved_set_speed_cal` (1191, EEPROM) and `cruise_resume_speed` (1190 +0).
+  - `cm848_secondOrderFilterUnsigned` (was `cm848_interpolateTableLinearStep`) is a second order filter. It returns
+    0 in this build: the asm shifts the output down 16 twice (0x56640 / 0x5664c). So
+    `cruise_governor_filtered_road_speed` is 0 except right after a preset, and the sump and the preset fueling window
+    see no road speed change.
+- **Stage B (9a1bd93, types):**
+  - `cruise_governor_gain_set_t` with the three e2m 1186 sets and the typed pointer.
+  - `second_order_filter_state_t` (coefficient 1 / 3 pointers, output / previous output) with two instances. The
+    filter prototypes take it, so their bodies read `filter->output`.
+  - `cruise_governor_fueling_maximum_pointer` is typed `word *`, which removes one underscore warning (25 -> 24).
+  - 11 new rows for the governor's `DAT_` words.
+- **Stage C (5945df3, types; the user's decision):** `switch_input_state_t` bytes 0 / 1 / 3 as bitfields.
+  - 180 named bit accesses replace 198 masked byte-field accesses.
+  - The cost is the round 11 pilot's: 10 piece lines in three setters, and `field_0x0` in two indexed loops.
+  - The proof: `switch_normalize_r16c.py` + `cast_normalized_diff.py`. The 8 functions that differ are all in those
+    classes.
+- **Stage D (098ecfe, docs; the user's decision):** firmware/CLAUDE.md now has the round 11-15 methods and the
+  switch exception to the wave 11 bitfield rule.
+- **Round 16 leads:**
+  - **The Q16 integrator at 0x3fd032** is a `word` row read as a dword (`_cruise_pid_integrator_q16`). The preset
+    writes its halves apart (`DAT_003fd034` is the fraction). `q16_fixed_point_t` would print pieces for the dword
+    stores; decide by a pilot.
+  - **The engine retarder family** (e2m 1070 / 1071 / 1192), still open from round 15. 1192 +4 / +6 / +8 have no
+    rows.
+  - **`DAT_0040b5c0`:** only the power-up initializer writes it (the maximum road speed trim).
+  - **e2m 8A0F +C / +E / +10** do not fit the CM848 words there (the engine warning flags), so the block drifts after
+    +A.
+  - **`governor_override_fuel_threshold_cal` (0x408e96)** is ROM, so it has a legacy `_cal`.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
   - The TSC1 / ETC1 vocabulary: resolved in round 6 (below).
   - The `governor_cruise_*` working words of the cruise governor (and its `governor_cruise_zone_table_ptr`):
-    rename them to the `cruise_governor_*` words with the functions.
+    rename them to the `cruise_governor_*` words with the functions. (Done in round 16.)
   - The engine speed module's run-state machine (`mpc555_updateEngineRunState`, the `cm848_engineRunState*` handlers).
     Block 819B has no value list, so naming the states needs a read.
   - The 48RE governor pressure functions 0x3257c / 0x3241c and their words. Block 8D14 drifts from +2, so its

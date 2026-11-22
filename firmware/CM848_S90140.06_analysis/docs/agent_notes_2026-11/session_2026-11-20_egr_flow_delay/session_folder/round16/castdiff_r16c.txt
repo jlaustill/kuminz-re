@@ -1,0 +1,26 @@
+functions: 1968; changed: 8; still different after normalizing casts / literals / auto-names: 8
+changed functions with local_variables.csv rows (0): 
+## cm848_buildFaultConditionMask
+   old ...ral_diagnostic_battery_voltage_in_range_flag;EVar2=engine_state;V=0;V=switch_input_state_bits.switch
+   new ...ral_diagnostic_battery_voltage_in_range_flag;EVar2=engine_state;V=0;V=(switch_input_state_bits.switch
+## cm848_detectThreeAcceleratorPedalPresses
+   old ...nt!=1){return;}if(accelerator_pedal_press_count_previous!=0){return;}}switch_input_state_bits.switch
+   new ...nt!=1){return;}if(accelerator_pedal_press_count_previous!=0){return;}}(switch_input_state_bits.switch
+## cm848_updateSwitch31FromAcceleratorPedal
+   old ...erator_pedal_sensor_fault_hold_flag=0;accelerator_pedal_press_count=0;switch_input_state_bits.switches_24_to_31=switch_input_state_bits.switch
+   new ...erator_pedal_sensor_fault_hold_flag=0;accelerator_pedal_press_count=0;(switch_input_state_bits.switch
+## cm848_checkSwitch31OnTimeFault
+   old ...h_input_state_bits.switches_24_to_31&128)==0){switch_input_state_bits.switches_24_to_31=switch_input_state_bits.sw
+   new ...h_input_state_bits.switches_24_to_31&128)==0){switch_input_state_bits._3_1_=switch_input_state_bits.
+## cm848_updateAirConditioningSwitchFromPci
+   old ...ive_message_10_climate_control_bits&128)!=0)){switch_input_state_bits.switches_8_to_15=switch_input_state_bits.sw
+   new ...ive_message_10_climate_control_bits&128)!=0)){switch_input_state_bits._1_1_=switch_input_state_bits.
+## cm848_scanAndDebounceSwitchInputs
+   old ...put_hardware_line_cal[V];if(V==0){V=V&7;if(((&switch_input_state_bits.switches_0_to_7)[V]&1<<V)==0){sw
+   new ...put_hardware_line_cal[V];if(V==0){V=V&7;if(((&switch_input_state_bits.field_0x0)[V]&1<<V)==0){switch_
+## hpcr_initProtectionAndOutputCycle
+   old ...r_initProtectionAndOutputCycle(void){V=0;do{(&switch_input_state_bits.switches_0_to_7)[V]=j1939_switch
+   new ...r_initProtectionAndOutputCycle(void){V=0;do{(&switch_input_state_bits.field_0x0)[V]=j1939_switch_inpu
+## cm848_deriveSecondBrakeSwitchSignal
+   old ...econd_brake_switch_trigger_confirmed_flag==0){switch_input_state_bits.switches_0_to_7=switch_input_state_bit
+   new ...econd_brake_switch_trigger_confirmed_flag==0){switch_input_state_bits._0_1_=switch_input_state_bits.
