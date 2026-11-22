@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 02:47:58 MST 2026
+// Generated: Sun Nov 22 03:27:08 MST 2026
 
 
 //
@@ -6092,9 +6092,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -18259,9 +18259,9 @@ void cm848_runEgrValveFaultAndPositionControl(void)
    Configuration 1), into the buffer param_1 (j1939_pgn65251_payload; the transmit descriptor
    j1939_pgn65251_tx_message has its can_id built from 0xfee300 and length 28, set by
    initializePgn65251EngineConfiguration1Buffer at 0x1b900). First it refreshes the torque curve
-   with governor_calculateIntegratorRpmOutput (0x507a20, the fault derate speed points) and
-   cm848_updateJ1939EngineConfigurationTorqueCurve (0x20d10). Then, byte swapped to J1939 little
-   endian, it stores: the speeds and percent torques of curve points 1-5 (e2m 1102
+   with cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints (0x507a20, the fault derate speed
+   points) and cm848_updateJ1939EngineConfigurationTorqueCurve (0x20d10). Then, byte swapped to
+   J1939 little endian, it stores: the speeds and percent torques of curve points 1-5 (e2m 1102
    Jcomm_Determined_RPM_Point_1-5 at +16 / +12 / +18 / +1A / +14, SPN 188 / 528 / 529 / 530 / 531;
    the high byte of j1939_indicated_percent_torque_at_* plus 125, SPN 539 .. 543), the high idle
    speed of point 6 (engine_speed_limit_arbitration.lowest_source_speed_limit, or the droop
@@ -18294,7 +18294,7 @@ void buildPgn65251EngineConfiguration1Payload(undefined4 *param_1)
   undefined4 local_10;
   undefined4 local_c;
   
-  governor_calculateIntegratorRpmOutput();
+  cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints();
   cm848_updateJ1939EngineConfigurationTorqueCurve();
   local_28._1_1_ = (undefined1)j1939_determined_engine_speed_at_point_1;
   local_28._0_1_ = (undefined1)(j1939_determined_engine_speed_at_point_1 >> 8);
@@ -18548,7 +18548,7 @@ void initializePgn65251EngineConfiguration1Buffer(void)
   ram0x003fa825 = 0xffff;
   j1939_pgn65251_control_range_limits._2_1_ = 0x7d;
   j1939_pgn65251_control_range_limits_previous._2_1_ = 0x7d;
-  fault_initBitwiseTimerMask();
+  cm848_initializeFaultDerateJ1939TorqueCurvePriority();
   cm848_initializeJ1939ReferenceEngineFuelingAndTorque();
   return;
 }
@@ -58143,7 +58143,7 @@ void cm848_applicationMain(void)
   cm848_initRpmSetpointFilters();
   cm848_initProtectionLimitVariables();
   cm848_initTimingFilterStates();
-  exception_resetProtectionModeState();
+  cm848_resetEngineProtectionShutdownOverrideDetector();
   cm848_stubFunction3();
   initializeHighSpeedGovernorGainSet();
   initializeEngineSpeedLimitDefaults();
@@ -58340,8 +58340,8 @@ void cm848_applicationMain(void)
   cm848_initializeFuelPressureGovernorMonitorState();
   cm848_initSensorCalibration();
   cm848_initialization_step_2();
-  cm848_completeEngineStartSequence();
-  cm848_initSensorChannelDataStructures();
+  cm848_resetEngineProtectionShutdownState();
+  cm848_resetEngineProtectionPrecrankState();
   power_down_start_flag = 0;
   if (hardware_timer_capture == 0) {
     hardware_timer_capture = TBLr;
@@ -58387,8 +58387,8 @@ void cm848_restartApplicationWithoutReset(void)
   
   cm848_initSensorCalibration();
   cm848_initialization_step_2();
-  cm848_completeEngineStartSequence();
-  cm848_initSensorChannelDataStructures();
+  cm848_resetEngineProtectionShutdownState();
+  cm848_resetEngineProtectionPrecrankState();
   power_down_start_flag = 0;
   if (hardware_timer_capture == 0) {
     hardware_timer_capture = TBLr;
@@ -65809,10 +65809,16 @@ void hpcr_initializeTimerRegisters(void)
 
 
 //
-// Function: engine_protection_derateParam_priorityApply @ 0x00507858
+// Function: cm848_applyFaultDerateToJ1939TorqueCurveFuelings @ 0x00507858
 //
 
-void engine_protection_derateParam_priorityApply(void)
+/* Looks the fault derate fuel limit up at the five J1939 torque curve speed points and lowers the
+   J1939 torque curve fuelings (PGN 65251) to them: always where the clamp mask
+   (fault_derate_curve_clamp_priority_mask) has the highest requester's bit, else only while
+   fault_derate_torque_curve_priority_bit is the highest request (was
+   engine_protection_derateParam_priorityApply) */
+
+void cm848_applyFaultDerateToJ1939TorqueCurveFuelings(void)
 
 {
   word wVar1;
@@ -65823,29 +65829,34 @@ void engine_protection_derateParam_priorityApply(void)
   ushort uVar6;
   
   wVar1 = lookupTableInterpolation
-                    (&governor_faultDerate_lookup_interp_state,j1939_torque_curve_speed_at_point_1,
+                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                     j1939_torque_curve_speed_at_point_1,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   wVar2 = lookupTableInterpolation
-                    (&governor_faultDerate_lookup_interp_state,j1939_torque_curve_speed_at_point_2,
+                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                     j1939_torque_curve_speed_at_point_2,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   wVar3 = lookupTableInterpolation
-                    (&governor_faultDerate_lookup_interp_state,j1939_torque_curve_speed_at_point_3,
+                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                     j1939_torque_curve_speed_at_point_3,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   wVar4 = lookupTableInterpolation
-                    (&governor_faultDerate_lookup_interp_state,j1939_torque_curve_speed_at_point_4,
+                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                     j1939_torque_curve_speed_at_point_4,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   wVar5 = lookupTableInterpolation
-                    (&governor_faultDerate_lookup_interp_state,j1939_torque_curve_speed_at_point_5,
+                    (&fault_derate_torque_curve_points_cached_axis_offset,
+                     j1939_torque_curve_speed_at_point_5,
                      fault_derate_fuel_limit_by_engine_speed_axis,
                      fault_derate_fuel_limit_by_engine_speed_values,0);
   uVar6 = cm848_getHighestPriorityBit();
   if ((fault_derate_curve_clamp_priority_mask & uVar6) == 0) {
-    if (governor_faultDerate_channel_bit <
-        (j1939_pgn65251_speed_points_request_flags & ~governor_faultDerate_channel_bit)) {
+    if (fault_derate_torque_curve_priority_bit <
+        (j1939_pgn65251_speed_points_request_flags & ~fault_derate_torque_curve_priority_bit)) {
       return;
     }
   }
@@ -65881,12 +65892,17 @@ void engine_protection_derateParam_priorityApply(void)
 
 
 //
-// Function: governor_calculateIntegratorRpmOutput @ 0x00507a20
+// Function: cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints @ 0x00507a20
 //
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
+/* While the fault derate is active: sets fault_derate_torque_curve_priority_bit in
+   j1939_pgn65251_speed_points_request_flags and, if no higher request is set, computes the J1939
+   torque curve speed points (point 1 from the low speed governor reference speed less its droop
+   correction, the next from the engine speed limit and its droop) (was
+   governor_calculateIntegratorRpmOutput) */
 
-void governor_calculateIntegratorRpmOutput(void)
+void cm848_calculateFaultDerateJ1939TorqueCurveSpeedPoints(void)
 
 {
   int iVar1;
@@ -65894,9 +65910,9 @@ void governor_calculateIntegratorRpmOutput(void)
   
   if (fault_derate_active_flag == 1) {
     j1939_pgn65251_speed_points_request_flags =
-         j1939_pgn65251_speed_points_request_flags | governor_faultDerate_channel_bit;
-    if ((j1939_pgn65251_speed_points_request_flags & ~governor_faultDerate_channel_bit) <=
-        governor_faultDerate_channel_bit) {
+         j1939_pgn65251_speed_points_request_flags | fault_derate_torque_curve_priority_bit;
+    if ((j1939_pgn65251_speed_points_request_flags & ~fault_derate_torque_curve_priority_bit) <=
+        fault_derate_torque_curve_priority_bit) {
       if ((algorithm_enable_flags_12_cal.low_speed_governor_droop_enable == 0) ||
          (iVar1 = (int)(short)governor_integrator_correction_term, iVar1 == 0)) {
         puVar2 = (undefined *)(uint)low_speed_governor_reference.reference_speed;
@@ -65953,11 +65969,11 @@ void governor_calculateIntegratorRpmOutput(void)
       j1939_torque_curve_speed_at_point_4 = fault_derate_curve_engine_speed_point_4;
       j1939_torque_curve_speed_at_point_5 = fault_derate_curve_engine_speed_point_5;
     }
-    engine_protection_derateParam_priorityApply();
+    cm848_applyFaultDerateToJ1939TorqueCurveFuelings();
   }
   else {
     j1939_pgn65251_speed_points_request_flags =
-         j1939_pgn65251_speed_points_request_flags & ~governor_faultDerate_channel_bit;
+         j1939_pgn65251_speed_points_request_flags & ~fault_derate_torque_curve_priority_bit;
   }
   return;
 }
@@ -65965,14 +65981,19 @@ void governor_calculateIntegratorRpmOutput(void)
 
 
 //
-// Function: fault_initBitwiseTimerMask @ 0x00507c1c
+// Function: cm848_initializeFaultDerateJ1939TorqueCurvePriority @ 0x00507c1c
 //
 
-void fault_initBitwiseTimerMask(void)
+/* Sets fault_derate_torque_curve_priority_bit from fault_derate_curve_priority_bit_position (e2m
+   EPF_Torque_Curve_Priority) and presets fault_derate_torque_curve_points_cached_axis_offset to 2
+   (was fault_initBitwiseTimerMask) */
+
+void cm848_initializeFaultDerateJ1939TorqueCurvePriority(void)
 
 {
-  governor_faultDerate_channel_bit = (word)(1 << (fault_derate_curve_priority_bit_position & 0x3f));
-  governor_faultDerate_lookup_interp_state = 2;
+  fault_derate_torque_curve_priority_bit =
+       (word)(1 << (fault_derate_curve_priority_bit_position & 0x3f));
+  fault_derate_torque_curve_points_cached_axis_offset = 2;
   return;
 }
 
@@ -66134,9 +66155,9 @@ void hpcr_initializeEngineProtection(void)
   }
   cm848_initializeFaultDerateEngineSpeedLimit();
   cm848_resetFaultDerateFuelLimit();
-  cm848_completeEngineStartSequence();
-  exception_resetProtectionModeState();
-  cm848_initSensorChannelDataStructures();
+  cm848_resetEngineProtectionShutdownState();
+  cm848_resetEngineProtectionShutdownOverrideDetector();
+  cm848_resetEngineProtectionPrecrankState();
   engine_protection_task_index = 0;
   return;
 }
@@ -66371,10 +66392,14 @@ void cm848_examineEngineProtectionBeforeCranking(void)
 
 
 //
-// Function: cm848_initSensorChannelDataStructures @ 0x005082f0
+// Function: cm848_resetEngineProtectionPrecrankState @ 0x005082f0
 //
 
-void cm848_initSensorChannelDataStructures(void)
+/* Boot / restart reset of the pre-crank examination: clears
+   engine_protection_precrank_shutdown_command_flag and the fuel temperature channel's
+   precrank_error. It touches no sensor channel (was cm848_initSensorChannelDataStructures) */
+
+void cm848_resetEngineProtectionPrecrankState(void)
 
 {
   engine_protection_precrank_shutdown_command_flag = 0;
@@ -66825,7 +66850,8 @@ LAB_00508b78:
       if (engine_protection_shutdown_total_cal != 0xff) {
         engine_protection_shutdown_total_cal = engine_protection_shutdown_total_cal + 1;
       }
-      if (engine_protection_shutdown_active_channel_cal == DAT_003fbd3a) {
+      if (engine_protection_shutdown_active_channel_cal ==
+          engine_protection_power_up_shutdown_channel) {
         if (engine_protection_shutdown_count_cal != 0xff) {
           engine_protection_shutdown_count_cal = engine_protection_shutdown_count_cal + 1;
         }
@@ -66856,15 +66882,22 @@ LAB_00508b78:
 
 
 //
-// Function: cm848_completeEngineStartSequence @ 0x00508de8
+// Function: cm848_resetEngineProtectionShutdownState @ 0x00508de8
 //
 
-void cm848_completeEngineStartSequence(void)
+/* Boot / restart reset of the engine protection shutdown (cm848_applicationMain,
+   cm848_restartApplicationWithoutReset, hpcr_initializeEngineProtection): clears the approaching
+   and command flags, the latch, the previous engine speed, the shutdown time counts, the override
+   request and lamp flags and the timer state, and records the shutdown channel at power-up
+   (engine_protection_power_up_shutdown_channel). It is not part of an engine start sequence (was
+   cm848_completeEngineStartSequence) */
+
+void cm848_resetEngineProtectionShutdownState(void)
 
 {
   engine_protection_shutdown_approaching_flag = 0;
   engine_shutdown_command_flag = 0;
-  DAT_003fbd3a = engine_protection_shutdown_active_channel_cal;
+  engine_protection_power_up_shutdown_channel = engine_protection_shutdown_active_channel_cal;
   engine_protection_shutdown_latch = 0;
   engine_protection_previous_engine_speed = 0;
   fuel_temperature_engine_protection_state.fueling_shutdown_time_count = 0;
@@ -66887,22 +66920,22 @@ void cm848_completeEngineStartSequence(void)
    algorithm_enable_flags_29_cal, e2m 106B +3C EPF_Shutdown_Override_Enable),
    engine_protection_shutdown_approaching_flag is set and logical switch 31
    (switch_input_state_bits[3] bit 0x80) turns on (a rising edge against
-   governor_derate_j1939_protection_active_prev) it sets governor_derate_j1939_trigger_pending. The
-   previous switch state is saved on every call. cm848_latchEngineProtectionShutdownOverride
-   (0x508ee0) turns the pending request into the override latch. It receives no J1939 message.
-   Called from cm848_periodicTaskSet_auxiliaryControl. (was cm848_updateJ1939ReceptionControlFlag)
-    */
+   engine_protection_override_switch_previous_state) it sets
+   engine_protection_shutdown_override_pending_flag. The previous switch state is saved on every
+   call. cm848_latchEngineProtectionShutdownOverride (0x508ee0) turns the pending request into the
+   override latch. It receives no J1939 message. Called from cm848_periodicTaskSet_auxiliaryControl.
+   (was cm848_updateJ1939ReceptionControlFlag) */
 
 void cm848_detectEngineProtectionShutdownOverrideRequest(void)
 
 {
   if ((((algorithm_enable_flags_29_cal.engine_protection_shutdown_override_enable != 0) &&
        (engine_protection_shutdown_approaching_flag != 0)) &&
-      (governor_derate_j1939_protection_active_prev == 0)) &&
+      (engine_protection_override_switch_previous_state == 0)) &&
      (switch_input_state_bits.unwired_switch != 0)) {
-    governor_derate_j1939_trigger_pending = 1;
+    engine_protection_shutdown_override_pending_flag = 1;
   }
-  governor_derate_j1939_protection_active_prev =
+  engine_protection_override_switch_previous_state =
        (ushort)(switch_input_state_bits.unwired_switch != 0);
   return;
 }
@@ -66914,20 +66947,21 @@ void cm848_detectEngineProtectionShutdownOverrideRequest(void)
 //
 
 /* Turns a pending engine protection shutdown override request into the override latch: when
-   governor_derate_j1939_trigger_pending (set by cm848_detectEngineProtectionShutdownOverrideRequest
-   at 0x508e78) is non-zero it sets engine_protection_shutdown_override_request_flag (e2m 10B1 +18
-   EPF_Shutdown_Override_Flag) and clears the pending flag. cm848_updateEngineProtectionShutdown
-   (0x508898) consumes the latch: it sets the shutdown timers back to their warning time, starts the
-   override lamp flag and clears the latch at the end of its channel loop. Called by
-   cm848_runFaultDerateScheduler (0x507c44) in task 1, before
-   cm848_updateEngineProtectionRestartSeverity. (was governor_derateTrigger_latch_clear) */
+   engine_protection_shutdown_override_pending_flag (set by
+   cm848_detectEngineProtectionShutdownOverrideRequest at 0x508e78) is non-zero it sets
+   engine_protection_shutdown_override_request_flag (e2m 10B1 +18 EPF_Shutdown_Override_Flag) and
+   clears the pending flag. cm848_updateEngineProtectionShutdown (0x508898) consumes the latch: it
+   sets the shutdown timers back to their warning time, starts the override lamp flag and clears the
+   latch at the end of its channel loop. Called by cm848_runFaultDerateScheduler (0x507c44) in task
+   1, before cm848_updateEngineProtectionRestartSeverity. (was governor_derateTrigger_latch_clear)
+    */
 
 void cm848_latchEngineProtectionShutdownOverride(void)
 
 {
-  if (governor_derate_j1939_trigger_pending != 0) {
+  if (engine_protection_shutdown_override_pending_flag != 0) {
     engine_protection_shutdown_override_request_flag = 1;
-    governor_derate_j1939_trigger_pending = 0;
+    engine_protection_shutdown_override_pending_flag = 0;
   }
   return;
 }
@@ -66935,14 +66969,17 @@ void cm848_latchEngineProtectionShutdownOverride(void)
 
 
 //
-// Function: exception_resetProtectionModeState @ 0x00508f0c
+// Function: cm848_resetEngineProtectionShutdownOverrideDetector @ 0x00508f0c
 //
 
-void exception_resetProtectionModeState(void)
+/* Boot / init reset of cm848_detectEngineProtectionShutdownOverrideRequest's state: the switch's
+   previous state and the pending request (was exception_resetProtectionModeState) */
+
+void cm848_resetEngineProtectionShutdownOverrideDetector(void)
 
 {
-  governor_derate_j1939_protection_active_prev = 0;
-  governor_derate_j1939_trigger_pending = 0;
+  engine_protection_override_switch_previous_state = 0;
+  engine_protection_shutdown_override_pending_flag = 0;
   return;
 }
 
@@ -67340,7 +67377,8 @@ void cm848_calculateFaultDerateFuelLimit(void)
   wVar2 = fuel_demand_maximum;
   if (fault_derate_ramp_times_256 != 0) {
     wVar2 = lookupTableInterpolation
-                      (&DAT_003fbd4e,engine_speed_state.filtered_engine_speed,
+                      (&fault_derate_fuel_limit_by_engine_speed_cached_axis_offset,
+                       engine_speed_state.filtered_engine_speed,
                        fault_derate_fuel_limit_by_engine_speed_axis,
                        fault_derate_fuel_limit_by_engine_speed_values,0);
     uVar4 = (int)(short)(0x100 - fault_derate_ramp_times_256) *
@@ -67367,7 +67405,7 @@ void cm848_resetFaultDerateFuelLimit(void)
 
 {
   fault_derate_ramp_times_256 = 0;
-  DAT_003fbd4e = 2;
+  fault_derate_fuel_limit_by_engine_speed_cached_axis_offset = 2;
   fault_derate_fuel_limit = fuel_demand_maximum;
   fault_derate_active_flag = 0;
   return;

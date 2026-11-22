@@ -6249,8 +6249,8 @@ extern dword fuel_demand_timing_demand_window_sum;  // 0x003fbc90
 extern dword fuel_demand_timing_correction_window_sum;  // 0x003fbc94
 extern word fuel_demand_timing_rolling_avg_index;  // 0x003fbc98
 extern word fuel_demand_timing_rolling_avg_full_flag;  // 0x003fbc9a
-extern word governor_faultDerate_channel_bit;  // 0x003fbd28
-extern word governor_faultDerate_lookup_interp_state;  // 0x003fbd2a
+extern word fault_derate_torque_curve_priority_bit;  // 0x003fbd28
+extern word fault_derate_torque_curve_points_cached_axis_offset;  // 0x003fbd2a
 extern dword variable_geometry_turbocharger_motor_back_electromotive_force_working;  // 0x003fcd04
 extern dword variable_geometry_turbocharger_motor_voltage_across_resistance;  // 0x003fcd08
 extern dword variable_geometry_turbocharger_circuit_resistance_working;  // 0x003fcd0c
@@ -6549,7 +6549,7 @@ extern word condensation_protection_emission_level_cap;  // 0x0040a5b8
 extern word egr_cooler_saturation_vapor_pressure;  // 0x0040a5e4
 extern word intake_saturation_vapor_pressure;  // 0x0040a5e6
 extern word engine_start_warmup_protection_emission_level_cap;  // 0x0040a5f6
-extern word governor_derate_j1939_trigger_pending;  // 0x0040a78e
+extern word engine_protection_shutdown_override_pending_flag;  // 0x0040a78e
 extern word pedal_fault_mode_fuel_demand_limit;  // 0x0040ae6e
 extern byte end_of_line_test_malfunction_indicator_lamp_flash_request_flag;  // 0x0040af0b
 extern int16_t turbocharger_speed_sensor_timeout_timer;  // 0x0040aff0
@@ -6940,7 +6940,7 @@ extern word extreme_ambient_coolant_temperature_high_flag;  // 0x003fbca2
 extern word egr_valve_autozero_active_flag;  // 0x003fbccc
 extern word egr_orifice_temperature_lead_time_constant_lookup;  // 0x003fbcf8
 extern word egr_valve_closed_hold_previous_flag;  // 0x003fbd1a
-extern word governor_derate_j1939_protection_active_prev;  // 0x003fbd40
+extern word engine_protection_override_switch_previous_state;  // 0x003fbd40
 extern byte accelerator_idle_switch_previous_state;  // 0x003fbd68
 extern word variable_geometry_turbocharger_valve_over_temperature_inhibit_counter;  // 0x003fcd28
 extern word j1939_tsc1_timing_fault_cycle_count;  // 0x003fcd7c
@@ -7902,6 +7902,8 @@ extern word general_diagnostic_battery_voltage_in_range_low_limit;  // 0x0006430
 extern word general_diagnostic_battery_voltage_in_range_high_limit;  // 0x0006430a
 extern word obd_battery_voltage_post_crank_lockout_reload;  // 0x0006430c
 extern word cold_delta_fuel_cached_axis_offsets[2];  // 0x003fb35c
+extern int16_t engine_protection_power_up_shutdown_channel;  // 0x003fbd3a
+extern word fault_derate_fuel_limit_by_engine_speed_cached_axis_offset;  // 0x003fbd4e
 extern word algorithm_enable_flags_table_length_cal;  // 0x003fd59a
 extern word algorithm_enable_flags_7_cal;  // 0x003fd5aa
 extern word algorithm_enable_flags_8_cal;  // 0x003fd5ac
