@@ -1427,8 +1427,8 @@ diag_clear_flags_t,0x003fedfc,learned_output_speed_to_vehicle_speed_ratio,word,2
 # J1939 PGN 65261 (CCSS - Cruise Control/Vehicle Speed Setup) TX payload - 8 bytes at 0x3fab0a
 # Populated by j1939HandlePgn65261CruiseControlSetup; values scaled to km/h via *0xa1/100>>8; 0xff = not available
 # Byte->SPN map from the j1939 PGN/SPN database (PGN 65261 spns 74/87/88)
-j1939_ccss_tx_payload_t,0x003fab0a,max_vehicle_speed_limit,byte,1,SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate j1939_governor_feature_cal&0x80,,verified
-j1939_ccss_tx_payload_t,0x003fab0a,cruise_high_set_limit_speed,byte,1,SPN 87 Cruise Control High Set Limit Speed (km/h); gate j1939_governor_feature_cal&0x40; fed by cruise_maximum_road_speed_cal,,verified
+j1939_ccss_tx_payload_t,0x003fab0a,max_vehicle_speed_limit,byte,1,SPN 74 Maximum Vehicle Speed Limit (km/h); from maximum_road_speed; gate algorithm_enable_flags_3_cal&0x80,,verified
+j1939_ccss_tx_payload_t,0x003fab0a,cruise_high_set_limit_speed,byte,1,SPN 87 Cruise Control High Set Limit Speed (km/h); gate algorithm_enable_flags_3_cal&0x40; fed by cruise_maximum_road_speed_cal,,verified
 j1939_ccss_tx_payload_t,0x003fab0a,cruise_low_set_limit_speed,byte,1,SPN 88 Cruise Control Operator Low Set Limit Speed (km/h); from DAT_0005c28a,,verified
 j1939_ccss_tx_payload_t,0x003fab0a,reserved3,byte,1,reserved - init 0xff (not available),,verified
 j1939_ccss_tx_payload_t,0x003fab0a,reserved4,byte,1,reserved - init 0xff (not available),,verified

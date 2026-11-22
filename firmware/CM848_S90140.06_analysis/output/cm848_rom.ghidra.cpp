@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 00:17:47 MST 2026
+// Generated: Sun Nov 22 00:27:02 MST 2026
 
 
 //
@@ -8531,7 +8531,7 @@ word cm848_calculateBoostPressure(void)
 
 /* Sets air_fuel_control_fuel_limit, the air fuel control (boost) fuel limit (e2m AFCDERAT): the
    engine speed x boost pressure grid air_fuel_control_fuel_limit_grid, blended toward the low boost
-   grid by a ramp while governor_fault_status_flags bit 1 is set (was
+   grid by a ramp while algorithm_enable_flags_0_cal bit 1 is set (was
    cm848_fuelDemandBlendCalculator) */
 
 void cm848_calculateAirFuelControlFuelLimit(void)
@@ -8550,7 +8550,7 @@ void cm848_calculateAirFuelControlFuelLimit(void)
                        air_fuel_control_fuel_limit_x_axis,wVar1,air_fuel_control_fuel_limit_y_axis,
                        air_fuel_control_fuel_limit_grid,0);
     uVar3 = (uint)wVar1;
-    if ((governor_fault_status_flags & 2) != 0) {
+    if ((algorithm_enable_flags_0_cal & 2) != 0) {
       wVar2 = cm848_calculateBoostPressure();
       wVar2 = cm848_dualAxisTableInterpolation
                         (&diag_state_group1_c_state,engine_speed_state.filtered_engine_speed,
@@ -8684,7 +8684,7 @@ void cm848_applyAirFuelControlFuelLimit(void)
 //
 
 /* Alpha altitude derate latch: returns 1 while alpha must follow altitude_derate_alpha (e2m 104B +8
-   Altitude_Derate_Alpha), else 0. With bit 0x20 of feature_enable_flags_cal clear it clears
+   Altitude_Derate_Alpha), else 0. With bit 0x20 of algorithm_enable_flags_19_cal clear it clears
    alpha_altitude_derate_timer (e2m 104A +1A Alpha_Altitude_Derate_Timer) and returns 0. Otherwise,
    in every pass final_fueling_state is FUELING_STATE_ALTITUDE_DERATE it reloads the timer with
    altitude_derate_alpha_timeout (e2m 104B +A Altitude_Derate_Alpha_Timeout, 'time alpha is latched
@@ -8699,7 +8699,7 @@ undefined4 cm848_calculateAlphaAltitudeDerateLatch(void)
   word wVar2;
   undefined4 uVar1;
   
-  if ((feature_enable_flags_cal & 0x20) == 0) {
+  if ((algorithm_enable_flags_19_cal & 0x20) == 0) {
 LAB_0000e150:
     alpha_altitude_derate_timer = 0;
     uVar1 = 0;
@@ -8730,7 +8730,7 @@ LAB_0000e150:
    0 at or below alpha_reset_fuel_rate (e2m 104B +18 C_Alpha_Reset_Rate), else the previous
    alpha_fuel_rate_result. While alpha_low_speed_governor_state_detected_flag is 1 and the filtered
    rate is above the reset rate, the filter accumulator is first pulled down to the reset rate.
-   Called by calculateAlphaBase when bit 0x1000 of governor_fault_status_flags (algorithm enable
+   Called by calculateAlphaBase when bit 0x1000 of algorithm_enable_flags_0_cal (algorithm enable
    flags word 0, 0x3fd59c) is set; a 1 lets alpha_base ramp toward 1.0. Shared name with CM550
    0xc404 (the same function). (was cm848_calculateSensorEma) */
 
@@ -8769,9 +8769,9 @@ int calculateAlphaFuelRateResult(void)
 /* Alpha on governor result (e2m 104A +A Alpha_Governor, '[APGVAP] result of On Governor'): returns
    1 while the engine is on a speed governor, that is final_fueling_state is
    FUELING_STATE_ROAD_SPEED_GOVERNOR or cruise_control_engaged_flag is 1, else 0. Called by
-   calculateAlphaBase when bit 0x2000 of governor_fault_status_flags (algorithm enable flags word 0)
-   is set; the result is stored in alpha_on_governor_result (0x40a172) and a 1 lets alpha_base ramp
-   toward 1.0. Shared name with CM550 0xc496 (the same function). (was
+   calculateAlphaBase when bit 0x2000 of algorithm_enable_flags_0_cal (algorithm enable flags word
+   0) is set; the result is stored in alpha_on_governor_result (0x40a172) and a 1 lets alpha_base
+   ramp toward 1.0. Shared name with CM550 0xc496 (the same function). (was
    cm848_calculateAlphaOnGovernorResult, earlier cm848_checkFuelRateCondition) */
 
 undefined4 calculateAlphaOnGovernorResult(void)
@@ -8802,7 +8802,7 @@ undefined4 calculateAlphaOnGovernorResult(void)
    'time that must expire without LSG commanding fuel before alpha is one'), sets
    alpha_low_speed_governor_timer_active_flag and returns 0; while the active flag is set and the
    timer is above 0 it counts it down by 1 per pass and returns 0; otherwise it clears the active
-   flag and returns 1. Called by calculateAlphaBase when bit 0x400 of governor_fault_status_flags
+   flag and returns 1. Called by calculateAlphaBase when bit 0x400 of algorithm_enable_flags_0_cal
    (algorithm enable flags word 0) is set; the result is stored in alpha_low_speed_governor_result
    (0x40a174) and a 1 lets alpha_base ramp toward 1.0. Shared name with CM550 0xc4b2 (the same
    function). (was cm848_calculateAlphaLowSpeedGovernorResult, earlier
@@ -8844,7 +8844,7 @@ undefined4 calculateAlphaLowSpeedGovernorResult(void)
    limiting before ALPHA may be set to one'), sets alpha_air_fuel_control_timer_active_flag and
    returns 0; while the active flag is set and the timer is above 0 it counts it down by 1 per pass
    and returns 0; otherwise it clears the active flag and returns 1. Called by calculateAlphaBase
-   when bit 0x800 of governor_fault_status_flags (algorithm enable flags word 0) is set; the result
+   when bit 0x800 of algorithm_enable_flags_0_cal (algorithm enable flags word 0) is set; the result
    is stored in alpha_air_fuel_control_result (0x40a16e) and a 1 lets alpha_base ramp toward 1.0.
    Shared name with CM550 0xc504 (the same function). (was cm848_calculateAlphaAirFuelControlResult,
    earlier cm848_checkPressureFuelDelayB) */
@@ -8884,7 +8884,7 @@ undefined4 calculateAlphaAirFuelControlResult(void)
    above alpha_lock_off_barometric_pressure (e2m 104B +E Alpha_Lock_Off_Air_Pressure, 'air pressure
    after hysteresis to unlock alpha'; ROM 1540 against 1507 for the lock on value), and the previous
    alpha_low_ambient_air_pressure_result in between. Called by calculateAlphaBase when bit 0x8000 of
-   governor_fault_status_flags (algorithm enable flags word 0) is set; the result is stored in
+   algorithm_enable_flags_0_cal (algorithm enable flags word 0) is set; the result is stored in
    alpha_low_ambient_air_pressure_result (0x40a17a). Shared name with CM550 0xc556 (the same
    function). (was cm848_calculateAlphaLowAmbientAirPressureResult, earlier
    cm848_checkPressureHysteresis) */
@@ -8914,7 +8914,7 @@ int calculateAlphaLowAmbientAirPressureResult(void)
 
 /* Alpha ramp (e2m 104A +2 Alpha_Base, '[APAPBA] result of AFC, LSG, On Governor, and Fuel Rate
    alpha comparison'; alpha 16384 = 1.0 = open road, 0 = urban). Runs the alpha conditions that bits
-   of governor_fault_status_flags (algorithm enable flags word 0) enable and stores each result:
+   of algorithm_enable_flags_0_cal (algorithm enable flags word 0) enable and stores each result:
    0x400 calculateAlphaLowSpeedGovernorResult (low speed governor) into
    alpha_low_speed_governor_result, 0x800 calculateAlphaAirFuelControlResult (air fuel control) into
    alpha_air_fuel_control_result, 0x1000 calculateAlphaFuelRateResult (fuel rate) into
@@ -8936,23 +8936,23 @@ void calculateAlphaBase(void)
   ushort uVar2;
   
   uVar2 = 0;
-  if ((governor_fault_status_flags & 0x400) != 0) {
+  if ((algorithm_enable_flags_0_cal & 0x400) != 0) {
     alpha_low_speed_governor_result = calculateAlphaLowSpeedGovernorResult();
     uVar2 = alpha_low_speed_governor_result;
   }
-  if ((governor_fault_status_flags & 0x800) != 0) {
+  if ((algorithm_enable_flags_0_cal & 0x800) != 0) {
     alpha_air_fuel_control_result = calculateAlphaAirFuelControlResult();
     uVar2 = uVar2 | alpha_air_fuel_control_result;
   }
-  if ((governor_fault_status_flags & 0x1000) != 0) {
+  if ((algorithm_enable_flags_0_cal & 0x1000) != 0) {
     alpha_fuel_rate_result = calculateAlphaFuelRateResult();
     uVar2 = uVar2 | alpha_fuel_rate_result;
   }
-  if ((governor_fault_status_flags & 0x2000) != 0) {
+  if ((algorithm_enable_flags_0_cal & 0x2000) != 0) {
     alpha_on_governor_result = calculateAlphaOnGovernorResult();
     uVar2 = uVar2 | alpha_on_governor_result;
   }
-  if ((governor_fault_status_flags & 0x8000) != 0) {
+  if ((algorithm_enable_flags_0_cal & 0x8000) != 0) {
     alpha_low_ambient_air_pressure_result = calculateAlphaLowAmbientAirPressureResult();
     uVar2 = uVar2 | alpha_low_ambient_air_pressure_result;
   }
@@ -8991,15 +8991,15 @@ void calculateAlphaBase(void)
    alpha_altitude_derate_timer, alpha_filtered_fuel_delivery_rate, the fuel rate filter accumulator,
    alpha_base and governor_mode_code_snapshot; in every other state it runs calculateAlphaBase (the
    alpha ramp). Source priority, tested in this order (disassembly 0xe5b4-0xe6fc):
-   master_slave_override_enable_flag nonzero -> 4; bit 0x8000 of governor_feature_config_flags set
-   and electronic_smart_power_tau = 0x4000 -> 5; mask 0x01 of governor_feature_flags set -> 1;
+   master_slave_override_enable_flag nonzero -> 4; bit 0x8000 of algorithm_enable_flags_21_cal set
+   and electronic_smart_power_tau = 0x4000 -> 5; mask 0x01 of algorithm_enable_flags_1_cal set -> 1;
    cm848_calculateAlphaAltitudeDerateLatch nonzero (altitude derate latched) -> 2; mask 0x4000 of
-   governor_fault_status_flags set and fault_derate_active_flag = 1, unless
-   alpha_altitude_derate_timer is nonzero while mask 0x20 of feature_enable_flags_cal is set -> 3;
-   else 0. The alpha is limited to 16384 and copied to four_dimensional_fueling_interpolation_factor
-   (e2m 1053 +2 Fuel_Interp_Factor) unless bit 0x10 of algorithm_enable_flags_12_cal (ESP enable) is
-   set. Caller main_loop. Shared name with CM550 0xc326 (the same function). (was
-   hpcr_calculateFuelTrimOutput) */
+   algorithm_enable_flags_0_cal set and fault_derate_active_flag = 1, unless
+   alpha_altitude_derate_timer is nonzero while mask 0x20 of algorithm_enable_flags_19_cal is set ->
+   3; else 0. The alpha is limited to 16384 and copied to
+   four_dimensional_fueling_interpolation_factor (e2m 1053 +2 Fuel_Interp_Factor) unless bit 0x10 of
+   algorithm_enable_flags_12_cal (ESP enable) is set. Caller main_loop. Shared name with CM550
+   0xc326 (the same function). (was hpcr_calculateFuelTrimOutput) */
 
 void calculateAlpha(void)
 
@@ -9022,10 +9022,10 @@ void calculateAlpha(void)
   else {
     calculateAlphaBase();
   }
-  pwVar1 = &governor_fault_status_flags;
+  pwVar1 = &algorithm_enable_flags_0_cal;
   if (master_slave_override_enable_flag == 0) {
-    if (((governor_feature_config_flags & 0x8000) == 0) || (electronic_smart_power_tau != 0x4000)) {
-      if ((governor_feature_flags & 1) == 0) {
+    if (((algorithm_enable_flags_21_cal & 0x8000) == 0) || (electronic_smart_power_tau != 0x4000)) {
+      if ((algorithm_enable_flags_1_cal & 1) == 0) {
         uVar2 = cm848_calculateAlphaAltitudeDerateLatch();
         pwVar1 = (word *)uVar2;
         if ((uVar2 & 0xffff00000000) == 0) {
@@ -9103,7 +9103,7 @@ void cm848_initializeAlpha(void)
 void cm848_temperatureBasedFuelTrim(void)
 
 {
-  if (((governor_feature_flags & 1) == 0) && (iat_fuel_trim_enable_flag != 0)) {
+  if (((algorithm_enable_flags_1_cal & 1) == 0) && (iat_fuel_trim_enable_flag != 0)) {
     iat_fuel_trim_lookup_result =
          lookupTableInterpolation
                    (&DAT_003fa0de,sensor_readings_t_0040baf2.barometric_pressure,
@@ -9666,7 +9666,7 @@ LAB_0000f700:
     uVar17 = (uint)*pwVar14;
   }
   all_speed_governor_fueling = (word)uVar17;
-  if ((cruise_control_engaged_flag == 1) && ((fuel_feature_control_flags & 0x10) != 0)) {
+  if ((cruise_control_engaged_flag == 1) && ((algorithm_enable_flags_43_cal & 0x10) != 0)) {
     if ((uint)governor_override_fuel_decay_cal < (uVar17 & 0xffff)) {
       all_speed_governor_fueling = all_speed_governor_fueling - governor_override_fuel_decay_cal;
     }
@@ -12492,8 +12492,8 @@ void cm848_initializePumpingTorqueLookupCache(void)
    (charge_pressure_estimate_filter_state) into both
    charge_pressure_estimate_with_turbocharger_speed and charge_pressure_estimate. The state
    (charge_pressure_estimate_with_turbocharger_speed_state, copied to
-   charge_pressure_estimate_state) is 0x80 while combustion_override_and_estimation_enable_flags_cal
-   bit 0x8000 is clear, the turbocharger speed is DEFAULT or outside
+   charge_pressure_estimate_state) is 0x80 while algorithm_enable_flags_5_cal bit 0x8000 is clear,
+   the turbocharger speed is DEFAULT or outside
    charge_pressure_estimate_turbocharger_speed_low_threshold .. _high_threshold, an input source
    (intake manifold temperature, compressor inlet temperature, barometric pressure) is DEFAULT, or
    the monitor condition bit charge_pressure_estimate_enable is clear or latched; 0x40 while one of
@@ -12547,8 +12547,7 @@ void cm848_estimateChargePressure(void)
   }
   dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&charge_pressure_estimate_filter_state);
   charge_pressure_estimate_with_turbocharger_speed = (word)dVar1;
-  if ((((((combustion_override_and_estimation_enable_flags_cal & 0x8000) == 0) ||
-        (turbocharger_speed_source == 2)) ||
+  if ((((((algorithm_enable_flags_5_cal & 0x8000) == 0) || (turbocharger_speed_source == 2)) ||
        (turbocharger_speed < charge_pressure_estimate_turbocharger_speed_low_threshold)) ||
       (((charge_pressure_estimate_turbocharger_speed_high_threshold < turbocharger_speed ||
         (intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_DEFAULT)) ||
@@ -12629,7 +12628,7 @@ void cm848_calculateChargePressureInRangeEnable(void)
 /* Charge pressure in range fault counter (e2m 1A2D +A Charge_Press_IR_Fault_Cnt), run every pass by
    cm848_monitorChargePressureInRange after it sets Charge_Press_IR_Cond
    (charge_pressure_in_range_condition: 0 good, 1 suspect). With the monitor disabled (bit 0x10 of
-   governor_feature_config_flags clear, or air_handling_compensation_and_diagnostic_bypass_cal
+   algorithm_enable_flags_21_cal clear, or air_handling_compensation_and_diagnostic_bypass_cal
    nonzero) the count is 0. While Charge_Press_IR_Enable (charge_pressure_in_range_enable_flag, e2m
    1A2D +8) is set it adds charge_pressure_in_range_fault_count_increment (e2m 1A2C +4
    C_Charge_Press_Fault_Cnt_Incrt) per suspect pass, limited to
@@ -12660,7 +12659,7 @@ void cm848_updateChargePressureInRangeFaultCount(void)
       fuel_demand_cal_percent = 100;
     }
   }
-  if (((governor_feature_config_flags & 0x10) == 0) ||
+  if (((algorithm_enable_flags_21_cal & 0x10) == 0) ||
      (air_handling_compensation_and_diagnostic_bypass_cal != 0)) {
     bVar1 = true;
   }
@@ -12853,8 +12852,8 @@ void cm848_estimateChargeTemperature(undefined4 param_1,int param_2)
   int unaff_r31;
   int iVar1;
   
-  if ((compressor_inlet_temperature_source == 2) ||
-     ((combustion_override_and_estimation_enable_flags_cal & 0x4000) == 0)) {
+  if ((compressor_inlet_temperature_source == 2) || ((algorithm_enable_flags_5_cal & 0x4000) == 0))
+  {
     charge_temperature_estimate_status = 0x80;
   }
   else if (compressor_inlet_temperature_source == 1) {
@@ -12922,8 +12921,8 @@ void cm848_initializeChargeTemperatureEstimate(void)
   charge_temperature_estimate_filter.accumulator =
        (int)(short)intake_manifold_temperature_sensor_value << 0x10;
   charge_temperature_estimate_filter.coefficient = &charge_temperature_estimate_filter_coefficient;
-  if ((compressor_inlet_temperature_source == 2) ||
-     ((combustion_override_and_estimation_enable_flags_cal & 0x4000) == 0)) {
+  if ((compressor_inlet_temperature_source == 2) || ((algorithm_enable_flags_5_cal & 0x4000) == 0))
+  {
     charge_temperature_estimate_status = 0x80;
   }
   else if (compressor_inlet_temperature_source == 1) {
@@ -13134,9 +13133,8 @@ void cm848_initializeIntakeTemperatureFilterStates(void)
 /* Looks up the minimum and maximum main timing limits (two engine speed x
    fuel_quantity_compensated_reference tables) into injection_timing_combustion_minimum_limit and
    injection_timing_combustion_maximum_limit, adds injection_timing_user_increment (when
-   combustion_override_and_estimation_enable_flags_cal bit 3 (8) is set;
-   injection_timing_user_increment_active_flag = it is not 0) to
-   injection_timing_combustion_limits_input and clamps that between the two limits into
+   algorithm_enable_flags_5_cal bit 3 (8) is set; injection_timing_user_increment_active_flag = it
+   is not 0) to injection_timing_combustion_limits_input and clamps that between the two limits into
    injection_timing_main_base_before_override. injection_timing_intermediate_source_code records
    which limit applied (28 = minimum limit, 27 = maximum limit); cm848_calculateMainInjectionTiming
    turns them into source codes 30 and 29. (was cm848_calculateRpmLoadTables) */
@@ -13159,7 +13157,7 @@ void cm848_applyCombustionTimingLimits(void)
                   injection_timing_combustion_maximum_limit_y_axis,
                   injection_timing_combustion_maximum_limit_grid,4);
   injection_timing_combustion_maximum_limit = injection_timing_main_base_before_override;
-  if ((combustion_override_and_estimation_enable_flags_cal & 8) == 0) {
+  if ((algorithm_enable_flags_5_cal & 8) == 0) {
     injection_timing_with_user_increment = injection_timing_combustion_limits_input;
     injection_timing_user_increment_active_flag = 0;
   }
@@ -13196,15 +13194,15 @@ void cm848_applyCombustionTimingLimits(void)
 
 /* Selects the combustion fuel command injection_quantity_combustion_command:
    fuel_quantity_compensated_reference (the fuel reference after the off-nominal stage), or the
-   calibrated override value (0x405236) when combustion_override_and_estimation_enable_flags_cal bit
-   1 (2) is set. Its reader cm848_selectFinalFueling takes it as the base of the cranking /
-   cold-start fuel arbitration. (was cm848_selectFuelDemandOverride) */
+   calibrated override value (0x405236) when algorithm_enable_flags_5_cal bit 1 (2) is set. Its
+   reader cm848_selectFinalFueling takes it as the base of the cranking / cold-start fuel
+   arbitration. (was cm848_selectFuelDemandOverride) */
 
 void cm848_selectCombustionFuelCommand(void)
 
 {
   injection_quantity_combustion_command = fuel_quantity_compensated_reference;
-  if ((combustion_override_and_estimation_enable_flags_cal & 2) != 0) {
+  if ((algorithm_enable_flags_5_cal & 2) != 0) {
     injection_quantity_combustion_command = injection_quantity_combustion_command_override_value;
   }
   return;
@@ -13218,16 +13216,15 @@ void cm848_selectCombustionFuelCommand(void)
 
 /* Selects the main base timing command: injection_timing_main_base_command =
    injection_timing_main_base_before_override, or the calibrated
-   injection_timing_main_base_override_value when
-   combustion_override_and_estimation_enable_flags_cal bit 4 (16) is set. Its only reader is
-   cm848_calculateMainInjectionTiming, where it is the base term of the sum / highest / lowest
-   (source code 18). (was cm848_selectFuelLimitOverride) */
+   injection_timing_main_base_override_value when algorithm_enable_flags_5_cal bit 4 (16) is set.
+   Its only reader is cm848_calculateMainInjectionTiming, where it is the base term of the sum /
+   highest / lowest (source code 18). (was cm848_selectFuelLimitOverride) */
 
 void cm848_selectMainBaseTimingOverride(void)
 
 {
   injection_timing_main_base_command = injection_timing_main_base_before_override;
-  if ((combustion_override_and_estimation_enable_flags_cal & 0x10) != 0) {
+  if ((algorithm_enable_flags_5_cal & 0x10) != 0) {
     injection_timing_main_base_command = injection_timing_main_base_override_value;
   }
   return;
@@ -13301,16 +13298,15 @@ void cm848_limitMassChargeFlowReference(void)
 //
 
 /* Selects the mass charge flow command mass_charge_flow_combustion_command: the limited mass charge
-   flow reference, or the calibrated override value (0x405238) when
-   combustion_override_and_estimation_enable_flags_cal bit 2 (4) is set. Its reader copies it into
-   the boost / charge chain (cm848_selectChargeManagerMassChargeFlowCommand). (was
-   cm848_selectFinalLoadLimit) */
+   flow reference, or the calibrated override value (0x405238) when algorithm_enable_flags_5_cal bit
+   2 (4) is set. Its reader copies it into the boost / charge chain
+   (cm848_selectChargeManagerMassChargeFlowCommand). (was cm848_selectFinalLoadLimit) */
 
 void cm848_selectMassChargeFlowCommand(void)
 
 {
   mass_charge_flow_combustion_command = mass_charge_flow_combustion_limited_reference;
-  if ((combustion_override_and_estimation_enable_flags_cal & 4) != 0) {
+  if ((algorithm_enable_flags_5_cal & 4) != 0) {
     mass_charge_flow_combustion_command = mass_charge_flow_combustion_command_override_value;
   }
   return;
@@ -13324,14 +13320,14 @@ void cm848_selectMassChargeFlowCommand(void)
 
 /* Selects the EGR fraction command egr_fraction_combustion_command: the cached EGR fraction
    reference (egr_fraction_compensated_reference, Q13), or the calibrated override value (0x405234)
-   when combustion_override_and_estimation_enable_flags_cal bit 0 (1) is set. Its only reader is
+   when algorithm_enable_flags_5_cal bit 0 (1) is set. Its only reader is
    cm848_limitChargeManagerCommands. (was cm848_selectFuelLoadOverride) */
 
 void cm848_selectEgrFractionCommand(void)
 
 {
   egr_fraction_combustion_command = egr_fraction_compensated_reference;
-  if ((combustion_override_and_estimation_enable_flags_cal & 1) != 0) {
+  if ((algorithm_enable_flags_5_cal & 1) != 0) {
     egr_fraction_combustion_command = egr_fraction_combustion_command_override_value;
   }
   return;
@@ -14140,13 +14136,12 @@ void cm848_calculateCombustionChiMaximumFuel(void)
 
 /* Calculates the gross fuel and its maximum limit: looks up the density-based maximum fuel (engine
    speed x intake air density), keeps the smaller of it and the chi maximum fuel (plus
-   fuel_demand_offset_correction when fuel_feature_control_flags bits 0x80 / 0x40 are set) as
+   fuel_demand_offset_correction when algorithm_enable_flags_43_cal bits 0x80 / 0x40 are set) as
    injection_quantity_combustion_maximum_limit (source code 52 density / 53 chi), subtracts
    injection_timing_torque_to_fuel_adjustment from the arbitrated demand when it is at or above the
    adjustment threshold, clamps it to 0..5888 (or the override calibration when
-   combustion_override_and_estimation_enable_flags_cal bit 10 is set, source 55) and limits it by
-   the maximum limit into injection_quantity_combustion_gross. (was cm848_calculateFuelLimitSource)
-    */
+   algorithm_enable_flags_5_cal bit 10 is set, source 55) and limits it by the maximum limit into
+   injection_quantity_combustion_gross. (was cm848_calculateFuelLimitSource) */
 
 void cm848_calculateCombustionGrossFuel(void)
 
@@ -14163,12 +14158,12 @@ void cm848_calculateCombustionGrossFuel(void)
                   injection_quantity_combustion_density_maximum_y_axis,
                   injection_quantity_combustion_density_maximum_grid,0);
   wVar3 = injection_quantity_combustion_density_maximum;
-  if ((fuel_feature_control_flags & 0x80) != 0) {
+  if ((algorithm_enable_flags_43_cal & 0x80) != 0) {
     wVar3 = injection_quantity_combustion_density_maximum + fuel_demand_offset_correction;
   }
   cm848_calculateCombustionChiMaximumFuel();
   injection_quantity_combustion_maximum_limit = injection_quantity_combustion_chi_maximum;
-  if ((fuel_feature_control_flags & 0x40) != 0) {
+  if ((algorithm_enable_flags_43_cal & 0x40) != 0) {
     injection_quantity_combustion_maximum_limit =
          injection_quantity_combustion_chi_maximum + fuel_demand_offset_correction;
   }
@@ -14187,7 +14182,7 @@ void cm848_calculateCombustionGrossFuel(void)
     uVar2 = uVar2 - (int)injection_timing_torque_to_fuel_adjustment;
   }
   combustion_reference_state.gross_fuel_timing_adjustment_active_flag = (word)bVar1;
-  if ((combustion_override_and_estimation_enable_flags_cal & 0x400) == 0) {
+  if ((algorithm_enable_flags_5_cal & 0x400) == 0) {
     injection_quantity_combustion_gross_source_code =
          final_fueling_state_before_combustion_reference;
     if ((int)uVar2 < 0) {
@@ -14217,9 +14212,8 @@ void cm848_calculateCombustionGrossFuel(void)
 
 /* Calculates the fuel reference injection_quantity_combustion_reference: the gross fuel capped by
    injection_quantity_temperature_headroom_cap (source 54) and by injection_quantity_oxygen_limit
-   (source 58), or the override calibration (0x4059ee) when
-   combustion_override_and_estimation_enable_flags_cal bit 9 (0x200) is set (source 23). Also
-   computes the gross-to-limit ratio (Q13) and sets or clears
+   (source 58), or the override calibration (0x4059ee) when algorithm_enable_flags_5_cal bit 9
+   (0x200) is set (source 23). Also computes the gross-to-limit ratio (Q13) and sets or clears
    injection_quantity_combustion_limited_flag with the on / off ratios 17203 / 9830 as hysteresis.
    (was cm848_selectFuelLimitWithFiltering) */
 
@@ -14231,7 +14225,7 @@ void cm848_calculateCombustionFuelReference(void)
   
   cm848_calculateCombustionGrossFuel();
   uVar1 = (uint)injection_quantity_oxygen_limit;
-  if ((combustion_override_and_estimation_enable_flags_cal & 0x200) == 0) {
+  if ((algorithm_enable_flags_5_cal & 0x200) == 0) {
     injection_quantity_combustion_reference = injection_quantity_combustion_gross;
     injection_quantity_combustion_reference_source_code =
          injection_quantity_combustion_gross_source_code;
@@ -14454,11 +14448,11 @@ void cm848_determineBaseChi(void)
 /* Selects the chi and alpha of the combustion reference: takes the base chi, or the fixed EGR-off
    or protection chi when emission_manager_engine_protection_state ask for it
    (combustion_chi_source_code 10 / 14), or the calibrated override chi (bit 7 of
-   combustion_override_and_estimation_enable_flags_cal; bit 6 picks the full override, source 12, or
-   the single value, source 13); clamps the two map numbers to 1..4 and sets alpha_percent of the
-   struct at 0x40a494 from the alpha command combustion_alpha_input (Q14 -> percent), the override
-   value (bit 5) or 100 (EGR off or chi above the limit). Also sets egr_off_flag of the struct at
-   0x40a494 (bit 8 overrides it). (was cm848_calculateFuelBlendModeSelection) */
+   algorithm_enable_flags_5_cal; bit 6 picks the full override, source 12, or the single value,
+   source 13); clamps the two map numbers to 1..4 and sets alpha_percent of the struct at 0x40a494
+   from the alpha command combustion_alpha_input (Q14 -> percent), the override value (bit 5) or 100
+   (EGR off or chi above the limit). Also sets egr_off_flag of the struct at 0x40a494 (bit 8
+   overrides it). (was cm848_calculateFuelBlendModeSelection) */
 
 void cm848_selectChiAndAlpha(void)
 
@@ -14509,7 +14503,7 @@ void cm848_selectChiAndAlpha(void)
     egr_off_requested_flag = 0;
   }
   combustion_reference_state.egr_off_flag = egr_off_requested_flag;
-  if ((combustion_override_and_estimation_enable_flags_cal & 0x100) != 0) {
+  if ((algorithm_enable_flags_5_cal & 0x100) != 0) {
     combustion_reference_state.egr_off_flag = combustion_egr_off_override_value;
   }
   cm848_determineBaseChi();
@@ -14527,14 +14521,14 @@ void cm848_selectChiAndAlpha(void)
     local_10 = local_1c;
     local_16 = local_18;
   }
-  if ((combustion_override_and_estimation_enable_flags_cal & 0x80) == 0) {
+  if ((algorithm_enable_flags_5_cal & 0x80) == 0) {
     local_2e = local_16;
     local_30 = local_18;
     local_2c = local_14;
     local_2a = local_12;
     local_28 = local_10;
   }
-  else if ((combustion_override_and_estimation_enable_flags_cal & 0x40) == 0) {
+  else if ((algorithm_enable_flags_5_cal & 0x40) == 0) {
     uVar2 = (combustion_chi_override_hundredths / 100) * 100;
     if (uVar2 < 400) {
       if (uVar2 < 0x65) {
@@ -14582,7 +14576,7 @@ void cm848_selectChiAndAlpha(void)
   }
   combustion_chi_upper_map_number = local_28;
   combustion_reference_state.alpha_percent = combustion_alpha_override_percent;
-  if ((combustion_override_and_estimation_enable_flags_cal & 0x20) == 0) {
+  if ((algorithm_enable_flags_5_cal & 0x20) == 0) {
     if ((local_2e < combustion_alpha_clamp_chi_limit_hundredths) &&
        (combustion_reference_state.egr_off_flag == 0)) {
       combustion_reference_state.alpha_percent = (word)((uint)combustion_alpha_input * 100 >> 0xe);
@@ -15148,7 +15142,7 @@ void cm848_fuelDemandBaseCalculation(void)
   else {
     throttle_fuel_enable_flag._0_2_ = 1;
   }
-  if ((governor_feature_flags & 4) == 0) {
+  if ((algorithm_enable_flags_1_cal & 4) == 0) {
     uVar1 = (uint)accelerator_pedal_autozero_cal;
   }
   else {
@@ -15541,7 +15535,7 @@ void cm848_fuelDemandCoordinator(void)
 {
   if (((sensor_channel_held_value_enable_bits_cal[0] & 0x2000) == 0) &&
      (accelerator_pedal_dual_channel_enable_flag != 1)) {
-    if ((governor_feature_flags & 4) == 0) {
+    if ((algorithm_enable_flags_1_cal & 4) == 0) {
       if ((system_status_flags_t_003fe974.fault_detected_bits_192_to_207 & 0x20) != 0) {
         throttle_fuel_enable_flag._0_2_ = 1;
       }
@@ -15688,7 +15682,7 @@ uint cm848_estimateCompressorOutletTemperature(void)
 
 /* Selects compressor_outlet_temperature: the calibrated default
    (compressor_outlet_temperature_default) when the compressor outlet temperature estimation is
-   disabled (bit 0x80 of feature_enable_flags_cal clear) or both source states are 2, otherwise
+   disabled (bit 0x80 of algorithm_enable_flags_19_cal clear) or both source states are 2, otherwise
    cm848_estimateCompressorOutletTemperature (the estimate); sets the state code 0 / 1 / 2
    (compressor_outlet_temperature_source). (was cm848_selectFuelFlowMode) */
 
@@ -15696,7 +15690,7 @@ void cm848_selectCompressorOutletTemperature(void)
 
 {
   if (((compressor_inlet_pressure_source == 2) && (compressor_inlet_temperature_source == 2)) ||
-     ((feature_enable_flags_cal & 0x80) == 0)) {
+     ((algorithm_enable_flags_19_cal & 0x80) == 0)) {
     compressor_outlet_temperature_estimation_active_flag = 0;
   }
   else {
@@ -17881,7 +17875,7 @@ undefined4 cm848_bothConditionsTrue(int param_1,int param_2)
 
 /* EGR valve driver (H-bridge) fault handler: reads and clears bits 0x10 / 0x40 / 0x100 of
    supervisor_register_162_status (the third and fourth inputs, masks 4 / 8, both take bit 0x100, or
-   both take bit 0 of switch_input_state_bits[2] when bit 0 of fuel_feature_control_flags is set;
+   both take bit 0 of switch_input_state_bits[2] when bit 0 of algorithm_enable_flags_43_cal is set;
    the inrush input keeps bit 0x100), runs the retry timers and counters and sets or clears faults
    720 to 723 (masks 1 / 2 / 4 / 8), the inrush fault 724 (mask 0x10) and the electrical fault 726
    (mask 0x40) of fault_detected_bits_720_to_735, and writes egr_valve_driver_fault_pending_flag.
@@ -17903,7 +17897,7 @@ void cm848_processEgrValveHBridgeFaults(void)
   bVar3 = (supervisor_register_162_status & 0x100) != 0;
   egr_valve_h_bridge_inrush_input_flag = (word)bVar3;
   egr_valve_h_bridge_over_current_high_input_flag = egr_valve_h_bridge_inrush_input_flag;
-  if ((fuel_feature_control_flags & 1) != 0) {
+  if ((algorithm_enable_flags_43_cal & 1) != 0) {
     bVar3 = switch_input_state_bits.egr_valve_driver_feedback != 0;
     egr_valve_h_bridge_over_current_high_input_flag = (word)bVar3;
   }
@@ -20073,7 +20067,7 @@ void cm848_selectFinalFueling(void)
             total_fueling_selected = engine_overspeed_fueling;
             final_fueling_state = FUELING_STATE_OVERSPEED;
           }
-          else if ((governor_feature_flags & 2) == 0) {
+          else if ((algorithm_enable_flags_1_cal & 2) == 0) {
             if (engine_state == ENGINE_STATE_ENGINE_BRAKE) {
               total_fueling_selected = engine_brake_fueling;
               final_fueling_state = FUELING_STATE_ENGINE_BRAKE;
@@ -20190,9 +20184,9 @@ void cm848_calculateProtectionRateLimited(void)
 //
 
 /* Runs the derate chain (torque_derate_fuel_quantity / torque_derate_fuel_source_code, or the
-   calibrated fixed limit 13 while governor_feature_flags bit 0x10 is set), takes the smaller of it
-   and the governed fuel into requested_fueling / requested_fueling_state (Cummins FSLMDSST) and the
-   smaller of that and fuel_demand_minimum_tracked into fuel_demand_arbitrated /
+   calibrated fixed limit 13 while algorithm_enable_flags_1_cal bit 0x10 is set), takes the smaller
+   of it and the governed fuel into requested_fueling / requested_fueling_state (Cummins FSLMDSST)
+   and the smaller of that and fuel_demand_minimum_tracked into fuel_demand_arbitrated /
    fuel_demand_arbitrated_state (was cm848_processProtectionSelection) */
 
 void cm848_arbitrateRequestedFueling(void)
@@ -20200,7 +20194,7 @@ void cm848_arbitrateRequestedFueling(void)
 {
   FUELING_STATE FVar1;
   
-  if ((governor_feature_flags & 0x10) == 0) {
+  if ((algorithm_enable_flags_1_cal & 0x10) == 0) {
     torque_derate_torque_limit = 0xffff;
     torque_derate_torque_limit_state = FUELING_STATE_NO_DERATE;
     cm848_processProtectionLimits();
@@ -20322,7 +20316,7 @@ void cm848_updateFourDimensionalFueling(void)
    user_commanded_injection_timing_cal while algorithm_enable_flags_4_cal bit 8
    (User_Commanded_Timing_Enable) is set (injection_timing_intermediate_source_code 0 for the maps,
    2 for the user timing). Adds user_commanded_injection_timing_increment_cal and sets
-   injection_timing_increment_flags to 1 when governor_feature_config_word bit 0x4000 is set, and
+   injection_timing_increment_flags to 1 when algorithm_enable_flags_2_cal bit 0x4000 is set, and
    copies the result to main_injection_timing_copy (103B +2 SOI), which
    cm848_copyMainInjectionTiming overwrites with main_injection_timing before its only reader
    cm848_computeFuelRpmCompensatedOffset runs. Both maps are flat 171 counts (20 degrees) in the
@@ -20333,7 +20327,7 @@ void cm848_updateFourDimensionalFueling(void)
    (Q14, 16384 = map a only, 0 = map b only), or the fixed user_commanded_injection_timing_cal while
    algorithm_enable_flags_4_cal bit 8 is set (injection_timing_intermediate_source_code is 0 for the
    maps and 2 for the fixed value). Adds user_commanded_injection_timing_increment_cal and sets
-   injection_timing_increment_flags to 1 when governor_feature_config_word bit 0x4000 is set, and
+   injection_timing_increment_flags to 1 when algorithm_enable_flags_2_cal bit 0x4000 is set, and
    copies the result to main_injection_timing_copy, which cm848_copyMainInjectionTiming overwrites
    with main_injection_timing before its only reader cm848_computeFuelRpmCompensatedOffset runs.
    Both maps are flat 171 counts (20 degrees) in the dump. Task of
@@ -20394,7 +20388,7 @@ void cm848_calculateFourDimensionalInjectionTiming(void)
     injection_timing_intermediate_source_code =
          INJECTION_TIMING_INTERMEDIATE_SOURCE_USER_COMMANDED_TIMING;
   }
-  if ((governor_feature_config_word & 0x4000) != 0) {
+  if ((algorithm_enable_flags_2_cal & 0x4000) != 0) {
     four_dimensional_injection_timing =
          four_dimensional_injection_timing + user_commanded_injection_timing_increment_cal;
     injection_timing_increment_flags = 1;
@@ -21680,7 +21674,7 @@ uint cm848_calculateEffectiveFuelLimit(void)
   if (injection_quantity_oxygen_limit < uVar4) {
     uVar4 = (uint)injection_quantity_oxygen_limit;
   }
-  if (((engine_feature_enable_flags_cal & 0x800) == 0) ||
+  if (((algorithm_enable_flags_40_cal & 0x800) == 0) ||
      (torque_derate_fuel_source_code == FUELING_STATE_TSC1_TORQUE_LIMIT)) {
     uVar2 = governor_reference_speed_filtered - uVar2;
     if (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) {
@@ -22939,7 +22933,7 @@ void j1939_receivePgn56576Handler(int param_1)
   if (*(short *)(param_1 + 4) == 8) {
     j1939_pgn56320_source_address = *(byte *)(param_1 + 2);
     j1939_pgn56320_destination_address = *(byte *)(param_1 + 3);
-    if (((governor_system_config_flags & 0x800) != 0) &&
+    if (((algorithm_enable_flags_27_cal & 0x800) != 0) &&
        (j1939_anti_theft_status_transmit_state == 0)) {
       j1939_anti_theft_status_transmit_state = 2;
       bVar1 = **(byte **)(param_1 + 6);
@@ -23184,7 +23178,7 @@ void cm848_clearJ1939Dm13StoppedNetworkBits(int param_1)
 // Function: cm848_processJ1939Dm13StopStartBroadcast @ 0x000223f4
 //
 
-/* J1939 DM13 (PGN 57088) handler - needs DM13EN (j1939_feature_enable_flags_cal bit 8 - 0 in this
+/* J1939 DM13 (PGN 57088) handler - needs DM13EN (algorithm_enable_flags_29_cal bit 8 - 0 in this
    truck's EEPROM): at RPM 0 and speed 0 updates the sender's requester slot / else frees all slots
    and zeroes the hold timer and fault log inhibit (was cm848_processGovernorControlMessage) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
@@ -23206,7 +23200,7 @@ void cm848_processJ1939Dm13StopStartBroadcast(int param_1)
   uint uVar12;
   uint uVar13;
   
-  if ((j1939_feature_enable_flags_cal & 0x100) != 0) {
+  if ((algorithm_enable_flags_29_cal & 0x100) != 0) {
     if ((engine_speed_state.filtered_engine_speed == 0) && (vehicle_speed == 0)) {
       pbVar11 = *(byte **)(param_1 + 6);
       j1939_dm13_network_command_byte = *pbVar11;
@@ -23869,16 +23863,16 @@ void cm848_initJ1939ProtocolHandlers(void)
    oil change monitor reset flag, 0x30 sets new_tires_installed_flag_cal (was
    cm848_j1939HandleProprietaryCommand) | earlier note: receives J1939 PGN 56832 (named Reset in the
    J1939 database) via the Bank-2 receive table 0x3fd414 (cm848_dispatchJ1939ReceivedMessages) -
-   sets feature-enable and ascii-detect flags gated by j1939_feature_enable_flags_cal - registered
-   by cm848_initJ1939ProprietaryHandler */
+   sets feature-enable and ascii-detect flags gated by algorithm_enable_flags_29_cal - registered by
+   cm848_initJ1939ProprietaryHandler */
 
 void cm848_j1939HandlePgn56832Reset(j1939_rx_msg_t *param_1)
 
 {
-  if ((j1939_feature_enable_flags_cal & 0x20) != 0) {
+  if ((algorithm_enable_flags_29_cal & 0x20) != 0) {
     DAT_003faa64 = *param_1->data_pointer;
   }
-  if ((j1939_feature_enable_flags_cal & 0x40) != 0) {
+  if ((algorithm_enable_flags_29_cal & 0x40) != 0) {
     j1939_proprietary_cmd_byte1 = param_1->data_pointer[1];
     if (j1939_proprietary_cmd_byte1 == 0x20) {
       oil_change_monitor_reset_flag = 1;
@@ -24078,7 +24072,7 @@ void cm848_processEngineRetarderTsc1Request(j1939_rx_msg_t *msg)
   bVar5 = engine_retarder_received_tsc1_control_byte & 0x30;
   engine_retarder_received_tsc1_torque_byte = msg->data_pointer[3];
   bVar1 = msg->source_address;
-  if (((governor_feature_config_word & 0x1000) == 0) && (bVar1 == j1939_transmission_source_address)
+  if (((algorithm_enable_flags_2_cal & 0x1000) == 0) && (bVar1 == j1939_transmission_source_address)
      ) {
     return;
   }
@@ -24274,7 +24268,7 @@ void cm848_initJ1939AddressDispatcher(void)
 void cm848_sendPgn56320AntiTheftStatus(void)
 
 {
-  if ((((governor_system_config_flags & 0x800) != 0) &&
+  if ((((algorithm_enable_flags_27_cal & 0x800) != 0) &&
       (j1939_anti_theft_send_status_report_cal != 0)) &&
      (j1939_anti_theft_status_transmit_state == 2)) {
     j1939_anti_theft_send_status_report_cal = 0;
@@ -24389,7 +24383,7 @@ void cm848_initJ1939AckBuffer(void)
 /* Builds and sends the ECM's AMB broadcast (PGN 65269): byte 1 barometric pressure (SPN 108 - 0.5
    kPa/bit from sensor_readings_t.barometric_pressure - 0xFE on its fault bits) / bytes 4-5 ambient
    air temperature (SPN 171 from ambient_air_temperature_sensor_filtered - 0xFFFF unless
-   j1939_feature_enable_flags_cal bits 0 and 1) / the rest not available (was
+   algorithm_enable_flags_29_cal bits 0 and 1) / the rest not available (was
    cm848_j1939HandlePgn65269AmbientConditions - a transmit builder) | review-function-readability
    reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
@@ -24407,7 +24401,7 @@ void cm848_buildPgn65269AmbientConditionsMessage(void)
   else {
     j1939_amb_barometric_pressure = 0xfe;
   }
-  if (((j1939_feature_enable_flags_cal & 1) == 0) || ((j1939_feature_enable_flags_cal & 2) == 0)) {
+  if (((algorithm_enable_flags_29_cal & 1) == 0) || ((algorithm_enable_flags_29_cal & 2) == 0)) {
     DAT_003faac5 = 0xffff;
   }
   else if (((system_status_flags_t_003fe974.fault_detected_bits_144_to_159 & 0x40) == 0) &&
@@ -24592,7 +24586,7 @@ void cm848_buildPgn65265CruiseControlVehicleSpeedMessage(void)
 LAB_000242b4:
     j1939_ccvs1_cruise_brake_clutch_byte = j1939_ccvs1_cruise_brake_clutch_byte | bVar3;
   }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
+  if ((algorithm_enable_flags_3_cal & 0x40) == 0) {
     bVar3 = 0xf;
 LAB_0002432c:
     j1939_ccvs1_cruise_brake_clutch_byte = j1939_ccvs1_cruise_brake_clutch_byte | bVar3;
@@ -24614,7 +24608,7 @@ LAB_00024304:
       goto LAB_0002432c;
     }
   }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
+  if ((algorithm_enable_flags_3_cal & 0x40) == 0) {
     j1939_ccvs1_cruise_set_resume_byte = 0xff;
   }
   else {
@@ -24675,7 +24669,7 @@ LAB_00024494:
     j1939_ccvs1_cruise_set_resume_byte = j1939_ccvs1_cruise_set_resume_byte | bVar3;
   }
 LAB_00024514:
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
+  if ((algorithm_enable_flags_3_cal & 0x40) == 0) {
     j1939_ccvs1_cruise_set_speed_byte = 0xff;
   }
   else {
@@ -24687,7 +24681,7 @@ LAB_00024514:
   else {
     bVar3 = 0;
   }
-  if ((j1939_governor_feature_cal & 0x10) == 0) {
+  if ((algorithm_enable_flags_3_cal & 0x10) == 0) {
     bVar1 = 0x1f;
   }
   else {
@@ -24764,7 +24758,7 @@ void cm848_initPgn65265CruiseSpeedHandler(void)
 void j1939HandlePgn65261CruiseControlSetup(void)
 
 {
-  if (((j1939_governor_feature_cal & 0x80) == 0) ||
+  if (((algorithm_enable_flags_3_cal & 0x80) == 0) ||
      (&DAT_00009e00 < (undefined *)(uint)maximum_road_speed)) {
     j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit = 0xff;
   }
@@ -24772,7 +24766,7 @@ void j1939HandlePgn65261CruiseControlSetup(void)
     j1939_ccss_tx_payload_t_003fab0a.max_vehicle_speed_limit =
          (byte)((uint)((int)(uint)maximum_road_speed * 0xa1) / 100 >> 8);
   }
-  if ((j1939_governor_feature_cal & 0x40) == 0) {
+  if ((algorithm_enable_flags_3_cal & 0x40) == 0) {
     j1939_ccss_tx_payload_t_003fab0a.cruise_high_set_limit_speed = 0xff;
   }
   else {
@@ -25478,7 +25472,7 @@ LAB_00025724:
     j1939_status_byte_a = j1939_status_byte_a | bVar1;
   }
   if (((switch_input_datalink_source_bits_cal[3] & 0x80) == 0) &&
-     ((governor_feature_flags & 0x10) != 0)) {
+     ((algorithm_enable_flags_1_cal & 0x10) != 0)) {
     if (switch_input_state_bits.unwired_switch != 0) {
       bVar1 = 4;
       goto LAB_0002576c;
@@ -25499,7 +25493,7 @@ LAB_0002576c:
   }
   j1939_status_byte_a = j1939_status_byte_a | bVar1;
 LAB_000257c4:
-  if (((fault_feature_config_flags & 1) == 0) && ((datalink_broadcast_enable_flags & 8) != 0)) {
+  if (((algorithm_enable_flags_13_cal & 1) == 0) && ((datalink_broadcast_enable_flags & 8) != 0)) {
     DAT_003fad7c = (undefined1)((int)((uint)engine_retarder_selection_percent * 5) >> 1);
   }
   else {
@@ -25883,17 +25877,17 @@ void cm848_initPgn65247ElectronicEngineController3Buffer(void)
 //
 
 /* Builds and sends the ECM's EFL/P1 broadcast (PGN 65263): byte 1 fuel delivery pressure (SPN 94 -
-   4 kPa/bit from fuel_delivery_pressure_sensor_filtered - 0xFF unless
-   j1939_feature_enable_flags_cal bit 12) / byte 4 engine oil pressure (SPN 100 - 4 kPa/bit from
-   oil_pressure_sensor_filtered) / byte 7 coolant pressure (SPN 109 - 2 kPa/bit from
-   coolant_pressure_sensor_filtered - 0xFF unless sensor_channel_enable_bits_cal[1] bit 3) (was
-   cm848_j1939HandlePgn65263FluidLevelPressure - a transmit builder) | review-function-readability
-   reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
+   4 kPa/bit from fuel_delivery_pressure_sensor_filtered - 0xFF unless algorithm_enable_flags_29_cal
+   bit 12) / byte 4 engine oil pressure (SPN 100 - 4 kPa/bit from oil_pressure_sensor_filtered) /
+   byte 7 coolant pressure (SPN 109 - 2 kPa/bit from coolant_pressure_sensor_filtered - 0xFF unless
+   sensor_channel_enable_bits_cal[1] bit 3) (was cm848_j1939HandlePgn65263FluidLevelPressure - a
+   transmit builder) | review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy
+   Confidence High */
 
 void cm848_buildPgn65263EngineFluidLevelPressure1Message(void)
 
 {
-  if ((j1939_feature_enable_flags_cal & 0x1000) == 0) {
+  if ((algorithm_enable_flags_29_cal & 0x1000) == 0) {
     j1939_eflp1_fuel_delivery_pressure = 0xff;
   }
   else if (((system_status_flags_t_003fe974.reserved_16 & 0x10) == 0) &&
@@ -27662,7 +27656,7 @@ void cm848_updateLowSpeedGovernorAggressiveGainLogic(void)
   int iVar1;
   word wVar2;
   
-  if (((governor_feature_flags & 0x1000) != 0) &&
+  if (((algorithm_enable_flags_1_cal & 0x1000) != 0) &&
      (adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR)) {
     if (((low_speed_governor_aggressive_gain_run_timer == 0) &&
         (engine_state == ENGINE_STATE_RUNNING)) ||
@@ -27887,7 +27881,7 @@ void cm848_initializeLowSpeedGovernorGainSelection(void)
 //
 
 /* With a TSC1 governor mode request (j1939_powertrain_control_state.tsc1_override_control_mode) and
-   governor_feature_flags bit 0x8000: final gain state 4 and the TSC1 gain set; returns 1 when
+   algorithm_enable_flags_1_cal bit 0x8000: final gain state 4 and the TSC1 gain set; returns 1 when
    selected (was cm848_getGovernorOverrideSource) */
 
 undefined4 cm848_selectLowSpeedGovernorTsc1GainSet(void)
@@ -27896,7 +27890,7 @@ undefined4 cm848_selectLowSpeedGovernorTsc1GainSet(void)
   undefined4 uVar1;
   
   if ((j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_OVERRIDE_OFF) ||
-     ((governor_feature_flags & 0x8000) == 0)) {
+     ((algorithm_enable_flags_1_cal & 0x8000) == 0)) {
     uVar1 = 0;
   }
   else {
@@ -28241,7 +28235,7 @@ void cm848_selectLowSpeedGovernorDesiredReferenceSpeed(void)
   if (high_pressure_safety_valve_test_request_flag == 0) {
     high_pressure_safety_valve_test_state = SERVICE_TOOL_TEST_NOT_RUN;
   }
-  else if ((((((protection_feature_flags & 0x10) == 0) ||
+  else if ((((((algorithm_enable_flags_42_cal & 0x10) == 0) ||
              (adjusted_user_fueling_state != FUELING_STATE_LOW_SPEED_GOVERNOR)) ||
             (engine_state != ENGINE_STATE_RUNNING)) ||
            ((transmission_park_or_neutral_flag == 0 || (switch_input_state_bits.brake_switch != 0)))
@@ -28637,7 +28631,7 @@ void cm848_processEngineConfigSpeedControl(void)
 {
   word x_input;
   
-  if ((engine_feature_enable_flags_cal & 0x100) != 0) {
+  if ((algorithm_enable_flags_40_cal & 0x100) != 0) {
     x_input = cm848_calculateBoostPressure();
     injection_timing_main_misfire_limit =
          cm848_dualAxisTableInterpolation
@@ -29391,7 +29385,7 @@ void cm848_runPowerTakeOffGovernorStateMachine(void)
   
   power_take_off_governor_switch_state_bits =
        (power_take_off_governor_switch_state_bits & 0x55555) * 2;
-  if ((engine_feature_enable_flags_cal & 0x200) == 0) {
+  if ((algorithm_enable_flags_40_cal & 0x200) == 0) {
     if (switch_input_state_bits.unwired_switch != 0) {
       power_take_off_governor_switch_state_bits = power_take_off_governor_switch_state_bits | 1;
     }
@@ -29443,10 +29437,10 @@ LAB_0002b0f0:
     power_take_off_governor_switch_state_bits = power_take_off_governor_switch_state_bits | 0x40000;
   }
   if (power_take_off_governor_state == POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT) {
-    if (((((j1939_governor_feature_cal & 0x10) == 0) || ((j1939_governor_feature_byte & 2) == 0)) ||
-        ((power_take_off_remote_switch_pressed_pass_count <= power_take_off_remote_switch_timeout &&
-         (power_take_off_remote_switch_press_count != power_take_off_remote_count_limit_cal)))) ||
-       (power_take_off_remote_switch_press_count == 0)) {
+    if (((((algorithm_enable_flags_3_cal & 0x10) == 0) || ((j1939_governor_feature_byte & 2) == 0))
+        || ((power_take_off_remote_switch_pressed_pass_count <= power_take_off_remote_switch_timeout
+            && (power_take_off_remote_switch_press_count != power_take_off_remote_count_limit_cal)))
+        ) || (power_take_off_remote_switch_press_count == 0)) {
       if (((((power_take_off_remote_switch_timeout <
               power_take_off_remote_switch_released_pass_count) &&
             (power_take_off_saved_cab_target_engine_speed == 0)) ||
@@ -29474,7 +29468,7 @@ LAB_0002b0f0:
     else if ((((algorithm_enable_flags_12_cal.power_take_off_brake_override_enable == 0) ||
               ((power_take_off_governor_switch_state_bits & 0x10000) == 0)) &&
              ((power_take_off_governor_switch_state_bits & 0x40000) == 0)) &&
-            ((((engine_feature_enable_flags_cal & 0x400) == 0 ||
+            ((((algorithm_enable_flags_40_cal & 0x400) == 0 ||
               (transmission_park_or_neutral_flag != 0)) &&
              (power_take_off_switch_enable_option_cal != 1)))) {
       power_take_off_governor_state = POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_RUN;
@@ -29502,7 +29496,7 @@ LAB_0002b3d0:
               (((algorithm_enable_flags_12_cal.power_take_off_brake_override_enable != 0 &&
                 ((power_take_off_governor_switch_state_bits & 0x10000) != 0)) ||
                ((power_take_off_governor_switch_state_bits & 0x40000) != 0)))))) ||
-            (((engine_feature_enable_flags_cal & 0x400) != 0 &&
+            (((algorithm_enable_flags_40_cal & 0x400) != 0 &&
              (transmission_park_or_neutral_flag == 0)))) goto LAB_0002b5f4;
   }
   else if (power_take_off_governor_state == POWER_TAKE_OFF_GOVERNOR_STATE_WAIT) {
@@ -29513,23 +29507,23 @@ LAB_0002b3d0:
            ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
           ((power_take_off_governor_switch_state_bits & 0x3000) != 0x1000)) ||
          (power_take_off_disable_flag != 0)))))) {
-      if (((((j1939_governor_feature_cal & 0x10) != 0) && ((j1939_governor_feature_byte & 1) != 0))
-          && (((power_take_off_governor_switch_state_bits & 0x10) != 0 &&
-              (((vehicle_speed <= power_take_off_maximum_vehicle_speed_cal &&
-                (power_take_off_minimum_engage_engine_speed <=
-                 engine_speed_state.filtered_engine_speed)) &&
-               ((engine_speed_state.filtered_engine_speed <=
-                 power_take_off_maximum_engage_engine_speed &&
-                (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x4000) == 0 &&
-                 ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) == 0)))))))
-              ))) &&
+      if (((((algorithm_enable_flags_3_cal & 0x10) != 0) && ((j1939_governor_feature_byte & 1) != 0)
+           ) && (((power_take_off_governor_switch_state_bits & 0x10) != 0 &&
+                 (((vehicle_speed <= power_take_off_maximum_vehicle_speed_cal &&
+                   (power_take_off_minimum_engage_engine_speed <=
+                    engine_speed_state.filtered_engine_speed)) &&
+                  ((engine_speed_state.filtered_engine_speed <=
+                    power_take_off_maximum_engage_engine_speed &&
+                   (((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x4000) == 0 &&
+                    ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) == 0))))
+                  )))))) &&
          (((power_take_off_switch_enable_option_cal == 0 ||
            ((power_take_off_governor_switch_state_bits & 0x1000) != 0)) &&
           ((((power_take_off_governor_switch_state_bits & 0x4000) == 0 ||
             (algorithm_enable_flags_12_cal.power_take_off_clutch_override_enable == 0)) &&
            (((((power_take_off_governor_switch_state_bits & 0x10000) == 0 ||
               (algorithm_enable_flags_12_cal.power_take_off_brake_override_enable == 0)) &&
-             ((((engine_feature_enable_flags_cal & 0x400) == 0 ||
+             ((((algorithm_enable_flags_40_cal & 0x400) == 0 ||
                (transmission_park_or_neutral_flag != 0)) &&
               (((power_take_off_governor_switch_state_bits & 0xc0) == 0x80 ||
                (((((power_take_off_governor_switch_state_bits & 0x300) == 0x200 ||
@@ -29576,7 +29570,7 @@ LAB_0002b3d0:
               (engine_state == ENGINE_STATE_STOPPED)) ||
              ((engine_state == ENGINE_STATE_SHUTDOWN ||
               ((power_take_off_governor_switch_state_bits & 0x40000) != 0)))) ||
-            (((engine_feature_enable_flags_cal & 0x400) != 0 &&
+            (((algorithm_enable_flags_40_cal & 0x400) != 0 &&
              (transmission_park_or_neutral_flag == 0)))) ||
            ((power_take_off_switch_enable_option_cal != 0 &&
             ((power_take_off_governor_switch_state_bits & 0x1000) == 0)))))))) goto LAB_0002b5f4;
@@ -29725,9 +29719,9 @@ void cm848_initializePowerTakeOffGovernorState(void)
 
 /* Sets operating_mode_governor_output: the user fueling (engine_operating_mode_fuel_demand with
    engine_operating_mode) or, while power_take_off_governor_active_flag is 1 and
-   j1939_governor_feature_cal bit 0x10 is set, power_take_off_governor_fuel_demand with
+   algorithm_enable_flags_3_cal bit 0x10 is set, power_take_off_governor_fuel_demand with
    FUELING_STATE_POWER_TAKE_OFF (modes 5 / 6 always; 7 / 8 / 30 unless the user fuel is larger and
-   governor_feature_config_word bit 0x2000 lets the throttle override - then
+   algorithm_enable_flags_2_cal bit 0x2000 lets the throttle override - then
    power_take_off_throttle_override_flag and its engine speed limit
    power_take_off_throttle_override_maximum_engine_speed_cal are set) (was
    cm848_updateGovernorFromProtection) */
@@ -29742,13 +29736,13 @@ void cm848_selectPowerTakeOffOrUserFueling(void)
     operating_mode_governor_output.mode_code = engine_operating_mode;
     operating_mode_governor_output.fuel_demand = engine_operating_mode_fuel_demand;
   }
-  else if ((power_take_off_governor_active_flag == 1) && ((j1939_governor_feature_cal & 0x10) != 0))
-  {
+  else if ((power_take_off_governor_active_flag == 1) &&
+          ((algorithm_enable_flags_3_cal & 0x10) != 0)) {
     if (((engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) ||
         (engine_operating_mode == FUELING_STATE_ALL_SPEED_GOVERNOR_APPLICATION)) ||
        (engine_operating_mode == FUELING_STATE_DUAL_AXIS_FUEL_DEMAND_TABLE)) {
       if ((power_take_off_governor_fuel_demand <= engine_operating_mode_fuel_demand) &&
-         ((governor_feature_config_word & 0x2000) != 0)) {
+         ((algorithm_enable_flags_2_cal & 0x2000) != 0)) {
         power_take_off_throttle_override_engine_speed_limit =
              power_take_off_throttle_override_maximum_engine_speed_cal;
         power_take_off_throttle_override_flag = 1;
@@ -29803,9 +29797,9 @@ void cm848_initializePowerTakeOffThrottleOverride(void)
 //
 
 /* Builds and sends PGN 65264 (power take-off information, 8 bytes): bytes 4-5 =
-   power_take_off_requested_engine_speed (byte-swapped) when j1939_governor_feature_cal bit 0x10 is
-   set, else 0xFFFF; bytes 6 / 7 = 2-bit switch fields (switches 19 + 3, switch 31). The PGN 65264
-   request responder (cm848_initJ1939ProtocolHandlers) and a 100 ms broadcast
+   power_take_off_requested_engine_speed (byte-swapped) when algorithm_enable_flags_3_cal bit 0x10
+   is set, else 0xFFFF; bytes 6 / 7 = 2-bit switch fields (switches 19 + 3, switch 31). The PGN
+   65264 request responder (cm848_initJ1939ProtocolHandlers) and a 100 ms broadcast
    (cm848_j1939_system_init) (was cm848_j1939HandlePgn65264Pto) */
 
 void cm848_buildPgn65264PowerTakeOffInformationMessage(void)
@@ -29813,7 +29807,7 @@ void cm848_buildPgn65264PowerTakeOffInformationMessage(void)
 {
   byte bVar1;
   
-  if ((j1939_governor_feature_cal & 0x10) == 0) {
+  if ((algorithm_enable_flags_3_cal & 0x10) == 0) {
     j1939_pgn65264_requested_engine_speed_tx_word = 0xffff;
     j1939_pgn65264_payload_byte_6 = 0xff;
     j1939_pgn65264_payload_byte_7 = 0xff;
@@ -29926,13 +29920,13 @@ void cm848_updateNotSafeToProgramFlag(void)
    _maximum_reference_speed. The weight governor_tuning_set_blend_weight (0 = set 1, 128 = set 2)
    comes from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 / 0x5a9d2 (all 128 in
    this ROM), or from governor_tuning_set_default_blend_weight_cal (e2m 1387 +8 ASG_Droop_Flag_Trim
-   'select droop source') when governor_system_config_flags bit 0x08 is set. It runs only when the
+   'select droop source') when algorithm_enable_flags_27_cal bit 0x08 is set. It runs only when the
    computed fuel demand is 0 and the final fueling is below the friction fuel plus a deadband, or at
    the high idle override reset (was cm848_blendGovernorTuningSets) | earlier note: Selects
    governor_tuning_set_blend_weight (0 = the governor_speed_error_*_working set, 128 = the _b set)
    from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 (ratio x 2048 breakpoints 1843
    / 2458 / 3482 / 6144 / 10240 / 40960) and 0x5a9d2 (weights, all 128 in this ROM), or uses
-   governor_tuning_set_default_blend_weight_cal when governor_system_config_flags mask 0x08 is set,
+   governor_tuning_set_default_blend_weight_cal when algorithm_enable_flags_27_cal mask 0x08 is set,
    then writes all_speed_governor_minimum_reference_speed / _low as the weighted blend of the two
    sets ((w x b + (128 - w) x working) >> 7). It runs only when its entry conditions hold (computed
    fuel demand below friction_fuel_adjustment_for_coolant_temperature plus a deadband, or the high
@@ -29952,7 +29946,7 @@ void cm848_blendAllSpeedGovernorReferenceSpeeds(void)
      ((high_idle_override_reset_enable_cal != 0 && (high_idle_override_flag._0_2_ != 0)))) {
     high_idle_override_flag._0_2_ = 0;
     wVar1 = governor_tuning_set_default_blend_weight_cal;
-    if ((governor_system_config_flags & 8) == 0) {
+    if ((algorithm_enable_flags_27_cal & 8) == 0) {
       uVar2 = 1;
       do {
         if (drivetrain_ratio < governor_tuning_set_blend_weight_by_drivetrain_ratio_axis[uVar2]) {
@@ -30129,15 +30123,15 @@ void cm848_detectThreeAcceleratorPedalPresses(void)
 // Function: cm848_checkAcceleratorPedalSensorFaults @ 0x0002c318
 //
 
-/* accelerator_pedal_sensor_fault_hold_flag = 1 when j1939_feature_enable_flags_cal bit 11 is set
-   and an accelerator pedal sensor fault bit is active: fault bits 10 P2123 / 11 P2122 / 63 P2121 /
-   62 P2127 / 68 P2128 plus 52 / 53 (no OBD code) (was cm848_checkSafetyConditionsForProtection) |
+/* accelerator_pedal_sensor_fault_hold_flag = 1 when algorithm_enable_flags_29_cal bit 11 is set and
+   an accelerator pedal sensor fault bit is active: fault bits 10 P2123 / 11 P2122 / 63 P2121 / 62
+   P2127 / 68 P2128 plus 52 / 53 (no OBD code) (was cm848_checkSafetyConditionsForProtection) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
 
 void cm848_checkAcceleratorPedalSensorFaults(void)
 
 {
-  if ((j1939_feature_enable_flags_cal & 0x800) == 0) {
+  if ((algorithm_enable_flags_29_cal & 0x800) == 0) {
     accelerator_pedal_sensor_fault_hold_flag = 0;
   }
   else if (((((system_status_flags_t_003fe974.fault_detected_bits_48_to_63 & 0x20) == 0) &&
@@ -30161,7 +30155,7 @@ void cm848_checkAcceleratorPedalSensorFaults(void)
 // Function: cm848_updateSwitch31FromAcceleratorPedal @ 0x0002c3c8
 //
 
-/* Key on (switch 0) + engine stopped (engine_state 1) + j1939_feature_enable_flags_cal bit 10 (0
+/* Key on (switch 0) + engine stopped (engine_state 1) + algorithm_enable_flags_29_cal bit 10 (0
    here): each 100 ms clears switch 31 then sets it while a pedal fault holds it or for one pass
    after 3 presses in 5 s; else clears it and resets the detector (was
    cm848_processProtectionControlLogic) | review-function-readability reviewed 2026-11-13 -
@@ -30179,7 +30173,7 @@ void cm848_updateSwitch31FromAcceleratorPedal(void)
   
   if (((engine_state != ENGINE_STATE_STOPPED) ||
       (psVar4 = &switch_input_state_bits, switch_input_state_bits.key_switch == 0)) ||
-     ((j1939_feature_enable_flags_cal & 0x400) == 0)) {
+     ((algorithm_enable_flags_29_cal & 0x400) == 0)) {
     accelerator_pedal_press_tracking_initialized_flag = 0;
     accelerator_pedal_sensor_fault_hold_flag_previous = 0;
     accelerator_pedal_press_count_previous = 0;
@@ -30244,7 +30238,7 @@ void cm848_checkSwitch31OnTimeFault(void)
     }
   }
   if (((engine_state == ENGINE_STATE_STOPPED) && (switch_input_state_bits.key_switch != 0)) &&
-     ((j1939_feature_enable_flags_cal & 0x400) != 0)) {
+     ((algorithm_enable_flags_29_cal & 0x400) != 0)) {
     if (switch_input_state_bits.unwired_switch != 0) {
       switch_input_state_bits._3_1_ = switch_input_state_bits._3_1_ | 0x80;
     }
@@ -30279,7 +30273,7 @@ void cm848_checkSwitch31OnTimeFault(void)
 
 /* Governor type switch - only with the accelerator released and final_fueling <=
    no_load_fuel_quantity + all_speed_governor_switch_droop_fueling_offset:
-   governor_system_config_flags bit 3 (0 here) + switch 31 invert
+   algorithm_enable_flags_27_cal bit 3 (0 here) + switch 31 invert
    variable_speed_governor_default_cal / else use it (was cm848_updateProtectionEntryConditions) |
    review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
     */
@@ -30293,7 +30287,7 @@ void cm848_updateVariableSpeedGovernorSelection(void)
   if (((((uint)final_fueling <=
          (uint)no_load_fuel_quantity + (uint)all_speed_governor_switch_droop_fueling_offset) &&
        (fuel_demand_control_t_0040a57a.calculated == 0)) &&
-      (wVar1 = variable_speed_governor_default_cal, (governor_system_config_flags & 8) != 0)) &&
+      (wVar1 = variable_speed_governor_default_cal, (algorithm_enable_flags_27_cal & 8) != 0)) &&
      (wVar1 = variable_speed_governor_default_cal, switch_input_state_bits.unwired_switch != 0)) {
     if (variable_speed_governor_default_cal == 1) {
       wVar1 = 0;
@@ -31471,7 +31465,7 @@ bool cm848_updateVariableGeometryTurbochargerHBridgeInrushFaultCounter(int param
 /* Valve driver (H-bridge) fault handler, run each pass of cm848_periodicTaskSet_controlLoop when
    variable_geometry_turbocharger_enable_flag is set: reads and clears bits 0x20 / 0x80 / 0x100 of
    supervisor_register_162_status (the over-current input comes from bit 1 of
-   switch_input_state_bits[2] instead when bit 0 of fuel_feature_control_flags is set), runs the
+   switch_input_state_bits[2] instead when bit 0 of algorithm_enable_flags_43_cal is set), runs the
    inrush and the general fault timers and counters, sets or clears faults 738 to 741 (masks 4 / 8 /
    16 / 32), the inrush fault 742 (mask 64) and the electrical fault 744 (mask 256) of
    fault_detected_bits_736_to_751, and writes
@@ -31493,7 +31487,7 @@ void cm848_processVariableGeometryTurbochargerHBridgeFaults(void)
     bVar2 = (supervisor_register_162_status & 0x80) != 0;
     uVar4 = (uint)((supervisor_register_162_status & 0x100) != 0);
     uVar5 = uVar4;
-    if ((fuel_feature_control_flags & 1) != 0) {
+    if ((algorithm_enable_flags_43_cal & 1) != 0) {
       uVar5 = (uint)(switch_input_state_bits.variable_geometry_turbocharger_driver_feedback != 0);
     }
     supervisor_register_162_status = supervisor_register_162_status & 0xfe5f;
@@ -36004,9 +35998,9 @@ void cm848_runTransmissionControlWhenEnabled(void)
 //
 
 /* Copies the sensor values the engine protection and the freeze frame use; with
-   protection_feature_flags bit 1 set each one is replaced by its low or high substitute while the
-   matching system_status_flags fault bit is set: intake_manifold_pressure_in_use (enable_state bits
-   8/9) / coolant_temperature_in_use (condition_monitor bits 0/1) /
+   algorithm_enable_flags_42_cal bit 1 set each one is replaced by its low or high substitute while
+   the matching system_status_flags fault bit is set: intake_manifold_pressure_in_use (enable_state
+   bits 8/9) / coolant_temperature_in_use (condition_monitor bits 0/1) /
    intake_manifold_temperature_in_use (bits 3/4) / accelerator_pedal_position_in_use (was
    cm848_updateSensorBufferValues) | review-function-readability reviewed 2026-11-12 - Readability
    Medium Accuracy Confidence Medium */
@@ -36017,7 +36011,7 @@ void cm848_selectSensorValuesInUse(void)
   word *pwVar1;
   int iVar2;
   
-  if ((protection_feature_flags & 2) == 0) {
+  if ((algorithm_enable_flags_42_cal & 2) == 0) {
     intake_manifold_pressure_in_use = sensor_readings_t_0040baf2.intake_manifold_pressure;
     accelerator_pedal_position_in_use = fuel_demand_control_t_0040a57a.calculated;
     coolant_temperature_in_use = sensor_readings_t_0040baf2.coolant_temp;
@@ -37569,7 +37563,7 @@ void cm848_queueSerialOutputDriverWrite(void)
 // Function: cm848_calculateChargingVoltageTarget @ 0x000375c8
 //
 
-/* Calculates the alternator charging voltage target when engine_feature_enable_flags_cal bit 0 is
+/* Calculates the alternator charging voltage target when algorithm_enable_flags_40_cal bit 0 is
    set: charging_voltage_target_fixed_value if charging_voltage_target_fixed_select is non-zero,
    otherwise charging_voltage_target_by_battery_temperature interpolated at
    battery_temperature_sensor_filtered plus charging_voltage_target_offset. The result
@@ -37583,7 +37577,7 @@ void cm848_calculateChargingVoltageTarget(void)
   word wVar1;
   
   wVar1 = charging_voltage_target;
-  if (((engine_feature_enable_flags_cal & 1) != 0) &&
+  if (((algorithm_enable_flags_40_cal & 1) != 0) &&
      (wVar1 = charging_voltage_target_fixed_value, charging_voltage_target_fixed_select == 0)) {
     wVar1 = lookupTableInterpolation
                       (&charging_voltage_target_cached_axis_offset,
@@ -37602,7 +37596,7 @@ void cm848_calculateChargingVoltageTarget(void)
 // Function: cm848_calculateChargingVoltageError @ 0x00037658
 //
 
-/* Charging regulator error: when engine_feature_enable_flags_cal bit 0 is set, saves the previous
+/* Charging regulator error: when algorithm_enable_flags_40_cal bit 0 is set, saves the previous
    error in charging_voltage_error_previous, sets charging_voltage_error = charging_voltage_target -
    battery voltage (1/16 V per count; 48 = 3.0 V in the dump), updates
    charging_voltage_error_slow_average (new-sample weight
@@ -37613,7 +37607,7 @@ void cm848_calculateChargingVoltageTarget(void)
 void cm848_calculateChargingVoltageError(void)
 
 {
-  if ((engine_feature_enable_flags_cal & 1) != 0) {
+  if ((algorithm_enable_flags_40_cal & 1) != 0) {
     charging_voltage_error_previous = charging_voltage_error;
     charging_voltage_error = charging_voltage_target - sensor_readings_t_0040baf2.battery_voltage;
     charging_voltage_error_slow_average =
@@ -37633,8 +37627,8 @@ void cm848_calculateChargingVoltageError(void)
 // Function: cm848_updateAlternatorFieldRegulatorState @ 0x000376dc
 //
 
-/* Steps the 4-state charging (alternator field) regulator when engine_feature_enable_flags_cal bit
-   0 is set: saves the state in alternator_field_regulator_previous_state, then takes the next state
+/* Steps the 4-state charging (alternator field) regulator when algorithm_enable_flags_40_cal bit 0
+   is set: saves the state in alternator_field_regulator_previous_state, then takes the next state
    from the 4-entry handler table at ROM 0x57730 (0 idle or fault, 1 start ramp, 2 regulation, 3
    load response; the handlers at ROM 0x38338 / 0x38384 / 0x383f0 / 0x3844c are not decompiled as
    functions). (was cm848_dispatchProtectionOutputMode) */
@@ -37642,7 +37636,7 @@ void cm848_calculateChargingVoltageError(void)
 void cm848_updateAlternatorFieldRegulatorState(void)
 
 {
-  if ((engine_feature_enable_flags_cal & 1) != 0) {
+  if ((algorithm_enable_flags_40_cal & 1) != 0) {
     alternator_field_regulator_previous_state = alternator_field_regulator_state;
     alternator_field_regulator_state =
          (*(code *)(&PTR_cm848_evaluateAlternatorFieldRegulatorIdleState_00057730)
@@ -37659,7 +37653,7 @@ void cm848_updateAlternatorFieldRegulatorState(void)
 
 /* Per-state duty calculation of the 4-state charging-voltage (alternator field) regulator whose
    state machine is cm848_updateAlternatorFieldRegulatorState; it runs only while
-   engine_feature_enable_flags_cal bit 0 is set and writes alternator_field_duty_target (25600 = 100
+   algorithm_enable_flags_40_cal bit 0 is set and writes alternator_field_duty_target (25600 = 100
    %), clamped to 25600: state 0 (engine stopped, or fault 368) gives 0, or
    alternator_field_duty_while_charging_system_fault_368_set while fault 368 is set; state 1 gives
    the soft-start ramp by pass count; state 2 gives the duty from charging_voltage_error through
@@ -37675,7 +37669,7 @@ void cm848_calculateAlternatorFieldDutyByRegulatorState(void)
   word wVar1;
   word wVar2;
   
-  if ((engine_feature_enable_flags_cal & 1) != 0) {
+  if ((algorithm_enable_flags_40_cal & 1) != 0) {
     alternator_field_duty_slow_average =
          (word)((int)((uint)alternator_field_duty_slow_average *
                       (0x10000 - (uint)alternator_field_duty_slow_average_coefficient) +
@@ -37852,8 +37846,8 @@ void cm848_calculateAlternatorFieldDutyByPid(void)
 
 /* Alternator field output stage (output channel assignment table entry 27 - the ECM's C1-7 K20
    Generator Field Control pin - this calibration: TPU-B 10 with MDASM14 read-back), only while
-   engine_feature_enable_flags_cal bit 0x1 is set: alternator_field_duty_target with overrides
-   (P0562 system voltage low -> alternator_field_system_voltage_low_target /
+   algorithm_enable_flags_40_cal bit 0x1 is set: alternator_field_duty_target with overrides (P0562
+   system voltage low -> alternator_field_system_voltage_low_target /
    alternator_field_cut_test_active_flag -> 0 / alternator_field_target_override) / 25600 - target
    unless alternator_field_duty_not_inverted_flag / the protection-voltage and mode-b override
    duties / snaps to full on above 95 % and full off below 5 % / the read-back retest / then the
@@ -37866,7 +37860,7 @@ void cm848_applyAlternatorFieldDuty(void)
   word wVar2;
   dword dVar1;
   
-  if ((engine_feature_enable_flags_cal & 1) != 0) {
+  if ((algorithm_enable_flags_40_cal & 1) != 0) {
     if ((system_status_flags_t_003fe974.fault_detected_bits_64_to_79 & 4) != 0) {
       alternator_field_duty_target = alternator_field_system_voltage_low_target;
     }
@@ -38478,7 +38472,7 @@ void cm848_initProtectionFilterLimits(void)
 //
 
 /* WARNING: Unable to use type for symbol receive_interval */
-/* J1850 PCI message-timeout monitor (not J1939): gated on engine_feature_enable_flags_cal bit 0x40;
+/* J1850 PCI message-timeout monitor (not J1939): gated on algorithm_enable_flags_40_cal bit 0x40;
    ages every pci_transmit_message_table / pci_receive_message_table timer by 10 (interrupts masked
    via EID/EIE around each entry) and sets status bit 0x10 once timer exceeds interval +
    pci_message_timeout_grace; if every timed TX entry is overdue it raises link_event_code 7 |
@@ -38495,7 +38489,7 @@ void cm848_checkPciMessageTimeouts(void)
   byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
-  if ((engine_feature_enable_flags_cal & 0x40) != 0) {
+  if ((algorithm_enable_flags_40_cal & 0x40) != 0) {
     if (pci_normal_transmit_disabled == 0) {
       message_index = 0;
       if (pci_transmit_message_count != 0) {
@@ -38549,7 +38543,7 @@ void cm848_checkPciMessageTimeouts(void)
 
 /* SIU vector 6 interrupt handler for the J1850 PCI controller - dispatch table[6] ROM 0x575f6 via
    mpc555_timerInterruptHandler - acks USIU_SIPEND 0x200 then queues pci_controller_receive_job
-   (gate engine_feature_enable_flags_cal 0x40) - not dead (was mpc555_triggerJ1939TransmitMessage) |
+   (gate algorithm_enable_flags_40_cal 0x40) - not dead (was mpc555_triggerJ1939TransmitMessage) |
    registration-table-sweep reviewed 2026-11-13 */
 
 void cm848_onPciControllerInterrupt(void)
@@ -38559,7 +38553,7 @@ void cm848_onPciControllerInterrupt(void)
   
   uVar1 = USIU_SIPEND._0_2_;
   USIU_SIPEND._0_2_ = uVar1 | 0x200;
-  if ((engine_feature_enable_flags_cal & 0x40) != 0) {
+  if ((algorithm_enable_flags_40_cal & 0x40) != 0) {
     pci_qspi_queue_result =
          cm848_queueQspiJob(&pci_controller_receive_job,(uint)pci_qspi_queue_priority);
   }
@@ -39150,7 +39144,7 @@ void cm848_servicePciTransmit(void)
   byte queue_priority;
   
   resend_requested = 0;
-  if ((engine_feature_enable_flags_cal & 0x40) != 0) {
+  if ((algorithm_enable_flags_40_cal & 0x40) != 0) {
     if (pci_link_state.link_event_code != 0) {
       resend_requested = cm848_handlePciLinkEvent();
       pci_link_state.link_event_code = 0;
@@ -39949,7 +39943,7 @@ void cm848_schedulePciTransmit(void)
   dword payload_index;
   dword frame_index;
   
-  if (((pci_transmit_state == 4) && ((engine_feature_enable_flags_cal & 0x40) != 0)) &&
+  if (((pci_transmit_state == 4) && ((algorithm_enable_flags_40_cal & 0x40) != 0)) &&
      (pci_normal_transmit_disabled == 0)) {
     transmit_index = 0;
     if (pci_transmit_message_count != 0) {
@@ -41150,8 +41144,8 @@ void cm848_buildPciTransmitMessage13FuelLevel(void)
 /* Builds the PCI (J1850) TX[14] header 0xC0 payload (cluster gauge values): byte 1 battery voltage
    in 1/16 V (battery_voltage_default_cal while intake_air_heater_status_flags bit 1 or 5 is set) /
    byte 2 oil pressure in 4 kPa (oil_pressure_sensor_filtered - or engine_oil_pressure when
-   engine_feature_enable_flags_cal bit 2 is set - x 100 / 7426) / byte 3 coolant temperature in deg
-   C + 40 (coolant_temperature_in_use filtered into coolant_temp_filtered) / byte 4 battery
+   algorithm_enable_flags_40_cal bit 2 is set - x 100 / 7426) / byte 3 coolant temperature in deg C
+   + 40 (coolant_temperature_in_use filtered into coolant_temp_filtered) / byte 4 battery
    temperature (slot 69 battery_temperature_sensor_filtered) in deg C + 40 (was
    hpcr_validateBatteryVoltageInput) | review-function-readability reviewed 2026-11-13 - Readability
    Medium Accuracy Confidence Medium */
@@ -41173,7 +41167,7 @@ void cm848_buildPciTransmitMessage14VoltageOilPressureTemperatures(void)
     wVar4 = 0xff;
   }
   local_8[0] = (byte)wVar4;
-  if ((engine_feature_enable_flags_cal & 4) == 0) {
+  if ((algorithm_enable_flags_40_cal & 4) == 0) {
     pwVar1 = &oil_pressure_sensor_filtered;
   }
   else {
@@ -41328,8 +41322,8 @@ void cm848_buildPciTransmitMessage15DistanceHighByte(void)
 // Function: cm848_calculateNetTorqueFuelLimit @ 0x0003ccb4
 //
 
-/* Sets net_torque_fuel_limit (e2m NETTORQ for its code 59): while fault_feature_config_flags bit 2
-   is set the engine speed curves of net_torque_fuel_limit_engine_speed_axis for the base / chi
+/* Sets net_torque_fuel_limit (e2m NETTORQ for its code 59): while algorithm_enable_flags_13_cal bit
+   2 is set the engine speed curves of net_torque_fuel_limit_engine_speed_axis for the base / chi
    lower / chi upper map blended by alpha / chi (cm848_interpolateAlphaChiValue) plus
    friction_fuel_adjustment_for_air_conditioning_clutch / _b, clamped to 0..5888 and rate limited by
    net_torque_fuel_limit_positive_slew_rate / _down; else 5888 (was cm848_calculateFuelDemandLimit)
@@ -41341,7 +41335,7 @@ void cm848_calculateNetTorqueFuelLimit(void)
   uint uVar1;
   uint uVar2;
   
-  if ((fault_feature_config_flags & 4) == 0) {
+  if ((algorithm_enable_flags_13_cal & 4) == 0) {
     net_torque_fuel_limit = 0x1700;
   }
   else {
@@ -41379,7 +41373,7 @@ void cm848_calculateNetTorqueFuelLimit(void)
       uVar2 = (uint)net_torque_fuel_limit_table_output +
               (uint)friction_fuel_adjustment_for_air_conditioning_clutch +
               (int)(short)friction_fuel_adjustment_for_radiator_fan;
-      if ((fuel_feature_control_flags & 0x100) != 0) {
+      if ((algorithm_enable_flags_43_cal & 0x100) != 0) {
         uVar2 = uVar2 + fuel_demand_offset_correction;
       }
       if ((int)uVar2 < 0) {
@@ -41418,12 +41412,12 @@ void cm848_calculateNetTorqueFuelLimit(void)
 //
 
 /* Takes net_torque_fuel_limit into fuel_demand_minimum_tracked with FUELING_STATE_NET_TORQUE when
-   it is lower and fault_feature_config_flags bit 2 is set (was cm848_trackFuelDemandMinimum) */
+   it is lower and algorithm_enable_flags_13_cal bit 2 is set (was cm848_trackFuelDemandMinimum) */
 
 void cm848_applyNetTorqueFuelLimit(void)
 
 {
-  if (((fault_feature_config_flags & 4) != 0) &&
+  if (((algorithm_enable_flags_13_cal & 4) != 0) &&
      (net_torque_fuel_limit < fuel_demand_minimum_tracked)) {
     fuel_demand_minimum_tracked = net_torque_fuel_limit;
     fuel_demand_minimum_tracked_state = FUELING_STATE_NET_TORQUE;
@@ -42318,7 +42312,7 @@ void cm848_initVehicleSpeedCalculation(void)
 // Function: cm848_calculateParkNeutralExitEngineSpeedLimit @ 0x0003e2bc
 //
 
-/* Engine speed limit source 15 for automatic transmissions (fuel_feature_control_flags bit 3,
+/* Engine speed limit source 15 for automatic transmissions (algorithm_enable_flags_43_cal bit 3,
    transmission_type_cal 3): while the park/neutral exit window is open, the vehicle is below its
    speed threshold and fuel demand is inside its calibrated range, the limit is held at
    park_neutral_exit_engine_speed_limit (6800 = 850 rpm) and the phase is 0; afterwards it ramps up
@@ -42330,7 +42324,7 @@ void cm848_calculateParkNeutralExitEngineSpeedLimit(void)
 {
   word wVar1;
   
-  if (((fuel_feature_control_flags & 8) == 0) || (transmission_type_cal != 3)) {
+  if (((algorithm_enable_flags_43_cal & 8) == 0) || (transmission_type_cal != 3)) {
     engine_speed_limit_park_neutral_exit = engine_speed_limit_default_cal;
   }
   else {
@@ -42747,7 +42741,7 @@ void cm848_monitorConverterSlipAndEngineSpeedLimit(void)
   uint uVar4;
   short sVar5;
   
-  if (((protection_feature_flags & 0x20) == 0) || (transmission_type_cal == 0)) {
+  if (((algorithm_enable_flags_42_cal & 0x20) == 0) || (transmission_type_cal == 0)) {
     engine_speed_limit_converter_slip = engine_speed_limit_default_cal;
     return;
   }
@@ -42870,20 +42864,20 @@ void cm848_setThermalProtectionMode5(void)
 /* Decides whether torque management is required this pass (torque_management_required_flag) and
    which table stage applies (torque_management_gear_ratio_stage): manual transmission
    (transmission_type_cal 0) compares drivetrain_ratio with the manual threshold and, with
-   protection_feature_flags bit 0x1000, the three stage thresholds; type 1 uses the manual threshold
-   while fuel_demand_timing_enable_flag is 1; type 2 (47RE) is required in gear 4, or in unknown
-   gear 255 at or below the 47RE threshold; type 3 only stores a mode word and is never reached.
-   Only called by cm848_runTorqueManagement. (was cm848_evaluateThermalProtectionActive) */
+   algorithm_enable_flags_42_cal bit 0x1000, the three stage thresholds; type 1 uses the manual
+   threshold while fuel_demand_timing_enable_flag is 1; type 2 (47RE) is required in gear 4, or in
+   unknown gear 255 at or below the 47RE threshold; type 3 only stores a mode word and is never
+   reached. Only called by cm848_runTorqueManagement. (was cm848_evaluateThermalProtectionActive) */
 
 void cm848_evaluateTorqueManagementRequired(void)
 
 {
   if (transmission_type_cal == 0) {
-    if (((engine_feature_enable_flags_cal & 0x1000) == 0) ||
+    if (((algorithm_enable_flags_40_cal & 0x1000) == 0) ||
        ((vehicle_speed != 0 && (drivetrain_ratio < torque_management_manual_gear_ratio_threshold))))
     {
       torque_management_required_flag = 0;
-      if ((protection_feature_flags & 0x1000) != 0) {
+      if ((algorithm_enable_flags_42_cal & 0x1000) != 0) {
         if (torque_management_manual_gear_ratio_stage_0_threshold <= drivetrain_ratio) {
           torque_management_gear_ratio_stage = 0;
           torque_management_required_flag = 1;
@@ -42951,8 +42945,8 @@ void cm848_evaluateTorqueManagementRequired(void)
    combustion_alpha_input in the torque management table (ROM 0x5b508, 2944 = 200 mm3 everywhere in
    this calibration); stages 0-2 read the two 4-D fuelling table sets at throttle breakpoint (stage)
    over engine speed and blend them by four_dimensional_fueling_interpolation_factor, skipping a set
-   when the factor is 0 or 0x4000. Adds fuel_demand_offset_correction when protection_feature_flags
-   bit 0x200 is set. (was cm848_calculateThermalLimitValue) */
+   when the factor is 0 or 0x4000. Adds fuel_demand_offset_correction when
+   algorithm_enable_flags_42_cal bit 0x200 is set. (was cm848_calculateThermalLimitValue) */
 
 void cm848_calculateTorqueManagementFuelTableLimit(void)
 
@@ -43002,7 +42996,7 @@ void cm848_calculateTorqueManagementFuelTableLimit(void)
       ;
     }
   }
-  if ((protection_feature_flags & 0x200) != 0) {
+  if ((algorithm_enable_flags_42_cal & 0x200) != 0) {
     torque_management_table_fuel_limit =
          torque_management_table_fuel_limit + fuel_demand_offset_correction;
   }
@@ -43134,16 +43128,16 @@ void cm848_selectTorqueManagementFuelLimitOutsideTransitions(void)
 //
 
 /* Torque management pass (cm848_periodicTaskSet_protection): when neither enable bit 0x1000
-   (engine_feature_enable_flags_cal, protection_feature_flags) is set, or transmission_type_cal is
-   3, the limit is 0x1700 (no limit); otherwise it evaluates the requirement, the table limit, the
-   exit delay, the exit ramp and the entry ramp, selects the limit and stores the previous-pass
+   (algorithm_enable_flags_40_cal, algorithm_enable_flags_42_cal) is set, or transmission_type_cal
+   is 3, the limit is 0x1700 (no limit); otherwise it evaluates the requirement, the table limit,
+   the exit delay, the exit ramp and the entry ramp, selects the limit and stores the previous-pass
    copies. Off in this calibration. (was cm848_processThermalProtection) */
 
 void cm848_runTorqueManagement(void)
 
 {
-  if ((((engine_feature_enable_flags_cal & 0x1000) == 0) &&
-      ((protection_feature_flags & 0x1000) == 0)) || (transmission_type_cal == 3)) {
+  if ((((algorithm_enable_flags_40_cal & 0x1000) == 0) &&
+      ((algorithm_enable_flags_42_cal & 0x1000) == 0)) || (transmission_type_cal == 3)) {
     torque_management_fuel_limit = 0x1700;
   }
   else {
@@ -43568,7 +43562,7 @@ void cm848_controlCruiseVacuumServo(void)
   uint uVar5;
   dword dVar6;
   
-  if ((fuel_feature_control_flags & 0x10) == 0) {
+  if ((algorithm_enable_flags_43_cal & 0x10) == 0) {
     cm848_clearLogicalOutputRequest(0x13,0);
     cm848_clearLogicalOutputRequest(0x14,0);
     cm848_clearLogicalOutputRequest(0x15,0);
@@ -43704,8 +43698,8 @@ LAB_0003ffc8:
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* Turbocharger wastegate solenoid output stage (output channel assignment table entry 11 - this
-   calibration: TPU-B 7 with MDASM12 read-back), only while fuel_feature_control_flags bit 0x1000 is
-   set: duty = wastegate_solenoid_fixed_duty if wastegate_solenoid_fixed_duty_enable else 2 x
+   calibration: TPU-B 7 with MDASM12 read-back), only while algorithm_enable_flags_43_cal bit 0x1000
+   is set: duty = wastegate_solenoid_fixed_duty if wastegate_solenoid_fixed_duty_enable else 2 x
    wastegate_duty_controller_state.request_half_duty_counts / clamped to
    wastegate_solenoid_duty_minimum / _maximum / inverted if wastegate_solenoid_duty_invert_flag /
    the read-back retest while wastegate_solenoid_read_back_retest_active_flag is set / then 1000000
@@ -43718,7 +43712,7 @@ void cm848_applyWastegateSolenoidDuty(void)
   ushort uVar1;
   word wVar2;
   
-  if ((fuel_feature_control_flags & 0x1000) != 0) {
+  if ((algorithm_enable_flags_43_cal & 0x1000) != 0) {
     uVar1 = wastegate_solenoid_fixed_duty;
     if (wastegate_solenoid_fixed_duty_enable == 0) {
       uVar1 = wastegate_duty_controller_state.request_half_duty_counts * 2;
@@ -44209,14 +44203,14 @@ void cm848_cruiseSpeedCommandStateMachine(void)
 //
 
 /* On the power-down path (before cm848_runPowerDownSequence): cruise_saved_set_speed_cal =
-   cruise_speed_command, or 0 while j1939_governor_feature_cal bit 0x8000 is clear (was
+   cruise_speed_command, or 0 while algorithm_enable_flags_3_cal bit 0x8000 is clear (was
    cm848_initFuelRateFromCapability) */
 
 void cm848_saveCruiseSetSpeedForPowerDown(void)
 
 {
   cruise_saved_set_speed_cal = cruise_speed_command;
-  if ((j1939_governor_feature_cal & 0x8000) == 0) {
+  if ((algorithm_enable_flags_3_cal & 0x8000) == 0) {
     cruise_saved_set_speed_cal = 0;
   }
   return;
@@ -44359,13 +44353,13 @@ LAB_00040f7c:
 /* WARNING: Removing unreachable block (ram,0x00041198) */
 /* Sets road_speed_governor_fueling (FUELING_STATE_ROAD_SPEED_GOVERNOR when it wins the arbitration)
    from the error between vehicle_speed_rise_limited and road_speed_governor_reference_speed through
-   the RSG droop gains / offsets (0x1700 = no limit while j1939_governor_feature_cal bit 0x80 is
+   the RSG droop gains / offsets (0x1700 = no limit while algorithm_enable_flags_3_cal bit 0x80 is
    clear, fault 29 (P0500 vehicle speed sensor) is set or TSC1 controls the engine); capped at
    adjusted_user_fueling + 58 while it governs (was cm848_calculateVehicleSpeedLimitFueling) |
    earlier note: Sets road_speed_governor_fueling (FUELING_STATE_ROAD_SPEED_GOVERNOR when it wins
    the arbitration): from the error between vehicle_speed_rise_limited and
    road_speed_governor_reference_speed through road_speed_governor_fueling_bottom_droop_gain / _d
-   (5888 = no limit while j1939_governor_feature_cal bit 0x80 is clear, fault 29 (P0500 vehicle
+   (5888 = no limit while algorithm_enable_flags_3_cal bit 0x80 is clear, fault 29 (P0500 vehicle
    speed sensor) is set or TSC1 controls the engine); capped at adjusted_user_fueling + 58 while the
    limit governs (was cm848_processProtectionRampTimer) */
 
@@ -44376,14 +44370,14 @@ void cm848_calculateRoadSpeedGovernorFueling(void)
   uint uVar2;
   dword dVar3;
   
-  if (((((j1939_governor_feature_cal & 0x80) == 0) ||
+  if (((((algorithm_enable_flags_3_cal & 0x80) == 0) ||
        ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
       (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
      (operating_mode_governor_output.mode_code == FUELING_STATE_TSC1_TORQUE_CONTROL)) {
     road_speed_governor_fueling = 0x1700;
     return;
   }
-  if (((j1939_governor_feature_cal & 0x100) == 0) ||
+  if (((algorithm_enable_flags_3_cal & 0x100) == 0) ||
      (drivetrain_gear_range == DRIVETRAIN_GEAR_RANGE_TOP_GEAR)) {
     uVar1 = (uint)vehicle_speed_rise_limited;
     uVar2 = (uint)road_speed_governor_reference_speed;
@@ -44580,13 +44574,12 @@ void cm848_updateEngineRetarderAllowedState(void)
     engine_retarder_enter_condition_flag = false;
   }
   if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
-       ((power_take_off_governor_active_flag == 0 ||
-        ((engine_feature_enable_flags_cal & 0x8000) == 0)))) &&
-      ((switch_input_state_bits.clutch_switch == 0 || ((governor_feature_config_word & 0x40) == 0)))
-      ) && (((service_brake_recently_applied_flag == 1 ||
-             (algorithm_enable_flags_18_cal.engine_retarder_service_brake_activate_enable == 0)) ||
-            (engine_retarder_non_override_command_source == ENGINE_RETARDER_COMMAND_SOURCE_CRUISE)))
-     ) {
+       ((power_take_off_governor_active_flag == 0 || ((algorithm_enable_flags_40_cal & 0x8000) == 0)
+        ))) && ((switch_input_state_bits.clutch_switch == 0 ||
+                ((algorithm_enable_flags_2_cal & 0x40) == 0)))) &&
+     (((service_brake_recently_applied_flag == 1 ||
+       (algorithm_enable_flags_18_cal.engine_retarder_service_brake_activate_enable == 0)) ||
+      (engine_retarder_non_override_command_source == ENGINE_RETARDER_COMMAND_SOURCE_CRUISE)))) {
     engine_retarder_driver_conditions_met_flag = true;
   }
   else {
@@ -44622,10 +44615,9 @@ void cm848_updateEngineRetarderAllowedState(void)
     engine_retarder_exit_condition_flag = false;
   }
   if (((fuel_demand_control_t_0040a57a.calculated == 0) &&
-      ((power_take_off_governor_active_flag == 0 ||
-       ((engine_feature_enable_flags_cal & 0x8000) == 0)))) &&
-     ((switch_input_state_bits.clutch_switch == 0 || ((governor_feature_config_word & 0x40) == 0))))
-  {
+      ((power_take_off_governor_active_flag == 0 || ((algorithm_enable_flags_40_cal & 0x8000) == 0))
+      )) && ((switch_input_state_bits.clutch_switch == 0 ||
+             ((algorithm_enable_flags_2_cal & 0x40) == 0)))) {
     engine_retarder_driver_inhibit_flag = false;
   }
   else {
@@ -44649,7 +44641,7 @@ void cm848_updateEngineRetarderAllowedState(void)
   engine_retarder_allowed_state = ENGINE_RETARDER_ALLOWED_OVERRIDE_OR_NON_OVERRIDE;
   engine_retarder_non_override_command_percent = 0x65;
 LAB_000418e0:
-  if ((service_brake_recently_applied_flag == 1) && ((governor_mode_config_flags & 1) != 0)) {
+  if ((service_brake_recently_applied_flag == 1) && ((algorithm_enable_flags_25_cal & 1) != 0)) {
     engine_retarder_immediate_brake_flag = 1;
   }
   else {
@@ -44668,13 +44660,13 @@ LAB_000418e0:
 
 /* Calculates the operator engine retarder selection engine_retarder_selection_percent: 100 or 0
    from the exhaust brake switch (switch 12) through engine_retarder_switch_percent, or the J1939
-   EBC1 retarder selection j1939_engine_retarder_selection_percent when fault_feature_config_flags
-   bit 0 is set; 100 while low_speed_governor_extended_idle_active_flag is set and
-   algorithm_enable_flags_41_cal bit 0 is set. engine_retarder_selection_percent_fault_masked is the
-   same value forced to 0 while fault bit 41 or 42 (P0478 / P0477) is detected and
-   engine_feature_enable_flags_cal bit 0x4000 is set; the ERC1 builder uses it for the brake assist
-   bits, and cm848_j1939BuildEngineControlByte sends the percent as EBC1 SPN 973 (was
-   cm848_processProtectionSystemBit4) */
+   EBC1 retarder selection j1939_engine_retarder_selection_percent when
+   algorithm_enable_flags_13_cal bit 0 is set; 100 while
+   low_speed_governor_extended_idle_active_flag is set and algorithm_enable_flags_41_cal bit 0 is
+   set. engine_retarder_selection_percent_fault_masked is the same value forced to 0 while fault bit
+   41 or 42 (P0478 / P0477) is detected and algorithm_enable_flags_40_cal bit 0x4000 is set; the
+   ERC1 builder uses it for the brake assist bits, and cm848_j1939BuildEngineControlByte sends the
+   percent as EBC1 SPN 973 (was cm848_processProtectionSystemBit4) */
 
 void cm848_calculateEngineRetarderSelectionPercent(void)
 
@@ -44686,14 +44678,14 @@ void cm848_calculateEngineRetarderSelectionPercent(void)
     engine_retarder_switch_percent = 100;
   }
   engine_retarder_selection_percent = j1939_engine_retarder_selection_percent;
-  if ((((fault_feature_config_flags & 1) == 0) &&
+  if ((((algorithm_enable_flags_13_cal & 1) == 0) &&
       (engine_retarder_selection_percent = engine_retarder_switch_percent,
       low_speed_governor_extended_idle_active_flag != 0)) &&
      (algorithm_enable_flags_41_cal.engine_retarder_extended_idle_enable != 0)) {
     engine_retarder_selection_percent = 100;
   }
   engine_retarder_selection_percent_fault_masked = engine_retarder_selection_percent;
-  if (((engine_feature_enable_flags_cal & 0x4000) != 0) &&
+  if (((algorithm_enable_flags_40_cal & 0x4000) != 0) &&
      (((system_status_flags_t_003fe974.fault_detected_bits_32_to_47 & 0x400) != 0 ||
       ((system_status_flags_t_003fe974.fault_detected_bits_32_to_47 & 0x200) != 0)))) {
     engine_retarder_selection_percent_fault_masked = 0;
@@ -44857,7 +44849,7 @@ void cm848_updateEngineRetarderActiveState(void)
     engine_retarder_fueling_below_threshold_pass_counter =
          engine_retarder_fueling_below_threshold_pass_counter + 1;
   }
-  if ((((governor_system_config_flags & 4) == 0) || (engine_retarder_command_percent == 0)) ||
+  if ((((algorithm_enable_flags_27_cal & 4) == 0) || (engine_retarder_command_percent == 0)) ||
      ((engine_retarder_command_percent_previous != 0 || (bVar1)))) {
     if ((((bVar1) && (engine_retarder_boost_sensor_fault_hold_passes != 0)) &&
         (engine_retarder_command_percent != 0)) && (engine_retarder_command_percent_previous == 0))
@@ -45266,11 +45258,11 @@ void cm848_selectLowSpeedGovernorGearGainSet(void)
         else if ((((low_speed_governor_user_gain_state == 0) &&
                   (low_speed_governor_gear_gain_transition_timer ==
                    low_speed_governor_gear_gain_transition_time)) &&
-                 ((governor_feature_flags & 0x4000) != 0)) &&
+                 ((algorithm_enable_flags_1_cal & 0x4000) != 0)) &&
                 ((int)uVar1 <
                  (int)low_speed_governor_gear_breakpoint_1 - (int)low_speed_governor_gear_hysteresis
                 )) {
-          if (((governor_feature_flags & 0x2000) == 0) ||
+          if (((algorithm_enable_flags_1_cal & 0x2000) == 0) ||
              ((int)low_speed_governor_gear_breakpoint_2 < (int)uVar1)) {
             low_speed_governor_user_gain_state = 2;
             low_speed_governor_requested_gain_set_pointer = &low_speed_governor_middle_gear_gain_set
@@ -47471,13 +47463,13 @@ void cm848_calculateAllSpeedGovernorEquivalentThrottle(void)
   int iVar11;
   int iVar12;
   
-  if ((governor_fuel_feature_flags & 4) == 0) {
+  if ((algorithm_enable_flags_32_cal & 4) == 0) {
     all_speed_governor_equivalent_throttle = fuel_demand_control_t_0040a57a.calculated;
     return;
   }
   bVar1 = false;
   if ((((adjusted_user_fueling_state == FUELING_STATE_VARIABLE_SPEED_GOVERNOR) &&
-       ((((fuel_feature_control_flags & 0x10) != 0 ||
+       ((((algorithm_enable_flags_43_cal & 0x10) != 0 ||
          (all_speed_governor_deadband_compensation_flag != 1)) || (all_speed_governor_delta == 0))))
       || ((((adjusted_user_fueling_state == FUELING_STATE_LOW_SPEED_GOVERNOR ||
             (adjusted_user_fueling_state == FUELING_STATE_TSC1_SPEED_CONTROL)) ||
@@ -47487,7 +47479,7 @@ void cm848_calculateAllSpeedGovernorEquivalentThrottle(void)
         (operating_mode_governor_output.mode_code == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) &&
        (adjusted_user_fueling < operating_mode_governor_output.fuel_demand)) ||
       (0x80 < governor_tuning_set_blend_weight)))) {
-    if ((fuel_feature_control_flags & 0x10) == 0) {
+    if ((algorithm_enable_flags_43_cal & 0x10) == 0) {
       uVar8 = (uint)fuel_demand_control_t_0040a57a.calculated;
     }
     else {
@@ -47680,7 +47672,7 @@ LAB_0004659c:
     uVar8 = 0;
   }
   uVar8 = uVar8 & 0xffff;
-  if ((fuel_feature_control_flags & 0x10) == 0) {
+  if ((algorithm_enable_flags_43_cal & 0x10) == 0) {
     if (uVar8 < fuel_demand_control_t_0040a57a.calculated) {
       uVar8 = (uint)fuel_demand_control_t_0040a57a.calculated;
     }
@@ -49533,7 +49525,7 @@ void cm848_diagnoseFuelPressureGovernor(void)
     sVar4 = fuel_pressure_setpoint - fuel_pressure_sensor;
     fuel_pressure_diagnostic_flags = 0;
     if ((engine_speed_state.filtered_engine_speed == 0) ||
-       ((protection_feature_flags & 0x2000) == 0)) {
+       ((algorithm_enable_flags_42_cal & 0x2000) == 0)) {
 LAB_00049380:
       fuel_pressure_too_high_pending_flag = 0;
       fuel_pressure_too_high_count = 0;
@@ -49892,7 +49884,7 @@ void cm848_updateFuelPressureFaultReactionRequests(void)
    cap them at the fuel metering fault limits, fault reaction bits 0 / 1 cap them at the reaction
    limits and P0088 (303) at the too-high limits; with none of these the fuel limit is 0x1700 (the
    maximum) and the speed limit stays at its default. It adds fuel_demand_offset_correction to the
-   fuel limit when protection_feature_flags bit 3 is set and requests logical output 54 while a
+   fuel limit when algorithm_enable_flags_42_cal bit 3 is set and requests logical output 54 while a
    too-high bit of fuel_pressure_diagnostic_snapshot is set and the enable word is non-zero. (was
    cm848_protectionSensorFaultHandler) */
 
@@ -49944,7 +49936,8 @@ void cm848_applyFuelLimitsForFuelPressureFaults(void)
   }
   fuel_pressure_fault_engine_speed_limit_working = wVar1;
 LAB_0004a098:
-  if ((fuel_pressure_fault_fuel_limit_working != 0x1700) && ((protection_feature_flags & 8) != 0)) {
+  if ((fuel_pressure_fault_fuel_limit_working != 0x1700) &&
+     ((algorithm_enable_flags_42_cal & 8) != 0)) {
     fuel_pressure_fault_fuel_limit_working =
          fuel_pressure_fault_fuel_limit_working + fuel_demand_offset_correction;
   }
@@ -50818,7 +50811,7 @@ void cm848_selectMainInjectionTiming(void)
 // Function: cm848_calculateFuelLimitByRpmAndDemand @ 0x0004b6cc
 //
 
-/* In the variable speed governor (engine_operating_mode 7) while injection_timing_enable_flags bit
+/* In the variable speed governor (engine_operating_mode 7) while algorithm_enable_flags_31_cal bit
    0 is set: looks up the engine speed x accelerator demand (fuel_demand_control.calculated) grids -
    the reference map and the chi lower / upper blend maps - and blends them by alpha / chi
    (cm848_interpolateAlphaChiValue) into fuel_limit_by_rpm_and_demand (e2m label of its code 42:
@@ -50827,7 +50820,7 @@ void cm848_selectMainInjectionTiming(void)
 void cm848_calculateFuelLimitByRpmAndDemand(void)
 
 {
-  if (((injection_timing_enable_flags & 1) != 0) &&
+  if (((algorithm_enable_flags_31_cal & 1) != 0) &&
      (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) {
     fuel_limit_by_rpm_and_demand_reference =
          cm848_dualAxisTableInterpolation
@@ -50905,7 +50898,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
                     fuel_limit_by_rpm_and_demand_reference,combustion_chi_lower_map_number,
                     combustion_chi_upper_map_number,combustion_reference_state.chi_hundredths,
                     combustion_reference_state.alpha_percent);
-    if ((protection_feature_flags & 0x100) != 0) {
+    if ((algorithm_enable_flags_42_cal & 0x100) != 0) {
       fuel_limit_by_rpm_and_demand = fuel_limit_by_rpm_and_demand + fuel_demand_offset_correction;
     }
   }
@@ -50925,7 +50918,7 @@ void cm848_calculateFuelLimitByRpmAndDemand(void)
 void cm848_applyFuelLimitByRpmAndDemand(void)
 
 {
-  if ((((injection_timing_enable_flags & 1) != 0) &&
+  if ((((algorithm_enable_flags_31_cal & 1) != 0) &&
       (engine_operating_mode == FUELING_STATE_VARIABLE_SPEED_GOVERNOR)) &&
      (fuel_limit_by_rpm_and_demand < torque_derate_fuel_quantity)) {
     torque_derate_fuel_quantity = fuel_limit_by_rpm_and_demand;
@@ -61788,8 +61781,8 @@ void cm848_initializeBarometricPressureSelection(void)
 // Function: cm848_calculateAltitudeDerateFuelLimit @ 0x00502464
 //
 
-/* Sets altitude_derate_fuel_limit (e2m ALTDERAT): while governor_feature_flags bit 0x20 is set and
-   the engine runs - the engine speed x barometric pressure grids for cool / hot ambient air
+/* Sets altitude_derate_fuel_limit (e2m ALTDERAT): while algorithm_enable_flags_1_cal bit 0x20 is
+   set and the engine runs - the engine speed x barometric pressure grids for cool / hot ambient air
    (fuel_limit_barometric_cool_ambient_air_grid / _hot_ambient_air_grid) blended by ambient air
    temperature inside the band altitude_derate_ambient_temperature_band_lower / _upper; while an air
    handling fault enabled in altitude_derate_air_handling_fault_enable_a / _b is set (boost sensor /
@@ -61808,7 +61801,7 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
   int iVar5;
   
   wVar1 = fuel_demand_maximum;
-  if (((governor_feature_flags & 0x20) != 0) &&
+  if (((algorithm_enable_flags_1_cal & 0x20) != 0) &&
      (wVar1 = fuel_demand_maximum, engine_state == ENGINE_STATE_RUNNING)) {
     wVar1 = altitude_derate_turbocharger_overspeed_ambient_pressure;
     if (turbocharger_overspeed_immediate_derate_flag != 1) {
@@ -61977,7 +61970,7 @@ void cm848_calculateAltitudeDerateFuelLimit(void)
                          fuel_limit_barometric_pressure_y_axis,
                          fuel_limit_barometric_cool_ambient_air_grid,0);
     }
-    if ((protection_feature_flags & 0x80) != 0) {
+    if ((algorithm_enable_flags_42_cal & 0x80) != 0) {
       wVar1 = wVar1 + fuel_demand_offset_correction;
     }
   }
@@ -62319,7 +62312,7 @@ void cm848_initializeVehicleSpeedAndCruiseState(void)
    (egr_cooler_fouling_precondition_dwell_counter); then egr_cooler_fouling_fault_counter rises by 1
    per pass up to egr_cooler_fouling_fault_time_threshold while egr_cooler_efficiency is below
    egr_cooler_efficiency_threshold and falls by 1 while it is at or above it; the counter is held at
-   0 while bit 0x2000 of feature_enable_flags_cal is clear or
+   0 while bit 0x2000 of algorithm_enable_flags_19_cal is clear or
    air_handling_compensation_and_diagnostic_bypass_cal is non-zero; egr_cooler_fouled_flag (second
    word of fuel_blend_correction_inhibit_flag) is set at the maximum and cleared at 0. (was
    governor_adjustment_counter_update) */
@@ -62345,7 +62338,7 @@ void cm848_updateEgrCoolerFoulingFaultCounter(void)
       egr_cooler_fouling_precondition_dwell_counter = 10;
     }
   }
-  if (((feature_enable_flags_cal & 0x2000) == 0) ||
+  if (((algorithm_enable_flags_19_cal & 0x2000) == 0) ||
      (air_handling_compensation_and_diagnostic_bypass_cal != 0)) {
     bVar1 = true;
   }
@@ -62965,11 +62958,11 @@ void cm848_calculateCylinderOxygenBalance(void)
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* Calculates injection_quantity_oxygen_limit, the fuel limit above which oxygen is limited:
    oxygen_limit_equivalence_ratio (engine speed x total_injection_quantity_for_air_handling table,
-   or oxygen_limit_equivalence_ratio_override_value when
-   combustion_override_and_estimation_enable_flags_cal bit 0x800 is set) x a barometric pressure
-   scale x cylinder_total_oxygen_mass x 2 / (stoichiometric_oxygen_fuel_ratio << 11), capped at
-   0x1700 (injection_quantity_oxygen_limit_override_value replaces it when bit 0x1000 is set), then
-   clamped between injection_quantity_oxygen_limit_minimum and _upper_limit.
+   or oxygen_limit_equivalence_ratio_override_value when algorithm_enable_flags_5_cal bit 0x800 is
+   set) x a barometric pressure scale x cylinder_total_oxygen_mass x 2 /
+   (stoichiometric_oxygen_fuel_ratio << 11), capped at 0x1700
+   (injection_quantity_oxygen_limit_override_value replaces it when bit 0x1000 is set), then clamped
+   between injection_quantity_oxygen_limit_minimum and _upper_limit.
    cm848_calculateCombustionFuelReference uses it as a cap on
    injection_quantity_combustion_reference (mode 0x3a) and as the divisor of
    injection_quantity_combustion_gross_to_limit_ratio. (was fuel_demandLimit_rpmLoad_calc) */
@@ -62985,7 +62978,7 @@ void cm848_calculateOxygenFuelLimit(void)
                  (&DAT_003fba12,engine_speed_state.filtered_engine_speed,
                   oxygen_limit_equivalence_ratio_x_axis,total_injection_quantity_for_air_handling,
                   oxygen_limit_equivalence_ratio_y_axis,oxygen_limit_equivalence_ratio_grid,0);
-  if ((combustion_override_and_estimation_enable_flags_cal & 0x800) != 0) {
+  if ((algorithm_enable_flags_5_cal & 0x800) != 0) {
     oxygen_limit_equivalence_ratio = oxygen_limit_equivalence_ratio_override_value;
   }
   wVar1 = lookupTableInterpolation
@@ -63001,7 +62994,7 @@ void cm848_calculateOxygenFuelLimit(void)
     uVar2 = 0x1700;
   }
   injection_quantity_oxygen_limit = (word)uVar2;
-  if ((combustion_override_and_estimation_enable_flags_cal & 0x1000) != 0) {
+  if ((algorithm_enable_flags_5_cal & 0x1000) != 0) {
     injection_quantity_oxygen_limit = injection_quantity_oxygen_limit_override_value;
   }
   wVar1 = injection_quantity_oxygen_limit_maximum;
@@ -63743,8 +63736,8 @@ LAB_005050ac:
 //
 
 /* Condensation protection driver (e2m EMO condensation AECD): condensation_count_enable_flag =
-   feature_enable_flags_cal bit 0x200 and engine_is_active_flag; scales the four condensation on /
-   off gains (EGR cooler and intake) by charge_mass_flow_filtered x scale / 128; runs
+   algorithm_enable_flags_19_cal bit 0x200 and engine_is_active_flag; scales the four condensation
+   on / off gains (EGR cooler and intake) by charge_mass_flow_filtered x scale / 128; runs
    cm848_updateIntakeCondensationCount and cm848_updateEgrCoolerCondensationCount; while either
    count is at its limit sets condensation_protection_active_flag and
    condensation_protection_emission_level_cap (the calibrated cap 0x40654e), else clears both (was
@@ -63755,7 +63748,7 @@ void cm848_updateCondensationProtection(void)
 {
   uint uVar1;
   
-  if (((feature_enable_flags_cal & 0x200) == 0) || (engine_is_active_flag != 1)) {
+  if (((algorithm_enable_flags_19_cal & 0x200) == 0) || (engine_is_active_flag != 1)) {
     condensation_count_enable_flag = 0;
   }
   else {
@@ -64554,7 +64547,7 @@ void cm848_sendDataCollectorBuffer(void)
 /* Runs one pass of the Cummins data collector (e2m records 002F .. 003B): a tool-controlled sampler
    of up to 32 addresses (the table e2m 003B Collector_Table at data_collector_address_table_cal)
    into a 32768 byte ring buffer, with an optional trigger. It sets the fill phase to 0 and returns
-   unless the collector is enabled (governor_fault_status_flags bit 0x100, e2m 106B +2
+   unless the collector is enabled (algorithm_enable_flags_0_cal bit 0x100, e2m 106B +2
    Collector_Enable, 'EEPROM indicator set by tools to enable data collector operation'; clear in
    this calibration, 39954 = 0x9c12 in the RAM dump), and it runs only for the call selected by
    data_collector_schedule_cal (e2m 002F Collector_Schedule: 0 = cm848_phase_group_b_processing, 1 =
@@ -64581,7 +64574,7 @@ void cm848_runDataCollector(int param_1)
   dword *pdVar5;
   
   pdVar5 = data_collector_address_table_cal;
-  if ((governor_fault_status_flags & 0x100) == 0) {
+  if ((algorithm_enable_flags_0_cal & 0x100) == 0) {
     data_collector_fill_phase = 0;
     return;
   }
@@ -65075,9 +65068,9 @@ void cm848_initializeEgrValvePosition(void)
    exhaust_pressure_estimate_charge_pressure_constant / 4096 + exhaust_pressure_estimate_constant,
    limited to 0 .. 0xffff and filtered (exhaust_pressure_estimate_filter_state) into
    exhaust_pressure_estimate. exhaust_pressure_estimate_state (1772 +8 Exhaust_Press_EStat): 0x80
-   while combustion_override_and_estimation_enable_flags_cal bit 0x2000 is clear or the valve
-   position / charge pressure source is DEFAULT, 0x40 while one is BACKUP, else 0. (was
-   cm848_phase_groupA_exponentialAverage) */
+   while algorithm_enable_flags_5_cal bit 0x2000 is clear or the valve position / charge pressure
+   source is DEFAULT, 0x40 while one is BACKUP, else 0. (was cm848_phase_groupA_exponentialAverage)
+    */
 
 void cm848_estimateExhaustPressure(void)
 
@@ -65109,7 +65102,7 @@ void cm848_estimateExhaustPressure(void)
   }
   dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&exhaust_pressure_estimate_filter_state);
   exhaust_pressure_estimate = (word)dVar1;
-  if ((((combustion_override_and_estimation_enable_flags_cal & 0x2000) == 0) ||
+  if ((((algorithm_enable_flags_5_cal & 0x2000) == 0) ||
       (egr_valve_position_source == SENSOR_VALUE_SOURCE_DEFAULT)) ||
      (charge_pressure_source == SENSOR_VALUE_SOURCE_DEFAULT)) {
     exhaust_pressure_estimate_state = 0x80;
@@ -65956,7 +65949,7 @@ void fault_initBitwiseTimerMask(void)
 // Function: cm848_runFaultDerateScheduler @ 0x00507c44
 //
 
-/* Fault derate scheduler: with the derate feature bit 0x10 of governor_feature_config_word clear it
+/* Fault derate scheduler: with the derate feature bit 0x10 of algorithm_enable_flags_2_cal clear it
    sets the derate outputs to their defaults (engine_speed_limit_fault_derate =
    engine_speed_limit_default_cal, fault_derate_fuel_limit = fuel_demand_maximum, flags 0, state 3);
    otherwise it runs the cold start trigger and one derate task per call selected by
@@ -65967,7 +65960,7 @@ void fault_initBitwiseTimerMask(void)
 void cm848_runFaultDerateScheduler(void)
 
 {
-  if ((governor_feature_config_word & 0x10) == 0) {
+  if ((algorithm_enable_flags_2_cal & 0x10) == 0) {
     engine_speed_limit_fault_derate = engine_speed_limit_default_cal;
     fault_derate_fuel_limit = fuel_demand_maximum;
     fault_derate_active_flag = 0;
@@ -66243,7 +66236,7 @@ LAB_00508108:
 
 /* Engine protection restart examination (e2m 10B1 +10 Precrank_Shutdown, 'EPF shutdown engine
    command from restart examine before cranking'). While the engine is CRANKING and the feature bits
-   are set (governor_feature_config_word, e2m 106B +6: 0x10 Engine_Protection_Enable, 0x1
+   are set (algorithm_enable_flags_2_cal, e2m 106B +6: 0x10 Engine_Protection_Enable, 0x1
    Engine_Protection_Shutdown_Enable, 0x20 Engine_Protection_Restart_Enable) it looks at the channel
    that caused the last shutdown (engine_protection_shutdown_active_channel_cal, 0xff = none,
    channel 4 excluded) once that channel's consecutive shutdown count
@@ -66256,7 +66249,7 @@ LAB_00508108:
    Fuel_Temperature_Precrank_Error) and engine_protection_precrank_shutdown_command_flag, which
    cm848_updateEngineProtectionShutdown (0x508898) turns into engine_shutdown_command_flag. Called
    on every pass by cm848_runFaultDerateScheduler (0x507c44). The shutdown enable bit is clear in
-   this calibration (15888 = 0x3e10 in governor_feature_config_word), so it does nothing here. (was
+   this calibration (15888 = 0x3e10 in algorithm_enable_flags_2_cal), so it does nothing here. (was
    governor_coldStart_faultDerate_trigger) */
 
 void cm848_examineEngineProtectionBeforeCranking(void)
@@ -66271,9 +66264,9 @@ void cm848_examineEngineProtectionBeforeCranking(void)
   int iVar7;
   ushort *puVar8;
   
-  if (((((engine_state == ENGINE_STATE_CRANKING) && ((governor_feature_config_word & 0x10) != 0)) &&
-       ((governor_feature_config_word & 1) != 0)) &&
-      (((governor_feature_config_word & 0x20) != 0 &&
+  if (((((engine_state == ENGINE_STATE_CRANKING) && ((algorithm_enable_flags_2_cal & 0x10) != 0)) &&
+       ((algorithm_enable_flags_2_cal & 1) != 0)) &&
+      (((algorithm_enable_flags_2_cal & 0x20) != 0 &&
        (engine_protection_shutdown_active_channel_cal != 0xff)))) &&
      ((engine_protection_shutdown_active_channel_cal != 4 &&
       (DAT_0005c2f4 <= engine_protection_shutdown_count_cal)))) {
@@ -66284,10 +66277,10 @@ void cm848_examineEngineProtectionBeforeCranking(void)
     uVar2 = (uint)engine_protection_shutdown_active_channel_cal * 4 + 0x80 & 0xffff;
     iVar3 = uVar2 + 2;
     iVar6 = iVar3 >> 4;
-    if ((((uint)(&governor_fault_status_flags)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0)
+    if ((((uint)(&algorithm_enable_flags_0_cal)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0)
        && (iVar3 = uVar2 + 3, iVar6 = iVar3 >> 4,
-          ((uint)(&governor_fault_status_flags)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0)
-       ) {
+          ((uint)(&algorithm_enable_flags_0_cal)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0
+          )) {
       uVar1 = *puVar8;
       if (((uVar1 & 1) != 0) && (sVar4 = protection_threshold_check(puVar8,iVar7,0,0), sVar4 != 0))
       {
@@ -66402,7 +66395,7 @@ void governor_fault_derateCalc_channelIter(void)
   uint uVar5;
   word *pwVar6;
   
-  if ((((governor_feature_config_word & 1) != 0) && ((governor_feature_config_word & 0x20) != 0)) &&
+  if ((((algorithm_enable_flags_2_cal & 1) != 0) && ((algorithm_enable_flags_2_cal & 0x20) != 0)) &&
      (engine_protection_shutdown_active_channel_cal != 0xff)) {
     pwVar1 = &fuel_temperature_derate_configuration_flags;
     ppuVar3 = &fuel_temperature_derate_input_pointer;
@@ -66412,10 +66405,11 @@ void governor_fault_derateCalc_channelIter(void)
     do {
       if ((((int)(short)engine_protection_shutdown_active_channel_cal == uVar4) &&
           (iVar2 = (int)(uVar5 + 2) >> 4,
-          ((uint)(&governor_fault_status_flags)[iVar2] & 1 << (uVar5 + 2 + iVar2 * -0x10 & 0x3f)) !=
-          0)) && (iVar2 = (int)(uVar5 + 3) >> 4,
-                 ((uint)(&governor_fault_status_flags)[iVar2] &
-                 1 << (uVar5 + 3 + iVar2 * -0x10 & 0x3f)) != 0)) {
+          ((uint)(&algorithm_enable_flags_0_cal)[iVar2] & 1 << (uVar5 + 2 + iVar2 * -0x10 & 0x3f))
+          != 0)) &&
+         (iVar2 = (int)(uVar5 + 3) >> 4,
+         ((uint)(&algorithm_enable_flags_0_cal)[iVar2] & 1 << (uVar5 + 3 + iVar2 * -0x10 & 0x3f)) !=
+         0)) {
         protection_threshold_update(pwVar1,ppuVar3,pwVar6);
         protection_state_transition(uVar4,ppuVar3,pwVar1);
       }
@@ -66466,24 +66460,24 @@ void cm848_calculateFaultDerateEngineSpeedLimit(void)
   do {
     if ((*pwVar8 & 2) != 0) {
       iVar3 = (int)uVar9 >> 4;
-      if ((((uint)(&governor_fault_status_flags)[(int)uVar7 >> 4] &
+      if ((((uint)(&algorithm_enable_flags_0_cal)[(int)uVar7 >> 4] &
            1 << (uVar7 + ((int)uVar7 >> 4) * -0x10 & 0x3f)) == 0) &&
-         (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0))
-      {
+         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0)
+         ) {
         uVar2 = 0;
       }
       else {
         uVar2 = threshold_adjustment_ramp(pwVar8,ppuVar4,pwVar6,1);
         if ((uVar2 < pwVar6[3]) &&
-           (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0
-           )) {
+           (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) ==
+            0)) {
           uVar2 = pwVar6[3];
         }
       }
       pwVar6[1] = uVar2;
       if ((uVar5 < uVar2) &&
-         (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0))
-      {
+         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0)
+         ) {
         uVar5 = uVar2;
       }
     }
@@ -66565,7 +66559,7 @@ void protection_event_timestamp(int param_1,int param_2,int param_3)
 //
 
 /* Engine protection shutdown algorithm (e2m blocks 10B1 and 1152; enabled by bit 0 of
-   governor_feature_config_word, e2m 106B +6 Engine_Protection_Shutdown_Enable, clear in this
+   algorithm_enable_flags_2_cal, e2m 106B +6 Engine_Protection_Shutdown_Enable, clear in this
    calibration: 15888 = 0x3e10 in the RAM dump): the last of the five tasks of
    cm848_runFaultDerateScheduler (0x507c44). With the engine STOPPED it clears
    governor_faultDerate_latch; with the shutdown disabled, or in SHUTDOWN or STOPPED, it clears
@@ -66606,7 +66600,7 @@ void cm848_updateEngineProtectionShutdown(void)
   if (engine_state == ENGINE_STATE_STOPPED) {
     governor_faultDerate_latch = 0;
   }
-  if ((((governor_feature_config_word & 1) == 0) || (engine_state == ENGINE_STATE_SHUTDOWN)) ||
+  if ((((algorithm_enable_flags_2_cal & 1) == 0) || (engine_state == ENGINE_STATE_SHUTDOWN)) ||
      (engine_state == ENGINE_STATE_STOPPED)) {
     engine_protection_shutdown_approaching_flag = 0;
     fuel_temperature_derate_fuel_shutdown_time_count = 0;
@@ -66629,7 +66623,7 @@ void cm848_updateEngineProtectionShutdown(void)
     governor_faultDerate_peak_value = 0;
     do {
       uVar1 = *pwVar5;
-      if (((uint)(&governor_fault_status_flags)[(int)uVar6 >> 4] &
+      if (((uint)(&algorithm_enable_flags_0_cal)[(int)uVar6 >> 4] &
           1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) {
         *(undefined2 *)((int)ppuVar8 + 0x1a) = 0;
 LAB_00508c1c:
@@ -66739,7 +66733,7 @@ LAB_00508b78:
     engine_shutdown_command_flag = 1;
   }
   governor_faultDerate_prev_rpm = engine_speed_state.filtered_engine_speed;
-  if ((governor_feature_config_word & 1) == 0) {
+  if ((algorithm_enable_flags_2_cal & 1) == 0) {
     engine_protection_timer_state = 3;
   }
   else if ((engine_protection_shutdown_approaching_flag == 0) &&
@@ -66783,7 +66777,7 @@ void cm848_completeEngineStartSequence(void)
 
 /* Detects an engine protection shutdown override request (e2m 10B1 +18 EPF_Shutdown_Override_Flag,
    'EPS shutdown override request detected'): when the override algorithm is enabled (bit 0x200 of
-   j1939_feature_enable_flags_cal, e2m 106B +3C EPF_Shutdown_Override_Enable),
+   algorithm_enable_flags_29_cal, e2m 106B +3C EPF_Shutdown_Override_Enable),
    engine_protection_shutdown_approaching_flag is set and logical switch 31
    (switch_input_state_bits[3] bit 0x80) turns on (a rising edge against
    governor_derate_j1939_protection_active_prev) it sets governor_derate_j1939_trigger_pending. The
@@ -66795,7 +66789,7 @@ void cm848_completeEngineStartSequence(void)
 void cm848_detectEngineProtectionShutdownOverrideRequest(void)
 
 {
-  if (((((j1939_feature_enable_flags_cal & 0x200) != 0) &&
+  if (((((algorithm_enable_flags_29_cal & 0x200) != 0) &&
        (engine_protection_shutdown_approaching_flag != 0)) &&
       (governor_derate_j1939_protection_active_prev == 0)) &&
      (switch_input_state_bits.unwired_switch != 0)) {
@@ -67175,10 +67169,10 @@ void cm848_calculateFaultDerateFuelLimit(void)
   do {
     if ((*pwVar7 & 1) != 0) {
       iVar3 = (int)uVar10 >> 4;
-      if ((((uint)(&governor_fault_status_flags)[(int)uVar6 >> 4] &
+      if ((((uint)(&algorithm_enable_flags_0_cal)[(int)uVar6 >> 4] &
            1 << (uVar6 + ((int)uVar6 >> 4) * -0x10 & 0x3f)) == 0) &&
-         (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0)
-         ) {
+         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0
+         )) {
         uVar1 = 0;
       }
       else {
@@ -67196,15 +67190,15 @@ void cm848_calculateFaultDerateFuelLimit(void)
           uVar1 = threshold_adjustment_ramp(pwVar7,ppuVar8,pwVar5,0);
         }
         if (((uVar1 & 0xffff) < (uint)pwVar5[2]) &&
-           (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) ==
+           (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) ==
             0)) {
           uVar1 = (uint)pwVar5[2];
         }
       }
       *pwVar5 = (word)uVar1;
       if ((uVar4 < (uVar1 & 0xffff)) &&
-         (((uint)(&governor_fault_status_flags)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0)
-         ) {
+         (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar10 + iVar3 * -0x10 & 0x3f)) == 0
+         )) {
         uVar4 = uVar1 & 0xffff;
       }
     }
@@ -67381,7 +67375,7 @@ void cm848_initializeExhaustPressure(void)
 // Function: cm848_updateGeneralEngineProtection @ 0x00509a7c
 //
 
-/* The e2m EMO general engine protection AECD (blocks 1A41 / 1A42; governor_feature_config_flags bit
+/* The e2m EMO general engine protection AECD (blocks 1A41 / 1A42; algorithm_enable_flags_21_cal bit
    0x40, clear on this truck): general_engine_protection_state from egr_system_failure_flag (0x100),
    DAT_0040a43c (8) and DAT_0040a43e (4), and its cap (was cm848_updateSensorValidationFlags) */
 
@@ -67406,7 +67400,7 @@ void cm848_updateGeneralEngineProtection(void)
   else {
     DAT_003fbd58 = 4;
   }
-  if ((governor_feature_config_flags & 0x40) == 0) {
+  if ((algorithm_enable_flags_21_cal & 0x40) == 0) {
     general_engine_protection_state = 0;
   }
   else {
@@ -67764,7 +67758,7 @@ void cm848_setJ1939InputTimeoutBit(uint param_1)
 /* J1939 input 5: EBC1 (PGN 61441) byte 5 Engine Retarder Selection (SPN 973 - 0.4 %/bit) ->
    j1939_engine_retarder_selection_percent (raw x 4 / 10 = 1 %/bit); message lost or not available
    -> j1939_engine_retarder_selection_default_percent plus the timeout / data-error bit; runs only
-   when fault_feature_config_flags bit 0 is set (0x0024 in this calibration = off) (was
+   when algorithm_enable_flags_13_cal bit 0 is set (0x0024 in this calibration = off) (was
    governor_loadPercent_channel5_update) | review-function-readability reviewed 2026-11-12 -
    Readability Medium Accuracy Confidence High */
 
@@ -67775,7 +67769,7 @@ void cm848_processJ1939EngineRetarderSelection(void)
   
   cm848_clearJ1939InputDataErrorBit(5);
   cm848_clearJ1939InputTimeoutBit(5);
-  if ((fault_feature_config_flags & 1) == 0) {
+  if ((algorithm_enable_flags_13_cal & 1) == 0) {
     return;
   }
   if (j1939_input_source_priority < j1939_engine_retarder_selection_source_priority) {
@@ -67817,7 +67811,7 @@ void cm848_processJ1939EngineRetarderSelection(void)
 /* J1939 input 0: CM1 (PGN 57344) byte 1 (SPN 986 Engine Fan 1 Requested Percent Speed - 0.4 %/bit -
    position per J1939-71) -> j1939_engine_fan_requested_speed (raw x 16 / 10 = 0.25 %/bit); message
    lost or invalid -> j1939_engine_fan_requested_speed_default; runs only when
-   governor_mode_config_flags bit 15 is set (0 in this calibration); the output has no reader in
+   algorithm_enable_flags_25_cal bit 15 is set (0 in this calibration); the output has no reader in
    S90140.06 (was governor_loadPercent_channel0_update) | review-function-readability reviewed
    2026-11-12 - Readability Medium Accuracy Confidence Medium */
 
@@ -67830,7 +67824,7 @@ void cm848_processJ1939EngineFanRequestedSpeed(void)
   cm848_clearJ1939InputDataErrorBit(0);
   cm848_clearJ1939InputTimeoutBit(0);
   wVar1 = j1939_engine_fan_requested_speed;
-  if ((((governor_mode_config_flags & 0x8000) != 0) &&
+  if ((((algorithm_enable_flags_25_cal & 0x8000) != 0) &&
       (j1939_engine_fan_request_source_priority <= j1939_input_source_priority)) &&
      (wVar1 = j1939_engine_fan_requested_speed_default, j1939_dm13_fault_log_inhibit_flag == 0)) {
     if (j1939_input_signal_timeouts[0] == 0) {
@@ -67924,8 +67918,8 @@ joined_r0x0050a29c:
 // Function: cm848_updateIdleSwitchesFromLocalInputs @ 0x0050a2cc
 //
 
-/* Fallback used when the J1939 accelerator pedal message is lost: governor_mode_config_flags bit 3
-   clear -> debounces the hardware off-idle switch (logical switch 8 via
+/* Fallback used when the J1939 accelerator pedal message is lost: algorithm_enable_flags_25_cal bit
+   3 clear -> debounces the hardware off-idle switch (logical switch 8 via
    cm848_readSwitchHardwareInput - accelerator_idle_switch_debounce_timer 100 minus 50 per pass) /
    set -> off idle while the raw pedal sensor (sensor channel 13 or its diagnostic override) is
    above 360 counts; drives logical switches 7 (at idle) and 8 (off idle) plus
@@ -67939,7 +67933,7 @@ void cm848_updateIdleSwitchesFromLocalInputs(void)
   byte bVar2;
   uint uVar3;
   
-  if ((governor_mode_config_flags & 8) == 0) {
+  if ((algorithm_enable_flags_25_cal & 8) == 0) {
     if (accelerator_idle_switch_debounce_armed_flag == 0) {
       accelerator_idle_switch_debounce_armed_flag = 1;
       accelerator_idle_switch_debounce_timer = 100;
@@ -68297,11 +68291,11 @@ void cm848_processJ1939AcceleratorIdleSwitchPair(void)
 // Function: cm848_processJ1939SwitchAndRequestInputs @ 0x0050aba8
 //
 
-/* J1939 input task (from cm848_phase_group_a_processing): when j1939_input_processing_enable_cal
-   bit 10 is set runs cm848_evaluateJ1939InputSignalFault for the 17 table entries / the fan request
-   (input 0) and retarder selection (input 5) processors / five status-bit copies (switch 31 from
-   status bits 1 35 0 5 and switch 4 from bit 4); then sets system_status_flags reserved_10 bit 2
-   while any data-error bit is set and bit 0 while any timeout bit is set (was
+/* J1939 input task (from cm848_phase_group_a_processing): when algorithm_enable_flags_28_cal bit 10
+   is set runs cm848_evaluateJ1939InputSignalFault for the 17 table entries / the fan request (input
+   0) and retarder selection (input 5) processors / five status-bit copies (switch 31 from status
+   bits 1 35 0 5 and switch 4 from bit 4); then sets system_status_flags reserved_10 bit 2 while any
+   data-error bit is set and bit 0 while any timeout bit is set (was
    phase_group_a_adjustCalibrationParameters) | review-function-readability reviewed 2026-11-12 -
    Readability Medium Accuracy Confidence High */
 
@@ -68311,7 +68305,7 @@ void cm848_processJ1939SwitchAndRequestInputs(void)
   short sVar1;
   int iVar2;
   
-  if ((j1939_input_processing_enable_cal & 0x400) != 0) {
+  if ((algorithm_enable_flags_28_cal & 0x400) != 0) {
     iVar2 = 0;
     do {
       cm848_evaluateJ1939InputSignalFault(iVar2);
@@ -68355,8 +68349,8 @@ void cm848_processJ1939SwitchAndRequestInputs(void)
 //
 
 /* J1939 accelerator input task (from cm848_periodicTaskGroup18_calibration6): when
-   j1939_input_processing_enable_cal bit 10 is set runs the low idle switch (input 6) / idle switch
-   pair and pedal position (input 7) processors then the same reserved_10 bit 2 / bit 0 summary and
+   algorithm_enable_flags_28_cal bit 10 is set runs the low idle switch (input 6) / idle switch pair
+   and pedal position (input 7) processors then the same reserved_10 bit 2 / bit 0 summary and
    j1939_pedal_input_timeout_active_flag (was phase_group_a_performCalibrationUpdate) |
    review-function-readability reviewed 2026-11-12 - Readability Medium Accuracy Confidence High */
 
@@ -68365,7 +68359,7 @@ void cm848_processJ1939AcceleratorInputs(void)
 {
   short sVar1;
   
-  if ((j1939_input_processing_enable_cal & 0x400) != 0) {
+  if ((algorithm_enable_flags_28_cal & 0x400) != 0) {
     cm848_processJ1939AcceleratorLowIdleSwitch();
     cm848_processJ1939AcceleratorIdleSwitchPair();
     cm848_processJ1939AcceleratorPedalPosition();
@@ -68426,7 +68420,7 @@ void cm848_initJ1939InputProcessing(void)
 // Function: cm848_endRetarderShiftAssistAboveFuelDemandLimit @ 0x0050aec0
 //
 
-/* When governor_feature_config_word bit 0x1000 is set, the transmission holds both an engine
+/* When algorithm_enable_flags_2_cal bit 0x1000 is set, the transmission holds both an engine
    retarder torque control request and an engine speed control request, and
    engine_operating_mode_fuel_demand has reached engine_retarder_shift_assist_fuel_demand_limit, it
    ends the retarder request (mode off, torque limit 125, the zero torque timer and the speed
@@ -68435,7 +68429,7 @@ void cm848_initJ1939InputProcessing(void)
 void cm848_endRetarderShiftAssistAboveFuelDemandLimit(void)
 
 {
-  if (((((governor_feature_config_word & 0x1000) != 0) &&
+  if (((((algorithm_enable_flags_2_cal & 0x1000) != 0) &&
        (engine_retarder_override_control_mode == TSC1_TORQUE_CONTROL)) &&
       (engine_retarder_control_device_indicator == J1939_CONTROL_DEVICE_TRANSMISSION)) &&
      (((j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_CONTROL &&
@@ -69097,7 +69091,7 @@ void cm848_tickJ1939InputSupervision(void)
 {
   word *pwVar1;
   
-  if ((j1939_input_processing_enable_cal & 0x400) != 0) {
+  if ((algorithm_enable_flags_28_cal & 0x400) != 0) {
     if (governor_table_check_startup_delay != 0) {
       governor_table_check_startup_delay = governor_table_check_startup_delay - 1;
     }
@@ -69270,7 +69264,7 @@ void cm848_startJ1939ControlSession(int session_kind)
 // Function: cm848_trackJ1939ControlSessions @ 0x0050bff4
 //
 
-/* J1939 monitor (enabled by bit 0x800 of governor_feature_config_word, e2m 106B +6
+/* J1939 monitor (enabled by bit 0x800 of algorithm_enable_flags_2_cal, e2m 106B +6
    J1939_Monitor_Enable; set in this calibration, 15888 = 0x3e10 in the RAM dump): tracks the
    sessions in which another device controls the engine or the retarder over J1939. It compares the
    engine control (TSC1) state j1939_powertrain_control_state.tsc1_override_control_mode /
@@ -69301,7 +69295,7 @@ void cm848_trackJ1939ControlSessions(void)
   TSC1_OVERRIDE_MODE *pTVar9;
   
   bVar6 = j1939_powertrain_control_state.tsc1_controlling_source_address;
-  if ((governor_feature_config_word & 0x800) == 0) {
+  if ((algorithm_enable_flags_2_cal & 0x800) == 0) {
     return;
   }
   pTVar2 = &j1939_monitor_engine_override_control_mode_previous;
@@ -72888,7 +72882,7 @@ void cm848_initializeAirConditioningClutchControl(void)
 void cm848_controlAirConditioningClutchForBrTruck(void)
 
 {
-  if (((engine_feature_enable_flags_cal & 8) != 0) &&
+  if (((algorithm_enable_flags_40_cal & 8) != 0) &&
      (air_conditioning_low_rpm_off_threshold < engine_speed_state.filtered_engine_speed)) {
     if (j1939_powertrain_control_state.etc1_spn574_shift_in_process == 0) {
       air_conditioning_shift_hold_off_count = 0;
@@ -73020,7 +73014,7 @@ void cm848_controlAirConditioningClutchForDrTruck(void)
   }
   bVar3 = true;
   air_conditioning_condition_code = 0xe;
-  if ((engine_feature_enable_flags_cal & 8) == 0) {
+  if ((algorithm_enable_flags_40_cal & 8) == 0) {
     air_conditioning_condition_code = 1;
     if (logical_output_request_bits_32_to_39.air_conditioning_clutch_request != 0) {
       air_conditioning_condition_code_2 = 1;
@@ -73228,8 +73222,8 @@ void cm848_controlAirConditioningClutch(void)
 // Function: cm848_updateParkNeutralExitEngineSpeedLimitWindow @ 0x0051193c
 //
 
-/* Park/neutral exit engine speed limit timing (fuel_feature_control_flags bit 3): while switch 20
-   (park/neutral) is set with fuel demand 20-400 it loads the countdown from a transmission
+/* Park/neutral exit engine speed limit timing (algorithm_enable_flags_43_cal bit 3): while switch
+   20 (park/neutral) is set with fuel demand 20-400 it loads the countdown from a transmission
    temperature table; once the switch clears the active flag is 1 until it runs out, and
    cm848_calculateParkNeutralExitEngineSpeedLimit holds the speed limit at 850 rpm meanwhile. (was
    cm848_updateParkNeutralExitTorqueLimitWindow, earlier fuel_temp_protection_monitor) */
@@ -73244,7 +73238,7 @@ void cm848_updateParkNeutralExitEngineSpeedLimitWindow(void)
     park_neutral_exit_engine_speed_limit_startup_delay_count =
          park_neutral_exit_engine_speed_limit_startup_delay_count + 1;
   }
-  if ((fuel_feature_control_flags & 8) != 0) {
+  if ((algorithm_enable_flags_43_cal & 8) != 0) {
     bVar1 = park_neutral_exit_engine_speed_limit_state_bits;
     if ((park_neutral_exit_engine_speed_limit_state_bits & 2) == 0) {
       if (switch_input_state_bits.park_neutral_switch == 0) {
@@ -73379,7 +73373,7 @@ LAB_00511cac:
     cm848_removeEngineTsc1IgnoredRequestEntry(1,j1939_anti_slip_regulation_source_address & 0xff);
     cm848_removeEngineTsc1IgnoredRequestEntry(1,j1939_anti_lock_brake_source_address & 0xff);
     uVar1 = datalink_broadcast_enable_default_cal;
-    if ((protection_feature_flags & 0x40) == 0) {
+    if ((algorithm_enable_flags_42_cal & 0x40) == 0) {
       return;
     }
   }
@@ -73410,7 +73404,7 @@ LAB_00511cac:
       bVar3 = bVar3 + 1;
     } while (bVar3 < 4);
     j1939_tsc1_active_duration_counter = j1939_tsc1_active_duration_reload;
-    if ((protection_feature_flags & 0x40) == 0) {
+    if ((algorithm_enable_flags_42_cal & 0x40) == 0) {
       return;
     }
     uVar1 = datalink_broadcast_enable_flags & 0xfff3;
@@ -73958,8 +73952,8 @@ undefined4 cm848_updateCruiseControlDeniedStatus(void)
   undefined4 uVar1;
   uint uVar2;
   
-  if ((((j1939_governor_feature_cal & 0x40) == 0) || (cruise_control_switches_learned_flag == 0)) ||
-     (fault_reaction_request_bits != 0)) {
+  if ((((algorithm_enable_flags_3_cal & 0x40) == 0) || (cruise_control_switches_learned_flag == 0))
+     || (fault_reaction_request_bits != 0)) {
     cruise_control_denied_status = 1;
     if (cruise_control_engaged_flag != 0) {
       cruise_control_last_cutout_reason = 1;
@@ -74129,7 +74123,7 @@ undefined4 governor_cruise_standbyState_get(void)
 {
   undefined4 uVar1;
   
-  if (((((cruise_control_on_toggle_state == 0) || ((j1939_governor_feature_cal & 0x40) == 0)) ||
+  if (((((cruise_control_on_toggle_state == 0) || ((algorithm_enable_flags_3_cal & 0x40) == 0)) ||
        (cruise_control_switches_learned_flag == 0)) ||
       ((((fault_reaction_request_bits != 0 ||
          ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
@@ -74848,16 +74842,15 @@ void cm848_resetCoolantOverheatFuelDerate(void)
 // Function: cm848_runCoolantOverheatFuelDerate @ 0x00513f5c
 //
 
-/* The engine coolant overheat fuel derate (e2m CTDERAT; engine_feature_enable_flags_cal bit 1 -
-   else coolant_overheat_fuel_derate 0x6400 = no limit): below the coolant threshold with no bucket
-   cycle it resets; else it runs the coolant temperature buckets, the PI limit, the fuel floor, the
-   limit selection and the ramp, and keeps the previous-pass words (was governor_fuel_limit_update)
-    */
+/* The engine coolant overheat fuel derate (e2m CTDERAT; algorithm_enable_flags_40_cal bit 1 - else
+   coolant_overheat_fuel_derate 0x6400 = no limit): below the coolant threshold with no bucket cycle
+   it resets; else it runs the coolant temperature buckets, the PI limit, the fuel floor, the limit
+   selection and the ramp, and keeps the previous-pass words (was governor_fuel_limit_update) */
 
 void cm848_runCoolantOverheatFuelDerate(void)
 
 {
-  if ((engine_feature_enable_flags_cal & 2) == 0) {
+  if ((algorithm_enable_flags_40_cal & 2) == 0) {
     coolant_overheat_fuel_derate = 0x6400;
     engine_overheat_derate_reason_code = 0;
   }
@@ -76096,7 +76089,7 @@ void cm848_initFuelLevelPowerUpCheck(void)
 
 /* Returns 1 when the fuel level sample may be filtered (switch 0 on - apparently ignition - and
    fuel_level_sensor_channel_state.value within 20 of the last sample); arms the power-up check on
-   the first; engine_feature_enable_flags_cal bit 5 clear = copy the sensor instead (was
+   the first; algorithm_enable_flags_40_cal bit 5 clear = copy the sensor instead (was
    cm848_calibBlock1_trim_eepromWrite) | review-function-readability reviewed 2026-11-13 -
    Readability Medium Accuracy Confidence Medium */
 
@@ -76124,7 +76117,7 @@ undefined4 cm848_qualifyFuelLevelSample(void)
         fuel_level_first_sample_flag = 0;
         fuel_level_power_up_check_pending_flag = 1;
       }
-      if ((engine_feature_enable_flags_cal & 0x20) != 0) {
+      if ((algorithm_enable_flags_40_cal & 0x20) != 0) {
         uVar1 = 1;
         goto LAB_0051656c;
       }
@@ -76542,7 +76535,7 @@ void fuel_quantity_demand_initialize(void)
 
 /* Reset-path init of the intake air heater (grid heater) control: clears output requests 43 / 44
    (heater relays A / B - driver faults P0541 P0542 / P2607 P2608 - B only when
-   governor_fuel_feature_flags bit 4 is clear) and zeroes its state and counters (was
+   algorithm_enable_flags_32_cal bit 4 is clear) and zeroes its state and counters (was
    protection_iat_oilTemp_initialize) | review-function-readability reviewed 2026-11-13 -
    Readability Medium Accuracy Confidence High */
 
@@ -76551,7 +76544,7 @@ void cm848_initIntakeAirHeaterControl(void)
 {
   intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_KEY_ON;
   cm848_clearLogicalOutputRequest(0x2b,0);
-  if ((governor_fuel_feature_flags & 0x10) == 0) {
+  if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
     cm848_clearLogicalOutputRequest(0x2c,0);
   }
   intake_air_heater_status_flags = 1;
@@ -76595,7 +76588,7 @@ void cm848_computeIntakeAirHeaterPreheatDuration(void)
   if (intake_air_heater_preheat_total_ticks == 0) {
     intake_air_heater_no_preheat_flag = 1;
     cm848_clearLogicalOutputRequest(0x2b,0);
-    if ((governor_fuel_feature_flags & 0x10) == 0) {
+    if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
       cm848_clearLogicalOutputRequest(0x2c,0);
     }
   }
@@ -76608,7 +76601,7 @@ void cm848_computeIntakeAirHeaterPreheatDuration(void)
     if ((algorithm_enable_flags_41_cal.intake_air_heater_monitor_enable == 0) ||
        (intake_air_heater_performance_test_state != 0)) {
       cm848_setLogicalOutputRequest(0x2b,0);
-      if ((governor_fuel_feature_flags & 0x10) == 0) {
+      if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
         cm848_setLogicalOutputRequest(0x2c,0);
       }
     }
@@ -76645,7 +76638,7 @@ void cm848_countDownIntakeAirHeaterPreheat(void)
         (intake_air_heater_performance_test_state == 5)) ||
        (intake_air_heater_performance_test_state == 6)) {
       cm848_clearLogicalOutputRequest(0x2b,0);
-      if ((governor_fuel_feature_flags & 0x10) == 0) {
+      if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
         cm848_clearLogicalOutputRequest(0x2c,0);
       }
       if (intake_air_heater_no_preheat_flag == 0) {
@@ -76654,7 +76647,7 @@ void cm848_countDownIntakeAirHeaterPreheat(void)
     }
     else {
       cm848_clearLogicalOutputRequest(0x2b,0);
-      if ((governor_fuel_feature_flags & 0x10) == 0) {
+      if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
         cm848_clearLogicalOutputRequest(0x2c,0);
       }
     }
@@ -76666,7 +76659,7 @@ void cm848_countDownIntakeAirHeaterPreheat(void)
     if ((algorithm_enable_flags_41_cal.intake_air_heater_monitor_enable == 0) ||
        (intake_air_heater_performance_test_state != 0)) {
       cm848_setLogicalOutputRequest(0x2b,0);
-      if ((governor_fuel_feature_flags & 0x10) == 0) {
+      if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
         cm848_setLogicalOutputRequest(0x2c,0);
       }
       cm848_setLogicalOutputRequest(4,2);
@@ -76941,7 +76934,7 @@ LAB_0051782c:
   if (intake_air_heater_pwm_on_ticks_remaining == 0) {
     cm848_clearLogicalOutputRequest(0x2b,0);
 LAB_00517a0c:
-    if ((governor_fuel_feature_flags & 0x10) == 0) {
+    if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
       cm848_clearLogicalOutputRequest(0x2c,0);
     }
   }
@@ -76956,7 +76949,7 @@ LAB_00517a0c:
       }
       cm848_clearLogicalOutputRequest(0x2b,0);
     }
-    if ((governor_fuel_feature_flags & 0x10) == 0) {
+    if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
       cm848_setLogicalOutputRequest(0x2c,0);
     }
   }
@@ -76978,7 +76971,7 @@ void cm848_shutdownIntakeAirHeater(void)
 {
   intake_air_heater_control_state = INTAKE_AIR_HEATER_PHASE_OFF;
   cm848_clearLogicalOutputRequest(0x2b,0);
-  if ((governor_fuel_feature_flags & 0x10) == 0) {
+  if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
     cm848_clearLogicalOutputRequest(0x2c,0);
   }
   cm848_clearLogicalOutputRequest(4,2);
@@ -77073,7 +77066,7 @@ LAB_00517e34:
     }
     if (intake_air_heater_level6_grace_count != 0) {
       cm848_clearLogicalOutputRequest(0x2b,0);
-      if ((governor_fuel_feature_flags & 0x10) == 0) {
+      if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
         cm848_clearLogicalOutputRequest(0x2c,0);
         return;
       }
@@ -77123,16 +77116,16 @@ LAB_00517e34:
 // Function: cm848_updateIntakeAirHeaterControl @ 0x00517f48
 //
 
-/* grid heater control top level gated by governor_fuel_feature_flags bit 0 - advances control state
-   from engine_state then dispatches the preheat / crank / postheat / off phase handlers (e2m 8A35
-   +2 IAH_Phase) (they drive relays 43/44) - its own relay tail is dead code (was
+/* grid heater control top level gated by algorithm_enable_flags_32_cal bit 0 - advances control
+   state from engine_state then dispatches the preheat / crank / postheat / off phase handlers (e2m
+   8A35 +2 IAH_Phase) (they drive relays 43/44) - its own relay tail is dead code (was
    battery_voltage_protection_control) | review-function-readability reviewed 2026-11-13 -
    Readability Medium Accuracy Confidence High */
 
 void cm848_updateIntakeAirHeaterControl(void)
 
 {
-  if ((governor_fuel_feature_flags & 1) == 0) {
+  if ((algorithm_enable_flags_32_cal & 1) == 0) {
     return;
   }
   if ((intake_air_heater_vehicle_speed_threshold < vehicle_speed) &&
@@ -77208,7 +77201,7 @@ void cm848_updateIntakeAirHeaterControl(void)
   if (intake_air_heater_relay_action_code == 1) {
     cm848_setLogicalOutputRequest(0x2b,0);
 LAB_00518230:
-    if ((governor_fuel_feature_flags & 0x10) == 0) {
+    if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
       cm848_clearLogicalOutputRequest(0x2c,0);
     }
   }
@@ -77224,7 +77217,7 @@ LAB_00518230:
       }
       cm848_setLogicalOutputRequest(0x2b,0);
     }
-    if ((governor_fuel_feature_flags & 0x10) == 0) {
+    if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
       cm848_setLogicalOutputRequest(0x2c,0);
     }
   }
@@ -77238,7 +77231,7 @@ LAB_00518250:
     }
     if (intake_air_heater_relay_onset_countdown == 0) {
       cm848_clearLogicalOutputRequest(0x2b,0);
-      if ((governor_fuel_feature_flags & 0x10) == 0) {
+      if ((algorithm_enable_flags_32_cal & 0x10) == 0) {
         cm848_clearLogicalOutputRequest(0x2c,0);
       }
     }
@@ -77312,7 +77305,7 @@ void cm848_captureIntakeAirHeaterStartTemperature(void)
 // Function: cm848_updateIntakeAirHeaterAmbientTemperature @ 0x005183b4
 //
 
-/* Periodic if governor_fuel_feature_flags bit 0: captures the start temperature once / sets
+/* Periodic if algorithm_enable_flags_32_cal bit 0: captures the start temperature once / sets
    intake_air_heater_ambient_temperature = min(fuel temperature if configured else ambient air /
    battery temperature) - the healthy one on a fault - else start temperature (was
    protection_oilTemp_source_update) | review-function-readability reviewed 2026-11-13 - Readability
@@ -77329,7 +77322,7 @@ void cm848_updateIntakeAirHeaterAmbientTemperature(void)
   ushort unaff_r31;
   word *pwVar4;
   
-  if ((governor_fuel_feature_flags & 1) == 0) {
+  if ((algorithm_enable_flags_32_cal & 1) == 0) {
     return;
   }
   pbVar1 = &intake_air_heater_start_temperature_captured_flag;
@@ -77381,7 +77374,7 @@ LAB_0051851c:
 // Function: cm848_runPciMessageHandlers @ 0x00518538
 //
 
-/* PCI (J1850) application task every ~100 ms gated by engine_feature_enable_flags_cal bit 0x40 (the
+/* PCI (J1850) application task every ~100 ms gated by algorithm_enable_flags_40_cal bit 0x40 (the
    PCI link layer gate): runs the TX2-5 / TX11-18 builders and the RX2-5 / 8 / 10 / 13 / 14
    consumers on every / even / odd / mod 4 / 6 / 12 / 14 passes of a 0-59 tick (was
    protection_diagnostics_periodic) | review-function-readability reviewed 2026-11-13 - Readability
@@ -77390,7 +77383,7 @@ LAB_0051851c:
 void cm848_runPciMessageHandlers(void)
 
 {
-  if ((engine_feature_enable_flags_cal & 0x40) != 0) {
+  if ((algorithm_enable_flags_40_cal & 0x40) != 0) {
     cm848_buildPciTransmitMessage11DistanceAndFuelUsed();
     cm848_latchPciIdleSpeedRequest();
     cm848_buildPciTransmitMessage3MilAndDtcDisplay();
@@ -78386,8 +78379,8 @@ void initDiagnosticShadowFlags(void)
 // Function: cm848_processEngineOilPressure @ 0x0051a0a8
 //
 
-/* Engine oil pressure and the low-oil-pressure check (only when engine_feature_enable_flags_cal bit
-   2 is set): with a sensor engine_oil_pressure = oil_pressure_sensor_filtered minus barometric
+/* Engine oil pressure and the low-oil-pressure check (only when algorithm_enable_flags_40_cal bit 2
+   is set): with a sensor engine_oil_pressure = oil_pressure_sensor_filtered minus barometric
    pressure; with oil_pressure_switch_only_cal set (this truck) it is an RPM-indexed model (table
    0x3fceae + EMA) and the low-oil-pressure switch (switch 14) drives the fault; above
    low_oil_pressure_check_minimum_rpm a debounced low reading sets fault_detected_bits_384_to_399
@@ -78402,7 +78395,7 @@ void cm848_processEngineOilPressure(void)
   dword dVar1;
   uint uVar2;
   
-  if ((engine_feature_enable_flags_cal & 4) == 0) {
+  if ((algorithm_enable_flags_40_cal & 4) == 0) {
     return;
   }
   low_oil_pressure_debounce_limit = DAT_0005b4d4;
@@ -78534,7 +78527,7 @@ void initGovernorTempTableParams(void)
 // Function: cm848_monitorEngineToVehicleSpeedRatio @ 0x0051a648
 //
 
-/* Needs fuel_feature_control_flags bit 5 / EEPROM 0x3fd934 = 0 / engine running (unmet in this
+/* Needs algorithm_enable_flags_43_cal bit 5 / EEPROM 0x3fd934 = 0 / engine running (unmet in this
    calibration): filters vehicle speed and engine rpm over vehicle speed (8 counts per rpm per mph);
    sets engine_to_vehicle_speed_ratio_high_flag over 300 rpm per mph under 44 mph (was
    fuelTempTrimComputation) | review-function-readability reviewed 2026-11-13 - Readability Medium
@@ -78546,7 +78539,7 @@ void cm848_monitorEngineToVehicleSpeedRatio(void)
   dword dVar1;
   uint uVar2;
   
-  if ((((fuel_feature_control_flags & 0x20) != 0) && (transmission_type_cal == 0)) &&
+  if ((((algorithm_enable_flags_43_cal & 0x20) != 0) && (transmission_type_cal == 0)) &&
      (engine_state == ENGINE_STATE_RUNNING)) {
     dVar1 = exponentialMovingAverage((uint)vehicle_speed_unfiltered,&ema_filter_state_t_003fcece);
     vehicle_speed_filtered_for_engine_speed_ratio = (word)dVar1;
@@ -84416,9 +84409,9 @@ void cm848_completeTransmissionTemperatureMonitorReport(void)
 /* P0711 transmission fluid temperature sensor performance check (fault 298 =
    fault_detected_bits_288_to_303 bit 10 -> slot 127 -> P0711), run from
    cm848_periodicTaskGroup26_calibration8 (main-loop phases 1 and 21 of 40) when
-   fuel_feature_control_flags bit 2 is set (EEPROM 0x170 = 0x11dc, set here). State 0 takes a start
-   snapshot of the transmission, coolant and battery temperatures 40 passes after the engine reaches
-   the governor setpoint, qualifies a cold soak (coolant under 9 deg F above the battery
+   algorithm_enable_flags_43_cal bit 2 is set (EEPROM 0x170 = 0x11dc, set here). State 0 takes a
+   start snapshot of the transmission, coolant and battery temperatures 40 passes after the engine
+   reaches the governor setpoint, qualifies a cold soak (coolant under 9 deg F above the battery
    temperature, engine-off time 200 or more or unusable) and sets the too-hot flag when the
    transmission reads over 260 deg F with coolant and battery under 100 deg F (at or under it, and
    with the insufficient-rise flag clear, it clears P0711); with a start snapshot under 50 deg F it
@@ -84439,7 +84432,7 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
   word wVar1;
   
   if (transmission_temperature_rationality_state == 0) {
-    if (((((((fuel_feature_control_flags & 4) == 0) ||
+    if (((((((algorithm_enable_flags_43_cal & 4) == 0) ||
            ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 2) != 0)) ||
           ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 1) != 0)) ||
          (((fault_detected_bits_400_to_415 & 2) != 0 ||
@@ -84693,7 +84686,7 @@ void initSensorTableIndexing(void)
 
 /* WARNING: Function: cm848_unsignedDivision32 replaced with injection: udiv64by32 */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Trip and lifetime counters (when engine_feature_enable_flags_cal bit 13 is set - EEPROM 0x16a =
+/* Trip and lifetime counters (when algorithm_enable_flags_40_cal bit 13 is set - EEPROM 0x16a =
    0x27EF here): a pending trip reset (SCI command 35) zeroes the trip set first; counts engine-run
    time and time at governed speed (governor mode 11 within +/-400 rpm of its target - probably
    idle); on each PCI 0x5D send adds the injected fuel since the last send
@@ -84710,7 +84703,7 @@ void cm848_updateTripAndLifetimeCounters(void)
   uint uVar1;
   uint uVar2;
   
-  if ((engine_feature_enable_flags_cal & 0x2000) != 0) {
+  if ((algorithm_enable_flags_40_cal & 0x2000) != 0) {
     if (trip_counters_reset_pending_flag == 1) {
       trip_average_fuel_economy = 0;
       ram0x003fee28 = 0;
@@ -84909,7 +84902,7 @@ void sensorDiagnosticsConfiguration(void)
 
 /* While turbocharger_speed_limiter_active_flag is set and the engine is at the governor setpoint,
    counts turbocharger_speed_limiter_timer down and clears the flag when the enable bit
-   (governor_feature_config_flags bit 8), the start coolant temperature, fault 29, park / neutral or
+   (algorithm_enable_flags_21_cal bit 8), the start coolant temperature, fault 29, park / neutral or
    the vehicle speed condition fails or the timer reaches 0; the engine speed limit arbitration then
    stops applying engine_speed_limit_source_16. (was governorSpeedCompensation) */
 
@@ -84917,7 +84910,7 @@ void cm848_updateTurbochargerSpeedLimiter(void)
 
 {
   if ((turbocharger_speed_limiter_active_flag != 0) && (engine_state == ENGINE_STATE_RUNNING)) {
-    if ((((governor_feature_config_flags & 8) == 0) ||
+    if ((((algorithm_enable_flags_21_cal & 8) == 0) ||
         (((turbocharger_speed_limiter_maximum_coolant_temperature <
            turbocharger_speed_limiter_start_coolant_temperature ||
           ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x2000) != 0)) ||
@@ -85627,7 +85620,7 @@ void cm848_selectCruiseGovernorGainSet(int param_1)
   if (((cruise_droops_allowed_flag == 0) &&
       (adjusted_user_fueling_state == FUELING_STATE_CRUISE_CONTROL)) ||
      ((adjusted_user_fueling_state == FUELING_STATE_ROAD_SPEED_GOVERNOR &&
-      (((j1939_governor_feature_cal & 0x100) != 0 &&
+      (((algorithm_enable_flags_3_cal & 0x100) != 0 &&
        (drivetrain_gear_range != DRIVETRAIN_GEAR_RANGE_TOP_GEAR)))))) {
 LAB_00524934:
     cruise_droop_speed_error_delta = 0;
@@ -87952,8 +87945,8 @@ LAB_00528260:
     uVar5 = uVar5 + 0xfe;
   }
 LAB_00528338:
-  if (((governor_fuel_feature_flags & 2) == 0) || (1 < (byte)(&DAT_0005f14e)[cylinder_event_index]))
-  {
+  if (((algorithm_enable_flags_32_cal & 2) == 0) ||
+     (1 < (byte)(&DAT_0005f14e)[cylinder_event_index])) {
     uVar2 = 10;
   }
   else {
@@ -89256,7 +89249,7 @@ LAB_0052a5b0:
                   fuel_pressure_setpoint_cranking_x_axis,wVar13,
                   fuel_pressure_setpoint_cranking_y_axis,fuel_pressure_setpoint_cranking_grid,6);
   iVar10 = (int)(short)fuel_pressure_setpoint_cranking_value;
-  if ((protection_feature_flags & 4) == 0) goto LAB_0052a7e4;
+  if ((algorithm_enable_flags_42_cal & 4) == 0) goto LAB_0052a7e4;
   if ((((engine_state == ENGINE_STATE_STOPPED) || (engine_state == ENGINE_STATE_CRANKING)) ||
       (engine_state == ENGINE_STATE_JUMP_START)) || (engine_state == ENGINE_STATE_REENTRY)) {
     fuel_pressure_setpoint_transition_state = 1;
@@ -90844,7 +90837,7 @@ void cm848_initializePilotInjectionTimingState(void)
 //
 
 /* Fault 340 (P0106) monitor, run every 20th main-loop phase (about 100 ms at 5 ms per phase) when
-   engine_feature_enable_flags_cal bit 0x80 is set (it is, 0x27ef) and the barometric sensor circuit
+   algorithm_enable_flags_40_cal bit 0x80 is set (it is, 0x27ef) and the barometric sensor circuit
    faults 25 / 26 (P0108 / P0107) are clear. Barometric pressure above
    barometric_pressure_sensor_maximum_pressure (2012 = 108.4 kPa at 1/18.56 kPa per count) raises
    barometric_pressure_sensor_above_maximum_debounce_count by 1 per pass up to its limit (20),
@@ -90860,7 +90853,7 @@ void cm848_detectBarometricPressureSensorAboveMaximum(void)
 {
   int iVar1;
   
-  if ((engine_feature_enable_flags_cal & 0x80) == 0) {
+  if ((algorithm_enable_flags_40_cal & 0x80) == 0) {
     return;
   }
   if ((system_status_flags_t_003fe974.fault_detected_bits_16_to_31 & 0x200) != 0) {
@@ -90969,7 +90962,7 @@ void cm848_completeBoostPressureMonitorReport(void)
 //
 
 /* Boost pressure sensor and underboost monitors, run every 20th main-loop phase (about 100 ms at 5
-   ms per phase) when governor_system_config_flags bit 0x10 is set (it is, 0x0010). While
+   ms per phase) when algorithm_enable_flags_27_cal bit 0x10 is set (it is, 0x0010). While
    engine_state is ENGINE_STATE_STOPPED (1 = key on, engine speed still below the start trigger), in
    the four passes that start 25 passes (about 2.5 s) after the initializer, intake manifold
    pressure above 2254 (121.4 kPa) sets fault 64 (P0236 boost sensor range), otherwise a difference
@@ -90991,7 +90984,7 @@ void cm848_monitorBoostPressureSensorAndUnderboost(void)
   short sVar4;
   uint uVar5;
   
-  if ((governor_system_config_flags & 0x10) == 0) {
+  if ((algorithm_enable_flags_27_cal & 0x10) == 0) {
     return;
   }
   if ((boost_pressure_pre_start_check_evaluation_count < 4) &&
@@ -91656,7 +91649,7 @@ void cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor(void)
 //
 
 /* EGR orifice temperature sensor (sensor channel 108, the cooler outlet temperature) rationality
-   monitor, e2m EGR_Orifice_Temp_*. Enabled by fuel_feature_control_flags bit 1 (clear in this
+   monitor, e2m EGR_Orifice_Temp_*. Enabled by algorithm_enable_flags_43_cal bit 1 (clear in this
    calibration, 0x11dc, so it returns at once), monitor_enabling_conditions_met bit 23 and no sensor
    circuit fault 796. After the startup delay it runs a key-on test once (ENGINE_STATE_STOPPED,
    coolant / battery temperature sensors healthy): coolant minus battery temperature under 640 (10
@@ -91673,7 +91666,7 @@ void cm848_monitorEgrOrificeTemperatureSensorRationality(void)
 {
   short sVar1;
   
-  if ((fuel_feature_control_flags & 2) == 0) {
+  if ((algorithm_enable_flags_43_cal & 2) == 0) {
     return;
   }
   if ((fault_detected_bits_784_to_799 & 0x1000) != 0) {
@@ -93234,8 +93227,8 @@ LAB_00531098:
 //
 
 /* Monitor wrapper for the rail pressure sensor plausibility check, called from
-   cm848_periodicTaskGroup26_calibration8: when bit 5 of fault_feature_config_flags is set and the
-   check is not aborted (state 4) it runs cm848_abortFuelPressureSensorPlausibilityOnFaults and
+   cm848_periodicTaskGroup26_calibration8: when bit 5 of algorithm_enable_flags_13_cal is set and
+   the check is not aborted (state 4) it runs cm848_abortFuelPressureSensorPlausibilityOnFaults and
    cm848_checkFuelPressureSensorPlausibilityByFuelDemand, and once a result (state 2 or 3) agrees
    with the previous pass's fault 7 bit it sets bit 19 of diagnostic_monitor_complete_bits and
    clears the monitor's pending bit 19 in monitor_readiness_code_cal (a fail clears
@@ -93247,9 +93240,10 @@ void cm848_runFuelPressureSensorPlausibilityMonitor(void)
   bool bVar1;
   bool bVar2;
   
-  if ((((fault_feature_config_flags & 0x20) != 0) && (fuel_pressure_sensor_plausibility_state != 4))
-     && (cm848_abortFuelPressureSensorPlausibilityOnFaults(),
-        fuel_pressure_sensor_plausibility_state != 4)) {
+  if ((((algorithm_enable_flags_13_cal & 0x20) != 0) &&
+      (fuel_pressure_sensor_plausibility_state != 4)) &&
+     (cm848_abortFuelPressureSensorPlausibilityOnFaults(),
+     fuel_pressure_sensor_plausibility_state != 4)) {
     cm848_checkFuelPressureSensorPlausibilityByFuelDemand();
     bVar1 = fuel_pressure_sensor_plausibility_state == 3;
     if (((fuel_pressure_sensor_plausibility_state == 2) || (bVar1)) &&
@@ -93691,7 +93685,7 @@ void cm848_resetFuelPressureTrackingErrorAccumulators(void)
 // Function: cm848_monitorFuelPressureTrackingError @ 0x00531d34
 //
 
-/* Rail pressure tracking monitor, enabled by protection_feature_flags bit 0x4000: each pass it
+/* Rail pressure tracking monitor, enabled by algorithm_enable_flags_42_cal bit 0x4000: each pass it
    integrates (fuel_pressure_setpoint - fuel_pressure_feedback_previous) / ROM divisor 1 into
    fuel_pressure_shortfall_accumulator and, negated, fuel_pressure_excess_accumulator (both clamped
    at 0); above the ROM limits 245902 / 204918 it sets fault 408 / 409 (both P0148) and monitor
@@ -93706,7 +93700,7 @@ void cm848_monitorFuelPressureTrackingError(void)
     fuel_pressure_tracking_error_monitor_active_flag = 0;
   }
   else if (((monitor_enabling_conditions_met.fuel_pressure_tracking != 0) &&
-           ((protection_feature_flags & 0x4000) != 0)) &&
+           ((algorithm_enable_flags_42_cal & 0x4000) != 0)) &&
           (fuel_pressure_tracking_error_monitor_active_flag == 0)) {
     fuel_pressure_tracking_error_monitor_state = 1;
     fuel_pressure_tracking_error_monitor_active_flag = 1;
@@ -93811,8 +93805,8 @@ void cm848_monitorFuelPressureTrackingError(void)
 //
 
 /* Start-up reset of the rail pressure tracking monitor: monitor state 0, accumulators and pass
-   count zeroed, monitor inactive; when protection_feature_flags bit 0x4000 is clear it also marks
-   the monitor complete (clears bit 7 of monitor_readiness_code_cal, sets bit 7 of
+   count zeroed, monitor inactive; when algorithm_enable_flags_42_cal bit 0x4000 is clear it also
+   marks the monitor complete (clears bit 7 of monitor_readiness_code_cal, sets bit 7 of
    diagnostic_monitor_complete_bits). Called once from cm848_applicationMain. (was
    hpcr_camTimingReset) */
 
@@ -93820,7 +93814,7 @@ void cm848_resetFuelPressureTrackingErrorMonitor(void)
 
 {
   fuel_pressure_tracking_error_monitor_state = 0;
-  if ((protection_feature_flags & 0x4000) == 0) {
+  if ((algorithm_enable_flags_42_cal & 0x4000) == 0) {
     monitor_readiness_code_cal = monitor_readiness_code_cal & 0xffffff7f;
     diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x80;
   }
@@ -94625,7 +94619,7 @@ void cm848_runMisfireMonitor(void)
                   (int)(&cylinder_balance_fueling_trim_cal)[uVar1]) *
                  (int)(short)misfire_monitor_fuel_multiplier_percent) / 100);
     misfire_monitor_response_limit = misfire_monitor_absolute_response_limit;
-    if ((protection_feature_flags & 1) != 0) {
+    if ((algorithm_enable_flags_42_cal & 1) != 0) {
       misfire_monitor_response_limit =
            (&cylinder_balance_acceleration_buffer_1)[uVar1] +
            misfire_monitor_relative_response_margin;
@@ -96776,9 +96770,9 @@ void cm848_resetFuelPressureSetpointNotReachedAccumulator(void)
 // Function: cm848_monitorFuelPressureSetpointNotReached @ 0x00536e4c
 //
 
-/* One-sided sibling of cm848_monitorFuelPressureTrackingError, enabled by protection_feature_flags
-   bit 0x8000: it integrates (fuel_pressure_setpoint - fuel_pressure_feedback_previous) /
-   fuel_pressure_setpoint_not_reached_error_divisor into
+/* One-sided sibling of cm848_monitorFuelPressureTrackingError, enabled by
+   algorithm_enable_flags_42_cal bit 0x8000: it integrates (fuel_pressure_setpoint -
+   fuel_pressure_feedback_previous) / fuel_pressure_setpoint_not_reached_error_divisor into
    fuel_pressure_setpoint_not_reached_accumulator, which is clamped at 0 and zeroed whenever
    fuel_pressure_sensor has reached the setpoint; above
    fuel_pressure_setpoint_not_reached_accumulator_threshold (18443) it sets fault 352 (no OBD slot)
@@ -96796,7 +96790,7 @@ void cm848_monitorFuelPressureSetpointNotReached(void)
   if (switch_input_state_bits.key_switch == 0) {
     fuel_pressure_setpoint_not_reached_monitor_active_flag = 0;
   }
-  else if ((((protection_feature_flags & 0x8000) != 0) &&
+  else if ((((algorithm_enable_flags_42_cal & 0x8000) != 0) &&
            (monitor_enabling_conditions_met.fuel_pressure_tracking != 0)) &&
           (fuel_pressure_setpoint_not_reached_monitor_active_flag == 0)) {
     fuel_pressure_setpoint_not_reached_monitor_state = 1;
@@ -96886,8 +96880,8 @@ void cm848_monitorFuelPressureSetpointNotReached(void)
 
 /* Start-up reset of the rail pressure setpoint-not-reached monitor: monitor state 0, accumulator
    and pass count zeroed (cm848_resetFuelPressureSetpointNotReachedAccumulator), fault 352 cleared
-   and the monitor marked inactive; when protection_feature_flags bit 0x8000 is clear it also marks
-   the monitor complete (clears bit 5 of monitor_readiness_code_cal, sets bit 5 of
+   and the monitor marked inactive; when algorithm_enable_flags_42_cal bit 0x8000 is clear it also
+   marks the monitor complete (clears bit 5 of monitor_readiness_code_cal, sets bit 5 of
    diagnostic_monitor_complete_bits). Called once from cm848_applicationMain. (was
    cm848_initTimerInterrupts) */
 
@@ -96895,7 +96889,7 @@ void cm848_resetFuelPressureSetpointNotReachedMonitor(void)
 
 {
   fuel_pressure_setpoint_not_reached_monitor_state = 0;
-  if ((protection_feature_flags & 0x8000) == 0) {
+  if ((algorithm_enable_flags_42_cal & 0x8000) == 0) {
     monitor_readiness_code_cal = monitor_readiness_code_cal & 0xffffffdf;
     diagnostic_monitor_complete_bits = diagnostic_monitor_complete_bits | 0x20;
   }
@@ -97007,9 +97001,9 @@ void cm848_monitorOverboostAndHighLoadBoostBand(void)
 //
 
 /* Wastegate (CWG) boost-pressure monitor, called from periodicTaskSet_fuelDemand; it runs only when
-   feature_enable_flags_cal mask 0x8, monitor_enabling_conditions_met mask 0x1000000 and the start
-   battery temperature test (DAT_003fd270) allow it, and it clears its counts and exits while sensor
-   faults or the wastegate solenoid fault (403) are active. It looks up three boost limits by
+   algorithm_enable_flags_19_cal mask 0x8, monitor_enabling_conditions_met mask 0x1000000 and the
+   start battery temperature test (DAT_003fd270) allow it, and it clears its counts and exits while
+   sensor faults or the wastegate solenoid fault (403) are active. It looks up three boost limits by
    barometric_pressure_reference and sets fault 332 (fault_detected_bits_320_to_335 mask 0x1000,
    high boost) after wastegate_monitor_debounce_count_limit passes with boost at or above
    wastegate_monitor_fail_high_boost_pressure_threshold, engine speed at or above
@@ -97027,7 +97021,7 @@ void cm848_monitorWastegateBoostPressure(void)
   short sVar2;
   word wVar3;
   
-  if ((feature_enable_flags_cal & 8) == 0) {
+  if ((algorithm_enable_flags_19_cal & 8) == 0) {
     return;
   }
   if (monitor_enabling_conditions_met.wastegate_boost_pressure == 0) {
@@ -97922,7 +97916,7 @@ LAB_0053900c:
         local_20 = (ushort)bVar9 << 8;
       }
       else if (bVar9 < 0xf0) {
-        if ((bVar9 == 0xdf) && ((j1939_feature_enable_flags_cal & 0x100) != 0)) {
+        if ((bVar9 == 0xdf) && ((algorithm_enable_flags_29_cal & 0x100) != 0)) {
           cm848_onJ1939Dm13SeenOnBus();
         }
         if ((local_20 & 0xff) != (j1939_source_address & 0xff)) goto LAB_00539000;
