@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 23:18:02 MST 2026
+// Generated: Sat Nov 21 23:26:14 MST 2026
 
 
 //
@@ -28603,10 +28603,10 @@ void cm848_initFuelDemandFilterDimensions(void)
 void cm848_initProtectionFilterAccumulators(void)
 
 {
-  injection_timing_demand_floor_cached_axis_offset_y = 2;
-  injection_timing_demand_floor_cached_axis_offset = 2;
+  injection_timing_main_misfire_limit_cached_axis_offset_y = 2;
+  injection_timing_main_misfire_limit_cached_axis_offset = 2;
   injection_timing_pid_init_flag = 0;
-  main_injection_timing_misfire_limit = 0;
+  injection_timing_main_misfire_limit = 0;
   return;
 }
 
@@ -28623,11 +28623,13 @@ void cm848_processEngineConfigSpeedControl(void)
   
   if ((engine_feature_enable_flags_cal & 0x100) != 0) {
     x_input = cm848_calculateBoostPressure();
-    main_injection_timing_misfire_limit =
+    injection_timing_main_misfire_limit =
          cm848_dualAxisTableInterpolation
-                   (&injection_timing_demand_floor_cached_axis_offset,x_input,
-                    injection_timing_demand_floor_x_axis,engine_speed_state.filtered_engine_speed,
-                    injection_timing_demand_floor_y_axis,injection_timing_demand_floor_grid,4);
+                   (&injection_timing_main_misfire_limit_cached_axis_offset,x_input,
+                    injection_timing_main_misfire_limit_x_axis,
+                    engine_speed_state.filtered_engine_speed,
+                    injection_timing_main_misfire_limit_y_axis,
+                    injection_timing_main_misfire_limit_grid,4);
   }
   return;
 }
@@ -50494,7 +50496,7 @@ void cm848_initTimingFilterStates(void)
   injection_timing_main_boost_angle_cached_axis_offset_y = 2;
   injection_timing_main_boost_factor_cached_axis_offset = 2;
   injection_timing_main_boost_factor_cached_axis_offset_y = 2;
-  main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_ENGINE_STOPPED;
+  main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_POWER_UP;
   return;
 }
 
@@ -50505,16 +50507,18 @@ void cm848_initTimingFilterStates(void)
 //
 
 /* Computes the main injection timing (counts of 0.1171875 degree, larger = earlier) into
-   main_injection_timing: the cold-start rpm x coolant map while engine_state is
-   ENGINE_STATE_CRANKING / ENGINE_STATE_JUMP_START / ENGINE_STATE_REENTRY, otherwise the sum,
-   highest or lowest (injection_timing_main_combination_mode 0 / 1 / other) of the coolant, intake
-   temperature, barometric pressure and boost components (each an rpm x final_fueling angle map x a
-   Q12 factor / 4096), injection_timing_main_base_command and a constant, then the floor,
-   governor-limit minimum and working minimum; with main_injection_timing_selection 3 it adds
-   user_commanded_injection_timing_cal and injection_timing_top_dead_center_offset (minus the top
-   dead center position, 171 counts). The winning source goes to main_injection_timing_source_code,
-   and the result is sent in PGN 65504 and is the angle of TPU-A channel 5 slot 8 (was
-   cm848_calculateEngineTimingData). */
+   main_injection_timing: the cranking map (engine speed x coolant; e2m label 05 CRANK) while
+   engine_state is ENGINE_STATE_CRANKING / ENGINE_STATE_JUMP_START / ENGINE_STATE_REENTRY, otherwise
+   the sum, highest or lowest (injection_timing_main_combination_mode 0 / 1 / other) of the coolant,
+   intake temperature, barometric pressure and boost components (each an rpm x final_fueling angle
+   map x a Q12 factor / 4096), injection_timing_main_base_command (the combustion manager's
+   CBL_SOI_Cmd) and a constant, then the limits injection_timing_main_misfire_limit,
+   injection_timing_main_extended_idle_minimum (extended idle) and
+   coolant_overheat_derate_minimum_injection_timing (coolant overheat derate); with
+   main_injection_timing_selection 3 it adds user_commanded_injection_timing_cal and
+   injection_timing_top_dead_center_offset (minus the top dead center position, 171 counts). The
+   winning source goes to main_injection_timing_source_code, and the result is sent in PGN 65504 and
+   is the angle of TPU-A channel 5 slot 8 (was cm848_calculateEngineTimingData). */
 
 void cm848_calculateMainInjectionTiming(void)
 
@@ -50709,14 +50713,14 @@ LAB_0004b424:
       INJECTION_TIMING_INTERMEDIATE_SOURCE_COMBUSTION_MAXIMUM_LIMIT)) {
     main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_COMBUSTION_MAXIMUM_LIMIT;
   }
-  if (injection_timing_demand < main_injection_timing_misfire_limit) {
-    injection_timing_demand = main_injection_timing_misfire_limit;
+  if (injection_timing_demand < injection_timing_main_misfire_limit) {
+    injection_timing_demand = injection_timing_main_misfire_limit;
     main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_MISFIRE_LIMIT;
     injection_timing_adjustment_flags = 0;
   }
   if ((low_speed_governor_extended_idle_active_flag != 0) &&
-     (injection_timing_demand < main_injection_timing_extended_idle_minimum)) {
-    injection_timing_demand = main_injection_timing_extended_idle_minimum;
+     (injection_timing_demand < injection_timing_main_extended_idle_minimum)) {
+    injection_timing_demand = injection_timing_main_extended_idle_minimum;
     main_injection_timing_source_code = MAIN_INJECTION_TIMING_SOURCE_EXTENDED_IDLE;
     injection_timing_adjustment_flags = 0;
   }
@@ -90337,11 +90341,11 @@ void cm848_initializePilotInjectionQuantityState(void)
 
 /* WARNING: Function: cm848_signedDivision32 replaced with injection: sdiv64by32 */
 /* Computes how far the pilot (first) injection is advanced ahead of the main injection, in counts
-   of 0.1171875 degree: the cold-start rpm x coolant map while engine_state is ENGINE_STATE_CRANKING
-   / ENGINE_STATE_JUMP_START / ENGINE_STATE_REENTRY, otherwise the sum, highest, lowest or
-   main-timing-winner choice (injection_timing_pilot_offset_combination_mode 0 / 1 / 2 / 3) of a
-   4-map blend and the coolant, intake temperature, barometric pressure and boost components (each
-   an rpm x angle map x a Q12 factor / 4096) and the fuel pressure limp home term
+   of 0.1171875 degree: the cranking map (engine speed x coolant) while engine_state is
+   ENGINE_STATE_CRANKING / ENGINE_STATE_JUMP_START / ENGINE_STATE_REENTRY, otherwise the sum,
+   highest, lowest or main-timing-winner choice (injection_timing_pilot_offset_combination_mode 0 /
+   1 / 2 / 3) of a 4-map blend and the coolant, intake temperature, barometric pressure and boost
+   components (each an rpm x angle map x a Q12 factor / 4096) and the fuel pressure limp home term
    (injection_timing_pilot_offset_fuel_pressure_normal_value, or
    injection_timing_pilot_offset_fuel_pressure_limp_home_default while
    fuel_pressure_limp_home_active_flag is set). While the governor holds a target speed
@@ -90722,7 +90726,7 @@ void cm848_calculatePilotInjectionTiming(void)
          injection_timing_pilot_offset_rpm_corrected + main_injection_timing;
   }
   if ((low_speed_governor_extended_idle_active_flag != 0) &&
-     (main_injection_timing_extended_idle_minimum == main_injection_timing)) {
+     (injection_timing_main_extended_idle_minimum == main_injection_timing)) {
     pilot_injection_timing_uncapped = injection_timing_pilot_offset_governor_limit_floor;
     if (injection_timing_pilot_absolute_switch == 0) {
       pilot_injection_timing_uncapped =

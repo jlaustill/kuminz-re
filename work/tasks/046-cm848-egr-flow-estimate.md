@@ -1051,15 +1051,26 @@ Scripts are in `session_folder/round18/`.
     timing replaces it while `algorithm_enable_flags_4_cal` bit 8 is set. That word was `engine_mode_control_flags`;
     it is EEPROM 0x122, AENBLFLG word 4.
   - **The timing source members** follow the e2m value labels of 103B +8 `Final_Timing_State` (hex keys, shared with
-    +4 `SOI_State`), each checked at its store: CRANK, USER_OVERRIDE, ENGINE_STOPPED, MISFIRE_LIMIT,
-    COMBUSTION_MANAGER, EXTENDED_IDLE, COOLANT_OVERHEAT_DERATE, plus the intermediate FOUR_DIMENSIONAL_TIMING /
-    USER_COMMANDED_TIMING / COMBUSTION_REFERENCE. They also name the limit words: the misfire timing limit (8A3D),
+    +4 `SOI_State`), checked at the stores: CRANK, USER_OVERRIDE, MISFIRE_LIMIT, COMBUSTION_MANAGER,
+    EXTENDED_IDLE, COOLANT_OVERHEAT_DERATE, plus the intermediate FOUR_DIMENSIONAL_TIMING / USER_COMMANDED_TIMING.
+    Two rest on more than a store: 8 is only the power-up value (stage D: `POWER_UP`, as the dump with the engine
+    stopped reads 20), and 25 `COMBUSTION_REFERENCE` is the dump's value, but its storing function is a lead. They also name the limit words: the misfire timing limit (8A3D),
     the extended idle minimum (8085 +4) and the coolant overheat derate's minimum timing family.
 - **Stage C (99dd717, types):** `MAIN_INJECTION_TIMING_SELECTION` and `INJECTION_TIMING_COMBINATION_MODE`, the
   `algorithm_enable_flags_4_t` bitfield (the user commanded fueling / timing enables), and five 2-D lookup caches as
   `word[2]`. Two of the caches were the `dual_axis_table_dims_t` instances, whose 'row / column counts' were the
   cached offsets, so that struct is gone.
+- **Stage D (label-only, after the review):** one prefix rule for the main timing. `main_injection_timing*` names
+  the final value and what describes it (its copies, selection and source; 9 rows), and `injection_timing_main_*`
+  (60 rows) names its inputs, components and limits. So the misfire limit and the extended idle minimum are
+  `injection_timing_main_*`, with the misfire limit's table and cache (were `injection_timing_demand_floor_*`).
+  The plates of `cm848_calculateMainInjectionTiming` / `cm848_calculatePilotInjectionTimingOffset` lost the retired
+  'floor / governor-limit minimum / working minimum / cold-start map' words.
 - **Round 18 leads:**
+  - **The cranking timing map** is e2m 105E +4 `Crank_4D_Timing`, but its tables keep
+    `injection_timing_main_cold_start_*`.
+  - **Two more 'row count' caches:** `governor_adjustment_input_table_row_count` (0x3fb9da) and
+    `boost_fuel_rpm_blend_table_row_count` (0x3fb9f2) look like lookup caches named as table dimensions.
   - **`cm848_storeFuelDemandPreviousValues`** copies the off-nominal compensated reference (1711 +8 `CBO_SOI_Ref`)
     into `ANC_SOI` (10A4 +14) and two kernel-window words (0x3fa700 / 0x3fa702), with source 25 (e2m `CBR_SOI`). The
     ANC stage (e2m 10A4) has no names yet, and the function name is wrong.
