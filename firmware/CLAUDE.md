@@ -657,9 +657,13 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     `egr_mass_flow_delay_line` cover the boot calls to 0x3fa2f0 (`cm848_runFlashProgramStateMachine`) and 0x3fa5a0
     (`mpc555_cmfEraseBlocks`). The build log now reads 19 thunks / 13 call overrides.
   - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_tx_msg_t` instance (`header.can_id` /
-    `header.data_length` / `data_pointer` / `data_end_pointer`): `j1939_pgn<N>_tx_message`, `j1939_dm1_tx_message`, and
+    `header.data_length` / `data_pointer` / `status_pointer`): `j1939_pgn<N>_tx_message`, `j1939_dm1_tx_message`, and
     so on (30 of them).
-  - The ACK message keeps `j1939_ackm_msg` and its payload is `j1939_ack_payload` (`j1939_acknowledgement_payload_t`).
+  - The ACK message is `j1939_pgn59392_tx_message` (was `j1939_ackm_msg`; PR #53 round 33) and its payload is `j1939_ack_payload` (`j1939_acknowledgement_payload_t`).
+  - `status_pointer` (was `data_end_pointer`; PR #53 round 33) points at the message's status byte
+    `j1939_<message>_transmit_status`: the send result or the transport session code (`j1939_tx_msg_t` lists
+    the codes). The multi-frame builders (EC1, DM1, DM2, DM4, RC) rebuild their payload only while its 0xf0
+    nibble is clear.
   - `sendJ1939Message(&j1939_pgn65262_tx_message)` now carries no cast (it carried one at 30 call sites).
 - **Wave 10 (2026-11-18, PR #51, todo 044): names checked against the DTC each function sets.** The P-code comes from
   fault n → ROM 0x5985a slot → `obd_dtc_code_table`. The monitors found, with the full table in `work/tasks/044`:

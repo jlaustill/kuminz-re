@@ -2513,7 +2513,7 @@ struct j1939_pgn_handler_entry_t {
 struct j1939_tx_msg_t {
     j1939_msg_hdr_t header;  /* J1939 TX message header (can_id + data_length) */
     void * data_pointer;  /* Pointer to the first payload byte */
-    void * data_end_pointer;  /* Pointer one past the last payload byte */
+    void * status_pointer;  /* Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there and initiateJ1939TransportProtocol / the j1939_transport_* handlers their session codes through j1939_multiframe_tx_status_ptr (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy / 3 not our source address); the multi-frame builders rebuild only while its 0xf0 nibble is clear. The boot twin is diagnostic_response_message_t.status_pointer */
 };
 
 struct j1939_acknowledgement_payload_t {

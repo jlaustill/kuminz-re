@@ -1131,14 +1131,15 @@ j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_1,byte,1,First PGN byte for matchi
 j1939_pgn_handler_entry_t,0x003fa9a2,pgn_byte_0,byte,1,Second PGN byte for matching (compared against msg+6+0),,verified
 j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PGN handler callback,,verified
 
-# J1939 TX Message Descriptor - complete outgoing J1939 message with inline payload
-# Self-referential: data_ptr = &this.control_byte, data_end_ptr = &this.control_byte + 8
-# 22 bytes total (6 header + 4 data_ptr + 4 data_end_ptr + 8 payload)
+# J1939 transmit descriptor. It began as the ACK message's 22-byte struct (header + two pointers + the 8-byte
+# payload), split 2026-11-18 into j1939_tx_msg_t and j1939_ack_payload. Its third pointer was read as a data end
+# pointer because the ACK status byte sits right after the payload (0x3faaaa + 8 = 0x3faab2): it is the status
+# pointer (PR #53 round 33)
 # j1939_tx_msg_t: one J1939 transmit descriptor (14 bytes), the argument of sendJ1939Message - type-only template since 2026-11-18;
-# every descriptor is a global row typed with it (j1939_ackm_msg at 0x3faa9c, j1939_pgn<N>_tx_message, ...). header is j1939_msg_hdr_t, so &msg.header is what cm848_transmitCanMessage takes
+# every descriptor is a global row typed with it (j1939_pgn59392_tx_message at 0x3faa9c, j1939_pgn<N>_tx_message, ...). header is j1939_msg_hdr_t, so &msg.header is what cm848_transmitCanMessage takes
 j1939_tx_msg_t,,header,j1939_msg_hdr_t,6,J1939 TX message header (can_id + data_length),,verified
 j1939_tx_msg_t,,data_pointer,pointer,4,Pointer to the first payload byte,,verified
-j1939_tx_msg_t,,data_end_pointer,pointer,4,Pointer one past the last payload byte,,verified
+j1939_tx_msg_t,,status_pointer,pointer,4,Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there and initiateJ1939TransportProtocol / the j1939_transport_* handlers their session codes through j1939_multiframe_tx_status_ptr (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy / 3 not our source address); the multi-frame builders rebuild only while its 0xf0 nibble is clear. The boot twin is diagnostic_response_message_t.status_pointer,,verified
 # j1939_acknowledgement_payload_t: the J1939-21 ACKM payload (PGN 59392) - j1939_ack_payload at 0x3faaaa (was the tail of j1939_tx_msg_t)
 j1939_acknowledgement_payload_t,,control_byte,J1939_ACK_TYPE,1,J1939-21 ACKM control byte (ACK/NACK/ACCESS_DENIED/CANNOT_RESPOND),,verified
 j1939_acknowledgement_payload_t,,group_function,byte,1,Group function value (0xFF = not defined per J1939-21),,verified
