@@ -1631,8 +1631,8 @@ void cm848_calibBlock1_warmupFlag_reset(void);  // @ 0x00516a10
 void cm848_initFuelLevelFilter(void);  // @ 0x00516a20
 void cm848_substituteFuelLevelOnSensorFault(void);  // @ 0x00516a94
 void cm848_updateFuelLevel(void);  // @ 0x00516bb0
-void fuel_quantity_demand_monitor(void);  // @ 0x00516c18
-void fuel_quantity_demand_initialize(void);  // @ 0x00516df8
+void cm848_monitorWatchdogFueling(void);  // @ 0x00516c18
+void cm848_initializeWatchdogFueling(void);  // @ 0x00516df8
 void cm848_initIntakeAirHeaterControl(void);  // @ 0x00516e5c
 void cm848_computeIntakeAirHeaterPreheatDuration(void);  // @ 0x00516f9c
 void cm848_countDownIntakeAirHeaterPreheat(void);  // @ 0x00517120

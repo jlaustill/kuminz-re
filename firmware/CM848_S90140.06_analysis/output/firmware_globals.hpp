@@ -6243,7 +6243,7 @@ extern word fault_derate_fuel_limit_by_engine_speed_cached_axis_offset_2;  // 0x
 extern dword variable_geometry_turbocharger_motor_back_electromotive_force_working;  // 0x003fcd04
 extern dword variable_geometry_turbocharger_motor_voltage_across_resistance;  // 0x003fcd08
 extern dword variable_geometry_turbocharger_circuit_resistance_working;  // 0x003fcd0c
-extern word fuel_quantity_demand_active_correction_sum;  // 0x003fce2e
+extern word watchdog_fueling_duration_offset_sum;  // 0x003fce2e
 extern dword rom_crc_scan_ptr;  // 0x003fcfdc
 extern word rom_crc_accumulator;  // 0x003fcfe4
 extern word vehicle_speed_zero_under_load_pass_count;  // 0x003fd06e
@@ -6595,9 +6595,9 @@ extern word variable_geometry_turbocharger_control_fault_time_increment;  // 0x0
 extern word variable_geometry_turbocharger_control_fault_time_fail_threshold;  // 0x0040777c
 extern word j1939_tsc1_active_duration_reload;  // 0x004086c8
 extern word protection_fault_severity_code;  // 0x00408788
-extern word fuel_demand_active_correction_increment;  // 0x00408952
-extern word fuel_quantity_demand_excess_cold_allowance_axis[3];  // 0x00408954
-extern word fuel_quantity_demand_excess_cold_allowance_values[3];  // 0x0040895a
+extern word watchdog_fueling_minimum_duration_offset;  // 0x00408952
+extern word watchdog_coolant_duration_adjustment_axis[3];  // 0x00408954
+extern word watchdog_coolant_duration_adjustment_values[3];  // 0x0040895a
 extern word low_oil_pressure_threshold;  // 0x0040898c
 extern word egr_delta_pressure_pre_start_check_dwell_limit_b;  // 0x00409e9a
 extern word egr_delta_pressure_high_reading_check_recovery_limit;  // 0x00409e9c
@@ -6732,7 +6732,7 @@ extern word cold_start_coolant_overheat_event_count;  // 0x003fcdcc
 extern byte radiator_fan_input_configured_for_type_5100_flag;  // 0x003fce1e
 extern byte radiator_fan_input_was_type_5100_flag;  // 0x003fce1f
 extern word radiator_fan_speed_pulse_timeout_count;  // 0x003fce20
-extern word fuel_quantity_demand_excess_fault_count;  // 0x003fce2c
+extern word watchdog_fueling_debounce_count;  // 0x003fce2c
 extern INTAKE_AIR_HEATER_PHASE intake_air_heater_control_state_previous;  // 0x003fce3b
 extern word intake_air_heater_loaded_cycle_count;  // 0x003fce3d
 extern word intake_air_heater_relay_onset_countdown;  // 0x003fce47
@@ -7908,6 +7908,8 @@ extern word cold_delta_fuel_cached_axis_offsets[2];  // 0x003fb35c
 extern word compressor_inlet_pressure_drop_by_air_flow_cached_axis_offset;  // 0x003fb9dc
 extern int16_t engine_protection_power_up_shutdown_channel;  // 0x003fbd3a
 extern word fault_derate_fuel_limit_by_engine_speed_cached_axis_offset;  // 0x003fbd4e
+extern word watchdog_fueling_coolant_duration_adjustment;  // 0x003fce30
+extern word watchdog_coolant_duration_adjustment_cached_axis_offset;  // 0x003fce32
 extern word algorithm_enable_flags_table_length_cal;  // 0x003fd59a
 extern word algorithm_enable_flags_7_cal;  // 0x003fd5aa
 extern word algorithm_enable_flags_8_cal;  // 0x003fd5ac
@@ -7929,5 +7931,8 @@ extern word water_in_fuel_running_heal_threshold;  // 0x004077f0
 extern word water_in_fuel_key_on_heal_threshold;  // 0x004077f2
 extern word water_in_fuel_maximum_wet_reading;  // 0x004077f4
 extern word general_engine_protection_emission_level_cap_when_active;  // 0x00406fb2
+extern word watchdog_fueling_duration_threshold;  // 0x0040894c
+extern word watchdog_fueling_error_debounce_limit;  // 0x0040894e
+extern word watchdog_fueling_minimum_engine_speed;  // 0x00408950
 extern engine_protection_channel_state_t fuel_temperature_engine_protection_state;  // 0x0040a734
 extern byte engine_protection_shutdown_override_lamp_flag;  // 0x0040a78b

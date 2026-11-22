@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 09:59:04 MST 2026
+// Generated: Sun Nov 22 10:31:51 MST 2026
 
 
 //
@@ -6741,7 +6741,7 @@ void cm848_periodicTaskSet_sensorProcessing(void)
   cm848_selectSensorValuesInUse();
   diagnosticMainStateProcessor();
   cm848_calculateDrivetrainRatioFromVehicleSpeed();
-  fuel_quantity_demand_monitor();
+  cm848_monitorWatchdogFueling();
   return;
 }
 
@@ -38777,8 +38777,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -58445,7 +58445,7 @@ void cm848_applicationMain(void)
   cm848_initializePilotInjectionTimingState();
   cm848_initializeAuxiliaryInjectionQuantityState();
   cm848_initializeAuxiliaryInjectionTimingState();
-  fuel_quantity_demand_initialize();
+  cm848_initializeWatchdogFueling();
   fuel_demand_timing_initialize();
   cm848_resetCoolantOverheatFuelDerate();
   cm848_initializeInjectorDriverBoosterCapacitor1VoltageChannel();
@@ -77019,52 +77019,60 @@ void cm848_updateFuelLevel(void)
 
 
 //
-// Function: fuel_quantity_demand_monitor @ 0x00516c18
+// Function: cm848_monitorWatchdogFueling @ 0x00516c18
 //
 
-/* Excess-injection monitor (fault 388, P0606: an internal fault with no component DTC): sums the
-   pilot / main / auxiliary injection on-times minus fuel_demand_active_correction_increment per
-   active event and compares the sum with DAT_0040894c plus
-   fuel_quantity_demand_excess_cold_allowance (coolant temperature table) while nothing demands fuel
-   (no TSC1 override mode 1 / 2, governor fuel, cruise, computed driver demand or accelerator
-   off-idle) and engine speed is above DAT_00408950; after DAT_0040894e passes in a row it sets
-   fault 388 and logical output request 54. fuel_quantity_demand_initialize is the only clear (name
-   kept). */
+/* The watchdog fueling monitor (e2m 8A70, fault 388 Watchdog_Fueling_Error 'fueling is high when it
+   should not be'): with nothing demanding fuel (no TSC1 speed / torque control, power take-off
+   governor, cruise, commanded throttle or accelerator off idle) and average_engine_speed above
+   watchdog_fueling_minimum_engine_speed, the pilot + main + auxiliary on-time minus the per-event
+   offsets above watchdog_fueling_duration_threshold + the coolant allowance for
+   watchdog_fueling_error_debounce_limit passes sets fault 388 and logical output request 54 (was
+   fuel_quantity_demand_monitor) | earlier note: Excess-injection monitor (fault 388, P0606: an
+   internal fault with no component DTC): sums the pilot / main / auxiliary injection on-times minus
+   watchdog_fueling_minimum_duration_offset per active event and compares the sum with
+   watchdog_fueling_duration_threshold plus fuel_quantity_demand_excess_cold_allowance (coolant
+   temperature table) while nothing demands fuel (no TSC1 override mode 1 / 2, governor fuel,
+   cruise, computed driver demand or accelerator off-idle) and engine speed is above
+   watchdog_fueling_minimum_engine_speed; after watchdog_fueling_error_debounce_limit passes in a
+   row it sets fault 388 and logical output request 54. cm848_initializeWatchdogFueling is the only
+   clear (name kept). */
 
-void fuel_quantity_demand_monitor(void)
+void cm848_monitorWatchdogFueling(void)
 
 {
-  fuel_quantity_demand_active_correction_sum = 0;
+  watchdog_fueling_duration_offset_sum = 0;
   if (pilot_injection_pulse_width != 0) {
-    fuel_quantity_demand_active_correction_sum = fuel_demand_active_correction_increment;
+    watchdog_fueling_duration_offset_sum = watchdog_fueling_minimum_duration_offset;
   }
   if (main_injection_pulse_width != 0) {
-    fuel_quantity_demand_active_correction_sum =
-         fuel_quantity_demand_active_correction_sum + fuel_demand_active_correction_increment;
+    watchdog_fueling_duration_offset_sum =
+         watchdog_fueling_duration_offset_sum + watchdog_fueling_minimum_duration_offset;
   }
   if (auxiliary_injection_pulse_width != 0) {
-    fuel_quantity_demand_active_correction_sum =
-         fuel_quantity_demand_active_correction_sum + fuel_demand_active_correction_increment;
+    watchdog_fueling_duration_offset_sum =
+         watchdog_fueling_duration_offset_sum + watchdog_fueling_minimum_duration_offset;
   }
-  DAT_003fce30 = lookupTableInterpolation
-                           (&DAT_003fce32,coolant_temperature_sensor_filtered,
-                            fuel_quantity_demand_excess_cold_allowance_axis,
-                            fuel_quantity_demand_excess_cold_allowance_values,1);
+  watchdog_fueling_coolant_duration_adjustment =
+       lookupTableInterpolation
+                 (&watchdog_coolant_duration_adjustment_cached_axis_offset,
+                  coolant_temperature_sensor_filtered,watchdog_coolant_duration_adjustment_axis,
+                  watchdog_coolant_duration_adjustment_values,1);
   if ((((((j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_SPEED_CONTROL) ||
          (j1939_powertrain_control_state.tsc1_override_control_mode == TSC1_TORQUE_CONTROL)) ||
         (power_take_off_governor_active_flag != 0)) ||
        ((cruise_control_engaged_flag != 0 || (fault_detected_cal.watchdog_fueling_error != 0)))) ||
       ((commanded_throttle_state.commanded_throttle != 0 ||
        ((commanded_throttle_state.accelerator_off_idle != 0 ||
-        (average_engine_speed <= DAT_00408950)))))) ||
+        (average_engine_speed <= watchdog_fueling_minimum_engine_speed)))))) ||
      ((int)(((uint)main_injection_pulse_width + (uint)pilot_injection_pulse_width +
-            (uint)auxiliary_injection_pulse_width) -
-           (uint)fuel_quantity_demand_active_correction_sum) <=
-      (int)((uint)DAT_0040894c + (uint)DAT_003fce30))) {
-    fuel_quantity_demand_excess_fault_count = 0;
+            (uint)auxiliary_injection_pulse_width) - (uint)watchdog_fueling_duration_offset_sum) <=
+      (int)((uint)watchdog_fueling_duration_threshold +
+           (uint)watchdog_fueling_coolant_duration_adjustment))) {
+    watchdog_fueling_debounce_count = 0;
   }
-  else if (fuel_quantity_demand_excess_fault_count < DAT_0040894e) {
-    fuel_quantity_demand_excess_fault_count = fuel_quantity_demand_excess_fault_count + 1;
+  else if (watchdog_fueling_debounce_count < watchdog_fueling_error_debounce_limit) {
+    watchdog_fueling_debounce_count = watchdog_fueling_debounce_count + 1;
   }
   else {
     fault_detected_cal.watchdog_fueling_error = 1;
@@ -77076,16 +77084,19 @@ void fuel_quantity_demand_monitor(void)
 
 
 //
-// Function: fuel_quantity_demand_initialize @ 0x00516df8
+// Function: cm848_initializeWatchdogFueling @ 0x00516df8
 //
 
-void fuel_quantity_demand_initialize(void)
+/* Clears fault 388 (detected and registered), logical output request 54 and the coolant allowance
+   lookup cache (2) (was fuel_quantity_demand_initialize) */
+
+void cm848_initializeWatchdogFueling(void)
 
 {
   fault_detected_cal.watchdog_fueling_error = 0;
   fault_registered_cal.watchdog_fueling_error = 0;
   cm848_clearLogicalOutputRequest(0x36,0);
-  DAT_003fce32 = 2;
+  watchdog_coolant_duration_adjustment_cached_axis_offset = 2;
   return;
 }
 
