@@ -143,27 +143,27 @@ pci_link_state_t,0x0040b34e,link_event_code,dword,4,PCI link event 1..7 (all stw
 # Fault List Management - DTC list indices and counters
 # Used by fault logging and DM1/DM2 message generation
 # Total size: 8 bytes (0x003fe11a-0x003fe121)
-fault_list_state_t,0x003fe11a,write_index,word,2,Next write position in fault list,,verified
-fault_list_state_t,0x003fe11a,read_index,word,2,Current read position in fault list,,verified
-fault_list_state_t,0x003fe11a,emission_count,word,2,Count of emission-related faults,,verified
-fault_list_state_t,0x003fe11a,total_emission_faults,word,2,Total emission fault counter,,verified
+j1587_fault_count_data_t,0x003fe11a,active_fault_count,word,2,"e2m 1097 +C0 J1587_Fault_Count_Data 'Data used by J1587 and Fault Handler to keep track of fault counts': the number of faults in active_dtc_list_cal - it moves with active_dtc_list_cal.count and active_dtc_cummins_fault_codes_cal[0], and the list code indexes the slots with it. No ring buffer write index (was write_index) | earlier note: Next write position in fault list",,verified
+j1587_fault_count_data_t,0x003fe11a,previously_active_fault_count,word,2,The number of faults in previously_active_dtc_list_cal (it moves with its count and previously_active_dtc_cummins_fault_codes_cal[0]). No ring buffer read index (was read_index) | earlier note: Current read position in fault list,,verified
+j1587_fault_count_data_t,0x003fe11a,emission_count,word,2,"Count of emission-related faults | It counts the active faults whose fault_definition_t.definition_flags bit 0x2000 is clear - every slot in this calibration, so it equals active_fault_count. Only these count updates test the bit, so 'emission' is unproven",,verified
+j1587_fault_count_data_t,0x003fe11a,total_emission_faults,word,2,"Total emission fault counter | It counts the previously active faults whose definition_flags bit 0x2000 is clear - every slot in this calibration, so it equals previously_active_fault_count; 'emission' is unproven",,verified
 # Data Transfer State - diagnostic memory read/write operations
 # Used by diagMemoryReadHandler and calibration download
 # Total size: 8 bytes (0x003fec82-0x003fec89)
-data_transfer_state_t,0x003fec82,byte_count,word,2,Byte count,,verified
-data_transfer_state_t,0x003fec82,buffer_write_enabled_flag,word,2,Buffer write enabled flag,,verified
-data_transfer_state_t,0x003fec82,largest_write_length,word,2,Largest write length,,verified
-data_transfer_state_t,0x003fec82,reserved_06,word,2,Reserved,,verified
-data_transfer_state_t,0x003fec82,pending_write_transport,byte,1,1 = CAN / 2 = serial (was the high byte of the state word),,verified
-data_transfer_state_t,0x003fec82,finish_requested_flag,byte,1,Finish requested (was the low byte of the state word),,verified
-data_transfer_state_t,0x003fec82,flash_program_step,byte,1,Step 1-5 of cm848_runFlashProgramStateMachine (was the high byte of the status word),,verified
-data_transfer_state_t,0x003fec82,flash2_erase_state,byte,1,Medium confidence: 1 programmed / 2 erasing / 3 erased (was the low byte of the status word),,verified
+reflash_transfer_state_t,0x003fec82,byte_count,word,2,Byte count,,verified
+reflash_transfer_state_t,0x003fec82,buffer_write_enabled_flag,word,2,Buffer write enabled flag,,verified
+reflash_transfer_state_t,0x003fec82,largest_write_length,word,2,Largest write length,,verified
+reflash_transfer_state_t,0x003fec82,reserved_06,word,2,Reserved,,verified
+reflash_transfer_state_t,0x003fec82,pending_write_transport,byte,1,1 = CAN / 2 = serial (was the high byte of the state word),,verified
+reflash_transfer_state_t,0x003fec82,finish_requested_flag,byte,1,Finish requested (was the low byte of the state word),,verified
+reflash_transfer_state_t,0x003fec82,flash_program_step,byte,1,Step 1-5 of cm848_runFlashProgramStateMachine (was the high byte of the status word),,verified
+reflash_transfer_state_t,0x003fec82,flash2_erase_state,byte,1,Medium confidence: 1 programmed / 2 erasing / 3 erased (was the low byte of the status word),,verified
 # Diagnostic Session Flags - diagnostic service session state
 # Used by initDiagnosticSession and diagnostic handlers
 # Total size: 6 bytes (0x003fecbe-0x003fecc3)
-diag_session_state_t,0x003fecbe,session_flags,byte,1,Session flags,,verified
-diag_session_state_t,0x003fecbe,response_write_index,byte,1,Response write index,,verified
-diag_session_state_t,0x003fecbe,response_cursor_pointer,pointer,4,"Cursor into diag_serial_buffer (stw r9,-4928(r10) @ 0x6788 stores 0x3fecf0) - the decompiler showed it as four byte stores",,verified
+boot_sci_session_state_t,0x003fecbe,session_flags,byte,1,Session flags,,verified
+boot_sci_session_state_t,0x003fecbe,response_write_index,byte,1,Response write index,,verified
+boot_sci_session_state_t,0x003fecbe,response_cursor_pointer,pointer,4,"Cursor into diag_serial_buffer (stw r9,-4928(r10) @ 0x6788 stores 0x3fecf0) - the decompiler showed it as four byte stores",,verified
 # System Status Flags - engine and protection status bitmaps
 # Used by condition monitoring and fault detection
 # Total size: 48 bytes (0x003fe974-0x003fe9a3)
@@ -1283,8 +1283,8 @@ eeprom_param_t,0x0030252a,callback_param,dword,4,Diagnostic callback parameter f
 # Written in mpc555_systemInitialization: sentinel=0xBBBB counter=0
 # Sentinel checked at boot to detect cold-start vs warm-reset
 # =============================================================================
-sys_init_flags_t,0x00302736,init_sentinel,word,2,System initialization sentinel (0xBBBB = fully initialized),,verified
-sys_init_flags_t,0x00302736,init_counter,word,2,System initialization counter (zeroed at startup),,verified
+system_initialization_flags_t,0x00302736,initialization_sentinel,word,2,"0xBBBB, stored by mpc555_systemInitialization (the boot service loop); no reader in the .cpp (was init_sentinel) | earlier note: System initialization sentinel (0xBBBB = fully initialized)",,verified
+system_initialization_flags_t,0x00302736,initialization_counter,word,2,"0, stored by mpc555_systemInitialization; no reader in the .cpp (was init_counter) | earlier note: System initialization counter (zeroed at startup)",,verified
 # =============================================================================
 # EEPROM data transfer state machine @ 0x302878
 # bytes_transferred: current byte offset progress within transfer block
@@ -1315,27 +1315,27 @@ eeprom_block_tracking_t,0x003028a6,block_count,word,2,Completed transfer block c
 # =============================================================================
 # J1939 Transport Protocol queue/RTS-CTS state machine @ 0x302905
 # Used by mpc555_handleJ1939TransportRequestToSend / mpc555_sendJ1939TransportDataPackets
-# session_pgn: PGN for active queue TP session (top byte 0xEF)
-# total_bytes: total data bytes for TP session (from CTS request)
-# data_buf_ptr: pointer to source data buffer for multi-packet transmission
+# transported_pgn: PGN for active queue TP session (top byte 0xEF)
+# message_size: total data bytes for TP session (from CTS request)
+# message_data_pointer: pointer to source data buffer for multi-packet transmission
 # state_ptr: pointer to session status byte (updated with J1939 TP state codes)
-# retry_timer: CTS retry countdown (nominal 0x37 = 55 ticks)
-# can_header: CAN frame first-4-byte header (alternates PGN 0xEC00/0xEB00)
-# packet_size: bytes to send in current CTS grant (max 8)
-# tx_buf_ptr: pointer to CAN TX assembly buffer (initialized to 0x30306D)
+# timeout_timer: CTS retry countdown (nominal 0x37 = 55 ticks)
+# frame_can_id: CAN frame first-4-byte header (alternates PGN 0xEC00/0xEB00)
+# frame_data_length: bytes to send in current CTS grant (max 8)
+# transmit_frame_pointer: pointer to CAN TX assembly buffer (initialized to 0x30306D)
 # =============================================================================
-j1939_tp_queue_t,0x00302905,session_pgn,word,2,Active J1939 TP queue session PGN (0xEF__ format),,verified
-j1939_tp_queue_t,0x00302905,queue_status2,byte,1,J1939 TP queue entry count (number of packets in queue),,verified
-j1939_tp_queue_t,0x00302905,range_start,byte,1,J1939 TP batch range start index (incremented by batch size),,verified
-j1939_tp_queue_t,0x00302905,queue_ptr,byte,1,J1939 TP remaining packet pointer (decremented by batch size),,verified
-j1939_tp_queue_t,0x00302905,_pad5,byte,1,Reserved,,verified
-j1939_tp_queue_t,0x00302905,total_bytes,word,2,Total data bytes for TP queue session,,verified
-j1939_tp_queue_t,0x00302905,data_buf_ptr,dword,4,Pointer to source data buffer for queue TP session,,verified
-j1939_tp_queue_t,0x00302905,state_ptr,dword,4,Pointer to session status byte (J1939 TP state codes),,verified
-j1939_tp_queue_t,0x00302905,retry_timer,word,2,CTS retry countdown timer (nominal 0x37 ticks),,verified
-j1939_tp_queue_t,0x00302905,can_header,dword,4,CAN frame header word (PGN 0xEC00 RTS or 0xEB00 DT),,verified
-j1939_tp_queue_t,0x00302905,packet_size,word,2,Bytes in current CTS packet grant (max 8),,verified
-j1939_tp_queue_t,0x00302905,tx_buf_ptr,dword,4,Pointer to CAN TX assembly buffer (0x30306D),,verified
+j1939_transport_transmit_session_t,0x00302905,transported_pgn,word,2,"The PGN of the transported message (its PDU format byte and data page; mpc555_sendJ1939TransportRequestToSend masks the low byte), compared with each clear-to-send (was session_pgn) | earlier note: Active J1939 TP queue session PGN (0xEF__ format)",,verified
+j1939_transport_transmit_session_t,0x00302905,total_packet_count,byte,1,"(message_size - 1) / 7 + 1, set by mpc555_sendJ1939TransportRequestToSend; TP.CM byte 4 of the request-to-send (was queue_status2) | earlier note: J1939 TP queue entry count (number of packets in queue)",,verified
+j1939_transport_transmit_session_t,0x00302905,next_packet_number,byte,1,"The next packet number (TP.CM clear-to-send byte 3, recorded by mpc555_handleJ1939TransportClearToSend); mpc555_sendJ1939TransportDataPackets adds 15 per call (was range_start) | earlier note: J1939 TP batch range start index (incremented by batch size)",,verified
+j1939_transport_transmit_session_t,0x00302905,granted_packet_count,byte,1,"The packets left in the granted window (TP.CM clear-to-send byte 2); 0 at the request-to-send, 15 less per data packet call (was queue_ptr) | earlier note: J1939 TP remaining packet pointer (decremented by batch size)",,verified
+j1939_transport_transmit_session_t,0x00302905,frame_queue_status,byte,1,The status mpc555_canTransmitQueuePush writes through its fourth argument (0x30290a) for the last frame: 0 queued / 1 no data / 4 queue full; the senders test it. No padding (was _pad5) | earlier note: Reserved,,verified
+j1939_transport_transmit_session_t,0x00302905,message_size,word,2,"The transported message's size in bytes (its header data_length; TP.CM bytes 2-3), set by mpc555_sendJ1939TransportRequestToSend (was total_bytes) | earlier note: Total data bytes for TP queue session",,verified
+j1939_transport_transmit_session_t,0x00302905,message_data_pointer,dword,4,The transported message's data (the message record's data pointer) (was data_buf_ptr) | earlier note: Pointer to source data buffer for queue TP session,,verified
+j1939_transport_transmit_session_t,0x00302905,session_status_pointer,dword,4,"Points at the message's status byte (the message record's last dword): 0x12 while the data transfer runs, 6 on a timeout (was state_ptr) | earlier note: Pointer to session status byte (J1939 TP state codes)",,verified
+j1939_transport_transmit_session_t,0x00302905,timeout_timer,word,2,"Counted down by mpc555_sendJ1939TransportDataPackets while no window is granted; 0x37 after the request-to-send and each clear-to-send, 0x70 after a window; at 0 the session status becomes 6 (timeout) (was retry_timer) | earlier note: CTS retry countdown timer (nominal 0x37 ticks)",,verified
+j1939_transport_transmit_session_t,0x00302905,frame_can_id,dword,4,"The CAN identifier of the next frame: the message's with PDU format 0xEC (TP.CM, PGN 60416) for the request-to-send, then 0xEB (TP.DT, PGN 60160) (was can_header) | earlier note: CAN frame header word (PGN 0xEC00 RTS or 0xEB00 DT)",,verified
+j1939_transport_transmit_session_t,0x00302905,frame_data_length,word,2,"Data bytes of the next frame: 8, or what is left for the last data packet (was packet_size) | earlier note: Bytes in current CTS packet grant (max 8)",,verified
+j1939_transport_transmit_session_t,0x00302905,transmit_frame_pointer,dword,4,The frame assembly buffer the senders fill (0x30306D) (was tx_buf_ptr) | earlier note: Pointer to CAN TX assembly buffer (0x30306D),,verified
 # =============================================================================
 # J1939 Transport Protocol pause/DataRequest state @ 0x302927
 # Used by mpc555_handleJ1939TransportRequestToSend / mpc555_handleJ1939TransportDataPacket

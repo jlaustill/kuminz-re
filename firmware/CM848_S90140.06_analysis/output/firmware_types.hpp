@@ -1214,9 +1214,9 @@ typedef struct sensor_readings_t sensor_readings_t;
 typedef struct eeprom_header_t eeprom_header_t;
 typedef struct low_speed_governor_reference_t low_speed_governor_reference_t;
 typedef struct pci_link_state_t pci_link_state_t;
-typedef struct fault_list_state_t fault_list_state_t;
-typedef struct data_transfer_state_t data_transfer_state_t;
-typedef struct diag_session_state_t diag_session_state_t;
+typedef struct j1587_fault_count_data_t j1587_fault_count_data_t;
+typedef struct reflash_transfer_state_t reflash_transfer_state_t;
+typedef struct boot_sci_session_state_t boot_sci_session_state_t;
 typedef struct system_status_flags_t system_status_flags_t;
 typedef struct wastegate_duty_controller_state_t wastegate_duty_controller_state_t;
 typedef struct egr_flow_estimate_terms_t egr_flow_estimate_terms_t;
@@ -1312,10 +1312,10 @@ typedef struct can_tx_ring_t can_tx_ring_t;
 typedef struct diag_write_request_state_t diag_write_request_state_t;
 typedef struct can_slot_range_t can_slot_range_t;
 typedef struct can_rx_channel_t can_rx_channel_t;
-typedef struct sys_init_flags_t sys_init_flags_t;
+typedef struct system_initialization_flags_t system_initialization_flags_t;
 typedef struct eeprom_xfer_state_t eeprom_xfer_state_t;
 typedef struct eeprom_block_tracking_t eeprom_block_tracking_t;
-typedef struct j1939_tp_queue_t j1939_tp_queue_t;
+typedef struct j1939_transport_transmit_session_t j1939_transport_transmit_session_t;
 typedef struct j1939_tp_pause_t j1939_tp_pause_t;
 typedef struct diag_buf_b_ctrl_t diag_buf_b_ctrl_t;
 typedef struct diag_buf_a_ctrl_t diag_buf_a_ctrl_t;
@@ -1519,14 +1519,14 @@ struct pci_link_state_t {
     uint32_t link_event_code;  /* PCI link event 1..7 (all stw/lwz); cm848_handlePciLinkEvent maps each to a recovery-action mask at 0x3fd8e0..0x3fd8e7; 7 = every scheduled PCI transmit overdue (set by cm848_checkPciMessageTimeouts); was dm1_pending (word) */
 };
 
-struct fault_list_state_t {
-    uint16_t write_index;  /* Next write position in fault list */
-    uint16_t read_index;  /* Current read position in fault list */
-    uint16_t emission_count;  /* Count of emission-related faults */
-    uint16_t total_emission_faults;  /* Total emission fault counter */
+struct j1587_fault_count_data_t {
+    uint16_t active_fault_count;  /* e2m 1097 +C0 J1587_Fault_Count_Data 'Data used by J1587 and Fault Handler to keep track of fault counts': the number of faults in active_dtc_list_cal - it moves with active_dtc_list_cal.count and active_dtc_cummins_fault_codes_cal[0], and the list code indexes the slots with it. No ring buffer write index (was write_index) | earlier note: Next write position in fault list */
+    uint16_t previously_active_fault_count;  /* The number of faults in previously_active_dtc_list_cal (it moves with its count and previously_active_dtc_cummins_fault_codes_cal[0]). No ring buffer read index (was read_index) | earlier note: Current read position in fault list */
+    uint16_t emission_count;  /* Count of emission-related faults | It counts the active faults whose fault_definition_t.definition_flags bit 0x2000 is clear - every slot in this calibration, so it equals active_fault_count. Only these count updates test the bit, so 'emission' is unproven */
+    uint16_t total_emission_faults;  /* Total emission fault counter | It counts the previously active faults whose definition_flags bit 0x2000 is clear - every slot in this calibration, so it equals previously_active_fault_count; 'emission' is unproven */
 };
 
-struct data_transfer_state_t {
+struct reflash_transfer_state_t {
     uint16_t byte_count;  /* Byte count */
     uint16_t buffer_write_enabled_flag;  /* Buffer write enabled flag */
     uint16_t largest_write_length;  /* Largest write length */
@@ -1537,7 +1537,7 @@ struct data_transfer_state_t {
     uint8_t flash2_erase_state;  /* Medium confidence: 1 programmed / 2 erasing / 3 erased (was the low byte of the status word) */
 };
 
-struct diag_session_state_t {
+struct boot_sci_session_state_t {
     uint8_t session_flags;  /* Session flags */
     uint8_t response_write_index;  /* Response write index */
     void * response_cursor_pointer;  /* Cursor into diag_serial_buffer (stw r9,-4928(r10) @ 0x6788 stores 0x3fecf0) - the decompiler showed it as four byte stores */
@@ -2545,9 +2545,9 @@ struct can_rx_channel_t {
     uint16_t channel_id;  /* J1939 source address filter for CAN receive matching */
 };
 
-struct sys_init_flags_t {
-    uint16_t init_sentinel;  /* System initialization sentinel (0xBBBB = fully initialized) */
-    uint16_t init_counter;  /* System initialization counter (zeroed at startup) */
+struct system_initialization_flags_t {
+    uint16_t initialization_sentinel;  /* 0xBBBB, stored by mpc555_systemInitialization (the boot service loop); no reader in the .cpp (was init_sentinel) | earlier note: System initialization sentinel (0xBBBB = fully initialized) */
+    uint16_t initialization_counter;  /* 0, stored by mpc555_systemInitialization; no reader in the .cpp (was init_counter) | earlier note: System initialization counter (zeroed at startup) */
 };
 
 struct eeprom_xfer_state_t {
@@ -2567,19 +2567,19 @@ struct eeprom_block_tracking_t {
     uint16_t block_count;  /* Completed transfer block count (max 9) */
 };
 
-struct j1939_tp_queue_t {
-    uint16_t session_pgn;  /* Active J1939 TP queue session PGN (0xEF__ format) */
-    uint8_t queue_status2;  /* J1939 TP queue entry count (number of packets in queue) */
-    uint8_t range_start;  /* J1939 TP batch range start index (incremented by batch size) */
-    uint8_t queue_ptr;  /* J1939 TP remaining packet pointer (decremented by batch size) */
-    uint8_t _pad5;  /* Reserved */
-    uint16_t total_bytes;  /* Total data bytes for TP queue session */
-    uint32_t data_buf_ptr;  /* Pointer to source data buffer for queue TP session */
-    uint32_t state_ptr;  /* Pointer to session status byte (J1939 TP state codes) */
-    uint16_t retry_timer;  /* CTS retry countdown timer (nominal 0x37 ticks) */
-    uint32_t can_header;  /* CAN frame header word (PGN 0xEC00 RTS or 0xEB00 DT) */
-    uint16_t packet_size;  /* Bytes in current CTS packet grant (max 8) */
-    uint32_t tx_buf_ptr;  /* Pointer to CAN TX assembly buffer (0x30306D) */
+struct j1939_transport_transmit_session_t {
+    uint16_t transported_pgn;  /* The PGN of the transported message (its PDU format byte and data page; mpc555_sendJ1939TransportRequestToSend masks the low byte), compared with each clear-to-send (was session_pgn) | earlier note: Active J1939 TP queue session PGN (0xEF__ format) */
+    uint8_t total_packet_count;  /* (message_size - 1) / 7 + 1, set by mpc555_sendJ1939TransportRequestToSend; TP.CM byte 4 of the request-to-send (was queue_status2) | earlier note: J1939 TP queue entry count (number of packets in queue) */
+    uint8_t next_packet_number;  /* The next packet number (TP.CM clear-to-send byte 3, recorded by mpc555_handleJ1939TransportClearToSend); mpc555_sendJ1939TransportDataPackets adds 15 per call (was range_start) | earlier note: J1939 TP batch range start index (incremented by batch size) */
+    uint8_t granted_packet_count;  /* The packets left in the granted window (TP.CM clear-to-send byte 2); 0 at the request-to-send, 15 less per data packet call (was queue_ptr) | earlier note: J1939 TP remaining packet pointer (decremented by batch size) */
+    uint8_t frame_queue_status;  /* The status mpc555_canTransmitQueuePush writes through its fourth argument (0x30290a) for the last frame: 0 queued / 1 no data / 4 queue full; the senders test it. No padding (was _pad5) | earlier note: Reserved */
+    uint16_t message_size;  /* The transported message's size in bytes (its header data_length; TP.CM bytes 2-3), set by mpc555_sendJ1939TransportRequestToSend (was total_bytes) | earlier note: Total data bytes for TP queue session */
+    uint32_t message_data_pointer;  /* The transported message's data (the message record's data pointer) (was data_buf_ptr) | earlier note: Pointer to source data buffer for queue TP session */
+    uint32_t session_status_pointer;  /* Points at the message's status byte (the message record's last dword): 0x12 while the data transfer runs, 6 on a timeout (was state_ptr) | earlier note: Pointer to session status byte (J1939 TP state codes) */
+    uint16_t timeout_timer;  /* Counted down by mpc555_sendJ1939TransportDataPackets while no window is granted; 0x37 after the request-to-send and each clear-to-send, 0x70 after a window; at 0 the session status becomes 6 (timeout) (was retry_timer) | earlier note: CTS retry countdown timer (nominal 0x37 ticks) */
+    uint32_t frame_can_id;  /* The CAN identifier of the next frame: the message's with PDU format 0xEC (TP.CM, PGN 60416) for the request-to-send, then 0xEB (TP.DT, PGN 60160) (was can_header) | earlier note: CAN frame header word (PGN 0xEC00 RTS or 0xEB00 DT) */
+    uint16_t frame_data_length;  /* Data bytes of the next frame: 8, or what is left for the last data packet (was packet_size) | earlier note: Bytes in current CTS packet grant (max 8) */
+    uint32_t transmit_frame_pointer;  /* The frame assembly buffer the senders fill (0x30306D) (was tx_buf_ptr) | earlier note: Pointer to CAN TX assembly buffer (0x30306D) */
 };
 
 struct j1939_tp_pause_t {

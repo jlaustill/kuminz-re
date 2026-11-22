@@ -808,8 +808,8 @@ address,name,type,comment
 0x00302530,eeprom_diag_callback.default_value,,
 0x00302532,can_tx_status.callback_param,,
 0x00302731,flash2_writes_enabled,byte,Nonzero allows diagnostic writes to Bank-2 flash 0x500000-0x5fffff (memory region type 2); otherwise those addresses report 9 = not writable
-0x00302736,sys_init_flags_t_00302736,sys_init_flags_t,
-0x00302738,sys_init_flags_t_00302736.init_counter,,
+0x00302736,system_initialization_flags,system_initialization_flags_t,Set by the boot service loop mpc555_systemInitialization: initialization_sentinel = 0xBBBB and initialization_counter = 0 (no reader in the .cpp) (was sys_init_flags_t_00302736)
+0x00302738,system_initialization_flags.initialization_counter,,
 0x00302877,eeprom_service_mode_flags,byte,EEPROM-programming service-mode flags byte. High bit 0x80 = in EEPROM mode; low nibble (& 0xf) gates special main-loop processing; whole-byte 0x81 routes main-loop dispatch to CAN handlers and 0x82 to the diagnostic handler (mpc555_runPeriodicInterruptTimerTick/cm848_runBootKernelLoop/cm848_dispatchDiagnosticService) - name covers the dispatch role not just diag. Renamed from qadc_a_result_high_1 (legacy mislabel - not analog data; real QADC-A results are at 0x304A80+). Peripheral/RAM region 0x302xxx so no _cal
 0x00302878,eeprom_xfer_state,eeprom_xfer_state_t,
 0x0030287c,qadc_a_result_ch4,,
@@ -824,17 +824,17 @@ address,name,type,comment
 0x003028b1,qadc_a_result_ch30,,
 0x00302903,qadc_a_queue_status_1,byte,
 0x00302904,qadc_a_active_channel_id,byte,
-0x00302905,j1939_tp_queue_t_00302905,j1939_tp_queue_t,
+0x00302905,boot_j1939_transport_transmit_session,j1939_transport_transmit_session_t,The boot reflash kernel's outbound J1939 transport session (j1939_transport_transmit_session_t): mpc555_sendJ1939TransportRequestToSend opens it (TP.CM request-to-send), mpc555_handleJ1939TransportClearToSend records each granted window and mpc555_sendJ1939TransportDataPackets sends up to 15 TP.DT frames per call (was j1939_tp_queue_t_00302905)
 0x00302907,qadc_a_queue_status_2,,
 0x00302908,qadc_a_range_start,,
 0x00302909,qadc_a_queue_ptr,,
 0x0030290a,qadc_a_queue_count_1,,
 0x0030290b,qadc_a_queue_count_2,,
-0x0030290d,j1939_tp_queue_t_00302905.data_buf_ptr,,
+0x0030290d,boot_j1939_transport_transmit_session.message_data_pointer,,
 0x00302911,qadc_a_queue_ctrl_1,,
 0x00302915,qadc_a_queue_ctrl_2,,
-0x00302917,j1939_tp_queue_t_00302905.can_header,,
-0x0030291b,j1939_tp_queue_t_00302905.packet_size,,
+0x00302917,boot_j1939_transport_transmit_session.frame_can_id,,
+0x0030291b,boot_j1939_transport_transmit_session.frame_data_length,,
 0x0030291d,qadc_a_queue_ctrl_3,,
 0x00302925,qadc_a_pause_status,byte,
 0x00302926,qadc_a_pause_ctrl,byte,
@@ -1028,11 +1028,11 @@ address,name,type,comment
 0x00305030,QSMCM_COMD0,byte,
 0x00305040,QSMCM_RECRAM0,byte,
 0x00305060,QSMCM_TRANRAM0,byte,
-0x00305140,qsmcm_recram_t_00305140,qsmcm_recram_t,
-0x00305142,qsmcm_recram_t_00305140.RX1,,
-0x00305144,qsmcm_recram_t_00305140.RX2,,
-0x00305148,qsmcm_recram_t_00305140.RX4,,
-0x0030514a,qsmcm_recram_t_00305140.RX5,,
+0x00305140,qsmcm_recram,qsmcm_recram_t,QSMCM RECRAM, the QSPI receive RAM (qsmcm_recram_t): the replies of the boot EEPROM driver (mpc555_eepromReadWords / WriteWords) and of the supervisor chip watchdog (cm848_initSupervisorWatchdog / cm848_serviceSupervisorWatchdog / cm848_forceSupervisorWatchdogReset) (was qsmcm_recram_t_00305140)
+0x00305142,qsmcm_recram.RX1,,
+0x00305144,qsmcm_recram.RX2,,
+0x00305148,qsmcm_recram.RX4,,
+0x0030514a,qsmcm_recram.RX5,,
 0x00305180,qsmcm_tranram,qsmcm_txram_t,QSPI transmit RAM (was eeprom_command_register)
 0x00305182,eeprom_address_register,,
 0x00305184,eeprom_data_register,,
@@ -1534,7 +1534,7 @@ address,name,type,comment
 0x003fab52,j1939_dm10_tx_message,j1939_tx_msg_t,the transmit descriptor of DM10 (header 0xfed200, PGN 65234); the old name said DM11 (PGN 65235) (was j1939_dm11_tx_message) | earlier note: J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_dm11_tx_header / j1939_dm11_tx_length / j1939_dm11_data_ptr / j1939_dm11_end_ptr)
 0x003fab60,j1939_dm10_payload,word,the DM10 data word: cm848_j1939HandlePgn65234Dm10 stores the byte-reversed supported_non_continuous_monitors_bits in it and the DM10 transmit descriptor points at it (the old name said DM11, which is PGN 65235) (was j1939_dm11_feature_config_word)
 0x003fab6a,j1939_dm1_tx_message,j1939_tx_msg_t,J1939 transmit descriptor sent by sendJ1939Message (j1939_tx_msg_t: header.can_id / header.data_length / data_pointer / data_end_pointer). Typed as one struct 2026-11-18 (were the flat rows j1939_dm1_tx_header / j1939_dtc_byte_offset / j1939_dm1_tx_buf_ptr / j1939_dm1_fault_data_ptr)
-0x003fab78,j1939_dm1_lamp_status,byte,byte 0 of the DM1 (PGN 65226) TX payload = lamp status (MIL/RSL/AWL/PL); set to j1939_buildLampStatusByte() when faults pending else 0; tx_buf_ptr points here
+0x003fab78,j1939_dm1_lamp_status,byte,byte 0 of the DM1 (PGN 65226) TX payload = lamp status (MIL/RSL/AWL/PL); set to j1939_buildLampStatusByte() when faults pending else 0; transmit_frame_pointer points here
 0x003fab79,j1939_dm1_flash_lamp_status,byte,byte 1 of the DM1 (PGN 65226) TX payload = flash lamp status; initialized to 0xff (not available) in cm848_initPgn65226Dm1Handler
 0x003fab7a,j1939_dm1_dtc_mask_working,dword,
 0x003fab7d,j1939_dm1_dtc_mask_working+3,,
@@ -2573,12 +2573,12 @@ address,name,type,comment
 0x003fe058,engine_overspeed_log_index_cal,word,Record (0-4) of engine_overspeed_log_cal being written; advances modulo 5 when an overspeed event ends (lhz @ 0x1c348 / 0x1c374 / 0x1c3a0 / 0x1c428 / 0x1c43c / 0x1c45c, sth @ 0x1c464 / 0x1c47c); EEPROM mirror (EEPROM 0xbd6), so _cal; e2m ES_Calc_Overspeed_Error_Log_Index (DGRPOSIN, 0x0110DA7A = log + 0x7a). 0 in the dumps (was fault_rpm_log_index)
 0x003fe05a,active_dtc_list_cal,dtc_list_t,Active DTC list: a count byte + 31 fault slots (1-based loops from the count) (was active_dtc_count) (was active_dtc_count) | earlier note: Number of entries (max 31) in active_dtc_list_cal.slots = faults present now: J1939 DM1 (PGN 65226) sends this list and DM5 byte 1 (active DTC count) is this value; 2 in the dump (was pending_fault_count)
 0x003fe07a,previously_active_dtc_list_cal,dtc_list_t,Previously active DTC list (same layout) (was previously_active_dtc_count) (was previously_active_dtc_count) | earlier note: Number of entries (max 31) in previously_active_dtc_list_cal.slots = faults that were present and cleared: J1939 DM2 (PGN 65227) sends this list and DM5 byte 2 (previously active count) is this value (was active_fault_count)
-0x003fe09a,fault_pending_counter_array,word[32], | retyped word -> word[32] 2026-11-18
+0x003fe09a,active_dtc_cummins_fault_codes_cal,word[32],e2m 1097 +40 Active_Fault_Service_Code_Buffer 'storage for three digit service code for 31 active faults' (HEX): Cummins fault codes of the active DTC list (word[32], EEPROM mirror): [0] counts with active_dtc_list_cal.count and [n] holds the fault_definition_table cummins_fault_code of active_dtc_list_cal.slots[n - 1] (the list updates in cm848_processFaultScanGroup and its removers); the twin of previously_active_dtc_cummins_fault_codes_cal. No pending fault counter (was fault_pending_counter_array) | earlier note:  | retyped word -> word[32] 2026-11-18
 0x003fe0da,previously_active_dtc_cummins_fault_codes_cal,word[32],Cummins fault codes of the previously active DTC list (was emission_fault_count) (was emission_fault_count)
-0x003fe11a,fault_list_state_t_003fe11a,fault_list_state_t,
-0x003fe11c,fault_list_state_t_003fe11a.read_index,,
-0x003fe11e,fault_list_state_t_003fe11a.emission_count,,
-0x003fe120,fault_list_state_t_003fe11a.total_emission_faults,,
+0x003fe11a,j1587_fault_count_data_cal,j1587_fault_count_data_t,e2m 1097 +C0 J1587_Fault_Count_Data 'Data used by J1587 and Fault Handler to keep track of fault counts' (UNITLESS): The fault counts the J1587 link and the fault handler keep (j1587_fault_count_data_t, EEPROM mirror): the active and previously active fault counts (they move with active_dtc_list_cal.count / previously_active_dtc_list_cal.count) and the same two counts for the faults whose definition flag 0x2000 is clear (was fault_list_state_t_003fe11a)
+0x003fe11c,j1587_fault_count_data_cal.previously_active_fault_count,,
+0x003fe11e,j1587_fault_count_data_cal.emission_count,,
+0x003fe120,j1587_fault_count_data_cal.total_emission_faults,,
 0x003fe122,fault_list_iteration_counter,word,
 0x003fe197,,pointer,
 0x003fe1ce,fault_state_records_cal,fault_state_t[170],One 7-byte state record per fault slot: timestamp / debounce count / status / timer (were four parallel arrays fault_timestamp_array / fault_entry_debounce_array / fault_entry_status_array / fault_timer_array) (was fault_timestamp_array)
@@ -2655,13 +2655,13 @@ address,name,type,comment
 0x003fec7a,data_transfer_target_address,dword,
 0x003fec7e,data_transfer_write_index,word,
 0x003fec80,data_transfer_read_index,word,
-0x003fec82,data_transfer_state_t_003fec82,data_transfer_state_t,
-0x003fec84,data_transfer_state_t_003fec82.buffer_write_enabled_flag,,
-0x003fec86,data_transfer_state_t_003fec82.largest_write_length,,
-0x003fec8a,data_transfer_state_t_003fec82.pending_write_transport,,
-0x003fec8b,data_transfer_state_t_003fec82.finish_requested_flag,,
-0x003fec8c,data_transfer_state_t_003fec82.flash_program_step,,
-0x003fec8d,data_transfer_state_t_003fec82.flash2_erase_state,,
+0x003fec82,reflash_transfer_state,reflash_transfer_state_t,The reflash download state of the boot ROM and the boot reflash kernel (reflash_transfer_state_t): the transfer buffer's byte count and write enable, the largest write, the pending write's transport (1 CAN / 2 serial), the finish request, the flash program step (cm848_runFlashProgramStateMachine) and the Bank 2 erase state. Boot and kernel working state, no _cal (was data_transfer_state_t_003fec82)
+0x003fec84,reflash_transfer_state.buffer_write_enabled_flag,,
+0x003fec86,reflash_transfer_state.largest_write_length,,
+0x003fec8a,reflash_transfer_state.pending_write_transport,,
+0x003fec8b,reflash_transfer_state.finish_requested_flag,,
+0x003fec8c,reflash_transfer_state.flash_program_step,,
+0x003fec8d,reflash_transfer_state.flash2_erase_state,,
 0x003fec8e,data_transfer_buffer_status,byte,
 0x003fec8f,cmf_pulse_step_index,byte,
 0x003fec90,cmf_control_block_select,dword,CMFCTL base | 0x8000 >> block
@@ -2675,9 +2675,9 @@ address,name,type,comment
 0x003fecb5,qadc_active_port_ptr+3,,
 0x003fecb6,diagnostic_callback_ptr,pointer,
 0x003fecba,diag_serial_transfer_phase,dword,
-0x003fecbe,diag_session_state_t_003fecbe,diag_session_state_t,
-0x003fecbf,diag_session_state_t_003fecbe.response_write_index,,
-0x003fecc0,diag_session_state_t_003fecbe.response_cursor_pointer,,
+0x003fecbe,boot_sci_session_state,boot_sci_session_state_t,The boot ROM's SCI diagnostic session (boot_sci_session_state_t): session flags, the response write index and the cursor into the serial response buffer. Every user is boot ROM (below 0x3c30) or boot kernel code, so this RAM is their working state, not an EEPROM-backed value (no _cal) (was diag_session_state_t_003fecbe)
+0x003fecbf,boot_sci_session_state.response_write_index,,
+0x003fecc0,boot_sci_session_state.response_cursor_pointer,,
 0x003fecc4,boot_sci_security_state,byte,Boot ROM SCI security state: 0 locked / 1 unlocked (cm848_bootSciCheckSecurityKey accepted the key, or mpc555_initDiagnosticSession found serial_reflash_unlock_request_cal set by the application's SCI command 49) / 2 locked out (a key request after 3 wrong keys). While it is 1 mpc555_generateSerialChallenge sends seed 0 and boot SCI command 0x31 (cm848_processDiagnosticSessionFlags) can set session_flags bits 0-1. Only the boot ROM uses it; at run time this byte is the EEPROM mirror of offset 0x1842 (0 in both dumps). Was ram_refresh_enable, the name of the application's session state at 0x40c04a
 0x003fecc5,diag_request_pending_flag,undefined1,
 0x003fecc6,serial_response_crc_expected,word,

@@ -759,7 +759,7 @@ extern can_slot_range_t can_mailbox_counter;  // 0x00302510
 extern can_rx_channel_t can_rx_channel_filter;  // 0x0030251c
 extern eeprom_param_t eeprom_diag_callback;  // 0x0030252a
 extern byte flash2_writes_enabled;  // 0x00302731
-extern sys_init_flags_t sys_init_flags_t_00302736;  // 0x00302736
+extern system_initialization_flags_t system_initialization_flags;  // 0x00302736
 extern byte eeprom_service_mode_flags;  // 0x00302877
 extern eeprom_xfer_state_t eeprom_xfer_state;  // 0x00302878
 extern undefined qadc_a_result_ch4;  // 0x0030287c
@@ -771,7 +771,7 @@ extern undefined qadc_a_result_ch28;  // 0x003028ad
 extern undefined qadc_a_result_ch30;  // 0x003028b1
 extern byte qadc_a_queue_status_1;  // 0x00302903
 extern byte qadc_a_active_channel_id;  // 0x00302904
-extern j1939_tp_queue_t j1939_tp_queue_t_00302905;  // 0x00302905
+extern j1939_transport_transmit_session_t boot_j1939_transport_transmit_session;  // 0x00302905
 extern undefined qadc_a_queue_status_2;  // 0x00302907
 extern undefined qadc_a_range_start;  // 0x00302908
 extern undefined qadc_a_queue_ptr;  // 0x00302909
@@ -964,7 +964,7 @@ extern byte QSMCM_SC2DR;  // 0x00305026
 extern byte QSMCM_COMD0;  // 0x00305030
 extern byte QSMCM_RECRAM0;  // 0x00305040
 extern byte QSMCM_TRANRAM0;  // 0x00305060
-extern qsmcm_recram_t qsmcm_recram_t_00305140;  // 0x00305140
+extern qsmcm_recram_t qsmcm_recram;  // 0x00305140
 extern qsmcm_txram_t qsmcm_tranram;  // 0x00305180
 extern undefined eeprom_address_register;  // 0x00305182
 extern undefined eeprom_data_register;  // 0x00305184
@@ -2357,9 +2357,9 @@ extern word engine_overspeed_log_entry_open_flag_cal;  // 0x003fe056
 extern word engine_overspeed_log_index_cal;  // 0x003fe058
 extern dtc_list_t active_dtc_list_cal;  // 0x003fe05a
 extern dtc_list_t previously_active_dtc_list_cal;  // 0x003fe07a
-extern word fault_pending_counter_array[32];  // 0x003fe09a
+extern word active_dtc_cummins_fault_codes_cal[32];  // 0x003fe09a
 extern word previously_active_dtc_cummins_fault_codes_cal[32];  // 0x003fe0da
-extern fault_list_state_t fault_list_state_t_003fe11a;  // 0x003fe11a
+extern j1587_fault_count_data_t j1587_fault_count_data_cal;  // 0x003fe11a
 extern word fault_list_iteration_counter;  // 0x003fe122
 extern fault_state_t fault_state_records_cal[170];  // 0x003fe1ce
 extern fault_entry_t fault_freeze_frame_entries_cal[16];  // 0x003fe674
@@ -2417,7 +2417,7 @@ extern word tsc1_lost_management_maximum_accelerator_pedal_cal;  // 0x003feb90
 extern dword data_transfer_target_address;  // 0x003fec7a
 extern word data_transfer_write_index;  // 0x003fec7e
 extern word data_transfer_read_index;  // 0x003fec80
-extern data_transfer_state_t data_transfer_state_t_003fec82;  // 0x003fec82
+extern reflash_transfer_state_t reflash_transfer_state;  // 0x003fec82
 extern byte data_transfer_buffer_status;  // 0x003fec8e
 extern byte cmf_pulse_step_index;  // 0x003fec8f
 extern dword cmf_control_block_select;  // 0x003fec90
@@ -2430,7 +2430,7 @@ extern void * cmf_active_control_register;  // 0x003fecae
 extern void * cmf_active_test_register;  // 0x003fecb2
 extern void * diagnostic_callback_ptr;  // 0x003fecb6
 extern dword diag_serial_transfer_phase;  // 0x003fecba
-extern diag_session_state_t diag_session_state_t_003fecbe;  // 0x003fecbe
+extern boot_sci_session_state_t boot_sci_session_state;  // 0x003fecbe
 extern byte boot_sci_security_state;  // 0x003fecc4
 extern undefined1 diag_request_pending_flag;  // 0x003fecc5
 extern word serial_response_crc_expected;  // 0x003fecc6

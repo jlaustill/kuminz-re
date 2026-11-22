@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 05:36:34 MST 2026
+// Generated: Sun Nov 22 05:45:38 MST 2026
 
 
 //
@@ -592,7 +592,7 @@ void mpc555_eepromWriteWords(dword dest_address,word *src_ptr,word word_count)
       } while ((bVar2 & 0x80) == 0);
       bVar2 = qsmcm_qspi.SPSR;
       qsmcm_qspi.SPSR = bVar2 & 0x7f;
-      wVar1 = qsmcm_recram_t_00305140.RX1;
+      wVar1 = qsmcm_recram.RX1;
       mpc555_sciPollDuringEepromWrite();
       mpc555_runPacedSerialService();
       cm848_serviceSupervisorWatchdog();
@@ -635,7 +635,7 @@ void mpc555_eepromReadWords(word param_1,word *param_2,uint param_3)
     } while ((bVar2 & 0x80) == 0);
     bVar2 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar2 & 0x7f;
-    wVar1 = qsmcm_recram_t_00305140.RX2;
+    wVar1 = qsmcm_recram.RX2;
     *param_2 = wVar1;
     param_2 = param_2 + 1;
     mpc555_sciDispatchByTransferPhase();
@@ -824,11 +824,11 @@ short cm848_flashEraseChip(void)
   ushort unaff_r21;
   
   bVar2 = flash2_writes_enabled;
-  if ((bVar2 == 0) || (data_transfer_state_t_003fec82.flash2_erase_state == 3)) {
+  if ((bVar2 == 0) || (reflash_transfer_state.flash2_erase_state == 3)) {
     sVar3 = 1;
   }
   else {
-    data_transfer_state_t_003fec82.flash2_erase_state = 2;
+    reflash_transfer_state.flash2_erase_state = 2;
     do {
                     /* WARNING: Read-only address (ram,0x00500aaa) is written */
                     /* WARNING: Read-only address (ram,0x00500554) is written */
@@ -844,7 +844,7 @@ short cm848_flashEraseChip(void)
       unaff_r21 = unaff_r21 + 1;
     } while (bVar1);
     if (sVar3 != 0) {
-      data_transfer_state_t_003fec82.flash2_erase_state = 3;
+      reflash_transfer_state.flash2_erase_state = 3;
     }
   }
   return sVar3;
@@ -891,7 +891,7 @@ undefined4 cm848_flashWriteBlock(int param_1,int param_2,uint param_3)
   
   bVar1 = flash2_writes_enabled;
   if (bVar1 != 0) {
-    data_transfer_state_t_003fec82.flash2_erase_state = 1;
+    reflash_transfer_state.flash2_erase_state = 1;
     uVar4 = (int)param_3 >> 1;
     if ((param_3 & 1) != 0) {
       uVar4 = uVar4 + 1;
@@ -981,8 +981,8 @@ void mpc555_initHardwareConfig(void)
     qadc_sample_rate_cal = 48000;
     protection_event_output_polarity_bits_cal._2_2_ = 8;
   }
-  if (data_transfer_state_t_003fec82.flash2_erase_state == 0) {
-    data_transfer_state_t_003fec82.flash2_erase_state = 1;
+  if (reflash_transfer_state.flash2_erase_state == 0) {
+    reflash_transfer_state.flash2_erase_state = 1;
   }
   memory_scan_pointer = (undefined *)0x0;
   cmf_erase_pulse_total = 0;
@@ -990,17 +990,17 @@ void mpc555_initHardwareConfig(void)
   flash_poll_timeout_cal = 200;
   flash_poll_retry_limit_cal = 3;
   data_transfer_retry_count = 0x32;
-  data_transfer_state_t_003fec82.byte_count = 0;
+  reflash_transfer_state.byte_count = 0;
   data_transfer_buffer_status = 0;
   data_transfer_target_address = 0;
   data_transfer_write_index = 0;
   data_transfer_read_index = 0;
-  if (data_transfer_state_t_003fec82.flash_program_step == 0) {
-    data_transfer_state_t_003fec82.buffer_write_enabled_flag = 1;
-    data_transfer_state_t_003fec82.flash_program_step = 2;
+  if (reflash_transfer_state.flash_program_step == 0) {
+    reflash_transfer_state.buffer_write_enabled_flag = 1;
+    reflash_transfer_state.flash_program_step = 2;
   }
-  data_transfer_state_t_003fec82.pending_write_transport = 0;
-  data_transfer_state_t_003fec82.finish_requested_flag = 0;
+  reflash_transfer_state.pending_write_transport = 0;
+  reflash_transfer_state.finish_requested_flag = 0;
   eeprom_xfer_state.flash2_write_callback = 0x1338;
   wVar1 = mios_mpiosm32.data;
   mios_mpiosm32.data = wVar1 & 0xfdff;
@@ -1471,7 +1471,7 @@ undefined1 cm848_diagService76_memoryReadExt(dword request_msg)
 void mpc555_initDiagResponseHandlers(void)
 
 {
-  j1939_tp_queue_t_00302905.tx_buf_ptr = 0x30306d;
+  boot_j1939_transport_transmit_session.transmit_frame_pointer = 0x30306d;
   j1939_tp_pause_state.rx_buf_ptr = 0x303075;
   cm848_registerPgnResponseHandler(0xec00,&DAT_003fbe5c);
   cm848_registerPgnResponseHandler(0xeb00,&DAT_003fbbb4);
@@ -1501,7 +1501,7 @@ void cm848_diagSendResponseCode(byte response_code,dword negative_response_id)
     diag_serial_buffer[1] = diag_serial_buffer[(negative_response_id == 0x74) + 0x20];
   }
   diag_serial_buffer[3] = 0;
-  diag_session_state_t_003fecbe.response_write_index = 4;
+  boot_sci_session_state.response_write_index = 4;
   diagnostic_callback_ptr = mpc555_processDiagnosticAndEepromRequests;
   diag_serial_buffer[2] = response_code;
   mpc555_sciStartResponseTransmit();
@@ -1525,8 +1525,8 @@ void mpc555_processDiagnosticAndEepromRequests(void)
   
   mpc555_sciValidateChecksum();
   cm848_processDiagnosticTimeout();
-  if ((diag_request_pending_flag != '\x01') ||
-     ((diag_session_state_t_003fecbe.session_flags & 1) == 0)) goto LAB_000020ac;
+  if ((diag_request_pending_flag != '\x01') || ((boot_sci_session_state.session_flags & 1) == 0))
+  goto LAB_000020ac;
   if (diag_serial_buffer[0x20] == 0x34) {
     bVar1 = eeprom_service_mode_flags;
     if ((bVar1 & 0x80) != 0) {
@@ -1651,25 +1651,24 @@ void mpc555_initDiagnosticSession(void)
   boot_sci_key_retry_delay = 0;
   if (eeprom_shadow_header.serial_reflash_unlock_request == 0) {
     cm848_installBootSciDispatcher();
-    diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags & 0xfc
-    ;
+    boot_sci_session_state.session_flags = boot_sci_session_state.session_flags & 0xfc;
     diag_serial_crc_match_flag = 0;
     boot_sci_security_state = 0;
     diag_serial_transfer_phase = 0;
-    diag_session_state_t_003fecbe.response_write_index = 0;
-    diag_session_state_t_003fecbe.response_cursor_pointer = diag_serial_buffer;
+    boot_sci_session_state.response_write_index = 0;
+    boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
     qsmcm_sccr1.SCC1R0 = 0xa0;
     qsmcm_sccr1.SCC1R1 = 0x102c;
   }
   else {
     local_8[0] = 0;
     mpc555_eepromWriteWords((dword)local_8,&serial_reflash_unlock_request_cal,2);
-    diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 1;
+    boot_sci_session_state.session_flags = boot_sci_session_state.session_flags | 1;
     boot_sci_security_state = 1;
     diag_serial_transfer_phase = 2;
     cm848_initDiagnosticCallback();
-    diag_session_state_t_003fecbe.response_write_index = 0;
-    diag_session_state_t_003fecbe.response_cursor_pointer = diag_serial_buffer;
+    boot_sci_session_state.response_write_index = 0;
+    boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
     qsmcm_sccr1.SCC1R0 = 0x14;
     qsmcm_sccr1.SCC1R1 = 0x102c;
     cm848_setDataTransferMode();
@@ -1874,8 +1873,8 @@ void mpc555_systemInitialization(void)
   cm848_stubFunction2();
   mpc555_initCanController();
   ecu_power_state_flags.state = 0;
-  sys_init_flags_t_00302736.init_sentinel = 0xbbbb;
-  sys_init_flags_t_00302736.init_counter = 0;
+  system_initialization_flags.initialization_sentinel = 0xbbbb;
+  system_initialization_flags.initialization_counter = 0;
   mpc555_eepromReadWords(&eeprom_config_block,0x3fee12,4);
   mpc555_loadRuntimeCounterFromEepromShadow();
   mpc555_eepromReadWords(&eeprom_serial_number,0x3fee16,2);
@@ -2227,8 +2226,7 @@ void cm848_pumpDiagnosticCallback(void)
 
 {
   cm848_decrementDiagnosticTimeout();
-  if ((diag_request_pending_flag == '\x01') &&
-     ((diag_session_state_t_003fecbe.session_flags & 1) == 0)) {
+  if ((diag_request_pending_flag == '\x01') && ((boot_sci_session_state.session_flags & 1) == 0)) {
     cm848_enableDiagnosticTimer();
     (*(code *)diagnostic_callback_ptr)();
     diag_request_pending_flag = '\0';
@@ -2259,7 +2257,7 @@ void cm848_dispatchBootSciDiagnosticCommand(void)
   bVar1 = false;
   uVar2 = 0;
   do {
-    if (*diag_session_state_t_003fecbe.response_cursor_pointer == (&DAT_00007f7a)[uVar2 * 5]) {
+    if (*boot_sci_session_state.response_cursor_pointer == (&DAT_00007f7a)[uVar2 * 5]) {
       (**(code **)((int)&eepromStatusHandler_ptr0 + uVar2 * 5))();
       bVar1 = true;
     }
@@ -2307,9 +2305,8 @@ void mpc555_sciBeginUnchecksummedResponseTransmit(void)
 {
   word wVar1;
   
-  diag_session_state_t_003fecbe.response_write_index =
-       diag_session_state_t_003fecbe.response_write_index - 1;
-  diag_session_state_t_003fecbe.response_cursor_pointer = diag_serial_buffer;
+  boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index - 1;
+  boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
   wVar1 = qsmcm_sccr1.SC1SR;
   qsmcm_sccr1.SC1DR = (ushort)diag_serial_buffer[0];
   mpc555_sciEnableTransmitInterrupt();
@@ -2331,9 +2328,8 @@ void mpc555_sciReceiveRequestByte(void)
   if ((wVar1 & 0x40) != 0) {
     if ((((wVar1 & 4) == 0) && ((wVar1 & 8) == 0)) && ((wVar1 & 2) == 0)) {
       wVar1 = qsmcm_sccr1.SC1DR;
-      diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = (byte)wVar1;
-      diag_session_state_t_003fecbe.response_write_index =
-           diag_session_state_t_003fecbe.response_write_index + 1;
+      diag_serial_buffer[boot_sci_session_state.response_write_index] = (byte)wVar1;
+      boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index + 1;
       diag_request_pending_flag = 1;
       wVar1 = qsmcm_sccr1.SCC1R1;
       qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
@@ -2358,25 +2354,24 @@ void mpc555_sciTransmitResponseByte(void)
   
   wVar1 = qsmcm_sccr1.SC1SR;
   if ((wVar1 & 0x80) != 0) {
-    if (diag_session_state_t_003fecbe.response_write_index == 0) {
-      if ((diag_session_state_t_003fecbe.session_flags & 2) == 0) {
+    if (boot_sci_session_state.response_write_index == 0) {
+      if ((boot_sci_session_state.session_flags & 2) == 0) {
         wVar1 = 0xa0;
       }
       else {
         wVar1 = 0x14;
       }
       qsmcm_sccr1.SCC1R0 = wVar1;
-      if ((diag_session_state_t_003fecbe.session_flags & 1) != 0) {
+      if ((boot_sci_session_state.session_flags & 1) != 0) {
         cm848_setDataTransferMode();
       }
       mpc555_sciResetToReceiveRequest();
     }
     else {
-      diag_session_state_t_003fecbe.response_write_index =
-           diag_session_state_t_003fecbe.response_write_index - 1;
-      diag_session_state_t_003fecbe.response_cursor_pointer =
-           diag_session_state_t_003fecbe.response_cursor_pointer + 1;
-      qsmcm_sccr1.SC1DR = (ushort)(byte)*diag_session_state_t_003fecbe.response_cursor_pointer;
+      boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index - 1;
+      boot_sci_session_state.response_cursor_pointer =
+           boot_sci_session_state.response_cursor_pointer + 1;
+      qsmcm_sccr1.SC1DR = (ushort)(byte)*boot_sci_session_state.response_cursor_pointer;
     }
   }
   return;
@@ -2426,8 +2421,8 @@ void mpc555_sciDispatchByTransferPhase(void)
 void cm848_resetEepromStatusPointer(void)
 
 {
-  diag_session_state_t_003fecbe.response_write_index = 0;
-  diag_session_state_t_003fecbe.response_cursor_pointer = diag_serial_buffer;
+  boot_sci_session_state.response_write_index = 0;
+  boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
   return;
 }
 
@@ -2503,11 +2498,10 @@ void cm848_processDiagnosticResponseCallback(void)
   byte *pbVar1;
   
   pbVar1 = (byte *)cm848_lookupEepromParameterAddress
-                             (*diag_session_state_t_003fecbe.response_cursor_pointer);
+                             (*boot_sci_session_state.response_cursor_pointer);
   if (pbVar1 != (byte *)0x0) {
-    diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = *pbVar1;
-    diag_session_state_t_003fecbe.response_write_index =
-         diag_session_state_t_003fecbe.response_write_index + 1;
+    diag_serial_buffer[boot_sci_session_state.response_write_index] = *pbVar1;
+    boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index + 1;
   }
   diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
   cm848_processTimerInterrupt();
@@ -2545,12 +2539,12 @@ void mpc555_generateSerialChallenge(void)
   }
   dVar2 = crc16_working_value;
   bVar3 = (byte)(crc16_working_value >> 8);
-  diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = bVar3;
-  uVar1 = diag_session_state_t_003fecbe.response_write_index + 1 & 0xff;
+  diag_serial_buffer[boot_sci_session_state.response_write_index] = bVar3;
+  uVar1 = boot_sci_session_state.response_write_index + 1 & 0xff;
   diag_serial_buffer[uVar1] = (byte)dVar2;
   write_pos = uVar1 + 1;
   diag_serial_buffer[write_pos & 0xff] = bVar3 + 0x2b + (byte)dVar2;
-  diag_session_state_t_003fecbe.response_write_index = (char)write_pos + 1;
+  boot_sci_session_state.response_write_index = (char)write_pos + 1;
   diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
   cm848_processTimerInterrupt();
   mpc555_sciBeginUnchecksummedResponseTransmit();
@@ -2612,15 +2606,15 @@ void cm848_bootSciCheckSecurityKey(void)
   
   *(undefined *)
    ((int)&oil_change_monitor_distance_pulses_cal + oil_change_monitor_distance_pulses_cal._0_1_ + 1)
-       = *diag_session_state_t_003fecbe.response_cursor_pointer;
+       = *boot_sci_session_state.response_cursor_pointer;
   uVar1 = oil_change_monitor_distance_pulses_cal._0_1_ + 1;
   oil_change_monitor_distance_pulses_cal._0_1_ = (byte)uVar1;
   if (2 < (uVar1 & 0xff)) {
     if ((char)((char)oil_change_monitor_distance_pulses_cal + DAT_003fee3c + ',') == DAT_003fee3d) {
       if (boot_sci_security_state == 1) {
-        diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 0;
-        diag_session_state_t_003fecbe.response_write_index =
-             diag_session_state_t_003fecbe.response_write_index + 1;
+        diag_serial_buffer[boot_sci_session_state.response_write_index] = 0;
+        boot_sci_session_state.response_write_index =
+             boot_sci_session_state.response_write_index + 1;
       }
       else if ((boot_sci_failed_key_count < 3) && (boot_sci_security_state != 2)) {
         if (boot_sci_key_retry_delay == 0) {
@@ -2630,36 +2624,35 @@ void cm848_bootSciCheckSecurityKey(void)
           if (diag_serial_crc_match_flag == 0) {
             boot_sci_failed_key_count = boot_sci_failed_key_count + 1;
             boot_sci_key_retry_delay = 1000;
-            diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 1;
-            diag_session_state_t_003fecbe.response_write_index =
-                 diag_session_state_t_003fecbe.response_write_index + 1;
+            diag_serial_buffer[boot_sci_session_state.response_write_index] = 1;
+            boot_sci_session_state.response_write_index =
+                 boot_sci_session_state.response_write_index + 1;
           }
           else {
             boot_sci_failed_key_count = 0;
             boot_sci_key_retry_delay = 0;
             boot_sci_security_state = 1;
-            diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 0;
-            diag_session_state_t_003fecbe.response_write_index =
-                 diag_session_state_t_003fecbe.response_write_index + 1;
+            diag_serial_buffer[boot_sci_session_state.response_write_index] = 0;
+            boot_sci_session_state.response_write_index =
+                 boot_sci_session_state.response_write_index + 1;
           }
         }
         else {
-          diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 2;
-          diag_session_state_t_003fecbe.response_write_index =
-               diag_session_state_t_003fecbe.response_write_index + 1;
+          diag_serial_buffer[boot_sci_session_state.response_write_index] = 2;
+          boot_sci_session_state.response_write_index =
+               boot_sci_session_state.response_write_index + 1;
         }
       }
       else {
         boot_sci_security_state = 2;
-        diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 3;
-        diag_session_state_t_003fecbe.response_write_index =
-             diag_session_state_t_003fecbe.response_write_index + 1;
+        diag_serial_buffer[boot_sci_session_state.response_write_index] = 3;
+        boot_sci_session_state.response_write_index =
+             boot_sci_session_state.response_write_index + 1;
       }
     }
     else {
-      diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index] = 2;
-      diag_session_state_t_003fecbe.response_write_index =
-           diag_session_state_t_003fecbe.response_write_index + 1;
+      diag_serial_buffer[boot_sci_session_state.response_write_index] = 2;
+      boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index + 1;
     }
     diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
     cm848_processTimerInterrupt();
@@ -2699,9 +2692,9 @@ void cm848_initDiagnosticSessionHandler(void)
 void cm848_processDiagnosticSessionFlags(void)
 
 {
-  if ((*diag_session_state_t_003fecbe.response_cursor_pointer == '\x01') &&
-     (boot_sci_security_state == 1)) {
-    diag_session_state_t_003fecbe.session_flags = diag_session_state_t_003fecbe.session_flags | 3;
+  if ((*boot_sci_session_state.response_cursor_pointer == '\x01') && (boot_sci_security_state == 1))
+  {
+    boot_sci_session_state.session_flags = boot_sci_session_state.session_flags | 3;
     cm848_processTimerInterrupt();
     mpc555_sciBeginUnchecksummedResponseTransmit();
   }
@@ -2733,7 +2726,7 @@ void cm848_sendDiagnosticResponse(void)
     diag_serial_buffer[uVar1] = (&DAT_00007f94)[uVar1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 6);
-  diag_session_state_t_003fecbe.response_write_index = 6;
+  boot_sci_session_state.response_write_index = 6;
   diagnostic_callback_ptr = cm848_dispatchBootSciDiagnosticCommand;
   cm848_processTimerInterrupt();
   mpc555_sciBeginUnchecksummedResponseTransmit();
@@ -3193,7 +3186,7 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
   uint uVar3;
   undefined1 *puVar4;
   
-  if (data_transfer_state_t_003fec82.buffer_write_enabled_flag == 0) {
+  if (reflash_transfer_state.buffer_write_enabled_flag == 0) {
     data_transfer_buffer_status = 0;
     uVar2 = 1;
   }
@@ -3203,11 +3196,11 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
     }
     bVar1 = eeprom_service_mode_flags;
     eeprom_service_mode_flags = bVar1 | param_5;
-    if ((int)(uint)data_transfer_state_t_003fec82.largest_write_length < (int)param_3) {
-      data_transfer_state_t_003fec82.largest_write_length = (word)param_3;
+    if ((int)(uint)reflash_transfer_state.largest_write_length < (int)param_3) {
+      reflash_transfer_state.largest_write_length = (word)param_3;
     }
-    uVar3 = (uint)data_transfer_state_t_003fec82.byte_count;
-    data_transfer_state_t_003fec82.byte_count = (word)(uVar3 + param_3);
+    uVar3 = (uint)reflash_transfer_state.byte_count;
+    reflash_transfer_state.byte_count = (word)(uVar3 + param_3);
     if (((uVar3 + param_3 & 0xffff) < 0x1001) &&
        (cm848_serviceSupervisorWatchdog(), (param_3 & 0xffff) != 0)) {
       puVar4 = (undefined1 *)(param_1 + -1);
@@ -3219,29 +3212,29 @@ cm848_dataTransferBufferWrite(int param_1,dword param_2,uint param_3,int param_4
         param_3 = param_3 + 0xffff;
       } while ((param_3 & 0xffff) != 0);
     }
-    if (data_transfer_state_t_003fec82.byte_count < 0x1001) {
+    if (reflash_transfer_state.byte_count < 0x1001) {
       if (param_4 == 0) {
-        if ((uint)data_transfer_state_t_003fec82.byte_count +
-            (uint)data_transfer_state_t_003fec82.largest_write_length < 0x1001) {
+        if ((uint)reflash_transfer_state.byte_count +
+            (uint)reflash_transfer_state.largest_write_length < 0x1001) {
           data_transfer_buffer_status = 1;
           uVar2 = 0;
         }
         else {
           data_transfer_buffer_status = 2;
           uVar2 = 2;
-          data_transfer_state_t_003fec82.pending_write_transport = param_5;
+          reflash_transfer_state.pending_write_transport = param_5;
         }
       }
       else {
         data_transfer_buffer_status = 3;
         uVar2 = 2;
         data_transfer_active_flag = 1;
-        data_transfer_state_t_003fec82.pending_write_transport = param_5;
+        reflash_transfer_state.pending_write_transport = param_5;
       }
     }
     else {
       data_transfer_buffer_status = 5;
-      data_transfer_state_t_003fec82.byte_count = 0x1000;
+      reflash_transfer_state.byte_count = 0x1000;
       uVar2 = 1;
     }
   }
@@ -3269,8 +3262,8 @@ void cm848_fillFlashProgramPageBuffer(void)
   
   uVar1 = data_transfer_target_address & 0x3f;
   data_transfer_current_ptr = (undefined *)(data_transfer_target_address - uVar1);
-  if (data_transfer_state_t_003fec82.byte_count < 0x40) {
-    uVar3 = data_transfer_state_t_003fec82.byte_count & 0xff;
+  if (reflash_transfer_state.byte_count < 0x40) {
+    uVar3 = reflash_transfer_state.byte_count & 0xff;
   }
   else {
     uVar3 = 0x40;
@@ -3290,8 +3283,7 @@ void cm848_fillFlashProgramPageBuffer(void)
     data_transfer_read_index = (short)uVar4 + (short)((int)(uVar4 & 0xffff) >> 0xc) * -0x1000;
     mpc555_sciPollDuringEepromWrite();
   }
-  data_transfer_state_t_003fec82.byte_count =
-       data_transfer_state_t_003fec82.byte_count - ((ushort)uVar2 & 0xff);
+  reflash_transfer_state.byte_count = reflash_transfer_state.byte_count - ((ushort)uVar2 & 0xff);
   data_transfer_target_address = data_transfer_target_address + (uVar2 & 0xff);
   return;
 }
@@ -3312,14 +3304,14 @@ void cm848_completePendingDiagWrite(void)
 {
   dword dVar1;
   
-  if (data_transfer_state_t_003fec82.pending_write_transport == 2) {
+  if (reflash_transfer_state.pending_write_transport == 2) {
     eeprom_calibration_pending_flag = 0;
   }
-  else if ((data_transfer_state_t_003fec82.pending_write_transport == 1) &&
+  else if ((reflash_transfer_state.pending_write_transport == 1) &&
           (dVar1 = diag_write_request_state.pending_request, dVar1 != 0)) {
     cm848_sendDiagServiceResponse(dVar1,0);
   }
-  data_transfer_state_t_003fec82.pending_write_transport = 0;
+  reflash_transfer_state.pending_write_transport = 0;
   return;
 }
 
@@ -3539,21 +3531,21 @@ void cm848_runFlashProgramStateMachine(void)
   short sVar3;
   
   puVar2 = data_transfer_current_ptr;
-  if ((char)data_transfer_state_t_003fec82.flash_program_step < '\x04') {
-    if (data_transfer_state_t_003fec82.flash_program_step == 3) {
+  if ((char)reflash_transfer_state.flash_program_step < '\x04') {
+    if (reflash_transfer_state.flash_program_step == 3) {
       if (data_transfer_buffer_status != 5) {
-        if ((0x40 < data_transfer_state_t_003fec82.byte_count) ||
-           ((data_transfer_state_t_003fec82.byte_count != 0 &&
+        if ((0x40 < reflash_transfer_state.byte_count) ||
+           ((reflash_transfer_state.byte_count != 0 &&
             ((data_transfer_buffer_status == 3 || (data_transfer_buffer_status == 4)))))) {
           cm848_fillFlashProgramPageBuffer();
-          data_transfer_state_t_003fec82.flash_program_step = 4;
+          reflash_transfer_state.flash_program_step = 4;
           goto LAB_000049a0;
         }
-        if (data_transfer_state_t_003fec82.pending_write_transport == 0) goto LAB_000049a0;
+        if (reflash_transfer_state.pending_write_transport == 0) goto LAB_000049a0;
         goto LAB_00004928;
       }
     }
-    else if (data_transfer_state_t_003fec82.flash_program_step == 1) {
+    else if (reflash_transfer_state.flash_program_step == 1) {
       if ((*(uint *)cmf_active_control_register & 0x80000000) != 0) {
         return;
       }
@@ -3561,13 +3553,13 @@ void cm848_runFlashProgramStateMachine(void)
       sVar3 = mpc555_cmfScanRangeForNonzeroWords();
       if (sVar3 != 2) {
         mpc555_cmfEndHighVoltagePulse();
-        if ((data_transfer_active_flag != 0) && (data_transfer_state_t_003fec82.byte_count == 0)) {
-          if (data_transfer_state_t_003fec82.pending_write_transport != 0) {
+        if ((data_transfer_active_flag != 0) && (reflash_transfer_state.byte_count == 0)) {
+          if (reflash_transfer_state.pending_write_transport != 0) {
             cm848_completePendingDiagWrite();
             data_transfer_buffer_status = 0;
           }
           mpc555_cmfEndHighVoltagePulse();
-          data_transfer_state_t_003fec82.buffer_write_enabled_flag = 1;
+          reflash_transfer_state.buffer_write_enabled_flag = 1;
           data_transfer_active_flag = 0;
           goto LAB_0000497c;
         }
@@ -3575,51 +3567,51 @@ void cm848_runFlashProgramStateMachine(void)
       }
       sVar3 = mpc555_cmfApplyHighVoltagePulse();
       if (sVar3 != 0) {
-        data_transfer_state_t_003fec82.flash_program_step = 1;
+        reflash_transfer_state.flash_program_step = 1;
         goto LAB_000049a0;
       }
     }
-    else if (data_transfer_state_t_003fec82.flash_program_step == 2) {
+    else if (reflash_transfer_state.flash_program_step == 2) {
       if ((data_transfer_buffer_status == 0) || (data_transfer_buffer_status == 5))
       goto LAB_000049a0;
       mpc555_cmfRestoreNormalMode();
 LAB_00004854:
-      data_transfer_state_t_003fec82.flash_program_step = 3;
+      reflash_transfer_state.flash_program_step = 3;
       goto LAB_000049a0;
     }
   }
   else {
-    if (data_transfer_state_t_003fec82.flash_program_step == 4) {
+    if (reflash_transfer_state.flash_program_step == 4) {
       mpc555_cmfSelectBlockAndStartSequence((uint)data_transfer_current_ptr >> 0xf & 0xffff);
       mpc555_cmfLoadProgramPage(puVar2);
       mpc555_cmfApplyHighVoltagePulse();
-      data_transfer_state_t_003fec82.flash_program_step = 1;
-      if (((data_transfer_state_t_003fec82.pending_write_transport == 0) ||
+      reflash_transfer_state.flash_program_step = 1;
+      if (((reflash_transfer_state.pending_write_transport == 0) ||
           (data_transfer_buffer_status != 2)) ||
-         (data_transfer_state_t_003fec82.largest_write_length <
-          data_transfer_state_t_003fec82.byte_count)) goto LAB_000049a0;
+         (reflash_transfer_state.largest_write_length < reflash_transfer_state.byte_count))
+      goto LAB_000049a0;
 LAB_00004928:
       cm848_completePendingDiagWrite();
       data_transfer_buffer_status = 1;
       goto LAB_000049a0;
     }
-    if (data_transfer_state_t_003fec82.flash_program_step == 5) {
+    if (reflash_transfer_state.flash_program_step == 5) {
       if ((*(uint *)cmf_active_control_register & 0x80000000) != 0) goto LAB_000049a0;
       *(uint *)cmf_active_control_register = *(uint *)cmf_active_control_register & 0xfffffffe;
       mpc555_cmfEndHighVoltagePulse();
-      data_transfer_state_t_003fec82.buffer_write_enabled_flag = 0;
+      reflash_transfer_state.buffer_write_enabled_flag = 0;
       cm848_completePendingDiagWrite();
 LAB_0000497c:
-      data_transfer_state_t_003fec82.flash_program_step = 2;
+      reflash_transfer_state.flash_program_step = 2;
       bVar1 = eeprom_service_mode_flags;
       eeprom_service_mode_flags = bVar1 & 0xf0;
       goto LAB_000049a0;
     }
   }
-  data_transfer_state_t_003fec82.finish_requested_flag = 1;
+  reflash_transfer_state.finish_requested_flag = 1;
 LAB_000049a0:
-  if (data_transfer_state_t_003fec82.finish_requested_flag != 0) {
-    data_transfer_state_t_003fec82.flash_program_step = 5;
+  if (reflash_transfer_state.finish_requested_flag != 0) {
+    reflash_transfer_state.flash_program_step = 5;
   }
   return;
 }
@@ -3651,7 +3643,7 @@ bool mpc555_cmfEraseBlocks(uint param_1)
   uint uVar9;
   ushort uVar10;
   
-  data_transfer_state_t_003fec82.buffer_write_enabled_flag = 1;
+  reflash_transfer_state.buffer_write_enabled_flag = 1;
   wVar4 = mios_mpiosm32.data;
   mios_mpiosm32.data = wVar4 & 0xfdff | 0x8000;
   wVar4 = mios_mpiosm32.data_direction;
@@ -4491,40 +4483,44 @@ void mpc555_sendJ1939TransportRequestToSend
     if (bVar4 == 0) {
       qadc_a_queue_status_1 = 1;
       qadc_a_active_channel_id = bVar3;
-      j1939_tp_queue_t_00302905.session_pgn = *puVar1 & 0xff00;
-      j1939_tp_queue_t_00302905.total_bytes = msg_header->data_length;
-      j1939_tp_queue_t_00302905.queue_status2 = (char)((int)(msg_header->data_length - 1) / 7) + 1;
-      j1939_tp_queue_t_00302905.queue_ptr = 0;
-      j1939_tp_queue_t_00302905.data_buf_ptr = msg_header[1].can_id;
-      j1939_tp_queue_t_00302905.can_header = msg_header->can_id & 0xff00ffff | 0xec0000;
-      j1939_tp_queue_t_00302905.packet_size = 8;
-      j1939_tp_queue_t_00302905.retry_timer = 0x37;
-      j1939_tp_queue_t_00302905.state_ptr = *(dword *)&msg_header[1].data_length;
-      puVar6 = (undefined1 *)j1939_tp_queue_t_00302905.tx_buf_ptr;
+      boot_j1939_transport_transmit_session.transported_pgn = *puVar1 & 0xff00;
+      boot_j1939_transport_transmit_session.message_size = msg_header->data_length;
+      boot_j1939_transport_transmit_session.total_packet_count =
+           (char)((int)(msg_header->data_length - 1) / 7) + 1;
+      boot_j1939_transport_transmit_session.granted_packet_count = 0;
+      boot_j1939_transport_transmit_session.message_data_pointer = msg_header[1].can_id;
+      boot_j1939_transport_transmit_session.frame_can_id =
+           msg_header->can_id & 0xff00ffff | 0xec0000;
+      boot_j1939_transport_transmit_session.frame_data_length = 8;
+      boot_j1939_transport_transmit_session.timeout_timer = 0x37;
+      boot_j1939_transport_transmit_session.session_status_pointer =
+           *(dword *)&msg_header[1].data_length;
+      puVar6 = (undefined1 *)boot_j1939_transport_transmit_session.transmit_frame_pointer;
       *puVar6 = 0x10;
-      wVar5 = j1939_tp_queue_t_00302905.total_bytes;
+      wVar5 = boot_j1939_transport_transmit_session.message_size;
       uStack_1b = (undefined1)wVar5;
       puVar6[1] = uStack_1b;
       local_1c = (undefined1)(wVar5 >> 8);
       puVar6[2] = local_1c;
-      bVar3 = j1939_tp_queue_t_00302905.queue_status2;
+      bVar3 = boot_j1939_transport_transmit_session.total_packet_count;
       puVar6[3] = bVar3;
       puVar6[4] = 0xff;
       puVar6[5] = 0;
       puVar6[6] = bVar2;
       puVar6[7] = 0;
-      wVar5 = j1939_tp_queue_t_00302905.packet_size;
-      dVar8 = j1939_tp_queue_t_00302905.can_header;
-      dVar9 = j1939_tp_queue_t_00302905.tx_buf_ptr;
+      wVar5 = boot_j1939_transport_transmit_session.frame_data_length;
+      dVar8 = boot_j1939_transport_transmit_session.frame_can_id;
+      dVar9 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
       mpc555_canTransmitQueuePush(dVar8,wVar5,dVar9,0x30290a);
-      bVar2 = j1939_tp_queue_t_00302905._pad5;
+      bVar2 = boot_j1939_transport_transmit_session.frame_queue_status;
       if (bVar2 == 0) {
-        puVar6 = (undefined1 *)j1939_tp_queue_t_00302905.state_ptr;
+        puVar6 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
         *puVar6 = 0x12;
-        j1939_tp_queue_t_00302905.can_header = msg_header->can_id & 0xff00ffff | 0xeb0000;
+        boot_j1939_transport_transmit_session.frame_can_id =
+             msg_header->can_id & 0xff00ffff | 0xeb0000;
       }
       else {
-        pbVar7 = (byte *)j1939_tp_queue_t_00302905.state_ptr;
+        pbVar7 = (byte *)boot_j1939_transport_transmit_session.session_status_pointer;
         *pbVar7 = bVar2;
         qadc_a_queue_status_1 = 0;
       }
@@ -4562,19 +4558,19 @@ void mpc555_handleJ1939TransportClearToSend(byte request_type,byte connection_id
   local_18 = (ushort)*(byte *)(*(int *)(iVar4 + 6) + 6) << 8;
   bVar2 = qadc_a_queue_status_1;
   if ((bVar2 == 1) && (bVar2 = qadc_a_active_channel_id, bVar2 == *(byte *)(iVar4 + 3))) {
-    bVar2 = j1939_tp_queue_t_00302905.queue_status2;
+    bVar2 = boot_j1939_transport_transmit_session.total_packet_count;
     if (((uint)bVar1 <= (uint)bVar2) &&
-       (wVar3 = j1939_tp_queue_t_00302905.session_pgn, local_18 == wVar3)) {
+       (wVar3 = boot_j1939_transport_transmit_session.transported_pgn, local_18 == wVar3)) {
       bVar5 = *(byte *)(*(int *)(iVar4 + 6) + 1);
       if (bVar5 == 0) {
-        j1939_tp_queue_t_00302905.retry_timer = 0x37;
+        boot_j1939_transport_transmit_session.timeout_timer = 0x37;
       }
       else {
         if ((int)(uint)bVar2 < (int)((uint)bVar1 + (uint)bVar5 + -1)) {
           bVar5 = (bVar2 - bVar1) + 1;
         }
-        j1939_tp_queue_t_00302905.range_start = bVar1;
-        j1939_tp_queue_t_00302905.queue_ptr = bVar5;
+        boot_j1939_transport_transmit_session.next_packet_number = bVar1;
+        boot_j1939_transport_transmit_session.granted_packet_count = bVar5;
       }
     }
   }
@@ -4896,9 +4892,9 @@ void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *rx_msg)
   bVar1 = qadc_a_queue_status_1;
   if ((bVar1 == 1) && (bVar1 = qadc_a_active_channel_id, bVar1 == rx_msg->source_address)) {
     local_10 = (ushort)rx_msg->data_pointer[6] << 8;
-    wVar2 = j1939_tp_queue_t_00302905.session_pgn;
+    wVar2 = boot_j1939_transport_transmit_session.transported_pgn;
     if (local_10 == wVar2) {
-      puVar3 = (undefined1 *)j1939_tp_queue_t_00302905.state_ptr;
+      puVar3 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
       *puVar3 = 9;
       qadc_a_queue_status_1 = 0;
     }
@@ -4927,8 +4923,8 @@ void mpc555_handleJ1939TransportAbort(int param_1)
   local_10 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
   bVar1 = qadc_a_queue_status_1;
   if (((bVar1 == 1) && (bVar1 = qadc_a_active_channel_id, bVar1 == *(byte *)(param_1 + 3))) &&
-     (wVar2 = j1939_tp_queue_t_00302905.session_pgn, local_10 == wVar2)) {
-    puVar3 = (undefined1 *)j1939_tp_queue_t_00302905.state_ptr;
+     (wVar2 = boot_j1939_transport_transmit_session.transported_pgn, local_10 == wVar2)) {
+    puVar3 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
     *puVar3 = 10;
     qadc_a_queue_status_1 = 0;
   }
@@ -5004,43 +5000,43 @@ void mpc555_sendJ1939TransportDataPackets(void *queue_entry)
   undefined1 uVar13;
   undefined1 *puVar14;
   
-  bVar11 = j1939_tp_queue_t_00302905.queue_ptr;
+  bVar11 = boot_j1939_transport_transmit_session.granted_packet_count;
   if (bVar11 == 0) {
-    wVar3 = j1939_tp_queue_t_00302905.retry_timer;
+    wVar3 = boot_j1939_transport_transmit_session.timeout_timer;
     if (wVar3 == 0) {
       uVar13 = 6;
 LAB_00006458:
-      puVar14 = (undefined1 *)j1939_tp_queue_t_00302905.state_ptr;
+      puVar14 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
       *puVar14 = uVar13;
       qadc_a_queue_status_1 = 0;
     }
     else {
-      j1939_tp_queue_t_00302905.retry_timer = wVar3 - 1;
+      boot_j1939_transport_transmit_session.timeout_timer = wVar3 - 1;
     }
   }
   else {
-    bVar12 = j1939_tp_queue_t_00302905.range_start;
+    bVar12 = boot_j1939_transport_transmit_session.next_packet_number;
     uVar7 = (uint)bVar12;
     if (bVar11 < 0x10) {
-      j1939_tp_queue_t_00302905.queue_ptr = 0;
-      j1939_tp_queue_t_00302905.retry_timer = 0x70;
+      boot_j1939_transport_transmit_session.granted_packet_count = 0;
+      boot_j1939_transport_transmit_session.timeout_timer = 0x70;
     }
     else {
-      j1939_tp_queue_t_00302905.range_start = bVar12 + 0xf;
-      j1939_tp_queue_t_00302905.queue_ptr = bVar11 - 0xf;
+      boot_j1939_transport_transmit_session.next_packet_number = bVar12 + 0xf;
+      boot_j1939_transport_transmit_session.granted_packet_count = bVar11 - 0xf;
       bVar11 = 0xf;
     }
-    dVar4 = j1939_tp_queue_t_00302905.data_buf_ptr;
+    dVar4 = boot_j1939_transport_transmit_session.message_data_pointer;
     puVar14 = (undefined1 *)(dVar4 + uVar7 * 7 + -7);
     bVar12 = 0;
     if (bVar11 != 0) {
       do {
-        puVar6 = (undefined1 *)j1939_tp_queue_t_00302905.tx_buf_ptr;
-        bVar2 = j1939_tp_queue_t_00302905.queue_status2;
+        puVar6 = (undefined1 *)boot_j1939_transport_transmit_session.transmit_frame_pointer;
+        bVar2 = boot_j1939_transport_transmit_session.total_packet_count;
         if (bVar2 == uVar7) {
-          wVar3 = j1939_tp_queue_t_00302905.total_bytes;
+          wVar3 = boot_j1939_transport_transmit_session.message_size;
           uVar9 = ((uint)wVar3 - (uVar7 * 7 + 0xf9)) + 1;
-          j1939_tp_queue_t_00302905.packet_size = (ushort)uVar9 & 0xff;
+          boot_j1939_transport_transmit_session.frame_data_length = (ushort)uVar9 & 0xff;
         }
         else {
           uVar9 = 8;
@@ -5060,16 +5056,16 @@ LAB_00006458:
           } while ((int)uVar8 < iVar10);
           puVar14 = puVar14 + 2;
         }
-        wVar3 = j1939_tp_queue_t_00302905.packet_size;
-        dVar4 = j1939_tp_queue_t_00302905.can_header;
-        dVar5 = j1939_tp_queue_t_00302905.tx_buf_ptr;
+        wVar3 = boot_j1939_transport_transmit_session.frame_data_length;
+        dVar4 = boot_j1939_transport_transmit_session.frame_can_id;
+        dVar5 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
         mpc555_canTransmitQueuePush(dVar4,wVar3,dVar5,0x30290a);
-        bVar2 = j1939_tp_queue_t_00302905._pad5;
+        bVar2 = boot_j1939_transport_transmit_session.frame_queue_status;
         if (bVar2 != 0) {
           uVar13 = 7;
           goto LAB_00006458;
         }
-        puVar6 = (undefined1 *)j1939_tp_queue_t_00302905.state_ptr;
+        puVar6 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
         *puVar6 = 0x13;
         bVar12 = bVar12 + 1;
       } while (bVar12 < bVar11);
@@ -5194,7 +5190,7 @@ void mpc555_sciSendServiceResponse(byte param_1,int param_2)
     diag_serial_buffer[1] = diag_serial_buffer[(param_2 == 0x74) + 0x20];
   }
   diag_serial_buffer[3] = 0;
-  diag_session_state_t_003fecbe.response_write_index = 4;
+  boot_sci_session_state.response_write_index = 4;
   diagnostic_callback_ptr = &DAT_003fc1fc;
   diag_serial_buffer[2] = param_1;
   mpc555_sciStartResponseTransmit();
@@ -5218,7 +5214,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
   if (diag_request_pending_flag != '\x01') {
     return;
   }
-  if ((diag_session_state_t_003fecbe.session_flags & 1) == 0) {
+  if ((boot_sci_session_state.session_flags & 1) == 0) {
     return;
   }
   if (diag_serial_buffer[0x20] == 0x34) {
@@ -5253,7 +5249,7 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
         diag_request_pending_flag = 0;
         return;
       }
-      data_transfer_state_t_003fec82.finish_requested_flag = 1;
+      reflash_transfer_state.finish_requested_flag = 1;
       cm848_runFlashProgramStateMachine();
       diag_request_pending_flag = 0;
       return;
@@ -5277,8 +5273,8 @@ void mpc555_diagnosticSubcommandDispatcher(byte subcommand,byte *data_ptr)
 void cm848_resetSerialReceiveBuffer(void)
 
 {
-  diag_session_state_t_003fecbe.response_write_index = 0;
-  diag_session_state_t_003fecbe.response_cursor_pointer = diag_serial_buffer + 0x20;
+  boot_sci_session_state.response_write_index = 0;
+  boot_sci_session_state.response_cursor_pointer = diag_serial_buffer + 0x20;
   return;
 }
 
@@ -5297,10 +5293,9 @@ void mpc555_sciReceiveDataByte(void)
   wVar1 = qsmcm_sccr1.SC1SR;
   wVar2 = qsmcm_sccr1.SC1DR;
   if ((wVar1 & 0x40) != 0) {
-    if (((wVar1 & 0xe) == 0) && (diag_session_state_t_003fecbe.response_write_index < 0xfe)) {
-      diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index + 0x20] = (byte)wVar2;
-      diag_session_state_t_003fecbe.response_write_index =
-           diag_session_state_t_003fecbe.response_write_index + 1;
+    if (((wVar1 & 0xe) == 0) && (boot_sci_session_state.response_write_index < 0xfe)) {
+      diag_serial_buffer[boot_sci_session_state.response_write_index + 0x20] = (byte)wVar2;
+      boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index + 1;
       transmission_learned_information_stored_flags_byte_1_cal = 2;
       diag_clear_flags_t_003fedfc.diag_response_write_count =
            diag_clear_flags_t_003fedfc.diag_response_write_count + (byte)wVar2;
@@ -5349,8 +5344,8 @@ void mpc555_sciTransmitChecksummedByte(void)
   if ((wVar1 & 0x80) != 0) {
     output_speed_to_vehicle_speed_ratio_learned_flag_cal =
          output_speed_to_vehicle_speed_ratio_learned_flag_cal +
-         *diag_session_state_t_003fecbe.response_cursor_pointer;
-    if (diag_session_state_t_003fecbe.response_write_index == 0) {
+         *boot_sci_session_state.response_cursor_pointer;
+    if (boot_sci_session_state.response_write_index == 0) {
       wVar1 = qsmcm_sccr1.SCC1R1;
       qsmcm_sccr1.SCC1R1 = wVar1 & 0xffbf;
       qsmcm_sccr1.SC1DR = ~(ushort)output_speed_to_vehicle_speed_ratio_learned_flag_cal & 0x1ff;
@@ -5358,11 +5353,10 @@ void mpc555_sciTransmitChecksummedByte(void)
       mpc555_sciResetToReceiveData();
     }
     else {
-      diag_session_state_t_003fecbe.response_write_index =
-           diag_session_state_t_003fecbe.response_write_index - 1;
-      diag_session_state_t_003fecbe.response_cursor_pointer =
-           diag_session_state_t_003fecbe.response_cursor_pointer + 1;
-      qsmcm_sccr1.SC1DR = (ushort)(byte)*diag_session_state_t_003fecbe.response_cursor_pointer;
+      boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index - 1;
+      boot_sci_session_state.response_cursor_pointer =
+           boot_sci_session_state.response_cursor_pointer + 1;
+      qsmcm_sccr1.SC1DR = (ushort)(byte)*boot_sci_session_state.response_cursor_pointer;
     }
   }
   return;
@@ -5404,8 +5398,8 @@ void mpc555_sciValidateChecksum(void)
            transmission_learned_information_stored_flags_byte_1_cal - 1,
      transmission_learned_information_stored_flags_byte_1_cal == 0)) {
     if ((byte)(diag_clear_flags_t_003fedfc.diag_response_write_count -
-              diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index + 0x1f]) ==
-        (byte)~diag_serial_buffer[diag_session_state_t_003fecbe.response_write_index + 0x1f]) {
+              diag_serial_buffer[boot_sci_session_state.response_write_index + 0x1f]) ==
+        (byte)~diag_serial_buffer[boot_sci_session_state.response_write_index + 0x1f]) {
       wVar1 = qsmcm_sccr1.SCC1R1;
       qsmcm_sccr1.SCC1R1 = wVar1 & 0xffdf;
       diag_request_pending_flag = 1;
@@ -5429,9 +5423,8 @@ void mpc555_sciStartResponseTransmit(void)
 {
   word wVar1;
   
-  diag_session_state_t_003fecbe.response_write_index =
-       diag_session_state_t_003fecbe.response_write_index - 1;
-  diag_session_state_t_003fecbe.response_cursor_pointer = diag_serial_buffer;
+  boot_sci_session_state.response_write_index = boot_sci_session_state.response_write_index - 1;
+  boot_sci_session_state.response_cursor_pointer = diag_serial_buffer;
   wVar1 = qsmcm_sccr1.SC1SR;
   qsmcm_sccr1.SC1DR = (ushort)diag_serial_buffer[0];
   mpc555_sciEnableChecksummedTransmit();
@@ -6365,12 +6358,12 @@ void cm848_serviceSupervisorWatchdog(void)
     } while ((bVar2 & 0x80) == 0);
     bVar2 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar2 & 0x7f;
-    wVar1 = qsmcm_recram_t_00305140.RX4;
+    wVar1 = qsmcm_recram.RX4;
     kernel_watchdog_question = wVar1 & 0xf;
-    wVar1 = qsmcm_recram_t_00305140.RX4;
+    wVar1 = qsmcm_recram.RX4;
     kernel_watchdog_error_count = wVar1 >> 4 & 7;
     if (kernel_watchdog_error_count_peak < kernel_watchdog_error_count) {
-      kernel_watchdog_status_at_peak = qsmcm_recram_t_00305140.RX5;
+      kernel_watchdog_status_at_peak = qsmcm_recram.RX5;
       kernel_watchdog_error_count_peak = kernel_watchdog_error_count;
     }
     kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
@@ -6425,15 +6418,15 @@ void cm848_initSupervisorWatchdog(void)
     bVar5 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar5 & 0x7f;
     wVar3 = mios_mmcsm_cnt.CNT;
-  } while ((wVar3 <= (ushort)(wVar4 + 0xa89)) &&
-          (wVar3 = qsmcm_recram_t_00305140.RX4, (wVar3 & 0xff) != 0x14));
-  wVar4 = qsmcm_recram_t_00305140.RX4;
+  } while ((wVar3 <= (ushort)(wVar4 + 0xa89)) && (wVar3 = qsmcm_recram.RX4, (wVar3 & 0xff) != 0x14))
+  ;
+  wVar4 = qsmcm_recram.RX4;
   if ((wVar4 & 0xff) == 0x14) {
     kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
     uVar1 = kernel_watchdog_last_service_time + 0x7990;
-    wVar4 = qsmcm_recram_t_00305140.RX2;
+    wVar4 = qsmcm_recram.RX2;
     kernel_watchdog_question = wVar4 & 0xf;
-    wVar4 = qsmcm_recram_t_00305140.RX2;
+    wVar4 = qsmcm_recram.RX2;
     kernel_watchdog_error_count = wVar4 >> 4 & 7;
     if (kernel_watchdog_error_count != 0) {
       wVar4 = mios_mmcsm_cnt.CNT;
@@ -6463,7 +6456,7 @@ void cm848_initSupervisorWatchdog(void)
     } while ((bVar5 & 0x80) == 0);
     bVar5 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar5 & 0x7f;
-    wVar4 = qsmcm_recram_t_00305140.RX1;
+    wVar4 = qsmcm_recram.RX1;
     kernel_watchdog_question = wVar4 & 0xf;
     kernel_watchdog_last_service_time = mios_mmcsm_cnt.CNT;
   }
@@ -6527,9 +6520,9 @@ void cm848_forceSupervisorWatchdogReset(void)
     } while ((bVar3 & 0x80) == 0);
     bVar3 = qsmcm_qspi.SPSR;
     qsmcm_qspi.SPSR = bVar3 & 0x7f;
-    wVar2 = qsmcm_recram_t_00305140.RX4;
+    wVar2 = qsmcm_recram.RX4;
     kernel_watchdog_question = wVar2 & 0xf;
-    wVar2 = qsmcm_recram_t_00305140.RX4;
+    wVar2 = qsmcm_recram.RX4;
     kernel_watchdog_error_count = wVar2 >> 4 & 7;
   } while (uVar4 < 0x10);
   qsmcm_qspi.SPCR0 = wVar1;
@@ -19226,16 +19219,18 @@ void cm848_faultTimeoutHandler(byte param_1)
         if (fault_state_records_cal[param_1].timer == 0) {
           cm848_resetFaultStatus(param_1);
           if ((fault_definition_table[param_1].definition_flags & 0x2000) == 0) {
-            fault_list_state_t_003fe11a.total_emission_faults =
-                 fault_list_state_t_003fe11a.total_emission_faults - 1;
+            j1587_fault_count_data_cal.total_emission_faults =
+                 j1587_fault_count_data_cal.total_emission_faults - 1;
           }
           previously_active_dtc_list_cal.count = previously_active_dtc_list_cal.count - 1;
           previously_active_dtc_cummins_fault_codes_cal[0] =
                previously_active_dtc_cummins_fault_codes_cal[0] - 1;
           previously_active_dtc_list_cal.slots[active_fault_scan_counter - 1] =
-               previously_active_dtc_list_cal.slots[fault_list_state_t_003fe11a.read_index - 1];
-          uVar1 = (uint)fault_list_state_t_003fe11a.read_index;
-          fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
+               previously_active_dtc_list_cal.slots
+               [j1587_fault_count_data_cal.previously_active_fault_count - 1];
+          uVar1 = (uint)j1587_fault_count_data_cal.previously_active_fault_count;
+          j1587_fault_count_data_cal.previously_active_fault_count =
+               j1587_fault_count_data_cal.previously_active_fault_count - 1;
           previously_active_dtc_cummins_fault_codes_cal[active_fault_scan_counter] =
                previously_active_dtc_cummins_fault_codes_cal[uVar1];
           active_fault_scan_counter = active_fault_scan_counter - 1;
@@ -19278,17 +19273,19 @@ void cm848_clearFaultFromActiveList(byte param_1)
     fault_clearFromRing(uVar2);
     cm848_resetFaultStatus(param_1);
     if ((fault_definition_table[uVar2].definition_flags & 0x2000) == 0) {
-      fault_list_state_t_003fe11a.total_emission_faults =
-           fault_list_state_t_003fe11a.total_emission_faults - 1;
+      j1587_fault_count_data_cal.total_emission_faults =
+           j1587_fault_count_data_cal.total_emission_faults - 1;
     }
     uVar2 = 1;
     if (previously_active_dtc_list_cal.count != 0) {
       do {
         if (previously_active_dtc_list_cal.slots[uVar2 - 1] == param_1) {
           previously_active_dtc_list_cal.slots[uVar2 - 1] =
-               previously_active_dtc_list_cal.slots[fault_list_state_t_003fe11a.read_index - 1];
-          uVar4 = (uint)fault_list_state_t_003fe11a.read_index;
-          fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
+               previously_active_dtc_list_cal.slots
+               [j1587_fault_count_data_cal.previously_active_fault_count - 1];
+          uVar4 = (uint)j1587_fault_count_data_cal.previously_active_fault_count;
+          j1587_fault_count_data_cal.previously_active_fault_count =
+               j1587_fault_count_data_cal.previously_active_fault_count - 1;
           previously_active_dtc_cummins_fault_codes_cal[uVar2] =
                previously_active_dtc_cummins_fault_codes_cal[uVar4];
           previously_active_dtc_list_cal.count = previously_active_dtc_list_cal.count - 1;
@@ -19505,9 +19502,9 @@ void cm848_clearDiagnosticState(void)
           } while (uVar1 <= active_dtc_list_cal.count);
         }
         active_dtc_list_cal.count = 0;
-        fault_pending_counter_array[0] = 0;
-        fault_list_state_t_003fe11a.write_index = 0;
-        fault_list_state_t_003fe11a.emission_count = 0;
+        active_dtc_cummins_fault_codes_cal[0] = 0;
+        j1587_fault_count_data_cal.active_fault_count = 0;
+        j1587_fault_count_data_cal.emission_count = 0;
         diag_resetAllFaults();
         diag_resetSingleFault();
       }
@@ -19521,8 +19518,8 @@ void cm848_clearDiagnosticState(void)
     }
     previously_active_dtc_list_cal.count = 0;
     previously_active_dtc_cummins_fault_codes_cal[0] = 0;
-    fault_list_state_t_003fe11a.read_index = 0;
-    fault_list_state_t_003fe11a.total_emission_faults = 0;
+    j1587_fault_count_data_cal.previously_active_fault_count = 0;
+    j1587_fault_count_data_cal.total_emission_faults = 0;
     diagnostic_fault_to_erase = 0;
     if (lifetime_distance_pulses <= (uint)end_of_line_test_settings_cal.maximum_miles * 8000) {
       diag_clear_flags_t_003fedfc.diag_response_write_count = 0;
@@ -19598,17 +19595,18 @@ void cm848_processFaultScanGroup(void)
                     cm848_ringBufferWriteByte(&fault_spn_ring_buffer,uVar1 & 0xff);
                   }
                   if ((fault_definition_table[uVar9].definition_flags & 0x2000) == 0) {
-                    fault_list_state_t_003fe11a.emission_count =
-                         fault_list_state_t_003fe11a.emission_count - 1;
+                    j1587_fault_count_data_cal.emission_count =
+                         j1587_fault_count_data_cal.emission_count - 1;
                   }
                   active_dtc_list_cal.count = active_dtc_list_cal.count - 1;
-                  fault_pending_counter_array[0] = fault_pending_counter_array[0] - 1;
+                  active_dtc_cummins_fault_codes_cal[0] = active_dtc_cummins_fault_codes_cal[0] - 1;
                   active_dtc_list_cal.slots[uVar8 - 1] =
-                       active_dtc_list_cal.slots[fault_list_state_t_003fe11a.write_index - 1];
-                  uVar3 = (uint)fault_list_state_t_003fe11a.write_index;
-                  fault_list_state_t_003fe11a.write_index =
-                       fault_list_state_t_003fe11a.write_index - 1;
-                  fault_pending_counter_array[uVar8] = fault_pending_counter_array[uVar3];
+                       active_dtc_list_cal.slots[j1587_fault_count_data_cal.active_fault_count - 1];
+                  uVar3 = (uint)j1587_fault_count_data_cal.active_fault_count;
+                  j1587_fault_count_data_cal.active_fault_count =
+                       j1587_fault_count_data_cal.active_fault_count - 1;
+                  active_dtc_cummins_fault_codes_cal[uVar8] =
+                       active_dtc_cummins_fault_codes_cal[uVar3];
                 }
               } while (!bVar2);
               if (previously_active_dtc_list_cal.count != 0x1f) {
@@ -19616,15 +19614,16 @@ void cm848_processFaultScanGroup(void)
                 previously_active_dtc_list_cal.count = previously_active_dtc_list_cal.count + 1;
                 previously_active_dtc_cummins_fault_codes_cal[0] =
                      previously_active_dtc_cummins_fault_codes_cal[0] + 1;
-                fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index + 1;
-                previously_active_dtc_list_cal.slots[fault_list_state_t_003fe11a.read_index - 1] =
-                     (byte)uVar1;
+                j1587_fault_count_data_cal.previously_active_fault_count =
+                     j1587_fault_count_data_cal.previously_active_fault_count + 1;
+                previously_active_dtc_list_cal.slots
+                [j1587_fault_count_data_cal.previously_active_fault_count - 1] = (byte)uVar1;
                 previously_active_dtc_cummins_fault_codes_cal
-                [fault_list_state_t_003fe11a.read_index] =
+                [j1587_fault_count_data_cal.previously_active_fault_count] =
                      fault_definition_table[uVar9].cummins_fault_code;
                 if ((fault_definition_table[uVar9].definition_flags & 0x2000) == 0) {
-                  fault_list_state_t_003fe11a.total_emission_faults =
-                       fault_list_state_t_003fe11a.total_emission_faults + 1;
+                  j1587_fault_count_data_cal.total_emission_faults =
+                       j1587_fault_count_data_cal.total_emission_faults + 1;
                 }
               }
               fault_list_iteration_counter = fault_list_iteration_counter - 1;
@@ -19675,34 +19674,37 @@ void cm848_processFaultScanGroup(void)
               else if (previously_active_dtc_list_cal.slots[uVar9 - 1] == uVar8) {
                 bVar2 = true;
                 if ((fault_definition_table[uVar8].definition_flags & 0x40) == 0) {
-                  fault_list_state_t_003fe11a.total_emission_faults =
-                       fault_list_state_t_003fe11a.total_emission_faults - 1;
+                  j1587_fault_count_data_cal.total_emission_faults =
+                       j1587_fault_count_data_cal.total_emission_faults - 1;
                 }
                 previously_active_dtc_list_cal.count = previously_active_dtc_list_cal.count - 1;
                 previously_active_dtc_cummins_fault_codes_cal[0] =
                      previously_active_dtc_cummins_fault_codes_cal[0] - 1;
                 previously_active_dtc_list_cal.slots[uVar9 - 1] =
                      previously_active_dtc_list_cal.slots
-                     [fault_list_state_t_003fe11a.read_index - 1];
-                uVar3 = (uint)fault_list_state_t_003fe11a.read_index;
-                fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
+                     [j1587_fault_count_data_cal.previously_active_fault_count - 1];
+                uVar3 = (uint)j1587_fault_count_data_cal.previously_active_fault_count;
+                j1587_fault_count_data_cal.previously_active_fault_count =
+                     j1587_fault_count_data_cal.previously_active_fault_count - 1;
                 previously_active_dtc_cummins_fault_codes_cal[uVar9] =
                      previously_active_dtc_cummins_fault_codes_cal[uVar3];
               }
             } while (!bVar2);
             pending_fault_added_flag = 1;
             active_dtc_list_cal.count = active_dtc_list_cal.count + 1;
-            fault_pending_counter_array[0] = fault_pending_counter_array[0] + 1;
-            fault_list_state_t_003fe11a.write_index = fault_list_state_t_003fe11a.write_index + 1;
-            active_dtc_list_cal.slots[fault_list_state_t_003fe11a.write_index - 1] = (byte)uVar1;
-            fault_pending_counter_array[fault_list_state_t_003fe11a.write_index] =
+            active_dtc_cummins_fault_codes_cal[0] = active_dtc_cummins_fault_codes_cal[0] + 1;
+            j1587_fault_count_data_cal.active_fault_count =
+                 j1587_fault_count_data_cal.active_fault_count + 1;
+            active_dtc_list_cal.slots[j1587_fault_count_data_cal.active_fault_count - 1] =
+                 (byte)uVar1;
+            active_dtc_cummins_fault_codes_cal[j1587_fault_count_data_cal.active_fault_count] =
                  fault_definition_table[uVar8].cummins_fault_code;
             if ((fault_definition_table[uVar8].definition_flags & 0x40) == 0) {
               cm848_ringBufferWriteByte(&fault_spn_ring_buffer,uVar8 & 0xff | 0x80);
             }
             if ((fault_definition_table[uVar8].definition_flags & 0x2000) == 0) {
-              fault_list_state_t_003fe11a.emission_count =
-                   fault_list_state_t_003fe11a.emission_count + 1;
+              j1587_fault_count_data_cal.emission_count =
+                   j1587_fault_count_data_cal.emission_count + 1;
             }
             fault_list_iteration_counter = fault_list_iteration_counter + 1;
           }
@@ -95362,17 +95364,19 @@ void fault_ring_buffer_auto_clear_emission(void)
       fault_clearFromRing(uVar2);
       cm848_resetFaultStatus(bVar3);
       if ((fault_definition_table[uVar2].definition_flags & 0x2000) == 0) {
-        fault_list_state_t_003fe11a.total_emission_faults =
-             fault_list_state_t_003fe11a.total_emission_faults - 1;
+        j1587_fault_count_data_cal.total_emission_faults =
+             j1587_fault_count_data_cal.total_emission_faults - 1;
       }
       uVar2 = 1;
       if (previously_active_dtc_list_cal.count != 0) {
         do {
           if (previously_active_dtc_list_cal.slots[uVar2 - 1] == bVar3) {
             previously_active_dtc_list_cal.slots[uVar2 - 1] =
-                 previously_active_dtc_list_cal.slots[fault_list_state_t_003fe11a.read_index - 1];
-            uVar1 = (uint)fault_list_state_t_003fe11a.read_index;
-            fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
+                 previously_active_dtc_list_cal.slots
+                 [j1587_fault_count_data_cal.previously_active_fault_count - 1];
+            uVar1 = (uint)j1587_fault_count_data_cal.previously_active_fault_count;
+            j1587_fault_count_data_cal.previously_active_fault_count =
+                 j1587_fault_count_data_cal.previously_active_fault_count - 1;
             previously_active_dtc_cummins_fault_codes_cal[uVar2] =
                  previously_active_dtc_cummins_fault_codes_cal[uVar1];
             previously_active_dtc_list_cal.count = previously_active_dtc_list_cal.count - 1;
@@ -95753,9 +95757,11 @@ void diag_activeFault_remove(uint param_1)
       do {
         if (previously_active_dtc_list_cal.slots[uVar2 - 1] == param_1) {
           previously_active_dtc_list_cal.slots[uVar2 - 1] =
-               previously_active_dtc_list_cal.slots[fault_list_state_t_003fe11a.read_index - 1];
-          uVar3 = (uint)fault_list_state_t_003fe11a.read_index;
-          fault_list_state_t_003fe11a.read_index = fault_list_state_t_003fe11a.read_index - 1;
+               previously_active_dtc_list_cal.slots
+               [j1587_fault_count_data_cal.previously_active_fault_count - 1];
+          uVar3 = (uint)j1587_fault_count_data_cal.previously_active_fault_count;
+          j1587_fault_count_data_cal.previously_active_fault_count =
+               j1587_fault_count_data_cal.previously_active_fault_count - 1;
           previously_active_dtc_cummins_fault_codes_cal[uVar2] =
                previously_active_dtc_cummins_fault_codes_cal[uVar3];
           previously_active_dtc_list_cal.count = previously_active_dtc_list_cal.count - 1;
