@@ -451,6 +451,8 @@ state enum, the flag bytes.**
   word 4, and the timing source members from the 103B value labels with their limit words.
 - **Stage C (99dd717, types):** the two timing enums, the `algorithm_enable_flags_4_t` bitfield, and five lookup
   caches (the misread `dual_axis_table_dims_t` struct is gone).
+- **Stage D (label-only, after the review):** one prefix rule for the main timing (`injection_timing_main_*` for
+  its inputs and limits), the misfire limit's table, the power-up timing source, and the plates' retired words.
 
 ## Test plan
 
@@ -543,7 +545,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
-- [x] Round 18: stage B is EQUIVALENT (30 names); stages A and C are type diffs reviewed line by line (only the intended effects).
+- [x] Round 18: stages B and D are EQUIVALENT; stage A's cast-normalized diff and stage C's diff show only the intended effects.
 - [x] Round 17: stage A is EQUIVALENT (30 names); stage B's enum proof shows 0 functions differing beyond the substitutions; stage C's type diff is reviewed with a mask normalizer.
 - [x] Round 16: stage A is EQUIVALENT (109 names); B and C are type diffs reviewed function by function (C with a mask-normalized cast diff); every renamed row's width matches its e2m size.
 - [x] Round 15: stages A and B are EQUIVALENT; every renamed row's width matches its e2m size.
