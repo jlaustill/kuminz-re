@@ -56,8 +56,8 @@ function_address,function_name,old_name,new_name,type,comment
 0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar1,cruise_switch_adc_value,ushort,Live or overridden cruise-switch ADC reading compared against the valid window (ushort emits a benign Unable-to-use-type warning, same as message_data_length on main)
 0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar2,qadc_dispatch_index,uint,Clamped index into qadc_channel_dispatch_table for cruise-switch channel 0x2f
 0x00512e70,cm848_checkCruiseSwitchLearnCondition,uVar3,learn_condition_met,undefined4,Return flag - 1 for a fresh ON / OFF request with the cruise switch ADC inside its window (was engage_allowed)
-# sensorChannelTypeB_configInit @ 0x005012dc - per-channel sensor read/validate/debounce (reviewed via review-function-readability)
-# sensorChannelTypeB_update @ 0x00501b4c - boot-time twin of configInit (same shape, fewer temps)
+# cm848_processUnsignedSensorChannel @ 0x005012dc - per-channel sensor read/validate/debounce (reviewed via review-function-readability)
+# cm848_initializeUnsignedSensorChannel @ 0x00501b4c - boot-time twin of the periodic pass (same shape, fewer temps)
 0x0002f5a4,cm848_evaluateVariableGeometryTurbochargerPositionAdjustments,uVar1,engineLoadProtection,VARIABLE_GEOMETRY_TURBOCHARGER_SPAN_ADJUSTMENT_STATE,ACTIVE(0x08)/INACTIVE(0) - engine-load (fuel-demand-derived) protection derate; mirrors governor_status_flags confirm-B (0x8000); OR-ed into the protection status word
 0x00038ac8,cm848_checkPciMessageTimeouts,bVar2,all_transmits_overdue,byte,True until any timed TX entry is still within interval + grace; when it stays true link_event_code = 7
 0x00038ac8,cm848_checkPciMessageTimeouts,uVar4,message_index,uint,Entry index into pci_transmit_message_table then pci_receive_message_table (masked to 8 bits)
@@ -115,26 +115,26 @@ function_address,function_name,old_name,new_name,type,comment
 0x000160ac,cm848_selectChiAndAlpha,local_1a,chi_source_code,COMBUSTION_CHI_SOURCE,Chi source code of this pass
 0x00015f34,cm848_determineBaseChi,local_1a,chi_source_code,COMBUSTION_CHI_SOURCE,Base chi source code (1 or 3)
 0x00015f34,cm848_determineBaseChi,CVar1,selected_chi_source_code,COMBUSTION_CHI_SOURCE,Return value of cm848_selectChiSourceCode (compared with 1 and 3)
-0x005012dc,sensorChannelTypeB_configInit,iVar9,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
-0x005012dc,sensorChannelTypeB_configInit,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
-0x005012dc,sensorChannelTypeB_configInit,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
-0x005012dc,sensorChannelTypeB_configInit,sVar5,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
-0x005012dc,sensorChannelTypeB_configInit,uVar10,sensor_value,uint,Reading compared against the thresholds and stored as lookup_input (the register is also reused for the channel bit mask and the dispatch index)
-0x005012dc,sensorChannelTypeB_configInit,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
-0x005012dc,sensorChannelTypeB_configInit,wVar6,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
-0x005012dc,sensorChannelTypeB_configInit,dVar4,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
-0x005012dc,sensorChannelTypeB_configInit,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
-0x005012dc,sensorChannelTypeB_configInit,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy
-0x005012dc,sensorChannelTypeB_configInit,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0 settled / 1 still counting / 2 limit reached
-0x00501b4c,sensorChannelTypeB_update,iVar7,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
-0x00501b4c,sensorChannelTypeB_update,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
-0x00501b4c,sensorChannelTypeB_update,iVar6,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
-0x00501b4c,sensorChannelTypeB_update,sVar3,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
-0x00501b4c,sensorChannelTypeB_update,uVar9,sensor_value,uint,Lookup input before it is stored in lookup_input (the register is also reused for the channel bit mask and the dispatch index)
-0x00501b4c,sensorChannelTypeB_update,uVar5,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
-0x00501b4c,sensorChannelTypeB_update,wVar4,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
-0x00501b4c,sensorChannelTypeB_update,dVar2,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
-0x00501b4c,sensorChannelTypeB_update,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
+0x005012dc,cm848_processUnsignedSensorChannel,iVar9,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x005012dc,cm848_processUnsignedSensorChannel,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
+0x005012dc,cm848_processUnsignedSensorChannel,iVar7,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
+0x005012dc,cm848_processUnsignedSensorChannel,sVar5,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x005012dc,cm848_processUnsignedSensorChannel,uVar10,sensor_value,uint,Reading compared against the thresholds and stored as lookup_input (the register is also reused for the channel bit mask and the dispatch index)
+0x005012dc,cm848_processUnsignedSensorChannel,uVar3,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
+0x005012dc,cm848_processUnsignedSensorChannel,wVar6,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
+0x005012dc,cm848_processUnsignedSensorChannel,dVar4,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x005012dc,cm848_processUnsignedSensorChannel,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
+0x005012dc,cm848_processUnsignedSensorChannel,uVar2,recovery_decrement,ushort,config_ptr->recovery_decrement copy
+0x005012dc,cm848_processUnsignedSensorChannel,unaff_r29,debounce_transition_state,uint,Debounce step outcome - 0 settled / 1 still counting / 2 limit reached
+0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar7,channel_word_index,int,channel_index >> 4 - word index into the per-channel flag arrays
+0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar8,high_fault_word_index,int,high_fault_bit >> 4 - word index into the fault bitmaps
+0x00501b4c,cm848_initializeUnsignedSensorChannel,iVar6,low_fault_word_index,int,low_fault_bit >> 4 - word index into the fault bitmaps
+0x00501b4c,cm848_initializeUnsignedSensorChannel,sVar3,validation_state,short,sensorChannelConditionValidator result (0 for channels 21 / 42 / 43 / 28)
+0x00501b4c,cm848_initializeUnsignedSensorChannel,uVar9,sensor_value,uint,Lookup input before it is stored in lookup_input (the register is also reused for the channel bit mask and the dispatch index)
+0x00501b4c,cm848_initializeUnsignedSensorChannel,uVar5,dispatch_index,uint,Clamped index into qadc_channel_dispatch_table
+0x00501b4c,cm848_initializeUnsignedSensorChannel,wVar4,sensor_scratch,word,Raw reading / lookup result / fault status - one register reused across the paths
+0x00501b4c,cm848_initializeUnsignedSensorChannel,dVar2,ema_result,undefined4,exponentialMovingAverage output written to sensor_channel_filtered_output
+0x00501b4c,cm848_initializeUnsignedSensorChannel,uVar1,scratch16,ushort,Reused 16-bit scratch (default value / state fields)
 0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,dVar1,filtered_engine_load,dword,exponentialMovingAverage output of engine_load_percent - also stored to vehicle_speed_zero_under_load_engine_load_filtered
 0x005269c0,cm848_detectVehicleSpeedSensorZeroUnderLoad,cVar2,limits_reached_count,byte,How many of the two P0500 limits (accelerator off-idle entries / events) are reached - 2 sets fault 29
 0x00047bd0,cm848_calculateFuelMeteringCommand,local_64,working_proportional_gains,piecewise_linear_gain_t,Stack copy of fuel_pressure_governor_proportional_gains (each gain scaled by its lookup table while cam_timing_alt_mode_enable_cal is 0) passed to cm848_applyPiecewiseLinearGain

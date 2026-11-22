@@ -56,7 +56,7 @@ address,reason
 0x00027174,mid-function split (was cm848_selectTorqueLimitByStateMachine)
 # 2026-11-12 (PR #46): the remaining mid-function splits across the whole binary - no call / no 32-bit pointer / no lis+addi address; a control-flow walk from the named containing function reaches each one (fall-through or an internal branch). Most came from bl targets in the old e2m flash2 image (V11.20.13.16) that no longer exist in the live flash2 (V11.46.06). Each had a function_renames.csv row that force-created it
 0x0000bec8,mid-function split inside cm848_periodicTaskSet_protection3 +0x14 (was cm848_schedulerPhaseDispatcher)
-0x0000db88,mid-function split inside cm848_sensorChannel16_process +0x38 (was cm848_sensorChannel16BProcessOilPressure)
+0x0000db88,mid-function split inside cm848_initializeWaterInFuelChannel +0x38 (was cm848_sensorChannel16BProcessOilPressure)
 0x0000e8f0,mid-function split inside cm848_calculateGovernorReferenceSpeedBlend +0x14 (was cm848_fuelTimingCompensation)
 0x0001444c,mid-function split inside cm848_selectMassChargeFlowCommand +0x1c (was cm848_setFuelDemandVariable)
 0x00014458,mid-function split inside cm848_selectMassChargeFlowCommand +0x28 (was cm848_setFuelDemandVariable)

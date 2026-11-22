@@ -4,7 +4,7 @@ Extract extended flash region (0x00500000+) from CM848 e2m file.
 
 The e2m file contains calibration data in a hex dump format. This script
 extracts the second flash bank (0x005xxxxx) which contains utility functions
-like sensorChannelConfigInit that are called from the main ROM.
+like cm848_processSignedSensorChannel that are called from the main ROM.
 
 Usage:
     python3 extract_flash2.py <input.e2m> <output.bin>

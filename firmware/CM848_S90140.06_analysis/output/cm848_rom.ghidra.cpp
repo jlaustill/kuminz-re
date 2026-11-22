@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 07:30:51 MST 2026
+// Generated: Sun Nov 22 08:17:51 MST 2026
 
 
 //
@@ -6558,8 +6558,8 @@ void cm848_phase_common_processing(void)
   cm848_runSupervisorChipSchedule();
   cm848_applyLogicalOutputRequests();
   cm848_refreshOutputPortsAndReadback();
-  cm848_sensorChannel7_init();
-  cm848_readVariableGeometryTurbochargerPositionSensor();
+  cm848_processEgrValvePositionChannel();
+  cm848_processVariableGeometryTurbochargerPositionChannel();
   cm848_runEgrValveFaultAndPositionControl();
   cm848_sciCallbackDispatcher();
   cm848_runVariableGeometryTurbochargerPositionControlLoop();
@@ -6587,15 +6587,15 @@ void cm848_phase_group_a_processing(void)
   cm848_endRetarderShiftAssistAboveFuelDemandLimit();
   cm848_runJ1939PeriodicTransmitQueues();
   cm848_calculateTransmissionRatioFromOutputShaft();
-  cm848_sensorChannel4_init();
+  cm848_processBoostPressureAbsoluteChannel();
   cm848_processLoadNormalizerSelection();
-  cm848_sensorChannel10_intakeManifoldTemperatureInit();
+  cm848_processIntakeManifoldTemperatureChannel();
   cm848_calculateChargeFlows();
   cm848_updateEgrValveDriverOverCurrentFault();
-  cm848_sensorChannel6_init();
-  cm848_sensorChannel5_init();
-  cm848_processSensorLookupTable1();
-  cm848_sensorChannel8_exhaustPressureInit();
+  cm848_processEgrOrificeTemperatureChannel();
+  cm848_processEgrDeltaPressureChannel();
+  cm848_processGovernorPressureChannel();
+  cm848_processExhaustPressureChannel();
   cm848_deriveSecondBrakeSwitchSignal();
   cm848_learnOutputSpeedToVehicleSpeedRatio();
   cm848_monitorTransmissionOutputSpeedSensor();
@@ -6635,7 +6635,7 @@ void cm848_phase_group_b_processing(void)
   cm848_schedulePciTransmit();
   cm848_processTsc1IgnoredRequestTimeouts();
   cm848_runMisfireMonitor();
-  cm848_sensorChannel2_init();
+  cm848_processBatteryVoltageChannel();
   cm848_calculateChargingVoltageError();
   cm848_updateAlternatorFieldRegulatorState();
   cm848_calculateAlternatorFieldDutyByRegulatorState();
@@ -6669,25 +6669,25 @@ void cm848_phase_group_b_processing(void)
 void hpcr_periodicTaskSet_fuelFinal(void)
 
 {
-  cm848_sensorChannel14_init();
-  cm848_sensorChannel15_init();
-  sensorChannelTypeB_configInit_axis2();
-  cm848_sensorChannel13_init();
+  cm848_processSensorReferenceVoltageAChannel();
+  cm848_processSensorReferenceVoltageCChannel();
+  cm848_processSensorReferenceVoltageBChannel();
+  cm848_processAcceleratorPedalChannel();
   cm848_refreshInputLineImage();
   cm848_selectCompressorOutletTemperature();
   cm848_updateEngineSpeedFromCrankSignal();
   cm848_setEngineRpmFromCalibration();
   fuelDemandProportionalCalculationSlowCycle40Coordinator();
   cm848_runOxygenFuelLimitTask();
-  cm848_sensorChannel11_init();
-  cm848_sensorChannel9_init();
-  cm848_sensorChannel0_init();
+  cm848_processOilPressureChannel();
+  cm848_processFuelTemperatureChannel();
+  cm848_processBarometricPressureChannel();
   cm848_selectBarometricPressure();
   cm848_calculateAmbientAndCompressorInletConditions();
-  cm848_sensorChannel3_boostPressureInit();
+  cm848_processBoostPressureChannel();
   cm848_estimateTurbochargerSpeed();
-  cm848_processSensorLookupTable3();
-  cm848_processSensorLookupTable2();
+  cm848_processAcceleratorPedalPositionSensor1Channel();
+  cm848_processAcceleratorPedalPositionSensor2Channel();
   cm848_scanAndDebounceSwitchInputs();
   cm848_checkSwitch31OnTimeFault();
   cm848_processEngineRpmDerivative();
@@ -6825,7 +6825,7 @@ void cm848_periodicTaskSet_canTx(void)
 
 {
   cm848_calculateRiseLimitedVehicleSpeed();
-  cm848_processSensorLookupTable5();
+  cm848_processAirConditioningPressureChannel();
   cm848_calculateVehicleSpeed();
   return;
 }
@@ -6846,9 +6846,9 @@ void cm848_periodicTaskSet_canTx(void)
 void cm848_periodicTaskSet_sensors2(void)
 
 {
-  cm848_sensorChannel1_init();
+  cm848_processAmbientAirTemperatureChannel();
   cm848_processCruiseSwitchChannel();
-  cm848_sensorChannel69_init();
+  cm848_processBatteryTemperatureChannel();
   return;
 }
 
@@ -6893,7 +6893,7 @@ void cm848_periodicTaskSet_outputs(void)
 {
   cm848_updateDrivetrainRatio();
   cm848_runCruiseAndRoadSpeedGovernor();
-  cm848_updateInjectorDriverBoosterCapacitor1VoltageChannel();
+  cm848_processInjectorDriverBoosterCapacitor1VoltageChannel();
   return;
 }
 
@@ -6906,8 +6906,8 @@ void cm848_periodicTaskSet_outputs(void)
 void cm848_periodicTaskSet_sensors(void)
 
 {
-  cm848_sensorChannelGeneric_init_configBundle();
-  cm848_sensorChannel12_init();
+  cm848_processCoolantTemperatureChannel();
+  cm848_processRemoteAcceleratorPedalChannel();
   cm848_monitorConverterSlipAndEngineSpeedLimit();
   return;
 }
@@ -6921,10 +6921,10 @@ void cm848_periodicTaskSet_sensors(void)
 void cm848_periodicTaskSet_monitoring(void)
 
 {
-  cm848_sensorChannel16_init();
+  cm848_processWaterInFuelChannel();
   cm848_calculateVehicleSpeedFromOutputShaft();
   cm848_buildPciTransmitMessage0EngineSpeedAndVehicleSpeed();
-  cm848_updateInjectorDriverBoosterCapacitor2VoltageChannel();
+  cm848_processInjectorDriverBoosterCapacitor2VoltageChannel();
   return;
 }
 
@@ -7126,7 +7126,7 @@ void cm848_periodicTaskGroup29_calibration11(void)
 void cm848_periodicTaskGroup30_calibration12(void)
 
 {
-  sensorChannelTypeB_configInit_axis3();
+  cm848_processEngineSpeedSensorSupplyVoltageChannel();
   cm848_runVehicleSpeedSensorMonitors();
   cm848_learnAcceleratorPedalIdlePositions();
   cm848_monitorParkNeutralSwitch();
@@ -7283,7 +7283,7 @@ void hpcr_periodicTaskGroup20_calibration(void)
 
 {
   cm848_monitorIntakeAirHeaterPerformance();
-  sensorChannelTypeA_configInit_axis5();
+  cm848_processTransmissionTemperatureChannel();
   hpcr_periodicTaskGroup20_empty_stub();
   return;
 }
@@ -7555,7 +7555,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensorProcessing();
     cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskGroup22_calibration();
-    sensorChannelTypeB_configInit_axis4();
+    cm848_processFuelLevelChannel();
     cm848_updateFuelLevel();
     cm848_main_loop_initialization();
     main_loop_scheduler_phase = 0x12;
@@ -7635,7 +7635,7 @@ void main_loop(void)
     cm848_periodicTaskSet_sensors2();
     cm848_periodicTaskGroup17_calibration5();
     cm848_periodicTaskGroup30_calibration12();
-    cm848_sensorChannel7_init_configBundle();
+    cm848_processExhaustThrottlePositionChannel();
     main_loop_scheduler_phase = 0x1a;
     break;
   case 0x1a:
@@ -7663,7 +7663,7 @@ void main_loop(void)
     hpcr_periodicTaskSet_fuelFinal();
     cm848_periodicTaskSet_outputs();
     cm848_periodicTaskSet_protection3();
-    sensorChannelTypeB_configInit_axis1();
+    cm848_processEcmInternalTemperatureChannel();
     main_loop_scheduler_phase = 0x1d;
     break;
   case 0x1d:
@@ -7812,53 +7812,66 @@ void cm848_initSensorDefaults(void)
 
 
 //
-// Function: cm848_sensorChannel0_init @ 0x0000c8bc
+// Function: cm848_processBarometricPressureChannel @ 0x0000c8bc
 //
 
-void cm848_sensorChannel0_init(void)
+/* Sensor channel 3 (barometric pressure): calls cm848_processUnsignedSensorChannel every pass, from
+   a periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel0_init)
+    */
+
+void cm848_processBarometricPressureChannel(void)
 
 {
-  sensorChannelTypeB_configInit
-            (&barometric_pressure_sensor_config,&barometric_pressure_sensor_state,
-             &sensor_channel0_cached_axis_offset,barometric_pressure_linearization_axis,
-             barometric_pressure_linearization_values,0,&sensor_channel0_filter_state,3,0x19,0x1a,
-             &barometric_pressure_sensor_value,&barometric_pressure_sensor_default_value,
-             &barometric_pressure_sensor_fault_status);
+  cm848_processUnsignedSensorChannel
+            (&barometric_pressure_sensor_config,&barometric_pressure_sensor_channel_state,
+             &barometric_pressure_linearization_cached_axis_offset,
+             barometric_pressure_linearization_axis,barometric_pressure_linearization_values,0,
+             &barometric_pressure_sensor_filter_state,3,0x19,0x1a,&barometric_pressure_sensor_value,
+             &barometric_pressure_sensor_default_value,&barometric_pressure_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel0_process @ 0x0000c948
+// Function: cm848_initializeBarometricPressureChannel @ 0x0000c948
 //
 
-void cm848_sensorChannel0_process(void)
+/* Sensor channel 3 (barometric pressure): calls cm848_initializeUnsignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel0_process) */
+
+void cm848_initializeBarometricPressureChannel(void)
 
 {
-  sensorChannelTypeB_update
-            (&barometric_pressure_sensor_config,&barometric_pressure_sensor_state,
-             &sensor_channel0_cached_axis_offset,barometric_pressure_linearization_axis,
-             barometric_pressure_linearization_values,0,&sensor_channel0_filter_state,3,0x19,0x1a,
-             &barometric_pressure_sensor_value,&barometric_pressure_sensor_default_value,
-             &barometric_pressure_sensor_fault_status);
+  cm848_initializeUnsignedSensorChannel
+            (&barometric_pressure_sensor_config,&barometric_pressure_sensor_channel_state,
+             &barometric_pressure_linearization_cached_axis_offset,
+             barometric_pressure_linearization_axis,barometric_pressure_linearization_values,0,
+             &barometric_pressure_sensor_filter_state,3,0x19,0x1a,&barometric_pressure_sensor_value,
+             &barometric_pressure_sensor_default_value,&barometric_pressure_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel1_init @ 0x0000c9d4
+// Function: cm848_processAmbientAirTemperatureChannel @ 0x0000c9d4
 //
 
-void cm848_sensorChannel1_init(void)
+/* Sensor channel 20 (ambient air temperature): calls cm848_processSignedSensorChannel every pass,
+   from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel1_init) */
+
+void cm848_processAmbientAirTemperatureChannel(void)
 
 {
-  sensorChannelConfigInit
-            (&sensor_channel_config_t_000592d6,&sensor_channel1_ram,
-             &sensor_channel1_cached_axis_offset,ambient_air_temperature_linearization_axis,
-             ambient_air_temperature_linearization_values,2,&sensor_channel1_filter_state,0x14,0x96,
-             0x97,&compressor_inlet_temperature_sensor_value,
+  cm848_processSignedSensorChannel
+            (&ambient_air_temperature_sensor_config,&ambient_air_temperature_sensor_channel_state,
+             &ambient_air_temperature_linearization_cached_axis_offset,
+             ambient_air_temperature_linearization_axis,ambient_air_temperature_linearization_values
+             ,2,&ambient_air_temperature_sensor_filter_state,0x14,0x96,0x97,
+             &compressor_inlet_temperature_sensor_value,
              &compressor_inlet_temperature_sensor_default_value,
              &compressor_inlet_temperature_sensor_fault_status);
   return;
@@ -7867,17 +7880,22 @@ void cm848_sensorChannel1_init(void)
 
 
 //
-// Function: cm848_sensorChannel1_process @ 0x0000ca60
+// Function: cm848_initializeAmbientAirTemperatureChannel @ 0x0000ca60
 //
 
-void cm848_sensorChannel1_process(void)
+/* Sensor channel 20 (ambient air temperature): calls cm848_initializeSignedSensorChannel once at
+   boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel1_process) */
+
+void cm848_initializeAmbientAirTemperatureChannel(void)
 
 {
-  updateSensorChannelWithConfig
-            (&sensor_channel_config_t_000592d6,&sensor_channel1_ram,
-             &sensor_channel1_cached_axis_offset,ambient_air_temperature_linearization_axis,
-             ambient_air_temperature_linearization_values,2,&sensor_channel1_filter_state,0x14,0x96,
-             0x97,&compressor_inlet_temperature_sensor_value,
+  cm848_initializeSignedSensorChannel
+            (&ambient_air_temperature_sensor_config,&ambient_air_temperature_sensor_channel_state,
+             &ambient_air_temperature_linearization_cached_axis_offset,
+             ambient_air_temperature_linearization_axis,ambient_air_temperature_linearization_values
+             ,2,&ambient_air_temperature_sensor_filter_state,0x14,0x96,0x97,
+             &compressor_inlet_temperature_sensor_value,
              &compressor_inlet_temperature_sensor_default_value,
              &compressor_inlet_temperature_sensor_fault_status);
   return;
@@ -7886,115 +7904,150 @@ void cm848_sensorChannel1_process(void)
 
 
 //
-// Function: cm848_sensorChannel2_init @ 0x0000caec
+// Function: cm848_processBatteryVoltageChannel @ 0x0000caec
 //
 
-void cm848_sensorChannel2_init(void)
+/* Sensor channel 4 (battery voltage): calls cm848_processUnsignedSensorChannel every pass, from a
+   periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel2_init) */
+
+void cm848_processBatteryVoltageChannel(void)
 
 {
-  sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_00059336,&sensor_channel2_ram,&WORD_003fa028,
-             battery_voltage_linearization_axis,battery_voltage_linearization_values,0,
-             &ema_filter_state_t_003fa02a,4,0x43,0x42,&battery_voltage_sensor_value,
-             &battery_voltage_sensor_default_value,&sensor_channel4_fault_status);
+  cm848_processUnsignedSensorChannel
+            (&battery_voltage_sensor_config,&battery_voltage_sensor_channel_state,
+             &battery_voltage_linearization_cached_axis_offset,battery_voltage_linearization_axis,
+             battery_voltage_linearization_values,0,&battery_voltage_sensor_filter_state,4,0x43,0x42
+             ,&battery_voltage_sensor_value,&battery_voltage_sensor_default_value,
+             &battery_voltage_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel2_process @ 0x0000cb78
+// Function: cm848_initializeBatteryVoltageChannel @ 0x0000cb78
 //
 
-void cm848_sensorChannel2_process(void)
+/* Sensor channel 4 (battery voltage): calls cm848_initializeUnsignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel2_process) */
+
+void cm848_initializeBatteryVoltageChannel(void)
 
 {
-  sensorChannelTypeB_update
-            (&sensor_channel_config_t_00059336,&sensor_channel2_ram,&WORD_003fa028,
-             battery_voltage_linearization_axis,battery_voltage_linearization_values,0,
-             &ema_filter_state_t_003fa02a,4,0x43,0x42,&battery_voltage_sensor_value,
-             &battery_voltage_sensor_default_value,&sensor_channel4_fault_status);
+  cm848_initializeUnsignedSensorChannel
+            (&battery_voltage_sensor_config,&battery_voltage_sensor_channel_state,
+             &battery_voltage_linearization_cached_axis_offset,battery_voltage_linearization_axis,
+             battery_voltage_linearization_values,0,&battery_voltage_sensor_filter_state,4,0x43,0x42
+             ,&battery_voltage_sensor_value,&battery_voltage_sensor_default_value,
+             &battery_voltage_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel3_boostPressureInit @ 0x0000cc04
+// Function: cm848_processBoostPressureChannel @ 0x0000cc04
 //
 
-void cm848_sensorChannel3_boostPressureInit(void)
+/* Sensor channel 1 (boost pressure): calls cm848_processUnsignedSensorChannel every pass, from a
+   periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel3_boostPressureInit) */
+
+void cm848_processBoostPressureChannel(void)
 
 {
-  sensorChannelTypeB_configInit
-            (&boost_pressure_sensor_config,&boost_pressure_sensor_state,&WORD_003fa032,
-             boost_pressure_linearization_x_axis,boost_pressure_linearization_y_axis,0,
-             &ema_filter_state_t_003fa034,1,8,9,&boost_pressure_sensor_value,
-             &boost_pressure_sensor_default_value,&map_sensor_fault_status);
+  cm848_processUnsignedSensorChannel
+            (&boost_pressure_sensor_config,&boost_pressure_sensor_channel_state,
+             &boost_pressure_linearization_cached_axis_offset,boost_pressure_linearization_axis,
+             boost_pressure_linearization_values,0,&boost_pressure_sensor_filter_state,1,8,9,
+             &boost_pressure_sensor_value,&boost_pressure_sensor_default_value,
+             &boost_pressure_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel3_boostPressureProcess @ 0x0000cc90
+// Function: cm848_initializeBoostPressureChannel @ 0x0000cc90
 //
 
-void cm848_sensorChannel3_boostPressureProcess(void)
+/* Sensor channel 1 (boost pressure): calls cm848_initializeUnsignedSensorChannel once at boot, from
+   cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel3_boostPressureProcess) */
+
+void cm848_initializeBoostPressureChannel(void)
 
 {
-  sensorChannelTypeB_update
-            (&boost_pressure_sensor_config,&boost_pressure_sensor_state,&WORD_003fa032,
-             boost_pressure_linearization_x_axis,boost_pressure_linearization_y_axis,0,
-             &ema_filter_state_t_003fa034,1,8,9,&boost_pressure_sensor_value,
-             &boost_pressure_sensor_default_value,&map_sensor_fault_status);
+  cm848_initializeUnsignedSensorChannel
+            (&boost_pressure_sensor_config,&boost_pressure_sensor_channel_state,
+             &boost_pressure_linearization_cached_axis_offset,boost_pressure_linearization_axis,
+             boost_pressure_linearization_values,0,&boost_pressure_sensor_filter_state,1,8,9,
+             &boost_pressure_sensor_value,&boost_pressure_sensor_default_value,
+             &boost_pressure_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel4_init @ 0x0000cd1c
+// Function: cm848_processBoostPressureAbsoluteChannel @ 0x0000cd1c
 //
 
-void cm848_sensorChannel4_init(void)
+/* Sensor channel 77 (boost pressure absolute): calls cm848_processUnsignedSensorChannel every pass,
+   from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel4_init) */
+
+void cm848_processBoostPressureAbsoluteChannel(void)
 
 {
-  sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005939e,&sensor_channel4_ram,&WORD_003fa03c,
-             sensor_channel77_linearization_axis,sensor_channel77_linearization_values,0,
-             &ema_filter_state_t_003fa03e,0x4d,0x288,0x289,&WORD_003fa046,&WORD_003fa048,
-             &WORD_003fa04a);
+  cm848_processUnsignedSensorChannel
+            (&boost_pressure_absolute_sensor_config,&boost_pressure_absolute_sensor_channel_state,
+             &boost_pressure_absolute_linearization_cached_axis_offset,
+             boost_pressure_absolute_linearization_axis,boost_pressure_absolute_linearization_values
+             ,0,&boost_pressure_absolute_sensor_filter_state,0x4d,0x288,0x289,
+             &boost_pressure_absolute_sensor_value,&boost_pressure_absolute_sensor_default_value,
+             &boost_pressure_absolute_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel4_process @ 0x0000cda8
+// Function: cm848_initializeBoostPressureAbsoluteChannel @ 0x0000cda8
 //
 
-void cm848_sensorChannel4_process(void)
+/* Sensor channel 77 (boost pressure absolute): calls cm848_initializeUnsignedSensorChannel once at
+   boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel4_process) */
+
+void cm848_initializeBoostPressureAbsoluteChannel(void)
 
 {
-  sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005939e,&sensor_channel4_ram,&WORD_003fa03c,
-             sensor_channel77_linearization_axis,sensor_channel77_linearization_values,0,
-             &ema_filter_state_t_003fa03e,0x4d,0x288,0x289,&WORD_003fa046,&WORD_003fa048,
-             &WORD_003fa04a);
+  cm848_initializeUnsignedSensorChannel
+            (&boost_pressure_absolute_sensor_config,&boost_pressure_absolute_sensor_channel_state,
+             &boost_pressure_absolute_linearization_cached_axis_offset,
+             boost_pressure_absolute_linearization_axis,boost_pressure_absolute_linearization_values
+             ,0,&boost_pressure_absolute_sensor_filter_state,0x4d,0x288,0x289,
+             &boost_pressure_absolute_sensor_value,&boost_pressure_absolute_sensor_default_value,
+             &boost_pressure_absolute_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel5_init @ 0x0000ce34
+// Function: cm848_processEgrDeltaPressureChannel @ 0x0000ce34
 //
 
-void cm848_sensorChannel5_init(void)
+/* Sensor channel 105 (egr delta pressure): calls cm848_processSignedSensorChannel every pass, from
+   a periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel5_init)
+    */
+
+void cm848_processEgrDeltaPressureChannel(void)
 
 {
-  sensorChannelConfigInit
+  cm848_processSignedSensorChannel
             (&egr_delta_pressure_sensor_config,&egr_delta_pressure_sensor_channel_state,
              &egr_delta_pressure_linearization_cached_axis_offset,
              egr_delta_pressure_linearization_axis,egr_delta_pressure_linearization_values,2,
@@ -8007,13 +8060,17 @@ void cm848_sensorChannel5_init(void)
 
 
 //
-// Function: cm848_sensorChannel5_process @ 0x0000cec0
+// Function: cm848_initializeEgrDeltaPressureChannel @ 0x0000cec0
 //
 
-void cm848_sensorChannel5_process(void)
+/* Sensor channel 105 (egr delta pressure): calls cm848_initializeSignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel5_process) */
+
+void cm848_initializeEgrDeltaPressureChannel(void)
 
 {
-  updateSensorChannelWithConfig
+  cm848_initializeSignedSensorChannel
             (&egr_delta_pressure_sensor_config,&egr_delta_pressure_sensor_channel_state,
              &egr_delta_pressure_linearization_cached_axis_offset,
              egr_delta_pressure_linearization_axis,egr_delta_pressure_linearization_values,2,
@@ -8026,13 +8083,17 @@ void cm848_sensorChannel5_process(void)
 
 
 //
-// Function: cm848_sensorChannel6_init @ 0x0000cf4c
+// Function: cm848_processEgrOrificeTemperatureChannel @ 0x0000cf4c
 //
 
-void cm848_sensorChannel6_init(void)
+/* Sensor channel 108 (egr orifice temperature): calls cm848_processUnsignedSensorChannel every
+   pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel6_init) */
+
+void cm848_processEgrOrificeTemperatureChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&egr_orifice_temperature_sensor_config,&egr_orifice_temperature_sensor_channel_state,
              &egr_orifice_temperature_linearization_cached_axis_offset,
              egr_orifice_temperature_linearization_axis,egr_orifice_temperature_linearization_values
@@ -8045,13 +8106,17 @@ void cm848_sensorChannel6_init(void)
 
 
 //
-// Function: cm848_sensorChannel6_process @ 0x0000cfd8
+// Function: cm848_initializeEgrOrificeTemperatureChannel @ 0x0000cfd8
 //
 
-void cm848_sensorChannel6_process(void)
+/* Sensor channel 108 (egr orifice temperature): calls cm848_initializeUnsignedSensorChannel once at
+   boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel6_process) */
+
+void cm848_initializeEgrOrificeTemperatureChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&egr_orifice_temperature_sensor_config,&egr_orifice_temperature_sensor_channel_state,
              &egr_orifice_temperature_linearization_cached_axis_offset,
              egr_orifice_temperature_linearization_axis,egr_orifice_temperature_linearization_values
@@ -8064,57 +8129,72 @@ void cm848_sensorChannel6_process(void)
 
 
 //
-// Function: cm848_sensorChannel7_init @ 0x0000d064
+// Function: cm848_processEgrValvePositionChannel @ 0x0000d064
 //
 
-void cm848_sensorChannel7_init(void)
+/* Sensor channel 75 (egr valve position): calls cm848_processSignedSensorChannel every pass, from a
+   periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel7_init) */
+
+void cm848_processEgrValvePositionChannel(void)
 
 {
-  sensorChannelConfigInit
-            (&sensor_channel_config_t_00059446,&sensor_channel7_ram,&WORD_003fa060,
-             sensor_channel75_linearization_axis,sensor_channel75_linearization_values,2,
-             &ema_filter_state_t_003fa062,0x4b,0x282,0x283,&egr_valve_position_sensor_value,
-             &egr_valve_position_sensor_default_value,&egr_valve_position_sensor_fault_status);
+  cm848_processSignedSensorChannel
+            (&egr_valve_position_sensor_config,&egr_valve_position_sensor_channel_state,
+             &egr_valve_position_linearization_cached_axis_offset,
+             egr_valve_position_linearization_axis,egr_valve_position_linearization_values,2,
+             &egr_valve_position_sensor_filter_state,0x4b,0x282,0x283,
+             &egr_valve_position_sensor_value,&egr_valve_position_sensor_default_value,
+             &egr_valve_position_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel7_process @ 0x0000d0f0
+// Function: cm848_initializeEgrValvePositionChannel @ 0x0000d0f0
 //
 
-void cm848_sensorChannel7_process(void)
+/* Sensor channel 75 (egr valve position): calls cm848_initializeSignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel7_process) */
+
+void cm848_initializeEgrValvePositionChannel(void)
 
 {
-  updateSensorChannelWithConfig
-            (&sensor_channel_config_t_00059446,&sensor_channel7_ram,&WORD_003fa060,
-             sensor_channel75_linearization_axis,sensor_channel75_linearization_values,2,
-             &ema_filter_state_t_003fa062,0x4b,0x282,0x283,&egr_valve_position_sensor_value,
-             &egr_valve_position_sensor_default_value,&egr_valve_position_sensor_fault_status);
+  cm848_initializeSignedSensorChannel
+            (&egr_valve_position_sensor_config,&egr_valve_position_sensor_channel_state,
+             &egr_valve_position_linearization_cached_axis_offset,
+             egr_valve_position_linearization_axis,egr_valve_position_linearization_values,2,
+             &egr_valve_position_sensor_filter_state,0x4b,0x282,0x283,
+             &egr_valve_position_sensor_value,&egr_valve_position_sensor_default_value,
+             &egr_valve_position_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel8_exhaustPressureInit @ 0x0000d17c
+// Function: cm848_processExhaustPressureChannel @ 0x0000d17c
 //
 
-/* Exhaust pressure sensor channel (sensor channel 109; e2m 1966 +A Exhaust_Press_Sensor): the
-   periodic pass (sensorChannelTypeB_configInit; the _init / _process suffixes are inverted in this
-   firmware) on exhaust_pressure_sensor_config / exhaust_pressure_sensor_channel_state and the
-   linearization table, fault bits 672 / 673, outputs exhaust_pressure_sensor_value / _default_value
-   / _fault_status. (was cm848_sensorChannel8_init) */
+/* Sensor channel 109 (exhaust pressure): calls cm848_processUnsignedSensorChannel every pass, from
+   a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel8_exhaustPressureInit) | earlier note: Exhaust pressure sensor channel (sensor
+   channel 109; e2m 1966 +A Exhaust_Press_Sensor): the periodic pass
+   (cm848_processUnsignedSensorChannel; the _init / _process suffixes are inverted in this firmware)
+   on exhaust_pressure_sensor_config / exhaust_pressure_sensor_channel_state and the linearization
+   table, fault bits 672 / 673, outputs exhaust_pressure_sensor_value / _default_value /
+   _fault_status. (was cm848_sensorChannel8_init) */
 
-void cm848_sensorChannel8_exhaustPressureInit(void)
+void cm848_processExhaustPressureChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&exhaust_pressure_sensor_config,&exhaust_pressure_sensor_channel_state,
-             &exhaust_pressure_sensor_cached_axis_offset,exhaust_pressure_sensor_linearization_axis,
-             exhaust_pressure_sensor_linearization_values,0,&exhaust_pressure_sensor_filter_state,
-             0x6d,0x2a0,0x2a1,&exhaust_pressure_sensor_value,&exhaust_pressure_sensor_default_value,
+             &exhaust_pressure_sensor_linearization_cached_axis_offset,
+             exhaust_pressure_sensor_linearization_axis,exhaust_pressure_sensor_linearization_values
+             ,0,&exhaust_pressure_sensor_filter_state,0x6d,0x2a0,0x2a1,
+             &exhaust_pressure_sensor_value,&exhaust_pressure_sensor_default_value,
              &exhaust_pressure_sensor_fault_status);
   return;
 }
@@ -8122,20 +8202,24 @@ void cm848_sensorChannel8_exhaustPressureInit(void)
 
 
 //
-// Function: cm848_sensorChannel8_exhaustPressureProcess @ 0x0000d208
+// Function: cm848_initializeExhaustPressureChannel @ 0x0000d208
 //
 
-/* Boot pass of the exhaust pressure sensor channel (sensorChannelTypeB_update, the same arguments
-   as cm848_sensorChannel8_exhaustPressureInit). (was cm848_sensorChannel8_process) */
+/* Sensor channel 109 (exhaust pressure): calls cm848_initializeUnsignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel8_exhaustPressureProcess) | earlier note: Boot pass of the exhaust pressure
+   sensor channel (cm848_initializeUnsignedSensorChannel, the same arguments as
+   cm848_processExhaustPressureChannel). (was cm848_sensorChannel8_process) */
 
-void cm848_sensorChannel8_exhaustPressureProcess(void)
+void cm848_initializeExhaustPressureChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&exhaust_pressure_sensor_config,&exhaust_pressure_sensor_channel_state,
-             &exhaust_pressure_sensor_cached_axis_offset,exhaust_pressure_sensor_linearization_axis,
-             exhaust_pressure_sensor_linearization_values,0,&exhaust_pressure_sensor_filter_state,
-             0x6d,0x2a0,0x2a1,&exhaust_pressure_sensor_value,&exhaust_pressure_sensor_default_value,
+             &exhaust_pressure_sensor_linearization_cached_axis_offset,
+             exhaust_pressure_sensor_linearization_axis,exhaust_pressure_sensor_linearization_values
+             ,0,&exhaust_pressure_sensor_filter_state,0x6d,0x2a0,0x2a1,
+             &exhaust_pressure_sensor_value,&exhaust_pressure_sensor_default_value,
              &exhaust_pressure_sensor_fault_status);
   return;
 }
@@ -8143,13 +8227,16 @@ void cm848_sensorChannel8_exhaustPressureProcess(void)
 
 
 //
-// Function: cm848_sensorChannel9_init @ 0x0000d294
+// Function: cm848_processFuelTemperatureChannel @ 0x0000d294
 //
 
-void cm848_sensorChannel9_init(void)
+/* Sensor channel 7 (fuel temperature): calls cm848_processSignedSensorChannel every pass, from a
+   periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel9_init) */
+
+void cm848_processFuelTemperatureChannel(void)
 
 {
-  sensorChannelConfigInit
+  cm848_processSignedSensorChannel
             (&fuel_temperature_sensor_config,&fuel_temperature_sensor_channel_state,
              &fuel_temperature_linearization_cached_axis_offset,fuel_temperature_linearization_axis,
              fuel_temperature_linearization_values,2,&fuel_temperature_sensor_filter_state,7,0x2f,
@@ -8161,13 +8248,17 @@ void cm848_sensorChannel9_init(void)
 
 
 //
-// Function: cm848_sensorChannel9_process @ 0x0000d320
+// Function: cm848_initializeFuelTemperatureChannel @ 0x0000d320
 //
 
-void cm848_sensorChannel9_process(void)
+/* Sensor channel 7 (fuel temperature): calls cm848_initializeSignedSensorChannel once at boot, from
+   cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel9_process) */
+
+void cm848_initializeFuelTemperatureChannel(void)
 
 {
-  updateSensorChannelWithConfig
+  cm848_initializeSignedSensorChannel
             (&fuel_temperature_sensor_config,&fuel_temperature_sensor_channel_state,
              &fuel_temperature_linearization_cached_axis_offset,fuel_temperature_linearization_axis,
              fuel_temperature_linearization_values,2,&fuel_temperature_sensor_filter_state,7,0x2f,
@@ -8179,23 +8270,58 @@ void cm848_sensorChannel9_process(void)
 
 
 //
-// Function: cm848_sensorChannel10_intakeManifoldTemperatureInit @ 0x0000d3ac
+// Function: cm848_processIntakeManifoldTemperatureChannel @ 0x0000d3ac
 //
 
-/* Periodic Type A sampler for sensor slot 9 = intake manifold temperature
-   (intake_manifold_temperature_sensor_filtered - circuit faults 0x13 / 0x14 = P0113 / P0112) - not
-   oil temperature - _init is the family name of the periodic sampler (was
-   cm848_sensorChannel10_oilTempInit) | review-function-readability reviewed 2026-11-13 -
+/* Sensor channel 9 (intake manifold temperature): calls cm848_processSignedSensorChannel every
+   pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel10_intakeManifoldTemperatureInit) | earlier note: Periodic Type A sampler for
+   sensor slot 9 = intake manifold temperature (intake_manifold_temperature_sensor_filtered -
+   circuit faults 0x13 / 0x14 = P0113 / P0112) - not oil temperature - _init is the family name of
+   the periodic sampler (was cm848_sensorChannel10_oilTempInit) | review-function-readability
+   reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+
+void cm848_processIntakeManifoldTemperatureChannel(void)
+
+{
+  cm848_processSignedSensorChannel
+            (&intake_manifold_temperature_sensor_config,
+             &intake_manifold_temperature_sensor_channel_state,
+             &intake_manifold_temperature_linearization_cached_axis_offset,
+             intake_manifold_temperature_linearization_axis,
+             intake_manifold_temperature_linearization_values,2,
+             &intake_manifold_temperature_sensor_filter_state,9,0x13,0x14,
+             &intake_manifold_temperature_sensor_value,
+             &intake_manifold_temperature_sensor_default_value,
+             &intake_manifold_temperature_sensor_fault_status);
+  return;
+}
+
+
+
+//
+// Function: cm848_initializeIntakeManifoldTemperatureChannel @ 0x0000d438
+//
+
+/* Sensor channel 9 (intake manifold temperature): calls cm848_initializeSignedSensorChannel once at
+   boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel10_intakeManifoldTemperatureProcess) | earlier note: Boot-time update twin of
+   cm848_processIntakeManifoldTemperatureChannel (cm848_initializeSignedSensorChannel with the same
+   slot 9 intake manifold temperature arguments) called once from cm848_applicationMain (was
+   cm848_sensorChannel10_oilTempProcess) | review-function-readability reviewed 2026-11-13 -
    Readability Medium Accuracy Confidence High */
 
-void cm848_sensorChannel10_intakeManifoldTemperatureInit(void)
+void cm848_initializeIntakeManifoldTemperatureChannel(void)
 
 {
-  sensorChannelConfigInit
-            (&sensor_channel_config_t_00059526,&sensor_channel10_ram,&WORD_003fa07e,
+  cm848_initializeSignedSensorChannel
+            (&intake_manifold_temperature_sensor_config,
+             &intake_manifold_temperature_sensor_channel_state,
+             &intake_manifold_temperature_linearization_cached_axis_offset,
              intake_manifold_temperature_linearization_axis,
-             intake_manifold_temperature_linearization_values,2,&ema_filter_state_t_003fa080,9,0x13,
-             0x14,&intake_manifold_temperature_sensor_value,
+             intake_manifold_temperature_linearization_values,2,
+             &intake_manifold_temperature_sensor_filter_state,9,0x13,0x14,
+             &intake_manifold_temperature_sensor_value,
              &intake_manifold_temperature_sensor_default_value,
              &intake_manifold_temperature_sensor_fault_status);
   return;
@@ -8204,37 +8330,17 @@ void cm848_sensorChannel10_intakeManifoldTemperatureInit(void)
 
 
 //
-// Function: cm848_sensorChannel10_intakeManifoldTemperatureProcess @ 0x0000d438
+// Function: cm848_processOilPressureChannel @ 0x0000d4c4
 //
 
-/* Boot-time update twin of cm848_sensorChannel10_intakeManifoldTemperatureInit
-   (updateSensorChannelWithConfig with the same slot 9 intake manifold temperature arguments) called
-   once from cm848_applicationMain (was cm848_sensorChannel10_oilTempProcess) |
-   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence High */
+/* Sensor channel 10 (oil pressure): calls cm848_processUnsignedSensorChannel every pass, from a
+   periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel11_init)
+    */
 
-void cm848_sensorChannel10_intakeManifoldTemperatureProcess(void)
+void cm848_processOilPressureChannel(void)
 
 {
-  updateSensorChannelWithConfig
-            (&sensor_channel_config_t_00059526,&sensor_channel10_ram,&WORD_003fa07e,
-             intake_manifold_temperature_linearization_axis,
-             intake_manifold_temperature_linearization_values,2,&ema_filter_state_t_003fa080,9,0x13,
-             0x14,&intake_manifold_temperature_sensor_value,
-             &intake_manifold_temperature_sensor_default_value,
-             &intake_manifold_temperature_sensor_fault_status);
-  return;
-}
-
-
-
-//
-// Function: cm848_sensorChannel11_init @ 0x0000d4c4
-//
-
-void cm848_sensorChannel11_init(void)
-
-{
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&oil_pressure_sensor_config,&oil_pressure_sensor_channel_state,
              &oil_pressure_linearization_cached_axis_offset,oil_pressure_linearization_axis,
              oil_pressure_linearization_values,0,&oil_pressure_sensor_filter_state,10,0xc,0xd,
@@ -8246,13 +8352,17 @@ void cm848_sensorChannel11_init(void)
 
 
 //
-// Function: cm848_sensorChannel11_process @ 0x0000d550
+// Function: cm848_initializeOilPressureChannel @ 0x0000d550
 //
 
-void cm848_sensorChannel11_process(void)
+/* Sensor channel 10 (oil pressure): calls cm848_initializeUnsignedSensorChannel once at boot, from
+   cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel11_process) */
+
+void cm848_initializeOilPressureChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&oil_pressure_sensor_config,&oil_pressure_sensor_channel_state,
              &oil_pressure_linearization_cached_axis_offset,oil_pressure_linearization_axis,
              oil_pressure_linearization_values,0,&oil_pressure_sensor_filter_state,10,0xc,0xd,
@@ -8264,13 +8374,17 @@ void cm848_sensorChannel11_process(void)
 
 
 //
-// Function: cm848_sensorChannel12_init @ 0x0000d5dc
+// Function: cm848_processRemoteAcceleratorPedalChannel @ 0x0000d5dc
 //
 
-void cm848_sensorChannel12_init(void)
+/* Sensor channel 8 (remote accelerator pedal): calls cm848_processUnsignedSensorChannel every pass,
+   from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel12_init) */
+
+void cm848_processRemoteAcceleratorPedalChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&remote_accelerator_pedal_sensor_config,&remote_accelerator_pedal_sensor_channel_state,
              &remote_accelerator_pedal_linearization_cached_axis_offset,
              remote_accelerator_pedal_linearization_axis,
@@ -8284,13 +8398,17 @@ void cm848_sensorChannel12_init(void)
 
 
 //
-// Function: cm848_sensorChannel12_process @ 0x0000d668
+// Function: cm848_initializeRemoteAcceleratorPedalChannel @ 0x0000d668
 //
 
-void cm848_sensorChannel12_process(void)
+/* Sensor channel 8 (remote accelerator pedal): calls cm848_initializeUnsignedSensorChannel once at
+   boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel12_process) */
+
+void cm848_initializeRemoteAcceleratorPedalChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&remote_accelerator_pedal_sensor_config,&remote_accelerator_pedal_sensor_channel_state,
              &remote_accelerator_pedal_linearization_cached_axis_offset,
              remote_accelerator_pedal_linearization_axis,
@@ -8304,13 +8422,17 @@ void cm848_sensorChannel12_process(void)
 
 
 //
-// Function: cm848_sensorChannel13_init @ 0x0000d6f4
+// Function: cm848_processAcceleratorPedalChannel @ 0x0000d6f4
 //
 
-void cm848_sensorChannel13_init(void)
+/* Sensor channel 13 (accelerator pedal): calls cm848_processUnsignedSensorChannel every pass, from
+   a periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel13_init)
+    */
+
+void cm848_processAcceleratorPedalChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&accelerator_pedal_sensor_config,&accelerator_pedal_sensor_channel_state,
              &accelerator_pedal_linearization_cached_axis_offset,
              accelerator_pedal_linearization_axis,accelerator_pedal_linearization_values,0,
@@ -8322,13 +8444,17 @@ void cm848_sensorChannel13_init(void)
 
 
 //
-// Function: cm848_sensorChannel13_process @ 0x0000d780
+// Function: cm848_initializeAcceleratorPedalChannel @ 0x0000d780
 //
 
-void cm848_sensorChannel13_process(void)
+/* Sensor channel 13 (accelerator pedal): calls cm848_initializeUnsignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel13_process) */
+
+void cm848_initializeAcceleratorPedalChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&accelerator_pedal_sensor_config,&accelerator_pedal_sensor_channel_state,
              &accelerator_pedal_linearization_cached_axis_offset,
              accelerator_pedal_linearization_axis,accelerator_pedal_linearization_values,0,
@@ -8340,13 +8466,17 @@ void cm848_sensorChannel13_process(void)
 
 
 //
-// Function: cm848_sensorChannel14_init @ 0x0000d80c
+// Function: cm848_processSensorReferenceVoltageAChannel @ 0x0000d80c
 //
 
-void cm848_sensorChannel14_init(void)
+/* Sensor channel 42 (sensor reference voltage a): calls cm848_processUnsignedSensorChannel every
+   pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel14_init) */
+
+void cm848_processSensorReferenceVoltageAChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&sensor_reference_voltage_a_config,&sensor_reference_voltage_a_channel_state,
              &sensor_reference_voltage_a_linearization_cached_axis_offset,
              sensor_reference_voltage_a_linearization_axis,
@@ -8360,13 +8490,17 @@ void cm848_sensorChannel14_init(void)
 
 
 //
-// Function: cm848_sensorChannel14_process @ 0x0000d898
+// Function: cm848_initializeSensorReferenceVoltageAChannel @ 0x0000d898
 //
 
-void cm848_sensorChannel14_process(void)
+/* Sensor channel 42 (sensor reference voltage a): calls cm848_initializeUnsignedSensorChannel once
+   at boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel14_process) */
+
+void cm848_initializeSensorReferenceVoltageAChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&sensor_reference_voltage_a_config,&sensor_reference_voltage_a_channel_state,
              &sensor_reference_voltage_a_linearization_cached_axis_offset,
              sensor_reference_voltage_a_linearization_axis,
@@ -8380,13 +8514,17 @@ void cm848_sensorChannel14_process(void)
 
 
 //
-// Function: cm848_sensorChannel15_init @ 0x0000d924
+// Function: cm848_processSensorReferenceVoltageCChannel @ 0x0000d924
 //
 
-void cm848_sensorChannel15_init(void)
+/* Sensor channel 21 (sensor reference voltage c): calls cm848_processUnsignedSensorChannel every
+   pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel15_init) */
+
+void cm848_processSensorReferenceVoltageCChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&sensor_reference_voltage_c_config,&sensor_reference_voltage_c_channel_state,
              &sensor_reference_voltage_c_linearization_cached_axis_offset,
              sensor_reference_voltage_c_linearization_axis,
@@ -8400,13 +8538,17 @@ void cm848_sensorChannel15_init(void)
 
 
 //
-// Function: cm848_sensorChannel15_process @ 0x0000d9b0
+// Function: cm848_initializeSensorReferenceVoltageCChannel @ 0x0000d9b0
 //
 
-void cm848_sensorChannel15_process(void)
+/* Sensor channel 21 (sensor reference voltage c): calls cm848_initializeUnsignedSensorChannel once
+   at boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel15_process) */
+
+void cm848_initializeSensorReferenceVoltageCChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&sensor_reference_voltage_c_config,&sensor_reference_voltage_c_channel_state,
              &sensor_reference_voltage_c_linearization_cached_axis_offset,
              sensor_reference_voltage_c_linearization_axis,
@@ -8420,14 +8562,18 @@ void cm848_sensorChannel15_process(void)
 
 
 //
-// Function: cm848_sensorChannel16_init @ 0x0000da3c
+// Function: cm848_processWaterInFuelChannel @ 0x0000da3c
 //
 
-void cm848_sensorChannel16_init(void)
+/* Sensor channel 15 (water in fuel): calls cm848_processUnsignedSensorChannel every pass, from a
+   periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel16_init)
+    */
+
+void cm848_processWaterInFuelChannel(void)
 
 {
   if ((j1939_governor_feature_byte & 0x10) == 0) {
-    sensorChannelTypeB_configInit
+    cm848_processUnsignedSensorChannel
               (&water_in_fuel_sensor_feature_bit_4_off_config,&water_in_fuel_sensor_channel_state,
                &water_in_fuel_linearization_cached_axis_offset,
                water_in_fuel_linearization_feature_bit_4_off_axis,
@@ -8436,7 +8582,7 @@ void cm848_sensorChannel16_init(void)
                &water_in_fuel_sensor_default_value,&water_in_fuel_sensor_fault_status);
   }
   else {
-    sensorChannelTypeB_configInit
+    cm848_processUnsignedSensorChannel
               (&water_in_fuel_sensor_feature_bit_4_on_config,&water_in_fuel_sensor_channel_state,
                &water_in_fuel_linearization_cached_axis_offset,
                water_in_fuel_linearization_feature_bit_4_on_axis,
@@ -8450,14 +8596,18 @@ void cm848_sensorChannel16_init(void)
 
 
 //
-// Function: cm848_sensorChannel16_process @ 0x0000db50
+// Function: cm848_initializeWaterInFuelChannel @ 0x0000db50
 //
 
-void cm848_sensorChannel16_process(void)
+/* Sensor channel 15 (water in fuel): calls cm848_initializeUnsignedSensorChannel once at boot, from
+   cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel16_process) */
+
+void cm848_initializeWaterInFuelChannel(void)
 
 {
   if ((j1939_governor_feature_byte & 0x10) == 0) {
-    sensorChannelTypeB_update
+    cm848_initializeUnsignedSensorChannel
               (&water_in_fuel_sensor_feature_bit_4_off_config,&water_in_fuel_sensor_channel_state,
                &water_in_fuel_linearization_cached_axis_offset,
                water_in_fuel_linearization_feature_bit_4_off_axis,
@@ -8466,7 +8616,7 @@ void cm848_sensorChannel16_process(void)
                &water_in_fuel_sensor_default_value,&water_in_fuel_sensor_fault_status);
   }
   else {
-    sensorChannelTypeB_update
+    cm848_initializeUnsignedSensorChannel
               (&water_in_fuel_sensor_feature_bit_4_on_config,&water_in_fuel_sensor_channel_state,
                &water_in_fuel_linearization_cached_axis_offset,
                water_in_fuel_linearization_feature_bit_4_on_axis,
@@ -10230,8 +10380,8 @@ void mpc555_fatalErrorHalt(void)
 void cm848_selectBatteryVoltage(void)
 
 {
-  sensor_channel4_fault_snapshot = sensor_channel4_fault_status;
-  if (sensor_channel4_fault_status == 2) {
+  sensor_channel4_fault_snapshot = battery_voltage_sensor_fault_status;
+  if (battery_voltage_sensor_fault_status == 2) {
     battery_voltage_source = SENSOR_VALUE_SOURCE_DEFAULT;
     battery_voltage_selected = battery_voltage_sensor_default_value;
   }
@@ -10255,10 +10405,10 @@ void cm848_selectBatteryVoltage(void)
 void cm848_updateBatteryVoltageSource(void)
 
 {
-  if ((sensor_channel4_fault_status == 0) || (sensor_channel4_fault_status == 1)) {
+  if ((battery_voltage_sensor_fault_status == 0) || (battery_voltage_sensor_fault_status == 1)) {
     battery_voltage_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
-  else if (sensor_channel4_fault_status == 2) {
+  else if (battery_voltage_sensor_fault_status == 2) {
     battery_voltage_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   return;
@@ -12594,14 +12744,14 @@ void cm848_initializeChargePressureEstimate(void)
 //
 
 /* e2m 1A2D +8 Charge_Press_IR_Enable: charge_pressure_in_range_enable_flag = 1 while the charge
-   pressure sensor has no fault (map_sensor_fault_status 0) and the estimate is good
+   pressure sensor has no fault (boost_pressure_sensor_fault_status 0) and the estimate is good
    (charge_pressure_estimate_state 0), else 0. Called by cm848_monitorChargePressureInRange. (was
    cm848_checkBoostControlCondition) */
 
 void cm848_calculateChargePressureInRangeEnable(void)
 
 {
-  if ((map_sensor_fault_status == 0) && (charge_pressure_estimate_state == 0)) {
+  if ((boost_pressure_sensor_fault_status == 0) && (charge_pressure_estimate_state == 0)) {
     charge_pressure_in_range_enable_flag = 1;
   }
   else {
@@ -12729,7 +12879,7 @@ void cm848_monitorChargePressureInRange(void)
   ushort uVar2;
   ushort uVar3;
   
-  uVar2 = map_sensor_fault_status;
+  uVar2 = boost_pressure_sensor_fault_status;
   if ((((fault_detected_cal.faults_0_to_15 & 0x100) == 0) ||
       ((charge_pressure_sensor_fault_gate_bits & 1) == 0)) &&
      (((fault_detected_cal.faults_0_to_15 & 0x200) == 0 ||
@@ -28711,7 +28861,7 @@ uint cm848_absoluteValue16(uint param_1)
    cm848_processSensorDeviationOnKeyoff after the engine has been stopped for
    pressure_sensor_check_delay_time while algorithm_enable_flags_6_cal bit 0x20 is set. It compares
    three pressure readings, barometric_pressure_sensor_filtered,
-   boost_pressure_channel77_sensor_filtered (sensor_channel_filtered_output[77], paired with the
+   boost_pressure_absolute_sensor_filtered (sensor_channel_filtered_output[77], paired with the
    boost tolerance) and sensor_channel38_filtered_output ([38], paired with the oil tolerance),
    using barometric_pressure_sensor_tolerance, boost_pressure_sensor_tolerance and
    oil_pressure_sensor_tolerance. A sensor is flagged when it differs from both of the other two by
@@ -28737,7 +28887,7 @@ void cm848_checkPressureSensorAgreement(void)
        ((fault_detected_cal.faults_0_to_15 & 0x1000) == 0)))) &&
      ((fault_detected_cal.faults_0_to_15 & 0x2000) == 0)) {
     uVar2 = (uint)barometric_pressure_sensor_filtered;
-    uVar1 = cm848_absoluteValue16(uVar2 - boost_pressure_channel77_sensor_filtered);
+    uVar1 = cm848_absoluteValue16(uVar2 - boost_pressure_absolute_sensor_filtered);
     uVar2 = cm848_absoluteValue16(uVar2 - sensor_channel38_filtered_output);
     if (((uint)barometric_pressure_sensor_tolerance + (uint)boost_pressure_sensor_tolerance <
          (uVar1 & 0xffff)) &&
@@ -28749,7 +28899,7 @@ void cm848_checkPressureSensorAgreement(void)
       fault_detected_cal.faults_592_to_607 = fault_detected_cal.faults_592_to_607 & 0xfffb;
       fault_registered_cal.faults_592_to_607 = fault_registered_cal.faults_592_to_607 & 0xfffb;
     }
-    uVar2 = (uint)boost_pressure_channel77_sensor_filtered;
+    uVar2 = (uint)boost_pressure_absolute_sensor_filtered;
     uVar1 = cm848_absoluteValue16(uVar2 - barometric_pressure_sensor_filtered);
     uVar2 = cm848_absoluteValue16(uVar2 - sensor_channel38_filtered_output);
     if (((uint)boost_pressure_sensor_tolerance + (uint)barometric_pressure_sensor_tolerance <
@@ -28764,7 +28914,7 @@ void cm848_checkPressureSensorAgreement(void)
     }
     uVar2 = (uint)sensor_channel38_filtered_output;
     uVar1 = cm848_absoluteValue16(uVar2 - barometric_pressure_sensor_filtered);
-    uVar2 = cm848_absoluteValue16(uVar2 - boost_pressure_channel77_sensor_filtered);
+    uVar2 = cm848_absoluteValue16(uVar2 - boost_pressure_absolute_sensor_filtered);
     if (((uint)oil_pressure_sensor_tolerance + (uint)barometric_pressure_sensor_tolerance <
          (uVar1 & 0xffff)) &&
        ((uint)oil_pressure_sensor_tolerance + (uint)boost_pressure_sensor_tolerance <
@@ -36161,13 +36311,17 @@ void cm848_copySensorValuesInUseUnchecked(void)
 
 
 //
-// Function: cm848_processSensorLookupTable5 @ 0x00035558
+// Function: cm848_processAirConditioningPressureChannel @ 0x00035558
 //
 
-void cm848_processSensorLookupTable5(void)
+/* Sensor channel 71 (air conditioning pressure): calls cm848_processUnsignedSensorChannel every
+   pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_processSensorLookupTable5) */
+
+void cm848_processAirConditioningPressureChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&air_conditioning_pressure_sensor_config,
              &air_conditioning_pressure_sensor_channel_state,
              &air_conditioning_pressure_linearization_cached_axis_offset,
@@ -36182,13 +36336,17 @@ void cm848_processSensorLookupTable5(void)
 
 
 //
-// Function: cm848_initSensorLookupTable5 @ 0x000355e4
+// Function: cm848_initializeAirConditioningPressureChannel @ 0x000355e4
 //
 
-void cm848_initSensorLookupTable5(void)
+/* Sensor channel 71 (air conditioning pressure): calls cm848_initializeUnsignedSensorChannel once
+   at boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_initSensorLookupTable5) */
+
+void cm848_initializeAirConditioningPressureChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&air_conditioning_pressure_sensor_config,
              &air_conditioning_pressure_sensor_channel_state,
              &air_conditioning_pressure_linearization_cached_axis_offset,
@@ -36203,20 +36361,22 @@ void cm848_initSensorLookupTable5(void)
 
 
 //
-// Function: cm848_sensorChannel69_init @ 0x00035670
+// Function: cm848_processBatteryTemperatureChannel @ 0x00035670
 //
 
-/* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High -
-   Type A sensor channel on ADC index 0x45(69) via sensorChannelConfigInit. Was misnamed
-   calculateSensorLookupValue (no calc/lookup - it is sensor acquisition). Despite the _init suffix
-   this is the PERIODIC sampler (called from periodicTaskSet_sensors2); _init follows the
-   sensorChannelN family convention where the configInit wrapper is _init and the boot-time update
-   sibling is _process */
+/* Sensor channel 69 (battery temperature): calls cm848_processSignedSensorChannel every pass, from
+   a periodic task; the old _init / _process suffixes were inverted (was cm848_sensorChannel69_init)
+   | earlier note: review-function-readability reviewed 2026-06-12 - Readability High Accuracy
+   Confidence High - Type A sensor channel on ADC index 0x45(69) via
+   cm848_processSignedSensorChannel. Was misnamed calculateSensorLookupValue (no calc/lookup - it is
+   sensor acquisition). Despite the _init suffix this is the PERIODIC sampler (called from
+   periodicTaskSet_sensors2); _init follows the sensorChannelN family convention where the
+   configInit wrapper is _init and the boot-time update sibling is _process */
 
-void cm848_sensorChannel69_init(void)
+void cm848_processBatteryTemperatureChannel(void)
 
 {
-  sensorChannelConfigInit
+  cm848_processSignedSensorChannel
             (&battery_temperature_sensor_config,&battery_temperature_sensor_channel_state,
              &battery_temperature_linearization_cached_axis_offset,
              battery_temperature_linearization_axis,battery_temperature_linearization_values,2,
@@ -36229,18 +36389,20 @@ void cm848_sensorChannel69_init(void)
 
 
 //
-// Function: cm848_sensorChannel69_process @ 0x000356fc
+// Function: cm848_initializeBatteryTemperatureChannel @ 0x000356fc
 //
 
-/* review-function-readability reviewed 2026-06-12 - Readability High Accuracy Confidence High -
-   boot-init update sibling of cm848_sensorChannel69_init (ADC 0x45/69) via
-   updateSensorChannelWithConfig; called once from the cm848_applicationMain reset path. Was
-   misnamed updateSensorLookupTable */
+/* Sensor channel 69 (battery temperature): calls cm848_initializeSignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel69_process) | earlier note: review-function-readability reviewed 2026-06-12 -
+   Readability High Accuracy Confidence High - boot-init update sibling of
+   cm848_processBatteryTemperatureChannel (ADC 0x45/69) via cm848_initializeSignedSensorChannel;
+   called once from the cm848_applicationMain reset path. Was misnamed updateSensorLookupTable */
 
-void cm848_sensorChannel69_process(void)
+void cm848_initializeBatteryTemperatureChannel(void)
 
 {
-  updateSensorChannelWithConfig
+  cm848_initializeSignedSensorChannel
             (&battery_temperature_sensor_config,&battery_temperature_sensor_channel_state,
              &battery_temperature_linearization_cached_axis_offset,
              battery_temperature_linearization_axis,battery_temperature_linearization_values,2,
@@ -36265,7 +36427,7 @@ void cm848_sensorChannel69_process(void)
 void cm848_processCruiseSwitchChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&cruise_switch_sensor_config,&cruise_switch_channel_state,
              &cruise_switch_ladder_cached_axis_offset,cruise_switch_adc_band_table_x,
              cruise_switch_button_code_table_y,0,&cruise_switch_filter_state,0x2f,0x175,0x176,
@@ -36276,16 +36438,19 @@ void cm848_processCruiseSwitchChannel(void)
 
 
 //
-// Function: cm848_initCruiseSwitchChannel @ 0x00035814
+// Function: cm848_initializeCruiseSwitchChannel @ 0x00035814
 //
 
-/* review-function-readability reviewed 2026-06-11 - Readability High Accuracy Confidence High -
-   boot-time init sibling of cm848_processCruiseSwitchChannel (same channel 47 / config 0x5ab84) */
+/* Sensor channel 47 (cruise switch): calls cm848_initializeUnsignedSensorChannel once at boot, from
+   cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_initCruiseSwitchChannel) | earlier note: review-function-readability reviewed 2026-06-11 -
+   Readability High Accuracy Confidence High - boot-time init sibling of
+   cm848_processCruiseSwitchChannel (same channel 47 / config 0x5ab84) */
 
-void cm848_initCruiseSwitchChannel(void)
+void cm848_initializeCruiseSwitchChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&cruise_switch_sensor_config,&cruise_switch_channel_state,
              &cruise_switch_ladder_cached_axis_offset,cruise_switch_adc_band_table_x,
              cruise_switch_button_code_table_y,0,&cruise_switch_filter_state,0x2f,0x175,0x176,
@@ -36296,13 +36461,17 @@ void cm848_initCruiseSwitchChannel(void)
 
 
 //
-// Function: cm848_processSensorLookupTable3 @ 0x000358a0
+// Function: cm848_processAcceleratorPedalPositionSensor1Channel @ 0x000358a0
 //
 
-void cm848_processSensorLookupTable3(void)
+/* Sensor channel 97 (accelerator pedal position sensor 1): calls cm848_processUnsignedSensorChannel
+   every pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_processSensorLookupTable3) */
+
+void cm848_processAcceleratorPedalPositionSensor1Channel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&accelerator_pedal_position_sensor_1_config,
              &accelerator_pedal_position_sensor_1_channel_state,
              &accelerator_pedal_position_sensor_1_linearization_cached_axis_offset,
@@ -36318,13 +36487,17 @@ void cm848_processSensorLookupTable3(void)
 
 
 //
-// Function: cm848_initSensorLookupTable3 @ 0x0003592c
+// Function: cm848_initializeAcceleratorPedalPositionSensor1Channel @ 0x0003592c
 //
 
-void cm848_initSensorLookupTable3(void)
+/* Sensor channel 97 (accelerator pedal position sensor 1): calls
+   cm848_initializeUnsignedSensorChannel once at boot, from cm848_applicationMain; the old _init /
+   _process suffixes were inverted (was cm848_initSensorLookupTable3) */
+
+void cm848_initializeAcceleratorPedalPositionSensor1Channel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&accelerator_pedal_position_sensor_1_config,
              &accelerator_pedal_position_sensor_1_channel_state,
              &accelerator_pedal_position_sensor_1_linearization_cached_axis_offset,
@@ -36340,13 +36513,17 @@ void cm848_initSensorLookupTable3(void)
 
 
 //
-// Function: cm848_processSensorLookupTable2 @ 0x000359b8
+// Function: cm848_processAcceleratorPedalPositionSensor2Channel @ 0x000359b8
 //
 
-void cm848_processSensorLookupTable2(void)
+/* Sensor channel 98 (accelerator pedal position sensor 2): calls cm848_processUnsignedSensorChannel
+   every pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_processSensorLookupTable2) */
+
+void cm848_processAcceleratorPedalPositionSensor2Channel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&accelerator_pedal_position_sensor_2_config,
              &accelerator_pedal_position_sensor_2_channel_state,
              &accelerator_pedal_position_sensor_2_linearization_cached_axis_offset,
@@ -36362,13 +36539,17 @@ void cm848_processSensorLookupTable2(void)
 
 
 //
-// Function: cm848_initSensorLookupTable2 @ 0x00035a44
+// Function: cm848_initializeAcceleratorPedalPositionSensor2Channel @ 0x00035a44
 //
 
-void cm848_initSensorLookupTable2(void)
+/* Sensor channel 98 (accelerator pedal position sensor 2): calls
+   cm848_initializeUnsignedSensorChannel once at boot, from cm848_applicationMain; the old _init /
+   _process suffixes were inverted (was cm848_initSensorLookupTable2) */
+
+void cm848_initializeAcceleratorPedalPositionSensor2Channel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&accelerator_pedal_position_sensor_2_config,
              &accelerator_pedal_position_sensor_2_channel_state,
              &accelerator_pedal_position_sensor_2_linearization_cached_axis_offset,
@@ -36387,17 +36568,18 @@ void cm848_initSensorLookupTable2(void)
 // Function: cm848_processFourWheelDriveSwitchChannel @ 0x00035ad0
 //
 
-/* Periodic pass of sensor channel 76, the four wheel drive switch: sensorChannelTypeB_configInit on
-   ADC index 76 decodes the raw reading through four_wheel_drive_switch_position_code_axis / _values
-   into sensor_channel_filtered_output[76] (codes 1-5 in five narrow windows, 0 between them, 7
-   outside) with circuit faults 412 (P0839, raw reading above 762 counts) and 413 (P0838, below 11
-   counts). Its only caller is cm848_monitorFourWheelDriveSwitch, once the switch is learned (was
+/* Periodic pass of sensor channel 76, the four wheel drive switch:
+   cm848_processUnsignedSensorChannel on ADC index 76 decodes the raw reading through
+   four_wheel_drive_switch_position_code_axis / _values into sensor_channel_filtered_output[76]
+   (codes 1-5 in five narrow windows, 0 between them, 7 outside) with circuit faults 412 (P0839, raw
+   reading above 762 counts) and 413 (P0838, below 11 counts). Its only caller is
+   cm848_monitorFourWheelDriveSwitch, once the switch is learned (was
    cm848_processSensorLookupTable0). */
 
 void cm848_processFourWheelDriveSwitchChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&four_wheel_drive_switch_sensor_config,&four_wheel_drive_switch_sensor_channel_state,
              &four_wheel_drive_switch_position_code_cached_axis_offset,
              four_wheel_drive_switch_position_code_axis,four_wheel_drive_switch_position_code_values
@@ -36413,14 +36595,15 @@ void cm848_processFourWheelDriveSwitchChannel(void)
 // Function: cm848_initializeFourWheelDriveSwitchChannel @ 0x00035b5c
 //
 
-/* Boot pass of sensor channel 76, the four wheel drive switch: sensorChannelTypeB_update with the
-   same arguments as cm848_processFourWheelDriveSwitchChannel, called once from the initialization
-   sequence (was cm848_initSensorLookupTable1). */
+/* Boot pass of sensor channel 76, the four wheel drive switch:
+   cm848_initializeUnsignedSensorChannel with the same arguments as
+   cm848_processFourWheelDriveSwitchChannel, called once from the initialization sequence (was
+   cm848_initSensorLookupTable1). */
 
 void cm848_initializeFourWheelDriveSwitchChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&four_wheel_drive_switch_sensor_config,&four_wheel_drive_switch_sensor_channel_state,
              &four_wheel_drive_switch_position_code_cached_axis_offset,
              four_wheel_drive_switch_position_code_axis,four_wheel_drive_switch_position_code_values
@@ -36433,13 +36616,17 @@ void cm848_initializeFourWheelDriveSwitchChannel(void)
 
 
 //
-// Function: cm848_processSensorLookupTable1 @ 0x00035be8
+// Function: cm848_processGovernorPressureChannel @ 0x00035be8
 //
 
-void cm848_processSensorLookupTable1(void)
+/* Sensor channel 102 (governor pressure): calls cm848_processUnsignedSensorChannel every pass, from
+   a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_processSensorLookupTable1) */
+
+void cm848_processGovernorPressureChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&governor_pressure_sensor_config,&governor_pressure_sensor_channel_state,
              &governor_pressure_linearization_cached_axis_offset,
              governor_pressure_linearization_axis,governor_pressure_linearization_values,0,
@@ -36451,13 +36638,17 @@ void cm848_processSensorLookupTable1(void)
 
 
 //
-// Function: cm848_initSensorLookupTableInit1 @ 0x00035c74
+// Function: cm848_initializeGovernorPressureChannel @ 0x00035c74
 //
 
-void cm848_initSensorLookupTableInit1(void)
+/* Sensor channel 102 (governor pressure): calls cm848_initializeUnsignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_initSensorLookupTableInit1) */
+
+void cm848_initializeGovernorPressureChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&governor_pressure_sensor_config,&governor_pressure_sensor_channel_state,
              &governor_pressure_linearization_cached_axis_offset,
              governor_pressure_linearization_axis,governor_pressure_linearization_values,0,
@@ -36656,10 +36847,12 @@ void cm848_processFaultScanLookup(void)
       1 << ((uint)*puVar9 + iVar5 * -0x10 & 0x3f)) == 0) {
     wVar2 = lookupTableInterpolation
                       (&DAT_003fb228,wVar2,
-                       (word *)(&PTR_injector_group_a_supply_voltage_linearization_axis_0005764a)
-                               [uVar6 * 0xd],
-                       (word *)(&PTR_injector_group_a_supply_voltage_linearization_values_0005764e)
-                               [uVar6 * 0xd],0);
+                       (word *)(&
+                               PTR_injector_driver_booster_capacitor_1_voltage_linearization_axis_0005764a
+                               )[uVar6 * 0xd],
+                       (word *)(&
+                               PTR_injector_driver_booster_capacitor_1_voltage_linearization_values_0005764e
+                               )[uVar6 * 0xd],0);
   }
   else {
     wVar2 = **(word **)(&BYTE_00057646 + iVar7);
@@ -36681,10 +36874,13 @@ void cm848_processFaultScanLookup(void)
         1 << (*(ushort *)(&DAT_0005769c + iVar4) & 0xf)) == 0)))) &&
      ((logical_output_request_bits_48_to_55.driver_asic_shutoff_request == 0 &&
       ((0x3a < final_fueling && (supervisor_register_36_bit_1_low_held_flag == 0)))))) {
-    if (*(ushort *)(&PTR_sensor_channel_config_t_0005b55c_high_threshold_0005762e)[uVar6 * 0xd] <
-        **(ushort **)(&BYTE_0005763e + iVar7)) {
+    if (*(ushort *)
+         (&PTR_injector_driver_booster_capacitor_1_voltage_sensor_config_high_threshold_0005762e)
+         [uVar6 * 0xd] < **(ushort **)(&BYTE_0005763e + iVar7)) {
       if (*(ushort *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) <
-          *(ushort *)(&PTR_sensor_channel_config_t_0005b55c_debounce_limit_0005763a)[uVar6 * 0xd]) {
+          *(ushort *)
+           (&PTR_injector_driver_booster_capacitor_1_voltage_sensor_config_debounce_limit_0005763a)
+           [uVar6 * 0xd]) {
         **(short **)
           (&BYTE_00057652 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
              = **(short **)
@@ -36722,9 +36918,13 @@ void cm848_processFaultScanLookup(void)
            *(short *)(&per_cylinder_timing_array + (uint)cylinder_event_index * 2) + -1;
     }
     if (**(ushort **)(&BYTE_0005763e + iVar7) <
-        *(ushort *)(&PTR_sensor_channel_config_t_0005b55c_low_threshold_00057632)[uVar6 * 0xd]) {
+        *(ushort *)
+         (&PTR_injector_driver_booster_capacitor_1_voltage_sensor_config_low_threshold_00057632)
+         [uVar6 * 0xd]) {
       if ((&per_cylinder_sync_counter)[cylinder_event_index] <
-          *(ushort *)(&PTR_sensor_channel_config_t_0005b55c_debounce_limit_0005763a)[uVar6 * 0xd]) {
+          *(ushort *)
+           (&PTR_injector_driver_booster_capacitor_1_voltage_sensor_config_debounce_limit_0005763a)
+           [uVar6 * 0xd]) {
         **(short **)
           (&BYTE_00057656 + (uint)(&calibration_constant_1)[(uint)cylinder_event_index * 5] * 0x34)
              = **(short **)
@@ -38544,8 +38744,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -45605,21 +45805,27 @@ void cm848_dispatchModeHandlers(void)
 
 
 //
-// Function: cm848_updateInjectorDriverBoosterCapacitor1VoltageChannel @ 0x000429a0
+// Function: cm848_processInjectorDriverBoosterCapacitor1VoltageChannel @ 0x000429a0
 //
 
-/* Sensor channel 54 wrapper run every pass from cm848_periodicTaskSet_outputs: the injector driver
-   booster capacitor 1 voltage (faults 328 / 329; P2146) (was cm848_initProtectionParameter1) */
+/* Sensor channel 54 (injector driver booster capacitor 1 voltage): calls
+   cm848_processUnsignedSensorChannel every pass, from a periodic task; the old _init / _process
+   suffixes were inverted (was cm848_updateInjectorDriverBoosterCapacitor1VoltageChannel) | earlier
+   note: Sensor channel 54 wrapper run every pass from cm848_periodicTaskSet_outputs: the injector
+   driver booster capacitor 1 voltage (faults 328 / 329; P2146) (was cm848_initProtectionParameter1)
+    */
 
-void cm848_updateInjectorDriverBoosterCapacitor1VoltageChannel(void)
+void cm848_processInjectorDriverBoosterCapacitor1VoltageChannel(void)
 
 {
-  sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005b55c,
-             &injector_driver_booster_capacitor_1_voltage_channel_state,&WORD_003fb564,
-             injector_group_a_supply_voltage_linearization_axis,
-             injector_group_a_supply_voltage_linearization_values,0,&ema_filter_state_t_003fb566,
-             0x36,0x148,0x149,&injector_driver_booster_capacitor_1_voltage_sensor_value,
+  cm848_processUnsignedSensorChannel
+            (&injector_driver_booster_capacitor_1_voltage_sensor_config,
+             &injector_driver_booster_capacitor_1_voltage_sensor_channel_state,
+             &injector_driver_booster_capacitor_1_voltage_linearization_cached_axis_offset,
+             injector_driver_booster_capacitor_1_voltage_linearization_axis,
+             injector_driver_booster_capacitor_1_voltage_linearization_values,0,
+             &injector_driver_booster_capacitor_1_voltage_sensor_filter_state,0x36,0x148,0x149,
+             &injector_driver_booster_capacitor_1_voltage_sensor_value,
              &injector_driver_booster_capacitor_1_voltage_sensor_default_value,
              &injector_driver_booster_capacitor_1_voltage_sensor_fault_status);
   return;
@@ -45637,12 +45843,14 @@ void cm848_updateInjectorDriverBoosterCapacitor1VoltageChannel(void)
 void cm848_initializeInjectorDriverBoosterCapacitor1VoltageChannel(void)
 
 {
-  sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005b55c,
-             &injector_driver_booster_capacitor_1_voltage_channel_state,&WORD_003fb564,
-             injector_group_a_supply_voltage_linearization_axis,
-             injector_group_a_supply_voltage_linearization_values,0,&ema_filter_state_t_003fb566,
-             0x36,0x148,0x149,&injector_driver_booster_capacitor_1_voltage_sensor_value,
+  cm848_initializeUnsignedSensorChannel
+            (&injector_driver_booster_capacitor_1_voltage_sensor_config,
+             &injector_driver_booster_capacitor_1_voltage_sensor_channel_state,
+             &injector_driver_booster_capacitor_1_voltage_linearization_cached_axis_offset,
+             injector_driver_booster_capacitor_1_voltage_linearization_axis,
+             injector_driver_booster_capacitor_1_voltage_linearization_values,0,
+             &injector_driver_booster_capacitor_1_voltage_sensor_filter_state,0x36,0x148,0x149,
+             &injector_driver_booster_capacitor_1_voltage_sensor_value,
              &injector_driver_booster_capacitor_1_voltage_sensor_default_value,
              &injector_driver_booster_capacitor_1_voltage_sensor_fault_status);
   return;
@@ -45651,21 +45859,27 @@ void cm848_initializeInjectorDriverBoosterCapacitor1VoltageChannel(void)
 
 
 //
-// Function: cm848_updateInjectorDriverBoosterCapacitor2VoltageChannel @ 0x00042ab8
+// Function: cm848_processInjectorDriverBoosterCapacitor2VoltageChannel @ 0x00042ab8
 //
 
-/* Sensor channel 55 wrapper run every pass from cm848_periodicTaskSet_outputs: the injector driver
-   booster capacitor 2 voltage (faults 330 / 331; P2149) (was cm848_initProtectionParameter2) */
+/* Sensor channel 55 (injector driver booster capacitor 2 voltage): calls
+   cm848_processUnsignedSensorChannel every pass, from a periodic task; the old _init / _process
+   suffixes were inverted (was cm848_updateInjectorDriverBoosterCapacitor2VoltageChannel) | earlier
+   note: Sensor channel 55 wrapper run every pass from cm848_periodicTaskSet_outputs: the injector
+   driver booster capacitor 2 voltage (faults 330 / 331; P2149) (was cm848_initProtectionParameter2)
+    */
 
-void cm848_updateInjectorDriverBoosterCapacitor2VoltageChannel(void)
+void cm848_processInjectorDriverBoosterCapacitor2VoltageChannel(void)
 
 {
-  sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005b56c,
-             &injector_driver_booster_capacitor_2_voltage_channel_state,&WORD_003fb56e,
-             injector_group_b_supply_voltage_linearization_axis,
-             injector_group_b_supply_voltage_linearization_values,0,&ema_filter_state_t_003fb570,
-             0x37,0x14a,0x14b,&injector_driver_booster_capacitor_2_voltage_sensor_value,
+  cm848_processUnsignedSensorChannel
+            (&injector_driver_booster_capacitor_2_voltage_sensor_config,
+             &injector_driver_booster_capacitor_2_voltage_sensor_channel_state,
+             &injector_driver_booster_capacitor_2_voltage_linearization_cached_axis_offset,
+             injector_driver_booster_capacitor_2_voltage_linearization_axis,
+             injector_driver_booster_capacitor_2_voltage_linearization_values,0,
+             &injector_driver_booster_capacitor_2_voltage_sensor_filter_state,0x37,0x14a,0x14b,
+             &injector_driver_booster_capacitor_2_voltage_sensor_value,
              &injector_driver_booster_capacitor_2_voltage_sensor_default_value,
              &injector_driver_booster_capacitor_2_voltage_sensor_fault_status);
   return;
@@ -45683,12 +45897,14 @@ void cm848_updateInjectorDriverBoosterCapacitor2VoltageChannel(void)
 void cm848_initializeInjectorDriverBoosterCapacitor2VoltageChannel(void)
 
 {
-  sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005b56c,
-             &injector_driver_booster_capacitor_2_voltage_channel_state,&WORD_003fb56e,
-             injector_group_b_supply_voltage_linearization_axis,
-             injector_group_b_supply_voltage_linearization_values,0,&ema_filter_state_t_003fb570,
-             0x37,0x14a,0x14b,&injector_driver_booster_capacitor_2_voltage_sensor_value,
+  cm848_initializeUnsignedSensorChannel
+            (&injector_driver_booster_capacitor_2_voltage_sensor_config,
+             &injector_driver_booster_capacitor_2_voltage_sensor_channel_state,
+             &injector_driver_booster_capacitor_2_voltage_linearization_cached_axis_offset,
+             injector_driver_booster_capacitor_2_voltage_linearization_axis,
+             injector_driver_booster_capacitor_2_voltage_linearization_values,0,
+             &injector_driver_booster_capacitor_2_voltage_sensor_filter_state,0x37,0x14a,0x14b,
+             &injector_driver_booster_capacitor_2_voltage_sensor_value,
              &injector_driver_booster_capacitor_2_voltage_sensor_default_value,
              &injector_driver_booster_capacitor_2_voltage_sensor_fault_status);
   return;
@@ -49354,7 +49570,7 @@ LAB_000489d0:
   if (fuel_pressure_governor_state.fuel_pressure_governor_mode ==
       FUEL_PRESSURE_GOVERNOR_OPEN_LOOP_START) {
     fuel_metering_battery_voltage_filter.coefficient =
-         &sensor_channel_config_t_00059336.filter_coefficient;
+         &battery_voltage_sensor_config.filter_coefficient;
   }
   else {
     fuel_metering_battery_voltage_filter.coefficient =
@@ -49535,7 +49751,7 @@ void cm848_initializeFuelPressureGovernorState(void)
   fuel_metering_reference_filter.coefficient = &fuel_metering_reference_filter_coefficient;
   fuel_metering_battery_voltage_filter.accumulator = 0;
   fuel_metering_battery_voltage_filter.coefficient =
-       &sensor_channel_config_t_00059336.filter_coefficient;
+       &battery_voltage_sensor_config.filter_coefficient;
   fuel_pressure_sensor_filter.accumulator = 0;
   fuel_pressure_sensor_filter.coefficient = &fuel_pressure_sensor_filter_coefficient;
   fuel_pressure_governor_accelerator_feed_forward_filter.accumulator = 0;
@@ -49569,7 +49785,8 @@ void cm848_filterEngineSensorValue(void)
   dword dVar1;
   
   dVar1 = exponentialMovingAverage
-                    ((uint)sensor_channel2_ram.value,&fuel_metering_battery_voltage_filter);
+                    ((uint)battery_voltage_sensor_channel_state.value,
+                     &fuel_metering_battery_voltage_filter);
   fuel_pressure_governor_state.filtered_battery_voltage = (word)dVar1;
   return;
 }
@@ -58096,21 +58313,21 @@ void cm848_applicationMain(void)
   }
   hpcr_initProtectionAndOutputCycle();
   cm848_processProtectionFaultsAndTiming();
-  cm848_sensorChannel15_process();
-  sensorChannelTypeB_update_axis2();
-  sensorChannelTypeB_update_axis3();
-  cm848_sensorChannel14_process();
-  cm848_sensorChannel3_boostPressureProcess();
-  cm848_sensorChannelGeneric_update_configBundle();
-  cm848_sensorChannel0_process();
-  cm848_sensorChannel2_process();
-  cm848_sensorChannel9_process();
-  cm848_sensorChannel12_process();
-  cm848_sensorChannel10_intakeManifoldTemperatureProcess();
-  cm848_sensorChannel11_process();
-  cm848_sensorChannel13_process();
-  cm848_sensorChannel16_process();
-  cm848_sensorChannel1_process();
+  cm848_initializeSensorReferenceVoltageCChannel();
+  cm848_initializeSensorReferenceVoltageBChannel();
+  cm848_initializeEngineSpeedSensorSupplyVoltageChannel();
+  cm848_initializeSensorReferenceVoltageAChannel();
+  cm848_initializeBoostPressureChannel();
+  cm848_initializeCoolantTemperatureChannel();
+  cm848_initializeBarometricPressureChannel();
+  cm848_initializeBatteryVoltageChannel();
+  cm848_initializeFuelTemperatureChannel();
+  cm848_initializeRemoteAcceleratorPedalChannel();
+  cm848_initializeIntakeManifoldTemperatureChannel();
+  cm848_initializeOilPressureChannel();
+  cm848_initializeAcceleratorPedalChannel();
+  cm848_initializeWaterInFuelChannel();
+  cm848_initializeAmbientAirTemperatureChannel();
   cm848_loadHourMetersFromEeprom();
   cm848_dispatchModeHandlers();
   cm848_initializeHighSpeedGovernorCompensatedEngineSpeed();
@@ -58159,13 +58376,13 @@ void cm848_applicationMain(void)
   cm848_stubFunction3();
   initializeHighSpeedGovernorGainSet();
   initializeEngineSpeedLimitDefaults();
-  cm848_sensorChannel69_process();
-  sensorChannelTypeB_update_axis4();
+  cm848_initializeBatteryTemperatureChannel();
+  cm848_initializeFuelLevelChannel();
   governor_fuel_mode_initialization();
   hpcr_cbdInitFilterState();
   hpcr_initializeEngineProtection();
   cm848_initializeAirConditioningClutchControl();
-  cm848_initCruiseSwitchChannel();
+  cm848_initializeCruiseSwitchChannel();
   cm848_initFuelLevelFilter();
   cm848_initJ1939CommunicationSystem();
   mpc555_enableSchedulerMiosOutput();
@@ -58178,7 +58395,7 @@ void cm848_applicationMain(void)
   cm848_initEngineRpmFilterPointers();
   cm848_initializeCruiseGovernorFilters();
   cm848_initTemperatureTrimCoeff();
-  cm848_initSensorLookupTable5();
+  cm848_initializeAirConditioningPressureChannel();
   cm848_initializeLowSpeedGovernorReferenceSpeed();
   cm848_initGovernorLookupDimensions();
   cm848_initializeTorqueManagement();
@@ -58226,9 +58443,9 @@ void cm848_applicationMain(void)
   cm848_initializeRadiatorFanSpeedRationalityCheck();
   cm848_initInterpolationStateCounters();
   cm848_initializeRemoteThrottle();
-  cm848_sensorChannel4_process();
-  cm848_sensorChannel7_update_configBundle();
-  cm848_sensorChannel7_process();
+  cm848_initializeBoostPressureAbsoluteChannel();
+  cm848_initializeExhaustThrottlePositionChannel();
+  cm848_initializeEgrValvePositionChannel();
   cm848_initializeChargeFlows();
   cm848_initializePumpingTorqueLookupCache();
   cm848_initializeOffNominalCompensationLookupCaches();
@@ -58250,7 +58467,7 @@ void cm848_applicationMain(void)
   cm848_initializeVehicleSpeedAndCruiseState();
   cm848_copyROMCalibrationToRAM();
   cm848_initJ1939InputProcessing();
-  cm848_initializeVariableGeometryTurbochargerPositionSensor();
+  cm848_initializeVariableGeometryTurbochargerPositionChannel();
   cm848_initializeSciCommand37TestTimeouts();
   cm848_initMemoryLayout();
   cm848_resetFuelPressureSetpointNotReachedMonitor();
@@ -58268,15 +58485,15 @@ void cm848_applicationMain(void)
   cm848_initializePredictedIntakeManifoldTemperature();
   cm848_initializeTurbochargerSpeedEstimate();
   cm848_initSensorRetryCounters();
-  cm848_sensorChannel6_process();
-  cm848_sensorChannel5_process();
+  cm848_initializeEgrOrificeTemperatureChannel();
+  cm848_initializeEgrDeltaPressureChannel();
   initGovernorFlagsAux();
   initMessageBufferPointers();
   cm848_initializeMaximumRoadSpeeds();
-  cm848_initSensorLookupTable3();
-  cm848_initSensorLookupTable2();
-  cm848_initSensorLookupTableInit1();
-  sensorChannelTypeA_update_axis5();
+  cm848_initializeAcceleratorPedalPositionSensor1Channel();
+  cm848_initializeAcceleratorPedalPositionSensor2Channel();
+  cm848_initializeGovernorPressureChannel();
+  cm848_initializeTransmissionTemperatureChannel();
   cm848_initializeAcceleratorPedalIdlePositions();
   configurationValidationCheck();
   initSensorTableIndexing();
@@ -58284,7 +58501,7 @@ void cm848_applicationMain(void)
   cm848_initializeParkNeutralExitEngineSpeedLimit();
   cm848_initializeEgrOrificeTemperatureSensorRationalityMonitor();
   cm848_initializeEgrDeltaPressureSensorPerformanceCheck();
-  cm848_sensorChannel8_exhaustPressureProcess();
+  cm848_initializeExhaustPressureChannel();
   cm848_initializeTransmissionOutputSpeedSensorMonitor();
   cm848_initializeConverterClutchRationalityMonitor();
   cm848_initializeGovernorPressureControl();
@@ -58331,7 +58548,7 @@ void cm848_applicationMain(void)
   cm848_initializeBatteryVoltageInRangeFlags();
   mpc555_clearTimingDataAndFilters();
   cm848_dispatchCalibrationBlockHandlers();
-  sensorChannelTypeB_update_axis1();
+  cm848_initializeEcmInternalTemperatureChannel();
   initGovernorTempTableParams();
   cm848_initializeChargeManagerLimiters();
   cm848_initializeChargeSystemErrorTables();
@@ -58524,8 +58741,8 @@ void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
 
 {
   undefined4 compare_register_pair;
-  word modulus_start_value;
   word modulus_period_value;
+  word modulus_start_value;
   
   if (duty < 0x6400) {
     if (duty == 0) {
@@ -60586,16 +60803,21 @@ void cm848_calibrationTableLookup2D(void)
 
 
 //
-// Function: cm848_sensorChannelGeneric_init_configBundle @ 0x00500004
+// Function: cm848_processCoolantTemperatureChannel @ 0x00500004
 //
 
-void cm848_sensorChannelGeneric_init_configBundle(void)
+/* Sensor channel 2 (coolant temperature): calls cm848_processSignedSensorChannel every pass, from a
+   periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannelGeneric_init_configBundle) */
+
+void cm848_processCoolantTemperatureChannel(void)
 
 {
-  sensorChannelConfigInit
-            (&sensor_channel_config_t_000593de,&sensor_channelGeneric_ram,&WORD_003fb9ac,
+  cm848_processSignedSensorChannel
+            (&coolant_temperature_sensor_config,&coolant_temperature_sensor_channel_state,
+             &coolant_temperature_linearization_cached_axis_offset,
              coolant_temperature_linearization_axis,coolant_temperature_linearization_values,2,
-             &ema_filter_state_t_003fb9ae,2,0x10,0x11,&coolant_temperature_sensor_value,
+             &coolant_temperature_sensor_filter_state,2,0x10,0x11,&coolant_temperature_sensor_value,
              &coolant_temperature_sensor_default_value,&coolant_temperature_sensor_fault_status);
   return;
 }
@@ -60603,16 +60825,21 @@ void cm848_sensorChannelGeneric_init_configBundle(void)
 
 
 //
-// Function: cm848_sensorChannelGeneric_update_configBundle @ 0x00500090
+// Function: cm848_initializeCoolantTemperatureChannel @ 0x00500090
 //
 
-void cm848_sensorChannelGeneric_update_configBundle(void)
+/* Sensor channel 2 (coolant temperature): calls cm848_initializeSignedSensorChannel once at boot,
+   from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannelGeneric_update_configBundle) */
+
+void cm848_initializeCoolantTemperatureChannel(void)
 
 {
-  updateSensorChannelWithConfig
-            (&sensor_channel_config_t_000593de,&sensor_channelGeneric_ram,&WORD_003fb9ac,
+  cm848_initializeSignedSensorChannel
+            (&coolant_temperature_sensor_config,&coolant_temperature_sensor_channel_state,
+             &coolant_temperature_linearization_cached_axis_offset,
              coolant_temperature_linearization_axis,coolant_temperature_linearization_values,2,
-             &ema_filter_state_t_003fb9ae,2,0x10,0x11,&coolant_temperature_sensor_value,
+             &coolant_temperature_sensor_filter_state,2,0x10,0x11,&coolant_temperature_sensor_value,
              &coolant_temperature_sensor_default_value,&coolant_temperature_sensor_fault_status);
   return;
 }
@@ -60620,44 +60847,65 @@ void cm848_sensorChannelGeneric_update_configBundle(void)
 
 
 //
-// Function: cm848_sensorChannel7_init_configBundle @ 0x0050011c
+// Function: cm848_processExhaustThrottlePositionChannel @ 0x0050011c
 //
 
-void cm848_sensorChannel7_init_configBundle(void)
+/* Sensor channel 88 (exhaust throttle position): calls cm848_processSignedSensorChannel every pass,
+   from a periodic task; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel7_init_configBundle) */
+
+void cm848_processExhaustThrottlePositionChannel(void)
 
 {
-  sensorChannelConfigInit
-            (&sensor_channel_config_t_00059482,&sensor_channel_state_t_0040a0da,&WORD_003fb9b6,
-             sensor_channel88_linearization_axis,sensor_channel88_linearization_values,2,
-             &ema_filter_state_t_003fb9b8,0x58,0x292,0x293,&fuel_temperature_sensor_value,
-             &fuel_temperature_sensor_default_value,&fuel_temperature_sensor_fault_status);
+  cm848_processSignedSensorChannel
+            (&exhaust_throttle_position_sensor_config,
+             &exhaust_throttle_position_sensor_channel_state,
+             &exhaust_throttle_position_linearization_cached_axis_offset,
+             exhaust_throttle_position_linearization_axis,
+             exhaust_throttle_position_linearization_values,2,
+             &exhaust_throttle_position_sensor_filter_state,0x58,0x292,0x293,
+             &fuel_temperature_sensor_value,&fuel_temperature_sensor_default_value,
+             &fuel_temperature_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: cm848_sensorChannel7_update_configBundle @ 0x005001a8
+// Function: cm848_initializeExhaustThrottlePositionChannel @ 0x005001a8
 //
 
-void cm848_sensorChannel7_update_configBundle(void)
+/* Sensor channel 88 (exhaust throttle position): calls cm848_initializeSignedSensorChannel once at
+   boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   cm848_sensorChannel7_update_configBundle) */
+
+void cm848_initializeExhaustThrottlePositionChannel(void)
 
 {
-  updateSensorChannelWithConfig
-            (&sensor_channel_config_t_00059482,&sensor_channel_state_t_0040a0da,&WORD_003fb9b6,
-             sensor_channel88_linearization_axis,sensor_channel88_linearization_values,2,
-             &ema_filter_state_t_003fb9b8,0x58,0x292,0x293,&fuel_temperature_sensor_value,
-             &fuel_temperature_sensor_default_value,&fuel_temperature_sensor_fault_status);
+  cm848_initializeSignedSensorChannel
+            (&exhaust_throttle_position_sensor_config,
+             &exhaust_throttle_position_sensor_channel_state,
+             &exhaust_throttle_position_linearization_cached_axis_offset,
+             exhaust_throttle_position_linearization_axis,
+             exhaust_throttle_position_linearization_values,2,
+             &exhaust_throttle_position_sensor_filter_state,0x58,0x292,0x293,
+             &fuel_temperature_sensor_value,&fuel_temperature_sensor_default_value,
+             &fuel_temperature_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: sensorChannelConfigInit @ 0x00500234
+// Function: cm848_processSignedSensorChannel @ 0x00500234
 //
 
-void sensorChannelConfigInit
+/* The periodic pass of the signed sensor channels (lookup flags 2, cm848_signedFirstOrderFilter;
+   lha loads): read the QADC result, linearize, filter, debounce the high / low faults, write the
+   outputs. Its callers run from periodic tasks; the old name said configInit (was
+   sensorChannelConfigInit) */
+
+void cm848_processSignedSensorChannel
                (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr,
                word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
                ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit,
@@ -60890,10 +61138,14 @@ LAB_00500a1c:
 
 
 //
-// Function: updateSensorChannelWithConfig @ 0x00500a4c
+// Function: cm848_initializeSignedSensorChannel @ 0x00500a4c
 //
 
-void updateSensorChannelWithConfig
+/* The boot pass of the signed sensor channels: seeds the filter accumulator, resets the lookup
+   cache to 2 and points the filter at the config's coefficient. Its callers run once from
+   cm848_applicationMain (was updateSensorChannelWithConfig) */
+
+void cm848_initializeSignedSensorChannel
                (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr,
                word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
                ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit,
@@ -61141,25 +61393,29 @@ LAB_0050119c:
 
 
 //
-// Function: cm848_readVariableGeometryTurbochargerPositionSensor @ 0x005011c4
+// Function: cm848_processVariableGeometryTurbochargerPositionChannel @ 0x005011c4
 //
 
-/* Periodic read of sensor channel 101 (called once per pass from cm848_phase_common_processing):
+/* Sensor channel 101 (variable geometry turbocharger position): calls
+   cm848_processSignedSensorChannel every pass, from a periodic task; the old _init / _process
+   suffixes were inverted (was cm848_readVariableGeometryTurbochargerPositionSensor) | earlier note:
+   Periodic read of sensor channel 101 (called once per pass from cm848_phase_common_processing):
    linearises the ADC value through the channel table, debounces the high / low faults 682 / 683 and
    filters it into variable_geometry_turbocharger_position_sensor_value, with
    variable_geometry_turbocharger_position_sensor_default_value and
    variable_geometry_turbocharger_position_sensor_fault_status as the other outputs. (was
    cm848_protection_init_configBundle) */
 
-void cm848_readVariableGeometryTurbochargerPositionSensor(void)
+void cm848_processVariableGeometryTurbochargerPositionChannel(void)
 
 {
-  sensorChannelConfigInit
+  cm848_processSignedSensorChannel
             (&variable_geometry_turbocharger_position_sensor_config,
-             &variable_geometry_turbocharger_position_sensor_state,&WORD_003fb9c0,
+             &variable_geometry_turbocharger_position_sensor_channel_state,
+             &variable_geometry_turbocharger_position_sensor_linearization_cached_axis_offset,
              variable_geometry_turbocharger_position_sensor_linearization_axis,
              variable_geometry_turbocharger_position_sensor_linearization_values,2,
-             &ema_filter_state_t_003fb9c2,0x65,0x2aa,0x2ab,
+             &variable_geometry_turbocharger_position_sensor_filter_state,0x65,0x2aa,0x2ab,
              &variable_geometry_turbocharger_position_sensor_value,
              &variable_geometry_turbocharger_position_sensor_default_value,
              &variable_geometry_turbocharger_position_sensor_fault_status);
@@ -61169,22 +61425,26 @@ void cm848_readVariableGeometryTurbochargerPositionSensor(void)
 
 
 //
-// Function: cm848_initializeVariableGeometryTurbochargerPositionSensor @ 0x00501250
+// Function: cm848_initializeVariableGeometryTurbochargerPositionChannel @ 0x00501250
 //
 
-/* Boot-time first pass of sensor channel 101 (called from the init sequence): loads the first
-   position sensor value, default and status through updateSensorChannelWithConfig with the same
-   arguments as the periodic read. (was cm848_protection_update_configBundle) */
+/* Sensor channel 101 (variable geometry turbocharger position): calls
+   cm848_initializeSignedSensorChannel once at boot, from cm848_applicationMain; the old _init /
+   _process suffixes were inverted (was cm848_initializeVariableGeometryTurbochargerPositionSensor)
+   | earlier note: Boot-time first pass of sensor channel 101 (called from the init sequence): loads
+   the first position sensor value, default and status through cm848_initializeSignedSensorChannel
+   with the same arguments as the periodic read. (was cm848_protection_update_configBundle) */
 
-void cm848_initializeVariableGeometryTurbochargerPositionSensor(void)
+void cm848_initializeVariableGeometryTurbochargerPositionChannel(void)
 
 {
-  updateSensorChannelWithConfig
+  cm848_initializeSignedSensorChannel
             (&variable_geometry_turbocharger_position_sensor_config,
-             &variable_geometry_turbocharger_position_sensor_state,&WORD_003fb9c0,
+             &variable_geometry_turbocharger_position_sensor_channel_state,
+             &variable_geometry_turbocharger_position_sensor_linearization_cached_axis_offset,
              variable_geometry_turbocharger_position_sensor_linearization_axis,
              variable_geometry_turbocharger_position_sensor_linearization_values,2,
-             &ema_filter_state_t_003fb9c2,0x65,0x2aa,0x2ab,
+             &variable_geometry_turbocharger_position_sensor_filter_state,0x65,0x2aa,0x2ab,
              &variable_geometry_turbocharger_position_sensor_value,
              &variable_geometry_turbocharger_position_sensor_default_value,
              &variable_geometry_turbocharger_position_sensor_fault_status);
@@ -61194,18 +61454,22 @@ void cm848_initializeVariableGeometryTurbochargerPositionSensor(void)
 
 
 //
-// Function: sensorChannelTypeB_configInit @ 0x005012dc
+// Function: cm848_processUnsignedSensorChannel @ 0x005012dc
 //
 
 /* WARNING: Unable to use type for symbol recovery_decrement */
-/* review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
-   converging-epilogue gotos + 3 split-remnant scratch temps Ghidra will not let CSV name) Accuracy
-   Confidence High. config_ptr typed as sensor_channel_config_t* (7 default/threshold/debounce
-   fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
+/* The periodic pass of the unsigned sensor channels (lookup flags 0, exponentialMovingAverage; lhz
+   loads). Unlike the signed twin it skips the threshold faults of channel 47 (cruise switch) until
+   cruise_control_switches_learned_flag, of channel 71 (A/C pressure) until its learned flag, and of
+   channel 10 (oil pressure) while oil_pressure_switch_only_cal is set (was
+   sensorChannelTypeB_configInit) | earlier note: review-function-readability reviewed 2026-06-12 -
+   Readability MEDIUM (irreducible converging-epilogue gotos + 3 split-remnant scratch temps Ghidra
+   will not let CSV name) Accuracy Confidence High. config_ptr typed as sensor_channel_config_t* (7
+   default/threshold/debounce fields render); DAT_003fd8e8 -> governor_temp_protection_disable (now
    oil_pressure_switch_only_cal); 11 locals named; 2 array globals renamed. 13-param PowerPC
    prototype; params 4-6 passed but unused. */
 
-void sensorChannelTypeB_configInit
+void cm848_processUnsignedSensorChannel
                (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr,
                word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
                ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit,
@@ -61467,15 +61731,17 @@ LAB_00501b1c:
 
 
 //
-// Function: sensorChannelTypeB_update @ 0x00501b4c
+// Function: cm848_initializeUnsignedSensorChannel @ 0x00501b4c
 //
 
-/* review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
+/* The boot pass of the unsigned sensor channels (the unsigned twin of
+   cm848_initializeSignedSensorChannel) (was sensorChannelTypeB_update) | earlier note:
+   review-function-readability reviewed 2026-06-12 - Readability MEDIUM (irreducible
    converging-epilogue gotos + split-remnant scratch temps) Accuracy Confidence High. Boot-time twin
    of configInit; same config_ptr struct typing, named global, and named locals; 13-param prototype.
     */
 
-void sensorChannelTypeB_update
+void cm848_initializeUnsignedSensorChannel
                (sensor_channel_config_t *config_ptr,sensor_channel_state_t *state_ptr,
                word *cached_axis_offset,word *x_axis,word *y_data,dword flags,
                ema_filter_state_t *filter_state_ptr,dword channel_index,dword high_fault_bit,
@@ -71765,7 +72031,7 @@ void cm848_diagnoseTurbochargerSpeedSensorFrequency(void)
          turbocharger_speed_sensor_fault_counter + turbocharger_speed_sensor_fault_increment;
   }
   if ((barometric_pressure_reference == 0) ||
-     (uVar1 = (uint)(((ulonglong)boost_pressure_channel77_sensor_filtered << 8) /
+     (uVar1 = (uint)(((ulonglong)boost_pressure_absolute_sensor_filtered << 8) /
                     (ulonglong)(uint)barometric_pressure_reference), 0xffff < uVar1)) {
     uVar1 = 0xffff;
   }
@@ -72848,47 +73114,65 @@ void protection_event_11_reset(void)
 
 
 //
-// Function: sensorChannelTypeB_configInit_axis1 @ 0x005109bc
+// Function: cm848_processEcmInternalTemperatureChannel @ 0x005109bc
 //
 
-void sensorChannelTypeB_configInit_axis1(void)
+/* Sensor channel 26 (ecm internal temperature): calls cm848_processSignedSensorChannel every pass,
+   from a periodic task; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeB_configInit_axis1) */
+
+void cm848_processEcmInternalTemperatureChannel(void)
 
 {
-  sensorChannelConfigInit
-            (&sensor_channel_config_t_0005abe8,&sensor_channel_state_t_0040b17a,&WORD_003fcd2c,
-             sensor_channel26_linearization_axis,sensor_channel26_linearization_values,2,
-             &ema_filter_state_t_003fcd2e,0x1a,0x133,0x132,&ecm_internal_temperature_sensor_value,
-             &ecm_internal_temperature_sensor_default_value,&WORD_0040be32);
+  cm848_processSignedSensorChannel
+            (&ecm_internal_temperature_sensor_config,&ecm_internal_temperature_sensor_channel_state,
+             &ecm_internal_temperature_linearization_cached_axis_offset,
+             ecm_internal_temperature_linearization_axis,
+             ecm_internal_temperature_linearization_values,2,
+             &ecm_internal_temperature_sensor_filter_state,0x1a,0x133,0x132,
+             &ecm_internal_temperature_sensor_value,&ecm_internal_temperature_sensor_default_value,
+             &ecm_internal_temperature_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: sensorChannelTypeB_update_axis1 @ 0x00510a48
+// Function: cm848_initializeEcmInternalTemperatureChannel @ 0x00510a48
 //
 
-void sensorChannelTypeB_update_axis1(void)
+/* Sensor channel 26 (ecm internal temperature): calls cm848_initializeSignedSensorChannel once at
+   boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeB_update_axis1) */
+
+void cm848_initializeEcmInternalTemperatureChannel(void)
 
 {
-  updateSensorChannelWithConfig
-            (&sensor_channel_config_t_0005abe8,&sensor_channel_state_t_0040b17a,&WORD_003fcd2c,
-             sensor_channel26_linearization_axis,sensor_channel26_linearization_values,2,
-             &ema_filter_state_t_003fcd2e,0x1a,0x133,0x132,&ecm_internal_temperature_sensor_value,
-             &ecm_internal_temperature_sensor_default_value,&WORD_0040be32);
+  cm848_initializeSignedSensorChannel
+            (&ecm_internal_temperature_sensor_config,&ecm_internal_temperature_sensor_channel_state,
+             &ecm_internal_temperature_linearization_cached_axis_offset,
+             ecm_internal_temperature_linearization_axis,
+             ecm_internal_temperature_linearization_values,2,
+             &ecm_internal_temperature_sensor_filter_state,0x1a,0x133,0x132,
+             &ecm_internal_temperature_sensor_value,&ecm_internal_temperature_sensor_default_value,
+             &ecm_internal_temperature_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: sensorChannelTypeB_configInit_axis2 @ 0x00510ad4
+// Function: cm848_processSensorReferenceVoltageBChannel @ 0x00510ad4
 //
 
-void sensorChannelTypeB_configInit_axis2(void)
+/* Sensor channel 28 (sensor reference voltage b): calls cm848_processUnsignedSensorChannel every
+   pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeB_configInit_axis2) */
+
+void cm848_processSensorReferenceVoltageBChannel(void)
 
 {
-  sensorChannelTypeB_configInit
+  cm848_processUnsignedSensorChannel
             (&sensor_reference_voltage_b_config,&sensor_reference_voltage_b_channel_state,
              &sensor_reference_voltage_b_linearization_cached_axis_offset,
              sensor_reference_voltage_b_linearization_axis,
@@ -72902,13 +73186,17 @@ void sensorChannelTypeB_configInit_axis2(void)
 
 
 //
-// Function: sensorChannelTypeB_update_axis2 @ 0x00510b60
+// Function: cm848_initializeSensorReferenceVoltageBChannel @ 0x00510b60
 //
 
-void sensorChannelTypeB_update_axis2(void)
+/* Sensor channel 28 (sensor reference voltage b): calls cm848_initializeUnsignedSensorChannel once
+   at boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeB_update_axis2) */
+
+void cm848_initializeSensorReferenceVoltageBChannel(void)
 
 {
-  sensorChannelTypeB_update
+  cm848_initializeUnsignedSensorChannel
             (&sensor_reference_voltage_b_config,&sensor_reference_voltage_b_channel_state,
              &sensor_reference_voltage_b_linearization_cached_axis_offset,
              sensor_reference_voltage_b_linearization_axis,
@@ -72922,102 +73210,144 @@ void sensorChannelTypeB_update_axis2(void)
 
 
 //
-// Function: sensorChannelTypeB_configInit_axis3 @ 0x00510bec
+// Function: cm848_processEngineSpeedSensorSupplyVoltageChannel @ 0x00510bec
 //
 
-void sensorChannelTypeB_configInit_axis3(void)
+/* Sensor channel 29 (engine speed sensor supply voltage): calls cm848_processUnsignedSensorChannel
+   every pass, from a periodic task; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeB_configInit_axis3) */
+
+void cm848_processEngineSpeedSensorSupplyVoltageChannel(void)
 
 {
-  sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005ac78,&sensor_channel_state_t_0040b192,&WORD_003fcd40,
-             sensor_channel29_linearization_axis,sensor_channel29_linearization_values,0,
-             &ema_filter_state_t_003fcd42,0x1d,0x177,0x178,&WORD_0040bdd8,&WORD_0040bdda,
-             &WORD_0040be40);
+  cm848_processUnsignedSensorChannel
+            (&engine_speed_sensor_supply_voltage_config,
+             &engine_speed_sensor_supply_voltage_channel_state,
+             &engine_speed_sensor_supply_voltage_linearization_cached_axis_offset,
+             engine_speed_sensor_supply_voltage_linearization_axis,
+             engine_speed_sensor_supply_voltage_linearization_values,0,
+             &engine_speed_sensor_supply_voltage_filter_state,0x1d,0x177,0x178,
+             &engine_speed_sensor_supply_voltage_value,
+             &engine_speed_sensor_supply_voltage_default_value,
+             &engine_speed_sensor_supply_voltage_fault_status);
   return;
 }
 
 
 
 //
-// Function: sensorChannelTypeB_update_axis3 @ 0x00510c78
+// Function: cm848_initializeEngineSpeedSensorSupplyVoltageChannel @ 0x00510c78
 //
 
-void sensorChannelTypeB_update_axis3(void)
+/* Sensor channel 29 (engine speed sensor supply voltage): calls
+   cm848_initializeUnsignedSensorChannel once at boot, from cm848_applicationMain; the old _init /
+   _process suffixes were inverted (was sensorChannelTypeB_update_axis3) */
+
+void cm848_initializeEngineSpeedSensorSupplyVoltageChannel(void)
 
 {
-  sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005ac78,&sensor_channel_state_t_0040b192,&WORD_003fcd40,
-             sensor_channel29_linearization_axis,sensor_channel29_linearization_values,0,
-             &ema_filter_state_t_003fcd42,0x1d,0x177,0x178,&WORD_0040bdd8,&WORD_0040bdda,
-             &WORD_0040be40);
+  cm848_initializeUnsignedSensorChannel
+            (&engine_speed_sensor_supply_voltage_config,
+             &engine_speed_sensor_supply_voltage_channel_state,
+             &engine_speed_sensor_supply_voltage_linearization_cached_axis_offset,
+             engine_speed_sensor_supply_voltage_linearization_axis,
+             engine_speed_sensor_supply_voltage_linearization_values,0,
+             &engine_speed_sensor_supply_voltage_filter_state,0x1d,0x177,0x178,
+             &engine_speed_sensor_supply_voltage_value,
+             &engine_speed_sensor_supply_voltage_default_value,
+             &engine_speed_sensor_supply_voltage_fault_status);
   return;
 }
 
 
 
 //
-// Function: sensorChannelTypeB_configInit_axis4 @ 0x00510d04
+// Function: cm848_processFuelLevelChannel @ 0x00510d04
 //
 
-void sensorChannelTypeB_configInit_axis4(void)
+/* Sensor channel 68 (fuel level): calls cm848_processUnsignedSensorChannel every pass, from a
+   periodic task; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeB_configInit_axis4) */
+
+void cm848_processFuelLevelChannel(void)
 
 {
-  sensorChannelTypeB_configInit
-            (&sensor_channel_config_t_0005aca4,&fuel_level_sensor_channel_state,&WORD_003fcd4a,
-             fuel_level_linearization_axis,fuel_level_linearization_values,0,
-             &ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e,&fuel_level_sensor_value,
-             &fuel_level_sensor_default_value,&WORD_0040be30);
+  cm848_processUnsignedSensorChannel
+            (&fuel_level_sensor_config,&fuel_level_sensor_channel_state,
+             &fuel_level_linearization_cached_axis_offset,fuel_level_linearization_axis,
+             fuel_level_linearization_values,0,&fuel_level_sensor_filter_state,0x44,0x17d,0x17e,
+             &fuel_level_sensor_value,&fuel_level_sensor_default_value,
+             &fuel_level_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: sensorChannelTypeB_update_axis4 @ 0x00510d90
+// Function: cm848_initializeFuelLevelChannel @ 0x00510d90
 //
 
-void sensorChannelTypeB_update_axis4(void)
+/* Sensor channel 68 (fuel level): calls cm848_initializeUnsignedSensorChannel once at boot, from
+   cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeB_update_axis4) */
+
+void cm848_initializeFuelLevelChannel(void)
 
 {
-  sensorChannelTypeB_update
-            (&sensor_channel_config_t_0005aca4,&fuel_level_sensor_channel_state,&WORD_003fcd4a,
-             fuel_level_linearization_axis,fuel_level_linearization_values,0,
-             &ema_filter_state_t_003fcd4c,0x44,0x17d,0x17e,&fuel_level_sensor_value,
-             &fuel_level_sensor_default_value,&WORD_0040be30);
+  cm848_initializeUnsignedSensorChannel
+            (&fuel_level_sensor_config,&fuel_level_sensor_channel_state,
+             &fuel_level_linearization_cached_axis_offset,fuel_level_linearization_axis,
+             fuel_level_linearization_values,0,&fuel_level_sensor_filter_state,0x44,0x17d,0x17e,
+             &fuel_level_sensor_value,&fuel_level_sensor_default_value,
+             &fuel_level_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: sensorChannelTypeA_configInit_axis5 @ 0x00510e1c
+// Function: cm848_processTransmissionTemperatureChannel @ 0x00510e1c
 //
 
-void sensorChannelTypeA_configInit_axis5(void)
+/* Sensor channel 103 (transmission temperature): calls cm848_processSignedSensorChannel every pass,
+   from a periodic task; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeA_configInit_axis5) */
+
+void cm848_processTransmissionTemperatureChannel(void)
 
 {
-  sensorChannelConfigInit
-            (&sensor_channel_config_t_0005adf8,&sensor_channel_state_t_0040b1da,&WORD_003fcd54,
+  cm848_processSignedSensorChannel
+            (&transmission_temperature_sensor_config,&transmission_temperature_sensor_channel_state,
+             &transmission_temperature_linearization_cached_axis_offset,
              transmission_temperature_linearization_axis,
-             transmission_temperature_linearization_values,2,&ema_filter_state_t_003fcd56,0x67,0x12d
-             ,0x12e,&WORD_0040bdf8,&WORD_0040bdfa,&WORD_0040be50);
+             transmission_temperature_linearization_values,2,
+             &transmission_temperature_sensor_filter_state,0x67,0x12d,0x12e,
+             &transmission_temperature_sensor_value,&transmission_temperature_sensor_default_value,
+             &transmission_temperature_sensor_fault_status);
   return;
 }
 
 
 
 //
-// Function: sensorChannelTypeA_update_axis5 @ 0x00510ea8
+// Function: cm848_initializeTransmissionTemperatureChannel @ 0x00510ea8
 //
 
-void sensorChannelTypeA_update_axis5(void)
+/* Sensor channel 103 (transmission temperature): calls cm848_initializeSignedSensorChannel once at
+   boot, from cm848_applicationMain; the old _init / _process suffixes were inverted (was
+   sensorChannelTypeA_update_axis5) */
+
+void cm848_initializeTransmissionTemperatureChannel(void)
 
 {
-  updateSensorChannelWithConfig
-            (&sensor_channel_config_t_0005adf8,&sensor_channel_state_t_0040b1da,&WORD_003fcd54,
+  cm848_initializeSignedSensorChannel
+            (&transmission_temperature_sensor_config,&transmission_temperature_sensor_channel_state,
+             &transmission_temperature_linearization_cached_axis_offset,
              transmission_temperature_linearization_axis,
-             transmission_temperature_linearization_values,2,&ema_filter_state_t_003fcd56,0x67,0x12d
-             ,0x12e,&WORD_0040bdf8,&WORD_0040bdfa,&WORD_0040be50);
+             transmission_temperature_linearization_values,2,
+             &transmission_temperature_sensor_filter_state,0x67,0x12d,0x12e,
+             &transmission_temperature_sensor_value,&transmission_temperature_sensor_default_value,
+             &transmission_temperature_sensor_fault_status);
   return;
 }
 
@@ -77466,21 +77796,21 @@ void cm848_captureIntakeAirHeaterStartTemperature(void)
 {
   sword *psVar1;
   
-  if (((short)sensor_channel10_ram.raw_adc_counts <
-       (short)sensor_channel_config_t_00059526.low_threshold) ||
-     ((short)sensor_channel_config_t_00059526.high_threshold <
-      (short)sensor_channel10_ram.raw_adc_counts)) {
-    if (((short)sensor_channel_config_t_000593de.low_threshold <=
-         (short)sensor_channelGeneric_ram.raw_adc_counts) &&
-       ((short)sensor_channelGeneric_ram.raw_adc_counts <=
-        (short)sensor_channel_config_t_000593de.high_threshold)) {
-      intake_air_heater_start_temperature = sensor_channelGeneric_ram.value;
+  if (((short)intake_manifold_temperature_sensor_channel_state.raw_adc_counts <
+       (short)intake_manifold_temperature_sensor_config.low_threshold) ||
+     ((short)intake_manifold_temperature_sensor_config.high_threshold <
+      (short)intake_manifold_temperature_sensor_channel_state.raw_adc_counts)) {
+    if (((short)coolant_temperature_sensor_config.low_threshold <=
+         (short)coolant_temperature_sensor_channel_state.raw_adc_counts) &&
+       ((short)coolant_temperature_sensor_channel_state.raw_adc_counts <=
+        (short)coolant_temperature_sensor_config.high_threshold)) {
+      intake_air_heater_start_temperature = coolant_temperature_sensor_channel_state.value;
       return;
     }
     psVar1 = &intake_air_heater_default_intake_manifold_temperature;
   }
   else {
-    psVar1 = (sword *)&sensor_channel10_ram.value;
+    psVar1 = (sword *)&intake_manifold_temperature_sensor_channel_state.value;
   }
   intake_air_heater_start_temperature = *psVar1;
   return;
@@ -85130,7 +85460,8 @@ void cm848_startTurbochargerSpeedLimiter(void)
 {
   word wVar1;
   
-  turbocharger_speed_limiter_start_coolant_temperature = sensor_channelGeneric_ram.value;
+  turbocharger_speed_limiter_start_coolant_temperature =
+       coolant_temperature_sensor_channel_state.value;
   turbocharger_speed_limiter_active_flag = 1;
   DAT_003fcfc6 = 2;
   wVar1 = turbocharger_speed_limiter_maximum_time;
@@ -85138,7 +85469,7 @@ void cm848_startTurbochargerSpeedLimiter(void)
       ((fault_detected_cal.faults_16_to_31 & 2) == 0)) &&
      ((fault_detected_cal.faults_400_to_415 & 2) == 0)) {
     wVar1 = lookupTableInterpolation
-                      (&DAT_003fcfc6,sensor_channelGeneric_ram.value,
+                      (&DAT_003fcfc6,coolant_temperature_sensor_channel_state.value,
                        turbocharger_speed_limiter_coolant_temperature_axis,
                        turbocharger_speed_limiter_time_values,1);
   }

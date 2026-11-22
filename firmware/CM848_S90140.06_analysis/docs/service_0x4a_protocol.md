@@ -94,7 +94,7 @@ The flash2 SCI table 253 (0x53a5ec) maps each DRB "FD" read to a RAM byte (FD n 
 | 0x0040B2F4 | `radiator_fan_speed` | FD-80-81 RAD FAN SPEED | × 0.125 rpm |
 | 0x0040C13A | `cooling_fan_duty_command` | FD-82-83 DES RAD FAN PWM | 1/256 % |
 | 0x0040A064 | (unnamed) | FD-A0-A1 BAROMETRIC PRESSURE | DRB 0.0159 per count ("mmHg" in the DB; likely inHg) |
-| 0x0040A070 / 0x0040A06E | (unnamed) / `sensor_channel1_ram` | FD-A4-A5 AMBIENT AIR TEMP DEG / FD-A6-A7 AMBIENT AIR TEMP V | DRB 0.0156 °C / 0.0049 V |
+| 0x0040A070 / 0x0040A06E | (unnamed) / `ambient_air_temperature_sensor_channel_state` | FD-A4-A5 AMBIENT AIR TEMP DEG / FD-A6-A7 AMBIENT AIR TEMP V | DRB 0.0156 °C / 0.0049 V |
 | 0x003FDF98 + 2n | `percent_time_at_load_cal`[n] | FD-84-85 ... FD-96-97 % OF TIME @ 0-10% ... 91-100% LOAD | 1/256 % (EEPROM mirror) |
 | 0x0040B75E-63 | `cylinder_1/5/3/6/2/4_contribution_percent` | FD-E1 ... FD-E6 Cyl. #1 / 5 / 3 / 6 / 2 / 4 Contribution (firing order) | 1 % |
 | 0x0040B765 | `cylinder_contribution_test_status` | FD-EB Cylinder test status | 0 / 1 / 2 |
