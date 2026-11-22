@@ -555,7 +555,8 @@ state enum, the flag bytes.**
   146 / 147 are the cruise servo supply's. These were 55 `DAT_` labels.
 **Round 33.**
 - **Stage A (3c495a2, labels):** the J1939 transmit descriptor's third field is the status pointer (was
-  `data_end_pointer`). 30 status bytes are named, the ACK descriptor is `j1939_pgn59392_tx_message`, and five
+  `data_end_pointer`): the send result or the broadcast / RTS-CTS session code, 0x1x while a session runs.
+  30 status bytes are named (31 with stage B's 65259), the ACK descriptor is `j1939_pgn59392_tx_message`, and five
   stale rows inside it are fixed.
 - **Stage B (20a26d2, types):** the RC (PGN 65249), CI (PGN 65259) and SOFT (PGN 65242) payloads as structs, and
   the decimal text formatter's prototype. RC byte 1 decodes as exhaust brake (one driver) or compression release

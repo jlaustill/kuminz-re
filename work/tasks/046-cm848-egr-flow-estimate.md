@@ -1710,11 +1710,17 @@ A peer relay started the round. Scripts are in `session_folder/round33/`.
 - **Stage A (3c495a2, labels):**
   - The finding: `j1939_tx_msg_t`'s third field is the pointer to the message's status byte, not a data end pointer.
     `mpc555_sendJ1939SingleFrame` stores its result there (0 queued / 1 zero length / 4 queue full), and the
-    application transport stores its session codes there (0x12 started / 0x13 sending / 9 complete / 10 aborted /
-    6 clear to send timeout / 7 send failed / 8 busy / 3 not our source address).
+    application transport stores its session codes there. A broadcast (BAM) session, which every PF 0xFE message
+    takes, writes 0x10 announced / 0x11 sending / 5 complete / 2 already active. A destination-specific (RTS / CTS)
+    session writes 0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed /
+    8 busy. Both write 3 for a source address that is not ours.
+  - The stage A commit message (and the first comments) listed only the RTS / CTS codes, although the five
+    builders' messages are broadcasts; the comments were corrected in the round 33 closing fix.
+  - The stage B commit message calls the cleared code units at 0x3fab40 / 0x3fab4c RAM-dump bytes that analysis
+    disassembled. That is an inference: no code unit there was listed.
   - The five multi-frame builders (EC1, DM1, DM2, DM4, RC) rebuild only while its 0xf0 nibble is clear.
   - The field is `status_pointer`, the name its boot twin `diagnostic_response_message_t` already had.
-  - 29 new `j1939_<message>_transmit_status` byte rows (all `lbz`), and DM1's misnamed
+  - 29 new `j1939_<message>_transmit_status` byte rows (all `lbz`; 31 status bytes with DM1's and stage B's 65259), and DM1's misnamed
     `j1939_dm1_fault_data_channel_byte` renamed.
   - `j1939_ackm_msg` is `j1939_pgn59392_tx_message`; five stale flat rows inside it are now dotted documentation
     rows.
@@ -1728,8 +1734,11 @@ A peer relay started the round. Scripts are in `session_folder/round33/`.
     field print as a bare constant.
   - Proof: 1962 functions token-equal, 2 declaration reorders, 5 read as label-substituted diffs.
 - **Leads:**
-  - Round 34: the application J1939 transport transmit session (`j1939_multiframe_tx_*`, the `ptr` / `addr` / `len`
-    abbreviations) as a struct, with `initiateJ1939TransportProtocol(j1939_tx_msg_t *msg)` and
+  - Round 34: the application J1939 transport's two transmit mechanisms as structs: the RTS / CTS session
+    (`j1939_multiframe_tx_*`, the `ptr` / `addr` / `len` abbreviations) and the two 32-byte broadcast (BAM) session
+    records at 0x3fbd74 / 0x3fbd94 (named `j1939_tp_rx_session_*`, though they transmit). 0x3fbd7c is record 0's
+    advancing data pointer; its derived label `PTR_j1939_pgn65242_transmit_status_003fbd7c` only shows that the dump's
+    last broadcast was the 47-byte SOFT payload (0x3fae80 + 47). Also as a struct, with `initiateJ1939TransportProtocol(j1939_tx_msg_t *msg)` and
     `mpc555_sendJ1939SingleFrame`'s parameters. They were deferred so the same functions change only once.
   - `j1939_diag_response_word_b` (0x3faddd) sits at EFL/P1 bytes 5-6 (SPN 101 crankcase pressure in J1939-71):
     check its writer.
