@@ -145,6 +145,9 @@
   201392 build_r33a.log
   201458 build_r33b.log
   201458 build_r33_fix.log
+  201462 build_r34a.log
+  201462 build_r34b.log
+  201563 build_r34c.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
  1072739 e2m_audit_round17a.csv
@@ -193,3 +196,4 @@
   402883 verify_round31.log
   403099 verify_round32.log
   403231 verify_round33.log
+  403227 verify_round34.log

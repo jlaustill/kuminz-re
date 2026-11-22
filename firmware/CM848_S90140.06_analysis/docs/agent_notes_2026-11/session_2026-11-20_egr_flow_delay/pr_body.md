@@ -561,6 +561,13 @@ state enum, the flag bytes.**
 - **Stage B (20a26d2, types):** the RC (PGN 65249), CI (PGN 65259) and SOFT (PGN 65242) payloads as structs, and
   the decimal text formatter's prototype. RC byte 1 decodes as exhaust brake (one driver) or compression release
   brake (two or more).
+**Round 34.**
+- **Stage A (67955cf, labels):** the transport's send / service / initialize functions and the PGN 65535 delay
+  flag named from the code.
+- **Stage B (91993f0, types):** the two broadcast transmit session records as a struct array (were
+  `j1939_tp_rx_session_*` / DAT_).
+- **Stage C (44f4c9e, types):** the RTS / CTS transmit session as the boot twin's type, that type's pointers as
+  `byte*`, and the prototypes of `initiateJ1939TransportProtocol` / `mpc555_sendJ1939SingleFrame`.
 
 ## Test plan
 
@@ -653,6 +660,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 34: stage A is EQUIVALENT; stages B / C are token-equal apart from declaration reorders and 4 / 18
+  hand-read functions.
 - [x] Round 33: stage A is EQUIVALENT (with the field rename applied forward and one derived `PTR_` row);
   stage B matches token for token apart from 2 declaration reorders and 5 hand-read functions.
 - [x] Round 32: stage A matches token for token apart from the check's parameter names (verified) and one

@@ -1,0 +1,35 @@
+cm848: round 34 stage B - the J1939 broadcast transmit session records as a struct array (types)
+
+The application transport's broadcast (BAM) side keeps one 32-byte record per source address, at 0x3fbd74 /
+0x3fbd94: [0] for j1939_source_address, [1] for j1939_engine_retarder_source_address. initiateJ1939TransportProtocol
+picks one by the message's source address. They were flat rows named j1939_tp_rx_session_*, but nothing in them
+receives, and the second record was all DAT_.
+
+- j1939_broadcast_transmit_session_t is a type-only template. The widths come from the initiator's stores and the
+  packet sender's loads.
+  - Fields: active / total_packet_count / message_size / next_data_byte_number / next_packet_number /
+    frame_queue_status / message_data_pointer / session_status_pointer / packet_delay_timer / frame_can_id /
+    frame_data_length / transmit_frame_pointer / unused[4].
+  - The words follow the boot twin j1939_transport_transmit_session_t where they match.
+  - The pointers are byte*.
+  - next_data_byte_number is one sth (the decompiler's two byte stores were one halfword 1). It is the 1-based
+    number of the next data byte, +7 per packet.
+- The instance is the array row j1939_broadcast_transmit_sessions[2]. The named rows inside became untyped dotted
+  documentation rows. The two unnamed type-only pointer rows went, because a typed row inside would keep the
+  array from applying.
+- Their frame buffers are j1939_broadcast_transmit_frame_buffer_0 / _1 (byte[8] at 0x3fbdb4 / 0x3fbdbc).
+- cm848_sendJ1939BroadcastDataPacket now reads j1939_broadcast_transmit_sessions[param_1].packet_delay_timer and so
+  on (was (&DAT_003fbd84)[param_1 * 0x10]). Ghidra types its record pointer by itself. In the initiator,
+  pjVar7->message_size and so on replace pbVar8[1] / *(ushort *)(pbVar8 + 2).
+- The derived label PTR_j1939_pgn65242_transmit_status_003fbd7c is gone (round 33's lead): it is
+  [0].message_data_pointer.
+- One argument got worse: the sender's fourth argument to mpc555_sendJ1939SingleFrame prints
+  param_1 * 0x20 + 0x3fbd7b, because that parameter is untyped. The round's prototype stage addresses it.
+
+Proof: prove_tokens.py with the map's tokens (flattened copies) gives 1964 of 1969 functions token-equal. The tick
+function only reorders its declarations. The other four (the initiator, the sender, the service and the
+initializer) were read as label-substituted diffs: every access lands on its field. Pieces 1412 -> 1412.
+"1 failed (in code)" and the thunk counts are unchanged. Headers regenerated (0 g++ errors), lookup_tables.py 0
+sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

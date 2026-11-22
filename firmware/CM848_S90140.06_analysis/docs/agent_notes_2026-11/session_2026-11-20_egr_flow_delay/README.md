@@ -436,3 +436,7 @@ Hand work on the round 7 lead.
 ## Round 33: the J1939 transmit status bytes and three payload structs (`session_folder/round33/`)
 
 - **Stage A:** `status_bytes.py` (every descriptor's status byte and its readers), `coverage_check.py` (what covers an address), `apply_r33a.py`, `fix_text_r33a.py`; the proof map `map_r33a_proof*.csv` and `proof_r33a.txt`. **Stage B:** `apply_r33b.py`, `apply_r33b2.py`; the proof `tokens_r33b.json`, `check_reorders_r33b.py`, `diff_functions.py` (label-substituted unified diffs). **Closing:** `apply_r33_closing.py`.
+
+## Round 34: the application J1939 transport's transmit sessions (`session_folder/round34/`)
+
+- `area_users.py` (who uses an address range). **Stage A:** `worklist_r34a.py`. **Stage B:** `apply_r34b.py`. **Stage C:** `apply_r34c.py`. The proofs reuse round 33's `diff_functions.py` / `check_reorders_r33b.py` and round 32's `flatten_cpp.py` / `make_tokens_r32a.py`. **Closing:** `apply_r34_closing.py`.

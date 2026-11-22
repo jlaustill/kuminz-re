@@ -1747,6 +1747,39 @@ A peer relay started the round. Scripts are in `session_folder/round33/`.
     have no e2m records; name them once their writers are found.
   - Prototype `char` maps to `byte`, so ASCII digits print as 0x30.
 
+## Done, round 34 (2026-11-22, same PR): the application J1939 transport's transmit sessions
+
+A peer relay started the round. Scripts are in `session_folder/round34/`.
+- **Stage A (67955cf, labels):**
+  - The transport functions: `cm848_sendJ1939BroadcastDataPacket` / `cm848_sendJ1939ConnectionModeDataPackets` /
+    `cm848_serviceJ1939TransportSessions` / `cm848_initializeJ1939Transport`. They were
+    `j1939_transport_singleFrame_send` / `_dataFrame_bulkSend` / `phase_group_a_triggerControllerUpdates` /
+    `j1939_pgn_handler_init_ec00eb00`.
+  - `j1939_broadcast_no_packet_delay_flag` (was `j1939_tp_bam_session_active`). The disassembly sets it only for PF
+    and PS both 0xff (PGN 65535), and it turns the 5-pass packet delay to 0.
+- **Stage B (91993f0, types):**
+  - `j1939_broadcast_transmit_sessions[2]` of `j1939_broadcast_transmit_session_t`: the two 32-byte broadcast
+    records per source address. They were `j1939_tp_rx_session_*` and DAT_, although they only transmit.
+  - Two frame buffers.
+  - The packet sender reads `j1939_broadcast_transmit_sessions[param_1].packet_delay_timer`. Round 33's misleading
+    `PTR_j1939_pgn65242_transmit_status_003fbd7c` is gone.
+- **Stage C (44f4c9e, types):**
+  - The RTS / CTS transmit session has the boot twin's 28-byte layout, and its code is the twin's. It is the
+    application instance `j1939_transport_transmit_session` of `j1939_transport_transmit_session_t`.
+  - The type's pointer fields are `byte*`. The prototypes are `initiateJ1939TransportProtocol(j1939_tx_msg_t *msg)`
+    and `mpc555_sendJ1939SingleFrame(can_id, data_length (ushort), data, result)`.
+  - Casts: `(undefined1 *)` 100 -> 80.
+  - `cm848_sendDataCollectorBuffer`'s wait loop (0x10 / 0x11 / 5) confirms the broadcast codes.
+  - `j1939_multiframe_tx_active` (shared with CM550) stays flat.
+- **Leads (round 35):**
+  - The boot session's flag / destination bytes 0x302903 / 0x302904 are misnamed `qadc_a_queue_status_1` /
+    `qadc_a_active_channel_id`, and stale `qadc_a_*` rows sit inside `boot_j1939_transport_transmit_session`.
+    Check CM550 for the shared names first.
+  - `mpc555_sendJ1939TransportRequestToSend` takes a `j1939_msg_hdr_t *` that is really a whole message record
+    (`diagnostic_response_message_t`), so it reads `msg_header[1].can_id` as the data pointer.
+  - The receive session `j1939_multiframe_rx_*` (0x3fbdef-0x3fbe00) as a struct.
+  - Round 33's EFL/P1 `j1939_diag_response_word_b` and the stale +1 rows at 0x3faeb0-0x3faeb3.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
