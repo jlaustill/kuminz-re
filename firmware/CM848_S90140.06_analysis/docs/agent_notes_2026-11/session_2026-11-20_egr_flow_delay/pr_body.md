@@ -553,6 +553,13 @@ state enum, the flag bytes.**
 - **Stage A (cad1457, labels and types):** the discrete output read-back checks. The check, its monitor and
   initializer are named, the four counters are a struct with 11 instances, each output has a retry word, and faults
   146 / 147 are the cruise servo supply's. These were 55 `DAT_` labels.
+**Round 33.**
+- **Stage A (3c495a2, labels):** the J1939 transmit descriptor's third field is the status pointer (was
+  `data_end_pointer`). 30 status bytes are named, the ACK descriptor is `j1939_pgn59392_tx_message`, and five
+  stale rows inside it are fixed.
+- **Stage B (20a26d2, types):** the RC (PGN 65249), CI (PGN 65259) and SOFT (PGN 65242) payloads as structs, and
+  the decimal text formatter's prototype. RC byte 1 decodes as exhaust brake (one driver) or compression release
+  brake (two or more).
 
 ## Test plan
 
@@ -645,6 +652,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 33: stage A is EQUIVALENT (with the field rename applied forward and one derived `PTR_` row);
+  stage B matches token for token apart from 2 declaration reorders and 5 hand-read functions.
 - [x] Round 32: stage A matches token for token apart from the check's parameter names (verified) and one
   declaration reorder.
 - [x] Round 31: stage A changes only the two EC1 functions, each access checked.

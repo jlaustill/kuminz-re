@@ -1704,6 +1704,40 @@ A peer relay started the round. Scripts are in `session_folder/round32/`.
   - `cm848_initPgn65242SoftwareIdHandler` (17), `cm848_processFaultScanLookup` (12), `cm848_sciCommand20Callback`
     (15).
 
+## Done, round 33 (2026-11-22, same PR): the J1939 transmit status bytes and three text / configuration payloads
+
+A peer relay started the round. Scripts are in `session_folder/round33/`.
+- **Stage A (3c495a2, labels):**
+  - The finding: `j1939_tx_msg_t`'s third field is the pointer to the message's status byte, not a data end pointer.
+    `mpc555_sendJ1939SingleFrame` stores its result there (0 queued / 1 zero length / 4 queue full), and the
+    application transport stores its session codes there (0x12 started / 0x13 sending / 9 complete / 10 aborted /
+    6 clear to send timeout / 7 send failed / 8 busy / 3 not our source address).
+  - The five multi-frame builders (EC1, DM1, DM2, DM4, RC) rebuild only while its 0xf0 nibble is clear.
+  - The field is `status_pointer`, the name its boot twin `diagnostic_response_message_t` already had.
+  - 29 new `j1939_<message>_transmit_status` byte rows (all `lbz`), and DM1's misnamed
+    `j1939_dm1_fault_data_channel_byte` renamed.
+  - `j1939_ackm_msg` is `j1939_pgn59392_tx_message`; five stale flat rows inside it are now dotted documentation
+    rows.
+  - The proof needed the field rename applied forward to the old `.cpp`, since the boot twin's `status_pointer`
+    collides with a reverse map. One derived `PTR_` row was proof-only.
+- **Stage B (20a26d2, types):**
+  - The RC (PGN 65249) payload. Its byte 1 decodes against SPN 901 / 902: exhaust brake (0x14) for one retarder
+    output driver, compression release brake (3) for two or more.
+  - The CI (PGN 65259) payload, which covers the boot-called 0x3fab3c: the thunk became a call override.
+  - The SOFT (PGN 65242) payload, plus the decimal text formatter's prototype. Its int text buffer had made a struct
+    field print as a bare constant.
+  - Proof: 1962 functions token-equal, 2 declaration reorders, 5 read as label-substituted diffs.
+- **Leads:**
+  - Round 34: the application J1939 transport transmit session (`j1939_multiframe_tx_*`, the `ptr` / `addr` / `len`
+    abbreviations) as a struct, with `initiateJ1939TransportProtocol(j1939_tx_msg_t *msg)` and
+    `mpc555_sendJ1939SingleFrame`'s parameters. They were deferred so the same functions change only once.
+  - `j1939_diag_response_word_b` (0x3faddd) sits at EFL/P1 bytes 5-6 (SPN 101 crankcase pressure in J1939-71):
+    check its writer.
+  - The stale rows `j1939_rpm_tx_word+1` / `j1939_etc1_speed_offset_tx_word+1` (0x3faeb0-0x3faeb3).
+  - The component / software identification sources in the EEPROM mirror (0x3fd653, 0x3fd69b-0x3fd6b9, 0x3fd71b)
+    have no e2m records; name them once their writers are found.
+  - Prototype `char` maps to `byte`, so ASCII digits print as 0x30.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

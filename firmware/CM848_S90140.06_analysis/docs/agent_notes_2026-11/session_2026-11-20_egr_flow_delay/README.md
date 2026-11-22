@@ -432,3 +432,7 @@ Hand work on the round 7 lead.
 ## Round 32: the discrete output read-back checks (`session_folder/round32/`)
 
 - **Finder:** `messy_functions.py`. **Stage A:** `output_check_calls.py`, `worklist_r32a.py`, `apply_r32a.py`; the proof `make_tokens_r32a.py`, `flatten_cpp.py`, `check_two_r32a.py`. **Closing:** `apply_r32_closing.py`.
+
+## Round 33: the J1939 transmit status bytes and three payload structs (`session_folder/round33/`)
+
+- **Stage A:** `status_bytes.py` (every descriptor's status byte and its readers), `coverage_check.py` (what covers an address), `apply_r33a.py`, `fix_text_r33a.py`; the proof map `map_r33a_proof*.csv` and `proof_r33a.txt`. **Stage B:** `apply_r33b.py`, `apply_r33b2.py`; the proof `tokens_r33b.json`, `check_reorders_r33b.py`, `diff_functions.py` (label-substituted unified diffs). **Closing:** `apply_r33_closing.py`.
