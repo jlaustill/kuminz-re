@@ -1,0 +1,9 @@
+{
+  "*": [["\\(undefined1 \\*\\)(boot_j1939_transport_transmit_session\\.(?:session_status_pointer|transmit_frame_pointer|message_data_pointer))", "\\1"],
+        ["\\(byte \\*\\)(boot_j1939_transport_transmit_session\\.(?:session_status_pointer|transmit_frame_pointer|message_data_pointer))", "\\1"],
+        ["0x30290a\\)", "&boot_j1939_transport_transmit_session.frame_queue_status)"],
+        ["\\(char\\)", "(byte)"]],
+  "mpc555_sendJ1939TransportDataPackets": [["mpc555_canTransmitQueuePush\\(([A-Za-z0-9_]+),([A-Za-z0-9_]+),", "mpc555_canTransmitQueuePush(\\1,(uint)\\2,"]],
+  "mpc555_sendJ1939TransportClearToSend": [],
+  "cm848_diagService65_handler": []
+}

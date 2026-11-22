@@ -4354,7 +4354,7 @@ struct j1939_pgn65263_payload_t {
 
 struct j1939_pgn65504_payload_t {
     uint16_t engine_speed;  /* engine_speed_state.filtered_engine_speed in J1939 byte order (0 with the engine stopped) */
-    uint16_t engine_net_output_torque;  /* j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f (125 % in 1/256 % units / rounded) in J1939 byte order */
+    uint16_t engine_net_output_torque;  /* j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f in J1939 byte order (read as 125 % in 1/256 % units / an inference from the constant) */
     uint8_t scrambled_injection_timing_byte_1;  /* bits 0x52 of the scrambled timing (timing value XOR the key) shifted right once / the other bits time base noise */
     uint8_t scrambled_injection_timing_byte_2;  /* bits 0x41 of the scrambled timing / the rest time base noise */
     uint8_t scramble_key;  /* the key: the time base (TBLr) >> 7. The timing value is (main_injection_timing + injection_timing_top_dead_center_offset) x 120 >> 10 + 125 */

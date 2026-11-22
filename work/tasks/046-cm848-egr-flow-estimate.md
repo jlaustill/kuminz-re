@@ -1840,7 +1840,7 @@ A peer relay started the round. Scripts are in `session_folder/round37/`.
 - **Leads:**
   - Eleven caches skipped:
     - six of tables that another cache already names, which need a per-function word (one table is looked up from
-      five functions);
+      five functions). The cache that took the bare name gets renamed with its siblings;
     - three of unnamed tables (`WORD_ARRAY_00406778` / `WORD_ARRAY_0040770e` / a `PTR_` label);
     - two whose tables keep legacy names (`injection_timing_temp_corr_axis1_cal`, `safety_fuel_limit_rpm_axis_cal`):
       rename those tables first.

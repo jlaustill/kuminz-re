@@ -1136,7 +1136,7 @@ j1939_pgn_handler_entry_t,0x003fa9a2,handler_func,dword,4,Function pointer to PG
 # pointer because the ACK status byte sits right after the payload (0x3faaaa + 8 = 0x3faab2): it is the status
 # pointer (PR #53 round 33)
 # j1939_tx_msg_t: one J1939 transmit descriptor (14 bytes), the argument of sendJ1939Message - type-only template since 2026-11-18;
-# every descriptor is a global row typed with it (j1939_pgn59392_tx_message at 0x3faa9c, j1939_pgn<N>_tx_message, ...). header is j1939_msg_hdr_t, so &msg.header is what cm848_transmitCanMessage takes
+# every descriptor is a global row typed with it (j1939_pgn59392_tx_message at 0x3faa9c, j1939_pgn<N>_tx_message, ...). header is j1939_msg_hdr_t (the boot kernel's cm848_transmitCanMessage takes its whole twin record diagnostic_response_message_t since PR #53 round 35)
 j1939_tx_msg_t,,header,j1939_msg_hdr_t,6,J1939 TX message header (can_id + data_length),,verified
 j1939_tx_msg_t,,data_pointer,pointer,4,Pointer to the first payload byte,,verified
 j1939_tx_msg_t,,status_pointer,pointer,4,Points at the message's status byte j1939_<message>_transmit_status (was data_end_pointer: the byte often sits right after the payload; PR #53 round 33): in the application mpc555_sendJ1939SingleFrame stores its result there (0 queued / 1 zero length / 4 queue full) and the transport its session codes: a broadcast (BAM) session through the per source address records at 0x3fbd74 (initiateJ1939TransportProtocol / cm848_sendJ1939BroadcastDataPacket: 0x10 announced / 0x11 sending / 5 complete / 2 already active) and a destination-specific (RTS / CTS) session through j1939_transport_transmit_session.session_status_pointer (0x12 started / 0x13 sending / 9 complete / 10 aborted / 6 clear to send timeout / 7 send failed / 8 busy); 3 = not our source address. The multi-frame builders rebuild only while its 0xf0 nibble is clear (no session in progress). The boot twin is diagnostic_response_message_t.status_pointer,,verified
@@ -3050,7 +3050,7 @@ j1939_transport_receive_session_t,,timeout_timer,word,2,counted down while the s
 j1939_transport_receive_session_t,,request_to_send_can_id,dword,4,the request to send's CAN identifier (its source address byte is matched against the data packets and aborts),,verified
 j1939_transport_receive_session_t,,message_size,word,2,the message size in bytes (TP.CM bytes 2-3; the application takes at most 0x6a4),,verified
 j1939_transport_receive_session_t,,receive_buffer_pointer,byte*,4,where the next packet's data goes: reset to the receive buffer (boot 0x303075 / application 0x3fbe09) and advanced per byte,,verified
-# j1939_pgn65263_payload_t: the J1939 EFL/P1 (PGN 65263) payload: 8 bytes (PR #53 round 36)
+# j1939_pgn65263_payload_t: the J1939 EFL/P1 (PGN 65263) payload: 8 bytes (PR #53 round 36). Bytes 1 / 4 / 7 and the bytes 5-6 word are set by the code; the SPNs of bytes 2 / 3 / 8 follow the J1939-71 sequence (the databases give no positions)
 j1939_pgn65263_payload_t,0x003fadd9,fuel_delivery_pressure,byte,1,SPN 94 engine fuel delivery pressure,,verified
 j1939_pgn65263_payload_t,0x003fadd9,extended_crankcase_blow_by_pressure,byte,1,SPN 22: 0xff (not available) from the initializer,,verified
 j1939_pgn65263_payload_t,0x003fadd9,oil_level,byte,1,SPN 98 engine oil level: never written in this firmware,,verified
@@ -3060,7 +3060,7 @@ j1939_pgn65263_payload_t,0x003fadd9,coolant_pressure,byte,1,SPN 109 engine coola
 j1939_pgn65263_payload_t,0x003fadd9,coolant_level,byte,1,SPN 111: 0xff (not available) from the initializer,,verified
 # j1939_pgn65504_payload_t: the Proprietary B PGN 65504 payload: 8 bytes (PR #53 round 36)
 j1939_pgn65504_payload_t,0x003faeb0,engine_speed,word,2,engine_speed_state.filtered_engine_speed in J1939 byte order (0 with the engine stopped),,verified
-j1939_pgn65504_payload_t,0x003faeb0,engine_net_output_torque,word,2,j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f (125 % in 1/256 % units / rounded) in J1939 byte order,,verified
+j1939_pgn65504_payload_t,0x003faeb0,engine_net_output_torque,word,2,j1939_powertrain_control_state.engine_net_output_torque + 0x7d7f in J1939 byte order (read as 125 % in 1/256 % units / an inference from the constant),,verified
 j1939_pgn65504_payload_t,0x003faeb0,scrambled_injection_timing_byte_1,byte,1,bits 0x52 of the scrambled timing (timing value XOR the key) shifted right once / the other bits time base noise,,verified
 j1939_pgn65504_payload_t,0x003faeb0,scrambled_injection_timing_byte_2,byte,1,bits 0x41 of the scrambled timing / the rest time base noise,,verified
 j1939_pgn65504_payload_t,0x003faeb0,scramble_key,byte,1,the key: the time base (TBLr) >> 7. The timing value is (main_injection_timing + injection_timing_top_dead_center_offset) x 120 >> 10 + 125,,verified

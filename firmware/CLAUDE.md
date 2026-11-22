@@ -655,7 +655,10 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     21 thunks / 11 call overrides.
   - Todo 046 (2026-11-20) added two more: the EGR delay lines `egr_oxygen_fraction_delay_line` /
     `egr_mass_flow_delay_line` cover the boot calls to 0x3fa2f0 (`cm848_runFlashProgramStateMachine`) and 0x3fa5a0
-    (`mpc555_cmfEraseBlocks`). The build log now reads 19 thunks / 13 call overrides.
+    (`mpc555_cmfEraseBlocks`). The build log then read 19 thunks / 13 call overrides.
+  - PR #53 round 33 added one more: the CI (PGN 65259) payload `j1939_pgn65259_payload` covers the 3 boot calls to
+    the RAM copy of `mpc555_can2TransmitInterruptHandler` at 0x3fab3c. The build log now reads 18 thunks / 14 call
+    overrides.
   - **J1939 transmit descriptors:** every one is now a 14-byte `j1939_tx_msg_t` instance (`header.can_id` /
     `header.data_length` / `data_pointer` / `status_pointer`): `j1939_pgn<N>_tx_message`, `j1939_dm1_tx_message`, and
     so on (30 of them).
