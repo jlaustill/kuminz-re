@@ -94,6 +94,7 @@
   200906 build_r19a.log
   200907 build_r19b.log
   200903 build_r19c.log
+  200905 build_r19d.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
  1072739 e2m_audit_round17a.csv

@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 00:01:27 MST 2026
+// Generated: Sun Nov 22 00:17:47 MST 2026
 
 
 //
@@ -89016,7 +89016,7 @@ void cm848_initializeInjectionAngleScheduler(void)
    (fuel_pressure_setpoint_base_map_grid and fuel_pressure_setpoint_map_1_grid to
    fuel_pressure_setpoint_map_4_grid), the coolant limit and the ambient limit (their sum when the
    byte at 0x409a71 is 0; it is 1 here) plus a slewed offset table, held in a dead band at low speed
-   and load. While cranking it uses the cold-start table and then ramps out of it, and the result is
+   and load. While cranking it uses the cranking table and then ramps out of it, and the result is
    clamped to the calibration minimum and maximum (3279 counts = 160 MPa here); a forced or additive
    override, 0 while engine_shutdown_command_flag, a fixed value in
    high_pressure_safety_valve_test_state 1 and the fault-reaction cap (fault_reaction_request_bits
@@ -89250,13 +89250,12 @@ LAB_0052a5b0:
   }
   fuel_pressure_setpoint_rise_limited_flag = (word)bVar1;
   fuel_pressure_setpoint_running_value = (sword)unaff_r28;
-  fuel_pressure_setpoint_cold_start_value =
+  fuel_pressure_setpoint_cranking_value =
        cm848_dualAxisTableInterpolation
-                 (fuel_pressure_setpoint_cold_start_cached_axis_offsets,average_engine_speed,
-                  fuel_pressure_setpoint_cold_start_x_axis,wVar13,
-                  fuel_pressure_setpoint_cold_start_y_axis,fuel_pressure_setpoint_cold_start_grid,6)
-  ;
-  iVar10 = (int)(short)fuel_pressure_setpoint_cold_start_value;
+                 (fuel_pressure_setpoint_cranking_cached_axis_offsets,average_engine_speed,
+                  fuel_pressure_setpoint_cranking_x_axis,wVar13,
+                  fuel_pressure_setpoint_cranking_y_axis,fuel_pressure_setpoint_cranking_grid,6);
+  iVar10 = (int)(short)fuel_pressure_setpoint_cranking_value;
   if ((protection_feature_flags & 4) == 0) goto LAB_0052a7e4;
   if ((((engine_state == ENGINE_STATE_STOPPED) || (engine_state == ENGINE_STATE_CRANKING)) ||
       (engine_state == ENGINE_STATE_JUMP_START)) || (engine_state == ENGINE_STATE_REENTRY)) {
@@ -89352,8 +89351,8 @@ void cm848_initializeFuelPressureSetpointState(void)
   fuel_pressure_setpoint_winning_term_code = 1;
   fuel_pressure_setpoint_map_cached_axis_offsets[0] = 2;
   fuel_pressure_setpoint_map_cached_axis_offsets[1] = 2;
-  fuel_pressure_setpoint_cold_start_cached_axis_offsets[0] = 2;
-  fuel_pressure_setpoint_cold_start_cached_axis_offsets[1] = 2;
+  fuel_pressure_setpoint_cranking_cached_axis_offsets[0] = 2;
+  fuel_pressure_setpoint_cranking_cached_axis_offsets[1] = 2;
   fuel_pressure_setpoint_ambient_factor_cached_axis_offsets[0] = 2;
   fuel_pressure_setpoint_ambient_factor_cached_axis_offsets[1] = 2;
   fuel_pressure_setpoint_ambient_limit_cached_axis_offsets[0] = 2;
@@ -89975,12 +89974,12 @@ void cm848_calculatePilotInjectionQuantity(void)
   }
   if ((((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) ||
       (engine_state == ENGINE_STATE_REENTRY)) &&
-     (injection_quantity_pilot_cold_start_logic_select == 0)) {
+     (injection_quantity_pilot_cranking_logic_select == 0)) {
     injection_quantity_pilot_coolant_factor =
          lookupTableInterpolation
                    (&DAT_003fd10e,sensor_readings_t_0040baf2.coolant_temp,
-                    injection_quantity_pilot_coolant_factor_cold_start_axis,
-                    injection_quantity_pilot_coolant_factor_cold_start_values,1);
+                    injection_quantity_pilot_cranking_coolant_factor_axis,
+                    injection_quantity_pilot_cranking_coolant_factor_values,1);
   }
   else {
     injection_quantity_pilot_coolant_factor =
@@ -90223,16 +90222,16 @@ LAB_0052c278:
 LAB_0052c398:
       injection_quantity_pilot_arbitrated_target = (dword)injection_quantity_pilot_cold_correction;
     }
-    injection_quantity_pilot_cold_start_override_value =
+    injection_quantity_pilot_cranking_correction =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fd13c,injection_quantity_pilot_engine_speed_with_hysteresis,
-                    injection_quantity_pilot_cold_start_override_x_axis,x_input,
-                    injection_quantity_pilot_cold_start_override_y_axis,
-                    injection_quantity_pilot_cold_start_override_grid,6);
+                    injection_quantity_pilot_cranking_x_axis,x_input,
+                    injection_quantity_pilot_cranking_y_axis,injection_quantity_pilot_cranking_grid,
+                    6);
     if ((((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) ||
         (engine_state == ENGINE_STATE_REENTRY)) &&
-       (wVar3 = injection_quantity_pilot_cold_start_override_value,
-       injection_quantity_pilot_cold_start_logic_select == 1)) goto LAB_0052c41c;
+       (wVar3 = injection_quantity_pilot_cranking_correction,
+       injection_quantity_pilot_cranking_logic_select == 1)) goto LAB_0052c41c;
   }
   else {
 LAB_0052c41c:
@@ -90242,7 +90241,7 @@ LAB_0052c41c:
      ) {
     if ((((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) ||
         (engine_state == ENGINE_STATE_REENTRY)) &&
-       (injection_quantity_pilot_cold_start_logic_select == 0)) {
+       (injection_quantity_pilot_cranking_logic_select == 0)) {
       injection_quantity_pilot_source_code = 6;
     }
     else {
@@ -90274,7 +90273,7 @@ LAB_0052c41c:
   }
   if ((((engine_state == ENGINE_STATE_CRANKING) || (engine_state == ENGINE_STATE_JUMP_START)) ||
       (engine_state == ENGINE_STATE_REENTRY)) &&
-     (injection_quantity_pilot_cold_start_logic_select == 1)) {
+     (injection_quantity_pilot_cranking_logic_select == 1)) {
     injection_quantity_pilot_source_code = 0x13;
   }
   injection_quantity_pilot_arbitrated_target = injection_quantity_pilot_arbitrated_target << 0x10;
@@ -90410,10 +90409,10 @@ void cm848_calculatePilotInjectionTimingOffset(void)
     injection_timing_pilot_offset_arbitrated =
          cm848_dualAxisTableInterpolation
                    (&DAT_003fd160,engine_speed_state.filtered_engine_speed,
-                    injection_timing_pilot_offset_cold_start_x_axis,
+                    injection_timing_pilot_offset_cranking_x_axis,
                     sensor_readings_t_0040baf2.coolant_temp,
-                    injection_timing_pilot_offset_cold_start_y_axis,
-                    injection_timing_pilot_offset_cold_start_grid,6);
+                    injection_timing_pilot_offset_cranking_y_axis,
+                    injection_timing_pilot_offset_cranking_grid,6);
     injection_timing_pilot_source_code = 10;
     goto LAB_0052d010;
   }

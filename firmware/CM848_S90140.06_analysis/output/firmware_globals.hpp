@@ -571,9 +571,9 @@ extern word injection_quantity_pilot_cold_correction_factor_grid[64];  // 0x0006
 extern word injection_quantity_pilot_cold_correction_map_x_axis[14];  // 0x00062ada
 extern word injection_quantity_pilot_cold_correction_map_y_axis[12];  // 0x00062af6
 extern word injection_quantity_pilot_cold_correction_map_grid[143];  // 0x00062b0e
-extern word injection_quantity_pilot_cold_start_override_x_axis[10];  // 0x00062c2c
-extern word injection_quantity_pilot_cold_start_override_y_axis[10];  // 0x00062c40
-extern word injection_quantity_pilot_cold_start_override_grid[81];  // 0x00062c54
+extern word injection_quantity_pilot_cranking_x_axis[10];  // 0x00062c2c
+extern word injection_quantity_pilot_cranking_y_axis[10];  // 0x00062c40
+extern word injection_quantity_pilot_cranking_grid[81];  // 0x00062c54
 extern word injection_timing_pilot_offset_coolant_factor_x_axis[9];  // 0x00062cf6
 extern word injection_timing_pilot_offset_coolant_factor_y_axis[9];  // 0x00062d08
 extern word injection_timing_pilot_offset_coolant_factor_grid[64];  // 0x00062d1a
@@ -581,9 +581,9 @@ extern word injection_timing_pilot_offset_intake_temperature_factor_axis[13];  /
 extern word injection_timing_pilot_offset_intake_temperature_factor_values[13];  // 0x00062db4
 extern word injection_timing_pilot_offset_barometric_pressure_factor_axis[6];  // 0x00062dce
 extern word injection_timing_pilot_offset_barometric_pressure_factor_values[6];  // 0x00062dda
-extern word injection_timing_pilot_offset_cold_start_x_axis[10];  // 0x00062de6
-extern word injection_timing_pilot_offset_cold_start_y_axis[10];  // 0x00062dfa
-extern word injection_timing_pilot_offset_cold_start_grid[81];  // 0x00062e0e
+extern word injection_timing_pilot_offset_cranking_x_axis[10];  // 0x00062de6
+extern word injection_timing_pilot_offset_cranking_y_axis[10];  // 0x00062dfa
+extern word injection_timing_pilot_offset_cranking_grid[81];  // 0x00062e0e
 extern word injection_timing_pilot_offset_base_map_x_axis[20];  // 0x00062eb0
 extern word injection_timing_pilot_offset_base_map_y_axis[17];  // 0x00062ed8
 extern word injection_timing_pilot_offset_base_map_grid[304];  // 0x00062efa
@@ -2095,7 +2095,7 @@ extern dword output_shaft_to_vehicle_speed_divisor_high_axle_ratio;  // 0x003fd0
 extern word vehicle_speed_zero_under_load_engine_load_filtered;  // 0x003fd06a
 extern word vehicle_speed_zero_under_load_accelerator_off_idle_previous;  // 0x003fd06c
 extern ema_filter_state_t vehicle_speed_zero_under_load_engine_load_filter_state;  // 0x003fd070
-extern word fuel_pressure_setpoint_cold_start_cached_axis_offsets[2];  // 0x003fd0ce
+extern word fuel_pressure_setpoint_cranking_cached_axis_offsets[2];  // 0x003fd0ce
 extern word fuel_pressure_setpoint_ambient_factor_cached_axis_offsets[2];  // 0x003fd0d2
 extern word fuel_pressure_setpoint_ambient_limit_cached_axis_offsets[2];  // 0x003fd0d6
 extern word fuel_pressure_setpoint_base_map_cached_axis_offsets[2];  // 0x003fd0da
@@ -6499,7 +6499,7 @@ extern word injection_quantity_pilot_engine_speed_hysteresis;  // 0x00409e56
 extern word injection_quantity_pilot_fuel_demand_hysteresis;  // 0x00409e58
 extern word injection_quantity_pilot_logic_select;  // 0x00409e64
 extern word injection_quantity_pilot_cold_correction_logic_select;  // 0x00409e6a
-extern word injection_quantity_pilot_cold_start_logic_select;  // 0x00409e6c
+extern word injection_quantity_pilot_cranking_logic_select;  // 0x00409e6c
 extern word injection_quantity_pilot_coolant_factor;  // 0x0040b93c
 extern int16_t injection_quantity_pilot_coolant_correction;  // 0x0040b93e
 extern int16_t injection_quantity_pilot_intake_temperature_correction;  // 0x0040b946
@@ -7433,9 +7433,9 @@ extern word fuel_pressure_setpoint_ambient_factor_grid[50];  // 0x0005fe24
 extern word fuel_pressure_setpoint_ambient_limit_x_axis[13];  // 0x0005fe88
 extern word fuel_pressure_setpoint_ambient_limit_y_axis[17];  // 0x0005fea2
 extern word fuel_pressure_setpoint_ambient_limit_grid[192];  // 0x0005fec4
-extern word fuel_pressure_setpoint_cold_start_x_axis[10];  // 0x00060044
-extern word fuel_pressure_setpoint_cold_start_y_axis[6];  // 0x00060058
-extern word fuel_pressure_setpoint_cold_start_grid[45];  // 0x00060064
+extern word fuel_pressure_setpoint_cranking_x_axis[10];  // 0x00060044
+extern word fuel_pressure_setpoint_cranking_y_axis[6];  // 0x00060058
+extern word fuel_pressure_setpoint_cranking_grid[45];  // 0x00060064
 extern word fuel_pressure_setpoint_map_1_x_axis[20];  // 0x000600be
 extern word fuel_pressure_setpoint_map_1_y_axis[17];  // 0x000600e6
 extern word fuel_pressure_setpoint_map_2_x_axis[20];  // 0x00060108
@@ -7500,8 +7500,8 @@ extern word injection_quantity_pilot_coolant_factor_grid[64];  // 0x00061792
 extern word injection_quantity_pilot_coolant_map_x_axis[14];  // 0x00061812
 extern word injection_quantity_pilot_coolant_map_y_axis[12];  // 0x0006182e
 extern word injection_quantity_pilot_coolant_map_grid[143];  // 0x00061846
-extern word injection_quantity_pilot_coolant_factor_cold_start_axis[6];  // 0x00061964
-extern word injection_quantity_pilot_coolant_factor_cold_start_values[6];  // 0x00061970
+extern word injection_quantity_pilot_cranking_coolant_factor_axis[6];  // 0x00061964
+extern word injection_quantity_pilot_cranking_coolant_factor_values[6];  // 0x00061970
 extern word injection_quantity_pilot_intake_temperature_factor_axis[11];  // 0x0006197c
 extern word injection_quantity_pilot_intake_temperature_factor_values[11];  // 0x00061992
 extern word injection_quantity_pilot_intake_temperature_map_x_axis[14];  // 0x000619a8
@@ -7513,7 +7513,7 @@ extern word injection_quantity_pilot_ambient_map_grid[143];  // 0x00061b2e
 extern word injection_quantity_pilot_ambient_factor_x_axis[13];  // 0x00061c4c
 extern word injection_quantity_pilot_ambient_factor_y_axis[6];  // 0x00061c66
 extern word injection_quantity_pilot_ambient_factor_grid[60];  // 0x00061c72
-extern word fuel_pressure_setpoint_cold_start_value;  // 0x0040b8b8
+extern word fuel_pressure_setpoint_cranking_value;  // 0x0040b8b8
 extern int16_t fuel_pressure_setpoint_map_blended;  // 0x0040b8be
 extern word fuel_pressure_governor_demand_threshold;  // 0x0040b8ea
 extern int16_t injection_timing_pilot_offset_coolant_factor;  // 0x0040b972
@@ -7551,7 +7551,7 @@ extern word injection_quantity_pilot_ratio_limit;  // 0x00409e66
 extern word injection_quantity_pilot_maximum;  // 0x0040b94c
 extern int16_t injection_quantity_pilot_coolant_map_value;  // 0x0040b940
 extern int16_t injection_quantity_pilot_cold_correction_map_value;  // 0x0040b95c
-extern int16_t injection_quantity_pilot_cold_start_override_value;  // 0x0040b95e
+extern int16_t injection_quantity_pilot_cranking_correction;  // 0x0040b95e
 extern word injection_quantity_pilot_override_switch;  // 0x00409e4a
 extern word injection_quantity_pilot_override_value;  // 0x00409e4c
 extern word injection_quantity_pilot_shutoff_acceleration;  // 0x00409e5a

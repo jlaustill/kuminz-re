@@ -1193,9 +1193,9 @@ typedef enum {
 } INJECTION_TIMING_COMBINATION_MODE;
 
 typedef enum {
-    SENSOR_VALUE_SOURCE_PRIMARY = 0,  /* The primary sensor (e2m PRIMARY) */
-    SENSOR_VALUE_SOURCE_BACKUP = 1,  /* The backup source (e2m BACKUP): an estimate or a second sensor */
-    SENSOR_VALUE_SOURCE_DEFAULT = 2  /* The default value (e2m DEFAULT): the sensor has a confirmed fault */
+    SENSOR_VALUE_SOURCE_PRIMARY = 0,  /* e2m PRIMARY */
+    SENSOR_VALUE_SOURCE_BACKUP = 1,  /* e2m BACKUP */
+    SENSOR_VALUE_SOURCE_DEFAULT = 2  /* e2m DEFAULT */
 } SENSOR_VALUE_SOURCE;
 
 /* ---- Structures ---- */

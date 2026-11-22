@@ -1092,14 +1092,26 @@ Scripts are in `session_folder/round19/`.
     share the value list '0=PRIMARY, 1=BACKUP, 2=DEFAULT', and the code stores and compares only those values.
     `barometric_altitude_source` (1921 +12) gets a row.
   - The humidity table's cache is `word[2]`.
-- **Stage C (label-only): the ANC pass-through.**
-  - The ANC timing stage (e2m 10A4, enables in 106B +8) is compiled out: its RAM words have no access.
+- **Stage C (75d8c34, label-only): the ANC pass-through.**
+  - The ANC timing stage (e2m 10A4, enables in 106B +8) is compiled out. A raw scan of both banks finds no access to
+    0x40a04a-0x40a05d (its control, 0x40a05e, finds the three known ones), and no code tests the three ANC enable
+    bits (0x1000 / 0x2000 / 0x4000 of 0x3fd5a2).
   - `cm848_passCompensatedTimingToCombustionLimits` (was `cm848_storeFuelDemandPreviousValues`) copies the
     off-nominal compensated reference into `injection_timing_combustion_limits_input`. That word was
     `injection_timing_compensated_reference_previous`; it is 10A4 +14 `ANC_SOI`, 'input to CBL'.
   - The function also sets source 25 (COMBUSTION_REFERENCE). The combustion limits step reads the word.
   - 'ANC' is not spelled out in the e2m, so the names use the role.
+- **Stage D (label-only, after the review):** the siblings of stage A's map, each by its e2m record and the parameter
+  ID table: the pilot timing offset cranking map (8078-807A `Pilot_SOI_Cranking_*`), the pilot quantity crank map,
+  its correction and coolant factor (8D76-8D78, 806A +26, 8068 / 8069), the crank logic select (805F +22), and the
+  cranking fuel pressure setpoint table and value (803F +2). They were all `*_cold_start_*`.
 - **Round 19 leads:**
+  - **AENBLFLG word 3:** 0x3fd5a2 `j1939_governor_feature_cal` is algorithm enable flags word 3 (e2m 106B +8):
+    0x8 idle speed adjust, 0x10 PTO, 0x40 cruise control, 0x80 road speed governor, 0x400 cruise / RSG droop,
+    0x1000-0x4000 ANC, 0x8000 the cruise set speed save. The code tests 0x10 / 0x40 / 0x80 / 0x100 / 0x8000 (21
+    lines), so it is a bitfield struct and a rename (0x100 has no e2m name).
+  - **`cm848_initialization_step_3`** is the ambient conditions module's initializer. Its filter
+    (`ema_filter_state_t_003fb9f6`, coefficient `WORD_003ff07e`) is unnamed.
   - **The source enum's reach:** other `*_Source` words may use the same 0 / 1 / 2 coding without the e2m list (for
     example `egr_flow_source`). Check each one's stores before typing it.
 

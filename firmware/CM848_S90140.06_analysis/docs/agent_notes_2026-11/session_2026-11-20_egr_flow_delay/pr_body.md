@@ -459,7 +459,9 @@ state enum, the flag bytes.**
   and the altitude cache, from the parameter ID table.
 - **Stage B (e3bc815, types):** `SENSOR_VALUE_SOURCE` on the eleven words whose e2m records share the PRIMARY / BACKUP /
   DEFAULT list, and the humidity cache as `word[2]`.
-- **Stage C (label-only):** the compiled-out ANC stage's pass-through into the combustion limits input.
+- **Stage C (75d8c34, label-only):** the compiled-out ANC stage's pass-through into the combustion limits input.
+- **Stage D (label-only, after the review):** the pilot timing / pilot quantity / rail pressure cranking maps and words,
+  from their e2m records (were `*_cold_start_*`).
 
 ## Test plan
 
@@ -552,7 +554,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
-- [x] Round 19: stages A and C are EQUIVALENT; stage B's enum proof shows only the substitutions (plus the cache's two users).
+- [x] Round 19: stages A, C and D are EQUIVALENT; stage B's enum proof shows only the substitutions (plus the cache's two users).
 - [x] Round 18: stages B and D are EQUIVALENT; stage A's cast-normalized diff and stage C's diff show only the intended effects.
 - [x] Round 17: stage A is EQUIVALENT (30 names); stage B's enum proof shows 0 functions differing beyond the substitutions; stage C's type diff is reviewed with a mask normalizer.
 - [x] Round 16: stage A is EQUIVALENT (109 names); B and C are type diffs reviewed function by function (C with a mask-normalized cast diff); every renamed row's width matches its e2m size.
