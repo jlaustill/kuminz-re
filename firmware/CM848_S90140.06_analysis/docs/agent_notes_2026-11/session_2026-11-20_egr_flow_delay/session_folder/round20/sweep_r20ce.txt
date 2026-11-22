@@ -1,0 +1,3 @@
+work/tasks/046-cm848-egr-flow-estimate.md:1031: ...  - **`fuel_demand_offset_correction`** is added to the idle / PTO
+work/tasks/046-cm848-egr-flow-estimate.md:1079: ...  - **`fuel_demand_offset_correction`** is added to the altitude d
+work/tasks/042-table-campaign-rename-leads.md:62: ...- `fuel_demand_offset_correction` at 0x0040a550 and 0x0040b22a

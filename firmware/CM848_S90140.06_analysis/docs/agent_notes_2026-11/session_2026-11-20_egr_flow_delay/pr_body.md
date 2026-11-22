@@ -463,6 +463,17 @@ state enum, the flag bytes.**
 - **Stage D (label-only, after the review):** the pilot timing / pilot quantity / rail pressure cranking maps and words,
   from their e2m records (were `*_cold_start_*`).
 
+**Round 20 (the relayed "keep going" again): the algorithm enable flags block.**
+- **Stage A (7117c24, label-only):** the 17 guessed flag words named by their e2m 106B word numbers
+  (`algorithm_enable_flags_<N>_cal`; word 3 was `j1939_governor_feature_cal`).
+- **Stage B (516e3be, types):** `algorithm_enable_flags_3_t`, the cruise / road speed governor / PTO enables.
+- **Stage C (9c46007, label-only):** `cold_delta_fuel` (e2m 8A9F, was `fuel_demand_offset_correction`) and its table,
+  the misfire timing limit function, the wave 11 structs' proven guessed bits, and rows for the length word and words
+  7 / 8 / 11 / 26.
+- **Stage D (797ec46, types):** 17 more flag words as bitfields: 117 bits named from a matching reader, 50 from a
+  single spelled-out record, 105 reserved. Plus the cold delta fuel cache.
+- **Stage E (32df48c, label-only):** the cold delta fuel cache initializer.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -554,6 +565,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 20: stages A, C and E are EQUIVALENT; stages B and D pass the mask normalizer (D's count gate: per word and mask, old masked reads = new field reads; pieces 464 -> 464).
 - [x] Round 19: stages A, C and D are EQUIVALENT; stage B's enum proof shows only the substitutions (plus the cache's two users).
 - [x] Round 18: stages B and D are EQUIVALENT; stage A's cast-normalized diff and stage C's diff show only the intended effects.
 - [x] Round 17: stage A is EQUIVALENT (30 names); stage B's enum proof shows 0 functions differing beyond the substitutions; stage C's type diff is reviewed with a mask normalizer.
@@ -583,13 +595,13 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 19:**
+- **Open after round 20:**
   - the droop word at 0x40aedc and the task 046 leads;
   - the fault status records (a packed record array, but the range is time-shared RAM);
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;
-  - the switch bytes 0 / 1 / 3 as bitfields (the user's call; see round 11);
-  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches; round 13 the end-of-line test sequencer; round 14 the low speed governor reference speed chain.
+  - `calculateAlpha`'s r4 alias (a calling convention question) and the PGN 65269 ambient temperature bytes;
+  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches; round 13 the end-of-line test sequencer; round 14 the low speed governor reference speed chain; round 16 the switch bytes 0 / 1 / 3 bitfields (the user approved them); round 20 the algorithm enable flags block.
 - **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

@@ -1,0 +1,193 @@
+== word 1 (+4, 0x3fd59e)
+  0x0001 Alpha_User_Override_Enable [00=DISABLE:01=ENABLE] [APUOAPEN] Bit 0 Word 1. EEPROM indicator set by engr applications to control alpha
+  0x0002 User_Override_Fueling_Enable [00=DISABLE:02=ENABLE] [FSUOFLEN] Bit 1 Word 1. Enable indicator for engineering fuel override command
+  0x0004 Test_Cell_Throttle_Switch_Override_Enable [00=DISABLE:04=ENABLE] [CTTHSWOD] BIT 2 OF 0-15. (WORD 1:B2) TEST CELL USE - ENABLE OVERRIDES UNDEFINED SWITCH F
+  0x0008 User_Override_Timing_Enable [00=DISABLE:08=ENABLE] [TSUOTAEN] Bit 3 Word 1. Indicator of which algorithm is in control of the o'ride tmg ena
+  0x0010 Torque_Derate_Override_Enable [00=DISABLE:10=ENABLE] [FSTQUOEN] Bit 4 Word 1. Enable indicator for torque derate fuel override
+  0x0020 Altitude_Derate_Enable [20=ENABLE:00=DISABLE] [ATAGEN] Bit 5 of 0-15. Calibration trim used to enable the altitude derate algorithm
+  0x1000 LSG_Aggressive_Gain_Set_Enable [0000=DISABLE:1000=ENABLE] [LSAGGNEN] Low speed governor aggressive gain set enable.
+  0x2000 LSG_High_Gear_Gain_Set_Enable [0000=DISABLE:2000=ENABLE] [LSHGGNEN] Enables the LSG gain set for when in high gears.
+  0x4000 LSG_Mid_Gear_Gain_Set_Enable [0000=DISABLE:4000=ENABLE] [LSMGGNEN] Enable parameter for LSG gain set used when in middle gears
+  0x8000 LSG_Jcomm_Gain_Set_Enable [0000=DISABLE:8000=ENABLE] [LSJCGNEN] Enables/Disables the LSG Jcomm PID gains
+== word 2 (+6, 0x3fd5a0)
+  0x0001 Engine_Protection_Shutdown_Enable [01=ENABLE:00=DISABLE] [EPSOEN] BIT 0 OF 0-15. ENABLE SHUTDOWN ALGORITHM.
+  0x0010 Engine_Protection_Enable [10=ENABLE:00=DISABLE] [EPEN] BIT 4 OF 0-15. ENGINE PROTECTION FEATURES ENABLE PARAMETER.
+  0x0020 Engine_Protection_Restart_Enable [20=ENABLE:00=DISABLE] [EPRYEN] BIT 5 OF 0-15. ENABLE RESTART ALGORITHM.
+  0x0040 EB_Clutch_Enable [00=DISABLE:40=ENABLE] [EBCHDBEN] BIT 6 OF 0-15. CALIBRATION INDICATOR USED TO ENABLE ENGINE BRAKE DEACTIVATION
+  0x0080 J1922_Monitor_Enable [00=DISABLE:80=ENABLE] [JC22MRSW] J1922 Monitor Enable 0 = disable monitor algorithm 1 = enable monitor algori
+  0x0100 J1922_Monitor_Clear_Enable [000=DISABLE:100=ENABLE] [JC22CCSW] Bit 1 of Bits 0:15 J1922 Monitor Clear Enable 0 = don"t clear J1922 control fla
+  0x0800 J1939_Monitor_Enable [000=DISABLE:800=ENABLE] [JC39MREA] J1939 Monitor Enable 0 = 1939 monitor algo. disabled 1 = 1939 monitor algo. en
+  0x1000 J1939_Retarder_Shift_Assist_Enable [0000=DISABLE:1000=ENABLE] [JCRDTXEA] enable for speed control / engine braking interaction
+  0x2000 PTO_Throttle_Override_Enable [0000=DISABLE:2000=ENABLE] [PTTHOVEN] Bit 13 of 0-15. Calibration indicator as to whether throttle depression disabl
+  0x4000 User_Commanded_Timing_Increment_Enable [0000=DISABLE:4000=ENABLE] [TSUCICEN] Bit 14 Word 2. Parameter used to enable the User Timing Increment
+  0x8000 Zero_Vss_PTO_Limit_Enable [0000=DISABLE:8000=ENABLE] [ZVPTLMEN] Bit 15 Word 2 - Enable engine speed to be limited when in PTO mode
+== word 5 (+C, 0x3fd5a6)
+  0x0001 T_CBL_EGR_Frac_User_Override [0000=DISABLE:0001=ENABLE] Bit 0 of Word 6, EGR fraction user override in combustion manager
+  0x0002 T_CBL_Fuel_User_Override [0000=DISABLE:0002=ENABLE] Bit 1 of Word 6, Fueling user override in before Advanced FS Control
+  0x0004 T_CBL_MCF_User_Override [0000=DISABLE:0004=ENABLE] Bit 2 of Word 6, Mass charge flow user override on final output of comb mgr
+  0x0008 T_CBL_SOI_Increment_Enable [0000=DISABLE:0008=ENABLE] Bit 3 of Word 6, Enable use of C_CBL_SOI_Increment
+  0x0010 T_CBL_SOI_User_Override [0000=DISABLE:0010=ENABLE] Bit 4 of Word 6, SOI user override before Cranking or Advanced FS Control
+  0x0020 T_CBR_Alpha_User_Override [0000=DISABLE:0020=ENABLE] Bit 5 of Word 6, Enables override of CBR_Alpha
+  0x0040 T_CBR_Chi_Selective_Override [0000=DISABLE:0040=ENABLE] Bit 6 of Word 6, 0:CBR_SINGLE_USER_OVERRIDE; 1:CBR_FULL_USER_OVERRIDE
+  0x0080 T_CBR_Chi_User_Override [0000=DISABLE:0080=ENABLE] Bit 7 of Word 6, set chi = C_CBR_Chi_Override_..'s
+  0x0100 T_CBR_EGR_Off_User_Override [0000=DISABLE:0100=ENABLE] Bit 8 of Word 6, Use C_CBR_EGR_Off_Override_Value
+  0x0200 T_CBR_Fuel_Ref_User_Override [0000=DISABLE:0200=ENABLE] Bit 0 of Word 9, Fueling user override in combustion manager after OFC limit
+  0x0400 T_CBR_Gross_Fuel_User_Override [0000=DISABLE:0400=ENABLE] Bit 10 of Word 6, Fueling user override in combustion manager before OFC limit
+  0x0800 T_OFC_Equiv_Ratio_User_Override [0800=ENABLE:0000=DISABLE] Bit 11 of Word 6, OFC equivalence ratio user override
+  0x1000 T_OFC_Fuel_Limit_User_Override [1000=ENABLE:0000=DISABLE] Bit 12 of Word 6, OFC fuel limit user override
+  0x2000 T_TPE_Exhaust_Press_Est_Enable [2000=ENABLE:0000=DISABLE] Exhaust pressure estimate enable
+  0x4000 T_Charge_Tmptr_Estimate_Enable [0000=DISABLE:4000=ENABLE] Enables or Disables the charge temperature estimate algorithm
+  0x8000 T_Charge_Press_Estimate_Enable [8000=ENABLE:0000=DISABLE] Enables or disables charge pressure estimation
+== word 6 (+E, 0x3fd5a8)
+  0x0001 T_Turbo_Speed_Estimation_Enable [0=DISABLE:1=ENABLE] Bit 1 of Algorithm_Enables_Flags[6] enables feature
+  0x0002 Low_Fuelpr_Derate_Enable [0000=DISABLE:0002=ENABLE] Enable for Low Fuel Pressure Derate Feature
+  0x0004 RE_Trans_Enable [00=DISABLE:04=ENABLE] Bit 3 of Algorithm_Enables_Flags[6] enables feature
+  0x0008 RE_2Lock_Enable [00=DISABLE:08=ENABLE] Algorithm enable for 2nd gear lockup strategy
+  0x0010 Alt_Not_Brake_Switch_Enable [0000=DISABLE:0010=ENABLE] Alternate Brake switch diagnostics algorithm enable/disable
+  0x0020 Enhanced_Diagnostics_Enable [0020=ENABLE:0000=DISABLE] Enhanced diagnostics enable flag.
+  0x0400 Fan_AC_Pressure_Enable [000=DISABLE:400=ENABLE] [FCAKAGEN] BIT 10 OF 0-15, allows pressure switch functionality
+  0x0800 Fan_AC_Vehicle_Speed_Interaction_Enable [000=DISABLE:800=ENABLE] [FCAKVSEN] BIT 11 OF 0-15, Allows special AC pressure switch functionality
+  0x1000 Fan_Clutch_2_Enable [0000=DISABLE:1000=ENABLE] [FC02EN] BIT 12 of 0-15 allows bus applications imt fan control
+  0x2000 Fan_EB_Enable [0000=DISABLE:2000=ENABLE] [FCEBAGEN] BIT 13 OF 0-15, allows engine brake functionality
+  0x4000 Fan_Manual_Input_Enable [0000=DISABLE:4000=ENABLE] [FCEN] BIT 14 OF 0-15, allows manual switch input functionality
+  0x8000 Cruise_Brake_Enable [0000=DISABLE:8000=ENABLE] [CREBEN] BIT 5 OF 0-15. CRUISE BRAKE CONTROL ENABLE/DISABLE PARAMETER
+== word 13 (+1C, 0x3fd5b6)
+  0x0001 EB_Switch_Level_Override [1=ENABLE:0=DISABLE] [ADEBLVOD] A/D override for Engine Brake switch level.
+  0x0002 Active_Driver_Demand_With_Jcomm [02=ENABLE:00=DISABLE] Makes driver demand torque active durring JCOMM CONTROL mode msgs.
+  0x0004 Net_Torque_Derate_Enable [00=DISABLE:04=ENABLE] Enable for Net Torque Derate algorihm
+  0x0020 Fuel_Press_Idle_Diag_Enable [0020=ENABLE:0000=DISABLE] Enable for Fuel Pressure Idle Diagnostic
+== word 19 (+28, 0x3fd5c2)
+  0x0001 Alternate_Curve_Configuration_Enable [00=DISABLE:01=ENABLE] [FSALCFEN] Alternate Torque Curve Fueling Points enable flag, Bit 0 of word 0x13.
+  0x0002 Switched_Rear_Axle_Anti_Tamper_Enable [02=ENABLE:00=DISABLE] Enables reduction of RSG road speed limit to prevent tampering.
+  0x0008 CWG_Monitor_Enable [0000=DISABLE:0008=ENABLE] Control wastegate enable flag
+  0x0020 Alpha_Altitude_Derate_Override_Enable [0020=ENABLE:0000=DISABLE] Bit F Word 0. Enables altitude derate override logic in the alpha feature
+  0x0040 EGR_Condensation_Algorithm_Enable [00=DISABLE:40=ENABLE] enable flag for EGR Condesnation prediction algorithm
+  0x0080 COT_Estimation_Enable [00=DISABLE:80=ENABLE] ENABLE/DISABLE compressor outlet temperature estimation.
+  0x0080 T_TPE_COT_Estimation_Enable [00=DISABLE:80=ENABLE] ENABLE/DISABLE compressor outlet temperature estimation.
+  0x0100 IS_Brake_On_Prevent_Shutdown_Enable [0100=ENABLE:0000=DISABLE] Enables depressed serv. brake to prevent idle shutdow
+  0x0200 ESP_Smart_Torque_Enable [0000=DISABLE:0200=ENABLE] Enables the Smart Torque control feature
+  0x0200 T_EMO_Condensation_AECD_Enable [0000=DISABLE:0200=ENABLE] Condensation AECD Enable engineering trim
+  0x0400 T_VGA_Swingvane_Enable [0400=ENABLE:0000=DISABLE] Enable for Swingvane VG Manager
+  0x1000 T_Bypass_Combustion_Mgr [1000=ENABLE:0000=DISABLE] Flag to bypass combustion mgr and use old Core fueling/timing algorithms
+  0x2000 T_EGR_Cooler_Fouling_Enable [2000=ENABLE:0000=DISABLE] Enables EGR cooler fouling diagnostic algorithm
+  0x2000 T_VGT_Pneumatic_Control_Enable [2000=ENABLE:0000=DISABLE] Enable for VGT Pneumatic Control
+  0x4000 T_EAC_EGR_Table_Active [0000=FALSE:4000=TRUE] Establishes whether Charge Manager uses open loop EGR position table
+  0x8000 T_CSE_Virtual_Sensor_Active [8000=TRUE:0000=FALSE] Establishes whether Charge Manager uses virtual feedback sensors
+== word 20 (+2A, 0x3fd5c4)
+  0x0001 T_CSE_Delta_P_Only_Mode [0001=ENABLE:0000=DISABLE] Selects denominator in CSE_Delta_P_Over_P
+  0x0100 T_EMO_Air_Handling_AECD_Enable [0000=DISABLE:0100=ENABLE] Air Handling System Protection AECD enabler
+  0x0200 T_EMO_Extreme_Amb_AECD_Enable [0000=DISABLE:0200=ENABLE] Extreme ambient AECD Enable trim
+  0x0400 T_EMO_White_Smoke_AECD_Enable [0000=DISABLE:0400=ENABLE] White Smoke and Misfire Protection AECD enable trim
+  0x0800 T_EMO_Extended_Idle_AECD_Enable [0800=ENABLE:0000=DISABLE] Extended Idle and PTO Protection enable trim
+  0x1000 T_EMO_Engine_Start_AECD_Enable [0000=DISABLE:1000=ENABLE] Engine Starting and Warmup Protection AECD enable trim
+  0x4000 T_INM_ICT_Lead_Enable [4000=ENABLE:0000=DISABLE] Enable bit for the lead compensator
+  0x8000 T_INM_EGRT_Lead_Enable [0000=DISABLE:8000=ENABLE] Enables EGR orifice temperature lead compensation algorithm
+== word 21 (+2C, 0x3fd5c6)
+  0x0004 TVA_ASIC_Diagnostic_Enable [0004=ENABLE:0000=DISABLE] Enables ASIC based H-bridge diagnostics
+  0x0008 Trbo_Spd_Limiter_Enable [0000=DISABLE:0008=ENABLE] Trbo Spd Limiter Algorithm Enable
+  0x0010 T_Charge_Press_IR_Enable [0000=DISABLE:0010=ENABLE] Enable for the charge pressure in range.
+  0x0020 T_Turbo_Speed_IR_Enable [0000=DISABLE:0020=ENABLE] Trim parameter to enable/disable turbospd sensor in-range
+  0x0040 T_EMO_Gen_Protect_AECD_Enable [0000=DISABLE:0040=ENABLE] General Engine Protection AECD Enable trim
+  0x0200 AC_Anti_Slugging_Start_Enable [0200=ENABLE:0000=DISABLE] Enable for initial ac anti slugging flag status
+  0x0400 T_Deicer_Speed_Limit_Enable [0400=ENABLE:0000=DISABLE] RSG Deicer Function Enable word 15h, bit 10 of 0 to 15
+== word 25 (+34, 0x3fd5ce)
+  0x0001 EB_Rate_Limit_Defeat_Enable [00=DISABLE:01=ENABLE] [EBRTDFEN] Bit 0 of 0-15 - Enable brake Rate Limit defeat during on/off trans.
+  0x0002 PTP_Enable [00=DISABLE:02=ENABLE] [TCEN] Powertrain Protection Enable Word 19h, bit 1 of 0 to 15
+  0x0004 PTP_Lugback_Enable [00=DISABLE:04=ENABLE] [TCLDEN] Powertrain Protection Lugback Enable Word 19h, bit 2 of 0 to 15
+  0x0008 J1939_Mux_Limphome_On_AD_Enable [0=DISABLE:8=ENABLE] [MXLPANEA] Bit 3 Enabled indicates limphome via MUXing shall use Raw Sampled Throttle.
+  0x0020 SR_Enable [00=DISABLE:20=ENABLE] [SREN] Smart RSG Enable word 19h, bit 5 of 0 to 15
+  0x0040 Fan_Clutch_1_AC_Enable [00=DISABLE:40=ENABLE] [FCAKINEN] AC Input Enable, Bit 6 of Word 19h
+  0x0080 Fan_Clutch_1_Coolant_Enable [00=DISABLE:80=ENABLE] [FCCLINEN] CT Input Enable, Bit 7 of Word 19h
+  0x0100 Fan_Clutch_1_IMT_Enable [000=DISABLE:100=ENABLE] [FCIMINEN] IMT Input Enable, Bit 8 of Word 19h
+  0x0200 Fan_Clutch_2_AC_Enable [000=DISABLE:200=ENABLE] [FCAKI2EN] AC Input Enable, Bit 9 of Word 19h
+  0x0400 Fan_Clutch_2_AC_Pressure_Enable [000=DISABLE:400=ENABLE] [FCAK02EN] AC Switch Enable, Bit 10 of Word 19h
+  0x0800 Fan_Clutch_2_Coolant_Enable [000=DISABLE:800=ENABLE] [FCCLI2EN] CT Input Enable, Bit 11 of Word 19h
+  0x1000 Fan_Clutch_2_EB_Enable [0000=DISABLE:1000=ENABLE] [FCEBINEN] Fan_Clutch_2_EB_Enable, Bit 12 of Word 19h
+  0x2000 Fan_Clutch_2_IMT_Enable [0000=DISABLE:2000=ENABLE] [FCIMI2EN] IMT Input Enable, Bit 13 of Word 19h
+  0x4000 Fan_Clutch_2_Manual_Input_Enable [0000=DISABLE:4000=ENABLE] [FCSW02EN] Fan_Clutch_2_Manual_Input_Enable, Bit 14 of Word 19h
+  0x8000 Manual_Fan_Level_Override [0000=DISABLE:8000=ENABLE] [ADMNFMOD] A/D Override for Manual Fan Level (Requested % fan Speed)
+== word 27 (+38, 0x3fd5d2)
+  0x0002 Cruise_Use_Min_Fuel_Ramp_OOG_Enable [00=DISABLE:02=ENABLE] [CRMFOGEA] If enabled, uses cc/rsg min fuel transtion ramp during OOG
+  0x0004 EB_Fuel_to_Brake_Delay_Enable [00=DISABLE:04=ENABLE] [EBAEDYEN] 0 = do not delay on e-brake transition, 1 = delay on e-brake transition
+  0x0008 STCG_ASG_Droop_Select [08=STCG:00=ASGDROOP] [STCGASDS] Switched Throttle Control Governor select (bit 3, 0 - 15) 0=ASG_DROOP, 1=STCG
+  0x0010 Boost_In_Range_Enable [00=DISABLE:10=ENABLE] [DGBSIREN] Enable flag for boost pressure in-range diagnostic algorithm
+  0x0020 AH_Enable [00=DISABLE:20=ENABLE] [AHEN] Bit 5 ENABLE/DISABLE for Air Handeling feature. Bit 11 of 0-15
+  0x0040 TB_Airmass_Enable [00=DISABLE:40=ENABLE] [TBAMEN] Bit 6 Enable/Disable for Airmass calculation. Bit 12 of 0-15
+  0x0080 TB_Speed_Temp_Enable [00=DISABLE:80=ENABLE] [TBSPTMEN] Bit 7 Enable/Disable Turbin Speed /Temp. calc. Bit 13 of 0-15
+  0x0100 TU_WG_Enable [000=DISABLE:100=ENABLE] [TUWGEN] Enable/Disable for 4 Step WG control. Bit8 15 of 0-15
+  0x0200 TU_WG_Tool_Override_Enable [000=DISABLE:200=ENABLE] [TUWGOVEN] Bit9 Enable/Disable for tool override of wastegates. Bit 14 of 0-15
+  0x0400 Idle_Shutdown_Temperature_Enable [000=DISABLE:400=ENABLE] [ISAATPEN] bit 10 of 15.selects the temp. interaction option for Idle Shutdown
+  0x0800 AT_AUTO_Anti_Theft_Enable [000=DISABLE:800=ENABLE] [AT01EN] Bit 11 of 15. Enables the anti theft at_auto module
+  0x1000 Anti_Theft_Auto_Lock_Enable [0000=DISABLE:1000=ENABLE] [ATAULOEN] Bit 12 of 15. Enables the automatic locking functionality
+  0x2000 SR_Ramp_Enable [0000=OFF:2000=ON] [SRRMEN] If enabled, RSG ref speed is allowed to ramp
+== word 28 (+3A, 0x3fd5d4)
+  0x0008 ES_Keyless_Restart [0=DISABLE:8=ENABLE] [ESNKASEN] Allows engine to run while keyswitch is off.
+  0x0020 ES_Alarm_During_Autostart_Enable [0=DISABLE:20=ENABLE] [ESALASEN] Enables Alarm sounding for auto-start Keyswitch on.
+  0x0080 SL_Enable [0=DISABLE:80=ENABLE] [STLOCKEN] Enables Starter Lockout feature (exclusive of ISTAEN).
+  0x0100 TU_WG_Table_Control_Enable [0=DISABLE:100=ENABLE] [TCWGTCEN] Enable/Disable direct table control of WG.
+  0x0400 J1939_Multiplex_Enable [00=DISABLE:400=ENABLE] [JC39MXEA] bit 10 of 0-15, enables or disables multiplex processing
+  0x1000 AT_Random_Number_Generator_Enable [0=DISABLE:1000=ENABLE] [ATRNGNEN] enable for generation of random numbers (for VAT)
+  0x2000 SL_NO_Contact_Enable [0=DISABLE:2000=ENABLE] [SLNOCTEN] Enables Normally Open contacts for SL Relay, Relay failures will disable missio
+  0x8000 LSG_QPID_Inhibit_Enable [8000=ENABLE:0000=DISABLE] [LSQAIHEN] When enabled LSG QPID is inhibited for middle and high gear
+== word 29 (+3C, 0x3fd5d6)
+  0x0001 SS_Ambient_Adv_Enable [1=ENABLE:0=DISABLE] [SSAADQEN] Calibration trim used to enable the SS Ambient Advance algorithm
+  0x0002 SS_Ambient_Derate_Enable [2=ENABLE:0=DISABLE] [SSADDQEN] Calibration trim used to enable the SS Ambient Fueling Derate
+  0x0004 Trans_Clt_Rtrd_Enable [4=ENABLE:0=DISABLE] [TSCQTAEN] Calibration trim used to enable the Coolant Temp Retard algorithm
+  0x0008 Trans_Clt_Derate_Enable [8=ENABLE:0=DISABLE] [TSCQDQEN] Calibration trim used to enable the Coolant Temp Derate algorithm
+  0x0010 AH_Direct_Derate_Enable [0010=ENABLE:0000=DISABLE] [AHDRLAEN] ENABLE/DISABLE turbo protection latched fuel derate
+  0x0020 Trip_Reset_Enable [0020=ENABLE:0000=DISABLE] [TRPRSTEN] Enable/Disable trip information reset asked from reset PGN
+  0x0040 Service_Component_Reset_Enable [0040=ENABLE:0000=DISABLE] [SRCRSTEN] Enable/Disable service component reset asked from reset PGN
+  0x0080 TW_Enable [0080=ENABLE:0000=DISABLE] [TWEN] Tire Wear Adjustment Enable
+  0x0100 DM13_Enable [0000=DISABLE:0100=ENABLE] [DM13EN] Algorithm enable flag for DM13
+  0x0200 EPF_Shutdown_Override_Enable [200=ENABLE:0=DISABLE] [EPSOOVEN] Algorithm enable for EPS shutdown override
+  0x0400 Throttle_Diagnostic_Switch_Enable [00=DISABLE:400=ENABLE] [THDGSWEN] ENABLE/DISABLE parameter for the Throttle Activated Diagnostic Switch feature
+  0x0800 Throttle_Related_Error_Handler_Enable [00=DISABLE:800=ENABLE] [THDGEREN] Enable/Disable parameter, which defines how to handle throttle errors
+  0x8000 Fan_Clutch_Variable_Speed_Fan_Logic_Enable [8000=ENABLE:0000=DISABLE] Flag which allows variable speed fan logic to execute
+== word 31 (+40, 0x3fd5da)
+  0x0001 Hybrid_Governor_Enable [1=ENABLE:0=DISABLE] Hybrid Governor Enable - Bit 0 of 0-15 in word 31
+== word 32 (+42, 0x3fd5dc)
+  0x0001 IAH_Control_Enable [0=DISABLE:1=ENABLE] Intake Air Heater Control Algorithm Enable
+  0x0002 EOI_Limit_Algorithm_Enable [0002=ENABLE:0000=DISABLE] Algorithm enable calibration for eoi_limit
+  0x0007 Equivalent_Throttle_Enable [0=DISABLE:4=ENABLE] Equivalent_Throttle Algorithm Enable
+  0x0010 IAH_24V_Enable [00=DISABLE:10=ENABLE] Intake Air Heater 24V Control Algorithm Enable
+== word 40 (+52, 0x3fd5ec)
+  0x0001 EVR_Enable [0000=DISABLE:0001=ENABLE] Electronic Voltage Regulation algorithm enable
+  0x0002 CT_Derate_Enable [0000=DISABLE:0002=ENABLE] Coolant Temp Derate; algorithm enable
+  0x0004 OPG_Enable [0000=DISABLE:0004=ENABLE] Enable bit for Low Oil Pressure algorithm
+  0x0008 AC_Control_Enable [0000=DISABLE:0008=ENABLE] Enables AC control
+  0x0020 Fuel_Lvl_Process_Enable [0020=ENABLE:0000=DISABLE] Disable=use CORE A/D for bus msg.Enabled=fuel level alg to determine bus msg
+  0x0040 J1850_Communication_Enable [0040=ENABLE:0000=DISABLE] J1850 Total Network Enable setting Enable=1=Network is ACTIVE
+  0x0080 Ambient_Air_Pressure_Monitor_Enable [0080=ENABLE:0000=DISABLE] Detect ambient air pressure in range error
+  0x0100 Misfire_Timing_Limit_Enable [0000=DISABLE:0100=ENABLE] Misfire timing limit algorithm enable
+  0x0200 PTO_MUX_Enable [0200=ENABLE:0000=DISABLE] Enable cruise control switches to operate PTO
+  0x0400 PTO_Park_Neutral_Enable [0000=DISABLE:0400=ENABLE] Enables PTO only when PARK/NEUTRAL status is TRUE
+  0x0800 DDT_Is_Unmanaged_Torque_Enable [0800=ENABLE:0000=DISABLE] Makes EEC1 DDT msg. to be Adjusted_User_Fueling when Enabled
+  0x1000 Torque_Mgmt_Enable [0000=DISABLE:1000=ENABLE] Enable for Torque Management Feature
+  0x2000 Trip_Info_Enable [0000=DISABLE:2000=ENABLE] Enable bit for the Trip Information Feature
+== word 42 (+56, 0x3fd5f0)
+  0x0001 Misfire_Relative_Enable [0000=DISABLE:0001=ENABLE] Misfire relative enabler
+  0x0002 Actual_Sensor_Values_Enable [0002=ENABLE:0000=DISABLE] Enable flag for actual sensor values algorithm
+  0x0004 HPCR_Fuelpr_Crank_Mode_Enable [0000=DISABLE:0004=ENABLE] Enables use of crank rail press table during start
+  0x0008 FSS_Derate_Cold_Increment_Enable [0008=ENABLE:0000=DISABLE] If enabled, adds Cold_Delta_Fuel to FSS_Fueling_Derate
+  0x0010 HPSV_Test_Enable [0000=DISABLE:0010=ENABLE] High Pressure Safety Valve Test enable
+  0x0020 TC_Stall_Enable [0000=DISABLE:0020=ENABLE] Enable for stall troque management
+  0x0040 J1939_Lost_TSC_No_Broadcast_Enable [0040=ENABLE:0000=DISABLE] Enable for shut-off of J1939/71 broadcast on lost/intermittent TSC1.
+  0x0080 Altitude_Derate_Cold_Increment_Enable [0000=DISABLE:0080=ENABLE] Enable to add Cold_Delta_Fuel to Altitide_Derate_Fueling
+  0x0100 Hybrid_Governor_Cold_Increment_Enable [0000=DISABLE:0100=ENABLE] Enable to add Cold_Delta_Fuel to Hybrid_Governor_Fueling
+  0x0200 Torque_Mgmt_Cold_Increment_Enable [0000=DISABLE:0200=ENABLE] Enable to add Cold_Delta_Fuel to Torque_Mgmt_Fueling
+  0x0800 Torque_Mgmt_GR_Enable [0000=DISABLE:0800=ENABLE] Enable to
+  0x2000 HPCR_Pressure_Too_High_Monitor_Enable [0000=DISABLE:2000=ENABLE] HPCR Pressure Too High diagnostic enable/disable
+  0x4000 HPCR_Cusum_Monitor_Enable [0000=DISABLE:4000=ENABLE] HPCR Cusum diagnostics enable/disable
+  0x8000 HPCR_Cusum_Leak_Monitor_Enable [0000=DISABLE:8000=ENABLE] HPCR Cusum leak detection enable/disable
+== word 43 (+58, 0x3fd5f2)
+  0x0001 HB_Fault_Discrete_Feedback_Enable [0001=ENABLE:0000=DISABLE] Enable h-bridge fault A & B discrete input logic
+  0x0002 EGR_Orifice_Temp_Rationality_Enable [0002=ENABLE:0000=DISABLE] Enable for EGR orifice temp rationality
+  0x0004 TTSR_Monitor_Enable [0004=ENABLE:0000=DISABLE] transmission temp rationality monitor enable
+  0x0008 TC_Rock_Cycle_Enable [0000=DISABLE:0008=ENABLE] Enable for rock cycle torque management
+  0x0010 Vac_Throttle_Cruise_Enable [0000=DISABLE:0010=ENABLE] Cal enable to control throttle actuator during cruise mode
+  0x0020 Tcase_Trans_Low_Range_Enable [0020=ENABLE:0000=DISABLE] Enables 4WD Low Range Indication
+  0x0040 Chi_Cold_Increment_Enable [0040=ENABLE:0000=DISABLE] Enable to add Cold_Delta_Fuel to CBR_Max_Chi_Fuel
+  0x0080 Density_Cold_Increment_Enable [0080=ENABLE:0000=DISABLE] Enable to add Cold_Delta_Fuel to CBR_Density_Max_Fuel
+  0x0100 Net_Torque_Fueling_Cold_Increment_Enable [0100=ENABLE:0000=DISABLE] Enable to add Cold_Delta_Fuel to Net_Torque_Fueling_Limit
+  0x0800 TVA_Algorithm_Enable [0800=ENABLE:0000=DISABLE] Enables TTVA position control and end-stop learning
+  0x1000 CWG_LS_Pressure_Driver_Enable [1000=ENABLE:0000=DISABLE] Input Enable, Bit of Word

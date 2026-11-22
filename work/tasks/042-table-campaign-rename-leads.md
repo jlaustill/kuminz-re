@@ -59,7 +59,7 @@ applied and proved the waves are in `firmware/scripts/rename_waves/`.
 
 ## Duplicate names in global_variables.csv
 
-- `fuel_demand_offset_correction` at 0x0040a550 and 0x0040b22a (bin 13).
+- `fuel_demand_offset_correction` at 0x0040a550 and 0x0040b22a (bin 13). (0x40a550 is injection_timing_torque_to_fuel_adjustment since rename wave 5, PR #50; 0x40b22a is cold_delta_fuel, e2m 8A9F Cold_Delta_Fuel, since PR #53 round 20.)
 - `sensor_channel7_fault_status` at 0x0040be18 and 0x0040be3a (PR #53 round 15: the channel 7 one at 0x40be3a is fuel_temperature_sensor_fault_status) (bin 16).
 
 ## Vocabulary the table names follow (change them together)

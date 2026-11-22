@@ -1115,6 +1115,75 @@ Scripts are in `session_folder/round19/`.
   - **The source enum's reach:** other `*_Source` words may use the same 0 / 1 / 2 coding without the e2m list (for
     example `egr_flow_source`). Check each one's stores before typing it.
 
+## Done, round 20 (2026-11-22, same PR; the relayed "keep going" again): the algorithm enable flags block
+
+Scripts are in `session_folder/round20/`.
+- **The block:** e2m 106B (AENBLFLG) is the algorithm enable flags table. It is the 90-byte CRC-guarded EEPROM block
+  0x118-0x171 (RAM 0x3fd59a + offset): a length word (+0) and 44 flag words, the e2m's word N at +2+2N.
+  - The code reads it three ways. Most reads are masked tests of the named words.
+  - The engine protection loops compute bit numbers from word 0: `(&algorithm_enable_flags_0_cal)[bit >> 4] &
+    1 << (bit & 15)`, with bit = 128 + 4n + k and 420 + n. They run over one channel in this build (the fuel
+    temperature derate channel at 0x597b2; the channel table ends after its 36 bytes). So they read word 8 bits 0-3
+    (`Fuel_Temperature_{Fueling_Limiting, RPM_Limiting, Shutdown, Restart}_Enable`) and word 26 bit 4
+    (`Fuel_Temperature_Data_Noderate_Enable`).
+  - `calculateAlpha` reads words 0, 1, 12 and 19 through a pointer to word 0.
+  - Nothing of these reaches word 3, so stage B's "no reader" comments and round 19's ANC claim hold.
+- **Stage A (7117c24, label-only):** 17 words had guessed names. Word 3 was `j1939_governor_feature_cal`; the others
+  were `governor_*`, `j1939_*` and `*_feature_*` guesses. Each is now `algorithm_enable_flags_<N>_cal`, with its e2m
+  bits in the comment. The code agrees: word 29 0x100 is DM13, 0x20 / 0x40 the PGN 56832 resets, 0x800 the throttle
+  error handler; word 28 0x400 is the J1939 input layer.
+- **Stage B (516e3be, types):** `algorithm_enable_flags_3_t`, the PTO / cruise control / road speed governor / set
+  speed save enables. Bit 8 has no record; its readers make the road speed governor a hard limit with no droop outside
+  top gear.
+- **Stage C (9c46007, label-only):**
+  - `cold_delta_fuel` (0x40b22a, was `fuel_demand_offset_correction`) is e2m 8A9F `Cold_Delta_Fuel`. Its table
+    (8AA0-8AA2, coolant temperature x engine speed) and `cm848_calculateColdDeltaFuel` are renamed with it. Each of
+    its nine gated additions sits behind a `*_Cold_Increment_Enable` bit whose record says 'add Cold_Delta_Fuel to
+    <that limit>'. This resolves round 18's note on the altitude derate limit.
+  - `cm848_calculateInjectionTimingMainMisfireLimit` (was `cm848_processEngineConfigSpeedControl`).
+  - The read 'guess (not proven, so reserved)' bits of the wave 11 structs 12 / 18 / 41 take their e2m names. Their
+    e2m-named unread bits are named as word 3's are.
+  - New rows: the length word `algorithm_enable_flags_table_length_cal` (the CRC scan starts there; it holds 70 in the
+    dump, not 90) and words 7 / 8 / 11 / 26.
+  - Word 11 bit 3 (`J1939_Communication_Enable`) was an unnamed `DAT_003fd5b2` that gates the J1939 transmit queues and
+    the receive dispatch. The label-only proof found it.
+- **Stage D (797ec46, types):** 17 more bitfield structs, on words 1, 2, 5, 6, 13, 19, 20, 21, 25, 27, 28, 29, 31, 32,
+  40, 42 and 43. 117 bits are named from a matching reader, 50 from a single spelled-out record, and 105 are reserved.
+  Word 0 stays a word, because the loops index from it. The cold delta fuel cache is `word[2]`.
+  - **Naming tiers (from the advisor):**
+    - a read bit takes its record's name when the reader agrees, or its behaviour's name when there is no record;
+    - an unread bit takes its record's name only when exactly one record sits on it and the description spells the
+      words out;
+    - the rest stay `reserved_bit_N`, with the record and the reader in the comment. 'SS', 'CSE', 'VGA', 'QPID',
+      'OOG' and 'TVA' are never spelled out.
+  - Where two records share a bit (word 19 0x200 / 0x2000), the reader picks.
+  - A multi-bit e2m mask goes by its value list. Word 32's `Equivalent_Throttle_Enable` has mask 7 and 4 = ENABLE;
+    the code tests 4.
+  - Read bits with no record:
+    - word 29 0x1000, the fuel delivery pressure byte of PGN 65263;
+    - word 40 0x4000 / 0x8000, the retarder fault mask / PTO inhibit;
+    - word 42 0x1000, the gear ratio torque management (the e2m's `Torque_Mgmt_GR_Enable` sits on 0x800, which
+      nothing reads);
+    - word 21 0x8000, kept reserved.
+  - The dump fits the truck: word 40 sets `j1850_communication_enable` (the PCI bus), word 43
+    `vacuum_throttle_cruise_enable` (the vacuum cruise servo) and `wastegate_solenoid_driver_enable`, and word 6
+    `transmission_control_enable` (the 48RE).
+- **Stage E (32df48c, label-only):** `cm848_initializeColdDeltaFuelLookupCache` (was
+  `mpc555_initFuelDemandOffsetFilter`). Stage D's cache typing showed it only presets the lookup cache.
+- **Methods:**
+  - A "no reader" claim needs three searches:
+    - the name's masked tests;
+    - unnamed `DAT_` references in the range (the label-only proof found word 11's);
+    - the computed and pointer reads (the engine protection loops, `calculateAlpha`).
+  - The scratch `refresh_enums_structs.py` replaced a field map row's old name (`reserved_bit_N`) in every struct. It
+    now skips field rows, and a generic field name is renamed per struct.
+- **Round 20 leads:**
+  - `calculateAlpha` keeps the flags base in r4 across `cm848_calculateAlphaAltitudeDerateLatch`; the callee never
+    touches r4. Ghidra joins r3:r4 into a `ulonglong` and renders the pointer as the call's result. A locked prototype
+    would leave r4 undefined after the call; a fix needs a calling convention that keeps r4.
+  - The PGN 65269 ambient air temperature bytes (`DAT_003faac5`) are unnamed.
+  - The length word's 70 does not match the block's 90 bytes.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

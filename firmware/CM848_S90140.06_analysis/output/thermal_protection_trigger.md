@@ -10,7 +10,7 @@
 > `protection_mode_enable_flag` = `accelerator_pedal_sensor_fault_hold_flag`, `cm848_processProtectionControlLogic`
 > = `cm848_updateSwitch31FromAcceleratorPedal` (the "protection_active" bit was logical switch 31 in
 > `switch_input_state_bits`), `cm848_fuelTrimFromOutputShaftSpeed` = `cm848_calculateVehicleSpeedFromOutputShaft`
-> (switch 31 picks the second axle ratio), `j1939_feature_enable_flags` = `j1939_feature_enable_flags_cal`,
+> (switch 31 picks the second axle ratio), `j1939_feature_enable_flags` = `algorithm_enable_flags_29_cal`,
 > `protection_fault_latch_update` = `cm848_updateEngineWarningFlags`, `j1939FaultStateUpdate` =
 > `cm848_monitorGovernorPressureSensorOffset`. Kept below for history; current picture in `firmware/CLAUDE.md`
 > (switch-input layer, vehicle speed).

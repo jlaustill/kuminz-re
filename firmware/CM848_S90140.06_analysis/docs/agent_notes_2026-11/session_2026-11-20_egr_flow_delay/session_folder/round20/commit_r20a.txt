@@ -1,0 +1,23 @@
+cm848: round 20 stage A - the algorithm enable flags words named by their e2m word numbers (label-only)
+
+e2m block 106B is the algorithm enable flags block (AENBLFLG; RAM 0x3fd59a + offset = EEPROM 0x118 + offset, the
+CRC-guarded block). The e2m's 'word N' is at offset 2 + 2N ([FSUCFLEN] 'Bit 0 Word 4' sits at +A), and the existing
+algorithm_enable_flags_4 / 6 / 12 / 18 / 20 / 41_cal rows already follow it. Seventeen more words had guessed names,
+and each now has its e2m bits (name and mask) in its comment:
+- word 3 (0x3fd5a2, was j1939_governor_feature_cal): PTO / cruise control / road speed governor / ANC / cruise set
+  speed save enables, tested at 0x10 / 0x40 / 0x80 / 0x100 / 0x8000.
+- words 0 / 1 / 2 / 5 / 13 / 19 / 21 / 25 / 27 / 28 / 29 / 31 / 32 / 40 / 42 / 43 (were governor_fault_status_flags,
+  governor_feature_flags, governor_feature_config_word, combustion_override_and_estimation_enable_flags_cal,
+  fault_feature_config_flags, feature_enable_flags_cal, governor_feature_config_flags, governor_mode_config_flags,
+  governor_system_config_flags, j1939_input_processing_enable_cal, j1939_feature_enable_flags_cal,
+  injection_timing_enable_flags, governor_fuel_feature_flags, engine_feature_enable_flags_cal,
+  protection_feature_flags, fuel_feature_control_flags).
+The alignment is checked against the code: word 29 0x100 is DM13 (cm848_processJ1939Dm13StopStartBroadcast), 0x20 /
+0x40 trip / service reset (cm848_j1939HandlePgn56832Reset), 0x800 the throttle error handler
+(cm848_checkAcceleratorPedalSensorFaults); word 28 0x400 J1939_Multiplex_Enable (the J1939 input layer).
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (17 names). Headers regenerated
+(0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass. firmware/CLAUDE.md: 5 rename
+refreshes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -1,0 +1,33 @@
+cm848: round 20 stage C - cold_delta_fuel, the misfire timing limit, the proven flag bits (label-only)
+
+- fuel_demand_offset_correction (0x40b22a) is e2m 8A9F Cold_Delta_Fuel ('Amount of fuel to add to AFC, torque curve
+  based on RPM and coolant temperature'): cold_delta_fuel. Its table becomes cold_delta_fuel_x_axis / _y_axis / _grid
+  (e2m 8AA0 Cold_Delta_Fuel_Temp_Axis = coolant temperature, 8AA1 _Speed_Axis = engine speed, 8AA2 _Table), and
+  cm848_calculateFuelDemandOffsetTrim becomes cm848_calculateColdDeltaFuel. All nine of its gated additions sit behind
+  an algorithm enable bit whose e2m record says 'add Cold_Delta_Fuel to <that limit>' (air fuel control, throttle 100,
+  altitude derate, fuel pressure fault, hybrid governor, torque management, net torque, chi, density).
+- cm848_processEngineConfigSpeedControl only looks up injection_timing_main_misfire_limit (e2m 8A3D
+  Misfire_Timing_Limit / 8A40 Misfire_Timing_Table) while algorithm_enable_flags_40_cal bit 8 (Misfire_Timing_Limit_
+  Enable) is set: cm848_calculateInjectionTimingMainMisfireLimit.
+- algorithm_enable_flags_12_t / 18_t / 41_t: the five read 'guess (not proven, so reserved)' bits take their e2m
+  names (duty_cycle_monitor_enable, remote_throttle_transition_verification_enable, torque_normalization_enable,
+  throttle_100_cold_increment_enable, air_fuel_control_cold_increment_enable). Six e2m-named unread bits are named as
+  in algorithm_enable_flags_3_t, and their comments keep "no reader". The stage A block alignment is now proven by:
+  - the direct readers;
+  - the engine protection loops' indexed reads from algorithm_enable_flags_0_cal (the one channel, fuel temperature,
+    reads word 8 bits 0-3 = Fuel_Temperature_{Fueling_Limiting, RPM_Limiting, Shutdown, Restart}_Enable and word 26
+    bit 4 = Fuel_Temperature_Data_Noderate_Enable);
+  - word 11 bit 3 = J1939_Communication_Enable gating the J1939 transmit queues and receive dispatch (it was an
+    unnamed DAT_003fd5b2).
+- New rows:
+  - algorithm_enable_flags_table_length_cal (0x3fd59a, e2m 106B +0, where the CRC scan starts; 70 in the dump, not
+    the block's 90 bytes);
+  - algorithm_enable_flags_7 / 8 / 11 / 26_cal.
+- Hidden readers checked: the indexed loops reach only words 8 / 26, and calculateAlpha's pointer reads only words 0,
+  1, 12 and 19. Nothing reaches word 3, so stage B's 'no reader' comments and round 19's ANC claim hold.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (8 names + 11 fields; 2 functions
+differ only in the order of their local declarations); no DAT_003fd5xx is left. Headers regenerated (0 g++ errors),
+lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
