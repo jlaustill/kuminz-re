@@ -1927,8 +1927,8 @@ Two peer relays covered the round. The scripts are in `session_folder/round40/`.
 - **Stage A (7f54db1, labels):** `audit_cal_suffixes.py` MISSING 258 -> 234.
   - **Which rows:** `missing_users.py` sorts the rows by who uses them; only names that application code alone uses and
     that describe the application's EEPROM value change. Every candidate went through the ECU's parameter ID table
-    first, which resolves 8.
-  - **Seven names change with the evidence:**
+    first, which resolves 7.
+  - **Ten names change with the evidence (nine EEPROM rows and `engine_idling_flag`; 7f54db1's message said seven):**
     - the idle counters (e2m 117F +A Total_Idle_Fuel_Used: the "governed speed" flag is the low speed governor within
       50 rpm of its reference), now `lifetime_idle_*_cal` / `trip_idle_*_cal` / `engine_idling_flag`;
     - `low_speed_governor_no_load_fuel_trim_cal` (was governor_speed_target_trim: a fuel addend);
@@ -1936,7 +1936,7 @@ Two peer relays covered the round. The scripts are in `session_folder/round40/`.
     - `eeprom_verify_retry_lifetime_total_cal`;
     - `final_fueling_state_before_shutdown_or_excess_injection_fault_cal`;
     - `exhaust_brake_switch_learned_flag_cal` (was protection_b_fault_active_flag).
-  - The other 17 rows only gain `_cal`, among them the VIN, `lifetime_distance_pulses_cal` and the
+  - The other 15 rows only gain `_cal` (7f54db1's message said 17), among them the VIN, `lifetime_distance_pulses_cal` and the
     0x19ce-0x19f2 counters.
   - `arrays.csv` also named the VIN; its arrays stage overrides the globals' name, so it changed too.
   - 1967 functions match the canonical form; the VIN reader differs only by whitespace.

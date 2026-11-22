@@ -593,8 +593,9 @@ state enum, the flag bytes.**
 - **Stage C (2aa86ed, labels, types):** the last 42 HARD `_cal` scalars renamed from their code (11 with e2m records);
   the J1939-named supervisor chip block re-domained. `audit_cal_suffixes.py` HARD 63 -> 0.
 **Round 40.**
-- **Stage A (7f54db1, labels):** 24 application-side names in the EEPROM mirror gain `_cal`; 7 renamed from their e2m
-  records and code (the idle counters, the feature bitmap, the exhaust brake switch learned flag, ...).
+- **Stage A (7f54db1, labels):** 24 application-side names in the EEPROM mirror gain `_cal`; 9 of them (plus
+  `engine_idling_flag`) renamed from their e2m records and code (the idle counters, the feature bitmap, the exhaust
+  brake switch learned flag, ...).
 - **Stage B (9c5414a, a type):** `feature_selection_bits_cal` as a bitfield struct; the SCI setting lookup's pointer
   typed `byte *`.
 
