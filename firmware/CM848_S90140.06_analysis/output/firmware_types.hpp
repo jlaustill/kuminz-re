@@ -1617,9 +1617,9 @@ struct charge_flow_estimate_terms_t {
     uint16_t volumetric_efficiency_square_root;  /* e2m 177D +6 CHP_Veff_Sqrt: the volumetric efficiency test point based only on energy */
     uint16_t flow_area_constant;  /* e2m 177D +8 CHP_Flow_Area_Constant */
     uint16_t pressure_ratio;  /* e2m 177D +A CHP_Pratio: the charge flow pressure ratio */
-    uint16_t charge_flow_source;  /* e2m 177D +C Charge_Flow_Source: 0 primary / 1 backup */
+    SENSOR_VALUE_SOURCE charge_flow_source;  /* e2m 177D +C Charge_Flow_Source: 0 primary / 1 backup | typed SENSOR_VALUE_SOURCE in PR #53 round 23 (was word): e2m 177D +C Charge_Flow_Source lists 0=PRIMARY, 1=BACKUP, and the code uses only 0 / 1 */
     uint16_t fresh_air_mass_flow_filtered;  /* e2m 177B +0 Fresh_Air_Flow: the fresh air flow virtual sensor (lb/min) */
-    uint16_t fresh_air_flow_source;  /* e2m 177B +2 Fresh_Air_Flow_Source: 0 primary / 1 backup */
+    SENSOR_VALUE_SOURCE fresh_air_flow_source;  /* e2m 177B +2 Fresh_Air_Flow_Source: 0 primary / 1 backup | typed SENSOR_VALUE_SOURCE in PR #53 round 23 (was word): e2m 177B +2 Fresh_Air_Flow_Source lists 0=PRIMARY, 1=BACKUP, and the code uses only 0 / 1 and compares 2 (DEFAULT) */
 };
 
 struct engine_speed_limit_arbitration_t {

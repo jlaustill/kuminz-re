@@ -1050,4 +1050,4 @@ INJECTION_TIMING_COMBINATION_MODE,2,INJECTION_TIMING_COMBINATION_MINIMUM,The sma
 SENSOR_VALUE_SOURCE,0,SENSOR_VALUE_SOURCE_PRIMARY,e2m PRIMARY,2
 SENSOR_VALUE_SOURCE,1,SENSOR_VALUE_SOURCE_BACKUP,e2m BACKUP,2
 SENSOR_VALUE_SOURCE,2,SENSOR_VALUE_SOURCE_DEFAULT,e2m DEFAULT,2
-# SENSOR_VALUE_SOURCE also types (PR #53 round 23) the ambient air temperature / compressor inlet pressure / compressor inlet and outlet temperature / EGR orifice, valve and engine delta pressure / EGR delta pressure sensor / turbocharger speed / EGR flow sources
+# SENSOR_VALUE_SOURCE also types (PR #53 round 23) the ambient air temperature / compressor inlet pressure / compressor inlet and outlet temperature / EGR orifice, valve and engine delta pressure / EGR delta pressure sensor / turbocharger speed / EGR flow sources, and the exhaust temperature source and the charge flow estimate's charge flow and fresh air flow sources (struct fields)

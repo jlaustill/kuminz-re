@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 04:01:27 MST 2026
+// Generated: Sun Nov 22 04:16:25 MST 2026
 
 
 //
@@ -11819,8 +11819,8 @@ word cm848_calculateUpstreamEgrFlowSource(void)
   word wVar1;
   
   if (((egr_valve_position_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
-      (exhaust_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) && (exhaust_temperature_source == 0)
-     ) {
+      (exhaust_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
+     (exhaust_temperature_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
     wVar1 = 0;
   }
   else {
@@ -12165,10 +12165,10 @@ void cm848_calculateChargeFlowEstimate(void)
   if (((intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
       (charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
      (exhaust_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
-    charge_flow_estimate_terms.charge_flow_source = 0;
+    charge_flow_estimate_terms.charge_flow_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
-    charge_flow_estimate_terms.charge_flow_source = 1;
+    charge_flow_estimate_terms.charge_flow_source = SENSOR_VALUE_SOURCE_BACKUP;
   }
   return;
 }
@@ -12262,12 +12262,12 @@ void cm848_calculateFreshAirMassFlow(void)
   }
   dVar1 = exponentialMovingAverage((uint)uVar2,&fresh_air_mass_flow_filter_state);
   charge_flow_estimate_terms.fresh_air_mass_flow_filtered = (word)dVar1;
-  if ((charge_flow_estimate_terms.charge_flow_source == 0) &&
+  if ((charge_flow_estimate_terms.charge_flow_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
      (egr_flow_source == SENSOR_VALUE_SOURCE_PRIMARY)) {
-    charge_flow_estimate_terms.fresh_air_flow_source = 0;
+    charge_flow_estimate_terms.fresh_air_flow_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
-    charge_flow_estimate_terms.fresh_air_flow_source = 1;
+    charge_flow_estimate_terms.fresh_air_flow_source = SENSOR_VALUE_SOURCE_BACKUP;
   }
   return;
 }
@@ -15710,7 +15710,7 @@ void cm848_selectCompressorOutletTemperature(void)
     compressor_outlet_temperature = cm848_estimateCompressorOutletTemperature();
     if (((compressor_inlet_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
         (compressor_inlet_temperature_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
-       ((charge_flow_estimate_terms.fresh_air_flow_source == 0 &&
+       ((charge_flow_estimate_terms.fresh_air_flow_source == SENSOR_VALUE_SOURCE_PRIMARY &&
         (turbocharger_speed_source != SENSOR_VALUE_SOURCE_DEFAULT)))) {
       compressor_outlet_temperature_source = SENSOR_VALUE_SOURCE_PRIMARY;
     }
@@ -62093,10 +62093,10 @@ void cm848_initializeBarometricFuelLimitInterpolationStates(void)
    the drop and the inlet pressure is the pressure; set, the reference is the pressure and the inlet
    pressure is the pressure minus the drop (at least 1). The pressure sources go to
    barometric_pressure_reference_source (+4 Ambient_Air_Press_Source),
-   compressor_inlet_pressure_source (+C Compressor_Inlet_Press_Source) and DAT_0040a1a6 (+12
-   Altitude_Source). Then barometric_altitude_feet (+0 Altitude) from barometric_pressure_reference
-   (limited to 0x75e) through the altitude table and ambient_relative_humidity (+14
-   Ambient_Relative_Humidity) from a grid of engine speed and
+   compressor_inlet_pressure_source (+C Compressor_Inlet_Press_Source) and
+   barometric_altitude_source (+12 Altitude_Source). Then barometric_altitude_feet (+0 Altitude)
+   from barometric_pressure_reference (limited to 0x75e) through the altitude table and
+   ambient_relative_humidity (+14 Ambient_Relative_Humidity) from a grid of engine speed and
    injection_quantity_combustion_reference. Caller hpcr_periodicTaskSet_fuelFinal. (was
    hpcr_fuelFinal_exponentialAverage) */
 
@@ -62118,11 +62118,11 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
                   compressor_inlet_temperature_rise_y_axis,compressor_inlet_temperature_rise_grid,0)
   ;
   if ((compressor_inlet_temperature_source == SENSOR_VALUE_SOURCE_DEFAULT) ||
-     (charge_flow_estimate_terms.fresh_air_flow_source == 2)) {
+     (charge_flow_estimate_terms.fresh_air_flow_source == SENSOR_VALUE_SOURCE_DEFAULT)) {
     ambient_air_temperature_source = SENSOR_VALUE_SOURCE_DEFAULT;
   }
   else if ((compressor_inlet_temperature_source == SENSOR_VALUE_SOURCE_BACKUP) ||
-          (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
+          (charge_flow_estimate_terms.fresh_air_flow_source == SENSOR_VALUE_SOURCE_BACKUP)) {
     ambient_air_temperature_source = SENSOR_VALUE_SOURCE_BACKUP;
   }
   else {
@@ -62155,12 +62155,12 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
       compressor_inlet_pressure = 1;
     }
     compressor_inlet_pressure_source = barometric_pressure_selected_source;
-    if ((charge_flow_estimate_terms.fresh_air_flow_source == 2) ||
+    if ((charge_flow_estimate_terms.fresh_air_flow_source == SENSOR_VALUE_SOURCE_DEFAULT) ||
        (barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_DEFAULT)) {
       barometric_pressure_reference_source = SENSOR_VALUE_SOURCE_DEFAULT;
     }
     else if ((barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_BACKUP) ||
-            (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
+            (charge_flow_estimate_terms.fresh_air_flow_source == SENSOR_VALUE_SOURCE_BACKUP)) {
       barometric_pressure_reference_source = SENSOR_VALUE_SOURCE_BACKUP;
     }
     else {
@@ -62176,12 +62176,12 @@ void cm848_calculateAmbientAndCompressorInletConditions(void)
       compressor_inlet_pressure = barometric_pressure_selected - compressor_inlet_pressure_drop;
     }
     barometric_pressure_reference_source = barometric_pressure_selected_source;
-    if ((charge_flow_estimate_terms.fresh_air_flow_source == 2) ||
+    if ((charge_flow_estimate_terms.fresh_air_flow_source == SENSOR_VALUE_SOURCE_DEFAULT) ||
        (barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_DEFAULT)) {
       compressor_inlet_pressure_source = SENSOR_VALUE_SOURCE_DEFAULT;
     }
     else if ((barometric_pressure_selected_source == SENSOR_VALUE_SOURCE_BACKUP) ||
-            (charge_flow_estimate_terms.fresh_air_flow_source == 1)) {
+            (charge_flow_estimate_terms.fresh_air_flow_source == SENSOR_VALUE_SOURCE_BACKUP)) {
       compressor_inlet_pressure_source = SENSOR_VALUE_SOURCE_BACKUP;
     }
     else {
@@ -62474,7 +62474,7 @@ void cm848_calculateEgrCoolerEfficiency(void)
   iVar3 = (int)(short)coolant_temperature_selected;
   if ((((egr_flow_cold_side_algorithm_select == 0) ||
        (coolant_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY)) ||
-      (exhaust_temperature_source != 0)) ||
+      (exhaust_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY)) ||
      (((egr_orifice_temperature_source != SENSOR_VALUE_SOURCE_PRIMARY ||
        (egr_flow_source != SENSOR_VALUE_SOURCE_PRIMARY)) ||
       ((uVar2 < egr_cooler_fouling_flow_threshold ||
@@ -65297,14 +65297,14 @@ void cm848_estimateExhaustTemperature(void)
   exhaust_temperature = (word)uVar2;
   dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fbcea);
   exhaust_metal_temperature = (word)dVar1;
-  if ((((charge_flow_estimate_terms.charge_flow_source == 0) &&
+  if ((((charge_flow_estimate_terms.charge_flow_source == SENSOR_VALUE_SOURCE_PRIMARY) &&
        (charge_pressure_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
       (intake_manifold_temperature_filtered_source == SENSOR_VALUE_SOURCE_PRIMARY)) &&
      (exhaust_temperature_model_invalid_flag == 0)) {
-    exhaust_temperature_source = 0;
+    exhaust_temperature_source = SENSOR_VALUE_SOURCE_PRIMARY;
   }
   else {
-    exhaust_temperature_source = 1;
+    exhaust_temperature_source = SENSOR_VALUE_SOURCE_BACKUP;
   }
   exhaust_temperature_virtual_sensor_copy = exhaust_temperature;
   return;

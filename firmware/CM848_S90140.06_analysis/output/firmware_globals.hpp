@@ -4570,7 +4570,7 @@ extern word egr_valve_closed_flag;  // 0x0040a668
 extern word egr_valve_position;  // 0x0040a66a
 extern SENSOR_VALUE_SOURCE egr_valve_position_source;  // 0x0040a66c
 extern word exhaust_temperature;  // 0x0040a686
-extern int16_t exhaust_temperature_source;  // 0x0040a688
+extern SENSOR_VALUE_SOURCE exhaust_temperature_source;  // 0x0040a688
 extern word egr_orifice_temperature;  // 0x0040a68c
 extern SENSOR_VALUE_SOURCE egr_orifice_temperature_source;  // 0x0040a68e
 extern word egr_valve_driver_over_current_retry_trigger_flag;  // 0x0040a698
