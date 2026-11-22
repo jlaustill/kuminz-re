@@ -1395,6 +1395,7 @@ typedef struct j1939_broadcast_transmit_session_t j1939_broadcast_transmit_sessi
 typedef struct j1939_transport_receive_session_t j1939_transport_receive_session_t;
 typedef struct j1939_pgn65263_payload_t j1939_pgn65263_payload_t;
 typedef struct j1939_pgn65504_payload_t j1939_pgn65504_payload_t;
+typedef struct feature_selection_bits_t feature_selection_bits_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4359,4 +4360,15 @@ struct j1939_pgn65504_payload_t {
     uint8_t scrambled_injection_timing_byte_2;  /* bits 0x41 of the scrambled timing / the rest time base noise */
     uint8_t scramble_key;  /* the key: the time base (TBLr) >> 7. The timing value is (main_injection_timing + injection_timing_top_dead_center_offset) x 120 >> 10 + 125 */
     uint8_t scrambled_injection_timing_byte_3;  /* bits 0x1a of the scrambled timing shifted left 3 / the rest time base noise */
+};
+
+struct feature_selection_bits_t {
+    uint8_t power_take_off_cab_governor_enable : 1;  /* bit 0: mask 0x01: cm848_runPowerTakeOffGovernorStateMachine enters the cab (set / resume) governor only while it is set (with algorithm_enable_flags_3_cal.power_take_off_enable) (PR #53 round 40) */
+    uint8_t power_take_off_remote_governor_enable : 1;  /* bit 1: mask 0x02: cm848_runPowerTakeOffGovernorStateMachine's remote switch path needs it (PR #53 round 40) */
+    uint8_t oil_change_monitor_feature_enable : 1;  /* bit 2: mask 0x04: cm848_updateOilChangeMonitor runs only while it is set (with algorithm_enable_flags_12_cal.oil_change_monitor_enable) (PR #53 round 40) */
+    uint8_t overdrive_initial_flags_option : 1;  /* bit 3: mask 0x08: cm848_initializeTransmissionControl starts transmission_control_flags.overdrive_flags with 0x0a while it is set and 0x08 while it is clear (the meaning of overdrive_flags bit 1 is unproven) (PR #53 round 40) */
+    uint8_t water_in_fuel_sensor_second_configuration : 1;  /* bit 4: mask 0x10: while it is clear cm848_processWaterInFuelChannel / cm848_initializeWaterInFuelChannel use the *_feature_bit_4_off_* configuration and tables (PR #53 round 40) */
+    uint8_t reserved_bit_5 : 1;  /* bit 5: mask 0x20: no reader (PR #53 round 40) */
+    uint8_t reserved_bit_6 : 1;  /* bit 6: mask 0x40: no reader (PR #53 round 40) */
+    uint8_t reserved_bit_7 : 1;  /* bit 7: mask 0x80: no reader (PR #53 round 40) */
 };

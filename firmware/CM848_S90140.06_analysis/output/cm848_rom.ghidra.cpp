@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 16:00:49 MST 2026
+// Generated: Sun Nov 22 16:08:28 MST 2026
 
 
 //
@@ -8571,7 +8571,7 @@ void cm848_initializeSensorReferenceVoltageCChannel(void)
 void cm848_processWaterInFuelChannel(void)
 
 {
-  if ((feature_selection_bits_cal & 0x10) == 0) {
+  if (feature_selection_bits_cal.water_in_fuel_sensor_second_configuration == 0) {
     cm848_processUnsignedSensorChannel
               (&water_in_fuel_sensor_feature_bit_4_off_config,&water_in_fuel_sensor_channel_state,
                &water_in_fuel_linearization_cached_axis_offset,
@@ -8605,7 +8605,7 @@ void cm848_processWaterInFuelChannel(void)
 void cm848_initializeWaterInFuelChannel(void)
 
 {
-  if ((feature_selection_bits_cal & 0x10) == 0) {
+  if (feature_selection_bits_cal.water_in_fuel_sensor_second_configuration == 0) {
     cm848_initializeUnsignedSensorChannel
               (&water_in_fuel_sensor_feature_bit_4_off_config,&water_in_fuel_sensor_channel_state,
                &water_in_fuel_linearization_cached_axis_offset,
@@ -29740,7 +29740,7 @@ LAB_0002b0f0:
   }
   if (power_take_off_governor_state == POWER_TAKE_OFF_GOVERNOR_STATE_REMOTE_COUNT) {
     if ((((algorithm_enable_flags_3_cal.power_take_off_enable == 0) ||
-         ((feature_selection_bits_cal & 2) == 0)) ||
+         (feature_selection_bits_cal.power_take_off_remote_governor_enable == 0)) ||
         ((power_take_off_remote_switch_pressed_pass_count <= power_take_off_remote_switch_timeout &&
          (power_take_off_remote_switch_press_count != power_take_off_remote_count_limit_cal)))) ||
        (power_take_off_remote_switch_press_count == 0)) {
@@ -29811,7 +29811,7 @@ LAB_0002b3d0:
           ((power_take_off_governor_switch_state_bits & 0x3000) != 0x1000)) ||
          (power_take_off_disable_flag != 0)))))) {
       if ((((algorithm_enable_flags_3_cal.power_take_off_enable != 0) &&
-           ((feature_selection_bits_cal & 1) != 0)) &&
+           (feature_selection_bits_cal.power_take_off_cab_governor_enable != 0)) &&
           (((power_take_off_governor_switch_state_bits & 0x10) != 0 &&
            (((vehicle_speed <= power_take_off_maximum_vehicle_speed_cal &&
              (power_take_off_minimum_engage_engine_speed <= engine_speed_state.filtered_engine_speed
@@ -36058,7 +36058,7 @@ void cm848_initializeTransmissionControl(void)
   transmission_cruise_downshift_delay_timer = 0;
   transmission_cruise_upshift_delay_timer = 0;
   exhaust_brake_inhibit_timer = 0;
-  if ((feature_selection_bits_cal & 8) == 0) {
+  if (feature_selection_bits_cal.overdrive_initial_flags_option == 0) {
     transmission_control_flags.overdrive_flags =
          transmission_control_flags.overdrive_flags & 0x9d | 8;
   }
@@ -79372,7 +79372,7 @@ void cm848_updateOilChangeMonitor(void)
   word wVar1;
   
   if ((algorithm_enable_flags_12_cal.oil_change_monitor_enable != 0) &&
-     ((feature_selection_bits_cal & 4) != 0)) {
+     (feature_selection_bits_cal.oil_change_monitor_feature_enable != 0)) {
     if (engine_state != ENGINE_STATE_STOPPED) {
       _oil_change_monitor_distance_pulses_cal =
            lifetime_distance_pulses_cal - oil_change_monitor_reset_distance_pulses_cal;
@@ -80842,9 +80842,9 @@ LAB_0051cec0:
 byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
 
 {
-  byte *pbVar1;
-  uint uVar2;
-  int iVar3;
+  byte *setting_pointer;
+  uint uVar1;
+  int iVar2;
   
   if (param_1 != 0) {
     if (param_1 == 1) {
@@ -80859,93 +80859,93 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
       if (4 < (param_2 & 0xff) - 0xd8) {
         return (byte *)0x0;
       }
-      pbVar1 = (byte *)0x3fee2c;
-      uVar2 = (param_2 & 0xff) + 0xff28;
+      setting_pointer = (byte *)((int)&eeprom_write_buffer + 2);
+      uVar1 = (param_2 & 0xff) + 0xff28;
     }
     else {
-      if ((param_1 != 2) || (uVar2 = param_2 >> 3 & 0x1f, 1 < uVar2)) {
+      if ((param_1 != 2) || (uVar1 = param_2 >> 3 & 0x1f, 1 < uVar1)) {
         return (byte *)0x0;
       }
-      pbVar1 = &feature_selection_bits_cal;
+      setting_pointer = (byte *)&feature_selection_bits_cal;
     }
     goto LAB_0051d5a4;
   }
   if (((param_2 & 0xff) != 0) && ((param_2 & 0xff) < 7)) {
-    pbVar1 = &DAT_003fd4cc;
-    uVar2 = (param_2 & 0xff) + 0xffff;
+    setting_pointer = &DAT_003fd4cc;
+    uVar1 = (param_2 & 0xff) + 0xffff;
     goto LAB_0051d5a4;
   }
   if ((param_2 & 0xff) == 7) {
-    pbVar1 = (byte *)0x3fd4d2;
-    uVar2 = 1;
+    setting_pointer = (byte *)0x3fd4d2;
+    uVar1 = 1;
     goto LAB_0051d5a4;
   }
   if ((param_2 & 0xff) == 8) {
-    pbVar1 = (byte *)0x3fd4d4;
-    uVar2 = 1;
+    setting_pointer = (byte *)0x3fd4d4;
+    uVar1 = 1;
     goto LAB_0051d5a4;
   }
   if ((param_2 & 0xff) == 9) {
-    pbVar1 = (byte *)0x3fd4d6;
-    uVar2 = 1;
+    setting_pointer = (byte *)0x3fd4d6;
+    uVar1 = 1;
     goto LAB_0051d5a4;
   }
   if ((0x1c < (param_2 & 0xff)) && ((param_2 & 0xff) < 0x21)) {
-    pbVar1 = (byte *)(s__CMMNS00000000000000000_003fd653 + 0x17);
-    uVar2 = (param_2 & 0xff) + 0xffe3;
+    setting_pointer = (byte *)(s__CMMNS00000000000000000_003fd653 + 0x17);
+    uVar1 = (param_2 & 0xff) + 0xffe3;
     goto LAB_0051d5a4;
   }
   if ((0x20 < (param_2 & 0xff)) && ((param_2 & 0xff) < 0x24)) {
-    pbVar1 = (byte *)0x3fd66e;
-    uVar2 = (param_2 & 0xff) + 0xffdf;
+    setting_pointer = (byte *)0x3fd66e;
+    uVar1 = (param_2 & 0xff) + 0xffdf;
     goto LAB_0051d5a4;
   }
   if ((0x23 < (param_2 & 0xff)) && ((param_2 & 0xff) < 0x2c)) {
-    pbVar1 = (byte *)0x3fd4bc;
-    uVar2 = (param_2 & 0xff) + 0xffdc;
+    setting_pointer = (byte *)0x3fd4bc;
+    uVar1 = (param_2 & 0xff) + 0xffdc;
     goto LAB_0051d5a4;
   }
   if ((0x2b < (param_2 & 0xff)) && ((param_2 & 0xff) < 0x30)) {
-    pbVar1 = (byte *)0x3fd48e;
-    uVar2 = (param_2 & 0xff) + 0xffd4;
+    setting_pointer = (byte *)0x3fd48e;
+    uVar1 = (param_2 & 0xff) + 0xffd4;
     goto LAB_0051d5a4;
   }
   if (0x85 < (param_2 & 0xff) - 0x77) {
     if (((param_2 & 0xff) < 10) || (0x1d < (param_2 & 0xff))) {
       return (byte *)0x0;
     }
-    pbVar1 = vehicle_vin_string_cal;
-    uVar2 = (param_2 & 0xff) + 0xfff6;
+    setting_pointer = vehicle_vin_string_cal;
+    uVar1 = (param_2 & 0xff) + 0xfff6;
     goto LAB_0051d5a4;
   }
   switch(param_2 & 0xff) {
   case 0x77:
-    uVar2 = 0;
-    pbVar1 = &end_of_line_test_settings_cal.test_results_1;
+    uVar1 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.test_results_1;
     goto LAB_0051d5a4;
   case 0x78:
     break;
   case 0x79:
-    pbVar1 = (byte *)0x3fd939;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.test_results_3;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0x7a:
     break;
   case 0x7b:
     break;
   case 0x7c:
-    pbVar1 = (byte *)0x3fd93a;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.final_test_results_1;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0x7d:
-    pbVar1 = (byte *)0x3fd93b;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.final_test_results_2;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0x7e:
     break;
   case 0x7f:
-    pbVar1 = (byte *)0x3fd943;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.final_test_reserved_1;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0x80:
     break;
@@ -80964,20 +80964,20 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
   case 0x87:
     break;
   case 0x88:
-    pbVar1 = (byte *)0x3fd93c;
-    uVar2 = 1;
+    setting_pointer = (byte *)&end_of_line_test_settings_cal.field_mode_register;
+    uVar1 = 1;
     goto LAB_0051d5a4;
   case 0x89:
-    pbVar1 = (byte *)0x3fd93c;
-    uVar2 = 0;
+    setting_pointer = (byte *)&end_of_line_test_settings_cal.field_mode_register;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0x8a:
     break;
   case 0x8b:
     break;
   case 0x8c:
-    pbVar1 = (byte *)0x3fd947;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.misfire_test_warm_up_seconds;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0x8d:
     break;
@@ -81106,30 +81106,30 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
   case 0xcb:
     break;
   case 0xcc:
-    pbVar1 = (byte *)0x3fd93e;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.test_flags_1;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xcd:
-    pbVar1 = (byte *)0x3fd93f;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.test_flags_2;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xce:
-    pbVar1 = (byte *)0x3fd940;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.test_flags_3;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xcf:
-    pbVar1 = (byte *)0x3fd941;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.test_flags_4;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xd0:
-    pbVar1 = (byte *)0x3fd942;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.test_flags_5;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xd1:
     break;
   case 0xd2:
-    pbVar1 = (byte *)0x3fd946;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.misfire_test_timeout_seconds;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xd3:
     break;
@@ -81148,8 +81148,8 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
   case 0xda:
     break;
   case 0xdb:
-    pbVar1 = (byte *)0x3fd944;
-    uVar2 = 0;
+    setting_pointer = &end_of_line_test_settings_cal.maximum_miles;
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xdc:
     break;
@@ -81198,50 +81198,51 @@ byte * cm848_sciLookupEepromSettingAddress(int param_1,uint param_2)
   case 0xf2:
     break;
   case 0xf3:
-    uVar2 = 0;
-    pbVar1 = (byte *)&low_speed_governor_base_reference_speed_cal;
+    uVar1 = 0;
+    setting_pointer = (byte *)&low_speed_governor_base_reference_speed_cal;
     goto LAB_0051d5a4;
   case 0xf4:
-    uVar2 = 1;
-    pbVar1 = (byte *)&low_speed_governor_base_reference_speed_cal;
+    uVar1 = 1;
+    setting_pointer = (byte *)&low_speed_governor_base_reference_speed_cal;
     goto LAB_0051d5a4;
   case 0xf5:
-    iVar3 = 0;
+    iVar2 = 0;
     goto LAB_0051d534;
   case 0xf6:
-    iVar3 = 0;
+    iVar2 = 0;
     goto LAB_0051d54c;
   case 0xf7:
-    iVar3 = 2;
+    iVar2 = 2;
     goto LAB_0051d504;
   case 0xf8:
-    iVar3 = 2;
+    iVar2 = 2;
     goto LAB_0051d51c;
   case 0xf9:
-    iVar3 = 4;
+    iVar2 = 4;
 LAB_0051d504:
-    pbVar1 = (byte *)((int)lifetime_distance_8_mile_record_cal + iVar3);
-    uVar2 = 0;
+    setting_pointer = (byte *)((int)lifetime_distance_8_mile_record_cal + iVar2);
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xfa:
-    iVar3 = 4;
+    iVar2 = 4;
 LAB_0051d51c:
-    pbVar1 = (byte *)((int)lifetime_distance_8_mile_record_cal + iVar3);
-    uVar2 = 1;
+    setting_pointer = (byte *)((int)lifetime_distance_8_mile_record_cal + iVar2);
+    uVar1 = 1;
     goto LAB_0051d5a4;
   case 0xfb:
-    iVar3 = 6;
+    iVar2 = 6;
 LAB_0051d534:
-    pbVar1 = (byte *)((int)lifetime_distance_8_mile_record_cal + iVar3);
-    uVar2 = 0;
+    setting_pointer = (byte *)((int)lifetime_distance_8_mile_record_cal + iVar2);
+    uVar1 = 0;
     goto LAB_0051d5a4;
   case 0xfc:
-    iVar3 = 6;
+    iVar2 = 6;
 LAB_0051d54c:
-    pbVar1 = (byte *)((int)lifetime_distance_8_mile_record_cal + iVar3);
-    uVar2 = 1;
+    setting_pointer = (byte *)((int)lifetime_distance_8_mile_record_cal + iVar2);
+    uVar1 = 1;
 LAB_0051d5a4:
-    return &((end_of_line_test_settings_t *)pbVar1)->test_results_1 + (uVar2 & 0xffff);
+    return (byte *)((int)&((end_of_line_test_settings_t *)setting_pointer)->test_results_1 +
+                   (uVar1 & 0xffff));
   }
   return (byte *)0x0;
 }

@@ -145,3 +145,4 @@ function_address,function_name,old_name,new_name,type,comment
 0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,pwVar2,source_word,word *,the record word cursor (starts one word before the record)
 0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,pwVar4,history_word,word *,the history entry word cursor (j1939_input_signal_timeouts + entry x 12 + 24 words: the table behind that array)
 0x0050be6c,cm848_storeJ1939ControlSessionInHistoryTable,bVar5,copied_word_count,byte,12 words per record
+0x0051cf74,cm848_sciLookupEepromSettingAddress,pfVar1,setting_pointer,byte *,The EEPROM setting address it returns (base + index). Typed byte * so the struct type of feature_selection_bits_cal (one of the settings) does not spread to every setting (PR #53 round 40)

@@ -2190,7 +2190,7 @@ extern word vehicle_speed_sensor_period_scale_cal;  // 0x003fd8f4
 extern dword vehicle_speed_sensor_max_scaled_period_cal;  // 0x003fd8f6
 extern dword vehicle_speed_sensor_min_scaled_period_cal;  // 0x003fd8fa
 extern word gear_down_gear_ratio_cal;  // 0x003fd900
-extern byte feature_selection_bits_cal;  // 0x003fd902
+extern feature_selection_bits_t feature_selection_bits_cal;  // 0x003fd902
 extern word cruise_feedback_uses_road_speed_flag_cal;  // 0x003fd920
 extern word engine_retarder_exit_engine_speed_warm_oil_cal;  // 0x003fd924
 extern word engine_retarder_minimum_road_speed_cal;  // 0x003fd92c
