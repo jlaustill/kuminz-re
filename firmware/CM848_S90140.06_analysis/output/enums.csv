@@ -49,9 +49,17 @@ PROTECTION_FLAGS,0x40,FLAG_STATE2_EXCEEDED,State 2 threshold exceeded,1
 PROTECTION_FLAGS,0x20,FLAG_WARNING_THRESHOLD,Warning threshold crossed,1
 PROTECTION_FLAGS,0x10,FLAG_DERATE_ACTIVE,Derate condition active,1
 PROTECTION_FLAGS,0x08,FLAG_CONDITION_CHECK,Condition check flag,1
-# Protection Override Mode (DAT_0040b4ff values)
-PROTECTION_OVERRIDE,0x7e,OVERRIDE_ACTIVE_126,Protection override mode active (~),1
-PROTECTION_OVERRIDE,0x7f,OVERRIDE_ACTIVE_127,Protection override mode active (DEL),1
+# Transmission selected gear (PR #53 round 25): the J1939 SPN 524 coding of transmission_selected_gear and its copies - one gear per bit with a -125 offset, 251 = park. Replaces PROTECTION_OVERRIDE, which no variable used and whose members were named after the ASCII glyphs of 0x7e / 0x7f
+TRANSMISSION_SELECTED_GEAR,0x7c,TRANSMISSION_SELECTED_GEAR_REVERSE,"-1: reverse (shift lever position 2, cm848_updateSelectedGearFromShiftLever)",1
+TRANSMISSION_SELECTED_GEAR,0x7d,TRANSMISSION_SELECTED_GEAR_NEUTRAL,0: neutral (lever position 3),1
+TRANSMISSION_SELECTED_GEAR,0x7e,TRANSMISSION_SELECTED_GEAR_FIRST,1st gear,1
+TRANSMISSION_SELECTED_GEAR,0x7f,TRANSMISSION_SELECTED_GEAR_SECOND,2nd gear,1
+TRANSMISSION_SELECTED_GEAR,0x80,TRANSMISSION_SELECTED_GEAR_THIRD,3rd gear (drive while overdrive is off),1
+TRANSMISSION_SELECTED_GEAR,0x81,TRANSMISSION_SELECTED_GEAR_FOURTH,4th gear (drive with overdrive),1
+TRANSMISSION_SELECTED_GEAR,0x82,TRANSMISSION_SELECTED_GEAR_FIFTH,5th gear,1
+TRANSMISSION_SELECTED_GEAR,0xfb,TRANSMISSION_SELECTED_GEAR_PARK,251: park (lever position 1; J1939 SPN 524 special value),1
+TRANSMISSION_SELECTED_GEAR,0xfe,TRANSMISSION_SELECTED_GEAR_ERROR,254: J1939 error indicator,1
+TRANSMISSION_SELECTED_GEAR,0xff,TRANSMISSION_SELECTED_GEAR_NOT_AVAILABLE,"255: not available (the PCI 0x37 message is invalid, or no ETC2 arrived)",1
 # Fueling State (renamed 2026-11-19 from ENGINE_OPERATING_MODE): the code of the algorithm in control of the fuel - one numbering for every fueling stage. The labelled Chrysler calibration e2m-analysis/CHR/CHR_CC_11.45.01.07.e2m lists Cummins' labels with HEX keys (User_Fueling_State / Fueling_Control_State 00-3D; each member comment gives its label). Carriers: engine_operating_mode (the user stage) -> operating_mode_governor_output.mode_code (power take-off selection adds 4) -> governor_fuel_demand_working_mode (cruise adds 9) -> adjusted_user_fueling_state (the governed stage adds 10 / 11 / 12) -> requested_fueling_state / fuel_demand_arbitrated_state (cm848_arbitrateRequestedFueling: the governed fuel against torque_derate_fuel_source_code - the derate stage - and fuel_demand_minimum_tracked_state) -> injection_quantity_combustion_gross_source_code / _reference_source_code (the combustion stage 52-58) -> final_fueling_state (the engine-state overrides 22-41). 62 is newer than the label list. FUELING_STATE_UNIDENTIFIED_<n> (37 38 49 50) are codes stored or only compared whose algorithm is not proved yet: without an exact member Ghidra prints such a code as an OR of other members
 FUELING_STATE,0,FUELING_STATE_NOT_SELECTED,Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) - e2m label NOT_SET (CHR_CC_11.45.01.07 0x00),2
 FUELING_STATE,1,FUELING_STATE_TSC1_TORQUE_CONTROL,cm848_setEngineOperatingMode1: J1939 TSC1 override control mode 2 (torque); the governor output is tsc1_torque_control_fueling - e2m label JCOMTORQ (CHR_CC_11.45.01.07 0x01),2

@@ -1778,7 +1778,7 @@ extern void * pci_diagnostic_eeprom_mirror_pointer;  // 0x003fb3f4
 extern word pci_receive_message_1_timer_previous;  // 0x003fb3f8
 extern word wait_to_start_lamp_fault_count;  // 0x003fb3fa
 extern word cluster_lamp_status_error_count;  // 0x003fb3fc
-extern byte transmission_selected_gear_last_valid;  // 0x003fb3fe
+extern TRANSMISSION_SELECTED_GEAR transmission_selected_gear_last_valid;  // 0x003fb3fe
 extern word pci_transmit_message_2_status_bits;  // 0x003fb400
 extern word pci_transmit_message_2_status_bits_previous;  // 0x003fb402
 extern word engine_warning_alert_flag_previous;  // 0x003fb404
@@ -4968,7 +4968,7 @@ extern word transmission_anti_hunt_maximum_throttle_interpolated;  // 0x0040b0d8
 extern word transmission_vehicle_inertia_measurement;  // 0x0040b0da
 extern word transmission_cruise_downshift_delay_timer;  // 0x0040b0dc
 extern word transmission_cruise_upshift_delay_timer;  // 0x0040b0de
-extern byte transmission_selected_gear_previous;  // 0x0040b0e0
+extern TRANSMISSION_SELECTED_GEAR transmission_selected_gear_previous;  // 0x0040b0e0
 extern word transmission_4th_gear_lockup_boost_pressure;  // 0x0040b0e2
 extern word transmission_3_4_shift_after_3rd_gear_lockup_flag;  // 0x0040b0e4
 extern word governor_pressure_wide_open_throttle_anti_hang_timer;  // 0x0040b0e6
@@ -5253,7 +5253,7 @@ extern byte pci_spare_in_frame_response;  // 0x0040b4fb
 extern byte pci_spare_in_frame_response_end;  // 0x0040b4fc
 extern byte pci_transmit_message_3_in_frame_response;  // 0x0040b4fd
 extern byte pci_transmit_message_3_in_frame_response_end;  // 0x0040b4fe
-extern byte transmission_selected_gear;  // 0x0040b4ff
+extern TRANSMISSION_SELECTED_GEAR transmission_selected_gear;  // 0x0040b4ff
 extern word pci_requested_idle_speed;  // 0x0040b500
 extern byte pci_received_mil_request_flag;  // 0x0040b502
 extern byte trip_counters_reset_pending_flag;  // 0x0040b503

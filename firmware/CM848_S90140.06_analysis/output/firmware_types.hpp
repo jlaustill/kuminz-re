@@ -100,9 +100,17 @@ typedef enum {
 } PROTECTION_FLAGS;
 
 typedef enum {
-    OVERRIDE_ACTIVE_126 = 0x7e,  /* Protection override mode active (~) */
-    OVERRIDE_ACTIVE_127 = 0x7f  /* Protection override mode active (DEL) */
-} PROTECTION_OVERRIDE;
+    TRANSMISSION_SELECTED_GEAR_REVERSE = 0x7c,  /* -1: reverse (shift lever position 2, cm848_updateSelectedGearFromShiftLever) */
+    TRANSMISSION_SELECTED_GEAR_NEUTRAL = 0x7d,  /* 0: neutral (lever position 3) */
+    TRANSMISSION_SELECTED_GEAR_FIRST = 0x7e,  /* 1st gear */
+    TRANSMISSION_SELECTED_GEAR_SECOND = 0x7f,  /* 2nd gear */
+    TRANSMISSION_SELECTED_GEAR_THIRD = 0x80,  /* 3rd gear (drive while overdrive is off) */
+    TRANSMISSION_SELECTED_GEAR_FOURTH = 0x81,  /* 4th gear (drive with overdrive) */
+    TRANSMISSION_SELECTED_GEAR_FIFTH = 0x82,  /* 5th gear */
+    TRANSMISSION_SELECTED_GEAR_PARK = 0xfb,  /* 251: park (lever position 1; J1939 SPN 524 special value) */
+    TRANSMISSION_SELECTED_GEAR_ERROR = 0xfe,  /* 254: J1939 error indicator */
+    TRANSMISSION_SELECTED_GEAR_NOT_AVAILABLE = 0xff  /* 255: not available (the PCI 0x37 message is invalid, or no ETC2 arrived) */
+} TRANSMISSION_SELECTED_GEAR;
 
 typedef enum {
     FUELING_STATE_NOT_SELECTED = 0,  /* Cleared at the start of every pass by cm848_resetEngineOperatingMode; the selectors then run in call order 30 then 1 then 2 then 5 then 6 then 7 then 8 and each acts only while the mode is still 0 (first wins) - e2m label NOT_SET (CHR_CC_11.45.01.07 0x00) */
@@ -2246,7 +2254,7 @@ struct j1939_powertrain_control_state_t {
     uint16_t etc1_output_shaft_speed_fault_hold_off_flag;  /* e2m 10E8 +22 J1939_Powerup_Faults_Inhibit (UNITLESS): 'flag indicating VSS lost fault is prohibited.'. 1 holds off the J1939 output shaft speed fault: while switch input bit 0 is 0, or while the engine has run for fewer passes than j1939_pgn61442_output_shaft_speed_fault_run_state_delay (e2m J1939_Powerup_Runtime_Fault_Delay) (was etc1_handler_initialized) */
     uint16_t j1939_blocked_message_bits;  /* e2m 10E8 +24 J1939_Block_Message (HEX): 'Bit 0 TSC1 destination engine; Bit 1 TSC1 Destination retarder; Bit 2 ETC1'. The J1939 messages blocked after a time limit: bit 0 = TSC1 to the engine (the sender went into the ignored request list), bit 1 = TSC1 to the engine retarder, bit 2 = the ETC1 high idle override (in recovery: e2m Jcomm_Recovery_Time). processEngineTsc1Request clears bit 0 on override disabled; ETC1 SPN 606 = 00 and the high idle timeout clear bit 2. A word, not a bitfield: the code clears and sets the bits with masks, which Ghidra renders as a raw piece on a bitfield (was time_limited_node_status_bits, before that speed_control_target) */
     uint8_t etc1_spn574_shift_in_process;  /* e2m 10E8 +26 Jcomm_Shift_In_Process (UNITLESS): 'J1939 ETC1 Shift in process status bits state. 0=F;1=T'. 1=coast/brake mode from ETC1 byte0 bits 0x30==0x10 */
-    uint8_t etc2_transmission_selected_gear;  /* e2m 10E8 +27 J1939_Selected_Gear (UNITLESS): 'J1939 ETC2 Selected Gear'. J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when etc2_selected_gear_timeout (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter) */
+    TRANSMISSION_SELECTED_GEAR etc2_transmission_selected_gear;  /* e2m 10E8 +27 J1939_Selected_Gear (UNITLESS): 'J1939 ETC2 Selected Gear'. J1939 ETC2 (PGN 61445) byte 1 = SPN 524 transmission selected gear - stored by the ETC2 handler at 0x22c5c when DLC is 8; 0xFF at init or when etc2_selected_gear_timeout (ETC2 timeout) expires; 0xFB or 0x7D sets transmission_park_or_neutral_flag; RAM dump 0xFF (was etc1_address_filter) */
     int16_t engine_net_output_torque;  /* e2m 10E8 +28 Jcomm_Engine_Output_Net_Torque (FT*LB): 'Jcomm Net ouput torque = Actual - friction'. the engine's net output torque in ft lb (e2m: actual - friction, signed); read by cm848_j1939HandlePgn65504ProprietaryB, cm848_checkAirHandlingSystemProtectionHighLoad and governor_speedRatio_etcFuelCorrection_calc (was proprietary_offset_value) */
     uint16_t tsc1_request_timed_out_flag;  /* e2m 10E8 +2A TSC_Lost_Flag (UNITLESS): 'Flag indicated J1939 TSC1 message has timed out used as signal for PTP mode.'. 1 when tsc1_request_timeout_count is below 2 (the accepted engine TSC1 request timed out); cm848_runTsc1LostManagement then ramps the limits (was etc1_speed_error_timeout_flag) */
     uint16_t tsc1_request_time_limit_timer;  /* the time limit of a speed / torque control request: the sender's tsc1_source_configuration_t speed_control_time_limit / torque_control_time_limit + 1 when the request starts or changes; at 1 the sender goes into the ignored request list (bit 0 of j1939_blocked_message_bits) and cm848_runTsc1LostManagement runs (was etc1_activation_confirm_timer) */
