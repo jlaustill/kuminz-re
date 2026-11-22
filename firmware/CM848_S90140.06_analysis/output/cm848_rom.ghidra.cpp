@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 09:31:50 MST 2026
+// Generated: Sun Nov 22 09:59:04 MST 2026
 
 
 //
@@ -6094,9 +6094,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  word counter_value;
   byte prescaler_count;
   dword runtime_value;
+  word counter_value;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -7169,7 +7169,7 @@ void cm848_periodicTaskGroup32_calibration14(void)
   cm848_runPowerTakeOffGovernorStateMachine();
   cm848_calculateDrivetrainRatioFromGearRatio();
   cm848_applyJ1939OutOfGearToDrivetrainRatio();
-  cm848_monitorEngineToVehicleSpeedRatio();
+  cm848_detectTransferCaseLowRange();
   return;
 }
 
@@ -32937,14 +32937,14 @@ void cm848_updateVariableGeometryTurbochargerPosition(void)
 
 {
   if (variable_geometry_turbocharger_enable_flag != 0) {
-    if (fault_detected_cal.fault_682 == 0) {
+    if (fault_detected_cal.variable_geometry_turbocharger_position_sensor_high_error == 0) {
       fault_detected_cal._88_2_ = fault_detected_cal._88_2_ & 0xffdf;
       fault_registered_cal._88_2_ = fault_registered_cal._88_2_ & 0xffdf;
     }
     else {
       fault_detected_cal._88_2_ = fault_detected_cal._88_2_ | 0x20;
     }
-    if (fault_detected_cal.fault_683 == 0) {
+    if (fault_detected_cal.variable_geometry_turbocharger_position_sensor_low_error == 0) {
       fault_detected_cal._88_2_ = fault_detected_cal._88_2_ & 0xffbf;
       fault_registered_cal._88_2_ = fault_registered_cal._88_2_ & 0xffbf;
     }
@@ -38702,8 +38702,10 @@ void cm848_applyFuelPressureGovernorFaultBlend(void)
   if (safety_system_enable_cal == 0) {
     return;
   }
-  if ((((fault_detected_cal.fault_57 == 0) && (fault_detected_cal.fault_58 == 0)) &&
-      (fault_detected_cal.fault_59 == 0)) && (fault_detected_cal.fault_60 == 0)) {
+  if ((((fault_detected_cal.fuel_pressure_governed_speed_check_error == 0) &&
+       (fault_detected_cal.fuel_pressure_governor_demand_above_limit_error == 0)) &&
+      (fault_detected_cal.fuel_pressure_decay_below_model_error == 0)) &&
+     (fault_detected_cal.fuel_metering_feedback_low_error == 0)) {
     safety_condition_active_flag = 0;
     if (safety_fuel_blend_fraction == 0) {
       uVar1 = (uint)injection_quantity_combustion_chi_maximum;
@@ -41012,10 +41014,10 @@ void cm848_decodePciReceiveMessage13State(void)
 /* Builds the PCI (J1850) TX[12] header 0x98 status byte: bit 0 = overdrive_off_flag (O/D OFF lamp)
    / bit 1 = transmission_overheat_flag (284 deg F) or torque_converter_slip_warning_flag (converter
    slip - likely the TRANS TEMP lamp) / bit 4 = 1 in high range - cleared while mode_flags bit 2
-   (transfer case low range) or engine_to_vehicle_speed_ratio_high_flag is set; a change of bits 0
-   or 4 sends at once (timer pushed past its 2816 interval) (was
-   cm848_updateProtectionOverrideFlags) | review-function-readability reviewed 2026-11-13 -
-   Readability Medium Accuracy Confidence Medium */
+   (transfer case low range) or transfer_case_low_range_flag is set; a change of bits 0 or 4 sends
+   at once (timer pushed past its 2816 interval) (was cm848_updateProtectionOverrideFlags) |
+   review-function-readability reviewed 2026-11-13 - Readability Medium Accuracy Confidence Medium
+    */
 
 void cm848_buildPciTransmitMessage12StatusBits(void)
 
@@ -41036,8 +41038,7 @@ LAB_0003c0a8:
   else {
     pci_transmit_message_12_status_bits = pci_transmit_message_12_status_bits | 2;
   }
-  if (((transmission_control_flags.mode_flags & 4) == 0) &&
-     (engine_to_vehicle_speed_ratio_high_flag == 0)) {
+  if (((transmission_control_flags.mode_flags & 4) == 0) && (transfer_case_low_range_flag == 0)) {
     if ((pci_transmit_message_12_status_bits & 0x10) != 0) {
       return;
     }
@@ -58159,7 +58160,7 @@ void cm848_checkRpmOverspeedProtection(void)
   if (engine_speed_state.filtered_engine_speed <= overspeed_protection_recovery_threshold) {
     cm848_setLogicalOutputAndDriveLine(0x2f);
     cm848_setLogicalOutputAndDriveLine(0x30);
-    if (fault_registered_cal.fault_342 != 0) {
+    if (fault_registered_cal.overspeed_protection_error != 0) {
       fault_detected_cal._42_2_ = fault_detected_cal._42_2_ & 0xffbf;
       fault_registered_cal._42_2_ = fault_registered_cal._42_2_ & 0xffbf;
     }
@@ -58168,7 +58169,7 @@ void cm848_checkRpmOverspeedProtection(void)
     fault_detected_cal._42_2_ = fault_detected_cal._42_2_ | 0x80;
   }
   if ((engine_speed_state.filtered_engine_speed <= overspeed_warning_recovery_threshold) &&
-     (fault_registered_cal.fault_343 != 0)) {
+     (fault_registered_cal.overspeed_warning_error != 0)) {
     fault_detected_cal._42_2_ = fault_detected_cal._42_2_ & 0xff7f;
     fault_registered_cal._42_2_ = fault_registered_cal._42_2_ & 0xff7f;
   }
@@ -58587,7 +58588,7 @@ void cm848_applicationMain(void)
   mpc555_clearTimingDataAndFilters();
   cm848_dispatchCalibrationBlockHandlers();
   cm848_initializeEcmInternalTemperatureChannel();
-  initGovernorTempTableParams();
+  cm848_initializeTransferCaseLowRangeFilters();
   cm848_initializeChargeManagerLimiters();
   cm848_initializeChargeSystemErrorTables();
   cm848_initializeEgrAssistController();
@@ -74824,8 +74825,10 @@ LAB_00513168:
 void cm848_updateEngineWarningFlags(void)
 
 {
-  if ((((fault_detected_cal.fault_57 == 0) && (fault_detected_cal.fault_58 == 0)) &&
-      (fault_detected_cal.fault_59 == 0)) && (fault_detected_cal.fault_60 == 0)) {
+  if ((((fault_detected_cal.fuel_pressure_governed_speed_check_error == 0) &&
+       (fault_detected_cal.fuel_pressure_governor_demand_above_limit_error == 0)) &&
+      (fault_detected_cal.fuel_pressure_decay_below_model_error == 0)) &&
+     (fault_detected_cal.fuel_metering_feedback_low_error == 0)) {
     protection_fault_latch_flag = 0;
   }
   else {
@@ -79065,34 +79068,42 @@ LAB_0051a478:
 
 
 //
-// Function: initGovernorTempTableParams @ 0x0051a5f8
+// Function: cm848_initializeTransferCaseLowRangeFilters @ 0x0051a5f8
 //
 
-void initGovernorTempTableParams(void)
+/* Clears the three transfer case filters and points them at their e2m 8C5F coefficients (the N/V
+   average, its percent change, the road speed) (was initGovernorTempTableParams) */
+
+void cm848_initializeTransferCaseLowRangeFilters(void)
 
 {
-  ema_filter_state_t_003fcebe.accumulator = 0;
-  ema_filter_state_t_003fcebe.coefficient = &WORD_00408a58;
-  ema_filter_state_t_003fcec6.accumulator = 0;
-  ema_filter_state_t_003fcec6.coefficient = &WORD_00408a5e;
-  ema_filter_state_t_003fcece.accumulator = 0;
-  ema_filter_state_t_003fcece.coefficient = &WORD_00408a64;
+  transfer_case_ratio_average_filter.accumulator = 0;
+  transfer_case_ratio_average_filter.coefficient = &transfer_case_ratio_average_filter_coefficient;
+  transfer_case_ratio_change_filter.accumulator = 0;
+  transfer_case_ratio_change_filter.coefficient = &transfer_case_ratio_change_filter_coefficient;
+  transfer_case_road_speed_filter.accumulator = 0;
+  transfer_case_road_speed_filter.coefficient = &transfer_case_road_speed_filter_coefficient;
   return;
 }
 
 
 
 //
-// Function: cm848_monitorEngineToVehicleSpeedRatio @ 0x0051a648
+// Function: cm848_detectTransferCaseLowRange @ 0x0051a648
 //
 
-/* Needs algorithm_enable_flags_43_cal bit 5 / EEPROM 0x3fd934 = 0 / engine running (unmet in this
-   calibration): filters vehicle speed and engine rpm over vehicle speed (8 counts per rpm per mph);
-   sets engine_to_vehicle_speed_ratio_high_flag over 300 rpm per mph under 44 mph (was
+/* The transfer case low-range detector by N/V (e2m 8C5F / 8C60 'Tcase NV'): filters the road speed,
+   computes engine speed / road speed and its average and percent change, keeps
+   transfer_case_launch_flag and transfer_case_low_range_flag. Runs with
+   algorithm_enable_flags_43_cal.transfer_case_low_range_enable, transmission_type_cal 0 and the
+   engine running (not in this calibration) (was cm848_monitorEngineToVehicleSpeedRatio) | earlier
+   note: Needs algorithm_enable_flags_43_cal bit 5 / EEPROM 0x3fd934 = 0 / engine running (unmet in
+   this calibration): filters vehicle speed and engine rpm over vehicle speed (8 counts per rpm per
+   mph); sets transfer_case_low_range_flag over 300 rpm per mph under 44 mph (was
    fuelTempTrimComputation) | review-function-readability reviewed 2026-11-13 - Readability Medium
    Accuracy Confidence High */
 
-void cm848_monitorEngineToVehicleSpeedRatio(void)
+void cm848_detectTransferCaseLowRange(void)
 
 {
   dword dVar1;
@@ -79100,14 +79111,15 @@ void cm848_monitorEngineToVehicleSpeedRatio(void)
   
   if (((algorithm_enable_flags_43_cal.transfer_case_low_range_enable != 0) &&
       (transmission_type_cal == 0)) && (engine_state == ENGINE_STATE_RUNNING)) {
-    dVar1 = exponentialMovingAverage((uint)vehicle_speed_unfiltered,&ema_filter_state_t_003fcece);
-    vehicle_speed_filtered_for_engine_speed_ratio = (word)dVar1;
-    if ((uint)engine_to_vehicle_speed_ratio_minimum_vehicle_speed < (dVar1 & 0xffff)) {
+    dVar1 = exponentialMovingAverage
+                      ((uint)vehicle_speed_unfiltered,&transfer_case_road_speed_filter);
+    transfer_case_road_speed = (word)dVar1;
+    if ((uint)transfer_case_ratio_minimum_vehicle_speed < (dVar1 & 0xffff)) {
       uVar2 = ((uint)engine_speed_state.filtered_engine_speed << 8) / (dVar1 & 0xffff);
-      engine_to_vehicle_speed_ratio_raw = (word)uVar2;
-      dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fcebe);
-      engine_to_vehicle_speed_ratio_filtered = (word)dVar1;
-      uVar2 = (uint)engine_to_vehicle_speed_ratio_raw;
+      transfer_case_engine_to_vehicle_speed_ratio = (word)uVar2;
+      dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&transfer_case_ratio_average_filter);
+      transfer_case_engine_to_vehicle_speed_ratio_average = (word)dVar1;
+      uVar2 = (uint)transfer_case_engine_to_vehicle_speed_ratio;
       if ((int)((dVar1 & 0xffff) - uVar2) < 0) {
         uVar2 = uVar2 - dVar1;
       }
@@ -79115,41 +79127,37 @@ void cm848_monitorEngineToVehicleSpeedRatio(void)
         uVar2 = dVar1 - uVar2;
       }
       uVar2 = ((uVar2 & 0xffff) * 0x6400) / (dVar1 & 0xffff);
-      engine_to_vehicle_speed_ratio_deviation_raw = (word)uVar2;
-      dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&ema_filter_state_t_003fcec6);
+      transfer_case_engine_to_vehicle_speed_ratio_change = (word)uVar2;
+      dVar1 = exponentialMovingAverage(uVar2 & 0xffff,&transfer_case_ratio_change_filter);
     }
     else {
-      engine_to_vehicle_speed_ratio_raw = 0;
-      engine_to_vehicle_speed_ratio_filtered = 0;
+      transfer_case_engine_to_vehicle_speed_ratio = 0;
+      transfer_case_engine_to_vehicle_speed_ratio_average = 0;
       dVar1 = 0;
     }
     uVar2 = dVar1 & 0xffff;
-    engine_to_vehicle_speed_ratio_deviation_filtered = (word)dVar1;
-    if ((vehicle_speed_filtered_for_engine_speed_ratio == 0) ||
-       ((vehicle_speed_filtered_for_engine_speed_ratio <
-         engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed &&
-        (engine_to_vehicle_speed_ratio_invalid_minimum_deviation < uVar2)))) {
-      engine_to_vehicle_speed_ratio_invalid_flag = 1;
-      engine_to_vehicle_speed_ratio_high_flag = 0;
+    transfer_case_engine_to_vehicle_speed_ratio_change_filtered = (word)dVar1;
+    if ((transfer_case_road_speed == 0) ||
+       ((transfer_case_road_speed < transfer_case_launch_maximum_vehicle_speed &&
+        (transfer_case_launch_minimum_ratio_change < uVar2)))) {
+      transfer_case_launch_flag = 1;
+      transfer_case_low_range_flag = 0;
     }
-    else if ((uVar2 < engine_to_vehicle_speed_ratio_stable_maximum_deviation) ||
-            (engine_to_vehicle_speed_ratio_invalid_maximum_vehicle_speed <
-             vehicle_speed_filtered_for_engine_speed_ratio)) {
-      engine_to_vehicle_speed_ratio_invalid_flag = 0;
+    else if ((uVar2 < transfer_case_launch_clear_maximum_ratio_change) ||
+            (transfer_case_launch_maximum_vehicle_speed < transfer_case_road_speed)) {
+      transfer_case_launch_flag = 0;
     }
-    if (((vehicle_speed_filtered_for_engine_speed_ratio <
-          engine_to_vehicle_speed_ratio_high_maximum_vehicle_speed) &&
-        (uVar2 < engine_to_vehicle_speed_ratio_stable_maximum_deviation)) &&
-       ((engine_to_vehicle_speed_ratio_invalid_flag == 0 &&
-        ((engine_to_vehicle_speed_ratio_high_minimum_accelerator_pedal <
+    if (((transfer_case_road_speed < transfer_case_low_range_maximum_vehicle_speed) &&
+        (uVar2 < transfer_case_launch_clear_maximum_ratio_change)) &&
+       ((transfer_case_launch_flag == 0 &&
+        ((transfer_case_low_range_minimum_commanded_throttle <
           commanded_throttle_state.commanded_throttle &&
-         (engine_to_vehicle_speed_ratio_high_threshold < engine_to_vehicle_speed_ratio_filtered)))))
-       ) {
-      engine_to_vehicle_speed_ratio_high_flag = 1;
+         (transfer_case_low_range_minimum_engine_to_vehicle_speed_ratio <
+          transfer_case_engine_to_vehicle_speed_ratio_average)))))) {
+      transfer_case_low_range_flag = 1;
     }
-    if (engine_to_vehicle_speed_ratio_high_maximum_vehicle_speed <
-        vehicle_speed_filtered_for_engine_speed_ratio) {
-      engine_to_vehicle_speed_ratio_high_flag = 0;
+    if (transfer_case_low_range_maximum_vehicle_speed < transfer_case_road_speed) {
+      transfer_case_low_range_flag = 0;
     }
   }
   return;
@@ -85063,9 +85071,11 @@ void cm848_checkTransmissionTemperatureSensorPerformance(void)
       transmission_temperature_rationality_start_snapshot_taken_flag = 1;
       return;
     }
-    if ((((engine_off_time_latched_flag == 0) || (fault_detected_cal.fault_308 != 0)) ||
+    if ((((engine_off_time_latched_flag == 0) ||
+         (fault_detected_cal.engine_off_time_stuck_error != 0)) ||
         (engine_off_time_at_key_on < transmission_temperature_check_minimum_engine_off_time)) &&
-       (((pci_receive_message_14_status & 0x3f) == 0 && (fault_detected_cal.fault_308 == 0)))) {
+       (((pci_receive_message_14_status & 0x3f) == 0 &&
+        (fault_detected_cal.engine_off_time_stuck_error == 0)))) {
       transmission_temperature_rationality_start_snapshot_taken_flag = 1;
       return;
     }
@@ -91829,9 +91839,11 @@ void cm848_checkCoolantTemperatureSensorPerformance(void)
       protection_group29_startup_timer_count = 0xffff;
       return;
     }
-    if ((((engine_off_time_latched_flag == 0) || (fault_detected_cal.fault_308 != 0)) ||
+    if ((((engine_off_time_latched_flag == 0) ||
+         (fault_detected_cal.engine_off_time_stuck_error != 0)) ||
         (engine_off_time_at_key_on < coolant_temperature_check_minimum_engine_off_time)) &&
-       (((pci_receive_message_14_status & 0x3f) == 0 && (fault_detected_cal.fault_308 == 0)))) {
+       (((pci_receive_message_14_status & 0x3f) == 0 &&
+        (fault_detected_cal.engine_off_time_stuck_error == 0)))) {
       protection_group29_startup_timer_count = 0xffff;
       return;
     }
@@ -93835,7 +93847,8 @@ void hpcr_checkRailPressureSensorBeforeStart(void)
     return;
   }
   if (((pci_receive_message_14_engine_off_time < rail_pressure_check_minimum_engine_off_time) ||
-      ((pci_receive_message_14_status & 0x3f) != 0)) || (fault_detected_cal.fault_308 != 0)) {
+      ((pci_receive_message_14_status & 0x3f) != 0)) ||
+     (fault_detected_cal.engine_off_time_stuck_error != 0)) {
     fuel_pressure_sensor_pre_start_check_state = 4;
     fuel_pressure_sensor_pre_start_check_abort_code = 1;
     return;
@@ -96385,7 +96398,8 @@ void cm848_crossCheckTemperatureSensorsBeforeStart(void)
     bVar4 = true;
     goto LAB_00535828;
   }
-  if (((((pci_receive_message_14_status & 0x3f) != 0) || (fault_detected_cal.fault_308 != 0)) ||
+  if (((((pci_receive_message_14_status & 0x3f) != 0) ||
+       (fault_detected_cal.engine_off_time_stuck_error != 0)) ||
       (engine_off_time_at_key_on < temperature_cross_check_minimum_engine_off_time)) ||
      ((iVar5 = (int)(short)temperature_rationality_coolant_temperature_sample,
       temperature_rationality_coolant_soak_reference - iVar5 <=

@@ -1658,8 +1658,8 @@ void cm848_limitFuelQuantityOnRailPressureShortfall(void);  // @ 0x00519e2c
 void protection_speed_limit_initialize(void);  // @ 0x00519ffc
 void initDiagnosticShadowFlags(void);  // @ 0x0051a018
 void cm848_processEngineOilPressure(void);  // @ 0x0051a0a8
-void initGovernorTempTableParams(void);  // @ 0x0051a5f8
-void cm848_monitorEngineToVehicleSpeedRatio(void);  // @ 0x0051a648
+void cm848_initializeTransferCaseLowRangeFilters(void);  // @ 0x0051a5f8
+void cm848_detectTransferCaseLowRange(void);  // @ 0x0051a648
 void cm848_updateOilChangeMonitor(void);  // @ 0x0051a878
 void initFuelCorrectionTableParams(void);  // @ 0x0051ab50
 void cm848_monitorGovernorPressureSensorOffset(void);  // @ 0x0051ab70

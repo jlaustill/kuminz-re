@@ -206,10 +206,10 @@ fault_bit_words_t,0x003fe974,frequency_throttle_high_error,bitfield:1@5,0,fault 
 fault_bit_words_t,0x003fe974,water_in_fuel_high_error,bitfield:1@6,0,fault 54: e2m 1036 Water_In_Fuel_High_Error (P2267),,verified
 fault_bit_words_t,0x003fe974,water_in_fuel_low_error,bitfield:1@7,0,fault 55: e2m 1036 Water_In_Fuel_Low_Error (P2266),,verified
 fault_bit_words_t,0x003fe974,water_in_fuel_error,bitfield:1@8,0,fault 56: e2m 1036 Water_In_Fuel_Error (P2269),,verified
-fault_bit_words_t,0x003fe974,fault_57,bitfield:1@9,0,fault 57 (P1221),,verified
-fault_bit_words_t,0x003fe974,fault_58,bitfield:1@10,0,fault 58 (P1222),,verified
-fault_bit_words_t,0x003fe974,fault_59,bitfield:1@11,0,fault 59,,verified
-fault_bit_words_t,0x003fe974,fault_60,bitfield:1@12,0,fault 60 (P1223),,verified
+fault_bit_words_t,0x003fe974,fuel_pressure_governed_speed_check_error,bitfield:1@9,0,cm848_checkFuelPressureGovernorDemandAtGovernedSpeed sets it when fuel_pressure_governed_speed_check_debounce_count reaches its limit (was fault_57; PR #53 round 29) | fault 57 (P1221),,verified
+fault_bit_words_t,0x003fe974,fuel_pressure_governor_demand_above_limit_error,bitfield:1@10,0,cm848_checkFuelPressureWithoutInjection sets it when fuel_pressure_governor_demand_above_limit_debounce_count reaches its limit (was fault_58; PR #53 round 29) | fault 58 (P1222),,verified
+fault_bit_words_t,0x003fe974,fuel_pressure_decay_below_model_error,bitfield:1@11,0,cm848_checkFuelPressureWithoutInjection sets it when fuel_pressure_allowed_decay_below_model_debounce_count reaches its limit (was fault_59; PR #53 round 29) | fault 59,,verified
+fault_bit_words_t,0x003fe974,fuel_metering_feedback_low_error,bitfield:1@12,0,cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand sets it when fuel_metering_feedback_low_debounce_count reaches its limit (was fault_60; PR #53 round 29) | fault 60 (P1223),,verified
 fault_bit_words_t,0x003fe974,fault_61,bitfield:1@13,0,fault 61,,verified
 fault_bit_words_t,0x003fe974,throttle_validation_switch_low_error,bitfield:1@14,0,fault 62: e2m 1036 Throttle_Validation_Switch_Low_Error (P2127),,verified
 fault_bit_words_t,0x003fe974,throttle_validation_process_error,bitfield:1@15,0,fault 63: e2m 1036 Throttle_Validation_Process_Error (P2121),,verified
@@ -457,7 +457,7 @@ fault_bit_words_t,0x003fe974,fuel_rail_pressure_high_error,bitfield:1@0,2,word f
 fault_bit_words_t,0x003fe974,fuel_rail_pressure_low_error,bitfield:1@1,0,fault 305: e2m 1036 Fuel_Rail_Pressure_Low_Error (P0192),,verified
 fault_bit_words_t,0x003fe974,ecm_internal_temperature_low_error,bitfield:1@2,0,fault 306: e2m 1036 ECM_Internal_Temperature_Low_Error,,verified
 fault_bit_words_t,0x003fe974,ecm_internal_temperature_high_error,bitfield:1@3,0,fault 307: e2m 1036 ECM_Internal_Temperature_High_Error,,verified
-fault_bit_words_t,0x003fe974,fault_308,bitfield:1@4,0,fault 308: e2m 1036 Chry_Dat42_Stuck_Error; e2m Chry_Dat42_Stuck_Error has an abbreviation the code does not resolve (chry; dat42),,verified
+fault_bit_words_t,0x003fe974,engine_off_time_stuck_error,bitfield:1@4,0,cm848_latchAndCheckEngineOffTime sets it when the engine-off time in PCI frame 0x42 stays within engine_off_time_unchanged_delta of the last value for engine_off_time_unchanged_count_limit key cycles (e2m Chry_Dat42 = Chrysler data frame 0x42); the temperature rationality checks skip while it is set (was fault_308; PR #53 round 29) | fault 308: e2m 1036 Chry_Dat42_Stuck_Error; e2m Chry_Dat42_Stuck_Error has an abbreviation the code does not resolve (chry; dat42),,verified
 fault_bit_words_t,0x003fe974,fault_309,bitfield:1@5,0,fault 309,,verified
 fault_bit_words_t,0x003fe974,fault_310,bitfield:1@6,0,fault 310,,verified
 fault_bit_words_t,0x003fe974,fault_311,bitfield:1@7,0,fault 311,,verified
@@ -491,8 +491,8 @@ fault_bit_words_t,0x003fe974,sensor_supply_1_voltage_high_error,bitfield:1@2,0,f
 fault_bit_words_t,0x003fe974,ambient_air_temperature_rationality_error,bitfield:1@3,0,fault 339: e2m 1036 Ambient_Air_Temperature_Rationality_Error (P0071),,verified
 fault_bit_words_t,0x003fe974,ambient_air_pressure_in_range_error,bitfield:1@4,0,fault 340: e2m 1036 Ambient_Air_Pressure_In_Range_Error (P0106),,verified
 fault_bit_words_t,0x003fe974,low_oil_switch_error,bitfield:1@5,0,fault 341: e2m 1036 Low_Oil_Switch_Error (P0521),,verified
-fault_bit_words_t,0x003fe974,fault_342,bitfield:1@6,0,fault 342,,verified
-fault_bit_words_t,0x003fe974,fault_343,bitfield:1@7,0,fault 343,,verified
+fault_bit_words_t,0x003fe974,overspeed_protection_error,bitfield:1@6,0,cm848_checkRpmOverspeedProtection sets it above overspeed_protection_threshold (and clears logical outputs 0x2f / 0x30 until overspeed_protection_recovery_threshold) (was fault_342; PR #53 round 29) | fault 342,,verified
+fault_bit_words_t,0x003fe974,overspeed_warning_error,bitfield:1@7,0,cm848_checkRpmOverspeedProtection sets it above overspeed_warning_threshold (until overspeed_warning_recovery_threshold) (was fault_343; PR #53 round 29) | fault 343,,verified
 fault_bit_words_t,0x003fe974,vin_eeprom_not_entered_error,bitfield:1@8,0,fault 344: e2m 1036 VIN_E2_Not_Entered_Error (P0630),,verified
 fault_bit_words_t,0x003fe974,odometer_eeprom_not_entered_error,bitfield:1@9,0,fault 345: e2m 1036 Odometer_E2_Not_Entered_Error,,verified
 fault_bit_words_t,0x003fe974,vehicle_theft_alarm_secret_key_eeprom_not_entered_error,bitfield:1@10,0,fault 346: e2m 1036 VTA_Secret_Key_E2_Not_Entered_Error (P0633),,verified
@@ -831,8 +831,8 @@ fault_bit_words_t,0x003fe974,fault_678,bitfield:1@6,0,fault 678,,verified
 fault_bit_words_t,0x003fe974,fault_679,bitfield:1@7,0,fault 679,,verified
 fault_bit_words_t,0x003fe974,fault_680,bitfield:1@8,0,fault 680,,verified
 fault_bit_words_t,0x003fe974,fault_681,bitfield:1@9,0,fault 681,,verified
-fault_bit_words_t,0x003fe974,fault_682,bitfield:1@10,0,fault 682,,verified
-fault_bit_words_t,0x003fe974,fault_683,bitfield:1@11,0,fault 683,,verified
+fault_bit_words_t,0x003fe974,variable_geometry_turbocharger_position_sensor_high_error,bitfield:1@10,0,sensor channel 101's high fault bit (cm848_processVariableGeometryTurbochargerPositionChannel passes 0x2aa) (was fault_682; PR #53 round 29) | fault 682,,verified
+fault_bit_words_t,0x003fe974,variable_geometry_turbocharger_position_sensor_low_error,bitfield:1@11,0,sensor channel 101's low fault bit (0x2ab) (was fault_683; PR #53 round 29) | fault 683,,verified
 fault_bit_words_t,0x003fe974,fault_684,bitfield:1@12,0,fault 684,,verified
 fault_bit_words_t,0x003fe974,fault_685,bitfield:1@13,0,fault 685,,verified
 fault_bit_words_t,0x003fe974,fault_686,bitfield:1@14,0,fault 686,,verified
@@ -2737,7 +2737,7 @@ algorithm_enable_flags_43_t,,egr_orifice_temperature_rationality_enable,bitfield
 algorithm_enable_flags_43_t,,transmission_temperature_rationality_monitor_enable,bitfield:1@2,0,"e2m TTSR_Monitor_Enable (0x4): 'transmission temp rationality monitor enable'; read by cm848_checkTransmissionTemperatureSensorPerformance; set on this truck",,verified
 algorithm_enable_flags_43_t,,rock_cycle_torque_management_enable,bitfield:1@3,0,"e2m TC_Rock_Cycle_Enable (0x8): 'Enable for rock cycle torque management'; read by cm848_calculateParkNeutralExitEngineSpeedLimit, cm848_updateParkNeutralExitEngineSpeedLimitWindow; set on this truck",,verified
 algorithm_enable_flags_43_t,,vacuum_throttle_cruise_enable,bitfield:1@4,0,"e2m Vac_Throttle_Cruise_Enable (0x10): 'Cal enable to control throttle actuator during cruise mode'; read by cm848_runOperatingModeSpeedGovernor, cm848_controlCruiseVacuumServo, cm848_calculateAllSpeedGovernorEquivalentThrottle; set on this truck",,verified
-algorithm_enable_flags_43_t,,transfer_case_low_range_enable,bitfield:1@5,0,"e2m Tcase_Trans_Low_Range_Enable (0x20): 'Enables 4WD Low Range Indication'; read by cm848_monitorEngineToVehicleSpeedRatio; clear on this truck",,verified
+algorithm_enable_flags_43_t,,transfer_case_low_range_enable,bitfield:1@5,0,"e2m Tcase_Trans_Low_Range_Enable (0x20): 'Enables 4WD Low Range Indication'; read by cm848_detectTransferCaseLowRange; clear on this truck",,verified
 algorithm_enable_flags_43_t,,chi_cold_increment_enable,bitfield:1@6,0,"e2m Chi_Cold_Increment_Enable (0x40): 'Enable to add Cold_Delta_Fuel to CBR_Max_Chi_Fuel'; read by cm848_calculateCombustionGrossFuel; set on this truck",,verified
 algorithm_enable_flags_43_t,,density_cold_increment_enable,bitfield:1@7,0,"e2m Density_Cold_Increment_Enable (0x80): 'Enable to add Cold_Delta_Fuel to CBR_Density_Max_Fuel'; read by cm848_calculateCombustionGrossFuel; set on this truck",,verified
 algorithm_enable_flags_43_t,,net_torque_fueling_cold_increment_enable,bitfield:1@8,0,"e2m Net_Torque_Fueling_Cold_Increment_Enable (0x100): 'Enable to add Cold_Delta_Fuel to Net_Torque_Fueling_Limit'; read by cm848_calculateNetTorqueFuelLimit; set on this truck",,verified

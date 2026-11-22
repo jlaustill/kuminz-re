@@ -1584,10 +1584,10 @@ struct fault_bit_words_t {
     uint16_t water_in_fuel_high_error : 1;  /* bit 6: fault 54: e2m 1036 Water_In_Fuel_High_Error (P2267) */
     uint16_t water_in_fuel_low_error : 1;  /* bit 7: fault 55: e2m 1036 Water_In_Fuel_Low_Error (P2266) */
     uint16_t water_in_fuel_error : 1;  /* bit 8: fault 56: e2m 1036 Water_In_Fuel_Error (P2269) */
-    uint16_t fault_57 : 1;  /* bit 9: fault 57 (P1221) */
-    uint16_t fault_58 : 1;  /* bit 10: fault 58 (P1222) */
-    uint16_t fault_59 : 1;  /* bit 11: fault 59 */
-    uint16_t fault_60 : 1;  /* bit 12: fault 60 (P1223) */
+    uint16_t fuel_pressure_governed_speed_check_error : 1;  /* bit 9: cm848_checkFuelPressureGovernorDemandAtGovernedSpeed sets it when fuel_pressure_governed_speed_check_debounce_count reaches its limit (was fault_57; PR #53 round 29) | fault 57 (P1221) */
+    uint16_t fuel_pressure_governor_demand_above_limit_error : 1;  /* bit 10: cm848_checkFuelPressureWithoutInjection sets it when fuel_pressure_governor_demand_above_limit_debounce_count reaches its limit (was fault_58; PR #53 round 29) | fault 58 (P1222) */
+    uint16_t fuel_pressure_decay_below_model_error : 1;  /* bit 11: cm848_checkFuelPressureWithoutInjection sets it when fuel_pressure_allowed_decay_below_model_debounce_count reaches its limit (was fault_59; PR #53 round 29) | fault 59 */
+    uint16_t fuel_metering_feedback_low_error : 1;  /* bit 12: cm848_monitorFuelMeteringFeedbackAgainstGovernorDemand sets it when fuel_metering_feedback_low_debounce_count reaches its limit (was fault_60; PR #53 round 29) | fault 60 (P1223) */
     uint16_t fault_61 : 1;  /* bit 13: fault 61 */
     uint16_t throttle_validation_switch_low_error : 1;  /* bit 14: fault 62: e2m 1036 Throttle_Validation_Switch_Low_Error (P2127) */
     uint16_t throttle_validation_process_error : 1;  /* bit 15: fault 63: e2m 1036 Throttle_Validation_Process_Error (P2121) */
@@ -1835,7 +1835,7 @@ struct fault_bit_words_t {
     uint16_t fuel_rail_pressure_low_error : 1;  /* bit 1: fault 305: e2m 1036 Fuel_Rail_Pressure_Low_Error (P0192) */
     uint16_t ecm_internal_temperature_low_error : 1;  /* bit 2: fault 306: e2m 1036 ECM_Internal_Temperature_Low_Error */
     uint16_t ecm_internal_temperature_high_error : 1;  /* bit 3: fault 307: e2m 1036 ECM_Internal_Temperature_High_Error */
-    uint16_t fault_308 : 1;  /* bit 4: fault 308: e2m 1036 Chry_Dat42_Stuck_Error; e2m Chry_Dat42_Stuck_Error has an abbreviation the code does not resolve (chry; dat42) */
+    uint16_t engine_off_time_stuck_error : 1;  /* bit 4: cm848_latchAndCheckEngineOffTime sets it when the engine-off time in PCI frame 0x42 stays within engine_off_time_unchanged_delta of the last value for engine_off_time_unchanged_count_limit key cycles (e2m Chry_Dat42 = Chrysler data frame 0x42); the temperature rationality checks skip while it is set (was fault_308; PR #53 round 29) | fault 308: e2m 1036 Chry_Dat42_Stuck_Error; e2m Chry_Dat42_Stuck_Error has an abbreviation the code does not resolve (chry; dat42) */
     uint16_t fault_309 : 1;  /* bit 5: fault 309 */
     uint16_t fault_310 : 1;  /* bit 6: fault 310 */
     uint16_t fault_311 : 1;  /* bit 7: fault 311 */
@@ -1869,8 +1869,8 @@ struct fault_bit_words_t {
     uint16_t ambient_air_temperature_rationality_error : 1;  /* bit 3: fault 339: e2m 1036 Ambient_Air_Temperature_Rationality_Error (P0071) */
     uint16_t ambient_air_pressure_in_range_error : 1;  /* bit 4: fault 340: e2m 1036 Ambient_Air_Pressure_In_Range_Error (P0106) */
     uint16_t low_oil_switch_error : 1;  /* bit 5: fault 341: e2m 1036 Low_Oil_Switch_Error (P0521) */
-    uint16_t fault_342 : 1;  /* bit 6: fault 342 */
-    uint16_t fault_343 : 1;  /* bit 7: fault 343 */
+    uint16_t overspeed_protection_error : 1;  /* bit 6: cm848_checkRpmOverspeedProtection sets it above overspeed_protection_threshold (and clears logical outputs 0x2f / 0x30 until overspeed_protection_recovery_threshold) (was fault_342; PR #53 round 29) | fault 342 */
+    uint16_t overspeed_warning_error : 1;  /* bit 7: cm848_checkRpmOverspeedProtection sets it above overspeed_warning_threshold (until overspeed_warning_recovery_threshold) (was fault_343; PR #53 round 29) | fault 343 */
     uint16_t vin_eeprom_not_entered_error : 1;  /* bit 8: fault 344: e2m 1036 VIN_E2_Not_Entered_Error (P0630) */
     uint16_t odometer_eeprom_not_entered_error : 1;  /* bit 9: fault 345: e2m 1036 Odometer_E2_Not_Entered_Error */
     uint16_t vehicle_theft_alarm_secret_key_eeprom_not_entered_error : 1;  /* bit 10: fault 346: e2m 1036 VTA_Secret_Key_E2_Not_Entered_Error (P0633) */
@@ -2209,8 +2209,8 @@ struct fault_bit_words_t {
     uint16_t fault_679 : 1;  /* bit 7: fault 679 */
     uint16_t fault_680 : 1;  /* bit 8: fault 680 */
     uint16_t fault_681 : 1;  /* bit 9: fault 681 */
-    uint16_t fault_682 : 1;  /* bit 10: fault 682 */
-    uint16_t fault_683 : 1;  /* bit 11: fault 683 */
+    uint16_t variable_geometry_turbocharger_position_sensor_high_error : 1;  /* bit 10: sensor channel 101's high fault bit (cm848_processVariableGeometryTurbochargerPositionChannel passes 0x2aa) (was fault_682; PR #53 round 29) | fault 682 */
+    uint16_t variable_geometry_turbocharger_position_sensor_low_error : 1;  /* bit 11: sensor channel 101's low fault bit (0x2ab) (was fault_683; PR #53 round 29) | fault 683 */
     uint16_t fault_684 : 1;  /* bit 12: fault 684 */
     uint16_t fault_685 : 1;  /* bit 13: fault 685 */
     uint16_t fault_686 : 1;  /* bit 14: fault 686 */
@@ -3975,7 +3975,7 @@ struct algorithm_enable_flags_43_t {
     uint16_t transmission_temperature_rationality_monitor_enable : 1;  /* bit 2: e2m TTSR_Monitor_Enable (0x4): 'transmission temp rationality monitor enable'; read by cm848_checkTransmissionTemperatureSensorPerformance; set on this truck */
     uint16_t rock_cycle_torque_management_enable : 1;  /* bit 3: e2m TC_Rock_Cycle_Enable (0x8): 'Enable for rock cycle torque management'; read by cm848_calculateParkNeutralExitEngineSpeedLimit, cm848_updateParkNeutralExitEngineSpeedLimitWindow; set on this truck */
     uint16_t vacuum_throttle_cruise_enable : 1;  /* bit 4: e2m Vac_Throttle_Cruise_Enable (0x10): 'Cal enable to control throttle actuator during cruise mode'; read by cm848_runOperatingModeSpeedGovernor, cm848_controlCruiseVacuumServo, cm848_calculateAllSpeedGovernorEquivalentThrottle; set on this truck */
-    uint16_t transfer_case_low_range_enable : 1;  /* bit 5: e2m Tcase_Trans_Low_Range_Enable (0x20): 'Enables 4WD Low Range Indication'; read by cm848_monitorEngineToVehicleSpeedRatio; clear on this truck */
+    uint16_t transfer_case_low_range_enable : 1;  /* bit 5: e2m Tcase_Trans_Low_Range_Enable (0x20): 'Enables 4WD Low Range Indication'; read by cm848_detectTransferCaseLowRange; clear on this truck */
     uint16_t chi_cold_increment_enable : 1;  /* bit 6: e2m Chi_Cold_Increment_Enable (0x40): 'Enable to add Cold_Delta_Fuel to CBR_Max_Chi_Fuel'; read by cm848_calculateCombustionGrossFuel; set on this truck */
     uint16_t density_cold_increment_enable : 1;  /* bit 7: e2m Density_Cold_Increment_Enable (0x80): 'Enable to add Cold_Delta_Fuel to CBR_Density_Max_Fuel'; read by cm848_calculateCombustionGrossFuel; set on this truck */
     uint16_t net_torque_fueling_cold_increment_enable : 1;  /* bit 8: e2m Net_Torque_Fueling_Cold_Increment_Enable (0x100): 'Enable to add Cold_Delta_Fuel to Net_Torque_Fueling_Limit'; read by cm848_calculateNetTorqueFuelLimit; set on this truck */
