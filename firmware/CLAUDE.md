@@ -1094,7 +1094,9 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     `instance.field` back to the old labels) and then `cast_normalized_diff.py`.
 - **Rounds 11-15 (2026-11-21, PR #53): the methods.** The user promoted them from task 046, which keeps the details
   and the leads. Scripts are in the session folder under `roundNN/`.
-  - **The e2m discrete I/O and output tables.** Only 12A7 / 12A8 are in the dumped part of the parameter ID table.
+  - **The e2m discrete I/O and output tables.** Of these blocks, only 12A7, 12A8 and 1966 are in the dumped part of
+    the parameter ID table. The others are placed by their layout (output N, switch N, entry N), checked against the
+    code.
     - 1577: the 80 logical output requests (output N = byte N/8, mask 1 << N%8, at 0x40c080). 12A7 holds their
       override priorities (0x40c094), and 1578 / 1579 / 157A the inversion, hardware map and previous command.
     - 1612: the 32 debounced switches (`switch_input_state_bits`). 12A8 holds their override priorities (0x40c058).
@@ -1103,8 +1105,9 @@ Toolchain (gate, apply, build, label-only proof, reference refresh, checks): `sc
     - 1966: the sensor channels' value and default outputs.
   - **Blocks past the dumped table** can be aligned by relative offset only when every record lands on its code use
     and the dump values fit (14EE / 1496 / 14EF / 14F0, round 14). The next block's start bounds the last record.
-  - **Where 11.45 and 11.46 differ, the code decides.** 8A6F is one word longer in 11.46: a fixed word replaces
-    11.45's key-on time table input, so the +4 / +6 records sit at +6 / +8 (round 11).
+  - **Where 11.45 and 11.46 differ, the code decides.** In 8A6F (the lift pump), 11.45 computes the key-on run time
+    from a temperature table. This calibration has a fixed word at +4 instead, so 11.45's +4 / +6 records sit at +6 /
+    +8, and Temp_Source has no word (round 11).
   - **Value lists.** An e2m record lists its values in the field before the `;`, with hexadecimal keys
     (`0000=COOLANT:0001=PARK_NEU`).
     - An enum built from a list holds exactly the values the code stores (`LOW_SPEED_GOVERNOR_REFERENCE_SPEED_STATE`,

@@ -81,6 +81,7 @@
   200884 build_r16a.log
   200895 build_r16b.log
   200888 build_r16c.log
+  200889 build_r16e.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
  3544401 stage2.cpp

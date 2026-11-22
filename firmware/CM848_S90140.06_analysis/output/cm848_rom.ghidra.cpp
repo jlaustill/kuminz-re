@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sat Nov 21 20:55:35 MST 2026
+// Generated: Sat Nov 21 21:18:05 MST 2026
 
 
 //
@@ -25516,7 +25516,7 @@ void cm848_initializePgn61441ElectronicBrakeController1Buffer(void)
    (j1939_powertrain_control_state.tsc1_override_control_mode non-zero in the TSC1 fueling states)
    0xf6 / 0xf7 / 0xf5 for the sender index 1 / 2 / 3 (transmission / ABS / ASR), otherwise from
    final_fueling_state: 0xf8 (torque limiting) when torque_derate_fuel_source_code equals it, 0xf0
-   low speed governor, 0xf2 cruise control, 0xf3 power take-off governor, 0xf4 vehicle speed limit,
+   low speed governor, 0xf2 cruise control, 0xf3 power take-off governor, 0xf4 road speed governor,
    0xf9 high speed governor, 0xfa engine brake, 0xf1 accelerator pedal for the other user fueling
    states, else 0xfe. Byte 2 is the driver demand percent torque plus 125
    (cm848_calculateDriverDemandPercentTorque, SPN 512), byte 3 the actual engine percent torque plus
@@ -43947,7 +43947,7 @@ void cm848_initFuelFilterCoefficients(void)
 /* Sets vehicle_speed_rise_limited: vehicle_speed, or (cruise_feedback_uses_road_speed_flag_cal 0)
    engine speed over the drivetrain ratio terms engine_speed_to_vehicle_speed_ratio /
    drivetrain_ratio_user_filtered, with each rise limited to cruise_road_speed_maximum_change per
-   pass; the speed the cruise control and vehicle speed limit fueling work on (was
+   pass; the speed the cruise control and road speed governor fueling work on (was
    cm848_calculateFuelRateFromRpm) */
 
 void cm848_calculateRiseLimitedVehicleSpeed(void)
@@ -44045,10 +44045,15 @@ void cm848_increaseCruiseSpeedCommand(int param_1)
 // Function: cm848_cruiseSpeedCommandStateMachine @ 0x000409b0
 //
 
-/* Applies the CRUISE_CONTROL_STATE (cruise_control_state) to cruise_speed_command:
-   CRUISE_SET(1)=latch setpoint+override; CRUISE_RESUME(2)=restore target;
-   CRUISE_COAST/ACCEL(3-6)=fuel-rate step/ramp; CRUISE_HOLD(7); CRUISE_CANCEL(8)/CRUISE_OFF(0)=clear
-   override. State values map to SAE J1939 SPN527. */
+/* Applies cruise_control_state to cruise_speed_command. The states are the e2m 1184 +2
+   Cruise_Command_Mode list (not J1939 SPN 527 states; ccvs1_cruise_control_state carries those):
+   OFF (0) clears engaged / resume / the resume speed valid flag; SET (1) takes the road speed (at
+   most cruise_maximum_road_speed_cal) into the command and cruise_resume_speed; RESUME (2) restores
+   cruise_resume_speed and requests a governor reset; COAST (3) / ACCELERATE (4) ramp the command by
+   cruise_coast_ramp / cruise_accelerate_ramp per pass; BUMP_DOWN (5) / BUMP_UP (6) step it by
+   cruise_bump_down_step / cruise_bump_up_step; HOLD (7) copies the command into
+   cruise_resume_speed; CANCEL (8) clears engaged and resume but keeps the resume speed. (PR #53
+   round 16 rewrote this plate: it claimed SPN 527 values and grouped 3-6 as fuel-rate steps) */
 
 void cm848_cruiseSpeedCommandStateMachine(void)
 

@@ -974,8 +974,10 @@ Scripts are in `session_folder/round16/`.
   - **The engine retarder family** (e2m 1070 / 1071 / 1192), still open from round 15. 1192 +4 / +6 / +8 have no
     rows.
   - **`DAT_0040b5c0`:** only the power-up initializer writes it (the maximum road speed trim).
-  - **e2m 8A0F +C / +E / +10** do not fit the CM848 words there (the engine warning flags), so the block drifts after
-    +A.
+  - **e2m 8A0F +C / +E / +10** (Prev_Debounced_CC_Switch_Mux / Prev_CC_Switch_Mux / Trans_Cruise_Cutoff_Request) land
+    on `engine_warning_alert_flag` / `coolant_overheat_or_low_oil_pressure_flag` / `protection_fault_latch_flag`.
+    It is open whether the block drifts or that family is misnamed. One reader of 0x40b214 is the PCI cruise control
+    message builder, and 0x40b210 has a `_previous` twin. Read `cm848_updateEngineWarningFlags` before deciding.
   - **`governor_override_fuel_threshold_cal` (0x408e96)** is ROM, so it has a legacy `_cal`.
 
 ## Leads (not in this PR)

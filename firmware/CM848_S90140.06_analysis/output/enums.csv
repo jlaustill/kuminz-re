@@ -831,7 +831,7 @@ J1939_ACK_TYPE,0,J1939_ACK,Positive acknowledgment - request fulfilled,1
 J1939_ACK_TYPE,1,J1939_NACK,Negative acknowledgment - cannot comply with request,1
 J1939_ACK_TYPE,2,J1939_ACCESS_DENIED,Access denied - not authorized for requested action,1
 J1939_ACK_TYPE,3,J1939_CANNOT_RESPOND,Cannot respond - busy or resource unavailable,1
-# Cruise control action state (cruise_control_state @ 0x0040b68e) - selects action in cm848_cruiseSpeedCommandStateMachine; maps to SAE J1939 SPN527 cruise states
+# Cruise control action state (cruise_control_state @ 0x0040b68e, e2m 1184 +2 Cruise_Command_Mode) - selects the action in cm848_cruiseSpeedCommandStateMachine; its values are the e2m list off / set / resume / coast / accel / bump down / bump up / hold / cancel, not the J1939 SPN 527 states (ccvs1_cruise_control_state carries those)
 CRUISE_CONTROL_STATE,0,CRUISE_OFF,"Off: clears engaged, resume and the resume speed valid flag (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') | earlier note: Cruise off/disabled - clears override and fuel-enable",2
 CRUISE_CONTROL_STATE,1,CRUISE_SET,Set: cruise_speed_command = the road speed (at most the cruise maximum); engaged (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') | earlier note: SET pressed - latch current speed as cruise_speed_command (J1939 SET),2
 CRUISE_CONTROL_STATE,2,CRUISE_RESUME,Resume: cruise_speed_command = cruise_resume_speed; an external reset of the governor (e2m 1184 +2 Cruise_Command_Mode value list 'off/set/resume/coast/accel/bump down/bump up/hold/cancel') | earlier note: RESUME - restore cruise_resume_speed (J1939 RESUME),2

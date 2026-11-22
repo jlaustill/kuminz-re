@@ -322,5 +322,6 @@ Hand work on the round 7 lead.
   round15/apply_r15a_fill.py) and `apply_r16a_enums.py`; `refresh_enums_structs.py` refreshes the two CSVs that
   refresh_references.py skips.
 - **Stage B:** `apply_r16b.py`. **Stage C:** `apply_r16c_switch_bits.py` and the proof helper
-  `switch_normalize_r16c.py`. **Closing:** `apply_r16_closing.py`.
+  `switch_normalize_r16c.py`. **Closing:** `apply_r16_closing.py`; after the review, `retired_prose.py` (the old
+  vocabulary in current comment text) and `fix_retired_prose.py`.
 
