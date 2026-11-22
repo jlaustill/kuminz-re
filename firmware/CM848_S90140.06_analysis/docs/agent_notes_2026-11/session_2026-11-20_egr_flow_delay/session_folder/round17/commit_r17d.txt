@@ -1,0 +1,18 @@
+cm848: round 17 stage D - the retarder counters and the extended idle enable bit (label-only, review)
+
+- engine_retarder_command_age_counter, engine_retarder_output_on_delay_counter / _passes (were
+  engine_retarder_request_*): 'request' now stays only where the code means one (the TSC1 requests, the
+  request chain).
+- algorithm_enable_flags_41_t bit 0 is engine_retarder_extended_idle_enable (was
+  engine_retarder_speed_limit_enable). That name came from the extended idle flag's old name
+  governor_speed_limit_active_flag; e2m 1496 +A is LSG_Extended_Idle_Status. With the flag and the bit
+  set the selection is 100 and the allowed state 2, while the active flag stays 0: the exhaust brake
+  runs at extended idle without reporting braking.
+- Task 046's round 17 section: stage D, the 117D +6 range (0-3 vs the code's 0-100), and the softened
+  'fits the code' wording.
+
+Proof: reverse_names.py --ignore-comments --canonical-code-labels prints EQUIVALENT (the field renders
+at its 3 uses). Headers regenerated (0 g++ errors), the four test suites pass. A sweep for 1192 +4 / +6 /
++8 and 1070 +6 under any label finds no reader.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -440,6 +440,9 @@ state enum, the flag bytes.**
 - **Stage B (bd059da, types):** `ENGINE_RETARDER_COMMAND_SOURCE` and `ENGINE_RETARDER_ALLOWED_STATE` from their e2m
   value lists, and `J1939_CONTROL_DEVICE` on the retarder's device word.
 - **Stage C (833d573, types):** the `EB_Brake_Type` bitfield (exhaust / VG brake), and the 0x40a35c dword split.
+- **Stage D (93b46ef, label-only, after the review):** the counters renamed beside the command / output level words,
+  and `algorithm_enable_flags_41_t` bit 0 is `engine_retarder_extended_idle_enable` (its old "speed limit" name came
+  from the extended idle flag's old name).
 
 ## Test plan
 

@@ -1,0 +1,11 @@
+cm848: round 17 closing - docs, the session archive, verify
+
+- Task 046: the round 17 section (the records, the e2m override / non-override vocabulary, the rule for
+  engine_retarder_* / exhaust_brake_* / variable_geometry_turbocharger_brake_*, stages A-C, the leads);
+  the round 15 / 16 retarder leads are marked done.
+- The PR body, the session README, the todo line; the round 17 scratch in session_folder/round17/; the
+  build / verify logs and the e2m audit in the large-files tarball.
+
+./analyze.sh verify: two builds byte-identical (the .cpp differed only in its timestamp, restored).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
