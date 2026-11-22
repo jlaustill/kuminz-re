@@ -618,7 +618,7 @@ void cm848_emptyStubFunction5(void);  // @ 0x00026f7c
 void cm848_runTsc1LostManagement(void);  // @ 0x00026f80
 void cm848_resetEngineRetarderTsc1Request(void);  // @ 0x00027118
 void cm848_runJ1939PowertrainControlTimeouts(void);  // @ 0x0002715c
-void cm848_formatNumberAsDecimalText(uint *param_1,int param_2,int param_3);  // @ 0x00027bc4
+void cm848_formatNumberAsDecimalText(byte *number,byte *text,int digit_count);  // @ 0x00027bc4
 undefined4 cm848_findTsc1SourceConfiguration(int param_1,uint param_2);  // @ 0x00027cc4
 void cm848_calculateLowSpeedGovernorReferenceMaximumFuelQuantity(void);  // @ 0x00027d38
 void cm848_presetLowSpeedGovernorIntegrator(int param_1);  // @ 0x00027e4c

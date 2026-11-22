@@ -1421,8 +1421,7 @@ extern byte j1939_erc1_torque_mode_and_enable_byte;  // 0x003fae08
 extern j1939_tx_msg_t j1939_pgn61440_tx_message;  // 0x003fae10
 extern j1939_tx_msg_t j1939_pgn65213_tx_message;  // 0x003fae28
 extern j1939_tx_msg_t j1939_pgn65270_tx_message;  // 0x003fae38
-extern byte j1939_pgn65249_payload_byte_1;  // 0x003fae50
-extern byte j1939_pgn65249_payload_byte_2;  // 0x003fae51
+extern j1939_pgn65249_payload_t j1939_pgn65249_payload;  // 0x003fae50
 extern j1939_tx_msg_t j1939_pgn65249_tx_message;  // 0x003fae63
 extern j1939_tx_msg_t j1939_pgn65242_tx_message;  // 0x003fae72
 extern word j1939_rpm_tx_word;  // 0x003faeb0
@@ -6618,7 +6617,7 @@ extern byte j1939_dm4_tx_record_size_byte;  // 0x003fac3c
 extern byte j1939_et1_coolant_temp_byte;  // 0x003fadfe
 extern byte j1939_et1_fuel_temp_byte;  // 0x003fadff
 extern byte j1939_erc1_actual_retarder_percent_torque_byte;  // 0x003fae09
-extern byte j1939_pgn65242_field_count_byte;  // 0x003fae80
+extern j1939_pgn65242_payload_t j1939_pgn65242_payload;  // 0x003fae80
 extern byte j1939_pgn65279_water_in_fuel_indicator_byte;  // 0x003faf1c
 extern byte tsc1_controlling_source_address_previous;  // 0x003faf38
 extern byte engine_retarder_controlling_source_address_previous;  // 0x003faf3d
@@ -7891,6 +7890,8 @@ extern byte j1939_pgn65269_transmit_status;  // 0x003faaca
 extern byte j1939_pgn65241_transmit_status;  // 0x003faae2
 extern byte j1939_pgn65265_transmit_status;  // 0x003faafa
 extern byte j1939_pgn65261_transmit_status;  // 0x003fab12
+extern j1939_pgn65259_payload_t j1939_pgn65259_payload;  // 0x003fab22
+extern byte j1939_pgn65259_transmit_status;  // 0x003fab4e
 extern byte j1939_dm10_transmit_status;  // 0x003fab68
 extern byte j1939_dm2_transmit_status;  // 0x003fac2c
 extern byte j1939_pgn65229_transmit_status;  // 0x003fad46

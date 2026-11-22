@@ -156,7 +156,7 @@ Calls to `0x003Fxxxx` in the decompilation are calls from the boot ROM into the 
 
 **Declaring data in this window:** an array/struct's boundary is usually the copy-window EDGE (0x3FDB30), not the next named global — post-copy working RAM (handler tables etc.) begins at 0x3FDB30. Size arrays to 0x3FDB30, not to the next symbol (it may belong to a different structure). Array typing DOES apply over this code-overlap region (verified deterministic via `analyze.sh verify`) — the "types revert on export" caution is about scalar WIDTH, not array creation.
 
-**Flat globals alias function bodies here (only inside a thunk's 4 bytes since todo 043, and only for unnamed rows - name the row):** a flat global declared in the slice overlapping a RAM-executed function gets a permanent `_` prefix (the function-image symbol wins) — declare it via `arrays.csv`/`structure_definitions.csv`, which survive. Hottest zone: `dispatchCanMessageHandlers` at RAM **0x3FAE3C–0x3FAFD0** (e.g. the PGN-65249 TX payload 0x3FAE51–0x3FAE62 must be an array, not 18 flat bytes).
+**Flat globals alias function bodies here (only inside a thunk's 4 bytes since todo 043, and only for unnamed rows - name the row):** a flat global declared in the slice overlapping a RAM-executed function gets a permanent `_` prefix (the function-image symbol wins) — declare it via `arrays.csv`/`structure_definitions.csv`, which survive. Hottest zone: `dispatchCanMessageHandlers` at RAM **0x3FAE3C–0x3FAFD0** (e.g. the PGN-65249 TX payload 0x3FAE50–0x3FAE62 is the struct `j1939_pgn65249_payload` since PR #53 round 33, not 19 flat bytes).
 
 Key RAM-executed functions called from `mainLoopIteration`:
 - `dispatchCanMessageHandlers` (ROM 0x526C → RAM 0x3FAE3C)

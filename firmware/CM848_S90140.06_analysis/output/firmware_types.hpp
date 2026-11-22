@@ -1389,6 +1389,9 @@ typedef struct engine_protection_channel_state_t engine_protection_channel_state
 typedef struct engine_protection_channel_history_t engine_protection_channel_history_t;
 typedef struct j1939_pgn65251_payload_t j1939_pgn65251_payload_t;
 typedef struct discrete_output_read_back_counters_t discrete_output_read_back_counters_t;
+typedef struct j1939_pgn65249_payload_t j1939_pgn65249_payload_t;
+typedef struct j1939_pgn65259_payload_t j1939_pgn65259_payload_t;
+typedef struct j1939_pgn65242_payload_t j1939_pgn65242_payload_t;
 
 struct j1939_rx_msg_t {
     uint8_t priority_dp_flags;  /* J1939 priority/reserved/data-page bits packed from upper CAN ID */
@@ -4266,4 +4269,53 @@ struct discrete_output_read_back_counters_t {
     uint8_t off_mismatch_count;  /* commanded off but reads on: passes before the low fault bit sets */
     uint8_t high_fault_recovery_count;  /* passes with the read-back agreeing while the high fault is registered; it clears at the recovery threshold */
     uint8_t low_fault_recovery_count;  /* the same for the low fault */
+};
+
+struct j1939_pgn65249_payload_t {
+    uint8_t retarder_type_and_location;  /* SPN 901 retarder type (bits 1-4) and SPN 902 retarder location (bits 5-8): 0x14 = exhaust (4) at the engine exhaust brake (1) for one engine_retarder_output_driver_count / 3 = compression release (3) at the engine compression release brake (0) for two or more / 0xff = not available */
+    uint8_t retarder_control_method;  /* SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for engine_retarder_stage_1_weight 0 / 1 / 2 / 3 / 6 (6 divided by the weight); other weights leave it */
+    uint8_t retarder_speed_at_idle_point_1_low_byte;  /* SPN 546 retarder speed at idle (point 1); low byte */
+    uint8_t retarder_speed_at_idle_point_1_high_byte;  /* SPN 546; high byte */
+    uint8_t percent_torque_at_idle_point_1;  /* SPN 551; 125 minus the high byte of the ROM percent word */
+    uint8_t maximum_retarder_speed_point_2_low_byte;  /* SPN 548 maximum retarder speed (point 2); low byte */
+    uint8_t maximum_retarder_speed_point_2_high_byte;  /* SPN 548; high byte */
+    uint8_t percent_torque_at_maximum_speed_point_2;  /* SPN 552; 125 minus the percent */
+    uint8_t retarder_speed_at_point_3_low_byte;  /* SPN 549; low byte */
+    uint8_t retarder_speed_at_point_3_high_byte;  /* SPN 549; high byte */
+    uint8_t percent_torque_at_point_3;  /* SPN 553; 125 minus the percent */
+    uint8_t retarder_speed_at_point_4_low_byte;  /* SPN 550; low byte */
+    uint8_t retarder_speed_at_point_4_high_byte;  /* SPN 550; high byte */
+    uint8_t percent_torque_at_point_4;  /* SPN 554; 125 minus the percent */
+    uint8_t retarder_speed_at_peak_torque_point_5_low_byte;  /* SPN 547 retarder speed at peak torque (point 5); low byte */
+    uint8_t retarder_speed_at_peak_torque_point_5_high_byte;  /* SPN 547; high byte */
+    uint8_t reference_retarder_torque_low_byte;  /* SPN 556 reference retarder torque; low byte */
+    uint8_t reference_retarder_torque_high_byte;  /* SPN 556; high byte */
+    uint8_t percent_torque_at_peak_torque_point_5;  /* SPN 555; 125 minus the percent */
+};
+
+struct j1939_pgn65259_payload_t {
+    uint8_t make[5];  /* SPN 586 make: characters 1-5 of the component identification string at 0x3fd653 in the EEPROM mirror (CMMNS in the RAM dump) */
+    uint8_t make_delimiter;  /* the '*' after the make */
+    uint8_t model[17];  /* SPN 587 model: characters 6-22 of the same string (the field order follows the J1939-71 sequence make / model / serial number / unit number; the databases give no positions) */
+    uint8_t model_delimiter;  /* the '*' after the model */
+    uint8_t serial_number[8];  /* SPN 588 serial number: cm848_formatNumberAsDecimalText writes 8 decimal digits of the number at 0x3fd66a */
+    uint8_t serial_number_delimiter;  /* the '*' after the serial number */
+    uint8_t unit_number[10];  /* SPN 233 unit number (power unit): 10 characters from 0x3fd743 */
+    uint8_t unit_number_delimiter;  /* the '*' that ends the message (data length 44) */
+};
+
+struct j1939_pgn65242_payload_t {
+    uint8_t number_of_software_identification_fields;  /* SPN 965: 6 */
+    uint8_t software_identification_field_1[8];  /* 8 decimal digits of the 4-byte number at 0x3fd69b (EEPROM 0x219) from cm848_formatNumberAsDecimalText */
+    uint8_t software_identification_field_1_delimiter;  /* '*' */
+    uint8_t software_identification_field_2[8];  /* 8 decimal digits of the 4-byte number at 0x3fd69f (EEPROM 0x21d) */
+    uint8_t software_identification_field_2_delimiter;  /* '*' */
+    uint8_t software_identification_field_3[12];  /* characters 10-21 of the string at 0x3fd6a5 (EEPROM 0x22d-0x238) */
+    uint8_t software_identification_field_3_delimiter;  /* '*' */
+    uint8_t calibration_version_number[8];  /* application_overlay_core_software_version (e2m 0019) as two decimal digits per byte (11460600 for V11.46.06) */
+    uint8_t calibration_version_number_delimiter;  /* '*' */
+    uint8_t ecm_identifier[2];  /* the two ASCII characters of ecm_hardware_type_identifier_cal (e2m 0000 ECM_Identifier) high byte first */
+    uint8_t ecm_identifier_delimiter;  /* '*' */
+    uint8_t application_identifier[2];  /* the two ASCII characters of application_identifier_cal (e2m 1292) high byte first */
+    uint8_t application_identifier_delimiter;  /* the '*' that ends the message (data length 47) */
 };

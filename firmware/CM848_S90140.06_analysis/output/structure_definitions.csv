@@ -2988,3 +2988,46 @@ discrete_output_read_back_counters_t,0x003fd2ab,,,,transmission_torque_converter
 discrete_output_read_back_counters_t,0x003fd2b1,,,,cruise_vent_output_read_back_check - marker only,,verified
 discrete_output_read_back_counters_t,0x003fd2b7,,,,cruise_vacuum_output_read_back_check - marker only,,verified
 discrete_output_read_back_counters_t,0x003fd2bd,,,,cruise_servo_supply_output_read_back_check - marker only,,verified
+# j1939_pgn65249_payload_t: the J1939 RC (PGN 65249) payload: 19 bytes in J1939 byte order (PR #53 round 33)
+j1939_pgn65249_payload_t,0x003fae50,retarder_type_and_location,byte,1,SPN 901 retarder type (bits 1-4) and SPN 902 retarder location (bits 5-8): 0x14 = exhaust (4) at the engine exhaust brake (1) for one engine_retarder_output_driver_count / 3 = compression release (3) at the engine compression release brake (0) for two or more / 0xff = not available,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_control_method,byte,1,SPN 557 retarder control method: 0xff / 6 / 3 / 2 / 1 for engine_retarder_stage_1_weight 0 / 1 / 2 / 3 / 6 (6 divided by the weight); other weights leave it,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_idle_point_1_low_byte,byte,1,SPN 546 retarder speed at idle (point 1); low byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_idle_point_1_high_byte,byte,1,SPN 546; high byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,percent_torque_at_idle_point_1,byte,1,SPN 551; 125 minus the high byte of the ROM percent word,,verified
+j1939_pgn65249_payload_t,0x003fae50,maximum_retarder_speed_point_2_low_byte,byte,1,SPN 548 maximum retarder speed (point 2); low byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,maximum_retarder_speed_point_2_high_byte,byte,1,SPN 548; high byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,percent_torque_at_maximum_speed_point_2,byte,1,SPN 552; 125 minus the percent,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_point_3_low_byte,byte,1,SPN 549; low byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_point_3_high_byte,byte,1,SPN 549; high byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,percent_torque_at_point_3,byte,1,SPN 553; 125 minus the percent,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_point_4_low_byte,byte,1,SPN 550; low byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_point_4_high_byte,byte,1,SPN 550; high byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,percent_torque_at_point_4,byte,1,SPN 554; 125 minus the percent,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_peak_torque_point_5_low_byte,byte,1,SPN 547 retarder speed at peak torque (point 5); low byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,retarder_speed_at_peak_torque_point_5_high_byte,byte,1,SPN 547; high byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,reference_retarder_torque_low_byte,byte,1,SPN 556 reference retarder torque; low byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,reference_retarder_torque_high_byte,byte,1,SPN 556; high byte,,verified
+j1939_pgn65249_payload_t,0x003fae50,percent_torque_at_peak_torque_point_5,byte,1,SPN 555; 125 minus the percent,,verified
+# j1939_pgn65259_payload_t: the J1939 component identification (PGN 65259) payload: 44 bytes of '*'-delimited text (PR #53 round 33)
+j1939_pgn65259_payload_t,0x003fab22,make,byte,5,SPN 586 make: characters 1-5 of the component identification string at 0x3fd653 in the EEPROM mirror (CMMNS in the RAM dump),,verified
+j1939_pgn65259_payload_t,0x003fab22,make_delimiter,byte,1,the '*' after the make,,verified
+j1939_pgn65259_payload_t,0x003fab22,model,byte,17,SPN 587 model: characters 6-22 of the same string (the field order follows the J1939-71 sequence make / model / serial number / unit number; the databases give no positions),,verified
+j1939_pgn65259_payload_t,0x003fab22,model_delimiter,byte,1,the '*' after the model,,verified
+j1939_pgn65259_payload_t,0x003fab22,serial_number,byte,8,SPN 588 serial number: cm848_formatNumberAsDecimalText writes 8 decimal digits of the number at 0x3fd66a,,verified
+j1939_pgn65259_payload_t,0x003fab22,serial_number_delimiter,byte,1,the '*' after the serial number,,verified
+j1939_pgn65259_payload_t,0x003fab22,unit_number,byte,10,SPN 233 unit number (power unit): 10 characters from 0x3fd743,,verified
+j1939_pgn65259_payload_t,0x003fab22,unit_number_delimiter,byte,1,the '*' that ends the message (data length 44),,verified
+# j1939_pgn65242_payload_t: the J1939 software identification (PGN 65242) payload: 47 bytes - the field count and six '*'-ended fields (PR #53 round 33)
+j1939_pgn65242_payload_t,0x003fae80,number_of_software_identification_fields,byte,1,SPN 965: 6,,verified
+j1939_pgn65242_payload_t,0x003fae80,software_identification_field_1,byte,8,8 decimal digits of the 4-byte number at 0x3fd69b (EEPROM 0x219) from cm848_formatNumberAsDecimalText,,verified
+j1939_pgn65242_payload_t,0x003fae80,software_identification_field_1_delimiter,byte,1,'*',,verified
+j1939_pgn65242_payload_t,0x003fae80,software_identification_field_2,byte,8,8 decimal digits of the 4-byte number at 0x3fd69f (EEPROM 0x21d),,verified
+j1939_pgn65242_payload_t,0x003fae80,software_identification_field_2_delimiter,byte,1,'*',,verified
+j1939_pgn65242_payload_t,0x003fae80,software_identification_field_3,byte,12,characters 10-21 of the string at 0x3fd6a5 (EEPROM 0x22d-0x238),,verified
+j1939_pgn65242_payload_t,0x003fae80,software_identification_field_3_delimiter,byte,1,'*',,verified
+j1939_pgn65242_payload_t,0x003fae80,calibration_version_number,byte,8,application_overlay_core_software_version (e2m 0019) as two decimal digits per byte (11460600 for V11.46.06),,verified
+j1939_pgn65242_payload_t,0x003fae80,calibration_version_number_delimiter,byte,1,'*',,verified
+j1939_pgn65242_payload_t,0x003fae80,ecm_identifier,byte,2,the two ASCII characters of ecm_hardware_type_identifier_cal (e2m 0000 ECM_Identifier) high byte first,,verified
+j1939_pgn65242_payload_t,0x003fae80,ecm_identifier_delimiter,byte,1,'*',,verified
+j1939_pgn65242_payload_t,0x003fae80,application_identifier,byte,2,the two ASCII characters of application_identifier_cal (e2m 1292) high byte first,,verified
+j1939_pgn65242_payload_t,0x003fae80,application_identifier_delimiter,byte,1,the '*' that ends the message (data length 47),,verified

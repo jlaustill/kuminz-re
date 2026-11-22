@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 12:11:01 MST 2026
+// Generated: Sun Nov 22 12:23:28 MST 2026
 
 
 //
@@ -1776,10 +1776,10 @@ bool mpc555_areBootModeStrapPinsHigh(void)
   word *qadc_b_port;
   word *qadc_a_port;
   word *qadc_b_direction;
+  word qadc_b_pqb0_sample;
   word qadc_b_pqa4_sample;
   word qadc_a_pqa2_sample;
   word direction_register_value;
-  word qadc_b_pqb0_sample;
   
   qadc_b_direction = &QADC64B_MCR.DDRQA_B;
   wVar1 = QADC64B_MCR.DDRQA_B;
@@ -6094,9 +6094,9 @@ void mpc555_tickTransferTimeoutAndRuntimeCounter(void)
 
 {
   word wVar1;
-  byte prescaler_count;
   dword runtime_value;
   word counter_value;
+  byte prescaler_count;
   
   prescaler_count = watchdog_tick_prescaler;
   if (prescaler_count < 0x28) {
@@ -25069,24 +25069,27 @@ void cm848_j1939HandlePgn65259ComponentId(void)
   
   uVar1 = 0;
   do {
-    (&DAT_003fab22)[uVar1] = s__CMMNS00000000000000000_003fd653[uVar1 + 1];
+    j1939_pgn65259_payload.make[uVar1] = s__CMMNS00000000000000000_003fd653[uVar1 + 1];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 5);
-  DAT_003fab27 = 0x2a;
+  j1939_pgn65259_payload.make_delimiter = 0x2a;
   uVar1 = 0;
   do {
-    (&DAT_003fab28)[uVar1] = s__CMMNS00000000000000000_003fd653[uVar1 + 6];
+    j1939_pgn65259_payload.model[uVar1] = s__CMMNS00000000000000000_003fd653[uVar1 + 6];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0x11);
-  DAT_003fab39 = 0x2a;
-  cm848_formatNumberAsDecimalText(s__CMMNS00000000000000000_003fd653 + 0x17,&DAT_003fab3a,8);
-  LAB_003fab40_2 = 0x2a;
+  j1939_pgn65259_payload.model_delimiter = 0x2a;
+  cm848_formatNumberAsDecimalText
+            ((byte *)(s__CMMNS00000000000000000_003fd653 + 0x17),
+             j1939_pgn65259_payload.serial_number,8);
+  j1939_pgn65259_payload.serial_number_delimiter = 0x2a;
   uVar1 = 0;
   do {
-    (&LAB_003fab40_3)[uVar1] = s_00000000000000000000000000000000_003fd71b[uVar1 + 0x28];
+    j1939_pgn65259_payload.unit_number[uVar1] =
+         s_00000000000000000000000000000000_003fd71b[uVar1 + 0x28];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 10);
-  LAB_003fab4c_1 = 0x2a;
+  j1939_pgn65259_payload.unit_number_delimiter = 0x2a;
   sendJ1939Message(&j1939_pgn65259_tx_message);
   return;
 }
@@ -25097,14 +25100,20 @@ void cm848_j1939HandlePgn65259ComponentId(void)
 // Function: cm848_initPgn65259ComponentIdHandler @ 0x00024940
 //
 
+/* Initializes the CI (PGN 65259 component identification) transmit descriptor: identifier 0xfeeb
+   with the priority from j1939_pgn65259_priority_cal and the source address j1939_source_address /
+   data length 44 / data pointer j1939_pgn65259_payload / status byte
+   j1939_pgn65259_transmit_status. Then it registers cm848_j1939HandlePgn65259ComponentId, which
+   fills the payload and sends it when PGN 65259 is requested (PR #53 round 33) */
+
 void cm848_initPgn65259ComponentIdHandler(void)
 
 {
   j1939_pgn65259_tx_message.header.can_id =
        CONCAT13(((byte)j1939_pgn65259_priority_cal & 7) << 2,0xfeeb00);
   j1939_pgn65259_tx_message.header.data_length = 0x2c;
-  j1939_pgn65259_tx_message.data_pointer = &DAT_003fab22;
-  j1939_pgn65259_tx_message.status_pointer = &LAB_003fab4c_2;
+  j1939_pgn65259_tx_message.data_pointer = j1939_pgn65259_payload.make;
+  j1939_pgn65259_tx_message.status_pointer = &j1939_pgn65259_transmit_status;
   j1939_pgn65259_tx_message.header.can_id =
        CONCAT31(j1939_pgn65259_tx_message.header.can_id._0_3_,(char)j1939_source_address);
   cm848_j1939RegisterPgnHandler(0xfeeb,cm848_j1939HandlePgn65259ComponentId);
@@ -26493,65 +26502,70 @@ void cm848_initJ1939InletExhaustConditionsBuffer(void)
 void cm848_buildPgn65249RetarderConfigurationMessage(void)
 
 {
-  undefined1 local_8;
-  undefined1 uStack_7;
+  byte local_8;
+  byte bStack_7;
   
   if ((j1939_pgn65249_transmit_status & 0xf0) == 0) {
     if (engine_retarder_output_driver_count < 2) {
       if (engine_retarder_output_driver_count == 1) {
-        j1939_pgn65249_payload_byte_1 = 0x14;
+        j1939_pgn65249_payload.retarder_type_and_location = 0x14;
       }
       else {
-        j1939_pgn65249_payload_byte_1 = 0xff;
+        j1939_pgn65249_payload.retarder_type_and_location = 0xff;
       }
     }
     else {
-      j1939_pgn65249_payload_byte_1 = 3;
+      j1939_pgn65249_payload.retarder_type_and_location = 3;
     }
     if (engine_retarder_stage_1_weight == 0) {
-      j1939_pgn65249_payload_byte_2 = 0xff;
+      j1939_pgn65249_payload.retarder_control_method = 0xff;
     }
     else if (engine_retarder_stage_1_weight == 1) {
-      j1939_pgn65249_payload_byte_2 = 6;
+      j1939_pgn65249_payload.retarder_control_method = 6;
     }
     else if (engine_retarder_stage_1_weight == 2) {
-      j1939_pgn65249_payload_byte_2 = 3;
+      j1939_pgn65249_payload.retarder_control_method = 3;
     }
     else if (engine_retarder_stage_1_weight == 3) {
-      j1939_pgn65249_payload_byte_2 = 2;
+      j1939_pgn65249_payload.retarder_control_method = 2;
     }
     else if (engine_retarder_stage_1_weight == 6) {
-      j1939_pgn65249_payload_byte_2 = 1;
+      j1939_pgn65249_payload.retarder_control_method = 1;
     }
-    uStack_7 = (undefined1)engine_retarder_configuration_idle_speed;
-    DAT_003fae52 = uStack_7;
-    local_8 = (undefined1)(engine_retarder_configuration_idle_speed >> 8);
-    DAT_003fae53 = local_8;
-    DAT_003fae54 = '}' - (char)(engine_retarder_configuration_idle_torque_percent >> 8);
-    uStack_7 = (undefined1)engine_retarder_configuration_maximum_speed;
-    DAT_003fae55 = uStack_7;
-    local_8 = (undefined1)(engine_retarder_configuration_maximum_speed >> 8);
-    DAT_003fae56 = local_8;
-    DAT_003fae57 = '}' - (char)(engine_retarder_configuration_maximum_speed_torque_percent >> 8);
-    uStack_7 = (undefined1)engine_retarder_configuration_point_3_speed;
-    DAT_003fae58 = uStack_7;
-    local_8 = (undefined1)(engine_retarder_configuration_point_3_speed >> 8);
-    DAT_003fae59 = local_8;
-    DAT_003fae5a = '}' - (char)(engine_retarder_configuration_point_3_torque_percent >> 8);
-    uStack_7 = (undefined1)engine_retarder_configuration_point_4_speed;
-    DAT_003fae5b = uStack_7;
-    local_8 = (undefined1)(engine_retarder_configuration_point_4_speed >> 8);
-    DAT_003fae5c = local_8;
-    DAT_003fae5d = '}' - (char)(engine_retarder_configuration_point_4_torque_percent >> 8);
-    uStack_7 = (undefined1)engine_retarder_configuration_peak_torque_speed;
-    DAT_003fae5e = uStack_7;
-    local_8 = (undefined1)(engine_retarder_configuration_peak_torque_speed >> 8);
-    DAT_003fae5f = local_8;
-    uStack_7 = (undefined1)engine_retarder_configuration_reference_torque;
-    DAT_003fae60 = uStack_7;
-    local_8 = (undefined1)(engine_retarder_configuration_reference_torque >> 8);
-    DAT_003fae61 = local_8;
-    DAT_003fae62 = '}' - (char)(engine_retarder_configuration_peak_torque_percent >> 8);
+    bStack_7 = (byte)engine_retarder_configuration_idle_speed;
+    j1939_pgn65249_payload.retarder_speed_at_idle_point_1_low_byte = bStack_7;
+    local_8 = (byte)(engine_retarder_configuration_idle_speed >> 8);
+    j1939_pgn65249_payload.retarder_speed_at_idle_point_1_high_byte = local_8;
+    j1939_pgn65249_payload.percent_torque_at_idle_point_1 =
+         0x7d - (char)(engine_retarder_configuration_idle_torque_percent >> 8);
+    bStack_7 = (byte)engine_retarder_configuration_maximum_speed;
+    j1939_pgn65249_payload.maximum_retarder_speed_point_2_low_byte = bStack_7;
+    local_8 = (byte)(engine_retarder_configuration_maximum_speed >> 8);
+    j1939_pgn65249_payload.maximum_retarder_speed_point_2_high_byte = local_8;
+    j1939_pgn65249_payload.percent_torque_at_maximum_speed_point_2 =
+         0x7d - (char)(engine_retarder_configuration_maximum_speed_torque_percent >> 8);
+    bStack_7 = (byte)engine_retarder_configuration_point_3_speed;
+    j1939_pgn65249_payload.retarder_speed_at_point_3_low_byte = bStack_7;
+    local_8 = (byte)(engine_retarder_configuration_point_3_speed >> 8);
+    j1939_pgn65249_payload.retarder_speed_at_point_3_high_byte = local_8;
+    j1939_pgn65249_payload.percent_torque_at_point_3 =
+         0x7d - (char)(engine_retarder_configuration_point_3_torque_percent >> 8);
+    bStack_7 = (byte)engine_retarder_configuration_point_4_speed;
+    j1939_pgn65249_payload.retarder_speed_at_point_4_low_byte = bStack_7;
+    local_8 = (byte)(engine_retarder_configuration_point_4_speed >> 8);
+    j1939_pgn65249_payload.retarder_speed_at_point_4_high_byte = local_8;
+    j1939_pgn65249_payload.percent_torque_at_point_4 =
+         0x7d - (char)(engine_retarder_configuration_point_4_torque_percent >> 8);
+    bStack_7 = (byte)engine_retarder_configuration_peak_torque_speed;
+    j1939_pgn65249_payload.retarder_speed_at_peak_torque_point_5_low_byte = bStack_7;
+    local_8 = (byte)(engine_retarder_configuration_peak_torque_speed >> 8);
+    j1939_pgn65249_payload.retarder_speed_at_peak_torque_point_5_high_byte = local_8;
+    bStack_7 = (byte)engine_retarder_configuration_reference_torque;
+    j1939_pgn65249_payload.reference_retarder_torque_low_byte = bStack_7;
+    local_8 = (byte)(engine_retarder_configuration_reference_torque >> 8);
+    j1939_pgn65249_payload.reference_retarder_torque_high_byte = local_8;
+    j1939_pgn65249_payload.percent_torque_at_peak_torque_point_5 =
+         0x7d - (char)(engine_retarder_configuration_peak_torque_percent >> 8);
     sendJ1939Message(&j1939_pgn65249_tx_message);
   }
   return;
@@ -26566,8 +26580,8 @@ void cm848_buildPgn65249RetarderConfigurationMessage(void)
 /* Initialises the RC transmit descriptor (PGN 65249): CAN identifier from the priority word
    j1939_pgn65249_priority_cal, 0xFEE1 and the engine retarder source address
    j1939_engine_retarder_source_address, data length 19 (0x13) the data pointer
-   (j1939_pgn65249_payload_byte_1) and the status pointer (j1939_pgn65249_transmit_status, 0x3fae71)
-   (was cm848_initJ1939ProtocolModeStatusBuffer). */
+   (j1939_pgn65249_payload) and the status pointer (j1939_pgn65249_transmit_status, 0x3fae71) (was
+   cm848_initJ1939ProtocolModeStatusBuffer). */
 
 void cm848_initializePgn65249RetarderConfigurationBuffer(void)
 
@@ -26578,7 +26592,7 @@ void cm848_initializePgn65249RetarderConfigurationBuffer(void)
        CONCAT31(j1939_pgn65249_tx_message.header.can_id._0_3_,
                 (char)j1939_engine_retarder_source_address);
   j1939_pgn65249_tx_message.header.data_length = 0x13;
-  j1939_pgn65249_tx_message.data_pointer = &j1939_pgn65249_payload_byte_1;
+  j1939_pgn65249_tx_message.data_pointer = &j1939_pgn65249_payload.retarder_type_and_location;
   j1939_pgn65249_tx_message.status_pointer = &j1939_pgn65249_transmit_status;
   return;
 }
@@ -26606,40 +26620,54 @@ void cm848_j1939HandlePgn65242SoftwareId(void)
 // Function: cm848_initPgn65242SoftwareIdHandler @ 0x000268ac
 //
 
+/* Initializes the SOFT (PGN 65242 software identification) transmit descriptor (identifier
+   0x18feda00 + j1939_source_address / data length 47 / data pointer j1939_pgn65242_payload / status
+   byte j1939_pgn65242_transmit_status) and builds the payload once: the field count 6 and six
+   '*'-ended fields (two 8-digit numbers from EEPROM 0x219 / 0x21d / 12 characters from EEPROM 0x22d
+   / the calibration version / the ECM identifier / the application identifier). Then it registers
+   cm848_j1939HandlePgn65242SoftwareId, which only sends it when PGN 65242 is requested (PR #53
+   round 33) */
+
 void cm848_initPgn65242SoftwareIdHandler(void)
 
 {
   uint uVar1;
-  undefined1 local_10;
-  undefined1 uStack_f;
+  byte local_10;
+  byte bStack_f;
   
   j1939_pgn65242_tx_message.header.data_length = 0x2f;
-  j1939_pgn65242_tx_message.data_pointer = &j1939_pgn65242_field_count_byte;
+  j1939_pgn65242_tx_message.data_pointer =
+       &j1939_pgn65242_payload.number_of_software_identification_fields;
   j1939_pgn65242_tx_message.status_pointer = &j1939_pgn65242_transmit_status;
   j1939_pgn65242_tx_message.header.can_id = CONCAT31(0x18feda,(char)j1939_source_address);
-  j1939_pgn65242_field_count_byte = 6;
-  cm848_formatNumberAsDecimalText(&DAT_003fd69b,&DAT_003fae81,8);
-  DAT_003fae89 = 0x2a;
-  cm848_formatNumberAsDecimalText(&DAT_003fd69f,&DAT_003fae8a,8);
-  DAT_003fae92 = 0x2a;
+  j1939_pgn65242_payload.number_of_software_identification_fields = 6;
+  cm848_formatNumberAsDecimalText
+            (&DAT_003fd69b,j1939_pgn65242_payload.software_identification_field_1,8);
+  j1939_pgn65242_payload.software_identification_field_1_delimiter = 0x2a;
+  cm848_formatNumberAsDecimalText
+            (&DAT_003fd69f,j1939_pgn65242_payload.software_identification_field_2,8);
+  j1939_pgn65242_payload.software_identification_field_2_delimiter = 0x2a;
   uVar1 = 0;
   do {
-    (&DAT_003fae93)[uVar1] = s_0000000000000000000000_003fd6a5[uVar1 + 10];
+    j1939_pgn65242_payload.software_identification_field_3[uVar1] =
+         s_0000000000000000000000_003fd6a5[uVar1 + 10];
     uVar1 = uVar1 + 1 & 0xff;
   } while (uVar1 < 0xc);
-  DAT_003fae9f = 0x2a;
-  cm848_formatNumberAsDecimalText(application_overlay_core_software_version,&DAT_003faea0,1);
-  DAT_003faea8 = 0x2a;
-  local_10 = (undefined1)(ecm_hardware_type_identifier_cal >> 8);
-  DAT_003faea9 = local_10;
-  uStack_f = (undefined1)ecm_hardware_type_identifier_cal;
-  DAT_003faeaa = uStack_f;
-  DAT_003faeab = 0x2a;
-  local_10 = (undefined1)(application_identifier_cal >> 8);
-  DAT_003faeac = local_10;
-  uStack_f = (undefined1)application_identifier_cal;
-  DAT_003faead = uStack_f;
-  DAT_003faeae = 0x2a;
+  j1939_pgn65242_payload.software_identification_field_3_delimiter = 0x2a;
+  cm848_formatNumberAsDecimalText
+            (application_overlay_core_software_version,
+             j1939_pgn65242_payload.calibration_version_number,1);
+  j1939_pgn65242_payload.calibration_version_number_delimiter = 0x2a;
+  local_10 = (byte)(ecm_hardware_type_identifier_cal >> 8);
+  j1939_pgn65242_payload.ecm_identifier[0] = local_10;
+  bStack_f = (byte)ecm_hardware_type_identifier_cal;
+  j1939_pgn65242_payload.ecm_identifier[1] = bStack_f;
+  j1939_pgn65242_payload.ecm_identifier_delimiter = 0x2a;
+  local_10 = (byte)(application_identifier_cal >> 8);
+  j1939_pgn65242_payload.application_identifier[0] = local_10;
+  bStack_f = (byte)application_identifier_cal;
+  j1939_pgn65242_payload.application_identifier[1] = bStack_f;
+  j1939_pgn65242_payload.application_identifier_delimiter = 0x2a;
   cm848_j1939RegisterPgnHandler(0xfeda,cm848_j1939HandlePgn65242SoftwareId);
   return;
 }
@@ -27408,59 +27436,59 @@ LAB_00027ae8:
 // Function: cm848_formatNumberAsDecimalText @ 0x00027bc4
 //
 
-/* Formats an unsigned number as zero padded decimal ASCII text. param_1 points at the number (a
-   4-byte value), param_2 is the text buffer and param_3 the digit count: the digits are written
-   backwards, the last one at param_2 + param_3 - 1 (the callers use 8). param_3 = 1 is a special
-   mode: param_1 is read as 4 bytes and each byte is written as two decimal digits, 8 characters in
-   all (for example the bytes 11 46 6 0 give 11460600). Used for the star delimited ID strings of
-   the J1939 component identification (cm848_j1939HandlePgn65259ComponentId, 0x24870) and software
-   identification (cm848_initPgn65242SoftwareIdHandler, 0x268ac), whose last number is
+/* Formats an unsigned number as zero padded decimal ASCII text. number points at the number (a
+   4-byte value), text is the text buffer and digit_count the digit count: the digits are written
+   backwards, the last one at text + digit_count - 1 (the callers use 8). digit_count = 1 is a
+   special mode: number is read as 4 bytes and each byte is written as two decimal digits, 8
+   characters in all (for example the bytes 11 46 6 0 give 11460600). Used for the star delimited ID
+   strings of the J1939 component identification (cm848_j1939HandlePgn65259ComponentId, 0x24870) and
+   software identification (cm848_initPgn65242SoftwareIdHandler, 0x268ac), whose last number is
    application_overlay_core_software_version (e2m 0019 Calibration_Version_Number). It has nothing
    to do with a governor droop. (was cm848_governorDroopCalculation) */
 
-void cm848_formatNumberAsDecimalText(uint *param_1,int param_2,int param_3)
+void cm848_formatNumberAsDecimalText(byte *number,byte *text,int digit_count)
 
 {
   byte bVar1;
   uint uVar2;
-  char *pcVar3;
+  byte *pbVar3;
   byte bVar4;
-  char *pcVar5;
+  byte *pbVar5;
   byte bVar6;
   uint local_8;
   
-  pcVar5 = (char *)(param_2 + param_3);
+  pbVar5 = text + digit_count;
   uVar2 = 0;
-  if (param_3 == 1) {
-    pcVar5 = (char *)(param_2 + 1);
-    bVar1 = *(byte *)param_1;
+  if (digit_count == 1) {
+    pbVar5 = text + 1;
+    bVar1 = *number;
     bVar4 = 0;
     do {
       bVar6 = 0;
       uVar2 = (uint)bVar1;
-      pcVar3 = pcVar5 + 1;
+      pbVar3 = pbVar5 + 1;
       do {
-        pcVar5 = pcVar3;
-        pcVar3 = pcVar5 + -1;
-        *pcVar3 = (char)uVar2 + (char)(uVar2 / 10) * -10 + '0';
+        pbVar5 = pbVar3;
+        pbVar3 = pbVar5 + -1;
+        *pbVar3 = (char)uVar2 + (char)(uVar2 / 10) * -10 + 0x30;
         uVar2 = uVar2 / 10;
         bVar6 = bVar6 + 1;
       } while (bVar6 < 2);
-      param_1 = (uint *)((int)param_1 + 1);
-      bVar1 = *(byte *)param_1;
-      pcVar5 = pcVar5 + 2;
+      number = number + 1;
+      bVar1 = *number;
+      pbVar5 = pbVar5 + 2;
       bVar4 = bVar4 + 1;
     } while (bVar4 < 4);
   }
   else {
-    local_8 = *param_1;
-    if (0 < param_3) {
+    local_8 = *(uint *)number;
+    if (0 < digit_count) {
       do {
-        pcVar5 = pcVar5 + -1;
-        *pcVar5 = (char)local_8 + (char)(local_8 / 10) * -10 + '0';
+        pbVar5 = pbVar5 + -1;
+        *pbVar5 = (char)local_8 + (char)(local_8 / 10) * -10 + 0x30;
         local_8 = local_8 / 10;
         uVar2 = uVar2 + 1 & 0xff;
-      } while ((int)uVar2 < param_3);
+      } while ((int)uVar2 < digit_count);
     }
   }
   return;

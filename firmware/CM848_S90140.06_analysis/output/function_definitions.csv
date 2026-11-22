@@ -502,3 +502,7 @@ function_address,function_name,param_index,name,type,comment
 0x00537c64,cm848_checkDiscreteOutputReadBack,6,high_fault_recovery_count,byte*,discrete_output_read_back_counters_t field
 0x00537c64,cm848_checkDiscreteOutputReadBack,7,low_fault_recovery_count,byte*,discrete_output_read_back_counters_t field
 0x00537c64,cm848_checkDiscreteOutputReadBack,8,retry_count,word*,the output's retry count
+# The decimal text formatter (PR #53 round 33): the text buffer was an int
+0x00027bc4,cm848_formatNumberAsDecimalText,0,number,byte*,the number: 4 bytes read as one value (or one by one in the digit count 1 mode); byte* because every caller passes a byte address
+0x00027bc4,cm848_formatNumberAsDecimalText,1,text,byte*,the text buffer; the digits are written backwards from text + digit_count - 1
+0x00027bc4,cm848_formatNumberAsDecimalText,2,digit_count,int32_t,the digit count (the callers use 8); 1 selects two digits per byte
