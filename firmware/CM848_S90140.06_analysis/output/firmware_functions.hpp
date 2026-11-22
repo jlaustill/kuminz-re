@@ -1233,7 +1233,7 @@ void cm848_refreshOutputPortsAndReadback(void);  // @ 0x000529b8
 void cm848_refreshInputLineImage(void);  // @ 0x000533e0
 void mpc555_processJ1939TxBufferSend(void);  // @ 0x000535e8
 void mpc555_queueCanReceiveMessage(int param_1);  // @ 0x00053720
-void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined1 *param_4);  // @ 0x00053858
+void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *result);  // @ 0x00053858
 void sendJ1939Message(j1939_tx_msg_t *msg);  // @ 0x000539fc
 J1939_CONTROL_DEVICE cm848_lookupJ1939ControlDevice(dword source_address);  // @ 0x00053a4c
 void cm848_handleCanMailboxTransmitComplete(uint param_1);  // @ 0x00053aa8
@@ -1498,11 +1498,11 @@ undefined1 j1939_diagService72_memoryReadByParameterId(int param_1);  // @ 0x005
 undefined1 j1939_diagService74_memoryRead(int param_1);  // @ 0x0050c7b0
 undefined1 j1939_diagService76_memoryReadExt(int param_1);  // @ 0x0050c81c
 void j1939_diag_request_batch_43to48(void);  // @ 0x0050c880
-void initiateJ1939TransportProtocol(uint *param_1);  // @ 0x0050c8ec
+void initiateJ1939TransportProtocol(j1939_tx_msg_t *msg);  // @ 0x0050c8ec
 void j1939_transport_handleClearToSend(int param_1);  // @ 0x0050cc18
 void j1939_transport_sendAbort(undefined1 param_1,undefined2 param_2);  // @ 0x0050ccbc
 void j1939_transport_sendEndOfMessageAcknowledge(undefined1 param_1,undefined2 param_2);  // @ 0x0050cd54
-undefined1 j1939_transport_sendClearToSend (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4);  // @ 0x0050cdfc
+byte j1939_transport_sendClearToSend (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4);  // @ 0x0050cdfc
 void j1939_transport_handleRequestToSend(dword *param_1);  // @ 0x0050ce90
 void j1939_transport_handleDataPacket(int param_1);  // @ 0x0050cfa8
 void j1939_transport_handleEndOfMessageAcknowledge(int param_1);  // @ 0x0050d144

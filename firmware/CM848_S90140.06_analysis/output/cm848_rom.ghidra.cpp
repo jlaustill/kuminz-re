@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 12:51:32 MST 2026
+// Generated: Sun Nov 22 13:00:16 MST 2026
 
 
 //
@@ -1471,7 +1471,8 @@ undefined1 cm848_diagService76_memoryReadExt(dword request_msg)
 void mpc555_initDiagResponseHandlers(void)
 
 {
-  boot_j1939_transport_transmit_session.transmit_frame_pointer = 0x30306d;
+  boot_j1939_transport_transmit_session.transmit_frame_pointer =
+       boot_j1939_transport_transmit_frame_buffer;
   j1939_tp_pause_state.rx_buf_ptr = 0x303075;
   cm848_registerPgnResponseHandler(0xec00,&DAT_003fbe5c);
   cm848_registerPgnResponseHandler(0xeb00,&DAT_003fbbb4);
@@ -4476,12 +4477,10 @@ void mpc555_sendJ1939TransportRequestToSend
   byte bVar3;
   byte bVar4;
   word wVar5;
-  undefined1 *puVar6;
-  byte *pbVar7;
-  dword dVar8;
-  dword dVar9;
-  undefined1 local_1c;
-  undefined1 uStack_1b;
+  byte *pbVar6;
+  dword dVar7;
+  byte local_1c;
+  byte bStack_1b;
   
   puVar1 = (ushort *)((int)&msg_header->can_id + 1);
   bVar2 = *(byte *)puVar1;
@@ -4496,40 +4495,40 @@ void mpc555_sendJ1939TransportRequestToSend
       boot_j1939_transport_transmit_session.total_packet_count =
            (char)((int)(msg_header->data_length - 1) / 7) + 1;
       boot_j1939_transport_transmit_session.granted_packet_count = 0;
-      boot_j1939_transport_transmit_session.message_data_pointer = msg_header[1].can_id;
+      boot_j1939_transport_transmit_session.message_data_pointer = (byte *)msg_header[1].can_id;
       boot_j1939_transport_transmit_session.frame_can_id =
            msg_header->can_id & 0xff00ffff | 0xec0000;
       boot_j1939_transport_transmit_session.frame_data_length = 8;
       boot_j1939_transport_transmit_session.timeout_timer = 0x37;
       boot_j1939_transport_transmit_session.session_status_pointer =
-           *(dword *)&msg_header[1].data_length;
-      puVar6 = (undefined1 *)boot_j1939_transport_transmit_session.transmit_frame_pointer;
-      *puVar6 = 0x10;
+           *(byte **)&msg_header[1].data_length;
+      pbVar6 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
+      *pbVar6 = 0x10;
       wVar5 = boot_j1939_transport_transmit_session.message_size;
-      uStack_1b = (undefined1)wVar5;
-      puVar6[1] = uStack_1b;
-      local_1c = (undefined1)(wVar5 >> 8);
-      puVar6[2] = local_1c;
+      bStack_1b = (byte)wVar5;
+      pbVar6[1] = bStack_1b;
+      local_1c = (byte)(wVar5 >> 8);
+      pbVar6[2] = local_1c;
       bVar3 = boot_j1939_transport_transmit_session.total_packet_count;
-      puVar6[3] = bVar3;
-      puVar6[4] = 0xff;
-      puVar6[5] = 0;
-      puVar6[6] = bVar2;
-      puVar6[7] = 0;
+      pbVar6[3] = bVar3;
+      pbVar6[4] = 0xff;
+      pbVar6[5] = 0;
+      pbVar6[6] = bVar2;
+      pbVar6[7] = 0;
       wVar5 = boot_j1939_transport_transmit_session.frame_data_length;
-      dVar8 = boot_j1939_transport_transmit_session.frame_can_id;
-      dVar9 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
-      mpc555_canTransmitQueuePush(dVar8,wVar5,dVar9,0x30290a);
+      dVar7 = boot_j1939_transport_transmit_session.frame_can_id;
+      pbVar6 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
+      mpc555_canTransmitQueuePush(dVar7,wVar5,pbVar6,0x30290a);
       bVar2 = boot_j1939_transport_transmit_session.frame_queue_status;
       if (bVar2 == 0) {
-        puVar6 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
-        *puVar6 = 0x12;
+        pbVar6 = boot_j1939_transport_transmit_session.session_status_pointer;
+        *pbVar6 = 0x12;
         boot_j1939_transport_transmit_session.frame_can_id =
              msg_header->can_id & 0xff00ffff | 0xeb0000;
       }
       else {
-        pbVar7 = (byte *)boot_j1939_transport_transmit_session.session_status_pointer;
-        *pbVar7 = bVar2;
+        pbVar6 = boot_j1939_transport_transmit_session.session_status_pointer;
+        *pbVar6 = bVar2;
         qadc_a_queue_status_1 = 0;
       }
     }
@@ -4894,7 +4893,7 @@ void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *rx_msg)
 {
   byte bVar1;
   word wVar2;
-  undefined1 *puVar3;
+  byte *pbVar3;
   word local_10;
   
   bVar1 = qadc_a_queue_status_1;
@@ -4902,8 +4901,8 @@ void mpc555_handleJ1939TransportEndOfMessageAcknowledge(j1939_rx_msg_t *rx_msg)
     local_10 = (ushort)rx_msg->data_pointer[6] << 8;
     wVar2 = boot_j1939_transport_transmit_session.transported_pgn;
     if (local_10 == wVar2) {
-      puVar3 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
-      *puVar3 = 9;
+      pbVar3 = boot_j1939_transport_transmit_session.session_status_pointer;
+      *pbVar3 = 9;
       qadc_a_queue_status_1 = 0;
     }
   }
@@ -4925,15 +4924,15 @@ void mpc555_handleJ1939TransportAbort(int param_1)
 {
   byte bVar1;
   word wVar2;
-  undefined1 *puVar3;
+  byte *pbVar3;
   undefined2 local_10;
   
   local_10 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
   bVar1 = qadc_a_queue_status_1;
   if (((bVar1 == 1) && (bVar1 = qadc_a_active_channel_id, bVar1 == *(byte *)(param_1 + 3))) &&
      (wVar2 = boot_j1939_transport_transmit_session.transported_pgn, local_10 == wVar2)) {
-    puVar3 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
-    *puVar3 = 10;
+    pbVar3 = boot_j1939_transport_transmit_session.session_status_pointer;
+    *pbVar3 = 10;
     qadc_a_queue_status_1 = 0;
   }
   else {
@@ -4993,29 +4992,27 @@ void mpc555_dispatchJ1939TransportConnectionManagement(j1939_rx_msg_t *rx_msg,by
 void mpc555_sendJ1939TransportDataPackets(void *queue_entry)
 
 {
-  undefined1 *puVar1;
+  byte *pbVar1;
   byte bVar2;
   word wVar3;
   dword dVar4;
-  dword dVar5;
-  undefined1 *puVar6;
+  byte *pbVar5;
+  uint uVar6;
   uint uVar7;
   uint uVar8;
-  uint uVar9;
-  int iVar10;
+  int iVar9;
+  byte bVar10;
   byte bVar11;
-  byte bVar12;
-  undefined1 uVar13;
-  undefined1 *puVar14;
+  byte *pbVar12;
   
   bVar11 = boot_j1939_transport_transmit_session.granted_packet_count;
   if (bVar11 == 0) {
     wVar3 = boot_j1939_transport_transmit_session.timeout_timer;
     if (wVar3 == 0) {
-      uVar13 = 6;
+      bVar11 = 6;
 LAB_00006458:
-      puVar14 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
-      *puVar14 = uVar13;
+      pbVar12 = boot_j1939_transport_transmit_session.session_status_pointer;
+      *pbVar12 = bVar11;
       qadc_a_queue_status_1 = 0;
     }
     else {
@@ -5023,60 +5020,60 @@ LAB_00006458:
     }
   }
   else {
-    bVar12 = boot_j1939_transport_transmit_session.next_packet_number;
-    uVar7 = (uint)bVar12;
+    bVar10 = boot_j1939_transport_transmit_session.next_packet_number;
+    uVar6 = (uint)bVar10;
     if (bVar11 < 0x10) {
       boot_j1939_transport_transmit_session.granted_packet_count = 0;
       boot_j1939_transport_transmit_session.timeout_timer = 0x70;
     }
     else {
-      boot_j1939_transport_transmit_session.next_packet_number = bVar12 + 0xf;
+      boot_j1939_transport_transmit_session.next_packet_number = bVar10 + 0xf;
       boot_j1939_transport_transmit_session.granted_packet_count = bVar11 - 0xf;
       bVar11 = 0xf;
     }
-    dVar4 = boot_j1939_transport_transmit_session.message_data_pointer;
-    puVar14 = (undefined1 *)(dVar4 + uVar7 * 7 + -7);
-    bVar12 = 0;
+    pbVar12 = boot_j1939_transport_transmit_session.message_data_pointer;
+    pbVar12 = pbVar12 + uVar6 * 7 + -7;
+    bVar10 = 0;
     if (bVar11 != 0) {
       do {
-        puVar6 = (undefined1 *)boot_j1939_transport_transmit_session.transmit_frame_pointer;
+        pbVar5 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
         bVar2 = boot_j1939_transport_transmit_session.total_packet_count;
-        if (bVar2 == uVar7) {
+        if (bVar2 == uVar6) {
           wVar3 = boot_j1939_transport_transmit_session.message_size;
-          uVar9 = ((uint)wVar3 - (uVar7 * 7 + 0xf9)) + 1;
-          boot_j1939_transport_transmit_session.frame_data_length = (ushort)uVar9 & 0xff;
+          uVar8 = ((uint)wVar3 - (uVar6 * 7 + 0xf9)) + 1;
+          boot_j1939_transport_transmit_session.frame_data_length = (ushort)uVar8 & 0xff;
         }
         else {
-          uVar9 = 8;
+          uVar8 = 8;
         }
-        *puVar6 = (char)uVar7;
-        uVar7 = uVar7 + 1 & 0xff;
-        uVar8 = 0;
-        iVar10 = (uVar9 & 0xff) - 1;
-        if (0 < iVar10) {
-          puVar1 = puVar14 + -1;
+        *pbVar5 = (byte)uVar6;
+        uVar6 = uVar6 + 1 & 0xff;
+        uVar7 = 0;
+        iVar9 = (uVar8 & 0xff) - 1;
+        if (0 < iVar9) {
+          pbVar1 = pbVar12 + -1;
           do {
-            puVar14 = puVar1;
-            puVar1 = puVar14 + 1;
-            puVar6 = puVar6 + 1;
-            *puVar6 = *puVar1;
-            uVar8 = uVar8 + 1 & 0xff;
-          } while ((int)uVar8 < iVar10);
-          puVar14 = puVar14 + 2;
+            pbVar12 = pbVar1;
+            pbVar1 = pbVar12 + 1;
+            pbVar5 = pbVar5 + 1;
+            *pbVar5 = *pbVar1;
+            uVar7 = uVar7 + 1 & 0xff;
+          } while ((int)uVar7 < iVar9);
+          pbVar12 = pbVar12 + 2;
         }
         wVar3 = boot_j1939_transport_transmit_session.frame_data_length;
         dVar4 = boot_j1939_transport_transmit_session.frame_can_id;
-        dVar5 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
-        mpc555_canTransmitQueuePush(dVar4,wVar3,dVar5,0x30290a);
+        pbVar5 = boot_j1939_transport_transmit_session.transmit_frame_pointer;
+        mpc555_canTransmitQueuePush(dVar4,wVar3,pbVar5,0x30290a);
         bVar2 = boot_j1939_transport_transmit_session.frame_queue_status;
         if (bVar2 != 0) {
-          uVar13 = 7;
+          bVar11 = 7;
           goto LAB_00006458;
         }
-        puVar6 = (undefined1 *)boot_j1939_transport_transmit_session.session_status_pointer;
-        *puVar6 = 0x13;
-        bVar12 = bVar12 + 1;
-      } while (bVar12 < bVar11);
+        pbVar5 = boot_j1939_transport_transmit_session.session_status_pointer;
+        *pbVar5 = 0x13;
+        bVar10 = bVar10 + 1;
+      } while (bVar10 < bVar11);
     }
   }
   return;
@@ -38835,8 +38832,8 @@ void cm848_checkPciMessageTimeouts(void)
   word *transmit_timer;
   dword message_index;
   uint uVar1;
-  byte all_transmits_overdue;
   ushort receive_interval;
+  byte all_transmits_overdue;
   
   all_transmits_overdue = 1;
   if (algorithm_enable_flags_40_cal.j1850_communication_enable != 0) {
@@ -57550,58 +57547,60 @@ void mpc555_queueCanReceiveMessage(int param_1)
 // Function: mpc555_sendJ1939SingleFrame @ 0x00053858
 //
 
-void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined1 *param_4)
+void mpc555_sendJ1939SingleFrame(dword can_id,word data_length,byte *data,byte *result)
 
 {
-  undefined1 *puVar1;
+  byte *pbVar1;
   uint uVar2;
-  undefined1 *puVar3;
+  undefined2 in_register_00000010;
+  byte *pbVar3;
   undefined2 *puVar4;
-  undefined1 *puVar5;
+  byte *pbVar5;
   undefined2 *puVar6;
-  byte bVar7;
-  undefined1 uVar8;
+  uint uVar7;
+  byte bVar8;
   undefined2 uStack_1a;
   undefined4 local_18;
-  undefined1 local_14 [12];
+  byte local_14 [12];
   
-  if (param_2 == 0) {
-    uVar8 = 1;
+  uVar7 = CONCAT22(in_register_00000010,data_length);
+  if (uVar7 == 0) {
+    bVar8 = 1;
   }
   else if (can_transmit_queue_full_flag == 1) {
-    uVar8 = 4;
+    bVar8 = 4;
   }
   else {
-    local_18 = (param_1 & 0x1ffc0000) << 3 | (param_1 & 0x3ffff) << 1 | 0x180000;
-    puVar5 = local_14;
+    local_18 = (can_id & 0x1ffc0000) << 3 | (can_id & 0x3ffff) << 1 | 0x180000;
+    pbVar5 = local_14;
     uVar2 = 0;
-    if (0 < (int)param_2) {
-      puVar3 = (undefined1 *)(param_3 + -1);
-      puVar1 = (undefined1 *)((int)&local_18 + 3);
+    if (0 < (int)uVar7) {
+      pbVar3 = data + -1;
+      pbVar1 = (byte *)((int)&local_18 + 3);
       do {
-        puVar5 = puVar1;
-        puVar3 = puVar3 + 1;
-        puVar1 = puVar5 + 1;
-        *puVar1 = *puVar3;
+        pbVar5 = pbVar1;
+        pbVar3 = pbVar3 + 1;
+        pbVar1 = pbVar5 + 1;
+        *pbVar1 = *pbVar3;
         uVar2 = uVar2 + 1 & 0xff;
-      } while ((int)uVar2 < (int)param_2);
-      puVar5 = puVar5 + 2;
+      } while ((int)uVar2 < (int)uVar7);
+      pbVar5 = pbVar5 + 2;
     }
-    puVar5 = puVar5 + -1;
-    for (; (param_2 & 0xff) < 8; param_2 = (param_2 & 0xff) + 1) {
-      puVar5 = puVar5 + 1;
-      *puVar5 = 0xff;
+    pbVar5 = pbVar5 + -1;
+    for (; (uVar7 & 0xff) < 8; uVar7 = (uVar7 & 0xff) + 1) {
+      pbVar5 = pbVar5 + 1;
+      *pbVar5 = 0xff;
     }
     if ((can_transmit_mailbox_pointer[1] & 0xf0) == 0xc0) {
-      bVar7 = 0;
+      bVar8 = 0;
       puVar6 = &uStack_1a;
       puVar4 = (undefined2 *)(can_transmit_queue_enqueue_pointer + -2);
       do {
         puVar6 = puVar6 + 1;
         puVar4 = puVar4 + 1;
         *puVar4 = *puVar6;
-        bVar7 = bVar7 + 1;
-      } while (bVar7 < 6);
+        bVar8 = bVar8 + 1;
+      } while (bVar8 < 6);
       can_transmit_queue_enqueue_pointer = can_transmit_queue_enqueue_pointer + 0xc;
       if ((undefined *)0x40ad18 < can_transmit_queue_enqueue_pointer) {
         can_transmit_queue_enqueue_pointer = &can_transmit_queue_buffer;
@@ -57615,9 +57614,9 @@ void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined
       cm848_writeCanControllerTxMailbox
                 (&toucan_a,can_tx_mailbox_start_index & 0xff,(word *)&local_18);
     }
-    uVar8 = 0;
+    bVar8 = 0;
   }
-  *param_4 = uVar8;
+  *result = bVar8;
   return;
 }
 
@@ -57627,18 +57626,17 @@ void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined
 // Function: sendJ1939Message @ 0x000539fc
 //
 
-/* WARNING: Unable to use type for symbol message_data_length */
 /* jlaustill reviewed 2026-5-26 - reads nicely, hopefully accurate */
 
 void sendJ1939Message(j1939_tx_msg_t *msg)
 
 {
-  ushort message_data_length;
+  word data_length;
   
-  message_data_length = (msg->header).data_length;
-  if (message_data_length < 9) {
+  data_length = (msg->header).data_length;
+  if (data_length < 9) {
     mpc555_sendJ1939SingleFrame
-              ((msg->header).can_id,message_data_length,msg->data_pointer,msg->status_pointer);
+              ((msg->header).can_id,data_length,msg->data_pointer,msg->status_pointer);
   }
   else {
     initiateJ1939TransportProtocol(msg);
@@ -58838,8 +58836,8 @@ void mpc555_miosSetChannelPwmDuty(mios_mdasm_t *channel_registers,word duty)
 
 {
   undefined4 compare_register_pair;
-  word modulus_start_value;
   word modulus_period_value;
+  word modulus_start_value;
   
   if (duty < 0x6400) {
     if (duty == 0) {
@@ -64882,63 +64880,60 @@ void cm848_sendDataCollectorBuffer(void)
 
 {
   undefined *puVar1;
-  byte *pbVar2;
-  undefined1 *puVar3;
-  undefined *puVar4;
-  uint uVar5;
-  undefined1 *puVar6;
+  j1939_tx_msg_t *msg;
+  undefined1 *puVar2;
+  undefined *puVar3;
+  uint uVar4;
+  undefined1 *puVar5;
   
   puVar1 = data_collector_start_address;
   if ((data_collector_stop_mode_cal == 3) &&
      (data_collector_start_address != data_collector_end_address)) {
     if (data_collector_start_address < data_collector_end_address) {
-      puVar4 = (undefined *)(1 - (int)data_collector_start_address);
+      puVar3 = (undefined *)(1 - (int)data_collector_start_address);
     }
     else {
-      puVar4 = data_collector_buffer_end_address +
+      puVar3 = data_collector_buffer_end_address +
                (-(int)data_collector_start_address - (int)data_collector_buffer_start_address) + 2;
     }
-    puVar4 = data_collector_end_address + (int)puVar4;
-    if (0x20 < ((uint)puVar4 & 0xffff)) {
-      uVar5 = (uint)data_collector_table_entry_count;
-      if (uVar5 == 0) {
-        puVar4 = (undefined *)0x0;
+    puVar3 = data_collector_end_address + (int)puVar3;
+    if (0x20 < ((uint)puVar3 & 0xffff)) {
+      uVar4 = (uint)data_collector_table_entry_count;
+      if (uVar4 == 0) {
+        puVar3 = (undefined *)0x0;
       }
       else {
-        puVar4 = (undefined *)((0x20 / uVar5) * uVar5);
+        puVar3 = (undefined *)((0x20 / uVar4) * uVar4);
       }
     }
-    pbVar2 = (byte *)j1939_selectResponseBuffer((uint)puVar4 & 0xffff);
+    msg = (j1939_tx_msg_t *)j1939_selectResponseBuffer((uint)puVar3 & 0xffff);
     puVar1 = data_collector_start_address;
-    if (pbVar2 != (byte *)0x0) {
-      pbVar2[0] = 0;
-      pbVar2[1] = 0xff;
-      pbVar2[2] = 0xff;
-      pbVar2[3] = 0;
-      *pbVar2 = *pbVar2 & 0xe3 | 0x18;
-      pbVar2[3] = (byte)j1939_source_address;
-      puVar3 = *(undefined1 **)(pbVar2 + 6);
-      puVar6 = data_collector_start_address;
-      for (; ((uint)puVar4 & 0xffff) != 0; puVar4 = puVar4 + 0xffff) {
-        *puVar3 = *puVar6;
-        puVar3 = puVar3 + 1;
-        if (data_collector_end_address == puVar6) {
+    if (msg != (j1939_tx_msg_t *)0x0) {
+      (msg->header).can_id = 0xffff00;
+      *(byte *)&(msg->header).can_id = *(byte *)&(msg->header).can_id & 0xe3 | 0x18;
+      *(char *)((int)&(msg->header).can_id + 3) = (char)j1939_source_address;
+      puVar2 = msg->data_pointer;
+      puVar5 = data_collector_start_address;
+      for (; ((uint)puVar3 & 0xffff) != 0; puVar3 = puVar3 + 0xffff) {
+        *puVar2 = *puVar5;
+        puVar2 = puVar2 + 1;
+        if (data_collector_end_address == puVar5) {
           data_collector_buffer_has_data_flag = 0;
           break;
         }
-        puVar6 = puVar6 + 1;
-        if (data_collector_buffer_end_address < puVar6) {
-          puVar6 = data_collector_buffer_start_address;
+        puVar5 = puVar5 + 1;
+        if (data_collector_buffer_end_address < puVar5) {
+          puVar5 = data_collector_buffer_start_address;
         }
       }
-      initiateJ1939TransportProtocol(pbVar2);
+      initiateJ1939TransportProtocol(msg);
       puVar1 = data_collector_start_address;
-      if (**(char **)(pbVar2 + 10) == '\x10') {
+      if (*msg->status_pointer == '\x10') {
         do {
           cm848_sendJ1939BroadcastDataPacket(0);
-        } while (**(char **)(pbVar2 + 10) == '\x11');
-        puVar1 = puVar6;
-        if (**(char **)(pbVar2 + 10) != '\x05') {
+        } while (*msg->status_pointer == '\x11');
+        puVar1 = puVar5;
+        if (*msg->status_pointer != '\x05') {
           cm848_resetDataCollector();
           puVar1 = data_collector_start_address;
         }
@@ -69959,13 +69954,13 @@ undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1)
 {
   char cVar2;
   undefined4 uVar1;
-  undefined1 auStack_28 [4];
+  byte abStack_28 [4];
   undefined2 local_24;
   undefined1 local_20;
   undefined1 local_1f;
   undefined1 local_1e;
   undefined1 local_1d;
-  undefined1 local_1c;
+  byte local_1c;
   undefined1 local_1b;
   undefined1 local_1a;
   undefined1 local_19;
@@ -69974,7 +69969,7 @@ undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1)
   undefined1 local_16;
   undefined4 local_14;
   undefined2 local_10;
-  undefined1 *local_e;
+  byte *local_e;
   
   local_24 = *(undefined2 *)(*(int *)(param_1 + 6) + 1);
   cVar2 = cm848_lookupParameterIdAddress(local_24,&local_20);
@@ -69990,7 +69985,7 @@ undefined4 j1939_diagService65_getAddressByParameterId(byte *param_1)
     local_18 = local_1f;
     local_17 = local_1e;
     local_16 = local_1d;
-    mpc555_sendJ1939SingleFrame(local_14,7,local_e,auStack_28);
+    mpc555_sendJ1939SingleFrame(local_14,7,local_e,abStack_28);
     uVar1 = 0xff;
   }
   else {
@@ -70260,123 +70255,130 @@ void j1939_diag_request_batch_43to48(void)
 // Function: initiateJ1939TransportProtocol @ 0x0050c8ec
 //
 
-void initiateJ1939TransportProtocol(uint *param_1)
+void initiateJ1939TransportProtocol(j1939_tx_msg_t *msg)
 
 {
-  byte bVar1;
+  ushort *puVar1;
   byte bVar2;
-  ushort uVar3;
-  dword dVar4;
+  byte bVar3;
+  ushort uVar4;
   word wVar6;
   byte *pbVar5;
-  j1939_broadcast_transmit_session_t *pjVar7;
+  ushort uVar7;
+  j1939_broadcast_transmit_session_t *pjVar8;
   byte local_18;
   byte local_14;
   byte bStack_13;
   
-  dVar4 = j1939_multiframe_tx_buf_ptr;
-  bVar1 = *(byte *)((int)param_1 + 1);
-  bVar2 = *(byte *)((int)param_1 + 2);
-  uVar3 = *(ushort *)((int)param_1 + 1);
-  local_18 = (byte)(uVar3 >> 8);
-  if ((bVar1 < 0xf0) && (bVar2 != 0xff)) {
+  pbVar5 = j1939_transport_transmit_session.transmit_frame_pointer;
+  puVar1 = (ushort *)((int)&(msg->header).can_id + 1);
+  bVar2 = *(byte *)puVar1;
+  bVar3 = *(byte *)((int)&(msg->header).can_id + 2);
+  uVar4 = *puVar1;
+  uVar7 = (ushort)(byte)(msg->header).can_id;
+  local_18 = (byte)(uVar4 >> 8);
+  if ((bVar2 < 0xf0) && (bVar3 != 0xff)) {
     if (j1939_multiframe_tx_active == 0) {
       j1939_multiframe_tx_active = 1;
-      j1939_multiframe_tx_dest_addr_word = uVar3 & 0xff00;
-      j1939_multiframe_tx_total_bytes = *(word *)(param_1 + 1);
-      j1939_multiframe_tx_total_packets = (char)((int)(j1939_multiframe_tx_total_bytes - 1) / 7) + 1
-      ;
-      j1939_multiframe_tx_packets_remaining = 0;
-      PTR_DAT_003fbdcf = *(undefined **)((int)param_1 + 6);
-      j1939_multiframe_tx_can_header = *param_1 & 0xff00ffff | 0xec0000;
-      j1939_multiframe_tx_frame_len = 8;
-      j1939_multiframe_tx_cts_timeout = 0x37;
-      j1939_multiframe_tx_status_ptr = *(dword *)((int)param_1 + 10);
-      j1939_multiframe_tx_destination_address = bVar2;
-      *(undefined1 *)j1939_multiframe_tx_buf_ptr = 0x10;
-      wVar6 = j1939_multiframe_tx_total_bytes;
-      bStack_13 = (byte)j1939_multiframe_tx_total_bytes;
-      *(byte *)(dVar4 + 1) = bStack_13;
+      j1939_transport_transmit_session.transported_pgn = uVar4 & 0xff00;
+      j1939_transport_transmit_session.message_size = (msg->header).data_length;
+      j1939_transport_transmit_session.total_packet_count =
+           (char)((int)(j1939_transport_transmit_session.message_size - 1) / 7) + 1;
+      j1939_transport_transmit_session.granted_packet_count = 0;
+      j1939_transport_transmit_session.message_data_pointer = msg->data_pointer;
+      j1939_transport_transmit_session.frame_can_id = (msg->header).can_id & 0xff00ffff | 0xec0000;
+      j1939_transport_transmit_session.frame_data_length = 8;
+      j1939_transport_transmit_session.timeout_timer = 0x37;
+      j1939_transport_transmit_session.session_status_pointer = msg->status_pointer;
+      j1939_multiframe_tx_destination_address = bVar3;
+      *j1939_transport_transmit_session.transmit_frame_pointer = 0x10;
+      wVar6 = j1939_transport_transmit_session.message_size;
+      bStack_13 = (byte)j1939_transport_transmit_session.message_size;
+      pbVar5[1] = bStack_13;
       local_14 = (byte)(wVar6 >> 8);
-      *(byte *)(dVar4 + 2) = local_14;
-      *(byte *)(dVar4 + 3) = j1939_multiframe_tx_total_packets;
-      *(undefined1 *)(dVar4 + 4) = 0xff;
-      *(undefined1 *)(dVar4 + 5) = 0;
-      *(byte *)(dVar4 + 6) = local_18;
-      *(undefined1 *)(dVar4 + 7) = 0;
+      pbVar5[2] = local_14;
+      pbVar5[3] = j1939_transport_transmit_session.total_packet_count;
+      pbVar5[4] = 0xff;
+      pbVar5[5] = 0;
+      pbVar5[6] = local_18;
+      pbVar5[7] = 0;
       mpc555_sendJ1939SingleFrame
-                (j1939_multiframe_tx_can_header,j1939_multiframe_tx_frame_len,
-                 j1939_multiframe_tx_buf_ptr,&j1939_multiframe_tx_send_result);
-      if (j1939_multiframe_tx_send_result == 0) {
-        *(undefined1 *)j1939_multiframe_tx_status_ptr = 0x12;
-        j1939_multiframe_tx_can_header = *param_1 & 0xff00ffff | 0xeb0000;
+                (j1939_transport_transmit_session.frame_can_id,
+                 j1939_transport_transmit_session.frame_data_length,
+                 j1939_transport_transmit_session.transmit_frame_pointer,
+                 &j1939_transport_transmit_session.frame_queue_status);
+      if (j1939_transport_transmit_session.frame_queue_status == 0) {
+        *j1939_transport_transmit_session.session_status_pointer = 0x12;
+        j1939_transport_transmit_session.frame_can_id = (msg->header).can_id & 0xff00ffff | 0xeb0000
+        ;
       }
       else {
-        *(byte *)j1939_multiframe_tx_status_ptr = j1939_multiframe_tx_send_result;
+        *j1939_transport_transmit_session.session_status_pointer =
+             j1939_transport_transmit_session.frame_queue_status;
         j1939_multiframe_tx_active = 0;
       }
     }
     else {
-      **(undefined1 **)((int)param_1 + 10) = 8;
+      *msg->status_pointer = 8;
     }
   }
   else {
-    if (j1939_source_address == (byte)*param_1) {
-      pjVar7 = j1939_broadcast_transmit_sessions;
+    if (j1939_source_address == uVar7) {
+      pjVar8 = j1939_broadcast_transmit_sessions;
     }
     else {
-      if (j1939_engine_retarder_source_address != (byte)*param_1) {
-        **(undefined1 **)((int)param_1 + 10) = 3;
+      if (j1939_engine_retarder_source_address != uVar7) {
+        *msg->status_pointer = 3;
         return;
       }
-      pjVar7 = j1939_broadcast_transmit_sessions + 1;
+      pjVar8 = j1939_broadcast_transmit_sessions + 1;
     }
-    if (pjVar7->active == 1) {
-      **(undefined1 **)((int)param_1 + 10) = 2;
+    if (pjVar8->active == 1) {
+      *msg->status_pointer = 2;
     }
     else {
-      if ((bVar1 == 0xff) && (bVar2 == 0xff)) {
+      if ((bVar2 == 0xff) && (bVar3 == 0xff)) {
         j1939_broadcast_no_packet_delay_flag = 1;
       }
-      pjVar7->active = 1;
-      uVar3 = *(ushort *)(param_1 + 1);
-      pjVar7->message_size = uVar3;
-      pjVar7->total_packet_count = (char)((int)(uVar3 - 1) / 7) + 1;
-      pjVar7->next_packet_number = 1;
-      pjVar7->next_data_byte_number = 1;
-      pjVar7->message_data_pointer = *(byte **)((int)param_1 + 6);
-      pjVar7->frame_can_id = *param_1 & 0xff0000ff | 0xecff00;
-      pjVar7->frame_data_length = 8;
+      pjVar8->active = 1;
+      uVar4 = (msg->header).data_length;
+      pjVar8->message_size = uVar4;
+      pjVar8->total_packet_count = (char)((int)(uVar4 - 1) / 7) + 1;
+      pjVar8->next_packet_number = 1;
+      pjVar8->next_data_byte_number = 1;
+      pjVar8->message_data_pointer = msg->data_pointer;
+      pjVar8->frame_can_id = (msg->header).can_id & 0xff0000ff | 0xecff00;
+      pjVar8->frame_data_length = 8;
       if (j1939_broadcast_no_packet_delay_flag == 0) {
         wVar6 = 5;
       }
       else {
         wVar6 = 0;
       }
-      pjVar7->packet_delay_timer = wVar6;
-      pjVar7->session_status_pointer = *(byte **)((int)param_1 + 10);
-      pbVar5 = pjVar7->transmit_frame_pointer;
+      pjVar8->packet_delay_timer = wVar6;
+      pjVar8->session_status_pointer = msg->status_pointer;
+      pbVar5 = pjVar8->transmit_frame_pointer;
       *pbVar5 = 0x20;
-      wVar6 = pjVar7->message_size;
+      wVar6 = pjVar8->message_size;
       bStack_13 = (byte)wVar6;
       pbVar5[1] = bStack_13;
       local_14 = (byte)(wVar6 >> 8);
       pbVar5[2] = local_14;
-      pbVar5[3] = pjVar7->total_packet_count;
+      pbVar5[3] = pjVar8->total_packet_count;
       pbVar5[4] = 0xff;
-      pbVar5[5] = bVar2;
+      pbVar5[5] = bVar3;
       pbVar5[6] = local_18;
       pbVar5[7] = 0;
       mpc555_sendJ1939SingleFrame
-                (pjVar7->frame_can_id,pjVar7->frame_data_length,pjVar7->transmit_frame_pointer,
-                 &pjVar7->frame_queue_status);
-      if (pjVar7->frame_queue_status == 0) {
-        *pjVar7->session_status_pointer = 0x10;
-        pjVar7->frame_can_id = *param_1 & 0xff0000ff | 0xebff00;
+                (pjVar8->frame_can_id,pjVar8->frame_data_length,pjVar8->transmit_frame_pointer,
+                 &pjVar8->frame_queue_status);
+      if (pjVar8->frame_queue_status == 0) {
+        *pjVar8->session_status_pointer = 0x10;
+        pjVar8->frame_can_id = (msg->header).can_id & 0xff0000ff | 0xebff00;
       }
       else {
-        *pjVar7->session_status_pointer = pjVar7->frame_queue_status;
-        pjVar7->active = 0;
+        *pjVar8->session_status_pointer = pjVar8->frame_queue_status;
+        pjVar8->active = 0;
         j1939_broadcast_no_packet_delay_flag = 0;
       }
     }
@@ -70405,17 +70407,19 @@ void j1939_transport_handleClearToSend(int param_1)
   local_8 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
   if ((((j1939_multiframe_tx_active == 1) &&
        (j1939_multiframe_tx_destination_address == *(byte *)(param_1 + 3))) &&
-      ((uint)bVar1 <= (uint)j1939_multiframe_tx_total_packets)) &&
-     (local_8 == j1939_multiframe_tx_dest_addr_word)) {
+      ((uint)bVar1 <= (uint)j1939_transport_transmit_session.total_packet_count)) &&
+     (local_8 == j1939_transport_transmit_session.transported_pgn)) {
     bVar2 = *(byte *)(*(int *)(param_1 + 6) + 1);
     if (bVar2 == 0) {
-      j1939_multiframe_tx_cts_timeout = 0x37;
+      j1939_transport_transmit_session.timeout_timer = 0x37;
     }
     else {
-      j1939_multiframe_tx_cts_start_packet = bVar1;
-      j1939_multiframe_tx_packets_remaining = bVar2;
-      if ((int)(uint)j1939_multiframe_tx_total_packets < (int)((uint)bVar1 + (uint)bVar2 + -1)) {
-        j1939_multiframe_tx_packets_remaining = (j1939_multiframe_tx_total_packets - bVar1) + 1;
+      j1939_transport_transmit_session.next_packet_number = bVar1;
+      j1939_transport_transmit_session.granted_packet_count = bVar2;
+      if ((int)(uint)j1939_transport_transmit_session.total_packet_count <
+          (int)((uint)bVar1 + (uint)bVar2 + -1)) {
+        j1939_transport_transmit_session.granted_packet_count =
+             (j1939_transport_transmit_session.total_packet_count - bVar1) + 1;
       }
     }
   }
@@ -70435,35 +70439,35 @@ void j1939_transport_handleClearToSend(int param_1)
 void j1939_transport_sendAbort(undefined1 param_1,undefined2 param_2)
 
 {
-  undefined1 *puVar1;
-  undefined1 *puVar2;
+  byte *pbVar1;
+  byte *pbVar2;
   byte bVar3;
-  undefined1 auStack_20 [4];
+  byte abStack_20 [4];
   undefined2 local_1c;
-  undefined1 local_18;
-  undefined1 local_17 [7];
+  byte local_18;
+  byte local_17 [7];
   undefined4 local_10;
-  undefined2 local_c;
-  undefined1 *local_a;
+  word local_c;
+  byte *local_a;
   
   local_10 = CONCAT31(CONCAT21(0x18ec,param_1),(char)j1939_source_address);
   local_c = 8;
   local_a = &local_18;
   local_18 = 0xff;
   bVar3 = 0;
-  puVar1 = local_a;
+  pbVar1 = local_a;
   do {
-    puVar2 = puVar1;
-    puVar2[1] = 0xff;
+    pbVar2 = pbVar1;
+    pbVar2[1] = 0xff;
     bVar3 = bVar3 + 1;
-    puVar1 = puVar2 + 1;
+    pbVar1 = pbVar2 + 1;
   } while (bVar3 < 4);
-  puVar2[2] = 0;
-  local_1c._0_1_ = (undefined1)((ushort)param_2 >> 8);
-  puVar2[3] = local_1c._0_1_;
-  puVar2[4] = 0;
+  pbVar2[2] = 0;
+  local_1c._0_1_ = (byte)((ushort)param_2 >> 8);
+  pbVar2[3] = local_1c._0_1_;
+  pbVar2[4] = 0;
   local_1c = param_2;
-  mpc555_sendJ1939SingleFrame(local_10,local_c,local_a,auStack_20);
+  mpc555_sendJ1939SingleFrame(local_10,local_c,local_a,abStack_20);
   return;
 }
 
@@ -70480,10 +70484,10 @@ void j1939_transport_sendEndOfMessageAcknowledge(undefined1 param_1,undefined2 p
 
 {
   word wVar1;
-  undefined1 auStack_28 [4];
+  byte abStack_28 [4];
   undefined2 local_24;
   undefined2 local_20;
-  undefined1 local_1c;
+  byte local_1c;
   undefined1 local_1b;
   undefined1 local_1a;
   byte local_19;
@@ -70493,7 +70497,7 @@ void j1939_transport_sendEndOfMessageAcknowledge(undefined1 param_1,undefined2 p
   undefined1 local_15;
   undefined4 local_14;
   undefined2 local_10;
-  undefined1 *local_e;
+  byte *local_e;
   
   local_14 = CONCAT31(CONCAT21(0x18ec,param_1),(char)j1939_source_address);
   local_10 = 8;
@@ -70513,7 +70517,7 @@ void j1939_transport_sendEndOfMessageAcknowledge(undefined1 param_1,undefined2 p
   local_15 = 0;
   local_24 = wVar1;
   local_20 = param_2;
-  mpc555_sendJ1939SingleFrame(local_14,8,local_e,auStack_28);
+  mpc555_sendJ1939SingleFrame(local_14,8,local_e,abStack_28);
   return;
 }
 
@@ -70526,14 +70530,13 @@ void j1939_transport_sendEndOfMessageAcknowledge(undefined1 param_1,undefined2 p
 /* Application J1939 transport: sends TP.CM 0x11 (packets allowed / next packet / FF FF / PGN) |
    review-function-readability reviewed 2026-11-11 - Readability Medium Accuracy Confidence High */
 
-undefined1
-j1939_transport_sendClearToSend
-          (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
+byte j1939_transport_sendClearToSend
+               (undefined1 param_1,undefined1 param_2,undefined1 param_3,undefined2 param_4)
 
 {
-  undefined1 local_20 [4];
+  byte local_20 [4];
   undefined2 local_1c;
-  undefined1 local_18;
+  byte local_18;
   undefined1 local_17;
   undefined1 local_16;
   undefined1 local_15;
@@ -70543,7 +70546,7 @@ j1939_transport_sendClearToSend
   undefined1 local_11;
   undefined4 local_10;
   undefined2 local_c;
-  undefined1 *local_a;
+  byte *local_a;
   
   local_10 = CONCAT31(CONCAT21(0x18ec,param_1),(char)j1939_source_address);
   local_c = 8;
@@ -70710,8 +70713,8 @@ void j1939_transport_handleEndOfMessageAcknowledge(int param_1)
   if ((j1939_multiframe_tx_active == 1) &&
      (j1939_multiframe_tx_destination_address == *(byte *)(param_1 + 3))) {
     local_8 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
-    if (local_8 == j1939_multiframe_tx_dest_addr_word) {
-      *(undefined1 *)j1939_multiframe_tx_status_ptr = 9;
+    if (local_8 == j1939_transport_transmit_session.transported_pgn) {
+      *j1939_transport_transmit_session.session_status_pointer = 9;
       j1939_multiframe_tx_active = 0;
     }
   }
@@ -70736,8 +70739,8 @@ void j1939_transport_handleAbort(int param_1)
   local_8 = (ushort)*(byte *)(*(int *)(param_1 + 6) + 6) << 8;
   if (((j1939_multiframe_tx_active == 1) &&
       (j1939_multiframe_tx_destination_address == *(byte *)(param_1 + 3))) &&
-     (local_8 == j1939_multiframe_tx_dest_addr_word)) {
-    *(undefined1 *)j1939_multiframe_tx_status_ptr = 10;
+     (local_8 == j1939_transport_transmit_session.transported_pgn)) {
+    *j1939_transport_transmit_session.session_status_pointer = 10;
     j1939_multiframe_tx_active = 0;
   }
   else if (((j1939_multiframe_rx_active == 1) &&
@@ -70848,7 +70851,7 @@ void cm848_sendJ1939BroadcastDataPacket(int param_1)
               (j1939_broadcast_transmit_sessions[param_1].frame_can_id,
                j1939_broadcast_transmit_sessions[param_1].frame_data_length,
                j1939_broadcast_transmit_sessions[param_1].transmit_frame_pointer,
-               param_1 * 0x20 + 0x3fbd7b);
+               &j1939_broadcast_transmit_sessions[param_1].frame_queue_status);
     if (j1939_broadcast_transmit_sessions[param_1].frame_queue_status == 0) {
       if (pjVar8->active == 1) {
         *j1939_broadcast_transmit_sessions[param_1].session_status_pointer = 0x11;
@@ -70885,77 +70888,81 @@ void cm848_sendJ1939BroadcastDataPacket(int param_1)
 void cm848_sendJ1939ConnectionModeDataPackets(void)
 
 {
-  undefined1 *puVar1;
-  undefined1 *puVar2;
+  byte *pbVar1;
+  byte *pbVar2;
   uint uVar3;
   uint uVar4;
   uint uVar5;
   int iVar6;
   byte bVar7;
   byte bVar8;
-  undefined1 uVar9;
-  undefined1 *puVar10;
+  byte *pbVar9;
   
-  bVar7 = j1939_multiframe_tx_packets_remaining;
-  if (j1939_multiframe_tx_packets_remaining == 0) {
-    if (j1939_multiframe_tx_cts_timeout == 0) {
-      uVar9 = 6;
+  bVar8 = j1939_transport_transmit_session.granted_packet_count;
+  if (j1939_transport_transmit_session.granted_packet_count == 0) {
+    if (j1939_transport_transmit_session.timeout_timer == 0) {
+      bVar8 = 6;
 LAB_0050d5a0:
-      *(undefined1 *)j1939_multiframe_tx_status_ptr = uVar9;
+      *j1939_transport_transmit_session.session_status_pointer = bVar8;
       j1939_multiframe_tx_active = 0;
     }
     else {
-      j1939_multiframe_tx_cts_timeout = j1939_multiframe_tx_cts_timeout - 1;
+      j1939_transport_transmit_session.timeout_timer =
+           j1939_transport_transmit_session.timeout_timer - 1;
     }
   }
   else {
-    uVar3 = (uint)j1939_multiframe_tx_cts_start_packet;
-    if (j1939_multiframe_tx_packets_remaining < 0xb) {
-      j1939_multiframe_tx_packets_remaining = 0;
-      j1939_multiframe_tx_cts_timeout = 0x70;
+    uVar3 = (uint)j1939_transport_transmit_session.next_packet_number;
+    if (j1939_transport_transmit_session.granted_packet_count < 0xb) {
+      j1939_transport_transmit_session.granted_packet_count = 0;
+      j1939_transport_transmit_session.timeout_timer = 0x70;
     }
     else {
-      bVar7 = 10;
-      j1939_multiframe_tx_cts_start_packet = j1939_multiframe_tx_cts_start_packet + 10;
-      j1939_multiframe_tx_packets_remaining = j1939_multiframe_tx_packets_remaining - 10;
+      bVar8 = 10;
+      j1939_transport_transmit_session.next_packet_number =
+           j1939_transport_transmit_session.next_packet_number + 10;
+      j1939_transport_transmit_session.granted_packet_count =
+           j1939_transport_transmit_session.granted_packet_count - 10;
     }
-    puVar10 = PTR_DAT_003fbdcf + uVar3 * 7 + -7;
-    bVar8 = 0;
-    if (bVar7 != 0) {
+    pbVar9 = j1939_transport_transmit_session.message_data_pointer + uVar3 * 7 + -7;
+    bVar7 = 0;
+    if (bVar8 != 0) {
       do {
-        puVar2 = (undefined1 *)j1939_multiframe_tx_buf_ptr;
-        if (j1939_multiframe_tx_total_packets == uVar3) {
-          uVar5 = ((uint)j1939_multiframe_tx_total_bytes - (uVar3 * 7 + 0xf9)) + 1;
-          j1939_multiframe_tx_frame_len = (ushort)uVar5 & 0xff;
+        pbVar2 = j1939_transport_transmit_session.transmit_frame_pointer;
+        if (j1939_transport_transmit_session.total_packet_count == uVar3) {
+          uVar5 = ((uint)j1939_transport_transmit_session.message_size - (uVar3 * 7 + 0xf9)) + 1;
+          j1939_transport_transmit_session.frame_data_length = (ushort)uVar5 & 0xff;
         }
         else {
           uVar5 = 8;
         }
-        *(char *)j1939_multiframe_tx_buf_ptr = (char)uVar3;
+        *j1939_transport_transmit_session.transmit_frame_pointer = (byte)uVar3;
         uVar3 = uVar3 + 1 & 0xff;
         uVar4 = 0;
         iVar6 = (uVar5 & 0xff) - 1;
         if (0 < iVar6) {
-          puVar1 = puVar10 + -1;
+          pbVar1 = pbVar9 + -1;
           do {
-            puVar10 = puVar1;
-            puVar1 = puVar10 + 1;
-            puVar2 = puVar2 + 1;
-            *puVar2 = *puVar1;
+            pbVar9 = pbVar1;
+            pbVar1 = pbVar9 + 1;
+            pbVar2 = pbVar2 + 1;
+            *pbVar2 = *pbVar1;
             uVar4 = uVar4 + 1 & 0xff;
           } while ((int)uVar4 < iVar6);
-          puVar10 = puVar10 + 2;
+          pbVar9 = pbVar9 + 2;
         }
         mpc555_sendJ1939SingleFrame
-                  (j1939_multiframe_tx_can_header,j1939_multiframe_tx_frame_len,
-                   j1939_multiframe_tx_buf_ptr,&j1939_multiframe_tx_send_result);
-        if (j1939_multiframe_tx_send_result != 0) {
-          uVar9 = 7;
+                  (j1939_transport_transmit_session.frame_can_id,
+                   j1939_transport_transmit_session.frame_data_length,
+                   j1939_transport_transmit_session.transmit_frame_pointer,
+                   &j1939_transport_transmit_session.frame_queue_status);
+        if (j1939_transport_transmit_session.frame_queue_status != 0) {
+          bVar8 = 7;
           goto LAB_0050d5a0;
         }
-        *(undefined1 *)j1939_multiframe_tx_status_ptr = 0x13;
-        bVar8 = bVar8 + 1;
-      } while (bVar8 < bVar7);
+        *j1939_transport_transmit_session.session_status_pointer = 0x13;
+        bVar7 = bVar7 + 1;
+      } while (bVar7 < bVar8);
     }
   }
   return;
@@ -71057,7 +71064,7 @@ void cm848_initializeJ1939Transport(void)
        j1939_broadcast_transmit_frame_buffer_0;
   j1939_broadcast_transmit_sessions[1].transmit_frame_pointer =
        j1939_broadcast_transmit_frame_buffer_1;
-  j1939_multiframe_tx_buf_ptr = (dword)&DAT_003fbde7;
+  j1939_transport_transmit_session.transmit_frame_pointer = j1939_transport_transmit_frame_buffer;
   j1939_multiframe_rx_data_buf_ptr = &DAT_003fbe09;
   j1939_handlerInitializer(0xec00,j1939_transport_dispatchConnectionManagement);
   j1939_handlerInitializer(0xeb00,j1939_transport_handleDataPacket);

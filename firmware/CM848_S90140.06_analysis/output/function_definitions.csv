@@ -506,3 +506,9 @@ function_address,function_name,param_index,name,type,comment
 0x00027bc4,cm848_formatNumberAsDecimalText,0,number,byte*,the number: 4 bytes read as one value (or one by one in the digit count 1 mode); byte* because every caller passes a byte address
 0x00027bc4,cm848_formatNumberAsDecimalText,1,text,byte*,the text buffer; the digits are written backwards from text + digit_count - 1
 0x00027bc4,cm848_formatNumberAsDecimalText,2,digit_count,int32_t,the digit count (the callers use 8); 1 selects two digits per byte
+# The application J1939 transport's senders (PR #53 round 34)
+0x0050c8ec,initiateJ1939TransportProtocol,0,msg,j1939_tx_msg_t*,the transmit descriptor of a message longer than 8 bytes (from sendJ1939Message)
+0x00053858,mpc555_sendJ1939SingleFrame,0,can_id,dword,the 29-bit identifier (priority / PGN / source address)
+0x00053858,mpc555_sendJ1939SingleFrame,1,data_length,ushort,the data bytes (padded to 8 with 0xff); ushort because every caller passes a 16-bit length
+0x00053858,mpc555_sendJ1939SingleFrame,2,data,byte*,the data
+0x00053858,mpc555_sendJ1939SingleFrame,3,result,byte*,where the result goes: 0 queued / 1 zero length / 4 CAN transmit queue full
