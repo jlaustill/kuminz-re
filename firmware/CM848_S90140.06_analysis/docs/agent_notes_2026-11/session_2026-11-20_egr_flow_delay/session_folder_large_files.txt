@@ -130,6 +130,8 @@
  1072739 e2m_audit_round17a.csv
  1072859 e2m_audit_round18b.csv
  1072915 e2m_audit_round19a.csv
+ 2753025 pre_r24e_globals.csv
+  330882 pre_r24e_structs.csv
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log

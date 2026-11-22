@@ -1425,8 +1425,29 @@ rows, with round 6's checks.
   - The kernel's response messages: `cm848_allocateDiagnosticResponseBuffer` returns 0x303056 / 0x303047, two 14-byte
     message records. Their last dword points at a status byte, not a data end, so check the type before using
     `j1939_tx_msg_t`.
-  - `j1939_can_ring_buf._pad16` byte 0 is the CAN transmit queue's full flag (`mpc555_canTransmitQueuePush` returns 4
-    on it).
+  - `j1939_can_ring_buf._pad16` byte 0 is the CAN transmit ring's full flag: `mpc555_canTransmitQueuePush` sets it
+    when its write pointer reaches the read pointer and returns 4 while it is set. Byte 1 is the receive ring's.
+    Both bytes still render as pieces.
+  - The `PROTECTION_OVERRIDE` enum (enums.csv, 0x7e / 0x7f named after their ASCII glyphs) is applied nowhere.
+    `transmission_selected_gear` holds the J1939 SPN 524 coding (0x7E 1st / 0x7F 2nd ...). Since byte enums
+    render, a `TRANSMISSION_SELECTED_GEAR` enum on it, `transmission_selected_gear_previous` and
+    `j1939_powertrain_control_state.etc2_transmission_selected_gear` would replace the junk one.
+  - Four e2m 1966 words have no row: 0x40bdc8-0x40bdce, the fuel and rail pressure sensor values and defaults.
+    Nothing ties the 'Fuel_Press' value to the fuel delivery pressure channel yet.
+  - Three dotted alias families keep a stale instance label: `adc_trigger_t_003024f4.*`,
+    `j1939_cruise_state_t_003fee00.*` and `protection_b_state_t_003feebc.*`. Their base addresses carry flat
+    names now. Check whether those struct types still exist.
+  - Stage A read only its REVIEW set. Not read: the 209 hits it kept as history (classified by the words around
+    them) and 29 left for review, which are dotted names, own-label openings, rename arrows and '#' lines.
+    `classify_labels.py` reproduces the sets.
+  - Still named with their Ghidra labels: `diag_buf_a_ctrl_t_0030305a` / `diag_buf_b_ctrl_t_0030304b` (the
+    kernel response messages), `diag_clear_flags_t_003fedfc`, `scheduler_task_stat_t_0040be6a` and
+    `toucan_a_mb1_t_00307090` (the TouCAN map). The two `BYTE_` holds stay on purpose.
+  - Claims checked by the raw lis scan, in permissive mode:
+    - the reflash transfer state (33 kernel + 9 boot accesses) and the boot SCI session (12 + 28) have no
+      application access;
+    - the fault arrays have 718 application accesses and none from boot or kernel code;
+    - only one instruction forms 0x3fa6fc.
   - e2m 1036's two records at +0x64 (EGA / VGA valve over-temperature) fall on the registered array's word 0 here.
     This is 11.45-vs-11.46 drift, or registered bits.
   - `fault_definition_t.definition_flags` bit 0x2000 is clear in every slot, and the J1587 counts are its only test.

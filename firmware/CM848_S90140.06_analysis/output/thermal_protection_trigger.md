@@ -60,7 +60,7 @@ while actively fueling — a sustained-overtemperature, debounced condition, not
 The debounce counters act as the software "thermal mass": transients decay (reset path), sustained
 heat latches.
 
-## `system_status_flags_t_003fe974` safety-bit map (this firmware)
+## `fault_detected_cal` (was `system_status_flags_t_003fe974`) safety-bit map (this firmware)
 
 The protection-engage gate (`checkSafetyConditionsForProtection`) ORs these — but only some are
 ever *set* in this calibration:
