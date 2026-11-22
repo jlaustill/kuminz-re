@@ -19,6 +19,8 @@
   200714 build19.log
   200713 build20.log
   200713 build21.log
+  104459 build_cm550_base.log
+  104456 build_cm550_change.log
   200714 build_r5a.log
   104231 build_r5a_cm550.log
   200728 build_r5b.log
@@ -103,6 +105,13 @@
   200904 build_r20d.log
   200908 build_r20e.log
   200908 build_r20f.log
+  200908 build_r21a.log
+  200902 build_r21a2.log
+  200902 build_r21b.log
+  200906 build_r21b2.log
+  201031 build_r21c.log
+  201029 build_r21d.log
+  200903 build_r21_pilot.log
    23475 cm848_runCruiseAndRoadSpeedGovernor_round16.asm
  1071916 e2m_audit_round16a.csv
  1072739 e2m_audit_round17a.csv
@@ -136,3 +145,4 @@
   402126 verify_round18.log
   402131 verify_round19.log
   402122 verify_round20.log
+  402384 verify_round21.log

@@ -1198,6 +1198,57 @@ Scripts are in `session_folder/round20/`.
   - The PGN 65269 ambient air temperature bytes (`DAT_003faac5`) are unnamed.
   - The length word's 70 does not match the block's 90 bytes.
 
+## Done, round 21 (2026-11-22, same PR; the relayed "keep going" again): the engine protection module
+
+Scripts are in `session_folder/round21/`.
+- **The module:** the engine protection feature (the e2m's 'EPF') runs as five round-robin tasks of
+  `cm848_runFaultDerateScheduler`. Its per-channel data sits in three e2m blocks, and the channel loops step through
+  each with the block's size as the stride: the configuration (112E, ROM), the state (1152, RAM) and the history (1143,
+  EEPROM). This build has one channel, fuel temperature.
+- **Stage A (75178dc, types):** `engine_protection_channel_configuration_t` / `_state_t` / `_history_t` (36 / 62 / 30
+  bytes), the instances `fuel_temperature_engine_protection_configuration` / `_state` / `_history_cal`, and full
+  prototypes for the five helpers that take them as parameters. The 62-byte state has 4-byte fields at 2-mod-4
+  offsets. A pilot build of it alone showed the importer places fields at running offsets, and the loops step `+ 1`.
+- **Stage B (756f2e0, types):**
+  - the fault log: `engine_protection_fault_log_entry_t` (occurrence time = `key_on_hour_meter`, extreme value,
+    duration) and the two EEPROM logs (e2m 10DA, 5 entries each);
+  - the state's current-entry copies and log pointers;
+  - the fault-log loop's three current-channel pointers;
+  - the fix for stage A's five `i16` fields (see Methods).
+- **Stage C (093c501, label-only):** 11 functions and 9 words:
+  - the helpers, by what they do: the severity ramp, the threshold test, the restart indexes and limitation, the
+    shutdown time count;
+  - the loops: the over-limit durations, the restart severity, the fault logs;
+  - the log helpers, which open and close an entry;
+  - `hpcr_initializeEngineProtection` (was `hpcr_initFuelTemperatureSensorChannel`). Task 025 kept the old name
+    because the channel it sets up is fuel temperature, and noted 'SensorChannel overclaims'. All its calls
+    initialize engine protection: the derate limits, the start sequence, the protection mode, the precrank error and
+    the task index;
+  - the working words that were `governor_faultDerate_*` / `fault_channel_*`;
+  - the override lamp flag (e2m 10B1 +19).
+- **Stage D (cc49e74, tooling):** `ApplyStructures.java` maps `i16` / `sword` to short and warns when a field type is
+  unknown; such a field used to become byte without a word. CM550 and CM848 build identical before and after.
+- **Methods:**
+  - `structure_definitions.csv` field types: the importer knows byte / word / dword / short / ushort / int / uint /
+    pointer, `T*`, and the struct and enum names. Until stage D an unknown name became a byte array without a word:
+    `i16`, which `global_variables.csv` uses, did. The decompiler then rendered array decays and odd computed-offset
+    bases. `struct_type_fallbacks.py` lists such fields.
+  - A struct stage's gate has three parts:
+    - known access sites per struct, so a shifted layout fails them;
+    - the changed functions stay inside the predicted set once the instance fields are rewritten back to the flat
+      names;
+    - the artifact counts (pieces, `extraout_`, `unaff_`, `in_r`) do not grow.
+    Stage A's sites had no `i16` field, which is how its defect got through. Include one field of every type.
+  - Pilot a struct with misaligned 4-byte fields alone before writing the rest.
+- **Round 21 leads:**
+  - The configuration flags word (+0) is tested at 0x1 / 0x2 / 0x4 / 0x8 / 0x10 / 0x20 / 0x40 / 0x100-0x800 / 0x1000.
+    It has no e2m bit records, so a bitfield needs each bit named from the code.
+  - `DAT_0040a78c` is cleared with the lamp flag. The module also has other unnamed working words (`DAT_003fbd20`-`26`,
+    `3a`, `4e`-`58`). `governor_faultDerate_channel_bit` / `_lookup_interp_state` and their users
+    (`engine_protection_derateParam_priorityApply`, `fault_initBitwiseTimerMask`,
+    `governor_calculateIntegratorRpmOutput`) are still guesses.
+  - e2m 10DA's engine overspeed error log (+0 / +78 / +7A).
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

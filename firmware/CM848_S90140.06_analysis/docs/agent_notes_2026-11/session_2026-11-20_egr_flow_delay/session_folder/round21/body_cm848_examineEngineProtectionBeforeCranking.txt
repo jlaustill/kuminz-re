@@ -1,0 +1,64 @@
+=== cm848_examineEngineProtectionBeforeCranking (lines 66267-66336, 63 non-blank)
+66267: // Function: cm848_examineEngineProtectionBeforeCranking @ 0x00508130
+66268: //
+66270: /* Engine protection restart examination (e2m 10B1 +10 Precrank_Shutdown, 'EPF shutdown engine
+66271:    command from restart examine before cranking'). While the engine is CRANKING and the feature bits
+66272:    are set (algorithm_enable_flags_2_cal, e2m 106B +6: 0x10 Engine_Protection_Enable, 0x1
+66273:    Engine_Protection_Shutdown_Enable, 0x20 Engine_Protection_Restart_Enable) it looks at the channel
+66274:    that caused the last shutdown (engine_protection_shutdown_active_channel_cal, 0xff = none,
+66275:    channel 4 excluded) once that channel's consecutive shutdown count
+66276:    engine_protection_shutdown_count_cal has reached the ROM limit DAT_0005c2f4 (e2m 10B9 +0
+66277:    Shutdown_Max_Limit, 'max number of shutdowns before restart is not allowed') and its shutdown and
+66278:    restart enable bits are set in the per channel enable words (e2m 106B +12, EEPROM 0x12a: bits 130
+66279:    + 4n and 131 + 4n). If a threshold of that channel is still exceeded (protection_threshold_check
+66280:    at 0x507ebc, for the thresholds selected by the masks 0x1 and 0x2 of the channel's configuration
+66281:    flags) it sets fuel_temperature_derate_precrank_error_flag for the channel (e2m 1152 +18
+66282:    Fuel_Temperature_Precrank_Error) and engine_protection_precrank_shutdown_command_flag, which
+66283:    cm848_updateEngineProtectionShutdown (0x508898) turns into engine_shutdown_command_flag. Called
+66284:    on every pass by cm848_runFaultDerateScheduler (0x507c44). The shutdown enable bit is clear in
+66285:    this calibration (15888 = 0x3e10 in algorithm_enable_flags_2_cal), so it does nothing here. (was
+66286:    governor_coldStart_faultDerate_trigger) */
+66288: void cm848_examineEngineProtectionBeforeCranking(void)
+66290: {
+66291:   ushort uVar1;
+66292:   uint uVar2;
+66293:   int iVar3;
+66294:   short sVar4;
+66295:   int iVar5;
+66296:   int iVar6;
+66297:   int iVar7;
+66298:   ushort *puVar8;
+66300:   if (((((engine_state == ENGINE_STATE_CRANKING) &&
+66301:         (algorithm_enable_flags_2_cal.engine_protection_enable != 0)) &&
+66302:        (algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0)) &&
+66303:       ((algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0 &&
+66304:        (engine_protection_shutdown_active_channel_cal != 0xff)))) &&
+66305:      ((engine_protection_shutdown_active_channel_cal != 4 &&
+66306:       (DAT_0005c2f4 <= engine_protection_shutdown_count_cal)))) {
+66307:     puVar8 = &fuel_temperature_derate_configuration_flags +
+66308:              (short)engine_protection_shutdown_active_channel_cal * 0x12;
+66309:     iVar5 = (int)(short)engine_protection_shutdown_active_channel_cal;
+66310:     iVar7 = (int)&fuel_temperature_derate_input_pointer + iVar5 * 0x3e;
+66311:     uVar2 = (uint)engine_protection_shutdown_active_channel_cal * 4 + 0x80 & 0xffff;
+66312:     iVar3 = uVar2 + 2;
+66313:     iVar6 = iVar3 >> 4;
+66314:     if ((((uint)(&algorithm_enable_flags_0_cal)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0)
+66315:        && (iVar3 = uVar2 + 3, iVar6 = iVar3 >> 4,
+66316:           ((uint)(&algorithm_enable_flags_0_cal)[iVar6] & 1 << (iVar3 + iVar6 * -0x10 & 0x3fU)) != 0
+66317:           )) {
+66318:       uVar1 = *puVar8;
+66319:       if (((uVar1 & 1) != 0) && (sVar4 = protection_threshold_check(puVar8,iVar7,0,0), sVar4 != 0))
+66320:       {
+66321:         (&fuel_temperature_derate_precrank_error_flag)[iVar5 * 0x1f] = 1;
+66322:         engine_protection_precrank_shutdown_command_flag = 1;
+66323:       }
+66324:       if (((uVar1 & 2) != 0) && (sVar4 = protection_threshold_check(puVar8,iVar7,1,0), sVar4 != 0))
+66325:       {
+66326:         (&fuel_temperature_derate_precrank_error_flag)[iVar5 * 0x1f] = 1;
+66327:         engine_protection_precrank_shutdown_command_flag = 1;
+66328:       }
+66329:     }
+66330:   }
+66331:   return;
+66332: }
+66336: //

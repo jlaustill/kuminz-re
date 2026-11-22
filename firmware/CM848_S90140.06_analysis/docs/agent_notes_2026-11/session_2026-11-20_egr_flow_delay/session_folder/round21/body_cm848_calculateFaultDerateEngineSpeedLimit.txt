@@ -1,0 +1,62 @@
+=== cm848_calculateFaultDerateEngineSpeedLimit (lines 66468-66535, 61 non-blank)
+66468: // Function: cm848_calculateFaultDerateEngineSpeedLimit @ 0x0050860c
+66469: //
+66471: /* Engine speed limit source 5: takes the largest derate ramp value over the fault derate channels
+66472:    (zero for a channel whose fault status bits are clear) and sets engine_speed_limit_fault_derate
+66473:    to an exponential average of engine_speed_limit_default_cal minus that derate x
+66474:    engine_speed_limit_fault_derate_span / 256. (was engine_torqueLimit_min_emaCalc) */
+66476: void cm848_calculateFaultDerateEngineSpeedLimit(void)
+66478: {
+66479:   ushort uVar2;
+66480:   dword dVar1;
+66481:   int iVar3;
+66482:   undefined **ppuVar4;
+66483:   ushort uVar5;
+66484:   word *pwVar6;
+66485:   uint uVar7;
+66486:   word *pwVar8;
+66487:   uint uVar9;
+66489:   pwVar8 = &fuel_temperature_derate_configuration_flags;
+66490:   ppuVar4 = &fuel_temperature_derate_input_pointer;
+66491:   pwVar6 = &fuel_temperature_derate_fueling_severity_index_cal;
+66492:   uVar7 = 0x81;
+66493:   uVar9 = 0x1a4;
+66494:   uVar5 = 0;
+66495:   do {
+66496:     if ((*pwVar8 & 2) != 0) {
+66497:       iVar3 = (int)uVar9 >> 4;
+66498:       if ((((uint)(&algorithm_enable_flags_0_cal)[(int)uVar7 >> 4] &
+66499:            1 << (uVar7 + ((int)uVar7 >> 4) * -0x10 & 0x3f)) == 0) &&
+66500:          (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0)
+66501:          ) {
+66502:         uVar2 = 0;
+66503:       }
+66504:       else {
+66505:         uVar2 = threshold_adjustment_ramp(pwVar8,ppuVar4,pwVar6,1);
+66506:         if ((uVar2 < pwVar6[3]) &&
+66507:            (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) ==
+66508:             0)) {
+66509:           uVar2 = pwVar6[3];
+66510:         }
+66511:       }
+66512:       pwVar6[1] = uVar2;
+66513:       if ((uVar5 < uVar2) &&
+66514:          (((uint)(&algorithm_enable_flags_0_cal)[iVar3] & 1 << (uVar9 + iVar3 * -0x10 & 0x3f)) == 0)
+66515:          ) {
+66516:         uVar5 = uVar2;
+66517:       }
+66518:     }
+66519:     pwVar8 = pwVar8 + 0x12;
+66520:     ppuVar4 = (undefined **)((int)ppuVar4 + 0x3e);
+66521:     pwVar6 = pwVar6 + 0xf;
+66522:     uVar7 = uVar7 + 4 & 0xffff;
+66523:     uVar9 = uVar9 + 1 & 0xffff;
+66524:   } while (pwVar8 < fault_derate_fuel_limit_by_engine_speed_axis);
+66525:   dVar1 = exponentialMovingAverage
+66526:                     ((uint)engine_speed_limit_default_cal -
+66527:                      ((uint)uVar5 * (uint)engine_speed_limit_fault_derate_span >> 8) & 0xffff,
+66528:                      &ema_filter_state_t_003fbd2e);
+66529:   engine_speed_limit_fault_derate = (word)dVar1;
+66530:   return;
+66531: }
+66535: //

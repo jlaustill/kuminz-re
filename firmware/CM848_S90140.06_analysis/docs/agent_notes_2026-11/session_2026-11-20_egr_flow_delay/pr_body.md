@@ -478,6 +478,14 @@ state enum, the flag bytes.**
   J1922 / proprietary communication enables), its dump value corrected to 0x000b (J1939 communication is enabled),
   and word 19 bit 7's comment.
 
+**Round 21 (the relayed "keep going" again): the engine protection module.**
+- **Stage A (75178dc, types):** the three per-channel records (e2m 112E / 1152 / 1143) as structs, and full prototypes
+  for the helpers that take them.
+- **Stage B (756f2e0, types):** the fault log entry and the two EEPROM logs, the fault-log loop's current-channel
+  pointers, and stage A's five `i16` fields corrected to `short`.
+- **Stage C (093c501, label-only):** the module's 11 functions and 9 working words, from the typed bodies.
+- **Stage D (cc49e74, tooling):** `ApplyStructures.java` maps `i16` / `sword` and warns on an unknown field type.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -569,6 +577,7 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 21: stages A and B pass a layout / containment / artifact gate (A was piloted first); stage C is EQUIVALENT; stage D builds CM550 and CM848 identical before and after.
 - [x] Round 20: stages A, C and E are EQUIVALENT; stages B, D and F pass the mask normalizer (the count gate: per word and mask, old masked reads = new field reads; pieces 464 -> 464).
 - [x] Round 19: stages A, C and D are EQUIVALENT; stage B's enum proof shows only the substitutions (plus the cache's two users).
 - [x] Round 18: stages B and D are EQUIVALENT; stage A's cast-normalized diff and stage C's diff show only the intended effects.
@@ -599,13 +608,13 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 20:**
+- **Open after round 21:**
   - the droop word at 0x40aedc and the task 046 leads;
   - the fault status records (a packed record array, but the range is time-shared RAM);
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;
   - `calculateAlpha`'s r4 alias (a calling convention question) and the PGN 65269 ambient temperature bytes;
-  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches; round 13 the end-of-line test sequencer; round 14 the low speed governor reference speed chain; round 16 the switch bytes 0 / 1 / 3 bitfields (the user approved them); round 20 the algorithm enable flags block.
+  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches; round 13 the end-of-line test sequencer; round 14 the low speed governor reference speed chain; round 16 the switch bytes 0 / 1 / 3 bitfields (the user approved them); round 20 the algorithm enable flags block; round 21 the engine protection records and fault logs.
 - **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

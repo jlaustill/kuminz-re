@@ -1,0 +1,44 @@
+=== governor_fault_derateCalc_channelIter (lines 66419-66467, 43 non-blank)
+66419: // Function: governor_fault_derateCalc_channelIter @ 0x005084b4
+66420: //
+66422: void governor_fault_derateCalc_channelIter(void)
+66424: {
+66425:   word *pwVar1;
+66426:   int iVar2;
+66427:   undefined **ppuVar3;
+66428:   uint uVar4;
+66429:   uint uVar5;
+66430:   word *pwVar6;
+66432:   if (((algorithm_enable_flags_2_cal.engine_protection_shutdown_enable != 0) &&
+66433:       (algorithm_enable_flags_2_cal.engine_protection_restart_enable != 0)) &&
+66434:      (engine_protection_shutdown_active_channel_cal != 0xff)) {
+66435:     pwVar1 = &fuel_temperature_derate_configuration_flags;
+66436:     ppuVar3 = &fuel_temperature_derate_input_pointer;
+66437:     pwVar6 = &fuel_temperature_derate_fueling_severity_index_cal;
+66438:     uVar5 = 0x80;
+66439:     uVar4 = 0;
+66440:     do {
+66441:       if ((((int)(short)engine_protection_shutdown_active_channel_cal == uVar4) &&
+66442:           (iVar2 = (int)(uVar5 + 2) >> 4,
+66443:           ((uint)(&algorithm_enable_flags_0_cal)[iVar2] & 1 << (uVar5 + 2 + iVar2 * -0x10 & 0x3f))
+66444:           != 0)) &&
+66445:          (iVar2 = (int)(uVar5 + 3) >> 4,
+66446:          ((uint)(&algorithm_enable_flags_0_cal)[iVar2] & 1 << (uVar5 + 3 + iVar2 * -0x10 & 0x3f)) !=
+66447:          0)) {
+66448:         protection_threshold_update(pwVar1,ppuVar3,pwVar6);
+66449:         protection_state_transition(uVar4,ppuVar3,pwVar1);
+66450:       }
+66451:       else {
+66452:         pwVar6[2] = 0;
+66453:         pwVar6[3] = 0;
+66454:       }
+66455:       pwVar1 = pwVar1 + 0x12;
+66456:       ppuVar3 = (undefined **)((int)ppuVar3 + 0x3e);
+66457:       pwVar6 = pwVar6 + 0xf;
+66458:       uVar5 = uVar5 + 4 & 0xffff;
+66459:       uVar4 = uVar4 + 1 & 0xffff;
+66460:     } while (pwVar1 < fault_derate_fuel_limit_by_engine_speed_axis);
+66461:   }
+66462:   return;
+66463: }
+66467: //

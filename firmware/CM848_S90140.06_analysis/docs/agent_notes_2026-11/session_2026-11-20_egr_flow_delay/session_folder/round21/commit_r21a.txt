@@ -1,0 +1,34 @@
+cm848: round 21 stage A - the engine protection channel records as structs (types)
+
+The engine protection loops (fault derate fuel / engine speed limits, shutdown, restart, pre-crank check) walk three
+per-channel tables through raw pointer offsets. Each table is an e2m block whose records tile it exactly, and each
+block's size is the loops' stride:
+- engine_protection_channel_configuration_t: 36 bytes, e2m 112E, ROM 0x597b2 (step 0x12 words);
+- engine_protection_channel_state_t: 62 bytes, e2m 1152, RAM 0x40a734 (step 0x3e bytes);
+- engine_protection_channel_history_t: 30 bytes, e2m 1143, the EEPROM mirror 0x3fdfbe, so the instance is _cal
+  (step 0xf words).
+This build has one channel, fuel temperature (fuel_temperature_engine_protection_configuration / _state /
+_history_cal). The field names are generic, because the loops are channel loops (the e2m's 'Input_Source_0' records
+name the same fields).
+- Field types come from the covered flat rows (asm-checked) or the e2m size and sign. The pointees of the input and
+  threshold pointers come from hpcr_initFuelTemperatureSensorChannel: words. The fault log pointers point into EEPROM
+  (e2m 10DA) and stay pointer.
+- The 10 named and 5 unnamed covered flat rows are removed, and their comments move into the fields. Three plates
+  that named them are refreshed.
+- The five helpers that see the records only as parameters get full prototypes: threshold_adjustment_ramp,
+  protection_threshold_check, protection_threshold_update, protection_state_transition and protection_event_timestamp.
+  Stage B renames them.
+
+The layout was piloted first. The 62-byte state struct has 4-byte fields at +0x0A / +0x0E / +0x12 / +0x26 / +0x2A /
++0x2E / +0x36; the importer places fields at running offsets (non-packed), and the loops now step `+ 1`.
+
+Proof (prove_r21a.py):
+- 16 known access sites spread over the three structs render the expected fields. The 17th, the ramp rate in
+  threshold_adjustment_ramp, is read through a computed offset (6 or 8) and stays one.
+- With each <instance>.<field> rewritten to its old flat name, the changed functions are the predicted 13, plus
+  cm848_checkPciMessageTimeouts and mpc555_tickTransferTimeoutAndRuntimeCounter, which only reorder one local
+  declaration.
+- The counts do not grow: pieces 500 -> 500, extraout_ 13 -> 13, unaff_ 275 -> 275, in_r 86 -> 86.
+Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, the four test suites pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

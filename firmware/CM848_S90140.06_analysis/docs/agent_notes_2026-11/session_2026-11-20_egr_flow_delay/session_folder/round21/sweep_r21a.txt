@@ -1,0 +1,23 @@
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:82: ...extern word fuel_temperature_derate_configuration_flags;  // 0x000597b2
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:83: ...extern word fuel_temperature_derate_fueling_minimum_temperature;  // 0x000597bc
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:84: ...extern word fuel_temperature_derate_fueling_maximum_temperature;  // 0x000597be
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:85: ...extern int16_t fuel_temperature_derate_engine_speed_minimum_temperature;  // 0x000597c0
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:4632: ...extern void * fuel_temperature_derate_input_pointer;  // 0x0040a734
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:6118: ...extern word fuel_temperature_derate_fueling_severity_index_cal;  // 0x003fdfbe
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:6119: ...extern word fuel_temperature_derate_engine_speed_severity_index_cal;  // 0x003fdfc0
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:6628: ...extern word fuel_temperature_derate_precrank_error_flag;  // 0x0040a74c
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:6629: ...extern word fuel_temperature_derate_fuel_shutdown_time_count;  // 0x0040a74e
+firmware/CM848_S90140.06_analysis/output/firmware_globals.hpp:6630: ...extern word fuel_temperature_derate_rpm_shutdown_time_count;  // 0x0040a750
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:110: ...n_t, e2m 112E; PR #53 round 21: was the flat rows fuel_temperature_derate_configuration_flags, fuel_temperature_derate_engi
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:110: ...rows fuel_temperature_derate_configuration_flags, fuel_temperature_derate_engine_speed_minimum_temperature, fuel_temperature_derate_fuel
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:110: ...perature_derate_engine_speed_minimum_temperature, fuel_temperature_derate_fueling_maximum_temperature, fuel_temperature_derate_fuel
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:110: ...l_temperature_derate_fueling_maximum_temperature, fuel_temperature_derate_fueling_minimum_temperature)
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:8415: ...y_t, e2m 1143; PR #53 round 21: was the flat rows fuel_temperature_derate_engine_speed_severity_index_cal, fuel_temperature_derate_fuel
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:8415: ...mperature_derate_engine_speed_severity_index_cal, fuel_temperature_derate_fueling_severity_index_cal)
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:8430: ...e_t, e2m 1152; PR #53 round 21: was the flat rows fuel_temperature_derate_fuel_shutdown_time_count, fuel_temperature_derate_inpu
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:8430: ...fuel_temperature_derate_fuel_shutdown_time_count, fuel_temperature_derate_input_pointer, fuel_temperature_derate_prec
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:8430: ...ime_count, fuel_temperature_derate_input_pointer, fuel_temperature_derate_precrank_error_flag, fuel_temperature_derate_rpm_
+firmware/CM848_S90140.06_analysis/output/global_variables.csv:8430: ...ter, fuel_temperature_derate_precrank_error_flag, fuel_temperature_derate_rpm_shutdown_time_count)
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:1778: ...0x2 of the channel's configuration flags) it sets fuel_temperature_derate_precrank_error_flag for the channel (e2m 1152 +18
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:1786: ...n_approaching_flag, the two shutdown time counts (fuel_temperature_derate_fuel_shutdown_time_count / _rpm_) and the override lat
+firmware/CM848_S90140.06_analysis/output/function_renames.csv:1796: ... 0x597b2 (one entry: the fuel temperature channel fuel_temperature_derate_input_pointer with its 200 to 210 degrees F

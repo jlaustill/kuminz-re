@@ -354,3 +354,12 @@ Hand work on the round 7 lead.
   `flag_records_typed.txt` (the e2m records with their descriptions), `bit_context.py` (the code around a bit's
   tests).
 
+## Round 21: the engine protection module (`session_folder/round21/`)
+
+- **Stage A:** `apply_r21a.py` (the three structs and the helper prototypes; `--only state` was the packing pilot),
+  `refresh_r21a_plates.py`, the gate `prove_r21a.py`. **Stage B:** `apply_r21b.py` + `prove_r21b.py`, and
+  `struct_type_fallbacks.py` (the field types the importer does not know). **Stage C:** `worklist_r21c.py`,
+  `apply_r21c2.py`. **Stage D:** `patch_apply_structures.py` (mind the file's CRLF line endings). **Closing:**
+  `apply_r21_closing.py`.
+- **Evidence:** `blocks.txt` (e2m 112E / 1152 / 1143), the per-function bodies `body_*.txt`.
+
