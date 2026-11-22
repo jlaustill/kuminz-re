@@ -1,0 +1,33 @@
+cm848: round 13 stage C - the SCI SET RPM request, the LSG base and ASG reference speeds, bit maps (label-only)
+
+The record-anchored pieces of the governor reference speeds, plus the open comment items from stages A / B.
+- **SCI command 0x19 (DRB 'SET RPM' / 'SET_ENG_RPM'; 19-7D 'SET ECM RPM 1000' = 125 x 8):**
+  - cm848_sciCommand25Callback stores the request byte x 64 (1/8 rpm) in sci_set_engine_speed_request (was
+    governor_speed_limit_floor_b), with a 0xe5c1 key (_key, was _floor_a) and a 72-pass timeout (_timeout_count).
+  - cm848_expireSciSetEngineSpeedRequest (was governor_speedLimitFloor_decrement) clears them when the timeout ends.
+  - The LSG target selection uses the request as low_speed_governor_service_speed_floor (was
+    governor_speed_limit_floor; its other source is the high pressure safety valve test).
+- **e2m block 0008, checked in the RAM and EEPROM dumps:**
+  - +2 LSG_Breakpoint_Speed = low_speed_governor_base_reference_speed_cal (was governor_speed_limit_output). It reads
+    6000 = 750 rpm, the dump's idle reference.
+  - +20 / +22 / +2E / +30 ASG_Minimum / _Maximum and the set 2 copies (740 / 4650 rpm) =
+    all_speed_governor_{minimum,maximum}_reference_speed_{1,2}_cal (were governor_speed_error_{high,low}_{working,b}).
+- **The ASG blend:** cm848_blendAllSpeedGovernorReferenceSpeeds (was cm848_blendGovernorTuningSets) blends sets 1 and
+  2 into all_speed_governor_minimum_reference_speed / _maximum_reference_speed.
+  - cm848_calculateAllSpeedGovernorThrottleReference spans 0 % to 100 % throttle between them.
+  - The old names called the minimum 'high' and the maximum 'low'. Set 3 has no reader.
+- **Comments:**
+  - The injector cutout words at 0x3fcf64 (8 words, read by the cancel loop with lhz) are never counted down, so
+    1000 is only a marker.
+  - Bit maps for end_of_line_test_enable_flags (all eight tests), the in-plant flag bytes test_flags_1 to _5,
+    test_results_1, final_test_results_1 and transmission_shift_strategy_flags.service_test_request_flags.
+  - The SCI command 0x25 callback plate.
+- **Docs:** tasks 025 / 042 / 044 / 046 note the round 13 names. firmware/CLAUDE.md only gets the 0x3fd1ac rename.
+- **Checks:**
+  - reverse_names.py EQUIVALENT (13 names rendered); 19 thunks / 13 call overrides.
+  - No round 13 name in a 'was' history mention; the refreshes of stages A and C are plain references.
+  - lookup_tables 0 sizing problems; the headers compile.
+  - No old name is in CM550.
+  - e2m 1981 +0 EOL_Alternator_Test_State (0x3fee9a) has no access in either bank, so it gets no row.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

@@ -280,3 +280,15 @@ Hand work on the round 7 lead.
 - **Stage C:** `apply_r12c.py` (the remaining names, the plate, the stale text).
 - **Logs:** the round 12 build logs (with 12A's first attempt) are in the large-files tarball.
 - **Commit messages:** `commit_r12*.txt`.
+
+## Round 13: the end-of-line tests and the SCI command 0x25 service tests (`session_folder/round13/`)
+
+- **Stage A:** `worklist_r13a.py` (35 renames, 13 functions), `new_r13a.json` (10 new rows) and `apply_r13a_plates.py`.
+- **Stage B:** `apply_r13b_enums.py`. The proof is `check_enum_proof3.py`, a copy of the fueling state session's
+  `check_enum_proof2.py` that normalizes byte-sized enum types to `byte`.
+- **Stage C:** `worklist_r13c.py`, `apply_r13c_comments.py` (the bit maps, the cutout correction) and
+  `apply_r13c_docs.py`.
+- **Audits:** `refresh_diff_offline.py` checks a committed stage's reference refresh between two commits.
+  `keyed_refresh_audit_refs.py` is the same audit pinned to two commits.
+- **Logs:** the round 13 build logs and the final verify log are in the large-files tarball.
+- **Commit messages:** `commit_r13*.txt`.

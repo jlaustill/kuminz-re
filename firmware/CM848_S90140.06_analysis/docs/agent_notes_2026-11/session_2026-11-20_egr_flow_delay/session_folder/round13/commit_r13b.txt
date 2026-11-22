@@ -1,0 +1,19 @@
+cm848: round 13 stage B - three enums for the end-of-line and service tool test states (types)
+
+- **SERVICE_TOOL_TEST_STATE** (size 1): 0 not run / 1 running / 2 aborted, from e2m 8C74 +9
+  Cylinder_Performance_Test and 8C77 +1 HPSV_Test_Active '(0=NOT_RUN,1=RUN,2=ABORT)'.
+  - It types cylinder_contribution_test_status and high_pressure_safety_valve_test_state (bytes).
+  - It is not DIAGNOSTIC_MONITOR_STATE: there 2 is PASSED and 4 is ABORT.
+- **END_OF_LINE_TEST_STEP** (size 2) on end_of_line_test_step: the seven step functions of
+  cm848_runEndOfLineTestSequence, then DONE.
+- **END_OF_LINE_OUTPUT_TEST_STATE** (size 1) on end_of_line_output_test_state: idle / start / lift pump / relays /
+  before and during each intake air heater / done.
+- **Coverage:** every value the code stores has a member. 0 of the output test state is only a case label.
+- **Renders:** the switch case labels and stores render the members. The step functions return undefined4, so
+  their returns stay numbers.
+- **Checks:**
+  - reverse_names.py --write-reversed, then check_enum_proof3.py (check_enum_proof2 with byte-sized enum types):
+    0 functions differ beyond the enum substitutions.
+  - lookup_tables 0 sizing problems; the headers compile.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

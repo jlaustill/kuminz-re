@@ -69,6 +69,9 @@
   200743 build_r12a_attempt1.log
   200748 build_r12b.log
   200750 build_r12c.log
+  200828 build_r13a.log
+  200824 build_r13b.log
+  200825 build_r13c.log
  3544401 stage2.cpp
   402904 verify.log
   402089 verify2.log
@@ -89,3 +92,4 @@
   401993 verify_round10.log
   401810 verify_round11.log
   401807 verify_round12.log
+  401967 verify_round13.log

@@ -1,0 +1,22 @@
+=== cm848_initGovernorStateVariables (lines 28348-28373, 21 non-blank)
+// Function: cm848_initGovernorStateVariables @ 0x00029bf8
+//
+void cm848_initGovernorStateVariables(void)
+{
+  governor_speed_limit_by_coolant_temperature_cached_axis_offset = 2;
+  governor_idle_speed_by_barometric_pressure_cached_axis_offset = 2;
+  governor_minimum_speed_by_vehicle_speed_cached_axis_offset = 2;
+  governor_speed_disengage_timer = 0;
+  governor_speed_limit_count = 0;
+  governor_speed_engage_timer = 0;
+  governor_speed_debounce_count = 0;
+  governor_speed_debounce_timer = 0;
+  governor_protection_phase_a_flag = 0;
+  governor_protection_phase_b_flag = 0;
+  governor_speed_limit_exceeded_flag._2_2_ = governor_speed_limit_output;
+  j1939_powertrain_control_state.tsc1_override_control_mode = TSC1_OVERRIDE_OFF;
+  governor_output_t_0040aec2.governor_output = 5;
+  governor_output_state_prev = 5;
+  return;
+}
+//

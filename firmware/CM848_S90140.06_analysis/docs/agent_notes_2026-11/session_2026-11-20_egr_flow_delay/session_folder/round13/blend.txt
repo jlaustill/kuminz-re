@@ -1,0 +1,56 @@
+=== cm848_blendGovernorTuningSets (lines 29756-29817, 55 non-blank)
+// Function: cm848_blendGovernorTuningSets @ 0x0002bf6c
+//
+/* Selects governor_tuning_set_blend_weight (0 = the governor_speed_error_*_working set, 128 = the
+   _b set) from drivetrain_ratio through the six-entry tables at ROM 0x5a9c4 (ratio x 2048
+   breakpoints 1843 / 2458 / 3482 / 6144 / 10240 / 40960) and 0x5a9d2 (weights, all 128 in this
+   ROM), or uses governor_tuning_set_default_blend_weight_cal when governor_system_config_flags mask
+   0x08 is set, then writes governor_speed_error_high / _low as the weighted blend of the two sets
+   ((w x b + (128 - w) x working) >> 7). It runs only when its entry conditions hold (computed fuel
+   demand below friction_fuel_adjustment_for_coolant_temperature plus a deadband, or the high idle
+   override reset) (was cm848_calculateRpmLimitsFromProtection). */
+void cm848_blendGovernorTuningSets(void)
+{
+  word wVar1;
+  uint uVar2;
+  if ((((fuel_demand_control_t_0040a57a.calculated == 0) &&
+       ((uint)final_fueling <
+        (uint)friction_fuel_adjustment_for_coolant_temperature +
+        (uint)all_speed_governor_switch_droop_fueling_offset)) &&
+      (governor_tuning_set_default_blend_weight_cal < 0x100)) ||
+     ((high_idle_override_reset_enable_cal != 0 && (high_idle_override_flag._0_2_ != 0)))) {
+    high_idle_override_flag._0_2_ = 0;
+    wVar1 = governor_tuning_set_default_blend_weight_cal;
+    if ((governor_system_config_flags & 8) == 0) {
+      uVar2 = 1;
+      do {
+        if (drivetrain_ratio < governor_tuning_set_blend_weight_by_drivetrain_ratio_axis[uVar2]) {
+          wVar1 = governor_tuning_set_blend_weight_by_drivetrain_ratio_values[uVar2];
+          break;
+        }
+        uVar2 = uVar2 + 1 & 0xffff;
+        wVar1 = governor_tuning_set_blend_weight;
+      } while (uVar2 < 7);
+    }
+    governor_tuning_set_blend_weight = wVar1;
+    uVar2 = (uint)governor_tuning_set_blend_weight;
+    if (uVar2 == 0) {
+      governor_speed_error_high = governor_speed_error_high_working;
+      governor_speed_error_low = governor_speed_error_low_working;
+    }
+    else if (uVar2 == 0x80) {
+      governor_speed_error_high = governor_speed_error_high_b;
+      governor_speed_error_low = governor_speed_error_low_b;
+    }
+    else {
+      governor_speed_error_high =
+           (short)(uVar2 * governor_speed_error_high_b >> 7) +
+           (short)((0x80 - uVar2) * (uint)governor_speed_error_high_working >> 7);
+      governor_speed_error_low =
+           (short)(uVar2 * governor_speed_error_low_b >> 7) +
+           (short)((0x80 - uVar2) * (uint)governor_speed_error_low_working >> 7);
+    }
+  }
+  return;
+}
+//

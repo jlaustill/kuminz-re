@@ -1,0 +1,15 @@
+cm848: round 13 closing - docs, the session archive, verify
+
+- **Docs:**
+  - task 046 gains a round 13 section, and its leads now open with the low speed governor reference speed chain: the
+    three functions' roles, the source codes 0-12, and `thermal_governor_*` = ramp rates.
+  - The PR body, the session README and work/todo.md describe round 13.
+- **Archive:** `session_folder/round13/` holds the worklists, the apply scripts, the maps, the enum proof
+  (`check_enum_proof3.py`) and the offline refresh audit. The large-files tarball adds the round 13 build logs and
+  the final verify log.
+- **Checks on the final tree:**
+  - `./analyze.sh verify`: two byte-identical builds; the .cpp matches f951258 except its timestamp.
+  - `lookup_tables.py` reports 0 sizing problems.
+  - `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

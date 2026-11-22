@@ -387,6 +387,21 @@ state enum, the flag bytes.**
   last caches. Stage B had scanned only part of the function. Also the plate (the tool override, not a cranking
   value) and stale text.
 
+**Round 13 (the relayed "keep going" again): the end-of-line tests and the SCI command 0x25 service tests.**
+- **Stage A (99a8d67, label-only): the steps of the Chrysler end-of-line (in-plant) test sequencer.**
+  - The steps are the output tests (lift pump / wait-to-start lamp and A/C clutch relay / intake air heaters), the
+    heater voltage-drop verdict, the alternator test, the fan speed noise, the misfire test and the final result.
+  - They were cold start / protection / cam sync guesses. e2m 164A / 1649 name their settings.
+  - **The SCI command 0x25 tests** (DRB 25-xx, e2m `Cmd25`) and their timeouts: the alternator field, the 48RE
+    solenoids, the lift pump, the cylinder contribution test and the high pressure safety valve test.
+- **Stage B (a44169f, types):** `SERVICE_TOOL_TEST_STATE` (e2m 0 not run / 1 running / 2 aborted),
+  `END_OF_LINE_TEST_STEP` and `END_OF_LINE_OUTPUT_TEST_STATE`.
+- **Stage C (f951258, label-only):**
+  - the DRB SCI 0x19 'SET RPM' request;
+  - the LSG base reference speed and the ASG minimum / maximum reference speeds from e2m block 0008. The old names
+    called the minimum 'high'.
+  - the bit maps in the comments.
+
 ## Test plan
 
 - [x] `./analyze.sh build` passes at every stage. The warnings are unchanged, except the three stale-prototype warnings
@@ -473,6 +488,11 @@ state enum, the flag bytes.**
   - stage A passes `array_normalize.py` + `cast_normalized_diff.py` (two differences, the same addresses);
   - stage B is label-only (EQUIVALENT);
   - `lookup_tables.py` reports 0 sizing problems.
+- [x] Round 13:
+  - stages A and C are label-only (stage A: one function's local declarations reorder, sorted lines identical;
+    stage C EQUIVALENT);
+  - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
+  - the thunk stage still makes 19 thunks and 13 call overrides.
 - [x] `./analyze.sh verify`: the two builds are byte-identical.
 - [x] `lookup_tables.py` is clean (920 / 920 typed).
 - [x] `test_lookup_tables.py`, `test_disasm_tools.py`, `test_e2m_block_addresses.py` and `test_rename_waves.py` pass.
@@ -494,13 +514,13 @@ state enum, the flag bytes.**
   - the fault derate scheduler words and the 11D5 air fuel control rows;
   - the TPU injection bytes and the A/C class-B coolant flags.
   The full list is in task 046.
-- **Open after round 12:**
+- **Open after round 13:**
+  - the low speed governor reference speed chain (about 75 rows; task 046 lists the three functions' roles);
   - the fault status records (a packed record array, but the range is time-shared RAM);
-  - the end-of-line test sequencer;
   - e2m 8C80 (TVA) / 8C2D;
   - the SCI high-speed table words;
   - the switch bytes 0 / 1 / 3 as bitfields (the user's call; see round 11);
-  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches.
+  Round 11 resolved the output bitfields and the lift pump control; round 12 the cam_sync fuel metering tables and the setpoint caches; round 13 the end-of-line test sequencer.
 - **The e2m pool above 0.2 overlap** (123 rows at ≤ 0.25, 140 at ≤ 0.34, 220 at ≤ 0.5): a next wave if wanted.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

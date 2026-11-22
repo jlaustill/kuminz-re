@@ -790,6 +790,63 @@ Scripts are in `session_folder/round12/`.
   - **`HPCR_Current_Integrator_Preset_*`** (8B49 / 8B4A) and the other `HPCR_*` tables (the leak response, the
     monitor duty curves) have no row yet.
 
+## Done, round 13 (2026-11-21, same PR; the relayed "keep going" again): the end-of-line tests and the SCI service tests
+
+Scripts are in `session_folder/round13/`.
+- **Stage A (99a8d67, label-only): the end-of-line test steps and the SCI command 0x25 service tests.**
+  - **The sequencer:** `cm848_runEndOfLineTestSequence` runs seven step functions, each returning the next step.
+    Their names were cold start / protection / cam sync / fault queue guesses.
+    - 0 start, then 1 the output tests (engine stopped): lift pump, then the wait-to-start lamp and A/C clutch relay,
+      then intake air heaters 1 and 2 one at a time.
+    - 2 the intake air heater verdict: the battery voltage drop each heater causes.
+    - 3 the alternator test, which cuts the field.
+    - 4 the fan speed noise, 5 the misfire test, 6 the plant tester's final result.
+  - **The settings:** e2m 164A `EOL_*` and 1649 `CHRY_In_Plant_*`. 0x642ee is 164A +C `EOL_EVR_Test_Time`.
+  - **The SCI command 0x25 tests** (DRB 25-xx; the e2m calls them `Cmd25`). `cm848_expireSciCommand37Tests` (was
+    `protectionVoltageTimeoutControl`) ends each one at its timeout.
+    - 0x11 alternator field, 0x14-0x16 the 48RE solenoids, 0x24 lift pump.
+    - 0x25 cylinder contribution (DRB 25-25 CylinderPerformanceTest, e2m 8C74).
+    - 0x26 high pressure safety valve (DRB 25-26, e2m 8C76 / 8C77 / 8022 +1E).
+    - 5-10 cut out injectors 1-6.
+  - **`BYTE_003fd1ac`** is `end_of_line_test_seconds_since_engine_start`. It is time-shared with the boot kernel, and its
+    boot calls keep their call override.
+  - **The alternator verdict** takes the present voltage minus the snapshot in 16 bits (`subf` / `clrlwi`), so any fall
+    in voltage passes.
+- **Stage B (a44169f, types): three enums.**
+  - `SERVICE_TOOL_TEST_STATE` (e2m '0=NOT_RUN,1=RUN,2=ABORT') on the cylinder contribution and HPSV test states.
+  - `END_OF_LINE_TEST_STEP` and `END_OF_LINE_OUTPUT_TEST_STATE`.
+  - The proof is `check_enum_proof3.py`, which handles byte-sized enum types: 0 functions differ beyond the
+    substitutions.
+- **Stage C (f951258, label-only): the record-anchored governor reference speeds.**
+  - **DRB SCI 0x19 'SET RPM'** (19-7D 'SET ECM RPM 1000' = 125 x 8): `sci_set_engine_speed_request`, with its 0xe5c1
+    key and a 72-pass timeout. The LSG target selection takes it as `low_speed_governor_service_speed_floor`.
+  - **e2m block 0008** (checked in both dumps):
+    - `LSG_Breakpoint_Speed` is `low_speed_governor_base_reference_speed_cal` (750 rpm).
+    - `ASG_Minimum` / `_Maximum` for sets 1 and 2 (740 / 4650 rpm) and their blend
+      (`cm848_blendAllSpeedGovernorReferenceSpeeds`). The old names called the minimum 'high' and the maximum
+      'low'.
+  - **Bit maps in the comments:** `end_of_line_test_enable_flags`, the in-plant flag bytes and
+    `service_test_request_flags`.
+- **Round 13 leads:**
+  - **The low speed governor reference speed chain** (about 75 rows) has almost no e2m records, so it needs its own
+    round:
+    - `cm848_updateSpeedLimitFromCoolant` is the coolant idle speed (e2m 8A51 / 8A52 `LSG_Coolant_*`). Its engage /
+      disengage timers are not traced yet.
+    - `cm848_calculateProtectionSpeedLimits` is the LSG target selection. It takes the largest of: the base
+      reference speed (source 5), the coolant idle (0), the park / neutral idle (1), the cold idle-up (2: battery and
+      coolant cold), switch 13 (3), the PCI idle request (4), the barometric idle (9), the service floor (11) and the
+      moving-vehicle table (12, e2m 8C51 / 8C52). Source 10 means a shift is in process, and 6 is the TSC1 override.
+    - `cm848_applySpeedLimitConstraints` ramps `idle_reference_speed` toward the target. The `thermal_governor_*`
+      words are its up / down rates, and the minimum (source 7) and maximum (source 8) clamps follow.
+    - The source code `governor_output_t.governor_output` needs an enum with every value 0-12 proved; 7 and 8 are
+      stored in the ramp function.
+  - **The injector cutout markers** at 0x3fcf64 are a `word[8]` array candidate (the cancel loop reads them with
+    `lhz`).
+  - **The 47 '+N' offcut-label rows** in `global_variables.csv` are legacy export rows; some carry stale base names.
+  - **e2m 1981 +0 `EOL_Alternator_Test_State`** (0x3fee9a) has no access in either bank.
+  - **`cm848_validateWriteAuth`'s local declaration order** flips between builds of different CSVs. The DECL pattern
+    of `reverse_names.py` probably does not match its array locals.
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**
