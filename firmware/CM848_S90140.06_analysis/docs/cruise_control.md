@@ -2,7 +2,7 @@
 
 This file covers what the S90140.06 firmware does for cruise control. It comes from a read-only review on 2026-11-22.
 
-**Names and addresses follow PR #53 at `2fe6d2d` (round 32).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
+**Names and addresses follow PR #53 at `5e007b4` (round 39).** Most of these names exist only on that branch, so merge this file after PR #53. If a later round renames something, search for the address.
 
 Evidence tags:
 
@@ -98,7 +98,7 @@ Pressing the pedal past the cruise fuel overrides cruise (`cm848_selectCruiseOrU
   - Otherwise it copies the operating mode governor's fuel demand.
 - **The choice.** `cm848_selectCruiseOrUserFueling` (0x411b0) sets the working demand (`governor_fuel_demand_working`) to the lower of the two, with mode `FUELING_STATE_CRUISE_CONTROL`. It never tests the servo bit. It hands control back to the operating mode governor when any of these hold:
   - cruise isn't engaged;
-  - the pedal's governor asks for more fuel than cruise, with the throttle above `governor_override_fuel_threshold_cal`;
+  - the pedal's governor asks for more fuel than cruise, with the throttle above `governor_override_fuel_threshold`;
   - a TSC1 speed or torque mode, mode 37 or 38, or a fixed fuel demand is active.
 
 ## Vacuum throttle servo
