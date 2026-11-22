@@ -408,34 +408,8 @@ address,name,type,comment
 # =============================================================================
 # TouCAN A - CAN Controller A (0x307000 - 0x30707F)
 # =============================================================================
-0x00307000,TOUCAN_A_MCR,u16,TouCAN A Module Configuration Register
-0x00307002,TOUCAN_A_TCR,u16,TouCAN A Test Register
-0x00307004,TOUCAN_A_CANICR,u16,TouCAN A Interrupt Configuration Register
-0x00307006,TOUCAN_A_CANCTRL0,u8,TouCAN A Control Register 0
-0x00307007,TOUCAN_A_CANCTRL1,u8,TouCAN A Control Register 1
-0x00307008,TOUCAN_A_PRESDIV,u8,TouCAN A Prescaler Divide Register
-0x00307009,TOUCAN_A_CANCTRL2,u8,TouCAN A Control Register 2
-0x0030700c,TOUCAN_A_TIMER,u16,TouCAN A Free Running Timer
-0x00307010,TOUCAN_A_RXGMSK_HI,u16,TouCAN A Rx Global Mask High
-0x00307012,TOUCAN_A_RXGMSK_LO,u16,TouCAN A Rx Global Mask Low
-0x00307014,TOUCAN_A_RX14MSK_HI,u16,TouCAN A Rx Buffer 14 Mask High
-0x00307016,TOUCAN_A_RX14MSK_LO,u16,TouCAN A Rx Buffer 14 Mask Low
-0x00307018,TOUCAN_A_RX15MSK_HI,u16,TouCAN A Rx Buffer 15 Mask High
-0x0030701a,TOUCAN_A_RX15MSK_LO,u16,TouCAN A Rx Buffer 15 Mask Low
-0x00307020,TOUCAN_A_ESR,u16,TouCAN A Error and Status Register
-0x00307022,TOUCAN_A_IMASK,u16,TouCAN A Interrupt Mask Register
-0x00307024,TOUCAN_A_IFLAG,u16,TouCAN A Interrupt Flag Register
-0x00307026,TOUCAN_A_RXECTR,u8,TouCAN A Rx Error Counter
-0x00307027,TOUCAN_A_TXECTR,u8,TouCAN A Tx Error Counter
 
-# TouCAN A Message Buffers (16 buffers, 16 bytes each at 0x307080-0x30717F)
-0x00307080,TOUCAN_A_MB0_CTRL,u16,TouCAN A Message Buffer 0 Control/Status
-0x00307082,TOUCAN_A_MB0_ID_HI,u16,TouCAN A Message Buffer 0 ID High
-0x00307084,TOUCAN_A_MB0_ID_LO,u16,TouCAN A Message Buffer 0 ID Low
-0x00307086,TOUCAN_A_MB0_DATA0,u16,TouCAN A Message Buffer 0 Data 0-1
-0x00307088,TOUCAN_A_MB0_DATA2,u16,TouCAN A Message Buffer 0 Data 2-3
-0x0030708a,TOUCAN_A_MB0_DATA4,u16,TouCAN A Message Buffer 0 Data 4-5
-0x0030708c,TOUCAN_A_MB0_DATA6,u16,TouCAN A Message Buffer 0 Data 6-7
+# TouCAN A (PR #53 round 25): mpc555_initCanController proves the module registers at 0x307080-0x3070a7 and the 16 message buffers at 0x307100-0x3071ff. They are the struct toucan_a (toucan_module_registers_t) and the array toucan_a_message_buffers in global_variables.csv; a row here inside the struct would split it. The rows that were here put the module at 0x307000 (no code touches 0x307000-0x30707f) and message buffer 0 at 0x307080
 
 # =============================================================================
 # TouCAN B - CAN Controller B (0x307080 + offset, using alternate address)

@@ -1174,30 +1174,32 @@ mios_mmcsm_b_t,0x003060b0,,,,MMCSM22 instance - marker only,,verified
 # MB area starts at TouCAN_A_base + 0x80; each MB = 16 bytes (spacing confirmed)
 # Fields: CTRL (code+flags), ID_HI, ID_LO, DATA0..DATA6, _pad (timestamp/reserved)
 # =============================================================================
-toucan_a_mb0_t,0x00307080,CTRL,word,2,Message Buffer 0 Control/Status (code+DLC+flags),,verified
-toucan_a_mb0_t,0x00307080,ID_HI,word,2,Message Buffer 0 ID High (bits 28-16),,verified
-toucan_a_mb0_t,0x00307080,ID_LO,word,2,Message Buffer 0 ID Low (bits 15-0),,verified
-toucan_a_mb0_t,0x00307080,DATA0,word,2,Message Buffer 0 Data bytes 0-1,,verified
-toucan_a_mb0_t,0x00307080,DATA2,word,2,Message Buffer 0 Data bytes 2-3,,verified
-toucan_a_mb0_t,0x00307080,DATA4,word,2,Message Buffer 0 Data bytes 4-5,,verified
-toucan_a_mb0_t,0x00307080,DATA6,word,2,Message Buffer 0 Data bytes 6-7,,verified
-toucan_a_mb0_t,0x00307080,_pad,word,2,Reserved (timestamp),,verified
-toucan_a_mb1_t,0x00307090,CTRL,word,2,Message Buffer 1 Control/Status,,verified
-toucan_a_mb1_t,0x00307090,ID_HI,word,2,Message Buffer 1 ID High,,verified
-toucan_a_mb1_t,0x00307090,ID_LO,word,2,Message Buffer 1 ID Low,,verified
-toucan_a_mb1_t,0x00307090,DATA0,word,2,Message Buffer 1 Data bytes 0-1,,verified
-toucan_a_mb1_t,0x00307090,DATA2,word,2,Message Buffer 1 Data bytes 2-3,,verified
-toucan_a_mb1_t,0x00307090,DATA4,word,2,Message Buffer 1 Data bytes 4-5,,verified
-toucan_a_mb1_t,0x00307090,DATA6,word,2,Message Buffer 1 Data bytes 6-7,,verified
-toucan_a_mb1_t,0x00307090,_pad,word,2,Reserved (timestamp),,verified
-toucan_a_mb2_t,0x003070a0,CTRL,word,2,Message Buffer 2 Control/Status,,verified
-toucan_a_mb2_t,0x003070a0,ID_HI,word,2,Message Buffer 2 ID High,,verified
-toucan_a_mb2_t,0x003070a0,ID_LO,word,2,Message Buffer 2 ID Low,,verified
-toucan_a_mb2_t,0x003070a0,DATA0,word,2,Message Buffer 2 Data bytes 0-1,,verified
-toucan_a_mb2_t,0x003070a0,DATA2,word,2,Message Buffer 2 Data bytes 2-3,,verified
-toucan_a_mb2_t,0x003070a0,DATA4,word,2,Message Buffer 2 Data bytes 4-5,,verified
-toucan_a_mb2_t,0x003070a0,DATA6,word,2,Message Buffer 2 Data bytes 6-7,,verified
-toucan_a_mb2_t,0x003070a0,_pad,word,2,Reserved (timestamp),,verified
+toucan_module_registers_t,0x00307080,MCR,word,2,Module configuration: mpc555_initCanController writes 0x5000 (freeze + halt) before the setup and 0 after it (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,TCR,word,2,Test register (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,CANICR,word,2,Interrupt configuration (0x400 at init) (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,CANCTRL0,byte,1,Control register 0 (0 at init) (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,CANCTRL1,byte,1,Control register 1 (0x10 at init) (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,PRESDIV,byte,1,Prescaler divide (9 at init) (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,CANCTRL2,byte,1,Control register 2 (0x36 at init) (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,TIMER,word,2,Free-running timer (the message buffer time stamps count it) (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,reserved_0c,dword,4,Reserved (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,RXGMSK,dword,4,"Receive global mask, high and low halves (0x1fee0000 at init, one 32-bit store) (PR #53 round 25)",,verified
+toucan_module_registers_t,0x00307080,RX14MSK,dword,4,Receive buffer 14 mask (0x1feffe00 at init) (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,RX15MSK,dword,4,Receive buffer 15 mask (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,reserved_1c,dword,4,Reserved (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,ESR,word,2,Error and status (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,IMASK,word,2,"Interrupt mask, one bit per message buffer (0 at init) (PR #53 round 25)",,verified
+toucan_module_registers_t,0x00307080,IFLAG,word,2,"Interrupt flags, one bit per message buffer (read, then cleared, at init) (PR #53 round 25)",,verified
+toucan_module_registers_t,0x00307080,RXECTR,byte,1,Receive error counter (PR #53 round 25),,verified
+toucan_module_registers_t,0x00307080,TXECTR,byte,1,Transmit error counter (PR #53 round 25),,verified
+toucan_message_buffer_t,,CONTROL_STATUS,word,2,"Bits 15-8 time stamp, 7-4 CODE, 3-0 LENGTH; mpc555_initCanController zeroes byte +1 (CODE / LENGTH) of all 16 buffers",,verified
+toucan_message_buffer_t,,ID_HIGH,word,2,"Identifier, high word",,verified
+toucan_message_buffer_t,,ID_LOW,word,2,"Identifier, low word",,verified
+toucan_message_buffer_t,,DATA_0_1,word,2,Data bytes 0-1,,verified
+toucan_message_buffer_t,,DATA_2_3,word,2,Data bytes 2-3,,verified
+toucan_message_buffer_t,,DATA_4_5,word,2,Data bytes 4-5,,verified
+toucan_message_buffer_t,,DATA_6_7,word,2,Data bytes 6-7,,verified
+toucan_message_buffer_t,,RESERVED,word,2,Reserved,,verified
 # =============================================================================
 # QSMCM SCI1 register block - 4 x u16 = 8 bytes at 0x305008
 # SCC1R0/SCC1R1 = SCI1 control registers; SC1SR = status; SC1DR = data

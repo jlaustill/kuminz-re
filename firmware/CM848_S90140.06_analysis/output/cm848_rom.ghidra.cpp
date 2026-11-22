@@ -1,5 +1,5 @@
 // Ghidra C++ Decompilation Export - cm848_rom Firmware
-// Generated: Sun Nov 22 06:54:08 MST 2026
+// Generated: Sun Nov 22 07:00:12 MST 2026
 
 
 //
@@ -2012,17 +2012,17 @@ void mpc555_initCanController(void)
   undefined1 *puVar2;
   byte bVar3;
   
-  toucan_a_mcr.CTRL = 0x5000;
-  toucan_a_mb2_t_003070a0.ID_HI = 0;
-  wVar1 = toucan_a_mb2_t_003070a0.ID_LO;
-  toucan_a_mb2_t_003070a0.ID_LO = 0;
-  toucan_a_mcr.DATA0._0_1_ = 0;
-  toucan_a_mcr.DATA0._1_1_ = 0x10;
-  toucan_a_mcr.DATA2._1_1_ = 0x36;
-  toucan_a_mcr.DATA2._0_1_ = 9;
-  toucan_a_mb1_t_00307090._0_4_ = 0x1fee0000;
-  toucan_a_mb1_t_00307090._4_4_ = 0x1feffe00;
-  toucan_a_mcr.ID_LO = 0x400;
+  toucan_a.MCR = 0x5000;
+  toucan_a.IMASK = 0;
+  wVar1 = toucan_a.IFLAG;
+  toucan_a.IFLAG = 0;
+  toucan_a.CANCTRL0 = 0;
+  toucan_a.CANCTRL1 = 0x10;
+  toucan_a.CANCTRL2 = 0x36;
+  toucan_a.PRESDIV = 9;
+  toucan_a.RXGMSK = 0x1fee0000;
+  toucan_a.RX14MSK = 0x1feffe00;
+  toucan_a.CANICR = 0x400;
   bVar3 = 0;
   puVar2 = &DAT_003070f1;
   do {
@@ -2030,7 +2030,7 @@ void mpc555_initCanController(void)
     *puVar2 = 0;
     bVar3 = bVar3 + 1;
   } while (bVar3 < 0x10);
-  toucan_a_mcr.CTRL = 0;
+  toucan_a.MCR = 0;
   mpc555_initDiagnosticSubsystem();
   return;
 }
@@ -2084,12 +2084,12 @@ void mpc555_initDiagnosticSubsystem(void)
     puVar1 = puVar1 + 0x10;
   } while (bVar6 < 4);
   iVar5 = 1 << (wVar2 + 0x10000 & 0x3f);
-  toucan_a_mb2_t_003070a0.ID_HI = (word)iVar5;
+  toucan_a.IMASK = (word)iVar5;
   bVar6 = 0;
   do {
     iVar5 = iVar5 * 2;
-    wVar2 = toucan_a_mb2_t_003070a0.ID_HI;
-    toucan_a_mb2_t_003070a0.ID_HI = (ushort)iVar5 | wVar2;
+    wVar2 = toucan_a.IMASK;
+    toucan_a.IMASK = (ushort)iVar5 | wVar2;
     bVar6 = bVar6 + 1;
   } while (bVar6 < 4);
   return;
@@ -3109,7 +3109,7 @@ void mpc555_canTransmitQueuePush(uint param_1,uint param_2,int param_3,undefined
       }
       else {
         wVar5 = can_mailbox_counter.slot_start;
-        cm848_writeCan2ControllerTxMailbox(&toucan_a_mcr,wVar5 & 0xff,&local_28);
+        cm848_writeCan2ControllerTxMailbox(&toucan_a,wVar5 & 0xff,&local_28);
       }
       uVar12 = 0;
     }
@@ -3852,7 +3852,7 @@ void mpc555_can2TransmitInterruptHandler(void)
   ushort uVar3;
   ushort uVar4;
   
-  wVar1 = toucan_a_mb2_t_003070a0.ID_LO;
+  wVar1 = toucan_a.IFLAG;
   if (wVar1 != 0) {
     uVar3 = 1;
     uVar2 = 1;
@@ -3863,7 +3863,7 @@ void mpc555_can2TransmitInterruptHandler(void)
       uVar4 = wVar1 & uVar3;
     }
     do {
-      toucan_a_mb2_t_003070a0.ID_LO = ~(ushort)(1 << (uVar2 + 0xffff & 0x3f));
+      toucan_a.IFLAG = ~(ushort)(1 << (uVar2 + 0xffff & 0x3f));
       wVar1 = can_mailbox_counter.slot_start;
       if ((uVar2 & 0xffff) == (uint)wVar1) {
         cm848_can2MailboxTransmitCompleteWrapper(uVar2);
@@ -3871,7 +3871,7 @@ void mpc555_can2TransmitInterruptHandler(void)
       else {
         cm848_can2MailboxTransmitRangeWrapper(uVar2 & 0xff);
       }
-      wVar1 = toucan_a_mb2_t_003070a0.ID_LO;
+      wVar1 = toucan_a.IFLAG;
       if (wVar1 == 0) {
         uVar2 = 0x11;
       }
@@ -3906,8 +3906,8 @@ void mpc555_manageCan1TransmitBuffer(void)
   word wVar5;
   
   wVar4 = can_mailbox_counter.slot_start;
-  wVar5 = toucan_a_mb2_t_003070a0.ID_LO;
-  toucan_a_mb2_t_003070a0.ID_LO = wVar5 & ~(ushort)(1 << (wVar4 + 0xffff & 0x3f));
+  wVar5 = toucan_a.IFLAG;
+  toucan_a.IFLAG = wVar5 & ~(ushort)(1 << (wVar4 + 0xffff & 0x3f));
   dVar2 = j1939_can_ring_buf.j1939_tx_read_ptr;
   dVar1 = j1939_can_ring_buf.j1939_tx_write_ptr;
   if ((dVar1 == dVar2) && (cVar3 = j1939_can_ring_buf._pad16._0_1_, cVar3 != '\x01')) {
@@ -3916,7 +3916,7 @@ void mpc555_manageCan1TransmitBuffer(void)
   }
   else {
     wVar4 = can_mailbox_counter.slot_start;
-    cm848_writeCan2ControllerTxMailbox(&toucan_a_mcr,wVar4 & 0xff);
+    cm848_writeCan2ControllerTxMailbox(&toucan_a,wVar4 & 0xff);
     j1939_can_ring_buf._pad16._0_1_ = 0;
     dVar1 = j1939_can_ring_buf.j1939_tx_read_ptr;
     j1939_can_ring_buf.j1939_tx_read_ptr = dVar1 + 0xc;
@@ -3965,7 +3965,7 @@ void mpc555_processCanReceiveBuffer(int param_1)
       *puVar10 = *puVar9;
       uVar11 = uVar11 + 1;
     } while (uVar11 < 8);
-    wVar5 = toucan_a_mcr.DATA4;
+    wVar5 = toucan_a.TIMER;
   }
   dVar2 = j1939_can_ring_buf.can_rx_write_ptr;
   j1939_can_ring_buf.can_rx_write_ptr = dVar2 + 0x12;
@@ -3982,8 +3982,8 @@ void mpc555_processCanReceiveBuffer(int param_1)
     wVar6 = can_mailbox_counter.slot_end;
     if (0 < (int)((uint)wVar6 - (uint)wVar5)) {
       do {
-        wVar5 = toucan_a_mb2_t_003070a0.ID_HI;
-        toucan_a_mb2_t_003070a0.ID_HI = wVar5 & ~(ushort)iVar8;
+        wVar5 = toucan_a.IMASK;
+        toucan_a.IMASK = wVar5 & ~(ushort)iVar8;
         iVar8 = iVar8 * 2;
         uVar7 = uVar7 + 1 & 0xffff;
         wVar6 = can_mailbox_counter.slot_end;
@@ -4062,8 +4062,8 @@ void mpc555_dispatchCanMessageHandlers(void)
       wVar5 = can_mailbox_counter.slot_end;
       if (uVar10 < wVar5) {
         do {
-          wVar5 = toucan_a_mb2_t_003070a0.ID_HI;
-          toucan_a_mb2_t_003070a0.ID_HI = (ushort)iVar8 | wVar5;
+          wVar5 = toucan_a.IMASK;
+          toucan_a.IMASK = (ushort)iVar8 | wVar5;
           iVar8 = iVar8 * 2;
           uVar10 = uVar10 + 1 & 0xff;
           wVar5 = can_mailbox_counter.slot_end;
@@ -57154,15 +57154,14 @@ void mpc555_processJ1939TxBufferSend(void)
   word wVar1;
   
   can_transmit_completed_flag = 1;
-  wVar1 = toucan_a_mb2_t_003070a0.ID_LO;
-  toucan_a_mb2_t_003070a0.ID_LO =
-       wVar1 & ~(ushort)(1 << (can_tx_mailbox_start_index + 0xffff & 0x3f));
+  wVar1 = toucan_a.IFLAG;
+  toucan_a.IFLAG = wVar1 & ~(ushort)(1 << (can_tx_mailbox_start_index + 0xffff & 0x3f));
   if ((can_transmit_queue_enqueue_pointer == (undefined *)can_transmit_queue_dequeue_pointer) &&
      (can_transmit_queue_full_flag != 1)) {
     can_transmit_mailbox_pointer[1] = 0;
   }
   else {
-    cm848_writeCanControllerTxMailbox(&toucan_a_mcr,can_tx_mailbox_start_index & 0xff);
+    cm848_writeCanControllerTxMailbox(&toucan_a,can_tx_mailbox_start_index & 0xff);
     can_transmit_queue_full_flag = 0;
     can_transmit_queue_dequeue_pointer = can_transmit_queue_dequeue_pointer + 0xc;
     if (0x40ad18 < can_transmit_queue_dequeue_pointer) {
@@ -57211,7 +57210,7 @@ void mpc555_queueCanReceiveMessage(int param_1)
       *puVar6 = *puVar5;
       uVar7 = uVar7 + 1;
     } while (uVar7 < 8);
-    wVar1 = toucan_a_mcr.DATA4;
+    wVar1 = toucan_a.TIMER;
   }
   can_receive_queue_write_pointer = can_receive_queue_write_pointer + 0x12;
   if (&can_receive_queue_last_entry < can_receive_queue_write_pointer) {
@@ -57223,8 +57222,8 @@ void mpc555_queueCanReceiveMessage(int param_1)
     uVar3 = 0;
     if (0 < (int)((uint)can_tx_mailbox_end_index - (uint)can_tx_mailbox_start_index)) {
       do {
-        wVar1 = toucan_a_mb2_t_003070a0.ID_HI;
-        toucan_a_mb2_t_003070a0.ID_HI = wVar1 & ~(ushort)iVar4;
+        wVar1 = toucan_a.IMASK;
+        toucan_a.IMASK = wVar1 & ~(ushort)iVar4;
         iVar4 = iVar4 * 2;
         uVar3 = uVar3 + 1 & 0xffff;
       } while ((int)uVar3 < (int)((uint)can_tx_mailbox_end_index - (uint)can_tx_mailbox_start_index)
@@ -57302,7 +57301,7 @@ void mpc555_sendJ1939SingleFrame(uint param_1,uint param_2,int param_3,undefined
       }
     }
     else {
-      cm848_writeCanControllerTxMailbox(&toucan_a_mcr,can_tx_mailbox_start_index & 0xff,&local_18);
+      cm848_writeCanControllerTxMailbox(&toucan_a,can_tx_mailbox_start_index & 0xff,&local_18);
     }
     uVar8 = 0;
   }
@@ -57445,7 +57444,7 @@ void mpc555_canTransmitInterruptHandler(void)
   ushort uVar3;
   ushort uVar4;
   
-  wVar1 = toucan_a_mb2_t_003070a0.ID_LO;
+  wVar1 = toucan_a.IFLAG;
   if (wVar1 != 0) {
     uVar3 = 1;
     uVar2 = 1;
@@ -57456,14 +57455,14 @@ void mpc555_canTransmitInterruptHandler(void)
       uVar4 = wVar1 & uVar3;
     }
     do {
-      toucan_a_mb2_t_003070a0.ID_LO = ~(ushort)(1 << (uVar2 + 0xffff & 0x3f));
+      toucan_a.IFLAG = ~(ushort)(1 << (uVar2 + 0xffff & 0x3f));
       if ((uVar2 & 0xffff) == (uint)can_tx_mailbox_start_index) {
         cm848_handleCanMailboxTransmitComplete(uVar2 & 0xff);
       }
       else {
         cm848_handleCanMailboxTransmitRange(uVar2 & 0xff);
       }
-      wVar1 = toucan_a_mb2_t_003070a0.ID_LO;
+      wVar1 = toucan_a.IFLAG;
       if (wVar1 == 0) {
         uVar2 = 0x11;
       }
@@ -98119,8 +98118,8 @@ LAB_00539060:
         iVar5 = 1 << (can_tx_mailbox_start_index & 0x3f);
         for (uVar6 = can_tx_mailbox_start_index; (uVar6 & 0xff) < can_tx_mailbox_end_index;
             uVar6 = (uVar6 & 0xff) + 1) {
-          wVar3 = toucan_a_mb2_t_003070a0.ID_HI;
-          toucan_a_mb2_t_003070a0.ID_HI = (ushort)iVar5 | wVar3;
+          wVar3 = toucan_a.IMASK;
+          toucan_a.IMASK = (ushort)iVar5 | wVar3;
           iVar5 = iVar5 * 2;
         }
       }
@@ -98144,9 +98143,8 @@ void cm848_j1939_system_init(void)
   int iVar2;
   uint uVar3;
   uint uVar4;
-  undefined *puVar5;
-  uint uVar6;
-  ushort uVar7;
+  uint uVar5;
+  ushort uVar6;
   
   datalink_broadcast_enable_flags = datalink_broadcast_enable_default_cal;
   can_transmit_queue_dequeue_pointer = (dword)&can_transmit_queue_buffer;
@@ -98155,11 +98153,11 @@ void cm848_j1939_system_init(void)
   can_receive_queue_write_pointer = &can_receive_queue_buffer;
   j1939_pgn_handler_init_ec00eb00();
   DAT_0040ad54 = 4;
-  uVar6 = 0;
+  uVar5 = 0;
   do {
-    j1939_receive_source_address_whitelist[uVar6] = 0xfe;
-    uVar6 = uVar6 + 1 & 0xff;
-  } while (uVar6 < 4);
+    j1939_receive_source_address_whitelist[uVar5] = 0xfe;
+    uVar5 = uVar5 + 1 & 0xff;
+  } while (uVar5 < 4);
   can_transmit_completed_flag = 0;
   fault_detected_cal.faults_96_to_111 = fault_detected_cal.faults_96_to_111 & 0x7fff;
   fault_registered_cal.faults_96_to_111 = fault_registered_cal.faults_96_to_111 & 0x7fff;
@@ -98230,69 +98228,69 @@ void cm848_j1939_system_init(void)
   iVar2 = uVar3 + 1;
   can_tx_mailbox_start_index = (word)iVar2;
   can_tx_mailbox_end_index = can_last_message_object_used + 0xf;
-  uVar6 = iVar2 * 0x10 & 0xffff0;
-  can_transmit_mailbox_pointer = &UNK_003070f0 + uVar6;
-  puVar5 = &DAT_00307100 + uVar6;
+  uVar5 = iVar2 * 0x10 & 0xffff0;
+  can_transmit_mailbox_pointer = &UNK_003070f0 + uVar5;
+  iVar2 = (int)&toucan_a_message_buffers[0].CONTROL_STATUS + uVar5;
+  uVar5 = 0;
   uVar6 = 0;
-  uVar7 = 0;
   can_last_message_object_used = can_tx_mailbox_end_index;
   if (j1939_engine_destination_specific_receive_message_object_count != 0) {
     uVar4 = (uint)j1939_source_address;
     do {
-      *(uint *)(puVar5 + 2) = (&DAT_0006457e)[uVar6 & 0xff] | (uVar4 & 0xff) << 9;
-      uVar6 = uVar6 + 1;
-      puVar5[1] = 0x40;
-      puVar5 = puVar5 + 0x10;
-      uVar7 = uVar7 + 1 & 0xff;
-    } while (uVar7 < wVar1);
+      *(uint *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
+      uVar5 = uVar5 + 1;
+      *(undefined1 *)(iVar2 + 1) = 0x40;
+      iVar2 = iVar2 + 0x10;
+      uVar6 = uVar6 + 1 & 0xff;
+    } while (uVar6 < wVar1);
   }
   wVar1 = j1939_engine_destination_non_specific_receive_message_object_count;
-  uVar7 = 0;
+  uVar6 = 0;
   if (j1939_engine_destination_non_specific_receive_message_object_count != 0) {
     do {
-      *(undefined4 *)(puVar5 + 2) = (&DAT_0006457e)[uVar6 & 0xff];
-      uVar6 = uVar6 + 1;
-      puVar5[1] = 0x40;
-      puVar5 = puVar5 + 0x10;
-      uVar7 = uVar7 + 1 & 0xff;
-    } while (uVar7 < wVar1);
+      *(undefined4 *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff];
+      uVar5 = uVar5 + 1;
+      *(undefined1 *)(iVar2 + 1) = 0x40;
+      iVar2 = iVar2 + 0x10;
+      uVar6 = uVar6 + 1 & 0xff;
+    } while (uVar6 < wVar1);
   }
   wVar1 = j1939_retarder_destination_specific_receive_message_object_count;
-  uVar7 = 0;
+  uVar6 = 0;
   if (j1939_retarder_destination_specific_receive_message_object_count != 0) {
     uVar4 = (uint)j1939_engine_retarder_source_address;
     do {
-      *(uint *)(puVar5 + 2) = (&DAT_0006457e)[uVar6 & 0xff] | (uVar4 & 0xff) << 9;
-      uVar6 = uVar6 + 1;
-      puVar5[1] = 0x40;
-      puVar5 = puVar5 + 0x10;
-      uVar7 = uVar7 + 1 & 0xff;
-    } while (uVar7 < wVar1);
+      *(uint *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff] | (uVar4 & 0xff) << 9;
+      uVar5 = uVar5 + 1;
+      *(undefined1 *)(iVar2 + 1) = 0x40;
+      iVar2 = iVar2 + 0x10;
+      uVar6 = uVar6 + 1 & 0xff;
+    } while (uVar6 < wVar1);
   }
   wVar1 = j1939_retarder_destination_non_specific_receive_message_object_count;
-  uVar7 = 0;
+  uVar6 = 0;
   if (j1939_retarder_destination_non_specific_receive_message_object_count != 0) {
     do {
-      *(undefined4 *)(puVar5 + 2) = (&DAT_0006457e)[uVar6 & 0xff];
-      uVar6 = uVar6 + 1;
-      puVar5[1] = 0x40;
-      puVar5 = puVar5 + 0x10;
-      uVar7 = uVar7 + 1 & 0xff;
-    } while (uVar7 < wVar1);
+      *(undefined4 *)(iVar2 + 2) = (&DAT_0006457e)[uVar5 & 0xff];
+      uVar5 = uVar5 + 1;
+      *(undefined1 *)(iVar2 + 1) = 0x40;
+      iVar2 = iVar2 + 0x10;
+      uVar6 = uVar6 + 1 & 0xff;
+    } while (uVar6 < wVar1);
   }
   iVar2 = 1 << (uVar3 + 0x10000 & 0x3f);
-  toucan_a_mb2_t_003070a0.ID_HI = (word)iVar2;
-  uVar7 = 0;
+  toucan_a.IMASK = (word)iVar2;
+  uVar6 = 0;
   if (j1939_valid_receive_message_object_count != 0) {
     do {
       iVar2 = iVar2 * 2;
-      wVar1 = toucan_a_mb2_t_003070a0.ID_HI;
-      toucan_a_mb2_t_003070a0.ID_HI = (ushort)iVar2 | wVar1;
-      uVar7 = uVar7 + 1 & 0xff;
-    } while (uVar7 < j1939_valid_receive_message_object_count);
+      wVar1 = toucan_a.IMASK;
+      toucan_a.IMASK = (ushort)iVar2 | wVar1;
+      uVar6 = uVar6 + 1 & 0xff;
+    } while (uVar6 < j1939_valid_receive_message_object_count);
   }
-  uVar7 = USIU_SIMASK._0_2_;
-  USIU_SIMASK._0_2_ = uVar7 | 0x40;
+  uVar6 = USIU_SIMASK._0_2_;
+  USIU_SIMASK._0_2_ = uVar6 | 0x40;
   return;
 }
 
@@ -98359,17 +98357,17 @@ void cm848_initCanHardware(void)
   undefined1 *puVar2;
   byte bVar3;
   
-  toucan_a_mcr.CTRL = 0x5000;
-  toucan_a_mb2_t_003070a0.ID_HI = 0;
-  wVar1 = toucan_a_mb2_t_003070a0.ID_LO;
-  toucan_a_mb2_t_003070a0.ID_LO = 0;
-  toucan_a_mcr.DATA0._0_1_ = 0;
-  toucan_a_mcr.DATA0._1_1_ = 0x10;
-  toucan_a_mcr.DATA2._1_1_ = 0x36;
-  toucan_a_mcr.DATA2._0_1_ = 9;
-  toucan_a_mb1_t_00307090._0_4_ = 0x1fee0000;
-  toucan_a_mb1_t_00307090._4_4_ = 0x1feffe00;
-  toucan_a_mcr.ID_LO = 0x400;
+  toucan_a.MCR = 0x5000;
+  toucan_a.IMASK = 0;
+  wVar1 = toucan_a.IFLAG;
+  toucan_a.IFLAG = 0;
+  toucan_a.CANCTRL0 = 0;
+  toucan_a.CANCTRL1 = 0x10;
+  toucan_a.CANCTRL2 = 0x36;
+  toucan_a.PRESDIV = 9;
+  toucan_a.RXGMSK = 0x1fee0000;
+  toucan_a.RX14MSK = 0x1feffe00;
+  toucan_a.CANICR = 0x400;
   bVar3 = 0;
   puVar2 = &DAT_003070f1;
   do {
@@ -98377,7 +98375,7 @@ void cm848_initCanHardware(void)
     *puVar2 = 0;
     bVar3 = bVar3 + 1;
   } while (bVar3 < 0x10);
-  toucan_a_mcr.CTRL = 0;
+  toucan_a.MCR = 0;
   cm848_j1939_system_init();
   return;
 }

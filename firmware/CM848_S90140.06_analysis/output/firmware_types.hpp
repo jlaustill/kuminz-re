@@ -1307,9 +1307,8 @@ typedef struct tpub_ch0_params_t tpub_ch0_params_t;
 typedef struct tpub_ch11_params_t tpub_ch11_params_t;
 typedef struct tpub_ch14_params_t tpub_ch14_params_t;
 typedef struct mios_mmcsm_b_t mios_mmcsm_b_t;
-typedef struct toucan_a_mb0_t toucan_a_mb0_t;
-typedef struct toucan_a_mb1_t toucan_a_mb1_t;
-typedef struct toucan_a_mb2_t toucan_a_mb2_t;
+typedef struct toucan_module_registers_t toucan_module_registers_t;
+typedef struct toucan_message_buffer_t toucan_message_buffer_t;
 typedef struct qsmcm_sci1_regs_t qsmcm_sci1_regs_t;
 typedef struct qsmcm_qspi_ctrl_t qsmcm_qspi_ctrl_t;
 typedef struct qsmcm_recram_t qsmcm_recram_t;
@@ -2475,37 +2474,36 @@ struct mios_mmcsm_b_t {
     uint16_t SCRD;  /* Status/Control Register D */
 };
 
-struct toucan_a_mb0_t {
-    uint16_t CTRL;  /* Message Buffer 0 Control/Status (code+DLC+flags) */
-    uint16_t ID_HI;  /* Message Buffer 0 ID High (bits 28-16) */
-    uint16_t ID_LO;  /* Message Buffer 0 ID Low (bits 15-0) */
-    uint16_t DATA0;  /* Message Buffer 0 Data bytes 0-1 */
-    uint16_t DATA2;  /* Message Buffer 0 Data bytes 2-3 */
-    uint16_t DATA4;  /* Message Buffer 0 Data bytes 4-5 */
-    uint16_t DATA6;  /* Message Buffer 0 Data bytes 6-7 */
-    uint16_t _pad;  /* Reserved (timestamp) */
+struct toucan_module_registers_t {
+    uint16_t MCR;  /* Module configuration: mpc555_initCanController writes 0x5000 (freeze + halt) before the setup and 0 after it (PR #53 round 25) */
+    uint16_t TCR;  /* Test register (PR #53 round 25) */
+    uint16_t CANICR;  /* Interrupt configuration (0x400 at init) (PR #53 round 25) */
+    uint8_t CANCTRL0;  /* Control register 0 (0 at init) (PR #53 round 25) */
+    uint8_t CANCTRL1;  /* Control register 1 (0x10 at init) (PR #53 round 25) */
+    uint8_t PRESDIV;  /* Prescaler divide (9 at init) (PR #53 round 25) */
+    uint8_t CANCTRL2;  /* Control register 2 (0x36 at init) (PR #53 round 25) */
+    uint16_t TIMER;  /* Free-running timer (the message buffer time stamps count it) (PR #53 round 25) */
+    uint32_t reserved_0c;  /* Reserved (PR #53 round 25) */
+    uint32_t RXGMSK;  /* Receive global mask, high and low halves (0x1fee0000 at init, one 32-bit store) (PR #53 round 25) */
+    uint32_t RX14MSK;  /* Receive buffer 14 mask (0x1feffe00 at init) (PR #53 round 25) */
+    uint32_t RX15MSK;  /* Receive buffer 15 mask (PR #53 round 25) */
+    uint32_t reserved_1c;  /* Reserved (PR #53 round 25) */
+    uint16_t ESR;  /* Error and status (PR #53 round 25) */
+    uint16_t IMASK;  /* Interrupt mask, one bit per message buffer (0 at init) (PR #53 round 25) */
+    uint16_t IFLAG;  /* Interrupt flags, one bit per message buffer (read, then cleared, at init) (PR #53 round 25) */
+    uint8_t RXECTR;  /* Receive error counter (PR #53 round 25) */
+    uint8_t TXECTR;  /* Transmit error counter (PR #53 round 25) */
 };
 
-struct toucan_a_mb1_t {
-    uint16_t CTRL;  /* Message Buffer 1 Control/Status */
-    uint16_t ID_HI;  /* Message Buffer 1 ID High */
-    uint16_t ID_LO;  /* Message Buffer 1 ID Low */
-    uint16_t DATA0;  /* Message Buffer 1 Data bytes 0-1 */
-    uint16_t DATA2;  /* Message Buffer 1 Data bytes 2-3 */
-    uint16_t DATA4;  /* Message Buffer 1 Data bytes 4-5 */
-    uint16_t DATA6;  /* Message Buffer 1 Data bytes 6-7 */
-    uint16_t _pad;  /* Reserved (timestamp) */
-};
-
-struct toucan_a_mb2_t {
-    uint16_t CTRL;  /* Message Buffer 2 Control/Status */
-    uint16_t ID_HI;  /* Message Buffer 2 ID High */
-    uint16_t ID_LO;  /* Message Buffer 2 ID Low */
-    uint16_t DATA0;  /* Message Buffer 2 Data bytes 0-1 */
-    uint16_t DATA2;  /* Message Buffer 2 Data bytes 2-3 */
-    uint16_t DATA4;  /* Message Buffer 2 Data bytes 4-5 */
-    uint16_t DATA6;  /* Message Buffer 2 Data bytes 6-7 */
-    uint16_t _pad;  /* Reserved (timestamp) */
+struct toucan_message_buffer_t {
+    uint16_t CONTROL_STATUS;  /* Bits 15-8 time stamp, 7-4 CODE, 3-0 LENGTH; mpc555_initCanController zeroes byte +1 (CODE / LENGTH) of all 16 buffers */
+    uint16_t ID_HIGH;  /* Identifier, high word */
+    uint16_t ID_LOW;  /* Identifier, low word */
+    uint16_t DATA_0_1;  /* Data bytes 0-1 */
+    uint16_t DATA_2_3;  /* Data bytes 2-3 */
+    uint16_t DATA_4_5;  /* Data bytes 4-5 */
+    uint16_t DATA_6_7;  /* Data bytes 6-7 */
+    uint16_t RESERVED;  /* Reserved */
 };
 
 struct qsmcm_sci1_regs_t {
