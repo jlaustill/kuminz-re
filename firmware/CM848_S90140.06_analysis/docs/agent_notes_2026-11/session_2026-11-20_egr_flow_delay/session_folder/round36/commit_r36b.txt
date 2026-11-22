@@ -1,0 +1,30 @@
+cm848: round 36 stage B - the boot kernel's diagnostic request path (prototypes)
+
+The boot reflash kernel's diagnostic request path had three prototypes that hid the received-message record.
+- cm848_sendDiagServiceResponse(j1939_rx_msg_t *request, dword result_code) is the boot twin of round 35's
+  cm848_sendJ1939ResponseFrame. It was (byte *, uint).
+  - It now reads request->source_address / ->dest_address / ->data_pointer.
+  - Its callers' stored requests show as typed locals. Four of them come from dword fields
+    (eeprom_diag_callback._0_4_, diag_write_request_state.pending_request) and now carry an explicit
+    (j1939_rx_msg_t *) cast.
+- cm848_dispatchDiagnosticService(j1939_rx_msg_t *request) was (byte service_code, byte *data_ptr, ushort
+  data_length).
+  - The boot data packet handler passes record + 8 in r3 (addi r3,r31,8) and sets no r4 / r5. The callee reads the
+    data pointer at +6 of r3 (lwz r11,6(r29)).
+  - The old rows made the call print cm848_dispatchDiagnosticService(0x2d, data_ptr, wVar8): 0x2d was the low byte
+    of 0x30292d, not a service code. The body printed CONCAT31(in_register_0000000c, service_code).
+  - It now reads cm848_dispatchDiagnosticService((j1939_rx_msg_t
+    *)&boot_j1939_transport_receive_session.request_to_send_can_id), the boot twin of the application's call.
+  - Its plate is corrected (it scans for the request's first data byte).
+- mpc555_sendJ1939TransportEndOfMessageAcknowledge(byte destination_address, ushort transported_pgn) was
+  (byte, byte *data_ptr, ushort data_length).
+  - Its second parameter is the PGN word: its high byte goes into the TP.CM 0x13 frame. The third is never used.
+  - The call cast the PGN to a pointer and passed a truncated pointer as the third argument.
+
+Proof: prove_tokens.py (prototypes only, an empty label map) gives 1959 of 1969 functions token-equal. One of the
+rest only reorders its declarations. The other nine were read as unified diffs: parameter names, request-> field
+reads, the casts above, and the removed bogus arguments.
+- Phantom register lines (in_r / in_register) 84 -> 82. CONCAT 329 -> 328. Pieces unchanged.
+- Headers regenerated (0 g++ errors), lookup_tables.py 0 sizing problems, tests pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

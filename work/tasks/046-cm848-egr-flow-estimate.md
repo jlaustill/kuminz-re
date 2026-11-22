@@ -1807,6 +1807,25 @@ A peer relay started the round. Scripts are in `session_folder/round35/`.
     bytes.
   - Round 33's EFL/P1 `j1939_diag_response_word_b` and the stale +1 rows at 0x3faeb0-0x3faeb3.
 
+## Done, round 36 (2026-11-22, same PR): two more payloads and the boot diagnostic request path
+
+A peer relay started the round. Scripts are in `session_folder/round36/`.
+- **Stage A (29f28c8, types):**
+  - The EFL/P1 (PGN 65263) payload. The word at bytes 5-6 is SPN 101 crankcase pressure (was
+    `j1939_diag_response_word_b`), and byte 3 (oil level) is never written.
+  - The PGN 65504 payload: engine speed and net output torque, then the main injection timing XOR-scrambled with a
+    key from the time base (`TBLr`) into bytes 5 / 6 / 8.
+- **Stage B (c7d1515, prototypes):**
+  - `cm848_sendDiagServiceResponse(j1939_rx_msg_t *request, dword result_code)`.
+  - `cm848_dispatchDiagnosticService(j1939_rx_msg_t *request)`. Its old (service_code, data_ptr, data_length) rows
+    made the boot data packet handler's call print a service code 0x2d, which was really the low byte of the receive
+    session's message view 0x30292d (the disassembly: `addi r3,r31,8`).
+  - `mpc555_sendJ1939TransportEndOfMessageAcknowledge(destination_address, transported_pgn)`.
+- **Leads:**
+  - Type `eeprom_diag_callback` / `diag_write_request_state.pending_request` as `j1939_rx_msg_t *`. They store
+    requests, and four calls now cast them.
+  - The next functions on `messy_functions.py`'s ranking (round 32).
+
 ## Leads (not in this PR)
 
 - **Round 5 leads:**

@@ -573,6 +573,11 @@ state enum, the flag bytes.**
 - **Stage B (ff9e247, types):** the J1939 transport receive session as one type with boot and application
   instances (were `j1939_tp_pause_t` / `qadc_a_*` / `j1939_multiframe_rx_*`); both `_pad2` fields named.
 - **Stage C (68c58e4, prototypes):** the boot record senders, the boot queue push and the diagnostic service chain.
+**Round 36.**
+- **Stage A (29f28c8, types):** the EFL/P1 (PGN 65263) and PGN 65504 payloads as structs (SPN 101 crankcase
+  pressure was `j1939_diag_response_word_b`; PGN 65504 carries a time-base-scrambled injection timing).
+- **Stage B (c7d1515, prototypes):** the boot diagnostic request path. The dispatcher's old rows printed a fake
+  service code 0x2d (the low byte of the receive session's message view).
 
 ## Test plan
 
@@ -665,6 +670,8 @@ state enum, the flag bytes.**
     stage C EQUIVALENT);
   - stage B passes `check_enum_proof3.py` (0 functions differ beyond the enum substitutions);
   - stage D (comments) is EQUIVALENT;
+- [x] Round 36: stages A / B are token-equal apart from the 2 / 9 hand-read functions and one declaration
+  reorder.
 - [x] Round 35: stage A is EQUIVALENT; stages B / C are token-equal apart from declaration reorders and 8 / 16
   hand-read functions.
 - [x] Round 34: stage A is EQUIVALENT; stages B / C are token-equal apart from declaration reorders and 4 / 18

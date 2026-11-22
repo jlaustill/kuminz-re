@@ -1,0 +1,6 @@
+j1939_eflp1_fuel_delivery_pressure
+j1939_eflp1_engine_oil_pressure
+j1939_diag_response_word_b
+j1939_eflp1_coolant_pressure
+j1939_rpm_tx_word
+j1939_etc1_speed_offset_tx_word

@@ -444,3 +444,7 @@ Hand work on the round 7 lead.
 ## Round 35: the boot kernel's J1939 transport and the receive session (`session_folder/round35/`)
 
 - **Stage A:** `apply_r35a.py`. **Stage B:** `apply_r35b.py`. **Stage C:** `apply_r35c.py` (its first run was not idempotent: the clean-up is in the stage C commit message). **Closing:** `apply_r35_closing.py`.
+
+## Round 36: two payloads and the boot diagnostic request path (`session_folder/round36/`)
+
+- **Stage A:** `apply_r36a.py`. **Stage B:** the prototype rows (in the commit). **Closing:** `apply_r36_closing.py`.
